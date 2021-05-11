@@ -29,19 +29,19 @@ public class MagicalPredatorRenderer extends MobRenderer<MagicalPredatorEntity, 
     ));
 
     public MagicalPredatorRenderer(EntityRendererManager p_i50961_1_) {
-        super(p_i50961_1_, new MagicalPredatorModel(RenderType::entityTranslucent), 0.66F);
+        super(p_i50961_1_, new MagicalPredatorModel(RenderType::getEntityTranslucent), 0.66F);
     }
 
     @Override
-    protected void scale(MagicalPredatorEntity entitylivingbaseIn, MatrixStack matrixStackIn, float partialTickTime) {
-        this.shadowRadius = entitylivingbaseIn.size / entitylivingbaseIn.getBbHeight() / 1.44F;
-        float scale = entitylivingbaseIn.size / entitylivingbaseIn.getBbHeight();
+    protected void preRenderCallback(MagicalPredatorEntity entitylivingbaseIn, MatrixStack matrixStackIn, float partialTickTime) {
+        this.shadowSize = entitylivingbaseIn.size / entitylivingbaseIn.getHeight() / 1.44F;
+        float scale = entitylivingbaseIn.size / entitylivingbaseIn.getHeight();
         matrixStackIn.scale(scale, scale, scale);
     }
 
 
     @Override
-    public ResourceLocation getTextureLocation(MagicalPredatorEntity entity) {
+    public ResourceLocation getEntityTexture(MagicalPredatorEntity entity) {
         return MAGICAL_BEAST_TEXTURES.get(entity.type);
     }
 }

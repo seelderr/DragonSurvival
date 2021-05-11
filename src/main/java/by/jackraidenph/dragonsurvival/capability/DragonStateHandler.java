@@ -2,58 +2,22 @@ package by.jackraidenph.dragonsurvival.capability;
 
 import by.jackraidenph.dragonsurvival.util.DragonLevel;
 import by.jackraidenph.dragonsurvival.util.DragonType;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.PlayerEntity;
-
-import javax.annotation.Nullable;
-import java.util.Objects;
-import java.util.UUID;
+import net.minecraft.util.math.Vec3d;
 
 
 public class DragonStateHandler {
     private boolean isDragon;
     private boolean isHiding;
     private DragonType type = DragonType.NONE;
-
+    private DragonLevel level = DragonLevel.BABY;
+    /**
+     * Current health, must be equal to the player's health
+     */
+    private float health = level.initialHealth;
     private final DragonMovementData data = new DragonMovementData(0, 0, 0);
     private boolean hasWings;
-    private float size;
-    /**
-     * Base damage
-     */
-    private int baseDamage;
-
-    public void setBaseDamage(int baseDamage) {
-        this.baseDamage = baseDamage;
-    }
-
-    public void setBaseDamage(int baseDamage, PlayerEntity playerEntity) {
-        setBaseDamage(baseDamage);
-        playerEntity.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(baseDamage);
-    }
-
-    public int getBaseDamage() {
-        return baseDamage;
-    }
-
-    public float getSize() {
-        return size;
-    }
-
-    /**
-     * Sets the size and initial health
-     */
-    public void setSize(float size, PlayerEntity playerEntity) {
-        setSize(size);
-    	AttributeModifier mod = buildHealthMod(size);
-        updateHealthModifier(playerEntity, mod);
-    }
-    
-    public void setSize(float size) {
-    	this.size = size;
-    }
 
     public boolean hasWings() {
         return hasWings;
@@ -80,37 +44,39 @@ public class DragonStateHandler {
     }
 
     public DragonLevel getLevel() {
-        if (size < 20F)
-        	return DragonLevel.BABY;
-        else if (size < 30F)
-        	return DragonLevel.YOUNG;
-        else
-        	return DragonLevel.ADULT;
+        return this.level;
     }
 
-    @Nullable
-    public static AttributeModifier getHealthModifier(PlayerEntity player) {
-    	return Objects.requireNonNull(player.getAttribute(Attributes.MAX_HEALTH)).getModifier(UUID.fromString("03574e62-f9e4-4f1b-85ad-fde00915e446"));
-    }
-    
-    public static AttributeModifier buildHealthMod(Float size) {
-    	return new AttributeModifier(
-        		UUID.fromString("03574e62-f9e4-4f1b-85ad-fde00915e446"),
-    			"Dragon Health Adjustment",
-    			(size - 20),
-    			AttributeModifier.Operation.ADDITION
-    		);
+    public void setLevel(DragonLevel level) {
+        this.level = level;
     }
 
-    public static void updateHealthModifier(PlayerEntity player, AttributeModifier mod) {
-    	float oldMax = player.getMaxHealth();
-    	ModifiableAttributeInstance max = Objects.requireNonNull(player.getAttribute(Attributes.MAX_HEALTH));
-    	max.removeModifier(mod);
-    	max.addPermanentModifier(mod);
-    	float newHealth = player.getHealth() * player.getMaxHealth() / oldMax;
-    	player.setHealth(newHealth);
+    public void setHealth(float health) {
+        this.health = health;
     }
-    
+
+    public float getHealth() {
+        return health;
+    }
+
+    /**
+     * Sets the level and initial health
+     */
+    public void setLevel(DragonLevel level, PlayerEntity playerEntity) {
+        setLevel(level);
+        playerEntity.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(level.initialHealth);
+        playerEntity.heal(playerEntity.getMaxHealth());
+        setHealth(level.initialHealth);
+    }
+
+    public void setLevelAndHealth(DragonLevel level, float health, PlayerEntity playerEntity) {
+        setLevel(level);
+        playerEntity.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(health);
+        playerEntity.heal(playerEntity.getMaxHealth());
+        setHealth(health);
+    }
+
+
     public void setMovementData(double bodyYaw, double headYaw, double headPitch) {
         data.bodyYaw = bodyYaw;
         data.headYaw = headYaw;
@@ -134,18 +100,37 @@ public class DragonStateHandler {
         public double headYaw;
         public double headPitch;
 
+        public Vec3d headPosLastTick;
+        public Vec3d tailPosLastTick;
         public double headYawLastTick;
         public double headPitchLastTick;
         public double bodyYawLastTick;
 
-        public DragonMovementData(double bodyYaw, double headYaw, double headPitch) {
+        public DragonMovementData(
+                double bodyYaw,
+                double headYaw,
+                double headPitch) {
+
             this.bodyYaw = bodyYaw;
             this.headYaw = headYaw;
             this.headPitch = headPitch;
+
             this.headYawLastTick = headYaw;
             this.headPitchLastTick = headPitch;
             this.bodyYawLastTick = bodyYaw;
         }
 
+        void setMovementData(double bodyYaw, double headYaw, double headPitch) {
+            this.setMovementLastTick(this.bodyYaw, this.headYaw, this.headPitch);
+            this.bodyYaw = bodyYaw;
+            this.headYaw = headYaw;
+            this.headPitch = headPitch;
+        }
+
+        void setMovementLastTick(double bodyYawLastTick, double headYawLastTick, double headPitchLastTick) {
+            this.bodyYawLastTick = bodyYawLastTick;
+            this.headYawLastTick = headYawLastTick;
+            this.headPitchLastTick = headPitchLastTick;
+        }
     }
 }

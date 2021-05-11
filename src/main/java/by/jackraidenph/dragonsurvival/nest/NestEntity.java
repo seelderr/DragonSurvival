@@ -5,7 +5,6 @@ import by.jackraidenph.dragonsurvival.tiles.BaseBlockEntity;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import io.netty.buffer.Unpooled;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -58,59 +57,59 @@ public class NestEntity extends BaseBlockEntity implements ITickableTileEntity, 
         ItemStack itemStack = regenItem.getStackInSlot(0);
         if (!itemStack.isEmpty()) {
             int value = regenValue.get(itemStack.getItem());
-            if (energy < 64 - value) {
+            if (energy < 64) {
                 energy = Math.min(64, energy + value);
                 itemStack.shrink(1);
             }
         }
         Block block = getBlockState().getBlock();
         if (block instanceof BigNestBlock) {
-            List<PlayerEntity> playerEntities = level.getEntitiesOfClass(PlayerEntity.class, new AxisAlignedBB(worldPosition).inflate(1, 0, 1).expandTowards(0, 1, 0), playerEntity -> playerEntity.getUUID().equals(ownerUUID));
+            List<PlayerEntity> playerEntities = world.getEntitiesWithinAABB(PlayerEntity.class, new AxisAlignedBB(pos).grow(1, 0, 1).expand(0, 1, 0), playerEntity -> playerEntity.getUniqueID().equals(ownerUUID));
             if (playerEntities.size() == 1) {
                 PlayerEntity owner = playerEntities.get(0);
                 if (owner.getHealth() < owner.getMaxHealth() && regenerationMode && energy > 0) {
-                    if (level.getGameTime() % 10 == 0) {
+                    if (world.getGameTime() % 10 == 0) {
                         owner.heal(1);
                         energy--;
                     }
                 }
             }
         }
-        if (!level.isClientSide) {
-        	level.blockEvent(worldPosition, getBlockState().getBlock(), 0, energy);
+        if (!world.isRemote) {
+            world.addBlockEvent(pos, getBlockState().getBlock(), 0, energy);
         }
     }
 
     @Override
-    public boolean triggerEvent(int id, int type) {
+    public boolean receiveClientEvent(int id, int type) {
         if (id == 0) {
             energy = type;
             return true;
         }
-        return super.triggerEvent(id, type);
+        return super.receiveClientEvent(id, type);
     }
 
     @Override
-    public CompoundNBT save(CompoundNBT compound) {
+    public CompoundNBT write(CompoundNBT compound) {
         compound.putInt("Health", energy);
         compound.putInt("Damage cooldown", damageCooldown);
         compound.putString("Type", type.name());
         if (ownerUUID != null)
-            compound.putUUID("Owner", ownerUUID);
+            compound.putUniqueId("Owner", ownerUUID);
         compound.putBoolean("Regenerating", regenerationMode);
         compound.put("Item", regenItem.serializeNBT());
-        return super.save(compound);
+        return super.write(compound);
     }
 
     @Override
-    public void load(BlockState state, CompoundNBT compound) {
-        super.load(state, compound);
+    public void read(CompoundNBT compound) {
+        super.read(compound);
         energy = compound.getInt("Health");
         damageCooldown = compound.getInt("Damage cooldown");
         type = DragonType.valueOf(compound.getString("Type"));
         regenerationMode = compound.getBoolean("Regenerating");
         regenItem.deserializeNBT(compound.getCompound("Item"));
-        ownerUUID = compound.getUUID("Owner");
+        ownerUUID = compound.getUniqueId("Owner");
         if (ownerUUID.equals(new UUID(0, 0)))
             ownerUUID = null;
     }
@@ -124,7 +123,7 @@ public class NestEntity extends BaseBlockEntity implements ITickableTileEntity, 
     @Override
     public Container createMenu(int p_createMenu_1_, PlayerInventory p_createMenu_2_, PlayerEntity p_createMenu_3_) {
         PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
-        buffer.writeBlockPos(worldPosition);
+        buffer.writeBlockPos(pos);
         return new NestContainer(p_createMenu_1_, p_createMenu_2_, buffer);
     }
 }
