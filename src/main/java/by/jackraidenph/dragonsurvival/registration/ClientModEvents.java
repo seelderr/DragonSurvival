@@ -4,6 +4,7 @@ import by.jackraidenph.dragonsurvival.BeaconParticle;
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.gecko.PrinceRenderer;
 import by.jackraidenph.dragonsurvival.gecko.*;
+import by.jackraidenph.dragonsurvival.gui.DragonScreen;
 import by.jackraidenph.dragonsurvival.handlers.ClientEvents;
 import by.jackraidenph.dragonsurvival.nest.NestScreen;
 import by.jackraidenph.dragonsurvival.renderer.PrincessRenderer;
@@ -39,6 +40,14 @@ import javax.annotation.Nullable;
 public class ClientModEvents {
 
     public static KeyBinding TOGGLE_WINGS;
+    public static KeyBinding DRAGON_INVENTORY;
+    
+    //Abilities
+    public static KeyBinding USE_ABILITY;
+    public static KeyBinding TOGGLE_ABILITIES;
+    public static KeyBinding NEXT_ABILITY;
+    public static KeyBinding PREV_ABILITY;
+    
     
     @SubscribeEvent
     public static void onTextureStitchEvent(TextureStitchEvent.Pre event) {
@@ -87,9 +96,25 @@ public class ClientModEvents {
         ShaderHelper.initShaders();
 
         ScreenManager.register(Containers.nestContainer, NestScreen::new);
+        ScreenManager.register(Containers.dragonContainer, DragonScreen::new);
 
-        TOGGLE_WINGS = new KeyBinding("Toggle wings", GLFW.GLFW_KEY_G, "Dragon Survival");
+        TOGGLE_WINGS = new KeyBinding("ds.keybind.wings", GLFW.GLFW_KEY_G, "Dragon Survival");
         ClientRegistry.registerKeyBinding(TOGGLE_WINGS);
+    
+        DRAGON_INVENTORY = new KeyBinding("ds.keybind.dragon_inv", GLFW.GLFW_KEY_V, "Dragon Survival");
+        ClientRegistry.registerKeyBinding(DRAGON_INVENTORY);
+    
+        USE_ABILITY = new KeyBinding("ds.keybind.use_ability", GLFW.GLFW_KEY_C, "Dragon Survival");
+        ClientRegistry.registerKeyBinding(USE_ABILITY);
+    
+        TOGGLE_ABILITIES = new KeyBinding("ds.keybind.toggle_abilities", GLFW.GLFW_KEY_X, "Dragon Survival");
+        ClientRegistry.registerKeyBinding(TOGGLE_ABILITIES);
+    
+        NEXT_ABILITY = new KeyBinding("ds.keybind.next_ability", GLFW.GLFW_KEY_R, "Dragon Survival");
+        ClientRegistry.registerKeyBinding(NEXT_ABILITY);
+    
+        PREV_ABILITY = new KeyBinding("ds.keybind.prev_ability", GLFW.GLFW_KEY_F, "Dragon Survival");
+        ClientRegistry.registerKeyBinding(PREV_ABILITY);
         //Gecko renderers
         DragonModel dragonModel = new DragonModel();
         RenderingRegistry.registerEntityRenderingHandler(EntityTypesInit.DRAGON, manager -> new DragonRenderer(manager, ClientEvents.dragonModel = dragonModel));

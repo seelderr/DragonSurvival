@@ -28,6 +28,8 @@ public class DragonEffects {
     public static Effect PEACE, MAGIC, FIRE;
     public static Effect ANIMAL_PEACE;
     public static Effect PREDATOR_ANTI_SPAWN;
+    
+    public static Effect WATER_VISION, LAVA_VISION;
 
     @SuppressWarnings("unused")
     @SubscribeEvent
@@ -49,6 +51,12 @@ public class DragonEffects {
         forgeRegistry.register(ANIMAL_PEACE);
         PREDATOR_ANTI_SPAWN = new Effect2(EffectType.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "predator_anti_spawn");
         forgeRegistry.register(PREDATOR_ANTI_SPAWN);
+        
+        WATER_VISION = new Effect2(EffectType.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "water_vision");
+        forgeRegistry.register(WATER_VISION);
+        
+        LAVA_VISION = new Effect2(EffectType.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "lava_vision");
+        forgeRegistry.register(LAVA_VISION);
     }
 
     private static class Effect2 extends Effect {

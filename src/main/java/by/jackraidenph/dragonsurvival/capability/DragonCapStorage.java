@@ -8,7 +8,7 @@ import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 
 public class DragonCapStorage implements Capability.IStorage<DragonStateHandler> {
-
+    
     @Override
     public INBT writeNBT(Capability<DragonStateHandler> capability, DragonStateHandler instance, Direction side) {
         CompoundNBT tag = new CompoundNBT();
@@ -26,6 +26,15 @@ public class DragonCapStorage implements Capability.IStorage<DragonStateHandler>
             tag.putFloat("size", instance.getSize());
             tag.putBoolean("hasWings", instance.hasWings());
             tag.putInt("lavaAirSupply", instance.getLavaAirSupply());
+            
+            tag.putBoolean("renderSkills", instance.renderAbilityHotbar());
+            
+            CompoundNBT nbt = new CompoundNBT();
+            nbt.putInt("mana", instance.getCurrentMana());
+            nbt.putInt("maxMana", instance.getMaxMana());
+            nbt.putInt("selectedAbilitySlot", instance.getSelectedAbilitySlot());
+            nbt.put("abilitySlots", instance.saveAbilities());
+            tag.put("abilityData", nbt);
         }
         return tag;
     }
@@ -42,11 +51,24 @@ public class DragonCapStorage implements Capability.IStorage<DragonStateHandler>
             instance.setDebuffData(tag.getInt("timeWithoutWater"), tag.getInt("timeInDarkness"));
             instance.setIsHiding(tag.getBoolean("isHiding"));
             instance.setSize(tag.getFloat("size"));
+    
+            instance.setRenderAbilities(tag.getBoolean("renderSkills"));
+    
             if (instance.getSize() == 0)
                 instance.setSize(DragonLevel.BABY.size);
             instance.setHasWings(tag.getBoolean("hasWings"));
             instance.setLavaAirSupply(tag.getInt("lavaAirSupply"));
-            
+    
+            if(tag.contains("abilityData")) {
+                CompoundNBT ability = tag.getCompound("abilityData");
+    
+                if (ability != null) {
+                    instance.setSelectedAbilitySlot(ability.getInt("selectedAbilitySlot"));
+                    instance.setMaxMana(ability.getInt("maxMana"));
+                    instance.setCurrentMana(ability.getInt("mana"));
+                    instance.loadAbilities(ability);
+                }
+            }
         }
     }
 }

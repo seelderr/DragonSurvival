@@ -1,6 +1,11 @@
 package by.jackraidenph.dragonsurvival.handlers;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
+import by.jackraidenph.dragonsurvival.Functions;
+import by.jackraidenph.dragonsurvival.abilities.DragonAbilities;
+import by.jackraidenph.dragonsurvival.abilities.Passives.AthleticsAbility;
+import by.jackraidenph.dragonsurvival.abilities.Passives.WaterAbility;
+import by.jackraidenph.dragonsurvival.abilities.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
@@ -40,8 +45,19 @@ public class DragonTraitHandler {
                 BlockState blockUnder = world.getBlockState(playerEntity.blockPosition().below());
                 Block block = blockUnder.getBlock();
                 Biome biome = world.getBiome(playerEntity.blockPosition());
-                if (!world.isClientSide && ConfigHandler.SERVER.bonuses.get() && ConfigHandler.SERVER.speedupEffectLevel.get() > 0 && SpecificsHandler.DRAGON_SPEEDUP_BLOCKS != null && SpecificsHandler.DRAGON_SPEEDUP_BLOCKS.get(dragonStateHandler.getType()).contains(block))
-                    playerEntity.addEffect(new EffectInstance(Effects.MOVEMENT_SPEED, 65, ConfigHandler.SERVER.speedupEffectLevel.get() - 1, false, false));
+                
+                if (!world.isClientSide && ConfigHandler.SERVER.bonuses.get() && ConfigHandler.SERVER.speedupEffectLevel.get() > 0 && SpecificsHandler.DRAGON_SPEEDUP_BLOCKS != null && SpecificsHandler.DRAGON_SPEEDUP_BLOCKS.get(dragonStateHandler.getType()).contains(block)) {
+                    int duration =
+                            dragonStateHandler.getType() == DragonType.SEA && dragonStateHandler.getAbility(DragonAbilities.SEA_ATHLETICS) != null ?  ((AthleticsAbility)dragonStateHandler.getAbility(DragonAbilities.SEA_ATHLETICS)).getDuration() :
+                            dragonStateHandler.getType() == DragonType.FOREST && dragonStateHandler.getAbility(DragonAbilities.FOREST_ATHLETICS) != null ? ((AthleticsAbility)dragonStateHandler.getAbility(DragonAbilities.FOREST_ATHLETICS)).getDuration() :
+                            dragonStateHandler.getType() == DragonType.CAVE && dragonStateHandler.getAbility(DragonAbilities.CAVE_ATHLETICS) != null ? ((AthleticsAbility)dragonStateHandler.getAbility(DragonAbilities.CAVE_ATHLETICS)).getDuration() :
+                            0;
+                
+                    if(duration > 0){
+                        playerEntity.addEffect(new EffectInstance(Effects.MOVEMENT_SPEED, Functions.secondsToTicks(duration), ConfigHandler.SERVER.speedupEffectLevel.get() - 1, false, false));
+                    }
+                }
+                
                 switch (dragonStateHandler.getType()) {
                     case CAVE:
                         if (ConfigHandler.SERVER.penalties.get() && !playerEntity.hasEffect(DragonEffects.FIRE) && !playerEntity.isCreative() && !playerEntity.isSpectator() && ((playerEntity.isInWaterOrBubble() && ConfigHandler.SERVER.caveWaterDamage.get() != 0.0) || (playerEntity.isInWaterOrRain() && !playerEntity.isInWater() && ConfigHandler.SERVER.caveRainDamage.get() != 0.0) || (SpecificsHandler.SEA_DRAGON_HYDRATION_BLOCKS != null && (SpecificsHandler.SEA_DRAGON_HYDRATION_BLOCKS.contains(block) || SpecificsHandler.SEA_DRAGON_HYDRATION_BLOCKS.contains(world.getBlockState(playerEntity.blockPosition()).getBlock())) && ConfigHandler.SERVER.caveRainDamage.get() != 0.0))) {
@@ -93,29 +109,36 @@ public class DragonTraitHandler {
                         }
                         break;
                     case SEA:
+                        int maxTicksOutofWater = ConfigHandler.SERVER.seaTicksWithoutWater.get();
+                        DragonAbility waterAbility = dragonStateHandler.getAbility(DragonAbilities.WATER);
+                        
+                        if(waterAbility != null){
+                           maxTicksOutofWater +=  Functions.secondsToTicks(((WaterAbility)waterAbility).getDuration());
+                        }
+                        
                         if ((playerEntity.hasEffect(DragonEffects.PEACE) || playerEntity.isEyeInFluid(FluidTags.WATER)) && playerEntity.getAirSupply() < playerEntity.getMaxAirSupply())
                             playerEntity.setAirSupply(playerEntity.getMaxAirSupply());
-                        if (ConfigHandler.SERVER.penalties.get() && !playerEntity.hasEffect(DragonEffects.PEACE) && ConfigHandler.SERVER.seaTicksWithoutWater.get() > 0 && !playerEntity.isCreative() && !playerEntity.isSpectator()) {
+                        if (ConfigHandler.SERVER.penalties.get() && !playerEntity.hasEffect(DragonEffects.PEACE) && maxTicksOutofWater > 0 && !playerEntity.isCreative() && !playerEntity.isSpectator()) {
                             DragonStateHandler.DragonDebuffData debuffData = dragonStateHandler.getDebuffData();
                             if (!playerEntity.isInWaterRainOrBubble() && (SpecificsHandler.SEA_DRAGON_HYDRATION_BLOCKS != null && !SpecificsHandler.SEA_DRAGON_HYDRATION_BLOCKS.contains(block) && !SpecificsHandler.SEA_DRAGON_HYDRATION_BLOCKS.contains(world.getBlockState(playerEntity.blockPosition()).getBlock()))) {
-                                if (debuffData.timeWithoutWater < ConfigHandler.SERVER.seaTicksWithoutWater.get() * 2){
+                                if (debuffData.timeWithoutWater < maxTicksOutofWater * 2){
                                     boolean hotBiome = biome.getPrecipitation() == RainType.NONE && biome.getBaseTemperature() > 1.0;
                                     double timeIncrement = (world.isNight() ? 0.5F : 1.0) * (hotBiome ? biome.getBaseTemperature() : 1F);
                                     debuffData.timeWithoutWater += ConfigHandler.SERVER.seaTicksBasedOnTemperature.get() ? timeIncrement : 1;
                                }
-                                if (debuffData.timeWithoutWater == ConfigHandler.SERVER.seaTicksWithoutWater.get() + 1 && !playerEntity.level.isClientSide)
+                                if (debuffData.timeWithoutWater == maxTicksOutofWater + 1 && !playerEntity.level.isClientSide)
                                     DragonSurvivalMod.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new SyncCapabilityDebuff(playerEntity.getId(), debuffData.timeWithoutWater, debuffData.timeInDarkness));
                             } else if (debuffData.timeWithoutWater > 0) {
                                 double old = debuffData.timeWithoutWater;
-                                debuffData.timeWithoutWater = (Math.max(debuffData.timeWithoutWater - (int) Math.ceil(ConfigHandler.SERVER.seaTicksWithoutWater.get() * 0.005F), 0));
-                                if (old > ConfigHandler.SERVER.seaTicksWithoutWater.get() + 1 && debuffData.timeWithoutWater <= ConfigHandler.SERVER.seaTicksWithoutWater.get() && !playerEntity.level.isClientSide)
+                                debuffData.timeWithoutWater = (Math.max(debuffData.timeWithoutWater - (int) Math.ceil(maxTicksOutofWater * 0.005F), 0));
+                                if (old > maxTicksOutofWater + 1 && debuffData.timeWithoutWater <= maxTicksOutofWater && !playerEntity.level.isClientSide)
                                     DragonSurvivalMod.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new SyncCapabilityDebuff(playerEntity.getId(), debuffData.timeWithoutWater, debuffData.timeInDarkness));
                             }
-                            if (!world.isClientSide && debuffData.timeWithoutWater > ConfigHandler.SERVER.seaTicksWithoutWater.get() && debuffData.timeWithoutWater < ConfigHandler.SERVER.seaTicksWithoutWater.get() * 2) {
+                            if (!world.isClientSide && debuffData.timeWithoutWater > maxTicksOutofWater && debuffData.timeWithoutWater < maxTicksOutofWater * 2) {
                                 if (playerEntity.tickCount % 40 == 0) {
                                     playerEntity.hurt(DamageSources.DEHYDRATION, ConfigHandler.SERVER.seaDehydrationDamage.get().floatValue());
                                 }
-                            } else if (!world.isClientSide && debuffData.timeWithoutWater >= ConfigHandler.SERVER.seaTicksWithoutWater.get() * 2) {
+                            } else if (!world.isClientSide && debuffData.timeWithoutWater >= maxTicksOutofWater * 2) {
                                 if (playerEntity.tickCount % 20 == 0) {
                                     playerEntity.hurt(DamageSources.DEHYDRATION, ConfigHandler.SERVER.seaDehydrationDamage.get().floatValue());
                                 }
@@ -129,11 +152,18 @@ public class DragonTraitHandler {
                         }
                         break;
                 }
-
+    
+                int maxTicksOutofWater = ConfigHandler.SERVER.seaTicksWithoutWater.get();
+                DragonAbility waterAbility = dragonStateHandler.getAbility(DragonAbilities.WATER);
+    
+                if(waterAbility != null){
+                    maxTicksOutofWater +=  Functions.secondsToTicks(((WaterAbility)waterAbility).getDuration());
+                }
+                
                 // Dragon Particles
                 // TODO: Randomize along dragon body
                 if (world.isClientSide && !playerEntity.isCreative() && !playerEntity.isSpectator()) {
-                    if (dragonStateHandler.getType() == DragonType.SEA && !playerEntity.hasEffect(DragonEffects.PEACE) && dragonStateHandler.getDebuffData().timeWithoutWater >= ConfigHandler.SERVER.seaTicksWithoutWater.get())
+                    if (dragonStateHandler.getType() == DragonType.SEA && !playerEntity.hasEffect(DragonEffects.PEACE) && dragonStateHandler.getDebuffData().timeWithoutWater >= maxTicksOutofWater)
                         world.addParticle(ParticleTypes.WHITE_ASH,
                                 playerEntity.getX() + world.random.nextDouble() * (world.random.nextBoolean() ? 1 : -1),
                                 playerEntity.getY() + 0.5F,

@@ -1,5 +1,8 @@
 package by.jackraidenph.dragonsurvival.capability;
 
+import by.jackraidenph.dragonsurvival.abilities.DragonAbilities;
+import by.jackraidenph.dragonsurvival.abilities.common.ActiveDragonAbility;
+import by.jackraidenph.dragonsurvival.abilities.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.util.DragonLevel;
 import by.jackraidenph.dragonsurvival.util.DragonType;
@@ -8,10 +11,13 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.ToolType;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -25,11 +31,13 @@ public class DragonStateHandler {
     private final DragonDebuffData debuffData = new DragonDebuffData(0, 0);
     private int lavaAirSupply;
     private int passengerId;
-    
-    public static final UUID HEALTH_MODIFIER_UUID = UUID.fromString("03574e62-f9e4-4f1b-85ad-fde00915e446");
+	
+	private boolean renderAbilities = true;
+	
+	public static final UUID HEALTH_MODIFIER_UUID = UUID.fromString("03574e62-f9e4-4f1b-85ad-fde00915e446");
     public static final UUID DAMAGE_MODIFIER_UUID = UUID.fromString("5bd3cebc-132e-4f9d-88ef-b686c7ad1e2c");
     public static final UUID SWIM_SPEED_MODIFIER_UUID = UUID.fromString("2a9341f3-d19e-446c-924b-7cf2e5259e10");
-    
+	
     public float getSize() {
         return size;
     }
@@ -223,6 +231,108 @@ public class DragonStateHandler {
     public DragonType getType() {
         return this.type;
     }
+	
+	private ArrayList<DragonAbility> abilities = new ArrayList<>();
+	public static final int MAX_SLOTS = 4;
+	
+	private int selectedAbilitySlot = 0;
+	private int maxMana = 100;
+	private int currentMana = 0;
+	
+	public int getMaxMana() {
+		return maxMana;
+	}
+	
+	public void setMaxMana(int maxMana) {
+		this.maxMana = maxMana;
+	}
+	
+	public int getCurrentMana() {
+		return maxMana;
+	}
+	
+	public void setCurrentMana(int currentMana) {
+		this.currentMana = MathHelper.clamp(currentMana, 0, this.getMaxMana());
+	}
+	
+	public void replenishMana(int mana) {
+		this.setCurrentMana(this.getCurrentMana() + mana);
+	}
+	
+	public void consumeMana(int mana) {
+		this.setCurrentMana(this.getCurrentMana() - mana);
+	}
+	
+	public DragonAbility getAbility(DragonAbility ability){
+		if(ability != null && ability.getId() != null) {
+			for (DragonAbility ab : getAbilities()) {
+				if (ab != null && ab.getId() != null) {
+					if (Objects.equals(ab.getId(), ability.getId())) {
+						return ab;
+					}
+				}
+			}
+		}
+		
+		return null;
+	}
+	
+	public int getAbilityLevel(DragonAbility ability){
+		DragonAbility ab = getAbility(ability);
+		return ab == null ? ability.getMinLevel() : ab.getLevel();
+	}
+	
+	public ArrayList<DragonAbility> getAbilities()
+	{
+		return abilities;
+	}
+	
+	public void addAbility(DragonAbility ability){
+		abilities.add(ability);
+	}
+	
+	public ActiveDragonAbility getAbilityFromSlot(int slot) {
+		if ((slot > MAX_SLOTS) || (slot < 0))
+			throw new IllegalArgumentException("Failed to set ability in the slot. The slot number is inappropriate.");
+		
+		ActiveDragonAbility dragonAbility = DragonAbilities.ACTIVE_ABILITIES.get(type).size() >= slot ? DragonAbilities.ACTIVE_ABILITIES.get(type).get(slot) : null;
+		ActiveDragonAbility actual = (ActiveDragonAbility)getAbility(dragonAbility);
+		
+		return actual == null ? dragonAbility : actual;
+	}
+	
+	
+	public int getSelectedAbilitySlot() {
+		return this.selectedAbilitySlot;
+	}
+	
+	public void setSelectedAbilitySlot(int newSlot) {
+		this.selectedAbilitySlot = newSlot;
+	}
+	
+	public CompoundNBT saveAbilities(){
+		CompoundNBT tag = new CompoundNBT();
+		
+		for(DragonAbility ability : abilities){
+			tag.put(ability.getId(), ability.saveNBT());
+		}
+		
+		return tag;
+	}
+	
+	public void loadAbilities(CompoundNBT nbt){
+		CompoundNBT tag = nbt.contains("abilitySlots") ? nbt.getCompound("abilitySlots") : null;
+		
+		if(tag != null){
+			for(DragonAbility staticAbility : DragonAbilities.ABILITIES.get(type)){
+				if(tag.contains(staticAbility.getId())){
+					DragonAbility ability = staticAbility.createInstance();
+					ability.loadNBT(tag.getCompound(staticAbility.getId()));
+					addAbility(ability);
+				}
+			}
+		}
+	}
 
     public void setType(DragonType type) {
         this.type = type;
@@ -243,8 +353,19 @@ public class DragonStateHandler {
     public void setPassengerId( int passengerId){
         this.passengerId = passengerId;
     }
-
-    public static class DragonMovementData {
+	
+	public boolean renderAbilityHotbar()
+	{
+		return renderAbilities;
+	}
+	
+	public DragonStateHandler setRenderAbilities(boolean renderAbilities)
+	{
+		this.renderAbilities = renderAbilities;
+		return this;
+	}
+	
+	public static class DragonMovementData {
         public double bodyYaw;
         public double headYaw;
         public double headPitch;
@@ -275,4 +396,5 @@ public class DragonStateHandler {
     		this.timeInDarkness = timeInDarkness;
     	}
     }
+	
 }

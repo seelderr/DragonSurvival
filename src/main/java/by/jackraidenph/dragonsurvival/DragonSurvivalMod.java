@@ -1,13 +1,11 @@
 package by.jackraidenph.dragonsurvival;
 
+import by.jackraidenph.dragonsurvival.abilities.DragonAbilities;
 import by.jackraidenph.dragonsurvival.capability.Capabilities;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.gecko.DragonEntity;
-import by.jackraidenph.dragonsurvival.handlers.ClientEvents;
-import by.jackraidenph.dragonsurvival.handlers.DragonFoodHandler;
-import by.jackraidenph.dragonsurvival.handlers.SpecificsHandler;
-import by.jackraidenph.dragonsurvival.handlers.WingObtainmentController;
+import by.jackraidenph.dragonsurvival.handlers.*;
 import by.jackraidenph.dragonsurvival.nest.DismantleNest;
 import by.jackraidenph.dragonsurvival.nest.NestEntity;
 import by.jackraidenph.dragonsurvival.nest.SleepInNest;
@@ -82,7 +80,8 @@ public class DragonSurvivalMod {
     private static final String PROTOCOL_VERSION = "2";
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(new ResourceLocation(MODID, "main"),
             () -> PROTOCOL_VERSION, PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
-
+    
+    private static AbilityTickingHandler HANDLER;
     private static int nextPacketId = 0;
 
     public DragonSurvivalMod() {
@@ -98,6 +97,7 @@ public class DragonSurvivalMod {
         MinecraftForge.EVENT_BUS.register(new SpecificsHandler());
         MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGH, this::biomeLoadingEvent);
         MinecraftForge.EVENT_BUS.addListener(this::serverRegisterCommandsEvent);
+        MinecraftForge.EVENT_BUS.register(getTickHandler());
     }
     
     private static <T> void register(Class<T> clazz, IMessage<T> message) {
@@ -108,7 +108,8 @@ public class DragonSurvivalMod {
     	WingObtainmentController.loadDragonPhrases();
         Capabilities.register();
         LOGGER.info("Successfully registered capabilities!");
-
+        DragonAbilities.initAbilities();
+    
         register(PacketSyncCapabilityMovement.class, new PacketSyncCapabilityMovement());
         register(SyncCapabilityDebuff.class, new SyncCapabilityDebuff());
         register(PacketSyncXPDevour.class, new PacketSyncXPDevour());
@@ -117,7 +118,13 @@ public class DragonSurvivalMod {
         register(SyncSize.class, new SyncSize());
         register(ToggleWings.class, new ToggleWings());
         register(OpenCrafting.class,new OpenCrafting());
-
+    
+        register(OpenDragonInventory.class, new OpenDragonInventory());
+        register(ActivateAbilityInSlot.class, new ActivateAbilityInSlot());
+        register(ChangeSkillLevel.class, new ChangeSkillLevel());
+        register(SyncCapabilityAbility.class, new SyncCapabilityAbility());
+        register(SyncDragonAbilitySlot.class, new SyncDragonAbilitySlot());
+    
         CHANNEL.registerMessage(nextPacketId++, SynchronizeDragonCap.class, (synchronizeDragonCap, packetBuffer) -> {
             packetBuffer.writeInt(synchronizeDragonCap.playerId);
             packetBuffer.writeByte(synchronizeDragonCap.dragonType.ordinal());
@@ -380,5 +387,14 @@ public class DragonSurvivalMod {
             serverPlayerEntity.refreshDimensions();
         });
         return 1;
+    }
+    
+    
+    public static AbilityTickingHandler getTickHandler() {
+        if (HANDLER == null) {
+            HANDLER = new AbilityTickingHandler();
+            return HANDLER;
+        }
+        return HANDLER;
     }
 }

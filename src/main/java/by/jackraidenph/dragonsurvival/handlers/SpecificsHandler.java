@@ -1,6 +1,10 @@
 package by.jackraidenph.dragonsurvival.handlers;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
+import by.jackraidenph.dragonsurvival.Functions;
+import by.jackraidenph.dragonsurvival.abilities.DragonAbilities;
+import by.jackraidenph.dragonsurvival.abilities.Passives.WaterAbility;
+import by.jackraidenph.dragonsurvival.abilities.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.network.StartJump;
@@ -71,8 +75,8 @@ import java.util.Map;
 
 @Mod.EventBusSubscriber(modid = DragonSurvivalMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class SpecificsHandler {
-
-	private static final ResourceLocation DRAGON_HUD = new ResourceLocation(DragonSurvivalMod.MODID + ":textures/gui/dragon_hud.png");
+	
+	public static final ResourceLocation DRAGON_HUD = new ResourceLocation(DragonSurvivalMod.MODID + ":textures/gui/dragon_hud.png");
 
 	static Map<DragonType, List<Block>> DRAGON_SPEEDUP_BLOCKS;
 	static List<Block> SEA_DRAGON_HYDRATION_BLOCKS;
@@ -182,8 +186,6 @@ public class SpecificsHandler {
 		SEA_DRAGON_HYDRATION_USE_ALTERNATIVES = hydrationItems;
 	}
 	
-	
-	
 	@SubscribeEvent
 	@OnlyIn(Dist.CLIENT)
     public void onRenderOverlayPreTick(RenderGameOverlayEvent.Pre event) {
@@ -201,6 +203,12 @@ public class SpecificsHandler {
     				ForgeIngameGui.right_height += 10;
 
     				int maxTimeWithoutWater = ConfigHandler.SERVER.seaTicksWithoutWater.get();
+				    DragonAbility waterAbility = playerStateHandler.getAbility(DragonAbilities.WATER);
+				
+				    if(waterAbility != null){
+					    maxTimeWithoutWater +=  Functions.secondsToTicks(((WaterAbility)waterAbility).getDuration());
+				    }
+					
 				    double timeWithoutWater = maxTimeWithoutWater - playerStateHandler.getDebuffData().timeWithoutWater;
     				boolean flag = false;
     				if (timeWithoutWater < 0) {
