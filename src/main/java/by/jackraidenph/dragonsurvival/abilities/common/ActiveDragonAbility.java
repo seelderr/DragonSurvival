@@ -1,7 +1,6 @@
 package by.jackraidenph.dragonsurvival.abilities.common;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -66,11 +65,13 @@ public class ActiveDragonAbility extends DragonAbility
     }
     
     public boolean canConsumeMana(PlayerEntity player) {
-        return DragonStateProvider.getCurrentMana(player) >= this.getManaCost();
+        return player.isCreative() || DragonStateProvider.getCurrentMana(player) >= this.getManaCost();
     }
     
     public void consumeMana(PlayerEntity player) {
-        DragonStateProvider.consumeMana(player, this.getManaCost());
+        if(!player.isCreative()) {
+            DragonStateProvider.consumeMana(player, this.getManaCost());
+        }
     }
     
     public void onActivation(PlayerEntity player) {
@@ -78,40 +79,30 @@ public class ActiveDragonAbility extends DragonAbility
        consumeMana(player);
     }
 
-    @Override
-    public void onKeyPressed(PlayerEntity player, int keyMode) {
+    public boolean canRun(PlayerEntity player, int keyMode){
         if (!this.canConsumeMana(player)){
             if(keyMode == GLFW.GLFW_PRESS){
-                if(!player.level.isClientSide) {
-                    player.sendMessage(new TranslationTextComponent("ds.skill_mana_check_failure").withStyle(TextFormatting.DARK_AQUA), player.getUUID());
-                }
+                player.sendMessage(new TranslationTextComponent("ds.skill_mana_check_failure").withStyle(TextFormatting.DARK_AQUA), player.getUUID());
             }
             stopCasting();
-            return;
+            return false;
         }
     
         if (this.getCooldown() != 0) {
             if(keyMode == GLFW.GLFW_PRESS){
-                if(!player.level.isClientSide) {
-                    player.sendMessage(new TranslationTextComponent("ds.skill_cooldown_check_failure", nf.format(Functions.ticksToSeconds(this.getCooldown())) + "s").withStyle(TextFormatting.RED), player.getUUID());
-                }
+                player.sendMessage(new TranslationTextComponent("ds.skill_cooldown_check_failure", nf.format(this.getCooldown() / 20F) + "s").withStyle(TextFormatting.RED), player.getUUID());
             }
             stopCasting();
-            return;
+            return false;
         }
         
-        //TODO Charging isnt working
+        return true;
+    }
+    
+    @Override
+    public void onKeyPressed(PlayerEntity player) {
         if (this.getCooldown() == 0 && this.canConsumeMana(player)){
-            if(keyMode == GLFW.GLFW_RELEASE){
-                stopCasting();
-                
-            }else if(getCurrentCastTimer() < getCastingTime() && keyMode == GLFW.GLFW_REPEAT) {
-                tickCasting();
-            }else if(getCurrentCastTimer() >= getCastingTime()){
-                this.onActivation(player);
-            }else if(keyMode == GLFW.GLFW_PRESS && getCastingTime() <= 0){
-                this.onActivation(player);
-            }
+            this.onActivation(player);
         }
     }
     

@@ -1,4 +1,4 @@
-package by.jackraidenph.dragonsurvival.network;
+package by.jackraidenph.dragonsurvival.network.Abilities;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.abilities.DragonAbilities;
@@ -6,6 +6,7 @@ import by.jackraidenph.dragonsurvival.abilities.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.abilities.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.abilities.common.PassiveDragonAbility;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.network.IMessage;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
@@ -13,7 +14,8 @@ import net.minecraftforge.fml.network.PacketDistributor;
 
 import java.util.function.Supplier;
 
-public class ChangeSkillLevel implements IMessage<ChangeSkillLevel> {
+public class ChangeSkillLevel implements IMessage<ChangeSkillLevel>
+{
 
     private int level;
     private String skill;

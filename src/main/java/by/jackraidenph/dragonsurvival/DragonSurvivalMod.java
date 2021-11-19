@@ -11,6 +11,7 @@ import by.jackraidenph.dragonsurvival.nest.NestEntity;
 import by.jackraidenph.dragonsurvival.nest.SleepInNest;
 import by.jackraidenph.dragonsurvival.nest.ToggleRegeneration;
 import by.jackraidenph.dragonsurvival.network.*;
+import by.jackraidenph.dragonsurvival.network.Abilities.*;
 import by.jackraidenph.dragonsurvival.registration.BlockInit;
 import by.jackraidenph.dragonsurvival.registration.EntityTypesInit;
 import by.jackraidenph.dragonsurvival.util.BiomeDictionaryHelper;
@@ -124,6 +125,7 @@ public class DragonSurvivalMod {
         register(ChangeSkillLevel.class, new ChangeSkillLevel());
         register(SyncCapabilityAbility.class, new SyncCapabilityAbility());
         register(SyncDragonAbilitySlot.class, new SyncDragonAbilitySlot());
+        register(SyncCurrentAbilityCasting.class, new SyncCurrentAbilityCasting());
     
         CHANNEL.registerMessage(nextPacketId++, SynchronizeDragonCap.class, (synchronizeDragonCap, packetBuffer) -> {
             packetBuffer.writeInt(synchronizeDragonCap.playerId);

@@ -47,7 +47,6 @@ public abstract class DragonAbility
     
     public IFormattableTextComponent getTitle(){
         return new TranslationTextComponent("ds.skill." + getId());
-               // .append((getMaxLevel() > 1 ? (" ("  +getLevel() + " / " + getMaxLevel()) + ")" : ""));
     }
     
     public IFormattableTextComponent getDescription(){
@@ -73,7 +72,7 @@ public abstract class DragonAbility
     public void tick(){}
     public void frame(float partialTicks){}
     
-    public void onKeyPressed(PlayerEntity player, int keyMode) {}
+    public void onKeyPressed(PlayerEntity player) {}
     
     public CompoundNBT saveNBT(){
         CompoundNBT nbt = new CompoundNBT();

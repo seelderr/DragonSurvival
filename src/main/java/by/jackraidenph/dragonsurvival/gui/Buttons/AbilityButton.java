@@ -1,9 +1,11 @@
 package by.jackraidenph.dragonsurvival.gui.Buttons;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
+import by.jackraidenph.dragonsurvival.Functions;
+import by.jackraidenph.dragonsurvival.abilities.Actives.AoeBuffAbility;
 import by.jackraidenph.dragonsurvival.abilities.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.abilities.common.DragonAbility;
-import by.jackraidenph.dragonsurvival.abilities.common.InformationDragonAbility;
+import by.jackraidenph.dragonsurvival.abilities.common.InnateDragonAbility;
 import by.jackraidenph.dragonsurvival.abilities.common.PassiveDragonAbility;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.gui.AbilityScreen;
@@ -12,14 +14,15 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.List;
 
 public class AbilityButton extends Button {
@@ -75,53 +78,103 @@ public class AbilityButton extends Button {
 	@Override
 	public void renderToolTip(MatrixStack stack, int mouseX, int mouseY)
 	{
-		drawHover(stack,  ability, new ArrayList<>());
+		drawHover(stack,  ability);
 	}
 	
-	public void drawHover(MatrixStack stack, DragonAbility ability, List<ITextComponent> extraText) {
+	public void drawHover(MatrixStack stack, DragonAbility ability) {
 		int origYPos = this.y;
 		int width = 150;
 		
 		int lx = 29 + Minecraft.getInstance().font.width(ability.getTitle().getContents());
 		List<IReorderingProcessor> description = Minecraft.getInstance().font.split(ability.getDescription(), width - 7);
 		
-		for(ITextComponent tt : extraText){
-			description.addAll(Minecraft.getInstance().font.split(tt, width - 7));
-		}
-		
 		for(IReorderingProcessor ireorderingprocessor : description) {
 			lx = Math.max(lx, Minecraft.getInstance().font.width(ireorderingprocessor));
 		}
 		
-		origYPos -= (description.size() * 9);
+		origYPos -= (description.size() * 7);
 		
 		Minecraft.getInstance().getTextureManager().bind(WIDGETS_LOCATION);
 		RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 		RenderSystem.enableBlend();
 		
 		if (!description.isEmpty()) {
+			Minecraft.getInstance().getTextureManager().bind(WIDGETS_LOCATION);
+			
+			int extraWidth = (int)(width / 1.5);
+			
+			if(ability instanceof ActiveDragonAbility) {
+				IFormattableTextComponent textContents = new TranslationTextComponent("ds.skill.mana_cost", ((ActiveDragonAbility)ability).getManaCost());
+				
+				if(((ActiveDragonAbility)ability).getCastingTime() > 0){
+					textContents.append("\n");
+					textContents.append(new TranslationTextComponent("ds.skill.cast_time", Functions.ticksToSeconds(((ActiveDragonAbility)ability).getCastingTime())));
+				}
+				
+				if(((ActiveDragonAbility)ability).getMaxCooldown() > 0){
+					textContents.append("\n");
+					textContents.append(new TranslationTextComponent("ds.skill.cooldown", Functions.ticksToSeconds(((ActiveDragonAbility)ability).getMaxCooldown())));
+				}
+				
+				if(ability instanceof AoeBuffAbility){
+					textContents.append("\n");
+					textContents.append(new TranslationTextComponent("ds.skill.aoe", ((AoeBuffAbility)ability).getRange() + "x" + ((AoeBuffAbility)ability).getRange()));
+				}
+				
+				List<IReorderingProcessor> text = Minecraft.getInstance().font.split(textContents, extraWidth - 5);
+				
+				if(Screen.hasShiftDown()){
+					this.render9Sprite(stack, this.x -extraWidth, origYPos + 3, extraWidth, 35 + 24 + (text.size() * 4), 10, 50, 26, 0, 52);
+				}else {
+					this.render9Sprite(stack, this.x - 10, origYPos + 3, 10 + 5, 35 + 24 + (text.size() * 4), 10, 50, 26, 0, 52);
+				}
+				
+				Minecraft.getInstance().getTextureManager().bind(TOOLTIP_BARS);
+				
+				if(Screen.hasShiftDown()){
+					this.blit(stack, this.x - extraWidth + 3, origYPos + 9, 0, 20, 200, 20);
+					
+					AbstractGui.drawCenteredString(stack, Minecraft.getInstance().font, new TranslationTextComponent("ds.skill.info"), this.x - (width / 2) + 3 + 25, (origYPos + 15), -1);
+					
+					for(int k1 = 0; k1 < text.size(); ++k1) {
+						Minecraft.getInstance().font.draw(stack, text.get(k1), this.x - extraWidth + 5, (origYPos + 15) + 18 + (k1 * 9), -5592406);
+					}
+					
+				} else{
+					this.blit(stack, this.x - 10 + 3, origYPos + 9, 0, 20, 200, 20);
+				}
+			}
+			
+			Minecraft.getInstance().getTextureManager().bind(WIDGETS_LOCATION);
 			this.render9Sprite(stack, this.x - 2, origYPos - 4, width + 5, 35 + 24 + (description.size() * 9), 10, 200, 26, 0, 52);
 		}
 		
 		Minecraft.getInstance().getTextureManager().bind(TOOLTIP_BARS);
-		int yPos = ability instanceof ActiveDragonAbility ? 20 : ability instanceof InformationDragonAbility ? 40 : 0;
+		int yPos = ability instanceof ActiveDragonAbility ? 20 : ability instanceof InnateDragonAbility ? 40 : 0;
 		this.blit(stack, this.x, origYPos + 3, 0, yPos, 200, 20);
 		
 		Minecraft.getInstance().getTextureManager().bind(WIDGETS_LOCATION);
 		this.blit(stack, this.x, origYPos, 0, 128 + 26, 26, 26);
 		
-		String skillType = ability instanceof ActiveDragonAbility ? "active" : ability instanceof InformationDragonAbility ? "innate" : ability instanceof PassiveDragonAbility ? "passive" : null;
+		String skillType = ability instanceof ActiveDragonAbility ? "active" : ability instanceof InnateDragonAbility ? "innate" : ability instanceof PassiveDragonAbility ? "passive" : null;
 		
 		if(skillType != null){
-			Color c = ability instanceof ActiveDragonAbility ? new Color(200, 143, 31) : ability instanceof InformationDragonAbility ? new Color(150, 56, 175) : new Color(127, 145, 46);
+			Color c = ability instanceof ActiveDragonAbility ? new Color(200, 143, 31) : ability instanceof InnateDragonAbility ? new Color(150, 56, 175) : new Color(127, 145, 46);
 			AbstractGui.drawCenteredString(stack, Minecraft.getInstance().font, new TranslationTextComponent("ds.skill.type." + skillType), this.x + (width / 2), origYPos + 30, c.getRGB());
 		}
 		
-		AbstractGui.drawCenteredString(stack, Minecraft.getInstance().font, ability.getTitle(), this.x + (width / 2) + 10, origYPos + 9, -1);
+		
+		if(ability.getMaxLevel() > 1) {
+			AbstractGui.drawCenteredString(stack, Minecraft.getInstance().font, new StringTextComponent(ability.getLevel() + "/" + ability.getMaxLevel()), (this.x + width - 15), (origYPos + 9), -1);
+			AbstractGui.drawCenteredString(stack, Minecraft.getInstance().font, ability.getTitle(), this.x + (width / 2), origYPos + 9, -1);
+		}else{
+			AbstractGui.drawCenteredString(stack, Minecraft.getInstance().font, ability.getTitle(), this.x + (width / 2) + 10, origYPos + 9, -1);
+		}
 		
 		for(int k1 = 0; k1 < description.size(); ++k1) {
 			Minecraft.getInstance().font.draw(stack, description.get(k1), (float)(this.x + 5), (float)(origYPos + 47 + k1 * 9), -5592406);
 		}
+		
 		
 		Minecraft.getInstance().textureManager.bind(ability.getIcon());
 		this.blit(stack, this.x + 5, origYPos + 5, 0, 0, 16, 16, 16, 16);

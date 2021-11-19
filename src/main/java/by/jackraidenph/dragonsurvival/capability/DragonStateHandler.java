@@ -235,12 +235,14 @@ public class DragonStateHandler {
 	private ArrayList<DragonAbility> abilities = new ArrayList<>();
 	public static final int MAX_SLOTS = 4;
 	
+	private ActiveDragonAbility currentlyCasting = null;
+	
 	private int selectedAbilitySlot = 0;
 	private int maxMana = 100;
 	private int currentMana = 0;
 	
 	public int getMaxMana() {
-		return maxMana;
+		return currentMana;
 	}
 	
 	public void setMaxMana(int maxMana) {
@@ -261,6 +263,17 @@ public class DragonStateHandler {
 	
 	public void consumeMana(int mana) {
 		this.setCurrentMana(this.getCurrentMana() - mana);
+	}
+	
+	public ActiveDragonAbility getCurrentlyCasting()
+	{
+		return currentlyCasting;
+	}
+	
+	public DragonStateHandler setCurrentlyCasting(ActiveDragonAbility currentlyCasting)
+	{
+		this.currentlyCasting = currentlyCasting;
+		return this;
 	}
 	
 	public DragonAbility getAbility(DragonAbility ability){
@@ -295,7 +308,7 @@ public class DragonStateHandler {
 		if ((slot > MAX_SLOTS) || (slot < 0))
 			throw new IllegalArgumentException("Failed to set ability in the slot. The slot number is inappropriate.");
 		
-		ActiveDragonAbility dragonAbility = DragonAbilities.ACTIVE_ABILITIES.get(type).size() >= slot ? DragonAbilities.ACTIVE_ABILITIES.get(type).get(slot) : null;
+		ActiveDragonAbility dragonAbility = type != null && DragonAbilities.ACTIVE_ABILITIES.get(type) != null && DragonAbilities.ACTIVE_ABILITIES.get(type).size() >= slot ? DragonAbilities.ACTIVE_ABILITIES.get(type).get(slot) : null;
 		ActiveDragonAbility actual = (ActiveDragonAbility)getAbility(dragonAbility);
 		
 		return actual == null ? dragonAbility : actual;

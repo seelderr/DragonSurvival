@@ -1,15 +1,16 @@
-package by.jackraidenph.dragonsurvival.network;
+package by.jackraidenph.dragonsurvival.network.Abilities;
 
 import by.jackraidenph.dragonsurvival.abilities.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
-import net.minecraft.entity.player.PlayerEntity;
+import by.jackraidenph.dragonsurvival.network.IMessage;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class ActivateAbilityInSlot implements IMessage<ActivateAbilityInSlot> {
+public class ActivateAbilityInSlot implements IMessage<ActivateAbilityInSlot>
+{
 
     private int slot;
     private byte glfwMode;
@@ -20,12 +21,6 @@ public class ActivateAbilityInSlot implements IMessage<ActivateAbilityInSlot> {
     }
 
     public ActivateAbilityInSlot() {
-    }
-    
-    public static void runAbility(PlayerEntity player, DragonAbility ability, int modeAbility){
-        if(ability == null) return;
-        
-        ability.onKeyPressed(player, modeAbility);
     }
     
     @Override
@@ -51,7 +46,7 @@ public class ActivateAbilityInSlot implements IMessage<ActivateAbilityInSlot> {
         DragonStateProvider.getCap(playerEntity).ifPresent(dragonStateHandler -> {
             DragonAbility ability = dragonStateHandler.getAbilityFromSlot(message.slot);
             if(ability.getLevel() > 0) {
-                runAbility(playerEntity, ability, message.glfwMode);
+                ability.onKeyPressed(playerEntity);
             }
         });
     }

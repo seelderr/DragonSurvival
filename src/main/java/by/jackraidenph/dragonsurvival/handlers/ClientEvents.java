@@ -1,8 +1,6 @@
 package by.jackraidenph.dragonsurvival.handlers;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.abilities.common.ActiveDragonAbility;
-import by.jackraidenph.dragonsurvival.abilities.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.config.DragonBodyMovementType;
@@ -14,7 +12,10 @@ import by.jackraidenph.dragonsurvival.gecko.DragonRenderer;
 import by.jackraidenph.dragonsurvival.mixins.AccessorEntityRenderer;
 import by.jackraidenph.dragonsurvival.mixins.AccessorEntityRendererManager;
 import by.jackraidenph.dragonsurvival.mixins.AccessorLivingRenderer;
-import by.jackraidenph.dragonsurvival.network.*;
+import by.jackraidenph.dragonsurvival.network.OpenCrafting;
+import by.jackraidenph.dragonsurvival.network.Abilities.OpenDragonInventory;
+import by.jackraidenph.dragonsurvival.network.PacketSyncCapabilityMovement;
+import by.jackraidenph.dragonsurvival.network.Abilities.SyncDragonAbilitySlot;
 import by.jackraidenph.dragonsurvival.registration.ClientModEvents;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
 import by.jackraidenph.dragonsurvival.registration.EntityTypesInit;
@@ -22,11 +23,9 @@ import by.jackraidenph.dragonsurvival.registration.ItemsInit;
 import by.jackraidenph.dragonsurvival.util.DragonLevel;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.inventory.InventoryScreen;
 import net.minecraft.client.gui.widget.button.Button;
@@ -38,7 +37,6 @@ import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.client.renderer.entity.layers.ParrotVariantLayer;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.settings.PointOfView;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -47,7 +45,6 @@ import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
-import net.minecraft.tags.FluidTags;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
@@ -64,8 +61,6 @@ import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.network.PacketDistributor;
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.opengl.GL11;
 import software.bernie.geckolib3.core.processor.IBone;
 
 import java.awt.*;
@@ -105,9 +100,6 @@ public class ClientEvents {
      */
     public static ConcurrentHashMap<Integer, Integer> dragonsJumpingTicks = new ConcurrentHashMap<>(20);
     
-    private static byte timer = 0;
-    private static byte abilityHoldTimer = 0;
-    
     @SubscribeEvent
     public static void onKey(InputEvent.KeyInputEvent keyInputEvent) {
         Minecraft minecraft = Minecraft.getInstance();
@@ -116,10 +108,6 @@ public class ClientEvents {
         if (player != null && ClientModEvents.DRAGON_INVENTORY.consumeClick()) {
             if(minecraft.screen == null && DragonStateProvider.isDragon(minecraft.player)){
                 DragonSurvivalMod.CHANNEL.sendToServer(new OpenDragonInventory());
-            }
-        }else  if (player != null && ClientModEvents.USE_ABILITY.consumeClick()) {
-            if(minecraft.screen == null && DragonStateProvider.isDragon(minecraft.player)){
-                DragonSurvivalMod.CHANNEL.sendToServer(new ActivateAbilityInSlot());
             }
         }else  if (player != null && ClientModEvents.TOGGLE_ABILITIES.consumeClick()) {
             if(DragonStateProvider.isDragon(minecraft.player)){
@@ -145,106 +133,6 @@ public class ClientEvents {
                 });
             }
         }
-    }
-    
-    
-    @SubscribeEvent
-    public static void abilityKeyBindingChecks(TickEvent.ClientTickEvent clientTickEvent) {
-        
-        if ((Minecraft.getInstance().player == null) ||
-            (Minecraft.getInstance().level == null) ||
-            (clientTickEvent.phase != TickEvent.Phase.END) ||
-            (!DragonStateProvider.isDragon(Minecraft.getInstance().player)))
-            return;
-        
-        PlayerEntity playerEntity = Minecraft.getInstance().player;
-        
-        abilityHoldTimer = (byte) (ClientModEvents.USE_ABILITY.isDown() ? abilityHoldTimer < 3 ? abilityHoldTimer + 1 : abilityHoldTimer : 0);
-        byte modeAbility;
-        if (ClientModEvents.USE_ABILITY.isDown() && abilityHoldTimer > 1)
-            modeAbility = GLFW.GLFW_REPEAT;
-        else if (ClientModEvents.USE_ABILITY.isDown() && abilityHoldTimer == 1)
-            modeAbility = GLFW.GLFW_PRESS;
-        else
-            modeAbility = GLFW.GLFW_RELEASE;
-        
-        int slot = DragonStateProvider.getCap(playerEntity).map((i) -> i.getSelectedAbilitySlot()).orElse(0);
-        timer = (byte) ((modeAbility == GLFW.GLFW_RELEASE) ? timer < 3 ? timer + 1 : timer : 0);
-        
-        if (timer > 1)
-            return;
-        
-        IMessage message = new ActivateAbilityInSlot(slot, modeAbility);
-        DragonSurvivalMod.CHANNEL.sendToServer(message);
-        
-        DragonStateProvider.getCap(playerEntity).ifPresent(dragonStateHandler -> {
-            DragonAbility ability = dragonStateHandler.getAbilityFromSlot(slot);
-            if(ability.getLevel() > 0) {
-                ActivateAbilityInSlot.runAbility(playerEntity, ability, modeAbility);
-            }
-        });
-    }
-    
-    @SubscribeEvent
-    public static void renderAbilityHud(RenderGameOverlayEvent.Post event) {
-        PlayerEntity playerEntity = Minecraft.getInstance().player;
-        
-        if ((playerEntity == null) || !DragonStateProvider.isDragon(playerEntity))
-            return;
-        
-        DragonStateProvider.getCap(playerEntity).ifPresent(cap -> {
-            if(!cap.renderAbilityHotbar()) return;
-            
-            if (event.getType() == RenderGameOverlayEvent.ElementType.HOTBAR) {
-                GL11.glPushMatrix();
-                GL11.glEnable(GL11.GL_BLEND);
-                GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-                
-                TextureManager textureManager = Minecraft.getInstance().getTextureManager();
-                MainWindow window = Minecraft.getInstance().getWindow();
-                
-                GL11.glTranslated(0.0d, 0.125d, 0.0d);
-                
-                int count = 4;
-                
-                int sizeX = 20;
-                int sizeY = 20;
-                
-                boolean rightSide = true;
-                
-                int posX = rightSide ? window.getGuiScaledWidth() - (sizeX * count) - 20 : (sizeX * count) + 20;
-                int posY = window.getGuiScaledHeight() - (sizeY);
-    
-                textureManager.bind(new ResourceLocation("textures/gui/widgets.png"));
-                Screen.blit(event.getMatrixStack(), posX, posY - 2, 0, 0, 0, 41, 22, 256, 256);
-                Screen.blit(event.getMatrixStack(), posX + 41, posY - 2, 0, 141, 0, 41, 22, 256, 256);
-                
-                for (int x = 0; x < count; x++) {
-                    ActiveDragonAbility ability = cap.getAbilityFromSlot(x);
-                    
-                    if(ability != null && ability.getIcon() != null) {
-                        textureManager.bind(ability.getIcon());
-                        Screen.blit(event.getMatrixStack(), posX + (x * sizeX) + 3, posY + 1
-                                , 1, 0, 0, 16, 16, 16, 16);
-                    }
-                    
-                    //TODO This isnt rendering
-                    if(ability.getMaxCooldown() > 0 && ability.getCooldown() > 0 && ability.getMaxCooldown() != ability.getCooldown()){
-                        float f = MathHelper.clamp((float)ability.getCooldown() / (float)ability.getMaxCooldown(), 0, 1);
-                        int boxX = posX + (x * sizeX) + 3;
-                        int boxY = posY + 1;
-                        int offset = 16 - (16 - (int)(f * 16));
-                        AbstractGui.fill(event.getMatrixStack(), boxX, boxY, boxX + 16, boxY + (offset), new Color(0.15F, 0.15F, 0.15F, 0.75F).getRGB());
-                    }
-                }
-                
-                textureManager.bind(new ResourceLocation("textures/gui/widgets.png"));
-                Screen.blit(event.getMatrixStack(), posX + (sizeX * cap.getSelectedAbilitySlot()) - 1, window.getGuiScaledHeight() - 23, 2, 0, 22, 24, 24, 256, 256);
-    
-                GL11.glDisable(GL11.GL_BLEND);
-                GL11.glPopMatrix();
-            }
-        });
     }
     
     
@@ -721,28 +609,7 @@ public class ClientEvents {
         }
         return texture + "empty_armor.png";
     }
-
-    @SubscribeEvent
-    @OnlyIn(Dist.CLIENT)
-    public static void removeLavaAndWaterFog(EntityViewRenderEvent.FogDensity event) {
-        ClientPlayerEntity player = Minecraft.getInstance().player;
-        DragonStateProvider.getCap(player).ifPresent(cap -> {
-            if(!cap.isDragon()) return;
-            
-            if (cap.getType() == DragonType.CAVE && event.getInfo().getFluidInCamera().is(FluidTags.LAVA)) {
-                if(player.hasEffect(DragonEffects.LAVA_VISION)) {
-                    event.setDensity(0.01F);
-                    event.setCanceled(true);
-                }
-            }else if (cap.getType() == DragonType.SEA && event.getInfo().getFluidInCamera().is(FluidTags.WATER)) {
-                if(player.hasEffect(DragonEffects.WATER_VISION)) {
-                    event.setDensity(event.getDensity() / 10);
-                    event.setCanceled(true);
-                }
-            }
-        });
-    }
-
+    
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
     public static void removeFireOverlay(RenderBlockOverlayEvent event) {

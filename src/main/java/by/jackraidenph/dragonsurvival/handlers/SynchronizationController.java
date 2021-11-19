@@ -6,7 +6,7 @@ import by.jackraidenph.dragonsurvival.capability.DragonStateHandler.DragonDebuff
 import by.jackraidenph.dragonsurvival.capability.DragonStateHandler.DragonMovementData;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.network.PacketSyncCapabilityMovement;
-import by.jackraidenph.dragonsurvival.network.SyncCapabilityAbility;
+import by.jackraidenph.dragonsurvival.network.Abilities.SyncCapabilityAbility;
 import by.jackraidenph.dragonsurvival.network.SyncCapabilityDebuff;
 import by.jackraidenph.dragonsurvival.network.SynchronizeDragonCap;
 import net.minecraft.entity.Entity;
@@ -72,14 +72,44 @@ public class SynchronizationController {
      * Synchronizes the capability after death
      */
     @SubscribeEvent
+    public static void onPlayerClone(PlayerEvent.Clone playerRespawnEvent) {
+        PlayerEntity orig = playerRespawnEvent.getOriginal();
+        PlayerEntity player = playerRespawnEvent.getPlayer();
+        
+        if (!player.level.isClientSide) {
+            // send the capability to everyone
+            DragonStateProvider.getCap(orig).ifPresent(origCap -> {
+                DragonStateProvider.getCap(player).ifPresent(cap -> {
+                    cap.getAbilities().clear();
+                    cap.getAbilities().addAll(origCap.getAbilities());
+                    cap.setMaxMana(origCap.getMaxMana());
+                    cap.setCurrentMana(origCap.getCurrentMana());
+                    cap.setSelectedAbilitySlot(origCap.getSelectedAbilitySlot());
+                    cap.setRenderAbilities(origCap.renderAbilityHotbar());
+    
+                    syncToAll(player);
+                });
+            });
+            
+            // receive capability from others
+            player.getServer().getPlayerList().getPlayers().forEach(serverPlayerEntity -> {
+                DragonStateProvider.getCap(orig).ifPresent(dragonStateHandler -> {
+                    syncWithPlayer(player, serverPlayerEntity, dragonStateHandler);
+                });
+            });
+        }
+    }
+    
+    @SubscribeEvent
     public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent playerRespawnEvent) {
         PlayerEntity player = playerRespawnEvent.getPlayer();
+        
         if (!player.level.isClientSide) {
             // send the capability to everyone
             syncToAll(player);
             // receive capability from others
-            playerRespawnEvent.getPlayer().getServer().getPlayerList().getPlayers().forEach(serverPlayerEntity -> {
-                DragonStateProvider.getCap(serverPlayerEntity).ifPresent(dragonStateHandler -> {
+            player.getServer().getPlayerList().getPlayers().forEach(serverPlayerEntity -> {
+                DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
                     syncWithPlayer(player, serverPlayerEntity, dragonStateHandler);
                 });
             });

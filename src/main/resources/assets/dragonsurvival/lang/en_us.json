@@ -198,7 +198,11 @@
 
   "ds.skill_cooldown_check_failure": "The ability is not ready yet! ({0})",
   "ds.skill_mana_check_failure": "Not enough mana!",
-  "ds.skill.mana_cost": "Costs {0} Mana",
+  "ds.skill.mana_cost": "Mana cost: {0}",
+  "ds.skill.cast_time": "Cast time: {0}s",
+  "ds.skill.cooldown": "Cooldown: {0}s",
+  "ds.skill.range": "Range: {0}",
+  "ds.skill.aoe": "Radius: {0}",
   "ds.skill.required_level": "Requires level {0}",
   "ds.skill.can_unlock": "Can unlock for {0} levels",
   "ds.skill.level.can_unlock.cant_afford": "You need {0} levels to afford this. ",
@@ -207,6 +211,7 @@
   "ds.skill.type.active": "Active skill",
   "ds.skill.type.passive": "Passive skill",
   "ds.skill.type.innate": "Innate passive skill",
+  "ds.skill.info": "Info",
 
   "ds.endmessage.1": "Have you come here for the wings, {0}? Get out, before it's too late.",
   "ds.endmessage.2": "This is my land, {0}, show some respect. Go away, but first answer, why have you come here. Is it for wings?",

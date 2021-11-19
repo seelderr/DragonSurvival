@@ -1,8 +1,9 @@
-package by.jackraidenph.dragonsurvival.network;
+package by.jackraidenph.dragonsurvival.network.Abilities;
 
 import by.jackraidenph.dragonsurvival.abilities.DragonAbilities;
 import by.jackraidenph.dragonsurvival.abilities.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.network.IMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
@@ -13,7 +14,8 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import java.util.ArrayList;
 import java.util.function.Supplier;
 
-public class SyncCapabilityAbility implements IMessage<SyncCapabilityAbility> {
+public class SyncCapabilityAbility implements IMessage<SyncCapabilityAbility>
+{
 	
 	public int playerId;
 	private ArrayList<DragonAbility> abilities = new ArrayList<>();

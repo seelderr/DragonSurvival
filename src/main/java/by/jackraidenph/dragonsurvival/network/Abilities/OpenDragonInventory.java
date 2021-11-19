@@ -1,6 +1,7 @@
-package by.jackraidenph.dragonsurvival.network;
+package by.jackraidenph.dragonsurvival.network.Abilities;
 
 import by.jackraidenph.dragonsurvival.containers.DragonContainer;
+import by.jackraidenph.dragonsurvival.network.IMessage;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -14,7 +15,8 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
-public class OpenDragonInventory implements IMessage<OpenDragonInventory> {
+public class OpenDragonInventory implements IMessage<OpenDragonInventory>
+{
     @Override
     public void encode(OpenDragonInventory message, PacketBuffer buffer) {
 

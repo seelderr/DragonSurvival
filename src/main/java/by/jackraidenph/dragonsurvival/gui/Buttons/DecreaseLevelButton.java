@@ -6,7 +6,7 @@ import by.jackraidenph.dragonsurvival.abilities.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.abilities.common.PassiveDragonAbility;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.gui.AbilityScreen;
-import by.jackraidenph.dragonsurvival.network.ChangeSkillLevel;
+import by.jackraidenph.dragonsurvival.network.Abilities.ChangeSkillLevel;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
@@ -77,7 +77,7 @@ public class DecreaseLevelButton extends Button
 				}
 				
 				if(currentAbility != null && currentAbility.getLevel() > currentAbility.getMinLevel()) {
-					GuiUtils.drawHoveringText(stack, Arrays.asList(new TranslationTextComponent("ds.skill.level.refund_cost", (int)(currentAbility.getLevelCost() * 0.8F))), mouseX, mouseY, Minecraft.getInstance().screen.width, Minecraft.getInstance().screen.height, 200, Minecraft.getInstance().font);
+					GuiUtils.drawHoveringText(stack, Arrays.asList(new TranslationTextComponent("ds.skill.level.refund_cost", (int)Math.max(1, currentAbility.getLevelCost() * 0.8F))), mouseX, mouseY, Minecraft.getInstance().screen.width, Minecraft.getInstance().screen.height, 200, Minecraft.getInstance().font);
 				}
 			}
 		});

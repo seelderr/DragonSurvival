@@ -5,7 +5,7 @@ import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.abilities.DragonAbilities;
 import by.jackraidenph.dragonsurvival.abilities.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.abilities.common.DragonAbility;
-import by.jackraidenph.dragonsurvival.abilities.common.InformationDragonAbility;
+import by.jackraidenph.dragonsurvival.abilities.common.InnateDragonAbility;
 import by.jackraidenph.dragonsurvival.abilities.common.PassiveDragonAbility;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.gui.Buttons.*;
@@ -93,7 +93,7 @@ public class AbilityScreen extends Screen {
             }
     
             num = 0;
-            for(InformationDragonAbility ability : DragonAbilities.INFORMATION_ABILITIES.get(cap.getType())){
+            for(InnateDragonAbility ability : DragonAbilities.INFORMATION_ABILITIES.get(cap.getType())){
                 if(ability != null) {
                     addButton(new AbilityButton(guiLeft + (int)(348 / 2F), (guiTop + 40 + (num * 23)), ability, this));
                     num++;
