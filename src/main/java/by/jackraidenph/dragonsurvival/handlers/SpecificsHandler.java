@@ -127,13 +127,13 @@ public class SpecificsHandler {
 				if (tag != null && tag.getValues().size() != 0)
 					speedupMap.addAll(tag.getValues());
 				else
-					DragonSurvivalMod.LOGGER.error("Null or empty tag '{}:{}' in {} dragon speedup block config.", sEntry[1], sEntry[2], type.toString().toLowerCase());
+					DragonSurvivalMod.LOGGER.warn("Null or empty tag '{}:{}' in {} dragon speedup block config.", sEntry[1], sEntry[2], type.toString().toLowerCase());
 			} else {
 				final Block block = ForgeRegistries.BLOCKS.getValue(rlEntry);
 				if (block != null)
 					speedupMap.add(block);
 				else
-					DragonSurvivalMod.LOGGER.error("Unknown block '{}:{}' in {} dragon speedup block config.", sEntry[1], sEntry[2], type.toString().toLowerCase());
+					DragonSurvivalMod.LOGGER.warn("Unknown block '{}:{}' in {} dragon speedup block config.", sEntry[1], sEntry[2], type.toString().toLowerCase());
 			}
 		}
 		return speedupMap;
