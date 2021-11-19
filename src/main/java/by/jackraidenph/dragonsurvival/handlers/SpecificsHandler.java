@@ -154,7 +154,7 @@ public class SpecificsHandler {
 					DragonSurvivalMod.LOGGER.warn("Null or empty tag '{}:{}' in sea dragon hydraton block config.", sEntry[1], sEntry[2]);
 			} else {
 				final Block block = ForgeRegistries.BLOCKS.getValue(rlEntry);
-				if (block != null)
+				if (block != Blocks.AIR)
 					hydrationBlocks.add(block);
 				else
 					DragonSurvivalMod.LOGGER.warn("Unknown block '{}:{}' in sea dragon hydration block config.", sEntry[1], sEntry[2]);
@@ -174,7 +174,7 @@ public class SpecificsHandler {
 					DragonSurvivalMod.LOGGER.warn("Null or empty tag '{}:{}' in sea dragon hydration block config.", sEntry[1], sEntry[2]);
 			} else {
 				final Item item = ForgeRegistries.ITEMS.getValue(rlEntry);
-				if (item != null)
+				if (item != Items.AIR)
 					hydrationItems.add(item);
 				else
 					DragonSurvivalMod.LOGGER.warn("Unknown block '{}:{}' in sea dragon hydration block config.", sEntry[1], sEntry[2]);
