@@ -11,6 +11,7 @@ public class ClientConfig {
 	public final ForgeConfigSpec.BooleanValue dragonNameTags;
 	public final ForgeConfigSpec.BooleanValue renderInFirstPerson;
 	public final ForgeConfigSpec.BooleanValue notifyWingStatus;
+	public final ForgeConfigSpec.BooleanValue clientDebugMessages;
 
 	ClientConfig(ForgeConfigSpec.Builder builder) {
 		builder.push("client");
@@ -18,6 +19,7 @@ public class ClientConfig {
 		renderInFirstPerson = builder.comment("Render dragon model in first person")
 				.define("renderFirstPerson", true);
 		notifyWingStatus = builder.comment("Notifies of wing status in chat message").define("notifyWingStatus", true);
+		clientDebugMessages = builder.define("Enable client-side debug messages", false);
 		// Movement
 		builder.push("movement");
 		firstPersonBodyMovement = builder

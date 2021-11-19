@@ -13,6 +13,7 @@ import by.jackraidenph.dragonsurvival.util.DragonType;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.AbstractGui;
@@ -127,13 +128,13 @@ public class SpecificsHandler {
 				if (tag != null && tag.getValues().size() != 0)
 					speedupMap.addAll(tag.getValues());
 				else
-					DragonSurvivalMod.LOGGER.error("Null or empty tag '{}:{}' in {} dragon speedup block config.", sEntry[1], sEntry[2], type.toString().toLowerCase());
+					DragonSurvivalMod.LOGGER.warn("Null or empty tag '{}:{}' in {} dragon speedup block config.", sEntry[1], sEntry[2], type.toString().toLowerCase());
 			} else {
 				final Block block = ForgeRegistries.BLOCKS.getValue(rlEntry);
-				if (block != null)
+				if (block != Blocks.AIR)
 					speedupMap.add(block);
 				else
-					DragonSurvivalMod.LOGGER.error("Unknown block '{}:{}' in {} dragon speedup block config.", sEntry[1], sEntry[2], type.toString().toLowerCase());
+					DragonSurvivalMod.LOGGER.warn("Unknown block '{}:{}' in {} dragon speedup block config.", sEntry[1], sEntry[2], type.toString().toLowerCase());
 			}
 		}
 		return speedupMap;
@@ -153,7 +154,7 @@ public class SpecificsHandler {
 					DragonSurvivalMod.LOGGER.warn("Null or empty tag '{}:{}' in sea dragon hydraton block config.", sEntry[1], sEntry[2]);
 			} else {
 				final Block block = ForgeRegistries.BLOCKS.getValue(rlEntry);
-				if (block != null)
+				if (block != Blocks.AIR)
 					hydrationBlocks.add(block);
 				else
 					DragonSurvivalMod.LOGGER.warn("Unknown block '{}:{}' in sea dragon hydration block config.", sEntry[1], sEntry[2]);
@@ -173,7 +174,7 @@ public class SpecificsHandler {
 					DragonSurvivalMod.LOGGER.warn("Null or empty tag '{}:{}' in sea dragon hydration block config.", sEntry[1], sEntry[2]);
 			} else {
 				final Item item = ForgeRegistries.ITEMS.getValue(rlEntry);
-				if (item != null)
+				if (item != Items.AIR)
 					hydrationItems.add(item);
 				else
 					DragonSurvivalMod.LOGGER.warn("Unknown block '{}:{}' in sea dragon hydration block config.", sEntry[1], sEntry[2]);
