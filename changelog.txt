@@ -1,9 +1,20 @@
 1.16.5-0.0.47:
-fixed water not rendering in first person;
-fixed dragon not rendering in first person;
-fixed off-hand item rendering;
-added option to toggle prince/princess spawning;
-fixed sea dragon getting speedup from air blocks;
+- fixed water not rendering in first person;
+- fixed dragon not rendering in first person;
+- fixed off-hand item rendering;
+- added option to toggle prince/princess spawning;
+- fixed sea dragon getting speedup from air blocks;
+- added Ukrainian language;
+- glowing skin support (example: Horeak_adult_glow.png);
+- cave dragons now take damage when consuming any items in the config list "drinkingItems" which includes potions, water bottles, milk buckets and honey bottles by default;
+- cave dragons also take damage when hit by snowballs or splash water bottles;
+- flying now uses hunger at about the same rate as running;
+- made charged soup grant water protection for cave dragons;
+- config items that deal damage to each kind of dragon when consumed;
+- leather armor now renders the dye colors;
+- added command: /dragon human, /dragon cave 1 true Player;
+- added auto complete for the dragon_stage argument to make it easier;
+- added config option for creative like flight;
 
 1.16.5-0.0.46:
 - missing armor fix;
