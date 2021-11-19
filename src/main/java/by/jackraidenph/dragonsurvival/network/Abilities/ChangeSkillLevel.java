@@ -1,10 +1,10 @@
 package by.jackraidenph.dragonsurvival.network.Abilities;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.abilities.DragonAbilities;
-import by.jackraidenph.dragonsurvival.abilities.common.ActiveDragonAbility;
-import by.jackraidenph.dragonsurvival.abilities.common.DragonAbility;
-import by.jackraidenph.dragonsurvival.abilities.common.PassiveDragonAbility;
+import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
+import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
+import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
+import by.jackraidenph.dragonsurvival.magic.common.PassiveDragonAbility;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.network.IMessage;
 import net.minecraft.entity.player.ServerPlayerEntity;

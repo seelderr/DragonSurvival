@@ -1,4 +1,4 @@
-package by.jackraidenph.dragonsurvival.abilities.common;
+package by.jackraidenph.dragonsurvival.magic.common;
 
 public class InnateDragonAbility extends DragonAbility {
 	public InnateDragonAbility(String abilityId, String icon, int minLevel, int maxLevel)

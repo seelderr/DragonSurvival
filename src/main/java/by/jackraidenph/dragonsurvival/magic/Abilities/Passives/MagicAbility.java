@@ -1,6 +1,6 @@
-package by.jackraidenph.dragonsurvival.abilities.Passives;
+package by.jackraidenph.dragonsurvival.magic.Abilities.Passives;
 
-import by.jackraidenph.dragonsurvival.abilities.common.PassiveDragonAbility;
+import by.jackraidenph.dragonsurvival.magic.common.PassiveDragonAbility;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 

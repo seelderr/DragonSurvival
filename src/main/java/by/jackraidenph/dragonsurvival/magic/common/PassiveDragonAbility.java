@@ -1,4 +1,4 @@
-package by.jackraidenph.dragonsurvival.abilities.common;
+package by.jackraidenph.dragonsurvival.magic.common;
 
 import net.minecraft.nbt.CompoundNBT;
 

@@ -1,17 +1,18 @@
-package by.jackraidenph.dragonsurvival.abilities;
+package by.jackraidenph.dragonsurvival.magic;
 
 import by.jackraidenph.dragonsurvival.Functions;
-import by.jackraidenph.dragonsurvival.abilities.Actives.AoeBuffAbility;
-import by.jackraidenph.dragonsurvival.abilities.Actives.VisionAbility;
-import by.jackraidenph.dragonsurvival.abilities.InformationSkills.DragonClawsAbility;
-import by.jackraidenph.dragonsurvival.abilities.InformationSkills.DragonWingAbility;
-import by.jackraidenph.dragonsurvival.abilities.Passives.AthleticsAbility;
-import by.jackraidenph.dragonsurvival.abilities.Passives.MagicAbility;
-import by.jackraidenph.dragonsurvival.abilities.Passives.WaterAbility;
-import by.jackraidenph.dragonsurvival.abilities.common.ActiveDragonAbility;
-import by.jackraidenph.dragonsurvival.abilities.common.DragonAbility;
-import by.jackraidenph.dragonsurvival.abilities.common.InnateDragonAbility;
-import by.jackraidenph.dragonsurvival.abilities.common.PassiveDragonAbility;
+import by.jackraidenph.dragonsurvival.magic.Abilities.Actives.AoeBuffAbility;
+import by.jackraidenph.dragonsurvival.magic.Abilities.Actives.HunterAbility;
+import by.jackraidenph.dragonsurvival.magic.Abilities.Actives.VisionAbility;
+import by.jackraidenph.dragonsurvival.magic.Abilities.Innate.DragonClawsAbility;
+import by.jackraidenph.dragonsurvival.magic.Abilities.Innate.DragonWingAbility;
+import by.jackraidenph.dragonsurvival.magic.Abilities.Passives.AthleticsAbility;
+import by.jackraidenph.dragonsurvival.magic.Abilities.Passives.MagicAbility;
+import by.jackraidenph.dragonsurvival.magic.Abilities.Passives.WaterAbility;
+import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
+import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
+import by.jackraidenph.dragonsurvival.magic.common.InnateDragonAbility;
+import by.jackraidenph.dragonsurvival.magic.common.PassiveDragonAbility;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.potion.EffectInstance;
@@ -76,7 +77,7 @@ public class DragonAbilities
 		POISONOUS_BREATH = register(DragonType.FOREST, new ActiveDragonAbility("poisonous_breath", "forest/poisonous_breath", 1, 4, 2, 0, 0, new Integer[]{0, 10, 30, 50}));
 		SPIKE = register(DragonType.FOREST, new ActiveDragonAbility("spike", "forest/spike", 0, 4, 1, 0,  Functions.secondsToTicks(1), new Integer[]{0, 20, 30, 40}));
 		INSPIRATION = register(DragonType.FOREST, new AoeBuffAbility(new EffectInstance(Effects.DIG_SPEED, 0, 2), 5, Color.GREEN.darker(), "inspiration", "forest/inspiration", 0, 3, 5, Functions.secondsToTicks(5), Functions.secondsToTicks(30), new Integer[]{0, 15, 35}));
-		HUNTER = register(DragonType.FOREST, new ActiveDragonAbility("hunter", "forest/hunter", 0, 2, 3, Functions.secondsToTicks(3), Functions.secondsToTicks(30), new Integer[]{0, 25}));
+		HUNTER = register(DragonType.FOREST, new HunterAbility("hunter", "forest/hunter", 0, 2, 3, Functions.secondsToTicks(3), Functions.secondsToTicks(30), new Integer[]{0, 25}));
 		
 		FOREST_MAGIC = register(DragonType.FOREST, new MagicAbility("forest_magic", "forest/forest_magic", 0, 10));
 		FOREST_ATHLETICS = register(DragonType.FOREST, new AthleticsAbility("forest_athletics", "forest/forest_athletics", 0, 5));

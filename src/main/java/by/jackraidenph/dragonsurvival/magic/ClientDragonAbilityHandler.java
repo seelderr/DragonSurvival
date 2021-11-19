@@ -1,7 +1,7 @@
-package by.jackraidenph.dragonsurvival.handlers;
+package by.jackraidenph.dragonsurvival.magic;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.abilities.common.ActiveDragonAbility;
+import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.gui.Buttons.TabButton;
 import by.jackraidenph.dragonsurvival.network.Abilities.ActivateAbilityInSlot;
@@ -138,15 +138,22 @@ public class ClientDragonAbilityHandler
 				
 		
 		        ActiveDragonAbility ability = cap.getAbilityFromSlot(cap.getSelectedAbilitySlot());
-	
+				
 	            //TODO Improve cast bar, for example add a background box to it and render the icon of the skill that is currently casting
 	            //TODO And maybe change color based on dragon type?
 	            //TODO Show current casting in seconds at the end of the bar
 	            if(ability.getCurrentCastTimer() > 0){
-	                float perc = Math.min((float)ability.getCurrentCastTimer() / (float)ability.getCastingTime(), 1);
+		            textureManager.bind(ability.getIcon());
+		
+					int offset = 50;
+					
+		            Screen.blit(event.getMatrixStack(), (window.getGuiScaledWidth() / 2) - (8 / 2), window.getGuiScaledHeight() - offset - 8,
+		                        0, 0, 8, 8, 8, 8);
+					
+		            float perc = Math.min((float)ability.getCurrentCastTimer() / (float)ability.getCastingTime(), 1);
 	                textureManager.bind(TabButton.buttonTexture);
-	                Screen.blit(event.getMatrixStack(), (window.getGuiScaledWidth() / 2) - (194 / 4), window.getGuiScaledHeight() - 60, 0, 180 / 2,  194 / 2, 6 / 2, 128, 128);
-	                Screen.blit(event.getMatrixStack(), (window.getGuiScaledWidth() / 2) - (194 / 4), window.getGuiScaledHeight() - 60, 0, 174 / 2,  (int)((194 / 2) * perc), 6 / 2, 128, 128);
+	                Screen.blit(event.getMatrixStack(), (window.getGuiScaledWidth() / 2) - (194 / 4), window.getGuiScaledHeight() - offset, 0, 180 / 2,  194 / 2, 6 / 2, 128, 128);
+	                Screen.blit(event.getMatrixStack(), (window.getGuiScaledWidth() / 2) - (194 / 4), window.getGuiScaledHeight() - offset, 0, 174 / 2,  (int)((194 / 2) * perc), 6 / 2, 128, 128);
 	            }
 		
 		        textureManager.bind(new ResourceLocation("textures/gui/widgets.png"));

@@ -1,6 +1,6 @@
 package by.jackraidenph.dragonsurvival.capability;
 
-import by.jackraidenph.dragonsurvival.abilities.common.DragonAbility;
+import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;

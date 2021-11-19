@@ -2,9 +2,9 @@ package by.jackraidenph.dragonsurvival.handlers;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.Functions;
-import by.jackraidenph.dragonsurvival.abilities.DragonAbilities;
-import by.jackraidenph.dragonsurvival.abilities.Passives.WaterAbility;
-import by.jackraidenph.dragonsurvival.abilities.common.DragonAbility;
+import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
+import by.jackraidenph.dragonsurvival.magic.Abilities.Passives.WaterAbility;
+import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.network.StartJump;

@@ -1,7 +1,7 @@
 package by.jackraidenph.dragonsurvival.gui.Buttons;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.abilities.common.ActiveDragonAbility;
+import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.gui.AbilityScreen;
 import by.jackraidenph.dragonsurvival.network.Abilities.ChangeSkillLevel;

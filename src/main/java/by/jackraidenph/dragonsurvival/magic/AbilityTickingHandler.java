@@ -1,7 +1,7 @@
-package by.jackraidenph.dragonsurvival.handlers;
+package by.jackraidenph.dragonsurvival.magic;
 
-import by.jackraidenph.dragonsurvival.abilities.common.ActiveDragonAbility;
-import by.jackraidenph.dragonsurvival.abilities.common.DragonAbility;
+import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
+import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
 import com.google.common.collect.Queues;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.event.TickEvent;

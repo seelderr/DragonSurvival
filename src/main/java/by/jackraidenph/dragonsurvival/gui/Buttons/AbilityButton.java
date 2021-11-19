@@ -2,11 +2,11 @@ package by.jackraidenph.dragonsurvival.gui.Buttons;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.Functions;
-import by.jackraidenph.dragonsurvival.abilities.Actives.AoeBuffAbility;
-import by.jackraidenph.dragonsurvival.abilities.common.ActiveDragonAbility;
-import by.jackraidenph.dragonsurvival.abilities.common.DragonAbility;
-import by.jackraidenph.dragonsurvival.abilities.common.InnateDragonAbility;
-import by.jackraidenph.dragonsurvival.abilities.common.PassiveDragonAbility;
+import by.jackraidenph.dragonsurvival.magic.Abilities.Actives.AoeBuffAbility;
+import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
+import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
+import by.jackraidenph.dragonsurvival.magic.common.InnateDragonAbility;
+import by.jackraidenph.dragonsurvival.magic.common.PassiveDragonAbility;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.gui.AbilityScreen;
 import by.jackraidenph.dragonsurvival.util.DragonType;
@@ -26,11 +26,11 @@ import java.awt.*;
 import java.util.List;
 
 public class AbilityButton extends Button {
-	static final ResourceLocation BLANK_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/blank.png");
-	static final ResourceLocation BLANK_1_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/blank1.png");
-	static final ResourceLocation BLANK_2_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/blank2.png");
-	private static final ResourceLocation WIDGETS_LOCATION = new ResourceLocation("textures/gui/advancements/widgets.png");
-	private static final ResourceLocation TOOLTIP_BARS = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/tooltip_bars.png");
+	public static final ResourceLocation BLANK_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/blank.png");
+	public static final ResourceLocation BLANK_1_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/blank1.png");
+	public static final ResourceLocation BLANK_2_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/blank2.png");
+	public static final ResourceLocation WIDGETS_LOCATION = new ResourceLocation("textures/gui/advancements/widgets.png");
+	public static final ResourceLocation TOOLTIP_BARS = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/tooltip_bars.png");
 	
 	private DragonAbility ability;
 	private AbilityScreen screen;
@@ -203,6 +203,5 @@ public class AbilityButton extends Button {
 				this.blit(p_238690_1_, j, i1, p_238690_6_, p_238690_7_, k, j1);
 			}
 		}
-		
 	}
 }

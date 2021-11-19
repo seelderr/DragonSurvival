@@ -1,7 +1,7 @@
-package by.jackraidenph.dragonsurvival.abilities.Actives;
+package by.jackraidenph.dragonsurvival.magic.Abilities.Actives;
 
 import by.jackraidenph.dragonsurvival.Functions;
-import by.jackraidenph.dragonsurvival.abilities.common.ActiveDragonAbility;
+import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;

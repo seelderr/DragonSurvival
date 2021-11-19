@@ -30,6 +30,7 @@ public class DragonEffects {
     public static Effect PREDATOR_ANTI_SPAWN;
     
     public static Effect WATER_VISION, LAVA_VISION;
+    public static Effect HUNTER;
 
     @SuppressWarnings("unused")
     @SubscribeEvent
@@ -57,6 +58,9 @@ public class DragonEffects {
         
         LAVA_VISION = new Effect2(EffectType.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "lava_vision");
         forgeRegistry.register(LAVA_VISION);
+    
+        HUNTER = new Effect2(EffectType.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "hunter");
+        forgeRegistry.register(HUNTER);
     }
 
     private static class Effect2 extends Effect {

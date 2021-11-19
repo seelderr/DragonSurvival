@@ -1,6 +1,6 @@
-package by.jackraidenph.dragonsurvival.abilities.InformationSkills;
+package by.jackraidenph.dragonsurvival.magic.Abilities.Innate;
 
-import by.jackraidenph.dragonsurvival.abilities.common.InnateDragonAbility;
+import by.jackraidenph.dragonsurvival.magic.common.InnateDragonAbility;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.registration.ClientModEvents;
 import net.minecraft.client.Minecraft;

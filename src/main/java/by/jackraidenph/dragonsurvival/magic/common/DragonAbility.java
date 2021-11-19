@@ -1,4 +1,4 @@
-package by.jackraidenph.dragonsurvival.abilities.common;
+package by.jackraidenph.dragonsurvival.magic.common;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import net.minecraft.entity.player.PlayerEntity;

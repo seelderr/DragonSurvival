@@ -92,6 +92,7 @@
   "effect.dragonsurvival.predator_anti_spawn": "Anti-Predator",
   "effect.dragonsurvival.water_vision": "Sea Eyes",
   "effect.dragonsurvival.lava_vision": "Lava Eyes",
+  "effect.dragonsurvival.hunter": "Hunter",
 
   "death.attack.starDrain": "%1$s had their life and energy drained by magic.",
   "death.attack.waterBurn": "%1$s tried to swim in water.",

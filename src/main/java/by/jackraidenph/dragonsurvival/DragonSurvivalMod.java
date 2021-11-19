@@ -1,6 +1,7 @@
 package by.jackraidenph.dragonsurvival;
 
-import by.jackraidenph.dragonsurvival.abilities.DragonAbilities;
+import by.jackraidenph.dragonsurvival.magic.AbilityTickingHandler;
+import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
 import by.jackraidenph.dragonsurvival.capability.Capabilities;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;

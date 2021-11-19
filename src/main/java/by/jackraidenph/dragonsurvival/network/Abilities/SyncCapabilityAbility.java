@@ -1,7 +1,7 @@
 package by.jackraidenph.dragonsurvival.network.Abilities;
 
-import by.jackraidenph.dragonsurvival.abilities.DragonAbilities;
-import by.jackraidenph.dragonsurvival.abilities.common.DragonAbility;
+import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
+import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.network.IMessage;
 import net.minecraft.client.Minecraft;

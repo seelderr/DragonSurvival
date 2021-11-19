@@ -1,5 +1,6 @@
 package by.jackraidenph.dragonsurvival.network.Abilities;
 
+import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.containers.DragonContainer;
 import by.jackraidenph.dragonsurvival.network.IMessage;
 import net.minecraft.entity.player.PlayerEntity;
@@ -30,17 +31,22 @@ public class OpenDragonInventory implements IMessage<OpenDragonInventory>
     @Override
     public void handle(OpenDragonInventory message, Supplier<NetworkEvent.Context> supplier) {
         ServerPlayerEntity serverPlayerEntity = supplier.get().getSender();
-        serverPlayerEntity.openMenu(new INamedContainerProvider() {
-            @Override
-            public ITextComponent getDisplayName() {
-                return new StringTextComponent("");
-            }
-
-            @Nullable
-            @Override
-            public Container createMenu(int p_createMenu_1_, PlayerInventory p_createMenu_2_, PlayerEntity p_createMenu_3_) {
-                return new DragonContainer(p_createMenu_1_, p_createMenu_2_, false);
-            }
-        });
+        if(DragonStateProvider.isDragon(serverPlayerEntity)) {
+            serverPlayerEntity.openMenu(new INamedContainerProvider()
+            {
+                @Override
+                public ITextComponent getDisplayName()
+                {
+                    return new StringTextComponent("");
+                }
+        
+                @Nullable
+                @Override
+                public Container createMenu(int p_createMenu_1_, PlayerInventory p_createMenu_2_, PlayerEntity p_createMenu_3_)
+                {
+                    return new DragonContainer(p_createMenu_1_, p_createMenu_2_, false);
+                }
+            });
+        }
     }
 }
