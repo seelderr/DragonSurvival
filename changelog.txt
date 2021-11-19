@@ -3,6 +3,7 @@ fixed water not rendering in first person;
 fixed dragon not rendering in first person;
 fixed off-hand item rendering;
 added option to toggle prince/princess spawning;
+fixed sea dragon getting speedup from air blocks;
 
 1.16.5-0.0.46:
 - missing armor fix;
