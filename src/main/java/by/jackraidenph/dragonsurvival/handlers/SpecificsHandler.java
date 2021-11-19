@@ -13,6 +13,7 @@ import by.jackraidenph.dragonsurvival.util.DragonType;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.AbstractGui;
@@ -130,7 +131,7 @@ public class SpecificsHandler {
 					DragonSurvivalMod.LOGGER.warn("Null or empty tag '{}:{}' in {} dragon speedup block config.", sEntry[1], sEntry[2], type.toString().toLowerCase());
 			} else {
 				final Block block = ForgeRegistries.BLOCKS.getValue(rlEntry);
-				if (block != null)
+				if (block != Blocks.AIR)
 					speedupMap.add(block);
 				else
 					DragonSurvivalMod.LOGGER.warn("Unknown block '{}:{}' in {} dragon speedup block config.", sEntry[1], sEntry[2], type.toString().toLowerCase());
