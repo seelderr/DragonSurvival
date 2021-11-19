@@ -81,7 +81,9 @@ public class ClientModEvents {
         RenderTypeLookup.setRenderLayer(BlockInit.peaceDragonBeacon, RenderType.cutout());
         RenderTypeLookup.setRenderLayer(BlockInit.fireDragonBeacon, RenderType.cutout());
         RenderTypeLookup.setRenderLayer(BlockInit.magicDragonBeacon, RenderType.cutout());
-
+    
+        RenderingRegistry.registerEntityRenderingHandler(EntityTypesInit.DRAGON_SPIKE, DragonSpikeRenderer::new);
+    
         RenderingRegistry.registerEntityRenderingHandler(EntityTypesInit.MAGICAL_BEAST, MagicalPredatorRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityTypesInit.BOLAS_ENTITY, manager -> new SpriteRenderer<>(manager, minecraft.getItemRenderer()));
 

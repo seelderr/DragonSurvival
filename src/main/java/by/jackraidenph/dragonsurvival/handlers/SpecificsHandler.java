@@ -2,6 +2,8 @@ package by.jackraidenph.dragonsurvival.handlers;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.Functions;
+import by.jackraidenph.dragonsurvival.magic.Abilities.Passives.CliffhangerAbility;
+import by.jackraidenph.dragonsurvival.magic.Abilities.Passives.LightInDarknessAbility;
 import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
 import by.jackraidenph.dragonsurvival.magic.Abilities.Passives.WaterAbility;
 import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
@@ -254,7 +256,13 @@ public class SpecificsHandler {
         			final int right_height = ForgeIngameGui.right_height;
     				ForgeIngameGui.right_height += 10;
 
-    				final int maxTimeInDarkness = ConfigHandler.SERVER.forestStressTicks.get();
+					int maxTimeInDarkness = ConfigHandler.SERVER.forestStressTicks.get();
+				    DragonAbility lightInDarkness = playerStateHandler.getAbility(DragonAbilities.LIGHT_IN_DARKNESS);
+				
+				    if(lightInDarkness != null){
+					    maxTimeInDarkness +=  Functions.secondsToTicks(((LightInDarknessAbility)lightInDarkness).getDuration());
+				    }
+					
     				final int timeInDarkness = maxTimeInDarkness - Math.min(playerStateHandler.getDebuffData().timeInDarkness, maxTimeInDarkness);
     				
                     final int left = Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 + 91;
@@ -552,13 +560,23 @@ public class SpecificsHandler {
     
     @SubscribeEvent
     public void reduceFallDistance(LivingFallEvent livingFallEvent) {
-    	if (!ConfigHandler.SERVER.bonuses.get() || ConfigHandler.SERVER.forestFallReduction.get() == 0)
-    		return;
         LivingEntity livingEntity = livingFallEvent.getEntityLiving();
         DragonStateProvider.getCap(livingEntity).ifPresent(dragonStateHandler -> {
             if (dragonStateHandler.isDragon()) {
                 if (dragonStateHandler.getType() == DragonType.FOREST) {
-                    livingFallEvent.setDistance(livingFallEvent.getDistance() - ConfigHandler.SERVER.forestFallReduction.get().floatValue());
+					float distance = livingFallEvent.getDistance();
+					
+					if(ConfigHandler.SERVER.bonuses.get()){
+						distance -= ConfigHandler.SERVER.forestFallReduction.get().floatValue();
+					}
+	
+	                DragonAbility ability = dragonStateHandler.getAbility(DragonAbilities.CLIFFHANGER);
+
+					if(ability != null){
+						distance -= ((CliffhangerAbility)ability).getHeight();
+					}
+	
+	                livingFallEvent.setDistance(distance);
                 }
             }
         });

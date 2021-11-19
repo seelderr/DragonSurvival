@@ -4,6 +4,7 @@ import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.blocks.DragonBeacon;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.entity.*;
+import by.jackraidenph.dragonsurvival.entity.Magic.DragonSpikeEntity;
 import by.jackraidenph.dragonsurvival.gecko.DragonEntity;
 import by.jackraidenph.dragonsurvival.gecko.Knight;
 import by.jackraidenph.dragonsurvival.gecko.Princess;
@@ -53,6 +54,8 @@ public class EntityTypesInit {
     public static EntityType<Knight> KNIGHT;
     public static EntityType<Princess> PRINCESS_ON_HORSE;
     public static EntityType<by.jackraidenph.dragonsurvival.gecko.Prince> PRINCE_ON_HORSE;
+    
+    public static EntityType<DragonSpikeEntity> DRAGON_SPIKE;
 
     private static <T extends CreatureEntity> EntityType<T> createEntity(Class<T> entityClass, EntityType.IFactory<T> factory, float width, float height, int eggPrimary, int eggSecondary, EntitySpawnPlacementRegistry.IPlacementPredicate spawnPlacementPredicate) {
 
@@ -99,6 +102,11 @@ public class EntityTypesInit {
         BOLAS_ENTITY = cast(EntityType.Builder.of((p_create_1_, p_create_2_) -> new BolasEntity(p_create_2_), EntityClassification.MISC).sized(0.25F, 0.25F).clientTrackingRange(4).updateInterval(10).build("bolas"));
         BOLAS_ENTITY.setRegistryName("dragonsurvival", "bolas");
         registry.register(BOLAS_ENTITY);
+    
+        DRAGON_SPIKE = EntityType.Builder.<DragonSpikeEntity>of(DragonSpikeEntity::new, EntityClassification.MISC)
+                .sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(20).build("dragon_spike");
+        DRAGON_SPIKE.setRegistryName("dragonsurvival", "dragon_spike");
+        registry.register(DRAGON_SPIKE);
     }
 
     @SubscribeEvent

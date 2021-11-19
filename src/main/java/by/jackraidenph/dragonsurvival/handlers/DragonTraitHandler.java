@@ -2,6 +2,7 @@ package by.jackraidenph.dragonsurvival.handlers;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.Functions;
+import by.jackraidenph.dragonsurvival.magic.Abilities.Passives.LightInDarknessAbility;
 import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
 import by.jackraidenph.dragonsurvival.magic.Abilities.Passives.AthleticsAbility;
 import by.jackraidenph.dragonsurvival.magic.Abilities.Passives.WaterAbility;
@@ -92,17 +93,24 @@ public class DragonTraitHandler {
                             dragonStateHandler.setLavaAirSupply(Math.min(dragonStateHandler.getLavaAirSupply() + (int) Math.ceil(ConfigHandler.SERVER.caveLavaSwimmingTicks.get() * 0.0133333F), ConfigHandler.SERVER.caveLavaSwimmingTicks.get()));
                         break;
                     case FOREST:
+                        int maxStressTicks = ConfigHandler.SERVER.forestStressTicks.get();
+                        DragonAbility lightInDarkness = dragonStateHandler.getAbility(DragonAbilities.LIGHT_IN_DARKNESS);
+    
+                        if(lightInDarkness != null){
+                            maxStressTicks +=  Functions.secondsToTicks(((LightInDarknessAbility)lightInDarkness).getDuration());
+                        }
+                        
                         if (ConfigHandler.SERVER.penalties.get() && !playerEntity.hasEffect(DragonEffects.MAGIC) && ConfigHandler.SERVER.forestStressTicks.get() > 0 && !playerEntity.isCreative() && !playerEntity.isSpectator()) {
                             WorldLightManager lightManager = world.getChunkSource().getLightEngine();
                             if ((lightManager.getLayerListener(LightType.BLOCK).getLightValue(playerEntity.blockPosition()) < 3 && lightManager.getLayerListener(LightType.SKY).getLightValue(playerEntity.blockPosition()) < 3)) {
-                                if (dragonStateHandler.getDebuffData().timeInDarkness < ConfigHandler.SERVER.forestStressTicks.get())
+                                if (dragonStateHandler.getDebuffData().timeInDarkness < maxStressTicks)
                                     dragonStateHandler.getDebuffData().timeInDarkness++;
                                 if (dragonStateHandler.getDebuffData().timeInDarkness == 1 && !playerEntity.level.isClientSide)
                                     DragonSurvivalMod.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new SyncCapabilityDebuff(playerEntity.getId(), dragonStateHandler.getDebuffData().timeWithoutWater, dragonStateHandler.getDebuffData().timeInDarkness));
-                                if (dragonStateHandler.getDebuffData().timeInDarkness == ConfigHandler.SERVER.forestStressTicks.get() && !world.isClientSide && playerEntity.tickCount % 21 == 0)
+                                if (dragonStateHandler.getDebuffData().timeInDarkness == maxStressTicks && !world.isClientSide && playerEntity.tickCount % 21 == 0)
                                     playerEntity.addEffect(new EffectInstance(DragonEffects.STRESS, ConfigHandler.SERVER.forestStressEffectDuration.get() * 20));
                             } else if (dragonStateHandler.getDebuffData().timeInDarkness > 0) {
-                                dragonStateHandler.getDebuffData().timeInDarkness = (Math.max(dragonStateHandler.getDebuffData().timeInDarkness - (int) Math.ceil(ConfigHandler.SERVER.forestStressTicks.get() * 0.02F), 0));
+                                dragonStateHandler.getDebuffData().timeInDarkness = (Math.max(dragonStateHandler.getDebuffData().timeInDarkness - (int) Math.ceil(maxStressTicks * 0.02F), 0));
                                 if (dragonStateHandler.getDebuffData().timeInDarkness == 0 && !playerEntity.level.isClientSide)
                                     DragonSurvivalMod.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new SyncCapabilityDebuff(playerEntity.getId(), dragonStateHandler.getDebuffData().timeWithoutWater, dragonStateHandler.getDebuffData().timeInDarkness));
                             }

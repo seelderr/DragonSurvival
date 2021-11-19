@@ -9,6 +9,8 @@ import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
+import net.minecraftforge.event.entity.player.CriticalHitEvent;
+import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
@@ -49,4 +51,23 @@ public class DragonAbilityHandler
 			});
 		}
 	}
+	
+	@SubscribeEvent
+	public static void playerHitEntity(CriticalHitEvent event){
+		if(event.getEntityLiving() instanceof PlayerEntity) {
+			PlayerEntity player = (PlayerEntity)event.getEntityLiving();
+			
+			DragonStateProvider.getCap(player).ifPresent(cap -> {
+				if (!cap.isDragon()) return;
+				
+				if (player.hasEffect(DragonEffects.HUNTER)) {
+					EffectInstance hunter = player.getEffect(DragonEffects.HUNTER);
+					player.removeEffect(DragonEffects.HUNTER);
+					event.setDamageModifier((hunter.getAmplifier() + 1) * 1.5F);
+					event.setResult(Result.ALLOW);
+				}
+			});
+		}
+	}
+	
 }

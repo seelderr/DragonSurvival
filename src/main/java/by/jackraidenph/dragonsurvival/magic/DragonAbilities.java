@@ -3,12 +3,11 @@ package by.jackraidenph.dragonsurvival.magic;
 import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.magic.Abilities.Actives.AoeBuffAbility;
 import by.jackraidenph.dragonsurvival.magic.Abilities.Actives.HunterAbility;
+import by.jackraidenph.dragonsurvival.magic.Abilities.Actives.SpikeAbility;
 import by.jackraidenph.dragonsurvival.magic.Abilities.Actives.VisionAbility;
 import by.jackraidenph.dragonsurvival.magic.Abilities.Innate.DragonClawsAbility;
 import by.jackraidenph.dragonsurvival.magic.Abilities.Innate.DragonWingAbility;
-import by.jackraidenph.dragonsurvival.magic.Abilities.Passives.AthleticsAbility;
-import by.jackraidenph.dragonsurvival.magic.Abilities.Passives.MagicAbility;
-import by.jackraidenph.dragonsurvival.magic.Abilities.Passives.WaterAbility;
+import by.jackraidenph.dragonsurvival.magic.Abilities.Passives.*;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.magic.common.InnateDragonAbility;
@@ -75,14 +74,14 @@ public class DragonAbilities
 	public static void initAbilities(){
 		//Forest dragon
 		POISONOUS_BREATH = register(DragonType.FOREST, new ActiveDragonAbility("poisonous_breath", "forest/poisonous_breath", 1, 4, 2, 0, 0, new Integer[]{0, 10, 30, 50}));
-		SPIKE = register(DragonType.FOREST, new ActiveDragonAbility("spike", "forest/spike", 0, 4, 1, 0,  Functions.secondsToTicks(1), new Integer[]{0, 20, 30, 40}));
+		SPIKE = register(DragonType.FOREST, new SpikeAbility("spike", "forest/spike", 0, 4, 1, 0, Functions.secondsToTicks(1), new Integer[]{0, 20, 30, 40}));
 		INSPIRATION = register(DragonType.FOREST, new AoeBuffAbility(new EffectInstance(Effects.DIG_SPEED, 0, 2), 5, Color.GREEN.darker(), "inspiration", "forest/inspiration", 0, 3, 5, Functions.secondsToTicks(5), Functions.secondsToTicks(30), new Integer[]{0, 15, 35}));
 		HUNTER = register(DragonType.FOREST, new HunterAbility("hunter", "forest/hunter", 0, 2, 3, Functions.secondsToTicks(3), Functions.secondsToTicks(30), new Integer[]{0, 25}));
 		
 		FOREST_MAGIC = register(DragonType.FOREST, new MagicAbility("forest_magic", "forest/forest_magic", 0, 10));
 		FOREST_ATHLETICS = register(DragonType.FOREST, new AthleticsAbility("forest_athletics", "forest/forest_athletics", 0, 5));
-		LIGHT_IN_DARKNESS = register(DragonType.FOREST, new PassiveDragonAbility("light_in_darkness", "forest/light_in_darkness", 0, 6));
-		CLIFFHANGER = register(DragonType.FOREST, new PassiveDragonAbility("cliffhanger", "forest/cliffhanger", 0, 5));
+		LIGHT_IN_DARKNESS = register(DragonType.FOREST, new LightInDarknessAbility("light_in_darkness", "forest/light_in_darkness", 0, 6));
+		CLIFFHANGER = register(DragonType.FOREST, new CliffhangerAbility("cliffhanger", "forest/cliffhanger", 0, 5));
 		
 		FOREST_CLAWS_AND_TEETH = register(DragonType.FOREST, new DragonClawsAbility("forest_claws_and_teeth", "forest/forest_claws_and_teeth", 1, 5));
 		FOREST_WINGS = register(DragonType.FOREST, new DragonWingAbility("forest_wings", "forest/forest_wings", 1, 1));
@@ -93,7 +92,7 @@ public class DragonAbilities
 		STORM_BREATH = register(DragonType.SEA, new ActiveDragonAbility("storm_breath", "sea/storm_breath", 1, 4, 0, 0, 0, new Integer[]{0, 10, 30, 50}));
 		BALL_LIGHTNING = register(DragonType.SEA, new ActiveDragonAbility("ball_lightning", "sea/ball_lightning", 0, 4, 0,0, 0,  new Integer[]{0, 20, 45}));
 		REVEALING_THE_SOUL = register(DragonType.SEA, new AoeBuffAbility(new EffectInstance(Effects.NIGHT_VISION), 5, Color.BLUE, "revealing_the_soul", "sea/revealing_the_soul", 0, 3, 5, Functions.secondsToTicks(5), Functions.secondsToTicks(30),  new Integer[]{0, 25, 40}));
-		SEA_EYES = register(DragonType.SEA, new VisionAbility(DragonEffects.WATER_VISION, "sea_eyes", "sea/sea_eyes", 0, 2, 0, 0, Functions.secondsToTicks(30), new Integer[]{0, 15}));
+		SEA_EYES = register(DragonType.SEA, new VisionAbility(DragonEffects.WATER_VISION, "sea_eyes", "sea/sea_eyes", 0, 2, 2, Functions.secondsToTicks(2), Functions.secondsToTicks(30), new Integer[]{0, 15}));
 		
 		SEA_MAGIC = register(DragonType.SEA, new MagicAbility("sea_magic", "sea/sea_magic", 0, 10));
 		SEA_ATHLETICS = register(DragonType.SEA, new AthleticsAbility("sea_athletics", "sea/sea_athletics", 0, 5));

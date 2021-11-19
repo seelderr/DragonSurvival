@@ -37,6 +37,7 @@ public class AoeBuffAbility extends ActiveDragonAbility
 	{
 		super.onActivation(player);
 		AreaEffectCloudEntity entity = new AreaEffectCloudEntity(EntityType.AREA_EFFECT_CLOUD, player.level);
+		entity.setWaitTime(0);
 		entity.setPos(player.position().x, player.position().y + 0.5, player.position().z);
 		entity.setPotion(new Potion(new EffectInstance(effect.getEffect(), Functions.secondsToTicks(getDuration()) * 4, effect.getAmplifier(), false, false))); //Effect duration is divided by 4 normaly
 		entity.setDuration(Functions.secondsToTicks(1));

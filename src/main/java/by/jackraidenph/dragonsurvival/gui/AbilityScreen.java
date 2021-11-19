@@ -109,8 +109,8 @@ public class AbilityScreen extends Screen {
                     minecraft.getTextureManager().bind(TabButton.buttonTexture);
                     int xP = type == DragonType.SEA ? 0 : type == DragonType.FOREST ? 18 : 36;
                     GL11.glPushMatrix();
-                    GL11.glTranslated(0.5, 0, 0);
-                    blit(stack, x + 3, y + 3, xP / 2, 204 / 2, 9, 9, 128, 128);
+                    GL11.glTranslated(0.6, 0, 0);
+                    blit(stack, x + 3, y + 6, xP / 2, 204 / 2, 9, 9, 128, 128);
                     GL11.glPopMatrix();
                 }
             }
