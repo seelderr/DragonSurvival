@@ -199,7 +199,7 @@ public class ClientEvents {
 
                         eventMatrixStack.translate(0, 0, 0.15);
                     } catch (Throwable ignored) {
-                        if (!(ignored instanceof NullPointerException))
+                        if (!(ignored instanceof NullPointerException) || ConfigHandler.CLIENT.clientDebugMessages.get())
                             ignored.printStackTrace();
                     } finally {
                         eventMatrixStack.popPose();
@@ -496,7 +496,7 @@ public class ClientEvents {
                         matrixStack.popPose();
                     }
                 } catch (Throwable throwable) {
-                    if (!(throwable instanceof NullPointerException))
+                    if (!(throwable instanceof NullPointerException) || ConfigHandler.CLIENT.clientDebugMessages.get())
                         throwable.printStackTrace();
                     matrixStack.popPose();
                 } finally {
