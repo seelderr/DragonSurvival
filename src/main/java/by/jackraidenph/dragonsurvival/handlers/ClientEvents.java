@@ -56,6 +56,7 @@ import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.network.PacketDistributor;
@@ -635,5 +636,11 @@ public class ClientEvents {
                 toolTip.add(new TranslationTextComponent("ds.sea.dragon.food"));
             }
         }
+    }
+
+    @SubscribeEvent
+    public static void unloadWorld(WorldEvent.Unload worldEvent) {
+        dragonEntity = null;
+        dragonArmor = null;
     }
 }
