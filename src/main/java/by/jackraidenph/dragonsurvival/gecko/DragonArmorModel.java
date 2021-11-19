@@ -56,7 +56,7 @@ public class DragonArmorModel extends AnimatedGeoModel<DragonEntity> {
     public void setLivingAnimations(DragonEntity entity, Integer uniqueID, @Nullable AnimationEvent customPredicate) {
         super.setLivingAnimations(entity, uniqueID, customPredicate);
         PlayerEntity player = entity.getPlayer();
-        if (!player.isSleeping() && !player.isPassenger()) {
+        if (player != null && !player.isSleeping() && !player.isPassenger()) {
             AnimationProcessor animationProcessor = getAnimationProcessor();
             IBone neck = animationProcessor.getBone("Neck");
             IBone neck1 = animationProcessor.getBone("Neck1");

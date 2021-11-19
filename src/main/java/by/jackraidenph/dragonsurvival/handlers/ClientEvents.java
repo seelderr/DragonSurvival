@@ -188,19 +188,20 @@ public class ClientEvents {
                         ((DragonRenderer)dragonArmorRenderer).renderColor = renderColor;
 
                         if(bootsItem.getItem() instanceof IDyeableArmorItem){
-                            int colorCode = ((IDyeableArmorItem)bootsItem.getItem()).getColor(bootsItem);
-                            ((DragonRenderer)dragonArmorRenderer).renderColor = new Color(colorCode);
+                            int colorCode = ((IDyeableArmorItem) bootsItem.getItem()).getColor(bootsItem);
+                            ((DragonRenderer) dragonArmorRenderer).renderColor = new Color(colorCode);
                         }
 
                         ResourceLocation boots = new ResourceLocation(DragonSurvivalMod.MODID, constructArmorTexture(player, EquipmentSlotType.FEET));
                         dragonArmorModel.setArmorTexture(boots);
                         dragonArmorRenderer.render(dragonArmor, playerYaw, partialTicks, eventMatrixStack, buffers, light);
-                        ((DragonRenderer)dragonArmorRenderer).renderColor = renderColor;
+                        ((DragonRenderer) dragonArmorRenderer).renderColor = renderColor;
 
                         eventMatrixStack.translate(0, 0, 0.15);
-                    } catch (Throwable ignored) {
-                        if (!(ignored instanceof NullPointerException) || ConfigHandler.CLIENT.clientDebugMessages.get())
-                            ignored.printStackTrace();
+                    } catch (Throwable throwable) {
+                        if (!(throwable instanceof NullPointerException) || ConfigHandler.CLIENT.clientDebugMessages.get())
+                            throwable.printStackTrace();
+                        eventMatrixStack.popPose();
                     } finally {
                         eventMatrixStack.popPose();
                     }
