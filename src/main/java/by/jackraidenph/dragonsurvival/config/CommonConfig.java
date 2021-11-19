@@ -67,6 +67,7 @@ public class CommonConfig {
 	public final ForgeConfigSpec.BooleanValue spawnSquire;
 	public final ForgeConfigSpec.BooleanValue spawnHunter;
 	public final ForgeConfigSpec.BooleanValue spawnHound;
+	public final ForgeConfigSpec.BooleanValue spawnPrinceAndPrincess;
 
 	public final ForgeConfigSpec.IntValue xpGain;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> evilDragonStatusGivers;
@@ -122,6 +123,7 @@ public class CommonConfig {
 		spawnSquire = builder.comment("Dragon Squire spawning enabled?").define("allowSquireSpawning", true);
 		spawnHunter = builder.comment("Dragon Hunter spawning enabled?").define("allowHunterSpawning", true);
 		spawnHound = builder.comment("Dragon Knight hound spawning enabled?").define("allowHoundSpawning", true);
+		spawnPrinceAndPrincess = builder.comment("Princess and prince spawning enabled?").define("allowPrinceAndPrincessSpawning", true);
 		xpGain = builder.comment("How many experience points are gained for killing a villager").defineInRange("villagerKillxp", 10, 10, 1000);
 		evilDragonStatusGivers = builder.comment("Entities which give 'Evil dragon' status on death").defineList("evilDragonStatusGivers", () -> Arrays.asList("minecraft:villager", "dragonsurvival:hunter_hound", "dragonsurvival:knight", "dragonsurvival:shooter", "dragonsurvival:squire", "dragonsurvival:prince", "dragonsurvival:princess", "dragonsurvival:princess_entity"), o -> EntityType.byString((String) o).isPresent());
 		preserveEvilDragonEffectAfterDeath = builder.comment("Preserve effect 'Evil dragon' after death?").define("preserveEvilDragonAfterDeath", false);

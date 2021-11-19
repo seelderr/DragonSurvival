@@ -287,51 +287,53 @@ public class VillagerRelationsHandler {
 
     @SubscribeEvent
     public static void spawnPrinceOrPrincess(TickEvent.WorldTickEvent serverTickEvent) {
-        World world = serverTickEvent.world;
-        if (world instanceof ServerWorld) {
-            ServerWorld serverWorld = (ServerWorld) world;
-            if (!serverWorld.players().isEmpty() && serverWorld.dimension() == World.OVERWORLD)
-                if (timeLeft == 0) {
-                    ServerPlayerEntity player = serverWorld.getRandomPlayer();
-                    if (player != null && player.isAlive() && !player.isCreative() && !player.isSpectator()) {
-                        BlockPos blockPos = Functions.findRandomSpawnPosition(player, 1, 2, 20.0F);
-                        if (blockPos != null && blockPos.getY() >= ConfigHandler.COMMON.riderSpawnLowerBound.get() && blockPos.getY() <= ConfigHandler.COMMON.riderSpawnUpperBound.get()) {
-                            Optional<RegistryKey<Biome>> biomeRegistryKey = serverWorld.getBiomeName(blockPos);
-                            if (biomeRegistryKey.isPresent()) {
-                                RegistryKey<Biome> biome = biomeRegistryKey.get();
-                                if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.OCEAN))
-                                    return;
+        if (ConfigHandler.COMMON.spawnPrinceAndPrincess.get()) {
+            World world = serverTickEvent.world;
+            if (world instanceof ServerWorld) {
+                ServerWorld serverWorld = (ServerWorld) world;
+                if (!serverWorld.players().isEmpty() && serverWorld.dimension() == World.OVERWORLD)
+                    if (timeLeft == 0) {
+                        ServerPlayerEntity player = serverWorld.getRandomPlayer();
+                        if (player != null && player.isAlive() && !player.isCreative() && !player.isSpectator()) {
+                            BlockPos blockPos = Functions.findRandomSpawnPosition(player, 1, 2, 20.0F);
+                            if (blockPos != null && blockPos.getY() >= ConfigHandler.COMMON.riderSpawnLowerBound.get() && blockPos.getY() <= ConfigHandler.COMMON.riderSpawnUpperBound.get()) {
+                                Optional<RegistryKey<Biome>> biomeRegistryKey = serverWorld.getBiomeName(blockPos);
+                                if (biomeRegistryKey.isPresent()) {
+                                    RegistryKey<Biome> biome = biomeRegistryKey.get();
+                                    if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.OCEAN))
+                                        return;
+                                }
+                                EntityType<? extends Princess> entityType = world.random.nextBoolean() ? EntityTypesInit.PRINCESS_ON_HORSE : EntityTypesInit.PRINCE_ON_HORSE;
+                                Princess princessEntity = entityType.create(world);
+                                princessEntity.setPos(blockPos.getX(), blockPos.getY(), blockPos.getZ());
+                                princessEntity.finalizeSpawn(serverWorld, serverWorld.getCurrentDifficultyAt(player.blockPosition()), SpawnReason.NATURAL, null, null);
+
+                                serverWorld.addFreshEntity(princessEntity);
+
+                                ListNBT pattern = (new BannerPattern.Builder()).addPattern(BannerPattern.values()[world.random.nextInt((BannerPattern.values()).length)], DyeColor.values()[world.random.nextInt((DyeColor.values()).length)]).toListTag();
+
+                                int knights = world.random.nextInt(3) + 3;
+                                for (int i = 0; i < knights; i++) {
+                                    Knight knightHunter = EntityTypesInit.KNIGHT.create(serverWorld);
+                                    knightHunter.setPos(blockPos.getX(), blockPos.getY(), blockPos.getZ());
+                                    knightHunter.goalSelector.addGoal(5, new FollowMobGoal(Princess.class, knightHunter, 8));
+                                    knightHunter.finalizeSpawn(serverWorld, serverWorld.getCurrentDifficultyAt(player.blockPosition()), SpawnReason.NATURAL, null, null);
+                                    ItemStack itemStack = new ItemStack(Items.SHIELD);
+                                    CompoundNBT compoundNBT = new CompoundNBT();
+                                    compoundNBT.putInt("Base", princessEntity.getColor());
+                                    compoundNBT.put("Patterns", pattern);
+                                    itemStack.addTagElement("BlockEntityTag", compoundNBT);
+                                    knightHunter.setItemInHand(Hand.OFF_HAND, itemStack);
+                                    serverWorld.addFreshEntity(knightHunter);
+                                }
+
+                                timeLeft = Functions.minutesToTicks(ConfigHandler.COMMON.princessSpawnDelay.get()) + Functions.minutesToTicks(world.random.nextInt(ConfigHandler.COMMON.princessSpawnDelay.get() / 2));
                             }
-                            EntityType<? extends Princess> entityType = world.random.nextBoolean() ? EntityTypesInit.PRINCESS_ON_HORSE : EntityTypesInit.PRINCE_ON_HORSE;
-                            Princess princessEntity = entityType.create(world);
-                            princessEntity.setPos(blockPos.getX(), blockPos.getY(), blockPos.getZ());
-                            princessEntity.finalizeSpawn(serverWorld, serverWorld.getCurrentDifficultyAt(player.blockPosition()), SpawnReason.NATURAL, null, null);
-
-                            serverWorld.addFreshEntity(princessEntity);
-
-                            ListNBT pattern = (new BannerPattern.Builder()).addPattern(BannerPattern.values()[world.random.nextInt((BannerPattern.values()).length)], DyeColor.values()[world.random.nextInt((DyeColor.values()).length)]).toListTag();
-
-                            int knights = world.random.nextInt(3) + 3;
-                            for (int i = 0; i < knights; i++) {
-                                Knight knightHunter = EntityTypesInit.KNIGHT.create(serverWorld);
-                                knightHunter.setPos(blockPos.getX(), blockPos.getY(), blockPos.getZ());
-                                knightHunter.goalSelector.addGoal(5, new FollowMobGoal(Princess.class, knightHunter, 8));
-                                knightHunter.finalizeSpawn(serverWorld, serverWorld.getCurrentDifficultyAt(player.blockPosition()), SpawnReason.NATURAL, null, null);
-                                ItemStack itemStack = new ItemStack(Items.SHIELD);
-                                CompoundNBT compoundNBT = new CompoundNBT();
-                                compoundNBT.putInt("Base", princessEntity.getColor());
-                                compoundNBT.put("Patterns", pattern);
-                                itemStack.addTagElement("BlockEntityTag", compoundNBT);
-                                knightHunter.setItemInHand(Hand.OFF_HAND, itemStack);
-                                serverWorld.addFreshEntity(knightHunter);
-                            }
-
-                            timeLeft = Functions.minutesToTicks(ConfigHandler.COMMON.princessSpawnDelay.get()) + Functions.minutesToTicks(world.random.nextInt(ConfigHandler.COMMON.princessSpawnDelay.get() / 2));
                         }
+                    } else {
+                        timeLeft--;
                     }
-                } else {
-                    timeLeft--;
-                }
+            }
         }
     }
 
