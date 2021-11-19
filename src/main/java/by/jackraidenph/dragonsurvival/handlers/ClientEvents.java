@@ -488,13 +488,14 @@ public class ClientEvents {
                         ItemStack right = player.getMainHandItem();
                         matrixStack.pushPose();
                         matrixStack.mulPose(Vector3f.YP.rotationDegrees(180));
-                        matrixStack.translate(0.5f, 1, -0.8);
+                        matrixStack.translate(0.5, 1, -0.8);
                         itemRenderer.renderStatic(right, ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND, eventLight, combinedOverlayIn, matrixStack, renderTypeBuffer);
                         matrixStack.popPose();
                         matrixStack.pushPose();
                         ItemStack left = player.getOffhandItem();
-                        matrixStack.translate(0.25, 1, 0.4);
-                        itemRenderer.renderStatic(left, ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND, eventLight, combinedOverlayIn, matrixStack, renderTypeBuffer);
+                        matrixStack.mulPose(Vector3f.YP.rotationDegrees(180));
+                        matrixStack.translate(-0.5, 1, -0.8);
+                        mc.getItemInHandRenderer().renderItem(player, left, ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND, true, matrixStack, renderTypeBuffer, eventLight);
                         matrixStack.popPose();
                     }
                 } catch (Throwable throwable) {
