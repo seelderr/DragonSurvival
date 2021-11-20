@@ -6,6 +6,9 @@ import by.jackraidenph.dragonsurvival.gecko.PrinceRenderer;
 import by.jackraidenph.dragonsurvival.gecko.*;
 import by.jackraidenph.dragonsurvival.gui.DragonScreen;
 import by.jackraidenph.dragonsurvival.handlers.ClientEvents;
+import by.jackraidenph.dragonsurvival.magic.entity.Renderer.BallLightningRenderer;
+import by.jackraidenph.dragonsurvival.magic.entity.Renderer.DragonSpikeRenderer;
+import by.jackraidenph.dragonsurvival.magic.entity.models.FireBallModel;
 import by.jackraidenph.dragonsurvival.nest.NestScreen;
 import by.jackraidenph.dragonsurvival.renderer.PrincessRenderer;
 import by.jackraidenph.dragonsurvival.renderer.*;
@@ -119,6 +122,8 @@ public class ClientModEvents {
         ClientRegistry.registerKeyBinding(PREV_ABILITY);
         //Gecko renderers
         DragonModel dragonModel = new DragonModel();
+        RenderingRegistry.registerEntityRenderingHandler(EntityTypesInit.BALL_LIGHTNING, manager -> new BallLightningRenderer(manager, new FireBallModel()));
+    
         RenderingRegistry.registerEntityRenderingHandler(EntityTypesInit.DRAGON, manager -> new DragonRenderer(manager, ClientEvents.dragonModel = dragonModel));
         RenderingRegistry.registerEntityRenderingHandler(EntityTypesInit.DRAGON_ARMOR, manager -> new DragonRenderer(manager, ClientEvents.dragonArmorModel = new DragonArmorModel(dragonModel)));
         RenderingRegistry.registerEntityRenderingHandler(EntityTypesInit.KNIGHT, manager -> new KnightRenderer(manager, new KnightModel()));

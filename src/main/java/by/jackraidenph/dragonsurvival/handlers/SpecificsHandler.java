@@ -81,9 +81,9 @@ public class SpecificsHandler {
 	
 	public static final ResourceLocation DRAGON_HUD = new ResourceLocation(DragonSurvivalMod.MODID + ":textures/gui/dragon_hud.png");
 
-	static Map<DragonType, List<Block>> DRAGON_SPEEDUP_BLOCKS;
-	static List<Block> SEA_DRAGON_HYDRATION_BLOCKS;
-	static List<Item> SEA_DRAGON_HYDRATION_USE_ALTERNATIVES;
+	public static Map<DragonType, List<Block>> DRAGON_SPEEDUP_BLOCKS;
+	public static List<Block> SEA_DRAGON_HYDRATION_BLOCKS;
+	public static List<Item> SEA_DRAGON_HYDRATION_USE_ALTERNATIVES;
 
 	@SubscribeEvent
 	public static void onConfigLoad(ModConfig.Loading event) {

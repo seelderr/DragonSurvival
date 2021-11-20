@@ -1,14 +1,12 @@
-package by.jackraidenph.dragonsurvival.gui.Buttons;
+package by.jackraidenph.dragonsurvival.magic.gui.Buttons;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.Functions;
-import by.jackraidenph.dragonsurvival.magic.Abilities.Actives.AoeBuffAbility;
+import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.magic.common.InnateDragonAbility;
 import by.jackraidenph.dragonsurvival.magic.common.PassiveDragonAbility;
-import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.gui.AbilityScreen;
+import by.jackraidenph.dragonsurvival.magic.gui.AbilityScreen;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -19,6 +17,7 @@ import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
@@ -103,45 +102,43 @@ public class AbilityButton extends Button {
 			
 			int extraWidth = (int)(width / 1.5);
 			
-			if(ability instanceof ActiveDragonAbility) {
-				IFormattableTextComponent textContents = new TranslationTextComponent("ds.skill.mana_cost", ((ActiveDragonAbility)ability).getManaCost());
+			if(ability.getInfo().size() > 0) {
+				IFormattableTextComponent textContents = new StringTextComponent("");
 				
-				if(((ActiveDragonAbility)ability).getCastingTime() > 0){
+				for (ITextComponent component : ability.getInfo()) {
 					textContents.append("\n");
-					textContents.append(new TranslationTextComponent("ds.skill.cast_time", Functions.ticksToSeconds(((ActiveDragonAbility)ability).getCastingTime())));
-				}
-				
-				if(((ActiveDragonAbility)ability).getMaxCooldown() > 0){
-					textContents.append("\n");
-					textContents.append(new TranslationTextComponent("ds.skill.cooldown", Functions.ticksToSeconds(((ActiveDragonAbility)ability).getMaxCooldown())));
-				}
-				
-				if(ability instanceof AoeBuffAbility){
-					textContents.append("\n");
-					textContents.append(new TranslationTextComponent("ds.skill.aoe", ((AoeBuffAbility)ability).getRange() + "x" + ((AoeBuffAbility)ability).getRange()));
+					textContents.append(component);
 				}
 				
 				List<IReorderingProcessor> text = Minecraft.getInstance().font.split(textContents, extraWidth - 5);
 				
+				int longest = 0;
+				
+				for(IReorderingProcessor textR : text){
+					longest = Math.max(longest, Minecraft.getInstance().font.width(textR) + 20);
+				}
+				
+				extraWidth = Math.min(longest, extraWidth);
+				
 				if(Screen.hasShiftDown()){
-					this.render9Sprite(stack, this.x -extraWidth, origYPos + 3, extraWidth, 35 + 24 + (text.size() * 4), 10, 50, 26, 0, 52);
+					this.render9Sprite(stack, this.x -extraWidth, origYPos + 3, extraWidth, 27 + (text.size() * 9), 10, 50, 26, 0, 52);
 				}else {
-					this.render9Sprite(stack, this.x - 10, origYPos + 3, 10 + 5, 35 + 24 + (text.size() * 4), 10, 50, 26, 0, 52);
+					this.render9Sprite(stack, this.x - 10, origYPos + 3, 10 + 5, Math.min((27 + (text.size() * 9)), (35 + 24 + (description.size() * 9)) - 10), 10, 50, 26, 0, 52);
 				}
 				
 				Minecraft.getInstance().getTextureManager().bind(TOOLTIP_BARS);
+				int yPos = ability instanceof ActiveDragonAbility ? 20 : ability instanceof InnateDragonAbility ? 40 : 0;
 				
 				if(Screen.hasShiftDown()){
-					this.blit(stack, this.x - extraWidth + 3, origYPos + 9, 0, 20, 200, 20);
-					
-					AbstractGui.drawCenteredString(stack, Minecraft.getInstance().font, new TranslationTextComponent("ds.skill.info"), this.x - (width / 2) + 3 + 25, (origYPos + 15), -1);
+					this.blit(stack, this.x - extraWidth + 3, origYPos + 9, 0, yPos, 200, 20);
+					AbstractGui.drawString(stack, Minecraft.getInstance().font, new TranslationTextComponent("ds.skill.info"), this.x - extraWidth + 10, (origYPos + 15), -1);
 					
 					for(int k1 = 0; k1 < text.size(); ++k1) {
-						Minecraft.getInstance().font.draw(stack, text.get(k1), this.x - extraWidth + 5, (origYPos + 15) + 18 + (k1 * 9), -5592406);
+						Minecraft.getInstance().font.draw(stack, text.get(k1), this.x - extraWidth + 5, (origYPos + 5) + 18 + (k1 * 9), -5592406);
 					}
 					
 				} else{
-					this.blit(stack, this.x - 10 + 3, origYPos + 9, 0, 20, 200, 20);
+					this.blit(stack, this.x - 10 + 3, origYPos + 9, 0, yPos, 200, 20);
 				}
 			}
 			

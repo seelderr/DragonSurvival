@@ -3,7 +3,7 @@ package by.jackraidenph.dragonsurvival.magic;
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.gui.Buttons.TabButton;
+import by.jackraidenph.dragonsurvival.magic.gui.Buttons.TabButton;
 import by.jackraidenph.dragonsurvival.network.Abilities.ActivateAbilityInSlot;
 import by.jackraidenph.dragonsurvival.network.Abilities.SyncCurrentAbilityCasting;
 import by.jackraidenph.dragonsurvival.registration.ClientModEvents;
@@ -33,7 +33,7 @@ import org.lwjgl.opengl.GL11;
 import java.awt.*;
 
 @Mod.EventBusSubscriber(Dist.CLIENT)
-public class ClientDragonAbilityHandler
+public class ClientMagicHandler
 {
 	private static byte timer = 0;
 	private static byte abilityHoldTimer = 0;

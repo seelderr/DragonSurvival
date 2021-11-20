@@ -29,8 +29,10 @@ public class DragonEffects {
     public static Effect ANIMAL_PEACE;
     public static Effect PREDATOR_ANTI_SPAWN;
     
+    //Magic system effects
     public static Effect WATER_VISION, LAVA_VISION;
     public static Effect HUNTER;
+    public static Effect REVEALING_THE_SOUL;
 
     @SuppressWarnings("unused")
     @SubscribeEvent
@@ -53,6 +55,7 @@ public class DragonEffects {
         PREDATOR_ANTI_SPAWN = new Effect2(EffectType.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "predator_anti_spawn");
         forgeRegistry.register(PREDATOR_ANTI_SPAWN);
         
+        //Magic system effects
         WATER_VISION = new Effect2(EffectType.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "water_vision");
         forgeRegistry.register(WATER_VISION);
         
@@ -61,6 +64,9 @@ public class DragonEffects {
     
         HUNTER = new Effect2(EffectType.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "hunter");
         forgeRegistry.register(HUNTER);
+    
+        REVEALING_THE_SOUL = new Effect2(EffectType.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "revealing_the_soul");
+        forgeRegistry.register(REVEALING_THE_SOUL);
     }
 
     private static class Effect2 extends Effect {

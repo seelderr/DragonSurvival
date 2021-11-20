@@ -1,4 +1,4 @@
-package by.jackraidenph.dragonsurvival.entity.Magic;
+package by.jackraidenph.dragonsurvival.magic.entity;
 
 import by.jackraidenph.dragonsurvival.registration.EntityTypesInit;
 import net.minecraft.entity.EntityType;
@@ -70,7 +70,6 @@ public class DragonSpikeEntity extends AbstractArrowEntity
 	
 	@Override
 	public IPacket<?> getAddEntityPacket() {
-		IPacket packet = NetworkHooks.getEntitySpawningPacket(this);
-		return packet;
+		return NetworkHooks.getEntitySpawningPacket(this);
 	}
 }

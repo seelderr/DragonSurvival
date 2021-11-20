@@ -1,7 +1,7 @@
-package by.jackraidenph.dragonsurvival.renderer;
+package by.jackraidenph.dragonsurvival.magic.entity.Renderer;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.entity.Magic.DragonSpikeEntity;
+import by.jackraidenph.dragonsurvival.magic.entity.DragonSpikeEntity;
 import net.minecraft.client.renderer.entity.ArrowRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.util.ResourceLocation;

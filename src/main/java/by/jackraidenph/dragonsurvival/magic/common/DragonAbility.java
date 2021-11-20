@@ -5,9 +5,11 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public abstract class DragonAbility
@@ -52,6 +54,7 @@ public abstract class DragonAbility
     public IFormattableTextComponent getDescription(){
         return new TranslationTextComponent("ds.skill.description." + getId());
     }
+    public ArrayList<ITextComponent> getInfo(){return new ArrayList<ITextComponent>();}
     
     public int getMaxLevel()
     {

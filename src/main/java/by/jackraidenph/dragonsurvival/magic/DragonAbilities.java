@@ -1,10 +1,7 @@
 package by.jackraidenph.dragonsurvival.magic;
 
 import by.jackraidenph.dragonsurvival.Functions;
-import by.jackraidenph.dragonsurvival.magic.Abilities.Actives.AoeBuffAbility;
-import by.jackraidenph.dragonsurvival.magic.Abilities.Actives.HunterAbility;
-import by.jackraidenph.dragonsurvival.magic.Abilities.Actives.SpikeAbility;
-import by.jackraidenph.dragonsurvival.magic.Abilities.Actives.VisionAbility;
+import by.jackraidenph.dragonsurvival.magic.Abilities.Actives.*;
 import by.jackraidenph.dragonsurvival.magic.Abilities.Innate.DragonClawsAbility;
 import by.jackraidenph.dragonsurvival.magic.Abilities.Innate.DragonWingAbility;
 import by.jackraidenph.dragonsurvival.magic.Abilities.Passives.*;
@@ -90,14 +87,14 @@ public class DragonAbilities
 		
 		//Sea dragon
 		STORM_BREATH = register(DragonType.SEA, new ActiveDragonAbility("storm_breath", "sea/storm_breath", 1, 4, 0, 0, 0, new Integer[]{0, 10, 30, 50}));
-		BALL_LIGHTNING = register(DragonType.SEA, new ActiveDragonAbility("ball_lightning", "sea/ball_lightning", 0, 4, 0,0, 0,  new Integer[]{0, 20, 45}));
-		REVEALING_THE_SOUL = register(DragonType.SEA, new AoeBuffAbility(new EffectInstance(Effects.NIGHT_VISION), 5, Color.BLUE, "revealing_the_soul", "sea/revealing_the_soul", 0, 3, 5, Functions.secondsToTicks(5), Functions.secondsToTicks(30),  new Integer[]{0, 25, 40}));
+		BALL_LIGHTNING = register(DragonType.SEA, new BallLightningAbility(4, "ball_lightning", "sea/ball_lightning", 0, 4, 6, Functions.secondsToTicks(2), Functions.secondsToTicks(60), new Integer[]{0, 20, 45}));
+		REVEALING_THE_SOUL = register(DragonType.SEA, new AoeBuffAbility(new EffectInstance(DragonEffects.REVEALING_THE_SOUL, 60), 5, Color.BLUE, "revealing_the_soul", "sea/revealing_the_soul", 0, 3, 5, Functions.secondsToTicks(5), Functions.secondsToTicks(30),  new Integer[]{0, 25, 40}));
 		SEA_EYES = register(DragonType.SEA, new VisionAbility(DragonEffects.WATER_VISION, "sea_eyes", "sea/sea_eyes", 0, 2, 2, Functions.secondsToTicks(2), Functions.secondsToTicks(30), new Integer[]{0, 15}));
 		
 		SEA_MAGIC = register(DragonType.SEA, new MagicAbility("sea_magic", "sea/sea_magic", 0, 10));
 		SEA_ATHLETICS = register(DragonType.SEA, new AthleticsAbility("sea_athletics", "sea/sea_athletics", 0, 5));
 		WATER = register(DragonType.SEA, new WaterAbility("water", "sea/water", 0, 5));
-		SPECTRAL_IMPACT = register(DragonType.SEA, new PassiveDragonAbility("spectral_impact", "sea/spectral_impact", 0, 3));
+		SPECTRAL_IMPACT = register(DragonType.SEA, new SpectralImpactAbility("spectral_impact", "sea/spectral_impact", 0, 3));
 		
 		SEA_CLAWS_AND_TEETH = register(DragonType.SEA, new DragonClawsAbility("sea_claws_and_teeth", "sea/sea_claws_and_teeth", 1, 5));
 		SEA_WINGS = register(DragonType.SEA, new DragonWingAbility("sea_wings", "sea/sea_wings", 1, 1));

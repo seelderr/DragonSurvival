@@ -8,9 +8,11 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 public class AoeBuffAbility extends ActiveDragonAbility
 {
@@ -27,6 +29,14 @@ public class AoeBuffAbility extends ActiveDragonAbility
 	}
 	
 	@Override
+	public ArrayList<ITextComponent> getInfo()
+	{
+		ArrayList<ITextComponent> components = super.getInfo();
+		components.add(new TranslationTextComponent("ds.skill.aoe", getRange() + "x" + getRange()));
+		return components;
+	}
+	
+	@Override
 	public AoeBuffAbility createInstance()
 	{
 		return new AoeBuffAbility(effect, range, effectColor, id, icon, minLevel, maxLevel, manaCost, castTime, abilityCooldown, requiredLevels);
@@ -40,14 +50,14 @@ public class AoeBuffAbility extends ActiveDragonAbility
 		entity.setWaitTime(0);
 		entity.setPos(player.position().x, player.position().y + 0.5, player.position().z);
 		entity.setPotion(new Potion(new EffectInstance(effect.getEffect(), Functions.secondsToTicks(getDuration()) * 4, effect.getAmplifier(), false, false))); //Effect duration is divided by 4 normaly
-		entity.setDuration(Functions.secondsToTicks(1));
+		entity.setDuration(10);
 		entity.setRadius(getRange());
 		entity.setFixedColor(effectColor.getRGB());
 		player.level.addFreshEntity(entity);
 	}
 	
 	public int getDuration(){
-		return getLevel() * 30;
+		return getLevel() * (effect.getDuration() > 0 ? effect.getDuration() : 30);
 	}
 	
 	public int getRange()

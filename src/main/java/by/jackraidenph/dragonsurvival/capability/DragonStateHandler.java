@@ -276,6 +276,11 @@ public class DragonStateHandler {
 		return this;
 	}
 	
+	public DragonAbility getAbilityOrDefault(DragonAbility ability){
+		DragonAbility ab = getAbility(ability);
+		return ab != null ? ab : ability;
+	}
+	
 	public DragonAbility getAbility(DragonAbility ability){
 		if(ability != null && ability.getId() != null) {
 			for (DragonAbility ab : getAbilities()) {

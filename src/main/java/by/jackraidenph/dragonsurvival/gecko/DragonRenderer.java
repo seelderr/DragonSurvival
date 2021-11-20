@@ -1,6 +1,5 @@
 package by.jackraidenph.dragonsurvival.gecko;
 
-import by.jackraidenph.dragonsurvival.handlers.ClientEvents;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
@@ -26,9 +25,7 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 		super.render(entity, entityYaw, partialTicks, stack, bufferIn, packedLightIn);
 		
 		if (glowTexture != null) {
-			ClientEvents.dragonModel.setCurrentTexture(glowTexture);
-			
-			renderType = RenderType.entityCutoutNoCullZOffset(glowTexture);
+			renderType = RenderType.entityCutout(glowTexture);
 			super.render(entity, entityYaw, partialTicks, stack, bufferIn, 200);
 			renderType = null;
 		}

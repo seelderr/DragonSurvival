@@ -4,7 +4,8 @@ import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.blocks.DragonBeacon;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.entity.*;
-import by.jackraidenph.dragonsurvival.entity.Magic.DragonSpikeEntity;
+import by.jackraidenph.dragonsurvival.magic.entity.BallLightningEntity;
+import by.jackraidenph.dragonsurvival.magic.entity.DragonSpikeEntity;
 import by.jackraidenph.dragonsurvival.gecko.DragonEntity;
 import by.jackraidenph.dragonsurvival.gecko.Knight;
 import by.jackraidenph.dragonsurvival.gecko.Princess;
@@ -55,7 +56,9 @@ public class EntityTypesInit {
     public static EntityType<Princess> PRINCESS_ON_HORSE;
     public static EntityType<by.jackraidenph.dragonsurvival.gecko.Prince> PRINCE_ON_HORSE;
     
+    //Magic abilities
     public static EntityType<DragonSpikeEntity> DRAGON_SPIKE;
+    public static EntityType<BallLightningEntity> BALL_LIGHTNING;
 
     private static <T extends CreatureEntity> EntityType<T> createEntity(Class<T> entityClass, EntityType.IFactory<T> factory, float width, float height, int eggPrimary, int eggSecondary, EntitySpawnPlacementRegistry.IPlacementPredicate spawnPlacementPredicate) {
 
@@ -107,6 +110,11 @@ public class EntityTypesInit {
                 .sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(20).build("dragon_spike");
         DRAGON_SPIKE.setRegistryName("dragonsurvival", "dragon_spike");
         registry.register(DRAGON_SPIKE);
+    
+        BALL_LIGHTNING = EntityType.Builder.<BallLightningEntity>of(BallLightningEntity::new, EntityClassification.MISC)
+                .sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(20).build("ball_lightning");
+        BALL_LIGHTNING.setRegistryName("dragonsurvival", "ball_lightning");
+        registry.register(BALL_LIGHTNING);
     }
 
     @SubscribeEvent

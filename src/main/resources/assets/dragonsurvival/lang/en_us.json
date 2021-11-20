@@ -93,6 +93,7 @@
   "effect.dragonsurvival.water_vision": "Sea Eyes",
   "effect.dragonsurvival.lava_vision": "Lava Eyes",
   "effect.dragonsurvival.hunter": "Hunter",
+  "effect.dragonsurvival.revealing_the_soul": "Revealing The Soul",
 
   "death.attack.starDrain": "%1$s had their life and energy drained by magic.",
   "death.attack.waterBurn": "%1$s tried to swim in water.",
@@ -134,7 +135,7 @@
 
   "ds.skill.description.storm_breath": "Thunderous breath that deals damage {0} at a distance of {1} blocks.\n\nWith prolonged exposure to the enemy, the \"charged\" effect is applied.\n\nCharged opponents electrocute each other. Makes creepers charged. ",
   "ds.skill.description.ball_lightning": "Shoot balls of lightning, dealing {0} damage in an area. ",
-  "ds.skill.description.revealing_the_soul": "Gives the player and those who are nearby a bonus to the experience gained.\n\nThe effect itself lasts {0} seconds.",
+  "ds.skill.description.revealing_the_soul": "Gives the player and those who are nearby a bonus to the experience gained.\n\nThe effect lasts {0} seconds.",
   "ds.skill.description.sea_eyes": "Gives the player the ability to see underwater for {0} seconds ",
   "ds.skill.description.sea_magic": "Concentrated knowledge that can be used over and over again.\n\nYou currently get {0} additional magic points. ",
   "ds.skill.description.sea_athletics": "Running on some surfaces has a Speed II effect.\n\nDuration {0} seconds.\nBlock list: [{1}] ",
@@ -207,12 +208,13 @@
   "ds.skill.required_level": "Requires level {0}",
   "ds.skill.can_unlock": "Can unlock for {0} levels",
   "ds.skill.level.can_unlock.cant_afford": "You need {0} levels to afford this. ",
-  "ds.skill.level.cost": "Costs {0} levels",
-  "ds.skill.level.refund_cost": "Refunds {0} levels",
+  "ds.skill.level.up": "Upgrade the skill for {0} levels",
+  "ds.skill.level.down": "Downgrade the skill and refund {0} levels",
   "ds.skill.type.active": "Active skill",
   "ds.skill.type.passive": "Passive skill",
   "ds.skill.type.innate": "Innate passive skill",
   "ds.skill.info": "Info",
+  "ds.skill.athletics.blocks": "Blocks: {0}",
 
   "ds.endmessage.1": "Have you come here for the wings, {0}? Get out, before it's too late.",
   "ds.endmessage.2": "This is my land, {0}, show some respect. Go away, but first answer, why have you come here. Is it for wings?",

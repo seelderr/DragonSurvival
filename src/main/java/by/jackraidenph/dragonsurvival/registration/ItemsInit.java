@@ -27,6 +27,9 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.registries.IForgeRegistry;
 
+import java.util.Collection;
+import java.util.Collections;
+
 @Mod.EventBusSubscriber(modid = DragonSurvivalMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ItemsInit {
     public static Item heartElement;
@@ -40,6 +43,8 @@ public class ItemsInit {
     public static Item charredMeat, charredVegetable, charredMushroom, charredSeafood, chargedCoal, chargedSoup;
     public static Item huntingNet;
     public static Item passiveFireBeacon, passiveMagicBeacon, passivePeaceBeacon;
+    
+    public static Item lightningTextureItem;
 
     @SubscribeEvent
     public static void register(final RegistryEvent.Register<Item> event) {
@@ -147,5 +152,14 @@ public class ItemsInit {
         registry.register(passivePeaceBeacon);
         passiveFireBeacon = new Item(new Item.Properties()).setRegistryName(DragonSurvivalMod.MODID, "beacon_fire_1");
         registry.register(passiveFireBeacon);
+        
+        lightningTextureItem = new Item(new Item.Properties()){
+            @Override
+            public Collection<ItemGroup> getCreativeTabs()
+            {
+                return Collections.emptyList();
+            }
+        }.setRegistryName(DragonSurvivalMod.MODID, "lightning");
+        registry.register(lightningTextureItem);
     }
 }

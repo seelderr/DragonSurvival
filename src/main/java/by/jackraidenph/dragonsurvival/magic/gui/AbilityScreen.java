@@ -1,4 +1,4 @@
-package by.jackraidenph.dragonsurvival.gui;
+package by.jackraidenph.dragonsurvival.magic.gui;
 
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
@@ -8,7 +8,7 @@ import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.magic.common.InnateDragonAbility;
 import by.jackraidenph.dragonsurvival.magic.common.PassiveDragonAbility;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.gui.Buttons.*;
+import by.jackraidenph.dragonsurvival.magic.gui.Buttons.*;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;

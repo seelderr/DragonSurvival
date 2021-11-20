@@ -1,12 +1,16 @@
 package by.jackraidenph.dragonsurvival.magic.common;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
+import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.lwjgl.glfw.GLFW;
+
+import java.util.ArrayList;
 
 public class ActiveDragonAbility extends DragonAbility
 {
@@ -26,6 +30,24 @@ public class ActiveDragonAbility extends DragonAbility
         this.requiredLevels = requiredLevels;
         this.abilityCooldown = cooldown;
         this.castTime = castTime;
+    }
+    
+    @Override
+    public ArrayList<ITextComponent> getInfo()
+    {
+        ArrayList<ITextComponent> components = super.getInfo();
+    
+        components.add(new TranslationTextComponent("ds.skill.mana_cost", getManaCost()));
+    
+        if(getCastingTime() > 0){
+            components.add(new TranslationTextComponent("ds.skill.cast_time", Functions.ticksToSeconds(getCastingTime())));
+        }
+    
+        if(getMaxCooldown() > 0){
+            components.add(new TranslationTextComponent("ds.skill.cooldown", Functions.ticksToSeconds(getMaxCooldown())));
+        }
+        
+        return components;
     }
     
     @Override

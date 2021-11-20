@@ -2,7 +2,7 @@ package by.jackraidenph.dragonsurvival.gui;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.containers.DragonContainer;
-import by.jackraidenph.dragonsurvival.gui.Buttons.TabButton;
+import by.jackraidenph.dragonsurvival.magic.gui.Buttons.TabButton;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;

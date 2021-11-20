@@ -1,6 +1,6 @@
 package by.jackraidenph.dragonsurvival.magic.Abilities.Actives;
 
-import by.jackraidenph.dragonsurvival.entity.Magic.DragonSpikeEntity;
+import by.jackraidenph.dragonsurvival.magic.entity.DragonSpikeEntity;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.registration.EntityTypesInit;
 import net.minecraft.entity.player.PlayerEntity;

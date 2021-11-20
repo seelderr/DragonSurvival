@@ -1,7 +1,7 @@
-package by.jackraidenph.dragonsurvival.gui.Buttons;
+package by.jackraidenph.dragonsurvival.magic.gui.Buttons;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.gui.AbilityScreen;
+import by.jackraidenph.dragonsurvival.magic.gui.AbilityScreen;
 import by.jackraidenph.dragonsurvival.gui.DragonScreen;
 import by.jackraidenph.dragonsurvival.network.Abilities.OpenDragonInventory;
 import com.mojang.blaze3d.matrix.MatrixStack;

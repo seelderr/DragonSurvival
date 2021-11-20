@@ -15,15 +15,15 @@ public class AnimationTimer {
         animationTimes.put(animation, ticks);
     }
 
-    protected void trackAnimation(String animation) {
+    public void trackAnimation(String animation) {
         animationTimes.computeIfPresent(animation, (s, integer) -> --integer);
     }
 
-    protected int getDuration(String animation) {
+    public int getDuration(String animation) {
         return animationTimes.getOrDefault(animation, 0);
     }
 
-    protected void putAnimation(String animation, int ticks, AnimationBuilder builder) {
+    public void putAnimation(String animation, int ticks, AnimationBuilder builder) {
         builder.addAnimation(animation);
         putDuration(animation, ticks);
     }
