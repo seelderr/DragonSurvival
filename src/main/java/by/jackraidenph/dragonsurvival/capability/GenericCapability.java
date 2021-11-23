@@ -1,4 +1,4 @@
-package by.jackraidenph.dragonsurvival.capability.entity;
+package by.jackraidenph.dragonsurvival.capability;
 
 import net.minecraft.util.math.vector.Vector3d;
 

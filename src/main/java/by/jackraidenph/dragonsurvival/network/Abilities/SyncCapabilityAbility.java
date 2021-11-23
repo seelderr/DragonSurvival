@@ -20,7 +20,6 @@ public class SyncCapabilityAbility implements IMessage<SyncCapabilityAbility>
 	public int playerId;
 	private ArrayList<DragonAbility> abilities = new ArrayList<>();
 	private int selectedSlot;
-	private int maxMana;
 	private int currentMana;
 	private boolean renderHotbar;
 	
@@ -28,9 +27,8 @@ public class SyncCapabilityAbility implements IMessage<SyncCapabilityAbility>
 	
 	}
 	
-	public SyncCapabilityAbility(int playerId, int selectedSlot, int maxMana, int currentMana, ArrayList<DragonAbility> abilities, boolean renderHotbar) {
+	public SyncCapabilityAbility(int playerId, int selectedSlot, int currentMana, ArrayList<DragonAbility> abilities, boolean renderHotbar) {
 		this.playerId = playerId;
-		this.maxMana = maxMana;
 		this.currentMana = currentMana;
 		this.abilities = abilities;
 		this.selectedSlot = selectedSlot;
@@ -41,7 +39,6 @@ public class SyncCapabilityAbility implements IMessage<SyncCapabilityAbility>
 	public void encode(SyncCapabilityAbility message, PacketBuffer buffer) {
 		buffer.writeInt(message.playerId);
 		buffer.writeInt(message.selectedSlot);
-		buffer.writeInt(message.maxMana);
 		buffer.writeInt(message.currentMana);
 		buffer.writeBoolean(message.renderHotbar);
 		
@@ -59,7 +56,6 @@ public class SyncCapabilityAbility implements IMessage<SyncCapabilityAbility>
 		int playerId = buffer.readInt();
 		ArrayList<DragonAbility> abilities = new ArrayList<>();
 		int selectedSlot = buffer.readInt();
-		int maxMana = buffer.readInt();
 		int currentMana = buffer.readInt();
 		boolean renderHotbar = buffer.readBoolean();
 		
@@ -73,7 +69,7 @@ public class SyncCapabilityAbility implements IMessage<SyncCapabilityAbility>
 			}
 		}
 		
-		return new SyncCapabilityAbility(playerId, selectedSlot, maxMana, currentMana, abilities, renderHotbar);
+		return new SyncCapabilityAbility(playerId, selectedSlot, currentMana, abilities, renderHotbar);
 	}
 	
 	@Override
@@ -81,7 +77,6 @@ public class SyncCapabilityAbility implements IMessage<SyncCapabilityAbility>
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
 			if (supplier.get().getDirection().getReceptionSide().isClient() && (Minecraft.getInstance().player != null)) {
 				DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {
-					cap.setMaxMana(message.maxMana);
 					cap.setCurrentMana(message.currentMana);
 					cap.getAbilities().clear();
 					cap.getAbilities().addAll(message.abilities);

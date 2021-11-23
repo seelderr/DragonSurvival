@@ -1,9 +1,9 @@
 package by.jackraidenph.dragonsurvival.capability;
 
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.magic.Abilities.DragonAbilities;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
-import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.util.DragonLevel;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.block.BlockState;
@@ -12,8 +12,6 @@ import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.ToolType;
 
@@ -32,10 +30,6 @@ public class DragonStateHandler {
     private final DragonDebuffData debuffData = new DragonDebuffData(0, 0, 0);
     private int lavaAirSupply;
     private int passengerId;
-	
-	private Vector3d lastPos;
-	
-	private boolean renderAbilities = true;
 	
 	public static final UUID HEALTH_MODIFIER_UUID = UUID.fromString("03574e62-f9e4-4f1b-85ad-fde00915e446");
     public static final UUID DAMAGE_MODIFIER_UUID = UUID.fromString("5bd3cebc-132e-4f9d-88ef-b686c7ad1e2c");
@@ -57,17 +51,6 @@ public class DragonStateHandler {
         AttributeModifier swimSpeedMod = buildSwimSpeedMod(getType());
         updateSwimSpeedModifier(playerEntity, swimSpeedMod);
     }
-	
-	public Vector3d getLastPos()
-	{
-		return lastPos;
-	}
-	
-	public DragonStateHandler setLastPos(Vector3d lastPos)
-	{
-		this.lastPos = lastPos;
-		return this;
-	}
 	
 	public void setSize(float size) {
     	this.size = size;
@@ -246,38 +229,98 @@ public class DragonStateHandler {
     public DragonType getType() {
         return this.type;
     }
+    public void setType(DragonType type) {
+        this.type = type;
+    }
+    
+    public int getLavaAirSupply() {
+    	return this.lavaAirSupply;
+    }
+    
+    public void setLavaAirSupply(int lavaAirSupply) {
+    	this.lavaAirSupply = lavaAirSupply;
+    }
+
+    public int getPassengerId() {
+        return this.passengerId;
+    }
+
+    public void setPassengerId( int passengerId){
+        this.passengerId = passengerId;
+    }
+	
+	public static class DragonMovementData {
+        public double bodyYaw;
+        public double headYaw;
+        public double headPitch;
+
+        public double headYawLastTick;
+        public double headPitchLastTick;
+        public double bodyYawLastTick;
+
+        public boolean bite;
+        
+        public DragonMovementData(double bodyYaw, double headYaw, double headPitch, boolean bite) {
+            this.bodyYaw = bodyYaw;
+            this.headYaw = headYaw;
+            this.headPitch = headPitch;
+            this.headYawLastTick = headYaw;
+            this.headPitchLastTick = headPitch;
+            this.bodyYawLastTick = bodyYaw;
+            this.bite = bite;
+        }
+    }
+    
+    public static class DragonDebuffData {
+    	public double timeWithoutWater;
+		public int timeInRain;
+    	public int timeInDarkness;
+    	
+    	public DragonDebuffData(double timeWithoutWater, int timeInDarkness, int timeInRain) {
+    		this.timeWithoutWater = timeWithoutWater;
+    		this.timeInDarkness = timeInDarkness;
+			this.timeInRain = timeInRain;
+    	}
+    }
 	
 	private ArrayList<DragonAbility> abilities = new ArrayList<>();
 	public static final int MAX_SLOTS = 4;
 	
 	private ActiveDragonAbility currentlyCasting = null;
-	
 	private int selectedAbilitySlot = 0;
-	private int maxMana = 100;
 	private int currentMana = 0;
 	
-	public int getMaxMana() {
-		return currentMana;
-	}
+	private boolean renderAbilities = true;
 	
-	public void setMaxMana(int maxMana) {
-		this.maxMana = maxMana;
+	
+	public int getMaxMana(PlayerEntity entity) {
+		int mana = 1;
+		
+		mana += (Math.min(50, entity.experienceLevel) - 5) / 5;
+		
+		switch(type){
+			case SEA:
+				mana += getAbilityLevel(DragonAbilities.SEA_MAGIC);
+				break;
+			
+			case CAVE:
+				mana += getAbilityLevel(DragonAbilities.CAVE_MAGIC);
+				break;
+			
+			case FOREST:
+				mana += getAbilityLevel(DragonAbilities.FOREST_MAGIC);
+				break;
+		}
+		
+		return mana;
 	}
 	
 	public int getCurrentMana() {
-		return maxMana;
+		return currentMana;
 	}
 	
 	public void setCurrentMana(int currentMana) {
-		this.currentMana = MathHelper.clamp(currentMana, 0, this.getMaxMana());
-	}
-	
-	public void replenishMana(int mana) {
-		this.setCurrentMana(this.getCurrentMana() + mana);
-	}
-	
-	public void consumeMana(int mana) {
-		this.setCurrentMana(this.getCurrentMana() - mana);
+		this.currentMana = currentMana;
 	}
 	
 	public ActiveDragonAbility getCurrentlyCasting()
@@ -325,9 +368,6 @@ public class DragonStateHandler {
 	}
 	
 	public ActiveDragonAbility getAbilityFromSlot(int slot) {
-		if ((slot > MAX_SLOTS) || (slot < 0))
-			throw new IllegalArgumentException("Failed to set ability in the slot. The slot number is inappropriate.");
-		
 		ActiveDragonAbility dragonAbility = type != null && DragonAbilities.ACTIVE_ABILITIES.get(type) != null && DragonAbilities.ACTIVE_ABILITIES.get(type).size() >= slot ? DragonAbilities.ACTIVE_ABILITIES.get(type).get(slot) : null;
 		ActiveDragonAbility actual = (ActiveDragonAbility)getAbility(dragonAbility);
 		
@@ -341,6 +381,17 @@ public class DragonStateHandler {
 	
 	public void setSelectedAbilitySlot(int newSlot) {
 		this.selectedAbilitySlot = newSlot;
+	}
+	
+	public boolean renderAbilityHotbar()
+	{
+		return renderAbilities;
+	}
+	
+	public DragonStateHandler setRenderAbilities(boolean renderAbilities)
+	{
+		this.renderAbilities = renderAbilities;
+		return this;
 	}
 	
 	public CompoundNBT saveAbilities(){
@@ -366,70 +417,4 @@ public class DragonStateHandler {
 			}
 		}
 	}
-
-    public void setType(DragonType type) {
-        this.type = type;
-    }
-    
-    public int getLavaAirSupply() {
-    	return this.lavaAirSupply;
-    }
-    
-    public void setLavaAirSupply(int lavaAirSupply) {
-    	this.lavaAirSupply = lavaAirSupply;
-    }
-
-    public int getPassengerId() {
-        return this.passengerId;
-    }
-
-    public void setPassengerId( int passengerId){
-        this.passengerId = passengerId;
-    }
-	
-	public boolean renderAbilityHotbar()
-	{
-		return renderAbilities;
-	}
-	
-	public DragonStateHandler setRenderAbilities(boolean renderAbilities)
-	{
-		this.renderAbilities = renderAbilities;
-		return this;
-	}
-	
-	public static class DragonMovementData {
-        public double bodyYaw;
-        public double headYaw;
-        public double headPitch;
-
-        public double headYawLastTick;
-        public double headPitchLastTick;
-        public double bodyYawLastTick;
-
-        public boolean bite;
-        
-        public DragonMovementData(double bodyYaw, double headYaw, double headPitch, boolean bite) {
-            this.bodyYaw = bodyYaw;
-            this.headYaw = headYaw;
-            this.headPitch = headPitch;
-            this.headYawLastTick = headYaw;
-            this.headPitchLastTick = headPitch;
-            this.bodyYawLastTick = bodyYaw;
-            this.bite = bite;
-        }
-    }
-    
-    public static class DragonDebuffData {
-    	public double timeWithoutWater;
-		public int timeInRain;
-    	public int timeInDarkness;
-    	
-    	public DragonDebuffData(double timeWithoutWater, int timeInDarkness, int timeInRain) {
-    		this.timeWithoutWater = timeWithoutWater;
-    		this.timeInDarkness = timeInDarkness;
-			this.timeInRain = timeInRain;
-    	}
-    }
-	
 }

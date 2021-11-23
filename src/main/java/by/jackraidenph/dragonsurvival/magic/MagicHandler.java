@@ -55,6 +55,14 @@ public class MagicHandler
 					player.addEffect(new EffectInstance(Effects.NIGHT_VISION, 10, 0, false, false));
 				}
 			}
+			
+			if(!player.level.isClientSide) {
+				if (cap.getCurrentMana() < cap.getMaxMana(player)) {
+					if (player.tickCount % Functions.secondsToTicks(15) == 0) {
+						DragonStateProvider.replenishMana(player, 1);
+					}
+				}
+			}
 		});
 	}
 	

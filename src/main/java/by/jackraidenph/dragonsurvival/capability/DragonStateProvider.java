@@ -1,13 +1,17 @@
 package by.jackraidenph.dragonsurvival.capability;
 
-import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
+import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
+import by.jackraidenph.dragonsurvival.network.Abilities.SyncCapabilityAbility;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fml.network.PacketDistributor;
 
 public class DragonStateProvider implements ICapabilitySerializable<CompoundNBT> {
 
@@ -23,28 +27,26 @@ public class DragonStateProvider implements ICapabilitySerializable<CompoundNBT>
         return getCap(entity).filter(DragonStateHandler::isDragon).isPresent();
     }
     
-    public static boolean hasAbility(Entity entity, DragonAbility ability) {
-        return getCap(entity).filter((cap) -> cap.getAbility(ability) != null).isPresent();
+    public static int getCurrentMana(PlayerEntity entity) {
+        return getCap(entity).map(DragonStateHandler::getCurrentMana).orElse(0);
     }
+    public static void replenishMana(PlayerEntity entity, int mana) {
+        getCap(entity).ifPresent(cap -> {
+            cap.setCurrentMana(Math.min(cap.getMaxMana(entity), cap.getCurrentMana() + mana));
     
-    public static int getAbilityLevel(Entity entity, DragonAbility ability) {
-        return !hasAbility(entity, ability) ? 0 : getCap(entity).map((cap) -> cap.getAbility(ability).getLevel()).get();
+            if(!entity.level.isClientSide){
+                DragonSurvivalMod.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)entity), new SyncCapabilityAbility(entity.getId(), cap.getSelectedAbilitySlot(), cap.getCurrentMana(), cap.getAbilities(), cap.renderAbilityHotbar()));
+            }
+        });
     }
+    public static void consumeMana(PlayerEntity entity, int mana) {
+        getCap(entity).ifPresent(cap -> {
+            cap.setCurrentMana(Math.max(0, cap.getCurrentMana() - mana));
     
-    public static int getCurrentMana(Entity entity) {
-        return getCap(entity).map(cap -> cap.getCurrentMana()).orElseGet(() -> 0);
-    }
-    
-    public static void setMaxMana(Entity entity, int mana) {
-        getCap(entity).ifPresent(cap -> cap.setMaxMana(mana));
-    }
-    
-    public static void replenishMana(Entity entity, int mana) {
-        getCap(entity).ifPresent(cap -> cap.replenishMana(mana));
-    }
-    
-    public static void consumeMana(Entity entity, int mana) {
-        getCap(entity).ifPresent(cap -> cap.consumeMana(mana));
+            if(!entity.level.isClientSide){
+                DragonSurvivalMod.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)entity), new SyncCapabilityAbility(entity.getId(), cap.getSelectedAbilitySlot(), cap.getCurrentMana(), cap.getAbilities(), cap.renderAbilityHotbar()));
+            }
+        });
     }
     
     @Override

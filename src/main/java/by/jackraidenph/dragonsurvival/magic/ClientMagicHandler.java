@@ -136,14 +136,28 @@ public class ClientMagicHandler
 					
 					textureManager.bind(new ResourceLocation("textures/gui/widgets.png"));
 					Screen.blit(event.getMatrixStack(), posX + (sizeX * cap.getSelectedAbilitySlot()) - 1, window.getGuiScaledHeight() - 23, 2, 0, 22, 24, 24, 256, 256);
+					
+					textureManager.bind(TabButton.buttonTexture);
+					
+					int maxMana = cap.getMaxMana(playerEntity);
+					int curMana = cap.getCurrentMana();
+					
+					for(int i = 0; i < 1 + Math.ceil(maxMana / 10.0); i++){
+						for(int x = 0; x < 10; x++){
+							int manaSlot = (i * 10) + x;
+							if(manaSlot < maxMana) {
+								int xPos = curMana <= manaSlot ? 54 : cap.getType() == DragonType.SEA ? 0 : cap.getType() == DragonType.FOREST ? 18 : 36;
+								float rescale = 2.15F;
+								Screen.blit(event.getMatrixStack(), posX + (x * (int)(18 / rescale)), posY - 12 - (i * ((int)(18 / rescale) + 1)), xPos / rescale, 204 / rescale, (int)(18 / rescale), (int)(18 / rescale), (int)(256 / rescale), (int)(256 / rescale));
+							//	Minecraft.getInstance().font.draw(event.getMatrixStack(), Integer.toString(manaSlot), posX + (x * (int)(18 / rescale)), posY - 12 - (i * ((int)(18 / rescale) + 1)), -1);
+							}
+						}
+					}
 				}
 				
 		
 		        ActiveDragonAbility ability = cap.getAbilityFromSlot(cap.getSelectedAbilitySlot());
 				
-	            //TODO Improve cast bar, for example add a background box to it and render the icon of the skill that is currently casting
-	            //TODO And maybe change color based on dragon type?
-	            //TODO Show current casting in seconds at the end of the bar
 	            if(ability.getCurrentCastTimer() > 0){
 		            textureManager.bind(ability.getIcon());
 		

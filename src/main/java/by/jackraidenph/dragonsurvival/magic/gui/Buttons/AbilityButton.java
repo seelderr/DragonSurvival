@@ -166,7 +166,7 @@ public class AbilityButton extends Button {
 		
 		
 		if(ability.getMaxLevel() > 1) {
-			AbstractGui.drawCenteredString(stack, Minecraft.getInstance().font, new StringTextComponent(ability.getLevel() + "/" + ability.getMaxLevel()), (this.x + width - 15), (origYPos + 9), -1);
+			AbstractGui.drawCenteredString(stack, Minecraft.getInstance().font, new StringTextComponent(ability.getLevel() + "/" + ability.getMaxLevel()), (this.x + width - 18), (origYPos + 9), -1);
 			AbstractGui.drawCenteredString(stack, Minecraft.getInstance().font, ability.getTitle(), this.x + (width / 2), origYPos + 9, -1);
 		}else{
 			AbstractGui.drawCenteredString(stack, Minecraft.getInstance().font, ability.getTitle(), this.x + (width / 2) + 10, origYPos + 9, -1);

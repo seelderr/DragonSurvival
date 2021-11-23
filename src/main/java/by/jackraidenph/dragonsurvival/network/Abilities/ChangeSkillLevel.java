@@ -83,7 +83,7 @@ public class ChangeSkillLevel implements IMessage<ChangeSkillLevel>
                 }
                 
                 playerAbility.setLevel(message.level);
-                DragonSurvivalMod.CHANNEL.send(PacketDistributor.PLAYER.with(() -> playerEntity), new SyncCapabilityAbility(playerEntity.getId(), dragonStateHandler.getSelectedAbilitySlot(), dragonStateHandler.getMaxMana(), dragonStateHandler.getCurrentMana(), dragonStateHandler.getAbilities(), dragonStateHandler.renderAbilityHotbar()));
+                DragonSurvivalMod.CHANNEL.send(PacketDistributor.PLAYER.with(() -> playerEntity), new SyncCapabilityAbility(playerEntity.getId(), dragonStateHandler.getSelectedAbilitySlot(), dragonStateHandler.getCurrentMana(), dragonStateHandler.getAbilities(), dragonStateHandler.renderAbilityHotbar()));
             }
         });
     }

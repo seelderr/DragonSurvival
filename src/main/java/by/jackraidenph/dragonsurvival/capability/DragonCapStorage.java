@@ -34,7 +34,6 @@ public class DragonCapStorage implements Capability.IStorage<DragonStateHandler>
             
             CompoundNBT nbt = new CompoundNBT();
             nbt.putInt("mana", instance.getCurrentMana());
-            nbt.putInt("maxMana", instance.getMaxMana());
             nbt.putInt("selectedAbilitySlot", instance.getSelectedAbilitySlot());
             nbt.put("abilitySlots", instance.saveAbilities());
             tag.put("abilityData", nbt);
@@ -70,7 +69,6 @@ public class DragonCapStorage implements Capability.IStorage<DragonStateHandler>
     
                 if (ability != null) {
                     instance.setSelectedAbilitySlot(ability.getInt("selectedAbilitySlot"));
-                    instance.setMaxMana(ability.getInt("maxMana"));
                     instance.setCurrentMana(ability.getInt("mana"));
                     instance.loadAbilities(ability);
                 }

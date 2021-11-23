@@ -2,10 +2,10 @@ package by.jackraidenph.dragonsurvival.handlers;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.capability.Capabilities;
-import by.jackraidenph.dragonsurvival.capability.entity.GenericCapabilityProvider;
+import by.jackraidenph.dragonsurvival.capability.Capabilities.GenericCapabilityProvider;
 import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.capability.VillageRelationshipsProvider;
+import by.jackraidenph.dragonsurvival.capability.Capabilities.VillageRelationshipsProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.network.DiggingStatus;
 import by.jackraidenph.dragonsurvival.network.RefreshDragons;
@@ -59,7 +59,6 @@ public class CapabilityController {
     
                         capNew.getAbilities().clear();
                         capNew.getAbilities().addAll(capOld.getAbilities());
-                        capNew.setMaxMana(capOld.getMaxMana());
                         capNew.setCurrentMana(capOld.getCurrentMana());
                         capNew.setSelectedAbilitySlot(capOld.getSelectedAbilitySlot());
                         capNew.setRenderAbilities(capOld.renderAbilityHotbar());

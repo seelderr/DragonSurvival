@@ -91,9 +91,7 @@ public class ActiveDragonAbility extends DragonAbility
     }
     
     public void consumeMana(PlayerEntity player) {
-        if(!player.isCreative()) {
-            DragonStateProvider.consumeMana(player, this.getManaCost());
-        }
+        DragonStateProvider.consumeMana(player, this.getManaCost());
     }
     
     public void onActivation(PlayerEntity player) {

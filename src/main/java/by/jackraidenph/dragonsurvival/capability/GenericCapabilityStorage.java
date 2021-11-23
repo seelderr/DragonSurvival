@@ -1,4 +1,4 @@
-package by.jackraidenph.dragonsurvival.capability.entity;
+package by.jackraidenph.dragonsurvival.capability;
 
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.DoubleNBT;
