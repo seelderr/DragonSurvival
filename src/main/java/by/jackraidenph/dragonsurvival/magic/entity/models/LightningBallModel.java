@@ -5,7 +5,7 @@ import by.jackraidenph.dragonsurvival.magic.entity.BallLightningEntity;
 import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 
-public class FireBallModel extends AnimatedGeoModel<BallLightningEntity>
+public class LightningBallModel extends AnimatedGeoModel<BallLightningEntity>
 {
 	private  ResourceLocation currentTexture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/entity/lightning_texture.png");
 	
@@ -25,6 +25,6 @@ public class FireBallModel extends AnimatedGeoModel<BallLightningEntity>
 	
 	@Override
 	public ResourceLocation getAnimationFileLocation(BallLightningEntity animatable) {
-		return new ResourceLocation(DragonSurvivalMod.MODID, "animations/dragon_ball.animation.json");
+		return new ResourceLocation(DragonSurvivalMod.MODID, "animations/lightning_ball.animation.json");
 	}
 }

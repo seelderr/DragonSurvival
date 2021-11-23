@@ -98,8 +98,6 @@ public class ClientMagicHandler
 	        return;
 	    
 	    DragonStateProvider.getCap(playerEntity).ifPresent(cap -> {
-	        if(!cap.renderAbilityHotbar()) return;
-	        
 	        if (event.getType() == RenderGameOverlayEvent.ElementType.HOTBAR) {
 	            GL11.glPushMatrix();
 
@@ -114,27 +112,31 @@ public class ClientMagicHandler
 	            int posX = rightSide ? window.getGuiScaledWidth() - (sizeX * count) - 20 : (sizeX * count) + 20;
 	            int posY = window.getGuiScaledHeight() - (sizeY);
 	
-	            textureManager.bind(new ResourceLocation("textures/gui/widgets.png"));
-	            Screen.blit(event.getMatrixStack(), posX, posY - 2, 0, 0, 0, 41, 22, 256, 256);
-	            Screen.blit(event.getMatrixStack(), posX + 41, posY - 2, 0, 141, 0, 41, 22, 256, 256);
-	            
-	            for (int x = 0; x < count; x++) {
-	                ActiveDragonAbility ability = cap.getAbilityFromSlot(x);
-	                
-	                if(ability != null && ability.getIcon() != null) {
-	                    textureManager.bind(ability.getIcon());
-	                    Screen.blit(event.getMatrixStack(), posX + (x * sizeX) + 3, posY + 1
-	                            , 0, 0, 16, 16, 16, 16);
-		
-		                if(ability.getMaxCooldown() > 0 && ability.getCooldown() > 0 && ability.getMaxCooldown() != ability.getCooldown() ){
-			                float f = MathHelper.clamp((float)ability.getCooldown() / (float)ability.getMaxCooldown(), 0, 1);
-			                int boxX = posX + (x * sizeX) + 3;
-			                int boxY = posY + 1;
-			                int offset = 16 - (16 - (int)(f * 16));
-			                AbstractGui.fill(event.getMatrixStack(), boxX, boxY, boxX + 16, boxY + (offset), new Color(0.15F, 0.15F, 0.15F, 0.75F).getRGB());
-		                }
-	                }
-	            }
+				if(cap.renderAbilityHotbar()) {
+					textureManager.bind(new ResourceLocation("textures/gui/widgets.png"));
+					Screen.blit(event.getMatrixStack(), posX, posY - 2, 0, 0, 0, 41, 22, 256, 256);
+					Screen.blit(event.getMatrixStack(), posX + 41, posY - 2, 0, 141, 0, 41, 22, 256, 256);
+					
+					for (int x = 0; x < count; x++) {
+						ActiveDragonAbility ability = cap.getAbilityFromSlot(x);
+						
+						if (ability != null && ability.getIcon() != null) {
+							textureManager.bind(ability.getIcon());
+							Screen.blit(event.getMatrixStack(), posX + (x * sizeX) + 3, posY + 1, 0, 0, 16, 16, 16, 16);
+							
+							if (ability.getMaxCooldown() > 0 && ability.getCooldown() > 0 && ability.getMaxCooldown() != ability.getCooldown()) {
+								float f = MathHelper.clamp((float)ability.getCooldown() / (float)ability.getMaxCooldown(), 0, 1);
+								int boxX = posX + (x * sizeX) + 3;
+								int boxY = posY + 1;
+								int offset = 16 - (16 - (int)(f * 16));
+								AbstractGui.fill(event.getMatrixStack(), boxX, boxY, boxX + 16, boxY + (offset), new Color(0.15F, 0.15F, 0.15F, 0.75F).getRGB());
+							}
+						}
+					}
+					
+					textureManager.bind(new ResourceLocation("textures/gui/widgets.png"));
+					Screen.blit(event.getMatrixStack(), posX + (sizeX * cap.getSelectedAbilitySlot()) - 1, window.getGuiScaledHeight() - 23, 2, 0, 22, 24, 24, 256, 256);
+				}
 				
 		
 		        ActiveDragonAbility ability = cap.getAbilityFromSlot(cap.getSelectedAbilitySlot());
@@ -155,10 +157,7 @@ public class ClientMagicHandler
 	                Screen.blit(event.getMatrixStack(), (window.getGuiScaledWidth() / 2) - (194 / 4), window.getGuiScaledHeight() - offset, 0, 180 / 2,  194 / 2, 6 / 2, 128, 128);
 	                Screen.blit(event.getMatrixStack(), (window.getGuiScaledWidth() / 2) - (194 / 4), window.getGuiScaledHeight() - offset, 0, 174 / 2,  (int)((194 / 2) * perc), 6 / 2, 128, 128);
 	            }
-		
-		        textureManager.bind(new ResourceLocation("textures/gui/widgets.png"));
-	            Screen.blit(event.getMatrixStack(), posX + (sizeX * cap.getSelectedAbilitySlot()) - 1, window.getGuiScaledHeight() - 23, 2, 0, 22, 24, 24, 256, 256);
-
+				
 	            GL11.glPopMatrix();
 	        }
 	    });
@@ -187,7 +186,7 @@ public class ClientMagicHandler
 	        
 	        if (cap.getType() == DragonType.CAVE && event.getInfo().getFluidInCamera().is(FluidTags.LAVA)) {
 	            if(player.hasEffect(DragonEffects.LAVA_VISION)) {
-	                event.setDensity(0.01F);
+	                event.setDensity(event.getDensity() / 5);
 	                event.setCanceled(true);
 	            }
 	        }else if (cap.getType() == DragonType.SEA && event.getInfo().getFluidInCamera().is(FluidTags.WATER)) {

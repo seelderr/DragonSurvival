@@ -2,7 +2,9 @@ package by.jackraidenph.dragonsurvival.registration;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.entity.BolasEntity;
+import by.jackraidenph.dragonsurvival.magic.Abilities.Actives.StrongLeatherAbility;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.attributes.AttributeModifier.Operation;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -15,6 +17,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.IForgeRegistry;
 
+import java.awt.*;
 import java.util.Collections;
 import java.util.List;
 
@@ -33,6 +36,8 @@ public class DragonEffects {
     public static Effect WATER_VISION, LAVA_VISION;
     public static Effect HUNTER;
     public static Effect REVEALING_THE_SOUL;
+    public static Effect BURN;
+    public static Effect STRONG_LEATHER;
 
     @SuppressWarnings("unused")
     @SubscribeEvent
@@ -67,6 +72,13 @@ public class DragonEffects {
     
         REVEALING_THE_SOUL = new Effect2(EffectType.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "revealing_the_soul");
         forgeRegistry.register(REVEALING_THE_SOUL);
+    
+        STRONG_LEATHER = new Effect2(EffectType.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "strong_leather");
+        STRONG_LEATHER.addAttributeModifier(Attributes.ARMOR, "1640719a-4c40-11ec-81d3-0242ac130003", StrongLeatherAbility.getDefence(1), Operation.ADDITION);
+        forgeRegistry.register(STRONG_LEATHER);
+    
+        BURN = new Effect2(EffectType.HARMFUL, new Color(255, 92, 43).getRGB(), false).setRegistryName(DragonSurvivalMod.MODID, "burn");
+        forgeRegistry.register(BURN);
     }
 
     private static class Effect2 extends Effect {
@@ -81,6 +93,8 @@ public class DragonEffects {
         public List<ItemStack> getCurativeItems() {
             return uncurable ? Collections.emptyList() : super.getCurativeItems();
         }
+        
+        
     }
 
     private static class Stress extends Effect {

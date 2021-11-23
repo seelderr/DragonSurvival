@@ -10,6 +10,7 @@ import by.jackraidenph.dragonsurvival.gecko.DragonEntity;
 import by.jackraidenph.dragonsurvival.gecko.Knight;
 import by.jackraidenph.dragonsurvival.gecko.Princess;
 import by.jackraidenph.dragonsurvival.handlers.VillagerRelationsHandler;
+import by.jackraidenph.dragonsurvival.magic.entity.FireBallEntity;
 import by.jackraidenph.dragonsurvival.tiles.DragonBeaconEntity;
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Preconditions;
@@ -59,6 +60,7 @@ public class EntityTypesInit {
     //Magic abilities
     public static EntityType<DragonSpikeEntity> DRAGON_SPIKE;
     public static EntityType<BallLightningEntity> BALL_LIGHTNING;
+    public static EntityType<FireBallEntity> FIREBALL;
 
     private static <T extends CreatureEntity> EntityType<T> createEntity(Class<T> entityClass, EntityType.IFactory<T> factory, float width, float height, int eggPrimary, int eggSecondary, EntitySpawnPlacementRegistry.IPlacementPredicate spawnPlacementPredicate) {
 
@@ -107,14 +109,19 @@ public class EntityTypesInit {
         registry.register(BOLAS_ENTITY);
     
         DRAGON_SPIKE = EntityType.Builder.<DragonSpikeEntity>of(DragonSpikeEntity::new, EntityClassification.MISC)
-                .sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(20).build("dragon_spike");
+                .sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(1).build("dragon_spike");
         DRAGON_SPIKE.setRegistryName("dragonsurvival", "dragon_spike");
         registry.register(DRAGON_SPIKE);
     
         BALL_LIGHTNING = EntityType.Builder.<BallLightningEntity>of(BallLightningEntity::new, EntityClassification.MISC)
-                .sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(20).build("ball_lightning");
+                .sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(1).build("ball_lightning");
         BALL_LIGHTNING.setRegistryName("dragonsurvival", "ball_lightning");
         registry.register(BALL_LIGHTNING);
+    
+        FIREBALL = EntityType.Builder.<FireBallEntity>of(FireBallEntity::new, EntityClassification.MISC)
+                .sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(1).build("fireball");
+        FIREBALL.setRegistryName("dragonsurvival", "fireball");
+        registry.register(FIREBALL);
     }
 
     @SubscribeEvent

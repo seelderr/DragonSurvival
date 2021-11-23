@@ -45,7 +45,7 @@ public class PacketProxy {
             Entity entity = world.getEntity(syncCapabilityDebuff.playerId);
             if (entity instanceof PlayerEntity) {
             	DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
-                    dragonStateHandler.setDebuffData(syncCapabilityDebuff.timeWithoutWater, syncCapabilityDebuff.timeInDarkness);
+                    dragonStateHandler.setDebuffData(syncCapabilityDebuff.timeWithoutWater, syncCapabilityDebuff.timeInDarkness, syncCapabilityDebuff.timeInRain);
                 });
             }
 		 }

@@ -2,6 +2,7 @@ package by.jackraidenph.dragonsurvival.handlers;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.capability.Capabilities;
+import by.jackraidenph.dragonsurvival.capability.entity.GenericCapabilityProvider;
 import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.capability.VillageRelationshipsProvider;
@@ -33,6 +34,8 @@ import net.minecraftforge.fml.network.PacketDistributor;
 public class CapabilityController {
     @SubscribeEvent
     public static void attachCapabilities(AttachCapabilitiesEvent<Entity> event) {
+        event.addCapability(new ResourceLocation("dragonsurvival", "generic_capability_data"), new GenericCapabilityProvider());
+    
         if (event.getObject() instanceof PlayerEntity) {
             event.addCapability(new ResourceLocation("dragonsurvival", "playerstatehandler"), new DragonStateProvider());
             event.addCapability(new ResourceLocation("dragonsurvival", "village_relations"), new VillageRelationshipsProvider());
@@ -53,7 +56,14 @@ public class CapabilityController {
                         capNew.setType(capOld.getType());
                         capNew.setHasWings(capOld.hasWings());
                         capNew.setLavaAirSupply(ConfigHandler.SERVER.caveLavaSwimmingTicks.get());
-
+    
+                        capNew.getAbilities().clear();
+                        capNew.getAbilities().addAll(capOld.getAbilities());
+                        capNew.setMaxMana(capOld.getMaxMana());
+                        capNew.setCurrentMana(capOld.getCurrentMana());
+                        capNew.setSelectedAbilitySlot(capOld.getSelectedAbilitySlot());
+                        capNew.setRenderAbilities(capOld.renderAbilityHotbar());
+                        
                         DragonStateHandler.updateModifiers(original, player);
 
                         player.refreshDimensions();

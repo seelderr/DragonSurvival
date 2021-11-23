@@ -16,12 +16,9 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.*;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.List;
 
 public class AbilityButton extends Button {
@@ -85,7 +82,14 @@ public class AbilityButton extends Button {
 		int width = 150;
 		
 		int lx = 29 + Minecraft.getInstance().font.width(ability.getTitle().getContents());
-		List<IReorderingProcessor> description = Minecraft.getInstance().font.split(ability.getDescription(), width - 7);
+		IFormattableTextComponent desc = ability.getDescription();
+		
+		if(ability.getInfo().size() > 0 && !Screen.hasShiftDown()){
+			desc.append("\n\n");
+			desc.append(new TranslationTextComponent("ds.skill.info.hold_shift").withStyle(TextFormatting.DARK_GRAY));
+		}
+		
+		List<IReorderingProcessor> description = Minecraft.getInstance().font.split(desc, width - 7);
 		
 		for(IReorderingProcessor ireorderingprocessor : description) {
 			lx = Math.max(lx, Minecraft.getInstance().font.width(ireorderingprocessor));

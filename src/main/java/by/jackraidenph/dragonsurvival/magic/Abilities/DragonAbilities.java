@@ -1,20 +1,21 @@
-package by.jackraidenph.dragonsurvival.magic;
+package by.jackraidenph.dragonsurvival.magic.Abilities;
 
 import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.magic.Abilities.Actives.*;
 import by.jackraidenph.dragonsurvival.magic.Abilities.Innate.DragonClawsAbility;
 import by.jackraidenph.dragonsurvival.magic.Abilities.Innate.DragonWingAbility;
+import by.jackraidenph.dragonsurvival.magic.Abilities.Innate.HotBloodAbility;
 import by.jackraidenph.dragonsurvival.magic.Abilities.Passives.*;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.magic.common.InnateDragonAbility;
 import by.jackraidenph.dragonsurvival.magic.common.PassiveDragonAbility;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
+import by.jackraidenph.dragonsurvival.registration.ParticleRegistry;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -72,7 +73,7 @@ public class DragonAbilities
 		//Forest dragon
 		POISONOUS_BREATH = register(DragonType.FOREST, new ActiveDragonAbility("poisonous_breath", "forest/poisonous_breath", 1, 4, 2, 0, 0, new Integer[]{0, 10, 30, 50}));
 		SPIKE = register(DragonType.FOREST, new SpikeAbility("spike", "forest/spike", 0, 4, 1, 0, Functions.secondsToTicks(1), new Integer[]{0, 20, 30, 40}));
-		INSPIRATION = register(DragonType.FOREST, new AoeBuffAbility(new EffectInstance(Effects.DIG_SPEED, 0, 2), 5, Color.GREEN.darker(), "inspiration", "forest/inspiration", 0, 3, 5, Functions.secondsToTicks(5), Functions.secondsToTicks(30), new Integer[]{0, 15, 35}));
+		INSPIRATION = register(DragonType.FOREST, new AoeBuffAbility(new EffectInstance(Effects.DIG_SPEED, 0, 2), 5, ParticleRegistry.fireBeaconParticle, "inspiration", "forest/inspiration", 0, 3, 5, Functions.secondsToTicks(5), Functions.secondsToTicks(30), new Integer[]{0, 15, 35}));
 		HUNTER = register(DragonType.FOREST, new HunterAbility("hunter", "forest/hunter", 0, 2, 3, Functions.secondsToTicks(3), Functions.secondsToTicks(30), new Integer[]{0, 25}));
 		
 		FOREST_MAGIC = register(DragonType.FOREST, new MagicAbility("forest_magic", "forest/forest_magic", 0, 10));
@@ -88,7 +89,7 @@ public class DragonAbilities
 		//Sea dragon
 		STORM_BREATH = register(DragonType.SEA, new ActiveDragonAbility("storm_breath", "sea/storm_breath", 1, 4, 0, 0, 0, new Integer[]{0, 10, 30, 50}));
 		BALL_LIGHTNING = register(DragonType.SEA, new BallLightningAbility(4, "ball_lightning", "sea/ball_lightning", 0, 4, 6, Functions.secondsToTicks(2), Functions.secondsToTicks(60), new Integer[]{0, 20, 45}));
-		REVEALING_THE_SOUL = register(DragonType.SEA, new AoeBuffAbility(new EffectInstance(DragonEffects.REVEALING_THE_SOUL, 60), 5, Color.BLUE, "revealing_the_soul", "sea/revealing_the_soul", 0, 3, 5, Functions.secondsToTicks(5), Functions.secondsToTicks(30),  new Integer[]{0, 25, 40}));
+		REVEALING_THE_SOUL = register(DragonType.SEA, new AoeBuffAbility(new EffectInstance(DragonEffects.REVEALING_THE_SOUL, 60), 5, ParticleRegistry.magicBeaconParticle, "revealing_the_soul", "sea/revealing_the_soul", 0, 3, 5, Functions.secondsToTicks(5), Functions.secondsToTicks(30), new Integer[]{0, 25, 40}));
 		SEA_EYES = register(DragonType.SEA, new VisionAbility(DragonEffects.WATER_VISION, "sea_eyes", "sea/sea_eyes", 0, 2, 2, Functions.secondsToTicks(2), Functions.secondsToTicks(30), new Integer[]{0, 15}));
 		
 		SEA_MAGIC = register(DragonType.SEA, new MagicAbility("sea_magic", "sea/sea_magic", 0, 10));
@@ -103,19 +104,19 @@ public class DragonAbilities
 		
 		//Cave dragon
 		NETHER_BREATH = register(DragonType.CAVE, new ActiveDragonAbility("nether_breath", "cave/nether_breath", 1, 4, 0,0, 0,  new Integer[]{0, 10, 30, 50}));
-		FIREBALL = register(DragonType.CAVE, new ActiveDragonAbility("fireball", "cave/fireball", 0, 4, 0,0, 0,  new Integer[]{0, 20, 40, 45}));
-		STRONG_LEATHER = register(DragonType.CAVE, new AoeBuffAbility(new EffectInstance(Effects.NIGHT_VISION), 5, Color.RED, "strong_leather", "cave/strong_leather", 0, 3, 5, Functions.secondsToTicks(5), Functions.secondsToTicks(30),  new Integer[]{0, 15, 35}));
-		LAVA_VISION = register(DragonType.CAVE, new VisionAbility(DragonEffects.LAVA_VISION, "lava_vision", "cave/lava_vision", 0, 2, 0, 0, Functions.secondsToTicks(30),  new Integer[]{0, 25}));
+		FIREBALL = register(DragonType.CAVE, new FireBallAbility("fireball", "cave/fireball", 0, 4,6, Functions.secondsToTicks(4), Functions.secondsToTicks(60),  new Integer[]{0, 20, 40, 45}));
+		STRONG_LEATHER = register(DragonType.CAVE, new StrongLeatherAbility(new EffectInstance(DragonEffects.STRONG_LEATHER), 5, ParticleRegistry.peaceBeaconParticle, "strong_leather", "cave/strong_leather", 0, 3, 5, Functions.secondsToTicks(5), Functions.secondsToTicks(30),  new Integer[]{0, 15, 35}));
+		LAVA_VISION = register(DragonType.CAVE, new VisionAbility(DragonEffects.LAVA_VISION, "lava_vision", "cave/lava_vision", 0, 2, 2, Functions.secondsToTicks(2), Functions.secondsToTicks(30),  new Integer[]{0, 25}));
 		
 		CAVE_MAGIC = register(DragonType.CAVE, new MagicAbility("cave_magic", "cave/cave_magic", 0, 10));
 		CAVE_ATHLETICS = register(DragonType.CAVE, new AthleticsAbility("cave_athletics", "cave/cave_athletics", 0, 5));
-		CONTRAST_SHOWER = register(DragonType.CAVE, new PassiveDragonAbility("contrast_shower", "cave/contrast_shower", 0, 5));
-		BURN = register(DragonType.CAVE, new PassiveDragonAbility("burn", "cave/burn", 0, 3));
+		CONTRAST_SHOWER = register(DragonType.CAVE, new ContrastShowerAbility("contrast_shower", "cave/contrast_shower", 0, 5));
+		BURN = register(DragonType.CAVE, new BurnAbility("burn", "cave/burn", 0, 3));
 		
 		CAVE_CLAWS_AND_TEETH = register(DragonType.CAVE, new DragonClawsAbility("cave_claws_and_teeth", "cave/cave_claws_and_teeth", 1, 5));
 		CAVE_WINGS = register(DragonType.CAVE, new DragonWingAbility("cave_wings", "cave/cave_wings", 1, 1));
 		CAVE_DRAGON = register(DragonType.CAVE, new InnateDragonAbility("cave_dragon", "cave/cave_dragon", 1, 1));
-		HOT_BLOOD = register(DragonType.CAVE, new InnateDragonAbility("hot_bloode", "cave/hot_bloode", 1, 1));
+		HOT_BLOOD = register(DragonType.CAVE, new HotBloodAbility("hot_bloode", "cave/hot_bloode", 1, 1));
 	}
 	
 	

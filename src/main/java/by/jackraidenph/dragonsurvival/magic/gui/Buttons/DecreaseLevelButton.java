@@ -1,7 +1,7 @@
 package by.jackraidenph.dragonsurvival.magic.gui.Buttons;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
+import by.jackraidenph.dragonsurvival.magic.Abilities.DragonAbilities;
 import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.magic.common.PassiveDragonAbility;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;

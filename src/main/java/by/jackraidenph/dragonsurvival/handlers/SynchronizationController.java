@@ -25,7 +25,7 @@ public class SynchronizationController {
     {
         DragonSurvivalMod.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SynchronizeDragonCap(serverPlayerEntity.getId(), dragonStateHandler.isHiding(), dragonStateHandler.getType(), dragonStateHandler.getSize(), dragonStateHandler.hasWings(), dragonStateHandler.getLavaAirSupply(), 0));
         DragonSurvivalMod.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new PacketSyncCapabilityMovement(player.getId(), dragonStateHandler.getMovementData().bodyYaw, dragonStateHandler.getMovementData().headYaw, dragonStateHandler.getMovementData().headPitch, dragonStateHandler.getMovementData().bite));
-        DragonSurvivalMod.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncCapabilityDebuff(player.getId(), dragonStateHandler.getDebuffData().timeWithoutWater, dragonStateHandler.getDebuffData().timeInDarkness));
+        DragonSurvivalMod.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncCapabilityDebuff(player.getId(), dragonStateHandler.getDebuffData().timeWithoutWater, dragonStateHandler.getDebuffData().timeInDarkness, dragonStateHandler.getDebuffData().timeInRain));
         DragonSurvivalMod.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncCapabilityAbility(player.getId(), dragonStateHandler.getSelectedAbilitySlot(), dragonStateHandler.getMaxMana(), dragonStateHandler.getCurrentMana(), dragonStateHandler.getAbilities(), dragonStateHandler.renderAbilityHotbar()));
     }
     
@@ -34,7 +34,7 @@ public class SynchronizationController {
         DragonStateProvider.getCap(player).ifPresent(cap -> {
             DragonSurvivalMod.CHANNEL.send(PacketDistributor.ALL.noArg(), new SynchronizeDragonCap(player.getId(), cap.isHiding(), cap.getType(), cap.getSize(), cap.hasWings(), cap.getLavaAirSupply(), 0));
             DragonSurvivalMod.CHANNEL.send(PacketDistributor.ALL.noArg(), new PacketSyncCapabilityMovement(player.getId(), cap.getMovementData().bodyYaw, cap.getMovementData().headYaw, cap.getMovementData().headPitch, cap.getMovementData().bite));
-            DragonSurvivalMod.CHANNEL.send(PacketDistributor.ALL.noArg(), new SyncCapabilityDebuff(player.getId(), cap.getDebuffData().timeWithoutWater, cap.getDebuffData().timeInDarkness));
+            DragonSurvivalMod.CHANNEL.send(PacketDistributor.ALL.noArg(), new SyncCapabilityDebuff(player.getId(), cap.getDebuffData().timeWithoutWater, cap.getDebuffData().timeInDarkness, cap.getDebuffData().timeInRain));
             DragonSurvivalMod.CHANNEL.send(PacketDistributor.ALL.noArg(), new SyncCapabilityAbility(player.getId(), cap.getSelectedAbilitySlot(), cap.getMaxMana(), cap.getCurrentMana(), cap.getAbilities(), cap.renderAbilityHotbar()));
         });
     }
@@ -44,7 +44,7 @@ public class SynchronizationController {
         DragonMovementData mData = dragonStateHandler.getMovementData();
         DragonSurvivalMod.CHANNEL.send(PacketDistributor.PLAYER.with(() -> trackingPlayer), new PacketSyncCapabilityMovement(trackedEntity.getId(), mData.bodyYaw, mData.headYaw, mData.headPitch, mData.bite));
         DragonDebuffData dData = dragonStateHandler.getDebuffData();
-        DragonSurvivalMod.CHANNEL.send(PacketDistributor.PLAYER.with(() -> trackingPlayer), new SyncCapabilityDebuff(trackedEntity.getId(), dData.timeWithoutWater, dData.timeInDarkness));
+        DragonSurvivalMod.CHANNEL.send(PacketDistributor.PLAYER.with(() -> trackingPlayer), new SyncCapabilityDebuff(trackedEntity.getId(), dData.timeWithoutWater, dData.timeInDarkness, dData.timeInRain));
         DragonSurvivalMod.CHANNEL.send(PacketDistributor.PLAYER.with(() -> trackingPlayer), new SyncCapabilityAbility(trackedEntity.getId(), dragonStateHandler.getSelectedAbilitySlot(), dragonStateHandler.getMaxMana(), dragonStateHandler.getCurrentMana(), dragonStateHandler.getAbilities(), dragonStateHandler.renderAbilityHotbar()));
     }
     
@@ -71,35 +71,6 @@ public class SynchronizationController {
     /**
      * Synchronizes the capability after death
      */
-    @SubscribeEvent
-    public static void onPlayerClone(PlayerEvent.Clone playerRespawnEvent) {
-        PlayerEntity orig = playerRespawnEvent.getOriginal();
-        PlayerEntity player = playerRespawnEvent.getPlayer();
-        
-        if (!player.level.isClientSide) {
-            // send the capability to everyone
-            DragonStateProvider.getCap(orig).ifPresent(origCap -> {
-                DragonStateProvider.getCap(player).ifPresent(cap -> {
-                    cap.getAbilities().clear();
-                    cap.getAbilities().addAll(origCap.getAbilities());
-                    cap.setMaxMana(origCap.getMaxMana());
-                    cap.setCurrentMana(origCap.getCurrentMana());
-                    cap.setSelectedAbilitySlot(origCap.getSelectedAbilitySlot());
-                    cap.setRenderAbilities(origCap.renderAbilityHotbar());
-    
-                    syncToAll(player);
-                });
-            });
-            
-            // receive capability from others
-            player.getServer().getPlayerList().getPlayers().forEach(serverPlayerEntity -> {
-                DragonStateProvider.getCap(orig).ifPresent(dragonStateHandler -> {
-                    syncWithPlayer(player, serverPlayerEntity, dragonStateHandler);
-                });
-            });
-        }
-    }
-    
     @SubscribeEvent
     public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent playerRespawnEvent) {
         PlayerEntity player = playerRespawnEvent.getPlayer();

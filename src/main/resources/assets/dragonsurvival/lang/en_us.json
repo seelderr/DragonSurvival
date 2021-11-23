@@ -94,6 +94,8 @@
   "effect.dragonsurvival.lava_vision": "Lava Eyes",
   "effect.dragonsurvival.hunter": "Hunter",
   "effect.dragonsurvival.revealing_the_soul": "Revealing The Soul",
+  "effect.dragonsurvival.burn": "Burn",
+  "effect.dragonsurvival.strong_leather": "Strong Leather",
 
   "death.attack.starDrain": "%1$s had their life and energy drained by magic.",
   "death.attack.waterBurn": "%1$s tried to swim in water.",
@@ -187,7 +189,7 @@
 
   "ds.skill.description.nether_breath": "Real fire is gradually ignited from your mouth, dealing {0} damage at a distance of 3 blocks.\n\nLong-term exposure to the enemy gives the effect of \"burn\". ",
   "ds.skill.description.fireball": "Just a ball of fire.\n\nDeals {0} damage.",
-  "ds.skill.description.strong_leather": "Empowers players and nearby entities, giving them additional {1} defense units.\nThe effect itself lasts {2} seconds. ",
+  "ds.skill.description.strong_leather": "Empowers players and nearby entities, giving them additional {1} defense units.\nThe effect itself lasts {0} seconds. ",
   "ds.skill.description.lava_vision": "Gives your dragon the ability to see what is in the lava for {0} seconds ",
   "ds.skill.description.cave_magic": "Concentrated knowledge that can be used over and over again.\n\nYou currently get {0} additional magic points. ",
   "ds.skill.description.cave_athletics": "Running on some surfaces has a Speed II effect.\n\nDuration {0} seconds.\nBlock list: [{1}]",
@@ -207,13 +209,14 @@
   "ds.skill.aoe": "Radius: {0}",
   "ds.skill.required_level": "Requires level {0}",
   "ds.skill.can_unlock": "Can unlock for {0} levels",
-  "ds.skill.level.can_unlock.cant_afford": "You need {0} levels to afford this. ",
+  "ds.skill.can_unlock.cant_afford": "You need {0} levels to afford this. ",
   "ds.skill.level.up": "Upgrade the skill for {0} levels",
   "ds.skill.level.down": "Downgrade the skill and refund {0} levels",
   "ds.skill.type.active": "Active skill",
   "ds.skill.type.passive": "Passive skill",
   "ds.skill.type.innate": "Innate passive skill",
   "ds.skill.info": "Info",
+  "ds.skill.info.hold_shift": "Hold 'Shift' for info",
   "ds.skill.athletics.blocks": "Blocks: {0}",
 
   "ds.endmessage.1": "Have you come here for the wings, {0}? Get out, before it's too late.",

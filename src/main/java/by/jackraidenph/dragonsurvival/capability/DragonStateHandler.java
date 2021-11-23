@@ -1,6 +1,6 @@
 package by.jackraidenph.dragonsurvival.capability;
 
-import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
+import by.jackraidenph.dragonsurvival.magic.Abilities.DragonAbilities;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
@@ -13,6 +13,7 @@ import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.ToolType;
 
@@ -28,9 +29,11 @@ public class DragonStateHandler {
     private final DragonMovementData movementData = new DragonMovementData(0, 0, 0, false);
     private boolean hasWings;
     private float size;
-    private final DragonDebuffData debuffData = new DragonDebuffData(0, 0);
+    private final DragonDebuffData debuffData = new DragonDebuffData(0, 0, 0);
     private int lavaAirSupply;
     private int passengerId;
+	
+	private Vector3d lastPos;
 	
 	private boolean renderAbilities = true;
 	
@@ -54,8 +57,19 @@ public class DragonStateHandler {
         AttributeModifier swimSpeedMod = buildSwimSpeedMod(getType());
         updateSwimSpeedModifier(playerEntity, swimSpeedMod);
     }
-    
-    public void setSize(float size) {
+	
+	public Vector3d getLastPos()
+	{
+		return lastPos;
+	}
+	
+	public DragonStateHandler setLastPos(Vector3d lastPos)
+	{
+		this.lastPos = lastPos;
+		return this;
+	}
+	
+	public void setSize(float size) {
     	this.size = size;
     }
 
@@ -219,9 +233,10 @@ public class DragonStateHandler {
         return this.movementData;
     }
     
-    public void setDebuffData(double timeWithoutWater, int timeInDarkness) {
+    public void setDebuffData(double timeWithoutWater, int timeInDarkness, int timeInRain) {
     	debuffData.timeWithoutWater = timeWithoutWater;
     	debuffData.timeInDarkness = timeInDarkness;
+		debuffData.timeInRain = timeInRain;
     }
     
     public DragonDebuffData getDebuffData() {
@@ -407,11 +422,13 @@ public class DragonStateHandler {
     
     public static class DragonDebuffData {
     	public double timeWithoutWater;
+		public int timeInRain;
     	public int timeInDarkness;
     	
-    	public DragonDebuffData(double timeWithoutWater, int timeInDarkness) {
+    	public DragonDebuffData(double timeWithoutWater, int timeInDarkness, int timeInRain) {
     		this.timeWithoutWater = timeWithoutWater;
     		this.timeInDarkness = timeInDarkness;
+			this.timeInRain = timeInRain;
     	}
     }
 	

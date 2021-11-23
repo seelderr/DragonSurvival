@@ -2,8 +2,9 @@ package by.jackraidenph.dragonsurvival.handlers;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.Functions;
+import by.jackraidenph.dragonsurvival.magic.Abilities.Passives.ContrastShowerAbility;
 import by.jackraidenph.dragonsurvival.magic.Abilities.Passives.LightInDarknessAbility;
-import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
+import by.jackraidenph.dragonsurvival.magic.Abilities.DragonAbilities;
 import by.jackraidenph.dragonsurvival.magic.Abilities.Passives.AthleticsAbility;
 import by.jackraidenph.dragonsurvival.magic.Abilities.Passives.WaterAbility;
 import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
@@ -61,22 +62,63 @@ public class DragonTraitHandler {
                 
                 switch (dragonStateHandler.getType()) {
                     case CAVE:
-                        if (ConfigHandler.SERVER.penalties.get() && !playerEntity.hasEffect(DragonEffects.FIRE) && !playerEntity.isCreative() && !playerEntity.isSpectator() && ((playerEntity.isInWaterOrBubble() && ConfigHandler.SERVER.caveWaterDamage.get() != 0.0) || (playerEntity.isInWaterOrRain() && !playerEntity.isInWater() && ConfigHandler.SERVER.caveRainDamage.get() != 0.0) || (SpecificsHandler.SEA_DRAGON_HYDRATION_BLOCKS != null && (SpecificsHandler.SEA_DRAGON_HYDRATION_BLOCKS.contains(block) || SpecificsHandler.SEA_DRAGON_HYDRATION_BLOCKS.contains(world.getBlockState(playerEntity.blockPosition()).getBlock())) && ConfigHandler.SERVER.caveRainDamage.get() != 0.0))) {
-                            if (playerEntity.isInWaterOrBubble() && playerEntity.tickCount % 10 == 0 && ConfigHandler.SERVER.caveWaterDamage.get() != 0.0)
-                                playerEntity.hurt(DamageSources.WATER_BURN, ConfigHandler.SERVER.caveWaterDamage.get().floatValue());
-                            else if (((playerEntity.isInWaterOrRain() && !playerEntity.isInWaterOrBubble()) || (SpecificsHandler.SEA_DRAGON_HYDRATION_BLOCKS != null && (SpecificsHandler.SEA_DRAGON_HYDRATION_BLOCKS.contains(block) || SpecificsHandler.SEA_DRAGON_HYDRATION_BLOCKS.contains(world.getBlockState(playerEntity.blockPosition()).getBlock())))) && playerEntity.tickCount % 40 == 0 && ConfigHandler.SERVER.caveRainDamage.get() != 0.0)
-                                playerEntity.hurt(DamageSources.WATER_BURN, ConfigHandler.SERVER.caveRainDamage.get().floatValue());
-                            if (playerEntity.tickCount % 5 == 0)
-                                playerEntity.playSound(SoundEvents.LAVA_EXTINGUISH, 1.0F, (playerEntity.getRandom().nextFloat() - playerEntity.getRandom().nextFloat()) * 0.2F + 1.0F);
-                            if (world.isClientSide)
-                                world.addParticle(ParticleTypes.POOF,
-                                        playerEntity.getX() + world.random.nextDouble() * (world.random.nextBoolean() ? 1 : -1),
-                                        playerEntity.getY() + 0.5F,
-                                        playerEntity.getZ() + world.random.nextDouble() * (world.random.nextBoolean() ? 1 : -1),
-                                        0, 0, 0);
+                        DragonAbility contrastShower = dragonStateHandler.getAbility(DragonAbilities.CONTRAST_SHOWER);
+                        int maxRainTime = 0;
+    
+                        if(contrastShower != null){
+                            maxRainTime +=  Functions.secondsToTicks(((ContrastShowerAbility)contrastShower).getDuration());
                         }
-                        if (playerEntity.isOnFire() && ConfigHandler.SERVER.bonuses.get() && ConfigHandler.SERVER.caveFireImmunity.get())
+    
+    
+                        if (ConfigHandler.SERVER.penalties.get() && !playerEntity.hasEffect(DragonEffects.FIRE) && !playerEntity.isCreative() && !playerEntity.isSpectator() && ((playerEntity.isInWaterOrBubble() && ConfigHandler.SERVER.caveWaterDamage.get() != 0.0)
+                             || (playerEntity.isInWaterOrRain() && !playerEntity.isInWater() && ConfigHandler.SERVER.caveRainDamage.get() != 0.0)
+                             || (SpecificsHandler.SEA_DRAGON_HYDRATION_BLOCKS != null && (SpecificsHandler.SEA_DRAGON_HYDRATION_BLOCKS.contains(block)
+                             || SpecificsHandler.SEA_DRAGON_HYDRATION_BLOCKS.contains(world.getBlockState(playerEntity.blockPosition()).getBlock())) && ConfigHandler.SERVER.caveRainDamage.get() != 0.0))) {
+                            
+                            if (playerEntity.isInWaterOrBubble() && playerEntity.tickCount % 10 == 0 && ConfigHandler.SERVER.caveWaterDamage.get() != 0.0){
+                                playerEntity.hurt(DamageSources.WATER_BURN, ConfigHandler.SERVER.caveWaterDamage.get().floatValue());
+                                
+                          }else if (((playerEntity.isInWaterOrRain() && !playerEntity.isInWaterOrBubble())
+                                      || (SpecificsHandler.SEA_DRAGON_HYDRATION_BLOCKS != null && (SpecificsHandler.SEA_DRAGON_HYDRATION_BLOCKS.contains(block)
+                                      || SpecificsHandler.SEA_DRAGON_HYDRATION_BLOCKS.contains(world.getBlockState(playerEntity.blockPosition()).getBlock())))) && ConfigHandler.SERVER.caveRainDamage.get() != 0.0) {
+                             
+                              if(dragonStateHandler.getDebuffData().timeInRain >= maxRainTime) {
+                                  if(playerEntity.tickCount % 40 == 0) {
+                                      playerEntity.hurt(DamageSources.WATER_BURN, ConfigHandler.SERVER.caveRainDamage.get().floatValue());
+                                  }
+                              }else{
+                                  dragonStateHandler.getDebuffData().timeInRain++;
+    
+                                  if (!playerEntity.level.isClientSide) {
+                                      DragonSurvivalMod.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new SyncCapabilityDebuff(playerEntity.getId(), dragonStateHandler.getDebuffData().timeWithoutWater, dragonStateHandler.getDebuffData().timeInDarkness, dragonStateHandler.getDebuffData().timeInRain));
+                                  }
+                              }
+                            }
+                          
+                            if (playerEntity.tickCount % 5 == 0) {
+                                playerEntity.playSound(SoundEvents.LAVA_EXTINGUISH, 1.0F, (playerEntity.getRandom().nextFloat() - playerEntity.getRandom().nextFloat()) * 0.2F + 1.0F);
+                               
+                                if (world.isClientSide) {
+                                    world.addParticle(ParticleTypes.POOF, playerEntity.getX() + world.random.nextDouble() * (world.random.nextBoolean() ? 1 : -1), playerEntity.getY() + 0.5F, playerEntity.getZ() + world.random.nextDouble() * (world.random.nextBoolean() ? 1 : -1), 0, 0, 0);
+                                }
+                            }
+                            
+                        }else if(dragonStateHandler.getDebuffData().timeInRain > 0){
+                            if(maxRainTime > 0) {
+                                dragonStateHandler.getDebuffData().timeInRain = (Math.max(dragonStateHandler.getDebuffData().timeInRain - (int)Math.ceil(maxRainTime * 0.02F), 0));
+                            }else{
+                                dragonStateHandler.getDebuffData().timeInRain--;
+                            }
+    
+                            if (!playerEntity.level.isClientSide) {
+                                DragonSurvivalMod.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new SyncCapabilityDebuff(playerEntity.getId(), dragonStateHandler.getDebuffData().timeWithoutWater, dragonStateHandler.getDebuffData().timeInDarkness, dragonStateHandler.getDebuffData().timeInRain));
+                            }
+                        }
+                        
+                        if (playerEntity.isOnFire() && ConfigHandler.SERVER.bonuses.get() && ConfigHandler.SERVER.caveFireImmunity.get()) {
                             playerEntity.clearFire();
+                        }
+                        
                         if (playerEntity.isEyeInFluid(FluidTags.LAVA) && ConfigHandler.SERVER.bonuses.get() && ConfigHandler.SERVER.caveLavaSwimming.get() && ConfigHandler.SERVER.caveLavaSwimmingTicks.get() != 0) {
                             if (!playerEntity.canBreatheUnderwater() && !playerEntity.abilities.invulnerable) {
                                 dragonStateHandler.setLavaAirSupply(dragonStateHandler.getLavaAirSupply() - 1);
@@ -106,13 +148,13 @@ public class DragonTraitHandler {
                                 if (dragonStateHandler.getDebuffData().timeInDarkness < maxStressTicks)
                                     dragonStateHandler.getDebuffData().timeInDarkness++;
                                 if (dragonStateHandler.getDebuffData().timeInDarkness == 1 && !playerEntity.level.isClientSide)
-                                    DragonSurvivalMod.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new SyncCapabilityDebuff(playerEntity.getId(), dragonStateHandler.getDebuffData().timeWithoutWater, dragonStateHandler.getDebuffData().timeInDarkness));
+                                    DragonSurvivalMod.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new SyncCapabilityDebuff(playerEntity.getId(), dragonStateHandler.getDebuffData().timeWithoutWater, dragonStateHandler.getDebuffData().timeInDarkness, dragonStateHandler.getDebuffData().timeInRain));
                                 if (dragonStateHandler.getDebuffData().timeInDarkness == maxStressTicks && !world.isClientSide && playerEntity.tickCount % 21 == 0)
                                     playerEntity.addEffect(new EffectInstance(DragonEffects.STRESS, ConfigHandler.SERVER.forestStressEffectDuration.get() * 20));
                             } else if (dragonStateHandler.getDebuffData().timeInDarkness > 0) {
                                 dragonStateHandler.getDebuffData().timeInDarkness = (Math.max(dragonStateHandler.getDebuffData().timeInDarkness - (int) Math.ceil(maxStressTicks * 0.02F), 0));
                                 if (dragonStateHandler.getDebuffData().timeInDarkness == 0 && !playerEntity.level.isClientSide)
-                                    DragonSurvivalMod.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new SyncCapabilityDebuff(playerEntity.getId(), dragonStateHandler.getDebuffData().timeWithoutWater, dragonStateHandler.getDebuffData().timeInDarkness));
+                                    DragonSurvivalMod.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new SyncCapabilityDebuff(playerEntity.getId(), dragonStateHandler.getDebuffData().timeWithoutWater, dragonStateHandler.getDebuffData().timeInDarkness, dragonStateHandler.getDebuffData().timeInRain));
                             }
                         }
                         break;
@@ -135,12 +177,12 @@ public class DragonTraitHandler {
                                     debuffData.timeWithoutWater += ConfigHandler.SERVER.seaTicksBasedOnTemperature.get() ? timeIncrement : 1;
                                }
                                 if (debuffData.timeWithoutWater == maxTicksOutofWater + 1 && !playerEntity.level.isClientSide)
-                                    DragonSurvivalMod.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new SyncCapabilityDebuff(playerEntity.getId(), debuffData.timeWithoutWater, debuffData.timeInDarkness));
+                                    DragonSurvivalMod.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new SyncCapabilityDebuff(playerEntity.getId(), debuffData.timeWithoutWater, debuffData.timeInDarkness, dragonStateHandler.getDebuffData().timeInRain));
                             } else if (debuffData.timeWithoutWater > 0) {
                                 double old = debuffData.timeWithoutWater;
                                 debuffData.timeWithoutWater = (Math.max(debuffData.timeWithoutWater - (int) Math.ceil(maxTicksOutofWater * 0.005F), 0));
                                 if (old > maxTicksOutofWater + 1 && debuffData.timeWithoutWater <= maxTicksOutofWater && !playerEntity.level.isClientSide)
-                                    DragonSurvivalMod.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new SyncCapabilityDebuff(playerEntity.getId(), debuffData.timeWithoutWater, debuffData.timeInDarkness));
+                                    DragonSurvivalMod.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new SyncCapabilityDebuff(playerEntity.getId(), debuffData.timeWithoutWater, debuffData.timeInDarkness, dragonStateHandler.getDebuffData().timeInRain));
                             }
                             if (!world.isClientSide && debuffData.timeWithoutWater > maxTicksOutofWater && debuffData.timeWithoutWater < maxTicksOutofWater * 2) {
                                 if (playerEntity.tickCount % 40 == 0) {
@@ -155,7 +197,7 @@ public class DragonTraitHandler {
                             DragonStateHandler.DragonDebuffData debuffData = dragonStateHandler.getDebuffData();
                             if (debuffData.timeWithoutWater > 0) {
                                 debuffData.timeWithoutWater = 0;
-                                DragonSurvivalMod.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new SyncCapabilityDebuff(playerEntity.getId(), debuffData.timeWithoutWater, debuffData.timeInDarkness));
+                                DragonSurvivalMod.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new SyncCapabilityDebuff(playerEntity.getId(), debuffData.timeWithoutWater, debuffData.timeInDarkness, dragonStateHandler.getDebuffData().timeInRain));
                             }
                         }
                         break;

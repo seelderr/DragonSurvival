@@ -1,10 +1,5 @@
 package by.jackraidenph.dragonsurvival.mixins;
 
-import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.api.DragonFood;
-import net.minecraft.item.ShearsItem;
-import net.minecraft.item.SwordItem;
-import net.minecraft.item.ToolItem;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

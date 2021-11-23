@@ -1,19 +1,28 @@
 package by.jackraidenph.dragonsurvival.magic;
 
+import by.jackraidenph.dragonsurvival.Functions;
+import by.jackraidenph.dragonsurvival.capability.Capabilities;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.magic.Abilities.DragonAbilities;
+import by.jackraidenph.dragonsurvival.magic.Abilities.Passives.BurnAbility;
 import by.jackraidenph.dragonsurvival.magic.Abilities.Passives.SpectralImpactAbility;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
+import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.IndirectEntityDamageSource;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
+import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingExperienceDropEvent;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
@@ -45,6 +54,35 @@ public class MagicHandler
 				if(player.isEyeInFluid(FluidTags.WATER)){
 					player.addEffect(new EffectInstance(Effects.NIGHT_VISION, 10, 0, false, false));
 				}
+			}
+		});
+	}
+	
+	@SubscribeEvent
+	public static void livingTick(LivingUpdateEvent event){
+		LivingEntity entity = event.getEntityLiving();
+		
+		if (entity.hasEffect(DragonEffects.BURN)) {
+			if (entity.isEyeInFluid(FluidTags.WATER) || entity.isInWaterRainOrBubble()) {
+				entity.removeEffect(DragonEffects.BURN);
+			}
+		}
+		
+		Capabilities.getGenericCapability(entity).ifPresent(cap -> {
+			if (entity.tickCount % 20 == 0) {
+				if (entity.hasEffect(DragonEffects.BURN)) {
+					if (cap.lastPos != null) {
+						double distance = entity.distanceToSqr(cap.lastPos);
+						float damage = MathHelper.clamp((float)distance, 0, 10);
+						
+						if (damage > 0) {
+							entity.hurt(DamageSource.ON_FIRE, damage);
+						}
+						
+					}
+				}
+				
+				cap.lastPos = entity.position();
 			}
 		});
 	}
@@ -85,6 +123,7 @@ public class MagicHandler
 	@SubscribeEvent
 	public static void livingHurt(LivingAttackEvent event){
 		if(event.getSource() instanceof EntityDamageSource && !(event.getSource() instanceof IndirectEntityDamageSource)) {
+			if(event.getEntity() instanceof LivingEntity){
 			if (event.getSource() != null && event.getSource().getEntity() != null) {
 				if (event.getSource().getEntity() instanceof PlayerEntity) {
 					PlayerEntity player = (PlayerEntity)event.getSource().getEntity();
@@ -92,14 +131,24 @@ public class MagicHandler
 					DragonStateProvider.getCap(player).ifPresent(cap -> {
 						if (!cap.isDragon()) return;
 						
-						SpectralImpactAbility spectralImpact = (SpectralImpactAbility)cap.getAbilityOrDefault(DragonAbilities.SPECTRAL_IMPACT);
-						boolean hit = player.level.random.nextInt(100) <= spectralImpact.getChance();
-						
-						if(hit){
-							event.getSource().bypassArmor();
+						if (cap.getType() == DragonType.SEA) {
+							SpectralImpactAbility spectralImpact = (SpectralImpactAbility)cap.getAbilityOrDefault(DragonAbilities.SPECTRAL_IMPACT);
+							boolean hit = player.level.random.nextInt(100) <= spectralImpact.getChance();
+							
+							if (hit) {
+								event.getSource().bypassArmor();
+							}
+						} else if (cap.getType() == DragonType.CAVE) {
+							BurnAbility burnAbility = (BurnAbility)cap.getAbilityOrDefault(DragonAbilities.BURN);
+							boolean hit = player.level.random.nextInt(100) <= burnAbility.getChance();
+							
+							if (hit) {
+								((LivingEntity)event.getEntity()).addEffect(new EffectInstance(DragonEffects.BURN, Functions.secondsToTicks(30)));
+							}
 						}
 					});
 				}
+			}
 			}
 		}
 	}

@@ -2,7 +2,7 @@ package by.jackraidenph.dragonsurvival.magic.gui;
 
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
+import by.jackraidenph.dragonsurvival.magic.Abilities.DragonAbilities;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.magic.common.InnateDragonAbility;
@@ -137,11 +137,9 @@ public class AbilityScreen extends Screen {
                 
                 if(db != null) {
                     if(db.getLevel() < db.getMaxLevel()) {
-                        if (Minecraft.getInstance().player.experienceLevel >= (db.getNextRequiredLevel() - 3)) {
-                            ActiveDragonAbility newActivty = db.createInstance();
-                            newActivty.setLevel(db.getLevel() + 1);
-                            unlockAbleSkills.add(newActivty);
-                        }
+                        ActiveDragonAbility newActivty = db.createInstance();
+                        newActivty.setLevel(db.getLevel() + 1);
+                        unlockAbleSkills.add(newActivty);
                     }
                 }
             }

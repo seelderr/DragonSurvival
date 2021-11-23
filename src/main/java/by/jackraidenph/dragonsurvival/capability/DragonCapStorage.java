@@ -9,10 +9,12 @@ import net.minecraftforge.common.capabilities.Capability;
 
 public class DragonCapStorage implements Capability.IStorage<DragonStateHandler> {
     
+    
     @Override
     public INBT writeNBT(Capability<DragonStateHandler> capability, DragonStateHandler instance, Direction side) {
         CompoundNBT tag = new CompoundNBT();
         tag.putString("type", instance.getType().toString());
+    
         if (instance.isDragon()) {
             DragonStateHandler.DragonMovementData movementData = instance.getMovementData();
             tag.putDouble("bodyYaw", movementData.bodyYaw);
@@ -22,6 +24,7 @@ public class DragonCapStorage implements Capability.IStorage<DragonStateHandler>
             DragonStateHandler.DragonDebuffData debuffData = instance.getDebuffData();
             tag.putDouble("timeWithoutWater", debuffData.timeWithoutWater);
             tag.putInt("timeInDarkness", debuffData.timeInDarkness);
+            tag.putInt("timeInRain", debuffData.timeInRain);
             tag.putBoolean("isHiding", instance.isHiding());
             tag.putFloat("size", instance.getSize());
             tag.putBoolean("hasWings", instance.hasWings());
@@ -46,9 +49,12 @@ public class DragonCapStorage implements Capability.IStorage<DragonStateHandler>
         	instance.setType(DragonType.NONE);
         else
         	instance.setType(DragonType.valueOf(tag.getString("type")));
+        
+
+        
         if (instance.isDragon()) {
             instance.setMovementData(tag.getDouble("bodyYaw"), tag.getDouble("headYaw"), tag.getDouble("headPitch"), tag.getBoolean("bite"));
-            instance.setDebuffData(tag.getInt("timeWithoutWater"), tag.getInt("timeInDarkness"));
+            instance.setDebuffData(tag.getInt("timeWithoutWater"), tag.getInt("timeInDarkness"), tag.getInt("timeInRain"));
             instance.setIsHiding(tag.getBoolean("isHiding"));
             instance.setSize(tag.getFloat("size"));
     
