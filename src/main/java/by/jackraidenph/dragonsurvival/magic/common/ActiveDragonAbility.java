@@ -112,6 +112,7 @@ public class ActiveDragonAbility extends DragonAbility
             if(keyMode == GLFW.GLFW_PRESS){
                 player.sendMessage(new TranslationTextComponent("ds.skill_cooldown_check_failure", nf.format(this.getCooldown() / 20F) + "s").withStyle(TextFormatting.RED), player.getUUID());
             }
+            DragonSurvivalMod.getTickHandler().addToCoolDownList(this);
             stopCasting();
             return false;
         }
@@ -121,9 +122,7 @@ public class ActiveDragonAbility extends DragonAbility
     
     @Override
     public void onKeyPressed(PlayerEntity player) {
-        if (this.getCooldown() == 0 && this.canConsumeMana(player)){
-            this.onActivation(player);
-        }
+        this.onActivation(player);
     }
     
     public void resetSkill(){
@@ -169,10 +168,6 @@ public class ActiveDragonAbility extends DragonAbility
         return currentCastingTime;
     }
     
-    public void setCastTimer(int chargeTimer) {
-        this.currentCastingTime = chargeTimer;
-    }
-    
     public int getCastingTime() {
         return castTime;
     }
@@ -180,12 +175,15 @@ public class ActiveDragonAbility extends DragonAbility
     public CompoundNBT saveNBT(){
         CompoundNBT nbt = super.saveNBT();
         nbt.putInt("cooldown", currentCooldown);
+        nbt.putInt("castTime", currentCastingTime);
+    
         return nbt;
     }
     
     public void loadNBT(CompoundNBT nbt){
         super.loadNBT(nbt);
         currentCooldown = nbt.getInt("cooldown");
+        currentCastingTime = nbt.getInt("castTime");
     
         if(currentCooldown > 0) {
             DragonSurvivalMod.getTickHandler().addToCoolDownList(this);

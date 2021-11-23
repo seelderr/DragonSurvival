@@ -4,7 +4,7 @@ import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.magic.gui.AbilityScreen;
-import by.jackraidenph.dragonsurvival.network.Abilities.ChangeSkillLevel;
+import by.jackraidenph.dragonsurvival.network.magic.ChangeSkillLevel;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;

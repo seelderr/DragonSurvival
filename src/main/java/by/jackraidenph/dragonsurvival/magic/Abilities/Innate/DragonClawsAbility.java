@@ -1,10 +1,9 @@
 package by.jackraidenph.dragonsurvival.magic.Abilities.Innate;
 
+import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.magic.common.InnateDragonAbility;
-import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.util.DragonLevel;
-import net.minecraft.client.Minecraft;
 
 public class DragonClawsAbility extends InnateDragonAbility
 {
@@ -22,7 +21,6 @@ public class DragonClawsAbility extends InnateDragonAbility
 	@Override
 	public int getLevel()
 	{
-		return DragonStateProvider.getCap(Minecraft.getInstance().player).map(cap -> cap.getLevel()).orElse(DragonLevel.BABY).ordinal() + 1;
+		return DragonStateProvider.getCap(getPlayer()).map(cap -> cap.getLevel()).orElse(DragonLevel.BABY).ordinal() + 1;
 	}
-	
 }

@@ -1,4 +1,4 @@
-package by.jackraidenph.dragonsurvival.network.Abilities;
+package by.jackraidenph.dragonsurvival.network.magic;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.magic.Abilities.DragonAbilities;
@@ -16,7 +16,6 @@ import java.util.function.Supplier;
 
 public class ChangeSkillLevel implements IMessage<ChangeSkillLevel>
 {
-
     private int level;
     private String skill;
     
@@ -26,8 +25,7 @@ public class ChangeSkillLevel implements IMessage<ChangeSkillLevel>
         this.skill = skill;
     }
     
-    public ChangeSkillLevel() {
-    }
+    public ChangeSkillLevel() {}
     
     @Override
     public void encode(ChangeSkillLevel message, PacketBuffer buffer) {
@@ -59,6 +57,10 @@ public class ChangeSkillLevel implements IMessage<ChangeSkillLevel>
                     playerAbility = staticAbility.createInstance();
                     dragonStateHandler.getAbilities().add(playerAbility);
                 }
+                
+                if(playerAbility.player == null){
+                    playerAbility.player = playerEntity;
+                }
     
                 int levelCost = 0;
                 
@@ -83,7 +85,7 @@ public class ChangeSkillLevel implements IMessage<ChangeSkillLevel>
                 }
                 
                 playerAbility.setLevel(message.level);
-                DragonSurvivalMod.CHANNEL.send(PacketDistributor.PLAYER.with(() -> playerEntity), new SyncCapabilityAbility(playerEntity.getId(), dragonStateHandler.getSelectedAbilitySlot(), dragonStateHandler.getCurrentMana(), dragonStateHandler.getAbilities(), dragonStateHandler.renderAbilityHotbar()));
+                DragonSurvivalMod.CHANNEL.send(PacketDistributor.PLAYER.with(() -> playerEntity), new SyncMagicAbilities(playerEntity.getId(), dragonStateHandler.getAbilities()));
             }
         });
     }

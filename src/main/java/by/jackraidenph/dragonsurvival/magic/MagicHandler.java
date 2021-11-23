@@ -36,6 +36,21 @@ public class MagicHandler
 	public static void playerTick(PlayerTickEvent event){
 		PlayerEntity player = event.player;
 		
+		if(!player.level.isClientSide) {
+			if (player.tickCount % Functions.secondsToTicks(15) == 0) {
+				DragonStateProvider.getCap(player).ifPresent(cap -> {
+					if(cap.getCurrentlyCasting() == null) {
+						if (cap.lastTick == -1 || cap.lastTick != player.tickCount) {
+							cap.lastTick = player.tickCount; //It was activating twice for some reason
+							if (cap.getCurrentMana() < cap.getMaxMana(player)) {
+								DragonStateProvider.replenishMana(player, 1);
+							}
+						}
+					}
+				});
+			}
+		}
+		
 		DragonStateProvider.getCap(player).ifPresent(cap -> {
 			if(!cap.isDragon()) return;
 			
@@ -56,13 +71,6 @@ public class MagicHandler
 				}
 			}
 			
-			if(!player.level.isClientSide) {
-				if (cap.getCurrentMana() < cap.getMaxMana(player)) {
-					if (player.tickCount % Functions.secondsToTicks(15) == 0) {
-						DragonStateProvider.replenishMana(player, 1);
-					}
-				}
-			}
 		});
 	}
 	

@@ -23,6 +23,8 @@ public abstract class DragonAbility
     protected final int maxLevel;
     protected final int minLevel;
     
+    public PlayerEntity player;
+    
     public DragonAbility(String abilityId, String icon, int minLevel, int maxLevel){
         this.nf.setMaximumFractionDigits(1);
         
@@ -31,6 +33,14 @@ public abstract class DragonAbility
         this.maxLevel = maxLevel;
         this.minLevel = minLevel;
         this.level = minLevel;
+    }
+    
+    public PlayerEntity getPlayer(){
+//        if(FMLEnvironment.dist == Dist.CLIENT){
+//            return Minecraft.getInstance().player;
+//        }
+        
+        return player;
     }
     
     public abstract DragonAbility createInstance();

@@ -4,8 +4,8 @@ import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.magic.gui.Buttons.TabButton;
-import by.jackraidenph.dragonsurvival.network.Abilities.ActivateAbilityInSlot;
-import by.jackraidenph.dragonsurvival.network.Abilities.SyncCurrentAbilityCasting;
+import by.jackraidenph.dragonsurvival.network.magic.ActivateAbilityInSlot;
+import by.jackraidenph.dragonsurvival.network.magic.SyncCurrentAbilityCasting;
 import by.jackraidenph.dragonsurvival.registration.ClientModEvents;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
 import by.jackraidenph.dragonsurvival.util.DragonType;
@@ -40,7 +40,6 @@ public class ClientMagicHandler
 	
 	@SubscribeEvent
 	public static void abilityKeyBindingChecks(TickEvent.ClientTickEvent clientTickEvent) {
-	    
 	    if ((Minecraft.getInstance().player == null) ||
 	        (Minecraft.getInstance().level == null) ||
 	        (clientTickEvent.phase != TickEvent.Phase.END) ||
@@ -70,20 +69,23 @@ public class ClientMagicHandler
 	            if(ability.canRun(playerEntity, modeAbility)) {
 	                if (ability.getCurrentCastTimer() < ability.getCastingTime() && modeAbility == GLFW.GLFW_REPEAT) {
 	                    ability.tickCasting();
-		                DragonSurvivalMod.CHANNEL.sendToServer(new SyncCurrentAbilityCasting(slot, ability));
-						dragonStateHandler.setCurrentlyCasting(ability);
+						
+						if(dragonStateHandler.getCurrentlyCasting() != ability) {
+							DragonSurvivalMod.CHANNEL.sendToServer(new SyncCurrentAbilityCasting(slot, ability));
+							dragonStateHandler.setCurrentlyCasting(ability);
+						}
+						
 	                } else if (modeAbility == GLFW.GLFW_RELEASE) {
 	                    ability.stopCasting();
-		                DragonSurvivalMod.CHANNEL.sendToServer(new SyncCurrentAbilityCasting(slot, null));
-		                dragonStateHandler.setCurrentlyCasting(null);
+						
+						if(dragonStateHandler.getCurrentlyCasting() != null) {
+							DragonSurvivalMod.CHANNEL.sendToServer(new SyncCurrentAbilityCasting(slot, null));
+							dragonStateHandler.setCurrentlyCasting(null);
+						}
 		
 	                } else if (ability.getCastingTime() <= 0 || ability.getCurrentCastTimer() >= ability.getCastingTime()){
 	                    ability.onKeyPressed(playerEntity);
 	                    DragonSurvivalMod.CHANNEL.sendToServer(new ActivateAbilityInSlot(slot, modeAbility));
-						if(ability.getCurrentCastTimer() >= ability.getCastingTime()){
-							DragonSurvivalMod.CHANNEL.sendToServer(new SyncCurrentAbilityCasting(slot, null));
-							dragonStateHandler.setCurrentlyCasting(null);
-						}
 	                }
 	            }
 	        }
@@ -149,7 +151,6 @@ public class ClientMagicHandler
 								int xPos = curMana <= manaSlot ? 54 : cap.getType() == DragonType.SEA ? 0 : cap.getType() == DragonType.FOREST ? 18 : 36;
 								float rescale = 2.15F;
 								Screen.blit(event.getMatrixStack(), posX + (x * (int)(18 / rescale)), posY - 12 - (i * ((int)(18 / rescale) + 1)), xPos / rescale, 204 / rescale, (int)(18 / rescale), (int)(18 / rescale), (int)(256 / rescale), (int)(256 / rescale));
-							//	Minecraft.getInstance().font.draw(event.getMatrixStack(), Integer.toString(manaSlot), posX + (x * (int)(18 / rescale)), posY - 12 - (i * ((int)(18 / rescale) + 1)), -1);
 							}
 						}
 					}

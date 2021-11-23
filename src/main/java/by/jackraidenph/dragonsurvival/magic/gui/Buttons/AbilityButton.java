@@ -37,6 +37,10 @@ public class AbilityButton extends Button {
 		super(x, y, 16, 16, null, (button) -> {});
 		this.ability = ability;
 		this.screen = screen;
+		
+		if(ability.player == null){
+			ability.player = Minecraft.getInstance().player;
+		}
 	}
 	@Override
 	public void renderButton(MatrixStack stack, int mouseX, int mouseY, float p_230431_4_)

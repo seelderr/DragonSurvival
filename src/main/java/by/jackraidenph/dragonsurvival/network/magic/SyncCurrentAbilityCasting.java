@@ -1,4 +1,4 @@
-package by.jackraidenph.dragonsurvival.network.Abilities;
+package by.jackraidenph.dragonsurvival.network.magic;
 
 import by.jackraidenph.dragonsurvival.magic.Abilities.DragonAbilities;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;

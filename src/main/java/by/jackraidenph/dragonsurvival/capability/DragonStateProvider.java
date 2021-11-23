@@ -1,7 +1,7 @@
 package by.jackraidenph.dragonsurvival.capability;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.network.Abilities.SyncCapabilityAbility;
+import by.jackraidenph.dragonsurvival.network.magic.SyncMagicStats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -33,9 +33,8 @@ public class DragonStateProvider implements ICapabilitySerializable<CompoundNBT>
     public static void replenishMana(PlayerEntity entity, int mana) {
         getCap(entity).ifPresent(cap -> {
             cap.setCurrentMana(Math.min(cap.getMaxMana(entity), cap.getCurrentMana() + mana));
-    
             if(!entity.level.isClientSide){
-                DragonSurvivalMod.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)entity), new SyncCapabilityAbility(entity.getId(), cap.getSelectedAbilitySlot(), cap.getCurrentMana(), cap.getAbilities(), cap.renderAbilityHotbar()));
+                DragonSurvivalMod.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)entity), new SyncMagicStats(entity.getId(), cap.getSelectedAbilitySlot(), cap.getCurrentMana(), cap.renderAbilityHotbar()));
             }
         });
     }
@@ -44,7 +43,7 @@ public class DragonStateProvider implements ICapabilitySerializable<CompoundNBT>
             cap.setCurrentMana(Math.max(0, cap.getCurrentMana() - mana));
     
             if(!entity.level.isClientSide){
-                DragonSurvivalMod.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)entity), new SyncCapabilityAbility(entity.getId(), cap.getSelectedAbilitySlot(), cap.getCurrentMana(), cap.getAbilities(), cap.renderAbilityHotbar()));
+                DragonSurvivalMod.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)entity), new SyncMagicStats(entity.getId(), cap.getSelectedAbilitySlot(), cap.getCurrentMana(), cap.renderAbilityHotbar()));
             }
         });
     }

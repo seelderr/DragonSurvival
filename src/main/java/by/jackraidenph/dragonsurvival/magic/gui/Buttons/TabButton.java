@@ -3,7 +3,7 @@ package by.jackraidenph.dragonsurvival.magic.gui.Buttons;
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.magic.gui.AbilityScreen;
 import by.jackraidenph.dragonsurvival.gui.DragonScreen;
-import by.jackraidenph.dragonsurvival.network.Abilities.OpenDragonInventory;
+import by.jackraidenph.dragonsurvival.network.magic.OpenDragonInventory;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;

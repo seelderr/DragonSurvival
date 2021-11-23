@@ -7,6 +7,8 @@ import by.jackraidenph.dragonsurvival.handlers.ClientEvents;
 import by.jackraidenph.dragonsurvival.handlers.ClientFlightHandler;
 import by.jackraidenph.dragonsurvival.nest.NestEntity;
 import by.jackraidenph.dragonsurvival.network.*;
+import by.jackraidenph.dragonsurvival.network.magic.SyncMagicAbilities;
+import by.jackraidenph.dragonsurvival.network.magic.SyncMagicStats;
 import by.jackraidenph.dragonsurvival.registration.EntityTypesInit;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
@@ -30,14 +32,60 @@ import java.util.function.Supplier;
  * Synchronizes client data
  */
 public class PacketProxy {
-
-	 public DistExecutor.SafeRunnable handleCapabilityDebuff(SyncCapabilityDebuff syncCapabilityDebuff, Supplier<NetworkEvent.Context> supplier) {
-		 return () -> {
-	            NetworkEvent.Context context = supplier.get();
-	            context.enqueueWork(() -> handleDebuffs(syncCapabilityDebuff, context));
-	        };
-	 }
-	 
+    
+    public DistExecutor.SafeRunnable handleMagicAbilities(SyncMagicAbilities magicStatus, Supplier<NetworkEvent.Context> supplier) {
+        return () -> {
+            NetworkEvent.Context context = supplier.get();
+            context.enqueueWork(() -> handleMagicAbilities(magicStatus, context));
+        };
+    }
+    
+    private void handleMagicAbilities(SyncMagicAbilities magicStatus, NetworkEvent.Context context) {
+        PlayerEntity thisPlayer = Minecraft.getInstance().player;
+        if (thisPlayer != null) {
+            World world = thisPlayer.level;
+            Entity entity = world.getEntity(magicStatus.playerId);
+            if (entity instanceof PlayerEntity) {
+                DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
+                    magicStatus.abilities.forEach((ab) -> ab.player = (PlayerEntity)entity);
+                    dragonStateHandler.getAbilities().clear();
+                    dragonStateHandler.getAbilities().addAll(magicStatus.abilities);
+                });
+            }
+        }
+        context.setPacketHandled(true);
+    }
+    
+    public DistExecutor.SafeRunnable handleMagicSync(SyncMagicStats magicStatus, Supplier<NetworkEvent.Context> supplier) {
+        return () -> {
+            NetworkEvent.Context context = supplier.get();
+            context.enqueueWork(() -> handleMagicStats(magicStatus, context));
+        };
+    }
+    
+    private void handleMagicStats(SyncMagicStats magicStatus, NetworkEvent.Context context) {
+        PlayerEntity thisPlayer = Minecraft.getInstance().player;
+        if (thisPlayer != null) {
+            World world = thisPlayer.level;
+            Entity entity = world.getEntity(magicStatus.playerid);
+            if (entity instanceof PlayerEntity) {
+                DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
+                    dragonStateHandler.setCurrentMana(magicStatus.currentMana);
+                    dragonStateHandler.setSelectedAbilitySlot(magicStatus.selectedSlot);
+                    dragonStateHandler.setRenderAbilities(magicStatus.renderHotbar);
+                });
+            }
+        }
+        context.setPacketHandled(true);
+    }
+    
+    public DistExecutor.SafeRunnable handleCapabilityDebuff(SyncCapabilityDebuff syncCapabilityDebuff, Supplier<NetworkEvent.Context> supplier) {
+        return () -> {
+            NetworkEvent.Context context = supplier.get();
+            context.enqueueWork(() -> handleDebuffs(syncCapabilityDebuff, context));
+        };
+    }
+    
 	 private void handleDebuffs(SyncCapabilityDebuff syncCapabilityDebuff, NetworkEvent.Context context) {
 		 PlayerEntity thisPlayer = Minecraft.getInstance().player;
 		 if (thisPlayer != null) {

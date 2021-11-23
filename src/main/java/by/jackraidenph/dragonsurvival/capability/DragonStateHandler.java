@@ -284,11 +284,11 @@ public class DragonStateHandler {
     }
 	
 	private ArrayList<DragonAbility> abilities = new ArrayList<>();
-	public static final int MAX_SLOTS = 4;
 	
 	private ActiveDragonAbility currentlyCasting = null;
 	private int selectedAbilitySlot = 0;
 	private int currentMana = 0;
+	public int lastTick = -1;
 	
 	private boolean renderAbilities = true;
 	
@@ -296,7 +296,7 @@ public class DragonStateHandler {
 	public int getMaxMana(PlayerEntity entity) {
 		int mana = 1;
 		
-		mana += (Math.min(50, entity.experienceLevel) - 5) / 5;
+		mana += Math.max(0, (Math.min(50, entity.experienceLevel) - 5) / 5);
 		
 		switch(type){
 			case SEA:

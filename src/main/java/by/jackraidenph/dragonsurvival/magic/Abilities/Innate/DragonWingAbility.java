@@ -1,9 +1,8 @@
 package by.jackraidenph.dragonsurvival.magic.Abilities.Innate;
 
-import by.jackraidenph.dragonsurvival.magic.common.InnateDragonAbility;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.magic.common.InnateDragonAbility;
 import by.jackraidenph.dragonsurvival.registration.ClientModEvents;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
@@ -25,7 +24,7 @@ public class DragonWingAbility extends InnateDragonAbility
 	@Override
 	public int getLevel()
 	{
-		return DragonStateProvider.getCap(Minecraft.getInstance().player).map(cap -> cap.hasWings()).orElse(false) ? 1 : 0;
+		return DragonStateProvider.getCap(getPlayer()).map(cap -> cap.hasWings()).orElse(false) ? 1 : 0;
 	}
 	
 	@Override
