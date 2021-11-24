@@ -12,8 +12,6 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
@@ -69,30 +67,26 @@ public class DragonBallEntity extends AbstractFireballEntity implements IAnimata
 		return false;
 	}
 	
+	public void attackMobs() {}
+	
+	protected boolean canHitEntity(Entity p_230298_1_) {
+		return true;
+	}
+	
 	@Override
-	protected void onHitBlock(BlockRayTraceResult p_230299_1_)
+	protected void onHit(RayTraceResult p_70227_1_)
 	{
 		attackMobs();
 	}
-	
-	protected void onHitEntity(EntityRayTraceResult p_213868_1_) {
-		attackMobs();
-	}
-	
-	public void attackMobs() {}
 	
 	@Override
 	public void tick()
 	{
 		Entity entity = this.getOwner();
 		if (this.level.isClientSide || (entity == null || !entity.removed) && this.level.hasChunkAt(this.blockPosition())) {
-			super.tick();
-			if (this.shouldBurn()) {
-				this.setSecondsOnFire(1);
-			}
-			
 			RayTraceResult raytraceresult = ProjectileHelper.getHitResult(this, this::canHitEntity);
-			if (raytraceresult.getType() != RayTraceResult.Type.MISS && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult)) {
+			
+			if (raytraceresult.getType() != RayTraceResult.Type.MISS) {
 				this.onHit(raytraceresult);
 			}
 			

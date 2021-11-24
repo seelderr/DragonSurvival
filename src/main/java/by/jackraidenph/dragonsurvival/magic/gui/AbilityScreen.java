@@ -135,9 +135,9 @@ public class AbilityScreen extends Screen {
                 ActiveDragonAbility db = ability != null ? ((ActiveDragonAbility)ability) : ab;
                 
                 if(db != null) {
-                    if(db.getLevel() < db.getMaxLevel()) {
+                    for(int i = db.getLevel(); i < db.getMaxLevel(); i++){
                         ActiveDragonAbility newActivty = db.createInstance();
-                        newActivty.setLevel(db.getLevel() + 1);
+                        newActivty.setLevel(i + 1);
                         unlockAbleSkills.add(newActivty);
                     }
                 }

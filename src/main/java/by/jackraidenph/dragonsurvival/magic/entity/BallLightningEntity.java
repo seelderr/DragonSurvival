@@ -42,8 +42,7 @@ public class BallLightningEntity extends DragonBallEntity
 		List<Entity> entities = this.level.getEntities(null, new AxisAlignedBB(position().x - range, position().y - range, position().z - range, position().x + range, position().y + range, position().z + range));
 		
 		for(Entity ent : entities){
-			if(ent == this) continue;
-			if(ent.position().distanceTo(position()) > (range / 2f)) continue;
+			if(ent instanceof BallLightningEntity) continue;
 			if(ent == getOwner()) continue;
 			
 			if (!this.level.isClientSide) {
@@ -55,11 +54,11 @@ public class BallLightningEntity extends DragonBallEntity
 			}
 			
 			if(this.level.isClientSide) {
-				for (int i = 0; i < 4; i++) {
+				for (int i = 0; i < 10; i++) {
 					double d1 = level.random.nextFloat();
 					double d2 = level.random.nextFloat();
 					double d3 = level.random.nextFloat();
-					level.addParticle(ParticleTypes.LARGE_SMOKE, ent.getX() + d1, ent.getY() + d2, ent.getZ() + d3, 0.0D, 0.0D, 0.0D);
+					level.addParticle(ParticleTypes.LARGE_SMOKE, ent.getX() + d1, ent.getY() + 0.5 + d2, ent.getZ() + d3, 0.0D, 0.0D, 0.0D);
 				}
 			}
 		}

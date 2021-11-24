@@ -6,6 +6,7 @@ import by.jackraidenph.dragonsurvival.magic.gui.AbilityScreen;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -13,6 +14,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.client.gui.GuiUtils;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -52,6 +54,14 @@ public class SkillProgressButton extends Button {
 		
 		Minecraft.getInstance().getTextureManager().bind(texture);
 		blit(stack, x, y, 0, 0, 16, 16, 16, 16);
+		
+		if(ability != null) {
+			DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {
+				if (ability.getLevel() > cap.getAbilityLevel(ability) + 1) {
+					AbstractGui.fill(stack, x, y, x + 16, y + 16, new Color(0.25F, 0.25F, 0.25F, 0.75F).getRGB());
+				}
+			});
+		}
 	}
 	@Override
 	public void renderToolTip(MatrixStack stack, int mouseX, int mouseY)
@@ -59,7 +69,7 @@ public class SkillProgressButton extends Button {
 		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {
 			if(ability != null) {
 				TextFormatting format = cap.getType() == DragonType.CAVE ? TextFormatting.DARK_RED : cap.getType() == DragonType.SEA ? TextFormatting.AQUA : cap.getType() == DragonType.FOREST ? TextFormatting.GREEN : TextFormatting.WHITE;
-				ArrayList<ITextComponent> description = new ArrayList<>(Arrays.asList(ability.getTitle().withStyle(format).append(" (" + ability.getLevel() + " / " + ability.getMaxLevel() + ")"), ability.getDescription().withStyle(TextFormatting.GRAY)));
+				ArrayList<ITextComponent> description = new ArrayList<>(Arrays.asList(ability.getTitle().withStyle(format).append(" (" + ability.getLevel() + " / " + ability.getMaxLevel() + ")")));
 				
 				int requiredLevel = ability.getCurrentRequiredLevel();
 				

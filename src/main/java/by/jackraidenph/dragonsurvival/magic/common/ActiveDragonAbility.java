@@ -136,7 +136,6 @@ public class ActiveDragonAbility extends DragonAbility
                 errorMessage = new TranslationTextComponent("ds.skill_cooldown_check_failure", nf.format(this.getCooldown() / 20F) + "s").withStyle(TextFormatting.RED);
                 errorTicks = Functions.secondsToTicks(5);
                 player.playSound(SoundEvents.WITHER_SHOOT, 0.05f, 100f);
-    
             }
             DragonSurvivalMod.HANDLER.addToCoolDownList(this);
             stopCasting();
