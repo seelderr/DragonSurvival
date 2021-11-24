@@ -50,7 +50,6 @@ public class DragonSpikeEntity extends AbstractArrowEntity
 	@Override
 	protected void onHitBlock(BlockRayTraceResult p_230299_1_) {
 		super.onHitBlock(p_230299_1_);
-		kill();
 	}
 	
 	@Override

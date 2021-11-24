@@ -67,6 +67,9 @@ public class ClientMagicHandler
 	        ActiveDragonAbility ability = dragonStateHandler.getAbilityFromSlot(slot);
 	        if(ability.getLevel() > 0) {
 	            if(ability.canRun(playerEntity, modeAbility)) {
+					ability.errorTicks = 0;
+		            ability.errorMessage = null;
+					
 	                if (ability.getCurrentCastTimer() < ability.getCastingTime() && modeAbility == GLFW.GLFW_REPEAT) {
 	                    ability.tickCasting();
 						
@@ -87,6 +90,11 @@ public class ClientMagicHandler
 	                    ability.onKeyPressed(playerEntity);
 	                    DragonSurvivalMod.CHANNEL.sendToServer(new ActivateAbilityInSlot(slot, modeAbility));
 	                }
+	            }else{
+		            if(dragonStateHandler.getCurrentlyCasting() != null) {
+			            DragonSurvivalMod.CHANNEL.sendToServer(new SyncCurrentAbilityCasting(slot, null));
+			            dragonStateHandler.setCurrentlyCasting(null);
+		            }
 	            }
 	        }
 	    });
@@ -131,7 +139,17 @@ public class ClientMagicHandler
 								int boxX = posX + (x * sizeX) + 3;
 								int boxY = posY + 1;
 								int offset = 16 - (16 - (int)(f * 16));
-								AbstractGui.fill(event.getMatrixStack(), boxX, boxY, boxX + 16, boxY + (offset), new Color(0.15F, 0.15F, 0.15F, 0.75F).getRGB());
+								int color = new Color(0.15F, 0.15F, 0.15F, 0.75F).getRGB();
+								int fColor = ability.errorTicks > 0 ? new Color(1F, 0F, 0F, 0.75F).getRGB() : color;
+								AbstractGui.fill(event.getMatrixStack(), boxX, boxY, boxX + 16, boxY + (offset), fColor);
+							}
+						}
+						
+						if(ability.errorTicks > 0){
+							ability.errorTicks--;
+							
+							if(ability.errorTicks <= 0){
+								ability.errorMessage = null;
 							}
 						}
 					}
@@ -173,6 +191,10 @@ public class ClientMagicHandler
 	                Screen.blit(event.getMatrixStack(), (window.getGuiScaledWidth() / 2) - (194 / 4), window.getGuiScaledHeight() - offset, 0, 174 / 2,  (int)((194 / 2) * perc), 6 / 2, 128, 128);
 	            }
 				
+				if(ability.errorTicks > 0){
+					Minecraft.getInstance().font.draw(event.getMatrixStack(), ability.errorMessage, (window.getGuiScaledWidth() / 2) - (Minecraft.getInstance().font.width(ability.errorMessage) / 2), window.getGuiScaledHeight() - 70, 0);
+				}
+				
 	            GL11.glPopMatrix();
 	        }
 	    });
@@ -186,8 +208,15 @@ public class ClientMagicHandler
 	        ActiveDragonAbility ability = cap.getCurrentlyCasting();
 	        
 	        if(ability != null && ability.getCurrentCastTimer() > 0){
-	            float perc = Math.min(0.5F + ((float)ability.getCurrentCastTimer() / (float)ability.getCastingTime() / 2), 1);
-	            event.setNewfov(perc);
+		        double perc = Math.min(((float)ability.getCurrentCastTimer() / (float)ability.getCastingTime()), 1) / 4;
+				double c4 = (2 * Math.PI) / 3;
+				
+				if(perc != 0 && perc != 1){
+					perc = Math.pow(2, -10 * perc) * Math.sin((perc * 10 - 0.75) * c4) + 1;
+				}
+				
+				float newFov = (float)MathHelper.clamp(perc, 0.75F, 1.2F);
+	            event.setNewfov(newFov);
 	        }
 	    });
 	}

@@ -9,12 +9,12 @@ import by.jackraidenph.dragonsurvival.gecko.DragonArmorModel;
 import by.jackraidenph.dragonsurvival.gecko.DragonEntity;
 import by.jackraidenph.dragonsurvival.gecko.DragonModel;
 import by.jackraidenph.dragonsurvival.gecko.DragonRenderer;
+import by.jackraidenph.dragonsurvival.magic.gui.Buttons.TabButton;
 import by.jackraidenph.dragonsurvival.mixins.AccessorEntityRenderer;
 import by.jackraidenph.dragonsurvival.mixins.AccessorEntityRendererManager;
 import by.jackraidenph.dragonsurvival.mixins.AccessorLivingRenderer;
-import by.jackraidenph.dragonsurvival.network.OpenCrafting;
-import by.jackraidenph.dragonsurvival.network.magic.OpenDragonInventory;
 import by.jackraidenph.dragonsurvival.network.PacketSyncCapabilityMovement;
+import by.jackraidenph.dragonsurvival.network.magic.OpenDragonInventory;
 import by.jackraidenph.dragonsurvival.network.magic.SyncDragonAbilitySlot;
 import by.jackraidenph.dragonsurvival.registration.ClientModEvents;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
@@ -283,8 +283,13 @@ public class ClientEvents {
     {
         Screen screen=initGuiEvent.getGui();
         if(screen instanceof InventoryScreen && DragonStateProvider.isDragon(Minecraft.getInstance().player)) {
-            Button openCrafting = new Button(screen.width/2, screen.height-30, 60, 20, new StringTextComponent("Crafting"), p_onPress_1_ -> {
-                DragonSurvivalMod.CHANNEL.sendToServer(new OpenCrafting());
+            initGuiEvent.addWidget(new TabButton( ((InventoryScreen)screen).getGuiLeft(),  ((InventoryScreen)screen).getGuiTop() - 28, 0, screen));
+            initGuiEvent.addWidget(new TabButton( ((InventoryScreen)screen).getGuiLeft() + 28,  ((InventoryScreen)screen).getGuiTop() - 26, 1, screen));
+            initGuiEvent.addWidget(new TabButton( ((InventoryScreen)screen).getGuiLeft() + 57,  ((InventoryScreen)screen).getGuiTop() - 26, 2, screen));
+            initGuiEvent.addWidget(new TabButton( ((InventoryScreen)screen).getGuiLeft() + 86,  ((InventoryScreen)screen).getGuiTop() - 26, 3, screen));
+    
+            net.minecraft.client.gui.widget.button.Button openCrafting = new Button(screen.width / 2, screen.height - 30, 60, 20, new StringTextComponent("Crafting"), p_onPress_1_ -> {
+                DragonSurvivalMod.CHANNEL.sendToServer(new OpenDragonInventory());
             });
             initGuiEvent.addWidget(openCrafting);
         }

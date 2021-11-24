@@ -44,6 +44,7 @@ public class BallLightningEntity extends DragonBallEntity
 		for(Entity ent : entities){
 			if(ent == this) continue;
 			if(ent.position().distanceTo(position()) > (range / 2f)) continue;
+			if(ent == getOwner()) continue;
 			
 			if (!this.level.isClientSide) {
 				ent.hurt(DamageSource.LIGHTNING_BOLT, BallLightningAbility.getDamage(getLevel()));

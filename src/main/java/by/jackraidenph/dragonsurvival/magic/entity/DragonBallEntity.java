@@ -5,6 +5,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.AbstractFireballEntity;
+import net.minecraft.entity.projectile.ProjectileHelper;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
@@ -13,6 +14,8 @@ import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.EntityRayTraceResult;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
 import software.bernie.geckolib3.core.IAnimatable;
@@ -41,12 +44,6 @@ public class DragonBallEntity extends AbstractFireballEntity implements IAnimata
 	}
 	
 	@Override
-	protected boolean canHitEntity(Entity p_230298_1_)
-	{
-		return false;
-	}
-	
-	@Override
 	public IPacket<?> getAddEntityPacket() {
 		return NetworkHooks.getEntitySpawningPacket(this);
 	}
@@ -72,7 +69,6 @@ public class DragonBallEntity extends AbstractFireballEntity implements IAnimata
 		return false;
 	}
 	
-	
 	@Override
 	protected void onHitBlock(BlockRayTraceResult p_230299_1_)
 	{
@@ -84,6 +80,44 @@ public class DragonBallEntity extends AbstractFireballEntity implements IAnimata
 	}
 	
 	public void attackMobs() {}
+	
+	@Override
+	public void tick()
+	{
+		Entity entity = this.getOwner();
+		if (this.level.isClientSide || (entity == null || !entity.removed) && this.level.hasChunkAt(this.blockPosition())) {
+			super.tick();
+			if (this.shouldBurn()) {
+				this.setSecondsOnFire(1);
+			}
+			
+			RayTraceResult raytraceresult = ProjectileHelper.getHitResult(this, this::canHitEntity);
+			if (raytraceresult.getType() != RayTraceResult.Type.MISS && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult)) {
+				this.onHit(raytraceresult);
+			}
+			
+			this.checkInsideBlocks();
+			Vector3d vector3d = this.getDeltaMovement();
+			double d0 = this.getX() + vector3d.x;
+			double d1 = this.getY() + vector3d.y;
+			double d2 = this.getZ() + vector3d.z;
+			ProjectileHelper.rotateTowardsMovement(this, 0.2F);
+			float f = this.getInertia();
+			if (this.isInWater()) {
+				f = 0.8F;
+			}
+			moveDist += distanceToSqr(d0, d1, d2);
+			this.setDeltaMovement(vector3d.add(this.xPower, this.yPower, this.zPower).scale((double)f));
+			this.level.addParticle(this.getTrailParticle(), d0, d1, d2, 0.0D, 0.0D, 0.0D);
+			this.setPos(d0, d1, d2);
+		} else {
+			this.remove();
+		}
+		
+		if(moveDist >= 16){
+			onHit(ProjectileHelper.getHitResult(this, this::canHitEntity));
+		}
+	}
 	
 	AnimationTimer animationTimer = new AnimationTimer();
 	

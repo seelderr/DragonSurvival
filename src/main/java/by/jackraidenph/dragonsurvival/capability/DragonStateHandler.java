@@ -230,6 +230,10 @@ public class DragonStateHandler {
         return this.type;
     }
     public void setType(DragonType type) {
+		if(this.type != type){
+			initAbilities(type);
+		}
+		
         this.type = type;
     }
     
@@ -292,6 +296,14 @@ public class DragonStateHandler {
 	
 	private boolean renderAbilities = true;
 	
+	public void initAbilities(DragonType type){
+		abilities.clear();
+		for(ActiveDragonAbility ability : DragonAbilities.ACTIVE_ABILITIES.get(type)){
+			ActiveDragonAbility newAbility = ability.createInstance();
+			newAbility.setLevel(ability.getMinLevel());
+			abilities.add(newAbility);
+		}
+	}
 	
 	public int getMaxMana(PlayerEntity entity) {
 		int mana = 1;

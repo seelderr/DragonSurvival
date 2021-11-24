@@ -7,7 +7,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.renderer.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -39,7 +39,7 @@ public class BallLightningRenderer extends GeoProjectilesRenderer<BallLightningE
 			stack.scale(2.0F, 2.0F, 2.0F);
 			stack.mulPose(this.entityRenderDispatcher.cameraOrientation());
 			stack.mulPose(Vector3f.YP.rotationDegrees(180.0F));
-			Minecraft.getInstance().getItemRenderer().renderStatic(new ItemStack(ItemsInit.lightningTextureItem), ItemCameraTransforms.TransformType.GROUND, p_225623_6_, OverlayTexture.NO_OVERLAY, stack, p_225623_5_);
+			Minecraft.getInstance().getItemRenderer().renderStatic(new ItemStack(ItemsInit.lightningTextureItem), TransformType.GROUND, p_225623_6_, OverlayTexture.NO_OVERLAY, stack, p_225623_5_);
 			stack.popPose();
 			super.render(p_225623_1_, p_225623_2_, p_225623_3_, stack, p_225623_5_, p_225623_6_);
 		}

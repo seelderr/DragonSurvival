@@ -1,12 +1,12 @@
 package by.jackraidenph.dragonsurvival.magic.gui.Buttons;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.magic.gui.AbilityScreen;
 import by.jackraidenph.dragonsurvival.gui.DragonScreen;
-import by.jackraidenph.dragonsurvival.network.magic.OpenDragonInventory;
+import by.jackraidenph.dragonsurvival.magic.gui.AbilityScreen;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.inventory.InventoryScreen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.ResourceLocation;
 
@@ -50,7 +50,7 @@ public class TabButton extends Button
 	public boolean isCurrent(){
 		switch(index){
 			case 0:
-				return parent instanceof DragonScreen;
+				return parent instanceof DragonScreen || parent instanceof InventoryScreen;
 			
 			case 1:
 				return parent instanceof AbilityScreen;
@@ -64,7 +64,8 @@ public class TabButton extends Button
 		if(!isCurrent()){
 			switch(index){
 				case 0:
-					DragonSurvivalMod.CHANNEL.sendToServer(new OpenDragonInventory());
+					Minecraft.getInstance().setScreen(new InventoryScreen(Minecraft.getInstance().player));
+					//DragonSurvivalMod.CHANNEL.sendToServer(new OpenDragonInventory());
 				break;
 				
 				case 1:

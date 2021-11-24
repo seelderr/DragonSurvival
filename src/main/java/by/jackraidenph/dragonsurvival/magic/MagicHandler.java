@@ -6,10 +6,12 @@ import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.magic.Abilities.DragonAbilities;
 import by.jackraidenph.dragonsurvival.magic.Abilities.Passives.BurnAbility;
 import by.jackraidenph.dragonsurvival.magic.Abilities.Passives.SpectralImpactAbility;
+import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
+import net.minecraft.block.DoublePlantBlock;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.EffectInstance;
@@ -23,6 +25,7 @@ import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
+import net.minecraftforge.event.entity.living.LivingEvent.LivingVisibilityEvent;
 import net.minecraftforge.event.entity.living.LivingExperienceDropEvent;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
@@ -37,14 +40,12 @@ public class MagicHandler
 		PlayerEntity player = event.player;
 		
 		if(!player.level.isClientSide) {
-			if (player.tickCount % Functions.secondsToTicks(15) == 0) {
+			if (player.tickCount % Functions.secondsToTicks(5) == 0) {
 				DragonStateProvider.getCap(player).ifPresent(cap -> {
-					if(cap.getCurrentlyCasting() == null) {
-						if (cap.lastTick == -1 || cap.lastTick != player.tickCount) {
-							cap.lastTick = player.tickCount; //It was activating twice for some reason
-							if (cap.getCurrentMana() < cap.getMaxMana(player)) {
-								DragonStateProvider.replenishMana(player, 1);
-							}
+					if (cap.lastTick == -1 || cap.lastTick != player.tickCount) {
+						cap.lastTick = player.tickCount; //It was activating twice for some reason
+						if (cap.getCurrentMana() < cap.getMaxMana(player)) {
+							DragonStateProvider.replenishMana(player, 1);
 						}
 					}
 				});
@@ -54,12 +55,18 @@ public class MagicHandler
 		DragonStateProvider.getCap(player).ifPresent(cap -> {
 			if(!cap.isDragon()) return;
 			
+			for (DragonAbility ability : cap.getAbilities()) {
+				if(ability.getPlayer() == null){
+					ability.player = player;
+				}
+			}
+			
 			if(player.hasEffect(DragonEffects.HUNTER)){
 				BlockState bl = player.getFeetBlockState();
 				BlockState below = player.level.getBlockState(player.blockPosition().below());
 				
-				if(bl.is(Blocks.GRASS_BLOCK) || below.is(Blocks.GRASS_BLOCK)){
-					player.addEffect(new EffectInstance(Effects.INVISIBILITY, 20, 0, false, false));
+				if(bl.getBlock() instanceof DoublePlantBlock || below.getBlock() instanceof DoublePlantBlock || bl.getMaterial() == Material.REPLACEABLE_PLANT || below.getMaterial() == Material.REPLACEABLE_PLANT){
+					player.addEffect(new EffectInstance(Effects.INVISIBILITY, 10, 0, false, false));
 				}
 				
 				player.addEffect(new EffectInstance(Effects.MOVEMENT_SPEED, 20, 2, false, false));
@@ -67,11 +74,25 @@ public class MagicHandler
 			
 			if(player.hasEffect(DragonEffects.WATER_VISION)){
 				if(player.isEyeInFluid(FluidTags.WATER)){
-					player.addEffect(new EffectInstance(Effects.NIGHT_VISION, 10, 0, false, false));
+					player.addEffect(new EffectInstance(Effects.NIGHT_VISION, 40, 0, false, false));
 				}
 			}
 			
 		});
+	}
+	
+	@SubscribeEvent
+	public static void livingVisibility(LivingVisibilityEvent event){
+		if(event.getEntityLiving() instanceof PlayerEntity) {
+			PlayerEntity player = (PlayerEntity)event.getEntityLiving();
+			DragonStateProvider.getCap(player).ifPresent(cap -> {
+				if (!cap.isDragon()) return;
+				
+				if (player.hasEffect(DragonEffects.HUNTER)) {
+					event.modifyVisibility(0);
+				}
+			});
+		}
 	}
 	
 	@SubscribeEvent

@@ -291,12 +291,24 @@ public class SpecificsHandler {
 		DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
 			if (playerStateHandler.getType() == DragonType.CAVE && ConfigHandler.SERVER.bonuses.get() && ConfigHandler.SERVER.caveLavaSwimming.get()) {
 				if (!wasCaveDragon) {
-					RenderType lavaType = RenderType.translucent();
-					RenderTypeLookup.setRenderLayer(Fluids.LAVA, lavaType);
-					RenderTypeLookup.setRenderLayer(Fluids.FLOWING_LAVA, lavaType);
-					prevFluidRenderer = minecraft.getBlockRenderer().liquidBlockRenderer;
-					minecraft.getBlockRenderer().liquidBlockRenderer = new CaveLavaFluidRenderer();
-					minecraft.levelRenderer.allChanged();
+					if(player.hasEffect(DragonEffects.LAVA_VISION)) {
+						RenderType lavaType = RenderType.translucent();
+						RenderTypeLookup.setRenderLayer(Fluids.LAVA, lavaType);
+						RenderTypeLookup.setRenderLayer(Fluids.FLOWING_LAVA, lavaType);
+						prevFluidRenderer = minecraft.getBlockRenderer().liquidBlockRenderer;
+						minecraft.getBlockRenderer().liquidBlockRenderer = new CaveLavaFluidRenderer();
+						minecraft.levelRenderer.allChanged();
+					}
+				}else{
+					if(!player.hasEffect(DragonEffects.LAVA_VISION)){
+						if (prevFluidRenderer != null) {
+							RenderType lavaType = RenderType.solid();
+							RenderTypeLookup.setRenderLayer(Fluids.LAVA, lavaType);
+							RenderTypeLookup.setRenderLayer(Fluids.FLOWING_LAVA, lavaType);
+							minecraft.getBlockRenderer().liquidBlockRenderer = prevFluidRenderer;
+						}
+						minecraft.levelRenderer.allChanged();
+					}
 				}
     		}else {
     			if (wasCaveDragon) {
@@ -309,7 +321,7 @@ public class SpecificsHandler {
 					minecraft.levelRenderer.allChanged();
     			}
     		}
-    		wasCaveDragon = playerStateHandler.getType() == DragonType.CAVE;
+    		wasCaveDragon = playerStateHandler.getType() == DragonType.CAVE && player.hasEffect(DragonEffects.LAVA_VISION);
     	});
     }
     

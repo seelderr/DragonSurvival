@@ -88,7 +88,7 @@ public class DragonAbilities
 		
 		//Sea dragon
 		STORM_BREATH = register(DragonType.SEA, new BreathAbility(DragonType.SEA, "storm_breath", "sea/storm_breath", 1, 4, 2, Functions.secondsToTicks(2), Functions.secondsToTicks(5), new Integer[]{0, 10, 30, 50}));
-		BALL_LIGHTNING = register(DragonType.SEA, new BallLightningAbility(4, "ball_lightning", "sea/ball_lightning", 0, 4, 6, Functions.secondsToTicks(2), Functions.secondsToTicks(60), new Integer[]{0, 20, 45}));
+		BALL_LIGHTNING = register(DragonType.SEA, new BallLightningAbility(4, "ball_lightning", "sea/ball_lightning", 0, 4, 6, Functions.secondsToTicks(2), Functions.secondsToTicks(60), new Integer[]{0, 20, 45, 50}));
 		REVEALING_THE_SOUL = register(DragonType.SEA, new AoeBuffAbility(new EffectInstance(DragonEffects.REVEALING_THE_SOUL, 60), 5, ParticleRegistry.magicBeaconParticle, "revealing_the_soul", "sea/revealing_the_soul", 0, 3, 5, Functions.secondsToTicks(5), Functions.secondsToTicks(30), new Integer[]{0, 25, 40}));
 		SEA_EYES = register(DragonType.SEA, new VisionAbility(DragonEffects.WATER_VISION, "sea_eyes", "sea/sea_eyes", 0, 2, 2, Functions.secondsToTicks(2), Functions.secondsToTicks(30), new Integer[]{0, 15}));
 		

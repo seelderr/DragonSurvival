@@ -143,7 +143,7 @@ public class AbilityScreen extends Screen {
                 }
             }
     
-            unlockAbleSkills.sort(Comparator.comparingInt(c -> c.getNextRequiredLevel()));
+            unlockAbleSkills.sort(Comparator.comparingInt(c -> c.getCurrentRequiredLevel()));
         });
     }
     
@@ -188,9 +188,6 @@ public class AbilityScreen extends Screen {
     
                 if (btn instanceof IncreaseLevelButton) {
                     expChange = ((IncreaseLevelButton)btn).skillCost;
-                    break;
-                } else if (btn instanceof SkillProgressButton) {
-                    expChange = ((SkillProgressButton)btn).skillCost;
                     break;
                 }
             }

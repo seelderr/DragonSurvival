@@ -5,6 +5,7 @@ import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -51,6 +52,23 @@ public class ActiveDragonAbility extends DragonAbility
     }
     
     @Override
+    public int getLevel()
+    {
+        if(requiredLevels != null && getPlayer() != null){
+            int level = 0;
+            
+            for(int req : requiredLevels){
+                if(getPlayer().experienceLevel >= req){
+                    level++;
+                }
+            }
+            
+            return level;
+        }
+        return super.getLevel();
+    }
+    
+    @Override
     public ActiveDragonAbility createInstance(){
         return new ActiveDragonAbility(id, icon, minLevel, maxLevel, manaCost, castTime, abilityCooldown, requiredLevels);
     }
@@ -61,9 +79,9 @@ public class ActiveDragonAbility extends DragonAbility
     }
     
     public int getNextRequiredLevel(){
-        if(level < maxLevel){
-            if(getRequiredLevels().length > level && level > 0){
-                return getRequiredLevels()[level];
+        if(getLevel() <= maxLevel){
+            if(getRequiredLevels().length > getLevel() && getLevel() > 0){
+                return getRequiredLevels()[getLevel()];
             }
         }
         
@@ -71,8 +89,8 @@ public class ActiveDragonAbility extends DragonAbility
     }
     
     public int getCurrentRequiredLevel(){
-        if(getRequiredLevels().length > level && level > 0){
-            return getRequiredLevels()[level - 1];
+        if(getRequiredLevels().length >= getLevel() && getLevel() > 0){
+            return getRequiredLevels()[getLevel() - 1];
         }
         
         return 0;
@@ -99,10 +117,15 @@ public class ActiveDragonAbility extends DragonAbility
        consumeMana(player);
     }
 
+    public int errorTicks;
+    public ITextComponent errorMessage;
+    
     public boolean canRun(PlayerEntity player, int keyMode){
         if (!this.canConsumeMana(player)){
             if(keyMode == GLFW.GLFW_PRESS){
-                player.sendMessage(new TranslationTextComponent("ds.skill_mana_check_failure").withStyle(TextFormatting.DARK_AQUA), player.getUUID());
+                errorMessage = new TranslationTextComponent("ds.skill_mana_check_failure").withStyle(TextFormatting.DARK_AQUA);
+                errorTicks = Functions.secondsToTicks(5);
+                player.playSound(SoundEvents.GENERIC_SPLASH, 0.15f, 100f);
             }
             stopCasting();
             return false;
@@ -110,9 +133,12 @@ public class ActiveDragonAbility extends DragonAbility
     
         if (this.getCooldown() != 0) {
             if(keyMode == GLFW.GLFW_PRESS){
-                player.sendMessage(new TranslationTextComponent("ds.skill_cooldown_check_failure", nf.format(this.getCooldown() / 20F) + "s").withStyle(TextFormatting.RED), player.getUUID());
+                errorMessage = new TranslationTextComponent("ds.skill_cooldown_check_failure", nf.format(this.getCooldown() / 20F) + "s").withStyle(TextFormatting.RED);
+                errorTicks = Functions.secondsToTicks(5);
+                player.playSound(SoundEvents.WITHER_SHOOT, 0.05f, 100f);
+    
             }
-            DragonSurvivalMod.getTickHandler().addToCoolDownList(this);
+            DragonSurvivalMod.HANDLER.addToCoolDownList(this);
             stopCasting();
             return false;
         }
@@ -140,7 +166,7 @@ public class ActiveDragonAbility extends DragonAbility
     
     public void startCooldown() {
         this.currentCooldown = this.getMaxCooldown();
-        DragonSurvivalMod.getTickHandler().addToCoolDownList(this);
+        DragonSurvivalMod.HANDLER.addToCoolDownList(this);
     }
     
     public int getMaxCooldown() {
@@ -186,7 +212,7 @@ public class ActiveDragonAbility extends DragonAbility
         currentCastingTime = nbt.getInt("castTime");
     
         if(currentCooldown > 0) {
-            DragonSurvivalMod.getTickHandler().addToCoolDownList(this);
+            DragonSurvivalMod.HANDLER.addToCoolDownList(this);
         }
     }
 }

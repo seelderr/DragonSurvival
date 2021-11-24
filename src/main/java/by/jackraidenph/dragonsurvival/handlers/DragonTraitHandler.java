@@ -54,9 +54,19 @@ public class DragonTraitHandler {
                             dragonStateHandler.getType() == DragonType.FOREST && dragonStateHandler.getAbility(DragonAbilities.FOREST_ATHLETICS) != null ? ((AthleticsAbility)dragonStateHandler.getAbility(DragonAbilities.FOREST_ATHLETICS)).getDuration() :
                             dragonStateHandler.getType() == DragonType.CAVE && dragonStateHandler.getAbility(DragonAbilities.CAVE_ATHLETICS) != null ? ((AthleticsAbility)dragonStateHandler.getAbility(DragonAbilities.CAVE_ATHLETICS)).getDuration() :
                             0;
-                
+    
+                    int level =
+                        dragonStateHandler.getType() == DragonType.SEA ? dragonStateHandler.getAbilityLevel(DragonAbilities.SEA_ATHLETICS) :
+                        dragonStateHandler.getType() == DragonType.FOREST ? dragonStateHandler.getAbilityLevel(DragonAbilities.FOREST_ATHLETICS) :
+                        dragonStateHandler.getType() == DragonType.CAVE ? dragonStateHandler.getAbilityLevel(DragonAbilities.CAVE_ATHLETICS) : 0;
+    
+                    int maxLevel =
+                            dragonStateHandler.getType() == DragonType.SEA && dragonStateHandler.getAbility(DragonAbilities.SEA_ATHLETICS) != null ?  ((AthleticsAbility)dragonStateHandler.getAbility(DragonAbilities.SEA_ATHLETICS)).getMaxLevel() :
+                                    dragonStateHandler.getType() == DragonType.FOREST && dragonStateHandler.getAbility(DragonAbilities.FOREST_ATHLETICS) != null ? ((AthleticsAbility)dragonStateHandler.getAbility(DragonAbilities.FOREST_ATHLETICS)).getMaxLevel() :
+                                            dragonStateHandler.getType() == DragonType.CAVE && dragonStateHandler.getAbility(DragonAbilities.CAVE_ATHLETICS) != null ? ((AthleticsAbility)dragonStateHandler.getAbility(DragonAbilities.CAVE_ATHLETICS)).getMaxLevel() :
+                                                    0;
                     if(duration > 0){
-                        playerEntity.addEffect(new EffectInstance(Effects.MOVEMENT_SPEED, Functions.secondsToTicks(duration), ConfigHandler.SERVER.speedupEffectLevel.get() - 1, false, false));
+                        playerEntity.addEffect(new EffectInstance(Effects.MOVEMENT_SPEED, Functions.secondsToTicks(duration), (ConfigHandler.SERVER.speedupEffectLevel.get() - 1) + (level == maxLevel ? 1 : 0), false, false));
                     }
                 }
                 

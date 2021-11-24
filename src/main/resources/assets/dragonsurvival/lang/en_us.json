@@ -213,8 +213,6 @@
   "ds.skill.aoe": "Radius: {0}",
   "ds.skill.channel_cost": "Costs {0} per {1}",
   "ds.skill.required_level": "Requires level {0}",
-  "ds.skill.can_unlock": "Can unlock for {0} levels",
-  "ds.skill.can_unlock.cant_afford": "You need {0} levels to afford this. ",
   "ds.skill.level.up": "Upgrade the skill for {0} levels",
   "ds.skill.level.down": "Downgrade the skill and refund {0} levels",
   "ds.skill.type.active": "Active skill",

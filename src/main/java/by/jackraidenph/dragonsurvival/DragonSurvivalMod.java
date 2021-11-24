@@ -83,7 +83,7 @@ public class DragonSurvivalMod {
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(new ResourceLocation(MODID, "main"),
             () -> PROTOCOL_VERSION, PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
     
-    private static AbilityTickingHandler HANDLER;
+    public static AbilityTickingHandler HANDLER = new AbilityTickingHandler();
     private static int nextPacketId = 0;
 
     public DragonSurvivalMod() {
@@ -99,7 +99,7 @@ public class DragonSurvivalMod {
         MinecraftForge.EVENT_BUS.register(new SpecificsHandler());
         MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGH, this::biomeLoadingEvent);
         MinecraftForge.EVENT_BUS.addListener(this::serverRegisterCommandsEvent);
-        MinecraftForge.EVENT_BUS.register(getTickHandler());
+        MinecraftForge.EVENT_BUS.register(HANDLER);
     }
     
     private static <T> void register(Class<T> clazz, IMessage<T> message) {
@@ -391,14 +391,5 @@ public class DragonSurvivalMod {
             serverPlayerEntity.refreshDimensions();
         });
         return 1;
-    }
-    
-    
-    public static AbilityTickingHandler getTickHandler() {
-        if (HANDLER == null) {
-            HANDLER = new AbilityTickingHandler();
-            return HANDLER;
-        }
-        return HANDLER;
     }
 }

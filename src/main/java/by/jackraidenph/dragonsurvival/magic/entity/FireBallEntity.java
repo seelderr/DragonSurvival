@@ -28,7 +28,7 @@ public class FireBallEntity extends DragonBallEntity
 	@Override
 	protected IParticleData getTrailParticle()
 	{
-		return ParticleTypes.SMOKE;
+		return ParticleTypes.LARGE_SMOKE;
 	}
 	
 	protected boolean shouldBurn() {
@@ -36,18 +36,15 @@ public class FireBallEntity extends DragonBallEntity
 	}
 	
 	protected void onHit(RayTraceResult p_70227_1_) {
-		super.onHit(p_70227_1_);
 		if (!this.level.isClientSide) {
 			boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level, this.getOwner());
 			float explosivePower = getLevel();
 			this.level.explode((Entity)null, this.getX(), this.getY(), this.getZ(), explosivePower, flag, flag ? Explosion.Mode.DESTROY : Explosion.Mode.NONE);
 			this.remove();
 		}
-		
 	}
 	
 	protected void onHitEntity(EntityRayTraceResult p_213868_1_) {
-		super.onHitEntity(p_213868_1_);
 		if (!this.level.isClientSide) {
 			Entity entity = p_213868_1_.getEntity();
 			Entity entity1 = this.getOwner();
@@ -55,6 +52,8 @@ public class FireBallEntity extends DragonBallEntity
 			if (entity1 instanceof LivingEntity) {
 				this.doEnchantDamageEffects((LivingEntity)entity1, entity);
 			}
+			
+			this.remove();
 		}
 	}
 }

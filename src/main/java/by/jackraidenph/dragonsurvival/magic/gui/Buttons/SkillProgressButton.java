@@ -1,10 +1,8 @@
 package by.jackraidenph.dragonsurvival.magic.gui.Buttons;
 
-import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.magic.gui.AbilityScreen;
-import by.jackraidenph.dragonsurvival.network.magic.ChangeSkillLevel;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
@@ -23,12 +21,6 @@ public class SkillProgressButton extends Button {
 	
 	private ActiveDragonAbility ability;
 	private AbilityScreen screen;
-	
-	public int skillCost;
-	
-	public static final ResourceLocation LEVELUP = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/levelup.png");
-	public static final ResourceLocation NOLEVELUP = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/nolevelup.png");
-	
 	
 	public SkillProgressButton(int x, int y, int slot, AbilityScreen screen)
 	{
@@ -60,33 +52,7 @@ public class SkillProgressButton extends Button {
 		
 		Minecraft.getInstance().getTextureManager().bind(texture);
 		blit(stack, x, y, 0, 0, 16, 16, 16, 16);
-		
-		skillCost = ability != null ? ability.getLevelCost() : 0;
-		
-		if(ability != null) {
-			if(Minecraft.getInstance().player.experienceLevel < ability.getNextRequiredLevel()) {
-				Minecraft.getInstance().getTextureManager().bind(NOLEVELUP);
-				blit(stack, x, y, 0, 0, 16, 16, 16, 16);
-			}
-		}
 	}
-	
-	@Override
-	public void onPress()
-	{
-		super.onPress();
-		
-		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {
-			if(ability != null) {
-				if (cap.getAbilityLevel(ability) < ability.getMaxLevel()) {
-					if(Minecraft.getInstance().player.experienceLevel > ability.getCurrentRequiredLevel() && Minecraft.getInstance().player.experienceLevel >= ability.getLevelCost()) {
-						DragonSurvivalMod.CHANNEL.sendToServer(new ChangeSkillLevel(cap.getAbilityLevel(ability) + 1, ability.getId()));
-					}
-				}
-			}
-		});
-	}
-	
 	@Override
 	public void renderToolTip(MatrixStack stack, int mouseX, int mouseY)
 	{
@@ -97,17 +63,8 @@ public class SkillProgressButton extends Button {
 				
 				int requiredLevel = ability.getCurrentRequiredLevel();
 				
-				if (Minecraft.getInstance().player.experienceLevel >= requiredLevel) {
-					if(Minecraft.getInstance().player.experienceLevel >= ability.getLevelCost()){
-						description.add(new TranslationTextComponent("ds.skill.can_unlock", ability.getLevelCost()).withStyle(TextFormatting.GOLD));
-					}else{
-						description.add(new TranslationTextComponent("ds.skill.can_unlock.cant_afford", ability.getLevelCost()).withStyle(TextFormatting.GOLD));
-					}
-					
-				} else {
-					if (requiredLevel != -1) {
-						description.add(new TranslationTextComponent("ds.skill.required_level", requiredLevel).withStyle(TextFormatting.DARK_GRAY));
-					}
+				if (requiredLevel != -1) {
+					description.add(new TranslationTextComponent("ds.skill.required_level", requiredLevel).withStyle(TextFormatting.DARK_GRAY));
 				}
 				
 				GuiUtils.drawHoveringText(stack, description, mouseX, mouseY, Minecraft.getInstance().screen.width, Minecraft.getInstance().screen.height, 200, Minecraft.getInstance().font);

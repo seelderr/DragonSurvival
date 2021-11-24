@@ -28,9 +28,11 @@ public class DragonStateProvider implements ICapabilitySerializable<CompoundNBT>
     }
     
     public static int getCurrentMana(PlayerEntity entity) {
-        return getCap(entity).map(DragonStateHandler::getCurrentMana).orElse(0);
+        return getCap(entity).map(cap -> Math.min(cap.getCurrentMana(), cap.getMaxMana(entity))).orElse(0);
     }
     public static void replenishMana(PlayerEntity entity, int mana) {
+        if(entity.level.isClientSide) return;
+    
         getCap(entity).ifPresent(cap -> {
             cap.setCurrentMana(Math.min(cap.getMaxMana(entity), cap.getCurrentMana() + mana));
             if(!entity.level.isClientSide){
@@ -39,6 +41,8 @@ public class DragonStateProvider implements ICapabilitySerializable<CompoundNBT>
         });
     }
     public static void consumeMana(PlayerEntity entity, int mana) {
+        if(entity.level.isClientSide) return;
+        
         getCap(entity).ifPresent(cap -> {
             cap.setCurrentMana(Math.max(0, cap.getCurrentMana() - mana));
     
