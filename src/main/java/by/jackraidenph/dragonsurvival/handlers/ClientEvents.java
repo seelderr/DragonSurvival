@@ -643,5 +643,6 @@ public class ClientEvents {
     public static void unloadWorld(WorldEvent.Unload worldEvent) {
         dragonEntity = null;
         dragonArmor = null;
+        playerDragonHashMap.clear();
     }
 }

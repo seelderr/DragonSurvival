@@ -279,7 +279,7 @@ public class DragonSurvivalMod {
                                 e.printStackTrace();
                             }
                             ClientPlayerEntity myPlayer = Minecraft.getInstance().player;
-                            ClientEvents.dragonEntity.getAndSet(EntityTypesInit.DRAGON.create(myPlayer.level));
+                            ClientEvents.dragonEntity = new AtomicReference<>(EntityTypesInit.DRAGON.create(myPlayer.level));
                             ClientEvents.dragonEntity.get().player = myPlayer.getId();
                             ClientEvents.dragonArmor = EntityTypesInit.DRAGON_ARMOR.create(myPlayer.level);
                             if (ClientEvents.dragonArmor != null)
