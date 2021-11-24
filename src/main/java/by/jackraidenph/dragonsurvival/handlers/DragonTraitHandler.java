@@ -95,9 +95,11 @@ public class DragonTraitHandler {
                               }
                             }
                           
-                            if (playerEntity.tickCount % 5 == 0) {
+                            if (playerEntity.tickCount % 40 == 0) {
                                 playerEntity.playSound(SoundEvents.LAVA_EXTINGUISH, 1.0F, (playerEntity.getRandom().nextFloat() - playerEntity.getRandom().nextFloat()) * 0.2F + 1.0F);
-                               
+                            }
+                            
+                            if(playerEntity.tickCount % 10 == 0){
                                 if (world.isClientSide) {
                                     world.addParticle(ParticleTypes.POOF, playerEntity.getX() + world.random.nextDouble() * (world.random.nextBoolean() ? 1 : -1), playerEntity.getY() + 0.5F, playerEntity.getZ() + world.random.nextDouble() * (world.random.nextBoolean() ? 1 : -1), 0, 0, 0);
                                 }

@@ -106,7 +106,7 @@ public class SkillProgressButton extends Button {
 					
 				} else {
 					if (requiredLevel != -1) {
-						description.add(new TranslationTextComponent("ds.skill.required_level", requiredLevel).withStyle(TextFormatting.GRAY));
+						description.add(new TranslationTextComponent("ds.skill.required_level", requiredLevel).withStyle(TextFormatting.DARK_GRAY));
 					}
 				}
 				
