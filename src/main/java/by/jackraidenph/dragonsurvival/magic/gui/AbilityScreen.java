@@ -71,7 +71,6 @@ public class AbilityScreen extends Screen {
             addButton(new SkillProgressButton(guiLeft + (int)(219 / 2F) + (i * (23 + ((4 - i) / 4))), startY + 8, 4 + i, this));
         }
         
-        //TODO Maybe just manually add the buttons?
         DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {
      
             int num = 0;
@@ -209,8 +208,7 @@ public class AbilityScreen extends Screen {
             }
     
             GL11.glPopMatrix();
-    
-            //TODO Set font size
+            
             GL11.glPushMatrix();
             ITextComponent textComponent = new StringTextComponent(Integer.toString(minecraft.player.experienceLevel)).withStyle(TextFormatting.DARK_GRAY);
             int xPos = startX + 117 + 1;

@@ -49,8 +49,6 @@ public class IncreaseLevelButton extends Button
 		}
 	}
 	
-	//TODO Render tooltip with level up price
-	
 	@Override
 	public void onPress()
 	{
