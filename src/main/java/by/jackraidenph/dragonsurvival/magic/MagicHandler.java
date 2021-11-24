@@ -71,13 +71,6 @@ public class MagicHandler
 				
 				player.addEffect(new EffectInstance(Effects.MOVEMENT_SPEED, 20, 2, false, false));
 			}
-			
-			if(player.hasEffect(DragonEffects.WATER_VISION)){
-				if(player.isEyeInFluid(FluidTags.WATER)){
-					player.addEffect(new EffectInstance(Effects.NIGHT_VISION, 40, 0, false, false));
-				}
-			}
-			
 		});
 	}
 	
