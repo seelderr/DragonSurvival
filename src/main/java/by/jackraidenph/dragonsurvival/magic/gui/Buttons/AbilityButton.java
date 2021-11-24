@@ -56,11 +56,11 @@ public class AbilityButton extends Button {
 		});
 		
 		Minecraft.getInstance().getTextureManager().bind(ability instanceof PassiveDragonAbility ? BLANK_2_TEXTURE : BLANK_1_TEXTURE);
-		blit(stack, x - 1, y - 1, 0, 0, 18, 18, 18, 18);
+		blit(stack, x - 1, y - 1, 0, 0, 20, 20, 20, 20);
 		
 		
 		Minecraft.getInstance().getTextureManager().bind(ability.getIcon());
-		blit(stack, x, y, 0, 0, 16, 16, 16, 16);
+		blit(stack, x, y, 0, 0, 18, 18, 18, 18);
 	}
 	
 	@Override

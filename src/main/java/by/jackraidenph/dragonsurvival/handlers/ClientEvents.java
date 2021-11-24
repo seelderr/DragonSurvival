@@ -133,6 +133,34 @@ public class ClientEvents {
                     DragonSurvivalMod.CHANNEL.sendToServer(new SyncDragonAbilitySlot(player.getId(), dragonStateHandler.getSelectedAbilitySlot(), dragonStateHandler.renderAbilityHotbar()));
                 });
             }
+        }else  if (player != null && ClientModEvents.ABILITY1.consumeClick()) {
+            if(DragonStateProvider.isDragon(minecraft.player)){
+                DragonStateProvider.getCap(minecraft.player).ifPresent(dragonStateHandler -> {
+                    dragonStateHandler.setSelectedAbilitySlot(0);
+                    DragonSurvivalMod.CHANNEL.sendToServer(new SyncDragonAbilitySlot(player.getId(), dragonStateHandler.getSelectedAbilitySlot(), dragonStateHandler.renderAbilityHotbar()));
+                });
+            }
+        }else  if (player != null && ClientModEvents.ABILITY2.consumeClick()) {
+            if(DragonStateProvider.isDragon(minecraft.player)){
+                DragonStateProvider.getCap(minecraft.player).ifPresent(dragonStateHandler -> {
+                    dragonStateHandler.setSelectedAbilitySlot(1);
+                    DragonSurvivalMod.CHANNEL.sendToServer(new SyncDragonAbilitySlot(player.getId(), dragonStateHandler.getSelectedAbilitySlot(), dragonStateHandler.renderAbilityHotbar()));
+                });
+            }
+        }else  if (player != null && ClientModEvents.ABILITY3.consumeClick()) {
+            if(DragonStateProvider.isDragon(minecraft.player)){
+                DragonStateProvider.getCap(minecraft.player).ifPresent(dragonStateHandler -> {
+                    dragonStateHandler.setSelectedAbilitySlot(2);
+                    DragonSurvivalMod.CHANNEL.sendToServer(new SyncDragonAbilitySlot(player.getId(), dragonStateHandler.getSelectedAbilitySlot(), dragonStateHandler.renderAbilityHotbar()));
+                });
+            }
+        }else  if (player != null && ClientModEvents.ABILITY4.consumeClick()) {
+            if(DragonStateProvider.isDragon(minecraft.player)){
+                DragonStateProvider.getCap(minecraft.player).ifPresent(dragonStateHandler -> {
+                    dragonStateHandler.setSelectedAbilitySlot(3);
+                    DragonSurvivalMod.CHANNEL.sendToServer(new SyncDragonAbilitySlot(player.getId(), dragonStateHandler.getSelectedAbilitySlot(), dragonStateHandler.renderAbilityHotbar()));
+                });
+            }
         }
     }
     

@@ -52,7 +52,10 @@ public class ClientModEvents {
     public static KeyBinding TOGGLE_ABILITIES;
     public static KeyBinding NEXT_ABILITY;
     public static KeyBinding PREV_ABILITY;
-    
+    public static KeyBinding ABILITY1;
+    public static KeyBinding ABILITY2;
+    public static KeyBinding ABILITY3;
+    public static KeyBinding ABILITY4;
     
     @SubscribeEvent
     public static void onTextureStitchEvent(TextureStitchEvent.Pre event) {
@@ -122,6 +125,19 @@ public class ClientModEvents {
     
         PREV_ABILITY = new KeyBinding("ds.keybind.prev_ability", GLFW.GLFW_KEY_F, "Dragon Survival");
         ClientRegistry.registerKeyBinding(PREV_ABILITY);
+    
+        ABILITY1 = new KeyBinding("ds.keybind.ability1", GLFW.GLFW_KEY_UNKNOWN, "Dragon Survival");
+        ClientRegistry.registerKeyBinding(ABILITY1);
+    
+        ABILITY2 = new KeyBinding("ds.keybind.ability2", GLFW.GLFW_KEY_UNKNOWN, "Dragon Survival");
+        ClientRegistry.registerKeyBinding(ABILITY2);
+    
+        ABILITY3 = new KeyBinding("ds.keybind.ability3", GLFW.GLFW_KEY_UNKNOWN, "Dragon Survival");
+        ClientRegistry.registerKeyBinding(ABILITY3);
+    
+        ABILITY4 = new KeyBinding("ds.keybind.ability4", GLFW.GLFW_KEY_UNKNOWN, "Dragon Survival");
+        ClientRegistry.registerKeyBinding(ABILITY4);
+        
         //Gecko renderers
         DragonModel dragonModel = new DragonModel();
         RenderingRegistry.registerEntityRenderingHandler(EntityTypesInit.BALL_LIGHTNING, manager -> new BallLightningRenderer(manager, new LightningBallModel()));

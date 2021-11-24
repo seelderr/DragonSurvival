@@ -121,6 +121,10 @@
   "ds.keybind.toggle_abilities": "Toggle skill bar",
   "ds.keybind.next_ability": "Next skill",
   "ds.keybind.prev_ability": "Previous skill",
+  "ds.keybind.ability1": "Skill #1",
+  "ds.keybind.ability2": "Skill #2",
+  "ds.keybind.ability3": "Skill #3",
+  "ds.keybind.ability4": "Skill #4",
 
   "ds.skill.storm_breath": "Storm Breath",
   "ds.skill.ball_lightning": "Ball Lightning",
