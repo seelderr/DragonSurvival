@@ -10,8 +10,10 @@ import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.DoublePlantBlock;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.material.MaterialColor;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.EffectInstance;
@@ -35,21 +37,54 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 @EventBusSubscriber
 public class MagicHandler
 {
+	public static boolean isPlayerInGoodConditions(PlayerEntity player){
+		BlockState blockBelow = player.level.getBlockState(player.blockPosition().below());
+		return DragonStateProvider.getCap(player).map(cap -> {
+			switch (cap.getType()) {
+				case SEA:
+					if (player.isInWaterRainOrBubble() || blockBelow.getMaterial() == Material.SNOW || blockBelow.getMaterial() == Material.WATER) {
+						return true;
+					}
+					break;
+				
+				case FOREST:
+					if (player.level.canSeeSky(player.blockPosition()) && player.level.isDay()) {
+						return true;
+					}
+					break;
+				
+				case CAVE:
+					if (player.isInLava() || blockBelow.getMaterial() == Material.LAVA || blockBelow.getMaterial() == Material.FIRE || player.isOnFire()
+					    || blockBelow.getMaterial().getColor() == MaterialColor.NETHER || blockBelow.getBlock() == Blocks.MAGMA_BLOCK
+					    || blockBelow.getBlock() == Blocks.NETHERRACK) {
+						return true;
+					}
+					break;
+			}
+			
+			return false;
+		}).orElse(false);
+	}
+	
 	@SubscribeEvent
 	public static void playerTick(PlayerTickEvent event){
 		PlayerEntity player = event.player;
 		
 		if(!player.level.isClientSide) {
-			if (player.tickCount % Functions.secondsToTicks(5) == 0) {
-				DragonStateProvider.getCap(player).ifPresent(cap -> {
+			DragonStateProvider.getCap(player).ifPresent(cap -> {
+				boolean goodConditions = isPlayerInGoodConditions(player);
+				
+				int timeToRecover = goodConditions ? 5 : 15;
+				
+				if (player.tickCount % Functions.secondsToTicks(timeToRecover) == 0) {
 					if (cap.lastTick == -1 || cap.lastTick != player.tickCount) {
 						cap.lastTick = player.tickCount; //It was activating twice for some reason
 						if (cap.getCurrentMana() < DragonStateProvider.getMaxMana(player)) {
 							DragonStateProvider.replenishMana(player, 1);
 						}
 					}
-				});
-			}
+				}
+			});
 		}
 		
 		DragonStateProvider.getCap(player).ifPresent(cap -> {

@@ -8,6 +8,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
+import net.minecraft.util.SoundEvents;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
@@ -67,12 +68,28 @@ public class DragonStateProvider implements ICapabilitySerializable<CompoundNBT>
         });
     }
     public static void consumeMana(PlayerEntity entity, int mana) {
-        if(entity.level.isClientSide) return;
+        if(entity.level.isClientSide){
+            if(getCurrentMana(entity) < mana && (getCurrentMana(entity) + (entity.totalExperience / 10) >= mana || entity.experienceLevel > 0) ){
+                entity.playSound(SoundEvents.EXPERIENCE_ORB_PICKUP, 0.01F,  0.01F);
+            }
+            return;
+        }
         
         getCap(entity).ifPresent(cap -> {
+            if(getCurrentMana(entity) < mana && ((entity.totalExperience / 10) >= mana || entity.experienceLevel > 0)){
+                int missingMana = mana - getCurrentMana(entity);
+                int missingExp = (missingMana * 10);
+                
+                if(entity.totalExperience >= missingExp){
+                    entity.giveExperiencePoints(-missingExp);
+                }
+                
+                cap.setCurrentMana(cap.getCurrentMana() + mana);
+            }
+    
             cap.setCurrentMana(Math.max(0, cap.getCurrentMana() - mana));
     
-            if(!entity.level.isClientSide){
+            if (!entity.level.isClientSide) {
                 DragonSurvivalMod.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)entity), new SyncMagicStats(entity.getId(), cap.getSelectedAbilitySlot(), cap.getCurrentMana(), cap.renderAbilityHotbar()));
             }
         });

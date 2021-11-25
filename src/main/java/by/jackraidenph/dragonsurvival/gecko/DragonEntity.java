@@ -47,7 +47,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
     
     ActiveDragonAbility lastCast = null;
     boolean started, ended;
-    public boolean neckLocked = true;
+    public boolean neckLocked = false;
     AnimationTimer animationTimer = new AnimationTimer();
     
     @SuppressWarnings("rawtypes")
@@ -115,6 +115,9 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                         lastCast = null;
                         neckLocked = false;
                     }
+                }else{
+                    lastCast = null;
+                    neckLocked = false;
                 }
                 
                 Vector3d motio = new Vector3d(player.getX() - player.xo, player.getY() - player.yo, player.getZ() - player.zo);

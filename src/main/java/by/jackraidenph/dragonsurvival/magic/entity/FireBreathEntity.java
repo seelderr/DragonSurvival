@@ -89,27 +89,28 @@ public class FireBreathEntity extends AbstractFireballEntity
 			this.checkInsideBlocks();
 			Vector3d vector3d = this.getDeltaMovement();
 			double d0 = this.getX() + vector3d.x;
-			double d1 = this.getY() + vector3d.y + 0.02;
+			double d1 = this.getY() + vector3d.y;
 			double d2 = this.getZ() + vector3d.z;
 			ProjectileHelper.rotateTowardsMovement(this, 0.2F);
 			float f = 0.7F;
 			
 			if (this.isInWater()) {
-				for(int i = 0; i < 4; ++i) {
-					this.level.addParticle(ParticleTypes.BUBBLE, d0 - vector3d.x * 0.25D, d1 - vector3d.y * 0.25D, d2 - vector3d.z * 0.25D, vector3d.x, vector3d.y, vector3d.z);
-				}
+				this.remove();
 			}
 			
-//			for(int i = 0; i < 10; ++i) {
-//				this.level.addParticle(ParticleTypes.FLAME, d0 + level.random.nextFloat(), d1 + level.random.nextFloat(), d2 + level.random.nextFloat(), vector3d.x, vector3d.y, vector3d.z);
-//			}
+			for(int i = 0; i < 2; i++){
+				double n1 = this.getX() + (0.5 - level.getRandom().nextFloat());
+				double n2 = this.getY() + (0.5 - level.getRandom().nextFloat());
+				double n3 = this.getZ() + (0.5 - level.getRandom().nextFloat());
+				this.level.addParticle(ParticleTypes.FLAME, n1, n2, n3, 0, 0.01, 0);
+			}
 			
 			moveDist += distanceToSqr(d0, d1, d2);
 			this.setDeltaMovement(vector3d.add(this.xPower, this.yPower, this.zPower).scale(f));
 			
-			if(tickCount % 2 == 0) {
-				this.level.addParticle(this.getTrailParticle(), d0, d1, d2, 0.0D, 0.0D, 0.0D);
-			}
+//			if(tickCount % 2 == 0) {
+//				this.level.addParticle(this.getTrailParticle(), d0, d1, d2, 0.0D, 0.0D, 0.0D);
+//			}
 			
 			this.setPos(d0, d1, d2);
 		} else {

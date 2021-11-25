@@ -9,6 +9,7 @@ import by.jackraidenph.dragonsurvival.network.magic.SyncAbilityCastingToServer;
 import by.jackraidenph.dragonsurvival.registration.ClientModEvents;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
 import by.jackraidenph.dragonsurvival.util.DragonType;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
@@ -24,6 +25,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.FOVUpdateEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -101,6 +103,54 @@ public class ClientMagicHandler
 	}
 	
 	@SubscribeEvent
+	public static void cancelExpBar(RenderGameOverlayEvent event) {
+		PlayerEntity playerEntity = Minecraft.getInstance().player;
+		
+		if( event.getType() == ElementType.EXPERIENCE){
+			DragonStateProvider.getCap(playerEntity).ifPresent(cap -> {
+				ActiveDragonAbility ability = cap.getAbilityFromSlot(cap.getSelectedAbilitySlot());
+				
+				if(cap.getCurrentMana() < ability.getManaCost() && ((cap.getCurrentMana() + (playerEntity.totalExperience / 10) >= ability.getManaCost()) || playerEntity.experienceLevel > 0)){
+					event.setCanceled(true);
+					MainWindow window = Minecraft.getInstance().getWindow();
+					
+					int screenWidth = window.getGuiScaledWidth();
+					int screenHeight =  window.getGuiScaledHeight();
+					
+					Minecraft.getInstance().getTextureManager().bind(TabButton.buttonTexture);
+					MatrixStack stack = event.getMatrixStack();
+					int x = window.getGuiScaledWidth() / 2 - 91;
+					int i = Minecraft.getInstance().player.getXpNeededForNextLevel();
+					if (i > 0) {
+						int j = 182;
+						int k = (int)(Minecraft.getInstance().player.experienceProgress * 183.0F);
+						int l = screenHeight - 32 + 3;
+						blit(stack, x, l, 0, 164, 182, 5);
+						if (k > 0) {
+							blit(stack, x, l, 0, 169, k, 5);
+						}
+					}
+					
+					if (Minecraft.getInstance().player.experienceLevel > 0) {
+						String s = "" + Minecraft.getInstance().player.experienceLevel;
+						int i1 = (screenWidth - Minecraft.getInstance().font.width(s)) / 2;
+						int j1 = screenHeight - 31 - 4;
+						Minecraft.getInstance().font.draw(stack, s, (float)(i1 + 1), (float)j1, 0);
+						Minecraft.getInstance().font.draw(stack, s, (float)(i1 - 1), (float)j1, 0);
+						Minecraft.getInstance().font.draw(stack, s, (float)i1, (float)(j1 + 1), 0);
+						Minecraft.getInstance().font.draw(stack, s, (float)i1, (float)(j1 - 1), 0);
+						Minecraft.getInstance().font.draw(stack, s, (float)i1, (float)j1, new Color(243, 48, 59).getRGB());
+					}
+				}
+			});
+		}
+	}
+	
+	public static void blit(MatrixStack p_238474_1_, int p_238474_2_, int p_238474_3_, int p_238474_4_, int p_238474_5_, int p_238474_6_, int p_238474_7_) {
+		Screen.blit(p_238474_1_, p_238474_2_, p_238474_3_, 0, (float)p_238474_4_, (float)p_238474_5_, p_238474_6_, p_238474_7_, 256, 256);
+	}
+	
+	@SubscribeEvent
 	public static void renderAbilityHud(RenderGameOverlayEvent.Post event) {
 	    PlayerEntity playerEntity = Minecraft.getInstance().player;
 	    
@@ -169,6 +219,11 @@ public class ClientMagicHandler
 								int xPos = curMana <= manaSlot ? 54 : cap.getType() == DragonType.SEA ? 0 : cap.getType() == DragonType.FOREST ? 18 : 36;
 								float rescale = 2.15F;
 								Screen.blit(event.getMatrixStack(), posX + (x * (int)(18 / rescale)), posY - 12 - (i * ((int)(18 / rescale) + 1)), xPos / rescale, 204 / rescale, (int)(18 / rescale), (int)(18 / rescale), (int)(256 / rescale), (int)(256 / rescale));
+								
+								if(MagicHandler.isPlayerInGoodConditions(playerEntity)){
+									xPos = cap.getType() == DragonType.SEA ? 0 : cap.getType() == DragonType.FOREST ? 18 : 36;
+									Screen.blit(event.getMatrixStack(), posX + (x * (int)(18 / rescale)), posY - 12 - (i * ((int)(18 / rescale) + 1)), (xPos + 72) / rescale, 204 / rescale, (int)(18 / rescale), (int)(18 / rescale), (int)(256 / rescale), (int)(256 / rescale));
+								}
 							}
 						}
 					}

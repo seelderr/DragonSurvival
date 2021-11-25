@@ -33,6 +33,8 @@ public class FireBreathRenderer extends EntityRenderer<FireBreathEntity>
 	}
 	
 	public void render(FireBreathEntity p_225623_1_, float p_225623_2_, float p_225623_3_, MatrixStack p_225623_4_, IRenderTypeBuffer p_225623_5_, int p_225623_6_) {
+		if(true) return;
+		
 		p_225623_4_.pushPose();
 		GL11.glPushMatrix();
 		//p_225623_4_.scale(2.0F, 2.0F, 2.0F);

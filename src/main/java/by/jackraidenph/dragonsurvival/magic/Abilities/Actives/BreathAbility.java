@@ -33,7 +33,8 @@ public class BreathAbility extends ActiveDragonAbility
 	private boolean firstUse = true;
 	
 	public boolean canConsumeMana(PlayerEntity player) {
-		return player.isCreative() || DragonStateProvider.getCurrentMana(player) >= (firstUse ? this.getManaCost() : channelCost);
+		return player.isCreative() || DragonStateProvider.getCurrentMana(player) >= (firstUse ? this.getManaCost() : channelCost)
+		       || (player.totalExperience / 10) >= (firstUse ? this.getManaCost() : channelCost) || player.experienceLevel > 0;
 	}
 	
 	public void stopCasting() {
@@ -56,18 +57,18 @@ public class BreathAbility extends ActiveDragonAbility
 				DragonStateProvider.consumeMana(player, channelCost);
 			}
 		}
-		
+		//TODO Add flight speed to the view vector
 		Vector3d vector3d = player.getViewVector(1.0F);
-		double speed = 0.5d;
-		
+		double speed = 1d;
 		double d2 = vector3d.x * speed;
 		double d3 = vector3d.y * speed;
 		double d4 = vector3d.z * speed;
 		
+		
 		FireBreathEntity entity = new FireBreathEntity(player.level, player, d2, d3, d4);
-		entity.setPos(player.getX() + (vector3d.x * speed) * 4, player.getY(0.5D), player.getZ() + (vector3d.z * speed) * 4);
+		entity.setPos(player.getX() + d2, player.getY(0.5D) + d3, player.getZ() + d4);
 		entity.setLevel(getLevel());
-		entity.shootFromRotation(player, player.xRot, player.yRot, 0.0F, (float)speed, 1.0F);
+		//entity.shootFromRotation(player, player.xRot, player.yRot, 0.0F, (float)speed, 1.0F);
 		player.level.addFreshEntity(entity);
 	}
 	

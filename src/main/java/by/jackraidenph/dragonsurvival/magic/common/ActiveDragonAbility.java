@@ -106,7 +106,7 @@ public class ActiveDragonAbility extends DragonAbility
     }
     
     public boolean canConsumeMana(PlayerEntity player) {
-        return player.isCreative() || DragonStateProvider.getCurrentMana(player) >= this.getManaCost();
+        return player.isCreative() || DragonStateProvider.getCurrentMana(player) >= this.getManaCost() || (player.totalExperience / 10) >= getManaCost() || player.experienceLevel > 0;
     }
     
     public void consumeMana(PlayerEntity player) {
