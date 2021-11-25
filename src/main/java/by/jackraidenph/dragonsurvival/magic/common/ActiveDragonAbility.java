@@ -3,6 +3,7 @@ package by.jackraidenph.dragonsurvival.magic.common;
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.network.magic.SyncAbilityCastingToServer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.SoundEvents;
@@ -153,6 +154,13 @@ public class ActiveDragonAbility extends DragonAbility
     public void resetSkill(){
         stopCasting();
         startCooldown();
+    
+        DragonStateProvider.getCap(getPlayer()).ifPresent(dragonStateHandler -> {
+            if(getPlayer().level.isClientSide){
+                DragonSurvivalMod.CHANNEL.sendToServer(new SyncAbilityCastingToServer(getPlayer().getId(), null));
+            }
+            dragonStateHandler.setCurrentlyCasting(null);
+        });
     }
     
     public int getCooldown() {
@@ -213,5 +221,17 @@ public class ActiveDragonAbility extends DragonAbility
         if(currentCooldown > 0) {
             DragonSurvivalMod.HANDLER.addToCoolDownList(this);
         }
+    }
+    
+    public String startAnimation(){
+        return null;
+    }
+    
+    public String loopAnimation(){
+        return null;
+    }
+    
+    public String stopAnimation(){
+        return null;
     }
 }

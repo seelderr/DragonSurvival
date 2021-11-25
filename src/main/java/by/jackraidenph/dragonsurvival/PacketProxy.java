@@ -5,8 +5,10 @@ import by.jackraidenph.dragonsurvival.entity.MagicalPredatorEntity;
 import by.jackraidenph.dragonsurvival.gecko.DragonEntity;
 import by.jackraidenph.dragonsurvival.handlers.ClientEvents;
 import by.jackraidenph.dragonsurvival.handlers.ClientFlightHandler;
+import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.nest.NestEntity;
 import by.jackraidenph.dragonsurvival.network.*;
+import by.jackraidenph.dragonsurvival.network.magic.SyncCurrentAbilityCasting;
 import by.jackraidenph.dragonsurvival.network.magic.SyncMagicAbilities;
 import by.jackraidenph.dragonsurvival.network.magic.SyncMagicStats;
 import by.jackraidenph.dragonsurvival.registration.EntityTypesInit;
@@ -32,6 +34,29 @@ import java.util.function.Supplier;
  * Synchronizes client data
  */
 public class PacketProxy {
+    
+    public DistExecutor.SafeRunnable handleSkillAnimation(SyncCurrentAbilityCasting syncCapabilityDebuff, Supplier<NetworkEvent.Context> supplier) {
+        return () -> {
+            NetworkEvent.Context context = supplier.get();
+            context.enqueueWork(() -> handleSkillAnimation(syncCapabilityDebuff, context));
+        };
+    }
+    
+    private void handleSkillAnimation(SyncCurrentAbilityCasting abilityCasting, NetworkEvent.Context context) {
+        PlayerEntity thisPlayer = Minecraft.getInstance().player;
+        if (thisPlayer != null) {
+            World world = thisPlayer.level;
+            Entity entity = world.getEntity(abilityCasting.playerId);
+            if (entity instanceof PlayerEntity) {
+                if(entity == thisPlayer) return;
+                
+                DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
+                    dragonStateHandler.setCurrentlyCasting((ActiveDragonAbility)abilityCasting.currentAbility);
+                });
+            }
+        }
+        context.setPacketHandled(true);
+    }
     
     public DistExecutor.SafeRunnable handleMagicAbilities(SyncMagicAbilities magicStatus, Supplier<NetworkEvent.Context> supplier) {
         return () -> {

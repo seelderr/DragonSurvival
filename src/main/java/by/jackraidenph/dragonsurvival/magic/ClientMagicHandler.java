@@ -1,11 +1,11 @@
 package by.jackraidenph.dragonsurvival.magic;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.magic.gui.Buttons.TabButton;
 import by.jackraidenph.dragonsurvival.network.magic.ActivateAbilityInSlot;
-import by.jackraidenph.dragonsurvival.network.magic.SyncCurrentAbilityCasting;
+import by.jackraidenph.dragonsurvival.network.magic.SyncAbilityCastingToServer;
 import by.jackraidenph.dragonsurvival.registration.ClientModEvents;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
 import by.jackraidenph.dragonsurvival.util.DragonType;
@@ -74,15 +74,15 @@ public class ClientMagicHandler
 	                    ability.tickCasting();
 						
 						if(dragonStateHandler.getCurrentlyCasting() != ability) {
-							DragonSurvivalMod.CHANNEL.sendToServer(new SyncCurrentAbilityCasting(slot, ability));
 							dragonStateHandler.setCurrentlyCasting(ability);
+							DragonSurvivalMod.CHANNEL.sendToServer(new SyncAbilityCastingToServer(playerEntity.getId(), ability));
 						}
 						
 	                } else if (modeAbility == GLFW.GLFW_RELEASE) {
 	                    ability.stopCasting();
 						
 						if(dragonStateHandler.getCurrentlyCasting() != null) {
-							DragonSurvivalMod.CHANNEL.sendToServer(new SyncCurrentAbilityCasting(slot, null));
+							DragonSurvivalMod.CHANNEL.sendToServer(new SyncAbilityCastingToServer(playerEntity.getId(), null));
 							dragonStateHandler.setCurrentlyCasting(null);
 						}
 		
@@ -92,7 +92,7 @@ public class ClientMagicHandler
 	                }
 	            }else{
 		            if(dragonStateHandler.getCurrentlyCasting() != null) {
-			            DragonSurvivalMod.CHANNEL.sendToServer(new SyncCurrentAbilityCasting(slot, null));
+			            DragonSurvivalMod.CHANNEL.sendToServer(new SyncAbilityCastingToServer(playerEntity.getId(), null));
 			            dragonStateHandler.setCurrentlyCasting(null);
 		            }
 	            }
@@ -221,6 +221,7 @@ public class ClientMagicHandler
 	    });
 	}
 	
+	//TODO This isnt removing the lava fog when on shaders
 	@SubscribeEvent
 	@OnlyIn( Dist.CLIENT)
 	public static void removeLavaAndWaterFog(EntityViewRenderEvent.FogDensity event) {

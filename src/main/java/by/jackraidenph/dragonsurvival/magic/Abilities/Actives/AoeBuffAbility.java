@@ -78,6 +78,18 @@ public class AoeBuffAbility extends ActiveDragonAbility
 	}
 	
 	@Override
+	public String loopAnimation()
+	{
+		return "cast_mass_buff";
+	}
+	
+	@Override
+	public String stopAnimation()
+	{
+		return "mass_buff";
+	}
+	
+	@Override
 	public IFormattableTextComponent getDescription()
 	{
 		return new TranslationTextComponent("ds.skill.description." + getId(), getDuration());

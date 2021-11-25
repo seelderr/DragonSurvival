@@ -1,33 +1,32 @@
 package by.jackraidenph.dragonsurvival.network.magic;
 
-import by.jackraidenph.dragonsurvival.PacketProxy;
+import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.magic.Abilities.DragonAbilities;
 import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.network.IMessage;
 import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.fml.network.PacketDistributor;
 
 import java.util.function.Supplier;
 
-public class SyncCurrentAbilityCasting implements IMessage<SyncCurrentAbilityCasting>
+public class SyncAbilityCastingToServer implements IMessage<SyncAbilityCastingToServer>
 {
 	
 	public int playerId;
 	public DragonAbility currentAbility;
 	
-	public SyncCurrentAbilityCasting() {
+	public SyncAbilityCastingToServer() {
 	
 	}
 	
-	public SyncCurrentAbilityCasting(int playerId, DragonAbility currentAbility) {
+	public SyncAbilityCastingToServer(int playerId, DragonAbility currentAbility) {
 		this.playerId = playerId;
 		this.currentAbility = currentAbility;
 	}
 	
 	@Override
-	public void encode(SyncCurrentAbilityCasting message, PacketBuffer buffer) {
+	public void encode(SyncAbilityCastingToServer message, PacketBuffer buffer) {
 		buffer.writeInt(message.playerId);
 		buffer.writeBoolean(message.currentAbility != null);
 		
@@ -38,7 +37,7 @@ public class SyncCurrentAbilityCasting implements IMessage<SyncCurrentAbilityCas
 	}
 	
 	@Override
-	public SyncCurrentAbilityCasting decode(PacketBuffer buffer) {
+	public SyncAbilityCastingToServer decode(PacketBuffer buffer) {
 		int playerId = buffer.readInt();
 		DragonAbility ability = null;
 		boolean hasAbility = buffer.readBoolean();
@@ -49,11 +48,11 @@ public class SyncCurrentAbilityCasting implements IMessage<SyncCurrentAbilityCas
 			ability.loadNBT(buffer.readNbt());
 		}
 		
-		return new SyncCurrentAbilityCasting(playerId, ability);
+		return new SyncAbilityCastingToServer(playerId, ability);
 	}
 	
 	@Override
-	public void handle(SyncCurrentAbilityCasting message, Supplier<NetworkEvent.Context> supplier) {
-		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> new PacketProxy().handleSkillAnimation(message, supplier));
+	public void handle(SyncAbilityCastingToServer message, Supplier<NetworkEvent.Context> supplier) {
+		DragonSurvivalMod.CHANNEL.send(PacketDistributor.ALL.noArg(), new SyncCurrentAbilityCasting(message.playerId, message.currentAbility));
 	}
 }

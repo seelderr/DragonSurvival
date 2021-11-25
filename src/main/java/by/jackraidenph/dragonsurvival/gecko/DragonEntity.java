@@ -3,6 +3,7 @@ package by.jackraidenph.dragonsurvival.gecko;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.handlers.ClientEvents;
 import by.jackraidenph.dragonsurvival.handlers.DragonSizeHandler;
+import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Pose;
@@ -41,7 +42,10 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
     public AnimationFactory getFactory() {
         return animationFactory;
     }
-
+    
+    
+    private ActiveDragonAbility lastCast = null;
+    
     @SuppressWarnings("rawtypes")
     private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> animationEvent) {
         final PlayerEntity player = getPlayer();
@@ -49,6 +53,29 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
         AnimationBuilder builder = new AnimationBuilder();
         if (player != null) {
             DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
+                ActiveDragonAbility curCast = playerStateHandler.getCurrentlyCasting();
+                if(curCast != null && lastCast == null){
+                    lastCast = curCast;
+    
+                    if(curCast.startAnimation() != null){
+                        builder.addAnimation(curCast.startAnimation(), false);
+                    }else if(curCast.loopAnimation() != null){
+                        builder.addAnimation(curCast.loopAnimation(), true);
+                    }
+                }else if(curCast != null && lastCast != null){
+                    lastCast = curCast;
+    
+                    if(curCast.loopAnimation() != null) {
+                        builder.addAnimation(curCast.loopAnimation(), true);
+                    }
+                }else if(curCast == null && lastCast != null){
+                    if(lastCast.stopAnimation() != null) {
+                        builder.addAnimation(lastCast.stopAnimation());
+                    }
+                    
+                    lastCast = null;
+                }
+                
                 Vector3d motio = new Vector3d(player.getX() - player.xo, player.getY() - player.yo, player.getZ() - player.zo);
                 boolean isMovingHorizontal = Math.sqrt(Math.pow(motio.x, 2) + Math.pow(motio.z, 2)) > 0.005;
                 // Main
