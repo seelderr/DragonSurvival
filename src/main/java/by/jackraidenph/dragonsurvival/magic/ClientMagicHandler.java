@@ -106,7 +106,7 @@ public class ClientMagicHandler
 	public static void cancelExpBar(RenderGameOverlayEvent event) {
 		PlayerEntity playerEntity = Minecraft.getInstance().player;
 		
-		if( event.getType() == ElementType.EXPERIENCE){
+		if( event.getType() == ElementType.EXPERIENCE && !playerEntity.isCreative()){
 			DragonStateProvider.getCap(playerEntity).ifPresent(cap -> {
 				ActiveDragonAbility ability = cap.getAbilityFromSlot(cap.getSelectedAbilitySlot());
 				

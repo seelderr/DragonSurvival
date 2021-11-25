@@ -15,6 +15,7 @@ import by.jackraidenph.dragonsurvival.network.*;
 import by.jackraidenph.dragonsurvival.network.magic.*;
 import by.jackraidenph.dragonsurvival.registration.BlockInit;
 import by.jackraidenph.dragonsurvival.registration.EntityTypesInit;
+import by.jackraidenph.dragonsurvival.registration.ParticleRegistry;
 import by.jackraidenph.dragonsurvival.util.BiomeDictionaryHelper;
 import by.jackraidenph.dragonsurvival.util.DragonLevel;
 import by.jackraidenph.dragonsurvival.util.DragonType;
@@ -93,6 +94,8 @@ public class DragonSurvivalMod {
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ConfigHandler.clientSpec);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ConfigHandler.commonSpec);
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ConfigHandler.serverSpec);
+    
+        ParticleRegistry.REG.register(modEventBus);
         
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(new DragonFoodHandler());

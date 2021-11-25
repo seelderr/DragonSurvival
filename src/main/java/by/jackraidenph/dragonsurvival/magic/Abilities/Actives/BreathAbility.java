@@ -31,6 +31,7 @@ public class BreathAbility extends ActiveDragonAbility
 	
 	public int channelCost = 1;
 	private boolean firstUse = true;
+	private int spawnCooldown = 0;
 	
 	public boolean canConsumeMana(PlayerEntity player) {
 		return player.isCreative() || DragonStateProvider.getCurrentMana(player) >= (firstUse ? this.getManaCost() : channelCost)
@@ -44,6 +45,7 @@ public class BreathAbility extends ActiveDragonAbility
 			startCooldown();
 			firstUse = true;
 		}
+		spawnCooldown = 0;
 	}
 	
 	@Override
@@ -52,24 +54,30 @@ public class BreathAbility extends ActiveDragonAbility
 		if(firstUse) {
 			DragonStateProvider.consumeMana(player, this.getManaCost());
 			firstUse = false;
+			spawnCooldown = 0;
 		}else{
 			if(player.tickCount % Functions.secondsToTicks(2) == 0){
 				DragonStateProvider.consumeMana(player, channelCost);
 			}
 		}
-		//TODO Add flight speed to the view vector
-		Vector3d vector3d = player.getViewVector(1.0F);
-		double speed = 1d;
-		double d2 = vector3d.x * speed;
-		double d3 = vector3d.y * speed;
-		double d4 = vector3d.z * speed;
 		
-		
-		FireBreathEntity entity = new FireBreathEntity(player.level, player, d2, d3, d4);
-		entity.setPos(player.getX() + d2, player.getY(0.5D) + d3, player.getZ() + d4);
-		entity.setLevel(getLevel());
-		//entity.shootFromRotation(player, player.xRot, player.yRot, 0.0F, (float)speed, 1.0F);
-		player.level.addFreshEntity(entity);
+		if(spawnCooldown <= 0) {
+			Vector3d vector3d = player.getViewVector(1.0F);
+			double speed = 1d;
+			double d2 = vector3d.x * speed;
+			double d3 = vector3d.y * speed;
+			double d4 = vector3d.z * speed;
+			
+			FireBreathEntity entity = new FireBreathEntity(player.level, player, 0, 0, 0);
+			entity.setPos(player.getX() + d2, player.getY(0.5D) + d3, player.getZ() + d4);
+			entity.setLevel(getLevel());
+			entity.setOwner(player);
+			player.level.addFreshEntity(entity);
+			
+			spawnCooldown = 65;
+		}else{
+			spawnCooldown--;
+		}
 	}
 	
 	public static int getDamage(int level){
