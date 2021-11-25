@@ -56,6 +56,7 @@ import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.network.PacketDistributor;
@@ -188,19 +189,20 @@ public class ClientEvents {
                         ((DragonRenderer)dragonArmorRenderer).renderColor = renderColor;
 
                         if(bootsItem.getItem() instanceof IDyeableArmorItem){
-                            int colorCode = ((IDyeableArmorItem)bootsItem.getItem()).getColor(bootsItem);
-                            ((DragonRenderer)dragonArmorRenderer).renderColor = new Color(colorCode);
+                            int colorCode = ((IDyeableArmorItem) bootsItem.getItem()).getColor(bootsItem);
+                            ((DragonRenderer) dragonArmorRenderer).renderColor = new Color(colorCode);
                         }
 
                         ResourceLocation boots = new ResourceLocation(DragonSurvivalMod.MODID, constructArmorTexture(player, EquipmentSlotType.FEET));
                         dragonArmorModel.setArmorTexture(boots);
                         dragonArmorRenderer.render(dragonArmor, playerYaw, partialTicks, eventMatrixStack, buffers, light);
-                        ((DragonRenderer)dragonArmorRenderer).renderColor = renderColor;
+                        ((DragonRenderer) dragonArmorRenderer).renderColor = renderColor;
 
                         eventMatrixStack.translate(0, 0, 0.15);
-                    } catch (Throwable ignored) {
-                        if (!(ignored instanceof NullPointerException))
-                            ignored.printStackTrace();
+                    } catch (Throwable throwable) {
+                        if (!(throwable instanceof NullPointerException) || ConfigHandler.CLIENT.clientDebugMessages.get())
+                            throwable.printStackTrace();
+                        eventMatrixStack.popPose();
                     } finally {
                         eventMatrixStack.popPose();
                     }
@@ -486,17 +488,18 @@ public class ClientEvents {
                         ItemStack right = player.getMainHandItem();
                         matrixStack.pushPose();
                         matrixStack.mulPose(Vector3f.YP.rotationDegrees(180));
-                        matrixStack.translate(0.5f, 1, -0.8);
+                        matrixStack.translate(0.5, 1, -0.8);
                         itemRenderer.renderStatic(right, ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND, eventLight, combinedOverlayIn, matrixStack, renderTypeBuffer);
                         matrixStack.popPose();
                         matrixStack.pushPose();
                         ItemStack left = player.getOffhandItem();
-                        matrixStack.translate(0.25, 1, 0.4);
-                        itemRenderer.renderStatic(left, ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND, eventLight, combinedOverlayIn, matrixStack, renderTypeBuffer);
+                        matrixStack.mulPose(Vector3f.YP.rotationDegrees(180));
+                        matrixStack.translate(-0.5, 1, -0.8);
+                        mc.getItemInHandRenderer().renderItem(player, left, ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND, true, matrixStack, renderTypeBuffer, eventLight);
                         matrixStack.popPose();
                     }
                 } catch (Throwable throwable) {
-                    if (!(throwable instanceof NullPointerException))
+                    if (!(throwable instanceof NullPointerException) || ConfigHandler.CLIENT.clientDebugMessages.get())
                         throwable.printStackTrace();
                     matrixStack.popPose();
                 } finally {
@@ -634,5 +637,12 @@ public class ClientEvents {
                 toolTip.add(new TranslationTextComponent("ds.sea.dragon.food"));
             }
         }
+    }
+
+    @SubscribeEvent
+    public static void unloadWorld(WorldEvent.Unload worldEvent) {
+        dragonEntity = null;
+        dragonArmor = null;
+        playerDragonHashMap.clear();
     }
 }
