@@ -33,7 +33,7 @@ public class VisionAbility extends ActiveDragonAbility
 	{
 		super.onActivation(player);
 		player.addEffect(new EffectInstance(effect, Functions.secondsToTicks(getDuration())));
-		player.addEffect(new EffectInstance(Effects.NIGHT_VISION, Functions.secondsToTicks(getDuration())));
+		player.addEffect(new EffectInstance(Effects.NIGHT_VISION, Functions.secondsToTicks(getDuration()), 0, false, false));
 		
 	}
 	

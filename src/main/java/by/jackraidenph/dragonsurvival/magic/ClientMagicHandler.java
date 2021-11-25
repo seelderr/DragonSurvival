@@ -159,7 +159,7 @@ public class ClientMagicHandler
 					
 					textureManager.bind(TabButton.buttonTexture);
 					
-					int maxMana = cap.getMaxMana(playerEntity);
+					int maxMana = DragonStateProvider.getMaxMana(playerEntity);
 					int curMana = cap.getCurrentMana();
 					
 					for(int i = 0; i < 1 + Math.ceil(maxMana / 10.0); i++){
@@ -231,7 +231,7 @@ public class ClientMagicHandler
 	        
 	        if (cap.getType() == DragonType.CAVE && event.getInfo().getFluidInCamera().is(FluidTags.LAVA)) {
 	            if(player.hasEffect(DragonEffects.LAVA_VISION)) {
-	                event.setDensity(event.getDensity() / 5);
+	                event.setDensity(0.02F);
 	                event.setCanceled(true);
 	            }
 	        }else if (cap.getType() == DragonType.SEA && event.getInfo().getFluidInCamera().is(FluidTags.WATER)) {

@@ -36,12 +36,14 @@ public class AbilityScreen extends Screen {
     private int guiTop;
     
     private DragonType type;
+    public Screen sourceScreen;
     
     public ArrayList<ActiveDragonAbility> unlockAbleSkills = new ArrayList<>();
     
     
-    public AbilityScreen() {
+    public AbilityScreen(Screen sourceScreen) {
         super(new StringTextComponent("AbilityScreenTest"));
+        this.sourceScreen = sourceScreen;
     }
     
     @Override

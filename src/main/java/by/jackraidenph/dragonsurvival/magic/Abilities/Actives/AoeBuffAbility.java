@@ -90,6 +90,12 @@ public class AoeBuffAbility extends ActiveDragonAbility
 	}
 	
 	@Override
+	public int endAnimationTime()
+	{
+		return Functions.secondsToTicks(13);
+	}
+	
+	@Override
 	public IFormattableTextComponent getDescription()
 	{
 		return new TranslationTextComponent("ds.skill.description." + getId(), getDuration());

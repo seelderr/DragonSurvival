@@ -3,9 +3,9 @@ package by.jackraidenph.dragonsurvival.magic.Abilities.Actives;
 import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
+import by.jackraidenph.dragonsurvival.magic.entity.FireBreathEntity;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
@@ -30,8 +30,7 @@ public class BreathAbility extends ActiveDragonAbility
 	}
 	
 	public int channelCost = 1;
-	
-	private boolean firstUse = false;
+	private boolean firstUse = true;
 	
 	public boolean canConsumeMana(PlayerEntity player) {
 		return player.isCreative() || DragonStateProvider.getCurrentMana(player) >= (firstUse ? this.getManaCost() : channelCost);
@@ -59,20 +58,19 @@ public class BreathAbility extends ActiveDragonAbility
 		}
 		
 		Vector3d vector3d = player.getViewVector(1.0F);
-		double speed = 1d;
+		double speed = 0.2d;
 		
 		double d2 = vector3d.x * speed;
 		double d3 = vector3d.y * speed;
 		double d4 = vector3d.z * speed;
 		
-		if(player.level.isClientSide) {
-			player.level.addParticle(ParticleTypes.FLAME, player.position().x, player.position().y + 1, player.position().z, d2, d3, d4);
+		if(player.tickCount % 3 == 0) {
+			FireBreathEntity entity = new FireBreathEntity(player.level, player, d2, d3, d4);
+			entity.setPos(player.getX() + (vector3d.x * speed) * 4, player.getY(0.5D), player.getZ() + (vector3d.z * speed) * 4);
+			entity.setLevel(getLevel());
+			entity.shootFromRotation(player, player.xRot, player.yRot, 0.0F, (float)speed, 1.0F);
+			player.level.addFreshEntity(entity);
 		}
-//		FireBallEntity entity = new FireBallEntity(player.level, player, d2, d3, d4);
-//		entity.setPos(player.getX() + vector3d.x * speed, player.getY(0.5D) + 0.5D, player.getZ() + vector3d.z * speed);
-//		entity.setLevel(getLevel());
-//		entity.shootFromRotation(player, player.xRot, player.yRot, 0.0F, (float)speed, 1.0F);
-//		player.level.addFreshEntity(entity);
 	}
 	
 	public static int getDamage(int level){

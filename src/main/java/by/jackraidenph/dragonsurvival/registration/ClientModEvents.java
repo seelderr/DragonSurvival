@@ -9,6 +9,7 @@ import by.jackraidenph.dragonsurvival.handlers.ClientEvents;
 import by.jackraidenph.dragonsurvival.magic.entity.Renderer.BallLightningRenderer;
 import by.jackraidenph.dragonsurvival.magic.entity.Renderer.DragonSpikeRenderer;
 import by.jackraidenph.dragonsurvival.magic.entity.Renderer.FireBallRenderer;
+import by.jackraidenph.dragonsurvival.magic.entity.Renderer.FireBreathRenderer;
 import by.jackraidenph.dragonsurvival.magic.entity.models.FireballModel;
 import by.jackraidenph.dragonsurvival.magic.entity.models.LightningBallModel;
 import by.jackraidenph.dragonsurvival.nest.NestScreen;
@@ -91,6 +92,7 @@ public class ClientModEvents {
         RenderTypeLookup.setRenderLayer(BlockInit.magicDragonBeacon, RenderType.cutout());
     
         RenderingRegistry.registerEntityRenderingHandler(EntityTypesInit.DRAGON_SPIKE, DragonSpikeRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityTypesInit.FIRE_BREATH, FireBreathRenderer::new);
     
         RenderingRegistry.registerEntityRenderingHandler(EntityTypesInit.MAGICAL_BEAST, MagicalPredatorRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityTypesInit.BOLAS_ENTITY, manager -> new SpriteRenderer<>(manager, minecraft.getItemRenderer()));
@@ -111,7 +113,7 @@ public class ClientModEvents {
         TOGGLE_WINGS = new KeyBinding("ds.keybind.wings", GLFW.GLFW_KEY_G, "Dragon Survival");
         ClientRegistry.registerKeyBinding(TOGGLE_WINGS);
     
-        DRAGON_INVENTORY = new KeyBinding("ds.keybind.dragon_inv", GLFW.GLFW_KEY_V, "Dragon Survival");
+        DRAGON_INVENTORY = new KeyBinding("ds.keybind.dragon_inv", GLFW.GLFW_KEY_UNKNOWN, "Dragon Survival");
         ClientRegistry.registerKeyBinding(DRAGON_INVENTORY);
     
         USE_ABILITY = new KeyBinding("ds.keybind.use_ability", GLFW.GLFW_KEY_C, "Dragon Survival");

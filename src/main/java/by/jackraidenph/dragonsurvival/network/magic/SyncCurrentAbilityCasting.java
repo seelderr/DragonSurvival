@@ -17,9 +17,7 @@ public class SyncCurrentAbilityCasting implements IMessage<SyncCurrentAbilityCas
 	public int playerId;
 	public DragonAbility currentAbility;
 	
-	public SyncCurrentAbilityCasting() {
-	
-	}
+	public SyncCurrentAbilityCasting() {}
 	
 	public SyncCurrentAbilityCasting(int playerId, DragonAbility currentAbility) {
 		this.playerId = playerId;

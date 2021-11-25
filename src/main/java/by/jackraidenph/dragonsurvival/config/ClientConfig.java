@@ -12,7 +12,8 @@ public class ClientConfig {
 	public final ForgeConfigSpec.BooleanValue renderInFirstPerson;
 	public final ForgeConfigSpec.BooleanValue notifyWingStatus;
 	public final ForgeConfigSpec.BooleanValue clientDebugMessages;
-
+	public final ForgeConfigSpec.BooleanValue dragonInventory;
+	
 	ClientConfig(ForgeConfigSpec.Builder builder) {
 		builder.push("client");
 		//For people who use first person view mods
@@ -32,6 +33,9 @@ public class ClientConfig {
 		dragonNameTags = builder
 				.comment("Show name tags for dragons.")
 				.define("dragonNameTags", false);
+		dragonInventory = builder
+				.comment("Should the default inventory be replaced as a dragon?")
+				.define("dragonInventory", true);
 		builder.pop();
 	}
 	

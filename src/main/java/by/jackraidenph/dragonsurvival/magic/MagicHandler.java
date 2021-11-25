@@ -44,7 +44,7 @@ public class MagicHandler
 				DragonStateProvider.getCap(player).ifPresent(cap -> {
 					if (cap.lastTick == -1 || cap.lastTick != player.tickCount) {
 						cap.lastTick = player.tickCount; //It was activating twice for some reason
-						if (cap.getCurrentMana() < cap.getMaxMana(player)) {
+						if (cap.getCurrentMana() < DragonStateProvider.getMaxMana(player)) {
 							DragonStateProvider.replenishMana(player, 1);
 						}
 					}

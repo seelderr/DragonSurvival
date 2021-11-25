@@ -19,9 +19,7 @@ import java.util.function.Supplier;
 public class OpenDragonInventory implements IMessage<OpenDragonInventory>
 {
     @Override
-    public void encode(OpenDragonInventory message, PacketBuffer buffer) {
-
-    }
+    public void encode(OpenDragonInventory message, PacketBuffer buffer) {}
 
     @Override
     public OpenDragonInventory decode(PacketBuffer buffer) {

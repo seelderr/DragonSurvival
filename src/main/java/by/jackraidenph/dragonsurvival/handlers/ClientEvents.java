@@ -9,6 +9,7 @@ import by.jackraidenph.dragonsurvival.gecko.DragonArmorModel;
 import by.jackraidenph.dragonsurvival.gecko.DragonEntity;
 import by.jackraidenph.dragonsurvival.gecko.DragonModel;
 import by.jackraidenph.dragonsurvival.gecko.DragonRenderer;
+import by.jackraidenph.dragonsurvival.gui.DragonScreen;
 import by.jackraidenph.dragonsurvival.magic.gui.Buttons.TabButton;
 import by.jackraidenph.dragonsurvival.mixins.AccessorEntityRenderer;
 import by.jackraidenph.dragonsurvival.mixins.AccessorEntityRendererManager;
@@ -23,6 +24,7 @@ import by.jackraidenph.dragonsurvival.registration.ItemsInit;
 import by.jackraidenph.dragonsurvival.util.DragonLevel;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
@@ -38,6 +40,7 @@ import net.minecraft.client.renderer.entity.layers.ParrotVariantLayer;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.settings.PointOfView;
+import net.minecraft.client.util.InputMappings;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -277,6 +280,37 @@ public class ClientEvents {
             });
         }
     }
+    
+    public static boolean showingInventory;
+    public static boolean switchingInventory;
+    
+    @SubscribeEvent
+    public static void onOpenScreen(GuiOpenEvent openEvent) {
+        if(switchingInventory) return;
+        
+        if(ConfigHandler.CLIENT.dragonInventory.get()) {
+            ClientPlayerEntity player = Minecraft.getInstance().player;
+            if (openEvent.getGui() instanceof InventoryScreen && !player.isCreative() && DragonStateProvider.isDragon(player)) {
+                openEvent.setCanceled(true);
+                showingInventory = false;
+            }
+        }
+    }
+    
+    @SubscribeEvent
+    public static void onInventoryKey(InputEvent.KeyInputEvent keyInputEvent) {
+        if(switchingInventory) return;
+        
+        if(ConfigHandler.CLIENT.dragonInventory.get()) {
+            Minecraft minecraft = Minecraft.getInstance();
+            GameSettings gameSettings = minecraft.options;
+            InputMappings.Input input = InputMappings.getKey(keyInputEvent.getKey(), keyInputEvent.getScanCode());
+            if (minecraft.screen == null && DragonStateProvider.isDragon(minecraft.player) && !minecraft.player.isCreative() && gameSettings.keyInventory.isActiveAndMatches(input) && !showingInventory) {
+                DragonSurvivalMod.CHANNEL.sendToServer(new OpenDragonInventory());
+                showingInventory = true;
+            }
+        }
+    }
 
     @SubscribeEvent
     public static void addCraftingButton(GuiScreenEvent.InitGuiEvent.Post initGuiEvent)
@@ -288,9 +322,20 @@ public class ClientEvents {
             initGuiEvent.addWidget(new TabButton( ((InventoryScreen)screen).getGuiLeft() + 57,  ((InventoryScreen)screen).getGuiTop() - 26, 2, screen));
             initGuiEvent.addWidget(new TabButton( ((InventoryScreen)screen).getGuiLeft() + 86,  ((InventoryScreen)screen).getGuiTop() - 26, 3, screen));
     
-            net.minecraft.client.gui.widget.button.Button openCrafting = new Button(screen.width / 2, screen.height - 30, 60, 20, new StringTextComponent("Crafting"), p_onPress_1_ -> {
+            net.minecraft.client.gui.widget.button.Button openCrafting = new Button(((InventoryScreen)screen).getGuiLeft(), screen.height - 30, 100, 20, new StringTextComponent("Dragon Inventory"), p_onPress_1_ -> {
                 DragonSurvivalMod.CHANNEL.sendToServer(new OpenDragonInventory());
             });
+            
+            initGuiEvent.addWidget(openCrafting);
+        }
+    
+        if(screen instanceof DragonScreen) {
+            net.minecraft.client.gui.widget.button.Button openCrafting = new Button(((DragonScreen)screen).getGuiLeft(), screen.height - 30, 100, 20, new StringTextComponent("Normal Inventory"), p_onPress_1_ -> {
+                switchingInventory = true;
+                Minecraft.getInstance().setScreen(new InventoryScreen(Minecraft.getInstance().player));
+                switchingInventory = false;
+            });
+        
             initGuiEvent.addWidget(openCrafting);
         }
     }

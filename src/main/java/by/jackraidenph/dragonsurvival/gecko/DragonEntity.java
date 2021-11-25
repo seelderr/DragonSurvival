@@ -45,6 +45,8 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
     
     
     private ActiveDragonAbility lastCast = null;
+    private boolean started, ended;
+    AnimationTimer animationTimer = new AnimationTimer();
     
     @SuppressWarnings("rawtypes")
     private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> animationEvent) {
@@ -55,25 +57,46 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
             DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
                 ActiveDragonAbility curCast = playerStateHandler.getCurrentlyCasting();
                 if(curCast != null && lastCast == null){
-                    lastCast = curCast;
     
                     if(curCast.startAnimation() != null){
-                        builder.addAnimation(curCast.startAnimation(), false);
+                        if(!started){
+                            animationTimer.putAnimation(curCast.startAnimation(), curCast.startAnimationTime(), builder);
+                            started = true;
+                        }
+                        
+                        animationTimer.trackAnimation(curCast.startAnimation());
+                        builder.addAnimation(curCast.startAnimation());
+    
+                        if (animationTimer.getDuration(curCast.startAnimation()) <= 0) {
+                            lastCast = curCast;
+                            started = false;
+                        }
+                        
                     }else if(curCast.loopAnimation() != null){
+                        lastCast = curCast;
                         builder.addAnimation(curCast.loopAnimation(), true);
                     }
                 }else if(curCast != null && lastCast != null){
                     lastCast = curCast;
-    
+                    
                     if(curCast.loopAnimation() != null) {
                         builder.addAnimation(curCast.loopAnimation(), true);
                     }
                 }else if(curCast == null && lastCast != null){
                     if(lastCast.stopAnimation() != null) {
+                        if(!ended){
+                            animationTimer.putAnimation(lastCast.stopAnimation(), lastCast.endAnimationTime(), builder);
+                            ended = true;
+                        }
+    
+                        animationTimer.trackAnimation(lastCast.stopAnimation());
                         builder.addAnimation(lastCast.stopAnimation());
+    
+                        if (animationTimer.getDuration(lastCast.stopAnimation()) <= 0) {
+                            lastCast = null;
+                            ended = false;
+                        }
                     }
-                    
-                    lastCast = null;
                 }
                 
                 Vector3d motio = new Vector3d(player.getX() - player.xo, player.getY() - player.yo, player.getZ() - player.zo);

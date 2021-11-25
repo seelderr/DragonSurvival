@@ -2,7 +2,9 @@ package by.jackraidenph.dragonsurvival.magic.gui.Buttons;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.gui.DragonScreen;
+import by.jackraidenph.dragonsurvival.handlers.ClientEvents;
 import by.jackraidenph.dragonsurvival.magic.gui.AbilityScreen;
+import by.jackraidenph.dragonsurvival.network.magic.OpenDragonInventory;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
@@ -64,12 +66,26 @@ public class TabButton extends Button
 		if(!isCurrent()){
 			switch(index){
 				case 0:
+					if(parent instanceof AbilityScreen){
+						if(((AbilityScreen)parent).sourceScreen != null){
+							if(((AbilityScreen)parent).sourceScreen instanceof InventoryScreen){
+								ClientEvents.switchingInventory = true;
+								Minecraft.getInstance().setScreen(new InventoryScreen(Minecraft.getInstance().player));
+								ClientEvents.switchingInventory = false;
+								
+								break;
+							}else if(((AbilityScreen)parent).sourceScreen instanceof DragonScreen){
+								DragonSurvivalMod.CHANNEL.sendToServer(new OpenDragonInventory());
+								break;
+							}
+						}
+					}
+					
 					Minecraft.getInstance().setScreen(new InventoryScreen(Minecraft.getInstance().player));
-					//DragonSurvivalMod.CHANNEL.sendToServer(new OpenDragonInventory());
 				break;
 				
 				case 1:
-					Minecraft.getInstance().setScreen(new AbilityScreen());
+					Minecraft.getInstance().setScreen(new AbilityScreen(parent));
 					break;
 			}
 		}

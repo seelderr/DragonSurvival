@@ -304,29 +304,6 @@ public class DragonStateHandler {
 			abilities.add(newAbility);
 		}
 	}
-	
-	public int getMaxMana(PlayerEntity entity) {
-		int mana = 1;
-		
-		mana += Math.max(0, (Math.min(50, entity.experienceLevel) - 5) / 5);
-		
-		switch(type){
-			case SEA:
-				mana += getAbilityLevel(DragonAbilities.SEA_MAGIC);
-				break;
-			
-			case CAVE:
-				mana += getAbilityLevel(DragonAbilities.CAVE_MAGIC);
-				break;
-			
-			case FOREST:
-				mana += getAbilityLevel(DragonAbilities.FOREST_MAGIC);
-				break;
-		}
-		
-		return mana;
-	}
-	
 	public int getCurrentMana() {
 		return currentMana;
 	}

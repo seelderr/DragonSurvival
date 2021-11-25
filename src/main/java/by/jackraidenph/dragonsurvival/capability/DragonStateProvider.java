@@ -1,6 +1,7 @@
 package by.jackraidenph.dragonsurvival.capability;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
+import by.jackraidenph.dragonsurvival.magic.Abilities.DragonAbilities;
 import by.jackraidenph.dragonsurvival.network.magic.SyncMagicStats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -28,18 +29,38 @@ public class DragonStateProvider implements ICapabilitySerializable<CompoundNBT>
     }
     
     public static int getCurrentMana(PlayerEntity entity) {
-        return getCap(entity).map(cap -> Math.min(cap.getCurrentMana(), cap.getMaxMana(entity))).orElse(0);
+        return getCap(entity).map(cap -> Math.min(cap.getCurrentMana(), getMaxMana(entity))).orElse(0);
     }
     
     public static int getMaxMana(PlayerEntity entity) {
-        return getCap(entity).map(cap -> cap.getMaxMana(entity)).orElse(0);
+        return getCap(entity).map(cap -> {
+            int mana = 1;
+    
+            mana += Math.max(0, (Math.min(50, entity.experienceLevel) - 5) / 5);
+    
+            switch(cap.getType()){
+                case SEA:
+                    mana += cap.getAbilityLevel(DragonAbilities.SEA_MAGIC);
+                    break;
+        
+                case CAVE:
+                    mana += cap.getAbilityLevel(DragonAbilities.CAVE_MAGIC);
+                    break;
+        
+                case FOREST:
+                    mana += cap.getAbilityLevel(DragonAbilities.FOREST_MAGIC);
+                    break;
+            }
+    
+            return mana;
+        }).orElse(0);
     }
     
     public static void replenishMana(PlayerEntity entity, int mana) {
         if(entity.level.isClientSide) return;
     
         getCap(entity).ifPresent(cap -> {
-            cap.setCurrentMana(Math.min(cap.getMaxMana(entity), cap.getCurrentMana() + mana));
+            cap.setCurrentMana(Math.min(getMaxMana(entity), cap.getCurrentMana() + mana));
             if(!entity.level.isClientSide){
                 DragonSurvivalMod.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)entity), new SyncMagicStats(entity.getId(), cap.getSelectedAbilitySlot(), cap.getCurrentMana(), cap.renderAbilityHotbar()));
             }
