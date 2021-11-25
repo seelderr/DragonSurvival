@@ -1,6 +1,5 @@
 package by.jackraidenph.dragonsurvival.gecko;
 
-import by.jackraidenph.dragonsurvival.handlers.ClientEvents;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
@@ -24,23 +23,6 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 		this.addLayer(new glowLayerRender(this));
     }
 	
-<<<<<<< Updated upstream
-	@Override
-	public void render(DragonEntity entity, float entityYaw, float partialTicks, MatrixStack stack, IRenderTypeBuffer bufferIn, int packedLightIn)
-	{
-		super.render(entity, entityYaw, partialTicks, stack, bufferIn, packedLightIn);
-		
-		if (glowTexture != null) {
-			ClientEvents.dragonModel.setCurrentTexture(glowTexture);
-			
-			renderType = RenderType.entityCutoutNoCullZOffset(glowTexture);
-			super.render(entity, entityYaw, partialTicks, stack, bufferIn, 200);
-			renderType = null;
-		}
-	}
-=======
->>>>>>> Stashed changes
-	
 	public Color renderColor = new Color(255, 255, 255);
 	
 	@Override
@@ -50,6 +32,7 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 	{
 		return renderColor;
 	}
+	
 	public class glowLayerRender extends GeoLayerRenderer<DragonEntity>
 	{
 		private final IGeoRenderer<DragonEntity> renderer;
