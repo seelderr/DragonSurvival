@@ -3,6 +3,7 @@ package by.jackraidenph.dragonsurvival.gecko;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.handlers.ClientEvents;
 import by.jackraidenph.dragonsurvival.handlers.DragonSizeHandler;
+import by.jackraidenph.dragonsurvival.magic.common.AbilityAnimation;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -44,8 +45,9 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
     }
     
     
-    private ActiveDragonAbility lastCast = null;
-    private boolean started, ended;
+    ActiveDragonAbility lastCast = null;
+    boolean started, ended;
+    public boolean neckLocked = true;
     AnimationTimer animationTimer = new AnimationTimer();
     
     @SuppressWarnings("rawtypes")
@@ -57,45 +59,61 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
             DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
                 ActiveDragonAbility curCast = playerStateHandler.getCurrentlyCasting();
                 if(curCast != null && lastCast == null){
+                    if(curCast.getStartingAnimation() != null){
+                        AbilityAnimation starAni = curCast.getStartingAnimation();
+                        neckLocked = starAni.locksNeck;
+                        
+                        animationTimer.trackAnimation(starAni.animationKey);
     
-                    if(curCast.startAnimation() != null){
                         if(!started){
-                            animationTimer.putAnimation(curCast.startAnimation(), curCast.startAnimationTime(), builder);
+                            animationTimer.putAnimation(starAni.animationKey, starAni.duration, builder);
                             started = true;
                         }
                         
-                        animationTimer.trackAnimation(curCast.startAnimation());
-                        builder.addAnimation(curCast.startAnimation());
+                        builder.addAnimation(starAni.animationKey);
     
-                        if (animationTimer.getDuration(curCast.startAnimation()) <= 0) {
+                        if (animationTimer.getDuration(starAni.animationKey) <= 0) {
                             lastCast = curCast;
                             started = false;
                         }
                         
-                    }else if(curCast.loopAnimation() != null){
+                    }else if(curCast.getLoopingAnimation() != null){
+                        AbilityAnimation loopingAni = curCast.getLoopingAnimation();
+                        neckLocked = loopingAni.locksNeck;
+                        
                         lastCast = curCast;
-                        builder.addAnimation(curCast.loopAnimation(), true);
+                        builder.addAnimation(loopingAni.animationKey, true);
                     }
                 }else if(curCast != null && lastCast != null){
                     lastCast = curCast;
                     
-                    if(curCast.loopAnimation() != null) {
-                        builder.addAnimation(curCast.loopAnimation(), true);
+                    if(curCast.getLoopingAnimation() != null) {
+                        AbilityAnimation loopingAni = curCast.getLoopingAnimation();
+                        neckLocked = loopingAni.locksNeck;
+                        builder.addAnimation(loopingAni.animationKey, true);
                     }
                 }else if(curCast == null && lastCast != null){
-                    if(lastCast.stopAnimation() != null) {
+                    if(lastCast.getStoppingAnimation() != null) {
+                        AbilityAnimation stopAni = lastCast.getStoppingAnimation();
+                        neckLocked = stopAni.locksNeck;
+                        
+                        animationTimer.trackAnimation(stopAni.animationKey);
+    
                         if(!ended){
-                            animationTimer.putAnimation(lastCast.stopAnimation(), lastCast.endAnimationTime(), builder);
+                            animationTimer.putAnimation(stopAni.animationKey, stopAni.duration, builder);
                             ended = true;
                         }
     
-                        animationTimer.trackAnimation(lastCast.stopAnimation());
-                        builder.addAnimation(lastCast.stopAnimation());
+                        builder.addAnimation(stopAni.animationKey);
     
-                        if (animationTimer.getDuration(lastCast.stopAnimation()) <= 0) {
+                        if (animationTimer.getDuration(stopAni.animationKey) <= 0) {
                             lastCast = null;
                             ended = false;
+                            neckLocked = false;
                         }
+                    }else{
+                        lastCast = null;
+                        neckLocked = false;
                     }
                 }
                 

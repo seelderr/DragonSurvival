@@ -1,6 +1,5 @@
 package by.jackraidenph.dragonsurvival.magic.entity;
 
-import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.registration.EntityTypesInit;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -93,7 +92,7 @@ public class FireBreathEntity extends AbstractFireballEntity
 			double d1 = this.getY() + vector3d.y + 0.02;
 			double d2 = this.getZ() + vector3d.z;
 			ProjectileHelper.rotateTowardsMovement(this, 0.2F);
-			float f = 0.5F;
+			float f = 0.7F;
 			
 			if (this.isInWater()) {
 				for(int i = 0; i < 4; ++i) {
@@ -107,13 +106,17 @@ public class FireBreathEntity extends AbstractFireballEntity
 			
 			moveDist += distanceToSqr(d0, d1, d2);
 			this.setDeltaMovement(vector3d.add(this.xPower, this.yPower, this.zPower).scale(f));
-			this.level.addParticle(this.getTrailParticle(), d0, d1, d2, 0.0D, 0.0D, 0.0D);
+			
+			if(tickCount % 2 == 0) {
+				this.level.addParticle(this.getTrailParticle(), d0, d1, d2, 0.0D, 0.0D, 0.0D);
+			}
+			
 			this.setPos(d0, d1, d2);
 		} else {
 			this.remove();
 		}
 		
-		if(tickCount >= Functions.secondsToTicks(3)){
+		if(moveDist >= 2){
 			onHit(ProjectileHelper.getHitResult(this, this::canHitEntity));
 			this.remove();
 		}

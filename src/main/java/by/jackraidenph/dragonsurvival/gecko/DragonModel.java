@@ -40,6 +40,10 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 		PlayerEntity player = entity.getPlayer();
 		if (player != null && !player.isSleeping() && !player.isPassenger()) {
 			DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
+				if(entity.neckLocked){
+					return;
+				}
+				
 				/*IBone neck = this.getAnimationProcessor().getBone("Neck"); // rot(0, -22.5, 0)
 				IBone neck4 = this.getAnimationProcessor().getBone("Neck4"); // rot(0, 0, -10)
 				IBone neck3 = this.getAnimationProcessor().getBone("Neck3"); // rot(12.5, -15, 30), mov(-0.25, 0, 0)

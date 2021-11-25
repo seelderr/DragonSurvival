@@ -223,9 +223,7 @@ public class ActiveDragonAbility extends DragonAbility
         }
     }
     
-    public String startAnimation(){ return null; }
-    public String loopAnimation(){ return null; }
-    public String stopAnimation(){ return null; }
-    public int startAnimationTime(){ return 0; }
-    public int endAnimationTime(){ return 0; }
+    public AbilityAnimation getStartingAnimation(){ return null; }
+    public AbilityAnimation getLoopingAnimation(){ return null; }
+    public AbilityAnimation getStoppingAnimation(){ return null; }
 }

@@ -1,6 +1,7 @@
 package by.jackraidenph.dragonsurvival.magic.Abilities.Actives;
 
 import by.jackraidenph.dragonsurvival.Functions;
+import by.jackraidenph.dragonsurvival.magic.common.AbilityAnimation;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -78,21 +79,15 @@ public class AoeBuffAbility extends ActiveDragonAbility
 	}
 	
 	@Override
-	public String loopAnimation()
+	public AbilityAnimation getLoopingAnimation()
 	{
-		return "cast_mass_buff";
+		return new AbilityAnimation("cast_mass_buff", true);
 	}
 	
 	@Override
-	public String stopAnimation()
+	public AbilityAnimation getStoppingAnimation()
 	{
-		return "mass_buff";
-	}
-	
-	@Override
-	public int endAnimationTime()
-	{
-		return Functions.secondsToTicks(13);
+		return new AbilityAnimation("mass_buff", 160, true);
 	}
 	
 	@Override
