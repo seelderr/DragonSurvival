@@ -1,7 +1,6 @@
 package by.jackraidenph.dragonsurvival.registration;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.magic.entity.particle.*;
 import by.jackraidenph.dragonsurvival.magic.entity.particle.CaveDragon.LargeFireParticle;
 import by.jackraidenph.dragonsurvival.magic.entity.particle.CaveDragon.LargeFireParticleData;
 import by.jackraidenph.dragonsurvival.magic.entity.particle.CaveDragon.SmallFireParticle;
@@ -29,13 +28,6 @@ public class ParticleRegistry {
     public static ParticleType<BasicParticleType> fireBeaconParticle, magicBeaconParticle, peaceBeaconParticle;
     
     public static final DeferredRegister<ParticleType<?>> REGISTRY = DeferredRegister.create(ForgeRegistries.PARTICLE_TYPES, DragonSurvivalMod.MODID);
-    
-    public static final RegistryObject<ParticleType<SnowflakeData>> SNOWFLAKE = REGISTRY.register("snowflake", () -> new ParticleType<SnowflakeData>(false, SnowflakeData.DESERIALIZER) {
-        @Override
-        public Codec<SnowflakeData> codec() {
-            return SnowflakeData.CODEC(SNOWFLAKE.get());
-        }
-    });
     
     public static final RegistryObject<ParticleType<SmallFireParticleData>> FIRE = REGISTRY.register("fire", () -> new ParticleType<SmallFireParticleData>(false, SmallFireParticleData.DESERIALIZER) {
         @Override
@@ -81,7 +73,6 @@ public class ParticleRegistry {
     
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void registerParticles(ParticleFactoryRegisterEvent event) {
-        Minecraft.getInstance().particleEngine.register(ParticleRegistry.SNOWFLAKE.get(), ParticleSnowFlake.SnowFlakeFactory::new);
         Minecraft.getInstance().particleEngine.register(ParticleRegistry.FIRE.get(), SmallFireParticle.FireFactory::new);
         Minecraft.getInstance().particleEngine.register(ParticleRegistry.LARGE_FIRE.get(), LargeFireParticle.FireFactory::new);
         Minecraft.getInstance().particleEngine.register(ParticleRegistry.FOREST.get(), ForestFactory::new);
