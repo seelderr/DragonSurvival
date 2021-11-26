@@ -81,11 +81,11 @@ public class FireBreathAbility extends ActiveDragonAbility
 		
 		DragonLevel growthLevel = DragonStateProvider.getCap(player).map(cap -> cap.getLevel()).get();
 		
-		RANGE = growthLevel == DragonLevel.BABY ? 1 : growthLevel == DragonLevel.YOUNG ? 3 : 5;
+		RANGE = growthLevel == DragonLevel.BABY ? 4 : growthLevel == DragonLevel.YOUNG ? 7 : 10;
 		
 		float yaw = (float) Math.toRadians(-player.yRot);
 		float pitch = (float) Math.toRadians(-player.xRot);
-		float speed = growthLevel == DragonLevel.BABY ? 0.1F : growthLevel == DragonLevel.YOUNG ? 0.3F : 0.5F; //Changes distance
+		float speed = growthLevel == DragonLevel.BABY ? 0.1F : growthLevel == DragonLevel.YOUNG ? 0.2F : 0.3F; //Changes distance
 		float spread = 0.1f;
 		float xComp = (float) (Math.sin(yaw) * Math.cos(pitch));
 		float yComp = (float) (Math.sin(pitch));
@@ -250,10 +250,8 @@ public class FireBreathAbility extends ActiveDragonAbility
 					
 					if (inRange && yawCheck && pitchCheck) {
 						if(blockState.getBlock() == Blocks.ICE || blockState.getBlock() == Blocks.SNOW || blockState.getBlock() == Blocks.SNOW_BLOCK){
-							if(!player.level.isClientSide) {
-								if (player.level.random.nextInt(100) < 40) {
-									player.level.setBlock(pos, blockState.getBlock() == Blocks.ICE ? Blocks.WATER.defaultBlockState() : Blocks.AIR.defaultBlockState(), 3);
-								}
+							if (player.level.random.nextInt(100) < 80) {
+								player.level.setBlock(pos, blockState.getBlock() == Blocks.ICE ? Blocks.WATER.defaultBlockState() : Blocks.AIR.defaultBlockState(), 3);
 							}
 							continue;
 						}else if(blockState.getMaterial().isSolidBlocking()) {
@@ -262,18 +260,16 @@ public class FireBreathAbility extends ActiveDragonAbility
 									boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(player.level, player);
 									
 									if (flag) {
-										if (player.level.random.nextInt(100) < 30) {
+										if (player.level.random.nextInt(100) < 70) {
 											player.level.setBlock(pos.above(), Blocks.FIRE.defaultBlockState(), 3);
 										}
 									}
 								}
 							}
 							
-							if(player.level.isClientSide) {
-								for (int z = 0; z < 4; ++z) {
-									if (player.level.random.nextInt(100) < 50) {
-										player.level.addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, i, j, k, 0, 0.05, 0);
-									}
+							for (int z = 0; z < 4; ++z) {
+								if (player.level.random.nextInt(100) < 20) {
+									player.level.addParticle(ParticleTypes.LAVA, i, j, k, 0, 0.05, 0);
 								}
 							}
 						}
@@ -281,8 +277,9 @@ public class FireBreathAbility extends ActiveDragonAbility
 						if(player.level.isClientSide){
 							if (blockState.getBlock() == Blocks.WATER) {
 								for (int z = 0; z < 4; ++z) {
-									if (player.level.random.nextInt(100) < 10) {
-										player.level.addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, i, j, k, 0, 0.05, 0);
+									if (player.level.random.nextInt(100) < 90) {
+										player.level.addParticle(ParticleTypes.BUBBLE_COLUMN_UP, i, j, k, 0, 0.05, 0);
+
 									}
 								}
 							}
