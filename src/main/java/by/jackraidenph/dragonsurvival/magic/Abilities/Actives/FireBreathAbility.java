@@ -199,7 +199,7 @@ public class FireBreathAbility extends ActiveDragonAbility
 					continue;
 				}
 				
-				if (entityHit.hurt(DamageSource.mobAttack(player), damage)) {
+				if (entityHit.hurt(DamageSource.playerAttack(player), damage)) {
 					entityHit.setSecondsOnFire(30);
 					entityHit.setDeltaMovement(entityHit.getDeltaMovement().multiply(0.25, 1, 0.25));
 				}

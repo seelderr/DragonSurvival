@@ -91,9 +91,7 @@ public class MagicHandler
 			if(!cap.isDragon()) return;
 			
 			for (DragonAbility ability : cap.getAbilities()) {
-				if(ability.getPlayer() == null){
-					ability.player = player;
-				}
+				ability.player = player;
 			}
 			
 			if(player.hasEffect(DragonEffects.HUNTER)){

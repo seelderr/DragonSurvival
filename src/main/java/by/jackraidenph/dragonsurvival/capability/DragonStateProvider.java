@@ -18,7 +18,7 @@ import net.minecraftforge.fml.network.PacketDistributor;
 public class DragonStateProvider implements ICapabilitySerializable<CompoundNBT> {
 
     @CapabilityInject(DragonStateHandler.class)
-    public static Capability<DragonStateHandler> DRAGON_CAPABILITY = null;
+    public static Capability<DragonStateHandler> DRAGON_CAPABILITY;
     private final LazyOptional<DragonStateHandler> instance = LazyOptional.of(DRAGON_CAPABILITY::getDefaultInstance);
 
     public static LazyOptional<DragonStateHandler> getCap(Entity entity) {
