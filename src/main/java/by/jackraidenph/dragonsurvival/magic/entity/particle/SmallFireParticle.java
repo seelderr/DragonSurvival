@@ -21,7 +21,7 @@ public class SmallFireParticle extends SpriteTexturedParticle {
 	private final float spread;
 	boolean swirls;
 	private final IAnimatedSprite sprites;
-	
+
 	public SmallFireParticle(ClientWorld world, double x, double y, double z, double vX, double vY, double vZ, double duration, boolean swirls, IAnimatedSprite sprite) {
 		super(world, x, y, z);
 		setSize(1, 1);
@@ -35,22 +35,22 @@ public class SmallFireParticle extends SpriteTexturedParticle {
 		setSpriteFromAge(sprite);
 		this.sprites = sprite;
 	}
-	
+
 	@Override
 	protected float getU1() {
 		return super.getU1() - (super.getU1() - super.getU0())/8f;
 	}
-	
+
 	@Override
 	protected float getV1() {
 		return super.getV1() - (super.getV1() - super.getV0())/8f;
 	}
-	
+
 	@Override
 	public IParticleRenderType getRenderType() {
 		return PARTICLE_SHEET_TRANSLUCENT_NO_DEPTH;
 	}
-	
+
 	public static IParticleRenderType PARTICLE_SHEET_TRANSLUCENT_NO_DEPTH = new IParticleRenderType() {
 		public void begin(BufferBuilder p_217600_1_, TextureManager p_217600_2_) {
 			RenderSystem.depthMask(false);
@@ -61,20 +61,20 @@ public class SmallFireParticle extends SpriteTexturedParticle {
 			RenderSystem.alphaFunc(516, 0.003921569F);
 			p_217600_1_.begin(7, DefaultVertexFormats.PARTICLE);
 		}
-		
+
 		public void end(Tessellator p_217599_1_) {
 			p_217599_1_.end();
 		}
-		
+
 		public String toString() {
 			return "PARTICLE_SHEET_TRANSLUCENT_NO_DEPTH";
 		}
 	};
-	
+
 	@Override
 	public void tick() {
 		super.tick();
-		
+
 		if (swirls) {
 			Vector3f motionVec = new Vector3f((float)xd, (float)yd, (float)zd);
 			motionVec.normalize();
@@ -90,7 +90,7 @@ public class SmallFireParticle extends SpriteTexturedParticle {
 			y += vec.y();
 			z += vec.z();
 		}
-		
+
 		if (age >= lifetime) {
 			remove();
 		}
@@ -98,24 +98,24 @@ public class SmallFireParticle extends SpriteTexturedParticle {
 		swirlTick++;
 		this.setSpriteFromAge(this.sprites);
 	}
-	
+
 	@Override
 	public void render(IVertexBuilder buffer, ActiveRenderInfo renderInfo, float partialTicks) {
 		float var = (age + partialTicks)/(float)lifetime;
 		alpha = (float) (1 - Math.exp(10 * (var - 1)) - Math.pow(2000, -var));
 		if (alpha < 0.1) alpha = 0.1f;
-		
+
 		super.render(buffer, renderInfo, partialTicks);
 	}
-	
+
 	@OnlyIn(Dist.CLIENT)
 	public static final class FireFactory implements IParticleFactory<SmallFireParticleData> {
 		private final IAnimatedSprite spriteSet;
-		
+
 		public FireFactory(IAnimatedSprite sprite) {
 			this.spriteSet = sprite;
 		}
-		
+
 		@Override
 		public Particle createParticle(SmallFireParticleData typeIn, ClientWorld worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
 			SmallFireParticle particle = new SmallFireParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, typeIn.getDuration(), typeIn.getSwirls(), spriteSet);
@@ -123,5 +123,5 @@ public class SmallFireParticle extends SpriteTexturedParticle {
 			return particle;
 		}
 	}
-	
+
 }

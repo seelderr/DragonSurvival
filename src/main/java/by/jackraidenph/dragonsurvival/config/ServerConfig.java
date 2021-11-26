@@ -24,6 +24,9 @@ public class ServerConfig {
 	public final ForgeConfigSpec.DoubleValue newbornJump;
 	public final ForgeConfigSpec.DoubleValue youngJump;
 	public final ForgeConfigSpec.DoubleValue adultJump;
+	
+	//Abilities
+	public final ForgeConfigSpec.BooleanValue fireBreathSpreadsFire;
 
 	// Specifics
     public final ForgeConfigSpec.BooleanValue customDragonFoods;
@@ -130,6 +133,11 @@ public class ServerConfig {
 				.comment("Whether to use flight similar to creative rather then gliding")
 				.define("alternateFlight", false);
 
+		builder.pop().push("magic");
+		fireBreathSpreadsFire = builder
+				.comment("Whether the fire breath actually spreads fire when used")
+				.define("fireBreathSpreadsFire", true);
+		
 		// Specifics
 		builder.pop().push("specifics");
 		customDragonFoods = builder

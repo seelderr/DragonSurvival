@@ -150,6 +150,32 @@ public class MagicHandler
 				cap.lastPos = entity.position();
 			}
 		});
+		
+		
+		int durationForDebuff = Functions.secondsToTicks(2);
+		//Apply breath debuffs
+		Capabilities.getGenericCapability(entity).ifPresent(cap -> {
+			if(cap.burnTimer >= durationForDebuff){
+				cap.burnTimer = 0;
+				entity.addEffect(new EffectInstance(DragonEffects.BURN, Functions.secondsToTicks(30), 0, false, false));
+			}
+			
+			if(cap.chargedTimer >= durationForDebuff){
+				cap.chargedTimer = 0;
+				//entity.addEffect(new EffectInstance(DragonEffects.BURN, Functions.secondsToTicks(30), 0, false, false));
+			}
+			
+			if(cap.drainTimer >= durationForDebuff){
+				cap.drainTimer = 0;
+				//entity.addEffect(new EffectInstance(DragonEffects.BURN, Functions.secondsToTicks(30), 0, false, false));
+			}
+			
+			if(entity.tickCount % 2 == 0) {
+				cap.burnTimer = Math.min(0, cap.burnTimer - 1);
+				cap.chargedTimer = Math.min(0, cap.chargedTimer - 1);
+				cap.drainTimer = Math.min(0, cap.drainTimer - 1);
+			}
+		});
 	}
 	
 	@SubscribeEvent
