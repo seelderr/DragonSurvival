@@ -139,7 +139,7 @@ public class FireBreathAbility extends ActiveDragonAbility
 
 	public void hitEntities() {
 		List<LivingEntity> entitiesHit = getEntityLivingBaseNearby(RANGE, RANGE, RANGE, RANGE);
-		float damage = getLevel();
+		float damage = getDamage();
 		for (LivingEntity entityHit : entitiesHit) {
 			if (entityHit == player) continue;
 
@@ -179,14 +179,21 @@ public class FireBreathAbility extends ActiveDragonAbility
 				if (result.getType() == RayTraceResult.Type.BLOCK) {
 					continue;
 				}
-
+				if(entityHit.fireImmune()){
+					continue;
+				}
+				
+				Capabilities.getGenericCapability(entityHit).ifPresent(cap -> {
+					cap.burnTimer++;
+				});
+				
+				if(entityHit.getLastHurtByMob() == player && entityHit.getLastHurtByMobTimestamp() + Functions.secondsToTicks(1) < entityHit.tickCount){
+					continue;
+				}
+				
 				if (entityHit.hurt(DamageSource.mobAttack(player), damage)) {
 					entityHit.setSecondsOnFire(30);
 					entityHit.setDeltaMovement(entityHit.getDeltaMovement().multiply(0.25, 1, 0.25));
-
-					Capabilities.getGenericCapability(entityHit).ifPresent(cap -> {
-						cap.burnTimer++;
-					});
 				}
 			}
 		}
@@ -232,8 +239,6 @@ public class FireBreathAbility extends ActiveDragonAbility
 					boolean inRange = blockHitDistance <= RANGE;
 					boolean yawCheck = (blockRelativeYaw <= ARC / 2f && blockRelativeYaw >= -ARC / 2f) || (blockRelativeYaw >= 360 - ARC / 2f || blockRelativeYaw <= -360 + ARC / 2f);
 					boolean pitchCheck = (blockRelativePitch <= ARC / 2f && blockRelativePitch >= -ARC / 2f) || (blockRelativePitch >= 360 - ARC / 2f || blockRelativePitch <= -360 + ARC / 2f);
-					
-					
 					
 					if (inRange && yawCheck && pitchCheck) {
 						if(blockState.getBlock() == Blocks.ICE || blockState.getBlock() == Blocks.SNOW || blockState.getBlock() == Blocks.SNOW_BLOCK){
