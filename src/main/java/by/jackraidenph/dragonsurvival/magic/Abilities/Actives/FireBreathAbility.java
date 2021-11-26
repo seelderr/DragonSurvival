@@ -72,6 +72,7 @@ public class FireBreathAbility extends ActiveDragonAbility
 		if(firstUse) {
 			DragonStateProvider.consumeMana(player, this.getManaCost());
 			firstUse = false;
+			
 		}else{
 			if(player.tickCount % Functions.secondsToTicks(2) == 0){
 				DragonStateProvider.consumeMana(player, channelCost);
@@ -90,6 +91,12 @@ public class FireBreathAbility extends ActiveDragonAbility
 		float yComp = (float) (Math.sin(pitch));
 		float zComp = (float) (Math.cos(yaw) * Math.cos(pitch));
 		
+		Vector3d viewVector = player.getViewVector(1.0F);
+		
+		double x = player.getX() + viewVector.x;
+		double y = player.getY() + 1 + viewVector.y;
+		double z = player.getZ() + viewVector.z;
+		
 		if(player.isInWaterRainOrBubble()){
 			if(player.level.isClientSide) {
 				if (player.tickCount % 10 == 0) {
@@ -100,7 +107,7 @@ public class FireBreathAbility extends ActiveDragonAbility
 					double xSpeed = speed * 1f * xComp;
 					double ySpeed = speed * 1f * yComp;
 					double zSpeed = speed * 1f * zComp;
-					player.level.addParticle(ParticleTypes.SMOKE, player.getX(), player.getY() + 0.5, player.getZ(), xSpeed, ySpeed, zSpeed);
+					player.level.addParticle(ParticleTypes.SMOKE, x, y, z, xSpeed, ySpeed, zSpeed);
 				}
 			}
 			return;
@@ -119,14 +126,14 @@ public class FireBreathAbility extends ActiveDragonAbility
 				double xSpeed = speed * 1f * xComp;
 				double ySpeed = speed * 1f * yComp;
 				double zSpeed = speed * 1f * zComp;
-				level.addParticle(new SmallFireParticleData(37, true), player.getX(), player.getY() + 0.5, player.getZ(), xSpeed, ySpeed, zSpeed);
+				level.addParticle(new SmallFireParticleData(37, true),x, y, z, xSpeed, ySpeed, zSpeed);
 			}
 
 			for (int i = 0; i < 10; i++) {
 				double xSpeed = speed * xComp + (spread * 0.7 * (level.random.nextFloat() * 2 - 1) * (Math.sqrt(1 - xComp * xComp)));
 				double ySpeed = speed * yComp + (spread * 0.7 * (level.random.nextFloat() * 2 - 1) * (Math.sqrt(1 - yComp * yComp)));
 				double zSpeed = speed * zComp + (spread * 0.7 * (level.random.nextFloat() * 2 - 1) * (Math.sqrt(1 - zComp * zComp)));
-				level.addParticle(new LargeFireParticleData(37, false), player.getX(), player.getY() + 0.5, player.getZ(), xSpeed, ySpeed, zSpeed);
+				level.addParticle(new LargeFireParticleData(37, false), x, y, z, xSpeed, ySpeed, zSpeed);
 			}
 		}
 
@@ -179,6 +186,7 @@ public class FireBreathAbility extends ActiveDragonAbility
 				if (result.getType() == RayTraceResult.Type.BLOCK) {
 					continue;
 				}
+				
 				if(entityHit.fireImmune()){
 					continue;
 				}

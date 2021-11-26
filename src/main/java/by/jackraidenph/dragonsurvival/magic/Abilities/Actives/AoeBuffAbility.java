@@ -69,6 +69,8 @@ public class AoeBuffAbility extends ActiveDragonAbility
 		player.level.addFreshEntity(entity);
 	}
 	
+	public int getCastingSlowness() { return 10; }
+	
 	public int getDuration(){
 		return getLevel() * (effect.getDuration() > 0 ? effect.getDuration() : 30);
 	}

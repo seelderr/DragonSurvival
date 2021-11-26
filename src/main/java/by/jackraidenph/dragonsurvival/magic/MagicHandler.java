@@ -106,6 +106,10 @@ public class MagicHandler
 				
 				player.addEffect(new EffectInstance(Effects.MOVEMENT_SPEED, 20, 2, false, false));
 			}
+			
+			if(cap.getCurrentlyCasting() != null && cap.getCurrentlyCasting().getCastingSlowness() > 0){
+				player.addEffect(new EffectInstance(Effects.MOVEMENT_SLOWDOWN, 10, cap.getCurrentlyCasting().getCastingSlowness(), false, false));
+			}
 		});
 	}
 	

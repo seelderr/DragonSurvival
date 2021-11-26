@@ -3,6 +3,7 @@ package by.jackraidenph.dragonsurvival.magic.common;
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.handlers.ClientFlightHandler;
 import by.jackraidenph.dragonsurvival.network.magic.SyncAbilityCastingToServer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -142,6 +143,18 @@ public class ActiveDragonAbility extends DragonAbility
             stopCasting();
             return false;
         }
+    
+        if(getCastingSlowness() >= 10){
+            if(ClientFlightHandler.wingsEnabled && (player.isFallFlying() || !player.isOnGround())){
+                if(keyMode == GLFW.GLFW_PRESS) {
+                    errorMessage = new TranslationTextComponent("ds.skill.nofly").withStyle(TextFormatting.RED);
+                    errorTicks = Functions.secondsToTicks(5);
+                    player.playSound(SoundEvents.WITHER_SHOOT, 0.05f, 100f);
+                }
+                stopCasting();
+                return false;
+            }
+        }
         
         return true;
     }
@@ -222,6 +235,7 @@ public class ActiveDragonAbility extends DragonAbility
             DragonSurvivalMod.HANDLER.addToCoolDownList(this);
         }
     }
+    public int getCastingSlowness() { return 3; }
     
     public AbilityAnimation getStartingAnimation(){ return null; }
     public AbilityAnimation getLoopingAnimation(){ return null; }

@@ -34,4 +34,6 @@ public class StrongLeatherAbility extends AoeBuffAbility
 	{
 		return new TranslationTextComponent("ds.skill.description." + getId(), getDuration(), getDefence(getLevel()));
 	}
+	
+	public int getCastingSlowness() { return 10; }
 }

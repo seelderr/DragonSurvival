@@ -54,4 +54,6 @@ public class VisionAbility extends ActiveDragonAbility
 	{
 		return new AbilityAnimation("self_buff", 160, true);
 	}
+	
+	public int getCastingSlowness() { return 10; }
 }

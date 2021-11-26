@@ -69,11 +69,11 @@ public class ClientMagicHandler
 	        ActiveDragonAbility ability = dragonStateHandler.getAbilityFromSlot(slot);
 	        if(ability.getLevel() > 0) {
 	            if(ability.canRun(playerEntity, modeAbility)) {
-					ability.errorTicks = 0;
+		            ability.errorTicks = 0;
 		            ability.errorMessage = null;
 					
 	                if (ability.getCurrentCastTimer() < ability.getCastingTime() && modeAbility == GLFW.GLFW_REPEAT) {
-	                    ability.tickCasting();
+		                ability.tickCasting();
 						
 						if(dragonStateHandler.getCurrentlyCasting() != ability) {
 							dragonStateHandler.setCurrentlyCasting(ability);
@@ -109,6 +109,7 @@ public class ClientMagicHandler
 		if( event.getType() == ElementType.EXPERIENCE && !playerEntity.isCreative()){
 			DragonStateProvider.getCap(playerEntity).ifPresent(cap -> {
 				ActiveDragonAbility ability = cap.getAbilityFromSlot(cap.getSelectedAbilitySlot());
+				if(ability == null) return;
 				
 				if(cap.getCurrentMana() < ability.getManaCost() && ((cap.getCurrentMana() + (playerEntity.totalExperience / 10) >= ability.getManaCost()) || playerEntity.experienceLevel > 0)){
 					event.setCanceled(true);
