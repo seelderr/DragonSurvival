@@ -1,6 +1,7 @@
 package by.jackraidenph.dragonsurvival.magic.Abilities.Actives;
 
 import by.jackraidenph.dragonsurvival.Functions;
+import by.jackraidenph.dragonsurvival.magic.common.AbilityAnimation;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.Effect;
@@ -34,12 +35,23 @@ public class VisionAbility extends ActiveDragonAbility
 		super.onActivation(player);
 		player.addEffect(new EffectInstance(effect, Functions.secondsToTicks(getDuration())));
 		player.addEffect(new EffectInstance(Effects.NIGHT_VISION, Functions.secondsToTicks(getDuration()), 0, false, false));
-		
 	}
 	
 	@Override
 	public IFormattableTextComponent getDescription()
 	{
 		return new TranslationTextComponent("ds.skill.description." + getId(), getDuration());
+	}
+	
+	@Override
+	public AbilityAnimation getLoopingAnimation()
+	{
+		return new AbilityAnimation("cast_self_buff", true);
+	}
+	
+	@Override
+	public AbilityAnimation getStoppingAnimation()
+	{
+		return new AbilityAnimation("self_buff", 160, true);
 	}
 }

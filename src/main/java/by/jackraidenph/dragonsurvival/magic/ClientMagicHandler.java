@@ -4,7 +4,7 @@ import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.magic.gui.Buttons.TabButton;
-import by.jackraidenph.dragonsurvival.network.magic.ActivateAbilityInSlot;
+import by.jackraidenph.dragonsurvival.network.magic.ActivateAbilityServerSide;
 import by.jackraidenph.dragonsurvival.network.magic.SyncAbilityCastingToServer;
 import by.jackraidenph.dragonsurvival.registration.ClientModEvents;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
@@ -90,7 +90,7 @@ public class ClientMagicHandler
 		
 	                } else if (ability.getCastingTime() <= 0 || ability.getCurrentCastTimer() >= ability.getCastingTime()){
 	                    ability.onKeyPressed(playerEntity);
-	                    DragonSurvivalMod.CHANNEL.sendToServer(new ActivateAbilityInSlot(slot, modeAbility));
+	                    DragonSurvivalMod.CHANNEL.sendToServer(new ActivateAbilityServerSide(slot));
 	                }
 	            }else{
 		            if(dragonStateHandler.getCurrentlyCasting() != null) {

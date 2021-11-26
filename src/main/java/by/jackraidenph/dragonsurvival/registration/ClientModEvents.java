@@ -9,7 +9,6 @@ import by.jackraidenph.dragonsurvival.handlers.ClientEvents;
 import by.jackraidenph.dragonsurvival.magic.entity.Renderer.BallLightningRenderer;
 import by.jackraidenph.dragonsurvival.magic.entity.Renderer.DragonSpikeRenderer;
 import by.jackraidenph.dragonsurvival.magic.entity.Renderer.FireBallRenderer;
-import by.jackraidenph.dragonsurvival.magic.entity.Renderer.FireBreathRenderer;
 import by.jackraidenph.dragonsurvival.magic.entity.models.FireballModel;
 import by.jackraidenph.dragonsurvival.magic.entity.models.LightningBallModel;
 import by.jackraidenph.dragonsurvival.nest.NestScreen;
@@ -92,7 +91,6 @@ public class ClientModEvents {
         RenderTypeLookup.setRenderLayer(BlockInit.magicDragonBeacon, RenderType.cutout());
     
         RenderingRegistry.registerEntityRenderingHandler(EntityTypesInit.DRAGON_SPIKE, DragonSpikeRenderer::new);
-        RenderingRegistry.registerEntityRenderingHandler(EntityTypesInit.FIRE_BREATH, FireBreathRenderer::new);
     
         RenderingRegistry.registerEntityRenderingHandler(EntityTypesInit.MAGICAL_BEAST, MagicalPredatorRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityTypesInit.BOLAS_ENTITY, manager -> new SpriteRenderer<>(manager, minecraft.getItemRenderer()));

@@ -6,8 +6,10 @@ import by.jackraidenph.dragonsurvival.gecko.DragonEntity;
 import by.jackraidenph.dragonsurvival.handlers.ClientEvents;
 import by.jackraidenph.dragonsurvival.handlers.ClientFlightHandler;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
+import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.nest.NestEntity;
 import by.jackraidenph.dragonsurvival.network.*;
+import by.jackraidenph.dragonsurvival.network.magic.SyncAbilityActivation;
 import by.jackraidenph.dragonsurvival.network.magic.SyncCurrentAbilityCasting;
 import by.jackraidenph.dragonsurvival.network.magic.SyncMagicAbilities;
 import by.jackraidenph.dragonsurvival.network.magic.SyncMagicStats;
@@ -34,6 +36,30 @@ import java.util.function.Supplier;
  * Synchronizes client data
  */
 public class PacketProxy {
+    
+    public DistExecutor.SafeRunnable handleClientSideAbility(SyncAbilityActivation abilityActivation, Supplier<NetworkEvent.Context> supplier) {
+        return () -> {
+            NetworkEvent.Context context = supplier.get();
+            context.enqueueWork(() -> handleClientSideAbility(abilityActivation, context));
+        };
+    }
+    
+    private void handleClientSideAbility(SyncAbilityActivation abilityActivation, NetworkEvent.Context context) {
+        PlayerEntity thisPlayer = Minecraft.getInstance().player;
+        if (thisPlayer != null) {
+            World world = thisPlayer.level;
+            Entity entity = world.getEntity(abilityActivation.playerId);
+            if (entity instanceof PlayerEntity) {
+                DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
+                    DragonAbility ability = dragonStateHandler.getAbilityFromSlot(abilityActivation.slot);
+                    if(ability.getLevel() > 0) {
+                        ability.onKeyPressed((PlayerEntity)entity);
+                    }
+                });
+            }
+        }
+        context.setPacketHandled(true);
+    }
     
     public DistExecutor.SafeRunnable handleSkillAnimation(SyncCurrentAbilityCasting syncCapabilityDebuff, Supplier<NetworkEvent.Context> supplier) {
         return () -> {

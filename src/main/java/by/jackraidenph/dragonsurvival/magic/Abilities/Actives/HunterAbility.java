@@ -1,6 +1,7 @@
 package by.jackraidenph.dragonsurvival.magic.Abilities.Actives;
 
 import by.jackraidenph.dragonsurvival.Functions;
+import by.jackraidenph.dragonsurvival.magic.common.AbilityAnimation;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
 import net.minecraft.entity.player.PlayerEntity;
@@ -36,5 +37,17 @@ public class HunterAbility extends ActiveDragonAbility
 	{
 		super.onActivation(player);
 		player.addEffect(new EffectInstance(DragonEffects.HUNTER, Functions.secondsToTicks(getDuration()), getLevel() - 1));
+	}
+	
+	@Override
+	public AbilityAnimation getLoopingAnimation()
+	{
+		return new AbilityAnimation("cast_self_buff", true);
+	}
+	
+	@Override
+	public AbilityAnimation getStoppingAnimation()
+	{
+		return new AbilityAnimation("self_buff", 160, true);
 	}
 }

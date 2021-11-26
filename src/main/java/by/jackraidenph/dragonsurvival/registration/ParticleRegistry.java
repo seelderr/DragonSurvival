@@ -1,8 +1,7 @@
 package by.jackraidenph.dragonsurvival.registration;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.magic.entity.particle.ParticleSnowFlake;
-import by.jackraidenph.dragonsurvival.magic.entity.particle.ParticleSnowFlake.SnowflakeData;
+import by.jackraidenph.dragonsurvival.magic.entity.particle.*;
 import com.mojang.serialization.Codec;
 import net.minecraft.client.Minecraft;
 import net.minecraft.particles.BasicParticleType;
@@ -21,12 +20,26 @@ import net.minecraftforge.registries.IForgeRegistry;
 public class ParticleRegistry {
     public static ParticleType<BasicParticleType> fireBeaconParticle, magicBeaconParticle, peaceBeaconParticle;
     
-    public static final DeferredRegister<ParticleType<?>> REG = DeferredRegister.create(ForgeRegistries.PARTICLE_TYPES, DragonSurvivalMod.MODID);
+    public static final DeferredRegister<ParticleType<?>> REGISTRY = DeferredRegister.create(ForgeRegistries.PARTICLE_TYPES, DragonSurvivalMod.MODID);
     
-    public static final RegistryObject<ParticleType<SnowflakeData>> SNOWFLAKE = REG.register("snowflake", () -> new ParticleType<ParticleSnowFlake.SnowflakeData>(false, ParticleSnowFlake.SnowflakeData.DESERIALIZER) {
+    public static final RegistryObject<ParticleType<SnowflakeData>> SNOWFLAKE = REGISTRY.register("snowflake", () -> new ParticleType<SnowflakeData>(false, SnowflakeData.DESERIALIZER) {
         @Override
         public Codec<SnowflakeData> codec() {
-            return ParticleSnowFlake.SnowflakeData.CODEC(SNOWFLAKE.get());
+            return SnowflakeData.CODEC(SNOWFLAKE.get());
+        }
+    });
+    
+    public static final RegistryObject<ParticleType<SmallFireParticleData>> FIRE = REGISTRY.register("fire", () -> new ParticleType<SmallFireParticleData>(false, SmallFireParticleData.DESERIALIZER) {
+        @Override
+        public Codec<SmallFireParticleData> codec() {
+            return SmallFireParticleData.CODEC(FIRE.get());
+        }
+    });
+    
+    public static final RegistryObject<ParticleType<LargeFireParticleData>> LARGE_FIRE = REGISTRY.register("large_fire", () -> new ParticleType<LargeFireParticleData>(false, LargeFireParticleData.DESERIALIZER) {
+        @Override
+        public Codec<LargeFireParticleData> codec() {
+            return LargeFireParticleData.CODEC(LARGE_FIRE.get());
         }
     });
     
@@ -47,5 +60,8 @@ public class ParticleRegistry {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void registerParticles(ParticleFactoryRegisterEvent event) {
         Minecraft.getInstance().particleEngine.register(ParticleRegistry.SNOWFLAKE.get(), ParticleSnowFlake.SnowFlakeFactory::new);
+        Minecraft.getInstance().particleEngine.register(ParticleRegistry.FIRE.get(), SmallFireParticle.FireFactory::new);
+        Minecraft.getInstance().particleEngine.register(ParticleRegistry.LARGE_FIRE.get(), LargeFireParticle.FireFactory::new);
+    
     }
 }

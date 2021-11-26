@@ -95,7 +95,7 @@ public class DragonSurvivalMod {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ConfigHandler.commonSpec);
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ConfigHandler.serverSpec);
     
-        ParticleRegistry.REG.register(modEventBus);
+        ParticleRegistry.REGISTRY.register(modEventBus);
         
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(new DragonFoodHandler());
@@ -125,7 +125,8 @@ public class DragonSurvivalMod {
         register(OpenCrafting.class,new OpenCrafting());
     
         register(OpenDragonInventory.class, new OpenDragonInventory());
-        register(ActivateAbilityInSlot.class, new ActivateAbilityInSlot());
+        register(ActivateAbilityServerSide.class, new ActivateAbilityServerSide());
+        register(SyncAbilityActivation.class, new SyncAbilityActivation());
         register(ChangeSkillLevel.class, new ChangeSkillLevel());
         register(SyncMagicStats.class, new SyncMagicStats());
         register(SyncMagicAbilities.class, new SyncMagicAbilities());

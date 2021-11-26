@@ -11,7 +11,6 @@ import by.jackraidenph.dragonsurvival.gecko.Knight;
 import by.jackraidenph.dragonsurvival.gecko.Princess;
 import by.jackraidenph.dragonsurvival.handlers.VillagerRelationsHandler;
 import by.jackraidenph.dragonsurvival.magic.entity.FireBallEntity;
-import by.jackraidenph.dragonsurvival.magic.entity.FireBreathEntity;
 import by.jackraidenph.dragonsurvival.tiles.DragonBeaconEntity;
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Preconditions;
@@ -62,7 +61,6 @@ public class EntityTypesInit {
     public static EntityType<DragonSpikeEntity> DRAGON_SPIKE;
     public static EntityType<BallLightningEntity> BALL_LIGHTNING;
     public static EntityType<FireBallEntity> FIREBALL;
-    public static EntityType<FireBreathEntity> FIRE_BREATH;
 
     private static <T extends CreatureEntity> EntityType<T> createEntity(Class<T> entityClass, EntityType.IFactory<T> factory, float width, float height, int eggPrimary, int eggSecondary, EntitySpawnPlacementRegistry.IPlacementPredicate spawnPlacementPredicate) {
 
@@ -124,11 +122,6 @@ public class EntityTypesInit {
                 .sized(1F, 1F).clientTrackingRange(4).updateInterval(1).build("fireball");
         FIREBALL.setRegistryName("dragonsurvival", "fireball");
         registry.register(FIREBALL);
-    
-        FIRE_BREATH = EntityType.Builder.<FireBreathEntity>of(FireBreathEntity::new, EntityClassification.MISC)
-                .sized(1F, 1F).clientTrackingRange(4).updateInterval(1).build("fire_breath");
-        FIRE_BREATH.setRegistryName("dragonsurvival", "fire_breath");
-        registry.register(FIRE_BREATH);
     }
 
     @SubscribeEvent

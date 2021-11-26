@@ -16,15 +16,13 @@ import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-/**
- * Created by BobMowzie on 6/2/2017.
- */
-public class ParticleSnowFlake extends SpriteTexturedParticle {
+public class LargeFireParticle extends SpriteTexturedParticle {
 	private int swirlTick;
 	private final float spread;
 	boolean swirls;
+	private final IAnimatedSprite sprites;
 	
-	public ParticleSnowFlake(ClientWorld world, double x, double y, double z, double vX, double vY, double vZ, double duration, boolean swirls) {
+	public LargeFireParticle(ClientWorld world, double x, double y, double z, double vX, double vY, double vZ, double duration, boolean swirls, IAnimatedSprite sprite) {
 		super(world, x, y, z);
 		setSize(1, 1);
 		xd = vX;
@@ -34,6 +32,8 @@ public class ParticleSnowFlake extends SpriteTexturedParticle {
 		swirlTick = random.nextInt(120);
 		spread = random.nextFloat();
 		this.swirls = swirls;
+		setSpriteFromAge(sprite);
+		this.sprites = sprite;
 	}
 	
 	@Override
@@ -96,6 +96,7 @@ public class ParticleSnowFlake extends SpriteTexturedParticle {
 		}
 		age++;
 		swirlTick++;
+		this.setSpriteFromAge(this.sprites);
 	}
 	
 	@Override
@@ -108,17 +109,17 @@ public class ParticleSnowFlake extends SpriteTexturedParticle {
 	}
 	
 	@OnlyIn(Dist.CLIENT)
-	public static final class SnowFlakeFactory implements IParticleFactory<SnowflakeData> {
+	public static final class FireFactory implements IParticleFactory<LargeFireParticleData> {
 		private final IAnimatedSprite spriteSet;
 		
-		public SnowFlakeFactory(IAnimatedSprite sprite) {
+		public FireFactory(IAnimatedSprite sprite) {
 			this.spriteSet = sprite;
 		}
 		
 		@Override
-		public Particle createParticle(SnowflakeData typeIn, ClientWorld worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
-			ParticleSnowFlake particle = new ParticleSnowFlake(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, typeIn.getDuration(), typeIn.getSwirls());
-			particle.pickSprite(spriteSet);
+		public Particle createParticle(LargeFireParticleData typeIn, ClientWorld worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
+			LargeFireParticle particle = new LargeFireParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, typeIn.getDuration(), typeIn.getSwirls(), spriteSet);
+			particle.setSpriteFromAge(spriteSet);
 			return particle;
 		}
 	}
