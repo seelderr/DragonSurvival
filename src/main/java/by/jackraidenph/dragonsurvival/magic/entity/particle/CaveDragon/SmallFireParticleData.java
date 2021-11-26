@@ -1,4 +1,4 @@
-package by.jackraidenph.dragonsurvival.magic.entity.particle;
+package by.jackraidenph.dragonsurvival.magic.entity.particle.CaveDragon;
 
 import by.jackraidenph.dragonsurvival.registration.ParticleRegistry;
 import com.mojang.brigadier.StringReader;
@@ -14,29 +14,29 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.Locale;
 
-public class LargeFireParticleData implements IParticleData
+public class SmallFireParticleData implements IParticleData
 {
-	public static final IDeserializer<LargeFireParticleData> DESERIALIZER = new IDeserializer<LargeFireParticleData>()
+	public static final IDeserializer<SmallFireParticleData> DESERIALIZER = new IDeserializer<SmallFireParticleData>()
 	{
-		public LargeFireParticleData fromCommand(ParticleType<LargeFireParticleData> particleTypeIn, StringReader reader) throws CommandSyntaxException
+		public SmallFireParticleData fromCommand(ParticleType<SmallFireParticleData> particleTypeIn, StringReader reader) throws CommandSyntaxException
 		{
 			reader.expect(' ');
 			float duration = (float)reader.readDouble();
 			reader.expect(' ');
 			boolean swirls = reader.readBoolean();
-			return new LargeFireParticleData(duration, swirls);
+			return new SmallFireParticleData(duration, swirls);
 		}
 		
-		public LargeFireParticleData fromNetwork(ParticleType<LargeFireParticleData> particleTypeIn, PacketBuffer buffer)
+		public SmallFireParticleData fromNetwork(ParticleType<SmallFireParticleData> particleTypeIn, PacketBuffer buffer)
 		{
-			return new LargeFireParticleData(buffer.readFloat(), buffer.readBoolean());
+			return new SmallFireParticleData(buffer.readFloat(), buffer.readBoolean());
 		}
 	};
 	
 	private final float duration;
 	private final boolean swirls;
 	
-	public LargeFireParticleData(float duration, boolean spins)
+	public SmallFireParticleData(float duration, boolean spins)
 	{
 		this.duration = duration;
 		this.swirls = spins;
@@ -57,9 +57,9 @@ public class LargeFireParticleData implements IParticleData
 	}
 	
 	@Override
-	public ParticleType<LargeFireParticleData> getType()
+	public ParticleType<SmallFireParticleData> getType()
 	{
-		return ParticleRegistry.LARGE_FIRE.get();
+		return ParticleRegistry.FIRE.get();
 	}
 	
 	@OnlyIn( Dist.CLIENT )
@@ -74,8 +74,8 @@ public class LargeFireParticleData implements IParticleData
 		return this.swirls;
 	}
 	
-	public static Codec<LargeFireParticleData> CODEC(ParticleType<LargeFireParticleData> particleType)
+	public static Codec<SmallFireParticleData> CODEC(ParticleType<SmallFireParticleData> particleType)
 	{
-		return RecordCodecBuilder.create((codecBuilder) -> codecBuilder.group(Codec.FLOAT.fieldOf("duration").forGetter(LargeFireParticleData::getDuration), Codec.BOOL.fieldOf("swirls").forGetter(LargeFireParticleData::getSwirls)).apply(codecBuilder, LargeFireParticleData::new));
+		return RecordCodecBuilder.create((codecBuilder) -> codecBuilder.group(Codec.FLOAT.fieldOf("duration").forGetter(SmallFireParticleData::getDuration), Codec.BOOL.fieldOf("swirls").forGetter(SmallFireParticleData::getSwirls)).apply(codecBuilder, SmallFireParticleData::new));
 	}
 }

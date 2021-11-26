@@ -2,6 +2,14 @@ package by.jackraidenph.dragonsurvival.registration;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.magic.entity.particle.*;
+import by.jackraidenph.dragonsurvival.magic.entity.particle.CaveDragon.LargeFireParticle;
+import by.jackraidenph.dragonsurvival.magic.entity.particle.CaveDragon.LargeFireParticleData;
+import by.jackraidenph.dragonsurvival.magic.entity.particle.CaveDragon.SmallFireParticle;
+import by.jackraidenph.dragonsurvival.magic.entity.particle.CaveDragon.SmallFireParticleData;
+import by.jackraidenph.dragonsurvival.magic.entity.particle.ForestDragon.ForestParticle.ForestFactory;
+import by.jackraidenph.dragonsurvival.magic.entity.particle.ForestDragon.ForestParticleData;
+import by.jackraidenph.dragonsurvival.magic.entity.particle.SeaDragon.SeaParticle.SeaFactory;
+import by.jackraidenph.dragonsurvival.magic.entity.particle.SeaDragon.SeaParticleData;
 import com.mojang.serialization.Codec;
 import net.minecraft.client.Minecraft;
 import net.minecraft.particles.BasicParticleType;
@@ -43,6 +51,20 @@ public class ParticleRegistry {
         }
     });
     
+    public static final RegistryObject<ParticleType<ForestParticleData>> FOREST = REGISTRY.register("forest", () -> new ParticleType<ForestParticleData>(false, ForestParticleData.DESERIALIZER) {
+        @Override
+        public Codec<ForestParticleData> codec() {
+            return ForestParticleData.CODEC(FOREST.get());
+        }
+    });
+    
+    public static final RegistryObject<ParticleType<SeaParticleData>> SEA = REGISTRY.register("sea", () -> new ParticleType<SeaParticleData>(false, SeaParticleData.DESERIALIZER) {
+        @Override
+        public Codec<SeaParticleData> codec() {
+            return SeaParticleData.CODEC(SEA.get());
+        }
+    });
+    
     @SubscribeEvent
     public static void registerParticles(RegistryEvent.Register<ParticleType<?>> registryEvent) {
         IForgeRegistry<ParticleType<?>> particleTypes = registryEvent.getRegistry();
@@ -62,6 +84,7 @@ public class ParticleRegistry {
         Minecraft.getInstance().particleEngine.register(ParticleRegistry.SNOWFLAKE.get(), ParticleSnowFlake.SnowFlakeFactory::new);
         Minecraft.getInstance().particleEngine.register(ParticleRegistry.FIRE.get(), SmallFireParticle.FireFactory::new);
         Minecraft.getInstance().particleEngine.register(ParticleRegistry.LARGE_FIRE.get(), LargeFireParticle.FireFactory::new);
-    
+        Minecraft.getInstance().particleEngine.register(ParticleRegistry.FOREST.get(), ForestFactory::new);
+        Minecraft.getInstance().particleEngine.register(ParticleRegistry.SEA.get(), SeaFactory::new);
     }
 }
