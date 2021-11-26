@@ -80,7 +80,7 @@ public class SmallFireParticle extends SpriteTexturedParticle {
 			motionVec.normalize();
 			float yaw = (float) Math.atan2(motionVec.x(), motionVec.z());
 			float pitch = (float) Math.atan2(motionVec.y(), 1);
-			float swirlRadius = 4f * (age / (float) lifetime) * spread;
+			float swirlRadius = 1f * (age / (float) lifetime) * spread;
 			Quaternion quatSpin = motionVec.rotation(swirlTick * 0.2f);
 			Quaternion quatOrient = new Quaternion(pitch, yaw, 0, false);
 			Vector3f vec = new Vector3f(swirlRadius, 0, 0);

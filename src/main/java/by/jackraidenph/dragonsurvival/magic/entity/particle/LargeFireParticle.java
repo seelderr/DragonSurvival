@@ -24,7 +24,7 @@ public class LargeFireParticle extends SpriteTexturedParticle {
 	
 	public LargeFireParticle(ClientWorld world, double x, double y, double z, double vX, double vY, double vZ, double duration, boolean swirls, IAnimatedSprite sprite) {
 		super(world, x, y, z);
-		setSize(1, 1);
+		setSize(3, 3);
 		xd = vX;
 		yd = vY;
 		zd = vZ;
@@ -80,7 +80,7 @@ public class LargeFireParticle extends SpriteTexturedParticle {
 			motionVec.normalize();
 			float yaw = (float) Math.atan2(motionVec.x(), motionVec.z());
 			float pitch = (float) Math.atan2(motionVec.y(), 1);
-			float swirlRadius = 4f * (age / (float) lifetime) * spread;
+			float swirlRadius = 1f * (age / (float) lifetime) * spread;
 			Quaternion quatSpin = motionVec.rotation(swirlTick * 0.2f);
 			Quaternion quatOrient = new Quaternion(pitch, yaw, 0, false);
 			Vector3f vec = new Vector3f(swirlRadius, 0, 0);

@@ -75,8 +75,8 @@ public class BreathAbility extends ActiveDragonAbility
 		
 		float yaw = (float) Math.toRadians(-player.yRot);
 		float pitch = (float) Math.toRadians(-player.xRot);
-		float speed = 0.56f; //Changes distance
-		float spread = 0.25f;
+		float speed = 0.5f; //Changes distance
+		float spread = 0.1f;
 		float xComp = (float) (Math.sin(yaw) * Math.cos(pitch));
 		float yComp = (float) (Math.sin(pitch));
 		float zComp = (float) (Math.cos(yaw) * Math.cos(pitch));
@@ -91,11 +91,11 @@ public class BreathAbility extends ActiveDragonAbility
 				level.addParticle(new SmallFireParticleData(37f, true), player.getX(), player.getY() + 0.5, player.getZ(), xSpeed, ySpeed, zSpeed);
 			}
 			
-			for (int i = 0; i < 6; i++) {
+			for (int i = 0; i < 10; i++) {
 				double xSpeed = speed * xComp + (spread * 0.7 * (level.random.nextFloat() * 2 - 1) * (Math.sqrt(1 - xComp * xComp)));
 				double ySpeed = speed * yComp + (spread * 0.7 * (level.random.nextFloat() * 2 - 1) * (Math.sqrt(1 - yComp * yComp)));
 				double zSpeed = speed * zComp + (spread * 0.7 * (level.random.nextFloat() * 2 - 1) * (Math.sqrt(1 - zComp * zComp)));
-				level.addParticle(new LargeFireParticleData(37f, true), player.getX(), player.getY() + 0.5, player.getZ(), xSpeed, ySpeed, zSpeed);
+				level.addParticle(new LargeFireParticleData(37f, false), player.getX(), player.getY() + 0.5, player.getZ(), xSpeed, ySpeed, zSpeed);
 			}
 		}
 		
