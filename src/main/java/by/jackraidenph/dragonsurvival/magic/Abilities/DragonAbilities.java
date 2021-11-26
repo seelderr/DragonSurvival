@@ -81,7 +81,7 @@ public class DragonAbilities
 		LIGHT_IN_DARKNESS = register(DragonType.FOREST, new LightInDarknessAbility("light_in_darkness", "forest/light_in_darkness", 0, 6));
 		CLIFFHANGER = register(DragonType.FOREST, new CliffhangerAbility("cliffhanger", "forest/cliffhanger", 0, 5));
 		
-		FOREST_CLAWS_AND_TEETH = register(DragonType.FOREST, new DragonClawsAbility("forest_claws_and_teeth", "forest/forest_claws_and_teeth", 1, 5));
+		FOREST_CLAWS_AND_TEETH = register(DragonType.FOREST, new DragonClawsAbility("forest_claws_and_teeth", "forest/forest_claws_and_teeth", 1, 1));
 		FOREST_WINGS = register(DragonType.FOREST, new DragonWingAbility("forest_wings", "forest/forest_wings", 1, 1));
 		FOREST_DRAGON = register(DragonType.FOREST, new InnateDragonAbility("forest_dragon", "forest/forest_dragon", 1, 1));
 		FEAR_OF_DARK = register(DragonType.FOREST, new InnateDragonAbility("fear_of_dark", "forest/fear_of_dark", 1, 1));
@@ -97,7 +97,7 @@ public class DragonAbilities
 		WATER = register(DragonType.SEA, new WaterAbility("water", "sea/water", 0, 5));
 		SPECTRAL_IMPACT = register(DragonType.SEA, new SpectralImpactAbility("spectral_impact", "sea/spectral_impact", 0, 3));
 		
-		SEA_CLAWS_AND_TEETH = register(DragonType.SEA, new DragonClawsAbility("sea_claws_and_teeth", "sea/sea_claws_and_teeth", 1, 5));
+		SEA_CLAWS_AND_TEETH = register(DragonType.SEA, new DragonClawsAbility("sea_claws_and_teeth", "sea/sea_claws_and_teeth", 1, 1));
 		SEA_WINGS = register(DragonType.SEA, new DragonWingAbility("sea_wings", "sea/sea_wings", 1, 1));
 		SEA_DRAGON = register(DragonType.SEA, new InnateDragonAbility("sea_dragon", "sea/sea_dragon", 1, 1));
 		AMPHIBIAN = register(DragonType.SEA, new InnateDragonAbility("amphibian", "sea/amphibian", 1, 1));
@@ -113,7 +113,7 @@ public class DragonAbilities
 		CONTRAST_SHOWER = register(DragonType.CAVE, new ContrastShowerAbility("contrast_shower", "cave/contrast_shower", 0, 5));
 		BURN = register(DragonType.CAVE, new BurnAbility("burn", "cave/burn", 0, 3));
 		
-		CAVE_CLAWS_AND_TEETH = register(DragonType.CAVE, new DragonClawsAbility("cave_claws_and_teeth", "cave/cave_claws_and_teeth", 1, 5));
+		CAVE_CLAWS_AND_TEETH = register(DragonType.CAVE, new DragonClawsAbility("cave_claws_and_teeth", "cave/cave_claws_and_teeth", 1, 1));
 		CAVE_WINGS = register(DragonType.CAVE, new DragonWingAbility("cave_wings", "cave/cave_wings", 1, 1));
 		CAVE_DRAGON = register(DragonType.CAVE, new InnateDragonAbility("cave_dragon", "cave/cave_dragon", 1, 1));
 		HOT_BLOOD = register(DragonType.CAVE, new HotBloodAbility("hot_bloode", "cave/hot_bloode", 1, 1));

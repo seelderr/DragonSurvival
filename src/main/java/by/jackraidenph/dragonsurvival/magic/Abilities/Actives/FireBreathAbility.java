@@ -97,7 +97,7 @@ public class FireBreathAbility extends ActiveDragonAbility
 		double y = player.getY() + 1 + viewVector.y;
 		double z = player.getZ() + viewVector.z;
 		
-		if(player.isInWaterRainOrBubble()){
+		if(player.isInWaterRainOrBubble() || player.level.isRainingAt(player.blockPosition())){
 			if(player.level.isClientSide) {
 				if (player.tickCount % 10 == 0) {
 					player.playSound(SoundEvents.LAVA_EXTINGUISH, 0.25F, 1F);
@@ -250,8 +250,10 @@ public class FireBreathAbility extends ActiveDragonAbility
 					
 					if (inRange && yawCheck && pitchCheck) {
 						if(blockState.getBlock() == Blocks.ICE || blockState.getBlock() == Blocks.SNOW || blockState.getBlock() == Blocks.SNOW_BLOCK){
-							if (player.level.random.nextInt(100) < 80) {
-								player.level.setBlock(pos, blockState.getBlock() == Blocks.ICE ? Blocks.WATER.defaultBlockState() : Blocks.AIR.defaultBlockState(), 3);
+							if(!player.level.isClientSide) {
+								if (player.level.random.nextInt(100) < 80) {
+									player.level.setBlock(pos, blockState.getBlock() == Blocks.ICE ? Blocks.WATER.defaultBlockState() : Blocks.AIR.defaultBlockState(), 3);
+								}
 							}
 							continue;
 						}else if(blockState.getMaterial().isSolidBlocking()) {
@@ -267,9 +269,11 @@ public class FireBreathAbility extends ActiveDragonAbility
 								}
 							}
 							
-							for (int z = 0; z < 4; ++z) {
-								if (player.level.random.nextInt(100) < 20) {
-									player.level.addParticle(ParticleTypes.LAVA, i, j, k, 0, 0.05, 0);
+							if(player.level.isClientSide) {
+								for (int z = 0; z < 4; ++z) {
+									if (player.level.random.nextInt(100) < 20) {
+										player.level.addParticle(ParticleTypes.LAVA, i, j, k, 0, 0.05, 0);
+									}
 								}
 							}
 						}
