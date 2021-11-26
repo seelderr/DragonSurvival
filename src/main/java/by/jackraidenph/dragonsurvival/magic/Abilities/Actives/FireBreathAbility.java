@@ -7,13 +7,16 @@ import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.magic.entity.particle.CaveDragon.LargeFireParticleData;
 import by.jackraidenph.dragonsurvival.magic.entity.particle.CaveDragon.SmallFireParticleData;
+import by.jackraidenph.dragonsurvival.util.DragonLevel;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceContext;
@@ -27,23 +30,23 @@ import net.minecraft.world.World;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BreathAbility extends ActiveDragonAbility
+public class FireBreathAbility extends ActiveDragonAbility
 {
 	private DragonType type;
 
-	public BreathAbility(DragonType type, String id, String icon, int minLevel, int maxLevel, int manaCost, int castTime, int cooldown, Integer[] requiredLevels)
+	public FireBreathAbility(DragonType type, String id, String icon, int minLevel, int maxLevel, int manaCost, int castTime, int cooldown, Integer[] requiredLevels)
 	{
 		super(id, icon, minLevel, maxLevel, manaCost, castTime, cooldown, requiredLevels);
 		this.type = type;
 	}
 
 	@Override
-	public BreathAbility createInstance()
+	public FireBreathAbility createInstance()
 	{
-		return new BreathAbility(type, id, icon, minLevel, maxLevel, manaCost, castTime, abilityCooldown, requiredLevels);
+		return new FireBreathAbility(type, id, icon, minLevel, maxLevel, manaCost, castTime, abilityCooldown, requiredLevels);
 	}
 
-	private static final int RANGE = 10;
+	private int RANGE = 5;
 	private static final int ARC = 45;
 
 	public int channelCost = 1;
@@ -74,14 +77,40 @@ public class BreathAbility extends ActiveDragonAbility
 				DragonStateProvider.consumeMana(player, channelCost);
 			}
 		}
-
+		
+		DragonLevel growthLevel = DragonStateProvider.getCap(player).map(cap -> cap.getLevel()).get();
+		
+		RANGE = growthLevel == DragonLevel.BABY ? 1 : growthLevel == DragonLevel.YOUNG ? 3 : 5;
+		
 		float yaw = (float) Math.toRadians(-player.yRot);
 		float pitch = (float) Math.toRadians(-player.xRot);
-		float speed = 0.5f; //Changes distance
+		float speed = growthLevel == DragonLevel.BABY ? 0.1F : growthLevel == DragonLevel.YOUNG ? 0.3F : 0.5F; //Changes distance
 		float spread = 0.1f;
 		float xComp = (float) (Math.sin(yaw) * Math.cos(pitch));
 		float yComp = (float) (Math.sin(pitch));
 		float zComp = (float) (Math.cos(yaw) * Math.cos(pitch));
+		
+		if(player.isInWaterRainOrBubble()){
+			if(player.level.isClientSide) {
+				if (player.tickCount % 10 == 0) {
+					player.playSound(SoundEvents.LAVA_EXTINGUISH, 0.25F, 1F);
+				}
+				
+				for (int i = 0; i < 12; i++) {
+					double xSpeed = speed * 1f * xComp;
+					double ySpeed = speed * 1f * yComp;
+					double zSpeed = speed * 1f * zComp;
+					player.level.addParticle(ParticleTypes.SMOKE, player.getX(), player.getY() + 0.5, player.getZ(), xSpeed, ySpeed, zSpeed);
+				}
+			}
+			return;
+		}
+		
+		if(player.level.isClientSide) {
+			if (player.tickCount % 30 == 0) {
+				player.playSound(SoundEvents.FIRE_AMBIENT, 0.15F, 0.01F);
+			}
+		}
 
 		World level = player.level;
 
@@ -90,23 +119,21 @@ public class BreathAbility extends ActiveDragonAbility
 				double xSpeed = speed * 1f * xComp;
 				double ySpeed = speed * 1f * yComp;
 				double zSpeed = speed * 1f * zComp;
-				level.addParticle(new SmallFireParticleData(37f, true), player.getX(), player.getY() + 0.5, player.getZ(), xSpeed, ySpeed, zSpeed);
+				level.addParticle(new SmallFireParticleData(37, true), player.getX(), player.getY() + 0.5, player.getZ(), xSpeed, ySpeed, zSpeed);
 			}
 
 			for (int i = 0; i < 10; i++) {
 				double xSpeed = speed * xComp + (spread * 0.7 * (level.random.nextFloat() * 2 - 1) * (Math.sqrt(1 - xComp * xComp)));
 				double ySpeed = speed * yComp + (spread * 0.7 * (level.random.nextFloat() * 2 - 1) * (Math.sqrt(1 - yComp * yComp)));
 				double zSpeed = speed * zComp + (spread * 0.7 * (level.random.nextFloat() * 2 - 1) * (Math.sqrt(1 - zComp * zComp)));
-				level.addParticle(new LargeFireParticleData(37f, false), player.getX(), player.getY() + 0.5, player.getZ(), xSpeed, ySpeed, zSpeed);
+				level.addParticle(new LargeFireParticleData(37, false), player.getX(), player.getY() + 0.5, player.getZ(), xSpeed, ySpeed, zSpeed);
 			}
 		}
 
 		hitEntities();
-
-		if(ConfigHandler.SERVER.fireBreathSpreadsFire.get()) {
-			if (player.tickCount % 20 == 0) {
-				hitBlocks();
-			}
+		
+		if (player.tickCount % 20 == 0) {
+			hitBlocks();
 		}
 	}
 
@@ -174,12 +201,11 @@ public class BreathAbility extends ActiveDragonAbility
 
 					BlockState blockState = player.level.getBlockState(pos);
 					BlockState blockStateAbove = player.level.getBlockState(pos.above());
-					if (!blockState.getMaterial().isSolidBlocking() || blockStateAbove.getBlock() != Blocks.AIR) {
+					
+					if (blockStateAbove.getBlock() != Blocks.AIR) {
 						continue;
 					}
-
-					if(player.level.random.nextInt(100) > 30) continue;
-
+					
 					float blockHitYaw = (float) ((Math.atan2(pos.getZ() - player.getZ(), pos.getX() - player.getX()) * (180 / Math.PI) - 90) % 360);
 					float entityAttackingYaw = player.yRot % 360;
 					if (blockHitYaw < 0) {
@@ -206,8 +232,38 @@ public class BreathAbility extends ActiveDragonAbility
 					boolean inRange = blockHitDistance <= RANGE;
 					boolean yawCheck = (blockRelativeYaw <= ARC / 2f && blockRelativeYaw >= -ARC / 2f) || (blockRelativeYaw >= 360 - ARC / 2f || blockRelativeYaw <= -360 + ARC / 2f);
 					boolean pitchCheck = (blockRelativePitch <= ARC / 2f && blockRelativePitch >= -ARC / 2f) || (blockRelativePitch >= 360 - ARC / 2f || blockRelativePitch <= -360 + ARC / 2f);
+					
+					
+					
 					if (inRange && yawCheck && pitchCheck) {
-						player.level.setBlock(pos.above(), Blocks.FIRE.defaultBlockState(), 3);
+						if(blockState.getBlock() == Blocks.ICE || blockState.getBlock() == Blocks.SNOW || blockState.getBlock() == Blocks.SNOW_BLOCK){
+							if (player.level.random.nextInt(100) < 40) {
+								player.level.setBlock(pos, blockState.getBlock() == Blocks.ICE ? Blocks.WATER.defaultBlockState() : Blocks.AIR.defaultBlockState(), 3);
+							}
+							continue;
+						}else if(blockState.getMaterial().isSolidBlocking()) {
+							if(ConfigHandler.SERVER.fireBreathSpreadsFire.get()) {
+								if (player.level.random.nextInt(100) < 30) {
+									player.level.setBlock(pos.above(), Blocks.FIRE.defaultBlockState(), 3);
+								}
+							}
+							
+							for (int z = 0; z < 4; ++z) {
+								if (player.level.random.nextInt(100) < 50) {
+									player.level.addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, i, j, k, 0, 0.05, 0);
+								}
+							}
+						}
+						
+						if(player.level.isClientSide){
+							if (blockState.getBlock() == Blocks.WATER) {
+								for (int z = 0; z < 4; ++z) {
+									if (player.level.random.nextInt(100) < 10) {
+										player.level.addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, i, j, k, 0, 0.05, 0);
+									}
+								}
+							}
+						}
 					}
 				}
 			}

@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
@@ -99,7 +100,14 @@ public class SmallFireParticle extends SpriteTexturedParticle {
 		swirlTick++;
 		this.setSpriteFromAge(this.sprites);
 	}
-
+	
+	@Override
+	public void remove()
+	{
+		super.remove();
+		level.addParticle(ParticleTypes.SMOKE,x, y, z, 0, 0.01, 0);
+	}
+	
 	@Override
 	public void render(IVertexBuilder buffer, ActiveRenderInfo renderInfo, float partialTicks) {
 		float var = (age + partialTicks)/(float)lifetime;
