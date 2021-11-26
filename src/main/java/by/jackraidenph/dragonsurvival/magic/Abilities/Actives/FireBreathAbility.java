@@ -255,9 +255,15 @@ public class FireBreathAbility extends ActiveDragonAbility
 							}
 							continue;
 						}else if(blockState.getMaterial().isSolidBlocking()) {
-							if(ConfigHandler.SERVER.fireBreathSpreadsFire.get()) {
-								if (player.level.random.nextInt(100) < 30) {
-									player.level.setBlock(pos.above(), Blocks.FIRE.defaultBlockState(), 3);
+							if(!player.level.isClientSide) {
+								if (ConfigHandler.SERVER.fireBreathSpreadsFire.get()) {
+									boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(player.level, player);
+									
+									if (flag) {
+										if (player.level.random.nextInt(100) < 30) {
+											player.level.setBlock(pos.above(), Blocks.FIRE.defaultBlockState(), 3);
+										}
+									}
 								}
 							}
 							
