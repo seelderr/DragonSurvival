@@ -31,6 +31,7 @@ public class SmallFireParticle extends SpriteTexturedParticle {
 		lifetime = (int) duration;
 		swirlTick = random.nextInt(120);
 		spread = random.nextFloat();
+		this.hasPhysics = false;
 		this.swirls = swirls;
 		setSpriteFromAge(sprite);
 		this.sprites = sprite;

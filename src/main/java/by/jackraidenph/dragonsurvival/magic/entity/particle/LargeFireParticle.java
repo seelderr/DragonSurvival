@@ -32,6 +32,7 @@ public class LargeFireParticle extends SpriteTexturedParticle {
 		swirlTick = random.nextInt(120);
 		spread = random.nextFloat();
 		this.swirls = swirls;
+		this.hasPhysics = false;
 		setSpriteFromAge(sprite);
 		this.sprites = sprite;
 	}
