@@ -54,7 +54,7 @@ public class ForestParticle extends SpriteTexturedParticle {
 
 	public static IParticleRenderType PARTICLE_SHEET_TRANSLUCENT_NO_DEPTH = new IParticleRenderType() {
 		public void begin(BufferBuilder p_217600_1_, TextureManager p_217600_2_) {
-			RenderSystem.depthMask(false);
+			RenderSystem.depthMask(true);
 			RenderSystem.disableCull();
 			p_217600_2_.bind(AtlasTexture.LOCATION_PARTICLES);
 			RenderSystem.enableBlend();
