@@ -19,7 +19,9 @@
   "item.dragonsurvival.princess_spawn_egg": "Princess on horse Spawn Egg",
   "item.dragonsurvival.prince_spawn_egg": "Prince Spawn Egg",
 
-  "item.dragonsurvival.heart_element": "Heart element",
+  "item.dragonsurvival.dragon_heart_shard": "Dragon Heart Shard",
+  "item.dragonsurvival.weak_dragon_heart": "Weak Dragon Heart",
+  "item.dragonsurvival.ancient_dragon_heart": "Ancient Dragon Heart",
   "item.dragonsurvival.elder_dragon_bone": "Elder dragon bone",
   "item.dragonsurvival.elder_dragon_dust": "Elder dragon dust",
   "item.dragonsurvival.star_bone": "Star Bone",
@@ -78,6 +80,8 @@
   "block.dragonsurvival.big_forest_nest": "Big forest nest",
   "block.dragonsurvival.big_sea_nest": "Big sea nest",
   "block.dragonsurvival.big_cave_nest": "Big cave nest",
+
+  "ds.invalid_grow_item": "You need another type of growth catalyst: %1$s",
 
   "ds.regen.on": "Toggled nest regeneration on.",
   "ds.regen.off": "Toggled nest regeneration off.",

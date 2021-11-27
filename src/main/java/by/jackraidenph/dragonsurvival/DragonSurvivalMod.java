@@ -15,6 +15,7 @@ import by.jackraidenph.dragonsurvival.network.*;
 import by.jackraidenph.dragonsurvival.network.magic.*;
 import by.jackraidenph.dragonsurvival.registration.BlockInit;
 import by.jackraidenph.dragonsurvival.registration.EntityTypesInit;
+import by.jackraidenph.dragonsurvival.registration.ItemRegistry;
 import by.jackraidenph.dragonsurvival.registration.ParticleRegistry;
 import by.jackraidenph.dragonsurvival.util.BiomeDictionaryHelper;
 import by.jackraidenph.dragonsurvival.util.DragonLevel;
@@ -83,7 +84,7 @@ public class DragonSurvivalMod {
     private static final String PROTOCOL_VERSION = "2";
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(new ResourceLocation(MODID, "main"),
             () -> PROTOCOL_VERSION, PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
-    
+
     public static AbilityTickingHandler HANDLER = new AbilityTickingHandler();
     private static int nextPacketId = 0;
 
@@ -94,17 +95,18 @@ public class DragonSurvivalMod {
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ConfigHandler.clientSpec);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ConfigHandler.commonSpec);
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ConfigHandler.serverSpec);
-    
+
         ParticleRegistry.REGISTRY.register(modEventBus);
-        
+
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(new DragonFoodHandler());
         MinecraftForge.EVENT_BUS.register(new SpecificsHandler());
         MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGH, this::biomeLoadingEvent);
         MinecraftForge.EVENT_BUS.addListener(this::serverRegisterCommandsEvent);
         MinecraftForge.EVENT_BUS.register(HANDLER);
+        ItemRegistry.register();
     }
-    
+
     private static <T> void register(Class<T> clazz, IMessage<T> message) {
         CHANNEL.registerMessage(nextPacketId++, clazz, message::encode, message::decode, message::handle);
     }
@@ -123,7 +125,7 @@ public class DragonSurvivalMod {
         register(SyncSize.class, new SyncSize());
         register(ToggleWings.class, new ToggleWings());
         register(OpenCrafting.class,new OpenCrafting());
-    
+
         register(OpenDragonInventory.class, new OpenDragonInventory());
         register(ActivateAbilityServerSide.class, new ActivateAbilityServerSide());
         register(SyncAbilityActivation.class, new SyncAbilityActivation());
@@ -133,7 +135,7 @@ public class DragonSurvivalMod {
         register(SyncDragonAbilitySlot.class, new SyncDragonAbilitySlot());
         register(SyncCurrentAbilityCasting.class, new SyncCurrentAbilityCasting());
         register(SyncAbilityCastingToServer.class, new SyncAbilityCastingToServer());
-    
+
         CHANNEL.registerMessage(nextPacketId++, SynchronizeDragonCap.class, (synchronizeDragonCap, packetBuffer) -> {
             packetBuffer.writeInt(synchronizeDragonCap.playerId);
             packetBuffer.writeByte(synchronizeDragonCap.dragonType.ordinal());
@@ -151,7 +153,7 @@ public class DragonSurvivalMod {
             int lavaAirSupply = packetBuffer.readInt();
             int passengerId = packetBuffer.readInt();
             return new SynchronizeDragonCap(id, hiding, type, size, hasWings, lavaAirSupply, passengerId);
-        }, (synchronizeDragonCap, contextSupplier) -> { 
+        }, (synchronizeDragonCap, contextSupplier) -> {
             if (contextSupplier.get().getDirection().getReceptionSide() == LogicalSide.SERVER) {
                 CHANNEL.send(PacketDistributor.ALL.noArg(), synchronizeDragonCap);
                 ServerPlayerEntity serverPlayerEntity = contextSupplier.get().getSender();
@@ -316,7 +318,7 @@ public class DragonSurvivalMod {
                 });
         LOGGER.info("Successfully registered packets!");
     }
-    
+
     @SubscribeEvent
     public void biomeLoadingEvent(BiomeLoadingEvent event) {
         if (ConfigHandler.COMMON.predatorSpawnWeight.get() > 0) {
@@ -334,7 +336,7 @@ public class DragonSurvivalMod {
             }
         }
     }
-    
+
     @SubscribeEvent
     public void serverRegisterCommandsEvent(RegisterCommandsEvent event) {
     	CommandDispatcher<CommandSource> commandDispatcher = event.getDispatcher();
@@ -364,7 +366,7 @@ public class DragonSurvivalMod {
             ServerPlayerEntity serverPlayerEntity = context.getSource().getPlayerOrException();
             return runCommand(type, stage, wings, serverPlayerEntity);
         }).build();
-    
+
         ArgumentCommandNode<CommandSource, EntitySelector> target = argument("target", EntityArgument.players()).executes(context -> {
             String type = context.getArgument("dragon_type", String.class);
             int stage = context.getArgument("dragon_stage", Integer.TYPE);
@@ -382,7 +384,7 @@ public class DragonSurvivalMod {
         giveWings.addChild(target);
         LOGGER.info("Registered commands");
     }
-    
+
     private int runCommand(String type, int stage, boolean wings, ServerPlayerEntity serverPlayerEntity)
     {
         serverPlayerEntity.getCapability(DragonStateProvider.DRAGON_CAPABILITY).ifPresent(dragonStateHandler -> {
