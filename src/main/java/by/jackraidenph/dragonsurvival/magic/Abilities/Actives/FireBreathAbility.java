@@ -1,7 +1,6 @@
 package by.jackraidenph.dragonsurvival.magic.Abilities.Actives;
 
 import by.jackraidenph.dragonsurvival.Functions;
-import by.jackraidenph.dragonsurvival.capability.Capabilities;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.magic.entity.particle.CaveDragon.LargeFireParticleData;
 import by.jackraidenph.dragonsurvival.magic.entity.particle.CaveDragon.SmallFireParticleData;
@@ -96,11 +95,13 @@ public class FireBreathAbility extends BreathAbility
 	}
 	
 	@Override
-	public void tickEffect(LivingEntity entity)
+	public void onEntityHit(LivingEntity entityHit)
 	{
-		Capabilities.getGenericCapability(entity).ifPresent(cap -> {
-			cap.burnTimer++;
-		});
+		super.onEntityHit(entityHit);
+		
+		if(entityHit.level.random.nextInt(100) < 30){
+			entityHit.addEffect(new EffectInstance(DragonEffects.BURN, Functions.secondsToTicks(10), 0, false, true));
+		}
 	}
 	
 	@Override

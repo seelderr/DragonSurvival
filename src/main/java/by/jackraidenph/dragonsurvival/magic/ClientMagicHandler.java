@@ -4,6 +4,9 @@ import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
+import by.jackraidenph.dragonsurvival.magic.entity.particle.CaveDragon.SmallFireParticleData;
+import by.jackraidenph.dragonsurvival.magic.entity.particle.ForestDragon.SmallPoisonParticleData;
+import by.jackraidenph.dragonsurvival.magic.entity.particle.SeaDragon.LargeLightningParticleData;
 import by.jackraidenph.dragonsurvival.network.magic.ActivateAbilityServerSide;
 import by.jackraidenph.dragonsurvival.network.magic.SyncAbilityCastingToServer;
 import by.jackraidenph.dragonsurvival.registration.ClientModEvents;
@@ -16,7 +19,9 @@ import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.particles.IParticleData;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
@@ -27,6 +32,7 @@ import net.minecraftforge.client.event.FOVUpdateEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.glfw.GLFW;
@@ -290,6 +296,53 @@ public class ClientMagicHandler
 	            event.setNewfov(newFov);
 	        }
 	    });
+	}
+	
+	@OnlyIn( Dist.CLIENT)
+	@SubscribeEvent
+	public static void livingTick(LivingUpdateEvent event)
+	{
+		LivingEntity entity = event.getEntityLiving();
+		
+		
+		if (!entity.level.isClientSide) {
+			return;
+		}
+		
+		if(entity == Minecraft.getInstance().player || DragonStateProvider.isDragon(entity)){
+			return;
+		}
+		if (entity.hasEffect(DragonEffects.BURN)) {
+			IParticleData data = new SmallFireParticleData(37F, false);
+			for (int i = 0; i < 4; i++) {
+				renderEffectParticle(entity, data);
+			}
+		}
+		
+		if (entity.hasEffect(DragonEffects.DRAIN)) {
+			IParticleData data = new SmallPoisonParticleData(37F, false);
+			for (int i = 0; i < 4; i++) {
+				renderEffectParticle(entity, data);
+			}
+		}
+		
+		if (entity.hasEffect(DragonEffects.CHARGED)) {
+			IParticleData data = new LargeLightningParticleData(37F, false);
+			for (int i = 0; i < 4; i++) {
+				renderEffectParticle(entity, data);
+			}
+		}
+	}
+	
+	private static void renderEffectParticle(LivingEntity entity, IParticleData data)
+	{
+		double d0 = (double)(entity.level.random.nextFloat()) * entity.getBbWidth();
+		double d1 = (double)(entity.level.random.nextFloat()) * entity.getBbHeight();
+		double d2 = (double)(entity.level.random.nextFloat()) * entity.getBbWidth();
+		double x = entity.getX() + d0 - (entity.getBbWidth() / 2);
+		double y = entity.getY() + d1;
+		double z = entity.getZ() + d2 - (entity.getBbWidth() / 2);
+		Minecraft.getInstance().player.level.addParticle(data, x, y, z, 0, 0, 0);
 	}
 	
 	//TODO This isnt removing the lava fog when on shaders

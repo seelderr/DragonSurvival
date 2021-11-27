@@ -297,11 +297,13 @@ public class DragonStateHandler {
 	private boolean renderAbilities = true;
 	
 	public void initAbilities(DragonType type){
-		abilities.clear();
-		for(ActiveDragonAbility ability : DragonAbilities.ACTIVE_ABILITIES.get(type)){
-			ActiveDragonAbility newAbility = ability.createInstance();
-			newAbility.setLevel(ability.getMinLevel());
-			abilities.add(newAbility);
+		if(DragonAbilities.ACTIVE_ABILITIES.containsKey(type)) {
+			abilities.clear();
+			for (ActiveDragonAbility ability : DragonAbilities.ACTIVE_ABILITIES.get(type)) {
+				ActiveDragonAbility newAbility = ability.createInstance();
+				newAbility.setLevel(ability.getMinLevel());
+				abilities.add(newAbility);
+			}
 		}
 	}
 	public int getCurrentMana() {

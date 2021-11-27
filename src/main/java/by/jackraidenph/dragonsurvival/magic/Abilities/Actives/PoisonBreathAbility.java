@@ -1,7 +1,6 @@
 package by.jackraidenph.dragonsurvival.magic.Abilities.Actives;
 
 import by.jackraidenph.dragonsurvival.Functions;
-import by.jackraidenph.dragonsurvival.capability.Capabilities;
 import by.jackraidenph.dragonsurvival.magic.entity.particle.ForestDragon.LargePoisonParticleData;
 import by.jackraidenph.dragonsurvival.magic.entity.particle.ForestDragon.SmallPoisonParticleData;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
@@ -78,17 +77,19 @@ public class PoisonBreathAbility extends BreathAbility
 	}
 	
 	@Override
-	public boolean canHitEntity(LivingEntity entity)
+	public void onEntityHit(LivingEntity entityHit)
 	{
-		return true;
+		super.onEntityHit(entityHit);
+		
+		if(entityHit.level.random.nextInt(100) < 30){
+			entityHit.addEffect(new EffectInstance(DragonEffects.DRAIN, Functions.secondsToTicks(10), 0, false, true));
+		}
 	}
 	
 	@Override
-	public void tickEffect(LivingEntity entity)
+	public boolean canHitEntity(LivingEntity entity)
 	{
-		Capabilities.getGenericCapability(entity).ifPresent(cap -> {
-			cap.drainTimer++;
-		});
+		return true;
 	}
 	
 	@Override

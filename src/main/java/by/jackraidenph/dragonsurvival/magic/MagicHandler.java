@@ -1,5 +1,6 @@
 package by.jackraidenph.dragonsurvival.magic;
 
+import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.capability.Capabilities;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
@@ -8,6 +9,7 @@ import by.jackraidenph.dragonsurvival.magic.Abilities.DragonAbilities;
 import by.jackraidenph.dragonsurvival.magic.Abilities.Passives.BurnAbility;
 import by.jackraidenph.dragonsurvival.magic.Abilities.Passives.SpectralImpactAbility;
 import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
+import by.jackraidenph.dragonsurvival.network.magic.SyncPotionRemovedEffect;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.block.BlockState;
@@ -17,6 +19,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.tags.FluidTags;
@@ -25,15 +28,19 @@ import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.IndirectEntityDamageSource;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
+import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingVisibilityEvent;
 import net.minecraftforge.event.entity.living.LivingExperienceDropEvent;
+import net.minecraftforge.event.entity.living.PotionEvent.PotionExpiryEvent;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.fml.network.PacketDistributor.TargetPoint;
 
 @EventBusSubscriber
 public class MagicHandler
@@ -162,8 +169,7 @@ public class MagicHandler
 		Capabilities.getGenericCapability(entity).ifPresent(cap -> {
 			if (entity.tickCount % 20 == 0) {
 				if (entity.hasEffect(DragonEffects.BURN)) {
-					if(entity.fireImmune()){
-					
+					if(!entity.fireImmune()){
 						if (cap.lastPos != null) {
 							double distance = entity.distanceToSqr(cap.lastPos);
 							float damage = MathHelper.clamp((float)distance, 0, 10);
@@ -178,32 +184,21 @@ public class MagicHandler
 				cap.lastPos = entity.position();
 			}
 		});
-		
-		
-		//Apply breath debuffs
-		Capabilities.getGenericCapability(entity).ifPresent(cap -> {
-			if (cap.burnTimer >= Functions.secondsToTicks(2)) {
-				cap.burnTimer = 0;
-				entity.addEffect(new EffectInstance(DragonEffects.BURN, Functions.secondsToTicks(15), 0, false, true));
-			}
+	}
+	
+	@SubscribeEvent
+	public static void playerStruckByLightning(EntityStruckByLightningEvent event){
+		if(event.getEntity() instanceof PlayerEntity) {
+			PlayerEntity player = (PlayerEntity)event.getEntity();
 			
-			if (cap.drainTimer >= Functions.secondsToTicks(4)) {
-				cap.drainTimer = 0;
-				entity.addEffect(new EffectInstance(DragonEffects.DRAIN, Functions.secondsToTicks(15), 0, false, true));
-			}
-			
-			if (cap.chargedTimer >= Functions.secondsToTicks(4)) {
-				cap.chargedTimer = 0;
-				entity.addEffect(new EffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(10), 0, false, true));
-			}
-			
-			
-			if (entity.tickCount % 20 == 0) {
-				cap.burnTimer = Math.max(0, cap.burnTimer - 1);
-				cap.chargedTimer = Math.max(0, cap.chargedTimer - 1);
-				cap.drainTimer = Math.max(0, cap.drainTimer - 1);
-			}
-		});
+			DragonStateProvider.getCap(player).ifPresent(cap -> {
+				if (!cap.isDragon()) return;
+				
+				if(cap.getType() == DragonType.SEA){
+					event.setCanceled(true);
+				}
+			});
+		}
 	}
 	
 	@SubscribeEvent
@@ -286,6 +281,20 @@ public class MagicHandler
 					event.setDroppedExperience(event.getDroppedExperience() + extra);
 				}
 			});
+		}
+	}
+	
+	@SubscribeEvent
+	public static void potionRemoved(PotionExpiryEvent event){
+		if(event.getPotionEffect().getEffect() != DragonEffects.DRAIN && event.getPotionEffect().getEffect() != DragonEffects.CHARGED && event.getPotionEffect().getEffect() != DragonEffects.BURN){
+			return;
+		}
+		
+		LivingEntity entity = event.getEntityLiving();
+		
+		if(!entity.level.isClientSide){
+			TargetPoint point = new TargetPoint(entity.position().x, entity.position().y, entity.position().z, 64, entity.level.dimension());
+			DragonSurvivalMod.CHANNEL.send(PacketDistributor.NEAR.with(() -> point), new SyncPotionRemovedEffect(entity.getId(), Effect.getId(event.getPotionEffect().getEffect())));
 		}
 	}
 }

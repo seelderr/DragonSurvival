@@ -28,11 +28,6 @@ public class GenericCapabilityStorage implements Capability.IStorage<GenericCapa
         if(instance.lastPos != null) {
             compoundNBT.put("lastPos", newDoubleList(instance.lastPos.x, instance.lastPos.y, instance.lastPos.z));
         }
-        
-        compoundNBT.putInt("burnTimer", instance.burnTimer);
-        compoundNBT.putInt("chargedTimer", instance.chargedTimer);
-        compoundNBT.putInt("drainTimer", instance.drainTimer);
-    
         return compoundNBT;
     }
 
@@ -43,9 +38,5 @@ public class GenericCapabilityStorage implements Capability.IStorage<GenericCapa
             ListNBT listnbt = compoundNBT.getList("lastPos", 6);
             instance.lastPos = new Vector3d(listnbt.getDouble(0), listnbt.getDouble(1), listnbt.getDouble(2));
         }
-        
-        instance.burnTimer = compoundNBT.getInt("burnTimer");
-        instance.chargedTimer = compoundNBT.getInt("chargedTimer");
-        instance.drainTimer = compoundNBT.getInt("drainTimer");
     }
 }

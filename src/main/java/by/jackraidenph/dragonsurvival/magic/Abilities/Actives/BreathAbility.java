@@ -127,7 +127,6 @@ public abstract class BreathAbility extends ActiveDragonAbility
 				}
 				
 				if(!canHitEntity(entityHit)) return;
-				tickEffect(entityHit);
 				
 				if(entityHit.getLastHurtByMob() == player && entityHit.getLastHurtByMobTimestamp() + Functions.secondsToTicks(1) < entityHit.tickCount){
 					continue;
@@ -139,7 +138,6 @@ public abstract class BreathAbility extends ActiveDragonAbility
 	}
 	
 	public abstract boolean canHitEntity(LivingEntity entity);
-	public abstract void tickEffect(LivingEntity entity);
 	public abstract void onDamage(LivingEntity entity);
 	public abstract int getDamage();
 	public abstract void onBlock(BlockPos pos, BlockState blockState);

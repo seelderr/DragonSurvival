@@ -16,7 +16,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.IForgeRegistry;
 
-import java.awt.*;
 import java.util.Collections;
 import java.util.List;
 
@@ -76,13 +75,13 @@ public class DragonEffects {
         STRONG_LEATHER.addAttributeModifier(Attributes.ARMOR, "1640719a-4c40-11ec-81d3-0242ac130003", 2, Operation.ADDITION);
         forgeRegistry.register(STRONG_LEATHER);
     
-        BURN = new Effect2(EffectType.HARMFUL, new Color(255, 92, 43).getRGB(), false).setRegistryName(DragonSurvivalMod.MODID, "burn");
+        BURN = new Effect2(EffectType.HARMFUL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "burn");
         forgeRegistry.register(BURN);
     
-        CHARGED = new Effect2(EffectType.HARMFUL, new Color(93, 201, 255).getRGB(), false).setRegistryName(DragonSurvivalMod.MODID, "charged");
+        CHARGED = new Effect2(EffectType.HARMFUL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "charged");
         forgeRegistry.register(CHARGED);
     
-        DRAIN = new Effect2(EffectType.HARMFUL, new Color(30, 255, 0).getRGB(), false).setRegistryName(DragonSurvivalMod.MODID, "drain");
+        DRAIN = new Effect2(EffectType.HARMFUL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "drain");
         forgeRegistry.register(DRAIN);
     }
 

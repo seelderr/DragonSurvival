@@ -135,6 +135,7 @@ public class DragonSurvivalMod {
         register(SyncDragonAbilitySlot.class, new SyncDragonAbilitySlot());
         register(SyncCurrentAbilityCasting.class, new SyncCurrentAbilityCasting());
         register(SyncAbilityCastingToServer.class, new SyncAbilityCastingToServer());
+        register(SyncPotionRemovedEffect.class, new SyncPotionRemovedEffect());
 
         CHANNEL.registerMessage(nextPacketId++, SynchronizeDragonCap.class, (synchronizeDragonCap, packetBuffer) -> {
             packetBuffer.writeInt(synchronizeDragonCap.playerId);

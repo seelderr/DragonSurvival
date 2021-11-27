@@ -1,30 +1,30 @@
 package by.jackraidenph.dragonsurvival.magic.Abilities.Actives;
 
 import by.jackraidenph.dragonsurvival.Functions;
-import by.jackraidenph.dragonsurvival.capability.Capabilities;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.magic.entity.particle.SeaDragon.LargeLightningParticleData;
+import by.jackraidenph.dragonsurvival.magic.entity.particle.SeaDragon.SmallLightningParticleData;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.ProjectileHelper;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.particles.RedstoneParticleData;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.common.util.FakePlayer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.function.Predicate;
 
 public class LightningBreathAbility extends BreathAbility
 {
@@ -45,45 +45,69 @@ public class LightningBreathAbility extends BreathAbility
 		tickCost();
 		super.onActivation(player);
 		
-		Vector3d vector3d = player.getEyePosition(1.0F);
-		Vector3d vector3d1 = player.getViewVector(1.0F).scale((double)initialRange);
-		Vector3d vector3d2 = vector3d.add(vector3d1);
-		AxisAlignedBB axisalignedbb = player.getBoundingBox().expandTowards(vector3d1).inflate(1.0D);
-		Predicate<Entity> predicate = (entity) -> entity instanceof LivingEntity && !entity.isSpectator() && entity.isPickable();
-		
-		EntityRayTraceResult result = ProjectileHelper.getEntityHitResult(player, vector3d, vector3d2, axisalignedbb, predicate, initialRange * initialRange);
-		
-		if (result != null) {
-			LivingEntity entity = (LivingEntity)result.getEntity();
-			if (vector3d.distanceToSqr(result.getLocation()) <= initialRange) {
-				onEntityHit(entity);
-				return;
-			}
-		}
-		
 		Vector3d viewVector = player.getViewVector(1.0F);
 		
 		double x = player.getX() + viewVector.x;
 		double y = player.getY() + 1 + viewVector.y;
 		double z = player.getZ() + viewVector.z;
 		
-//		EntityChainLightning chainLightning = new EntityChainLightning(player, x, y, z, player.level);
-//		chainLightning.absMoveTo(player.getX(), player.getY() + player.getEyeHeight() - 0.5f, player.getZ(), player.yRot, player.xRot);
-//		player.level.addFreshEntity(chainLightning);
-		
 		if(player.level.isClientSide) {
-		
-//			if (player.tickCount % 10 == 0) {
-//				player.playSound(SoundEvents.LAVA_EXTINGUISH, 0.25F, 1F);
-//			}
-			
-			for (int i = 0; i < 12; i++) {
+			for (int i = 0; i < 24; i++) {
 				double xSpeed = speed * 1f * xComp;
 				double ySpeed = speed * 1f * yComp;
 				double zSpeed = speed * 1f * zComp;
-				player.level.addParticle(new LargeLightningParticleData(37, false), x, y, z, xSpeed, ySpeed, zSpeed);
+				player.level.addParticle(new LargeLightningParticleData(37, true), x, y, z, xSpeed, ySpeed, zSpeed);
+			}
+			
+			for (int i = 0; i < 10; i++) {
+				double xSpeed = speed * xComp + (spread * 0.7 * (player.level.random.nextFloat() * 2 - 1) * (Math.sqrt(1 - xComp * xComp)));
+				double ySpeed = speed * yComp + (spread * 0.7 * (player.level.random.nextFloat() * 2 - 1) * (Math.sqrt(1 - yComp * yComp)));
+				double zSpeed = speed * zComp + (spread * 0.7 * (player.level.random.nextFloat() * 2 - 1) * (Math.sqrt(1 - zComp * zComp)));
+				player.level.addParticle(new SmallLightningParticleData(37, false), x, y, z, xSpeed, ySpeed, zSpeed);
 			}
 		}
+		
+//		Vector3d vector3d = player.getEyePosition(1.0F);
+//		Vector3d vector3d1 = player.getViewVector(1.0F).scale((double)initialRange);
+//		Vector3d vector3d2 = vector3d.add(vector3d1);
+//		AxisAlignedBB axisalignedbb = player.getBoundingBox().expandTowards(vector3d1).inflate(1.0D);
+//		Predicate<Entity> predicate = (entity) -> entity instanceof LivingEntity && !entity.isSpectator() && entity.isPickable();
+//
+//		EntityRayTraceResult result = ProjectileHelper.getEntityHitResult(player, vector3d, vector3d2, axisalignedbb, predicate, initialRange * initialRange);
+//
+//		if (result != null) {
+//			LivingEntity entity = (LivingEntity)result.getEntity();
+//			if (vector3d.distanceToSqr(result.getLocation()) <= initialRange) {
+//				onEntityHit(entity);
+//				return;
+//			}
+//		}
+		
+//		Vector3d viewVector = player.getViewVector(1.0F);
+//
+//		double x = player.getX() + viewVector.x;
+//		double y = player.getY() + 1 + viewVector.y;
+//		double z = player.getZ() + viewVector.z;
+//
+////		EntityChainLightning chainLightning = new EntityChainLightning(player, x, y, z, player.level);
+////		chainLightning.absMoveTo(player.getX(), player.getY() + player.getEyeHeight() - 0.5f, player.getZ(), player.yRot, player.xRot);
+////		player.level.addFreshEntity(chainLightning);
+//
+//		if(player.level.isClientSide) {
+//
+////			if (player.tickCount % 10 == 0) {
+////				player.playSound(SoundEvents.LAVA_EXTINGUISH, 0.25F, 1F);
+////			}
+//
+//			for (int i = 0; i < 12; i++) {
+//				double xSpeed = speed * 1f * xComp;
+//				double ySpeed = speed * 1f * yComp;
+//				double zSpeed = speed * 1f * zComp;
+//				player.level.addParticle(new LargeLightningParticleData(37, false), x, y, z, xSpeed, ySpeed, zSpeed);
+//			}
+//		}
+		
+		hitEntities();
 		
 		if (player.tickCount % 20 == 0) {
 			hitBlocks();
@@ -96,13 +120,10 @@ public class LightningBreathAbility extends BreathAbility
 		return true;
 	}
 	
-	@Override
-	public void tickEffect(LivingEntity entity) {}
 	
 	@Override
 	public void onDamage(LivingEntity entity) {}
 	
-	private static int initialRange = 10;
 	private static int chainRange = 5;
 	private static int chainTimes = 3;
 	private static int maxChainTargets = 3;
@@ -133,16 +154,14 @@ public class LightningBreathAbility extends BreathAbility
 	
 	
 	public void hurtTarget(LivingEntity entity){
-		if(player.tickCount % 10 == 0) {
-			entity.hurt(DamageSource.playerAttack(player), getDamage());
-			
-			if(player.level.random.nextInt(100) < 50){
-				player.addEffect(new EffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(30)));
-			}
-			
-			Capabilities.getGenericCapability(entity).ifPresent(cap -> {
-				cap.chargedTimer += 10;
-			});
+		entity.hurt(DamageSource.playerAttack(player), getDamage());
+		
+		if(player.level.random.nextInt(100) < 50){
+			player.addEffect(new EffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(30)));
+		}
+		
+		if(entity.level.random.nextInt(100) < 30){
+			entity.addEffect(new EffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(10), 0, false, true));
 		}
 	}
 	
@@ -209,31 +228,34 @@ public class LightningBreathAbility extends BreathAbility
 		for(LivingEntity target : secondaryTargets){
 			target.hurt(DamageSource.mobAttack(source), damage);
 			
-			Capabilities.getGenericCapability(target).ifPresent(cap -> {
-				cap.chargedTimer += 20;
-			});
-			
-			spark(source, target);
+			if(target != source) {
+				if(target.level.random.nextInt(100) < 30){
+					target.addEffect(new EffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(10), 0, false, true));
+				}
+				
+				spark(source, target);
+			}
 		}
 	}
 	
 	@Override
 	public void onBlock(BlockPos pos, BlockState blockState)
 	{
-//		if(blockState.getMaterial().isSolidBlocking()) {
-//			if(!player.level.isClientSide) {
-//				if(player.level.random.nextInt(100) < 30){
-//					AreaEffectCloudEntity entity = new AreaEffectCloudEntity(EntityType.AREA_EFFECT_CLOUD, player.level);
-//					entity.setWaitTime(0);
-//					entity.setPos(pos.above().getX(), pos.above().getY(), pos.above().getZ());
-//					entity.setPotion(new Potion(new EffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(10) * 4))); //Effect duration is divided by 4 normaly
-//					entity.setDuration(Functions.secondsToTicks(2));
-//					entity.setRadius(1);
-//					entity.setParticle(new LargeLightningParticleData(37, false));
-//					player.level.addFreshEntity(entity);
-//				}
-//			}
-//		}
+		if(!player.level.isClientSide){
+			if(player.tickCount % 40 == 0) {
+				if (player.level.isThundering()) {
+					if (player.level.random.nextInt(100) < 30) {
+						if (player.level.canSeeSky(pos)) {
+							LightningBoltEntity lightningboltentity = EntityType.LIGHTNING_BOLT.create(player.level);
+							lightningboltentity.moveTo(new Vector3d(pos.getX(), pos.getY(), pos.getZ()));
+							lightningboltentity.setCause((ServerPlayerEntity)player);
+							player.level.addFreshEntity(lightningboltentity);
+							player.level.playSound(player, pos, SoundEvents.LIGHTNING_BOLT_THUNDER, SoundCategory.WEATHER, 5F, 1.0F);
+						}
+					}
+				}
+			}
+		}
 	}
 
 	public static int getDamage(int level){
