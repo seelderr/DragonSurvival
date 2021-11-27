@@ -151,20 +151,20 @@ public class ServerConfig {
 		growNewborn = builder
 				.comment("List of items to grow newborn dragon. Format: block/tag:modid:id")
 				.defineList("growNewborn", Arrays.asList(
-						"dragonsurvival:dragon_heart_shard",
+						"dragonsurvival:heart_element",
 						"dragonsurvival:weak_dragon_heart",
-						"dragonsurvival:ancient_dragon_heart"
+						"dragonsurvival:elder_dragon_heart"
 				), this::isValidItemConfig);
 		growYoung = builder
 				.comment("List of items to grow young dragon. Format: block/tag:modid:id")
 				.defineList("growYoung", Arrays.asList(
 						"dragonsurvival:weak_dragon_heart",
-						"dragonsurvival:ancient_dragon_heart"
+						"dragonsurvival:elder_dragon_heart"
 				), this::isValidItemConfig);
 		growAdult = builder
 				.comment("List of items to grow adult dragon. Format: block/tag:modid:id")
 				.defineList("growAdult", Collections.singletonList(
-						"dragonsurvival:ancient_dragon_heart"
+						"dragonsurvival:elder_dragon_heart"
 				), this::isValidItemConfig);
 
 		builder.push("bonuses"); // Bonuses
