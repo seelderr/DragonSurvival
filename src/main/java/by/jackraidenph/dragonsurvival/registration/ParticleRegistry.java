@@ -5,10 +5,14 @@ import by.jackraidenph.dragonsurvival.magic.entity.particle.CaveDragon.LargeFire
 import by.jackraidenph.dragonsurvival.magic.entity.particle.CaveDragon.LargeFireParticleData;
 import by.jackraidenph.dragonsurvival.magic.entity.particle.CaveDragon.SmallFireParticle;
 import by.jackraidenph.dragonsurvival.magic.entity.particle.CaveDragon.SmallFireParticleData;
-import by.jackraidenph.dragonsurvival.magic.entity.particle.ForestDragon.ForestParticle.ForestFactory;
-import by.jackraidenph.dragonsurvival.magic.entity.particle.ForestDragon.ForestParticleData;
-import by.jackraidenph.dragonsurvival.magic.entity.particle.SeaDragon.SeaParticle.SeaFactory;
-import by.jackraidenph.dragonsurvival.magic.entity.particle.SeaDragon.SeaParticleData;
+import by.jackraidenph.dragonsurvival.magic.entity.particle.ForestDragon.LargePoisonParticle;
+import by.jackraidenph.dragonsurvival.magic.entity.particle.ForestDragon.LargePoisonParticleData;
+import by.jackraidenph.dragonsurvival.magic.entity.particle.ForestDragon.SmallPoisonParticle.ForestFactory;
+import by.jackraidenph.dragonsurvival.magic.entity.particle.ForestDragon.SmallPoisonParticleData;
+import by.jackraidenph.dragonsurvival.magic.entity.particle.SeaDragon.LargeLightningParticle;
+import by.jackraidenph.dragonsurvival.magic.entity.particle.SeaDragon.LargeLightningParticleData;
+import by.jackraidenph.dragonsurvival.magic.entity.particle.SeaDragon.SmallLightningParticle.SeaFactory;
+import by.jackraidenph.dragonsurvival.magic.entity.particle.SeaDragon.SmallLightningParticleData;
 import com.mojang.serialization.Codec;
 import net.minecraft.client.Minecraft;
 import net.minecraft.particles.BasicParticleType;
@@ -43,17 +47,31 @@ public class ParticleRegistry {
         }
     });
     
-    public static final RegistryObject<ParticleType<ForestParticleData>> FOREST = REGISTRY.register("forest", () -> new ParticleType<ForestParticleData>(false, ForestParticleData.DESERIALIZER) {
+    public static final RegistryObject<ParticleType<SmallPoisonParticleData>> POISON = REGISTRY.register("poison", () -> new ParticleType<SmallPoisonParticleData>(false, SmallPoisonParticleData.DESERIALIZER) {
         @Override
-        public Codec<ForestParticleData> codec() {
-            return ForestParticleData.CODEC(FOREST.get());
+        public Codec<SmallPoisonParticleData> codec() {
+            return SmallPoisonParticleData.CODEC(POISON.get());
         }
     });
     
-    public static final RegistryObject<ParticleType<SeaParticleData>> SEA = REGISTRY.register("sea", () -> new ParticleType<SeaParticleData>(false, SeaParticleData.DESERIALIZER) {
+    public static final RegistryObject<ParticleType<LargePoisonParticleData>> LARGE_POISON = REGISTRY.register("large_poison", () -> new ParticleType<LargePoisonParticleData>(false, LargePoisonParticleData.DESERIALIZER) {
         @Override
-        public Codec<SeaParticleData> codec() {
-            return SeaParticleData.CODEC(SEA.get());
+        public Codec<LargePoisonParticleData> codec() {
+            return LargePoisonParticleData.CODEC(LARGE_POISON.get());
+        }
+    });
+    
+    public static final RegistryObject<ParticleType<SmallLightningParticleData>> LIGHTNING = REGISTRY.register("lightning", () -> new ParticleType<SmallLightningParticleData>(false, SmallLightningParticleData.DESERIALIZER) {
+        @Override
+        public Codec<SmallLightningParticleData> codec() {
+            return SmallLightningParticleData.CODEC(LIGHTNING.get());
+        }
+    });
+    
+    public static final RegistryObject<ParticleType<LargeLightningParticleData>> LARGE_LIGHTNING = REGISTRY.register("large_lightning", () -> new ParticleType<LargeLightningParticleData>(false, LargeLightningParticleData.DESERIALIZER) {
+        @Override
+        public Codec<LargeLightningParticleData> codec() {
+            return LargeLightningParticleData.CODEC(LARGE_LIGHTNING.get());
         }
     });
     
@@ -70,12 +88,15 @@ public class ParticleRegistry {
         magicBeaconParticle.setRegistryName(DragonSurvivalMod.MODID, "diamond_particle");
         particleTypes.register(magicBeaconParticle);
     }
-    
+    //LargePoisonParticleData
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void registerParticles(ParticleFactoryRegisterEvent event) {
         Minecraft.getInstance().particleEngine.register(ParticleRegistry.FIRE.get(), SmallFireParticle.FireFactory::new);
         Minecraft.getInstance().particleEngine.register(ParticleRegistry.LARGE_FIRE.get(), LargeFireParticle.FireFactory::new);
-        Minecraft.getInstance().particleEngine.register(ParticleRegistry.FOREST.get(), ForestFactory::new);
-        Minecraft.getInstance().particleEngine.register(ParticleRegistry.SEA.get(), SeaFactory::new);
+        Minecraft.getInstance().particleEngine.register(ParticleRegistry.POISON.get(), ForestFactory::new);
+        Minecraft.getInstance().particleEngine.register(ParticleRegistry.LARGE_POISON.get(), LargePoisonParticle.ForestFactory::new);
+        Minecraft.getInstance().particleEngine.register(ParticleRegistry.LIGHTNING.get(), SeaFactory::new);
+        Minecraft.getInstance().particleEngine.register(ParticleRegistry.LARGE_LIGHTNING.get(), LargeLightningParticle.SeaFactory::new);
+    
     }
 }

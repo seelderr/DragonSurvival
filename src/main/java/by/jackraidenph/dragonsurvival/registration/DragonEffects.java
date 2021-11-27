@@ -35,7 +35,7 @@ public class DragonEffects {
     public static Effect WATER_VISION, LAVA_VISION;
     public static Effect HUNTER;
     public static Effect REVEALING_THE_SOUL;
-    public static Effect BURN;
+    public static Effect BURN, CHARGED, DRAIN;
     public static Effect STRONG_LEATHER;
 
     @SuppressWarnings("unused")
@@ -78,6 +78,12 @@ public class DragonEffects {
     
         BURN = new Effect2(EffectType.HARMFUL, new Color(255, 92, 43).getRGB(), false).setRegistryName(DragonSurvivalMod.MODID, "burn");
         forgeRegistry.register(BURN);
+    
+        CHARGED = new Effect2(EffectType.HARMFUL, new Color(93, 201, 255).getRGB(), false).setRegistryName(DragonSurvivalMod.MODID, "charged");
+        forgeRegistry.register(CHARGED);
+    
+        DRAIN = new Effect2(EffectType.HARMFUL, new Color(30, 255, 0).getRGB(), false).setRegistryName(DragonSurvivalMod.MODID, "drain");
+        forgeRegistry.register(DRAIN);
     }
 
     private static class Effect2 extends Effect {

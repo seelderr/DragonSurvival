@@ -42,13 +42,13 @@ public class MagicHandler
 		return DragonStateProvider.getCap(player).map(cap -> {
 			switch (cap.getType()) {
 				case SEA:
-					if (player.isInWaterRainOrBubble() || blockBelow.getMaterial() == Material.SNOW || blockBelow.getMaterial() == Material.WATER) {
+					if (player.isInWaterRainOrBubble() || blockBelow.getMaterial() == Material.SNOW || blockBelow.getMaterial() == Material.WATER || player.hasEffect(DragonEffects.CHARGED)) {
 						return true;
 					}
 					break;
 				
 				case FOREST:
-					if (player.level.canSeeSky(player.blockPosition()) && player.level.isDay()) {
+					if (player.level.canSeeSky(player.blockPosition()) && player.level.isDay() || player.hasEffect(DragonEffects.DRAIN)) {
 						return true;
 					}
 					break;
@@ -56,7 +56,7 @@ public class MagicHandler
 				case CAVE:
 					if (player.isInLava() || blockBelow.getMaterial() == Material.LAVA || blockBelow.getMaterial() == Material.FIRE || player.isOnFire()
 					    || blockBelow.getMaterial().getColor() == MaterialColor.NETHER || blockBelow.getBlock() == Blocks.MAGMA_BLOCK
-					    || blockBelow.getBlock() == Blocks.NETHERRACK) {
+					    || blockBelow.getBlock() == Blocks.NETHERRACK || player.hasEffect(DragonEffects.BURN)) {
 						return true;
 					}
 					break;
@@ -140,14 +140,16 @@ public class MagicHandler
 		Capabilities.getGenericCapability(entity).ifPresent(cap -> {
 			if (entity.tickCount % 20 == 0) {
 				if (entity.hasEffect(DragonEffects.BURN)) {
-					if (cap.lastPos != null) {
-						double distance = entity.distanceToSqr(cap.lastPos);
-						float damage = MathHelper.clamp((float)distance, 0, 10);
-						
-						if (damage > 0) {
-							entity.hurt(DamageSource.ON_FIRE, damage);
+					if(entity.fireImmune()){
+					
+						if (cap.lastPos != null) {
+							double distance = entity.distanceToSqr(cap.lastPos);
+							float damage = MathHelper.clamp((float)distance, 0, 10);
+							
+							if (damage > 0) {
+								entity.hurt(DamageSource.ON_FIRE, damage);
+							}
 						}
-						
 					}
 				}
 				
@@ -162,6 +164,16 @@ public class MagicHandler
 			if(cap.burnTimer >= durationForDebuff){
 				cap.burnTimer = 0;
 				entity.addEffect(new EffectInstance(DragonEffects.BURN, Functions.secondsToTicks(30), 0, false, false));
+			}
+			
+			if(cap.drainTimer >= durationForDebuff){
+				cap.drainTimer = 0;
+				entity.addEffect(new EffectInstance(DragonEffects.DRAIN, Functions.secondsToTicks(30), 0, false, false));
+			}
+			
+			if(cap.chargedTimer >= durationForDebuff){
+				cap.chargedTimer = 0;
+				entity.addEffect(new EffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(30), 0, false, false));
 			}
 			
 			if(cap.chargedTimer >= durationForDebuff){

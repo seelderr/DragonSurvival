@@ -95,6 +95,8 @@
   "effect.dragonsurvival.hunter": "Hunter",
   "effect.dragonsurvival.revealing_the_soul": "Revealing The Soul",
   "effect.dragonsurvival.burn": "Burn",
+  "effect.dragonsurvival.charged": "Charged",
+  "effect.dragonsurvival.drain": "Drain",
   "effect.dragonsurvival.strong_leather": "Strong Leather",
 
   "death.attack.starDrain": "%1$s had their life and energy drained by magic.",

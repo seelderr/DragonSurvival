@@ -1,4 +1,4 @@
-package by.jackraidenph.dragonsurvival.magic.entity.particle.ForestDragon;
+package by.jackraidenph.dragonsurvival.magic.entity.particle.SeaDragon;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -16,13 +16,13 @@ import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class ForestParticle extends SpriteTexturedParticle {
+public class LargeLightningParticle extends SpriteTexturedParticle {
 	private int swirlTick;
 	private final float spread;
 	boolean swirls;
 	private final IAnimatedSprite sprites;
 
-	public ForestParticle(ClientWorld world, double x, double y, double z, double vX, double vY, double vZ, double duration, boolean swirls, IAnimatedSprite sprite) {
+	public LargeLightningParticle(ClientWorld world, double x, double y, double z, double vX, double vY, double vZ, double duration, boolean swirls, IAnimatedSprite sprite) {
 		super(world, x, y, z);
 		setSize(1, 1);
 		xd = vX;
@@ -110,16 +110,16 @@ public class ForestParticle extends SpriteTexturedParticle {
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	public static final class ForestFactory implements IParticleFactory<ForestParticleData> {
+	public static final class SeaFactory implements IParticleFactory<LargeLightningParticleData> {
 		private final IAnimatedSprite spriteSet;
 
-		public ForestFactory(IAnimatedSprite sprite) {
+		public SeaFactory(IAnimatedSprite sprite) {
 			this.spriteSet = sprite;
 		}
 
 		@Override
-		public Particle createParticle(ForestParticleData typeIn, ClientWorld worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
-			ForestParticle particle = new ForestParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, typeIn.getDuration(), typeIn.getSwirls(), spriteSet);
+		public Particle createParticle(LargeLightningParticleData typeIn, ClientWorld worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
+			LargeLightningParticle particle = new LargeLightningParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, typeIn.getDuration(), typeIn.getSwirls(), spriteSet);
 			particle.setSpriteFromAge(spriteSet);
 			return particle;
 		}

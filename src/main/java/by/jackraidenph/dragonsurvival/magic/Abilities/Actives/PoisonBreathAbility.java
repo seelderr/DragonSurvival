@@ -3,10 +3,9 @@ package by.jackraidenph.dragonsurvival.magic.Abilities.Actives;
 import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.capability.Capabilities;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
-import by.jackraidenph.dragonsurvival.magic.entity.particle.CaveDragon.LargeFireParticleData;
-import by.jackraidenph.dragonsurvival.magic.entity.particle.CaveDragon.SmallFireParticleData;
+import by.jackraidenph.dragonsurvival.magic.entity.particle.ForestDragon.LargePoisonParticleData;
+import by.jackraidenph.dragonsurvival.magic.entity.particle.ForestDragon.SmallPoisonParticleData;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
 import by.jackraidenph.dragonsurvival.util.DragonLevel;
 import net.minecraft.block.BlockState;
@@ -34,17 +33,17 @@ import net.minecraft.world.World;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FireBreathAbility extends ActiveDragonAbility
+public class PoisonBreathAbility extends ActiveDragonAbility
 {
-	public FireBreathAbility(String id, String icon, int minLevel, int maxLevel, int manaCost, int castTime, int cooldown, Integer[] requiredLevels)
+	public PoisonBreathAbility(String id, String icon, int minLevel, int maxLevel, int manaCost, int castTime, int cooldown, Integer[] requiredLevels)
 	{
 		super(id, icon, minLevel, maxLevel, manaCost, castTime, cooldown, requiredLevels);
 	}
 
 	@Override
-	public FireBreathAbility createInstance()
+	public PoisonBreathAbility createInstance()
 	{
-		return new FireBreathAbility(id, icon, minLevel, maxLevel, manaCost, castTime, abilityCooldown, requiredLevels);
+		return new PoisonBreathAbility(id, icon, minLevel, maxLevel, manaCost, castTime, abilityCooldown, requiredLevels);
 	}
 
 	private int RANGE = 5;
@@ -127,14 +126,14 @@ public class FireBreathAbility extends ActiveDragonAbility
 				double xSpeed = speed * 1f * xComp;
 				double ySpeed = speed * 1f * yComp;
 				double zSpeed = speed * 1f * zComp;
-				level.addParticle(new SmallFireParticleData(37, true),x, y, z, xSpeed, ySpeed, zSpeed);
+				level.addParticle(new SmallPoisonParticleData(37, true), x, y, z, xSpeed, ySpeed, zSpeed);
 			}
 
 			for (int i = 0; i < 10; i++) {
 				double xSpeed = speed * xComp + (spread * 0.7 * (level.random.nextFloat() * 2 - 1) * (Math.sqrt(1 - xComp * xComp)));
 				double ySpeed = speed * yComp + (spread * 0.7 * (level.random.nextFloat() * 2 - 1) * (Math.sqrt(1 - yComp * yComp)));
 				double zSpeed = speed * zComp + (spread * 0.7 * (level.random.nextFloat() * 2 - 1) * (Math.sqrt(1 - zComp * zComp)));
-				level.addParticle(new LargeFireParticleData(37, false), x, y, z, xSpeed, ySpeed, zSpeed);
+				level.addParticle(new LargePoisonParticleData(37, false), x, y, z, xSpeed, ySpeed, zSpeed);
 			}
 		}
 
@@ -188,12 +187,8 @@ public class FireBreathAbility extends ActiveDragonAbility
 					continue;
 				}
 				
-				if(entityHit.fireImmune()){
-					continue;
-				}
-				
 				Capabilities.getGenericCapability(entityHit).ifPresent(cap -> {
-					cap.burnTimer++;
+					cap.drainTimer++;
 				});
 				
 				if(entityHit.getLastHurtByMob() == player && entityHit.getLastHurtByMobTimestamp() + Functions.secondsToTicks(1) < entityHit.tickCount){
@@ -201,7 +196,6 @@ public class FireBreathAbility extends ActiveDragonAbility
 				}
 				
 				if (entityHit.hurt(DamageSource.playerAttack(player), damage)) {
-					entityHit.setSecondsOnFire(30);
 					entityHit.setDeltaMovement(entityHit.getDeltaMovement().multiply(0.25, 1, 0.25));
 				}
 			}
@@ -250,55 +244,27 @@ public class FireBreathAbility extends ActiveDragonAbility
 					boolean pitchCheck = (blockRelativePitch <= ARC / 2f && blockRelativePitch >= -ARC / 2f) || (blockRelativePitch >= 360 - ARC / 2f || blockRelativePitch <= -360 + ARC / 2f);
 					
 					if (inRange && yawCheck && pitchCheck) {
-						if(blockState.getBlock() == Blocks.ICE || blockState.getBlock() == Blocks.SNOW || blockState.getBlock() == Blocks.SNOW_BLOCK){
+						if(blockState.getMaterial().isSolidBlocking()) {
 							if(!player.level.isClientSide) {
-								if (player.level.random.nextInt(100) < 80) {
-									player.level.setBlock(pos, blockState.getBlock() == Blocks.ICE ? Blocks.WATER.defaultBlockState() : Blocks.AIR.defaultBlockState(), 3);
-								}
-							}
-							continue;
-						}else if(blockState.getMaterial().isSolidBlocking()) {
-							if(!player.level.isClientSide) {
-								if (ConfigHandler.SERVER.fireBreathSpreadsFire.get()) {
-									boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(player.level, player);
-									
-									if (flag) {
-										if (player.level.random.nextInt(100) < 50) {
-											player.level.setBlock(pos.above(), Blocks.FIRE.defaultBlockState(), 3);
-										}
-									}
-									
-									if(player.level.random.nextInt(100) < 30){
-										AreaEffectCloudEntity entity = new AreaEffectCloudEntity(EntityType.AREA_EFFECT_CLOUD, player.level);
-										entity.setWaitTime(0);
-										entity.setPos(pos.above().getX(), pos.above().getY(), pos.above().getZ());
-										entity.setPotion(new Potion(new EffectInstance(DragonEffects.BURN, Functions.secondsToTicks(30) * 4))); //Effect duration is divided by 4 normaly
-										entity.setDuration(Functions.secondsToTicks(2));
-										entity.setRadius(1);
-										entity.setParticle(new SmallFireParticleData(37, false));
-										player.level.addFreshEntity(entity);
-									}
+								if(player.level.random.nextInt(100) < 30){
+									AreaEffectCloudEntity entity = new AreaEffectCloudEntity(EntityType.AREA_EFFECT_CLOUD, player.level);
+									entity.setWaitTime(0);
+									entity.setPos(pos.above().getX(), pos.above().getY(), pos.above().getZ());
+									entity.setPotion(new Potion(new EffectInstance(DragonEffects.DRAIN, Functions.secondsToTicks(30) * 4))); //Effect duration is divided by 4 normaly
+									entity.setDuration(Functions.secondsToTicks(2));
+									entity.setRadius(1);
+									entity.setParticle(new LargePoisonParticleData(37, false));
+									player.level.addFreshEntity(entity);
 								}
 							}
 							
-							if(player.level.isClientSide) {
-								for (int z = 0; z < 4; ++z) {
-									if (player.level.random.nextInt(100) < 20) {
-										player.level.addParticle(ParticleTypes.LAVA, i, j, k, 0, 0.05, 0);
-									}
-								}
-							}
-						}
-						
-						if(player.level.isClientSide){
-							if (blockState.getBlock() == Blocks.WATER) {
-								for (int z = 0; z < 4; ++z) {
-									if (player.level.random.nextInt(100) < 90) {
-										player.level.addParticle(ParticleTypes.BUBBLE_COLUMN_UP, i, j, k, 0, 0.05, 0);
-
-									}
-								}
-							}
+//							if(player.level.isClientSide) {
+//								for (int z = 0; z < 4; ++z) {
+//									if (player.level.random.nextInt(100) < 20) {
+//										player.level.addParticle(ParticleTypes.LAVA, i, j, k, 0, 0.05, 0);
+//									}
+//								}
+//							}
 						}
 					}
 				}
@@ -315,7 +281,7 @@ public class FireBreathAbility extends ActiveDragonAbility
 	}
 
 	public static int getDamage(int level){
-		return 3 * level;
+		return level;
 	}
 
 	public int getDamage(){

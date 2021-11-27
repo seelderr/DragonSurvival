@@ -14,29 +14,29 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.Locale;
 
-public class SeaParticleData implements IParticleData
+public class LargeLightningParticleData implements IParticleData
 {
-	public static final IDeserializer<SeaParticleData> DESERIALIZER = new IDeserializer<SeaParticleData>()
+	public static final IDeserializer<LargeLightningParticleData> DESERIALIZER = new IDeserializer<LargeLightningParticleData>()
 	{
-		public SeaParticleData fromCommand(ParticleType<SeaParticleData> particleTypeIn, StringReader reader) throws CommandSyntaxException
+		public LargeLightningParticleData fromCommand(ParticleType<LargeLightningParticleData> particleTypeIn, StringReader reader) throws CommandSyntaxException
 		{
 			reader.expect(' ');
 			float duration = (float)reader.readDouble();
 			reader.expect(' ');
 			boolean swirls = reader.readBoolean();
-			return new SeaParticleData(duration, swirls);
+			return new LargeLightningParticleData(duration, swirls);
 		}
 		
-		public SeaParticleData fromNetwork(ParticleType<SeaParticleData> particleTypeIn, PacketBuffer buffer)
+		public LargeLightningParticleData fromNetwork(ParticleType<LargeLightningParticleData> particleTypeIn, PacketBuffer buffer)
 		{
-			return new SeaParticleData(buffer.readFloat(), buffer.readBoolean());
+			return new LargeLightningParticleData(buffer.readFloat(), buffer.readBoolean());
 		}
 	};
 	
 	private final float duration;
 	private final boolean swirls;
 	
-	public SeaParticleData(float duration, boolean spins)
+	public LargeLightningParticleData(float duration, boolean spins)
 	{
 		this.duration = duration;
 		this.swirls = spins;
@@ -57,9 +57,9 @@ public class SeaParticleData implements IParticleData
 	}
 	
 	@Override
-	public ParticleType<SeaParticleData> getType()
+	public ParticleType<LargeLightningParticleData> getType()
 	{
-		return ParticleRegistry.SEA.get();
+		return ParticleRegistry.LARGE_LIGHTNING.get();
 	}
 	
 	@OnlyIn( Dist.CLIENT )
@@ -74,8 +74,8 @@ public class SeaParticleData implements IParticleData
 		return this.swirls;
 	}
 	
-	public static Codec<SeaParticleData> CODEC(ParticleType<SeaParticleData> particleType)
+	public static Codec<LargeLightningParticleData> CODEC(ParticleType<LargeLightningParticleData> particleType)
 	{
-		return RecordCodecBuilder.create((codecBuilder) -> codecBuilder.group(Codec.FLOAT.fieldOf("duration").forGetter(SeaParticleData::getDuration), Codec.BOOL.fieldOf("swirls").forGetter(SeaParticleData::getSwirls)).apply(codecBuilder, SeaParticleData::new));
+		return RecordCodecBuilder.create((codecBuilder) -> codecBuilder.group(Codec.FLOAT.fieldOf("duration").forGetter(LargeLightningParticleData::getDuration), Codec.BOOL.fieldOf("swirls").forGetter(LargeLightningParticleData::getSwirls)).apply(codecBuilder, LargeLightningParticleData::new));
 	}
 }

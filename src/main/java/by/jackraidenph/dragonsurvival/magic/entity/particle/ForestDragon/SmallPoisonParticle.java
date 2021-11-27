@@ -1,4 +1,4 @@
-package by.jackraidenph.dragonsurvival.magic.entity.particle.SeaDragon;
+package by.jackraidenph.dragonsurvival.magic.entity.particle.ForestDragon;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -16,13 +16,13 @@ import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class SeaParticle extends SpriteTexturedParticle {
+public class SmallPoisonParticle extends SpriteTexturedParticle {
 	private int swirlTick;
 	private final float spread;
 	boolean swirls;
 	private final IAnimatedSprite sprites;
 
-	public SeaParticle(ClientWorld world, double x, double y, double z, double vX, double vY, double vZ, double duration, boolean swirls, IAnimatedSprite sprite) {
+	public SmallPoisonParticle(ClientWorld world, double x, double y, double z, double vX, double vY, double vZ, double duration, boolean swirls, IAnimatedSprite sprite) {
 		super(world, x, y, z);
 		setSize(1, 1);
 		xd = vX;
@@ -110,16 +110,16 @@ public class SeaParticle extends SpriteTexturedParticle {
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	public static final class SeaFactory implements IParticleFactory<SeaParticleData> {
+	public static final class ForestFactory implements IParticleFactory<SmallPoisonParticleData> {
 		private final IAnimatedSprite spriteSet;
 
-		public SeaFactory(IAnimatedSprite sprite) {
+		public ForestFactory(IAnimatedSprite sprite) {
 			this.spriteSet = sprite;
 		}
 
 		@Override
-		public Particle createParticle(SeaParticleData typeIn, ClientWorld worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
-			SeaParticle particle = new SeaParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, typeIn.getDuration(), typeIn.getSwirls(), spriteSet);
+		public Particle createParticle(SmallPoisonParticleData typeIn, ClientWorld worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
+			SmallPoisonParticle particle = new SmallPoisonParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, typeIn.getDuration(), typeIn.getSwirls(), spriteSet);
 			particle.setSpriteFromAge(spriteSet);
 			return particle;
 		}

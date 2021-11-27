@@ -1,4 +1,4 @@
-package by.jackraidenph.dragonsurvival.magic.entity.particle.ForestDragon;
+package by.jackraidenph.dragonsurvival.magic.entity.particle.SeaDragon;
 
 import by.jackraidenph.dragonsurvival.registration.ParticleRegistry;
 import com.mojang.brigadier.StringReader;
@@ -14,29 +14,29 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.Locale;
 
-public class ForestParticleData implements IParticleData
+public class SmallLightningParticleData implements IParticleData
 {
-	public static final IDeserializer<ForestParticleData> DESERIALIZER = new IDeserializer<ForestParticleData>()
+	public static final IDeserializer<SmallLightningParticleData> DESERIALIZER = new IDeserializer<SmallLightningParticleData>()
 	{
-		public ForestParticleData fromCommand(ParticleType<ForestParticleData> particleTypeIn, StringReader reader) throws CommandSyntaxException
+		public SmallLightningParticleData fromCommand(ParticleType<SmallLightningParticleData> particleTypeIn, StringReader reader) throws CommandSyntaxException
 		{
 			reader.expect(' ');
 			float duration = (float)reader.readDouble();
 			reader.expect(' ');
 			boolean swirls = reader.readBoolean();
-			return new ForestParticleData(duration, swirls);
+			return new SmallLightningParticleData(duration, swirls);
 		}
 		
-		public ForestParticleData fromNetwork(ParticleType<ForestParticleData> particleTypeIn, PacketBuffer buffer)
+		public SmallLightningParticleData fromNetwork(ParticleType<SmallLightningParticleData> particleTypeIn, PacketBuffer buffer)
 		{
-			return new ForestParticleData(buffer.readFloat(), buffer.readBoolean());
+			return new SmallLightningParticleData(buffer.readFloat(), buffer.readBoolean());
 		}
 	};
 	
 	private final float duration;
 	private final boolean swirls;
 	
-	public ForestParticleData(float duration, boolean spins)
+	public SmallLightningParticleData(float duration, boolean spins)
 	{
 		this.duration = duration;
 		this.swirls = spins;
@@ -57,9 +57,9 @@ public class ForestParticleData implements IParticleData
 	}
 	
 	@Override
-	public ParticleType<ForestParticleData> getType()
+	public ParticleType<SmallLightningParticleData> getType()
 	{
-		return ParticleRegistry.FOREST.get();
+		return ParticleRegistry.LIGHTNING.get();
 	}
 	
 	@OnlyIn( Dist.CLIENT )
@@ -74,8 +74,8 @@ public class ForestParticleData implements IParticleData
 		return this.swirls;
 	}
 	
-	public static Codec<ForestParticleData> CODEC(ParticleType<ForestParticleData> particleType)
+	public static Codec<SmallLightningParticleData> CODEC(ParticleType<SmallLightningParticleData> particleType)
 	{
-		return RecordCodecBuilder.create((codecBuilder) -> codecBuilder.group(Codec.FLOAT.fieldOf("duration").forGetter(ForestParticleData::getDuration), Codec.BOOL.fieldOf("swirls").forGetter(ForestParticleData::getSwirls)).apply(codecBuilder, ForestParticleData::new));
+		return RecordCodecBuilder.create((codecBuilder) -> codecBuilder.group(Codec.FLOAT.fieldOf("duration").forGetter(SmallLightningParticleData::getDuration), Codec.BOOL.fieldOf("swirls").forGetter(SmallLightningParticleData::getSwirls)).apply(codecBuilder, SmallLightningParticleData::new));
 	}
 }
