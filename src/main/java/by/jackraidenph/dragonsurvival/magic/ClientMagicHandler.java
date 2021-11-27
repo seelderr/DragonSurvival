@@ -2,8 +2,8 @@ package by.jackraidenph.dragonsurvival.magic;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
-import by.jackraidenph.dragonsurvival.magic.gui.Buttons.TabButton;
 import by.jackraidenph.dragonsurvival.network.magic.ActivateAbilityServerSide;
 import by.jackraidenph.dragonsurvival.network.magic.SyncAbilityCastingToServer;
 import by.jackraidenph.dragonsurvival.registration.ClientModEvents;
@@ -37,6 +37,10 @@ import java.awt.*;
 @Mod.EventBusSubscriber(Dist.CLIENT)
 public class ClientMagicHandler
 {
+	public static final ResourceLocation buttonTexture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/widgets.png");
+	public static final ResourceLocation castBars = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/cast_bars.png");
+	
+	
 	private static byte timer = 0;
 	private static byte abilityHoldTimer = 0;
 	
@@ -118,7 +122,7 @@ public class ClientMagicHandler
 					int screenWidth = window.getGuiScaledWidth();
 					int screenHeight =  window.getGuiScaledHeight();
 					
-					Minecraft.getInstance().getTextureManager().bind(TabButton.buttonTexture);
+					Minecraft.getInstance().getTextureManager().bind(buttonTexture);
 					MatrixStack stack = event.getMatrixStack();
 					int x = window.getGuiScaledWidth() / 2 - 91;
 					int i = Minecraft.getInstance().player.getXpNeededForNextLevel();
@@ -208,7 +212,7 @@ public class ClientMagicHandler
 					textureManager.bind(new ResourceLocation("textures/gui/widgets.png"));
 					Screen.blit(event.getMatrixStack(), posX + (sizeX * cap.getSelectedAbilitySlot()) - 1, window.getGuiScaledHeight() - 23, 2, 0, 22, 24, 24, 256, 256);
 					
-					textureManager.bind(TabButton.buttonTexture);
+					textureManager.bind(buttonTexture);
 					
 					int maxMana = DragonStateProvider.getMaxMana(playerEntity);
 					int curMana = cap.getCurrentMana();
@@ -217,14 +221,11 @@ public class ClientMagicHandler
 						for(int x = 0; x < 10; x++){
 							int manaSlot = (i * 10) + x;
 							if(manaSlot < maxMana) {
-								int xPos = curMana <= manaSlot ? 54 : cap.getType() == DragonType.SEA ? 0 : cap.getType() == DragonType.FOREST ? 18 : 36;
+								boolean goodCondi = MagicHandler.isPlayerInGoodConditions(playerEntity);
+								int condiXPos = cap.getType() == DragonType.SEA ? 0 : cap.getType() == DragonType.FOREST ? 18 : 36;;
+								int xPos = curMana <= manaSlot ? (goodCondi ? condiXPos + 72 : 54) : cap.getType() == DragonType.SEA ? 0 : cap.getType() == DragonType.FOREST ? 18 : 36;
 								float rescale = 2.15F;
 								Screen.blit(event.getMatrixStack(), posX + (x * (int)(18 / rescale)), posY - 12 - (i * ((int)(18 / rescale) + 1)), xPos / rescale, 204 / rescale, (int)(18 / rescale), (int)(18 / rescale), (int)(256 / rescale), (int)(256 / rescale));
-								
-								if(MagicHandler.isPlayerInGoodConditions(playerEntity)){
-									xPos = cap.getType() == DragonType.SEA ? 0 : cap.getType() == DragonType.FOREST ? 18 : 36;
-									Screen.blit(event.getMatrixStack(), posX + (x * (int)(18 / rescale)), posY - 12 - (i * ((int)(18 / rescale) + 1)), (xPos + 72) / rescale, 204 / rescale, (int)(18 / rescale), (int)(18 / rescale), (int)(256 / rescale), (int)(256 / rescale));
-								}
 							}
 						}
 					}
@@ -234,18 +235,32 @@ public class ClientMagicHandler
 		        ActiveDragonAbility ability = cap.getAbilityFromSlot(cap.getSelectedAbilitySlot());
 				
 	            if(ability.getCurrentCastTimer() > 0){
-		            textureManager.bind(ability.getIcon());
-		
-					int offset = 50;
+					GL11.glPushMatrix();
+		            GL11.glScalef(0.5F, 0.5F, 0);
+					int width = 196;
+					int height = 47;
 					
-		            Screen.blit(event.getMatrixStack(), (window.getGuiScaledWidth() / 2) - (8 / 2), window.getGuiScaledHeight() - offset - 8,
-		                        0, 0, 8, 8, 8, 8);
+					int yPos1 = cap.getType() == DragonType.CAVE ? 0 : cap.getType() == DragonType.FOREST ? 47 : 94;
+					int yPos2 = cap.getType() == DragonType.CAVE ? 142 : cap.getType() == DragonType.FOREST ? 147 : 152;
 					
 		            float perc = Math.min((float)ability.getCurrentCastTimer() / (float)ability.getCastingTime(), 1);
-	                textureManager.bind(TabButton.buttonTexture);
-	                Screen.blit(event.getMatrixStack(), (window.getGuiScaledWidth() / 2) - (194 / 4), window.getGuiScaledHeight() - offset, 0, 180 / 2,  194 / 2, 6 / 2, 128, 128);
-	                Screen.blit(event.getMatrixStack(), (window.getGuiScaledWidth() / 2) - (194 / 4), window.getGuiScaledHeight() - offset, 0, 174 / 2,  (int)((194 / 2) * perc), 6 / 2, 128, 128);
-	            }
+					
+					int startX = (window.getGuiScaledWidth() / 2) - ConfigHandler.CLIENT.casterBarXPos.get();
+					int startY = window.getGuiScaledHeight() - ConfigHandler.CLIENT.casterBarYPos.get();
+		
+		            GL11.glTranslatef(startX, startY, 0);
+		
+		
+		            textureManager.bind(castBars);
+		            Screen.blit(event.getMatrixStack(), startX, startY, 0, yPos1,  width, height, 256, 256);
+					Screen.blit(event.getMatrixStack(), startX + 2, startY + 41, 0, yPos2,  (int)((191) * perc), 4, 256, 256);
+		
+		            textureManager.bind(ability.getIcon());
+		            Screen.blit(event.getMatrixStack(), startX + 78, startY + 3,
+		                        0, 0, 36, 36, 36, 36);
+		
+		            GL11.glPopMatrix();
+				}
 				
 				if(ability.errorTicks > 0){
 					Minecraft.getInstance().font.draw(event.getMatrixStack(), ability.errorMessage, (window.getGuiScaledWidth() / 2) - (Minecraft.getInstance().font.width(ability.errorMessage) / 2), window.getGuiScaledHeight() - 70, 0);

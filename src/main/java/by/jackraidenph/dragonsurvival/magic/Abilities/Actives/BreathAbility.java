@@ -72,16 +72,6 @@ public abstract class BreathAbility extends ActiveDragonAbility
 	@Override
 	public void onActivation(PlayerEntity player)
 	{
-		if(firstUse) {
-			DragonStateProvider.consumeMana(player, this.getManaCost());
-			firstUse = false;
-			
-		}else{
-			if(player.tickCount % Functions.secondsToTicks(2) == 0){
-				DragonStateProvider.consumeMana(player, channelCost);
-			}
-		}
-		
 		DragonLevel growthLevel = DragonStateProvider.getCap(player).map(cap -> cap.getLevel()).get();
 		RANGE = growthLevel == DragonLevel.BABY ? 4 : growthLevel == DragonLevel.YOUNG ? 7 : 10;
 		

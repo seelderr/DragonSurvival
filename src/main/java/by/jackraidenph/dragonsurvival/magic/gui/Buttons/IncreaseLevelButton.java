@@ -2,6 +2,7 @@ package by.jackraidenph.dragonsurvival.magic.gui.Buttons;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.magic.Abilities.DragonAbilities;
+import by.jackraidenph.dragonsurvival.magic.ClientMagicHandler;
 import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.magic.common.PassiveDragonAbility;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
@@ -40,7 +41,7 @@ public class IncreaseLevelButton extends Button
 	@Override
 	public void renderButton(MatrixStack stack, int mouseX, int mouseY, float p_230431_4_)
 	{
-		Minecraft.getInstance().getTextureManager().bind(TabButton.buttonTexture);
+		Minecraft.getInstance().getTextureManager().bind(ClientMagicHandler.buttonTexture);
 		
 		if(isHovered()){
 			blit(stack, x, y, 66 / 2, 222 / 2, 11, 17,128, 128);

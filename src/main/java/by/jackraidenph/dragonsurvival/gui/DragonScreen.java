@@ -24,7 +24,6 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> implemen
     private final RecipeBookGui recipeBookGui = new RecipeBookGui();
     static final ResourceLocation BACKGROUND = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_inventory.png");
     private static final ResourceLocation RECIPE_BUTTON_TEXTURE = new ResourceLocation("textures/gui/recipe_button.png");
-    private static final ResourceLocation buttonTexture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/buttons.png");
     
     private boolean widthTooNarrow;
     private boolean buttonClicked;
@@ -60,7 +59,7 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> implemen
                        (int)(70 * Minecraft.getInstance().getWindow().getGuiScale()));
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
         
-        InventoryScreen.renderEntityInInventory(i + 60, j + 63, 30, (float)(i + 51) - mouseX * 20, (float)(j + 75 - 50) - mouseY * 20, this.minecraft.player);
+        InventoryScreen.renderEntityInInventory(i + 60, j + 70, 30, (float)(i + 51) - mouseX * 20, (float)(j + 75 - 50) - mouseY * 20, this.minecraft.player);
       
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
         GlStateManager._popMatrix();

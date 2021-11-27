@@ -3,6 +3,7 @@ package by.jackraidenph.dragonsurvival.magic.gui;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.magic.Abilities.DragonAbilities;
+import by.jackraidenph.dragonsurvival.magic.ClientMagicHandler;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.magic.common.InnateDragonAbility;
@@ -107,7 +108,7 @@ public class AbilityScreen extends Screen {
             public void renderButton(MatrixStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_)
             {
                 if(isHovered()){
-                    minecraft.getTextureManager().bind(TabButton.buttonTexture);
+                    minecraft.getTextureManager().bind(ClientMagicHandler.buttonTexture);
                     int xP = type == DragonType.SEA ? 0 : type == DragonType.FOREST ? 18 : 36;
                     GL11.glPushMatrix();
                     GL11.glTranslated(0.6, 0, 0);
@@ -166,7 +167,7 @@ public class AbilityScreen extends Screen {
         if(type != null) {
             int barYPos = type == DragonType.SEA ? 198 : type == DragonType.FOREST ? 186 : 192;
     
-            minecraft.getTextureManager().bind(TabButton.buttonTexture);
+            minecraft.getTextureManager().bind(ClientMagicHandler.buttonTexture);
     
             float progress = MathHelper.clamp((minecraft.player.experienceLevel / 50F), 0, 1);
             float progress1 = Math.min(1F, (Math.min(0.5F, progress) * 2F));

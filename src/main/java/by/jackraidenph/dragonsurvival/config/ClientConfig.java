@@ -14,6 +14,9 @@ public class ClientConfig {
 	public final ForgeConfigSpec.BooleanValue clientDebugMessages;
 	public final ForgeConfigSpec.BooleanValue dragonInventory;
 	
+	public final ForgeConfigSpec.IntValue casterBarXPos;
+	public final ForgeConfigSpec.IntValue casterBarYPos;
+	
 	ClientConfig(ForgeConfigSpec.Builder builder) {
 		builder.push("client");
 		//For people who use first person view mods
@@ -21,6 +24,16 @@ public class ClientConfig {
 				.define("renderFirstPerson", true);
 		notifyWingStatus = builder.comment("Notifies of wing status in chat message").define("notifyWingStatus", true);
 		clientDebugMessages = builder.define("Enable client-side debug messages", false);
+		
+		builder.push("ui");
+		casterBarXPos = builder
+				.comment("The x position of the cast bar from the center of the screen")
+				.defineInRange("casterBarXPos", 49, -1000, 1000);
+		
+		casterBarYPos = builder
+				.comment("The y position of the cast bar from the bottom of the screen")
+				.defineInRange("casterBarYPos", 96, -1000, 1000);
+		
 		// Movement
 		builder.push("movement");
 		firstPersonBodyMovement = builder

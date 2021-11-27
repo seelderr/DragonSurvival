@@ -145,7 +145,7 @@ public class ActiveDragonAbility extends DragonAbility
         }
     
         if(getCastingSlowness() >= 10){
-            if(ClientFlightHandler.wingsEnabled && (player.isFallFlying() || !player.isOnGround())){
+            if(ClientFlightHandler.wingsEnabled && player.isFallFlying() || !player.isOnGround()){
                 if(keyMode == GLFW.GLFW_PRESS) {
                     errorMessage = new TranslationTextComponent("ds.skill.nofly").withStyle(TextFormatting.RED);
                     errorTicks = Functions.secondsToTicks(5);

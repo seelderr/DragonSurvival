@@ -3,6 +3,7 @@ package by.jackraidenph.dragonsurvival.magic.gui.Buttons;
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.gui.DragonScreen;
 import by.jackraidenph.dragonsurvival.handlers.ClientEvents;
+import by.jackraidenph.dragonsurvival.magic.ClientMagicHandler;
 import by.jackraidenph.dragonsurvival.magic.gui.AbilityScreen;
 import by.jackraidenph.dragonsurvival.network.magic.OpenDragonInventory;
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -10,11 +11,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.inventory.InventoryScreen;
 import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.util.ResourceLocation;
 
 public class TabButton extends Button
 {
-	public static final ResourceLocation buttonTexture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/buttons.png");
 	private int index;
 	private Screen parent;
 	
@@ -28,7 +27,7 @@ public class TabButton extends Button
 	@Override
 	public void renderButton(MatrixStack stack, int mouseX, int mouseY, float p_230431_4_)
 	{
-		Minecraft.getInstance().getTextureManager().bind(buttonTexture);
+		Minecraft.getInstance().getTextureManager().bind(ClientMagicHandler.buttonTexture);
 		
 		if(isCurrent()){
 			blit(stack, x, y, index == 0 ? 0 : 28, 0, 28, 32);
