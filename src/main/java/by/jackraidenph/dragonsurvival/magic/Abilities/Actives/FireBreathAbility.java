@@ -99,8 +99,10 @@ public class FireBreathAbility extends BreathAbility
 	{
 		super.onEntityHit(entityHit);
 		
-		if(entityHit.level.random.nextInt(100) < 30){
-			entityHit.addEffect(new EffectInstance(DragonEffects.BURN, Functions.secondsToTicks(10), 0, false, true));
+		if(!entityHit.level.isClientSide) {
+			if (entityHit.level.random.nextInt(100) < 30) {
+				entityHit.addEffect(new EffectInstance(DragonEffects.BURN, Functions.secondsToTicks(10), 0, false, true));
+			}
 		}
 	}
 	

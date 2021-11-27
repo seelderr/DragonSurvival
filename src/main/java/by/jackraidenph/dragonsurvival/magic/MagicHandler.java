@@ -9,6 +9,7 @@ import by.jackraidenph.dragonsurvival.magic.Abilities.DragonAbilities;
 import by.jackraidenph.dragonsurvival.magic.Abilities.Passives.BurnAbility;
 import by.jackraidenph.dragonsurvival.magic.Abilities.Passives.SpectralImpactAbility;
 import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
+import by.jackraidenph.dragonsurvival.network.magic.SyncPotionAddedEffect;
 import by.jackraidenph.dragonsurvival.network.magic.SyncPotionRemovedEffect;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
 import by.jackraidenph.dragonsurvival.util.DragonType;
@@ -34,6 +35,7 @@ import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingVisibilityEvent;
 import net.minecraftforge.event.entity.living.LivingExperienceDropEvent;
+import net.minecraftforge.event.entity.living.PotionEvent.PotionAddedEvent;
 import net.minecraftforge.event.entity.living.PotionEvent.PotionExpiryEvent;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
@@ -281,6 +283,20 @@ public class MagicHandler
 					event.setDroppedExperience(event.getDroppedExperience() + extra);
 				}
 			});
+		}
+	}
+	
+	@SubscribeEvent
+	public static void potionAdded(PotionAddedEvent event){
+		if(event.getPotionEffect().getEffect() != DragonEffects.DRAIN && event.getPotionEffect().getEffect() != DragonEffects.CHARGED && event.getPotionEffect().getEffect() != DragonEffects.BURN){
+			return;
+		}
+		
+		LivingEntity entity = event.getEntityLiving();
+		
+		if(!entity.level.isClientSide){
+			TargetPoint point = new TargetPoint(entity.position().x, entity.position().y, entity.position().z, 64, entity.level.dimension());
+			DragonSurvivalMod.CHANNEL.send(PacketDistributor.NEAR.with(() -> point), new SyncPotionAddedEffect(entity.getId(), Effect.getId(event.getPotionEffect().getEffect()), event.getPotionEffect().getDuration(), event.getPotionEffect().getAmplifier()));
 		}
 	}
 	

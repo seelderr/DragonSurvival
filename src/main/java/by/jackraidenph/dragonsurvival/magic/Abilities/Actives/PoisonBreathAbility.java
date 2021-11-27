@@ -81,8 +81,10 @@ public class PoisonBreathAbility extends BreathAbility
 	{
 		super.onEntityHit(entityHit);
 		
-		if(entityHit.level.random.nextInt(100) < 30){
-			entityHit.addEffect(new EffectInstance(DragonEffects.DRAIN, Functions.secondsToTicks(10), 0, false, true));
+		if(!entityHit.level.isClientSide) {
+			if (entityHit.level.random.nextInt(100) < 30) {
+				entityHit.addEffect(new EffectInstance(DragonEffects.DRAIN, Functions.secondsToTicks(10), 0, false, true));
+			}
 		}
 	}
 	

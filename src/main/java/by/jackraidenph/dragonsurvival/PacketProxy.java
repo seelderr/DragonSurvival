@@ -20,6 +20,7 @@ import net.minecraft.entity.item.ExperienceOrbEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.Effect;
+import net.minecraft.potion.EffectInstance;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
@@ -35,6 +36,29 @@ import java.util.function.Supplier;
  * Synchronizes client data
  */
 public class PacketProxy {
+    
+    public DistExecutor.SafeRunnable handleAddedEffect(SyncPotionAddedEffect message, Supplier<NetworkEvent.Context> supplier) {
+        return () -> {
+            NetworkEvent.Context context = supplier.get();
+            context.enqueueWork(() -> handleAddedEffect(message, context));
+        };
+    }
+    
+    private void handleAddedEffect(SyncPotionAddedEffect message, NetworkEvent.Context context) {
+        PlayerEntity thisPlayer = Minecraft.getInstance().player;
+        if (thisPlayer != null) {
+            World world = thisPlayer.level;
+            Entity entity = world.getEntity(message.entityId);
+            Effect ef = Effect.byId(message.effectId);
+            
+            if(ef != null){
+                if(entity instanceof LivingEntity){
+                    ((LivingEntity)entity).addEffect(new EffectInstance(ef, message.duration, message.amplifier));
+                }
+            }
+        }
+        context.setPacketHandled(true);
+    }
     
     public DistExecutor.SafeRunnable handleEndedEffect(SyncPotionRemovedEffect message, Supplier<NetworkEvent.Context> supplier) {
         return () -> {

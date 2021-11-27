@@ -157,11 +157,15 @@ public class LightningBreathAbility extends BreathAbility
 		entity.hurt(DamageSource.playerAttack(player), getDamage());
 		
 		if(player.level.random.nextInt(100) < 50){
-			player.addEffect(new EffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(30)));
+			if(!player.level.isClientSide) {
+				player.addEffect(new EffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(30)));
+			}
 		}
 		
-		if(entity.level.random.nextInt(100) < 30){
-			entity.addEffect(new EffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(10), 0, false, true));
+		if(!entity.level.isClientSide) {
+			if (entity.level.random.nextInt(100) < 30) {
+				entity.addEffect(new EffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(10), 0, false, true));
+			}
 		}
 	}
 	
@@ -229,8 +233,10 @@ public class LightningBreathAbility extends BreathAbility
 			target.hurt(DamageSource.mobAttack(source), damage);
 			
 			if(target != source) {
-				if(target.level.random.nextInt(100) < 30){
-					target.addEffect(new EffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(10), 0, false, true));
+				if(!target.level.isClientSide) {
+					if (target.level.random.nextInt(100) < 30) {
+						target.addEffect(new EffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(10), 0, false, true));
+					}
 				}
 				
 				spark(source, target);
