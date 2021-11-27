@@ -125,8 +125,8 @@ public class FireBreathAbility extends BreathAbility
 					boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(player.level, player);
 					
 					if (flag) {
-						if (player.level.random.nextInt(100) < 50) {
-							player.level.setBlock(pos.above(), Blocks.FIRE.defaultBlockState(), 3);
+						if (player.level.random.nextInt(100) < 5) {
+							player.level.setBlock(pos.above(), Blocks.FIRE.defaultBlockState(), 2);
 						}
 					}
 				}

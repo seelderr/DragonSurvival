@@ -52,14 +52,14 @@ public class PoisonBreathAbility extends BreathAbility
 				double xSpeed = speed * 1f * xComp;
 				double ySpeed = speed * 1f * yComp;
 				double zSpeed = speed * 1f * zComp;
-				player.level.addParticle(new SmallPoisonParticleData(37, true), x, y, z, xSpeed, ySpeed, zSpeed);
+				player.level.addParticle(new LargePoisonParticleData(37, true), x, y, z, xSpeed, ySpeed, zSpeed);
 			}
 
 			for (int i = 0; i < 10; i++) {
 				double xSpeed = speed * xComp + (spread * 0.7 * (player.level.random.nextFloat() * 2 - 1) * (Math.sqrt(1 - xComp * xComp)));
 				double ySpeed = speed * yComp + (spread * 0.7 * (player.level.random.nextFloat() * 2 - 1) * (Math.sqrt(1 - yComp * yComp)));
 				double zSpeed = speed * zComp + (spread * 0.7 * (player.level.random.nextFloat() * 2 - 1) * (Math.sqrt(1 - zComp * zComp)));
-				player.level.addParticle(new LargePoisonParticleData(37, false), x, y, z, xSpeed, ySpeed, zSpeed);
+				player.level.addParticle(new SmallPoisonParticleData(37, false), x, y, z, xSpeed, ySpeed, zSpeed);
 			}
 		}
 
