@@ -30,6 +30,10 @@ public class ServerConfig {
     public final ForgeConfigSpec.BooleanValue healthAdjustments;
     public final ForgeConfigSpec.IntValue minHealth;
     public final ForgeConfigSpec.IntValue maxHealth;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> growNewborn;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> growYoung;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> growAdult;
+
     // Bonuses
     public final ForgeConfigSpec.BooleanValue bonuses;
     public final ForgeConfigSpec.BooleanValue attackDamage;
@@ -144,6 +148,25 @@ public class ServerConfig {
 		maxHealth = builder
 				.comment("Maximum health dragons can grow to.")
 				.defineInRange("maxHealth", 40, 1, 100);
+		growNewborn = builder
+				.comment("List of items to grow newborn dragon. Format: block/tag:modid:id")
+				.defineList("growNewborn", Arrays.asList(
+						"dragonsurvival:heart_element",
+						"dragonsurvival:weak_dragon_heart",
+						"dragonsurvival:elder_dragon_heart"
+				), this::isValidItemConfig);
+		growYoung = builder
+				.comment("List of items to grow young dragon. Format: block/tag:modid:id")
+				.defineList("growYoung", Arrays.asList(
+						"dragonsurvival:weak_dragon_heart",
+						"dragonsurvival:elder_dragon_heart"
+				), this::isValidItemConfig);
+		growAdult = builder
+				.comment("List of items to grow adult dragon. Format: block/tag:modid:id")
+				.defineList("growAdult", Collections.singletonList(
+						"dragonsurvival:elder_dragon_heart"
+				), this::isValidItemConfig);
+
 		builder.push("bonuses"); // Bonuses
 		bonuses = builder
 				.comment("Set to false to toggle off all dragon bonuses.")

@@ -1,5 +1,6 @@
 package by.jackraidenph.dragonsurvival.nest;
 
+import by.jackraidenph.dragonsurvival.registration.ItemRegistry;
 import by.jackraidenph.dragonsurvival.registration.ItemsInit;
 import by.jackraidenph.dragonsurvival.tiles.BaseBlockEntity;
 import by.jackraidenph.dragonsurvival.util.DragonType;
@@ -43,7 +44,7 @@ public class NestEntity extends BaseBlockEntity implements ITickableTileEntity, 
         regenValue.put(Items.GOLD_INGOT, 20);
         regenValue.put(Items.DIAMOND, 30);
         regenValue.put(ItemsInit.elderDragonBone, 40);
-        regenValue.put(ItemsInit.heartElement, 64);
+        regenValue.put(ItemRegistry.ELDER_DRAGON_HEART.get(), 64);
     }
 
     public NestEntity(TileEntityType<?> tileEntityTypeIn) {
