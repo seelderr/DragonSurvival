@@ -6,15 +6,23 @@ import by.jackraidenph.dragonsurvival.magic.entity.particle.ForestDragon.LargePo
 import by.jackraidenph.dragonsurvival.magic.entity.particle.ForestDragon.SmallPoisonParticleData;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.IGrowable;
+import net.minecraft.block.PotatoBlock;
 import net.minecraft.entity.AreaEffectCloudEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 
 public class PoisonBreathAbility extends BreathAbility
 {
@@ -96,21 +104,39 @@ public class PoisonBreathAbility extends BreathAbility
 					AreaEffectCloudEntity entity = new AreaEffectCloudEntity(EntityType.AREA_EFFECT_CLOUD, player.level);
 					entity.setWaitTime(0);
 					entity.setPos(pos.above().getX(), pos.above().getY(), pos.above().getZ());
-					entity.setPotion(new Potion(new EffectInstance(DragonEffects.DRAIN, Functions.secondsToTicks(30) * 4))); //Effect duration is divided by 4 normaly
+					entity.setPotion(new Potion(new EffectInstance(DragonEffects.DRAIN, Functions.secondsToTicks(10) * 4))); //Effect duration is divided by 4 normaly
 					entity.setDuration(Functions.secondsToTicks(2));
 					entity.setRadius(1);
 					entity.setParticle(new LargePoisonParticleData(37, false));
 					player.level.addFreshEntity(entity);
 				}
 			}
-			
-			//							if(player.level.isClientSide) {
-			//								for (int z = 0; z < 4; ++z) {
-			//									if (player.level.random.nextInt(100) < 20) {
-			//										player.level.addParticle(ParticleTypes.LAVA, i, j, k, 0, 0.05, 0);
-			//									}
-			//								}
-			//							}
+		}
+		if(blockState.getBlock() != Blocks.POTATOES){
+			if (player.level.random.nextInt(100) < 10) {
+				PotatoBlock bl = (PotatoBlock)blockState.getBlock();
+				if(bl.isMaxAge(blockState)){
+					player.level.destroyBlock(pos, false);
+					player.level.addFreshEntity(new ItemEntity((World) player.level, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, new ItemStack(Items.POISONOUS_POTATO)));
+				}
+			}
+		}
+		
+		if(blockState.getBlock() != Blocks.GRASS_BLOCK && blockState.getBlock() != Blocks.GRASS) {
+			if (player.level.random.nextInt(100) < 50) {
+				if (blockState.getBlock() instanceof IGrowable) {
+					IGrowable igrowable = (IGrowable)blockState.getBlock();
+					if (igrowable.isValidBonemealTarget(player.level, pos, blockState, player.level.isClientSide)) {
+						if (player.level instanceof ServerWorld) {
+							if (igrowable.isBonemealSuccess(player.level, player.level.random, pos, blockState)) {
+								for (int i = 0; i < 3; i++) {
+									igrowable.performBonemeal((ServerWorld)player.level, player.level.random, pos, blockState);
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 	

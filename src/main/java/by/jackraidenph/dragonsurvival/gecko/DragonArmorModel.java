@@ -65,6 +65,10 @@ public class DragonArmorModel extends AnimatedGeoModel<DragonEntity> {
             IBone neck4 = animationProcessor.getBone("Neck4");
             IBone head = animationProcessor.getBone("Head");
             DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
+                if(entity.neckLocked){
+                    return;
+                }
+                
                 float rotation = -1F * (((float) dragonStateHandler.getMovementData().bodyYaw) - (float) dragonStateHandler.getMovementData().headYaw) * (float) Math.PI / 180F;
                 if (rotation > (float) Math.PI)
                     rotation = (float) Math.PI;

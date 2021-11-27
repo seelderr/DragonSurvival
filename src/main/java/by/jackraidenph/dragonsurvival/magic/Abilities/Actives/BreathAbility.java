@@ -86,7 +86,6 @@ public abstract class BreathAbility extends ActiveDragonAbility
 
 	public void hitEntities() {
 		List<LivingEntity> entitiesHit = getEntityLivingBaseNearby(RANGE, RANGE, RANGE, RANGE);
-		float damage = getDamage();
 		for (LivingEntity entityHit : entitiesHit) {
 			if (entityHit == player) continue;
 
@@ -134,11 +133,7 @@ public abstract class BreathAbility extends ActiveDragonAbility
 					continue;
 				}
 				
-				
-				if (entityHit.hurt(DamageSource.playerAttack(player), damage)) {
-					entityHit.setDeltaMovement(entityHit.getDeltaMovement().multiply(0.25, 1, 0.25));
-					onDamage(entityHit);
-				}
+				onEntityHit(entityHit);
 			}
 		}
 	}
@@ -148,6 +143,13 @@ public abstract class BreathAbility extends ActiveDragonAbility
 	public abstract void onDamage(LivingEntity entity);
 	public abstract int getDamage();
 	public abstract void onBlock(BlockPos pos, BlockState blockState);
+	
+	public void onEntityHit(LivingEntity entityHit){
+		if (entityHit.hurt(DamageSource.playerAttack(player), getDamage())) {
+			entityHit.setDeltaMovement(entityHit.getDeltaMovement().multiply(0.25, 1, 0.25));
+			onDamage(entityHit);
+		}
+	}
 	
 	public void hitBlocks() {
 		int checkDist = 10;
@@ -196,6 +198,14 @@ public abstract class BreathAbility extends ActiveDragonAbility
 				}
 			}
 		}
+	}
+	
+	public static List<LivingEntity> getEntityLivingBaseNearby(LivingEntity source, double distanceX, double distanceY, double distanceZ, double radius) {
+		return getEntitiesNearby(source, LivingEntity.class, distanceX, distanceY, distanceZ, radius);
+	}
+	
+	public static <T extends Entity> List<T> getEntitiesNearby(LivingEntity source, Class<T> entityClass, double dX, double dY, double dZ, double r) {
+		return source.level.getEntitiesOfClass(entityClass, source.getBoundingBox().inflate(dX, dY, dZ), e -> e != source && source.distanceTo(e) <= r + e.getBbWidth() / 2f && e.getY() <= source.getY() + dY);
 	}
 
 	public List<LivingEntity> getEntityLivingBaseNearby(double distanceX, double distanceY, double distanceZ, double radius) {

@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
@@ -46,7 +47,14 @@ public class SmallPoisonParticle extends SpriteTexturedParticle {
 	protected float getV1() {
 		return super.getV1() - (super.getV1() - super.getV0())/8f;
 	}
-
+	
+	@Override
+	public void remove()
+	{
+		level.addParticle(ParticleTypes.DRAGON_BREATH, x, y, z, 0, 0.01, 0);
+		super.remove();
+	}
+	
 	@Override
 	public IParticleRenderType getRenderType() {
 		return PARTICLE_SHEET_TRANSLUCENT_NO_DEPTH;

@@ -3,6 +3,7 @@ package by.jackraidenph.dragonsurvival.magic;
 import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.capability.Capabilities;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.magic.Abilities.Actives.LightningBreathAbility;
 import by.jackraidenph.dragonsurvival.magic.Abilities.DragonAbilities;
 import by.jackraidenph.dragonsurvival.magic.Abilities.Passives.BurnAbility;
 import by.jackraidenph.dragonsurvival.magic.Abilities.Passives.SpectralImpactAbility;
@@ -137,6 +138,27 @@ public class MagicHandler
 			}
 		}
 		
+		
+		if(entity.hasEffect(DragonEffects.DRAIN)){
+			DragonType type = DragonStateProvider.getCap(entity).map( cap -> cap.getType()).orElse(null);
+			
+			if(type != DragonType.FOREST){
+				if (entity.tickCount % 20 == 0) {
+					entity.hurt(DamageSource.MAGIC, 1.0F);
+				}
+			}
+		}
+		
+		if(entity.hasEffect(DragonEffects.CHARGED)){
+			if (entity.tickCount % 20 == 0) {
+				DragonType type = DragonStateProvider.getCap(entity).map(cap -> cap.getType()).orElse(null);
+				
+				if (type != DragonType.SEA) {
+					LightningBreathAbility.sparkle(entity, 3, 2, 1);
+				}
+			}
+		}
+		
 		Capabilities.getGenericCapability(entity).ifPresent(cap -> {
 			if (entity.tickCount % 20 == 0) {
 				if (entity.hasEffect(DragonEffects.BURN)) {
@@ -158,38 +180,28 @@ public class MagicHandler
 		});
 		
 		
-		int durationForDebuff = Functions.secondsToTicks(2);
 		//Apply breath debuffs
 		Capabilities.getGenericCapability(entity).ifPresent(cap -> {
-			if(cap.burnTimer >= durationForDebuff){
+			if (cap.burnTimer >= Functions.secondsToTicks(2)) {
 				cap.burnTimer = 0;
-				entity.addEffect(new EffectInstance(DragonEffects.BURN, Functions.secondsToTicks(30), 0, false, false));
+				entity.addEffect(new EffectInstance(DragonEffects.BURN, Functions.secondsToTicks(15), 0, false, true));
 			}
 			
-			if(cap.drainTimer >= durationForDebuff){
+			if (cap.drainTimer >= Functions.secondsToTicks(4)) {
 				cap.drainTimer = 0;
-				entity.addEffect(new EffectInstance(DragonEffects.DRAIN, Functions.secondsToTicks(30), 0, false, false));
+				entity.addEffect(new EffectInstance(DragonEffects.DRAIN, Functions.secondsToTicks(15), 0, false, true));
 			}
 			
-			if(cap.chargedTimer >= durationForDebuff){
+			if (cap.chargedTimer >= Functions.secondsToTicks(4)) {
 				cap.chargedTimer = 0;
-				entity.addEffect(new EffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(30), 0, false, false));
+				entity.addEffect(new EffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(10), 0, false, true));
 			}
 			
-			if(cap.chargedTimer >= durationForDebuff){
-				cap.chargedTimer = 0;
-				//entity.addEffect(new EffectInstance(DragonEffects.BURN, Functions.secondsToTicks(30), 0, false, false));
-			}
 			
-			if(cap.drainTimer >= durationForDebuff){
-				cap.drainTimer = 0;
-				//entity.addEffect(new EffectInstance(DragonEffects.BURN, Functions.secondsToTicks(30), 0, false, false));
-			}
-			
-			if(entity.tickCount % 2 == 0) {
-				cap.burnTimer = Math.min(0, cap.burnTimer - 1);
-				cap.chargedTimer = Math.min(0, cap.chargedTimer - 1);
-				cap.drainTimer = Math.min(0, cap.drainTimer - 1);
+			if(entity.tickCount % 20 == 0) {
+				cap.burnTimer = Math.max(0, cap.burnTimer - 1);
+				cap.chargedTimer = Math.max(0, cap.chargedTimer - 1);
+				cap.drainTimer = Math.max(0, cap.drainTimer - 1);
 			}
 		});
 	}

@@ -126,7 +126,7 @@ public class FireBreathAbility extends BreathAbility
 					
 					if (flag) {
 						if (player.level.random.nextInt(100) < 5) {
-							player.level.setBlock(pos.above(), Blocks.FIRE.defaultBlockState(), 2);
+							player.level.setBlock(pos.above(), Blocks.FIRE.defaultBlockState(), 3);
 						}
 					}
 				}
@@ -135,7 +135,7 @@ public class FireBreathAbility extends BreathAbility
 					AreaEffectCloudEntity entity = new AreaEffectCloudEntity(EntityType.AREA_EFFECT_CLOUD, player.level);
 					entity.setWaitTime(0);
 					entity.setPos(pos.above().getX(), pos.above().getY(), pos.above().getZ());
-					entity.setPotion(new Potion(new EffectInstance(DragonEffects.BURN, Functions.secondsToTicks(30) * 4))); //Effect duration is divided by 4 normaly
+					entity.setPotion(new Potion(new EffectInstance(DragonEffects.BURN, Functions.secondsToTicks(10) * 4))); //Effect duration is divided by 4 normaly
 					entity.setDuration(Functions.secondsToTicks(2));
 					entity.setRadius(1);
 					entity.setParticle(new SmallFireParticleData(37, false));
