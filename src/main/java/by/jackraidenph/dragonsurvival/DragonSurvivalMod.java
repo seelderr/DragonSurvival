@@ -15,6 +15,7 @@ import by.jackraidenph.dragonsurvival.nest.ToggleRegeneration;
 import by.jackraidenph.dragonsurvival.network.*;
 import by.jackraidenph.dragonsurvival.registration.BlockInit;
 import by.jackraidenph.dragonsurvival.registration.EntityTypesInit;
+import by.jackraidenph.dragonsurvival.registration.ItemRegistry;
 import by.jackraidenph.dragonsurvival.util.BiomeDictionaryHelper;
 import by.jackraidenph.dragonsurvival.util.DragonLevel;
 import by.jackraidenph.dragonsurvival.util.DragonType;
@@ -98,6 +99,8 @@ public class DragonSurvivalMod {
         MinecraftForge.EVENT_BUS.register(new SpecificsHandler());
         MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGH, this::biomeLoadingEvent);
         MinecraftForge.EVENT_BUS.addListener(this::serverRegisterCommandsEvent);
+
+        ItemRegistry.register();
     }
     
     private static <T> void register(Class<T> clazz, IMessage<T> message) {

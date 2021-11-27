@@ -29,7 +29,6 @@ import net.minecraftforge.registries.IForgeRegistry;
 
 @Mod.EventBusSubscriber(modid = DragonSurvivalMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ItemsInit {
-    public static Item heartElement;
     public static Item starBone, elderDragonBone, elderDragonDust;
     public static ItemGroup items = new ItemGroup("dragon.survival.blocks") {
         @Override
@@ -43,40 +42,6 @@ public class ItemsInit {
 
     @SubscribeEvent
     public static void register(final RegistryEvent.Register<Item> event) {
-        heartElement = new Item(new Item.Properties().tab(items).stacksTo(64)) {
-            @Override
-            public ActionResult<ItemStack> use(World worldIn, PlayerEntity playerIn, Hand handIn) {
-                LazyOptional<DragonStateHandler> dragonStateHandlerLazyOptional = playerIn.getCapability(DragonStateProvider.DRAGON_CAPABILITY);
-                if (dragonStateHandlerLazyOptional.isPresent()) {
-                    DragonStateHandler dragonStateHandler = dragonStateHandlerLazyOptional.orElseGet(() -> null);
-                    if (dragonStateHandler.isDragon()) {
-                    	float size = dragonStateHandler.getSize();
-                        if (size < 40) {
-                        	size += 2;
-                        	dragonStateHandler.setSize(size, playerIn);
-                            playerIn.getItemInHand(handIn).shrink(1);
-                            if (!worldIn.isClientSide){
-                                DragonSurvivalMod.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerIn), new SyncSize(playerIn.getId(), size));
-                                if (playerIn.getVehicle() != null && playerIn.getVehicle() instanceof ServerPlayerEntity){
-                                    ServerPlayerEntity vehicle = (ServerPlayerEntity) playerIn.getVehicle();
-                                    DragonStateProvider.getCap(vehicle).ifPresent(vehicleCap -> {
-                                        playerIn.stopRiding();
-                                        vehicle.connection.send(new SSetPassengersPacket(vehicle));
-                                        DragonSurvivalMod.CHANNEL.send(PacketDistributor.PLAYER.with(() -> vehicle), new SynchronizeDragonCap(vehicle.getId(), vehicleCap.isHiding(), vehicleCap.getType(), vehicleCap.getSize(), vehicleCap.hasWings(), vehicleCap.getLavaAirSupply(), 0));
-                                    });
-                                }
-                            }
-
-                            playerIn.refreshDimensions();
-                            return ActionResult.success(playerIn.getItemInHand(handIn));
-                        }
-                    }
-                }
-                return super.use(worldIn, playerIn, handIn);
-            }
-        };
-        heartElement.setRegistryName(DragonSurvivalMod.MODID, "heart_element");
-
         starBone = new Item(new Item.Properties().tab(items)) {
             @Override
             public ActionResult<ItemStack> use(World worldIn, PlayerEntity playerIn, Hand handIn) {
@@ -137,7 +102,7 @@ public class ItemsInit {
                 .effect(() -> new EffectInstance(DragonEffects.FIRE, Functions.secondsToTicks(ConfigHandler.SERVER.chargedSoupBuffDuration.get()), 0), 1.0F)
                 .build())).setRegistryName(DragonSurvivalMod.MODID, "charged_soup");
         IForgeRegistry<Item> registry = event.getRegistry();
-        registry.registerAll(heartElement, starBone, elderDragonBone, chargedCoal, charredMeat, charredVegetable, charredMushroom, chargedSoup, charredSeafood, elderDragonDust);
+        registry.registerAll(starBone, elderDragonBone, chargedCoal, charredMeat, charredVegetable, charredMushroom, chargedSoup, charredSeafood, elderDragonDust);
 
         huntingNet = new Item(new Item.Properties()).setRegistryName("dragonsurvival", "dragon_hunting_mesh");
         registry.register(huntingNet);
