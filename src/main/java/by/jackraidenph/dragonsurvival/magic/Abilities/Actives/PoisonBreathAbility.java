@@ -21,7 +21,6 @@ import net.minecraft.potion.Potion;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 
 public class PoisonBreathAbility extends BreathAbility
@@ -112,12 +111,12 @@ public class PoisonBreathAbility extends BreathAbility
 				}
 			}
 		}
-		if(blockState.getBlock() != Blocks.POTATOES){
+		if(blockState.getBlock() == Blocks.POTATOES){
 			if (player.level.random.nextInt(100) < 10) {
 				PotatoBlock bl = (PotatoBlock)blockState.getBlock();
 				if(bl.isMaxAge(blockState)){
 					player.level.destroyBlock(pos, false);
-					player.level.addFreshEntity(new ItemEntity((World) player.level, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, new ItemStack(Items.POISONOUS_POTATO)));
+					player.level.addFreshEntity(new ItemEntity(player.level, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, new ItemStack(Items.POISONOUS_POTATO)));
 				}
 			}
 		}
