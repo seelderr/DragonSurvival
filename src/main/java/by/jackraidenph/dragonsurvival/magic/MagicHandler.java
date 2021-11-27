@@ -89,24 +89,24 @@ public class MagicHandler
 		}
 		
 		DragonStateProvider.getCap(player).ifPresent(cap -> {
-			if(!cap.isDragon()) return;
+			if (!cap.isDragon()) return;
 			
 			for (DragonAbility ability : cap.getAbilities()) {
 				ability.player = player;
 			}
 			
-			if(player.hasEffect(DragonEffects.HUNTER)){
+			if (player.hasEffect(DragonEffects.HUNTER)) {
 				BlockState bl = player.getFeetBlockState();
 				BlockState below = player.level.getBlockState(player.blockPosition().below());
 				
-				if(bl.getBlock() instanceof DoublePlantBlock || below.getBlock() instanceof DoublePlantBlock || bl.getMaterial() == Material.REPLACEABLE_PLANT || below.getMaterial() == Material.REPLACEABLE_PLANT){
+				if (bl.getBlock() instanceof DoublePlantBlock || below.getBlock() instanceof DoublePlantBlock || bl.getMaterial() == Material.REPLACEABLE_PLANT || below.getMaterial() == Material.REPLACEABLE_PLANT) {
 					player.addEffect(new EffectInstance(Effects.INVISIBILITY, 10, 0, false, false));
 				}
 				
 				player.addEffect(new EffectInstance(Effects.MOVEMENT_SPEED, 20, 2, false, false));
 			}
 			
-			if(cap.getCurrentlyCasting() != null && cap.getCurrentlyCasting().getCastingSlowness() > 0){
+			if (cap.getCurrentlyCasting() != null && cap.getCurrentlyCasting().getCastingSlowness() > 0) {
 				player.addEffect(new EffectInstance(Effects.MOVEMENT_SLOWDOWN, 10, cap.getCurrentlyCasting().getCastingSlowness(), false, false));
 				player.addEffect(new EffectInstance(Effects.JUMP, 10, -cap.getCurrentlyCasting().getCastingSlowness(), false, false));
 				player.addEffect(new EffectInstance(Effects.SLOW_FALLING, 10, 0, false, false));
@@ -154,7 +154,7 @@ public class MagicHandler
 				DragonType type = DragonStateProvider.getCap(entity).map(cap -> cap.getType()).orElse(null);
 				
 				if (type != DragonType.SEA) {
-					LightningBreathAbility.sparkle(entity, 3, 2, 1);
+					LightningBreathAbility.chargedEffectSparkle(entity, 3, 2, 1);
 				}
 			}
 		}
@@ -198,7 +198,7 @@ public class MagicHandler
 			}
 			
 			
-			if(entity.tickCount % 20 == 0) {
+			if (entity.tickCount % 20 == 0) {
 				cap.burnTimer = Math.max(0, cap.burnTimer - 1);
 				cap.chargedTimer = Math.max(0, cap.chargedTimer - 1);
 				cap.drainTimer = Math.max(0, cap.drainTimer - 1);

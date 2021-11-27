@@ -111,7 +111,8 @@ public class LightningBreathAbility extends BreathAbility
 		if(source.level.isClientSide) {
 			//source.level.addParticle(new LightningParticleData(target.getId()), source.getX(), source.getY() + (source.getEyeHeight() / 2), source.getZ(), 0, 0, 0);
 			
-			Vector3d start = source.getPosition(source instanceof PlayerEntity ? 0.5f : source.getEyeHeight());
+			float eyeHeight = source instanceof PlayerEntity ? 0f : source.getEyeHeight();
+			Vector3d start = source.getPosition(eyeHeight);
 			Vector3d end = target.getPosition(target.getEyeHeight());
 
 			int parts = 20;
@@ -121,8 +122,8 @@ public class LightningBreathAbility extends BreathAbility
 			double zDif = (end.z - start.z) / parts;
 
 			for (int i = 0; i < parts; i++) {
-				double x = start.x + (xDif * i) ;
-				double y = start.y + (yDif * i) + source.getEyeHeight();
+				double x = start.x + (xDif * i);
+				double y = start.y + (yDif * i) + eyeHeight;
 				double z = start.z + (zDif * i);
 				//new LargeLightningParticleData(37, false)
 				source.level.addParticle(new RedstoneParticleData(0f, 1F, 1F, 1f), x, y, z, 0, 0, 0);
@@ -130,44 +131,19 @@ public class LightningBreathAbility extends BreathAbility
 		}
 	}
 	
-	public static void sparkle(LivingEntity source, int chainRange, int maxChainTargets, int damage){
-		source.hurt(DamageSource.mobAttack(source), damage);
-		
-		Capabilities.getGenericCapability(source).ifPresent(cap -> {
-			cap.chargedTimer += 20;
-		});
-		
-		List<LivingEntity> secondaryTargets = getEntityLivingBaseNearby(source, source.getX(), source.getY() + source.getBbHeight() / 2, source.getZ(), chainRange);
-		secondaryTargets.removeIf(e -> !isValidTarget(source, e));
-		secondaryTargets.sort((c1, c2) -> Boolean.compare(c1.hasEffect(DragonEffects.CHARGED), c2.hasEffect(DragonEffects.CHARGED)));
-		
-		if(secondaryTargets.size() > maxChainTargets){
-			secondaryTargets = secondaryTargets.subList(0, maxChainTargets);
-		}
-		
-		for(LivingEntity target : secondaryTargets){
-			target.hurt(DamageSource.mobAttack(source), damage);
-			
-			Capabilities.getGenericCapability(target).ifPresent(cap -> {
-				cap.chargedTimer += 20;
-			});
-			
-			spark(source, target);
-		}
-	}
 	
 	public void hurtTarget(LivingEntity entity){
-		if(player.tickCount % 20 == 0) {
+		if(player.tickCount % 10 == 0) {
 			entity.hurt(DamageSource.playerAttack(player), getDamage());
 			
 			if(player.level.random.nextInt(100) < 50){
 				player.addEffect(new EffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(30)));
 			}
+			
+			Capabilities.getGenericCapability(entity).ifPresent(cap -> {
+				cap.chargedTimer += 10;
+			});
 		}
-		
-		Capabilities.getGenericCapability(entity).ifPresent(cap -> {
-			cap.chargedTimer += Functions.secondsToTicks(1);
-		});
 	}
 	
 	public void onEntityHit(LivingEntity entityHit){
@@ -184,9 +160,9 @@ public class LightningBreathAbility extends BreathAbility
 		List<LivingEntity> secondaryTargets = getEntityLivingBaseNearby(entityHit.getX(), entityHit.getY() + entityHit.getBbHeight() / 2, entityHit.getZ(), chainRange);
 		secondaryTargets.removeAll(hasHit);
 		secondaryTargets.removeIf(e -> !isValidTarget(getPlayer(), e));
-		secondaryTargets.sort((c1, c2) -> Boolean.compare(c1.hasEffect(DragonEffects.CHARGED), c2.hasEffect(DragonEffects.CHARGED)));
 		
 		if(secondaryTargets.size() > maxChainTargets){
+			secondaryTargets.sort((c1, c2) -> Boolean.compare(c1.hasEffect(DragonEffects.CHARGED), c2.hasEffect(DragonEffects.CHARGED)));
 			secondaryTargets = secondaryTargets.subList(0, maxChainTargets);
 		}
 		secondaryTargets.forEach((t) -> hitBy.put(t, entityHit));
@@ -200,13 +176,14 @@ public class LightningBreathAbility extends BreathAbility
 				List<LivingEntity> nextTargets = getEntityLivingBaseNearby(target.getX(), target.getY() + target.getBbHeight() / 2, target.getZ(), chainRange);
 				nextTargets.removeAll(hasHit);
 				nextTargets.removeIf(e -> !isValidTarget(getPlayer(), e));
-				nextTargets.sort((c1, c2) -> Boolean.compare(c1.hasEffect(DragonEffects.CHARGED), c2.hasEffect(DragonEffects.CHARGED)));
 				
 				if(nextTargets.size() > maxChainTargets){
+					nextTargets.sort((c1, c2) -> Boolean.compare(c1.hasEffect(DragonEffects.CHARGED), c2.hasEffect(DragonEffects.CHARGED)));
 					nextTargets = nextTargets.subList(0, maxChainTargets);
 				}
-				nextRound.forEach((t) -> hitBy.put(t, target));
+				
 				nextRound.addAll(nextTargets);
+				nextRound.forEach((t) -> hitBy.put(t, target));
 				
 				hurtTarget(target);
 				hasHit.add(target);
@@ -215,6 +192,28 @@ public class LightningBreathAbility extends BreathAbility
 			
 			targets.clear();
 			targets.addAll(nextRound);
+		}
+	}
+	
+	public static void chargedEffectSparkle(LivingEntity source, int chainRange, int maxChainTargets, int damage){
+		List<LivingEntity> secondaryTargets = getEntityLivingBaseNearby(source, source.getX(), source.getY() + source.getBbHeight() / 2, source.getZ(), chainRange);
+		secondaryTargets.removeIf(e -> !isValidTarget(source, e));
+		secondaryTargets.sort((c1, c2) -> Boolean.compare(c1.hasEffect(DragonEffects.CHARGED), c2.hasEffect(DragonEffects.CHARGED)));
+		
+		if(secondaryTargets.size() > maxChainTargets){
+			secondaryTargets = secondaryTargets.subList(0, maxChainTargets);
+		}
+		
+		secondaryTargets.add(source);
+		
+		for(LivingEntity target : secondaryTargets){
+			target.hurt(DamageSource.mobAttack(source), damage);
+			
+			Capabilities.getGenericCapability(target).ifPresent(cap -> {
+				cap.chargedTimer += 20;
+			});
+			
+			spark(source, target);
 		}
 	}
 	
@@ -246,22 +245,14 @@ public class LightningBreathAbility extends BreathAbility
 	}
 	
 	public static boolean isValidTarget(LivingEntity attacker, LivingEntity target){
-		if(attacker instanceof TameableEntity && !isValidTarget(((TameableEntity)attacker).getOwner(), target)) return false;
 		if(target == null) return false;
 		if(attacker == null) return true;
 		if(target == attacker) return false;
 		if(target instanceof FakePlayer) return false;
-		if(target instanceof TameableEntity && ((TameableEntity)target).getOwner() == attacker){
-			return false;
-		}
-		
-		if(target.getLastHurtByMob() == attacker && target.getLastHurtByMobTimestamp() + Functions.secondsToTicks(1) < target.tickCount){
-			return false;
-		}
-		
-		DragonType type = DragonStateProvider.getCap(target).map(cap -> cap.getType()).orElse(null);
-		
-		if(type == DragonType.SEA) return false;
+		if(target instanceof TameableEntity && ((TameableEntity)target).getOwner() == attacker) return false;
+		if(attacker instanceof TameableEntity && !isValidTarget(((TameableEntity)attacker).getOwner(), target)) return false;
+		if(target.getLastHurtByMob() == attacker && target.getLastHurtByMobTimestamp() + Functions.secondsToTicks(1) < target.tickCount) return false;
+		if(DragonStateProvider.getCap(target).map(cap -> cap.getType()).orElse(null) == DragonType.SEA) return false;
 		
 		return true;
 	}
