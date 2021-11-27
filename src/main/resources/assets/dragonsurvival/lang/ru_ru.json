@@ -19,7 +19,9 @@
   "item.dragonsurvival.prince_spawn_egg": "Яйцо призыва принца",
   "item.dragonsurvival.magical_predator_entity_spawn_egg": "Яйцо призыва магического хищника",
   "item.dragonsurvival.star_bone": "Звёздная кость",
-  "item.dragonsurvival.heart_element": "Элемент сердца",
+  "item.dragonsurvival.heart_element": "Осколок сердца дракона",
+  "item.dragonsurvival.weak_dragon_heart": "Слабое сердце дракона",
+  "item.dragonsurvival.elder_dragon_heart": "Древнее сердце дракона",
   "item.dragonsurvival.elder_dragon_bone": "Кость древнего дракона",
   "item.dragonsurvival.elder_dragon_dust": "Пыль древнего дракона",
   "item.dragonsurvival.charged_coal": "Заряженный уголь",
@@ -94,7 +96,7 @@
   "death.attack.dehydration": "%1$s иссушен солнцем.",
   "death.attack.dehydration.player": "%1$s иссушен при попытке убежать от %2$s.",
   
-  "ds.cave_dragon_choice": "Глубого внутри вас начинает бурлить раскаленная лава. Вы стали §nПещерным драконом.§r",
+  "ds.cave_dragon_choice": "Глубого внутри вас начинает бурлить раскаленная лава. Вы стали §cПещерным драконом.§r",
   "ds.forest_dragon_choice": "Вы чувствуете потребность в сыром мясе и покрываетесь зелеными чешуйками. Вы стали §aЛесным драконом.§r",
   "ds.sea_dragon_choice": "Бушующее море и рыба манят вас. Вы стали §3Морским драконом.§r",
   "ds.choice_human": "Вы проснулись ото сна и стали человеком.",
@@ -108,6 +110,7 @@
   
   "ds.regen.on": "Регенерация в гнезде включена.",
   "ds.regen.off": "Гнездо больше не восстанавливает здоровье.",
+  "ds.invalid_grow_item": "§6Вам теперь требуются более мощные артефакты для роста:§r %1$s",
   
   "ds.endmessage.1": "Не смей приближаться к моему гнезду, {0}. Для чего ты пришёл сюда? Я буду защищаться.",
   "ds.endmessage.2": "Я не терплю чужаков на своей территории, {0}. Держись от меня подальше. Каковы твои намерения?",
@@ -160,7 +163,7 @@
   "ds.altar_dragon_info.human.2": "Путешественник, строитель и изобретатель.",
 
   "ds.hold_shift.for_food": "Зажмите 'Shift' чтобы раскрыть полный список",
-  "ds.cave.dragon.food": "Еда пещерного дракона",
-  "ds.forest.dragon.food": "Еда лесного дракона",
-  "ds.sea.dragon.food": "Еда морского дракона"
+  "ds.cave.dragon.food": "§cЕда пещерного дракона§r",
+  "ds.forest.dragon.food": "§aЕда лесного дракона§r",
+  "ds.sea.dragon.food": "§3Еда морского дракона§r"
 }

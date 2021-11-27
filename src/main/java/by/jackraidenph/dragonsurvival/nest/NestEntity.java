@@ -44,7 +44,7 @@ public class NestEntity extends BaseBlockEntity implements ITickableTileEntity, 
         regenValue.put(Items.GOLD_INGOT, 20);
         regenValue.put(Items.DIAMOND, 30);
         regenValue.put(ItemsInit.elderDragonBone, 40);
-        regenValue.put(ItemRegistry.ANCIENT_DRAGON_HEART.get(), 64);
+        regenValue.put(ItemRegistry.ELDER_DRAGON_HEART.get(), 64);
     }
 
     public NestEntity(TileEntityType<?> tileEntityTypeIn) {
