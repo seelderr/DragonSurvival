@@ -125,7 +125,7 @@ public class ActiveDragonAbility extends DragonAbility
     public boolean canRun(PlayerEntity player, int keyMode){
         if (!this.canConsumeMana(player)){
             if(keyMode == GLFW.GLFW_PRESS){
-                errorMessage = new TranslationTextComponent("ds.skill_mana_check_failure").withStyle(TextFormatting.DARK_AQUA);
+                errorMessage = new TranslationTextComponent("ds.skill_mana_check_failure");
                 errorTicks = Functions.secondsToTicks(5);
                 player.playSound(SoundEvents.GENERIC_SPLASH, 0.15f, 100f);
             }
@@ -147,7 +147,7 @@ public class ActiveDragonAbility extends DragonAbility
         if(getCastingSlowness() >= 10){
             if(ClientFlightHandler.wingsEnabled && player.isFallFlying() || !player.isOnGround()){
                 if(keyMode == GLFW.GLFW_PRESS) {
-                    errorMessage = new TranslationTextComponent("ds.skill.nofly").withStyle(TextFormatting.RED);
+                    errorMessage = new TranslationTextComponent("ds.skill.nofly");
                     errorTicks = Functions.secondsToTicks(5);
                     player.playSound(SoundEvents.WITHER_SHOOT, 0.05f, 100f);
                 }

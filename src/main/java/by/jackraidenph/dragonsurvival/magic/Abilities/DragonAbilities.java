@@ -91,7 +91,7 @@ public class DragonAbilities
 		STORM_BREATH = register(DragonType.SEA, new LightningBreathAbility("storm_breath", "sea/storm_breath", 1, 4, 2, 10, Functions.secondsToTicks(5), new Integer[]{0, 10, 30, 50}));
 		BALL_LIGHTNING = register(DragonType.SEA, new BallLightningAbility(4, "ball_lightning", "sea/ball_lightning", 0, 4, 6, Functions.secondsToTicks(2), Functions.secondsToTicks(60), new Integer[]{0, 20, 45, 50}));
 		REVEALING_THE_SOUL = register(DragonType.SEA, new AoeBuffAbility(new EffectInstance(DragonEffects.REVEALING_THE_SOUL, 60), 5, ParticleRegistry.magicBeaconParticle, "revealing_the_soul", "sea/revealing_the_soul", 0, 3, 5, Functions.secondsToTicks(5), Functions.secondsToTicks(30), new Integer[]{0, 25, 40}));
-		SEA_EYES = register(DragonType.SEA, new VisionAbility(DragonEffects.WATER_VISION, "sea_eyes", "sea/sea_eyes", 0, 2, 2, Functions.secondsToTicks(2), Functions.secondsToTicks(30), new Integer[]{0, 15}));
+		SEA_EYES = register(DragonType.SEA, new VisionAbility(DragonEffects.WATER_VISION, "sea_eyes", "sea/sea_eyes", 0, 2, 2, Functions.secondsToTicks(2), Functions.secondsToTicks(60), new Integer[]{0, 15}));
 		
 		SEA_MAGIC = register(DragonType.SEA, new MagicAbility("sea_magic", "sea/sea_magic", 0, 10));
 		SEA_ATHLETICS = register(DragonType.SEA, new AthleticsAbility("sea_athletics", "sea/sea_athletics", 0, 5));
@@ -105,9 +105,9 @@ public class DragonAbilities
 		
 		//Cave dragon
 		NETHER_BREATH = register(DragonType.CAVE, new FireBreathAbility("nether_breath", "cave/nether_breath", 1, 4, 2, 10, Functions.secondsToTicks(5), new Integer[]{0, 10, 30, 50}));
-		FIREBALL = register(DragonType.CAVE, new FireBallAbility("fireball", "cave/fireball", 0, 4,6, Functions.secondsToTicks(4), Functions.secondsToTicks(60),  new Integer[]{0, 20, 40, 45}));
+		FIREBALL = register(DragonType.CAVE, new FireBallAbility("fireball", "cave/fireball", 0, 4,5, Functions.secondsToTicks(4), Functions.secondsToTicks(40),  new Integer[]{0, 20, 40, 45}));
 		STRONG_LEATHER = register(DragonType.CAVE, new StrongLeatherAbility(new EffectInstance(DragonEffects.STRONG_LEATHER), 5, ParticleRegistry.peaceBeaconParticle, "strong_leather", "cave/strong_leather", 0, 3, 5, Functions.secondsToTicks(5), Functions.secondsToTicks(30),  new Integer[]{0, 15, 35}));
-		LAVA_VISION = register(DragonType.CAVE, new VisionAbility(DragonEffects.LAVA_VISION, "lava_vision", "cave/lava_vision", 0, 2, 2, Functions.secondsToTicks(2), Functions.secondsToTicks(30),  new Integer[]{0, 25}));
+		LAVA_VISION = register(DragonType.CAVE, new VisionAbility(DragonEffects.LAVA_VISION, "lava_vision", "cave/lava_vision", 0, 2, 2, Functions.secondsToTicks(2), Functions.secondsToTicks(60),  new Integer[]{0, 25}));
 		
 		CAVE_MAGIC = register(DragonType.CAVE, new MagicAbility("cave_magic", "cave/cave_magic", 0, 10));
 		CAVE_ATHLETICS = register(DragonType.CAVE, new AthleticsAbility("cave_athletics", "cave/cave_athletics", 0, 5));

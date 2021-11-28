@@ -46,7 +46,7 @@ public class FireBallAbility extends ActiveDragonAbility
 	}
 	
 	public static int getDamage(int level){
-		return 3 * level;
+		return 5 * level;
 	}
 	
 	public int getDamage(){
