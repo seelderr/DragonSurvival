@@ -225,6 +225,9 @@ public abstract class BreathAbility extends ActiveDragonAbility
 	{
 		ArrayList<ITextComponent> list = super.getInfo();
 		list.add(new TranslationTextComponent("ds.skill.channel_cost", channelCost, "2s"));
+		list.add(new TranslationTextComponent("ds.skill.damage", getDamage()));
+		list.add(new TranslationTextComponent("ds.skill.range.blocks", "3"));
+		
 		return list;
 	}
 }
