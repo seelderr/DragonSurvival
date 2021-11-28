@@ -9,10 +9,7 @@ import by.jackraidenph.dragonsurvival.magic.abilities.Actives.BuffAbilities.AoeB
 import by.jackraidenph.dragonsurvival.magic.abilities.Actives.BuffAbilities.HunterAbility;
 import by.jackraidenph.dragonsurvival.magic.abilities.Actives.BuffAbilities.ToughSkinAbility;
 import by.jackraidenph.dragonsurvival.magic.abilities.Actives.BuffAbilities.VisionAbility;
-import by.jackraidenph.dragonsurvival.magic.abilities.Innate.DragonClawsAbility;
-import by.jackraidenph.dragonsurvival.magic.abilities.Innate.DragonWingAbility;
-import by.jackraidenph.dragonsurvival.magic.abilities.Innate.FearOfDarkAbility;
-import by.jackraidenph.dragonsurvival.magic.abilities.Innate.HotBloodAbility;
+import by.jackraidenph.dragonsurvival.magic.abilities.Innate.*;
 import by.jackraidenph.dragonsurvival.magic.abilities.Passives.*;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
@@ -108,7 +105,7 @@ public class DragonAbilities
 		SEA_CLAWS_AND_TEETH = register(DragonType.SEA, new DragonClawsAbility("sea_claws_and_teeth", "sea/sea_claws_and_teeth", 1, 1));
 		SEA_WINGS = register(DragonType.SEA, new DragonWingAbility("sea_wings", "sea/sea_wings", 1, 1));
 		SEA_DRAGON = register(DragonType.SEA, new InnateDragonAbility("sea_dragon", "sea/sea_dragon", 1, 1));
-		AMPHIBIAN = register(DragonType.SEA, new InnateDragonAbility("amphibian", "sea/amphibian", 1, 1));
+		AMPHIBIAN = register(DragonType.SEA, new AmphibianAbility("amphibian", "sea/amphibian", 1, 1));
 		
 		//Cave dragon
 		NETHER_BREATH = register(DragonType.CAVE, new FireBreathAbility("nether_breath", "cave/nether_breath", 1, 4, 2, 10, Functions.secondsToTicks(5), new Integer[]{0, 10, 30, 50}));
@@ -131,7 +128,7 @@ public class DragonAbilities
 	public static HashMap<DragonType, ArrayList<DragonAbility>> ABILITIES = new HashMap<>();
 	public static HashMap<DragonType, ArrayList<ActiveDragonAbility>> ACTIVE_ABILITIES = new HashMap<>();
 	public static HashMap<DragonType, ArrayList<PassiveDragonAbility>> PASSIVE_ABILITIES = new HashMap<>();
-	public static HashMap<DragonType, ArrayList<InnateDragonAbility>> INFORMATION_ABILITIES = new HashMap<>();
+	public static HashMap<DragonType, ArrayList<InnateDragonAbility>> INNATE_ABILITIES = new HashMap<>();
 	
 	public static HashMap<String, DragonAbility> ABILITY_LOOKUP = new HashMap<>();
 	
@@ -173,12 +170,12 @@ public class DragonAbilities
 			ABILITIES.put(type, new ArrayList<>());
 		}
 		
-		if(!INFORMATION_ABILITIES.containsKey(type)){
-			INFORMATION_ABILITIES.put(type, new ArrayList<>());
+		if(!INNATE_ABILITIES.containsKey(type)){
+			INNATE_ABILITIES.put(type, new ArrayList<>());
 		}
 		
 		ABILITIES.get(type).add(informationDragonAbility);
-		INFORMATION_ABILITIES.get(type).add(informationDragonAbility);
+		INNATE_ABILITIES.get(type).add(informationDragonAbility);
 		ABILITY_LOOKUP.put(informationDragonAbility.getId(), informationDragonAbility);
 		
 		return informationDragonAbility;

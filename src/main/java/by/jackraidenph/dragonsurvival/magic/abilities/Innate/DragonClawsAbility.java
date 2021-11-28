@@ -8,6 +8,7 @@ import by.jackraidenph.dragonsurvival.util.DragonLevel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemTier;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
@@ -29,7 +30,7 @@ public class DragonClawsAbility extends InnateDragonAbility
 	@Override
 	public int getLevel()
 	{
-		return getHarvestLevel() + 1;
+		return MathHelper.clamp(getHarvestLevel(), 0, 5) + 1;
 	}
 	
 	public int getHarvestLevel(){
@@ -64,11 +65,12 @@ public class DragonClawsAbility extends InnateDragonAbility
 		if(tier != null) {
 			components.add(new TranslationTextComponent("ds.skill.harvest_level", I18n.get("ds.skill.harvest_level." + tier.name().toLowerCase())));
 		}
+		
 		double bonusDamage = DragonStateProvider.getCap(Minecraft.getInstance().player).map((cap) -> (cap.getLevel() == DragonLevel.ADULT ? ConfigHandler.SERVER.adultBonusDamage.get() : cap.getLevel() == DragonLevel.YOUNG ? ConfigHandler.SERVER.youngBonusDamage.get() : ConfigHandler.SERVER.babyBonusDamage.get())).get();
+		
 		if(bonusDamage > 0.0) {
 			components.add(new TranslationTextComponent("ds.skill.damage", "+" + bonusDamage));
 		}
-		//components.add(new TranslationTextComponent("ds.skill.harvest_level." + getId(), "TBA"));
 		
 		return components;
 	}

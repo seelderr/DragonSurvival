@@ -164,7 +164,7 @@ public class MagicHandler
 				DragonType type = DragonStateProvider.getCap(entity).map(cap -> cap.getType()).orElse(null);
 				
 				if (type != DragonType.SEA) {
-					LightningBreathAbility.chargedEffectSparkle(entity, 3, 1, 1);
+					LightningBreathAbility.chargedEffectSparkle(entity, 6, 2, 1);
 				}
 			}
 		}

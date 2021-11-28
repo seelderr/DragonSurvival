@@ -196,7 +196,7 @@
   "ds.skill.harvest_level.sea_claws_and_teeth": "Harvest level: {0}",
   "ds.skill.description.sea_wings": "Magical knowledge that can only be obtained from the Ender Dragon.\n\nShe will hear your every word.\n\nEnable flight mode [{0}]",
   "ds.skill.description.sea_dragon": "Sea dragons eat seafood, are good at mining loose blocks, swim fast and do not suffocate underwater.\n\nTheir magic controls lightning.",
-  "ds.skill.description.amphibian": "You suffocate outside the water.",
+  "ds.skill.description.amphibian": "You suffocate outside the water.\n\nDeals {0} damage every {1} when suffocating.",
 
   "ds.skill.poisonous_breath": "Poisonous Breath",
   "ds.skill.spike": "Spike",

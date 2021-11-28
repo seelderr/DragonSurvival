@@ -95,7 +95,7 @@ public class AbilityScreen extends Screen {
             }
     
             num = 0;
-            for(InnateDragonAbility ability : DragonAbilities.INFORMATION_ABILITIES.get(cap.getType())){
+            for(InnateDragonAbility ability : DragonAbilities.INNATE_ABILITIES.get(cap.getType())){
                 if(ability != null) {
                     addButton(new AbilityButton(guiLeft + (int)(346 / 2F), (guiTop + 40 + (num * 23)), ability, this));
                     num++;

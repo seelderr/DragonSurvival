@@ -26,8 +26,6 @@ import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class LightningBreathAbility extends BreathAbility
@@ -84,12 +82,16 @@ public class LightningBreathAbility extends BreathAbility
 		return true;
 	}
 	
-	
 	private static Field chargedCreeperField;
 	
 	@Override
 	public void onDamage(LivingEntity entity) {
 		onDamageChecks(entity);
+	}
+	
+	public void onEntityHit(LivingEntity entityHit){
+		hurtTarget(entityHit);
+		LightningBreathAbility.chargedEffectSparkle(entityHit, 6, 2, 1);
 	}
 	
 	public static void onDamageChecks(LivingEntity entity){
@@ -112,35 +114,6 @@ public class LightningBreathAbility extends BreathAbility
 		}
 	}
 	
-	private static int chainRange = 4;
-	private static int chainTimes = 2;
-	private static int maxChainTargets = 3;
-	
-	public static void spark(LivingEntity source, LivingEntity target){
-		if(source.level.isClientSide) {
-			//source.level.addParticle(new LightningParticleData(target.getId()), source.getX(), source.getY() + (source.getEyeHeight() / 2), source.getZ(), 0, 0, 0);
-			
-			float eyeHeight = source instanceof PlayerEntity ? 0f : source.getEyeHeight();
-			Vector3d start = source.getPosition(eyeHeight);
-			Vector3d end = target.getPosition(target.getEyeHeight());
-
-			int parts = 20;
-
-			double xDif = (end.x - start.x) / parts;
-			double yDif = (end.y - start.y) / parts;
-			double zDif = (end.z - start.z) / parts;
-
-			for (int i = 0; i < parts; i++) {
-				double x = start.x + (xDif * i);
-				double y = start.y + (yDif * i) + eyeHeight;
-				double z = start.z + (zDif * i);
-				//new LargeLightningParticleData(37, false)
-				source.level.addParticle(new RedstoneParticleData(0f, 1F, 1F, 1f), x, y, z, 0, 0, 0);
-			}
-		}
-	}
-	
-	
 	public void hurtTarget(LivingEntity entity){
 		entity.hurt(DamageSource.playerAttack(player), getDamage());
 		onDamage(entity);
@@ -152,71 +125,39 @@ public class LightningBreathAbility extends BreathAbility
 		}
 		
 		if(!entity.level.isClientSide) {
-			if (entity.level.random.nextInt(100) < 30) {
+			if (entity.level.random.nextInt(100) < 40) {
 				entity.addEffect(new EffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(10), 0, false, true));
 			}
 		}
 	}
 	
-	public void onEntityHit(LivingEntity entityHit){
-		hurtTarget(entityHit);
-		spark(player, entityHit);
-		
-		List<LivingEntity> targets = new ArrayList<>();
-		List<LivingEntity> hasHit = new ArrayList<>();
-		HashMap<LivingEntity, LivingEntity> hitBy = new HashMap<>();
-		
-		hasHit.add(entityHit);
-		hitBy.put(entityHit, player);
-		
-		List<LivingEntity> secondaryTargets = getEntityLivingBaseNearby(entityHit.getX(), entityHit.getY() + entityHit.getBbHeight() / 2, entityHit.getZ(), chainRange);
-		secondaryTargets.removeAll(hasHit);
-		secondaryTargets.removeIf(e -> !isValidTarget(getPlayer(), e));
-		
-		if(secondaryTargets.size() > maxChainTargets){
-			secondaryTargets.sort((c1, c2) -> Boolean.compare(c1.hasEffect(DragonEffects.CHARGED), c2.hasEffect(DragonEffects.CHARGED)));
-			secondaryTargets = secondaryTargets.subList(0, maxChainTargets);
-		}
-		
-		secondaryTargets.forEach((t) -> hitBy.put(t, entityHit));
-		
-		targets.addAll(secondaryTargets);
-		for(int i = 0; i <= chainTimes; i++){
-			List<LivingEntity> nextRound = new ArrayList<>();
+	public static void spark(LivingEntity source, LivingEntity target){
+		if(source.level.isClientSide) {
+			float eyeHeight = source instanceof PlayerEntity ? 0f : source.getEyeHeight();
+			Vector3d start = source.getPosition(eyeHeight);
+			Vector3d end = target.getPosition(target.getEyeHeight());
 			
-			for(LivingEntity target : targets){
-				hurtTarget(target);
-				hasHit.add(target);
-				spark(hitBy.get(target), target);
+			int parts = 20;
+			
+			double xDif = (end.x - start.x) / parts;
+			double yDif = (end.y - start.y) / parts;
+			double zDif = (end.z - start.z) / parts;
+			
+			for (int i = 0; i < parts; i++) {
+				double x = start.x + (xDif * i);
+				double y = start.y + (yDif * i) + eyeHeight;
+				double z = start.z + (zDif * i);
+				source.level.addParticle(new RedstoneParticleData(0f, 1F, 1F, 1f), x, y, z, 0, 0, 0);
 			}
-			
-			for(LivingEntity target : targets){
-				if(nextRound.contains(target)) continue;
-				
-				List<LivingEntity> nextTargets = getEntityLivingBaseNearby(target.getX(), target.getY() + target.getBbHeight() / 2, target.getZ(), chainRange);
-				nextTargets.removeAll(hasHit);
-				nextTargets.removeIf(e -> !isValidTarget(getPlayer(), e));
-				
-				if(nextTargets.size() > maxChainTargets){
-					nextTargets.sort((c1, c2) -> Boolean.compare(c1.hasEffect(DragonEffects.CHARGED), c2.hasEffect(DragonEffects.CHARGED)));
-					nextTargets = nextTargets.subList(0, maxChainTargets);
-				}
-				
-				nextRound.addAll(nextTargets);
-				nextRound.forEach((t) -> hitBy.put(t, target));
-			}
-			
-			targets.clear();
-			targets.addAll(nextRound);
 		}
 	}
 	
 	public static void chargedEffectSparkle(LivingEntity source, int chainRange, int maxChainTargets, int damage){
 		List<LivingEntity> secondaryTargets = getEntityLivingBaseNearby(source, source.getX(), source.getY() + source.getBbHeight() / 2, source.getZ(), chainRange);
 		secondaryTargets.removeIf(e -> !isValidTarget(source, e));
-		secondaryTargets.sort((c1, c2) -> Boolean.compare(c1.hasEffect(DragonEffects.CHARGED), c2.hasEffect(DragonEffects.CHARGED)));
 		
 		if(secondaryTargets.size() > maxChainTargets){
+			secondaryTargets.sort((c1, c2) -> Boolean.compare(c1.hasEffect(DragonEffects.CHARGED), c2.hasEffect(DragonEffects.CHARGED)));
 			secondaryTargets = secondaryTargets.subList(0, maxChainTargets);
 		}
 		
@@ -228,7 +169,7 @@ public class LightningBreathAbility extends BreathAbility
 			
 			if(target != source) {
 				if(!target.level.isClientSide) {
-					if (target.level.random.nextInt(100) < 30) {
+					if (target.level.random.nextInt(100) < 40) {
 						target.addEffect(new EffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(10), 0, false, true));
 					}
 				}
@@ -267,8 +208,7 @@ public class LightningBreathAbility extends BreathAbility
 	}
 	
 	public static boolean isValidTarget(LivingEntity attacker, LivingEntity target){
-		if(target == null) return false;
-		if(attacker == null) return true;
+		if(target == null || attacker == null) return false;
 		if(target == attacker) return false;
 		if(target instanceof FakePlayer) return false;
 		if(target instanceof TameableEntity && ((TameableEntity)target).getOwner() == attacker) return false;
