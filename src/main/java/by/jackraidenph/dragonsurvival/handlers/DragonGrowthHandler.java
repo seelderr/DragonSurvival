@@ -13,6 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.SSetPassengersPacket;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -94,6 +95,53 @@ public class DragonGrowthHandler {
 
             handler.setSize(++size, player);
             event.getItemStack().shrink(1);
+
+            if (world.isClientSide)
+                return;
+
+            DragonSurvivalMod.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncSize(player.getId(), size));
+
+            if (player.getVehicle() == null || !(player.getVehicle() instanceof ServerPlayerEntity))
+                return;
+
+            ServerPlayerEntity vehicle = (ServerPlayerEntity) player.getVehicle();
+
+            DragonStateProvider.getCap(vehicle).ifPresent(vehicleCap -> {
+                player.stopRiding();
+
+                vehicle.connection.send(new SSetPassengersPacket(vehicle));
+
+                DragonSurvivalMod.CHANNEL.send(PacketDistributor.PLAYER.with(() -> vehicle), new SynchronizeDragonCap(vehicle.getId(),
+                        vehicleCap.isHiding(), vehicleCap.getType(), vehicleCap.getSize(), vehicleCap.hasWings(), vehicleCap.getLavaAirSupply(), 0));
+            });
+
+            player.refreshDimensions();
+        });
+    }
+
+    @SubscribeEvent
+    public static void onPlayerUpdate(TickEvent.PlayerTickEvent event) {
+        if (!ConfigHandler.SERVER.alternateGrowing.get())
+            return;
+
+        PlayerEntity player = event.player;
+        World world = player.getCommandSenderWorld();
+
+        DragonStateProvider.getCap(player).ifPresent(handler -> {
+            if (!handler.isDragon())
+                return;
+
+            float size = handler.getSize();
+
+            if (player.tickCount % (ConfigHandler.SERVER.alternateGrowingFrequency.get() * 20) != 0)
+                return;
+
+            size += ConfigHandler.SERVER.alternateGrowingStep.get().floatValue();
+
+            if (size >= 40F)
+                return;
+
+            handler.setSize(size, player);
 
             if (world.isClientSide)
                 return;
