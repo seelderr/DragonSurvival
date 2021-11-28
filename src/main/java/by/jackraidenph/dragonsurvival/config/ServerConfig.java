@@ -1,6 +1,7 @@
 package by.jackraidenph.dragonsurvival.config;
 
 import by.jackraidenph.dragonsurvival.util.DragonLevel;
+import com.google.common.collect.Lists;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.util.Arrays;
@@ -24,6 +25,7 @@ public class ServerConfig {
 	public final ForgeConfigSpec.DoubleValue newbornJump;
 	public final ForgeConfigSpec.DoubleValue youngJump;
 	public final ForgeConfigSpec.DoubleValue adultJump;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> allowedVehicles;
 
 	// Specifics
     public final ForgeConfigSpec.BooleanValue customDragonFoods;
@@ -133,6 +135,9 @@ public class ServerConfig {
 		creativeFlight = builder
 				.comment("Whether to use flight similar to creative rather then gliding")
 				.define("alternateFlight", false);
+		allowedVehicles = builder
+				.comment("List of rideable entities. Format: modid:id")
+				.defineList("allowedVehicles", Lists.newArrayList(), value -> value instanceof String);
 
 		// Specifics
 		builder.pop().push("specifics");
