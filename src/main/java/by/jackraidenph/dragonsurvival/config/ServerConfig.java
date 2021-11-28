@@ -26,6 +26,8 @@ public class ServerConfig {
 	public final ForgeConfigSpec.DoubleValue youngJump;
 	public final ForgeConfigSpec.DoubleValue adultJump;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> allowedVehicles;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> blacklistedItems;
+	public final ForgeConfigSpec.ConfigValue<List<? extends Integer>> blacklistedSlots;
 
 	// Specifics
     public final ForgeConfigSpec.BooleanValue customDragonFoods;
@@ -138,6 +140,16 @@ public class ServerConfig {
 		allowedVehicles = builder
 				.comment("List of rideable entities. Format: modid:id")
 				.defineList("allowedVehicles", Lists.newArrayList(), value -> value instanceof String);
+		blacklistedItems = builder
+				.comment("List of items that disallowed to be used by dragons. Format: item/tag:modid:id")
+				.defineList("blacklistedItems", Arrays.asList(
+						"minecraft:bow"
+				), this::isValidItemConfig);
+		blacklistedSlots = builder
+				.comment("List of slots to handle blacklistedItems option")
+				.defineList("blacklistedSlots", Arrays.asList(
+						0, 1, 2, 3, 4, 5, 6, 7, 8, 45
+				), value -> value instanceof Integer);
 
 		// Specifics
 		builder.pop().push("specifics");

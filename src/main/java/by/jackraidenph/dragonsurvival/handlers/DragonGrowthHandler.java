@@ -3,6 +3,7 @@ package by.jackraidenph.dragonsurvival.handlers;
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
+import by.jackraidenph.dragonsurvival.config.ConfigUtils;
 import by.jackraidenph.dragonsurvival.network.SyncSize;
 import by.jackraidenph.dragonsurvival.network.SynchronizeDragonCap;
 import net.minecraft.entity.player.PlayerEntity;
@@ -10,16 +11,12 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.SSetPassengersPacket;
-import net.minecraft.tags.ITag;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.network.PacketDistributor;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,9 +43,9 @@ public class DragonGrowthHandler {
 
             boolean canContinue = false;
 
-            List<Item> newbornList = parseConfigList(ConfigHandler.SERVER.growNewborn.get());
-            List<Item> youngList = parseConfigList(ConfigHandler.SERVER.growYoung.get());
-            List<Item> adultList = parseConfigList(ConfigHandler.SERVER.growAdult.get());
+            List<Item> newbornList = ConfigUtils.parseConfigItemList(ConfigHandler.SERVER.growNewborn.get());
+            List<Item> youngList = ConfigUtils.parseConfigItemList(ConfigHandler.SERVER.growYoung.get());
+            List<Item> adultList = ConfigUtils.parseConfigItemList(ConfigHandler.SERVER.growAdult.get());
 
             List<Item> allowedItems = new ArrayList<>();
 
@@ -119,24 +116,5 @@ public class DragonGrowthHandler {
 
             player.refreshDimensions();
         });
-    }
-
-    private static List<Item> parseConfigList(List<? extends String> values) {
-        List<Item> result = new ArrayList<>();
-
-        for (String entry : values.toArray(new String[0])) {
-            final String[] sEntry = entry.split(":");
-            final ResourceLocation rlEntry = new ResourceLocation(sEntry[0], sEntry[1]);
-
-            if (sEntry[0].equalsIgnoreCase("tag")) {
-                final ITag<Item> tag = ItemTags.getAllTags().getTag(rlEntry);
-
-                if (tag != null)
-                    result.addAll(tag.getValues());
-            } else
-                result.add(ForgeRegistries.ITEMS.getValue(rlEntry));
-        }
-
-        return result;
     }
 }
