@@ -67,46 +67,6 @@ public class LightningBreathAbility extends BreathAbility
 			}
 		}
 		
-//		Vector3d vector3d = player.getEyePosition(1.0F);
-//		Vector3d vector3d1 = player.getViewVector(1.0F).scale((double)initialRange);
-//		Vector3d vector3d2 = vector3d.add(vector3d1);
-//		AxisAlignedBB axisalignedbb = player.getBoundingBox().expandTowards(vector3d1).inflate(1.0D);
-//		Predicate<Entity> predicate = (entity) -> entity instanceof LivingEntity && !entity.isSpectator() && entity.isPickable();
-//
-//		EntityRayTraceResult result = ProjectileHelper.getEntityHitResult(player, vector3d, vector3d2, axisalignedbb, predicate, initialRange * initialRange);
-//
-//		if (result != null) {
-//			LivingEntity entity = (LivingEntity)result.getEntity();
-//			if (vector3d.distanceToSqr(result.getLocation()) <= initialRange) {
-//				onEntityHit(entity);
-//				return;
-//			}
-//		}
-		
-//		Vector3d viewVector = player.getViewVector(1.0F);
-//
-//		double x = player.getX() + viewVector.x;
-//		double y = player.getY() + 1 + viewVector.y;
-//		double z = player.getZ() + viewVector.z;
-//
-////		EntityChainLightning chainLightning = new EntityChainLightning(player, x, y, z, player.level);
-////		chainLightning.absMoveTo(player.getX(), player.getY() + player.getEyeHeight() - 0.5f, player.getZ(), player.yRot, player.xRot);
-////		player.level.addFreshEntity(chainLightning);
-//
-//		if(player.level.isClientSide) {
-//
-////			if (player.tickCount % 10 == 0) {
-////				player.playSound(SoundEvents.LAVA_EXTINGUISH, 0.25F, 1F);
-////			}
-//
-//			for (int i = 0; i < 12; i++) {
-//				double xSpeed = speed * 1f * xComp;
-//				double ySpeed = speed * 1f * yComp;
-//				double zSpeed = speed * 1f * zComp;
-//				player.level.addParticle(new LargeLightningParticleData(37, false), x, y, z, xSpeed, ySpeed, zSpeed);
-//			}
-//		}
-		
 		hitEntities();
 		
 		if (player.tickCount % 20 == 0) {
@@ -124,8 +84,8 @@ public class LightningBreathAbility extends BreathAbility
 	@Override
 	public void onDamage(LivingEntity entity) {}
 	
-	private static int chainRange = 5;
-	private static int chainTimes = 3;
+	private static int chainRange = 4;
+	private static int chainTimes = 2;
 	private static int maxChainTargets = 3;
 	
 	public static void spark(LivingEntity source, LivingEntity target){
@@ -188,6 +148,7 @@ public class LightningBreathAbility extends BreathAbility
 			secondaryTargets.sort((c1, c2) -> Boolean.compare(c1.hasEffect(DragonEffects.CHARGED), c2.hasEffect(DragonEffects.CHARGED)));
 			secondaryTargets = secondaryTargets.subList(0, maxChainTargets);
 		}
+		
 		secondaryTargets.forEach((t) -> hitBy.put(t, entityHit));
 		
 		targets.addAll(secondaryTargets);
@@ -196,6 +157,14 @@ public class LightningBreathAbility extends BreathAbility
 			List<LivingEntity> nextRound = new ArrayList<>();
 			
 			for(LivingEntity target : targets){
+				hurtTarget(target);
+				hasHit.add(target);
+				spark(hitBy.get(target), target);
+			}
+			
+			for(LivingEntity target : targets){
+				if(nextRound.contains(target)) continue;
+				
 				List<LivingEntity> nextTargets = getEntityLivingBaseNearby(target.getX(), target.getY() + target.getBbHeight() / 2, target.getZ(), chainRange);
 				nextTargets.removeAll(hasHit);
 				nextTargets.removeIf(e -> !isValidTarget(getPlayer(), e));
@@ -207,10 +176,6 @@ public class LightningBreathAbility extends BreathAbility
 				
 				nextRound.addAll(nextTargets);
 				nextRound.forEach((t) -> hitBy.put(t, target));
-				
-				hurtTarget(target);
-				hasHit.add(target);
-				spark(hitBy.get(target), target);
 			}
 			
 			targets.clear();
