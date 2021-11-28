@@ -4,7 +4,10 @@ import by.jackraidenph.dragonsurvival.Functions;
 import net.minecraft.particles.ParticleType;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+
+import java.util.ArrayList;
 
 public class StrongLeatherAbility extends AoeBuffAbility
 {
@@ -33,6 +36,14 @@ public class StrongLeatherAbility extends AoeBuffAbility
 	public IFormattableTextComponent getDescription()
 	{
 		return new TranslationTextComponent("ds.skill.description." + getId(), getDuration(), getDefence(getLevel()));
+	}
+	
+	@Override
+	public ArrayList<ITextComponent> getInfo()
+	{
+		ArrayList<ITextComponent> components = super.getInfo();
+		components.add(new TranslationTextComponent("ds.skill.duration.seconds", getDuration()));
+		return components;
 	}
 	
 	public int getCastingSlowness() { return 10; }

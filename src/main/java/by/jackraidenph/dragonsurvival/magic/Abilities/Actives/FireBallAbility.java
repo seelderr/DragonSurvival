@@ -2,10 +2,15 @@ package by.jackraidenph.dragonsurvival.magic.Abilities.Actives;
 
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.magic.entity.FireBallEntity;
+import by.jackraidenph.dragonsurvival.registration.ClientModEvents;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+
+import java.util.ArrayList;
+import java.util.Locale;
 
 public class FireBallAbility extends ActiveDragonAbility
 {
@@ -48,6 +53,18 @@ public class FireBallAbility extends ActiveDragonAbility
 		return getDamage(getLevel());
 	}
 	
+	@Override
+	public ArrayList<ITextComponent> getInfo()
+	{
+		ArrayList<ITextComponent> components = super.getInfo();
+		components.add(new TranslationTextComponent("ds.skill.damage", getDamage()));
+		
+		if(!ClientModEvents.ABILITY2.isUnbound()) {
+			components.add(new TranslationTextComponent("ds.skill.keybind", ClientModEvents.ABILITY2.getKey().getDisplayName().getContents().toUpperCase(Locale.ROOT)));
+		}
+		
+		return components;
+	}
 	@Override
 	public IFormattableTextComponent getDescription()
 	{

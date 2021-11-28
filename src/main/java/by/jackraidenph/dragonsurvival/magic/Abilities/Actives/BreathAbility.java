@@ -3,6 +3,7 @@ package by.jackraidenph.dragonsurvival.magic.Abilities.Actives;
 import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
+import by.jackraidenph.dragonsurvival.registration.ClientModEvents;
 import by.jackraidenph.dragonsurvival.util.DragonLevel;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -21,6 +22,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public abstract class BreathAbility extends ActiveDragonAbility
 {
@@ -223,11 +225,21 @@ public abstract class BreathAbility extends ActiveDragonAbility
 	@Override
 	public ArrayList<ITextComponent> getInfo()
 	{
-		ArrayList<ITextComponent> list = super.getInfo();
-		list.add(new TranslationTextComponent("ds.skill.channel_cost", channelCost, "2s"));
-		list.add(new TranslationTextComponent("ds.skill.damage", getDamage()));
-		list.add(new TranslationTextComponent("ds.skill.range.blocks", "3"));
+		ArrayList<ITextComponent> components = new ArrayList<ITextComponent>();
 		
-		return list;
+		components.add(new TranslationTextComponent("ds.skill.mana_cost", getManaCost()));
+		components.add(new TranslationTextComponent("ds.skill.channel_cost", channelCost, 2));
+		
+		components.add(new TranslationTextComponent("ds.skill.cast_time", Functions.ticksToSeconds(getCastingTime())));
+		components.add(new TranslationTextComponent("ds.skill.cooldown", Functions.ticksToSeconds(getMaxCooldown())));
+		
+		components.add(new TranslationTextComponent("ds.skill.damage", getDamage()));
+		components.add(new TranslationTextComponent("ds.skill.range.blocks", "3"));
+		
+		if(!ClientModEvents.ABILITY1.isUnbound()) {
+			components.add(new TranslationTextComponent("ds.skill.keybind", ClientModEvents.ABILITY1.getKey().getDisplayName().getContents().toUpperCase(Locale.ROOT)));
+		}
+		
+		return components;
 	}
 }

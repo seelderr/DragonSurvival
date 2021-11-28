@@ -4,6 +4,7 @@ import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.magic.Abilities.Actives.*;
 import by.jackraidenph.dragonsurvival.magic.Abilities.Innate.DragonClawsAbility;
 import by.jackraidenph.dragonsurvival.magic.Abilities.Innate.DragonWingAbility;
+import by.jackraidenph.dragonsurvival.magic.Abilities.Innate.FearOfDarkAbility;
 import by.jackraidenph.dragonsurvival.magic.Abilities.Innate.HotBloodAbility;
 import by.jackraidenph.dragonsurvival.magic.Abilities.Passives.*;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
@@ -84,7 +85,7 @@ public class DragonAbilities
 		FOREST_CLAWS_AND_TEETH = register(DragonType.FOREST, new DragonClawsAbility("forest_claws_and_teeth", "forest/forest_claws_and_teeth", 1, 1));
 		FOREST_WINGS = register(DragonType.FOREST, new DragonWingAbility("forest_wings", "forest/forest_wings", 1, 1));
 		FOREST_DRAGON = register(DragonType.FOREST, new InnateDragonAbility("forest_dragon", "forest/forest_dragon", 1, 1));
-		FEAR_OF_DARK = register(DragonType.FOREST, new InnateDragonAbility("fear_of_dark", "forest/fear_of_dark", 1, 1));
+		FEAR_OF_DARK = register(DragonType.FOREST, new FearOfDarkAbility("fear_of_dark", "forest/fear_of_dark", 1, 1));
 		
 		//Sea dragon
 		STORM_BREATH = register(DragonType.SEA, new LightningBreathAbility("storm_breath", "sea/storm_breath", 1, 4, 2, 10, Functions.secondsToTicks(5), new Integer[]{0, 10, 30, 50}));

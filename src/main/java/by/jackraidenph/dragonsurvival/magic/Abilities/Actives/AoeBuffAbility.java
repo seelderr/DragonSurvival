@@ -3,6 +3,7 @@ package by.jackraidenph.dragonsurvival.magic.Abilities.Actives;
 import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.magic.common.AbilityAnimation;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
+import by.jackraidenph.dragonsurvival.registration.ClientModEvents;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.entity.AreaEffectCloudEntity;
@@ -16,6 +17,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class AoeBuffAbility extends ActiveDragonAbility
 {
@@ -36,6 +38,11 @@ public class AoeBuffAbility extends ActiveDragonAbility
 	{
 		ArrayList<ITextComponent> components = super.getInfo();
 		components.add(new TranslationTextComponent("ds.skill.aoe", getRange() + "x" + getRange()));
+		
+		if(!ClientModEvents.ABILITY3.isUnbound()) {
+			components.add(new TranslationTextComponent("ds.skill.keybind", ClientModEvents.ABILITY3.getKey().getDisplayName().getContents().toUpperCase(Locale.ROOT)));
+		}
+		
 		return components;
 	}
 	

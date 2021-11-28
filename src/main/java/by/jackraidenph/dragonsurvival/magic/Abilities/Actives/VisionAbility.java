@@ -3,12 +3,17 @@ package by.jackraidenph.dragonsurvival.magic.Abilities.Actives;
 import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.magic.common.AbilityAnimation;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
+import by.jackraidenph.dragonsurvival.registration.ClientModEvents;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+
+import java.util.ArrayList;
+import java.util.Locale;
 
 public class VisionAbility extends ActiveDragonAbility
 {
@@ -35,6 +40,19 @@ public class VisionAbility extends ActiveDragonAbility
 		super.onActivation(player);
 		player.addEffect(new EffectInstance(effect, Functions.secondsToTicks(getDuration())));
 		player.addEffect(new EffectInstance(Effects.NIGHT_VISION, Functions.secondsToTicks(getDuration()), 0, false, false));
+	}
+	
+	@Override
+	public ArrayList<ITextComponent> getInfo()
+	{
+		ArrayList<ITextComponent> components = super.getInfo();
+		components.add(new TranslationTextComponent("ds.skill.duration.seconds", getDuration()));
+		
+		if(!ClientModEvents.ABILITY4.isUnbound()) {
+			components.add(new TranslationTextComponent("ds.skill.keybind", ClientModEvents.ABILITY4.getKey().getDisplayName().getContents().toUpperCase(Locale.ROOT)));
+		}
+		
+		return components;
 	}
 	
 	@Override

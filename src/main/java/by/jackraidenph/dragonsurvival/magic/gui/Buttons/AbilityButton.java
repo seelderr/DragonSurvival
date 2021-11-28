@@ -108,7 +108,7 @@ public class AbilityButton extends Button {
 		if (!description.isEmpty()) {
 			Minecraft.getInstance().getTextureManager().bind(WIDGETS_LOCATION);
 			
-			int extraWidth = (int)(width / 1.5);
+			int extraWidth = (int)(width / 1.25);
 			
 			if(ability.getInfo().size() > 0) {
 				IFormattableTextComponent textContents = new StringTextComponent("");
@@ -129,7 +129,7 @@ public class AbilityButton extends Button {
 				extraWidth = Math.min(longest, extraWidth);
 				
 				if(Screen.hasShiftDown()){
-					this.render9Sprite(stack, this.x -extraWidth, origYPos + 3, extraWidth, 27 + (text.size() * 9), 10, 50, 26, 0, 52);
+					this.render9Sprite(stack, this.x -extraWidth, origYPos + 3, extraWidth, 27 + (text.size() * 9), 10, 200, 26, 0, 52);
 				}else {
 					this.render9Sprite(stack, this.x - 10, origYPos + 3, 10 + 5, Math.min((27 + (text.size() * 9)), (35 + 24 + (description.size() * 9)) - 10), 10, 50, 26, 0, 52);
 				}

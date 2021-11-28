@@ -3,11 +3,16 @@ package by.jackraidenph.dragonsurvival.magic.Abilities.Actives;
 import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.magic.common.AbilityAnimation;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
+import by.jackraidenph.dragonsurvival.registration.ClientModEvents;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+
+import java.util.ArrayList;
+import java.util.Locale;
 
 public class HunterAbility extends ActiveDragonAbility
 {
@@ -52,4 +57,16 @@ public class HunterAbility extends ActiveDragonAbility
 	}
 	
 	public int getCastingSlowness() { return 10; }
+	
+	@Override
+	public ArrayList<ITextComponent> getInfo()
+	{
+		ArrayList<ITextComponent> components = super.getInfo();
+		
+		if(!ClientModEvents.ABILITY4.isUnbound()) {
+			components.add(new TranslationTextComponent("ds.skill.keybind", ClientModEvents.ABILITY4.getKey().getDisplayName().getContents().toUpperCase(Locale.ROOT)));
+		}
+		
+		return components;
+	}
 }
