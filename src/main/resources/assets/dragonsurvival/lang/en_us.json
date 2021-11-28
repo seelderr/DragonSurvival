@@ -81,8 +81,6 @@
   "block.dragonsurvival.big_sea_nest": "Big Sea nest",
   "block.dragonsurvival.big_cave_nest": "Big Cave nest",
 
-  "ds.invalid_grow_item": "§6You need another type of growth artifact:§r %1$s",
-
   "ds.regen.on": "Toggled nest regeneration on.",
   "ds.regen.off": "Toggled nest regeneration off.",
 
@@ -120,6 +118,8 @@
   "ds.dragon.grants.wings": "<Ender dragon> I bestow wings on you. Now get out of here!",
   "ds.space.occupied": "Not enough free space around",
   "ds.cooldown.active": "The altar is on cooldown: {0}",
+
+  "ds.invalid_grow_item": "§6You need another type of growth artifact:§r %1$s",
 
   "ds.gui.tab_button.0": "Inventory",
   "ds.gui.tab_button.1": "Abilities",
