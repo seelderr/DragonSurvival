@@ -230,7 +230,7 @@ public abstract class BreathAbility extends ActiveDragonAbility
 		components.add(new TranslationTextComponent("ds.skill.mana_cost", getManaCost()));
 		components.add(new TranslationTextComponent("ds.skill.channel_cost", channelCost, 2));
 		
-		components.add(new TranslationTextComponent("ds.skill.cast_time", Functions.ticksToSeconds(getCastingTime())));
+		components.add(new TranslationTextComponent("ds.skill.cast_time", nf.format((double)getCastingTime() / 20)));
 		components.add(new TranslationTextComponent("ds.skill.cooldown", Functions.ticksToSeconds(getMaxCooldown())));
 		
 		components.add(new TranslationTextComponent("ds.skill.damage", getDamage()));

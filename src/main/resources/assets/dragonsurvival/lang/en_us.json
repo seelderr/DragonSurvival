@@ -121,6 +121,11 @@
   "ds.space.occupied": "Not enough free space around",
   "ds.cooldown.active": "The altar is on cooldown: {0}",
 
+  "ds.gui.tab_button.0": "Inventory",
+  "ds.gui.tab_button.1": "Abilities",
+  "ds.gui.tab_button.2": "Lore will not be available anytime soon",
+  "ds.gui.tab_button.3": "Skin customization will not be available anytime soon",
+
   "ds.skill_cooldown_check_failure": "The ability is not ready yet! ({0})",
   "ds.skill_mana_check_failure": "Not enough mana!",
   "ds.skill.nofly": "This skill cant be used while flying!",
@@ -140,7 +145,7 @@
   "ds.skill.aoe": "Radius: {0}",
   "ds.skill.damage": "Damage: {0}",
   "ds.skill.range.blocks": "Range: {0} blocks",
-  "ds.skill.duration.seconds": "Duration: {0} seconds",
+  "ds.skill.duration.seconds": "Duration: {0}s",
   "ds.skill.keybind": "Bound to: [{0}]",
 
   "ds.keybind.wings": "Toggle wings",

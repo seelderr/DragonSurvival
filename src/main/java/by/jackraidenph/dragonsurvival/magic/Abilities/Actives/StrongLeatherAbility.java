@@ -1,6 +1,7 @@
 package by.jackraidenph.dragonsurvival.magic.Abilities.Actives;
 
 import by.jackraidenph.dragonsurvival.Functions;
+import by.jackraidenph.dragonsurvival.registration.ClientModEvents;
 import net.minecraft.particles.ParticleType;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.text.IFormattableTextComponent;
@@ -8,6 +9,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class StrongLeatherAbility extends AoeBuffAbility
 {
@@ -42,7 +44,17 @@ public class StrongLeatherAbility extends AoeBuffAbility
 	public ArrayList<ITextComponent> getInfo()
 	{
 		ArrayList<ITextComponent> components = super.getInfo();
+		
+		if(!ClientModEvents.ABILITY3.isUnbound()) {
+			components = new ArrayList<>(components.subList(0, components.size() - 1));
+		}
+		
 		components.add(new TranslationTextComponent("ds.skill.duration.seconds", getDuration()));
+		
+		if(!ClientModEvents.ABILITY3.isUnbound()) {
+			components.add(new TranslationTextComponent("ds.skill.keybind", ClientModEvents.ABILITY3.getKey().getDisplayName().getContents().toUpperCase(Locale.ROOT)));
+		}
+		
 		return components;
 	}
 	

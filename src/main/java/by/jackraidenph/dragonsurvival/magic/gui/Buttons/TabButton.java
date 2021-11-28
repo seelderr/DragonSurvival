@@ -11,6 +11,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.inventory.InventoryScreen;
 import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.fml.client.gui.GuiUtils;
+
+import java.util.Arrays;
 
 public class TabButton extends Button
 {
@@ -22,6 +26,11 @@ public class TabButton extends Button
 		super(x, y, 28, 32, null, (button) -> {});
 		this.index = index;
 		this.parent = parent;
+	}
+	
+	@Override
+	public void renderToolTip(MatrixStack stack, int mouseX, int mouseY)
+	{
 	}
 	
 	@Override
@@ -45,6 +54,10 @@ public class TabButton extends Button
 			blit(stack, x + 2, y + 2 + (isCurrent() ? 2 : 0), (index * 24), 67, 24, 24);
 		}else{
 			blit(stack, x + 2, y + 2 + (isCurrent() ? 2 : 0), (index * 24), 41, 24, 24);
+		}
+		
+		if(isHovered()){
+			GuiUtils.drawHoveringText(stack, Arrays.asList(new TranslationTextComponent("ds.gui.tab_button." + index)), mouseX, mouseY, Minecraft.getInstance().screen.width, Minecraft.getInstance().screen.height, 200, Minecraft.getInstance().font);
 		}
 	}
 	
