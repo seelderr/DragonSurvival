@@ -1,12 +1,15 @@
 package by.jackraidenph.dragonsurvival;
 
-import by.jackraidenph.dragonsurvival.magic.AbilityTickingHandler;
-import by.jackraidenph.dragonsurvival.magic.Abilities.DragonAbilities;
 import by.jackraidenph.dragonsurvival.capability.Capabilities;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.gecko.DragonEntity;
-import by.jackraidenph.dragonsurvival.handlers.*;
+import by.jackraidenph.dragonsurvival.handlers.ClientEvents;
+import by.jackraidenph.dragonsurvival.handlers.DragonFoodHandler;
+import by.jackraidenph.dragonsurvival.handlers.SpecificsHandler;
+import by.jackraidenph.dragonsurvival.handlers.WingObtainmentController;
+import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
+import by.jackraidenph.dragonsurvival.magic.MagicHandler;
 import by.jackraidenph.dragonsurvival.nest.DismantleNest;
 import by.jackraidenph.dragonsurvival.nest.NestEntity;
 import by.jackraidenph.dragonsurvival.nest.SleepInNest;
@@ -85,7 +88,6 @@ public class DragonSurvivalMod {
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(new ResourceLocation(MODID, "main"),
             () -> PROTOCOL_VERSION, PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
 
-    public static AbilityTickingHandler HANDLER = new AbilityTickingHandler();
     private static int nextPacketId = 0;
 
     public DragonSurvivalMod() {
@@ -103,7 +105,7 @@ public class DragonSurvivalMod {
         MinecraftForge.EVENT_BUS.register(new SpecificsHandler());
         MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGH, this::biomeLoadingEvent);
         MinecraftForge.EVENT_BUS.addListener(this::serverRegisterCommandsEvent);
-        MinecraftForge.EVENT_BUS.register(HANDLER);
+        MinecraftForge.EVENT_BUS.register(MagicHandler.cooldownHandler);
         ItemRegistry.register();
     }
 

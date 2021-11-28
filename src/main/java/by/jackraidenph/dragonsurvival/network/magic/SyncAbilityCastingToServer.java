@@ -2,7 +2,7 @@ package by.jackraidenph.dragonsurvival.network.magic;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.magic.Abilities.DragonAbilities;
+import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.network.IMessage;

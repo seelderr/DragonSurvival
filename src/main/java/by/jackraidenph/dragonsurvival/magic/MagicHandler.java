@@ -4,10 +4,9 @@ import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.capability.Capabilities;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.magic.Abilities.Actives.LightningBreathAbility;
-import by.jackraidenph.dragonsurvival.magic.Abilities.DragonAbilities;
-import by.jackraidenph.dragonsurvival.magic.Abilities.Passives.BurnAbility;
-import by.jackraidenph.dragonsurvival.magic.Abilities.Passives.SpectralImpactAbility;
+import by.jackraidenph.dragonsurvival.magic.abilities.Actives.BreathAbilities.LightningBreathAbility;
+import by.jackraidenph.dragonsurvival.magic.abilities.Passives.BurnAbility;
+import by.jackraidenph.dragonsurvival.magic.abilities.Passives.SpectralImpactAbility;
 import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.network.magic.SyncPotionAddedEffect;
 import by.jackraidenph.dragonsurvival.network.magic.SyncPotionRemovedEffect;
@@ -47,6 +46,8 @@ import net.minecraftforge.fml.network.PacketDistributor.TargetPoint;
 @EventBusSubscriber
 public class MagicHandler
 {
+	public static AbilityTickingHandler cooldownHandler = new AbilityTickingHandler();
+	
 	public static boolean isPlayerInGoodConditions(PlayerEntity player){
 		BlockState blockBelow = player.level.getBlockState(player.blockPosition().below());
 		return DragonStateProvider.getCap(player).map(cap -> {
@@ -163,7 +164,7 @@ public class MagicHandler
 				DragonType type = DragonStateProvider.getCap(entity).map(cap -> cap.getType()).orElse(null);
 				
 				if (type != DragonType.SEA) {
-					LightningBreathAbility.chargedEffectSparkle(entity, 3, 2, 1);
+					LightningBreathAbility.chargedEffectSparkle(entity, 3, 1, 1);
 				}
 			}
 		}
@@ -177,6 +178,11 @@ public class MagicHandler
 							float damage = MathHelper.clamp((float)distance, 0, 10);
 							
 							if (damage > 0) {
+								//Short enough fire duration to not cause fire damage but still drop cooked items
+								if(!entity.isOnFire()){
+									entity.setRemainingFireTicks(1);
+								}
+								
 								entity.hurt(DamageSource.ON_FIRE, damage);
 							}
 						}

@@ -4,9 +4,9 @@ import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
-import by.jackraidenph.dragonsurvival.magic.entity.particle.CaveDragon.SmallFireParticleData;
-import by.jackraidenph.dragonsurvival.magic.entity.particle.ForestDragon.SmallPoisonParticleData;
-import by.jackraidenph.dragonsurvival.magic.entity.particle.SeaDragon.LargeLightningParticleData;
+import by.jackraidenph.dragonsurvival.particles.CaveDragon.SmallFireParticleData;
+import by.jackraidenph.dragonsurvival.particles.ForestDragon.SmallPoisonParticleData;
+import by.jackraidenph.dragonsurvival.particles.SeaDragon.LargeLightningParticleData;
 import by.jackraidenph.dragonsurvival.network.magic.ActivateAbilityServerSide;
 import by.jackraidenph.dragonsurvival.network.magic.SyncAbilityCastingToServer;
 import by.jackraidenph.dragonsurvival.registration.ClientModEvents;
@@ -43,9 +43,8 @@ import java.awt.*;
 @Mod.EventBusSubscriber(Dist.CLIENT)
 public class ClientMagicHandler
 {
-	public static final ResourceLocation buttonTexture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/widgets.png");
+	public static final ResourceLocation widgetTextures = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/widgets.png");
 	public static final ResourceLocation castBars = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/cast_bars.png");
-	
 	
 	private static byte timer = 0;
 	private static byte abilityHoldTimer = 0;
@@ -128,7 +127,7 @@ public class ClientMagicHandler
 					int screenWidth = window.getGuiScaledWidth();
 					int screenHeight =  window.getGuiScaledHeight();
 					
-					Minecraft.getInstance().getTextureManager().bind(buttonTexture);
+					Minecraft.getInstance().getTextureManager().bind(widgetTextures);
 					MatrixStack stack = event.getMatrixStack();
 					int x = window.getGuiScaledWidth() / 2 - 91;
 					int i = Minecraft.getInstance().player.getXpNeededForNextLevel();
@@ -165,7 +164,7 @@ public class ClientMagicHandler
 	public static void renderAbilityHud(RenderGameOverlayEvent.Post event) {
 	    PlayerEntity playerEntity = Minecraft.getInstance().player;
 	    
-	    if ((playerEntity == null) || !DragonStateProvider.isDragon(playerEntity))
+	    if (playerEntity == null || !DragonStateProvider.isDragon(playerEntity) || playerEntity.isSpectator())
 	        return;
 	    
 	    DragonStateProvider.getCap(playerEntity).ifPresent(cap -> {
@@ -218,7 +217,7 @@ public class ClientMagicHandler
 					textureManager.bind(new ResourceLocation("textures/gui/widgets.png"));
 					Screen.blit(event.getMatrixStack(), posX + (sizeX * cap.getSelectedAbilitySlot()) - 1, window.getGuiScaledHeight() - 23, 2, 0, 22, 24, 24, 256, 256);
 					
-					textureManager.bind(buttonTexture);
+					textureManager.bind(widgetTextures);
 					
 					int maxMana = DragonStateProvider.getMaxMana(playerEntity);
 					int curMana = cap.getCurrentMana();

@@ -4,14 +4,13 @@ import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.blocks.DragonBeacon;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.entity.*;
-import by.jackraidenph.dragonsurvival.magic.entity.BallLightningEntity;
-import by.jackraidenph.dragonsurvival.magic.entity.DragonSpikeEntity;
 import by.jackraidenph.dragonsurvival.gecko.DragonEntity;
 import by.jackraidenph.dragonsurvival.gecko.Knight;
 import by.jackraidenph.dragonsurvival.gecko.Princess;
 import by.jackraidenph.dragonsurvival.handlers.VillagerRelationsHandler;
-import by.jackraidenph.dragonsurvival.magic.entity.EntityChainLightning;
-import by.jackraidenph.dragonsurvival.magic.entity.FireBallEntity;
+import by.jackraidenph.dragonsurvival.entity.magic.BallLightningEntity;
+import by.jackraidenph.dragonsurvival.entity.magic.DragonSpikeEntity;
+import by.jackraidenph.dragonsurvival.entity.magic.FireBallEntity;
 import by.jackraidenph.dragonsurvival.tiles.DragonBeaconEntity;
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Preconditions;
@@ -62,7 +61,6 @@ public class EntityTypesInit {
     public static EntityType<DragonSpikeEntity> DRAGON_SPIKE;
     public static EntityType<BallLightningEntity> BALL_LIGHTNING;
     public static EntityType<FireBallEntity> FIREBALL;
-    public static EntityType<EntityChainLightning> CHAIN_LIGHTNING;
 
     private static <T extends CreatureEntity> EntityType<T> createEntity(Class<T> entityClass, EntityType.IFactory<T> factory, float width, float height, int eggPrimary, int eggSecondary, EntitySpawnPlacementRegistry.IPlacementPredicate spawnPlacementPredicate) {
 
@@ -124,11 +122,6 @@ public class EntityTypesInit {
                 .sized(1F, 1F).clientTrackingRange(4).updateInterval(1).build("fireball");
         FIREBALL.setRegistryName("dragonsurvival", "fireball");
         registry.register(FIREBALL);
-    
-        CHAIN_LIGHTNING = EntityType.Builder.<EntityChainLightning>of(EntityChainLightning::new, EntityClassification.MISC)
-                .sized(1F, 1F).clientTrackingRange(4).updateInterval(1).build("fireball");
-        CHAIN_LIGHTNING.setRegistryName("dragonsurvival", "chain_lightning");
-        registry.register(CHAIN_LIGHTNING);
     }
 
     @SubscribeEvent

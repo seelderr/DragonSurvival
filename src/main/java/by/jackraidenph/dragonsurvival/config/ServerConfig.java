@@ -98,6 +98,9 @@ public class ServerConfig {
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> caveDragonFoods;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> forestDragonFoods;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> seaDragonFoods;
+	
+	// Magic System
+	public final ForgeConfigSpec.DoubleValue fireballDamage;
 
 	ServerConfig(ForgeConfigSpec.Builder builder){
 		builder.push("server");
@@ -136,11 +139,6 @@ public class ServerConfig {
 		creativeFlight = builder
 				.comment("Whether to use flight similar to creative rather then gliding")
 				.define("alternateFlight", false);
-
-		builder.pop().push("magic");
-		fireBreathSpreadsFire = builder
-				.comment("Whether the fire breath actually spreads fire when used")
-				.define("fireBreathSpreadsFire", true);
 		
 		// Specifics
 		builder.pop().push("specifics");
@@ -308,7 +306,7 @@ public class ServerConfig {
 		builder.pop().push("sea"); // Sea Dragon Penalties
 		seaTicksWithoutWater = builder
 				.comment("The number of ticks out of water before the sea dragon will start taking dehydration damage. Set to 0 to disable. Note: This value can stack up to double while dehydrated.")
-				.defineInRange("ticksWithoutWater", 15000, 0, 100000);
+				.defineInRange("ticksWithoutWater", 1200, 0, 100000);
 		seaTicksBasedOnTemperature = builder
 				.comment("Whether the sea dragon should lose more water in warmer biomes and less during the night.")
 				.define("waterConsumptionDependsOnTemperature", true);
@@ -703,6 +701,17 @@ public class ServerConfig {
 		forestDragonHurtfulItems = builder
 				.comment("Items which will cause damage to forest dragons when consumed. Formatting: item/tag:modid:itemid:damage")
 				.defineList("hurtfulToForestDragon", Arrays.asList(),  this::isValidHurtfulItem);
+		
+		builder.pop().pop().push("magic");
+		builder.comment("Config values for the magic system");
+		
+		fireballDamage = builder
+				.comment("The amount of damage the fireball ability deals. This value is multiplied by the skill elvel.")
+				.defineInRange("fireballDamage", 5.0, 0, 100.0);
+		
+		fireBreathSpreadsFire = builder
+				.comment("Whether the fire breath actually spreads fire when used")
+				.define("fireBreathSpreadsFire", true);
 	}
 
 	private boolean isValidHurtfulItem(Object food){

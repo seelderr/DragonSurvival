@@ -1,7 +1,7 @@
 package by.jackraidenph.dragonsurvival.capability;
 
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
-import by.jackraidenph.dragonsurvival.magic.Abilities.DragonAbilities;
+import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.util.DragonLevel;
@@ -86,6 +86,7 @@ public class DragonStateHandler {
     }
 
     public boolean canHarvestWithPaw(BlockState state) {
+		
     	int harvestLevel = state.getHarvestLevel();
     	switch(getLevel()) {
     		case BABY:

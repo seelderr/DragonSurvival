@@ -4,6 +4,7 @@ import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.handlers.ClientFlightHandler;
+import by.jackraidenph.dragonsurvival.magic.MagicHandler;
 import by.jackraidenph.dragonsurvival.network.magic.SyncAbilityCastingToServer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -107,7 +108,7 @@ public class ActiveDragonAbility extends DragonAbility
     }
     
     public boolean canConsumeMana(PlayerEntity player) {
-        return player.isCreative() || DragonStateProvider.getCurrentMana(player) >= this.getManaCost() || (player.totalExperience / 10) >= getManaCost() || player.experienceLevel > 0;
+        return DragonStateProvider.getCurrentMana(player) >= this.getManaCost() || (player.totalExperience / 10) >= getManaCost() || player.experienceLevel > 0;
     }
     
     public void consumeMana(PlayerEntity player) {
@@ -123,6 +124,9 @@ public class ActiveDragonAbility extends DragonAbility
     public ITextComponent errorMessage;
     
     public boolean canRun(PlayerEntity player, int keyMode){
+        if(player.isCreative()) return true;
+        if(player.isSpectator()) return false;
+        
         if (!this.canConsumeMana(player)){
             if(keyMode == GLFW.GLFW_PRESS){
                 errorMessage = new TranslationTextComponent("ds.skill_mana_check_failure");
@@ -139,7 +143,7 @@ public class ActiveDragonAbility extends DragonAbility
                 errorTicks = Functions.secondsToTicks(5);
                 player.playSound(SoundEvents.WITHER_SHOOT, 0.05f, 100f);
             }
-            DragonSurvivalMod.HANDLER.addToCoolDownList(this);
+            MagicHandler.cooldownHandler.addToCoolDownList(this);
             stopCasting();
             return false;
         }
@@ -186,7 +190,7 @@ public class ActiveDragonAbility extends DragonAbility
     
     public void startCooldown() {
         this.currentCooldown = this.getMaxCooldown();
-        DragonSurvivalMod.HANDLER.addToCoolDownList(this);
+        MagicHandler.cooldownHandler.addToCoolDownList(this);
     }
     
     public int getMaxCooldown() {
@@ -232,7 +236,7 @@ public class ActiveDragonAbility extends DragonAbility
         currentCastingTime = nbt.getInt("castTime");
     
         if(currentCooldown > 0) {
-            DragonSurvivalMod.HANDLER.addToCoolDownList(this);
+            MagicHandler.cooldownHandler.addToCoolDownList(this);
         }
     }
     public int getCastingSlowness() { return 3; }

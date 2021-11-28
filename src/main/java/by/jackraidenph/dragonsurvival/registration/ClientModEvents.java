@@ -4,14 +4,13 @@ import by.jackraidenph.dragonsurvival.BeaconParticle;
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.gecko.PrinceRenderer;
 import by.jackraidenph.dragonsurvival.gecko.*;
-import by.jackraidenph.dragonsurvival.gui.DragonScreen;
+import by.jackraidenph.dragonsurvival.gui.magic.DragonScreen;
 import by.jackraidenph.dragonsurvival.handlers.ClientEvents;
-import by.jackraidenph.dragonsurvival.magic.entity.Renderer.BallLightningRenderer;
-import by.jackraidenph.dragonsurvival.magic.entity.Renderer.ChainLightningRenderer;
-import by.jackraidenph.dragonsurvival.magic.entity.Renderer.DragonSpikeRenderer;
-import by.jackraidenph.dragonsurvival.magic.entity.Renderer.FireBallRenderer;
-import by.jackraidenph.dragonsurvival.magic.entity.models.FireballModel;
-import by.jackraidenph.dragonsurvival.magic.entity.models.LightningBallModel;
+import by.jackraidenph.dragonsurvival.renderer.magic.BallLightningRenderer;
+import by.jackraidenph.dragonsurvival.renderer.magic.DragonSpikeRenderer;
+import by.jackraidenph.dragonsurvival.renderer.magic.FireBallRenderer;
+import by.jackraidenph.dragonsurvival.models.magic.FireballModel;
+import by.jackraidenph.dragonsurvival.models.magic.LightningBallModel;
 import by.jackraidenph.dragonsurvival.nest.NestScreen;
 import by.jackraidenph.dragonsurvival.renderer.PrincessRenderer;
 import by.jackraidenph.dragonsurvival.renderer.*;
@@ -92,7 +91,6 @@ public class ClientModEvents {
         RenderTypeLookup.setRenderLayer(BlockInit.magicDragonBeacon, RenderType.cutout());
     
         RenderingRegistry.registerEntityRenderingHandler(EntityTypesInit.DRAGON_SPIKE, DragonSpikeRenderer::new);
-        RenderingRegistry.registerEntityRenderingHandler(EntityTypesInit.CHAIN_LIGHTNING, ChainLightningRenderer::new);
     
         RenderingRegistry.registerEntityRenderingHandler(EntityTypesInit.MAGICAL_BEAST, MagicalPredatorRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityTypesInit.BOLAS_ENTITY, manager -> new SpriteRenderer<>(manager, minecraft.getItemRenderer()));

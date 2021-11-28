@@ -1,7 +1,7 @@
 package by.jackraidenph.dragonsurvival.network.magic;
 
 import by.jackraidenph.dragonsurvival.PacketProxy;
-import by.jackraidenph.dragonsurvival.magic.Abilities.DragonAbilities;
+import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
 import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.network.IMessage;
 import net.minecraft.nbt.CompoundNBT;

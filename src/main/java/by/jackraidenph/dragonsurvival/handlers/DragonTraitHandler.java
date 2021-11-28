@@ -2,11 +2,11 @@ package by.jackraidenph.dragonsurvival.handlers;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.Functions;
-import by.jackraidenph.dragonsurvival.magic.Abilities.Passives.ContrastShowerAbility;
-import by.jackraidenph.dragonsurvival.magic.Abilities.Passives.LightInDarknessAbility;
-import by.jackraidenph.dragonsurvival.magic.Abilities.DragonAbilities;
-import by.jackraidenph.dragonsurvival.magic.Abilities.Passives.AthleticsAbility;
-import by.jackraidenph.dragonsurvival.magic.Abilities.Passives.WaterAbility;
+import by.jackraidenph.dragonsurvival.magic.abilities.Passives.ContrastShowerAbility;
+import by.jackraidenph.dragonsurvival.magic.abilities.Passives.LightInDarknessAbility;
+import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
+import by.jackraidenph.dragonsurvival.magic.abilities.Passives.AthleticsAbility;
+import by.jackraidenph.dragonsurvival.magic.abilities.Passives.WaterAbility;
 import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;

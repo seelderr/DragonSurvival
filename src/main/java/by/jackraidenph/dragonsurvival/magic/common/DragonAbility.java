@@ -7,6 +7,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -15,9 +17,9 @@ import java.util.HashMap;
 public abstract class DragonAbility
 {
     protected static NumberFormat nf = NumberFormat.getInstance();
-    private static HashMap<String, ResourceLocation> iconCache = new HashMap<>();
+    protected static HashMap<String, ResourceLocation> iconCache = new HashMap<>();
     
-    protected int level = 0;
+    protected int level;
     
     protected final String id, icon;
     protected final int maxLevel;
@@ -26,7 +28,7 @@ public abstract class DragonAbility
     public PlayerEntity player;
     
     public DragonAbility(String abilityId, String icon, int minLevel, int maxLevel){
-        this.nf.setMaximumFractionDigits(1);
+        nf.setMaximumFractionDigits(1);
         
         this.id = abilityId;
         this.icon = icon;
@@ -36,15 +38,12 @@ public abstract class DragonAbility
     }
     
     public PlayerEntity getPlayer(){
-//        if(FMLEnvironment.dist == Dist.CLIENT){
-//            return Minecraft.getInstance().player;
-//        }
-        
         return player;
     }
     
     public abstract DragonAbility createInstance();
     
+    @OnlyIn( Dist.CLIENT )
     public ResourceLocation getIcon()
     {
         if(!iconCache.containsKey(getLevel() + "_" + getId())){
@@ -57,14 +56,18 @@ public abstract class DragonAbility
     
     public String getId() {return id;}
     
+    @OnlyIn( Dist.CLIENT )
     public IFormattableTextComponent getTitle(){
         return new TranslationTextComponent("ds.skill." + getId());
     }
     
+    @OnlyIn( Dist.CLIENT )
     public IFormattableTextComponent getDescription(){
         return new TranslationTextComponent("ds.skill.description." + getId());
     }
-    public ArrayList<ITextComponent> getInfo(){return new ArrayList<ITextComponent>();}
+    
+    @OnlyIn( Dist.CLIENT )
+    public ArrayList<ITextComponent> getInfo(){return new ArrayList<>();}
     
     public int getMaxLevel()
     {
@@ -81,9 +84,6 @@ public abstract class DragonAbility
     public void setLevel(int level) {
         this.level = Math.min(getMaxLevel(), Math.max(getMinLevel(), level));
     }
-    
-    public void tick(){}
-    public void frame(float partialTicks){}
     
     public void onKeyPressed(PlayerEntity player) {}
     
