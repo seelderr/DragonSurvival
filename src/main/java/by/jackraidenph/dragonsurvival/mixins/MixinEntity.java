@@ -51,12 +51,16 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
         }
     }
 
-
-
     @Inject(at = @At(value = "HEAD"), method = "Lnet/minecraft/entity/Entity;isVisuallyCrawling()Z", cancellable = true)
     public void isDragonVisuallyCrawling(CallbackInfoReturnable<Boolean> ci){
         if (DragonStateProvider.isDragon((Entity)(Object)this))
             ci.setReturnValue(false);
+    }
+
+    @Inject(at = @At(value = "RETURN"), method = "canRide", cancellable = true)
+    public void canRide(Entity entity, CallbackInfoReturnable<Boolean> ci) {
+        if (ci.getReturnValue() && DragonStateProvider.isDragon((Entity) (Object) this) && !DragonStateProvider.isDragon(entity))
+                ci.setReturnValue(ConfigHandler.SERVER.allowedVehicles.get().contains(entity.getType().getRegistryName().toString()));
     }
 
     @Redirect(method = "canEnterPose(Lnet/minecraft/entity/Pose;)Z", at = @At(value="INVOKE",
