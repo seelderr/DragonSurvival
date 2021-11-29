@@ -98,7 +98,7 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> implemen
         this.recipeBookGui.init(this.width, this.height, this.minecraft, this.widthTooNarrow, this.menu);
         this.leftPos = this.recipeBookGui.updateScreenPosition(this.widthTooNarrow, this.width + 30, this.imageWidth);
 
-        this.addButton(new ImageButton(this.leftPos + (imageWidth - 30), (this.height / 2 - 49) + 30, 20, 18, 0, 0, 19, RECIPE_BUTTON_TEXTURE, (p_214076_1_) -> {
+        this.addButton(new ImageButton(this.leftPos + (imageWidth - 28), (this.height / 2 - 30) + 30, 20, 18, 0, 0, 19, RECIPE_BUTTON_TEXTURE, (p_214076_1_) -> {
             this.recipeBookGui.initVisuals(this.widthTooNarrow);
             this.recipeBookGui.toggleVisibility();
             this.leftPos = this.recipeBookGui.updateScreenPosition(this.widthTooNarrow, this.width + 30, this.imageWidth);
