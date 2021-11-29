@@ -1,7 +1,7 @@
 package by.jackraidenph.dragonsurvival.entity.magic;
 
-import by.jackraidenph.dragonsurvival.magic.abilities.Actives.BallLightningAbility;
 import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
+import by.jackraidenph.dragonsurvival.magic.abilities.Actives.BallLightningAbility;
 import by.jackraidenph.dragonsurvival.particles.SeaDragon.LargeLightningParticleData;
 import by.jackraidenph.dragonsurvival.registration.EntityTypesInit;
 import net.minecraft.entity.Entity;
@@ -11,6 +11,8 @@ import net.minecraft.entity.projectile.AbstractFireballEntity;
 import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -77,6 +79,8 @@ public class BallLightningEntity extends DragonBallEntity
 				level.addParticle(new LargeLightningParticleData(37F, false), this.getX() + (double)f8, this.getY(), this.getZ() + (double)f9, 0, 0, 0);
 			}
 		}
+		
+		level.playLocalSound(getX(), getY(), getZ(), SoundEvents.GENERIC_EXPLODE, SoundCategory.HOSTILE, 0.25F, 2.5f, false);
 		
 		this.remove();
 	}

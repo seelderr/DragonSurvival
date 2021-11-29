@@ -101,6 +101,7 @@ public class ServerConfig {
 	
 	// Magic System
 	public final ForgeConfigSpec.DoubleValue fireballDamage;
+	public final ForgeConfigSpec.BooleanValue saveAllAbilities;
 
 	ServerConfig(ForgeConfigSpec.Builder builder){
 		builder.push("server");
@@ -360,6 +361,7 @@ public class ServerConfig {
 						"item:minecraft:enchanted_golden_apple",
 						"item:dragonsurvival:charged_coal:4:2",
 						"item:dragonsurvival:charred_meat:10:12",
+						"item:dragonsurvival:cave_dragon_treat:10:12",
 						"item:dragonsurvival:charred_secharged_soupafood:8:10",
 						"item:dragonsurvival:charred_vegetable:8:9",
 						"item:dragonsurvival:charred_mushroom:8:5",
@@ -404,6 +406,7 @@ public class ServerConfig {
 						"item:minecraft:golden_apple",
 						"item:minecraft:enchanted_golden_apple",
 						"item:minecraft:honey_bottle",
+						"item:dragonsurvival:forest_dragon_treat:10:12",
 						"item:aoa3:fiery_chops:6:7",
 						"item:aoa3:raw_chimera_chop:6:7",
 						"item:aoa3:raw_furlion_chop:6:7",
@@ -545,6 +548,7 @@ public class ServerConfig {
 						"item:minecraft:golden_apple",
 						"item:minecraft:enchanted_golden_apple",
 						"item:minecraft:honey_bottle",
+						"item:dragonsurvival:sea_dragon_treat:10:12",
 						"item:aoa3:raw_candlefish:9:9",
 						"item:aoa3:raw_crimson_skipper:8:8",
 						"item:aoa3:raw_fingerfish:4:4",
@@ -712,6 +716,10 @@ public class ServerConfig {
 		fireBreathSpreadsFire = builder
 				.comment("Whether the fire breath actually spreads fire when used")
 				.define("fireBreathSpreadsFire", true);
+		
+		saveAllAbilities = builder
+				.comment("Whether to save passives skills when changing dragon type")
+				.define("saveAllAbilities", false);
 	}
 
 	private boolean isValidHurtfulItem(Object food){

@@ -70,6 +70,9 @@ public abstract class DragonAbility
     public ArrayList<ITextComponent> getInfo(){return new ArrayList<>();}
     
     @OnlyIn( Dist.CLIENT )
+    public ArrayList<ITextComponent> getLevelUpInfo(){return new ArrayList<>();}
+    
+    @OnlyIn( Dist.CLIENT )
     public boolean isDisabled() {
         return false;
     }

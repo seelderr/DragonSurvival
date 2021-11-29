@@ -9,6 +9,8 @@ import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -47,6 +49,13 @@ public class SpikeAbility extends ActiveDragonAbility
 		}
 		
 		return components;
+	}
+	
+	@OnlyIn( Dist.CLIENT )
+	public ArrayList<ITextComponent> getLevelUpInfo(){
+		ArrayList<ITextComponent> list = super.getLevelUpInfo();
+		list.add(new TranslationTextComponent("ds.skill.damage", "+2"));
+		return list;
 	}
 	
 	@Override

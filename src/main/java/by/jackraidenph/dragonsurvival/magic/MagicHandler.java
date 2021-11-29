@@ -10,10 +10,13 @@ import by.jackraidenph.dragonsurvival.magic.abilities.Passives.SpectralImpactAbi
 import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.network.magic.SyncPotionAddedEffect;
 import by.jackraidenph.dragonsurvival.network.magic.SyncPotionRemovedEffect;
+import by.jackraidenph.dragonsurvival.registration.BlockInit;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
 import by.jackraidenph.dragonsurvival.util.DragonType;
+import net.minecraft.block.AbstractFurnaceBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.CauldronBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -57,6 +60,31 @@ public class MagicHandler
 							|| blockBelow.getMaterial() == Material.ICE || player.hasEffect(DragonEffects.CHARGED) || player.hasEffect(DragonEffects.PEACE)) {
 						return true;
 					}
+					
+					if(blockBelow.getBlock() == BlockInit.smallSeaNest || blockBelow.getBlock() == BlockInit.mediumSeaNest || blockBelow.getBlock() == BlockInit.bigSeaNest){
+						return true;
+					}
+					
+					if(blockBelow.getBlock() == Blocks.CAULDRON){
+						if(blockBelow.hasProperty(CauldronBlock.LEVEL)) {
+							int level = blockBelow.getValue(CauldronBlock.LEVEL);
+							
+							if(level > 0){
+								return true;
+							}
+						}
+					}
+					
+					if(feetBlock.getBlock() == Blocks.CAULDRON){
+						if(feetBlock.hasProperty(CauldronBlock.LEVEL)) {
+							int level = feetBlock.getValue(CauldronBlock.LEVEL);
+							
+							if(level > 0){
+								return true;
+							}
+						}
+					}
+					
 					break;
 				
 				case FOREST:
@@ -65,9 +93,15 @@ public class MagicHandler
 					}
 					
 					if (player.hasEffect(DragonEffects.DRAIN) || player.hasEffect(DragonEffects.MAGIC)
-							|| blockBelow.getMaterial() == Material.GRASS || feetBlock.getMaterial() == Material.PLANT || feetBlock.getMaterial() == Material.GRASS)  {
+					    || blockBelow.getMaterial() == Material.PLANT || blockBelow.getMaterial() == Material.REPLACEABLE_PLANT
+					    || feetBlock.getMaterial() == Material.PLANT || feetBlock.getMaterial() == Material.REPLACEABLE_PLANT)  {
 						return true;
 					}
+					
+					if(blockBelow.getBlock() == BlockInit.smallForestNest || blockBelow.getBlock() == BlockInit.mediumForestNest || blockBelow.getBlock() == BlockInit.bigForestNest){
+						return true;
+					}
+					
 					break;
 				
 				case CAVE:
@@ -77,6 +111,20 @@ public class MagicHandler
 						|| player.hasEffect(DragonEffects.BURN) || player.hasEffect(DragonEffects.FIRE)) {
 						return true;
 					}
+					
+					if(blockBelow.getBlock() == BlockInit.smallCaveNest || blockBelow.getBlock() == BlockInit.mediumCaveNest || blockBelow.getBlock() == BlockInit.bigCaveNest){
+						return true;
+					}
+					
+					//If cave dragon is ontop of a burning furnace
+					if(blockBelow.getBlock() instanceof AbstractFurnaceBlock){
+						if(blockBelow.hasProperty(AbstractFurnaceBlock.LIT)) {
+							if (blockBelow.getValue(AbstractFurnaceBlock.LIT)) {
+								return true;
+							}
+						}
+					}
+					
 					break;
 			}
 			
@@ -116,17 +164,19 @@ public class MagicHandler
 				BlockState bl = player.getFeetBlockState();
 				BlockState below = player.level.getBlockState(player.blockPosition().below());
 				
-				if (bl.getMaterial() == Material.PLANT || bl.getMaterial() == Material.GRASS || below.getMaterial() == Material.PLANT || below.getMaterial() == Material.GRASS) {
+				if (bl.getMaterial() == Material.PLANT || bl.getMaterial() == Material.REPLACEABLE_PLANT || bl.getMaterial() == Material.GRASS || below.getMaterial() == Material.PLANT || below.getMaterial() == Material.REPLACEABLE_PLANT) {
 					player.addEffect(new EffectInstance(Effects.INVISIBILITY, 10, 0, false, false));
 				}
 				
 				player.addEffect(new EffectInstance(Effects.MOVEMENT_SPEED, 20, 2, false, false));
 			}
 			
-			if (cap.getCurrentlyCasting() != null && cap.getCurrentlyCasting().getCastingSlowness() > 0) {
-				player.addEffect(new EffectInstance(Effects.MOVEMENT_SLOWDOWN, 10, cap.getCurrentlyCasting().getCastingSlowness(), false, false));
-				player.addEffect(new EffectInstance(Effects.JUMP, 10, -cap.getCurrentlyCasting().getCastingSlowness(), false, false));
-				player.addEffect(new EffectInstance(Effects.SLOW_FALLING, 10, 0, false, false));
+			if(!player.isCreative()) {
+				if (cap.getCurrentlyCasting() != null && cap.getCurrentlyCasting().getCastingSlowness() > 0) {
+					player.addEffect(new EffectInstance(Effects.MOVEMENT_SLOWDOWN, 10, cap.getCurrentlyCasting().getCastingSlowness(), false, false));
+					player.addEffect(new EffectInstance(Effects.JUMP, 10, -cap.getCurrentlyCasting().getCastingSlowness(), false, false));
+					player.addEffect(new EffectInstance(Effects.SLOW_FALLING, 10, 0, false, false));
+				}
 			}
 		});
 	}

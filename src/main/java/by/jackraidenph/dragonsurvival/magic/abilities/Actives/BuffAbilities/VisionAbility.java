@@ -9,9 +9,13 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -44,6 +48,8 @@ public class VisionAbility extends ActiveDragonAbility
 		if(effect == DragonEffects.WATER_VISION) {
 			player.addEffect(new EffectInstance(Effects.NIGHT_VISION, Functions.secondsToTicks(getDuration()), 0, false, false));
 		}
+		
+		player.level.playLocalSound(player.position().x, player.position().y + 0.5, player.position().z, SoundEvents.UI_TOAST_IN, SoundCategory.PLAYERS, 5F, 0.1F, false);
 	}
 	
 	@Override
@@ -57,6 +63,13 @@ public class VisionAbility extends ActiveDragonAbility
 		}
 		
 		return components;
+	}
+	
+	@OnlyIn( Dist.CLIENT )
+	public ArrayList<ITextComponent> getLevelUpInfo(){
+		ArrayList<ITextComponent> list = super.getLevelUpInfo();
+		list.add(new TranslationTextComponent("ds.skill.duration.seconds", "+" + (effect == DragonEffects.LAVA_VISION ? 45 : 90)));
+		return list;
 	}
 	
 	@Override

@@ -7,9 +7,13 @@ import by.jackraidenph.dragonsurvival.registration.ClientModEvents;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.EffectInstance;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -42,6 +46,7 @@ public class HunterAbility extends ActiveDragonAbility
 	{
 		super.onActivation(player);
 		player.addEffect(new EffectInstance(DragonEffects.HUNTER, Functions.secondsToTicks(getDuration()), getLevel() - 1));
+		player.level.playLocalSound(player.position().x, player.position().y + 0.5, player.position().z, SoundEvents.UI_TOAST_IN, SoundCategory.PLAYERS, 5F, 0.1F, false);
 	}
 	
 	@Override
@@ -68,5 +73,13 @@ public class HunterAbility extends ActiveDragonAbility
 		}
 		
 		return components;
+	}
+	
+	@OnlyIn( Dist.CLIENT )
+	public ArrayList<ITextComponent> getLevelUpInfo(){
+		ArrayList<ITextComponent> list = super.getLevelUpInfo();
+		list.add(new TranslationTextComponent("ds.skill.duration.seconds", "+60"));
+		list.add(new TranslationTextComponent("ds.skill.damage", "+1.5X"));
+		return list;
 	}
 }

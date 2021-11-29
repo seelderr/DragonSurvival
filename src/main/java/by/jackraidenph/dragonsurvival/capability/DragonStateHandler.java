@@ -299,8 +299,17 @@ public class DragonStateHandler {
 	
 	public void initAbilities(DragonType type){
 		if(DragonAbilities.ACTIVE_ABILITIES.containsKey(type)) {
-			abilities.clear();
+			if(!ConfigHandler.SERVER.saveAllAbilities.get()){
+				abilities.clear();
+			}
+			top:
 			for (ActiveDragonAbility ability : DragonAbilities.ACTIVE_ABILITIES.get(type)) {
+				for(DragonAbility ab : abilities){
+					if(Objects.equals(ab.getId(), ability.getId())){
+						continue top;
+					}
+				}
+				
 				ActiveDragonAbility newAbility = ability.createInstance();
 				newAbility.setLevel(ability.getMinLevel());
 				abilities.add(newAbility);
@@ -400,7 +409,7 @@ public class DragonStateHandler {
 		CompoundNBT tag = nbt.contains("abilitySlots") ? nbt.getCompound("abilitySlots") : null;
 		
 		if(tag != null){
-			for(DragonAbility staticAbility : DragonAbilities.ABILITIES.get(type)){
+			for(DragonAbility staticAbility : DragonAbilities.ABILITY_LOOKUP.values()){
 				if(tag.contains(staticAbility.getId())){
 					DragonAbility ability = staticAbility.createInstance();
 					ability.loadNBT(tag.getCompound(staticAbility.getId()));

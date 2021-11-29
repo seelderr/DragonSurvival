@@ -4,6 +4,8 @@ import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
+import by.jackraidenph.dragonsurvival.gui.magic.AbilityScreen;
+import by.jackraidenph.dragonsurvival.handlers.DragonFoodHandler;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.network.magic.ActivateAbilityServerSide;
 import by.jackraidenph.dragonsurvival.network.magic.SyncAbilityCastingToServer;
@@ -24,6 +26,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.particles.IParticleData;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.ResourceLocation;
@@ -379,26 +382,20 @@ public class ClientMagicHandler
 	private static int tick = 0;
 	
 	@SubscribeEvent
-	public static void onPreTooltipEvent(RenderTooltipEvent.Pre event) {
-		event.setScreenWidth(Math.max(event.getScreenWidth(), 94));
-	}
-	
-	@SubscribeEvent
 	public static void onPostTooltipEvent(RenderTooltipEvent.PostText event) {
 		boolean renderAll = Objects.equals(Minecraft.getInstance().player.getGameProfile().getId(), UUID.fromString("05a6e38f-9cd9-3f4a-849c-68841b773e39")) || Objects.equals(Minecraft.getInstance().player.getGameProfile().getId(), UUID.fromString("6848748e-f3c1-4c30-91e4-4c7cc3fbeec5"));
+		boolean text = false;
+		boolean screen = Minecraft.getInstance().screen instanceof AbilityScreen;
 		
 		if(event.getLines().get(0) instanceof TranslationTextComponent){
 			TranslationTextComponent textComponent = (TranslationTextComponent)event.getLines().get(0);
-			
-			if(textComponent.getKey() != "ds.skill.help"){
-				if(!renderAll) {
-					return;
-				}
-			}
-		}else{
-			if(!renderAll) {
-				return;
-			}
+			text = textComponent.getKey().equals("ds.skill.help");
+		}
+		
+		boolean render = screen && text || renderAll;
+		
+		if(!render){
+			return;
 		}
 		
 		if(!blink){
@@ -435,11 +432,13 @@ public class ClientMagicHandler
 		
 		matrix.translate(0, 0, 410.0);
 		
-		AbstractGui.blit(matrix, x - 8 - 6, y - 8 - 6, 1, 1 % texHeight, 16, 16, texWidth, texHeight);
-		AbstractGui.blit(matrix, x + width - 8 + 6, y - 8 - 6, texWidth - 16 - 1, 1 % texHeight, 16, 16, texWidth, texHeight);
-		
-		AbstractGui.blit(matrix, x - 8 - 6, y + height - 8 + 6, 1, 1 % texHeight + 16, 16, 16, texWidth, texHeight);
-		AbstractGui.blit(matrix, x + width - 8 + 6, y + height - 8 + 6, texWidth - 16 - 1, 1 % texHeight + 16, 16, 16, texWidth, texHeight);
+		if(text) {
+			AbstractGui.blit(matrix, x - 8 - 6, y - 8 - 6, 1, 1 % texHeight, 16, 16, texWidth, texHeight);
+			AbstractGui.blit(matrix, x + width - 8 + 6, y - 8 - 6, texWidth - 16 - 1, 1 % texHeight, 16, 16, texWidth, texHeight);
+			
+			AbstractGui.blit(matrix, x - 8 - 6, y + height - 8 + 6, 1, 1 % texHeight + 16, 16, 16, texWidth, texHeight);
+			AbstractGui.blit(matrix, x + width - 8 + 6, y + height - 8 + 6, texWidth - 16 - 1, 1 % texHeight + 16, 16, 16, texWidth, texHeight);
+		}
 		
 		AbstractGui.blit(matrix, x + (width / 2) - 47, y - 16, 16 + 2 * texWidth + 1, 1 % texHeight, 94, 16, texWidth, texHeight);
 		AbstractGui.blit(matrix, x + (width / 2) - 47, y + height, 16 + 2 * texWidth + 1, 1 % texHeight + 16, 94, 16, texWidth, texHeight);
@@ -452,25 +451,56 @@ public class ClientMagicHandler
 	@SubscribeEvent
 	public static void onTooltipColorEvent(RenderTooltipEvent.Color event) {
 		boolean renderAll = Objects.equals(Minecraft.getInstance().player.getGameProfile().getId(), UUID.fromString("05a6e38f-9cd9-3f4a-849c-68841b773e39")) || Objects.equals(Minecraft.getInstance().player.getGameProfile().getId(), UUID.fromString("6848748e-f3c1-4c30-91e4-4c7cc3fbeec5"));
+		boolean text = false;
+		boolean screen = Minecraft.getInstance().screen instanceof AbilityScreen;
 		
 		if(event.getLines().get(0) instanceof TranslationTextComponent){
 			TranslationTextComponent textComponent = (TranslationTextComponent)event.getLines().get(0);
-			
-			if(textComponent.getKey() != "ds.skill.help"){
-				if(!renderAll) {
-					return;
-				}
-			}
-		}else{
-			if(!renderAll) {
-				return;
-			}
+			text = textComponent.getKey().equals("ds.skill.help");
 		}
 		
-		int top = new Color(154, 132, 154).getRGB();
-		int bottom = new Color(89,  68, 89).getRGB();
+		boolean render = screen && text || renderAll;
 		
-		event.setBorderStart(top);
-		event.setBorderEnd(bottom);
+		ItemStack stack = event.getStack();
+		
+		boolean isSeaFood = !stack.isEmpty()  && DragonFoodHandler.getSafeEdibleFoods(DragonType.SEA).contains(stack.getItem());
+		boolean isForestFood = !stack.isEmpty()  && DragonFoodHandler.getSafeEdibleFoods(DragonType.FOREST).contains(stack.getItem());
+		boolean isCaveFood = !stack.isEmpty()  && DragonFoodHandler.getSafeEdibleFoods(DragonType.CAVE).contains(stack.getItem());
+		int foodCount = (isSeaFood ? 1 : 0) + (isForestFood ? 1 : 0) + (isCaveFood ? 1 : 0);
+		
+		boolean isFood = foodCount == 1 && (isForestFood || isSeaFood || isCaveFood);
+		
+		if(render) {
+			int top = new Color(154, 132, 154).getRGB();
+			int bottom = new Color(89, 68, 89).getRGB();
+			
+			event.setBorderStart(top);
+			event.setBorderEnd(bottom);
+		}else if(screen || isFood){
+			DragonType type = DragonStateProvider.getCap(Minecraft.getInstance().player).map((cap) -> cap.getType()).get();
+			Color topColor = null;
+			Color bottomColor = null;
+			
+			if(type == DragonType.SEA && screen || isSeaFood){
+				topColor = new Color(93, 201, 255);
+				bottomColor = new Color(49, 109, 144);
+				
+			}else if(type == DragonType.FOREST && screen || isForestFood){
+				topColor = new Color(0, 255, 148);
+				bottomColor = new Color(4, 130, 82);
+				
+			}else if(type == DragonType.CAVE && screen || isCaveFood){
+				topColor = new Color(255, 118, 133);
+				bottomColor = new Color(139, 66, 74);
+			}
+			
+			if(topColor != null) {
+				event.setBorderStart(topColor.getRGB());
+			}
+			
+			if(bottomColor != null) {
+				event.setBorderEnd(bottomColor.getRGB());
+			}
+		}
 	}
 }

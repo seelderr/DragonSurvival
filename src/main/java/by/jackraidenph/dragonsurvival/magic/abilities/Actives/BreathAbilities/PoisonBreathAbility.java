@@ -21,7 +21,13 @@ import net.minecraft.potion.Potion;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+
+import java.util.ArrayList;
 
 public class PoisonBreathAbility extends BreathAbility
 {
@@ -166,5 +172,12 @@ public class PoisonBreathAbility extends BreathAbility
 
 	public int getDamage(){
 		return getDamage(getLevel());
+	}
+	
+	@OnlyIn( Dist.CLIENT )
+	public ArrayList<ITextComponent> getLevelUpInfo(){
+		ArrayList<ITextComponent> list = super.getLevelUpInfo();
+		list.add(new TranslationTextComponent("ds.skill.damage", "+1"));
+		return list;
 	}
 }

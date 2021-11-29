@@ -22,10 +22,15 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 
 public class LightningBreathAbility extends BreathAbility
@@ -202,9 +207,16 @@ public class LightningBreathAbility extends BreathAbility
 	public static int getDamage(int level){
 		return level;
 	}
-
+	
 	public int getDamage(){
 		return getDamage(getLevel());
+	}
+	
+	@OnlyIn( Dist.CLIENT )
+	public ArrayList<ITextComponent> getLevelUpInfo(){
+		ArrayList<ITextComponent> list = super.getLevelUpInfo();
+		list.add(new TranslationTextComponent("ds.skill.damage", "+1"));
+		return list;
 	}
 	
 	public static boolean isValidTarget(LivingEntity attacker, LivingEntity target){

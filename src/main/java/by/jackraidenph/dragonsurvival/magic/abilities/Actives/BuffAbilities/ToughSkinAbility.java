@@ -7,6 +7,8 @@ import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -59,4 +61,11 @@ public class ToughSkinAbility extends AoeBuffAbility
 	}
 	
 	public int getCastingSlowness() { return 10; }
+	
+	@OnlyIn( Dist.CLIENT )
+	public ArrayList<ITextComponent> getLevelUpInfo(){
+		ArrayList<ITextComponent> list = super.getLevelUpInfo();
+		list.add(new TranslationTextComponent("ds.skill.defence", "+2"));
+		return list;
+	}
 }

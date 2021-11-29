@@ -10,6 +10,7 @@ import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.client.gui.GuiUtils;
@@ -70,6 +71,11 @@ public class SkillProgressButton extends Button {
 			if(ability != null) {
 				TextFormatting format = cap.getType() == DragonType.CAVE ? TextFormatting.DARK_RED : cap.getType() == DragonType.SEA ? TextFormatting.AQUA : cap.getType() == DragonType.FOREST ? TextFormatting.GREEN : TextFormatting.WHITE;
 				ArrayList<ITextComponent> description = new ArrayList<>(Arrays.asList(ability.getTitle().withStyle(format).append(" (" + ability.getLevel() + " / " + ability.getMaxLevel() + ")")));
+				
+				if(ability.getLevelUpInfo().size() > 0){
+					description.add(new StringTextComponent(""));
+					description.addAll(ability.getLevelUpInfo());
+				}
 				
 				int requiredLevel = ability.getCurrentRequiredLevel();
 				

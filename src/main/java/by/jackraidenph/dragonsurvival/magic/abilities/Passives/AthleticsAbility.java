@@ -4,6 +4,8 @@ import by.jackraidenph.dragonsurvival.magic.common.PassiveDragonAbility;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.ArrayList;
 
@@ -30,11 +32,10 @@ public class AthleticsAbility extends PassiveDragonAbility
 		return new TranslationTextComponent("ds.skill.description." + getId(), getDuration(), getLevel() == getMaxLevel() ? "III" : "II");
 	}
 	
-	@Override
-	public ArrayList<ITextComponent> getInfo()
-	{
-		ArrayList<ITextComponent> list = super.getInfo();
-		
+	@OnlyIn( Dist.CLIENT )
+	public ArrayList<ITextComponent> getLevelUpInfo(){
+		ArrayList<ITextComponent> list = super.getLevelUpInfo();
+		list.add(new TranslationTextComponent("ds.skill.duration.seconds", "+1"));
 		return list;
 	}
 }

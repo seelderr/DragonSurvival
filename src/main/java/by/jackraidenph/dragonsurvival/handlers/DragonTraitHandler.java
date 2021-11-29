@@ -17,6 +17,8 @@ import by.jackraidenph.dragonsurvival.util.DamageSources;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.CauldronBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
@@ -44,9 +46,35 @@ public class DragonTraitHandler {
         DragonStateProvider.getCap(playerEntity).ifPresent(dragonStateHandler -> {
             if (dragonStateHandler.isDragon()) {
                 World world = playerEntity.level;
+                BlockState feetBlock = playerEntity.getFeetBlockState();
                 BlockState blockUnder = world.getBlockState(playerEntity.blockPosition().below());
                 Block block = blockUnder.getBlock();
                 Biome biome = world.getBiome(playerEntity.blockPosition());
+    
+                
+                //Because it is used for both cave and sea dragon it is added here
+                boolean isInCauldron = false;
+                if(blockUnder.getBlock() == Blocks.CAULDRON){
+                    if(blockUnder.hasProperty(CauldronBlock.LEVEL)) {
+                        int level = blockUnder.getValue(CauldronBlock.LEVEL);
+            
+                        if(level > 0){
+                            isInCauldron = true;
+                        }
+                    }
+                }else if(feetBlock.getBlock() == Blocks.CAULDRON){
+                    if(feetBlock.hasProperty(CauldronBlock.LEVEL)) {
+                        int level = feetBlock.getValue(CauldronBlock.LEVEL);
+        
+                        if(level > 0){
+                            isInCauldron = true;
+                        }
+                    }
+                }
+                
+                boolean isInSeaBlock = SpecificsHandler.SEA_DRAGON_HYDRATION_BLOCKS != null &&
+                                        (SpecificsHandler.SEA_DRAGON_HYDRATION_BLOCKS.contains(block)
+                                        || SpecificsHandler.SEA_DRAGON_HYDRATION_BLOCKS.contains(feetBlock.getBlock()) || isInCauldron);
                 
                 if (!world.isClientSide && ConfigHandler.SERVER.bonuses.get() && ConfigHandler.SERVER.speedupEffectLevel.get() > 0 && SpecificsHandler.DRAGON_SPEEDUP_BLOCKS != null && SpecificsHandler.DRAGON_SPEEDUP_BLOCKS.get(dragonStateHandler.getType()).contains(block)) {
                     int duration =
@@ -70,6 +98,8 @@ public class DragonTraitHandler {
                     }
                 }
                 
+
+                
                 switch (dragonStateHandler.getType()) {
                     case CAVE:
                         DragonAbility contrastShower = dragonStateHandler.getAbility(DragonAbilities.CONTRAST_SHOWER);
@@ -82,15 +112,13 @@ public class DragonTraitHandler {
     
                         if (ConfigHandler.SERVER.penalties.get() && !playerEntity.hasEffect(DragonEffects.FIRE) && !playerEntity.isCreative() && !playerEntity.isSpectator() && ((playerEntity.isInWaterOrBubble() && ConfigHandler.SERVER.caveWaterDamage.get() != 0.0)
                              || (playerEntity.isInWaterOrRain() && !playerEntity.isInWater() && ConfigHandler.SERVER.caveRainDamage.get() != 0.0)
-                             || (SpecificsHandler.SEA_DRAGON_HYDRATION_BLOCKS != null && (SpecificsHandler.SEA_DRAGON_HYDRATION_BLOCKS.contains(block)
-                             || SpecificsHandler.SEA_DRAGON_HYDRATION_BLOCKS.contains(world.getBlockState(playerEntity.blockPosition()).getBlock())) && ConfigHandler.SERVER.caveRainDamage.get() != 0.0))) {
+                             || isInSeaBlock && ConfigHandler.SERVER.caveRainDamage.get() != 0.0)) {
                             
                             if (playerEntity.isInWaterOrBubble() && playerEntity.tickCount % 10 == 0 && ConfigHandler.SERVER.caveWaterDamage.get() != 0.0){
                                 playerEntity.hurt(DamageSources.WATER_BURN, ConfigHandler.SERVER.caveWaterDamage.get().floatValue());
                                 
                           }else if (((playerEntity.isInWaterOrRain() && !playerEntity.isInWaterOrBubble())
-                                      || (SpecificsHandler.SEA_DRAGON_HYDRATION_BLOCKS != null && (SpecificsHandler.SEA_DRAGON_HYDRATION_BLOCKS.contains(block)
-                                      || SpecificsHandler.SEA_DRAGON_HYDRATION_BLOCKS.contains(world.getBlockState(playerEntity.blockPosition()).getBlock())))) && ConfigHandler.SERVER.caveRainDamage.get() != 0.0) {
+                                      || isInSeaBlock) && ConfigHandler.SERVER.caveRainDamage.get() != 0.0) {
                              
                               if(dragonStateHandler.getDebuffData().timeInRain >= maxRainTime) {
                                   if(playerEntity.tickCount % 40 == 0) {
@@ -182,7 +210,7 @@ public class DragonTraitHandler {
                             playerEntity.setAirSupply(playerEntity.getMaxAirSupply());
                         if (ConfigHandler.SERVER.penalties.get() && !playerEntity.hasEffect(DragonEffects.PEACE) && maxTicksOutofWater > 0 && !playerEntity.isCreative() && !playerEntity.isSpectator()) {
                             DragonStateHandler.DragonDebuffData debuffData = dragonStateHandler.getDebuffData();
-                            if (!playerEntity.isInWaterRainOrBubble() && (SpecificsHandler.SEA_DRAGON_HYDRATION_BLOCKS != null && !SpecificsHandler.SEA_DRAGON_HYDRATION_BLOCKS.contains(block) && !SpecificsHandler.SEA_DRAGON_HYDRATION_BLOCKS.contains(world.getBlockState(playerEntity.blockPosition()).getBlock()))) {
+                            if (!playerEntity.isInWaterRainOrBubble() && !isInSeaBlock) {
                                 if (debuffData.timeWithoutWater < maxTicksOutofWater * 2){
                                     boolean hotBiome = biome.getPrecipitation() == RainType.NONE && biome.getBaseTemperature() > 1.0;
                                     double timeIncrement = (world.isNight() ? 0.5F : 1.0) * (hotBiome ? biome.getBaseTemperature() : 1F);

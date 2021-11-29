@@ -9,6 +9,8 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -52,6 +54,14 @@ public class FireBallAbility extends ActiveDragonAbility
 	
 	public float getDamage(){
 		return getDamage(getLevel());
+	}
+	
+	@OnlyIn( Dist.CLIENT )
+	public ArrayList<ITextComponent> getLevelUpInfo(){
+		ArrayList<ITextComponent> list = super.getLevelUpInfo();
+		list.add(new TranslationTextComponent("ds.skill.damage", "+" + ConfigHandler.SERVER.fireballDamage.get().floatValue()));
+		list.add(new TranslationTextComponent("ds.skill.aoe", "+1"));
+		return list;
 	}
 	
 	@Override
