@@ -11,7 +11,7 @@ public class LightningBallModel extends AnimatedGeoModel<BallLightningEntity>
 	
 	@Override
 	public ResourceLocation getModelLocation(BallLightningEntity dragonEntity) {
-		return new ResourceLocation(DragonSurvivalMod.MODID, "geo/dragon_ball.geo.json");
+		return new ResourceLocation(DragonSurvivalMod.MODID, "geo/dragon_lightning_ball.geo.json");
 	}
 	
 	public void setCurrentTexture(ResourceLocation currentTexture) {
