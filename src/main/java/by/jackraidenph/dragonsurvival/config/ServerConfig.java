@@ -1,6 +1,7 @@
 package by.jackraidenph.dragonsurvival.config;
 
 import by.jackraidenph.dragonsurvival.util.DragonLevel;
+import com.google.common.collect.Lists;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.util.Arrays;
@@ -24,6 +25,12 @@ public class ServerConfig {
 	public final ForgeConfigSpec.DoubleValue newbornJump;
 	public final ForgeConfigSpec.DoubleValue youngJump;
 	public final ForgeConfigSpec.DoubleValue adultJump;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> allowedVehicles;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> blacklistedItems;
+	public final ForgeConfigSpec.ConfigValue<List<? extends Integer>> blacklistedSlots;
+	public final ForgeConfigSpec.BooleanValue alternateGrowing;
+	public final ForgeConfigSpec.IntValue alternateGrowingFrequency;
+	public final ForgeConfigSpec.DoubleValue alternateGrowingStep;
 
 	// Specifics
     public final ForgeConfigSpec.BooleanValue customDragonFoods;
@@ -133,6 +140,28 @@ public class ServerConfig {
 		creativeFlight = builder
 				.comment("Whether to use flight similar to creative rather then gliding")
 				.define("alternateFlight", false);
+		allowedVehicles = builder
+				.comment("List of rideable entities. Format: modid:id")
+				.defineList("allowedVehicles", Lists.newArrayList(), value -> value instanceof String);
+		blacklistedItems = builder
+				.comment("List of items that disallowed to be used by dragons. Format: item/tag:modid:id")
+				.defineList("blacklistedItems", Arrays.asList(
+						"minecraft:bow"
+				), this::isValidItemConfig);
+		blacklistedSlots = builder
+				.comment("List of slots to handle blacklistedItems option")
+				.defineList("blacklistedSlots", Arrays.asList(
+						0, 1, 2, 3, 4, 5, 6, 7, 8, 45
+				), value -> value instanceof Integer);
+		alternateGrowing = builder
+				.comment("Defines if dragon should grow without requirement of catalyst items")
+				.define("alternateGrowing", false);
+		alternateGrowingFrequency = builder
+				.comment("Speed of alternateGrowing effect in seconds")
+				.defineInRange("alternateGrowingFrequency", 60, 0, Integer.MAX_VALUE);
+		alternateGrowingStep = builder
+				.comment("Amount of additional dragon size per each iteration of alternateGrowingFrequency for alternateGrowing effect")
+				.defineInRange("alternateGrowingStep", 0.1, 0, Double.MAX_VALUE);
 
 		// Specifics
 		builder.pop().push("specifics");
