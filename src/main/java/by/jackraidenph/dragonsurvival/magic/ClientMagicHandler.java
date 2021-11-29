@@ -24,6 +24,7 @@ import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -31,6 +32,7 @@ import net.minecraft.particles.IParticleData;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.ITextProperties;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -386,10 +388,25 @@ public class ClientMagicHandler
 		boolean renderAll = Objects.equals(Minecraft.getInstance().player.getGameProfile().getId(), UUID.fromString("05a6e38f-9cd9-3f4a-849c-68841b773e39")) || Objects.equals(Minecraft.getInstance().player.getGameProfile().getId(), UUID.fromString("6848748e-f3c1-4c30-91e4-4c7cc3fbeec5"));
 		boolean text = false;
 		boolean screen = Minecraft.getInstance().screen instanceof AbilityScreen;
+		String translatedText = I18n.get("ds.skill.help");
+		String mergedString = "";
 		
-		if(event.getLines().get(0) instanceof TranslationTextComponent){
-			TranslationTextComponent textComponent = (TranslationTextComponent)event.getLines().get(0);
-			text = textComponent.getKey().equals("ds.skill.help");
+		for(ITextProperties comp : event.getLines()) {
+			if (comp instanceof TranslationTextComponent) {
+				TranslationTextComponent textComponent = (TranslationTextComponent)comp;
+				if(textComponent.getKey().equals("ds.skill.help")){
+					text = true;
+					break;
+				}
+			}
+			
+			mergedString += comp.getString();
+		}
+		
+		if(!text){
+			if(mergedString.replace("\n", "").replace(" ", "").contains(translatedText.replace("\n", "").replace(" ", ""))){
+				text = true;
+			}
 		}
 		
 		boolean render = screen && text || renderAll;
@@ -453,10 +470,25 @@ public class ClientMagicHandler
 		boolean renderAll = Objects.equals(Minecraft.getInstance().player.getGameProfile().getId(), UUID.fromString("05a6e38f-9cd9-3f4a-849c-68841b773e39")) || Objects.equals(Minecraft.getInstance().player.getGameProfile().getId(), UUID.fromString("6848748e-f3c1-4c30-91e4-4c7cc3fbeec5"));
 		boolean text = false;
 		boolean screen = Minecraft.getInstance().screen instanceof AbilityScreen;
+		String translatedText = I18n.get("ds.skill.help");
+		String mergedString = "";
 		
-		if(event.getLines().get(0) instanceof TranslationTextComponent){
-			TranslationTextComponent textComponent = (TranslationTextComponent)event.getLines().get(0);
-			text = textComponent.getKey().equals("ds.skill.help");
+		for(ITextProperties comp : event.getLines()) {
+			if (comp instanceof TranslationTextComponent) {
+				TranslationTextComponent textComponent = (TranslationTextComponent)comp;
+				if(textComponent.getKey().equals("ds.skill.help")){
+					text = true;
+					break;
+				}
+			}
+			
+			mergedString += comp.getString();
+		}
+		
+		if(!text){
+			if(mergedString.replace("\n", "").replace(" ", "").contains(translatedText.replace("\n", "").replace(" ", ""))){
+				text = true;
+			}
 		}
 		
 		boolean render = screen && text || renderAll;
@@ -468,7 +500,7 @@ public class ClientMagicHandler
 		boolean isCaveFood = !stack.isEmpty()  && DragonFoodHandler.getSafeEdibleFoods(DragonType.CAVE).contains(stack.getItem());
 		int foodCount = (isSeaFood ? 1 : 0) + (isForestFood ? 1 : 0) + (isCaveFood ? 1 : 0);
 		
-		boolean isFood = foodCount == 1 && (isForestFood || isSeaFood || isCaveFood);
+		boolean isFood = foodCount == 1;
 		
 		if(render) {
 			int top = new Color(154, 132, 154).getRGB();
