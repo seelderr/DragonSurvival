@@ -60,7 +60,9 @@ public class DragonContainer extends RecipeBookContainer<CraftingInventory> {
                 craftingSlots.add(s);
             }
         }
-
+    
+        this.addSlot(new Slot(playerInventory, 40, 26, 62));
+        
         for (int k = 0; k < 4; ++k) {
             final EquipmentSlotType equipmentslottype = VALID_EQUIPMENT_SLOTS[k];
             this.addSlot(new Slot(playerInventory, 39 - k, 8, 8 + k * 18) {

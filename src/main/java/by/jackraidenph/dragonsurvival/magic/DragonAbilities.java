@@ -99,7 +99,7 @@ public class DragonAbilities
 		
 		SEA_MAGIC = register(DragonType.SEA, new MagicAbility("sea_magic", "sea/sea_magic", 0, 10));
 		SEA_ATHLETICS = register(DragonType.SEA, new AthleticsAbility("sea_athletics", "sea/sea_athletics", 0, 5));
-		WATER = register(DragonType.SEA, new WaterAbility("water", "sea/water", 0, 5));
+		WATER = register(DragonType.SEA, new WaterAbility("water", "sea/water", 0, 6));
 		SPECTRAL_IMPACT = register(DragonType.SEA, new SpectralImpactAbility("spectral_impact", "sea/spectral_impact", 0, 3));
 		
 		SEA_CLAWS_AND_TEETH = register(DragonType.SEA, new DragonClawsAbility("sea_claws_and_teeth", "sea/sea_claws_and_teeth", 1, 1));

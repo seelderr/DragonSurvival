@@ -78,7 +78,6 @@ public class AbilityButton extends Button {
 		
 		if(ability.getInfo().size() > 0){
 			desc.append("\n\n");
-			desc.append(new TranslationTextComponent("ds.skill.info.hold_shift").withStyle(TextFormatting.DARK_GRAY));
 		}
 		
 		List<IReorderingProcessor> description = Minecraft.getInstance().font.split(desc, width - 7);
@@ -168,6 +167,9 @@ public class AbilityButton extends Button {
 			Minecraft.getInstance().font.draw(stack, description.get(k1), (float)(this.x + 5), (float)(origYPos + 47 + k1 * 9), -5592406);
 		}
 		
+		if(ability.getInfo().size() > 0){
+			AbstractGui.drawCenteredString(stack, Minecraft.getInstance().font, new TranslationTextComponent("ds.skill.info.hold_shift").withStyle(TextFormatting.DARK_GRAY), this.x + (width / 2), (origYPos + 47 + (description.size() - 1) * 9), 0);
+		}
 		
 		Minecraft.getInstance().textureManager.bind(ability.getIcon());
 		this.blit(stack, this.x + 5, origYPos + 5, 0, 0, 16, 16, 16, 16);

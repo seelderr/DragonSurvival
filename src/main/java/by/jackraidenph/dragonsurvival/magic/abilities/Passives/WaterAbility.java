@@ -14,7 +14,7 @@ public class WaterAbility extends PassiveDragonAbility
 	}
 	
 	public int getDuration(){
-		return 30 * getLevel();
+		return 60 * getLevel();
 	}
 	
 	@Override

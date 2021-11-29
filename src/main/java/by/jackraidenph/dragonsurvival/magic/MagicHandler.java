@@ -14,9 +14,7 @@ import by.jackraidenph.dragonsurvival.registration.DragonEffects;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.DoublePlantBlock;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.material.MaterialColor;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.Effect;
@@ -50,6 +48,8 @@ public class MagicHandler
 	
 	public static boolean isPlayerInGoodConditions(PlayerEntity player){
 		BlockState blockBelow = player.level.getBlockState(player.blockPosition().below());
+		BlockState feetBlock = player.getFeetBlockState();
+		
 		return DragonStateProvider.getCap(player).map(cap -> {
 			switch (cap.getType()) {
 				case SEA:
@@ -60,8 +60,12 @@ public class MagicHandler
 					break;
 				
 				case FOREST:
-					if (player.level.canSeeSky(player.blockPosition()) && player.level.isDay() || player.hasEffect(DragonEffects.DRAIN) || player.hasEffect(DragonEffects.MAGIC)
-							|| blockBelow.getMaterial() == Material.GRASS)  {
+					if(!player.level.canSeeSky(player.blockPosition()) || !player.level.isDay()){
+						return false;
+					}
+					
+					if (player.hasEffect(DragonEffects.DRAIN) || player.hasEffect(DragonEffects.MAGIC)
+							|| blockBelow.getMaterial() == Material.GRASS || feetBlock.getMaterial() == Material.PLANT || feetBlock.getMaterial() == Material.GRASS)  {
 						return true;
 					}
 					break;
@@ -112,7 +116,7 @@ public class MagicHandler
 				BlockState bl = player.getFeetBlockState();
 				BlockState below = player.level.getBlockState(player.blockPosition().below());
 				
-				if (bl.getBlock() instanceof DoublePlantBlock || below.getBlock() instanceof DoublePlantBlock || bl.getMaterial() == Material.REPLACEABLE_PLANT || below.getMaterial() == Material.REPLACEABLE_PLANT) {
+				if (bl.getMaterial() == Material.PLANT || bl.getMaterial() == Material.GRASS || below.getMaterial() == Material.PLANT || below.getMaterial() == Material.GRASS) {
 					player.addEffect(new EffectInstance(Effects.INVISIBILITY, 10, 0, false, false));
 				}
 				

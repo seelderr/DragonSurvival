@@ -69,7 +69,7 @@ public class DragonClawsAbility extends InnateDragonAbility
 		double bonusDamage = DragonStateProvider.getCap(Minecraft.getInstance().player).map((cap) -> (cap.getLevel() == DragonLevel.ADULT ? ConfigHandler.SERVER.adultBonusDamage.get() : cap.getLevel() == DragonLevel.YOUNG ? ConfigHandler.SERVER.youngBonusDamage.get() : ConfigHandler.SERVER.babyBonusDamage.get())).get();
 		
 		if(bonusDamage > 0.0) {
-			components.add(new TranslationTextComponent("ds.skill.damage", "+" + bonusDamage));
+			components.add(new TranslationTextComponent("ds.skill.claws.damage", "+" + bonusDamage));
 		}
 		
 		return components;

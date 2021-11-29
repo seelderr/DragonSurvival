@@ -21,8 +21,6 @@ import net.minecraft.potion.Potion;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.LightType;
-import net.minecraft.world.lighting.WorldLightManager;
 import net.minecraft.world.server.ServerWorld;
 
 public class PoisonBreathAbility extends BreathAbility
@@ -50,9 +48,7 @@ public class PoisonBreathAbility extends BreathAbility
 		double y = player.getY() + 1 + viewVector.y;
 		double z = player.getZ() + viewVector.z;
 		
-		WorldLightManager lightManager = player.level.getChunkSource().getLightEngine();
-		
-		if ((lightManager.getLayerListener(LightType.BLOCK).getLightValue(player.blockPosition()) < 3 && lightManager.getLayerListener(LightType.SKY).getLightValue(player.blockPosition()) < 3)) {
+		if (player.hasEffect(DragonEffects.STRESS)) {
 			if(player.level.isClientSide) {
 				if (player.tickCount % 10 == 0) {
 					player.playSound(SoundEvents.LAVA_EXTINGUISH, 0.25F, 1F);
