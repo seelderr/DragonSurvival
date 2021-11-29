@@ -25,6 +25,10 @@ public class ClientConfig {
 		notifyWingStatus = builder.comment("Notifies of wing status in chat message").define("notifyWingStatus", true);
 		clientDebugMessages = builder.define("Enable client-side debug messages", false);
 		
+		dragonInventory = builder
+				.comment("Should the default inventory be replaced as a dragon?")
+				.define("dragonInventory", true);
+		
 		builder.push("ui");
 		casterBarXPos = builder
 				.comment("The x position of the cast bar from the center of the screen")
@@ -46,9 +50,6 @@ public class ClientConfig {
 		dragonNameTags = builder
 				.comment("Show name tags for dragons.")
 				.define("dragonNameTags", false);
-		dragonInventory = builder
-				.comment("Should the default inventory be replaced as a dragon?")
-				.define("dragonInventory", true);
 		builder.pop();
 	}
 	

@@ -17,6 +17,7 @@ import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.*;
+import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
 import java.util.List;
@@ -27,6 +28,7 @@ public class AbilityButton extends Button {
 	public static final ResourceLocation BLANK_2_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/blank2.png");
 	public static final ResourceLocation WIDGETS_LOCATION = new ResourceLocation("textures/gui/advancements/widgets.png");
 	public static final ResourceLocation TOOLTIP_BARS = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/tooltip_bars.png");
+	public static final ResourceLocation INVALID_ICON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/disabled.png");
 	
 	private DragonAbility ability;
 	private AbilityScreen screen;
@@ -61,6 +63,13 @@ public class AbilityButton extends Button {
 		
 		Minecraft.getInstance().getTextureManager().bind(ability.getIcon());
 		blit(stack, x, y, 0, 0, 18, 18, 18, 18);
+		
+		if(ability.isDisabled()){
+			GL11.glEnable(GL11.GL_BLEND);
+			Minecraft.getInstance().textureManager.bind(INVALID_ICON);
+			this.blit(stack, x, y, 0, 0, 18, 18, 18, 18);
+			GL11.glDisable(GL11.GL_BLEND);
+		}
 	}
 	
 	@Override
@@ -173,6 +182,13 @@ public class AbilityButton extends Button {
 		
 		Minecraft.getInstance().textureManager.bind(ability.getIcon());
 		this.blit(stack, this.x + 5, origYPos + 5, 0, 0, 16, 16, 16, 16);
+		
+		if(ability.isDisabled()){
+			GL11.glEnable(GL11.GL_BLEND);
+			Minecraft.getInstance().textureManager.bind(INVALID_ICON);
+			this.blit(stack, this.x + 5, origYPos + 5, 0, 0, 16, 16, 16, 16);
+			GL11.glDisable(GL11.GL_BLEND);
+		}
 	}
 	
 	protected void render9Sprite(MatrixStack p_238691_1_, int p_238691_2_, int p_238691_3_, int p_238691_4_, int p_238691_5_, int p_238691_6_, int p_238691_7_, int p_238691_8_, int p_238691_9_, int p_238691_10_) {

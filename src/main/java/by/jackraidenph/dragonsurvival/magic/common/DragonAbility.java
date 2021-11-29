@@ -69,6 +69,12 @@ public abstract class DragonAbility
     @OnlyIn( Dist.CLIENT )
     public ArrayList<ITextComponent> getInfo(){return new ArrayList<>();}
     
+    @OnlyIn( Dist.CLIENT )
+    public boolean isDisabled() {
+        return false;
+    }
+    
+    
     public int getMaxLevel()
     {
         return maxLevel;
