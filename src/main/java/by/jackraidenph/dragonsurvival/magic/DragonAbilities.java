@@ -77,8 +77,8 @@ public class DragonAbilities
 	public static void initAbilities(){
 		//Forest dragon
 		POISONOUS_BREATH = register(DragonType.FOREST, new PoisonBreathAbility("poisonous_breath", "forest/poisonous_breath", 1, 4, 2, 10, Functions.secondsToTicks(5), new Integer[]{0, 10, 30, 50}));
-		SPIKE = register(DragonType.FOREST, new SpikeAbility("spike", "forest/spike", 0, 4, 1, 0, Functions.secondsToTicks(1), new Integer[]{0, 20, 30, 40}));
-		INSPIRATION = register(DragonType.FOREST, new AoeBuffAbility(new EffectInstance(Effects.DIG_SPEED, 0, 2), 5, ParticleRegistry.fireBeaconParticle, "inspiration", "forest/inspiration", 0, 3, 5, Functions.secondsToTicks(5), Functions.secondsToTicks(30), new Integer[]{0, 15, 35}));
+		SPIKE = register(DragonType.FOREST, new SpikeAbility("spike", "forest/spike", 0, 4, 3, 0, Functions.secondsToTicks(3), new Integer[]{0, 20, 30, 40}));
+		INSPIRATION = register(DragonType.FOREST, new AoeBuffAbility(new EffectInstance(Effects.DIG_SPEED, 0, 2), 5, ParticleRegistry.fireBeaconParticle, "inspiration", "forest/inspiration", 0, 3, 5, Functions.secondsToTicks(5), Functions.secondsToTicks(90), new Integer[]{0, 15, 35}));
 		HUNTER = register(DragonType.FOREST, new HunterAbility("hunter", "forest/hunter", 0, 2, 3, Functions.secondsToTicks(3), Functions.secondsToTicks(30), new Integer[]{0, 25}));
 		
 		FOREST_MAGIC = register(DragonType.FOREST, new MagicAbility("forest_magic", "forest/forest_magic", 0, 10));

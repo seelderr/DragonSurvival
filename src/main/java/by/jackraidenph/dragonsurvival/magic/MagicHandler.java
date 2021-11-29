@@ -53,21 +53,24 @@ public class MagicHandler
 		return DragonStateProvider.getCap(player).map(cap -> {
 			switch (cap.getType()) {
 				case SEA:
-					if (player.isInWaterRainOrBubble() || blockBelow.getMaterial() == Material.SNOW || blockBelow.getMaterial() == Material.WATER || player.hasEffect(DragonEffects.CHARGED)) {
+					if (player.isInWaterRainOrBubble() || blockBelow.getMaterial() == Material.SNOW || blockBelow.getMaterial() == Material.WATER || blockBelow.getBlock() == Blocks.WET_SPONGE
+							|| blockBelow.getMaterial() == Material.ICE || player.hasEffect(DragonEffects.CHARGED) || player.hasEffect(DragonEffects.PEACE)) {
 						return true;
 					}
 					break;
 				
 				case FOREST:
-					if (player.level.canSeeSky(player.blockPosition()) && player.level.isDay() || player.hasEffect(DragonEffects.DRAIN)) {
+					if (player.level.canSeeSky(player.blockPosition()) && player.level.isDay() || player.hasEffect(DragonEffects.DRAIN) || player.hasEffect(DragonEffects.MAGIC)
+							|| blockBelow.getMaterial() == Material.GRASS)  {
 						return true;
 					}
 					break;
 				
 				case CAVE:
 					if (player.isInLava() || blockBelow.getMaterial() == Material.LAVA || blockBelow.getMaterial() == Material.FIRE || player.isOnFire()
-					    || blockBelow.getMaterial().getColor() == MaterialColor.NETHER || blockBelow.getBlock() == Blocks.MAGMA_BLOCK
-					    || blockBelow.getBlock() == Blocks.NETHERRACK || player.hasEffect(DragonEffects.BURN)) {
+					    || blockBelow.getBlock() == Blocks.CAMPFIRE || blockBelow.getBlock() == Blocks.SOUL_CAMPFIRE || blockBelow.getBlock() == Blocks.BLAST_FURNACE
+						|| blockBelow.getBlock() == Blocks.SMOKER || blockBelow.getBlock() == Blocks.FURNACE || blockBelow.getBlock() == Blocks.MAGMA_BLOCK
+						|| player.hasEffect(DragonEffects.BURN) || player.hasEffect(DragonEffects.FIRE)) {
 						return true;
 					}
 					break;

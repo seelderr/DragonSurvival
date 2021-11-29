@@ -21,7 +21,7 @@ public class SpikeAbility extends ActiveDragonAbility
 	}
 	
 	public int getDamage(){
-		return 5 * getLevel();
+		return 2 * getLevel();
 	}
 	
 	@Override
