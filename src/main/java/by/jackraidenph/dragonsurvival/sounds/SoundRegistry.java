@@ -1,4 +1,4 @@
-package by.jackraidenph.dragonsurvival.registration;
+package by.jackraidenph.dragonsurvival.sounds;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import net.minecraft.util.ResourceLocation;
@@ -9,8 +9,10 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.IForgeRegistry;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
-public class Sounds {
+public class SoundRegistry
+{
     public static SoundEvent activateBeacon, deactivateBeacon, upgradeBeacon, applyEffect;
+    public static SoundEvent breathStart, breathLoop, breathEnd;
 
     @SubscribeEvent
     public static void registerSounds(RegistryEvent.Register<SoundEvent> registryEvent) {
@@ -19,6 +21,10 @@ public class Sounds {
         deactivateBeacon = register("deactivate_beacon", forgeRegistry);
         upgradeBeacon = register("upgrade_beacon", forgeRegistry);
         applyEffect = register("apply_effect", forgeRegistry);
+    
+        breathStart = register("breath_start", forgeRegistry);
+        breathLoop = register("breath_loop", forgeRegistry);
+        breathEnd = register("breath_end", forgeRegistry);
     }
 
     private static SoundEvent register(String name, IForgeRegistry<SoundEvent> forgeRegistry) {

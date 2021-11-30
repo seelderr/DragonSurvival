@@ -112,7 +112,7 @@ public class ItemsInit {
         IForgeRegistry<Item> registry = event.getRegistry();
         registry.registerAll(starBone, elderDragonBone, chargedCoal, charredMeat, charredVegetable, charredMushroom, chargedSoup, charredSeafood, elderDragonDust);
     
-        seaDragonTreat = new Item(new Item.Properties().tab(items).food(new Food.Builder().nutrition(1).saturationMod(0.4F).meat()
+        seaDragonTreat = new Item(new Item.Properties().tab(items).food(new Food.Builder().nutrition(1).alwaysEat().saturationMod(0.4F).meat()
                                                                                    .effect(() -> new EffectInstance(Effects.HUNGER, 20 * 15, 0), 1.0F)
                                                                                    .build())){
             public ItemStack finishUsingItem(ItemStack p_77654_1_, World p_77654_2_, LivingEntity entity) {
@@ -128,7 +128,7 @@ public class ItemsInit {
             }
         }.setRegistryName(DragonSurvivalMod.MODID, "sea_dragon_treat");
     
-        caveDragonTreat = new Item(new Item.Properties().tab(items).food(new Food.Builder().nutrition(1).saturationMod(0.4F).meat()
+        caveDragonTreat = new Item(new Item.Properties().tab(items).food(new Food.Builder().nutrition(1).alwaysEat().saturationMod(0.4F).meat()
                                                                                    .effect(() -> new EffectInstance(Effects.HUNGER, 20 * 15, 0), 1.0F)
                                                                                    .build())){
             public ItemStack finishUsingItem(ItemStack p_77654_1_, World p_77654_2_, LivingEntity entity) {
@@ -144,7 +144,7 @@ public class ItemsInit {
             }
         }.setRegistryName(DragonSurvivalMod.MODID, "cave_dragon_treat");
     
-        forestDragonTreat = new Item(new Item.Properties().tab(items).food(new Food.Builder().nutrition(1).saturationMod(0.4F).meat()
+        forestDragonTreat = new Item(new Item.Properties().tab(items).food(new Food.Builder().nutrition(1).alwaysEat().saturationMod(0.4F).meat()
                     .effect(() -> new EffectInstance(Effects.HUNGER, 20 * 15, 0), 1.0F)
                     .build())){
             public ItemStack finishUsingItem(ItemStack p_77654_1_, World p_77654_2_, LivingEntity entity) {

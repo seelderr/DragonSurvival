@@ -31,6 +31,7 @@ public class ServerConfig {
 	public final ForgeConfigSpec.BooleanValue alternateGrowing;
 	public final ForgeConfigSpec.IntValue alternateGrowingFrequency;
 	public final ForgeConfigSpec.DoubleValue alternateGrowingStep;
+	public final ForgeConfigSpec.BooleanValue saveGrowthStage;
 
 	//Abilities
 	public final ForgeConfigSpec.BooleanValue fireBreathSpreadsFire;
@@ -169,6 +170,10 @@ public class ServerConfig {
 		alternateGrowingStep = builder
 				.comment("Amount of additional dragon size per each iteration of alternateGrowingFrequency for alternateGrowing effect")
 				.defineInRange("alternateGrowingStep", 0.1, 0, Double.MAX_VALUE);
+		
+		saveGrowthStage = builder
+				.comment("Should the growth stage of a dragon be saved even when you change")
+				.define("saveGrowthStage", false);
 
 		// Specifics
 		builder.pop().push("specifics");

@@ -189,7 +189,7 @@ public class DragonTraitHandler {
                                     dragonStateHandler.getDebuffData().timeInDarkness++;
                                 if (dragonStateHandler.getDebuffData().timeInDarkness == 1 && !playerEntity.level.isClientSide)
                                     DragonSurvivalMod.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new SyncCapabilityDebuff(playerEntity.getId(), dragonStateHandler.getDebuffData().timeWithoutWater, dragonStateHandler.getDebuffData().timeInDarkness, dragonStateHandler.getDebuffData().timeInRain));
-                                if (dragonStateHandler.getDebuffData().timeInDarkness == maxStressTicks && !world.isClientSide && playerEntity.tickCount % 21 == 0)
+                                if (dragonStateHandler.getDebuffData().timeInDarkness >= maxStressTicks && !world.isClientSide && playerEntity.tickCount % 21 == 0)
                                     playerEntity.addEffect(new EffectInstance(DragonEffects.STRESS, ConfigHandler.SERVER.forestStressEffectDuration.get() * 20));
                             } else if (dragonStateHandler.getDebuffData().timeInDarkness > 0) {
                                 dragonStateHandler.getDebuffData().timeInDarkness = (Math.max(dragonStateHandler.getDebuffData().timeInDarkness - (int) Math.ceil(maxStressTicks * 0.02F), 0));
@@ -216,7 +216,7 @@ public class DragonTraitHandler {
                                     double timeIncrement = (world.isNight() ? 0.5F : 1.0) * (hotBiome ? biome.getBaseTemperature() : 1F);
                                     debuffData.timeWithoutWater += ConfigHandler.SERVER.seaTicksBasedOnTemperature.get() ? timeIncrement : 1;
                                }
-                                if (debuffData.timeWithoutWater == maxTicksOutofWater + 1 && !playerEntity.level.isClientSide)
+                                if (debuffData.timeWithoutWater >= maxTicksOutofWater + 1 && !playerEntity.level.isClientSide)
                                     DragonSurvivalMod.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new SyncCapabilityDebuff(playerEntity.getId(), debuffData.timeWithoutWater, debuffData.timeInDarkness, dragonStateHandler.getDebuffData().timeInRain));
                             } else if (debuffData.timeWithoutWater > 0) {
                                 double old = debuffData.timeWithoutWater;

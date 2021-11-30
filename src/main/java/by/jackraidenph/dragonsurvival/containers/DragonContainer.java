@@ -1,5 +1,8 @@
 package by.jackraidenph.dragonsurvival.containers;
 
+import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
+import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.gui.magic.Slots.ClawToolSlot;
 import by.jackraidenph.dragonsurvival.registration.Containers;
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
@@ -19,6 +22,7 @@ import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.*;
 import net.minecraft.network.play.server.SSetSlotPacket;
+import net.minecraft.util.IIntArray;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -36,7 +40,9 @@ public class DragonContainer extends RecipeBookContainer<CraftingInventory> {
     public List<Slot> inventorySlots = new ArrayList<>();
     
     public final boolean isLocalWorld;
-    private final PlayerEntity player;
+    public final PlayerEntity player;
+    public PlayerInventory playerInventory;
+    
     private static final EquipmentSlotType[] VALID_EQUIPMENT_SLOTS = new EquipmentSlotType[]{EquipmentSlotType.HEAD, EquipmentSlotType.CHEST, EquipmentSlotType.LEGS, EquipmentSlotType.FEET};
     public static final ResourceLocation LOCATION_BLOCKS_TEXTURE = new ResourceLocation("textures/atlas/blocks.png");
     public static final ResourceLocation EMPTY_ARMOR_SLOT_HELMET = new ResourceLocation("item/empty_armor_slot_helmet");
@@ -44,14 +50,49 @@ public class DragonContainer extends RecipeBookContainer<CraftingInventory> {
     public static final ResourceLocation EMPTY_ARMOR_SLOT_LEGGINGS = new ResourceLocation("item/empty_armor_slot_leggings");
     public static final ResourceLocation EMPTY_ARMOR_SLOT_BOOTS = new ResourceLocation("item/empty_armor_slot_boots");
     private static final ResourceLocation[] ARMOR_SLOT_TEXTURES = new ResourceLocation[]{EMPTY_ARMOR_SLOT_BOOTS, EMPTY_ARMOR_SLOT_LEGGINGS, EMPTY_ARMOR_SLOT_CHESTPLATE, EMPTY_ARMOR_SLOT_HELMET};
-
+    
+    public int menuStatus = 0;
+    protected final IIntArray dataStatus = new IIntArray() {
+        public int get(int p_221476_1_) {
+            switch(p_221476_1_) {
+                case 0:
+                    return DragonContainer.this.menuStatus;
+                    
+                default:
+                    return 0;
+            }
+        }
+        
+        public void set(int p_221477_1_, int p_221477_2_) {
+            switch(p_221477_1_) {
+                case 0:
+                    DragonContainer.this.menuStatus = p_221477_2_;
+                    break;
+            }
+            
+        }
+        
+        public int getCount() {
+            return 1;
+        }
+    };
+    
     public DragonContainer(int id, PlayerInventory playerInventory, boolean localWorld) {
         super(Containers.dragonContainer, id);
         this.isLocalWorld = localWorld;
         this.player = playerInventory.player;
+        this.playerInventory = playerInventory;
         craftMatrix = new CraftingInventory(this, 3, 3);
+        
+        slots.clear();
+        craftingSlots.clear();
+        inventorySlots.clear();
+        clearCraftingContent();
+    
+        this.addDataSlots(dataStatus);
+        
         this.addSlot(new CraftingResultSlot(playerInventory.player, this.craftMatrix, this.craftResult, 0, 178, 33));
-
+    
         int slotIndex = 0;
         for (int i = 0; i < craftMatrix.getWidth(); ++i) {
             for (int j = 0; j < craftMatrix.getHeight(); ++j) {
@@ -61,45 +102,33 @@ public class DragonContainer extends RecipeBookContainer<CraftingInventory> {
             }
         }
     
-        this.addSlot(new Slot(playerInventory, 40, 26, 62));
-        
         for (int k = 0; k < 4; ++k) {
             final EquipmentSlotType equipmentslottype = VALID_EQUIPMENT_SLOTS[k];
             this.addSlot(new Slot(playerInventory, 39 - k, 8, 8 + k * 18) {
-                /**
-                 * Returns the maximum stack size for a given slot (usually the same as getInventoryStackLimit(), but 1 in
-                 * the case of armor slots)
-                 */
-                @Override
-                public int getMaxStackSize() {
-                    return 1;
-                }
-
-                /**
-                 * Check if the stack is allowed to be placed in this slot, used for armor slots as well as furnace fuel.
-                 */
                 @Override
                 public boolean mayPlace(ItemStack stack) {
                     return stack.canEquip(equipmentslottype, player);
                 }
-
-                /**
-                 * Return whether this slot's stack can be taken from this slot.
-                 */
+            
                 @Override
                 public boolean mayPickup(PlayerEntity playerIn) {
                     ItemStack itemstack = this.getItem();
                     return (itemstack.isEmpty() || playerIn.isCreative() || !EnchantmentHelper.hasBindingCurse(itemstack)) && super.mayPickup(playerIn);
                 }
-    
+            
                 @Override
-                @OnlyIn(Dist.CLIENT)
+                @OnlyIn( Dist.CLIENT)
                 public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
                     return Pair.of(LOCATION_BLOCKS_TEXTURE, ARMOR_SLOT_TEXTURES[equipmentslottype.getIndex()]);
                 }
             });
+        
+            broadcastChanges();
         }
-
+    
+        //Offhand
+        this.addSlot(new Slot(playerInventory, 40, 26, 62));
+    
         //main inventory
         for (int l = 0; l < 3; ++l) {
             for (int j1 = 0; j1 < 9; ++j1) {
@@ -114,7 +143,28 @@ public class DragonContainer extends RecipeBookContainer<CraftingInventory> {
             this.addSlot(s);
             inventorySlots.add(s);
         }
+    
+        DragonStateProvider.getCap(player).ifPresent((cap) -> {
+            for (int i = 0; i < 4; ++i) {
+                ClawToolSlot s = new ClawToolSlot(this, cap.clawsInventory, DragonStateHandler.CLAW_TOOL_TYPES[i], i, -50, 35 + (i * 18));
+                this.addSlot(s);
+                inventorySlots.add(s);
+            }
+        });
+        
+        update();
     }
+    
+    public void update(){
+        DragonStateProvider.getCap(player).ifPresent((cap) -> {
+            menuStatus = cap.clawsMenuOpen ? 1 : 0;
+        });
+        
+        broadcastChanges();
+    }
+    
+    
+    
     
     @Override
     public void fillCraftSlotsStackedContents(RecipeItemHelper p_201771_1_)
@@ -173,6 +223,7 @@ public class DragonContainer extends RecipeBookContainer<CraftingInventory> {
             ItemStack itemstack1 = slot.getItem();
             itemstack = itemstack1.copy();
             EquipmentSlotType equipmentslottype = MobEntity.getEquipmentSlotForItem(itemstack);
+            
             if (index == 0) {
                 if (!this.moveItemStackTo(itemstack1, 9 + 5, 45 + 5, true)) {
                     return ItemStack.EMPTY;
@@ -188,14 +239,14 @@ public class DragonContainer extends RecipeBookContainer<CraftingInventory> {
                     return ItemStack.EMPTY;
                 }
             } else if (equipmentslottype.getType() == EquipmentSlotType.Group.ARMOR && !this.slots.get(8 - equipmentslottype.getIndex()).hasItem()) {
-                int i = 8 - equipmentslottype.getIndex() + 5;
+                int i = 8 - equipmentslottype.getIndex();
                 if (!this.moveItemStackTo(itemstack1, i, i + 1, false)) {
                     return ItemStack.EMPTY;
                 }
-                //            } else if (equipmentslottype == EquipmentSlotType.OFFHAND && !this.inventorySlots.get(45).getHasStack()) {
-                //                if (!this.mergeItemStack(itemstack1, 45, 46, false)) {
-                //                    return ItemStack.EMPTY;
-                //                }
+            } else if (equipmentslottype == EquipmentSlotType.OFFHAND && !this.slots.get(45).hasItem()) {
+                if (!this.moveItemStackTo(itemstack1, 45, 46, false)) {
+                    return ItemStack.EMPTY;
+                }
             } else if (index >= 9 + 5 && index < 36 + 5) {
                 if (!this.moveItemStackTo(itemstack1, 36 + 5, 45 + 5, false)) {
                     return ItemStack.EMPTY;

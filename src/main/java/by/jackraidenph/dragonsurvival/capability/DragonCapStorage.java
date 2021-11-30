@@ -29,8 +29,19 @@ public class DragonCapStorage implements Capability.IStorage<DragonStateHandler>
             tag.putFloat("size", instance.getSize());
             tag.putBoolean("hasWings", instance.hasWings());
             tag.putInt("lavaAirSupply", instance.getLavaAirSupply());
+    
+            tag.putFloat("caveSize", instance.caveSize);
+            tag.putFloat("seaSize", instance.seaSize);
+            tag.putFloat("forestSize", instance.forestSize);
+    
+            tag.putBoolean("caveWings", instance.caveWings);
+            tag.putBoolean("seaWings", instance.seaWings);
+            tag.putBoolean("forestWings", instance.forestWings);
             
             tag.putBoolean("renderSkills", instance.renderAbilityHotbar());
+            
+            tag.putBoolean("clawsMenu", instance.clawsMenuOpen);
+            tag.put("clawsInventory", instance.clawsInventory.createTag());
             
             CompoundNBT nbt = new CompoundNBT();
             nbt.putInt("mana", instance.getCurrentMana());
@@ -56,11 +67,23 @@ public class DragonCapStorage implements Capability.IStorage<DragonStateHandler>
             instance.setDebuffData(tag.getInt("timeWithoutWater"), tag.getInt("timeInDarkness"), tag.getInt("timeInRain"));
             instance.setIsHiding(tag.getBoolean("isHiding"));
             instance.setSize(tag.getFloat("size"));
+            
+            instance.caveSize = tag.getFloat("caveSize");
+            instance.seaSize = tag.getFloat("seaSize");
+            instance.forestSize = tag.getFloat("forestSize");
     
+            instance.caveWings = tag.getBoolean("caveWings");
+            instance.seaWings = tag.getBoolean("seaWings");
+            instance.forestWings = tag.getBoolean("forestWings");
+            
             instance.setRenderAbilities(tag.getBoolean("renderSkills"));
+            
+            instance.clawsMenuOpen = tag.getBoolean("clawsMenu");
+            instance.clawsInventory.fromTag(tag.getList("clawsInventory", 10));
     
             if (instance.getSize() == 0)
                 instance.setSize(DragonLevel.BABY.size);
+            
             instance.setHasWings(tag.getBoolean("hasWings"));
             instance.setLavaAirSupply(tag.getInt("lavaAirSupply"));
     

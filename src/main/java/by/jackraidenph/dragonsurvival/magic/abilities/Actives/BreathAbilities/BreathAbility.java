@@ -1,6 +1,7 @@
 package by.jackraidenph.dragonsurvival.magic.abilities.Actives.BreathAbilities;
 
 import by.jackraidenph.dragonsurvival.Functions;
+import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.registration.ClientModEvents;
@@ -10,11 +11,9 @@ import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.ProjectileHelper;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.RayTraceContext;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.*;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
@@ -23,6 +22,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Predicate;
 
 public abstract class BreathAbility extends ActiveDragonAbility
 {
@@ -36,12 +36,19 @@ public abstract class BreathAbility extends ActiveDragonAbility
 
 	public int channelCost = 1;
 	private boolean firstUse = true;
+	public int castingTicks = 0;
 
 	public boolean canConsumeMana(PlayerEntity player) {
-		return DragonStateProvider.getCurrentMana(player) >= (firstUse ? this.getManaCost() : channelCost)
-		       || (player.totalExperience / 10) >= (firstUse ? this.getManaCost() : channelCost) || player.experienceLevel > 0;
+		return DragonStateProvider.getCurrentMana(player) >= this.getManaCost()
+		       || (player.totalExperience / 10) + DragonStateProvider.getCurrentMana(player) >= this.getManaCost() || player.experienceLevel > 0;
 	}
-
+	
+	@Override
+	public int getManaCost()
+	{
+		return (firstUse ? super.getManaCost() : channelCost);
+	}
+	
 	public void stopCasting() {
 		super.stopCasting();
 
@@ -49,17 +56,13 @@ public abstract class BreathAbility extends ActiveDragonAbility
 			startCooldown();
 			firstUse = true;
 		}
+		castingTicks = 0;
 	}
 	
 	public void tickCost(){
-		if(firstUse) {
+		if(firstUse || player.tickCount % Functions.secondsToTicks(2) == 0){
 			DragonStateProvider.consumeMana(player, this.getManaCost());
 			firstUse = false;
-			
-		}else{
-			if(player.tickCount % Functions.secondsToTicks(2) == 0){
-				DragonStateProvider.consumeMana(player, channelCost);
-			}
 		}
 	}
 	
@@ -74,6 +77,14 @@ public abstract class BreathAbility extends ActiveDragonAbility
 	@Override
 	public void onActivation(PlayerEntity player)
 	{
+		castingTicks++;
+		
+		DragonStateHandler playerStateHandler = DragonStateProvider.getCap(player).orElseGet(null);
+		
+		if(playerStateHandler == null){
+			return;
+		}
+		
 		DragonLevel growthLevel = DragonStateProvider.getCap(player).map(cap -> cap.getLevel()).get();
 		RANGE = growthLevel == DragonLevel.BABY ? 4 : growthLevel == DragonLevel.YOUNG ? 7 : 10;
 		
@@ -87,6 +98,7 @@ public abstract class BreathAbility extends ActiveDragonAbility
 	}
 
 	public void hitEntities() {
+		boolean found = false;
 		List<LivingEntity> entitiesHit = getEntityLivingBaseNearby(RANGE, RANGE, RANGE, RANGE);
 		for (LivingEntity entityHit : entitiesHit) {
 			if (entityHit == player) continue;
@@ -118,6 +130,7 @@ public abstract class BreathAbility extends ActiveDragonAbility
 			boolean inRange = entityHitDistance <= RANGE;
 			boolean yawCheck = (entityRelativeYaw <= ARC / 2f && entityRelativeYaw >= -ARC / 2f) || (entityRelativeYaw >= 360 - ARC / 2f || entityRelativeYaw <= -360 + ARC / 2f);
 			boolean pitchCheck = (entityRelativePitch <= ARC / 2f && entityRelativePitch >= -ARC / 2f) || (entityRelativePitch >= 360 - ARC / 2f || entityRelativePitch <= -360 + ARC / 2f);
+			
 			if (inRange && yawCheck && pitchCheck) {
 				// Raytrace to mob center to avoid damaging through walls
 				Vector3d from = player.position();
@@ -135,6 +148,25 @@ public abstract class BreathAbility extends ActiveDragonAbility
 				}
 				
 				onEntityHit(entityHit);
+				found = true;
+			}
+		}
+		
+		if(!found){
+			Vector3d vector3d = player.getEyePosition(1.0F);
+			Vector3d vector3d1 = player.getViewVector(1.0F).scale(RANGE);
+			Vector3d vector3d2 = vector3d.add(vector3d1);
+			AxisAlignedBB axisalignedbb = player.getBoundingBox().expandTowards(vector3d1).inflate(1.0D);
+			Predicate<Entity> predicate = (entity) -> entity instanceof LivingEntity && !entity.isSpectator() && entity.isPickable();
+			
+			EntityRayTraceResult result = ProjectileHelper.getEntityHitResult(player, vector3d, vector3d2, axisalignedbb, predicate, RANGE * RANGE);
+			
+			if (result != null) {
+				LivingEntity entity = (LivingEntity)result.getEntity();
+				if (vector3d.distanceToSqr(result.getLocation()) <= RANGE) {
+					onEntityHit(entity);
+					return;
+				}
 			}
 		}
 	}

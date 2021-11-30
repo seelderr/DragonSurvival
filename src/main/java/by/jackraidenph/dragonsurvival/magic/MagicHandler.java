@@ -270,7 +270,7 @@ public class MagicHandler
 	public static void playerDamaged(LivingDamageEvent event){
 		if(event.getEntityLiving() instanceof PlayerEntity) {
 			PlayerEntity player = (PlayerEntity)event.getEntityLiving();
-			
+			LivingEntity target = event.getEntityLiving();
 			DragonStateProvider.getCap(player).ifPresent(cap -> {
 				if (!cap.isDragon()) return;
 				
@@ -306,7 +306,7 @@ public class MagicHandler
 			if (event.getSource() != null && event.getSource().getEntity() != null) {
 				if (event.getSource().getEntity() instanceof PlayerEntity) {
 					PlayerEntity player = (PlayerEntity)event.getSource().getEntity();
-					
+					LivingEntity target = (LivingEntity)event.getEntity();
 					DragonStateProvider.getCap(player).ifPresent(cap -> {
 						if (!cap.isDragon()) return;
 						
@@ -325,7 +325,59 @@ public class MagicHandler
 								((LivingEntity)event.getEntity()).addEffect(new EffectInstance(DragonEffects.BURN, Functions.secondsToTicks(30)));
 							}
 						}
+						
+						
+						//TODO Finish this sword claw innate
+						/*
+						ItemStack mainStack = player.getMainHandItem();
+						ItemStack sword = cap.clawsInventory.getItem(0);
+						
+						float mainDamage = 0;
+						float swordDamage = 0;
+						
+						if(!mainStack.isEmpty() && mainStack.getItem() instanceof SwordItem){
+							mainDamage = ((SwordItem)mainStack.getItem()).getDamage();
+							mainDamage += EnchantmentHelper.getDamageBonus(mainStack, target.getMobType());
+						}
+						
+						if(!sword.isEmpty() && sword.getItem() instanceof SwordItem){
+							swordDamage = ((SwordItem)sword.getItem()).getDamage();
+							swordDamage += EnchantmentHelper.getDamageBonus(sword, target.getMobType());
+						}
+						
+						if(swordDamage > mainDamage){
+							float f = (float)player.getAttributeValue(Attributes.ATTACK_DAMAGE);
+							float f1 = (float)player.getAttributeValue(Attributes.ATTACK_KNOCKBACK);
+							
+							f += EnchantmentHelper.getDamageBonus(sword, target.getMobType());
+							f1 += (float)EnchantmentHelper.getItemEnchantmentLevel(Enchantments.KNOCKBACK, sword);
+							
+							int i = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FIRE_ASPECT, sword);
+							
+							if (i > 0) {
+								target.setSecondsOnFire(i * 4);
+							}
+							
+							boolean flag = target.hurt(DamageSource.playerAttack(player), f);
+							
+							if (flag) {
+								if (f1 > 0.0F) {
+									target.knockback(f1 * 0.5F, (double)MathHelper.sin(target.yRot * ((float)Math.PI / 180F)), (double)(-MathHelper.cos(target.yRot * ((float)Math.PI / 180F))));
+									target.setDeltaMovement(target.getDeltaMovement().multiply(0.6D, 1.0D, 0.6D));
+								}
+								
+								player.doEnchantDamageEffects(player, target);
+								target.setLastHurtMob(player);
+							}
+							
+						 
+							
+							event.setCanceled(true);
+						}
+						*/
+						
 					});
+					
 				}
 			}
 			}

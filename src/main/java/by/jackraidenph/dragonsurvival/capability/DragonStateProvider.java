@@ -78,19 +78,16 @@ public class DragonStateProvider implements ICapabilitySerializable<CompoundNBT>
         }
         
         getCap(entity).ifPresent(cap -> {
-            if (getCurrentMana(entity) < mana && ((entity.totalExperience / 10) >= mana || entity.experienceLevel > 0)) {
+            if (getCurrentMana(entity) < mana && (getCurrentMana(entity) + (entity.totalExperience / 10) >= mana || entity.experienceLevel > 0)) {
                 int missingMana = mana - getCurrentMana(entity);
                 int missingExp = (missingMana * 10);
-    
-                if (entity.totalExperience >= missingExp) {
-                    entity.giveExperiencePoints(-missingExp);
-                }
-    
-                cap.setCurrentMana(cap.getCurrentMana() + mana);
+                entity.giveExperiencePoints(-missingExp);
+                cap.setCurrentMana(0);
+            }else {
+                cap.setCurrentMana(Math.max(0, cap.getCurrentMana() - mana));
             }
-    
-            cap.setCurrentMana(Math.max(0, cap.getCurrentMana() - mana));
-    
+            
+            
             if (!entity.level.isClientSide) {
                 DragonSurvivalMod.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)entity), new SyncMagicStats(entity.getId(), cap.getSelectedAbilitySlot(), cap.getCurrentMana(), cap.renderAbilityHotbar()));
             }

@@ -11,6 +11,8 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.ToolType;
@@ -22,11 +24,34 @@ import java.util.UUID;
 
 
 public class DragonStateHandler {
-    private boolean isHiding;
+	public static final ToolType[] CLAW_TOOL_TYPES = new ToolType[]{null, ToolType.PICKAXE, ToolType.AXE, ToolType.SHOVEL};
+	
+	private boolean isHiding;
     private DragonType type = DragonType.NONE;
     private final DragonMovementData movementData = new DragonMovementData(0, 0, 0, false);
     private boolean hasWings;
-    private float size;
+	
+    private float size = 0;
+	
+	//Saving status of other types incase the config option for saving all is on
+	public float caveSize;
+	public float seaSize;
+	public float forestSize;
+	public boolean caveWings;
+	public boolean seaWings;
+	public boolean forestWings;
+	
+	
+	public boolean clawsMenuOpen = false;
+	
+	/*
+		Slot 0: Sword
+		Slot 1: Pickaxe
+		Slot 2: Axe
+		Slot 3: Shovel
+	 */
+	public Inventory clawsInventory = new Inventory(4);
+	
     private final DragonDebuffData debuffData = new DragonDebuffData(0, 0, 0);
     private int lavaAirSupply;
     private int passengerId;
@@ -46,14 +71,30 @@ public class DragonStateHandler {
         setSize(size);
     	AttributeModifier healthMod = buildHealthMod(size);
         updateHealthModifier(playerEntity, healthMod);
-        AttributeModifier damageMod = buildDamageMod(getLevel(), isDragon());
+        AttributeModifier damageMod = buildDamageMod(this, isDragon());
         updateDamageModifier(playerEntity, damageMod);
         AttributeModifier swimSpeedMod = buildSwimSpeedMod(getType());
         updateSwimSpeedModifier(playerEntity, swimSpeedMod);
     }
 	
 	public void setSize(float size) {
-    	this.size = size;
+		if(size != this.size) {
+			this.size = size;
+			
+			switch (type) {
+				case SEA:
+					seaSize = size;
+					break;
+				
+				case CAVE:
+					caveSize = size;
+					break;
+				
+				case FOREST:
+					forestSize = size;
+					break;
+			}
+		}
     }
 
     public boolean hasWings() {
@@ -61,7 +102,23 @@ public class DragonStateHandler {
     }
 
     public void setHasWings(boolean hasWings) {
-        this.hasWings = hasWings;
+		if(hasWings != this.hasWings) {
+			this.hasWings = hasWings;
+			
+			switch (type) {
+				case SEA:
+					seaWings = hasWings;
+					break;
+				
+				case CAVE:
+					caveWings = hasWings;
+					break;
+				
+				case FOREST:
+					forestWings = hasWings;
+					break;
+			}
+		}
     }
 
     public boolean isDragon() {
@@ -85,24 +142,39 @@ public class DragonStateHandler {
         	return DragonLevel.ADULT;
     }
 
-    public boolean canHarvestWithPaw(BlockState state) {
-		
+    public boolean canHarvestWithPaw(PlayerEntity player, BlockState state) {
     	int harvestLevel = state.getHarvestLevel();
+		int baseHarvestLevel = 0;
+		
+		for(int i = 1; i < 4; i++){
+			if(state.isToolEffective(CLAW_TOOL_TYPES[i])){
+				ItemStack stack = clawsInventory.getItem(i);
+				
+				if(!stack.isEmpty()){
+					int hvLevel = stack.getHarvestLevel(CLAW_TOOL_TYPES[i], player, state);
+					
+					if(hvLevel > baseHarvestLevel){
+						baseHarvestLevel = hvLevel;
+					}
+				}
+			}
+		}
+		
     	switch(getLevel()) {
     		case BABY:
     			if (ConfigHandler.SERVER.bonusUnlockedAt.get() != DragonLevel.BABY){
-    			    if (harvestLevel <= ConfigHandler.SERVER.baseHarvestLevel.get())
+    			    if (harvestLevel <= ConfigHandler.SERVER.baseHarvestLevel.get() + baseHarvestLevel)
                         return true;
     			    break;
                 }
     		case YOUNG:
     		    if (ConfigHandler.SERVER.bonusUnlockedAt.get() == DragonLevel.ADULT && getLevel() != DragonLevel.BABY){
-    		        if (harvestLevel <= ConfigHandler.SERVER.baseHarvestLevel.get())
+    		        if (harvestLevel <= ConfigHandler.SERVER.baseHarvestLevel.get() + baseHarvestLevel)
                         return true;
     		        break;
                 }
             case ADULT:
-            	if (harvestLevel <= ConfigHandler.SERVER.bonusHarvestLevel.get()) {
+            	if (harvestLevel <= ConfigHandler.SERVER.bonusHarvestLevel.get() + baseHarvestLevel) {
                     switch (getType()) {
                         case SEA:
                             if (state.isToolEffective(ToolType.SHOVEL))
@@ -117,7 +189,7 @@ public class DragonStateHandler {
                                 return true;
                     }
                 }
-            	if (harvestLevel <= ConfigHandler.SERVER.baseHarvestLevel.get())
+            	if (harvestLevel <= ConfigHandler.SERVER.baseHarvestLevel.get() + baseHarvestLevel)
                     return true;
     	}
     	return false;
@@ -148,11 +220,13 @@ public class DragonStateHandler {
     		);
     }
     
-    public static AttributeModifier buildDamageMod(DragonLevel level, boolean isDragon) {
+    public static AttributeModifier buildDamageMod(DragonStateHandler handler, boolean isDragon) {
+		double ageBonus = isDragon ? (handler.getLevel() == DragonLevel.ADULT ? ConfigHandler.SERVER.adultBonusDamage.get() : handler.getLevel() == DragonLevel.YOUNG ? ConfigHandler.SERVER.youngBonusDamage.get() : ConfigHandler.SERVER.babyBonusDamage.get()) : 0;
+
     	return new AttributeModifier(
     			DAMAGE_MODIFIER_UUID,
     			"Dragon Damage Adjustment",
-    			isDragon ? (level == DragonLevel.ADULT ? ConfigHandler.SERVER.adultBonusDamage.get() : level == DragonLevel.YOUNG ? ConfigHandler.SERVER.youngBonusDamage.get() : ConfigHandler.SERVER.babyBonusDamage.get()) : 0,
+			    ageBonus,
     			AttributeModifier.Operation.ADDITION
     		);
     }
@@ -236,6 +310,25 @@ public class DragonStateHandler {
 		}
 		
         this.type = type;
+	
+		if(ConfigHandler.SERVER.saveGrowthStage.get()) {
+			switch (type) {
+				case SEA:
+					size = seaSize;
+					hasWings = seaWings;
+					break;
+				
+				case CAVE:
+					size = caveSize;
+					hasWings = caveWings;
+					break;
+				
+				case FOREST:
+					size = forestSize;
+					hasWings = forestWings;
+					break;
+			}
+		}
     }
     
     public int getLavaAirSupply() {

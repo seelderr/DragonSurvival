@@ -2,13 +2,14 @@ package by.jackraidenph.dragonsurvival.handlers;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.Functions;
-import by.jackraidenph.dragonsurvival.magic.abilities.Passives.CliffhangerAbility;
-import by.jackraidenph.dragonsurvival.magic.abilities.Passives.LightInDarknessAbility;
-import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
-import by.jackraidenph.dragonsurvival.magic.abilities.Passives.WaterAbility;
-import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
+import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
+import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
+import by.jackraidenph.dragonsurvival.magic.abilities.Passives.CliffhangerAbility;
+import by.jackraidenph.dragonsurvival.magic.abilities.Passives.LightInDarknessAbility;
+import by.jackraidenph.dragonsurvival.magic.abilities.Passives.WaterAbility;
+import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.network.StartJump;
 import by.jackraidenph.dragonsurvival.network.SyncCapabilityDebuff;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
@@ -370,54 +371,84 @@ public class SpecificsHandler {
     			event.setCanceled(true);
     	});
     }
-
+	
+	
+	
+	
     @SubscribeEvent
     public void modifyBreakSpeed(PlayerEvent.BreakSpeed breakSpeedEvent) {
     	if (!ConfigHandler.SERVER.bonuses.get() || !ConfigHandler.SERVER.clawsAreTools.get())
     		return;
         PlayerEntity playerEntity = breakSpeedEvent.getPlayer();
+		
         DragonStateProvider.getCap(playerEntity).ifPresent(dragonStateHandler -> {
             if (dragonStateHandler.isDragon()) {
                 ItemStack mainStack = playerEntity.getMainHandItem();
                 BlockState blockState = breakSpeedEvent.getState();
                 Item item = mainStack.getItem();
+				
+				float speed = breakSpeedEvent.getOriginalSpeed();
+				float newSpeed = 0F;
+				
+				for(int i = 1; i < 4; i++){
+					if(blockState.isToolEffective(DragonStateHandler.CLAW_TOOL_TYPES[i])){
+						ItemStack breakingItem = dragonStateHandler.clawsInventory.getItem(i);
+						if(!breakingItem.isEmpty()){
+							float tempSpeed = breakingItem.getDestroySpeed(blockState) * 0.7F;
+							
+							if(tempSpeed > newSpeed){
+								newSpeed = tempSpeed;
+							}
+						}
+					}
+				}
+				
+				if(!playerEntity.getMainHandItem().isEmpty()){
+					float tempSpeed = playerEntity.getMainHandItem().getDestroySpeed(blockState);
+					
+					if(tempSpeed > newSpeed){
+						newSpeed = 0;
+					}
+				}
+				
+				
                 if (!(item instanceof ToolItem || item instanceof SwordItem || item instanceof ShearsItem)) {
                     switch (dragonStateHandler.getLevel()) {
                         case BABY:
                         	if (ConfigHandler.SERVER.bonusUnlockedAt.get() != DragonLevel.BABY) {
-                        		breakSpeedEvent.setNewSpeed(breakSpeedEvent.getOriginalSpeed() * 2.0F);
+                        		breakSpeedEvent.setNewSpeed((speed * 2.0F) + newSpeed);
                         		break;
                         	}
                         case YOUNG:
                         	if (ConfigHandler.SERVER.bonusUnlockedAt.get() == DragonLevel.ADULT && dragonStateHandler.getLevel() != DragonLevel.BABY) {
-                        		breakSpeedEvent.setNewSpeed(breakSpeedEvent.getOriginalSpeed() * 2.0F);
+                        		breakSpeedEvent.setNewSpeed((speed * 2.0F) + newSpeed);
                         		break;
                         	}
                         case ADULT:
                             switch (dragonStateHandler.getType()) {
                                 case FOREST:
                                     if (blockState.isToolEffective(ToolType.AXE)) {
-                                        breakSpeedEvent.setNewSpeed(breakSpeedEvent.getOriginalSpeed() * 4.0F);
-                                    } else breakSpeedEvent.setNewSpeed(breakSpeedEvent.getOriginalSpeed() * 2.0F);
+                                        breakSpeedEvent.setNewSpeed((speed * 4.0F) + newSpeed);
+                                    } else breakSpeedEvent.setNewSpeed((speed * 2.0F) + newSpeed);
                                     break;
                                 case CAVE:
                                     if (blockState.isToolEffective(ToolType.PICKAXE)) {
-                                        breakSpeedEvent.setNewSpeed(breakSpeedEvent.getOriginalSpeed() * 4.0F);
-                                    } else breakSpeedEvent.setNewSpeed(breakSpeedEvent.getOriginalSpeed() * 2.0F);
+                                        breakSpeedEvent.setNewSpeed((speed * 4.0F) + newSpeed);
+                                    } else breakSpeedEvent.setNewSpeed((speed * 2.0F) + newSpeed);
                                     break;
                                 case SEA:
                                     if (blockState.isToolEffective(ToolType.SHOVEL)) {
-                                        breakSpeedEvent.setNewSpeed(breakSpeedEvent.getOriginalSpeed() * 4.0F);
-                                    } else breakSpeedEvent.setNewSpeed(breakSpeedEvent.getOriginalSpeed() * 2.0F);
+                                        breakSpeedEvent.setNewSpeed((speed * 4.0F) + newSpeed);
+                                    } else breakSpeedEvent.setNewSpeed((speed * 2.0F) + newSpeed);
                                     if (playerEntity.isInWaterOrBubble()) {
-                                        breakSpeedEvent.setNewSpeed(breakSpeedEvent.getNewSpeed() * 1.4f);
+                                        breakSpeedEvent.setNewSpeed((speed * 1.4f) + newSpeed);
                                     }
                                     break;
                             }
                             break;
                     }
                 } else {
-                    breakSpeedEvent.setNewSpeed(breakSpeedEvent.getOriginalSpeed() * 0.7f);
+                    breakSpeedEvent.setNewSpeed((speed * 0.7f) + newSpeed);
                 }
             }
         });
@@ -434,7 +465,7 @@ public class SpecificsHandler {
                 Item item = stack.getItem();
                 BlockState blockState = harvestCheck.getTargetBlock();
                 if (!(item instanceof ToolItem || item instanceof SwordItem || item instanceof ShearsItem) && !harvestCheck.canHarvest()) {
-                	harvestCheck.setCanHarvest(dragonStateHandler.canHarvestWithPaw(blockState));
+                	harvestCheck.setCanHarvest(dragonStateHandler.canHarvestWithPaw(playerEntity, blockState));
             	}
             }
         });

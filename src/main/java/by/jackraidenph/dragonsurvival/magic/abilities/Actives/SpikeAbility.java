@@ -64,7 +64,7 @@ public class SpikeAbility extends ActiveDragonAbility
 		super.onActivation(player);
 		
 		DragonSpikeEntity entity = new DragonSpikeEntity(EntityTypesInit.DRAGON_SPIKE, player.level, player);
-		entity.setLevel(getLevel());
+		entity.setArrow_level(getLevel());
 		entity.setBaseDamage(getDamage());
 		entity.pickup = AbstractArrowEntity.PickupStatus.DISALLOWED;
 		entity.shootFromRotation(player, player.xRot, player.yRot, 0.0F, 4F, 1.0F);

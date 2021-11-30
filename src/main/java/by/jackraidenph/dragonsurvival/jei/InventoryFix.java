@@ -1,8 +1,10 @@
 package by.jackraidenph.dragonsurvival.jei;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
+import by.jackraidenph.dragonsurvival.gui.magic.DragonScreen;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
+import mezz.jei.api.registration.IGuiHandlerRegistration;
 import mezz.jei.api.registration.IRecipeTransferRegistration;
 import net.minecraft.util.ResourceLocation;
 
@@ -18,5 +20,11 @@ public class InventoryFix implements IModPlugin {
     public void registerRecipeTransferHandlers(IRecipeTransferRegistration registration)
     {
         registration.addRecipeTransferHandler(new DragonInventoryGUIHandler());
+    }
+    
+    @Override
+    public void registerGuiHandlers(IGuiHandlerRegistration registration)
+    {
+        registration.addGuiContainerHandler(DragonScreen.class, new DragonInventoryGUIHandler());
     }
 }

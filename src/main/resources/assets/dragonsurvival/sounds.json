@@ -18,5 +18,20 @@
     "sounds": [
       "dragonsurvival:get_effect"
     ]
+  },
+  "breath_start": {
+    "sounds": [
+      "dragonsurvival:dragon_breath_start"
+    ]
+  },
+  "breath_loop": {
+    "sounds": [
+      "dragonsurvival:dragon_breath_loop"
+    ]
+  },
+  "breath_end": {
+    "sounds": [
+      "dragonsurvival:dragon_breath_end"
+    ]
   }
 }

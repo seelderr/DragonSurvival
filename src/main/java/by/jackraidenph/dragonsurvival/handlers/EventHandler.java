@@ -1,5 +1,6 @@
 package by.jackraidenph.dragonsurvival.handlers;
 
+import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.entity.MagicalPredatorEntity;
@@ -117,7 +118,51 @@ public class EventHandler {
         if (world.isNight() && world.getBlockEntity(sleepingLocation) instanceof NestEntity)
             sleepingLocationCheckEvent.setResult(Event.Result.ALLOW);
     }
-
+    
+    @SubscribeEvent
+    public static void blockBroken(BlockEvent.BreakEvent breakEvent) {
+        if(breakEvent.isCanceled()) return;
+        
+        PlayerEntity playerEntity = breakEvent.getPlayer();
+        
+        DragonStateProvider.getCap(playerEntity).ifPresent(dragonStateHandler -> {
+            if (dragonStateHandler.isDragon()) {
+                ItemStack mainStack = playerEntity.getMainHandItem();
+                BlockState blockState = breakEvent.getState();
+                float newSpeed = 0F;
+                ItemStack hotbarItem = null;
+                
+                for(int i = 1; i < 4; i++){
+                    if(blockState.isToolEffective(DragonStateHandler.CLAW_TOOL_TYPES[i])){
+                        ItemStack breakingItem = dragonStateHandler.clawsInventory.getItem(i);
+                        if(!breakingItem.isEmpty()){
+                            float tempSpeed = breakingItem.getDestroySpeed(blockState) * 0.7F;
+                            
+                            if(tempSpeed > newSpeed){
+                                newSpeed = tempSpeed;
+                                hotbarItem = breakingItem;
+                            }
+                        }
+                    }
+                }
+                
+                if(!playerEntity.getMainHandItem().isEmpty()){
+                    float tempSpeed = playerEntity.getMainHandItem().getDestroySpeed(blockState);
+                    if(tempSpeed > newSpeed){
+                        hotbarItem = null;
+                    }
+                }
+                
+                if(hotbarItem != null && !playerEntity.level.isClientSide){
+                    hotbarItem.mineBlock(playerEntity.level, blockState, breakEvent.getPos(), playerEntity);
+                    breakEvent.setCanceled(true);
+                    Block.dropResources(breakEvent.getState(), (World)breakEvent.getWorld(), breakEvent.getPos(), breakEvent.getWorld().getBlockEntity(breakEvent.getPos()), playerEntity, hotbarItem);
+                    breakEvent.getWorld().setBlock(breakEvent.getPos(), Blocks.AIR.defaultBlockState(), 3);
+                }
+            }
+        });
+    }
+    
     @SubscribeEvent
     public static void dropDragonDust(BlockEvent.BreakEvent breakEvent) {
         if (!breakEvent.isCanceled()) {
@@ -141,7 +186,7 @@ public class EventHandler {
                         .withParameter(LootParameters.TOOL, mainHandItem));
                 DragonStateProvider.getCap(playerEntity).ifPresent(dragonStateHandler -> {
                     final boolean suitableOre = (playerEntity.getMainHandItem().isCorrectToolForDrops(blockState) ||
-                            (dragonStateHandler.isDragon() && dragonStateHandler.canHarvestWithPaw(blockState)))
+                            (dragonStateHandler.isDragon() && dragonStateHandler.canHarvestWithPaw(playerEntity, blockState)))
                             && drops.stream().noneMatch(item -> oresTag.contains(item.getItem()));
                     if (suitableOre && !playerEntity.isCreative()) {
                         if (dragonStateHandler.isDragon()) {

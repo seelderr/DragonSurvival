@@ -1,8 +1,11 @@
 package by.jackraidenph.dragonsurvival.gui.magic;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
+import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.containers.DragonContainer;
 import by.jackraidenph.dragonsurvival.gui.magic.buttons.TabButton;
+import by.jackraidenph.dragonsurvival.network.magic.DragonClawsMenuToggle;
+import by.jackraidenph.dragonsurvival.registration.ClientModEvents;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -11,13 +14,16 @@ import net.minecraft.client.gui.DisplayEffectsScreen;
 import net.minecraft.client.gui.recipebook.IRecipeShownListener;
 import net.minecraft.client.gui.recipebook.RecipeBookGui;
 import net.minecraft.client.gui.screen.inventory.InventoryScreen;
+import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.widget.button.ImageButton;
+import net.minecraft.client.util.InputMappings;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.ClickType;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import org.lwjgl.opengl.GL11;
 
 public class DragonScreen extends DisplayEffectsScreen<DragonContainer> implements IRecipeShownListener {
@@ -25,13 +31,24 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> implemen
     static final ResourceLocation BACKGROUND = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_inventory.png");
     private static final ResourceLocation RECIPE_BUTTON_TEXTURE = new ResourceLocation("textures/gui/recipe_button.png");
     
+    private static final ResourceLocation CLAWS_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_claws.png");
+    private static final ResourceLocation DRAGON_CLAW_BUTTON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_claws_button.png");
+    
+    
     private boolean widthTooNarrow;
     private boolean buttonClicked;
+    
+    public boolean clawsMenu = false;
+    
     private PlayerEntity player;
     public DragonScreen(DragonContainer screenContainer, PlayerInventory inv, ITextComponent titleIn) {
         super(screenContainer, inv, titleIn);
         passEvents = true;
         player = inv.player;
+    
+        DragonStateProvider.getCap(player).ifPresent((cap) -> {
+            clawsMenu = cap.clawsMenuOpen;
+        });
     }
 
     @Override
@@ -64,9 +81,14 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> implemen
         InventoryScreen.renderEntityInInventory(i + 60, j + 70, 30, (float)(i + 51) - mouseX * 20, (float)(j + 75 - 50) - mouseY * 20, this.minecraft.player);
     
         GL11.glTranslatef(0F, 0F, -100F);
-    
-    
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
+        
+        
+        if(clawsMenu){
+            minecraft.getTextureManager().bind(CLAWS_TEXTURE);
+            this.blit(stack,leftPos - 80, topPos, 0, 0, 77, 170);
+        }
+        
         GlStateManager._popMatrix();
     }
     
@@ -88,8 +110,13 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> implemen
     }
     
     @Override
-    protected void renderLabels(MatrixStack p_230451_1_, int p_230451_2_, int p_230451_3_)
+    protected void renderLabels(MatrixStack stack, int p_230451_2_, int p_230451_3_)
     {
+    }
+    
+    public int getLeftPos()
+    {
+        return leftPos;
     }
     
     @Override
@@ -115,11 +142,29 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> implemen
         addButton(new TabButton(leftPos + 28, topPos - 26, 1, this));
         addButton(new TabButton(leftPos + 57, topPos - 26, 2, this));
         addButton(new TabButton(leftPos + 86, topPos - 26, 3, this));
+    
+        addButton(new Button(leftPos + 27, topPos + 10, 11, 11, new StringTextComponent(""), p_onPress_1_ -> {
+            clawsMenu = !clawsMenu;
+            this.leftPos += (clawsMenu ? 80 : -80);
+            buttons.clear();
+            init();
+            
+            DragonSurvivalMod.CHANNEL.sendToServer(new DragonClawsMenuToggle(clawsMenu));
+            DragonStateProvider.getCap(player).ifPresent((cap) -> cap.clawsMenuOpen = clawsMenu);
+            
+        }){
+            @Override
+            public void renderButton(MatrixStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_)
+            {
+                minecraft.getTextureManager().bind(DRAGON_CLAW_BUTTON);
+                this.blit(stack,x, y, 0, 0, 11, 11, 11, 11);
+            }
+        });
     }
     
     public void render(MatrixStack p_230450_1_,int p_render_1_, int p_render_2_, float p_render_3_) {
         this.renderBackground(p_230450_1_);
-        this.doRenderEffects = !this.recipeBookGui.isVisible();
+        this.doRenderEffects = !this.recipeBookGui.isVisible() && !clawsMenu;
         if (this.recipeBookGui.isVisible() && this.widthTooNarrow) {
             this.renderBg(p_230450_1_, p_render_3_, p_render_1_, p_render_2_);
             this.recipeBookGui.render(p_230450_1_, p_render_1_, p_render_2_, p_render_3_);
@@ -163,5 +208,16 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> implemen
     protected void slotClicked(Slot slotIn, int slotId, int mouseButton, ClickType type) {
         super.slotClicked(slotIn, slotId, mouseButton, type);
         this.recipeBookGui.slotClicked(slotIn);
+    }
+    
+    public boolean keyPressed(int p_231046_1_, int p_231046_2_, int p_231046_3_) {
+        InputMappings.Input mouseKey = InputMappings.getKey(p_231046_1_, p_231046_2_);
+    
+        if (ClientModEvents.DRAGON_INVENTORY.isActiveAndMatches(mouseKey)) {
+            this.onClose();
+            return true;
+        }
+        
+        return super.keyPressed(p_231046_1_, p_231046_2_, p_231046_3_);
     }
 }

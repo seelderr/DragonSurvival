@@ -132,7 +132,7 @@ public class ClientMagicHandler
 				ActiveDragonAbility ability = cap.getAbilityFromSlot(cap.getSelectedAbilitySlot());
 				if(ability == null) return;
 				
-				if(cap.getCurrentMana() < ability.getManaCost() && ((cap.getCurrentMana() + (playerEntity.totalExperience / 10) >= ability.getManaCost()) || playerEntity.experienceLevel > 0)){
+				if(DragonStateProvider.getCurrentMana(playerEntity) < ability.getManaCost() && ((DragonStateProvider.getCurrentMana(playerEntity) + (playerEntity.totalExperience / 10) >= ability.getManaCost()) || playerEntity.experienceLevel > 0)){
 					event.setCanceled(true);
 					MainWindow window = Minecraft.getInstance().getWindow();
 					
@@ -232,7 +232,7 @@ public class ClientMagicHandler
 					textureManager.bind(widgetTextures);
 					
 					int maxMana = DragonStateProvider.getMaxMana(playerEntity);
-					int curMana = cap.getCurrentMana();
+					int curMana = DragonStateProvider.getCurrentMana(playerEntity);
 					
 					for(int i = 0; i < 1 + Math.ceil(maxMana / 10.0); i++){
 						for(int x = 0; x < 10; x++){

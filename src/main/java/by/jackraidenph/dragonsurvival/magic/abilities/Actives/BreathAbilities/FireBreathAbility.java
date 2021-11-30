@@ -5,8 +5,13 @@ import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.particles.CaveDragon.LargeFireParticleData;
 import by.jackraidenph.dragonsurvival.particles.CaveDragon.SmallFireParticleData;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
+import by.jackraidenph.dragonsurvival.sounds.FireBreathSound;
+import by.jackraidenph.dragonsurvival.sounds.SoundRegistry;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.ISound;
+import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.entity.AreaEffectCloudEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -21,6 +26,8 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.DistExecutor.SafeRunnable;
 
 import java.util.ArrayList;
 
@@ -36,6 +43,23 @@ public class FireBreathAbility extends BreathAbility
 	{
 		return new FireBreathAbility(id, icon, minLevel, maxLevel, manaCost, castTime, abilityCooldown, requiredLevels);
 	}
+	
+	
+	@Override
+	public void stopCasting()
+	{
+		if(castingTicks > 1) {
+			if (player.level.isClientSide) {
+				DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> stopSound());
+			}
+		}
+		
+		super.stopCasting();
+	}
+	
+	
+	private ISound startingSound;
+	private ISound endSound;
 	
 	@Override
 	public void onActivation(PlayerEntity player)
@@ -66,9 +90,7 @@ public class FireBreathAbility extends BreathAbility
 		}
 		
 		if(player.level.isClientSide) {
-			if (player.tickCount % 30 == 0) {
-				player.playSound(SoundEvents.FIRE_AMBIENT, 0.15F, 0.01F);
-			}
+			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> sound());
 		}
 		
 		if(player.level.isClientSide) {
@@ -91,6 +113,29 @@ public class FireBreathAbility extends BreathAbility
 		
 		if (player.tickCount % 20 == 0) {
 			hitBlocks();
+		}
+	}
+	
+	@OnlyIn(Dist.CLIENT)
+	public void sound(){
+		if (castingTicks == 1) {
+			if(startingSound == null){
+				startingSound = SimpleSound.forAmbientAddition(SoundRegistry.breathStart);
+			}
+			
+			Minecraft.getInstance().getSoundManager().play(startingSound);
+			Minecraft.getInstance().getSoundManager().playDelayed(new FireBreathSound(this), 10);
+		}
+	}
+	
+	@OnlyIn(Dist.CLIENT)
+	public void stopSound(){
+		if(SoundRegistry.breathEnd != null) {
+			if (endSound == null) {
+				endSound = SimpleSound.forAmbientAddition(SoundRegistry.breathEnd);
+			}
+			
+			Minecraft.getInstance().getSoundManager().play(endSound);
 		}
 	}
 	
@@ -133,7 +178,7 @@ public class FireBreathAbility extends BreathAbility
 				}
 			}
 			return;
-		}else if(blockState.getMaterial().isSolidBlocking()) {
+		}else if(blockState.getMaterial().isSolid()) {
 			if(!player.level.isClientSide) {
 				if (ConfigHandler.SERVER.fireBreathSpreadsFire.get()) {
 					boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(player.level, player);

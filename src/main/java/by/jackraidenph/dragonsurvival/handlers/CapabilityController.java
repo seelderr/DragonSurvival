@@ -52,6 +52,18 @@ public class CapabilityController {
                     if (capOld.isDragon()) {
                         DragonStateHandler.DragonMovementData movementData = capOld.getMovementData();
                         capNew.setMovementData(movementData.bodyYaw, movementData.headYaw, movementData.headPitch, movementData.bite);
+    
+                        capNew.forestSize = capOld.forestSize;
+                        capNew.caveSize = capOld.caveSize;
+                        capNew.seaSize = capOld.seaSize;
+                        
+                        capNew.forestWings = capOld.forestWings;
+                        capNew.caveWings = capOld.caveWings;
+                        capNew.seaWings = capOld.seaWings;
+                        
+                        capNew.clawsInventory.fromTag(capOld.clawsInventory.createTag());
+                        capNew.clawsMenuOpen = capOld.clawsMenuOpen;
+                        
                         capNew.setSize(capOld.getSize());
                         capNew.setType(capOld.getType());
                         capNew.setHasWings(capOld.hasWings());
