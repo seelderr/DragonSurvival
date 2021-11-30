@@ -73,14 +73,13 @@ public class SkillProgressButton extends Button {
 				ArrayList<ITextComponent> description = new ArrayList<>(Arrays.asList(ability.getTitle().withStyle(format).append(" (" + ability.getLevel() + " / " + ability.getMaxLevel() + ")")));
 				
 				if(ability.getLevelUpInfo().size() > 0){
-					description.add(new StringTextComponent(""));
 					description.addAll(ability.getLevelUpInfo());
 				}
 				
 				int requiredLevel = ability.getCurrentRequiredLevel();
 				
 				if (requiredLevel != -1) {
-					description.add(new TranslationTextComponent("ds.skill.required_level", requiredLevel).withStyle(TextFormatting.DARK_GRAY));
+					description.add(new TranslationTextComponent("ds.skill.required_level", requiredLevel).withStyle(TextFormatting.WHITE));
 				}
 				
 				GuiUtils.drawHoveringText(stack, description, mouseX, mouseY, Minecraft.getInstance().screen.width, Minecraft.getInstance().screen.height, 200, Minecraft.getInstance().font);
