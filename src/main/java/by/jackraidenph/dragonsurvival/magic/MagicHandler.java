@@ -3,6 +3,7 @@ package by.jackraidenph.dragonsurvival.magic;
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.capability.Capabilities;
+import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.magic.abilities.Actives.BreathAbilities.LightningBreathAbility;
 import by.jackraidenph.dragonsurvival.magic.abilities.Passives.BurnAbility;
@@ -368,6 +369,7 @@ public class MagicHandler
 			if (swordDamage > mainDamage) {
 				float f = (float)player.getAttributeValue(Attributes.ATTACK_DAMAGE);
 				float f1 = (float)player.getAttributeValue(Attributes.ATTACK_KNOCKBACK);
+				f += DragonStateHandler.buildDamageMod(cap, cap.isDragon()).getAmount();
 				
 				f += EnchantmentHelper.getDamageBonus(sword, target.getMobType());
 				f1 += (float)EnchantmentHelper.getItemEnchantmentLevel(Enchantments.KNOCKBACK, sword);

@@ -329,16 +329,6 @@ public class ClientEvents {
             
             initGuiEvent.addWidget(openCrafting);
         }
-    
-        if(screen instanceof DragonScreen) {
-            net.minecraft.client.gui.widget.button.Button openCrafting = new Button(((DragonScreen)screen).getGuiLeft(), screen.height - 30, 100, 20, new StringTextComponent("Normal Inventory"), p_onPress_1_ -> {
-                switchingInventory = true;
-                Minecraft.getInstance().setScreen(new InventoryScreen(Minecraft.getInstance().player));
-                switchingInventory = false;
-            });
-        
-            initGuiEvent.addWidget(openCrafting);
-        }
     }
 
     private static Vector3d getInputVector(Vector3d movement, float fricSpeed, float yRot) {

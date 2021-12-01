@@ -5,6 +5,7 @@ import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.containers.DragonContainer;
 import by.jackraidenph.dragonsurvival.gui.magic.buttons.TabButton;
+import by.jackraidenph.dragonsurvival.handlers.ClientEvents;
 import by.jackraidenph.dragonsurvival.magic.ClientMagicHandler;
 import by.jackraidenph.dragonsurvival.network.magic.DragonClawsMenuToggle;
 import by.jackraidenph.dragonsurvival.registration.ClientModEvents;
@@ -158,6 +159,14 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> implemen
         addButton(new TabButton(leftPos + 86, topPos - 26, 3, this));
     
         addButton(new Button(leftPos + 27, topPos + 10, 11, 11, new StringTextComponent(""), p_onPress_1_ -> {
+           if(recipeBookGui.isVisible()){
+               this.recipeBookGui.initVisuals(this.widthTooNarrow);
+               this.recipeBookGui.toggleVisibility();
+               this.leftPos = this.recipeBookGui.updateScreenPosition(this.widthTooNarrow, this.width + 30, this.imageWidth);
+               buttons.clear();
+               init();
+           }
+           
             clawsMenu = !clawsMenu;
             this.leftPos += (clawsMenu ? 80 : -80);
             buttons.clear();
@@ -201,6 +210,14 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> implemen
                 Minecraft.getInstance().screen.renderComponentTooltip(stack, description, mouseX, mouseY);
             }
         });
+    
+       Button openCrafting = new Button(getGuiLeft(), height - 30, 100, 20, new StringTextComponent("Normal Inventory"), p_onPress_1_ -> {
+            ClientEvents.switchingInventory = true;
+            Minecraft.getInstance().setScreen(new InventoryScreen(Minecraft.getInstance().player));
+           ClientEvents.switchingInventory = false;
+        });
+    
+        addWidget(openCrafting);
     }
     
     public void render(MatrixStack p_230450_1_,int p_render_1_, int p_render_2_, float p_render_3_) {

@@ -128,6 +128,8 @@ public class EventHandler {
         
         PlayerEntity playerEntity = breakEvent.getPlayer();
     
+        if(playerEntity.isCreative()) return;
+        
         DragonStateProvider.getCap(playerEntity).ifPresent(dragonStateHandler -> {
             if (dragonStateHandler.isDragon()) {
                 ItemStack mainStack = playerEntity.getMainHandItem();
