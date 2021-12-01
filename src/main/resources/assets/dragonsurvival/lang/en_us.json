@@ -89,7 +89,7 @@
   "effect.dragonsurvival.revealing_the_soul": "Revealing The Soul",
   "effect.dragonsurvival.burn": "Burned",
   "effect.dragonsurvival.charged": "Charged",
-  "effect.dragonsurvival.drain": "Drained",
+  "effect.dragonsurvival.drain": "Forest Gas",
   "effect.dragonsurvival.strong_leather": "Tough Skin",
 
   "death.attack.starDrain": "%1$s had their life and energy drained by magic.",
@@ -173,7 +173,7 @@
   "ds.skill.help":  "■ §6Active skills§r are used in combat, their power depends of level of the dragon;\n■ §aPassive skills§r do not disappear after death, can be upgraded;\n■ §dInnate passive skills§r are the features of your dragon.\n\n■ §9Level scale§r - the higher the level, the stronger the active skills.. \n\n■ §9Magic points (mana)§r restore under dragon-friendly conditions. Skills begin to spend experience if mana runs out.\n\n■ §9Controls§r - check controls in the game settings. To fine-tune the mod, use the configs. More information can be found on WikiFandom and Discord.",
 
   "ds.skill_cooldown_check_failure": "§fThe ability is §r§cnot ready§r§f yet!§r ({0})",
-  "ds.skill_mana_check_failure": "§fNot enough §r§mana and experience§r§f!§r",
+  "ds.skill_mana_check_failure": "§fNot enough§r §cmana and experience§r!",
   "ds.skill.nofly": "§fThis skill cannot be used §r§while flying§r§f!§f",
   "ds.skill.required_level": "§6■ Requires level:§r {0}",
   "ds.skill.level.up": "§aUpgrade the skill for§r {0} §alevels§r",

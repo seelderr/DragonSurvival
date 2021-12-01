@@ -86,6 +86,14 @@
   "effect.dragonsurvival.fire": "Пещерный Огонь",
   "effect.dragonsurvival.animal_peace": "Умиротворение",
   "effect.dragonsurvival.predator_anti_spawn": "Анти-Хищник",
+  "effect.dragonsurvival.water_vision": "Глаза Моря",
+  "effect.dragonsurvival.lava_vision": "Глаза Лавы",
+  "effect.dragonsurvival.hunter": "Охотник",
+  "effect.dragonsurvival.revealing_the_soul": "Раскрытие души",
+  "effect.dragonsurvival.burn": "Ожог",
+  "effect.dragonsurvival.charged": "Заряжен",
+  "effect.dragonsurvival.drain": "Лесной Газ",
+  "effect.dragonsurvival.strong_leather": "Крепкая Чешуя",
 
   "dragonsurvival:config.category.general.tooltip": "Общие параметры конфигурации для Dragons Survival",
   "dragonsurvival:config.category.spawnchances.tooltip": "Настройка спавна сущностей",
@@ -293,7 +301,7 @@
 
   "ds.skill.description.nether_breath": "■ Стихийное дыхание - поток огня, поджигающий врагов. Создаёт на земле область с эффектом §c«Ожог»§r. Дальность зависит от возраста дракона.\n\n■ Разрушает некоторые блоки. Нельзя использовать под водой и во время дождя.",
   "ds.skill.description.fireball": "■ Дальняя атака - шар огня, который §cвзрывается§r и поджигает область.",
-  "ds.skill.description.strong_leather": "■ Массовый бафф - временная §2броня§r для всех вокруг.\n\n■ Не суммируется. Нельзя использовать в полёте.",
+  "ds.skill.description.strong_leather": "■ Массовый бафф - временная §2броня§r для всех вокруг. Эффект §2«Крепкая Чешуя»§r.\n\n■ Не суммируется. Нельзя использовать в полёте.",
   "ds.skill.description.lava_vision": "■ Бафф на себя - делает лаву более §2прозрачной§r на некоторое время.\n\n■ Не суммируется. Нельзя использовать в полёте.",
   "ds.skill.description.cave_magic": "■ Очки магии (Мана) - используются для сотворения магии драконов. Восстанавливаются на горячих блоках.\n\n■ Сейчас у вас §2{0}§r маны:\n - §2{1}§r от «Пещерная Магия»\n - §2{2}§r от уровня дракона.",
   "ds.skill.description.cave_athletics": "■ Бег по каменным поверхностям даёт эффект §2Скорость {1}§r\n\n■ Длительность: §2{0}§rs.",
