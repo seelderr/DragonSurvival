@@ -33,5 +33,10 @@
     "sounds": [
       "dragonsurvival:dragon_breath_end"
     ]
+  },
+  "poison_breath_loop": {
+    "sounds": [
+      "dragonsurvival:poison_breath_loop"
+    ]
   }
 }

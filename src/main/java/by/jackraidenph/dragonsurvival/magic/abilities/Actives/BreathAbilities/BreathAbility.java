@@ -159,7 +159,7 @@ public abstract class BreathAbility extends ActiveDragonAbility
 			AxisAlignedBB axisalignedbb = player.getBoundingBox().expandTowards(vector3d1).inflate(1.0D);
 			Predicate<Entity> predicate = (entity) -> entity instanceof LivingEntity && !entity.isSpectator() && entity.isPickable();
 			
-			EntityRayTraceResult result = ProjectileHelper.getEntityHitResult(player, vector3d, vector3d2, axisalignedbb, predicate, RANGE * RANGE);
+			EntityRayTraceResult result = ProjectileHelper.getEntityHitResult(player.level, player, vector3d, vector3d2, axisalignedbb, predicate);
 			
 			if (result != null) {
 				LivingEntity entity = (LivingEntity)result.getEntity();

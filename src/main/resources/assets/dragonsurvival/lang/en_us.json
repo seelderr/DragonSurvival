@@ -174,7 +174,7 @@
 
   "ds.skill_cooldown_check_failure": "§fThe ability is §r§cnot ready§r§f yet!§r ({0})",
   "ds.skill_mana_check_failure": "§fNot enough§r §cmana and experience§r!",
-  "ds.skill.nofly": "§fThis skill cannot be used §r§while flying§r§f!§f",
+  "ds.skill.nofly": "§fThis skill cannot be used §r§cwhile flying§r§f!§f",
   "ds.skill.required_level": "§6■ Requires level:§r {0}",
   "ds.skill.level.up": "§aUpgrade the skill for§r {0} §alevels§r",
   "ds.skill.level.down": "§aDowngrade the skill and refund§r {0} §alevels§r",

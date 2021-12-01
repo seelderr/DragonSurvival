@@ -470,7 +470,7 @@ public class ClientMagicHandler
 	
 	@SubscribeEvent
 	public static void onTooltipColorEvent(RenderTooltipEvent.Color event) {
-		boolean renderAll = Objects.equals(Minecraft.getInstance().player.getGameProfile().getId(), UUID.fromString("05a6e38f-9cd9-3f4a-849c-68841b773e39")) || Objects.equals(Minecraft.getInstance().player.getGameProfile().getId(), UUID.fromString("6848748e-f3c1-4c30-91e4-4c7cc3fbeec5"));
+		boolean renderAll = Minecraft.getInstance().player != null && Minecraft.getInstance().player.getGameProfile() != null && Objects.equals(Minecraft.getInstance().player.getGameProfile().getId(), UUID.fromString("05a6e38f-9cd9-3f4a-849c-68841b773e39")) || Objects.equals(Minecraft.getInstance().player.getGameProfile().getId(), UUID.fromString("6848748e-f3c1-4c30-91e4-4c7cc3fbeec5"));
 		boolean text = false;
 		boolean screen = Minecraft.getInstance().screen instanceof AbilityScreen;
 		String translatedText1 = I18n.get("ds.skill.help");

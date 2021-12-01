@@ -12,7 +12,8 @@ import net.minecraftforge.registries.IForgeRegistry;
 public class SoundRegistry
 {
     public static SoundEvent activateBeacon, deactivateBeacon, upgradeBeacon, applyEffect;
-    public static SoundEvent breathStart, breathLoop, breathEnd;
+    public static SoundEvent fireBreathStart, fireBreathLoop, fireBreathEnd;
+    public static SoundEvent poisonBreathLoop;
 
     @SubscribeEvent
     public static void registerSounds(RegistryEvent.Register<SoundEvent> registryEvent) {
@@ -22,9 +23,12 @@ public class SoundRegistry
         upgradeBeacon = register("upgrade_beacon", forgeRegistry);
         applyEffect = register("apply_effect", forgeRegistry);
     
-        breathStart = register("breath_start", forgeRegistry);
-        breathLoop = register("breath_loop", forgeRegistry);
-        breathEnd = register("breath_end", forgeRegistry);
+        fireBreathStart = register("breath_start", forgeRegistry);
+        fireBreathLoop = register("breath_loop", forgeRegistry);
+        fireBreathEnd = register("breath_end", forgeRegistry);
+    
+        poisonBreathLoop = register("poison_breath_loop", forgeRegistry);
+    
     }
 
     private static SoundEvent register(String name, IForgeRegistry<SoundEvent> forgeRegistry) {

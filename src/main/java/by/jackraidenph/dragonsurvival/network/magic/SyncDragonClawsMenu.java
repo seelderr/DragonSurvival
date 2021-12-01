@@ -6,8 +6,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -38,7 +38,14 @@ public class SyncDragonClawsMenu implements IMessage<SyncDragonClawsMenu>
 		buffer.writeBoolean(message.state);
 		
 		CompoundNBT nbt = new CompoundNBT();
-		nbt.put("list", message.inv.createTag());
+		
+		for(int i = 0; i < 4; i++){
+			ItemStack stack = message.inv.getItem(i);
+			
+			if(!stack.isEmpty()){
+				nbt.put(Integer.toString(i), stack.save(new CompoundNBT()));
+			}
+		}
 		
 		buffer.writeNbt(nbt);
 	}
@@ -48,9 +55,19 @@ public class SyncDragonClawsMenu implements IMessage<SyncDragonClawsMenu>
 		int playerId = buffer.readInt();
 		boolean state = buffer.readBoolean();
 		CompoundNBT tag = buffer.readNbt();
-		ListNBT list = tag.getList("list", 10);
+		
 		Inventory inventory = new Inventory(4);
-		inventory.fromTag(list);
+		
+		for(int i = 0; i < 4; i++){
+			if(tag.contains(Integer.toString(i))){
+				ItemStack stack = ItemStack.of(tag.getCompound(Integer.toString(i)));
+				
+				if(!stack.isEmpty()){
+					inventory.setItem(i, stack);
+				}
+			}
+		}
+		
 		return new SyncDragonClawsMenu(playerId, state, inventory);
 	}
 	
@@ -70,7 +87,11 @@ public class SyncDragonClawsMenu implements IMessage<SyncDragonClawsMenu>
 				if (entity instanceof PlayerEntity) {
 					DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
 						dragonStateHandler.clawsMenuOpen = message.state;
-						dragonStateHandler.clawsInventory.fromTag(message.inv.createTag());
+						dragonStateHandler.clawsInventory = new Inventory(4);
+						
+						for(int i = 0; i < 4; i++){
+							dragonStateHandler.clawsInventory.setItem(i, message.inv.getItem(i));
+						}
 					});
 				}
 			}

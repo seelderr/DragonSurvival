@@ -43,6 +43,8 @@ public class DragonContainer extends RecipeBookContainer<CraftingInventory> {
     public final PlayerEntity player;
     public PlayerInventory playerInventory;
     
+    private int craftingSlot;
+    
     private static final EquipmentSlotType[] VALID_EQUIPMENT_SLOTS = new EquipmentSlotType[]{EquipmentSlotType.HEAD, EquipmentSlotType.CHEST, EquipmentSlotType.LEGS, EquipmentSlotType.FEET};
     public static final ResourceLocation LOCATION_BLOCKS_TEXTURE = new ResourceLocation("textures/atlas/blocks.png");
     public static final ResourceLocation EMPTY_ARMOR_SLOT_HELMET = new ResourceLocation("item/empty_armor_slot_helmet");
@@ -142,8 +144,10 @@ public class DragonContainer extends RecipeBookContainer<CraftingInventory> {
         //Offhand
         this.addSlot(new Slot(playerInventory, 40, 26, 62));
     
+        
         this.addSlot(new CraftingResultSlot(playerInventory.player, this.craftMatrix, this.craftResult, 0, 178, 33));
-    
+        craftingSlot = slots.size();
+        
         int slotIndex = 0;
         for (int i = 0; i < craftMatrix.getWidth(); ++i) {
             for (int j = 0; j < craftMatrix.getHeight(); ++j) {
@@ -163,8 +167,6 @@ public class DragonContainer extends RecipeBookContainer<CraftingInventory> {
         
         broadcastChanges();
     }
-    
-    
     
     
     @Override
@@ -225,19 +227,22 @@ public class DragonContainer extends RecipeBookContainer<CraftingInventory> {
             itemstack = itemstack1.copy();
             EquipmentSlotType equipmentslottype = MobEntity.getEquipmentSlotForItem(itemstack);
             
-            if (index == 0) {
+            if (index == craftingSlot) {
                 if (!this.moveItemStackTo(itemstack1, 4, 40, true)) {
                     return ItemStack.EMPTY;
                 }
                 slot.onQuickCraft(itemstack1, itemstack);
-                
-            } else if (index < 9) {
-                if (!this.moveItemStackTo(itemstack1, 31, 40, false)) {
-                    return ItemStack.EMPTY;
-                }
             } else if (equipmentslottype.getType() == EquipmentSlotType.Group.ARMOR && !this.slots.get(3 - equipmentslottype.getIndex()).hasItem()) {
                 int i = 3 - equipmentslottype.getIndex();
                 if (!this.moveItemStackTo(itemstack1, i, i + 1, false)) {
+                    return ItemStack.EMPTY;
+                }
+            } else if (index < 4) {
+                if (!this.moveItemStackTo(itemstack1, 4, 40, false)) {
+                    return ItemStack.EMPTY;
+                }
+            } else if (index < 9) {
+                if (!this.moveItemStackTo(itemstack1, 31, 40, false)) {
                     return ItemStack.EMPTY;
                 }
             } else if (equipmentslottype == EquipmentSlotType.OFFHAND && !this.slots.get(44).hasItem()) {
@@ -245,14 +250,14 @@ public class DragonContainer extends RecipeBookContainer<CraftingInventory> {
                     return ItemStack.EMPTY;
                 }
             } else if (index >= 4 && index < 30) {
-                if (!this.moveItemStackTo(itemstack1, 31, 40, false)) {
+                if (!this.moveItemStackTo(itemstack1, 31, 45, false)) {
                     return ItemStack.EMPTY;
                 }
             } else if (index >= 31 && index < 39) {
                 if (!this.moveItemStackTo(itemstack1, 4, 31, false)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (!this.moveItemStackTo(itemstack1, 4, 40, false)) {
+            } else if (!this.moveItemStackTo(itemstack1, 9, 45, false)) {
                 return ItemStack.EMPTY;
             }
         
@@ -292,9 +297,8 @@ public class DragonContainer extends RecipeBookContainer<CraftingInventory> {
                 }
             }
     
-            craftResult.setItem(0, itemstack);
-            serverplayerentity.connection.send(new SSetSlotPacket(containerId, 0, itemstack));
-        
+            craftResult.setItem(45, itemstack);
+            serverplayerentity.connection.send(new SSetSlotPacket(containerId, 45, itemstack));
         }
     }
 

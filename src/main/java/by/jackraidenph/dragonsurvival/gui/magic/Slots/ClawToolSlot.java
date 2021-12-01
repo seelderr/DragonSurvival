@@ -1,11 +1,16 @@
 package by.jackraidenph.dragonsurvival.gui.magic.Slots;
 
+import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
+import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.containers.DragonContainer;
+import by.jackraidenph.dragonsurvival.network.magic.SyncDragonClawsMenu;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.SwordItem;
 import net.minecraftforge.common.ToolType;
+import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.fml.network.PacketDistributor.TargetPoint;
 
 public class ClawToolSlot extends Slot
 {
@@ -23,6 +28,34 @@ public class ClawToolSlot extends Slot
 	public boolean isActive()
 	{
 		return dragonContainer.menuStatus == 1;
+	}
+	
+	@Override
+	public ItemStack remove(int p_75209_1_)
+	{
+		ItemStack stack = super.remove(p_75209_1_);
+		
+		if(!dragonContainer.player.level.isClientSide){
+			DragonStateProvider.getCap(dragonContainer.player).ifPresent((cap) -> {
+				TargetPoint point = new TargetPoint(null, dragonContainer.player.position().x, dragonContainer.player.position().y, dragonContainer.player.position().z, 64, dragonContainer.player.level.dimension());
+				DragonSurvivalMod.CHANNEL.send(PacketDistributor.NEAR.with(() -> point), new SyncDragonClawsMenu(dragonContainer.player.getId(), cap.clawsMenuOpen, cap.clawsInventory));
+			});
+		}
+		
+		return stack;
+	}
+	
+	@Override
+	public void set(ItemStack p_75215_1_)
+	{
+		super.set(p_75215_1_);
+		
+		if(!dragonContainer.player.level.isClientSide){
+			DragonStateProvider.getCap(dragonContainer.player).ifPresent((cap) -> {
+				TargetPoint point = new TargetPoint(null, dragonContainer.player.position().x, dragonContainer.player.position().y, dragonContainer.player.position().z, 64, dragonContainer.player.level.dimension());
+				DragonSurvivalMod.CHANNEL.send(PacketDistributor.NEAR.with(() -> point), new SyncDragonClawsMenu(dragonContainer.player.getId(), cap.clawsMenuOpen, cap.clawsInventory));
+			});
+		}
 	}
 	
 	@Override

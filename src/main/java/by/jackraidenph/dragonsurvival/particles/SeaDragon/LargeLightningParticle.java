@@ -1,15 +1,8 @@
 package by.jackraidenph.dragonsurvival.particles.SeaDragon;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.particle.*;
 import net.minecraft.client.renderer.ActiveRenderInfo;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.texture.AtlasTexture;
-import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3f;
@@ -46,32 +39,18 @@ public class LargeLightningParticle extends SpriteTexturedParticle {
 	protected float getV1() {
 		return super.getV1() - (super.getV1() - super.getV0())/8f;
 	}
-
+	
 	@Override
 	public IParticleRenderType getRenderType() {
-		return PARTICLE_SHEET_TRANSLUCENT_NO_DEPTH;
+		return IParticleRenderType.PARTICLE_SHEET_OPAQUE;
 	}
-
-	public static IParticleRenderType PARTICLE_SHEET_TRANSLUCENT_NO_DEPTH = new IParticleRenderType() {
-		public void begin(BufferBuilder p_217600_1_, TextureManager p_217600_2_) {
-			RenderSystem.depthMask(true);
-			RenderSystem.disableCull();
-			p_217600_2_.bind(AtlasTexture.LOCATION_PARTICLES);
-			RenderSystem.enableBlend();
-			RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-			RenderSystem.alphaFunc(516, 0.003921569F);
-			p_217600_1_.begin(7, DefaultVertexFormats.PARTICLE);
-		}
-
-		public void end(Tessellator p_217599_1_) {
-			p_217599_1_.end();
-		}
-
-		public String toString() {
-			return "PARTICLE_SHEET_TRANSLUCENT_NO_DEPTH";
-		}
-	};
-
+	
+	@Override
+	protected int getLightColor(float p_189214_1_)
+	{
+		return 256;
+	}
+	
 	@Override
 	public void tick() {
 		super.tick();

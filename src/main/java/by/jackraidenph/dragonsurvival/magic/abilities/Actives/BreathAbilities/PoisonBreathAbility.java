@@ -4,10 +4,12 @@ import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.particles.ForestDragon.LargePoisonParticleData;
 import by.jackraidenph.dragonsurvival.particles.ForestDragon.SmallPoisonParticleData;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
+import by.jackraidenph.dragonsurvival.sounds.PoisonBreathSound;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.IGrowable;
 import net.minecraft.block.PotatoBlock;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.AreaEffectCloudEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -26,6 +28,8 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.DistExecutor.SafeRunnable;
 
 import java.util.ArrayList;
 
@@ -41,7 +45,14 @@ public class PoisonBreathAbility extends BreathAbility
 	{
 		return new PoisonBreathAbility(id, icon, minLevel, maxLevel, manaCost, castTime, abilityCooldown, requiredLevels);
 	}
-
+	
+	@OnlyIn(Dist.CLIENT)
+	public void sound(){
+		if (castingTicks == 1) {
+			Minecraft.getInstance().getSoundManager().play(new PoisonBreathSound(this));
+		}
+	}
+	
 	@Override
 	public void onActivation(PlayerEntity player)
 	{
@@ -49,10 +60,14 @@ public class PoisonBreathAbility extends BreathAbility
 		super.onActivation(player);
 		
 		Vector3d viewVector = player.getViewVector(1.0F);
+		Vector3d delta = player.getDeltaMovement();
 		
 		double x = player.getX() + viewVector.x;
 		double y = player.getY() + 1 + viewVector.y;
 		double z = player.getZ() + viewVector.z;
+		
+		xComp += delta.x * 6;
+		zComp += delta.z * 6;
 		
 		if (player.hasEffect(DragonEffects.STRESS)) {
 			if(player.level.isClientSide) {
@@ -71,9 +86,7 @@ public class PoisonBreathAbility extends BreathAbility
 		}
 		
 		if(player.level.isClientSide) {
-			if (player.tickCount % 30 == 0) {
-				player.playSound(SoundEvents.FIRE_AMBIENT, 0.15F, 0.01F);
-			}
+			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> sound());
 		}
 		
 		if(player.level.isClientSide) {

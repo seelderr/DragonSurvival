@@ -44,11 +44,14 @@ import net.minecraftforge.event.entity.living.PotionEvent.PotionAddedEvent;
 import net.minecraftforge.event.entity.living.PotionEvent.PotionExpiryEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
+import net.minecraftforge.event.entity.player.PlayerXpEvent.PickupXp;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.fml.network.PacketDistributor.TargetPoint;
+
+import java.util.ArrayList;
 
 @EventBusSubscriber
 public class MagicHandler
@@ -342,12 +345,10 @@ public class MagicHandler
 	
 	@SubscribeEvent
 	public static void playerAttack(AttackEntityEvent event){
-		//TODO Finish this sword claw innate
 		PlayerEntity player = (PlayerEntity)event.getPlayer().getEntity();
 		LivingEntity target = (LivingEntity)event.getTarget();
 		
 		DragonStateProvider.getCap(player).ifPresent(cap -> {
-			
 			ItemStack mainStack = player.getMainHandItem();
 			ItemStack sword = cap.clawsInventory.getItem(0);
 			
@@ -391,6 +392,34 @@ public class MagicHandler
 				}
 				
 				event.setCanceled(true);
+			}
+		});
+	}
+	
+	@SubscribeEvent
+	public static void experiencePickup(PickupXp event){
+		PlayerEntity player = event.getPlayer();
+		
+		DragonStateProvider.getCap(player).ifPresent(cap -> {
+			ArrayList<ItemStack> stacks = new ArrayList<>();
+			
+			for(int i = 0; i < 4; i++){
+				ItemStack clawStack = cap.clawsInventory.getItem(i);
+				int mending = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MENDING, clawStack);
+				
+				if(mending > 0 && clawStack.isDamaged()){
+					stacks.add(clawStack);
+				}
+			}
+			
+			if(stacks.size() > 0) {
+				ItemStack repairTime = stacks.get(player.level.random.nextInt(stacks.size()));
+				if (!repairTime.isEmpty() && repairTime.isDamaged()) {
+					
+					int i = Math.min((int)(event.getOrb().value * repairTime.getXpRepairRatio()), repairTime.getDamageValue());
+					event.getOrb().value -= i * 2;
+					repairTime.setDamageValue(repairTime.getDamageValue() - i);
+				}
 			}
 		});
 	}
