@@ -37,7 +37,7 @@ public class DragonClawsAbility extends InnateDragonAbility
 	@Override
 	public int getLevel()
 	{
-		return MathHelper.clamp(FMLEnvironment.dist == Dist.CLIENT ? getHarvestLevel() : 0, 0, 5) + 1;
+		return MathHelper.clamp(FMLEnvironment.dist == Dist.CLIENT ? getHarvestLevel() : 0, 0, 6) + 1;
 	}
 	
 	@OnlyIn( Dist.CLIENT)

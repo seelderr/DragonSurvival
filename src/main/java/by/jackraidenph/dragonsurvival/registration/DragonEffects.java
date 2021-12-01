@@ -154,7 +154,7 @@ public class DragonEffects {
     private static class EvilDragon extends Effect {
 
         protected EvilDragon(EffectType p_i50391_1_) {
-            super(p_i50391_1_, 13700608);
+            super(p_i50391_1_, 0x0);
         }
 
         @Override

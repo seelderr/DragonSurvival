@@ -7,6 +7,7 @@ import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
 import by.jackraidenph.dragonsurvival.magic.abilities.Passives.CliffhangerAbility;
+import by.jackraidenph.dragonsurvival.magic.abilities.Passives.ContrastShowerAbility;
 import by.jackraidenph.dragonsurvival.magic.abilities.Passives.LightInDarknessAbility;
 import by.jackraidenph.dragonsurvival.magic.abilities.Passives.WaterAbility;
 import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
@@ -277,6 +278,35 @@ public class SpecificsHandler {
                     mc.getTextureManager().bind(AbstractGui.GUI_ICONS_LOCATION);
                     RenderSystem.disableBlend();
     			}
+			
+			    if (playerStateHandler.getDebuffData().timeInRain > 0 && playerStateHandler.getType() == DragonType.CAVE && ConfigHandler.SERVER.penalties.get() && ConfigHandler.SERVER.caveRainDamage.get() != 0.0) {
+				    RenderSystem.enableBlend();
+				    mc.getTextureManager().bind(DRAGON_HUD);
+				
+				    final int right_height = ForgeIngameGui.right_height;
+				    ForgeIngameGui.right_height += 10;
+				
+				    DragonAbility contrastShower = playerStateHandler.getAbility(DragonAbilities.CONTRAST_SHOWER);
+				    int maxRainTime = 0;
+				
+				    if(contrastShower != null){
+					    maxRainTime +=  Functions.secondsToTicks(((ContrastShowerAbility)contrastShower).getDuration());
+				    }
+				
+				
+				    final int timeInRain = maxRainTime - Math.min(playerStateHandler.getDebuffData().timeInRain, maxRainTime);
+				
+				    final int left = Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 + 91;
+				    final int top = Minecraft.getInstance().getWindow().getGuiScaledHeight() - right_height;
+				    final int full = MathHelper.ceil((double) (timeInRain - 2) * 10.0D / maxRainTime);
+				    final int partial = MathHelper.ceil((double) timeInRain * 10.0D / maxRainTime) - full;
+				
+				    for (int i = 0; i < full + partial; ++i)
+					    Minecraft.getInstance().gui.blit(event.getMatrixStack(), left - i * 8 - 9, top, (i < full ? 0 : 9), 54, 9, 9);
+				
+				    mc.getTextureManager().bind(AbstractGui.GUI_ICONS_LOCATION);
+				    RenderSystem.disableBlend();
+			    }
     		}
     	});
     }

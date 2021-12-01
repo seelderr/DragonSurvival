@@ -106,23 +106,6 @@ public class ClientFlightHandler {
         }
     }
     
-    
-    @SubscribeEvent
-    public static void playerFoodExhaustion(TickEvent.PlayerTickEvent playerTickEvent) {
-        if(playerTickEvent.player.level.isClientSide) {
-            DragonStateProvider.getCap(playerTickEvent.player).ifPresent(dragonStateHandler -> {
-                if (dragonStateHandler.isDragon()) {
-                    boolean wingsSpread = wingsEnabled;
-                    if (ConfigHandler.SERVER.creativeFlight.get()) {
-                        if (playerTickEvent.player.abilities.flying != wingsSpread) {
-                            playerTickEvent.player.abilities.flying = wingsSpread;
-                        }
-                    }
-                }
-            });
-        }
-    }
-    
     @SubscribeEvent
     public static void toggleWings(InputEvent.KeyInputEvent keyInputEvent) {
         ClientPlayerEntity player = Minecraft.getInstance().player;

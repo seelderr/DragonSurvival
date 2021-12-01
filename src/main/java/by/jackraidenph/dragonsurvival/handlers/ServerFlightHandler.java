@@ -54,9 +54,10 @@ public class ServerFlightHandler {
         DragonStateProvider.getCap(playerTickEvent.player).ifPresent(dragonStateHandler -> {
             if(dragonStateHandler.isDragon()) {
                 boolean wingsSpread = DragonSizeHandler.wingsStatusServer.containsKey(playerTickEvent.player.getId()) && DragonSizeHandler.wingsStatusServer.get(playerTickEvent.player.getId());
-                if(ConfigHandler.SERVER.creativeFlight.get()){
+                if(ConfigHandler.SERVER.creativeFlight.get() && !playerTickEvent.player.level.isClientSide){
                     if(playerTickEvent.player.abilities.flying != wingsSpread){
                         playerTickEvent.player.abilities.flying = wingsSpread;
+                        playerTickEvent.player.onUpdateAbilities();
                     }
                 }
                 
