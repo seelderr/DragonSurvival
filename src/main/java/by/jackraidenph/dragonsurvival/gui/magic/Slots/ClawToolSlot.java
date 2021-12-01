@@ -1,6 +1,5 @@
 package by.jackraidenph.dragonsurvival.gui.magic.Slots;
 
-import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.containers.DragonContainer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.Slot;
@@ -24,25 +23,6 @@ public class ClawToolSlot extends Slot
 	public boolean isActive()
 	{
 		return dragonContainer.menuStatus == 1;
-	}
-	
-	@Override
-	public void set(ItemStack p_75215_1_)
-	{
-		super.set(p_75215_1_);
-		
-		DragonStateProvider.getCap(dragonContainer.player).ifPresent((cap) -> {
-			cap.setSize(cap.getSize(), dragonContainer.player);
-		});
-	}
-	
-	@Override
-	public ItemStack remove(int p_75209_1_)
-	{
-		DragonStateProvider.getCap(dragonContainer.player).ifPresent((cap) -> {
-			cap.setSize(cap.getSize(), dragonContainer.player);
-		});
-		return super.remove(p_75209_1_);
 	}
 	
 	@Override
