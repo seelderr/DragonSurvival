@@ -146,14 +146,13 @@ public class DragonStateHandler {
     	int harvestLevel = state.getHarvestLevel();
 		int baseHarvestLevel = 0;
 		
-		for(int i = 1; i < 4; i++){
-			if(state.isToolEffective(CLAW_TOOL_TYPES[i])){
+		for(int i = 1; i < 4; i++) {
+			if(state.getHarvestTool() ==  CLAW_TOOL_TYPES[i]){
 				ItemStack stack = clawsInventory.getItem(i);
 				
 				if(!stack.isEmpty()){
 					int hvLevel = stack.getHarvestLevel(CLAW_TOOL_TYPES[i], player, state);
-					
-					if(hvLevel > baseHarvestLevel){
+					if (hvLevel > baseHarvestLevel) {
 						baseHarvestLevel = hvLevel;
 					}
 				}
@@ -177,15 +176,15 @@ public class DragonStateHandler {
             	if (harvestLevel <= ConfigHandler.SERVER.bonusHarvestLevel.get() + baseHarvestLevel) {
                     switch (getType()) {
                         case SEA:
-                            if (state.isToolEffective(ToolType.SHOVEL))
+                            if (state.getHarvestTool() == ToolType.SHOVEL)
                             	return true;
                             break;
                         case CAVE:
-                            if (state.isToolEffective(ToolType.PICKAXE))
+                            if (state.getHarvestTool() == ToolType.PICKAXE)
                             	return true;
                             break;
                         case FOREST:
-                            if (state.isToolEffective(ToolType.AXE))
+                            if (state.getHarvestTool() == ToolType.AXE)
                                 return true;
                     }
                 }

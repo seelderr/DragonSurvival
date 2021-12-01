@@ -15,7 +15,7 @@ public class ConfigUtils {
 
         for (String entry : values.toArray(new String[0])) {
             final String[] sEntry = entry.split(":");
-            final ResourceLocation rlEntry = new ResourceLocation(sEntry[0], sEntry[1]);
+            final ResourceLocation rlEntry = new ResourceLocation(sEntry[1], sEntry[2]);
 
             if (sEntry[0].equalsIgnoreCase("tag")) {
                 final ITag<Item> tag = ItemTags.getAllTags().getTag(rlEntry);

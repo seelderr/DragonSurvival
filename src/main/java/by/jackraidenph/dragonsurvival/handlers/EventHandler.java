@@ -138,7 +138,7 @@ public class EventHandler {
                 ItemStack hotbarItem = null;
                 
                 for(int i = 1; i < 4; i++){
-                    if(blockState.isToolEffective(DragonStateHandler.CLAW_TOOL_TYPES[i])){
+                    if(blockState.getHarvestTool() == DragonStateHandler.CLAW_TOOL_TYPES[i]){
                         ItemStack breakingItem = dragonStateHandler.clawsInventory.getItem(i);
                         if(!breakingItem.isEmpty()){
                             float tempSpeed = breakingItem.getDestroySpeed(blockState) * 0.7F;

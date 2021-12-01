@@ -346,6 +346,8 @@ public class MagicHandler
 	
 	@SubscribeEvent
 	public static void playerAttack(AttackEntityEvent event){
+		if(!(event.getTarget() instanceof LivingEntity)) return;
+		
 		PlayerEntity player = (PlayerEntity)event.getPlayer().getEntity();
 		LivingEntity target = (LivingEntity)event.getTarget();
 		

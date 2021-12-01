@@ -421,7 +421,7 @@ public class SpecificsHandler {
 				float newSpeed = 0F;
 				
 				for(int i = 1; i < 4; i++){
-					if(blockState.isToolEffective(DragonStateHandler.CLAW_TOOL_TYPES[i])){
+					if(blockState.getHarvestTool() == DragonStateHandler.CLAW_TOOL_TYPES[i]){
 						ItemStack breakingItem = dragonStateHandler.clawsInventory.getItem(i);
 						if(!breakingItem.isEmpty()){
 							float tempSpeed = breakingItem.getDestroySpeed(blockState) * 0.7F;
@@ -457,17 +457,17 @@ public class SpecificsHandler {
                         case ADULT:
                             switch (dragonStateHandler.getType()) {
                                 case FOREST:
-                                    if (blockState.isToolEffective(ToolType.AXE)) {
+                                    if (blockState.getHarvestTool() == ToolType.AXE) {
                                         breakSpeedEvent.setNewSpeed((speed * 4.0F) + newSpeed);
                                     } else breakSpeedEvent.setNewSpeed((speed * 2.0F) + newSpeed);
                                     break;
                                 case CAVE:
-                                    if (blockState.isToolEffective(ToolType.PICKAXE)) {
+                                    if (blockState.getHarvestTool() == ToolType.PICKAXE) {
                                         breakSpeedEvent.setNewSpeed((speed * 4.0F) + newSpeed);
                                     } else breakSpeedEvent.setNewSpeed((speed * 2.0F) + newSpeed);
                                     break;
                                 case SEA:
-                                    if (blockState.isToolEffective(ToolType.SHOVEL)) {
+                                    if (blockState.getHarvestTool() == ToolType.SHOVEL) {
                                         breakSpeedEvent.setNewSpeed((speed * 4.0F) + newSpeed);
                                     } else breakSpeedEvent.setNewSpeed((speed * 2.0F) + newSpeed);
                                     if (playerEntity.isInWaterOrBubble()) {
