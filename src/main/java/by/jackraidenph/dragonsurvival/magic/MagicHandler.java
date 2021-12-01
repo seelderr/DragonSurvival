@@ -18,8 +18,13 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.CauldronBlock;
 import net.minecraft.block.material.Material;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.SwordItem;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
@@ -37,6 +42,7 @@ import net.minecraftforge.event.entity.living.LivingEvent.LivingVisibilityEvent;
 import net.minecraftforge.event.entity.living.LivingExperienceDropEvent;
 import net.minecraftforge.event.entity.living.PotionEvent.PotionAddedEvent;
 import net.minecraftforge.event.entity.living.PotionEvent.PotionExpiryEvent;
+import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -326,56 +332,6 @@ public class MagicHandler
 							}
 						}
 						
-						
-						//TODO Finish this sword claw innate
-						/*
-						ItemStack mainStack = player.getMainHandItem();
-						ItemStack sword = cap.clawsInventory.getItem(0);
-						
-						float mainDamage = 0;
-						float swordDamage = 0;
-						
-						if(!mainStack.isEmpty() && mainStack.getItem() instanceof SwordItem){
-							mainDamage = ((SwordItem)mainStack.getItem()).getDamage();
-							mainDamage += EnchantmentHelper.getDamageBonus(mainStack, target.getMobType());
-						}
-						
-						if(!sword.isEmpty() && sword.getItem() instanceof SwordItem){
-							swordDamage = ((SwordItem)sword.getItem()).getDamage();
-							swordDamage += EnchantmentHelper.getDamageBonus(sword, target.getMobType());
-						}
-						
-						if(swordDamage > mainDamage){
-							float f = (float)player.getAttributeValue(Attributes.ATTACK_DAMAGE);
-							float f1 = (float)player.getAttributeValue(Attributes.ATTACK_KNOCKBACK);
-							
-							f += EnchantmentHelper.getDamageBonus(sword, target.getMobType());
-							f1 += (float)EnchantmentHelper.getItemEnchantmentLevel(Enchantments.KNOCKBACK, sword);
-							
-							int i = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FIRE_ASPECT, sword);
-							
-							if (i > 0) {
-								target.setSecondsOnFire(i * 4);
-							}
-							
-							boolean flag = target.hurt(DamageSource.playerAttack(player), f);
-							
-							if (flag) {
-								if (f1 > 0.0F) {
-									target.knockback(f1 * 0.5F, (double)MathHelper.sin(target.yRot * ((float)Math.PI / 180F)), (double)(-MathHelper.cos(target.yRot * ((float)Math.PI / 180F))));
-									target.setDeltaMovement(target.getDeltaMovement().multiply(0.6D, 1.0D, 0.6D));
-								}
-								
-								player.doEnchantDamageEffects(player, target);
-								target.setLastHurtMob(player);
-							}
-							
-						 
-							
-							event.setCanceled(true);
-						}
-						*/
-						
 					});
 					
 				}
@@ -384,6 +340,60 @@ public class MagicHandler
 		}
 	}
 	
+	@SubscribeEvent
+	public static void playerAttack(AttackEntityEvent event){
+		//TODO Finish this sword claw innate
+		PlayerEntity player = (PlayerEntity)event.getPlayer().getEntity();
+		LivingEntity target = (LivingEntity)event.getTarget();
+		
+		DragonStateProvider.getCap(player).ifPresent(cap -> {
+			
+			ItemStack mainStack = player.getMainHandItem();
+			ItemStack sword = cap.clawsInventory.getItem(0);
+			
+			float mainDamage = 0;
+			float swordDamage = 0;
+			
+			if (!mainStack.isEmpty() && mainStack.getItem() instanceof SwordItem) {
+				mainDamage = ((SwordItem)mainStack.getItem()).getDamage();
+				mainDamage += EnchantmentHelper.getDamageBonus(mainStack, target.getMobType());
+			}
+			
+			if (!sword.isEmpty() && sword.getItem() instanceof SwordItem) {
+				swordDamage = ((SwordItem)sword.getItem()).getDamage();
+				swordDamage += EnchantmentHelper.getDamageBonus(sword, target.getMobType());
+			}
+			
+			if (swordDamage > mainDamage) {
+				float f = (float)player.getAttributeValue(Attributes.ATTACK_DAMAGE);
+				float f1 = (float)player.getAttributeValue(Attributes.ATTACK_KNOCKBACK);
+				
+				f += EnchantmentHelper.getDamageBonus(sword, target.getMobType());
+				f1 += (float)EnchantmentHelper.getItemEnchantmentLevel(Enchantments.KNOCKBACK, sword);
+				
+				int i = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FIRE_ASPECT, sword);
+				
+				if (i > 0) {
+					target.setSecondsOnFire(i * 4);
+				}
+				
+				boolean flag = target.hurt(DamageSource.playerAttack(player), f);
+				
+				if (flag) {
+					if (f1 > 0.0F) {
+						target.knockback(f1 * 0.5F, (double)MathHelper.sin(target.yRot * ((float)Math.PI / 180F)), (double)(-MathHelper.cos(target.yRot * ((float)Math.PI / 180F))));
+						target.setDeltaMovement(target.getDeltaMovement().multiply(0.6D, 1.0D, 0.6D));
+					}
+					((SwordItem)sword.getItem()).hurtEnemy(sword, player, target);
+					
+					player.doEnchantDamageEffects(player, target);
+					target.setLastHurtMob(player);
+				}
+				
+				event.setCanceled(true);
+			}
+		});
+	}
 	
 	@SubscribeEvent
 	public static void experienceDrop(LivingExperienceDropEvent event){

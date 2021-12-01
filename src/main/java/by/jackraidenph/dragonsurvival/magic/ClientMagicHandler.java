@@ -388,13 +388,15 @@ public class ClientMagicHandler
 		boolean renderAll = Objects.equals(Minecraft.getInstance().player.getGameProfile().getId(), UUID.fromString("05a6e38f-9cd9-3f4a-849c-68841b773e39")) || Objects.equals(Minecraft.getInstance().player.getGameProfile().getId(), UUID.fromString("6848748e-f3c1-4c30-91e4-4c7cc3fbeec5"));
 		boolean text = false;
 		boolean screen = Minecraft.getInstance().screen instanceof AbilityScreen;
-		String translatedText = I18n.get("ds.skill.help");
+		String translatedText1 = I18n.get("ds.skill.help");
+		String translatedText2 = I18n.get("ds.skill.help.claws");
+		
 		String mergedString = "";
 		
 		for(ITextProperties comp : event.getLines()) {
 			if (comp instanceof TranslationTextComponent) {
 				TranslationTextComponent textComponent = (TranslationTextComponent)comp;
-				if(textComponent.getKey().equals("ds.skill.help")){
+				if(textComponent.getKey().contains("ds.skill.help")){
 					text = true;
 					break;
 				}
@@ -404,12 +406,13 @@ public class ClientMagicHandler
 		}
 		
 		if(!text){
-			if(mergedString.replace("\n", "").replace(" ", "").contains(translatedText.replace("\n", "").replace(" ", ""))){
+			if(mergedString.replace("\n", "").replace(" ", "").contains(translatedText1.replace("\n", "").replace(" ", ""))
+			|| mergedString.replace("\n", "").replace(" ", "").contains(translatedText2.replace("\n", "").replace(" ", ""))){
 				text = true;
 			}
 		}
 		
-		boolean render = screen && text || renderAll;
+		boolean render = text || renderAll;
 		
 		if(!render){
 			return;
@@ -470,13 +473,15 @@ public class ClientMagicHandler
 		boolean renderAll = Objects.equals(Minecraft.getInstance().player.getGameProfile().getId(), UUID.fromString("05a6e38f-9cd9-3f4a-849c-68841b773e39")) || Objects.equals(Minecraft.getInstance().player.getGameProfile().getId(), UUID.fromString("6848748e-f3c1-4c30-91e4-4c7cc3fbeec5"));
 		boolean text = false;
 		boolean screen = Minecraft.getInstance().screen instanceof AbilityScreen;
-		String translatedText = I18n.get("ds.skill.help");
+		String translatedText1 = I18n.get("ds.skill.help");
+		String translatedText2 = I18n.get("ds.skill.help.claws");
+		
 		String mergedString = "";
 		
 		for(ITextProperties comp : event.getLines()) {
 			if (comp instanceof TranslationTextComponent) {
 				TranslationTextComponent textComponent = (TranslationTextComponent)comp;
-				if(textComponent.getKey().equals("ds.skill.help")){
+				if(textComponent.getKey().contains("ds.skill.help")){
 					text = true;
 					break;
 				}
@@ -486,12 +491,13 @@ public class ClientMagicHandler
 		}
 		
 		if(!text){
-			if(mergedString.replace("\n", "").replace(" ", "").contains(translatedText.replace("\n", "").replace(" ", ""))){
+			if(mergedString.replace("\n", "").replace(" ", "").contains(translatedText1.replace("\n", "").replace(" ", ""))
+			   || mergedString.replace("\n", "").replace(" ", "").contains(translatedText2.replace("\n", "").replace(" ", ""))){
 				text = true;
 			}
 		}
 		
-		boolean render = screen && text || renderAll;
+		boolean render =  text || renderAll;
 		
 		ItemStack stack = event.getStack();
 		

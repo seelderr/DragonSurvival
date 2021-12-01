@@ -13,6 +13,8 @@ import by.jackraidenph.dragonsurvival.util.DragonLevel;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.AvoidEntityGoal;
@@ -45,6 +47,7 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.SleepingLocationCheckEvent;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -125,47 +128,6 @@ public class EventHandler {
         
         PlayerEntity playerEntity = breakEvent.getPlayer();
     
-        IWorld world = breakEvent.getWorld();
-        if (world instanceof ServerWorld) {
-            BlockState blockState = breakEvent.getState();
-            BlockPos blockPos = breakEvent.getPos();
-            Block block = blockState.getBlock();
-            ItemStack mainHandItem = playerEntity.getItemInHand(Hand.MAIN_HAND);
-            double random;
-            // Modded Ore Support
-            String[] tagStringSplit = ConfigHandler.SERVER.oresTag.get().split(":");
-            ResourceLocation ores = new ResourceLocation(tagStringSplit[0], tagStringSplit[1]);
-            // Checks to make sure the ore does not drop itself or another ore from the tag (no going infinite with ores)
-            ITag<Item> oresTag = ItemTags.getAllTags().getTag(ores);
-            if (!oresTag.contains(block.asItem()))
-                return;
-            List<ItemStack> drops = block.getDrops(blockState, new LootContext.Builder((ServerWorld) world)
-                    .withParameter(LootParameters.ORIGIN, new Vector3d(blockPos.getX(), blockPos.getY(), blockPos.getZ()))
-                    .withParameter(LootParameters.TOOL, mainHandItem));
-            DragonStateProvider.getCap(playerEntity).ifPresent(dragonStateHandler -> {
-                final boolean suitableOre = (playerEntity.getMainHandItem().isCorrectToolForDrops(blockState) ||
-                                             (dragonStateHandler.isDragon() && dragonStateHandler.canHarvestWithPaw(playerEntity, blockState)))
-                                            && drops.stream().noneMatch(item -> oresTag.contains(item.getItem()));
-                if (suitableOre && !playerEntity.isCreative()) {
-                    if (dragonStateHandler.isDragon()) {
-                        if (playerEntity.getRandom().nextDouble() < ConfigHandler.SERVER.dragonOreDustChance.get()) {
-                            world.addFreshEntity(new ItemEntity((World) world, blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, new ItemStack(ItemsInit.elderDragonDust)));
-                        }
-                        if (playerEntity.getRandom().nextDouble() < ConfigHandler.SERVER.dragonOreBoneChance.get()) {
-                            world.addFreshEntity(new ItemEntity((World) world, blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, new ItemStack(ItemsInit.elderDragonBone)));
-                        }
-                    } else {
-                        if (playerEntity.getRandom().nextDouble() < ConfigHandler.SERVER.humanOreDustChance.get()) {
-                            world.addFreshEntity(new ItemEntity((World) world, blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, new ItemStack(ItemsInit.elderDragonDust)));
-                        }
-                        if (playerEntity.getRandom().nextDouble() < ConfigHandler.SERVER.humanOreBoneChance.get()) {
-                            world.addFreshEntity(new ItemEntity((World) world, blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, new ItemStack(ItemsInit.elderDragonBone)));
-                        }
-                    }
-                }
-            });
-        }
-        
         DragonStateProvider.getCap(playerEntity).ifPresent(dragonStateHandler -> {
             if (dragonStateHandler.isDragon()) {
                 ItemStack mainStack = playerEntity.getMainHandItem();
@@ -199,17 +161,75 @@ public class EventHandler {
                     hotbarItem.mineBlock(playerEntity.level, blockState, breakEvent.getPos(), playerEntity);
                     breakEvent.setCanceled(true);
                     breakEvent.getState().getBlock().playerDestroy((World)breakEvent.getWorld(), playerEntity, breakEvent.getPos(),  breakEvent.getState(), breakEvent.getWorld().getBlockEntity(breakEvent.getPos()), hotbarItem);
-                   
-                    if (breakEvent.getWorld().setBlock(breakEvent.getPos(), Blocks.AIR.defaultBlockState(), 3) && exp > 0) {
+    
+                    int i = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, hotbarItem);
+                    
+                    if (breakEvent.getWorld().setBlock(breakEvent.getPos(), Blocks.AIR.defaultBlockState(), 3) && exp > 0 && i <= 0) {
                         if(!((World)breakEvent.getWorld()).isClientSide) {
                             breakEvent.getState().getBlock().popExperience((ServerWorld)breakEvent.getWorld(), breakEvent.getPos(), exp);
                         }
                     }
+    
+                    if(i <= 0) {
+                        dustDrop(breakEvent, playerEntity, hotbarItem);
+                    }
+                    
+                    return;
                 }
             }
         });
+    
+        int i = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, playerEntity.getMainHandItem());
+    
+        if(i <= 0) {
+            dustDrop(breakEvent, playerEntity, playerEntity.getMainHandItem());
+        }
     }
-
+    
+    private static boolean dustDrop(BreakEvent breakEvent, PlayerEntity playerEntity, ItemStack stack)
+    {
+        IWorld world = breakEvent.getWorld();
+        if (world instanceof ServerWorld) {
+            BlockState blockState = breakEvent.getState();
+            BlockPos blockPos = breakEvent.getPos();
+            Block block = blockState.getBlock();
+            ItemStack mainHandItem = stack;
+            double random;
+            // Modded Ore Support
+            String[] tagStringSplit = ConfigHandler.SERVER.oresTag.get().split(":");
+            ResourceLocation ores = new ResourceLocation(tagStringSplit[0], tagStringSplit[1]);
+            // Checks to make sure the ore does not drop itself or another ore from the tag (no going infinite with ores)
+            ITag<Item> oresTag = ItemTags.getAllTags().getTag(ores);
+            if (!oresTag.contains(block.asItem())) return true;
+            List<ItemStack> drops = block.getDrops(blockState, new LootContext.Builder((ServerWorld) world)
+                    .withParameter(LootParameters.ORIGIN, new Vector3d(blockPos.getX(), blockPos.getY(), blockPos.getZ()))
+                    .withParameter(LootParameters.TOOL, mainHandItem));
+            DragonStateProvider.getCap(playerEntity).ifPresent(dragonStateHandler -> {
+                final boolean suitableOre = (playerEntity.getMainHandItem().isCorrectToolForDrops(blockState) ||
+                                             (dragonStateHandler.isDragon() && dragonStateHandler.canHarvestWithPaw(playerEntity, blockState)))
+                                            && drops.stream().noneMatch(item -> oresTag.contains(item.getItem()));
+                if (suitableOre && !playerEntity.isCreative()) {
+                    if (dragonStateHandler.isDragon()) {
+                        if (playerEntity.getRandom().nextDouble() < ConfigHandler.SERVER.dragonOreDustChance.get()) {
+                            world.addFreshEntity(new ItemEntity((World) world, blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, new ItemStack(ItemsInit.elderDragonDust)));
+                        }
+                        if (playerEntity.getRandom().nextDouble() < ConfigHandler.SERVER.dragonOreBoneChance.get()) {
+                            world.addFreshEntity(new ItemEntity((World) world, blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, new ItemStack(ItemsInit.elderDragonBone)));
+                        }
+                    } else {
+                        if (playerEntity.getRandom().nextDouble() < ConfigHandler.SERVER.humanOreDustChance.get()) {
+                            world.addFreshEntity(new ItemEntity((World) world, blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, new ItemStack(ItemsInit.elderDragonDust)));
+                        }
+                        if (playerEntity.getRandom().nextDouble() < ConfigHandler.SERVER.humanOreBoneChance.get()) {
+                            world.addFreshEntity(new ItemEntity((World) world, blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, new ItemStack(ItemsInit.elderDragonBone)));
+                        }
+                    }
+                }
+            });
+        }
+        return false;
+    }
+    
     @SubscribeEvent
     public static void createAltar(PlayerInteractEvent.RightClickBlock rightClickBlock) {
         ItemStack itemStack = rightClickBlock.getItemStack();

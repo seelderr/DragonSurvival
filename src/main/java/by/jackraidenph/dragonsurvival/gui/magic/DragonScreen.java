@@ -1,11 +1,14 @@
 package by.jackraidenph.dragonsurvival.gui.magic;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
+import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.containers.DragonContainer;
 import by.jackraidenph.dragonsurvival.gui.magic.buttons.TabButton;
+import by.jackraidenph.dragonsurvival.magic.ClientMagicHandler;
 import by.jackraidenph.dragonsurvival.network.magic.DragonClawsMenuToggle;
 import by.jackraidenph.dragonsurvival.registration.ClientModEvents;
+import by.jackraidenph.dragonsurvival.util.DragonType;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -14,6 +17,7 @@ import net.minecraft.client.gui.DisplayEffectsScreen;
 import net.minecraft.client.gui.recipebook.IRecipeShownListener;
 import net.minecraft.client.gui.recipebook.RecipeBookGui;
 import net.minecraft.client.gui.screen.inventory.InventoryScreen;
+import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.widget.button.ImageButton;
 import net.minecraft.client.util.InputMappings;
@@ -24,7 +28,11 @@ import net.minecraft.inventory.container.Slot;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.lwjgl.opengl.GL11;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class DragonScreen extends DisplayEffectsScreen<DragonContainer> implements IRecipeShownListener {
     private final RecipeBookGui recipeBookGui = new RecipeBookGui();
@@ -135,6 +143,12 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> implemen
             buttons.clear();
             init();
             ((ImageButton)p_214076_1_).setPosition(this.leftPos + (imageWidth - 30), (this.height / 2 - 49) + 30);
+            
+            if(recipeBookGui.isVisible() && clawsMenu){
+                clawsMenu = false;
+                DragonSurvivalMod.CHANNEL.sendToServer(new DragonClawsMenuToggle(clawsMenu));
+                DragonStateProvider.getCap(player).ifPresent((cap) -> cap.clawsMenuOpen = clawsMenu);
+            }
         }));
         this.children.add(this.recipeBookGui);
         
@@ -160,6 +174,33 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> implemen
                 this.blit(stack,x, y, 0, 0, 11, 11, 11, 11);
             }
         });
+    
+        addButton(new Button(leftPos - 80 + 33, topPos + 111, 11, 11, null, (button) -> {}){
+            @Override
+            public void renderButton(MatrixStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_)
+            {
+                this.visible = clawsMenu;
+                this.active = clawsMenu;
+                
+                if(isHovered()){
+                    minecraft.getTextureManager().bind(ClientMagicHandler.widgetTextures);
+                    DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+                    if(handler != null) {
+                        int xP = handler.getType() == DragonType.SEA ? 0 : handler.getType() == DragonType.FOREST ? 18 : 36;
+                        GL11.glPushMatrix();
+                        blit(stack, x + 1, y + 1, xP / 2, 204 / 2, 9, 9, 128, 128);
+                        GL11.glPopMatrix();
+                    }
+                }
+            }
+        
+            @Override
+            public void renderToolTip(MatrixStack stack, int mouseX, int mouseY)
+            {
+                ArrayList<ITextComponent> description = new ArrayList<>(Arrays.asList(new TranslationTextComponent("ds.skill.help.claws")));
+                Minecraft.getInstance().screen.renderComponentTooltip(stack, description, mouseX, mouseY);
+            }
+        });
     }
     
     public void render(MatrixStack p_230450_1_,int p_render_1_, int p_render_2_, float p_render_3_) {
@@ -176,6 +217,12 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> implemen
 
         this.renderTooltip(p_230450_1_, p_render_1_, p_render_2_);
         this.recipeBookGui.renderTooltip(p_230450_1_, this.getGuiLeft(), this.getGuiTop(), p_render_1_, p_render_2_);
+        
+        for(Widget w : buttons){
+            if(w.isHovered()){
+                w.renderToolTip(p_230450_1_, p_render_1_, p_render_2_);
+            }
+        }
     }
 
     public boolean mouseClicked(double p_mouseClicked_1_, double p_mouseClicked_3_, int p_mouseClicked_5_) {

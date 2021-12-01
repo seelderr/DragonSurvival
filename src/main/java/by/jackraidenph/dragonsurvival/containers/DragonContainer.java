@@ -91,17 +91,7 @@ public class DragonContainer extends RecipeBookContainer<CraftingInventory> {
     
         this.addDataSlots(dataStatus);
         
-        this.addSlot(new CraftingResultSlot(playerInventory.player, this.craftMatrix, this.craftResult, 0, 178, 33));
-    
-        int slotIndex = 0;
-        for (int i = 0; i < craftMatrix.getWidth(); ++i) {
-            for (int j = 0; j < craftMatrix.getHeight(); ++j) {
-                Slot s = new Slot(this.craftMatrix, slotIndex++, 111 + j * 18, 15 + i * 18);
-                this.addSlot(s);
-                craftingSlots.add(s);
-            }
-        }
-    
+        
         for (int k = 0; k < 4; ++k) {
             final EquipmentSlotType equipmentslottype = VALID_EQUIPMENT_SLOTS[k];
             this.addSlot(new Slot(playerInventory, 39 - k, 8, 8 + k * 18) {
@@ -125,10 +115,7 @@ public class DragonContainer extends RecipeBookContainer<CraftingInventory> {
         
             broadcastChanges();
         }
-    
-        //Offhand
-        this.addSlot(new Slot(playerInventory, 40, 26, 62));
-    
+        
         //main inventory
         for (int l = 0; l < 3; ++l) {
             for (int j1 = 0; j1 < 9; ++j1) {
@@ -151,6 +138,20 @@ public class DragonContainer extends RecipeBookContainer<CraftingInventory> {
                 inventorySlots.add(s);
             }
         });
+    
+        //Offhand
+        this.addSlot(new Slot(playerInventory, 40, 26, 62));
+    
+        this.addSlot(new CraftingResultSlot(playerInventory.player, this.craftMatrix, this.craftResult, 0, 178, 33));
+    
+        int slotIndex = 0;
+        for (int i = 0; i < craftMatrix.getWidth(); ++i) {
+            for (int j = 0; j < craftMatrix.getHeight(); ++j) {
+                Slot s = new Slot(this.craftMatrix, slotIndex++, 111 + j * 18, 15 + i * 18);
+                this.addSlot(s);
+                craftingSlots.add(s);
+            }
+        }
         
         update();
     }
@@ -225,37 +226,33 @@ public class DragonContainer extends RecipeBookContainer<CraftingInventory> {
             EquipmentSlotType equipmentslottype = MobEntity.getEquipmentSlotForItem(itemstack);
             
             if (index == 0) {
-                if (!this.moveItemStackTo(itemstack1, 9 + 5, 45 + 5, true)) {
+                if (!this.moveItemStackTo(itemstack1, 4, 40, true)) {
                     return ItemStack.EMPTY;
                 }
                 slot.onQuickCraft(itemstack1, itemstack);
-            
-            } else if (index >= 1 + 5 && index < 5 + 5) {
-                if (!this.moveItemStackTo(itemstack1, 9 + 5, 45 + 5, false)) {
+                
+            } else if (index < 9) {
+                if (!this.moveItemStackTo(itemstack1, 31, 40, false)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (index >= 5 + 5 && index < 9 + 5) {
-                if (!this.moveItemStackTo(itemstack1, 9 + 5, 45 + 5, false)) {
-                    return ItemStack.EMPTY;
-                }
-            } else if (equipmentslottype.getType() == EquipmentSlotType.Group.ARMOR && !this.slots.get(8 - equipmentslottype.getIndex()).hasItem()) {
-                int i = 8 - equipmentslottype.getIndex();
+            } else if (equipmentslottype.getType() == EquipmentSlotType.Group.ARMOR && !this.slots.get(3 - equipmentslottype.getIndex()).hasItem()) {
+                int i = 3 - equipmentslottype.getIndex();
                 if (!this.moveItemStackTo(itemstack1, i, i + 1, false)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (equipmentslottype == EquipmentSlotType.OFFHAND && !this.slots.get(45).hasItem()) {
-                if (!this.moveItemStackTo(itemstack1, 45, 46, false)) {
+            } else if (equipmentslottype == EquipmentSlotType.OFFHAND && !this.slots.get(44).hasItem()) {
+                if (!this.moveItemStackTo(itemstack1, 44, 46, false)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (index >= 9 + 5 && index < 36 + 5) {
-                if (!this.moveItemStackTo(itemstack1, 36 + 5, 45 + 5, false)) {
+            } else if (index >= 4 && index < 30) {
+                if (!this.moveItemStackTo(itemstack1, 31, 45, false)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (index >= 36 + 5 && index < 45 + 5) {
-                if (!this.moveItemStackTo(itemstack1, 9 + 5, 36 + 5, false)) {
+            } else if (index >= 31 && index < 39) {
+                if (!this.moveItemStackTo(itemstack1, 4, 31, false)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (!this.moveItemStackTo(itemstack1, 9 + 5, 45 + 5, false)) {
+            } else if (!this.moveItemStackTo(itemstack1, 9, 45, false)) {
                 return ItemStack.EMPTY;
             }
         
