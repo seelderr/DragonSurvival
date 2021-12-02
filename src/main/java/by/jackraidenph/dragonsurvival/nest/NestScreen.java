@@ -1,6 +1,6 @@
 package by.jackraidenph.dragonsurvival.nest;
 
-import by.jackraidenph.dragonsurvival.handlers.Server.NetworkHandler;
+import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import org.lwjgl.opengl.GL11;
 
 import com.mojang.blaze3d.matrix.MatrixStack;

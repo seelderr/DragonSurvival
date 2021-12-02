@@ -3,7 +3,7 @@ package by.jackraidenph.dragonsurvival.gui.magic.Slots;
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.containers.DragonContainer;
-import by.jackraidenph.dragonsurvival.handlers.Server.NetworkHandler;
+import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.magic.SyncDragonClawsMenu;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.inventory.IInventory;

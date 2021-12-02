@@ -1,7 +1,7 @@
 package by.jackraidenph.dragonsurvival.magic.abilities.Actives.BuffAbilities;
 
 import by.jackraidenph.dragonsurvival.Functions;
-import by.jackraidenph.dragonsurvival.handlers.Client.KeyInputHandler;
+import by.jackraidenph.dragonsurvival.handlers.ClientSide.KeyInputHandler;
 import net.minecraft.particles.ParticleType;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.text.IFormattableTextComponent;

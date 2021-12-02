@@ -1,7 +1,7 @@
 package by.jackraidenph.dragonsurvival.magic.abilities.Actives.BuffAbilities;
 
 import by.jackraidenph.dragonsurvival.Functions;
-import by.jackraidenph.dragonsurvival.handlers.Client.KeyInputHandler;
+import by.jackraidenph.dragonsurvival.handlers.ClientSide.KeyInputHandler;
 import by.jackraidenph.dragonsurvival.magic.common.AbilityAnimation;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;

@@ -1,7 +1,7 @@
 package by.jackraidenph.dragonsurvival.magic.abilities.Actives;
 
 import by.jackraidenph.dragonsurvival.entity.magic.DragonSpikeEntity;
-import by.jackraidenph.dragonsurvival.handlers.Client.KeyInputHandler;
+import by.jackraidenph.dragonsurvival.handlers.ClientSide.KeyInputHandler;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.registration.EntityTypesInit;
 import net.minecraft.entity.player.PlayerEntity;

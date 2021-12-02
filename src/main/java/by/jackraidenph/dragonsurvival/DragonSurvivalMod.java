@@ -5,7 +5,7 @@ import by.jackraidenph.dragonsurvival.commands.DragonCommand;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.handlers.DragonFoodHandler;
 import by.jackraidenph.dragonsurvival.handlers.Magic.MagicHandler;
-import by.jackraidenph.dragonsurvival.handlers.Server.NetworkHandler;
+import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import by.jackraidenph.dragonsurvival.handlers.SpecificsHandler;
 import by.jackraidenph.dragonsurvival.handlers.WingObtainmentController;
 import by.jackraidenph.dragonsurvival.magic.DragonAbilities;

@@ -1,7 +1,7 @@
-package by.jackraidenph.dragonsurvival.handlers.Client;
+package by.jackraidenph.dragonsurvival.handlers.ClientSide;
 
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.handlers.Server.NetworkHandler;
+import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.magic.OpenDragonInventory;
 import by.jackraidenph.dragonsurvival.network.magic.SyncDragonAbilitySlot;
 import net.minecraft.client.Minecraft;

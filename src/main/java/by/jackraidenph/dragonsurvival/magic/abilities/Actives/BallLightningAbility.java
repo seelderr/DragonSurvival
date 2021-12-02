@@ -1,7 +1,7 @@
 package by.jackraidenph.dragonsurvival.magic.abilities.Actives;
 
 import by.jackraidenph.dragonsurvival.entity.magic.BallLightningEntity;
-import by.jackraidenph.dragonsurvival.handlers.Client.KeyInputHandler;
+import by.jackraidenph.dragonsurvival.handlers.ClientSide.KeyInputHandler;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.vector.Vector3d;

@@ -1,6 +1,6 @@
 package by.jackraidenph.dragonsurvival.capability;
 
-import by.jackraidenph.dragonsurvival.handlers.Server.NetworkHandler;
+import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
 import by.jackraidenph.dragonsurvival.network.magic.SyncMagicStats;
 import net.minecraft.entity.Entity;

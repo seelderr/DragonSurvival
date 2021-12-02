@@ -100,6 +100,7 @@ public class EntityTypesInit {
         }
 
         DRAGON = new EntityType<>(DragonEntity::new, EntityClassification.MISC, true, false, false, false, ImmutableSet.of(), EntitySize.fixed(0.9f, 1.9f), 0, 0);
+       
         DRAGON.setRegistryName(DragonSurvivalMod.MODID, "dummy_dragon");
         registry.register(DRAGON);
         DRAGON_ARMOR = new EntityType<>(DragonEntity::new, EntityClassification.MISC, true, false, false, false, ImmutableSet.of(), EntitySize.fixed(0.9f, 1.9f), 0, 0);

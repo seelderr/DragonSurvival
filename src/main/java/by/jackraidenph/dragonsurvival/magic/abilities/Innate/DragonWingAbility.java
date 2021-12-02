@@ -1,7 +1,7 @@
 package by.jackraidenph.dragonsurvival.magic.abilities.Innate;
 
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.handlers.Client.KeyInputHandler;
+import by.jackraidenph.dragonsurvival.handlers.ClientSide.KeyInputHandler;
 import by.jackraidenph.dragonsurvival.magic.common.InnateDragonAbility;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;

@@ -1,7 +1,7 @@
 package by.jackraidenph.dragonsurvival.handlers;
 
 import by.jackraidenph.dragonsurvival.Functions;
-import by.jackraidenph.dragonsurvival.handlers.Server.NetworkHandler;
+import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import by.jackraidenph.dragonsurvival.magic.abilities.Passives.ContrastShowerAbility;
 import by.jackraidenph.dragonsurvival.magic.abilities.Passives.LightInDarknessAbility;
 import by.jackraidenph.dragonsurvival.magic.DragonAbilities;

@@ -2,7 +2,7 @@ package by.jackraidenph.dragonsurvival.handlers;
 
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
-import by.jackraidenph.dragonsurvival.handlers.Client.ClientDragonRender;
+import by.jackraidenph.dragonsurvival.handlers.ClientSide.ClientDragonRender;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntitySize;

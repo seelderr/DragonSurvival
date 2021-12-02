@@ -1,4 +1,4 @@
-package by.jackraidenph.dragonsurvival.handlers.Client;
+package by.jackraidenph.dragonsurvival.handlers.ClientSide;
 
 import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
@@ -7,7 +7,7 @@ import by.jackraidenph.dragonsurvival.config.DragonBodyMovementType;
 import by.jackraidenph.dragonsurvival.entity.BolasEntity;
 import by.jackraidenph.dragonsurvival.gui.magic.DragonScreen;
 import by.jackraidenph.dragonsurvival.gui.magic.buttons.TabButton;
-import by.jackraidenph.dragonsurvival.handlers.Server.NetworkHandler;
+import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.PacketSyncCapabilityMovement;
 import by.jackraidenph.dragonsurvival.network.magic.OpenDragonInventory;
 import by.jackraidenph.dragonsurvival.registration.ItemsInit;

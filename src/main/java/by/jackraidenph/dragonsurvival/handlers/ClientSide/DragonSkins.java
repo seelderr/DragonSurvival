@@ -1,4 +1,4 @@
-package by.jackraidenph.dragonsurvival.handlers.Client;
+package by.jackraidenph.dragonsurvival.handlers.ClientSide;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.util.DragonLevel;

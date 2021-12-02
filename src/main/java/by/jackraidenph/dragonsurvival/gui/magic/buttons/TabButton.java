@@ -3,7 +3,7 @@ package by.jackraidenph.dragonsurvival.gui.magic.buttons;
 import by.jackraidenph.dragonsurvival.gui.magic.AbilityScreen;
 import by.jackraidenph.dragonsurvival.gui.magic.DragonScreen;
 import by.jackraidenph.dragonsurvival.handlers.Magic.ClientMagicHandler;
-import by.jackraidenph.dragonsurvival.handlers.Server.NetworkHandler;
+import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.magic.OpenDragonInventory;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;

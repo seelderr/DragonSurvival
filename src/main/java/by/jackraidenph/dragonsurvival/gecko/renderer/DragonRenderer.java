@@ -2,7 +2,7 @@ package by.jackraidenph.dragonsurvival.gecko.renderer;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.gecko.entity.DragonEntity;
-import by.jackraidenph.dragonsurvival.handlers.Client.ClientEvents;
+import by.jackraidenph.dragonsurvival.handlers.ClientSide.ClientEvents;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
