@@ -10,6 +10,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.IGrowable;
 import net.minecraft.block.PotatoBlock;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.TickableSound;
 import net.minecraft.entity.AreaEffectCloudEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -47,9 +48,17 @@ public class PoisonBreathAbility extends BreathAbility
 	}
 	
 	@OnlyIn(Dist.CLIENT)
+	private TickableSound loopingSound;
+	
+	@OnlyIn(Dist.CLIENT)
 	public void sound(){
 		if (castingTicks == 1) {
-			Minecraft.getInstance().getSoundManager().play(new PoisonBreathSound(this));
+			loopingSound = new PoisonBreathSound(this);
+			Minecraft.getInstance().getSoundManager().play(loopingSound);
+		}
+		
+		if(loopingSound != null && castingTicks > 10 && (!loopingSound.isLooping() || loopingSound.isStopped())){
+			Minecraft.getInstance().getSoundManager().play(loopingSound);
 		}
 	}
 	

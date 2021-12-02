@@ -13,6 +13,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.SimpleSound;
+import net.minecraft.client.audio.TickableSound;
 import net.minecraft.entity.AreaEffectCloudEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -58,9 +59,6 @@ public class FireBreathAbility extends BreathAbility
 		super.stopCasting();
 	}
 	
-	
-	private ISound startingSound;
-	private ISound endSound;
 	
 	@Override
 	public void onActivation(PlayerEntity player)
@@ -121,6 +119,14 @@ public class FireBreathAbility extends BreathAbility
 			hitBlocks();
 		}
 	}
+	@OnlyIn(Dist.CLIENT)
+	private ISound startingSound;
+	
+	@OnlyIn(Dist.CLIENT)
+	private TickableSound loopingSound;
+	
+	@OnlyIn(Dist.CLIENT)
+	private ISound endSound;
 	
 	@OnlyIn(Dist.CLIENT)
 	public void sound(){
@@ -128,9 +134,13 @@ public class FireBreathAbility extends BreathAbility
 			if(startingSound == null){
 				startingSound = SimpleSound.forAmbientAddition(SoundRegistry.fireBreathStart);
 			}
-			
+			loopingSound = new FireBreathSound(this);
 			Minecraft.getInstance().getSoundManager().play(startingSound);
-			Minecraft.getInstance().getSoundManager().playDelayed(new FireBreathSound(this), 10);
+			Minecraft.getInstance().getSoundManager().playDelayed(loopingSound, 10);
+		}
+		
+		if(loopingSound != null && castingTicks > 10 && (!loopingSound.isLooping() || loopingSound.isStopped())){
+			Minecraft.getInstance().getSoundManager().play(loopingSound);
 		}
 	}
 	
