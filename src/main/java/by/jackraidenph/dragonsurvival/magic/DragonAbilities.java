@@ -180,4 +180,22 @@ public class DragonAbilities
 		
 		return informationDragonAbility;
 	}
+	
+	public static int getAbilitySlot(ActiveDragonAbility ability)
+	{
+	    int abilityId = -1;
+	    top:
+	    for(DragonType type : DragonType.values()){
+	        int index = 0;
+	        
+	        for(ActiveDragonAbility ab : ACTIVE_ABILITIES.get(type)){
+	            if(ab.getId() == ability.getId()){
+	                abilityId = index;
+	                break top;
+	            }
+	            index++;
+	        }
+	    }
+	    return abilityId;
+	}
 }

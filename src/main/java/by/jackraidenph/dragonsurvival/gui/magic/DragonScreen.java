@@ -5,10 +5,10 @@ import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.containers.DragonContainer;
 import by.jackraidenph.dragonsurvival.gui.magic.buttons.TabButton;
-import by.jackraidenph.dragonsurvival.handlers.ClientEvents;
-import by.jackraidenph.dragonsurvival.magic.ClientMagicHandler;
+import by.jackraidenph.dragonsurvival.handlers.Client.KeyInputHandler;
+import by.jackraidenph.dragonsurvival.handlers.Magic.ClientMagicHandler;
+import by.jackraidenph.dragonsurvival.handlers.Server.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.magic.DragonClawsMenuToggle;
-import by.jackraidenph.dragonsurvival.registration.ClientModEvents;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -39,6 +39,7 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> implemen
     private final RecipeBookGui recipeBookGui = new RecipeBookGui();
     static final ResourceLocation BACKGROUND = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_inventory.png");
     private static final ResourceLocation RECIPE_BUTTON_TEXTURE = new ResourceLocation("textures/gui/recipe_button.png");
+    public static final ResourceLocation INVENTORY_TOGGLE_BUTTON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/inventory_button.png");
     
     private static final ResourceLocation CLAWS_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_claws.png");
     private static final ResourceLocation DRAGON_CLAW_BUTTON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_claws_button.png");
@@ -147,7 +148,7 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> implemen
             
             if(recipeBookGui.isVisible() && clawsMenu){
                 clawsMenu = false;
-                DragonSurvivalMod.CHANNEL.sendToServer(new DragonClawsMenuToggle(clawsMenu));
+                NetworkHandler.CHANNEL.sendToServer(new DragonClawsMenuToggle(clawsMenu));
                 DragonStateProvider.getCap(player).ifPresent((cap) -> cap.clawsMenuOpen = clawsMenu);
             }
         }));
@@ -172,7 +173,7 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> implemen
             buttons.clear();
             init();
             
-            DragonSurvivalMod.CHANNEL.sendToServer(new DragonClawsMenuToggle(clawsMenu));
+            NetworkHandler.CHANNEL.sendToServer(new DragonClawsMenuToggle(clawsMenu));
             DragonStateProvider.getCap(player).ifPresent((cap) -> cap.clawsMenuOpen = clawsMenu);
             
         }){
@@ -217,13 +218,9 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> implemen
             }
         });
     
-       Button openCrafting = new Button(getGuiLeft(), height - 30, 100, 20, new StringTextComponent("Normal Inventory"), p_onPress_1_ -> {
-            ClientEvents.switchingInventory = true;
+        addButton(new ImageButton(this.leftPos + (imageWidth - 28), (this.height / 2 - 30) + 50, 20, 18, 0, 0, 19, INVENTORY_TOGGLE_BUTTON, p_onPress_1_ -> {
             Minecraft.getInstance().setScreen(new InventoryScreen(Minecraft.getInstance().player));
-           ClientEvents.switchingInventory = false;
-        });
-    
-        addWidget(openCrafting);
+        }));
     }
     
     public void render(MatrixStack p_230450_1_,int p_render_1_, int p_render_2_, float p_render_3_) {
@@ -283,7 +280,7 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> implemen
     public boolean keyPressed(int p_231046_1_, int p_231046_2_, int p_231046_3_) {
         InputMappings.Input mouseKey = InputMappings.getKey(p_231046_1_, p_231046_2_);
     
-        if (ClientModEvents.DRAGON_INVENTORY.isActiveAndMatches(mouseKey)) {
+        if (KeyInputHandler.DRAGON_INVENTORY.isActiveAndMatches(mouseKey)) {
             this.onClose();
             return true;
         }

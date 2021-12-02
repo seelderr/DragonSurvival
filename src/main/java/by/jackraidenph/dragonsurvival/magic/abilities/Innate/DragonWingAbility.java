@@ -1,8 +1,8 @@
 package by.jackraidenph.dragonsurvival.magic.abilities.Innate;
 
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.handlers.Client.KeyInputHandler;
 import by.jackraidenph.dragonsurvival.magic.common.InnateDragonAbility;
-import by.jackraidenph.dragonsurvival.registration.ClientModEvents;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
@@ -30,6 +30,12 @@ public class DragonWingAbility extends InnateDragonAbility
 	@Override
 	public IFormattableTextComponent getDescription()
 	{
-		return new TranslationTextComponent("ds.skill.description." + getId(), ClientModEvents.TOGGLE_WINGS.getKey().getDisplayName().getContents().toUpperCase(Locale.ROOT));
+		String key = KeyInputHandler.TOGGLE_WINGS.getKey().getDisplayName().getContents().toUpperCase(Locale.ROOT);
+		
+		if(key.isEmpty()){
+			key = KeyInputHandler.TOGGLE_WINGS.getKey().getDisplayName().getString();
+		}
+		
+		return new TranslationTextComponent("ds.skill.description." + getId(), key);
 	}
 }

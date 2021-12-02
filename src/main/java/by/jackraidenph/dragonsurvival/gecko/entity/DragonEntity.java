@@ -1,7 +1,10 @@
-package by.jackraidenph.dragonsurvival.gecko;
+package by.jackraidenph.dragonsurvival.gecko.entity;
 
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.handlers.ClientEvents;
+import by.jackraidenph.dragonsurvival.gecko.AnimationTimer;
+import by.jackraidenph.dragonsurvival.gecko.CommonTraits;
+import by.jackraidenph.dragonsurvival.handlers.Client.ClientDragonRender;
+import by.jackraidenph.dragonsurvival.handlers.Client.ClientEvents;
 import by.jackraidenph.dragonsurvival.handlers.DragonSizeHandler;
 import by.jackraidenph.dragonsurvival.magic.common.AbilityAnimation;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
@@ -22,7 +25,8 @@ import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
-public class DragonEntity extends LivingEntity implements IAnimatable, CommonTraits {
+public class DragonEntity extends LivingEntity implements IAnimatable, CommonTraits
+{
     AnimationFactory animationFactory = new AnimationFactory(this);
 
     /**
@@ -135,7 +139,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                     builder.addAnimation("swim_fast", true);
                 else if ((player.isInLava() || player.isInWaterOrBubble()) && !player.isOnGround())
                     builder.addAnimation("swim", true);
-                else if ((player.abilities.flying || ClientEvents.dragonsFlying.getOrDefault(player.getId(), false)) && !player.isOnGround() && !player.isInWater() && !player.isInLava() && player.getCapability(DragonStateProvider.DRAGON_CAPABILITY).orElse(null).hasWings())
+                else if ((player.abilities.flying || ClientDragonRender.dragonsFlying.getOrDefault(player.getId(), false)) && !player.isOnGround() && !player.isInWater() && !player.isInLava() && player.getCapability(DragonStateProvider.DRAGON_CAPABILITY).orElse(null).hasWings())
                     builder.addAnimation("fly", true);
                 else if (!player.isOnGround() && motio.y() < 0) {
                     builder.addAnimation("land", false);
@@ -185,7 +189,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
         return getPlayer().getMainArm();
     }
 
-    PlayerEntity getPlayer() {
+    public PlayerEntity getPlayer() {
         return (PlayerEntity) level.getEntity(player);
     }
 }

@@ -1,9 +1,9 @@
 package by.jackraidenph.dragonsurvival.magic.abilities.Actives.BuffAbilities;
 
 import by.jackraidenph.dragonsurvival.Functions;
+import by.jackraidenph.dragonsurvival.handlers.Client.KeyInputHandler;
 import by.jackraidenph.dragonsurvival.magic.common.AbilityAnimation;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
-import by.jackraidenph.dragonsurvival.registration.ClientModEvents;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.Effect;
@@ -58,8 +58,13 @@ public class VisionAbility extends ActiveDragonAbility
 		ArrayList<ITextComponent> components = super.getInfo();
 		components.add(new TranslationTextComponent("ds.skill.duration.seconds", getDuration()));
 		
-		if(!ClientModEvents.ABILITY4.isUnbound()) {
-			components.add(new TranslationTextComponent("ds.skill.keybind", ClientModEvents.ABILITY4.getKey().getDisplayName().getContents().toUpperCase(Locale.ROOT)));
+		if(!KeyInputHandler.ABILITY4.isUnbound()) {
+			String key = KeyInputHandler.ABILITY4.getKey().getDisplayName().getContents().toUpperCase(Locale.ROOT);
+			
+			if(key.isEmpty()){
+				key = KeyInputHandler.ABILITY4.getKey().getDisplayName().getString();
+			}
+			components.add(new TranslationTextComponent("ds.skill.keybind", key));
 		}
 		
 		return components;

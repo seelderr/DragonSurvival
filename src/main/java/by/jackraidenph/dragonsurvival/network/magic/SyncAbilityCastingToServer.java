@@ -1,7 +1,7 @@
 package by.jackraidenph.dragonsurvival.network.magic;
 
-import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.handlers.Server.NetworkHandler;
 import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
@@ -64,6 +64,6 @@ public class SyncAbilityCastingToServer implements IMessage<SyncAbilityCastingTo
 		});
 		
 		TargetPoint point = new TargetPoint(player, player.position().x, player.position().y, player.position().z, 64, player.level.dimension());
-		DragonSurvivalMod.CHANNEL.send(PacketDistributor.NEAR.with(() -> point), new SyncCurrentAbilityCasting(message.playerId, message.currentAbility));
+		NetworkHandler.CHANNEL.send(PacketDistributor.NEAR.with(() -> point), new SyncCurrentAbilityCasting(message.playerId, message.currentAbility));
 	}
 }

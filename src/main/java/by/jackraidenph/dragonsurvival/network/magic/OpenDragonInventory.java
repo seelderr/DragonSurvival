@@ -45,6 +45,7 @@ public class OpenDragonInventory implements IMessage<OpenDragonInventory>
                     return new DragonContainer(p_createMenu_1_, p_createMenu_2_, false);
                 }
             });
+            
         }
     }
 }

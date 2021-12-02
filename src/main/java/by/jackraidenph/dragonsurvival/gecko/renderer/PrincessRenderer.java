@@ -1,5 +1,6 @@
-package by.jackraidenph.dragonsurvival.gecko;
+package by.jackraidenph.dragonsurvival.gecko.renderer;
 
+import by.jackraidenph.dragonsurvival.gecko.entity.Princess;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;

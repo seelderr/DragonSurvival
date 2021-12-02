@@ -1,6 +1,6 @@
 package by.jackraidenph.dragonsurvival.network.magic;
 
-import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
+import by.jackraidenph.dragonsurvival.handlers.Server.NetworkHandler;
 import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
@@ -85,7 +85,7 @@ public class ChangeSkillLevel implements IMessage<ChangeSkillLevel>
                 }
                 
                 playerAbility.setLevel(message.level);
-                DragonSurvivalMod.CHANNEL.send(PacketDistributor.PLAYER.with(() -> playerEntity), new SyncMagicAbilities(playerEntity.getId(), dragonStateHandler.getAbilities()));
+                NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> playerEntity), new SyncMagicAbilities(playerEntity.getId(), dragonStateHandler.getAbilities()));
             }
         });
     }

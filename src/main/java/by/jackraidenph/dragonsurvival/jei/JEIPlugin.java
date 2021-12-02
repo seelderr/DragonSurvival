@@ -10,7 +10,7 @@ import net.minecraft.util.ResourceLocation;
 
 @JeiPlugin
 @SuppressWarnings("unused")
-public class InventoryFix implements IModPlugin {
+public class JEIPlugin implements IModPlugin {
     @Override
     public ResourceLocation getPluginUid() {
         return new ResourceLocation(DragonSurvivalMod.MODID, "fix");

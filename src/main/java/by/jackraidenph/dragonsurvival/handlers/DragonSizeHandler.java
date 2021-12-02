@@ -2,6 +2,7 @@ package by.jackraidenph.dragonsurvival.handlers;
 
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
+import by.jackraidenph.dragonsurvival.handlers.Client.ClientDragonRender;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntitySize;
@@ -120,7 +121,7 @@ public class DragonSizeHandler {
 
 	public static Pose getOverridePose(LivingEntity player) {
 		boolean swimming = (player.isInWaterOrBubble() || (player.isInLava() && ConfigHandler.SERVER.bonuses.get() && ConfigHandler.SERVER.caveLavaSwimming.get() && DragonStateProvider.getCap(player).orElseGet(null).getType() == DragonType.CAVE)) && player.isSprinting() && !player.isPassenger();
-		boolean flying = (player.level.isClientSide && ClientEvents.dragonsFlying.getOrDefault(player.getId(), false) && !player.isInWater() && !player.isInLava() && !player.isOnGround() && player.getCapability(DragonStateProvider.DRAGON_CAPABILITY).orElse(null).hasWings())
+		boolean flying = (player.level.isClientSide && ClientDragonRender.dragonsFlying.getOrDefault(player.getId(), false) && !player.isInWater() && !player.isInLava() && !player.isOnGround() && player.getCapability(DragonStateProvider.DRAGON_CAPABILITY).orElse(null).hasWings())
 				|| (!player.level.isClientSide && !player.isOnGround() && wingsStatusServer.getOrDefault(player.getId(), false) && !player.isInWater() && !player.isInLava() && player.getCapability(DragonStateProvider.DRAGON_CAPABILITY).orElse(null).hasWings());
 		boolean spinning = player.isAutoSpinAttack();
 		boolean crouching = player.isShiftKeyDown();
@@ -160,22 +161,6 @@ public class DragonSizeHandler {
     			wasDragon.put(player.getId(), false);
 			}
     	});
-		
-//	    DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
-//		    if (!dragonStateHandler.isDragon())
-//			    return;
-//
-//		    float size = dragonStateHandler.getSize();
-//		    float height = calculateDragonHeight(size, ConfigHandler.SERVER.hitboxGrowsPastHuman.get());
-//		    float width = calculateDragonWidth(size, ConfigHandler.SERVER.hitboxGrowsPastHuman.get()) * 2;
-//
-//		    if (ConfigHandler.SERVER.sizeChangesHitbox.get()) {
-//			    Pose overridePose = overridePose(player);
-//			    height = calculateModifiedHeight(height, overridePose, true);
-//			    double d0 = (double)width / 2.0D;
-//			    player.setBoundingBox(new AxisAlignedBB(player.getX() - d0, player.getY(), player.getZ() - d0, player.getX() + d0, player.getY() + height, player.getZ() + d0));
-//		    }
-//	    });
     }
 }
 

@@ -1,8 +1,8 @@
 package by.jackraidenph.dragonsurvival.magic.abilities.Actives;
 
 import by.jackraidenph.dragonsurvival.entity.magic.BallLightningEntity;
+import by.jackraidenph.dragonsurvival.handlers.Client.KeyInputHandler;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
-import by.jackraidenph.dragonsurvival.registration.ClientModEvents;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.IFormattableTextComponent;
@@ -69,8 +69,13 @@ public class BallLightningAbility extends ActiveDragonAbility
 		components.add(new TranslationTextComponent("ds.skill.aoe", getRange() + "x" + getRange() + "x" + getRange()));
 		components.add(new TranslationTextComponent("ds.skill.damage", getDamage()));
 		
-		if(!ClientModEvents.ABILITY2.isUnbound()) {
-			components.add(new TranslationTextComponent("ds.skill.keybind", ClientModEvents.ABILITY2.getKey().getDisplayName().getContents().toUpperCase(Locale.ROOT)));
+		if(!KeyInputHandler.ABILITY2.isUnbound()) {
+			String key = KeyInputHandler.ABILITY2.getKey().getDisplayName().getContents().toUpperCase(Locale.ROOT);
+			
+			if(key.isEmpty()){
+				key = KeyInputHandler.ABILITY2.getKey().getDisplayName().getString();
+			}
+			components.add(new TranslationTextComponent("ds.skill.keybind", key));
 		}
 		
 		return components;

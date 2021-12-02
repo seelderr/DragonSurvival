@@ -45,7 +45,6 @@ public class DragonInventoryGUIHandler implements IRecipeTransferInfo, IGuiConta
 		return ((DragonContainer)container).inventorySlots;
 	}
 	
-	
 	@Override
 	public List<Rectangle2d> getGuiExtraAreas(DragonScreen screen)
 	{

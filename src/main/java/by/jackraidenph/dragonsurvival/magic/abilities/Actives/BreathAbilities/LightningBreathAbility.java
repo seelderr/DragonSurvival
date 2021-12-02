@@ -54,14 +54,17 @@ public class LightningBreathAbility extends BreathAbility
 		
 		Vector3d viewVector = player.getViewVector(1.0F);
 		Vector3d delta = player.getDeltaMovement();
+		float size = DragonStateProvider.getCap(player).map((cap) -> cap.getSize()).get();
 		
 		double x = player.getX() + viewVector.x;
-		double y = player.getY() + 1 + viewVector.y;
+		double y = player.getY() + viewVector.y + (size / 20F);
 		double z = player.getZ() + viewVector.z;
 		
-		xComp += delta.x * 6;
-		yComp += delta.y * 6;
-		zComp += delta.z * 6;
+		if(player.isFallFlying() || player.abilities.flying) {
+			xComp += delta.x * 6;
+			yComp += delta.y * 6;
+			zComp += delta.z * 6;
+		}
 		
 		if(player.level.isClientSide) {
 			for (int i = 0; i < 24; i++) {

@@ -4,6 +4,7 @@ import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.config.ConfigUtils;
+import by.jackraidenph.dragonsurvival.handlers.Server.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.SyncSize;
 import by.jackraidenph.dragonsurvival.network.SynchronizeDragonCap;
 import net.minecraft.entity.player.PlayerEntity;
@@ -99,7 +100,7 @@ public class DragonGrowthHandler {
             if (world.isClientSide)
                 return;
 
-            DragonSurvivalMod.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncSize(player.getId(), size));
+            NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncSize(player.getId(), size));
 
             if (player.getVehicle() == null || !(player.getVehicle() instanceof ServerPlayerEntity))
                 return;
@@ -111,8 +112,8 @@ public class DragonGrowthHandler {
 
                 vehicle.connection.send(new SSetPassengersPacket(vehicle));
 
-                DragonSurvivalMod.CHANNEL.send(PacketDistributor.PLAYER.with(() -> vehicle), new SynchronizeDragonCap(vehicle.getId(),
-                        vehicleCap.isHiding(), vehicleCap.getType(), vehicleCap.getSize(), vehicleCap.hasWings(), vehicleCap.getLavaAirSupply(), 0));
+                NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> vehicle), new SynchronizeDragonCap(vehicle.getId(),
+                                                                                                                   vehicleCap.isHiding(), vehicleCap.getType(), vehicleCap.getSize(), vehicleCap.hasWings(), vehicleCap.getLavaAirSupply(), 0));
             });
 
             player.refreshDimensions();
@@ -146,7 +147,7 @@ public class DragonGrowthHandler {
             if (world.isClientSide)
                 return;
 
-            DragonSurvivalMod.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncSize(player.getId(), size));
+            NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncSize(player.getId(), size));
 
             if (player.getVehicle() == null || !(player.getVehicle() instanceof ServerPlayerEntity))
                 return;
@@ -158,8 +159,8 @@ public class DragonGrowthHandler {
 
                 vehicle.connection.send(new SSetPassengersPacket(vehicle));
 
-                DragonSurvivalMod.CHANNEL.send(PacketDistributor.PLAYER.with(() -> vehicle), new SynchronizeDragonCap(vehicle.getId(),
-                        vehicleCap.isHiding(), vehicleCap.getType(), vehicleCap.getSize(), vehicleCap.hasWings(), vehicleCap.getLavaAirSupply(), 0));
+                NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> vehicle), new SynchronizeDragonCap(vehicle.getId(),
+                                                                                                                   vehicleCap.isHiding(), vehicleCap.getType(), vehicleCap.getSize(), vehicleCap.hasWings(), vehicleCap.getLavaAirSupply(), 0));
             });
 
             player.refreshDimensions();

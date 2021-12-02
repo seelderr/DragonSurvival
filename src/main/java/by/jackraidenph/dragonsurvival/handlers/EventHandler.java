@@ -302,5 +302,4 @@ public class EventHandler {
             craftedEvent.getPlayer().addItem(new ItemStack(Items.BEACON));
         }
     }
-
 }

@@ -1,7 +1,7 @@
 package by.jackraidenph.dragonsurvival.handlers;
 
-import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.Functions;
+import by.jackraidenph.dragonsurvival.handlers.Server.NetworkHandler;
 import by.jackraidenph.dragonsurvival.magic.abilities.Passives.ContrastShowerAbility;
 import by.jackraidenph.dragonsurvival.magic.abilities.Passives.LightInDarknessAbility;
 import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
@@ -128,7 +128,7 @@ public class DragonTraitHandler {
                                   dragonStateHandler.getDebuffData().timeInRain++;
     
                                   if (!playerEntity.level.isClientSide) {
-                                      DragonSurvivalMod.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new SyncCapabilityDebuff(playerEntity.getId(), dragonStateHandler.getDebuffData().timeWithoutWater, dragonStateHandler.getDebuffData().timeInDarkness, dragonStateHandler.getDebuffData().timeInRain));
+                                      NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new SyncCapabilityDebuff(playerEntity.getId(), dragonStateHandler.getDebuffData().timeWithoutWater, dragonStateHandler.getDebuffData().timeInDarkness, dragonStateHandler.getDebuffData().timeInRain));
                                   }
                               }
                             }
@@ -151,7 +151,7 @@ public class DragonTraitHandler {
                             }
     
                             if (!playerEntity.level.isClientSide) {
-                                DragonSurvivalMod.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new SyncCapabilityDebuff(playerEntity.getId(), dragonStateHandler.getDebuffData().timeWithoutWater, dragonStateHandler.getDebuffData().timeInDarkness, dragonStateHandler.getDebuffData().timeInRain));
+                                NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new SyncCapabilityDebuff(playerEntity.getId(), dragonStateHandler.getDebuffData().timeWithoutWater, dragonStateHandler.getDebuffData().timeInDarkness, dragonStateHandler.getDebuffData().timeInRain));
                             }
                         }
                         
@@ -188,13 +188,13 @@ public class DragonTraitHandler {
                                 if (dragonStateHandler.getDebuffData().timeInDarkness < maxStressTicks)
                                     dragonStateHandler.getDebuffData().timeInDarkness++;
                                 if (dragonStateHandler.getDebuffData().timeInDarkness == 1 && !playerEntity.level.isClientSide)
-                                    DragonSurvivalMod.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new SyncCapabilityDebuff(playerEntity.getId(), dragonStateHandler.getDebuffData().timeWithoutWater, dragonStateHandler.getDebuffData().timeInDarkness, dragonStateHandler.getDebuffData().timeInRain));
+                                    NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new SyncCapabilityDebuff(playerEntity.getId(), dragonStateHandler.getDebuffData().timeWithoutWater, dragonStateHandler.getDebuffData().timeInDarkness, dragonStateHandler.getDebuffData().timeInRain));
                                 if (dragonStateHandler.getDebuffData().timeInDarkness >= maxStressTicks && !world.isClientSide && playerEntity.tickCount % 21 == 0)
                                     playerEntity.addEffect(new EffectInstance(DragonEffects.STRESS, ConfigHandler.SERVER.forestStressEffectDuration.get() * 20));
                             } else if (dragonStateHandler.getDebuffData().timeInDarkness > 0) {
                                 dragonStateHandler.getDebuffData().timeInDarkness = (Math.max(dragonStateHandler.getDebuffData().timeInDarkness - (int) Math.ceil(maxStressTicks * 0.02F), 0));
                                 if (dragonStateHandler.getDebuffData().timeInDarkness == 0 && !playerEntity.level.isClientSide)
-                                    DragonSurvivalMod.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new SyncCapabilityDebuff(playerEntity.getId(), dragonStateHandler.getDebuffData().timeWithoutWater, dragonStateHandler.getDebuffData().timeInDarkness, dragonStateHandler.getDebuffData().timeInRain));
+                                    NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new SyncCapabilityDebuff(playerEntity.getId(), dragonStateHandler.getDebuffData().timeWithoutWater, dragonStateHandler.getDebuffData().timeInDarkness, dragonStateHandler.getDebuffData().timeInRain));
                             }
                         }
                         break;
@@ -217,12 +217,12 @@ public class DragonTraitHandler {
                                     debuffData.timeWithoutWater += ConfigHandler.SERVER.seaTicksBasedOnTemperature.get() ? timeIncrement : 1;
                                }
                                 if (debuffData.timeWithoutWater >= maxTicksOutofWater + 1 && !playerEntity.level.isClientSide)
-                                    DragonSurvivalMod.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new SyncCapabilityDebuff(playerEntity.getId(), debuffData.timeWithoutWater, debuffData.timeInDarkness, dragonStateHandler.getDebuffData().timeInRain));
+                                    NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new SyncCapabilityDebuff(playerEntity.getId(), debuffData.timeWithoutWater, debuffData.timeInDarkness, dragonStateHandler.getDebuffData().timeInRain));
                             } else if (debuffData.timeWithoutWater > 0) {
                                 double old = debuffData.timeWithoutWater;
                                 debuffData.timeWithoutWater = (Math.max(debuffData.timeWithoutWater - (int) Math.ceil(maxTicksOutofWater * 0.005F), 0));
                                 if (old > maxTicksOutofWater + 1 && debuffData.timeWithoutWater <= maxTicksOutofWater && !playerEntity.level.isClientSide)
-                                    DragonSurvivalMod.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new SyncCapabilityDebuff(playerEntity.getId(), debuffData.timeWithoutWater, debuffData.timeInDarkness, dragonStateHandler.getDebuffData().timeInRain));
+                                    NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new SyncCapabilityDebuff(playerEntity.getId(), debuffData.timeWithoutWater, debuffData.timeInDarkness, dragonStateHandler.getDebuffData().timeInRain));
                             }
                             if (!world.isClientSide && debuffData.timeWithoutWater > maxTicksOutofWater && debuffData.timeWithoutWater < maxTicksOutofWater * 2) {
                                 if (playerEntity.tickCount % 40 == 0) {
@@ -237,7 +237,7 @@ public class DragonTraitHandler {
                             DragonStateHandler.DragonDebuffData debuffData = dragonStateHandler.getDebuffData();
                             if (debuffData.timeWithoutWater > 0) {
                                 debuffData.timeWithoutWater = 0;
-                                DragonSurvivalMod.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new SyncCapabilityDebuff(playerEntity.getId(), debuffData.timeWithoutWater, debuffData.timeInDarkness, dragonStateHandler.getDebuffData().timeInRain));
+                                NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new SyncCapabilityDebuff(playerEntity.getId(), debuffData.timeWithoutWater, debuffData.timeInDarkness, dragonStateHandler.getDebuffData().timeInRain));
                             }
                         }
                         break;

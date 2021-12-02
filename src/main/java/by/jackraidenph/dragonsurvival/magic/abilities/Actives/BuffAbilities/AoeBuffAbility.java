@@ -1,9 +1,9 @@
 package by.jackraidenph.dragonsurvival.magic.abilities.Actives.BuffAbilities;
 
 import by.jackraidenph.dragonsurvival.Functions;
+import by.jackraidenph.dragonsurvival.handlers.Client.KeyInputHandler;
 import by.jackraidenph.dragonsurvival.magic.common.AbilityAnimation;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
-import by.jackraidenph.dragonsurvival.registration.ClientModEvents;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -52,8 +52,13 @@ public class AoeBuffAbility extends ActiveDragonAbility
 			components.add(new TranslationTextComponent("ds.skill.bonus_exp.max_gain", "20"));
 		}
 		
-		if(!ClientModEvents.ABILITY3.isUnbound()) {
-			components.add(new TranslationTextComponent("ds.skill.keybind", ClientModEvents.ABILITY3.getKey().getDisplayName().getContents().toUpperCase(Locale.ROOT)));
+		if(!KeyInputHandler.ABILITY3.isUnbound()) {
+			String key = KeyInputHandler.ABILITY3.getKey().getDisplayName().getContents().toUpperCase(Locale.ROOT);
+			
+			if(key.isEmpty()){
+				key = KeyInputHandler.ABILITY3.getKey().getDisplayName().getString();
+			}
+			components.add(new TranslationTextComponent("ds.skill.keybind", key));
 		}
 		
 		return components;

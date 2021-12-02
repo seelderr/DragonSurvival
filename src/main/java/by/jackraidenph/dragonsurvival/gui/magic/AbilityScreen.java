@@ -3,7 +3,7 @@ package by.jackraidenph.dragonsurvival.gui.magic;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
-import by.jackraidenph.dragonsurvival.magic.ClientMagicHandler;
+import by.jackraidenph.dragonsurvival.handlers.Magic.ClientMagicHandler;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.magic.common.InnateDragonAbility;

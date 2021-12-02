@@ -1,9 +1,11 @@
-package by.jackraidenph.dragonsurvival.gecko;
+package by.jackraidenph.dragonsurvival.gecko.entity;
 
 import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.entity.PrincessEntity;
+import by.jackraidenph.dragonsurvival.gecko.AnimationTimer;
+import by.jackraidenph.dragonsurvival.gecko.CommonTraits;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
 import by.jackraidenph.dragonsurvival.registration.EntityTypesInit;
 import by.jackraidenph.dragonsurvival.util.PrincessTrades;
@@ -55,7 +57,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-public class Princess extends VillagerEntity implements IAnimatable, CommonTraits {
+public class Princess extends VillagerEntity implements IAnimatable, CommonTraits
+{
     private static final List<DyeColor> colors = Arrays.asList(DyeColor.RED, DyeColor.YELLOW, DyeColor.PURPLE, DyeColor.BLUE, DyeColor.BLACK, DyeColor.WHITE);
     public static DataParameter<Integer> color = EntityDataManager.defineId(Princess.class, DataSerializers.INT);
 

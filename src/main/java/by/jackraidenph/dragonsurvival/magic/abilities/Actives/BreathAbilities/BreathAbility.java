@@ -3,8 +3,8 @@ package by.jackraidenph.dragonsurvival.magic.abilities.Actives.BreathAbilities;
 import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.handlers.Client.KeyInputHandler;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
-import by.jackraidenph.dragonsurvival.registration.ClientModEvents;
 import by.jackraidenph.dragonsurvival.util.DragonLevel;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -14,6 +14,9 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileHelper;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.*;
+import net.minecraft.util.math.RayTraceContext.BlockMode;
+import net.minecraft.util.math.RayTraceContext.FluidMode;
+import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
@@ -154,18 +157,13 @@ public abstract class BreathAbility extends ActiveDragonAbility
 		
 		if(!found){
 			Vector3d vector3d = player.getEyePosition(1.0F);
-			Vector3d vector3d1 = player.getViewVector(1.0F).scale(RANGE);
-			Vector3d vector3d2 = vector3d.add(vector3d1);
-			AxisAlignedBB axisalignedbb = player.getBoundingBox().expandTowards(vector3d1).inflate(1.0D);
 			Predicate<Entity> predicate = (entity) -> entity instanceof LivingEntity && !entity.isSpectator() && entity.isPickable();
+			RayTraceResult result = ProjectileHelper.getHitResult(player, predicate);
 			
-			EntityRayTraceResult result = ProjectileHelper.getEntityHitResult(player.level, player, vector3d, vector3d2, axisalignedbb, predicate);
-			
-			if (result != null) {
-				LivingEntity entity = (LivingEntity)result.getEntity();
+			if(result.getType() == Type.ENTITY) {
+				LivingEntity entity = (LivingEntity)((EntityRayTraceResult)result).getEntity();
 				if (vector3d.distanceToSqr(result.getLocation()) <= RANGE) {
 					onEntityHit(entity);
-					return;
 				}
 			}
 		}
@@ -184,52 +182,84 @@ public abstract class BreathAbility extends ActiveDragonAbility
 	}
 	
 	public void hitBlocks() {
-		int checkDist = 10;
-		for (int i = (int)player.getX() - checkDist; i < (int)player.getX() + checkDist; i++) {
-			for (int j = (int)player.getY() - checkDist; j < (int)player.getY() + checkDist; j++) {
-				for (int k = (int)player.getZ() - checkDist; k < (int)player.getZ() + checkDist; k++) {
-					BlockPos pos = new BlockPos(i, j, k);
-
-					BlockState blockState = player.level.getBlockState(pos);
-					BlockState blockStateAbove = player.level.getBlockState(pos.above());
-					
-					if (blockStateAbove.getBlock() != Blocks.AIR) {
-						continue;
-					}
-					
-					float blockHitYaw = (float) ((Math.atan2(pos.getZ() - player.getZ(), pos.getX() - player.getX()) * (180 / Math.PI) - 90) % 360);
-					float entityAttackingYaw = player.yRot % 360;
-					if (blockHitYaw < 0) {
-						blockHitYaw += 360;
-					}
-					if (entityAttackingYaw < 0) {
-						entityAttackingYaw += 360;
-					}
-					float blockRelativeYaw = blockHitYaw - entityAttackingYaw;
-
-					float xzDistance = (float) Math.sqrt((pos.getZ() - player.getZ()) * (pos.getZ() - player.getZ()) + (pos.getX() - player.getX()) * (pos.getX() - player.getX()));
-					float blockHitPitch = (float) ((Math.atan2((pos.getY() - player.getY()), xzDistance) * (180 / Math.PI)) % 360);
-					float entityAttackingPitch = -player.xRot % 360;
-					if (blockHitPitch < 0) {
-						blockHitPitch += 360;
-					}
-					if (entityAttackingPitch < 0) {
-						entityAttackingPitch += 360;
-					}
-					float blockRelativePitch = blockHitPitch - entityAttackingPitch;
-
-					float blockHitDistance = (float) Math.sqrt((pos.getZ() - player.getZ()) * (pos.getZ() - player.getZ()) + (pos.getX() - player.getX()) * (pos.getX() - player.getX()) + (pos.getY() - player.getY()) * (pos.getY() - player.getY()));
-
-					boolean inRange = blockHitDistance <= RANGE;
-					boolean yawCheck = (blockRelativeYaw <= ARC / 2f && blockRelativeYaw >= -ARC / 2f) || (blockRelativeYaw >= 360 - ARC / 2f || blockRelativeYaw <= -360 + ARC / 2f);
-					boolean pitchCheck = (blockRelativePitch <= ARC / 2f && blockRelativePitch >= -ARC / 2f) || (blockRelativePitch >= 360 - ARC / 2f || blockRelativePitch <= -360 + ARC / 2f);
-					
-					if (inRange && yawCheck && pitchCheck) {
-						onBlock(pos, blockState);
+		{
+			Vector3d vector3d = player.getEyePosition(1.0F);
+			Vector3d vector3d1 = player.getViewVector(1.0F).scale(RANGE);
+			Vector3d vector3d2 = vector3d.add(vector3d1);
+			BlockRayTraceResult result = player.level.clip(new RayTraceContext(player.position(), vector3d2, BlockMode.OUTLINE, this instanceof LightningBreathAbility ? FluidMode.NONE : FluidMode.ANY, null));
+			
+			BlockPos pos = null;
+			
+			if (result.getType() == Type.MISS) {
+				pos = new BlockPos(vector3d2.x, vector3d2.y, vector3d2.z);
+			}else if(result.getType() == Type.BLOCK){
+				pos = result.getBlockPos();
+			}
+			
+			if(pos == null) return;
+			
+			for(int x = -(RANGE / 2); x < (RANGE / 2); x++){
+				for(int y = -(RANGE / 2); y < (RANGE / 2); y++){
+					for(int z =  -(RANGE / 2); z < (RANGE / 2); z++){
+						BlockPos newPos = new BlockPos(pos.getX() + x, pos.getY() + y, pos.getZ() + z);
+						if(newPos.distSqr(pos) <= (RANGE / 2)){
+							BlockState state = player.level.getBlockState(newPos);
+							
+							if(state.getBlock() != Blocks.AIR){
+								onBlock(newPos, state);
+							}
+						}
 					}
 				}
 			}
 		}
+		
+//		int checkDist = RANGE*2;
+//		for (int i = (int)player.getX() - checkDist; i < (int)player.getX() + checkDist; i++) {
+//			for (int j = (int)player.getY() - checkDist; j < (int)player.getY() + checkDist; j++) {
+//				for (int k = (int)player.getZ() - checkDist; k < (int)player.getZ() + checkDist; k++) {
+//					BlockPos pos = new BlockPos(i, j, k);
+//
+//					BlockState blockState = player.level.getBlockState(pos.above());
+//					BlockState blockStateAbove = player.level.getBlockState(pos.above().above());
+//
+//					if( blockState.getBlock() != Blocks.AIR && blockStateAbove.getBlock() != Blocks.AIR){
+//						continue;
+//					}
+//
+//					float blockHitYaw = (float) ((Math.atan2(pos.getZ() - player.getZ(), pos.getX() - player.getX()) * (180 / Math.PI) - 90) % 360);
+//					float entityAttackingYaw = player.yRot % 360;
+//					if (blockHitYaw < 0) {
+//						blockHitYaw += 360;
+//					}
+//					if (entityAttackingYaw < 0) {
+//						entityAttackingYaw += 360;
+//					}
+//					float blockRelativeYaw = blockHitYaw - entityAttackingYaw;
+//
+//					float xzDistance = (float) Math.sqrt((pos.getZ() - player.getZ()) * (pos.getZ() - player.getZ()) + (pos.getX() - player.getX()) * (pos.getX() - player.getX()));
+//					float blockHitPitch = (float) ((Math.atan2((pos.getY() - player.getY()), xzDistance) * (180 / Math.PI)) % 360);
+//					float entityAttackingPitch = -player.xRot % 360;
+//					if (blockHitPitch < 0) {
+//						blockHitPitch += 360;
+//					}
+//					if (entityAttackingPitch < 0) {
+//						entityAttackingPitch += 360;
+//					}
+//					float blockRelativePitch = blockHitPitch - entityAttackingPitch;
+//
+//					float blockHitDistance = (float) Math.sqrt((pos.getZ() - player.getZ()) * (pos.getZ() - player.getZ()) + (pos.getX() - player.getX()) * (pos.getX() - player.getX()) + (pos.getY() - player.getY()) * (pos.getY() - player.getY()));
+//
+//					boolean inRange = blockHitDistance <= RANGE;
+//					boolean yawCheck = (blockRelativeYaw <= ARC / 2f && blockRelativeYaw >= -ARC / 2f) || (blockRelativeYaw >= 360 - ARC / 2f || blockRelativeYaw <= -360 + ARC / 2f);
+//					boolean pitchCheck = (blockRelativePitch <= ARC / 2f && blockRelativePitch >= -ARC / 2f) || (blockRelativePitch >= 360 - ARC / 2f || blockRelativePitch <= -360 + ARC / 2f);
+//
+//					if (inRange && yawCheck && pitchCheck) {
+//						onBlock(pos, blockState);
+//					}
+//				}
+//			}
+//		}
 	}
 	
 	public static List<LivingEntity> getEntityLivingBaseNearby(LivingEntity source, double distanceX, double distanceY, double distanceZ, double radius) {
@@ -271,8 +301,13 @@ public abstract class BreathAbility extends ActiveDragonAbility
 		components.add(new TranslationTextComponent("ds.skill.damage", getDamage()));
 		components.add(new TranslationTextComponent("ds.skill.range.blocks", RANGE));
 		
-		if(!ClientModEvents.ABILITY1.isUnbound()) {
-			components.add(new TranslationTextComponent("ds.skill.keybind", ClientModEvents.ABILITY1.getKey().getDisplayName().getContents().toUpperCase(Locale.ROOT)));
+		if(!KeyInputHandler.ABILITY1.isUnbound()) {
+			String key = KeyInputHandler.ABILITY1.getKey().getDisplayName().getContents().toUpperCase(Locale.ROOT);
+			
+			if(key.isEmpty()){
+				key = KeyInputHandler.ABILITY1.getKey().getDisplayName().getString();
+			}
+			components.add(new TranslationTextComponent("ds.skill.keybind", key));
 		}
 		
 		return components;

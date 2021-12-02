@@ -1,6 +1,7 @@
-package by.jackraidenph.dragonsurvival.gecko;
+package by.jackraidenph.dragonsurvival.gecko.model;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
+import by.jackraidenph.dragonsurvival.gecko.entity.Princess;
 import net.minecraft.item.DyeColor;
 import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib3.model.AnimatedGeoModel;

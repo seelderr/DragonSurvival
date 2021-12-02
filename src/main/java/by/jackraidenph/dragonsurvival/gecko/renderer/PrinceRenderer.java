@@ -1,5 +1,6 @@
-package by.jackraidenph.dragonsurvival.gecko;
+package by.jackraidenph.dragonsurvival.gecko.renderer;
 
+import by.jackraidenph.dragonsurvival.gecko.entity.Prince;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;

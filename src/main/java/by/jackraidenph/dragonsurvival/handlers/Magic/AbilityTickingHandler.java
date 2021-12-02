@@ -1,7 +1,9 @@
-package by.jackraidenph.dragonsurvival.magic;
+package by.jackraidenph.dragonsurvival.handlers.Magic;
 
+import by.jackraidenph.dragonsurvival.handlers.Server.NetworkHandler;
+import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
-import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
+import by.jackraidenph.dragonsurvival.network.magic.SyncAbilityCooldown;
 import com.google.common.collect.Queues;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -21,14 +23,17 @@ public class AbilityTickingHandler {
             this.abilitiesToCoolDown.add(ability);
     }
     
-    public void removeFromCoolDownList(DragonAbility ability) {
-        this.abilitiesToCoolDown.remove(ability);
-    }
-    
     private void decreaseCooldownTimer(ActiveDragonAbility ability) {
-        if (ability.getCooldown() != 0)
+        if (ability.getCooldown() != 0) {
             ability.decreaseCooldownTimer();
-        else
-            this.removeFromCoolDownList(ability);
+        } else {
+            this.abilitiesToCoolDown.remove(ability);
+    
+            int abilityId = DragonAbilities.getAbilitySlot(ability);
+            
+            if(abilityId != -1){
+                NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCooldown(abilityId, 0));
+            }
+        }
     }
 }

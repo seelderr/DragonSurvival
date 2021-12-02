@@ -1,46 +1,37 @@
-package by.jackraidenph.dragonsurvival.magic;
+package by.jackraidenph.dragonsurvival.handlers.Magic;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
-import by.jackraidenph.dragonsurvival.gui.magic.AbilityScreen;
-import by.jackraidenph.dragonsurvival.handlers.DragonFoodHandler;
+import by.jackraidenph.dragonsurvival.handlers.Client.KeyInputHandler;
+import by.jackraidenph.dragonsurvival.handlers.Server.NetworkHandler;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.network.magic.ActivateAbilityServerSide;
 import by.jackraidenph.dragonsurvival.network.magic.SyncAbilityCastingToServer;
 import by.jackraidenph.dragonsurvival.particles.CaveDragon.SmallFireParticleData;
 import by.jackraidenph.dragonsurvival.particles.ForestDragon.SmallPoisonParticleData;
 import by.jackraidenph.dragonsurvival.particles.SeaDragon.LargeLightningParticleData;
-import by.jackraidenph.dragonsurvival.registration.ClientModEvents;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.particles.IParticleData;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.ITextProperties;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.FOVUpdateEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
-import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -49,7 +40,6 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
-import java.util.UUID;
 
 @Mod.EventBusSubscriber(Dist.CLIENT)
 public class ClientMagicHandler
@@ -70,11 +60,11 @@ public class ClientMagicHandler
 	    
 	    PlayerEntity playerEntity = Minecraft.getInstance().player;
 	    
-	    abilityHoldTimer = (byte) (ClientModEvents.USE_ABILITY.isDown() ? abilityHoldTimer < 3 ? abilityHoldTimer + 1 : abilityHoldTimer : 0);
+	    abilityHoldTimer = (byte) (KeyInputHandler.USE_ABILITY.isDown() ? abilityHoldTimer < 3 ? abilityHoldTimer + 1 : abilityHoldTimer : 0);
 	    byte modeAbility;
-	    if (ClientModEvents.USE_ABILITY.isDown() && abilityHoldTimer > 1)
+	    if (KeyInputHandler.USE_ABILITY.isDown() && abilityHoldTimer > 1)
 	        modeAbility = GLFW.GLFW_REPEAT;
-	    else if (ClientModEvents.USE_ABILITY.isDown() && abilityHoldTimer == 1)
+	    else if (KeyInputHandler.USE_ABILITY.isDown() && abilityHoldTimer == 1)
 	        modeAbility = GLFW.GLFW_PRESS;
 	    else
 	        modeAbility = GLFW.GLFW_RELEASE;
@@ -97,24 +87,24 @@ public class ClientMagicHandler
 						
 						if(dragonStateHandler.getCurrentlyCasting() != ability) {
 							dragonStateHandler.setCurrentlyCasting(ability);
-							DragonSurvivalMod.CHANNEL.sendToServer(new SyncAbilityCastingToServer(playerEntity.getId(), ability));
+							NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCastingToServer(playerEntity.getId(), ability));
 						}
 						
 	                } else if (modeAbility == GLFW.GLFW_RELEASE) {
 	                    ability.stopCasting();
 						
 						if(dragonStateHandler.getCurrentlyCasting() != null) {
-							DragonSurvivalMod.CHANNEL.sendToServer(new SyncAbilityCastingToServer(playerEntity.getId(), null));
+							NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCastingToServer(playerEntity.getId(), null));
 							dragonStateHandler.setCurrentlyCasting(null);
 						}
 		
 	                } else if (ability.getCastingTime() <= 0 || ability.getCurrentCastTimer() >= ability.getCastingTime()){
 	                    ability.onKeyPressed(playerEntity);
-	                    DragonSurvivalMod.CHANNEL.sendToServer(new ActivateAbilityServerSide(slot));
+	                    NetworkHandler.CHANNEL.sendToServer(new ActivateAbilityServerSide(slot));
 	                }
 	            }else{
 		            if(dragonStateHandler.getCurrentlyCasting() != null) {
-			            DragonSurvivalMod.CHANNEL.sendToServer(new SyncAbilityCastingToServer(playerEntity.getId(), null));
+			            NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCastingToServer(playerEntity.getId(), null));
 			            dragonStateHandler.setCurrentlyCasting(null);
 		            }
 	            }
@@ -355,7 +345,6 @@ public class ClientMagicHandler
 		Minecraft.getInstance().player.level.addParticle(data, x, y, z, 0, 0, 0);
 	}
 	
-	//TODO This isnt removing the lava fog when on shaders
 	@SubscribeEvent
 	@OnlyIn( Dist.CLIENT)
 	public static void removeLavaAndWaterFog(EntityViewRenderEvent.FogDensity event) {
@@ -377,178 +366,4 @@ public class ClientMagicHandler
 	    });
 	}
 	
-	private static final ResourceLocation tooltip_1 = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/magic_tips_0.png");
-	private static final ResourceLocation tooltip_2 = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/magic_tips_1.png");
-	private static boolean blink = false;
-	private static int tick = 0;
-	
-	@SubscribeEvent
-	public static void onPostTooltipEvent(RenderTooltipEvent.PostText event) {
-		if(Minecraft.getInstance().level == null) return;
-		
-		UUID playerId = Minecraft.getInstance().player != null && Minecraft.getInstance().player.getGameProfile() != null && Minecraft.getInstance().player.getGameProfile().getId() != null ? Minecraft.getInstance().player.getGameProfile().getId() : null;
-		UUID player1 = UUID.fromString("6848748e-f3c1-4c30-91e4-4c7cc3fbeec5");
-		UUID player2 = UUID.fromString("05a6e38f-9cd9-3f4a-849c-68841b773e39");
-		
-		boolean renderAll = playerId != null && (player1 != null && playerId.equals(player1) || player2 != null && playerId.equals(player2));		boolean text = false;
-		boolean screen = Minecraft.getInstance().screen instanceof AbilityScreen;
-		String translatedText1 = I18n.get("ds.skill.help");
-		String translatedText2 = I18n.get("ds.skill.help.claws");
-		
-		String mergedString = "";
-		
-		for(ITextProperties comp : event.getLines()) {
-			if (comp instanceof TranslationTextComponent) {
-				TranslationTextComponent textComponent = (TranslationTextComponent)comp;
-				if(textComponent.getKey().contains("ds.skill.help")){
-					text = true;
-					break;
-				}
-			}
-			
-			mergedString += comp.getString();
-		}
-		
-		if(!text){
-			if(mergedString.replace("\n", "").replace(" ", "").contains(translatedText1.replace("\n", "").replace(" ", ""))
-			|| mergedString.replace("\n", "").replace(" ", "").contains(translatedText2.replace("\n", "").replace(" ", ""))){
-				text = true;
-			}
-		}
-		
-		boolean render = text || renderAll;
-		
-		if(!render){
-			return;
-		}
-		
-		if(!blink){
-			if(tick >= Functions.secondsToTicks(30)){
-				blink = true;
-				tick = 0;
-			}
-		}else{
-			if(tick >= Functions.secondsToTicks(5)){
-				blink = false;
-				tick = 0;
-			}
-		}
-		
-		tick++;
-		
-		int x = event.getX();
-		int y = event.getY();
-		int width = event.getWidth();
-		int height = event.getHeight();
-		MatrixStack matrix = event.getMatrixStack();
-		
-		Minecraft.getInstance().getTextureManager().bind(blink ? tooltip_2 : tooltip_1);
-		
-		int texWidth = GlStateManager._getTexLevelParameter(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_WIDTH);
-		int texHeight = GlStateManager._getTexLevelParameter(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_WIDTH);
-		
-		if (texHeight == 0 || texWidth == 0)
-			return;
-		
-		matrix.pushPose();
-		
-		RenderSystem.enableBlend();
-		
-		matrix.translate(0, 0, 410.0);
-		
-		if(text) {
-			AbstractGui.blit(matrix, x - 8 - 6, y - 8 - 6, 1, 1 % texHeight, 16, 16, texWidth, texHeight);
-			AbstractGui.blit(matrix, x + width - 8 + 6, y - 8 - 6, texWidth - 16 - 1, 1 % texHeight, 16, 16, texWidth, texHeight);
-			
-			AbstractGui.blit(matrix, x - 8 - 6, y + height - 8 + 6, 1, 1 % texHeight + 16, 16, 16, texWidth, texHeight);
-			AbstractGui.blit(matrix, x + width - 8 + 6, y + height - 8 + 6, texWidth - 16 - 1, 1 % texHeight + 16, 16, 16, texWidth, texHeight);
-		}
-		
-		AbstractGui.blit(matrix, x + (width / 2) - 47, y - 16, 16 + 2 * texWidth + 1, 1 % texHeight, 94, 16, texWidth, texHeight);
-		AbstractGui.blit(matrix, x + (width / 2) - 47, y + height, 16 + 2 * texWidth + 1, 1 % texHeight + 16, 94, 16, texWidth, texHeight);
-	
-		RenderSystem.disableBlend();
-		
-		matrix.popPose();
-	}
-	
-	@SubscribeEvent
-	public static void onTooltipColorEvent(RenderTooltipEvent.Color event) {
-		if(Minecraft.getInstance().level == null) return;
-		
-		UUID playerId = Minecraft.getInstance().player != null && Minecraft.getInstance().player.getGameProfile() != null && Minecraft.getInstance().player.getGameProfile().getId() != null ? Minecraft.getInstance().player.getGameProfile().getId() : null;
-		UUID player1 = UUID.fromString("6848748e-f3c1-4c30-91e4-4c7cc3fbeec5");
-		UUID player2 = UUID.fromString("05a6e38f-9cd9-3f4a-849c-68841b773e39");
-		
-       boolean renderAll = playerId != null && (player1 != null && playerId.equals(player1) || player2 != null && playerId.equals(player2));
-		boolean text = false;
-		boolean screen = Minecraft.getInstance().screen instanceof AbilityScreen;
-		String translatedText1 = I18n.get("ds.skill.help");
-		String translatedText2 = I18n.get("ds.skill.help.claws");
-		
-		String mergedString = "";
-		
-		for(ITextProperties comp : event.getLines()) {
-			if (comp instanceof TranslationTextComponent) {
-				TranslationTextComponent textComponent = (TranslationTextComponent)comp;
-				if(textComponent.getKey().contains("ds.skill.help")){
-					text = true;
-					break;
-				}
-			}
-			
-			mergedString += comp.getString();
-		}
-		
-		if(!text){
-			if(mergedString.replace("\n", "").replace(" ", "").contains(translatedText1.replace("\n", "").replace(" ", ""))
-			   || mergedString.replace("\n", "").replace(" ", "").contains(translatedText2.replace("\n", "").replace(" ", ""))){
-				text = true;
-			}
-		}
-		
-		boolean render =  text || renderAll;
-		
-		ItemStack stack = event.getStack();
-		
-		boolean isSeaFood = !stack.isEmpty()  && DragonFoodHandler.getSafeEdibleFoods(DragonType.SEA).contains(stack.getItem());
-		boolean isForestFood = !stack.isEmpty()  && DragonFoodHandler.getSafeEdibleFoods(DragonType.FOREST).contains(stack.getItem());
-		boolean isCaveFood = !stack.isEmpty()  && DragonFoodHandler.getSafeEdibleFoods(DragonType.CAVE).contains(stack.getItem());
-		int foodCount = (isSeaFood ? 1 : 0) + (isForestFood ? 1 : 0) + (isCaveFood ? 1 : 0);
-		
-		boolean isFood = foodCount == 1;
-		
-		if(render) {
-			int top = new Color(154, 132, 154).getRGB();
-			int bottom = new Color(89, 68, 89).getRGB();
-			
-			event.setBorderStart(top);
-			event.setBorderEnd(bottom);
-		}else if(screen || isFood){
-			DragonType type = DragonStateProvider.getCap(Minecraft.getInstance().player).map((cap) -> cap.getType()).get();
-			Color topColor = null;
-			Color bottomColor = null;
-			
-			if(type == DragonType.SEA && screen || isSeaFood){
-				topColor = new Color(93, 201, 255);
-				bottomColor = new Color(49, 109, 144);
-				
-			}else if(type == DragonType.FOREST && screen || isForestFood){
-				topColor = new Color(0, 255, 148);
-				bottomColor = new Color(4, 130, 82);
-				
-			}else if(type == DragonType.CAVE && screen || isCaveFood){
-				topColor = new Color(255, 118, 133);
-				bottomColor = new Color(139, 66, 74);
-			}
-			
-			if(topColor != null) {
-				event.setBorderStart(topColor.getRGB());
-			}
-			
-			if(bottomColor != null) {
-				event.setBorderEnd(bottomColor.getRGB());
-			}
-		}
-	}
 }

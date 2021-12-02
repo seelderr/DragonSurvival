@@ -1,12 +1,12 @@
 package by.jackraidenph.dragonsurvival.network.magic;
 
+import by.jackraidenph.dragonsurvival.capability.DragonCapStorage;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.network.IMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.World;
@@ -37,16 +37,7 @@ public class SyncDragonClawsMenu implements IMessage<SyncDragonClawsMenu>
 		buffer.writeInt(message.playerId);
 		buffer.writeBoolean(message.state);
 		
-		CompoundNBT nbt = new CompoundNBT();
-		
-		for(int i = 0; i < 4; i++){
-			ItemStack stack = message.inv.getItem(i);
-			
-			if(!stack.isEmpty()){
-				nbt.put(Integer.toString(i), stack.save(new CompoundNBT()));
-			}
-		}
-		
+		CompoundNBT nbt = DragonCapStorage.saveClawInventory(message.inv);
 		buffer.writeNbt(nbt);
 	}
 	
@@ -56,18 +47,7 @@ public class SyncDragonClawsMenu implements IMessage<SyncDragonClawsMenu>
 		boolean state = buffer.readBoolean();
 		CompoundNBT tag = buffer.readNbt();
 		
-		Inventory inventory = new Inventory(4);
-		
-		for(int i = 0; i < 4; i++){
-			if(tag.contains(Integer.toString(i))){
-				ItemStack stack = ItemStack.of(tag.getCompound(Integer.toString(i)));
-				
-				if(!stack.isEmpty()){
-					inventory.setItem(i, stack);
-				}
-			}
-		}
-		
+		Inventory inventory = DragonCapStorage.readClawInventory(tag);
 		return new SyncDragonClawsMenu(playerId, state, inventory);
 	}
 	

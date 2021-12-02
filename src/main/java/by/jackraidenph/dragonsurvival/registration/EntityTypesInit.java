@@ -4,9 +4,10 @@ import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.blocks.DragonBeacon;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.entity.*;
-import by.jackraidenph.dragonsurvival.gecko.DragonEntity;
-import by.jackraidenph.dragonsurvival.gecko.Knight;
-import by.jackraidenph.dragonsurvival.gecko.Princess;
+import by.jackraidenph.dragonsurvival.gecko.entity.DragonEntity;
+import by.jackraidenph.dragonsurvival.gecko.entity.Knight;
+import by.jackraidenph.dragonsurvival.gecko.entity.Prince;
+import by.jackraidenph.dragonsurvival.gecko.entity.Princess;
 import by.jackraidenph.dragonsurvival.handlers.VillagerRelationsHandler;
 import by.jackraidenph.dragonsurvival.entity.magic.BallLightningEntity;
 import by.jackraidenph.dragonsurvival.entity.magic.DragonSpikeEntity;
@@ -55,7 +56,7 @@ public class EntityTypesInit {
     public static EntityType<PrincessEntity> PRINCESS;
     public static EntityType<Knight> KNIGHT;
     public static EntityType<Princess> PRINCESS_ON_HORSE;
-    public static EntityType<by.jackraidenph.dragonsurvival.gecko.Prince> PRINCE_ON_HORSE;
+    public static EntityType<Prince> PRINCE_ON_HORSE;
     
     //Magic abilities
     public static EntityType<DragonSpikeEntity> DRAGON_SPIKE;
@@ -139,7 +140,7 @@ public class EntityTypesInit {
         SQUIRE_HUNTER = createEntity(Squire.class, Squire::new, 0.6F, 1.95F, 12486764, 5318420, null);
         PRINCESS = createEntity(PrincessEntity.class, PrincessEntity::new, 0.6F, 1.9F, 16766495, 174864, null);
         KNIGHT = createEntity(Knight.class, Knight::new, 0.8f, 2.5f, 0, 0x510707, null);
-        PRINCE_ON_HORSE = createEntity(by.jackraidenph.dragonsurvival.gecko.Prince.class, by.jackraidenph.dragonsurvival.gecko.Prince::new, 0.8f, 2.5f, 0xffdd1f, 0x2ab10, null);
+        PRINCE_ON_HORSE = createEntity(Prince.class, Prince::new, 0.8f, 2.5f, 0xffdd1f, 0x2ab10, null);
         VillagerRelationsHandler.dragonHunters = new ArrayList<>(4);
         if (ConfigHandler.COMMON.spawnHound.get())
             VillagerRelationsHandler.dragonHunters.add(cast(HUNTER_HOUND));

@@ -1,8 +1,8 @@
 package by.jackraidenph.dragonsurvival.gui.magic.buttons;
 
-import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
+import by.jackraidenph.dragonsurvival.handlers.Server.NetworkHandler;
 import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
-import by.jackraidenph.dragonsurvival.magic.ClientMagicHandler;
+import by.jackraidenph.dragonsurvival.handlers.Magic.ClientMagicHandler;
 import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.magic.common.PassiveDragonAbility;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
@@ -58,7 +58,7 @@ public class DecreaseLevelButton extends Button
 		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {
 			if(ability != null) {
 				if (cap.getAbility(ability) != null && cap.getAbilityLevel(ability) > ability.getMinLevel()) {
-					DragonSurvivalMod.CHANNEL.sendToServer(new ChangeSkillLevel(cap.getAbilityLevel(ability) - 1, ability.getId()));
+					NetworkHandler.CHANNEL.sendToServer(new ChangeSkillLevel(cap.getAbilityLevel(ability) - 1, ability.getId()));
 				}
 			}
 		});

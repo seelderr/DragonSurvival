@@ -1,11 +1,13 @@
 package by.jackraidenph.dragonsurvival.magic.common;
 
-import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.handlers.ClientFlightHandler;
-import by.jackraidenph.dragonsurvival.magic.MagicHandler;
+import by.jackraidenph.dragonsurvival.handlers.Client.ClientFlightHandler;
+import by.jackraidenph.dragonsurvival.handlers.Magic.MagicHandler;
+import by.jackraidenph.dragonsurvival.handlers.Server.NetworkHandler;
+import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
 import by.jackraidenph.dragonsurvival.network.magic.SyncAbilityCastingToServer;
+import by.jackraidenph.dragonsurvival.network.magic.SyncAbilityCooldown;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.SoundEvents;
@@ -174,7 +176,7 @@ public class ActiveDragonAbility extends DragonAbility
     
         DragonStateProvider.getCap(getPlayer()).ifPresent(dragonStateHandler -> {
             if(getPlayer().level.isClientSide){
-                DragonSurvivalMod.CHANNEL.sendToServer(new SyncAbilityCastingToServer(getPlayer().getId(), null));
+                NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCastingToServer(getPlayer().getId(), null));
             }
             dragonStateHandler.setCurrentlyCasting(null);
         });
@@ -191,6 +193,14 @@ public class ActiveDragonAbility extends DragonAbility
     public void startCooldown() {
         this.currentCooldown = this.getMaxCooldown();
         MagicHandler.cooldownHandler.addToCoolDownList(this);
+        
+        if(player.level.isClientSide){
+            int abilityId = DragonAbilities.getAbilitySlot(this);
+            
+            if(abilityId != -1) {
+                NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCooldown(abilityId, currentCooldown));
+            }
+        }
     }
     
     public int getMaxCooldown() {

@@ -8,6 +8,7 @@ import by.jackraidenph.dragonsurvival.particles.CaveDragon.SmallFireParticleData
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
 import by.jackraidenph.dragonsurvival.sounds.FireBreathSound;
 import by.jackraidenph.dragonsurvival.sounds.SoundRegistry;
+import net.minecraft.block.AbstractFireBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
@@ -21,6 +22,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Potion;
+import net.minecraft.util.Direction;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
@@ -74,8 +76,11 @@ public class FireBreathAbility extends BreathAbility
 		double y = player.getY() + viewVector.y + (size / 20F);
 		double z = player.getZ() + viewVector.z;
 		
+		if(player.isFallFlying() || player.abilities.flying) {
+			yComp += delta.y * 6;
+		}
+		
 		xComp += delta.x * 6;
-		yComp += delta.y * 6;
 		zComp += delta.z * 6;
 		
 		if(player.isInWaterRainOrBubble() || player.level.isRainingAt(player.blockPosition())){
@@ -195,19 +200,29 @@ public class FireBreathAbility extends BreathAbility
 				}
 			}
 			return;
-		}else if(blockState.getMaterial().isSolid()) {
-			if(!player.level.isClientSide) {
-				if (ConfigHandler.SERVER.fireBreathSpreadsFire.get()) {
+		}
+		
+		if(!player.level.isClientSide) {
+			if (ConfigHandler.SERVER.fireBreathSpreadsFire.get()) {
+				Direction direction = player.getDirection().getOpposite();
+				BlockPos blockPos = pos.relative(direction);
+				
+				if(AbstractFireBlock.canBePlacedAt(player.level, blockPos,direction)) {
 					boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(player.level, player);
 					
 					if (flag) {
 						if (player.level.random.nextInt(100) < 5) {
-							player.level.setBlock(pos.above(), Blocks.FIRE.defaultBlockState(), 3);
+							BlockState blockstate1 = AbstractFireBlock.getState(player.level, blockPos);
+							player.level.setBlock(blockPos, blockstate1, 3);
 						}
 					}
 				}
+			}
 				
-				if(player.level.random.nextInt(100) < 30){
+			if(player.level.random.nextInt(100) < 30){
+				BlockState blockAbove = player.level.getBlockState(pos.above());
+				
+				if(blockAbove.getBlock() == Blocks.AIR) {
 					AreaEffectCloudEntity entity = new AreaEffectCloudEntity(EntityType.AREA_EFFECT_CLOUD, player.level);
 					entity.setWaitTime(0);
 					entity.setPos(pos.above().getX(), pos.above().getY(), pos.above().getZ());
@@ -218,13 +233,13 @@ public class FireBreathAbility extends BreathAbility
 					player.level.addFreshEntity(entity);
 				}
 			}
+		}
 		
 			
-			if(player.level.isClientSide) {
-				for (int z = 0; z < 4; ++z) {
-					if (player.level.random.nextInt(100) < 20) {
-						player.level.addParticle(ParticleTypes.LAVA,pos.above().getX(), pos.above().getY(), pos.above().getZ(), 0, 0.05, 0);
-					}
+		if(player.level.isClientSide) {
+			for (int z = 0; z < 4; ++z) {
+				if (player.level.random.nextInt(100) < 20) {
+					player.level.addParticle(ParticleTypes.LAVA,pos.above().getX(), pos.above().getY(), pos.above().getZ(), 0, 0.05, 0);
 				}
 			}
 		}

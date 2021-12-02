@@ -1,10 +1,11 @@
-package by.jackraidenph.dragonsurvival.magic;
+package by.jackraidenph.dragonsurvival.handlers.Magic;
 
-import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.capability.Capabilities;
 import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.handlers.Server.NetworkHandler;
+import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
 import by.jackraidenph.dragonsurvival.magic.abilities.Actives.BreathAbilities.LightningBreathAbility;
 import by.jackraidenph.dragonsurvival.magic.abilities.Passives.BurnAbility;
 import by.jackraidenph.dragonsurvival.magic.abilities.Passives.SpectralImpactAbility;
@@ -454,7 +455,7 @@ public class MagicHandler
 		
 		if(!entity.level.isClientSide){
 			TargetPoint point = new TargetPoint(entity.position().x, entity.position().y, entity.position().z, 64, entity.level.dimension());
-			DragonSurvivalMod.CHANNEL.send(PacketDistributor.NEAR.with(() -> point), new SyncPotionAddedEffect(entity.getId(), Effect.getId(event.getPotionEffect().getEffect()), event.getPotionEffect().getDuration(), event.getPotionEffect().getAmplifier()));
+			NetworkHandler.CHANNEL.send(PacketDistributor.NEAR.with(() -> point), new SyncPotionAddedEffect(entity.getId(), Effect.getId(event.getPotionEffect().getEffect()), event.getPotionEffect().getDuration(), event.getPotionEffect().getAmplifier()));
 		}
 	}
 	
@@ -468,7 +469,7 @@ public class MagicHandler
 		
 		if(!entity.level.isClientSide){
 			TargetPoint point = new TargetPoint(entity.position().x, entity.position().y, entity.position().z, 64, entity.level.dimension());
-			DragonSurvivalMod.CHANNEL.send(PacketDistributor.NEAR.with(() -> point), new SyncPotionRemovedEffect(entity.getId(), Effect.getId(event.getPotionEffect().getEffect())));
+			NetworkHandler.CHANNEL.send(PacketDistributor.NEAR.with(() -> point), new SyncPotionRemovedEffect(entity.getId(), Effect.getId(event.getPotionEffect().getEffect())));
 		}
 	}
 }

@@ -1,8 +1,8 @@
 package by.jackraidenph.dragonsurvival.magic.abilities.Actives;
 
 import by.jackraidenph.dragonsurvival.entity.magic.DragonSpikeEntity;
+import by.jackraidenph.dragonsurvival.handlers.Client.KeyInputHandler;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
-import by.jackraidenph.dragonsurvival.registration.ClientModEvents;
 import by.jackraidenph.dragonsurvival.registration.EntityTypesInit;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
@@ -44,8 +44,13 @@ public class SpikeAbility extends ActiveDragonAbility
 		ArrayList<ITextComponent> components = super.getInfo();
 		components.add(new TranslationTextComponent("ds.skill.damage", getDamage()));
 		
-		if(!ClientModEvents.ABILITY2.isUnbound()) {
-			components.add(new TranslationTextComponent("ds.skill.keybind", ClientModEvents.ABILITY2.getKey().getDisplayName().getContents().toUpperCase(Locale.ROOT)));
+		if(!KeyInputHandler.ABILITY2.isUnbound()) {
+			String key = KeyInputHandler.ABILITY2.getKey().getDisplayName().getContents().toUpperCase(Locale.ROOT);
+			
+			if(key.isEmpty()){
+				key = KeyInputHandler.ABILITY2.getKey().getDisplayName().getString();
+			}
+			components.add(new TranslationTextComponent("ds.skill.keybind", key));
 		}
 		
 		return components;

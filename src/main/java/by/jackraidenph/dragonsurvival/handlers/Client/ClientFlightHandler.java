@@ -1,10 +1,10 @@
-package by.jackraidenph.dragonsurvival.handlers;
+package by.jackraidenph.dragonsurvival.handlers.Client;
 
-import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
+import by.jackraidenph.dragonsurvival.handlers.Server.NetworkHandler;
+import by.jackraidenph.dragonsurvival.handlers.Server.ServerFlightHandler;
 import by.jackraidenph.dragonsurvival.network.ToggleWings;
-import by.jackraidenph.dragonsurvival.registration.ClientModEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.LivingEntity;
@@ -109,13 +109,13 @@ public class ClientFlightHandler {
     @SubscribeEvent
     public static void toggleWings(InputEvent.KeyInputEvent keyInputEvent) {
         ClientPlayerEntity player = Minecraft.getInstance().player;
-        if (player != null && ClientModEvents.TOGGLE_WINGS.consumeClick()) {
+        if (player != null && KeyInputHandler.TOGGLE_WINGS.consumeClick()) {
             DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
                 if (dragonStateHandler.hasWings()) {
                     //Allows toggling the wings if food level is above 0, player is creative, wings are already enabled (allows disabling even when hungry) or if config options is turned on
                     if((player.getFoodData().getFoodLevel() > ConfigHandler.SERVER.flightHungerThreshold.get() || player.isCreative()) || wingsEnabled || ConfigHandler.SERVER.allowFlyingWithoutHunger.get()) {
                         wingsEnabled = !wingsEnabled;
-                        DragonSurvivalMod.CHANNEL.sendToServer(new ToggleWings(wingsEnabled));
+                        NetworkHandler.CHANNEL.sendToServer(new ToggleWings(wingsEnabled));
                         if (ConfigHandler.CLIENT.notifyWingStatus.get()) {
                             if (wingsEnabled) player.sendMessage(new TranslationTextComponent("ds.wings.enabled"), player.getUUID());
                             else player.sendMessage(new TranslationTextComponent("ds.wings.disabled"), player.getUUID());

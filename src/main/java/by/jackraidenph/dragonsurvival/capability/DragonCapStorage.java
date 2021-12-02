@@ -2,6 +2,8 @@ package by.jackraidenph.dragonsurvival.capability;
 
 import by.jackraidenph.dragonsurvival.util.DragonLevel;
 import by.jackraidenph.dragonsurvival.util.DragonType;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.Direction;
@@ -41,7 +43,7 @@ public class DragonCapStorage implements Capability.IStorage<DragonStateHandler>
             tag.putBoolean("renderSkills", instance.renderAbilityHotbar());
             
             tag.putBoolean("clawsMenu", instance.clawsMenuOpen);
-            tag.put("clawsInventory", instance.clawsInventory.createTag());
+            tag.put("clawsInventory", saveClawInventory(instance.clawsInventory));
             
             CompoundNBT nbt = new CompoundNBT();
             nbt.putInt("mana", instance.getCurrentMana());
@@ -79,7 +81,10 @@ public class DragonCapStorage implements Capability.IStorage<DragonStateHandler>
             instance.setRenderAbilities(tag.getBoolean("renderSkills"));
             
             instance.clawsMenuOpen = tag.getBoolean("clawsMenu");
-            instance.clawsInventory.fromTag(tag.getList("clawsInventory", 10));
+            
+            CompoundNBT clawInv = tag.getCompound("clawsInventory");
+            instance.clawsInventory = readClawInventory(clawInv);;
+    
     
             if (instance.getSize() == 0)
                 instance.setSize(DragonLevel.BABY.size);
@@ -97,5 +102,37 @@ public class DragonCapStorage implements Capability.IStorage<DragonStateHandler>
                 }
             }
         }
+    }
+    
+    public static Inventory readClawInventory(CompoundNBT clawInv)
+    {
+        Inventory inventory = new Inventory(4);
+        
+        for(int i = 0; i < 4; i++){
+            if(clawInv.contains(Integer.toString(i))){
+                ItemStack stack = ItemStack.of(clawInv.getCompound(Integer.toString(i)));
+        
+                if(!stack.isEmpty()){
+                    inventory.setItem(i, stack);
+                }
+            }
+        }
+        
+        return inventory;
+    }
+    
+    public static CompoundNBT saveClawInventory(Inventory inv)
+    {
+        CompoundNBT nbt = new CompoundNBT();
+    
+        for(int i = 0; i < 4; i++){
+            ItemStack stack = inv.getItem(i);
+        
+            if(!stack.isEmpty()){
+                nbt.put(Integer.toString(i), stack.save(new CompoundNBT()));
+            }
+        }
+        
+        return nbt;
     }
 }

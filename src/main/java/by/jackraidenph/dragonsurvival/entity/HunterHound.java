@@ -2,7 +2,7 @@ package by.jackraidenph.dragonsurvival.entity;
 
 import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
-import by.jackraidenph.dragonsurvival.gecko.Knight;
+import by.jackraidenph.dragonsurvival.gecko.entity.Knight;
 import by.jackraidenph.dragonsurvival.goals.AlertExceptHunters;
 import by.jackraidenph.dragonsurvival.goals.FollowMobGoal;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
