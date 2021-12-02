@@ -9,6 +9,7 @@ import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.entity.AreaEffectCloudEntity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particles.ParticleType;
 import net.minecraft.potion.EffectInstance;
@@ -22,6 +23,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 public class AoeBuffAbility extends ActiveDragonAbility
@@ -72,10 +74,10 @@ public class AoeBuffAbility extends ActiveDragonAbility
 	{
 		super.onActivation(player);
 		AreaEffectCloudEntity entity = new AreaEffectCloudEntity(EntityType.AREA_EFFECT_CLOUD, player.level);
-		entity.setWaitTime(2);
+		entity.setWaitTime(10);
 		entity.setPos(player.position().x, player.position().y + 0.5, player.position().z);
 		entity.setPotion(new Potion(getEffect())); //Effect duration is divided by 4 normaly
-		entity.setDuration(10);
+		entity.setDuration(20);
 		entity.setRadius(getRange());
 		
 		try {
@@ -84,8 +86,22 @@ public class AoeBuffAbility extends ActiveDragonAbility
 			e.printStackTrace();
 		}
 		
-		player.level.addFreshEntity(entity);
+		List<LivingEntity> list1 = player.level.getEntitiesOfClass(LivingEntity.class, entity.getBoundingBox());
+		if (!list1.isEmpty()) {
+			for(LivingEntity livingentity : list1) {
+				if (livingentity.isAffectedByPotions()) {
+					double d0 = livingentity.getX() - entity.getX();
+					double d1 = livingentity.getZ() - entity.getZ();
+					double d2 = d0 * d0 + d1 * d1;
+					if (d2 <= (double)(getRange() * getRange())) {
+						livingentity.addEffect(new EffectInstance(new EffectInstance(effect.getEffect(), Functions.secondsToTicks(getDuration()), effect.getAmplifier())));
+					}
+				}
+			}
+		}
 		
+		
+		player.level.addFreshEntity(entity);
 		player.level.playLocalSound(player.position().x, player.position().y + 0.5, player.position().z, SoundEvents.UI_TOAST_OUT, SoundCategory.PLAYERS, 5F, 0.1F, false);
 	}
 	

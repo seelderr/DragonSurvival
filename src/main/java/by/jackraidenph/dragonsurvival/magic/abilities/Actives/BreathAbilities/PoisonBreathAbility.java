@@ -76,6 +76,7 @@ public class PoisonBreathAbility extends BreathAbility
 		double z = player.getZ() + viewVector.z;
 		
 		xComp += delta.x * 6;
+		yComp += delta.y * 6;
 		zComp += delta.z * 6;
 		
 		if (player.hasEffect(DragonEffects.STRESS)) {

@@ -110,9 +110,9 @@ public class SynchronizationController {
             DragonDebuffData dData = dragonStateHandler.getDebuffData();
             DragonSurvivalMod.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)player), new SyncCapabilityDebuff(player.getId(), dData.timeWithoutWater, dData.timeInDarkness, dData.timeInRain));
     
-            DragonSurvivalMod.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncMagicStats(player.getId(), dragonStateHandler.getSelectedAbilitySlot(), dragonStateHandler.getCurrentMana(), dragonStateHandler.renderAbilityHotbar()));
-            DragonSurvivalMod.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncMagicAbilities(player.getId(), dragonStateHandler.getAbilities()));
-            DragonSurvivalMod.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncDragonClawsMenu(player.getId(), dragonStateHandler.clawsMenuOpen, dragonStateHandler.clawsInventory));
+//            DragonSurvivalMod.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncMagicStats(player.getId(), dragonStateHandler.getSelectedAbilitySlot(), dragonStateHandler.getCurrentMana(), dragonStateHandler.renderAbilityHotbar()));
+//            DragonSurvivalMod.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncMagicAbilities(player.getId(), dragonStateHandler.getAbilities()));
+//            DragonSurvivalMod.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncDragonClawsMenu(player.getId(), dragonStateHandler.clawsMenuOpen, dragonStateHandler.clawsInventory));
         });
     }
 }

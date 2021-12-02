@@ -75,6 +75,7 @@ public class FireBreathAbility extends BreathAbility
 		double z = player.getZ() + viewVector.z;
 		
 		xComp += delta.x * 6;
+		yComp += delta.y * 6;
 		zComp += delta.z * 6;
 		
 		if(player.isInWaterRainOrBubble() || player.level.isRainingAt(player.blockPosition())){

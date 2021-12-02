@@ -179,8 +179,14 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> implemen
             @Override
             public void renderButton(MatrixStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_)
             {
+                GL11.glPushMatrix();
+                GL11.glDisable(GL11.GL_DEPTH_TEST);
+    
                 minecraft.getTextureManager().bind(DRAGON_CLAW_BUTTON);
                 this.blit(stack,x, y, 0, 0, 11, 11, 11, 11);
+                
+                GL11.glEnable(GL11.GL_DEPTH_TEST);
+                GL11.glPopMatrix();
             }
         });
     

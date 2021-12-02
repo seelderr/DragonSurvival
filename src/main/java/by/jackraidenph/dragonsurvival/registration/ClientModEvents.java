@@ -23,6 +23,7 @@ import net.minecraft.client.particle.ParticleManager;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.entity.SpriteRenderer;
+import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.particles.BasicParticleType;
@@ -59,10 +60,18 @@ public class ClientModEvents {
     
     @SubscribeEvent
     public static void onTextureStitchEvent(TextureStitchEvent.Pre event) {
-        event.addSprite(new ResourceLocation(DragonSurvivalMod.MODID, "te/star/cage"));
-        event.addSprite(new ResourceLocation(DragonSurvivalMod.MODID, "te/star/wind"));
-        event.addSprite(new ResourceLocation(DragonSurvivalMod.MODID, "te/star/open_eye"));
-        event.addSprite(new ResourceLocation(DragonSurvivalMod.MODID, "te/star/wind_vertical"));
+        if(event.getMap().location() == AtlasTexture.LOCATION_BLOCKS) {
+            event.addSprite(new ResourceLocation(DragonSurvivalMod.MODID, "te/star/cage"));
+            event.addSprite(new ResourceLocation(DragonSurvivalMod.MODID, "te/star/wind"));
+            event.addSprite(new ResourceLocation(DragonSurvivalMod.MODID, "te/star/open_eye"));
+            event.addSprite(new ResourceLocation(DragonSurvivalMod.MODID, "te/star/wind_vertical"));
+    
+            event.addSprite(new ResourceLocation(DragonSurvivalMod.MODID, "gui/dragon_claws_axe"));
+            event.addSprite(new ResourceLocation(DragonSurvivalMod.MODID, "gui/dragon_claws_pickaxe"));
+            event.addSprite(new ResourceLocation(DragonSurvivalMod.MODID, "gui/dragon_claws_shovel"));
+            event.addSprite(new ResourceLocation(DragonSurvivalMod.MODID, "gui/dragon_claws_sword"));
+        }
+    
         DragonSurvivalMod.LOGGER.info("Successfully added sprites!");
     }
 
