@@ -20,7 +20,7 @@ public class ClientConfig {
 	ClientConfig(ForgeConfigSpec.Builder builder) {
 		builder.push("client");
 		//For people who use first person view mods
-		renderInFirstPerson = builder.comment("Render dragon model in first person")
+		renderInFirstPerson = builder.comment("Render dragon model in first person. If your own tail scares you, write false")
 				.define("renderFirstPerson", true);
 		notifyWingStatus = builder.comment("Notifies of wing status in chat message").define("notifyWingStatus", true);
 		clientDebugMessages = builder.define("Enable client-side debug messages", false);
