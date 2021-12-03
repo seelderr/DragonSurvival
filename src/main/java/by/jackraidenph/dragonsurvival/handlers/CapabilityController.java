@@ -3,9 +3,9 @@ package by.jackraidenph.dragonsurvival.handlers;
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.capability.Capabilities;
 import by.jackraidenph.dragonsurvival.capability.Capabilities.GenericCapabilityProvider;
+import by.jackraidenph.dragonsurvival.capability.Capabilities.VillageRelationshipsProvider;
 import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.capability.Capabilities.VillageRelationshipsProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.DiggingStatus;
@@ -62,7 +62,7 @@ public class CapabilityController {
                         capNew.caveWings = capOld.caveWings;
                         capNew.seaWings = capOld.seaWings;
                         
-                        capNew.clawsInventory.fromTag(capOld.clawsInventory.createTag());
+                        capNew.clawsInventory = capOld.clawsInventory;
                         capNew.clawsMenuOpen = capOld.clawsMenuOpen;
                         
                         capNew.setSize(capOld.getSize());

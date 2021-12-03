@@ -13,7 +13,7 @@ public class PoisonBreathSound extends TickableSound
 	private PoisonBreathAbility ability;
 	public PoisonBreathSound(PoisonBreathAbility ability)
 	{
-		super(SoundRegistry.poisonBreathLoop, SoundCategory.PLAYERS);
+		super(SoundRegistry.forestBreathLoop, SoundCategory.PLAYERS);
 		this.looping = true;
 		
 		this.ability = ability;

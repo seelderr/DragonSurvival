@@ -13,7 +13,7 @@ public class SoundRegistry
 {
     public static SoundEvent activateBeacon, deactivateBeacon, upgradeBeacon, applyEffect;
     public static SoundEvent fireBreathStart, fireBreathLoop, fireBreathEnd;
-    public static SoundEvent poisonBreathLoop;
+    public static SoundEvent forestBreathStart, forestBreathLoop, forestBreathEnd;
 
     @SubscribeEvent
     public static void registerSounds(RegistryEvent.Register<SoundEvent> registryEvent) {
@@ -23,12 +23,13 @@ public class SoundRegistry
         upgradeBeacon = register("upgrade_beacon", forgeRegistry);
         applyEffect = register("apply_effect", forgeRegistry);
     
-        fireBreathStart = register("breath_start", forgeRegistry);
-        fireBreathLoop = register("breath_loop", forgeRegistry);
-        fireBreathEnd = register("breath_end", forgeRegistry);
+        fireBreathStart = register("fire_breath_start", forgeRegistry);
+        fireBreathLoop = register("fire_breath_loop", forgeRegistry);
+        fireBreathEnd = register("fire_breath_end", forgeRegistry);
     
-        poisonBreathLoop = register("poison_breath_loop", forgeRegistry);
-    
+        forestBreathStart = register("forest_breath_start", forgeRegistry);
+        forestBreathLoop = register("forest_breath_loop", forgeRegistry);
+        forestBreathEnd = register("forest_breath_end", forgeRegistry);
     }
 
     private static SoundEvent register(String name, IForgeRegistry<SoundEvent> forgeRegistry) {

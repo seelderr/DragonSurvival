@@ -6,6 +6,7 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 
@@ -82,7 +83,7 @@ public class DragonCapStorage implements Capability.IStorage<DragonStateHandler>
             
             instance.clawsMenuOpen = tag.getBoolean("clawsMenu");
             
-            CompoundNBT clawInv = tag.getCompound("clawsInventory");
+            ListNBT clawInv = tag.getList("clawsInventory",10);
             instance.clawsInventory = readClawInventory(clawInv);;
     
     
@@ -104,16 +105,17 @@ public class DragonCapStorage implements Capability.IStorage<DragonStateHandler>
         }
     }
     
-    public static Inventory readClawInventory(CompoundNBT clawInv)
+    public static Inventory readClawInventory(ListNBT clawInv)
     {
         Inventory inventory = new Inventory(4);
-        
-        for(int i = 0; i < 4; i++){
-            if(clawInv.contains(Integer.toString(i))){
-                ItemStack stack = ItemStack.of(clawInv.getCompound(Integer.toString(i)));
-        
-                if(!stack.isEmpty()){
-                    inventory.setItem(i, stack);
+    
+        for(int i = 0; i < clawInv.size(); ++i) {
+            CompoundNBT compoundnbt = clawInv.getCompound(i);
+            int j = compoundnbt.getByte("Slot") & 255;
+            ItemStack itemstack = ItemStack.of(compoundnbt);
+            if (!itemstack.isEmpty()) {
+                if (j >= 0 && j < inventory.getContainerSize()) {
+                    inventory.setItem(j, itemstack);
                 }
             }
         }
@@ -121,15 +123,16 @@ public class DragonCapStorage implements Capability.IStorage<DragonStateHandler>
         return inventory;
     }
     
-    public static CompoundNBT saveClawInventory(Inventory inv)
+    public static ListNBT saveClawInventory(Inventory inv)
     {
-        CompoundNBT nbt = new CompoundNBT();
+        ListNBT nbt = new ListNBT();
     
-        for(int i = 0; i < 4; i++){
-            ItemStack stack = inv.getItem(i);
-        
-            if(!stack.isEmpty()){
-                nbt.put(Integer.toString(i), stack.save(new CompoundNBT()));
+        for(int i = 0; i < inv.getContainerSize(); ++i) {
+            if (!inv.getItem(i).isEmpty()) {
+                CompoundNBT compoundnbt = new CompoundNBT();
+                compoundnbt.putByte("Slot", (byte)i);
+                inv.getItem(i).save(compoundnbt);
+                nbt.add(compoundnbt);
             }
         }
         

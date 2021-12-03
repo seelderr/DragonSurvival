@@ -1,6 +1,7 @@
 package by.jackraidenph.dragonsurvival.magic.abilities.Actives.BreathAbilities;
 
 import by.jackraidenph.dragonsurvival.Functions;
+import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.particles.CaveDragon.LargeFireParticleData;
@@ -25,6 +26,7 @@ import net.minecraft.potion.Potion;
 import net.minecraft.util.Direction;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -68,13 +70,20 @@ public class FireBreathAbility extends BreathAbility
 		tickCost();
 		super.onActivation(player);
 		
-		Vector3d viewVector = player.getViewVector(1.0F);
+		DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+		if(handler == null) return;
+		
 		Vector3d delta = player.getDeltaMovement();
+		float f1 = -(float)handler.getMovementData().bodyYaw * ((float)Math.PI / 180F);
+
+		float f4 = MathHelper.sin(f1);
+		float f5 = MathHelper.cos(f1);
+		
 		float size = DragonStateProvider.getCap(player).map((cap) -> cap.getSize()).get();
 		
-		double x = player.getX() + viewVector.x;
-		double y = player.getY() + viewVector.y + (size / 20F);
-		double z = player.getZ() + viewVector.z;
+		double x = player.getX() + f4;
+		double y = player.getY() + (size / 20F);
+		double z = player.getZ() + f5;
 		
 		if(player.isFallFlying() || player.abilities.flying) {
 			yComp += delta.y * 6;
