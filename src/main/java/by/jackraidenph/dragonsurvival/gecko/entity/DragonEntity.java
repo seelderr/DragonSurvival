@@ -1,5 +1,6 @@
 package by.jackraidenph.dragonsurvival.gecko.entity;
 
+import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.gecko.AnimationTimer;
 import by.jackraidenph.dragonsurvival.gecko.CommonTraits;
@@ -41,24 +42,48 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
     @Override
     public void registerControllers(AnimationData animationData) {
         animationData.addAnimationController(new AnimationController<>(this, "controller", 2, this::predicate));
+        animationData.addAnimationController(new AnimationController<>(this, "bite_controller", 0, this::bitePredicate));
     }
+    
 
+    static int biteEndingTicks = 150;
+    private int biteEnd = biteEndingTicks;
+    private <E extends IAnimatable> PlayState bitePredicate(AnimationEvent<E> animationEvent) {
+        final PlayerEntity player = getPlayer();
+        DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+        AnimationBuilder builder = new AnimationBuilder();
+    
+        if(handler != null){
+            if(handler.getMovementData().bite && biteEnd <= biteEndingTicks || biteEnd > 0 && biteEnd <= biteEndingTicks){
+                builder.addAnimation("bite");
+    
+                biteEnd++;
+                
+                animationEvent.getController().setAnimation(builder);
+                return PlayState.CONTINUE;
+            }
+        }
+        
+        biteEnd = 0;
+        return PlayState.STOP;
+    }
+    
     @Override
     public AnimationFactory getFactory() {
         return animationFactory;
     }
-    
     
     ActiveDragonAbility lastCast = null;
     boolean started, ended;
     public boolean neckLocked = false;
     AnimationTimer animationTimer = new AnimationTimer();
     
-    @SuppressWarnings("rawtypes")
     private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> animationEvent) {
         final PlayerEntity player = getPlayer();
         final AnimationController animationController = animationEvent.getController();
+        
         AnimationBuilder builder = new AnimationBuilder();
+        
         if (player != null) {
             DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
                 ActiveDragonAbility curCast = playerStateHandler.getCurrentlyCasting();
@@ -126,49 +151,67 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                 
                 Vector3d motio = new Vector3d(player.getX() - player.xo, player.getY() - player.yo, player.getZ() - player.zo);
                 boolean isMovingHorizontal = Math.sqrt(Math.pow(motio.x, 2) + Math.pow(motio.z, 2)) > 0.005;
+                
                 // Main
-                if (player.isSleeping())
+                if (player.isSleeping()) {
                     builder.addAnimation("sleep", true);
-                else if (player.isPassenger())
+    
+                }else if (player.isPassenger()) {
                     builder.addAnimation("sit", true);
-                else if (player.isPassenger())
+                    
+                }else if (player.isPassenger()){
                     builder.addAnimation("idle", true); // TODO: Passenger animation for riding entities
-                else if (playerStateHandler.getMovementData().bite)
-                    builder.addAnimation("bite");
-                else if (player.getPose() == Pose.SWIMMING)
+                
+                }else if (player.getPose() == Pose.SWIMMING) {
                     builder.addAnimation("swim_fast", true);
-                else if ((player.isInLava() || player.isInWaterOrBubble()) && !player.isOnGround())
+                    
+                }else if ((player.isInLava() || player.isInWaterOrBubble()) && !player.isOnGround()) {
                     builder.addAnimation("swim", true);
-                else if ((player.abilities.flying || ClientDragonRender.dragonsFlying.getOrDefault(player.getId(), false)) && !player.isOnGround() && !player.isInWater() && !player.isInLava() && player.getCapability(DragonStateProvider.DRAGON_CAPABILITY).orElse(null).hasWings())
+                    
+                } else if ((player.abilities.flying || ClientDragonRender.dragonsFlying.getOrDefault(player.getId(), false))
+                           && !player.isOnGround() && !player.isInWater()
+                           && !player.isInLava() && player.getCapability(DragonStateProvider.DRAGON_CAPABILITY).orElse(null).hasWings()) {
                     builder.addAnimation("fly", true);
-                else if (!player.isOnGround() && motio.y() < 0) {
+                    
+                }else if (!player.isOnGround() && motio.y() < 0) {
                     if(player.fallDistance > 4){
                         builder.addAnimation("idle", true);
                     }else {
                         builder.addAnimation("land", false);
                     }
                     
-                } else if (ClientEvents.dragonsJumpingTicks.getOrDefault(this.player, 0) > 0)
+                } else if (ClientEvents.dragonsJumpingTicks.getOrDefault(this.player, 0) > 0) {
                     builder.addAnimation("jump", false);
-                else if (player.isShiftKeyDown() || (!DragonSizeHandler.canPoseFit(player, Pose.STANDING) && DragonSizeHandler.canPoseFit(player, Pose.CROUCHING))) {
+                    
+                }else if (player.isShiftKeyDown() ||
+                          (!DragonSizeHandler.canPoseFit(player, Pose.STANDING)
+                           && DragonSizeHandler.canPoseFit(player, Pose.CROUCHING))) {
                     // Player is Sneaking
-                    if (isMovingHorizontal && player.animationSpeed != 0f)
+                    if (isMovingHorizontal && player.animationSpeed != 0f) {
                         builder.addAnimation("sneak_walk", true);
-                    else if (ClientEvents.dragonsDigging.getOrDefault(this.player, false))
+                        
+                    } else if (ClientEvents.dragonsDigging.getOrDefault(this.player, false)) {
                         builder.addAnimation("dig_sneak", true);
-                    else
+                        
+                    } else {
                         builder.addAnimation("sneak", true);
-                } else if (player.isSprinting())
+                    }
+                    
+                } else if (player.isSprinting()) {
                     builder.addAnimation("run", true);
-                else if (isMovingHorizontal && player.animationSpeed != 0f)
+                    
+                }else if (isMovingHorizontal && player.animationSpeed != 0f) {
                     builder.addAnimation("walk", true);
-                else if (ClientEvents.dragonsDigging.getOrDefault(this.player, false))
+    
+                }else if (ClientEvents.dragonsDigging.getOrDefault(this.player, false)) {
                     builder.addAnimation("dig", true);
-                else
+                }else {
                     builder.addAnimation("idle", true);
+                }
             });
-        } else
+        } else {
             builder.addAnimation("idle", true);
+        }
         animationController.setAnimation(builder);
         return PlayState.CONTINUE;
     }
