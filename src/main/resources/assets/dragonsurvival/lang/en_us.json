@@ -118,9 +118,9 @@
   "ds.gui.tab_button.3": "Skin customization will not be available anytime soon",
 
   "ds.hold_shift.for_food": "Hold 'Shift' for food info",
-  "ds.cave.dragon.food": "§cCave dragon food§r",
-  "ds.forest.dragon.food": "§aForest dragon food§r",
-  "ds.sea.dragon.food": "§3Sea dragon food§r",
+  "ds.cave.dragon.food": "§c■ Cave dragon food§r",
+  "ds.forest.dragon.food": "§a■ Forest dragon food§r",
+  "ds.sea.dragon.food": "§3■ Sea dragon food§r",
 
   "dragonsurvival:config.category.general.tooltip": "General config options for Dragon Survival",
   "dragonsurvival:config.category.spawnchances.tooltip": "Configurable spawn chances for entities",
@@ -171,6 +171,7 @@
   "ds.keybind.ability3": "Skill #3",
   "ds.keybind.ability4": "Skill #4",
   "ds.skill.help":  "■ §6Active skills§r are used in combat, their power depends of level of the dragon;\n■ §aPassive skills§r do not disappear after death, can be upgraded;\n■ §dInnate passive skills§r are the features of your dragon.\n\n■ §9Level scale§r - the higher the level, the stronger the active skills.. \n\n■ §9Magic points (mana)§r restore under dragon-friendly conditions. Skills begin to spend experience if mana runs out.\n\n■ §9Controls§r - check controls in the game settings. To fine-tune the mod, use the configs. More information can be found on WikiFandom and Discord.",
+  "ds.skill.help.claws": "■ Any dragon is born with strong §6claws and teeth§r, but you can make them even better! Just put §6any tools§r here in these slots and your bare paw will have stronger characteristics.\n§7■ Does not stack with «Claws and Teeth» skill, which affects only if these slots are empty.",
 
   "ds.skill_cooldown_check_failure": "§fThe ability is §r§cnot ready§r§f yet!§r ({0})",
   "ds.skill_mana_check_failure": "§fNot enough§r §cmana and experience§r!",
@@ -293,6 +294,32 @@
 
   "item.dragonsurvival.sea_dragon_treat": "Sea Dragon Treat",
   "item.dragonsurvival.cave_dragon_treat": "Cave Dragon Treat",
-  "item.dragonsurvival.forest_dragon_treat": "Forest Dragon Treat"
+  "item.dragonsurvival.forest_dragon_treat": "Forest Dragon Treat",
+
+  "ds.description.caveDoor": "■ A large door that only a cave dragon can open.",
+  "ds.description.forestDoor": "■ A large door that only a forest dragon can open.",
+  "ds.description.seaDoor": "■ A large door that only a sea dragon can open.",
+  "ds.description.legacyDoor": "■ The very first big door we added to the mod. Just for nostalgia.",
+  "ds.description.grayHelmet": "■ Poor hunter. Fortunately, you didn't know him.",
+  "ds.description.goldHelmet": "■ You surely remember that the knight wore dark armor. Where did the golden helmet come from?",
+  "ds.description.blackHelmet": "■ You should have used the Eye of Innos.",
+  "ds.description.dragonBeacon": "■ Required to create dragon beacons. Silk touch is required. When crafting a vanilla beacon returns.",
+  "ds.description.passivePeaceBeacon": "■ Gives the effects «Sea Peace» and «Animal Calm». Best for sea dragons. Requires a silk touch.",
+  "ds.description.passiveMagicBeacon": "■ Gives the effects «Forest Magic» and «Anti-Predator». Best for forest dragons. Requires a silk touch.",
+  "ds.description.passiveFireBeacon": "■ Gives the effects «Cave Fire» and «Fire resistance». Best for cave dragons. Requires a silk touch.",
+  "ds.description.dragonMemoryBlock": "■ If set under any dragon beacon, you can get its effect in the area without having to buy it.",
+  "ds.description.dragonAltar": "■ Block to turn into a dragon and decor.",
+  "ds.description.predatorStar": "■ Block that you will hate with all your soul.",
+  "ds.description.heartElement": "§6■ Part of the Elder dragon.§r\n■ Fragment from a little dragon's heart. Used for newborn dragon's growth.",
+  "ds.description.weakDragonHeart": "§6■ Part of the Elder dragon.§r\n■ Strengthened, but still unstable heart. Used for young dragon's growth.",
+  "ds.description.elderDragonHeart": "§6■ Part of the Elder dragon.§r\n■ The Heart that is radiant and full of energy. If you listen, you can hear elder voice calling you from the depths. Used for adult dragon's growth.",
+
+  "ds.description.starBone": "■ If you throw the right part of the ancient dragon into the star, you can get an item that allows you to reduce the growth of the dragon.",
+  "ds.description.caveDragonTreat": "■ Fully restores a cave dragon's magic power.",
+  "ds.description.forestDragonTreat": "■ Fully restores a forest dragon's magic power.",
+  "ds.description.seaDragonTreat": "■ Fully restores a sea dragon's magic power.",
+  "ds.description.chargedSoup": "■ The best food for the cave dragon. Gives the effect \"Cave Fire\" that protects from the damaging effects of water.",
+  "ds.description.elderDragonDust": "§6■ Part of the Elder dragon.§r\n■ The smallest particle left from an ancient creature. Used in many dragon crafts.",
+  "ds.description.elderDragonBone": "§6■ Part of the Elder dragon.§r\n■ The remains of small dragons that were created from the body of an elder creature. Used in many dragon crafts."
 }
 
