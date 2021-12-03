@@ -2,6 +2,7 @@ package by.jackraidenph.dragonsurvival.handlers.ClientSide;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.Functions;
+import by.jackraidenph.dragonsurvival.blocks.DragonAltarBlock;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.gui.magic.AbilityScreen;
 import by.jackraidenph.dragonsurvival.handlers.DragonFoodHandler;
@@ -12,6 +13,7 @@ import by.jackraidenph.dragonsurvival.util.DragonType;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.resources.I18n;
@@ -111,7 +113,7 @@ public class ToolTipHandler
 			if (item == BlockInit.dragonMemoryBlock.asItem()){
 				toolTip.add(new TranslationTextComponent("ds.description.dragonMemoryBlock"));
 			}
-			if (item == BlockInit.dragon_altar_stone.asItem()){
+			if (Block.byItem(item) instanceof DragonAltarBlock){
 				toolTip.add(new TranslationTextComponent("ds.description.dragonAltar"));
 			}
 			if (item == BlockInit.PREDATOR_STAR_BLOCK.asItem()){
