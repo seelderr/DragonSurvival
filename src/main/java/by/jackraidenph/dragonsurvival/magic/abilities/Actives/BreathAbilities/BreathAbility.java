@@ -136,7 +136,7 @@ public abstract class BreathAbility extends ActiveDragonAbility
 			
 			if (inRange && yawCheck && pitchCheck) {
 				// Raytrace to mob center to avoid damaging through walls
-				Vector3d from = player.position();
+				Vector3d from = player.getEyePosition(1.0F);
 				Vector3d to = entityHit.position().add(0, entityHit.getEyeHeight() / 2.0f, 0);
 				BlockRayTraceResult result = player.level.clip(new RayTraceContext(from, to, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, player));
 
@@ -186,7 +186,7 @@ public abstract class BreathAbility extends ActiveDragonAbility
 			Vector3d vector3d = player.getEyePosition(1.0F);
 			Vector3d vector3d1 = player.getViewVector(1.0F).scale(RANGE);
 			Vector3d vector3d2 = vector3d.add(vector3d1);
-			BlockRayTraceResult result = player.level.clip(new RayTraceContext(player.position(), vector3d2, BlockMode.OUTLINE, this instanceof LightningBreathAbility ? FluidMode.NONE : FluidMode.ANY, null));
+			BlockRayTraceResult result = player.level.clip(new RayTraceContext(vector3d, vector3d2, BlockMode.OUTLINE, this instanceof LightningBreathAbility ? FluidMode.NONE : FluidMode.ANY, null));
 			
 			BlockPos pos = null;
 			

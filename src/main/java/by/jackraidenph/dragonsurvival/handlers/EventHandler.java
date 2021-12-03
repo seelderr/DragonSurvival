@@ -113,7 +113,7 @@ public class EventHandler {
             }
         }
     }
-
+    
     @SubscribeEvent
     public static void sleepCheck(SleepingLocationCheckEvent sleepingLocationCheckEvent) {
         BlockPos sleepingLocation = sleepingLocationCheckEvent.getSleepingLocation();
@@ -161,7 +161,6 @@ public class EventHandler {
                 if(hotbarItem != null && !playerEntity.level.isClientSide){
                     int exp = breakEvent.getExpToDrop();
                     hotbarItem.mineBlock(playerEntity.level, blockState, breakEvent.getPos(), playerEntity);
-                    breakEvent.setCanceled(true);
                     breakEvent.getState().getBlock().playerDestroy((World)breakEvent.getWorld(), playerEntity, breakEvent.getPos(),  breakEvent.getState(), breakEvent.getWorld().getBlockEntity(breakEvent.getPos()), hotbarItem);
     
                     int i = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, hotbarItem);
