@@ -5,6 +5,8 @@ import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.gui.magic.AbilityScreen;
 import by.jackraidenph.dragonsurvival.handlers.DragonFoodHandler;
+import by.jackraidenph.dragonsurvival.registration.BlockInit;
+import by.jackraidenph.dragonsurvival.registration.ItemsInit;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -12,6 +14,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -51,6 +54,76 @@ public class ToolTipHandler
 			if (DragonFoodHandler.getSafeEdibleFoods(DragonType.SEA).contains(item)) {
 				toolTip.add(new TranslationTextComponent("ds.sea.dragon.food"));
 			}
+			if (item == ItemsInit.starBone){
+				toolTip.add(new TranslationTextComponent("ds.description.starBone"));
+			}
+			if (item == ItemsInit.chargedSoup){
+				toolTip.add(new TranslationTextComponent("ds.description.chargedSoup"));
+			}
+			if (item == ItemsInit.forestDragonTreat){
+				toolTip.add(new TranslationTextComponent("ds.description.forestDragonTreat"));
+			}
+			if (item == ItemsInit.seaDragonTreat){
+				toolTip.add(new TranslationTextComponent("ds.description.seaDragonTreat"));
+			}
+			if (item == ItemsInit.caveDragonTreat){
+				toolTip.add(new TranslationTextComponent("ds.description.caveDragonTreat"));
+			}
+			if (item == ItemsInit.elderDragonBone){
+				toolTip.add(new TranslationTextComponent("ds.description.elderDragonBone"));
+			}
+			if (item == ItemsInit.elderDragonDust){
+				toolTip.add(new TranslationTextComponent("ds.description.elderDragonDust"));
+			}
+			if (item == ItemsInit.passiveFireBeacon){
+				toolTip.add(new TranslationTextComponent("ds.description.passiveFireBeacon"));
+			}
+			if (item == ItemsInit.passiveMagicBeacon){
+				toolTip.add(new TranslationTextComponent("ds.description.passiveMagicBeacon"));
+			}
+			if (item == ItemsInit.passivePeaceBeacon){
+				toolTip.add(new TranslationTextComponent("ds.description.passivePeaceBeacon"));
+			}
+/*			if (item == BlockItem.caveDoor){
+				toolTip.add(new TranslationTextComponent("ds.description.caveDoor"));
+			}
+			if (item == BlockInit.forestDoor){
+				toolTip.add(new TranslationTextComponent("ds.description.forestDoor"));
+			}
+			if (item == BlockInit.seaDoor){
+				toolTip.add(new TranslationTextComponent("ds.description.seaDoor"));
+			}
+			if (item == BlockInit.caveDoor){
+				toolTip.add(new TranslationTextComponent("ds.description.caveDoor"));
+			}
+			if (item == BlockInit.legacyDoor){
+				toolTip.add(new TranslationTextComponent("ds.description.legacyDoor"));
+			}
+			if (item == BlockInit.helmet1){
+				toolTip.add(new TranslationTextComponent("ds.description.grayHelmet"));
+			}
+			if (item == BlockInit.helmet2){
+				toolTip.add(new TranslationTextComponent("ds.description.goldHelmet"));
+			}
+			if (item == BlockInit.helmet3){
+				toolTip.add(new TranslationTextComponent("ds.description.blackHelmet"));
+			}
+			if (item == BlockInit.dragonBeacon){
+				toolTip.add(new TranslationTextComponent("ds.description.dragonBeacon"));
+			}
+			if (item == BlockInit.dragonMemoryBlock){
+				toolTip.add(new TranslationTextComponent("ds.description.dragonMemoryBlock"));
+			}
+			if (item == BlockInit.dragon_altar_stone){
+				toolTip.add(new TranslationTextComponent("ds.description.dragonAltar"));
+			}
+			if (item == BlockInit.PREDATOR_STAR_BLOCK){
+				toolTip.add(new TranslationTextComponent("ds.description.predatorStar"));
+			}
+			if (item == BlockInit.helmet2){
+				toolTip.add(new TranslationTextComponent("ds.description.goldHelmet"));
+			}
+ */
 		}
 	}
 	
