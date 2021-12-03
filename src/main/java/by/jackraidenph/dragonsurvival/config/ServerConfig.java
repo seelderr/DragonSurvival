@@ -543,7 +543,7 @@ public class ServerConfig {
 						"item:dragonsurvival:charged_coal:4:2",
 						"item:dragonsurvival:charred_meat:10:12",
 						"item:dragonsurvival:cave_dragon_treat:10:12",
-						"item:dragonsurvival:charred_secharged_soupafood:8:10",
+						"item:dragonsurvival:charred_seafood:8:10",
 						"item:dragonsurvival:charred_vegetable:8:9",
 						"item:dragonsurvival:charred_mushroom:8:5",
 						"item:dragonsurvival:charged_soup:20:15",
