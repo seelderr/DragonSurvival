@@ -49,9 +49,11 @@ public class SmallFireParticle extends SpriteTexturedParticle {
 	@Override
 	protected int getLightColor(float p_189214_1_)
 	{
-		return 256;
+		int i = super.getLightColor(p_189214_1_);
+		int k = i >> 16 & 255;
+		return 240 | k << 16;
 	}
-
+	
 	@Override
 	public void tick() {
 		super.tick();

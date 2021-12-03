@@ -1,16 +1,20 @@
 package by.jackraidenph.dragonsurvival.magic.abilities.Actives.BreathAbilities;
 
 import by.jackraidenph.dragonsurvival.Functions;
+import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.particles.ForestDragon.LargePoisonParticleData;
 import by.jackraidenph.dragonsurvival.particles.ForestDragon.SmallPoisonParticleData;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
 import by.jackraidenph.dragonsurvival.sounds.PoisonBreathSound;
+import by.jackraidenph.dragonsurvival.sounds.SoundRegistry;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.IGrowable;
 import net.minecraft.block.PotatoBlock;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.ISound;
+import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.audio.TickableSound;
 import net.minecraft.entity.AreaEffectCloudEntity;
 import net.minecraft.entity.EntityType;
@@ -24,6 +28,7 @@ import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -49,18 +54,51 @@ public class PoisonBreathAbility extends BreathAbility
 	}
 	
 	@OnlyIn(Dist.CLIENT)
+	private ISound startingSound;
+	
+	@OnlyIn(Dist.CLIENT)
 	private TickableSound loopingSound;
+	
+	@OnlyIn(Dist.CLIENT)
+	private ISound endSound;
 	
 	@OnlyIn(Dist.CLIENT)
 	public void sound(){
 		if (castingTicks == 1) {
+			if(startingSound == null){
+				startingSound = SimpleSound.forAmbientAddition(SoundRegistry.forestBreathStart);
+			}
 			loopingSound = new PoisonBreathSound(this);
-			Minecraft.getInstance().getSoundManager().play(loopingSound);
+			Minecraft.getInstance().getSoundManager().play(startingSound);
+			Minecraft.getInstance().getSoundManager().playDelayed(loopingSound, 10);
 		}
 		
 		if(loopingSound != null && castingTicks > 10 && (!loopingSound.isLooping() || loopingSound.isStopped())){
 			Minecraft.getInstance().getSoundManager().play(loopingSound);
 		}
+	}
+	
+	@OnlyIn(Dist.CLIENT)
+	public void stopSound(){
+		if(SoundRegistry.forestBreathEnd != null) {
+			if (endSound == null) {
+				endSound = SimpleSound.forAmbientAddition(SoundRegistry.forestBreathEnd);
+			}
+			
+			Minecraft.getInstance().getSoundManager().play(endSound);
+		}
+	}
+	
+	@Override
+	public void stopCasting()
+	{
+		if(castingTicks > 1) {
+			if (player.level.isClientSide) {
+				DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> stopSound());
+			}
+		}
+		
+		super.stopCasting();
 	}
 	
 	@Override
@@ -69,19 +107,27 @@ public class PoisonBreathAbility extends BreathAbility
 		tickCost();
 		super.onActivation(player);
 		
-		Vector3d viewVector = player.getViewVector(1.0F);
+		DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+		if(handler == null) return;
+		
 		Vector3d delta = player.getDeltaMovement();
+		float f1 = -(float)handler.getMovementData().bodyYaw * ((float)Math.PI / 180F);
+
+		float f4 = MathHelper.sin(f1);
+		float f5 = MathHelper.cos(f1);
+		
 		float size = DragonStateProvider.getCap(player).map((cap) -> cap.getSize()).get();
 		
-		double x = player.getX() + viewVector.x;
-		double y = player.getY() + viewVector.y + (size / 20F);
-		double z = player.getZ() + viewVector.z;
+		double x = player.getX() + f4;
+		double y = player.getY() + (size / 20F);
+		double z = player.getZ() + f5;
 		
 		if(player.isFallFlying() || player.abilities.flying) {
-			xComp += delta.x * 6;
 			yComp += delta.y * 6;
-			zComp += delta.z * 6;
 		}
+		
+		xComp += delta.x * 6;
+		zComp += delta.z * 6;
 		
 		if (player.hasEffect(DragonEffects.STRESS)) {
 			if(player.level.isClientSide) {

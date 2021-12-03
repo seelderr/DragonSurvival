@@ -39,7 +39,7 @@ public class SmallLightningParticle extends SpriteTexturedParticle {
 	protected float getV1() {
 		return super.getV1() - (super.getV1() - super.getV0())/8f;
 	}
-
+	
 	@Override
 	public IParticleRenderType getRenderType() {
 		return IParticleRenderType.PARTICLE_SHEET_OPAQUE;
@@ -48,9 +48,10 @@ public class SmallLightningParticle extends SpriteTexturedParticle {
 	@Override
 	protected int getLightColor(float p_189214_1_)
 	{
-		return 256;
+		int i = super.getLightColor(p_189214_1_);
+		int k = i >> 16 & 255;
+		return 240 | k << 16;
 	}
-	
 	
 	@Override
 	public void tick() {

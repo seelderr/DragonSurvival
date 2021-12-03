@@ -36,8 +36,8 @@ public class SyncDragonClawsMenu implements IMessage<SyncDragonClawsMenu>
 	public void encode(SyncDragonClawsMenu message, PacketBuffer buffer) {
 		buffer.writeInt(message.playerId);
 		buffer.writeBoolean(message.state);
-		
-		CompoundNBT nbt = DragonCapStorage.saveClawInventory(message.inv);
+		CompoundNBT nbt = new CompoundNBT();
+		nbt.put("inv", DragonCapStorage.saveClawInventory(message.inv));
 		buffer.writeNbt(nbt);
 	}
 	
@@ -46,8 +46,7 @@ public class SyncDragonClawsMenu implements IMessage<SyncDragonClawsMenu>
 		int playerId = buffer.readInt();
 		boolean state = buffer.readBoolean();
 		CompoundNBT tag = buffer.readNbt();
-		
-		Inventory inventory = DragonCapStorage.readClawInventory(tag);
+		Inventory inventory = DragonCapStorage.readClawInventory(tag.getList("inv", 10));
 		return new SyncDragonClawsMenu(playerId, state, inventory);
 	}
 	
@@ -67,11 +66,7 @@ public class SyncDragonClawsMenu implements IMessage<SyncDragonClawsMenu>
 				if (entity instanceof PlayerEntity) {
 					DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
 						dragonStateHandler.clawsMenuOpen = message.state;
-						dragonStateHandler.clawsInventory = new Inventory(4);
-						
-						for(int i = 0; i < 4; i++){
-							dragonStateHandler.clawsInventory.setItem(i, message.inv.getItem(i));
-						}
+						dragonStateHandler.clawsInventory = message.inv;
 					});
 				}
 			}

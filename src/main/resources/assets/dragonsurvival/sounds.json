@@ -19,24 +19,34 @@
       "dragonsurvival:get_effect"
     ]
   },
-  "breath_start": {
+  "fire_breath_start": {
     "sounds": [
-      "dragonsurvival:dragon_breath_start"
+      "dragonsurvival:fire_breath_start"
     ]
   },
-  "breath_loop": {
+  "fire_breath_loop": {
     "sounds": [
-      "dragonsurvival:dragon_breath_loop"
+      "dragonsurvival:fire_breath_loop"
     ]
   },
-  "breath_end": {
+  "fire_breath_end": {
     "sounds": [
-      "dragonsurvival:dragon_breath_end"
+      "dragonsurvival:fire_breath_end"
     ]
   },
-  "poison_breath_loop": {
+  "forest_breath_start": {
     "sounds": [
-      "dragonsurvival:poison_breath_loop"
+      "dragonsurvival:forest_breath_start"
+    ]
+  },
+  "forest_breath_loop": {
+    "sounds": [
+      "dragonsurvival:forest_breath_loop"
+    ]
+  },
+  "forest_breath_end": {
+    "sounds": [
+      "dragonsurvival:forest_breath_end"
     ]
   }
 }
