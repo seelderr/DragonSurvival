@@ -64,7 +64,7 @@ public class SyncEmote implements IMessage<SyncEmote>
                     DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
                         if(!message.emote.equals("nil")){
                             for(Emote emote : EmoteRegistry.EMOTES){
-                                if(Objects.equals(emote.translationKey, message.emote)){
+                                if(Objects.equals(emote.name, message.emote)){
                                     dragonStateHandler.setCurrentEmote(emote);
                                     break;
                                 }

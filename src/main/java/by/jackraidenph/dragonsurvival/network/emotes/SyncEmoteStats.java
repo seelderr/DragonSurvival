@@ -44,8 +44,8 @@ public class SyncEmoteStats implements IMessage<SyncEmoteStats>
         CompoundNBT emoteUsage = new CompoundNBT();
     
         for(Emote emote : EmoteRegistry.EMOTES){
-            if(message.usage.containsKey(emote.translationKey)){
-                emoteUsage.putInt(emote.translationKey, message.usage.get(emote.translationKey));
+            if(message.usage.containsKey(emote.name)){
+                emoteUsage.putInt(emote.name, message.usage.get(emote.name));
             }
         }
         
@@ -59,8 +59,8 @@ public class SyncEmoteStats implements IMessage<SyncEmoteStats>
         CompoundNBT emoteUsage = buffer.readNbt();
         HashMap<String, Integer> usage = new HashMap<>();
         for(Emote emote : EmoteRegistry.EMOTES){
-            if(emoteUsage.contains(emote.translationKey)){
-                usage.put(emote.translationKey, emoteUsage.getInt(emote.translationKey));
+            if(emoteUsage.contains(emote.name)){
+                usage.put(emote.name, emoteUsage.getInt(emote.name));
             }
         }
         

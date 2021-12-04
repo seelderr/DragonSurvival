@@ -3,6 +3,7 @@ package by.jackraidenph.dragonsurvival.handlers.ClientSide;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.emotes.Emote;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
@@ -13,6 +14,7 @@ import net.minecraft.util.SoundEvent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -34,7 +36,7 @@ public class EmoteHandler
 					Emote emote = cap.getCurrentEmote();
 					cap.emoteTick++;
 					
-					if (player.isCrouching()) {
+					if (player.isCrouching() || player.swinging) {
 						EmoteMenuHandler.setEmote(null);
 						
 					} else {
@@ -59,6 +61,21 @@ public class EmoteHandler
 					if (attributeInstance.hasModifier(noMove)) {
 						attributeInstance.removeModifier(EMOTE_NO_MOVE);
 					}
+				}
+			});
+		}
+	}
+	
+	@SubscribeEvent
+	public static void playerAttacked(LivingHurtEvent event){
+		LivingEntity entity = event.getEntityLiving();
+		
+		if(entity instanceof PlayerEntity){
+			PlayerEntity player = (PlayerEntity)entity;
+			
+			DragonStateProvider.getCap(player).ifPresent(cap -> {
+				if (cap.getCurrentEmote() != null) {
+					EmoteMenuHandler.setEmote(null);
 				}
 			});
 		}

@@ -50,14 +50,14 @@ public class DragonCapStorage implements Capability.IStorage<DragonStateHandler>
             tag.putBoolean("clawsMenu", instance.clawsMenuOpen);
             tag.put("clawsInventory", saveClawInventory(instance.clawsInventory));
             
-            tag.putString("emote", instance.getCurrentEmote() != null ? instance.getCurrentEmote().animationKey : "nil");
+            tag.putString("emote", instance.getCurrentEmote() != null ? instance.getCurrentEmote().animation : "nil");
             tag.putBoolean("emoteOpen", instance.emoteMenuOpen);
     
             CompoundNBT emoteUsage = new CompoundNBT();
     
             for(Emote emote : EmoteRegistry.EMOTES){
-                if(instance.emoteUsage.containsKey(emote.translationKey)){
-                    emoteUsage.putInt(emote.translationKey, instance.emoteUsage.get(emote.translationKey));
+                if(instance.emoteUsage.containsKey(emote.name)){
+                    emoteUsage.putInt(emote.name, instance.emoteUsage.get(emote.name));
                 }
             }
             
@@ -108,7 +108,7 @@ public class DragonCapStorage implements Capability.IStorage<DragonStateHandler>
             
             if(!emoteId.equals("nil")){
                 for(Emote emote : EmoteRegistry.EMOTES){
-                    if(Objects.equals(emote.animationKey, emoteId)){
+                    if(Objects.equals(emote.animation, emoteId)){
                         instance.setCurrentEmote(emote);
                         break;
                     }
@@ -120,8 +120,8 @@ public class DragonCapStorage implements Capability.IStorage<DragonStateHandler>
             CompoundNBT emoteUsage = tag.getCompound("emoteUsage");
             
             for(Emote emote : EmoteRegistry.EMOTES){
-                if(emoteUsage.contains(emote.translationKey)){
-                    instance.emoteUsage.put(emote.translationKey, tag.getInt(emote.translationKey));
+                if(emoteUsage.contains(emote.name)){
+                    instance.emoteUsage.put(emote.name, tag.getInt(emote.name));
                 }
             }
     

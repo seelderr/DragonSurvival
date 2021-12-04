@@ -47,12 +47,12 @@ public class EmoteMenuHandler
 	
 	public static void setEmote(Emote emote){
 		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent((cap) -> cap.setCurrentEmote(emote));
-		NetworkHandler.CHANNEL.sendToServer(new SyncEmoteServer(emote != null ? emote.translationKey : "nil"));
+		NetworkHandler.CHANNEL.sendToServer(new SyncEmoteServer(emote != null ? emote.name : "nil"));
 		
 		if(emote != null){
 			DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent((cap) -> {
-				cap.emoteUsage.putIfAbsent(emote.translationKey, 0);
-				cap.emoteUsage.put(emote.translationKey, cap.emoteUsage.get(emote.translationKey) + 1);
+				cap.emoteUsage.putIfAbsent(emote.name, 0);
+				cap.emoteUsage.put(emote.name, cap.emoteUsage.get(emote.name) + 1);
 				NetworkHandler.CHANNEL.sendToServer(new SyncEmoteStatsServer(cap.emoteMenuOpen, cap.emoteUsage));
 			});
 		}
@@ -211,16 +211,13 @@ public class EmoteMenuHandler
 				}
 			});
 			
-
-			//TODO Cancel emote on attacked and on attack
-			
 			for(int i = 0; i < PER_PAGE; i++){
 				int finalI = i;
 				initGuiEvent.addWidget(new Button(screen.width - width, screen.height - 75 - (height * ((PER_PAGE-1) - finalI)), width, height, null, (btn) -> {
 					DragonStateHandler handler = DragonStateProvider.getCap(Minecraft.getInstance().player).orElse(null);
 					Emote emote = emotes.size() > finalI ? emotes.get(finalI) : null;
 					
-					if(handler.getCurrentEmote() != null && emote != null && Objects.equals(handler.getCurrentEmote().translationKey, emote.translationKey)) return;
+					if(handler.getCurrentEmote() != null && emote != null && Objects.equals(handler.getCurrentEmote().name, emote.name)) return;
 					
 					if(handler != null && emote != null){
 						setEmote(emote);
@@ -241,7 +238,7 @@ public class EmoteMenuHandler
 						if(emote != null) {
 							GL11.glPushMatrix();
 							
-							drawString(stack, Minecraft.getInstance().font, new TranslationTextComponent(emote.translationKey), this.x + 22, this.y + (this.height - 8) / 2, Color.lightGray.getRGB());
+							drawString(stack, Minecraft.getInstance().font, new TranslationTextComponent(emote.name), this.x + 22, this.y + (this.height - 8) / 2, Color.lightGray.getRGB());
 							
 							GL11.glPopMatrix();
 							
@@ -267,7 +264,7 @@ public class EmoteMenuHandler
 		HashMap<Integer, ArrayList<Emote>> list = new HashMap<>();
 		
 		emotes.addAll(EmoteRegistry.EMOTES);
-		emotes.sort(Comparator.comparingInt(c -> handler.emoteUsage.getOrDefault(c.translationKey, 0)));
+		emotes.sort(Comparator.comparingInt(c -> handler.emoteUsage.getOrDefault(c.name, 0)));
 		emotes = new ArrayList<>(Lists.reverse(emotes));
 		
 		int num = 0;

@@ -7,8 +7,8 @@ public class Emote
 	public boolean loops = false;
 	public boolean locksHead = false;
 	
-	public String translationKey;
-	public String animationKey;
+	public String name;
+	public String animation;
 	public Sound sound = null;
 	
 	

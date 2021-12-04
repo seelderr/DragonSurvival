@@ -103,7 +103,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                 
                 if(playerStateHandler.getCurrentEmote() != null){
                     neckLocked = playerStateHandler.getCurrentEmote().locksHead;
-                    builder.addAnimation(playerStateHandler.getCurrentEmote().animationKey, playerStateHandler.getCurrentEmote().loops);
+                    builder.addAnimation(playerStateHandler.getCurrentEmote().animation, playerStateHandler.getCurrentEmote().loops);
                     lastEmote = playerStateHandler.getCurrentEmote();
                     return;
                 }
