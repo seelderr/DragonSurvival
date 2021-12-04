@@ -182,8 +182,11 @@ public class ClientMagicHandler
 	            
 	            int posX = rightSide ? window.getGuiScaledWidth() - (sizeX * count) - 20 : (sizeX * count) + 20;
 	            int posY = window.getGuiScaledHeight() - (sizeY);
-	
-				if(cap.renderAbilityHotbar()) {
+				
+				posX += ConfigHandler.CLIENT.skillbarXOffset.get();
+		        posY += ConfigHandler.CLIENT.skillbarYOffset.get();
+				
+		        if(cap.renderAbilityHotbar()) {
 					textureManager.bind(new ResourceLocation("textures/gui/widgets.png"));
 					Screen.blit(event.getMatrixStack(), posX, posY - 2, 0, 0, 0, 41, 22, 256, 256);
 					Screen.blit(event.getMatrixStack(), posX + 41, posY - 2, 0, 141, 0, 41, 22, 256, 256);
@@ -251,8 +254,8 @@ public class ClientMagicHandler
 					
 		            float perc = Math.min((float)ability.getCurrentCastTimer() / (float)ability.getCastingTime(), 1);
 					
-					int startX = (window.getGuiScaledWidth() / 2) - ConfigHandler.CLIENT.casterBarXPos.get();
-					int startY = window.getGuiScaledHeight() - ConfigHandler.CLIENT.casterBarYPos.get();
+					int startX = (window.getGuiScaledWidth() / 2) - 49 + ConfigHandler.CLIENT.castbarXOffset.get();
+					int startY = window.getGuiScaledHeight() - 96 + ConfigHandler.CLIENT.castbarYOffset.get();
 		
 		            GL11.glTranslatef(startX, startY, 0);
 		

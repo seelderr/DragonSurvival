@@ -90,50 +90,62 @@ public class ClientEvents {
         
         if(sc instanceof InventoryScreen && DragonStateProvider.isDragon(Minecraft.getInstance().player)) {
             InventoryScreen screen = (InventoryScreen)sc;
-            
-            initGuiEvent.addWidget(new TabButton( screen.getGuiLeft(),  screen.getGuiTop() - 28, 0, screen){
-                @Override
-                public void renderButton(MatrixStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_)
-                {
-                    super.renderButton(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
-                    this.x = screen.getGuiLeft();
-                }
-            });
-            initGuiEvent.addWidget(new TabButton( screen.getGuiLeft() + 28,  screen.getGuiTop() - 26, 1, screen){
-                @Override
-                public void renderButton(MatrixStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_)
-                {
-                    super.renderButton(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
-                    this.x = screen.getGuiLeft() + 28;
-                }
-            });
-            initGuiEvent.addWidget(new TabButton( screen.getGuiLeft() + 57,  screen.getGuiTop() - 26, 2, screen){
-                @Override
-                public void renderButton(MatrixStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_)
-                {
-                    super.renderButton(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
-                    this.x = screen.getGuiLeft() + 57;
-                }
-            });
-            initGuiEvent.addWidget(new TabButton( screen.getGuiLeft() + 86,  screen.getGuiTop() - 26, 3, screen){
-                @Override
-                public void renderButton(MatrixStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_)
-                {
-                    super.renderButton(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
-                    this.x = screen.getGuiLeft() + 86;
-                }
-            });
     
-            initGuiEvent.addWidget(new ImageButton(screen.getGuiLeft() + 128, screen.height / 2 - 22, 20, 18, 20, 0, 19, DragonScreen.INVENTORY_TOGGLE_BUTTON, p_onPress_1_ -> {
-                NetworkHandler.CHANNEL.sendToServer(new OpenDragonInventory());
-            }){
-                @Override
-                public void renderButton(MatrixStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_)
+            if(ConfigHandler.CLIENT.dragonTabs.get()) {
+                initGuiEvent.addWidget(new TabButton(screen.getGuiLeft(), screen.getGuiTop() - 28, 0, screen)
                 {
-                    super.renderButton(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
-                    this.x = screen.getGuiLeft() + 128;
-                }
-            });
+                    @Override
+                    public void renderButton(MatrixStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_)
+                    {
+                        super.renderButton(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
+                        this.x = screen.getGuiLeft();
+                    }
+                });
+                
+                initGuiEvent.addWidget(new TabButton(screen.getGuiLeft() + 28, screen.getGuiTop() - 26, 1, screen)
+                {
+                    @Override
+                    public void renderButton(MatrixStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_)
+                    {
+                        super.renderButton(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
+                        this.x = screen.getGuiLeft() + 28;
+                    }
+                });
+                
+                initGuiEvent.addWidget(new TabButton(screen.getGuiLeft() + 57, screen.getGuiTop() - 26, 2, screen)
+                {
+                    @Override
+                    public void renderButton(MatrixStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_)
+                    {
+                        super.renderButton(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
+                        this.x = screen.getGuiLeft() + 57;
+                    }
+                });
+                
+                initGuiEvent.addWidget(new TabButton(screen.getGuiLeft() + 86, screen.getGuiTop() - 26, 3, screen)
+                {
+                    @Override
+                    public void renderButton(MatrixStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_)
+                    {
+                        super.renderButton(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
+                        this.x = screen.getGuiLeft() + 86;
+                    }
+                });
+            }
+    
+            if(ConfigHandler.CLIENT.inventoryToggle.get()) {
+                initGuiEvent.addWidget(new ImageButton(screen.getGuiLeft() + 128, screen.height / 2 - 22, 20, 18, 20, 0, 19, DragonScreen.INVENTORY_TOGGLE_BUTTON, p_onPress_1_ -> {
+                    NetworkHandler.CHANNEL.sendToServer(new OpenDragonInventory());
+                })
+                {
+                    @Override
+                    public void renderButton(MatrixStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_)
+                    {
+                        super.renderButton(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
+                        this.x = screen.getGuiLeft() + 128;
+                    }
+                });
+            }
         }
     }
     

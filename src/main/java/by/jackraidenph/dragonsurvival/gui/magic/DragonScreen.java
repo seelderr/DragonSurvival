@@ -3,6 +3,7 @@ package by.jackraidenph.dragonsurvival.gui.magic;
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.containers.DragonContainer;
 import by.jackraidenph.dragonsurvival.gui.magic.buttons.TabButton;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.KeyInputHandler;
@@ -218,9 +219,11 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> implemen
             }
         });
     
-        addButton(new ImageButton(this.leftPos + (imageWidth - 28), (this.height / 2 - 30) + 50, 20, 18, 0, 0, 19, INVENTORY_TOGGLE_BUTTON, p_onPress_1_ -> {
-            Minecraft.getInstance().setScreen(new InventoryScreen(Minecraft.getInstance().player));
-        }));
+        if(ConfigHandler.CLIENT.inventoryToggle.get()) {
+            addButton(new ImageButton(this.leftPos + (imageWidth - 28), (this.height / 2 - 30) + 50, 20, 18, 0, 0, 19, INVENTORY_TOGGLE_BUTTON, p_onPress_1_ -> {
+                Minecraft.getInstance().setScreen(new InventoryScreen(Minecraft.getInstance().player));
+            }));
+        }
     }
     
     public void render(MatrixStack p_230450_1_,int p_render_1_, int p_render_2_, float p_render_3_) {

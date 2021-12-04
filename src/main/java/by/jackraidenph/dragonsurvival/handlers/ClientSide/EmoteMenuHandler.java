@@ -3,6 +3,7 @@ package by.jackraidenph.dragonsurvival.handlers.ClientSide;
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.emotes.Emote;
 import by.jackraidenph.dragonsurvival.emotes.EmoteRegistry;
 import by.jackraidenph.dragonsurvival.handlers.Magic.ClientMagicHandler;
@@ -74,7 +75,13 @@ public class EmoteMenuHandler
 			int width = 120;
 			int height = 10;
 			
-			initGuiEvent.addWidget(new Button(screen.width - width, screen.height - 55 - ((PER_PAGE + 2) * height) - 5, width, height, new StringTextComponent(">"), (btn) -> {
+			int startX = screen.width - width;
+			int startY = screen.height - 55;
+			
+			startX += ConfigHandler.CLIENT.emoteXOffset.get();
+			startY += ConfigHandler.CLIENT.emoteYOffset.get();
+			
+			initGuiEvent.addWidget(new Button(startX, startY - ((PER_PAGE + 2) * height) - 5, width, height, new StringTextComponent(">"), (btn) -> {
 			}){
 				@Override
 				public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks)
@@ -94,7 +101,7 @@ public class EmoteMenuHandler
 				public boolean mouseClicked(double p_231044_1_, double p_231044_3_, int p_231044_5_) {return false;}
 			});
 			
-			initGuiEvent.addWidget(new Button(screen.width - width + ((width / 4) - 10), screen.height - 55 - ((PER_PAGE + 2) * height) - 5, 15, height, null, (btn) -> {
+			initGuiEvent.addWidget(new Button(startX + ((width / 4) - 10), startY - ((PER_PAGE + 2) * height) - 5, 15, height, null, (btn) -> {
 				if(emotePage > 0) {
 					emotePage = MathHelper.clamp(emotePage - 1, 0, maxPages() - 1);
 					emotes.clear();
@@ -130,7 +137,7 @@ public class EmoteMenuHandler
 				}
 			});
 			
-			initGuiEvent.addWidget(new Button(screen.width - ((width / 4) + 5), screen.height - 55 - ((PER_PAGE + 2) * height) - 5, 15, height, null, (btn) -> {
+			initGuiEvent.addWidget(new Button(startX + width - ((width / 4) + 5), startY - ((PER_PAGE + 2) * height) - 5, 15, height, null, (btn) -> {
 				if(emotePage < (maxPages() - 1)) {
 					emotePage = MathHelper.clamp(emotePage + 1, 0, maxPages() - 1);
 					emotes.clear();
@@ -166,7 +173,7 @@ public class EmoteMenuHandler
 				}
 			});
 			
-			initGuiEvent.addWidget(new Button(screen.width - width, screen.height - 55, width, height, new StringTextComponent(">"), (btn) -> {
+			initGuiEvent.addWidget(new Button(startX, startY, width, height, new StringTextComponent(">"), (btn) -> {
 				DragonStateHandler handler = DragonStateProvider.getCap(Minecraft.getInstance().player).orElse(null);
 				
 				if(handler != null){
@@ -213,7 +220,7 @@ public class EmoteMenuHandler
 			
 			for(int i = 0; i < PER_PAGE; i++){
 				int finalI = i;
-				initGuiEvent.addWidget(new Button(screen.width - width, screen.height - 75 - (height * ((PER_PAGE-1) - finalI)), width, height, null, (btn) -> {
+				initGuiEvent.addWidget(new Button(startX, startY - 20 - (height * ((PER_PAGE-1) - finalI)), width, height, null, (btn) -> {
 					DragonStateHandler handler = DragonStateProvider.getCap(Minecraft.getInstance().player).orElse(null);
 					Emote emote = emotes.size() > finalI ? emotes.get(finalI) : null;
 					

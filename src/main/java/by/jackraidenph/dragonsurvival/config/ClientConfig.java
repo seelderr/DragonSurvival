@@ -12,10 +12,19 @@ public class ClientConfig {
 	public final ForgeConfigSpec.BooleanValue renderInFirstPerson;
 	public final ForgeConfigSpec.BooleanValue notifyWingStatus;
 	public final ForgeConfigSpec.BooleanValue clientDebugMessages;
-	public final ForgeConfigSpec.BooleanValue dragonInventory;
 	
-	public final ForgeConfigSpec.IntValue casterBarXPos;
-	public final ForgeConfigSpec.IntValue casterBarYPos;
+	public final ForgeConfigSpec.BooleanValue dragonInventory;
+	public final ForgeConfigSpec.BooleanValue dragonTabs;
+	public final ForgeConfigSpec.BooleanValue inventoryToggle;
+	
+	public final ForgeConfigSpec.IntValue castbarXOffset;
+	public final ForgeConfigSpec.IntValue castbarYOffset;
+	
+	public final ForgeConfigSpec.IntValue skillbarXOffset;
+	public final ForgeConfigSpec.IntValue skillbarYOffset;
+	
+	public final ForgeConfigSpec.IntValue emoteXOffset;
+	public final ForgeConfigSpec.IntValue emoteYOffset;
 	
 	ClientConfig(ForgeConfigSpec.Builder builder) {
 		builder.push("client");
@@ -29,14 +38,38 @@ public class ClientConfig {
 				.comment("Should the default inventory be replaced as a dragon?")
 				.define("dragonInventory", true);
 		
-		builder.push("ui");
-		casterBarXPos = builder
-				.comment("The x position of the cast bar from the center of the screen")
-				.defineInRange("casterBarXPos", 49, -1000, 1000);
+		dragonTabs = builder
+				.comment("Should dragon tabs be added to the default player inventory?")
+				.define("dragonTabs", true);
 		
-		casterBarYPos = builder
-				.comment("The y position of the cast bar from the bottom of the screen")
-				.defineInRange("casterBarYPos", 96, -1000, 1000);
+		inventoryToggle = builder
+				.comment("Should the buttons for toggeling between dragon and normaly inventory be added?")
+				.define("inventoryToggle", true);
+		
+		builder.push("ui");
+		castbarXOffset = builder
+				.comment("Offset the x position of the cast bar in relation to its normal position")
+				.defineInRange("casterBarXPos", 0, -1000, 1000);
+		
+		castbarYOffset = builder
+				.comment("Offset the y position of the cast bar in relation to its normal position")
+				.defineInRange("casterBarYPos", 0, -1000, 1000);
+		
+		skillbarXOffset = builder
+				.comment("Offset the x position of the magic skill bar in relation to its normal position")
+				.defineInRange("skillbarXOffset", 0, -1000, 1000);
+		
+		skillbarYOffset = builder
+				.comment("Offset the y position of the magic skill bar in relation to its normal position")
+				.defineInRange("skillbarYOffset", 0, -1000, 1000);
+		
+		emoteXOffset = builder
+				.comment("Offset the x position of the emote button in relation to its normal position")
+				.defineInRange("emoteXOffset", 0, -1000, 1000);
+		
+		emoteYOffset = builder
+				.comment("Offset the y position of the emote button in relation to its normal position")
+				.defineInRange("emoteYOffset", 0, -1000, 1000);
 		
 		// Movement
 		builder.push("movement");
