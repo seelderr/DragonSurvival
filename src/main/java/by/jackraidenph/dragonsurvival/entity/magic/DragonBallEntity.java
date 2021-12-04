@@ -1,6 +1,5 @@
 package by.jackraidenph.dragonsurvival.entity.magic;
 
-import by.jackraidenph.dragonsurvival.gecko.AnimationTimer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -113,22 +112,13 @@ public class DragonBallEntity extends AbstractFireballEntity implements IAnimata
 		}
 	}
 	
-	AnimationTimer animationTimer = new AnimationTimer();
-	
 	@Override
 	public void registerControllers(AnimationData data)
 	{
 		data.addAnimationController(new AnimationController<>(this, "everything", 3, event -> {
 			AnimationBuilder animationBuilder = new AnimationBuilder();
-			AnimationController animationController = event.getController();
-			
-			animationTimer.trackAnimation("idle");
-			
-			if (animationTimer.getDuration("idle") <= 0) {
-				animationTimer.putAnimation("idle", 88, animationBuilder);
-			}
-			
-			animationController.setAnimation(animationBuilder);
+			animationBuilder.addAnimation("idle", true);
+			event.getController().setAnimation(animationBuilder);
 			return PlayState.CONTINUE;
 		}));
 	}

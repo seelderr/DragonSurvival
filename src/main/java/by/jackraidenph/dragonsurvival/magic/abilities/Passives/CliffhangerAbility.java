@@ -36,7 +36,7 @@ public class CliffhangerAbility extends PassiveDragonAbility
 	@OnlyIn( Dist.CLIENT )
 	public ArrayList<ITextComponent> getLevelUpInfo(){
 		ArrayList<ITextComponent> list = super.getLevelUpInfo();
-		list.add(new TranslationTextComponent("ds.skill.range", "+1"));
+		list.add(new TranslationTextComponent("ds.skill.range.blocks", "+1"));
 		return list;
 	}
 }

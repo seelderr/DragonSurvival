@@ -26,8 +26,6 @@ public class DragonSpikeEntity extends AbstractArrowEntity
 {
 	public static final DataParameter<Integer> ARROW_LEVEL = EntityDataManager.defineId(DragonSpikeEntity.class, DataSerializers.INT);
 	
-	public int arrow_level = 1;
-	
 	public DragonSpikeEntity(World p_i50172_2_)
 	{
 		super(EntityTypesInit.DRAGON_SPIKE, p_i50172_2_);
@@ -66,7 +64,6 @@ public class DragonSpikeEntity extends AbstractArrowEntity
 	}
 	
 	public void setArrow_level(int arrow_level){
-		this.arrow_level = arrow_level;
 		this.entityData.set(ARROW_LEVEL, arrow_level);
 	}
 	
@@ -83,7 +80,7 @@ public class DragonSpikeEntity extends AbstractArrowEntity
 	@Override
 	public double getBaseDamage()
 	{
-		return arrow_level * 2;
+		return getArrow_level() * 2;
 	}
 	
 	protected void onHitEntity(EntityRayTraceResult p_213868_1_) {

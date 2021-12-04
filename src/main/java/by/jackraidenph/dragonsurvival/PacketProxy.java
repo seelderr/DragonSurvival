@@ -121,6 +121,10 @@ public class PacketProxy {
             Entity entity = world.getEntity(abilityCasting.playerId);
             if (entity instanceof PlayerEntity) {
                 DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
+                    if(abilityCasting.currentAbility == null && dragonStateHandler.getCurrentlyCasting() != null){
+                        dragonStateHandler.getCurrentlyCasting().stopCasting();
+                    }
+                    
                     dragonStateHandler.setCurrentlyCasting((ActiveDragonAbility)abilityCasting.currentAbility);
                 });
             }

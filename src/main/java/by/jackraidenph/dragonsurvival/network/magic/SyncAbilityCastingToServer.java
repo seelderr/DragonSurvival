@@ -60,6 +60,10 @@ public class SyncAbilityCastingToServer implements IMessage<SyncAbilityCastingTo
 		ServerPlayerEntity player = supplier.get().getSender();
 		
 		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
+			if(message.currentAbility != dragonStateHandler.getCurrentlyCasting() && dragonStateHandler.getCurrentlyCasting() != null){
+				dragonStateHandler.getCurrentlyCasting().stopCasting();
+			}
+			
 			dragonStateHandler.setCurrentlyCasting((ActiveDragonAbility)message.currentAbility);
 		});
 		

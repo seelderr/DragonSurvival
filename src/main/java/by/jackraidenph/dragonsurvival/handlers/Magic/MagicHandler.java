@@ -390,6 +390,7 @@ public class MagicHandler
 						target.knockback(f1 * 0.5F, (double)MathHelper.sin(target.yRot * ((float)Math.PI / 180F)), (double)(-MathHelper.cos(target.yRot * ((float)Math.PI / 180F))));
 						target.setDeltaMovement(target.getDeltaMovement().multiply(0.6D, 1.0D, 0.6D));
 					}
+					sword.getItem().onLeftClickEntity(sword, player, target);
 					((SwordItem)sword.getItem()).hurtEnemy(sword, player, target);
 					
 					player.doEnchantDamageEffects(player, target);

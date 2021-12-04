@@ -11,12 +11,14 @@ import by.jackraidenph.dragonsurvival.handlers.ClientSide.ClientDragonRender;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.KeyInputHandler;
 import by.jackraidenph.dragonsurvival.models.magic.FireballModel;
 import by.jackraidenph.dragonsurvival.models.magic.LightningBallModel;
+import by.jackraidenph.dragonsurvival.models.magic.StormBreathModel;
 import by.jackraidenph.dragonsurvival.nest.NestScreen;
 import by.jackraidenph.dragonsurvival.renderer.PrincessRenderer;
 import by.jackraidenph.dragonsurvival.renderer.*;
 import by.jackraidenph.dragonsurvival.renderer.magic.BallLightningRenderer;
 import by.jackraidenph.dragonsurvival.renderer.magic.DragonSpikeRenderer;
 import by.jackraidenph.dragonsurvival.renderer.magic.FireBallRenderer;
+import by.jackraidenph.dragonsurvival.renderer.magic.StormBreathRenderer;
 import by.jackraidenph.dragonsurvival.shader.ShaderHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScreenManager;
@@ -111,6 +113,7 @@ public class ClientModEvents {
         DragonModel dragonModel = new DragonModel();
         RenderingRegistry.registerEntityRenderingHandler(EntityTypesInit.BALL_LIGHTNING, manager -> new BallLightningRenderer(manager, new LightningBallModel()));
         RenderingRegistry.registerEntityRenderingHandler(EntityTypesInit.FIREBALL, manager -> new FireBallRenderer(manager, new FireballModel()));
+        RenderingRegistry.registerEntityRenderingHandler(EntityTypesInit.STORM_BREATH, manager -> new StormBreathRenderer(manager, new StormBreathModel()));
     
         RenderingRegistry.registerEntityRenderingHandler(EntityTypesInit.DRAGON, manager -> new DragonRenderer(manager, ClientDragonRender.dragonModel = dragonModel));
         RenderingRegistry.registerEntityRenderingHandler(EntityTypesInit.DRAGON_ARMOR, manager -> new DragonRenderer(manager, ClientDragonRender.dragonArmorModel = new DragonArmorModel(dragonModel)));
