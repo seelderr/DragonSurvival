@@ -1,6 +1,7 @@
 package by.jackraidenph.dragonsurvival.capability;
 
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
+import by.jackraidenph.dragonsurvival.emotes.Emote;
 import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
@@ -19,6 +20,7 @@ import net.minecraftforge.common.ToolType;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -41,7 +43,6 @@ public class DragonStateHandler {
 	public boolean seaWings;
 	public boolean forestWings;
 	
-	
 	public boolean clawsMenuOpen = false;
 	
 	/*
@@ -60,7 +61,8 @@ public class DragonStateHandler {
     public static final UUID DAMAGE_MODIFIER_UUID = UUID.fromString("5bd3cebc-132e-4f9d-88ef-b686c7ad1e2c");
     public static final UUID SWIM_SPEED_MODIFIER_UUID = UUID.fromString("2a9341f3-d19e-446c-924b-7cf2e5259e10");
 	
-    public float getSize() {
+	
+	public float getSize() {
         return size;
     }
 
@@ -509,5 +511,24 @@ public class DragonStateHandler {
 				}
 			}
 		}
+	}
+	
+	//Emotes
+	
+	private Emote currentEmote;
+	public int emoteTick;
+	
+	public HashMap<String, Integer> emoteUsage = new HashMap<>();
+	public boolean emoteMenuOpen = false;
+	
+	public Emote getCurrentEmote()
+	{
+		return currentEmote;
+	}
+	
+	public void setCurrentEmote(Emote currentEmote)
+	{
+		this.currentEmote = currentEmote;
+		emoteTick = 0;
 	}
 }

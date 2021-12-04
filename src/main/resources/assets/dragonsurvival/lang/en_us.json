@@ -320,6 +320,19 @@
   "ds.description.seaDragonTreat": "■ Fully restores a sea dragon's magic power.",
   "ds.description.chargedSoup": "■ The best food for the cave dragon. Gives the effect \"Cave Fire\" that protects from the damaging effects of water.",
   "ds.description.elderDragonDust": "§6■ Part of the Elder dragon.§r\n■ The smallest particle left from an ancient creature. Used in many dragon crafts.",
-  "ds.description.elderDragonBone": "§6■ Part of the Elder dragon.§r\n■ The remains of small dragons that were created from the body of an elder creature. Used in many dragon crafts."
+  "ds.description.elderDragonBone": "§6■ Part of the Elder dragon.§r\n■ The remains of small dragons that were created from the body of an elder creature. Used in many dragon crafts.",
+
+  "ds.emote.toggle": "Emotion",
+  "ds.emote.sad": "Sad",
+  "ds.emote.sad2": "Sad 2",
+  "ds.emote.vibe": "Vibe",
+  "ds.emote.spin_on_back": "Spin on back",
+  "ds.emote.sleep_on_back": "Sleep on back",
+  "ds.emote.rest_on_back": "Rest on back",
+  "ds.emote.rest_sleepy": "Rest sleepy",
+  "ds.emote.rest": "Rest",
+  "ds.emote.rest2": "Rest 2",
+  "ds.emote.sit": "Sit",
+  "ds.emote.sit2": "Sit 2"
 }
 

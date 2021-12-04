@@ -6,6 +6,7 @@ import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.network.PacketSyncCapabilityMovement;
 import by.jackraidenph.dragonsurvival.network.SyncCapabilityDebuff;
 import by.jackraidenph.dragonsurvival.network.SynchronizeDragonCap;
+import by.jackraidenph.dragonsurvival.network.emotes.SyncEmoteStats;
 import by.jackraidenph.dragonsurvival.network.magic.SyncDragonClawsMenu;
 import by.jackraidenph.dragonsurvival.network.magic.SyncMagicAbilities;
 import by.jackraidenph.dragonsurvival.network.magic.SyncMagicStats;
@@ -33,8 +34,14 @@ public class SynchronizationController {
                 NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new PacketSyncCapabilityMovement(player.getId(), cap.getMovementData().bodyYaw, cap.getMovementData().headYaw, cap.getMovementData().headPitch, cap.getMovementData().bite));
                 NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new SyncCapabilityDebuff(player.getId(), cap.getDebuffData().timeWithoutWater, cap.getDebuffData().timeInDarkness, cap.getDebuffData().timeInRain));
                 NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new SyncDragonClawsMenu(player.getId(), cap.clawsMenuOpen, cap.clawsInventory));
-    
+           
             });
+    
+            DragonStateProvider.getCap(player).ifPresent(cap -> {
+                NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new SyncDragonClawsMenu(player.getId(), cap.clawsMenuOpen, cap.clawsInventory));
+                NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncEmoteStats(player.getId(), cap.emoteMenuOpen, cap.emoteUsage));
+            });
+            
             // receive capability from others
             loggedInEvent.getPlayer().getServer().getPlayerList().getPlayers().forEach(serverPlayerEntity -> {
                 DragonStateProvider.getCap(serverPlayerEntity).ifPresent(dragonStateHandler -> {
@@ -44,6 +51,7 @@ public class SynchronizationController {
                     NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncMagicStats(player.getId(), dragonStateHandler.getSelectedAbilitySlot(), dragonStateHandler.getCurrentMana(), dragonStateHandler.renderAbilityHotbar()));
                     NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncMagicAbilities(player.getId(), dragonStateHandler.getAbilities()));
                     NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncDragonClawsMenu(player.getId(), dragonStateHandler.clawsMenuOpen, dragonStateHandler.clawsInventory));
+                    NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncEmoteStats(player.getId(), dragonStateHandler.emoteMenuOpen, dragonStateHandler.emoteUsage));
                 });
             });
         }
@@ -63,6 +71,12 @@ public class SynchronizationController {
                 NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new SyncCapabilityDebuff(player.getId(), cap.getDebuffData().timeWithoutWater, cap.getDebuffData().timeInDarkness, cap.getDebuffData().timeInRain));
                 NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new SyncDragonClawsMenu(player.getId(), cap.clawsMenuOpen, cap.clawsInventory));
             });
+    
+            DragonStateProvider.getCap(player).ifPresent(cap -> {
+                NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new SyncDragonClawsMenu(player.getId(), cap.clawsMenuOpen, cap.clawsInventory));
+                NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncEmoteStats(player.getId(), cap.emoteMenuOpen, cap.emoteUsage));
+            });
+            
             // receive capability from others
             playerRespawnEvent.getPlayer().getServer().getPlayerList().getPlayers().forEach(serverPlayerEntity -> {
                 DragonStateProvider.getCap(serverPlayerEntity).ifPresent(dragonStateHandler -> {
@@ -72,7 +86,6 @@ public class SynchronizationController {
                     NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncMagicStats(player.getId(), dragonStateHandler.getSelectedAbilitySlot(), dragonStateHandler.getCurrentMana(), dragonStateHandler.renderAbilityHotbar()));
                     NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncMagicAbilities(player.getId(), dragonStateHandler.getAbilities()));
                     NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncDragonClawsMenu(player.getId(), dragonStateHandler.clawsMenuOpen, dragonStateHandler.clawsInventory));
-    
                 });
             });
         }
@@ -92,6 +105,7 @@ public class SynchronizationController {
                     NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)trackingPlayer), new SyncCapabilityDebuff(trackedEntity.getId(), dData.timeWithoutWater, dData.timeInDarkness, dData.timeInRain));
                     NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) trackingPlayer), new SyncMagicStats(trackingPlayer.getId(), dragonStateHandler.getSelectedAbilitySlot(), dragonStateHandler.getCurrentMana(), dragonStateHandler.renderAbilityHotbar()));
                     NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) trackingPlayer), new SyncDragonClawsMenu(trackingPlayer.getId(), dragonStateHandler.clawsMenuOpen, dragonStateHandler.clawsInventory));
+                    NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) trackingPlayer), new SyncEmoteStats(trackingPlayer.getId(), dragonStateHandler.emoteMenuOpen, dragonStateHandler.emoteUsage));
                 });
             }
         }
@@ -112,6 +126,7 @@ public class SynchronizationController {
             NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncMagicStats(player.getId(), dragonStateHandler.getSelectedAbilitySlot(), dragonStateHandler.getCurrentMana(), dragonStateHandler.renderAbilityHotbar()));
             NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncMagicAbilities(player.getId(), dragonStateHandler.getAbilities()));
             NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncDragonClawsMenu(player.getId(), dragonStateHandler.clawsMenuOpen, dragonStateHandler.clawsInventory));
+            NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncEmoteStats(player.getId(), dragonStateHandler.emoteMenuOpen, dragonStateHandler.emoteUsage));
         });
     }
 }

@@ -2,6 +2,7 @@ package by.jackraidenph.dragonsurvival.gecko.entity;
 
 import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.emotes.Emote;
 import by.jackraidenph.dragonsurvival.gecko.AnimationTimer;
 import by.jackraidenph.dragonsurvival.gecko.CommonTraits;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.ClientDragonRender;
@@ -54,14 +55,21 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
         AnimationBuilder builder = new AnimationBuilder();
     
         if(handler != null){
-            if(handler.getMovementData().bite && biteEnd <= biteEndingTicks || biteEnd > 0 && biteEnd <= biteEndingTicks){
-                builder.addAnimation("bite");
-    
-                biteEnd++;
-                
-                animationEvent.getController().setAnimation(builder);
-                return PlayState.CONTINUE;
+            if(handler.getCurrentEmote() == null) {
+                if (handler.getMovementData().bite && biteEnd <= biteEndingTicks || biteEnd > 0 && biteEnd <= biteEndingTicks) {
+                    builder.addAnimation("bite");
+                    neckLocked = true;
+        
+                    biteEnd++;
+        
+                    animationEvent.getController().setAnimation(builder);
+                    return PlayState.CONTINUE;
+                }
             }
+        }
+        
+        if(biteEnd == biteEndingTicks + 1){
+            neckLocked = false;
         }
         
         biteEnd = 0;
@@ -77,6 +85,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
     boolean started, ended;
     public boolean neckLocked = false;
     AnimationTimer animationTimer = new AnimationTimer();
+    Emote lastEmote;
     
     private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> animationEvent) {
         final PlayerEntity player = getPlayer();
@@ -87,6 +96,18 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
         if (player != null) {
             DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
                 ActiveDragonAbility curCast = playerStateHandler.getCurrentlyCasting();
+                
+                if(playerStateHandler.getCurrentEmote() == null && lastEmote != null && lastEmote.locksHead){
+                    neckLocked = false;
+                }
+                
+                if(playerStateHandler.getCurrentEmote() != null){
+                    neckLocked = playerStateHandler.getCurrentEmote().locksHead;
+                    builder.addAnimation(playerStateHandler.getCurrentEmote().animationKey, playerStateHandler.getCurrentEmote().loops);
+                    lastEmote = playerStateHandler.getCurrentEmote();
+                    return;
+                }
+                
                 if(curCast != null && lastCast == null){
                     if(curCast.getStartingAnimation() != null){
                         AbilityAnimation starAni = curCast.getStartingAnimation();

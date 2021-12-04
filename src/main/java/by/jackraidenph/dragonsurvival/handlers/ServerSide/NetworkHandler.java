@@ -11,6 +11,10 @@ import by.jackraidenph.dragonsurvival.nest.NestEntity;
 import by.jackraidenph.dragonsurvival.nest.SleepInNest;
 import by.jackraidenph.dragonsurvival.nest.ToggleRegeneration;
 import by.jackraidenph.dragonsurvival.network.*;
+import by.jackraidenph.dragonsurvival.network.emotes.SyncEmote;
+import by.jackraidenph.dragonsurvival.network.emotes.SyncEmoteServer;
+import by.jackraidenph.dragonsurvival.network.emotes.SyncEmoteStats;
+import by.jackraidenph.dragonsurvival.network.emotes.SyncEmoteStatsServer;
 import by.jackraidenph.dragonsurvival.network.magic.*;
 import by.jackraidenph.dragonsurvival.registration.BlockInit;
 import by.jackraidenph.dragonsurvival.registration.EntityTypesInit;
@@ -47,6 +51,8 @@ public class NetworkHandler
      }
 	 
 	 public static void setup(){
+		
+		//Generic packets
 		 register(PacketSyncCapabilityMovement.class, new PacketSyncCapabilityMovement());
 		 register(SyncCapabilityDebuff.class, new SyncCapabilityDebuff());
 		 register(PacketSyncXPDevour.class, new PacketSyncXPDevour());
@@ -56,6 +62,8 @@ public class NetworkHandler
 		 register(ToggleWings.class, new ToggleWings());
 		// register(OpenCrafting.class, new OpenCrafting());
 		
+		 
+		 //Ability packets
 		 register(OpenDragonInventory.class, new OpenDragonInventory());
 		 register(ActivateAbilityServerSide.class, new ActivateAbilityServerSide());
 		 register(SyncAbilityActivation.class, new SyncAbilityActivation());
@@ -70,6 +78,13 @@ public class NetworkHandler
 		 register(DragonClawsMenuToggle.class, new DragonClawsMenuToggle());
 		 register(SyncDragonClawsMenu.class, new SyncDragonClawsMenu());
 		 register(SyncAbilityCooldown.class, new SyncAbilityCooldown());
+		
+		 //Emote packets
+		 register(SyncEmoteServer.class, new SyncEmoteServer());
+		 register(SyncEmote.class, new SyncEmote());
+		 register(SyncEmoteStatsServer.class, new SyncEmoteStatsServer());
+		 register(SyncEmoteStats.class, new SyncEmoteStats());
+		
 		
 		 CHANNEL.registerMessage(nextPacketId++, SynchronizeDragonCap.class, (synchronizeDragonCap, packetBuffer) -> {
 			 packetBuffer.writeInt(synchronizeDragonCap.playerId);

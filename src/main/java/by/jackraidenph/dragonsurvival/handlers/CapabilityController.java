@@ -65,6 +65,9 @@ public class CapabilityController {
                         capNew.clawsInventory = capOld.clawsInventory;
                         capNew.clawsMenuOpen = capOld.clawsMenuOpen;
                         
+                        capNew.emoteMenuOpen = capOld.emoteMenuOpen;
+                        capNew.emoteUsage = capOld.emoteUsage;
+                        
                         capNew.setSize(capOld.getSize());
                         capNew.setType(capOld.getType());
                         capNew.setHasWings(capOld.hasWings());

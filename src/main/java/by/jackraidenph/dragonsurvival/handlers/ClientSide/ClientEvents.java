@@ -87,6 +87,7 @@ public class ClientEvents {
     public static void addCraftingButton(GuiScreenEvent.InitGuiEvent.Post initGuiEvent)
     {
         Screen sc = initGuiEvent.getGui();
+        
         if(sc instanceof InventoryScreen && DragonStateProvider.isDragon(Minecraft.getInstance().player)) {
             InventoryScreen screen = (InventoryScreen)sc;
             
@@ -135,7 +136,8 @@ public class ClientEvents {
             });
         }
     }
-
+    
+    
     private static Vector3d getInputVector(Vector3d movement, float fricSpeed, float yRot) {
         double d0 = movement.lengthSqr();
         if (d0 < 1.0E-7D) {

@@ -282,6 +282,11 @@ public class ClientMagicHandler
 	    PlayerEntity player = event.getEntity();
 	    
 	    DragonStateProvider.getCap(player).ifPresent(cap -> {
+			if(cap.getCurrentEmote() != null){
+				event.setNewfov(1f);
+				return;
+			}
+			
 	        ActiveDragonAbility ability = cap.getCurrentlyCasting();
 	        
 	        if(ability != null && ability.getCurrentCastTimer() > 0){

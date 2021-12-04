@@ -22,7 +22,7 @@ public class DragonStateProvider implements ICapabilitySerializable<CompoundNBT>
     private final LazyOptional<DragonStateHandler> instance = LazyOptional.of(DRAGON_CAPABILITY::getDefaultInstance);
 
     public static LazyOptional<DragonStateHandler> getCap(Entity entity) {
-        return entity.getCapability(DragonStateProvider.DRAGON_CAPABILITY);
+        return entity == null ? LazyOptional.empty() : entity.getCapability(DragonStateProvider.DRAGON_CAPABILITY);
     }
 
     public static boolean isDragon(Entity entity) {

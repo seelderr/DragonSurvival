@@ -1,5 +1,7 @@
 package by.jackraidenph.dragonsurvival.capability;
 
+import by.jackraidenph.dragonsurvival.emotes.Emote;
+import by.jackraidenph.dragonsurvival.emotes.EmoteRegistry;
 import by.jackraidenph.dragonsurvival.util.DragonLevel;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.inventory.Inventory;
@@ -9,6 +11,8 @@ import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
+
+import java.util.Objects;
 
 public class DragonCapStorage implements Capability.IStorage<DragonStateHandler> {
     
@@ -46,6 +50,19 @@ public class DragonCapStorage implements Capability.IStorage<DragonStateHandler>
             tag.putBoolean("clawsMenu", instance.clawsMenuOpen);
             tag.put("clawsInventory", saveClawInventory(instance.clawsInventory));
             
+            tag.putString("emote", instance.getCurrentEmote() != null ? instance.getCurrentEmote().animationKey : "nil");
+            tag.putBoolean("emoteOpen", instance.emoteMenuOpen);
+    
+            CompoundNBT emoteUsage = new CompoundNBT();
+    
+            for(Emote emote : EmoteRegistry.EMOTES){
+                if(instance.emoteUsage.containsKey(emote.translationKey)){
+                    emoteUsage.putInt(emote.translationKey, instance.emoteUsage.get(emote.translationKey));
+                }
+            }
+            
+            tag.put("emoteUsage", emoteUsage);
+    
             CompoundNBT nbt = new CompoundNBT();
             nbt.putInt("mana", instance.getCurrentMana());
             nbt.putInt("selectedAbilitySlot", instance.getSelectedAbilitySlot());
@@ -86,6 +103,27 @@ public class DragonCapStorage implements Capability.IStorage<DragonStateHandler>
             ListNBT clawInv = tag.getList("clawsInventory",10);
             instance.clawsInventory = readClawInventory(clawInv);;
     
+            
+            String emoteId = tag.getString("emote");
+            
+            if(!emoteId.equals("nil")){
+                for(Emote emote : EmoteRegistry.EMOTES){
+                    if(Objects.equals(emote.animationKey, emoteId)){
+                        instance.setCurrentEmote(emote);
+                        break;
+                    }
+                }
+            }
+            
+            instance.emoteMenuOpen = tag.getBoolean("emoteOpen");
+            
+            CompoundNBT emoteUsage = tag.getCompound("emoteUsage");
+            
+            for(Emote emote : EmoteRegistry.EMOTES){
+                if(emoteUsage.contains(emote.translationKey)){
+                    instance.emoteUsage.put(emote.translationKey, tag.getInt(emote.translationKey));
+                }
+            }
     
             if (instance.getSize() == 0)
                 instance.setSize(DragonLevel.BABY.size);
