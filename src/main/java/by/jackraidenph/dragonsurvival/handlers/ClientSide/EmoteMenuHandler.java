@@ -76,7 +76,7 @@ public class EmoteMenuHandler
 			
 			if(emotes == null || emotes.size() <= 0) return;
 			
-			int width = 120;
+			int width = 150;
 			int height = 10;
 			
 			int startX = screen.width - width;
