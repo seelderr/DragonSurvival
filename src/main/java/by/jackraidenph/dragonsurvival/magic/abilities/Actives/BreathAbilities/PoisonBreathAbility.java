@@ -99,11 +99,10 @@ public class PoisonBreathAbility extends BreathAbility
 			}
 			loopingSound = new PoisonBreathSound(this);
 			Minecraft.getInstance().getSoundManager().play(startingSound);
-			Minecraft.getInstance().getSoundManager().playDelayed(loopingSound, 10);
 		}
 		
-		if(loopingSound != null && castingTicks > 10 && (!loopingSound.isLooping() || loopingSound.isStopped())){
-			Minecraft.getInstance().getSoundManager().play(loopingSound);
+		if(loopingSound != null && (!loopingSound.isLooping() || loopingSound.isStopped() || !Minecraft.getInstance().getSoundManager().isActive(loopingSound))){
+			Minecraft.getInstance().getSoundManager().queueTickingSound(loopingSound);
 		}
 	}
 	

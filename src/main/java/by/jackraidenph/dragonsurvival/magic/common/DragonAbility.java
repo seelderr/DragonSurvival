@@ -78,7 +78,6 @@ public abstract class DragonAbility
     @OnlyIn( Dist.CLIENT )
     public ArrayList<ITextComponent> getLevelUpInfo(){return new ArrayList<>();}
     
-    @OnlyIn( Dist.CLIENT )
     public boolean isDisabled() {
         if(!ConfigHandler.SERVER.dragonAbilities.get()) return true;
         if(type == DragonType.CAVE && !ConfigHandler.SERVER.caveDragonAbilities.get()) return true;
