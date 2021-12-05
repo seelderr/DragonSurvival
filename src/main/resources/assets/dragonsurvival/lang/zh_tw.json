@@ -316,11 +316,6 @@
   "item.dragonsurvival.cave_dragon_treat": "洞穴龍的佳肴",
   "item.dragonsurvival.forest_dragon_treat": "森林龍的佳肴",
 
-  "ds.hold_shift.for_food": "按住Shift键以查看食物信息",
-  "ds.cave.dragon.food": "洞穴龍的食物",
-  "ds.forest.dragon.food": "森林龍的食物",
-  "ds.sea.dragon.food": "海洋龍的食物",
-
   "dragonsurvival:config.category.general.tooltip": "通用工具配置",
   "dragonsurvival:config.category.spawnchances.tooltip": "實體生成幾率配置"
 }
