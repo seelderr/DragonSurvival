@@ -1,6 +1,8 @@
 package by.jackraidenph.dragonsurvival.magic.abilities.Passives;
 
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.magic.common.PassiveDragonAbility;
+import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -11,9 +13,9 @@ import java.util.ArrayList;
 
 public class BurnAbility extends PassiveDragonAbility
 {
-	public BurnAbility(String abilityId, String icon, int minLevel, int maxLevel)
+	public BurnAbility(DragonType type, String abilityId, String icon, int minLevel, int maxLevel)
 	{
-		super(abilityId, icon, minLevel, maxLevel);
+		super(type, abilityId, icon, minLevel, maxLevel);
 	}
 	
 	public int getChance(){
@@ -23,7 +25,13 @@ public class BurnAbility extends PassiveDragonAbility
 	@Override
 	public BurnAbility createInstance()
 	{
-		return new BurnAbility(id, icon, minLevel, maxLevel);
+		return new BurnAbility(type, id, icon, minLevel, maxLevel);
+	}
+	
+	@Override
+	public boolean isDisabled()
+	{
+		return super.isDisabled() || !ConfigHandler.SERVER.burn.get();
 	}
 	
 	@Override

@@ -1,10 +1,12 @@
 package by.jackraidenph.dragonsurvival.magic.common;
 
+import by.jackraidenph.dragonsurvival.util.DragonType;
+
 public class PassiveDragonAbility extends DragonAbility {
 	
-	public PassiveDragonAbility(String abilityId, String icon, int minLevel, int maxLevel)
+	public PassiveDragonAbility(DragonType type, String abilityId, String icon, int minLevel, int maxLevel)
 	{
-		super(abilityId, icon, minLevel, maxLevel);
+		super(type, abilityId, icon, minLevel, maxLevel);
 	}
 	
 	public int getLevelCost(){
@@ -13,6 +15,6 @@ public class PassiveDragonAbility extends DragonAbility {
 	@Override
 	public PassiveDragonAbility createInstance()
 	{
-		return new PassiveDragonAbility(id, icon, minLevel, maxLevel);
+		return new PassiveDragonAbility(type, id, icon, minLevel, maxLevel);
 	}
 }

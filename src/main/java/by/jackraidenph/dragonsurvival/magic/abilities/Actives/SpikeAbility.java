@@ -1,9 +1,11 @@
 package by.jackraidenph.dragonsurvival.magic.abilities.Actives;
 
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.entity.magic.DragonSpikeEntity;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.KeyInputHandler;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.registration.EntityTypesInit;
+import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.util.text.IFormattableTextComponent;
@@ -17,13 +19,13 @@ import java.util.Locale;
 
 public class SpikeAbility extends ActiveDragonAbility
 {
-	public SpikeAbility(String id, String icon, int minLevel, int maxLevel, int manaCost, int castTime, int cooldown, Integer[] requiredLevels)
+	public SpikeAbility(DragonType type, String id, String icon, int minLevel, int maxLevel, int manaCost, int castTime, int cooldown, Integer[] requiredLevels)
 	{
-		super(id, icon, minLevel, maxLevel, manaCost, castTime, cooldown, requiredLevels);
+		super(type, id, icon, minLevel, maxLevel, manaCost, castTime, cooldown, requiredLevels);
 	}
 	
-	public int getDamage(){
-		return 2 * getLevel();
+	public float getDamage(){
+		return (float)(ConfigHandler.SERVER.spikeDamage.get() * getLevel());
 	}
 	
 	@Override
@@ -35,7 +37,7 @@ public class SpikeAbility extends ActiveDragonAbility
 	@Override
 	public SpikeAbility createInstance()
 	{
-		return new SpikeAbility(id, icon, minLevel, maxLevel, manaCost, castTime, abilityCooldown, requiredLevels);
+		return new SpikeAbility(type, id, icon, minLevel, maxLevel, manaCost, castTime, abilityCooldown, requiredLevels);
 	}
 	
 	@Override
@@ -59,7 +61,7 @@ public class SpikeAbility extends ActiveDragonAbility
 	@OnlyIn( Dist.CLIENT )
 	public ArrayList<ITextComponent> getLevelUpInfo(){
 		ArrayList<ITextComponent> list = super.getLevelUpInfo();
-		list.add(new TranslationTextComponent("ds.skill.damage", "+2"));
+		list.add(new TranslationTextComponent("ds.skill.damage", "+" + ConfigHandler.SERVER.spikeDamage.get() ));
 		return list;
 	}
 	
@@ -74,5 +76,11 @@ public class SpikeAbility extends ActiveDragonAbility
 		entity.pickup = AbstractArrowEntity.PickupStatus.DISALLOWED;
 		entity.shootFromRotation(player, player.xRot, player.yRot, 0.0F, 4F, 1.0F);
 		player.level.addFreshEntity(entity);
+	}
+	
+	@Override
+	public boolean isDisabled()
+	{
+		return super.isDisabled() || !ConfigHandler.SERVER.spike.get();
 	}
 }

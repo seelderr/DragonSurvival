@@ -47,7 +47,7 @@ public class ClientCastingHandler
 	    DragonStateProvider.getCap(playerEntity).ifPresent(dragonStateHandler -> {
 	        ActiveDragonAbility ability = dragonStateHandler.getMagic().getAbilityFromSlot(slot);
 	        if(ability.getLevel() > 0) {
-	            if(ability.canRun(playerEntity, modeAbility)) {
+	            if(ability.canRun(playerEntity, modeAbility) && !ability.isDisabled()) {
 		            ability.errorTicks = 0;
 		            ability.errorMessage = null;
 					

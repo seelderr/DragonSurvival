@@ -6,6 +6,7 @@ import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.magic.common.InnateDragonAbility;
 import by.jackraidenph.dragonsurvival.util.DragonLevel;
+import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
@@ -23,15 +24,15 @@ import java.util.ArrayList;
 
 public class DragonClawsAbility extends InnateDragonAbility
 {
-	public DragonClawsAbility(String abilityId, String icon, int minLevel, int maxLevel)
+	public DragonClawsAbility(DragonType type, String abilityId, String icon, int minLevel, int maxLevel)
 	{
-		super(abilityId, icon, minLevel, maxLevel);
+		super(type, abilityId, icon, minLevel, maxLevel);
 	}
 	
 	@Override
 	public DragonAbility createInstance()
 	{
-		return new DragonClawsAbility(id, icon, minLevel, maxLevel);
+		return new DragonClawsAbility(type,id, icon, minLevel, maxLevel);
 	}
 	
 	@Override

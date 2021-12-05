@@ -1,5 +1,6 @@
 package by.jackraidenph.dragonsurvival.config;
 
+import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.util.DragonLevel;
 import com.google.common.collect.Lists;
 import net.minecraftforge.common.ForgeConfigSpec;
@@ -108,7 +109,84 @@ public class ServerConfig {
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> seaDragonFoods;
 
 	// Magic System
+	public final ForgeConfigSpec.BooleanValue dragonAbilities;
+	public final ForgeConfigSpec.BooleanValue caveDragonAbilities;
+	public final ForgeConfigSpec.BooleanValue forestDragonAbilities;
+	public final ForgeConfigSpec.BooleanValue seaDragonAbilities;
+	
+	public final ForgeConfigSpec.BooleanValue fireBreath;
+	public final ForgeConfigSpec.DoubleValue fireBreathDamage;
+	public final ForgeConfigSpec.IntValue fireBreathInitialMana;
+	public final ForgeConfigSpec.IntValue fireBreathOvertimeMana;
+	public final ForgeConfigSpec.IntValue fireBreathManaTicks;
+	
+	public final ForgeConfigSpec.BooleanValue stormBreath;
+	public final ForgeConfigSpec.DoubleValue stormBreathDamage;
+	public final ForgeConfigSpec.IntValue stormBreathInitialMana;
+	public final ForgeConfigSpec.IntValue stormBreathOvertimeMana;
+	public final ForgeConfigSpec.IntValue stormBreathManaTicks;
+	
+	public final ForgeConfigSpec.BooleanValue forestBreath;
+	public final ForgeConfigSpec.DoubleValue forestBreathDamage;
+	public final ForgeConfigSpec.IntValue forestBreathInitialMana;
+	public final ForgeConfigSpec.IntValue forestBreathOvertimeMana;
+	public final ForgeConfigSpec.IntValue forestBreathManaTicks;
+	
+	public final ForgeConfigSpec.BooleanValue spike;
+	public final ForgeConfigSpec.DoubleValue spikeDamage;
+	public final ForgeConfigSpec.IntValue spikeManaCost;
+	
+	public final ForgeConfigSpec.BooleanValue inspiration;
+	public final ForgeConfigSpec.IntValue inspirationDuration;
+	public final ForgeConfigSpec.IntValue inspirationManaCost;
+	
+	public final ForgeConfigSpec.BooleanValue hunter;
+	public final ForgeConfigSpec.IntValue hunterDuration;
+	public final ForgeConfigSpec.DoubleValue hunterDamageBonus;
+	public final ForgeConfigSpec.IntValue hunterManaCost;
+	
+	public final ForgeConfigSpec.BooleanValue forestMagic;
+	public final ForgeConfigSpec.BooleanValue forestAthletics;
+	public final ForgeConfigSpec.BooleanValue lightInDarkness;
+	public final ForgeConfigSpec.BooleanValue cliffHanger;
+	
+	public final ForgeConfigSpec.BooleanValue ballLightning;
+	public final ForgeConfigSpec.DoubleValue ballLightningDamage;
+	public final ForgeConfigSpec.IntValue ballLightningManaCost;
+	
+	public final ForgeConfigSpec.BooleanValue revealingTheSoul;
+	public final ForgeConfigSpec.IntValue revealingTheSoulDuration;
+	public final ForgeConfigSpec.IntValue revealingTheSoulManaCost;
+	public final ForgeConfigSpec.IntValue revealingTheSoulMaxEXP;
+	public final ForgeConfigSpec.DoubleValue revealingTheSoulMultiplier;
+	
+	public final ForgeConfigSpec.BooleanValue seaEyes;
+	public final ForgeConfigSpec.IntValue seaEyesDuration;
+	public final ForgeConfigSpec.IntValue seaEyesManaCost;
+	
+	public final ForgeConfigSpec.BooleanValue seaMagic;
+	public final ForgeConfigSpec.BooleanValue seaAthletics;
+	public final ForgeConfigSpec.BooleanValue water;
+	public final ForgeConfigSpec.BooleanValue spectralImpact;
+	
+	public final ForgeConfigSpec.BooleanValue fireball;
 	public final ForgeConfigSpec.DoubleValue fireballDamage;
+	public final ForgeConfigSpec.IntValue fireballManaCost;
+	
+	public final ForgeConfigSpec.BooleanValue toughSkin;
+	public final ForgeConfigSpec.IntValue toughSkinDuration;
+	public final ForgeConfigSpec.IntValue toughSkinManaCost;
+	public final ForgeConfigSpec.DoubleValue toughSkinArmorValue;
+	
+	public final ForgeConfigSpec.BooleanValue lavaVision;
+	public final ForgeConfigSpec.IntValue lavaVisionDuration;
+	public final ForgeConfigSpec.IntValue lavaVisionManaCost;
+	
+	public final ForgeConfigSpec.BooleanValue caveMagic;
+	public final ForgeConfigSpec.BooleanValue caveAthletics;
+	public final ForgeConfigSpec.BooleanValue contrastShower;
+	public final ForgeConfigSpec.BooleanValue burn;
+	
 	public final ForgeConfigSpec.BooleanValue saveAllAbilities;
 
 	ServerConfig(ForgeConfigSpec.Builder builder){
@@ -872,11 +950,312 @@ public class ServerConfig {
 		//Magic
 		builder.pop().pop().push("magic");
 		builder.comment("Config values for the magic system");
+		
+		dragonAbilities = builder
+				.comment("Whether dragon abilities should be enabled")
+				.define("dragonAbilities", true);
+		caveDragonAbilities = builder
+				.comment("Whether cave dragon abilities should be enabled")
+				.define("caveDragonAbilities", true);
+		forestDragonAbilities = builder
+				.comment("Whether forest dragon abilities should be enabled")
+				.define("forestDragonAbilities", true);
+		seaDragonAbilities = builder
+				.comment("Whether sea dragon abilities should be enabled")
+				.define("seaDragonAbilities", true);
+		
+		builder.push("abilities");
+		
+		builder.push("forest_dragon");
+		builder.push("actives");
+		
+		{
+			forestBreath = builder
+					.comment("Whether the forest breath ability should be enabled")
+					.define("forestBreath", true);
+			
+			forestBreathDamage = builder
+					.comment("The amount of damage the forest breath ability deals. This value is multiplied by the skill level.")
+					.defineInRange("forestBreathDamage", 1.0, 0, 100.0);
+			
+			forestBreathInitialMana = builder
+					.comment("The mana cost for starting the forest breath ability")
+					.defineInRange("forestBreathInitialMana", 2, 0, 100);
+			
+			forestBreathOvertimeMana = builder
+					.comment("The mana cost of sustaining the forest breath ability")
+					.defineInRange("forestBreathOvertimeMana", 1, 0, 100);
+			
+			forestBreathManaTicks = builder
+					.comment("How often in ticks, mana is consumed while using forest breath")
+					.defineInRange("forestBreathManaTicks", Functions.secondsToTicks(2), 0, 100);
+		}
+		
+		{
+			spike = builder
+					.comment("Whether the spike ability should be enabled")
+					.define("spike", true);
+			
+			spikeDamage = builder
+					.comment("The amount of damage the spike ability deals. This value is multiplied by the skill level.")
+					.defineInRange("spikeDamage", 2.0, 0, 100.0);
+			
+			spikeManaCost = builder
+					.comment("The mana cost for using the spike ability")
+					.defineInRange("spikeManaCost", 3, 0, 100);
+			
+		}
+		
+		{
+			inspiration = builder
+					.comment("Whether the inspiration ability should be enabled")
+					.define("inspiration", true);
+			
+			inspirationDuration = builder
+					.comment("The duration in seconds of the inspiration effect given when the ability is used")
+					.defineInRange("inspirationDuration", 30, 0, 10000);
+			
+			inspirationManaCost = builder
+					.comment("The mana cost for using the inspiration ability")
+					.defineInRange("inspirationManaCost", 5, 0, 100);
+			
+		}
+		
+		{
+			hunter = builder
+					.comment("Whether the hunter ability should be enabled")
+					.define("hunter", true);
+			
+			hunterDuration = builder
+					.comment("The duration in seconds of the inspiration effect given when the ability is used")
+					.defineInRange("hunterDuration", 60, 0, 10000);
+			
+			hunterDamageBonus = builder
+					.comment("The damage bonus the hunter effect gives when invisible. This value is multiplied by the skill level.")
+					.defineInRange("hunterDamageBonus", 1.5, 0, 100.0);
+			
+			hunterManaCost = builder
+					.comment("The mana cost for using the inspiration ability")
+					.defineInRange("hunterManaCost", 3, 0, 100);
+			
+		}
+		
+		builder.pop().push("passives");
+		
+		{
+			forestMagic = builder
+					.comment("Whether the forest magic ability should be enabled")
+					.define("forestMagic", true);
+			
+			forestAthletics = builder
+					.comment("Whether the forest athletics ability should be enabled")
+					.define("forestAthletics", true);
+			
+			lightInDarkness = builder
+					.comment("Whether the light in darkness ability should be enabled")
+					.define("lightInDarkness", true);
+			
+			cliffHanger = builder
+					.comment("Whether the cliffhanger ability should be enabled")
+					.define("cliffHanger", true);
+			
+		}
+		
+		
+		
+		builder.pop().pop().push("sea_dragon");
+		builder.push("actives");
+		{
+			stormBreath = builder
+					.comment("Whether the storm breath ability should be enabled")
+					.define("stormBreath", true);
+			
+			stormBreathDamage = builder
+					.comment("The amount of damage the storm breath ability deals. This value is multiplied by the skill level.")
+					.defineInRange("stormBreathDamage", 1.0, 0, 100.0);
+			
+			stormBreathInitialMana = builder
+					.comment("The mana cost for starting the storm breath ability")
+					.defineInRange("stormBreathInitialMana", 2, 0, 100);
+			
+			stormBreathOvertimeMana = builder
+					.comment("The mana cost of sustaining the storm breath ability")
+					.defineInRange("stormBreathOvertimeMana", 1, 0, 100);
+			
+			stormBreathManaTicks = builder
+					.comment("How often in ticks, mana is consumed while using storm breath")
+					.defineInRange("stormBreathManaTicks", Functions.secondsToTicks(2), 0, 100);
+		}
+		
+		{
+			ballLightning = builder
+					.comment("Whether the lightning ball ability should be enabled")
+					.define("ballLightning", true);
+			
+			ballLightningDamage = builder
+					.comment("The amount of damage the lightning ball ability deals. This value is multiplied by the skill level.")
+					.defineInRange("ballLightningDamage", 3.0, 0, 100.0);
+			
+			ballLightningManaCost = builder
+					.comment("The mana cost for using the lightning ball ability")
+					.defineInRange("ballLightningManaCost", 6, 0, 100);
+			
+		}
+		
+		{
+			revealingTheSoul = builder
+					.comment("Whether the revealing The Soul ability should be enabled")
+					.define("revealingTheSoul", true);
+			
+			revealingTheSoulDuration = builder
+					.comment("The duration in seconds of the revealing The Soul effect given when the ability is used")
+					.defineInRange("revealingTheSoulDuration", 60, 0, 10000);
+			
+			revealingTheSoulManaCost = builder
+					.comment("The mana cost for using the revealing The Soul ability")
+					.defineInRange("revealingTheSoulManaCost", 5, 0, 100);
+			
+			revealingTheSoulMaxEXP = builder
+					.comment("The max amount of increased exp that can be gained from a single mob with reavling the soul")
+					.defineInRange("revealingTheSoulMaxEXP", 20, 0, 10000);
+			
+			revealingTheSoulMultiplier = builder
+					.comment("The multiplier that is applied to exp with revealing the soul, the extra exp is in addition to the normal drops. so 1.0 = 100% increase")
+					.defineInRange("revealingTheSoulMultiplier", 1.0, 0, 10000);
+		}
+		
+		{
+			seaEyes = builder
+					.comment("Whether the sea eyes ability should be enabled")
+					.define("seaEyes", true);
+			
+			seaEyesDuration = builder
+					.comment("The duration in seconds of the sea eyes effect given when the ability is used")
+					.defineInRange("seaEyesDuration", 90, 0, 10000);
+			
+			seaEyesManaCost = builder
+					.comment("The mana cost for using the sea eyes ability")
+					.defineInRange("seaEyesManaCost", 2, 0, 100);
+			
+		}
+		
+		builder.pop().push("passives");
+		
+		{
+			seaMagic = builder
+					.comment("Whether the sea magic ability should be enabled")
+					.define("seaMagic", true);
+			
+			seaAthletics = builder
+					.comment("Whether the sea athletics ability should be enabled")
+					.define("seaAthletics", true);
+			
+			water = builder
+					.comment("Whether the water ability should be enabled")
+					.define("water", true);
+			
+			spectralImpact = builder
+					.comment("Whether the spectralImpact ability should be enabled")
+					.define("spectralImpact", true);
+			
+		}
+		
+		builder.pop().pop().push("cave_dragon");
+		builder.push("actives");
+		
+		{
+			fireBreath = builder
+					.comment("Whether the firebreath ability should be enabled")
+					.define("fireBreath", true);
+			
+			fireBreathDamage = builder
+					.comment("The amount of damage the firebreath ability deals. This value is multiplied by the skill level.")
+					.defineInRange("fireballDamage", 3.0, 0, 100.0);
+			
+			fireBreathInitialMana = builder
+					.comment("The mana cost for starting the firebreath ability")
+					.defineInRange("fireBreathInitialMana", 2, 0, 100);
+			
+			fireBreathOvertimeMana = builder
+					.comment("The mana cost of sustaining the firebreath ability")
+					.defineInRange("fireBreathOvertimeMana", 1, 0, 100);
+			
+			fireBreathManaTicks = builder
+					.comment("How often in ticks, mana is consumed while using fire breath")
+					.defineInRange("fireBreathOvertimeMana", Functions.secondsToTicks(2), 0, 100);
+		}
+		
+		{
+			fireball = builder
+					.comment("Whether the fireball ability should be enabled")
+					.define("fireball", true);
+			
+			fireballDamage = builder
+					.comment("The amount of damage the fireball ability deals. This value is multiplied by the skill level.")
+					.defineInRange("fireballDamage", 5.0, 0, 100.0);
+			
+			fireballManaCost = builder
+					.comment("The mana cost for using the fireball ball ability")
+					.defineInRange("fireballManaCost", 5, 0, 100);
+			
+		}
+		
+		{
+			toughSkin = builder
+					.comment("Whether the tough skin ability should be enabled")
+					.define("toughSkin", true);
+			
+			toughSkinDuration = builder
+					.comment("The duration in seconds of the tough skin effect given when the ability is used")
+					.defineInRange("toughSkinDuration", 30, 0, 10000);
+			
+			toughSkinManaCost = builder
+					.comment("The mana cost for using the tough skin ability")
+					.defineInRange("toughSkinManaCost", 5, 0, 100);
+			
+			toughSkinArmorValue = builder
+					.comment("The amount of extra armor given per level of tough skin effect")
+					.defineInRange("toughSkinArmorValue", 2.0, 0, 10000);
+			
+		}
+		
+		{
+			lavaVision = builder
+					.comment("Whether the lava vision ability should be enabled")
+					.define("lavaVision", true);
+			
+			lavaVisionDuration = builder
+					.comment("The duration in seconds of the lava vision effect given when the ability is used")
+					.defineInRange("lavaVisionDuration", 45, 0, 10000);
+			
+			lavaVisionManaCost = builder
+					.comment("The mana cost for using the lava vision ability")
+					.defineInRange("lavaVisionManaCost", 2, 0, 100);
+			
+		}
+		
+		builder.pop().push("passives");
+		{
+			caveMagic = builder
+					.comment("Whether the cave magic ability should be enabled")
+					.define("caveMagic", true);
+			
+			caveAthletics = builder
+					.comment("Whether the cave athletics ability should be enabled")
+					.define("caveAthletics", true);
+			
+			contrastShower = builder
+					.comment("Whether the contrast shower ability should be enabled")
+					.define("contrastShower", true);
+			
+			burn = builder
+					.comment("Whether the burn ability should be enabled")
+					.define("burn", true);
+			
+		}
 
-		fireballDamage = builder
-				.comment("The amount of damage the fireball ability deals. This value is multiplied by the skill elvel.")
-				.defineInRange("fireballDamage", 5.0, 0, 100.0);
-
+		builder.pop().pop().pop();
+		
 		fireBreathSpreadsFire = builder
 				.comment("Whether the fire breath actually spreads fire when used")
 				.define("fireBreathSpreadsFire", true);

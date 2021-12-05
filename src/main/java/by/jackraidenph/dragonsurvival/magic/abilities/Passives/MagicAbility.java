@@ -2,7 +2,9 @@ package by.jackraidenph.dragonsurvival.magic.abilities.Passives;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.magic.common.PassiveDragonAbility;
+import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.IFormattableTextComponent;
@@ -12,9 +14,9 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class MagicAbility extends PassiveDragonAbility
 {
-	public MagicAbility(String abilityId, String icon, int minLevel, int maxLevel)
+	public MagicAbility(DragonType type, String abilityId, String icon, int minLevel, int maxLevel)
 	{
-		super(abilityId, icon, minLevel, maxLevel);
+		super( type, abilityId, icon, minLevel, maxLevel);
 	}
 	
 	public int getPoints(){
@@ -24,7 +26,17 @@ public class MagicAbility extends PassiveDragonAbility
 	@Override
 	public MagicAbility createInstance()
 	{
-		return new MagicAbility(id, icon, minLevel, maxLevel);
+		return new MagicAbility(type, id, icon, minLevel, maxLevel);
+	}
+	
+	@Override
+	public boolean isDisabled()
+	{
+		if(type == DragonType.FOREST && !ConfigHandler.SERVER.forestMagic.get()) return true;
+		if(type == DragonType.SEA && !ConfigHandler.SERVER.seaMagic.get()) return true;
+		if(type == DragonType.CAVE && !ConfigHandler.SERVER.caveMagic.get()) return true;
+		
+		return super.isDisabled();
 	}
 	
 	@OnlyIn( Dist.CLIENT )

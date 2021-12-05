@@ -8,6 +8,7 @@ import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
 import by.jackraidenph.dragonsurvival.network.magic.SyncAbilityCastingToServer;
 import by.jackraidenph.dragonsurvival.network.magic.SyncAbilityCooldown;
+import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.SoundEvents;
@@ -29,9 +30,9 @@ public class ActiveDragonAbility extends DragonAbility
     protected int abilityCooldown;
     protected int currentCooldown;
     
-    public ActiveDragonAbility(String id,  String icon, int minLevel, int maxLevel, int manaCost, int castTime, int cooldown, Integer[] requiredLevels)
+    public ActiveDragonAbility(DragonType type, String id,  String icon, int minLevel, int maxLevel, int manaCost, int castTime, int cooldown, Integer[] requiredLevels)
     {
-        super(id, icon, minLevel, maxLevel);
+        super(type, id, icon, minLevel, maxLevel);
         this.manaCost = manaCost;
         this.requiredLevels = requiredLevels;
         this.abilityCooldown = cooldown;
@@ -59,6 +60,8 @@ public class ActiveDragonAbility extends DragonAbility
     @Override
     public int getLevel()
     {
+        if(isDisabled()) return 0;
+        
         if(requiredLevels != null && getPlayer() != null){
             int level = 0;
             
@@ -75,7 +78,7 @@ public class ActiveDragonAbility extends DragonAbility
     
     @Override
     public ActiveDragonAbility createInstance(){
-        return new ActiveDragonAbility(id, icon, minLevel, maxLevel, manaCost, castTime, abilityCooldown, requiredLevels);
+        return new ActiveDragonAbility(type, id, icon, minLevel, maxLevel, manaCost, castTime, abilityCooldown, requiredLevels);
     }
     
     public Integer[] getRequiredLevels()

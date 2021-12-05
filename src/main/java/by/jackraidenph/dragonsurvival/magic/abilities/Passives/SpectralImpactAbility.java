@@ -1,6 +1,8 @@
 package by.jackraidenph.dragonsurvival.magic.abilities.Passives;
 
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.magic.common.PassiveDragonAbility;
+import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -11,9 +13,9 @@ import java.util.ArrayList;
 
 public class SpectralImpactAbility extends PassiveDragonAbility
 {
-	public SpectralImpactAbility(String abilityId, String icon, int minLevel, int maxLevel)
+	public SpectralImpactAbility(DragonType type, String abilityId, String icon, int minLevel, int maxLevel)
 	{
-		super(abilityId, icon, minLevel, maxLevel);
+		super(type, abilityId, icon, minLevel, maxLevel);
 	}
 	
 	public int getChance(){
@@ -23,7 +25,7 @@ public class SpectralImpactAbility extends PassiveDragonAbility
 	@Override
 	public SpectralImpactAbility createInstance()
 	{
-		return new SpectralImpactAbility(id, icon, minLevel, maxLevel);
+		return new SpectralImpactAbility(type, id, icon, minLevel, maxLevel);
 	}
 	
 	@Override
@@ -37,5 +39,11 @@ public class SpectralImpactAbility extends PassiveDragonAbility
 		ArrayList<ITextComponent> list = super.getLevelUpInfo();
 		list.add(new TranslationTextComponent("ds.skill.chance", "+15"));
 		return list;
+	}
+	
+	@Override
+	public boolean isDisabled()
+	{
+		return super.isDisabled() || !ConfigHandler.SERVER.spectralImpact.get();
 	}
 }

@@ -4,6 +4,7 @@ import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.KeyInputHandler;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.entity.magic.FireBallEntity;
+import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.IFormattableTextComponent;
@@ -18,15 +19,15 @@ import java.util.Locale;
 public class FireBallAbility extends ActiveDragonAbility
 {
 	
-	public FireBallAbility(String id, String icon, int minLevel, int maxLevel, int manaCost, int castTime, int cooldown, Integer[] requiredLevels)
+	public FireBallAbility(DragonType type, String id, String icon, int minLevel, int maxLevel, int manaCost, int castTime, int cooldown, Integer[] requiredLevels)
 	{
-		super(id, icon, minLevel, maxLevel, manaCost, castTime, cooldown, requiredLevels);
+		super(type, id, icon, minLevel, maxLevel, manaCost, castTime, cooldown, requiredLevels);
 	}
 	
 	@Override
 	public FireBallAbility createInstance()
 	{
-		return new FireBallAbility(id, icon, minLevel, maxLevel, manaCost, castTime, abilityCooldown, requiredLevels);
+		return new FireBallAbility(type, id, icon, minLevel, maxLevel, manaCost, castTime, abilityCooldown, requiredLevels);
 	}
 	
 	@Override
@@ -85,5 +86,11 @@ public class FireBallAbility extends ActiveDragonAbility
 	public IFormattableTextComponent getDescription()
 	{
 		return new TranslationTextComponent("ds.skill.description." + getId(), getDamage());
+	}
+	
+	@Override
+	public boolean isDisabled()
+	{
+		return super.isDisabled() || !ConfigHandler.SERVER.fireball.get();
 	}
 }

@@ -6,7 +6,6 @@ import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.emotes.Emote;
 import by.jackraidenph.dragonsurvival.emotes.EmoteRegistry;
-import by.jackraidenph.dragonsurvival.handlers.Magic.ClientMagicHUDHandler;
 import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.emotes.SyncEmoteServer;
 import by.jackraidenph.dragonsurvival.network.emotes.SyncEmoteStatsServer;
@@ -44,6 +43,11 @@ public class EmoteMenuHandler
 	
 	private static final ResourceLocation SOUND = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/emote/sound.png");
 	private static final ResourceLocation NO_SOUND = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/emote/no_sound.png");
+	
+	private static final ResourceLocation BUTTON_UP = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/emote/button_up.png");
+	private static final ResourceLocation BUTTON_DOWN = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/emote/button_down.png");
+	private static final ResourceLocation BUTTON_LEFT = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/emote/button_left.png");
+	private static final ResourceLocation BUTTON_RIGHT = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/emote/button_right.png");
 	
 	
 	public static void setEmote(Emote emote){
@@ -120,18 +124,14 @@ public class EmoteMenuHandler
 						AbstractGui.fill(stack, x, y, x + this.width, y + this.height, new Color(0.35F, 0.35F, 0.35F, 0.75F).getRGB());
 					}
 					
-					Minecraft.getInstance().getTextureManager().bind(ClientMagicHUDHandler.widgetTextures);
+					Minecraft.getInstance().getTextureManager().bind(BUTTON_LEFT);
 					
 					GL11.glPushMatrix();
 					GL11.glScalef(0.25F, 0.25F, 0F);
 					GL11.glTranslatef(x * 3, y * 3, 0);
 					GL11.glTranslatef(15, (height / 2) - 2, 0);
 					
-					if (isHovered()) {
-						blit(stack, x, y, 22, 222, 22, 34, 256, 256);
-					} else {
-						blit(stack, x, y, 0, 222, 22, 34, 256, 256);
-					}
+					blit(stack, x, y, 0, 0, 32, 32, 32, 32);
 					
 					GL11.glPopMatrix();
 				}
@@ -156,18 +156,14 @@ public class EmoteMenuHandler
 						AbstractGui.fill(stack, x, y, x + this.width, y + this.height, new Color(0.35F, 0.35F, 0.35F, 0.75F).getRGB());
 					}
 					
-					Minecraft.getInstance().getTextureManager().bind(ClientMagicHUDHandler.widgetTextures);
+					Minecraft.getInstance().getTextureManager().bind(BUTTON_RIGHT);
 					
 					GL11.glPushMatrix();
 					GL11.glScalef(0.25F, 0.25F, 0F);
 					GL11.glTranslatef(x * 3, y * 3, 0);
 					GL11.glTranslatef(20, (height / 2) - 2, 0);
 					
-					if (isHovered()) {
-						blit(stack, x, y, 66, 222, 22, 34, 256, 256);
-					} else {
-						blit(stack, x, y, 44, 222, 22, 34, 256, 256);
-					}
+					blit(stack, x, y, 0, 0, 32, 32, 32, 32);
 					
 					GL11.glPopMatrix();
 				}
@@ -193,25 +189,18 @@ public class EmoteMenuHandler
 					int j = getFGColor();
 					drawCenteredString(stack, Minecraft.getInstance().font, new TranslationTextComponent("ds.emote.toggle"), this.x + this.width / 2, this.y + (this.height - 8) / 2, j | MathHelper.ceil(this.alpha * 255.0F) << 24);
 					
-					Minecraft.getInstance().getTextureManager().bind(ClientMagicHUDHandler.widgetTextures);
 					
 					GL11.glPushMatrix();
 					GL11.glScalef(0.25F, 0.25F, 0F);
 					GL11.glTranslatef(x * 3, y * 3, 0);
-					GL11.glTranslatef(15, (height / 2) + 3, 0);
+					GL11.glTranslatef(15, (height / 2), 0);
 					
 					if(handler.getEmotes().emoteMenuOpen) {
-						if (isHovered()) {
-							blit(stack, x, y, 222, 212, 34, 22, 256, 256);
-						} else {
-							blit(stack, x, y, 222, 234, 34, 22, 256, 256);
-						}
+						Minecraft.getInstance().getTextureManager().bind(BUTTON_UP);
+						blit(stack, x, y, 0, 0, 32, 32, 32, 32);
 					}else{
-						if (isHovered()) {
-							blit(stack, x, y, 188, 234, 34, 22, 256, 256);
-						} else {
-							blit(stack, x, y, 188, 212, 34, 22, 256, 256);
-						}
+						Minecraft.getInstance().getTextureManager().bind(BUTTON_DOWN);
+						blit(stack, x, y, 0, 0, 32, 32, 32, 32);
 					}
 					
 					GL11.glPopMatrix();

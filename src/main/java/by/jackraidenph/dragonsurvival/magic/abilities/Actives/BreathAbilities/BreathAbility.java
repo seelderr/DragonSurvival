@@ -6,6 +6,7 @@ import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.KeyInputHandler;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.util.DragonLevel;
+import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
@@ -29,16 +30,16 @@ import java.util.function.Predicate;
 
 public abstract class BreathAbility extends ActiveDragonAbility
 {
-	public BreathAbility(String id, String icon, int minLevel, int maxLevel, int manaCost, int castTime, int cooldown, Integer[] requiredLevels)
+	public BreathAbility(DragonType type, String id, String icon, int minLevel, int maxLevel, int manaCost, int castTime, int cooldown, Integer[] requiredLevels)
 	{
-		super(id, icon, minLevel, maxLevel, manaCost, castTime, cooldown, requiredLevels);
+		super(type, id, icon, minLevel, maxLevel, manaCost, castTime, cooldown, requiredLevels);
 	}
 	
 	private int RANGE = 5;
 	private static final int ARC = 45;
 
 	public int channelCost = 1;
-	private boolean firstUse = true;
+	protected boolean firstUse = true;
 	public int castingTicks = 0;
 
 	public boolean canConsumeMana(PlayerEntity player) {
@@ -171,7 +172,7 @@ public abstract class BreathAbility extends ActiveDragonAbility
 	
 	public abstract boolean canHitEntity(LivingEntity entity);
 	public abstract void onDamage(LivingEntity entity);
-	public abstract int getDamage();
+	public abstract float getDamage();
 	public abstract void onBlock(BlockPos pos, BlockState blockState);
 	
 	public void onEntityHit(LivingEntity entityHit){

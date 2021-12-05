@@ -1,10 +1,12 @@
 package by.jackraidenph.dragonsurvival.magic.abilities.Actives.BuffAbilities;
 
 import by.jackraidenph.dragonsurvival.Functions;
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.KeyInputHandler;
 import by.jackraidenph.dragonsurvival.magic.common.AbilityAnimation;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
+import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.SoundCategory;
@@ -20,19 +22,23 @@ import java.util.Locale;
 
 public class HunterAbility extends ActiveDragonAbility
 {
-	public HunterAbility(String id, String icon, int minLevel, int maxLevel, int manaCost, int castTime, int cooldown, Integer[] requiredLevels)
+	public HunterAbility(DragonType type, String id, String icon, int minLevel, int maxLevel, int manaCost, int castTime, int cooldown, Integer[] requiredLevels)
 	{
-		super(id, icon, minLevel, maxLevel, manaCost, castTime, cooldown, requiredLevels);
+		super(type, id, icon, minLevel, maxLevel, manaCost, castTime, cooldown, requiredLevels);
 	}
 	
 	@Override
 	public HunterAbility createInstance()
 	{
-		return new HunterAbility(id, icon, minLevel, maxLevel, manaCost, castTime, abilityCooldown, requiredLevels);
+		return new HunterAbility(type, id, icon, minLevel, maxLevel, manaCost, castTime, abilityCooldown, requiredLevels);
 	}
 	
 	public int getDuration(){
-		return 60 * getLevel();
+		return ConfigHandler.SERVER.hunterDuration.get() * getLevel();
+	}
+	
+	public double getDamage(){
+		return ConfigHandler.SERVER.hunterDamageBonus.get() * getLevel();
 	}
 	
 	@Override
@@ -83,8 +89,14 @@ public class HunterAbility extends ActiveDragonAbility
 	@OnlyIn( Dist.CLIENT )
 	public ArrayList<ITextComponent> getLevelUpInfo(){
 		ArrayList<ITextComponent> list = super.getLevelUpInfo();
-		list.add(new TranslationTextComponent("ds.skill.duration.seconds", "+60"));
-		list.add(new TranslationTextComponent("ds.skill.damage", "+1.5X"));
+		list.add(new TranslationTextComponent("ds.skill.duration.seconds", "+" + ConfigHandler.SERVER.hunterDuration.get()));
+		list.add(new TranslationTextComponent("ds.skill.damage", "+" + ConfigHandler.SERVER.hunterDamageBonus.get() + "X"));
 		return list;
+	}
+	
+	@Override
+	public boolean isDisabled()
+	{
+		return super.isDisabled() || !ConfigHandler.SERVER.hunter.get();
 	}
 }

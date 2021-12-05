@@ -3,6 +3,7 @@ package by.jackraidenph.dragonsurvival.magic.abilities.Passives;
 import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.magic.common.PassiveDragonAbility;
+import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -13,9 +14,9 @@ import java.util.ArrayList;
 
 public class LightInDarknessAbility extends PassiveDragonAbility
 {
-	public LightInDarknessAbility(String abilityId, String icon, int minLevel, int maxLevel)
+	public LightInDarknessAbility(DragonType type, String abilityId, String icon, int minLevel, int maxLevel)
 	{
-		super(abilityId, icon, minLevel, maxLevel);
+		super(type, abilityId, icon, minLevel, maxLevel);
 	}
 	
 	public int getDuration(){
@@ -25,7 +26,13 @@ public class LightInDarknessAbility extends PassiveDragonAbility
 	@Override
 	public LightInDarknessAbility createInstance()
 	{
-		return new LightInDarknessAbility(id, icon, minLevel, maxLevel);
+		return new LightInDarknessAbility(type, id, icon, minLevel, maxLevel);
+	}
+	
+	@Override
+	public boolean isDisabled()
+	{
+		return super.isDisabled() || !ConfigHandler.SERVER.lightInDarkness.get();
 	}
 	
 	@Override

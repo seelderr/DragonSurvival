@@ -1,5 +1,6 @@
 package by.jackraidenph.dragonsurvival.entity.magic;
 
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.registration.EntityTypesInit;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -80,7 +81,7 @@ public class DragonSpikeEntity extends AbstractArrowEntity
 	@Override
 	public double getBaseDamage()
 	{
-		return getArrow_level() * 2;
+		return getArrow_level() * ConfigHandler.SERVER.spikeDamage.get();
 	}
 	
 	protected void onHitEntity(EntityRayTraceResult p_213868_1_) {
@@ -95,7 +96,7 @@ public class DragonSpikeEntity extends AbstractArrowEntity
 				((LivingEntity)entity1).setLastHurtMob(entity);
 			}
 		}
-		float damage = getArrow_level() * 2;
+		float damage = (float)getBaseDamage();
 		
 		if (entity.hurt(damagesource, damage)) {
 			if (entity instanceof LivingEntity) {

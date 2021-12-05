@@ -3,6 +3,7 @@ package by.jackraidenph.dragonsurvival.handlers.Magic;
 import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.capability.Capabilities;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
 import by.jackraidenph.dragonsurvival.magic.abilities.Actives.BreathAbilities.LightningBreathAbility;
 import by.jackraidenph.dragonsurvival.magic.abilities.Passives.BurnAbility;
@@ -181,7 +182,7 @@ public class MagicHandler
 				if (player.hasEffect(DragonEffects.HUNTER)) {
 					EffectInstance hunter = player.getEffect(DragonEffects.HUNTER);
 					player.removeEffect(DragonEffects.HUNTER);
-					event.setDamageModifier((hunter.getAmplifier() + 1) * 1.5F);
+					event.setDamageModifier((float)((hunter.getAmplifier() + 1) * ConfigHandler.SERVER.hunterDamageBonus.get()));
 					event.setResult(Result.ALLOW);
 				}
 			});
@@ -232,7 +233,7 @@ public class MagicHandler
 				if (!cap.isDragon()) return;
 				
 				if (player.hasEffect(DragonEffects.REVEALING_THE_SOUL)) {
-					int extra = Math.min(20, event.getDroppedExperience()); //TODO Change this to a config option for max exp gain
+					int extra = (int)Math.min(ConfigHandler.SERVER.revealingTheSoulMaxEXP.get(), event.getDroppedExperience() * ConfigHandler.SERVER.revealingTheSoulMultiplier.get()); //TODO Change this to a config option for max exp gain
 					event.setDroppedExperience(event.getDroppedExperience() + extra);
 				}
 			});

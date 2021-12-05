@@ -1,6 +1,8 @@
 package by.jackraidenph.dragonsurvival.magic.common;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
+import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
@@ -25,9 +27,11 @@ public abstract class DragonAbility
     protected final int maxLevel;
     protected final int minLevel;
     
+    protected DragonType type;
+    
     public PlayerEntity player;
     
-    public DragonAbility(String abilityId, String icon, int minLevel, int maxLevel){
+    public DragonAbility(DragonType type, String abilityId, String icon, int minLevel, int maxLevel){
         nf.setMaximumFractionDigits(1);
         
         this.id = abilityId;
@@ -35,6 +39,7 @@ public abstract class DragonAbility
         this.maxLevel = maxLevel;
         this.minLevel = minLevel;
         this.level = minLevel;
+        this.type = type;
     }
     
     public PlayerEntity getPlayer(){
@@ -42,6 +47,7 @@ public abstract class DragonAbility
     }
     
     public abstract DragonAbility createInstance();
+    
     
     @OnlyIn( Dist.CLIENT )
     public ResourceLocation getIcon()
@@ -74,6 +80,11 @@ public abstract class DragonAbility
     
     @OnlyIn( Dist.CLIENT )
     public boolean isDisabled() {
+        if(!ConfigHandler.SERVER.dragonAbilities.get()) return true;
+        if(type == DragonType.CAVE && !ConfigHandler.SERVER.caveDragonAbilities.get()) return true;
+        if(type == DragonType.SEA && !ConfigHandler.SERVER.seaDragonAbilities.get()) return true;
+        if(type == DragonType.FOREST && !ConfigHandler.SERVER.forestDragonAbilities.get()) return true;
+    
         return false;
     }
     
@@ -88,6 +99,7 @@ public abstract class DragonAbility
     }
     
     public int getLevel() {
+        if(isDisabled()) return 0;
         return this.level;
     }
     public void setLevel(int level) {

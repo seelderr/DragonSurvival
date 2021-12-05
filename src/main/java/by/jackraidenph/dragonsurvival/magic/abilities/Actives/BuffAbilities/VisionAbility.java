@@ -1,10 +1,12 @@
 package by.jackraidenph.dragonsurvival.magic.abilities.Actives.BuffAbilities;
 
 import by.jackraidenph.dragonsurvival.Functions;
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.KeyInputHandler;
 import by.jackraidenph.dragonsurvival.magic.common.AbilityAnimation;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
+import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
@@ -23,21 +25,23 @@ import java.util.Locale;
 public class VisionAbility extends ActiveDragonAbility
 {
 	private Effect effect;
-	public VisionAbility(Effect effect, String name, String icon, int minLevel, int maxLevel, int manaCost, int castTime, int cooldown, Integer[] requiredLevels)
+	public VisionAbility(DragonType type, Effect effect, String name, String icon, int minLevel, int maxLevel, int manaCost, int castTime, int cooldown, Integer[] requiredLevels)
 	{
-		super(name, icon, minLevel, maxLevel, manaCost, castTime, cooldown, requiredLevels);
+		super(type, name, icon, minLevel, maxLevel, manaCost, castTime, cooldown, requiredLevels);
 		this.effect = effect;
 	}
 	
 	@Override
 	public VisionAbility createInstance()
 	{
-		return new VisionAbility(effect, id, icon, minLevel, maxLevel, manaCost, castTime, abilityCooldown, requiredLevels);
+		return new VisionAbility(type, effect, id, icon, minLevel, maxLevel, manaCost, castTime, abilityCooldown, requiredLevels);
 	}
 	
 	public int getDuration(){
-		return (effect == DragonEffects.LAVA_VISION ? 45 : 90) * getLevel();
+		return (effect == DragonEffects.LAVA_VISION ? ConfigHandler.SERVER.lavaVisionDuration.get() : ConfigHandler.SERVER.seaEyesDuration.get()) * getLevel();
 	}
+	
+	
 	
 	@Override
 	public void onActivation(PlayerEntity player)
@@ -50,6 +54,14 @@ public class VisionAbility extends ActiveDragonAbility
 		}
 		
 		player.level.playLocalSound(player.position().x, player.position().y + 0.5, player.position().z, SoundEvents.UI_TOAST_IN, SoundCategory.PLAYERS, 5F, 0.1F, false);
+	}
+	
+	@Override
+	public boolean isDisabled()
+	{
+		if(effect == DragonEffects.LAVA_VISION && !ConfigHandler.SERVER.lavaVision.get()) return true;
+		if(effect == DragonEffects.WATER_VISION && !ConfigHandler.SERVER.seaEyes.get()) return true;
+		return super.isDisabled();
 	}
 	
 	@Override
@@ -73,7 +85,7 @@ public class VisionAbility extends ActiveDragonAbility
 	@OnlyIn( Dist.CLIENT )
 	public ArrayList<ITextComponent> getLevelUpInfo(){
 		ArrayList<ITextComponent> list = super.getLevelUpInfo();
-		list.add(new TranslationTextComponent("ds.skill.duration.seconds", "+" + (effect == DragonEffects.LAVA_VISION ? 45 : 90)));
+		list.add(new TranslationTextComponent("ds.skill.duration.seconds", "+" + (effect == DragonEffects.LAVA_VISION ? ConfigHandler.SERVER.lavaVisionDuration.get() : ConfigHandler.SERVER.seaEyesDuration.get())));
 		return list;
 	}
 	

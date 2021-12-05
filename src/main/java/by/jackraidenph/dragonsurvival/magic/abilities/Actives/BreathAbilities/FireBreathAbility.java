@@ -9,6 +9,7 @@ import by.jackraidenph.dragonsurvival.particles.CaveDragon.SmallFireParticleData
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
 import by.jackraidenph.dragonsurvival.sounds.FireBreathSound;
 import by.jackraidenph.dragonsurvival.sounds.SoundRegistry;
+import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.block.AbstractFireBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -39,15 +40,34 @@ import java.util.ArrayList;
 
 public class FireBreathAbility extends BreathAbility
 {
-	public FireBreathAbility(String id, String icon, int minLevel, int maxLevel, int manaCost, int castTime, int cooldown, Integer[] requiredLevels)
+	public FireBreathAbility(DragonType type, String id, String icon, int minLevel, int maxLevel, int manaCost, int castTime, int cooldown, Integer[] requiredLevels)
 	{
-		super(id, icon, minLevel, maxLevel, manaCost, castTime, cooldown, requiredLevels);
+		super(type, id, icon, minLevel, maxLevel, manaCost, castTime, cooldown, requiredLevels);
 	}
 
 	@Override
 	public FireBreathAbility createInstance()
 	{
-		return new FireBreathAbility(id, icon, minLevel, maxLevel, manaCost, castTime, abilityCooldown, requiredLevels);
+		return new FireBreathAbility(type, id, icon, minLevel, maxLevel, manaCost, castTime, abilityCooldown, requiredLevels);
+	}
+	
+	@Override
+	public int getManaCost()
+	{
+		return (firstUse ? ConfigHandler.SERVER.fireBreathInitialMana.get() : ConfigHandler.SERVER.fireBreathOvertimeMana.get());
+	}
+	
+	public void tickCost(){
+		if(firstUse || player.tickCount % Functions.secondsToTicks(ConfigHandler.SERVER.fireBreathManaTicks.get()) == 0){
+			DragonStateProvider.consumeMana(player, this.getManaCost());
+			firstUse = false;
+		}
+	}
+	
+	@Override
+	public boolean isDisabled()
+	{
+		return super.isDisabled() || !ConfigHandler.SERVER.fireBreath.get();
 	}
 	
 	
@@ -63,7 +83,7 @@ public class FireBreathAbility extends BreathAbility
 		super.stopCasting();
 	}
 	
-	
+
 	@Override
 	public void onActivation(PlayerEntity player)
 	{
@@ -265,18 +285,18 @@ public class FireBreathAbility extends BreathAbility
 		}
 	}
 	
-	public static int getDamage(int level){
-		return 3 * level;
+	public static float getDamage(int level){
+		return (float)(ConfigHandler.SERVER.fireBreathDamage.get() * level);
 	}
 
-	public int getDamage(){
+	public float getDamage(){
 		return getDamage(getLevel());
 	}
 	
 	@OnlyIn( Dist.CLIENT )
 	public ArrayList<ITextComponent> getLevelUpInfo(){
 		ArrayList<ITextComponent> list = super.getLevelUpInfo();
-		list.add(new TranslationTextComponent("ds.skill.damage", "+3"));
+		list.add(new TranslationTextComponent("ds.skill.damage", "+" + ConfigHandler.SERVER.fireBreathDamage.get()));
 		return list;
 	}
 }

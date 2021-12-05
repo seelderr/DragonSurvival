@@ -3,11 +3,13 @@ package by.jackraidenph.dragonsurvival.magic.abilities.Actives.BreathAbilities;
 import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.particles.ForestDragon.LargePoisonParticleData;
 import by.jackraidenph.dragonsurvival.particles.ForestDragon.SmallPoisonParticleData;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
 import by.jackraidenph.dragonsurvival.sounds.PoisonBreathSound;
 import by.jackraidenph.dragonsurvival.sounds.SoundRegistry;
+import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.IGrowable;
@@ -42,15 +44,42 @@ import java.util.ArrayList;
 
 public class PoisonBreathAbility extends BreathAbility
 {
-	public PoisonBreathAbility(String id, String icon, int minLevel, int maxLevel, int manaCost, int castTime, int cooldown, Integer[] requiredLevels)
+	public PoisonBreathAbility(DragonType type, String id, String icon, int minLevel, int maxLevel, int manaCost, int castTime, int cooldown, Integer[] requiredLevels)
 	{
-		super(id, icon, minLevel, maxLevel, manaCost, castTime, cooldown, requiredLevels);
+		super(type, id, icon, minLevel, maxLevel, manaCost, castTime, cooldown, requiredLevels);
 	}
 
 	@Override
 	public PoisonBreathAbility createInstance()
 	{
-		return new PoisonBreathAbility(id, icon, minLevel, maxLevel, manaCost, castTime, abilityCooldown, requiredLevels);
+		return new PoisonBreathAbility(type, id, icon, minLevel, maxLevel, manaCost, castTime, abilityCooldown, requiredLevels);
+	}
+	
+	@Override
+	public int getManaCost()
+	{
+		return (firstUse ? ConfigHandler.SERVER.forestBreathInitialMana.get() : ConfigHandler.SERVER.forestBreathOvertimeMana.get());
+	}
+	
+	public void tickCost(){
+		if(firstUse || player.tickCount % Functions.secondsToTicks(ConfigHandler.SERVER.forestBreathManaTicks.get()) == 0){
+			DragonStateProvider.consumeMana(player, this.getManaCost());
+			firstUse = false;
+		}
+	}
+	
+	@Override
+	public boolean isDisabled()
+	{
+		return super.isDisabled() || !ConfigHandler.SERVER.forestBreath.get();
+	}
+	
+	public static float getDamage(int level){
+		return (float)(ConfigHandler.SERVER.forestBreathDamage.get() * level);
+	}
+	
+	public float getDamage(){
+		return getDamage(getLevel());
 	}
 	
 	@OnlyIn(Dist.CLIENT)
@@ -238,19 +267,11 @@ public class PoisonBreathAbility extends BreathAbility
 		}
 	}
 	
-
-	public static int getDamage(int level){
-		return level;
-	}
-
-	public int getDamage(){
-		return getDamage(getLevel());
-	}
-	
 	@OnlyIn( Dist.CLIENT )
 	public ArrayList<ITextComponent> getLevelUpInfo(){
 		ArrayList<ITextComponent> list = super.getLevelUpInfo();
-		list.add(new TranslationTextComponent("ds.skill.damage", "+1"));
+		list.add(new TranslationTextComponent("ds.skill.damage", "+" + ConfigHandler.SERVER.forestBreathDamage.get()));
 		return list;
 	}
+	
 }

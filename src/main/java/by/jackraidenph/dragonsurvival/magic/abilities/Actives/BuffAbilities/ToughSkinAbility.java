@@ -1,7 +1,9 @@
 package by.jackraidenph.dragonsurvival.magic.abilities.Actives.BuffAbilities;
 
 import by.jackraidenph.dragonsurvival.Functions;
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.KeyInputHandler;
+import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.particles.ParticleType;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.text.IFormattableTextComponent;
@@ -15,13 +17,13 @@ import java.util.Locale;
 
 public class ToughSkinAbility extends AoeBuffAbility
 {
-	public ToughSkinAbility(EffectInstance effect, int range, ParticleType particle, String id, String icon, int minLevel, int maxLevel, int manaCost, int castTime, int cooldown, Integer[] requiredLevels)
+	public ToughSkinAbility(DragonType type, EffectInstance effect, int range, ParticleType particle, String id, String icon, int minLevel, int maxLevel, int manaCost, int castTime, int cooldown, Integer[] requiredLevels)
 	{
-		super(effect, range, particle, id, icon, minLevel, maxLevel, manaCost, castTime, cooldown, requiredLevels);
+		super(type, effect, range, particle, id, icon, minLevel, maxLevel, manaCost, castTime, cooldown, requiredLevels);
 	}
 	
-	public static int getDefence(int level){
-		return level * 2;
+	public static double getDefence(int level){
+		return level * ConfigHandler.SERVER.toughSkinArmorValue.get();
 	}
 	
 	@Override
@@ -33,7 +35,7 @@ public class ToughSkinAbility extends AoeBuffAbility
 	@Override
 	public ToughSkinAbility createInstance()
 	{
-		return new ToughSkinAbility(effect, range, particle, id, icon, minLevel, maxLevel, manaCost, castTime, abilityCooldown, requiredLevels);
+		return new ToughSkinAbility(type, effect, range, particle, id, icon, minLevel, maxLevel, manaCost, castTime, abilityCooldown, requiredLevels);
 	}
 	
 	@Override
@@ -70,7 +72,13 @@ public class ToughSkinAbility extends AoeBuffAbility
 	@OnlyIn( Dist.CLIENT )
 	public ArrayList<ITextComponent> getLevelUpInfo(){
 		ArrayList<ITextComponent> list = super.getLevelUpInfo();
-		list.add(new TranslationTextComponent("ds.skill.defence", "+2"));
+		list.add(new TranslationTextComponent("ds.skill.defence", "+" + ConfigHandler.SERVER.toughSkinArmorValue.get()));
 		return list;
+	}
+	
+	@Override
+	public boolean isDisabled()
+	{
+		return super.isDisabled() || !ConfigHandler.SERVER.toughSkin.get();
 	}
 }

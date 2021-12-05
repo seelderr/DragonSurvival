@@ -3,6 +3,7 @@ package by.jackraidenph.dragonsurvival.magic.abilities.Actives.BreathAbilities;
 import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.particles.SeaDragon.LargeLightningParticleData;
 import by.jackraidenph.dragonsurvival.particles.SeaDragon.SmallLightningParticleData;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
@@ -37,16 +38,36 @@ import java.util.List;
 
 public class LightningBreathAbility extends BreathAbility
 {
-	public LightningBreathAbility(String id, String icon, int minLevel, int maxLevel, int manaCost, int castTime, int cooldown, Integer[] requiredLevels)
+	public LightningBreathAbility(DragonType type, String id, String icon, int minLevel, int maxLevel, int manaCost, int castTime, int cooldown, Integer[] requiredLevels)
 	{
-		super(id, icon, minLevel, maxLevel, manaCost, castTime, cooldown, requiredLevels);
+		super(type, id, icon, minLevel, maxLevel, manaCost, castTime, cooldown, requiredLevels);
 	}
 
 	@Override
 	public LightningBreathAbility createInstance()
 	{
-		return new LightningBreathAbility(id, icon, minLevel, maxLevel, manaCost, castTime, abilityCooldown, requiredLevels);
+		return new LightningBreathAbility(type, id, icon, minLevel, maxLevel, manaCost, castTime, abilityCooldown, requiredLevels);
 	}
+	
+	@Override
+	public int getManaCost()
+	{
+		return (firstUse ? ConfigHandler.SERVER.stormBreathInitialMana.get() : ConfigHandler.SERVER.stormBreathOvertimeMana.get());
+	}
+	
+	public void tickCost(){
+		if(firstUse || player.tickCount % Functions.secondsToTicks(ConfigHandler.SERVER.stormBreathManaTicks.get()) == 0){
+			DragonStateProvider.consumeMana(player, this.getManaCost());
+			firstUse = false;
+		}
+	}
+	
+	@Override
+	public boolean isDisabled()
+	{
+		return super.isDisabled() || !ConfigHandler.SERVER.stormBreath.get();
+	}
+	
 	
 	@Override
 	public void onActivation(PlayerEntity player)
@@ -222,18 +243,18 @@ public class LightningBreathAbility extends BreathAbility
 		}
 	}
 
-	public static int getDamage(int level){
-		return level;
+	public static float getDamage(int level){
+		return (float)(ConfigHandler.SERVER.stormBreathDamage.get() * level);
 	}
 	
-	public int getDamage(){
+	public float getDamage(){
 		return getDamage(getLevel());
 	}
 	
 	@OnlyIn( Dist.CLIENT )
 	public ArrayList<ITextComponent> getLevelUpInfo(){
 		ArrayList<ITextComponent> list = super.getLevelUpInfo();
-		list.add(new TranslationTextComponent("ds.skill.damage", "+1"));
+		list.add(new TranslationTextComponent("ds.skill.damage", "+" + ConfigHandler.SERVER.stormBreathDamage.get()));
 		return list;
 	}
 	

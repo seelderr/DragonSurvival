@@ -1,8 +1,10 @@
 package by.jackraidenph.dragonsurvival.magic.abilities.Actives;
 
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.entity.magic.BallLightningEntity;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.KeyInputHandler;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
+import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.IFormattableTextComponent;
@@ -18,16 +20,16 @@ public class BallLightningAbility extends ActiveDragonAbility
 {
 	private int range;
 	
-	public BallLightningAbility(int range, String id, String icon, int minLevel, int maxLevel, int manaCost, int castTime, int cooldown, Integer[] requiredLevels)
+	public BallLightningAbility(DragonType type, int range, String id, String icon, int minLevel, int maxLevel, int manaCost, int castTime, int cooldown, Integer[] requiredLevels)
 	{
-		super(id, icon, minLevel, maxLevel, manaCost, castTime, cooldown, requiredLevels);
+		super(type, id, icon, minLevel, maxLevel, manaCost, castTime, cooldown, requiredLevels);
 		this.range = range;
 	}
 	
 	@Override
 	public BallLightningAbility createInstance()
 	{
-		return new BallLightningAbility(range, id, icon, minLevel, maxLevel, manaCost, castTime, abilityCooldown, requiredLevels);
+		return new BallLightningAbility(type, range, id, icon, minLevel, maxLevel, manaCost, castTime, abilityCooldown, requiredLevels);
 	}
 	
 	@Override
@@ -54,11 +56,11 @@ public class BallLightningAbility extends ActiveDragonAbility
 		return range;
 	}
 	
-	public static int getDamage(int level){
-		return 3 * level;
+	public static float getDamage(int level){
+		return (float)(ConfigHandler.SERVER.ballLightningDamage.get() * level);
 	}
 	
-	public int getDamage(){
+	public float getDamage(){
 		return getDamage(getLevel());
 	}
 	
@@ -84,7 +86,7 @@ public class BallLightningAbility extends ActiveDragonAbility
 	@OnlyIn( Dist.CLIENT )
 	public ArrayList<ITextComponent> getLevelUpInfo(){
 		ArrayList<ITextComponent> list = super.getLevelUpInfo();
-		list.add(new TranslationTextComponent("ds.skill.damage", "+3"));
+		list.add(new TranslationTextComponent("ds.skill.damage", "+" + ConfigHandler.SERVER.ballLightningDamage.get()));
 		return list;
 	}
 	
@@ -92,5 +94,11 @@ public class BallLightningAbility extends ActiveDragonAbility
 	public IFormattableTextComponent getDescription()
 	{
 		return new TranslationTextComponent("ds.skill.description." + getId(), getDamage());
+	}
+	
+	@Override
+	public boolean isDisabled()
+	{
+		return super.isDisabled() || !ConfigHandler.SERVER.ballLightning.get();
 	}
 }

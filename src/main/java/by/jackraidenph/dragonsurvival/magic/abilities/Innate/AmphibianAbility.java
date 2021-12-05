@@ -2,6 +2,7 @@ package by.jackraidenph.dragonsurvival.magic.abilities.Innate;
 
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.magic.common.InnateDragonAbility;
+import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
@@ -9,15 +10,15 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class AmphibianAbility extends InnateDragonAbility
 {
-	public AmphibianAbility(String abilityId, String icon, int minLevel, int maxLevel)
+	public AmphibianAbility(DragonType type, String abilityId, String icon, int minLevel, int maxLevel)
 	{
-		super(abilityId, icon, minLevel, maxLevel);
+		super(type, abilityId, icon, minLevel, maxLevel);
 	}
 	
 	@Override
 	public AmphibianAbility createInstance()
 	{
-		return new AmphibianAbility(id, icon, minLevel, maxLevel);
+		return new AmphibianAbility(type, id, icon, minLevel, maxLevel);
 	}
 	
 	@Override
@@ -28,7 +29,7 @@ public class AmphibianAbility extends InnateDragonAbility
 	
 	@OnlyIn( Dist.CLIENT )
 	public boolean isDisabled() {
-		return !ConfigHandler.SERVER.penalties.get() || ConfigHandler.SERVER.seaTicksWithoutWater.get() == 0.0;
+		return super.isDisabled() || !ConfigHandler.SERVER.penalties.get() || ConfigHandler.SERVER.seaTicksWithoutWater.get() == 0.0;
 	}
 	
 	

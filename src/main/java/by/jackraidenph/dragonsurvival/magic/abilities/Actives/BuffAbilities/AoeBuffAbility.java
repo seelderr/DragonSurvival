@@ -1,10 +1,12 @@
 package by.jackraidenph.dragonsurvival.magic.abilities.Actives.BuffAbilities;
 
 import by.jackraidenph.dragonsurvival.Functions;
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.KeyInputHandler;
 import by.jackraidenph.dragonsurvival.magic.common.AbilityAnimation;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
+import by.jackraidenph.dragonsurvival.util.DragonType;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.entity.AreaEffectCloudEntity;
@@ -13,6 +15,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particles.ParticleType;
 import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
@@ -32,13 +35,15 @@ public class AoeBuffAbility extends ActiveDragonAbility
 	protected int range;
 	protected ParticleType particle;
 	
-	public AoeBuffAbility(EffectInstance effect, int range, ParticleType particle, String id, String icon, int minLevel, int maxLevel, int manaCost, int castTime, int cooldown, Integer[] requiredLevels)
+	public AoeBuffAbility(DragonType type, EffectInstance effect, int range, ParticleType particle, String id, String icon, int minLevel, int maxLevel, int manaCost, int castTime, int cooldown, Integer[] requiredLevels)
 	{
-		super(id, icon, minLevel, maxLevel, manaCost, castTime, cooldown, requiredLevels);
+		super(type, id, icon, minLevel, maxLevel, manaCost, castTime, cooldown, requiredLevels);
 		this.effect = effect;
 		this.range = range;
 		this.particle = particle;
 	}
+	
+	
 	
 	@Override
 	public ArrayList<ITextComponent> getInfo()
@@ -48,8 +53,8 @@ public class AoeBuffAbility extends ActiveDragonAbility
 		components.add(new TranslationTextComponent("ds.skill.aoe", getRange() + "x" + getRange()));
 		
 		if(effect.getEffect() == DragonEffects.REVEALING_THE_SOUL){
-			components.add(new TranslationTextComponent("ds.skill.bonus_exp.multiplier", "2x"));
-			components.add(new TranslationTextComponent("ds.skill.bonus_exp.max_gain", "20"));
+			components.add(new TranslationTextComponent("ds.skill.bonus_exp.multiplier", ConfigHandler.SERVER.revealingTheSoulMultiplier.get() + "x"));
+			components.add(new TranslationTextComponent("ds.skill.bonus_exp.max_gain", Integer.toString(ConfigHandler.SERVER.revealingTheSoulMaxEXP.get())));
 		}
 		
 		if(!KeyInputHandler.ABILITY3.isUnbound()) {
@@ -65,9 +70,18 @@ public class AoeBuffAbility extends ActiveDragonAbility
 	}
 	
 	@Override
+	public boolean isDisabled()
+	{
+		if(effect.getEffect() == DragonEffects.REVEALING_THE_SOUL && !ConfigHandler.SERVER.revealingTheSoul.get()) return true;
+		if(effect.getEffect() == DragonEffects.STRONG_LEATHER && !ConfigHandler.SERVER.toughSkin.get()) return true;
+		if(effect.getEffect() == Effects.DIG_SPEED && !ConfigHandler.SERVER.inspiration.get()) return true;
+		return super.isDisabled();
+	}
+	
+	@Override
 	public AoeBuffAbility createInstance()
 	{
-		return new AoeBuffAbility(effect, range, particle, id, icon, minLevel, maxLevel, manaCost, castTime, abilityCooldown, requiredLevels);
+		return new AoeBuffAbility(type, effect, range, particle, id, icon, minLevel, maxLevel, manaCost, castTime, abilityCooldown, requiredLevels);
 	}
 	
 	public EffectInstance getEffect(){

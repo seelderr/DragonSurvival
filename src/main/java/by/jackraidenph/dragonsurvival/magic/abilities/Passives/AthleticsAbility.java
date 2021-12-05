@@ -1,6 +1,8 @@
 package by.jackraidenph.dragonsurvival.magic.abilities.Passives;
 
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.magic.common.PassiveDragonAbility;
+import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -11,9 +13,9 @@ import java.util.ArrayList;
 
 public class AthleticsAbility extends PassiveDragonAbility
 {
-	public AthleticsAbility(String abilityId, String icon, int minLevel, int maxLevel)
+	public AthleticsAbility(DragonType type, String abilityId, String icon, int minLevel, int maxLevel)
 	{
-		super(abilityId, icon, minLevel, maxLevel);
+		super(type, abilityId, icon, minLevel, maxLevel);
 	}
 	
 	public int getDuration(){
@@ -23,7 +25,7 @@ public class AthleticsAbility extends PassiveDragonAbility
 	@Override
 	public AthleticsAbility createInstance()
 	{
-		return new AthleticsAbility(id, icon, minLevel, maxLevel);
+		return new AthleticsAbility(type, id, icon, minLevel, maxLevel);
 	}
 	
 	@Override
@@ -37,5 +39,15 @@ public class AthleticsAbility extends PassiveDragonAbility
 		ArrayList<ITextComponent> list = super.getLevelUpInfo();
 		list.add(new TranslationTextComponent("ds.skill.duration.seconds", "+1"));
 		return list;
+	}
+	
+	@Override
+	public boolean isDisabled()
+	{
+		if(type == DragonType.FOREST && !ConfigHandler.SERVER.forestAthletics.get()) return true;
+		if(type == DragonType.SEA && !ConfigHandler.SERVER.seaAthletics.get()) return true;
+		if(type == DragonType.CAVE && !ConfigHandler.SERVER.caveAthletics.get()) return true;
+		
+		return super.isDisabled();
 	}
 }
