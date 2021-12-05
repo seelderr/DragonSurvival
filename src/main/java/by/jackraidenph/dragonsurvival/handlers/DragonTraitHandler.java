@@ -78,20 +78,20 @@ public class DragonTraitHandler {
                 
                 if (!world.isClientSide && ConfigHandler.SERVER.bonuses.get() && ConfigHandler.SERVER.speedupEffectLevel.get() > 0 && SpecificsHandler.DRAGON_SPEEDUP_BLOCKS != null && SpecificsHandler.DRAGON_SPEEDUP_BLOCKS.get(dragonStateHandler.getType()).contains(block)) {
                     int duration =
-                            dragonStateHandler.getType() == DragonType.SEA && dragonStateHandler.getAbility(DragonAbilities.SEA_ATHLETICS) != null ?  ((AthleticsAbility)dragonStateHandler.getAbility(DragonAbilities.SEA_ATHLETICS)).getDuration() :
-                            dragonStateHandler.getType() == DragonType.FOREST && dragonStateHandler.getAbility(DragonAbilities.FOREST_ATHLETICS) != null ? ((AthleticsAbility)dragonStateHandler.getAbility(DragonAbilities.FOREST_ATHLETICS)).getDuration() :
-                            dragonStateHandler.getType() == DragonType.CAVE && dragonStateHandler.getAbility(DragonAbilities.CAVE_ATHLETICS) != null ? ((AthleticsAbility)dragonStateHandler.getAbility(DragonAbilities.CAVE_ATHLETICS)).getDuration() :
+                            dragonStateHandler.getType() == DragonType.SEA && dragonStateHandler.getMagic().getAbility(DragonAbilities.SEA_ATHLETICS) != null ?  ((AthleticsAbility)dragonStateHandler.getMagic().getAbility(DragonAbilities.SEA_ATHLETICS)).getDuration() :
+                            dragonStateHandler.getType() == DragonType.FOREST && dragonStateHandler.getMagic().getAbility(DragonAbilities.FOREST_ATHLETICS) != null ? ((AthleticsAbility)dragonStateHandler.getMagic().getAbility(DragonAbilities.FOREST_ATHLETICS)).getDuration() :
+                            dragonStateHandler.getType() == DragonType.CAVE && dragonStateHandler.getMagic().getAbility(DragonAbilities.CAVE_ATHLETICS) != null ? ((AthleticsAbility)dragonStateHandler.getMagic().getAbility(DragonAbilities.CAVE_ATHLETICS)).getDuration() :
                             0;
     
                     int level =
-                        dragonStateHandler.getType() == DragonType.SEA ? dragonStateHandler.getAbilityLevel(DragonAbilities.SEA_ATHLETICS) :
-                        dragonStateHandler.getType() == DragonType.FOREST ? dragonStateHandler.getAbilityLevel(DragonAbilities.FOREST_ATHLETICS) :
-                        dragonStateHandler.getType() == DragonType.CAVE ? dragonStateHandler.getAbilityLevel(DragonAbilities.CAVE_ATHLETICS) : 0;
+                        dragonStateHandler.getType() == DragonType.SEA ? dragonStateHandler.getMagic().getAbilityLevel(DragonAbilities.SEA_ATHLETICS) :
+                        dragonStateHandler.getType() == DragonType.FOREST ? dragonStateHandler.getMagic().getAbilityLevel(DragonAbilities.FOREST_ATHLETICS) :
+                        dragonStateHandler.getType() == DragonType.CAVE ? dragonStateHandler.getMagic().getAbilityLevel(DragonAbilities.CAVE_ATHLETICS) : 0;
     
                     int maxLevel =
-                            dragonStateHandler.getType() == DragonType.SEA && dragonStateHandler.getAbility(DragonAbilities.SEA_ATHLETICS) != null ?  ((AthleticsAbility)dragonStateHandler.getAbility(DragonAbilities.SEA_ATHLETICS)).getMaxLevel() :
-                                    dragonStateHandler.getType() == DragonType.FOREST && dragonStateHandler.getAbility(DragonAbilities.FOREST_ATHLETICS) != null ? ((AthleticsAbility)dragonStateHandler.getAbility(DragonAbilities.FOREST_ATHLETICS)).getMaxLevel() :
-                                            dragonStateHandler.getType() == DragonType.CAVE && dragonStateHandler.getAbility(DragonAbilities.CAVE_ATHLETICS) != null ? ((AthleticsAbility)dragonStateHandler.getAbility(DragonAbilities.CAVE_ATHLETICS)).getMaxLevel() :
+                            dragonStateHandler.getType() == DragonType.SEA && dragonStateHandler.getMagic().getAbility(DragonAbilities.SEA_ATHLETICS) != null ?  ((AthleticsAbility)dragonStateHandler.getMagic().getAbility(DragonAbilities.SEA_ATHLETICS)).getMaxLevel() :
+                                    dragonStateHandler.getType() == DragonType.FOREST && dragonStateHandler.getMagic().getAbility(DragonAbilities.FOREST_ATHLETICS) != null ? ((AthleticsAbility)dragonStateHandler.getMagic().getAbility(DragonAbilities.FOREST_ATHLETICS)).getMaxLevel() :
+                                            dragonStateHandler.getType() == DragonType.CAVE && dragonStateHandler.getMagic().getAbility(DragonAbilities.CAVE_ATHLETICS) != null ? ((AthleticsAbility)dragonStateHandler.getMagic().getAbility(DragonAbilities.CAVE_ATHLETICS)).getMaxLevel() :
                                                     0;
                     if(duration > 0){
                         playerEntity.addEffect(new EffectInstance(Effects.MOVEMENT_SPEED, Functions.secondsToTicks(duration), (ConfigHandler.SERVER.speedupEffectLevel.get() - 1) + (level == maxLevel ? 1 : 0), false, false));
@@ -102,7 +102,7 @@ public class DragonTraitHandler {
                 
                 switch (dragonStateHandler.getType()) {
                     case CAVE:
-                        DragonAbility contrastShower = dragonStateHandler.getAbility(DragonAbilities.CONTRAST_SHOWER);
+                        DragonAbility contrastShower = dragonStateHandler.getMagic().getAbility(DragonAbilities.CONTRAST_SHOWER);
                         int maxRainTime = 0;
     
                         if(contrastShower != null){
@@ -176,7 +176,7 @@ public class DragonTraitHandler {
                         break;
                     case FOREST:
                         int maxStressTicks = ConfigHandler.SERVER.forestStressTicks.get();
-                        DragonAbility lightInDarkness = dragonStateHandler.getAbility(DragonAbilities.LIGHT_IN_DARKNESS);
+                        DragonAbility lightInDarkness = dragonStateHandler.getMagic().getAbility(DragonAbilities.LIGHT_IN_DARKNESS);
     
                         if(lightInDarkness != null){
                             maxStressTicks +=  Functions.secondsToTicks(((LightInDarknessAbility)lightInDarkness).getDuration());
@@ -200,7 +200,7 @@ public class DragonTraitHandler {
                         break;
                     case SEA:
                         int maxTicksOutofWater = ConfigHandler.SERVER.seaTicksWithoutWater.get();
-                        DragonAbility waterAbility = dragonStateHandler.getAbility(DragonAbilities.WATER);
+                        DragonAbility waterAbility = dragonStateHandler.getMagic().getAbility(DragonAbilities.WATER);
                         
                         if(waterAbility != null){
                            maxTicksOutofWater +=  Functions.secondsToTicks(((WaterAbility)waterAbility).getDuration());
@@ -244,7 +244,7 @@ public class DragonTraitHandler {
                 }
     
                 int maxTicksOutofWater = ConfigHandler.SERVER.seaTicksWithoutWater.get();
-                DragonAbility waterAbility = dragonStateHandler.getAbility(DragonAbilities.WATER);
+                DragonAbility waterAbility = dragonStateHandler.getMagic().getAbility(DragonAbilities.WATER);
     
                 if(waterAbility != null){
                     maxTicksOutofWater +=  Functions.secondsToTicks(((WaterAbility)waterAbility).getDuration());

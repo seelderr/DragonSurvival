@@ -2,7 +2,7 @@ package by.jackraidenph.dragonsurvival.gui.magic.buttons;
 
 import by.jackraidenph.dragonsurvival.gui.magic.AbilityScreen;
 import by.jackraidenph.dragonsurvival.gui.magic.DragonScreen;
-import by.jackraidenph.dragonsurvival.handlers.Magic.ClientMagicHandler;
+import by.jackraidenph.dragonsurvival.handlers.Magic.ClientMagicHUDHandler;
 import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.magic.OpenDragonInventory;
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -30,7 +30,7 @@ public class TabButton extends Button
 	@Override
 	public void renderButton(MatrixStack stack, int mouseX, int mouseY, float p_230431_4_)
 	{
-		Minecraft.getInstance().getTextureManager().bind(ClientMagicHandler.widgetTextures);
+		Minecraft.getInstance().getTextureManager().bind(ClientMagicHUDHandler.widgetTextures);
 		
 		if(isCurrent()){
 			blit(stack, x, y, index == 0 ? 0 : 28, 0, 28, 32);

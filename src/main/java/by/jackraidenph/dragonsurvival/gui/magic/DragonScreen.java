@@ -7,7 +7,8 @@ import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.containers.DragonContainer;
 import by.jackraidenph.dragonsurvival.gui.magic.buttons.TabButton;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.KeyInputHandler;
-import by.jackraidenph.dragonsurvival.handlers.Magic.ClientMagicHandler;
+import by.jackraidenph.dragonsurvival.handlers.Magic.ClawToolHandler;
+import by.jackraidenph.dragonsurvival.handlers.Magic.ClientMagicHUDHandler;
 import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.magic.DragonClawsMenuToggle;
 import by.jackraidenph.dragonsurvival.util.DragonType;
@@ -44,6 +45,7 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> implemen
     
     private static final ResourceLocation CLAWS_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_claws.png");
     private static final ResourceLocation DRAGON_CLAW_BUTTON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_claws_button.png");
+    private static final ResourceLocation DRAGON_CLAW_CHECKMARK = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_claws_tetris.png");
     
     
     private boolean widthTooNarrow;
@@ -58,7 +60,7 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> implemen
         player = inv.player;
     
         DragonStateProvider.getCap(player).ifPresent((cap) -> {
-            clawsMenu = cap.clawsMenuOpen;
+            clawsMenu = cap.getClawInventory().isClawsMenuOpen();
         });
     }
 
@@ -98,6 +100,11 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> implemen
         if(clawsMenu){
             minecraft.getTextureManager().bind(CLAWS_TEXTURE);
             this.blit(stack,leftPos - 80, topPos, 0, 0, 77, 170);
+            
+            if(ClawToolHandler.hasEmptySlot(Minecraft.getInstance().player)){
+                minecraft.getTextureManager().bind(DRAGON_CLAW_CHECKMARK);
+                this.blit(stack,leftPos - 80 + 34, topPos + 140, 0, 0, 9, 9, 9, 9);
+            }
         }
         
         GlStateManager._popMatrix();
@@ -150,7 +157,7 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> implemen
             if(recipeBookGui.isVisible() && clawsMenu){
                 clawsMenu = false;
                 NetworkHandler.CHANNEL.sendToServer(new DragonClawsMenuToggle(clawsMenu));
-                DragonStateProvider.getCap(player).ifPresent((cap) -> cap.clawsMenuOpen = clawsMenu);
+                DragonStateProvider.getCap(player).ifPresent((cap) -> cap.getClawInventory().setClawsMenuOpen(clawsMenu));
             }
         }));
         this.children.add(this.recipeBookGui);
@@ -175,7 +182,7 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> implemen
             init();
             
             NetworkHandler.CHANNEL.sendToServer(new DragonClawsMenuToggle(clawsMenu));
-            DragonStateProvider.getCap(player).ifPresent((cap) -> cap.clawsMenuOpen = clawsMenu);
+            DragonStateProvider.getCap(player).ifPresent((cap) -> cap.getClawInventory().setClawsMenuOpen(clawsMenu));
             
         }){
             @Override
@@ -200,7 +207,7 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> implemen
                 this.active = clawsMenu;
                 
                 if(isHovered()){
-                    minecraft.getTextureManager().bind(ClientMagicHandler.widgetTextures);
+                    minecraft.getTextureManager().bind(ClientMagicHUDHandler.widgetTextures);
                     DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
                     if(handler != null) {
                         int xP = handler.getType() == DragonType.SEA ? 0 : handler.getType() == DragonType.FOREST ? 18 : 36;

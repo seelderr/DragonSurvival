@@ -55,7 +55,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
         AnimationBuilder builder = new AnimationBuilder();
     
         if(handler != null){
-            if(handler.getCurrentEmote() == null) {
+            if(handler.getEmotes().getCurrentEmote() == null) {
                 if (handler.getMovementData().bite && biteEnd <= biteEndingTicks || biteEnd > 0 && biteEnd <= biteEndingTicks) {
                     builder.addAnimation("bite");
                     neckLocked = true;
@@ -95,16 +95,16 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
         
         if (player != null) {
             DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
-                ActiveDragonAbility curCast = playerStateHandler.getCurrentlyCasting();
+                ActiveDragonAbility curCast = playerStateHandler.getMagic().getCurrentlyCasting();
                 
-                if(playerStateHandler.getCurrentEmote() == null && lastEmote != null && lastEmote.locksHead){
+                if(playerStateHandler.getEmotes().getCurrentEmote() == null && lastEmote != null && lastEmote.locksHead){
                     neckLocked = false;
                 }
                 
-                if(playerStateHandler.getCurrentEmote() != null){
-                    neckLocked = playerStateHandler.getCurrentEmote().locksHead;
-                    builder.addAnimation(playerStateHandler.getCurrentEmote().animation, playerStateHandler.getCurrentEmote().loops);
-                    lastEmote = playerStateHandler.getCurrentEmote();
+                if(playerStateHandler.getEmotes().getCurrentEmote() != null){
+                    neckLocked = playerStateHandler.getEmotes().getCurrentEmote().locksHead;
+                    builder.addAnimation(playerStateHandler.getEmotes().getCurrentEmote().animation, playerStateHandler.getEmotes().getCurrentEmote().loops);
+                    lastEmote = playerStateHandler.getEmotes().getCurrentEmote();
                     return;
                 }
                 

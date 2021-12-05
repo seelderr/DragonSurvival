@@ -1,10 +1,9 @@
 package by.jackraidenph.dragonsurvival.capability;
 
+import by.jackraidenph.dragonsurvival.capability.DragonCapabilities.ClawInventory;
+import by.jackraidenph.dragonsurvival.capability.DragonCapabilities.EmoteCap;
+import by.jackraidenph.dragonsurvival.capability.DragonCapabilities.MagicCap;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
-import by.jackraidenph.dragonsurvival.emotes.Emote;
-import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
-import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
-import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.util.DragonLevel;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.block.BlockState;
@@ -12,15 +11,11 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.ToolType;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -43,18 +38,13 @@ public class DragonStateHandler {
 	public boolean seaWings;
 	public boolean forestWings;
 	
-	public boolean clawsMenuOpen = false;
-	
-	/*
-		Slot 0: Sword
-		Slot 1: Pickaxe
-		Slot 2: Axe
-		Slot 3: Shovel
-	 */
-	public Inventory clawsInventory = new Inventory(4);
-	
     private final DragonDebuffData debuffData = new DragonDebuffData(0, 0, 0);
-    private int lavaAirSupply;
+	
+	private final ClawInventory clawInventory = new ClawInventory();
+	private final EmoteCap emotes = new EmoteCap();
+	private final MagicCap magic = new MagicCap(this);
+	
+	private int lavaAirSupply;
     private int passengerId;
 	
 	public static final UUID HEALTH_MODIFIER_UUID = UUID.fromString("03574e62-f9e4-4f1b-85ad-fde00915e446");
@@ -150,7 +140,7 @@ public class DragonStateHandler {
 		
 		for(int i = 1; i < 4; i++) {
 			if(state.getHarvestTool() ==  CLAW_TOOL_TYPES[i]){
-				ItemStack stack = clawsInventory.getItem(i);
+				ItemStack stack = getClawInventory().getClawsInventory().getItem(i);
 				
 				if(!stack.isEmpty()){
 					int hvLevel = stack.getHarvestLevel(CLAW_TOOL_TYPES[i], player, state);
@@ -307,7 +297,7 @@ public class DragonStateHandler {
     }
     public void setType(DragonType type) {
 		if(this.type != type){
-			initAbilities(type);
+			getMagic().initAbilities(type);
 		}
 		
         this.type = type;
@@ -382,153 +372,18 @@ public class DragonStateHandler {
     	}
     }
 	
-	private ArrayList<DragonAbility> abilities = new ArrayList<>();
-	
-	private ActiveDragonAbility currentlyCasting = null;
-	private int selectedAbilitySlot = 0;
-	private int currentMana = 0;
-	public int lastTick = -1;
-	
-	private boolean renderAbilities = true;
-	
-	public void initAbilities(DragonType type){
-		if(DragonAbilities.ACTIVE_ABILITIES.containsKey(type)) {
-			if(!ConfigHandler.SERVER.saveAllAbilities.get()){
-				abilities.clear();
-			}
-			top:
-			for (ActiveDragonAbility ability : DragonAbilities.ACTIVE_ABILITIES.get(type)) {
-				for(DragonAbility ab : abilities){
-					if(Objects.equals(ab.getId(), ability.getId())){
-						continue top;
-					}
-				}
-				
-				ActiveDragonAbility newAbility = ability.createInstance();
-				newAbility.setLevel(ability.getMinLevel());
-				abilities.add(newAbility);
-			}
-		}
-	}
-	public int getCurrentMana() {
-		return currentMana;
-	}
-	
-	public void setCurrentMana(int currentMana) {
-		this.currentMana = currentMana;
-	}
-	
-	public ActiveDragonAbility getCurrentlyCasting()
+	public ClawInventory getClawInventory()
 	{
-		return currentlyCasting;
+		return clawInventory;
 	}
 	
-	public DragonStateHandler setCurrentlyCasting(ActiveDragonAbility currentlyCasting)
+	public EmoteCap getEmotes()
 	{
-		this.currentlyCasting = currentlyCasting;
-		return this;
+		return emotes;
 	}
 	
-	public DragonAbility getAbilityOrDefault(DragonAbility ability){
-		DragonAbility ab = getAbility(ability);
-		return ab != null ? ab : ability;
-	}
-	
-	public DragonAbility getAbility(DragonAbility ability){
-		if(ability != null && ability.getId() != null) {
-			for (DragonAbility ab : getAbilities()) {
-				if (ab != null && ab.getId() != null) {
-					if (Objects.equals(ab.getId(), ability.getId())) {
-						return ab;
-					}
-				}
-			}
-		}
-		
-		return null;
-	}
-	
-	public int getAbilityLevel(DragonAbility ability){
-		DragonAbility ab = getAbility(ability);
-		return ab == null ? ability.getMinLevel() : ab.getLevel();
-	}
-	
-	public ArrayList<DragonAbility> getAbilities()
+	public MagicCap getMagic()
 	{
-		return abilities;
-	}
-	
-	public void addAbility(DragonAbility ability){
-		abilities.add(ability);
-	}
-	
-	public ActiveDragonAbility getAbilityFromSlot(int slot) {
-		ActiveDragonAbility dragonAbility = type != null && DragonAbilities.ACTIVE_ABILITIES.get(type) != null && DragonAbilities.ACTIVE_ABILITIES.get(type).size() >= slot ? DragonAbilities.ACTIVE_ABILITIES.get(type).get(slot) : null;
-		ActiveDragonAbility actual = (ActiveDragonAbility)getAbility(dragonAbility);
-		
-		return actual == null ? dragonAbility : actual;
-	}
-	
-	
-	public int getSelectedAbilitySlot() {
-		return this.selectedAbilitySlot;
-	}
-	
-	public void setSelectedAbilitySlot(int newSlot) {
-		this.selectedAbilitySlot = newSlot;
-	}
-	
-	public boolean renderAbilityHotbar()
-	{
-		return renderAbilities;
-	}
-	
-	public DragonStateHandler setRenderAbilities(boolean renderAbilities)
-	{
-		this.renderAbilities = renderAbilities;
-		return this;
-	}
-	
-	public CompoundNBT saveAbilities(){
-		CompoundNBT tag = new CompoundNBT();
-		
-		for(DragonAbility ability : abilities){
-			tag.put(ability.getId(), ability.saveNBT());
-		}
-		
-		return tag;
-	}
-	
-	public void loadAbilities(CompoundNBT nbt){
-		CompoundNBT tag = nbt.contains("abilitySlots") ? nbt.getCompound("abilitySlots") : null;
-		
-		if(tag != null){
-			for(DragonAbility staticAbility : DragonAbilities.ABILITY_LOOKUP.values()){
-				if(tag.contains(staticAbility.getId())){
-					DragonAbility ability = staticAbility.createInstance();
-					ability.loadNBT(tag.getCompound(staticAbility.getId()));
-					addAbility(ability);
-				}
-			}
-		}
-	}
-	
-	//Emotes
-	
-	private Emote currentEmote;
-	public int emoteTick;
-	
-	public HashMap<String, Integer> emoteUsage = new HashMap<>();
-	public boolean emoteMenuOpen = false;
-	
-	public Emote getCurrentEmote()
-	{
-		return currentEmote;
-	}
-	
-	public void setCurrentEmote(Emote currentEmote)
-	{
-		this.currentEmote = currentEmote;
-		emoteTick = 0;
+		return magic;
 	}
 }

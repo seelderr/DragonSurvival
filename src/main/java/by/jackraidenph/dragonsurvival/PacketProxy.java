@@ -5,22 +5,16 @@ import by.jackraidenph.dragonsurvival.entity.MagicalPredatorEntity;
 import by.jackraidenph.dragonsurvival.gecko.entity.DragonEntity;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.ClientDragonRender;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.ClientFlightHandler;
-import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
-import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.nest.NestEntity;
 import by.jackraidenph.dragonsurvival.network.*;
-import by.jackraidenph.dragonsurvival.network.magic.*;
 import by.jackraidenph.dragonsurvival.registration.EntityTypesInit;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.ExperienceOrbEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.potion.Effect;
-import net.minecraft.potion.EffectInstance;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
@@ -36,147 +30,6 @@ import java.util.function.Supplier;
  * Synchronizes client data
  */
 public class PacketProxy {
-    
-    public DistExecutor.SafeRunnable handleAddedEffect(SyncPotionAddedEffect message, Supplier<NetworkEvent.Context> supplier) {
-        return () -> {
-            NetworkEvent.Context context = supplier.get();
-            context.enqueueWork(() -> handleAddedEffect(message, context));
-        };
-    }
-    
-    private void handleAddedEffect(SyncPotionAddedEffect message, NetworkEvent.Context context) {
-        PlayerEntity thisPlayer = Minecraft.getInstance().player;
-        if (thisPlayer != null) {
-            World world = thisPlayer.level;
-            Entity entity = world.getEntity(message.entityId);
-            Effect ef = Effect.byId(message.effectId);
-            
-            if(ef != null){
-                if(entity instanceof LivingEntity){
-                    ((LivingEntity)entity).addEffect(new EffectInstance(ef, message.duration, message.amplifier));
-                }
-            }
-        }
-        context.setPacketHandled(true);
-    }
-    
-    public DistExecutor.SafeRunnable handleEndedEffect(SyncPotionRemovedEffect message, Supplier<NetworkEvent.Context> supplier) {
-        return () -> {
-            NetworkEvent.Context context = supplier.get();
-            context.enqueueWork(() -> handleEndedEffect(message, context));
-        };
-    }
-    
-    private void handleEndedEffect(SyncPotionRemovedEffect message, NetworkEvent.Context context) {
-        PlayerEntity thisPlayer = Minecraft.getInstance().player;
-        if (thisPlayer != null) {
-            World world = thisPlayer.level;
-            Entity entity = world.getEntity(message.entityId);
-            Effect ef = Effect.byId(message.effectId);
-            
-            if(ef != null){
-                if(entity instanceof LivingEntity){
-                    ((LivingEntity)entity).removeEffect(ef);
-                }
-            }
-        }
-        context.setPacketHandled(true);
-    }
-    
-    public DistExecutor.SafeRunnable handleClientSideAbility(SyncAbilityActivation abilityActivation, Supplier<NetworkEvent.Context> supplier) {
-        return () -> {
-            NetworkEvent.Context context = supplier.get();
-            context.enqueueWork(() -> handleClientSideAbility(abilityActivation, context));
-        };
-    }
-    
-    private void handleClientSideAbility(SyncAbilityActivation abilityActivation, NetworkEvent.Context context) {
-        PlayerEntity thisPlayer = Minecraft.getInstance().player;
-        if (thisPlayer != null) {
-            World world = thisPlayer.level;
-            Entity entity = world.getEntity(abilityActivation.playerId);
-            if (entity instanceof PlayerEntity) {
-                DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
-                    DragonAbility ability = dragonStateHandler.getAbilityFromSlot(abilityActivation.slot);
-                    if(ability.getLevel() > 0) {
-                        ability.onKeyPressed((PlayerEntity)entity);
-                    }
-                });
-            }
-        }
-        context.setPacketHandled(true);
-    }
-    
-    public DistExecutor.SafeRunnable handleSkillAnimation(SyncCurrentAbilityCasting syncCapabilityDebuff, Supplier<NetworkEvent.Context> supplier) {
-        return () -> {
-            NetworkEvent.Context context = supplier.get();
-            context.enqueueWork(() -> handleSkillAnimation(syncCapabilityDebuff, context));
-        };
-    }
-    
-    private void handleSkillAnimation(SyncCurrentAbilityCasting abilityCasting, NetworkEvent.Context context) {
-        PlayerEntity thisPlayer = Minecraft.getInstance().player;
-        if (thisPlayer != null) {
-            World world = thisPlayer.level;
-            Entity entity = world.getEntity(abilityCasting.playerId);
-            if (entity instanceof PlayerEntity) {
-                DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
-                    if(abilityCasting.currentAbility == null && dragonStateHandler.getCurrentlyCasting() != null){
-                        dragonStateHandler.getCurrentlyCasting().stopCasting();
-                    }
-                    
-                    dragonStateHandler.setCurrentlyCasting((ActiveDragonAbility)abilityCasting.currentAbility);
-                });
-            }
-        }
-        context.setPacketHandled(true);
-    }
-    
-    public DistExecutor.SafeRunnable handleMagicAbilities(SyncMagicAbilities magicStatus, Supplier<NetworkEvent.Context> supplier) {
-        return () -> {
-            NetworkEvent.Context context = supplier.get();
-            context.enqueueWork(() -> handleMagicAbilities(magicStatus, context));
-        };
-    }
-    
-    private void handleMagicAbilities(SyncMagicAbilities magicStatus, NetworkEvent.Context context) {
-        PlayerEntity thisPlayer = Minecraft.getInstance().player;
-        if (thisPlayer != null) {
-            World world = thisPlayer.level;
-            Entity entity = world.getEntity(magicStatus.playerId);
-            if (entity instanceof PlayerEntity) {
-                DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
-                    magicStatus.abilities.forEach((ab) -> ab.player = (PlayerEntity)entity);
-                    dragonStateHandler.getAbilities().clear();
-                    dragonStateHandler.getAbilities().addAll(magicStatus.abilities);
-                });
-            }
-        }
-        context.setPacketHandled(true);
-    }
-    
-    public DistExecutor.SafeRunnable handleMagicSync(SyncMagicStats magicStatus, Supplier<NetworkEvent.Context> supplier) {
-        return () -> {
-            NetworkEvent.Context context = supplier.get();
-            context.enqueueWork(() -> handleMagicStats(magicStatus, context));
-        };
-    }
-    
-    private void handleMagicStats(SyncMagicStats magicStatus, NetworkEvent.Context context) {
-        PlayerEntity thisPlayer = Minecraft.getInstance().player;
-        if (thisPlayer != null) {
-            World world = thisPlayer.level;
-            Entity entity = world.getEntity(magicStatus.playerid);
-            if (entity instanceof PlayerEntity) {
-                DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
-                    dragonStateHandler.setCurrentMana(magicStatus.currentMana);
-                    dragonStateHandler.setSelectedAbilitySlot(magicStatus.selectedSlot);
-                    dragonStateHandler.setRenderAbilities(magicStatus.renderHotbar);
-                });
-            }
-        }
-        context.setPacketHandled(true);
-    }
     
     public DistExecutor.SafeRunnable handleCapabilityDebuff(SyncCapabilityDebuff syncCapabilityDebuff, Supplier<NetworkEvent.Context> supplier) {
         return () -> {

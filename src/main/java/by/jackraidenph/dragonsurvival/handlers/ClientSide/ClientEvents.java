@@ -1,6 +1,5 @@
 package by.jackraidenph.dragonsurvival.handlers.ClientSide;
 
-import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.config.DragonBodyMovementType;
@@ -281,33 +280,7 @@ public class ClientEvents {
         ClientDragonRender.playerDragonHashMap.clear();
     }
     
-    public static String constructTeethTexture(PlayerEntity playerEntity) {
-        String texture = "textures/armor/";
-        ItemStack swordItem = DragonStateProvider.getCap(playerEntity).orElse(null).clawsInventory.getItem(0);
-        
-        if(!swordItem.isEmpty() && swordItem.getItem() instanceof TieredItem){
-            texture = getMaterial(texture, swordItem);
-        }else{
-            return null;
-        }
-        
-        return texture + "dragon_teeth.png";
-    }
-    
-    public static String constructClaws(PlayerEntity playerEntity) {
-        String texture = "textures/armor/";
-        DragonStateHandler handler = DragonStateProvider.getCap(playerEntity).orElse(null);
-        ItemStack clawItem = handler.clawsInventory.getItem(handler.getType() == DragonType.CAVE ? 1 : handler.getType() == DragonType.FOREST ? 2 : 3);
-        if(!clawItem.isEmpty() && clawItem.getItem() instanceof TieredItem){
-            texture = getMaterial(texture, clawItem);
-        }else{
-            return null;
-        }
-        
-        return texture + "dragon_claws.png";
-    }
-    
-    private static String getMaterial(String texture, ItemStack clawItem)
+    public static String getMaterial(String texture, ItemStack clawItem)
     {
         TieredItem item = (TieredItem)clawItem.getItem();
         IItemTier tier = item.getTier();

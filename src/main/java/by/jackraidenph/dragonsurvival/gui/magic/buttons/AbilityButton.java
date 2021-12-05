@@ -48,7 +48,7 @@ public class AbilityButton extends Button {
 	public void renderButton(MatrixStack stack, int mouseX, int mouseY, float p_230431_4_)
 	{
 		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {
-			DragonAbility ab = cap.getAbility(ability);
+			DragonAbility ab = cap.getMagic().getAbility(ability);
 			
 			if(ab != null) {
 				ability = ab;

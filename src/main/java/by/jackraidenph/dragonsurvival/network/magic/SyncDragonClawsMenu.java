@@ -1,6 +1,6 @@
 package by.jackraidenph.dragonsurvival.network.magic;
 
-import by.jackraidenph.dragonsurvival.capability.DragonCapStorage;
+import by.jackraidenph.dragonsurvival.capability.DragonCapabilities.ClawInventory;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.network.IMessage;
 import net.minecraft.client.Minecraft;
@@ -37,7 +37,7 @@ public class SyncDragonClawsMenu implements IMessage<SyncDragonClawsMenu>
 		buffer.writeInt(message.playerId);
 		buffer.writeBoolean(message.state);
 		CompoundNBT nbt = new CompoundNBT();
-		nbt.put("inv", DragonCapStorage.saveClawInventory(message.inv));
+		nbt.put("inv", ClawInventory.saveClawInventory(message.inv));
 		buffer.writeNbt(nbt);
 	}
 	
@@ -46,7 +46,7 @@ public class SyncDragonClawsMenu implements IMessage<SyncDragonClawsMenu>
 		int playerId = buffer.readInt();
 		boolean state = buffer.readBoolean();
 		CompoundNBT tag = buffer.readNbt();
-		Inventory inventory = DragonCapStorage.readClawInventory(tag.getList("inv", 10));
+		Inventory inventory = ClawInventory.readClawInventory(tag.getList("inv", 10));
 		return new SyncDragonClawsMenu(playerId, state, inventory);
 	}
 	
@@ -65,8 +65,8 @@ public class SyncDragonClawsMenu implements IMessage<SyncDragonClawsMenu>
 				Entity entity = world.getEntity(message.playerId);
 				if (entity instanceof PlayerEntity) {
 					DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
-						dragonStateHandler.clawsMenuOpen = message.state;
-						dragonStateHandler.clawsInventory = message.inv;
+						dragonStateHandler.getClawInventory().setClawsMenuOpen(message.state);
+						dragonStateHandler.getClawInventory().setClawsInventory(message.inv);
 					});
 				}
 			}

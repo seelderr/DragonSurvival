@@ -43,7 +43,7 @@ public class ActivateAbilityServerSide implements IMessage<ActivateAbilityServer
             return;
 
         DragonStateProvider.getCap(playerEntity).ifPresent(dragonStateHandler -> {
-            DragonAbility ability = dragonStateHandler.getAbilityFromSlot(message.slot);
+            DragonAbility ability = dragonStateHandler.getMagic().getAbilityFromSlot(message.slot);
             if(ability.getLevel() > 0) {
                 ability.onKeyPressed(playerEntity);
             }

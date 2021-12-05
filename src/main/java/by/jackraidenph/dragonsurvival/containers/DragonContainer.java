@@ -131,7 +131,7 @@ public class DragonContainer extends RecipeBookContainer<CraftingInventory> {
     
         DragonStateProvider.getCap(player).ifPresent((cap) -> {
             for (int i = 0; i < 4; ++i) {
-                ClawToolSlot s = new ClawToolSlot(this, cap.clawsInventory, DragonStateHandler.CLAW_TOOL_TYPES[i], i, -50, 35 + (i * 18));
+                ClawToolSlot s = new ClawToolSlot(this, cap.getClawInventory().getClawsInventory(), DragonStateHandler.CLAW_TOOL_TYPES[i], i, -50, 35 + (i * 18));
                 this.addSlot(s);
                 inventorySlots.add(s);
             }
@@ -158,7 +158,7 @@ public class DragonContainer extends RecipeBookContainer<CraftingInventory> {
     
     public void update(){
         DragonStateProvider.getCap(player).ifPresent((cap) -> {
-            menuStatus = cap.clawsMenuOpen ? 1 : 0;
+            menuStatus = cap.getClawInventory().isClawsMenuOpen() ? 1 : 0;
         });
         
         broadcastChanges();

@@ -1,12 +1,19 @@
 package by.jackraidenph.dragonsurvival.network.magic;
 
-import by.jackraidenph.dragonsurvival.PacketProxy;
+import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
+import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.network.IMessage;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.DistExecutor.SafeRunnable;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -52,6 +59,28 @@ public class SyncCurrentAbilityCasting implements IMessage<SyncCurrentAbilityCas
 	
 	@Override
 	public void handle(SyncCurrentAbilityCasting message, Supplier<NetworkEvent.Context> supplier) {
-		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> new PacketProxy().handleSkillAnimation(message, supplier));
+		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> run(message, supplier));
+	}
+	
+	@OnlyIn(Dist.CLIENT)
+	public void run(SyncCurrentAbilityCasting message, Supplier<NetworkEvent.Context> supplier){
+		NetworkEvent.Context context = supplier.get();
+		context.enqueueWork(() -> {
+			PlayerEntity thisPlayer = Minecraft.getInstance().player;
+			if (thisPlayer != null) {
+				World world = thisPlayer.level;
+				Entity entity = world.getEntity(message.playerId);
+				if (entity instanceof PlayerEntity) {
+					DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
+						if(message.currentAbility == null && dragonStateHandler.getMagic().getCurrentlyCasting() != null){
+							dragonStateHandler.getMagic().getCurrentlyCasting().stopCasting();
+						}
+						
+						dragonStateHandler.getMagic().setCurrentlyCasting((ActiveDragonAbility)message.currentAbility);
+					});
+				}
+			}
+			context.setPacketHandled(true);
+		});
 	}
 }

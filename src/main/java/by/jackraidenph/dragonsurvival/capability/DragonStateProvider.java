@@ -30,7 +30,7 @@ public class DragonStateProvider implements ICapabilitySerializable<CompoundNBT>
     }
     
     public static int getCurrentMana(PlayerEntity entity) {
-        return getCap(entity).map(cap -> Math.min(cap.getCurrentMana(), getMaxMana(entity))).orElse(0);
+        return getCap(entity).map(cap -> Math.min(cap.getMagic().getCurrentMana(), getMaxMana(entity))).orElse(0);
     }
     
     public static int getMaxMana(PlayerEntity entity) {
@@ -41,15 +41,15 @@ public class DragonStateProvider implements ICapabilitySerializable<CompoundNBT>
     
             switch(cap.getType()){
                 case SEA:
-                    mana += cap.getAbilityLevel(DragonAbilities.SEA_MAGIC);
+                    mana += cap.getMagic().getAbilityLevel(DragonAbilities.SEA_MAGIC);
                     break;
         
                 case CAVE:
-                    mana += cap.getAbilityLevel(DragonAbilities.CAVE_MAGIC);
+                    mana += cap.getMagic().getAbilityLevel(DragonAbilities.CAVE_MAGIC);
                     break;
         
                 case FOREST:
-                    mana += cap.getAbilityLevel(DragonAbilities.FOREST_MAGIC);
+                    mana += cap.getMagic().getAbilityLevel(DragonAbilities.FOREST_MAGIC);
                     break;
             }
     
@@ -61,9 +61,9 @@ public class DragonStateProvider implements ICapabilitySerializable<CompoundNBT>
         if(entity.level.isClientSide) return;
     
         getCap(entity).ifPresent(cap -> {
-            cap.setCurrentMana(Math.min(getMaxMana(entity), cap.getCurrentMana() + mana));
+            cap.getMagic().setCurrentMana(Math.min(getMaxMana(entity), cap.getMagic().getCurrentMana() + mana));
             if(!entity.level.isClientSide){
-                NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)entity), new SyncMagicStats(entity.getId(), cap.getSelectedAbilitySlot(), cap.getCurrentMana(), cap.renderAbilityHotbar()));
+                NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)entity), new SyncMagicStats(entity.getId(), cap.getMagic().getSelectedAbilitySlot(), cap.getMagic().getCurrentMana(), cap.getMagic().renderAbilityHotbar()));
             }
         });
     }
@@ -82,14 +82,14 @@ public class DragonStateProvider implements ICapabilitySerializable<CompoundNBT>
                 int missingMana = mana - getCurrentMana(entity);
                 int missingExp = (missingMana * 10);
                 entity.giveExperiencePoints(-missingExp);
-                cap.setCurrentMana(0);
+                cap.getMagic().setCurrentMana(0);
             }else {
-                cap.setCurrentMana(Math.max(0, cap.getCurrentMana() - mana));
+                cap.getMagic().setCurrentMana(Math.max(0, cap.getMagic().getCurrentMana() - mana));
             }
             
             
             if (!entity.level.isClientSide) {
-                NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)entity), new SyncMagicStats(entity.getId(), cap.getSelectedAbilitySlot(), cap.getCurrentMana(), cap.renderAbilityHotbar()));
+                NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)entity), new SyncMagicStats(entity.getId(), cap.getMagic().getSelectedAbilitySlot(), cap.getMagic().getCurrentMana(), cap.getMagic().renderAbilityHotbar()));
             }
         });
     }

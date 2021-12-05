@@ -65,12 +65,12 @@ public class SyncEmote implements IMessage<SyncEmote>
                         if(!message.emote.equals("nil")){
                             for(Emote emote : EmoteRegistry.EMOTES){
                                 if(Objects.equals(emote.name, message.emote)){
-                                    dragonStateHandler.setCurrentEmote(emote);
+                                    dragonStateHandler.getEmotes().setCurrentEmote(emote);
                                     break;
                                 }
                             }
                         }else{
-                            dragonStateHandler.setCurrentEmote(null);
+                            dragonStateHandler.getEmotes().setCurrentEmote(null);
                         }
                     });
                 }

@@ -2,8 +2,8 @@ package by.jackraidenph.dragonsurvival.gui.magic;
 
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
+import by.jackraidenph.dragonsurvival.handlers.Magic.ClientMagicHUDHandler;
 import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
-import by.jackraidenph.dragonsurvival.handlers.Magic.ClientMagicHandler;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.magic.common.InnateDragonAbility;
@@ -108,7 +108,7 @@ public class AbilityScreen extends Screen {
             public void renderButton(MatrixStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_)
             {
                 if(isHovered()){
-                    minecraft.getTextureManager().bind(ClientMagicHandler.widgetTextures);
+                    minecraft.getTextureManager().bind(ClientMagicHUDHandler.widgetTextures);
                     int xP = type == DragonType.SEA ? 0 : type == DragonType.FOREST ? 18 : 36;
                     GL11.glPushMatrix();
                     blit(stack, x + 3, y + 6, xP / 2, 204 / 2, 9, 9, 128, 128);
@@ -133,7 +133,7 @@ public class AbilityScreen extends Screen {
             unlockAbleSkills.clear();
     
             for(ActiveDragonAbility ab : DragonAbilities.ACTIVE_ABILITIES.get(cap.getType())){
-                DragonAbility ability = cap.getAbility(ab);
+                DragonAbility ability = cap.getMagic().getAbility(ab);
                 ActiveDragonAbility db = ability != null ? ((ActiveDragonAbility)ability) : ab;
                 
                 if(db != null) {
@@ -166,7 +166,7 @@ public class AbilityScreen extends Screen {
         if(type != null) {
             int barYPos = type == DragonType.SEA ? 198 : type == DragonType.FOREST ? 186 : 192;
     
-            minecraft.getTextureManager().bind(ClientMagicHandler.widgetTextures);
+            minecraft.getTextureManager().bind(ClientMagicHUDHandler.widgetTextures);
     
             float progress = MathHelper.clamp((minecraft.player.experienceLevel / 50F), 0, 1);
             float progress1 = Math.min(1F, (Math.min(0.5F, progress) * 2F));

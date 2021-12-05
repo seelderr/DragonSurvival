@@ -43,8 +43,8 @@ public class SyncDragonAbilitySlot implements IMessage<SyncDragonAbilitySlot>
 	@Override
 	public void handle(SyncDragonAbilitySlot message, Supplier<NetworkEvent.Context> supplier) {
 		DragonStateProvider.getCap(supplier.get().getSender()).ifPresent(cap -> {
-			cap.setSelectedAbilitySlot(message.selectedSlot);
-			cap.setRenderAbilities(message.displayHotbar);
+			cap.getMagic().setSelectedAbilitySlot(message.selectedSlot);
+			cap.getMagic().setRenderAbilities(message.displayHotbar);
 		});
 	}
 }

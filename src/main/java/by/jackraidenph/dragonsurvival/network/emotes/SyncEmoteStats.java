@@ -82,8 +82,8 @@ public class SyncEmoteStats implements IMessage<SyncEmoteStats>
                 Entity entity = world.getEntity(message.playerId);
                 if (entity instanceof PlayerEntity) {
                     DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
-                        dragonStateHandler.emoteMenuOpen = message.menuOpen;
-                        dragonStateHandler.emoteUsage = message.usage;
+                        dragonStateHandler.getEmotes().emoteMenuOpen = message.menuOpen;
+                        dragonStateHandler.getEmotes().emoteUsage = message.usage;
                     });
                 }
             }

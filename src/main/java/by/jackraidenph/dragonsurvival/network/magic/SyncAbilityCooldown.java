@@ -42,7 +42,7 @@ public class SyncAbilityCooldown implements IMessage<SyncAbilityCooldown>
         if(playerEntity == null) return;
 
         DragonStateProvider.getCap(playerEntity).ifPresent(dragonStateHandler -> {
-            ActiveDragonAbility ability = dragonStateHandler.getAbilityFromSlot(message.slot);
+            ActiveDragonAbility ability = dragonStateHandler.getMagic().getAbilityFromSlot(message.slot);
             ability.setCooldown(message.cooldown);
         });
     }

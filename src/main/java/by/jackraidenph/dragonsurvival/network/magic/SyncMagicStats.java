@@ -1,10 +1,16 @@
 package by.jackraidenph.dragonsurvival.network.magic;
 
-import by.jackraidenph.dragonsurvival.PacketProxy;
+import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.network.IMessage;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.DistExecutor.SafeRunnable;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -46,6 +52,26 @@ public class SyncMagicStats implements IMessage<SyncMagicStats>
 	
 	@Override
 	public void handle(SyncMagicStats message, Supplier<NetworkEvent.Context> supplier) {
-		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> new PacketProxy().handleMagicSync(message, supplier));
+		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> run(message, supplier));
+	}
+	
+	@OnlyIn(Dist.CLIENT)
+	public void run(SyncMagicStats message, Supplier<NetworkEvent.Context> supplier){
+		NetworkEvent.Context context = supplier.get();
+		context.enqueueWork(() -> {
+			PlayerEntity thisPlayer = Minecraft.getInstance().player;
+			if (thisPlayer != null) {
+				World world = thisPlayer.level;
+				Entity entity = world.getEntity(message.playerid);
+				if (entity instanceof PlayerEntity) {
+					DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
+						dragonStateHandler.getMagic().setCurrentMana(message.currentMana);
+						dragonStateHandler.getMagic().setSelectedAbilitySlot(message.selectedSlot);
+						dragonStateHandler.getMagic().setRenderAbilities(message.renderHotbar);
+					});
+				}
+			}
+			context.setPacketHandled(true);
+		});
 	}
 }

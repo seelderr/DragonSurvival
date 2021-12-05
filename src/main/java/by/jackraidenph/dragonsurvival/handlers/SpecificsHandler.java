@@ -2,7 +2,6 @@ package by.jackraidenph.dragonsurvival.handlers;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.Functions;
-import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
@@ -17,7 +16,6 @@ import by.jackraidenph.dragonsurvival.network.SyncCapabilityDebuff;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
 import by.jackraidenph.dragonsurvival.renderer.magic.CaveLavaFluidRenderer;
 import by.jackraidenph.dragonsurvival.util.DamageSources;
-import by.jackraidenph.dragonsurvival.util.DragonLevel;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.block.Block;
@@ -58,7 +56,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.gui.ForgeIngameGui;
-import net.minecraftforge.common.ToolType;
 import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
@@ -209,7 +206,7 @@ public class SpecificsHandler {
     				ForgeIngameGui.right_height += 10;
 
     				int maxTimeWithoutWater = ConfigHandler.SERVER.seaTicksWithoutWater.get();
-				    DragonAbility waterAbility = playerStateHandler.getAbility(DragonAbilities.WATER);
+				    DragonAbility waterAbility = playerStateHandler.getMagic().getAbility(DragonAbilities.WATER);
 				
 				    if(waterAbility != null){
 					    maxTimeWithoutWater +=  Functions.secondsToTicks(((WaterAbility)waterAbility).getDuration());
@@ -260,7 +257,7 @@ public class SpecificsHandler {
     				ForgeIngameGui.right_height += 10;
 
 					int maxTimeInDarkness = ConfigHandler.SERVER.forestStressTicks.get();
-				    DragonAbility lightInDarkness = playerStateHandler.getAbility(DragonAbilities.LIGHT_IN_DARKNESS);
+				    DragonAbility lightInDarkness = playerStateHandler.getMagic().getAbility(DragonAbilities.LIGHT_IN_DARKNESS);
 				
 				    if(lightInDarkness != null){
 					    maxTimeInDarkness +=  Functions.secondsToTicks(((LightInDarknessAbility)lightInDarkness).getDuration());
@@ -287,7 +284,7 @@ public class SpecificsHandler {
 				    final int right_height = ForgeIngameGui.right_height;
 				    ForgeIngameGui.right_height += 10;
 				
-				    DragonAbility contrastShower = playerStateHandler.getAbility(DragonAbilities.CONTRAST_SHOWER);
+				    DragonAbility contrastShower = playerStateHandler.getMagic().getAbility(DragonAbilities.CONTRAST_SHOWER);
 				    int maxRainTime = 0;
 				
 				    if(contrastShower != null){
@@ -404,86 +401,6 @@ public class SpecificsHandler {
     }
 	
 	
-	
-	
-    @SubscribeEvent
-    public void modifyBreakSpeed(PlayerEvent.BreakSpeed breakSpeedEvent) {
-    	if (!ConfigHandler.SERVER.bonuses.get() || !ConfigHandler.SERVER.clawsAreTools.get())
-    		return;
-        PlayerEntity playerEntity = breakSpeedEvent.getPlayer();
-		
-        DragonStateProvider.getCap(playerEntity).ifPresent(dragonStateHandler -> {
-            if (dragonStateHandler.isDragon()) {
-                ItemStack mainStack = playerEntity.getMainHandItem();
-                BlockState blockState = breakSpeedEvent.getState();
-                Item item = mainStack.getItem();
-				
-				float speed = breakSpeedEvent.getOriginalSpeed();
-				float newSpeed = 0F;
-				
-				for(int i = 1; i < 4; i++){
-					if(blockState.getHarvestTool() == DragonStateHandler.CLAW_TOOL_TYPES[i]){
-						ItemStack breakingItem = dragonStateHandler.clawsInventory.getItem(i);
-						if(!breakingItem.isEmpty()){
-							float tempSpeed = breakingItem.getDestroySpeed(blockState) * 0.7F;
-							
-							if(tempSpeed > newSpeed){
-								newSpeed = tempSpeed;
-							}
-						}
-					}
-				}
-				
-				if(!playerEntity.getMainHandItem().isEmpty()){
-					float tempSpeed = playerEntity.getMainHandItem().getDestroySpeed(blockState);
-					
-					if(tempSpeed > newSpeed){
-						newSpeed = 0;
-					}
-				}
-				
-				
-                if (!(item instanceof ToolItem || item instanceof SwordItem || item instanceof ShearsItem)) {
-                    switch (dragonStateHandler.getLevel()) {
-                        case BABY:
-                        	if (ConfigHandler.SERVER.bonusUnlockedAt.get() != DragonLevel.BABY) {
-                        		breakSpeedEvent.setNewSpeed((speed * 2.0F) + newSpeed);
-                        		break;
-                        	}
-                        case YOUNG:
-                        	if (ConfigHandler.SERVER.bonusUnlockedAt.get() == DragonLevel.ADULT && dragonStateHandler.getLevel() != DragonLevel.BABY) {
-                        		breakSpeedEvent.setNewSpeed((speed * 2.0F) + newSpeed);
-                        		break;
-                        	}
-                        case ADULT:
-                            switch (dragonStateHandler.getType()) {
-                                case FOREST:
-                                    if (blockState.getHarvestTool() == ToolType.AXE) {
-                                        breakSpeedEvent.setNewSpeed((speed * 4.0F) + newSpeed);
-                                    } else breakSpeedEvent.setNewSpeed((speed * 2.0F) + newSpeed);
-                                    break;
-                                case CAVE:
-                                    if (blockState.getHarvestTool() == ToolType.PICKAXE) {
-                                        breakSpeedEvent.setNewSpeed((speed * 4.0F) + newSpeed);
-                                    } else breakSpeedEvent.setNewSpeed((speed * 2.0F) + newSpeed);
-                                    break;
-                                case SEA:
-                                    if (blockState.getHarvestTool() == ToolType.SHOVEL) {
-                                        breakSpeedEvent.setNewSpeed((speed * 4.0F) + newSpeed);
-                                    } else breakSpeedEvent.setNewSpeed((speed * 2.0F) + newSpeed);
-                                    if (playerEntity.isInWaterOrBubble()) {
-                                        breakSpeedEvent.setNewSpeed((speed * 1.4f) + newSpeed);
-                                    }
-                                    break;
-                            }
-                            break;
-                    }
-                } else {
-                    breakSpeedEvent.setNewSpeed((speed * 0.7f) + newSpeed);
-                }
-            }
-        });
-    }
     
     @SubscribeEvent
     public void dropBlocksMinedByPaw(PlayerEvent.HarvestCheck harvestCheck) {
@@ -644,7 +561,7 @@ public class SpecificsHandler {
 						distance -= ConfigHandler.SERVER.forestFallReduction.get().floatValue();
 					}
 	
-	                DragonAbility ability = dragonStateHandler.getAbility(DragonAbilities.CLIFFHANGER);
+	                DragonAbility ability = dragonStateHandler.getMagic().getAbility(DragonAbilities.CLIFFHANGER);
 
 					if(ability != null){
 						distance -= ((CliffhangerAbility)ability).getHeight();

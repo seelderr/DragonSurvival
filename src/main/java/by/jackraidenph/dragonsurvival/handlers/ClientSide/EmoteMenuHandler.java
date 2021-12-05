@@ -6,7 +6,7 @@ import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.emotes.Emote;
 import by.jackraidenph.dragonsurvival.emotes.EmoteRegistry;
-import by.jackraidenph.dragonsurvival.handlers.Magic.ClientMagicHandler;
+import by.jackraidenph.dragonsurvival.handlers.Magic.ClientMagicHUDHandler;
 import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.emotes.SyncEmoteServer;
 import by.jackraidenph.dragonsurvival.network.emotes.SyncEmoteStatsServer;
@@ -47,14 +47,14 @@ public class EmoteMenuHandler
 	
 	
 	public static void setEmote(Emote emote){
-		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent((cap) -> cap.setCurrentEmote(emote));
+		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent((cap) -> cap.getEmotes().setCurrentEmote(emote));
 		NetworkHandler.CHANNEL.sendToServer(new SyncEmoteServer(emote != null ? emote.name : "nil"));
 		
 		if(emote != null){
 			DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent((cap) -> {
-				cap.emoteUsage.putIfAbsent(emote.name, 0);
-				cap.emoteUsage.put(emote.name, cap.emoteUsage.get(emote.name) + 1);
-				NetworkHandler.CHANNEL.sendToServer(new SyncEmoteStatsServer(cap.emoteMenuOpen, cap.emoteUsage));
+				cap.getEmotes().emoteUsage.putIfAbsent(emote.name, 0);
+				cap.getEmotes().emoteUsage.put(emote.name, cap.getEmotes().emoteUsage.get(emote.name) + 1);
+				NetworkHandler.CHANNEL.sendToServer(new SyncEmoteStatsServer(cap.getEmotes().emoteMenuOpen, cap.getEmotes().emoteUsage));
 			});
 		}
 	}
@@ -88,8 +88,8 @@ public class EmoteMenuHandler
 				{
 					this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
 					DragonStateHandler handler = DragonStateProvider.getCap(Minecraft.getInstance().player).orElse(null);
-					this.active = this.visible = (handler != null && handler.emoteMenuOpen);
-					if(handler == null || !handler.emoteMenuOpen) return;
+					this.active = this.visible = (handler != null && handler.getEmotes().emoteMenuOpen);
+					if(handler == null || !handler.getEmotes().emoteMenuOpen) return;
 					int color = new Color(0.15F, 0.15F, 0.15F, 0.75F).getRGB();
 					AbstractGui.fill(stack, x, y, x + this.width, y + this.height, color);
 					
@@ -113,14 +113,14 @@ public class EmoteMenuHandler
 				{
 					this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
 					DragonStateHandler handler = DragonStateProvider.getCap(Minecraft.getInstance().player).orElse(null);
-					this.active = this.visible = (handler != null && handler.emoteMenuOpen);
-					if(handler == null || !handler.emoteMenuOpen) return;
+					this.active = this.visible = (handler != null && handler.getEmotes().emoteMenuOpen);
+					if(handler == null || !handler.getEmotes().emoteMenuOpen) return;
 					
 					if(isHovered){
 						AbstractGui.fill(stack, x, y, x + this.width, y + this.height, new Color(0.35F, 0.35F, 0.35F, 0.75F).getRGB());
 					}
 					
-					Minecraft.getInstance().getTextureManager().bind(ClientMagicHandler.widgetTextures);
+					Minecraft.getInstance().getTextureManager().bind(ClientMagicHUDHandler.widgetTextures);
 					
 					GL11.glPushMatrix();
 					GL11.glScalef(0.25F, 0.25F, 0F);
@@ -149,14 +149,14 @@ public class EmoteMenuHandler
 				{
 					this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
 					DragonStateHandler handler = DragonStateProvider.getCap(Minecraft.getInstance().player).orElse(null);
-					this.active = this.visible = (handler != null && handler.emoteMenuOpen);
-					if(handler == null || !handler.emoteMenuOpen) return;
+					this.active = this.visible = (handler != null && handler.getEmotes().emoteMenuOpen);
+					if(handler == null || !handler.getEmotes().emoteMenuOpen) return;
 					
 					if(isHovered){
 						AbstractGui.fill(stack, x, y, x + this.width, y + this.height, new Color(0.35F, 0.35F, 0.35F, 0.75F).getRGB());
 					}
 					
-					Minecraft.getInstance().getTextureManager().bind(ClientMagicHandler.widgetTextures);
+					Minecraft.getInstance().getTextureManager().bind(ClientMagicHUDHandler.widgetTextures);
 					
 					GL11.glPushMatrix();
 					GL11.glScalef(0.25F, 0.25F, 0F);
@@ -177,8 +177,8 @@ public class EmoteMenuHandler
 				DragonStateHandler handler = DragonStateProvider.getCap(Minecraft.getInstance().player).orElse(null);
 				
 				if(handler != null){
-					handler.emoteMenuOpen = !handler.emoteMenuOpen;
-					NetworkHandler.CHANNEL.sendToServer(new SyncEmoteStatsServer(handler.emoteMenuOpen, handler.emoteUsage));
+					handler.getEmotes().emoteMenuOpen = !handler.getEmotes().emoteMenuOpen;
+					NetworkHandler.CHANNEL.sendToServer(new SyncEmoteStatsServer(handler.getEmotes().emoteMenuOpen, handler.getEmotes().emoteUsage));
 				}
 			}){
 				@Override
@@ -193,14 +193,14 @@ public class EmoteMenuHandler
 					int j = getFGColor();
 					drawCenteredString(stack, Minecraft.getInstance().font, new TranslationTextComponent("ds.emote.toggle"), this.x + this.width / 2, this.y + (this.height - 8) / 2, j | MathHelper.ceil(this.alpha * 255.0F) << 24);
 					
-					Minecraft.getInstance().getTextureManager().bind(ClientMagicHandler.widgetTextures);
+					Minecraft.getInstance().getTextureManager().bind(ClientMagicHUDHandler.widgetTextures);
 					
 					GL11.glPushMatrix();
 					GL11.glScalef(0.25F, 0.25F, 0F);
 					GL11.glTranslatef(x * 3, y * 3, 0);
 					GL11.glTranslatef(15, (height / 2) + 3, 0);
 					
-					if(handler.emoteMenuOpen) {
+					if(handler.getEmotes().emoteMenuOpen) {
 						if (isHovered()) {
 							blit(stack, x, y, 222, 212, 34, 22, 256, 256);
 						} else {
@@ -224,7 +224,7 @@ public class EmoteMenuHandler
 					DragonStateHandler handler = DragonStateProvider.getCap(Minecraft.getInstance().player).orElse(null);
 					Emote emote = emotes.size() > finalI ? emotes.get(finalI) : null;
 					
-					if(handler.getCurrentEmote() != null && emote != null && Objects.equals(handler.getCurrentEmote().name, emote.name)) return;
+					if(handler.getEmotes().getCurrentEmote() != null && emote != null && Objects.equals(handler.getEmotes().getCurrentEmote().name, emote.name)) return;
 					
 					if(handler != null && emote != null){
 						setEmote(emote);
@@ -234,9 +234,9 @@ public class EmoteMenuHandler
 					public void render(MatrixStack stack, int mouseX, int mouseY, float partialTick)
 					{
 						DragonStateHandler handler = DragonStateProvider.getCap(Minecraft.getInstance().player).orElse(null);
-						this.active = this.visible = (handler != null && handler.emoteMenuOpen);
+						this.active = this.visible = (handler != null && handler.getEmotes().emoteMenuOpen);
 						this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
-						if(handler == null || !handler.emoteMenuOpen) return;
+						if(handler == null || !handler.getEmotes().emoteMenuOpen) return;
 						int color = isHovered && emotes.size() > finalI ? new Color(0.1F, 0.1F, 0.1F, 0.8F).getRGB() : new Color(0.1F, 0.1F, 0.1F, 0.5F).getRGB();
 						AbstractGui.fill(stack, x, y, x + this.width, y + this.height, color);
 						
@@ -271,7 +271,7 @@ public class EmoteMenuHandler
 		HashMap<Integer, ArrayList<Emote>> list = new HashMap<>();
 		
 		emotes.addAll(EmoteRegistry.EMOTES);
-		emotes.sort(Comparator.comparingInt(c -> handler.emoteUsage.getOrDefault(c.name, 0)));
+		emotes.sort(Comparator.comparingInt(c -> handler.getEmotes().emoteUsage.getOrDefault(c.name, 0)));
 		emotes = new ArrayList<>(Lists.reverse(emotes));
 		
 		int num = 0;

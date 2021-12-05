@@ -1,8 +1,8 @@
 package by.jackraidenph.dragonsurvival.gui.magic.buttons;
 
+import by.jackraidenph.dragonsurvival.handlers.Magic.ClientMagicHUDHandler;
 import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
-import by.jackraidenph.dragonsurvival.handlers.Magic.ClientMagicHandler;
 import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.magic.common.PassiveDragonAbility;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
@@ -39,7 +39,7 @@ public class DecreaseLevelButton extends Button
 	@Override
 	public void renderButton(MatrixStack stack, int mouseX, int mouseY, float p_230431_4_)
 	{
-		Minecraft.getInstance().getTextureManager().bind(ClientMagicHandler.widgetTextures);
+		Minecraft.getInstance().getTextureManager().bind(ClientMagicHUDHandler.widgetTextures);
 		
 		if(isHovered()){
 			blit(stack, x, y, 22 / 2, 222 / 2, 11, 17,128, 128);
@@ -57,8 +57,8 @@ public class DecreaseLevelButton extends Button
 		
 		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {
 			if(ability != null) {
-				if (cap.getAbility(ability) != null && cap.getAbilityLevel(ability) > ability.getMinLevel()) {
-					NetworkHandler.CHANNEL.sendToServer(new ChangeSkillLevel(cap.getAbilityLevel(ability) - 1, ability.getId()));
+				if (cap.getMagic().getAbility(ability) != null && cap.getMagic().getAbilityLevel(ability) > ability.getMinLevel()) {
+					NetworkHandler.CHANNEL.sendToServer(new ChangeSkillLevel(cap.getMagic().getAbilityLevel(ability) - 1, ability.getId()));
 				}
 			}
 		});
@@ -71,7 +71,7 @@ public class DecreaseLevelButton extends Button
 			ability = DragonAbilities.PASSIVE_ABILITIES.get(type).get(slot);
 			
 			if(ability != null) {
-				PassiveDragonAbility currentAbility = (PassiveDragonAbility)cap.getAbility(ability);
+				PassiveDragonAbility currentAbility = (PassiveDragonAbility)cap.getMagic().getAbility(ability);
 				
 				if(ability != null && currentAbility == null){
 					currentAbility = (PassiveDragonAbility)ability;

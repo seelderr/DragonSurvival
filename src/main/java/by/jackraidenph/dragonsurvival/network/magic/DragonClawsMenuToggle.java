@@ -34,7 +34,7 @@ public class DragonClawsMenuToggle implements IMessage<DragonClawsMenuToggle>
 		ServerPlayerEntity player = supplier.get().getSender();
 		
 		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
-			dragonStateHandler.clawsMenuOpen = message.state;
+			dragonStateHandler.getClawInventory().setClawsMenuOpen(message.state);
 		});
 		
 		if(player.containerMenu instanceof DragonContainer){

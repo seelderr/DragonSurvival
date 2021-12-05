@@ -55,7 +55,7 @@ public class DragonClawsAbility extends InnateDragonAbility
 			
 			switch(handler.getType()){
 				case SEA: {
-					ItemStack item = handler.clawsInventory.getItem(3);
+					ItemStack item = handler.getClawInventory().getClawsInventory().getItem(3);
 					if (!item.isEmpty()) {
 						harvestLevel += item.getHarvestLevel(ToolType.SHOVEL, Minecraft.getInstance().player, null);
 					}
@@ -63,7 +63,7 @@ public class DragonClawsAbility extends InnateDragonAbility
 				}
 					
 				case FOREST: {
-					ItemStack item = handler.clawsInventory.getItem(2);
+					ItemStack item = handler.getClawInventory().getClawsInventory().getItem(2);
 					if (!item.isEmpty()) {
 						harvestLevel += item.getHarvestLevel(ToolType.AXE, Minecraft.getInstance().player, null);
 					}
@@ -71,7 +71,7 @@ public class DragonClawsAbility extends InnateDragonAbility
 				}
 					
 				case CAVE: {
-					ItemStack item = handler.clawsInventory.getItem(1);
+					ItemStack item = handler.getClawInventory().getClawsInventory().getItem(1);
 					if (!item.isEmpty()) {
 						harvestLevel += item.getHarvestLevel(ToolType.PICKAXE, Minecraft.getInstance().player, null);
 					}
@@ -107,7 +107,7 @@ public class DragonClawsAbility extends InnateDragonAbility
 		DragonStateHandler handler = DragonStateProvider.getCap(Minecraft.getInstance().player).orElse(null);
 		
 		if(handler != null) {
-			ItemStack swordStack = handler.clawsInventory.getItem(0);
+			ItemStack swordStack = handler.getClawInventory().getClawsInventory().getItem(0);
 			double ageBonus = handler.isDragon() ? (handler.getLevel() == DragonLevel.ADULT ? ConfigHandler.SERVER.adultBonusDamage.get() : handler.getLevel() == DragonLevel.YOUNG ? ConfigHandler.SERVER.youngBonusDamage.get() : ConfigHandler.SERVER.babyBonusDamage.get()) : 0;
 			double swordBonus = swordStack.isEmpty() ? 0 : swordStack.getItem() instanceof SwordItem ? ((((SwordItem)swordStack.getItem()).getDamage())) : 0;
 			double bonus = Math.max(ageBonus, swordBonus - 1);

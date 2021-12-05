@@ -32,9 +32,9 @@ public class EmoteHandler
 		
 		if (player != null) {
 			DragonStateProvider.getCap(player).ifPresent(cap -> {
-				if (cap.getCurrentEmote() != null) {
-					Emote emote = cap.getCurrentEmote();
-					cap.emoteTick++;
+				if (cap.getEmotes().getCurrentEmote() != null) {
+					Emote emote = cap.getEmotes().getCurrentEmote();
+					cap.getEmotes().emoteTick++;
 					
 					if (player.isCrouching() || player.swinging) {
 						EmoteMenuHandler.setEmote(null);
@@ -42,7 +42,7 @@ public class EmoteHandler
 					} else {
 						if (emote != null && emote.sound != null) {
 							if (emote.sound.interval > 0) {
-								if (cap.emoteTick % emote.sound.interval == 0) {
+								if (cap.getEmotes().emoteTick % emote.sound.interval == 0) {
 									player.level.playLocalSound(player.position().x, player.position().y, player.position().z, new SoundEvent(new ResourceLocation(emote.sound.key)), SoundCategory.PLAYERS, emote.sound.volume, emote.sound.pitch, false);
 								}
 							}
@@ -74,7 +74,7 @@ public class EmoteHandler
 			PlayerEntity player = (PlayerEntity)entity;
 			
 			DragonStateProvider.getCap(player).ifPresent(cap -> {
-				if (cap.getCurrentEmote() != null) {
+				if (cap.getEmotes().getCurrentEmote() != null) {
 					EmoteMenuHandler.setEmote(null);
 				}
 			});
@@ -84,8 +84,8 @@ public class EmoteHandler
 	@SubscribeEvent
 	public static void playerTick(ClientTickEvent event){
 		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent((cap) -> {
-			if(cap.getCurrentEmote() != null && !cap.getCurrentEmote().loops){
-				if(cap.emoteTick >= cap.getCurrentEmote().duration){
+			if(cap.getEmotes().getCurrentEmote() != null && !cap.getEmotes().getCurrentEmote().loops){
+				if(cap.getEmotes().emoteTick >= cap.getEmotes().getCurrentEmote().duration){
 					EmoteMenuHandler.setEmote(null);
 				}
 			}

@@ -1,8 +1,8 @@
 package by.jackraidenph.dragonsurvival.gui.magic.buttons;
 
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.gui.magic.AbilityScreen;
+import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
@@ -10,7 +10,6 @@ import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.client.gui.GuiUtils;
@@ -58,7 +57,7 @@ public class SkillProgressButton extends Button {
 		
 		if(ability != null) {
 			DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {
-				if (ability.getLevel() > cap.getAbilityLevel(ability) + 1) {
+				if (ability.getLevel() > cap.getMagic().getAbilityLevel(ability) + 1) {
 					AbstractGui.fill(stack, x, y, x + 16, y + 16, new Color(0.25F, 0.25F, 0.25F, 0.75F).getRGB());
 				}
 			});

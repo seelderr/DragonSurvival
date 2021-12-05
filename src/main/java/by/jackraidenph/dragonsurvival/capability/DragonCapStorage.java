@@ -1,18 +1,11 @@
 package by.jackraidenph.dragonsurvival.capability;
 
-import by.jackraidenph.dragonsurvival.emotes.Emote;
-import by.jackraidenph.dragonsurvival.emotes.EmoteRegistry;
 import by.jackraidenph.dragonsurvival.util.DragonLevel;
 import by.jackraidenph.dragonsurvival.util.DragonType;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
-
-import java.util.Objects;
 
 public class DragonCapStorage implements Capability.IStorage<DragonStateHandler> {
     
@@ -45,29 +38,9 @@ public class DragonCapStorage implements Capability.IStorage<DragonStateHandler>
             tag.putBoolean("seaWings", instance.seaWings);
             tag.putBoolean("forestWings", instance.forestWings);
             
-            tag.putBoolean("renderSkills", instance.renderAbilityHotbar());
-            
-            tag.putBoolean("clawsMenu", instance.clawsMenuOpen);
-            tag.put("clawsInventory", saveClawInventory(instance.clawsInventory));
-            
-            tag.putString("emote", instance.getCurrentEmote() != null ? instance.getCurrentEmote().animation : "nil");
-            tag.putBoolean("emoteOpen", instance.emoteMenuOpen);
-    
-            CompoundNBT emoteUsage = new CompoundNBT();
-    
-            for(Emote emote : EmoteRegistry.EMOTES){
-                if(instance.emoteUsage.containsKey(emote.name)){
-                    emoteUsage.putInt(emote.name, instance.emoteUsage.get(emote.name));
-                }
-            }
-            
-            tag.put("emoteUsage", emoteUsage);
-    
-            CompoundNBT nbt = new CompoundNBT();
-            nbt.putInt("mana", instance.getCurrentMana());
-            nbt.putInt("selectedAbilitySlot", instance.getSelectedAbilitySlot());
-            nbt.put("abilitySlots", instance.saveAbilities());
-            tag.put("abilityData", nbt);
+            tag.put("clawInv", instance.getClawInventory().writeNBT(capability, instance, side));
+            tag.put("emotes", instance.getEmotes().writeNBT(capability, instance, side));
+            tag.put("magic", instance.getMagic().writeNBT(capability, instance, side));
         }
         return tag;
     }
@@ -79,8 +52,6 @@ public class DragonCapStorage implements Capability.IStorage<DragonStateHandler>
         	instance.setType(DragonType.NONE);
         else
         	instance.setType(DragonType.valueOf(tag.getString("type")));
-        
-
         
         if (instance.isDragon()) {
             instance.setMovementData(tag.getDouble("bodyYaw"), tag.getDouble("headYaw"), tag.getDouble("headPitch"), tag.getBoolean("bite"));
@@ -96,84 +67,15 @@ public class DragonCapStorage implements Capability.IStorage<DragonStateHandler>
             instance.seaWings = tag.getBoolean("seaWings");
             instance.forestWings = tag.getBoolean("forestWings");
             
-            instance.setRenderAbilities(tag.getBoolean("renderSkills"));
-            
-            instance.clawsMenuOpen = tag.getBoolean("clawsMenu");
-            
-            ListNBT clawInv = tag.getList("clawsInventory",10);
-            instance.clawsInventory = readClawInventory(clawInv);;
-    
-            
-            String emoteId = tag.getString("emote");
-            
-            if(!emoteId.equals("nil")){
-                for(Emote emote : EmoteRegistry.EMOTES){
-                    if(Objects.equals(emote.animation, emoteId)){
-                        instance.setCurrentEmote(emote);
-                        break;
-                    }
-                }
-            }
-            
-            instance.emoteMenuOpen = tag.getBoolean("emoteOpen");
-            
-            CompoundNBT emoteUsage = tag.getCompound("emoteUsage");
-            
-            for(Emote emote : EmoteRegistry.EMOTES){
-                if(emoteUsage.contains(emote.name)){
-                    instance.emoteUsage.put(emote.name, tag.getInt(emote.name));
-                }
-            }
+            if(tag.contains("clawInv")) instance.getClawInventory().readNBT(capability, instance, side, tag.get("clawInv"));
+            if(tag.contains("emotes"))  instance.getEmotes().readNBT(capability, instance, side, tag.get("emotes"));
+            if(tag.contains("magic"))  instance.getMagic().readNBT(capability, instance, side, tag.get("magic"));
     
             if (instance.getSize() == 0)
                 instance.setSize(DragonLevel.BABY.size);
             
             instance.setHasWings(tag.getBoolean("hasWings"));
             instance.setLavaAirSupply(tag.getInt("lavaAirSupply"));
-    
-            if(tag.contains("abilityData")) {
-                CompoundNBT ability = tag.getCompound("abilityData");
-    
-                if (ability != null) {
-                    instance.setSelectedAbilitySlot(ability.getInt("selectedAbilitySlot"));
-                    instance.setCurrentMana(ability.getInt("mana"));
-                    instance.loadAbilities(ability);
-                }
-            }
         }
-    }
-    
-    public static Inventory readClawInventory(ListNBT clawInv)
-    {
-        Inventory inventory = new Inventory(4);
-    
-        for(int i = 0; i < clawInv.size(); ++i) {
-            CompoundNBT compoundnbt = clawInv.getCompound(i);
-            int j = compoundnbt.getByte("Slot") & 255;
-            ItemStack itemstack = ItemStack.of(compoundnbt);
-            if (!itemstack.isEmpty()) {
-                if (j >= 0 && j < inventory.getContainerSize()) {
-                    inventory.setItem(j, itemstack);
-                }
-            }
-        }
-        
-        return inventory;
-    }
-    
-    public static ListNBT saveClawInventory(Inventory inv)
-    {
-        ListNBT nbt = new ListNBT();
-    
-        for(int i = 0; i < inv.getContainerSize(); ++i) {
-            if (!inv.getItem(i).isEmpty()) {
-                CompoundNBT compoundnbt = new CompoundNBT();
-                compoundnbt.putByte("Slot", (byte)i);
-                inv.getItem(i).save(compoundnbt);
-                nbt.add(compoundnbt);
-            }
-        }
-        
-        return nbt;
     }
 }

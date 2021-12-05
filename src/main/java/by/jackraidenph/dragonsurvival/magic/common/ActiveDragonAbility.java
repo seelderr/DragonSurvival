@@ -178,7 +178,7 @@ public class ActiveDragonAbility extends DragonAbility
             if(getPlayer().level.isClientSide){
                 NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCastingToServer(getPlayer().getId(), null));
             }
-            dragonStateHandler.setCurrentlyCasting(null);
+            dragonStateHandler.getMagic().setCurrentlyCasting(null);
         });
     }
     

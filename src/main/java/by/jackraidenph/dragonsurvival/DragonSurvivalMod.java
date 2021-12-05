@@ -5,6 +5,7 @@ import by.jackraidenph.dragonsurvival.commands.DragonCommand;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.emotes.EmoteRegistry;
 import by.jackraidenph.dragonsurvival.handlers.DragonFoodHandler;
+import by.jackraidenph.dragonsurvival.handlers.Magic.ClawToolHandler.Event_busHandler;
 import by.jackraidenph.dragonsurvival.handlers.Magic.MagicHandler;
 import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import by.jackraidenph.dragonsurvival.handlers.SpecificsHandler;
@@ -61,6 +62,7 @@ public class DragonSurvivalMod {
         MinecraftForge.EVENT_BUS.register(new EmoteRegistry());
         MinecraftForge.EVENT_BUS.register(new DragonFoodHandler());
         MinecraftForge.EVENT_BUS.register(new SpecificsHandler());
+        MinecraftForge.EVENT_BUS.register(new Event_busHandler());
         MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGH, this::biomeLoadingEvent);
         MinecraftForge.EVENT_BUS.addListener(this::serverRegisterCommandsEvent);
         MinecraftForge.EVENT_BUS.register(MagicHandler.cooldownHandler);

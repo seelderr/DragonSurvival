@@ -24,7 +24,7 @@ public class FireBreathSound extends TickableSound
 	{
 		if(ability.getPlayer() != null){
 			DragonStateProvider.getCap(ability.getPlayer()).ifPresent((cap) -> {
-				if(cap.getCurrentlyCasting() != ability){
+				if(cap.getMagic().getCurrentlyCasting() != ability){
 					this.stop();
 				}
 			});

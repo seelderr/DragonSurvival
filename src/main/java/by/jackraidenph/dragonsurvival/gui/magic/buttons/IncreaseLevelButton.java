@@ -1,8 +1,8 @@
 package by.jackraidenph.dragonsurvival.gui.magic.buttons;
 
+import by.jackraidenph.dragonsurvival.handlers.Magic.ClientMagicHUDHandler;
 import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
-import by.jackraidenph.dragonsurvival.handlers.Magic.ClientMagicHandler;
 import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.magic.common.PassiveDragonAbility;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
@@ -45,7 +45,7 @@ public class IncreaseLevelButton extends Button
 	@Override
 	public void renderButton(MatrixStack stack, int mouseX, int mouseY, float p_230431_4_)
 	{
-		Minecraft.getInstance().getTextureManager().bind(ClientMagicHandler.widgetTextures);
+		Minecraft.getInstance().getTextureManager().bind(ClientMagicHUDHandler.widgetTextures);
 		
 		if(isHovered()){
 			blit(stack, x, y, 66 / 2, 222 / 2, 11, 17,128, 128);
@@ -63,10 +63,10 @@ public class IncreaseLevelButton extends Button
 		
 		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {
 			if(ability != null) {
-				if (cap.getAbilityLevel(ability) + 1 <= ability.getMaxLevel()) {
+				if (cap.getMagic().getAbilityLevel(ability) + 1 <= ability.getMaxLevel()) {
 					
 					if (ability != null) {
-						PassiveDragonAbility currentAbility = (PassiveDragonAbility)cap.getAbility(ability);
+						PassiveDragonAbility currentAbility = (PassiveDragonAbility)cap.getMagic().getAbility(ability);
 						
 						if (ability != null && currentAbility == null) {
 							currentAbility = (PassiveDragonAbility)ability;
@@ -77,7 +77,7 @@ public class IncreaseLevelButton extends Button
 							newActivty.setLevel(currentAbility.getLevel() + 1);
 							
 							if(Minecraft.getInstance().player.experienceLevel >= newActivty.getLevelCost()){
-								NetworkHandler.CHANNEL.sendToServer(new ChangeSkillLevel(cap.getAbilityLevel(ability) + 1, ability.getId()));
+								NetworkHandler.CHANNEL.sendToServer(new ChangeSkillLevel(cap.getMagic().getAbilityLevel(ability) + 1, ability.getId()));
 							}
 						}else{
 							skillCost = -1;
@@ -96,7 +96,7 @@ public class IncreaseLevelButton extends Button
 			ArrayList<ITextComponent> description = new ArrayList<>(Arrays.asList(new TranslationTextComponent("ds.skill.level.up", skillCost).withStyle(format)));
 			
 			if(ability != null) {
-				PassiveDragonAbility currentAbility = (PassiveDragonAbility)cap.getAbility(ability);
+				PassiveDragonAbility currentAbility = (PassiveDragonAbility)cap.getMagic().getAbility(ability);
 				
 				if(ability != null && currentAbility == null){
 					currentAbility = (PassiveDragonAbility)ability;

@@ -62,22 +62,14 @@ public class CapabilityController {
                         capNew.caveWings = capOld.caveWings;
                         capNew.seaWings = capOld.seaWings;
                         
-                        capNew.clawsInventory = capOld.clawsInventory;
-                        capNew.clawsMenuOpen = capOld.clawsMenuOpen;
-                        
-                        capNew.emoteMenuOpen = capOld.emoteMenuOpen;
-                        capNew.emoteUsage = capOld.emoteUsage;
-                        
+                        capNew.getClawInventory().clone(capOld);
+                        capNew.getEmotes().clone(capOld);
+                        capNew.getMagic().clone(capOld);
+    
                         capNew.setSize(capOld.getSize());
                         capNew.setType(capOld.getType());
                         capNew.setHasWings(capOld.hasWings());
                         capNew.setLavaAirSupply(ConfigHandler.SERVER.caveLavaSwimmingTicks.get());
-    
-                        capNew.getAbilities().clear();
-                        capNew.getAbilities().addAll(capOld.getAbilities());
-                        capNew.setCurrentMana(capOld.getCurrentMana());
-                        capNew.setSelectedAbilitySlot(capOld.getSelectedAbilitySlot());
-                        capNew.setRenderAbilities(capOld.renderAbilityHotbar());
                         
                         DragonStateHandler.updateModifiers(original, player);
 

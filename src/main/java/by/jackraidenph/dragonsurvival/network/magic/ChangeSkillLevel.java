@@ -51,11 +51,11 @@ public class ChangeSkillLevel implements IMessage<ChangeSkillLevel>
             DragonAbility staticAbility = DragonAbilities.ABILITY_LOOKUP.get(message.skill);
         
             if(staticAbility != null){
-                DragonAbility playerAbility = dragonStateHandler.getAbility(staticAbility);
+                DragonAbility playerAbility = dragonStateHandler.getMagic().getAbility(staticAbility);
             
                 if(playerAbility == null){
                     playerAbility = staticAbility.createInstance();
-                    dragonStateHandler.getAbilities().add(playerAbility);
+                    dragonStateHandler.getMagic().getAbilities().add(playerAbility);
                 }
                 
                 if(playerAbility.player == null){
@@ -85,7 +85,7 @@ public class ChangeSkillLevel implements IMessage<ChangeSkillLevel>
                 }
                 
                 playerAbility.setLevel(message.level);
-                NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> playerEntity), new SyncMagicAbilities(playerEntity.getId(), dragonStateHandler.getAbilities()));
+                NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> playerEntity), new SyncMagicAbilities(playerEntity.getId(), dragonStateHandler.getMagic().getAbilities()));
             }
         });
     }
