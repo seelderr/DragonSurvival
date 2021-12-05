@@ -12,7 +12,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTier;
 import net.minecraft.item.SwordItem;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.item.TieredItem;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
@@ -38,7 +38,63 @@ public class DragonClawsAbility extends InnateDragonAbility
 	@Override
 	public int getLevel()
 	{
-		return MathHelper.clamp(FMLEnvironment.dist == Dist.CLIENT ? getHarvestLevel() : 0, 0, 4) + 1;
+		return FMLEnvironment.dist == Dist.CLIENT ? getHarvestTexture() : 0;
+	}
+	
+	@OnlyIn( Dist.CLIENT)
+	public int getHarvestTexture(){
+		DragonStateHandler handler = DragonStateProvider.getCap(Minecraft.getInstance().player).orElse(null);
+		if(handler == null) return 0;
+		
+		ItemTier tier = ItemTier.STONE;
+		ItemStack stack = null;
+		
+		switch(handler.getType()){
+			case SEA: {
+				stack = handler.getClawInventory().getClawsInventory().getItem(3);
+				break;
+			}
+			
+			case FOREST: {
+				stack = handler.getClawInventory().getClawsInventory().getItem(2);
+				break;
+			}
+			
+			case CAVE: {
+				stack = handler.getClawInventory().getClawsInventory().getItem(1);
+				break;
+			}
+		}
+		
+		if(stack != null && !stack.isEmpty() && stack.getItem() instanceof TieredItem){
+			TieredItem tieredItem = (TieredItem)stack.getItem();
+			if(tieredItem.getTier() instanceof ItemTier) {
+				tier = (ItemTier)tieredItem.getTier();
+			}
+		}
+		
+		switch(tier){
+			case WOOD:
+				return 1;
+				
+			case STONE:
+				return 2;
+				
+			case IRON:
+				return 3;
+				
+			case GOLD:
+				return 4;
+				
+			case DIAMOND:
+				return 5;
+				
+			case NETHERITE:
+				return 6;
+				
+			default:
+				return 0;
+		}
 	}
 	
 	@OnlyIn( Dist.CLIENT)
