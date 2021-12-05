@@ -41,24 +41,24 @@ public class ClawInventory implements DragonCapability
 	}
 	
 	@Override
-	public INBT writeNBT(Capability<DragonStateHandler> capability, DragonStateHandler instance, Direction side)
+	public INBT writeNBT(Capability<DragonStateHandler> capability,  Direction side)
 	{
 		CompoundNBT tag = new CompoundNBT();
 		
-		tag.putBoolean("clawsMenu", instance.getClawInventory().isClawsMenuOpen());
-		tag.put("clawsInventory", saveClawInventory(instance.getClawInventory().getClawsInventory()));
+		tag.putBoolean("clawsMenu", isClawsMenuOpen());
+		tag.put("clawsInventory", saveClawInventory(getClawsInventory()));
 		
 		return tag;
 	}
 	
 	@Override
-	public void readNBT(Capability<DragonStateHandler> capability, DragonStateHandler instance, Direction side, INBT base)
+	public void readNBT(Capability<DragonStateHandler> capability, Direction side, INBT base)
 	{
 		CompoundNBT tag = (CompoundNBT) base;
 		
-		instance.getClawInventory().setClawsMenuOpen(tag.getBoolean("clawsMenu"));
+		setClawsMenuOpen(tag.getBoolean("clawsMenu"));
 		ListNBT clawInv = tag.getList("clawsInventory", 10);
-		instance.getClawInventory().setClawsInventory(readClawInventory(clawInv));
+		setClawsInventory(readClawInventory(clawInv));
 	}
 	
 	@Override

@@ -14,10 +14,12 @@ public class SyncEmoteServer implements IMessage<SyncEmoteServer>
 {
 
     private String emote;
+    private int emoteTick;
     
-    public SyncEmoteServer(String emote)
+    public SyncEmoteServer(String emote, int emoteTick)
     {
         this.emote = emote;
+        this.emoteTick = emoteTick;
     }
     
     public SyncEmoteServer() {
@@ -26,12 +28,14 @@ public class SyncEmoteServer implements IMessage<SyncEmoteServer>
     @Override
     public void encode(SyncEmoteServer message, PacketBuffer buffer) {
         buffer.writeUtf(message.emote);
+        buffer.writeInt(message.emoteTick);
     }
 
     @Override
     public SyncEmoteServer decode(PacketBuffer buffer) {
         String emote = buffer.readUtf();
-        return new SyncEmoteServer(emote);
+        int emoteTick = buffer.readInt();
+        return new SyncEmoteServer(emote, emoteTick);
     }
 
     @Override
@@ -42,6 +46,6 @@ public class SyncEmoteServer implements IMessage<SyncEmoteServer>
             return;
         
         TargetPoint point = new TargetPoint(playerEntity, playerEntity.position().x, playerEntity.position().y, playerEntity.position().z, 64, playerEntity.level.dimension());
-        NetworkHandler.CHANNEL.send(PacketDistributor.NEAR.with(() -> point), new SyncEmote(playerEntity.getId(), message.emote));
+        NetworkHandler.CHANNEL.send(PacketDistributor.NEAR.with(() -> point), new SyncEmote(playerEntity.getId(), message.emote, message.emoteTick));
     }
 }

@@ -154,36 +154,36 @@ public class MagicCap implements DragonCapability
 	}
 	
 	@Override
-	public INBT writeNBT(Capability<DragonStateHandler> capability, DragonStateHandler instance, Direction side)
+	public INBT writeNBT(Capability<DragonStateHandler> capability,  Direction side)
 	{
 		CompoundNBT tag = new CompoundNBT();
 		
-		tag.putBoolean("renderSkills", instance.getMagic().renderAbilityHotbar());
+		tag.putBoolean("renderSkills",renderAbilityHotbar());
 		
 		CompoundNBT nbt = new CompoundNBT();
-		nbt.putInt("mana", instance.getMagic().getCurrentMana());
-		nbt.putInt("selectedAbilitySlot", instance.getMagic().getSelectedAbilitySlot());
-		nbt.put("abilitySlots", instance.getMagic().saveAbilities());
+		nbt.putInt("mana", getCurrentMana());
+		nbt.putInt("selectedAbilitySlot", getSelectedAbilitySlot());
+		nbt.put("abilitySlots", saveAbilities());
 		tag.put("abilityData", nbt);
 		
 		return tag;
 	}
 	
 	@Override
-	public void readNBT(Capability<DragonStateHandler> capability, DragonStateHandler instance, Direction side, INBT base)
+	public void readNBT(Capability<DragonStateHandler> capability, Direction side, INBT base)
 	{
 		CompoundNBT tag = (CompoundNBT) base;
 		
-		instance.getMagic().setRenderAbilities(tag.getBoolean("renderSkills"));
+		setRenderAbilities(tag.getBoolean("renderSkills"));
 		
 		
 		if(tag.contains("abilityData")) {
 			CompoundNBT ability = tag.getCompound("abilityData");
 			
 			if (ability != null) {
-				instance.getMagic().setSelectedAbilitySlot(ability.getInt("selectedAbilitySlot"));
-				instance.getMagic().setCurrentMana(ability.getInt("mana"));
-				instance.getMagic().loadAbilities(ability);
+				setSelectedAbilitySlot(ability.getInt("selectedAbilitySlot"));
+				setCurrentMana(ability.getInt("mana"));
+				loadAbilities(ability);
 			}
 		}
 	}

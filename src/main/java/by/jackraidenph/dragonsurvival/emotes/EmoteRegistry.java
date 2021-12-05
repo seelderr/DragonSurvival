@@ -3,7 +3,6 @@ package by.jackraidenph.dragonsurvival.emotes;
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import com.google.gson.Gson;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -30,11 +29,11 @@ public class EmoteRegistry
 	public static void clientStart(FMLClientSetupEvent event){
 		EmoteRegistry.reload(Minecraft.getInstance().getResourceManager(), EmoteRegistry.CLIENT_EMOTES);
 		
-		((IReloadableResourceManager)Minecraft.getInstance().getResourceManager()).registerReloadListener((p_215226_1_, resourceManager, p_215226_3_, p_215226_4_, p_215226_5_, p_215226_6_) -> {
-			EmoteRegistry.EMOTES.clear();
-			EmoteRegistry.reload(Minecraft.getInstance().getResourceManager(), EmoteRegistry.CLIENT_EMOTES);
-			return null;
-		});
+//		((IReloadableResourceManager)Minecraft.getInstance().getResourceManager()).registerReloadListener((p_215226_1_, resourceManager, p_215226_3_, p_215226_4_, p_215226_5_, p_215226_6_) -> {
+//			EmoteRegistry.EMOTES.clear();
+//			EmoteRegistry.reload(Minecraft.getInstance().getResourceManager(), EmoteRegistry.CLIENT_EMOTES);
+//			return null;
+//		});
 	}
 	
 	protected static void reload(IResourceManager manager, ResourceLocation location){

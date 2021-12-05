@@ -20,15 +20,15 @@ import java.util.function.Supplier;
 
 public class SyncEmote implements IMessage<SyncEmote>
 {
-
-    private String emote;
     public int playerId;
+    private String emote;
+    public int emoteTick;
     
-    
-    public SyncEmote(int playerId, String emote)
+    public SyncEmote(int playerId, String emote, int emoteTick)
     {
         this.emote = emote;
         this.playerId = playerId;
+        this.emoteTick = emoteTick;
     }
     
     public SyncEmote() {
@@ -38,13 +38,15 @@ public class SyncEmote implements IMessage<SyncEmote>
     public void encode(SyncEmote message, PacketBuffer buffer) {
         buffer.writeInt(message.playerId);
         buffer.writeUtf(message.emote);
+        buffer.writeInt(message.emoteTick);
     }
 
     @Override
     public SyncEmote decode(PacketBuffer buffer) {
         int playerId = buffer.readInt();
         String emote = buffer.readUtf();
-        return new SyncEmote(playerId, emote);
+        int emoteTick = buffer.readInt();
+        return new SyncEmote(playerId, emote, emoteTick);
     }
     
     @Override
@@ -66,6 +68,7 @@ public class SyncEmote implements IMessage<SyncEmote>
                             for(Emote emote : EmoteRegistry.EMOTES){
                                 if(Objects.equals(emote.name, message.emote)){
                                     dragonStateHandler.getEmotes().setCurrentEmote(emote);
+                                    dragonStateHandler.getEmotes().emoteTick = message.emoteTick;
                                     break;
                                 }
                             }

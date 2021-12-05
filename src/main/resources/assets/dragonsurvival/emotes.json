@@ -70,19 +70,22 @@
 		  "name": "ds.emote.spin_on_back",
 		  "animation": "spin_on_back",
 		  "loops": true,
-		  "locksHead": true
+		  "locksHead": true,
+		  "thirdPerson": true
 	  },
 	  {
 		  "name": "ds.emote.spin_on_back_fast",
 		  "animation": "spin_on_back_fast",
 		  "loops": true,
-		  "locksHead": true
+		  "locksHead": true,
+		  "thirdPerson": true
 	  },
 	  {
 		  "name": "ds.emote.spin_on_back_very_fast",
 		  "animation": "spin_on_back_very_fast",
 		  "loops": true,
-		  "locksHead": true
+		  "locksHead": true,
+		  "thirdPerson": true
 	  },
 	  {
 		  "name": "ds.emote.vibe",

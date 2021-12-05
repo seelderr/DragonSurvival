@@ -6,6 +6,7 @@ public class Emote
 	
 	public boolean loops = false;
 	public boolean locksHead = false;
+	public boolean thirdPerson = false;
 	
 	public String name;
 	public String animation;

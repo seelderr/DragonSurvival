@@ -53,23 +53,17 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
         final PlayerEntity player = getPlayer();
         DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
         AnimationBuilder builder = new AnimationBuilder();
-    
+        
         if(handler != null){
             if(handler.getEmotes().getCurrentEmote() == null) {
                 if (handler.getMovementData().bite && biteEnd <= biteEndingTicks || biteEnd > 0 && biteEnd <= biteEndingTicks) {
                     builder.addAnimation("bite");
-                    neckLocked = true;
-        
                     biteEnd++;
         
                     animationEvent.getController().setAnimation(builder);
                     return PlayState.CONTINUE;
                 }
             }
-        }
-        
-        if(biteEnd == biteEndingTicks + 1){
-            neckLocked = false;
         }
         
         biteEnd = 0;
@@ -103,9 +97,16 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                 
                 if(playerStateHandler.getEmotes().getCurrentEmote() != null){
                     neckLocked = playerStateHandler.getEmotes().getCurrentEmote().locksHead;
-                    builder.addAnimation(playerStateHandler.getEmotes().getCurrentEmote().animation, playerStateHandler.getEmotes().getCurrentEmote().loops);
+                    
+                   if(playerStateHandler.getEmotes().getCurrentEmote().animation != null && !playerStateHandler.getEmotes().getCurrentEmote().animation.isEmpty()) {
+                       builder.addAnimation(playerStateHandler.getEmotes().getCurrentEmote().animation, playerStateHandler.getEmotes().getCurrentEmote().loops);
+                   }
+                   
                     lastEmote = playerStateHandler.getEmotes().getCurrentEmote();
-                    return;
+                   
+                   if(playerStateHandler.getEmotes().getCurrentEmote().animation != null && !playerStateHandler.getEmotes().getCurrentEmote().animation.isEmpty()) {
+                       return;
+                   }
                 }
                 
                 if(curCast != null && lastCast == null){

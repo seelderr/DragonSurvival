@@ -1,8 +1,12 @@
 package by.jackraidenph.dragonsurvival.handlers.ClientSide;
 
+import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.emotes.Emote;
+import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
+import by.jackraidenph.dragonsurvival.network.emotes.SyncEmoteServer;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.settings.PointOfView;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
@@ -20,6 +24,8 @@ import net.minecraftforge.fml.common.Mod;
 
 import java.util.UUID;
 
+import static net.minecraft.client.settings.PointOfView.THIRD_PERSON_BACK;
+
 
 @Mod.EventBusSubscriber( Dist.CLIENT)
 public class EmoteHandler
@@ -36,22 +42,40 @@ public class EmoteHandler
 					Emote emote = cap.getEmotes().getCurrentEmote();
 					cap.getEmotes().emoteTick++;
 					
+					if( cap.getEmotes().emoteTick % Functions.secondsToTicks(5) == 0){
+						NetworkHandler.CHANNEL.sendToServer(new SyncEmoteServer(emote.name, cap.getEmotes().emoteTick));
+					}
+					
 					if (player.isCrouching() || player.swinging) {
 						EmoteMenuHandler.setEmote(null);
 						
 					} else {
-						if (emote != null && emote.sound != null) {
-							if (emote.sound.interval > 0) {
-								if (cap.getEmotes().emoteTick % emote.sound.interval == 0) {
-									player.level.playLocalSound(player.position().x, player.position().y, player.position().z, new SoundEvent(new ResourceLocation(emote.sound.key)), SoundCategory.PLAYERS, emote.sound.volume, emote.sound.pitch, false);
-								}
+						if (emote.sound != null && emote.sound.interval > 0) {
+							if (cap.getEmotes().emoteTick % emote.sound.interval == 0) {
+								player.level.playLocalSound(player.position().x, player.position().y, player.position().z, new SoundEvent(new ResourceLocation(emote.sound.key)), SoundCategory.PLAYERS, emote.sound.volume, emote.sound.pitch, false);
 							}
 						}
-						ModifiableAttributeInstance attributeInstance = player.getAttribute(Attributes.MOVEMENT_SPEED);
-						AttributeModifier noMove = new AttributeModifier(EMOTE_NO_MOVE, "EMOTE", -attributeInstance.getValue(), AttributeModifier.Operation.ADDITION);
 						
-						if (!attributeInstance.hasModifier(noMove)) {
-							attributeInstance.addTransientModifier(noMove);
+						if(emote.animation != null && !emote.animation.isEmpty()) {
+							ModifiableAttributeInstance attributeInstance = player.getAttribute(Attributes.MOVEMENT_SPEED);
+							AttributeModifier noMove = new AttributeModifier(EMOTE_NO_MOVE, "EMOTE", -attributeInstance.getValue(), AttributeModifier.Operation.ADDITION);
+							
+							if (!attributeInstance.hasModifier(noMove)) {
+								attributeInstance.addTransientModifier(noMove);
+							}
+						}
+						
+						if(emote.thirdPerson){
+							Minecraft.getInstance().levelRenderer.needsUpdate();
+							PointOfView pointofview = Minecraft.getInstance().options.getCameraType();
+							
+							if(pointofview.isFirstPerson()) {
+								Minecraft.getInstance().options.setCameraType(THIRD_PERSON_BACK);
+								
+								if (pointofview.isFirstPerson() != Minecraft.getInstance().options.getCameraType().isFirstPerson()) {
+									Minecraft.getInstance().gameRenderer.checkEntityPostEffect(Minecraft.getInstance().options.getCameraType().isFirstPerson() ? Minecraft.getInstance().getCameraEntity() : null);
+								}
+							}
 						}
 					}
 				}else{

@@ -38,9 +38,9 @@ public class DragonCapStorage implements Capability.IStorage<DragonStateHandler>
             tag.putBoolean("seaWings", instance.seaWings);
             tag.putBoolean("forestWings", instance.forestWings);
             
-            tag.put("clawInv", instance.getClawInventory().writeNBT(capability, instance, side));
-            tag.put("emotes", instance.getEmotes().writeNBT(capability, instance, side));
-            tag.put("magic", instance.getMagic().writeNBT(capability, instance, side));
+            tag.put("clawInv", instance.getClawInventory().writeNBT(capability, side));
+            tag.put("emotes", instance.getEmotes().writeNBT(capability, side));
+            tag.put("magic", instance.getMagic().writeNBT(capability, side));
         }
         return tag;
     }
@@ -67,9 +67,9 @@ public class DragonCapStorage implements Capability.IStorage<DragonStateHandler>
             instance.seaWings = tag.getBoolean("seaWings");
             instance.forestWings = tag.getBoolean("forestWings");
             
-            if(tag.contains("clawInv")) instance.getClawInventory().readNBT(capability, instance, side, tag.get("clawInv"));
-            if(tag.contains("emotes"))  instance.getEmotes().readNBT(capability, instance, side, tag.get("emotes"));
-            if(tag.contains("magic"))  instance.getMagic().readNBT(capability, instance, side, tag.get("magic"));
+            if(tag.contains("clawInv")) instance.getClawInventory().readNBT(capability, side, tag.get("clawInv"));
+            if(tag.contains("emotes"))  instance.getEmotes().readNBT(capability, side, tag.get("emotes"));
+            if(tag.contains("magic"))  instance.getMagic().readNBT(capability, side, tag.get("magic"));
     
             if (instance.getSize() == 0)
                 instance.setSize(DragonLevel.BABY.size);

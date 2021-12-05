@@ -52,15 +52,7 @@ public class EmoteMenuHandler
 	
 	public static void setEmote(Emote emote){
 		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent((cap) -> cap.getEmotes().setCurrentEmote(emote));
-		NetworkHandler.CHANNEL.sendToServer(new SyncEmoteServer(emote != null ? emote.name : "nil"));
-		
-		if(emote != null){
-			DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent((cap) -> {
-				cap.getEmotes().emoteUsage.putIfAbsent(emote.name, 0);
-				cap.getEmotes().emoteUsage.put(emote.name, cap.getEmotes().emoteUsage.get(emote.name) + 1);
-				NetworkHandler.CHANNEL.sendToServer(new SyncEmoteStatsServer(cap.getEmotes().emoteMenuOpen, cap.getEmotes().emoteUsage));
-			});
-		}
+		NetworkHandler.CHANNEL.sendToServer(new SyncEmoteServer(emote != null ? emote.name : "nil", 0));
 	}
 	
 	@SubscribeEvent
@@ -174,7 +166,7 @@ public class EmoteMenuHandler
 				
 				if(handler != null){
 					handler.getEmotes().emoteMenuOpen = !handler.getEmotes().emoteMenuOpen;
-					NetworkHandler.CHANNEL.sendToServer(new SyncEmoteStatsServer(handler.getEmotes().emoteMenuOpen, handler.getEmotes().emoteUsage));
+					NetworkHandler.CHANNEL.sendToServer(new SyncEmoteStatsServer(handler.getEmotes().emoteMenuOpen));
 				}
 			}){
 				@Override
@@ -260,7 +252,6 @@ public class EmoteMenuHandler
 		HashMap<Integer, ArrayList<Emote>> list = new HashMap<>();
 		
 		emotes.addAll(EmoteRegistry.EMOTES);
-		emotes.sort(Comparator.comparingInt(c -> handler.getEmotes().emoteUsage.getOrDefault(c.name, 0)));
 		emotes = new ArrayList<>(Lists.reverse(emotes));
 		
 		int num = 0;
