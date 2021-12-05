@@ -14,6 +14,7 @@ public class SoundRegistry
     public static SoundEvent activateBeacon, deactivateBeacon, upgradeBeacon, applyEffect;
     public static SoundEvent fireBreathStart, fireBreathLoop, fireBreathEnd;
     public static SoundEvent forestBreathStart, forestBreathLoop, forestBreathEnd;
+    public static SoundEvent stormBreathStart, stormBreathLoop, stormBreathEnd;
 
     @SubscribeEvent
     public static void registerSounds(RegistryEvent.Register<SoundEvent> registryEvent) {
@@ -30,6 +31,10 @@ public class SoundRegistry
         forestBreathStart = register("forest_breath_start", forgeRegistry);
         forestBreathLoop = register("forest_breath_loop", forgeRegistry);
         forestBreathEnd = register("forest_breath_end", forgeRegistry);
+
+        stormBreathStart = register("storm_breath_start", forgeRegistry);
+        stormBreathLoop = register("storm_breath_loop", forgeRegistry);
+        stormBreathEnd = register("storm_breath_end", forgeRegistry);
     }
 
     private static SoundEvent register(String name, IForgeRegistry<SoundEvent> forgeRegistry) {

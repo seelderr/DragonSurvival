@@ -7,8 +7,14 @@ import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.particles.SeaDragon.LargeLightningParticleData;
 import by.jackraidenph.dragonsurvival.particles.SeaDragon.SmallLightningParticleData;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
+import by.jackraidenph.dragonsurvival.sounds.StormBreathSound;
+import by.jackraidenph.dragonsurvival.sounds.SoundRegistry;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.ISound;
+import net.minecraft.client.audio.SimpleSound;
+import net.minecraft.client.audio.TickableSound;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.LightningBoltEntity;
@@ -30,6 +36,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
 import java.lang.reflect.Field;
@@ -61,7 +68,53 @@ public class LightningBreathAbility extends BreathAbility
 			firstUse = false;
 		}
 	}
-	
+	@OnlyIn(Dist.CLIENT)
+	private ISound startingSound;
+
+	@OnlyIn(Dist.CLIENT)
+	private TickableSound loopingSound;
+
+	@OnlyIn(Dist.CLIENT)
+	private ISound endSound;
+
+	@OnlyIn(Dist.CLIENT)
+	public void sound(){
+		if (castingTicks == 1) {
+			if(startingSound == null){
+				startingSound = SimpleSound.forAmbientAddition(SoundRegistry.stormBreathStart);
+			}
+			loopingSound = new StormBreathSound(this);
+			Minecraft.getInstance().getSoundManager().play(startingSound);
+			Minecraft.getInstance().getSoundManager().playDelayed(loopingSound, 10);
+		}
+
+		if(loopingSound != null && castingTicks > 10 && (!loopingSound.isLooping() || loopingSound.isStopped())){
+			Minecraft.getInstance().getSoundManager().play(loopingSound);
+		}
+	}
+
+	@OnlyIn(Dist.CLIENT)
+	public void stopSound(){
+		if(SoundRegistry.stormBreathEnd != null) {
+			if (endSound == null) {
+				endSound = SimpleSound.forAmbientAddition(SoundRegistry.stormBreathEnd);
+			}
+
+			Minecraft.getInstance().getSoundManager().play(endSound);
+		}
+	}
+
+	@Override
+	public void stopCasting()
+	{
+		if(castingTicks > 1) {
+			if (player.level.isClientSide) {
+				DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (DistExecutor.SafeRunnable)() -> stopSound());
+			}
+		}
+
+		super.stopCasting();
+	}
 	@Override
 	public boolean isDisabled()
 	{
@@ -111,6 +164,10 @@ public class LightningBreathAbility extends BreathAbility
 				double zSpeed = speed * zComp + (spread * 0.7 * (player.level.random.nextFloat() * 2 - 1) * (Math.sqrt(1 - zComp * zComp)));
 				player.level.addParticle(new SmallLightningParticleData(37, false), x, y, z, xSpeed, ySpeed, zSpeed);
 			}
+		}
+
+		if(player.level.isClientSide) {
+			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (DistExecutor.SafeRunnable)() -> sound());
 		}
 		
 		hitEntities();
