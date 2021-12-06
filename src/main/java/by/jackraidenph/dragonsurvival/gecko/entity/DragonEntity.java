@@ -8,6 +8,7 @@ import by.jackraidenph.dragonsurvival.gecko.CommonTraits;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.ClientDragonRender;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.ClientEvents;
 import by.jackraidenph.dragonsurvival.handlers.DragonSizeHandler;
+import by.jackraidenph.dragonsurvival.magic.abilities.Actives.BreathAbilities.BreathAbility;
 import by.jackraidenph.dragonsurvival.magic.common.AbilityAnimation;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import net.minecraft.entity.EntityType;
@@ -55,7 +56,16 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
         AnimationBuilder builder = new AnimationBuilder();
         
         if(handler != null){
+            ActiveDragonAbility curCast = handler.getMagic().getCurrentlyCasting();
+            
             if(handler.getEmotes().getCurrentEmote() == null) {
+                
+                if(curCast instanceof BreathAbility || lastCast instanceof BreathAbility){
+                    renderAbility(builder, curCast);
+                    animationEvent.getController().setAnimation(builder);
+                    return PlayState.CONTINUE;
+                }
+                
                 if (handler.getMovementData().bite && biteEnd <= biteEndingTicks || biteEnd > 0 && biteEnd <= biteEndingTicks) {
                     builder.addAnimation("bite");
                     biteEnd++;
@@ -109,67 +119,10 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                    }
                 }
                 
-                if(curCast != null && lastCast == null){
-                    if(curCast.getStartingAnimation() != null){
-                        AbilityAnimation starAni = curCast.getStartingAnimation();
-                        neckLocked = starAni.locksNeck;
-                        
-                        animationTimer.trackAnimation(starAni.animationKey);
-    
-                        if(!started){
-                            animationTimer.putAnimation(starAni.animationKey, starAni.duration, builder);
-                            started = true;
-                        }
-                        
-                        builder.addAnimation(starAni.animationKey);
-    
-                        if (animationTimer.getDuration(starAni.animationKey) <= 0) {
-                            lastCast = curCast;
-                            started = false;
-                        }
-                        
-                    }else if(curCast.getLoopingAnimation() != null){
-                        AbilityAnimation loopingAni = curCast.getLoopingAnimation();
-                        neckLocked = loopingAni.locksNeck;
-                        
-                        lastCast = curCast;
-                        builder.addAnimation(loopingAni.animationKey, true);
-                    }
-                }else if(curCast != null && lastCast != null){
-                    lastCast = curCast;
-                    
-                    if(curCast.getLoopingAnimation() != null) {
-                        AbilityAnimation loopingAni = curCast.getLoopingAnimation();
-                        neckLocked = loopingAni.locksNeck;
-                        builder.addAnimation(loopingAni.animationKey, true);
-                    }
-                }else if(curCast == null && lastCast != null){
-                    if(lastCast.getStoppingAnimation() != null) {
-                        AbilityAnimation stopAni = lastCast.getStoppingAnimation();
-                        neckLocked = stopAni.locksNeck;
-                        
-                        animationTimer.trackAnimation(stopAni.animationKey);
-    
-                        if(!ended){
-                            animationTimer.putAnimation(stopAni.animationKey, stopAni.duration, builder);
-                            ended = true;
-                        }
-    
-                        builder.addAnimation(stopAni.animationKey);
-    
-                        if (animationTimer.getDuration(stopAni.animationKey) <= 0) {
-                            lastCast = null;
-                            ended = false;
-                            neckLocked = false;
-                        }
-                    }else{
-                        lastCast = null;
-                        neckLocked = false;
-                    }
-                }else{
-                    lastCast = null;
-                    neckLocked = false;
+                if(!(curCast instanceof BreathAbility) && !(lastCast instanceof BreathAbility)){
+                    renderAbility(builder, curCast);
                 }
+                
                 
                 Vector3d motio = new Vector3d(player.getX() - player.xo, player.getY() - player.yo, player.getZ() - player.zo);
                 boolean isMovingHorizontal = Math.sqrt(Math.pow(motio.x, 2) + Math.pow(motio.z, 2)) > 0.005;
@@ -237,7 +190,72 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
         animationController.setAnimation(builder);
         return PlayState.CONTINUE;
     }
+    
+    private void renderAbility(AnimationBuilder builder, ActiveDragonAbility curCast)
+    {
+        if(curCast != null && lastCast == null){
+            if(curCast.getStartingAnimation() != null){
+                AbilityAnimation starAni = curCast.getStartingAnimation();
+                neckLocked = starAni.locksNeck;
 
+                animationTimer.trackAnimation(starAni.animationKey);
+
+                if(!started){
+                    animationTimer.putAnimation(starAni.animationKey, starAni.duration, builder);
+                    started = true;
+                }
+
+                builder.addAnimation(starAni.animationKey);
+
+                if (animationTimer.getDuration(starAni.animationKey) <= 0) {
+                    lastCast = curCast;
+                    started = false;
+                }
+
+            }else if(curCast.getLoopingAnimation() != null){
+                AbilityAnimation loopingAni = curCast.getLoopingAnimation();
+                neckLocked = loopingAni.locksNeck;
+
+                lastCast = curCast;
+                builder.addAnimation(loopingAni.animationKey, true);
+            }
+        }else if(curCast != null && lastCast != null){
+            lastCast = curCast;
+
+            if(curCast.getLoopingAnimation() != null) {
+                AbilityAnimation loopingAni = curCast.getLoopingAnimation();
+                neckLocked = loopingAni.locksNeck;
+                builder.addAnimation(loopingAni.animationKey, true);
+            }
+        }else if(curCast == null && lastCast != null){
+            if(lastCast.getStoppingAnimation() != null) {
+                AbilityAnimation stopAni = lastCast.getStoppingAnimation();
+                neckLocked = stopAni.locksNeck;
+
+                animationTimer.trackAnimation(stopAni.animationKey);
+
+                if(!ended){
+                    animationTimer.putAnimation(stopAni.animationKey, stopAni.duration, builder);
+                    ended = true;
+                }
+
+                builder.addAnimation(stopAni.animationKey);
+
+                if (animationTimer.getDuration(stopAni.animationKey) <= 0) {
+                    lastCast = null;
+                    ended = false;
+                    neckLocked = false;
+                }
+            }else{
+                lastCast = null;
+                neckLocked = false;
+            }
+        }else{
+            lastCast = null;
+            neckLocked = false;
+        }
+    }
+    
     @Override
     public Iterable<ItemStack> getArmorSlots() {
         return getPlayer().getArmorSlots();
