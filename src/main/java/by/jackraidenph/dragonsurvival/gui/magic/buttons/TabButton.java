@@ -4,6 +4,7 @@ import by.jackraidenph.dragonsurvival.gui.magic.AbilityScreen;
 import by.jackraidenph.dragonsurvival.gui.magic.DragonScreen;
 import by.jackraidenph.dragonsurvival.handlers.Magic.ClientMagicHUDHandler;
 import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
+import by.jackraidenph.dragonsurvival.network.OpenInventory;
 import by.jackraidenph.dragonsurvival.network.magic.OpenDragonInventory;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
@@ -76,7 +77,7 @@ public class TabButton extends Button
 						if(((AbilityScreen)parent).sourceScreen != null){
 							if(((AbilityScreen)parent).sourceScreen instanceof InventoryScreen){
 								Minecraft.getInstance().setScreen(new InventoryScreen(Minecraft.getInstance().player));
-								
+								NetworkHandler.CHANNEL.sendToServer(new OpenInventory());
 								break;
 							}else if(((AbilityScreen)parent).sourceScreen instanceof DragonScreen){
 								NetworkHandler.CHANNEL.sendToServer(new OpenDragonInventory());
@@ -86,7 +87,8 @@ public class TabButton extends Button
 					}
 					
 					Minecraft.getInstance().setScreen(new InventoryScreen(Minecraft.getInstance().player));
-				break;
+					NetworkHandler.CHANNEL.sendToServer(new OpenInventory());
+					break;
 				
 				case 1:
 					Minecraft.getInstance().setScreen(new AbilityScreen(parent));

@@ -71,14 +71,13 @@ public class ClientEvents {
     public static void onOpenScreen(GuiOpenEvent openEvent) {
         ClientPlayerEntity player = Minecraft.getInstance().player;
     
-        if (openEvent.getGui() instanceof InventoryScreen && !player.isCreative() && DragonStateProvider.isDragon(player)) {
-            if(ConfigHandler.CLIENT.dragonInventory.get()) {
-                Minecraft minecraft = Minecraft.getInstance();
-                if (minecraft.screen == null) {
-                    NetworkHandler.CHANNEL.sendToServer(new OpenDragonInventory());
-                    openEvent.setCanceled(true);
-                }
-            }
+        if(!ConfigHandler.CLIENT.dragonInventory.get()) return;
+        if(Minecraft.getInstance().screen != null) return;
+        if(player == null || player.isCreative() || !DragonStateProvider.isDragon(player)) return;
+        
+        if (openEvent.getGui() instanceof InventoryScreen) {
+            openEvent.setCanceled(true);
+            NetworkHandler.CHANNEL.sendToServer(new OpenDragonInventory());
         }
     }
     

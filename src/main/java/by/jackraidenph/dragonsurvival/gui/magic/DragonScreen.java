@@ -10,6 +10,7 @@ import by.jackraidenph.dragonsurvival.handlers.ClientSide.KeyInputHandler;
 import by.jackraidenph.dragonsurvival.handlers.Magic.ClawToolHandler;
 import by.jackraidenph.dragonsurvival.handlers.Magic.ClientMagicHUDHandler;
 import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
+import by.jackraidenph.dragonsurvival.network.OpenInventory;
 import by.jackraidenph.dragonsurvival.network.magic.DragonClawsMenuToggle;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -228,11 +229,8 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> implemen
     
         if(ConfigHandler.CLIENT.inventoryToggle.get()) {
             addButton(new ImageButton(this.leftPos + (imageWidth - 28), (this.height / 2 - 30) + 50, 20, 18, 0, 0, 19, INVENTORY_TOGGLE_BUTTON, p_onPress_1_ -> {
-                if (Minecraft.getInstance().gameMode.isServerControlledInventory()) {
-                    Minecraft.getInstance().player.sendOpenInventory();
-                } else {
-                    Minecraft.getInstance().setScreen(new InventoryScreen(this.player));
-                }
+                Minecraft.getInstance().setScreen(new InventoryScreen(this.player));
+                NetworkHandler.CHANNEL.sendToServer(new OpenInventory());
             }));
         }
     }

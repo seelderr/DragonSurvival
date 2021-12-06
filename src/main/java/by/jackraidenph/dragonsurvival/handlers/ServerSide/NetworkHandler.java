@@ -61,7 +61,7 @@ public class NetworkHandler
 		 register(SyncSize.class, new SyncSize());
 		 register(ToggleWings.class, new ToggleWings());
 		// register(OpenCrafting.class, new OpenCrafting());
-		
+		 register(OpenInventory.class, new OpenInventory());
 		 
 		 //Ability packets
 		 register(OpenDragonInventory.class, new OpenDragonInventory());
