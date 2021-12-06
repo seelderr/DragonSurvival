@@ -1,3 +1,34 @@
+1.16.5-0.1 Magic Update:
+- Special thanks to Horeak for this update! He did a great job. It took us a year to prepare for this update. And in 3 weeks of very intensive work, we did it!
+There are a total of 14,000 lines in DS. The update with magic adds another 10,000 lines and changes about 4,000 old lines of code. Just look at this amount of code: https://github.com/DragonSurvivalTeam/DragonSurvival/pull/74/commits/04c8ebf2fd65a8f7cf28eba36aaf6daa9ffba2f9
+- Added 36 dragon skills. Each dragon species now has 4 active skills, 4 passive skills, and 4 innate skills.
+- Each dragon got its own breath! The cave dragon vaporizes enemies, the forest dragon poisons, and the sea dragon strikes everyone with lightning. The "mob griefing" game - rule applies to all magic skills.
+- Now you can give useful buffs to your friends and yourself.
+- Added 250 textures for skills.
+- Added effects: Burned (target takes damage if it moves), Charged (target strikes all creatures nearby with electricity), Sea Eyes (dragon can see at night), Lava Eyes (dragon can see under the lava), Hunter (when in contact with grass the player becomes invisible to all and deals increased first damage on impact), Revealing The Soul (twice as much experience when killing monsters), Forest Gas (poisoning, but fatal), Tough Skin (temporary extra armor points).
+- Added a system of magic points (mana). They will be restored in favorable places for the dragon. For forest dragons it flowers and sun, for cave dragons - fire, and for sea dragons - water.
+- Added an emotion system. Now you can sit, sleep, rest, growl, spin and do 40 other animations to express all your dragon emotions! Just open the chat! With assets/dragonsurvival/emotes.json you can add your own emotions and sounds.
+- You can now learn most of the information about the dragon through the new skills menu. Absolutely everything you need to know about your dragon can be found there. If anyone can help us fill out WikiFandom on the new update, we'd love it!
+- Returned and improved dragon inventory with a 3x3 crafting and buttons specifically for the dragon. If you want, you can quickly switch to the vanilla inventory with the button at the bottom. You can now get a crafting from survival in creative mode.
+- In-game hints. Just hover your cursor over any round buttons. Be sure to tell us what you think of this wonderful dragon on all tooltips! Horeak is watching you and will not blink.
+- Added items: Cave Dragon Treat, Sea Dragon Treat Weak, Forest Dragon Treat (to restore magic), Weak Heart, Elder Dragon Heart (for growth of dragons at different stages).
+- Heart element is renamed to "Dragon Heart Shard" and is used for the growth of newborn dragons.
+- Sea dragons again cannot stay on land for long. You will need to pump up the "Water" skill to feel well on land.
+- Cave dragons can now pump up a skill that allows them to stay in the rain longer - "Contrast Shower".
+- Forest dragons won't have to eat as much either, because they'll be able to stay in the dark longer thanks to "Light in the Darkness"
+- Improvement of claws and teeth with tools. Special GUI in the dragon's inventory. No more first-person tool animations for dragons!
+- Now the tooltip of the correct food for a dragon is highlighted with colors.
+- Added cast GUI.
+- The "Evil Dragon" effect has removed potion particles.
+- A lot of work into localization. Now we have 22500 characters in the localization files! Before that it was 9000. Thank you so much for translating Kitna into English, Sundra into French, Dgarden7 into Spanish, yuvalyly into Hebrew, Ice flare-dragon ice and Gairlading into Chinese, BlackAures into Russian (you can't praise yourself, no one will). And thanks to daifucu we also got Japanese!
+- All sounds were made by NoCube.
+- Thanks for testing an earlier version: Tynebris, Sundra (molresa), Dgarden7, azuichh, Lünko. Without them, we wouldn't have known about the dozens of bugs that were in the first test version and you'd be playing with more problems.
+- Also thank SSKirillSS for adding Blacklisted items and slots, Rideable entities blacklist, Alternate way of dragon growing mechanic and the division of all items for dragon growth into 3 stages.
+- The bite animation no longer interrupts other animations
+- Fixed 100500 bugs
+- Slightly changed the code for the glowing parts of the skins. Now they can be used on membranes, but there are requirements to transparency. Its RGB color must be 000 (not 255). For you it is visually no different, but the code is very sensitive to this.
+- Configs: All magic settings, Whether to save passives skills and grow stage when changing dragon type,  List of rideable entities, List of slots to handle blacklistedItems option, List of items that disallowed to be used by dragons,  How long of a cooldown in seconds the altar has after each use, Speed of alternateGrowing effect in seconds, Defines if dragon should grow without requirement of catalyst items, Amount of additional dragon size per each iteration of alternateGrowingFrequency for alternateGrowing effect, Items which will cause damage to dragons when consumed, List of items to grow dragons, The amount of damage taken when hit with a snowball or a water bottle (cave dragon), Additional modded USEABLE items that restore water when used (called from LivingEntityUseItemEvent.Finish), Whether the sea dragon should lose more water in warmer biomes and less during the night, How long in seconds should the cave fire effect from charged soup last, Should the default inventory be replaced as a dragon, The y position of the cast bar from the bottom of the screen.
+
 1.16.5-0.0.9999:
 - added a magic system
 
