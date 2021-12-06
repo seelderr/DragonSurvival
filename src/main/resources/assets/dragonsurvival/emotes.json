@@ -25,48 +25,6 @@
 		  "locksHead": true
 	  },
 	  {
-		  "name": "ds.emote.rest",
-		  "animation": "rest",
-		  "loops": true,
-		  "locksHead": false
-	  },
-	  {
-		  "name": "ds.emote.rest2",
-		  "animation": "rest2",
-		  "loops": true,
-		  "locksHead": true
-	  },
-	  {
-		  "name": "ds.emote.rest3",
-		  "animation": "rest3",
-		  "loops": true,
-		  "locksHead": false
-	  },
-	  {
-		  "name": "ds.emote.rest4",
-		  "animation": "rest4",
-		  "loops": true,
-		  "locksHead": false
-	  },
-	  {
-		  "name": "ds.emote.rest_sleepy",
-		  "animation": "rest_sleepy",
-		  "loops": true,
-		  "locksHead": true
-	  },
-	  {
-		  "name": "ds.emote.rest_on_back",
-		  "animation": "rest_on_back",
-		  "loops": true,
-		  "locksHead": true
-	  },
-	  {
-		  "name": "ds.emote.sleep_on_back",
-		  "animation": "sleep_on_back",
-		  "loops": true,
-		  "locksHead": true
-	  },
-	  {
 		  "name": "ds.emote.spin_on_back",
 		  "animation": "spin_on_back",
 		  "loops": true,
@@ -108,6 +66,48 @@
 	  {
 		  "name": "ds.emote.wings_flapping",
 		  "animation": "wings_flapping",
+		  "loops": true,
+		  "locksHead": true
+	  },
+	  {
+		  "name": "ds.emote.rest",
+		  "animation": "rest",
+		  "loops": true,
+		  "locksHead": false
+	  },
+	  {
+		  "name": "ds.emote.rest2",
+		  "animation": "rest2",
+		  "loops": true,
+		  "locksHead": true
+	  },
+	  {
+		  "name": "ds.emote.rest3",
+		  "animation": "rest3",
+		  "loops": true,
+		  "locksHead": false
+	  },
+	  {
+		  "name": "ds.emote.rest4",
+		  "animation": "rest4",
+		  "loops": true,
+		  "locksHead": false
+	  },
+	  {
+		  "name": "ds.emote.rest_sleepy",
+		  "animation": "rest_sleepy",
+		  "loops": true,
+		  "locksHead": true
+	  },
+	  {
+		  "name": "ds.emote.rest_on_back",
+		  "animation": "rest_on_back",
+		  "loops": true,
+		  "locksHead": true
+	  },
+	  {
+		  "name": "ds.emote.sleep_on_back",
+		  "animation": "sleep_on_back",
 		  "loops": true,
 		  "locksHead": true
 	  },
@@ -208,6 +208,19 @@
 		  }
 	  },
 	  {
+		  "name": "ds.emote.sleep_growl",
+		  "animation": "sleep",
+		  "locksHead": true,
+		  "loops": true,
+		  "duration": 300,
+		  "sound": {
+			  "key": "minecraft:entity.fox.sleep",
+			  "interval": 100,
+			  "volume": 1.0,
+			  "pitch": 0.3
+		  }
+	  },
+	  {
 		  "name": "ds.emote.just_growl",
 		  "animation": "",
 		  "locksHead": false,
@@ -216,19 +229,6 @@
 			  "key": "minecraft:entity.polar_bear.ambient_baby",
 			  "interval": 30,
 			  "volume": 1.4,
-			  "pitch": 0.3
-		  }
-	  },
-	  {
-		  "name": "ds.emote.sleep_growl",
-		  "animation": "",
-		  "locksHead": true,
-		  "loops": true,
-		  "duration": 300,
-		  "sound": {
-			  "key": "minecraft:entity.fox.sleep",
-			  "interval": 100,
-			  "volume": 1.0,
 			  "pitch": 0.3
 		  }
 	  },
