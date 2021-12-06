@@ -32,7 +32,9 @@ public class AbilityTickingHandler {
             int abilityId = DragonAbilities.getAbilitySlot(ability);
             
             if(abilityId != -1){
-                NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCooldown(abilityId, 0));
+                if(NetworkHandler.CHANNEL != null) { //Should fix a weird crash that shouldnt be happening...
+                    NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCooldown(abilityId, 0));
+                }
             }
         }
     }
