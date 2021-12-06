@@ -1,35 +1,30 @@
 package by.jackraidenph.dragonsurvival.nest;
 
-import java.util.List;
-
+import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import org.lwjgl.opengl.GL11;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.Functions;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
 
 public class NestScreen extends ContainerScreen<NestContainer> {
-    static final ResourceLocation BACKGROUND = new ResourceLocation(DragonSurvivalMod.MODID, "textures/ui/nest_ui.png");
-    static final ResourceLocation CAVE_NEST0 = new ResourceLocation(DragonSurvivalMod.MODID, "textures/ui/cave_nest_0.png");
-    static final ResourceLocation CAVE_NEST1 = new ResourceLocation(DragonSurvivalMod.MODID, "textures/ui/cave_nest_1.png");
-    static final ResourceLocation FOREST_NEST0 = new ResourceLocation(DragonSurvivalMod.MODID, "textures/ui/forest_nest_0.png");
-    static final ResourceLocation FOREST_NEST1 = new ResourceLocation(DragonSurvivalMod.MODID, "textures/ui/forest_nest_1.png");
-    static final ResourceLocation SEA_NEST0 = new ResourceLocation(DragonSurvivalMod.MODID, "textures/ui/sea_nest_0.png");
-    static final ResourceLocation SEA_NEST1 = new ResourceLocation(DragonSurvivalMod.MODID, "textures/ui/sea_nest_1.png");
-    static final ResourceLocation RED_HEART = new ResourceLocation(DragonSurvivalMod.MODID, "textures/ui/red_heart.png");
+    static final ResourceLocation BACKGROUND = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/nest_ui.png");
+    static final ResourceLocation CAVE_NEST0 = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/cave_nest_0.png");
+    static final ResourceLocation CAVE_NEST1 = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/cave_nest_1.png");
+    static final ResourceLocation FOREST_NEST0 = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/forest_nest_0.png");
+    static final ResourceLocation FOREST_NEST1 = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/forest_nest_1.png");
+    static final ResourceLocation SEA_NEST0 = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/sea_nest_0.png");
+    static final ResourceLocation SEA_NEST1 = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/sea_nest_1.png");
+    static final ResourceLocation RED_HEART = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/red_heart.png");
     private final NestEntity nestEntity;
 
     private final PlayerEntity playerEntity;
@@ -102,7 +97,7 @@ public class NestScreen extends ContainerScreen<NestContainer> {
             @Override
             public boolean mouseReleased(double p_mouseReleased_1_, double p_mouseReleased_3_, int p_mouseReleased_5_) {
                 playerEntity.closeContainer();
-                DragonSurvivalMod.CHANNEL.sendToServer(new SleepInNest(nestEntity.getBlockPos()));
+                NetworkHandler.CHANNEL.sendToServer(new SleepInNest(nestEntity.getBlockPos()));
                 return true;
             }
         });
@@ -116,7 +111,7 @@ public class NestScreen extends ContainerScreen<NestContainer> {
             @Override
             public boolean mouseReleased(double p_mouseReleased_1_, double p_mouseReleased_3_, int p_mouseReleased_5_) {
                 nestEntity.regenerationMode = !nestEntity.regenerationMode;
-                DragonSurvivalMod.CHANNEL.sendToServer(new ToggleRegeneration(nestEntity.getBlockPos(), nestEntity.regenerationMode));
+                NetworkHandler.CHANNEL.sendToServer(new ToggleRegeneration(nestEntity.getBlockPos(), nestEntity.regenerationMode));
                 if (nestEntity.regenerationMode)
                     playerEntity.sendMessage(new TranslationTextComponent("ds.regen.on"), playerEntity.getUUID());
                 else
@@ -133,7 +128,7 @@ public class NestScreen extends ContainerScreen<NestContainer> {
             @Override
             public boolean mouseReleased(double p_mouseReleased_1_, double p_mouseReleased_3_, int p_mouseReleased_5_) {
                 playerEntity.closeContainer();
-                DragonSurvivalMod.CHANNEL.sendToServer(new DismantleNest(nestEntity.getBlockPos()));
+                NetworkHandler.CHANNEL.sendToServer(new DismantleNest(nestEntity.getBlockPos()));
                 return true;
             }
         });

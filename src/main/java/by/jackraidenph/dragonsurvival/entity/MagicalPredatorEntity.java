@@ -1,8 +1,8 @@
 package by.jackraidenph.dragonsurvival.entity;
 
-import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
+import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.PacketSyncXPDevour;
 import by.jackraidenph.dragonsurvival.registration.BlockInit;
 import net.minecraft.block.BlockState;
@@ -286,7 +286,7 @@ public class MagicalPredatorEntity extends MonsterEntity {
         @Override
         public void tick() {
             this.world.getEntities(EntityType.EXPERIENCE_ORB, this.entity.getBoundingBox().inflate(4), Objects::nonNull).forEach(
-                    xpOrb -> DragonSurvivalMod.CHANNEL.send(PacketDistributor.ALL.noArg(), new PacketSyncXPDevour(this.entity.getId(), xpOrb.getId()))
+                    xpOrb -> NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new PacketSyncXPDevour(this.entity.getId(), xpOrb.getId()))
             );
             super.tick();
         }

@@ -5,7 +5,7 @@ import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.registration.BlockInit;
-import by.jackraidenph.dragonsurvival.registration.Sounds;
+import by.jackraidenph.dragonsurvival.sounds.SoundRegistry;
 import by.jackraidenph.dragonsurvival.registration.TileEntityTypesInit;
 import by.jackraidenph.dragonsurvival.tiles.DragonBeaconEntity;
 import by.jackraidenph.dragonsurvival.util.EffectInstance2;
@@ -58,7 +58,7 @@ public class DragonBeacon extends Block implements IWaterLoggable {
                 dragonBeaconEntity.type = DragonBeaconEntity.Type.PEACE;
                 dragonBeaconEntity.tick = old.tick;
                 itemStack.shrink(1);
-                world.playSound(playerEntity, pos, Sounds.upgradeBeacon, SoundCategory.BLOCKS, 1, 1);
+                world.playSound(playerEntity, pos, SoundRegistry.upgradeBeacon, SoundCategory.BLOCKS, 1, 1);
                 return ActionResultType.SUCCESS;
             } else if (item == Items.DIAMOND_BLOCK) {
                 world.setBlockAndUpdate(pos, BlockInit.magicDragonBeacon.defaultBlockState());
@@ -66,7 +66,7 @@ public class DragonBeacon extends Block implements IWaterLoggable {
                 dragonBeaconEntity.type = DragonBeaconEntity.Type.MAGIC;
                 dragonBeaconEntity.tick = old.tick;
                 itemStack.shrink(1);
-                world.playSound(playerEntity, pos, Sounds.upgradeBeacon, SoundCategory.BLOCKS, 1, 1);
+                world.playSound(playerEntity, pos, SoundRegistry.upgradeBeacon, SoundCategory.BLOCKS, 1, 1);
                 return ActionResultType.SUCCESS;
             } else if (item == Items.NETHERITE_INGOT) {
                 world.setBlockAndUpdate(pos, BlockInit.fireDragonBeacon.defaultBlockState());
@@ -74,7 +74,7 @@ public class DragonBeacon extends Block implements IWaterLoggable {
                 dragonBeaconEntity.type = DragonBeaconEntity.Type.FIRE;
                 dragonBeaconEntity.tick = old.tick;
                 itemStack.shrink(1);
-                world.playSound(playerEntity, pos, Sounds.upgradeBeacon, SoundCategory.BLOCKS, 1, 1);
+                world.playSound(playerEntity, pos, SoundRegistry.upgradeBeacon, SoundCategory.BLOCKS, 1, 1);
                 return ActionResultType.SUCCESS;
             }
         }
@@ -111,7 +111,7 @@ public class DragonBeacon extends Block implements IWaterLoggable {
                     }
 
                     playerEntity.giveExperiencePoints(-60);
-                    world.playSound(playerEntity, pos, Sounds.applyEffect, SoundCategory.PLAYERS, 1, 1);
+                    world.playSound(playerEntity, pos, SoundRegistry.applyEffect, SoundCategory.PLAYERS, 1, 1);
                     return ActionResultType.SUCCESS;
                 }
             }

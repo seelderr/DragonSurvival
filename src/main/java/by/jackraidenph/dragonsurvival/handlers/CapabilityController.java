@@ -2,10 +2,12 @@ package by.jackraidenph.dragonsurvival.handlers;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.capability.Capabilities;
+import by.jackraidenph.dragonsurvival.capability.Capabilities.GenericCapabilityProvider;
+import by.jackraidenph.dragonsurvival.capability.Capabilities.VillageRelationshipsProvider;
 import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.capability.VillageRelationshipsProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
+import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.DiggingStatus;
 import by.jackraidenph.dragonsurvival.network.RefreshDragons;
 import by.jackraidenph.dragonsurvival.network.SynchronizeDragonCap;
@@ -33,6 +35,8 @@ import net.minecraftforge.fml.network.PacketDistributor;
 public class CapabilityController {
     @SubscribeEvent
     public static void attachCapabilities(AttachCapabilitiesEvent<Entity> event) {
+        event.addCapability(new ResourceLocation("dragonsurvival", "generic_capability_data"), new GenericCapabilityProvider());
+    
         if (event.getObject() instanceof PlayerEntity) {
             event.addCapability(new ResourceLocation("dragonsurvival", "playerstatehandler"), new DragonStateProvider());
             event.addCapability(new ResourceLocation("dragonsurvival", "village_relations"), new VillageRelationshipsProvider());
@@ -49,11 +53,24 @@ public class CapabilityController {
                     if (capOld.isDragon()) {
                         DragonStateHandler.DragonMovementData movementData = capOld.getMovementData();
                         capNew.setMovementData(movementData.bodyYaw, movementData.headYaw, movementData.headPitch, movementData.bite);
+    
+                        capNew.forestSize = capOld.forestSize;
+                        capNew.caveSize = capOld.caveSize;
+                        capNew.seaSize = capOld.seaSize;
+                        
+                        capNew.forestWings = capOld.forestWings;
+                        capNew.caveWings = capOld.caveWings;
+                        capNew.seaWings = capOld.seaWings;
+                        
+                        capNew.getClawInventory().clone(capOld);
+                        capNew.getEmotes().clone(capOld);
+                        capNew.getMagic().clone(capOld);
+    
                         capNew.setSize(capOld.getSize());
                         capNew.setType(capOld.getType());
                         capNew.setHasWings(capOld.hasWings());
                         capNew.setLavaAirSupply(ConfigHandler.SERVER.caveLavaSwimmingTicks.get());
-
+                        
                         DragonStateHandler.updateModifiers(original, player);
 
                         player.refreshDimensions();
@@ -82,7 +99,7 @@ public class CapabilityController {
                 if (playerEntity instanceof ServerPlayerEntity) {
                     PlayerInteractionManager interactionManager = ((ServerPlayerEntity) playerEntity).gameMode;
                     boolean isMining = interactionManager.isDestroyingBlock;
-                    DragonSurvivalMod.CHANNEL.send(PacketDistributor.ALL.noArg(), new DiggingStatus(playerEntity.getId(), isMining));
+                    NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new DiggingStatus(playerEntity.getId(), isMining));
                 }
             }
         });
@@ -105,7 +122,7 @@ public class CapabilityController {
                             self.startRiding(target);
                             ((ServerPlayerEntity) event.getTarget()).connection.send(new SSetPassengersPacket(target));
                             targetCap.setPassengerId(self.getId());
-                            DragonSurvivalMod.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> target), new SynchronizeDragonCap(target.getId(), targetCap.isHiding(), targetCap.getType(), targetCap.getSize(), targetCap.hasWings(), targetCap.getLavaAirSupply(), self.getId()));
+                            NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> target), new SynchronizeDragonCap(target.getId(), targetCap.isHiding(), targetCap.getType(), targetCap.getSize(), targetCap.hasWings(), targetCap.getLavaAirSupply(), self.getId()));
                         }
                         event.setCancellationResult(ActionResultType.SUCCESS);
                         event.setCanceled(true);
@@ -155,7 +172,7 @@ public class CapabilityController {
             }
             if (flag || passenger == null || !player.hasPassenger(passenger) || passenger.isSpectator() || player.isSpectator()) {
                 dragonStateHandler.setPassengerId(0);
-                DragonSurvivalMod.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new SynchronizeDragonCap(player.getId(), dragonStateHandler.isHiding(), dragonStateHandler.getType(), dragonStateHandler.getSize(), dragonStateHandler.hasWings(), dragonStateHandler.getLavaAirSupply(), 0));
+                NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new SynchronizeDragonCap(player.getId(), dragonStateHandler.isHiding(), dragonStateHandler.getType(), dragonStateHandler.getSize(), dragonStateHandler.hasWings(), dragonStateHandler.getLavaAirSupply(), 0));
             }
 
         });
@@ -172,7 +189,7 @@ public class CapabilityController {
                 player.stopRiding();
                 vehicle.connection.send(new SSetPassengersPacket(vehicle));
                 vehicleCap.setPassengerId(0);
-                DragonSurvivalMod.CHANNEL.send(PacketDistributor.PLAYER.with(() -> vehicle), new SynchronizeDragonCap(player.getId(), vehicleCap.isHiding(), vehicleCap.getType(), vehicleCap.getSize(), vehicleCap.hasWings(), vehicleCap.getLavaAirSupply(), 0));
+                NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> vehicle), new SynchronizeDragonCap(player.getId(), vehicleCap.isHiding(), vehicleCap.getType(), vehicleCap.getSize(), vehicleCap.hasWings(), vehicleCap.getLavaAirSupply(), 0));
             });
         });
     }
@@ -181,8 +198,8 @@ public class CapabilityController {
     public static void changedDimension(PlayerEvent.PlayerChangedDimensionEvent changedDimensionEvent) {
         PlayerEntity playerEntity = changedDimensionEvent.getPlayer();
         DragonStateProvider.getCap(playerEntity).ifPresent(dragonStateHandler -> {
-            DragonSurvivalMod.CHANNEL.send(PacketDistributor.ALL.noArg(), new SynchronizeDragonCap(playerEntity.getId(), dragonStateHandler.isHiding(), dragonStateHandler.getType(), dragonStateHandler.getSize(), dragonStateHandler.hasWings(), dragonStateHandler.getLavaAirSupply(), 0));
-            DragonSurvivalMod.CHANNEL.send(PacketDistributor.ALL.noArg(), new RefreshDragons(playerEntity.getId()));
+            NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new SynchronizeDragonCap(playerEntity.getId(), dragonStateHandler.isHiding(), dragonStateHandler.getType(), dragonStateHandler.getSize(), dragonStateHandler.hasWings(), dragonStateHandler.getLavaAirSupply(), 0));
+            NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new RefreshDragons(playerEntity.getId()));
         });
     }
 }

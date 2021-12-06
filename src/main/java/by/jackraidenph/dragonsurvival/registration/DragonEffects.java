@@ -1,8 +1,10 @@
 package by.jackraidenph.dragonsurvival.registration;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.entity.BolasEntity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.attributes.AttributeModifier.Operation;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -28,6 +30,13 @@ public class DragonEffects {
     public static Effect PEACE, MAGIC, FIRE;
     public static Effect ANIMAL_PEACE;
     public static Effect PREDATOR_ANTI_SPAWN;
+    
+    //Magic system effects
+    public static Effect WATER_VISION, LAVA_VISION;
+    public static Effect HUNTER;
+    public static Effect REVEALING_THE_SOUL;
+    public static Effect BURN, CHARGED, DRAIN;
+    public static Effect STRONG_LEATHER;
 
     @SuppressWarnings("unused")
     @SubscribeEvent
@@ -49,6 +58,32 @@ public class DragonEffects {
         forgeRegistry.register(ANIMAL_PEACE);
         PREDATOR_ANTI_SPAWN = new Effect2(EffectType.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "predator_anti_spawn");
         forgeRegistry.register(PREDATOR_ANTI_SPAWN);
+        
+        //Magic system effects
+        WATER_VISION = new Effect2(EffectType.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "water_vision");
+        forgeRegistry.register(WATER_VISION);
+        
+        LAVA_VISION = new Effect2(EffectType.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "lava_vision");
+        forgeRegistry.register(LAVA_VISION);
+    
+        HUNTER = new Effect2(EffectType.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "hunter");
+        forgeRegistry.register(HUNTER);
+    
+        REVEALING_THE_SOUL = new Effect2(EffectType.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "revealing_the_soul");
+        forgeRegistry.register(REVEALING_THE_SOUL);
+    
+        STRONG_LEATHER = new Effect2(EffectType.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "strong_leather");
+        STRONG_LEATHER.addAttributeModifier(Attributes.ARMOR, "1640719a-4c40-11ec-81d3-0242ac130003", ConfigHandler.SERVER.toughSkinArmorValue.get(), Operation.ADDITION);
+        forgeRegistry.register(STRONG_LEATHER);
+    
+        BURN = new Effect2(EffectType.HARMFUL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "burn");
+        forgeRegistry.register(BURN);
+    
+        CHARGED = new Effect2(EffectType.HARMFUL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "charged");
+        forgeRegistry.register(CHARGED);
+    
+        DRAIN = new Effect2(EffectType.HARMFUL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "drain");
+        forgeRegistry.register(DRAIN);
     }
 
     private static class Effect2 extends Effect {
@@ -63,6 +98,8 @@ public class DragonEffects {
         public List<ItemStack> getCurativeItems() {
             return uncurable ? Collections.emptyList() : super.getCurativeItems();
         }
+        
+        
     }
 
     private static class Stress extends Effect {
@@ -118,7 +155,7 @@ public class DragonEffects {
     private static class EvilDragon extends Effect {
 
         protected EvilDragon(EffectType p_i50391_1_) {
-            super(p_i50391_1_, 13700608);
+            super(p_i50391_1_, 0x0);
         }
 
         @Override

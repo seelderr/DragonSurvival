@@ -12,6 +12,8 @@ import by.jackraidenph.dragonsurvival.util.DragonLevel;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.AvoidEntityGoal;
@@ -109,7 +111,7 @@ public class EventHandler {
             }
         }
     }
-
+    
     @SubscribeEvent
     public static void sleepCheck(SleepingLocationCheckEvent sleepingLocationCheckEvent) {
         BlockPos sleepingLocation = sleepingLocationCheckEvent.getSleepingLocation();
@@ -117,32 +119,41 @@ public class EventHandler {
         if (world.isNight() && world.getBlockEntity(sleepingLocation) instanceof NestEntity)
             sleepingLocationCheckEvent.setResult(Event.Result.ALLOW);
     }
-
+    
     @SubscribeEvent
-    public static void dropDragonDust(BlockEvent.BreakEvent breakEvent) {
-        if (!breakEvent.isCanceled()) {
+    public static void blockBroken(BlockEvent.BreakEvent breakEvent) {
+        if(breakEvent.isCanceled()) return;
+        
+        PlayerEntity playerEntity = breakEvent.getPlayer();
+        if(playerEntity.isCreative()) return;
+    
+        int i = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, playerEntity.getMainHandItem());
+    
+        if(i <= 0) {
             IWorld world = breakEvent.getWorld();
             if (world instanceof ServerWorld) {
                 BlockState blockState = breakEvent.getState();
                 BlockPos blockPos = breakEvent.getPos();
-                PlayerEntity playerEntity = breakEvent.getPlayer();
                 Block block = blockState.getBlock();
-                ItemStack mainHandItem = playerEntity.getItemInHand(Hand.MAIN_HAND);
+                ItemStack mainHandItem = playerEntity.getMainHandItem();
                 double random;
                 // Modded Ore Support
                 String[] tagStringSplit = ConfigHandler.SERVER.oresTag.get().split(":");
                 ResourceLocation ores = new ResourceLocation(tagStringSplit[0], tagStringSplit[1]);
                 // Checks to make sure the ore does not drop itself or another ore from the tag (no going infinite with ores)
                 ITag<Item> oresTag = ItemTags.getAllTags().getTag(ores);
-                if (!oresTag.contains(block.asItem()))
+                
+                if (!oresTag.contains(block.asItem())){
                     return;
+                }
+                
                 List<ItemStack> drops = block.getDrops(blockState, new LootContext.Builder((ServerWorld) world)
                         .withParameter(LootParameters.ORIGIN, new Vector3d(blockPos.getX(), blockPos.getY(), blockPos.getZ()))
                         .withParameter(LootParameters.TOOL, mainHandItem));
                 DragonStateProvider.getCap(playerEntity).ifPresent(dragonStateHandler -> {
                     final boolean suitableOre = (playerEntity.getMainHandItem().isCorrectToolForDrops(blockState) ||
-                            (dragonStateHandler.isDragon() && dragonStateHandler.canHarvestWithPaw(blockState)))
-                            && drops.stream().noneMatch(item -> oresTag.contains(item.getItem()));
+                                                 (dragonStateHandler.isDragon() && dragonStateHandler.canHarvestWithPaw(playerEntity, blockState)))
+                                                && drops.stream().noneMatch(item -> oresTag.contains(item.getItem()));
                     if (suitableOre && !playerEntity.isCreative()) {
                         if (dragonStateHandler.isDragon()) {
                             if (playerEntity.getRandom().nextDouble() < ConfigHandler.SERVER.dragonOreDustChance.get()) {
@@ -164,7 +175,8 @@ public class EventHandler {
             }
         }
     }
-
+    
+    
     @SubscribeEvent
     public static void createAltar(PlayerInteractEvent.RightClickBlock rightClickBlock) {
         ItemStack itemStack = rightClickBlock.getItemStack();
@@ -235,5 +247,4 @@ public class EventHandler {
             craftedEvent.getPlayer().addItem(new ItemStack(Items.BEACON));
         }
     }
-
 }

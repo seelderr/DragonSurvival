@@ -2301,6 +2301,25 @@
 					]
 				},
 				{
+					"name": "BreathSource",
+					"parent": "Snout",
+					"pivot": [0, 33.23837, -18.92398],
+					"cubes": [
+						{
+							"origin": [-0.5, 32.81256, -19.35327],
+							"size": [1, 1, 1],
+							"uv": {
+								"north": {"uv": [0, 0], "uv_size": [1, 1]},
+								"east": {"uv": [0, 0], "uv_size": [1, 1]},
+								"south": {"uv": [0, 0], "uv_size": [1, 1]},
+								"west": {"uv": [0, 0], "uv_size": [1, 1]},
+								"up": {"uv": [1, 1], "uv_size": [-1, -1]},
+								"down": {"uv": [1, 1], "uv_size": [-1, -1]}
+							}
+						}
+					]
+				},
+				{
 					"name": "Jaw",
 					"parent": "Head",
 					"pivot": [0, 33.73837, -12.17398],

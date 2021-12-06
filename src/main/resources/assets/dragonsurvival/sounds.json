@@ -18,5 +18,50 @@
     "sounds": [
       "dragonsurvival:get_effect"
     ]
+  },
+  "fire_breath_start": {
+    "sounds": [
+      "dragonsurvival:fire_breath_start"
+    ]
+  },
+  "fire_breath_loop": {
+    "sounds": [
+      "dragonsurvival:fire_breath_loop"
+    ]
+  },
+  "fire_breath_end": {
+    "sounds": [
+      "dragonsurvival:fire_breath_end"
+    ]
+  },
+  "forest_breath_start": {
+    "sounds": [
+      "dragonsurvival:forest_breath_start"
+    ]
+  },
+  "forest_breath_loop": {
+    "sounds": [
+      "dragonsurvival:forest_breath_loop"
+    ]
+  },
+  "forest_breath_end": {
+    "sounds": [
+      "dragonsurvival:forest_breath_end"
+    ]
+  },
+  "storm_breath_start": {
+    "sounds": [
+      "dragonsurvival:storm_breath_start"
+    ]
+  },
+  "storm_breath_loop": {
+    "sounds": [
+      "dragonsurvival:storm_breath_loop"
+    ]
+  },
+  "storm_breath_end": {
+    "sounds": [
+      "dragonsurvival:storm_breath_end"
+    ]
   }
 }

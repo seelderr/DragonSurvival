@@ -22,16 +22,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class MixinItem {
 	@Inject(at = @At("HEAD"), method = "inventoryTick", cancellable = true)
 	public void onItemUpdate(ItemStack stack, World world, Entity entity, int slot, boolean isSelected, CallbackInfo ci) {
-		if (!(entity instanceof PlayerEntity) || entity.tickCount % 20 != 0)
+		if (!(entity instanceof PlayerEntity) || entity.tickCount % 10 != 0)
 			return;
-
+		
 		PlayerEntity player = (PlayerEntity) entity;
-
+		
 		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
-			if (dragonStateHandler.isDragon() && ConfigHandler.SERVER.blacklistedSlots.get().contains(slot)
-					&& ConfigUtils.parseConfigItemList(ConfigHandler.SERVER.blacklistedItems.get()).contains(stack.getItem())) {
-				player.drop(stack, false, true);
-				stack.shrink(stack.getCount());;
+			if (dragonStateHandler.isDragon() && ConfigHandler.SERVER.blacklistedSlots.get().contains(slot) && ConfigUtils.parseConfigItemList(ConfigHandler.SERVER.blacklistedItems.get()).contains(stack.getItem())) {
+				if(slot > 0 && slot < 9 && !isSelected) return;
+				if (stack.isEmpty() || !stack.onDroppedByPlayer(player)) return;
+				
+				player.drop(stack, false);
+				player.inventory.removeItem(stack);
 			}
 		});
 	}

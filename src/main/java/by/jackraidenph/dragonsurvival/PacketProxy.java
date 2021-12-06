@@ -2,9 +2,9 @@ package by.jackraidenph.dragonsurvival;
 
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.entity.MagicalPredatorEntity;
-import by.jackraidenph.dragonsurvival.gecko.DragonEntity;
-import by.jackraidenph.dragonsurvival.handlers.ClientEvents;
-import by.jackraidenph.dragonsurvival.handlers.ClientFlightHandler;
+import by.jackraidenph.dragonsurvival.gecko.entity.DragonEntity;
+import by.jackraidenph.dragonsurvival.handlers.ClientSide.ClientDragonRender;
+import by.jackraidenph.dragonsurvival.handlers.ClientSide.ClientFlightHandler;
 import by.jackraidenph.dragonsurvival.nest.NestEntity;
 import by.jackraidenph.dragonsurvival.network.*;
 import by.jackraidenph.dragonsurvival.registration.EntityTypesInit;
@@ -30,14 +30,14 @@ import java.util.function.Supplier;
  * Synchronizes client data
  */
 public class PacketProxy {
-
-	 public DistExecutor.SafeRunnable handleCapabilityDebuff(SyncCapabilityDebuff syncCapabilityDebuff, Supplier<NetworkEvent.Context> supplier) {
-		 return () -> {
-	            NetworkEvent.Context context = supplier.get();
-	            context.enqueueWork(() -> handleDebuffs(syncCapabilityDebuff, context));
-	        };
-	 }
-	 
+    
+    public DistExecutor.SafeRunnable handleCapabilityDebuff(SyncCapabilityDebuff syncCapabilityDebuff, Supplier<NetworkEvent.Context> supplier) {
+        return () -> {
+            NetworkEvent.Context context = supplier.get();
+            context.enqueueWork(() -> handleDebuffs(syncCapabilityDebuff, context));
+        };
+    }
+    
 	 private void handleDebuffs(SyncCapabilityDebuff syncCapabilityDebuff, NetworkEvent.Context context) {
 		 PlayerEntity thisPlayer = Minecraft.getInstance().player;
 		 if (thisPlayer != null) {
@@ -45,7 +45,7 @@ public class PacketProxy {
             Entity entity = world.getEntity(syncCapabilityDebuff.playerId);
             if (entity instanceof PlayerEntity) {
             	DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
-                    dragonStateHandler.setDebuffData(syncCapabilityDebuff.timeWithoutWater, syncCapabilityDebuff.timeInDarkness);
+                    dragonStateHandler.setDebuffData(syncCapabilityDebuff.timeWithoutWater, syncCapabilityDebuff.timeInDarkness, syncCapabilityDebuff.timeInRain);
                 });
             }
 		 }
@@ -97,11 +97,11 @@ public class PacketProxy {
             if (myPlayer != null) {
                 World world = myPlayer.level;
 
-                if (ClientEvents.dragonEntity != null) {
-                    ClientEvents.dragonEntity.get().player = myPlayer.getId();
+                if (ClientDragonRender.dragonEntity != null) {
+                    ClientDragonRender.dragonEntity.get().player = myPlayer.getId();
                 }
-                if (ClientEvents.dragonArmor != null) {
-                    ClientEvents.dragonArmor.player = myPlayer.getId();
+                if (ClientDragonRender.dragonArmor != null) {
+                    ClientDragonRender.dragonArmor.player = myPlayer.getId();
                 }
                 PlayerEntity thatPlayer = (PlayerEntity) world.getEntity(synchronizeDragonCap.playerId);
 
@@ -120,10 +120,10 @@ public class PacketProxy {
                     if (thatPlayer != myPlayer) {
                         DragonEntity dragonEntity = EntityTypesInit.DRAGON.create(world);
                         dragonEntity.player = thatPlayer.getId();
-                        ClientEvents.playerDragonHashMap.computeIfAbsent(thatPlayer.getId(), integer -> new AtomicReference<>(dragonEntity)).getAndSet(dragonEntity);
+                        ClientDragonRender.playerDragonHashMap.computeIfAbsent(thatPlayer.getId(), integer -> new AtomicReference<>(dragonEntity)).getAndSet(dragonEntity);
                         DragonEntity dragonArmor = EntityTypesInit.DRAGON_ARMOR.create(world);
                         dragonArmor.player = thatPlayer.getId();
-                        ClientEvents.playerArmorMap.computeIfAbsent(thatPlayer.getId(), integer -> dragonArmor);
+                        ClientDragonRender.playerArmorMap.computeIfAbsent(thatPlayer.getId(), integer -> dragonArmor);
                     }
                     thatPlayer.setForcedPose(null);
                     thatPlayer.refreshDimensions();

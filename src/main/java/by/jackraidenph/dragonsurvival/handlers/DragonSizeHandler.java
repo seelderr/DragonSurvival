@@ -2,6 +2,7 @@ package by.jackraidenph.dragonsurvival.handlers;
 
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
+import by.jackraidenph.dragonsurvival.handlers.ClientSide.ClientDragonRender;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntitySize;
@@ -42,6 +43,7 @@ public class DragonSizeHandler {
     		}
         });
     }
+	
     
 	public static float calculateDragonHeight(float size, boolean growsPastHuman) {
 		float height = (size + 4.0F) / 20.0F; // 0.9 -> 2.2
@@ -119,7 +121,7 @@ public class DragonSizeHandler {
 
 	public static Pose getOverridePose(LivingEntity player) {
 		boolean swimming = (player.isInWaterOrBubble() || (player.isInLava() && ConfigHandler.SERVER.bonuses.get() && ConfigHandler.SERVER.caveLavaSwimming.get() && DragonStateProvider.getCap(player).orElseGet(null).getType() == DragonType.CAVE)) && player.isSprinting() && !player.isPassenger();
-		boolean flying = (player.level.isClientSide && ClientEvents.dragonsFlying.getOrDefault(player.getId(), false) && !player.isInWater() && !player.isInLava() && !player.isOnGround() && player.getCapability(DragonStateProvider.DRAGON_CAPABILITY).orElse(null).hasWings())
+		boolean flying = (player.level.isClientSide && ClientDragonRender.dragonsFlying.getOrDefault(player.getId(), false) && !player.isInWater() && !player.isInLava() && !player.isOnGround() && player.getCapability(DragonStateProvider.DRAGON_CAPABILITY).orElse(null).hasWings())
 				|| (!player.level.isClientSide && !player.isOnGround() && wingsStatusServer.getOrDefault(player.getId(), false) && !player.isInWater() && !player.isInLava() && player.getCapability(DragonStateProvider.DRAGON_CAPABILITY).orElse(null).hasWings());
 		boolean spinning = player.isAutoSpinAttack();
 		boolean crouching = player.isShiftKeyDown();

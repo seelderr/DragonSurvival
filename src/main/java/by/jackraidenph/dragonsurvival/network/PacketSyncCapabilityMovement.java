@@ -1,8 +1,8 @@
 package by.jackraidenph.dragonsurvival.network;
 
-import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.PacketProxy;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -81,7 +81,7 @@ public class PacketSyncCapabilityMovement implements IMessage<PacketSyncCapabili
             });
         }
     	if (!entity.level.isClientSide)
-    		DragonSurvivalMod.CHANNEL.send(PacketDistributor.TRACKING_ENTITY.with(() -> player), syncCapabilityMovement);
+    		NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY.with(() -> player), syncCapabilityMovement);
     	context.setPacketHandled(true);
     }
 }

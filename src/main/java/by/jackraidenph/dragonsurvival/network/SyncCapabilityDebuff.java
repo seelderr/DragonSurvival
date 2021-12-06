@@ -13,14 +13,16 @@ public class SyncCapabilityDebuff implements IMessage<SyncCapabilityDebuff>{
 	public int playerId;
 	public double timeWithoutWater;
 	public int timeInDarkness;
+	public int timeInRain;
 	
 	public SyncCapabilityDebuff() {
     }
 	
-	public SyncCapabilityDebuff(int playerId, double timeWithoutWater, int timeInDarkness) {
+	public SyncCapabilityDebuff(int playerId, double timeWithoutWater, int timeInDarkness, int timeInRain) {
         this.playerId = playerId;
         this.timeWithoutWater = timeWithoutWater;
         this.timeInDarkness = timeInDarkness;
+		this.timeInRain = timeInRain;
     }
 	
 	@Override
@@ -28,11 +30,12 @@ public class SyncCapabilityDebuff implements IMessage<SyncCapabilityDebuff>{
 		buffer.writeInt(message.playerId);
 		buffer.writeDouble(message.timeWithoutWater);
 		buffer.writeInt(message.timeInDarkness);
+		buffer.writeInt(message.timeInRain);
 	}
 
 	@Override
 	public SyncCapabilityDebuff decode(PacketBuffer buffer) {
-		return new SyncCapabilityDebuff(buffer.readInt(), buffer.readDouble(), buffer.readInt());
+		return new SyncCapabilityDebuff(buffer.readInt(), buffer.readDouble(), buffer.readInt(), buffer.readInt());
 	}
 
 	@Override

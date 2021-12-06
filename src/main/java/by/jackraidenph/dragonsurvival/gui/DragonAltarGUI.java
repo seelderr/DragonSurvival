@@ -4,6 +4,7 @@ import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.handlers.DragonFoodHandler;
+import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.SynchronizeDragonCap;
 import by.jackraidenph.dragonsurvival.util.DragonLevel;
 import by.jackraidenph.dragonsurvival.util.DragonType;
@@ -130,7 +131,7 @@ public class DragonAltarGUI extends Screen {
                 playerStateHandler.setType(DragonType.NONE);
                 playerStateHandler.setHasWings(false);
                 playerStateHandler.setSize(20F);
-                DragonSurvivalMod.CHANNEL.sendToServer(new SynchronizeDragonCap(minecraft.player.getId(), false, DragonType.NONE, 20, false, ConfigHandler.SERVER.caveLavaSwimmingTicks.get(), 0));
+                NetworkHandler.CHANNEL.sendToServer(new SynchronizeDragonCap(minecraft.player.getId(), false, DragonType.NONE, 20, false, ConfigHandler.SERVER.caveLavaSwimmingTicks.get(), 0));
                 minecraft.player.closeContainer();
                 minecraft.player.sendMessage(new TranslationTextComponent("ds.choice_human"), minecraft.player.getUUID());
             });
@@ -143,11 +144,23 @@ public class DragonAltarGUI extends Screen {
             return;
         player.closeContainer();
         DragonStateProvider.getCap(player).ifPresent(cap -> {
-            DragonSurvivalMod.CHANNEL.sendToServer(new SynchronizeDragonCap(player.getId(), false, type, DragonLevel.BABY.size, ConfigHandler.SERVER.startWithWings.get(), ConfigHandler.SERVER.caveLavaSwimmingTicks.get(), 0));
+            if(ConfigHandler.SERVER.saveGrowthStage.get()) {
+                cap.setType(type);
+            }
+            
+            NetworkHandler.CHANNEL.sendToServer(new SynchronizeDragonCap(player.getId(), false, type, !ConfigHandler.SERVER.saveGrowthStage.get() || cap.getSize() == 0 ? DragonLevel.BABY.size : cap.getSize(), ConfigHandler.SERVER.saveGrowthStage.get() ? cap.hasWings() || ConfigHandler.SERVER.startWithWings.get() : ConfigHandler.SERVER.startWithWings.get(), ConfigHandler.SERVER.caveLavaSwimmingTicks.get(), 0));
             //DragonSurvivalMod.CHANNEL.sendToServer(new GiveNest(type)); //gives a nest to the player after transforming into a dragon
             player.level.playSound(player, player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundCategory.PLAYERS, 1, 0.7f);
-            cap.setType(type);
-            cap.setSize(DragonLevel.BABY.size, player);
+            
+            if(!ConfigHandler.SERVER.saveGrowthStage.get()){
+                cap.setType(type);
+            }
+            
+            if(cap.getSize() == 0){
+                cap.setSize(DragonLevel.BABY.size, player);
+            }
+            
+            
             cap.setHasWings(false);
         });
     }

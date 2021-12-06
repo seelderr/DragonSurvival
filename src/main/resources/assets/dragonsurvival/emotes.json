@@ -1,0 +1,248 @@
+{
+  "emotes": [
+	  {
+		  "name": "ds.emote.sit",
+		  "animation": "sit",
+		  "loops": true,
+		  "locksHead": false
+	  },
+	  {
+		  "name": "ds.emote.sit_neck_lock",
+		  "animation": "sit",
+		  "loops": true,
+		  "locksHead": true
+	  },
+	  {
+		  "name": "ds.emote.sit2",
+		  "animation": "sit2",
+		  "loops": true,
+		  "locksHead": false
+	  },
+	  {
+		  "name": "ds.emote.sit2_neck_lock",
+		  "animation": "sit2",
+		  "loops": true,
+		  "locksHead": true
+	  },
+	  {
+		  "name": "ds.emote.spin_on_back",
+		  "animation": "spin_on_back",
+		  "loops": true,
+		  "locksHead": true,
+		  "thirdPerson": true
+	  },
+	  {
+		  "name": "ds.emote.spin_on_back_fast",
+		  "animation": "spin_on_back_fast",
+		  "loops": true,
+		  "locksHead": true,
+		  "thirdPerson": true
+	  },
+	  {
+		  "name": "ds.emote.spin_on_back_very_fast",
+		  "animation": "spin_on_back_very_fast",
+		  "loops": true,
+		  "locksHead": true,
+		  "thirdPerson": true
+	  },
+	  {
+		  "name": "ds.emote.vibe",
+		  "animation": "vibe",
+		  "loops": true,
+		  "locksHead": true
+	  },
+	  {
+		  "name": "ds.emote.sad",
+		  "animation": "sad",
+		  "loops": true,
+		  "locksHead": true
+	  },
+	  {
+		  "name": "ds.emote.wings_flapping_feet",
+		  "animation": "wings_flapping_feet",
+		  "loops": true,
+		  "locksHead": true
+	  },
+	  {
+		  "name": "ds.emote.wings_flapping",
+		  "animation": "wings_flapping",
+		  "loops": true,
+		  "locksHead": true
+	  },
+	  {
+		  "name": "ds.emote.rest",
+		  "animation": "rest",
+		  "loops": true,
+		  "locksHead": false
+	  },
+	  {
+		  "name": "ds.emote.rest2",
+		  "animation": "rest2",
+		  "loops": true,
+		  "locksHead": true
+	  },
+	  {
+		  "name": "ds.emote.rest3",
+		  "animation": "rest3",
+		  "loops": true,
+		  "locksHead": false
+	  },
+	  {
+		  "name": "ds.emote.rest4",
+		  "animation": "rest4",
+		  "loops": true,
+		  "locksHead": false
+	  },
+	  {
+		  "name": "ds.emote.rest_sleepy",
+		  "animation": "rest_sleepy",
+		  "loops": true,
+		  "locksHead": true
+	  },
+	  {
+		  "name": "ds.emote.rest_on_back",
+		  "animation": "rest_on_back",
+		  "loops": true,
+		  "locksHead": true
+	  },
+	  {
+		  "name": "ds.emote.sleep_on_back",
+		  "animation": "sleep_on_back",
+		  "loops": true,
+		  "locksHead": true
+	  },
+	  {
+		  "name": "ds.emote.sleep",
+		  "animation": "sleep",
+		  "loops": true,
+		  "locksHead": true
+	  },
+	  {
+		  "name": "ds.emote.sleep3",
+		  "animation": "sleep3",
+		  "loops": true,
+		  "locksHead": true
+	  },
+	  {
+		  "name": "ds.emote.sleep4",
+		  "animation": "sleep4",
+		  "loops": true,
+		  "locksHead": true
+	  },
+	  {
+		  "name": "ds.emote.sleep5",
+		  "animation": "sleep5",
+		  "loops": true,
+		  "locksHead": true
+	  },
+	  {
+		  "name": "ds.emote.dig",
+		  "animation": "dig",
+		  "loops": true,
+		  "locksHead": false
+	  },
+	  {
+		  "name": "ds.emote.dig_sneak",
+		  "animation": "dig_sneak",
+		  "loops": true,
+		  "locksHead": false
+	  },
+	  {
+		  "name": "ds.emote.angry_growl",
+		  "animation": "",
+		  "locksHead": false,
+		  "duration": 40,
+		  "sound": {
+			  "key": "minecraft:entity.ender_dragon.growl",
+			  "interval": 30,
+			  "volume": 0.4,
+			  "pitch": 0.5
+		  }
+	  },
+	  {
+		  "name": "ds.emote.angry_warning",
+		  "animation": "",
+		  "locksHead": false,
+		  "duration": 40,
+		  "sound": {
+			  "key": "minecraft:entity.polar_bear.warning",
+			  "interval": 30,
+			  "volume": 0.7,
+			  "pitch": 0.5
+		  }
+	  },
+	  {
+		  "name": "ds.emote.annoyed_warning",
+		  "animation": "",
+		  "locksHead": false,
+		  "duration": 40,
+		  "sound": {
+			  "key": "minecraft:entity.wolf.growl",
+			  "interval": 30,
+			  "volume": 0.6,
+			  "pitch": 0.5
+		  }
+	  },
+	  {
+		  "name": "ds.emote.hiss",
+		  "animation": "",
+		  "locksHead": false,
+		  "duration": 40,
+		  "sound": {
+			  "key": "minecraft:entity.cat.hiss",
+			  "interval": 30,
+			  "volume": 0.6,
+			  "pitch": 0.2
+		  }
+	  },
+	  {
+		  "name": "ds.emote.purreow",
+		  "animation": "",
+		  "locksHead": false,
+		  "duration": 40,
+		  "sound": {
+			  "key": "minecraft:entity.cat.purreow",
+			  "interval": 30,
+			  "volume": 5.0,
+			  "pitch": 0.5
+		  }
+	  },
+	  {
+		  "name": "ds.emote.sleep_growl",
+		  "animation": "sleep",
+		  "locksHead": true,
+		  "loops": true,
+		  "duration": 300,
+		  "sound": {
+			  "key": "minecraft:entity.fox.sleep",
+			  "interval": 100,
+			  "volume": 1.0,
+			  "pitch": 0.3
+		  }
+	  },
+	  {
+		  "name": "ds.emote.just_growl",
+		  "animation": "",
+		  "locksHead": false,
+		  "duration": 40,
+		  "sound": {
+			  "key": "minecraft:entity.polar_bear.ambient_baby",
+			  "interval": 30,
+			  "volume": 1.4,
+			  "pitch": 0.3
+		  }
+	  },
+	  {
+		  "name": "ds.emote.purr_growl",
+		  "animation": "",
+		  "locksHead": false,
+		  "duration": 100,
+		  "sound": {
+			  "key": "minecraft:entity.cat.purr",
+			  "interval": 50,
+			  "volume": 3.0,
+			  "pitch": 0.6
+		  }
+	  }
+    ]
+}

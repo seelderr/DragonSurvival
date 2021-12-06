@@ -1,5 +1,6 @@
 package by.jackraidenph.dragonsurvival.config;
 
+import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.util.DragonLevel;
 import com.google.common.collect.Lists;
 import net.minecraftforge.common.ForgeConfigSpec;
@@ -31,6 +32,10 @@ public class ServerConfig {
 	public final ForgeConfigSpec.BooleanValue alternateGrowing;
 	public final ForgeConfigSpec.IntValue alternateGrowingFrequency;
 	public final ForgeConfigSpec.DoubleValue alternateGrowingStep;
+	public final ForgeConfigSpec.BooleanValue saveGrowthStage;
+
+	//Abilities
+	public final ForgeConfigSpec.BooleanValue fireBreathSpreadsFire;
 
 	// Specifics
     public final ForgeConfigSpec.BooleanValue customDragonFoods;
@@ -86,7 +91,7 @@ public class ServerConfig {
     public final ForgeConfigSpec.IntValue seaTicksWithoutWaterRestored; // 0 = Disabled
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> seaAdditionalWaterUseables;
 
-    // Ore Loot (Networked for JEI) TODO: Addon for JEI to display the ore droprates when clicking on dust or bones.
+    // Ore Loot (Networked for JEI)
     public final ForgeConfigSpec.DoubleValue humanOreDustChance;
     public final ForgeConfigSpec.DoubleValue dragonOreDustChance;
     public final ForgeConfigSpec.DoubleValue humanOreBoneChance;
@@ -103,58 +108,126 @@ public class ServerConfig {
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> forestDragonFoods;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> seaDragonFoods;
 
+	// Magic System
+	public final ForgeConfigSpec.BooleanValue dragonAbilities;
+	public final ForgeConfigSpec.BooleanValue caveDragonAbilities;
+	public final ForgeConfigSpec.BooleanValue forestDragonAbilities;
+	public final ForgeConfigSpec.BooleanValue seaDragonAbilities;
+	
+	public final ForgeConfigSpec.BooleanValue fireBreath;
+	public final ForgeConfigSpec.DoubleValue fireBreathDamage;
+	public final ForgeConfigSpec.IntValue fireBreathInitialMana;
+	public final ForgeConfigSpec.IntValue fireBreathOvertimeMana;
+	public final ForgeConfigSpec.IntValue fireBreathManaTicks;
+	
+	public final ForgeConfigSpec.BooleanValue stormBreath;
+	public final ForgeConfigSpec.DoubleValue stormBreathDamage;
+	public final ForgeConfigSpec.IntValue stormBreathInitialMana;
+	public final ForgeConfigSpec.IntValue stormBreathOvertimeMana;
+	public final ForgeConfigSpec.IntValue stormBreathManaTicks;
+	
+	public final ForgeConfigSpec.BooleanValue forestBreath;
+	public final ForgeConfigSpec.DoubleValue forestBreathDamage;
+	public final ForgeConfigSpec.IntValue forestBreathInitialMana;
+	public final ForgeConfigSpec.IntValue forestBreathOvertimeMana;
+	public final ForgeConfigSpec.IntValue forestBreathManaTicks;
+	
+	public final ForgeConfigSpec.BooleanValue spike;
+	public final ForgeConfigSpec.DoubleValue spikeDamage;
+	public final ForgeConfigSpec.IntValue spikeManaCost;
+	
+	public final ForgeConfigSpec.BooleanValue inspiration;
+	public final ForgeConfigSpec.IntValue inspirationDuration;
+	public final ForgeConfigSpec.IntValue inspirationManaCost;
+	
+	public final ForgeConfigSpec.BooleanValue hunter;
+	public final ForgeConfigSpec.IntValue hunterDuration;
+	public final ForgeConfigSpec.DoubleValue hunterDamageBonus;
+	public final ForgeConfigSpec.IntValue hunterManaCost;
+	
+	public final ForgeConfigSpec.BooleanValue forestMagic;
+	public final ForgeConfigSpec.BooleanValue forestAthletics;
+	public final ForgeConfigSpec.BooleanValue lightInDarkness;
+	public final ForgeConfigSpec.BooleanValue cliffHanger;
+	
+	public final ForgeConfigSpec.BooleanValue ballLightning;
+	public final ForgeConfigSpec.DoubleValue ballLightningDamage;
+	public final ForgeConfigSpec.IntValue ballLightningManaCost;
+	
+	public final ForgeConfigSpec.BooleanValue revealingTheSoul;
+	public final ForgeConfigSpec.IntValue revealingTheSoulDuration;
+	public final ForgeConfigSpec.IntValue revealingTheSoulManaCost;
+	public final ForgeConfigSpec.IntValue revealingTheSoulMaxEXP;
+	public final ForgeConfigSpec.DoubleValue revealingTheSoulMultiplier;
+	
+	public final ForgeConfigSpec.BooleanValue seaEyes;
+	public final ForgeConfigSpec.IntValue seaEyesDuration;
+	public final ForgeConfigSpec.IntValue seaEyesManaCost;
+	
+	public final ForgeConfigSpec.BooleanValue seaMagic;
+	public final ForgeConfigSpec.BooleanValue seaAthletics;
+	public final ForgeConfigSpec.BooleanValue water;
+	public final ForgeConfigSpec.BooleanValue spectralImpact;
+	
+	public final ForgeConfigSpec.BooleanValue fireball;
+	public final ForgeConfigSpec.DoubleValue fireballDamage;
+	public final ForgeConfigSpec.IntValue fireballManaCost;
+	
+	public final ForgeConfigSpec.BooleanValue toughSkin;
+	public final ForgeConfigSpec.IntValue toughSkinDuration;
+	public final ForgeConfigSpec.IntValue toughSkinManaCost;
+	public final ForgeConfigSpec.DoubleValue toughSkinArmorValue;
+	
+	public final ForgeConfigSpec.BooleanValue lavaVision;
+	public final ForgeConfigSpec.IntValue lavaVisionDuration;
+	public final ForgeConfigSpec.IntValue lavaVisionManaCost;
+	
+	public final ForgeConfigSpec.BooleanValue caveMagic;
+	public final ForgeConfigSpec.BooleanValue caveAthletics;
+	public final ForgeConfigSpec.BooleanValue contrastShower;
+	public final ForgeConfigSpec.BooleanValue burn;
+	
+	public final ForgeConfigSpec.BooleanValue saveAllAbilities;
+
 	ServerConfig(ForgeConfigSpec.Builder builder){
 		builder.push("server");
-
 		// General
 		builder.push("general");
-		maxFlightSpeed = builder
-				.defineInRange("maxFlightSpeed", 0.3, 0.1, 1);
 		mineStarBlock = builder
 				.comment("Whether silk touch hoes can be used to harvest Predator Stars.")
 				.define("harvestableStarBlock", false);
 		altarUsageCooldown = builder
 				.comment("How long of a cooldown in seconds the altar has after each use.")
-				.defineInRange("altarUsageCooldown", 1, 0, 1000);
+				.defineInRange("altarUsageCooldown", 0, 0, 1000);
+
+		// Growth
+		builder.pop().push("growth");
 		sizeChangesHitbox = builder
 				.comment("Whether the dragon size determines its hitbox size.")
 				.define("sizeChangesHitbox", true);
 		hitboxGrowsPastHuman = builder
 				.comment("Whether the dragon hitbox grows past a human hitbox.")
 				.define("largerDragonHitbox", true);
-		startWithWings = builder
-				.comment("Whether dragons start out with wings.")
-				.define("startWithWings", false);
-		allowFlyingWithoutHunger = builder
-				.comment("Whether dragons can fly when totally hungry")
-				.define("allowFlyingWhenTotallyHungry", false);
-		flightHungerThreshold = builder
-				.comment("If the player's hunger is below this parameter, he can't open his wings.")
-				.defineInRange("flightHungerThreshold", 6, 0, 20);
-		flyingUsesHunger = builder
-				.comment("Whether you use up hunger while flying")
-				.define("flyingUsesHunger", true);
-		enableFlightFallDamage = builder
-				.comment("Whether damage from flight falling is enabled")
-				.define("enableFlightFallDamage", true);
-		creativeFlight = builder
-				.comment("Whether to use flight similar to creative rather then gliding")
-				.define("alternateFlight", false);
-		allowedVehicles = builder
-				.comment("List of rideable entities. Format: modid:id")
-				.defineList("allowedVehicles", Lists.newArrayList(), value -> value instanceof String);
-		blacklistedItems = builder
-				.comment("List of items that disallowed to be used by dragons. Format: item/tag:modid:id")
-				.defineList("blacklistedItems", Arrays.asList(
-						"minecraft:bow"
+		growNewborn = builder
+				.comment("List of items to grow newborn dragon. Format: item/tag:modid:id")
+				.defineList("growNewborn", Arrays.asList(
+						"item:dragonsurvival:heart_element",
+						"item:dragonsurvival:weak_dragon_heart",
+						"item:dragonsurvival:elder_dragon_heart"
 				), this::isValidItemConfig);
-		blacklistedSlots = builder
-				.comment("List of slots to handle blacklistedItems option")
-				.defineList("blacklistedSlots", Arrays.asList(
-						0, 1, 2, 3, 4, 5, 6, 7, 8, 45
-				), value -> value instanceof Integer);
+		growYoung = builder
+				.comment("List of items to grow young dragon. Format: item/tag:modid:id")
+				.defineList("growYoung", Arrays.asList(
+						"item:dragonsurvival:weak_dragon_heart",
+						"item:dragonsurvival:elder_dragon_heart"
+				), this::isValidItemConfig);
+		growAdult = builder
+				.comment("List of items to grow adult dragon. Format: item/tag:modid:id")
+				.defineList("growAdult", Collections.singletonList(
+						"item:dragonsurvival:elder_dragon_heart"
+				), this::isValidItemConfig);
 		alternateGrowing = builder
-				.comment("Defines if dragon should grow without requirement of catalyst items")
+				.comment("Defines if dragon should grow without requirement of catalyst items. Your dragon will just grow over time.")
 				.define("alternateGrowing", false);
 		alternateGrowingFrequency = builder
 				.comment("Speed of alternateGrowing effect in seconds")
@@ -162,41 +235,44 @@ public class ServerConfig {
 		alternateGrowingStep = builder
 				.comment("Amount of additional dragon size per each iteration of alternateGrowingFrequency for alternateGrowing effect")
 				.defineInRange("alternateGrowingStep", 0.1, 0, Double.MAX_VALUE);
-
-		// Specifics
-		builder.pop().push("specifics");
-		customDragonFoods = builder
-				.comment("Force dragons to eat a unique diet for their type.")
-				.define("dragonFoods", true);
-		healthAdjustments = builder
-				.comment("Apply a health modifier for dragons.")
-				.define("healthMod", true);
+		saveGrowthStage = builder
+				.comment("Should the growth stage of a dragon be saved even when you change. Does not affect the saving progress of magic (use saveAllAbilities).")
+				.define("saveGrowthStage", false);
 		minHealth = builder
-				.comment("Minumum health dragons will start off with.")
+				.comment("Dragon starting health. Minumum health dragons will start off with.")
 				.defineInRange("minHealth", 14, 1, 100);
 		maxHealth = builder
 				.comment("Maximum health dragons can grow to.")
 				.defineInRange("maxHealth", 40, 1, 100);
-		growNewborn = builder
-				.comment("List of items to grow newborn dragon. Format: block/tag:modid:id")
-				.defineList("growNewborn", Arrays.asList(
-						"dragonsurvival:heart_element",
-						"dragonsurvival:weak_dragon_heart",
-						"dragonsurvival:elder_dragon_heart"
-				), this::isValidItemConfig);
-		growYoung = builder
-				.comment("List of items to grow young dragon. Format: block/tag:modid:id")
-				.defineList("growYoung", Arrays.asList(
-						"dragonsurvival:weak_dragon_heart",
-						"dragonsurvival:elder_dragon_heart"
-				), this::isValidItemConfig);
-		growAdult = builder
-				.comment("List of items to grow adult dragon. Format: block/tag:modid:id")
-				.defineList("growAdult", Collections.singletonList(
-						"dragonsurvival:elder_dragon_heart"
-				), this::isValidItemConfig);
 
-		builder.push("bonuses"); // Bonuses
+		// Wings
+		builder.pop().push("wings");
+		maxFlightSpeed = builder
+				.defineInRange("maxFlightSpeed", 0.3, 0.1, 1);
+		startWithWings = builder
+				.comment("Whether dragons start out with wings.")
+				.define("startWithWings", false);
+		allowFlyingWithoutHunger = builder
+				.comment("Whether dragons can fly when totally hungry.")
+				.define("allowFlyingWhenTotallyHungry", false);
+		flightHungerThreshold = builder
+				.comment("If the player's hunger is below this parameter, he can't open his wings.")
+				.defineInRange("flightHungerThreshold", 6, 0, 20);
+		flyingUsesHunger = builder
+				.comment("Whether you use up hunger while flying.")
+				.define("flyingUsesHunger", true);
+		enableFlightFallDamage = builder
+				.comment("Whether fatal fall damage in flight is included. If true dragon will take fatal damage from the fall.")
+				.define("enableFlightFallDamage", true);
+		creativeFlight = builder
+				.comment("Whether to use flight similar to creative rather then gliding.")
+				.define("alternateFlight", false);
+
+		// Innate dragon bonuses
+		builder.pop().push("bonuses");
+		healthAdjustments = builder
+				.comment("Apply a health modifier for dragons.")
+				.define("healthMod", true);
 		bonuses = builder
 				.comment("Set to false to toggle off all dragon bonuses.")
 				.define("bonuses", true);
@@ -236,7 +312,8 @@ public class ServerConfig {
 		speedupEffectLevel = builder
 				.comment("The speed effect level for dragon block-specific speedups. Set to 0 to disable.")
 				.defineInRange("speedupEffectLevel", 2, 0, 100);
-		builder.push("cave"); // Cave Dragon Bonuses
+		// Cave Dragon Bonuses
+		builder.push("cave");
 		caveFireImmunity = builder
 				.comment("Whether cave dragons are immune to fire damage types.")
 				.define("fireImmunity", true);
@@ -256,12 +333,14 @@ public class ServerConfig {
 						"tag:forge:cobblestone",
 						"tag:forge:sandstone",
 						"tag:forge:stone",
-						"tag:forge:ores"
+						"tag:forge:ores",
+						"block:quark:deepslate",
+						"block:quark:deepslate_bricks",
+						"block:quark:cobbled_deepslate"
 				), this::isValidBlockConfig);
-		chargedSoupBuffDuration = builder
-				.comment("How long in seconds should the cave fire effect from charged soup last. (Default to 5min) Set to 0 to disable.")
-				.defineInRange("chargedSoupBuffDuration", 300, 0, 10000);
-		builder.pop().push("forest"); // Forest Dragon Bonuses
+
+		// Forest Dragon Bonuses
+		builder.pop().push("forest");
 		forestFallReduction = builder
 				.comment("How many blocks of fall damage is mitigated for forest dragons. Set to 0.0 to disable.")
 				.defineInRange("fallReduction", 5.0, 0.0, 100.0);
@@ -279,7 +358,9 @@ public class ServerConfig {
 						"tag:minecraft:planks",
 						"tag:forge:dirt"
 				), this::isValidBlockConfig);
-		builder.pop().push("sea"); // Sea Dragon Bonuses
+
+		// Sea Dragon Bonuses
+		builder.pop().push("sea");
 		seaSwimmingBonuses = builder
 				.comment("Whether sea dragons gain bonus swim speed and unlimited air.")
 				.define("waterBonuses", true);
@@ -302,11 +383,141 @@ public class ServerConfig {
 						"block:minecraft:smooth_red_sandstone",
 						"block:minecraft:water"
 				), this::isValidBlockConfig);
-		builder.pop(2).push("penalties");
+
+		//Dragon Penalties
+		builder.pop().pop().push("penalties");
 		penalties = builder
 				.comment("Set to false to toggle off all dragon penalties.")
 				.define("penalties", true);
-		builder.push("cave"); // Cave Dragon Penalties
+		allowedVehicles = builder
+				.comment("List of rideable entities. Format: modid:id")
+				.defineList("allowedVehicles", Lists.newArrayList(), value -> value instanceof String);
+		blacklistedItems = builder
+				.comment("List of items that disallowed to be used by dragons. Format: item/tag:modid:id")
+				.defineList("blacklistedItems", Arrays.asList(
+						"item:minecraft:bow",
+						"item:spartanshields:shield_basic_nickel",
+						"item:spartanshields:shield_basic_invar",
+						"item:spartanshields:shield_basic_constantan",
+						"item:spartanshields:shield_basic_platinum",
+						"item:spartanshields:shield_mekanism_refined_glowstone",
+						"item:spartanshields:shield_tower_wood",
+						"item:spartanshields:shield_tower_stone",
+						"item:spartanshields:shield_tower_iron",
+						"item:spartanshields:shield_tower_gold",
+						"item:spartanshields:shield_tower_diamond",
+						"item:spartanshields:shield_tower_netherite",
+						"item:spartanshields:shield_tower_obsidian",
+						"item:spartanshields:shield_tower_copper",
+						"item:spartanshields:shield_tower_tin",
+						"item:spartanshields:shield_tower_bronze",
+						"item:spartanshields:shield_tower_steel",
+						"item:spartanshields:shield_tower_silver",
+						"item:spartanshields:shield_tower_lead",
+						"item:spartanshields:shield_tower_nickel",
+						"item:spartanshields:shield_tower_constantan",
+						"item:spartanshields:shield_tower_invar",
+						"item:spartanshields:shield_tower_platinum",
+						"item:spartanshields:shield_tower_electrum",
+						"item:spartanshields:shield_mekanism_powered_ultimate",
+						"item:quark:flamerang", "item:quark:pickarang",
+						"item:spartanshields:shield_botania_manasteel",
+						"item:spartanshields:shield_botania_elementium",
+						"item:spartanshields:shield_mekanism_osmium",
+						"item:spartanshields:shield_mekanism_lapis_lazuli",
+						"item:spartanshields:shield_basic_electrum",
+						"item:spartanshields:shield_mekanism_refined_obsidian",
+						"item:spartanshields:shield_mekanism_powered_basic",
+						"item:spartanshields:shield_mekanism_powered_advanced",
+						"item:spartanshields:shield_mekanism_powered_elite",
+						"item:spartanweaponry:boomerang_steel",
+						"item:spartanweaponry:boomerang_invar",
+						"item:spartanweaponry:boomerang_platinum",
+						"item:spartanweaponry:boomerang_electrum",
+						"item:spartanshields:shield_basic_bronze",
+						"item:spartanshields:shield_basic_tin",
+						"item:spartanshields:shield_basic_copper",
+						"item:spartanshields:shield_basic_obsidian",
+						"item:spartanshields:shield_basic_netherite",
+						"item:spartanshields:shield_basic_diamond",
+						"item:spartanshields:shield_basic_gold",
+						"item:spartanshields:shield_basic_iron",
+						"item:spartanshields:shield_basic_stone",
+						"item:spartanshields:shield_basic_wood",
+						"item:spartanweaponry:boomerang_lead",
+						"item:spartanweaponry:boomerang_nickel",
+						"item:spartanshields:shield_basic_steel",
+						"item:spartanshields:shield_basic_silver",
+						"item:spartanshields:shield_basic_lead",
+						"item:spartanweaponry:boomerang_bronze",
+						"item:spartanweaponry:boomerang_tin",
+						"item:spartanweaponry:boomerang_copper",
+						"item:spartanweaponry:boomerang_netherite",
+						"item:spartanweaponry:boomerang_gold",
+						"item:spartanweaponry:boomerang_iron",
+						"item:spartanweaponry:boomerang_stone",
+						"item:spartanweaponry:heavy_crossbow_bronze",
+						"item:spartanshields:shield_botania_terrasteel",
+						"item:spartanweaponry:heavy_crossbow_leather",
+						"item:spartanweaponry:heavy_crossbow_iron",
+						"item:spartanweaponry:heavy_crossbow_gold",
+						"item:spartanweaponry:heavy_crossbow_diamond",
+						"item:spartanweaponry:heavy_crossbow_netherite",
+						"item:spartanweaponry:heavy_crossbow_copper",
+						"item:spartanweaponry:heavy_crossbow_tin",
+						"item:spartanweaponry:boomerang_wood",
+						"item:nethers_exoticism:rambutan_shield",
+						"item:minecraft:shield",
+						"item:minecraft:trident",
+						"item:spartanweaponry:heavy_crossbow_lead",
+						"item:spartanweaponry:heavy_crossbow_nickel",
+						"item:spartanweaponry:heavy_crossbow_electrum",
+						"item:spartanweaponry:heavy_crossbow_platinum",
+						"item:spartanweaponry:heavy_crossbow_invar",
+						"item:spartanweaponry:heavy_crossbow_silver",
+						"item:spartanweaponry:heavy_crossbow_steel",
+						"item:spartanweaponry:boomerang_diamond",
+						"item:spartanweaponry:heavy_crossbow_wood",
+						"item:minecraft:crossbow",
+						"item:aquaculture:neptunium_bow",
+						"item:spartanweaponry:longbow_electrum",
+						"item:spartanweaponry:longbow_invar",
+						"item:infernalexp:glowsilk_bow",
+						"item:spartanweaponry:longbow_wood",
+						"item:spartanweaponry:longbow_leather",
+						"item:spartanweaponry:longbow_silver",
+						"item:spartanweaponry:longbow_steel",
+						"item:spartanweaponry:longbow_bronze",
+						"item:spartanweaponry:longbow_tin",
+						"item:spartanweaponry:longbow_copper",
+						"item:spartanweaponry:longbow_netherite",
+						"item:spartanweaponry:longbow_diamond",
+						"item:spartanweaponry:longbow_gold",
+						"item:spartanweaponry:longbow_iron",
+						"item:spartanweaponry:boomerang_diamond",
+						"item:spartanweaponry:boomerang_iron",
+						"item:spartanweaponry:boomerang_wood",
+						"item:spartanweaponry:boomerang_gold",
+						"item:spartanweaponry:boomerang_netherite",
+						"item:spartanweaponry:boomerang_copper",
+						"item:spartanweaponry:boomerang_tin",
+						"item:spartanweaponry:boomerang_bronze",
+						"item:spartanweaponry:boomerang_stone",
+						"item:spartanweaponry:boomerang_platinum",
+						"item:spartanweaponry:boomerang_electrum",
+						"item:spartanweaponry:boomerang_steel",
+						"item:spartanweaponry:boomerang_lead",
+						"item:spartanweaponry:boomerang_invar",
+						"item:spartanweaponry:boomerang_nickel"
+				), this::isValidItemConfig);
+		blacklistedSlots = builder
+				.comment("List of slots to handle blacklistedItems option")
+				.defineList("blacklistedSlots", Arrays.asList(
+						0, 1, 2, 3, 4, 5, 6, 7, 8, 45
+				), value -> value instanceof Integer);
+
+		// Cave Dragon Penalties
+		builder.push("cave");
 		caveWaterDamage = builder
 				.comment("The amount of damage taken per water damage tick (once every 10 ticks). Set to 0.0 to disable water damage.")
 				.defineInRange("waterDamage", 1.0, 0.0, 100.0);
@@ -316,9 +527,11 @@ public class ServerConfig {
 		caveSplashDamage = builder
 				.comment("The amount of damage taken when hit with a snowball or a water bottle. Set to 0.0 to disable splash damage.")
 				.defineInRange("splashDamage", 2.0, 0.0, 100.0);
-		builder.pop().push("forest"); // Forest Dragon Penalties
+
+		// Forest Dragon Penalties
+		builder.pop().push("forest");
 		forestStressTicks = builder
-				.comment("The number of ticks in darkness before the forest dragon gets the Stressed effect. Set to 0 to disable to stress effect.")
+				.comment("The number of ticks in darkness before the forest dragon gets Stress effect. Set to 0 to disable to stress effect.")
 				.defineInRange("ticksBeforeStressed", 70, 0, 10000);
 		forestStressEffectDuration = builder
 				.comment("The number of seconds the stress effect lasts for.")
@@ -326,10 +539,12 @@ public class ServerConfig {
 		stressExhaustion = builder
 				.comment("The amount of exhaustion applied per 10 ticks during the stress effect.")
 				.defineInRange("stressExhaustion", 1.0, 0.1, 4.0);
-		builder.pop().push("sea"); // Sea Dragon Penalties
+
+		// Sea Dragon Penalties
+		builder.pop().push("sea");
 		seaTicksWithoutWater = builder
 				.comment("The number of ticks out of water before the sea dragon will start taking dehydration damage. Set to 0 to disable. Note: This value can stack up to double while dehydrated.")
-				.defineInRange("ticksWithoutWater", 15000, 0, 100000);
+				.defineInRange("ticksWithoutWater", 1200, 0, 100000);
 		seaTicksBasedOnTemperature = builder
 				.comment("Whether the sea dragon should lose more water in warmer biomes and less during the night.")
 				.define("waterConsumptionDependsOnTemperature", true);
@@ -355,7 +570,7 @@ public class ServerConfig {
 						"item:minecraft:enchanted_golden_apple"
 				), this::isValidItemConfig);
 		// Ore Loot
-		builder.pop(3).push("oreLoot");
+		builder.pop().pop().push("ore");
 		humanOreDustChance = builder
 				.comment("The odds of dust dropping when a human harvests an ore.")
 				.defineInRange("humanOreDustChance", 0.1, 0.0, 1.0);
@@ -371,10 +586,32 @@ public class ServerConfig {
         oresTag = builder
         		.comment("The tag that contains all ores that can drop dust/bones when harvested. Will not drop if the ore drops another of the items in this tag. Format: modid:id")
         		.define("oresTag", "forge:ores");
-
-		// Dragon Food
+		// Food general
 		builder.pop().push("food");
+		customDragonFoods = builder
+				.comment("Force dragons to eat a unique diet for their type.")
+				.define("dragonFoods", true);
+		caveDragonHurtfulItems = builder
+				.comment("Items which will cause damage to cave dragons when consumed. Formatting: item/tag:modid:itemid:damage")
+				.defineList("hurtfulToCaveDragon", Arrays.asList(
+						"item:minecraft:potion:2",
+						"item:minecraft:water_bottle:2",
+						"item:minecraft:milk_bucket:2"
+				), this::isValidHurtfulItem);
+		seaDragonHurtfulItems = builder
+				.comment("Items which will cause damage to sea dragons when consumed. Formatting: item/tag:modid:itemid:damage")
+				.defineList("hurtfulToSeaDragon", Arrays.asList(), this::isValidHurtfulItem);
+		forestDragonHurtfulItems = builder
+				.comment("Items which will cause damage to forest dragons when consumed. Formatting: item/tag:modid:itemid:damage")
+				.defineList("hurtfulToForestDragon", Arrays.asList(),  this::isValidHurtfulItem);
+		chargedSoupBuffDuration = builder
+				.comment("How long in seconds should the cave fire effect from charged soup last. (Default to 5min) Set to 0 to disable.")
+				.defineInRange("chargedSoupBuffDuration", 300, 0, 10000);
+
+		// Dragon Food List
+		builder.push("list");
 		builder.comment("Dragon food formatting: item/tag:modid:id:food:saturation. Food/saturation values are optional as the human values will be used if missing.");
+
 		caveDragonFoods = builder
 				.defineList("caveDragon", Arrays.asList(
 						"tag:minecraft:coals:1:1",
@@ -383,7 +620,8 @@ public class ServerConfig {
 						"item:minecraft:enchanted_golden_apple",
 						"item:dragonsurvival:charged_coal:4:2",
 						"item:dragonsurvival:charred_meat:10:12",
-						"item:dragonsurvival:charred_secharged_soupafood:8:10",
+						"item:dragonsurvival:cave_dragon_treat:10:12",
+						"item:dragonsurvival:charred_seafood:8:10",
 						"item:dragonsurvival:charred_vegetable:8:9",
 						"item:dragonsurvival:charred_mushroom:8:5",
 						"item:dragonsurvival:charged_soup:20:15",
@@ -415,6 +653,7 @@ public class ServerConfig {
 						"item:thermal:basalz_powder:1:2",
 						"item:druidcraft:fiery_glass:2:2"
 				), this::isValidFoodConfig);
+
 		forestDragonFoods = builder
 				.defineList("forestDragon", Arrays.asList(
 						"tag:forge:raw_meats:5:7",
@@ -427,6 +666,7 @@ public class ServerConfig {
 						"item:minecraft:golden_apple",
 						"item:minecraft:enchanted_golden_apple",
 						"item:minecraft:honey_bottle",
+						"item:dragonsurvival:forest_dragon_treat:10:12",
 						"item:aoa3:fiery_chops:6:7",
 						"item:aoa3:raw_chimera_chop:6:7",
 						"item:aoa3:raw_furlion_chop:6:7",
@@ -559,6 +799,7 @@ public class ServerConfig {
 						"item:mysticalworld:venison:5:5",
 						"item:toadterror:toad_chops:8:7"
 				), this::isValidFoodConfig);
+
 		seaDragonFoods = builder
 				.defineList("seaDragon", Arrays.asList(
 						"tag:forge:raw_fishes:6:7",
@@ -568,6 +809,7 @@ public class ServerConfig {
 						"item:minecraft:golden_apple",
 						"item:minecraft:enchanted_golden_apple",
 						"item:minecraft:honey_bottle",
+						"item:dragonsurvival:sea_dragon_treat:10:12",
 						"item:aoa3:raw_candlefish:9:9",
 						"item:aoa3:raw_crimson_skipper:8:8",
 						"item:aoa3:raw_fingerfish:4:4",
@@ -705,25 +947,322 @@ public class ServerConfig {
 						"item:aquafina:spider_crab_leg:4:1",
 						"item:aquafina:raw_stingray_slice:4:1"
 				), this::isValidFoodConfig);
+		//Magic
+		builder.pop().pop().push("magic");
+		builder.comment("Config values for the magic system");
+		
+		dragonAbilities = builder
+				.comment("Whether dragon abilities should be enabled")
+				.define("dragonAbilities", true);
+		caveDragonAbilities = builder
+				.comment("Whether cave dragon abilities should be enabled")
+				.define("caveDragonAbilities", true);
+		forestDragonAbilities = builder
+				.comment("Whether forest dragon abilities should be enabled")
+				.define("forestDragonAbilities", true);
+		seaDragonAbilities = builder
+				.comment("Whether sea dragon abilities should be enabled")
+				.define("seaDragonAbilities", true);
+		
+		builder.push("abilities");
+		
+		builder.push("forest_dragon");
+		builder.push("actives");
+		
+		{
+			forestBreath = builder
+					.comment("Whether the forest breath ability should be enabled")
+					.define("forestBreath", true);
+			
+			forestBreathDamage = builder
+					.comment("The amount of damage the forest breath ability deals. This value is multiplied by the skill level.")
+					.defineInRange("forestBreathDamage", 1.0, 0, 100.0);
+			
+			forestBreathInitialMana = builder
+					.comment("The mana cost for starting the forest breath ability")
+					.defineInRange("forestBreathInitialMana", 2, 0, 100);
+			
+			forestBreathOvertimeMana = builder
+					.comment("The mana cost of sustaining the forest breath ability")
+					.defineInRange("forestBreathOvertimeMana", 1, 0, 100);
+			
+			forestBreathManaTicks = builder
+					.comment("How often in ticks, mana is consumed while using forest breath")
+					.defineInRange("forestBreathManaTicks", Functions.secondsToTicks(2), 0, 100);
+		}
+		
+		{
+			spike = builder
+					.comment("Whether the spike ability should be enabled")
+					.define("spike", true);
+			
+			spikeDamage = builder
+					.comment("The amount of damage the spike ability deals. This value is multiplied by the skill level.")
+					.defineInRange("spikeDamage", 2.0, 0, 100.0);
+			
+			spikeManaCost = builder
+					.comment("The mana cost for using the spike ability")
+					.defineInRange("spikeManaCost", 3, 0, 100);
+			
+		}
+		
+		{
+			inspiration = builder
+					.comment("Whether the inspiration ability should be enabled")
+					.define("inspiration", true);
+			
+			inspirationDuration = builder
+					.comment("The duration in seconds of the inspiration effect given when the ability is used")
+					.defineInRange("inspirationDuration", 30, 0, 10000);
+			
+			inspirationManaCost = builder
+					.comment("The mana cost for using the inspiration ability")
+					.defineInRange("inspirationManaCost", 5, 0, 100);
+			
+		}
+		
+		{
+			hunter = builder
+					.comment("Whether the hunter ability should be enabled")
+					.define("hunter", true);
+			
+			hunterDuration = builder
+					.comment("The duration in seconds of the inspiration effect given when the ability is used")
+					.defineInRange("hunterDuration", 60, 0, 10000);
+			
+			hunterDamageBonus = builder
+					.comment("The damage bonus the hunter effect gives when invisible. This value is multiplied by the skill level.")
+					.defineInRange("hunterDamageBonus", 1.5, 0, 100.0);
+			
+			hunterManaCost = builder
+					.comment("The mana cost for using the inspiration ability")
+					.defineInRange("hunterManaCost", 3, 0, 100);
+			
+		}
+		
+		builder.pop().push("passives");
+		
+		{
+			forestMagic = builder
+					.comment("Whether the forest magic ability should be enabled")
+					.define("forestMagic", true);
+			
+			forestAthletics = builder
+					.comment("Whether the forest athletics ability should be enabled")
+					.define("forestAthletics", true);
+			
+			lightInDarkness = builder
+					.comment("Whether the light in darkness ability should be enabled")
+					.define("lightInDarkness", true);
+			
+			cliffHanger = builder
+					.comment("Whether the cliffhanger ability should be enabled")
+					.define("cliffHanger", true);
+			
+		}
+		
+		
+		
+		builder.pop().pop().push("sea_dragon");
+		builder.push("actives");
+		{
+			stormBreath = builder
+					.comment("Whether the storm breath ability should be enabled")
+					.define("stormBreath", true);
+			
+			stormBreathDamage = builder
+					.comment("The amount of damage the storm breath ability deals. This value is multiplied by the skill level.")
+					.defineInRange("stormBreathDamage", 1.0, 0, 100.0);
+			
+			stormBreathInitialMana = builder
+					.comment("The mana cost for starting the storm breath ability")
+					.defineInRange("stormBreathInitialMana", 2, 0, 100);
+			
+			stormBreathOvertimeMana = builder
+					.comment("The mana cost of sustaining the storm breath ability")
+					.defineInRange("stormBreathOvertimeMana", 1, 0, 100);
+			
+			stormBreathManaTicks = builder
+					.comment("How often in ticks, mana is consumed while using storm breath")
+					.defineInRange("stormBreathManaTicks", Functions.secondsToTicks(2), 0, 100);
+		}
+		
+		{
+			ballLightning = builder
+					.comment("Whether the lightning ball ability should be enabled")
+					.define("ballLightning", true);
+			
+			ballLightningDamage = builder
+					.comment("The amount of damage the lightning ball ability deals. This value is multiplied by the skill level.")
+					.defineInRange("ballLightningDamage", 3.0, 0, 100.0);
+			
+			ballLightningManaCost = builder
+					.comment("The mana cost for using the lightning ball ability")
+					.defineInRange("ballLightningManaCost", 6, 0, 100);
+			
+		}
+		
+		{
+			revealingTheSoul = builder
+					.comment("Whether the revealing The Soul ability should be enabled")
+					.define("revealingTheSoul", true);
+			
+			revealingTheSoulDuration = builder
+					.comment("The duration in seconds of the revealing The Soul effect given when the ability is used")
+					.defineInRange("revealingTheSoulDuration", 60, 0, 10000);
+			
+			revealingTheSoulManaCost = builder
+					.comment("The mana cost for using the revealing The Soul ability")
+					.defineInRange("revealingTheSoulManaCost", 5, 0, 100);
+			
+			revealingTheSoulMaxEXP = builder
+					.comment("The max amount of increased exp that can be gained from a single mob with reavling the soul")
+					.defineInRange("revealingTheSoulMaxEXP", 20, 0, 10000);
+			
+			revealingTheSoulMultiplier = builder
+					.comment("The multiplier that is applied to exp with revealing the soul, the extra exp is in addition to the normal drops. so 1.0 = 100% increase")
+					.defineInRange("revealingTheSoulMultiplier", 1.0, 0, 10000);
+		}
+		
+		{
+			seaEyes = builder
+					.comment("Whether the sea eyes ability should be enabled")
+					.define("seaEyes", true);
+			
+			seaEyesDuration = builder
+					.comment("The duration in seconds of the sea eyes effect given when the ability is used")
+					.defineInRange("seaEyesDuration", 90, 0, 10000);
+			
+			seaEyesManaCost = builder
+					.comment("The mana cost for using the sea eyes ability")
+					.defineInRange("seaEyesManaCost", 2, 0, 100);
+			
+		}
+		
+		builder.pop().push("passives");
+		
+		{
+			seaMagic = builder
+					.comment("Whether the sea magic ability should be enabled")
+					.define("seaMagic", true);
+			
+			seaAthletics = builder
+					.comment("Whether the sea athletics ability should be enabled")
+					.define("seaAthletics", true);
+			
+			water = builder
+					.comment("Whether the water ability should be enabled")
+					.define("water", true);
+			
+			spectralImpact = builder
+					.comment("Whether the spectralImpact ability should be enabled")
+					.define("spectralImpact", true);
+			
+		}
+		
+		builder.pop().pop().push("cave_dragon");
+		builder.push("actives");
+		
+		{
+			fireBreath = builder
+					.comment("Whether the firebreath ability should be enabled")
+					.define("fireBreath", true);
+			
+			fireBreathDamage = builder
+					.comment("The amount of damage the firebreath ability deals. This value is multiplied by the skill level.")
+					.defineInRange("fireballDamage", 3.0, 0, 100.0);
+			
+			fireBreathInitialMana = builder
+					.comment("The mana cost for starting the firebreath ability")
+					.defineInRange("fireBreathInitialMana", 2, 0, 100);
+			
+			fireBreathOvertimeMana = builder
+					.comment("The mana cost of sustaining the firebreath ability")
+					.defineInRange("fireBreathOvertimeMana", 1, 0, 100);
+			
+			fireBreathManaTicks = builder
+					.comment("How often in ticks, mana is consumed while using fire breath")
+					.defineInRange("fireBreathOvertimeMana", Functions.secondsToTicks(2), 0, 100);
+		}
+		
+		{
+			fireball = builder
+					.comment("Whether the fireball ability should be enabled")
+					.define("fireball", true);
+			
+			fireballDamage = builder
+					.comment("The amount of damage the fireball ability deals. This value is multiplied by the skill level.")
+					.defineInRange("fireballDamage", 5.0, 0, 100.0);
+			
+			fireballManaCost = builder
+					.comment("The mana cost for using the fireball ball ability")
+					.defineInRange("fireballManaCost", 5, 0, 100);
+			
+		}
+		
+		{
+			toughSkin = builder
+					.comment("Whether the tough skin ability should be enabled")
+					.define("toughSkin", true);
+			
+			toughSkinDuration = builder
+					.comment("The duration in seconds of the tough skin effect given when the ability is used")
+					.defineInRange("toughSkinDuration", 30, 0, 10000);
+			
+			toughSkinManaCost = builder
+					.comment("The mana cost for using the tough skin ability")
+					.defineInRange("toughSkinManaCost", 5, 0, 100);
+			
+			toughSkinArmorValue = builder
+					.comment("The amount of extra armor given per level of tough skin effect")
+					.defineInRange("toughSkinArmorValue", 2.0, 0, 10000);
+			
+		}
+		
+		{
+			lavaVision = builder
+					.comment("Whether the lava vision ability should be enabled")
+					.define("lavaVision", true);
+			
+			lavaVisionDuration = builder
+					.comment("The duration in seconds of the lava vision effect given when the ability is used")
+					.defineInRange("lavaVisionDuration", 45, 0, 10000);
+			
+			lavaVisionManaCost = builder
+					.comment("The mana cost for using the lava vision ability")
+					.defineInRange("lavaVisionManaCost", 2, 0, 100);
+			
+		}
+		
+		builder.pop().push("passives");
+		{
+			caveMagic = builder
+					.comment("Whether the cave magic ability should be enabled")
+					.define("caveMagic", true);
+			
+			caveAthletics = builder
+					.comment("Whether the cave athletics ability should be enabled")
+					.define("caveAthletics", true);
+			
+			contrastShower = builder
+					.comment("Whether the contrast shower ability should be enabled")
+					.define("contrastShower", true);
+			
+			burn = builder
+					.comment("Whether the burn ability should be enabled")
+					.define("burn", true);
+			
+		}
 
-		builder.push("hurtful");
-		builder.comment("Dragon food formatting: item/tag:modid:itemid:damage.");
+		builder.pop().pop().pop();
+		
+		fireBreathSpreadsFire = builder
+				.comment("Whether the fire breath actually spreads fire when used")
+				.define("fireBreathSpreadsFire", true);
 
-		caveDragonHurtfulItems = builder
-				.comment("Items which will cause damage to cave dragons when consumed. Formatting: item/tag:modid:itemid:damage")
-				.defineList("hurtfulToCaveDragon", Arrays.asList(
-						"item:minecraft:potion:2",
-						"item:minecraft:water_bottle:2",
-						"item:minecraft:milk_bucket:2"
-				), this::isValidHurtfulItem);
-
-		seaDragonHurtfulItems = builder
-				.comment("Items which will cause damage to sea dragons when consumed. Formatting: item/tag:modid:itemid:damage")
-				.defineList("hurtfulToSeaDragon", Arrays.asList(), this::isValidHurtfulItem);
-
-		forestDragonHurtfulItems = builder
-				.comment("Items which will cause damage to forest dragons when consumed. Formatting: item/tag:modid:itemid:damage")
-				.defineList("hurtfulToForestDragon", Arrays.asList(),  this::isValidHurtfulItem);
+		saveAllAbilities = builder
+				.comment("Whether to save passives skills when changing dragon type")
+				.define("saveAllAbilities", false);
 	}
 
 	private boolean isValidHurtfulItem(Object food){

@@ -1,6 +1,6 @@
 package by.jackraidenph.dragonsurvival.entity;
 
-import by.jackraidenph.dragonsurvival.gecko.Knight;
+import by.jackraidenph.dragonsurvival.gecko.entity.Knight;
 import by.jackraidenph.dragonsurvival.goals.AlertExceptHunters;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.EntityType;

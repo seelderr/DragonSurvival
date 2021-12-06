@@ -5,9 +5,12 @@ import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
+import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.SyncSize;
 import by.jackraidenph.dragonsurvival.network.SynchronizeDragonCap;
+import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Food;
@@ -27,6 +30,9 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.registries.IForgeRegistry;
 
+import java.util.Collection;
+import java.util.Collections;
+
 @Mod.EventBusSubscriber(modid = DragonSurvivalMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ItemsInit {
     public static Item starBone, elderDragonBone, elderDragonDust;
@@ -37,8 +43,11 @@ public class ItemsInit {
         }
     };
     public static Item charredMeat, charredVegetable, charredMushroom, charredSeafood, chargedCoal, chargedSoup;
+    public static Item seaDragonTreat, caveDragonTreat, forestDragonTreat;
     public static Item huntingNet;
     public static Item passiveFireBeacon, passiveMagicBeacon, passivePeaceBeacon;
+    
+    public static Item lightningTextureItem;
 
     @SubscribeEvent
     public static void register(final RegistryEvent.Register<Item> event) {
@@ -55,13 +64,13 @@ public class ItemsInit {
                         	dragonStateHandler.setSize(size, playerIn);
                         	playerIn.getItemInHand(handIn).shrink(1);
                             if (!worldIn.isClientSide){
-                                DragonSurvivalMod.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerIn), new SyncSize(playerIn.getId(), size));
+                                NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerIn), new SyncSize(playerIn.getId(), size));
                                 if (dragonStateHandler.getPassengerId() != 0){
                                     Entity mount = worldIn.getEntity(dragonStateHandler.getPassengerId());
                                     if (mount != null){
                                         mount.stopRiding();
                                         ((ServerPlayerEntity)playerIn).connection.send(new SSetPassengersPacket(playerIn));
-                                        DragonSurvivalMod.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) playerIn), new SynchronizeDragonCap(playerIn.getId(), dragonStateHandler.isHiding(), dragonStateHandler.getType(), dragonStateHandler.getSize(), dragonStateHandler.hasWings(), dragonStateHandler.getLavaAirSupply(), 0));
+                                        NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) playerIn), new SynchronizeDragonCap(playerIn.getId(), dragonStateHandler.isHiding(), dragonStateHandler.getType(), dragonStateHandler.getSize(), dragonStateHandler.hasWings(), dragonStateHandler.getLavaAirSupply(), 0));
                                     }
                                 }
                             }
@@ -103,7 +112,57 @@ public class ItemsInit {
                 .build())).setRegistryName(DragonSurvivalMod.MODID, "charged_soup");
         IForgeRegistry<Item> registry = event.getRegistry();
         registry.registerAll(starBone, elderDragonBone, chargedCoal, charredMeat, charredVegetable, charredMushroom, chargedSoup, charredSeafood, elderDragonDust);
-
+    
+        seaDragonTreat = new Item(new Item.Properties().tab(items).food(new Food.Builder().nutrition(1).alwaysEat().saturationMod(0.4F).meat()
+                                                                                   .effect(() -> new EffectInstance(Effects.HUNGER, 20 * 15, 0), 1.0F)
+                                                                                   .build())){
+            public ItemStack finishUsingItem(ItemStack p_77654_1_, World p_77654_2_, LivingEntity entity) {
+                if(entity instanceof PlayerEntity){
+                    PlayerEntity player = (PlayerEntity)entity;
+                
+                    if( DragonStateProvider.getCap(player).map((cap) -> cap.getType()).get() == DragonType.SEA) {
+                        DragonStateProvider.replenishMana(player, DragonStateProvider.getMaxMana(player));
+                    }
+                }
+            
+                return this.isEdible() ? entity.eat(p_77654_2_, p_77654_1_) : p_77654_1_;
+            }
+        }.setRegistryName(DragonSurvivalMod.MODID, "sea_dragon_treat");
+    
+        caveDragonTreat = new Item(new Item.Properties().tab(items).food(new Food.Builder().nutrition(1).alwaysEat().saturationMod(0.4F).meat()
+                                                                                   .effect(() -> new EffectInstance(Effects.HUNGER, 20 * 15, 0), 1.0F)
+                                                                                   .build())){
+            public ItemStack finishUsingItem(ItemStack p_77654_1_, World p_77654_2_, LivingEntity entity) {
+                if(entity instanceof PlayerEntity){
+                    PlayerEntity player = (PlayerEntity)entity;
+                
+                    if( DragonStateProvider.getCap(player).map((cap) -> cap.getType()).get() == DragonType.CAVE) {
+                        DragonStateProvider.replenishMana(player, DragonStateProvider.getMaxMana(player));
+                    }
+                }
+            
+                return this.isEdible() ? entity.eat(p_77654_2_, p_77654_1_) : p_77654_1_;
+            }
+        }.setRegistryName(DragonSurvivalMod.MODID, "cave_dragon_treat");
+    
+        forestDragonTreat = new Item(new Item.Properties().tab(items).food(new Food.Builder().nutrition(1).alwaysEat().saturationMod(0.4F).meat()
+                    .effect(() -> new EffectInstance(Effects.HUNGER, 20 * 15, 0), 1.0F)
+                    .build())){
+            public ItemStack finishUsingItem(ItemStack p_77654_1_, World p_77654_2_, LivingEntity entity) {
+                if(entity instanceof PlayerEntity){
+                    PlayerEntity player = (PlayerEntity)entity;
+                    
+                    if( DragonStateProvider.getCap(player).map((cap) -> cap.getType()).get() == DragonType.FOREST) {
+                        DragonStateProvider.replenishMana(player, DragonStateProvider.getMaxMana(player));
+                    }
+                }
+                
+                return this.isEdible() ? entity.eat(p_77654_2_, p_77654_1_) : p_77654_1_;
+            }
+        }.setRegistryName(DragonSurvivalMod.MODID, "forest_dragon_treat");
+    
+        registry.registerAll(seaDragonTreat, caveDragonTreat, forestDragonTreat);
+    
         huntingNet = new Item(new Item.Properties()).setRegistryName("dragonsurvival", "dragon_hunting_mesh");
         registry.register(huntingNet);
         passiveMagicBeacon = new Item(new Item.Properties()).setRegistryName(DragonSurvivalMod.MODID, "beacon_magic_1");
@@ -112,5 +171,14 @@ public class ItemsInit {
         registry.register(passivePeaceBeacon);
         passiveFireBeacon = new Item(new Item.Properties()).setRegistryName(DragonSurvivalMod.MODID, "beacon_fire_1");
         registry.register(passiveFireBeacon);
+        
+        lightningTextureItem = new Item(new Item.Properties()){
+            @Override
+            public Collection<ItemGroup> getCreativeTabs()
+            {
+                return Collections.emptyList();
+            }
+        }.setRegistryName(DragonSurvivalMod.MODID, "lightning");
+        registry.register(lightningTextureItem);
     }
 }

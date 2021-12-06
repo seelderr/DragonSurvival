@@ -3,6 +3,7 @@ package by.jackraidenph.dragonsurvival.handlers;
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
+import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.RefreshDragons;
 import by.jackraidenph.dragonsurvival.network.SynchronizeDragonCap;
 import com.google.gson.Gson;
@@ -133,7 +134,7 @@ public class WingObtainmentController {
                             });
                             thread.start();
                             dragonStateHandler.setHasWings(true);
-                            DragonSurvivalMod.CHANNEL.send(PacketDistributor.ALL.noArg(), new SynchronizeDragonCap(playerEntity.getId(), dragonStateHandler.isHiding(), dragonStateHandler.getType(), dragonStateHandler.getSize(), true, dragonStateHandler.getLavaAirSupply(), dragonStateHandler.getPassengerId()));
+                            NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new SynchronizeDragonCap(playerEntity.getId(), dragonStateHandler.isHiding(), dragonStateHandler.getType(), dragonStateHandler.getSize(), true, dragonStateHandler.getLavaAirSupply(), dragonStateHandler.getPassengerId()));
                         }
                     }
                 }
@@ -152,7 +153,7 @@ public class WingObtainmentController {
                 DragonStateProvider.getCap(livingEntity).ifPresent(dragonStateHandler -> {
                     if (dragonStateHandler.isDragon()) {
                         livingEntity.changeDimension(livingEntity.getServer().overworld());
-                        DragonSurvivalMod.CHANNEL.send(PacketDistributor.ALL.noArg(), new RefreshDragons(livingEntity.getId()));
+                        NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new RefreshDragons(livingEntity.getId()));
                         damageEvent.setCanceled(true);
                     }
                 });

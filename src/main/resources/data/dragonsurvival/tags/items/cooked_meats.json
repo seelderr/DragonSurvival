@@ -108,6 +108,8 @@
     {"id": "wyrmroost:cooked_behemoth_meat",
       "required": false},
     {"id": "wyrmroost:cooked_desertwyrm",
+      "required": false},
+    {"id": "untamedwilds:food_turtle_cooked",
       "required": false}
   ]
 }

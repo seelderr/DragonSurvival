@@ -5,7 +5,7 @@ import by.jackraidenph.dragonsurvival.blocks.DragonBeacon;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.registration.BlockInit;
-import by.jackraidenph.dragonsurvival.registration.Sounds;
+import by.jackraidenph.dragonsurvival.sounds.SoundRegistry;
 import by.jackraidenph.dragonsurvival.registration.TileEntityTypesInit;
 import by.jackraidenph.dragonsurvival.util.EffectInstance2;
 import net.minecraft.block.Block;
@@ -51,7 +51,7 @@ public class DragonBeaconEntity extends BaseBlockEntity implements ITickableTile
         if (below.getBlock() == BlockInit.dragonMemoryBlock && type != Type.NONE) {
             if (!blockState.getValue(DragonBeacon.LIT)) {
                 level.setBlockAndUpdate(getBlockPos(), blockState.cycle(DragonBeacon.LIT));
-                level.playSound(null, getBlockPos(), Sounds.activateBeacon, SoundCategory.BLOCKS, 1, 1);
+                level.playSound(null, getBlockPos(), SoundRegistry.activateBeacon, SoundCategory.BLOCKS, 1, 1);
             }
             if (!level.isClientSide) {
                 List<PlayerEntity> dragons = level.getEntitiesOfClass(PlayerEntity.class, new AxisAlignedBB(getBlockPos()).inflate(50).expandTowards(0, level.getMaxBuildHeight(), 0), DragonStateProvider::isDragon);
@@ -89,7 +89,7 @@ public class DragonBeaconEntity extends BaseBlockEntity implements ITickableTile
             BlockState thisState = getBlockState();
             if (thisState.getValue(DragonBeacon.LIT)) {
                 level.setBlockAndUpdate(getBlockPos(), thisState.cycle(DragonBeacon.LIT));
-                level.playSound(null, getBlockPos(), Sounds.deactivateBeacon, SoundCategory.BLOCKS, 1, 1);
+                level.playSound(null, getBlockPos(), SoundRegistry.deactivateBeacon, SoundCategory.BLOCKS, 1, 1);
             }
         }
         tick++;

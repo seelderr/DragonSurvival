@@ -4,10 +4,14 @@ import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.blocks.DragonBeacon;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.entity.*;
-import by.jackraidenph.dragonsurvival.gecko.DragonEntity;
-import by.jackraidenph.dragonsurvival.gecko.Knight;
-import by.jackraidenph.dragonsurvival.gecko.Princess;
+import by.jackraidenph.dragonsurvival.gecko.entity.DragonEntity;
+import by.jackraidenph.dragonsurvival.gecko.entity.Knight;
+import by.jackraidenph.dragonsurvival.gecko.entity.Prince;
+import by.jackraidenph.dragonsurvival.gecko.entity.Princess;
 import by.jackraidenph.dragonsurvival.handlers.VillagerRelationsHandler;
+import by.jackraidenph.dragonsurvival.entity.magic.BallLightningEntity;
+import by.jackraidenph.dragonsurvival.entity.magic.DragonSpikeEntity;
+import by.jackraidenph.dragonsurvival.entity.magic.FireBallEntity;
 import by.jackraidenph.dragonsurvival.tiles.DragonBeaconEntity;
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Preconditions;
@@ -52,7 +56,12 @@ public class EntityTypesInit {
     public static EntityType<PrincessEntity> PRINCESS;
     public static EntityType<Knight> KNIGHT;
     public static EntityType<Princess> PRINCESS_ON_HORSE;
-    public static EntityType<by.jackraidenph.dragonsurvival.gecko.Prince> PRINCE_ON_HORSE;
+    public static EntityType<Prince> PRINCE_ON_HORSE;
+    
+    //Magic abilities
+    public static EntityType<DragonSpikeEntity> DRAGON_SPIKE;
+    public static EntityType<BallLightningEntity> BALL_LIGHTNING;
+    public static EntityType<FireBallEntity> FIREBALL;
 
     private static <T extends CreatureEntity> EntityType<T> createEntity(Class<T> entityClass, EntityType.IFactory<T> factory, float width, float height, int eggPrimary, int eggSecondary, EntitySpawnPlacementRegistry.IPlacementPredicate spawnPlacementPredicate) {
 
@@ -91,6 +100,7 @@ public class EntityTypesInit {
         }
 
         DRAGON = new EntityType<>(DragonEntity::new, EntityClassification.MISC, true, false, false, false, ImmutableSet.of(), EntitySize.fixed(0.9f, 1.9f), 0, 0);
+       
         DRAGON.setRegistryName(DragonSurvivalMod.MODID, "dummy_dragon");
         registry.register(DRAGON);
         DRAGON_ARMOR = new EntityType<>(DragonEntity::new, EntityClassification.MISC, true, false, false, false, ImmutableSet.of(), EntitySize.fixed(0.9f, 1.9f), 0, 0);
@@ -99,6 +109,21 @@ public class EntityTypesInit {
         BOLAS_ENTITY = cast(EntityType.Builder.of((p_create_1_, p_create_2_) -> new BolasEntity(p_create_2_), EntityClassification.MISC).sized(0.25F, 0.25F).clientTrackingRange(4).updateInterval(10).build("bolas"));
         BOLAS_ENTITY.setRegistryName("dragonsurvival", "bolas");
         registry.register(BOLAS_ENTITY);
+    
+        DRAGON_SPIKE = EntityType.Builder.<DragonSpikeEntity>of(DragonSpikeEntity::new, EntityClassification.MISC)
+                .sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(1).build("dragon_spike");
+        DRAGON_SPIKE.setRegistryName("dragonsurvival", "dragon_spike");
+        registry.register(DRAGON_SPIKE);
+    
+        BALL_LIGHTNING = EntityType.Builder.<BallLightningEntity>of(BallLightningEntity::new, EntityClassification.MISC)
+                .sized(1F, 1F).clientTrackingRange(4).updateInterval(1).build("ball_lightning");
+        BALL_LIGHTNING.setRegistryName("dragonsurvival", "ball_lightning");
+        registry.register(BALL_LIGHTNING);
+    
+        FIREBALL = EntityType.Builder.<FireBallEntity>of(FireBallEntity::new, EntityClassification.MISC)
+                .sized(1F, 1F).clientTrackingRange(4).updateInterval(1).build("fireball");
+        FIREBALL.setRegistryName("dragonsurvival", "fireball");
+        registry.register(FIREBALL);
     }
 
     @SubscribeEvent
@@ -116,7 +141,7 @@ public class EntityTypesInit {
         SQUIRE_HUNTER = createEntity(Squire.class, Squire::new, 0.6F, 1.95F, 12486764, 5318420, null);
         PRINCESS = createEntity(PrincessEntity.class, PrincessEntity::new, 0.6F, 1.9F, 16766495, 174864, null);
         KNIGHT = createEntity(Knight.class, Knight::new, 0.8f, 2.5f, 0, 0x510707, null);
-        PRINCE_ON_HORSE = createEntity(by.jackraidenph.dragonsurvival.gecko.Prince.class, by.jackraidenph.dragonsurvival.gecko.Prince::new, 0.8f, 2.5f, 0xffdd1f, 0x2ab10, null);
+        PRINCE_ON_HORSE = createEntity(Prince.class, Prince::new, 0.8f, 2.5f, 0xffdd1f, 0x2ab10, null);
         VillagerRelationsHandler.dragonHunters = new ArrayList<>(4);
         if (ConfigHandler.COMMON.spawnHound.get())
             VillagerRelationsHandler.dragonHunters.add(cast(HUNTER_HOUND));

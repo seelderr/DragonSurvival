@@ -104,7 +104,7 @@ public class CommonConfig {
 				.defineInRange("starSpawnChance", 0.3, 0, 1.0);
 		predatorAnimalSpawnChance = builder
 				.comment("Chance for predators to spawn when an animal dies. Set to 0.0 to disable.")
-				.defineInRange("animalSpawnChance", 0.03, 0.0, 1.0);
+				.defineInRange("animalSpawnChance", 0.0, 0.0, 1.0);
 		builder.pop().push("spawnBiomes");
 		predatorBiomesInclude = builder
 				.comment("The predator can only spawn in biomes with the included types.")
