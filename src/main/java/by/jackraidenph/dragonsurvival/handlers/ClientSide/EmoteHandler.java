@@ -43,7 +43,7 @@ public class EmoteHandler
 					cap.getEmotes().emoteTick++;
 					
 					if( cap.getEmotes().emoteTick % Functions.secondsToTicks(5) == 0){
-						NetworkHandler.CHANNEL.sendToServer(new SyncEmoteServer(emote.name, cap.getEmotes().emoteTick));
+						NetworkHandler.CHANNEL.sendToServer(new SyncEmoteServer(emote.id, cap.getEmotes().emoteTick));
 					}
 					
 					if (player.isCrouching() || player.swinging) {

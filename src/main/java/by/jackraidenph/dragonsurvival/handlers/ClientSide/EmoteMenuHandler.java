@@ -9,7 +9,6 @@ import by.jackraidenph.dragonsurvival.emotes.EmoteRegistry;
 import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.emotes.SyncEmoteServer;
 import by.jackraidenph.dragonsurvival.network.emotes.SyncEmoteStatsServer;
-import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
@@ -27,8 +26,10 @@ import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.*;
+import java.util.Objects;
 
 @Mod.EventBusSubscriber( Dist.CLIENT)
 public class EmoteMenuHandler
@@ -52,7 +53,7 @@ public class EmoteMenuHandler
 	
 	public static void setEmote(Emote emote){
 		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent((cap) -> cap.getEmotes().setCurrentEmote(emote));
-		NetworkHandler.CHANNEL.sendToServer(new SyncEmoteServer(emote != null ? emote.name : "nil", 0));
+		NetworkHandler.CHANNEL.sendToServer(new SyncEmoteServer(emote != null ? emote.id : "nil", 0));
 	}
 	
 	@SubscribeEvent
@@ -205,7 +206,7 @@ public class EmoteMenuHandler
 					DragonStateHandler handler = DragonStateProvider.getCap(Minecraft.getInstance().player).orElse(null);
 					Emote emote = emotes.size() > finalI ? emotes.get(finalI) : null;
 					
-					if(handler.getEmotes().getCurrentEmote() != null && emote != null && Objects.equals(handler.getEmotes().getCurrentEmote().name, emote.name)) return;
+					if(handler.getEmotes().getCurrentEmote() != null && emote != null && Objects.equals(handler.getEmotes().getCurrentEmote().id, emote.id)) return;
 					
 					if(handler != null && emote != null){
 						setEmote(emote);
@@ -252,7 +253,49 @@ public class EmoteMenuHandler
 		HashMap<Integer, ArrayList<Emote>> list = new HashMap<>();
 		
 		emotes.addAll(EmoteRegistry.EMOTES);
-		emotes = new ArrayList<>(Lists.reverse(emotes));
+		
+		emotes.removeIf((em) -> {
+			if(em.requirements != null){
+				if(em.requirements.type != null){
+					boolean hasType = false;
+					for(String t : em.requirements.type){
+						if(t.equalsIgnoreCase(handler.getType().name())){
+							hasType = true;
+							break;
+						}
+					}
+					
+					if(!hasType) return true;
+				}
+				
+				if(em.requirements.age != null){
+					boolean hasAge = false;
+					for(String t : em.requirements.age){
+						if(t.equalsIgnoreCase(handler.getLevel().name)){
+							hasAge = true;
+							break;
+						}
+					}
+					
+					if(!hasAge) return true;
+				}
+				
+				//TODO Add this when alternate models are added
+//				if(em.requirements.model != null){
+//					boolean hasModel = false;
+//					for(String t : em.requirements.model){
+//						if(t.toLowerCase().equals(handler.getModel().name.toLowerCase())){
+//							hasModel = true;
+//							break;
+//						}
+//					}
+//
+//					if(!hasModel) return true;
+//				}
+			}
+			
+			return false;
+		});
 		
 		int num = 0;
 		for(Emote emote : emotes){
