@@ -147,7 +147,7 @@ public class PoisonBreathAbility extends BreathAbility
 		float size = DragonStateProvider.getCap(player).map((cap) -> cap.getSize()).get();
 		
 		double x = player.getX() + f4;
-		double y = player.getY() + (size / 20F);
+		double y = player.getY() + (size / 20F) - 0.3;
 		double z = player.getZ() + f5;
 		
 		if(player.isFallFlying() || player.abilities.flying) {
