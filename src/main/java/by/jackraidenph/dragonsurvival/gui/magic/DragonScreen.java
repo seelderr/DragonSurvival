@@ -228,7 +228,11 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> implemen
     
         if(ConfigHandler.CLIENT.inventoryToggle.get()) {
             addButton(new ImageButton(this.leftPos + (imageWidth - 28), (this.height / 2 - 30) + 50, 20, 18, 0, 0, 19, INVENTORY_TOGGLE_BUTTON, p_onPress_1_ -> {
-                Minecraft.getInstance().setScreen(new InventoryScreen(Minecraft.getInstance().player));
+                if (Minecraft.getInstance().gameMode.isServerControlledInventory()) {
+                    Minecraft.getInstance().player.sendOpenInventory();
+                } else {
+                    Minecraft.getInstance().setScreen(new InventoryScreen(this.player));
+                }
             }));
         }
     }

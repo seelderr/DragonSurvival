@@ -6,6 +6,7 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.inventory.container.Slot;
+import net.minecraft.item.AxeItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.SwordItem;
 import net.minecraft.util.ResourceLocation;
@@ -59,6 +60,6 @@ public class ClawToolSlot extends Slot
 	@Override
 	public boolean mayPlace(ItemStack stack)
 	{
-		return type == null && stack.getItem() instanceof SwordItem || stack.getItem().getToolTypes(stack).contains(type);
+		return type == null && (stack.getItem() instanceof SwordItem || stack.getItem() instanceof AxeItem || stack.getToolTypes().contains(ToolType.AXE)) || stack.getItem().getToolTypes(stack).contains(type);
 	}
 }
