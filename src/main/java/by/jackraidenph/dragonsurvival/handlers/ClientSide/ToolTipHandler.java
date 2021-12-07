@@ -56,6 +56,16 @@ public class ToolTipHandler
 			if (DragonFoodHandler.getSafeEdibleFoods(DragonType.SEA).contains(item)) {
 				toolTip.add(new TranslationTextComponent("ds.sea.dragon.food"));
 			}
+		}
+	}
+	
+	
+	@SubscribeEvent
+	public static void itemDescriptions(ItemTooltipEvent event){
+		if(event.getPlayer() != null){
+			Item item = event.getItemStack().getItem();
+			List<ITextComponent> toolTip = event.getToolTip();
+			
 			if (item == ItemsInit.starBone){
 				toolTip.add(new TranslationTextComponent("ds.description.starBone"));
 			}
@@ -119,10 +129,10 @@ public class ToolTipHandler
 			if (item == BlockInit.PREDATOR_STAR_BLOCK.asItem()){
 				toolTip.add(new TranslationTextComponent("ds.description.predatorStar"));
 			}
-			if (item == ItemRegistry.WEAK_DRAGON_HEART.get()){
+			if (item == ItemRegistry.WEAK_DRAGON_HEART.orElse(null)){
 				toolTip.add(new TranslationTextComponent("ds.description.weakDragonHeart"));
 			}
-			if (item == ItemRegistry.ELDER_DRAGON_HEART.get()){
+			if (item == ItemRegistry.ELDER_DRAGON_HEART.orElse(null)){
 				toolTip.add(new TranslationTextComponent("ds.description.elderDragonHeart"));
 			}
 		}
