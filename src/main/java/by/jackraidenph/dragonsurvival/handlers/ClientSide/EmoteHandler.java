@@ -39,11 +39,13 @@ public class EmoteHandler
 					Emote emote = cap.getEmotes().getCurrentEmote();
 					cap.getEmotes().emoteTick++;
 					
-					if(emote.duration != -1 && cap.getEmotes().emoteTick > emote.duration){
+					//Cancel emote if its duration is expired, this should happen even if it isnt local
+					if (emote.duration != -1 && cap.getEmotes().emoteTick > emote.duration) {
 						cap.getEmotes().setCurrentEmote(null);
 						return;
 					}
 					
+					if(player.getId() == Minecraft.getInstance().player.getId()) {
 					/*
 					//Enable this code to fix emotes being usable while flying and jumping
 					if(!player.isOnGround()){
@@ -51,40 +53,38 @@ public class EmoteHandler
 						return;
 					}
 					*/
-					
-					if (player.isCrouching() || player.swinging) {
-						EmoteMenuHandler.setEmote(null);
-						return;
 						
-					} else {
-						if (emote.sound != null && emote.sound.interval > 0) {
-							if (cap.getEmotes().emoteTick % emote.sound.interval == 0) {
-								player.level.playLocalSound(player.position().x, player.position().y, player.position().z, new SoundEvent(new ResourceLocation(emote.sound.key)), SoundCategory.PLAYERS, emote.sound.volume, emote.sound.pitch, false);
-							}
-						}
-						
-						if(emote.animation != null && !emote.animation.isEmpty()) {
-							ModifiableAttributeInstance attributeInstance = player.getAttribute(Attributes.MOVEMENT_SPEED);
-							AttributeModifier noMove = new AttributeModifier(EMOTE_NO_MOVE, "EMOTE", -attributeInstance.getValue(), AttributeModifier.Operation.ADDITION);
-							
-							if (!attributeInstance.hasModifier(noMove)) {
-								attributeInstance.addTransientModifier(noMove);
-							}
+						if (player.isCrouching() || player.swinging) {
+							EmoteMenuHandler.setEmote(null);
+							return;
 						}
 						
 						if(emote.thirdPerson) {
-							if (player == Minecraft.getInstance().player) {
-								Minecraft.getInstance().levelRenderer.needsUpdate();
-								PointOfView pointofview = Minecraft.getInstance().options.getCameraType();
+							Minecraft.getInstance().levelRenderer.needsUpdate();
+							PointOfView pointofview = Minecraft.getInstance().options.getCameraType();
+							
+							if (pointofview.isFirstPerson()) {
+								Minecraft.getInstance().options.setCameraType(THIRD_PERSON_BACK);
 								
-								if (pointofview.isFirstPerson()) {
-									Minecraft.getInstance().options.setCameraType(THIRD_PERSON_BACK);
-									
-									if (pointofview.isFirstPerson() != Minecraft.getInstance().options.getCameraType().isFirstPerson()) {
-										Minecraft.getInstance().gameRenderer.checkEntityPostEffect(Minecraft.getInstance().options.getCameraType().isFirstPerson() ? Minecraft.getInstance().getCameraEntity() : null);
-									}
+								if (pointofview.isFirstPerson() != Minecraft.getInstance().options.getCameraType().isFirstPerson()) {
+									Minecraft.getInstance().gameRenderer.checkEntityPostEffect(Minecraft.getInstance().options.getCameraType().isFirstPerson() ? Minecraft.getInstance().getCameraEntity() : null);
 								}
 							}
+						}
+					}
+					
+					if (emote.sound != null && emote.sound.interval > 0) {
+						if (cap.getEmotes().emoteTick % emote.sound.interval == 0) {
+							player.level.playLocalSound(player.position().x, player.position().y, player.position().z, new SoundEvent(new ResourceLocation(emote.sound.key)), SoundCategory.PLAYERS, emote.sound.volume, emote.sound.pitch, false);
+						}
+					}
+					
+					if(emote.animation != null && !emote.animation.isEmpty()) {
+						ModifiableAttributeInstance attributeInstance = player.getAttribute(Attributes.MOVEMENT_SPEED);
+						AttributeModifier noMove = new AttributeModifier(EMOTE_NO_MOVE, "EMOTE", -attributeInstance.getValue(), AttributeModifier.Operation.ADDITION);
+						
+						if (!attributeInstance.hasModifier(noMove)) {
+							attributeInstance.addTransientModifier(noMove);
 						}
 					}
 				}else{
