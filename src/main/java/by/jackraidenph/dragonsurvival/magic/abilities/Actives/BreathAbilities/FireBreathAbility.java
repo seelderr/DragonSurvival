@@ -58,8 +58,8 @@ public class FireBreathAbility extends BreathAbility
 	}
 	
 	public void tickCost(){
-		if(firstUse || player.tickCount % Functions.secondsToTicks(ConfigHandler.SERVER.fireBreathManaTicks.get()) == 0){
-			DragonStateProvider.consumeMana(player, this.getManaCost());
+		if(firstUse || player.tickCount % ConfigHandler.SERVER.fireBreathManaTicks.get() == 0){
+			consumeMana(player);
 			firstUse = false;
 		}
 	}
@@ -169,11 +169,17 @@ public class FireBreathAbility extends BreathAbility
 			if(startingSound == null){
 				startingSound = SimpleSound.forAmbientAddition(SoundRegistry.fireBreathStart);
 			}
-			loopingSound = new FireBreathSound(this);
 			Minecraft.getInstance().getSoundManager().play(startingSound);
 		}
 		
-		if(loopingSound != null && (!loopingSound.isLooping() || loopingSound.isStopped() || !Minecraft.getInstance().getSoundManager().isActive(loopingSound))){
+		if(loopingSound == null){
+			loopingSound = new FireBreathSound(this);
+		}
+		
+		if((!loopingSound.isLooping()
+                    || loopingSound.isStopped()
+                    || !Minecraft.getInstance().getSoundManager().isActive(loopingSound))
+					|| player.tickCount % Functions.secondsToTicks(6) == 0){
 			Minecraft.getInstance().getSoundManager().queueTickingSound(loopingSound);
 		}
 	}
@@ -221,15 +227,6 @@ public class FireBreathAbility extends BreathAbility
 	@Override
 	public void onBlock(BlockPos pos, BlockState blockState)
 	{
-		if(blockState.getBlock() == Blocks.ICE || blockState.getBlock() == Blocks.SNOW || blockState.getBlock() == Blocks.SNOW_BLOCK){
-			if(!player.level.isClientSide) {
-				if (player.level.random.nextInt(100) < 80) {
-					player.level.setBlock(pos, blockState.getBlock() == Blocks.ICE ? Blocks.WATER.defaultBlockState() : Blocks.AIR.defaultBlockState(), 3);
-				}
-			}
-			return;
-		}
-		
 		if(!player.level.isClientSide) {
 			if (ConfigHandler.SERVER.fireBreathSpreadsFire.get()) {
 				Direction direction = player.getDirection().getOpposite();

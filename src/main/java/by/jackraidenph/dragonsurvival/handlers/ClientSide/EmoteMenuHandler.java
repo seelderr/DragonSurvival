@@ -53,7 +53,7 @@ public class EmoteMenuHandler
 	
 	public static void setEmote(Emote emote){
 		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent((cap) -> cap.getEmotes().setCurrentEmote(emote));
-		NetworkHandler.CHANNEL.sendToServer(new SyncEmoteServer(emote != null ? emote.id : "nil", 0));
+		NetworkHandler.CHANNEL.sendToServer(new SyncEmoteServer(emote != null ? emote.id : "nil"));
 	}
 	
 	@SubscribeEvent

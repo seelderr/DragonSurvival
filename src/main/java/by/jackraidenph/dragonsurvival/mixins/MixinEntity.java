@@ -60,6 +60,7 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
     @Inject(at = @At(value = "RETURN"), method = "canRide", cancellable = true)
     public void canRide(Entity entity, CallbackInfoReturnable<Boolean> ci) {
         if (ci.getReturnValue() && DragonStateProvider.isDragon((Entity) (Object) this) && !DragonStateProvider.isDragon(entity))
+            if(ConfigHandler.SERVER.ridingBlacklist.get())
                 ci.setReturnValue(ConfigHandler.SERVER.allowedVehicles.get().contains(entity.getType().getRegistryName().toString()));
     }
 

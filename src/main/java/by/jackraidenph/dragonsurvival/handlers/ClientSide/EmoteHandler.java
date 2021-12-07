@@ -1,10 +1,7 @@
 package by.jackraidenph.dragonsurvival.handlers.ClientSide;
 
-import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.emotes.Emote;
-import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
-import by.jackraidenph.dragonsurvival.network.emotes.SyncEmoteServer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.PointOfView;
 import net.minecraft.entity.LivingEntity;
@@ -42,12 +39,22 @@ public class EmoteHandler
 					Emote emote = cap.getEmotes().getCurrentEmote();
 					cap.getEmotes().emoteTick++;
 					
-					if( cap.getEmotes().emoteTick % Functions.secondsToTicks(5) == 0){
-						NetworkHandler.CHANNEL.sendToServer(new SyncEmoteServer(emote.id, cap.getEmotes().emoteTick));
+					if(emote.duration != -1 && cap.getEmotes().emoteTick > emote.duration){
+						cap.getEmotes().setCurrentEmote(null);
+						return;
 					}
+					
+					/*
+					//Enable this code to fix emotes being usable while flying and jumping
+					if(!player.isOnGround()){
+						EmoteMenuHandler.setEmote(null);
+						return;
+					}
+					*/
 					
 					if (player.isCrouching() || player.swinging) {
 						EmoteMenuHandler.setEmote(null);
+						return;
 						
 					} else {
 						if (emote.sound != null && emote.sound.interval > 0) {
@@ -65,15 +72,17 @@ public class EmoteHandler
 							}
 						}
 						
-						if(emote.thirdPerson){
-							Minecraft.getInstance().levelRenderer.needsUpdate();
-							PointOfView pointofview = Minecraft.getInstance().options.getCameraType();
-							
-							if(pointofview.isFirstPerson()) {
-								Minecraft.getInstance().options.setCameraType(THIRD_PERSON_BACK);
+						if(emote.thirdPerson) {
+							if (player == Minecraft.getInstance().player) {
+								Minecraft.getInstance().levelRenderer.needsUpdate();
+								PointOfView pointofview = Minecraft.getInstance().options.getCameraType();
 								
-								if (pointofview.isFirstPerson() != Minecraft.getInstance().options.getCameraType().isFirstPerson()) {
-									Minecraft.getInstance().gameRenderer.checkEntityPostEffect(Minecraft.getInstance().options.getCameraType().isFirstPerson() ? Minecraft.getInstance().getCameraEntity() : null);
+								if (pointofview.isFirstPerson()) {
+									Minecraft.getInstance().options.setCameraType(THIRD_PERSON_BACK);
+									
+									if (pointofview.isFirstPerson() != Minecraft.getInstance().options.getCameraType().isFirstPerson()) {
+										Minecraft.getInstance().gameRenderer.checkEntityPostEffect(Minecraft.getInstance().options.getCameraType().isFirstPerson() ? Minecraft.getInstance().getCameraEntity() : null);
+									}
 								}
 							}
 						}

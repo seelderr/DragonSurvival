@@ -8,6 +8,7 @@ import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
 import by.jackraidenph.dragonsurvival.magic.abilities.Actives.BreathAbilities.LightningBreathAbility;
 import by.jackraidenph.dragonsurvival.magic.abilities.Passives.BurnAbility;
 import by.jackraidenph.dragonsurvival.magic.abilities.Passives.SpectralImpactAbility;
+import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
 import by.jackraidenph.dragonsurvival.util.DragonType;
@@ -37,7 +38,37 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 @EventBusSubscriber
 public class MagicHandler
 {
-	public static AbilityTickingHandler cooldownHandler = new AbilityTickingHandler();
+	@SubscribeEvent
+	public static void magicUpdate(PlayerTickEvent event){
+		PlayerEntity player = event.player;
+		
+		DragonStateProvider.getCap(player).ifPresent(cap -> {
+			if (!cap.isDragon()) return;
+			
+			if(cap.getMagic().getCurrentlyCasting() != null){
+				ActiveDragonAbility ability = cap.getMagic().getCurrentlyCasting();
+				ability.player = player;
+				
+				if(ability.getCastingTime() <= 0 || ability.getCurrentCastTimer() >= ability.getCastingTime()) {
+					if (ability.canRun(player, -1)) {
+						ability.onActivation(player);
+					}else{
+						cap.getMagic().setCurrentlyCasting(null);
+					}
+				}else{
+					cap.getMagic().setCurrentlyCasting(null);
+				}
+			}
+			
+			for(int i = 0; i < 4; i++){
+				ActiveDragonAbility ability = cap.getMagic().getAbilityFromSlot(i);
+				
+				if(ability != null){
+					ability.decreaseCooldownTimer();
+				}
+			}
+		});
+	}
 	
 	@SubscribeEvent
 	public static void playerTick(PlayerTickEvent event){

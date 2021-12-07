@@ -15,6 +15,9 @@ public class EmoteCap implements DragonCapability
 	private Emote currentEmote;
 	public int emoteTick;
 	
+	public String serverEmote;
+	public int serverTick;
+	
 	public boolean emoteMenuOpen = false;
 	
 	public Emote getCurrentEmote()

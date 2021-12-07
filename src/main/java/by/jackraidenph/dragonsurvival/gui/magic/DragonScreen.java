@@ -18,8 +18,6 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.DisplayEffectsScreen;
-import net.minecraft.client.gui.recipebook.IRecipeShownListener;
-import net.minecraft.client.gui.recipebook.RecipeBookGui;
 import net.minecraft.client.gui.screen.inventory.InventoryScreen;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
@@ -27,8 +25,6 @@ import net.minecraft.client.gui.widget.button.ImageButton;
 import net.minecraft.client.util.InputMappings;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.ClickType;
-import net.minecraft.inventory.container.Slot;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -38,18 +34,14 @@ import org.lwjgl.opengl.GL11;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class DragonScreen extends DisplayEffectsScreen<DragonContainer> implements IRecipeShownListener {
-    private final RecipeBookGui recipeBookGui = new RecipeBookGui();
+public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
     static final ResourceLocation BACKGROUND = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_inventory.png");
-    private static final ResourceLocation RECIPE_BUTTON_TEXTURE = new ResourceLocation("textures/gui/recipe_button.png");
     public static final ResourceLocation INVENTORY_TOGGLE_BUTTON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/inventory_button.png");
     
     private static final ResourceLocation CLAWS_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_claws.png");
     private static final ResourceLocation DRAGON_CLAW_BUTTON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_claws_button.png");
     private static final ResourceLocation DRAGON_CLAW_CHECKMARK = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_claws_tetris.png");
     
-    
-    private boolean widthTooNarrow;
     private boolean buttonClicked;
     
     public boolean clawsMenu = false;
@@ -64,11 +56,7 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> implemen
             clawsMenu = cap.getClawInventory().isClawsMenuOpen();
         });
     }
-
-    @Override
-    public void tick() {
-        recipeBookGui.tick();
-    }
+    
     
     @Override
     protected void renderBg(MatrixStack stack, float partialTicks, int mouseX, int mouseY) {
@@ -113,22 +101,6 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> implemen
     
     
     @Override
-    public void recipesUpdated() {
-        recipeBookGui.recipesUpdated();
-    }
-    
-    @Override
-    public RecipeBookGui getRecipeBookComponent()
-    {
-        return recipeBookGui;
-    }
-    
-    @Override
-    protected boolean isHovering(int x, int y, int width, int height, double mouseX, double mouseY) {
-        return (!widthTooNarrow || !recipeBookGui.isVisible()) && super.isHovering(x, y, width, height, mouseX, mouseY);
-    }
-    
-    @Override
     protected void renderLabels(MatrixStack stack, int p_230451_2_, int p_230451_3_)
     {
     }
@@ -143,7 +115,8 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> implemen
         this.imageWidth = 203;
         this.imageHeight = 166;
         super.init();
-        widthTooNarrow = width < 379;
+        
+        /*
         this.recipeBookGui.init(this.width, this.height, this.minecraft, this.widthTooNarrow, this.menu);
         this.leftPos = this.recipeBookGui.updateScreenPosition(this.widthTooNarrow, this.width + 30, this.imageWidth);
 
@@ -163,20 +136,14 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> implemen
         }));
         this.children.add(this.recipeBookGui);
         
+        */
+        
         addButton(new TabButton(leftPos, topPos - 28, 0, this));
         addButton(new TabButton(leftPos + 28, topPos - 26, 1, this));
         addButton(new TabButton(leftPos + 57, topPos - 26, 2, this));
         addButton(new TabButton(leftPos + 86, topPos - 26, 3, this));
     
         addButton(new Button(leftPos + 27, topPos + 10, 11, 11, new StringTextComponent(""), p_onPress_1_ -> {
-           if(recipeBookGui.isVisible()){
-               this.recipeBookGui.initVisuals(this.widthTooNarrow);
-               this.recipeBookGui.toggleVisibility();
-               this.leftPos = this.recipeBookGui.updateScreenPosition(this.widthTooNarrow, this.width + 30, this.imageWidth);
-               buttons.clear();
-               init();
-           }
-           
             clawsMenu = !clawsMenu;
             this.leftPos += (clawsMenu ? 80 : -80);
             buttons.clear();
@@ -237,18 +204,10 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> implemen
     
     public void render(MatrixStack p_230450_1_,int p_render_1_, int p_render_2_, float p_render_3_) {
         this.renderBackground(p_230450_1_);
-        this.doRenderEffects = !this.recipeBookGui.isVisible() && !clawsMenu;
-        if (this.recipeBookGui.isVisible() && this.widthTooNarrow) {
-            this.renderBg(p_230450_1_, p_render_3_, p_render_1_, p_render_2_);
-            this.recipeBookGui.render(p_230450_1_, p_render_1_, p_render_2_, p_render_3_);
-        } else {
-            this.recipeBookGui.render(p_230450_1_, p_render_1_, p_render_2_, p_render_3_);
-            super.render(p_230450_1_, p_render_1_, p_render_2_, p_render_3_);
-            this.recipeBookGui.renderGhostRecipe(p_230450_1_, this.getGuiLeft(), this.getGuiTop(), false, p_render_3_);
-        }
-
+        this.doRenderEffects = !clawsMenu;
+        super.render(p_230450_1_, p_render_1_, p_render_2_, p_render_3_);
+    
         this.renderTooltip(p_230450_1_, p_render_1_, p_render_2_);
-        this.recipeBookGui.renderTooltip(p_230450_1_, this.getGuiLeft(), this.getGuiTop(), p_render_1_, p_render_2_);
         
         for(Widget w : buttons){
             if(w.isHovered()){
@@ -256,15 +215,7 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> implemen
             }
         }
     }
-
-    public boolean mouseClicked(double p_mouseClicked_1_, double p_mouseClicked_3_, int p_mouseClicked_5_) {
-        if (this.recipeBookGui.mouseClicked(p_mouseClicked_1_, p_mouseClicked_3_, p_mouseClicked_5_)) {
-            return true;
-        } else {
-            return (!this.widthTooNarrow || !this.recipeBookGui.isVisible()) && super.mouseClicked(p_mouseClicked_1_, p_mouseClicked_3_, p_mouseClicked_5_);
-        }
-    }
-
+    
     public boolean mouseReleased(double p_mouseReleased_1_, double p_mouseReleased_3_, int p_mouseReleased_5_) {
         if (this.buttonClicked) {
             this.buttonClicked = false;
@@ -272,21 +223,6 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> implemen
         } else {
             return super.mouseReleased(p_mouseReleased_1_, p_mouseReleased_3_, p_mouseReleased_5_);
         }
-    }
-
-    protected boolean hasClickedOutside(double mouseX, double mouseY, int guiLeftIn, int guiTopIn, int mouseButton) {
-        boolean flag = mouseX < (double) guiLeftIn || mouseY < (double) guiTopIn || mouseX >= (double) (guiLeftIn + this.getXSize()) || mouseY >= (double) (guiTopIn + this.getYSize());
-        return this.recipeBookGui.hasClickedOutside(mouseX, mouseY, this.getGuiLeft(), this.getGuiTop(), this.getXSize(), this.getYSize(), mouseButton) && flag;
-    }
-    
-    
-    /**
-     * Called when the mouse is clicked over a slot or outside the gui.
-     */
-    @Override
-    protected void slotClicked(Slot slotIn, int slotId, int mouseButton, ClickType type) {
-        super.slotClicked(slotIn, slotId, mouseButton, type);
-        this.recipeBookGui.slotClicked(slotIn);
     }
     
     public boolean keyPressed(int p_231046_1_, int p_231046_2_, int p_231046_3_) {

@@ -83,9 +83,8 @@ public class ChangeSkillLevel implements IMessage<ChangeSkillLevel>
                 if(levelCost != 0){
                     playerEntity.giveExperienceLevels(levelCost);
                 }
-                
                 playerAbility.setLevel(message.level);
-                NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> playerEntity), new SyncMagicAbilities(playerEntity.getId(), dragonStateHandler.getMagic().getAbilities()));
+                NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new SyncMagicAbilities(playerEntity.getId(), dragonStateHandler.getMagic().getAbilities()));
             }
         });
     }

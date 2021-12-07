@@ -26,9 +26,12 @@ public class ServerConfig {
 	public final ForgeConfigSpec.DoubleValue newbornJump;
 	public final ForgeConfigSpec.DoubleValue youngJump;
 	public final ForgeConfigSpec.DoubleValue adultJump;
+	
+	public final ForgeConfigSpec.BooleanValue ridingBlacklist;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> allowedVehicles;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> blacklistedItems;
 	public final ForgeConfigSpec.ConfigValue<List<? extends Integer>> blacklistedSlots;
+	
 	public final ForgeConfigSpec.BooleanValue alternateGrowing;
 	public final ForgeConfigSpec.IntValue alternateGrowingFrequency;
 	public final ForgeConfigSpec.DoubleValue alternateGrowingStep;
@@ -109,6 +112,11 @@ public class ServerConfig {
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> seaDragonFoods;
 
 	// Magic System
+	public final ForgeConfigSpec.BooleanValue noEXPRequirements;
+	public final ForgeConfigSpec.BooleanValue consumeEXPAsMana;
+	public final ForgeConfigSpec.IntValue favorableManaTicks;
+	public final ForgeConfigSpec.IntValue normalManaTicks;
+	
 	public final ForgeConfigSpec.BooleanValue dragonAbilities;
 	public final ForgeConfigSpec.BooleanValue caveDragonAbilities;
 	public final ForgeConfigSpec.BooleanValue forestDragonAbilities;
@@ -119,18 +127,22 @@ public class ServerConfig {
 	public final ForgeConfigSpec.IntValue fireBreathInitialMana;
 	public final ForgeConfigSpec.IntValue fireBreathOvertimeMana;
 	public final ForgeConfigSpec.IntValue fireBreathManaTicks;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> fireBreathBlockBreaks;
 	
 	public final ForgeConfigSpec.BooleanValue stormBreath;
 	public final ForgeConfigSpec.DoubleValue stormBreathDamage;
 	public final ForgeConfigSpec.IntValue stormBreathInitialMana;
 	public final ForgeConfigSpec.IntValue stormBreathOvertimeMana;
 	public final ForgeConfigSpec.IntValue stormBreathManaTicks;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> stormBreathBlockBreaks;
+	
 	
 	public final ForgeConfigSpec.BooleanValue forestBreath;
 	public final ForgeConfigSpec.DoubleValue forestBreathDamage;
 	public final ForgeConfigSpec.IntValue forestBreathInitialMana;
 	public final ForgeConfigSpec.IntValue forestBreathOvertimeMana;
 	public final ForgeConfigSpec.IntValue forestBreathManaTicks;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> forestBreathBlockBreaks;
 	
 	public final ForgeConfigSpec.BooleanValue spike;
 	public final ForgeConfigSpec.DoubleValue spikeDamage;
@@ -392,6 +404,11 @@ public class ServerConfig {
 		allowedVehicles = builder
 				.comment("List of rideable entities. Format: modid:id")
 				.defineList("allowedVehicles", Lists.newArrayList(), value -> value instanceof String);
+		
+		ridingBlacklist= builder
+				.comment("Should dragons be limited by which entities they can ride")
+				.define("limitedRiding", true);
+		
 		blacklistedItems = builder
 				.comment("List of items that disallowed to be used by dragons. Format: item/tag:modid:id")
 				.defineList("blacklistedItems", Arrays.asList(
@@ -954,17 +971,41 @@ public class ServerConfig {
 		dragonAbilities = builder
 				.comment("Whether dragon abilities should be enabled")
 				.define("dragonAbilities", true);
+		
 		caveDragonAbilities = builder
 				.comment("Whether cave dragon abilities should be enabled")
 				.define("caveDragonAbilities", true);
+		
 		forestDragonAbilities = builder
 				.comment("Whether forest dragon abilities should be enabled")
 				.define("forestDragonAbilities", true);
+		
 		seaDragonAbilities = builder
 				.comment("Whether sea dragon abilities should be enabled")
 				.define("seaDragonAbilities", true);
 		
+		
+		noEXPRequirements = builder
+				.comment("Disable the exp requirements for leveling up active skills")
+				.define("noEXPRequirements", false);
+		
+		consumeEXPAsMana = builder
+				.comment("Whether to use exp instead of mana if mana is empty")
+				.define("consumeEXPAsMana", true);
+		
+		favorableManaTicks = builder
+				.comment("How fast in seconds should mana be recovered in favorable conditions")
+				.defineInRange("favorableManaRegen", 5, 1, 1000);
+		
+		normalManaTicks = builder
+				.comment("How fast in seconds should mana be recovered in normal conditions")
+				.defineInRange("normalManaRegen", 15, 1, 1000);
+		
 		builder.push("abilities");
+		
+		saveAllAbilities = builder
+				.comment("Whether to save passives skills when changing dragon type")
+				.define("saveAllAbilities", false);
 		
 		builder.push("forest_dragon");
 		builder.push("actives");
@@ -989,6 +1030,10 @@ public class ServerConfig {
 			forestBreathManaTicks = builder
 					.comment("How often in ticks, mana is consumed while using forest breath")
 					.defineInRange("forestBreathManaTicks", Functions.secondsToTicks(2), 0, 100);
+			
+			forestBreathBlockBreaks = builder
+					.comment("Blocks that have a chance to be broken by forest breath. Formatting: block/tag:modid:id")
+					.defineList("stormBreathBlockBreaks", Arrays.asList(), this::isValidBlockConfig);
 		}
 		
 		{
@@ -1085,6 +1130,10 @@ public class ServerConfig {
 			stormBreathManaTicks = builder
 					.comment("How often in ticks, mana is consumed while using storm breath")
 					.defineInRange("stormBreathManaTicks", Functions.secondsToTicks(2), 0, 100);
+			
+			stormBreathBlockBreaks = builder
+					.comment("Blocks that have a chance to be broken by storm breath. Formatting: block/tag:modid:id")
+					.defineList("stormBreathBlockBreaks", Arrays.asList(), this::isValidBlockConfig);
 		}
 		
 		{
@@ -1182,7 +1231,19 @@ public class ServerConfig {
 			
 			fireBreathManaTicks = builder
 					.comment("How often in ticks, mana is consumed while using fire breath")
-					.defineInRange("fireBreathOvertimeMana", Functions.secondsToTicks(2), 0, 100);
+					.defineInRange("fireBreathManaTicks", Functions.secondsToTicks(2), 0, 100);
+			
+			fireBreathSpreadsFire = builder
+					.comment("Whether the fire breath actually spreads fire when used")
+					.define("fireBreathSpreadsFire", true);
+			
+			fireBreathBlockBreaks = builder
+					.comment("Blocks that have a chance to be broken by fire breath. Formatting: block/tag:modid:id")
+					.defineList("fireBreathBlockBreaks", Arrays.asList(
+							"tag:minecraft:ice",
+							"block:minecraft:snow",
+							"block:minecraft:snow_block"
+					), this::isValidBlockConfig);
 		}
 		
 		{
@@ -1255,14 +1316,6 @@ public class ServerConfig {
 		}
 
 		builder.pop().pop().pop();
-		
-		fireBreathSpreadsFire = builder
-				.comment("Whether the fire breath actually spreads fire when used")
-				.define("fireBreathSpreadsFire", true);
-
-		saveAllAbilities = builder
-				.comment("Whether to save passives skills when changing dragon type")
-				.define("saveAllAbilities", false);
 	}
 
 	private boolean isValidHurtfulItem(Object food){

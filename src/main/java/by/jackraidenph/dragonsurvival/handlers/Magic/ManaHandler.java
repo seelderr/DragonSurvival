@@ -2,6 +2,7 @@ package by.jackraidenph.dragonsurvival.handlers.Magic;
 
 import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.registration.BlockInit;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
 import net.minecraft.block.AbstractFurnaceBlock;
@@ -21,22 +22,20 @@ public class ManaHandler
 	public static void playerTick(PlayerTickEvent event){
 		PlayerEntity player = event.player;
 		
-		if(!player.level.isClientSide) {
-			DragonStateProvider.getCap(player).ifPresent(cap -> {
-				boolean goodConditions = ManaHandler.isPlayerInGoodConditions(player);
-				
-				int timeToRecover = goodConditions ? 5 : 15;
-				
-				if (player.tickCount % Functions.secondsToTicks(timeToRecover) == 0) {
-					if (cap.getMagic().lastTick == -1 || cap.getMagic().lastTick != player.tickCount) {
-						cap.getMagic().lastTick = player.tickCount; //It was activating twice for some reason
-						if (cap.getMagic().getCurrentMana() < DragonStateProvider.getMaxMana(player)) {
-							DragonStateProvider.replenishMana(player, 1);
-						}
+		DragonStateProvider.getCap(player).ifPresent(cap -> {
+			boolean goodConditions = ManaHandler.isPlayerInGoodConditions(player);
+			
+			int timeToRecover = goodConditions ? ConfigHandler.SERVER.favorableManaTicks.get() : ConfigHandler.SERVER.normalManaTicks.get();
+			
+			if (player.tickCount % Functions.secondsToTicks(timeToRecover) == 0) {
+				if (cap.getMagic().lastTick == -1 || cap.getMagic().lastTick != player.tickCount) {
+					cap.getMagic().lastTick = player.tickCount; //It was activating twice for some reason
+					if (cap.getMagic().getCurrentMana() < DragonStateProvider.getMaxMana(player)) {
+						DragonStateProvider.replenishMana(player, 1);
 					}
 				}
-			});
-		}
+			}
+		});
 	}
 	
 	public static boolean isPlayerInGoodConditions(PlayerEntity player){

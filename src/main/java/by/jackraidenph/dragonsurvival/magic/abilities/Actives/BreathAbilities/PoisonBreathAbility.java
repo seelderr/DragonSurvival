@@ -62,8 +62,8 @@ public class PoisonBreathAbility extends BreathAbility
 	}
 	
 	public void tickCost(){
-		if(firstUse || player.tickCount % Functions.secondsToTicks(ConfigHandler.SERVER.forestBreathManaTicks.get()) == 0){
-			DragonStateProvider.consumeMana(player, this.getManaCost());
+		if(firstUse || castingTicks % ConfigHandler.SERVER.forestBreathManaTicks.get() == 0){
+			consumeMana(player);
 			firstUse = false;
 		}
 	}
@@ -97,11 +97,17 @@ public class PoisonBreathAbility extends BreathAbility
 			if(startingSound == null){
 				startingSound = SimpleSound.forAmbientAddition(SoundRegistry.forestBreathStart);
 			}
-			loopingSound = new PoisonBreathSound(this);
 			Minecraft.getInstance().getSoundManager().play(startingSound);
 		}
 		
-		if(loopingSound != null && (!loopingSound.isLooping() || loopingSound.isStopped() || !Minecraft.getInstance().getSoundManager().isActive(loopingSound))){
+		if(loopingSound == null){
+			loopingSound = new PoisonBreathSound(this);
+		}
+		
+		if((!loopingSound.isLooping()
+		    || loopingSound.isStopped()
+		    || !Minecraft.getInstance().getSoundManager().isActive(loopingSound))
+		   || player.tickCount % Functions.secondsToTicks(4) == 0){
 			Minecraft.getInstance().getSoundManager().queueTickingSound(loopingSound);
 		}
 	}

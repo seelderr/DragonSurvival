@@ -65,19 +65,18 @@ public class NetworkHandler
 		 
 		 //Ability packets
 		 register(OpenDragonInventory.class, new OpenDragonInventory());
-		 register(ActivateAbilityServerSide.class, new ActivateAbilityServerSide());
-		 register(SyncAbilityActivation.class, new SyncAbilityActivation());
 		 register(ChangeSkillLevel.class, new ChangeSkillLevel());
 		 register(SyncMagicStats.class, new SyncMagicStats());
 		 register(SyncMagicAbilities.class, new SyncMagicAbilities());
 		 register(SyncDragonAbilitySlot.class, new SyncDragonAbilitySlot());
 		 register(SyncCurrentAbilityCasting.class, new SyncCurrentAbilityCasting());
 		 register(SyncAbilityCastingToServer.class, new SyncAbilityCastingToServer());
+		 
 		 register(SyncPotionRemovedEffect.class, new SyncPotionRemovedEffect());
 		 register(SyncPotionAddedEffect.class, new SyncPotionAddedEffect());
+		 
 		 register(DragonClawsMenuToggle.class, new DragonClawsMenuToggle());
 		 register(SyncDragonClawsMenu.class, new SyncDragonClawsMenu());
-		 register(SyncAbilityCooldown.class, new SyncAbilityCooldown());
 		
 		 //Emote packets
 		 register(SyncEmoteServer.class, new SyncEmoteServer());

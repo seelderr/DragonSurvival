@@ -2,12 +2,11 @@ package by.jackraidenph.dragonsurvival.magic.common;
 
 import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.ClientFlightHandler;
-import by.jackraidenph.dragonsurvival.handlers.Magic.MagicHandler;
+import by.jackraidenph.dragonsurvival.handlers.DragonSizeHandler;
 import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
-import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
 import by.jackraidenph.dragonsurvival.network.magic.SyncAbilityCastingToServer;
-import by.jackraidenph.dragonsurvival.network.magic.SyncAbilityCooldown;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -66,7 +65,7 @@ public class ActiveDragonAbility extends DragonAbility
             int level = 0;
             
             for(int req : requiredLevels){
-                if(getPlayer().experienceLevel >= req){
+                if(getPlayer().experienceLevel >= req || ConfigHandler.SERVER.noEXPRequirements.get()){
                     level++;
                 }
             }
@@ -113,11 +112,15 @@ public class ActiveDragonAbility extends DragonAbility
     }
     
     public boolean canConsumeMana(PlayerEntity player) {
-        return DragonStateProvider.getCurrentMana(player) >= this.getManaCost() || (player.totalExperience / 10) >= getManaCost() || player.experienceLevel > 0;
+        return DragonStateProvider.getCurrentMana(player) >= this.getManaCost() || ConfigHandler.SERVER.consumeEXPAsMana.get() && ((player.totalExperience / 10) >= getManaCost() || player.experienceLevel > 0);
     }
     
+    int lastTick = -1;
     public void consumeMana(PlayerEntity player) {
+        if(player.tickCount == lastTick) return;
+        
         DragonStateProvider.consumeMana(player, this.getManaCost());
+        lastTick = player.tickCount;
     }
     
     public void onActivation(PlayerEntity player) {
@@ -148,13 +151,12 @@ public class ActiveDragonAbility extends DragonAbility
                 errorTicks = Functions.secondsToTicks(5);
                 player.playSound(SoundEvents.WITHER_SHOOT, 0.05f, 100f);
             }
-            MagicHandler.cooldownHandler.addToCoolDownList(this);
             stopCasting();
             return false;
         }
     
         if(getCastingSlowness() >= 10){
-            if(ClientFlightHandler.wingsEnabled && player.isFallFlying() || !player.isOnGround()){
+            if((player.level.isClientSide ? ClientFlightHandler.wingsEnabled : DragonSizeHandler.wingsStatusServer.containsKey(player.getId())) && player.isFallFlying() || !player.isOnGround()){
                 if(keyMode == GLFW.GLFW_PRESS) {
                     errorMessage = new TranslationTextComponent("ds.skill.nofly");
                     errorTicks = Functions.secondsToTicks(5);
@@ -195,15 +197,6 @@ public class ActiveDragonAbility extends DragonAbility
     
     public void startCooldown() {
         this.currentCooldown = this.getMaxCooldown();
-        MagicHandler.cooldownHandler.addToCoolDownList(this);
-        
-        if(player.level.isClientSide){
-            int abilityId = DragonAbilities.getAbilitySlot(this);
-            
-            if(abilityId != -1) {
-                NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCooldown(abilityId, currentCooldown));
-            }
-        }
     }
     
     public int getMaxCooldown() {
@@ -247,10 +240,6 @@ public class ActiveDragonAbility extends DragonAbility
         super.loadNBT(nbt);
         currentCooldown = nbt.getInt("cooldown");
         currentCastingTime = nbt.getInt("castTime");
-    
-        if(currentCooldown > 0) {
-            MagicHandler.cooldownHandler.addToCoolDownList(this);
-        }
     }
     public int getCastingSlowness() { return 3; }
     

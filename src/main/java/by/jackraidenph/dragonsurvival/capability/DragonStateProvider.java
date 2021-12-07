@@ -1,11 +1,9 @@
 package by.jackraidenph.dragonsurvival.capability;
 
-import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
-import by.jackraidenph.dragonsurvival.network.magic.SyncMagicStats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.SoundEvents;
@@ -13,7 +11,6 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fml.network.PacketDistributor;
 
 public class DragonStateProvider implements ICapabilitySerializable<CompoundNBT> {
 
@@ -37,7 +34,7 @@ public class DragonStateProvider implements ICapabilitySerializable<CompoundNBT>
         return getCap(entity).map(cap -> {
             int mana = 1;
     
-            mana += Math.max(0, (Math.min(50, entity.experienceLevel) - 5) / 5);
+            mana += ConfigHandler.SERVER.noEXPRequirements.get() ? 9 : Math.max(0, (Math.min(50, entity.experienceLevel) - 5) / 5);
     
             switch(cap.getType()){
                 case SEA:
@@ -58,38 +55,33 @@ public class DragonStateProvider implements ICapabilitySerializable<CompoundNBT>
     }
     
     public static void replenishMana(PlayerEntity entity, int mana) {
-        if(entity.level.isClientSide) return;
-    
         getCap(entity).ifPresent(cap -> {
             cap.getMagic().setCurrentMana(Math.min(getMaxMana(entity), cap.getMagic().getCurrentMana() + mana));
-            if(!entity.level.isClientSide){
-                NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)entity), new SyncMagicStats(entity.getId(), cap.getMagic().getSelectedAbilitySlot(), cap.getMagic().getCurrentMana(), cap.getMagic().renderAbilityHotbar()));
-            }
         });
     }
     public static void consumeMana(PlayerEntity entity, int mana) {
         if(entity.isCreative()) return;
     
-        if(entity.level.isClientSide){
-            if (getCurrentMana(entity) < mana && (getCurrentMana(entity) + (entity.totalExperience / 10) >= mana || entity.experienceLevel > 0)) {
-                entity.playSound(SoundEvents.EXPERIENCE_ORB_PICKUP, 0.01F, 0.01F);
+        if(ConfigHandler.SERVER.consumeEXPAsMana.get()) {
+            if (entity.level.isClientSide) {
+                if (getCurrentMana(entity) < mana && (getCurrentMana(entity) + (entity.totalExperience / 10) >= mana || entity.experienceLevel > 0)) {
+                    entity.playSound(SoundEvents.EXPERIENCE_ORB_PICKUP, 0.01F, 0.01F);
+                }
             }
-            return;
         }
         
         getCap(entity).ifPresent(cap -> {
-            if (getCurrentMana(entity) < mana && (getCurrentMana(entity) + (entity.totalExperience / 10) >= mana || entity.experienceLevel > 0)) {
-                int missingMana = mana - getCurrentMana(entity);
-                int missingExp = (missingMana * 10);
-                entity.giveExperiencePoints(-missingExp);
-                cap.getMagic().setCurrentMana(0);
-            }else {
+            if(ConfigHandler.SERVER.consumeEXPAsMana.get()) {
+                if (getCurrentMana(entity) < mana && (getCurrentMana(entity) + (entity.totalExperience / 10) >= mana || entity.experienceLevel > 0)) {
+                    int missingMana = mana - getCurrentMana(entity);
+                    int missingExp = (missingMana * 10);
+                    entity.giveExperiencePoints(-missingExp);
+                    cap.getMagic().setCurrentMana(0);
+                } else {
+                    cap.getMagic().setCurrentMana(Math.max(0, cap.getMagic().getCurrentMana() - mana));
+                }
+            } else {
                 cap.getMagic().setCurrentMana(Math.max(0, cap.getMagic().getCurrentMana() - mana));
-            }
-            
-            
-            if (!entity.level.isClientSide) {
-                NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)entity), new SyncMagicStats(entity.getId(), cap.getMagic().getSelectedAbilitySlot(), cap.getMagic().getCurrentMana(), cap.getMagic().renderAbilityHotbar()));
             }
         });
     }

@@ -49,11 +49,6 @@ public class DragonInventoryGUIHandler implements IRecipeTransferInfo, IGuiConta
 	public List<Rectangle2d> getGuiExtraAreas(DragonScreen screen)
 	{
 		List<Rectangle2d> list = new ArrayList<>();
-		if(screen.getRecipeBookComponent().isVisible()){
-			int size = 147 + 40;
-			list.add(new Rectangle2d(screen.getLeftPos() - size, screen.getGuiTop(), size, screen.height));
-		}
-		
 		if(screen.clawsMenu){
 			int size = 80;
 			list.add(new Rectangle2d(screen.getLeftPos() - size, screen.getGuiTop(), size, screen.height));

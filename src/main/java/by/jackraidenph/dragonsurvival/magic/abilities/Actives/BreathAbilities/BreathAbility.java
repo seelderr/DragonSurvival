@@ -4,6 +4,7 @@ import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.KeyInputHandler;
+import by.jackraidenph.dragonsurvival.handlers.SpecificsHandler;
 import by.jackraidenph.dragonsurvival.magic.common.AbilityAnimation;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.util.DragonLevel;
@@ -14,6 +15,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileHelper;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.*;
 import net.minecraft.util.math.RayTraceContext.BlockMode;
@@ -42,11 +44,6 @@ public abstract class BreathAbility extends ActiveDragonAbility
 	public int channelCost = 1;
 	protected boolean firstUse = true;
 	public int castingTicks = 0;
-
-	public boolean canConsumeMana(PlayerEntity player) {
-		return DragonStateProvider.getCurrentMana(player) >= this.getManaCost()
-		       || (player.totalExperience / 10) + DragonStateProvider.getCurrentMana(player) >= this.getManaCost() || player.experienceLevel > 0;
-	}
 	
 	@Override
 	public int getManaCost()
@@ -65,7 +62,7 @@ public abstract class BreathAbility extends ActiveDragonAbility
 	}
 	
 	public void tickCost(){
-		if(firstUse || player.tickCount % Functions.secondsToTicks(2) == 0){
+		if(firstUse || castingTicks % Functions.secondsToTicks(2) == 0){
 			DragonStateProvider.consumeMana(player, this.getManaCost());
 			firstUse = false;
 		}
@@ -183,6 +180,10 @@ public abstract class BreathAbility extends ActiveDragonAbility
 		}
 	}
 	
+	public int blockBreakChance(){
+		return 20;
+	}
+	
 	public void hitBlocks() {
 		{
 			Vector3d vector3d = player.getEyePosition(1.0F);
@@ -208,6 +209,16 @@ public abstract class BreathAbility extends ActiveDragonAbility
 							BlockState state = player.level.getBlockState(newPos);
 							
 							if(state.getBlock() != Blocks.AIR){
+								if(SpecificsHandler.DRAGON_BREATH_BLOCKS != null && SpecificsHandler.DRAGON_BREATH_BLOCKS.containsKey(type) && SpecificsHandler.DRAGON_BREATH_BLOCKS.get(type).contains(state.getBlock())){
+									if(!player.level.isClientSide) {
+										if (player.level.random.nextInt(100) < (100 - blockBreakChance())) {
+											state.getBlock().playerDestroy(player.level, player, pos, state, player.level.getBlockEntity(pos), ItemStack.EMPTY);
+											player.level.destroyBlock(pos, false, player);
+										}
+									}
+									return;
+								}
+								
 								onBlock(newPos, state);
 							}
 						}
@@ -215,53 +226,6 @@ public abstract class BreathAbility extends ActiveDragonAbility
 				}
 			}
 		}
-		
-//		int checkDist = RANGE*2;
-//		for (int i = (int)player.getX() - checkDist; i < (int)player.getX() + checkDist; i++) {
-//			for (int j = (int)player.getY() - checkDist; j < (int)player.getY() + checkDist; j++) {
-//				for (int k = (int)player.getZ() - checkDist; k < (int)player.getZ() + checkDist; k++) {
-//					BlockPos pos = new BlockPos(i, j, k);
-//
-//					BlockState blockState = player.level.getBlockState(pos.above());
-//					BlockState blockStateAbove = player.level.getBlockState(pos.above().above());
-//
-//					if( blockState.getBlock() != Blocks.AIR && blockStateAbove.getBlock() != Blocks.AIR){
-//						continue;
-//					}
-//
-//					float blockHitYaw = (float) ((Math.atan2(pos.getZ() - player.getZ(), pos.getX() - player.getX()) * (180 / Math.PI) - 90) % 360);
-//					float entityAttackingYaw = player.yRot % 360;
-//					if (blockHitYaw < 0) {
-//						blockHitYaw += 360;
-//					}
-//					if (entityAttackingYaw < 0) {
-//						entityAttackingYaw += 360;
-//					}
-//					float blockRelativeYaw = blockHitYaw - entityAttackingYaw;
-//
-//					float xzDistance = (float) Math.sqrt((pos.getZ() - player.getZ()) * (pos.getZ() - player.getZ()) + (pos.getX() - player.getX()) * (pos.getX() - player.getX()));
-//					float blockHitPitch = (float) ((Math.atan2((pos.getY() - player.getY()), xzDistance) * (180 / Math.PI)) % 360);
-//					float entityAttackingPitch = -player.xRot % 360;
-//					if (blockHitPitch < 0) {
-//						blockHitPitch += 360;
-//					}
-//					if (entityAttackingPitch < 0) {
-//						entityAttackingPitch += 360;
-//					}
-//					float blockRelativePitch = blockHitPitch - entityAttackingPitch;
-//
-//					float blockHitDistance = (float) Math.sqrt((pos.getZ() - player.getZ()) * (pos.getZ() - player.getZ()) + (pos.getX() - player.getX()) * (pos.getX() - player.getX()) + (pos.getY() - player.getY()) * (pos.getY() - player.getY()));
-//
-//					boolean inRange = blockHitDistance <= RANGE;
-//					boolean yawCheck = (blockRelativeYaw <= ARC / 2f && blockRelativeYaw >= -ARC / 2f) || (blockRelativeYaw >= 360 - ARC / 2f || blockRelativeYaw <= -360 + ARC / 2f);
-//					boolean pitchCheck = (blockRelativePitch <= ARC / 2f && blockRelativePitch >= -ARC / 2f) || (blockRelativePitch >= 360 - ARC / 2f || blockRelativePitch <= -360 + ARC / 2f);
-//
-//					if (inRange && yawCheck && pitchCheck) {
-//						onBlock(pos, blockState);
-//					}
-//				}
-//			}
-//		}
 	}
 	
 	public static List<LivingEntity> getEntityLivingBaseNearby(LivingEntity source, double distanceX, double distanceY, double distanceZ, double radius) {

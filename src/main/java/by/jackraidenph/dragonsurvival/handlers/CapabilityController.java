@@ -48,12 +48,13 @@ public class CapabilityController {
     public static void onClone(PlayerEvent.Clone e) {
         PlayerEntity player = e.getPlayer();
         PlayerEntity original = e.getOriginal();
+        
         DragonStateProvider.getCap(player).ifPresent(capNew ->
                 DragonStateProvider.getCap(original).ifPresent(capOld -> {
                     if (capOld.isDragon()) {
                         DragonStateHandler.DragonMovementData movementData = capOld.getMovementData();
                         capNew.setMovementData(movementData.bodyYaw, movementData.headYaw, movementData.headPitch, movementData.bite);
-    
+                        
                         capNew.forestSize = capOld.forestSize;
                         capNew.caveSize = capOld.caveSize;
                         capNew.seaSize = capOld.seaSize;
@@ -76,6 +77,7 @@ public class CapabilityController {
                         player.refreshDimensions();
                     }
                 }));
+        
         Capabilities.getVillageRelationships(player).ifPresent(villageRelationShips -> {
             Capabilities.getVillageRelationships(original).ifPresent(old -> {
                 villageRelationShips.evilStatusDuration = old.evilStatusDuration;

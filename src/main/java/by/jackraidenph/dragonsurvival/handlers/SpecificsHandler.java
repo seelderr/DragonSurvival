@@ -84,12 +84,15 @@ public class SpecificsHandler {
 	public static Map<DragonType, List<Block>> DRAGON_SPEEDUP_BLOCKS;
 	public static List<Block> SEA_DRAGON_HYDRATION_BLOCKS;
 	public static List<Item> SEA_DRAGON_HYDRATION_USE_ALTERNATIVES;
-
+	public static Map<DragonType, List<Block>> DRAGON_BREATH_BLOCKS;
+	
 	@SubscribeEvent
 	public static void onConfigLoad(ModConfig.Loading event) {
 		if (event.getConfig().getType() == Type.SERVER) {
 			rebuildSpeedupBlocksMap();
 			rebuildSeaHydrationLists();
+			SpecificsHandler.rebuildBreathBlocks();
+			
 		}
 	}
 
@@ -98,6 +101,8 @@ public class SpecificsHandler {
 		if (event.getConfig().getType() == Type.SERVER) {
 			rebuildSpeedupBlocksMap();
 			rebuildSeaHydrationLists();
+			SpecificsHandler.rebuildBreathBlocks();
+			
 		}
 	}
 	
@@ -187,6 +192,51 @@ public class SpecificsHandler {
 			}
 		}
 		SEA_DRAGON_HYDRATION_USE_ALTERNATIVES = hydrationItems;
+	}
+	
+	public static void rebuildBreathBlocks() {
+		HashMap<DragonType, List<Block>> breathMap = new HashMap<>();
+		breathMap.put(DragonType.CAVE, buildDragonBreathBlocks(DragonType.CAVE));
+		breathMap.put(DragonType.FOREST, buildDragonBreathBlocks(DragonType.FOREST));
+		breathMap.put(DragonType.SEA, buildDragonBreathBlocks(DragonType.SEA));
+		DRAGON_BREATH_BLOCKS = breathMap;
+	}
+	
+	private static List<Block> buildDragonBreathBlocks(DragonType type) {
+		ArrayList<Block> speedupMap = new ArrayList<>();
+		String[] configSpeedups;
+		switch (type) {
+			case CAVE:
+				configSpeedups = ConfigHandler.SERVER.fireBreathBlockBreaks.get().toArray(new String[0]);
+				break;
+			case FOREST:
+				configSpeedups = ConfigHandler.SERVER.forestBreathBlockBreaks.get().toArray(new String[0]);
+				break;
+			case SEA:
+				configSpeedups = ConfigHandler.SERVER.stormBreathBlockBreaks.get().toArray(new String[0]);
+				break;
+			default:
+				configSpeedups = new String[0];
+				break;
+		}
+		for (String entry : configSpeedups) {
+			final String[] sEntry = entry.split(":");
+			final ResourceLocation rlEntry = new ResourceLocation(sEntry[1], sEntry[2]);
+			if (sEntry[0].equalsIgnoreCase("tag")) {
+				final ITag<Block> tag = BlockTags.getAllTags().getTag(rlEntry);
+				if (tag != null && tag.getValues().size() != 0)
+					speedupMap.addAll(tag.getValues());
+				else
+					DragonSurvivalMod.LOGGER.warn("Null or empty tag '{}:{}' in {} dragon breath break block config.", sEntry[1], sEntry[2], type.toString().toLowerCase());
+			} else {
+				final Block block = ForgeRegistries.BLOCKS.getValue(rlEntry);
+				if (block != Blocks.AIR)
+					speedupMap.add(block);
+				else
+					DragonSurvivalMod.LOGGER.warn("Unknown block '{}:{}' in {} dragon breath break block config.", sEntry[1], sEntry[2], type.toString().toLowerCase());
+			}
+		}
+		return speedupMap;
 	}
 	
 	@SubscribeEvent

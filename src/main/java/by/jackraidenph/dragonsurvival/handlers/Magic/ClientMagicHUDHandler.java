@@ -36,6 +36,8 @@ public class ClientMagicHUDHandler
 		if (playerEntity == null || !DragonStateProvider.isDragon(playerEntity) || playerEntity.isSpectator() || playerEntity.isCreative())
 			return;
 		
+		if(!ConfigHandler.SERVER.consumeEXPAsMana.get()) return;
+		
 		if(event.getType() == ElementType.EXPERIENCE){
 			
 			DragonStateProvider.getCap(playerEntity).ifPresent(cap -> {

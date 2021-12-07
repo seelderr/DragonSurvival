@@ -7,8 +7,8 @@ import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.particles.SeaDragon.LargeLightningParticleData;
 import by.jackraidenph.dragonsurvival.particles.SeaDragon.SmallLightningParticleData;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
-import by.jackraidenph.dragonsurvival.sounds.StormBreathSound;
 import by.jackraidenph.dragonsurvival.sounds.SoundRegistry;
+import by.jackraidenph.dragonsurvival.sounds.StormBreathSound;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
@@ -63,8 +63,8 @@ public class LightningBreathAbility extends BreathAbility
 	}
 	
 	public void tickCost(){
-		if(firstUse || player.tickCount % Functions.secondsToTicks(ConfigHandler.SERVER.stormBreathManaTicks.get()) == 0){
-			DragonStateProvider.consumeMana(player, this.getManaCost());
+		if(firstUse || castingTicks % ConfigHandler.SERVER.stormBreathManaTicks.get() == 0){
+			consumeMana(player);
 			firstUse = false;
 		}
 	}
@@ -76,18 +76,24 @@ public class LightningBreathAbility extends BreathAbility
 
 	@OnlyIn(Dist.CLIENT)
 	private ISound endSound;
-
+	
 	@OnlyIn(Dist.CLIENT)
 	public void sound(){
 		if (castingTicks == 1) {
 			if(startingSound == null){
 				startingSound = SimpleSound.forAmbientAddition(SoundRegistry.stormBreathStart);
 			}
-			loopingSound = new StormBreathSound(this);
 			Minecraft.getInstance().getSoundManager().play(startingSound);
 		}
-
-		if(loopingSound != null && (!loopingSound.isLooping() || loopingSound.isStopped() || !Minecraft.getInstance().getSoundManager().isActive(loopingSound))){
+		
+		if(loopingSound == null){
+			loopingSound = new StormBreathSound(this);
+		}
+		
+		if((!loopingSound.isLooping()
+		    || loopingSound.isStopped()
+		    || !Minecraft.getInstance().getSoundManager().isActive(loopingSound))
+		   || player.tickCount % Functions.secondsToTicks(3) == 0){
 			Minecraft.getInstance().getSoundManager().queueTickingSound(loopingSound);
 		}
 	}

@@ -4,7 +4,6 @@ import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.KeyInputHandler;
 import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
-import by.jackraidenph.dragonsurvival.network.magic.ActivateAbilityServerSide;
 import by.jackraidenph.dragonsurvival.network.magic.SyncAbilityCastingToServer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
@@ -68,8 +67,10 @@ public class ClientCastingHandler
 						}
 		
 	                } else if (ability.getCastingTime() <= 0 || ability.getCurrentCastTimer() >= ability.getCastingTime()){
-	                    ability.onKeyPressed(playerEntity);
-	                    NetworkHandler.CHANNEL.sendToServer(new ActivateAbilityServerSide(slot));
+						if(ability != null && (dragonStateHandler.getMagic().getCurrentlyCasting() == null || ability.getCastingTime() != dragonStateHandler.getMagic().getCurrentlyCasting().getCastingTime())){
+							dragonStateHandler.getMagic().setCurrentlyCasting(ability);
+							NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCastingToServer(playerEntity.getId(), ability));
+						}
 	                }
 	            }else{
 		            if(dragonStateHandler.getMagic().getCurrentlyCasting() != null) {
