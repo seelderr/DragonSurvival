@@ -54,8 +54,6 @@ public class MagicHandler
 				ability.player = player;
 				
 				if (ability.canRun(player, -1)) {
-					System.out.println(player.level.isClientSide + " - " + ability.getCurrentCastTimer());
-					
 					if (ability.getCastingTime() <= 0 || ability.getCurrentCastTimer() >= ability.getCastingTime()) {
 						if(!player.level.isClientSide) {
 							ability.onActivation(player);
