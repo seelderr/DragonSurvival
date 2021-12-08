@@ -34,8 +34,10 @@ public class MagicCap implements DragonCapability
 	
 	public void initAbilities(DragonType type){
 		if(DragonAbilities.ACTIVE_ABILITIES.containsKey(type)) {
-			if(!ConfigHandler.SERVER.saveAllAbilities.get()){
-				abilities.clear();
+			if(instance.getType() != null && instance.getType() != DragonType.NONE) {
+				if (!ConfigHandler.SERVER.saveAllAbilities.get()) {
+					abilities.clear();
+				}
 			}
 			top:
 			for (ActiveDragonAbility ability : DragonAbilities.ACTIVE_ABILITIES.get(type)) {
@@ -174,7 +176,6 @@ public class MagicCap implements DragonCapability
 		CompoundNBT tag = (CompoundNBT) base;
 		
 		setRenderAbilities(tag.getBoolean("renderSkills"));
-		
 		
 		if(tag.contains("abilityData")) {
 			CompoundNBT ability = tag.getCompound("abilityData");
