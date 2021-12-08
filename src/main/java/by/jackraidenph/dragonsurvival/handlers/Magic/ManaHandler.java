@@ -11,6 +11,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.CauldronBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -20,19 +21,20 @@ public class ManaHandler
 {
 	@SubscribeEvent
 	public static void playerTick(PlayerTickEvent event){
+		if(event.phase == Phase.START) return;
+		
 		PlayerEntity player = event.player;
 		
 		DragonStateProvider.getCap(player).ifPresent(cap -> {
+			if(cap.getMagic().getCurrentlyCasting() != null) return;
+			
 			boolean goodConditions = ManaHandler.isPlayerInGoodConditions(player);
 			
 			int timeToRecover = goodConditions ? ConfigHandler.SERVER.favorableManaTicks.get() : ConfigHandler.SERVER.normalManaTicks.get();
 			
 			if (player.tickCount % Functions.secondsToTicks(timeToRecover) == 0) {
-				if (cap.getMagic().lastTick == -1 || cap.getMagic().lastTick != player.tickCount) {
-					cap.getMagic().lastTick = player.tickCount; //It was activating twice for some reason
-					if (cap.getMagic().getCurrentMana() < DragonStateProvider.getMaxMana(player)) {
-						DragonStateProvider.replenishMana(player, 1);
-					}
+				if (cap.getMagic().getCurrentMana() < DragonStateProvider.getMaxMana(player)) {
+					DragonStateProvider.replenishMana(player, 1);
 				}
 			}
 		});

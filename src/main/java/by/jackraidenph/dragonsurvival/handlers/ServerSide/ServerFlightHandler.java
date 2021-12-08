@@ -10,6 +10,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -53,6 +54,8 @@ public class ServerFlightHandler {
     
     @SubscribeEvent
     public static void playerFoodExhaustion(TickEvent.PlayerTickEvent playerTickEvent) {
+        if(playerTickEvent.phase == Phase.START) return;
+    
         DragonStateProvider.getCap(playerTickEvent.player).ifPresent(dragonStateHandler -> {
             if(dragonStateHandler.isDragon()) {
                 boolean wingsSpread = DragonSizeHandler.wingsStatusServer.containsKey(playerTickEvent.player.getId()) && DragonSizeHandler.wingsStatusServer.get(playerTickEvent.player.getId());

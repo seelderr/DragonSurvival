@@ -29,7 +29,6 @@ public class MagicCap implements DragonCapability
 	private ActiveDragonAbility currentlyCasting = null;
 	private int selectedAbilitySlot = 0;
 	private int currentMana = 0;
-	public int lastTick = -1;
 	
 	private boolean renderAbilities = true;
 	

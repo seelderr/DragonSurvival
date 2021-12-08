@@ -1,6 +1,7 @@
 package by.jackraidenph.dragonsurvival.network.magic;
 
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.network.IMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -52,7 +53,15 @@ public class ActivateClientAbility implements IMessage<ActivateClientAbility>
 				Entity entity = world.getEntity(message.playerId);
 				if (entity instanceof PlayerEntity) {
 					DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
-						dragonStateHandler.getMagic().getCurrentlyCasting().onActivation(((PlayerEntity)entity));
+						ActiveDragonAbility ability = dragonStateHandler.getMagic().getCurrentlyCasting();
+						
+						if(ability == null){
+							ability = dragonStateHandler.getMagic().getAbilityFromSlot(dragonStateHandler.getMagic().getSelectedAbilitySlot());
+						}
+						
+						if(ability != null){
+							ability.onActivation(((PlayerEntity)entity));
+						}
 					});
 				}
 			}

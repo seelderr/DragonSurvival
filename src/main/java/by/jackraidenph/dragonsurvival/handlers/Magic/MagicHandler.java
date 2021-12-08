@@ -25,6 +25,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.IndirectEntityDamageSource;
 import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -44,6 +45,8 @@ public class MagicHandler
 {
 	@SubscribeEvent
 	public static void magicUpdate(PlayerTickEvent event){
+		if(event.phase == Phase.START) return;
+		
 		PlayerEntity player = event.player;
 		
 		DragonStateProvider.getCap(player).ifPresent(cap -> {
@@ -82,6 +85,8 @@ public class MagicHandler
 	
 	@SubscribeEvent
 	public static void playerTick(PlayerTickEvent event){
+		if(event.phase == Phase.START) return;
+		
 		PlayerEntity player = event.player;
 		
 		DragonStateProvider.getCap(player).ifPresent(cap -> {

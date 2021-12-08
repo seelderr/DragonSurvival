@@ -32,6 +32,7 @@ import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.ToolType;
+import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
@@ -221,6 +222,8 @@ public class ClawToolHandler
 	
 	@SubscribeEvent
 	public static void playerTick(PlayerTickEvent event){
+		if(event.phase == Phase.START) return;
+		
 		PlayerEntity player = event.player;
 		
 		ModifiableAttributeInstance attackSpeedInstance = player.getAttribute(Attributes.ATTACK_SPEED);

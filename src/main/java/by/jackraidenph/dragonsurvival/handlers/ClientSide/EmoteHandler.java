@@ -14,6 +14,7 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
+import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -31,6 +32,8 @@ public class EmoteHandler
 	
 	@SubscribeEvent
 	public static void playerTick(PlayerTickEvent event){
+		if(event.phase == Phase.START) return;
+		
 		PlayerEntity player = event.player;
 		
 		if (player != null) {
@@ -116,6 +119,8 @@ public class EmoteHandler
 	
 	@SubscribeEvent
 	public static void playerTick(ClientTickEvent event){
+		if(event.phase == Phase.START) return;
+		
 		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent((cap) -> {
 			if(cap.getEmotes().getCurrentEmote() != null && !cap.getEmotes().getCurrentEmote().loops){
 				if(cap.getEmotes().emoteTick >= cap.getEmotes().getCurrentEmote().duration){

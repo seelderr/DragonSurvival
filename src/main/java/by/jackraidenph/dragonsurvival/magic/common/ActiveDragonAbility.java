@@ -115,12 +115,8 @@ public class ActiveDragonAbility extends DragonAbility
         return DragonStateProvider.getCurrentMana(player) >= this.getManaCost() || ConfigHandler.SERVER.consumeEXPAsMana.get() && ((player.totalExperience / 10) >= getManaCost() || player.experienceLevel > 0);
     }
     
-    int lastTick = -1;
     public void consumeMana(PlayerEntity player) {
-        if(player.tickCount == lastTick) return;
-        
         DragonStateProvider.consumeMana(player, this.getManaCost());
-        lastTick = player.tickCount;
     }
     
     public void onActivation(PlayerEntity player) {

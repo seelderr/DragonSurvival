@@ -43,13 +43,10 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 
     @Override
     public void registerControllers(AnimationData animationData) {
+        animationData.addAnimationController(new AnimationController<>(this, "bite_controller", 2, this::bitePredicate));
         animationData.addAnimationController(new AnimationController<>(this, "controller", 2, this::predicate));
-        animationData.addAnimationController(new AnimationController<>(this, "bite_controller", 0, this::bitePredicate));
     }
     
-
-    static int biteEndingTicks = 120;
-    private int biteEnd = biteEndingTicks;
     private <E extends IAnimatable> PlayState bitePredicate(AnimationEvent<E> animationEvent) {
         final PlayerEntity player = getPlayer();
         DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
@@ -59,24 +56,20 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
             ActiveDragonAbility curCast = handler.getMagic().getCurrentlyCasting();
             
             if(handler.getEmotes().getCurrentEmote() == null) {
-                
                 if(curCast instanceof BreathAbility || lastCast instanceof BreathAbility){
                     renderAbility(builder, curCast);
                     animationEvent.getController().setAnimation(builder);
                     return PlayState.CONTINUE;
                 }
                 
-                if (handler.getMovementData().bite && biteEnd <= biteEndingTicks || biteEnd > 0 && biteEnd <= biteEndingTicks) {
+                if (handler.getMovementData().bite) {
                     builder.addAnimation("bite");
-                    biteEnd++;
-        
                     animationEvent.getController().setAnimation(builder);
                     return PlayState.CONTINUE;
                 }
             }
         }
         
-        biteEnd = 0;
         return PlayState.STOP;
     }
     
