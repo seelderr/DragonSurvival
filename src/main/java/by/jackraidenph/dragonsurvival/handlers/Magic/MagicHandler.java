@@ -4,12 +4,14 @@ import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.capability.Capabilities;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
+import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
 import by.jackraidenph.dragonsurvival.magic.abilities.Actives.BreathAbilities.LightningBreathAbility;
 import by.jackraidenph.dragonsurvival.magic.abilities.Passives.BurnAbility;
 import by.jackraidenph.dragonsurvival.magic.abilities.Passives.SpectralImpactAbility;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
+import by.jackraidenph.dragonsurvival.network.magic.ActivateClientAbility;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.block.BlockState;
@@ -34,6 +36,8 @@ import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.fml.network.PacketDistributor.TargetPoint;
 
 @EventBusSubscriber
 public class MagicHandler
@@ -49,14 +53,22 @@ public class MagicHandler
 				ActiveDragonAbility ability = cap.getMagic().getCurrentlyCasting();
 				ability.player = player;
 				
-				if(ability.getCastingTime() <= 0 || ability.getCurrentCastTimer() >= ability.getCastingTime()) {
-					if (ability.canRun(player, -1)) {
-						ability.onActivation(player);
-					}else{
-						cap.getMagic().setCurrentlyCasting(null);
+				if (ability.canRun(player, -1)) {
+					System.out.println(player.level.isClientSide + " - " + ability.getCurrentCastTimer());
+					
+					if (ability.getCastingTime() <= 0 || ability.getCurrentCastTimer() >= ability.getCastingTime()) {
+						if(!player.level.isClientSide) {
+							ability.onActivation(player);
+							
+							TargetPoint point = new TargetPoint(player.position().x, player.position().y, player.position().z, 64, player.level.dimension());
+							NetworkHandler.CHANNEL.send(PacketDistributor.NEAR.with(() -> point), new ActivateClientAbility(player.getId()));
+						}
+					} else {
+						ability.tickCasting();
 					}
+					
 				}else{
-					ability.tickCasting();
+					cap.getMagic().setCurrentlyCasting(null);
 				}
 			}
 			

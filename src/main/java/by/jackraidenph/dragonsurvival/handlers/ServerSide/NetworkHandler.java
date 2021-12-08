@@ -71,7 +71,8 @@ public class NetworkHandler
 		 register(SyncDragonAbilitySlot.class, new SyncDragonAbilitySlot());
 		 register(SyncCurrentAbilityCasting.class, new SyncCurrentAbilityCasting());
 		 register(SyncAbilityCastingToServer.class, new SyncAbilityCastingToServer());
-		 
+		 register(ActivateClientAbility.class, new ActivateClientAbility());
+		
 		 register(SyncPotionRemovedEffect.class, new SyncPotionRemovedEffect());
 		 register(SyncPotionAddedEffect.class, new SyncPotionAddedEffect());
 		 
