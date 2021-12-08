@@ -10,12 +10,16 @@ import by.jackraidenph.dragonsurvival.network.magic.SyncDragonClawsMenu;
 import by.jackraidenph.dragonsurvival.network.magic.SyncMagicAbilities;
 import by.jackraidenph.dragonsurvival.network.magic.SyncMagicStats;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityPredicate;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.network.PacketDistributor;
+
+import java.util.List;
 
 @Mod.EventBusSubscriber
 @SuppressWarnings("unused")
@@ -88,6 +92,16 @@ public class SynchronizationController {
         PlayerEntity player = event.getPlayer();
         if (player.level.isClientSide())
             return;
+    
+        
+        List<PlayerEntity> players = player.level.getNearbyPlayers(EntityPredicate.DEFAULT, player, new AxisAlignedBB(player.position().subtract(32, 32, 32), player.position().add(32, 32, 32)));
+        
+        for(PlayerEntity playerEntity : players){
+            DragonStateProvider.getCap(playerEntity).ifPresent(dragonStateHandler -> {
+                NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncEmoteStats(player.getId(), dragonStateHandler.getEmotes().emoteMenuOpen));
+            });
+        }
+        
         DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
             NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)player), new SynchronizeDragonCap(player.getId(), dragonStateHandler.isHiding(), dragonStateHandler.getType(), dragonStateHandler.getSize(), dragonStateHandler.hasWings(), dragonStateHandler.getLavaAirSupply(), 0));
             NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)player), new PacketSyncCapabilityMovement(player.getId(), dragonStateHandler.getMovementData().bodyYaw, dragonStateHandler.getMovementData().headYaw, dragonStateHandler.getMovementData().headPitch, dragonStateHandler.getMovementData().bite));

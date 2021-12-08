@@ -48,7 +48,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
     }
     
 
-    static int biteEndingTicks = 150;
+    static int biteEndingTicks = 120;
     private int biteEnd = biteEndingTicks;
     private <E extends IAnimatable> PlayState bitePredicate(AnimationEvent<E> animationEvent) {
         final PlayerEntity player = getPlayer();

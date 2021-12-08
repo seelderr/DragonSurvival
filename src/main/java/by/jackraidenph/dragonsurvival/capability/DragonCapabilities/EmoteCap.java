@@ -65,5 +65,11 @@ public class EmoteCap implements DragonCapability
 	public void clone(DragonStateHandler oldCap)
 	{
 		emoteMenuOpen = oldCap.getEmotes().emoteMenuOpen;
+		
+		currentEmote = oldCap.getEmotes().getCurrentEmote();
+		emoteTick = oldCap.getEmotes().emoteTick;
+		
+		serverEmote = oldCap.getEmotes().serverEmote;
+		serverTick = oldCap.getEmotes().serverTick;
 	}
 }

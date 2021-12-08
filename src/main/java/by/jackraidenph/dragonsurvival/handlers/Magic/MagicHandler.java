@@ -56,7 +56,7 @@ public class MagicHandler
 						cap.getMagic().setCurrentlyCasting(null);
 					}
 				}else{
-					cap.getMagic().setCurrentlyCasting(null);
+					ability.tickCasting();
 				}
 			}
 			
