@@ -1,5 +1,6 @@
 package by.jackraidenph.dragonsurvival.magic.abilities.Actives.BreathAbilities;
 
+import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
@@ -26,6 +27,7 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.particles.RedstoneParticleData;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
@@ -84,16 +86,8 @@ public class LightningBreathAbility extends BreathAbility
 				startingSound = SimpleSound.forAmbientAddition(SoundRegistry.stormBreathStart);
 			}
 			Minecraft.getInstance().getSoundManager().play(startingSound);
-		}
-		
-		if(loopingSound == null){
+			
 			loopingSound = new StormBreathSound(this);
-		}
-		
-		if((!loopingSound.isLooping()
-		    || loopingSound.isStopped()
-		    || !Minecraft.getInstance().getSoundManager().isActive(loopingSound))
-		   || player.tickCount % Functions.secondsToTicks(3) == 0){
 			Minecraft.getInstance().getSoundManager().queueTickingSound(loopingSound);
 		}
 	}
@@ -107,6 +101,8 @@ public class LightningBreathAbility extends BreathAbility
 
 			Minecraft.getInstance().getSoundManager().play(endSound);
 		}
+		
+		Minecraft.getInstance().getSoundManager().stop(new ResourceLocation(DragonSurvivalMod.MODID, "storm_breath_loop"), SoundCategory.PLAYERS);
 	}
 
 	@Override

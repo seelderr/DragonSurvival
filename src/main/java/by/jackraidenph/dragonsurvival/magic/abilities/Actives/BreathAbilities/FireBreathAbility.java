@@ -1,5 +1,6 @@
 package by.jackraidenph.dragonsurvival.magic.abilities.Actives.BreathAbilities;
 
+import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
@@ -25,6 +26,8 @@ import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -170,16 +173,8 @@ public class FireBreathAbility extends BreathAbility
 				startingSound = SimpleSound.forAmbientAddition(SoundRegistry.fireBreathStart);
 			}
 			Minecraft.getInstance().getSoundManager().play(startingSound);
-		}
-		
-		if(loopingSound == null){
+			
 			loopingSound = new FireBreathSound(this);
-		}
-		
-		if((!loopingSound.isLooping()
-                    || loopingSound.isStopped()
-                    || !Minecraft.getInstance().getSoundManager().isActive(loopingSound))
-					|| player.tickCount % Functions.secondsToTicks(6) == 0){
 			Minecraft.getInstance().getSoundManager().queueTickingSound(loopingSound);
 		}
 	}
@@ -193,6 +188,8 @@ public class FireBreathAbility extends BreathAbility
 			
 			Minecraft.getInstance().getSoundManager().play(endSound);
 		}
+		
+		Minecraft.getInstance().getSoundManager().stop(new ResourceLocation(DragonSurvivalMod.MODID, "fire_breath_loop"), SoundCategory.PLAYERS);
 	}
 	
 	@Override
