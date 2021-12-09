@@ -182,9 +182,10 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
             @Override
             public void render(MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_)
             {
+                this.active = clawsMenu;
                 DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
                 
-                if(handler != null && handler.getClawInventory().renderClaws){
+                if(handler != null && handler.getClawInventory().renderClaws && clawsMenu){
                     minecraft.getTextureManager().bind(DRAGON_CLAW_CHECKMARK);
                     this.blit(p_230430_1_,x, y, 0, 0, 9, 9, 9, 9);
                 }

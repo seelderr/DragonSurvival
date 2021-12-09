@@ -12,6 +12,7 @@ import by.jackraidenph.dragonsurvival.magic.abilities.Passives.SpectralImpactAbi
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.network.magic.ActivateClientAbility;
+import by.jackraidenph.dragonsurvival.network.magic.SyncAbilityCastingToServer;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.block.BlockState;
@@ -59,17 +60,21 @@ public class MagicHandler
 				if (ability.canRun(player, -1)) {
 					if(!player.level.isClientSide) {
 						if (ability.getCastingTime() <= 0 || ability.getCurrentCastTimer() >= ability.getCastingTime()) {
-								ability.onActivation(player);
-								
-								TargetPoint point = new TargetPoint(player.position().x, player.position().y, player.position().z, 64, player.level.dimension());
-								NetworkHandler.CHANNEL.send(PacketDistributor.NEAR.with(() -> point), new ActivateClientAbility(player.getId()));
+							ability.onActivation(player);
 							
+							TargetPoint point = new TargetPoint(player.position().x, player.position().y, player.position().z, 64, player.level.dimension());
+							NetworkHandler.CHANNEL.send(PacketDistributor.NEAR.with(() -> point), new ActivateClientAbility(player.getId()));
+						
 						} else {
 							ability.tickCasting();
 						}
 					}
 				}else{
 					cap.getMagic().setCurrentlyCasting(null);
+					
+					if(player.level.isClientSide){
+						NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCastingToServer(player.getId(), null));
+					}
 				}
 			}
 			
@@ -111,8 +116,9 @@ public class MagicHandler
 				player.addEffect(new EffectInstance(Effects.MOVEMENT_SPEED, 20, 2, false, false));
 			}
 			
-			if(!player.isCreative()) {
-				if (cap.getMagic().getCurrentlyCasting() != null && cap.getMagic().getCurrentlyCasting().getCastingSlowness() > 0) {
+			if(!player.isCreative() && !player.level.isClientSide) {
+				ActiveDragonAbility active = cap.getMagic().getCurrentlyCasting();
+				if (active != null && active.getCastingSlowness() > 0 && (active.getCastingTime() <= 0 || active.getCurrentCastTimer() > 1)) {
 					player.addEffect(new EffectInstance(Effects.MOVEMENT_SLOWDOWN, 10, cap.getMagic().getCurrentlyCasting().getCastingSlowness(), false, false));
 					player.addEffect(new EffectInstance(Effects.JUMP, 10, -cap.getMagic().getCurrentlyCasting().getCastingSlowness(), false, false));
 					player.addEffect(new EffectInstance(Effects.SLOW_FALLING, 10, 0, false, false));
