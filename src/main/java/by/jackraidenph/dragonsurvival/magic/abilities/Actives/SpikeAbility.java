@@ -104,4 +104,6 @@ public class SpikeAbility extends ActiveDragonAbility
 	{
 		return super.isDisabled() || !ConfigHandler.SERVER.spike.get();
 	}
+	
+	public int getCastingSlowness() { return 0; }
 }

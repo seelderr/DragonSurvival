@@ -212,7 +212,6 @@
 		  "animation": "sleep",
 		  "locksHead": true,
 		  "loops": true,
-		  "duration": 300,
 		  "sound": {
 			  "key": "minecraft:entity.fox.sleep",
 			  "interval": 100,

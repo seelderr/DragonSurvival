@@ -5,6 +5,7 @@ import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
+import by.jackraidenph.dragonsurvival.magic.common.PassiveDragonAbility;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
@@ -40,14 +41,17 @@ public class MagicCap implements DragonCapability
 				}
 			}
 			top:
-			for (ActiveDragonAbility ability : DragonAbilities.ACTIVE_ABILITIES.get(type)) {
+			for (DragonAbility ability : DragonAbilities.ABILITIES.get(type)) {
+				if(ability.getMinLevel() <= 0 && ability instanceof PassiveDragonAbility) continue;
+				
 				for(DragonAbility ab : abilities){
 					if(Objects.equals(ab.getId(), ability.getId())){
 						continue top;
 					}
 				}
 				
-				ActiveDragonAbility newAbility = ability.createInstance();
+				
+				DragonAbility newAbility = ability.createInstance();
 				newAbility.setLevel(ability.getMinLevel());
 				abilities.add(newAbility);
 			}

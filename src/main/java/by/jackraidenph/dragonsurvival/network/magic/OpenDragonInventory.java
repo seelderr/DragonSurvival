@@ -30,6 +30,11 @@ public class OpenDragonInventory implements IMessage<OpenDragonInventory>
     public void handle(OpenDragonInventory message, Supplier<NetworkEvent.Context> supplier) {
         ServerPlayerEntity serverPlayerEntity = supplier.get().getSender();
         if(DragonStateProvider.isDragon(serverPlayerEntity)) {
+            
+            if(serverPlayerEntity.containerMenu != null){
+                serverPlayerEntity.containerMenu.removed(serverPlayerEntity);
+            }
+            
             serverPlayerEntity.openMenu(new INamedContainerProvider()
             {
                 @Override

@@ -152,7 +152,8 @@ public class ActiveDragonAbility extends DragonAbility
         }
     
         if(getCastingSlowness() >= 10){
-            if((player.level.isClientSide ? ClientFlightHandler.wingsEnabled : DragonSizeHandler.wingsStatusServer.containsKey(player.getId())) && player.isFallFlying() || !player.isOnGround()){
+            if((player.level.isClientSide ? ClientFlightHandler.wingsEnabled : DragonSizeHandler.wingsStatusServer.containsKey(player.getId())) && player.isFallFlying()
+               || (!player.isOnGround() && player.fallDistance > 0.25F)){
                 if(keyMode == GLFW.GLFW_PRESS) {
                     errorMessage = new TranslationTextComponent("ds.skill.nofly");
                     errorTicks = Functions.secondsToTicks(5);

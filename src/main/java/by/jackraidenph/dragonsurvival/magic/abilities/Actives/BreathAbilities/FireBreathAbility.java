@@ -5,6 +5,7 @@ import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
+import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
 import by.jackraidenph.dragonsurvival.particles.CaveDragon.LargeFireParticleData;
 import by.jackraidenph.dragonsurvival.particles.CaveDragon.SmallFireParticleData;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
@@ -209,8 +210,12 @@ public class FireBreathAbility extends BreathAbility
 		super.onEntityHit(entityHit);
 		
 		if(!entityHit.level.isClientSide) {
-			if (entityHit.level.random.nextInt(100) < 30) {
-				entityHit.addEffect(new EffectInstance(DragonEffects.BURN, Functions.secondsToTicks(10), 0, false, true));
+			DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+			
+			if(handler != null) {
+				if (entityHit.level.random.nextInt(100) < 100 - (handler.getMagic().getAbilityLevel(DragonAbilities.BURN) * 15)) {
+					entityHit.addEffect(new EffectInstance(DragonEffects.BURN, Functions.secondsToTicks(10), 0, false, true));
+				}
 			}
 		}
 	}
@@ -240,19 +245,22 @@ public class FireBreathAbility extends BreathAbility
 					}
 				}
 			}
-				
-			if(player.level.random.nextInt(100) < 30){
-				BlockState blockAbove = player.level.getBlockState(pos.above());
-				
-				if(blockAbove.getBlock() == Blocks.AIR) {
-					AreaEffectCloudEntity entity = new AreaEffectCloudEntity(EntityType.AREA_EFFECT_CLOUD, player.level);
-					entity.setWaitTime(0);
-					entity.setPos(pos.above().getX(), pos.above().getY(), pos.above().getZ());
-					entity.setPotion(new Potion(new EffectInstance(DragonEffects.BURN, Functions.secondsToTicks(10) * 4))); //Effect duration is divided by 4 normaly
-					entity.setDuration(Functions.secondsToTicks(2));
-					entity.setRadius(1);
-					entity.setParticle(new SmallFireParticleData(37, false));
-					player.level.addFreshEntity(entity);
+			DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+			
+			if(handler != null){
+				if(player.level.random.nextInt(100) < 100 - (handler.getMagic().getAbilityLevel(DragonAbilities.BURN) * 15)){
+					BlockState blockAbove = player.level.getBlockState(pos.above());
+					
+					if(blockAbove.getBlock() == Blocks.AIR) {
+						AreaEffectCloudEntity entity = new AreaEffectCloudEntity(EntityType.AREA_EFFECT_CLOUD, player.level);
+						entity.setWaitTime(0);
+						entity.setPos(pos.above().getX(), pos.above().getY(), pos.above().getZ());
+						entity.setPotion(new Potion(new EffectInstance(DragonEffects.BURN, Functions.secondsToTicks(10) * 4))); //Effect duration is divided by 4 normaly
+						entity.setDuration(Functions.secondsToTicks(2));
+						entity.setRadius(1);
+						entity.setParticle(new SmallFireParticleData(37, false));
+						player.level.addFreshEntity(entity);
+					}
 				}
 			}
 		}

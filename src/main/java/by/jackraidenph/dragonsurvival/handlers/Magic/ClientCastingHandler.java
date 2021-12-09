@@ -51,6 +51,8 @@ public class ClientCastingHandler
 		            ability.errorMessage = null;
 					
 	                if (ability.getCurrentCastTimer() < ability.getCastingTime() && modeAbility == GLFW.GLFW_REPEAT) {
+		                ability.tickCasting();
+						
 						if(dragonStateHandler.getMagic().getCurrentlyCasting() != ability) {
 							dragonStateHandler.getMagic().setCurrentlyCasting(ability);
 							NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCastingToServer(playerEntity.getId(), ability));

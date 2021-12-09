@@ -23,6 +23,10 @@ public class OpenInventory implements IMessage<OpenInventory>{
         NetworkEvent.Context context=supplier.get();
         ServerPlayerEntity player = context.getSender();
         
+        if(player.containerMenu != null){
+            player.containerMenu.removed(player);
+        }
+        
         Container container = player.inventoryMenu;
         
         container.addSlotListener(player);

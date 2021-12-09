@@ -57,17 +57,17 @@ public class MagicHandler
 				ability.player = player;
 				
 				if (ability.canRun(player, -1)) {
-					if (ability.getCastingTime() <= 0 || ability.getCurrentCastTimer() >= ability.getCastingTime()) {
-						if(!player.level.isClientSide) {
-							ability.onActivation(player);
+					if(!player.level.isClientSide) {
+						if (ability.getCastingTime() <= 0 || ability.getCurrentCastTimer() >= ability.getCastingTime()) {
+								ability.onActivation(player);
+								
+								TargetPoint point = new TargetPoint(player.position().x, player.position().y, player.position().z, 64, player.level.dimension());
+								NetworkHandler.CHANNEL.send(PacketDistributor.NEAR.with(() -> point), new ActivateClientAbility(player.getId()));
 							
-							TargetPoint point = new TargetPoint(player.position().x, player.position().y, player.position().z, 64, player.level.dimension());
-							NetworkHandler.CHANNEL.send(PacketDistributor.NEAR.with(() -> point), new ActivateClientAbility(player.getId()));
+						} else {
+							ability.tickCasting();
 						}
-					} else {
-						ability.tickCasting();
 					}
-					
 				}else{
 					cap.getMagic().setCurrentlyCasting(null);
 				}

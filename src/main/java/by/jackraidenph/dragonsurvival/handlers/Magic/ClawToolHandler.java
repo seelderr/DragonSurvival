@@ -4,6 +4,8 @@ import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
+import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
+import by.jackraidenph.dragonsurvival.network.magic.SyncDragonClawsMenu;
 import by.jackraidenph.dragonsurvival.util.DragonLevel;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -43,6 +45,7 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.network.PacketDistributor;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -52,6 +55,8 @@ import java.util.UUID;
 public class ClawToolHandler
 {
 	public static boolean hasEmptySlot(PlayerEntity player){
+		if(true) return true; //Disabled until it can be implemented properly
+		
       boolean hasEmptySlot = false;
         for(int slot = 0; slot < 9; slot++){
             ItemStack hotbarStack = player.inventory.getItem(slot);
@@ -197,6 +202,10 @@ public class ClawToolHandler
 					
 					sword.getItem().onLeftClickEntity(sword, player, target);
 					sword.getItem().hurtEnemy(sword, player, target);
+					
+					if(!player.level.isClientSide){
+						NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncDragonClawsMenu(player.getId(), cap.getClawInventory().isClawsMenuOpen(), cap.getClawInventory().getClawsInventory()));
+					}
 					
 					float f5 = f4 - target.getHealth();
 					player.awardStat(Stats.DAMAGE_DEALT, Math.round(f5 * 10.0F));
@@ -362,16 +371,21 @@ public class ClawToolHandler
 					}
 				}
 				
-				if(hotbarItem != null && !playerEntity.level.isClientSide){
-					int exp = breakEvent.getExpToDrop();
+				if(hotbarItem != null) {
 					hotbarItem.mineBlock(playerEntity.level, blockState, breakEvent.getPos(), playerEntity);
-					breakEvent.getState().getBlock().playerDestroy((World)breakEvent.getWorld(), playerEntity, breakEvent.getPos(), breakEvent.getState(), breakEvent.getWorld().getBlockEntity(breakEvent.getPos()), hotbarItem);
 					
-					int i = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, hotbarItem);
-					
-					if (breakEvent.getWorld().setBlock(breakEvent.getPos(), Blocks.AIR.defaultBlockState(), 3) && exp > 0 && i <= 0) {
-						if(!((World)breakEvent.getWorld()).isClientSide) {
-							breakEvent.getState().getBlock().popExperience((ServerWorld)breakEvent.getWorld(), breakEvent.getPos(), exp);
+					if (!playerEntity.level.isClientSide) {
+						int exp = breakEvent.getExpToDrop();
+						breakEvent.getState().getBlock().playerDestroy((World)breakEvent.getWorld(), playerEntity, breakEvent.getPos(), breakEvent.getState(), breakEvent.getWorld().getBlockEntity(breakEvent.getPos()), hotbarItem);
+						
+						NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new SyncDragonClawsMenu(playerEntity.getId(), dragonStateHandler.getClawInventory().isClawsMenuOpen(), dragonStateHandler.getClawInventory().getClawsInventory()));
+						
+						int i = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, hotbarItem);
+						
+						if (breakEvent.getWorld().setBlock(breakEvent.getPos(), Blocks.AIR.defaultBlockState(), 3) && exp > 0 && i <= 0) {
+							if (!((World)breakEvent.getWorld()).isClientSide) {
+								breakEvent.getState().getBlock().popExperience((ServerWorld)breakEvent.getWorld(), breakEvent.getPos(), exp);
+							}
 						}
 					}
 				}
