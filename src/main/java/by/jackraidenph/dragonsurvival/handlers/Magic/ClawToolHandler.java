@@ -310,6 +310,8 @@ public class ClawToolHandler
 					repairTime.setDamageValue(repairTime.getDamageValue() - i);
 				}
 			}
+			
+			event.getOrb().value = Math.max(0, event.getOrb().value);
 		});
 	}
 	

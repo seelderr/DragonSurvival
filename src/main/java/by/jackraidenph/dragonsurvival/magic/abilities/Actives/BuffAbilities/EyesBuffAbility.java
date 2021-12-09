@@ -21,19 +21,19 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class VisionAbility extends ActiveDragonAbility
+public class EyesBuffAbility extends ActiveDragonAbility
 {
 	private Effect effect;
-	public VisionAbility(DragonType type, Effect effect, String name, String icon, int minLevel, int maxLevel, int manaCost, int castTime, int cooldown, Integer[] requiredLevels)
+	public EyesBuffAbility(DragonType type, Effect effect, String name, String icon, int minLevel, int maxLevel, int manaCost, int castTime, int cooldown, Integer[] requiredLevels)
 	{
 		super(type, name, icon, minLevel, maxLevel, manaCost, castTime, cooldown, requiredLevels);
 		this.effect = effect;
 	}
 	
 	@Override
-	public VisionAbility createInstance()
+	public EyesBuffAbility createInstance()
 	{
-		return new VisionAbility(type, effect, id, icon, minLevel, maxLevel, manaCost, castTime, abilityCooldown, requiredLevels);
+		return new EyesBuffAbility(type, effect, id, icon, minLevel, maxLevel, manaCost, castTime, abilityCooldown, requiredLevels);
 	}
 	
 	public int getDuration(){

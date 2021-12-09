@@ -1,7 +1,7 @@
 package by.jackraidenph.dragonsurvival.sounds;
 
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.magic.abilities.Actives.BreathAbilities.FireBreathAbility;
+import by.jackraidenph.dragonsurvival.magic.abilities.Actives.BreathAbilities.NetherBreathAbility;
 import net.minecraft.client.audio.TickableSound;
 import net.minecraft.util.SoundCategory;
 import net.minecraftforge.api.distmarker.Dist;
@@ -10,8 +10,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn( Dist.CLIENT)
 public class FireBreathSound extends TickableSound
 {
-	private FireBreathAbility ability;
-	public FireBreathSound(FireBreathAbility ability)
+	private NetherBreathAbility ability;
+	public FireBreathSound(NetherBreathAbility ability)
 	{
 		super(SoundRegistry.fireBreathLoop, SoundCategory.PLAYERS);
 		this.looping = true;

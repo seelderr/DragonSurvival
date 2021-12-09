@@ -42,17 +42,17 @@ import net.minecraftforge.fml.DistExecutor.SafeRunnable;
 
 import java.util.ArrayList;
 
-public class FireBreathAbility extends BreathAbility
+public class NetherBreathAbility extends BreathAbility
 {
-	public FireBreathAbility(DragonType type, String id, String icon, int minLevel, int maxLevel, int manaCost, int castTime, int cooldown, Integer[] requiredLevels)
+	public NetherBreathAbility(DragonType type, String id, String icon, int minLevel, int maxLevel, int manaCost, int castTime, int cooldown, Integer[] requiredLevels)
 	{
 		super(type, id, icon, minLevel, maxLevel, manaCost, castTime, cooldown, requiredLevels);
 	}
 
 	@Override
-	public FireBreathAbility createInstance()
+	public NetherBreathAbility createInstance()
 	{
-		return new FireBreathAbility(type, id, icon, minLevel, maxLevel, manaCost, castTime, abilityCooldown, requiredLevels);
+		return new NetherBreathAbility(type, id, icon, minLevel, maxLevel, manaCost, castTime, abilityCooldown, requiredLevels);
 	}
 	
 	@Override

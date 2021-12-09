@@ -45,17 +45,17 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LightningBreathAbility extends BreathAbility
+public class StormBreathAbility extends BreathAbility
 {
-	public LightningBreathAbility(DragonType type, String id, String icon, int minLevel, int maxLevel, int manaCost, int castTime, int cooldown, Integer[] requiredLevels)
+	public StormBreathAbility(DragonType type, String id, String icon, int minLevel, int maxLevel, int manaCost, int castTime, int cooldown, Integer[] requiredLevels)
 	{
 		super(type, id, icon, minLevel, maxLevel, manaCost, castTime, cooldown, requiredLevels);
 	}
 
 	@Override
-	public LightningBreathAbility createInstance()
+	public StormBreathAbility createInstance()
 	{
-		return new LightningBreathAbility(type, id, icon, minLevel, maxLevel, manaCost, castTime, abilityCooldown, requiredLevels);
+		return new StormBreathAbility(type, id, icon, minLevel, maxLevel, manaCost, castTime, abilityCooldown, requiredLevels);
 	}
 	
 	@Override
@@ -193,7 +193,7 @@ public class LightningBreathAbility extends BreathAbility
 	
 	public void onEntityHit(LivingEntity entityHit){
 		hurtTarget(entityHit);
-		LightningBreathAbility.chargedEffectSparkle(entityHit, 6, 2, 1);
+		StormBreathAbility.chargedEffectSparkle(entityHit, 6, 2, 1);
 	}
 	
 	public static void onDamageChecks(LivingEntity entity){

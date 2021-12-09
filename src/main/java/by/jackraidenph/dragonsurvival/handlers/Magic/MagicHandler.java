@@ -6,7 +6,7 @@ import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
-import by.jackraidenph.dragonsurvival.magic.abilities.Actives.BreathAbilities.LightningBreathAbility;
+import by.jackraidenph.dragonsurvival.magic.abilities.Actives.BreathAbilities.StormBreathAbility;
 import by.jackraidenph.dragonsurvival.magic.abilities.Passives.BurnAbility;
 import by.jackraidenph.dragonsurvival.magic.abilities.Passives.SpectralImpactAbility;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
@@ -167,7 +167,7 @@ public class MagicHandler
 				DragonType type = DragonStateProvider.getCap(entity).map(cap -> cap.getType()).orElse(null);
 				
 				if (type != DragonType.SEA) {
-					LightningBreathAbility.chargedEffectSparkle(entity, 6, 2, 1);
+					StormBreathAbility.chargedEffectSparkle(entity, 6, 2, 1);
 				}
 			}
 		}

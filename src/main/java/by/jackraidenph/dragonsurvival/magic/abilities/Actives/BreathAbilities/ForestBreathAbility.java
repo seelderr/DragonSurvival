@@ -45,17 +45,17 @@ import net.minecraftforge.fml.DistExecutor.SafeRunnable;
 
 import java.util.ArrayList;
 
-public class PoisonBreathAbility extends BreathAbility
+public class ForestBreathAbility extends BreathAbility
 {
-	public PoisonBreathAbility(DragonType type, String id, String icon, int minLevel, int maxLevel, int manaCost, int castTime, int cooldown, Integer[] requiredLevels)
+	public ForestBreathAbility(DragonType type, String id, String icon, int minLevel, int maxLevel, int manaCost, int castTime, int cooldown, Integer[] requiredLevels)
 	{
 		super(type, id, icon, minLevel, maxLevel, manaCost, castTime, cooldown, requiredLevels);
 	}
 
 	@Override
-	public PoisonBreathAbility createInstance()
+	public ForestBreathAbility createInstance()
 	{
-		return new PoisonBreathAbility(type, id, icon, minLevel, maxLevel, manaCost, castTime, abilityCooldown, requiredLevels);
+		return new ForestBreathAbility(type, id, icon, minLevel, maxLevel, manaCost, castTime, abilityCooldown, requiredLevels);
 	}
 	
 	@Override

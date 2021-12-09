@@ -27,6 +27,8 @@ public class MixinItem {
 		
 		PlayerEntity player = (PlayerEntity) entity;
 		
+		if(player.isCreative() || player.isSpectator()) return;
+		
 		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
 			if (dragonStateHandler.isDragon() && ConfigHandler.SERVER.blacklistedSlots.get().contains(slot) && ConfigUtils.parseConfigItemList(ConfigHandler.SERVER.blacklistedItems.get()).contains(stack.getItem())) {
 				if(slot >= 0 && slot < 9 && !isSelected) return;
