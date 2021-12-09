@@ -192,16 +192,18 @@ public class DragonContainer extends Container
                 if (!this.moveItemStackTo(itemstack1, 44, 46, false)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (index >= 4 && index < 30) {
-                if (!this.moveItemStackTo(itemstack1, 31, 45, false)) {
+            } else if (index >= 4 && index < 31) {
+                if (!this.moveItemStackTo(itemstack1, 31, 40, false)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (index >= 31 && index < 39) {
+            } else if (index >= 31 && index < 40) {
                 if (!this.moveItemStackTo(itemstack1, 4, 31, false)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (!this.moveItemStackTo(itemstack1, 4, 31, false)) {
-                return ItemStack.EMPTY;
+            }else{
+                if (!this.moveItemStackTo(itemstack1, 4, 31, false)) {
+                    return ItemStack.EMPTY;
+                }
             }
         
             if (itemstack1.isEmpty()) {
