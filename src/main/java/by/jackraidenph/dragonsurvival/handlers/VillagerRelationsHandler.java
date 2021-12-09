@@ -235,12 +235,14 @@ public class VillagerRelationsHandler {
         Entity attacked = attackEntityEvent.getTarget();
         PlayerEntity attacker = attackEntityEvent.getPlayer();
         if (attacked instanceof AbstractVillagerEntity || attacked instanceof DragonHunter) {
-            if (attacker.hasEffect(DragonEffects.EVIL_DRAGON)) {
-                int duration = attacker.getEffect(DragonEffects.EVIL_DRAGON).getDuration();
-                int amplifier = attacker.getEffect(DragonEffects.EVIL_DRAGON).getAmplifier();
-                attacker.addEffect(new EffectInstance2(DragonEffects.EVIL_DRAGON, duration + Functions.secondsToTicks(5), amplifier));
-            } else {
-                attacker.addEffect(new EffectInstance2(DragonEffects.EVIL_DRAGON, Functions.secondsToTicks(5)));
+           if(DragonStateProvider.isDragon(attacker)) {
+                if (attacker.hasEffect(DragonEffects.EVIL_DRAGON)) {
+                    int duration = attacker.getEffect(DragonEffects.EVIL_DRAGON).getDuration();
+                    int amplifier = attacker.getEffect(DragonEffects.EVIL_DRAGON).getAmplifier();
+                    attacker.addEffect(new EffectInstance2(DragonEffects.EVIL_DRAGON, duration + Functions.secondsToTicks(5), amplifier));
+                } else {
+                    attacker.addEffect(new EffectInstance2(DragonEffects.EVIL_DRAGON, Functions.secondsToTicks(5)));
+                }
             }
         }
     }

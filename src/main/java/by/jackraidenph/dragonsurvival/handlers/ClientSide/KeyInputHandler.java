@@ -68,18 +68,24 @@ public class KeyInputHandler
 	    Minecraft minecraft = Minecraft.getInstance();
 	    ClientPlayerEntity player = Minecraft.getInstance().player;
 	    
-	    if (player != null && DRAGON_INVENTORY.consumeClick()) {
-	        if(minecraft.screen == null && DragonStateProvider.isDragon(minecraft.player)){
-	            NetworkHandler.CHANNEL.sendToServer(new OpenDragonInventory());
+		if(player == null) return;
+		
+	    if (DRAGON_INVENTORY.consumeClick()) {
+	        if(DragonStateProvider.isDragon(minecraft.player)){
+				if(minecraft.screen == null) {
+					NetworkHandler.CHANNEL.sendToServer(new OpenDragonInventory());
+				}else{
+					player.closeContainer();
+				}
 	        }
-	    }else  if (player != null && TOGGLE_ABILITIES.consumeClick()) {
+	    }else  if (TOGGLE_ABILITIES.consumeClick()) {
 	        if(DragonStateProvider.isDragon(minecraft.player)){
 	            DragonStateProvider.getCap(minecraft.player).ifPresent(dragonStateHandler -> {
 	                dragonStateHandler.getMagic().setRenderAbilities(!dragonStateHandler.getMagic().renderAbilityHotbar());
 	                NetworkHandler.CHANNEL.sendToServer(new SyncDragonAbilitySlot(player.getId(), dragonStateHandler.getMagic().getSelectedAbilitySlot(), dragonStateHandler.getMagic().renderAbilityHotbar()));
 	            });
 	        }
-	    }else  if (player != null && NEXT_ABILITY.consumeClick()) {
+	    }else  if (NEXT_ABILITY.consumeClick()) {
 	        if(DragonStateProvider.isDragon(minecraft.player)){
 	            DragonStateProvider.getCap(minecraft.player).ifPresent(dragonStateHandler -> {
 	                int nextSlot = dragonStateHandler.getMagic().getSelectedAbilitySlot() == 3 ? 0 : dragonStateHandler.getMagic().getSelectedAbilitySlot() + 1;
@@ -87,7 +93,7 @@ public class KeyInputHandler
 	                NetworkHandler.CHANNEL.sendToServer(new SyncDragonAbilitySlot(player.getId(), dragonStateHandler.getMagic().getSelectedAbilitySlot(), dragonStateHandler.getMagic().renderAbilityHotbar()));
 	            });
 	        }
-	    }else  if (player != null && PREV_ABILITY.consumeClick()) {
+	    }else  if (PREV_ABILITY.consumeClick()) {
 	        if(DragonStateProvider.isDragon(minecraft.player)){
 	            DragonStateProvider.getCap(minecraft.player).ifPresent(dragonStateHandler -> {
 	                int nextSlot = dragonStateHandler.getMagic().getSelectedAbilitySlot() == 0 ? 3 : dragonStateHandler.getMagic().getSelectedAbilitySlot() - 1;
@@ -95,28 +101,28 @@ public class KeyInputHandler
 	                NetworkHandler.CHANNEL.sendToServer(new SyncDragonAbilitySlot(player.getId(), dragonStateHandler.getMagic().getSelectedAbilitySlot(), dragonStateHandler.getMagic().renderAbilityHotbar()));
 	            });
 	        }
-	    }else  if (player != null && ABILITY1.consumeClick()) {
+	    }else  if (ABILITY1.consumeClick()) {
 	        if(DragonStateProvider.isDragon(minecraft.player)){
 	            DragonStateProvider.getCap(minecraft.player).ifPresent(dragonStateHandler -> {
 	                dragonStateHandler.getMagic().setSelectedAbilitySlot(0);
 	                NetworkHandler.CHANNEL.sendToServer(new SyncDragonAbilitySlot(player.getId(), dragonStateHandler.getMagic().getSelectedAbilitySlot(), dragonStateHandler.getMagic().renderAbilityHotbar()));
 	            });
 	        }
-	    }else  if (player != null && ABILITY2.consumeClick()) {
+	    }else  if (ABILITY2.consumeClick()) {
 	        if(DragonStateProvider.isDragon(minecraft.player)){
 	            DragonStateProvider.getCap(minecraft.player).ifPresent(dragonStateHandler -> {
 	                dragonStateHandler.getMagic().setSelectedAbilitySlot(1);
 	                NetworkHandler.CHANNEL.sendToServer(new SyncDragonAbilitySlot(player.getId(), dragonStateHandler.getMagic().getSelectedAbilitySlot(), dragonStateHandler.getMagic().renderAbilityHotbar()));
 	            });
 	        }
-	    }else  if (player != null && ABILITY3.consumeClick()) {
+	    }else  if (ABILITY3.consumeClick()) {
 	        if(DragonStateProvider.isDragon(minecraft.player)){
 	            DragonStateProvider.getCap(minecraft.player).ifPresent(dragonStateHandler -> {
 	                dragonStateHandler.getMagic().setSelectedAbilitySlot(2);
 	                NetworkHandler.CHANNEL.sendToServer(new SyncDragonAbilitySlot(player.getId(), dragonStateHandler.getMagic().getSelectedAbilitySlot(), dragonStateHandler.getMagic().renderAbilityHotbar()));
 	            });
 	        }
-	    }else  if (player != null && ABILITY4.consumeClick()) {
+	    }else  if (ABILITY4.consumeClick()) {
 	        if(DragonStateProvider.isDragon(minecraft.player)){
 	            DragonStateProvider.getCap(minecraft.player).ifPresent(dragonStateHandler -> {
 	                dragonStateHandler.getMagic().setSelectedAbilitySlot(3);

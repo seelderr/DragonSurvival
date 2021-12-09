@@ -90,6 +90,9 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 		@Override
 		public void render(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, DragonEntity entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch)
 		{
+			DragonStateHandler handler = DragonStateProvider.getCap(entitylivingbaseIn.getPlayer()).orElse(null);
+			if(handler == null || !handler.getClawInventory().renderClaws) return;
+			
 			String text = constructTeethTexture(entitylivingbaseIn.getPlayer());
 			
 			if(text != null) {
@@ -126,6 +129,9 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 		@Override
 		public void render(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, DragonEntity entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch)
 		{
+			DragonStateHandler handler = DragonStateProvider.getCap(entitylivingbaseIn.getPlayer()).orElse(null);
+			if(handler == null || !handler.getClawInventory().renderClaws) return;
+			
 			String text = constructClaws(entitylivingbaseIn.getPlayer());
 			
 			if(text != null) {

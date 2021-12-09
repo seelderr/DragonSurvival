@@ -18,7 +18,9 @@ public class ClawInventory implements DragonCapability
 		Slot 3: Shovel
 	 */
 	private Inventory clawsInventory = new Inventory(4);
+	
 	private boolean clawsMenuOpen = false;
+	public boolean renderClaws = true;
 	
 	public Inventory getClawsInventory()
 	{
@@ -47,6 +49,7 @@ public class ClawInventory implements DragonCapability
 		
 		tag.putBoolean("clawsMenu", isClawsMenuOpen());
 		tag.put("clawsInventory", saveClawInventory(getClawsInventory()));
+		tag.putBoolean("renderClaws", renderClaws);
 		
 		return tag;
 	}
@@ -57,6 +60,8 @@ public class ClawInventory implements DragonCapability
 		CompoundNBT tag = (CompoundNBT) base;
 		
 		setClawsMenuOpen(tag.getBoolean("clawsMenu"));
+		renderClaws = tag.getBoolean("renderClaws");
+		
 		ListNBT clawInv = tag.getList("clawsInventory", 10);
 		setClawsInventory(readClawInventory(clawInv));
 	}
@@ -66,6 +71,7 @@ public class ClawInventory implements DragonCapability
 	{
 		setClawsInventory(oldCap.getClawInventory().getClawsInventory());
 		setClawsMenuOpen(oldCap.getClawInventory().isClawsMenuOpen());
+		renderClaws = oldCap.getClawInventory().renderClaws;
 	}
 	
 	

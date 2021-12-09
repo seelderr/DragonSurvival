@@ -96,6 +96,10 @@ public class MagicHandler
 				ability.player = player;
 			}
 			
+			if (player.hasEffect(DragonEffects.WATER_VISION) && player.isEyeInFluid(FluidTags.WATER)) {
+				player.addEffect(new EffectInstance(Effects.NIGHT_VISION, 10, 0, false, false));
+			}
+			
 			if (player.hasEffect(DragonEffects.HUNTER)) {
 				BlockState bl = player.getFeetBlockState();
 				BlockState below = player.level.getBlockState(player.blockPosition().below());

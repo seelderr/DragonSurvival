@@ -5,7 +5,7 @@ import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
-import by.jackraidenph.dragonsurvival.network.magic.SyncDragonClawsMenu;
+import by.jackraidenph.dragonsurvival.network.claw.SyncDragonClawsMenu;
 import by.jackraidenph.dragonsurvival.util.DragonLevel;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -153,23 +153,27 @@ public class ClawToolHandler
 				
 				if (target.hurt(DamageSource.playerAttack(player), swordDamage)) {
 					if (f1 > 0.0F) {
-						target.knockback(f1 * 0.5F, (double)MathHelper.sin(target.yRot * ((float)Math.PI / 180F)), (double)(-MathHelper.cos(target.yRot * ((float)Math.PI / 180F))));
+						target.knockback(f1 * 0.5F, (double)MathHelper.sin(player.yRot * ((float)Math.PI / 180F)), (double)(-MathHelper.cos(player.yRot * ((float)Math.PI / 180F))));
 						player.setDeltaMovement(player.getDeltaMovement().multiply(0.6D, 1.0D, 0.6D));
 						player.setSprinting(false);
 					}
 					
 					if (flag3) {
-						float f3 = 1.0F + EnchantmentHelper.getSweepingDamageRatio(player) * swordDamage;
+						float sweap = EnchantmentHelper.getSweepingDamageRatio(player);
 						
-						for(LivingEntity livingentity : player.level.getEntitiesOfClass(LivingEntity.class, target.getBoundingBox().inflate(1.0D, 0.25D, 1.0D))) {
-							if (livingentity != player && livingentity != target && !player.isAlliedTo(livingentity) && (!(livingentity instanceof ArmorStandEntity) || !((ArmorStandEntity)livingentity).isMarker()) && player.distanceToSqr(livingentity) < 9.0D) {
-								livingentity.knockback(0.4F, (double)MathHelper.sin(player.yRot * ((float)Math.PI / 180F)), (double)(-MathHelper.cos(player.yRot * ((float)Math.PI / 180F))));
-								livingentity.hurt(DamageSource.playerAttack(player), f3);
+						if(sweap > 0) {
+							float f3 = 1.0F + sweap * swordDamage;
+							
+							for (LivingEntity livingentity : player.level.getEntitiesOfClass(LivingEntity.class, target.getBoundingBox().inflate(1.0D, 0.25D, 1.0D))) {
+								if (livingentity != player && livingentity != target && !player.isAlliedTo(livingentity) && (!(livingentity instanceof ArmorStandEntity) || !((ArmorStandEntity)livingentity).isMarker()) && player.distanceToSqr(livingentity) < 9.0D) {
+									livingentity.knockback(0.4F, (double)MathHelper.sin(player.yRot * ((float)Math.PI / 180F)), (double)(-MathHelper.cos(player.yRot * ((float)Math.PI / 180F))));
+									livingentity.hurt(DamageSource.playerAttack(player), f3);
+								}
 							}
+							
+							player.level.playSound((PlayerEntity)null, player.getX(), player.getY(), player.getZ(), SoundEvents.PLAYER_ATTACK_SWEEP, player.getSoundSource(), 1.0F, 1.0F);
+							player.sweepAttack();
 						}
-						
-						player.level.playSound((PlayerEntity)null, player.getX(), player.getY(), player.getZ(), SoundEvents.PLAYER_ATTACK_SWEEP, player.getSoundSource(), 1.0F, 1.0F);
-						player.sweepAttack();
 					}
 					
 					if (target instanceof ServerPlayerEntity && target.hurtMarked) {

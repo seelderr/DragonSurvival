@@ -10,7 +10,6 @@ import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.IFormattableTextComponent;
@@ -49,9 +48,9 @@ public class VisionAbility extends ActiveDragonAbility
 		super.onActivation(player);
 		player.addEffect(new EffectInstance(effect, Functions.secondsToTicks(getDuration())));
 		
-		if(effect == DragonEffects.WATER_VISION) {
-			player.addEffect(new EffectInstance(Effects.NIGHT_VISION, Functions.secondsToTicks(getDuration()), 0, false, false));
-		}
+//		if(effect == DragonEffects.WATER_VISION) {
+//			player.addEffect(new EffectInstance(Effects.NIGHT_VISION, Functions.secondsToTicks(getDuration()), 0, false, false));
+//		}
 		
 		player.level.playLocalSound(player.position().x, player.position().y + 0.5, player.position().z, SoundEvents.UI_TOAST_IN, SoundCategory.PLAYERS, 5F, 0.1F, false);
 	}

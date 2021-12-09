@@ -28,6 +28,7 @@ public class ServerConfig {
 	public final ForgeConfigSpec.DoubleValue adultJump;
 	
 	public final ForgeConfigSpec.BooleanValue keepClawItems;
+	public final ForgeConfigSpec.BooleanValue syncClawRender;
 	
 	public final ForgeConfigSpec.BooleanValue ridingBlacklist;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> allowedVehicles;
@@ -218,6 +219,10 @@ public class ServerConfig {
 		keepClawItems = builder
 				.comment("Whether to keep items in the claw slots on death otherwise they will drop on death.")
 				.define("keepClawItems", true);
+		
+		syncClawRender = builder
+				.comment("If players are allowed to hide their claws and teeth from other players.")
+				.define("syncClawRender", true);
 		
 		// Growth
 		builder.pop().push("growth");

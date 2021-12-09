@@ -7,11 +7,11 @@ import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.containers.DragonContainer;
 import by.jackraidenph.dragonsurvival.gui.magic.buttons.TabButton;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.KeyInputHandler;
-import by.jackraidenph.dragonsurvival.handlers.Magic.ClawToolHandler;
 import by.jackraidenph.dragonsurvival.handlers.Magic.ClientMagicHUDHandler;
 import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.OpenInventory;
-import by.jackraidenph.dragonsurvival.network.magic.DragonClawsMenuToggle;
+import by.jackraidenph.dragonsurvival.network.claw.DragonClawsMenuToggle;
+import by.jackraidenph.dragonsurvival.network.claw.SyncDragonClawRender;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -89,11 +89,6 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
         if(clawsMenu){
             minecraft.getTextureManager().bind(CLAWS_TEXTURE);
             this.blit(stack,leftPos - 80, topPos, 0, 0, 77, 170);
-            
-            if(ClawToolHandler.hasEmptySlot(Minecraft.getInstance().player)){
-                minecraft.getTextureManager().bind(DRAGON_CLAW_CHECKMARK);
-                this.blit(stack,leftPos - 80 + 34, topPos + 140, 0, 0, 9, 9, 9, 9);
-            }
         }
         
         GlStateManager._popMatrix();
@@ -115,28 +110,6 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
         this.imageWidth = 203;
         this.imageHeight = 166;
         super.init();
-        
-        /*
-        this.recipeBookGui.init(this.width, this.height, this.minecraft, this.widthTooNarrow, this.menu);
-        this.leftPos = this.recipeBookGui.updateScreenPosition(this.widthTooNarrow, this.width + 30, this.imageWidth);
-
-        this.addButton(new ImageButton(this.leftPos + (imageWidth - 28), (this.height / 2 - 30) + 30, 20, 18, 0, 0, 19, RECIPE_BUTTON_TEXTURE, (p_214076_1_) -> {
-            this.recipeBookGui.initVisuals(this.widthTooNarrow);
-            this.recipeBookGui.toggleVisibility();
-            this.leftPos = this.recipeBookGui.updateScreenPosition(this.widthTooNarrow, this.width + 30, this.imageWidth);
-            buttons.clear();
-            init();
-            ((ImageButton)p_214076_1_).setPosition(this.leftPos + (imageWidth - 30), (this.height / 2 - 49) + 30);
-            
-            if(recipeBookGui.isVisible() && clawsMenu){
-                clawsMenu = false;
-                NetworkHandler.CHANNEL.sendToServer(new DragonClawsMenuToggle(clawsMenu));
-                DragonStateProvider.getCap(player).ifPresent((cap) -> cap.getClawInventory().setClawsMenuOpen(clawsMenu));
-            }
-        }));
-        this.children.add(this.recipeBookGui);
-        
-        */
         
         addButton(new TabButton(leftPos, topPos - 28, 0, this));
         addButton(new TabButton(leftPos + 28, topPos - 26, 1, this));
@@ -194,6 +167,30 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
             }
         });
     
+
+        
+        addButton(new Button(leftPos - 80 + 34, topPos + 140, 9, 9, null, p_onPress_1_ -> {
+            DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+    
+            if(handler != null){
+               boolean claws = !handler.getClawInventory().renderClaws;
+               
+               handler.getClawInventory().renderClaws = claws;
+               NetworkHandler.CHANNEL.sendToServer(new SyncDragonClawRender(player.getId(), claws));
+            }
+        }){
+            @Override
+            public void render(MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_)
+            {
+                DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+                
+                if(handler != null && handler.getClawInventory().renderClaws){
+                    minecraft.getTextureManager().bind(DRAGON_CLAW_CHECKMARK);
+                    this.blit(p_230430_1_,x, y, 0, 0, 9, 9, 9, 9);
+                }
+          }
+        });
+        
         if(ConfigHandler.CLIENT.inventoryToggle.get()) {
             addButton(new ImageButton(this.leftPos + (imageWidth - 28), (this.height / 2 - 30) + 50, 20, 18, 0, 0, 19, INVENTORY_TOGGLE_BUTTON, p_onPress_1_ -> {
                 Minecraft.getInstance().setScreen(new InventoryScreen(this.player));

@@ -11,6 +11,9 @@ import by.jackraidenph.dragonsurvival.nest.NestEntity;
 import by.jackraidenph.dragonsurvival.nest.SleepInNest;
 import by.jackraidenph.dragonsurvival.nest.ToggleRegeneration;
 import by.jackraidenph.dragonsurvival.network.*;
+import by.jackraidenph.dragonsurvival.network.claw.DragonClawsMenuToggle;
+import by.jackraidenph.dragonsurvival.network.claw.SyncDragonClawRender;
+import by.jackraidenph.dragonsurvival.network.claw.SyncDragonClawsMenu;
 import by.jackraidenph.dragonsurvival.network.emotes.SyncEmote;
 import by.jackraidenph.dragonsurvival.network.emotes.SyncEmoteServer;
 import by.jackraidenph.dragonsurvival.network.emotes.SyncEmoteStats;
@@ -73,11 +76,14 @@ public class NetworkHandler
 		 register(SyncAbilityCastingToServer.class, new SyncAbilityCastingToServer());
 		 register(ActivateClientAbility.class, new ActivateClientAbility());
 		
+		 
+		 
 		 register(SyncPotionRemovedEffect.class, new SyncPotionRemovedEffect());
 		 register(SyncPotionAddedEffect.class, new SyncPotionAddedEffect());
 		 
 		 register(DragonClawsMenuToggle.class, new DragonClawsMenuToggle());
 		 register(SyncDragonClawsMenu.class, new SyncDragonClawsMenu());
+		 register(SyncDragonClawRender.class, new SyncDragonClawRender());
 		
 		 //Emote packets
 		 register(SyncEmoteServer.class, new SyncEmoteServer());

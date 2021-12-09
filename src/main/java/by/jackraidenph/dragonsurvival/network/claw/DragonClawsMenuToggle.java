@@ -1,4 +1,4 @@
-package by.jackraidenph.dragonsurvival.network.magic;
+package by.jackraidenph.dragonsurvival.network.claw;
 
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.containers.DragonContainer;

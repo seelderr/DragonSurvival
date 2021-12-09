@@ -5,7 +5,7 @@ import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.containers.DragonContainer;
 import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
-import by.jackraidenph.dragonsurvival.network.magic.SyncDragonClawsMenu;
+import by.jackraidenph.dragonsurvival.network.claw.SyncDragonClawsMenu;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.PlayerContainer;

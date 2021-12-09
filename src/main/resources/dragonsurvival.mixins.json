@@ -7,7 +7,9 @@
     "MixinEntity",
     "MixinItem",
     "MixinLivingEntity",
-    "MixinPlayerEntity"
+    "MixinPlayerEntity",
+    "MixinEnchantmentHelper",
+    "MixinGameRenderer"
   ],
   "client": [
     "AccessorEntityRenderer",
