@@ -77,7 +77,7 @@ public class IncreaseLevelButton extends Button
 							newActivty.setLevel(currentAbility.getLevel() + 1);
 							
 							if(Minecraft.getInstance().player.experienceLevel >= newActivty.getLevelCost()){
-								NetworkHandler.CHANNEL.sendToServer(new ChangeSkillLevel(cap.getMagic().getAbilityLevel(ability) + 1, ability.getId()));
+								NetworkHandler.CHANNEL.sendToServer(new ChangeSkillLevel(cap.getMagic().getAbilityLevel(ability) + 1, ability.getId(), 1));
 							}
 						}else{
 							skillCost = -1;

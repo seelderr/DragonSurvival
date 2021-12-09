@@ -197,6 +197,15 @@ public class DragonTraitHandler {
                                     NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new SyncCapabilityDebuff(playerEntity.getId(), dragonStateHandler.getDebuffData().timeWithoutWater, dragonStateHandler.getDebuffData().timeInDarkness, dragonStateHandler.getDebuffData().timeInRain));
                             }
                         }
+    
+                        if(dragonStateHandler.getDebuffData().timeInDarkness > maxStressTicks * 2){
+                            dragonStateHandler.getDebuffData().timeInDarkness = Math.min(dragonStateHandler.getDebuffData().timeInDarkness, maxStressTicks);
+                            
+                            if(!playerEntity.level.isClientSide) {
+                                NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new SyncCapabilityDebuff(playerEntity.getId(), dragonStateHandler.getDebuffData().timeWithoutWater, dragonStateHandler.getDebuffData().timeInDarkness, dragonStateHandler.getDebuffData().timeInRain));
+                            }
+                        }
+                        
                         break;
                     case SEA:
                         int maxTicksOutofWater = ConfigHandler.SERVER.seaTicksWithoutWater.get();
@@ -215,15 +224,28 @@ public class DragonTraitHandler {
                                     boolean hotBiome = biome.getPrecipitation() == RainType.NONE && biome.getBaseTemperature() > 1.0;
                                     double timeIncrement = (world.isNight() ? 0.5F : 1.0) * (hotBiome ? biome.getBaseTemperature() : 1F);
                                     debuffData.timeWithoutWater += ConfigHandler.SERVER.seaTicksBasedOnTemperature.get() ? timeIncrement : 1;
+                                    debuffData.timeWithoutWater = Math.min(debuffData.timeWithoutWater, maxTicksOutofWater * 2);
                                }
                                 if (debuffData.timeWithoutWater >= maxTicksOutofWater + 1 && !playerEntity.level.isClientSide)
                                     NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new SyncCapabilityDebuff(playerEntity.getId(), debuffData.timeWithoutWater, debuffData.timeInDarkness, dragonStateHandler.getDebuffData().timeInRain));
                             } else if (debuffData.timeWithoutWater > 0) {
+                                
                                 double old = debuffData.timeWithoutWater;
                                 debuffData.timeWithoutWater = (Math.max(debuffData.timeWithoutWater - (int) Math.ceil(maxTicksOutofWater * 0.005F), 0));
+                               
+                                debuffData.timeWithoutWater = Math.min(debuffData.timeWithoutWater, maxTicksOutofWater * 2);
+    
                                 if (old > maxTicksOutofWater + 1 && debuffData.timeWithoutWater <= maxTicksOutofWater && !playerEntity.level.isClientSide)
                                     NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new SyncCapabilityDebuff(playerEntity.getId(), debuffData.timeWithoutWater, debuffData.timeInDarkness, dragonStateHandler.getDebuffData().timeInRain));
                             }
+                            
+                            if(debuffData.timeWithoutWater > maxTicksOutofWater * 2){
+                                debuffData.timeWithoutWater = Math.min(debuffData.timeWithoutWater, maxTicksOutofWater * 2);
+                                if(!playerEntity.level.isClientSide) {
+                                    NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new SyncCapabilityDebuff(playerEntity.getId(), debuffData.timeWithoutWater, debuffData.timeInDarkness, dragonStateHandler.getDebuffData().timeInRain));
+                                }
+                            }
+                            
                             if (!world.isClientSide && debuffData.timeWithoutWater > maxTicksOutofWater && debuffData.timeWithoutWater < maxTicksOutofWater * 2) {
                                 if (playerEntity.tickCount % 40 == 0) {
                                     playerEntity.hurt(DamageSources.DEHYDRATION, ConfigHandler.SERVER.seaDehydrationDamage.get().floatValue());

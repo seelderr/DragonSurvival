@@ -17,6 +17,8 @@ import net.minecraft.util.text.TranslationTextComponent;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Objects;
 
 public class ActiveDragonAbility extends DragonAbility
 {
@@ -243,4 +245,21 @@ public class ActiveDragonAbility extends DragonAbility
     public AbilityAnimation getStartingAnimation(){ return null; }
     public AbilityAnimation getLoopingAnimation(){ return null; }
     public AbilityAnimation getStoppingAnimation(){ return null; }
+    
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (!(o instanceof ActiveDragonAbility)) return false;
+        ActiveDragonAbility ability = (ActiveDragonAbility)o;
+        return getManaCost() == ability.getManaCost() && castTime == ability.castTime && Arrays.equals(getRequiredLevels(), ability.getRequiredLevels());
+    }
+    
+    @Override
+    public int hashCode()
+    {
+        int result = Objects.hash(getManaCost(), castTime);
+        result = 31 * result + Arrays.hashCode(getRequiredLevels());
+        return result;
+    }
 }

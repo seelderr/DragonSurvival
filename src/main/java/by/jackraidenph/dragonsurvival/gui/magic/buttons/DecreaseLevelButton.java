@@ -58,7 +58,7 @@ public class DecreaseLevelButton extends Button
 		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {
 			if(ability != null) {
 				if (cap.getMagic().getAbility(ability) != null && cap.getMagic().getAbilityLevel(ability) > ability.getMinLevel()) {
-					NetworkHandler.CHANNEL.sendToServer(new ChangeSkillLevel(cap.getMagic().getAbilityLevel(ability) - 1, ability.getId()));
+					NetworkHandler.CHANNEL.sendToServer(new ChangeSkillLevel(cap.getMagic().getAbilityLevel(ability) - 1, ability.getId(), -1));
 				}
 			}
 		});

@@ -15,6 +15,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 public abstract class DragonAbility
 {
@@ -115,5 +116,20 @@ public abstract class DragonAbility
     
     public void loadNBT(CompoundNBT nbt){
         level = nbt.getInt("level");
+    }
+    
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (!(o instanceof DragonAbility)) return false;
+        DragonAbility ability = (DragonAbility)o;
+        return getLevel() == ability.getLevel() && getMaxLevel() == ability.getMaxLevel() && getMinLevel() == ability.getMinLevel() && getId().equals(ability.getId()) && getIcon().equals(ability.getIcon());
+    }
+    
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(getLevel(), getId(), getIcon(), getMaxLevel(), getMinLevel());
     }
 }

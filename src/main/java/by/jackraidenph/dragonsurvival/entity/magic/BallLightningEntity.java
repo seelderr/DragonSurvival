@@ -1,8 +1,10 @@
 package by.jackraidenph.dragonsurvival.entity.magic;
 
+import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
 import by.jackraidenph.dragonsurvival.magic.abilities.Actives.BallLightningAbility;
 import by.jackraidenph.dragonsurvival.particles.SeaDragon.LargeLightningParticleData;
+import by.jackraidenph.dragonsurvival.registration.DragonEffects;
 import by.jackraidenph.dragonsurvival.registration.EntityTypesInit;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -10,6 +12,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.AbstractFireballEntity;
 import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
@@ -51,6 +54,13 @@ public class BallLightningEntity extends DragonBallEntity
 		for(Entity ent : entities){
 			if (!this.level.isClientSide) {
 				ent.hurt(DamageSource.LIGHTNING_BOLT, BallLightningAbility.getDamage(getLevel()));
+				
+				if(ent instanceof LivingEntity) {
+					LivingEntity livingEntity = (LivingEntity)ent;
+					if (livingEntity.level.random.nextInt(100) < 40) {
+						livingEntity.addEffect(new EffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(10), 0, false, true));
+					}
+				}
 				
 				if (getOwner() instanceof LivingEntity) {
 					this.doEnchantDamageEffects((LivingEntity)getOwner(), ent);
