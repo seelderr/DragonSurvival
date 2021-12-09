@@ -27,6 +27,8 @@ public class ServerConfig {
 	public final ForgeConfigSpec.DoubleValue youngJump;
 	public final ForgeConfigSpec.DoubleValue adultJump;
 	
+	public final ForgeConfigSpec.BooleanValue keepClawItems;
+	
 	public final ForgeConfigSpec.BooleanValue ridingBlacklist;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> allowedVehicles;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> blacklistedItems;
@@ -208,10 +210,15 @@ public class ServerConfig {
 		mineStarBlock = builder
 				.comment("Whether silk touch hoes can be used to harvest Predator Stars.")
 				.define("harvestableStarBlock", false);
+		
 		altarUsageCooldown = builder
 				.comment("How long of a cooldown in seconds the altar has after each use.")
 				.defineInRange("altarUsageCooldown", 0, 0, 1000);
-
+		
+		keepClawItems = builder
+				.comment("Whether to keep items in the claw slots on death otherwise they will drop on death.")
+				.define("keepClawItems", true);
+		
 		// Growth
 		builder.pop().push("growth");
 		sizeChangesHitbox = builder

@@ -316,7 +316,7 @@ public class ClawToolHandler
 		if(ent instanceof PlayerEntity){
 			PlayerEntity player = (PlayerEntity)ent;
 			
-			if(!player.level.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)){
+			if(!player.level.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) && !ConfigHandler.SERVER.keepClawItems.get()){
 				DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
 				
 				if(handler != null){
@@ -324,10 +324,9 @@ public class ClawToolHandler
 						ItemStack stack = handler.getClawInventory().getClawsInventory().getItem(i);
 						
 						if(!stack.isEmpty()) {
-							player.level.addFreshEntity(new ItemEntity(player.level, player.getX(), player.getY(), player.getZ(), stack));
+							event.getDrops().add(new ItemEntity(player.level, player.getX(), player.getY(), player.getZ(), stack));
+							handler.getClawInventory().getClawsInventory().setItem(i, ItemStack.EMPTY);
 						}
-						
-						handler.getClawInventory().getClawsInventory().setItem(i, ItemStack.EMPTY);
 					}
 				}
 			}
