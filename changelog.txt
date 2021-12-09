@@ -1,3 +1,27 @@
+1.16.5-0.3 Magic Update:
+- Fixed: Passive skills can disappear after death
+- Fixed: If the tool in the claw is broken the blocks are destroyed at the same rate until the inventory is opened again. (the tool is not considered broken until the inventory is opened)
+- Fixed: If you put items in the dragon's craft and switch to the human inventory - the items in the craft will disappear.
+- Fixed: Casting bar might be broken on dedicated server. Skill still works and plays animation but no cast bar
+- Fixed: Some emotes seems to cancel on their own on dedicated servers
+- Fixed: Blacklisted items cannot be picked up if they try to get into 1 hotbar slot (even if not selected)
+- Fixed: the spike causes an endless soft fall in survival
+- Fixed: Rare dragon inventory dup
+- Configs added: Config for keeping claw items (saved by default) and possible solution for gravestones.
+
+1.16.5-0.2 Magic Update:
+- Fixed: Game no longer freezes when you try to use the recipe book (we removed it from the dragon's inventory). The JEI recipes work fine.
+- Fixed: Fixed all (hopefully) desynchronization on the server: emotions, casting, mana, sound, dimension, and so on.
+- Fixed: Using the animation that turns off the first-person view no longer turns it off to all players around.
+- Fixed: The bite animation does not cause other players to bite back.
+- Fixed: The sound should no longer loop endlessly after breathing.
+- Fixed: Turning off the player animation does not interrupt the animation of other players
+- Configs added: completely disabling the blacklist of riding animals
+- Configs added: all active skills pumped at once without the need to gain levels
+- Configs added: disabling experience consumption if mana runs out.
+- Configs added: mana recovery rate (under favorable and unfavorable factors)
+- Now, when creating your own animations, you can also specify requirements for the age and species of the dragon.
+
 1.16.5-0.1 Magic Update:
 - Special thanks to Horeak for this update! He did a great job. It took us a year to prepare for this update. And in 3 weeks of very intensive work, we did it!
 There are a total of 14,000 lines in DS. The update with magic adds another 10,000 lines and changes about 4,000 old lines of code. Just look at this amount of code: https://github.com/DragonSurvivalTeam/DragonSurvival/pull/74/commits/04c8ebf2fd65a8f7cf28eba36aaf6daa9ffba2f9
