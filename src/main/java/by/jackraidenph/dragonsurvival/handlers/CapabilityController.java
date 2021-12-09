@@ -100,8 +100,12 @@ public class CapabilityController {
             if (dragonStateHandler.isDragon()) {
                 if (playerEntity instanceof ServerPlayerEntity) {
                     PlayerInteractionManager interactionManager = ((ServerPlayerEntity) playerEntity).gameMode;
-                    boolean isMining = interactionManager.isDestroyingBlock;
-                    NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new DiggingStatus(playerEntity.getId(), isMining));
+                    boolean isMining = interactionManager.isDestroyingBlock && playerEntity.swinging;
+                    
+                    if(isMining != dragonStateHandler.getMovementData().dig) {
+                        dragonStateHandler.getMovementData().dig = isMining;
+                        NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new DiggingStatus(playerEntity.getId(), isMining));
+                    }
                 }
             }
         });

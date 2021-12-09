@@ -65,7 +65,8 @@ public class NetworkHandler
 		 register(ToggleWings.class, new ToggleWings());
 		// register(OpenCrafting.class, new OpenCrafting());
 		 register(OpenInventory.class, new OpenInventory());
-		 
+		 register(DiggingStatus.class, new DiggingStatus());
+		
 		 //Ability packets
 		 register(OpenDragonInventory.class, new OpenDragonInventory());
 		 register(ChangeSkillLevel.class, new ChangeSkillLevel());
@@ -76,7 +77,6 @@ public class NetworkHandler
 		 register(SyncAbilityCastingToServer.class, new SyncAbilityCastingToServer());
 		 register(ActivateClientAbility.class, new ActivateClientAbility());
 		
-		 
 		 
 		 register(SyncPotionRemovedEffect.class, new SyncPotionRemovedEffect());
 		 register(SyncPotionAddedEffect.class, new SyncPotionAddedEffect());
@@ -207,22 +207,6 @@ public class NetworkHandler
 	                }
 	                contextSupplier.get().setPacketHandled(true);
 	            });
-		
-		 CHANNEL.registerMessage(nextPacketId++, DiggingStatus.class, (diggingStatus, packetBuffer) -> {
-                packetBuffer.writeInt(diggingStatus.playerId);
-                packetBuffer.writeBoolean(diggingStatus.status);
-            },
-            packetBuffer -> new DiggingStatus(packetBuffer.readInt(), packetBuffer.readBoolean()),
-            (diggingStatus, contextSupplier) -> {
-                if (contextSupplier.get().getDirection().getReceptionSide() == LogicalSide.CLIENT) {
-                    Minecraft minecraft = Minecraft.getInstance();
-                    Entity entity = minecraft.level.getEntity(diggingStatus.playerId);
-                    if (entity instanceof PlayerEntity) {
-                        ClientEvents.dragonsDigging.put(entity.getId(), diggingStatus.status);
-                    }
-                }
-                contextSupplier.get().setPacketHandled(true);
-            });
 		
 		 CHANNEL.registerMessage(nextPacketId++, StartJump.class, (startJump, packetBuffer) -> {
 	            packetBuffer.writeInt(startJump.playerId);

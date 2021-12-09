@@ -51,10 +51,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ClientEvents {
     
     /**
-     * States of digging/breaking blocks
-     */
-    public static ConcurrentHashMap<Integer, Boolean> dragonsDigging = new ConcurrentHashMap<>(20);
-    /**
      * Durations of jumps
      */
     public static ConcurrentHashMap<Integer, Integer> dragonsJumpingTicks = new ConcurrentHashMap<>(20);

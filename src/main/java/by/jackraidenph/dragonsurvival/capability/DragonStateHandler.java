@@ -348,6 +348,7 @@ public class DragonStateHandler {
         public double bodyYawLastTick;
 
         public boolean bite;
+		public boolean dig;
         
         public DragonMovementData(double bodyYaw, double headYaw, double headPitch, boolean bite) {
             this.bodyYaw = bodyYaw;

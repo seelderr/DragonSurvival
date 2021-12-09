@@ -62,7 +62,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                     return PlayState.CONTINUE;
                 }
                 
-                if (handler.getMovementData().bite) {
+                if (handler.getMovementData().bite && !handler.getMovementData().dig) {
                     builder.addAnimation("bite");
                     animationEvent.getController().setAnimation(builder);
                     return PlayState.CONTINUE;
@@ -158,7 +158,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                     if (isMovingHorizontal && player.animationSpeed != 0f) {
                         builder.addAnimation("sneak_walk", true);
                         
-                    } else if (ClientEvents.dragonsDigging.getOrDefault(this.player, false)) {
+                    } else if (playerStateHandler.getMovementData().dig) {
                         builder.addAnimation("dig_sneak", true);
                         
                     } else {
@@ -171,7 +171,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                 }else if (isMovingHorizontal && player.animationSpeed != 0f) {
                     builder.addAnimation("walk", true);
     
-                }else if (ClientEvents.dragonsDigging.getOrDefault(this.player, false)) {
+                }else if (playerStateHandler.getMovementData().dig) {
                     builder.addAnimation("dig", true);
                 }else {
                     builder.addAnimation("idle", true);
