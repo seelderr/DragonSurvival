@@ -162,7 +162,7 @@ public class CommonConfig {
 		minutesOfDragonEffect = builder.comment("Duration of effect given in exchange for experience in minutes").defineInRange("temporaryEffect", 10, 1, 60 * 2);
 		peaceBeaconEffects = builder.comment("Effects of Peace beacon").defineList("peaceBeaconEffects", Arrays.asList("dragonsurvival:peace", "dragonsurvival:animal_peace"), o -> o instanceof String && ForgeRegistries.POTIONS.containsKey(new ResourceLocation((String) o)));
 		magicBeaconEffects = builder.comment("Effects of Magic beacon").defineList("magicBeaconEffects", Arrays.asList("dragonsurvival:magic", "dragonsurvival:predator_anti_spawn"), o -> o instanceof String && ForgeRegistries.POTIONS.containsKey(new ResourceLocation((String) o)));
-		fireBeaconEffects = builder.comment("Effects of Fire beacon").defineList("fireBeaconEffects", Arrays.asList("dragonsurvival:fire", "minecraft:fire_resistance"), o -> o instanceof String && ForgeRegistries.POTIONS.containsKey(new ResourceLocation((String) o)));
+		fireBeaconEffects = builder.comment("Effects of Fire beacon").defineList("fireBeaconEffects", Arrays.asList("dragonsurvival:fire", "dragonsurvival:strong_leather"), o -> o instanceof String && ForgeRegistries.POTIONS.containsKey(new ResourceLocation((String) o)));
 		builder.pop();
 	}
 }

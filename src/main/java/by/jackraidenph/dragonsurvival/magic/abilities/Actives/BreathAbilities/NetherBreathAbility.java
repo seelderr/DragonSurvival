@@ -238,7 +238,7 @@ public class NetherBreathAbility extends BreathAbility
 					boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(player.level, player);
 					
 					if (flag) {
-						if (player.level.random.nextInt(100) < 5) {
+						if (player.level.random.nextInt(100) < 50) {
 							BlockState blockstate1 = AbstractFireBlock.getState(player.level, blockPos);
 							player.level.setBlock(blockPos, blockstate1, 3);
 						}

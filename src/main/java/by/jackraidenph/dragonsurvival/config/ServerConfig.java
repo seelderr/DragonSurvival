@@ -1029,7 +1029,7 @@ public class ServerConfig {
 			
 			forestBreathDamage = builder
 					.comment("The amount of damage the forest breath ability deals. This value is multiplied by the skill level.")
-					.defineInRange("forestBreathDamage", 1.0, 0, 100.0);
+					.defineInRange("forestBreathDamage", 2.0, 0, 100.0);
 			
 			forestBreathInitialMana = builder
 					.comment("The mana cost for starting the forest breath ability")
@@ -1045,7 +1045,9 @@ public class ServerConfig {
 			
 			forestBreathBlockBreaks = builder
 					.comment("Blocks that have a chance to be broken by forest breath. Formatting: block/tag:modid:id")
-					.defineList("stormBreathBlockBreaks", Arrays.asList(), this::isValidBlockConfig);
+					.defineList("stormBreathBlockBreaks", Arrays.asList(
+							"tag:minecraft:banners"
+					), this::isValidBlockConfig);
 		}
 		
 		{
@@ -1059,7 +1061,7 @@ public class ServerConfig {
 			
 			spikeManaCost = builder
 					.comment("The mana cost for using the spike ability")
-					.defineInRange("spikeManaCost", 3, 0, 100);
+					.defineInRange("spikeManaCost", 2, 0, 100);
 			
 		}
 		
@@ -1070,11 +1072,11 @@ public class ServerConfig {
 			
 			inspirationDuration = builder
 					.comment("The duration in seconds of the inspiration effect given when the ability is used")
-					.defineInRange("inspirationDuration", 30, 0, 10000);
+					.defineInRange("inspirationDuration", 60, 0, 10000);
 			
 			inspirationManaCost = builder
 					.comment("The mana cost for using the inspiration ability")
-					.defineInRange("inspirationManaCost", 5, 0, 100);
+					.defineInRange("inspirationManaCost", 3, 0, 100);
 			
 		}
 		
@@ -1145,7 +1147,17 @@ public class ServerConfig {
 			
 			stormBreathBlockBreaks = builder
 					.comment("Blocks that have a chance to be broken by storm breath. Formatting: block/tag:modid:id")
-					.defineList("stormBreathBlockBreaks", Arrays.asList(), this::isValidBlockConfig);
+					.defineList("stormBreathBlockBreaks", Arrays.asList(
+							"tag:minecraft:impermeable",
+							"block:minecraft:snow",
+							"tag:minecraft:crops",
+							"tag:minecraft:flowers",
+							"tag:minecraft:banners",
+							"tag:minecraft:lush_plants_replaceable",
+							"tag:minecraft:azalea_log_replaceable",
+							"tag:minecraft:replaceable_plants",
+							"tag:minecraft:leaves"
+							), this::isValidBlockConfig);
 		}
 		
 		{
@@ -1155,11 +1167,11 @@ public class ServerConfig {
 			
 			ballLightningDamage = builder
 					.comment("The amount of damage the lightning ball ability deals. This value is multiplied by the skill level.")
-					.defineInRange("ballLightningDamage", 3.0, 0, 100.0);
+					.defineInRange("ballLightningDamage", 4.0, 0, 100.0);
 			
 			ballLightningManaCost = builder
 					.comment("The mana cost for using the lightning ball ability")
-					.defineInRange("ballLightningManaCost", 6, 0, 100);
+					.defineInRange("ballLightningManaCost", 3, 0, 100);
 			
 		}
 		
@@ -1174,7 +1186,7 @@ public class ServerConfig {
 			
 			revealingTheSoulManaCost = builder
 					.comment("The mana cost for using the revealing The Soul ability")
-					.defineInRange("revealingTheSoulManaCost", 5, 0, 100);
+					.defineInRange("revealingTheSoulManaCost", 3, 0, 100);
 			
 			revealingTheSoulMaxEXP = builder
 					.comment("The max amount of increased exp that can be gained from a single mob with reavling the soul")
@@ -1254,6 +1266,24 @@ public class ServerConfig {
 					.defineList("fireBreathBlockBreaks", Arrays.asList(
 							"tag:minecraft:ice",
 							"block:minecraft:snow",
+							"tag:minecraft:crops",
+							"tag:minecraft:leaves",
+							"tag:minecraft:flowers",
+							"tag:minecraft:banners",
+							"tag:minecraft:lush_plants_replaceable",
+							"tag:minecraft:azalea_log_replaceable",
+							"tag:minecraft:replaceable_plants",
+							"tag:minecraft:wooden_fences",
+							"tag:minecraft:logs_that_burn",
+							"tag:minecraft:mycelium",
+							"tag:minecraft:wooden_stairs",
+							"tag:minecraft:wooden_doors",
+							"tag:minecraft:wool",
+							"tag:minecraft:saplings",
+							"tag:minecraft:impermeable",
+							"block:minecraft:cobweb",
+							"block:minecraft:large_fern",
+							"block:minecraft:sugar_cane",
 							"block:minecraft:snow_block"
 					), this::isValidBlockConfig);
 		}
@@ -1269,7 +1299,7 @@ public class ServerConfig {
 			
 			fireballManaCost = builder
 					.comment("The mana cost for using the fireball ball ability")
-					.defineInRange("fireballManaCost", 5, 0, 100);
+					.defineInRange("fireballManaCost", 3, 0, 100);
 			
 		}
 		
@@ -1280,15 +1310,15 @@ public class ServerConfig {
 			
 			toughSkinDuration = builder
 					.comment("The duration in seconds of the tough skin effect given when the ability is used")
-					.defineInRange("toughSkinDuration", 30, 0, 10000);
+					.defineInRange("toughSkinDuration", 180, 0, 10000);
 			
 			toughSkinManaCost = builder
 					.comment("The mana cost for using the tough skin ability")
-					.defineInRange("toughSkinManaCost", 5, 0, 100);
+					.defineInRange("toughSkinManaCost", 3, 0, 100);
 			
 			toughSkinArmorValue = builder
 					.comment("The amount of extra armor given per level of tough skin effect")
-					.defineInRange("toughSkinArmorValue", 2.0, 0, 10000);
+					.defineInRange("toughSkinArmorValue", 3.0, 0, 10000);
 			
 		}
 		
@@ -1299,7 +1329,7 @@ public class ServerConfig {
 			
 			lavaVisionDuration = builder
 					.comment("The duration in seconds of the lava vision effect given when the ability is used")
-					.defineInRange("lavaVisionDuration", 45, 0, 10000);
+					.defineInRange("lavaVisionDuration", 60, 0, 10000);
 			
 			lavaVisionManaCost = builder
 					.comment("The mana cost for using the lava vision ability")
