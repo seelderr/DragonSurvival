@@ -9,6 +9,7 @@ import by.jackraidenph.dragonsurvival.registration.EntityTypesInit;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.entity.projectile.AbstractFireballEntity;
 import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.ParticleTypes;
@@ -18,6 +19,7 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 
 import java.util.List;
@@ -73,6 +75,18 @@ public class BallLightningEntity extends DragonBallEntity
 					double d2 = level.random.nextFloat();
 					double d3 = level.random.nextFloat();
 					level.addParticle(new LargeLightningParticleData(37F, false), ent.getX() + d1, ent.getY() + 0.5 + d2, ent.getZ() + d3, 0.0D, 0.0D, 0.0D);
+				}
+			}
+		}
+		
+		if(!level.isClientSide){
+			if (level.isThundering()) {
+				if (level.random.nextInt(100) < 30) {
+					if (level.canSeeSky(blockPosition())) {
+						LightningBoltEntity lightningboltentity = EntityType.LIGHTNING_BOLT.create(level);
+						lightningboltentity.moveTo(new Vector3d(position().x, position().y, position().z));
+						level.addFreshEntity(lightningboltentity);
+					}
 				}
 			}
 		}
