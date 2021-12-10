@@ -81,14 +81,15 @@ public class StormBreathAbility extends BreathAbility
 	
 	@OnlyIn(Dist.CLIENT)
 	public void sound(){
-		if (castingTicks == 1) {
+		if (castingTicks == 2) {
 			if(startingSound == null){
 				startingSound = SimpleSound.forAmbientAddition(SoundRegistry.stormBreathStart);
 			}
 			Minecraft.getInstance().getSoundManager().play(startingSound);
-			
 			loopingSound = new StormBreathSound(this);
-			Minecraft.getInstance().getSoundManager().queueTickingSound(loopingSound);
+			
+			Minecraft.getInstance().getSoundManager().stop(new ResourceLocation(DragonSurvivalMod.MODID, "storm_breath_loop"), SoundCategory.PLAYERS);
+			Minecraft.getInstance().getSoundManager().play(loopingSound);
 		}
 	}
 

@@ -169,14 +169,15 @@ public class NetherBreathAbility extends BreathAbility
 	
 	@OnlyIn(Dist.CLIENT)
 	public void sound(){
-		if (castingTicks == 1) {
+		if (castingTicks == 2) {
 			if(startingSound == null){
 				startingSound = SimpleSound.forAmbientAddition(SoundRegistry.fireBreathStart);
 			}
 			Minecraft.getInstance().getSoundManager().play(startingSound);
-			
 			loopingSound = new FireBreathSound(this);
-			Minecraft.getInstance().getSoundManager().queueTickingSound(loopingSound);
+			
+			Minecraft.getInstance().getSoundManager().stop(new ResourceLocation(DragonSurvivalMod.MODID, "fire_breath_loop"), SoundCategory.PLAYERS);
+			Minecraft.getInstance().getSoundManager().play(loopingSound);
 		}
 	}
 	
@@ -215,7 +216,7 @@ public class NetherBreathAbility extends BreathAbility
 			DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
 			
 			if(handler != null) {
-				if (entityHit.level.random.nextInt(100) < 100 - (handler.getMagic().getAbilityLevel(DragonAbilities.BURN) * 15)) {
+				if (entityHit.level.random.nextInt(100) < (handler.getMagic().getAbilityLevel(DragonAbilities.BURN) * 15)) {
 					entityHit.addEffect(new EffectInstance(DragonEffects.BURN, Functions.secondsToTicks(10), 0, false, true));
 				}
 			}
@@ -233,16 +234,18 @@ public class NetherBreathAbility extends BreathAbility
 	{
 		if(!player.level.isClientSide) {
 			if (ConfigHandler.SERVER.fireBreathSpreadsFire.get()) {
-				Direction direction = player.getDirection().getOpposite();
-				BlockPos blockPos = pos.relative(direction);
-				
-				if(AbstractFireBlock.canBePlacedAt(player.level, blockPos,direction)) {
-					boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(player.level, player);
+				Direction dir = player.getDirection().getOpposite();
+				for(Direction direction : new Direction[]{dir, Direction.UP}){
+					BlockPos blockPos = pos.relative(direction);
 					
-					if (flag) {
-						if (player.level.random.nextInt(100) < 50) {
-							BlockState blockstate1 = AbstractFireBlock.getState(player.level, blockPos);
-							player.level.setBlock(blockPos, blockstate1, 3);
+					if(AbstractFireBlock.canBePlacedAt(player.level, blockPos,direction)) {
+						boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(player.level, player);
+						
+						if (flag) {
+							if (player.level.random.nextInt(100) < 50) {
+								BlockState blockstate1 = AbstractFireBlock.getState(player.level, blockPos);
+								player.level.setBlock(blockPos, blockstate1, 3);
+							}
 						}
 					}
 				}
@@ -250,7 +253,7 @@ public class NetherBreathAbility extends BreathAbility
 			DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
 			
 			if(handler != null){
-				if(player.level.random.nextInt(100) < 100 - (handler.getMagic().getAbilityLevel(DragonAbilities.BURN) * 15)){
+				if(player.level.random.nextInt(100) < (handler.getMagic().getAbilityLevel(DragonAbilities.BURN) * 15)){
 					BlockState blockAbove = player.level.getBlockState(pos.above());
 					
 					if(blockAbove.getBlock() == Blocks.AIR) {

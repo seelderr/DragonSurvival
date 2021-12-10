@@ -96,14 +96,15 @@ public class ForestBreathAbility extends BreathAbility
 	
 	@OnlyIn(Dist.CLIENT)
 	public void sound(){
-		if (castingTicks == 1) {
+		if (castingTicks == 2) {
 			if(startingSound == null){
 				startingSound = SimpleSound.forAmbientAddition(SoundRegistry.forestBreathStart);
 			}
 			Minecraft.getInstance().getSoundManager().play(startingSound);
-			
 			loopingSound = new PoisonBreathSound(this);
-			Minecraft.getInstance().getSoundManager().queueTickingSound(loopingSound);
+			
+			Minecraft.getInstance().getSoundManager().stop(new ResourceLocation(DragonSurvivalMod.MODID, "forest_breath_loop"), SoundCategory.PLAYERS);
+			Minecraft.getInstance().getSoundManager().play(loopingSound);
 		}
 	}
 	

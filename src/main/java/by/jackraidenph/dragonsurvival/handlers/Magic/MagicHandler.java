@@ -95,10 +95,13 @@ public class MagicHandler
 						}
 					}
 				}else{
-					cap.getMagic().setCurrentlyCasting(null);
-					
-					if(player.level.isClientSide){
-						NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCastingToServer(player.getId(), null));
+					if(cap.getMagic().getCurrentlyCasting() != null) {
+						cap.getMagic().getCurrentlyCasting().stopCasting();
+						cap.getMagic().setCurrentlyCasting(null);
+						
+						if (player.level.isClientSide) {
+							NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCastingToServer(player.getId(), null));
+						}
 					}
 				}
 			}
