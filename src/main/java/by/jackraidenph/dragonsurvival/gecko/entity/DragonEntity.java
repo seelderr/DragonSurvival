@@ -142,7 +142,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                     builder.addAnimation("fly", true);
                     
                 }else if (!player.isOnGround() && motio.y() < 0) {
-                    if(player.fallDistance > 4){
+                    if(player.fallDistance > 4 || player.onClimbable()){
                         builder.addAnimation("idle", true);
                     }else {
                         builder.addAnimation("land", false);
