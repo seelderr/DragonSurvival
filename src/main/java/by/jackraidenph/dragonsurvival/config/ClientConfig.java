@@ -13,6 +13,8 @@ public class ClientConfig {
 	public final ForgeConfigSpec.BooleanValue notifyWingStatus;
 	public final ForgeConfigSpec.BooleanValue clientDebugMessages;
 	
+	public final ForgeConfigSpec.BooleanValue renderDragonClaws;
+	
 	public final ForgeConfigSpec.BooleanValue dragonInventory;
 	public final ForgeConfigSpec.BooleanValue dragonTabs;
 	public final ForgeConfigSpec.BooleanValue inventoryToggle;
@@ -45,6 +47,12 @@ public class ClientConfig {
 		inventoryToggle = builder
 				.comment("Should the buttons for toggeling between dragon and normaly inventory be added?")
 				.define("inventoryToggle", true);
+		
+		
+		renderDragonClaws = builder
+				.comment("Should the tools on the claws and teeth be rendered for your dragon?")
+				.define("renderDragonClaws", true);
+		
 		
 		builder.push("ui");
 		castbarXOffset = builder

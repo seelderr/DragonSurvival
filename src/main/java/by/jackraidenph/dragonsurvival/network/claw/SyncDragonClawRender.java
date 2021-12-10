@@ -75,6 +75,10 @@ public class SyncDragonClawRender implements IMessage<SyncDragonClawRender>
 				if (entity instanceof PlayerEntity) {
 					DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
 						dragonStateHandler.getClawInventory().renderClaws = message.state;
+						
+						if(thisPlayer == entity){
+							ConfigHandler.CLIENT.renderDragonClaws.set(message.state);
+						}
 					});
 				}
 			}

@@ -268,18 +268,7 @@ public class ClawToolHandler
 				Collection<AttributeModifier> attackSpeed = sword.getAttributeModifiers(EquipmentSlotType.MAINHAND).get(Attributes.ATTACK_SPEED);
 				AttributeModifier modifier = attackSpeed.stream().findFirst().orElse(null);
 				
-//				ModifiableAttributeInstance itemInstance = new ModifiableAttributeInstance(Attributes.ATTACK_SPEED, (s) -> {});
-//
-//				attackSpeed.forEach((mod) -> {
-//					if(!itemInstance.hasModifier(mod)){
-//						itemInstance.addTransientModifier(mod);
-//					}
-//				});
-//
-//				itemInstance.addTransientModifier(new AttributeModifier("REMOVE_DEFAULT_ATTACK_SPEED", -Attributes.ATTACK_SPEED.getDefaultValue(), Operation.ADDITION));
-//
 				if(modifier != null){
-//					AttributeModifier attack_speed = new AttributeModifier(CLAW_ATTACK_SPEED, "CLAW_ATTACK_SPEED", itemInstance.getValue(), Operation.ADDITION);
 					AttributeModifier attack_speed = new AttributeModifier(CLAW_ATTACK_SPEED, "CLAW_ATTACK_SPEED", modifier.getAmount(), modifier.getOperation());
 					
 					if(!attackSpeedInstance.hasModifier(attack_speed)){

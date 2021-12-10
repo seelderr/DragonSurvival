@@ -17,6 +17,7 @@ import net.minecraft.entity.EntityPredicate;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -30,6 +31,19 @@ public class SynchronizationController {
     /**
      * Synchronizes capability among players
      */
+    
+    @SubscribeEvent
+    public static void onEntityJoin(EntityJoinWorldEvent event){
+        Entity ent = event.getEntity();
+        
+        if(ent instanceof PlayerEntity){
+            PlayerEntity player = (PlayerEntity)ent;
+            
+            if(player.level.isClientSide){
+                NetworkHandler.CHANNEL.sendToServer(new SyncDragonClawRender(player.getId(), ConfigHandler.CLIENT.renderDragonClaws.get()));
+            }
+        }
+    }
     
     @SubscribeEvent
     public static void onLoggedIn(PlayerEvent.PlayerLoggedInEvent loggedInEvent) {

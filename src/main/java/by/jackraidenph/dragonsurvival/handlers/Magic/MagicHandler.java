@@ -65,7 +65,6 @@ public class MagicHandler
 				if(moveSpeed.getModifier(DRAGON_PASSIVE_MOVEMENT_SPEED) != null){
 					moveSpeed.removeModifier(DRAGON_PASSIVE_MOVEMENT_SPEED);
 				}
-				return;
 			}
 			
 			if(cap.getLevel() == DragonLevel.ADULT) {
