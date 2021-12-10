@@ -26,10 +26,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.particles.RedstoneParticleData;
 import net.minecraft.potion.EffectInstance;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
@@ -285,7 +282,7 @@ public class StormBreathAbility extends BreathAbility
 	}
 	
 	@Override
-	public void onBlock(BlockPos pos, BlockState blockState)
+	public void onBlock(BlockPos pos, BlockState blockState, Direction direction)
 	{
 		if(!player.level.isClientSide){
 			if(player.tickCount % 40 == 0) {

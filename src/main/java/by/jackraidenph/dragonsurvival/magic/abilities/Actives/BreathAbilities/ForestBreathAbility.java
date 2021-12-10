@@ -29,6 +29,7 @@ import net.minecraft.item.Items;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Potion;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
@@ -229,7 +230,7 @@ public class ForestBreathAbility extends BreathAbility
 	public void onDamage(LivingEntity entity) {}
 	
 	@Override
-	public void onBlock(BlockPos pos, BlockState blockState)
+	public void onBlock(BlockPos pos, BlockState blockState, Direction direction)
 	{
 		if(blockState.getMaterial().isSolidBlocking()) {
 			if(!player.level.isClientSide) {

@@ -88,7 +88,7 @@ public class DragonBallEntity extends AbstractFireballEntity implements IAnimata
 		if(isDead){
 			deadTicks++;
 			
-			if(deadTicks >= 40){
+			if(deadTicks >= 26){
 				this.remove();
 			}
 			return;

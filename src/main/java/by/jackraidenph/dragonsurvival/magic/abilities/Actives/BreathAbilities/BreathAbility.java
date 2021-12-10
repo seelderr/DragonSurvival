@@ -17,6 +17,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.*;
 import net.minecraft.util.math.RayTraceContext.BlockMode;
 import net.minecraft.util.math.RayTraceContext.FluidMode;
@@ -171,7 +172,7 @@ public abstract class BreathAbility extends ActiveDragonAbility
 	public abstract boolean canHitEntity(LivingEntity entity);
 	public abstract void onDamage(LivingEntity entity);
 	public abstract float getDamage();
-	public abstract void onBlock(BlockPos pos, BlockState blockState);
+	public abstract void onBlock(BlockPos pos, BlockState blockState, Direction direction);
 	
 	public void onEntityHit(LivingEntity entityHit){
 		if (entityHit.hurt(DamageSource.playerAttack(player), getDamage())) {
@@ -198,7 +199,6 @@ public abstract class BreathAbility extends ActiveDragonAbility
 			}else if(result.getType() == Type.BLOCK){
 				pos = result.getBlockPos();
 			}
-			
 			if(pos == null) return;
 			
 			for(int x = -(RANGE / 2); x < (RANGE / 2); x++){
@@ -219,7 +219,7 @@ public abstract class BreathAbility extends ActiveDragonAbility
 									return;
 								}
 								
-								onBlock(newPos, state);
+								onBlock(newPos, state, result.getDirection());
 							}
 						}
 					}

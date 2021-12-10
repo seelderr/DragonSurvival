@@ -230,22 +230,19 @@ public class NetherBreathAbility extends BreathAbility
 	}
 	
 	@Override
-	public void onBlock(BlockPos pos, BlockState blockState)
+	public void onBlock(BlockPos pos, BlockState blockState, Direction direction)
 	{
 		if(!player.level.isClientSide) {
 			if (ConfigHandler.SERVER.fireBreathSpreadsFire.get()) {
-				Direction dir = player.getDirection().getOpposite();
-				for(Direction direction : new Direction[]{dir, Direction.UP}){
-					BlockPos blockPos = pos.relative(direction);
+				BlockPos blockPos = pos.relative(direction);
+				
+				if(AbstractFireBlock.canBePlacedAt(player.level, blockPos, direction)) {
+					boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(player.level, player);
 					
-					if(AbstractFireBlock.canBePlacedAt(player.level, blockPos,direction)) {
-						boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(player.level, player);
-						
-						if (flag) {
-							if (player.level.random.nextInt(100) < 50) {
-								BlockState blockstate1 = AbstractFireBlock.getState(player.level, blockPos);
-								player.level.setBlock(blockPos, blockstate1, 3);
-							}
+					if (flag) {
+						if (player.level.random.nextInt(100) < 50) {
+							BlockState blockstate1 = AbstractFireBlock.getState(player.level, blockPos);
+							player.level.setBlock(blockPos, blockstate1, 3);
 						}
 					}
 				}

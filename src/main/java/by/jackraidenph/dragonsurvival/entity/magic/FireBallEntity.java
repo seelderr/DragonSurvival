@@ -47,6 +47,7 @@ public class FireBallEntity extends DragonBallEntity
 			float explosivePower = getLevel();
 			this.level.explode((Entity)null, this.getX(), this.getY(), this.getZ(), explosivePower, flag, flag ? Explosion.Mode.DESTROY : Explosion.Mode.NONE);
 			isDead = true;
+			setDeltaMovement(0, 0, 0);
 		}
 	}
 	
@@ -59,6 +60,7 @@ public class FireBallEntity extends DragonBallEntity
 				this.doEnchantDamageEffects((LivingEntity)entity1, entity);
 			}
 			isDead = true;
+			setDeltaMovement(0, 0, 0);
 		}
 	}
 }
