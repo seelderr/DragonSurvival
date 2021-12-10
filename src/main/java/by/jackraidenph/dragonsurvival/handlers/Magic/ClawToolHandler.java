@@ -14,6 +14,7 @@ import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.AttributeModifier.Operation;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.item.ArmorStandEntity;
@@ -54,21 +55,6 @@ import java.util.UUID;
 @EventBusSubscriber
 public class ClawToolHandler
 {
-	public static boolean hasEmptySlot(PlayerEntity player){
-		if(true) return true; //Disabled until it can be implemented properly
-		
-      boolean hasEmptySlot = false;
-        for(int slot = 0; slot < 9; slot++){
-            ItemStack hotbarStack = player.inventory.getItem(slot);
-            
-            if(hotbarStack.isEmpty()){
-                hasEmptySlot = true;
-                break;
-            }
-        }
-		
-		return hasEmptySlot;
-	}
 	
 	@SubscribeEvent
 	public static void playerAttack(AttackEntityEvent event){
@@ -77,34 +63,56 @@ public class ClawToolHandler
 		PlayerEntity player = (PlayerEntity)event.getPlayer().getEntity();
 		LivingEntity target = (LivingEntity)event.getTarget();
 		
-		if(!hasEmptySlot(player)) return;
 		if(!target.isAttackable()) return;
+		if(!DragonStateProvider.isDragon(player)) return;
 		
 		DragonStateProvider.getCap(player).ifPresent(cap -> {
 			ItemStack mainStack = player.getMainHandItem();
 			ItemStack sword = cap.getClawInventory().getClawsInventory().getItem(0);
 			
-			float baseDamage = (float)DragonStateHandler.buildDamageMod(cap, cap.isDragon()).getAmount();
+			ModifiableAttributeInstance baseAttacks = player.getAttributes().getInstance(Attributes.ATTACK_DAMAGE);
+			ModifiableAttributeInstance instance = new ModifiableAttributeInstance(Attributes.ATTACK_DAMAGE, (s) -> {});
+			
+			instance.addTransientModifier(new AttributeModifier("REMOVE_BASE_DMG", -1.0, Operation.ADDITION));
+			
+			if(!mainStack.isEmpty()){
+				mainStack.getAttributeModifiers(EquipmentSlotType.MAINHAND).get(Attributes.ATTACK_DAMAGE).forEach((c) -> {
+					baseAttacks.removeModifier(c.getId());
+				});
+			}
+			
+			baseAttacks.getModifiers().forEach((mod) -> {
+				if(!instance.hasModifier(mod)){
+					instance.addTransientModifier(mod);
+				}
+			});
+			
+			float baseDamage = (float)instance.getValue();
 			
 			float mainDamage = baseDamage;
 			float swordDamage = baseDamage;
 			
 			if (!mainStack.isEmpty()) {
-				ModifiableAttributeInstance instance = new ModifiableAttributeInstance(Attributes.ATTACK_DAMAGE, (s) -> {});
-				instance.setBaseValue(player.getAttributeBaseValue(Attributes.ATTACK_DAMAGE) + EnchantmentHelper.getDamageBonus(mainStack, target.getMobType()));
-				mainStack.getAttributeModifiers(EquipmentSlotType.MAINHAND).get(Attributes.ATTACK_DAMAGE).forEach((c) -> instance.addTransientModifier(c));
+				ModifiableAttributeInstance itemInstance = new ModifiableAttributeInstance(Attributes.ATTACK_DAMAGE, (s) -> {});
+				mainStack.getAttributeModifiers(EquipmentSlotType.MAINHAND).get(Attributes.ATTACK_DAMAGE).forEach((c) -> {
+					if(!itemInstance.hasModifier(c)) {
+						itemInstance.addTransientModifier(c);
+					}
+				});
 				
-				mainDamage += instance.getValue();
+				mainDamage += EnchantmentHelper.getDamageBonus(mainStack, target.getMobType()) + itemInstance.getValue();
 			}
 			
 			if (!sword.isEmpty()) {
-				ModifiableAttributeInstance instance = new ModifiableAttributeInstance(Attributes.ATTACK_DAMAGE, (s) -> {});
-				instance.setBaseValue(player.getAttributeBaseValue(Attributes.ATTACK_DAMAGE) + EnchantmentHelper.getDamageBonus(sword, target.getMobType()));
-				sword.getAttributeModifiers(EquipmentSlotType.MAINHAND).get(Attributes.ATTACK_DAMAGE).forEach((c) -> instance.addTransientModifier(c));
+				ModifiableAttributeInstance itemInstance = new ModifiableAttributeInstance(Attributes.ATTACK_DAMAGE, (s) -> {});
+				sword.getAttributeModifiers(EquipmentSlotType.MAINHAND).get(Attributes.ATTACK_DAMAGE).forEach((c) -> {
+					if(!itemInstance.hasModifier(c)) {
+						itemInstance.addTransientModifier(c);
+					}
+				});
 				
-				swordDamage += instance.getValue();
+				swordDamage += EnchantmentHelper.getDamageBonus(sword, target.getMobType()) + itemInstance.getValue();
 			}
-			
 			
 			//This is mostly reused code from PlayerEntity.attack(Entity)
 			if (swordDamage >= mainDamage) {
@@ -251,8 +259,6 @@ public class ClawToolHandler
 		DragonStateProvider.getCap(player).ifPresent(cap -> {
 			if (!cap.isDragon()) return;
 			ItemStack sword = cap.getClawInventory().getClawsInventory().getItem(0);
-			player.getAttributes().addTransientAttributeModifiers(sword.getAttributeModifiers(EquipmentSlotType.OFFHAND));
-			
 			
 			if(sword.isEmpty()){
 				if(attackSpeedInstance.getModifier(CLAW_ATTACK_SPEED) != null){
@@ -262,7 +268,18 @@ public class ClawToolHandler
 				Collection<AttributeModifier> attackSpeed = sword.getAttributeModifiers(EquipmentSlotType.MAINHAND).get(Attributes.ATTACK_SPEED);
 				AttributeModifier modifier = attackSpeed.stream().findFirst().orElse(null);
 				
+//				ModifiableAttributeInstance itemInstance = new ModifiableAttributeInstance(Attributes.ATTACK_SPEED, (s) -> {});
+//
+//				attackSpeed.forEach((mod) -> {
+//					if(!itemInstance.hasModifier(mod)){
+//						itemInstance.addTransientModifier(mod);
+//					}
+//				});
+//
+//				itemInstance.addTransientModifier(new AttributeModifier("REMOVE_DEFAULT_ATTACK_SPEED", -Attributes.ATTACK_SPEED.getDefaultValue(), Operation.ADDITION));
+//
 				if(modifier != null){
+//					AttributeModifier attack_speed = new AttributeModifier(CLAW_ATTACK_SPEED, "CLAW_ATTACK_SPEED", itemInstance.getValue(), Operation.ADDITION);
 					AttributeModifier attack_speed = new AttributeModifier(CLAW_ATTACK_SPEED, "CLAW_ATTACK_SPEED", modifier.getAmount(), modifier.getOperation());
 					
 					if(!attackSpeedInstance.hasModifier(attack_speed)){
@@ -346,7 +363,6 @@ public class ClawToolHandler
 		PlayerEntity playerEntity = breakEvent.getPlayer();
 		
 		if(playerEntity.isCreative()) return;
-		if(!hasEmptySlot(playerEntity)) return;
 		
 		
 		DragonStateProvider.getCap(playerEntity).ifPresent(dragonStateHandler -> {
@@ -415,26 +431,24 @@ public class ClawToolHandler
 					float speed = breakSpeedEvent.getOriginalSpeed();
 					float newSpeed = 0F;
 					
-					if(hasEmptySlot(playerEntity)) {
-						for (int i = 1; i < 4; i++) {
-							if (blockState.getHarvestTool() == DragonStateHandler.CLAW_TOOL_TYPES[i]) {
-								ItemStack breakingItem = dragonStateHandler.getClawInventory().getClawsInventory().getItem(i);
-								if (!breakingItem.isEmpty()) {
-									float tempSpeed = breakingItem.getDestroySpeed(blockState) * 0.7F;
-									
-									if (tempSpeed > newSpeed) {
-										newSpeed = tempSpeed;
-									}
+					for (int i = 1; i < 4; i++) {
+						if (blockState.getHarvestTool() == DragonStateHandler.CLAW_TOOL_TYPES[i]) {
+							ItemStack breakingItem = dragonStateHandler.getClawInventory().getClawsInventory().getItem(i);
+							if (!breakingItem.isEmpty()) {
+								float tempSpeed = breakingItem.getDestroySpeed(blockState) * 0.7F;
+								
+								if (tempSpeed > newSpeed) {
+									newSpeed = tempSpeed;
 								}
 							}
 						}
+					}
+					
+					if (!playerEntity.getMainHandItem().isEmpty()) {
+						float tempSpeed = playerEntity.getMainHandItem().getDestroySpeed(blockState);
 						
-						if (!playerEntity.getMainHandItem().isEmpty()) {
-							float tempSpeed = playerEntity.getMainHandItem().getDestroySpeed(blockState);
-							
-							if (tempSpeed > newSpeed) {
-								newSpeed = 0;
-							}
+						if (tempSpeed > newSpeed) {
+							newSpeed = 0;
 						}
 					}
 					
