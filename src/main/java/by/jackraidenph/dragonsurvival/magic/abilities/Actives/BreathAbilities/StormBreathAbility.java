@@ -94,6 +94,8 @@ public class StormBreathAbility extends BreathAbility
 
 	@OnlyIn(Dist.CLIENT)
 	public void stopSound(){
+		castingTicks = 0;
+		
 		if(SoundRegistry.stormBreathEnd != null) {
 			if (endSound == null) {
 				endSound = SimpleSound.forAmbientAddition(SoundRegistry.stormBreathEnd);

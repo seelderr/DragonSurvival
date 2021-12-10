@@ -109,6 +109,9 @@ public class ForestBreathAbility extends BreathAbility
 	
 	@OnlyIn(Dist.CLIENT)
 	public void stopSound(){
+		castingTicks = 0;
+		
+		
 		if(SoundRegistry.forestBreathEnd != null) {
 			if (endSound == null) {
 				endSound = SimpleSound.forAmbientAddition(SoundRegistry.forestBreathEnd);
