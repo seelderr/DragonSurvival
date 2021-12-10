@@ -90,6 +90,6 @@ public class BallLightningEntity extends DragonBallEntity
 			}
 		}
 		
-		level.playLocalSound(getX(), getY(), getZ(), SoundEvents.GENERIC_EXPLODE, SoundCategory.HOSTILE, 0.25F, 2.5f, false);
+		level.playLocalSound(getX(), getY(), getZ(), SoundEvents.LIGHTNING_BOLT_IMPACT, SoundCategory.HOSTILE, 3.0F, 0.5f, false);
 	}
 }

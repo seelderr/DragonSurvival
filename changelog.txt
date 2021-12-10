@@ -12,18 +12,23 @@
 - Fixed: knockback enchant seem to push mob toward you instead of sending them fly away
 - Fixed: the "evil dragon" effect should not be given to the human player.
 - Fixed: when falling from lianas and getting stuck somewhere, there is no animation at all and the wings are enlarged.
+- Fixed: block breakdown was calculated with an error
+- Fixed: Breath fire spawning was calculated with an error
 - Configs added: saving claws and teeth when dead (enabled by default)
 - adds charged effect to ball lightning
 - claw renderer can now be disabled by removing the check mark from "claws and teeth"
 - for ball lightning and fireball increased the range to 32 blocks.
 - cost of mass buffs has been reduced, and the duration has been increased.
 - chance of block destruction/burnout increased from 20% to 60%
+- chance of fire spawning with breath increased to 50%
 - Beacon Cave Fire now gives the "Tough Skin" effect, which strengthens armor instead of the fire resistance effect.
 - adult dragons are accelerated
-- Updated Hebrew
+- updated Hebrew
 - for each breath added a different list of blocks to destroy in the configuration.
 - Damage from Forest Gas is doubled.
-- Added explosion animation for ball lightning and fireball
+- added explosion animation for ball lightning and fireball
+- ball lightning now has many more visual effects and make  lightning strike when it's raining and stormy
+- accelerated expenditure of hunger during the use of skills.
 
 1.16.5-0.3 Magic Update:
 - Fixed: Passive skills can disappear after death

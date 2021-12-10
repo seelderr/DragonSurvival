@@ -182,7 +182,7 @@ public abstract class BreathAbility extends ActiveDragonAbility
 	}
 	
 	public int blockBreakChance(){
-		return 60;
+		return 90;
 	}
 	
 	public void hitBlocks() {
