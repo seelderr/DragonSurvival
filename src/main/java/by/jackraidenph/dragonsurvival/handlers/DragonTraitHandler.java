@@ -32,6 +32,7 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biome.RainType;
 import net.minecraft.world.lighting.WorldLightManager;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.network.PacketDistributor;
@@ -40,7 +41,7 @@ import net.minecraftforge.fml.network.PacketDistributor;
 public class DragonTraitHandler {
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent playerTickEvent) {
-        if (playerTickEvent.phase != TickEvent.Phase.START)
+        if (playerTickEvent.phase != Phase.END)
             return;
         PlayerEntity playerEntity = playerTickEvent.player;
         DragonStateProvider.getCap(playerEntity).ifPresent(dragonStateHandler -> {
@@ -246,13 +247,15 @@ public class DragonTraitHandler {
                                 }
                             }
                             
+                            float hydrationDamage = ConfigHandler.SERVER.seaDehydrationDamage.get().floatValue();
+                            
                             if (!world.isClientSide && debuffData.timeWithoutWater > maxTicksOutofWater && debuffData.timeWithoutWater < maxTicksOutofWater * 2) {
                                 if (playerEntity.tickCount % 40 == 0) {
-                                    playerEntity.hurt(DamageSources.DEHYDRATION, ConfigHandler.SERVER.seaDehydrationDamage.get().floatValue());
+                                    playerEntity.hurt(DamageSources.DEHYDRATION, hydrationDamage);
                                 }
                             } else if (!world.isClientSide && debuffData.timeWithoutWater >= maxTicksOutofWater * 2) {
                                 if (playerEntity.tickCount % 20 == 0) {
-                                    playerEntity.hurt(DamageSources.DEHYDRATION, ConfigHandler.SERVER.seaDehydrationDamage.get().floatValue());
+                                    playerEntity.hurt(DamageSources.DEHYDRATION, hydrationDamage);
                                 }
                             }
                         } else if (!playerEntity.level.isClientSide && playerEntity.hasEffect(DragonEffects.PEACE)) {

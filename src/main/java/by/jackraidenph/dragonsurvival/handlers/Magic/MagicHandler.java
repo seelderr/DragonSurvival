@@ -14,10 +14,14 @@ import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.network.magic.ActivateClientAbility;
 import by.jackraidenph.dragonsurvival.network.magic.SyncAbilityCastingToServer;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
+import by.jackraidenph.dragonsurvival.util.DragonLevel;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
@@ -41,17 +45,36 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.fml.network.PacketDistributor.TargetPoint;
 
+import java.util.UUID;
+
 @EventBusSubscriber
 public class MagicHandler
 {
+	private static final UUID DRAGON_PASSIVE_MOVEMENT_SPEED = UUID.fromString("cdc3be6e-e17d-4efa-90f4-9dd838e9b000");
+	
 	@SubscribeEvent
 	public static void magicUpdate(PlayerTickEvent event){
 		if(event.phase == Phase.START) return;
 		
 		PlayerEntity player = event.player;
 		
+		ModifiableAttributeInstance moveSpeed = player.getAttribute(Attributes.MOVEMENT_SPEED);
+		
 		DragonStateProvider.getCap(player).ifPresent(cap -> {
-			if (!cap.isDragon()) return;
+			if (!cap.isDragon() || cap.getLevel() != DragonLevel.ADULT){
+				if(moveSpeed.getModifier(DRAGON_PASSIVE_MOVEMENT_SPEED) != null){
+					moveSpeed.removeModifier(DRAGON_PASSIVE_MOVEMENT_SPEED);
+				}
+				return;
+			}
+			
+			if(cap.getLevel() == DragonLevel.ADULT) {
+				AttributeModifier move_speed = new AttributeModifier(DRAGON_PASSIVE_MOVEMENT_SPEED, "DRAGON_MOVE_SPEED", (double)0.2F, AttributeModifier.Operation.MULTIPLY_TOTAL);
+				
+				if (moveSpeed.getModifier(DRAGON_PASSIVE_MOVEMENT_SPEED) == null) {
+					moveSpeed.addTransientModifier(move_speed);
+				}
+			}
 			
 			if(cap.getMagic().getCurrentlyCasting() != null){
 				ActiveDragonAbility ability = cap.getMagic().getCurrentlyCasting();

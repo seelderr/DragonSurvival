@@ -107,7 +107,7 @@ public class DragonBallEntity extends AbstractFireballEntity implements IAnimata
 			this.remove();
 		}
 		
-		if(moveDist >= 16){
+		if(moveDist >= 32){
 			onHit(ProjectileHelper.getHitResult(this, this::canHitEntity));
 		}
 	}
