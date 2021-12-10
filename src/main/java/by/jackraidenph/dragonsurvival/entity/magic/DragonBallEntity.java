@@ -25,7 +25,6 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 public class DragonBallEntity extends AbstractFireballEntity implements IAnimatable
 {
 	public static final DataParameter<Integer> SKILL_LEVEL = EntityDataManager.defineId(DragonBallEntity.class, DataSerializers.INT);
-	public int skillLevel = 1;
 	
 	public int getLevel(){
 		return this.entityData.get(SKILL_LEVEL);
@@ -52,9 +51,10 @@ public class DragonBallEntity extends AbstractFireballEntity implements IAnimata
 	}
 	
 	public void setLevel(int level){
-		this.skillLevel = level;
 		this.entityData.set(SKILL_LEVEL, level);
 	}
+	
+	
 	
 	@Override
 	protected IParticleData getTrailParticle()
@@ -76,11 +76,24 @@ public class DragonBallEntity extends AbstractFireballEntity implements IAnimata
 	protected void onHit(RayTraceResult p_70227_1_)
 	{
 		attackMobs();
+		isDead = true;
 	}
+	
+	protected boolean isDead;
+	protected int deadTicks;
 	
 	@Override
 	public void tick()
 	{
+		if(isDead){
+			deadTicks++;
+			
+			if(deadTicks >= 40){
+				this.remove();
+			}
+			return;
+		}
+		
 		Entity entity = this.getOwner();
 		if (this.level.isClientSide || (entity == null || !entity.removed) && this.level.hasChunkAt(this.blockPosition())) {
 			RayTraceResult raytraceresult = ProjectileHelper.getHitResult(this, this::canHitEntity);
@@ -104,7 +117,8 @@ public class DragonBallEntity extends AbstractFireballEntity implements IAnimata
 			this.level.addParticle(this.getTrailParticle(), d0, d1, d2, 0.0D, 0.0D, 0.0D);
 			this.setPos(d0, d1, d2);
 		} else {
-			this.remove();
+			isDead = true;
+			//this.remove();
 		}
 		
 		if(moveDist >= 32){
@@ -117,7 +131,13 @@ public class DragonBallEntity extends AbstractFireballEntity implements IAnimata
 	{
 		data.addAnimationController(new AnimationController<>(this, "everything", 3, event -> {
 			AnimationBuilder animationBuilder = new AnimationBuilder();
-			animationBuilder.addAnimation("idle", true);
+			
+			if(isDead){
+				animationBuilder.addAnimation("explosion", true);
+			}else {
+				animationBuilder.addAnimation("idle", true);
+			}
+			
 			event.getController().setAnimation(animationBuilder);
 			return PlayState.CONTINUE;
 		}));

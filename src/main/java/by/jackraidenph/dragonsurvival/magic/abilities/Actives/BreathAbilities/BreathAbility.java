@@ -211,7 +211,7 @@ public abstract class BreathAbility extends ActiveDragonAbility
 							if(state.getBlock() != Blocks.AIR){
 								if(SpecificsHandler.DRAGON_BREATH_BLOCKS != null && SpecificsHandler.DRAGON_BREATH_BLOCKS.containsKey(type) && SpecificsHandler.DRAGON_BREATH_BLOCKS.get(type).contains(state.getBlock())){
 									if(!player.level.isClientSide) {
-										if (player.level.random.nextInt(100) < (100 - blockBreakChance())) {
+										if (player.level.random.nextFloat() * 100 <= blockBreakChance()) {
 											state.getBlock().playerDestroy(player.level, player, pos, state, player.level.getBlockEntity(pos), ItemStack.EMPTY);
 											player.level.destroyBlock(pos, false, player);
 										}

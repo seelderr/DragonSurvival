@@ -83,6 +83,7 @@ public class MagicHandler
 				if (ability.canRun(player, -1)) {
 					if(!player.level.isClientSide) {
 						if (ability.getCastingTime() <= 0 || ability.getCurrentCastTimer() >= ability.getCastingTime()) {
+							player.causeFoodExhaustion(0.1F * ability.getManaCost());
 							ability.onActivation(player);
 							
 							TargetPoint point = new TargetPoint(player.position().x, player.position().y, player.position().z, 64, player.level.dimension());
@@ -90,6 +91,7 @@ public class MagicHandler
 						
 						} else {
 							ability.tickCasting();
+							player.causeFoodExhaustion(0.1F);
 						}
 					}
 				}else{

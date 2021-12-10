@@ -35,25 +35,30 @@ public class FireBallEntity extends DragonBallEntity
 		return false;
 	}
 	
+	@Override
+	public boolean isInvulnerableTo(DamageSource p_180431_1_)
+	{
+		return p_180431_1_.isExplosion() || super.isInvulnerableTo(p_180431_1_);
+	}
+	
 	protected void onHit(RayTraceResult p_70227_1_) {
-		if (!this.level.isClientSide) {
+		if (!this.level.isClientSide && !this.isDead) {
 			boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level, this.getOwner());
 			float explosivePower = getLevel();
 			this.level.explode((Entity)null, this.getX(), this.getY(), this.getZ(), explosivePower, flag, flag ? Explosion.Mode.DESTROY : Explosion.Mode.NONE);
-			this.remove();
+			isDead = true;
 		}
 	}
 	
 	protected void onHitEntity(EntityRayTraceResult p_213868_1_) {
-		if (!this.level.isClientSide) {
+		if (!this.level.isClientSide && !this.isDead) {
 			Entity entity = p_213868_1_.getEntity();
 			Entity entity1 = this.getOwner();
 			entity.hurt(DamageSource.fireball(this, entity1), FireBallAbility.getDamage(getLevel()));
 			if (entity1 instanceof LivingEntity) {
 				this.doEnchantDamageEffects((LivingEntity)entity1, entity);
 			}
-			
-			this.remove();
+			isDead = true;
 		}
 	}
 }
