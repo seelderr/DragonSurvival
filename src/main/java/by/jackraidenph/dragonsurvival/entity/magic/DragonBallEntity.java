@@ -76,6 +76,7 @@ public class DragonBallEntity extends AbstractFireballEntity implements IAnimata
 	protected void onHit(RayTraceResult p_70227_1_)
 	{
 		attackMobs();
+		setDeltaMovement(0,0,0);
 		isDead = true;
 	}
 	
