@@ -1,6 +1,10 @@
 {
   "itemGroup.dragon.survival.blocks": "Dragons Survival",
 
+  "ds.level.newborn": "Newborn",
+  "ds.level.young": "Young",
+  "ds.level.adult": "Adult",
+
   "item.dragonsurvival.magical_predator_entity_spawn_egg": "Magical Predator Spawn Egg",
   "item.dragonsurvival.hunter_hound_spawn_egg": "Knight Hound Spawn Egg",
   "item.dragonsurvival.shooter_spawn_egg": "Hunter Spawn Egg",
@@ -115,7 +119,13 @@
   "ds.gui.tab_button.0": "Inventory",
   "ds.gui.tab_button.1": "Abilities",
   "ds.gui.tab_button.2": "Lore will not be available anytime soon",
-  "ds.gui.tab_button.3": "Skin customization will not be available anytime soon",
+  "ds.gui.tab_button.3": "Skin customization",
+
+  "ds.gui.skins": "Skin Settings",
+  "ds.gui.skins.other_skins": "Show player skins",
+  "ds.gui.skins.toggle": "Enable/disable skins",
+  "ds.gui.skins.yours": "Your dragon",
+  "ds.gui.skins.random": "Random",
 
   "ds.hold_shift.for_food": "Hold 'Shift' for food info",
   "ds.cave.dragon.food": "§c■ Cave dragon food§r",

@@ -3,6 +3,7 @@ package by.jackraidenph.dragonsurvival.capability;
 import by.jackraidenph.dragonsurvival.capability.DragonCapabilities.ClawInventory;
 import by.jackraidenph.dragonsurvival.capability.DragonCapabilities.EmoteCap;
 import by.jackraidenph.dragonsurvival.capability.DragonCapabilities.MagicCap;
+import by.jackraidenph.dragonsurvival.capability.DragonCapabilities.SkinCap;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.util.DragonLevel;
 import by.jackraidenph.dragonsurvival.util.DragonType;
@@ -43,6 +44,7 @@ public class DragonStateHandler {
 	private final ClawInventory clawInventory = new ClawInventory();
 	private final EmoteCap emotes = new EmoteCap();
 	private final MagicCap magic = new MagicCap(this);
+	private final SkinCap skin = new SkinCap();
 	
 	private int lavaAirSupply;
     private int passengerId;
@@ -386,5 +388,9 @@ public class DragonStateHandler {
 	public MagicCap getMagic()
 	{
 		return magic;
+	}
+	
+	public SkinCap getSkin(){
+		return skin;
 	}
 }

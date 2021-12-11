@@ -7,6 +7,7 @@ import by.jackraidenph.dragonsurvival.handlers.ClientSide.ClientDragonRender;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.ClientFlightHandler;
 import by.jackraidenph.dragonsurvival.nest.NestEntity;
 import by.jackraidenph.dragonsurvival.network.*;
+import by.jackraidenph.dragonsurvival.network.nest.SynchronizeNest;
 import by.jackraidenph.dragonsurvival.registration.EntityTypesInit;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;

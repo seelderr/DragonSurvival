@@ -4,7 +4,7 @@ import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import by.jackraidenph.dragonsurvival.handlers.ServerSide.ServerFlightHandler;
-import by.jackraidenph.dragonsurvival.network.ToggleWings;
+import by.jackraidenph.dragonsurvival.network.status.ToggleWings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.LivingEntity;

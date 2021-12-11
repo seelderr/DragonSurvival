@@ -2,7 +2,8 @@ package by.jackraidenph.dragonsurvival.handlers.ServerSide;
 
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
-import by.jackraidenph.dragonsurvival.network.DiggingStatus;
+import by.jackraidenph.dragonsurvival.network.SyncDragonSkinSettings;
+import by.jackraidenph.dragonsurvival.network.status.DiggingStatus;
 import by.jackraidenph.dragonsurvival.network.PacketSyncCapabilityMovement;
 import by.jackraidenph.dragonsurvival.network.SyncCapabilityDebuff;
 import by.jackraidenph.dragonsurvival.network.SynchronizeDragonCap;
@@ -41,6 +42,7 @@ public class SynchronizationController {
             
             if(player.level.isClientSide){
                 NetworkHandler.CHANNEL.sendToServer(new SyncDragonClawRender(player.getId(), ConfigHandler.CLIENT.renderDragonClaws.get()));
+                NetworkHandler.CHANNEL.sendToServer(new SyncDragonSkinSettings(player.getId(), ConfigHandler.CLIENT.renderNewbornSkin.get(), ConfigHandler.CLIENT.renderYoungSkin.get(), ConfigHandler.CLIENT.renderAdultSkin.get()));
             }
         }
     }
@@ -82,6 +84,7 @@ public class SynchronizationController {
                 NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncMagicAbilities(player.getId(), cap.getMagic().getAbilities()));
     
                 NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncDragonClawRender(player.getId(), cap.getClawInventory().renderClaws));
+                NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncDragonSkinSettings(player.getId(), cap.getSkin().renderNewborn, cap.getSkin().renderYoung, cap.getSkin().renderAdult));
             });
         }
     }
@@ -101,6 +104,8 @@ public class SynchronizationController {
                     
                     NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) trackingPlayer), new SyncMagicAbilities(trackedEntity.getId(), dragonStateHandler.getMagic().getAbilities()));
                     NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) trackingPlayer), new SyncDragonClawsMenu(trackedEntity.getId(), dragonStateHandler.getClawInventory().isClawsMenuOpen(), dragonStateHandler.getClawInventory().getClawsInventory()));
+    
+                    NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) trackingPlayer), new SyncDragonSkinSettings(trackedEntity.getId(), dragonStateHandler.getSkin().renderNewborn, dragonStateHandler.getSkin().renderYoung, dragonStateHandler.getSkin().renderAdult));
     
                     if(ConfigHandler.SERVER.syncClawRender.get()) {
                         NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)trackingPlayer), new SyncDragonClawRender(trackedEntity.getId(), dragonStateHandler.getClawInventory().renderClaws));
@@ -140,6 +145,7 @@ public class SynchronizationController {
             NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncEmoteStats(player.getId(), dragonStateHandler.getEmotes().emoteMenuOpen));
     
             NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncDragonClawRender(player.getId(), dragonStateHandler.getClawInventory().renderClaws));
+            NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncDragonSkinSettings(player.getId(), dragonStateHandler.getSkin().renderNewborn, dragonStateHandler.getSkin().renderYoung, dragonStateHandler.getSkin().renderAdult));
         });
     }
 }

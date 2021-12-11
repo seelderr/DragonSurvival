@@ -1,15 +1,15 @@
-package by.jackraidenph.dragonsurvival.gui.magic;
+package by.jackraidenph.dragonsurvival.gui;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.containers.DragonContainer;
-import by.jackraidenph.dragonsurvival.gui.magic.buttons.TabButton;
+import by.jackraidenph.dragonsurvival.gui.buttons.TabButton;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.KeyInputHandler;
 import by.jackraidenph.dragonsurvival.handlers.Magic.ClientMagicHUDHandler;
 import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
-import by.jackraidenph.dragonsurvival.network.OpenInventory;
+import by.jackraidenph.dragonsurvival.network.container.OpenInventory;
 import by.jackraidenph.dragonsurvival.network.claw.DragonClawsMenuToggle;
 import by.jackraidenph.dragonsurvival.network.claw.SyncDragonClawRender;
 import by.jackraidenph.dragonsurvival.util.DragonType;

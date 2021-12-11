@@ -1,4 +1,4 @@
-package by.jackraidenph.dragonsurvival.network;
+package by.jackraidenph.dragonsurvival.network.status;
 
 public class RefreshDragons {
     public int playerId;

@@ -1,6 +1,7 @@
-package by.jackraidenph.dragonsurvival.network;
+package by.jackraidenph.dragonsurvival.network.status;
 
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.network.IMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -15,7 +16,8 @@ import net.minecraftforge.fml.network.NetworkEvent.Context;
 
 import java.util.function.Supplier;
 
-public class DiggingStatus implements IMessage<DiggingStatus>{
+public class DiggingStatus implements IMessage<DiggingStatus>
+{
     public int playerId;
     public boolean status;
 

@@ -1,5 +1,7 @@
 package by.jackraidenph.dragonsurvival.util;
 
+import net.minecraft.client.resources.I18n;
+
 public enum DragonLevel {
     BABY(14, 1.1f, 0.4f, 0.9f, "newborn"),
     YOUNG(20, 1.6f, 0.9f, 1.9f, "young"),
@@ -17,5 +19,9 @@ public enum DragonLevel {
         this.maxWidth = maxWidth;
         this.maxHeight = maxHeight;
         this.name = name_;
+    }
+    
+    public String getName(){
+        return I18n.get("ds.level." + name);
     }
 }

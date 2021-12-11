@@ -1,13 +1,15 @@
-package by.jackraidenph.dragonsurvival.network;
+package by.jackraidenph.dragonsurvival.network.nest;
 
 import by.jackraidenph.dragonsurvival.PacketProxy;
+import by.jackraidenph.dragonsurvival.network.IMessage;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class SynchronizeNest implements IMessage<SynchronizeNest> {
+public class SynchronizeNest implements IMessage<SynchronizeNest>
+{
     public BlockPos pos;
     public int health;
     public int cooldown;

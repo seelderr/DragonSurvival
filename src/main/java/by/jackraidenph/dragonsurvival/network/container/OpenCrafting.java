@@ -1,6 +1,7 @@
-package by.jackraidenph.dragonsurvival.network;
+package by.jackraidenph.dragonsurvival.network.container;
 
 import by.jackraidenph.dragonsurvival.containers.CraftingContainer;
+import by.jackraidenph.dragonsurvival.network.IMessage;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -10,10 +11,10 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.fml.network.NetworkEvent;
 
-import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
-public class OpenCrafting implements IMessage<OpenCrafting>{
+public class OpenCrafting implements IMessage<OpenCrafting>
+{
     @Override
     public void encode(OpenCrafting message, PacketBuffer buffer) {
 

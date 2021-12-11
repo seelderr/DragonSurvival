@@ -1,7 +1,7 @@
 package by.jackraidenph.dragonsurvival.jei;
 
 import by.jackraidenph.dragonsurvival.containers.DragonContainer;
-import by.jackraidenph.dragonsurvival.gui.magic.DragonScreen;
+import by.jackraidenph.dragonsurvival.gui.DragonScreen;
 import mezz.jei.api.constants.VanillaRecipeCategoryUid;
 import mezz.jei.api.gui.handlers.IGuiContainerHandler;
 import mezz.jei.api.recipe.transfer.IRecipeTransferInfo;

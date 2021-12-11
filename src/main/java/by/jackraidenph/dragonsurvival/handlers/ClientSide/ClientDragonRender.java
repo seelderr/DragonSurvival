@@ -243,16 +243,8 @@ public class ClientDragonRender
 	                if (neckHead != null)
 	                    neckHead.setHidden(false);
 	                if (player.isCrouching()) {
-	                    switch (dragonStage) {
-	                        case ADULT:
-	                            matrixStack.translate(0, 0.125, 0);
-	                            break;
-	                        case YOUNG:
-	                            matrixStack.translate(0, 0.25, 0);
-	                            break;
-	                        case BABY:
-	                            matrixStack.translate(0, 0.325, 0);
-	                    }
+		                matrixStack.translate(0, 0.325 - ((size / DragonLevel.ADULT.size) * 0.200), 0);
+						
 	                } else if (player.isSwimming() || player.isAutoSpinAttack() || (dragonsFlying.getOrDefault(player.getId(), false) && !player.isOnGround() && !player.isInWater() && !player.isInLava())) { // FIXME yea this too, I just copied what was up there to shift the model for swimming but I swear this should be done differently...
 	                    switch (dragonStage) {
 	                        case ADULT:

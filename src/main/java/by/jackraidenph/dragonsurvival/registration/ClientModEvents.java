@@ -6,8 +6,9 @@ import by.jackraidenph.dragonsurvival.gecko.renderer.DragonRenderer;
 import by.jackraidenph.dragonsurvival.gecko.renderer.KnightRenderer;
 import by.jackraidenph.dragonsurvival.gecko.renderer.PrinceRenderer;
 import by.jackraidenph.dragonsurvival.gecko.model.*;
-import by.jackraidenph.dragonsurvival.gui.magic.DragonScreen;
+import by.jackraidenph.dragonsurvival.gui.DragonScreen;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.ClientDragonRender;
+import by.jackraidenph.dragonsurvival.handlers.ClientSide.DragonSkins;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.KeyInputHandler;
 import by.jackraidenph.dragonsurvival.models.magic.FireballModel;
 import by.jackraidenph.dragonsurvival.models.magic.LightningBallModel;
@@ -67,6 +68,8 @@ public class ClientModEvents {
     public static void setupClient(final FMLClientSetupEvent event) {
         Minecraft minecraft = event.getMinecraftSupplier().get();
     
+        DragonSkins.init();
+        
         KeyInputHandler.setupKeybinds();
 
         RenderTypeLookup.setRenderLayer(BlockInit.dragon_altar_stone, RenderType.cutout());

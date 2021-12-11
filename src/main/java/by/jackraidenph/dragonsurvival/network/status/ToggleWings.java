@@ -1,14 +1,16 @@
-package by.jackraidenph.dragonsurvival.network;
+package by.jackraidenph.dragonsurvival.network.status;
 
 import by.jackraidenph.dragonsurvival.handlers.DragonSizeHandler;
 import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
+import by.jackraidenph.dragonsurvival.network.IMessage;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
 
 import java.util.function.Supplier;
 
-public class ToggleWings implements IMessage<ToggleWings> {
+public class ToggleWings implements IMessage<ToggleWings>
+{
     public boolean state;
 
     public ToggleWings() {
