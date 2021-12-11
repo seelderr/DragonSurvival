@@ -126,6 +126,7 @@
   "ds.gui.skins.toggle": "Enable/disable skins",
   "ds.gui.skins.yours": "Your dragon",
   "ds.gui.skins.random": "Random",
+  "ds.gui.skins.noskin": "This author does not have a skin for this stage.",
 
   "ds.hold_shift.for_food": "Hold 'Shift' for food info",
   "ds.cave.dragon.food": "§c■ Cave dragon food§r",

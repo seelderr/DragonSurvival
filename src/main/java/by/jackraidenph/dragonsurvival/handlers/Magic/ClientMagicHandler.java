@@ -88,7 +88,7 @@ public class ClientMagicHandler
 		}
 	}
 	
-	private static void renderEffectParticle(LivingEntity entity, IParticleData data)
+	public static void renderEffectParticle(LivingEntity entity, IParticleData data)
 	{
 		double d0 = (double)(entity.level.random.nextFloat()) * entity.getBbWidth();
 		double d1 = (double)(entity.level.random.nextFloat()) * entity.getBbHeight();

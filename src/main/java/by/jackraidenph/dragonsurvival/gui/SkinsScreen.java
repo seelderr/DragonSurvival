@@ -14,6 +14,7 @@ import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.SyncDragonSkinSettings;
 import by.jackraidenph.dragonsurvival.registration.EntityTypesInit;
 import by.jackraidenph.dragonsurvival.util.DragonLevel;
+import com.ibm.icu.impl.Pair;
 import com.mojang.authlib.GameProfile;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -35,10 +36,7 @@ import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.*;
 import net.minecraftforge.fml.client.gui.GuiUtils;
 import org.lwjgl.opengl.GL11;
 import software.bernie.geckolib3.core.PlayState;
@@ -49,9 +47,7 @@ import software.bernie.geckolib3.core.processor.IBone;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Arrays;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 public class SkinsScreen extends Screen
 {
@@ -79,11 +75,15 @@ public class SkinsScreen extends Screen
 	private float yRot = 0;
 	private float xRot = 0;
 	
-	private String playerName = "";
-	private DragonLevel level = DragonLevel.ADULT;
+	private static String playerName = null;
+	private static DragonLevel level = DragonLevel.ADULT;
 	
 	private DragonEntity dragon;
 	private RemoteClientPlayerEntity clientPlayer;
+	
+	private boolean noSkin = false;
+	
+	private static ArrayList<String> seenSkins = new ArrayList<>();
 	
 	public SkinsScreen(Screen sourceScreen)
 	{
@@ -97,7 +97,10 @@ public class SkinsScreen extends Screen
 		
 		this.guiLeft = (this.width - 256) / 2;
 		this.guiTop = (this.height - 128) / 2;
-		playerName = minecraft.player.getGameProfile().getName();
+		
+		if(playerName == null) {
+			playerName = minecraft.player.getGameProfile().getName();
+		}
 		
 		clientPlayer = new RemoteClientPlayerEntity(minecraft.level, new GameProfile(UUID.randomUUID(), "DRAGON_RENDER"));
 		
@@ -287,13 +290,32 @@ public class SkinsScreen extends Screen
 		});
 		
 		addButton(new Button(startX + 35, startY + this.imageHeight, 60, 20, new TranslationTextComponent("ds.gui.skins.random"), (button) -> {
+			ArrayList<Pair<DragonLevel, String>> skins = new ArrayList<>();
+			ArrayList<String> users = new ArrayList<>();
 			Random random = new Random();
-			DragonLevel randomLevel = DragonLevel.values()[random.nextInt(DragonLevel.values().length)];
+			
+			for(Map.Entry<DragonLevel, ArrayList<String>> ent : DragonSkins.SKIN_USERS.entrySet()){
+				for(String user : ent.getValue()){
+					skins.add(Pair.of(ent.getKey(), user));
+					
+					if(!users.contains(user)){
+						users.add(user);
+					}
+				}
+			}
+			
+			skins.removeIf((c) -> seenSkins.contains(c.second));
+			Pair<DragonLevel, String> skin = skins.get(random.nextInt(skins.size()));
 		
-			if(DragonSkins.SKIN_USERS.containsKey(randomLevel)) {
-				level = randomLevel;
-				int num = random.nextInt(DragonSkins.SKIN_USERS.get(randomLevel).size());
-				playerName = DragonSkins.SKIN_USERS.get(randomLevel).get(num);
+			if(skin != null){
+				level = skin.first;
+				playerName = skin.second;
+				
+				seenSkins.add(skin.second);
+				
+				if(seenSkins.size() >= users.size() / 2){
+					seenSkins.remove(0);
+				}
 			}
 		}){
 			@Override
@@ -303,7 +325,7 @@ public class SkinsScreen extends Screen
 			}
 		});
 		
-		addButton(new Button(startX + 85, startY + 10, 11, 17, new StringTextComponent(""), (button) -> {
+		addButton(new Button(startX + 90, startY + 10, 11, 17, new StringTextComponent(""), (button) -> {
 			int pos = MathHelper.clamp(level.ordinal() + 1, 0, DragonLevel.values().length - 1);
 			level = DragonLevel.values()[pos];
 		}){
@@ -379,6 +401,7 @@ public class SkinsScreen extends Screen
 				}
 			}
 			
+			noSkin = defaultSkin;
 			
 			float scale = level.size;
 			stack.scale(scale, scale, scale);
@@ -394,8 +417,11 @@ public class SkinsScreen extends Screen
 			drawNonShadowString(stack, minecraft.font, new TranslationTextComponent("ds.gui.skins").withStyle(TextFormatting.DARK_GRAY), startX + 128 + ((imageWidth) / 2), startY + 7, -1);
 			drawCenteredString(stack, minecraft.font, new TranslationTextComponent("ds.gui.skins.toggle"), startX + 128 + ((imageWidth) / 2), startY + 30, -1);
 			
-			drawNonShadowString(stack, minecraft.font, new StringTextComponent(playerName + " - " + level.getName()).withStyle(TextFormatting.GRAY), startX + 15, startY, -1);
+			drawNonShadowString(stack, minecraft.font, new StringTextComponent(playerName + " - " + level.getName()).withStyle(TextFormatting.GRAY), startX + 15, startY - 15, -1);
 			
+			if(noSkin){
+				drawNonShadowString(stack, minecraft.font, new TranslationTextComponent("ds.gui.skins.noskin").withStyle(TextFormatting.DARK_GRAY), startX + 65, startY + this.imageHeight - 20, -1);
+			}
 			
 			super.render(stack, mouseX, mouseY, partialTicks);
 			
@@ -453,7 +479,13 @@ public class SkinsScreen extends Screen
 	
 	public void drawNonShadowString(MatrixStack p_238472_0_, FontRenderer p_238472_1_, ITextComponent p_238472_2_, int p_238472_3_, int p_238472_4_, int p_238472_5_) {
 		IReorderingProcessor ireorderingprocessor = p_238472_2_.getVisualOrderText();
-		p_238472_1_.draw(p_238472_0_, p_238472_2_, (int)(p_238472_3_ - p_238472_1_.width(ireorderingprocessor) / 2), (int)p_238472_4_, p_238472_5_);
+		
+		List<ITextProperties> wrappedLine = font.getSplitter().splitLines(p_238472_2_, 150, Style.EMPTY);
+		int i = 0;
+		for(ITextProperties properties : wrappedLine){
+			p_238472_1_.draw(p_238472_0_, LanguageMap.getInstance().getVisualOrder(properties), (int)(p_238472_3_ - p_238472_1_.width(ireorderingprocessor) / 2), (int)p_238472_4_ + i * 9, p_238472_5_);
+			i++;
+		}
 	}
 	
 	@Override
