@@ -2,7 +2,7 @@ package by.jackraidenph.dragonsurvival.registration;
 
 import by.jackraidenph.dragonsurvival.BeaconParticle;
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.gecko.renderer.DragonRenderer;
+import by.jackraidenph.dragonsurvival.gecko.renderer.Dragon.DragonRenderer;
 import by.jackraidenph.dragonsurvival.gecko.renderer.KnightRenderer;
 import by.jackraidenph.dragonsurvival.gecko.renderer.PrinceRenderer;
 import by.jackraidenph.dragonsurvival.gecko.model.*;
@@ -111,12 +111,11 @@ public class ClientModEvents {
         ScreenManager.register(Containers.dragonContainer, DragonScreen::new);
         
         //Gecko renderers
-        DragonModel dragonModel = new DragonModel();
         RenderingRegistry.registerEntityRenderingHandler(EntityTypesInit.BALL_LIGHTNING, manager -> new BallLightningRenderer(manager, new LightningBallModel()));
         RenderingRegistry.registerEntityRenderingHandler(EntityTypesInit.FIREBALL, manager -> new FireBallRenderer(manager, new FireballModel()));
     
-        RenderingRegistry.registerEntityRenderingHandler(EntityTypesInit.DRAGON, manager -> new DragonRenderer(manager, ClientDragonRender.dragonModel = dragonModel));
-        RenderingRegistry.registerEntityRenderingHandler(EntityTypesInit.DRAGON_ARMOR, manager -> new DragonRenderer(manager, ClientDragonRender.dragonArmorModel = new DragonArmorModel(dragonModel)));
+        RenderingRegistry.registerEntityRenderingHandler(EntityTypesInit.DRAGON, manager -> new DragonRenderer(manager, ClientDragonRender.dragonModel));
+        RenderingRegistry.registerEntityRenderingHandler(EntityTypesInit.DRAGON_ARMOR, manager -> new DragonRenderer(manager, ClientDragonRender.dragonArmorModel));
         RenderingRegistry.registerEntityRenderingHandler(EntityTypesInit.KNIGHT, manager -> new KnightRenderer(manager, new KnightModel()));
         RenderingRegistry.registerEntityRenderingHandler(EntityTypesInit.PRINCESS_ON_HORSE, manager -> new by.jackraidenph.dragonsurvival.gecko.renderer.PrincessRenderer(manager, new PrincessModel()));
         RenderingRegistry.registerEntityRenderingHandler(EntityTypesInit.PRINCE_ON_HORSE, manager -> new PrinceRenderer(manager, new PrinceModel()));

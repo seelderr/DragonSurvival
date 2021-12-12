@@ -9,6 +9,7 @@ import by.jackraidenph.dragonsurvival.gui.buttons.TabButton;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.KeyInputHandler;
 import by.jackraidenph.dragonsurvival.handlers.Magic.ClientMagicHUDHandler;
 import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
+import by.jackraidenph.dragonsurvival.network.SortInventoryPacket;
 import by.jackraidenph.dragonsurvival.network.container.OpenInventory;
 import by.jackraidenph.dragonsurvival.network.claw.DragonClawsMenuToggle;
 import by.jackraidenph.dragonsurvival.network.claw.SyncDragonClawRender;
@@ -37,6 +38,7 @@ import java.util.Arrays;
 public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
     static final ResourceLocation BACKGROUND = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_inventory.png");
     public static final ResourceLocation INVENTORY_TOGGLE_BUTTON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/inventory_button.png");
+    public static final ResourceLocation SORTING_BUTTON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/sorting_button.png");
     
     private static final ResourceLocation CLAWS_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_claws.png");
     private static final ResourceLocation DRAGON_CLAW_BUTTON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_claws_button.png");
@@ -116,6 +118,7 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
         addButton(new TabButton(leftPos + 57, topPos - 26, 2, this));
         addButton(new TabButton(leftPos + 86, topPos - 26, 3, this));
     
+        
         addButton(new Button(leftPos + 27, topPos + 10, 11, 11, new StringTextComponent(""), p_onPress_1_ -> {
             clawsMenu = !clawsMenu;
             this.leftPos += (clawsMenu ? 80 : -80);
@@ -198,6 +201,10 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
                 NetworkHandler.CHANNEL.sendToServer(new OpenInventory());
             }));
         }
+    
+        addButton(new ImageButton(this.leftPos + (imageWidth - 28), (this.height / 2), 20, 18, 0, 0, 18, SORTING_BUTTON, p_onPress_1_ -> {
+            NetworkHandler.CHANNEL.sendToServer(new SortInventoryPacket());
+        }));
     }
     
     public void render(MatrixStack p_230450_1_,int p_render_1_, int p_render_2_, float p_render_3_) {

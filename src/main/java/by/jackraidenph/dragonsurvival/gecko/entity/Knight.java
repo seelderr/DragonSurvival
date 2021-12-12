@@ -41,7 +41,11 @@ public class Knight extends CreatureEntity implements IAnimatable, DragonHunter,
     public Knight(EntityType<? extends CreatureEntity> p_i48576_1_, World world) {
         super(p_i48576_1_, world);
     }
-
+    
+    protected int getExperienceReward(PlayerEntity p_70693_1_) {
+        return 5 + this.level.random.nextInt(5);
+    }
+    
     AnimationTimer animationTimer = new AnimationTimer();
 
     @Override

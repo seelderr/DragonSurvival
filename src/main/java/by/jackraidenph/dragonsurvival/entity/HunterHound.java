@@ -32,6 +32,10 @@ public class HunterHound extends WolfEntity implements DragonHunter {
     public HunterHound(EntityType<? extends WolfEntity> type, World world) {
         super(type, world);
     }
+    
+    protected int getExperienceReward(PlayerEntity p_70693_1_) {
+        return 1 + this.level.random.nextInt(2);
+    }
 
     protected void registerGoals() {
         super.registerGoals();

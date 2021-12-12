@@ -9,6 +9,7 @@ import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.merchant.villager.VillagerData;
 import net.minecraft.entity.merchant.villager.VillagerEntity;
 import net.minecraft.entity.merchant.villager.VillagerTrades;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.villager.VillagerType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -34,7 +35,11 @@ public class Prince extends Princess {
     public Prince(EntityType<? extends VillagerEntity> entityType, World world, VillagerType villagerType) {
         super(entityType, world, villagerType);
     }
-
+    
+    protected int getExperienceReward(PlayerEntity p_70693_1_) {
+        return 1 + this.level.random.nextInt(2);
+    }
+    
     protected void registerGoals() {
         super.registerGoals();
         this.targetSelector.addGoal(5, new HurtByTargetGoal(this));

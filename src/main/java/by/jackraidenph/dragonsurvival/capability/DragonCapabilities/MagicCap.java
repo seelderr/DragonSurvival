@@ -105,7 +105,7 @@ public class MagicCap implements DragonCapability
 	}
 	
 	public void addAbility(DragonAbility ability){
-		abilities.removeIf((c) -> c.getClass() == ability.getClass());
+		abilities.removeIf((c) -> c.getId() == ability.getId());
 		abilities.add(ability);
 	}
 	

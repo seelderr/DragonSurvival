@@ -122,9 +122,6 @@ public class PacketProxy {
                         DragonEntity dragonEntity = EntityTypesInit.DRAGON.create(world);
                         dragonEntity.player = thatPlayer.getId();
                         ClientDragonRender.playerDragonHashMap.computeIfAbsent(thatPlayer.getId(), integer -> new AtomicReference<>(dragonEntity)).getAndSet(dragonEntity);
-                        DragonEntity dragonArmor = EntityTypesInit.DRAGON_ARMOR.create(world);
-                        dragonArmor.player = thatPlayer.getId();
-                        ClientDragonRender.playerArmorMap.computeIfAbsent(thatPlayer.getId(), integer -> dragonArmor);
                     }
                     thatPlayer.setForcedPose(null);
                     thatPlayer.refreshDimensions();

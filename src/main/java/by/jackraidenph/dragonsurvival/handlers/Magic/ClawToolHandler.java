@@ -7,6 +7,7 @@ import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.claw.SyncDragonClawsMenu;
 import by.jackraidenph.dragonsurvival.util.DragonLevel;
+import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -28,6 +29,7 @@ import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.Effects;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
@@ -37,8 +39,8 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
-import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerXpEvent.PickupXp;
@@ -48,6 +50,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.network.PacketDistributor;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
@@ -56,13 +59,21 @@ import java.util.UUID;
 public class ClawToolHandler
 {
 	
+	public static class clawDamageSource extends EntityDamageSource{
+		
+		public clawDamageSource(@Nullable Entity p_i1567_2_)
+		{
+			super("player", p_i1567_2_);
+		}
+	}
+	
 	@SubscribeEvent
-	public static void playerAttack(AttackEntityEvent event){
-		if(!(event.getTarget() instanceof LivingEntity)) return;
+	public static void playerAttack(LivingAttackEvent event){
+		PlayerEntity player = event.getSource().getEntity() instanceof PlayerEntity ? ((PlayerEntity)event.getSource().getEntity()) : null;
+		LivingEntity target = event.getEntityLiving();
 		
-		PlayerEntity player = (PlayerEntity)event.getPlayer().getEntity();
-		LivingEntity target = (LivingEntity)event.getTarget();
-		
+		if(event.getSource() instanceof clawDamageSource) return;
+		if(player == null) return;
 		if(!target.isAttackable()) return;
 		if(!DragonStateProvider.isDragon(player)) return;
 		
@@ -120,8 +131,9 @@ public class ClawToolHandler
 				float f1 = (float)player.getAttributeValue(Attributes.ATTACK_KNOCKBACK);
 				f1 += (float)EnchantmentHelper.getItemEnchantmentLevel(Enchantments.KNOCKBACK, sword);
 				
-				swordDamage = swordDamage * (0.2F + f2 * f2 * 0.8F);
-				swordDamage = swordDamage * f2;
+				//TODO This needs to be fixed
+				//swordDamage = swordDamage * (0.2F + f2 * f2 * 0.8F);
+				f1 = f1 * f2;
 				
 				boolean flag = f2 > 0.9F;
 				boolean flag1 = false;
@@ -137,7 +149,7 @@ public class ClawToolHandler
 				
 				if(i > 0 && !target.isOnFire()) {
 					flag4 = true;
-					target.setSecondsOnFire(i);
+					target.setSecondsOnFire(i * 4);
 				}
 				
 				boolean flag2 = flag && player.fallDistance > 0.0F && !player.isOnGround() && !player.onClimbable() && !player.isInWater() && !player.hasEffect(Effects.BLINDNESS) && !player.isPassenger();
@@ -159,7 +171,7 @@ public class ClawToolHandler
 				}
 				Vector3d vector3d = target.getDeltaMovement();
 				
-				if (target.hurt(DamageSource.playerAttack(player), swordDamage)) {
+				if (target.hurt(new clawDamageSource(player), swordDamage)) {
 					if (f1 > 0.0F) {
 						target.knockback(f1 * 0.5F, (double)MathHelper.sin(player.yRot * ((float)Math.PI / 180F)), (double)(-MathHelper.cos(player.yRot * ((float)Math.PI / 180F))));
 						player.setDeltaMovement(player.getDeltaMovement().multiply(0.6D, 1.0D, 0.6D));
@@ -417,68 +429,66 @@ public class ClawToolHandler
 					BlockState blockState = breakSpeedEvent.getState();
 					Item item = mainStack.getItem();
 					
-					float speed = breakSpeedEvent.getOriginalSpeed();
+					float originalSpeed = breakSpeedEvent.getOriginalSpeed();
+					float speed = originalSpeed;
+					
+					{
+						float tempSpeed = playerEntity.inventory.getDestroySpeed(blockState);
+						int efficiency = EnchantmentHelper.getBlockEfficiency(playerEntity);
+						ItemStack itemstack = playerEntity.getMainHandItem();
+						if (efficiency > 0 && !itemstack.isEmpty()) {
+							tempSpeed += (float)(efficiency * efficiency + 1);
+						}
+						
+						speed -= tempSpeed;
+					}
+					
 					float newSpeed = 0F;
+					ItemStack harvestTool = null;
 					
 					for (int i = 1; i < 4; i++) {
 						if (blockState.getHarvestTool() == DragonStateHandler.CLAW_TOOL_TYPES[i]) {
 							ItemStack breakingItem = dragonStateHandler.getClawInventory().getClawsInventory().getItem(i);
 							if (!breakingItem.isEmpty()) {
-								float tempSpeed = breakingItem.getDestroySpeed(blockState) * 0.7F;
+								int effLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_EFFICIENCY, breakingItem);
+								float tempSpeed = breakingItem.getDestroySpeed(blockState);
+								
+								if(effLevel > 0){
+									tempSpeed += (float)(effLevel * effLevel + 1);
+								}
 								
 								if (tempSpeed > newSpeed) {
 									newSpeed = tempSpeed;
+									harvestTool = breakingItem;
 								}
 							}
 						}
 					}
 					
-					if (!playerEntity.getMainHandItem().isEmpty()) {
-						float tempSpeed = playerEntity.getMainHandItem().getDestroySpeed(blockState);
-						
-						if (tempSpeed > newSpeed) {
-							newSpeed = 0;
-						}
+					speed += newSpeed;
+					
+					if(newSpeed > originalSpeed){
+						speed = newSpeed;
+					}else if(speed <= 0){
+						speed = originalSpeed;
 					}
 					
+					if(newSpeed > originalSpeed && harvestTool != null){
+						item = harvestTool.getItem();
+					}
 					
 					if (!(item instanceof ToolItem || item instanceof SwordItem || item instanceof ShearsItem)) {
-						switch (dragonStateHandler.getLevel()) {
-							case BABY:
-								if (ConfigHandler.SERVER.bonusUnlockedAt.get() != DragonLevel.BABY) {
-									breakSpeedEvent.setNewSpeed((speed * 2.0F) + newSpeed);
-									break;
-								}
-							case YOUNG:
-								if (ConfigHandler.SERVER.bonusUnlockedAt.get() == DragonLevel.ADULT && dragonStateHandler.getLevel() != DragonLevel.BABY) {
-									breakSpeedEvent.setNewSpeed((speed * 2.0F) + newSpeed);
-									break;
-								}
-							case ADULT:
-								switch (dragonStateHandler.getType()) {
-									case FOREST:
-										if (blockState.getHarvestTool() == ToolType.AXE) {
-											breakSpeedEvent.setNewSpeed((speed * 4.0F) + newSpeed);
-										} else breakSpeedEvent.setNewSpeed((speed * 2.0F) + newSpeed);
-										break;
-									case CAVE:
-										if (blockState.getHarvestTool() == ToolType.PICKAXE) {
-											breakSpeedEvent.setNewSpeed((speed * 4.0F) + newSpeed);
-										} else breakSpeedEvent.setNewSpeed((speed * 2.0F) + newSpeed);
-										break;
-									case SEA:
-										if (blockState.getHarvestTool() == ToolType.SHOVEL) {
-											breakSpeedEvent.setNewSpeed((speed * 4.0F) + newSpeed);
-										} else breakSpeedEvent.setNewSpeed((speed * 2.0F) + newSpeed);
-										if (playerEntity.isInWaterOrBubble()) {
-											breakSpeedEvent.setNewSpeed((speed * 1.4f) + newSpeed);
-										}
-										break;
-								}
-								break;
-						}
+						float bonus = dragonStateHandler.getLevel() == DragonLevel.ADULT ? (
+								blockState.getHarvestTool() == ToolType.AXE && dragonStateHandler.getType() == DragonType.FOREST ? 4 :
+								blockState.getHarvestTool() == ToolType.PICKAXE && dragonStateHandler.getType() == DragonType.CAVE ? 4 :
+								blockState.getHarvestTool() == ToolType.SHOVEL && dragonStateHandler.getType() == DragonType.SEA ? 4 : 2F
+								) : dragonStateHandler.getLevel() == DragonLevel.BABY ? ConfigHandler.SERVER.bonusUnlockedAt.get() != DragonLevel.BABY ? 2F : 1F
+								: dragonStateHandler.getLevel() == DragonLevel.YOUNG ? ConfigHandler.SERVER.bonusUnlockedAt.get() == DragonLevel.ADULT && dragonStateHandler.getLevel() != DragonLevel.BABY ? 2F : 1F
+								: 2F;
+						
+						breakSpeedEvent.setNewSpeed((speed * bonus));
 					} else {
-						breakSpeedEvent.setNewSpeed((speed * 0.7f) + newSpeed);
+						breakSpeedEvent.setNewSpeed((speed * 0.7f));
 					}
 				}
 			});

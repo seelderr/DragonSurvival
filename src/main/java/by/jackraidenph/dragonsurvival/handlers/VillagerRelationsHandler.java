@@ -40,10 +40,10 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.living.PotionEvent;
-import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -231,9 +231,12 @@ public class VillagerRelationsHandler {
     }
 
     @SubscribeEvent
-    public static void hurtEntity(AttackEntityEvent attackEntityEvent) {
-        Entity attacked = attackEntityEvent.getTarget();
-        PlayerEntity attacker = attackEntityEvent.getPlayer();
+    public static void hurtEntity(LivingDamageEvent attackEntityEvent) {
+        Entity attacked = attackEntityEvent.getEntity();
+        PlayerEntity attacker = attackEntityEvent.getSource().getEntity() instanceof PlayerEntity ? ((PlayerEntity)attackEntityEvent.getSource().getEntity()) : null;
+       
+        if(attacker == null) return;
+        
         if (attacked instanceof AbstractVillagerEntity || attacked instanceof DragonHunter) {
            if(DragonStateProvider.isDragon(attacker)) {
                 if (attacker.hasEffect(DragonEffects.EVIL_DRAGON)) {

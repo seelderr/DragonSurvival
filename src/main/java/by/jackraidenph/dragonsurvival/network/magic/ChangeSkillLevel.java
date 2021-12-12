@@ -69,7 +69,7 @@ public class ChangeSkillLevel implements IMessage<ChangeSkillLevel>
                 newActivty.setLevel(playerAbility.getLevel() + message.levelChange);
                 int levelCost = message.levelChange > 0 ? -newActivty.getLevelCost() : Math.max((int)(((PassiveDragonAbility)playerAbility).getLevelCost() * 0.8F), 1);
                 
-                dragonStateHandler.getMagic().getAbilities().removeIf((c) -> c.getClass() == newActivty.getClass());
+                dragonStateHandler.getMagic().getAbilities().removeIf((c) -> c.getId() == newActivty.getId());
                 dragonStateHandler.getMagic().addAbility(newActivty);
                 
                 if(levelCost != 0){

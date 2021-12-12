@@ -73,7 +73,8 @@ public class NetworkHandler
 		
 		 // register(OpenCrafting.class, new OpenCrafting());
 		 register(OpenInventory.class, new OpenInventory());
-		 
+		 register(SortInventoryPacket.class, new SortInventoryPacket());
+		
 		 register(SyncDragonClawRender.class, new SyncDragonClawRender());
 		 register(SyncDragonSkinSettings.class, new SyncDragonSkinSettings());
 		
@@ -257,9 +258,6 @@ public class NetworkHandler
                                 DragonEntity dragonEntity = EntityTypesInit.DRAGON.create(myPlayer.level);
                                 dragonEntity.player = thatPlayer.getId();
                                 ClientDragonRender.playerDragonHashMap.computeIfAbsent(thatPlayer.getId(), integer -> new AtomicReference<>(dragonEntity)).getAndSet(dragonEntity);
-                                DragonEntity dragonArmor = EntityTypesInit.DRAGON_ARMOR.create(myPlayer.level);
-                                dragonArmor.player = thatPlayer.getId();
-                                ClientDragonRender.playerArmorMap.computeIfAbsent(thatPlayer.getId(), integer -> dragonArmor);
                             }
                         });
                         thread.start();

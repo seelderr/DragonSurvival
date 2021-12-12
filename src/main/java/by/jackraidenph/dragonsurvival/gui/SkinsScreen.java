@@ -5,7 +5,7 @@ import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.gecko.entity.DragonEntity;
-import by.jackraidenph.dragonsurvival.gecko.renderer.DragonRenderer;
+import by.jackraidenph.dragonsurvival.gecko.renderer.Dragon.DragonRenderer;
 import by.jackraidenph.dragonsurvival.gui.buttons.TabButton;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.ClientDragonRender;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.DragonSkins;
@@ -48,6 +48,8 @@ import software.bernie.geckolib3.core.processor.IBone;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class SkinsScreen extends Screen
 {
@@ -72,23 +74,53 @@ public class SkinsScreen extends Screen
 	protected int imageWidth = 164;
 	protected int imageHeight = 128;
 	
-	private float yRot = 0;
-	private float xRot = 0;
+	private float yRot = -3;
+	private float xRot = -5;
 	
 	private static String playerName = null;
 	private static DragonLevel level = DragonLevel.ADULT;
 	
 	private DragonEntity dragon;
-	private RemoteClientPlayerEntity clientPlayer;
+	private static RemoteClientPlayerEntity clientPlayer;
 	
-	private boolean noSkin = false;
 	
 	private static ArrayList<String> seenSkins = new ArrayList<>();
+	
+	public static ResourceLocation skinTexture = null;
+	public static ResourceLocation glowTexture = null;
+	private static boolean noSkin = false;
+	
+	private static ExecutorService executor = Executors.newSingleThreadExecutor();
 	
 	public SkinsScreen(Screen sourceScreen)
 	{
 		super(new StringTextComponent(""));
 		this.sourceScreen = sourceScreen;
+	}
+	
+	public void setTextures(){
+		DragonStateHandler handler = DragonStateProvider.getCap(Minecraft.getInstance().player).orElse(null);
+		ResourceLocation skinTexture = DragonSkins.getPlayerSkin(playerName + "_" + level.name);
+		ResourceLocation glowTexture = null;
+		boolean defaultSkin = false;
+		
+		if(!DragonSkins.renderStage(minecraft.player, level) || skinTexture == null){
+			skinTexture = DragonSkins.getDefaultSkin(handler.getType(), level);
+			defaultSkin = true;
+		}
+		
+		SkinsScreen.skinTexture = skinTexture;
+		SkinsScreen.glowTexture = null;
+		
+		if(skinTexture != null) {
+			if(!defaultSkin) {
+				glowTexture = DragonSkins.getPlayerGlow(playerName + "_" + level.name);
+			}
+		}
+		
+		SkinsScreen.glowTexture = glowTexture;
+		
+		noSkin = defaultSkin;
 	}
 	
 	@Override
@@ -102,7 +134,18 @@ public class SkinsScreen extends Screen
 			playerName = minecraft.player.getGameProfile().getName();
 		}
 		
-		clientPlayer = new RemoteClientPlayerEntity(minecraft.level, new GameProfile(UUID.randomUUID(), "DRAGON_RENDER"));
+		if(clientPlayer == null) {
+			clientPlayer = new RemoteClientPlayerEntity(minecraft.level, new GameProfile(UUID.randomUUID(), "DRAGON_RENDER"));
+			DragonStateHandler handler = DragonStateProvider.getCap(Minecraft.getInstance().player).orElse(null);
+			
+			DragonStateProvider.getCap(clientPlayer).ifPresent((cap) -> {
+				cap.setHasWings(true);
+				
+				if(handler != null){
+					cap.setType(handler.getType());
+				}
+			});
+		}
 		
 		dragon = new DragonEntity(EntityTypesInit.DRAGON, minecraft.level){
 			@Override
@@ -121,6 +164,8 @@ public class SkinsScreen extends Screen
 				return clientPlayer;
 			}
 		};
+		
+		setTextures();
 	}
 	
 	@Override
@@ -147,6 +192,7 @@ public class SkinsScreen extends Screen
 			if(handler != null){
 				handler.getSkin().renderNewborn = !handler.getSkin().renderNewborn;
 				NetworkHandler.CHANNEL.sendToServer(new SyncDragonSkinSettings(getMinecraft().player.getId(), handler.getSkin().renderNewborn, handler.getSkin().renderYoung, handler.getSkin().renderAdult));
+				executor.execute(() -> setTextures());
 			}
 		}){
 			@Override
@@ -166,6 +212,7 @@ public class SkinsScreen extends Screen
 			if(handler != null){
 				handler.getSkin().renderYoung = !handler.getSkin().renderYoung;
 				NetworkHandler.CHANNEL.sendToServer(new SyncDragonSkinSettings(getMinecraft().player.getId(), handler.getSkin().renderNewborn, handler.getSkin().renderYoung, handler.getSkin().renderAdult));
+				executor.execute(() -> setTextures());
 			}
 		}){
 			@Override
@@ -185,6 +232,7 @@ public class SkinsScreen extends Screen
 			if(handler != null){
 				handler.getSkin().renderAdult = !handler.getSkin().renderAdult;
 				NetworkHandler.CHANNEL.sendToServer(new SyncDragonSkinSettings(getMinecraft().player.getId(), handler.getSkin().renderNewborn, handler.getSkin().renderYoung, handler.getSkin().renderAdult));
+				executor.execute(() -> setTextures());
 			}
 		}){
 			@Override
@@ -200,6 +248,7 @@ public class SkinsScreen extends Screen
 		
 		addButton(new Button(startX + 128, startY + 45 + 80, imageWidth, 20, new TranslationTextComponent("ds.gui.skins.other_skins"), (button) -> {
 			ConfigHandler.CLIENT.renderOtherPlayerSkins.set(!ConfigHandler.CLIENT.renderOtherPlayerSkins.get());
+			executor.execute(() -> setTextures());
 		}){
 			@Override
 			public void renderButton(MatrixStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_)
@@ -281,6 +330,7 @@ public class SkinsScreen extends Screen
 		
 		addButton(new Button(startX - 60, startY + this.imageHeight, 90, 20, new TranslationTextComponent("ds.gui.skins.yours"), (button) -> {
 			playerName = minecraft.player.getGameProfile().getName();
+			setTextures();
 		}){
 			@Override
 			public void renderToolTip(MatrixStack p_230443_1_, int p_230443_2_, int p_230443_3_)
@@ -316,6 +366,8 @@ public class SkinsScreen extends Screen
 				if(seenSkins.size() >= users.size() / 2){
 					seenSkins.remove(0);
 				}
+				
+				executor.execute(() -> setTextures());
 			}
 		}){
 			@Override
@@ -328,6 +380,8 @@ public class SkinsScreen extends Screen
 		addButton(new Button(startX + 90, startY + 10, 11, 17, new StringTextComponent(""), (button) -> {
 			int pos = MathHelper.clamp(level.ordinal() + 1, 0, DragonLevel.values().length - 1);
 			level = DragonLevel.values()[pos];
+			
+			executor.execute(() -> setTextures());
 		}){
 			@Override
 			public void renderButton(MatrixStack stack, int mouseX, int mouseY, float p_230431_4_)
@@ -345,6 +399,8 @@ public class SkinsScreen extends Screen
 		addButton(new Button(startX - 70, startY + 10, 11, 17, new StringTextComponent(""), (button) -> {
 			int pos = MathHelper.clamp(level.ordinal() - 1, 0, DragonLevel.values().length - 1);
 			level = DragonLevel.values()[pos];
+			
+			executor.execute(() -> setTextures());
 		}){
 			@Override
 			public void renderButton(MatrixStack stack, int mouseX, int mouseY, float p_230431_4_)
@@ -383,28 +439,13 @@ public class SkinsScreen extends Screen
 			}
 			
 			EntityRenderer<? super DragonEntity> dragonRenderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(dragon);
-			ResourceLocation texture = DragonSkins.getPlayerSkin(playerName + "_" + level.name);
-			
-			boolean defaultSkin = false;
-			if(!DragonSkins.renderStage(minecraft.player, level) || texture == null){
-				texture = DragonSkins.getDefaultSkin(handler.getType(), level);
-				((DragonRenderer)dragonRenderer).glowTexture = null;
-				defaultSkin = true;
-			}
-			
-			if(texture != null) {
-				ClientDragonRender.dragonModel.setCurrentTexture(texture);
-				
-				if(!defaultSkin) {
-					ResourceLocation glow = DragonSkins.getPlayerGlow(playerName + "_" + level.name);
-					((DragonRenderer)dragonRenderer).glowTexture = glow;
-				}
-			}
-			
-			noSkin = defaultSkin;
-			
+
+			ClientDragonRender.dragonModel.setCurrentTexture(skinTexture);
+			((DragonRenderer)dragonRenderer).glowTexture = glowTexture;
+
 			float scale = level.size;
 			stack.scale(scale, scale, scale);
+			
 			renderEntityInInventory(startX + 10, startY + 90, scale, xRot, yRot, dragon);
 			
 			stack.popPose();
