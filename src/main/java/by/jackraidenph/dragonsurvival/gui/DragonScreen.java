@@ -141,6 +141,13 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
                 GL11.glEnable(GL11.GL_DEPTH_TEST);
                 GL11.glPopMatrix();
             }
+    
+            @Override
+            public void renderToolTip(MatrixStack p_230443_1_, int p_230443_2_, int p_230443_3_)
+            {
+                ArrayList<ITextComponent> description = new ArrayList<>(Arrays.asList(new TranslationTextComponent("ds.gui.claws")));
+                Minecraft.getInstance().screen.renderComponentTooltip(p_230443_1_, description, p_230443_2_, p_230443_3_);
+            }
         });
     
         addButton(new Button(leftPos - 80 + 33, topPos + 111, 11, 11, null, (button) -> {}){
@@ -192,6 +199,12 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
                     minecraft.getTextureManager().bind(DRAGON_CLAW_CHECKMARK);
                     this.blit(p_230430_1_,x, y, 0, 0, 9, 9, 9, 9);
                 }
+                this.isHovered = p_230430_2_ >= this.x && p_230430_3_ >= this.y && p_230430_2_ < this.x + this.width && p_230430_3_ < this.y + this.height;
+    
+                if(isHovered){
+                    ArrayList<ITextComponent> description = new ArrayList<>(Arrays.asList(new TranslationTextComponent("ds.gui.claws.rendering")));
+                    Minecraft.getInstance().screen.renderComponentTooltip(p_230430_1_, description, p_230430_2_, p_230430_3_);
+                }
           }
         });
         
@@ -199,12 +212,26 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
             addButton(new ImageButton(this.leftPos + (imageWidth - 28), (this.height / 2 - 30) + 50, 20, 18, 0, 0, 19, INVENTORY_TOGGLE_BUTTON, p_onPress_1_ -> {
                 Minecraft.getInstance().setScreen(new InventoryScreen(this.player));
                 NetworkHandler.CHANNEL.sendToServer(new OpenInventory());
-            }));
+            }){
+                @Override
+                public void renderToolTip(MatrixStack p_230443_1_, int p_230443_2_, int p_230443_3_)
+                {
+                    ArrayList<ITextComponent> description = new ArrayList<>(Arrays.asList(new TranslationTextComponent("ds.gui.toggle_inventory.vanilla")));
+                    Minecraft.getInstance().screen.renderComponentTooltip(p_230443_1_, description, p_230443_2_, p_230443_3_);
+                }
+            });
         }
     
         addButton(new ImageButton(this.leftPos + (imageWidth - 28), (this.height / 2), 20, 18, 0, 0, 18, SORTING_BUTTON, p_onPress_1_ -> {
             NetworkHandler.CHANNEL.sendToServer(new SortInventoryPacket());
-        }));
+        }){
+            @Override
+            public void renderToolTip(MatrixStack p_230443_1_, int p_230443_2_, int p_230443_3_)
+            {
+                ArrayList<ITextComponent> description = new ArrayList<>(Arrays.asList(new TranslationTextComponent("ds.gui.sort")));
+                Minecraft.getInstance().screen.renderComponentTooltip(p_230443_1_, description, p_230443_2_, p_230443_3_);
+            }
+        });
     }
     
     public void render(MatrixStack p_230450_1_,int p_render_1_, int p_render_2_, float p_render_3_) {

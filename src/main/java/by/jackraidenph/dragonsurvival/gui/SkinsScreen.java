@@ -89,6 +89,7 @@ public class SkinsScreen extends Screen
 	public static ResourceLocation skinTexture = null;
 	public static ResourceLocation glowTexture = null;
 	private static boolean noSkin = false;
+	private static boolean loading = false;
 	
 	private static ExecutorService executor = Executors.newSingleThreadExecutor();
 	
@@ -99,12 +100,14 @@ public class SkinsScreen extends Screen
 	}
 	
 	public void setTextures(){
+		loading = true;
+		
 		DragonStateHandler handler = DragonStateProvider.getCap(Minecraft.getInstance().player).orElse(null);
 		ResourceLocation skinTexture = DragonSkins.getPlayerSkin(playerName + "_" + level.name);
 		ResourceLocation glowTexture = null;
 		boolean defaultSkin = false;
 		
-		if(!DragonSkins.renderStage(minecraft.player, level) || skinTexture == null){
+		if((!DragonSkins.renderStage(minecraft.player, level) && playerName == minecraft.player.getGameProfile().getName()) || skinTexture == null){
 			skinTexture = DragonSkins.getDefaultSkin(handler.getType(), level);
 			defaultSkin = true;
 		}
@@ -121,6 +124,7 @@ public class SkinsScreen extends Screen
 		SkinsScreen.glowTexture = glowTexture;
 		
 		noSkin = defaultSkin;
+		loading = false;
 	}
 	
 	@Override
@@ -246,7 +250,7 @@ public class SkinsScreen extends Screen
 			}
 		});
 		
-		addButton(new Button(startX + 128, startY + 45 + 80, imageWidth, 20, new TranslationTextComponent("ds.gui.skins.other_skins"), (button) -> {
+		addButton(new Button(startX + 128, startY + 128, imageWidth, 20, new TranslationTextComponent("ds.gui.skins.other_skins"), (button) -> {
 			ConfigHandler.CLIENT.renderOtherPlayerSkins.set(!ConfigHandler.CLIENT.renderOtherPlayerSkins.get());
 			executor.execute(() -> setTextures());
 		}){
@@ -260,7 +264,7 @@ public class SkinsScreen extends Screen
 			}
 		});
 		
-		addButton(new Button(startX + 128 + (imageWidth / 2) - 8, startY + 45 + 80 + 30, 16, 16, new StringTextComponent(""), (button) -> {
+		addButton(new Button(startX + 128 + (imageWidth / 2) - 8, startY + 128 + 30, 16, 16, new StringTextComponent(""), (button) -> {
 			try {
 				URI uri = new URI(DISCORD_URL);
 				this.clickedLink = uri;
@@ -283,7 +287,7 @@ public class SkinsScreen extends Screen
 			}
 		});
 		
-		addButton(new Button(startX + 128 + (imageWidth / 2) - 8 + 25, startY + 45 + 80 + 30, 16, 16, new StringTextComponent(""), (button) -> {
+		addButton(new Button(startX + 128 + (imageWidth / 2) - 8 + 25, startY + 128 + 30, 16, 16, new StringTextComponent(""), (button) -> {
 			try {
 				URI uri = new URI(WIKI_URL);
 				this.clickedLink = uri;
@@ -306,7 +310,7 @@ public class SkinsScreen extends Screen
 			}
 		});
 		
-		addButton(new Button(startX + 128 + (imageWidth / 2) - 8 - 25, startY + 45 + 80 + 30, 16, 16, new StringTextComponent(""), (button) -> {
+		addButton(new Button(startX + 128 + (imageWidth / 2) - 8 - 25, startY + 128 + 30, 16, 16, new StringTextComponent(""), (button) -> {
 		}){
 			@Override
 			public void renderButton(MatrixStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_)
@@ -328,7 +332,7 @@ public class SkinsScreen extends Screen
 			}
 		});
 		
-		addButton(new Button(startX - 60, startY + this.imageHeight, 90, 20, new TranslationTextComponent("ds.gui.skins.yours"), (button) -> {
+		addButton(new Button(startX - 60, startY + 128, 90, 20, new TranslationTextComponent("ds.gui.skins.yours"), (button) -> {
 			playerName = minecraft.player.getGameProfile().getName();
 			setTextures();
 		}){
@@ -339,7 +343,7 @@ public class SkinsScreen extends Screen
 			}
 		});
 		
-		addButton(new Button(startX + 35, startY + this.imageHeight, 60, 20, new TranslationTextComponent("ds.gui.skins.random"), (button) -> {
+		addButton(new Button(startX + 35, startY + 128, 60, 20, new TranslationTextComponent("ds.gui.skins.random"), (button) -> {
 			ArrayList<Pair<DragonLevel, String>> skins = new ArrayList<>();
 			ArrayList<String> users = new ArrayList<>();
 			Random random = new Random();
@@ -446,7 +450,9 @@ public class SkinsScreen extends Screen
 			float scale = level.size;
 			stack.scale(scale, scale, scale);
 			
-			renderEntityInInventory(startX + 10, startY + 90, scale, xRot, yRot, dragon);
+			if(!loading) {
+				renderEntityInInventory(startX + 10, startY + 90, scale, xRot, yRot, dragon);
+			}
 			
 			stack.popPose();
 			
@@ -460,19 +466,27 @@ public class SkinsScreen extends Screen
 			
 			drawNonShadowString(stack, minecraft.font, new StringTextComponent(playerName + " - " + level.getName()).withStyle(TextFormatting.GRAY), startX + 15, startY - 15, -1);
 			
-			if(noSkin){
-				drawNonShadowString(stack, minecraft.font, new TranslationTextComponent("ds.gui.skins.noskin").withStyle(TextFormatting.DARK_GRAY), startX + 65, startY + this.imageHeight - 20, -1);
+			if(!loading) {
+				if (noSkin) {
+					if (playerName == minecraft.player.getGameProfile().getName()) {
+						drawNonShadowString(stack, minecraft.font, new TranslationTextComponent("ds.gui.skins.noskin.yours").withStyle(TextFormatting.DARK_GRAY), startX + 40, startY + this.imageHeight - 20, -1);
+						
+					} else {
+						drawNonShadowString(stack, minecraft.font, new TranslationTextComponent("ds.gui.skins.noskin").withStyle(TextFormatting.DARK_GRAY), startX + 65, startY + this.imageHeight - 20, -1);
+					}
+				}
 			}
 			
 			super.render(stack, mouseX, mouseY, partialTicks);
-			
-			GL11.glTranslatef(0F, 0F, -400f);
 			
 			for(Widget btn : buttons){
 				if(btn.isHovered()){
 					btn.renderToolTip(stack, mouseX, mouseY);
 				}
 			}
+			
+			GL11.glTranslatef(0F, 0F, -400f);
+			
 		}
 	}
 	

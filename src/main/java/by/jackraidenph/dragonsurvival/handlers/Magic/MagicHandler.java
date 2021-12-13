@@ -62,6 +62,18 @@ public class MagicHandler
 		ModifiableAttributeInstance moveSpeed = player.getAttribute(Attributes.MOVEMENT_SPEED);
 		
 		DragonStateProvider.getCap(player).ifPresent(cap -> {
+			if(player.isSpectator()){
+				if(cap.getMagic().getCurrentlyCasting() != null) {
+					cap.getMagic().getCurrentlyCasting().stopCasting();
+					cap.getMagic().setCurrentlyCasting(null);
+					
+					if (player.level.isClientSide) {
+						NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCastingToServer(player.getId(), null));
+					}
+				}
+				return;
+			}
+			
 			if (!cap.isDragon() || cap.getLevel() != DragonLevel.ADULT){
 				if(moveSpeed.getModifier(DRAGON_PASSIVE_MOVEMENT_SPEED) != null){
 					moveSpeed.removeModifier(DRAGON_PASSIVE_MOVEMENT_SPEED);
