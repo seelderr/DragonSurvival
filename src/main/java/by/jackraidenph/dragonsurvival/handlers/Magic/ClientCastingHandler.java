@@ -43,6 +43,8 @@ public class ClientCastingHandler
 	    if (timer > 1)
 	        return;
 	    
+		if(playerEntity.isSpectator()) return;
+		
 	    DragonStateProvider.getCap(playerEntity).ifPresent(dragonStateHandler -> {
 	        ActiveDragonAbility ability = dragonStateHandler.getMagic().getAbilityFromSlot(slot);
 	        if(ability.getLevel() > 0) {

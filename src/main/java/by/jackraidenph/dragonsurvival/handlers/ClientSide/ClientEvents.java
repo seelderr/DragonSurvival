@@ -15,6 +15,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.inventory.CreativeScreen;
 import net.minecraft.client.gui.screen.inventory.InventoryScreen;
 import net.minecraft.client.gui.widget.button.ImageButton;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
@@ -26,12 +27,11 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.IItemTier;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemTier;
-import net.minecraft.item.TieredItem;
+import net.minecraft.item.*;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.GuiOpenEvent;
@@ -45,6 +45,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.network.PacketDistributor;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Mod.EventBusSubscriber(Dist.CLIENT)
@@ -82,7 +84,9 @@ public class ClientEvents {
     {
         Screen sc = initGuiEvent.getGui();
         
-        if(sc instanceof InventoryScreen && DragonStateProvider.isDragon(Minecraft.getInstance().player)) {
+        if(! DragonStateProvider.isDragon(Minecraft.getInstance().player)) return;
+        
+        if(sc instanceof InventoryScreen) {
             InventoryScreen screen = (InventoryScreen)sc;
     
             if(ConfigHandler.CLIENT.dragonTabs.get()) {
@@ -137,10 +141,44 @@ public class ClientEvents {
                     {
                         super.renderButton(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
                         this.x = screen.getGuiLeft() + 128;
+                        
+                        if(isHovered()){
+                            ArrayList<ITextComponent> description = new ArrayList<>(Arrays.asList(new TranslationTextComponent("ds.gui.toggle_inventory.dragon")));
+                            Minecraft.getInstance().screen.renderComponentTooltip(p_230431_1_, description, p_230431_2_, p_230431_3_);
+                        }
                     }
                 });
             }
         }
+        
+        if(sc instanceof CreativeScreen){
+            CreativeScreen screen = (CreativeScreen)sc;
+            
+            if(ConfigHandler.CLIENT.inventoryToggle.get()) {
+                initGuiEvent.addWidget(new ImageButton(screen.getGuiLeft() + 128 + 20, screen.height / 2 - 50, 20, 18, 20, 0, 19, DragonScreen.INVENTORY_TOGGLE_BUTTON, p_onPress_1_ -> {
+                    NetworkHandler.CHANNEL.sendToServer(new OpenDragonInventory());
+                })
+                {
+                    @Override
+                    public void render(MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_)
+                    {
+                        this.active = this.visible = screen.getSelectedTab() == ItemGroup.TAB_INVENTORY.getId();
+                        super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
+                    }
+    
+                    @Override
+                    public void renderButton(MatrixStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_)
+                    {
+                        super.renderButton(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
+                        if(isHovered()){
+                            ArrayList<ITextComponent> description = new ArrayList<>(Arrays.asList(new TranslationTextComponent("ds.gui.toggle_inventory.dragon")));
+                            Minecraft.getInstance().screen.renderComponentTooltip(p_230431_1_, description, p_230431_2_, p_230431_3_);
+                        }
+                    }
+                });
+            }
+        }
+        
     }
     
     

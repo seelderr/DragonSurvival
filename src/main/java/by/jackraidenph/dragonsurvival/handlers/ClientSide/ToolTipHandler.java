@@ -135,6 +135,9 @@ public class ToolTipHandler
 			if (item == ItemRegistry.ELDER_DRAGON_HEART.orElse(null)){
 				toolTip.add(new TranslationTextComponent("ds.description.elderDragonHeart"));
 			}
+			if (item == ItemRegistry.DRAGON_HEART_SHARD.orElse(null)){
+				toolTip.add(new TranslationTextComponent("ds.description.heartElement"));
+			}
 		}
 	}
 	
