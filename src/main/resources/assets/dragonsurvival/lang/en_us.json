@@ -359,7 +359,7 @@
   "ds.gui.skins.tooltip.yours": "■ This is what §6you§r look like now.",
   "ds.gui.skins.tooltip.random": "■ Shows a random skin of §6other players§r§f. You §ccan't install§r§f them yourself!§7 Only look and admire! >:D",
   "ds.gui.skins.tooltip.help": "■ §6Skin§r is a self-made texture for your dragon. In this tab you can disable the display of the skin for your dragon at different stages, as well as skins of other players.\n§7■ If you are interested in how to make your own skin or take a commission, use the buttons on the right.",
-  "ds.gui.skins.tooltip.discord": "■ Join our lamp §6discord server§r!§7 Read the Rules, FAQ and Wiki before you ask anything.",
+  "ds.gui.skins.tooltip.discord": "■ Join our §6discord server§r!§7 Read the Rules, FAQ and Wiki before you ask anything.",
   "ds.gui.skins.tooltip.wiki": "■ This is a link to §6WikiFandom§r dedicated to making your own skin!§7 Remember that this will be very difficult and requires knowledge of graphic editors.",
 
   "ds.gui.skins": "Skin Settings",
