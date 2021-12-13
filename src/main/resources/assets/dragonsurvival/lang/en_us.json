@@ -1,10 +1,6 @@
 {
   "itemGroup.dragon.survival.blocks": "Dragons Survival",
 
-  "ds.level.newborn": "Newborn",
-  "ds.level.young": "Young",
-  "ds.level.adult": "Adult",
-
   "item.dragonsurvival.magical_predator_entity_spawn_egg": "Magical Predator Spawn Egg",
   "item.dragonsurvival.hunter_hound_spawn_egg": "Knight Hound Spawn Egg",
   "item.dragonsurvival.shooter_spawn_egg": "Hunter Spawn Egg",
@@ -121,20 +117,6 @@
   "ds.gui.tab_button.2": "Lore will not be available anytime soon",
   "ds.gui.tab_button.3": "Skin customization",
 
-  "ds.gui.toggle_inventory.vanilla": "Go to vanilla inventory",
-  "ds.gui.toggle_inventory.dragon": "Go to dragon inventory",
-  "ds.gui.sort": "Sort inventory",
-  "ds.gui.claws": "Claws inventory",
-  "ds.gui.claws.rendering": "Toggle showing of claws and teeth.",
-
-  "ds.gui.skins": "Skin Settings",
-  "ds.gui.skins.other_skins": "Show player skins",
-  "ds.gui.skins.toggle": "Enable/disable skins",
-  "ds.gui.skins.yours": "Your dragon",
-  "ds.gui.skins.random": "Random",
-  "ds.gui.skins.noskin": "This author does not have a skin for this stage.",
-  "ds.gui.skins.noskin.yours": "You do not have a skin for this stage.",
-
   "ds.hold_shift.for_food": "Hold 'Shift' for food info",
   "ds.cave.dragon.food": "§c■ Cave dragon food§r",
   "ds.forest.dragon.food": "§a■ Forest dragon food§r",
@@ -189,7 +171,7 @@
   "ds.keybind.ability3": "Skill #3",
   "ds.keybind.ability4": "Skill #4",
   "ds.skill.help":  "■ §6Active skills§r are used in combat, their power depends of level of the dragon;\n■ §aPassive skills§r do not disappear after death, can be upgraded;\n■ §dInnate passive skills§r are the features of your dragon.\n\n■ §9Level scale§r - the higher the level, the stronger the active skills.. \n\n■ §9Magic points (mana)§r restore under dragon-friendly conditions. Skills begin to spend experience if mana runs out.\n\n■ §9Controls§r - check controls in the game settings. To fine-tune the mod, use the configs. More information can be found on WikiFandom and Discord.",
-  "ds.skill.help.claws": "■ This is the §6dragon inventory§r.\n§7■ Differences from the vanilla inventory: 3x3 craft, expanded window where your whole dragon fits, claw panel, button to keep the first hotbar slot clear of items.§r\n■ Any dragon is born with strong §6claws and teeth§r, but you can make them even better! Just put §6any tools§r§f here in these slots and your bare paw will have stronger characteristics.\n§7■ Does not stack with «Claws and Teeth» skill, which affects only if these slots are empty.",
+  "ds.skill.help.claws": "■ This is the §6dragon inventory§r.\n§7■ Differences from the vanilla inventory: 3x3 craft, expanded window where your whole dragon fits, claw panel, button to sort items.§r\n■ Any dragon is born with strong §6claws and teeth§r, but you can make them even better! Just put §6any tools§r§f here in these slots and your bare paw will have stronger characteristics.\n§7■ Does not stack with «Claws and Teeth» skill, which affects only if these slots are empty.",
 
   "ds.skill_cooldown_check_failure": "§fThe ability is §r§cnot ready§r§f yet!§r ({0})",
   "ds.skill_mana_check_failure": "§fNot enough§r §cmana and experience§r!",
@@ -372,6 +354,30 @@
   "ds.emote.hiss": "■ Hiss growl (loud)",
   "ds.emote.purreow": "■ Sad growl",
   "ds.emote.sleep_growl": "■ Sleep growl",
-  "ds.emote.annoyed_warning": "■ Annoyed growl (loud)"
+  "ds.emote.annoyed_warning": "■ Annoyed growl (loud)",
+
+  "ds.gui.skins.tooltip.yours": "■ This is what §6you§r look like now.",
+  "ds.gui.skins.tooltip.random": "■ Shows a random skin of §6other players§r§f. You §ccan't install§r§f them yourself!§7 Only look and admire! >:D",
+  "ds.gui.skins.tooltip.help": "■ §6Skin§r is a self-made texture for your dragon. In this tab you can disable the display of the skin for your dragon at different stages, as well as skins of other players.\n§7■ If you are interested in how to make your own skin or take a commission, use the buttons on the right.",
+  "ds.gui.skins.tooltip.discord": "■ Join our lamp §6discord server§r!§7 Read the Rules, FAQ and Wiki before you ask anything.",
+  "ds.gui.skins.tooltip.wiki": "■ This is a link to §6WikiFandom§r dedicated to making your own skin!§7 Remember that this will be very difficult and requires knowledge of graphic editors.",
+
+  "ds.gui.skins": "Skin Settings",
+  "ds.gui.skins.other_skins": "Show player skins",
+  "ds.gui.skins.toggle": "Enable/disable skins",
+  "ds.gui.skins.yours": "Your dragon",
+  "ds.gui.skins.random": "Random",
+  "ds.gui.skins.noskin": "This author does not have a skin for this stage.",
+  "ds.gui.skins.noskin.yours": "You do not have a skin for this stage.",
+
+  "ds.level.newborn": "Newborn",
+  "ds.level.young": "Young",
+  "ds.level.adult": "Adult",
+
+  "ds.gui.toggle_inventory.vanilla": "Go to vanilla inventory",
+  "ds.gui.toggle_inventory.dragon": "Go to dragon inventory",
+  "ds.gui.sort": "Sort inventory",
+  "ds.gui.claws": "Claws inventory",
+  "ds.gui.claws.rendering": "Toggle showing of claws and teeth."
 }
 
