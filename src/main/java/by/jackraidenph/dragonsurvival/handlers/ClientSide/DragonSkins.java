@@ -87,8 +87,7 @@ public class DragonSkins
 	
 	public static ResourceLocation getPlayerSkin(PlayerEntity player, DragonType type, DragonLevel dragonStage) {
 		ResourceLocation texture = null;
-		UUID id = player.getGameProfile().getId();
-		String playerKey = id + "_" + dragonStage.name;
+		String playerKey = player.getGameProfile().getName() + "_" + dragonStage.name;
 		
 		boolean renderStage = renderStage(player, dragonStage);
 		
@@ -127,7 +126,7 @@ public class DragonSkins
 	
 	public static ResourceLocation getGlowTexture(PlayerEntity player, DragonType type, DragonLevel dragonStage) {
 		ResourceLocation texture = null;
-		String playerKey = player.getGameProfile().getId() + "_" + dragonStage.name;
+		String playerKey = player.getGameProfile().getName() + "_" + dragonStage.name;
 		String defaultKey = type + "_" + dragonStage.name;
 		
 		boolean renderStage = renderStage(player, dragonStage);
@@ -166,8 +165,7 @@ public class DragonSkins
 	public static ResourceLocation fetchSkinFile(PlayerEntity playerEntity, DragonLevel dragonStage, String... extra) {
 		ResourceLocation resourceLocation = null;
 		String name = playerEntity.getGameProfile().getName();
-		UUID id = playerEntity.getGameProfile().getId();
-		String playerKey = id + "_" + dragonStage.name;
+		String playerKey = playerEntity.getGameProfile().getName() + "_" + dragonStage.name;
 		
 		String[] text = ArrayUtils.addAll(new String[]{name, dragonStage.name}, extra);
 		String searchText = StringUtils.join(text, "_");

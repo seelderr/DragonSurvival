@@ -112,9 +112,6 @@ public class SkinsScreen extends Screen
 			defaultSkin = true;
 		}
 		
-		SkinsScreen.skinTexture = skinTexture;
-		SkinsScreen.glowTexture = null;
-		
 		if(skinTexture != null) {
 			if(!defaultSkin) {
 				glowTexture = DragonSkins.getPlayerGlow(playerName + "_" + level.name);
@@ -122,7 +119,7 @@ public class SkinsScreen extends Screen
 		}
 		
 		SkinsScreen.glowTexture = glowTexture;
-		
+		SkinsScreen.skinTexture = skinTexture;
 		noSkin = defaultSkin;
 		loading = false;
 	}
