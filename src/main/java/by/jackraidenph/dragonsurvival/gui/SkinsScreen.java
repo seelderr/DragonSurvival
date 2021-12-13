@@ -454,6 +454,8 @@ public class SkinsScreen extends Screen
 				renderEntityInInventory(startX + 10, startY + 90, scale, xRot, yRot, dragon);
 			}
 			
+			((DragonRenderer)dragonRenderer).glowTexture = null;
+			
 			stack.popPose();
 			
 			GL11.glTranslatef(0F, 0F, 400);
@@ -469,10 +471,10 @@ public class SkinsScreen extends Screen
 			if(!loading) {
 				if (noSkin) {
 					if (playerName == minecraft.player.getGameProfile().getName()) {
-						drawNonShadowString(stack, minecraft.font, new TranslationTextComponent("ds.gui.skins.noskin.yours").withStyle(TextFormatting.DARK_GRAY), startX + 40, startY + this.imageHeight - 20, -1);
+						drawNonShadowLineBreak(stack, minecraft.font, new TranslationTextComponent("ds.gui.skins.noskin.yours").withStyle(TextFormatting.DARK_GRAY), startX + 40, startY + this.imageHeight - 20, -1);
 						
 					} else {
-						drawNonShadowString(stack, minecraft.font, new TranslationTextComponent("ds.gui.skins.noskin").withStyle(TextFormatting.DARK_GRAY), startX + 65, startY + this.imageHeight - 20, -1);
+						drawNonShadowLineBreak(stack, minecraft.font, new TranslationTextComponent("ds.gui.skins.noskin").withStyle(TextFormatting.DARK_GRAY), startX + 65, startY + this.imageHeight - 20, -1);
 					}
 				}
 			}
@@ -533,6 +535,10 @@ public class SkinsScreen extends Screen
 	}
 	
 	public void drawNonShadowString(MatrixStack p_238472_0_, FontRenderer p_238472_1_, ITextComponent p_238472_2_, int p_238472_3_, int p_238472_4_, int p_238472_5_) {
+		p_238472_1_.draw(p_238472_0_, LanguageMap.getInstance().getVisualOrder(p_238472_2_), (int)(p_238472_3_ - p_238472_1_.width(p_238472_2_) / 2), (int)p_238472_4_, p_238472_5_);
+	}
+	
+	public void drawNonShadowLineBreak(MatrixStack p_238472_0_, FontRenderer p_238472_1_, ITextComponent p_238472_2_, int p_238472_3_, int p_238472_4_, int p_238472_5_) {
 		IReorderingProcessor ireorderingprocessor = p_238472_2_.getVisualOrderText();
 		
 		List<ITextProperties> wrappedLine = font.getSplitter().splitLines(p_238472_2_, 150, Style.EMPTY);

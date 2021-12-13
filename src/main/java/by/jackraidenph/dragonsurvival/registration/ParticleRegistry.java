@@ -9,10 +9,8 @@ import by.jackraidenph.dragonsurvival.particles.ForestDragon.LargePoisonParticle
 import by.jackraidenph.dragonsurvival.particles.ForestDragon.LargePoisonParticleData;
 import by.jackraidenph.dragonsurvival.particles.ForestDragon.SmallPoisonParticle.ForestFactory;
 import by.jackraidenph.dragonsurvival.particles.ForestDragon.SmallPoisonParticleData;
-import by.jackraidenph.dragonsurvival.particles.SeaDragon.LargeLightningParticle;
-import by.jackraidenph.dragonsurvival.particles.SeaDragon.LargeLightningParticleData;
+import by.jackraidenph.dragonsurvival.particles.SeaDragon.*;
 import by.jackraidenph.dragonsurvival.particles.SeaDragon.SmallLightningParticle.SeaFactory;
-import by.jackraidenph.dragonsurvival.particles.SeaDragon.SmallLightningParticleData;
 import com.mojang.serialization.Codec;
 import net.minecraft.client.Minecraft;
 import net.minecraft.particles.BasicParticleType;
@@ -75,6 +73,13 @@ public class ParticleRegistry {
         }
     });
     
+    public static final RegistryObject<ParticleType<SeaSweepParticleData>> SEA_SWEEP = REGISTRY.register("sea_sweep", () -> new ParticleType<SeaSweepParticleData>(false, SeaSweepParticleData.DESERIALIZER) {
+        @Override
+        public Codec<SeaSweepParticleData> codec() {
+            return SeaSweepParticleData.CODEC(SEA_SWEEP.get());
+        }
+    });
+    
     @SubscribeEvent
     public static void registerParticles(RegistryEvent.Register<ParticleType<?>> registryEvent) {
         IForgeRegistry<ParticleType<?>> particleTypes = registryEvent.getRegistry();
@@ -97,6 +102,7 @@ public class ParticleRegistry {
         Minecraft.getInstance().particleEngine.register(ParticleRegistry.LARGE_POISON.get(), LargePoisonParticle.ForestFactory::new);
         Minecraft.getInstance().particleEngine.register(ParticleRegistry.LIGHTNING.get(), SeaFactory::new);
         Minecraft.getInstance().particleEngine.register(ParticleRegistry.LARGE_LIGHTNING.get(), LargeLightningParticle.SeaFactory::new);
+        Minecraft.getInstance().particleEngine.register(ParticleRegistry.SEA_SWEEP.get(), SeaSweepParticle.SeaFactory::new);
     
     }
 }

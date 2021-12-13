@@ -13,6 +13,7 @@ import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.network.magic.ActivateClientAbility;
 import by.jackraidenph.dragonsurvival.network.magic.SyncAbilityCastingToServer;
+import by.jackraidenph.dragonsurvival.particles.SeaDragon.SeaSweepParticleData;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
 import by.jackraidenph.dragonsurvival.util.DragonLevel;
 import by.jackraidenph.dragonsurvival.util.DragonType;
@@ -23,7 +24,7 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.particles.ParticleTypes;
+import net.minecraft.particles.IParticleData;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.tags.FluidTags;
@@ -304,8 +305,9 @@ public class MagicHandler
 								event.getSource().bypassArmor();
 								
 								if(player.level.isClientSide) {
-									for (int i = 0; i < 10; i++) {
-										ClientMagicHandler.renderEffectParticle(target, ParticleTypes.SOUL_FIRE_FLAME);
+									IParticleData data = new SeaSweepParticleData(37F);
+									for (int i = 0; i < 3; i++) {
+										ClientMagicHandler.renderEffectParticle(target, data);
 									}
 								}
 							}
