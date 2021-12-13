@@ -156,13 +156,14 @@ public class ToolTipHandler
 		
 		String translatedText1 = I18n.get("ds.skill.help");
 		String translatedText2 = I18n.get("ds.skill.help.claws");
+		String translatedText3 = I18n.get("ds.gui.skins.tooltip.help");
 		
 		String mergedString = "";
 		
 		for(ITextProperties comp : lines) {
 			if (comp instanceof TranslationTextComponent) {
 				TranslationTextComponent textComponent = (TranslationTextComponent)comp;
-				if(textComponent.getKey().contains("ds.skill.help")){
+				if(textComponent.getKey().contains("ds.skill.help") || textComponent.getKey().contains("ds.gui.skins.tooltip.help")){
 					text = true;
 					break;
 				}
@@ -173,7 +174,8 @@ public class ToolTipHandler
 		
 		if(!text){
 			if(mergedString.replace("\n", "").replace(" ", "").contains(translatedText1.replace("\n", "").replace(" ", ""))
-			   || mergedString.replace("\n", "").replace(" ", "").contains(translatedText2.replace("\n", "").replace(" ", ""))){
+			   || mergedString.replace("\n", "").replace(" ", "").contains(translatedText2.replace("\n", "").replace(" ", ""))
+			   || mergedString.replace("\n", "").replace(" ", "").contains(translatedText3.replace("\n", "").replace(" ", ""))){
 				text = true;
 			}
 		}

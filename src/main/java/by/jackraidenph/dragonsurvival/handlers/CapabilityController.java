@@ -8,8 +8,8 @@ import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
-import by.jackraidenph.dragonsurvival.network.DiggingStatus;
-import by.jackraidenph.dragonsurvival.network.RefreshDragons;
+import by.jackraidenph.dragonsurvival.network.status.DiggingStatus;
+import by.jackraidenph.dragonsurvival.network.status.RefreshDragons;
 import by.jackraidenph.dragonsurvival.network.SynchronizeDragonCap;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
 import by.jackraidenph.dragonsurvival.util.DragonLevel;
@@ -66,6 +66,7 @@ public class CapabilityController {
                         capNew.getClawInventory().clone(capOld);
                         capNew.getEmotes().clone(capOld);
                         capNew.getMagic().clone(capOld);
+                        capNew.getSkin().clone(capOld);
     
                         capNew.setSize(capOld.getSize());
                         capNew.setType(capOld.getType());

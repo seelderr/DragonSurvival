@@ -9,10 +9,13 @@ import net.minecraft.entity.projectile.AbstractFireballEntity;
 import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
+
+import java.util.List;
 
 public class FireBallEntity extends DragonBallEntity
 {
@@ -48,6 +51,29 @@ public class FireBallEntity extends DragonBallEntity
 			this.level.explode((Entity)null, this.getX(), this.getY(), this.getZ(), explosivePower, flag, flag ? Explosion.Mode.DESTROY : Explosion.Mode.NONE);
 			isDead = true;
 			setDeltaMovement(0, 0, 0);
+			
+			if(!flag){
+				aoeDamage();
+			}
+		}
+	}
+	
+	private void aoeDamage()
+	{
+		int range = 2;
+		List<Entity> entities = this.level.getEntities(null, new AxisAlignedBB(position().x - range, position().y - range, position().z - range, position().x + range, position().y + range, position().z + range));
+		entities.removeIf((e) -> e == getOwner() || e instanceof FireBallEntity);
+		entities.removeIf((e) -> e.distanceTo(this) > range);
+		entities.removeIf((e) -> !(e instanceof LivingEntity));
+		
+		for(Entity ent : entities){
+			if (!this.level.isClientSide) {
+				ent.hurt(DamageSource.explosion((Explosion)null), FireBallAbility.getDamage(getLevel()));
+				
+				if (getOwner() instanceof LivingEntity) {
+					this.doEnchantDamageEffects((LivingEntity)getOwner(), ent);
+				}
+			}
 		}
 	}
 	
@@ -61,6 +87,7 @@ public class FireBallEntity extends DragonBallEntity
 			}
 			isDead = true;
 			setDeltaMovement(0, 0, 0);
+			aoeDamage();
 		}
 	}
 }

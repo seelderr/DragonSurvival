@@ -65,11 +65,15 @@ public class Princess extends VillagerEntity implements IAnimatable, CommonTrait
     public Princess(EntityType<? extends VillagerEntity> entityType, World world) {
         super(entityType, world);
     }
-
+    
     public Princess(EntityType<? extends VillagerEntity> entityType, World world, VillagerType villagerType) {
         super(entityType, world, villagerType);
     }
-
+    
+    protected int getExperienceReward(PlayerEntity p_70693_1_) {
+        return 1 + this.level.random.nextInt(2);
+    }
+    
     AnimationFactory animationFactory = new AnimationFactory(this);
     AnimationTimer animationTimer = new AnimationTimer();
 

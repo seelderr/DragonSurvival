@@ -7,6 +7,7 @@ import by.jackraidenph.dragonsurvival.handlers.ClientSide.ClientDragonRender;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.ClientFlightHandler;
 import by.jackraidenph.dragonsurvival.nest.NestEntity;
 import by.jackraidenph.dragonsurvival.network.*;
+import by.jackraidenph.dragonsurvival.network.nest.SynchronizeNest;
 import by.jackraidenph.dragonsurvival.registration.EntityTypesInit;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
@@ -121,9 +122,6 @@ public class PacketProxy {
                         DragonEntity dragonEntity = EntityTypesInit.DRAGON.create(world);
                         dragonEntity.player = thatPlayer.getId();
                         ClientDragonRender.playerDragonHashMap.computeIfAbsent(thatPlayer.getId(), integer -> new AtomicReference<>(dragonEntity)).getAndSet(dragonEntity);
-                        DragonEntity dragonArmor = EntityTypesInit.DRAGON_ARMOR.create(world);
-                        dragonArmor.player = thatPlayer.getId();
-                        ClientDragonRender.playerArmorMap.computeIfAbsent(thatPlayer.getId(), integer -> dragonArmor);
                     }
                     thatPlayer.setForcedPose(null);
                     thatPlayer.refreshDimensions();

@@ -50,7 +50,11 @@ public class MagicalPredatorEntity extends MonsterEntity {
         scale = this.size / this.getBbHeight();
         deathStar = false;
     }
-
+    
+    protected int getExperienceReward(PlayerEntity p_70693_1_) {
+        return 1 + this.level.random.nextInt(2);
+    }
+    
     private static int getActualDistance(PlayerEntity player) {
 
         AtomicInteger distance = new AtomicInteger();

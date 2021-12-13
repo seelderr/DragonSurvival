@@ -1,4 +1,4 @@
-package by.jackraidenph.dragonsurvival.network;
+package by.jackraidenph.dragonsurvival.network.nest;
 
 import by.jackraidenph.dragonsurvival.util.DragonType;
 

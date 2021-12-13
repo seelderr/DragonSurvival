@@ -14,6 +14,10 @@ public class ClientConfig {
 	public final ForgeConfigSpec.BooleanValue clientDebugMessages;
 	
 	public final ForgeConfigSpec.BooleanValue renderDragonClaws;
+	public final ForgeConfigSpec.BooleanValue renderNewbornSkin;
+	public final ForgeConfigSpec.BooleanValue renderYoungSkin;
+	public final ForgeConfigSpec.BooleanValue renderAdultSkin;
+	public final ForgeConfigSpec.BooleanValue renderOtherPlayerSkins;
 	
 	public final ForgeConfigSpec.BooleanValue dragonInventory;
 	public final ForgeConfigSpec.BooleanValue dragonTabs;
@@ -52,6 +56,22 @@ public class ClientConfig {
 		renderDragonClaws = builder
 				.comment("Should the tools on the claws and teeth be rendered for your dragon?")
 				.define("renderDragonClaws", true);
+		
+		renderNewbornSkin = builder
+				.comment("Do you want your dragon skin to be rendered as a newborn dragon?")
+				.define("renderNewbornSkin", true);
+		
+		renderYoungSkin = builder
+				.comment("Do you want your dragon skin to be rendered as a young dragon?")
+				.define("renderYoungSkin", true);
+		
+		renderAdultSkin = builder
+				.comment("Do you want your dragon skin to be rendered as a adult dragon?")
+				.define("renderAdultSkin", true);
+		
+		renderOtherPlayerSkins = builder
+				.comment("Should other player skins be rendered?")
+				.define("renderOtherPlayerSkins", true);
 		
 		
 		builder.push("ui");

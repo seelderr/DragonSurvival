@@ -11,7 +11,7 @@ import by.jackraidenph.dragonsurvival.magic.abilities.Passives.ContrastShowerAbi
 import by.jackraidenph.dragonsurvival.magic.abilities.Passives.LightInDarknessAbility;
 import by.jackraidenph.dragonsurvival.magic.abilities.Passives.WaterAbility;
 import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
-import by.jackraidenph.dragonsurvival.network.StartJump;
+import by.jackraidenph.dragonsurvival.network.status.StartJump;
 import by.jackraidenph.dragonsurvival.network.SyncCapabilityDebuff;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
 import by.jackraidenph.dragonsurvival.renderer.magic.CaveLavaFluidRenderer;

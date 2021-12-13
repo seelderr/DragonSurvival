@@ -15,7 +15,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileHelper;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.*;
@@ -205,18 +204,17 @@ public abstract class BreathAbility extends ActiveDragonAbility
 				for(int y = -(RANGE / 2); y < (RANGE / 2); y++){
 					for(int z =  -(RANGE / 2); z < (RANGE / 2); z++){
 						BlockPos newPos = new BlockPos(pos.getX() + x, pos.getY() + y, pos.getZ() + z);
-						if(newPos.distSqr(pos) <= (RANGE / 2)){
+						if(newPos.distSqr(pos) <= RANGE){
 							BlockState state = player.level.getBlockState(newPos);
-							
 							if(state.getBlock() != Blocks.AIR){
 								if(SpecificsHandler.DRAGON_BREATH_BLOCKS != null && SpecificsHandler.DRAGON_BREATH_BLOCKS.containsKey(type) && SpecificsHandler.DRAGON_BREATH_BLOCKS.get(type).contains(state.getBlock())){
 									if(!player.level.isClientSide) {
 										if (player.level.random.nextFloat() * 100 <= blockBreakChance()) {
-											state.getBlock().playerDestroy(player.level, player, pos, state, player.level.getBlockEntity(pos), ItemStack.EMPTY);
+											//state.getBlock().playerDestroy(player.level, player, pos, state, player.level.getBlockEntity(pos), ItemStack.EMPTY);
 											player.level.destroyBlock(pos, false, player);
+											continue;
 										}
 									}
-									return;
 								}
 								
 								onBlock(newPos, state, result.getDirection());

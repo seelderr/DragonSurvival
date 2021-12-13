@@ -203,7 +203,7 @@ public class ForestBreathAbility extends BreathAbility
 
 		hitEntities();
 		
-		if (player.tickCount % 20 == 0) {
+		if (player.tickCount % 10 == 0) {
 			hitBlocks();
 		}
 	}

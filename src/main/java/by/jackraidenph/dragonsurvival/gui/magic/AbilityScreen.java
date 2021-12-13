@@ -2,6 +2,7 @@ package by.jackraidenph.dragonsurvival.gui.magic;
 
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
+import by.jackraidenph.dragonsurvival.gui.buttons.TabButton;
 import by.jackraidenph.dragonsurvival.handlers.Magic.ClientMagicHUDHandler;
 import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
@@ -43,7 +44,7 @@ public class AbilityScreen extends Screen {
     
     
     public AbilityScreen(Screen sourceScreen) {
-        super(new StringTextComponent("AbilityScreenTest"));
+        super(new StringTextComponent("AbilityScreen"));
         this.sourceScreen = sourceScreen;
     }
     

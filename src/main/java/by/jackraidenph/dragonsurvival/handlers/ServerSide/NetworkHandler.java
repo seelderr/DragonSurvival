@@ -14,11 +14,15 @@ import by.jackraidenph.dragonsurvival.network.*;
 import by.jackraidenph.dragonsurvival.network.claw.DragonClawsMenuToggle;
 import by.jackraidenph.dragonsurvival.network.claw.SyncDragonClawRender;
 import by.jackraidenph.dragonsurvival.network.claw.SyncDragonClawsMenu;
+import by.jackraidenph.dragonsurvival.network.container.OpenInventory;
 import by.jackraidenph.dragonsurvival.network.emotes.SyncEmote;
 import by.jackraidenph.dragonsurvival.network.emotes.SyncEmoteServer;
 import by.jackraidenph.dragonsurvival.network.emotes.SyncEmoteStats;
 import by.jackraidenph.dragonsurvival.network.emotes.SyncEmoteStatsServer;
 import by.jackraidenph.dragonsurvival.network.magic.*;
+import by.jackraidenph.dragonsurvival.network.nest.GiveNest;
+import by.jackraidenph.dragonsurvival.network.nest.SynchronizeNest;
+import by.jackraidenph.dragonsurvival.network.status.*;
 import by.jackraidenph.dragonsurvival.registration.BlockInit;
 import by.jackraidenph.dragonsurvival.registration.EntityTypesInit;
 import by.jackraidenph.dragonsurvival.util.DragonType;
@@ -56,16 +60,24 @@ public class NetworkHandler
 	 public static void setup(){
 		
 		//Generic packets
+		 register(SynchronizeNest.class, new SynchronizeNest());
+		
 		 register(PacketSyncCapabilityMovement.class, new PacketSyncCapabilityMovement());
 		 register(SyncCapabilityDebuff.class, new SyncCapabilityDebuff());
 		 register(PacketSyncXPDevour.class, new PacketSyncXPDevour());
 		 register(PacketSyncPredatorStats.class, new PacketSyncPredatorStats());
-		 register(SynchronizeNest.class, new SynchronizeNest());
+		 
 		 register(SyncSize.class, new SyncSize());
 		 register(ToggleWings.class, new ToggleWings());
-		// register(OpenCrafting.class, new OpenCrafting());
-		 register(OpenInventory.class, new OpenInventory());
 		 register(DiggingStatus.class, new DiggingStatus());
+		
+		 // register(OpenCrafting.class, new OpenCrafting());
+		 register(OpenInventory.class, new OpenInventory());
+		 register(SortInventoryPacket.class, new SortInventoryPacket());
+		
+		 register(SyncDragonClawRender.class, new SyncDragonClawRender());
+		 register(SyncDragonSkinSettings.class, new SyncDragonSkinSettings());
+		
 		
 		 //Ability packets
 		 register(OpenDragonInventory.class, new OpenDragonInventory());
@@ -76,7 +88,6 @@ public class NetworkHandler
 		 register(SyncCurrentAbilityCasting.class, new SyncCurrentAbilityCasting());
 		 register(SyncAbilityCastingToServer.class, new SyncAbilityCastingToServer());
 		 register(ActivateClientAbility.class, new ActivateClientAbility());
-		
 		 
 		 register(SyncPotionRemovedEffect.class, new SyncPotionRemovedEffect());
 		 register(SyncPotionAddedEffect.class, new SyncPotionAddedEffect());
@@ -167,7 +178,7 @@ public class NetworkHandler
 		 CHANNEL.registerMessage(nextPacketId++, GiveNest.class, (giveNest, packetBuffer) -> {
 			                                        packetBuffer.writeEnum(giveNest.dragonType);
 		                                        },
-		                                        packetBuffer -> new GiveNest(packetBuffer.readEnum(DragonType.class)), (giveNest, contextSupplier) -> {
+		                         packetBuffer -> new GiveNest(packetBuffer.readEnum(DragonType.class)), (giveNest, contextSupplier) -> {
 					 ServerPlayerEntity playerEntity = contextSupplier.get().getSender();
 					 Block item;
 					 switch (giveNest.dragonType) {
@@ -199,8 +210,8 @@ public class NetworkHandler
 	                packetBuffer.writeInt(setFlyState.playerid);
 	                packetBuffer.writeBoolean(setFlyState.flying);
 	            },
-	            packetBuffer -> new SetFlyState(packetBuffer.readInt(), packetBuffer.readBoolean()),
-	            (setFlyState, contextSupplier) -> {
+		                         packetBuffer -> new SetFlyState(packetBuffer.readInt(), packetBuffer.readBoolean()),
+		                         (setFlyState, contextSupplier) -> {
 	                if (contextSupplier.get().getDirection().getReceptionSide() == LogicalSide.CLIENT) {
 	                    ClientDragonRender.dragonsFlying.put(setFlyState.playerid, setFlyState.flying);
 	
@@ -212,8 +223,8 @@ public class NetworkHandler
 	            packetBuffer.writeInt(startJump.playerId);
 	            packetBuffer.writeByte(startJump.ticks);
 	        },
-	        packetBuffer -> new StartJump(packetBuffer.readInt(), packetBuffer.readByte()),
-	        (startJump, contextSupplier) -> {
+		                         packetBuffer -> new StartJump(packetBuffer.readInt(), packetBuffer.readByte()),
+		                         (startJump, contextSupplier) -> {
 	            if (contextSupplier.get().getDirection().getReceptionSide() == LogicalSide.CLIENT) {
 	                Entity entity = Minecraft.getInstance().level.getEntity(startJump.playerId);
 	                if (entity instanceof PlayerEntity) {
@@ -227,8 +238,8 @@ public class NetworkHandler
 		 CHANNEL.registerMessage(nextPacketId++, RefreshDragons.class, (refreshDragons, packetBuffer) -> {
                     packetBuffer.writeInt(refreshDragons.playerId);
                 },
-                packetBuffer -> new RefreshDragons(packetBuffer.readInt()),
-                (refreshDragons, contextSupplier) -> {
+		                         packetBuffer -> new RefreshDragons(packetBuffer.readInt()),
+		                         (refreshDragons, contextSupplier) -> {
                     if (contextSupplier.get().getDirection().getReceptionSide() == LogicalSide.CLIENT) {
                         Thread thread = new Thread(() -> {
                             try {
@@ -247,9 +258,6 @@ public class NetworkHandler
                                 DragonEntity dragonEntity = EntityTypesInit.DRAGON.create(myPlayer.level);
                                 dragonEntity.player = thatPlayer.getId();
                                 ClientDragonRender.playerDragonHashMap.computeIfAbsent(thatPlayer.getId(), integer -> new AtomicReference<>(dragonEntity)).getAndSet(dragonEntity);
-                                DragonEntity dragonArmor = EntityTypesInit.DRAGON_ARMOR.create(myPlayer.level);
-                                dragonArmor.player = thatPlayer.getId();
-                                ClientDragonRender.playerArmorMap.computeIfAbsent(thatPlayer.getId(), integer -> dragonArmor);
                             }
                         });
                         thread.start();

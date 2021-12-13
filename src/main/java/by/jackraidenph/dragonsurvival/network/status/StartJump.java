@@ -1,4 +1,4 @@
-package by.jackraidenph.dragonsurvival.network;
+package by.jackraidenph.dragonsurvival.network.status;
 
 /**
  * Jump animation length is 20.8 ticks

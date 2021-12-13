@@ -23,6 +23,7 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.tags.FluidTags;
@@ -289,6 +290,12 @@ public class MagicHandler
 							
 							if (hit) {
 								event.getSource().bypassArmor();
+								
+								if(player.level.isClientSide) {
+									for (int i = 0; i < 10; i++) {
+										ClientMagicHandler.renderEffectParticle(target, ParticleTypes.SOUL_FIRE_FLAME);
+									}
+								}
 							}
 						} else if (cap.getType() == DragonType.CAVE) {
 							BurnAbility burnAbility = (BurnAbility)cap.getMagic().getAbilityOrDefault(DragonAbilities.BURN);

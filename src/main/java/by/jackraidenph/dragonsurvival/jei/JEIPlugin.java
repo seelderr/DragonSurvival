@@ -1,7 +1,7 @@
 package by.jackraidenph.dragonsurvival.jei;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.gui.magic.DragonScreen;
+import by.jackraidenph.dragonsurvival.gui.DragonScreen;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.registration.IGuiHandlerRegistration;

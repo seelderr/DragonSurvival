@@ -31,7 +31,7 @@ public class MixinItem {
 		
 		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
 			if (dragonStateHandler.isDragon() && ConfigHandler.SERVER.blacklistedSlots.get().contains(slot) && ConfigUtils.parseConfigItemList(ConfigHandler.SERVER.blacklistedItems.get()).contains(stack.getItem())) {
-				if(slot >= 0 && slot < 9 && !isSelected) return;
+				if(slot >= 0 && slot < 9 && !isSelected && !ItemStack.matches(player.getOffhandItem(), stack)) return;
 				if (stack.isEmpty() || !stack.onDroppedByPlayer(player)) return;
 				
 				player.drop(stack, false);

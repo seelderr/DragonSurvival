@@ -28,7 +28,11 @@ public abstract class Hunter extends CreatureEntity implements DragonHunter {
     public Hunter(EntityType<? extends CreatureEntity> entityType, World world) {
         super(entityType, world);
     }
-
+    
+    protected int getExperienceReward(PlayerEntity p_70693_1_) {
+        return 5 + this.level.random.nextInt(5);
+    }
+    
     @Override
     protected void registerGoals() {
         goalSelector.addGoal(0, new SwimGoal(this));

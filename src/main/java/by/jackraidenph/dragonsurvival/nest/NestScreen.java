@@ -17,14 +17,14 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
 
 public class NestScreen extends ContainerScreen<NestContainer> {
-    static final ResourceLocation BACKGROUND = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/nest_ui.png");
-    static final ResourceLocation CAVE_NEST0 = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/cave_nest_0.png");
-    static final ResourceLocation CAVE_NEST1 = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/cave_nest_1.png");
-    static final ResourceLocation FOREST_NEST0 = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/forest_nest_0.png");
-    static final ResourceLocation FOREST_NEST1 = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/forest_nest_1.png");
-    static final ResourceLocation SEA_NEST0 = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/sea_nest_0.png");
-    static final ResourceLocation SEA_NEST1 = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/sea_nest_1.png");
-    static final ResourceLocation RED_HEART = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/red_heart.png");
+    static final ResourceLocation BACKGROUND = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/nest/nest_ui.png");
+    static final ResourceLocation CAVE_NEST0 = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/nest/cave_nest_0.png");
+    static final ResourceLocation CAVE_NEST1 = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/nest/cave_nest_1.png");
+    static final ResourceLocation FOREST_NEST0 = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/nest/forest_nest_0.png");
+    static final ResourceLocation FOREST_NEST1 = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/nest/forest_nest_1.png");
+    static final ResourceLocation SEA_NEST0 = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/nest/sea_nest_0.png");
+    static final ResourceLocation SEA_NEST1 = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/nest/sea_nest_1.png");
+    static final ResourceLocation RED_HEART = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/nest/red_heart.png");
     private final NestEntity nestEntity;
 
     private final PlayerEntity playerEntity;
