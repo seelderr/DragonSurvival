@@ -224,7 +224,7 @@
   "ds.skill.harvest_level.sea_claws_and_teeth": "§d■ Level:§r {0}",
 
   "ds.skill.description.storm_breath": "■ Elemental breath: a stream of sparks. Targets become §c«Electrified»§r and deal electric shock damage to each other. The more targets affected, the more damage dealt. \n\n■ Range depends on the age of the dragon. Makes creepers charged. During a storm will summon thunderbolts.",
-  "ds.skill.description.ball_lightning": "■ Ranged attack: shoots out a ball lightning. Deals area damage and §celectrifies§r enemies.",
+  "ds.skill.description.ball_lightning": "■ Ranged attack: shoots out a ball lightning. Deals area damage and §celectrifies§r enemies.\n\n■ During rain and storms, lightning can strike the ball.",
   "ds.skill.description.revealing_the_soul": "■ Massive buff: temporary increases amount of §2experience§r gained from monsters. \n\n■ Has a limit of maximum amount of experience you can gain at a time. Effect does not stack. Cannot be used in flight.",
   "ds.skill.description.sea_eyes": "■ Personal buff: providing §2Night Vision§r for a short time.\n\n■ Effect does not stack. Cannot be used in flight.",
   "ds.skill.description.sea_magic": "■ Magic points (Mana) are used for dragon magic. Restores on wet blocks.\n\n■ Current amount of §2{0}§r mana:\n - §2{1}§r from «Sea Magic»\n - §2{2}§r from level of dragon",

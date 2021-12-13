@@ -14,6 +14,8 @@
 - Fixed: when falling from lianas and getting stuck somewhere, there is no animation at all and the wings are enlarged.
 - Fixed: block breakdown was calculated with an error
 - Fixed: Breath fire spawning was calculated with an error
+- Fixed: humans no longer have damage bugs
+- Fixed: getting correct damage increase with strength
 - Configs added: saving claws and teeth when dead (enabled by default)
 - adds charged effect to ball lightning
 - claw renderer can now be disabled by removing the check mark from "claws and teeth"
