@@ -40,6 +40,8 @@ import net.minecraftforge.client.event.RenderBlockOverlayEvent;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.TickEvent.Phase;
+import net.minecraftforge.event.TickEvent.RenderTickEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -195,14 +197,17 @@ public class ClientEvents {
     }
 
     @SubscribeEvent
-    public static void onClientTick(TickEvent.ClientTickEvent clientTickEvent) {
-        if (clientTickEvent.phase == TickEvent.Phase.START) {
+    public static void onClientTick(RenderTickEvent clientTickEvent) {
+        if (clientTickEvent.phase == Phase.START) {
             Minecraft minecraft = Minecraft.getInstance();
             ClientPlayerEntity player = minecraft.player;
             if (player != null) {
                 DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
                     if (playerStateHandler.isDragon()) {
-                        float bodyAndHeadYawDiff = (((float) playerStateHandler.getMovementData().bodyYaw) - player.yHeadRot);
+                        float headRot = player.yHeadRot;
+                        double bodyYaw = playerStateHandler.getMovementData().bodyYaw;
+                        
+                        float bodyAndHeadYawDiff =(((float) playerStateHandler.getMovementData().bodyYaw) - headRot);
 
                         Vector3d moveVector = getInputVector(new Vector3d(player.input.leftImpulse, 0, player.input.forwardImpulse), 1F, player.yRot);
                         boolean isFlying = false;
@@ -212,12 +217,13 @@ public class ClientEvents {
                         }
                         float f = (float) MathHelper.atan2(moveVector.z, moveVector.x) * (180F / (float) Math.PI) - 90F;
                         float f1 = (float) (Math.pow(moveVector.x, 2) + Math.pow(moveVector.z, 2));
-
+    
                         if (f1 > 0.000028) {
+                            
                             if (isFlying || (minecraft.options.getCameraType() != PointOfView.FIRST_PERSON && ConfigHandler.CLIENT.thirdPersonBodyMovement.get() == DragonBodyMovementType.DRAGON) ||
                                     minecraft.options.getCameraType() == PointOfView.FIRST_PERSON && ConfigHandler.CLIENT.firstPersonBodyMovement.get() == DragonBodyMovementType.DRAGON) {
-                                float f2 = MathHelper.wrapDegrees(f - (float) playerStateHandler.getMovementData().bodyYaw);
-                                playerStateHandler.getMovementData().bodyYaw += 0.5F * f2;
+                                float f2 = MathHelper.wrapDegrees(f - (float) bodyYaw);
+                                bodyYaw += 0.5F * f2;
                             } else if ((minecraft.options.getCameraType() != PointOfView.FIRST_PERSON && ConfigHandler.CLIENT.thirdPersonBodyMovement.get() == DragonBodyMovementType.VANILLA) ||
                                     minecraft.options.getCameraType() == PointOfView.FIRST_PERSON && ConfigHandler.CLIENT.firstPersonBodyMovement.get() == DragonBodyMovementType.VANILLA) {
 
@@ -226,9 +232,9 @@ public class ClientEvents {
                                     f -= 180.0F;
                                 }
 
-                                float _f = MathHelper.wrapDegrees(f - (float) playerStateHandler.getMovementData().bodyYaw);
-                                playerStateHandler.getMovementData().bodyYaw += _f * 0.3F;
-                                float _f1 = MathHelper.wrapDegrees(player.yRot - (float) playerStateHandler.getMovementData().bodyYaw);
+                                float _f = MathHelper.wrapDegrees(f - (float) bodyYaw);
+                                bodyYaw += _f * 0.3F;
+                                float _f1 = MathHelper.wrapDegrees(player.yRot - (float) bodyYaw);
                                 boolean flag = _f1 < -90.0F || _f1 >= 90.0F;
 
                                 if (_f1 < -75.0F) {
@@ -238,28 +244,38 @@ public class ClientEvents {
                                 if (_f1 >= 75.0F) {
                                     _f1 = 75.0F;
                                 }
-
-                                playerStateHandler.getMovementData().bodyYaw = player.yRot - _f1;
+    
+                                bodyYaw = player.yRot - _f1;
                                 if (_f1 * _f1 > 2500.0F) {
-                                    playerStateHandler.getMovementData().bodyYaw += _f1 * 0.2F;
+                                    bodyYaw += _f1 * 0.2F;
                                 }
                             }
-                            if (bodyAndHeadYawDiff > 180)
-                                playerStateHandler.getMovementData().bodyYaw -= 360;
-                            if (bodyAndHeadYawDiff <= -180)
-                                playerStateHandler.getMovementData().bodyYaw += 360;
-                            playerStateHandler.setMovementData(playerStateHandler.getMovementData().bodyYaw, player.yHeadRot, player.xRot, player.swinging && player.getAttackStrengthScale(-3.0f) != 1);
-                            NetworkHandler.CHANNEL.send(PacketDistributor.SERVER.noArg(), new PacketSyncCapabilityMovement(player.getId(), playerStateHandler.getMovementData().bodyYaw, playerStateHandler.getMovementData().headYaw, playerStateHandler.getMovementData().headPitch, playerStateHandler.getMovementData().bite));
+                         
+                            
+                            if (bodyAndHeadYawDiff > 180) {
+                                bodyYaw -= 360;
+                            }
+                            
+                            if (bodyAndHeadYawDiff <= -180) {
+                                bodyYaw += 360;
+                            }
+                            
+                            if(Math.abs(bodyAndHeadYawDiff) <= 10){
+                                headRot = (float)bodyYaw;
+                            }
+    
+                            playerStateHandler.setMovementData(bodyYaw, headRot, player.xRot, player.swinging && player.getAttackStrengthScale(-3.0f) != 1);
+                            NetworkHandler.CHANNEL.send(PacketDistributor.SERVER.noArg(), new PacketSyncCapabilityMovement(player.getId(), bodyYaw, playerStateHandler.getMovementData().headYaw, playerStateHandler.getMovementData().headPitch, playerStateHandler.getMovementData().bite));
                         } else if (Math.abs(bodyAndHeadYawDiff) > 180F) {
                             if (Math.abs(bodyAndHeadYawDiff) > 360F)
-                                playerStateHandler.getMovementData().bodyYaw -= bodyAndHeadYawDiff;
+                                bodyYaw -= bodyAndHeadYawDiff;
                             else {
                                 float turnSpeed = Math.min(1F + (float) Math.pow(Math.abs(bodyAndHeadYawDiff) - 180F, 1.5F) / 30F, 50F);
-                                playerStateHandler.setMovementData((float) playerStateHandler.getMovementData().bodyYaw - Math.signum(bodyAndHeadYawDiff) * turnSpeed, player.yHeadRot, player.xRot, player.swinging && player.getAttackStrengthScale(-3.0f) != 1);
+                                playerStateHandler.setMovementData((float) bodyYaw - Math.signum(bodyAndHeadYawDiff) * turnSpeed, headRot, player.xRot, player.swinging && player.getAttackStrengthScale(-3.0f) != 1);
                             }
-                            NetworkHandler.CHANNEL.send(PacketDistributor.SERVER.noArg(), new PacketSyncCapabilityMovement(player.getId(), playerStateHandler.getMovementData().bodyYaw, playerStateHandler.getMovementData().headYaw, playerStateHandler.getMovementData().headPitch, playerStateHandler.getMovementData().bite));
-                        } else if (playerStateHandler.getMovementData().bite != (player.swinging && player.getAttackStrengthScale(-3.0f) != 1) || player.yHeadRot != playerStateHandler.getMovementData().headYaw) {
-                            playerStateHandler.setMovementData(playerStateHandler.getMovementData().bodyYaw, player.yHeadRot, player.xRot, player.swinging && player.getAttackStrengthScale(-3.0f) != 1);
+                            NetworkHandler.CHANNEL.send(PacketDistributor.SERVER.noArg(), new PacketSyncCapabilityMovement(player.getId(), bodyYaw, playerStateHandler.getMovementData().headYaw, playerStateHandler.getMovementData().headPitch, playerStateHandler.getMovementData().bite));
+                        } else if (playerStateHandler.getMovementData().bite != (player.swinging && player.getAttackStrengthScale(-3.0f) != 1) || headRot != playerStateHandler.getMovementData().headYaw) {
+                            playerStateHandler.setMovementData(playerStateHandler.getMovementData().bodyYaw, headRot, player.xRot, player.swinging && player.getAttackStrengthScale(-3.0f) != 1);
                             NetworkHandler.CHANNEL.send(PacketDistributor.SERVER.noArg(), new PacketSyncCapabilityMovement(player.getId(), playerStateHandler.getMovementData().bodyYaw, playerStateHandler.getMovementData().headYaw, playerStateHandler.getMovementData().headPitch, playerStateHandler.getMovementData().bite));
                         }
                     }

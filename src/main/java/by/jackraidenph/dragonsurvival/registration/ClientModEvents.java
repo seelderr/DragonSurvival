@@ -1,19 +1,21 @@
 package by.jackraidenph.dragonsurvival.registration;
 
-import by.jackraidenph.dragonsurvival.BeaconParticle;
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
+import by.jackraidenph.dragonsurvival.gecko.model.KnightModel;
+import by.jackraidenph.dragonsurvival.gecko.model.PrinceModel;
+import by.jackraidenph.dragonsurvival.gecko.model.PrincessModel;
 import by.jackraidenph.dragonsurvival.gecko.renderer.Dragon.DragonRenderer;
 import by.jackraidenph.dragonsurvival.gecko.renderer.KnightRenderer;
 import by.jackraidenph.dragonsurvival.gecko.renderer.PrinceRenderer;
-import by.jackraidenph.dragonsurvival.gecko.model.*;
 import by.jackraidenph.dragonsurvival.gui.DragonScreen;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.ClientDragonRender;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.DragonSkins;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.KeyInputHandler;
 import by.jackraidenph.dragonsurvival.models.magic.FireballModel;
 import by.jackraidenph.dragonsurvival.models.magic.LightningBallModel;
- import by.jackraidenph.dragonsurvival.nest.NestScreen;
-import by.jackraidenph.dragonsurvival.renderer.PrincessRenderer;
+import by.jackraidenph.dragonsurvival.nest.NestScreen;
+import by.jackraidenph.dragonsurvival.particles.BeaconParticle;
+import by.jackraidenph.dragonsurvival.particles.SeaSweepParticle;
 import by.jackraidenph.dragonsurvival.renderer.*;
 import by.jackraidenph.dragonsurvival.renderer.magic.BallLightningRenderer;
 import by.jackraidenph.dragonsurvival.renderer.magic.DragonSpikeRenderer;
@@ -147,6 +149,16 @@ public class ClientModEvents {
             @Override
             public Particle createParticle(BasicParticleType p_199234_1_, ClientWorld clientWorld, double v, double v1, double v2, double v3, double v4, double v5) {
                 BeaconParticle beaconParticle = new BeaconParticle(clientWorld, v, v1, v2, v3, v4, v5);
+                beaconParticle.pickSprite(p_create_1_);
+                return beaconParticle;
+            }
+        });
+    
+        particleManager.register(ParticleRegistry.seaSweep, p_create_1_ -> new IParticleFactory<BasicParticleType>() {
+            @Nullable
+            @Override
+            public Particle createParticle(BasicParticleType p_199234_1_, ClientWorld clientWorld, double v, double v1, double v2, double v3, double v4, double v5) {
+                SeaSweepParticle beaconParticle = new SeaSweepParticle(clientWorld, v, v1, v2, v3, p_create_1_);
                 beaconParticle.pickSprite(p_create_1_);
                 return beaconParticle;
             }

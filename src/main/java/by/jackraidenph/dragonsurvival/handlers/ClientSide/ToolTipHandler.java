@@ -5,6 +5,7 @@ import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.blocks.DragonAltarBlock;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.gui.magic.AbilityScreen;
+import by.jackraidenph.dragonsurvival.gui.magic.buttons.SkillProgressButton;
 import by.jackraidenph.dragonsurvival.handlers.DragonFoodHandler;
 import by.jackraidenph.dragonsurvival.registration.BlockInit;
 import by.jackraidenph.dragonsurvival.registration.ItemRegistry;
@@ -16,6 +17,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
+import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -259,6 +261,17 @@ public class ToolTipHandler
 		
 		boolean isFood = foodCount == 1;
 		
+		boolean button = false;
+		
+		if(screen) {
+			for (Widget widget : ((AbilityScreen)Minecraft.getInstance().screen).widgetList()) {
+				if(widget instanceof SkillProgressButton && widget.isHovered()){
+					button = true;
+					break;
+				}
+			}
+		}
+		
 		if(render) {
 			int top = new Color(154, 132, 154).getRGB();
 			int bottom = new Color(89, 68, 89).getRGB();
@@ -270,15 +283,15 @@ public class ToolTipHandler
 			Color topColor = null;
 			Color bottomColor = null;
 			
-			if(type == DragonType.SEA && screen || isSeaFood){
+			if(type == DragonType.SEA && button || isSeaFood){
 				topColor = new Color(93, 201, 255);
 				bottomColor = new Color(49, 109, 144);
 				
-			}else if(type == DragonType.FOREST && screen || isForestFood){
+			}else if(type == DragonType.FOREST && button || isForestFood){
 				topColor = new Color(0, 255, 148);
 				bottomColor = new Color(4, 130, 82);
 				
-			}else if(type == DragonType.CAVE && screen || isCaveFood){
+			}else if(type == DragonType.CAVE && button || isCaveFood){
 				topColor = new Color(255, 118, 133);
 				bottomColor = new Color(139, 66, 74);
 			}

@@ -13,8 +13,8 @@ import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.network.magic.ActivateClientAbility;
 import by.jackraidenph.dragonsurvival.network.magic.SyncAbilityCastingToServer;
-import by.jackraidenph.dragonsurvival.particles.SeaDragon.SeaSweepParticleData;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
+import by.jackraidenph.dragonsurvival.registration.ParticleRegistry;
 import by.jackraidenph.dragonsurvival.util.DragonLevel;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.block.BlockState;
@@ -24,7 +24,6 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.particles.IParticleData;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.tags.FluidTags;
@@ -32,6 +31,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.IndirectEntityDamageSource;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
@@ -303,12 +303,11 @@ public class MagicHandler
 							
 							if (hit) {
 								event.getSource().bypassArmor();
+								double d0 = (double)(-MathHelper.sin(player.yRot * ((float)Math.PI / 180F)));
+								double d1 = (double)MathHelper.cos(player.yRot * ((float)Math.PI / 180F));
 								
-								if(player.level.isClientSide) {
-									IParticleData data = new SeaSweepParticleData(37F);
-									for (int i = 0; i < 3; i++) {
-										ClientMagicHandler.renderEffectParticle(target, data);
-									}
+								if (player.level instanceof ServerWorld) {
+									((ServerWorld)player.level).sendParticles(ParticleRegistry.seaSweep, player.getX() + d0, player.getY(0.5D), player.getZ() + d1, 0, d0, 0.0D, d1, 0.0D);
 								}
 							}
 						} else if (cap.getType() == DragonType.CAVE) {

@@ -27,7 +27,8 @@ import net.minecraftforge.registries.IForgeRegistry;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ParticleRegistry {
-    public static ParticleType<BasicParticleType> fireBeaconParticle, magicBeaconParticle, peaceBeaconParticle;
+    public static BasicParticleType fireBeaconParticle, magicBeaconParticle, peaceBeaconParticle;
+    public static BasicParticleType seaSweep;
     
     public static final DeferredRegister<ParticleType<?>> REGISTRY = DeferredRegister.create(ForgeRegistries.PARTICLE_TYPES, DragonSurvivalMod.MODID);
     
@@ -73,12 +74,6 @@ public class ParticleRegistry {
         }
     });
     
-    public static final RegistryObject<ParticleType<SeaSweepParticleData>> SEA_SWEEP = REGISTRY.register("sea_sweep", () -> new ParticleType<SeaSweepParticleData>(false, SeaSweepParticleData.DESERIALIZER) {
-        @Override
-        public Codec<SeaSweepParticleData> codec() {
-            return SeaSweepParticleData.CODEC(SEA_SWEEP.get());
-        }
-    });
     
     @SubscribeEvent
     public static void registerParticles(RegistryEvent.Register<ParticleType<?>> registryEvent) {
@@ -86,12 +81,18 @@ public class ParticleRegistry {
         fireBeaconParticle = new BasicParticleType(false);
         fireBeaconParticle.setRegistryName(DragonSurvivalMod.MODID, "netherite_particle");
         particleTypes.register(fireBeaconParticle);
+        
         peaceBeaconParticle = new BasicParticleType(false);
         peaceBeaconParticle.setRegistryName(DragonSurvivalMod.MODID, "gold_particle");
         particleTypes.register(peaceBeaconParticle);
+        
         magicBeaconParticle = new BasicParticleType(false);
         magicBeaconParticle.setRegistryName(DragonSurvivalMod.MODID, "diamond_particle");
         particleTypes.register(magicBeaconParticle);
+    
+        seaSweep = new BasicParticleType(false);
+        seaSweep.setRegistryName(DragonSurvivalMod.MODID, "sea_sweep");
+        particleTypes.register(seaSweep);
     }
     //LargePoisonParticleData
     @SubscribeEvent(priority = EventPriority.LOWEST)
@@ -102,7 +103,5 @@ public class ParticleRegistry {
         Minecraft.getInstance().particleEngine.register(ParticleRegistry.LARGE_POISON.get(), LargePoisonParticle.ForestFactory::new);
         Minecraft.getInstance().particleEngine.register(ParticleRegistry.LIGHTNING.get(), SeaFactory::new);
         Minecraft.getInstance().particleEngine.register(ParticleRegistry.LARGE_LIGHTNING.get(), LargeLightningParticle.SeaFactory::new);
-        Minecraft.getInstance().particleEngine.register(ParticleRegistry.SEA_SWEEP.get(), SeaSweepParticle.SeaFactory::new);
-    
     }
 }

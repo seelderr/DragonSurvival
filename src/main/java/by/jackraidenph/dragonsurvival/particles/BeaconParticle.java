@@ -1,4 +1,4 @@
-package by.jackraidenph.dragonsurvival;
+package by.jackraidenph.dragonsurvival.particles;
 
 import net.minecraft.client.particle.IParticleRenderType;
 import net.minecraft.client.particle.SpriteTexturedParticle;

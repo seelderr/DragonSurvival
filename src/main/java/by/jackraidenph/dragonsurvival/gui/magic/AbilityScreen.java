@@ -2,15 +2,18 @@ package by.jackraidenph.dragonsurvival.gui.magic;
 
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
+import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.gui.buttons.TabButton;
+import by.jackraidenph.dragonsurvival.gui.magic.buttons.AbilityButton;
+import by.jackraidenph.dragonsurvival.gui.magic.buttons.DecreaseLevelButton;
+import by.jackraidenph.dragonsurvival.gui.magic.buttons.IncreaseLevelButton;
+import by.jackraidenph.dragonsurvival.gui.magic.buttons.SkillProgressButton;
 import by.jackraidenph.dragonsurvival.handlers.Magic.ClientMagicHUDHandler;
 import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.magic.common.InnateDragonAbility;
 import by.jackraidenph.dragonsurvival.magic.common.PassiveDragonAbility;
-import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.gui.magic.buttons.*;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
@@ -28,6 +31,7 @@ import org.lwjgl.opengl.GL11;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 
 public class AbilityScreen extends Screen {
     private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/magic_interface.png");
@@ -42,6 +46,9 @@ public class AbilityScreen extends Screen {
     
     public ArrayList<ActiveDragonAbility> unlockAbleSkills = new ArrayList<>();
     
+    public List<Widget> widgetList(){
+        return buttons;
+    }
     
     public AbilityScreen(Screen sourceScreen) {
         super(new StringTextComponent("AbilityScreen"));
