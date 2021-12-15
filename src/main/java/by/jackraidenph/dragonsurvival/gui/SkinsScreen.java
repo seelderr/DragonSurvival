@@ -76,6 +76,7 @@ public class SkinsScreen extends Screen
 	
 	private float yRot = -3;
 	private float xRot = -5;
+	private float zoom = 0;
 	
 	private static String playerName = null;
 	private static DragonLevel level = DragonLevel.ADULT;
@@ -90,6 +91,7 @@ public class SkinsScreen extends Screen
 	public static ResourceLocation glowTexture = null;
 	private static boolean noSkin = false;
 	private static boolean loading = false;
+	
 	
 	private static ExecutorService executor = Executors.newSingleThreadExecutor();
 	
@@ -120,6 +122,7 @@ public class SkinsScreen extends Screen
 		
 		SkinsScreen.glowTexture = glowTexture;
 		SkinsScreen.skinTexture = skinTexture;
+		zoom = level.size;
 		noSkin = defaultSkin;
 		loading = false;
 	}
@@ -444,7 +447,7 @@ public class SkinsScreen extends Screen
 			ClientDragonRender.dragonModel.setCurrentTexture(skinTexture);
 			((DragonRenderer)dragonRenderer).glowTexture = glowTexture;
 
-			float scale = level.size;
+			float scale = zoom;
 			stack.scale(scale, scale, scale);
 			
 			if(!loading) {
@@ -529,6 +532,15 @@ public class SkinsScreen extends Screen
 		p_228187_5_.yHeadRotO = f5;
 		p_228187_5_.yHeadRot = f6;
 		RenderSystem.popMatrix();
+	}
+	
+	@Override
+	public boolean mouseScrolled(double mouseX, double mouseY, double amount)
+	{
+		zoom += amount;
+		zoom = MathHelper.clamp(zoom, 10, 80);
+		
+		return true;
 	}
 	
 	public void drawNonShadowString(MatrixStack p_238472_0_, FontRenderer p_238472_1_, ITextComponent p_238472_2_, int p_238472_3_, int p_238472_4_, int p_238472_5_) {

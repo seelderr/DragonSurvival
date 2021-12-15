@@ -69,9 +69,9 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
     ))
     public AxisAlignedBB dragonPoseBB(Entity entity, Pose pose) {
         if (DragonStateProvider.isDragon(entity) && ConfigHandler.SERVER.sizeChangesHitbox.get()){
-            float size = DragonStateProvider.getCap(entity).orElseGet(null).getSize();
-            float height = DragonSizeHandler.calculateModifiedHeight(DragonSizeHandler.calculateDragonHeight(size, ConfigHandler.SERVER.hitboxGrowsPastHuman.get()), pose, ConfigHandler.SERVER.sizeChangesHitbox.get());
-            float width = DragonSizeHandler.calculateDragonWidth(size, ConfigHandler.SERVER.hitboxGrowsPastHuman.get()) / 2.0F;
+            double size = DragonStateProvider.getCap(entity).orElseGet(null).getSize();
+            double height = DragonSizeHandler.calculateModifiedHeight(DragonSizeHandler.calculateDragonHeight(size, ConfigHandler.SERVER.hitboxGrowsPastHuman.get()), pose, ConfigHandler.SERVER.sizeChangesHitbox.get());
+            double width = DragonSizeHandler.calculateDragonWidth(size, ConfigHandler.SERVER.hitboxGrowsPastHuman.get()) / 2.0F;
             Vector3d vector3d = new Vector3d(getX() - (double)width, getY(), getZ() - (double)width);
             Vector3d vector3d1 = new Vector3d(getX() + (double)width, getY() + (double)height, getZ() + (double)width);
             return new AxisAlignedBB(vector3d, vector3d1);

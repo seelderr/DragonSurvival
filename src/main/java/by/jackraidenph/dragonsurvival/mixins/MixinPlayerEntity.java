@@ -1,26 +1,16 @@
 package by.jackraidenph.dragonsurvival.mixins;
 
-import java.util.UUID;
-
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
+import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
+import by.jackraidenph.dragonsurvival.gecko.entity.DragonPartEntity;
 import by.jackraidenph.dragonsurvival.handlers.DragonFoodHandler;
 import by.jackraidenph.dragonsurvival.handlers.DragonSizeHandler;
 import by.jackraidenph.dragonsurvival.util.DragonType;
+import com.mojang.authlib.GameProfile;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MoverType;
-import net.minecraft.entity.Pose;
+import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.passive.IFlyingAnimal;
@@ -41,7 +31,19 @@ import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.World;
+import net.minecraftforge.entity.PartEntity;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import javax.annotation.Nullable;
+import java.util.UUID;
 
 
 @Mixin(PlayerEntity.class)
@@ -50,17 +52,82 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 	@Shadow
 	@Final
 	public PlayerAbilities abilities;
-
-
+	
+	public DragonPartEntity body;
+	public DragonPartEntity[] subEntities;
+	
 	protected MixinPlayerEntity(EntityType<? extends LivingEntity> p_i48577_1_, World p_i48577_2_) {
 		super(p_i48577_1_, p_i48577_2_);
 	}
 	
+	@Inject(method = "<init>()V", at = @At("RETURN"), cancellable = true)
+	public void constructor(World p_i241920_1_, BlockPos p_i241920_2_, float p_i241920_3_, GameProfile p_i241920_4_, CallbackInfo ci){
+		body = new DragonPartEntity(((PlayerEntity)(LivingEntity)this), 3F, 3F);
+		subEntities = new DragonPartEntity[]{body};
+	}
+	
 	private static final UUID SLOW_FALLING_ID = UUID.fromString("A5B6CF2A-2F7C-31EF-9022-7C3E7D5E6ABA");
 	private static final AttributeModifier SLOW_FALLING = new AttributeModifier(SLOW_FALLING_ID, "Slow falling acceleration reduction", -0.07, AttributeModifier.Operation.ADDITION); // Add -0.07 to 0.08 so we get the vanilla default of 0.01
+	
+	private float lastSize;
 
-
-	@Inject(method = "travel", at = @At("HEAD"), cancellable = true)
+	public void baseTick() {
+		super.baseTick();
+		
+		if(DragonStateProvider.isDragon(this)){
+			DragonStateHandler handler = DragonStateProvider.getCap(this).orElse(null);
+			
+			if(subEntities != null){
+				for(int l = 0; l < this.subEntities.length; ++l) {
+					this.subEntities[l].xo = this.subEntities[l].getX();
+					this.subEntities[l].yo = this.subEntities[l].getY();
+					this.subEntities[l].zo = this.subEntities[l].getZ();
+					this.subEntities[l].xOld = this.subEntities[l].getX();
+					this.subEntities[l].yOld = this.subEntities[l].getY();
+					this.subEntities[l].zOld =this.subEntities[l].getZ();
+				}
+				
+				float size = (float)handler.getSize() / 20F;
+				
+				if(size != lastSize){
+					body.size = EntitySize.scalable(size, getEyeHeight());
+					body.refreshDimensions();
+					lastSize = size;
+				}
+				
+				Vector3f lookVector = DragonStateProvider.getCameraOffset(this);
+				body.setPos(position().x - lookVector.x(), position().y, position().z - lookVector.z());
+				
+			}
+		}else {
+			if (lastSize != 0.0) {
+				if (subEntities != null) {
+					for (DragonPartEntity ent : subEntities) {
+						ent.size = EntitySize.scalable(0, 0);
+						ent.refreshDimensions();
+					}
+					lastSize = 0.0F;
+					
+				}
+			}
+		}
+	}
+	
+	
+	@Override
+	public boolean isMultipartEntity()
+	{
+		return true;
+	}
+	
+	@Nullable
+	@Override
+	public PartEntity<?>[] getParts()
+	{
+		return subEntities;
+	}
+	
+	@Inject( method = "travel", at = @At("HEAD"), cancellable = true)
 	public void travel(Vector3d p_213352_1_, CallbackInfo ci) {
 		if (DragonStateProvider.isDragon(this)) {
 			double d0 = this.getX();

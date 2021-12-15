@@ -58,7 +58,7 @@ public class ItemsInit {
                 if (playerStateProvider.isPresent()) {
                     DragonStateHandler dragonStateHandler = playerStateProvider.orElse(null);
                     if (dragonStateHandler.isDragon()) {
-                    	float size = dragonStateHandler.getSize();
+                        double size = dragonStateHandler.getSize();
                         if (size > 14) {
                         	size -= 2;
                         	dragonStateHandler.setSize(size, playerIn);

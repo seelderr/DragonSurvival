@@ -2,6 +2,7 @@ package by.jackraidenph.dragonsurvival.commands;
 
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
+import by.jackraidenph.dragonsurvival.handlers.DragonGrowthHandler;
 import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.SynchronizeDragonCap;
 import by.jackraidenph.dragonsurvival.util.DragonLevel;
@@ -82,6 +83,9 @@ public class DragonCommand
 	        dragonStateHandler.setHasWings(wings);
 	        dragonStateHandler.setSize(dragonLevel.size, serverPlayerEntity);
 	        dragonStateHandler.setPassengerId(0);
+			
+			dragonStateHandler.growing = true;
+			
 	        NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> serverPlayerEntity), new SynchronizeDragonCap(serverPlayerEntity.getId(), false, dragonType1, dragonLevel.size, wings, ConfigHandler.SERVER.caveLavaSwimmingTicks.get(), dragonStateHandler.getPassengerId()));
 	        serverPlayerEntity.refreshDimensions();
 	    });

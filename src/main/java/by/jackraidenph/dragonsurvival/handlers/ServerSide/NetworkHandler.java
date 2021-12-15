@@ -71,6 +71,8 @@ public class NetworkHandler
 		 register(ToggleWings.class, new ToggleWings());
 		 register(DiggingStatus.class, new DiggingStatus());
 		
+		 register(DragonHitboxAttacked.class, new DragonHitboxAttacked());
+		
 		 // register(OpenCrafting.class, new OpenCrafting());
 		 register(OpenInventory.class, new OpenInventory());
 		 register(SortInventoryPacket.class, new SortInventoryPacket());
@@ -107,7 +109,7 @@ public class NetworkHandler
 			 packetBuffer.writeInt(synchronizeDragonCap.playerId);
 			 packetBuffer.writeByte(synchronizeDragonCap.dragonType.ordinal());
 			 packetBuffer.writeBoolean(synchronizeDragonCap.hiding);
-			 packetBuffer.writeFloat(synchronizeDragonCap.size);
+			 packetBuffer.writeDouble(synchronizeDragonCap.size);
 			 packetBuffer.writeBoolean(synchronizeDragonCap.hasWings);
 			 packetBuffer.writeInt(synchronizeDragonCap.lavaAirSupply);
 			 packetBuffer.writeInt(synchronizeDragonCap.passengerId);
@@ -115,7 +117,7 @@ public class NetworkHandler
 			 int id = packetBuffer.readInt();
 			 DragonType type = DragonType.values()[packetBuffer.readByte()];
 			 boolean hiding = packetBuffer.readBoolean();
-			 float size = packetBuffer.readFloat();
+			 double size = packetBuffer.readDouble();
 			 boolean hasWings = packetBuffer.readBoolean();
 			 int lavaAirSupply = packetBuffer.readInt();
 			 int passengerId = packetBuffer.readInt();

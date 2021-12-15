@@ -36,8 +36,8 @@ public class ServerConfig {
 	public final ForgeConfigSpec.ConfigValue<List<? extends Integer>> blacklistedSlots;
 	
 	public final ForgeConfigSpec.BooleanValue alternateGrowing;
+	public final ForgeConfigSpec.DoubleValue maxGrowthSize;
 	public final ForgeConfigSpec.IntValue alternateGrowingFrequency;
-	public final ForgeConfigSpec.DoubleValue alternateGrowingStep;
 	public final ForgeConfigSpec.BooleanValue saveGrowthStage;
 
 	//Abilities
@@ -252,13 +252,13 @@ public class ServerConfig {
 				), this::isValidItemConfig);
 		alternateGrowing = builder
 				.comment("Defines if dragon should grow without requirement of catalyst items. Your dragon will just grow over time.")
-				.define("alternateGrowing", false);
+				.define("alternateGrowing", true);
+		maxGrowthSize = builder
+				.comment("Defines the max size your dragon can grow to.")
+				.defineInRange("maxGrowthSize", 60.0, 14.0, 1000000.0);
 		alternateGrowingFrequency = builder
 				.comment("Speed of alternateGrowing effect in seconds")
 				.defineInRange("alternateGrowingFrequency", 60, 0, Integer.MAX_VALUE);
-		alternateGrowingStep = builder
-				.comment("Amount of additional dragon size per each iteration of alternateGrowingFrequency for alternateGrowing effect")
-				.defineInRange("alternateGrowingStep", 0.1, 0, Double.MAX_VALUE);
 		saveGrowthStage = builder
 				.comment("Should the growth stage of a dragon be saved even when you change. Does not affect the saving progress of magic (use saveAllAbilities).")
 				.define("saveGrowthStage", false);

@@ -196,14 +196,14 @@ public class ClientEvents {
     }
 
     @SubscribeEvent
-    public static void onClientTick(RenderTickEvent clientTickEvent) {
-        if (clientTickEvent.phase == Phase.START) {
+    public static void onClientTick(RenderTickEvent renderTickEvent) {
+        if (renderTickEvent.phase == Phase.START) {
             Minecraft minecraft = Minecraft.getInstance();
             ClientPlayerEntity player = minecraft.player;
             if (player != null) {
                 DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
                     if (playerStateHandler.isDragon()) {
-                        float headRot = player.yHeadRot;
+                        float headRot = player.yRot;
                         double bodyYaw = playerStateHandler.getMovementData().bodyYaw;
                         
                         float bodyAndHeadYawDiff =(((float) playerStateHandler.getMovementData().bodyYaw) - headRot);
@@ -218,7 +218,6 @@ public class ClientEvents {
                         float f1 = (float) (Math.pow(moveVector.x, 2) + Math.pow(moveVector.z, 2));
     
                         if (f1 > 0.000028) {
-                            
                             if (isFlying || (minecraft.options.getCameraType() != PointOfView.FIRST_PERSON && ConfigHandler.CLIENT.thirdPersonBodyMovement.get() == DragonBodyMovementType.DRAGON) ||
                                     minecraft.options.getCameraType() == PointOfView.FIRST_PERSON && ConfigHandler.CLIENT.firstPersonBodyMovement.get() == DragonBodyMovementType.DRAGON) {
                                 float f2 = MathHelper.wrapDegrees(f - (float) bodyYaw);
@@ -259,10 +258,6 @@ public class ClientEvents {
                                 bodyYaw += 360;
                             }
                             
-                            if(Math.abs(bodyAndHeadYawDiff) <= 10){
-                                headRot = (float)bodyYaw;
-                            }
-    
                             playerStateHandler.setMovementData(bodyYaw, headRot, player.xRot, player.swinging && player.getAttackStrengthScale(-3.0f) != 1);
                             NetworkHandler.CHANNEL.sendToServer(new PacketSyncCapabilityMovement(player.getId(), bodyYaw, playerStateHandler.getMovementData().headYaw, playerStateHandler.getMovementData().headPitch, playerStateHandler.getMovementData().bite));
                         } else if (Math.abs(bodyAndHeadYawDiff) > 180F) {

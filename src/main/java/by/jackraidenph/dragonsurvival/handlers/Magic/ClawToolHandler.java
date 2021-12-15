@@ -395,7 +395,7 @@ public class ClawToolHandler
 				
 				if(hotbarItem != null) {
 					hotbarItem.mineBlock(playerEntity.level, blockState, breakEvent.getPos(), playerEntity);
-					
+					breakEvent.setCanceled(true);
 					if (!playerEntity.level.isClientSide) {
 						int exp = breakEvent.getExpToDrop();
 						breakEvent.getState().getBlock().playerDestroy((World)breakEvent.getWorld(), playerEntity, breakEvent.getPos(), breakEvent.getState(), breakEvent.getWorld().getBlockEntity(breakEvent.getPos()), hotbarItem);

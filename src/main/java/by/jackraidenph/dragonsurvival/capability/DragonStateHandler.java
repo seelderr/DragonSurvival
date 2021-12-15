@@ -29,12 +29,13 @@ public class DragonStateHandler {
     private final DragonMovementData movementData = new DragonMovementData(0, 0, 0, false);
     private boolean hasWings;
 	
-    private float size = 0;
+    private double size = 0;
+	public boolean growing = true;
 	
 	//Saving status of other types incase the config option for saving all is on
-	public float caveSize;
-	public float seaSize;
-	public float forestSize;
+	public double caveSize;
+	public double seaSize;
+	public double forestSize;
 	public boolean caveWings;
 	public boolean seaWings;
 	public boolean forestWings;
@@ -54,14 +55,14 @@ public class DragonStateHandler {
     public static final UUID SWIM_SPEED_MODIFIER_UUID = UUID.fromString("2a9341f3-d19e-446c-924b-7cf2e5259e10");
 	
 	
-	public float getSize() {
+	public double getSize() {
         return size;
     }
 
     /**
      * Sets the size, health and base damage
      */
-    public void setSize(float size, PlayerEntity playerEntity) {
+    public void setSize(double size, PlayerEntity playerEntity) {
         setSize(size);
     	AttributeModifier healthMod = buildHealthMod(size);
         updateHealthModifier(playerEntity, healthMod);
@@ -71,7 +72,7 @@ public class DragonStateHandler {
         updateSwimSpeedModifier(playerEntity, swimSpeedMod);
     }
 	
-	public void setSize(float size) {
+	public void setSize(double size) {
 		if(size != this.size) {
 			this.size = size;
 			
@@ -204,11 +205,15 @@ public class DragonStateHandler {
     }
     
     
-    public static AttributeModifier buildHealthMod(float size) {
-    	return new AttributeModifier(
+    public static AttributeModifier buildHealthMod(double size) {
+		double healthMod = ((float)ConfigHandler.SERVER.minHealth.get() + (((size - 14) / 26F) * ((float)ConfigHandler.SERVER.maxHealth.get() - (float)ConfigHandler.SERVER.minHealth.get()))) - 20;
+		
+		healthMod = Math.min(healthMod, ConfigHandler.SERVER.maxHealth.get() - 20);
+		
+		return new AttributeModifier(
     			HEALTH_MODIFIER_UUID,
     			"Dragon Health Adjustment",
-    			((float)ConfigHandler.SERVER.minHealth.get() + (((size - 14) / 26F) * ((float)ConfigHandler.SERVER.maxHealth.get() - (float)ConfigHandler.SERVER.minHealth.get()))) - 20,
+			    healthMod,
     			AttributeModifier.Operation.ADDITION
     		);
     }
@@ -298,7 +303,9 @@ public class DragonStateHandler {
         return this.type;
     }
     public void setType(DragonType type) {
-		if(this.type != type){
+		if(this.type != type && this.type != DragonType.NONE){
+			growing = true;
+			
 			getMagic().initAbilities(type);
 		}
 		

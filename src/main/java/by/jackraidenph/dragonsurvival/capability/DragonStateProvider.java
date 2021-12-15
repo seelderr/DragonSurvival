@@ -7,6 +7,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
@@ -70,6 +72,10 @@ public class DragonStateProvider implements ICapabilitySerializable<CompoundNBT>
             }
         }
         
+        if(entity.level.isClientSide){
+            return;
+        }
+        
         getCap(entity).ifPresent(cap -> {
             if(ConfigHandler.SERVER.consumeEXPAsMana.get()) {
                 if (getCurrentMana(entity) < mana && (getCurrentMana(entity) + (entity.totalExperience / 10) >= mana || entity.experienceLevel > 0)) {
@@ -85,8 +91,26 @@ public class DragonStateProvider implements ICapabilitySerializable<CompoundNBT>
             }
         });
     }
-    
-    @Override
+	
+	public static Vector3f getCameraOffset(Entity entity){
+	    Vector3f lookVector = new Vector3f(0,0,0);
+	
+	    if(entity instanceof PlayerEntity){
+	        PlayerEntity player = (PlayerEntity)entity;
+	        DragonStateHandler handler = getCap(player).orElse(null);
+	        if(handler != null && handler.isDragon()){
+	            float f1 = -(float)handler.getMovementData().bodyYaw * ((float)Math.PI / 180F);
+	        
+	            float f4 = MathHelper.sin(f1);
+	            float f5 = MathHelper.cos(f1);
+	            lookVector.set((float)(f4 * (handler.getSize() / 40)), 0, (float)(f5 * (handler.getSize() / 40)));
+	        }
+	    }
+	    
+	    return lookVector;
+	}
+	
+	@Override
     public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side) {
         return cap == DRAGON_CAPABILITY ? instance.cast() : LazyOptional.empty();
     }

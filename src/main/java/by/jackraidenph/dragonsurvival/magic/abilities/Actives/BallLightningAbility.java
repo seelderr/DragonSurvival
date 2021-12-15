@@ -55,7 +55,7 @@ public class BallLightningAbility extends ActiveDragonAbility
 		float f4 = MathHelper.sin(f1);
 		float f5 = MathHelper.cos(f1);
 		
-		float size = DragonStateProvider.getCap(player).map((cap) -> cap.getSize()).get();
+		Double size = DragonStateProvider.getCap(player).map((cap) -> cap.getSize()).get();
 		
 		double x = player.getX() + f4;
 		double y = player.getY() + (size / 20F) - 0.2;

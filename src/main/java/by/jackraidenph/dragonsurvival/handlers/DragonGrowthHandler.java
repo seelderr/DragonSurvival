@@ -7,6 +7,7 @@ import by.jackraidenph.dragonsurvival.config.ConfigUtils;
 import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.SyncSize;
 import by.jackraidenph.dragonsurvival.network.SynchronizeDragonCap;
+import by.jackraidenph.dragonsurvival.util.DragonLevel;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
@@ -15,6 +16,7 @@ import net.minecraft.network.play.server.SSetPassengersPacket;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -22,6 +24,7 @@ import net.minecraftforge.fml.network.PacketDistributor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Mod.EventBusSubscriber(modid = DragonSurvivalMod.MODID)
@@ -38,9 +41,9 @@ public class DragonGrowthHandler {
             if (!handler.isDragon())
                 return;
 
-            float size = handler.getSize();
+            double size = handler.getSize();
 
-            if (size >= 40)
+            if (size >= ConfigHandler.SERVER.maxGrowthSize.get())
                 return;
 
             boolean canContinue = false;
@@ -119,51 +122,65 @@ public class DragonGrowthHandler {
             player.refreshDimensions();
         });
     }
-
+    
     @SubscribeEvent
     public static void onPlayerUpdate(TickEvent.PlayerTickEvent event) {
         if (!ConfigHandler.SERVER.alternateGrowing.get())
             return;
-
+        
         PlayerEntity player = event.player;
         World world = player.getCommandSenderWorld();
-
+        
+        if (world.isClientSide || event.phase == Phase.END)
+            return;
+        
+        if(!DragonStateProvider.isDragon(player)) return;
+        
+        if (player.tickCount % (60 * 20) != 0)
+            return;
+    
         DragonStateProvider.getCap(player).ifPresent(handler -> {
-            if (!handler.isDragon())
-                return;
-
-            float size = handler.getSize();
-
-            if (player.tickCount % (ConfigHandler.SERVER.alternateGrowingFrequency.get() * 20) != 0)
-                return;
-
-            size += ConfigHandler.SERVER.alternateGrowingStep.get().floatValue();
-
-            if (size >= 40F)
-                return;
-
-            handler.setSize(size, player);
-
-            if (world.isClientSide)
-                return;
-
-            NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncSize(player.getId(), size));
-
-            if (player.getVehicle() == null || !(player.getVehicle() instanceof ServerPlayerEntity))
-                return;
-
-            ServerPlayerEntity vehicle = (ServerPlayerEntity) player.getVehicle();
-
-            DragonStateProvider.getCap(vehicle).ifPresent(vehicleCap -> {
-                player.stopRiding();
-
-                vehicle.connection.send(new SSetPassengersPacket(vehicle));
-
-                NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> vehicle), new SynchronizeDragonCap(vehicle.getId(),
-                                                                                                                   vehicleCap.isHiding(), vehicleCap.getType(), vehicleCap.getSize(), vehicleCap.hasWings(), vehicleCap.getLavaAirSupply(), 0));
-            });
-
-            player.refreshDimensions();
+            if(handler.growing) {
+                //TODO Add item to stop growing and a way to start growing again, maybe same item toggles it?
+                
+                /*
+                    1. Newborn - young = 3-4 h
+                    2. Young - adult = 15-20h
+                    3. Adult - maximum growth = 24h
+                    4. After maximum growth. = 30 days for max growth
+                 */
+            
+                long newbornToYoung = TimeUnit.SECONDS.convert(3, TimeUnit.HOURS);
+                long youngToAdult = TimeUnit.SECONDS.convert(15, TimeUnit.HOURS);
+                long adultToMax = TimeUnit.SECONDS.convert(24, TimeUnit.HOURS);
+                long beyond = TimeUnit.SECONDS.convert(30, TimeUnit.DAYS);
+            
+                double d = 0;
+                double timeIncrement = 60 * 20;
+            
+                if(handler.getSize() < DragonLevel.YOUNG.size){
+                    d = ((DragonLevel.YOUNG.size - DragonLevel.BABY.size) / ((newbornToYoung * 20.0))) * timeIncrement;
+                
+                }else if(handler.getSize() < DragonLevel.ADULT.size){
+                    d = ((DragonLevel.ADULT.size - DragonLevel.YOUNG.size) / ((youngToAdult * 20.0))) * timeIncrement;
+                
+                }else if(handler.getSize() < 40){
+                    d = ((40 - DragonLevel.ADULT.size) / ((adultToMax * 20.0))) * timeIncrement;
+                }else{
+                    d = ((60 - 40) / ((beyond * 20.0))) * timeIncrement;
+                }
+            
+                double size = handler.getSize() + d;
+                size = Math.min(size, ConfigHandler.SERVER.maxGrowthSize.get());
+                
+                if(handler.getSize() != size) {
+                    handler.setSize(size, player);
+    
+                    NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncSize(player.getId(), size));
+                    player.refreshDimensions();
+                }
+            }
         });
     }
+    
 }

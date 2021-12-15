@@ -55,6 +55,8 @@ public class CapabilityController {
                         DragonStateHandler.DragonMovementData movementData = capOld.getMovementData();
                         capNew.setMovementData(movementData.bodyYaw, movementData.headYaw, movementData.headPitch, movementData.bite);
                         
+                        capNew.growing = capOld.growing;
+                        
                         capNew.forestSize = capOld.forestSize;
                         capNew.caveSize = capOld.caveSize;
                         capNew.seaSize = capOld.seaSize;

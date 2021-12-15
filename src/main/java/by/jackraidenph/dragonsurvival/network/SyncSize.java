@@ -13,9 +13,9 @@ import java.util.function.Supplier;
 public class SyncSize implements IMessage<SyncSize> {
 
     public int playerId;
-    public float size;
+    public double size;
 
-    public SyncSize(int playerId, float size) {
+    public SyncSize(int playerId, double size) {
         this.playerId = playerId;
         this.size = size;
     }
@@ -27,12 +27,12 @@ public class SyncSize implements IMessage<SyncSize> {
     @Override
     public void encode(SyncSize message, PacketBuffer buffer) {
         buffer.writeInt(message.playerId);
-        buffer.writeFloat(message.size);
+        buffer.writeDouble(message.size);
     }
 
     @Override
     public SyncSize decode(PacketBuffer buffer) {
-        return new SyncSize(buffer.readInt(), buffer.readFloat());
+        return new SyncSize(buffer.readInt(), buffer.readDouble());
     }
 
     @Override

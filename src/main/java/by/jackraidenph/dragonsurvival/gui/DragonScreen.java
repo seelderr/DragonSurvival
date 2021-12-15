@@ -81,8 +81,10 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
     
         GL11.glTranslatef(0F, 0F, 100F);
-        
-        InventoryScreen.renderEntityInInventory(i + 60, j + 70, 30, (float)(i + 51) - mouseX * 20, (float)(j + 75 - 50) - mouseY * 20, this.minecraft.player);
+    
+        DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+        int sizeOffset = (int)(handler.getSize() - handler.getLevel().size) / 2;
+        InventoryScreen.renderEntityInInventory(i + 60, j + 70, (int)(30 - sizeOffset), (float)(i + 51) - mouseX * 20, (float)(j + 75 - 50) - mouseY * 20, this.minecraft.player);
     
         GL11.glTranslatef(0F, 0F, -100F);
         GL11.glDisable(GL11.GL_SCISSOR_TEST);

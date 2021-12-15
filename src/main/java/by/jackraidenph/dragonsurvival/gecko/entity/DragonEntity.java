@@ -36,11 +36,16 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
      * This reference must be updated whenever player is remade, for example, when changing dimensions
      */
     public volatile int player;
-
+    
+    @Override
+    public boolean isMultipartEntity()
+    {
+        return true;
+    }
+    
     public DragonEntity(EntityType<? extends LivingEntity> type, World worldIn) {
         super(type, worldIn);
     }
-
     @Override
     public void registerControllers(AnimationData animationData) {
         animationData.addAnimationController(new AnimationController<>(this, "bite_controller", 2, this::bitePredicate));

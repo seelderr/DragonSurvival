@@ -7,7 +7,7 @@ public class SynchronizeDragonCap {
     public int playerId;
     public boolean hiding;
     public DragonType dragonType;
-    public float size;
+    public double size;
     public boolean hasWings;
     public int lavaAirSupply;
     public int passengerId;
@@ -15,7 +15,7 @@ public class SynchronizeDragonCap {
     public SynchronizeDragonCap() {
     }
 
-    public SynchronizeDragonCap(int playerId, boolean hiding, DragonType dragonType, float size, boolean hasWings, int lavaAirSupply, int passengerId) {
+    public SynchronizeDragonCap(int playerId, boolean hiding, DragonType dragonType, double size, boolean hasWings, int lavaAirSupply, int passengerId) {
         this.playerId = playerId;
         this.hiding = hiding;
         this.dragonType = dragonType;

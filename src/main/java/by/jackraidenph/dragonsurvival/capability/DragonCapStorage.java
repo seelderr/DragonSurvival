@@ -27,13 +27,16 @@ public class DragonCapStorage implements Capability.IStorage<DragonStateHandler>
             tag.putInt("timeInDarkness", debuffData.timeInDarkness);
             tag.putInt("timeInRain", debuffData.timeInRain);
             tag.putBoolean("isHiding", instance.isHiding());
-            tag.putFloat("size", instance.getSize());
+            
+            tag.putDouble("size", instance.getSize());
+            tag.putBoolean("growing", instance.growing);
+            
             tag.putBoolean("hasWings", instance.hasWings());
             tag.putInt("lavaAirSupply", instance.getLavaAirSupply());
     
-            tag.putFloat("caveSize", instance.caveSize);
-            tag.putFloat("seaSize", instance.seaSize);
-            tag.putFloat("forestSize", instance.forestSize);
+            tag.putDouble("caveSize", instance.caveSize);
+            tag.putDouble("seaSize", instance.seaSize);
+            tag.putDouble("forestSize", instance.forestSize);
     
             tag.putBoolean("caveWings", instance.caveWings);
             tag.putBoolean("seaWings", instance.seaWings);
@@ -59,11 +62,13 @@ public class DragonCapStorage implements Capability.IStorage<DragonStateHandler>
             instance.getMovementData().dig = tag.getBoolean("dig");
             instance.setDebuffData(tag.getInt("timeWithoutWater"), tag.getInt("timeInDarkness"), tag.getInt("timeInRain"));
             instance.setIsHiding(tag.getBoolean("isHiding"));
-            instance.setSize(tag.getFloat("size"));
             
-            instance.caveSize = tag.getFloat("caveSize");
-            instance.seaSize = tag.getFloat("seaSize");
-            instance.forestSize = tag.getFloat("forestSize");
+            instance.setSize(tag.getDouble("size"));
+            instance.growing = tag.getBoolean("growing");
+            
+            instance.caveSize = tag.getDouble("caveSize");
+            instance.seaSize = tag.getDouble("seaSize");
+            instance.forestSize = tag.getDouble("forestSize");
     
             instance.caveWings = tag.getBoolean("caveWings");
             instance.seaWings = tag.getBoolean("seaWings");

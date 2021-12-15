@@ -8,8 +8,7 @@
     "MixinItem",
     "MixinLivingEntity",
     "MixinPlayerEntity",
-    "MixinEnchantmentHelper",
-    "MixinGameRenderer"
+    "MixinEnchantmentHelper"
   ],
   "client": [
     "AccessorEntityRenderer",
@@ -17,7 +16,9 @@
     "AccessorLivingRenderer",
     "MixinFirstPersonRenderer",
     "MixinInventoryScreen",
-    "MixinProjectileHelper"
+    "MixinProjectileHelper",
+    "MixinGameRenderer",
+    "MixinWorldRenderer"
   ],
   "minVersion": "0.8"
 }
