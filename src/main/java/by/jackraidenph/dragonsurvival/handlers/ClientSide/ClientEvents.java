@@ -258,8 +258,11 @@ public class ClientEvents {
                                 bodyYaw += 360;
                             }
                             
-                            playerStateHandler.setMovementData(MathHelper.lerp(0.1, playerStateHandler.getMovementData().bodyYaw, bodyYaw), headRot, player.xRot, player.swinging && player.getAttackStrengthScale(-3.0f) != 1);
-                            NetworkHandler.CHANNEL.sendToServer(new PacketSyncCapabilityMovement(player.getId(), bodyYaw, playerStateHandler.getMovementData().headYaw, playerStateHandler.getMovementData().headPitch, playerStateHandler.getMovementData().bite));
+                            double oldYaw = playerStateHandler.getMovementData().bodyYaw;
+                            double newYaw = bodyAndHeadYawDiff > -170 ? MathHelper.lerp(0.1, Math.min(oldYaw, bodyYaw), Math.max(bodyYaw, oldYaw)) : bodyYaw;
+                            
+                            playerStateHandler.setMovementData(newYaw, headRot, player.xRot, player.swinging && player.getAttackStrengthScale(-3.0f) != 1);
+                            NetworkHandler.CHANNEL.sendToServer(new PacketSyncCapabilityMovement(player.getId(), newYaw, playerStateHandler.getMovementData().headYaw, playerStateHandler.getMovementData().headPitch, playerStateHandler.getMovementData().bite));
                         } else if (Math.abs(bodyAndHeadYawDiff) > 180F) {
                             if (Math.abs(bodyAndHeadYawDiff) > 360F)
                                 bodyYaw -= bodyAndHeadYawDiff;
