@@ -14,6 +14,7 @@ import by.jackraidenph.dragonsurvival.util.DragonLevel;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -30,6 +31,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -54,6 +56,20 @@ public class ClientDragonRender
 	 */
 	public static ConcurrentHashMap<Integer, AtomicReference<DragonEntity>> playerDragonHashMap = new ConcurrentHashMap<>(20);
 	public static ConcurrentHashMap<Integer, Boolean> dragonsFlying = new ConcurrentHashMap<>(20);
+	
+	@SubscribeEvent
+	public static void renderFirstPerson(RenderHandEvent renderHandEvent) {
+		if (ConfigHandler.CLIENT.renderInFirstPerson.get()) {
+			ClientPlayerEntity player = Minecraft.getInstance().player;
+			DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
+				if (playerStateHandler.isDragon()) {
+					if(ConfigHandler.CLIENT.alternateHeldItem.get()){
+						renderHandEvent.setCanceled(true);
+					}
+				}
+			});
+		}
+	}
 	
 	/**
 	 * Called for every player.
@@ -153,18 +169,22 @@ public class ClientDragonRender
 	                    if (player.hasEffect(DragonEffects.TRAPPED)) {
 	                        ClientEvents.renderBolas(eventLight, combinedOverlayIn, renderTypeBuffer, matrixStack);
 	                    }
-	                    ItemStack right = player.getMainHandItem();
-	                    matrixStack.pushPose();
-	                    matrixStack.mulPose(Vector3f.YP.rotationDegrees(180));
-	                    matrixStack.translate(0.5, 1, -0.8);
-	                    itemRenderer.renderStatic(right, ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND, eventLight, combinedOverlayIn, matrixStack, renderTypeBuffer);
-	                    matrixStack.popPose();
-	                    matrixStack.pushPose();
-	                    ItemStack left = player.getOffhandItem();
-	                    matrixStack.mulPose(Vector3f.YP.rotationDegrees(180));
-	                    matrixStack.translate(-0.5, 1, -0.8);
-	                    mc.getItemInHandRenderer().renderItem(player, left, ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND, true, matrixStack, renderTypeBuffer, eventLight);
-	                    matrixStack.popPose();
+						
+						if(player != Minecraft.getInstance().player || ConfigHandler.CLIENT.alternateHeldItem.get() || !Minecraft.getInstance().options.getCameraType().isFirstPerson()) {
+							ItemStack right = player.getMainHandItem();
+							matrixStack.pushPose();
+							matrixStack.mulPose(Vector3f.YP.rotationDegrees(180));
+							matrixStack.translate(0.5, 1, -0.8);
+							itemRenderer.renderStatic(right, ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND, eventLight, combinedOverlayIn, matrixStack, renderTypeBuffer);
+							matrixStack.popPose();
+							matrixStack.pushPose();
+							
+							ItemStack left = player.getOffhandItem();
+							matrixStack.mulPose(Vector3f.YP.rotationDegrees(180));
+							matrixStack.translate(-0.5, 1, -0.8);
+							mc.getItemInHandRenderer().renderItem(player, left, ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND, true, matrixStack, renderTypeBuffer, eventLight);
+							matrixStack.popPose();
+						}
 	                }
 	            } catch (Throwable throwable) {
 	                if (!(throwable instanceof NullPointerException) || ConfigHandler.CLIENT.clientDebugMessages.get())

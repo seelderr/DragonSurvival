@@ -88,8 +88,8 @@ public abstract class BreathAbility extends ActiveDragonAbility
 		}
 		
 		DragonLevel growthLevel = DragonStateProvider.getCap(player).map(cap -> cap.getLevel()).get();
-		RANGE = growthLevel == DragonLevel.BABY ? 4 : growthLevel == DragonLevel.YOUNG ? 7 : 10;
-		
+//		RANGE = growthLevel == DragonLevel.BABY ? 4 : growthLevel == DragonLevel.YOUNG ? 7 : 10;
+		RANGE = (int)Math.round(4 + ((playerStateHandler.getSize() - DragonLevel.BABY.size) / (DragonLevel.ADULT.size - DragonLevel.BABY.size)) * 6);
 		yaw = (float) Math.toRadians(-player.yRot);
 		pitch = (float) Math.toRadians(-player.xRot);
 		speed = growthLevel == DragonLevel.BABY ? 0.1F : growthLevel == DragonLevel.YOUNG ? 0.2F : 0.3F; //Changes distance

@@ -91,22 +91,28 @@ public class NetherBreathAbility extends BreathAbility
 	@Override
 	public void onActivation(PlayerEntity player)
 	{
-		tickCost();
-		super.onActivation(player);
-		
 		DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
 		if(handler == null) return;
 		
 		Vector3d delta = player.getDeltaMovement();
-		float f1 = -(float)handler.getMovementData().bodyYaw * ((float)Math.PI / 180F);
+		float f1 = -(float)handler.getMovementData().headYaw * ((float)Math.PI / 180F);
+		float bodyAndHeadYawDiff = (float) handler.getMovementData().bodyYaw - (float) handler.getMovementData().headYaw;
 
 		float f4 = MathHelper.sin(f1);
 		float f5 = MathHelper.cos(f1);
 		
-		Double size = DragonStateProvider.getCap(player).map((cap) -> cap.getSize()).get();
+		f4 = MathHelper.clamp(f4, -0.8f, 0.8f);
+		f5 = MathHelper.clamp(f5, -0.8f, 0.8f);
+		
+		if(Math.abs(bodyAndHeadYawDiff) >= 130){
+			return;
+		}
+		
+		tickCost();
+		super.onActivation(player);
 		
 		double x = player.getX() + f4;
-		double y = player.getY() + (size / 20F) - 0.2;
+		double y = player.getY() + player.getEyeHeight() - 0.2;
 		double z = player.getZ() + f5;
 		
 		if(player.isFallFlying() || player.abilities.flying) {

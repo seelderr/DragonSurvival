@@ -13,6 +13,8 @@ public class ClientConfig {
 	public final ForgeConfigSpec.BooleanValue notifyWingStatus;
 	public final ForgeConfigSpec.BooleanValue clientDebugMessages;
 	
+	public final ForgeConfigSpec.BooleanValue alternateHeldItem;
+	
 	public final ForgeConfigSpec.BooleanValue renderDragonClaws;
 	public final ForgeConfigSpec.BooleanValue renderNewbornSkin;
 	public final ForgeConfigSpec.BooleanValue renderYoungSkin;
@@ -51,6 +53,10 @@ public class ClientConfig {
 		inventoryToggle = builder
 				.comment("Should the buttons for toggeling between dragon and normaly inventory be added?")
 				.define("inventoryToggle", true);
+		
+		alternateHeldItem = builder
+				.comment("Should held items be rendered as if you are in third-person even in first person as a dragon?")
+				.define("alternateHeldItem", false);
 		
 		
 		renderDragonClaws = builder
