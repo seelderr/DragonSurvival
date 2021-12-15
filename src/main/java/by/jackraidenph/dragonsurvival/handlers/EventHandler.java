@@ -4,10 +4,7 @@ import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.entity.MagicalPredatorEntity;
 import by.jackraidenph.dragonsurvival.nest.NestEntity;
-import by.jackraidenph.dragonsurvival.registration.BlockInit;
-import by.jackraidenph.dragonsurvival.registration.DragonEffects;
-import by.jackraidenph.dragonsurvival.registration.EntityTypesInit;
-import by.jackraidenph.dragonsurvival.registration.ItemsInit;
+import by.jackraidenph.dragonsurvival.registration.*;
 import by.jackraidenph.dragonsurvival.util.DragonLevel;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -20,6 +17,7 @@ import net.minecraft.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.monster.HoglinEntity;
+import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.WolfEntity;
 import net.minecraft.entity.passive.horse.HorseEntity;
@@ -42,6 +40,7 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.SleepingLocationCheckEvent;
@@ -76,6 +75,29 @@ public class EventHandler {
                     cycle = 0;
                 } else cycle++;
             });
+        }
+    }
+    
+    @SubscribeEvent
+    public static void mobDeath(LivingDropsEvent event){
+        if(!(event.getEntityLiving() instanceof MonsterEntity)) return;
+        
+        LivingEntity entity = event.getEntityLiving();
+        float health = entity.getMaxHealth();
+        ItemStack stack = ItemStack.EMPTY;
+        
+        if(health >= 14 && health < 20){
+            stack = new ItemStack(ItemRegistry.DRAGON_HEART_SHARD.get());
+        }else if(health >= 20 && health < 50){
+            stack = new ItemStack(ItemRegistry.WEAK_DRAGON_HEART.get());
+        }else if(health >= 50){
+            stack = new ItemStack(ItemRegistry.ELDER_DRAGON_HEART.get());
+        }
+        
+        if(!stack.isEmpty()) {
+            if (entity.level.random.nextInt(100) <= 1 + event.getLootingLevel()) {
+                event.getDrops().add(new ItemEntity(entity.level, entity.position().x, entity.position().y, entity.position().z, stack));
+            }
         }
     }
 

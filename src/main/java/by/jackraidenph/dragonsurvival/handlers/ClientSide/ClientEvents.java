@@ -203,11 +203,10 @@ public class ClientEvents {
             if (player != null) {
                 DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
                     if (playerStateHandler.isDragon()) {
-                        float headRot = player.yRot;
+                        float headRot = player.yRot != 0.0 ? player.yRot : player.yHeadRot;
                         double bodyYaw = playerStateHandler.getMovementData().bodyYaw;
-                        
-                        float bodyAndHeadYawDiff =(((float) playerStateHandler.getMovementData().bodyYaw) - headRot);
-
+                        float bodyAndHeadYawDiff =(((float)bodyYaw) - headRot);
+    
                         Vector3d moveVector = getInputVector(new Vector3d(player.input.leftImpulse, 0, player.input.forwardImpulse), 1F, player.yRot);
                         boolean isFlying = false;
                         if (ClientFlightHandler.wingsEnabled && !player.isOnGround() && !player.isInWater() && !player.isInLava()) { // TODO: Remove this when fixing flight system
@@ -248,21 +247,22 @@ public class ClientEvents {
                                     bodyYaw += _f1 * 0.2F;
                                 }
                             }
-                         
+    
+                            double oldYaw = playerStateHandler.getMovementData().bodyYaw;
+                            bodyYaw = MathHelper.lerp(0.1, oldYaw, bodyYaw) ;
+//                            bodyAndHeadYawDiff =(((float)bodyYaw) - headRot);
                             
                             if (bodyAndHeadYawDiff > 180) {
                                 bodyYaw -= 360;
                             }
-                            
+
                             if (bodyAndHeadYawDiff <= -180) {
                                 bodyYaw += 360;
                             }
                             
-                            double oldYaw = playerStateHandler.getMovementData().bodyYaw;
-                            double newYaw = bodyAndHeadYawDiff > -170 ? MathHelper.lerp(0.1, Math.min(oldYaw, bodyYaw), Math.max(bodyYaw, oldYaw)) : bodyYaw;
-                            
-                            playerStateHandler.setMovementData(newYaw, headRot, player.xRot, player.swinging && player.getAttackStrengthScale(-3.0f) != 1);
-                            NetworkHandler.CHANNEL.sendToServer(new PacketSyncCapabilityMovement(player.getId(), newYaw, playerStateHandler.getMovementData().headYaw, playerStateHandler.getMovementData().headPitch, playerStateHandler.getMovementData().bite));
+//                            System.out.println(bodyYaw + " | " + bodyAndHeadYawDiff + " | " + headRot);
+                            playerStateHandler.setMovementData(bodyYaw, headRot, player.xRot, player.swinging && player.getAttackStrengthScale(-3.0f) != 1);
+                            NetworkHandler.CHANNEL.sendToServer(new PacketSyncCapabilityMovement(player.getId(), bodyYaw, playerStateHandler.getMovementData().headYaw, playerStateHandler.getMovementData().headPitch, playerStateHandler.getMovementData().bite));
                         } else if (Math.abs(bodyAndHeadYawDiff) > 180F) {
                             if (Math.abs(bodyAndHeadYawDiff) > 360F)
                                 bodyYaw -= bodyAndHeadYawDiff;

@@ -78,15 +78,6 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 			DragonStateHandler handler = DragonStateProvider.getCap(this).orElse(null);
 			
 			if(subEntities != null){
-				for(int l = 0; l < this.subEntities.length; ++l) {
-					this.subEntities[l].xo = this.subEntities[l].getX();
-					this.subEntities[l].yo = this.subEntities[l].getY();
-					this.subEntities[l].zo = this.subEntities[l].getZ();
-					this.subEntities[l].xOld = this.subEntities[l].getX();
-					this.subEntities[l].yOld = this.subEntities[l].getY();
-					this.subEntities[l].zOld =this.subEntities[l].getZ();
-				}
-				
 				float size = (float)handler.getSize() / 20F;
 				
 				if(size != lastSize){
@@ -98,6 +89,14 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 				Vector3f lookVector = DragonStateProvider.getCameraOffset(this);
 				body.setPos(position().x - lookVector.x(), position().y, position().z - lookVector.z());
 				
+				for(int l = 0; l < this.subEntities.length; ++l) {
+					this.subEntities[l].xo = this.subEntities[l].getX();
+					this.subEntities[l].yo = this.subEntities[l].getY();
+					this.subEntities[l].zo = this.subEntities[l].getZ();
+					this.subEntities[l].xOld = this.subEntities[l].getX();
+					this.subEntities[l].yOld = this.subEntities[l].getY();
+					this.subEntities[l].zOld =this.subEntities[l].getZ();
+				}
 			}
 		}else {
 			if (lastSize != 0.0) {
