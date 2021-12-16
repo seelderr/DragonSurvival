@@ -2,19 +2,15 @@ package by.jackraidenph.dragonsurvival.handlers.ClientSide;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.Functions;
-import by.jackraidenph.dragonsurvival.blocks.DragonAltarBlock;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.gui.magic.AbilityScreen;
 import by.jackraidenph.dragonsurvival.gui.magic.buttons.SkillProgressButton;
 import by.jackraidenph.dragonsurvival.handlers.DragonFoodHandler;
 import by.jackraidenph.dragonsurvival.registration.BlockInit;
-import by.jackraidenph.dragonsurvival.registration.ItemRegistry;
-import by.jackraidenph.dragonsurvival.registration.ItemsInit;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.widget.Widget;
@@ -68,27 +64,6 @@ public class ToolTipHandler
 			Item item = event.getItemStack().getItem();
 			List<ITextComponent> toolTip = event.getToolTip();
 			
-			if (item == ItemsInit.starBone){
-				toolTip.add(new TranslationTextComponent("ds.description.starBone"));
-			}
-			if (item == ItemsInit.chargedSoup){
-				toolTip.add(new TranslationTextComponent("ds.description.chargedSoup"));
-			}
-			if (item == ItemsInit.forestDragonTreat){
-				toolTip.add(new TranslationTextComponent("ds.description.forestDragonTreat"));
-			}
-			if (item == ItemsInit.seaDragonTreat){
-				toolTip.add(new TranslationTextComponent("ds.description.seaDragonTreat"));
-			}
-			if (item == ItemsInit.caveDragonTreat){
-				toolTip.add(new TranslationTextComponent("ds.description.caveDragonTreat"));
-			}
-			if (item == ItemsInit.elderDragonBone){
-				toolTip.add(new TranslationTextComponent("ds.description.elderDragonBone"));
-			}
-			if (item == ItemsInit.elderDragonDust){
-				toolTip.add(new TranslationTextComponent("ds.description.elderDragonDust"));
-			}
 			if (item == BlockInit.fireDragonBeacon.asItem()){
 				toolTip.add(new TranslationTextComponent("ds.description.passiveFireBeacon"));
 			}
@@ -124,21 +99,6 @@ public class ToolTipHandler
 			}
 			if (item == BlockInit.dragonMemoryBlock.asItem()){
 				toolTip.add(new TranslationTextComponent("ds.description.dragonMemoryBlock"));
-			}
-			if (Block.byItem(item) instanceof DragonAltarBlock){
-				toolTip.add(new TranslationTextComponent("ds.description.dragonAltar"));
-			}
-			if (item == BlockInit.PREDATOR_STAR_BLOCK.asItem()){
-				toolTip.add(new TranslationTextComponent("ds.description.predatorStar"));
-			}
-			if (item == ItemRegistry.WEAK_DRAGON_HEART.orElse(null)){
-				toolTip.add(new TranslationTextComponent("ds.description.weakDragonHeart"));
-			}
-			if (item == ItemRegistry.ELDER_DRAGON_HEART.orElse(null)){
-				toolTip.add(new TranslationTextComponent("ds.description.elderDragonHeart"));
-			}
-			if (item == ItemRegistry.DRAGON_HEART_SHARD.orElse(null)){
-				toolTip.add(new TranslationTextComponent("ds.description.heartElement"));
 			}
 		}
 	}

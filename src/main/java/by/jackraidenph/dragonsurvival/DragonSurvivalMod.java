@@ -11,7 +11,6 @@ import by.jackraidenph.dragonsurvival.handlers.SpecificsHandler;
 import by.jackraidenph.dragonsurvival.handlers.WingObtainmentController;
 import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
 import by.jackraidenph.dragonsurvival.registration.EntityTypesInit;
-import by.jackraidenph.dragonsurvival.registration.ItemRegistry;
 import by.jackraidenph.dragonsurvival.registration.ParticleRegistry;
 import by.jackraidenph.dragonsurvival.util.BiomeDictionaryHelper;
 import com.mojang.brigadier.CommandDispatcher;
@@ -64,7 +63,6 @@ public class DragonSurvivalMod {
         MinecraftForge.EVENT_BUS.register(new Event_busHandler());
         MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGH, this::biomeLoadingEvent);
         MinecraftForge.EVENT_BUS.addListener(this::serverRegisterCommandsEvent);
-        ItemRegistry.register();
     }
     
     private void setup(final FMLCommonSetupEvent event) {

@@ -88,15 +88,15 @@ public class EventHandler {
 
         if(health >= 14 && health < 20){
             if (entity.level.random.nextInt(100) <= (ConfigHandler.SERVER.dragonHeartShardChance.get() * 100) + (event.getLootingLevel() * ((ConfigHandler.SERVER.dragonHeartShardChance.get() * 100) / 4))) {
-                event.getDrops().add(new ItemEntity(entity.level, entity.position().x, entity.position().y, entity.position().z, new ItemStack(ItemRegistry.DRAGON_HEART_SHARD.get())));
+                event.getDrops().add(new ItemEntity(entity.level, entity.position().x, entity.position().y, entity.position().z, new ItemStack(ItemsInit.dragonHeartShard)));
             }
         }else if(health >= 20 && health < 50){
             if (entity.level.random.nextInt(100) <= (ConfigHandler.SERVER.weakDragonHeartChance.get() * 100) + (event.getLootingLevel() * ((ConfigHandler.SERVER.weakDragonHeartChance.get() * 100) / 4))) {
-                event.getDrops().add(new ItemEntity(entity.level, entity.position().x, entity.position().y, entity.position().z, new ItemStack(ItemRegistry.WEAK_DRAGON_HEART.get())));
+                event.getDrops().add(new ItemEntity(entity.level, entity.position().x, entity.position().y, entity.position().z, new ItemStack(ItemsInit.weakDragonHeart)));
             }
         }else if(health >= 50){
             if (entity.level.random.nextInt(100) <= (ConfigHandler.SERVER.elderDragonHeartChance.get() * 100) + (event.getLootingLevel() * ((ConfigHandler.SERVER.elderDragonHeartChance.get() * 100) / 4))) {
-                event.getDrops().add(new ItemEntity(entity.level, entity.position().x, entity.position().y, entity.position().z, new ItemStack(ItemRegistry.ELDER_DRAGON_HEART.get())));
+                event.getDrops().add(new ItemEntity(entity.level, entity.position().x, entity.position().y, entity.position().z, new ItemStack(ItemsInit.elderDragonHeart)));
             }
         }
     }

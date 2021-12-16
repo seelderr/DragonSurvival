@@ -96,8 +96,25 @@ public class DragonGrowthHandler {
 
                 return;
             }
-
-            handler.setSize(++size, player);
+            
+            int increment = 1;
+    
+            switch (handler.getLevel()) {
+                case BABY:
+                        if(adultList.contains(item)){
+                            increment = 3;
+                        }else if(youngList.contains(item)){
+                            increment = 2;
+                        }
+                    break;
+                case YOUNG:
+                    if(adultList.contains(item)){
+                        increment = 2;
+                    }
+                    break;
+            }
+            size += increment;
+            handler.setSize(size, player);
             
             if(!player.isCreative())
             event.getItemStack().shrink(1);

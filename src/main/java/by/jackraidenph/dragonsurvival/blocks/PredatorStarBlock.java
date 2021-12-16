@@ -4,7 +4,6 @@ import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.entity.MagicalPredatorEntity;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
 import by.jackraidenph.dragonsurvival.registration.EntityTypesInit;
-import by.jackraidenph.dragonsurvival.registration.ItemRegistry;
 import by.jackraidenph.dragonsurvival.registration.ItemsInit;
 import by.jackraidenph.dragonsurvival.tiles.PredatorStarTileEntity;
 import by.jackraidenph.dragonsurvival.util.DamageSources;
@@ -13,6 +12,7 @@ import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.IWaterLoggable;
 import net.minecraft.block.material.PushReaction;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.Entity;
@@ -32,11 +32,15 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
 
+import javax.annotation.Nullable;
+import java.util.List;
 import java.util.Random;
 
 public class PredatorStarBlock extends Block implements IWaterLoggable {
@@ -49,7 +53,16 @@ public class PredatorStarBlock extends Block implements IWaterLoggable {
         super(p_i48440_1_);
         registerDefaultState(getStateDefinition().any().setValue(WATERLOGGED, false));
     }
-
+    
+    @Override
+    public void appendHoverText(ItemStack p_190948_1_,
+            @Nullable
+                    IBlockReader p_190948_2_, List<ITextComponent> p_190948_3_, ITooltipFlag p_190948_4_)
+    {
+        super.appendHoverText(p_190948_1_, p_190948_2_, p_190948_3_, p_190948_4_);
+        p_190948_3_.add(new TranslationTextComponent("ds.description.predatorStar"));
+    }
+    
     @Override
     public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
         return SHAPE;
@@ -80,9 +93,9 @@ public class PredatorStarBlock extends Block implements IWaterLoggable {
             
             if (itemEntity.getItem().getItem() == ItemsInit.elderDragonBone) {
                 itemEntity.setItem(new ItemStack(ItemsInit.starBone));
-            }else if(itemEntity.getItem().getItem() == ItemRegistry.ELDER_DRAGON_HEART.orElse(null)
-            || itemEntity.getItem().getItem() == ItemRegistry.WEAK_DRAGON_HEART.orElse(null)
-            || itemEntity.getItem().getItem() == ItemRegistry.DRAGON_HEART_SHARD.orElse(null)){
+            }else if(itemEntity.getItem().getItem() == ItemsInit.elderDragonHeart
+            || itemEntity.getItem().getItem() == ItemsInit.weakDragonHeart
+            || itemEntity.getItem().getItem() == ItemsInit.dragonHeartShard){
                 itemEntity.setItem(new ItemStack(ItemsInit.starHeart));
             }
         }
