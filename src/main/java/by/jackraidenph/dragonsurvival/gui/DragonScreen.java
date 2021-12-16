@@ -37,6 +37,7 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.lwjgl.opengl.GL11;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -51,11 +52,6 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
     private static final ResourceLocation CLAWS_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_claws.png");
     private static final ResourceLocation DRAGON_CLAW_BUTTON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_claws_button.png");
     private static final ResourceLocation DRAGON_CLAW_CHECKMARK = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_claws_tetris.png");
-    
-    private static final ResourceLocation CIRCLE_EMPTY = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_background.png");
-    private static final ResourceLocation CIRCLE_EDGE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_edge.png");
-    private static final ResourceLocation CIRCLE_EDGE_OFF = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_edge_off.png");
-    
     
     private boolean buttonClicked;
     
@@ -129,21 +125,39 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
             int thickness = 3;
             int circleX = leftPos - 57;
             int circleY = topPos - 35;
+            int sides = 45;
+            
+            int radius = size / 2;
     
             minecraft.getTextureManager().bind(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/growth_" + handler.getType().name().toLowerCase() + "_" + (handler.getLevel().ordinal() + 1) + ".png"));
             this.blit(stack, circleX + 5, circleY + 5, 0, 0, 20, 20, 20, 20);
     
-            minecraft.getTextureManager().bind(CIRCLE_EMPTY);
-            drawTexturedRing(circleX + (size / 2), circleY + (size / 2), (size / 2) - thickness, size / 2, 0, 0, 0, 128, 600, 1, 0);
+            GL11.glPushMatrix();
+            
+            GL11.glDisable(GL11.GL_TEXTURE_2D);
+            Color c = new Color(99, 99, 99);
+            GL11.glColor4d(c.getRed()  / 255.0, c.getBlue() / 255.0, c.getGreen() / 255.0, 1.0);
+            drawTexturedRing(circleX + radius, circleY + radius, radius - thickness, radius, 0, 0, 0, 128, sides, 1, 0);
+            GL11.glEnable(GL11.GL_TEXTURE_2D);
     
+            GL11.glColor4d(1F, 1F, 1F, 1.0);
             minecraft.getTextureManager().bind(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_" + handler.getType().name().toLowerCase() + ".png"));
-            drawTexturedRing(circleX + (size / 2), circleY + (size / 2), (size / 2) - thickness, size / 2, 0, 0, 0, 256, 600, progress, 0);
+            drawTexturedRing(circleX + radius, circleY + radius, radius - thickness, radius, 0.5, 0.5, 0.5, 0.5, sides, progress, 0);
     
-            minecraft.getTextureManager().bind(handler.growing ? CIRCLE_EDGE : CIRCLE_EDGE_OFF);
-            drawSmoothCircle(circleX + (size / 2), circleY + (size / 2), size / 2, 360, 1, 0);
+            GL11.glDisable(GL11.GL_TEXTURE_2D);
+            if(handler.growing){
+                GL11.glColor4f(0F, 0F, 0F, 1F);
+            }else{
+                GL11.glColor4f(76 / 255F, 0F, 0F, 1F);
+            }
+            drawSmoothCircle(circleX + radius, circleY + radius, radius, sides, 1, 0);
     
-            minecraft.getTextureManager().bind(CIRCLE_EMPTY);
-            drawSmoothCircle(circleX + (size / 2), circleY + (size / 2), size / 2 - thickness, 360, 1, 0);
+            GL11.glColor4d(c.getRed()  / 255.0, c.getBlue() / 255.0, c.getGreen() / 255.0, 1.0);
+            drawSmoothCircle(circleX + radius, circleY + radius, radius - thickness, sides, 1, 0);
+            GL11.glEnable(GL11.GL_TEXTURE_2D);
+            GL11.glColor4d(1F, 1F, 1F, 1.0);
+    
+            GL11.glPopMatrix();
         }
         
         GlStateManager._popMatrix();
@@ -363,7 +377,7 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
                     allowedList.addAll(newbornList);
                 }else if(handler.getSize() < DragonLevel.ADULT.size){
                     allowedList.addAll(youngList);
-                }else{
+                }else if(handler.getSize() < ConfigHandler.SERVER.maxGrowthSize.get()){
                     allowedList.addAll(adultList);
                 }
     
@@ -377,6 +391,12 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
                                                                                       new TranslationTextComponent("ds.gui.growth_age", age),
                                                                                       new TranslationTextComponent("ds.gui.growth_help", result)));
                 Minecraft.getInstance().screen.renderComponentTooltip(stack, description, mouseX, mouseY);
+            }
+    
+            @Override
+            public boolean mouseClicked(double p_231044_1_, double p_231044_3_, int p_231044_5_)
+            {
+                return false;
             }
         });
         
@@ -404,6 +424,12 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
             {
                 ArrayList<ITextComponent> description = new ArrayList<>(Arrays.asList(new TranslationTextComponent("ds.skill.help.claws")));
                 Minecraft.getInstance().screen.renderComponentTooltip(stack, description, mouseX, mouseY);
+            }
+    
+            @Override
+            public boolean mouseClicked(double p_231044_1_, double p_231044_3_, int p_231044_5_)
+            {
+                return false;
             }
         });
     
