@@ -18,7 +18,8 @@
     "MixinInventoryScreen",
     "MixinProjectileHelper",
     "MixinGameRenderer",
-    "MixinWorldRenderer"
+    "MixinWorldRenderer",
+    "MixinEntityRenderManager"
   ],
   "minVersion": "0.8"
 }

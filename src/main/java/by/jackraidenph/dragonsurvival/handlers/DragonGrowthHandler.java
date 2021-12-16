@@ -98,6 +98,8 @@ public class DragonGrowthHandler {
             }
 
             handler.setSize(++size, player);
+            
+            if(!player.isCreative())
             event.getItemStack().shrink(1);
 
             if (world.isClientSide)

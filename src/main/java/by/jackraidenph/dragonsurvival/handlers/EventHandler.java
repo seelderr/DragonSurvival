@@ -17,7 +17,6 @@ import net.minecraft.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.monster.HoglinEntity;
-import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.WolfEntity;
 import net.minecraft.entity.passive.horse.HorseEntity;
@@ -80,23 +79,23 @@ public class EventHandler {
     
     @SubscribeEvent
     public static void mobDeath(LivingDropsEvent event){
-        if(!(event.getEntityLiving() instanceof MonsterEntity)) return;
-        
         LivingEntity entity = event.getEntityLiving();
         float health = entity.getMaxHealth();
-        ItemStack stack = ItemStack.EMPTY;
         
+        //if(entity instanceof AnimalEntity) return;
+        if(event.getSource() == null || !(event.getSource().getEntity() instanceof PlayerEntity)) return;
+
         if(health >= 14 && health < 20){
-            stack = new ItemStack(ItemRegistry.DRAGON_HEART_SHARD.get());
+            if (entity.level.random.nextInt(100) <= (ConfigHandler.SERVER.dragonHeartShardChance.get() * 100) + (event.getLootingLevel() * ((ConfigHandler.SERVER.dragonHeartShardChance.get() * 100) / 4))) {
+                event.getDrops().add(new ItemEntity(entity.level, entity.position().x, entity.position().y, entity.position().z, new ItemStack(ItemRegistry.DRAGON_HEART_SHARD.get())));
+            }
         }else if(health >= 20 && health < 50){
-            stack = new ItemStack(ItemRegistry.WEAK_DRAGON_HEART.get());
+            if (entity.level.random.nextInt(100) <= (ConfigHandler.SERVER.weakDragonHeartChance.get() * 100) + (event.getLootingLevel() * ((ConfigHandler.SERVER.weakDragonHeartChance.get() * 100) / 4))) {
+                event.getDrops().add(new ItemEntity(entity.level, entity.position().x, entity.position().y, entity.position().z, new ItemStack(ItemRegistry.WEAK_DRAGON_HEART.get())));
+            }
         }else if(health >= 50){
-            stack = new ItemStack(ItemRegistry.ELDER_DRAGON_HEART.get());
-        }
-        
-        if(!stack.isEmpty()) {
-            if (entity.level.random.nextInt(100) <= 1 + event.getLootingLevel()) {
-                event.getDrops().add(new ItemEntity(entity.level, entity.position().x, entity.position().y, entity.position().z, stack));
+            if (entity.level.random.nextInt(100) <= (ConfigHandler.SERVER.elderDragonHeartChance.get() * 100) + (event.getLootingLevel() * ((ConfigHandler.SERVER.elderDragonHeartChance.get() * 100) / 4))) {
+                event.getDrops().add(new ItemEntity(entity.level, entity.position().x, entity.position().y, entity.position().z, new ItemStack(ItemRegistry.ELDER_DRAGON_HEART.get())));
             }
         }
     }
