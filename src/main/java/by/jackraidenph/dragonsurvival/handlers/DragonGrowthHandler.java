@@ -125,6 +125,11 @@ public class DragonGrowthHandler {
         });
     }
     
+    public static long newbornToYoung = TimeUnit.SECONDS.convert(3, TimeUnit.HOURS);
+    public static long youngToAdult = TimeUnit.SECONDS.convert(15, TimeUnit.HOURS);
+    public static long adultToMax = TimeUnit.SECONDS.convert(24, TimeUnit.HOURS);
+    public static long beyond = TimeUnit.SECONDS.convert(30, TimeUnit.DAYS);
+    
     @SubscribeEvent
     public static void onPlayerUpdate(TickEvent.PlayerTickEvent event) {
         if (!ConfigHandler.SERVER.alternateGrowing.get())
@@ -143,19 +148,12 @@ public class DragonGrowthHandler {
     
         DragonStateProvider.getCap(player).ifPresent(handler -> {
             if(handler.growing) {
-                //TODO Add item to stop growing and a way to start growing again, maybe same item toggles it?
-                
                 /*
                     1. Newborn - young = 3-4 h
                     2. Young - adult = 15-20h
                     3. Adult - maximum growth = 24h
                     4. After maximum growth. = 30 days for max growth
                  */
-            
-                long newbornToYoung = TimeUnit.SECONDS.convert(3, TimeUnit.HOURS);
-                long youngToAdult = TimeUnit.SECONDS.convert(15, TimeUnit.HOURS);
-                long adultToMax = TimeUnit.SECONDS.convert(24, TimeUnit.HOURS);
-                long beyond = TimeUnit.SECONDS.convert(30, TimeUnit.DAYS);
             
                 double d = 0;
                 double timeIncrement = 60 * 20;

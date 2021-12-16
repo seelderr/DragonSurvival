@@ -16,6 +16,7 @@
   "item.dragonsurvival.elder_dragon_bone": "Elder Dragon Bone",
   "item.dragonsurvival.elder_dragon_dust": "Elder Dragon Dust",
   "item.dragonsurvival.star_bone": "Star Bone",
+  "item.dragonsurvival.star_heart": "Star Heart",
 
   "item.dragonsurvival.charged_coal": "Charged Coal",
   "item.dragonsurvival.charged_soup": "Charged Soup",
@@ -379,7 +380,11 @@
   "ds.gui.sort": "Sort inventory",
   "ds.gui.claws": "Claws inventory",
   "ds.gui.claws.rendering": "Toggle showing of claws and teeth.",
-  "ds.gui.growth_stage": "Dragon Growth Stage: {0}",
-  "ds.gui.growth_age": "Dragon age: {0}"
+  "ds.gui.growth_stage": "■ Stage: {0}",
+  "ds.gui.growth_age": "■ Age: {0}",
+  "ds.gui.growth_help": "■ SOMETHING SOMETHING SOMETHING",
+
+  "ds.growth.now_growing": "You have now started growing again",
+  "ds.growth.no_growth": "You are no longer growing"
 }
 

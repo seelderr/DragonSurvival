@@ -2,11 +2,11 @@
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
     {
-      "item": "dragonsurvival:elder_dragon_heart"
+      "item": "dragonsurvival:weak_dragon_heart"
     }
   ],
   "result": {
-    "item": "dragonsurvival:weak_dragon_heart",
+    "item": "dragonsurvival:heart_element",
     "count": 1
   }
 }

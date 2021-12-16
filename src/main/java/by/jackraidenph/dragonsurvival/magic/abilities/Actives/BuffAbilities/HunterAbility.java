@@ -64,7 +64,7 @@ public class HunterAbility extends ActiveDragonAbility
 	@Override
 	public AbilityAnimation getStoppingAnimation()
 	{
-		return new AbilityAnimation("self_buff", 160, true);
+		return new AbilityAnimation("self_buff", 40, true);
 	}
 	
 	public int getCastingSlowness() { return 10; }

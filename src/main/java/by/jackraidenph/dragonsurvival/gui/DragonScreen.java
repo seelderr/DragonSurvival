@@ -7,6 +7,7 @@ import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.containers.DragonContainer;
 import by.jackraidenph.dragonsurvival.gui.buttons.TabButton;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.KeyInputHandler;
+import by.jackraidenph.dragonsurvival.handlers.DragonGrowthHandler;
 import by.jackraidenph.dragonsurvival.handlers.Magic.ClientMagicHUDHandler;
 import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.SortInventoryPacket;
@@ -109,9 +110,12 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
                 progress = (float)((curSize - DragonLevel.BABY.size) / (DragonLevel.YOUNG.size - DragonLevel.BABY.size));
             } else if (handler.getLevel() == DragonLevel.YOUNG) {
                 progress = (float)((curSize - DragonLevel.YOUNG.size) / (DragonLevel.ADULT.size - DragonLevel.YOUNG.size));
-        
-            } else if (handler.getLevel() == DragonLevel.ADULT) {
-                progress = (float)((curSize - DragonLevel.ADULT.size) / (ConfigHandler.SERVER.maxGrowthSize.get() - DragonLevel.ADULT.size));
+    
+            } else if (handler.getLevel() == DragonLevel.ADULT && handler.getSize() < 40) {
+                progress = (float)((curSize - DragonLevel.ADULT.size) / (40 - DragonLevel.ADULT.size));
+                
+            } else if (handler.getLevel() == DragonLevel.ADULT && handler.getSize() >= 40) {
+                progress = (float)((curSize - 40) / (ConfigHandler.SERVER.maxGrowthSize.get() - 40));
             }
     
             int size = 32;
@@ -294,8 +298,58 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
             @Override
             public void renderToolTip(MatrixStack stack, int mouseX, int mouseY)
             {
+                String age = (int)handler.getSize() - DragonLevel.BABY.size + "/";
+                double seconds = 0;
+                
+                if(handler.getLevel() == DragonLevel.BABY){
+                    age += DragonLevel.YOUNG.size - DragonLevel.BABY.size;
+                    double missing = DragonLevel.YOUNG.size - handler.getSize();
+                    double increment = ((DragonLevel.YOUNG.size - DragonLevel.BABY.size) / ((DragonGrowthHandler.newbornToYoung * 20.0)));
+                    seconds = (missing / increment) / 20;
+                    
+                }else if(handler.getLevel() == DragonLevel.YOUNG){
+                    age += DragonLevel.ADULT.size - DragonLevel.BABY.size;
+    
+                    double missing = DragonLevel.ADULT.size - handler.getSize();
+                    double increment = ((DragonLevel.ADULT.size - DragonLevel.YOUNG.size) / ((DragonGrowthHandler.youngToAdult * 20.0)));
+                    seconds = (missing / increment) / 20;
+    
+                }else if(handler.getLevel() == DragonLevel.ADULT && handler.getSize() < 40){
+                    age += 40 - DragonLevel.BABY.size;
+    
+                    double missing = 40 - handler.getSize();
+                    double increment = ((40 - DragonLevel.ADULT.size) / ((DragonGrowthHandler.adultToMax * 20.0)));
+                    seconds = (missing / increment) / 20;
+    
+                }else  if(handler.getLevel() == DragonLevel.ADULT && handler.getSize() >= 40){
+                    age += (int)(ConfigHandler.SERVER.maxGrowthSize.get() - DragonLevel.BABY.size);
+    
+                    double missing = ConfigHandler.SERVER.maxGrowthSize.get() - handler.getSize();
+                    double increment = ((ConfigHandler.SERVER.maxGrowthSize.get() - 40) / ((DragonGrowthHandler.beyond * 20.0)));
+                    seconds = (missing / increment) / 20;
+               }
+                
+                if(seconds != 0){
+                    int minutes = (int)(seconds / 60);
+                    seconds -= (int)(minutes * 60);
+    
+                    int hours = (int)(minutes / 60);
+                    minutes -= (hours * 60);
+                    
+                    String hourString = hours > 0 ? hours >= 10 ? Integer.toString(hours) : "0" + hours : "00";
+                    String minuteString = minutes > 0 ? minutes >= 10 ? Integer.toString(minutes) : "0" + minutes : "00";
+                    String secondString = seconds > 0 ? seconds >= 10 ? Integer.toString((int)seconds) : "0" + (int)seconds : "00";
+    
+                    if(handler.growing) {
+                        age += " (" + hourString + ":" + minuteString + ":" + secondString + ")";
+                    }else{
+                        age += " (--:--:--)";
+                    }
+                }
+                
                 ArrayList<ITextComponent> description = new ArrayList<>(Arrays.asList(new TranslationTextComponent("ds.gui.growth_stage", handler.getLevel().getName()),
-                                                                                      new TranslationTextComponent("ds.gui.growth_age", "N/A")));
+                                                                                      new TranslationTextComponent("ds.gui.growth_age", age),
+                                                                                      new TranslationTextComponent("ds.gui.growth_help")));
                 Minecraft.getInstance().screen.renderComponentTooltip(stack, description, mouseX, mouseY);
             }
         });

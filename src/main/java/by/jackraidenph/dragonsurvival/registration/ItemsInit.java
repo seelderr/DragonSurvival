@@ -6,6 +6,7 @@ import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
+import by.jackraidenph.dragonsurvival.network.SyncGrowthState;
 import by.jackraidenph.dragonsurvival.network.SyncSize;
 import by.jackraidenph.dragonsurvival.network.SynchronizeDragonCap;
 import by.jackraidenph.dragonsurvival.util.DragonType;
@@ -22,6 +23,7 @@ import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.RegistryEvent;
@@ -46,6 +48,7 @@ public class ItemsInit {
     public static Item seaDragonTreat, caveDragonTreat, forestDragonTreat;
     public static Item huntingNet;
     public static Item passiveFireBeacon, passiveMagicBeacon, passivePeaceBeacon;
+    public static Item starHeart;
     
     public static Item lightningTextureItem;
 
@@ -62,7 +65,12 @@ public class ItemsInit {
                         if (size > 14) {
                         	size -= 2;
                         	dragonStateHandler.setSize(size, playerIn);
-                        	playerIn.getItemInHand(handIn).shrink(1);
+                            
+                            
+                            if(!playerIn.isCreative()) {
+                                playerIn.getItemInHand(handIn).shrink(1);
+                            }
+                            
                             if (!worldIn.isClientSide){
                                 NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerIn), new SyncSize(playerIn.getId(), size));
                                 if (dragonStateHandler.getPassengerId() != 0){
@@ -76,7 +84,7 @@ public class ItemsInit {
                             }
 
                             playerIn.refreshDimensions();
-                            return ActionResult.success(playerIn.getItemInHand(handIn));
+                            return ActionResult.consume(playerIn.getItemInHand(handIn));
                         }
                     }
                 }
@@ -163,7 +171,35 @@ public class ItemsInit {
     
         registry.registerAll(seaDragonTreat, caveDragonTreat, forestDragonTreat);
     
-        huntingNet = new Item(new Item.Properties()).setRegistryName("dragonsurvival", "dragon_hunting_mesh");
+        starHeart = new Item(new Item.Properties().tab(items)){
+            @Override
+            public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand p_77659_3_)
+            {
+                if(!world.isClientSide) {
+                    DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+    
+                    if (handler != null) {
+                        handler.growing = !handler.growing;
+                        player.sendMessage(new TranslationTextComponent(handler.growing ? "ds.growth.now_growing" : "ds.growth.no_growth"), player.getUUID());
+                        
+                        if(!player.isCreative()) {
+                            player.getItemInHand(p_77659_3_).shrink(1);
+                        }
+                        
+                        NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)player), new SyncGrowthState(handler.growing));
+                        
+                        return ActionResult.consume(player.getItemInHand(p_77659_3_));
+                    }
+                }
+                
+                return super.use(world, player, p_77659_3_);
+            }
+        }.setRegistryName(DragonSurvivalMod.MODID, "star_heart");
+        registry.register(starHeart);
+        
+        
+        
+        huntingNet = new Item(new Item.Properties()).setRegistryName(DragonSurvivalMod.MODID, "dragon_hunting_mesh");
         registry.register(huntingNet);
         passiveMagicBeacon = new Item(new Item.Properties()).setRegistryName(DragonSurvivalMod.MODID, "beacon_magic_1");
         registry.register(passiveMagicBeacon);

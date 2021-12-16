@@ -84,6 +84,7 @@ public class EventHandler {
         
         //if(entity instanceof AnimalEntity) return;
         if(event.getSource() == null || !(event.getSource().getEntity() instanceof PlayerEntity)) return;
+        if(!DragonStateProvider.isDragon(event.getSource().getEntity())) return;
 
         if(health >= 14 && health < 20){
             if (entity.level.random.nextInt(100) <= (ConfigHandler.SERVER.dragonHeartShardChance.get() * 100) + (event.getLootingLevel() * ((ConfigHandler.SERVER.dragonHeartShardChance.get() * 100) / 4))) {

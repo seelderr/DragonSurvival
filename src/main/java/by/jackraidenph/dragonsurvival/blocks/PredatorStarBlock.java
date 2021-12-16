@@ -4,6 +4,7 @@ import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.entity.MagicalPredatorEntity;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
 import by.jackraidenph.dragonsurvival.registration.EntityTypesInit;
+import by.jackraidenph.dragonsurvival.registration.ItemRegistry;
 import by.jackraidenph.dragonsurvival.registration.ItemsInit;
 import by.jackraidenph.dragonsurvival.tiles.PredatorStarTileEntity;
 import by.jackraidenph.dragonsurvival.util.DamageSources;
@@ -76,8 +77,13 @@ public class PredatorStarBlock extends Block implements IWaterLoggable {
             }
         } else if (entity instanceof ItemEntity) {
             ItemEntity itemEntity = (ItemEntity) entity;
+            
             if (itemEntity.getItem().getItem() == ItemsInit.elderDragonBone) {
                 itemEntity.setItem(new ItemStack(ItemsInit.starBone));
+            }else if(itemEntity.getItem().getItem() == ItemRegistry.ELDER_DRAGON_HEART.orElse(null)
+            || itemEntity.getItem().getItem() == ItemRegistry.WEAK_DRAGON_HEART.orElse(null)
+            || itemEntity.getItem().getItem() == ItemRegistry.DRAGON_HEART_SHARD.orElse(null)){
+                itemEntity.setItem(new ItemStack(ItemsInit.starHeart));
             }
         }
     }

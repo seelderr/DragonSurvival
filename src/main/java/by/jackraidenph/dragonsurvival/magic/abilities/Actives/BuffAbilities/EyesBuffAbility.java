@@ -48,10 +48,6 @@ public class EyesBuffAbility extends ActiveDragonAbility
 		super.onActivation(player);
 		player.addEffect(new EffectInstance(effect, Functions.secondsToTicks(getDuration())));
 		
-//		if(effect == DragonEffects.WATER_VISION) {
-//			player.addEffect(new EffectInstance(Effects.NIGHT_VISION, Functions.secondsToTicks(getDuration()), 0, false, false));
-//		}
-		
 		player.level.playLocalSound(player.position().x, player.position().y + 0.5, player.position().z, SoundEvents.UI_TOAST_IN, SoundCategory.PLAYERS, 5F, 0.1F, false);
 	}
 	
@@ -103,7 +99,7 @@ public class EyesBuffAbility extends ActiveDragonAbility
 	@Override
 	public AbilityAnimation getStoppingAnimation()
 	{
-		return new AbilityAnimation("self_buff", 160, true);
+		return new AbilityAnimation("self_buff", 40, true);
 	}
 	
 	public int getCastingSlowness() { return 10; }

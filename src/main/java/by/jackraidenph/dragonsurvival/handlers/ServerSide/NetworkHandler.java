@@ -66,7 +66,8 @@ public class NetworkHandler
 		 register(SyncCapabilityDebuff.class, new SyncCapabilityDebuff());
 		 register(PacketSyncXPDevour.class, new PacketSyncXPDevour());
 		 register(PacketSyncPredatorStats.class, new PacketSyncPredatorStats());
-		 
+		
+		 register(SyncGrowthState.class, new SyncGrowthState());
 		 register(SyncSize.class, new SyncSize());
 		 register(ToggleWings.class, new ToggleWings());
 		 register(DiggingStatus.class, new DiggingStatus());
