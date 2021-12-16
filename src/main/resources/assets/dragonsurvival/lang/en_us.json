@@ -378,6 +378,8 @@
   "ds.gui.toggle_inventory.dragon": "Go to dragon inventory",
   "ds.gui.sort": "Sort inventory",
   "ds.gui.claws": "Claws inventory",
-  "ds.gui.claws.rendering": "Toggle showing of claws and teeth."
+  "ds.gui.claws.rendering": "Toggle showing of claws and teeth.",
+  "ds.gui.growth_stage": "Dragon Growth Stage: {0}",
+  "ds.gui.growth_age": "Dragon age: {0}"
 }
 
