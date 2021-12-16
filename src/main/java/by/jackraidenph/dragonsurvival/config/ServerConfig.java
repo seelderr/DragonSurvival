@@ -279,7 +279,7 @@ public class ServerConfig {
 				.defineInRange("dragonHeartShardChance", 0.05, 0.0, 1.0);
 		weakDragonHeartChance = builder
 				.comment("The chance for dragon heart shards to drop from mobs with max health between 20-50")
-				.defineInRange("weakDragonHeartChance", 0.1, 0.0, 1.0);
+				.defineInRange("weakDragonHeartChance", 0.06, 0.0, 1.0);
 		elderDragonHeartChance = builder
 				.comment("The chance for dragon heart shards to drop from mobs with max health above 50")
 				.defineInRange("elderDragonHeartChance", 0.2, 0.0, 1.0);

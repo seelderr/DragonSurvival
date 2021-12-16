@@ -1,3 +1,40 @@
+1.16.5-0.6 Magic Update:
+- Added: a more complex system of growth. Now the dragons are gradually growing faster. Adult dragons have a slower growth rate
+- Added: Star Heart to stop growth of dragon
+- Added: Visualization of the dragons growth in the inventory
+- Added: Added recipes for converting hearts back to weak versions
+- Added: Animations are now VERY smooth
+- Added: Different hearts can now be drop from different creatures with health 14-20 for a shard, 20-50 for a weak, and over 50 for an elder heart
+- Added: The camera is now attached to the dragons head instead of the torso.
+- Added: The dragons now has an extra large hitbox.
+- Added: You can now become larger than a standard adult dragon. Previously this parameter was equal to 40 units of growth (no heart!), but now it is 60. You can set this parameter up to 1000, but we strongly recommend not to do this. The maximum health is still 40.
+
+
+- Fixed:
+- Fixed:
+- Fixed:
+- Fixed:
+- Fixed:
+- Fixed:
+
+1.16.5-0.5 Magic Update:
+- Fixed: Claw and Teeth Damage
+- Fixed: Claws and teeth no longer render with invisibility or spectator
+- Fixed: carry on  no longer damaging mobs
+- Fixed: mining speed take efficiency into account with claws
+- Fixed: offhand not dropping blacklisted items
+- Fixed: breath abilities being able to break other blocks then intended
+- Fixed: No more magic in spectator
+- Added: smooth dragon turns
+- Added: Skin tab in the dragon's inventory.
+- Added: exp drops to hunters and knights.
+- Added: sort inventory button to dragon inventory
+- Added: tooltips to heart shards and various buttons that were missing tooltips.
+- Added: inventory toggle button to creative inventory
+- Added: "spectral impact" skill now has a visual effect
+- Added: sea_sweep particle
+- Localization: update ru_ru, en_us, zh_cn, he_il
+
 1.16.5-0.4 Magic Update:
 - Fixed: mending breaks tools, not fixes them
 - Fixed: digging animation freezes
