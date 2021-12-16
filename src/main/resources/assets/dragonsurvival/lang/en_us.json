@@ -385,7 +385,7 @@
   "ds.gui.growth_age": "■ §6Age§r§7: {0}",
   "ds.gui.growth_help": "\n■ The dragon gradually grows over time. When a dragon is older, it grows more slowly. You can use these items to speed up growth:§r\n§6■ {0}\n\n§7■ A Star Bone will shrink the dragon, and a Star Heart will completely stop the growth. Both items are created by throwing the appropriate items into the Predator Star.",
 
-  "ds.growth.now_growing": "Gradual growth is §2included§r",
+  "ds.growth.now_growing": "Gradual growth is §2active§r",
   "ds.growth.no_growth": "Gradual growth is §coff§r"
 }
 
