@@ -382,7 +382,7 @@
   "ds.gui.claws.rendering": "Toggle showing of claws and teeth.",
   "ds.gui.growth_stage": "■ Stage: {0}",
   "ds.gui.growth_age": "■ Age: {0}",
-  "ds.gui.growth_help": "■ SOMETHING SOMETHING SOMETHING",
+  "ds.gui.growth_help": "■ SOMETHING SOMETHING SOMETHING {0}",
 
   "ds.growth.now_growing": "You have now started growing again",
   "ds.growth.no_growth": "You are no longer growing"

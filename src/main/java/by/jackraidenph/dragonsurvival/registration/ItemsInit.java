@@ -9,6 +9,7 @@ import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.SyncGrowthState;
 import by.jackraidenph.dragonsurvival.network.SyncSize;
 import by.jackraidenph.dragonsurvival.network.SynchronizeDragonCap;
+import by.jackraidenph.dragonsurvival.util.DragonLevel;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -64,6 +65,7 @@ public class ItemsInit {
                         double size = dragonStateHandler.getSize();
                         if (size > 14) {
                         	size -= 2;
+                            size = Math.max(size, DragonLevel.BABY.size);
                         	dragonStateHandler.setSize(size, playerIn);
                             
                             

@@ -4,6 +4,7 @@ import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
+import by.jackraidenph.dragonsurvival.config.ConfigUtils;
 import by.jackraidenph.dragonsurvival.containers.DragonContainer;
 import by.jackraidenph.dragonsurvival.gui.buttons.TabButton;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.KeyInputHandler;
@@ -28,6 +29,8 @@ import net.minecraft.client.gui.widget.button.ImageButton;
 import net.minecraft.client.util.InputMappings;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -36,6 +39,9 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
     static final ResourceLocation BACKGROUND = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_inventory.png");
@@ -48,6 +54,7 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
     
     private static final ResourceLocation CIRCLE_EMPTY = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_background.png");
     private static final ResourceLocation CIRCLE_EDGE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_edge.png");
+    private static final ResourceLocation CIRCLE_EDGE_OFF = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_edge_off.png");
     
     
     private boolean buttonClicked;
@@ -132,7 +139,7 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
             minecraft.getTextureManager().bind(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_" + handler.getType().name().toLowerCase() + ".png"));
             drawTexturedRing(circleX + (size / 2), circleY + (size / 2), (size / 2) - thickness, size / 2, 0, 0, 0, 256, 600, progress, 0);
     
-            minecraft.getTextureManager().bind(CIRCLE_EDGE);
+            minecraft.getTextureManager().bind(handler.growing ? CIRCLE_EDGE : CIRCLE_EDGE_OFF);
             drawSmoothCircle(circleX + (size / 2), circleY + (size / 2), size / 2, 360, 1, 0);
     
             minecraft.getTextureManager().bind(CIRCLE_EMPTY);
@@ -338,18 +345,37 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
                     
                     String hourString = hours > 0 ? hours >= 10 ? Integer.toString(hours) : "0" + hours : "00";
                     String minuteString = minutes > 0 ? minutes >= 10 ? Integer.toString(minutes) : "0" + minutes : "00";
-                    String secondString = seconds > 0 ? seconds >= 10 ? Integer.toString((int)seconds) : "0" + (int)seconds : "00";
     
                     if(handler.growing) {
-                        age += " (" + hourString + ":" + minuteString + ":" + secondString + ")";
+                        age += " (" + hourString + ":" + minuteString + ")";
                     }else{
-                        age += " (--:--:--)";
+                        age += " (§4--:--§r)";
                     }
                 }
+    
+                ArrayList<Item> allowedList = new ArrayList<>();
+    
+                List<Item> newbornList = ConfigUtils.parseConfigItemList(ConfigHandler.SERVER.growNewborn.get());
+                List<Item> youngList = ConfigUtils.parseConfigItemList(ConfigHandler.SERVER.growYoung.get());
+                List<Item> adultList = ConfigUtils.parseConfigItemList(ConfigHandler.SERVER.growAdult.get());
+                
+                if(handler.getSize() < DragonLevel.YOUNG.size){
+                    allowedList.addAll(newbornList);
+                }else if(handler.getSize() < DragonLevel.ADULT.size){
+                    allowedList.addAll(youngList);
+                }else{
+                    allowedList.addAll(adultList);
+                }
+    
+                List<String> displayData = allowedList.stream()
+                        .map(i -> new ItemStack(i).getDisplayName().getString())
+                        .collect(Collectors.toList());
+                StringJoiner result = new StringJoiner(", ");
+                displayData.forEach(result::add);
                 
                 ArrayList<ITextComponent> description = new ArrayList<>(Arrays.asList(new TranslationTextComponent("ds.gui.growth_stage", handler.getLevel().getName()),
                                                                                       new TranslationTextComponent("ds.gui.growth_age", age),
-                                                                                      new TranslationTextComponent("ds.gui.growth_help")));
+                                                                                      new TranslationTextComponent("ds.gui.growth_help", result)));
                 Minecraft.getInstance().screen.renderComponentTooltip(stack, description, mouseX, mouseY);
             }
         });
