@@ -10,9 +10,10 @@ import by.jackraidenph.dragonsurvival.handlers.ClientSide.KeyInputHandler;
 import by.jackraidenph.dragonsurvival.handlers.Magic.ClientMagicHUDHandler;
 import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.SortInventoryPacket;
-import by.jackraidenph.dragonsurvival.network.container.OpenInventory;
 import by.jackraidenph.dragonsurvival.network.claw.DragonClawsMenuToggle;
 import by.jackraidenph.dragonsurvival.network.claw.SyncDragonClawRender;
+import by.jackraidenph.dragonsurvival.network.container.OpenInventory;
+import by.jackraidenph.dragonsurvival.util.DragonLevel;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -43,6 +44,10 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
     private static final ResourceLocation CLAWS_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_claws.png");
     private static final ResourceLocation DRAGON_CLAW_BUTTON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_claws_button.png");
     private static final ResourceLocation DRAGON_CLAW_CHECKMARK = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_claws_tetris.png");
+    
+    private static final ResourceLocation CIRCLE_EMPTY = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_background.png");
+    private static final ResourceLocation CIRCLE_EDGE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_edge.png");
+    
     
     private boolean buttonClicked;
     
@@ -94,8 +99,133 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
             minecraft.getTextureManager().bind(CLAWS_TEXTURE);
             this.blit(stack,leftPos - 80, topPos, 0, 0, 77, 170);
         }
+    
+
+        if(clawsMenu) {
+            double curSize = handler.getSize();
+            float progress = 0;
+    
+            if (handler.getLevel() == DragonLevel.BABY) {
+                progress = (float)((curSize - DragonLevel.BABY.size) / (DragonLevel.YOUNG.size - DragonLevel.BABY.size));
+            } else if (handler.getLevel() == DragonLevel.YOUNG) {
+                progress = (float)((curSize - DragonLevel.YOUNG.size) / (DragonLevel.ADULT.size - DragonLevel.YOUNG.size));
+        
+            } else if (handler.getLevel() == DragonLevel.ADULT) {
+                progress = (float)((curSize - DragonLevel.ADULT.size) / (ConfigHandler.SERVER.maxGrowthSize.get() - DragonLevel.ADULT.size));
+            }
+    
+            int size = 32;
+            int thickness = 3;
+            int circleX = leftPos - 57;
+            int circleY = topPos - 35;
+    
+            minecraft.getTextureManager().bind(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/growth_" + handler.getType().name().toLowerCase() + "_" + (handler.getLevel().ordinal() + 1) + ".png"));
+            this.blit(stack, circleX + 5, circleY + 5, 0, 0, 20, 20, 20, 20);
+    
+            minecraft.getTextureManager().bind(CIRCLE_EMPTY);
+            drawTexturedRing(circleX + (size / 2), circleY + (size / 2), (size / 2) - thickness, size / 2, 0, 0, 0, 128, 600, 1, 0);
+    
+            minecraft.getTextureManager().bind(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_" + handler.getType().name().toLowerCase() + ".png"));
+            drawTexturedRing(circleX + (size / 2), circleY + (size / 2), (size / 2) - thickness, size / 2, 0, 0, 0, 256, 600, progress, 0);
+    
+            minecraft.getTextureManager().bind(CIRCLE_EDGE);
+            drawSmoothCircle(circleX + (size / 2), circleY + (size / 2), size / 2, 360, 1, 0);
+    
+            minecraft.getTextureManager().bind(CIRCLE_EMPTY);
+            drawSmoothCircle(circleX + (size / 2), circleY + (size / 2), size / 2 - thickness, 360, 1, 0);
+        }
         
         GlStateManager._popMatrix();
+    }
+    
+    static final double PI_TWO = (Math.PI * 2.0);
+    
+    public static void drawSmoothCircle(double x, double y, double radius, int sides, double percent, double startAngle) {
+        boolean blend = GL11.glGetBoolean(GL11.GL_BLEND);
+        boolean lineSmooth = GL11.glGetBoolean(GL11.GL_LINE_SMOOTH);
+        
+        double rad;
+        double sin;
+        double cos;
+        
+        GL11.glPushMatrix();
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glEnable(GL11.GL_LINE_SMOOTH);
+        GL11.glHint(GL11.GL_LINE_SMOOTH_HINT, GL11.GL_NICEST);
+        GL11.glBegin(GL11.GL_LINE_STRIP);
+        
+        for (int i = 0; i < percent * sides; i++) {
+            rad = PI_TWO * ((double) i / (double) sides + startAngle);
+            sin = Math.sin(rad);
+            cos = -Math.cos(rad);
+            
+            GL11.glVertex2d(x + sin * radius, y + cos * radius);
+        }
+        
+        rad = PI_TWO * (percent + startAngle);
+        sin = Math.sin(rad);
+        cos = -Math.cos(rad);
+        
+        GL11.glVertex2d(x + sin * radius, y + cos * radius);
+        
+        GL11.glEnd();
+        if (!lineSmooth) {
+            GL11.glDisable(GL11.GL_LINE_SMOOTH);
+        }
+        if (!blend) {
+            GL11.glDisable(GL11.GL_BLEND);
+        }
+        GL11.glPopMatrix();
+    }
+    
+    
+    public static void drawTexturedRing(double x, double y, double innerRadius, double outerRadius, double u, double v, double texInnerRadius, double texOuterRadius, int sides, double percent, double startAngle) {
+        double rad;
+        double sin;
+        double cos;
+    
+        boolean blend = GL11.glGetBoolean(GL11.GL_BLEND);
+        boolean lineSmooth = GL11.glGetBoolean(GL11.GL_LINE_SMOOTH);
+        
+        GL11.glPushMatrix();
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glEnable(GL11.GL_LINE_SMOOTH);
+        GL11.glHint(GL11.GL_LINE_SMOOTH_HINT, GL11.GL_NICEST);
+        GL11.glBegin(GL11.GL_QUAD_STRIP);
+        
+        for (int i = 0; i < percent * sides; i++) {
+            rad = PI_TWO * ((double) i / (double) sides + startAngle);
+            sin = Math.sin(rad);
+            cos = -Math.cos(rad);
+            
+            GL11.glTexCoord2d(u + sin * texOuterRadius, v + cos * texOuterRadius);
+            GL11.glVertex2d(x + sin * outerRadius, y + cos * outerRadius);
+            
+            GL11.glTexCoord2d(u + sin * texInnerRadius, v + cos * texInnerRadius);
+            GL11.glVertex2d(x + sin * innerRadius, y + cos * innerRadius);
+        }
+        
+        rad = PI_TWO * (percent + startAngle);
+        sin = Math.sin(rad);
+        cos = -Math.cos(rad);
+        
+        GL11.glTexCoord2d(u + sin * texOuterRadius, v + cos * texOuterRadius);
+        GL11.glVertex2d(x + sin * outerRadius, y + cos * outerRadius);
+        
+        GL11.glTexCoord2d(u + sin * texInnerRadius, v + cos * texInnerRadius);
+        GL11.glVertex2d(x + sin * innerRadius, y + cos * innerRadius);
+        
+        GL11.glEnd();
+        
+        if (!lineSmooth) {
+            GL11.glDisable(GL11.GL_LINE_SMOOTH);
+        }
+        if (!blend) {
+            GL11.glDisable(GL11.GL_BLEND);
+        }
+        GL11.glPopMatrix();
     }
     
     
@@ -115,11 +245,12 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
         this.imageHeight = 166;
         super.init();
         
+        DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+    
         addButton(new TabButton(leftPos, topPos - 28, 0, this));
         addButton(new TabButton(leftPos + 28, topPos - 26, 1, this));
         addButton(new TabButton(leftPos + 57, topPos - 26, 2, this));
         addButton(new TabButton(leftPos + 86, topPos - 26, 3, this));
-    
         
         addButton(new Button(leftPos + 27, topPos + 10, 11, 11, new StringTextComponent(""), p_onPress_1_ -> {
             clawsMenu = !clawsMenu;
@@ -152,6 +283,23 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
             }
         });
     
+        addButton(new Button(leftPos - 57, topPos - 36, 32, 32, null, (button) -> {}){
+            @Override
+            public void renderButton(MatrixStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_)
+            {
+                this.visible = clawsMenu;
+                this.active = clawsMenu;
+            }
+        
+            @Override
+            public void renderToolTip(MatrixStack stack, int mouseX, int mouseY)
+            {
+                ArrayList<ITextComponent> description = new ArrayList<>(Arrays.asList(new TranslationTextComponent("ds.gui.growth_stage", handler.getLevel().getName()),
+                                                                                      new TranslationTextComponent("ds.gui.growth_age", "N/A")));
+                Minecraft.getInstance().screen.renderComponentTooltip(stack, description, mouseX, mouseY);
+            }
+        });
+        
         addButton(new Button(leftPos - 80 + 33, topPos + 111, 11, 11, null, (button) -> {}){
             @Override
             public void renderButton(MatrixStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_)
@@ -182,8 +330,6 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
 
         
         addButton(new Button(leftPos - 80 + 34, topPos + 140, 9, 9, null, p_onPress_1_ -> {
-            DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
-    
             if(handler != null){
                boolean claws = !handler.getClawInventory().renderClaws;
                
