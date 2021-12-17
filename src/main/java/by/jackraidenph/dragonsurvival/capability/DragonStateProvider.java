@@ -1,9 +1,12 @@
 package by.jackraidenph.dragonsurvival.capability;
 
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
+import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
+import by.jackraidenph.dragonsurvival.network.magic.SyncMagicStats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.SoundEvents;
@@ -13,6 +16,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fml.network.PacketDistributor;
 
 public class DragonStateProvider implements ICapabilitySerializable<CompoundNBT> {
 
@@ -57,8 +61,13 @@ public class DragonStateProvider implements ICapabilitySerializable<CompoundNBT>
     }
     
     public static void replenishMana(PlayerEntity entity, int mana) {
+        if(entity.level.isClientSide){
+            return;
+        }
+        
         getCap(entity).ifPresent(cap -> {
             cap.getMagic().setCurrentMana(Math.min(getMaxMana(entity), cap.getMagic().getCurrentMana() + mana));
+            NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) entity), new SyncMagicStats(entity.getId(), cap.getMagic().getSelectedAbilitySlot(), cap.getMagic().getCurrentMana(), cap.getMagic().renderAbilityHotbar()));
         });
     }
     public static void consumeMana(PlayerEntity entity, int mana) {
@@ -89,6 +98,8 @@ public class DragonStateProvider implements ICapabilitySerializable<CompoundNBT>
             } else {
                 cap.getMagic().setCurrentMana(Math.max(0, cap.getMagic().getCurrentMana() - mana));
             }
+    
+            NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) entity), new SyncMagicStats(entity.getId(), cap.getMagic().getSelectedAbilitySlot(), cap.getMagic().getCurrentMana(), cap.getMagic().renderAbilityHotbar()));
         });
     }
 	

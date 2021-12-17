@@ -51,7 +51,7 @@ public class DragonInventoryGUIHandler implements IRecipeTransferInfo, IGuiConta
 		List<Rectangle2d> list = new ArrayList<>();
 		if(screen.clawsMenu){
 			int size = 80;
-			list.add(new Rectangle2d(screen.getLeftPos() - size, screen.getGuiTop(), size, screen.height));
+			list.add(new Rectangle2d(screen.getLeftPos() - size, screen.getGuiTop() - 70, size, screen.height + 70));
 		}
 		return list;
 	}

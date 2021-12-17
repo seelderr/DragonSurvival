@@ -1,7 +1,5 @@
 package by.jackraidenph.dragonsurvival.magic.abilities.Actives;
 
-import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
-import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.entity.magic.DragonSpikeEntity;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.KeyInputHandler;
@@ -10,8 +8,6 @@ import by.jackraidenph.dragonsurvival.registration.EntityTypesInit;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -73,25 +69,8 @@ public class SpikeAbility extends ActiveDragonAbility
 	public void onActivation(PlayerEntity player)
 	{
 		super.onActivation(player);
-		DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
-		if(handler == null) return;
-		
-		float f1 = -(float)handler.getMovementData().bodyYaw * ((float)Math.PI / 180F);
-		
-		float f4 = MathHelper.sin(f1);
-		float f5 = MathHelper.cos(f1);
-		
-		Double size = DragonStateProvider.getCap(player).map((cap) -> cap.getSize()).get();
-		
-		double x = player.getX() + f4;
-		double y = player.getY() + (size / 20F) - 0.2;
-		double z = player.getZ() + f5;
-		
-		Vector3d vector3d = player.getViewVector(1.0F);
-		double speed = 1d;
 		
 		DragonSpikeEntity entity = new DragonSpikeEntity(EntityTypesInit.DRAGON_SPIKE, player.level, player);
-		entity.setPos(x + vector3d.x * speed, y, z + vector3d.z * speed);
 		entity.setArrow_level(getLevel());
 		entity.setBaseDamage(getDamage());
 		entity.pickup = AbstractArrowEntity.PickupStatus.DISALLOWED;
