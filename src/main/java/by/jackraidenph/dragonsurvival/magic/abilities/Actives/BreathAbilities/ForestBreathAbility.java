@@ -270,7 +270,9 @@ public class ForestBreathAbility extends BreathAbility
 						if (player.level instanceof ServerWorld) {
 							if (igrowable.isBonemealSuccess(player.level, player.level.random, pos, blockState)) {
 								for (int i = 0; i < 3; i++) {
-									igrowable.performBonemeal((ServerWorld)player.level, player.level.random, pos, blockState);
+									if(igrowable != null) {
+										igrowable.performBonemeal((ServerWorld)player.level, player.level.random, pos, blockState);
+									}
 								}
 							}
 						}

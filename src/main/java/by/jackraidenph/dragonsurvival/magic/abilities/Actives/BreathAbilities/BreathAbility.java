@@ -216,7 +216,9 @@ public abstract class BreathAbility extends ActiveDragonAbility
 									}
 								}
 								
-								onBlock(newPos, state, result.getDirection());
+								if(newPos != null && state != null) {
+									onBlock(newPos, state, result.getDirection());
+								}
 							}
 						}
 					}
