@@ -46,7 +46,7 @@ public class ClientGrowthHudHandler
 			
 			int increment = DragonGrowthHandler.getIncrement(stack.getItem(), handler.getLevel());
 			
-			if(increment != 0 && (handler.getSize() < ConfigHandler.SERVER.maxGrowthSize.get() && increment > 0 || increment < 0 && handler.getSize() > 0)){
+			if(increment != 0 && (handler.getSize() < ConfigHandler.SERVER.maxGrowthSize.get() && increment > 0 || increment < 0 && handler.getSize() >= (DragonLevel.BABY.size + 1))){
 				float curSize = (float)handler.getSize();
 				float nextSize = (float)(handler.getSize() + increment);
 				float progress = 0;

@@ -248,7 +248,7 @@ public class ClientEvents {
                                 }
                             }
                             
-                            bodyYaw = MathHelper.lerp(0.1, playerStateHandler.getMovementData().bodyYaw, bodyYaw) ;
+                            bodyYaw = MathHelper.lerp(renderTickEvent.renderTickTime / 4, playerStateHandler.getMovementData().bodyYaw, bodyYaw) ;
                             
                             if (bodyAndHeadYawDiff > 180) {
                                 bodyYaw -= 360;
