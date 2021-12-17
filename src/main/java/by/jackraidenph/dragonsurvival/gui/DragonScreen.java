@@ -121,17 +121,14 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
                 progress = (float)((curSize - 40) / (ConfigHandler.SERVER.maxGrowthSize.get() - 40));
             }
     
-            int size = 32;
-            int thickness = 3;
-            int circleX = leftPos - 57;
-            int circleY = topPos - 35;
-            int sides = 45;
+            int size = 34;
+            int thickness = 5;
+            int circleX = leftPos - 58;
+            int circleY = topPos - 40;
+            int sides = 6;
             
             int radius = size / 2;
-    
-            minecraft.getTextureManager().bind(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/growth_" + handler.getType().name().toLowerCase() + "_" + (handler.getLevel().ordinal() + 1) + ".png"));
-            this.blit(stack, circleX + 5, circleY + 5, 0, 0, 20, 20, 20, 20);
-    
+            
             GL11.glPushMatrix();
             
             GL11.glDisable(GL11.GL_TEXTURE_2D);
@@ -139,12 +136,13 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
             GL11.glColor4d(c.getRed()  / 255.0, c.getBlue() / 255.0, c.getGreen() / 255.0, 1.0);
             drawTexturedRing(circleX + radius, circleY + radius, radius - thickness, radius, 0, 0, 0, 128, sides, 1, 0);
             GL11.glEnable(GL11.GL_TEXTURE_2D);
-    
+            
             GL11.glColor4d(1F, 1F, 1F, 1.0);
             minecraft.getTextureManager().bind(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_" + handler.getType().name().toLowerCase() + ".png"));
-            drawTexturedRing(circleX + radius, circleY + radius, radius - thickness, radius, 0.5, 0.5, 0.5, 0.5, sides, progress, 0);
+            drawTexturedCircle(circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, sides, progress, -0.5);
     
             GL11.glDisable(GL11.GL_TEXTURE_2D);
+            GL11.glLineWidth(4.0F);
             if(handler.growing){
                 GL11.glColor4f(0F, 0F, 0F, 1F);
             }else{
@@ -154,13 +152,52 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
     
             GL11.glColor4d(c.getRed()  / 255.0, c.getBlue() / 255.0, c.getGreen() / 255.0, 1.0);
             drawSmoothCircle(circleX + radius, circleY + radius, radius - thickness, sides, 1, 0);
+            GL11.glLineWidth(1.0F);
+    
+            c = c.brighter();
+            GL11.glColor4d(c.getRed()  / 255.0, c.getBlue() / 255.0, c.getGreen() / 255.0, 1.0);
+            drawTexturedRing(circleX + radius, circleY + radius, 0, radius - thickness, 0, 0,0,0, sides, 1, 0);
+    
             GL11.glEnable(GL11.GL_TEXTURE_2D);
             GL11.glColor4d(1F, 1F, 1F, 1.0);
+    
+            minecraft.getTextureManager().bind(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/growth_" + handler.getType().name().toLowerCase() + "_" + (handler.getLevel().ordinal() + 1) + ".png"));
+            this.blit(stack, circleX + 6, circleY + 6, 0, 0, 20, 20, 20, 20);
     
             GL11.glPopMatrix();
         }
         
         GlStateManager._popMatrix();
+    }
+    
+    public static void drawTexturedCircle(double x, double y, double radius, double u, double v, double texRadius, int sides, double percent, double startAngle) {
+        double rad;
+        double sin;
+        double cos;
+        
+        GL11.glBegin(GL11.GL_TRIANGLE_FAN);
+        GL11.glTexCoord2d(u, v);
+        GL11.glVertex2d(x, y);
+        
+        for (int i = 0; i <= percent * sides; i++) {
+            rad = PI_TWO * ((double) i / (double) sides + startAngle);
+            sin = Math.sin(rad);
+            cos = Math.cos(rad);
+            
+            GL11.glTexCoord2d(u + sin * texRadius, v + cos * texRadius);
+            GL11.glVertex2d(x + sin * radius, y + cos * radius);
+        }
+        
+        if(percent == 1.0){
+            rad = PI_TWO * (percent + startAngle);
+            sin = Math.sin(rad);
+            cos = Math.cos(rad);
+    
+            GL11.glTexCoord2d(u + sin * texRadius, v + cos * texRadius);
+            GL11.glVertex2d(x + sin * radius, y + cos * radius);
+        }
+        
+        GL11.glEnd();
     }
     
     static final double PI_TWO = (Math.PI * 2.0);
@@ -180,7 +217,7 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
         GL11.glHint(GL11.GL_LINE_SMOOTH_HINT, GL11.GL_NICEST);
         GL11.glBegin(GL11.GL_LINE_STRIP);
         
-        for (int i = 0; i < percent * sides; i++) {
+        for (int i = 0; i <= percent * sides; i++) {
             rad = PI_TWO * ((double) i / (double) sides + startAngle);
             sin = Math.sin(rad);
             cos = -Math.cos(rad);
@@ -220,7 +257,7 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
         GL11.glHint(GL11.GL_LINE_SMOOTH_HINT, GL11.GL_NICEST);
         GL11.glBegin(GL11.GL_QUAD_STRIP);
         
-        for (int i = 0; i < percent * sides; i++) {
+        for (int i = 0; i <= percent * sides; i++) {
             rad = PI_TWO * ((double) i / (double) sides + startAngle);
             sin = Math.sin(rad);
             cos = -Math.cos(rad);
@@ -308,7 +345,7 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
             }
         });
     
-        addButton(new Button(leftPos - 57, topPos - 36, 32, 32, null, (button) -> {}){
+        addButton(new Button(leftPos - 58, topPos - 40, 32, 32, null, (button) -> {}){
             @Override
             public void renderButton(MatrixStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_)
             {
@@ -377,7 +414,7 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
                     allowedList.addAll(newbornList);
                 }else if(handler.getSize() < DragonLevel.ADULT.size){
                     allowedList.addAll(youngList);
-                }else if(handler.getSize() < ConfigHandler.SERVER.maxGrowthSize.get()){
+                }else {
                     allowedList.addAll(adultList);
                 }
     

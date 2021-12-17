@@ -12,7 +12,6 @@ import by.jackraidenph.dragonsurvival.network.SynchronizeDragonCap;
 import by.jackraidenph.dragonsurvival.util.DragonLevel;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -71,19 +70,7 @@ public class ItemsInit {
                 super.appendHoverText(p_77624_1_, p_77624_2_, p_77624_3_, p_77624_4_);
                 p_77624_3_.add(new TranslationTextComponent("ds.description.starBone"));
             }
-    
-            @Override
-            public void onArmorTick(ItemStack stack, World world, PlayerEntity player)
-            {
-                super.onArmorTick(stack, world, player);
-            }
-    
-            @Override
-            public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment)
-            {
-                return super.canApplyAtEnchantingTable(stack, enchantment);
-            }
-    
+            
             @Override
             public ActionResult<ItemStack> use(World worldIn, PlayerEntity playerIn, Hand handIn) {
                 LazyOptional<DragonStateHandler> playerStateProvider = playerIn.getCapability(DragonStateProvider.DRAGON_CAPABILITY);

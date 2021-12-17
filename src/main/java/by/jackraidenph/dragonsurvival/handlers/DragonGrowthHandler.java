@@ -7,6 +7,7 @@ import by.jackraidenph.dragonsurvival.config.ConfigUtils;
 import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.SyncSize;
 import by.jackraidenph.dragonsurvival.network.SynchronizeDragonCap;
+import by.jackraidenph.dragonsurvival.registration.ItemsInit;
 import by.jackraidenph.dragonsurvival.util.DragonLevel;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -96,23 +97,8 @@ public class DragonGrowthHandler {
 
                 return;
             }
-            
-            int increment = 1;
     
-            switch (handler.getLevel()) {
-                case BABY:
-                        if(adultList.contains(item)){
-                            increment = 3;
-                        }else if(youngList.contains(item)){
-                            increment = 2;
-                        }
-                    break;
-                case YOUNG:
-                    if(adultList.contains(item)){
-                        increment = 2;
-                    }
-                    break;
-            }
+            int increment = getIncrement(item, handler.getLevel());
             size += increment;
             handler.setSize(size, player);
             
@@ -140,6 +126,45 @@ public class DragonGrowthHandler {
 
             player.refreshDimensions();
         });
+    }
+    
+    public static int getIncrement(Item item, DragonLevel level)
+    {
+        List<Item> newbornList = ConfigUtils.parseConfigItemList(ConfigHandler.SERVER.growNewborn.get());
+        List<Item> youngList = ConfigUtils.parseConfigItemList(ConfigHandler.SERVER.growYoung.get());
+        List<Item> adultList = ConfigUtils.parseConfigItemList(ConfigHandler.SERVER.growAdult.get());
+        
+        int increment = 0;
+        
+        if(item == ItemsInit.starBone){
+            return -2;
+        }
+        
+        switch (level) {
+            case BABY:
+                    if(adultList.contains(item)){
+                        increment = 3;
+                    }else if(youngList.contains(item)){
+                        increment = 2;
+                    }else if(newbornList.contains(item)){
+                        increment = 1;
+                    }
+                break;
+            case YOUNG:
+                if(adultList.contains(item)){
+                    increment = 2;
+                }else if(youngList.contains(item)){
+                    increment = 1;
+                }
+                break;
+    
+            case ADULT:
+                if(adultList.contains(item)){
+                    increment = 1;
+                }
+                break;
+        }
+        return increment;
     }
     
     public static long newbornToYoung = TimeUnit.SECONDS.convert(3, TimeUnit.HOURS);
