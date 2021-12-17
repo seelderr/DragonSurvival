@@ -31,6 +31,9 @@ public class ClientConfig {
 	public final ForgeConfigSpec.IntValue skillbarXOffset;
 	public final ForgeConfigSpec.IntValue skillbarYOffset;
 	
+	public final ForgeConfigSpec.IntValue growthXOffset;
+	public final ForgeConfigSpec.IntValue growthYOffset;
+	
 	public final ForgeConfigSpec.IntValue emoteXOffset;
 	public final ForgeConfigSpec.IntValue emoteYOffset;
 	
@@ -96,6 +99,14 @@ public class ClientConfig {
 		skillbarYOffset = builder
 				.comment("Offset the y position of the magic skill bar in relation to its normal position")
 				.defineInRange("skillbarYOffset", 0, -1000, 1000);
+		
+		growthXOffset = builder
+				.comment("Offset the x position of the item growth icon in relation to its normal position")
+				.defineInRange("growthXOffset", 0, -1000, 1000);
+		
+		growthYOffset = builder
+				.comment("Offset the y position of the item growth icon in relation to its normal position")
+				.defineInRange("growthYOffset", 0, -1000, 1000);
 		
 		emoteXOffset = builder
 				.comment("Offset the x position of the emote button in relation to its normal position")

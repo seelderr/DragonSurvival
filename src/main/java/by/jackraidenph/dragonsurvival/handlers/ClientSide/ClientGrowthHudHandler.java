@@ -46,7 +46,7 @@ public class ClientGrowthHudHandler
 			
 			int increment = DragonGrowthHandler.getIncrement(stack.getItem(), handler.getLevel());
 			
-			if(increment != 0 && (handler.getSize() < ConfigHandler.SERVER.maxGrowthSize.get() && increment > 0)){
+			if(increment != 0 && (handler.getSize() < ConfigHandler.SERVER.maxGrowthSize.get() && increment > 0 || increment < 0 && handler.getSize() > 0)){
 				float curSize = (float)handler.getSize();
 				float nextSize = (float)(handler.getSize() + increment);
 				float progress = 0;
@@ -76,7 +76,10 @@ public class ClientGrowthHudHandler
 				int radius = 17;
 				int thickness = 5;
 				int circleX = (window.getGuiScaledWidth() / 2) - (radius);
-				int circleY = window.getGuiScaledHeight() - 80;
+				int circleY = window.getGuiScaledHeight() - 90;
+				
+				circleX += ConfigHandler.CLIENT.growthXOffset.get();
+				circleY += ConfigHandler.CLIENT.growthYOffset.get();
 				
 				GL11.glDisable(GL11.GL_TEXTURE_2D);
 				Color c = new Color(99, 99, 99);
@@ -95,10 +98,16 @@ public class ClientGrowthHudHandler
 					
 					textureManager.bind(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_" + num + ".png"));
 					DragonScreen.drawTexturedCircle(circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, 6, nextProgess, -0.5);
+					
+					textureManager.bind(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_" + handler.getType().name().toLowerCase() + ".png"));
+					DragonScreen.drawTexturedCircle(circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, 6, progress, -0.5);
+				}else if(increment < 0){
+					textureManager.bind(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_3.png"));
+					DragonScreen.drawTexturedCircle(circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, 6, progress, -0.5);
+					
+					textureManager.bind(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_" + handler.getType().name().toLowerCase() + ".png"));
+					DragonScreen.drawTexturedCircle(circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, 6, nextProgess, -0.5);
 				}
-				
-				textureManager.bind(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_" + handler.getType().name().toLowerCase() + ".png"));
-				DragonScreen.drawTexturedCircle(circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, 6, progress, -0.5);
 				
 				GL11.glDisable(GL11.GL_TEXTURE_2D);
 				GL11.glLineWidth(4.0F);
