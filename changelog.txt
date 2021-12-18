@@ -1,21 +1,24 @@
 1.16.5-0.6 Magic Update:
 - Added: a more complex system of growth. Now the dragons are gradually growing faster. Adult dragons have a slower growth rate
-- Added: Star Heart to stop growth of dragon
-- Added: Visualization of the dragons growth in the inventory
-- Added: Added recipes for converting hearts back to weak versions
-- Added: Animations are now VERY smooth
-- Added: Different hearts can now be drop from different creatures with health 14-20 for a shard, 20-50 for a weak, and over 50 for an elder heart
-- Added: The camera is now attached to the dragons head instead of the torso.
-- Added: The dragons now has an extra large hitbox.
+- Added: in-game tooltip with growth tips
 - Added: You can now become larger than a standard adult dragon. Previously this parameter was equal to 40 units of growth (no heart!), but now it is 60. You can set this parameter up to 1000, but we strongly recommend not to do this. The maximum health is still 40.
-
-
-- Fixed:
-- Fixed:
-- Fixed:
-- Fixed:
-- Fixed:
-- Fixed:
+- Added: Star Heart to stop growth of dragon
+- Added: more expensive hearts now give more growth for young and newborn dragons.
+- Added: Visualization of the dragons growth in the inventory
+- Added: Visualization of the dragons growth when a growth item is selected in the hotbar
+- Added: Added recipes for converting hearts back to weak versions
+- Added: Animations and model rotations are now VERY smooth. No more jerking when turning. Some mods can affect the rotation speed, but we do not know which ones. This was noticeable in the Young modpack.
+- Added: Different hearts can now be drop from different creatures with health 14-20 for a shard, 20-50 for a weak, and over 50 for an elder heart (only for dragon)
+- Added: The camera is now attached to the dragons head instead of the torso.
+- Added: zoom to skins menu
+- Fixed: The spike now shoots more accurately
+- Fixed: spectral impact no longer affects the sea dragons breath.
+- Fixed: The claw system is completely rewritten and now (hopefully) it will be definitely compatible with all mods.
+- Fixed: forest dragon now recovers mana during daylight hours and any time from plants.
+- Fixed: Bug with mana desynchronization when you saw a full supply, but could not use skills
+- Fixed: Bug with skills were not available until the magic menu is not opened for first time
+- Configs added: max growth size, growth over time, position of the growth indicator, render the items in first person
+- Localization: update ru_ru, en_us
 
 1.16.5-0.5 Magic Update:
 - Fixed: Claw and Teeth Damage
