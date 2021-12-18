@@ -11,6 +11,9 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.CauldronBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.LightType;
+import net.minecraft.world.lighting.WorldLightManager;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -79,12 +82,19 @@ public class ManaHandler
 					break;
 				
 				case FOREST:
-					if(!player.level.canSeeSky(player.blockPosition()) || !player.level.isDay()){
-						return false;
-					}
-					
-					if(player.level.canSeeSky(player.blockPosition()) && player.level.isDay()){
-						return true;
+					WorldLightManager lightManager = player.level.getChunkSource().getLightEngine();
+					if(player.level.canSeeSky(player.blockPosition())){
+						int light = player.level.getBrightness(LightType.SKY, player.blockPosition()) - player.level.getSkyDarken();
+						float f = player.level.getSunAngle(1.0F);
+						
+						float f1 = f < (float)Math.PI ? 0.0F : ((float)Math.PI * 2F);
+						f = f + (f1 - f) * 0.2F;
+						light = Math.round((float)light * MathHelper.cos(f));
+						light = MathHelper.clamp(light, 0, 15);
+						
+						if(light >= 14){
+							return true;
+						}
 					}
 					
 					if (player.hasEffect(DragonEffects.DRAIN) || player.hasEffect(DragonEffects.MAGIC)

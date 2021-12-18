@@ -145,7 +145,6 @@ public class ForestBreathAbility extends BreathAbility
 		
 		Vector3d delta = player.getDeltaMovement();
 		float f1 = -(float)handler.getMovementData().headYaw * ((float)Math.PI / 180F);
-		float bodyAndHeadYawDiff = (float) handler.getMovementData().bodyYaw - (float) handler.getMovementData().headYaw;
 		
 		float f4 = MathHelper.sin(f1);
 		float f5 = MathHelper.cos(f1);
@@ -153,9 +152,6 @@ public class ForestBreathAbility extends BreathAbility
 		f4 = MathHelper.clamp(f4, -0.8f, 0.8f);
 		f5 = MathHelper.clamp(f5, -0.8f, 0.8f);
 		
-		if(Math.abs(bodyAndHeadYawDiff) >= 130){
-			return;
-		}
 		
 		tickCost();
 		super.onActivation(player);

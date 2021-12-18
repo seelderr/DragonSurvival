@@ -8,7 +8,7 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ToolItem;
+import net.minecraft.item.TieredItem;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -34,7 +34,7 @@ public class MixinEnchantmentHelper
 	@Inject( at = @At("HEAD"), method = "getEnchantmentLevel", cancellable = true)
 	private static void getEnchantmentLevel(Enchantment enchantment, LivingEntity entity, CallbackInfoReturnable<Integer> ci) {
 		if(!entity.getMainHandItem().isEmpty()){
-			if(entity.getMainHandItem().getItem() instanceof ToolItem) return;
+			if(entity.getMainHandItem().getItem() instanceof TieredItem) return;
 		}
 		
 		if(DragonStateProvider.isDragon(entity)){
