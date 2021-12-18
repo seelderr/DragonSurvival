@@ -28,9 +28,12 @@ public class ServerFlightHandler {
     @SubscribeEvent
     public static void changeFallDistance(LivingFallEvent event) {
         LivingEntity livingEntity = event.getEntityLiving();
+        final double flightSpeed = livingEntity.getDeltaMovement().length();
         DragonStateProvider.getCap(livingEntity).ifPresent(dragonStateHandler -> {
             if(dragonStateHandler.isDragon()) {
-                if (dragonStateHandler.isFlying() && !livingEntity.isSprinting() || !ConfigHandler.SERVER.enableFlightFallDamage.get()){
+                if (dragonStateHandler.isFlying() && !livingEntity.isSprinting()
+                    || !ConfigHandler.SERVER.enableFlightFallDamage.get()
+                    || flightSpeed < 0.08){
                     event.setCanceled(true);
                 }
             }

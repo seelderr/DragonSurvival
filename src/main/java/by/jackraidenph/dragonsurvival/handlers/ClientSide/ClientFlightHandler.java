@@ -36,10 +36,10 @@ public class ClientFlightHandler {
      * Controls acceleration
      */
     @SubscribeEvent
-    public static void flightControl(TickEvent.PlayerTickEvent playerTickEvent) {
-        PlayerEntity playerEntity = playerTickEvent.player;
+    public static void flightControl(TickEvent.RenderTickEvent playerTickEvent) {
+        PlayerEntity playerEntity = Minecraft.getInstance().player;
         ClientPlayerEntity currentPlayer = Minecraft.getInstance().player;
-        if (playerEntity == currentPlayer && !playerEntity.isPassenger()) {
+        if (playerEntity != null && !playerEntity.isPassenger()) {
             DragonStateProvider.getCap(playerEntity).ifPresent(dragonStateHandler -> {
                 if (dragonStateHandler.isDragon()) {
                     if (dragonStateHandler.isFlying()) {
