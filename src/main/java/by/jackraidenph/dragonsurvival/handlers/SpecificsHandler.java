@@ -96,15 +96,15 @@ public class SpecificsHandler {
 		}
 	}
 
-	@SubscribeEvent
-	public static void onConfigReload(ModConfig.Reloading event) {
-		if (event.getConfig().getType() == Type.SERVER) {
-			rebuildSpeedupBlocksMap();
-			rebuildSeaHydrationLists();
-			SpecificsHandler.rebuildBreathBlocks();
-			
-		}
-	}
+//	@SubscribeEvent
+//	public static void onConfigReload(ModConfig.Reloading event) {
+//		if (event.getConfig().getType() == Type.SERVER) {
+//			rebuildSpeedupBlocksMap();
+//			rebuildSeaHydrationLists();
+//			SpecificsHandler.rebuildBreathBlocks();
+//
+//		}
+//	}
 	
 	private static void rebuildSpeedupBlocksMap() {
 		HashMap<DragonType, List<Block>> speedupMap = new HashMap<>();

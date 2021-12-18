@@ -36,15 +36,17 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Stream;
 
 @Mod.EventBusSubscriber(modid = DragonSurvivalMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class DragonFoodHandler {
 
-	private static Map<DragonType, Map<Item, Food>> DRAGON_FOODS;
-	public static List<Item> CAVE_D_FOOD;
-	public static List<Item> FOREST_D_FOOD;
-	public static List<Item> SEA_D_FOOD;
+	private static ConcurrentHashMap<DragonType, Map<Item, Food>> DRAGON_FOODS;
+	public static CopyOnWriteArrayList<Item> CAVE_D_FOOD;
+	public static CopyOnWriteArrayList<Item> FOREST_D_FOOD;
+	public static CopyOnWriteArrayList<Item> SEA_D_FOOD;
 	public static boolean isDrawingOverlay;
 
 	private Minecraft mc;
@@ -66,28 +68,29 @@ public class DragonFoodHandler {
 			rebuildFoodMap();
 	}
 	
-	@SubscribeEvent
-	public static void onConfigReload(ModConfig.Reloading event) {
-		if (event.getConfig().getType() == Type.SERVER)
-			rebuildFoodMap();
-	}
+	//TODO Temp fix for concurrentmodification error
+//	@SubscribeEvent
+//	public static void onConfigReload(ModConfig.Reloading event) {
+//		if (event.getConfig().getType() == Type.SERVER)
+//			rebuildFoodMap();
+//	}
 	
 	private static void rebuildFoodMap() {
-		HashMap<DragonType, Map<Item, Food>> dragonMap = new HashMap<DragonType, Map<Item, Food>>();
+		ConcurrentHashMap<DragonType, ConcurrentHashMap<Item, Food>> dragonMap = new ConcurrentHashMap<DragonType, ConcurrentHashMap<Item, Food>>();
 		dragonMap.put(DragonType.CAVE, buildDragonFoodMap(DragonType.CAVE));
 		dragonMap.put(DragonType.FOREST, buildDragonFoodMap(DragonType.FOREST));
 		dragonMap.put(DragonType.SEA, buildDragonFoodMap(DragonType.SEA));
-		DRAGON_FOODS = new HashMap<>(dragonMap);
+		DRAGON_FOODS = new ConcurrentHashMap<>(dragonMap);
 	}
 	
-	public static List<Item> getSafeEdibleFoods(DragonType dragonType) {
+	public static CopyOnWriteArrayList<Item> getSafeEdibleFoods(DragonType dragonType) {
 		if (dragonType == DragonType.FOREST && FOREST_D_FOOD != null)
 			return FOREST_D_FOOD;
 		else if (dragonType == DragonType.SEA && SEA_D_FOOD != null)
 			return SEA_D_FOOD;
 		else if (dragonType == DragonType.CAVE && CAVE_D_FOOD != null)
 			return CAVE_D_FOOD;
-		List<Item> foods = new ArrayList<>();
+		CopyOnWriteArrayList<Item> foods = new CopyOnWriteArrayList<>();
 		for (Item item : DRAGON_FOODS.get(dragonType).keySet()) {
 			boolean safe = true;
 			final Food food = DRAGON_FOODS.get(dragonType).get(item);
@@ -112,8 +115,8 @@ public class DragonFoodHandler {
 		return foods;
 	}
 	
-	private static Map<Item, Food> buildDragonFoodMap(DragonType type) {
-		HashMap<Item, Food> foodMap = new HashMap<Item, Food>();
+	private static ConcurrentHashMap<Item, Food> buildDragonFoodMap(DragonType type) {
+		ConcurrentHashMap<Item, Food> foodMap = new ConcurrentHashMap<Item, Food>();
 		String[] configFood;
 		switch (type) {
 			case CAVE:
@@ -158,7 +161,7 @@ public class DragonFoodHandler {
 		for (Item item : ForgeRegistries.ITEMS.getValues())
 			if (!foodMap.containsKey(item) && item.isEdible())
 				foodMap.put(item, calculateDragonFoodProperties(item, type, 0, 0, false));
-		return new HashMap<>(foodMap);
+		return new ConcurrentHashMap<>(foodMap);
 	}
 
 	@Nullable
