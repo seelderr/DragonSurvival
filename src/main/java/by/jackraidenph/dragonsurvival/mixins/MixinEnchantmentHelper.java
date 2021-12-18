@@ -1,10 +1,14 @@
 package by.jackraidenph.dragonsurvival.mixins;
 
+import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.util.DragonType;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.ToolItem;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -25,5 +29,33 @@ public class MixinEnchantmentHelper
 				ci.setReturnValue(true);
 			}
 		});
+	}
+	
+	@Inject( at = @At("HEAD"), method = "getEnchantmentLevel", cancellable = true)
+	private static void getEnchantmentLevel(Enchantment enchantment, LivingEntity entity, CallbackInfoReturnable<Integer> ci) {
+		if(!entity.getMainHandItem().isEmpty()){
+			if(entity.getMainHandItem().getItem() instanceof ToolItem) return;
+		}
+		
+		if(DragonStateProvider.isDragon(entity)){
+			DragonStateHandler handler = DragonStateProvider.getCap(entity).orElse(null);
+			
+			if(handler != null){
+				int highestLevel = 0;
+				for(int i = 0; i < 4; i++){
+					ItemStack stack = handler.getClawInventory().getClawsInventory().getItem(i);
+					
+					if(!stack.isEmpty()){
+						int lev = EnchantmentHelper.getItemEnchantmentLevel(enchantment, stack);
+						
+						if(lev > highestLevel){
+							highestLevel = lev;
+						}
+					}
+				}
+				
+				ci.setReturnValue(highestLevel);
+			}
+		}
 	}
 }

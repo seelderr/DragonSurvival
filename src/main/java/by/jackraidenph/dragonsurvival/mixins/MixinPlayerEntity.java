@@ -1,11 +1,13 @@
 package by.jackraidenph.dragonsurvival.mixins;
 
+import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.handlers.DragonFoodHandler;
 import by.jackraidenph.dragonsurvival.handlers.DragonSizeHandler;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.block.BlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -16,10 +18,13 @@ import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.passive.IFlyingAnimal;
 import net.minecraft.entity.player.PlayerAbilities;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.fluid.FluidState;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.TieredItem;
 import net.minecraft.potion.Effects;
 import net.minecraft.stats.Stat;
 import net.minecraft.stats.Stats;
@@ -28,8 +33,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.FoodStats;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.*;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Final;
@@ -37,6 +41,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -50,9 +55,111 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 	@Final
 	public PlayerAbilities abilities;
 	
+	@Shadow
+	@Final
+	public PlayerInventory inventory;
+	
+	public ItemStack lastStack = ItemStack.EMPTY;
+	
+	
 	protected MixinPlayerEntity(EntityType<? extends LivingEntity> p_i48577_1_, World p_i48577_2_) {
 		super(p_i48577_1_, p_i48577_2_);
 	}
+	
+	@Inject(at = @At("HEAD"), method = "tick", cancellable = true)
+	private void ticks(CallbackInfo ci) {
+		DragonStateHandler handler = DragonStateProvider.getCap(this).orElse(null);
+			if (handler != null) {
+				ItemStack sword = handler.getClawInventory().getClawsInventory().getItem(0);
+				
+				if (sword != null && !sword.isEmpty() && !(getMainHandItem().getItem() instanceof TieredItem)) {
+					if(!ItemStack.matches(lastStack, sword) || lastStack.isEmpty()){
+						if (!lastStack.isEmpty()) {
+							this.getAttributes().removeAttributeModifiers(lastStack.getAttributeModifiers(EquipmentSlotType.MAINHAND));
+						}
+						
+						if (!sword.isEmpty()) {
+							this.getAttributes().addTransientAttributeModifiers(sword.getAttributeModifiers(EquipmentSlotType.MAINHAND));
+						}
+						
+						lastStack = sword;
+					}
+				}else if(lastStack != null && !lastStack.isEmpty()){
+					if (!lastStack.isEmpty()) {
+						this.getAttributes().removeAttributeModifiers(lastStack.getAttributeModifiers(EquipmentSlotType.MAINHAND));
+					}
+					lastStack = ItemStack.EMPTY;
+				}
+			}
+	}
+	
+	@Redirect( method = "attack",
+	           at = @At(value="INVOKE", target="Lnet/minecraft/entity/player/PlayerEntity;getMainHandItem()Lnet/minecraft/item/ItemStack;" ))
+	private ItemStack getDragonSword(PlayerEntity entity)
+	{
+		ItemStack mainStack = entity.getMainHandItem();
+		DragonStateHandler cap = DragonStateProvider.getCap(entity).orElse(null);
+		
+		if(!(mainStack.getItem() instanceof TieredItem) && cap != null) {
+			ItemStack sword = cap.getClawInventory().getClawsInventory().getItem(0);
+
+			if(sword != null && !sword.isEmpty()){
+				return sword;
+			}
+		}
+
+		return mainStack;
+	}
+	
+	
+	@Redirect( method = "getDigSpeed",
+	           at = @At(value="INVOKE", target="Lnet/minecraft/entity/player/PlayerEntity;getMainHandItem()Lnet/minecraft/item/ItemStack;" ))
+	private ItemStack getDragonTools(PlayerEntity entity)
+	{
+		ItemStack mainStack = entity.getMainHandItem();
+		DragonStateHandler cap = DragonStateProvider.getCap(entity).orElse(null);
+		
+		if(!(mainStack.getItem() instanceof TieredItem) && cap != null) {
+			float newSpeed = 0F;
+			ItemStack harvestTool = null;
+			
+			Vector3d vector3d = entity.getDeltaMovement();
+			World world = entity.level;
+			Vector3d vector3d1 = entity.position();
+			Vector3d vector3d2 = vector3d1.add(vector3d);
+			BlockRayTraceResult raytraceresult = world.clip(new RayTraceContext(vector3d1, vector3d2, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, entity));
+			
+			if (raytraceresult != null && raytraceresult.getType() != RayTraceResult.Type.MISS) {
+				BlockState state = world.getBlockState(raytraceresult.getBlockPos());
+				
+				for (int i = 1; i < 4; i++) {
+					if (state.getHarvestTool() == DragonStateHandler.CLAW_TOOL_TYPES[i]) {
+						ItemStack breakingItem = cap.getClawInventory().getClawsInventory().getItem(i);
+						if (!breakingItem.isEmpty()) {
+							float tempSpeed = breakingItem.getDestroySpeed(state);
+							
+							if (tempSpeed > newSpeed) {
+								newSpeed = tempSpeed;
+								harvestTool = breakingItem;
+							}
+						}
+					}
+				}
+				
+			}
+			
+			
+			if(harvestTool != null && !harvestTool.isEmpty()){
+				return harvestTool;
+			}
+		}
+		
+		return mainStack;
+	}
+	
+	
+	
+	
 	
 	private static final UUID SLOW_FALLING_ID = UUID.fromString("A5B6CF2A-2F7C-31EF-9022-7C3E7D5E6ABA");
 	private static final AttributeModifier SLOW_FALLING = new AttributeModifier(SLOW_FALLING_ID, "Slow falling acceleration reduction", -0.07, AttributeModifier.Operation.ADDITION); // Add -0.07 to 0.08 so we get the vanilla default of 0.01

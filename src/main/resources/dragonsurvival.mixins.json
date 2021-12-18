@@ -8,7 +8,9 @@
     "MixinItem",
     "MixinLivingEntity",
     "MixinPlayerEntity",
-    "MixinEnchantmentHelper"
+    "MixinEnchantmentHelper",
+    "MixinPlayerInteractionManager",
+    "MixinPlayerInventory"
   ],
   "client": [
     "AccessorEntityRenderer",

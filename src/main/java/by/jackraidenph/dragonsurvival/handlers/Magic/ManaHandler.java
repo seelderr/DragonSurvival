@@ -83,6 +83,10 @@ public class ManaHandler
 						return false;
 					}
 					
+					if(player.level.canSeeSky(player.blockPosition()) && player.level.isDay()){
+						return true;
+					}
+					
 					if (player.hasEffect(DragonEffects.DRAIN) || player.hasEffect(DragonEffects.MAGIC)
 					    || blockBelow.getMaterial() == Material.PLANT || blockBelow.getMaterial() == Material.REPLACEABLE_PLANT
 					    || feetBlock.getMaterial() == Material.PLANT || feetBlock.getMaterial() == Material.REPLACEABLE_PLANT)  {

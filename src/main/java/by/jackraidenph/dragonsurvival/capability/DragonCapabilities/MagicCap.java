@@ -101,6 +101,10 @@ public class MagicCap implements DragonCapability
 	
 	public ArrayList<DragonAbility> getAbilities()
 	{
+		if(abilities.size() <= 0 && this.instance.getType() != null && this.instance.getType() != DragonType.NONE){
+			initAbilities(this.instance.getType());
+		}
+		
 		return abilities;
 	}
 	

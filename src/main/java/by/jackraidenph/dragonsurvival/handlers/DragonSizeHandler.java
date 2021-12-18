@@ -2,7 +2,6 @@ package by.jackraidenph.dragonsurvival.handlers;
 
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
-import by.jackraidenph.dragonsurvival.gecko.entity.DragonPartEntity;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.ClientDragonRender;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.client.Minecraft;
@@ -22,19 +21,10 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DragonSizeHandler {
 	@SubscribeEvent
     public static void getDragonSize(EntityEvent.Size event) {
-    	if (!(event.getEntity() instanceof PlayerEntity) && !(event.getEntity() instanceof DragonPartEntity))
+    	if (!(event.getEntity() instanceof PlayerEntity))
     		return;
-    	PlayerEntity player = null;
+    	PlayerEntity player = (PlayerEntity)event.getEntity();
 		
-		if(event.getEntity() instanceof PlayerEntity){
-			player = (PlayerEntity)event.getEntity();
-		}else{
-			player = (PlayerEntity)((DragonPartEntity)event.getEntity()).parentMob;
-		}
-		
-		boolean isHitbox = event.getEntity() instanceof DragonPartEntity;
-		
-		PlayerEntity finalPlayer = player;
 		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
     		if (!dragonStateHandler.isDragon())
     			return;
@@ -45,12 +35,12 @@ public class DragonSizeHandler {
 		    double eyeHeight = calculateDragonEyeHeight(size, ConfigHandler.SERVER.hitboxGrowsPastHuman.get());
     		// Handle Pose stuff
     		if (ConfigHandler.SERVER.sizeChangesHitbox.get()) {
-    		Pose overridePose = overridePose(finalPlayer);
+    		Pose overridePose = overridePose(player);
     		height = calculateModifiedHeight(height, overridePose, true);
     		eyeHeight = calculateModifiedEyeHeight(eyeHeight, overridePose);
     		// Apply changes
 			event.setNewEyeHeight((float)eyeHeight);
-    		event.setNewSize(new EntitySize((float)(isHitbox ? width * 2F : width), (float)height, false));
+    		event.setNewSize(new EntitySize((float)(width), (float)height, false));
     		}
         });
     }
