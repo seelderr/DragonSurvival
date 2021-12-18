@@ -10,7 +10,8 @@
     "MixinPlayerEntity",
     "MixinEnchantmentHelper",
     "MixinPlayerInteractionManager",
-    "MixinPlayerInventory"
+    "MixinPlayerInventory",
+    "MixinBlock"
   ],
   "client": [
     "AccessorEntityRenderer",

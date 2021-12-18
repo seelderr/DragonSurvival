@@ -300,7 +300,7 @@ public class MagicHandler
 						
 						if (cap.getType() == DragonType.SEA) {
 							SpectralImpactAbility spectralImpact = (SpectralImpactAbility)cap.getMagic().getAbilityOrDefault(DragonAbilities.SPECTRAL_IMPACT);
-							boolean hit = player.level.random.nextInt(100) <= spectralImpact.getChance();
+							boolean hit = player.level.random.nextInt(100) < spectralImpact.getChance();
 							
 							if (hit) {
 								event.getSource().bypassArmor();
@@ -313,7 +313,7 @@ public class MagicHandler
 							}
 						} else if (cap.getType() == DragonType.CAVE) {
 							BurnAbility burnAbility = (BurnAbility)cap.getMagic().getAbilityOrDefault(DragonAbilities.BURN);
-							boolean hit = player.level.random.nextInt(100) <= burnAbility.getChance();
+							boolean hit = player.level.random.nextInt(100) < burnAbility.getChance();
 							
 							if (hit) {
 								((LivingEntity)event.getEntity()).addEffect(new EffectInstance(DragonEffects.BURN, Functions.secondsToTicks(30)));

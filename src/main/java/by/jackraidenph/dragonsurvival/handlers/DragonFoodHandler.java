@@ -68,13 +68,6 @@ public class DragonFoodHandler {
 			rebuildFoodMap();
 	}
 	
-	//TODO Temp fix for concurrentmodification error
-//	@SubscribeEvent
-//	public static void onConfigReload(ModConfig.Reloading event) {
-//		if (event.getConfig().getType() == Type.SERVER)
-//			rebuildFoodMap();
-//	}
-	
 	private static void rebuildFoodMap() {
 		ConcurrentHashMap<DragonType, ConcurrentHashMap<Item, Food>> dragonMap = new ConcurrentHashMap<DragonType, ConcurrentHashMap<Item, Food>>();
 		dragonMap.put(DragonType.CAVE, buildDragonFoodMap(DragonType.CAVE));

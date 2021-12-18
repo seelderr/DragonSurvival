@@ -6,6 +6,7 @@ import by.jackraidenph.dragonsurvival.entity.MagicalPredatorEntity;
 import by.jackraidenph.dragonsurvival.nest.NestEntity;
 import by.jackraidenph.dragonsurvival.registration.*;
 import by.jackraidenph.dragonsurvival.util.DragonLevel;
+import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -177,19 +178,45 @@ public class EventHandler {
                                                  (dragonStateHandler.isDragon() && dragonStateHandler.canHarvestWithPaw(playerEntity, blockState)))
                                                 && drops.stream().noneMatch(item -> oresTag.contains(item.getItem()));
                     if (suitableOre && !playerEntity.isCreative()) {
+                        boolean isCave = dragonStateHandler.getType() == DragonType.CAVE;
+                        
                         if (dragonStateHandler.isDragon()) {
                             if (playerEntity.getRandom().nextDouble() < ConfigHandler.SERVER.dragonOreDustChance.get()) {
-                                world.addFreshEntity(new ItemEntity((World) world, blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, new ItemStack(ItemsInit.elderDragonDust)));
+                                world.addFreshEntity(new ItemEntity((World) world, blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, new ItemStack(ItemsInit.elderDragonDust)){
+                                    @Override
+                                    public boolean fireImmune()
+                                    {
+                                        return isCave || super.fireImmune();
+                                    }
+                                });
                             }
                             if (playerEntity.getRandom().nextDouble() < ConfigHandler.SERVER.dragonOreBoneChance.get()) {
-                                world.addFreshEntity(new ItemEntity((World) world, blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, new ItemStack(ItemsInit.elderDragonBone)));
+                                world.addFreshEntity(new ItemEntity((World) world, blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, new ItemStack(ItemsInit.elderDragonBone)){
+                                    @Override
+                                    public boolean fireImmune()
+                                    {
+                                        return isCave || super.fireImmune();
+                                    }
+                                });
                             }
                         } else {
                             if (playerEntity.getRandom().nextDouble() < ConfigHandler.SERVER.humanOreDustChance.get()) {
-                                world.addFreshEntity(new ItemEntity((World) world, blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, new ItemStack(ItemsInit.elderDragonDust)));
+                                world.addFreshEntity(new ItemEntity((World) world, blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, new ItemStack(ItemsInit.elderDragonDust)){
+                                    @Override
+                                    public boolean fireImmune()
+                                    {
+                                        return isCave || super.fireImmune();
+                                    }
+                                });
                             }
                             if (playerEntity.getRandom().nextDouble() < ConfigHandler.SERVER.humanOreBoneChance.get()) {
-                                world.addFreshEntity(new ItemEntity((World) world, blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, new ItemStack(ItemsInit.elderDragonBone)));
+                                world.addFreshEntity(new ItemEntity((World) world, blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, new ItemStack(ItemsInit.elderDragonBone)){
+                                    @Override
+                                    public boolean fireImmune()
+                                    {
+                                        return isCave || super.fireImmune();
+                                    }
+                                });
                             }
                         }
                     }
