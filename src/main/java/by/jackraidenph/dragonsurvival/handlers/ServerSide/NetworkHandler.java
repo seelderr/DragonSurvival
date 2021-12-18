@@ -69,7 +69,7 @@ public class NetworkHandler
 		
 		 register(SyncGrowthState.class, new SyncGrowthState());
 		 register(SyncSize.class, new SyncSize());
-		 register(ToggleWings.class, new ToggleWings());
+		 register(SyncFlyingStatus.class, new SyncFlyingStatus());
 		 register(DiggingStatus.class, new DiggingStatus());
 		
 		 register(DragonHitboxAttacked.class, new DragonHitboxAttacked());
@@ -208,20 +208,7 @@ public class NetworkHandler
 						 }
 					 }
 				 });
-		
-		 CHANNEL.registerMessage(nextPacketId++, SetFlyState.class, (setFlyState, packetBuffer) -> {
-	                packetBuffer.writeInt(setFlyState.playerid);
-	                packetBuffer.writeBoolean(setFlyState.flying);
-	            },
-		                         packetBuffer -> new SetFlyState(packetBuffer.readInt(), packetBuffer.readBoolean()),
-		                         (setFlyState, contextSupplier) -> {
-	                if (contextSupplier.get().getDirection().getReceptionSide() == LogicalSide.CLIENT) {
-	                    ClientDragonRender.dragonsFlying.put(setFlyState.playerid, setFlyState.flying);
-	
-	                }
-	                contextSupplier.get().setPacketHandled(true);
-	            });
-		
+		 
 		 CHANNEL.registerMessage(nextPacketId++, StartJump.class, (startJump, packetBuffer) -> {
 	            packetBuffer.writeInt(startJump.playerId);
 	            packetBuffer.writeByte(startJump.ticks);

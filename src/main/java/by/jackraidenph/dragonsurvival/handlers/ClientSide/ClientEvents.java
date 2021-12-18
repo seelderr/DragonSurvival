@@ -183,7 +183,7 @@ public class ClientEvents {
     }
     
     
-    private static Vector3d getInputVector(Vector3d movement, float fricSpeed, float yRot) {
+    public static Vector3d getInputVector(Vector3d movement, float fricSpeed, float yRot) {
         double d0 = movement.lengthSqr();
         if (d0 < 1.0E-7D) {
             return Vector3d.ZERO;
@@ -209,7 +209,7 @@ public class ClientEvents {
     
                         Vector3d moveVector = getInputVector(new Vector3d(player.input.leftImpulse, 0, player.input.forwardImpulse), 1F, player.yRot);
                         boolean isFlying = false;
-                        if (ClientFlightHandler.wingsEnabled && !player.isOnGround() && !player.isInWater() && !player.isInLava()) { // TODO: Remove this when fixing flight system
+                        if (playerStateHandler.isFlying() && !player.isOnGround() && !player.isInWater() && !player.isInLava()) { // TODO: Remove this when fixing flight system
                             moveVector = new Vector3d(player.getX() - player.xo, player.getY() - player.yo, player.getZ() - player.zo);
                             isFlying = true;
                         }

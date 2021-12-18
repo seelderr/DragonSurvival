@@ -1,10 +1,9 @@
 package by.jackraidenph.dragonsurvival.magic.common;
 
 import by.jackraidenph.dragonsurvival.Functions;
+import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
-import by.jackraidenph.dragonsurvival.handlers.ClientSide.ClientFlightHandler;
-import by.jackraidenph.dragonsurvival.handlers.DragonSizeHandler;
 import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.magic.SyncAbilityCastingToServer;
 import by.jackraidenph.dragonsurvival.util.DragonType;
@@ -132,6 +131,9 @@ public class ActiveDragonAbility extends DragonAbility
     public boolean canRun(PlayerEntity player, int keyMode){
         if(player.isCreative()) return true;
         if(player.isSpectator()) return false;
+    
+        DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+        if(handler == null) return false;
         
         if (!this.canConsumeMana(player)){
             if(keyMode == GLFW.GLFW_PRESS){
@@ -154,7 +156,7 @@ public class ActiveDragonAbility extends DragonAbility
         }
     
         if(getCastingSlowness() >= 10){
-            if((player.level.isClientSide ? ClientFlightHandler.wingsEnabled : DragonSizeHandler.wingsStatusServer.containsKey(player.getId())) && player.isFallFlying()
+            if(handler.isFlying() && player.isFallFlying()
                || (!player.isOnGround() && player.fallDistance > 0.15F)){
                 if(keyMode == GLFW.GLFW_PRESS) {
                     errorMessage = new TranslationTextComponent("ds.skill.nofly");

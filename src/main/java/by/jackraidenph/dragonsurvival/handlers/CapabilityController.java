@@ -60,6 +60,9 @@ public class CapabilityController {
                         capNew.forestSize = capOld.forestSize;
                         capNew.caveSize = capOld.caveSize;
                         capNew.seaSize = capOld.seaSize;
+    
+                        capNew.setHasWings(capOld.hasWings());
+                        capNew.setFlying(capOld.isFlying());
                         
                         capNew.forestWings = capOld.forestWings;
                         capNew.caveWings = capOld.caveWings;
@@ -72,7 +75,6 @@ public class CapabilityController {
     
                         capNew.setSize(capOld.getSize());
                         capNew.setType(capOld.getType());
-                        capNew.setHasWings(capOld.hasWings());
                         capNew.setLavaAirSupply(ConfigHandler.SERVER.caveLavaSwimmingTicks.get());
                         
                         DragonStateHandler.updateModifiers(original, player);

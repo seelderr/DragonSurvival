@@ -55,7 +55,6 @@ public class ClientDragonRender
 	 * Instances used for rendering third-person dragon models
 	 */
 	public static ConcurrentHashMap<Integer, AtomicReference<DragonEntity>> playerDragonHashMap = new ConcurrentHashMap<>(20);
-	public static ConcurrentHashMap<Integer, Boolean> dragonsFlying = new ConcurrentHashMap<>(20);
 	
 	@SubscribeEvent
 	public static void renderFirstPerson(RenderHandEvent renderHandEvent) {
@@ -134,16 +133,22 @@ public class ClientDragonRender
 	
 	                EntityRenderer<? super DragonEntity> dragonRenderer = mc.getEntityRenderDispatcher().getRenderer(dummyDragon);
 	                dragonModel.setCurrentTexture(texture);
-					
-
-	                if (player.isCrouching()) {
-		                matrixStack.translate(0, 0.325 - ((size / DragonLevel.ADULT.size) * 0.150), 0);
+		
+		            if (player.isCrouching() && cap.isFlying() && !player.isOnGround()) {
+			            matrixStack.translate(0, -0.15, 0);
+			
+		            }else if (player.isCrouching()) {
+						matrixStack.translate(0, 0.325 - ((size / DragonLevel.ADULT.size) * 0.150), 0);
 						
-	                } else if (player.isSwimming() || player.isAutoSpinAttack() || (dragonsFlying.getOrDefault(player.getId(), false) && !player.isOnGround() && !player.isInWater() && !player.isInLava())) {
-		                matrixStack.translate(0, -0.15 - ((size / DragonLevel.ADULT.size) * 0.2), 0);
-	                }
+					} else if (player.isSwimming() || player.isAutoSpinAttack() || (cap.isFlying() && !player.isOnGround() && !player.isInWater() && !player.isInLava())) {
+						matrixStack.translate(0, -0.15 - ((size / DragonLevel.ADULT.size) * 0.2), 0);
+					}
 					
 	                if (!player.isInvisible()) {
+						if(player.isSprinting()){
+							matrixStack.mulPose(Vector3f.XN.rotationDegrees((float)(player.getDeltaMovement().y * 20)));
+						}
+						
 	                    dragonRenderer.render(dummyDragon, yaw, partialRenderTick, matrixStack, renderTypeBuffer, eventLight);
 	                }
 	

@@ -27,7 +27,9 @@ public class DragonStateHandler {
 	private boolean isHiding;
     private DragonType type = DragonType.NONE;
     private final DragonMovementData movementData = new DragonMovementData(0, 0, 0, false);
+	
     private boolean hasWings;
+	private boolean isFlying;
 	
     private double size = 0;
 	public boolean growing = true;
@@ -115,8 +117,19 @@ public class DragonStateHandler {
 			}
 		}
     }
-
-    public boolean isDragon() {
+	
+	public boolean isFlying()
+	{
+		return isFlying;
+	}
+	
+	public DragonStateHandler setFlying(boolean flying)
+	{
+		isFlying = flying;
+		return this;
+	}
+	
+	public boolean isDragon() {
         return this.type != DragonType.NONE;
     }
 

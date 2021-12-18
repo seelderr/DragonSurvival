@@ -5,7 +5,6 @@ import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.emotes.Emote;
 import by.jackraidenph.dragonsurvival.gecko.AnimationTimer;
 import by.jackraidenph.dragonsurvival.gecko.CommonTraits;
-import by.jackraidenph.dragonsurvival.handlers.ClientSide.ClientDragonRender;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.ClientEvents;
 import by.jackraidenph.dragonsurvival.handlers.DragonSizeHandler;
 import by.jackraidenph.dragonsurvival.magic.abilities.Actives.BreathAbilities.BreathAbility;
@@ -92,16 +91,14 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
     private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> animationEvent) {
         final PlayerEntity player = getPlayer();
         final AnimationController animationController = animationEvent.getController();
+    
+        neckLocked = false;
         
         AnimationBuilder builder = new AnimationBuilder();
         
         if (player != null) {
             DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
                 ActiveDragonAbility curCast = playerStateHandler.getMagic().getCurrentlyCasting();
-                
-                if(playerStateHandler.getEmotes().getCurrentEmote() == null && lastEmote != null && lastEmote.locksHead){
-                    neckLocked = false;
-                }
                 
                 if(playerStateHandler.getEmotes().getCurrentEmote() != null){
                     neckLocked = playerStateHandler.getEmotes().getCurrentEmote().locksHead;
@@ -141,10 +138,19 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                 }else if ((player.isInLava() || player.isInWaterOrBubble()) && !player.isOnGround()) {
                     builder.addAnimation("swim", true);
                     
-                } else if ((player.abilities.flying || ClientDragonRender.dragonsFlying.getOrDefault(player.getId(), false))
+                } else if ((player.abilities.flying || playerStateHandler.isFlying())
                            && !player.isOnGround() && !player.isInWater()
-                           && !player.isInLava() && player.getCapability(DragonStateProvider.DRAGON_CAPABILITY).orElse(null).hasWings()) {
-                    builder.addAnimation("fly", true);
+                           && !player.isInLava() && playerStateHandler.hasWings()) {
+                    if(player.isSprinting()){
+                        neckLocked = true;
+                        if(player.getDeltaMovement().y < -0.2){
+                            builder.addAnimation("fly_dive", true);
+                        }else{
+                            builder.addAnimation("fly_fast", true);
+                        }
+                    }else{
+                        builder.addAnimation("fly", true);
+                    }
                     
                 }else if (!player.isOnGround() && motio.y() < 0) {
                     if(player.fallDistance > 4 || player.onClimbable()){
