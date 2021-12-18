@@ -29,6 +29,7 @@ import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 @Mod.EventBusSubscriber( Dist.CLIENT)
@@ -119,18 +120,29 @@ public class ToolTipHandler
 		boolean renderAll = userCheck();
 		boolean text = false;
 		
-		String translatedText1 = I18n.get("ds.skill.help");
-		String translatedText2 = I18n.get("ds.skill.help.claws");
-		String translatedText3 = I18n.get("ds.gui.skins.tooltip.help");
+		String[] keys = new String[]{
+				"ds.skill.help",
+				"ds.skill.help.claws",
+				"ds.gui.skins.tooltip.help",
+				"ds.gui.growth_help"
+		};
+		
+		ArrayList<String> texts = new ArrayList<>();
+		
+		for(String t : keys){
+			texts.add(I18n.get(t));
+		}
 		
 		String mergedString = "";
 		
 		for(ITextProperties comp : lines) {
 			if (comp instanceof TranslationTextComponent) {
 				TranslationTextComponent textComponent = (TranslationTextComponent)comp;
-				if(textComponent.getKey().contains("ds.skill.help") || textComponent.getKey().contains("ds.gui.skins.tooltip.help")){
-					text = true;
-					break;
+				for(String tg : keys){
+					if(textComponent.getKey().contains(tg)){
+						text = true;
+						break;
+					}
 				}
 			}
 			
@@ -138,10 +150,20 @@ public class ToolTipHandler
 		}
 		
 		if(!text){
-			if(mergedString.replace("\n", "").replace(" ", "").contains(translatedText1.replace("\n", "").replace(" ", ""))
-			   || mergedString.replace("\n", "").replace(" ", "").contains(translatedText2.replace("\n", "").replace(" ", ""))
-			   || mergedString.replace("\n", "").replace(" ", "").contains(translatedText3.replace("\n", "").replace(" ", ""))){
-				text = true;
+			String t = mergedString.replace("\n", "").replace(" ", "");
+			
+			for(String tg : texts){
+				String[] ss = tg.split("\n");
+				
+				for(String kl : ss){
+					String temp = kl.replace(" ", "");
+					if(!temp.isEmpty()) {
+						if (t.contains(temp) || t.equalsIgnoreCase(temp)) {
+							text = true;
+							break;
+						}
+					}
+				}
 			}
 		}
 		
