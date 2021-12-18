@@ -15,8 +15,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileHelper;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.Direction;
+import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.math.*;
 import net.minecraft.util.math.RayTraceContext.BlockMode;
 import net.minecraft.util.math.RayTraceContext.FluidMode;
@@ -26,6 +26,7 @@ import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -173,8 +174,16 @@ public abstract class BreathAbility extends ActiveDragonAbility
 	public abstract float getDamage();
 	public abstract void onBlock(BlockPos pos, BlockState blockState, Direction direction);
 	
+	public static class BreathDamage extends EntityDamageSource{
+		
+		public BreathDamage(@Nullable Entity p_i1567_2_)
+		{
+			super("player", p_i1567_2_);
+		}
+	}
+	
 	public void onEntityHit(LivingEntity entityHit){
-		if (entityHit.hurt(DamageSource.playerAttack(player), getDamage())) {
+		if (entityHit.hurt(new BreathDamage(player), getDamage())) {
 			entityHit.setDeltaMovement(entityHit.getDeltaMovement().multiply(0.25, 1, 0.25));
 			onDamage(entityHit);
 		}

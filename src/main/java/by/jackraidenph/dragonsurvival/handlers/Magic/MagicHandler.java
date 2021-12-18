@@ -6,6 +6,7 @@ import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
+import by.jackraidenph.dragonsurvival.magic.abilities.Actives.BreathAbilities.BreathAbility.BreathDamage;
 import by.jackraidenph.dragonsurvival.magic.abilities.Actives.BreathAbilities.StormBreathAbility;
 import by.jackraidenph.dragonsurvival.magic.abilities.Passives.BurnAbility;
 import by.jackraidenph.dragonsurvival.magic.abilities.Passives.SpectralImpactAbility;
@@ -288,7 +289,7 @@ public class MagicHandler
 	
 	@SubscribeEvent
 	public static void livingHurt(LivingAttackEvent event){
-		if(event.getSource() instanceof EntityDamageSource && !(event.getSource() instanceof IndirectEntityDamageSource)) {
+		if(event.getSource() instanceof EntityDamageSource && !(event.getSource() instanceof IndirectEntityDamageSource) && !(event.getSource() instanceof BreathDamage)) {
 			if(event.getEntity() instanceof LivingEntity){
 			if (event.getSource() != null && event.getSource().getEntity() != null) {
 				if (event.getSource().getEntity() instanceof PlayerEntity) {
