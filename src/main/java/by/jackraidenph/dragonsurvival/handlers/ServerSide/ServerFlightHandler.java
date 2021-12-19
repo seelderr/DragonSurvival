@@ -96,8 +96,8 @@ public class ServerFlightHandler {
                         if (!playerTickEvent.player.isOnGround() && !playerTickEvent.player.isInWater() && !playerTickEvent.player.isInLava()) {
                             Vector3d delta = playerTickEvent.player.getDeltaMovement();
                             double l = delta.length();
-                            if(delta.x == 0 && delta.y == 0){
-                                l *= 2;
+                            if(delta.x == 0 && delta.z == 0){
+                                l = 15;
                             }
                             float exhaustion = ConfigHandler.SERVER.creativeFlight.get() ? (playerTickEvent.player.abilities.flying ?  playerTickEvent.player.flyingSpeed : 0F) : (float)(0.005F * l);
                             playerTickEvent.player.causeFoodExhaustion(exhaustion);

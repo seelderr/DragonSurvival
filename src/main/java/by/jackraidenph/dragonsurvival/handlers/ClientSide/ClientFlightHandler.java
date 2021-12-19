@@ -16,7 +16,6 @@ import net.minecraft.util.MovementInput;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.gen.Heightmap.Type;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.event.TickEvent;
@@ -37,10 +36,8 @@ public class ClientFlightHandler {
 
     public static boolean canGlide(PlayerEntity player){
         boolean hasFood = player.getFoodData().getFoodLevel() > ConfigHandler.SERVER.flightHungerThreshold.get() || player.isCreative() || ConfigHandler.SERVER.allowFlyingWithoutHunger.get();
-        int height = player.level.getHeight(Type.MOTION_BLOCKING, player.blockPosition().getX(), player.blockPosition().getZ());
-        boolean isHigh = player.position().y > height + 4;
         
-        return hasFood && isHigh && player.isSprinting();
+        return hasFood && player.isSprinting();
     }
     
     /**
