@@ -162,7 +162,7 @@ public class ClientDragonRender
 									float f = Math.min(Math.max(0.5F, 1F - (float)(((lookVec.y * 5) / 2.5) * 0.5)), 3F);
 									gameRenderer.setZoom(f);
 									if (lookVec.y > 0.05) {
-										matrixStack.translate(0, -(lookVec.y * 5)+ ((lookVec.y * 5) * (aboveGround / 4F)), 0);
+										matrixStack.translate(0, -(lookVec.y * 5) + MathHelper.clamp(((lookVec.y * 5) * (aboveGround / 4F)), 0, (lookVec.y * 5)), 0);
 									}
 								}
 							}

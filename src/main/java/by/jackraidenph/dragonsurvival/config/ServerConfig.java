@@ -37,6 +37,8 @@ public class ServerConfig {
 	
 	public final ForgeConfigSpec.BooleanValue alternateGrowing;
 	public final ForgeConfigSpec.DoubleValue maxGrowthSize;
+	public final ForgeConfigSpec.DoubleValue reachBonus;
+	
 	public final ForgeConfigSpec.IntValue alternateGrowingFrequency;
 	public final ForgeConfigSpec.BooleanValue saveGrowthStage;
 
@@ -260,6 +262,9 @@ public class ServerConfig {
 		maxGrowthSize = builder
 				.comment("Defines the max size your dragon can grow to.")
 				.defineInRange("maxGrowthSize", 60.0, 14.0, 1000000.0);
+		reachBonus = builder
+				.comment("The bonus that is given to dragons at ever 60 size. Human players have 1.0x reach and a size 60 dragon will have 1.5x distance with default value")
+				.defineInRange("reachBonus", 0.5, 0, 1000000.0);
 		alternateGrowingFrequency = builder
 				.comment("Speed of alternateGrowing effect in seconds")
 				.defineInRange("alternateGrowingFrequency", 60, 0, Integer.MAX_VALUE);
