@@ -6,6 +6,7 @@ import by.jackraidenph.dragonsurvival.emotes.Emote;
 import by.jackraidenph.dragonsurvival.gecko.AnimationTimer;
 import by.jackraidenph.dragonsurvival.gecko.CommonTraits;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.ClientEvents;
+import by.jackraidenph.dragonsurvival.handlers.ClientSide.ClientFlightHandler;
 import by.jackraidenph.dragonsurvival.handlers.DragonSizeHandler;
 import by.jackraidenph.dragonsurvival.magic.abilities.Actives.BreathAbilities.BreathAbility;
 import by.jackraidenph.dragonsurvival.magic.common.AbilityAnimation;
@@ -141,7 +142,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                 } else if ((player.abilities.flying || playerStateHandler.isFlying())
                            && !player.isOnGround() && !player.isInWater()
                            && !player.isInLava() && playerStateHandler.hasWings()) {
-                    if(player.isSprinting()){
+                    if(ClientFlightHandler.canGlide(player)){
                         neckLocked = true;
                         if(player.getDeltaMovement().y < -0.2){
                             builder.addAnimation("fly_dive", true);

@@ -150,7 +150,7 @@ public class ClientDragonRender
 		            gameRenderer.setZoom(1.0F);
 					
 		            if (!player.isInvisible()) {
-						if(player.isSprinting() && cap.isFlying() && !player.isOnGround() && !player.isInLava() && !player.isInWater()){
+						if(ClientFlightHandler.canGlide(player) && cap.isFlying() && !player.isOnGround() && !player.isInLava() && !player.isInWater()){
 							matrixStack.mulPose(Vector3f.XN.rotationDegrees((float)(player.getDeltaMovement().y * 20)));
 							
 							if(player == mc.player){
@@ -161,8 +161,8 @@ public class ClientDragonRender
 									Vector3d lookVec = player.getLookAngle();
 									float f = Math.min(Math.max(0.5F, 1F - (float)(((lookVec.y * 5) / 2.5) * 0.5)), 3F);
 									gameRenderer.setZoom(f);
-									if (lookVec.y > 0.05) {
-										matrixStack.translate(0, -(lookVec.y * 5) + ((lookVec.y * 5) * (aboveGround / 4F)), 0);
+									if (lookVec.y > 0.05) {// + ((lookVec.y * 5) * (aboveGround / 4F))
+										matrixStack.translate(0, -(lookVec.y * 5), 0);
 									}
 								}
 							}

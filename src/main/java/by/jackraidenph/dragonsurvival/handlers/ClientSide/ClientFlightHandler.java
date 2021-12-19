@@ -16,6 +16,7 @@ import net.minecraft.util.MovementInput;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.gen.Heightmap.Type;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.event.TickEvent;
@@ -34,6 +35,14 @@ public class ClientFlightHandler {
      */
     static double ax, ay, az;
 
+    public static boolean canGlide(PlayerEntity player){
+        boolean hasFood = player.getFoodData().getFoodLevel() > ConfigHandler.SERVER.flightHungerThreshold.get() || player.isCreative() || ConfigHandler.SERVER.allowFlyingWithoutHunger.get();
+        int height = player.level.getHeight(Type.MOTION_BLOCKING, player.blockPosition().getX(), player.blockPosition().getZ());
+        boolean isHigh = player.position().y > height + 4;
+        
+        return hasFood && isHigh && player.isSprinting();
+    }
+    
     /**
      * Controls acceleration
      */
@@ -63,7 +72,7 @@ public class ClientFlightHandler {
                             ModifiableAttributeInstance gravity = playerEntity.getAttribute(net.minecraftforge.common.ForgeMod.ENTITY_GRAVITY.get());
                             double g = gravity.getValue();
                             
-                            if(playerEntity.isSprinting()) {
+                            if(canGlide(playerEntity)) {
                                 motion = playerEntity.getDeltaMovement().add(0.0D, g * (-1.0D + (double)f3 * 0.75D), 0.0D);
     
                                 if (motion.y < 0.0D && d9 > 0.0D) {
@@ -107,11 +116,14 @@ public class ClientFlightHandler {
     
                                 Vector3d moveVector = ClientEvents.getInputVector(new Vector3d(movement.leftImpulse, 0, movement.forwardImpulse), 1F, playerEntity.yRot);
                                 moveVector.multiply(1.3, 0, 1.3);
+    
+                                double lookY = lookVec.y;
                                 
                                 motion = motion.add(ax, ay, az);
-                                ax *= 0.99F;
-                                ay *= 0.98F;
-                                az *= 0.99F;
+                                
+                                ax *= 0.9F;
+                                ay *= 0.9F;
+                                az *= 0.9F;
     
                                 boolean moving = movement.up || movement.down || movement.left || movement.right;
                                 
@@ -121,17 +133,30 @@ public class ClientFlightHandler {
                                     motion = new Vector3d(MathHelper.lerp(0.1, motion.x, moveVector.x), 0, MathHelper.lerp(0.1, motion.z, moveVector.z));
     
                                     if(movement.jumping){
-                                        playerEntity.setDeltaMovement(new Vector3d(Math.max(Math.min(motion.x, maxForward), -maxForward), 0.4 + ay, Math.max(Math.min(motion.z, maxForward), -maxForward)));
-                                        NetworkHandler.CHANNEL.sendToServer(new SyncFlightSpeed(playerEntity.getId(), playerEntity.getDeltaMovement()));
+                                        motion = new Vector3d(Math.max(Math.min(motion.x, maxForward), -maxForward), 0.4 + motion.y, Math.max(Math.min(motion.z, maxForward), -maxForward));
+                                       
+                                        if(motion.length() != playerEntity.getDeltaMovement().length()){
+                                            NetworkHandler.CHANNEL.sendToServer(new SyncFlightSpeed(playerEntity.getId(), motion));
+                                        }
+                                        
+                                        playerEntity.setDeltaMovement(motion);
                                         return;
                                     }else if(movement.shiftKeyDown){
-                                        playerEntity.setDeltaMovement(new Vector3d(Math.max(Math.min(motion.x, maxForward), -maxForward), -0.4 + ay, Math.max(Math.min(motion.z, maxForward), -maxForward)));
-                                        NetworkHandler.CHANNEL.sendToServer(new SyncFlightSpeed(playerEntity.getId(), playerEntity.getDeltaMovement()));
+                                        motion = new Vector3d(Math.max(Math.min(motion.x, maxForward), -maxForward), -0.8 + motion.y, Math.max(Math.min(motion.z, maxForward), -maxForward));
+                                        if(motion.length() != playerEntity.getDeltaMovement().length()){
+                                            NetworkHandler.CHANNEL.sendToServer(new SyncFlightSpeed(playerEntity.getId(), motion));
+                                        }
+                                        
+                                        playerEntity.setDeltaMovement(motion);
                                         return;
                                     }
-
-                                    playerEntity.setDeltaMovement(new Vector3d(Math.max(Math.min(motion.x, maxForward), -maxForward), -(g * 2) + ay, Math.max(Math.min(motion.z, maxForward), -maxForward)));
-                                    NetworkHandler.CHANNEL.sendToServer(new SyncFlightSpeed(playerEntity.getId(), playerEntity.getDeltaMovement()));
+                                    motion = new Vector3d(Math.max(Math.min(motion.x, maxForward), -maxForward), -(g * 2) + motion.y, Math.max(Math.min(motion.z, maxForward), -maxForward));
+    
+                                    if(motion.length() != playerEntity.getDeltaMovement().length()){
+                                        NetworkHandler.CHANNEL.sendToServer(new SyncFlightSpeed(playerEntity.getId(), motion));
+                                    }
+                                   
+                                    playerEntity.setDeltaMovement(motion);
                                     return;
                                 }
     
@@ -139,7 +164,13 @@ public class ClientFlightHandler {
                                 
                                 if(playerEntity.fallDistance >= 2.5) { //Dont activate on a regular jump
                                     double yMotion = hasFood ? -g + ay : -(g * 4) + ay;
-                                    playerEntity.setDeltaMovement(new Vector3d(Math.max(Math.min(motion.x, maxForward), -maxForward), yMotion, Math.max(Math.min(motion.z, maxForward), -maxForward)));
+                                    motion = new Vector3d(Math.max(Math.min(motion.x, maxForward), -maxForward), yMotion, Math.max(Math.min(motion.z, maxForward), -maxForward));
+                                    
+                                    if(motion.length() != playerEntity.getDeltaMovement().length()){
+                                        NetworkHandler.CHANNEL.sendToServer(new SyncFlightSpeed(playerEntity.getId(), motion));
+                                    }
+                                    
+                                    playerEntity.setDeltaMovement(motion);
                                 }
                             }
                         } else {
@@ -147,6 +178,10 @@ public class ClientFlightHandler {
                             az = 0;
                             ay = 0;
                         }
+                    }else{
+                        ax = 0;
+                        az = 0;
+                        ay = 0;
                     }
                 }
             });
@@ -167,7 +202,7 @@ public class ClientFlightHandler {
     
         if(ConfigHandler.CLIENT.jumpToFly.get()) {
             if (Minecraft.getInstance().options.keyJump.consumeClick()) {
-                if (handler.hasWings() && !currentState && (lookVec.y > 0 || !ConfigHandler.CLIENT.lookAtSkyForFlight.get())) {
+                if (handler.hasWings() && !currentState && (lookVec.y > 0.8 || !ConfigHandler.CLIENT.lookAtSkyForFlight.get())) {
                     if (!player.isOnGround() && !player.isInLava() && !player.isInWater()) {
                         if (player.getFoodData().getFoodLevel() > ConfigHandler.SERVER.flightHungerThreshold.get() || player.isCreative() || ConfigHandler.SERVER.allowFlyingWithoutHunger.get()) {
                             NetworkHandler.CHANNEL.sendToServer(new SyncFlyingStatus(player.getId(), true));
