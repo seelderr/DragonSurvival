@@ -202,7 +202,7 @@ public class Princess extends VillagerEntity implements IAnimatable, CommonTrait
             } else {
                 Animation animation = controller.getCurrentAnimation();
                 if (animation == null) {
-                    animationTimer.putAnimation("idle_princess", 88, builder);
+                    animationTimer.putAnimation("idle_princess", 88d, builder);
                 } else {
                     String name = animation.animationName;
                     switch (name) {
@@ -210,18 +210,18 @@ public class Princess extends VillagerEntity implements IAnimatable, CommonTrait
                             animationTimer.trackAnimation("idle_princess");
                             if (animationTimer.getDuration("idle_princess") <= 0) {
                                 if (random.nextInt(2000) == 1) {
-                                    animationTimer.putAnimation("idle_princess_2", 145, builder);
+                                    animationTimer.putAnimation("idle_princess_2", 145d, builder);
                                 }
                             }
                             break;
                         case "walk_princess":
                         case "run_princess":
-                            animationTimer.putAnimation("idle_princess", 88, builder);
+                            animationTimer.putAnimation("idle_princess", 88d, builder);
                             break;
                         case "idle_princess_2":
                             animationTimer.trackAnimation("idle_princess_2");
                             if (animationTimer.getDuration("idle_princess_2") <= 0) {
-                                animationTimer.putAnimation("idle_princess", 88, builder);
+                                animationTimer.putAnimation("idle_princess", 88d, builder);
                             }
                             break;
                     }

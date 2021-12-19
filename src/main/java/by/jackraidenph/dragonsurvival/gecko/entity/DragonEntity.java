@@ -11,6 +11,7 @@ import by.jackraidenph.dragonsurvival.handlers.DragonSizeHandler;
 import by.jackraidenph.dragonsurvival.magic.abilities.Actives.BreathAbilities.BreathAbility;
 import by.jackraidenph.dragonsurvival.magic.common.AbilityAnimation;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Pose;
@@ -101,7 +102,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
     private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> animationEvent) {
         final PlayerEntity player = getPlayer();
         final AnimationController animationController = animationEvent.getController();
-    
+        
         neckLocked = false;
         
         AnimationBuilder builder = new AnimationBuilder();
@@ -128,10 +129,8 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                     renderAbility(animationEvent, builder, curCast);
                 }
                 
-                
                 Vector3d motio = new Vector3d(player.getX() - player.xo, player.getY() - player.yo, player.getZ() - player.zo);
                 boolean isMovingHorizontal = Math.sqrt(Math.pow(motio.x, 2) + Math.pow(motio.z, 2)) > 0.005;
-                
                 
                 // Main
                 if (player.isSleeping()) {
@@ -157,9 +156,9 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                         neckLocked = true;
                         if(playerStateHandler.getMovementData().bite || spinTime > 0) {
                             if(spinTime == 0){
-                                spinTime = 0.76 * 20;
+                                spinTime = 0.85 * 20;
                             }else{
-                                spinTime = MathHelper.clamp(spinTime - animationEvent.getPartialTick(), 0, 20);
+                                spinTime = MathHelper.clamp(spinTime - Minecraft.getInstance().getDeltaFrameTime(), 0, 20);
                             }
                             builder.addAnimation("fly_spin_fast", true);
                         }else if (player.getDeltaMovement().y < -1) {
@@ -191,13 +190,14 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                                 neckLocked = true;
     
                                 if(spinTime == 0){
-                                    spinTime = 20;
+                                    spinTime = 0.85 * 20;
                                 }else{
-                                    spinTime = MathHelper.clamp(spinTime - animationEvent.getPartialTick(), 0, 50);
+                                    spinTime = MathHelper.clamp(spinTime - Minecraft.getInstance().getDeltaFrameTime(), 0, 50);
                                 }
                                 builder.addAnimation("fly_spin", true);
                             }else{
                                 builder.addAnimation("fly", true);
+                                spinTime = 0;
                             }
                         }
                     }
@@ -252,7 +252,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                 AbilityAnimation starAni = curCast.getStartingAnimation();
                 neckLocked = starAni.locksNeck;
 
-                animationTimer.trackAnimation(starAni.animationKey, event.getPartialTick());
+                animationTimer.trackAnimation(starAni.animationKey);
 
                 if(!started){
                     animationTimer.putAnimation(starAni.animationKey, starAni.duration, builder);
@@ -261,7 +261,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 
                 builder.addAnimation(starAni.animationKey);
 
-                if (animationTimer.getDoubleDuration(starAni.animationKey) <= 0) {
+                if (animationTimer.getDuration(starAni.animationKey) <= 0) {
                     lastCast = curCast;
                     started = false;
                 }
@@ -286,7 +286,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                 AbilityAnimation stopAni = lastCast.getStoppingAnimation();
                 neckLocked = stopAni.locksNeck;
 
-                animationTimer.trackAnimation(stopAni.animationKey, event.getPartialTick());
+                animationTimer.trackAnimation(stopAni.animationKey);
 
                 if(!ended){
                     animationTimer.putAnimation(stopAni.animationKey, stopAni.duration, builder);
@@ -295,7 +295,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 
                 builder.addAnimation(stopAni.animationKey);
 
-                if (animationTimer.getDoubleDuration(stopAni.animationKey) <= 0) {
+                if (animationTimer.getDuration(stopAni.animationKey) <= 0) {
                     lastCast = null;
                     ended = false;
                     neckLocked = false;

@@ -64,25 +64,25 @@ public class Knight extends CreatureEntity implements IAnimatable, DragonHunter,
                             animationTimer.trackAnimation("attack");
                             if (animationTimer.getDuration("attack2") <= 0) {
                                 if (random.nextBoolean())
-                                    animationTimer.putAnimation("attack", 17, animationBuilder);
+                                    animationTimer.putAnimation("attack", 17d, animationBuilder);
                                 else
-                                    animationTimer.putAnimation("attack2", 17, animationBuilder);
+                                    animationTimer.putAnimation("attack2", 17d, animationBuilder);
                             }
                             break;
                         case "attack2":
                             animationTimer.trackAnimation("attack2");
                             if (animationTimer.getDuration("attack") <= 0) {
                                 if (random.nextBoolean())
-                                    animationTimer.putAnimation("attack", 17, animationBuilder);
+                                    animationTimer.putAnimation("attack", 17d, animationBuilder);
                                 else
-                                    animationTimer.putAnimation("attack2", 17, animationBuilder);
+                                    animationTimer.putAnimation("attack2", 17d, animationBuilder);
                             }
                             break;
                         default:
                             if (random.nextBoolean())
-                                animationTimer.putAnimation("attack", 17, animationBuilder);
+                                animationTimer.putAnimation("attack", 17d, animationBuilder);
                             else
-                                animationTimer.putAnimation("attack2", 17, animationBuilder);
+                                animationTimer.putAnimation("attack2", 17d, animationBuilder);
                     }
                 }
             }
@@ -93,7 +93,7 @@ public class Knight extends CreatureEntity implements IAnimatable, DragonHunter,
             } else {
                 Animation animation = animationController.getCurrentAnimation();
                 if (animation == null) {
-                    animationTimer.putAnimation("idle", 88, animationBuilder);
+                    animationTimer.putAnimation("idle", 88d, animationBuilder);
                 } else {
                     String name = animation.animationName;
                     switch (name) {
@@ -101,18 +101,18 @@ public class Knight extends CreatureEntity implements IAnimatable, DragonHunter,
                             animationTimer.trackAnimation("idle");
                             if (animationTimer.getDuration("idle") <= 0) {
                                 if (random.nextInt(2000) == 0) {
-                                    animationTimer.putAnimation("idle_2", 145, animationBuilder);
+                                    animationTimer.putAnimation("idle_2", 145d, animationBuilder);
                                 }
                             }
                             break;
                         case "walk":
                         case "run":
-                            animationTimer.putAnimation("idle", 88, animationBuilder);
+                            animationTimer.putAnimation("idle", 88d, animationBuilder);
                             break;
                         case "idle_2":
                             animationTimer.trackAnimation("idle_2");
                             if (animationTimer.getDuration("idle_2") <= 0) {
-                                animationTimer.putAnimation("idle", 88, animationBuilder);
+                                animationTimer.putAnimation("idle", 88d, animationBuilder);
                             }
                             break;
                     }
