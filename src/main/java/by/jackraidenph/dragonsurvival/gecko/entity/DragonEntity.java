@@ -95,7 +95,6 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
     public boolean neckLocked = false;
     AnimationTimer animationTimer = new AnimationTimer();
     Emote lastEmote;
-    double landingDuration;
     
     private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> animationEvent) {
         final PlayerEntity player = getPlayer();
@@ -150,43 +149,30 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                     
                 } else if ((player.abilities.flying || playerStateHandler.isFlying())
                            && !player.isOnGround() && !player.isInWater()
-                           && !player.isInLava() && playerStateHandler.hasWings()
-                || landingDuration > 0) {
-    
-                    double landDuration = 2;
-                    double preLandDuration = 1.12;
-    
-                    double hoverLand = ClientFlightHandler.getLandTime(player, (landDuration + preLandDuration) * 20);
-                    double fullLand = ClientFlightHandler.getLandTime(player, landDuration * 20);
-    
-                    if((fullLand != -1 || landingDuration > 0) && player.getDeltaMovement().length() < 4) {
-                        if(fullLand != -1) {
-                            landingDuration = fullLand;
-                        }else if(landingDuration < 0){
-                            landingDuration = 0;
-                        }else{
-                            landingDuration -= animationEvent.animationTick;
-                        }
-        
-                        //System.out.println(landingDuration);
-                        
+                           && !player.isInLava() && playerStateHandler.hasWings()) {
+                    
+                    if (ClientFlightHandler.canGlide(player)) {
                         neckLocked = true;
-                        builder.addAnimation("fly_land_end", false);
-                        builder.addAnimation("idle", true);
-        
-                    }else if(hoverLand != -1 && player.getDeltaMovement().length() < 4 && landingDuration == 0){
-                        neckLocked = true;
-                        builder.addAnimation("fly_land", false);
-                    }else  {
-                        landingDuration = 0;
-                        if (ClientFlightHandler.canGlide(player)) {
-                            neckLocked = true;
-                            if (player.getDeltaMovement().y < -0.2) {
-                                builder.addAnimation("fly_dive", true);
-                            } else {
-                                builder.addAnimation("fly_fast", true);
-                            }
+                        if (player.getDeltaMovement().y < -0.2) {
+                            builder.addAnimation("fly_dive", true);
                         } else {
+                            builder.addAnimation("fly_fast", true);
+                        }
+                    } else {
+                        double landDuration = 2;
+                        double preLandDuration = 1;
+    
+                        double hoverLand = ClientFlightHandler.getLandTime(player, (landDuration + preLandDuration) * 20);
+                        double fullLand = ClientFlightHandler.getLandTime(player, landDuration * 20);
+    
+                        if(fullLand != -1 && player.getDeltaMovement().length() < 4) {
+                            neckLocked = true;
+                            builder.addAnimation("fly_land_end", true);
+        
+                        }else if(hoverLand != -1 && player.getDeltaMovement().length() < 4){
+                            neckLocked = true;
+                            builder.addAnimation("fly_land", false);
+                        }else{
                             builder.addAnimation("fly", true);
                         }
                     }

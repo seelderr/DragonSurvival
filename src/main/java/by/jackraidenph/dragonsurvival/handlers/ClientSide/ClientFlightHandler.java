@@ -161,7 +161,7 @@ public class ClientFlightHandler {
     
                                 boolean moving = movement.up || movement.down || movement.left || movement.right;
                                 
-                                if(moving){
+                                if(moving && !movement.jumping && !movement.shiftKeyDown){
                                     maxForward = 0.8;
                                     moveVector.multiply(1.4, 0, 1.4);
                                     motion = new Vector3d(MathHelper.lerp(0.1, motion.x, moveVector.x), 0, MathHelper.lerp(0.1, motion.z, moveVector.z));
@@ -172,25 +172,6 @@ public class ClientFlightHandler {
                                     ax *= 0.9F;
                                     ay *= 0.9F;
                                     az *= 0.9F;
-                                    
-                                    if(movement.jumping){
-                                        motion = new Vector3d(motion.x, 0.4 + motion.y, motion.z);
-                                       
-                                        if(motion.length() != playerEntity.getDeltaMovement().length()){
-                                            NetworkHandler.CHANNEL.sendToServer(new SyncFlightSpeed(playerEntity.getId(), motion));
-                                        }
-                                        
-                                        playerEntity.setDeltaMovement(motion);
-                                        return;
-                                    }else if(movement.shiftKeyDown){
-                                        motion = new Vector3d(motion.x, -0.8 + motion.y, motion.z);
-                                        if(motion.length() != playerEntity.getDeltaMovement().length()){
-                                            NetworkHandler.CHANNEL.sendToServer(new SyncFlightSpeed(playerEntity.getId(), motion));
-                                        }
-                                        
-                                        playerEntity.setDeltaMovement(motion);
-                                        return;
-                                    }
                                     
                                     motion = new Vector3d(motion.x, -(g * 2) + motion.y, motion.z);
     
@@ -212,7 +193,16 @@ public class ClientFlightHandler {
                                 ay *= 0.9F;
                                 az *= 0.9F;
     
-                                if(movement.shiftKeyDown){
+                                if(movement.jumping){
+                                    motion = new Vector3d(motion.x, 0.4 + motion.y, motion.z);
+        
+                                    if(motion.length() != playerEntity.getDeltaMovement().length()){
+                                        NetworkHandler.CHANNEL.sendToServer(new SyncFlightSpeed(playerEntity.getId(), motion));
+                                    }
+        
+                                    playerEntity.setDeltaMovement(motion);
+                                    return;
+                                }else if(movement.shiftKeyDown){
                                     motion = new Vector3d(motion.x, -0.8 + motion.y, motion.z);
                                     if(motion.length() != playerEntity.getDeltaMovement().length()){
                                         NetworkHandler.CHANNEL.sendToServer(new SyncFlightSpeed(playerEntity.getId(), motion));
