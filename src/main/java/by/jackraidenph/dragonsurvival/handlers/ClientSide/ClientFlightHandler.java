@@ -9,6 +9,7 @@ import by.jackraidenph.dragonsurvival.network.status.SyncFlightSpeed;
 import by.jackraidenph.dragonsurvival.network.status.SyncFlyingStatus;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.player.PlayerEntity;
@@ -19,6 +20,7 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.gen.Heightmap.Type;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.EntityViewRenderEvent.CameraSetup;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -52,10 +54,7 @@ public class ClientFlightHandler {
         if (dragonStateHandler != null && dragonStateHandler.isDragon()) {
             if (dragonStateHandler.isFlying()) {
                 Vector3d motion = playerEntity.getDeltaMovement();
-                Vector3d targetMotion = playerEntity.getDeltaMovement().multiply(goalTime, goalTime, goalTime);
-                Vector3d target = playerEntity.position().add(targetMotion);
-                
-                BlockPos blockHeight = playerEntity.level.getHeightmapPos(Type.MOTION_BLOCKING, new BlockPos(target));
+                BlockPos blockHeight = playerEntity.level.getHeightmapPos(Type.MOTION_BLOCKING, playerEntity.blockPosition());
                 int height = blockHeight.getY();
                 double aboveGround = Math.max(0, playerEntity.position().y - height);
                 double timeToGround = (aboveGround / Math.abs(motion.y));
@@ -67,6 +66,26 @@ public class ClientFlightHandler {
             }
         }
         return -1;
+    }
+    
+    @SubscribeEvent
+    public static void flightCamera(CameraSetup setup){
+        ClientPlayerEntity currentPlayer = Minecraft.getInstance().player;
+        ActiveRenderInfo info = setup.getInfo();
+    
+        if(currentPlayer != null){
+            DragonStateHandler dragonStateHandler = DragonStateProvider.getCap(currentPlayer).orElse(null);
+            
+            if (dragonStateHandler.isDragon() && dragonStateHandler.isFlying() && canGlide(currentPlayer)) {
+                if(setup.getInfo().isDetached()){
+
+                    Vector3d lookVec = currentPlayer.getLookAngle();
+                    double increase = MathHelper.clamp(lookVec.y * 10, 0, lookVec.y * 5);
+    
+                    info.move(0, increase, 0);
+                }
+            }
+        }
     }
     
     /**

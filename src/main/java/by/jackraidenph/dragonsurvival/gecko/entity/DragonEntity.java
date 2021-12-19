@@ -153,10 +153,17 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                     
                     if (ClientFlightHandler.canGlide(player)) {
                         neckLocked = true;
-                        if (player.getDeltaMovement().y < -0.2) {
+                        if(playerStateHandler.getMovementData().bite) {
                             builder.addAnimation("fly_dive", true);
-                        } else {
+                        }else if (player.getDeltaMovement().y < -1) {
+                            builder.addAnimation("fly_dive_alt", true);
+                        }else if (player.getDeltaMovement().y < -0.25) {
+                            builder.addAnimation("fly_dive", true);
+                        } else if(player.getDeltaMovement().y > 0.25){
                             builder.addAnimation("fly_fast", true);
+                        }else{
+                            builder.addAnimation("fly_soaring", true);
+    
                         }
                     } else {
                         double landDuration = 2;
@@ -165,7 +172,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                         double hoverLand = ClientFlightHandler.getLandTime(player, (landDuration + preLandDuration) * 20);
                         double fullLand = ClientFlightHandler.getLandTime(player, landDuration * 20);
     
-                        if(fullLand != -1 && player.getDeltaMovement().length() < 4) {
+                        if(player.isShiftKeyDown() && fullLand != -1 && player.getDeltaMovement().length() < 4) {
                             neckLocked = true;
                             builder.addAnimation("fly_land_end", true);
         
