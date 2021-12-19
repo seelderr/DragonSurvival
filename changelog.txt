@@ -7,10 +7,12 @@
 - Added: Visualization of the dragons growth in the inventory
 - Added: Visualization of the dragons growth when a growth item is selected in the hotbar
 - Added: Added recipes for converting hearts back to weak versions
-- Added: Animations and model rotations are now VERY smooth. No more jerking when turning. Some mods can affect the rotation speed, but we do not know which ones. This was noticeable in the Young modpack.
+- Added: Flight changed! Now there is dive, takeoff, acceleration, braking and more!
+- Added: Animations and model rotations are now VERY smooth. No more twitch when turning. Some mods can affect the rotation speed, but we do not know which ones. This was noticeable in the Young modpack.
 - Added: Different hearts can now be drop from different creatures with health 14-20 for a shard, 20-50 for a weak, and over 50 for an elder heart (only for dragon)
 - Added: The camera is now attached to the dragons head instead of the torso.
 - Added: zoom to skins menu
+- Fixed: Temp fix for concurrent modification error on config reload
 - Fixed: The spike now shoots more accurately
 - Fixed: spectral impact no longer affects the sea dragons breath.
 - Fixed: The claw system is completely rewritten and now (hopefully) it will be definitely compatible with all mods.
