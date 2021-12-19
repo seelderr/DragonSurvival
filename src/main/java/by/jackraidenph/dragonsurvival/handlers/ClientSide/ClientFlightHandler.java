@@ -22,6 +22,8 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Used in pair with {@link ServerFlightHandler}
  */
@@ -186,6 +188,8 @@ public class ClientFlightHandler {
     }
     
     
+    private static long lastHungerMessage;
+    
     @SubscribeEvent
     public static void toggleWings(InputEvent.KeyInputEvent keyInputEvent) {
         ClientPlayerEntity player = Minecraft.getInstance().player;
@@ -197,14 +201,17 @@ public class ClientFlightHandler {
         boolean currentState = handler.isFlying();
         Vector3d lookVec = player.getLookAngle();
     
-        if(ConfigHandler.CLIENT.jumpToFly.get()) {
+        if(ConfigHandler.CLIENT.jumpToFly.get() && !player.isCreative() && !player.isSpectator()) {
             if (Minecraft.getInstance().options.keyJump.consumeClick()) {
                 if (handler.hasWings() && !currentState && (lookVec.y > 0.8 || !ConfigHandler.CLIENT.lookAtSkyForFlight.get())) {
                     if (!player.isOnGround() && !player.isInLava() && !player.isInWater()) {
                         if (player.getFoodData().getFoodLevel() > ConfigHandler.SERVER.flightHungerThreshold.get() || player.isCreative() || ConfigHandler.SERVER.allowFlyingWithoutHunger.get()) {
                             NetworkHandler.CHANNEL.sendToServer(new SyncFlyingStatus(player.getId(), true));
                         } else {
-                            player.sendMessage(new TranslationTextComponent("ds.wings.nohunger"), player.getUUID());
+                            if(lastHungerMessage == 0 || lastHungerMessage + TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS) < System.currentTimeMillis()) {
+                                lastHungerMessage = System.currentTimeMillis();
+                                player.sendMessage(new TranslationTextComponent("ds.wings.nohunger"), player.getUUID());
+                            }
                         }
                     }
                 }
