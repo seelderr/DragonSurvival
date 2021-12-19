@@ -10,7 +10,11 @@ public class ClientConfig {
 
 	public final ForgeConfigSpec.BooleanValue dragonNameTags;
 	public final ForgeConfigSpec.BooleanValue renderInFirstPerson;
+	
 	public final ForgeConfigSpec.BooleanValue notifyWingStatus;
+	public final ForgeConfigSpec.BooleanValue jumpToFly;
+	public final ForgeConfigSpec.BooleanValue lookAtSkyForFlight;
+	
 	public final ForgeConfigSpec.BooleanValue clientDebugMessages;
 	
 	public final ForgeConfigSpec.BooleanValue alternateHeldItem;
@@ -44,6 +48,10 @@ public class ClientConfig {
 				.define("renderFirstPerson", true);
 		notifyWingStatus = builder.comment("Notifies of wing status in chat message").define("notifyWingStatus", true);
 		clientDebugMessages = builder.define("Enable client-side debug messages", false);
+		
+		jumpToFly = builder.comment("Should flight be activated when jumping in the air").define("jumpToFly", true);
+		lookAtSkyForFlight = builder.comment("Is it required to look up to start flying while jumping, requires that jumpToFly is on").define("lookAtSkyForFlight", false);
+		
 		
 		dragonInventory = builder
 				.comment("Should the default inventory be replaced as a dragon?")

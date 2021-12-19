@@ -165,13 +165,15 @@ public class ClientFlightHandler {
         boolean currentState = handler.isFlying();
         Vector3d lookVec = player.getLookAngle();
     
-        if(Minecraft.getInstance().options.keyJump.consumeClick()){
-            if(handler.hasWings() && !currentState && lookVec.y > 0){
-                if(!player.isOnGround() && !player.isInLava() && !player.isInWater()){
-                    if(player.getFoodData().getFoodLevel() > ConfigHandler.SERVER.flightHungerThreshold.get() || player.isCreative() || ConfigHandler.SERVER.allowFlyingWithoutHunger.get()) {
-                        NetworkHandler.CHANNEL.sendToServer(new SyncFlyingStatus(player.getId(), true));
-                    }else{
-                        player.sendMessage(new TranslationTextComponent("ds.wings.nohunger"), player.getUUID());
+        if(ConfigHandler.CLIENT.jumpToFly.get()) {
+            if (Minecraft.getInstance().options.keyJump.consumeClick()) {
+                if (handler.hasWings() && !currentState && (lookVec.y > 0 || !ConfigHandler.CLIENT.lookAtSkyForFlight.get())) {
+                    if (!player.isOnGround() && !player.isInLava() && !player.isInWater()) {
+                        if (player.getFoodData().getFoodLevel() > ConfigHandler.SERVER.flightHungerThreshold.get() || player.isCreative() || ConfigHandler.SERVER.allowFlyingWithoutHunger.get()) {
+                            NetworkHandler.CHANNEL.sendToServer(new SyncFlyingStatus(player.getId(), true));
+                        } else {
+                            player.sendMessage(new TranslationTextComponent("ds.wings.nohunger"), player.getUUID());
+                        }
                     }
                 }
             }

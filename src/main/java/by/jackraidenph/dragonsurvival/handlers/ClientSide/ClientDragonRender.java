@@ -32,6 +32,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.world.gen.Heightmap.Type;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
@@ -153,12 +154,15 @@ public class ClientDragonRender
 							matrixStack.mulPose(Vector3f.XN.rotationDegrees((float)(player.getDeltaMovement().y * 20)));
 							
 							if(player == mc.player){
-								if(!Minecraft.getInstance().options.getCameraType().isFirstPerson()){
+								int height = player.level.getHeight(Type.MOTION_BLOCKING, player.blockPosition().getX(), player.blockPosition().getZ());
+								double aboveGround = Math.max(0, 4.0 - (player.position().y - height));
+								
+								if (!Minecraft.getInstance().options.getCameraType().isFirstPerson()) {
 									Vector3d lookVec = player.getLookAngle();
-									float f = Math.min(Math.max(0.5F, 1F - (float)(((lookVec.y * 5) / 2.5) * 0.5)), 2F);
+									float f = Math.min(Math.max(0.5F, 1F - (float)(((lookVec.y * 5) / 2.5) * 0.5)), 3F);
 									gameRenderer.setZoom(f);
-									if(lookVec.y > 0.05) {
-										matrixStack.translate(0, -(lookVec.y * 5), 0);
+									if (lookVec.y > 0.05) {
+										matrixStack.translate(0, -(lookVec.y * 5) + ((lookVec.y * 5) * (aboveGround / 4F)), 0);
 									}
 								}
 							}
