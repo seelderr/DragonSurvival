@@ -99,7 +99,7 @@ public class EyesBuffAbility extends ActiveDragonAbility
 	@Override
 	public AbilityAnimation getStoppingAnimation()
 	{
-		return new AbilityAnimation("self_buff", 40, true);
+		return new AbilityAnimation("self_buff", 0.52 * 20, true);
 	}
 	
 	public int getCastingSlowness() { return 10; }

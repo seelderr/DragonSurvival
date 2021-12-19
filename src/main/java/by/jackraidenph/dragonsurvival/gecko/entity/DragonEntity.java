@@ -18,6 +18,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.HandSide;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import software.bernie.geckolib3.core.IAnimatable;
@@ -69,7 +70,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
             
             if(handler.getEmotes().getCurrentEmote() == null) {
                 if(curCast instanceof BreathAbility || lastCast instanceof BreathAbility){
-                    renderAbility(builder, curCast);
+                    renderAbility(animationEvent, builder, curCast);
                     animationEvent.getController().setAnimation(builder);
                     return PlayState.CONTINUE;
                 }
@@ -95,6 +96,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
     public boolean neckLocked = false;
     AnimationTimer animationTimer = new AnimationTimer();
     Emote lastEmote;
+    double spinTime;
     
     private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> animationEvent) {
         final PlayerEntity player = getPlayer();
@@ -123,7 +125,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                 }
                 
                 if(!(curCast instanceof BreathAbility) && !(lastCast instanceof BreathAbility)){
-                    renderAbility(builder, curCast);
+                    renderAbility(animationEvent, builder, curCast);
                 }
                 
                 
@@ -153,8 +155,13 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                     
                     if (ClientFlightHandler.canGlide(player)) {
                         neckLocked = true;
-                        if(playerStateHandler.getMovementData().bite) {
-                            builder.addAnimation("fly_dive", true);
+                        if(playerStateHandler.getMovementData().bite || spinTime > 0) {
+                            if(spinTime == 0){
+                                spinTime = 0.76 * 20;
+                            }else{
+                                spinTime = MathHelper.clamp(spinTime - animationEvent.getPartialTick(), 0, 20);
+                            }
+                            builder.addAnimation("fly_spin_fast", true);
                         }else if (player.getDeltaMovement().y < -1) {
                             builder.addAnimation("fly_dive_alt", true);
                         }else if (player.getDeltaMovement().y < -0.25) {
@@ -180,7 +187,18 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                             neckLocked = true;
                             builder.addAnimation("fly_land", false);
                         }else{
-                            builder.addAnimation("fly", true);
+                            if(playerStateHandler.getMovementData().bite || spinTime > 0) {
+                                neckLocked = true;
+    
+                                if(spinTime == 0){
+                                    spinTime = 20;
+                                }else{
+                                    spinTime = MathHelper.clamp(spinTime - animationEvent.getPartialTick(), 0, 50);
+                                }
+                                builder.addAnimation("fly_spin", true);
+                            }else{
+                                builder.addAnimation("fly", true);
+                            }
                         }
                     }
                     
@@ -227,14 +245,14 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
         return PlayState.CONTINUE;
     }
     
-    private void renderAbility(AnimationBuilder builder, ActiveDragonAbility curCast)
+    private void renderAbility(AnimationEvent event, AnimationBuilder builder, ActiveDragonAbility curCast)
     {
         if(curCast != null && lastCast == null){
             if(curCast.getStartingAnimation() != null){
                 AbilityAnimation starAni = curCast.getStartingAnimation();
                 neckLocked = starAni.locksNeck;
 
-                animationTimer.trackAnimation(starAni.animationKey);
+                animationTimer.trackAnimation(starAni.animationKey, event.getPartialTick());
 
                 if(!started){
                     animationTimer.putAnimation(starAni.animationKey, starAni.duration, builder);
@@ -243,7 +261,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 
                 builder.addAnimation(starAni.animationKey);
 
-                if (animationTimer.getDuration(starAni.animationKey) <= 0) {
+                if (animationTimer.getDoubleDuration(starAni.animationKey) <= 0) {
                     lastCast = curCast;
                     started = false;
                 }
@@ -268,7 +286,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                 AbilityAnimation stopAni = lastCast.getStoppingAnimation();
                 neckLocked = stopAni.locksNeck;
 
-                animationTimer.trackAnimation(stopAni.animationKey);
+                animationTimer.trackAnimation(stopAni.animationKey, event.getPartialTick());
 
                 if(!ended){
                     animationTimer.putAnimation(stopAni.animationKey, stopAni.duration, builder);
@@ -277,7 +295,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 
                 builder.addAnimation(stopAni.animationKey);
 
-                if (animationTimer.getDuration(stopAni.animationKey) <= 0) {
+                if (animationTimer.getDoubleDuration(stopAni.animationKey) <= 0) {
                     lastCast = null;
                     ended = false;
                     neckLocked = false;

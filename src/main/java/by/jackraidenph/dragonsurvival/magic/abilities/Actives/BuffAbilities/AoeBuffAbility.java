@@ -151,7 +151,7 @@ public class AoeBuffAbility extends ActiveDragonAbility
 	@Override
 	public AbilityAnimation getStoppingAnimation()
 	{
-		return new AbilityAnimation("mass_buff", 35, true);
+		return new AbilityAnimation("mass_buff", 0.56 * 20, true);
 	}
 	
 	@Override
