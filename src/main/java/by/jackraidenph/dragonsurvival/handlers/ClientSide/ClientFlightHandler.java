@@ -73,16 +73,18 @@ public class ClientFlightHandler {
         ClientPlayerEntity currentPlayer = Minecraft.getInstance().player;
         ActiveRenderInfo info = setup.getInfo();
     
-        if(currentPlayer != null){
+        if(currentPlayer != null) {
             DragonStateHandler dragonStateHandler = DragonStateProvider.getCap(currentPlayer).orElse(null);
-            
-            if (dragonStateHandler.isDragon() && dragonStateHandler.isFlying() && canGlide(currentPlayer)) {
-                if(setup.getInfo().isDetached()){
-
-                    Vector3d lookVec = currentPlayer.getLookAngle();
-                    double increase = MathHelper.clamp(lookVec.y * 10, 0, lookVec.y * 5);
     
-                    info.move(0, increase, 0);
+            if (dragonStateHandler != null) {
+                if (dragonStateHandler.isDragon() && dragonStateHandler.isFlying() && canGlide(currentPlayer)) {
+                    if (setup.getInfo().isDetached()) {
+                
+                        Vector3d lookVec = currentPlayer.getLookAngle();
+                        double increase = MathHelper.clamp(lookVec.y * 10, 0, lookVec.y * 5);
+                
+                        info.move(0, increase, 0);
+                    }
                 }
             }
         }
