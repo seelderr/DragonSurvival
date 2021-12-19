@@ -83,6 +83,11 @@ public class DragonFoodHandler {
 			return SEA_D_FOOD;
 		else if (dragonType == DragonType.CAVE && CAVE_D_FOOD != null)
 			return CAVE_D_FOOD;
+		
+		if(DRAGON_FOODS == null){
+			rebuildFoodMap();
+		}
+		
 		CopyOnWriteArrayList<Item> foods = new CopyOnWriteArrayList<>();
 		for (Item item : DRAGON_FOODS.get(dragonType).keySet()) {
 			boolean safe = true;

@@ -6,14 +6,11 @@ import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.config.ConfigUtils;
 import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.SyncSize;
-import by.jackraidenph.dragonsurvival.network.SynchronizeDragonCap;
 import by.jackraidenph.dragonsurvival.registration.ItemsInit;
 import by.jackraidenph.dragonsurvival.util.DragonLevel;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.play.server.SSetPassengersPacket;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.event.TickEvent;
@@ -109,21 +106,6 @@ public class DragonGrowthHandler {
                 return;
 
             NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncSize(player.getId(), size));
-
-            if (player.getVehicle() == null || !(player.getVehicle() instanceof ServerPlayerEntity))
-                return;
-
-            ServerPlayerEntity vehicle = (ServerPlayerEntity) player.getVehicle();
-
-            DragonStateProvider.getCap(vehicle).ifPresent(vehicleCap -> {
-                player.stopRiding();
-
-                vehicle.connection.send(new SSetPassengersPacket(vehicle));
-
-                NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> vehicle), new SynchronizeDragonCap(vehicle.getId(),
-                                                                                                                   vehicleCap.isHiding(), vehicleCap.getType(), vehicleCap.getSize(), vehicleCap.hasWings(), vehicleCap.getLavaAirSupply(), 0));
-            });
-
             player.refreshDimensions();
         });
     }

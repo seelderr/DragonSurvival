@@ -24,7 +24,6 @@ import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.client.renderer.entity.layers.ParrotVariantLayer;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
-import net.minecraft.client.settings.PointOfView;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -81,13 +80,7 @@ public class ClientDragonRender
 	
 	    PlayerEntity player = renderPlayerEvent.getPlayer();
 	    Minecraft mc = Minecraft.getInstance();
-	
-	    // TODO come up with actual solution instead of just not rendering your passenger in first person.
-	    if (mc.options.getCameraType() == PointOfView.FIRST_PERSON && mc.player.hasPassenger(player)) {
-	        renderPlayerEvent.setCanceled(true);
-	        return;
-	    }
-	
+		
 	    if (!playerDragonHashMap.containsKey(player.getId())) {
 	        DragonEntity dummyDragon = EntityTypesInit.DRAGON.create(player.level);
 	        dummyDragon.player = player.getId();

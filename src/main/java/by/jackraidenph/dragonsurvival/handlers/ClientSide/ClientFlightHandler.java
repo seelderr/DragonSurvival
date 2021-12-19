@@ -7,6 +7,7 @@ import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import by.jackraidenph.dragonsurvival.handlers.ServerSide.ServerFlightHandler;
 import by.jackraidenph.dragonsurvival.network.status.SyncFlightSpeed;
 import by.jackraidenph.dragonsurvival.network.status.SyncFlyingStatus;
+import by.jackraidenph.dragonsurvival.sounds.FastGlideSound;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.renderer.ActiveRenderInfo;
@@ -90,6 +91,8 @@ public class ClientFlightHandler {
         }
     }
     
+    public static boolean wasGliding = false;
+    
     /**
      * Controls acceleration
      */
@@ -108,7 +111,7 @@ public class ClientFlightHandler {
                         //start
                         if (!playerEntity.isOnGround() && !playerEntity.isInWater() && !playerEntity.isInLava()) {
                             Vector3d motion = playerEntity.getDeltaMovement();
-
+                            
                             Vector3d lookVec = playerEntity.getLookAngle();
                             float f6 = playerEntity.xRot * ((float) Math.PI / 180F);
                             double d9 = Math.sqrt(lookVec.x * lookVec.x + lookVec.z * lookVec.z);
@@ -118,6 +121,13 @@ public class ClientFlightHandler {
                             f3 = (float) ((double) f3 * (double) f3 * Math.min(1.0D, d12 / 0.4D));
                             ModifiableAttributeInstance gravity = playerEntity.getAttribute(net.minecraftforge.common.ForgeMod.ENTITY_GRAVITY.get());
                             double g = gravity.getValue();
+                            
+                            if(canGlide(playerEntity)){
+                                if(!wasGliding){
+                                    Minecraft.getInstance().getSoundManager().play(new FastGlideSound(currentPlayer));
+                                    wasGliding = true;
+                                }
+                            }
                             
                             if(canGlide(playerEntity) || (ax != 0 || az != 0)) {
                                 motion = playerEntity.getDeltaMovement().add(0.0D, g * (-1.0D + (double)f3 * 0.75D), 0.0D);
@@ -168,6 +178,7 @@ public class ClientFlightHandler {
                             }
                             
                             if(!canGlide(playerEntity)){
+                                wasGliding = false;
                                 double maxForward = 0.5;
     
                                 Vector3d moveVector = ClientEvents.getInputVector(new Vector3d(movement.leftImpulse, 0, movement.forwardImpulse), 1F, playerEntity.yRot);
@@ -240,6 +251,7 @@ public class ClientFlightHandler {
                                 }
                             }
                         } else {
+                            wasGliding = false;
                             ax = 0;
                             az = 0;
                             ay = 0;

@@ -337,7 +337,7 @@ public class MagicHandler
 				if (!cap.isDragon()) return;
 				
 				if (player.hasEffect(DragonEffects.REVEALING_THE_SOUL)) {
-					int extra = (int)Math.min(ConfigHandler.SERVER.revealingTheSoulMaxEXP.get(), event.getDroppedExperience() * ConfigHandler.SERVER.revealingTheSoulMultiplier.get()); //TODO Change this to a config option for max exp gain
+					int extra = (int)Math.min(ConfigHandler.SERVER.revealingTheSoulMaxEXP.get(), event.getDroppedExperience() * ConfigHandler.SERVER.revealingTheSoulMultiplier.get());
 					event.setDroppedExperience(event.getDroppedExperience() + extra);
 				}
 			});

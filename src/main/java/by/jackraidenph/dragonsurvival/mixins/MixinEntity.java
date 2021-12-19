@@ -9,11 +9,13 @@ import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.Pose;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.vector.Vector3f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Entity.class)
@@ -24,7 +26,29 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
     protected MixinEntity(Class<Entity> baseClass) {
         super(baseClass);
     }
-
+    
+    @Inject(at = @At(value = "HEAD"), method = "Lnet/minecraft/entity/Entity;positionRider(Lnet/minecraft/entity/Entity;Lnet/minecraft/entity/Entity$IMoveCallback;)V", remap = false, cancellable = true)
+    private void positionRider(Entity p_226266_1_, Entity.IMoveCallback p_226266_2_, CallbackInfo callbackInfo) {
+        if(DragonStateProvider.isDragon((Entity) (net.minecraftforge.common.capabilities.CapabilityProvider<Entity>)this)){
+            if (hasPassenger(p_226266_1_)) {
+                double d0 = this.getY() + this.getPassengersRidingOffset() + p_226266_1_.getMyRidingOffset();
+                Vector3f cameraOffset = DragonStateProvider.getCameraOffset((Entity) (net.minecraftforge.common.capabilities.CapabilityProvider<Entity>)this);
+                p_226266_2_.accept(p_226266_1_, this.getX() - cameraOffset.x(), d0, this.getZ() - cameraOffset.z());
+                callbackInfo.cancel();
+            }
+        }
+    }
+    
+    @Shadow
+    private boolean hasPassenger(Entity p_184196_1_) {
+        throw new IllegalStateException("Mixin failed to shadow hasPassenger()");
+    }
+    
+    @Shadow
+    private double getPassengersRidingOffset() {
+        throw new IllegalStateException("Mixin failed to shadow getPassengersRidingOffset()");
+    }
+    
     @Inject(at = @At(value = "HEAD"), method = "Lnet/minecraft/entity/Entity;displayFireAnimation()Z", cancellable = true)
     private void hideCaveDragonFireAnimation(CallbackInfoReturnable<Boolean> ci){
         DragonStateProvider.getCap((Entity)(Object)this).ifPresent(dragonStateHandler -> {

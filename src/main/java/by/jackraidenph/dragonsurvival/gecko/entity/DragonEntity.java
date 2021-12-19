@@ -140,9 +140,6 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                 }else if (player.isPassenger()) {
                     builder.addAnimation("sit", true);
                     
-                }else if (player.isPassenger()){
-                    builder.addAnimation("idle", true); // TODO: Passenger animation for riding entities
-                
                 }else if (player.getPose() == Pose.SWIMMING) {
                     builder.addAnimation("swim_fast", true);
                     
