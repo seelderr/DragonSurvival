@@ -1,14 +1,19 @@
 package by.jackraidenph.dragonsurvival.gecko.model;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
+import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.gecko.entity.DragonEntity;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
+import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.processor.AnimationProcessor;
 import software.bernie.geckolib3.core.processor.IBone;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
+import software.bernie.geckolib3.resource.GeckoLibCache;
+import software.bernie.shadowed.eliotlash.molang.MolangParser;
 
 public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 
@@ -32,7 +37,20 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 	public ResourceLocation getAnimationFileLocation(DragonEntity animatable) {
 		return new ResourceLocation(DragonSurvivalMod.MODID, "animations/dragon.animations.json");
 	}
-
+	
+	@Override
+	public void setMolangQueries(IAnimatable animatable, double currentTick)
+	{
+		super.setMolangQueries(animatable, currentTick);
+		MolangParser parser = GeckoLibCache.getInstance().parser;
+		Minecraft minecraftInstance = Minecraft.getInstance();
+		PlayerEntity player = minecraftInstance.player;
+		DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+		
+		parser.setValue("query.delta_y", player.getDeltaMovement().y);
+		parser.setValue("query.head_yaw", handler.getMovementData().headYaw);
+	}
+	
 	@Override
 	public void setLivingAnimations(DragonEntity entity, Integer uniqueID, AnimationEvent customPredicate) {
 		super.setLivingAnimations(entity, uniqueID, customPredicate);

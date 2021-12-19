@@ -164,7 +164,7 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 	private static final UUID SLOW_FALLING_ID = UUID.fromString("A5B6CF2A-2F7C-31EF-9022-7C3E7D5E6ABA");
 	private static final AttributeModifier SLOW_FALLING = new AttributeModifier(SLOW_FALLING_ID, "Slow falling acceleration reduction", -0.07, AttributeModifier.Operation.ADDITION); // Add -0.07 to 0.08 so we get the vanilla default of 0.01
 	
-	//@Inject( method = "travel", at = @At("HEAD"), cancellable = true)
+	@Inject( method = "travel", at = @At("HEAD"), cancellable = true)
 	public void travel(Vector3d p_213352_1_, CallbackInfo ci) {
 		if (DragonStateProvider.isDragon(this)) {
 			double d0 = this.getX();

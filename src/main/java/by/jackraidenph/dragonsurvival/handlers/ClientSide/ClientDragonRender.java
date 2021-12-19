@@ -8,6 +8,7 @@ import by.jackraidenph.dragonsurvival.gecko.model.DragonModel;
 import by.jackraidenph.dragonsurvival.mixins.AccessorEntityRenderer;
 import by.jackraidenph.dragonsurvival.mixins.AccessorEntityRendererManager;
 import by.jackraidenph.dragonsurvival.mixins.AccessorLivingRenderer;
+import by.jackraidenph.dragonsurvival.mixins.MixinGameRendererZoom;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
 import by.jackraidenph.dragonsurvival.registration.EntityTypesInit;
 import by.jackraidenph.dragonsurvival.util.DragonLevel;
@@ -29,6 +30,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderHandEvent;
@@ -143,10 +145,23 @@ public class ClientDragonRender
 					} else if (player.isSwimming() || player.isAutoSpinAttack() || (cap.isFlying() && !player.isOnGround() && !player.isInWater() && !player.isInLava())) {
 						matrixStack.translate(0, -0.15 - ((size / DragonLevel.ADULT.size) * 0.2), 0);
 					}
+		            MixinGameRendererZoom gameRenderer = (MixinGameRendererZoom)Minecraft.getInstance().gameRenderer;
+		            gameRenderer.setZoom(1.0F);
 					
-	                if (!player.isInvisible()) {
-						if(player.isSprinting()){
+		            if (!player.isInvisible()) {
+						if(player.isSprinting() && cap.isFlying() && !player.isOnGround() && !player.isInLava() && !player.isInWater()){
 							matrixStack.mulPose(Vector3f.XN.rotationDegrees((float)(player.getDeltaMovement().y * 20)));
+							
+							if(player == mc.player){
+								if(!Minecraft.getInstance().options.getCameraType().isFirstPerson()){
+									Vector3d lookVec = player.getLookAngle();
+									float f = Math.min(Math.max(0.5F, 1F - (float)(((lookVec.y * 5) / 2.5) * 0.5)), 2F);
+									gameRenderer.setZoom(f);
+									if(lookVec.y > 0.05) {
+										matrixStack.translate(0, -(lookVec.y * 5), 0);
+									}
+								}
+							}
 						}
 						
 	                    dragonRenderer.render(dummyDragon, yaw, partialRenderTick, matrixStack, renderTypeBuffer, eventLight);

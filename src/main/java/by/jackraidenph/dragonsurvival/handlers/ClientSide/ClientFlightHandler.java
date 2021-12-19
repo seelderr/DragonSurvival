@@ -1,5 +1,6 @@
 package by.jackraidenph.dragonsurvival.handlers.ClientSide;
 
+import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
@@ -36,10 +37,10 @@ public class ClientFlightHandler {
      * Controls acceleration
      */
     @SubscribeEvent
-    public static void flightControl(TickEvent.RenderTickEvent playerTickEvent) {
-        PlayerEntity playerEntity = Minecraft.getInstance().player;
+    public static void flightControl(TickEvent.PlayerTickEvent playerTickEvent) {
+        PlayerEntity playerEntity = playerTickEvent.player;
         ClientPlayerEntity currentPlayer = Minecraft.getInstance().player;
-        if (playerEntity != null && !playerEntity.isPassenger()) {
+        if (playerEntity == currentPlayer && !playerEntity.isPassenger()) {
             DragonStateProvider.getCap(playerEntity).ifPresent(dragonStateHandler -> {
                 if (dragonStateHandler.isDragon()) {
                     if (dragonStateHandler.isFlying()) {
@@ -141,24 +142,40 @@ public class ClientFlightHandler {
     @SubscribeEvent
     public static void toggleWings(InputEvent.KeyInputEvent keyInputEvent) {
         ClientPlayerEntity player = Minecraft.getInstance().player;
-        if (player != null && KeyInputHandler.TOGGLE_WINGS.consumeClick()) {
-            DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
-                if (dragonStateHandler.hasWings()) {
-                    boolean currentState = dragonStateHandler.isFlying();
-                    //Allows toggling the wings if food level is above 0, player is creative, wings are already enabled (allows disabling even when hungry) or if config options is turned on
-                    if((player.getFoodData().getFoodLevel() > ConfigHandler.SERVER.flightHungerThreshold.get() || player.isCreative()) || currentState || ConfigHandler.SERVER.allowFlyingWithoutHunger.get()) {
-                        NetworkHandler.CHANNEL.sendToServer(new SyncFlyingStatus(player.getId(), !currentState));
-                        if (ConfigHandler.CLIENT.notifyWingStatus.get()) {
-                            if (!currentState) player.sendMessage(new TranslationTextComponent("ds.wings.enabled"), player.getUUID());
-                            else player.sendMessage(new TranslationTextComponent("ds.wings.disabled"), player.getUUID());
-                        }
+        if(player == null) return;
+    
+        DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+        if(handler == null) return;
+    
+        boolean currentState = handler.isFlying();
+        
+        if(Minecraft.getInstance().options.keyJump.consumeClick()){
+            if(handler.hasWings() && !currentState){
+                if(!player.isOnGround() && !player.isInLava() && !player.isInWater()){
+                    if(player.getFoodData().getFoodLevel() > ConfigHandler.SERVER.flightHungerThreshold.get() || player.isCreative() || ConfigHandler.SERVER.allowFlyingWithoutHunger.get()) {
+                        NetworkHandler.CHANNEL.sendToServer(new SyncFlyingStatus(player.getId(), true));
                     }else{
                         player.sendMessage(new TranslationTextComponent("ds.wings.nohunger"), player.getUUID());
                     }
-                } else {
-                    player.sendMessage(new TranslationTextComponent("ds.you.have.no.wings"), player.getUUID());
                 }
-            });
+            }
+        }
+        
+        if (KeyInputHandler.TOGGLE_WINGS.consumeClick()) {
+            if (handler.hasWings()) {
+                //Allows toggling the wings if food level is above 0, player is creative, wings are already enabled (allows disabling even when hungry) or if config options is turned on
+                if((player.getFoodData().getFoodLevel() > ConfigHandler.SERVER.flightHungerThreshold.get() || player.isCreative()) || currentState || ConfigHandler.SERVER.allowFlyingWithoutHunger.get()) {
+                    NetworkHandler.CHANNEL.sendToServer(new SyncFlyingStatus(player.getId(), !currentState));
+                    if (ConfigHandler.CLIENT.notifyWingStatus.get()) {
+                        if (!currentState) player.sendMessage(new TranslationTextComponent("ds.wings.enabled"), player.getUUID());
+                        else player.sendMessage(new TranslationTextComponent("ds.wings.disabled"), player.getUUID());
+                    }
+                }else{
+                    player.sendMessage(new TranslationTextComponent("ds.wings.nohunger"), player.getUUID());
+                }
+            } else {
+                player.sendMessage(new TranslationTextComponent("ds.you.have.no.wings"), player.getUUID());
+            }
         }
     }
 }

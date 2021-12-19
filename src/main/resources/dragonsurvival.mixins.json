@@ -22,7 +22,8 @@
     "MixinProjectileHelper",
     "MixinGameRenderer",
     "MixinWorldRenderer",
-    "MixinEntityRenderManager"
+    "MixinEntityRenderManager",
+    "MixinGameRendererZoom"
   ],
   "minVersion": "0.8"
 }
