@@ -75,11 +75,12 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                     animationEvent.getController().setAnimation(builder);
                     return PlayState.CONTINUE;
                 }
-                
-                if (handler.getMovementData().bite && !handler.getMovementData().dig) {
-                    builder.addAnimation("bite");
-                    animationEvent.getController().setAnimation(builder);
-                    return PlayState.CONTINUE;
+                if(!handler.isFlying() || player.isOnGround() || player.isInLava() || player.isInWater()) {
+                    if (handler.getMovementData().bite && !handler.getMovementData().dig) {
+                        builder.addAnimation("bite");
+                        animationEvent.getController().setAnimation(builder);
+                        return PlayState.CONTINUE;
+                    }
                 }
             }
         }

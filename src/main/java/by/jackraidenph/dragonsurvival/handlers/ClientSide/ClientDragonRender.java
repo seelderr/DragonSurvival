@@ -152,11 +152,13 @@ public class ClientDragonRender
 						if(ClientFlightHandler.canGlide(player) && cap.isFlying() && !player.isOnGround() && !player.isInLava() && !player.isInWater()){
 							matrixStack.mulPose(Vector3f.XN.rotationDegrees((float)(player.getDeltaMovement().y * 20)));
 							
-							if(player == mc.player){
-								if (!Minecraft.getInstance().options.getCameraType().isFirstPerson()) {
-									Vector3d lookVec = player.getLookAngle();
-									float f = Math.min(Math.max(0.5F, 1F - (float)(((lookVec.y * 5) / 2.5) * 0.5)), 3F);
-									gameRenderer.setZoom((float)MathHelper.lerp(0.5, gameRenderer.getZoom(), f));
+							if(ConfigHandler.CLIENT.flightZoomEffect.get()) {
+								if (player == mc.player) {
+									if (!Minecraft.getInstance().options.getCameraType().isFirstPerson()) {
+										Vector3d lookVec = player.getLookAngle();
+										float f = Math.min(Math.max(0.5F, 1F - (float)(((lookVec.y * 5) / 2.5) * 0.5)), 3F);
+										gameRenderer.setZoom(f);
+									}
 								}
 							}
 						}
