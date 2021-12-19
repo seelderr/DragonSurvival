@@ -4,6 +4,7 @@ import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
+import by.jackraidenph.dragonsurvival.handlers.ClientSide.ClientFlightHandler;
 import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.magic.SyncAbilityCastingToServer;
 import by.jackraidenph.dragonsurvival.util.DragonType;
@@ -155,7 +156,7 @@ public class ActiveDragonAbility extends DragonAbility
             return false;
         }
     
-        if(getCastingSlowness() >= 10){
+        if(getCastingSlowness() >= 10 || ClientFlightHandler.canGlide(player)){
             if(handler.isFlying() && player.isFallFlying()
                || (!player.isOnGround() && player.fallDistance > 0.15F)){
                 if(keyMode == GLFW.GLFW_PRESS) {

@@ -49,6 +49,8 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 		
 		parser.setValue("query.delta_y", player.getDeltaMovement().y);
 		parser.setValue("query.head_yaw", handler.getMovementData().headYaw);
+		parser.setValue("query.head_pitch", handler.getMovementData().headPitch);
+		
 	}
 	
 	@Override

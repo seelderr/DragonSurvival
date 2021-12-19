@@ -13,14 +13,17 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.MovementInput;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.gen.Heightmap.Type;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.concurrent.TimeUnit;
 
@@ -37,9 +40,33 @@ public class ClientFlightHandler {
     static double ax, ay, az;
 
     public static boolean canGlide(PlayerEntity player){
+        DragonStateHandler dragonStateHandler = DragonStateProvider.getCap(player).orElse(null);
         boolean hasFood = player.getFoodData().getFoodLevel() > ConfigHandler.SERVER.flightHungerThreshold.get() || player.isCreative() || ConfigHandler.SERVER.allowFlyingWithoutHunger.get();
-        
-        return hasFood && player.isSprinting();
+        boolean flight = dragonStateHandler != null && dragonStateHandler.isFlying() && !player.isOnGround() && !player.isInWater() && !player.isInLava();
+        return hasFood && player.isSprinting() && flight;
+    }
+    
+    public static double getLandTime(PlayerEntity playerEntity, double goalTime)
+    {
+        DragonStateHandler dragonStateHandler = DragonStateProvider.getCap(playerEntity).orElse(null);
+        if (dragonStateHandler != null && dragonStateHandler.isDragon()) {
+            if (dragonStateHandler.isFlying()) {
+                Vector3d motion = playerEntity.getDeltaMovement();
+                Vector3d targetMotion = playerEntity.getDeltaMovement().multiply(goalTime, goalTime, goalTime);
+                Vector3d target = playerEntity.position().add(targetMotion);
+                
+                BlockPos blockHeight = playerEntity.level.getHeightmapPos(Type.MOTION_BLOCKING, new BlockPos(target));
+                int height = blockHeight.getY();
+                double aboveGround = (playerEntity.position().y - height);
+                double timeToGround = (aboveGround / Math.abs(motion.y));
+                if(playerEntity.fallDistance > 5 && motion.y < 0) {
+                    if (aboveGround < 20 && timeToGround <= goalTime) {
+                        return timeToGround;
+                    }
+                }
+            }
+        }
+        return -1;
     }
     
     /**
@@ -71,7 +98,7 @@ public class ClientFlightHandler {
                             ModifiableAttributeInstance gravity = playerEntity.getAttribute(net.minecraftforge.common.ForgeMod.ENTITY_GRAVITY.get());
                             double g = gravity.getValue();
                             
-                            if(canGlide(playerEntity)) {
+                            if(canGlide(playerEntity) || (ax != 0 || az != 0)) {
                                 motion = playerEntity.getDeltaMovement().add(0.0D, g * (-1.0D + (double)f3 * 0.75D), 0.0D);
     
                                 if (motion.y < 0.0D && d9 > 0.0D) {
@@ -100,29 +127,37 @@ public class ClientFlightHandler {
                                 double speedLimit = ConfigHandler.SERVER.maxFlightSpeed.get();
                                 ax = MathHelper.clamp(ax, -0.2 * speedLimit, 0.2 * speedLimit);
                                 az = MathHelper.clamp(az, -0.2 * speedLimit, 0.2 * speedLimit);
-                                if (lookY < 0) {
-                                    motion = motion.add(ax, 0, az);
-                                } else {
-                                    motion = motion.add(ax, ay, az);
+                                
+//                                if(!canGlide(playerEntity)){
+//                                    ax = MathHelper.clamp(ax, -.99 * ax, .99 * ax);
+//                                    az = MathHelper.clamp(az, -.99 * az, .99 * az);
+//                                }
+                                
+                                if(canGlide(playerEntity)) {
+                                    if (lookY < 0) {
+                                        motion = motion.add(ax, 0, az);
+                                    } else {
+                                        motion = motion.add(ax, ay, az);
+                                    }
+                                    motion = motion.multiply(0.99F, 0.98F, 0.99F);
+    
+                                    if (motion.length() != playerEntity.getDeltaMovement().length()) {
+                                        NetworkHandler.CHANNEL.sendToServer(new SyncFlightSpeed(playerEntity.getId(), motion));
+                                    }
+    
+                                    playerEntity.setDeltaMovement(motion);
+                                    ay = playerEntity.getDeltaMovement().y;
                                 }
-                                motion = motion.multiply(0.99F, 0.98F, 0.99F);
-                                playerEntity.setDeltaMovement(motion);
-                                NetworkHandler.CHANNEL.sendToServer(new SyncFlightSpeed(playerEntity.getId(), playerEntity.getDeltaMovement()));
-                                ay = playerEntity.getDeltaMovement().y;
                                 //end
-                            }else{
+                            }
+                            
+                            if(!canGlide(playerEntity)){
                                 double maxForward = 0.5;
     
                                 Vector3d moveVector = ClientEvents.getInputVector(new Vector3d(movement.leftImpulse, 0, movement.forwardImpulse), 1F, playerEntity.yRot);
                                 moveVector.multiply(1.3, 0, 1.3);
     
                                 double lookY = lookVec.y;
-                                
-                                motion = motion.add(ax, ay, az);
-                                
-                                ax *= 0.9F;
-                                ay *= 0.9F;
-                                az *= 0.9F;
     
                                 boolean moving = movement.up || movement.down || movement.left || movement.right;
                                 
@@ -130,9 +165,16 @@ public class ClientFlightHandler {
                                     maxForward = 0.8;
                                     moveVector.multiply(1.4, 0, 1.4);
                                     motion = new Vector3d(MathHelper.lerp(0.1, motion.x, moveVector.x), 0, MathHelper.lerp(0.1, motion.z, moveVector.z));
+                                    motion = new Vector3d(MathHelper.clamp(motion.x, -maxForward, maxForward), 0, MathHelper.clamp(motion.z, -maxForward, maxForward));
     
+                                    motion = motion.add(ax, ay, az);
+    
+                                    ax *= 0.9F;
+                                    ay *= 0.9F;
+                                    az *= 0.9F;
+                                    
                                     if(movement.jumping){
-                                        motion = new Vector3d(Math.max(Math.min(motion.x, maxForward), -maxForward), 0.4 + motion.y, Math.max(Math.min(motion.z, maxForward), -maxForward));
+                                        motion = new Vector3d(motion.x, 0.4 + motion.y, motion.z);
                                        
                                         if(motion.length() != playerEntity.getDeltaMovement().length()){
                                             NetworkHandler.CHANNEL.sendToServer(new SyncFlightSpeed(playerEntity.getId(), motion));
@@ -141,7 +183,7 @@ public class ClientFlightHandler {
                                         playerEntity.setDeltaMovement(motion);
                                         return;
                                     }else if(movement.shiftKeyDown){
-                                        motion = new Vector3d(Math.max(Math.min(motion.x, maxForward), -maxForward), -0.8 + motion.y, Math.max(Math.min(motion.z, maxForward), -maxForward));
+                                        motion = new Vector3d(motion.x, -0.8 + motion.y, motion.z);
                                         if(motion.length() != playerEntity.getDeltaMovement().length()){
                                             NetworkHandler.CHANNEL.sendToServer(new SyncFlightSpeed(playerEntity.getId(), motion));
                                         }
@@ -149,7 +191,8 @@ public class ClientFlightHandler {
                                         playerEntity.setDeltaMovement(motion);
                                         return;
                                     }
-                                    motion = new Vector3d(Math.max(Math.min(motion.x, maxForward), -maxForward), -(g * 2) + motion.y, Math.max(Math.min(motion.z, maxForward), -maxForward));
+                                    
+                                    motion = new Vector3d(motion.x, -(g * 2) + motion.y, motion.z);
     
                                     if(motion.length() != playerEntity.getDeltaMovement().length()){
                                         NetworkHandler.CHANNEL.sendToServer(new SyncFlightSpeed(playerEntity.getId(), motion));
@@ -160,10 +203,28 @@ public class ClientFlightHandler {
                                 }
     
                                 motion = motion.multiply(0.99F, 0.98F, 0.99F);
+                                motion = new Vector3d(MathHelper.lerp(0.1, motion.x, moveVector.x), 0, MathHelper.lerp(0.1, motion.z, moveVector.z));
+                                motion = new Vector3d(MathHelper.clamp(motion.x, -maxForward, maxForward), 0, MathHelper.clamp(motion.z, -maxForward, maxForward));
+    
+                                motion = motion.add(ax, ay, az);
+    
+                                ax *= 0.9F;
+                                ay *= 0.9F;
+                                az *= 0.9F;
+    
+                                if(movement.shiftKeyDown){
+                                    motion = new Vector3d(motion.x, -0.8 + motion.y, motion.z);
+                                    if(motion.length() != playerEntity.getDeltaMovement().length()){
+                                        NetworkHandler.CHANNEL.sendToServer(new SyncFlightSpeed(playerEntity.getId(), motion));
+                                    }
+        
+                                    playerEntity.setDeltaMovement(motion);
+                                    return;
+                                }
                                 
                                 if(playerEntity.fallDistance >= 2.5) { //Dont activate on a regular jump
                                     double yMotion = hasFood ? -g + ay : -(g * 4) + ay;
-                                    motion = new Vector3d(Math.max(Math.min(motion.x, maxForward), -maxForward), yMotion, Math.max(Math.min(motion.z, maxForward), -maxForward));
+                                    motion = new Vector3d(motion.x, yMotion, motion.z);
                                     
                                     if(motion.length() != playerEntity.getDeltaMovement().length()){
                                         NetworkHandler.CHANNEL.sendToServer(new SyncFlightSpeed(playerEntity.getId(), motion));
@@ -187,7 +248,6 @@ public class ClientFlightHandler {
         }
     }
     
-    
     private static long lastHungerMessage;
     
     @SubscribeEvent
@@ -203,14 +263,16 @@ public class ClientFlightHandler {
     
         if(ConfigHandler.CLIENT.jumpToFly.get() && !player.isCreative() && !player.isSpectator()) {
             if (Minecraft.getInstance().options.keyJump.consumeClick()) {
-                if (handler.hasWings() && !currentState && (lookVec.y > 0.8 || !ConfigHandler.CLIENT.lookAtSkyForFlight.get())) {
-                    if (!player.isOnGround() && !player.isInLava() && !player.isInWater()) {
-                        if (player.getFoodData().getFoodLevel() > ConfigHandler.SERVER.flightHungerThreshold.get() || player.isCreative() || ConfigHandler.SERVER.allowFlyingWithoutHunger.get()) {
-                            NetworkHandler.CHANNEL.sendToServer(new SyncFlyingStatus(player.getId(), true));
-                        } else {
-                            if(lastHungerMessage == 0 || lastHungerMessage + TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS) < System.currentTimeMillis()) {
-                                lastHungerMessage = System.currentTimeMillis();
-                                player.sendMessage(new TranslationTextComponent("ds.wings.nohunger"), player.getUUID());
+                if(keyInputEvent.getAction() == GLFW.GLFW_PRESS) {
+                    if (handler.hasWings() && !currentState && (lookVec.y > 0.8 || !ConfigHandler.CLIENT.lookAtSkyForFlight.get())) {
+                        if (!player.isOnGround() && !player.isInLava() && !player.isInWater()) {
+                            if (player.getFoodData().getFoodLevel() > ConfigHandler.SERVER.flightHungerThreshold.get() || player.isCreative() || ConfigHandler.SERVER.allowFlyingWithoutHunger.get()) {
+                                NetworkHandler.CHANNEL.sendToServer(new SyncFlyingStatus(player.getId(), true));
+                            } else {
+                                if (lastHungerMessage == 0 || lastHungerMessage + TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS) < System.currentTimeMillis()) {
+                                    lastHungerMessage = System.currentTimeMillis();
+                                    player.sendMessage(new TranslationTextComponent("ds.wings.nohunger"), player.getUUID());
+                                }
                             }
                         }
                     }

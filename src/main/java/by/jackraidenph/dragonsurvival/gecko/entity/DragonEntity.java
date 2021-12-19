@@ -48,6 +48,13 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
     }
     @Override
     public void registerControllers(AnimationData animationData) {
+//        animationData.addAnimationController(new AnimationController<>(this, "head_turn", 2, (animationEvent) -> {
+//            AnimationBuilder builder = new AnimationBuilder();
+//            builder.addAnimation("head_turn");
+//            animationEvent.getController().setAnimation(builder);
+//            return PlayState.CONTINUE;
+//        }));
+    
         animationData.addAnimationController(new AnimationController<>(this, "bite_controller", 2, this::bitePredicate));
         animationData.addAnimationController(new AnimationController<>(this, "controller", 2, this::predicate));
     }
@@ -88,6 +95,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
     public boolean neckLocked = false;
     AnimationTimer animationTimer = new AnimationTimer();
     Emote lastEmote;
+    double landingDuration;
     
     private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> animationEvent) {
         final PlayerEntity player = getPlayer();
@@ -123,6 +131,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                 Vector3d motio = new Vector3d(player.getX() - player.xo, player.getY() - player.yo, player.getZ() - player.zo);
                 boolean isMovingHorizontal = Math.sqrt(Math.pow(motio.x, 2) + Math.pow(motio.z, 2)) > 0.005;
                 
+                
                 // Main
                 if (player.isSleeping()) {
                     builder.addAnimation("sleep", true);
@@ -141,16 +150,45 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                     
                 } else if ((player.abilities.flying || playerStateHandler.isFlying())
                            && !player.isOnGround() && !player.isInWater()
-                           && !player.isInLava() && playerStateHandler.hasWings()) {
-                    if(ClientFlightHandler.canGlide(player)){
-                        neckLocked = true;
-                        if(player.getDeltaMovement().y < -0.2){
-                            builder.addAnimation("fly_dive", true);
+                           && !player.isInLava() && playerStateHandler.hasWings()
+                || landingDuration > 0) {
+    
+                    double landDuration = 2;
+                    double preLandDuration = 1.12;
+    
+                    double hoverLand = ClientFlightHandler.getLandTime(player, (landDuration + preLandDuration) * 20);
+                    double fullLand = ClientFlightHandler.getLandTime(player, landDuration * 20);
+    
+                    if((fullLand != -1 || landingDuration > 0) && player.getDeltaMovement().length() < 4) {
+                        if(fullLand != -1) {
+                            landingDuration = fullLand;
+                        }else if(landingDuration < 0){
+                            landingDuration = 0;
                         }else{
-                            builder.addAnimation("fly_fast", true);
+                            landingDuration -= animationEvent.animationTick;
                         }
-                    }else{
-                        builder.addAnimation("fly", true);
+        
+                        //System.out.println(landingDuration);
+                        
+                        neckLocked = true;
+                        builder.addAnimation("fly_land_end", false);
+                        builder.addAnimation("idle", true);
+        
+                    }else if(hoverLand != -1 && player.getDeltaMovement().length() < 4 && landingDuration == 0){
+                        neckLocked = true;
+                        builder.addAnimation("fly_land", false);
+                    }else  {
+                        landingDuration = 0;
+                        if (ClientFlightHandler.canGlide(player)) {
+                            neckLocked = true;
+                            if (player.getDeltaMovement().y < -0.2) {
+                                builder.addAnimation("fly_dive", true);
+                            } else {
+                                builder.addAnimation("fly_fast", true);
+                            }
+                        } else {
+                            builder.addAnimation("fly", true);
+                        }
                     }
                     
                 }else if (!player.isOnGround() && motio.y() < 0) {
