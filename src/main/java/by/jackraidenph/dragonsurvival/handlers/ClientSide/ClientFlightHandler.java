@@ -57,7 +57,7 @@ public class ClientFlightHandler {
                 
                 BlockPos blockHeight = playerEntity.level.getHeightmapPos(Type.MOTION_BLOCKING, new BlockPos(target));
                 int height = blockHeight.getY();
-                double aboveGround = (playerEntity.position().y - height);
+                double aboveGround = Math.max(0, playerEntity.position().y - height);
                 double timeToGround = (aboveGround / Math.abs(motion.y));
                 if(playerEntity.fallDistance > 5 && motion.y < 0) {
                     if (aboveGround < 20 && timeToGround <= goalTime) {
@@ -127,11 +127,6 @@ public class ClientFlightHandler {
                                 double speedLimit = ConfigHandler.SERVER.maxFlightSpeed.get();
                                 ax = MathHelper.clamp(ax, -0.2 * speedLimit, 0.2 * speedLimit);
                                 az = MathHelper.clamp(az, -0.2 * speedLimit, 0.2 * speedLimit);
-                                
-//                                if(!canGlide(playerEntity)){
-//                                    ax = MathHelper.clamp(ax, -.99 * ax, .99 * ax);
-//                                    az = MathHelper.clamp(az, -.99 * az, .99 * az);
-//                                }
                                 
                                 if(canGlide(playerEntity)) {
                                     if (lookY < 0) {

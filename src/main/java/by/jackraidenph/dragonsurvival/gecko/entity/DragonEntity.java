@@ -169,7 +169,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                             neckLocked = true;
                             builder.addAnimation("fly_land_end", true);
         
-                        }else if(hoverLand != -1 && player.getDeltaMovement().length() < 4){
+                        }else if(player.isShiftKeyDown() && hoverLand != -1 && player.getDeltaMovement().length() < 4){
                             neckLocked = true;
                             builder.addAnimation("fly_land", false);
                         }else{
