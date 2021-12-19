@@ -5,6 +5,7 @@ import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.gecko.entity.DragonEntity;
 import by.jackraidenph.dragonsurvival.gecko.model.DragonArmorModel;
 import by.jackraidenph.dragonsurvival.gecko.model.DragonModel;
+import by.jackraidenph.dragonsurvival.handlers.ServerSide.ServerFlightHandler;
 import by.jackraidenph.dragonsurvival.mixins.AccessorEntityRenderer;
 import by.jackraidenph.dragonsurvival.mixins.AccessorEntityRendererManager;
 import by.jackraidenph.dragonsurvival.mixins.AccessorLivingRenderer;
@@ -142,7 +143,7 @@ public class ClientDragonRender
 		            gameRenderer.setZoom(1.0F);
 					
 		            if (!player.isInvisible()) {
-						if(ClientFlightHandler.canGlide(player) && cap.isFlying() && !player.isOnGround() && !player.isInLava() && !player.isInWater()){
+						if(ServerFlightHandler.canGlide(player) && cap.isFlying() && !player.isOnGround() && !player.isInLava() && !player.isInWater()){
 							matrixStack.mulPose(Vector3f.XN.rotationDegrees((float)(player.getDeltaMovement().y * 20)));
 							
 							if(ConfigHandler.CLIENT.flightZoomEffect.get()) {
@@ -155,7 +156,7 @@ public class ClientDragonRender
 								}
 							}
 						}
-						if(player != mc.player || !Minecraft.getInstance().options.getCameraType().isFirstPerson() || !ClientFlightHandler.canGlide(player)) {
+						if(player != mc.player || !Minecraft.getInstance().options.getCameraType().isFirstPerson() || !ServerFlightHandler.canGlide(player)) {
 							dragonRenderer.render(dummyDragon, yaw, partialRenderTick, matrixStack, renderTypeBuffer, eventLight);
 						}
 	                }

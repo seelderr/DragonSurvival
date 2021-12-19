@@ -6,8 +6,8 @@ import by.jackraidenph.dragonsurvival.emotes.Emote;
 import by.jackraidenph.dragonsurvival.gecko.AnimationTimer;
 import by.jackraidenph.dragonsurvival.gecko.CommonTraits;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.ClientEvents;
-import by.jackraidenph.dragonsurvival.handlers.ClientSide.ClientFlightHandler;
 import by.jackraidenph.dragonsurvival.handlers.DragonSizeHandler;
+import by.jackraidenph.dragonsurvival.handlers.ServerSide.ServerFlightHandler;
 import by.jackraidenph.dragonsurvival.magic.abilities.Actives.BreathAbilities.BreathAbility;
 import by.jackraidenph.dragonsurvival.magic.common.AbilityAnimation;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
@@ -150,7 +150,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                            && !player.isOnGround() && !player.isInWater()
                            && !player.isInLava() && playerStateHandler.hasWings()) {
                     
-                    if (ClientFlightHandler.canGlide(player)) {
+                    if (ServerFlightHandler.canGlide(player)) {
                         neckLocked = true;
                         if(playerStateHandler.getMovementData().bite || spinTime > 0) {
                             if(spinTime == 0){
@@ -173,8 +173,8 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                         double landDuration = 2;
                         double preLandDuration = 1;
     
-                        double hoverLand = ClientFlightHandler.getLandTime(player, (landDuration + preLandDuration) * 20);
-                        double fullLand = ClientFlightHandler.getLandTime(player, landDuration * 20);
+                        double hoverLand = ServerFlightHandler.getLandTime(player, (landDuration + preLandDuration) * 20);
+                        double fullLand = ServerFlightHandler.getLandTime(player, landDuration * 20);
     
                         if(player.isShiftKeyDown() && fullLand != -1 && player.getDeltaMovement().length() < 4) {
                             neckLocked = true;

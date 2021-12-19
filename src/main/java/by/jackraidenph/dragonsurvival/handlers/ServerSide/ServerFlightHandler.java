@@ -1,13 +1,17 @@
 package by.jackraidenph.dragonsurvival.handlers.ServerSide;
 
+import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.ClientFlightHandler;
 import by.jackraidenph.dragonsurvival.network.status.SyncFlyingStatus;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.gen.Heightmap.Type;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
@@ -107,4 +111,31 @@ public class ServerFlightHandler {
             }
         });
     }
+	
+	public static double getLandTime(PlayerEntity playerEntity, double goalTime)
+	{
+	    DragonStateHandler dragonStateHandler = DragonStateProvider.getCap(playerEntity).orElse(null);
+	    if (dragonStateHandler != null && dragonStateHandler.isDragon()) {
+	        if (dragonStateHandler.isFlying()) {
+	            Vector3d motion = playerEntity.getDeltaMovement();
+	            BlockPos blockHeight = playerEntity.level.getHeightmapPos(Type.MOTION_BLOCKING, playerEntity.blockPosition());
+	            int height = blockHeight.getY();
+	            double aboveGround = Math.max(0, playerEntity.position().y - height);
+	            double timeToGround = (aboveGround / Math.abs(motion.y));
+	            if(playerEntity.fallDistance > 5 && motion.y < 0) {
+	                if (aboveGround < 20 && timeToGround <= goalTime) {
+	                    return timeToGround;
+	                }
+	            }
+	        }
+	    }
+	    return -1;
+	}
+	
+	public static boolean canGlide(PlayerEntity player){
+	    DragonStateHandler dragonStateHandler = DragonStateProvider.getCap(player).orElse(null);
+	    boolean hasFood = player.getFoodData().getFoodLevel() > ConfigHandler.SERVER.flightHungerThreshold.get() || player.isCreative() || ConfigHandler.SERVER.allowFlyingWithoutHunger.get();
+	    boolean flight = dragonStateHandler != null && dragonStateHandler.isFlying() && !player.isOnGround() && !player.isInWater() && !player.isInLava();
+	    return hasFood && player.isSprinting() && flight;
+	}
 }

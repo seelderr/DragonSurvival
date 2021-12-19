@@ -15,11 +15,9 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.MovementInput;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.gen.Heightmap.Type;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityViewRenderEvent.CameraSetup;
 import net.minecraftforge.client.event.InputEvent;
@@ -41,33 +39,6 @@ public class ClientFlightHandler {
      * Acceleration
      */
     static double ax, ay, az;
-
-    public static boolean canGlide(PlayerEntity player){
-        DragonStateHandler dragonStateHandler = DragonStateProvider.getCap(player).orElse(null);
-        boolean hasFood = player.getFoodData().getFoodLevel() > ConfigHandler.SERVER.flightHungerThreshold.get() || player.isCreative() || ConfigHandler.SERVER.allowFlyingWithoutHunger.get();
-        boolean flight = dragonStateHandler != null && dragonStateHandler.isFlying() && !player.isOnGround() && !player.isInWater() && !player.isInLava();
-        return hasFood && player.isSprinting() && flight;
-    }
-    
-    public static double getLandTime(PlayerEntity playerEntity, double goalTime)
-    {
-        DragonStateHandler dragonStateHandler = DragonStateProvider.getCap(playerEntity).orElse(null);
-        if (dragonStateHandler != null && dragonStateHandler.isDragon()) {
-            if (dragonStateHandler.isFlying()) {
-                Vector3d motion = playerEntity.getDeltaMovement();
-                BlockPos blockHeight = playerEntity.level.getHeightmapPos(Type.MOTION_BLOCKING, playerEntity.blockPosition());
-                int height = blockHeight.getY();
-                double aboveGround = Math.max(0, playerEntity.position().y - height);
-                double timeToGround = (aboveGround / Math.abs(motion.y));
-                if(playerEntity.fallDistance > 5 && motion.y < 0) {
-                    if (aboveGround < 20 && timeToGround <= goalTime) {
-                        return timeToGround;
-                    }
-                }
-            }
-        }
-        return -1;
-    }
     
     @SubscribeEvent
     public static void flightCamera(CameraSetup setup){
@@ -78,7 +49,7 @@ public class ClientFlightHandler {
             DragonStateHandler dragonStateHandler = DragonStateProvider.getCap(currentPlayer).orElse(null);
     
             if (dragonStateHandler != null) {
-                if (dragonStateHandler.isDragon() && dragonStateHandler.isFlying() && canGlide(currentPlayer)) {
+                if (dragonStateHandler.isDragon() && dragonStateHandler.isFlying() && ServerFlightHandler.canGlide(currentPlayer)) {
                     if (setup.getInfo().isDetached()) {
                 
                         Vector3d lookVec = currentPlayer.getLookAngle();
@@ -122,14 +93,14 @@ public class ClientFlightHandler {
                             ModifiableAttributeInstance gravity = playerEntity.getAttribute(net.minecraftforge.common.ForgeMod.ENTITY_GRAVITY.get());
                             double g = gravity.getValue();
                             
-                            if(canGlide(playerEntity)){
+                            if(ServerFlightHandler.canGlide(playerEntity)){
                                 if(!wasGliding){
                                     Minecraft.getInstance().getSoundManager().play(new FastGlideSound(currentPlayer));
                                     wasGliding = true;
                                 }
                             }
                             
-                            if(canGlide(playerEntity) || (ax != 0 || az != 0)) {
+                            if(ServerFlightHandler.canGlide(playerEntity) || (ax != 0 || az != 0)) {
                                 motion = playerEntity.getDeltaMovement().add(0.0D, g * (-1.0D + (double)f3 * 0.75D), 0.0D);
     
                                 if (motion.y < 0.0D && d9 > 0.0D) {
@@ -159,7 +130,7 @@ public class ClientFlightHandler {
                                 ax = MathHelper.clamp(ax, -0.2 * speedLimit, 0.2 * speedLimit);
                                 az = MathHelper.clamp(az, -0.2 * speedLimit, 0.2 * speedLimit);
                                 
-                                if(canGlide(playerEntity)) {
+                                if(ServerFlightHandler.canGlide(playerEntity)) {
                                     if (lookY < 0) {
                                         motion = motion.add(ax, 0, az);
                                     } else {
@@ -177,7 +148,7 @@ public class ClientFlightHandler {
                                 //end
                             }
                             
-                            if(!canGlide(playerEntity)){
+                            if(!ServerFlightHandler.canGlide(playerEntity)){
                                 wasGliding = false;
                                 double maxForward = 0.5;
     
