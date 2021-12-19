@@ -33,16 +33,20 @@ public class ServerFlightHandler {
         
         DragonStateProvider.getCap(livingEntity).ifPresent(dragonStateHandler -> {
             if(dragonStateHandler.isDragon()) {
-    
+                if(!ConfigHandler.SERVER.enableFlightFallDamage.get()){
+                    event.setCanceled(true);
+                }
+                
                 if (dragonStateHandler.isFlying() && !livingEntity.isSprinting()
-                    || !ConfigHandler.SERVER.enableFlightFallDamage.get()
-                    || flightSpeed < 0.08){
+                    && flightSpeed < 1){
                     event.setCanceled(true);
                 }
     
                 if(!livingEntity.level.isClientSide) {
-                    dragonStateHandler.setFlying(false);
-                    NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> livingEntity), new SyncFlyingStatus(livingEntity.getId(), false));
+                    if(dragonStateHandler.isFlying()) {
+                        dragonStateHandler.setFlying(false);
+                        NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> livingEntity), new SyncFlyingStatus(livingEntity.getId(), false));
+                    }
                 }
             }
         });
@@ -60,7 +64,7 @@ public class ServerFlightHandler {
             } else if (ConfigHandler.SERVER.enableFlightFallDamage.get()) {
                 DragonStateProvider.getCap(livingEntity).ifPresent(dragonStateHandler -> {
                     if (dragonStateHandler.isDragon() && dragonStateHandler.isFlying()) {
-                        if (flightSpeed > 0.08 && livingEntity.isSprinting()) {
+                        if (flightSpeed > 0.08) {
                             double damage = flightSpeed * 35 * dragonStateHandler.getSize() / 20;
                             damage = MathHelper.clamp(damage, 0, livingEntity.getHealth() - 1);
                             event.setAmount((float) (damage));
@@ -89,10 +93,13 @@ public class ServerFlightHandler {
                 
                 if (wingsSpread) {
                     if (ConfigHandler.SERVER.flyingUsesHunger.get()) {
-                        if (!playerTickEvent.player.isOnGround()) {
+                        if (!playerTickEvent.player.isOnGround() && !playerTickEvent.player.isInWater() && !playerTickEvent.player.isInLava()) {
                             Vector3d delta = playerTickEvent.player.getDeltaMovement();
-                            float l = Math.round(MathHelper.sqrt(delta.x * delta.x + delta.y * delta.y + delta.z * delta.z));
-                            float exhaustion = ConfigHandler.SERVER.creativeFlight.get() ? (playerTickEvent.player.abilities.flying ?  playerTickEvent.player.flyingSpeed : 0F) : (0.005F * l);
+                            double l = delta.length();
+                            if(delta.x == 0 && delta.y == 0){
+                                l *= 2;
+                            }
+                            float exhaustion = ConfigHandler.SERVER.creativeFlight.get() ? (playerTickEvent.player.abilities.flying ?  playerTickEvent.player.flyingSpeed : 0F) : (float)(0.005F * l);
                             playerTickEvent.player.causeFoodExhaustion(exhaustion);
                         }
                     }

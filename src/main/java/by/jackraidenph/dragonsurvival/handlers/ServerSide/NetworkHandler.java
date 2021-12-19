@@ -69,8 +69,9 @@ public class NetworkHandler
 		
 		 register(SyncGrowthState.class, new SyncGrowthState());
 		 register(SyncSize.class, new SyncSize());
-		 register(SyncFlyingStatus.class, new SyncFlyingStatus());
 		 register(DiggingStatus.class, new DiggingStatus());
+		 register(SyncFlyingStatus.class, new SyncFlyingStatus());
+		 register(SyncFlightSpeed.class, new SyncFlightSpeed());
 		
 		 register(DragonHitboxAttacked.class, new DragonHitboxAttacked());
 		
