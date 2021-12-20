@@ -108,7 +108,7 @@ public class ServerFlightHandler {
 		PlayerEntity player = playerTickEvent.player;
 		DragonStateProvider.getCap(player).ifPresent(handler -> {
 			if(handler.isDragon()) {
-				if(isSpin(player)){
+				if(handler.getMovementData().spinAttack > 0){
 					if(!handler.isFlying() || player.isOnGround() || player.isInLava() || player.isInWater()){
 						if(!player.level.isClientSide){
 							handler.getMovementData().spinAttack = 0;
@@ -148,10 +148,12 @@ public class ServerFlightHandler {
 					
 				}else if(handler.getMovementData().bite && handler.getMovementData().spinCooldown <= 0){
 					//Do Spin
-					if(!player.level.isClientSide){
-						handler.getMovementData().spinAttack = spinDuration;
-						handler.getMovementData().spinCooldown = ConfigHandler.SERVER.flightSpinCooldown.get() * 20;
-						NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncSpinStatus(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown));
+					if(handler.isFlying() && !player.isOnGround() && !player.isInLava() && !player.isInWater()) {
+						if (!player.level.isClientSide) {
+							handler.getMovementData().spinAttack = spinDuration;
+							handler.getMovementData().spinCooldown = ConfigHandler.SERVER.flightSpinCooldown.get() * 20;
+							NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncSpinStatus(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown));
+						}
 					}
 				}
 			}

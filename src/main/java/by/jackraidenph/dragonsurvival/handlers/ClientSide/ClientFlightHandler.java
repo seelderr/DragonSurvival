@@ -76,7 +76,10 @@ public class ClientFlightHandler {
             return;
         
         DragonStateProvider.getCap(playerEntity).ifPresent(cap -> {
-            event.getType();
+            if(!cap.isFlying() || playerEntity.isOnGround() || playerEntity.isInWater() || playerEntity.isInLava()){
+                return;
+            }
+            
             if(cap.getMovementData().spinCooldown > 0) {
                 GL11.glPushMatrix();
 
