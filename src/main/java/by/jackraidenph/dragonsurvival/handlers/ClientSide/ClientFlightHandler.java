@@ -49,7 +49,7 @@ public class ClientFlightHandler {
             DragonStateHandler dragonStateHandler = DragonStateProvider.getCap(currentPlayer).orElse(null);
     
             if (dragonStateHandler != null) {
-                if (dragonStateHandler.isDragon() && dragonStateHandler.isFlying() && ServerFlightHandler.canGlide(currentPlayer)) {
+                if (dragonStateHandler.isDragon() && dragonStateHandler.isFlying() && ServerFlightHandler.isGliding(currentPlayer)) {
                     if (setup.getInfo().isDetached()) {
                 
                         Vector3d lookVec = currentPlayer.getLookAngle();
@@ -93,14 +93,14 @@ public class ClientFlightHandler {
                             ModifiableAttributeInstance gravity = playerEntity.getAttribute(net.minecraftforge.common.ForgeMod.ENTITY_GRAVITY.get());
                             double g = gravity.getValue();
                             
-                            if(ServerFlightHandler.canGlide(playerEntity)){
+                            if(ServerFlightHandler.isGliding(playerEntity)){
                                 if(!wasGliding){
                                     Minecraft.getInstance().getSoundManager().play(new FastGlideSound(currentPlayer));
                                     wasGliding = true;
                                 }
                             }
                             
-                            if(ServerFlightHandler.canGlide(playerEntity) || (ax != 0 || az != 0)) {
+                            if(ServerFlightHandler.isGliding(playerEntity) || (ax != 0 || az != 0)) {
                                 motion = playerEntity.getDeltaMovement().add(0.0D, g * (-1.0D + (double)f3 * 0.75D), 0.0D);
     
                                 if (motion.y < 0.0D && d9 > 0.0D) {
@@ -129,15 +129,21 @@ public class ClientFlightHandler {
                                 double speedLimit = ConfigHandler.SERVER.maxFlightSpeed.get();
                                 ax = MathHelper.clamp(ax, -0.2 * speedLimit, 0.2 * speedLimit);
                                 az = MathHelper.clamp(az, -0.2 * speedLimit, 0.2 * speedLimit);
+    
+                                if(dragonStateHandler.getMovementData().bite){
+                                    ax += (Math.cos(yaw) / 500) * 100;
+                                    az += (Math.sin(yaw) / 500) * 100;
+                                    ay = lookVec.y / 8;
+                                }
                                 
-                                if(ServerFlightHandler.canGlide(playerEntity)) {
+                                if(ServerFlightHandler.isGliding(playerEntity)) {
                                     if (lookY < 0) {
                                         motion = motion.add(ax, 0, az);
                                     } else {
                                         motion = motion.add(ax, ay, az);
                                     }
                                     motion = motion.multiply(0.99F, 0.98F, 0.99F);
-    
+                                    
                                     if (motion.length() != playerEntity.getDeltaMovement().length()) {
                                         NetworkHandler.CHANNEL.sendToServer(new SyncFlightSpeed(playerEntity.getId(), motion));
                                     }
@@ -148,7 +154,7 @@ public class ClientFlightHandler {
                                 //end
                             }
                             
-                            if(!ServerFlightHandler.canGlide(playerEntity)){
+                            if(!ServerFlightHandler.isGliding(playerEntity)){
                                 wasGliding = false;
                                 double maxForward = 0.5;
     
@@ -158,6 +164,13 @@ public class ClientFlightHandler {
                                 double lookY = lookVec.y;
     
                                 boolean moving = movement.up || movement.down || movement.left || movement.right;
+                                double yaw = Math.toRadians(playerEntity.yHeadRot + 90);
+    
+                                if(dragonStateHandler.getMovementData().bite){
+                                    ax += (Math.cos(yaw) / 500) * 200;
+                                    az += (Math.sin(yaw) / 500) * 200;
+                                    ay = lookVec.y / 8;
+                                }
                                 
                                 if(moving && !movement.jumping && !movement.shiftKeyDown){
                                     maxForward = 0.8;
@@ -172,7 +185,7 @@ public class ClientFlightHandler {
                                     az *= 0.9F;
                                     
                                     motion = new Vector3d(motion.x, -(g * 2) + motion.y, motion.z);
-    
+                                    
                                     if(motion.length() != playerEntity.getDeltaMovement().length()){
                                         NetworkHandler.CHANNEL.sendToServer(new SyncFlightSpeed(playerEntity.getId(), motion));
                                     }
@@ -186,6 +199,10 @@ public class ClientFlightHandler {
                                 motion = new Vector3d(MathHelper.clamp(motion.x, -maxForward, maxForward), 0, MathHelper.clamp(motion.z, -maxForward, maxForward));
     
                                 motion = motion.add(ax, ay, az);
+    
+                                if(dragonStateHandler.getMovementData().bite){
+                                    motion.multiply(10, 10, 10);
+                                }
     
                                 ax *= 0.9F;
                                 ay *= 0.9F;
@@ -201,7 +218,7 @@ public class ClientFlightHandler {
                                     playerEntity.setDeltaMovement(motion);
                                     return;
                                 }else if(movement.shiftKeyDown){
-                                    motion = new Vector3d(motion.x, -0.8 + motion.y, motion.z);
+                                    motion = new Vector3d(motion.x, -0.5 + motion.y, motion.z);
                                     if(motion.length() != playerEntity.getDeltaMovement().length()){
                                         NetworkHandler.CHANNEL.sendToServer(new SyncFlightSpeed(playerEntity.getId(), motion));
                                     }

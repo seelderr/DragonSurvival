@@ -1,5 +1,6 @@
 package by.jackraidenph.dragonsurvival.gui.buttons;
 
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.gui.SkinsScreen;
 import by.jackraidenph.dragonsurvival.gui.magic.AbilityScreen;
 import by.jackraidenph.dragonsurvival.gui.DragonScreen;
@@ -101,8 +102,12 @@ public class TabButton extends Button
 						}
 					}
 					
-					Minecraft.getInstance().setScreen(new InventoryScreen(Minecraft.getInstance().player));
-					NetworkHandler.CHANNEL.sendToServer(new OpenInventory());
+					if(ConfigHandler.CLIENT.dragonInventory.get()){
+						NetworkHandler.CHANNEL.sendToServer(new OpenDragonInventory());
+					}else {
+						Minecraft.getInstance().setScreen(new InventoryScreen(Minecraft.getInstance().player));
+						NetworkHandler.CHANNEL.sendToServer(new OpenInventory());
+					}
 					break;
 				
 				case 1:

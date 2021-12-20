@@ -156,7 +156,7 @@ public class ActiveDragonAbility extends DragonAbility
             return false;
         }
     
-        if(getCastingSlowness() >= 10 || ServerFlightHandler.canGlide(player)){
+        if(getCastingSlowness() >= 10 || ServerFlightHandler.isGliding(player)){
             if(handler.isFlying() && player.isFallFlying()
                || (!player.isOnGround() && player.fallDistance > 0.15F)){
                 if(keyMode == GLFW.GLFW_PRESS) {

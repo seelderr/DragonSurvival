@@ -5,9 +5,11 @@ import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.ClientFlightHandler;
 import by.jackraidenph.dragonsurvival.network.status.SyncFlyingStatus;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
@@ -19,6 +21,8 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.network.PacketDistributor;
+
+import java.util.List;
 
 /**
  * Used in pair with {@link ClientFlightHandler}
@@ -80,7 +84,29 @@ public class ServerFlightHandler {
             }
         }
     }
-    
+	
+	@SubscribeEvent
+	public static void playerFlightAttacks(TickEvent.PlayerTickEvent playerTickEvent) {
+		if(playerTickEvent.phase == Phase.START) return;
+		PlayerEntity player = playerTickEvent.player;
+		DragonStateProvider.getCap(player).ifPresent(handler -> {
+			if(handler.isDragon() && handler.isFlying()) {
+				if(!player.isOnGround() && !player.isInLava() && !player.isInWater()){
+					if(handler.getMovementData().bite){
+						int range = 3;
+						List<Entity> entities = player.level.getEntities(null, new AxisAlignedBB(player.position().x - range, player.position().y - range, player.position().z - range, player.position().x + range, player.position().y + range, player.position().z + range));
+						entities.removeIf((e) -> e.distanceTo(player) > range);
+						entities.remove(player);
+						
+						for(Entity ent : entities){
+							player.attack(ent);
+						}
+					}
+				}
+			}
+		});
+	}
+	
     @SubscribeEvent
     public static void playerFoodExhaustion(TickEvent.PlayerTickEvent playerTickEvent) {
         if(playerTickEvent.phase == Phase.START) return;
@@ -132,7 +158,7 @@ public class ServerFlightHandler {
 	    return -1;
 	}
 	
-	public static boolean canGlide(PlayerEntity player){
+	public static boolean isGliding(PlayerEntity player){
 	    DragonStateHandler dragonStateHandler = DragonStateProvider.getCap(player).orElse(null);
 	    boolean hasFood = player.getFoodData().getFoodLevel() > ConfigHandler.SERVER.flightHungerThreshold.get() || player.isCreative() || ConfigHandler.SERVER.allowFlyingWithoutHunger.get();
 	    boolean flight = dragonStateHandler != null && dragonStateHandler.isFlying() && !player.isOnGround() && !player.isInWater() && !player.isInLava();

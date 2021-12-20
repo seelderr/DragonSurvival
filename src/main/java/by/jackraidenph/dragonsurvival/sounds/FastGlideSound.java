@@ -20,7 +20,7 @@ public class FastGlideSound extends ElytraSound
 	
 	public void tick() {
 		++this.time;
-		if (!this.player.removed && (this.time <= 20 || ServerFlightHandler.canGlide(player))) {
+		if (!this.player.removed && (this.time <= 20 || ServerFlightHandler.isGliding(player))) {
 			this.x = (double)((float)this.player.getX());
 			this.y = (double)((float)this.player.getY());
 			this.z = (double)((float)this.player.getZ());

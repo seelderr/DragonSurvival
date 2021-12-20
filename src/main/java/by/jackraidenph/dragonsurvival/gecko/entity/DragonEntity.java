@@ -133,6 +133,10 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                 Vector3d motio = new Vector3d(player.getX() - player.xo, player.getY() - player.yo, player.getZ() - player.zo);
                 boolean isMovingHorizontal = Math.sqrt(Math.pow(motio.x, 2) + Math.pow(motio.z, 2)) > 0.005;
                 
+                if(!playerStateHandler.isFlying() || player.isOnGround() || player.isInWater() || player.isInLava()){
+                    spinTime = 0;
+                }
+                
                 // Main
                 if (player.isSleeping()) {
                     builder.addAnimation("sleep", true);
@@ -150,7 +154,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                            && !player.isOnGround() && !player.isInWater()
                            && !player.isInLava() && playerStateHandler.hasWings()) {
                     
-                    if (ServerFlightHandler.canGlide(player)) {
+                    if (ServerFlightHandler.isGliding(player)) {
                         neckLocked = true;
                         if(playerStateHandler.getMovementData().bite || spinTime > 0) {
                             if(spinTime == 0){

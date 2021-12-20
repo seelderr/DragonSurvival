@@ -306,6 +306,8 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
         this.imageWidth = 203;
         this.imageHeight = 166;
         super.init();
+    
+        this.leftPos = (this.width - this.imageWidth) / 2;
         
         DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
     
@@ -316,7 +318,6 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
         
         addButton(new Button(leftPos + 27, topPos + 10, 11, 11, new StringTextComponent(""), p_onPress_1_ -> {
             clawsMenu = !clawsMenu;
-            this.leftPos += (clawsMenu ? 80 : -80);
             buttons.clear();
             init();
             

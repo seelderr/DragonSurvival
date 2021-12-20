@@ -4,6 +4,7 @@ import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.KeyInputHandler;
+import by.jackraidenph.dragonsurvival.handlers.ServerSide.ServerFlightHandler;
 import by.jackraidenph.dragonsurvival.handlers.SpecificsHandler;
 import by.jackraidenph.dragonsurvival.magic.common.AbilityAnimation;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
@@ -80,6 +81,11 @@ public abstract class BreathAbility extends ActiveDragonAbility
 	@Override
 	public void onActivation(PlayerEntity player)
 	{
+		if(ServerFlightHandler.isGliding(player)){
+			stopCasting();
+			return;
+		}
+		
 		castingTicks++;
 		
 		DragonStateHandler playerStateHandler = DragonStateProvider.getCap(player).orElseGet(null);

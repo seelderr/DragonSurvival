@@ -270,7 +270,7 @@ public class DragonStateHandler {
 		double reachMod = 1 + ((size / 60.0) * (ConfigHandler.SERVER.reachBonus.get()));
 		
 		return new AttributeModifier(
-				HEALTH_MODIFIER_UUID,
+				REACH_MODIFIER_UUID,
 				"Dragon Reach Adjustment",
 				reachMod,
 				Operation.MULTIPLY_TOTAL

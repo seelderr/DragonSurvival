@@ -26,7 +26,6 @@ import net.minecraft.client.renderer.entity.layers.ParrotVariantLayer;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
@@ -79,7 +78,7 @@ public class ClientDragonRender
 	@SubscribeEvent
 	public static void thirdPersonPreRender(RenderPlayerEvent.Pre renderPlayerEvent) {
 	
-	    PlayerEntity player = renderPlayerEvent.getPlayer();
+	    ClientPlayerEntity player = (ClientPlayerEntity)renderPlayerEvent.getPlayer();
 	    Minecraft mc = Minecraft.getInstance();
 		
 	    if (!playerDragonHashMap.containsKey(player.getId())) {
@@ -143,9 +142,21 @@ public class ClientDragonRender
 		            gameRenderer.setZoom(1.0F);
 					
 		            if (!player.isInvisible()) {
-						if(ServerFlightHandler.canGlide(player) && cap.isFlying() && !player.isOnGround() && !player.isInLava() && !player.isInWater()){
+						if(ServerFlightHandler.isGliding(player) && cap.isFlying() && !player.isOnGround() && !player.isInLava() && !player.isInWater()){
 							matrixStack.mulPose(Vector3f.XN.rotationDegrees((float)(player.getDeltaMovement().y * 20)));
 							
+							
+							Vector3d vector3d1 = player.getDeltaMovement();
+							Vector3d vector3d = player.getViewVector(1f);
+							double d0 = Entity.getHorizontalDistanceSqr(vector3d1);
+							double d1 = Entity.getHorizontalDistanceSqr(vector3d);
+							double d2 = (vector3d1.x * vector3d.x + vector3d1.z * vector3d.z) / Math.sqrt(d0 * d1);
+							double d3 = vector3d1.x * vector3d.z - vector3d1.z * vector3d.x;
+							
+							if(player.getDeltaMovement().length() >= 0.5) {
+								matrixStack.mulPose(Vector3f.ZP.rotation(((float)(Math.signum(d3) * Math.acos(d2))) * 2));
+							}
+
 							if(ConfigHandler.CLIENT.flightZoomEffect.get()) {
 								if (player == mc.player) {
 									if (!Minecraft.getInstance().options.getCameraType().isFirstPerson()) {
@@ -156,7 +167,7 @@ public class ClientDragonRender
 								}
 							}
 						}
-						if(player != mc.player || !Minecraft.getInstance().options.getCameraType().isFirstPerson() || !ServerFlightHandler.canGlide(player)) {
+						if(player != mc.player || !Minecraft.getInstance().options.getCameraType().isFirstPerson() || !ServerFlightHandler.isGliding(player)) {
 							dragonRenderer.render(dummyDragon, yaw, partialRenderTick, matrixStack, renderTypeBuffer, eventLight);
 						}
 	                }
