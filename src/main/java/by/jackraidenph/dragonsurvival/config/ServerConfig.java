@@ -148,6 +148,7 @@ public class ServerConfig {
 	public final ForgeConfigSpec.IntValue stormBreathOvertimeMana;
 	public final ForgeConfigSpec.IntValue stormBreathManaTicks;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> stormBreathBlockBreaks;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> chargedBlacklist;
 	
 	
 	public final ForgeConfigSpec.BooleanValue forestBreath;
@@ -1185,6 +1186,13 @@ public class ServerConfig {
 							"tag:minecraft:replaceable_plants",
 							"tag:minecraft:leaves"
 							), this::isValidBlockConfig);
+			
+			chargedBlacklist = builder
+					.comment("List of entities that do not work with the charged effect. Format: modid:id")
+					.defineList("chargedBlacklist", Arrays.asList(
+							"upgrade_aquatic:thrasher",
+							"upgrade_aquatic:great_thrasher"
+					), value -> value instanceof String);
 		}
 		
 		{

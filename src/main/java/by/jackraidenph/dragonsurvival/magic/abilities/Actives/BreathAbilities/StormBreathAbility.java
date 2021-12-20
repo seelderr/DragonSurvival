@@ -267,7 +267,16 @@ public class StormBreathAbility extends BreathAbility
 		secondaryTargets.add(source);
 		
 		for(LivingEntity target : secondaryTargets){
-			target.hurt(DamageSource.mobAttack(source), damage);
+			boolean damaged = false;
+			if(target != null && target.getType() != null && target.getType().getRegistryType() != null) {
+				if (ConfigHandler.SERVER.chargedBlacklist.get().contains(target.getType().getRegistryName().toString())) {
+					target.hurt(DamageSource.GENERIC, damage);
+					damaged = true;
+				}
+			}
+			if(!damaged) {
+				target.hurt(DamageSource.mobAttack(source), damage);
+			}
 			onDamageChecks(target);
 			
 			if(target != source) {
