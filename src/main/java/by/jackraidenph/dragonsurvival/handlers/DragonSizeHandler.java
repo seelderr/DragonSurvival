@@ -41,53 +41,54 @@ public class DragonSizeHandler {
     		eyeHeight = calculateModifiedEyeHeight(eyeHeight, overridePose);
     		// Apply changes
 			event.setNewEyeHeight((float)eyeHeight);
-    		event.setNewSize(new EntitySize((float)(width), (float)height, false));
+			// Rounding solves floating point issues that caused the dragon to get stuck inside a block at times.
+    		event.setNewSize(new EntitySize((float)(Math.ceil(width * 100.0D) / 100.0D), (float)(Math.ceil(height * 100.0D) / 100.0D), false));
     		}
         });
     }
 	
     
 	public static double calculateDragonHeight(double size, boolean growsPastHuman) {
-		double height = (size + 4.0F) / 20.0F; // 0.9 -> 2.2
+		double height = (size + 4.0D) / 20.0D; // 0.9 -> Config Dragon Max
 		if (!growsPastHuman)
-			height = 9F * (size + 12F) / 260F; // 0.9 -> 1.8
+			height = 0.9D + 0.9D * (size - 14.0D) / (ConfigHandler.SERVER.maxGrowthSize.get() - 14.0D); // 0.9 -> 1.8 (Min to Human Max)
 		return height;
 	}
 
 	public static double calculateDragonWidth(double size, boolean growsPastHuman) {
-		double width = (3.0F * size + 62.0F) / 260.0F; // 0.4 -> 0.7
+		double width = (3.0D * size + 62.0D) / 260.0D; // 0.4 -> Config Dragon Max
 		if (!growsPastHuman)
-			width = (size + 38) / 130F; // 0.4 -> 0.6
+			width = 0.4D + 0.2D * (size - 14.0D) / (ConfigHandler.SERVER.maxGrowthSize.get() - 14.0D); // 0.4 -> 0.6 (Min to Human Max)
 		return width;
 	}
 
 	public static double calculateDragonEyeHeight(double size, boolean growsPastHuman) {
-		double eyeHeight = (11.0F * size + 54.0F) / 260.0F; // 0.8 -> 1.9
+		double eyeHeight = (11.0D * size + 54.0D) / 260.0D; // 0.8 -> Config Dragon Max
 		if (!growsPastHuman)
-			eyeHeight = (41F * size + 466F) / 1300F; // 14, 0.8 -> 40, 1.62
+			eyeHeight = 0.8D + 0.8D * (size - 14.0D) / (ConfigHandler.SERVER.maxGrowthSize.get() - 14.0D); // 0.8 -> 1.6 (Min to Human Max)
 		return eyeHeight;
 	}
 
 	public static double calculateModifiedHeight(double height, Pose pose, boolean sizeChangesHitbox) {
     	if (pose == Pose.CROUCHING) {
     		if (sizeChangesHitbox)
-    			height *= 5.0F / 6.0F;
+    			height *= 5.0D / 6.0D;
     		else
-    			height = 1.5F;
+    			height = 1.5D;
 		} else if (pose == Pose.SWIMMING || pose == Pose.FALL_FLYING || pose == Pose.SPIN_ATTACK) {
 			if (sizeChangesHitbox)
-				height *= 7.0F / 12.0F;
+				height *= 7.0D / 12.0D;
 			else
-				height = 0.6F;
+				height = 0.6D;
 		}
     	return height;
     }
 
 	public static double calculateModifiedEyeHeight(double eyeHeight, Pose pose) {
     	if (pose == Pose.CROUCHING) {
-    		eyeHeight *= 5.0F / 6.0F;
+    		eyeHeight *= 5.0D / 6.0D;
 		} else if (pose == Pose.SWIMMING || pose == Pose.FALL_FLYING || pose == Pose.SPIN_ATTACK) {
-			eyeHeight *= 7.0F / 12.0F;
+			eyeHeight *= 7.0D / 12.0D;
 		}
     	return eyeHeight;
     }
