@@ -11,7 +11,6 @@ import by.jackraidenph.dragonsurvival.handlers.ServerSide.ServerFlightHandler;
 import by.jackraidenph.dragonsurvival.magic.abilities.Actives.BreathAbilities.BreathAbility;
 import by.jackraidenph.dragonsurvival.magic.common.AbilityAnimation;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Pose;
@@ -19,7 +18,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.HandSide;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import software.bernie.geckolib3.core.IAnimatable;
@@ -156,12 +154,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                     
                     if (ServerFlightHandler.isGliding(player)) {
                         neckLocked = true;
-                        if(playerStateHandler.getMovementData().bite || spinTime > 0) {
-                            if(spinTime == 0){
-                                spinTime = 0.85 * 20;
-                            }else{
-                                spinTime = MathHelper.clamp(spinTime - Minecraft.getInstance().getDeltaFrameTime(), 0, 20);
-                            }
+                        if(ServerFlightHandler.isSpin(player)) {
                             builder.addAnimation("fly_spin_fast", true);
                         }else if (player.getDeltaMovement().y < -1) {
                             builder.addAnimation("fly_dive_alt", true);
@@ -188,14 +181,8 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                             neckLocked = true;
                             builder.addAnimation("fly_land", false);
                         }else{
-                            if(playerStateHandler.getMovementData().bite || spinTime > 0) {
+                            if(ServerFlightHandler.isSpin(player)) {
                                 neckLocked = true;
-    
-                                if(spinTime == 0){
-                                    spinTime = 0.85 * 20;
-                                }else{
-                                    spinTime = MathHelper.clamp(spinTime - Minecraft.getInstance().getDeltaFrameTime(), 0, 50);
-                                }
                                 builder.addAnimation("fly_spin", true);
                             }else{
                                 builder.addAnimation("fly", true);

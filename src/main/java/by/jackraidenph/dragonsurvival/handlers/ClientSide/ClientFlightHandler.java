@@ -8,9 +8,13 @@ import by.jackraidenph.dragonsurvival.handlers.ServerSide.ServerFlightHandler;
 import by.jackraidenph.dragonsurvival.network.status.SyncFlightSpeed;
 import by.jackraidenph.dragonsurvival.network.status.SyncFlyingStatus;
 import by.jackraidenph.dragonsurvival.sounds.FastGlideSound;
+import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.client.gui.AbstractGui;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.renderer.ActiveRenderInfo;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.player.PlayerEntity;
@@ -21,10 +25,12 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityViewRenderEvent.CameraSetup;
 import net.minecraftforge.client.event.InputEvent;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.opengl.GL11;
 
 import java.util.concurrent.TimeUnit;
 
@@ -60,6 +66,37 @@ public class ClientFlightHandler {
                 }
             }
         }
+    }
+    
+    @SubscribeEvent
+    public static void renderAbilityHud(RenderGameOverlayEvent.Post event) {
+        PlayerEntity playerEntity = Minecraft.getInstance().player;
+        
+        if (playerEntity == null || !DragonStateProvider.isDragon(playerEntity) || playerEntity.isSpectator())
+            return;
+        
+        DragonStateProvider.getCap(playerEntity).ifPresent(cap -> {
+            event.getType();
+            if(cap.getMovementData().spinCooldown > 0) {
+                GL11.glPushMatrix();
+
+                TextureManager textureManager = Minecraft.getInstance().getTextureManager();
+                MainWindow window = Minecraft.getInstance().getWindow();
+                Minecraft.getInstance().getTextureManager().bind(AbstractGui.GUI_ICONS_LOCATION);
+    
+                int cooldown = ConfigHandler.SERVER.flightSpinCooldown.get() * 20;
+                float f = ((float)cooldown - (float)cap.getMovementData().spinCooldown) / (float)cooldown;
+                
+                int k = (window.getGuiScaledWidth() / 2) - 8;
+                int j = window.getGuiScaledHeight() - 96;
+    
+                int l = (int)(f * 17.0F);
+                Screen.blit(event.getMatrixStack(), k, j, 36, 94, 16, 4, 256, 256);
+                Screen.blit(event.getMatrixStack(), k, j, 52, 94, l, 4, 256, 256);
+
+                GL11.glPopMatrix();
+            }
+        });
     }
     
     public static boolean wasGliding = false;
@@ -130,7 +167,7 @@ public class ClientFlightHandler {
                                 ax = MathHelper.clamp(ax, -0.2 * speedLimit, 0.2 * speedLimit);
                                 az = MathHelper.clamp(az, -0.2 * speedLimit, 0.2 * speedLimit);
     
-                                if(dragonStateHandler.getMovementData().bite){
+                                if(ServerFlightHandler.isSpin(playerEntity)){
                                     ax += (Math.cos(yaw) / 500) * 100;
                                     az += (Math.sin(yaw) / 500) * 100;
                                     ay = lookVec.y / 8;
@@ -166,7 +203,7 @@ public class ClientFlightHandler {
                                 boolean moving = movement.up || movement.down || movement.left || movement.right;
                                 double yaw = Math.toRadians(playerEntity.yHeadRot + 90);
     
-                                if(dragonStateHandler.getMovementData().bite){
+                                if(ServerFlightHandler.isSpin(playerEntity)){
                                     ax += (Math.cos(yaw) / 500) * 200;
                                     az += (Math.sin(yaw) / 500) * 200;
                                     ay = lookVec.y / 8;

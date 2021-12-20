@@ -77,8 +77,11 @@ public class ClientDragonRender
 	@SuppressWarnings("unchecked,rawtypes")
 	@SubscribeEvent
 	public static void thirdPersonPreRender(RenderPlayerEvent.Pre renderPlayerEvent) {
-	
-	    ClientPlayerEntity player = (ClientPlayerEntity)renderPlayerEvent.getPlayer();
+		if(!(renderPlayerEvent.getPlayer() instanceof AbstractClientPlayerEntity)){
+			return;
+		}
+		
+		AbstractClientPlayerEntity player = (AbstractClientPlayerEntity)renderPlayerEvent.getPlayer();
 	    Minecraft mc = Minecraft.getInstance();
 		
 	    if (!playerDragonHashMap.containsKey(player.getId())) {
@@ -109,7 +112,7 @@ public class ClientDragonRender
 					
 		            double size = cap.getSize();
 	                float scale = (float)Math.max(size / 40, DragonLevel.BABY.maxWidth);
-	                String playerModelType = ((AbstractClientPlayerEntity) player).getModelName();
+	                String playerModelType = player.getModelName();
 	                LivingRenderer playerRenderer = ((AccessorEntityRendererManager) mc.getEntityRenderDispatcher()).getPlayerRenderers().get(playerModelType);
 	                int eventLight = renderPlayerEvent.getLight();
 	                final IRenderTypeBuffer renderTypeBuffer = renderPlayerEvent.getBuffers();

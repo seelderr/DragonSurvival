@@ -5,6 +5,7 @@ import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.ClientFlightHandler;
 import by.jackraidenph.dragonsurvival.network.status.SyncFlyingStatus;
+import by.jackraidenph.dragonsurvival.network.status.SyncSpinStatus;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -85,22 +86,72 @@ public class ServerFlightHandler {
         }
     }
 	
+	public static final int spinDuration = (int)Math.round(0.85 * 20);
+	
+	public static boolean isSpin(PlayerEntity entity){
+		DragonStateHandler handler = DragonStateProvider.getCap(entity).orElse(null);
+		
+		if(handler != null){
+			if(handler.isFlying() && !entity.isOnGround() && !entity.isInLava() && !entity.isInWater()){
+				if(handler.getMovementData().spinAttack > 0){
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+	
 	@SubscribeEvent
 	public static void playerFlightAttacks(TickEvent.PlayerTickEvent playerTickEvent) {
 		if(playerTickEvent.phase == Phase.START) return;
 		PlayerEntity player = playerTickEvent.player;
 		DragonStateProvider.getCap(player).ifPresent(handler -> {
-			if(handler.isDragon() && handler.isFlying()) {
-				if(!player.isOnGround() && !player.isInLava() && !player.isInWater()){
-					if(handler.getMovementData().bite){
-						int range = 3;
-						List<Entity> entities = player.level.getEntities(null, new AxisAlignedBB(player.position().x - range, player.position().y - range, player.position().z - range, player.position().x + range, player.position().y + range, player.position().z + range));
-						entities.removeIf((e) -> e.distanceTo(player) > range);
-						entities.remove(player);
-						
-						for(Entity ent : entities){
-							player.attack(ent);
+			if(handler.isDragon()) {
+				if(isSpin(player)){
+					if(!handler.isFlying() || player.isOnGround() || player.isInLava() || player.isInWater()){
+						if(!player.level.isClientSide){
+							handler.getMovementData().spinAttack = 0;
+							NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncSpinStatus(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown));
 						}
+					}
+				}
+				
+				if(isSpin(player)){
+					int range = 5;
+					List<Entity> entities = player.level.getEntities(null, new AxisAlignedBB(player.position().x - range, player.position().y - range, player.position().z - range, player.position().x + range, player.position().y + range, player.position().z + range));
+					entities.removeIf((e) -> e.distanceTo(player) > range);
+					entities.remove(player);
+					
+					for(Entity ent : entities){
+						if(ent instanceof LivingEntity){
+							LivingEntity entity = (LivingEntity)ent;
+							
+							//Dont hit the same mob multiple times
+							if(entity.getLastHurtByMob() == player && entity.getLastHurtByMobTimestamp() <= entity.tickCount + 5 * 20){
+								continue;
+							}
+						}
+						player.attack(ent);
+					}
+					
+					if(!player.level.isClientSide){
+						handler.getMovementData().spinAttack--;
+						NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncSpinStatus(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown));
+					}
+					
+				}else if(handler.getMovementData().spinCooldown > 0){
+					if(!player.level.isClientSide){
+						handler.getMovementData().spinCooldown--;
+						NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncSpinStatus(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown));
+					}
+					
+				}else if(handler.getMovementData().bite && handler.getMovementData().spinCooldown <= 0){
+					//Do Spin
+					if(!player.level.isClientSide){
+						handler.getMovementData().spinAttack = spinDuration;
+						handler.getMovementData().spinCooldown = ConfigHandler.SERVER.flightSpinCooldown.get() * 20;
+						NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncSpinStatus(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown));
 					}
 				}
 			}

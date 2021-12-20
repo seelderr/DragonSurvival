@@ -16,12 +16,16 @@ public class ServerConfig {
 	public final ForgeConfigSpec.BooleanValue mineStarBlock;
     public final ForgeConfigSpec.BooleanValue sizeChangesHitbox;
     public final ForgeConfigSpec.BooleanValue hitboxGrowsPastHuman;
+	
 	public final ForgeConfigSpec.BooleanValue startWithWings;
 	public final ForgeConfigSpec.BooleanValue enableFlightFallDamage;
 	public final ForgeConfigSpec.IntValue flightHungerThreshold;
 	public final ForgeConfigSpec.BooleanValue allowFlyingWithoutHunger;
 	public final ForgeConfigSpec.BooleanValue flyingUsesHunger;
 	public final ForgeConfigSpec.BooleanValue creativeFlight;
+	public final ForgeConfigSpec.IntValue flightSpinCooldown;
+	
+	
 	public final ForgeConfigSpec.IntValue altarUsageCooldown;
 	public final ForgeConfigSpec.DoubleValue newbornJump;
 	public final ForgeConfigSpec.DoubleValue youngJump;
@@ -311,7 +315,10 @@ public class ServerConfig {
 		creativeFlight = builder
 				.comment("Whether to use flight similar to creative rather then gliding.")
 				.define("alternateFlight", false);
-
+		flightSpinCooldown = builder
+				.comment("The cooldown in seconds in between uses of the spin attack in flight")
+				.defineInRange("flightSpinCooldown", 5, 0, 100000);
+		
 		// Innate dragon bonuses
 		builder.pop().push("bonuses");
 		healthAdjustments = builder
