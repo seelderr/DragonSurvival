@@ -86,21 +86,6 @@ public class ServerFlightHandler {
         }
     }
 	
-	public static final int spinDuration = (int)Math.round(0.85 * 20);
-	
-	public static boolean isSpin(PlayerEntity entity){
-		DragonStateHandler handler = DragonStateProvider.getCap(entity).orElse(null);
-		
-		if(handler != null){
-			if(handler.isFlying() && !entity.isOnGround() && !entity.isInLava() && !entity.isInWater()){
-				if(handler.getMovementData().spinAttack > 0){
-					return true;
-				}
-			}
-		}
-		
-		return false;
-	}
 	
 	@SubscribeEvent
 	public static void playerFlightAttacks(TickEvent.PlayerTickEvent playerTickEvent) {
@@ -109,7 +94,7 @@ public class ServerFlightHandler {
 		DragonStateProvider.getCap(player).ifPresent(handler -> {
 			if(handler.isDragon()) {
 				if(handler.getMovementData().spinAttack > 0){
-					if(!handler.isFlying() || player.isOnGround() || player.isInLava() || player.isInWater()){
+					if(!isFlying(player)){
 						if(!player.level.isClientSide){
 							handler.getMovementData().spinAttack = 0;
 							NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncSpinStatus(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown));
@@ -148,7 +133,7 @@ public class ServerFlightHandler {
 					
 				}else if(handler.getMovementData().bite && handler.getMovementData().spinCooldown <= 0){
 					//Do Spin
-					if(handler.isFlying() && !player.isOnGround() && !player.isInLava() && !player.isInWater()) {
+					if(isFlying(player)) {
 						if (!player.level.isClientSide) {
 							handler.getMovementData().spinAttack = spinDuration;
 							handler.getMovementData().spinCooldown = ConfigHandler.SERVER.flightSpinCooldown.get() * 20;
@@ -168,7 +153,7 @@ public class ServerFlightHandler {
             if(dragonStateHandler.isDragon()) {
                 boolean wingsSpread = dragonStateHandler.isFlying();
                 if(ConfigHandler.SERVER.creativeFlight.get() && !playerTickEvent.player.level.isClientSide){
-                    if(playerTickEvent.player.abilities.flying != wingsSpread){
+                    if(playerTickEvent.player.abilities.flying != wingsSpread && (!playerTickEvent.player.isCreative() && !playerTickEvent.player.isSpectator())){
                         playerTickEvent.player.abilities.flying = wingsSpread;
                         playerTickEvent.player.onUpdateAbilities();
                     }
@@ -176,7 +161,7 @@ public class ServerFlightHandler {
                 
                 if (wingsSpread) {
                     if (ConfigHandler.SERVER.flyingUsesHunger.get()) {
-                        if (!playerTickEvent.player.isOnGround() && !playerTickEvent.player.isInWater() && !playerTickEvent.player.isInLava()) {
+                        if (isFlying(playerTickEvent.player)) {
                             Vector3d delta = playerTickEvent.player.getDeltaMovement();
                             double l = delta.length();
                             if(delta.x == 0 && delta.z == 0){
@@ -191,30 +176,48 @@ public class ServerFlightHandler {
         });
     }
 	
-	public static double getLandTime(PlayerEntity playerEntity, double goalTime)
-	{
-	    DragonStateHandler dragonStateHandler = DragonStateProvider.getCap(playerEntity).orElse(null);
-	    if (dragonStateHandler != null && dragonStateHandler.isDragon()) {
-	        if (dragonStateHandler.isFlying()) {
-	            Vector3d motion = playerEntity.getDeltaMovement();
-	            BlockPos blockHeight = playerEntity.level.getHeightmapPos(Type.MOTION_BLOCKING, playerEntity.blockPosition());
-	            int height = blockHeight.getY();
-	            double aboveGround = Math.max(0, playerEntity.position().y - height);
-	            double timeToGround = (aboveGround / Math.abs(motion.y));
-	            if(playerEntity.fallDistance > 5 && motion.y < 0) {
-	                if (aboveGround < 20 && timeToGround <= goalTime) {
-	                    return timeToGround;
-	                }
-	            }
-	        }
-	    }
-	    return -1;
+	public static final int spinDuration = (int)Math.round(0.85 * 20);
+	public static boolean isSpin(PlayerEntity entity){
+		DragonStateHandler handler = DragonStateProvider.getCap(entity).orElse(null);
+		
+		if(handler != null){
+			if(isFlying(entity)){
+				if(handler.getMovementData().spinAttack > 0){
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+	
+	public static boolean isFlying(LivingEntity player){
+		DragonStateHandler dragonStateHandler = DragonStateProvider.getCap(player).orElse(null);
+		return dragonStateHandler != null && dragonStateHandler.hasWings() && dragonStateHandler.isFlying() && !player.isOnGround() && !player.isInWater() && !player.isInLava();
 	}
 	
 	public static boolean isGliding(PlayerEntity player){
-	    DragonStateHandler dragonStateHandler = DragonStateProvider.getCap(player).orElse(null);
-	    boolean hasFood = player.getFoodData().getFoodLevel() > ConfigHandler.SERVER.flightHungerThreshold.get() || player.isCreative() || ConfigHandler.SERVER.allowFlyingWithoutHunger.get();
-	    boolean flight = dragonStateHandler != null && dragonStateHandler.isFlying() && !player.isOnGround() && !player.isInWater() && !player.isInLava();
-	    return hasFood && player.isSprinting() && flight;
+		DragonStateHandler dragonStateHandler = DragonStateProvider.getCap(player).orElse(null);
+		boolean hasFood = player.getFoodData().getFoodLevel() > ConfigHandler.SERVER.flightHungerThreshold.get() || player.isCreative() || ConfigHandler.SERVER.allowFlyingWithoutHunger.get();
+		return hasFood && player.isSprinting() && isFlying(player);
 	}
+	
+	public static double getLandTime(PlayerEntity playerEntity, double goalTime)
+	{
+        if (isFlying(playerEntity)) {
+	        Vector3d motion = playerEntity.getDeltaMovement();
+	        BlockPos blockHeight = playerEntity.level.getHeightmapPos(Type.MOTION_BLOCKING, playerEntity.blockPosition());
+	        int height = blockHeight.getY();
+	        double aboveGround = Math.max(0, playerEntity.position().y - height);
+	        double timeToGround = (aboveGround / Math.abs(motion.y));
+	        if (playerEntity.fallDistance > 5 && motion.y < 0) {
+		        if (aboveGround < 20 && timeToGround <= goalTime) {
+			        return timeToGround;
+		        }
+	        }
+        }
+		
+	    return -1;
+	}
+	
 }

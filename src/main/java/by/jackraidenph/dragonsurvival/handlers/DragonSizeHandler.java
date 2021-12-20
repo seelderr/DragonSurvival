@@ -3,6 +3,7 @@ package by.jackraidenph.dragonsurvival.handlers;
 import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
+import by.jackraidenph.dragonsurvival.handlers.ServerSide.ServerFlightHandler;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntitySize;
@@ -119,7 +120,7 @@ public class DragonSizeHandler {
 		DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
 		
 		boolean swimming = (player.isInWaterOrBubble() || (player.isInLava() && ConfigHandler.SERVER.bonuses.get() && ConfigHandler.SERVER.caveLavaSwimming.get() && handler.getType() == DragonType.CAVE)) && player.isSprinting() && !player.isPassenger();
-		boolean flying = (handler.isFlying() && !player.isInWater() && !player.isInLava() && !player.isOnGround() && handler.hasWings());
+		boolean flying = ServerFlightHandler.isFlying(player);
 		boolean spinning = player.isAutoSpinAttack();
 		boolean crouching = player.isShiftKeyDown();
 		if (flying && !player.isSleeping())

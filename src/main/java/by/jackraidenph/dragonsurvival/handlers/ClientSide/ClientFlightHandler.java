@@ -1,5 +1,6 @@
 package by.jackraidenph.dragonsurvival.handlers.ClientSide;
 
+import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
@@ -11,7 +12,6 @@ import by.jackraidenph.dragonsurvival.sounds.FastGlideSound;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.texture.TextureManager;
@@ -19,6 +19,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.MovementInput;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -55,7 +56,7 @@ public class ClientFlightHandler {
             DragonStateHandler dragonStateHandler = DragonStateProvider.getCap(currentPlayer).orElse(null);
     
             if (dragonStateHandler != null) {
-                if (dragonStateHandler.isDragon() && dragonStateHandler.isFlying() && ServerFlightHandler.isGliding(currentPlayer)) {
+                if ( ServerFlightHandler.isGliding(currentPlayer)) {
                     if (setup.getInfo().isDetached()) {
                 
                         Vector3d lookVec = currentPlayer.getLookAngle();
@@ -67,16 +68,16 @@ public class ClientFlightHandler {
             }
         }
     }
-    
+    public static final ResourceLocation SPIN_COOLDOWN = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/spin_cooldown.png");
     @SubscribeEvent
-    public static void renderAbilityHud(RenderGameOverlayEvent.Post event) {
+    public static void renderFlightCooldown(RenderGameOverlayEvent.Post event) {
         PlayerEntity playerEntity = Minecraft.getInstance().player;
         
         if (playerEntity == null || !DragonStateProvider.isDragon(playerEntity) || playerEntity.isSpectator())
             return;
         
         DragonStateProvider.getCap(playerEntity).ifPresent(cap -> {
-            if(!cap.isFlying() || playerEntity.isOnGround() || playerEntity.isInWater() || playerEntity.isInLava()){
+            if(!ServerFlightHandler.isFlying(playerEntity)){
                 return;
             }
             
@@ -85,17 +86,17 @@ public class ClientFlightHandler {
 
                 TextureManager textureManager = Minecraft.getInstance().getTextureManager();
                 MainWindow window = Minecraft.getInstance().getWindow();
-                Minecraft.getInstance().getTextureManager().bind(AbstractGui.GUI_ICONS_LOCATION);
+                Minecraft.getInstance().getTextureManager().bind(SPIN_COOLDOWN);
     
                 int cooldown = ConfigHandler.SERVER.flightSpinCooldown.get() * 20;
                 float f = ((float)cooldown - (float)cap.getMovementData().spinCooldown) / (float)cooldown;
                 
-                int k = (window.getGuiScaledWidth() / 2) - 8;
+                int k = (window.getGuiScaledWidth() / 2) - (66 / 2);
                 int j = window.getGuiScaledHeight() - 96;
     
-                int l = (int)(f * 17.0F);
-                Screen.blit(event.getMatrixStack(), k, j, 36, 94, 16, 4, 256, 256);
-                Screen.blit(event.getMatrixStack(), k, j, 52, 94, l, 4, 256, 256);
+                int l = (int)(f * 62);
+                Screen.blit(event.getMatrixStack(), k, j, 0, 0, 66, 21, 256, 256);
+                Screen.blit(event.getMatrixStack(), k + 4, j + 1, 4, 21, l, 21, 256, 256);
 
                 GL11.glPopMatrix();
             }
@@ -120,7 +121,7 @@ public class ClientFlightHandler {
                         boolean hasFood = playerEntity.getFoodData().getFoodLevel() > ConfigHandler.SERVER.flightHungerThreshold.get() || playerEntity.isCreative() || ConfigHandler.SERVER.allowFlyingWithoutHunger.get();
                         
                         //start
-                        if (!playerEntity.isOnGround() && !playerEntity.isInWater() && !playerEntity.isInLava()) {
+                        if (ServerFlightHandler.isFlying(playerEntity)) {
                             Vector3d motion = playerEntity.getDeltaMovement();
                             
                             Vector3d lookVec = playerEntity.getLookAngle();

@@ -48,13 +48,6 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
     }
     @Override
     public void registerControllers(AnimationData animationData) {
-//        animationData.addAnimationController(new AnimationController<>(this, "head_turn", 2, (animationEvent) -> {
-//            AnimationBuilder builder = new AnimationBuilder();
-//            builder.addAnimation("head_turn");
-//            animationEvent.getController().setAnimation(builder);
-//            return PlayState.CONTINUE;
-//        }));
-    
         animationData.addAnimationController(new AnimationController<>(this, "bite_controller", 2, this::bitePredicate));
         animationData.addAnimationController(new AnimationController<>(this, "controller", 2, this::predicate));
     }
@@ -73,7 +66,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                     animationEvent.getController().setAnimation(builder);
                     return PlayState.CONTINUE;
                 }
-                if(!handler.isFlying() || player.isOnGround() || player.isInLava() || player.isInWater()) {
+                if(!ServerFlightHandler.isFlying(player)) {
                     if (handler.getMovementData().bite && !handler.getMovementData().dig) {
                         builder.addAnimation("bite");
                         animationEvent.getController().setAnimation(builder);
@@ -96,8 +89,6 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
     public boolean neckLocked = false;
     AnimationTimer animationTimer = new AnimationTimer();
     Emote lastEmote;
-    double spinTime;
-    
     private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> animationEvent) {
         final PlayerEntity player = getPlayer();
         final AnimationController animationController = animationEvent.getController();
@@ -131,10 +122,6 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                 Vector3d motio = new Vector3d(player.getX() - player.xo, player.getY() - player.yo, player.getZ() - player.zo);
                 boolean isMovingHorizontal = Math.sqrt(Math.pow(motio.x, 2) + Math.pow(motio.z, 2)) > 0.005;
                 
-                if(!playerStateHandler.isFlying() || player.isOnGround() || player.isInWater() || player.isInLava()){
-                    spinTime = 0;
-                }
-                
                 // Main
                 if (player.isSleeping()) {
                     builder.addAnimation("sleep", true);
@@ -148,9 +135,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                 }else if ((player.isInLava() || player.isInWaterOrBubble()) && !player.isOnGround()) {
                     builder.addAnimation("swim", true);
                     
-                } else if ((player.abilities.flying || playerStateHandler.isFlying())
-                           && !player.isOnGround() && !player.isInWater()
-                           && !player.isInLava() && playerStateHandler.hasWings()) {
+                } else if (player.abilities.flying || ServerFlightHandler.isFlying(player)) {
                     
                     if (ServerFlightHandler.isGliding(player)) {
                         neckLocked = true;
@@ -164,9 +149,10 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                             builder.addAnimation("fly_fast", true);
                         }else{
                             builder.addAnimation("fly_soaring", true);
-    
                         }
                     } else {
+                        neckLocked = true;
+    
                         double landDuration = 2;
                         double preLandDuration = 1;
     
@@ -174,19 +160,16 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                         double fullLand = ServerFlightHandler.getLandTime(player, landDuration * 20);
     
                         if(player.isShiftKeyDown() && fullLand != -1 && player.getDeltaMovement().length() < 4) {
-                            neckLocked = true;
                             builder.addAnimation("fly_land_end", true);
         
                         }else if(player.isShiftKeyDown() && hoverLand != -1 && player.getDeltaMovement().length() < 4){
-                            neckLocked = true;
                             builder.addAnimation("fly_land", false);
                         }else{
                             if(ServerFlightHandler.isSpin(player)) {
-                                neckLocked = true;
                                 builder.addAnimation("fly_spin", true);
                             }else{
                                 builder.addAnimation("fly", true);
-                                spinTime = 0;
+                                neckLocked = false;
                             }
                         }
                     }
