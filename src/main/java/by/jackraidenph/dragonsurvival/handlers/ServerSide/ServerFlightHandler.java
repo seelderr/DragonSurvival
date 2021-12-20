@@ -6,9 +6,11 @@ import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.ClientFlightHandler;
 import by.jackraidenph.dragonsurvival.network.status.SyncFlyingStatus;
 import by.jackraidenph.dragonsurvival.network.status.SyncSpinStatus;
+import by.jackraidenph.dragonsurvival.registration.DragonEffects;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -46,14 +48,14 @@ public class ServerFlightHandler {
                     event.setCanceled(true);
                 }
                 
-                if (dragonStateHandler.isFlying() && !livingEntity.isSprinting()
+                if (dragonStateHandler.isWingsSpread() && !livingEntity.isSprinting()
                     && flightSpeed < 1){
                     event.setCanceled(true);
                 }
     
                 if(!livingEntity.level.isClientSide) {
-                    if(dragonStateHandler.isFlying()) {
-                        dragonStateHandler.setFlying(false);
+                    if(dragonStateHandler.isWingsSpread()) {
+                        dragonStateHandler.setWingsSpread(false);
                         NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> livingEntity), new SyncFlyingStatus(livingEntity.getId(), false));
                     }
                 }
@@ -72,7 +74,7 @@ public class ServerFlightHandler {
                 event.setCanceled(true);
             } else if (ConfigHandler.SERVER.enableFlightFallDamage.get()) {
                 DragonStateProvider.getCap(livingEntity).ifPresent(dragonStateHandler -> {
-                    if (dragonStateHandler.isDragon() && dragonStateHandler.isFlying()) {
+                    if (dragonStateHandler.isDragon() && dragonStateHandler.isWingsSpread()) {
                         if (flightSpeed > 0.08) {
                             double damage = flightSpeed * 35 * dragonStateHandler.getSize() / 20;
                             damage = MathHelper.clamp(damage, 0, livingEntity.getHealth() - 1);
@@ -85,6 +87,37 @@ public class ServerFlightHandler {
             }
         }
     }
+	@SubscribeEvent
+	public static void playerFlightIcon(TickEvent.PlayerTickEvent playerTickEvent) {
+		if(playerTickEvent.phase == Phase.START) return;
+		PlayerEntity player = playerTickEvent.player;
+		DragonStateProvider.getCap(player).ifPresent(handler -> {
+			if (handler.isDragon()) {
+				if(player.tickCount % 10 == 0) {
+					if (handler.isWingsSpread()) {
+						switch (handler.getType()) {
+							case SEA:
+								player.addEffect(new EffectInstance(DragonEffects.sea_wings, 500));
+								break;
+							
+							case CAVE:
+								player.addEffect(new EffectInstance(DragonEffects.cave_wings, 500));
+								break;
+							
+							case FOREST:
+								player.addEffect(new EffectInstance(DragonEffects.forest_wings, 500));
+								break;
+						}
+					} else {
+						if (player.hasEffect(DragonEffects.sea_wings)) player.removeEffect(DragonEffects.sea_wings);
+						if (player.hasEffect(DragonEffects.cave_wings)) player.removeEffect(DragonEffects.cave_wings);
+						if (player.hasEffect(DragonEffects.forest_wings)) player.removeEffect(DragonEffects.forest_wings);
+					}
+				}
+			}
+		});
+	}
+	
 	
 	
 	@SubscribeEvent
@@ -151,7 +184,7 @@ public class ServerFlightHandler {
     
         DragonStateProvider.getCap(playerTickEvent.player).ifPresent(dragonStateHandler -> {
             if(dragonStateHandler.isDragon()) {
-                boolean wingsSpread = dragonStateHandler.isFlying();
+                boolean wingsSpread = dragonStateHandler.isWingsSpread();
                 if(ConfigHandler.SERVER.creativeFlight.get() && !playerTickEvent.player.level.isClientSide){
                     if(playerTickEvent.player.abilities.flying != wingsSpread && (!playerTickEvent.player.isCreative() && !playerTickEvent.player.isSpectator())){
                         playerTickEvent.player.abilities.flying = wingsSpread;
@@ -193,7 +226,7 @@ public class ServerFlightHandler {
 	
 	public static boolean isFlying(LivingEntity player){
 		DragonStateHandler dragonStateHandler = DragonStateProvider.getCap(player).orElse(null);
-		return dragonStateHandler != null && dragonStateHandler.hasWings() && dragonStateHandler.isFlying() && !player.isOnGround() && !player.isInWater() && !player.isInLava();
+		return dragonStateHandler != null && dragonStateHandler.hasWings() && dragonStateHandler.isWingsSpread() && !player.isOnGround() && !player.isInWater() && !player.isInLava();
 	}
 	
 	public static boolean isGliding(PlayerEntity player){

@@ -94,6 +94,9 @@ public class ClientFlightHandler {
                 int k = (window.getGuiScaledWidth() / 2) - (66 / 2);
                 int j = window.getGuiScaledHeight() - 96;
     
+                k += ConfigHandler.CLIENT.spinCooldownXOffset.get();
+                j += ConfigHandler.CLIENT.spinCooldownYOffset.get();
+    
                 int l = (int)(f * 62);
                 Screen.blit(event.getMatrixStack(), k, j, 0, 0, 66, 21, 256, 256);
                 Screen.blit(event.getMatrixStack(), k + 4, j + 1, 4, 21, l, 21, 256, 256);
@@ -115,7 +118,7 @@ public class ClientFlightHandler {
         if (playerEntity == currentPlayer && !playerEntity.isPassenger()) {
             DragonStateProvider.getCap(playerEntity).ifPresent(dragonStateHandler -> {
                 if (dragonStateHandler.isDragon()) {
-                    if (dragonStateHandler.isFlying()) {
+                    if (dragonStateHandler.isWingsSpread()) {
                         MovementInput movement = currentPlayer.input;
     
                         boolean hasFood = playerEntity.getFoodData().getFoodLevel() > ConfigHandler.SERVER.flightHungerThreshold.get() || playerEntity.isCreative() || ConfigHandler.SERVER.allowFlyingWithoutHunger.get();
@@ -305,7 +308,7 @@ public class ClientFlightHandler {
         DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
         if(handler == null) return;
     
-        boolean currentState = handler.isFlying();
+        boolean currentState = handler.isWingsSpread();
         Vector3d lookVec = player.getLookAngle();
     
         if(ConfigHandler.CLIENT.jumpToFly.get() && !player.isCreative() && !player.isSpectator()) {

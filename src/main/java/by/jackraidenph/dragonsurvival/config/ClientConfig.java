@@ -43,12 +43,15 @@ public class ClientConfig {
 	public final ForgeConfigSpec.IntValue emoteXOffset;
 	public final ForgeConfigSpec.IntValue emoteYOffset;
 	
+	public final ForgeConfigSpec.IntValue spinCooldownXOffset;
+	public final ForgeConfigSpec.IntValue spinCooldownYOffset;
+	
 	ClientConfig(ForgeConfigSpec.Builder builder) {
 		builder.push("client");
 		//For people who use first person view mods
 		renderInFirstPerson = builder.comment("Render dragon model in first person. If your own tail scares you, write false")
 				.define("renderFirstPerson", true);
-		notifyWingStatus = builder.comment("Notifies of wing status in chat message").define("notifyWingStatus", true);
+		notifyWingStatus = builder.comment("Notifies of wing status in chat message").define("notifyWingStatus", false);
 		clientDebugMessages = builder.define("Enable client-side debug messages", false);
 		
 		jumpToFly = builder.comment("Should flight be activated when jumping in the air").define("jumpToFly", true);
@@ -126,6 +129,14 @@ public class ClientConfig {
 		emoteYOffset = builder
 				.comment("Offset the y position of the emote button in relation to its normal position")
 				.defineInRange("emoteYOffset", 0, -1000, 1000);
+		
+		spinCooldownXOffset = builder
+				.comment("Offset the x position of the spin cooldown indicator in relation to its normal position")
+				.defineInRange("spinCooldownXOffset", 0, -1000, 1000);
+		
+		spinCooldownYOffset = builder
+				.comment("Offset the y position of the spin cooldown indicator in relation to its normal position")
+				.defineInRange("spinCooldownYOffset", 0, -1000, 1000);
 		
 		// Movement
 		builder.push("movement");

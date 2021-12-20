@@ -132,13 +132,13 @@ public class ClientDragonRender
 	                EntityRenderer<? super DragonEntity> dragonRenderer = mc.getEntityRenderDispatcher().getRenderer(dummyDragon);
 	                dragonModel.setCurrentTexture(texture);
 		
-		            if (player.isCrouching() && cap.isFlying() && !player.isOnGround()) {
+		            if (player.isCrouching() && cap.isWingsSpread() && !player.isOnGround()) {
 			            matrixStack.translate(0, -0.15, 0);
 			
 		            }else if (player.isCrouching()) {
 						matrixStack.translate(0, 0.325 - ((size / DragonLevel.ADULT.size) * 0.150), 0);
 						
-					} else if (player.isSwimming() || player.isAutoSpinAttack() || (cap.isFlying() && !player.isOnGround() && !player.isInWater() && !player.isInLava())) {
+					} else if (player.isSwimming() || player.isAutoSpinAttack() || (cap.isWingsSpread() && !player.isOnGround() && !player.isInWater() && !player.isInLava())) {
 						matrixStack.translate(0, -0.15 - ((size / DragonLevel.ADULT.size) * 0.2), 0);
 					}
 		            MixinGameRendererZoom gameRenderer = (MixinGameRendererZoom)Minecraft.getInstance().gameRenderer;
@@ -157,10 +157,8 @@ public class ClientDragonRender
 								double d2 = (vector3d1.x * vector3d.x + vector3d1.z * vector3d.z) / Math.sqrt(d0 * d1);
 								double d3 = vector3d1.x * vector3d.z - vector3d1.z * vector3d.x;
 								
-								if (player.getDeltaMovement().length() >= 0.5) {
-									float rot = MathHelper.clamp(((float)(Math.signum(d3) * Math.acos(d2))) * 2, -1, 1);
-									matrixStack.mulPose(Vector3f.ZP.rotation(rot));
-								}
+								float rot = MathHelper.clamp(((float)(Math.signum(d3) * Math.acos(d2))) * 2, -1, 1);
+								matrixStack.mulPose(Vector3f.ZP.rotation(rot));
 							}
 
 							if(ConfigHandler.CLIENT.flightZoomEffect.get()) {

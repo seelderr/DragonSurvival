@@ -64,7 +64,7 @@ public class CapabilityController {
                         capNew.seaSize = capOld.seaSize;
     
                         capNew.setHasWings(capOld.hasWings());
-                        capNew.setFlying(capOld.isFlying());
+                        capNew.setWingsSpread(capOld.isWingsSpread());
                         
                         capNew.forestWings = capOld.forestWings;
                         capNew.caveWings = capOld.caveWings;

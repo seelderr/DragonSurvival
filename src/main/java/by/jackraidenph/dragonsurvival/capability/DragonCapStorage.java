@@ -37,7 +37,7 @@ public class DragonCapStorage implements Capability.IStorage<DragonStateHandler>
             tag.putBoolean("growing", instance.growing);
             
             tag.putBoolean("hasWings", instance.hasWings());
-            tag.putBoolean("isFlying", instance.isFlying());
+            tag.putBoolean("isFlying", instance.isWingsSpread());
             
             tag.putInt("lavaAirSupply", instance.getLavaAirSupply());
     
@@ -82,7 +82,7 @@ public class DragonCapStorage implements Capability.IStorage<DragonStateHandler>
             instance.forestSize = tag.getDouble("forestSize");
     
             instance.setHasWings(tag.getBoolean("hasWings"));
-            instance.setFlying(tag.getBoolean("isFlying"));
+            instance.setWingsSpread(tag.getBoolean("isFlying"));
     
             instance.caveWings = tag.getBoolean("caveWings");
             instance.seaWings = tag.getBoolean("seaWings");

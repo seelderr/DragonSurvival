@@ -30,7 +30,7 @@ public class DragonStateHandler {
     private final DragonMovementData movementData = new DragonMovementData(0, 0, 0, false);
 	
     private boolean hasWings;
-	private boolean isFlying;
+	private boolean spreadWings;
 	
     private double size = 0;
 	public boolean growing = true;
@@ -148,15 +148,14 @@ public class DragonStateHandler {
 		}
     }
 	
-	public boolean isFlying()
+	public boolean isWingsSpread()
 	{
-		return isFlying;
+		return hasWings && spreadWings;
 	}
 	
-	public DragonStateHandler setFlying(boolean flying)
+	public void setWingsSpread(boolean flying)
 	{
-		isFlying = flying;
-		return this;
+		spreadWings = flying;
 	}
 	
 	public boolean isDragon() {

@@ -52,7 +52,7 @@ public class SyncFlyingStatus implements IMessage<SyncFlyingStatus>
             ServerPlayerEntity entity = supplier.get().getSender();
             if(entity != null){
                 DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
-                    dragonStateHandler.setFlying(message.state);
+                    dragonStateHandler.setWingsSpread(message.state);
                 });
     
                 NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new SyncFlyingStatus(entity.getId(), message.state));
@@ -70,7 +70,7 @@ public class SyncFlyingStatus implements IMessage<SyncFlyingStatus>
                 Entity entity = world.getEntity(message.playerId);
                 if (entity instanceof PlayerEntity) {
                     DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
-                        dragonStateHandler.setFlying(message.state);
+                        dragonStateHandler.setWingsSpread(message.state);
                     });
                 }
             }

@@ -92,6 +92,9 @@
   "effect.dragonsurvival.charged": "Charged",
   "effect.dragonsurvival.drain": "Forest Gas",
   "effect.dragonsurvival.strong_leather": "Tough Skin",
+  "effect.dragonsurvival.wings_cave": "Wings active",
+  "effect.dragonsurvival.wings_forest": "Wings active",
+  "effect.dragonsurvival.wings_sea": "Wings active",
 
   "death.attack.starDrain": "%1$s had their life and energy drained by magic.",
   "death.attack.waterBurn": "%1$s tried to swim in water.",

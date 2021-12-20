@@ -37,7 +37,9 @@ public class DragonEffects {
     public static Effect REVEALING_THE_SOUL;
     public static Effect BURN, CHARGED, DRAIN;
     public static Effect STRONG_LEATHER;
-
+    
+    public static Effect cave_wings, sea_wings, forest_wings;
+    
     @SuppressWarnings("unused")
     @SubscribeEvent
     public static void registerEffects(RegistryEvent.Register<Effect> effectRegister) {
@@ -84,6 +86,15 @@ public class DragonEffects {
     
         DRAIN = new Effect2(EffectType.HARMFUL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "drain");
         forgeRegistry.register(DRAIN);
+    
+        forest_wings = new Effect2(EffectType.BENEFICIAL, 0x0, true).setRegistryName(DragonSurvivalMod.MODID, "wings_forest");
+        forgeRegistry.register(forest_wings);
+    
+        sea_wings = new Effect2(EffectType.BENEFICIAL, 0x0, true).setRegistryName(DragonSurvivalMod.MODID, "wings_sea");
+        forgeRegistry.register(sea_wings);
+    
+        cave_wings = new Effect2(EffectType.BENEFICIAL, 0x0, true).setRegistryName(DragonSurvivalMod.MODID, "wings_cave");
+        forgeRegistry.register(cave_wings);
     }
 
     private static class Effect2 extends Effect {
