@@ -237,6 +237,8 @@
   "ds.skill.description.spectral_impact": "■ Gives §c{0}%§r chance to make your attack ignore enemy armor.",
   "ds.skill.description.sea_claws_and_teeth": "■ Sea dragons §2can§r deal increased damage and dig loose blocks without tools. They are getting stronger with age.\n\n■ §cCannot§r ride horses and use several items.",
   "ds.skill.description.sea_wings": "■ Dragons use §2levitation§r to fly, but they are rarely born with the knowledge of it. Only one dragon in this world can share this power with you.\n\n■ Enable flight: [{0}]",
+  "ds.skill.description.sea_wings.has_spin": "You are able to spin in the air and in the water",
+  "ds.skill.description.sea_wings.no_spin": "You have not yet unlocked the ability to spin",
   "ds.skill.description.sea_dragon": "■ Sea dragons are made of water and gold. Their diet includes a variety of seafood. Peaceful animals fear dragons.\n\n■ They have innate immunity to lightning and §2unlimited oxygen§r§7. They feel best in the sea.§r",
   "ds.skill.description.amphibian": "■ Sun and dryness are the main foes of sea dragons. If they are out-of-water for too long, they begin to take damage.\n\n■ The skill «Water», effect «Sea Peace», rain, ice, snow and water bottles §7could make your life easier.\n\n■ Damage: §c{0} points in {1}s§r",
 
@@ -265,6 +267,8 @@
   "ds.skill.description.cliffhanger": "Landing becomes much softer. Safe fall distance: §2{0}b§r.",
   "ds.skill.description.forest_claws_and_teeth": "■ Forest dragons §2can§r deal increased damage and chop down trees without tools. They are getting stronger with age.\n\n■ §cCannot§r ride horses and use several items.",
   "ds.skill.description.forest_wings": "■ Dragons use §2levitation§r to fly, but are rarely born with that ability. Only one dragon in this world can share this power with you.\n\n■ Enable flight: [{0}]",
+  "ds.skill.description.forest_wings.has_spin": "You are able to spin in the air and in the water",
+  "ds.skill.description.forest_wings.no_spin": "You have not yet unlocked the ability to spin",
   "ds.skill.description.forest_dragon": "■ Forest dragons are made up of diamonds and predatory plants. Their diet includes raw meat and sweet berries. Peaceful animals fear dragons.\n\n■ They have innate §2immunity to thorn bushes and cacti§r§7. They feel best on the surface.",
   "ds.skill.description.fear_of_dark": "■ Predatory plants in the body of the forest dragon do not like §dDarkness§r. If the light level is lower than {0}, §c«Stress»§r effect appears which resets saturation and quickly decreases hunger value.\n\n■ The skill «Light the Dark» and effect «Forest Magic» §7could make your life easier.",
 
@@ -293,6 +297,8 @@
   "ds.skill.description.burn": "■ Your target has a {0}% chance to receive the §c«Burned»§r effect from your attacks.\n\nThe effect deals damage when the target moves.\n\nThe faster the movement, the more damage is done.\n\n■ Creatures with fire resistance are immune to this effect.",
   "ds.skill.description.cave_claws_and_teeth": "■ Cave dragons §2can§r deal increased damage and mine stone blocks without tools. They are getting stronger with age.\n\n■ §cCannot§r ride horses and use several items.",
   "ds.skill.description.cave_wings": "■ Dragons use §2levitation§r to fly, but are rarely born with that ability. Only one dragon in this world can share this power with you.\n\n■ Enable flight: [{0}]",
+  "ds.skill.description.cave_wings.has_spin": "You are able to spin in the air and in lava",
+  "ds.skill.description.cave_wings.no_spin": "You have not yet unlocked the ability to spin",
   "ds.skill.description.cave_dragon": "■ Cave dragons are made of netherite and lava. Their diet includes charred meat and coal. Peaceful animals fear dragons.\n\n■ They have innate §2immunity to fire§r and they feel best in the Nether.",
   "ds.skill.description.hot_blood": "■ Cave dragons take §cdamage from water§r, snow, rain and other liquids due to their fiery nature.\n\n■ The skill «Contrast Shower» and effect «Cave Fire» §7could make your life easier.\n\n■ Damage: §c{0} points in {1}s§r",
 

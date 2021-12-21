@@ -363,28 +363,28 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
                 if(handler.getLevel() == DragonLevel.BABY){
                     age += DragonLevel.YOUNG.size - DragonLevel.BABY.size;
                     double missing = DragonLevel.YOUNG.size - handler.getSize();
-                    double increment = ((DragonLevel.YOUNG.size - DragonLevel.BABY.size) / ((DragonGrowthHandler.newbornToYoung * 20.0)));
+                    double increment = ((DragonLevel.YOUNG.size - DragonLevel.BABY.size) / ((DragonGrowthHandler.newbornToYoung * 20.0))) * ConfigHandler.SERVER.newbornGrowthModifier.get();
                     seconds = (missing / increment) / 20;
                     
                 }else if(handler.getLevel() == DragonLevel.YOUNG){
                     age += DragonLevel.ADULT.size - DragonLevel.BABY.size;
     
                     double missing = DragonLevel.ADULT.size - handler.getSize();
-                    double increment = ((DragonLevel.ADULT.size - DragonLevel.YOUNG.size) / ((DragonGrowthHandler.youngToAdult * 20.0)));
+                    double increment = ((DragonLevel.ADULT.size - DragonLevel.YOUNG.size) / ((DragonGrowthHandler.youngToAdult * 20.0)))  * ConfigHandler.SERVER.youngGrowthModifier.get();
                     seconds = (missing / increment) / 20;
     
                 }else if(handler.getLevel() == DragonLevel.ADULT && handler.getSize() < 40){
                     age += 40 - DragonLevel.BABY.size;
     
                     double missing = 40 - handler.getSize();
-                    double increment = ((40 - DragonLevel.ADULT.size) / ((DragonGrowthHandler.adultToMax * 20.0)));
+                    double increment = ((40 - DragonLevel.ADULT.size) / ((DragonGrowthHandler.adultToMax * 20.0)))  * ConfigHandler.SERVER.adultGrowthModifier.get();
                     seconds = (missing / increment) / 20;
     
                 }else  if(handler.getLevel() == DragonLevel.ADULT && handler.getSize() >= 40){
                     age += (int)(ConfigHandler.SERVER.maxGrowthSize.get() - DragonLevel.BABY.size);
     
                     double missing = ConfigHandler.SERVER.maxGrowthSize.get() - handler.getSize();
-                    double increment = ((ConfigHandler.SERVER.maxGrowthSize.get() - 40) / ((DragonGrowthHandler.beyond * 20.0)));
+                    double increment = ((ConfigHandler.SERVER.maxGrowthSize.get() - 40) / ((DragonGrowthHandler.beyond * 20.0)))  * ConfigHandler.SERVER.maxGrowthModifier.get();
                     seconds = (missing / increment) / 20;
                }
                 

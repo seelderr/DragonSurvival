@@ -41,6 +41,12 @@ public class ServerConfig {
 	
 	public final ForgeConfigSpec.BooleanValue alternateGrowing;
 	public final ForgeConfigSpec.DoubleValue maxGrowthSize;
+	public final ForgeConfigSpec.DoubleValue newbornGrowthModifier;
+	public final ForgeConfigSpec.DoubleValue youngGrowthModifier;
+	public final ForgeConfigSpec.DoubleValue adultGrowthModifier;
+	public final ForgeConfigSpec.DoubleValue maxGrowthModifier;
+	
+	
 	public final ForgeConfigSpec.DoubleValue reachBonus;
 	
 	public final ForgeConfigSpec.BooleanValue saveGrowthStage;
@@ -278,6 +284,22 @@ public class ServerConfig {
 		maxHealth = builder
 				.comment("Maximum health dragons can grow to.")
 				.defineInRange("maxHealth", 40, 1, 100);
+		
+		newbornGrowthModifier = builder
+				.comment("A multiplier to change the growth rate from newborn to young.")
+				.defineInRange("newbornGrowthModifier", 1.0, 0, 1000);
+		
+		youngGrowthModifier = builder
+				.comment("A multiplier to change the growth rate from young to adult.")
+				.defineInRange("youngGrowthModifier", 1.0, 0, 1000);
+		
+		adultGrowthModifier = builder
+				.comment("A multiplier to change the growth rate from adult to a full sized adult.")
+				.defineInRange("adultGrowthModifier", 1.0, 0, 1000);
+		
+		maxGrowthModifier = builder
+				.comment("A multiplier to change the growth rate from full sized adult to max size.")
+				.defineInRange("maxGrowthModifier", 1.0, 0, 1000);
 		
 		builder.pop().push("drops");
 		dragonHeartShardChance = builder

@@ -1,5 +1,6 @@
 package by.jackraidenph.dragonsurvival.magic.abilities.Innate;
 
+import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.KeyInputHandler;
 import by.jackraidenph.dragonsurvival.magic.common.InnateDragonAbility;
@@ -37,6 +38,8 @@ public class DragonWingAbility extends InnateDragonAbility
 			key = KeyInputHandler.TOGGLE_WINGS.getKey().getDisplayName().getString();
 		}
 		
-		return new TranslationTextComponent("ds.skill.description." + getId(), key);
+		DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+		
+		return new TranslationTextComponent("ds.skill.description." + getId(), key).append("\n").append(new TranslationTextComponent("ds.skill.description." + getId() + (handler != null && handler.getMovementData().spinLearned ? ".has_spin" : ".no_spin")));
 	}
 }

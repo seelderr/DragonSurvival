@@ -160,6 +160,9 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
     AnimationTimer animationTimer = new AnimationTimer();
     Emote lastEmote;
     
+    public Float prevZRot;
+    public Float prevXRot;
+    
     private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> animationEvent) {
         if(landingBuilder.getRawAnimationList().size() > 0){
             return PlayState.STOP;
