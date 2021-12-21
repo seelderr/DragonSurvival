@@ -156,10 +156,6 @@ public class ClientDragonRender
 						if(ConfigHandler.CLIENT.renderOtherPlayerRotation.get() || mc.player == player) {
 							float upRot = MathHelper.clamp((float)(player.getDeltaMovement().y * 20), -80, 80);
 							
-							if(dummyDragon.prevXRot == null){
-								dummyDragon.prevXRot = upRot;
-							}
-							
 							dummyDragon.prevXRot = MathHelper.lerp(0.1F, dummyDragon.prevXRot, upRot);
 							dummyDragon.prevXRot = MathHelper.clamp(dummyDragon.prevXRot, -80, 80);
 							
@@ -173,10 +169,6 @@ public class ClientDragonRender
 							double d3 = vector3d1.x * vector3d.z - vector3d1.z * vector3d.x;
 							
 							float rot = MathHelper.clamp(((float)(Math.signum(d3) * Math.acos(d2))) * 2, -1, 1);
-							
-							if(dummyDragon.prevZRot == null){
-								dummyDragon.prevZRot = rot;
-							}
 							
 							dummyDragon.prevZRot = MathHelper.lerp(0.1F, dummyDragon.prevZRot, rot);
 							dummyDragon.prevZRot = MathHelper.clamp(dummyDragon.prevZRot, -1, 1);

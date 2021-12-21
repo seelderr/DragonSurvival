@@ -101,163 +101,154 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
     AnimationTimer animationTimer = new AnimationTimer();
     Emote lastEmote;
     
-    public Float prevZRot;
-    public Float prevXRot;
+    public float prevZRot;
+    public float prevXRot;
     
     private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> animationEvent) {
         final PlayerEntity player = getPlayer();
         final AnimationController animationController = animationEvent.getController();
+        DragonStateHandler playerStateHandler = DragonStateProvider.getCap(player).orElse(null);
         
         neckLocked = false;
         dragonAnimationController.speed = 1;
         
         AnimationBuilder builder = new AnimationBuilder();
         
-        if (player != null) {
-            DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
-                ActiveDragonAbility curCast = playerStateHandler.getMagic().getCurrentlyCasting();
+        if (player != null && playerStateHandler != null) {
+            ActiveDragonAbility curCast = playerStateHandler.getMagic().getCurrentlyCasting();
+            
+            if(playerStateHandler.getEmotes().getCurrentEmote() != null){
+                Emote emote = playerStateHandler.getEmotes().getCurrentEmote();
                 
-                if(playerStateHandler.getEmotes().getCurrentEmote() != null){
-                    Emote emote = playerStateHandler.getEmotes().getCurrentEmote();
-                    
-                    neckLocked = emote.locksHead;
-                    dragonAnimationController.speed = emote.speed;
-                    
-                   if(emote.animation != null && !emote.animation.isEmpty()) {
-                       builder.addAnimation(emote.animation, emote.loops);
-                   }
-                   
-                    lastEmote = emote;
-                   
-                   if(emote.animation != null && !emote.animation.isEmpty()) {
-                       return;
-                   }
+                neckLocked = emote.locksHead;
+                dragonAnimationController.speed = emote.speed;
+                
+               if(emote.animation != null && !emote.animation.isEmpty()) {
+                   builder.addAnimation(emote.animation, emote.loops);
+               }
+               
+                lastEmote = emote;
+            }
+            
+            if(!(curCast instanceof BreathAbility) && !(lastCast instanceof BreathAbility)){
+                renderAbility(builder, curCast);
+            }
+            
+            Vector3d motio = new Vector3d(player.getX() - player.xo, player.getY() - player.yo, player.getZ() - player.zo);
+            boolean isMovingHorizontal = Math.sqrt(Math.pow(motio.x, 2) + Math.pow(motio.z, 2)) > 0.005;
+            
+            // Main
+            if (player.isSleeping()) {
+                builder.addAnimation("sleep", true);
+
+            }else if (player.isPassenger()) {
+                builder.addAnimation("sit", true);
+                
+            } else if (player.abilities.flying || ServerFlightHandler.isFlying(player) || landDuration > 0) {
+                double preLandDuration = 1;
+                double hoverLand = ServerFlightHandler.getLandTime(player, (2.24 + preLandDuration) * 20);
+                double fullLand = ServerFlightHandler.getLandTime(player, 2.24 * 20);
+
+                if(ServerFlightHandler.isGliding(player)){
+                    landDuration = 0;
                 }
                 
-                if(!(curCast instanceof BreathAbility) && !(lastCast instanceof BreathAbility)){
-                    renderAbility(builder, curCast);
-                }
-                
-                Vector3d motio = new Vector3d(player.getX() - player.xo, player.getY() - player.yo, player.getZ() - player.zo);
-                boolean isMovingHorizontal = Math.sqrt(Math.pow(motio.x, 2) + Math.pow(motio.z, 2)) > 0.005;
-                
-                // Main
-                if (player.isSleeping()) {
-                    builder.addAnimation("sleep", true);
-    
-                }else if (player.isPassenger()) {
-                    builder.addAnimation("sit", true);
+                if (player.isCrouching() && fullLand != -1 && player.getDeltaMovement().length() < 4 || landDuration > 0) {
+                    neckLocked = true;
                     
-                } else if (player.abilities.flying || ServerFlightHandler.isFlying(player) || landDuration > 0) {
-                    double preLandDuration = 1;
-                    double hoverLand = ServerFlightHandler.getLandTime(player, (2.24 + preLandDuration) * 20);
-                    double fullLand = ServerFlightHandler.getLandTime(player, 2.24 * 20);
-    
-                    if(ServerFlightHandler.isGliding(player)){
-                        landDuration = 0;
-                    }
-                    
-                    if (player.isCrouching() && fullLand != -1 && player.getDeltaMovement().length() < 4 || landDuration > 0) {
-                        neckLocked = true;
-                        
 //                        if (landDuration == 0 && ServerFlightHandler.isFlying(player)) {
 //                            landDuration = landAnimationDuration;
 //                        }
-    
-                        builder.addAnimation("fly_land_end");
-                        
-                        if(landDuration > 0) {
-                            landDuration -= Minecraft.getInstance().getDeltaFrameTime() * dragonAnimationController.speed;
-                        }
-                        
-                    } else if (player.isCrouching() && hoverLand != -1 && player.getDeltaMovement().length() < 4) {
-                        neckLocked = true;
-                        builder.addAnimation("fly_land", true);
-                    }else{
-                        landDuration = 0;
+
+                    builder.addAnimation("fly_land_end");
+                    
+                    if(landDuration > 0) {
+                        landDuration -= Minecraft.getInstance().getDeltaFrameTime() * dragonAnimationController.speed;
                     }
                     
-                    if (ServerFlightHandler.isGliding(player)) {
-                        neckLocked = true;
-                        if(ServerFlightHandler.isSpin(player)) {
-                            builder.addAnimation("fly_spin_fast", true);
-                        }else if (player.getDeltaMovement().y < -1) {
-                            builder.addAnimation("fly_dive_alt", true);
-                        }else if (player.getDeltaMovement().y < -0.25) {
-                            builder.addAnimation("fly_dive", true);
-                        } else if(player.getDeltaMovement().y > 0.25){
-                            dragonAnimationController.speed = 1 + ((player.getDeltaMovement().y / 2) / 5);
-                            builder.addAnimation("fly_fast", true);
-                        }else{
-                            builder.addAnimation("fly_soaring", true);
-                        }
-                    } else if(ServerFlightHandler.isFlying(player)){
-                        if(ServerFlightHandler.isSpin(player)) {
-                            neckLocked = true;
-                            builder.addAnimation("fly_spin", true);
-                        } else if(player.getDeltaMovement().y > 0.25){
-                            dragonAnimationController.speed = 1 + ((player.getDeltaMovement().y / 2) / 5);
-                            builder.addAnimation("fly_fast", true);
-                        }else{
-                            builder.addAnimation("fly", true);
-                        }
-                    }
-    
-                }else if (player.getPose() == Pose.SWIMMING) {
-                    if(ServerFlightHandler.isSpin(player)) {
-                        builder.addAnimation("fly_spin_fast", true);
-                    }else {
-                        dragonAnimationController.speed = 1 + (double)MathHelper.sqrt(player.getDeltaMovement().x * player.getDeltaMovement().x + player.getDeltaMovement().z * player.getDeltaMovement().z);
-                        builder.addAnimation("swim_fast", true);
-                    }
-    
-                }else if ((player.isInLava() || player.isInWaterOrBubble()) && !player.isOnGround()) {
-                    if(ServerFlightHandler.isSpin(player)) {
-                        builder.addAnimation("fly_spin_fast", true);
-                    }else {
-                        dragonAnimationController.speed = 1 + (double)MathHelper.sqrt(player.getDeltaMovement().x * player.getDeltaMovement().x + player.getDeltaMovement().z * player.getDeltaMovement().z);
-                        builder.addAnimation("swim", true);
-                    }
-                    
-                }else if (!player.isOnGround() && motio.y() < 0) {
-                    if(player.fallDistance > 4 || player.onClimbable()){
-                        builder.addAnimation("idle", true);
-                    }else {
-                        builder.addAnimation("land", false);
-                    }
-                    
-                } else if (ClientEvents.dragonsJumpingTicks.getOrDefault(this.player, 0) > 0) {
-                    builder.addAnimation("jump", false);
-                    
-                }else if (player.isShiftKeyDown() ||
-                          (!DragonSizeHandler.canPoseFit(player, Pose.STANDING)
-                           && DragonSizeHandler.canPoseFit(player, Pose.CROUCHING))) {
-                    // Player is Sneaking
-                    if (isMovingHorizontal && player.animationSpeed != 0f) {
-                        builder.addAnimation("sneak_walk", true);
-                        
-                    } else if (playerStateHandler.getMovementData().dig) {
-                        builder.addAnimation("dig_sneak", true);
-                        
-                    } else {
-                        builder.addAnimation("sneak", true);
-                    }
-                    
-                } else if (player.isSprinting()) {
-                    dragonAnimationController.speed = 1 + (double)MathHelper.sqrt(player.getDeltaMovement().x * player.getDeltaMovement().x + player.getDeltaMovement().z * player.getDeltaMovement().z);
-                    builder.addAnimation("run", true);
-                    
-                }else if (isMovingHorizontal && player.animationSpeed != 0f) {
-                    dragonAnimationController.speed = 1 + (double)MathHelper.sqrt(player.getDeltaMovement().x * player.getDeltaMovement().x + player.getDeltaMovement().z * player.getDeltaMovement().z);
-    
-                    builder.addAnimation("walk", true);
-    
-                }else if (playerStateHandler.getMovementData().dig) {
-                    builder.addAnimation("dig", true);
-                }else {
-                    builder.addAnimation("idle", true);
+                } else if (player.isCrouching() && hoverLand != -1 && player.getDeltaMovement().length() < 4) {
+                    neckLocked = true;
+                    builder.addAnimation("fly_land", true);
+                }else{
+                    landDuration = 0;
                 }
-            });
+                
+                if (ServerFlightHandler.isGliding(player)) {
+                    neckLocked = true;
+                    if(ServerFlightHandler.isSpin(player)) {
+                        builder.addAnimation("fly_spin_fast", true);
+                    }else if (player.getDeltaMovement().y < -1) {
+                        builder.addAnimation("fly_dive_alt", true);
+                    }else if (player.getDeltaMovement().y < -0.25) {
+                        builder.addAnimation("fly_dive", true);
+                    } else if(player.getDeltaMovement().y > 0.25){
+                        dragonAnimationController.speed = 1 + ((player.getDeltaMovement().y / 2) / 5);
+                        builder.addAnimation("fly_fast", true);
+                    }else{
+                        builder.addAnimation("fly_soaring", true);
+                    }
+                } else if(ServerFlightHandler.isFlying(player)){
+                    if(ServerFlightHandler.isSpin(player)) {
+                        neckLocked = true;
+                        builder.addAnimation("fly_spin", true);
+                    } else if(player.getDeltaMovement().y > 0.25){
+                        dragonAnimationController.speed = 1 + ((player.getDeltaMovement().y / 2) / 5);
+                        builder.addAnimation("fly_fast", true);
+                    }else{
+                        builder.addAnimation("fly", true);
+                    }
+                }
+
+            }else if (player.getPose() == Pose.SWIMMING) {
+                if(ServerFlightHandler.isSpin(player)) {
+                    builder.addAnimation("fly_spin_fast", true);
+                }else {
+                    dragonAnimationController.speed = 1 + (double)MathHelper.sqrt(player.getDeltaMovement().x * player.getDeltaMovement().x + player.getDeltaMovement().z * player.getDeltaMovement().z);
+                    builder.addAnimation("swim_fast", true);
+                }
+
+            }else if ((player.isInLava() || player.isInWaterOrBubble()) && !player.isOnGround()) {
+                if(ServerFlightHandler.isSpin(player)) {
+                    builder.addAnimation("fly_spin_fast", true);
+                }else {
+                    dragonAnimationController.speed = 1 + (double)MathHelper.sqrt(player.getDeltaMovement().x * player.getDeltaMovement().x + player.getDeltaMovement().z * player.getDeltaMovement().z);
+                    builder.addAnimation("swim", true);
+                }
+                
+            }else if (!player.isOnGround() && motio.y() < 0) {
+                if ((player.fallDistance <= 4) && !player.onClimbable()) {
+                    builder.addAnimation("land", false);
+                }
+
+            } else if (ClientEvents.dragonsJumpingTicks.getOrDefault(this.player, 0) > 0) {
+                builder.addAnimation("jump", false);
+                
+            }else if (player.isShiftKeyDown() ||
+                      (!DragonSizeHandler.canPoseFit(player, Pose.STANDING)
+                       && DragonSizeHandler.canPoseFit(player, Pose.CROUCHING))) {
+                // Player is Sneaking
+                if (isMovingHorizontal && player.animationSpeed != 0f) {
+                    builder.addAnimation("sneak_walk", true);
+                    
+                } else if (playerStateHandler.getMovementData().dig) {
+                    builder.addAnimation("dig_sneak", true);
+                    
+                } else {
+                    builder.addAnimation("sneak", true);
+                }
+                
+            } else if (player.isSprinting()) {
+                dragonAnimationController.speed = 1 + (double)MathHelper.sqrt(player.getDeltaMovement().x * player.getDeltaMovement().x + player.getDeltaMovement().z * player.getDeltaMovement().z);
+                builder.addAnimation("run", true);
+                
+            }else if (isMovingHorizontal && player.animationSpeed != 0f) {
+                dragonAnimationController.speed = 1 + (double)MathHelper.sqrt(player.getDeltaMovement().x * player.getDeltaMovement().x + player.getDeltaMovement().z * player.getDeltaMovement().z);
+
+                builder.addAnimation("walk", true);
+
+            }else if (playerStateHandler.getMovementData().dig) {
+                builder.addAnimation("dig", true);
+            }
         }
     
         builder.addAnimation("idle", true);

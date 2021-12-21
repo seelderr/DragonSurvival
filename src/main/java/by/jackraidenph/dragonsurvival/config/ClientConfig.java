@@ -17,6 +17,9 @@ public class ClientConfig {
 	public final ForgeConfigSpec.BooleanValue flightZoomEffect;
 	public final ForgeConfigSpec.BooleanValue renderOtherPlayerRotation;
 	
+	public final ForgeConfigSpec.BooleanValue ownSpinParticles;
+	public final ForgeConfigSpec.BooleanValue othersSpinParticles;
+	
 	public final ForgeConfigSpec.BooleanValue clientDebugMessages;
 	
 	public final ForgeConfigSpec.BooleanValue alternateHeldItem;
@@ -58,6 +61,10 @@ public class ClientConfig {
 		lookAtSkyForFlight = builder.comment("Is it required to look up to start flying while jumping, requires that jumpToFly is on").define("lookAtSkyForFlight", false);
 		flightZoomEffect = builder.comment("Should the zoom effect while gliding as a dragon be enabled").define("flightZoomEffect", true);
 		renderOtherPlayerRotation = builder.comment("Should the rotation effect during gliding of other players be shown?").define("renderOtherPlayerRotation", true);
+		
+		ownSpinParticles = builder.comment("Should particles from your own spin attack be displayed for you?").define("ownSpinParticles", true);
+		othersSpinParticles = builder.comment("Should other players particles from spin attack be shown for you?").define("othersSpinParticles", true);
+		
 		
 		dragonInventory = builder
 				.comment("Should the default inventory be replaced as a dragon?")

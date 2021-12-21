@@ -15,9 +15,14 @@ import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.particles.IParticleData;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.particles.RedstoneParticleData;
 import net.minecraft.util.MovementInput;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
@@ -28,8 +33,11 @@ import net.minecraftforge.client.event.EntityViewRenderEvent.CameraSetup;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
+import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
@@ -107,6 +115,58 @@ public class ClientFlightHandler {
                 }
             }
         });
+    }
+    
+    
+    @SubscribeEvent
+    public static void flightParticles(TickEvent.PlayerTickEvent playerTickEvent) {
+        if(playerTickEvent.phase == Phase.START || playerTickEvent.side == LogicalSide.SERVER) return;
+        PlayerEntity player = playerTickEvent.player;
+        DragonStateProvider.getCap(player).ifPresent(handler -> {
+            if(handler.isDragon()) {
+                if(handler.getMovementData().spinAttack > 0){
+                    if(!ConfigHandler.CLIENT.ownSpinParticles.get() && player == Minecraft.getInstance().player) return;
+                    if(!ConfigHandler.CLIENT.othersSpinParticles.get() && player != Minecraft.getInstance().player) return;
+                    
+                    if(ServerFlightHandler.canSwimSpin(player) && ServerFlightHandler.isSpin(player)){
+                        spawnSpinParticle(player, player.isInWater() ? ParticleTypes.BUBBLE_COLUMN_UP : ParticleTypes.LAVA);
+                    }
+                    
+                    if(EnchantmentHelper.getFireAspect(player) > 0){
+                        spawnSpinParticle(player, ParticleTypes.LAVA);
+                        
+                    }else if(EnchantmentHelper.getKnockbackBonus(player) > 0){
+                        spawnSpinParticle(player, ParticleTypes.EXPLOSION);
+    
+                    }else if(EnchantmentHelper.getEnchantmentLevel(Enchantments.SWEEPING_EDGE, player) > 0){
+                        spawnSpinParticle(player, ParticleTypes.SWEEP_ATTACK); //TODO THis one might not work
+    
+                    }else if(EnchantmentHelper.getEnchantmentLevel(Enchantments.SHARPNESS, player) > 0){
+                        spawnSpinParticle(player, new RedstoneParticleData(1f, 1f, 1f, 1f));
+    
+                    }else if(EnchantmentHelper.getEnchantmentLevel(Enchantments.SMITE, player) > 0){
+                        spawnSpinParticle(player, ParticleTypes.ENCHANT);
+    
+                    }else if(EnchantmentHelper.getEnchantmentLevel(Enchantments.BANE_OF_ARTHROPODS, player) > 0){
+                        spawnSpinParticle(player, ParticleTypes.DRIPPING_OBSIDIAN_TEAR);
+    
+                    }
+                }
+            }
+        });
+    }
+    
+    private static void spawnSpinParticle(PlayerEntity player, IParticleData particleData){
+        for(int i = 0; i < 20; i++) {
+            double d0 = (player.level.random.nextFloat() - 0.5) * 2;
+            double d1 = (player.level.random.nextFloat() - 0.5) * 2;
+            double d2 = (player.level.random.nextFloat() - 0.5) * 2;
+            
+            double posX = player.position().x + player.getDeltaMovement().x + d0;
+            double posY = player.position().y - 1.5 + player.getDeltaMovement().y + d1;
+            double posZ = player.position().z + player.getDeltaMovement().z + d2;
+            player.level.addParticle(particleData, posX, posY, posZ, player.getDeltaMovement().x * -1, player.getDeltaMovement().y * -1, player.getDeltaMovement().z * -1);
+        }
     }
     
     public static boolean wasGliding = false;

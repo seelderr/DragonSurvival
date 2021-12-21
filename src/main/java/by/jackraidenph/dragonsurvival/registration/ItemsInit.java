@@ -9,6 +9,7 @@ import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.SyncGrowthState;
 import by.jackraidenph.dragonsurvival.network.SyncSize;
 import by.jackraidenph.dragonsurvival.network.SynchronizeDragonCap;
+import by.jackraidenph.dragonsurvival.network.status.SyncSpinStatus;
 import by.jackraidenph.dragonsurvival.util.DragonLevel;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.client.util.ITooltipFlag;
@@ -55,6 +56,7 @@ public class ItemsInit {
     public static Item passiveFireBeacon, passiveMagicBeacon, passivePeaceBeacon;
     public static Item starHeart;
     
+    public static Item wingGrantItem, spinGrantItem;
     public static Item lightningTextureItem;
 
     @SubscribeEvent
@@ -271,6 +273,53 @@ public class ItemsInit {
         registry.register(passiveFireBeacon);
         lightningTextureItem = new Item(new Item.Properties()).setRegistryName(DragonSurvivalMod.MODID, "lightning");
         registry.register(lightningTextureItem);
+        
+        wingGrantItem = new Item(new Item.Properties().tab(items)){
+            @Override
+            public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand p_77659_3_)
+            {
+                if(!world.isClientSide) {
+                    DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+            
+                    if (handler != null && handler.isDragon() && !handler.hasWings()) {
+                        handler.setHasWings(true);
+                        NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new SynchronizeDragonCap(player.getId(), handler.isHiding(), handler.getType(), handler.getSize(), true, handler.getLavaAirSupply(), handler.getPassengerId()));
+    
+                        if(!player.isCreative()) {
+                            player.getItemInHand(p_77659_3_).shrink(1);
+                        }
+                      
+                        return ActionResult.success(player.getItemInHand(p_77659_3_));
+                    }
+                }
+        
+                return super.use(world, player, p_77659_3_);
+            }
+        }.setRegistryName(DragonSurvivalMod.MODID, "wing_grant");
+        registry.register(wingGrantItem);
+    
+        spinGrantItem = new Item(new Item.Properties().tab(items)){
+            @Override
+            public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand p_77659_3_)
+            {
+                if(!world.isClientSide) {
+                    DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+            
+                    if (handler != null && handler.isDragon() && !handler.getMovementData().spinLearned) {
+                        handler.getMovementData().spinLearned = true;
+                        NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncSpinStatus(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
+                        
+                        if(!player.isCreative()) {
+                            player.getItemInHand(p_77659_3_).shrink(1);
+                        }
+                        return ActionResult.success(player.getItemInHand(p_77659_3_));
+                    }
+                }
+        
+                return super.use(world, player, p_77659_3_);
+            }
+        }.setRegistryName(DragonSurvivalMod.MODID, "spin_grant");
+        registry.register(spinGrantItem);
     }
     
     public static Item registerItem(IForgeRegistry<Item> registry, String name, String description){

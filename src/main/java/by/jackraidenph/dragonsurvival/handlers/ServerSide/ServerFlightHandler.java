@@ -11,7 +11,6 @@ import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -129,15 +128,6 @@ public class ServerFlightHandler {
 		DragonStateProvider.getCap(player).ifPresent(handler -> {
 			if(handler.isDragon()) {
 				if(handler.getMovementData().spinAttack > 0){
-					if(canSwimSpin(player) && isSpin(player)){
-						for(int i = 0; i < 20; i++) {
-							double d0 = player.level.random.nextFloat();
-							double d1 = player.level.random.nextFloat();
-							double d2 = player.level.random.nextFloat();
-							player.level.addParticle(player.isInWater() ? ParticleTypes.BUBBLE_COLUMN_UP : ParticleTypes.LAVA, player.position().x + player.getDeltaMovement().x + d0, player.position().y - 0.5 + player.getDeltaMovement().y + d1, player.position().z + player.getDeltaMovement().z + d2, player.getDeltaMovement().x * -1, player.getDeltaMovement().y * -1, player.getDeltaMovement().z * -1);
-						}
-					}
-					
 					if(!isFlying(player) && !canSwimSpin(player)){
 						if(!player.level.isClientSide){
 							handler.getMovementData().spinAttack = 0;
