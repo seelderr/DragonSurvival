@@ -266,7 +266,7 @@ public class DragonStateHandler {
     }
 	
 	public static AttributeModifier buildReachMod(double size) {
-		double reachMod = 1 + (((size - DragonLevel.BABY.size) / (60.0 - DragonLevel.BABY.size)) * (ConfigHandler.SERVER.reachBonus.get()));
+		double reachMod = (((size - DragonLevel.BABY.size) / (60.0 - DragonLevel.BABY.size)) * (ConfigHandler.SERVER.reachBonus.get()));
 		
 		return new AttributeModifier(
 				REACH_MODIFIER_UUID,
