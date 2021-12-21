@@ -1,4 +1,4 @@
-package by.jackraidenph.dragonsurvival.gecko.entity;
+package by.jackraidenph.dragonsurvival.gecko.entity.dragon;
 
 import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
@@ -11,6 +11,7 @@ import by.jackraidenph.dragonsurvival.handlers.ServerSide.ServerFlightHandler;
 import by.jackraidenph.dragonsurvival.magic.abilities.Actives.BreathAbilities.BreathAbility;
 import by.jackraidenph.dragonsurvival.magic.common.AbilityAnimation;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Pose;
@@ -31,7 +32,7 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 public class DragonEntity extends LivingEntity implements IAnimatable, CommonTraits
 {
     AnimationFactory animationFactory = new AnimationFactory(this);
-
+    
     /**
      * This reference must be updated whenever player is remade, for example, when changing dimensions
      */
@@ -46,13 +47,80 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
     public DragonEntity(EntityType<? extends LivingEntity> type, World worldIn) {
         super(type, worldIn);
     }
+    
+    
     @Override
     public void registerControllers(AnimationData animationData) {
         animationData.addAnimationController(new AnimationController<>(this, "bite_controller", 2, this::bitePredicate));
         animationData.addAnimationController(new AnimationController<>(this, "controller", 2, this::predicate));
+        animationData.addAnimationController(landingController);
+    }
+    
+    AnimationBuilder landingBuilder = new AnimationBuilder();
+    LandingAnimationController landingController = new LandingAnimationController(this, this::landPredicate);
+    double landDuration = 0;
+    final double landAnimationDuration = 2.24 * 20;
+    
+    private <E extends IAnimatable> PlayState landPredicate(AnimationEvent<E> animationEvent) {
+        final PlayerEntity player = getPlayer();
+        DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+        landingBuilder = new AnimationBuilder();
+        if(handler != null){
+            double preLandDuration = 1;
+            double hoverLand = ServerFlightHandler.getLandTime(player, (2.24 + preLandDuration) * 20);
+            double fullLand = ServerFlightHandler.getLandTime(player, 2.24 * 20);
+            landingController.speed = 1;
+            
+            if(landingBuilder.getRawAnimationList().size() == 0 || true) {
+                neckLocked = true;
+                
+                if(ServerFlightHandler.isGliding(player)){
+                    landDuration = 0;
+                    return PlayState.STOP;
+                }
+                
+                if(landDuration == 0 && fullLand != -1 && fullLand < (landAnimationDuration / 2)){
+                    return PlayState.STOP;
+                }
+                
+                if (player.isCrouching() && fullLand != -1 && player.getDeltaMovement().length() < 4 || landDuration > 0) {
+                    if (landDuration == 0) {
+                        landDuration = landAnimationDuration;
+                    }
+        
+                    if(fullLand == -1 && landDuration < (landAnimationDuration / 4)){
+                        landDuration = 0;
+                    }
+                    
+                    if (fullLand > 0 && fullLand < (landDuration)) {
+                        double dif = landDuration / fullLand;
+                        landingController.speed = Math.max(0, dif);
+                    }
+        
+                    landingBuilder.addAnimation("fly_land_end");
+                    landDuration -= Math.max(0.1, Minecraft.getInstance().getDeltaFrameTime() * landingController.speed);
+                } else if (player.isCrouching() && hoverLand != -1 && player.getDeltaMovement().length() < 4) {
+                    neckLocked = true;
+    
+                    landingBuilder.addAnimation("fly_land", true);
+                }else{
+                    landDuration = 0;
+                    return PlayState.STOP;
+                }
+            }
+            
+            animationEvent.getController().setAnimation(landingBuilder);
+            return PlayState.CONTINUE;
+        }
+        
+        return PlayState.STOP;
     }
     
     private <E extends IAnimatable> PlayState bitePredicate(AnimationEvent<E> animationEvent) {
+        if(landingBuilder.getRawAnimationList().size() > 0){
+            return PlayState.STOP;
+        }
+        
         final PlayerEntity player = getPlayer();
         DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
         AnimationBuilder builder = new AnimationBuilder();
@@ -62,7 +130,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
             
             if(handler.getEmotes().getCurrentEmote() == null) {
                 if(curCast instanceof BreathAbility || lastCast instanceof BreathAbility){
-                    renderAbility(animationEvent, builder, curCast);
+                    renderAbility(builder, curCast);
                     animationEvent.getController().setAnimation(builder);
                     return PlayState.CONTINUE;
                 }
@@ -89,7 +157,12 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
     public boolean neckLocked = false;
     AnimationTimer animationTimer = new AnimationTimer();
     Emote lastEmote;
+    
     private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> animationEvent) {
+        if(landingBuilder.getRawAnimationList().size() > 0){
+            return PlayState.STOP;
+        }
+        
         final PlayerEntity player = getPlayer();
         final AnimationController animationController = animationEvent.getController();
         
@@ -116,7 +189,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                 }
                 
                 if(!(curCast instanceof BreathAbility) && !(lastCast instanceof BreathAbility)){
-                    renderAbility(animationEvent, builder, curCast);
+                    renderAbility(builder, curCast);
                 }
                 
                 Vector3d motio = new Vector3d(player.getX() - player.xo, player.getY() - player.yo, player.getZ() - player.zo);
@@ -128,12 +201,6 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
     
                 }else if (player.isPassenger()) {
                     builder.addAnimation("sit", true);
-                    
-                }else if (player.getPose() == Pose.SWIMMING) {
-                    builder.addAnimation("swim_fast", true);
-                    
-                }else if ((player.isInLava() || player.isInWaterOrBubble()) && !player.isOnGround()) {
-                    builder.addAnimation("swim", true);
                     
                 } else if (player.abilities.flying || ServerFlightHandler.isFlying(player)) {
                     
@@ -152,26 +219,29 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                         }
                     } else {
                         neckLocked = true;
-    
-                        double landDuration = 2;
-                        double preLandDuration = 1;
-    
-                        double hoverLand = ServerFlightHandler.getLandTime(player, (landDuration + preLandDuration) * 20);
-                        double fullLand = ServerFlightHandler.getLandTime(player, landDuration * 20);
-    
-                        if(player.isShiftKeyDown() && fullLand != -1 && player.getDeltaMovement().length() < 4) {
-                            builder.addAnimation("fly_land_end", true);
-        
-                        }else if(player.isShiftKeyDown() && hoverLand != -1 && player.getDeltaMovement().length() < 4){
-                            builder.addAnimation("fly_land", false);
+                        
+                        if(ServerFlightHandler.isSpin(player)) {
+                            builder.addAnimation("fly_spin", true);
+                        } else if(player.getDeltaMovement().y > 0.25){
+                                builder.addAnimation("fly_fast", true);
                         }else{
-                            if(ServerFlightHandler.isSpin(player)) {
-                                builder.addAnimation("fly_spin", true);
-                            }else{
-                                builder.addAnimation("fly", true);
-                                neckLocked = false;
-                            }
+                            builder.addAnimation("fly", true);
+                            neckLocked = false;
                         }
+                    }
+    
+                }else if (player.getPose() == Pose.SWIMMING) {
+                    if(ServerFlightHandler.isSpin(player)) {
+                        builder.addAnimation("fly_spin_fast", true);
+                    }else {
+                        builder.addAnimation("swim_fast", true);
+                    }
+    
+                }else if ((player.isInLava() || player.isInWaterOrBubble()) && !player.isOnGround()) {
+                    if(ServerFlightHandler.isSpin(player)) {
+                        builder.addAnimation("fly_spin_fast", true);
+                    }else {
+                        builder.addAnimation("swim", true);
                     }
                     
                 }else if (!player.isOnGround() && motio.y() < 0) {
@@ -210,14 +280,14 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                     builder.addAnimation("idle", true);
                 }
             });
-        } else {
-            builder.addAnimation("idle", true);
         }
+    
+        builder.addAnimation("idle", true);
         animationController.setAnimation(builder);
         return PlayState.CONTINUE;
     }
     
-    private void renderAbility(AnimationEvent event, AnimationBuilder builder, ActiveDragonAbility curCast)
+    private void renderAbility(AnimationBuilder builder, ActiveDragonAbility curCast)
     {
         if(curCast != null && lastCast == null){
             if(curCast.getStartingAnimation() != null){

@@ -218,7 +218,7 @@ public class StormBreathAbility extends BreathAbility
 	}
 	
 	public void hurtTarget(LivingEntity entity){
-		entity.hurt(DamageSource.playerAttack(player), getDamage());
+		entity.hurt(new BreathDamage(player), getDamage());
 		onDamage(entity);
 		
 		if(player.level.random.nextInt(100) < 50){

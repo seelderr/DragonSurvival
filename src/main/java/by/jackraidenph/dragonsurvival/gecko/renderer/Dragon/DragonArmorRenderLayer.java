@@ -1,7 +1,7 @@
 package by.jackraidenph.dragonsurvival.gecko.renderer.Dragon;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.gecko.entity.DragonEntity;
+import by.jackraidenph.dragonsurvival.gecko.entity.dragon.DragonEntity;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.ClientDragonRender;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;

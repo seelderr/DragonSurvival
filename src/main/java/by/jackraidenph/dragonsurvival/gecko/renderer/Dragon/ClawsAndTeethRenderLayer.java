@@ -3,7 +3,7 @@ package by.jackraidenph.dragonsurvival.gecko.renderer.Dragon;
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.gecko.entity.DragonEntity;
+import by.jackraidenph.dragonsurvival.gecko.entity.dragon.DragonEntity;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.ClientEvents;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import com.mojang.blaze3d.matrix.MatrixStack;

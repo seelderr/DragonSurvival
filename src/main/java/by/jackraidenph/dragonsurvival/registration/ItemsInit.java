@@ -126,7 +126,7 @@ public class ItemsInit {
                 if(!world.isClientSide) {
                     DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
                 
-                    if (handler != null) {
+                    if (handler != null && handler.isDragon()) {
                         handler.growing = !handler.growing;
                         player.sendMessage(new TranslationTextComponent(handler.growing ? "ds.growth.now_growing" : "ds.growth.no_growth"), player.getUUID());
                         

@@ -2,7 +2,7 @@ package by.jackraidenph.dragonsurvival.handlers.ClientSide;
 
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
-import by.jackraidenph.dragonsurvival.gecko.entity.DragonEntity;
+import by.jackraidenph.dragonsurvival.gecko.entity.dragon.DragonEntity;
 import by.jackraidenph.dragonsurvival.gecko.model.DragonArmorModel;
 import by.jackraidenph.dragonsurvival.gecko.model.DragonModel;
 import by.jackraidenph.dragonsurvival.handlers.ServerSide.ServerFlightHandler;

@@ -27,7 +27,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityViewRenderEvent.CameraSetup;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
+import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.glfw.GLFW;
@@ -77,31 +78,33 @@ public class ClientFlightHandler {
             return;
         
         DragonStateProvider.getCap(playerEntity).ifPresent(cap -> {
-            if(!ServerFlightHandler.isFlying(playerEntity)){
+            if(!ServerFlightHandler.isFlying(playerEntity) && !ServerFlightHandler.isWaterSpin(playerEntity)){
                 return;
             }
             
             if(cap.getMovementData().spinCooldown > 0) {
-                GL11.glPushMatrix();
-
-                TextureManager textureManager = Minecraft.getInstance().getTextureManager();
-                MainWindow window = Minecraft.getInstance().getWindow();
-                Minecraft.getInstance().getTextureManager().bind(SPIN_COOLDOWN);
+                if (event.getType() == ElementType.HOTBAR) {
+                    GL11.glPushMatrix();
     
-                int cooldown = ConfigHandler.SERVER.flightSpinCooldown.get() * 20;
-                float f = ((float)cooldown - (float)cap.getMovementData().spinCooldown) / (float)cooldown;
-                
-                int k = (window.getGuiScaledWidth() / 2) - (66 / 2);
-                int j = window.getGuiScaledHeight() - 96;
+                    TextureManager textureManager = Minecraft.getInstance().getTextureManager();
+                    MainWindow window = Minecraft.getInstance().getWindow();
+                    Minecraft.getInstance().getTextureManager().bind(SPIN_COOLDOWN);
     
-                k += ConfigHandler.CLIENT.spinCooldownXOffset.get();
-                j += ConfigHandler.CLIENT.spinCooldownYOffset.get();
+                    int cooldown = ConfigHandler.SERVER.flightSpinCooldown.get() * 20;
+                    float f = ((float)cooldown - (float)cap.getMovementData().spinCooldown) / (float)cooldown;
     
-                int l = (int)(f * 62);
-                Screen.blit(event.getMatrixStack(), k, j, 0, 0, 66, 21, 256, 256);
-                Screen.blit(event.getMatrixStack(), k + 4, j + 1, 4, 21, l, 21, 256, 256);
-
-                GL11.glPopMatrix();
+                    int k = (window.getGuiScaledWidth() / 2) - (66 / 2);
+                    int j = window.getGuiScaledHeight() - 96;
+    
+                    k += ConfigHandler.CLIENT.spinCooldownXOffset.get();
+                    j += ConfigHandler.CLIENT.spinCooldownYOffset.get();
+    
+                    int l = (int)(f * 62);
+                    Screen.blit(event.getMatrixStack(), k, j, 0, 0, 66, 21, 256, 256);
+                    Screen.blit(event.getMatrixStack(), k + 4, j + 1, 4, 21, l, 21, 256, 256);
+    
+                    GL11.glPopMatrix();
+                }
             }
         });
     }
@@ -112,14 +115,45 @@ public class ClientFlightHandler {
      * Controls acceleration
      */
     @SubscribeEvent
-    public static void flightControl(TickEvent.PlayerTickEvent playerTickEvent) {
-        PlayerEntity playerEntity = playerTickEvent.player;
-        ClientPlayerEntity currentPlayer = Minecraft.getInstance().player;
-        if (playerEntity == currentPlayer && !playerEntity.isPassenger()) {
+    public static void flightControl(ClientTickEvent tickEvent) {
+        ClientPlayerEntity playerEntity = Minecraft.getInstance().player;
+        if (playerEntity != null && !playerEntity.isPassenger()) {
             DragonStateProvider.getCap(playerEntity).ifPresent(dragonStateHandler -> {
                 if (dragonStateHandler.isDragon()) {
+                    if(ServerFlightHandler.isWaterSpin(playerEntity) && ServerFlightHandler.isSpin(playerEntity)){
+                        MovementInput movement = playerEntity.input;
+                        
+                        Vector3d motion = playerEntity.getDeltaMovement();
+                        Vector3d lookVec = playerEntity.getLookAngle();
+                        
+                        double yaw = Math.toRadians(playerEntity.yHeadRot + 90);
+                        double lookY = lookVec.y;
+    
+                        double speedLimit = ConfigHandler.SERVER.maxFlightSpeed.get();
+                        ax = MathHelper.clamp(ax, -0.2 * speedLimit, 0.2 * speedLimit);
+                        az = MathHelper.clamp(az, -0.2 * speedLimit, 0.2 * speedLimit);
+    
+                        ax += (Math.cos(yaw) / 500) * 50;
+                        az += (Math.sin(yaw) / 500) * 50;
+                        ay = lookVec.y / 8;
+    
+                        if (lookY < 0) {
+                            motion = motion.add(ax, 0, az);
+                        } else {
+                            motion = motion.add(ax, ay, az);
+                        }
+                        motion = motion.multiply(0.99F, 0.98F, 0.99F);
+    
+                        if (motion.length() != playerEntity.getDeltaMovement().length()) {
+                            NetworkHandler.CHANNEL.sendToServer(new SyncFlightSpeed(playerEntity.getId(), motion));
+                        }
+    
+                        playerEntity.setDeltaMovement(motion);
+                        ay = playerEntity.getDeltaMovement().y;
+                    }
+                    
                     if (dragonStateHandler.isWingsSpread()) {
-                        MovementInput movement = currentPlayer.input;
+                        MovementInput movement = playerEntity.input;
     
                         boolean hasFood = playerEntity.getFoodData().getFoodLevel() > ConfigHandler.SERVER.flightHungerThreshold.get() || playerEntity.isCreative() || ConfigHandler.SERVER.allowFlyingWithoutHunger.get();
                         
@@ -139,7 +173,7 @@ public class ClientFlightHandler {
                             
                             if(ServerFlightHandler.isGliding(playerEntity)){
                                 if(!wasGliding){
-                                    Minecraft.getInstance().getSoundManager().play(new FastGlideSound(currentPlayer));
+                                    Minecraft.getInstance().getSoundManager().play(new FastGlideSound(playerEntity));
                                     wasGliding = true;
                                 }
                             }

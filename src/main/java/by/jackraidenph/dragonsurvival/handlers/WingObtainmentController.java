@@ -6,6 +6,7 @@ import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.status.RefreshDragons;
 import by.jackraidenph.dragonsurvival.network.SynchronizeDragonCap;
+import by.jackraidenph.dragonsurvival.network.status.SyncSpinStatus;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import net.minecraft.client.Minecraft;
@@ -120,7 +121,7 @@ public class WingObtainmentController {
         ServerPlayerEntity playerEntity = chatEvent.getPlayer();
         String lowercase = message.toLowerCase();
         DragonStateProvider.getCap(playerEntity).ifPresent(dragonStateHandler -> {
-            if (dragonStateHandler.isDragon() && !dragonStateHandler.hasWings()) {
+            if (dragonStateHandler.isDragon() && (!dragonStateHandler.hasWings() || !dragonStateHandler.getMovementData().spinLearned)) {
                 if (playerEntity.getLevel().dimension() == World.END) {
                     if (!playerEntity.getLevel().getDragons().isEmpty()) {
                         if (!lowercase.isEmpty()) {
@@ -134,7 +135,9 @@ public class WingObtainmentController {
                             });
                             thread.start();
                             dragonStateHandler.setHasWings(true);
-                            NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new SynchronizeDragonCap(playerEntity.getId(), dragonStateHandler.isHiding(), dragonStateHandler.getType(), dragonStateHandler.getSize(), true, dragonStateHandler.getLavaAirSupply(), dragonStateHandler.getPassengerId()));
+							dragonStateHandler.getMovementData().spinLearned = true;
+	                        NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new SyncSpinStatus(playerEntity.getId(), dragonStateHandler.getMovementData().spinAttack, dragonStateHandler.getMovementData().spinCooldown, dragonStateHandler.getMovementData().spinLearned));
+	                        NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new SynchronizeDragonCap(playerEntity.getId(), dragonStateHandler.isHiding(), dragonStateHandler.getType(), dragonStateHandler.getSize(), true, dragonStateHandler.getLavaAirSupply(), dragonStateHandler.getPassengerId()));
                         }
                     }
                 }

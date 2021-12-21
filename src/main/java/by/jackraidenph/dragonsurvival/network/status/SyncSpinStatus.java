@@ -25,12 +25,14 @@ public class SyncSpinStatus implements IMessage<SyncSpinStatus>
     public int playerId;
     public int spinAttack;
     public int spinCooldown;
+    public boolean spinLearned;
     
-    public SyncSpinStatus(int playerId, int spinAttack, int spinCooldown)
+    public SyncSpinStatus(int playerId, int spinAttack, int spinCooldown, boolean spinLearned)
     {
         this.playerId = playerId;
         this.spinAttack = spinAttack;
         this.spinCooldown = spinCooldown;
+        this.spinLearned = spinLearned;
     }
     
     public SyncSpinStatus() {
@@ -41,6 +43,7 @@ public class SyncSpinStatus implements IMessage<SyncSpinStatus>
         buffer.writeInt(message.playerId);
         buffer.writeInt(message.spinAttack);
         buffer.writeInt(message.spinCooldown);
+        buffer.writeBoolean(message.spinLearned);
     }
     
     @Override
@@ -48,7 +51,8 @@ public class SyncSpinStatus implements IMessage<SyncSpinStatus>
         int playerId = buffer.readInt();
         int spinAttack = buffer.readInt();
         int spinCooldown = buffer.readInt();
-        return new SyncSpinStatus(playerId, spinAttack, spinCooldown);
+        boolean spinLearned = buffer.readBoolean();
+        return new SyncSpinStatus(playerId, spinAttack, spinCooldown, spinLearned);
     }
     
     @Override
@@ -61,9 +65,10 @@ public class SyncSpinStatus implements IMessage<SyncSpinStatus>
                 DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
                   dragonStateHandler.getMovementData().spinAttack = message.spinAttack;
                     dragonStateHandler.getMovementData().spinCooldown = message.spinCooldown;
+                    dragonStateHandler.getMovementData().spinLearned = message.spinLearned;
                 });
                 
-                NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new SyncSpinStatus(entity.getId(), message.spinAttack, message.spinCooldown));
+                NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new SyncSpinStatus(entity.getId(), message.spinAttack, message.spinCooldown, message.spinLearned));
             }
         }
     }
@@ -80,6 +85,7 @@ public class SyncSpinStatus implements IMessage<SyncSpinStatus>
                     DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
                         dragonStateHandler.getMovementData().spinAttack = message.spinAttack;
                         dragonStateHandler.getMovementData().spinCooldown = message.spinCooldown;
+                        dragonStateHandler.getMovementData().spinLearned = message.spinLearned;
                     });
                 }
             }

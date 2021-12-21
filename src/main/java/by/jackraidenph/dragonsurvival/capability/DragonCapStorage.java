@@ -23,6 +23,7 @@ public class DragonCapStorage implements Capability.IStorage<DragonStateHandler>
     
             tag.putInt("spinCooldown", movementData.spinCooldown);
             tag.putInt("spinAttack", movementData.spinAttack);
+            tag.putBoolean("spinLearned", movementData.spinLearned);
     
             tag.putBoolean("bite", movementData.bite);
             tag.putBoolean("dig", movementData.dig);
@@ -66,10 +67,14 @@ public class DragonCapStorage implements Capability.IStorage<DragonStateHandler>
         
         if (instance.isDragon()) {
             instance.setMovementData(tag.getDouble("bodyYaw"), tag.getDouble("headYaw"), tag.getDouble("headPitch"), tag.getBoolean("bite"));
+    
+            instance.setHasWings(tag.getBoolean("hasWings"));
+            instance.setWingsSpread(tag.getBoolean("isFlying"));
             
             instance.getMovementData().dig = tag.getBoolean("dig");
             instance.getMovementData().spinCooldown = tag.getInt("spinCooldown");
             instance.getMovementData().spinAttack = tag.getInt("spinAttack");
+            instance.getMovementData().spinLearned = tag.contains("spinLearned") ? tag.getBoolean("spinLearned") : instance.hasWings(); //So that players from old versions unlock spin if they had wings
     
             instance.setDebuffData(tag.getInt("timeWithoutWater"), tag.getInt("timeInDarkness"), tag.getInt("timeInRain"));
             instance.setIsHiding(tag.getBoolean("isHiding"));
@@ -80,9 +85,6 @@ public class DragonCapStorage implements Capability.IStorage<DragonStateHandler>
             instance.caveSize = tag.getDouble("caveSize");
             instance.seaSize = tag.getDouble("seaSize");
             instance.forestSize = tag.getDouble("forestSize");
-    
-            instance.setHasWings(tag.getBoolean("hasWings"));
-            instance.setWingsSpread(tag.getBoolean("isFlying"));
     
             instance.caveWings = tag.getBoolean("caveWings");
             instance.seaWings = tag.getBoolean("seaWings");

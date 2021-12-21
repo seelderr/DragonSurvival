@@ -54,7 +54,7 @@ public class ClientConfig {
 		notifyWingStatus = builder.comment("Notifies of wing status in chat message").define("notifyWingStatus", false);
 		clientDebugMessages = builder.define("Enable client-side debug messages", false);
 		
-		jumpToFly = builder.comment("Should flight be activated when jumping in the air").define("jumpToFly", true);
+		jumpToFly = builder.comment("Should flight be activated when jumping in the air").define("jumpToFly", false);
 		lookAtSkyForFlight = builder.comment("Is it required to look up to start flying while jumping, requires that jumpToFly is on").define("lookAtSkyForFlight", false);
 		flightZoomEffect = builder.comment("Should the zoom effect while gliding as a dragon be enabled").define("flightZoomEffect", true);
 		renderOtherPlayerRotation = builder.comment("Should the rotation effect during gliding of other players be shown?").define("renderOtherPlayerRotation", true);

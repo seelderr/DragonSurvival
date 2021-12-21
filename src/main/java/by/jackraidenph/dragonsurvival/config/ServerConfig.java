@@ -43,7 +43,6 @@ public class ServerConfig {
 	public final ForgeConfigSpec.DoubleValue maxGrowthSize;
 	public final ForgeConfigSpec.DoubleValue reachBonus;
 	
-	public final ForgeConfigSpec.IntValue alternateGrowingFrequency;
 	public final ForgeConfigSpec.BooleanValue saveGrowthStage;
 
 	//Abilities
@@ -270,9 +269,6 @@ public class ServerConfig {
 		reachBonus = builder
 				.comment("The bonus that is given to dragons at ever 60 size. Human players have 1.0x reach and a size 60 dragon will have 1.5x distance with default value")
 				.defineInRange("reachBonus", 0.1, 0, 1000000.0);
-		alternateGrowingFrequency = builder
-				.comment("Speed of alternateGrowing effect in seconds")
-				.defineInRange("alternateGrowingFrequency", 60, 0, Integer.MAX_VALUE);
 		saveGrowthStage = builder
 				.comment("Should the growth stage of a dragon be saved even when you change. Does not affect the saving progress of magic (use saveAllAbilities).")
 				.define("saveGrowthStage", false);
@@ -297,10 +293,10 @@ public class ServerConfig {
 		// Wings
 		builder.pop().push("wings");
 		maxFlightSpeed = builder
-				.defineInRange("maxFlightSpeed", 0.3, 0.1, 1);
+				.defineInRange("maxFlightSpeed", 0.1, 0.1, 1);
 		startWithWings = builder
 				.comment("Whether dragons start out with wings.")
-				.define("startWithWings", false);
+				.define("startWithWings", true);
 		allowFlyingWithoutHunger = builder
 				.comment("Whether dragons can fly when totally hungry.")
 				.define("allowFlyingWhenTotallyHungry", false);

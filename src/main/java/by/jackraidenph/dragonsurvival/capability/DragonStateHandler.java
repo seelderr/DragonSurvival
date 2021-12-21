@@ -429,6 +429,7 @@ public class DragonStateHandler {
         public boolean bite;
 		public boolean dig;
 		
+		public boolean spinLearned;
 		public int spinCooldown;
 		public int spinAttack;
         

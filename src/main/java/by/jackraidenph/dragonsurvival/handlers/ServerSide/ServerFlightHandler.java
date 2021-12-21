@@ -7,9 +7,11 @@ import by.jackraidenph.dragonsurvival.handlers.ClientSide.ClientFlightHandler;
 import by.jackraidenph.dragonsurvival.network.status.SyncFlyingStatus;
 import by.jackraidenph.dragonsurvival.network.status.SyncSpinStatus;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
+import by.jackraidenph.dragonsurvival.util.DragonType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -127,10 +129,19 @@ public class ServerFlightHandler {
 		DragonStateProvider.getCap(player).ifPresent(handler -> {
 			if(handler.isDragon()) {
 				if(handler.getMovementData().spinAttack > 0){
-					if(!isFlying(player)){
+					if(isWaterSpin(player) && isSpin(player)){
+						for(int i = 0; i < 20; i++) {
+							double d0 = player.level.random.nextFloat();
+							double d1 = player.level.random.nextFloat();
+							double d2 = player.level.random.nextFloat();
+							player.level.addParticle(ParticleTypes.BUBBLE_COLUMN_UP, player.position().x + player.getDeltaMovement().x + d0, player.position().y - 0.5 + player.getDeltaMovement().y + d1, player.position().z + player.getDeltaMovement().z + d2, player.getDeltaMovement().x * -1, player.getDeltaMovement().y * -1, player.getDeltaMovement().z * -1);
+						}
+					}
+					
+					if(!isFlying(player) && !isWaterSpin(player)){
 						if(!player.level.isClientSide){
 							handler.getMovementData().spinAttack = 0;
-							NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncSpinStatus(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown));
+							NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncSpinStatus(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
 						}
 					}
 				}
@@ -155,22 +166,22 @@ public class ServerFlightHandler {
 					
 					if(!player.level.isClientSide){
 						handler.getMovementData().spinAttack--;
-						NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncSpinStatus(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown));
+						NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncSpinStatus(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
 					}
 					
 				}else if(handler.getMovementData().spinCooldown > 0){
 					if(!player.level.isClientSide){
 						handler.getMovementData().spinCooldown--;
-						NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncSpinStatus(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown));
+						NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncSpinStatus(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
 					}
 					
-				}else if(handler.getMovementData().bite && handler.getMovementData().spinCooldown <= 0){
+				}else if(handler.getMovementData().bite && handler.getMovementData().spinCooldown <= 0 && handler.getMovementData().spinLearned && (!isWaterSpin(player) || player.isSprinting())){
 					//Do Spin
-					if(isFlying(player)) {
+					if(isFlying(player) || isWaterSpin(player)) {
 						if (!player.level.isClientSide) {
 							handler.getMovementData().spinAttack = spinDuration;
 							handler.getMovementData().spinCooldown = ConfigHandler.SERVER.flightSpinCooldown.get() * 20;
-							NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncSpinStatus(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown));
+							NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncSpinStatus(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
 						}
 					}
 				}
@@ -214,7 +225,7 @@ public class ServerFlightHandler {
 		DragonStateHandler handler = DragonStateProvider.getCap(entity).orElse(null);
 		
 		if(handler != null){
-			if(isFlying(entity)){
+			if(isFlying(entity) || isWaterSpin(entity)){
 				if(handler.getMovementData().spinAttack > 0){
 					return true;
 				}
@@ -222,6 +233,11 @@ public class ServerFlightHandler {
 		}
 		
 		return false;
+	}
+	
+	public static boolean isWaterSpin(LivingEntity player){
+		DragonStateHandler dragonStateHandler = DragonStateProvider.getCap(player).orElse(null);
+		return dragonStateHandler != null && dragonStateHandler.getType() == DragonType.SEA && player.isInWater() && dragonStateHandler.hasWings() && !player.isOnGround() && !player.isInLava();
 	}
 	
 	public static boolean isFlying(LivingEntity player){
