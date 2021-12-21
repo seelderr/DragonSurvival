@@ -190,20 +190,21 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                         }else if (player.getDeltaMovement().y < -0.25) {
                             builder.addAnimation("fly_dive", true);
                         } else if(player.getDeltaMovement().y > 0.25){
+                            dragonAnimationController.speed = 1 + ((player.getDeltaMovement().y / 2) / 5);
                             builder.addAnimation("fly_fast", true);
                         }else{
                             builder.addAnimation("fly_soaring", true);
                         }
                     } else {
-                        neckLocked = true;
                         
                         if(ServerFlightHandler.isSpin(player)) {
+                            neckLocked = true;
                             builder.addAnimation("fly_spin", true);
                         } else if(player.getDeltaMovement().y > 0.25){
-                                builder.addAnimation("fly_fast", true);
+                            dragonAnimationController.speed = 1 + ((player.getDeltaMovement().y / 2) / 5);
+                            builder.addAnimation("fly_fast", true);
                         }else{
                             builder.addAnimation("fly", true);
-                            neckLocked = false;
                         }
                     }
     

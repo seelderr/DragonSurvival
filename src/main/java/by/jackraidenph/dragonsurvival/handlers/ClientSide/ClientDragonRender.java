@@ -160,7 +160,8 @@ public class ClientDragonRender
 								dummyDragon.prevXRot = upRot;
 							}
 							
-							dummyDragon.prevXRot = MathHelper.lerp(renderPlayerEvent.getPartialRenderTick(), dummyDragon.prevXRot, upRot);
+							dummyDragon.prevXRot = MathHelper.lerp(0.1F, dummyDragon.prevXRot, upRot);
+							dummyDragon.prevXRot = MathHelper.clamp(dummyDragon.prevXRot, -80, 80);
 							
 							matrixStack.mulPose(Vector3f.XN.rotationDegrees(dummyDragon.prevXRot));
 							
@@ -177,7 +178,8 @@ public class ClientDragonRender
 								dummyDragon.prevZRot = rot;
 							}
 							
-							dummyDragon.prevZRot = MathHelper.lerp(renderPlayerEvent.getPartialRenderTick(), dummyDragon.prevZRot, rot);
+							dummyDragon.prevZRot = MathHelper.lerp(0.1F, dummyDragon.prevZRot, rot);
+							dummyDragon.prevZRot = MathHelper.clamp(dummyDragon.prevZRot, -1, 1);
 							matrixStack.mulPose(Vector3f.ZP.rotation(dummyDragon.prevZRot));
 						}
 
