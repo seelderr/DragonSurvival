@@ -129,16 +129,16 @@ public class ServerFlightHandler {
 		DragonStateProvider.getCap(player).ifPresent(handler -> {
 			if(handler.isDragon()) {
 				if(handler.getMovementData().spinAttack > 0){
-					if(isWaterSpin(player) && isSpin(player)){
+					if(canSwimSpin(player) && isSpin(player)){
 						for(int i = 0; i < 20; i++) {
 							double d0 = player.level.random.nextFloat();
 							double d1 = player.level.random.nextFloat();
 							double d2 = player.level.random.nextFloat();
-							player.level.addParticle(ParticleTypes.BUBBLE_COLUMN_UP, player.position().x + player.getDeltaMovement().x + d0, player.position().y - 0.5 + player.getDeltaMovement().y + d1, player.position().z + player.getDeltaMovement().z + d2, player.getDeltaMovement().x * -1, player.getDeltaMovement().y * -1, player.getDeltaMovement().z * -1);
+							player.level.addParticle(player.isInWater() ? ParticleTypes.BUBBLE_COLUMN_UP : ParticleTypes.LAVA, player.position().x + player.getDeltaMovement().x + d0, player.position().y - 0.5 + player.getDeltaMovement().y + d1, player.position().z + player.getDeltaMovement().z + d2, player.getDeltaMovement().x * -1, player.getDeltaMovement().y * -1, player.getDeltaMovement().z * -1);
 						}
 					}
 					
-					if(!isFlying(player) && !isWaterSpin(player)){
+					if(!isFlying(player) && !canSwimSpin(player)){
 						if(!player.level.isClientSide){
 							handler.getMovementData().spinAttack = 0;
 							NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncSpinStatus(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
@@ -175,9 +175,9 @@ public class ServerFlightHandler {
 						NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncSpinStatus(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
 					}
 					
-				}else if(handler.getMovementData().bite && handler.getMovementData().spinCooldown <= 0 && handler.getMovementData().spinLearned && (!isWaterSpin(player) || player.isSprinting())){
+				}else if(handler.getMovementData().bite && handler.getMovementData().spinCooldown <= 0 && handler.getMovementData().spinLearned && (!canSwimSpin(player) || player.isSprinting())){
 					//Do Spin
-					if(isFlying(player) || isWaterSpin(player)) {
+					if(isFlying(player) || canSwimSpin(player)) {
 						if (!player.level.isClientSide) {
 							handler.getMovementData().spinAttack = spinDuration;
 							handler.getMovementData().spinCooldown = ConfigHandler.SERVER.flightSpinCooldown.get() * 20;
@@ -225,7 +225,7 @@ public class ServerFlightHandler {
 		DragonStateHandler handler = DragonStateProvider.getCap(entity).orElse(null);
 		
 		if(handler != null){
-			if(isFlying(entity) || isWaterSpin(entity)){
+			if(isFlying(entity) || canSwimSpin(entity)){
 				if(handler.getMovementData().spinAttack > 0){
 					return true;
 				}
@@ -235,9 +235,10 @@ public class ServerFlightHandler {
 		return false;
 	}
 	
-	public static boolean isWaterSpin(LivingEntity player){
+	public static boolean canSwimSpin(LivingEntity player){
 		DragonStateHandler dragonStateHandler = DragonStateProvider.getCap(player).orElse(null);
-		return dragonStateHandler != null && dragonStateHandler.getType() == DragonType.SEA && player.isInWater() && dragonStateHandler.hasWings() && !player.isOnGround() && !player.isInLava();
+		boolean validSwim = ((dragonStateHandler.getType() == DragonType.SEA || dragonStateHandler.getType() == DragonType.FOREST) && player.isInWater()) || (player.isInLava() && dragonStateHandler.getType() == DragonType.CAVE);
+		return dragonStateHandler != null && validSwim && dragonStateHandler.hasWings() && !player.isOnGround();
 	}
 	
 	public static boolean isFlying(LivingEntity player){

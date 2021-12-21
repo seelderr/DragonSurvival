@@ -51,13 +51,17 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
     
     @Override
     public void registerControllers(AnimationData animationData) {
-        animationData.addAnimationController(new AnimationController<>(this, "bite_controller", 2, this::bitePredicate));
-        animationData.addAnimationController(new AnimationController<>(this, "controller", 2, this::predicate));
+        animationData.addAnimationController(biteAnimationController);
+        animationData.addAnimationController(dragonAnimationController);
         animationData.addAnimationController(landingController);
     }
     
     AnimationBuilder landingBuilder = new AnimationBuilder();
-    LandingAnimationController landingController = new LandingAnimationController(this, this::landPredicate);
+    CustomTickAnimationController landingController = new CustomTickAnimationController(this, "landing", this::landPredicate);
+    
+    CustomTickAnimationController biteAnimationController = new CustomTickAnimationController(this, "bite_controller", this::bitePredicate);
+    CustomTickAnimationController dragonAnimationController = new CustomTickAnimationController(this, "controller", this::predicate);
+    
     double landDuration = 0;
     final double landAnimationDuration = 2.24 * 20;
     
@@ -71,44 +75,42 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
             double fullLand = ServerFlightHandler.getLandTime(player, 2.24 * 20);
             landingController.speed = 1;
             
-            if(landingBuilder.getRawAnimationList().size() == 0 || true) {
-                neckLocked = true;
-                
-                if(ServerFlightHandler.isGliding(player)){
-                    landDuration = 0;
-                    return PlayState.STOP;
-                }
-                
-                if(landDuration == 0 && fullLand != -1 && fullLand < (landAnimationDuration / 2)){
-                    return PlayState.STOP;
-                }
-                
-                if (player.isCrouching() && fullLand != -1 && player.getDeltaMovement().length() < 4 || landDuration > 0) {
-                    if (landDuration == 0) {
-                        landDuration = landAnimationDuration;
-                    }
-        
-                    if(fullLand == -1 && landDuration < (landAnimationDuration / 4)){
-                        landDuration = 0;
-                    }
-                    
-                    if (fullLand > 0 && fullLand < (landDuration)) {
-                        double dif = landDuration / fullLand;
-                        landingController.speed = Math.max(0, dif);
-                    }
-        
-                    landingBuilder.addAnimation("fly_land_end");
-                    landDuration -= Math.max(0.1, Minecraft.getInstance().getDeltaFrameTime() * landingController.speed);
-                } else if (player.isCrouching() && hoverLand != -1 && player.getDeltaMovement().length() < 4) {
-                    neckLocked = true;
-    
-                    landingBuilder.addAnimation("fly_land", true);
-                }else{
-                    landDuration = 0;
-                    return PlayState.STOP;
-                }
+            if(ServerFlightHandler.isGliding(player)){
+                landDuration = 0;
+                return PlayState.STOP;
             }
-            
+    
+            if(landDuration == 0 && fullLand != -1 && fullLand < (landAnimationDuration / 2)){
+                return PlayState.STOP;
+            }
+    
+            if (player.isCrouching() && fullLand != -1 && player.getDeltaMovement().length() < 4 || landDuration > 0) {
+                neckLocked = true;
+    
+                if (landDuration == 0) {
+                    landDuration = landAnimationDuration;
+                }
+    
+                if(fullLand == -1 && landDuration < (landAnimationDuration / 4)){
+                    landDuration = 0;
+                }
+                
+                if (fullLand > 0 && fullLand < (landDuration)) {
+                    double dif = landDuration / fullLand;
+                    landingController.speed = Math.max(0, dif);
+                }
+    
+                landingBuilder.addAnimation("fly_land_end");
+                landDuration -= Math.max(0.1, Minecraft.getInstance().getDeltaFrameTime() * landingController.speed);
+            } else if (player.isCrouching() && hoverLand != -1 && player.getDeltaMovement().length() < 4) {
+                neckLocked = true;
+
+                landingBuilder.addAnimation("fly_land", true);
+            }else{
+                landDuration = 0;
+                return PlayState.STOP;
+            }
+    
             animationEvent.getController().setAnimation(landingBuilder);
             return PlayState.CONTINUE;
         }
@@ -167,6 +169,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
         final AnimationController animationController = animationEvent.getController();
         
         neckLocked = false;
+        dragonAnimationController.speed = 1;
         
         AnimationBuilder builder = new AnimationBuilder();
         
@@ -175,15 +178,18 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                 ActiveDragonAbility curCast = playerStateHandler.getMagic().getCurrentlyCasting();
                 
                 if(playerStateHandler.getEmotes().getCurrentEmote() != null){
-                    neckLocked = playerStateHandler.getEmotes().getCurrentEmote().locksHead;
+                    Emote emote = playerStateHandler.getEmotes().getCurrentEmote();
                     
-                   if(playerStateHandler.getEmotes().getCurrentEmote().animation != null && !playerStateHandler.getEmotes().getCurrentEmote().animation.isEmpty()) {
-                       builder.addAnimation(playerStateHandler.getEmotes().getCurrentEmote().animation, playerStateHandler.getEmotes().getCurrentEmote().loops);
+                    neckLocked = emote.locksHead;
+                    dragonAnimationController.speed = emote.speed;
+                    
+                   if(emote.animation != null && !emote.animation.isEmpty()) {
+                       builder.addAnimation(emote.animation, emote.loops);
                    }
                    
-                    lastEmote = playerStateHandler.getEmotes().getCurrentEmote();
+                    lastEmote = emote;
                    
-                   if(playerStateHandler.getEmotes().getCurrentEmote().animation != null && !playerStateHandler.getEmotes().getCurrentEmote().animation.isEmpty()) {
+                   if(emote.animation != null && !emote.animation.isEmpty()) {
                        return;
                    }
                 }

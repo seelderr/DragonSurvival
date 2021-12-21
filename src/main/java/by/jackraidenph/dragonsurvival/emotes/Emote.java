@@ -3,6 +3,7 @@ package by.jackraidenph.dragonsurvival.emotes;
 public class Emote
 {
 	public int duration = -1;
+	public double speed = 1;
 	
 	public Requirement requirements;
 	

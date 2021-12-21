@@ -78,7 +78,7 @@ public class ClientFlightHandler {
             return;
         
         DragonStateProvider.getCap(playerEntity).ifPresent(cap -> {
-            if(!ServerFlightHandler.isFlying(playerEntity) && !ServerFlightHandler.isWaterSpin(playerEntity)){
+            if(!ServerFlightHandler.isFlying(playerEntity) && !ServerFlightHandler.canSwimSpin(playerEntity)){
                 return;
             }
             
@@ -120,7 +120,7 @@ public class ClientFlightHandler {
         if (playerEntity != null && !playerEntity.isPassenger()) {
             DragonStateProvider.getCap(playerEntity).ifPresent(dragonStateHandler -> {
                 if (dragonStateHandler.isDragon()) {
-                    if(ServerFlightHandler.isWaterSpin(playerEntity) && ServerFlightHandler.isSpin(playerEntity)){
+                    if(ServerFlightHandler.canSwimSpin(playerEntity) && ServerFlightHandler.isSpin(playerEntity)){
                         MovementInput movement = playerEntity.input;
                         
                         Vector3d motion = playerEntity.getDeltaMovement();

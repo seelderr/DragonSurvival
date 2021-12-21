@@ -9,11 +9,11 @@ import software.bernie.shadowed.eliotlash.molang.MolangParser;
 import java.util.HashMap;
 import java.util.List;
 
-class LandingAnimationController extends AnimationController
+class CustomTickAnimationController extends AnimationController
 {
-	public LandingAnimationController(IAnimatable animatable, IAnimationPredicate<DragonEntity> predicate)
+	public CustomTickAnimationController(IAnimatable animatable, String name, IAnimationPredicate<DragonEntity> predicate)
 	{
-		super(animatable, "landing", 2, predicate);
+		super(animatable, name, 2, predicate);
 	}
 	
 	public double speed = 1;
