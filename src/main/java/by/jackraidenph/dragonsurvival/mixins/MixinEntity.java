@@ -1,5 +1,6 @@
 package by.jackraidenph.dragonsurvival.mixins;
 
+import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.handlers.DragonSizeHandler;
@@ -95,9 +96,9 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
         if (DragonStateProvider.isDragon(entity) && ConfigHandler.SERVER.sizeChangesHitbox.get()){
             double size = DragonStateProvider.getCap(entity).orElseGet(null).getSize();
             double height = DragonSizeHandler.calculateModifiedHeight(DragonSizeHandler.calculateDragonHeight(size, ConfigHandler.SERVER.hitboxGrowsPastHuman.get()), pose, ConfigHandler.SERVER.sizeChangesHitbox.get());
-            double width = DragonSizeHandler.calculateDragonWidth(size, ConfigHandler.SERVER.hitboxGrowsPastHuman.get()) / 2.0F;
-            Vector3d vector3d = new Vector3d(getX() - (double)width, getY(), getZ() - (double)width);
-            Vector3d vector3d1 = new Vector3d(getX() + (double)width, getY() + (double)height, getZ() + (double)width);
+            double width = DragonSizeHandler.calculateDragonWidth(size, ConfigHandler.SERVER.hitboxGrowsPastHuman.get()) / 2.0D;
+            Vector3d vector3d = new Vector3d(getX() - width, getY(), getZ() - width);
+            Vector3d vector3d1 = new Vector3d(getX() + width, getY() + height, getZ() + width);
             return new AxisAlignedBB(vector3d, vector3d1);
         } else
             return getBoundingBoxForPose(pose);
