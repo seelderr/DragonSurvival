@@ -273,7 +273,7 @@ public class ServerConfig {
 				.comment("Defines the max size your dragon can grow to.")
 				.defineInRange("maxGrowthSize", 60.0, 14.0, 1000000.0);
 		reachBonus = builder
-				.comment("The bonus that is given to dragons at ever 60 size. Human players have 1.0x reach and a size 60 dragon will have 1.5x distance with default value")
+				.comment("The bonus that is given to dragons at ever 60 size. Human players have 1.0x reach and a size 60 dragon will have 1.1x distance with default value")
 				.defineInRange("reachBonus", 0.1, 0, 1000000.0);
 		saveGrowthStage = builder
 				.comment("Should the growth stage of a dragon be saved even when you change. Does not affect the saving progress of magic (use saveAllAbilities).")

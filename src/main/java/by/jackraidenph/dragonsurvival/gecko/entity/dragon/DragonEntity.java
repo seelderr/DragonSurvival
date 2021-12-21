@@ -187,7 +187,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                     }else{
                         builder.addAnimation("fly_soaring", true);
                     }
-                } else if(ServerFlightHandler.isFlying(player)){
+                } else {
                     if(ServerFlightHandler.isSpin(player)) {
                         neckLocked = true;
                         builder.addAnimation("fly_spin", true);

@@ -159,6 +159,10 @@ public class ClientDragonRender
 							dummyDragon.prevXRot = MathHelper.lerp(0.1F, dummyDragon.prevXRot, upRot);
 							dummyDragon.prevXRot = MathHelper.clamp(dummyDragon.prevXRot, -80, 80);
 							
+							if(Float.isNaN(dummyDragon.prevXRot)){
+								dummyDragon.prevXRot = upRot;
+							}
+							
 							matrixStack.mulPose(Vector3f.XN.rotationDegrees(dummyDragon.prevXRot));
 							
 							Vector3d vector3d1 = player.getDeltaMovement();
@@ -172,6 +176,11 @@ public class ClientDragonRender
 							
 							dummyDragon.prevZRot = MathHelper.lerp(0.1F, dummyDragon.prevZRot, rot);
 							dummyDragon.prevZRot = MathHelper.clamp(dummyDragon.prevZRot, -1, 1);
+							
+							if(Float.isNaN(dummyDragon.prevZRot)){
+								dummyDragon.prevZRot = rot;
+							}
+							
 							matrixStack.mulPose(Vector3f.ZP.rotation(dummyDragon.prevZRot));
 						}
 
