@@ -19,6 +19,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.HandSide;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import software.bernie.geckolib3.core.IAnimatable;
@@ -147,7 +148,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                 }else if (player.isPassenger()) {
                     builder.addAnimation("sit", true);
                     
-                } else if (player.abilities.flying || ServerFlightHandler.isFlying(player)) {
+                } else if (player.abilities.flying || ServerFlightHandler.isFlying(player) || landDuration > 0) {
                     double preLandDuration = 1;
                     double hoverLand = ServerFlightHandler.getLandTime(player, (2.24 + preLandDuration) * 20);
                     double fullLand = ServerFlightHandler.getLandTime(player, 2.24 * 20);
@@ -158,22 +159,17 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                     
                     if (player.isCrouching() && fullLand != -1 && player.getDeltaMovement().length() < 4 || landDuration > 0) {
                         neckLocked = true;
-        
-                        if (landDuration == 0) {
-                            landDuration = landAnimationDuration;
-                        }
-        
-                        if(fullLand == -1 && landDuration < (landAnimationDuration / 4)){
-                            landDuration = 0;
-                        }
-        
-                        if (fullLand > 0 && fullLand < (landDuration)) {
-                            double dif = landDuration / fullLand;
-                            dragonAnimationController.speed = Math.max(0, dif);
-                        }
-        
+                        
+//                        if (landDuration == 0 && ServerFlightHandler.isFlying(player)) {
+//                            landDuration = landAnimationDuration;
+//                        }
+    
                         builder.addAnimation("fly_land_end");
-                        landDuration -= Math.max(0.1, Minecraft.getInstance().getDeltaFrameTime() * dragonAnimationController.speed);
+                        
+                        if(landDuration > 0) {
+                            landDuration -= Minecraft.getInstance().getDeltaFrameTime() * dragonAnimationController.speed;
+                        }
+                        
                     } else if (player.isCrouching() && hoverLand != -1 && player.getDeltaMovement().length() < 4) {
                         neckLocked = true;
                         builder.addAnimation("fly_land", true);
@@ -195,8 +191,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                         }else{
                             builder.addAnimation("fly_soaring", true);
                         }
-                    } else {
-                        
+                    } else if(ServerFlightHandler.isFlying(player)){
                         if(ServerFlightHandler.isSpin(player)) {
                             neckLocked = true;
                             builder.addAnimation("fly_spin", true);
@@ -212,6 +207,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                     if(ServerFlightHandler.isSpin(player)) {
                         builder.addAnimation("fly_spin_fast", true);
                     }else {
+                        dragonAnimationController.speed = 1 + (double)MathHelper.sqrt(player.getDeltaMovement().x * player.getDeltaMovement().x + player.getDeltaMovement().z * player.getDeltaMovement().z);
                         builder.addAnimation("swim_fast", true);
                     }
     
@@ -219,6 +215,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                     if(ServerFlightHandler.isSpin(player)) {
                         builder.addAnimation("fly_spin_fast", true);
                     }else {
+                        dragonAnimationController.speed = 1 + (double)MathHelper.sqrt(player.getDeltaMovement().x * player.getDeltaMovement().x + player.getDeltaMovement().z * player.getDeltaMovement().z);
                         builder.addAnimation("swim", true);
                     }
                     
@@ -247,9 +244,12 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                     }
                     
                 } else if (player.isSprinting()) {
+                    dragonAnimationController.speed = 1 + (double)MathHelper.sqrt(player.getDeltaMovement().x * player.getDeltaMovement().x + player.getDeltaMovement().z * player.getDeltaMovement().z);
                     builder.addAnimation("run", true);
                     
                 }else if (isMovingHorizontal && player.animationSpeed != 0f) {
+                    dragonAnimationController.speed = 1 + (double)MathHelper.sqrt(player.getDeltaMovement().x * player.getDeltaMovement().x + player.getDeltaMovement().z * player.getDeltaMovement().z);
+    
                     builder.addAnimation("walk", true);
     
                 }else if (playerStateHandler.getMovementData().dig) {
