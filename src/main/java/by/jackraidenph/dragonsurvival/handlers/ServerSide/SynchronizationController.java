@@ -3,13 +3,13 @@ package by.jackraidenph.dragonsurvival.handlers.ServerSide;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.network.*;
-import by.jackraidenph.dragonsurvival.network.status.DiggingStatus;
 import by.jackraidenph.dragonsurvival.network.claw.SyncDragonClawRender;
 import by.jackraidenph.dragonsurvival.network.claw.SyncDragonClawsMenu;
 import by.jackraidenph.dragonsurvival.network.emotes.SyncEmote;
 import by.jackraidenph.dragonsurvival.network.emotes.SyncEmoteStats;
 import by.jackraidenph.dragonsurvival.network.magic.SyncMagicAbilities;
 import by.jackraidenph.dragonsurvival.network.magic.SyncMagicStats;
+import by.jackraidenph.dragonsurvival.network.status.DiggingStatus;
 import by.jackraidenph.dragonsurvival.network.status.SyncFlyingStatus;
 import by.jackraidenph.dragonsurvival.network.status.SyncSpinStatus;
 import net.minecraft.entity.Entity;
@@ -42,6 +42,10 @@ public class SynchronizationController {
             if(player.level.isClientSide){
                 NetworkHandler.CHANNEL.sendToServer(new SyncDragonClawRender(player.getId(), ConfigHandler.CLIENT.renderDragonClaws.get()));
                 NetworkHandler.CHANNEL.sendToServer(new SyncDragonSkinSettings(player.getId(), ConfigHandler.CLIENT.renderNewbornSkin.get(), ConfigHandler.CLIENT.renderYoungSkin.get(), ConfigHandler.CLIENT.renderAdultSkin.get()));
+    
+                DragonStateProvider.getCap(player).ifPresent(cap -> {
+                    cap.getMagic().getAbilities();
+                });
             }
         }
     }
