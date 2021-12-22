@@ -57,7 +57,7 @@ public class ClientFlightHandler {
      */
     static double ax, ay, az;
     static double lastIncrease;
-    static float lastZoom;
+    static float lastZoom = 1f;
     
     @SubscribeEvent
     public static void flightCamera(CameraSetup setup){
@@ -92,12 +92,12 @@ public class ClientFlightHandler {
                     }
                 }else{
                     if(lastIncrease > 0){
-                        lastIncrease = MathHelper.lerp(0.01, lastIncrease, 0);
+                        lastIncrease = MathHelper.lerp(0.25, lastIncrease, 0);
                         info.move(0, lastIncrease, 0);
                     }
                     
                     if(lastZoom != 1){
-                        lastZoom = MathHelper.lerp(0.01f, lastZoom, 1f);
+                        lastZoom = MathHelper.lerp(0.25f, lastZoom, 1f);
                         gameRenderer.setZoom(lastZoom);
                     }
                 }

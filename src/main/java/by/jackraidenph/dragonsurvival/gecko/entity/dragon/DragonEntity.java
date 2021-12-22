@@ -203,7 +203,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                 if(ServerFlightHandler.isSpin(player)) {
                     builder.addAnimation("fly_spin_fast", true);
                 }else {
-                    dragonAnimationController.speed = 1 + (double)MathHelper.sqrt(player.getDeltaMovement().x * player.getDeltaMovement().x + player.getDeltaMovement().z * player.getDeltaMovement().z);
+                    dragonAnimationController.speed = 1 + ((double)MathHelper.sqrt(player.getDeltaMovement().x * player.getDeltaMovement().x + player.getDeltaMovement().z * player.getDeltaMovement().z) / 4);
                     builder.addAnimation("swim_fast", true);
                 }
 
@@ -211,7 +211,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                 if(ServerFlightHandler.isSpin(player)) {
                     builder.addAnimation("fly_spin_fast", true);
                 }else {
-                    dragonAnimationController.speed = 1 + (double)MathHelper.sqrt(player.getDeltaMovement().x * player.getDeltaMovement().x + player.getDeltaMovement().z * player.getDeltaMovement().z);
+                    dragonAnimationController.speed = 1 + ((double)MathHelper.sqrt(player.getDeltaMovement().x * player.getDeltaMovement().x + player.getDeltaMovement().z * player.getDeltaMovement().z) / 4);
                     builder.addAnimation("swim", true);
                 }
                 
@@ -238,11 +238,11 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                 }
                 
             } else if (player.isSprinting()) {
-                dragonAnimationController.speed = 1 + (double)MathHelper.sqrt(player.getDeltaMovement().x * player.getDeltaMovement().x + player.getDeltaMovement().z * player.getDeltaMovement().z);
+                dragonAnimationController.speed = 1 + ((double)MathHelper.sqrt(player.getDeltaMovement().x * player.getDeltaMovement().x + player.getDeltaMovement().z * player.getDeltaMovement().z) / 4);
                 builder.addAnimation("run", true);
                 
             }else if (isMovingHorizontal && player.animationSpeed != 0f) {
-                dragonAnimationController.speed = 1 + (double)MathHelper.sqrt(player.getDeltaMovement().x * player.getDeltaMovement().x + player.getDeltaMovement().z * player.getDeltaMovement().z);
+                dragonAnimationController.speed = 1 + ((double)MathHelper.sqrt(player.getDeltaMovement().x * player.getDeltaMovement().x + player.getDeltaMovement().z * player.getDeltaMovement().z) / 4);
 
                 builder.addAnimation("walk", true);
 

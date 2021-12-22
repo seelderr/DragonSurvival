@@ -6,6 +6,7 @@ import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.handlers.DragonFoodHandler;
 import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.SynchronizeDragonCap;
+import by.jackraidenph.dragonsurvival.network.status.SyncSpinStatus;
 import by.jackraidenph.dragonsurvival.util.DragonLevel;
 import by.jackraidenph.dragonsurvival.util.DragonType;
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -130,7 +131,9 @@ public class DragonAltarGUI extends Screen {
                 playerStateHandler.setIsHiding(false);
                 playerStateHandler.setType(DragonType.NONE);
                 playerStateHandler.setHasWings(false);
+                playerStateHandler.getMovementData().spinLearned = false;
                 playerStateHandler.setSize(20F);
+                NetworkHandler.CHANNEL.sendToServer(new SyncSpinStatus(minecraft.player.getId(), playerStateHandler.getMovementData().spinAttack, playerStateHandler.getMovementData().spinCooldown, playerStateHandler.getMovementData().spinLearned));
                 NetworkHandler.CHANNEL.sendToServer(new SynchronizeDragonCap(minecraft.player.getId(), false, DragonType.NONE, 20, false, ConfigHandler.SERVER.caveLavaSwimmingTicks.get(), 0));
                 minecraft.player.closeContainer();
                 minecraft.player.sendMessage(new TranslationTextComponent("ds.choice_human"), minecraft.player.getUUID());
@@ -160,8 +163,10 @@ public class DragonAltarGUI extends Screen {
                 cap.setSize(DragonLevel.BABY.size, player);
             }
             
-            
             cap.setHasWings(false);
+            cap.getMovementData().spinLearned = false;
+    
+            NetworkHandler.CHANNEL.sendToServer(new SyncSpinStatus(minecraft.player.getId(), cap.getMovementData().spinAttack, cap.getMovementData().spinCooldown, cap.getMovementData().spinLearned));
         });
     }
 

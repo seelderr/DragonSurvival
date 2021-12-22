@@ -74,7 +74,7 @@ public class DragonCapStorage implements Capability.IStorage<DragonStateHandler>
             instance.getMovementData().dig = tag.getBoolean("dig");
             instance.getMovementData().spinCooldown = tag.getInt("spinCooldown");
             instance.getMovementData().spinAttack = tag.getInt("spinAttack");
-            instance.getMovementData().spinLearned = tag.contains("spinLearned") ? tag.getBoolean("spinLearned") : instance.hasWings(); //So that players from old versions unlock spin if they had wings
+            instance.getMovementData().spinLearned = tag.getBoolean("spinLearned");
     
             instance.setDebuffData(tag.getInt("timeWithoutWater"), tag.getInt("timeInDarkness"), tag.getInt("timeInRain"));
             instance.setIsHiding(tag.getBoolean("isHiding"));

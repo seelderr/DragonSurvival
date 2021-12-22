@@ -295,6 +295,15 @@ public class ItemsInit {
         
                 return super.use(world, player, p_77659_3_);
             }
+    
+            @Override
+            public void appendHoverText(ItemStack p_77624_1_,
+                    @Nullable
+                            World p_77624_2_, List<ITextComponent> p_77624_3_, ITooltipFlag p_77624_4_)
+            {
+                super.appendHoverText(p_77624_1_, p_77624_2_, p_77624_3_, p_77624_4_);
+                p_77624_3_.add(new TranslationTextComponent("ds.description.wing_grant"));
+            }
         }.setRegistryName(DragonSurvivalMod.MODID, "wing_grant");
         registry.register(wingGrantItem);
     
@@ -317,6 +326,15 @@ public class ItemsInit {
                 }
         
                 return super.use(world, player, p_77659_3_);
+            }
+    
+            @Override
+            public void appendHoverText(ItemStack p_77624_1_,
+                    @Nullable
+                            World p_77624_2_, List<ITextComponent> p_77624_3_, ITooltipFlag p_77624_4_)
+            {
+                super.appendHoverText(p_77624_1_, p_77624_2_, p_77624_3_, p_77624_4_);
+                p_77624_3_.add(new TranslationTextComponent("ds.description.spin_grant"));
             }
         }.setRegistryName(DragonSurvivalMod.MODID, "spin_grant");
         registry.register(spinGrantItem);
