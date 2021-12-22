@@ -163,7 +163,7 @@ public class CapabilityController {
                 flag = true;
                 player.getPassengers().get(0).stopRiding();
                 player.connection.send(new SSetPassengersPacket(player));
-            } else if (dragonStateHandler.isDragon() && dragonStateHandler.getSize() != 40 && player.isVehicle() && player.getPassengers().get(0) instanceof ServerPlayerEntity) {
+            } else if (dragonStateHandler.isDragon() && dragonStateHandler.getSize() < 40 && player.isVehicle() && player.getPassengers().get(0) instanceof ServerPlayerEntity) {
                 flag = true;
                 player.getPassengers().get(0).stopRiding();
                 player.connection.send(new SSetPassengersPacket(player));

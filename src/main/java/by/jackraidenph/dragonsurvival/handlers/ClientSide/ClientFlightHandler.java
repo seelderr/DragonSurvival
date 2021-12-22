@@ -139,7 +139,7 @@ public class ClientFlightHandler {
                         spawnSpinParticle(player, ParticleTypes.EXPLOSION);
     
                     }else if(EnchantmentHelper.getEnchantmentLevel(Enchantments.SWEEPING_EDGE, player) > 0){
-                        spawnSpinParticle(player, ParticleTypes.SWEEP_ATTACK); //TODO THis one might not work
+                        spawnSpinParticle(player, ParticleTypes.SWEEP_ATTACK);
     
                     }else if(EnchantmentHelper.getEnchantmentLevel(Enchantments.SHARPNESS, player) > 0){
                         spawnSpinParticle(player, new RedstoneParticleData(1f, 1f, 1f, 1f));

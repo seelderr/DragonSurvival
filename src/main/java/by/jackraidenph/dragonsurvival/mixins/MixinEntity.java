@@ -1,6 +1,5 @@
 package by.jackraidenph.dragonsurvival.mixins;
 
-import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.handlers.DragonSizeHandler;
@@ -61,7 +60,7 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
     @Inject(at = @At(value = "HEAD"), method = "Lnet/minecraft/entity/Entity;getPassengersRidingOffset()D", cancellable = true)
     public void getDragonPassengersRidingOffset(CallbackInfoReturnable<Double> ci) {
         if (DragonStateProvider.isDragon((Entity)(Object)this)){
-            switch (this.getPose()){
+            switch (((Entity)(Object)this).getPose()){
                 case FALL_FLYING:
                 case SWIMMING:
                 case SPIN_ATTACK:
@@ -103,12 +102,6 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
         } else
             return getBoundingBoxForPose(pose);
     }
-
-    @Shadow
-    public Pose getPose(){
-        throw new IllegalStateException("Mixin failed to shadow getPose()");
-    }
-
     @Shadow
     public AxisAlignedBB getBoundingBoxForPose(Pose pose){
         throw new IllegalStateException("Mixin failed to shadow getBoundingBoxForPose()");

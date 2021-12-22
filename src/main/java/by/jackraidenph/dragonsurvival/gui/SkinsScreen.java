@@ -522,6 +522,7 @@ public class SkinsScreen extends Screen
 		entityrenderermanager.setRenderShadow(false);
 		IRenderTypeBuffer.Impl irendertypebuffer$impl = Minecraft.getInstance().renderBuffers().bufferSource();
 		RenderSystem.runAsFancy(() -> {
+			if(p_228187_5_ == null || entityrenderermanager == null || irendertypebuffer$impl == null) return;
 			entityrenderermanager.render(p_228187_5_, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, matrixstack, irendertypebuffer$impl, 15728880);
 		});
 		irendertypebuffer$impl.endBatch();

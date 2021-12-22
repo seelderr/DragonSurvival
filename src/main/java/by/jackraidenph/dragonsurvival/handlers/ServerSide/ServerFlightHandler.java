@@ -143,6 +143,7 @@ public class ServerFlightHandler {
 					entities.remove(player);
 					
 					for(Entity ent : entities){
+						if(player.hasPassenger(ent)) continue;
 						if(ent instanceof LivingEntity){
 							LivingEntity entity = (LivingEntity)ent;
 							
