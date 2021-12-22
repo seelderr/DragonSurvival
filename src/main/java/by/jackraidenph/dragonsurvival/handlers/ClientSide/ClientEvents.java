@@ -206,7 +206,11 @@ public class ClientEvents {
                     if (playerStateHandler.isDragon()) {
                         float headRot = player.yRot != 0.0 ? player.yRot : player.yHeadRot;
                         double bodyYaw = playerStateHandler.getMovementData().bodyYaw;
-                        float bodyAndHeadYawDiff =(((float)bodyYaw) - headRot);
+                        
+                        double oldYaw = playerStateHandler.getMovementData().bodyYaw;
+                        double oldHeadRot = headRot;
+    
+                        float bodyAndHeadYawDiff = (((float)bodyYaw) - headRot);
     
                         Vector3d moveVector = getInputVector(new Vector3d(player.input.leftImpulse, 0, player.input.forwardImpulse), 1F, player.yRot);
                         boolean isFlying = false;
@@ -249,7 +253,7 @@ public class ClientEvents {
                                 }
                             }
                             
-                            bodyYaw = MathHelper.lerp(0.25, playerStateHandler.getMovementData().bodyYaw, bodyYaw) ;
+                            bodyYaw = MathHelper.lerp(Math.abs(playerStateHandler.getMovementData().bodyYaw - bodyYaw) >= 180 ? 1 : 0.25, playerStateHandler.getMovementData().bodyYaw, bodyYaw) ;
                             
                             if (bodyAndHeadYawDiff > 180) {
                                 bodyYaw -= 360;
@@ -268,14 +272,14 @@ public class ClientEvents {
                             float turnSpeed = Math.min(1F + (float) Math.pow(Math.abs(bodyAndHeadYawDiff) - 180F, 1.5F) / 30F, 50F);
                             double newYaw = (float) bodyYaw - Math.signum(bodyAndHeadYawDiff) * turnSpeed;
                             bodyYaw = MathHelper.lerp(0.25, playerStateHandler.getMovementData().bodyYaw, newYaw) ;
-    
+                            
                             playerStateHandler.setMovementData(bodyYaw, headRot, player.xRot, player.swinging && player.getAttackStrengthScale(-3.0f) != 1);
-                        
                         } else if (playerStateHandler.getMovementData().bite != (player.swinging && player.getAttackStrengthScale(-3.0f) != 1) || headRot != playerStateHandler.getMovementData().headYaw) {
                             playerStateHandler.setMovementData(playerStateHandler.getMovementData().bodyYaw, headRot, player.xRot, player.swinging && player.getAttackStrengthScale(-3.0f) != 1);
                         }
-                        
-                        NetworkHandler.CHANNEL.sendToServer(new PacketSyncCapabilityMovement(player.getId(), playerStateHandler.getMovementData().bodyYaw, playerStateHandler.getMovementData().headYaw, playerStateHandler.getMovementData().headPitch, playerStateHandler.getMovementData().bite));
+                        if(oldHeadRot != playerStateHandler.getMovementData().headYaw || oldYaw != playerStateHandler.getMovementData().bodyYaw) {
+                            NetworkHandler.CHANNEL.sendToServer(new PacketSyncCapabilityMovement(player.getId(), playerStateHandler.getMovementData().bodyYaw, playerStateHandler.getMovementData().headYaw, playerStateHandler.getMovementData().headPitch, playerStateHandler.getMovementData().bite));
+                        }
                     }
                 });
             }
