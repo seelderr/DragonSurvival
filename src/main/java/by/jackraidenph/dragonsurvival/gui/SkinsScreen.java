@@ -359,19 +359,21 @@ public class SkinsScreen extends Screen
 			}
 			
 			skins.removeIf((c) -> seenSkins.contains(c.second));
-			Pair<DragonLevel, String> skin = skins.get(random.nextInt(skins.size()));
-		
-			if(skin != null){
-				level = skin.first;
-				playerName = skin.second;
+			if(skins.size() > 0) {
+				Pair<DragonLevel, String> skin = skins.get(random.nextInt(skins.size()));
 				
-				seenSkins.add(skin.second);
-				
-				if(seenSkins.size() >= users.size() / 2){
-					seenSkins.remove(0);
+				if (skin != null) {
+					level = skin.first;
+					playerName = skin.second;
+					
+					seenSkins.add(skin.second);
+					
+					if (seenSkins.size() >= users.size() / 2) {
+						seenSkins.remove(0);
+					}
+					
+					executor.execute(() -> setTextures());
 				}
-				
-				executor.execute(() -> setTextures());
 			}
 		}){
 			@Override
@@ -517,16 +519,19 @@ public class SkinsScreen extends Screen
 		p_228187_5_.yHeadRot = p_228187_5_.yRot;
 		p_228187_5_.yHeadRotO = p_228187_5_.yRot;
 		EntityRendererManager entityrenderermanager = Minecraft.getInstance().getEntityRenderDispatcher();
+		boolean renderHitbox = entityrenderermanager.shouldRenderHitBoxes();
 		quaternion1.conj();
 		entityrenderermanager.overrideCameraOrientation(quaternion1);
 		entityrenderermanager.setRenderShadow(false);
 		IRenderTypeBuffer.Impl irendertypebuffer$impl = Minecraft.getInstance().renderBuffers().bufferSource();
 		RenderSystem.runAsFancy(() -> {
-			if(p_228187_5_ == null || entityrenderermanager == null || irendertypebuffer$impl == null) return;
+			entityrenderermanager.setRenderHitBoxes(false);
 			entityrenderermanager.render(p_228187_5_, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, matrixstack, irendertypebuffer$impl, 15728880);
+			entityrenderermanager.setRenderHitBoxes(renderHitbox);
 		});
 		irendertypebuffer$impl.endBatch();
 		entityrenderermanager.setRenderShadow(true);
+		
 		p_228187_5_.yBodyRot = f2;
 		p_228187_5_.yRot = f3;
 		p_228187_5_.xRot = f4;

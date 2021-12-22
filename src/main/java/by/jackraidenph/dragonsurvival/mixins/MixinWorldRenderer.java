@@ -4,7 +4,9 @@ import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.ClientDragonRender;
 import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Vector3d;
@@ -37,8 +39,13 @@ public class MixinWorldRenderer
 		
 		if (neckandHead != null) neckandHead.setHidden(true);
 		
+		EntityRendererManager entityrenderermanager = Minecraft.getInstance().getEntityRenderDispatcher();
+		boolean shouldRender = entityrenderermanager.shouldRenderHitBoxes();
+		
 		IRenderTypeBuffer.Impl immediate = this.renderBuffers.bufferSource();
+		entityrenderermanager.setRenderHitBoxes(false);
 		this.renderEntity(camera.getEntity(), d, e, f, tickDelta, matrices, immediate);
+		entityrenderermanager.setRenderHitBoxes(shouldRender);
 		if (neckandHead != null) neckandHead.setHidden(false);
 	}
 	

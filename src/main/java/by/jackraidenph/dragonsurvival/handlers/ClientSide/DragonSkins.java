@@ -132,7 +132,7 @@ public class DragonSkins
 		boolean renderStage = renderStage(player, dragonStage);
 		
 		
-		if (playerSkinCache.containsKey(playerKey) && renderStage) {
+		if ((ConfigHandler.CLIENT.renderOtherPlayerSkins.get() || player == Minecraft.getInstance().player) && playerSkinCache.containsKey(playerKey) && renderStage) {
 			if(playerGlowCache.containsKey(playerKey)){
 				return playerGlowCache.get(playerKey);
 				

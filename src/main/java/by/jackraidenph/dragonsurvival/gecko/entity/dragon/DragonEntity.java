@@ -308,15 +308,12 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                 if (animationTimer.getDuration(stopAni.animationKey) <= 0) {
                     lastCast = null;
                     ended = false;
-                    neckLocked = false;
                 }
             }else{
                 lastCast = null;
-                neckLocked = false;
             }
         }else{
             lastCast = null;
-            neckLocked = false;
         }
     }
     
