@@ -42,7 +42,7 @@ public class MixinPlayerInteractionManager
 				
 				if(state != null) {
 					for (int i = 1; i < 4; i++) {
-						if (state.getHarvestTool() == DragonStateHandler.CLAW_TOOL_TYPES[i]) {
+						if (state.getHarvestTool() == null || state.getHarvestTool() == DragonStateHandler.CLAW_TOOL_TYPES[i]) {
 							ItemStack breakingItem = cap.getClawInventory().getClawsInventory().getItem(i);
 							if (!breakingItem.isEmpty()) {
 								float tempSpeed = breakingItem.getDestroySpeed(state);

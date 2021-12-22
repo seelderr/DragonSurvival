@@ -101,7 +101,7 @@ public class ClawToolHandler
 			
 			if(!(item instanceof ToolItem)){
 				for (int i = 1; i < 4; i++) {
-					if (blockState.getHarvestTool() == DragonStateHandler.CLAW_TOOL_TYPES[i]) {
+					if (blockState.getHarvestTool() == null || blockState.getHarvestTool() == DragonStateHandler.CLAW_TOOL_TYPES[i]) {
 						ItemStack breakingItem = dragonStateHandler.getClawInventory().getClawsInventory().getItem(i);
 						if (breakingItem != null && !breakingItem.isEmpty()) {
 							return;

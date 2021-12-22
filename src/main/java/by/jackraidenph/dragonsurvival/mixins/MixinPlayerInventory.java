@@ -36,7 +36,7 @@ public class MixinPlayerInventory
 			ItemStack harvestTool = null;
 			
 			for (int i = 1; i < 4; i++) {
-				if (state.getHarvestTool() == DragonStateHandler.CLAW_TOOL_TYPES[i]) {
+				if (state.getHarvestTool() == null || state.getHarvestTool() == DragonStateHandler.CLAW_TOOL_TYPES[i]) {
 					ItemStack breakingItem = cap.getClawInventory().getClawsInventory().getItem(i);
 					if (breakingItem != null && !breakingItem.isEmpty()) {
 						float tempSpeed = breakingItem.getDestroySpeed(state);
@@ -48,7 +48,6 @@ public class MixinPlayerInventory
 					}
 				}
 			}
-			
 			if(harvestTool != null && !harvestTool.isEmpty()){
 				ci.setReturnValue(newSpeed);
 			}
