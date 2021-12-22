@@ -27,7 +27,7 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
         super(baseClass);
     }
     
-    @Inject(at = @At(value = "HEAD"), method = "Lnet/minecraft/entity/Entity;positionRider(Lnet/minecraft/entity/Entity;Lnet/minecraft/entity/Entity$IMoveCallback;)V", remap = false, cancellable = true)
+    @Inject(at = @At(value = "HEAD"), method = "Lnet/minecraft/entity/Entity;positionRider(Lnet/minecraft/entity/Entity;Lnet/minecraft/entity/Entity$IMoveCallback;)V", cancellable = true)
     private void positionRider(Entity p_226266_1_, Entity.IMoveCallback p_226266_2_, CallbackInfo callbackInfo) {
         if(DragonStateProvider.isDragon((Entity) (net.minecraftforge.common.capabilities.CapabilityProvider<Entity>)this)){
             if (hasPassenger(p_226266_1_)) {
