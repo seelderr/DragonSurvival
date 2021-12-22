@@ -94,28 +94,17 @@ public class MagicHandler
 				ActiveDragonAbility ability = cap.getMagic().getCurrentlyCasting();
 				ability.player = player;
 				
-				if (ability.canRun(player, -1)) {
-					if(!player.level.isClientSide) {
-						if (ability.getCastingTime() <= 0 || ability.getCurrentCastTimer() >= ability.getCastingTime()) {
-							player.causeFoodExhaustion(0.1F * ability.getManaCost());
-							ability.onActivation(player);
-							
-							TargetPoint point = new TargetPoint(player.position().x, player.position().y, player.position().z, 64, player.level.dimension());
-							NetworkHandler.CHANNEL.send(PacketDistributor.NEAR.with(() -> point), new ActivateClientAbility(player.getId()));
+				if(!player.level.isClientSide) {
+					if (ability.getCastingTime() <= 0 || ability.getCurrentCastTimer() >= ability.getCastingTime()) {
+						player.causeFoodExhaustion(0.1F * ability.getManaCost());
+						ability.onActivation(player);
 						
-						} else {
-							ability.tickCasting();
-							player.causeFoodExhaustion(0.1F);
-						}
-					}
-				}else{
-					if(cap.getMagic().getCurrentlyCasting() != null) {
-						cap.getMagic().getCurrentlyCasting().stopCasting();
-						cap.getMagic().setCurrentlyCasting(null);
+						TargetPoint point = new TargetPoint(player.position().x, player.position().y, player.position().z, 64, player.level.dimension());
+						NetworkHandler.CHANNEL.send(PacketDistributor.NEAR.with(() -> point), new ActivateClientAbility(player.getId()));
 						
-						if (player.level.isClientSide) {
-							NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCastingToServer(player.getId(), null));
-						}
+					} else {
+						ability.tickCasting();
+						player.causeFoodExhaustion(0.1F);
 					}
 				}
 			}
