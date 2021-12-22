@@ -6,6 +6,7 @@ import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import by.jackraidenph.dragonsurvival.handlers.ServerSide.ServerFlightHandler;
+import by.jackraidenph.dragonsurvival.mixins.MixinGameRendererZoom;
 import by.jackraidenph.dragonsurvival.network.status.SyncFlightSpeed;
 import by.jackraidenph.dragonsurvival.network.status.SyncFlyingStatus;
 import by.jackraidenph.dragonsurvival.sounds.FastGlideSound;
@@ -55,6 +56,8 @@ public class ClientFlightHandler {
      * Acceleration
      */
     static double ax, ay, az;
+    static double lastIncrease;
+    static float lastZoom;
     
     @SubscribeEvent
     public static void flightCamera(CameraSetup setup){
@@ -63,6 +66,7 @@ public class ClientFlightHandler {
     
         if(currentPlayer != null) {
             DragonStateHandler dragonStateHandler = DragonStateProvider.getCap(currentPlayer).orElse(null);
+            MixinGameRendererZoom gameRenderer = (MixinGameRendererZoom)Minecraft.getInstance().gameRenderer;
     
             if (dragonStateHandler != null) {
                 if ( ServerFlightHandler.isGliding(currentPlayer)) {
@@ -70,8 +74,31 @@ public class ClientFlightHandler {
                 
                         Vector3d lookVec = currentPlayer.getLookAngle();
                         double increase = MathHelper.clamp(lookVec.y * 10, 0, lookVec.y * 5);
-                
-                        info.move(0, increase, 0);
+                        double gradualIncrease = MathHelper.lerp(0.25, lastIncrease, increase);
+                        info.move(0, gradualIncrease, 0);
+                        lastIncrease = gradualIncrease;
+                    }
+    
+                    if(Minecraft.getInstance().player != null) {
+                        if (ConfigHandler.CLIENT.flightZoomEffect.get()) {
+                            if (!Minecraft.getInstance().options.getCameraType().isFirstPerson()) {
+                                Vector3d lookVec = currentPlayer.getLookAngle();
+                                float f = Math.min(Math.max(0.5F, 1F - (float)(((lookVec.y * 5) / 2.5) * 0.5)), 3F);
+                                float newZoom = MathHelper.lerp(0.25f, lastZoom, f);
+                                gameRenderer.setZoom(newZoom);
+                                lastZoom = newZoom;
+                            }
+                        }
+                    }
+                }else{
+                    if(lastIncrease > 0){
+                        lastIncrease = MathHelper.lerp(0.01, lastIncrease, 0);
+                        info.move(0, lastIncrease, 0);
+                    }
+                    
+                    if(lastZoom != 1){
+                        lastZoom = MathHelper.lerp(0.01f, lastZoom, 1f);
+                        gameRenderer.setZoom(lastZoom);
                     }
                 }
             }

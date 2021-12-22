@@ -10,7 +10,6 @@ import by.jackraidenph.dragonsurvival.handlers.ServerSide.ServerFlightHandler;
 import by.jackraidenph.dragonsurvival.mixins.AccessorEntityRenderer;
 import by.jackraidenph.dragonsurvival.mixins.AccessorEntityRendererManager;
 import by.jackraidenph.dragonsurvival.mixins.AccessorLivingRenderer;
-import by.jackraidenph.dragonsurvival.mixins.MixinGameRendererZoom;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
 import by.jackraidenph.dragonsurvival.registration.EntityTypesInit;
 import by.jackraidenph.dragonsurvival.util.DragonLevel;
@@ -145,12 +144,6 @@ public class ClientDragonRender
 				} else if (player.isSwimming() || player.isAutoSpinAttack() || (cap.isWingsSpread() && !player.isOnGround() && !player.isInWater() && !player.isInLava())) {
 					matrixStack.translate(0, -0.15 - ((size / DragonLevel.ADULT.size) * 0.2), 0);
 				}
-	            MixinGameRendererZoom gameRenderer = (MixinGameRendererZoom)Minecraft.getInstance().gameRenderer;
-				
-				if(ConfigHandler.CLIENT.flightZoomEffect.get()) {
-					gameRenderer.setZoom(1.0F);
-				}
-				
 	            if (!player.isInvisible()) {
 					if(ServerFlightHandler.isGliding(player)){
 						if(ConfigHandler.CLIENT.renderOtherPlayerRotation.get() || mc.player == player) {
@@ -161,6 +154,10 @@ public class ClientDragonRender
 							
 							if(Float.isNaN(dummyDragon.prevXRot)){
 								dummyDragon.prevXRot = upRot;
+							}
+							
+							if(Float.isNaN(dummyDragon.prevXRot)){
+								dummyDragon.prevXRot = 0;
 							}
 							
 							matrixStack.mulPose(Vector3f.XN.rotationDegrees(dummyDragon.prevXRot));
@@ -181,17 +178,11 @@ public class ClientDragonRender
 								dummyDragon.prevZRot = rot;
 							}
 							
-							matrixStack.mulPose(Vector3f.ZP.rotation(dummyDragon.prevZRot));
-						}
-
-						if(ConfigHandler.CLIENT.flightZoomEffect.get()) {
-							if (player == mc.player) {
-								if (!Minecraft.getInstance().options.getCameraType().isFirstPerson()) {
-									Vector3d lookVec = player.getLookAngle();
-									float f = Math.min(Math.max(0.5F, 1F - (float)(((lookVec.y * 5) / 2.5) * 0.5)), 3F);
-									gameRenderer.setZoom(f);
-								}
+							if(Float.isNaN(dummyDragon.prevZRot)){
+								dummyDragon.prevZRot = 0;
 							}
+							
+							matrixStack.mulPose(Vector3f.ZP.rotation(dummyDragon.prevZRot));
 						}
 					}
 					if(player != mc.player || !Minecraft.getInstance().options.getCameraType().isFirstPerson() || !ServerFlightHandler.isGliding(player)) {
