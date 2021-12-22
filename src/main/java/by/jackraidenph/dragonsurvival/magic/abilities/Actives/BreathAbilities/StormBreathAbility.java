@@ -23,7 +23,6 @@ import net.minecraft.entity.monster.CreeperEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.particles.RedstoneParticleData;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.*;
@@ -36,9 +35,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -185,8 +182,6 @@ public class StormBreathAbility extends BreathAbility
 		return true;
 	}
 	
-	private static Field chargedCreeperField;
-	
 	@Override
 	public void onDamage(LivingEntity entity) {
 		onDamageChecks(entity);
@@ -202,17 +197,7 @@ public class StormBreathAbility extends BreathAbility
 			CreeperEntity creeper = (CreeperEntity)entity;
 			
 			if(!creeper.isPowered()){
-				if(chargedCreeperField == null){
-					chargedCreeperField = ObfuscationReflectionHelper.findField(CreeperEntity.class, "field_184714_b"); //DATA_IS_POWERED
-					chargedCreeperField.setAccessible(true);
-				}
-				
-				if(chargedCreeperField != null){
-					try {
-						DataParameter<Boolean> powered = (DataParameter<Boolean>)chargedCreeperField.get(creeper);
-						creeper.getEntityData().set(powered, true);
-					} catch (IllegalAccessException e) {}
-				}
+				creeper.getEntityData().set(CreeperEntity.DATA_IS_POWERED, true);
 			}
 		}
 	}
