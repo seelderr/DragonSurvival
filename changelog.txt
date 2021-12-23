@@ -1,4 +1,13 @@
-1.16.5-0.6 Magic Update:
+1.16.5-0.6 Flight Update:
+- Added: Updated flight system. Now you can dive, quickly take off, slow down, smoothly land and do many more incredible things! Flying will become one of your favorite fun!
+- Added: Activation of flight mode is now slightly modified. You still need to press a button to turn on the mode, but when your paws touch the ground this mode is automatically turned off. If you want, you can turn on double jump in the config or take off when you look up into the sky.
+- Added: Dragons are now born with the skill to fly, but to get the ability to accelerate (Flight Spin), you need to ask the Ender dragon.
+- Added: Flight Spin speeds up your dragon in flight and water/lava, dealing massive melee damage to all enemies in your path. Has cooldown. Damage equals your melee damage.
+- Added: Depending on the enchantment of your claws, Flight Spin will have different particles.
+- Added: Flying wastes the player's hunger more if he stops in flight.
+- Added: The activation of the flight now does not spam in the chat, but just shows the open wings as an effect.
+- Added: 14 new areas where you can draw teeth/lips/fangs and slightly change the shape of your mouth (for skins)
+- Added: 9 new flight animations
 - Added: a more complex system of growth. Now the dragons are gradually growing faster. Adult dragons have a slower growth rate
 - Added: in-game tooltip with growth tips
 - Added: You can now become larger than a standard adult dragon. Previously this parameter was equal to 40 units of growth (no heart!), but now it is 60. You can set this parameter up to 1000, but we strongly recommend not to do this. The maximum health is still 40.
@@ -7,11 +16,13 @@
 - Added: Visualization of the dragons growth in the inventory
 - Added: Visualization of the dragons growth when a growth item is selected in the hotbar
 - Added: Added recipes for converting hearts back to weak versions
-- Added: Flight changed! Now there is dive, takeoff, acceleration, braking and more!
+- Added: Dragons can mine blocks at a greater distance with age (does not apply to attacks and interaction with chests)
 - Added: Animations and model rotations are now VERY smooth. No more twitch when turning. Some mods can affect the rotation speed, but we do not know which ones. This was noticeable in the Young modpack.
 - Added: Different hearts can now be drop from different creatures with health 14-20 for a shard, 20-50 for a weak, and over 50 for an elder heart (only for dragon)
 - Added: The camera is now attached to the dragons head instead of the torso.
 - Added: zoom to skins menu
+- Added: Emote animation speed, mirroring (Pos/Rot/Scale) for emotes.json
+- Added: Items that cave dragons mine under the lava no longer burn.
 - Fixed: Temp fix for concurrent modification error on config reload
 - Fixed: The spike now shoots more accurately
 - Fixed: spectral impact no longer affects the sea dragons breath.
@@ -19,8 +30,15 @@
 - Fixed: forest dragon now recovers mana during daylight hours and any time from plants.
 - Fixed: Bug with mana desynchronization when you saw a full supply, but could not use skills
 - Fixed: Bug with skills were not available until the magic menu is not opened for first time
-- Configs added: max growth size, growth over time, position of the growth indicator, render the items in first person
-- Localization: update ru_ru, en_us
+- Fixed: No more problems with animation if the fps is over 60.
+- Fixed: upgraded aquatic crash with storm breath
+- Fixed: When you open multiple tabs and return to inventory, it is now the dragon's inventory that opens.
+- Fixed: inventory displacement due to claws and teeth.
+- Fixed: Creative flight and DS flight do not conflict with each other.
+- Fixed: Fixed problems with first-person view.
+- Fixed: alternateGrowingFrequency deleted
+- Configs added: Growth modifier config, max growth size, growth over time, position of the growth indicator, render the items in first person, flight settings
+- Localization: update ru_ru, en_us, fr_fr
 
 1.16.5-0.5 Magic Update:
 - Fixed: Claw and Teeth Damage
