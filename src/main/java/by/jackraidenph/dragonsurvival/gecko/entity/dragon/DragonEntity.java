@@ -19,6 +19,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.HandSide;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import software.bernie.geckolib3.core.IAnimatable;
@@ -200,17 +201,19 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 
             }else if (player.getPose() == Pose.SWIMMING) {
                 if(ServerFlightHandler.isSpin(player)) {
+                    neckLocked = true;
                     builder.addAnimation("fly_spin_fast", true);
                 }else {
-                  //  dragonAnimationController.speed = 1 + ((double)MathHelper.sqrt(player.getDeltaMovement().x * player.getDeltaMovement().x + player.getDeltaMovement().z * player.getDeltaMovement().z) / 4);
+                    dragonAnimationController.speed = 1 + ((double)MathHelper.sqrt(player.getDeltaMovement().x * player.getDeltaMovement().x + player.getDeltaMovement().z * player.getDeltaMovement().z) / 10);
                     builder.addAnimation("swim_fast", true);
                 }
 
             }else if ((player.isInLava() || player.isInWaterOrBubble()) && !player.isOnGround()) {
                 if(ServerFlightHandler.isSpin(player)) {
+                    neckLocked = true;
                     builder.addAnimation("fly_spin_fast", true);
                 }else {
-                  //  dragonAnimationController.speed = 1 + ((double)MathHelper.sqrt(player.getDeltaMovement().x * player.getDeltaMovement().x + player.getDeltaMovement().z * player.getDeltaMovement().z) / 4);
+                    dragonAnimationController.speed = 1 + ((double)MathHelper.sqrt(player.getDeltaMovement().x * player.getDeltaMovement().x + player.getDeltaMovement().z * player.getDeltaMovement().z) / 10);
                     builder.addAnimation("swim", true);
                 }
                 
@@ -237,12 +240,11 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                 }
                 
             } else if (player.isSprinting()) {
-            //   dragonAnimationController.speed = 1 + ((double)MathHelper.sqrt(player.getDeltaMovement().x * player.getDeltaMovement().x + player.getDeltaMovement().z * player.getDeltaMovement().z) / 4);
+                dragonAnimationController.speed = 1 + ((double)MathHelper.sqrt(player.getDeltaMovement().x * player.getDeltaMovement().x + player.getDeltaMovement().z * player.getDeltaMovement().z) / 10);
                 builder.addAnimation("run", true);
                 
             }else if (isMovingHorizontal && player.animationSpeed != 0f) {
-             //   dragonAnimationController.speed = 1 + ((double)MathHelper.sqrt(player.getDeltaMovement().x * player.getDeltaMovement().x + player.getDeltaMovement().z * player.getDeltaMovement().z) / 4);
-
+                dragonAnimationController.speed = 1 + ((double)MathHelper.sqrt(player.getDeltaMovement().x * player.getDeltaMovement().x + player.getDeltaMovement().z * player.getDeltaMovement().z) / 10);
                 builder.addAnimation("walk", true);
 
             }else if (playerStateHandler.getMovementData().dig) {
