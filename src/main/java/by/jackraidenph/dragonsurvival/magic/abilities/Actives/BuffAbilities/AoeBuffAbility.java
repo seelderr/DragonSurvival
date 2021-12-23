@@ -7,18 +7,14 @@ import by.jackraidenph.dragonsurvival.magic.common.AbilityAnimation;
 import by.jackraidenph.dragonsurvival.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.registration.DragonEffects;
 import by.jackraidenph.dragonsurvival.util.DragonType;
-import com.mojang.brigadier.StringReader;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.entity.AreaEffectCloudEntity;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.particles.ParticleType;
+import net.minecraft.particles.IParticleData;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
-import net.minecraft.potion.Potion;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -33,9 +29,9 @@ public class AoeBuffAbility extends ActiveDragonAbility
 {
 	protected EffectInstance effect;
 	protected int range;
-	protected ParticleType particle;
+	protected IParticleData particle;
 	
-	public AoeBuffAbility(DragonType type, EffectInstance effect, int range, ParticleType particle, String id, String icon, int minLevel, int maxLevel, int manaCost, int castTime, int cooldown, Integer[] requiredLevels)
+	public AoeBuffAbility(DragonType type, EffectInstance effect, int range, IParticleData particle, String id, String icon, int minLevel, int maxLevel, int manaCost, int castTime, int cooldown, Integer[] requiredLevels)
 	{
 		super(type, id, icon, minLevel, maxLevel, manaCost, castTime, cooldown, requiredLevels);
 		this.effect = effect;
@@ -92,25 +88,24 @@ public class AoeBuffAbility extends ActiveDragonAbility
 	public void onActivation(PlayerEntity player)
 	{
 		super.onActivation(player);
-		AreaEffectCloudEntity entity = new AreaEffectCloudEntity(EntityType.AREA_EFFECT_CLOUD, player.level);
-		entity.setWaitTime(10);
-		entity.setPos(player.position().x, player.position().y + 0.5, player.position().z);
-		entity.setPotion(new Potion(getEffect())); //Effect duration is divided by 4 normaly
-		entity.setDuration(20);
-		entity.setRadius(getRange());
+		float f5 = (float)Math.PI * getRange() * getRange();
 		
-		try {
-			entity.setParticle(particle.getDeserializer().fromCommand(particle, new StringReader("")));
-		} catch (CommandSyntaxException e) {
-			e.printStackTrace();
+		for(int i = 0; i < 20; i++) {
+			for (int k1 = 0; (float)k1 < f5; ++k1) {
+				float f6 = player.level.random.nextFloat() * ((float)Math.PI * 2F);
+				float f7 = MathHelper.sqrt(player.level.random.nextFloat()) * getRange();
+				float f8 = MathHelper.cos(f6) * f7;
+				float f9 = MathHelper.sin(f6) * f7;
+				player.level.addAlwaysVisibleParticle(particle, player.getX() + (double)f8, player.getY(), player.getZ() + (double)f9, (0.5D - player.level.random.nextDouble()) * 0.15D, (double)0.01F, (0.5D - player.level.random.nextDouble()) * 0.15D);
+			}
 		}
 		
-		List<LivingEntity> list1 = player.level.getEntitiesOfClass(LivingEntity.class, entity.getBoundingBox());
+		List<LivingEntity> list1 = player.level.getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(getRange()));
 		if (!list1.isEmpty()) {
 			for(LivingEntity livingentity : list1) {
 				if (livingentity.isAffectedByPotions()) {
-					double d0 = livingentity.getX() - entity.getX();
-					double d1 = livingentity.getZ() - entity.getZ();
+					double d0 = livingentity.getX() - player.getX();
+					double d1 = livingentity.getZ() - player.getZ();
 					double d2 = d0 * d0 + d1 * d1;
 					if (d2 <= (double)(getRange() * getRange())) {
 						livingentity.addEffect(new EffectInstance(new EffectInstance(effect.getEffect(), Functions.secondsToTicks(getDuration()), effect.getAmplifier())));
@@ -118,9 +113,6 @@ public class AoeBuffAbility extends ActiveDragonAbility
 				}
 			}
 		}
-		
-		
-		player.level.addFreshEntity(entity);
 		player.level.playLocalSound(player.position().x, player.position().y + 0.5, player.position().z, SoundEvents.UI_TOAST_OUT, SoundCategory.PLAYERS, 5F, 0.1F, false);
 	}
 	

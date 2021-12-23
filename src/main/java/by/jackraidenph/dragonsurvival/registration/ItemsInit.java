@@ -26,6 +26,7 @@ import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
@@ -278,19 +279,20 @@ public class ItemsInit {
             @Override
             public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand p_77659_3_)
             {
-                if(!world.isClientSide) {
-                    DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
-            
-                    if (handler != null && handler.isDragon() && !handler.hasWings()) {
+                DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+        
+                if (handler != null && handler.isDragon() && !handler.hasWings()) {
+                    if(!world.isClientSide) {
                         handler.setHasWings(true);
                         NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new SynchronizeDragonCap(player.getId(), handler.isHiding(), handler.getType(), handler.getSize(), true, handler.getLavaAirSupply(), handler.getPassengerId()));
-    
-                        if(!player.isCreative()) {
+
+                        if (!player.isCreative()) {
                             player.getItemInHand(p_77659_3_).shrink(1);
                         }
-                      
-                        return ActionResult.success(player.getItemInHand(p_77659_3_));
                     }
+
+                    player.playSound(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, 1F, 0F);
+                    return ActionResult.success(player.getItemInHand(p_77659_3_));
                 }
         
                 return super.use(world, player, p_77659_3_);
@@ -311,18 +313,20 @@ public class ItemsInit {
             @Override
             public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand p_77659_3_)
             {
-                if(!world.isClientSide) {
-                    DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
-            
-                    if (handler != null && handler.isDragon() && !handler.getMovementData().spinLearned) {
+                DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+        
+                if (handler != null && handler.isDragon() && !handler.getMovementData().spinLearned) {
+                    if(!world.isClientSide) {
                         handler.getMovementData().spinLearned = true;
                         NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncSpinStatus(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
-                        
-                        if(!player.isCreative()) {
+
+                        if (!player.isCreative()) {
                             player.getItemInHand(p_77659_3_).shrink(1);
                         }
-                        return ActionResult.success(player.getItemInHand(p_77659_3_));
                     }
+                    
+                    player.playSound(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, 1F, 0F);
+                    return ActionResult.success(player.getItemInHand(p_77659_3_));
                 }
         
                 return super.use(world, player, p_77659_3_);

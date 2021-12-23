@@ -145,12 +145,6 @@ public class SynchronizationController {
         
         List<PlayerEntity> players = player.level.getNearbyPlayers(EntityPredicate.DEFAULT, player, new AxisAlignedBB(player.position().subtract(32, 32, 32), player.position().add(32, 32, 32)));
         
-        for(PlayerEntity playerEntity : players){
-            DragonStateProvider.getCap(playerEntity).ifPresent(dragonStateHandler -> {
-                NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncEmoteStats(player.getId(), dragonStateHandler.getEmotes().emoteMenuOpen));
-            });
-        }
-        
         DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
             NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SynchronizeDragonCap(player.getId(), dragonStateHandler.isHiding(), dragonStateHandler.getType(), dragonStateHandler.getSize(), dragonStateHandler.hasWings(), dragonStateHandler.getLavaAirSupply(), 0));
             NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new PacketSyncCapabilityMovement(player.getId(), dragonStateHandler.getMovementData().bodyYaw, dragonStateHandler.getMovementData().headYaw, dragonStateHandler.getMovementData().headPitch, dragonStateHandler.getMovementData().bite));
@@ -168,7 +162,6 @@ public class SynchronizationController {
     
             NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncDragonClawRender(player.getId(), dragonStateHandler.getClawInventory().renderClaws));
             NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncDragonSkinSettings(player.getId(), dragonStateHandler.getSkin().renderNewborn, dragonStateHandler.getSkin().renderYoung, dragonStateHandler.getSkin().renderAdult));
-    
             NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncSpinStatus(player.getId(), dragonStateHandler.getMovementData().spinAttack, dragonStateHandler.getMovementData().spinCooldown, dragonStateHandler.getMovementData().spinLearned));
     
             NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncGrowthState(dragonStateHandler.growing));

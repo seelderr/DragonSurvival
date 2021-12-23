@@ -4,7 +4,7 @@ import by.jackraidenph.dragonsurvival.Functions;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.KeyInputHandler;
 import by.jackraidenph.dragonsurvival.util.DragonType;
-import net.minecraft.particles.ParticleType;
+import net.minecraft.particles.IParticleData;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
@@ -17,7 +17,7 @@ import java.util.Locale;
 
 public class ToughSkinAbility extends AoeBuffAbility
 {
-	public ToughSkinAbility(DragonType type, EffectInstance effect, int range, ParticleType particle, String id, String icon, int minLevel, int maxLevel, int manaCost, int castTime, int cooldown, Integer[] requiredLevels)
+	public ToughSkinAbility(DragonType type, EffectInstance effect, int range, IParticleData particle, String id, String icon, int minLevel, int maxLevel, int manaCost, int castTime, int cooldown, Integer[] requiredLevels)
 	{
 		super(type, effect, range, particle, id, icon, minLevel, maxLevel, manaCost, castTime, cooldown, requiredLevels);
 	}
