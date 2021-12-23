@@ -84,7 +84,7 @@ public class WingObtainmentController {
         PlayerEntity playerEntity = changedDimensionEvent.getPlayer();
         if (changedDimensionEvent.getTo() == World.END) {
             DragonStateProvider.getCap(playerEntity).ifPresent(dragonStateHandler -> {
-                if (dragonStateHandler.isDragon() && (!dragonStateHandler.hasWings() || !dragonStateHandler.getMovementData().spinLearned)) {
+                if (dragonStateHandler.isDragon() && dragonStateHandler.hasWings() && !dragonStateHandler.getMovementData().spinLearned && ConfigHandler.SERVER.enderDragonGrantsSpin.get()) {
                     Thread thread = new Thread(() -> {
                         try {
                             Thread.sleep(3000);
@@ -121,7 +121,7 @@ public class WingObtainmentController {
         ServerPlayerEntity playerEntity = chatEvent.getPlayer();
         String lowercase = message.toLowerCase();
         DragonStateProvider.getCap(playerEntity).ifPresent(dragonStateHandler -> {
-            if (dragonStateHandler.isDragon() && (!dragonStateHandler.hasWings() || !dragonStateHandler.getMovementData().spinLearned)) {
+            if (dragonStateHandler.isDragon() && dragonStateHandler.hasWings() && !dragonStateHandler.getMovementData().spinLearned && ConfigHandler.SERVER.enderDragonGrantsSpin.get()) {
                 if (playerEntity.getLevel().dimension() == World.END) {
                     if (!playerEntity.getLevel().getDragons().isEmpty()) {
                         if (!lowercase.isEmpty()) {

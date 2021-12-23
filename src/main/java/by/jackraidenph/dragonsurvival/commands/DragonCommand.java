@@ -1,5 +1,6 @@
 package by.jackraidenph.dragonsurvival.commands;
 
+import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
@@ -18,7 +19,9 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.command.arguments.EntityArgument;
 import net.minecraft.command.arguments.EntitySelector;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.network.PacketDistributor;
 
 import java.util.List;
@@ -78,6 +81,11 @@ public class DragonCommand
 	{
 	    serverPlayerEntity.getCapability(DragonStateProvider.DRAGON_CAPABILITY).ifPresent(dragonStateHandler -> {
 	        DragonType dragonType1 = type.equalsIgnoreCase("human") ? DragonType.NONE : DragonType.valueOf(type.toUpperCase());
+			
+		    if(dragonType1 == DragonType.NONE && dragonStateHandler.getType() != DragonType.NONE){
+			    reInsertClawTools(serverPlayerEntity, dragonStateHandler);
+		    }
+			
 	        dragonStateHandler.setType(dragonType1);
 	        DragonLevel dragonLevel = DragonLevel.values()[stage - 1];
 	        dragonStateHandler.setHasWings(wings);
@@ -85,12 +93,26 @@ public class DragonCommand
 	        dragonStateHandler.setSize(dragonLevel.size, serverPlayerEntity);
 	        dragonStateHandler.setPassengerId(0);
 			
-			
 			dragonStateHandler.growing = true;
 		    NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> serverPlayerEntity), new SyncSpinStatus(serverPlayerEntity.getId(), dragonStateHandler.getMovementData().spinAttack, dragonStateHandler.getMovementData().spinCooldown, dragonStateHandler.getMovementData().spinLearned));
 		    NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> serverPlayerEntity), new SynchronizeDragonCap(serverPlayerEntity.getId(), false, dragonType1, dragonLevel.size, wings, ConfigHandler.SERVER.caveLavaSwimmingTicks.get(), dragonStateHandler.getPassengerId()));
 	        serverPlayerEntity.refreshDimensions();
 	    });
 	    return 1;
+	}
+	
+	public static void reInsertClawTools(ServerPlayerEntity serverPlayerEntity, DragonStateHandler dragonStateHandler)
+	{
+		for(int i = 0; i < 4; i++){
+			ItemStack stack =  dragonStateHandler.getClawInventory().getClawsInventory().getItem(i);
+			
+			if(!serverPlayerEntity.addItem(stack)){
+				if(serverPlayerEntity.level.addFreshEntity(new ItemEntity(serverPlayerEntity.level, serverPlayerEntity.position().x, serverPlayerEntity.position().y, serverPlayerEntity.position().z, stack))){
+					dragonStateHandler.getClawInventory().getClawsInventory().removeItem(i, stack.getCount());
+				}
+			}else{
+				dragonStateHandler.getClawInventory().getClawsInventory().removeItem(i, stack.getCount());
+			}
+		}
 	}
 }

@@ -17,6 +17,7 @@ public class ServerConfig {
     public final ForgeConfigSpec.BooleanValue sizeChangesHitbox;
     public final ForgeConfigSpec.BooleanValue hitboxGrowsPastHuman;
 	
+	public final ForgeConfigSpec.BooleanValue enderDragonGrantsSpin;
 	public final ForgeConfigSpec.BooleanValue startWithWings;
 	public final ForgeConfigSpec.BooleanValue enableFlightFallDamage;
 	public final ForgeConfigSpec.IntValue flightHungerThreshold;
@@ -321,6 +322,9 @@ public class ServerConfig {
 		startWithWings = builder
 				.comment("Whether dragons start out with wings.")
 				.define("startWithWings", true);
+		enderDragonGrantsSpin = builder
+				.comment("Whether you should be able to obtain the spin ability from the ender dragon.")
+				.define("enderDragonGrantsSpin", true);
 		allowFlyingWithoutHunger = builder
 				.comment("Whether dragons can fly when totally hungry.")
 				.define("allowFlyingWhenTotallyHungry", false);

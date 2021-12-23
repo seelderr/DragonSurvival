@@ -427,7 +427,7 @@ public class ClientFlightHandler {
         if(player == null) return;
     
         DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
-        if(handler == null) return;
+        if(handler == null || !handler.isDragon()) return;
     
         boolean currentState = handler.isWingsSpread();
         Vector3d lookVec = player.getLookAngle();

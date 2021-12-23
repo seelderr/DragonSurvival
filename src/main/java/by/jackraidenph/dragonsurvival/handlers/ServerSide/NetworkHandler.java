@@ -3,6 +3,7 @@ package by.jackraidenph.dragonsurvival.handlers.ServerSide;
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.PacketProxy;
 import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.commands.DragonCommand;
 import by.jackraidenph.dragonsurvival.gecko.entity.dragon.DragonEntity;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.ClientDragonRender;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.ClientEvents;
@@ -30,6 +31,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -131,6 +133,11 @@ public class NetworkHandler
 				 CHANNEL.send(PacketDistributor.ALL.noArg(), synchronizeDragonCap);
 				 ServerPlayerEntity serverPlayerEntity = contextSupplier.get().getSender();
 				 DragonStateProvider.getCap(serverPlayerEntity).ifPresent(dragonStateHandler -> {
+					 
+					 if(synchronizeDragonCap.dragonType == DragonType.NONE && dragonStateHandler.getType() != DragonType.NONE){
+						 DragonCommand.reInsertClawTools(serverPlayerEntity, dragonStateHandler);
+					 }
+					 
 					 dragonStateHandler.setIsHiding(synchronizeDragonCap.hiding);
 					 dragonStateHandler.setType(synchronizeDragonCap.dragonType);
 					 dragonStateHandler.setSize(synchronizeDragonCap.size, serverPlayerEntity);
