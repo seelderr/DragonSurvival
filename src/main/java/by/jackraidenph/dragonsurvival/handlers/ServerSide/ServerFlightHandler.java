@@ -20,6 +20,7 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.gen.Heightmap.Type;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
+import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -53,38 +54,66 @@ public class ServerFlightHandler {
                     && flightSpeed < 1){
                     event.setCanceled(true);
                 }
-    
-                if(!livingEntity.level.isClientSide) {
-                    if(dragonStateHandler.isWingsSpread()) {
-                        dragonStateHandler.setWingsSpread(false);
-                        NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> livingEntity), new SyncFlyingStatus(livingEntity.getId(), false));
-                    }
-                }
             }
         });
     }
     
+	@SubscribeEvent
+	public static void foldWings(PlayerTickEvent tickEvent){
+		PlayerEntity player = tickEvent.player;
+		if(tickEvent.phase ==  Phase.START || !DragonStateProvider.isDragon(player) || player.level.isClientSide) return;
+		if(!ConfigHandler.SERVER.foldWingsOnLand.get()) return;
+		
+		DragonStateHandler dragonStateHandler = DragonStateProvider.getCap(player).orElse(null);
+		if(dragonStateHandler != null){
+			if(dragonStateHandler.hasFlown && (player.isOnGround() || player.isInWater() || player.isInLava())){
+				if(dragonStateHandler.isWingsSpread()) {
+					dragonStateHandler.hasFlown = false;
+					dragonStateHandler.setWingsSpread(false);
+                    NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncFlyingStatus(player.getId(), false));
+                }
+			}else{
+				if(!dragonStateHandler.hasFlown && isFlying(player)){
+					dragonStateHandler.hasFlown = true;
+				}
+			}
+		}
+	}
     
     @SubscribeEvent
     public static void changeFlightFallDamage(LivingHurtEvent event) {
         LivingEntity livingEntity = event.getEntityLiving();
         DamageSource damageSource = event.getSource();
+		
         if (damageSource == DamageSource.FALL) {
             final double flightSpeed = livingEntity.getDeltaMovement().length();
-            if (livingEntity.isPassenger() && DragonStateProvider.isDragon(livingEntity.getVehicle())) {
+	
+	        if (livingEntity.isPassenger() && DragonStateProvider.isDragon(livingEntity.getVehicle())) {
                 event.setCanceled(true);
+				
             } else if (ConfigHandler.SERVER.enableFlightFallDamage.get()) {
-                DragonStateProvider.getCap(livingEntity).ifPresent(dragonStateHandler -> {
-                    if (dragonStateHandler.isDragon() && dragonStateHandler.isWingsSpread()) {
-                        if (flightSpeed > 0.08) {
-                            double damage = flightSpeed * 35 * dragonStateHandler.getSize() / 20;
-                            damage = MathHelper.clamp(damage, 0, livingEntity.getHealth() - 1);
-                            event.setAmount((float) (damage));
-                        } else {
-                            event.setCanceled(true);
-                        }
-                    }
-                });
+		        DragonStateHandler dragonStateHandler = DragonStateProvider.getCap(livingEntity).orElse(null);
+				if(dragonStateHandler != null){
+					if (dragonStateHandler.isDragon() && dragonStateHandler.hasWings()) {
+						if (flightSpeed > 0.08) {
+							double damage = flightSpeed * 35 * dragonStateHandler.getSize() / 20;
+							damage = MathHelper.clamp(damage, 0, livingEntity.getHealth() - (ConfigHandler.SERVER.lethalFlight.get() ? 0 : 1));
+							event.setAmount((float) (damage));
+							
+							if(ConfigHandler.SERVER.foldWingsOnLand.get()) {
+								if (!livingEntity.level.isClientSide) {
+									if (dragonStateHandler.isWingsSpread()) {
+										dragonStateHandler.setWingsSpread(false);
+										NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> livingEntity), new SyncFlyingStatus(livingEntity.getId(), false));
+									}
+								}
+							}
+							
+						} else {
+							event.setCanceled(true);
+						}
+					}
+				}
             }
         }
     }

@@ -7,6 +7,8 @@ public class Emote
 	
 	public Requirement requirements;
 	
+	public Mirror mirror;
+	
 	public boolean loops = false;
 	public boolean locksHead = false;
 	public boolean thirdPerson = false;
@@ -29,5 +31,19 @@ public class Emote
 		public String[] type;
 		public String[] model;
 		public String[] age;
+	}
+	
+	public static class Mirror{
+		public boolean xPos;
+		public boolean yPos;
+		public boolean zPos;
+		
+		public boolean xRot;
+		public boolean yRot;
+		public boolean zRot;
+		
+		public boolean xScale;
+		public boolean yScale;
+		public boolean zScale;
 	}
 }

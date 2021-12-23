@@ -7,6 +7,7 @@ import by.jackraidenph.dragonsurvival.containers.DragonContainer;
 import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.claw.SyncDragonClawsMenu;
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.inventory.container.Slot;
@@ -53,15 +54,7 @@ public class ClawToolSlot extends Slot
 	public ItemStack remove(int p_75209_1_)
 	{
 		ItemStack stack = super.remove(p_75209_1_);
-		
-		if(!dragonContainer.player.level.isClientSide) {
-			DragonStateHandler handler = DragonStateProvider.getCap(dragonContainer.player).orElse(null);
-			
-			if (handler != null) {
-				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> dragonContainer.player), new SyncDragonClawsMenu(dragonContainer.player.getId(), handler.getClawInventory().isClawsMenuOpen(), handler.getClawInventory().getClawsInventory()));
-			}
-		}
-		
+		syncSlots();
 		return stack;
 	}
 	
@@ -69,7 +62,11 @@ public class ClawToolSlot extends Slot
 	public void set(ItemStack p_75215_1_)
 	{
 		super.set(p_75215_1_);
-		
+		syncSlots();
+	}
+	
+	private void syncSlots()
+	{
 		if(!dragonContainer.player.level.isClientSide) {
 			DragonStateHandler handler = DragonStateProvider.getCap(dragonContainer.player).orElse(null);
 			
@@ -82,6 +79,6 @@ public class ClawToolSlot extends Slot
 	@Override
 	public boolean mayPlace(ItemStack stack)
 	{
-		return type == null && (stack.getItem() instanceof SwordItem || stack.getItem() instanceof AxeItem || stack.getToolTypes().contains(ToolType.AXE)) || stack.getItem().getToolTypes(stack).contains(type);
+		return type == null && (stack.getEquipmentSlot() == EquipmentSlotType.MAINHAND || stack.getItem() instanceof SwordItem || stack.getItem() instanceof AxeItem || stack.getToolTypes().contains(ToolType.AXE)) || stack.getItem().getToolTypes(stack).contains(type);
 	}
 }

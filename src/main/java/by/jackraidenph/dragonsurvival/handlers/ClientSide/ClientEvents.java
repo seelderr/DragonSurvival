@@ -67,10 +67,13 @@ public class ClientEvents {
         }
     }
     
+    public static double mouseX = -1;
+    public static double mouseY = -1;
+    
     @SubscribeEvent
     public static void onOpenScreen(GuiOpenEvent openEvent) {
         ClientPlayerEntity player = Minecraft.getInstance().player;
-    
+        
         if(!ConfigHandler.CLIENT.dragonInventory.get()) return;
         if(Minecraft.getInstance().screen != null) return;
         if(player == null || player.isCreative() || !DragonStateProvider.isDragon(player)) return;
