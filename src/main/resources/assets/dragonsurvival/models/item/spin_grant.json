@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "dragonsurvival:item/wing_grant"
+    "layer0": "dragonsurvival:item/spin_grant"
   }
 }
