@@ -1,9 +1,10 @@
 package by.jackraidenph.dragonsurvival.gui.buttons;
 
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
+import by.jackraidenph.dragonsurvival.gui.DragonScreen;
 import by.jackraidenph.dragonsurvival.gui.SkinsScreen;
 import by.jackraidenph.dragonsurvival.gui.magic.AbilityScreen;
-import by.jackraidenph.dragonsurvival.gui.DragonScreen;
+import by.jackraidenph.dragonsurvival.handlers.ClientSide.ClientEvents;
 import by.jackraidenph.dragonsurvival.handlers.Magic.ClientMagicHUDHandler;
 import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.container.OpenInventory;
@@ -85,6 +86,8 @@ public class TabButton extends Button
 								NetworkHandler.CHANNEL.sendToServer(new OpenInventory());
 								break;
 							}else if(((AbilityScreen)parent).sourceScreen instanceof DragonScreen){
+								ClientEvents.mouseX = Minecraft.getInstance().mouseHandler.xpos();
+								ClientEvents.mouseY = Minecraft.getInstance().mouseHandler.ypos();
 								NetworkHandler.CHANNEL.sendToServer(new OpenDragonInventory());
 								break;
 							}
@@ -96,6 +99,8 @@ public class TabButton extends Button
 								NetworkHandler.CHANNEL.sendToServer(new OpenInventory());
 								break;
 							}else if(((SkinsScreen)parent).sourceScreen instanceof DragonScreen){
+								ClientEvents.mouseX = Minecraft.getInstance().mouseHandler.xpos();
+								ClientEvents.mouseY = Minecraft.getInstance().mouseHandler.ypos();
 								NetworkHandler.CHANNEL.sendToServer(new OpenDragonInventory());
 								break;
 							}
@@ -103,6 +108,8 @@ public class TabButton extends Button
 					}
 					
 					if(ConfigHandler.CLIENT.dragonInventory.get()){
+						ClientEvents.mouseX = Minecraft.getInstance().mouseHandler.xpos();
+						ClientEvents.mouseY = Minecraft.getInstance().mouseHandler.ypos();
 						NetworkHandler.CHANNEL.sendToServer(new OpenDragonInventory());
 					}else {
 						Minecraft.getInstance().setScreen(new InventoryScreen(Minecraft.getInstance().player));

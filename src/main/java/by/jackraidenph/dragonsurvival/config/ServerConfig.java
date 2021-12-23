@@ -23,6 +23,8 @@ public class ServerConfig {
 	public final ForgeConfigSpec.BooleanValue allowFlyingWithoutHunger;
 	public final ForgeConfigSpec.BooleanValue flyingUsesHunger;
 	public final ForgeConfigSpec.BooleanValue creativeFlight;
+	public final ForgeConfigSpec.BooleanValue foldWingsOnLand;
+	public final ForgeConfigSpec.BooleanValue lethalFlight;
 	public final ForgeConfigSpec.IntValue flightSpinCooldown;
 	
 	
@@ -331,6 +333,12 @@ public class ServerConfig {
 		enableFlightFallDamage = builder
 				.comment("Whether fatal fall damage in flight is included. If true dragon will take fatal damage from the fall.")
 				.define("enableFlightFallDamage", true);
+		lethalFlight = builder
+				.comment("Whether fall damage from flight is lethal, otherwise it will leave you at half a heart")
+				.define("lethalFallDamage", false);
+		foldWingsOnLand = builder
+				.comment("Whether your wings will fold automatically when landing.")
+				.define("foldWingsOnLand", true);
 		creativeFlight = builder
 				.comment("Whether to use flight similar to creative rather then gliding.")
 				.define("alternateFlight", false);

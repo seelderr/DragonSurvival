@@ -31,6 +31,7 @@ public class DragonStateHandler {
 	
     private boolean hasWings;
 	private boolean spreadWings;
+	public boolean hasFlown;
 	
     private double size = 0;
 	public boolean growing = true;

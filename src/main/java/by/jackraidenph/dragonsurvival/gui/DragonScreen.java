@@ -7,6 +7,7 @@ import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.config.ConfigUtils;
 import by.jackraidenph.dragonsurvival.containers.DragonContainer;
 import by.jackraidenph.dragonsurvival.gui.buttons.TabButton;
+import by.jackraidenph.dragonsurvival.handlers.ClientSide.ClientEvents;
 import by.jackraidenph.dragonsurvival.handlers.ClientSide.KeyInputHandler;
 import by.jackraidenph.dragonsurvival.handlers.DragonGrowthHandler;
 import by.jackraidenph.dragonsurvival.handlers.Magic.ClientMagicHUDHandler;
@@ -306,6 +307,14 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
         this.imageWidth = 203;
         this.imageHeight = 166;
         super.init();
+    
+        if(ClientEvents.mouseX != -1 && ClientEvents.mouseY != -1) {
+            if(this.minecraft.getWindow() != null){
+                InputMappings.grabOrReleaseMouse(this.minecraft.getWindow().getWindow(), 212993, ClientEvents.mouseX, ClientEvents.mouseY);
+                ClientEvents.mouseX = -1;
+                ClientEvents.mouseY = -1;
+            }
+        }
     
         this.leftPos = (this.width - this.imageWidth) / 2;
         

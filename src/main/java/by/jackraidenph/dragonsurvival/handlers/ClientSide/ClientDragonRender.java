@@ -74,7 +74,6 @@ public class ClientDragonRender
 	/**
 	 * Called for every player.
 	 */
-	@SuppressWarnings("unchecked,rawtypes")
 	@SubscribeEvent
 	public static void thirdPersonPreRender(RenderPlayerEvent.Pre renderPlayerEvent) {
 		if(!(renderPlayerEvent.getPlayer() instanceof AbstractClientPlayerEntity)){
