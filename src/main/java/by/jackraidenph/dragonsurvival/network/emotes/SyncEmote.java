@@ -1,8 +1,8 @@
 package by.jackraidenph.dragonsurvival.network.emotes;
 
-import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.emotes.Emote;
-import by.jackraidenph.dragonsurvival.emotes.EmoteRegistry;
+import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.client.emotes.Emote;
+import by.jackraidenph.dragonsurvival.client.emotes.EmoteRegistry;
 import by.jackraidenph.dragonsurvival.network.IMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;

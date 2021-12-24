@@ -1,11 +1,11 @@
 package by.jackraidenph.dragonsurvival.mixins;
 
-import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
-import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
+import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
-import by.jackraidenph.dragonsurvival.handlers.DragonFoodHandler;
-import by.jackraidenph.dragonsurvival.handlers.DragonSizeHandler;
-import by.jackraidenph.dragonsurvival.util.DragonType;
+import by.jackraidenph.dragonsurvival.common.handlers.DragonFoodHandler;
+import by.jackraidenph.dragonsurvival.common.handlers.DragonSizeHandler;
+import by.jackraidenph.dragonsurvival.misc.DragonType;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.BlockState;
 import net.minecraft.enchantment.EnchantmentHelper;

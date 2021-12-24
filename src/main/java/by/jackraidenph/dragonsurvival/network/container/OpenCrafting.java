@@ -1,6 +1,6 @@
 package by.jackraidenph.dragonsurvival.network.container;
 
-import by.jackraidenph.dragonsurvival.containers.CraftingContainer;
+import by.jackraidenph.dragonsurvival.server.containers.CraftingContainer;
 import by.jackraidenph.dragonsurvival.network.IMessage;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;

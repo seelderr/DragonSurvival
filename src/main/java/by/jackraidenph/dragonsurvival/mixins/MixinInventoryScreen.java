@@ -1,6 +1,6 @@
 package by.jackraidenph.dragonsurvival.mixins;
 
-import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;

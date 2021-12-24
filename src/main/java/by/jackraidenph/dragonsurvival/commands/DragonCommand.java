@@ -1,13 +1,13 @@
 package by.jackraidenph.dragonsurvival.commands;
 
-import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
-import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
+import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
-import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
-import by.jackraidenph.dragonsurvival.network.SynchronizeDragonCap;
+import by.jackraidenph.dragonsurvival.network.NetworkHandler;
+import by.jackraidenph.dragonsurvival.network.entity.player.SynchronizeDragonCap;
 import by.jackraidenph.dragonsurvival.network.status.SyncSpinStatus;
-import by.jackraidenph.dragonsurvival.util.DragonLevel;
-import by.jackraidenph.dragonsurvival.util.DragonType;
+import by.jackraidenph.dragonsurvival.misc.DragonLevel;
+import by.jackraidenph.dragonsurvival.misc.DragonType;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;

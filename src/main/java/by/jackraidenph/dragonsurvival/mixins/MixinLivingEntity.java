@@ -10,8 +10,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.mojang.datafixers.util.Pair;
 
-import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.handlers.DragonFoodHandler;
+import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.handlers.DragonFoodHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;

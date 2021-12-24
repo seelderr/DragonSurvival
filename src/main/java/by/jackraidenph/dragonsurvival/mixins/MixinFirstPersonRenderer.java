@@ -10,8 +10,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
-import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.handlers.DragonFoodHandler;
+import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.handlers.DragonFoodHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
 import net.minecraft.client.renderer.FirstPersonRenderer;

@@ -1,17 +1,15 @@
 package by.jackraidenph.dragonsurvival;
 
-import by.jackraidenph.dragonsurvival.capability.Capabilities;
+import by.jackraidenph.dragonsurvival.client.particles.DSParticles;
 import by.jackraidenph.dragonsurvival.commands.DragonCommand;
+import by.jackraidenph.dragonsurvival.common.capability.Capabilities;
+import by.jackraidenph.dragonsurvival.common.entity.DSEntities;
+import by.jackraidenph.dragonsurvival.common.handlers.DragonFoodHandler;
+import by.jackraidenph.dragonsurvival.common.handlers.WingObtainmentController;
+import by.jackraidenph.dragonsurvival.common.handlers.magic.ClawToolHandler.Event_busHandler;
+import by.jackraidenph.dragonsurvival.common.magic.DragonAbilities;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
-import by.jackraidenph.dragonsurvival.emotes.EmoteRegistry;
-import by.jackraidenph.dragonsurvival.handlers.DragonFoodHandler;
-import by.jackraidenph.dragonsurvival.handlers.Magic.ClawToolHandler.Event_busHandler;
-import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
-import by.jackraidenph.dragonsurvival.handlers.SpecificsHandler;
-import by.jackraidenph.dragonsurvival.handlers.WingObtainmentController;
-import by.jackraidenph.dragonsurvival.magic.DragonAbilities;
-import by.jackraidenph.dragonsurvival.registration.EntityTypesInit;
-import by.jackraidenph.dragonsurvival.registration.ParticleRegistry;
+import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.util.BiomeDictionaryHelper;
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.command.CommandSource;
@@ -54,12 +52,10 @@ public class DragonSurvivalMod {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ConfigHandler.commonSpec);
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ConfigHandler.serverSpec);
 
-        ParticleRegistry.REGISTRY.register(modEventBus);
+        DSParticles.REGISTRY.register(modEventBus);
     
         MinecraftForge.EVENT_BUS.register(this);
-        MinecraftForge.EVENT_BUS.register(new EmoteRegistry());
         MinecraftForge.EVENT_BUS.register(new DragonFoodHandler());
-        MinecraftForge.EVENT_BUS.register(new SpecificsHandler());
         MinecraftForge.EVENT_BUS.register(new Event_busHandler());
         MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGH, this::biomeLoadingEvent);
         MinecraftForge.EVENT_BUS.addListener(this::serverRegisterCommandsEvent);
@@ -87,7 +83,7 @@ public class DragonSurvivalMod {
             if (spawns.stream().anyMatch(x -> x.type.getCategory() == EntityClassification.MONSTER)
                     && biomeTypes.stream().anyMatch(x -> includeList.contains(x)
                     && biomeTypes.stream().noneMatch(excludeList::contains))) {
-                spawns.add(new MobSpawnInfo.Spawners(EntityTypesInit.MAGICAL_BEAST, ConfigHandler.COMMON.predatorSpawnWeight.get(), ConfigHandler.COMMON.minPredatorSpawn.get(), ConfigHandler.COMMON.maxPredatorSpawn.get()));
+                spawns.add(new MobSpawnInfo.Spawners(DSEntities.MAGICAL_BEAST, ConfigHandler.COMMON.predatorSpawnWeight.get(), ConfigHandler.COMMON.minPredatorSpawn.get(), ConfigHandler.COMMON.maxPredatorSpawn.get()));
             }
         }
     }

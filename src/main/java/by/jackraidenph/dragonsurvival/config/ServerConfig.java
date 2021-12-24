@@ -1,7 +1,7 @@
 package by.jackraidenph.dragonsurvival.config;
 
-import by.jackraidenph.dragonsurvival.Functions;
-import by.jackraidenph.dragonsurvival.util.DragonLevel;
+import by.jackraidenph.dragonsurvival.util.Functions;
+import by.jackraidenph.dragonsurvival.misc.DragonLevel;
 import com.google.common.collect.Lists;
 import net.minecraftforge.common.ForgeConfigSpec;
 
@@ -48,7 +48,6 @@ public class ServerConfig {
 	public final ForgeConfigSpec.DoubleValue youngGrowthModifier;
 	public final ForgeConfigSpec.DoubleValue adultGrowthModifier;
 	public final ForgeConfigSpec.DoubleValue maxGrowthModifier;
-	
 	
 	public final ForgeConfigSpec.DoubleValue reachBonus;
 	

@@ -1,7 +1,7 @@
 package by.jackraidenph.dragonsurvival.mixins;
 
-import by.jackraidenph.dragonsurvival.capability.DragonStateHandler;
-import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
+import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.Entity;

@@ -1,6 +1,6 @@
 package by.jackraidenph.dragonsurvival.network.status;
 
-import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
+import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.IMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;

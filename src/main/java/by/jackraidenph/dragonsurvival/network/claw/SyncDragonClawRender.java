@@ -1,8 +1,8 @@
 package by.jackraidenph.dragonsurvival.network.claw;
 
-import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
-import by.jackraidenph.dragonsurvival.handlers.ServerSide.NetworkHandler;
+import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.IMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;

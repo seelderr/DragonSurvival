@@ -1,9 +1,9 @@
 package by.jackraidenph.dragonsurvival.mixins;
 
-import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
-import by.jackraidenph.dragonsurvival.handlers.DragonSizeHandler;
-import by.jackraidenph.dragonsurvival.util.DragonType;
+import by.jackraidenph.dragonsurvival.common.handlers.DragonSizeHandler;
+import by.jackraidenph.dragonsurvival.misc.DragonType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.Pose;

@@ -1,7 +1,7 @@
 package by.jackraidenph.dragonsurvival.network.magic;
 
-import by.jackraidenph.dragonsurvival.capability.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.containers.DragonContainer;
+import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.server.containers.DragonContainer;
 import by.jackraidenph.dragonsurvival.network.IMessage;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
