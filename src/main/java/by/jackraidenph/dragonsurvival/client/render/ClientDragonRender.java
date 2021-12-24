@@ -1,20 +1,22 @@
 package by.jackraidenph.dragonsurvival.client.render;
 
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.config.ConfigHandler;
-import by.jackraidenph.dragonsurvival.common.entity.DragonEntity;
-import by.jackraidenph.dragonsurvival.client.models.DragonArmorModel;
-import by.jackraidenph.dragonsurvival.client.models.DragonModel;
+import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.client.handlers.ClientEvents;
 import by.jackraidenph.dragonsurvival.client.handlers.DragonSkins;
-import by.jackraidenph.dragonsurvival.server.handlers.ServerFlightHandler;
+import by.jackraidenph.dragonsurvival.client.models.DragonArmorModel;
+import by.jackraidenph.dragonsurvival.client.models.DragonModel;
+import by.jackraidenph.dragonsurvival.client.render.entity.dragon.DragonRenderer;
+import by.jackraidenph.dragonsurvival.common.DragonEffects;
+import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
+import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.entity.DSEntities;
+import by.jackraidenph.dragonsurvival.common.entity.DragonEntity;
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
+import by.jackraidenph.dragonsurvival.misc.DragonLevel;
 import by.jackraidenph.dragonsurvival.mixins.AccessorEntityRenderer;
 import by.jackraidenph.dragonsurvival.mixins.AccessorEntityRendererManager;
 import by.jackraidenph.dragonsurvival.mixins.AccessorLivingRenderer;
-import by.jackraidenph.dragonsurvival.common.DragonEffects;
-import by.jackraidenph.dragonsurvival.common.entity.DSEntities;
-import by.jackraidenph.dragonsurvival.misc.DragonLevel;
+import by.jackraidenph.dragonsurvival.server.handlers.ServerFlightHandler;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
@@ -28,7 +30,9 @@ import net.minecraft.client.renderer.entity.layers.ParrotVariantLayer;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.entity.Entity;
-import net.minecraft.item.ItemStack;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.*;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
@@ -39,6 +43,7 @@ import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import java.awt.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 @Mod.EventBusSubscriber( Dist.CLIENT)
@@ -188,6 +193,21 @@ public class ClientDragonRender
 					}
 					if(player != mc.player || !Minecraft.getInstance().options.getCameraType().isFirstPerson() || !ServerFlightHandler.isGliding(player)) {
 						dragonRenderer.render(dummyDragon, yaw, partialRenderTick, matrixStack, renderTypeBuffer, eventLight);
+						
+						ItemStack helmet = player.getItemBySlot(EquipmentSlotType.HEAD);
+						ItemStack chestPlate = player.getItemBySlot(EquipmentSlotType.CHEST);
+						ItemStack legs = player.getItemBySlot(EquipmentSlotType.LEGS);
+						ItemStack boots = player.getItemBySlot(EquipmentSlotType.FEET);
+						
+						ResourceLocation helmetTexture = new ResourceLocation(DragonSurvivalMod.MODID, constructArmorTexture(player, EquipmentSlotType.HEAD));
+						ResourceLocation chestPlateTexture = new ResourceLocation(DragonSurvivalMod.MODID, constructArmorTexture(player, EquipmentSlotType.CHEST));
+						ResourceLocation legsTexture = new ResourceLocation(DragonSurvivalMod.MODID, constructArmorTexture(player, EquipmentSlotType.LEGS));
+						ResourceLocation bootsTexture = new ResourceLocation(DragonSurvivalMod.MODID, constructArmorTexture(player, EquipmentSlotType.FEET));
+						
+						renderArmorPiece(helmet, matrixStack, renderTypeBuffer, yaw, eventLight, dummyDragon, partialRenderTick, helmetTexture);
+						renderArmorPiece(chestPlate, matrixStack, renderTypeBuffer, yaw, eventLight, dummyDragon, partialRenderTick, chestPlateTexture);
+						renderArmorPiece(legs, matrixStack, renderTypeBuffer, yaw, eventLight, dummyDragon, partialRenderTick, legsTexture);
+						renderArmorPiece(boots, matrixStack, renderTypeBuffer, yaw, eventLight, dummyDragon, partialRenderTick, bootsTexture);
 					}
                 }
 
@@ -240,5 +260,90 @@ public class ClientDragonRender
         }
         else
             ((AccessorEntityRenderer)renderPlayerEvent.getRenderer()).setShadowRadius(0.5F);
+	}
+	
+	private static void renderArmorPiece(ItemStack stack, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, float yaw, int packedLightIn, DragonEntity entitylivingbaseIn, float partialTicks, ResourceLocation helmetTexture)
+	{
+		Color armorColor = new Color(1f, 1f, 1f);
+		
+		if(stack.getItem() instanceof IDyeableArmorItem){
+			int colorCode = ((IDyeableArmorItem)stack.getItem()).getColor(stack);
+			armorColor = new Color(colorCode);
+		}
+		
+		if(!stack.isEmpty()) {
+			EntityRenderer<? super DragonEntity> dragonArmorRenderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(ClientDragonRender.dragonArmor);
+			ClientDragonRender.dragonArmor.copyPosition(entitylivingbaseIn);
+			ClientDragonRender.dragonArmorModel.setArmorTexture(helmetTexture);
+			Color preColor = ((DragonRenderer)dragonArmorRenderer).renderColor;
+			((DragonRenderer)dragonArmorRenderer).renderColor = armorColor;
+			dragonArmorRenderer.render(ClientDragonRender.dragonArmor, yaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
+			((DragonRenderer)dragonArmorRenderer).renderColor = preColor;
+			
+		}
+	}
+	
+	private static String constructArmorTexture(PlayerEntity playerEntity, EquipmentSlotType equipmentSlot) {
+		String texture = "textures/armor/";
+		Item item = playerEntity.getItemBySlot(equipmentSlot).getItem();
+		if (item instanceof ArmorItem) {
+			ArmorItem armorItem = (ArmorItem) item;
+			IArmorMaterial armorMaterial = armorItem.getMaterial();
+			if (armorMaterial.getClass() == ArmorMaterial.class) {
+				if (armorMaterial == ArmorMaterial.NETHERITE) {
+					texture += "netherite_";
+				} else if (armorMaterial == ArmorMaterial.DIAMOND) {
+					texture += "diamond_";
+				} else if (armorMaterial == ArmorMaterial.IRON) {
+					texture += "iron_";
+				} else if (armorMaterial == ArmorMaterial.LEATHER) {
+					texture += "leather_";
+				} else if (armorMaterial == ArmorMaterial.GOLD) {
+					texture += "gold_";
+				} else if (armorMaterial == ArmorMaterial.CHAIN) {
+					texture += "chainmail_";
+				} else if (armorMaterial == ArmorMaterial.TURTLE)
+					texture += "turtle_";
+				else {
+					return texture + "empty_armor.png";
+				}
+				
+				texture += "dragon_";
+				switch (equipmentSlot) {
+					case HEAD:
+						texture += "helmet";
+						break;
+					case CHEST:
+						texture += "chestplate";
+						break;
+					case LEGS:
+						texture += "leggings";
+						break;
+					case FEET:
+						texture += "boots";
+						break;
+				}
+				texture += ".png";
+				return texture;
+			} else {
+				int defense = armorItem.getDefense();
+				switch (equipmentSlot) {
+					case FEET:
+						texture += MathHelper.clamp(defense, 1, 4) + "_dragon_boots";
+						break;
+					case CHEST:
+						texture += MathHelper.clamp(defense / 2, 1, 4) + "_dragon_chestplate";
+						break;
+					case HEAD:
+						texture += MathHelper.clamp(defense, 1, 4) + "_dragon_helmet";
+						break;
+					case LEGS:
+						texture += MathHelper.clamp((int) (defense / 1.5), 1, 4) + "_dragon_leggings";
+						break;
+				}
+				return texture + ".png";
+			}
+		}
+		return texture + "empty_armor.png";
 	}
 }

@@ -1,4 +1,4 @@
-package by.jackraidenph.dragonsurvival.network.status;
+package by.jackraidenph.dragonsurvival.network.flight;
 
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;

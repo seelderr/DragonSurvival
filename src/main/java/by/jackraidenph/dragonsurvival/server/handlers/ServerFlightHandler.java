@@ -1,19 +1,19 @@
 package by.jackraidenph.dragonsurvival.server.handlers;
 
+import by.jackraidenph.dragonsurvival.client.handlers.ClientFlightHandler;
+import by.jackraidenph.dragonsurvival.common.DragonEffects;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
-import by.jackraidenph.dragonsurvival.client.handlers.ClientFlightHandler;
-import by.jackraidenph.dragonsurvival.network.NetworkHandler;
-import by.jackraidenph.dragonsurvival.network.status.SyncFlyingStatus;
-import by.jackraidenph.dragonsurvival.network.status.SyncSpinStatus;
-import by.jackraidenph.dragonsurvival.common.DragonEffects;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
+import by.jackraidenph.dragonsurvival.network.NetworkHandler;
+import by.jackraidenph.dragonsurvival.network.flight.SyncFlyingStatus;
+import by.jackraidenph.dragonsurvival.network.flight.SyncSpinStatus;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.EffectInstance;
-import net.minecraft.util.DamageSource;
+import net.minecraft.potion.Effects;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -23,7 +23,6 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.network.PacketDistributor;
@@ -43,18 +42,40 @@ public class ServerFlightHandler {
     @SubscribeEvent
     public static void changeFallDistance(LivingFallEvent event) {
         LivingEntity livingEntity = event.getEntityLiving();
-        final double flightSpeed = livingEntity.getDeltaMovement().length();
+		double flightSpeed = event.getDistance();
         
         DragonStateProvider.getCap(livingEntity).ifPresent(dragonStateHandler -> {
-            if(dragonStateHandler.isDragon()) {
-                if(!ConfigHandler.SERVER.enableFlightFallDamage.get()){
-                    event.setCanceled(true);
-                }
-                
-                if (dragonStateHandler.isWingsSpread() && !livingEntity.isSprinting()
-                    && flightSpeed < 1){
-                    event.setCanceled(true);
-                }
+            if(dragonStateHandler.isDragon() && dragonStateHandler.hasWings()) {
+	            if (!ConfigHandler.SERVER.enableFlightFallDamage.get()) {
+		            event.setCanceled(true);
+	            }
+				
+	            if (flightSpeed <= 2 || dragonStateHandler.isWingsSpread() && !livingEntity.isSprinting() && flightSpeed <= 4) {
+		            event.setCanceled(true);
+		            return;
+	            }
+	
+	            if (livingEntity.isPassenger() && DragonStateProvider.isDragon(livingEntity.getVehicle())) {
+		            event.setCanceled(true);
+					return;
+	            }
+	
+	            EffectInstance effectinstance = livingEntity.getEffect(Effects.JUMP);
+	            float f = effectinstance == null ? 0.0F : (float)(effectinstance.getAmplifier() + 1);
+				
+	            double damage = livingEntity.getDeltaMovement().lengthSqr() * (dragonStateHandler.getSize() / 20);
+	            damage = MathHelper.clamp(damage, 0, livingEntity.getHealth() - (ConfigHandler.SERVER.lethalFlight.get() ? 0 : 1));
+				
+	            event.setDistance((float)Math.floor(((damage + 3.0F + f) / event.getDamageMultiplier())));
+				
+				if(!livingEntity.level.isClientSide) {
+					if (ConfigHandler.SERVER.foldWingsOnLand.get()) {
+						if (dragonStateHandler.isWingsSpread()) {
+							dragonStateHandler.setWingsSpread(false);
+							NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> livingEntity), new SyncFlyingStatus(livingEntity.getId(), false));
+						}
+					}
+				}
             }
         });
     }
@@ -80,44 +101,6 @@ public class ServerFlightHandler {
 			}
 		}
 	}
-    
-    @SubscribeEvent
-    public static void changeFlightFallDamage(LivingHurtEvent event) {
-        LivingEntity livingEntity = event.getEntityLiving();
-        DamageSource damageSource = event.getSource();
-		
-        if (damageSource == DamageSource.FALL) {
-            final double flightSpeed = livingEntity.getDeltaMovement().length();
-	
-	        if (livingEntity.isPassenger() && DragonStateProvider.isDragon(livingEntity.getVehicle())) {
-                event.setCanceled(true);
-				
-            } else if (ConfigHandler.SERVER.enableFlightFallDamage.get()) {
-		        DragonStateHandler dragonStateHandler = DragonStateProvider.getCap(livingEntity).orElse(null);
-				if(dragonStateHandler != null){
-					if (dragonStateHandler.isDragon() && dragonStateHandler.hasWings()) {
-						if (flightSpeed > 0.08) {
-							double damage = flightSpeed * 35 * dragonStateHandler.getSize() / 20;
-							damage = MathHelper.clamp(damage, 0, livingEntity.getHealth() - (ConfigHandler.SERVER.lethalFlight.get() ? 0 : 1));
-							event.setAmount((float) (damage));
-							
-							if(ConfigHandler.SERVER.foldWingsOnLand.get()) {
-								if (!livingEntity.level.isClientSide) {
-									if (dragonStateHandler.isWingsSpread()) {
-										dragonStateHandler.setWingsSpread(false);
-										NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> livingEntity), new SyncFlyingStatus(livingEntity.getId(), false));
-									}
-								}
-							}
-							
-						} else {
-							event.setCanceled(true);
-						}
-					}
-				}
-            }
-        }
-    }
 	@SubscribeEvent
 	public static void playerFlightIcon(TickEvent.PlayerTickEvent playerTickEvent) {
 		if(playerTickEvent.phase == Phase.START) return;
@@ -185,8 +168,9 @@ public class ServerFlightHandler {
 						player.attack(ent);
 					}
 					
+					handler.getMovementData().spinAttack--;
+					
 					if(!player.level.isClientSide){
-						handler.getMovementData().spinAttack--;
 						NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncSpinStatus(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
 					}
 					

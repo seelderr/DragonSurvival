@@ -11,6 +11,10 @@ import by.jackraidenph.dragonsurvival.network.emotes.SyncEmoteStats;
 import by.jackraidenph.dragonsurvival.network.emotes.SyncEmoteStatsServer;
 import by.jackraidenph.dragonsurvival.network.entity.PacketSyncPredatorStats;
 import by.jackraidenph.dragonsurvival.network.entity.PacketSyncXPDevour;
+import by.jackraidenph.dragonsurvival.network.flight.RequestSpinResync;
+import by.jackraidenph.dragonsurvival.network.flight.SyncFlightSpeed;
+import by.jackraidenph.dragonsurvival.network.flight.SyncFlyingStatus;
+import by.jackraidenph.dragonsurvival.network.flight.SyncSpinStatus;
 import by.jackraidenph.dragonsurvival.network.magic.*;
 import by.jackraidenph.dragonsurvival.network.nest.*;
 import by.jackraidenph.dragonsurvival.network.entity.player.*;
@@ -56,7 +60,8 @@ public class NetworkHandler
 		 register(SyncFlyingStatus.class, new SyncFlyingStatus());
 		 register(SyncFlightSpeed.class, new SyncFlightSpeed());
 		 register(SyncSpinStatus.class, new SyncSpinStatus());
-		 
+		 register(RequestSpinResync.class, new RequestSpinResync());
+		
 		 //Inventory
 		 register(OpenInventory.class, new OpenInventory());
 		 register(SortInventoryPacket.class, new SortInventoryPacket());

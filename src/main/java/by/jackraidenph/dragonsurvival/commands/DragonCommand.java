@@ -5,7 +5,7 @@ import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.entity.player.SynchronizeDragonCap;
-import by.jackraidenph.dragonsurvival.network.status.SyncSpinStatus;
+import by.jackraidenph.dragonsurvival.network.flight.SyncSpinStatus;
 import by.jackraidenph.dragonsurvival.misc.DragonLevel;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import com.mojang.brigadier.CommandDispatcher;

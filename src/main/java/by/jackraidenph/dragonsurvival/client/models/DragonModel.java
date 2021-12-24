@@ -47,10 +47,13 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 		PlayerEntity player = minecraftInstance.player;
 		DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
 		
-		parser.setValue("query.delta_y", player.getDeltaMovement().y);
-		parser.setValue("query.head_yaw", handler.getMovementData().headYaw);
-		parser.setValue("query.head_pitch", handler.getMovementData().headPitch);
+		float headRot = player.yRot != 0.0 ? player.yRot : player.yHeadRot;
+		double bodyYaw = handler.getMovementData().bodyYaw;
+		float bodyAndHeadYawDiff = (((float)bodyYaw) - headRot);
 		
+		parser.setValue("query.delta_y", player.getDeltaMovement().y);
+		parser.setValue("query.head_yaw", bodyAndHeadYawDiff);
+		parser.setValue("query.head_pitch", handler.getMovementData().headPitch);
 	}
 	
 	@Override

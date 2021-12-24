@@ -5,10 +5,11 @@ import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
+import by.jackraidenph.dragonsurvival.network.flight.RequestSpinResync;
 import by.jackraidenph.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.jackraidenph.dragonsurvival.mixins.MixinGameRendererZoom;
-import by.jackraidenph.dragonsurvival.network.status.SyncFlightSpeed;
-import by.jackraidenph.dragonsurvival.network.status.SyncFlyingStatus;
+import by.jackraidenph.dragonsurvival.network.flight.SyncFlightSpeed;
+import by.jackraidenph.dragonsurvival.network.flight.SyncFlyingStatus;
 import by.jackraidenph.dragonsurvival.client.sounds.FastGlideSound;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
@@ -144,6 +145,7 @@ public class ClientFlightHandler {
         });
     }
     
+    public static int lastSync;
     
     @SubscribeEvent
     public static void flightParticles(TickEvent.PlayerTickEvent playerTickEvent) {
@@ -154,6 +156,12 @@ public class ClientFlightHandler {
                 if(handler.getMovementData().spinAttack > 0){
                     if(!ConfigHandler.CLIENT.ownSpinParticles.get() && player == Minecraft.getInstance().player) return;
                     if(!ConfigHandler.CLIENT.othersSpinParticles.get() && player != Minecraft.getInstance().player) return;
+                    
+                    
+                    if(player.tickCount - lastSync >= 20){
+                        //Request the server to resync the status of a spin if it is has been too long since the last update
+                        NetworkHandler.CHANNEL.sendToServer(new RequestSpinResync());
+                    }
                     
                     if(ServerFlightHandler.canSwimSpin(player) && ServerFlightHandler.isSpin(player)){
                         spawnSpinParticle(player, player.isInWater() ? ParticleTypes.BUBBLE_COLUMN_UP : ParticleTypes.LAVA);

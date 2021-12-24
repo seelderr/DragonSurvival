@@ -1,5 +1,6 @@
 package by.jackraidenph.dragonsurvival.client.render.entity.dragon;
 
+import by.jackraidenph.dragonsurvival.client.render.ClientDragonRender;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.entity.DragonEntity;
@@ -27,6 +28,8 @@ public class DragonGlowLayerRenderer extends GeoLayerRenderer<DragonEntity>
 	@Override
 	public void render(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, DragonEntity entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch)
 	{
+		if(entitylivingbaseIn == ClientDragonRender.dragonArmor) return;
+		
 		PlayerEntity player = entitylivingbaseIn.getPlayer();
 		DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
 		

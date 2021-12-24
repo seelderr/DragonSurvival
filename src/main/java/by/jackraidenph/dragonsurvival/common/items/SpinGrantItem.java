@@ -3,7 +3,7 @@ package by.jackraidenph.dragonsurvival.common.items;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
-import by.jackraidenph.dragonsurvival.network.status.SyncSpinStatus;
+import by.jackraidenph.dragonsurvival.network.flight.SyncSpinStatus;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;

@@ -11,7 +11,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.config.ModConfig.Type;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,55 +34,22 @@ public class DragonConfigHandler
 	
 	private static void rebuildSpeedupBlocksMap() {
 		HashMap<DragonType, List<Block>> speedupMap = new HashMap<>();
-		speedupMap.put(DragonType.CAVE, buildDragonSpeedupMap(DragonType.CAVE));
-		speedupMap.put(DragonType.FOREST, buildDragonSpeedupMap(DragonType.FOREST));
-		speedupMap.put(DragonType.SEA, buildDragonSpeedupMap(DragonType.SEA));
+		speedupMap.put(DragonType.CAVE, ConfigUtils.parseConfigBlockList(ConfigHandler.SERVER.caveSpeedupBlocks.get()));
+		speedupMap.put(DragonType.FOREST, ConfigUtils.parseConfigBlockList(ConfigHandler.SERVER.forestSpeedupBlocks.get()));
+		speedupMap.put(DragonType.SEA, ConfigUtils.parseConfigBlockList(ConfigHandler.SERVER.seaSpeedupBlocks.get()));
 		DRAGON_SPEEDUP_BLOCKS = speedupMap;
 	}
 	
 	public static void rebuildBreathBlocks() {
 		HashMap<DragonType, List<Block>> breathMap = new HashMap<>();
-		breathMap.put(DragonType.CAVE, buildDragonBreathBlocks(DragonType.CAVE));
-		breathMap.put(DragonType.FOREST, buildDragonBreathBlocks(DragonType.FOREST));
-		breathMap.put(DragonType.SEA, buildDragonBreathBlocks(DragonType.SEA));
+		breathMap.put(DragonType.CAVE, ConfigUtils.parseConfigBlockList(ConfigHandler.SERVER.fireBreathBlockBreaks.get()));
+		breathMap.put(DragonType.FOREST, ConfigUtils.parseConfigBlockList(ConfigHandler.SERVER.forestBreathBlockBreaks.get()));
+		breathMap.put(DragonType.SEA, ConfigUtils.parseConfigBlockList(ConfigHandler.SERVER.stormBreathBlockBreaks.get()));
 		DRAGON_BREATH_BLOCKS = breathMap;
 	}
 	
 	private static void rebuildSeaHydrationLists() {
 		SEA_DRAGON_HYDRATION_BLOCKS = ConfigUtils.parseConfigBlockList(ConfigHandler.SERVER.seaHydrationBlocks.get());
 		SEA_DRAGON_HYDRATION_USE_ALTERNATIVES = ConfigUtils.parseConfigItemList(ConfigHandler.SERVER.seaAdditionalWaterUseables.get());
-	}
-	
-	private static List<Block> buildDragonSpeedupMap(DragonType type) {
-		List<? extends String> configSpeedups = new ArrayList<>();
-		switch (type) {
-			case CAVE:
-				configSpeedups = ConfigHandler.SERVER.caveSpeedupBlocks.get();
-				break;
-			case FOREST:
-				configSpeedups = ConfigHandler.SERVER.forestSpeedupBlocks.get();
-				break;
-			case SEA:
-				configSpeedups = ConfigHandler.SERVER.seaSpeedupBlocks.get();
-				break;
-		}
-		
-		return ConfigUtils.parseConfigBlockList(configSpeedups);
-	}
-	
-	private static List<Block> buildDragonBreathBlocks(DragonType type) {
-		List<? extends String> configBlocks = new ArrayList<>();
-		switch (type) {
-			case CAVE:
-				configBlocks = ConfigHandler.SERVER.fireBreathBlockBreaks.get();
-				break;
-			case FOREST:
-				configBlocks = ConfigHandler.SERVER.forestBreathBlockBreaks.get();
-				break;
-			case SEA:
-				configBlocks = ConfigHandler.SERVER.stormBreathBlockBreaks.get();
-				break;
-		}
-		return ConfigUtils.parseConfigBlockList(configBlocks);
 	}
 }

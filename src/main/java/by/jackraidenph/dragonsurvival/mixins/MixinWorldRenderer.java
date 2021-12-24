@@ -36,8 +36,10 @@ public class MixinWorldRenderer
 		double f = vec3d.z();
 		
 		final IBone neckandHead = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("Neck");
+		final IBone armorNeck = ClientDragonRender.dragonArmorModel.getAnimationProcessor().getBone("Neck");
 		
 		if (neckandHead != null) neckandHead.setHidden(true);
+		if (armorNeck != null) armorNeck.setHidden(true);
 		
 		EntityRendererManager entityrenderermanager = Minecraft.getInstance().getEntityRenderDispatcher();
 		boolean shouldRender = entityrenderermanager.shouldRenderHitBoxes();
@@ -47,6 +49,7 @@ public class MixinWorldRenderer
 		this.renderEntity(camera.getEntity(), d, e, f, tickDelta, matrices, immediate);
 		entityrenderermanager.setRenderHitBoxes(shouldRender);
 		if (neckandHead != null) neckandHead.setHidden(false);
+		if (armorNeck != null) armorNeck.setHidden(false);
 	}
 	
 	@Shadow

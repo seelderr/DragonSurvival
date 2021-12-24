@@ -6,7 +6,7 @@ import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.status.RefreshDragons;
 import by.jackraidenph.dragonsurvival.network.entity.player.SynchronizeDragonCap;
-import by.jackraidenph.dragonsurvival.network.status.SyncSpinStatus;
+import by.jackraidenph.dragonsurvival.network.flight.SyncSpinStatus;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import net.minecraft.client.Minecraft;
