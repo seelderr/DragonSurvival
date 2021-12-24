@@ -215,6 +215,8 @@ public class ClientEvents {
         }
     }
 
+    public static double bodyLerp = Double.NaN;
+    
     @SubscribeEvent
     public static void onClientTick(RenderTickEvent renderTickEvent) {
         if (renderTickEvent.phase == Phase.START) {
@@ -223,9 +225,21 @@ public class ClientEvents {
             if (player != null) {
                 DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
                     if (playerStateHandler.isDragon()) {
+                        if(!Double.isNaN(bodyLerp)){
+                            double bodyYaw = MathHelper.lerp(0.25, playerStateHandler.getMovementData().bodyYaw, bodyLerp) ;
+                            
+                            if(Math.ceil(bodyYaw) == Math.ceil(bodyLerp)){
+                                bodyLerp = Double.NaN;
+                            }
+    
+                            playerStateHandler.setMovementData(bodyYaw, player.yRot, player.xRot, player.swinging && player.getAttackStrengthScale(-3.0f) != 1);
+                            NetworkHandler.CHANNEL.sendToServer(new PacketSyncCapabilityMovement(player.getId(), playerStateHandler.getMovementData().bodyYaw, playerStateHandler.getMovementData().headYaw, playerStateHandler.getMovementData().headPitch, playerStateHandler.getMovementData().bite));
+                            return;
+                        }
+                        
                         float headRot = player.yRot != 0.0 ? player.yRot : player.yHeadRot;
                         double bodyYaw = playerStateHandler.getMovementData().bodyYaw;
-                        float bodyAndHeadYawDiff = (((float)bodyYaw) - headRot);
+                        float bodyAndHeadYawDiff = (float)(bodyYaw - headRot);
     
                         Vector3d moveVector = getInputVector(new Vector3d(player.input.leftImpulse, 0, player.input.forwardImpulse), 1F, player.yRot);
                         boolean isFlying = false;
@@ -267,8 +281,8 @@ public class ClientEvents {
                                     bodyYaw += _f1 * 0.2F;
                                 }
                             }
-                            
-                            bodyYaw = MathHelper.lerp(Math.abs(playerStateHandler.getMovementData().bodyYaw - bodyYaw) >= 180 ? 1 : 0.25, playerStateHandler.getMovementData().bodyYaw, bodyYaw) ;
+                            bodyLerp = bodyYaw;
+                            bodyYaw = MathHelper.lerp(Math.abs(playerStateHandler.getMovementData().bodyYaw - bodyYaw) >= 180 ? 1 : 0.25, playerStateHandler.getMovementData().bodyYaw, bodyLerp) ;
                             
                             if (bodyAndHeadYawDiff > 180) {
                                 bodyYaw -= 360;
@@ -277,10 +291,9 @@ public class ClientEvents {
                             if (bodyAndHeadYawDiff <= -180) {
                                 bodyYaw += 360;
                             }
-                            
                             playerStateHandler.setMovementData(bodyYaw, headRot, player.xRot, player.swinging && player.getAttackStrengthScale(-3.0f) != 1);
                             NetworkHandler.CHANNEL.sendToServer(new PacketSyncCapabilityMovement(player.getId(), playerStateHandler.getMovementData().bodyYaw, playerStateHandler.getMovementData().headYaw, playerStateHandler.getMovementData().headPitch, playerStateHandler.getMovementData().bite));
-                        } else if (Math.abs(bodyAndHeadYawDiff) > 180F) {
+                        } else if (Math.abs(bodyAndHeadYawDiff) > 180F && Double.isNaN(bodyLerp)) {
                             if (Math.abs(bodyAndHeadYawDiff) > 360F) {
                                 bodyYaw -= bodyAndHeadYawDiff;
                             }
@@ -288,7 +301,7 @@ public class ClientEvents {
                             float turnSpeed = Math.min(1F + (float) Math.pow(Math.abs(bodyAndHeadYawDiff) - 180F, 1.5F) / 30F, 50F);
                             double newYaw = (float) bodyYaw - Math.signum(bodyAndHeadYawDiff) * turnSpeed;
                             bodyYaw = MathHelper.lerp(0.25, playerStateHandler.getMovementData().bodyYaw, newYaw) ;
-                            
+    
                             playerStateHandler.setMovementData(bodyYaw, headRot, player.xRot, player.swinging && player.getAttackStrengthScale(-3.0f) != 1);
                             NetworkHandler.CHANNEL.sendToServer(new PacketSyncCapabilityMovement(player.getId(), playerStateHandler.getMovementData().bodyYaw, playerStateHandler.getMovementData().headYaw, playerStateHandler.getMovementData().headPitch, playerStateHandler.getMovementData().bite));
                         } else if (playerStateHandler.getMovementData().bite != (player.swinging && player.getAttackStrengthScale(-3.0f) != 1) || headRot != playerStateHandler.getMovementData().headYaw) {
