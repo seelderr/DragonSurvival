@@ -60,7 +60,7 @@ public class ActivateClientAbility implements IMessage<ActivateClientAbility>
 						}
 						
 						if(ability != null){
-							ability.onActivation(((PlayerEntity)entity));
+							ability.onActivation((PlayerEntity)entity);
 						}
 					});
 				}

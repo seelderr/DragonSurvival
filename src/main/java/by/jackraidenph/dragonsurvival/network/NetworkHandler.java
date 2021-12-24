@@ -4,6 +4,7 @@ import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.network.claw.DragonClawsMenuToggle;
 import by.jackraidenph.dragonsurvival.network.claw.SyncDragonClawRender;
 import by.jackraidenph.dragonsurvival.network.claw.SyncDragonClawsMenu;
+import by.jackraidenph.dragonsurvival.network.container.OpenDragonInventory;
 import by.jackraidenph.dragonsurvival.network.container.OpenInventory;
 import by.jackraidenph.dragonsurvival.network.emotes.SyncEmote;
 import by.jackraidenph.dragonsurvival.network.emotes.SyncEmoteServer;
@@ -79,8 +80,7 @@ public class NetworkHandler
 		 register(SyncMagicStats.class, new SyncMagicStats());
 		 register(SyncMagicAbilities.class, new SyncMagicAbilities());
 		 register(SyncDragonAbilitySlot.class, new SyncDragonAbilitySlot());
-		 register(SyncCurrentAbilityCasting.class, new SyncCurrentAbilityCasting());
-		 register(SyncAbilityCastingToServer.class, new SyncAbilityCastingToServer());
+		 register(SyncAbilityCasting.class, new SyncAbilityCasting());
 		 register(ActivateClientAbility.class, new ActivateClientAbility());
 		 
 		 //Potion sync

@@ -71,6 +71,7 @@ public class DragonStateProvider implements ICapabilitySerializable<CompoundNBT>
         });
     }
     public static void consumeMana(PlayerEntity entity, int mana) {
+        if(entity == null) return;
         if(entity.isCreative()) return;
     
         if(ConfigHandler.SERVER.consumeEXPAsMana.get()) {

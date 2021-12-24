@@ -1,10 +1,9 @@
 package by.jackraidenph.dragonsurvival.common.handlers.magic;
 
-import by.jackraidenph.dragonsurvival.util.Functions;
+import by.jackraidenph.dragonsurvival.client.particles.DSParticles;
+import by.jackraidenph.dragonsurvival.common.DragonEffects;
 import by.jackraidenph.dragonsurvival.common.capability.Capabilities;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.config.ConfigHandler;
-import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.common.magic.DragonAbilities;
 import by.jackraidenph.dragonsurvival.common.magic.abilities.Actives.BreathAbilities.BreathAbility.BreathDamage;
 import by.jackraidenph.dragonsurvival.common.magic.abilities.Actives.BreathAbilities.StormBreathAbility;
@@ -12,12 +11,13 @@ import by.jackraidenph.dragonsurvival.common.magic.abilities.Passives.BurnAbilit
 import by.jackraidenph.dragonsurvival.common.magic.abilities.Passives.SpectralImpactAbility;
 import by.jackraidenph.dragonsurvival.common.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.common.magic.common.DragonAbility;
-import by.jackraidenph.dragonsurvival.network.magic.ActivateClientAbility;
-import by.jackraidenph.dragonsurvival.network.magic.SyncAbilityCastingToServer;
-import by.jackraidenph.dragonsurvival.common.DragonEffects;
-import by.jackraidenph.dragonsurvival.client.particles.DSParticles;
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonLevel;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
+import by.jackraidenph.dragonsurvival.network.NetworkHandler;
+import by.jackraidenph.dragonsurvival.network.magic.ActivateClientAbility;
+import by.jackraidenph.dragonsurvival.network.magic.SyncAbilityCasting;
+import by.jackraidenph.dragonsurvival.util.Functions;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
@@ -46,7 +46,6 @@ import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.network.PacketDistributor;
-import net.minecraftforge.fml.network.PacketDistributor.TargetPoint;
 
 import java.util.UUID;
 
@@ -68,10 +67,6 @@ public class MagicHandler
 				if(cap.getMagic().getCurrentlyCasting() != null) {
 					cap.getMagic().getCurrentlyCasting().stopCasting();
 					cap.getMagic().setCurrentlyCasting(null);
-					
-					if (player.level.isClientSide) {
-						NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCastingToServer(player.getId(), null));
-					}
 				}
 				return;
 			}
@@ -99,12 +94,15 @@ public class MagicHandler
 						player.causeFoodExhaustion(0.1F * ability.getManaCost());
 						ability.onActivation(player);
 						
-						TargetPoint point = new TargetPoint(player.position().x, player.position().y, player.position().z, 64, player.level.dimension());
-						NetworkHandler.CHANNEL.send(PacketDistributor.NEAR.with(() -> point), new ActivateClientAbility(player.getId()));
+						NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new ActivateClientAbility(player.getId()));
 						
 					} else {
-						ability.tickCasting();
 						player.causeFoodExhaustion(0.1F);
+						ability.tickCasting();
+						
+						if (!player.level.isClientSide) {
+							NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCasting(player.getId(), ability, ability.getCurrentCastTimer()));
+						}
 					}
 				}
 			}

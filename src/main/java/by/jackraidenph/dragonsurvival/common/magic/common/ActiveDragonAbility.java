@@ -6,7 +6,7 @@ import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.server.handlers.ServerFlightHandler;
-import by.jackraidenph.dragonsurvival.network.magic.SyncAbilityCastingToServer;
+import by.jackraidenph.dragonsurvival.network.magic.SyncAbilityCasting;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -14,6 +14,7 @@ import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.fml.network.PacketDistributor;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
@@ -182,8 +183,8 @@ public class ActiveDragonAbility extends DragonAbility
         startCooldown();
     
         DragonStateProvider.getCap(getPlayer()).ifPresent(dragonStateHandler -> {
-            if(getPlayer().level.isClientSide){
-                NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCastingToServer(getPlayer().getId(), null));
+            if(!player.level.isClientSide) {
+                NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncAbilityCasting(player.getId(), null, 0));
             }
             dragonStateHandler.getMagic().setCurrentlyCasting(null);
         });
@@ -215,6 +216,10 @@ public class ActiveDragonAbility extends DragonAbility
         if (this.currentCastingTime <= this.getCastingTime()){
             this.currentCastingTime++;
         }
+    }
+    
+    public void setCastTime(int castTime){
+        this.currentCastingTime = castTime;
     }
     
     

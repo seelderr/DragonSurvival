@@ -5,9 +5,11 @@ import by.jackraidenph.dragonsurvival.common.magic.DragonAbilities;
 import by.jackraidenph.dragonsurvival.common.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.common.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.network.IMessage;
+import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -15,25 +17,33 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.DistExecutor.SafeRunnable;
 import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.fml.network.PacketDistributor;
 
 import java.util.function.Supplier;
 
-public class SyncCurrentAbilityCasting implements IMessage<SyncCurrentAbilityCasting>
+import static net.minecraftforge.fml.network.NetworkDirection.PLAY_TO_SERVER;
+
+public class SyncAbilityCasting implements IMessage<SyncAbilityCasting>
 {
 	
 	public int playerId;
 	public DragonAbility currentAbility;
+	public int castTime;
 	
-	public SyncCurrentAbilityCasting() {}
+	public SyncAbilityCasting() {
 	
-	public SyncCurrentAbilityCasting(int playerId, DragonAbility currentAbility) {
+	}
+	
+	public SyncAbilityCasting(int playerId, DragonAbility currentAbility, int castTime) {
 		this.playerId = playerId;
 		this.currentAbility = currentAbility;
+		this.castTime = castTime;
 	}
 	
 	@Override
-	public void encode(SyncCurrentAbilityCasting message, PacketBuffer buffer) {
+	public void encode(SyncAbilityCasting message, PacketBuffer buffer) {
 		buffer.writeInt(message.playerId);
+		buffer.writeInt(message.castTime);
 		buffer.writeBoolean(message.currentAbility != null);
 		
 		if(message.currentAbility != null){
@@ -43,8 +53,9 @@ public class SyncCurrentAbilityCasting implements IMessage<SyncCurrentAbilityCas
 	}
 	
 	@Override
-	public SyncCurrentAbilityCasting decode(PacketBuffer buffer) {
+	public SyncAbilityCasting decode(PacketBuffer buffer) {
 		int playerId = buffer.readInt();
+		int castTime = buffer.readInt();
 		DragonAbility ability = null;
 		boolean hasAbility = buffer.readBoolean();
 		
@@ -54,16 +65,31 @@ public class SyncCurrentAbilityCasting implements IMessage<SyncCurrentAbilityCas
 			ability.loadNBT(buffer.readNbt());
 		}
 		
-		return new SyncCurrentAbilityCasting(playerId, ability);
+		return new SyncAbilityCasting(playerId, ability, castTime);
 	}
 	
 	@Override
-	public void handle(SyncCurrentAbilityCasting message, Supplier<NetworkEvent.Context> supplier) {
-		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> run(message, supplier));
+	public void handle(SyncAbilityCasting message, Supplier<NetworkEvent.Context> supplier) {
+		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> runClient(message, supplier));
+		
+		if(supplier.get().getDirection() == PLAY_TO_SERVER) {
+			ServerPlayerEntity player = supplier.get().getSender();
+			
+			DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
+				if (message.currentAbility != dragonStateHandler.getMagic().getCurrentlyCasting() && dragonStateHandler.getMagic().getCurrentlyCasting() != null) {
+					dragonStateHandler.getMagic().getCurrentlyCasting().stopCasting();
+				}
+				
+				dragonStateHandler.getMagic().getAbilityFromSlot(dragonStateHandler.getMagic().getSelectedAbilitySlot()).setCastTime(message.castTime);
+				dragonStateHandler.getMagic().setCurrentlyCasting((ActiveDragonAbility)message.currentAbility);
+			});
+			
+			NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncAbilityCasting(message.playerId, message.currentAbility, message.castTime));
+		}
 	}
 	
-	@OnlyIn(Dist.CLIENT)
-	public void run(SyncCurrentAbilityCasting message, Supplier<NetworkEvent.Context> supplier){
+	@OnlyIn( Dist.CLIENT)
+	public void runClient(SyncAbilityCasting message, Supplier<NetworkEvent.Context> supplier){
 		NetworkEvent.Context context = supplier.get();
 		context.enqueueWork(() -> {
 			PlayerEntity thisPlayer = Minecraft.getInstance().player;
@@ -75,7 +101,7 @@ public class SyncCurrentAbilityCasting implements IMessage<SyncCurrentAbilityCas
 						if(message.currentAbility == null && dragonStateHandler.getMagic().getCurrentlyCasting() != null){
 							dragonStateHandler.getMagic().getCurrentlyCasting().stopCasting();
 						}
-						
+						if(message.castTime == 0 || message.castTime > dragonStateHandler.getMagic().getAbilityFromSlot(dragonStateHandler.getMagic().getSelectedAbilitySlot()).getCurrentCastTimer()) dragonStateHandler.getMagic().getAbilityFromSlot(dragonStateHandler.getMagic().getSelectedAbilitySlot()).setCastTime(message.castTime);
 						dragonStateHandler.getMagic().setCurrentlyCasting((ActiveDragonAbility)message.currentAbility);
 					});
 				}

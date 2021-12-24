@@ -34,6 +34,7 @@ public class ClawsAndTeethRenderLayer extends GeoLayerRenderer<DragonEntity>
 	@Override
 	public void render(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, DragonEntity entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch)
 	{
+		if(!((DragonRenderer)renderer).renderLayers) return;
 		if(entitylivingbaseIn.hasEffect(Effects.INVISIBILITY)) return;
 		
 		DragonStateHandler handler = DragonStateProvider.getCap(entitylivingbaseIn.getPlayer()).orElse(null);

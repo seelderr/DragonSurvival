@@ -1,4 +1,4 @@
-package by.jackraidenph.dragonsurvival.network.magic;
+package by.jackraidenph.dragonsurvival.network.container;
 
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.server.containers.DragonContainer;

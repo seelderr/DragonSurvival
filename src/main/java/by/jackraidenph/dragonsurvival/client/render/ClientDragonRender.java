@@ -276,9 +276,11 @@ public class ClientDragonRender
 			ClientDragonRender.dragonArmor.copyPosition(entitylivingbaseIn);
 			ClientDragonRender.dragonArmorModel.setArmorTexture(helmetTexture);
 			Color preColor = ((DragonRenderer)dragonArmorRenderer).renderColor;
+			((DragonRenderer)dragonArmorRenderer).renderLayers = false;
 			((DragonRenderer)dragonArmorRenderer).renderColor = armorColor;
-			dragonArmorRenderer.render(ClientDragonRender.dragonArmor, yaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
+			dragonArmorRenderer.render(entitylivingbaseIn, yaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
 			((DragonRenderer)dragonArmorRenderer).renderColor = preColor;
+			((DragonRenderer)dragonArmorRenderer).renderLayers = true;
 			
 		}
 	}

@@ -19,6 +19,7 @@ import java.awt.*;
 
 public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 	public ResourceLocation glowTexture = null;
+	public boolean renderLayers = true;
 	
 	public DragonRenderer(EntityRendererManager renderManager, AnimatedGeoModel<DragonEntity> modelProvider) {
         super(renderManager, modelProvider);
