@@ -142,28 +142,41 @@ public class DragonFoodHandler {
 			if (sEntry[0].equalsIgnoreCase("tag")) {
 				final ITag<Item> tag = ItemTags.getAllTags().getTag(rlEntry);
 				if (tag != null && tag.getValues().size() != 0) {
-					for (Item item : tag.getValues())
-						foodMap.put(item, calculateDragonFoodProperties(item, type,
-								sEntry.length == 5 ? Integer.parseInt(sEntry[3]) : item.getFoodProperties() != null ? item.getFoodProperties().getNutrition() : 1,
-								sEntry.length == 5 ? Integer.parseInt(sEntry[4]) : item.getFoodProperties() != null ? (int) (item.getFoodProperties().getNutrition() * (item.getFoodProperties().getSaturationModifier() * 2.0F)) : 0,
-								true));
+					for (Item item : tag.getValues()) {
+						Food food = calculateDragonFoodProperties(item, type,
+						                                          sEntry.length == 5 ? Integer.parseInt(sEntry[3]) : item.getFoodProperties() != null ? item.getFoodProperties().getNutrition() : 1,
+						                                          sEntry.length == 5 ? Integer.parseInt(sEntry[4]) : item.getFoodProperties() != null ? (int) (item.getFoodProperties().getNutrition() * (item.getFoodProperties().getSaturationModifier() * 2.0F)) : 0,
+						                                          true);
+						if(food != null){
+							foodMap.put(item, food);
+						}
+					}
 				}
 				else
 					DragonSurvivalMod.LOGGER.warn("Null or empty tag '{}:{}' in {} dragon food config.", sEntry[1], sEntry[2], type.toString().toLowerCase());
 			} else {
 				final Item item = ForgeRegistries.ITEMS.getValue(rlEntry);
 				if (item != null && item != Items.AIR) {
-					foodMap.put(item, calculateDragonFoodProperties(item, type,
-							sEntry.length == 5 ? Integer.parseInt(sEntry[3]) : item.getFoodProperties() != null ? item.getFoodProperties().getNutrition() : 1,
-							sEntry.length == 5 ? Integer.parseInt(sEntry[4]) : item.getFoodProperties() != null ? (int) (item.getFoodProperties().getNutrition() * (item.getFoodProperties().getSaturationModifier() * 2.0F)) : 0,
-							true));
+					Food food = calculateDragonFoodProperties(item, type,
+					                                          sEntry.length == 5 ? Integer.parseInt(sEntry[3]) : item.getFoodProperties() != null ? item.getFoodProperties().getNutrition() : 1,
+					                                          sEntry.length == 5 ? Integer.parseInt(sEntry[4]) : item.getFoodProperties() != null ? (int) (item.getFoodProperties().getNutrition() * (item.getFoodProperties().getSaturationModifier() * 2.0F)) : 0,
+					                                          true);
+					
+					if(food != null) {
+						foodMap.put(item, food);
+					}
 				} else
 					DragonSurvivalMod.LOGGER.warn("Unknown item '{}:{}' in {} dragon food config.", sEntry[1], sEntry[2], type.toString().toLowerCase());
 			}
 		}
 		for (Item item : ForgeRegistries.ITEMS.getValues())
-			if (!foodMap.containsKey(item) && item.isEdible())
-				foodMap.put(item, calculateDragonFoodProperties(item, type, 0, 0, false));
+			if (!foodMap.containsKey(item) && item.isEdible()){
+				Food food = calculateDragonFoodProperties(item, type, 0, 0, false);
+				
+				if(food != null) {
+					foodMap.put(item, food);
+				}
+			}
 		return new ConcurrentHashMap<>(foodMap);
 	}
 
