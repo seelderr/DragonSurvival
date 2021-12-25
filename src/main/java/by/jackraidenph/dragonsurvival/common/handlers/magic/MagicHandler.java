@@ -16,7 +16,7 @@ import by.jackraidenph.dragonsurvival.misc.DragonLevel;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.magic.ActivateClientAbility;
-import by.jackraidenph.dragonsurvival.network.magic.SyncAbilityCasting;
+import by.jackraidenph.dragonsurvival.network.magic.SyncAbilityCastTime;
 import by.jackraidenph.dragonsurvival.util.Functions;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
@@ -101,7 +101,7 @@ public class MagicHandler
 						ability.tickCasting();
 						
 						if (!player.level.isClientSide) {
-							NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCasting(player.getId(), ability, ability.getCurrentCastTimer()));
+							NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCastTime(player.getId(), ability.getCurrentCastTimer()));
 						}
 					}
 				}

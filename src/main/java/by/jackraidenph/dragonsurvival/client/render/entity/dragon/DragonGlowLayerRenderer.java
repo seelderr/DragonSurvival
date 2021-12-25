@@ -37,7 +37,7 @@ public class DragonGlowLayerRenderer extends GeoLayerRenderer<DragonEntity>
 		if(handler != null){
 			ResourceLocation glowTexture = DragonSkins.getGlowTexture(player, handler.getType(), handler.getLevel());
 			
-			if(glowTexture == null){
+			if(glowTexture == null || glowTexture.getPath().contains("/" + handler.getType().name().toLowerCase() + "_")){
 				if(((DragonRenderer)renderer).glowTexture != null){
 					glowTexture = ((DragonRenderer)renderer).glowTexture;
 				}

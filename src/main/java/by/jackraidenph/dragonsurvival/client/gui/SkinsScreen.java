@@ -448,7 +448,6 @@ public class SkinsScreen extends Screen
 
 			ClientDragonRender.dragonModel.setCurrentTexture(skinTexture);
 			((DragonRenderer)dragonRenderer).glowTexture = glowTexture;
-
 			float scale = zoom;
 			stack.scale(scale, scale, scale);
 			

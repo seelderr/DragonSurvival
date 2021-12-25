@@ -28,22 +28,19 @@ public class SyncAbilityCasting implements IMessage<SyncAbilityCasting>
 	
 	public int playerId;
 	public DragonAbility currentAbility;
-	public int castTime;
 	
 	public SyncAbilityCasting() {
 	
 	}
 	
-	public SyncAbilityCasting(int playerId, DragonAbility currentAbility, int castTime) {
+	public SyncAbilityCasting(int playerId, DragonAbility currentAbility) {
 		this.playerId = playerId;
 		this.currentAbility = currentAbility;
-		this.castTime = castTime;
 	}
 	
 	@Override
 	public void encode(SyncAbilityCasting message, PacketBuffer buffer) {
 		buffer.writeInt(message.playerId);
-		buffer.writeInt(message.castTime);
 		buffer.writeBoolean(message.currentAbility != null);
 		
 		if(message.currentAbility != null){
@@ -55,7 +52,6 @@ public class SyncAbilityCasting implements IMessage<SyncAbilityCasting>
 	@Override
 	public SyncAbilityCasting decode(PacketBuffer buffer) {
 		int playerId = buffer.readInt();
-		int castTime = buffer.readInt();
 		DragonAbility ability = null;
 		boolean hasAbility = buffer.readBoolean();
 		
@@ -65,7 +61,7 @@ public class SyncAbilityCasting implements IMessage<SyncAbilityCasting>
 			ability.loadNBT(buffer.readNbt());
 		}
 		
-		return new SyncAbilityCasting(playerId, ability, castTime);
+		return new SyncAbilityCasting(playerId, ability);
 	}
 	
 	@Override
@@ -80,11 +76,10 @@ public class SyncAbilityCasting implements IMessage<SyncAbilityCasting>
 					dragonStateHandler.getMagic().getCurrentlyCasting().stopCasting();
 				}
 				
-				dragonStateHandler.getMagic().getAbilityFromSlot(dragonStateHandler.getMagic().getSelectedAbilitySlot()).setCastTime(message.castTime);
 				dragonStateHandler.getMagic().setCurrentlyCasting((ActiveDragonAbility)message.currentAbility);
 			});
 			
-			NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncAbilityCasting(message.playerId, message.currentAbility, message.castTime));
+			NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncAbilityCasting(message.playerId, message.currentAbility));
 		}
 	}
 	
@@ -101,7 +96,6 @@ public class SyncAbilityCasting implements IMessage<SyncAbilityCasting>
 						if(message.currentAbility == null && dragonStateHandler.getMagic().getCurrentlyCasting() != null){
 							dragonStateHandler.getMagic().getCurrentlyCasting().stopCasting();
 						}
-						if(message.castTime == 0 || message.castTime > dragonStateHandler.getMagic().getAbilityFromSlot(dragonStateHandler.getMagic().getSelectedAbilitySlot()).getCurrentCastTimer()) dragonStateHandler.getMagic().getAbilityFromSlot(dragonStateHandler.getMagic().getSelectedAbilitySlot()).setCastTime(message.castTime);
 						dragonStateHandler.getMagic().setCurrentlyCasting((ActiveDragonAbility)message.currentAbility);
 					});
 				}

@@ -123,6 +123,8 @@ public class ActiveDragonAbility extends DragonAbility
     }
     
     public void onActivation(PlayerEntity player) {
+        if(player == null) return;
+        
        resetSkill();
        consumeMana(player);
     }
@@ -184,7 +186,7 @@ public class ActiveDragonAbility extends DragonAbility
     
         DragonStateProvider.getCap(getPlayer()).ifPresent(dragonStateHandler -> {
             if(!player.level.isClientSide) {
-                NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncAbilityCasting(player.getId(), null, 0));
+                NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncAbilityCasting(player.getId(), null));
             }
             dragonStateHandler.getMagic().setCurrentlyCasting(null);
         });

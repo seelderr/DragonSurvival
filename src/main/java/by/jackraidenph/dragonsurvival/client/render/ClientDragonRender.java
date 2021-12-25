@@ -281,7 +281,6 @@ public class ClientDragonRender
 			dragonArmorRenderer.render(entitylivingbaseIn, yaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
 			((DragonRenderer)dragonArmorRenderer).renderColor = preColor;
 			((DragonRenderer)dragonArmorRenderer).renderLayers = true;
-			
 		}
 	}
 	

@@ -81,6 +81,7 @@ public class NetworkHandler
 		 register(SyncMagicAbilities.class, new SyncMagicAbilities());
 		 register(SyncDragonAbilitySlot.class, new SyncDragonAbilitySlot());
 		 register(SyncAbilityCasting.class, new SyncAbilityCasting());
+		 register(SyncAbilityCastTime.class, new SyncAbilityCastTime());
 		 register(ActivateClientAbility.class, new ActivateClientAbility());
 		 
 		 //Potion sync

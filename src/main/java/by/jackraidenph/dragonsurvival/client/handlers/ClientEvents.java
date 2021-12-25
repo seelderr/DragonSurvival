@@ -18,8 +18,8 @@ import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.config.DragonBodyMovementType;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
-import by.jackraidenph.dragonsurvival.network.entity.player.PacketSyncCapabilityMovement;
 import by.jackraidenph.dragonsurvival.network.container.OpenDragonInventory;
+import by.jackraidenph.dragonsurvival.network.entity.player.PacketSyncCapabilityMovement;
 import by.jackraidenph.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.jackraidenph.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -215,7 +215,7 @@ public class ClientEvents {
         }
     }
 
-    public static double bodyLerp = Double.NaN;
+    public static double bodyLerp = java.lang.Double.NaN;
     
     @SubscribeEvent
     public static void onClientTick(RenderTickEvent renderTickEvent) {
@@ -225,11 +225,11 @@ public class ClientEvents {
             if (player != null) {
                 DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
                     if (playerStateHandler.isDragon()) {
-                        if(!Double.isNaN(bodyLerp)){
+                        if(!java.lang.Double.isNaN(bodyLerp)){
                             double bodyYaw = MathHelper.lerp(0.25, playerStateHandler.getMovementData().bodyYaw, bodyLerp) ;
                             
                             if(Math.ceil(bodyYaw) == Math.ceil(bodyLerp)){
-                                bodyLerp = Double.NaN;
+                                bodyLerp = java.lang.Double.NaN;
                             }
     
                             playerStateHandler.setMovementData(bodyYaw, player.yRot, player.xRot, player.swinging && player.getAttackStrengthScale(-3.0f) != 1);
@@ -281,8 +281,8 @@ public class ClientEvents {
                                     bodyYaw += _f1 * 0.2F;
                                 }
                             }
-                            bodyLerp = bodyYaw;
-                            bodyYaw = MathHelper.lerp(Math.abs(playerStateHandler.getMovementData().bodyYaw - bodyYaw) >= 180 ? 1 : 0.25, playerStateHandler.getMovementData().bodyYaw, bodyLerp) ;
+                            //bodyLerp = bodyYaw;
+                            bodyYaw = MathHelper.lerp(Math.abs(playerStateHandler.getMovementData().bodyYaw - bodyYaw) >= 180 ? 1 : 0.25, playerStateHandler.getMovementData().bodyYaw, bodyYaw) ;
                             
                             if (bodyAndHeadYawDiff > 180) {
                                 bodyYaw -= 360;
@@ -293,7 +293,7 @@ public class ClientEvents {
                             }
                             playerStateHandler.setMovementData(bodyYaw, headRot, player.xRot, player.swinging && player.getAttackStrengthScale(-3.0f) != 1);
                             NetworkHandler.CHANNEL.sendToServer(new PacketSyncCapabilityMovement(player.getId(), playerStateHandler.getMovementData().bodyYaw, playerStateHandler.getMovementData().headYaw, playerStateHandler.getMovementData().headPitch, playerStateHandler.getMovementData().bite));
-                        } else if (Math.abs(bodyAndHeadYawDiff) > 180F && Double.isNaN(bodyLerp)) {
+                        } else if (Math.abs(bodyAndHeadYawDiff) > 180F && java.lang.Double.isNaN(bodyLerp)) {
                             if (Math.abs(bodyAndHeadYawDiff) > 360F) {
                                 bodyYaw -= bodyAndHeadYawDiff;
                             }

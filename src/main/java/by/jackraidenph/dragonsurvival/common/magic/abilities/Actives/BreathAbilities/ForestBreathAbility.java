@@ -36,6 +36,7 @@ import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.server.ServerWorld;
@@ -44,6 +45,9 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.DistExecutor.SafeRunnable;
 
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
+import java.awt.geom.Point2D.Double;
 import java.util.ArrayList;
 
 public class ForestBreathAbility extends BreathAbility
@@ -144,21 +148,35 @@ public class ForestBreathAbility extends BreathAbility
 		if(handler == null) return;
 		
 		Vector3d delta = player.getDeltaMovement();
-		float f1 = -(float)handler.getMovementData().headYaw * ((float)Math.PI / 180F);
-		
-		float f4 = MathHelper.sin(f1);
-		float f5 = MathHelper.cos(f1);
-		
-		f4 = MathHelper.clamp(f4, -0.8f, 0.8f);
-		f5 = MathHelper.clamp(f5, -0.8f, 0.8f);
-		
 		
 		tickCost();
 		super.onActivation(player);
+		double headRot = handler.getMovementData().bodyYaw - handler.getMovementData().headYaw;
+		double pitch = handler.getMovementData().headPitch;
+		Vector3f bodyRot = DragonStateProvider.getCameraOffset(player);
 		
-		double x = player.getX() + f4;
-		double y = player.getY() + player.getEyeHeight() - 0.2;
-		double z = player.getZ() + f5;
+		Point2D result = new Point2D.Double();
+		Point2D result2 = new Point2D.Double();
+		
+		{
+			Point2D point = new Double(player.position().x() + bodyRot.x(), player.position().y() + player.getEyeHeight()- 0.2);
+			AffineTransform transform = new AffineTransform();
+			double angleInRadians = ((MathHelper.clamp(pitch, -45, 45) * -1) * Math.PI / 180);
+			transform.rotate(angleInRadians, player.position().x(), player.position().y() + player.getEyeHeight()- 0.2);
+			transform.transform(point, result);
+		}
+		
+		{
+			Point2D point2 = new Double(player.position().x() + bodyRot.x(), player.position().z() + bodyRot.z());
+			AffineTransform transform2 = new AffineTransform();
+			double angleInRadians2 = ((MathHelper.clamp(headRot, -130, 130) * -1) * Math.PI / 180);
+			transform2.rotate(angleInRadians2, player.position().x(), player.position().z());
+			transform2.transform(point2, result2);
+		}
+		
+		double dx = result2.getX();
+		double dy = result.getY() - (Math.abs(headRot) / 180 * .5);
+		double dz = result2.getY();
 		
 		if(player.isFallFlying() || player.abilities.flying) {
 			yComp += delta.y * 6;
@@ -177,7 +195,7 @@ public class ForestBreathAbility extends BreathAbility
 					double xSpeed = speed * 1f * xComp;
 					double ySpeed = speed * 1f * yComp;
 					double zSpeed = speed * 1f * zComp;
-					player.level.addParticle(ParticleTypes.SMOKE, x, y, z, xSpeed, ySpeed, zSpeed);
+					player.level.addParticle(ParticleTypes.SMOKE, dx, dy, dz, xSpeed, ySpeed, zSpeed);
 				}
 			}
 			return;
@@ -192,14 +210,14 @@ public class ForestBreathAbility extends BreathAbility
 				double xSpeed = speed * 1f * xComp;
 				double ySpeed = speed * 1f * yComp;
 				double zSpeed = speed * 1f * zComp;
-				player.level.addParticle(new LargePoisonParticleData(37, true), x, y, z, xSpeed, ySpeed, zSpeed);
+				player.level.addParticle(new LargePoisonParticleData(37, true), dx, dy, dz, xSpeed, ySpeed, zSpeed);
 			}
 
 			for (int i = 0; i < 10; i++) {
 				double xSpeed = speed * xComp + (spread * 0.7 * (player.level.random.nextFloat() * 2 - 1) * (Math.sqrt(1 - xComp * xComp)));
 				double ySpeed = speed * yComp + (spread * 0.7 * (player.level.random.nextFloat() * 2 - 1) * (Math.sqrt(1 - yComp * yComp)));
 				double zSpeed = speed * zComp + (spread * 0.7 * (player.level.random.nextFloat() * 2 - 1) * (Math.sqrt(1 - zComp * zComp)));
-				player.level.addParticle(new SmallPoisonParticleData(37, false), x, y, z, xSpeed, ySpeed, zSpeed);
+				player.level.addParticle(new SmallPoisonParticleData(37, false), dx, dy, dz, xSpeed, ySpeed, zSpeed);
 			}
 		}
 
