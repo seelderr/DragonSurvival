@@ -115,6 +115,11 @@ public class DragonFoodHandler {
 	
 	private static ConcurrentHashMap<Item, Food> buildDragonFoodMap(DragonType type) {
 		ConcurrentHashMap<Item, Food> foodMap = new ConcurrentHashMap<Item, Food>();
+		
+		if(!ConfigHandler.SERVER.customDragonFoods.get()){
+			return foodMap;
+		}
+		
 		String[] configFood;
 		switch (type) {
 			case CAVE:
