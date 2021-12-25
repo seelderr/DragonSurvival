@@ -14,8 +14,10 @@ public class ClientConfig {
 	public final ForgeConfigSpec.BooleanValue notifyWingStatus;
 	public final ForgeConfigSpec.BooleanValue jumpToFly;
 	public final ForgeConfigSpec.BooleanValue lookAtSkyForFlight;
-	public final ForgeConfigSpec.BooleanValue flightZoomEffect;
 	public final ForgeConfigSpec.BooleanValue renderOtherPlayerRotation;
+	
+	public final ForgeConfigSpec.BooleanValue flightZoomEffect;
+	public final ForgeConfigSpec.BooleanValue flightCameraMovement;
 	
 	public final ForgeConfigSpec.BooleanValue ownSpinParticles;
 	public final ForgeConfigSpec.BooleanValue othersSpinParticles;
@@ -59,8 +61,11 @@ public class ClientConfig {
 		
 		jumpToFly = builder.comment("Should flight be activated when jumping in the air").define("jumpToFly", false);
 		lookAtSkyForFlight = builder.comment("Is it required to look up to start flying while jumping, requires that jumpToFly is on").define("lookAtSkyForFlight", false);
-		flightZoomEffect = builder.comment("Should the zoom effect while gliding as a dragon be enabled").define("flightZoomEffect", true);
 		renderOtherPlayerRotation = builder.comment("Should the rotation effect during gliding of other players be shown?").define("renderOtherPlayerRotation", true);
+		
+		flightZoomEffect = builder.comment("Should the zoom effect while gliding as a dragon be enabled").define("flightZoomEffect", true);
+		flightCameraMovement = builder.comment("Should the camera movement while gliding as a dragon be enabled").define("flightCameraMovement", true);
+		
 		
 		ownSpinParticles = builder.comment("Should particles from your own spin attack be displayed for you?").define("ownSpinParticles", true);
 		othersSpinParticles = builder.comment("Should other players particles from spin attack be shown for you?").define("othersSpinParticles", true);

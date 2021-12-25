@@ -73,11 +73,13 @@ public class ClientFlightHandler {
                 if ( ServerFlightHandler.isGliding(currentPlayer)) {
                     if (setup.getInfo().isDetached()) {
                 
-                        Vector3d lookVec = currentPlayer.getLookAngle();
-                        double increase = MathHelper.clamp(lookVec.y * 10, 0, lookVec.y * 5);
-                        double gradualIncrease = MathHelper.lerp(0.25, lastIncrease, increase);
-                        info.move(0, gradualIncrease, 0);
-                        lastIncrease = gradualIncrease;
+                        if(ConfigHandler.CLIENT.flightCameraMovement.get()) {
+                            Vector3d lookVec = currentPlayer.getLookAngle();
+                            double increase = MathHelper.clamp(lookVec.y * 10, 0, lookVec.y * 5);
+                            double gradualIncrease = MathHelper.lerp(0.25, lastIncrease, increase);
+                            info.move(0, gradualIncrease, 0);
+                            lastIncrease = gradualIncrease;
+                        }
                     }
     
                     if(Minecraft.getInstance().player != null) {
@@ -93,13 +95,17 @@ public class ClientFlightHandler {
                     }
                 }else{
                     if(lastIncrease > 0){
-                        lastIncrease = MathHelper.lerp(0.25, lastIncrease, 0);
-                        info.move(0, lastIncrease, 0);
+                        if(ConfigHandler.CLIENT.flightCameraMovement.get()) {
+                            lastIncrease = MathHelper.lerp(0.25, lastIncrease, 0);
+                            info.move(0, lastIncrease, 0);
+                        }
                     }
                     
                     if(lastZoom != 1){
-                        lastZoom = MathHelper.lerp(0.25f, lastZoom, 1f);
-                        gameRenderer.setZoom(lastZoom);
+                       if(ConfigHandler.CLIENT.flightZoomEffect.get()) {
+                           lastZoom = MathHelper.lerp(0.25f, lastZoom, 1f);
+                           gameRenderer.setZoom(lastZoom);
+                       }
                     }
                 }
             }
