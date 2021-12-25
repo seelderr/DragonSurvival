@@ -23,11 +23,15 @@ import net.minecraft.util.math.RayTraceContext.BlockMode;
 import net.minecraft.util.math.RayTraceContext.FluidMode;
 import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import javax.annotation.Nullable;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
+import java.awt.geom.Point2D.Double;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -77,6 +81,9 @@ public abstract class BreathAbility extends ActiveDragonAbility
 	float xComp;
 	float yComp;
 	float zComp;
+	double dx;
+	double dy;
+	double dz;
 	
 	@Override
 	public void onActivation(PlayerEntity player)
@@ -85,7 +92,7 @@ public abstract class BreathAbility extends ActiveDragonAbility
 			stopCasting();
 			return;
 		}
-
+		
 		castingTicks++;
 		
 		DragonStateHandler playerStateHandler = DragonStateProvider.getCap(player).orElseGet(null);
@@ -104,6 +111,42 @@ public abstract class BreathAbility extends ActiveDragonAbility
 		xComp = (float) (Math.sin(yaw) * Math.cos(pitch));
 		yComp = (float) (Math.sin(pitch));
 		zComp = (float) (Math.cos(yaw) * Math.cos(pitch));
+		
+		double headRot = playerStateHandler.getMovementData().bodyYaw - playerStateHandler.getMovementData().headYaw;
+		double pitch = playerStateHandler.getMovementData().headPitch;
+		Vector3f bodyRot = DragonStateProvider.getCameraOffset(player);
+		
+		Point2D result = new Point2D.Double();
+		Point2D result2 = new Point2D.Double();
+		
+		{
+			Point2D point = new Double(player.position().x() + bodyRot.x(), player.position().y() + player.getEyeHeight() - 0.2);
+			AffineTransform transform = new AffineTransform();
+			double angleInRadians = ((MathHelper.clamp(pitch, -45, 45) * -1) * Math.PI / 180);
+			transform.rotate(angleInRadians, player.position().x(), player.position().y() + player.getEyeHeight()- 0.2);
+			transform.transform(point, result);
+		}
+		
+		{
+			Point2D point2 = new Double(player.position().x() + bodyRot.x(), player.position().z() + bodyRot.z());
+			AffineTransform transform2 = new AffineTransform();
+			double angleInRadians2 = ((MathHelper.clamp(headRot, -130, 130) * -1) * Math.PI / 180);
+			transform2.rotate(angleInRadians2, player.position().x(), player.position().z());
+			transform2.transform(point2, result2);
+		}
+		
+		dx = result2.getX();
+		dy = result.getY() - (Math.abs(headRot) / 180 * .5);
+		dz = result2.getY();
+		
+		Vector3d delta = player.getDeltaMovement();
+		
+		if(player.isFallFlying() || player.abilities.flying) {
+			yComp += delta.y * 6;
+		}
+		
+		xComp += delta.x * 6;
+		zComp += delta.z * 6;
 	}
 
 	public void hitEntities() {

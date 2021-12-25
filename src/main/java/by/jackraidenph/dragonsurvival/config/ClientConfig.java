@@ -3,13 +3,9 @@ package by.jackraidenph.dragonsurvival.config;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 public class ClientConfig {
-
-	// Movement
-	public final ForgeConfigSpec.ConfigValue<DragonBodyMovementType> firstPersonBodyMovement;
-	public final ForgeConfigSpec.ConfigValue<DragonBodyMovementType> thirdPersonBodyMovement;
-
 	public final ForgeConfigSpec.BooleanValue dragonNameTags;
 	public final ForgeConfigSpec.BooleanValue renderInFirstPerson;
+	public final ForgeConfigSpec.BooleanValue renderFirstPersonFlight;
 	
 	public final ForgeConfigSpec.BooleanValue notifyWingStatus;
 	public final ForgeConfigSpec.BooleanValue jumpToFly;
@@ -56,6 +52,8 @@ public class ClientConfig {
 		//For people who use first person view mods
 		renderInFirstPerson = builder.comment("Render dragon model in first person. If your own tail scares you, write false")
 				.define("renderFirstPerson", true);
+		renderFirstPersonFlight = builder.comment("Render dragon model in first person while gliding")
+				.define("renderFirstPersonFlight", false);
 		notifyWingStatus = builder.comment("Notifies of wing status in chat message").define("notifyWingStatus", false);
 		clientDebugMessages = builder.define("Enable client-side debug messages", false);
 		
@@ -150,14 +148,6 @@ public class ClientConfig {
 				.comment("Offset the y position of the spin cooldown indicator in relation to its normal position")
 				.defineInRange("spinCooldownYOffset", 0, -1000, 1000);
 		
-		// Movement
-		builder.push("movement");
-		firstPersonBodyMovement = builder
-				.comment("The type of body movement you use while in first person as a dragon.")
-				.defineEnum("firstPersonMovement", DragonBodyMovementType.VANILLA, DragonBodyMovementType.values());
-		thirdPersonBodyMovement = builder
-				.comment("The type of body movement you use while in third person as a dragon.")
-				.defineEnum("thirdPersonMovement", DragonBodyMovementType.DRAGON, DragonBodyMovementType.values());
 		builder.pop().push("nametag");
 		dragonNameTags = builder
 				.comment("Show name tags for dragons.")

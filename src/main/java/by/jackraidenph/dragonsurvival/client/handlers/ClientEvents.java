@@ -15,12 +15,10 @@ import by.jackraidenph.dragonsurvival.common.magic.abilities.Passives.LightInDar
 import by.jackraidenph.dragonsurvival.common.magic.abilities.Passives.WaterAbility;
 import by.jackraidenph.dragonsurvival.common.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
-import by.jackraidenph.dragonsurvival.config.DragonBodyMovementType;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.container.OpenDragonInventory;
 import by.jackraidenph.dragonsurvival.network.entity.player.PacketSyncCapabilityMovement;
-import by.jackraidenph.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.jackraidenph.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -38,7 +36,6 @@ import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.entity.LivingRenderer;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
-import net.minecraft.client.settings.PointOfView;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
@@ -234,55 +231,23 @@ public class ClientEvents {
     
                             playerStateHandler.setMovementData(bodyYaw, player.yRot, player.xRot, player.swinging && player.getAttackStrengthScale(-3.0f) != 1);
                             NetworkHandler.CHANNEL.sendToServer(new PacketSyncCapabilityMovement(player.getId(), playerStateHandler.getMovementData().bodyYaw, playerStateHandler.getMovementData().headYaw, playerStateHandler.getMovementData().headPitch, playerStateHandler.getMovementData().bite));
-                            return;
                         }
                         
                         float headRot = player.yRot != 0.0 ? player.yRot : player.yHeadRot;
                         double bodyYaw = playerStateHandler.getMovementData().bodyYaw;
                         float bodyAndHeadYawDiff = (float)(bodyYaw - headRot);
-    
+                        
                         Vector3d moveVector = getInputVector(new Vector3d(player.input.leftImpulse, 0, player.input.forwardImpulse), 1F, player.yRot);
-                        boolean isFlying = false;
-                        if (ServerFlightHandler.isFlying(player)) { // TODO: Remove this when fixing flight system
-                            moveVector = new Vector3d(player.getX() - player.xo, player.getY() - player.yo, player.getZ() - player.zo);
-                            isFlying = true;
-                        }
+
                         float f = (float) MathHelper.atan2(moveVector.z, moveVector.x) * (180F / (float) Math.PI) - 90F;
                         float f1 = (float) (Math.pow(moveVector.x, 2) + Math.pow(moveVector.z, 2));
     
                         if (f1 > 0.000028) {
-                            if (isFlying || (minecraft.options.getCameraType() != PointOfView.FIRST_PERSON && ConfigHandler.CLIENT.thirdPersonBodyMovement.get() == DragonBodyMovementType.DRAGON) ||
-                                    minecraft.options.getCameraType() == PointOfView.FIRST_PERSON && ConfigHandler.CLIENT.firstPersonBodyMovement.get() == DragonBodyMovementType.DRAGON) {
-                                float f2 = MathHelper.wrapDegrees(f - (float) bodyYaw);
-                                bodyYaw += 0.5F * f2;
-                            } else if ((minecraft.options.getCameraType() != PointOfView.FIRST_PERSON && ConfigHandler.CLIENT.thirdPersonBodyMovement.get() == DragonBodyMovementType.VANILLA) ||
-                                    minecraft.options.getCameraType() == PointOfView.FIRST_PERSON && ConfigHandler.CLIENT.firstPersonBodyMovement.get() == DragonBodyMovementType.VANILLA) {
-
-                                float f5 = MathHelper.abs(MathHelper.wrapDegrees(player.yRot) - f);
-                                if (95.0F < f5 && f5 < 265.0F) {
-                                    f -= 180.0F;
-                                }
-
-                                float _f = MathHelper.wrapDegrees(f - (float) bodyYaw);
-                                bodyYaw += _f * 0.3F;
-                                float _f1 = MathHelper.wrapDegrees(player.yRot - (float) bodyYaw);
-                                boolean flag = _f1 < -90.0F || _f1 >= 90.0F;
-
-                                if (_f1 < -75.0F) {
-                                    _f1 = -75.0F;
-                                }
-
-                                if (_f1 >= 75.0F) {
-                                    _f1 = 75.0F;
-                                }
-    
-                                bodyYaw = player.yRot - _f1;
-                                if (_f1 * _f1 > 2500.0F) {
-                                    bodyYaw += _f1 * 0.2F;
-                                }
-                            }
-                            //bodyLerp = bodyYaw;
-                            bodyYaw = MathHelper.lerp(Math.abs(playerStateHandler.getMovementData().bodyYaw - bodyYaw) >= 180 ? 1 : 0.25, playerStateHandler.getMovementData().bodyYaw, bodyYaw) ;
+                            float f2 = MathHelper.wrapDegrees(f - (float) bodyYaw);
+                            bodyYaw += 0.5F * f2;
+                            
+                            bodyLerp = bodyYaw;
+                            bodyYaw = MathHelper.lerp(Math.abs(playerStateHandler.getMovementData().bodyYaw - bodyYaw) >= 180 ? 1 : 0.25, playerStateHandler.getMovementData().bodyYaw, bodyLerp) ;
                             
                             if (bodyAndHeadYawDiff > 180) {
                                 bodyYaw -= 360;

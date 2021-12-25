@@ -1,16 +1,14 @@
 package by.jackraidenph.dragonsurvival.common.magic.abilities.Actives.BreathAbilities;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.util.Functions;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.client.particles.ForestDragon.LargePoisonParticleData;
 import by.jackraidenph.dragonsurvival.client.particles.ForestDragon.SmallPoisonParticleData;
-import by.jackraidenph.dragonsurvival.common.DragonEffects;
 import by.jackraidenph.dragonsurvival.client.sounds.PoisonBreathSound;
 import by.jackraidenph.dragonsurvival.client.sounds.SoundRegistry;
+import by.jackraidenph.dragonsurvival.common.DragonEffects;
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
+import by.jackraidenph.dragonsurvival.util.Functions;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.IGrowable;
@@ -34,9 +32,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.server.ServerWorld;
@@ -45,9 +40,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.DistExecutor.SafeRunnable;
 
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
-import java.awt.geom.Point2D.Double;
 import java.util.ArrayList;
 
 public class ForestBreathAbility extends BreathAbility
@@ -144,46 +136,8 @@ public class ForestBreathAbility extends BreathAbility
 	@Override
 	public void onActivation(PlayerEntity player)
 	{
-		DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
-		if(handler == null) return;
-		
-		Vector3d delta = player.getDeltaMovement();
-		
 		tickCost();
 		super.onActivation(player);
-		double headRot = handler.getMovementData().bodyYaw - handler.getMovementData().headYaw;
-		double pitch = handler.getMovementData().headPitch;
-		Vector3f bodyRot = DragonStateProvider.getCameraOffset(player);
-		
-		Point2D result = new Point2D.Double();
-		Point2D result2 = new Point2D.Double();
-		
-		{
-			Point2D point = new Double(player.position().x() + bodyRot.x(), player.position().y() + player.getEyeHeight()- 0.2);
-			AffineTransform transform = new AffineTransform();
-			double angleInRadians = ((MathHelper.clamp(pitch, -45, 45) * -1) * Math.PI / 180);
-			transform.rotate(angleInRadians, player.position().x(), player.position().y() + player.getEyeHeight()- 0.2);
-			transform.transform(point, result);
-		}
-		
-		{
-			Point2D point2 = new Double(player.position().x() + bodyRot.x(), player.position().z() + bodyRot.z());
-			AffineTransform transform2 = new AffineTransform();
-			double angleInRadians2 = ((MathHelper.clamp(headRot, -130, 130) * -1) * Math.PI / 180);
-			transform2.rotate(angleInRadians2, player.position().x(), player.position().z());
-			transform2.transform(point2, result2);
-		}
-		
-		double dx = result2.getX();
-		double dy = result.getY() - (Math.abs(headRot) / 180 * .5);
-		double dz = result2.getY();
-		
-		if(player.isFallFlying() || player.abilities.flying) {
-			yComp += delta.y * 6;
-		}
-		
-		xComp += delta.x * 6;
-		zComp += delta.z * 6;
 		
 		if (player.hasEffect(DragonEffects.STRESS)) {
 			if(player.level.isClientSide) {
