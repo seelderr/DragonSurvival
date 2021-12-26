@@ -24,7 +24,7 @@ public class MixinPlayerInteractionManager
 	           at = @At( value="INVOKE", target="Lnet/minecraft/entity/player/ServerPlayerEntity;getMainHandItem()Lnet/minecraft/item/ItemStack;"))
 	public ItemStack getTools(ServerPlayerEntity player)
 	{
-		ItemStack mainStack = player.getMainHandItem();
+		ItemStack mainStack = player.inventory.getSelected();
 		DragonStateHandler cap = DragonStateProvider.getCap(player).orElse(null);
 		
 		if(!(mainStack.getItem() instanceof TieredItem) && cap != null) {

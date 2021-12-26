@@ -6,6 +6,9 @@ import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.entity.DragonEntity;
 import by.jackraidenph.dragonsurvival.server.handlers.ServerFlightHandler;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityPredicate;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
@@ -92,7 +95,54 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 		parser.setValue("query.head_pitch_change", headPitchChange);
 		parser.setValue("query.tail_motion_up", tailMotionUp * -1);
 		parser.setValue("query.tail_motion_side", tailMotionSide);
+		
+		if(handler.getEmotes().getCurrentEmote() != null) {
+			EntityPredicate predicate = new EntityPredicate().range(lookDistance).allowSameTeam().allowInvulnerable().allowNonAttackable().selector(player::canSee);
+			Entity lookAt = player.level.getNearestLoadedEntity(LivingEntity.class, predicate, player, player.getX(), player.getEyeY(), player.getZ(), player.getBoundingBox().inflate(lookDistance, 3.0D, lookDistance));
+			
+			if (lookAt != null && lookAt.isAlive()) {
+				if (player.distanceToSqr(lookAt) <= (lookDistance * lookDistance)) {
+					float xRotD = 0;
+					float yRotD = 0;
+					
+					{
+						double d0 = lookAt.getX() - player.getX();
+						double d1 = lookAt.getEyeY() - player.getEyeY();
+						double d2 = lookAt.getZ() - player.getZ();
+						double d3 = (double)MathHelper.sqrt(d0 * d0 + d2 * d2);
+						xRotD = (float)(-(MathHelper.atan2(d1, d3) * (double)(180F / (float)Math.PI)));
+					}
+					
+					{
+						double d0 = lookAt.getX() - player.getX();
+						double d1 = lookAt.getZ() - player.getZ();
+						yRotD = (float)(MathHelper.atan2(d1, d0) * (double)(180F / (float)Math.PI)) - 90.0F;
+					}
+					
+					double bodyRot = handler.getMovementData().bodyYaw - (((int)handler.getMovementData().bodyYaw) / 360) * 360;
+					double yawDif = Math.abs(MathHelper.degreesDifference((float)yRotD, (float)bodyRot));
+					
+					if (yawDif <= 90 && Math.abs(xRotD) <= 30) {
+						lookYaw = MathHelper.lerp(lookSpeed, lookYaw, -bodyRot + yRotD);
+						lookPitch = MathHelper.lerp(lookSpeed, lookPitch, xRotD);
+					} else {
+						lookYaw = MathHelper.lerp(lookSpeed, lookYaw, 0);
+						lookPitch = MathHelper.lerp(lookSpeed, lookPitch, 0);
+					}
+				}
+			}
+		} else {
+			lookYaw = MathHelper.lerp(lookSpeed, lookYaw, 0);
+			lookPitch = MathHelper.lerp(lookSpeed, lookPitch, 0);
+		}
+		
+		parser.setValue("query.look_at_yaw", lookYaw);
+		parser.setValue("query.look_at_pitch", lookPitch);
 	}
+	private double lookSpeed = 0.05;
+	private double lookDistance = 10;
+	private double lookYaw = 0;
+	private double lookPitch = 0;
 	
 	private double tailMotionSide;
 	private double tailMotionUp;

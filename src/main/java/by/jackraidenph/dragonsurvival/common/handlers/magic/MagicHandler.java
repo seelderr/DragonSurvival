@@ -101,7 +101,7 @@ public class MagicHandler
 						ability.tickCasting();
 						
 						if (!player.level.isClientSide) {
-							NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCastTime(player.getId(), ability.getCurrentCastTimer()));
+							NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncAbilityCastTime(player.getId(), ability.getCurrentCastTimer()));
 						}
 					}
 				}

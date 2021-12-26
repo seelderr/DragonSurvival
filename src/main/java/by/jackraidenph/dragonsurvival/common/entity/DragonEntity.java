@@ -52,10 +52,11 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
         animationData.addAnimationController(dragonAnimationController);
         //animationData.addAnimationController(headController);
     }
+    
     CustomTickAnimationController tailController = new CustomTickAnimationController(this, "5", 10, this::tailPredicate);
     CustomTickAnimationController headController = new CustomTickAnimationController(this, "4", 10, this::headPredicate);
     CustomTickAnimationController emoteController = new CustomTickAnimationController(this, "2", 2, this::emotePredicate);
-    CustomTickAnimationController biteAnimationController = new CustomTickAnimationController(this, "4", 2, this::bitePredicate);
+    CustomTickAnimationController biteAnimationController = new CustomTickAnimationController(this, "5", 2, this::bitePredicate);
     CustomTickAnimationController dragonAnimationController = new CustomTickAnimationController(this, "3", 2, this::predicate);
     
     private <E extends IAnimatable> PlayState tailPredicate(AnimationEvent<E> animationEvent) {

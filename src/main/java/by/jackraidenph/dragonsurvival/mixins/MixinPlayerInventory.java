@@ -28,7 +28,7 @@ public class MixinPlayerInventory
 	
 	@Inject( at = @At("HEAD"), method = "getDestroySpeed", cancellable = true)
 	public void getDestroySpeed(BlockState state, CallbackInfoReturnable<Float> ci){
-		ItemStack mainStack = player.getMainHandItem();
+		ItemStack mainStack = player.inventory.getSelected();
 		DragonStateHandler cap = DragonStateProvider.getCap(player).orElse(null);
 		
 		if(!(mainStack.getItem() instanceof TieredItem) && cap != null && state != null && player != null) {

@@ -1,31 +1,33 @@
 package by.jackraidenph.dragonsurvival.mixins;
 
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.At.Shift;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import com.mojang.datafixers.util.Pair;
-
+import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.handlers.DragonFoodHandler;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Food;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.UseAction;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.*;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.At.Shift;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.ArrayList;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Mixin(LivingEntity.class)
 public abstract class MixinLivingEntity extends Entity{
@@ -37,7 +39,32 @@ public abstract class MixinLivingEntity extends Entity{
 	public MixinLivingEntity(EntityType<?> p_i48580_1_, World p_i48580_2_) {
 		super(p_i48580_1_, p_i48580_2_);
 	}
-
+	
+	@Redirect( method = "collectEquipmentChanges",
+	           at = @At(value="INVOKE", target="Lnet/minecraft/entity/LivingEntity;getItemBySlot(Lnet/minecraft/inventory/EquipmentSlotType;)Lnet/minecraft/item/ItemStack;" ))
+	private ItemStack getDragonSword(LivingEntity entity, EquipmentSlotType slotType)
+	{
+		ItemStack mainStack = entity.getMainHandItem();
+		
+		if (slotType == EquipmentSlotType.MAINHAND) {
+			DragonStateHandler cap = DragonStateProvider.getCap(entity).orElse(null);
+			
+			if(!(mainStack.getItem() instanceof TieredItem) && cap != null) {
+				ItemStack sword = cap.getClawInventory().getClawsInventory().getItem(0);
+				
+				if(sword != null && !sword.isEmpty()){
+					return sword;
+				}
+			}
+			
+			return entity.getMainHandItem();
+		} else if (slotType == EquipmentSlotType.OFFHAND) {
+			return entity.getOffhandItem();
+		} else {
+			return slotType.getType() == EquipmentSlotType.Group.ARMOR ? new ArrayList<ItemStack>(StreamSupport.stream(entity.getArmorSlots().spliterator(), false).collect(Collectors.toList())).get(slotType.getIndex()) : ItemStack.EMPTY;
+		}
+	}
+	
 	@Inject(at = @At("HEAD"), method = "Lnet/minecraft/entity/LivingEntity;rideableUnderWater()Z", cancellable = true)
 	public void dragonRideableUnderWater(CallbackInfoReturnable<Boolean> ci){
 		if (DragonStateProvider.isDragon(this))
