@@ -166,7 +166,6 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
         neckLocked = false;
         tailLocked = false;
     
-
         
         ActiveDragonAbility curCast = playerStateHandler.getMagic().getCurrentlyCasting();
         
@@ -180,13 +179,9 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
         // Main
         if (player.isSleeping()) {
             builder.addAnimation("sleep", true);
-        }
-        
-        if (player.isPassenger()) {
+        }else if (player.isPassenger()) {
             builder.addAnimation("sit", true);
-        }
-        
-        if (player.abilities.flying || ServerFlightHandler.isFlying(player)) {
+        }else if (player.abilities.flying || ServerFlightHandler.isFlying(player)) {
             double preLandDuration = 1;
             double hoverLand = ServerFlightHandler.getLandTime(player, (2.24 + preLandDuration) * 20);
             double fullLand = ServerFlightHandler.getLandTime(player, 2.24 * 20);
@@ -228,9 +223,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                     builder.addAnimation("fly", true);
                 }
             }
-        }
-        
-        if (player.getPose() == Pose.SWIMMING) {
+        }else if (player.getPose() == Pose.SWIMMING) {
             if(ServerFlightHandler.isSpin(player)) {
                 neckLocked = true;
                 tailLocked = true;
@@ -239,9 +232,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                 dragonAnimationController.speed = 1 + ((double)MathHelper.sqrt(player.getDeltaMovement().x * player.getDeltaMovement().x + player.getDeltaMovement().z * player.getDeltaMovement().z) / 10);
                 builder.addAnimation("swim_fast", true);
             }
-        }
-        
-        if ((player.isInLava() || player.isInWaterOrBubble()) && !player.isOnGround()) {
+        }else if ((player.isInLava() || player.isInWaterOrBubble()) && !player.isOnGround()) {
             if(ServerFlightHandler.isSpin(player)) {
                 neckLocked = true;
                 tailLocked = true;
@@ -250,21 +241,15 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                 dragonAnimationController.speed = 1 + ((double)MathHelper.sqrt(player.getDeltaMovement().x * player.getDeltaMovement().x + player.getDeltaMovement().z * player.getDeltaMovement().z) / 10);
                 builder.addAnimation("swim", true);
             }
-        }
-        
-        if (!player.isOnGround() && motio.y() < 0) {
+        }else if (!player.isOnGround() && motio.y() < 0) {
             if ((player.fallDistance <= 4) && !player.onClimbable()) {
                 builder.addAnimation("land", false);
             }
 
-        }
-        
-        if (ClientEvents.dragonsJumpingTicks.getOrDefault(this.player, 0) > 0) {
+        }else if (ClientEvents.dragonsJumpingTicks.getOrDefault(this.player, 0) > 0) {
             builder.addAnimation("jump", false);
             
-        }
-        
-        if (player.isShiftKeyDown() ||
+        }else if (player.isShiftKeyDown() ||
                   (!DragonSizeHandler.canPoseFit(player, Pose.STANDING)
                    && DragonSizeHandler.canPoseFit(player, Pose.CROUCHING))) {
             // Player is Sneaking
@@ -278,21 +263,15 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                 builder.addAnimation("sneak", true);
             }
             
-        }
-        
-        if (player.isSprinting()) {
+        }else if (player.isSprinting()) {
             dragonAnimationController.speed = 1 + ((double)MathHelper.sqrt(player.getDeltaMovement().x * player.getDeltaMovement().x + player.getDeltaMovement().z * player.getDeltaMovement().z) / 10);
             builder.addAnimation("run", true);
             
-        }
-        
-        if (isMovingHorizontal && player.animationSpeed != 0f) {
+        }else if (isMovingHorizontal && player.animationSpeed != 0f) {
             dragonAnimationController.speed = 1 + ((double)MathHelper.sqrt(player.getDeltaMovement().x * player.getDeltaMovement().x + player.getDeltaMovement().z * player.getDeltaMovement().z) / 10);
             builder.addAnimation("walk", true);
 
-        }
-        
-        if (playerStateHandler.getMovementData().dig) {
+        }else if (playerStateHandler.getMovementData().dig) {
             builder.addAnimation("dig", true);
             
         }
@@ -301,9 +280,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
             builder.addAnimation("idle", true);
         }
         
-        animationController.setAnimation(new AnimationBuilder()
-         .addAnimation(builder.getRawAnimationList().get(0).animationName, builder.getRawAnimationList().get(0).loop)
-         .addAnimation("idle", true));
+        animationController.setAnimation(builder);
         return PlayState.CONTINUE;
     }
     
