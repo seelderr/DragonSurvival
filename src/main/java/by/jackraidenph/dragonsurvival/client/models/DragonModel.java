@@ -83,7 +83,7 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 		}
 		
 		tailMotionUp = MathHelper.lerp(0.1, tailMotionUp, ServerFlightHandler.isFlying(player) ? 0 : (player.getDeltaMovement().y + g));
-		tailMotionSide = MathHelper.clamp(MathHelper.lerp(0.1, tailMotionSide, (bodyYawChange / 3) + tailSwing), -3, 3);
+		tailMotionSide = MathHelper.clamp(MathHelper.lerp(0.1, tailMotionSide, (bodyYawChange / 4) + tailSwing), -3, 3);
 		
 		if(((DragonEntity)animatable).tailLocked){
 			tailMotionUp = 0;
