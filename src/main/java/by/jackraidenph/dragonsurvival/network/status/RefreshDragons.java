@@ -48,8 +48,6 @@ public class RefreshDragons implements IMessage<RefreshDragons>
                     e.printStackTrace();
                 }
                 ClientPlayerEntity myPlayer = Minecraft.getInstance().player;
-                ClientDragonRender.dragonEntity = new AtomicReference<>(DSEntities.DRAGON.create(myPlayer.level));
-                ClientDragonRender.dragonEntity.get().player = myPlayer.getId();
                 ClientDragonRender.dragonArmor = DSEntities.DRAGON_ARMOR.create(myPlayer.level);
                 if (ClientDragonRender.dragonArmor != null)
                     ClientDragonRender.dragonArmor.player = myPlayer.getId();

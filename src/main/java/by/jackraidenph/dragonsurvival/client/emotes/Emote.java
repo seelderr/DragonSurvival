@@ -11,6 +11,7 @@ public class Emote
 	
 	public boolean loops = false;
 	public boolean locksHead = false;
+	public boolean locksTail = true;
 	public boolean thirdPerson = false;
 	
 	public String id;

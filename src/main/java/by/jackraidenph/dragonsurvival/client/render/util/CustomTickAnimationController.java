@@ -11,9 +11,9 @@ import java.util.List;
 
 public class CustomTickAnimationController extends AnimationController
 {
-	public CustomTickAnimationController(IAnimatable animatable, String name, IAnimationPredicate<DragonEntity> predicate)
+	public CustomTickAnimationController(IAnimatable animatable, String name, int transitionLength, IAnimationPredicate<DragonEntity> predicate)
 	{
-		super(animatable, name, 2, predicate);
+		super(animatable, name, transitionLength, predicate);
 	}
 	
 	public double speed = 1;

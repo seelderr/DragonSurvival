@@ -6,6 +6,7 @@ import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.handlers.DragonConfigHandler;
 import by.jackraidenph.dragonsurvival.common.magic.common.AbilityAnimation;
 import by.jackraidenph.dragonsurvival.common.magic.common.ActiveDragonAbility;
+import by.jackraidenph.dragonsurvival.common.magic.common.ISecondAnimation;
 import by.jackraidenph.dragonsurvival.misc.DragonLevel;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import by.jackraidenph.dragonsurvival.server.handlers.ServerFlightHandler;
@@ -37,7 +38,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.function.Predicate;
 
-public abstract class BreathAbility extends ActiveDragonAbility
+public abstract class BreathAbility extends ActiveDragonAbility implements ISecondAnimation
 {
 	public BreathAbility(DragonType type, String id, String icon, int minLevel, int maxLevel, int manaCost, int castTime, int cooldown, Integer[] requiredLevels)
 	{
@@ -339,6 +340,6 @@ public abstract class BreathAbility extends ActiveDragonAbility
 	@Override
 	public AbilityAnimation getLoopingAnimation()
 	{
-		return new AbilityAnimation("breath", false);
+		return new AbilityAnimation("breath", false, false);
 	}
 }

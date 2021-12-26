@@ -108,10 +108,7 @@ public class SynchronizeDragonCap implements IMessage<SynchronizeDragonCap>
             ClientPlayerEntity myPlayer = Minecraft.getInstance().player;
             if (myPlayer != null) {
                 World world = myPlayer.level;
-        
-                if (ClientDragonRender.dragonEntity != null) {
-                    ClientDragonRender.dragonEntity.get().player = myPlayer.getId();
-                }
+                
                 if (ClientDragonRender.dragonArmor != null) {
                     ClientDragonRender.dragonArmor.player = myPlayer.getId();
                 }

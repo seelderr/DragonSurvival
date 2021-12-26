@@ -85,8 +85,9 @@ public class PacketSyncCapabilityMovement implements IMessage<PacketSyncCapabili
                 dragonStateHandler.setMovementData(syncCapabilityMovement.bodyYaw, syncCapabilityMovement.headYaw, syncCapabilityMovement.headPitch, syncCapabilityMovement.bite);
             });
         }
-    	if (!entity.level.isClientSide)
-    		NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY.with(() -> player), syncCapabilityMovement);
+    	if (!entity.level.isClientSide) {
+		    NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY.with(() -> player), syncCapabilityMovement);
+	    }
     	context.setPacketHandled(true);
     }
 	

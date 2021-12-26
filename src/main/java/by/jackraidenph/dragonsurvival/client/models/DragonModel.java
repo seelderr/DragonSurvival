@@ -4,9 +4,12 @@ import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.entity.DragonEntity;
+import by.jackraidenph.dragonsurvival.server.handlers.ServerFlightHandler;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.processor.AnimationProcessor;
@@ -54,7 +57,47 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 		parser.setValue("query.delta_y", player.getDeltaMovement().y);
 		parser.setValue("query.head_yaw", bodyAndHeadYawDiff);
 		parser.setValue("query.head_pitch", handler.getMovementData().headPitch);
+		
+		double bodyYawChange = MathHelper.clamp(handler.getMovementData().bodyYawLastTick - handler.getMovementData().bodyYaw, -3, 3);
+		double headYawChange = handler.getMovementData().headYawLastTick - handler.getMovementData().headYaw;
+		double headPitchChange = handler.getMovementData().headPitchLastTick - handler.getMovementData().headPitch;
+		
+		ModifiableAttributeInstance gravity = player.getAttribute(net.minecraftforge.common.ForgeMod.ENTITY_GRAVITY.get());
+		double g = gravity.getValue();
+		
+		if(Math.abs(bodyYawChange) <= 0.5){
+			//tailSwingDir
+			tailSwing += 0.003 * (tailSwingDir ? 1 : -1);
+			
+			if(tailSwing >= 0.4 && tailSwingDir){
+				tailSwingDir = false;
+			}else if(tailSwing <= -0.4 && !tailSwingDir){
+				tailSwingDir = true;
+			}
+		}else{
+			tailSwing = MathHelper.lerp(0.1, tailSwing, 0);
+			tailSwingDir = bodyYawChange < 0;
+		}
+		
+		tailMotionUp = MathHelper.lerp(0.1, tailMotionUp, ServerFlightHandler.isFlying(player) ? 0 : (player.getDeltaMovement().y + g));
+		tailMotionSide = MathHelper.lerp(0.1, tailMotionSide, bodyYawChange + tailSwing);
+		
+		if(((DragonEntity)animatable).tailLocked){
+			tailMotionUp = 0;
+			tailMotionSide = 0;
+		}
+		
+		parser.setValue("query.body_yaw_change", bodyYawChange);
+		parser.setValue("query.head_yaw_change", headYawChange);
+		parser.setValue("query.head_pitch_change", headPitchChange);
+		parser.setValue("query.tail_motion_up", tailMotionUp * -1);
+		parser.setValue("query.tail_motion_side", tailMotionSide);
 	}
+	
+	private double tailMotionSide;
+	private double tailMotionUp;
+	private boolean tailSwingDir = false;
+	private double tailSwing = 0;
 	
 	@Override
 	public void setLivingAnimations(DragonEntity entity, Integer uniqueID, AnimationEvent customPredicate) {

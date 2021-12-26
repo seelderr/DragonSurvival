@@ -350,7 +350,11 @@ public class DragonStateHandler {
     }
     
     public void setMovementData(double bodyYaw, double headYaw, double headPitch, boolean bite) {
-        movementData.bodyYaw = bodyYaw;
+		movementData.headYawLastTick = movementData.headYaw;
+	    movementData.bodyYawLastTick = movementData.bodyYaw;
+	    movementData.headPitchLastTick = movementData.headPitch;
+		
+	    movementData.bodyYaw = bodyYaw;
         movementData.headYaw = headYaw;
         movementData.headPitch = headPitch;
         movementData.bite = bite;
@@ -438,9 +442,6 @@ public class DragonStateHandler {
             this.bodyYaw = bodyYaw;
             this.headYaw = headYaw;
             this.headPitch = headPitch;
-            this.headYawLastTick = headYaw;
-            this.headPitchLastTick = headPitch;
-            this.bodyYawLastTick = bodyYaw;
             this.bite = bite;
         }
     }

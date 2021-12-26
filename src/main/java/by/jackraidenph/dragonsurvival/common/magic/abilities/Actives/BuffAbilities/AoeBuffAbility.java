@@ -137,13 +137,13 @@ public class AoeBuffAbility extends ActiveDragonAbility
 	@Override
 	public AbilityAnimation getLoopingAnimation()
 	{
-		return new AbilityAnimation("cast_mass_buff", true);
+		return new AbilityAnimation("cast_mass_buff", true, true);
 	}
 	
 	@Override
 	public AbilityAnimation getStoppingAnimation()
 	{
-		return new AbilityAnimation("mass_buff", 0.56 * 20, true);
+		return new AbilityAnimation("mass_buff", 0.56 * 20, true, true);
 	}
 	
 	@Override

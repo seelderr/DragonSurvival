@@ -19,6 +19,7 @@ import by.jackraidenph.dragonsurvival.misc.DragonType;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.container.OpenDragonInventory;
 import by.jackraidenph.dragonsurvival.network.entity.player.PacketSyncCapabilityMovement;
+import by.jackraidenph.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.jackraidenph.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -64,7 +65,8 @@ import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Mod.EventBusSubscriber(Dist.CLIENT)
-public class ClientEvents {
+public class ClientEvents
+{
     
     public static final ResourceLocation DRAGON_HUD = new ResourceLocation(DragonSurvivalMod.MODID + ":textures/gui/dragon_hud.png");
     /**
@@ -73,7 +75,8 @@ public class ClientEvents {
     public static ConcurrentHashMap<Integer, Integer> dragonsJumpingTicks = new ConcurrentHashMap<>(20);
     
     @SubscribeEvent
-    public static void decreaseJumpDuration(TickEvent.PlayerTickEvent playerTickEvent) {
+    public static void decreaseJumpDuration(TickEvent.PlayerTickEvent playerTickEvent)
+    {
         if (playerTickEvent.phase == TickEvent.Phase.END) {
             PlayerEntity playerEntity = playerTickEvent.player;
             dragonsJumpingTicks.computeIfPresent(playerEntity.getId(), (playerEntity1, integer) -> integer > 0 ? integer - 1 : integer);
@@ -84,12 +87,13 @@ public class ClientEvents {
     public static double mouseY = -1;
     
     @SubscribeEvent
-    public static void onOpenScreen(GuiOpenEvent openEvent) {
+    public static void onOpenScreen(GuiOpenEvent openEvent)
+    {
         ClientPlayerEntity player = Minecraft.getInstance().player;
         
-        if(!ConfigHandler.CLIENT.dragonInventory.get()) return;
-        if(Minecraft.getInstance().screen != null) return;
-        if(player == null || player.isCreative() || !DragonStateProvider.isDragon(player)) return;
+        if (!ConfigHandler.CLIENT.dragonInventory.get()) return;
+        if (Minecraft.getInstance().screen != null) return;
+        if (player == null || player.isCreative() || !DragonStateProvider.isDragon(player)) return;
         
         if (openEvent.getGui() instanceof InventoryScreen) {
             openEvent.setCanceled(true);
@@ -102,12 +106,12 @@ public class ClientEvents {
     {
         Screen sc = initGuiEvent.getGui();
         
-        if(! DragonStateProvider.isDragon(Minecraft.getInstance().player)) return;
+        if (!DragonStateProvider.isDragon(Minecraft.getInstance().player)) return;
         
-        if(sc instanceof InventoryScreen) {
+        if (sc instanceof InventoryScreen) {
             InventoryScreen screen = (InventoryScreen)sc;
     
-            if(ConfigHandler.CLIENT.dragonTabs.get()) {
+            if (ConfigHandler.CLIENT.dragonTabs.get()) {
                 initGuiEvent.addWidget(new TabButton(screen.getGuiLeft(), screen.getGuiTop() - 28, 0, screen)
                 {
                     @Override
@@ -149,7 +153,7 @@ public class ClientEvents {
                 });
             }
     
-            if(ConfigHandler.CLIENT.inventoryToggle.get()) {
+            if (ConfigHandler.CLIENT.inventoryToggle.get()) {
                 initGuiEvent.addWidget(new ImageButton(screen.getGuiLeft() + 128, screen.height / 2 - 22, 20, 18, 20, 0, 19, DragonScreen.INVENTORY_TOGGLE_BUTTON, p_onPress_1_ -> {
                     NetworkHandler.CHANNEL.sendToServer(new OpenDragonInventory());
                 })
@@ -160,7 +164,7 @@ public class ClientEvents {
                         super.renderButton(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
                         this.x = screen.getGuiLeft() + 128;
                         
-                        if(isHovered()){
+                        if (isHovered()) {
                             ArrayList<ITextComponent> description = new ArrayList<>(Arrays.asList(new TranslationTextComponent("ds.gui.toggle_inventory.dragon")));
                             Minecraft.getInstance().screen.renderComponentTooltip(p_230431_1_, description, p_230431_2_, p_230431_3_);
                         }
@@ -169,10 +173,10 @@ public class ClientEvents {
             }
         }
         
-        if(sc instanceof CreativeScreen){
+        if (sc instanceof CreativeScreen) {
             CreativeScreen screen = (CreativeScreen)sc;
             
-            if(ConfigHandler.CLIENT.inventoryToggle.get()) {
+            if (ConfigHandler.CLIENT.inventoryToggle.get()) {
                 initGuiEvent.addWidget(new ImageButton(screen.getGuiLeft() + 128 + 20, screen.height / 2 - 50, 20, 18, 20, 0, 19, DragonScreen.INVENTORY_TOGGLE_BUTTON, p_onPress_1_ -> {
                     NetworkHandler.CHANNEL.sendToServer(new OpenDragonInventory());
                 })
@@ -188,7 +192,7 @@ public class ClientEvents {
                     public void renderButton(MatrixStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_)
                     {
                         super.renderButton(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
-                        if(isHovered()){
+                        if (isHovered()) {
                             ArrayList<ITextComponent> description = new ArrayList<>(Arrays.asList(new TranslationTextComponent("ds.gui.toggle_inventory.dragon")));
                             Minecraft.getInstance().screen.renderComponentTooltip(p_230431_1_, description, p_230431_2_, p_230431_3_);
                         }
@@ -200,73 +204,69 @@ public class ClientEvents {
     }
     
     
-    public static Vector3d getInputVector(Vector3d movement, float fricSpeed, float yRot) {
+    public static Vector3d getInputVector(Vector3d movement, float fricSpeed, float yRot)
+    {
         double d0 = movement.lengthSqr();
         if (d0 < 1.0E-7D) {
             return Vector3d.ZERO;
         } else {
-            Vector3d vector3d = (d0 > 1.0D ? movement.normalize() : movement).scale((double) fricSpeed);
-            float f = MathHelper.sin(yRot * ((float) Math.PI / 180F));
-            float f1 = MathHelper.cos(yRot * ((float) Math.PI / 180F));
-            return new Vector3d(vector3d.x * (double) f1 - vector3d.z * (double) f, vector3d.y, vector3d.z * (double) f1 + vector3d.x * (double) f);
+            Vector3d vector3d = (d0 > 1.0D ? movement.normalize() : movement).scale((double)fricSpeed);
+            float f = MathHelper.sin(yRot * ((float)Math.PI / 180F));
+            float f1 = MathHelper.cos(yRot * ((float)Math.PI / 180F));
+            return new Vector3d(vector3d.x * (double)f1 - vector3d.z * (double)f, vector3d.y, vector3d.z * (double)f1 + vector3d.x * (double)f);
         }
     }
-
-    public static double bodyLerp = java.lang.Double.NaN;
     
     @SubscribeEvent
-    public static void onClientTick(RenderTickEvent renderTickEvent) {
+    public static void onClientTick(RenderTickEvent renderTickEvent)
+    {
         if (renderTickEvent.phase == Phase.START) {
             Minecraft minecraft = Minecraft.getInstance();
             ClientPlayerEntity player = minecraft.player;
             if (player != null) {
                 DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
                     if (playerStateHandler.isDragon()) {
-                        if(!java.lang.Double.isNaN(bodyLerp)){
-                            double bodyYaw = MathHelper.lerp(0.25, playerStateHandler.getMovementData().bodyYaw, bodyLerp) ;
-                            
-                            if(Math.ceil(bodyYaw) == Math.ceil(bodyLerp)){
-                                bodyLerp = java.lang.Double.NaN;
-                            }
+                        playerStateHandler.getMovementData().headYawLastTick = MathHelper.lerp(0.01, playerStateHandler.getMovementData().headYawLastTick, playerStateHandler.getMovementData().headYaw);
+                        playerStateHandler.getMovementData().headPitchLastTick = MathHelper.lerp(0.01, playerStateHandler.getMovementData().headPitchLastTick, playerStateHandler.getMovementData().headPitch);
+                        playerStateHandler.getMovementData().bodyYawLastTick = MathHelper.lerp(0.01, playerStateHandler.getMovementData().bodyYawLastTick, playerStateHandler.getMovementData().bodyYaw);
     
-                            playerStateHandler.setMovementData(bodyYaw, player.yRot, player.xRot, player.swinging && player.getAttackStrengthScale(-3.0f) != 1);
-                            NetworkHandler.CHANNEL.sendToServer(new PacketSyncCapabilityMovement(player.getId(), playerStateHandler.getMovementData().bodyYaw, playerStateHandler.getMovementData().headYaw, playerStateHandler.getMovementData().headPitch, playerStateHandler.getMovementData().bite));
-                        }
-                        
                         float headRot = player.yRot != 0.0 ? player.yRot : player.yHeadRot;
                         double bodyYaw = playerStateHandler.getMovementData().bodyYaw;
                         float bodyAndHeadYawDiff = (float)(bodyYaw - headRot);
                         
                         Vector3d moveVector = getInputVector(new Vector3d(player.input.leftImpulse, 0, player.input.forwardImpulse), 1F, player.yRot);
-
-                        float f = (float) MathHelper.atan2(moveVector.z, moveVector.x) * (180F / (float) Math.PI) - 90F;
-                        float f1 = (float) (Math.pow(moveVector.x, 2) + Math.pow(moveVector.z, 2));
+    
+                        if (ServerFlightHandler.isFlying(player)) {
+                            moveVector = new Vector3d(player.getX() - player.xo, player.getY() - player.yo, player.getZ() - player.zo);
+                        }
+                        
+                        float f = (float)MathHelper.atan2(moveVector.z, moveVector.x) * (180F / (float)Math.PI) - 90F;
+                        float f1 = (float)(Math.pow(moveVector.x, 2) + Math.pow(moveVector.z, 2));
     
                         if (f1 > 0.000028) {
-                            float f2 = MathHelper.wrapDegrees(f - (float) bodyYaw);
+                            float f2 = MathHelper.wrapDegrees(f - (float)bodyYaw);
                             bodyYaw += 0.5F * f2;
                             
-                            bodyLerp = bodyYaw;
-                            bodyYaw = MathHelper.lerp(Math.abs(playerStateHandler.getMovementData().bodyYaw - bodyYaw) >= 180 ? 1 : 0.25, playerStateHandler.getMovementData().bodyYaw, bodyLerp) ;
+                            bodyYaw = MathHelper.lerp(0.25, playerStateHandler.getMovementData().bodyYaw, bodyYaw);
                             
                             if (bodyAndHeadYawDiff > 180) {
                                 bodyYaw -= 360;
                             }
-
+        
                             if (bodyAndHeadYawDiff <= -180) {
                                 bodyYaw += 360;
                             }
                             playerStateHandler.setMovementData(bodyYaw, headRot, player.xRot, player.swinging && player.getAttackStrengthScale(-3.0f) != 1);
                             NetworkHandler.CHANNEL.sendToServer(new PacketSyncCapabilityMovement(player.getId(), playerStateHandler.getMovementData().bodyYaw, playerStateHandler.getMovementData().headYaw, playerStateHandler.getMovementData().headPitch, playerStateHandler.getMovementData().bite));
-                        } else if (Math.abs(bodyAndHeadYawDiff) > 180F && java.lang.Double.isNaN(bodyLerp)) {
+                        } else if (Math.abs(bodyAndHeadYawDiff) > 180F) {
                             if (Math.abs(bodyAndHeadYawDiff) > 360F) {
                                 bodyYaw -= bodyAndHeadYawDiff;
                             }
                             
-                            float turnSpeed = Math.min(1F + (float) Math.pow(Math.abs(bodyAndHeadYawDiff) - 180F, 1.5F) / 30F, 50F);
-                            double newYaw = (float) bodyYaw - Math.signum(bodyAndHeadYawDiff) * turnSpeed;
-                            bodyYaw = MathHelper.lerp(0.25, playerStateHandler.getMovementData().bodyYaw, newYaw) ;
-    
+                            float turnSpeed = Math.min(1F + (float)Math.pow(Math.abs(bodyAndHeadYawDiff) - 180F, 1.5F) / 30F, 50F);
+                            double newYaw = (float)bodyYaw - Math.signum(bodyAndHeadYawDiff) * turnSpeed;
+                            bodyYaw = MathHelper.lerp(0.25, playerStateHandler.getMovementData().bodyYaw, newYaw);
+        
                             playerStateHandler.setMovementData(bodyYaw, headRot, player.xRot, player.swinging && player.getAttackStrengthScale(-3.0f) != 1);
                             NetworkHandler.CHANNEL.sendToServer(new PacketSyncCapabilityMovement(player.getId(), playerStateHandler.getMovementData().bodyYaw, playerStateHandler.getMovementData().headYaw, playerStateHandler.getMovementData().headPitch, playerStateHandler.getMovementData().bite));
                         } else if (playerStateHandler.getMovementData().bite != (player.swinging && player.getAttackStrengthScale(-3.0f) != 1) || headRot != playerStateHandler.getMovementData().headYaw) {
@@ -278,22 +278,23 @@ public class ClientEvents {
             }
         }
     }
-
+    
     private static ItemStack BOLAS;
     
     
     @SubscribeEvent
-    @OnlyIn(Dist.CLIENT)
-    public static void removeFireOverlay(RenderBlockOverlayEvent event) {
+    @OnlyIn( Dist.CLIENT )
+    public static void removeFireOverlay(RenderBlockOverlayEvent event)
+    {
         ClientPlayerEntity player = Minecraft.getInstance().player;
         DragonStateProvider.getCap(player).ifPresent(cap -> {
-            if (cap.isDragon() && cap.getType() == DragonType.CAVE && event.getOverlayType() == OverlayType.FIRE)
-                event.setCanceled(true);
+            if (cap.isDragon() && cap.getType() == DragonType.CAVE && event.getOverlayType() == OverlayType.FIRE) event.setCanceled(true);
         });
     }
-
+    
     @SubscribeEvent
-    public static void renderTrap(RenderLivingEvent.Pre<LivingEntity, EntityModel<LivingEntity>> postEvent) {
+    public static void renderTrap(RenderLivingEvent.Pre<LivingEntity, EntityModel<LivingEntity>> postEvent)
+    {
         LivingEntity entity = postEvent.getEntity();
         if (!(entity instanceof PlayerEntity) && entity.getAttributes().hasAttribute(Attributes.MOVEMENT_SPEED)) {
             AttributeModifier bolasTrap = new AttributeModifier(BolasEntity.DISABLE_MOVEMENT, "Bolas trap", -entity.getAttribute(Attributes.MOVEMENT_SPEED).getValue(), AttributeModifier.Operation.ADDITION);
@@ -307,20 +308,19 @@ public class ClientEvents {
         }
     }
     
-    public static void renderBolas(int light, int overlayCoords, IRenderTypeBuffer buffers, MatrixStack matrixStack) {
+    public static void renderBolas(int light, int overlayCoords, IRenderTypeBuffer buffers, MatrixStack matrixStack)
+    {
         matrixStack.pushPose();
         matrixStack.scale(3, 3, 3);
         matrixStack.translate(0, 0.5, 0);
-        if (BOLAS == null)
-            BOLAS = new ItemStack(DSItems.huntingNet);
+        if (BOLAS == null) BOLAS = new ItemStack(DSItems.huntingNet);
         Minecraft.getInstance().getItemRenderer().renderStatic(BOLAS, ItemCameraTransforms.TransformType.NONE, light, overlayCoords, matrixStack, buffers);
         matrixStack.popPose();
     }
     
     @SubscribeEvent
-    public static void unloadWorld(WorldEvent.Unload worldEvent) {
-        ClientDragonRender.dragonEntity = null;
-        ClientDragonRender.dragonArmor = null;
+    public static void unloadWorld(WorldEvent.Unload worldEvent)
+    {
         ClientDragonRender.playerDragonHashMap.clear();
     }
     
@@ -340,7 +340,7 @@ public class ClientEvents {
             texture += "stone_";
         } else if (tier == ItemTier.WOOD) {
             texture += "wooden_";
-        }	else {
+        } else {
             texture += "moded_";
         }
         return texture;
@@ -349,69 +349,70 @@ public class ClientEvents {
     private static boolean wasCaveDragon = false;
     private static FluidBlockRenderer prevFluidRenderer;
     
-	    @SubscribeEvent
-		@OnlyIn(Dist.CLIENT)
-		public static void onRenderWorldLastEvent(RenderWorldLastEvent event) {
-			Minecraft minecraft = Minecraft.getInstance();
-			ClientPlayerEntity player = minecraft.player;
-			DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
-				if (playerStateHandler.getType() == DragonType.CAVE && ConfigHandler.SERVER.bonuses.get() && ConfigHandler.SERVER.caveLavaSwimming.get()) {
-					if (!wasCaveDragon) {
-						if(player.hasEffect(DragonEffects.LAVA_VISION)) {
-							RenderType lavaType = RenderType.translucent();
-							RenderTypeLookup.setRenderLayer(Fluids.LAVA, lavaType);
-							RenderTypeLookup.setRenderLayer(Fluids.FLOWING_LAVA, lavaType);
-							prevFluidRenderer = minecraft.getBlockRenderer().liquidBlockRenderer;
-							minecraft.getBlockRenderer().liquidBlockRenderer = new CaveLavaFluidRenderer();
-							minecraft.levelRenderer.allChanged();
-						}
-					}else{
-						if(!player.hasEffect(DragonEffects.LAVA_VISION)){
-							if (prevFluidRenderer != null) {
-								RenderType lavaType = RenderType.solid();
-								RenderTypeLookup.setRenderLayer(Fluids.LAVA, lavaType);
-								RenderTypeLookup.setRenderLayer(Fluids.FLOWING_LAVA, lavaType);
-								minecraft.getBlockRenderer().liquidBlockRenderer = prevFluidRenderer;
-							}
-							minecraft.levelRenderer.allChanged();
-						}
-					}
-			}else {
-				if (wasCaveDragon) {
-					if (prevFluidRenderer != null) {
-						RenderType lavaType = RenderType.solid();
-	                    RenderTypeLookup.setRenderLayer(Fluids.LAVA, lavaType);
-							RenderTypeLookup.setRenderLayer(Fluids.FLOWING_LAVA, lavaType);
-							minecraft.getBlockRenderer().liquidBlockRenderer = prevFluidRenderer;
-					}
-						minecraft.levelRenderer.allChanged();
-				}
-			}
-			wasCaveDragon = playerStateHandler.getType() == DragonType.CAVE && player.hasEffect(DragonEffects.LAVA_VISION);
-		});
-	}
+    @SubscribeEvent
+    @OnlyIn( Dist.CLIENT )
+    public static void onRenderWorldLastEvent(RenderWorldLastEvent event)
+    {
+        Minecraft minecraft = Minecraft.getInstance();
+        ClientPlayerEntity player = minecraft.player;
+        DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
+            if (playerStateHandler.getType() == DragonType.CAVE && ConfigHandler.SERVER.bonuses.get() && ConfigHandler.SERVER.caveLavaSwimming.get()) {
+                if (!wasCaveDragon) {
+                    if (player.hasEffect(DragonEffects.LAVA_VISION)) {
+                        RenderType lavaType = RenderType.translucent();
+                        RenderTypeLookup.setRenderLayer(Fluids.LAVA, lavaType);
+                        RenderTypeLookup.setRenderLayer(Fluids.FLOWING_LAVA, lavaType);
+                        prevFluidRenderer = minecraft.getBlockRenderer().liquidBlockRenderer;
+                        minecraft.getBlockRenderer().liquidBlockRenderer = new CaveLavaFluidRenderer();
+                        minecraft.levelRenderer.allChanged();
+                    }
+                } else {
+                    if (!player.hasEffect(DragonEffects.LAVA_VISION)) {
+                        if (prevFluidRenderer != null) {
+                            RenderType lavaType = RenderType.solid();
+                            RenderTypeLookup.setRenderLayer(Fluids.LAVA, lavaType);
+                            RenderTypeLookup.setRenderLayer(Fluids.FLOWING_LAVA, lavaType);
+                            minecraft.getBlockRenderer().liquidBlockRenderer = prevFluidRenderer;
+                        }
+                        minecraft.levelRenderer.allChanged();
+                    }
+                }
+            } else {
+                if (wasCaveDragon) {
+                    if (prevFluidRenderer != null) {
+                        RenderType lavaType = RenderType.solid();
+                        RenderTypeLookup.setRenderLayer(Fluids.LAVA, lavaType);
+                        RenderTypeLookup.setRenderLayer(Fluids.FLOWING_LAVA, lavaType);
+                        minecraft.getBlockRenderer().liquidBlockRenderer = prevFluidRenderer;
+                    }
+                    minecraft.levelRenderer.allChanged();
+                }
+            }
+            wasCaveDragon = playerStateHandler.getType() == DragonType.CAVE && player.hasEffect(DragonEffects.LAVA_VISION);
+        });
+    }
     
     @SubscribeEvent
-    @OnlyIn(Dist.CLIENT)
-public static void onRenderOverlayPreTick(RenderGameOverlayEvent.Pre event) {
+    @OnlyIn( Dist.CLIENT )
+    public static void onRenderOverlayPreTick(RenderGameOverlayEvent.Pre event)
+    {
         Minecraft mc = Minecraft.getInstance();
         ClientPlayerEntity player = mc.player;
         DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
             if (event.getType() == RenderGameOverlayEvent.ElementType.AIR) {
-                if (playerStateHandler.getType() == DragonType.SEA && ConfigHandler.SERVER.bonuses.get() && ConfigHandler.SERVER.seaSwimmingBonuses.get())
-                    event.setCanceled(true);
+                if (playerStateHandler.getType() == DragonType.SEA && ConfigHandler.SERVER.bonuses.get() && ConfigHandler.SERVER.seaSwimmingBonuses.get()) event.setCanceled(true);
                 if (playerStateHandler.getDebuffData().timeWithoutWater > 0 && playerStateHandler.getType() == DragonType.SEA && ConfigHandler.SERVER.penalties.get() && ConfigHandler.SERVER.seaTicksWithoutWater.get() != 0) {
                     RenderSystem.enableBlend();
                     mc.getTextureManager().bind(DRAGON_HUD);
                     
                     final int right_height = ForgeIngameGui.right_height;
                     ForgeIngameGui.right_height += 10;
-
+    
                     int maxTimeWithoutWater = ConfigHandler.SERVER.seaTicksWithoutWater.get();
                     DragonAbility waterAbility = playerStateHandler.getMagic().getAbility(DragonAbilities.WATER);
-                
-                    if(waterAbility != null){
-                        maxTimeWithoutWater +=  Functions.secondsToTicks(((WaterAbility)waterAbility).getDuration());
+    
+                    if (waterAbility != null) {
+                        maxTimeWithoutWater += Functions.secondsToTicks(((WaterAbility)waterAbility).getDuration());
                     }
                     
                     double timeWithoutWater = maxTimeWithoutWater - playerStateHandler.getDebuffData().timeWithoutWater;
@@ -421,17 +422,17 @@ public static void onRenderOverlayPreTick(RenderGameOverlayEvent.Pre event) {
                         timeWithoutWater = Math.abs(timeWithoutWater);
                     }
                     
-final int left = Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 + 91;
-final int top = Minecraft.getInstance().getWindow().getGuiScaledHeight() - right_height;
-final int full = flag ? MathHelper.floor((double) timeWithoutWater * 10.0D / maxTimeWithoutWater) : MathHelper.ceil((double) (timeWithoutWater - 2) * 10.0D / maxTimeWithoutWater);
-final int partial = MathHelper.ceil((double) timeWithoutWater * 10.0D / maxTimeWithoutWater) - full;
-
-for (int i = 0; i < full + partial; ++i)
+                    final int left = Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 + 91;
+                    final int top = Minecraft.getInstance().getWindow().getGuiScaledHeight() - right_height;
+                    final int full = flag ? MathHelper.floor((double)timeWithoutWater * 10.0D / maxTimeWithoutWater) : MathHelper.ceil((double)(timeWithoutWater - 2) * 10.0D / maxTimeWithoutWater);
+                    final int partial = MathHelper.ceil((double)timeWithoutWater * 10.0D / maxTimeWithoutWater) - full;
+                    
+                    for (int i = 0; i < full + partial; ++i)
                         Minecraft.getInstance().gui.blit(event.getMatrixStack(), left - i * 8 - 9, top, (flag ? 18 : i < full ? 0 : 9), 36, 9, 9);
-                        
-
-mc.getTextureManager().bind(AbstractGui.GUI_ICONS_LOCATION);
-RenderSystem.disableBlend();
+    
+    
+                    mc.getTextureManager().bind(AbstractGui.GUI_ICONS_LOCATION);
+                    RenderSystem.disableBlend();
                 }
                 if (playerStateHandler.getLavaAirSupply() < ConfigHandler.SERVER.caveLavaSwimmingTicks.get() && playerStateHandler.getType() == DragonType.CAVE && ConfigHandler.SERVER.bonuses.get() && ConfigHandler.SERVER.caveLavaSwimmingTicks.get() != 0 && ConfigHandler.SERVER.caveLavaSwimming.get()) {
                     RenderSystem.enableBlend();
@@ -439,17 +440,17 @@ RenderSystem.disableBlend();
                     
                     final int right_height = ForgeIngameGui.right_height;
                     ForgeIngameGui.right_height += 10;
-
-final int left = Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 + 91;
-final int top = Minecraft.getInstance().getWindow().getGuiScaledHeight() - right_height;
-final int full = MathHelper.ceil((double) (playerStateHandler.getLavaAirSupply() - 2) * 10.0D / ConfigHandler.SERVER.caveLavaSwimmingTicks.get());
-final int partial = MathHelper.ceil((double) playerStateHandler.getLavaAirSupply() * 10.0D / ConfigHandler.SERVER.caveLavaSwimmingTicks.get()) - full;
-
-for (int i = 0; i < full + partial; ++i)
+    
+                    final int left = Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 + 91;
+                    final int top = Minecraft.getInstance().getWindow().getGuiScaledHeight() - right_height;
+                    final int full = MathHelper.ceil((double)(playerStateHandler.getLavaAirSupply() - 2) * 10.0D / ConfigHandler.SERVER.caveLavaSwimmingTicks.get());
+                    final int partial = MathHelper.ceil((double)playerStateHandler.getLavaAirSupply() * 10.0D / ConfigHandler.SERVER.caveLavaSwimmingTicks.get()) - full;
+    
+                    for (int i = 0; i < full + partial; ++i)
                         Minecraft.getInstance().gui.blit(event.getMatrixStack(), left - i * 8 - 9, top, (i < full ? 0 : 9), 27, 9, 9);
-
-mc.getTextureManager().bind(AbstractGui.GUI_ICONS_LOCATION);
-RenderSystem.disableBlend();
+    
+                    mc.getTextureManager().bind(AbstractGui.GUI_ICONS_LOCATION);
+                    RenderSystem.disableBlend();
                 }
                 if (playerStateHandler.getDebuffData().timeInDarkness > 0 && playerStateHandler.getType() == DragonType.FOREST && ConfigHandler.SERVER.penalties.get() && ConfigHandler.SERVER.forestStressTicks.get() != 0 && !player.hasEffect(DragonEffects.STRESS)) {
                     RenderSystem.enableBlend();
@@ -457,57 +458,57 @@ RenderSystem.disableBlend();
                     
                     final int right_height = ForgeIngameGui.right_height;
                     ForgeIngameGui.right_height += 10;
-
+    
                     int maxTimeInDarkness = ConfigHandler.SERVER.forestStressTicks.get();
                     DragonAbility lightInDarkness = playerStateHandler.getMagic().getAbility(DragonAbilities.LIGHT_IN_DARKNESS);
-                
-                    if(lightInDarkness != null){
-                        maxTimeInDarkness +=  Functions.secondsToTicks(((LightInDarknessAbility)lightInDarkness).getDuration());
+    
+                    if (lightInDarkness != null) {
+                        maxTimeInDarkness += Functions.secondsToTicks(((LightInDarknessAbility)lightInDarkness).getDuration());
                     }
                     
                     final int timeInDarkness = maxTimeInDarkness - Math.min(playerStateHandler.getDebuffData().timeInDarkness, maxTimeInDarkness);
-                    
-final int left = Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 + 91;
-final int top = Minecraft.getInstance().getWindow().getGuiScaledHeight() - right_height;
-final int full = MathHelper.ceil((double) (timeInDarkness - 2) * 10.0D / maxTimeInDarkness);
-final int partial = MathHelper.ceil((double) timeInDarkness * 10.0D / maxTimeInDarkness) - full;
-
-for (int i = 0; i < full + partial; ++i)
+    
+                    final int left = Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 + 91;
+                    final int top = Minecraft.getInstance().getWindow().getGuiScaledHeight() - right_height;
+                    final int full = MathHelper.ceil((double)(timeInDarkness - 2) * 10.0D / maxTimeInDarkness);
+                    final int partial = MathHelper.ceil((double)timeInDarkness * 10.0D / maxTimeInDarkness) - full;
+    
+                    for (int i = 0; i < full + partial; ++i)
                         Minecraft.getInstance().gui.blit(event.getMatrixStack(), left - i * 8 - 9, top, (i < full ? 0 : 9), 45, 9, 9);
-
-mc.getTextureManager().bind(AbstractGui.GUI_ICONS_LOCATION);
-RenderSystem.disableBlend();
+    
+                    mc.getTextureManager().bind(AbstractGui.GUI_ICONS_LOCATION);
+                    RenderSystem.disableBlend();
                 }
-            
+    
                 if (playerStateHandler.getDebuffData().timeInRain > 0 && playerStateHandler.getType() == DragonType.CAVE && ConfigHandler.SERVER.penalties.get() && ConfigHandler.SERVER.caveRainDamage.get() != 0.0) {
                     RenderSystem.enableBlend();
                     mc.getTextureManager().bind(DRAGON_HUD);
-                
+        
                     final int right_height = ForgeIngameGui.right_height;
                     ForgeIngameGui.right_height += 10;
-                
+        
                     DragonAbility contrastShower = playerStateHandler.getMagic().getAbility(DragonAbilities.CONTRAST_SHOWER);
                     int maxRainTime = 0;
-                
-                    if(contrastShower != null){
-                        maxRainTime +=  Functions.secondsToTicks(((ContrastShowerAbility)contrastShower).getDuration());
+        
+                    if (contrastShower != null) {
+                        maxRainTime += Functions.secondsToTicks(((ContrastShowerAbility)contrastShower).getDuration());
                     }
-                
-                
+        
+        
                     final int timeInRain = maxRainTime - Math.min(playerStateHandler.getDebuffData().timeInRain, maxRainTime);
-                
+        
                     final int left = Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 + 91;
                     final int top = Minecraft.getInstance().getWindow().getGuiScaledHeight() - right_height;
-                    final int full = MathHelper.ceil((double) (timeInRain - 2) * 10.0D / maxRainTime);
-                    final int partial = MathHelper.ceil((double) timeInRain * 10.0D / maxRainTime) - full;
-                
+                    final int full = MathHelper.ceil((double)(timeInRain - 2) * 10.0D / maxRainTime);
+                    final int partial = MathHelper.ceil((double)timeInRain * 10.0D / maxRainTime) - full;
+        
                     for (int i = 0; i < full + partial; ++i)
                         Minecraft.getInstance().gui.blit(event.getMatrixStack(), left - i * 8 - 9, top, (i < full ? 0 : 9), 54, 9, 9);
-                
+        
                     mc.getTextureManager().bind(AbstractGui.GUI_ICONS_LOCATION);
                     RenderSystem.disableBlend();
                 }
             }
         });
-}
+    }
 }

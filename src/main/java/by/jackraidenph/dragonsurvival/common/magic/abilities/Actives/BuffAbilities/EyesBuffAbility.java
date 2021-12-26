@@ -93,13 +93,13 @@ public class EyesBuffAbility extends ActiveDragonAbility
 	@Override
 	public AbilityAnimation getLoopingAnimation()
 	{
-		return new AbilityAnimation("cast_self_buff", true);
+		return new AbilityAnimation("cast_self_buff", true, false);
 	}
 	
 	@Override
 	public AbilityAnimation getStoppingAnimation()
 	{
-		return new AbilityAnimation("self_buff", 0.52 * 20, true);
+		return new AbilityAnimation("self_buff", 0.52 * 20, true, false);
 	}
 	
 	public int getCastingSlowness() { return 10; }

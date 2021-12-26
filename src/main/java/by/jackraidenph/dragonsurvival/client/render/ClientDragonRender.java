@@ -56,10 +56,6 @@ public class ClientDragonRender
 	 */
 	public static DragonEntity dragonArmor;
 	/**
-	 * Instance used for rendering first-person dragon model
-	 */
-	public static AtomicReference<DragonEntity> dragonEntity;
-	/**
 	 * Instances used for rendering third-person dragon models
 	 */
 	public static ConcurrentHashMap<Integer, AtomicReference<DragonEntity>> playerDragonHashMap = new ConcurrentHashMap<>(20);
