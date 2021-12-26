@@ -63,8 +63,6 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
             animationEvent.getController().setAnimation(new AnimationBuilder().addAnimation("tail_turn", true));
             return PlayState.CONTINUE;
         }else{
-            animationEvent.getController().setAnimation(null);
-            animationEvent.getController().clearAnimationCache();
             return PlayState.STOP;
         }
     }
@@ -74,8 +72,6 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
             animationEvent.getController().setAnimation(new AnimationBuilder().addAnimation("bottom_turn", true));
             return PlayState.CONTINUE;
         }else{
-            animationEvent.getController().setAnimation(null);
-            animationEvent.getController().clearAnimationCache();
             return PlayState.STOP;
         }
     }
@@ -89,8 +85,6 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
             ActiveDragonAbility curCast = handler.getMagic().getCurrentlyCasting();
             
             if(handler.getEmotes().getCurrentEmote() != null) {
-                animationEvent.getController().setAnimation(null);
-                animationEvent.getController().clearAnimationCache();
                 return PlayState.STOP;
             }
             
@@ -112,9 +106,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
         if(animationEvent.getController().getAnimationState() != AnimationState.Stopped){
             return PlayState.CONTINUE;
         }
-    
-        animationEvent.getController().setAnimation(null);
-        animationEvent.getController().clearAnimationCache();
+        
         return PlayState.STOP;
     }
     
@@ -140,8 +132,6 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
             }
         }
         
-        animationEvent.getController().setAnimation(null);
-        animationEvent.getController().clearAnimationCache();
         return PlayState.STOP;
     }
     
@@ -166,17 +156,17 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
         DragonStateHandler playerStateHandler = DragonStateProvider.getCap(player).orElse(null);
         
         AnimationBuilder builder = new AnimationBuilder();
+    
+        dragonAnimationController.speed = 1;
         
         if (player == null || playerStateHandler == null || emoteController.getAnimationState() != AnimationState.Stopped) {
-            animationEvent.getController().setAnimation(null);
-            animationEvent.getController().clearAnimationCache();
             return PlayState.STOP;
         }
     
         neckLocked = false;
         tailLocked = false;
     
-        dragonAnimationController.speed = 1;
+
         
         ActiveDragonAbility curCast = playerStateHandler.getMagic().getCurrentlyCasting();
         
@@ -213,6 +203,8 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
             if (ServerFlightHandler.isGliding(player)) {
                 neckLocked = true;
                 if(ServerFlightHandler.isSpin(player)) {
+                    tailLocked = true;
+    
                     builder.addAnimation("fly_spin_fast", true);
                 }else if (player.getDeltaMovement().y < -1) {
                     builder.addAnimation("fly_dive_alt", true);
@@ -227,6 +219,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
             } else {
                 if(ServerFlightHandler.isSpin(player)) {
                     neckLocked = true;
+                    tailLocked = true;
                     builder.addAnimation("fly_spin", true);
                 } else if(player.getDeltaMovement().y > 0.25){
                     dragonAnimationController.speed = 1 + ((player.getDeltaMovement().y / 2) / 5);
@@ -240,6 +233,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
         if (player.getPose() == Pose.SWIMMING) {
             if(ServerFlightHandler.isSpin(player)) {
                 neckLocked = true;
+                tailLocked = true;
                 builder.addAnimation("fly_spin_fast", true);
             }else {
                 dragonAnimationController.speed = 1 + ((double)MathHelper.sqrt(player.getDeltaMovement().x * player.getDeltaMovement().x + player.getDeltaMovement().z * player.getDeltaMovement().z) / 10);
@@ -250,6 +244,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
         if ((player.isInLava() || player.isInWaterOrBubble()) && !player.isOnGround()) {
             if(ServerFlightHandler.isSpin(player)) {
                 neckLocked = true;
+                tailLocked = true;
                 builder.addAnimation("fly_spin_fast", true);
             }else {
                 dragonAnimationController.speed = 1 + ((double)MathHelper.sqrt(player.getDeltaMovement().x * player.getDeltaMovement().x + player.getDeltaMovement().z * player.getDeltaMovement().z) / 10);
@@ -299,13 +294,16 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
         
         if (playerStateHandler.getMovementData().dig) {
             builder.addAnimation("dig", true);
+            
         }
         
         if(animationEvent.getController().getCurrentAnimation() == null || builder.getRawAnimationList().size() <= 0){
             builder.addAnimation("idle", true);
         }
         
-        animationController.setAnimation(builder);
+        animationController.setAnimation(new AnimationBuilder()
+         .addAnimation(builder.getRawAnimationList().get(0).animationName, builder.getRawAnimationList().get(0).loop)
+         .addAnimation("idle", true));
         return PlayState.CONTINUE;
     }
     

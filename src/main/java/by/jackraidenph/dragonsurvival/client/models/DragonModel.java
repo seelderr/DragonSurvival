@@ -80,7 +80,13 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 		}
 		
 		tailMotionUp = MathHelper.lerp(0.1, tailMotionUp, ServerFlightHandler.isFlying(player) ? 0 : (player.getDeltaMovement().y + g));
-		tailMotionSide = MathHelper.lerp(0.1, tailMotionSide, bodyYawChange + tailSwing);
+		
+		if(lastYawChange != bodyYawChange || Math.abs(lastYawChange) <= 0.5) {
+			tailMotionSide = MathHelper.lerp(0.1, tailMotionSide, bodyYawChange + tailSwing);
+			lastYawChange = bodyYawChange;
+		}else{
+			tailMotionSide = MathHelper.lerp(0.1, tailMotionSide, 0);
+		}
 		
 		if(((DragonEntity)animatable).tailLocked){
 			tailMotionUp = 0;
@@ -94,6 +100,7 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 		parser.setValue("query.tail_motion_side", tailMotionSide);
 	}
 	
+	private double lastYawChange;
 	private double tailMotionSide;
 	private double tailMotionUp;
 	private boolean tailSwingDir = false;
