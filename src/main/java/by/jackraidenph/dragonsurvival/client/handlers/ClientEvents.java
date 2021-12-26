@@ -226,9 +226,9 @@ public class ClientEvents
             if (player != null) {
                 DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
                     if (playerStateHandler.isDragon()) {
-                        playerStateHandler.getMovementData().headYawLastTick = MathHelper.lerp(0.01, playerStateHandler.getMovementData().headYawLastTick, playerStateHandler.getMovementData().headYaw);
-                        playerStateHandler.getMovementData().headPitchLastTick = MathHelper.lerp(0.01, playerStateHandler.getMovementData().headPitchLastTick, playerStateHandler.getMovementData().headPitch);
-                        playerStateHandler.getMovementData().bodyYawLastTick = MathHelper.lerp(0.01, playerStateHandler.getMovementData().bodyYawLastTick, playerStateHandler.getMovementData().bodyYaw);
+                        playerStateHandler.getMovementData().headYawLastTick = MathHelper.lerp(0.05, playerStateHandler.getMovementData().headYawLastTick, playerStateHandler.getMovementData().headYaw);
+                        playerStateHandler.getMovementData().headPitchLastTick = MathHelper.lerp(0.05, playerStateHandler.getMovementData().headPitchLastTick, playerStateHandler.getMovementData().headPitch);
+                        playerStateHandler.getMovementData().bodyYawLastTick = MathHelper.lerp(0.05, playerStateHandler.getMovementData().bodyYawLastTick, playerStateHandler.getMovementData().bodyYaw);
     
                         float headRot = player.yRot != 0.0 ? player.yRot : player.yHeadRot;
                         double bodyYaw = playerStateHandler.getMovementData().bodyYaw;

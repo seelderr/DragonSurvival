@@ -61,7 +61,7 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 		parser.setValue("query.head_yaw", bodyAndHeadYawDiff);
 		parser.setValue("query.head_pitch", handler.getMovementData().headPitch);
 		
-		double bodyYawChange = MathHelper.clamp(handler.getMovementData().bodyYawLastTick - handler.getMovementData().bodyYaw, -3, 3);
+		double bodyYawChange = handler.getMovementData().bodyYawLastTick - handler.getMovementData().bodyYaw;
 		double headYawChange = handler.getMovementData().headYawLastTick - handler.getMovementData().headYaw;
 		double headPitchChange = handler.getMovementData().headPitchLastTick - handler.getMovementData().headPitch;
 		
@@ -83,7 +83,7 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 		}
 		
 		tailMotionUp = MathHelper.lerp(0.1, tailMotionUp, ServerFlightHandler.isFlying(player) ? 0 : (player.getDeltaMovement().y + g));
-		tailMotionSide = MathHelper.lerp(0.1, tailMotionSide, bodyYawChange + tailSwing);
+		tailMotionSide = MathHelper.clamp(MathHelper.lerp(0.1, tailMotionSide, (bodyYawChange / 3) + tailSwing), -3, 3);
 		
 		if(((DragonEntity)animatable).tailLocked){
 			tailMotionUp = 0;
