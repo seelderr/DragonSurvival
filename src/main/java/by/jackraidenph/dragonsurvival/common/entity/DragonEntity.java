@@ -47,17 +47,20 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
     @Override
     public void registerControllers(AnimationData animationData) {
         animationData.addAnimationController(tailController);
-        animationData.addAnimationController(biteAnimationController);
         animationData.addAnimationController(emoteController);
         animationData.addAnimationController(dragonAnimationController);
+        animationData.addAnimationController(biteAnimationController);
         //animationData.addAnimationController(headController);
     }
     
     CustomTickAnimationController tailController = new CustomTickAnimationController(this, "5", 10, this::tailPredicate);
-    CustomTickAnimationController headController = new CustomTickAnimationController(this, "4", 10, this::headPredicate);
-    CustomTickAnimationController emoteController = new CustomTickAnimationController(this, "2", 2, this::emotePredicate);
-    CustomTickAnimationController biteAnimationController = new CustomTickAnimationController(this, "5", 2, this::bitePredicate);
-    CustomTickAnimationController dragonAnimationController = new CustomTickAnimationController(this, "3", 2, this::predicate);
+    CustomTickAnimationController biteAnimationController = new CustomTickAnimationController(this, "4", 2, this::bitePredicate);
+    
+    CustomTickAnimationController emoteController = new CustomTickAnimationController(this, "3", 2, this::emotePredicate);
+    CustomTickAnimationController dragonAnimationController = new CustomTickAnimationController(this, "2", 2, this::predicate);
+    
+    //CustomTickAnimationController headController = new CustomTickAnimationController(this, "4", 10, this::headPredicate);
+    
     
     private <E extends IAnimatable> PlayState tailPredicate(AnimationEvent<E> animationEvent) {
         if(!tailLocked) {
@@ -84,11 +87,6 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
     
         if(handler != null){
             ActiveDragonAbility curCast = handler.getMagic().getCurrentlyCasting();
-            
-            if(handler.getEmotes().getCurrentEmote() != null) {
-                return PlayState.STOP;
-            }
-            
             if(curCast instanceof ISecondAnimation || lastCast instanceof ISecondAnimation){
                 renderAbility(builder, curCast);
                 animationEvent.getController().setAnimation(builder);
@@ -97,17 +95,12 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
             
             if(!ServerFlightHandler.isFlying(player)) {
                 if (handler.getMovementData().bite && !handler.getMovementData().dig) {
-                    builder.addAnimation("bite", false);
+                    builder.addAnimation("bite", true);
                     animationEvent.getController().setAnimation(builder);
                     return PlayState.CONTINUE;
                 }
             }
         }
-        
-        if(animationEvent.getController().getAnimationState() != AnimationState.Stopped){
-            return PlayState.CONTINUE;
-        }
-        
         return PlayState.STOP;
     }
     

@@ -2,9 +2,9 @@ package by.jackraidenph.dragonsurvival.mixins;
 
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.jackraidenph.dragonsurvival.common.handlers.DragonSizeHandler;
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.BlockState;
@@ -21,7 +21,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.fluid.FluidState;
-import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.TieredItem;
@@ -59,38 +58,8 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 	@Final
 	public PlayerInventory inventory;
 	
-	public ItemStack lastStack = ItemStack.EMPTY;
-	
-	
 	protected MixinPlayerEntity(EntityType<? extends LivingEntity> p_i48577_1_, World p_i48577_2_) {
 		super(p_i48577_1_, p_i48577_2_);
-	}
-	
-	@Inject(at = @At("HEAD"), method = "tick", cancellable = true)
-	private void ticks(CallbackInfo ci) {
-		DragonStateHandler handler = DragonStateProvider.getCap(this).orElse(null);
-			if (handler != null) {
-				ItemStack sword = handler.getClawInventory().getClawsInventory().getItem(0);
-				
-				if (sword != null && !sword.isEmpty() && !(getMainHandItem().getItem() instanceof TieredItem)) {
-					if(!ItemStack.matches(lastStack, sword) || lastStack.isEmpty()){
-						if (!lastStack.isEmpty()) {
-							this.getAttributes().removeAttributeModifiers(lastStack.getAttributeModifiers(EquipmentSlotType.MAINHAND));
-						}
-						
-						if (!sword.isEmpty()) {
-							this.getAttributes().addTransientAttributeModifiers(sword.getAttributeModifiers(EquipmentSlotType.MAINHAND));
-						}
-						
-						lastStack = sword;
-					}
-				}else if(lastStack != null && !lastStack.isEmpty()){
-					if (!lastStack.isEmpty()) {
-						this.getAttributes().removeAttributeModifiers(lastStack.getAttributeModifiers(EquipmentSlotType.MAINHAND));
-					}
-					lastStack = ItemStack.EMPTY;
-				}
-			}
 	}
 	
 	@Redirect( method = "attack",
