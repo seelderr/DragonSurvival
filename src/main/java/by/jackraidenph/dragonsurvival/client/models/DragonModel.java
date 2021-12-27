@@ -146,7 +146,7 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 					double yawDif = Math.abs(MathHelper.degreesDifference((float)yRotD, (float)bodyRot));
 					
 					if (yawDif <= 90 && Math.abs(xRotD) <= 30) {
-						lookYaw = MathHelper.lerp(lookSpeed, lookYaw, -bodyRot + yRotD);
+						lookYaw = MathHelper.lerp(lookSpeed, lookYaw, MathHelper.wrapDegrees(-bodyRot + yRotD));
 						lookPitch = MathHelper.lerp(lookSpeed, lookPitch, xRotD);
 					} else {
 						lookYaw = MathHelper.lerp(lookSpeed, lookYaw, 0);

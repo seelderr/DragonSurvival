@@ -233,8 +233,21 @@ public class ClientEvents
                         float headRot = player.yRot != 0.0 ? player.yRot : player.yHeadRot;
                         double bodyYaw = playerStateHandler.getMovementData().bodyYaw;
                         float bodyAndHeadYawDiff = (float)(bodyYaw - headRot);
-                        
                         double headPitch = MathHelper.lerp(0.1, playerStateHandler.getMovementData().headPitch, player.xRot);
+    
+                        if(!ConfigHandler.CLIENT.firstPersonRotation.get()){
+                            if(Minecraft.getInstance().options.getCameraType().isFirstPerson()){
+                                bodyYaw = player.yRot;
+                                float bodyAndHeadYawDiff1 = (float)(bodyYaw - headRot);
+                                
+                                if(bodyAndHeadYawDiff1 > 0 || bodyAndHeadYawDiff != bodyAndHeadYawDiff1) {
+                                    playerStateHandler.setMovementData(bodyYaw, headRot, headPitch, player.attackAnim > 0 && player.getAttackStrengthScale(-3.0f) != 1);
+                                    playerStateHandler.getMovementData().bodyYawLastTick = bodyYaw;
+                                    NetworkHandler.CHANNEL.sendToServer(new PacketSyncCapabilityMovement(player.getId(), playerStateHandler.getMovementData().bodyYaw, playerStateHandler.getMovementData().headYaw, playerStateHandler.getMovementData().headPitch, playerStateHandler.getMovementData().bite));
+                                    return;
+                                }
+                            }
+                        }
                         
                         Vector3d moveVector = getInputVector(new Vector3d(player.input.leftImpulse, 0, player.input.forwardImpulse), 1F, player.yRot);
     

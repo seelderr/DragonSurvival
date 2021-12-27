@@ -5,6 +5,7 @@ import net.minecraftforge.common.ForgeConfigSpec;
 public class ClientConfig {
 	public final ForgeConfigSpec.BooleanValue dragonNameTags;
 	public final ForgeConfigSpec.BooleanValue renderInFirstPerson;
+	public final ForgeConfigSpec.BooleanValue firstPersonRotation;
 	public final ForgeConfigSpec.BooleanValue renderFirstPersonFlight;
 	
 	public final ForgeConfigSpec.BooleanValue notifyWingStatus;
@@ -50,10 +51,11 @@ public class ClientConfig {
 	ClientConfig(ForgeConfigSpec.Builder builder) {
 		builder.push("client");
 		//For people who use first person view mods
-		renderInFirstPerson = builder.comment("Render dragon model in first person. If your own tail scares you, write false")
-				.define("renderFirstPerson", true);
-		renderFirstPersonFlight = builder.comment("Render dragon model in first person while gliding")
-				.define("renderFirstPersonFlight", false);
+		renderInFirstPerson = builder.comment("Render dragon model in first person. If your own tail scares you, write false").define("renderFirstPerson", true);
+		renderFirstPersonFlight = builder.comment("Render dragon model in first person while gliding").define("renderFirstPersonFlight", false);
+		firstPersonRotation = builder.comment("Use rotation of your tail in first person, otherwise the tail is always opposite of your camera").define("firstPersonRotation", true);
+		
+		
 		notifyWingStatus = builder.comment("Notifies of wing status in chat message").define("notifyWingStatus", false);
 		clientDebugMessages = builder.define("Enable client-side debug messages", false);
 		
