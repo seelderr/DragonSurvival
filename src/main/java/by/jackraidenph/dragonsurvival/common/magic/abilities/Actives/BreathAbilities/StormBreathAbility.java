@@ -6,7 +6,9 @@ import by.jackraidenph.dragonsurvival.client.particles.SeaDragon.SmallLightningP
 import by.jackraidenph.dragonsurvival.client.sounds.SoundRegistry;
 import by.jackraidenph.dragonsurvival.client.sounds.StormBreathSound;
 import by.jackraidenph.dragonsurvival.common.DragonEffects;
+import by.jackraidenph.dragonsurvival.common.capability.Capabilities;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.GenericCapability;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import by.jackraidenph.dragonsurvival.util.Functions;
@@ -164,7 +166,7 @@ public class StormBreathAbility extends BreathAbility
 	
 	public void onEntityHit(LivingEntity entityHit){
 		hurtTarget(entityHit);
-		StormBreathAbility.chargedEffectSparkle(entityHit, 6, 2, 1);
+		StormBreathAbility.chargedEffectSparkle(player, entityHit, 6, 2, 1);
 	}
 	
 	public static void onDamageChecks(LivingEntity entity){
@@ -189,6 +191,12 @@ public class StormBreathAbility extends BreathAbility
 		
 		if(!entity.level.isClientSide) {
 			if (entity.level.random.nextInt(100) < 40) {
+				GenericCapability cap = Capabilities.getGenericCapability(entity).orElse(null);
+				
+				if(cap != null){
+					cap.lastAfflicted = player.getId();
+				}
+				
 				entity.addEffect(new EffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(10), 0, false, true));
 			}
 		}
@@ -215,7 +223,7 @@ public class StormBreathAbility extends BreathAbility
 		}
 	}
 	
-	public static void chargedEffectSparkle(LivingEntity source, int chainRange, int maxChainTargets, int damage){
+	public static void chargedEffectSparkle(PlayerEntity player, LivingEntity source, int chainRange, int maxChainTargets, int damage){
 		List<LivingEntity> secondaryTargets = getEntityLivingBaseNearby(source, source.getX(), source.getY() + source.getBbHeight() / 2, source.getZ(), chainRange);
 		secondaryTargets.removeIf(e -> !isValidTarget(source, e));
 		
@@ -230,19 +238,31 @@ public class StormBreathAbility extends BreathAbility
 			boolean damaged = false;
 			if(target != null && target.getType() != null && target.getType().getRegistryType() != null) {
 				if (ConfigHandler.SERVER.chargedBlacklist.get().contains(target.getType().getRegistryName().toString())) {
-					target.hurt(DamageSource.GENERIC, damage);
+					target.hurt(DamageSource.playerAttack(player), damage);
 					damaged = true;
 				}
 			}
 			if(!damaged) {
-				target.hurt(DamageSource.mobAttack(source), damage);
+				target.hurt(DamageSource.indirectMobAttack(source, player), damage);
 			}
 			onDamageChecks(target);
 			
 			if(target != source) {
 				if(!target.level.isClientSide) {
 					if (target.level.random.nextInt(100) < 40) {
+						GenericCapability cap = Capabilities.getGenericCapability(target).orElse(null);
+						if(cap != null){
+							cap.lastAfflicted = player != null ? player.getId() : -1;
+						}
 						target.addEffect(new EffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(10), 0, false, true));
+					}
+				}
+				
+				if(player != null) {
+					if (player.level.random.nextInt(100) < 50) {
+						if (!player.level.isClientSide) {
+							player.addEffect(new EffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(30)));
+						}
 					}
 				}
 				

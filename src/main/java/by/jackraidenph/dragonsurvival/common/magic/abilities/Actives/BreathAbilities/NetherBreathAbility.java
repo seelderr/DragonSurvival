@@ -6,8 +6,10 @@ import by.jackraidenph.dragonsurvival.client.particles.CaveDragon.SmallFireParti
 import by.jackraidenph.dragonsurvival.client.sounds.FireBreathSound;
 import by.jackraidenph.dragonsurvival.client.sounds.SoundRegistry;
 import by.jackraidenph.dragonsurvival.common.DragonEffects;
+import by.jackraidenph.dragonsurvival.common.capability.Capabilities;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.GenericCapability;
 import by.jackraidenph.dragonsurvival.common.magic.DragonAbilities;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
@@ -193,6 +195,11 @@ public class NetherBreathAbility extends BreathAbility
 			
 			if(handler != null) {
 				if (entityHit.level.random.nextInt(100) < (handler.getMagic().getAbilityLevel(DragonAbilities.BURN) * 15)) {
+					GenericCapability cap = Capabilities.getGenericCapability(entityHit).orElse(null);
+					if(cap != null){
+						cap.lastAfflicted = player != null ? player.getId() : -1;
+					}
+					
 					entityHit.addEffect(new EffectInstance(DragonEffects.BURN, Functions.secondsToTicks(10), 0, false, true));
 				}
 			}

@@ -72,7 +72,7 @@ public class ChangeSkillLevel implements IMessage<ChangeSkillLevel>
                 dragonStateHandler.getMagic().getAbilities().removeIf((c) -> c.getId() == newActivty.getId());
                 dragonStateHandler.getMagic().addAbility(newActivty);
                 
-                if(levelCost != 0){
+                if(levelCost != 0 && !playerEntity.isCreative()){
                     playerEntity.giveExperienceLevels(levelCost);
                 }
 

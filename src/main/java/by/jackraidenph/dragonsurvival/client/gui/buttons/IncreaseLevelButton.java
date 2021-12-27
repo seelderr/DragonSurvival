@@ -76,7 +76,7 @@ public class IncreaseLevelButton extends Button
 							PassiveDragonAbility newActivty = currentAbility.createInstance();
 							newActivty.setLevel(currentAbility.getLevel() + 1);
 							
-							if(Minecraft.getInstance().player.experienceLevel >= newActivty.getLevelCost()){
+							if(Minecraft.getInstance().player.experienceLevel >= newActivty.getLevelCost() || Minecraft.getInstance().player.isCreative()){
 								NetworkHandler.CHANNEL.sendToServer(new ChangeSkillLevel(cap.getMagic().getAbilityLevel(ability) + 1, ability.getId(), 1));
 							}
 						}else{

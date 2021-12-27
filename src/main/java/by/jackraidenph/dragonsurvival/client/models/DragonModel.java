@@ -21,6 +21,8 @@ import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.resource.GeckoLibCache;
 import software.bernie.shadowed.eliotlash.molang.MolangParser;
 
+import java.util.ArrayList;
+
 public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 
     private ResourceLocation currentTexture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/cave_newborn.png");
@@ -64,7 +66,6 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 		double bodyYawChange = handler.getMovementData().bodyYawLastTick - handler.getMovementData().bodyYaw;
 		double headYawChange = handler.getMovementData().headYawLastTick - handler.getMovementData().headYaw;
 		double headPitchChange = handler.getMovementData().headPitchLastTick - handler.getMovementData().headPitch;
-		
 		ModifiableAttributeInstance gravity = player.getAttribute(net.minecraftforge.common.ForgeMod.ENTITY_GRAVITY.get());
 		double g = gravity.getValue();
 		
@@ -82,19 +83,43 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 			tailSwingDir = bodyYawChange < 0;
 		}
 		
+		tailMotionMax = Math.max(0,MathHelper.lerp(0.1, tailMotionMax, 0));
+		
+		if(Math.abs(bodyYawChange) > tailMotionMax){
+			tailMotionMax += Math.abs(bodyYawChange);
+		}
+		
+		double tailMultiplier = MathHelper.clamp(tailMotionMax, 0, 5);
+		
 		tailMotionUp = MathHelper.lerp(0.1, tailMotionUp, ServerFlightHandler.isFlying(player) ? 0 : (player.getDeltaMovement().y + g));
-		tailMotionSide = MathHelper.clamp(MathHelper.lerp(0.1, tailMotionSide, (bodyYawChange / 4) + tailSwing), -3, 3);
+		tailMotionSide = MathHelper.clamp(MathHelper.lerp(0.1, tailMotionSide, (bodyYawChange / tailMultiplier) + tailSwing), -3, 3);
 		
 		if(((DragonEntity)animatable).tailLocked){
 			tailMotionUp = 0;
 			tailMotionSide = 0;
 		}
 		
+		headPitchAverage.add(headPitchChange);
+		
+		while(headPitchAverage.size() > 10){
+			headPitchAverage.remove(0);
+		}
+		
+		
+		tailSideAverage.add(tailMotionSide);
+		
+		while(tailSideAverage.size() > 10){
+			tailSideAverage.remove(0);
+		}
+		
+		double headPitchAvg = headPitchAverage.stream().mapToDouble(a -> a).sum() / headPitchAverage.size();
+		double tailSideAvg = MathHelper.clamp(tailSideAverage.stream().mapToDouble(a -> a).sum() / tailSideAverage.size(), -3, 3);
+		
 		parser.setValue("query.body_yaw_change", bodyYawChange);
 		parser.setValue("query.head_yaw_change", headYawChange);
-		parser.setValue("query.head_pitch_change", headPitchChange);
+		parser.setValue("query.head_pitch_change", headPitchAvg);
 		parser.setValue("query.tail_motion_up", tailMotionUp * -1);
-		parser.setValue("query.tail_motion_side", tailMotionSide);
+		parser.setValue("query.tail_motion_side", tailSideAvg);
 		
 		if(handler.getEmotes().getCurrentEmote() != null) {
 			EntityPredicate predicate = new EntityPredicate().range(lookDistance).allowSameTeam().allowInvulnerable().allowNonAttackable().selector(player::canSee);
@@ -139,11 +164,17 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 		parser.setValue("query.look_at_yaw", lookYaw);
 		parser.setValue("query.look_at_pitch", lookPitch);
 	}
+	
 	private double lookSpeed = 0.05;
 	private double lookDistance = 10;
 	private double lookYaw = 0;
 	private double lookPitch = 0;
 	
+	private ArrayList<Double> headPitchAverage = new ArrayList<>();
+	private ArrayList<Double> tailSideAverage = new ArrayList<>();
+	
+	
+	private double tailMotionMax = 0.0;
 	private double tailMotionSide;
 	private double tailMotionUp;
 	private boolean tailSwingDir = false;

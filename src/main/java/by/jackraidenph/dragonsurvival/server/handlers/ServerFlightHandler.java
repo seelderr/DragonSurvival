@@ -59,6 +59,7 @@ public class ServerFlightHandler {
 		            event.setCanceled(true);
 					return;
 	            }
+				
 	
 	            EffectInstance effectinstance = livingEntity.getEffect(Effects.JUMP);
 	            float f = effectinstance == null ? 0.0F : (float)(effectinstance.getAmplifier() + 1);
@@ -66,7 +67,9 @@ public class ServerFlightHandler {
 	            double damage = livingEntity.getDeltaMovement().lengthSqr() * (dragonStateHandler.getSize() / 20);
 	            damage = MathHelper.clamp(damage, 0, livingEntity.getHealth() - (ConfigHandler.SERVER.lethalFlight.get() ? 0 : 1));
 				
-	            event.setDistance((float)Math.floor(((damage + 3.0F + f) / event.getDamageMultiplier())));
+				if(!livingEntity.level.isClientSide && dragonStateHandler.isWingsSpread()) {
+					event.setDistance((float)Math.floor(((damage + 3.0F + f) / event.getDamageMultiplier())));
+				}
 				
 				if(!livingEntity.level.isClientSide) {
 					if (ConfigHandler.SERVER.foldWingsOnLand.get()) {
@@ -88,8 +91,8 @@ public class ServerFlightHandler {
 		
 		DragonStateHandler dragonStateHandler = DragonStateProvider.getCap(player).orElse(null);
 		if(dragonStateHandler != null){
-			if(dragonStateHandler.hasFlown && (player.isOnGround() || player.isInWater() || player.isInLava())){
-				if(dragonStateHandler.isWingsSpread()) {
+			if(dragonStateHandler.hasFlown && player.isOnGround()){
+				if(dragonStateHandler.isWingsSpread() && player.isCreative()) {
 					dragonStateHandler.hasFlown = false;
 					dragonStateHandler.setWingsSpread(false);
                     NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncFlyingStatus(player.getId(), false));

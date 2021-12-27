@@ -46,20 +46,18 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
     
     @Override
     public void registerControllers(AnimationData animationData) {
-        animationData.addAnimationController(tailController);
         animationData.addAnimationController(emoteController);
         animationData.addAnimationController(dragonAnimationController);
         animationData.addAnimationController(biteAnimationController);
+        animationData.addAnimationController(tailController);
         //animationData.addAnimationController(headController);
     }
     
     CustomTickAnimationController tailController = new CustomTickAnimationController(this, "5", 10, this::tailPredicate);
+    CustomTickAnimationController headController = new CustomTickAnimationController(this, "4", 10, this::headPredicate);
+    CustomTickAnimationController emoteController = new CustomTickAnimationController(this, "2", 2, this::emotePredicate);
     CustomTickAnimationController biteAnimationController = new CustomTickAnimationController(this, "4", 2, this::bitePredicate);
-    
-    CustomTickAnimationController emoteController = new CustomTickAnimationController(this, "3", 2, this::emotePredicate);
-    CustomTickAnimationController dragonAnimationController = new CustomTickAnimationController(this, "2", 2, this::predicate);
-    
-    //CustomTickAnimationController headController = new CustomTickAnimationController(this, "4", 10, this::headPredicate);
+    CustomTickAnimationController dragonAnimationController = new CustomTickAnimationController(this, "3", 2, this::predicate);
     
     
     private <E extends IAnimatable> PlayState tailPredicate(AnimationEvent<E> animationEvent) {
@@ -67,6 +65,8 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
             animationEvent.getController().setAnimation(new AnimationBuilder().addAnimation("tail_turn", true));
             return PlayState.CONTINUE;
         }else{
+            animationEvent.getController().setAnimation(null);
+            animationEvent.getController().clearAnimationCache();
             return PlayState.STOP;
         }
     }
@@ -76,6 +76,8 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
             animationEvent.getController().setAnimation(new AnimationBuilder().addAnimation("bottom_turn", true));
             return PlayState.CONTINUE;
         }else{
+            animationEvent.getController().setAnimation(null);
+            animationEvent.getController().clearAnimationCache();
             return PlayState.STOP;
         }
     }
@@ -154,6 +156,8 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
         dragonAnimationController.speed = 1;
         
         if (player == null || playerStateHandler == null || emoteController.getAnimationState() != AnimationState.Stopped) {
+            animationEvent.getController().setAnimation(null);
+            animationEvent.getController().clearAnimationCache();
             return PlayState.STOP;
         }
     

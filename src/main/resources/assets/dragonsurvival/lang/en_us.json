@@ -1,4 +1,13 @@
 {
+  "entity.dragonsurvival.magical_predator_entity": "Magical Predator",
+  "entity.dragonsurvival.hunter_hound": "Knight Hound",
+  "entity.dragonsurvival.shooter": "Hunter",
+  "entity.dragonsurvival.knight": "Armored Knight",
+  "entity.dragonsurvival.squire": "Squire",
+  "entity.dragonsurvival.princess_entity": "Princess",
+  "entity.dragonsurvival.princess": "Princess on horse",
+  "entity.dragonsurvival.prince": "Prince",
+
   "itemGroup.dragon.survival.blocks": "Dragons Survival",
 
   "item.dragonsurvival.magical_predator_entity_spawn_egg": "Magical Predator Spawn Egg",
@@ -100,6 +109,7 @@
   "effect.dragonsurvival.wings_sea": "Sea Wings",
 
   "death.attack.starDrain": "%1$s had their life and energy drained by magic.",
+  "death.attack.starDrain.player": "%1$s had their life and energy drained by magic while trying to escape %2$s.",
   "death.attack.waterBurn": "%1$s tried to swim in water.",
   "death.attack.waterBurn.player": "%1$s tried to swim in water to escape %2$s.",
   "death.attack.dehydration": "%1$s dried out.",

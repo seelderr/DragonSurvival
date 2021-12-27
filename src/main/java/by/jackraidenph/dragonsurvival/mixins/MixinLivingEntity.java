@@ -27,6 +27,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.ArrayList;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 @Mixin(LivingEntity.class)
@@ -61,7 +62,13 @@ public abstract class MixinLivingEntity extends Entity{
 		} else if (slotType == EquipmentSlotType.OFFHAND) {
 			return entity.getOffhandItem();
 		} else {
-			return slotType.getType() == EquipmentSlotType.Group.ARMOR ? new ArrayList<ItemStack>(StreamSupport.stream(entity.getArmorSlots().spliterator(), false).collect(Collectors.toList())).get(slotType.getIndex()) : ItemStack.EMPTY;
+			if(slotType.getType() == EquipmentSlotType.Group.ARMOR && entity.getArmorSlots() != null && entity.getArmorSlots().spliterator() != null){
+				Stream<ItemStack> stream = StreamSupport.stream(entity.getArmorSlots().spliterator(), false);
+				ArrayList<ItemStack> list = new ArrayList<>(stream.collect(Collectors.toList()));
+				return list.size() < slotType.getIndex() ? ItemStack.EMPTY : list.get(slotType.getIndex());
+			}else{
+				return ItemStack.EMPTY;
+			}
 		}
 	}
 	

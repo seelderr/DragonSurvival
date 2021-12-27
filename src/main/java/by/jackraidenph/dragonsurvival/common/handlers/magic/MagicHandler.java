@@ -4,6 +4,7 @@ import by.jackraidenph.dragonsurvival.client.particles.DSParticles;
 import by.jackraidenph.dragonsurvival.common.DragonEffects;
 import by.jackraidenph.dragonsurvival.common.capability.Capabilities;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.GenericCapability;
 import by.jackraidenph.dragonsurvival.common.magic.DragonAbilities;
 import by.jackraidenph.dragonsurvival.common.magic.abilities.Actives.BreathAbilities.BreathAbility.BreathDamage;
 import by.jackraidenph.dragonsurvival.common.magic.abilities.Actives.BreathAbilities.StormBreathAbility;
@@ -28,7 +29,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.IndirectEntityDamageSource;
 import net.minecraft.util.math.MathHelper;
@@ -169,7 +169,7 @@ public class MagicHandler
 			});
 		}
 	}
-	
+
 	@SubscribeEvent
 	public static void livingTick(LivingUpdateEvent event){
 		LivingEntity entity = event.getEntityLiving();
@@ -186,7 +186,9 @@ public class MagicHandler
 			
 			if(type != DragonType.FOREST){
 				if (entity.tickCount % 20 == 0) {
-					entity.hurt(DamageSource.MAGIC, 1.0F);
+					GenericCapability cap = Capabilities.getGenericCapability(entity).orElse(null);
+					PlayerEntity player = cap != null && cap.lastAfflicted != -1 && entity.level.getEntity(cap.lastAfflicted) instanceof PlayerEntity ? ((PlayerEntity)entity.level.getEntity(cap.lastAfflicted)) : null;
+					entity.hurt(new EntityDamageSource("magic", player).bypassArmor().setMagic(), 1.0F);
 				}
 			}
 		}
@@ -194,10 +196,17 @@ public class MagicHandler
 		if(entity.hasEffect(DragonEffects.CHARGED)){
 			if (entity.tickCount % 20 == 0) {
 				DragonType type = DragonStateProvider.getCap(entity).map(cap -> cap.getType()).orElse(null);
-				
+				GenericCapability cap = Capabilities.getGenericCapability(entity).orElse(null);
+				PlayerEntity player = cap != null && cap.lastAfflicted != -1 && entity.level.getEntity(cap.lastAfflicted) instanceof PlayerEntity ? ((PlayerEntity)entity.level.getEntity(cap.lastAfflicted)) : null;
 				if (type != DragonType.SEA) {
-					StormBreathAbility.chargedEffectSparkle(entity, 6, 2, 1);
+					StormBreathAbility.chargedEffectSparkle(player, entity, 6, 2, 1);
 				}
+			}
+		}else{
+			GenericCapability cap = Capabilities.getGenericCapability(entity).orElse(null);
+			
+			if(cap != null && cap.lastAfflicted != -1){
+				cap.lastAfflicted = -1;
 			}
 		}
 		
@@ -214,8 +223,8 @@ public class MagicHandler
 								if(!entity.isOnFire()){
 									entity.setRemainingFireTicks(1);
 								}
-								
-								entity.hurt(DamageSource.ON_FIRE, damage);
+								PlayerEntity player = cap != null && cap.lastAfflicted != -1 && entity.level.getEntity(cap.lastAfflicted) instanceof PlayerEntity ? ((PlayerEntity)entity.level.getEntity(cap.lastAfflicted)) : null;
+								entity.hurt(new EntityDamageSource("onFire", player).bypassArmor().setIsFire(), damage);
 							}
 						}
 					}
@@ -303,12 +312,15 @@ public class MagicHandler
 							boolean hit = player.level.random.nextInt(100) < burnAbility.getChance();
 							
 							if (hit) {
+								GenericCapability cap1 = Capabilities.getGenericCapability(event.getEntity()).orElse(null);
+								
+								if(cap1 != null){
+									cap1.lastAfflicted = player.getId();
+								}
 								((LivingEntity)event.getEntity()).addEffect(new EffectInstance(DragonEffects.BURN, Functions.secondsToTicks(30)));
 							}
 						}
-						
 					});
-					
 				}
 			}
 			}

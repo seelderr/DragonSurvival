@@ -6,6 +6,8 @@ import by.jackraidenph.dragonsurvival.client.particles.ForestDragon.SmallPoisonP
 import by.jackraidenph.dragonsurvival.client.sounds.PoisonBreathSound;
 import by.jackraidenph.dragonsurvival.client.sounds.SoundRegistry;
 import by.jackraidenph.dragonsurvival.common.DragonEffects;
+import by.jackraidenph.dragonsurvival.common.capability.Capabilities;
+import by.jackraidenph.dragonsurvival.common.capability.GenericCapability;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import by.jackraidenph.dragonsurvival.util.Functions;
@@ -189,6 +191,10 @@ public class ForestBreathAbility extends BreathAbility
 		
 		if(!entityHit.level.isClientSide) {
 			if (entityHit.level.random.nextInt(100) < 30) {
+				GenericCapability cap = Capabilities.getGenericCapability(entityHit).orElse(null);
+				if(cap != null){
+					cap.lastAfflicted = player != null ? player.getId() : -1;
+				}
 				entityHit.addEffect(new EffectInstance(DragonEffects.DRAIN, Functions.secondsToTicks(10), 0, false, true));
 			}
 		}
