@@ -15,10 +15,7 @@ import net.minecraft.entity.ILivingEntityData;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.brain.Brain;
-import net.minecraft.entity.ai.goal.AvoidEntityGoal;
-import net.minecraft.entity.ai.goal.LookAtGoal;
-import net.minecraft.entity.ai.goal.PanicGoal;
-import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
+import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.merchant.villager.VillagerData;
@@ -170,6 +167,7 @@ public class PrincesHorseEntity extends VillagerEntity implements IAnimatable, C
     }
 
     protected void registerGoals() {
+        this.goalSelector.addGoal(0, new SwimGoal(this));
         this.goalSelector.addGoal(5, new WaterAvoidingRandomWalkingGoal(this, 1) {
             public boolean canUse() {
                 return (!PrincesHorseEntity.this.isTrading() && super.canUse());

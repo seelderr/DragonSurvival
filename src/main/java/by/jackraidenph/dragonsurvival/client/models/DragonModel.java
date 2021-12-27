@@ -118,11 +118,11 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 		double tailSideAvg = MathHelper.clamp(dragonEntity.tailSideAverage.stream().mapToDouble(a -> a).sum() / dragonEntity.tailSideAverage.size(), -3, 3);
 		double tailUpAvg = MathHelper.clamp(dragonEntity.tailUpAverage.stream().mapToDouble(a -> a).sum() / dragonEntity.tailUpAverage.size(), -3, 2);
 		
-		double query_body_yaw_change = MathHelper.degreesDifference((float)bodyYawAvg, (float)dragonEntity.body_yaw_change) > 30 ? MathHelper.lerp(0.1, dragonEntity.body_yaw_change, bodyYawAvg) : bodyYawAvg;
-		double query_head_yaw_change = MathHelper.degreesDifference((float)headYawAvg, (float)dragonEntity.head_yaw_change) > 30 ? MathHelper.lerp(0.1, dragonEntity.head_yaw_change, headYawAvg) : headYawAvg;
-		double query_head_pitch_change = MathHelper.degreesDifference((float)headPitchAvg, (float)dragonEntity.head_pitch_change) > 30 ? MathHelper.lerp(0.1, dragonEntity.head_pitch_change, headPitchAvg) : headPitchAvg;
-		double query_tail_motion_up = MathHelper.degreesDifference((float)tailUpAvg, (float)dragonEntity.tail_motion_up) > 30 ? MathHelper.lerp(0.1, dragonEntity.tail_motion_up, tailUpAvg) : tailUpAvg;
-		double query_tail_motion_side = MathHelper.degreesDifference((float)tailSideAvg, (float)dragonEntity.tail_motion_side) > 30 ? MathHelper.lerp(0.1, dragonEntity.tail_motion_side, tailSideAvg) : tailSideAvg;
+		double query_body_yaw_change = Math.abs(MathHelper.degreesDifference((float)bodyYawAvg, (float)dragonEntity.body_yaw_change)) > 0.3 ? MathHelper.lerp(0.1, dragonEntity.body_yaw_change, bodyYawAvg) : bodyYawAvg;
+		double query_head_yaw_change = Math.abs(MathHelper.degreesDifference((float)headYawAvg, (float)dragonEntity.head_yaw_change)) > 0.3 ? MathHelper.lerp(0.1, dragonEntity.head_yaw_change, headYawAvg) : headYawAvg;
+		double query_head_pitch_change = Math.abs(MathHelper.degreesDifference((float)headPitchAvg, (float)dragonEntity.head_pitch_change)) > 0.3 ? MathHelper.lerp(0.1, dragonEntity.head_pitch_change, headPitchAvg) : headPitchAvg;
+		double query_tail_motion_up = Math.abs(MathHelper.degreesDifference((float)tailUpAvg, (float)dragonEntity.tail_motion_up)) > 0.3 ? MathHelper.lerp(0.1, dragonEntity.tail_motion_up, tailUpAvg) : tailUpAvg;
+		double query_tail_motion_side = Math.abs(MathHelper.degreesDifference((float)tailSideAvg, (float)dragonEntity.tail_motion_side)) > 0.3 ? MathHelper.lerp(0.1, dragonEntity.tail_motion_side, tailSideAvg) : tailSideAvg;
 		
 		parser.setValue("query.body_yaw_change", query_body_yaw_change);
 		parser.setValue("query.head_yaw_change", query_head_yaw_change);
@@ -182,8 +182,8 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 			if(Math.abs(dragonEntity.lookPitch) < 0.1) dragonEntity.lookPitch = 0;
 		}
 		
-		double query_look_at_yaw = MathHelper.degreesDifference((float)dragonEntity.lookYaw, (float)dragonEntity.look_at_yaw) > 30 ? MathHelper.lerp(0.1, dragonEntity.look_at_yaw, dragonEntity.lookYaw) : dragonEntity.lookYaw;
-		double query_look_at_pitch = MathHelper.degreesDifference((float)dragonEntity.lookPitch, (float)dragonEntity.look_at_pitch) > 30 ? MathHelper.lerp(0.1, dragonEntity.look_at_pitch, dragonEntity.lookPitch) : dragonEntity.lookPitch;
+		double query_look_at_yaw = Math.abs(MathHelper.degreesDifference((float)dragonEntity.lookYaw, (float)dragonEntity.look_at_yaw)) > 0.3 ? MathHelper.lerp(0.1, dragonEntity.look_at_yaw, dragonEntity.lookYaw) : dragonEntity.lookYaw;
+		double query_look_at_pitch = Math.abs(MathHelper.degreesDifference((float)dragonEntity.lookPitch, (float)dragonEntity.look_at_pitch)) > 0.3 ? MathHelper.lerp(0.1, dragonEntity.look_at_pitch, dragonEntity.lookPitch) : dragonEntity.lookPitch;
 		
 		parser.setValue("query.look_at_yaw", query_look_at_yaw);
 		parser.setValue("query.look_at_pitch", query_look_at_pitch);

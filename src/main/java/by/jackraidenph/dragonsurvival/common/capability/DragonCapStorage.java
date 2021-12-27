@@ -17,9 +17,9 @@ public class DragonCapStorage implements Capability.IStorage<DragonStateHandler>
     
         if (instance.isDragon()) {
             DragonStateHandler.DragonMovementData movementData = instance.getMovementData();
-            tag.putDouble("bodyYaw", movementData.bodyYaw);
-            tag.putDouble("headYaw", movementData.headYaw);
-            tag.putDouble("headPitch", movementData.headPitch);
+//            tag.putDouble("bodyYaw", movementData.bodyYaw);
+//            tag.putDouble("headYaw", movementData.headYaw);
+//            tag.putDouble("headPitch", movementData.headPitch);
     
             tag.putInt("spinCooldown", movementData.spinCooldown);
             tag.putInt("spinAttack", movementData.spinAttack);
@@ -66,7 +66,7 @@ public class DragonCapStorage implements Capability.IStorage<DragonStateHandler>
         	instance.setType(DragonType.valueOf(tag.getString("type")));
         
         if (instance.isDragon()) {
-            instance.setMovementData(tag.getDouble("bodyYaw"), tag.getDouble("headYaw"), tag.getDouble("headPitch"), tag.getBoolean("bite"));
+//            instance.setMovementData(tag.getDouble("bodyYaw"), tag.getDouble("headYaw"), tag.getDouble("headPitch"), tag.getBoolean("bite"));
     
             instance.setHasWings(tag.getBoolean("hasWings"));
             instance.setWingsSpread(tag.getBoolean("isFlying"));

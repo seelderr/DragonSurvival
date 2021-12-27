@@ -110,7 +110,7 @@ public class ManaHandler
 					break;
 				
 				case CAVE:
-					if (player.isInLava() || blockBelow.getMaterial() == Material.LAVA || blockBelow.getMaterial() == Material.FIRE || player.isOnFire()
+					if (player.isInLava() || feetBlock.getMaterial() == Material.LAVA || blockBelow.getMaterial() == Material.LAVA || feetBlock.getMaterial() == Material.FIRE ||  blockBelow.getMaterial() == Material.FIRE || player.isOnFire()
 					    || blockBelow.getBlock() == Blocks.CAMPFIRE || blockBelow.getBlock() == Blocks.SOUL_CAMPFIRE || blockBelow.getBlock() == Blocks.BLAST_FURNACE
 						|| blockBelow.getBlock() == Blocks.SMOKER || blockBelow.getBlock() == Blocks.FURNACE || blockBelow.getBlock() == Blocks.MAGMA_BLOCK
 						|| player.hasEffect(DragonEffects.BURN) || player.hasEffect(DragonEffects.FIRE)) {
