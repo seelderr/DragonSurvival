@@ -69,21 +69,14 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 		ModifiableAttributeInstance gravity = player.getAttribute(net.minecraftforge.common.ForgeMod.ENTITY_GRAVITY.get());
 		double g = gravity.getValue();
 		
-		if(Math.abs(bodyYawChange) <= 0.5){
-			//tailSwingDir
-			tailSwing += 0.003 * (tailSwingDir ? 1 : -1);
-			
-			if(tailSwing >= 0.4 && tailSwingDir){
-				tailSwingDir = false;
-			}else if(tailSwing <= -0.4 && !tailSwingDir){
-				tailSwingDir = true;
-			}
-		}else{
-			tailSwing = MathHelper.lerp(0.1, tailSwing, 0);
-			tailSwingDir = bodyYawChange < 0;
+		tailSwing += 0.003 * (tailSwingDir ? 1 : -1);
+		if(tailSwing >= 0.4 && tailSwingDir){
+			tailSwingDir = false;
+		}else if(tailSwing <= -0.4 && !tailSwingDir){
+			tailSwingDir = true;
 		}
 		
-		tailMotionMax = Math.max(0,MathHelper.lerp(0.1, tailMotionMax, 0));
+		tailMotionMax = Math.max(0, MathHelper.lerp(0.1, tailMotionMax, 0));
 		
 		if(Math.abs(bodyYawChange) > tailMotionMax){
 			tailMotionMax += Math.abs(bodyYawChange);
@@ -91,34 +84,39 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 		
 		double tailMultiplier = MathHelper.clamp(tailMotionMax, 0, 5);
 		
-		tailMotionUp = MathHelper.lerp(0.1, tailMotionUp, ServerFlightHandler.isFlying(player) ? 0 : (player.getDeltaMovement().y + g));
-		tailMotionSide = MathHelper.clamp(MathHelper.lerp(0.1, tailMotionSide, (bodyYawChange / tailMultiplier) + tailSwing), -3, 3);
+		tailMotionUp = MathHelper.lerp(0.25, tailMotionUp, ServerFlightHandler.isFlying(player) ? 0 : (player.getDeltaMovement().y + g) * 1.5);
+		tailMotionSide = MathHelper.lerp(0.1, tailMotionSide, (bodyYawChange / tailMultiplier) + tailSwing);
 		
 		if(((DragonEntity)animatable).tailLocked){
 			tailMotionUp = 0;
 			tailMotionSide = 0;
 		}
 		
+		bodyYawAverage.add(bodyYawChange);
+		while(bodyYawAverage.size() > 10) bodyYawAverage.remove(0);
+		
+		headYawAverage.add(headYawChange);
+		while(headYawAverage.size() > 10) headYawAverage.remove(0);
+		
 		headPitchAverage.add(headPitchChange);
-		
-		while(headPitchAverage.size() > 10){
-			headPitchAverage.remove(0);
-		}
-		
+		while(headPitchAverage.size() > 10) headPitchAverage.remove(0);
 		
 		tailSideAverage.add(tailMotionSide);
+		while(tailSideAverage.size() > 10) tailSideAverage.remove(0);
 		
-		while(tailSideAverage.size() > 10){
-			tailSideAverage.remove(0);
-		}
+		tailUpAverage.add(tailMotionUp * -1);
+		while(tailUpAverage.size() > 10) tailUpAverage.remove(0);
 		
+		double bodyYawAvg = bodyYawAverage.stream().mapToDouble(a -> a).sum() / bodyYawAverage.size();
+		double headYawAvg = headYawAverage.stream().mapToDouble(a -> a).sum() / headYawAverage.size();
 		double headPitchAvg = headPitchAverage.stream().mapToDouble(a -> a).sum() / headPitchAverage.size();
 		double tailSideAvg = MathHelper.clamp(tailSideAverage.stream().mapToDouble(a -> a).sum() / tailSideAverage.size(), -3, 3);
+		double tailUpAvg = MathHelper.clamp(tailUpAverage.stream().mapToDouble(a -> a).sum() / tailUpAverage.size(), -3, 2);
 		
-		parser.setValue("query.body_yaw_change", bodyYawChange);
-		parser.setValue("query.head_yaw_change", headYawChange);
+		parser.setValue("query.body_yaw_change", bodyYawAvg);
+		parser.setValue("query.head_yaw_change", headYawAvg);
 		parser.setValue("query.head_pitch_change", headPitchAvg);
-		parser.setValue("query.tail_motion_up", tailMotionUp * -1);
+		parser.setValue("query.tail_motion_up", tailUpAvg);
 		parser.setValue("query.tail_motion_side", tailSideAvg);
 		
 		if(handler.getEmotes().getCurrentEmote() != null) {
@@ -170,9 +168,11 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 	private double lookYaw = 0;
 	private double lookPitch = 0;
 	
+	private ArrayList<Double> bodyYawAverage = new ArrayList<>();
+	private ArrayList<Double> headYawAverage = new ArrayList<>();
 	private ArrayList<Double> headPitchAverage = new ArrayList<>();
 	private ArrayList<Double> tailSideAverage = new ArrayList<>();
-	
+	private ArrayList<Double> tailUpAverage = new ArrayList<>();
 	
 	private double tailMotionMax = 0.0;
 	private double tailMotionSide;

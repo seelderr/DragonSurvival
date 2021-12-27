@@ -62,10 +62,10 @@ public abstract class MixinLivingEntity extends Entity{
 		} else if (slotType == EquipmentSlotType.OFFHAND) {
 			return entity.getOffhandItem();
 		} else {
-			if(slotType.getType() == EquipmentSlotType.Group.ARMOR && entity.getArmorSlots() != null && entity.getArmorSlots().spliterator() != null){
+			if(slotType.getType() == EquipmentSlotType.Group.ARMOR && entity.getArmorSlots() != null && entity.getArmorSlots().iterator().hasNext() && entity.getArmorSlots().spliterator() != null){
 				Stream<ItemStack> stream = StreamSupport.stream(entity.getArmorSlots().spliterator(), false);
 				ArrayList<ItemStack> list = new ArrayList<>(stream.collect(Collectors.toList()));
-				return list.size() < slotType.getIndex() ? ItemStack.EMPTY : list.get(slotType.getIndex());
+				return list.size() > slotType.getIndex() ? list.get(slotType.getIndex()) : ItemStack.EMPTY;
 			}else{
 				return ItemStack.EMPTY;
 			}
