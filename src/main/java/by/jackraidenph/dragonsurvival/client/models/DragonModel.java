@@ -5,7 +5,6 @@ import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.entity.DragonEntity;
 import by.jackraidenph.dragonsurvival.server.handlers.ServerFlightHandler;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPredicate;
 import net.minecraft.entity.LivingEntity;
@@ -20,8 +19,6 @@ import software.bernie.geckolib3.core.processor.IBone;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.resource.GeckoLibCache;
 import software.bernie.shadowed.eliotlash.molang.MolangParser;
-
-import java.util.ArrayList;
 
 public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 
@@ -46,13 +43,21 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 		return new ResourceLocation(DragonSurvivalMod.MODID, "animations/dragon.animations.json");
 	}
 	
+	private final double lookSpeed = 0.05;
+	private final double lookDistance = 10;
+	
 	@Override
 	public void setMolangQueries(IAnimatable animatable, double currentTick)
 	{
 		super.setMolangQueries(animatable, currentTick);
+		if(!(animatable instanceof DragonEntity))return;
+		
+		DragonEntity dragonEntity = (DragonEntity)animatable;
 		MolangParser parser = GeckoLibCache.getInstance().parser;
-		Minecraft minecraftInstance = Minecraft.getInstance();
-		PlayerEntity player = minecraftInstance.player;
+		PlayerEntity player = dragonEntity.getPlayer();
+		
+		if(player == null) return;
+		
 		DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
 		
 		float headRot = player.yRot != 0.0 ? player.yRot : player.yHeadRot;
@@ -69,49 +74,49 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 		ModifiableAttributeInstance gravity = player.getAttribute(net.minecraftforge.common.ForgeMod.ENTITY_GRAVITY.get());
 		double g = gravity.getValue();
 		
-		tailSwing += 0.003 * (tailSwingDir ? 1 : -1);
-		if(tailSwing >= 0.4 && tailSwingDir){
-			tailSwingDir = false;
-		}else if(tailSwing <= -0.4 && !tailSwingDir){
-			tailSwingDir = true;
+		dragonEntity.tailSwing += 0.003 * (dragonEntity.tailSwingDir ? 1 : -1);
+		if(dragonEntity.tailSwing >= 0.4 && dragonEntity.tailSwingDir){
+			dragonEntity.tailSwingDir = false;
+		}else if(dragonEntity.tailSwing <= -0.4 && !dragonEntity.tailSwingDir){
+			dragonEntity.tailSwingDir = true;
 		}
 		
-		tailMotionMax = Math.max(0, MathHelper.lerp(0.1, tailMotionMax, 0));
+		dragonEntity.tailMotionMax = Math.max(0, MathHelper.lerp(0.1, dragonEntity.tailMotionMax, 0));
 		
-		if(Math.abs(bodyYawChange) > tailMotionMax){
-			tailMotionMax += Math.abs(bodyYawChange);
+		if(Math.abs(bodyYawChange) > dragonEntity.tailMotionMax){
+			dragonEntity.tailMotionMax += Math.abs(bodyYawChange);
 		}
 		
-		double tailMultiplier = MathHelper.clamp(tailMotionMax, 0, 5);
+		double tailMultiplier = MathHelper.clamp(dragonEntity.tailMotionMax, 0, 4);
 		
-		tailMotionUp = MathHelper.lerp(0.25, tailMotionUp, ServerFlightHandler.isFlying(player) ? 0 : (player.getDeltaMovement().y + g) * 1.5);
-		tailMotionSide = MathHelper.lerp(0.1, tailMotionSide, (bodyYawChange / tailMultiplier) + tailSwing);
+		dragonEntity.tailMotionUp = MathHelper.lerp(0.25, dragonEntity.tailMotionUp, ServerFlightHandler.isFlying(player) ? 0 : (player.getDeltaMovement().y + g) * 1.5);
+		dragonEntity.tailMotionSide = MathHelper.lerp(0.1, dragonEntity.tailMotionSide, (bodyYawChange / Math.max(1, tailMultiplier)) + dragonEntity.tailSwing);
 		
 		if(((DragonEntity)animatable).tailLocked){
-			tailMotionUp = 0;
-			tailMotionSide = 0;
+			dragonEntity.tailMotionUp = 0;
+			dragonEntity.tailMotionSide = 0;
 		}
 		
-		bodyYawAverage.add(bodyYawChange);
-		while(bodyYawAverage.size() > 10) bodyYawAverage.remove(0);
+		dragonEntity.bodyYawAverage.add(bodyYawChange);
+		while(dragonEntity.bodyYawAverage.size() > 10) dragonEntity.bodyYawAverage.remove(0);
 		
-		headYawAverage.add(headYawChange);
-		while(headYawAverage.size() > 10) headYawAverage.remove(0);
+		dragonEntity.headYawAverage.add(headYawChange);
+		while(dragonEntity.headYawAverage.size() > 10) dragonEntity.headYawAverage.remove(0);
 		
-		headPitchAverage.add(headPitchChange);
-		while(headPitchAverage.size() > 10) headPitchAverage.remove(0);
+		dragonEntity.headPitchAverage.add(headPitchChange);
+		while(dragonEntity.headPitchAverage.size() > 10) dragonEntity.headPitchAverage.remove(0);
 		
-		tailSideAverage.add(tailMotionSide);
-		while(tailSideAverage.size() > 10) tailSideAverage.remove(0);
+		dragonEntity.tailSideAverage.add(dragonEntity.tailMotionSide);
+		while(dragonEntity.tailSideAverage.size() > 10) dragonEntity.tailSideAverage.remove(0);
 		
-		tailUpAverage.add(tailMotionUp * -1);
-		while(tailUpAverage.size() > 10) tailUpAverage.remove(0);
+		dragonEntity.tailUpAverage.add(dragonEntity.tailMotionUp * -1);
+		while(dragonEntity.tailUpAverage.size() > 10) dragonEntity.tailUpAverage.remove(0);
 		
-		double bodyYawAvg = bodyYawAverage.stream().mapToDouble(a -> a).sum() / bodyYawAverage.size();
-		double headYawAvg = headYawAverage.stream().mapToDouble(a -> a).sum() / headYawAverage.size();
-		double headPitchAvg = headPitchAverage.stream().mapToDouble(a -> a).sum() / headPitchAverage.size();
-		double tailSideAvg = MathHelper.clamp(tailSideAverage.stream().mapToDouble(a -> a).sum() / tailSideAverage.size(), -3, 3);
-		double tailUpAvg = MathHelper.clamp(tailUpAverage.stream().mapToDouble(a -> a).sum() / tailUpAverage.size(), -3, 2);
+		double bodyYawAvg = dragonEntity.bodyYawAverage.stream().mapToDouble(a -> a).sum() / dragonEntity.bodyYawAverage.size();
+		double headYawAvg = dragonEntity.headYawAverage.stream().mapToDouble(a -> a).sum() / dragonEntity.headYawAverage.size();
+		double headPitchAvg = dragonEntity.headPitchAverage.stream().mapToDouble(a -> a).sum() / dragonEntity.headPitchAverage.size();
+		double tailSideAvg = MathHelper.clamp(dragonEntity.tailSideAverage.stream().mapToDouble(a -> a).sum() / dragonEntity.tailSideAverage.size(), -3, 3);
+		double tailUpAvg = MathHelper.clamp(dragonEntity.tailUpAverage.stream().mapToDouble(a -> a).sum() / dragonEntity.tailUpAverage.size(), -3, 2);
 		
 		parser.setValue("query.body_yaw_change", bodyYawAvg);
 		parser.setValue("query.head_yaw_change", headYawAvg);
@@ -146,39 +151,28 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 					double yawDif = Math.abs(MathHelper.degreesDifference((float)yRotD, (float)bodyRot));
 					
 					if (yawDif <= 90 && Math.abs(xRotD) <= 30) {
-						lookYaw = MathHelper.lerp(lookSpeed, lookYaw, MathHelper.wrapDegrees(-bodyRot + yRotD));
-						lookPitch = MathHelper.lerp(lookSpeed, lookPitch, xRotD);
-					} else {
-						lookYaw = MathHelper.lerp(lookSpeed, lookYaw, 0);
-						lookPitch = MathHelper.lerp(lookSpeed, lookPitch, 0);
+						dragonEntity.lookYaw = MathHelper.lerp(lookSpeed, dragonEntity.lookYaw, MathHelper.wrapDegrees(-bodyRot + yRotD));
+						dragonEntity.lookPitch = MathHelper.lerp(lookSpeed, dragonEntity.lookPitch, xRotD);
+					}  else {
+						dragonEntity.lookYaw = Math.round(MathHelper.lerp(lookSpeed, dragonEntity.lookYaw, 0)*100.0)/100.0;
+						dragonEntity.lookPitch = Math.round(MathHelper.lerp(lookSpeed, dragonEntity.lookPitch, 0)*100.0)/100.0;
+						
+						if(Math.abs(dragonEntity.lookYaw) < 0.1) dragonEntity.lookYaw = 0;
+						if(Math.abs(dragonEntity.lookPitch) < 0.1) dragonEntity.lookPitch = 0;
 					}
 				}
 			}
 		} else {
-			lookYaw = MathHelper.lerp(lookSpeed, lookYaw, 0);
-			lookPitch = MathHelper.lerp(lookSpeed, lookPitch, 0);
+			dragonEntity.lookYaw = Math.round(MathHelper.lerp(lookSpeed, dragonEntity.lookYaw, 0)*100.0)/100.0;
+			dragonEntity.lookPitch = Math.round(MathHelper.lerp(lookSpeed, dragonEntity.lookPitch, 0)*100.0)/100.0;
+			
+			if(Math.abs(dragonEntity.lookYaw) < 0.1) dragonEntity.lookYaw = 0;
+			if(Math.abs(dragonEntity.lookPitch) < 0.1) dragonEntity.lookPitch = 0;
 		}
 		
-		parser.setValue("query.look_at_yaw", lookYaw);
-		parser.setValue("query.look_at_pitch", lookPitch);
+		parser.setValue("query.look_at_yaw", dragonEntity.lookYaw);
+		parser.setValue("query.look_at_pitch", dragonEntity.lookPitch);
 	}
-	
-	private double lookSpeed = 0.05;
-	private double lookDistance = 10;
-	private double lookYaw = 0;
-	private double lookPitch = 0;
-	
-	private ArrayList<Double> bodyYawAverage = new ArrayList<>();
-	private ArrayList<Double> headYawAverage = new ArrayList<>();
-	private ArrayList<Double> headPitchAverage = new ArrayList<>();
-	private ArrayList<Double> tailSideAverage = new ArrayList<>();
-	private ArrayList<Double> tailUpAverage = new ArrayList<>();
-	
-	private double tailMotionMax = 0.0;
-	private double tailMotionSide;
-	private double tailMotionUp;
-	private boolean tailSwingDir = false;
-	private double tailSwing = 0;
 	
 	@Override
 	public void setLivingAnimations(DragonEntity entity, Integer uniqueID, AnimationEvent customPredicate) {
@@ -191,7 +185,6 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 				if(entity.neckLocked){
 					return;
 				}
-				
 				/*IBone neck = this.getAnimationProcessor().getBone("Neck"); // rot(0, -22.5, 0)
 				IBone neck4 = this.getAnimationProcessor().getBone("Neck4"); // rot(0, 0, -10)
 				IBone neck3 = this.getAnimationProcessor().getBone("Neck3"); // rot(12.5, -15, 30), mov(-0.25, 0, 0)

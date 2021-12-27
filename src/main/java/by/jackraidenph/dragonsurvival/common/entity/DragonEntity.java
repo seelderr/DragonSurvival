@@ -31,6 +31,8 @@ import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
+import java.util.ArrayList;
+
 public class DragonEntity extends LivingEntity implements IAnimatable, CommonTraits
 {
     AnimationFactory animationFactory = new AnimationFactory(this);
@@ -39,6 +41,34 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
      * This reference must be updated whenever player is remade, for example, when changing dimensions
      */
     public volatile int player;
+    
+    
+    public boolean neckLocked = false;
+    public boolean tailLocked = false;
+    
+    ActiveDragonAbility lastCast = null;
+    boolean started, ended;
+    AnimationTimer animationTimer = new AnimationTimer();
+    Emote lastEmote;
+    
+    public float prevZRot;
+    public float prevXRot;
+    
+    //Molang queries
+    public double lookYaw = 0;
+    public double lookPitch = 0;
+    
+    public final ArrayList<Double> bodyYawAverage = new ArrayList<>();
+    public final ArrayList<Double> headYawAverage = new ArrayList<>();
+    public final ArrayList<Double> headPitchAverage = new ArrayList<>();
+    public final ArrayList<Double> tailSideAverage = new ArrayList<>();
+    public final ArrayList<Double> tailUpAverage = new ArrayList<>();
+    
+    public double tailMotionMax = 0.0;
+    public double tailMotionSide;
+    public double tailMotionUp;
+    public boolean tailSwingDir = false;
+    public double tailSwing = 0;
     
     public DragonEntity(EntityType<? extends LivingEntity> type, World worldIn) {
         super(type, worldIn);
@@ -135,16 +165,6 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
     public AnimationFactory getFactory() {
         return animationFactory;
     }
-    public boolean neckLocked = false;
-    public boolean tailLocked = false;
-    
-    ActiveDragonAbility lastCast = null;
-    boolean started, ended;
-    AnimationTimer animationTimer = new AnimationTimer();
-    Emote lastEmote;
-    
-    public float prevZRot;
-    public float prevXRot;
     
     private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> animationEvent) {
         final PlayerEntity player = getPlayer();

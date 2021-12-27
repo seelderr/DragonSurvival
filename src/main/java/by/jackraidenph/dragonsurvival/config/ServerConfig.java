@@ -676,6 +676,7 @@ public class ServerConfig {
 		builder.pop().push("food");
 		customDragonFoods = builder
 				.comment("Force dragons to eat a unique diet for their type.")
+				.worldRestart()
 				.define("dragonFoods", true);
 		caveDragonHurtfulItems = builder
 				.comment("Items which will cause damage to cave dragons when consumed. Formatting: item/tag:modid:itemid:damage")

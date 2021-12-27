@@ -26031,7 +26031,8 @@
 				"Head": {
 					"rotation": {
 						"0.0": ["15 + query.look_at_pitch", "query.look_at_yaw", 0],
-						"2.08": ["10 + query.look_at_pitch", "query.look_at_yaw", 0],
+						"1.32": ["10 + query.look_at_pitch", "math.abs(query.look_at_yaw) > 0.1 ? query.look_at_yaw : 30", 0],
+						"2.92": ["10 + query.look_at_pitch", "math.abs(query.look_at_yaw) > 0.1 ? query.look_at_yaw : -30", 0],
 						"4.2": ["15 + query.look_at_pitch", "query.look_at_yaw", 0]
 					},
 					"position": [0, -0.35, 0]
