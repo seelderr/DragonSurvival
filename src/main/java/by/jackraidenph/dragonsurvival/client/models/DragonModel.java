@@ -118,11 +118,23 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 		double tailSideAvg = MathHelper.clamp(dragonEntity.tailSideAverage.stream().mapToDouble(a -> a).sum() / dragonEntity.tailSideAverage.size(), -3, 3);
 		double tailUpAvg = MathHelper.clamp(dragonEntity.tailUpAverage.stream().mapToDouble(a -> a).sum() / dragonEntity.tailUpAverage.size(), -3, 2);
 		
-		parser.setValue("query.body_yaw_change", bodyYawAvg);
-		parser.setValue("query.head_yaw_change", headYawAvg);
-		parser.setValue("query.head_pitch_change", headPitchAvg);
-		parser.setValue("query.tail_motion_up", tailUpAvg);
-		parser.setValue("query.tail_motion_side", tailSideAvg);
+		double query_body_yaw_change = MathHelper.degreesDifference((float)bodyYawAvg, (float)dragonEntity.body_yaw_change) > 30 ? MathHelper.lerp(0.1, dragonEntity.body_yaw_change, bodyYawAvg) : bodyYawAvg;
+		double query_head_yaw_change = MathHelper.degreesDifference((float)headYawAvg, (float)dragonEntity.head_yaw_change) > 30 ? MathHelper.lerp(0.1, dragonEntity.head_yaw_change, headYawAvg) : headYawAvg;
+		double query_head_pitch_change = MathHelper.degreesDifference((float)headPitchAvg, (float)dragonEntity.head_pitch_change) > 30 ? MathHelper.lerp(0.1, dragonEntity.head_pitch_change, headPitchAvg) : headPitchAvg;
+		double query_tail_motion_up = MathHelper.degreesDifference((float)tailUpAvg, (float)dragonEntity.tail_motion_up) > 30 ? MathHelper.lerp(0.1, dragonEntity.tail_motion_up, tailUpAvg) : tailUpAvg;
+		double query_tail_motion_side = MathHelper.degreesDifference((float)tailSideAvg, (float)dragonEntity.tail_motion_side) > 30 ? MathHelper.lerp(0.1, dragonEntity.tail_motion_side, tailSideAvg) : tailSideAvg;
+		
+		parser.setValue("query.body_yaw_change", query_body_yaw_change);
+		parser.setValue("query.head_yaw_change", query_head_yaw_change);
+		parser.setValue("query.head_pitch_change", query_head_pitch_change);
+		parser.setValue("query.tail_motion_up", query_tail_motion_up);
+		parser.setValue("query.tail_motion_side", query_tail_motion_side);
+		
+		dragonEntity.body_yaw_change = query_body_yaw_change;
+		dragonEntity.head_yaw_change = query_head_yaw_change;
+		dragonEntity.head_pitch_change = query_head_pitch_change;
+		dragonEntity.tail_motion_up = query_tail_motion_up;
+		dragonEntity.tail_motion_side = query_tail_motion_side;
 		
 		if(handler.getEmotes().getCurrentEmote() != null) {
 			EntityPredicate predicate = new EntityPredicate().range(lookDistance).allowSameTeam().allowInvulnerable().allowNonAttackable().selector(player::canSee);
@@ -170,8 +182,14 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 			if(Math.abs(dragonEntity.lookPitch) < 0.1) dragonEntity.lookPitch = 0;
 		}
 		
-		parser.setValue("query.look_at_yaw", dragonEntity.lookYaw);
-		parser.setValue("query.look_at_pitch", dragonEntity.lookPitch);
+		double query_look_at_yaw = MathHelper.degreesDifference((float)dragonEntity.lookYaw, (float)dragonEntity.look_at_yaw) > 30 ? MathHelper.lerp(0.1, dragonEntity.look_at_yaw, dragonEntity.lookYaw) : dragonEntity.lookYaw;
+		double query_look_at_pitch = MathHelper.degreesDifference((float)dragonEntity.lookPitch, (float)dragonEntity.look_at_pitch) > 30 ? MathHelper.lerp(0.1, dragonEntity.look_at_pitch, dragonEntity.lookPitch) : dragonEntity.lookPitch;
+		
+		parser.setValue("query.look_at_yaw", query_look_at_yaw);
+		parser.setValue("query.look_at_pitch", query_look_at_pitch);
+		
+		dragonEntity.look_at_yaw = query_look_at_yaw;
+		dragonEntity.look_at_pitch = query_look_at_pitch;
 	}
 	
 	@Override

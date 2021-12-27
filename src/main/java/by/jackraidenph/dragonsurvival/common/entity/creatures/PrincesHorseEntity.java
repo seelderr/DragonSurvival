@@ -238,7 +238,7 @@ public class PrincesHorseEntity extends VillagerEntity implements IAnimatable, C
 
     @Override
     public boolean removeWhenFarAway(double distance) {
-        return tickCount >= Functions.minutesToTicks(ConfigHandler.COMMON.princessDespawnDelay.get());
+        return tickCount >= Functions.minutesToTicks(ConfigHandler.COMMON.princessDespawnDelay.get()) && !hasCustomName();
     }
 
     @Override

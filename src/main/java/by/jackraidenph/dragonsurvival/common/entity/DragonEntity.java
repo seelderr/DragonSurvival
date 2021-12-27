@@ -70,6 +70,18 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
     public boolean tailSwingDir = false;
     public double tailSwing = 0;
     
+    public double body_yaw_change = 0;
+    public double head_yaw_change = 0;
+    public double head_pitch_change = 0;
+    
+    public double tail_motion_up = 0;
+    public double tail_motion_side = 0;
+    
+    public double look_at_yaw = 0;
+    public double look_at_pitch = 0;
+
+    
+    
     public DragonEntity(EntityType<? extends LivingEntity> type, World worldIn) {
         super(type, worldIn);
     }
@@ -79,7 +91,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
         animationData.addAnimationController(emoteController);
         animationData.addAnimationController(dragonAnimationController);
         animationData.addAnimationController(biteAnimationController);
-        animationData.addAnimationController(tailController);
+        //animationData.addAnimationController(tailController);
         //animationData.addAnimationController(headController);
     }
     
