@@ -4,7 +4,7 @@ import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.util.Functions;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.client.gui.AbilityScreen;
-import by.jackraidenph.dragonsurvival.client.gui.buttons.SkillProgressButton;
+import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.SkillProgressButton;
 import by.jackraidenph.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.jackraidenph.dragonsurvival.common.blocks.DSBlocks;
 import by.jackraidenph.dragonsurvival.misc.DragonType;

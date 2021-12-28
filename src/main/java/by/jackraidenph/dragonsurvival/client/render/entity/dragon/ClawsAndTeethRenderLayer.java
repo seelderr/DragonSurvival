@@ -44,14 +44,18 @@ public class ClawsAndTeethRenderLayer extends GeoLayerRenderer<DragonEntity>
 		
 		if (clawTexture != null) {
 			ResourceLocation texture = new ResourceLocation(DragonSurvivalMod.MODID, clawTexture);
+			((DragonRenderer)renderer).isLayer = true;
 			renderToolLayer(matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, texture, renderer, getEntityModel());
+			((DragonRenderer)renderer).isLayer = false;
 		}
 		
 		String teethTexture = constructTeethTexture(entitylivingbaseIn.getPlayer());
 		
 		if (teethTexture != null) {
 			ResourceLocation texture = new ResourceLocation(DragonSurvivalMod.MODID, teethTexture);
+			((DragonRenderer)renderer).isLayer = true;
 			renderToolLayer(matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, texture, renderer, getEntityModel());
+			((DragonRenderer)renderer).isLayer = false;
 		}
 	}
 	

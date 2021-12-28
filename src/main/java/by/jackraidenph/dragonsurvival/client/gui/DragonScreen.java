@@ -6,7 +6,7 @@ import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.config.ConfigUtils;
 import by.jackraidenph.dragonsurvival.server.containers.DragonContainer;
-import by.jackraidenph.dragonsurvival.client.gui.buttons.TabButton;
+import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.TabButton;
 import by.jackraidenph.dragonsurvival.client.handlers.ClientEvents;
 import by.jackraidenph.dragonsurvival.client.handlers.KeyInputHandler;
 import by.jackraidenph.dragonsurvival.common.handlers.DragonGrowthHandler;
@@ -324,7 +324,8 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
         addButton(new TabButton(leftPos + 28, topPos - 26, 1, this));
         addButton(new TabButton(leftPos + 57, topPos - 26, 2, this));
         addButton(new TabButton(leftPos + 86, topPos - 26, 3, this));
-        
+        addButton(new TabButton(leftPos + 115, topPos - 26, 4, this));
+    
         addButton(new Button(leftPos + 27, topPos + 10, 11, 11, new StringTextComponent(""), p_onPress_1_ -> {
             clawsMenu = !clawsMenu;
             buttons.clear();

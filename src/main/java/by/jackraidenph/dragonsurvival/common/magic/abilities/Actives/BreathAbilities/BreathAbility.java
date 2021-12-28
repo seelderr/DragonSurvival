@@ -52,6 +52,10 @@ public abstract class BreathAbility extends ActiveDragonAbility implements ISeco
 	protected boolean firstUse = true;
 	public int castingTicks = 0;
 	
+	public Entity getEffectEntity(){
+		return null;
+	}
+	
 	@Override
 	public int getManaCost()
 	{

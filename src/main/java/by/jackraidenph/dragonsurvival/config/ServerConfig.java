@@ -28,7 +28,6 @@ public class ServerConfig {
 	public final ForgeConfigSpec.BooleanValue lethalFlight;
 	public final ForgeConfigSpec.IntValue flightSpinCooldown;
 	
-	
 	public final ForgeConfigSpec.IntValue altarUsageCooldown;
 	public final ForgeConfigSpec.DoubleValue newbornJump;
 	public final ForgeConfigSpec.DoubleValue youngJump;

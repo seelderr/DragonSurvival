@@ -2,7 +2,7 @@ package by.jackraidenph.dragonsurvival.client.handlers;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.client.gui.DragonScreen;
-import by.jackraidenph.dragonsurvival.client.gui.buttons.TabButton;
+import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.TabButton;
 import by.jackraidenph.dragonsurvival.client.render.CaveLavaFluidRenderer;
 import by.jackraidenph.dragonsurvival.client.render.ClientDragonRender;
 import by.jackraidenph.dragonsurvival.common.DragonEffects;
@@ -151,6 +151,16 @@ public class ClientEvents
                         this.x = screen.getGuiLeft() + 86;
                     }
                 });
+    
+                initGuiEvent.addWidget(new TabButton(screen.getGuiLeft() + 115, screen.getGuiTop() - 26, 4, screen)
+                {
+                    @Override
+                    public void renderButton(MatrixStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_)
+                    {
+                        super.renderButton(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
+                        this.x = screen.getGuiLeft() + 115;
+                    }
+                });
             }
     
             if (ConfigHandler.CLIENT.inventoryToggle.get()) {
@@ -234,6 +244,8 @@ public class ClientEvents
                         double bodyYaw = playerStateHandler.getMovementData().bodyYaw;
                         float bodyAndHeadYawDiff = (float)(bodyYaw - headRot);
                         double headPitch = MathHelper.lerp(0.1, playerStateHandler.getMovementData().headPitch, player.xRot);
+                        
+                        boolean bite = (player.attackAnim > 0 && player.getAttackStrengthScale(-3.0f) != 1);
     
                         if(!ConfigHandler.CLIENT.firstPersonRotation.get()){
                             if(Minecraft.getInstance().options.getCameraType().isFirstPerson()){
@@ -271,7 +283,7 @@ public class ClientEvents
                             if (bodyAndHeadYawDiff <= -180) {
                                 bodyYaw += 360;
                             }
-                            playerStateHandler.setMovementData(bodyYaw, headRot, headPitch, player.attackAnim > 0 && player.getAttackStrengthScale(-3.0f) != 1);
+                            playerStateHandler.setMovementData(bodyYaw, headRot, headPitch, bite);
                             NetworkHandler.CHANNEL.sendToServer(new PacketSyncCapabilityMovement(player.getId(), playerStateHandler.getMovementData().bodyYaw, playerStateHandler.getMovementData().headYaw, playerStateHandler.getMovementData().headPitch, playerStateHandler.getMovementData().bite));
                         } else if (Math.abs(bodyAndHeadYawDiff) > 180F) {
                             if (Math.abs(bodyAndHeadYawDiff) > 360F) {
@@ -282,10 +294,10 @@ public class ClientEvents
                             double newYaw = (float)bodyYaw - Math.signum(bodyAndHeadYawDiff) * turnSpeed;
                             bodyYaw = MathHelper.lerp(0.25, playerStateHandler.getMovementData().bodyYaw, newYaw);
         
-                            playerStateHandler.setMovementData(bodyYaw, headRot, headPitch, player.attackAnim > 0 && player.getAttackStrengthScale(-3.0f) != 1);
+                            playerStateHandler.setMovementData(bodyYaw, headRot, headPitch, bite);
                             NetworkHandler.CHANNEL.sendToServer(new PacketSyncCapabilityMovement(player.getId(), playerStateHandler.getMovementData().bodyYaw, playerStateHandler.getMovementData().headYaw, playerStateHandler.getMovementData().headPitch, playerStateHandler.getMovementData().bite));
-                        } else if (playerStateHandler.getMovementData().bite != (player.swinging && player.getAttackStrengthScale(-3.0f) != 1) || headRot != playerStateHandler.getMovementData().headYaw) {
-                            playerStateHandler.setMovementData(playerStateHandler.getMovementData().bodyYaw, headRot, headPitch, player.attackAnim > 0 && player.getAttackStrengthScale(-3.0f) != 1);
+                        } else if (playerStateHandler.getMovementData().bite != bite || headRot != playerStateHandler.getMovementData().headYaw) {
+                            playerStateHandler.setMovementData(playerStateHandler.getMovementData().bodyYaw, headRot, headPitch, bite);
                             NetworkHandler.CHANNEL.sendToServer(new PacketSyncCapabilityMovement(player.getId(), playerStateHandler.getMovementData().bodyYaw, playerStateHandler.getMovementData().headYaw, playerStateHandler.getMovementData().headPitch, playerStateHandler.getMovementData().bite));
                         }
                     }

@@ -6,7 +6,7 @@ import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.common.entity.DragonEntity;
 import by.jackraidenph.dragonsurvival.client.render.entity.dragon.DragonRenderer;
-import by.jackraidenph.dragonsurvival.client.gui.buttons.TabButton;
+import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.TabButton;
 import by.jackraidenph.dragonsurvival.client.render.ClientDragonRender;
 import by.jackraidenph.dragonsurvival.client.handlers.DragonSkins;
 import by.jackraidenph.dragonsurvival.client.handlers.magic.ClientMagicHUDHandler;
@@ -189,6 +189,7 @@ public class SkinsScreen extends Screen
 		addButton(new TabButton(startX + 128 + 33, startY - 26, 1, this));
 		addButton(new TabButton(startX + 128 + 62, startY - 26, 2, this));
 		addButton(new TabButton(startX + 128 + 91, startY - 28, 3, this));
+		addButton(new TabButton(startX + 128 + 91 + 29, startY - 26, 4, this));
 		
 		addButton(new Button(startX + 128, startY + 45, imageWidth, 20, new TranslationTextComponent("ds.level.newborn"), (button) -> {
 			DragonStateHandler handler = DragonStateProvider.getCap(getMinecraft().player).orElse(null);

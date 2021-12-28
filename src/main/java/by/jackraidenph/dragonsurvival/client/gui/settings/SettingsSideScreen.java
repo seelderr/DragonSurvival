@@ -1,0 +1,59 @@
+package by.jackraidenph.dragonsurvival.client.gui.settings;
+
+import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.client.GameSettings;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.DialogTexts;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.SettingsScreen;
+import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
+
+public class SettingsSideScreen extends SettingsScreen
+{
+	public SettingsSideScreen(Screen p_i225930_1_, GameSettings p_i225930_2_, ITextComponent p_i225930_3_)
+	{
+		super(p_i225930_1_, p_i225930_2_, p_i225930_3_);
+	}
+	
+	protected void init() {
+		this.addButton(new Button(this.width / 2 - 100, 38, 200, 20, new TranslationTextComponent("ds.gui.settings.client"), (p_213106_1_) -> {
+           Minecraft.getInstance().setScreen(new ClientSettingsScreen(this, Minecraft.getInstance().options, new TranslationTextComponent("ds.gui.settings.client")));
+		})
+		);
+		
+		this.addButton(new Button(this.width / 2 - 100, 38 + 27, 200, 20, new TranslationTextComponent("ds.gui.settings.common"), (p_213106_1_) -> {
+			//this.minecraft.setScreen(this.lastScreen);
+			
+		}){
+			@Override
+			public void render(MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_)
+			{
+				this.active = Minecraft.getInstance().player.hasPermissions(2);
+				super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
+			}
+		});
+		
+		this.addButton(new Button(this.width / 2 - 100, 38 + 27 * 2, 200, 20, new TranslationTextComponent("ds.gui.settings.server"), (p_213106_1_) -> {
+			//this.minecraft.setScreen(this.lastScreen);
+			
+		}){
+			@Override
+			public void render(MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_)
+			{
+				this.active = Minecraft.getInstance().player.hasPermissions(2);
+				super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
+			}
+		});
+		
+		this.addButton(new Button(this.width / 2 - 100, this.height - 27, 200, 20, DialogTexts.GUI_BACK, (p_213106_1_) -> {
+			this.minecraft.setScreen(this.lastScreen);
+		}));
+	}
+	public void render(MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_) {
+		this.renderBackground(p_230430_1_);
+		drawCenteredString(p_230430_1_, this.font, this.title, this.width / 2, 5, 16777215);
+		super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
+	}
+}

@@ -46,8 +46,9 @@ public class DragonGlowLayerRenderer extends GeoLayerRenderer<DragonEntity>
 			if (glowTexture != null) {
 				RenderType type = RenderType.eyes(glowTexture);
 				IVertexBuilder vertexConsumer = bufferIn.getBuffer(type);
-				
+				((DragonRenderer)renderer).isLayer = true;
 				renderer.render(getEntityModel().getModel(getEntityModel().getModelLocation(entitylivingbaseIn)), entitylivingbaseIn, partialTicks, type, matrixStackIn, bufferIn, vertexConsumer, 0, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+				((DragonRenderer)renderer).isLayer = false;
 			}
 		}
 	}

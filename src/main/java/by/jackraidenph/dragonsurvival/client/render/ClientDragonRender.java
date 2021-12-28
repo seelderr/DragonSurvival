@@ -22,13 +22,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.LivingRenderer;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.client.renderer.entity.layers.ParrotVariantLayer;
 import net.minecraft.client.renderer.entity.model.EntityModel;
-import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -224,27 +222,10 @@ public class ClientDragonRender
                         }
                     }
 
-                    ItemRenderer itemRenderer = mc.getItemRenderer();
                     final int combinedOverlayIn = LivingRenderer.getOverlayCoords(player, 0);
                     if (player.hasEffect(DragonEffects.TRAPPED)) {
                         ClientEvents.renderBolas(eventLight, combinedOverlayIn, renderTypeBuffer, matrixStack);
                     }
-					
-					if(player != Minecraft.getInstance().player || ConfigHandler.CLIENT.alternateHeldItem.get() || !Minecraft.getInstance().options.getCameraType().isFirstPerson()) {
-						ItemStack right = player.getMainHandItem();
-						matrixStack.pushPose();
-						matrixStack.mulPose(Vector3f.YP.rotationDegrees(180));
-						matrixStack.translate(0.5, 1, -0.8);
-						itemRenderer.renderStatic(right, ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND, eventLight, combinedOverlayIn, matrixStack, renderTypeBuffer);
-						matrixStack.popPose();
-						matrixStack.pushPose();
-						
-						ItemStack left = player.getOffhandItem();
-						matrixStack.mulPose(Vector3f.YP.rotationDegrees(180));
-						matrixStack.translate(-0.5, 1, -0.8);
-						mc.getItemInHandRenderer().renderItem(player, left, ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND, true, matrixStack, renderTypeBuffer, eventLight);
-						matrixStack.popPose();
-					}
                 }
             } catch (Throwable throwable) {
                 if (!(throwable instanceof NullPointerException) || ConfigHandler.CLIENT.clientDebugMessages.get())

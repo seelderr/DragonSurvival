@@ -133,6 +133,11 @@
   "ds.gui.tab_button.1": "Abilities",
   "ds.gui.tab_button.2": "Lore will not be available anytime soon",
   "ds.gui.tab_button.3": "Skin customization",
+  "ds.gui.tab_button.4": "Settings",
+
+  "ds.gui.settings.client": "Client Settings",
+  "ds.gui.settings.common": "Common Settings",
+  "ds.gui.settings.server": "Server Settings",
 
   "ds.hold_shift.for_food": "Hold 'Shift' for food info",
   "ds.cave.dragon.food": "§c■ Cave dragon food§r",

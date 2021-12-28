@@ -91,7 +91,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
         animationData.addAnimationController(emoteController);
         animationData.addAnimationController(dragonAnimationController);
         animationData.addAnimationController(biteAnimationController);
-        //animationData.addAnimationController(tailController);
+        animationData.addAnimationController(tailController);
         //animationData.addAnimationController(headController);
     }
     

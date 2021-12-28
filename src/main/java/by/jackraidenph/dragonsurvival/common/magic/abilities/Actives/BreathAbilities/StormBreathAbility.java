@@ -9,6 +9,8 @@ import by.jackraidenph.dragonsurvival.common.DragonEffects;
 import by.jackraidenph.dragonsurvival.common.capability.Capabilities;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.capability.GenericCapability;
+import by.jackraidenph.dragonsurvival.common.entity.DSEntities;
+import by.jackraidenph.dragonsurvival.common.entity.projectiles.StormBreathEntity;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import by.jackraidenph.dragonsurvival.util.Functions;
@@ -17,6 +19,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.audio.TickableSound;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.LightningBoltEntity;
@@ -64,6 +67,9 @@ public class StormBreathAbility extends BreathAbility
 			firstUse = false;
 		}
 	}
+	
+	public static StormBreathEntity EFFECT_ENTITY;
+	
 	@OnlyIn(Dist.CLIENT)
 	private ISound startingSound;
 
@@ -121,12 +127,22 @@ public class StormBreathAbility extends BreathAbility
 	
 	
 	@Override
+	public Entity getEffectEntity()
+	{
+		return EFFECT_ENTITY;
+	}
+	
+	@Override
 	public void onActivation(PlayerEntity player)
 	{
+		if(EFFECT_ENTITY == null){
+			EFFECT_ENTITY = DSEntities.STORM_BREATH_EFFECT.create(player.level);
+		}
+		
 		tickCost();
 		super.onActivation(player);
 		
-		if(player.level.isClientSide) {
+		if(player.level.isClientSide && false) {
 			for (int i = 0; i < 24; i++) {
 				double xSpeed = speed * 1f * xComp;
 				double ySpeed = speed * 1f * yComp;

@@ -1,4 +1,4 @@
-package by.jackraidenph.dragonsurvival.client.gui.buttons;
+package by.jackraidenph.dragonsurvival.client.gui.widgets.buttons;
 
 import by.jackraidenph.dragonsurvival.client.handlers.magic.ClientMagicHUDHandler;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;

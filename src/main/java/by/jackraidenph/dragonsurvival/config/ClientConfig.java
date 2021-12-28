@@ -49,15 +49,14 @@ public class ClientConfig {
 	public final ForgeConfigSpec.IntValue spinCooldownYOffset;
 	
 	ClientConfig(ForgeConfigSpec.Builder builder) {
-		builder.push("client");
+		builder.push("client").push("firstperson");
 		//For people who use first person view mods
 		renderInFirstPerson = builder.comment("Render dragon model in first person. If your own tail scares you, write false").define("renderFirstPerson", true);
 		renderFirstPersonFlight = builder.comment("Render dragon model in first person while gliding").define("renderFirstPersonFlight", false);
 		firstPersonRotation = builder.comment("Use rotation of your tail in first person, otherwise the tail is always opposite of your camera").define("firstPersonRotation", true);
 		
-		
+		builder.pop().push("flight");
 		notifyWingStatus = builder.comment("Notifies of wing status in chat message").define("notifyWingStatus", false);
-		clientDebugMessages = builder.define("Enable client-side debug messages", false);
 		
 		jumpToFly = builder.comment("Should flight be activated when jumping in the air").define("jumpToFly", false);
 		lookAtSkyForFlight = builder.comment("Is it required to look up to start flying while jumping, requires that jumpToFly is on").define("lookAtSkyForFlight", false);
@@ -66,11 +65,14 @@ public class ClientConfig {
 		flightZoomEffect = builder.comment("Should the zoom effect while gliding as a dragon be enabled").define("flightZoomEffect", true);
 		flightCameraMovement = builder.comment("Should the camera movement while gliding as a dragon be enabled").define("flightCameraMovement", true);
 		
-		
 		ownSpinParticles = builder.comment("Should particles from your own spin attack be displayed for you?").define("ownSpinParticles", true);
 		othersSpinParticles = builder.comment("Should other players particles from spin attack be shown for you?").define("othersSpinParticles", true);
 		
+		builder.pop();
 		
+		clientDebugMessages = builder.comment("Enable client-side debug messages").define("clientDebugMessages", false);
+		
+		builder.push("inventory");
 		dragonInventory = builder
 				.comment("Should the default inventory be replaced as a dragon?")
 				.define("dragonInventory", true);
@@ -88,6 +90,7 @@ public class ClientConfig {
 				.define("alternateHeldItem", false);
 		
 		
+		builder.pop().push("rendering");
 		renderDragonClaws = builder
 				.comment("Should the tools on the claws and teeth be rendered for your dragon?")
 				.define("renderDragonClaws", true);
@@ -109,7 +112,8 @@ public class ClientConfig {
 				.define("renderOtherPlayerSkins", true);
 		
 		
-		builder.push("ui");
+		builder.pop().push("ui");
+		builder.push("magic");
 		castbarXOffset = builder
 				.comment("Offset the x position of the cast bar in relation to its normal position")
 				.defineInRange("casterBarXPos", 0, -1000, 1000);
@@ -126,6 +130,8 @@ public class ClientConfig {
 				.comment("Offset the y position of the magic skill bar in relation to its normal position")
 				.defineInRange("skillbarYOffset", 0, -1000, 1000);
 		
+		builder.pop().push("growth");
+		
 		growthXOffset = builder
 				.comment("Offset the x position of the item growth icon in relation to its normal position")
 				.defineInRange("growthXOffset", 0, -1000, 1000);
@@ -133,6 +139,8 @@ public class ClientConfig {
 		growthYOffset = builder
 				.comment("Offset the y position of the item growth icon in relation to its normal position")
 				.defineInRange("growthYOffset", 0, -1000, 1000);
+		
+		builder.pop().push("emotes");
 		
 		emoteXOffset = builder
 				.comment("Offset the x position of the emote button in relation to its normal position")
@@ -142,6 +150,8 @@ public class ClientConfig {
 				.comment("Offset the y position of the emote button in relation to its normal position")
 				.defineInRange("emoteYOffset", 0, -1000, 1000);
 		
+		builder.pop().push("spin");
+		
 		spinCooldownXOffset = builder
 				.comment("Offset the x position of the spin cooldown indicator in relation to its normal position")
 				.defineInRange("spinCooldownXOffset", 0, -1000, 1000);
@@ -150,11 +160,11 @@ public class ClientConfig {
 				.comment("Offset the y position of the spin cooldown indicator in relation to its normal position")
 				.defineInRange("spinCooldownYOffset", 0, -1000, 1000);
 		
-		builder.pop().push("nametag");
+		builder.pop().pop().push("nametag");
+		
 		dragonNameTags = builder
 				.comment("Show name tags for dragons.")
 				.define("dragonNameTags", false);
 		builder.pop();
 	}
-	
 }

@@ -1,6 +1,8 @@
 package by.jackraidenph.dragonsurvival.client;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
+import by.jackraidenph.dragonsurvival.client.models.projectiles.StormBreathEffectModel;
+import by.jackraidenph.dragonsurvival.client.render.entity.projectiles.StormBreathRender;
 import by.jackraidenph.dragonsurvival.common.blocks.DSBlocks;
 import by.jackraidenph.dragonsurvival.client.models.creatures.KnightModel;
 import by.jackraidenph.dragonsurvival.client.models.creatures.PrinceModel;
@@ -124,6 +126,7 @@ public class ClientModEvents {
         //Gecko renderers
         RenderingRegistry.registerEntityRenderingHandler(DSEntities.BALL_LIGHTNING, manager -> new BallLightningRenderer(manager, new LightningBallModel()));
         RenderingRegistry.registerEntityRenderingHandler(DSEntities.FIREBALL, manager -> new FireBallRenderer(manager, new FireballModel()));
+        RenderingRegistry.registerEntityRenderingHandler(DSEntities.STORM_BREATH_EFFECT, manager -> new StormBreathRender(manager, new StormBreathEffectModel()));
     
         RenderingRegistry.registerEntityRenderingHandler(DSEntities.DRAGON, manager -> new DragonRenderer(manager, ClientDragonRender.dragonModel));
         RenderingRegistry.registerEntityRenderingHandler(DSEntities.DRAGON_ARMOR, manager -> new DragonRenderer(manager, ClientDragonRender.dragonArmorModel));

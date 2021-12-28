@@ -3,11 +3,11 @@ package by.jackraidenph.dragonsurvival.client.gui;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.client.gui.buttons.TabButton;
-import by.jackraidenph.dragonsurvival.client.gui.buttons.AbilityButton;
-import by.jackraidenph.dragonsurvival.client.gui.buttons.DecreaseLevelButton;
-import by.jackraidenph.dragonsurvival.client.gui.buttons.IncreaseLevelButton;
-import by.jackraidenph.dragonsurvival.client.gui.buttons.SkillProgressButton;
+import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.TabButton;
+import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.AbilityButton;
+import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.DecreaseLevelButton;
+import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.IncreaseLevelButton;
+import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.SkillProgressButton;
 import by.jackraidenph.dragonsurvival.client.handlers.magic.ClientMagicHUDHandler;
 import by.jackraidenph.dragonsurvival.common.magic.DragonAbilities;
 import by.jackraidenph.dragonsurvival.common.magic.common.ActiveDragonAbility;
@@ -73,8 +73,9 @@ public class AbilityScreen extends Screen {
         addButton(new TabButton(startX + 33, startY - 28, 1, this));
         addButton(new TabButton(startX + 62, startY - 26, 2, this));
         addButton(new TabButton(startX + 91, startY - 26, 3, this));
-        
-        
+        addButton(new TabButton(startX + 91 + 29, startY - 26, 4, this));
+    
+    
         addButton(new SkillProgressButton(guiLeft + (int)(219 / 2F), startY + 8, 4, this));
         
         for(int i = 0; i <= 4; i++){

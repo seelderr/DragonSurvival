@@ -1,5 +1,6 @@
-package by.jackraidenph.dragonsurvival.client.gui.buttons;
+package by.jackraidenph.dragonsurvival.client.gui.widgets.buttons;
 
+import by.jackraidenph.dragonsurvival.client.gui.settings.SettingsSideScreen;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.client.gui.DragonScreen;
 import by.jackraidenph.dragonsurvival.client.gui.SkinsScreen;
@@ -69,6 +70,9 @@ public class TabButton extends Button
 			
 			case 3:
 				return parent instanceof SkinsScreen;
+			
+			case 4:
+				return parent instanceof SettingsSideScreen;
 		}
 		return false;
 	}
@@ -123,6 +127,10 @@ public class TabButton extends Button
 				
 				case 3:
 					Minecraft.getInstance().setScreen(new SkinsScreen(parent));
+					break;
+				
+				case 4:
+					Minecraft.getInstance().setScreen(new SettingsSideScreen(parent, Minecraft.getInstance().options, new TranslationTextComponent("ds.gui.tab_button.4")));
 					break;
 			}
 		}

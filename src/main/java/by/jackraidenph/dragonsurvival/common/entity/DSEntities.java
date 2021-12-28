@@ -5,10 +5,7 @@ import by.jackraidenph.dragonsurvival.common.DragonEffects;
 import by.jackraidenph.dragonsurvival.common.blocks.DragonBeacon;
 import by.jackraidenph.dragonsurvival.common.entity.creatures.*;
 import by.jackraidenph.dragonsurvival.common.entity.monsters.MagicalPredatorEntity;
-import by.jackraidenph.dragonsurvival.common.entity.projectiles.BallLightningEntity;
-import by.jackraidenph.dragonsurvival.common.entity.projectiles.BolasEntity;
-import by.jackraidenph.dragonsurvival.common.entity.projectiles.DragonSpikeEntity;
-import by.jackraidenph.dragonsurvival.common.entity.projectiles.FireBallEntity;
+import by.jackraidenph.dragonsurvival.common.entity.projectiles.*;
 import by.jackraidenph.dragonsurvival.common.handlers.VillagerRelationsHandler;
 import by.jackraidenph.dragonsurvival.common.items.DSItems;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
@@ -68,6 +65,7 @@ public class DSEntities
     public static EntityType<DragonSpikeEntity> DRAGON_SPIKE;
     public static EntityType<BallLightningEntity> BALL_LIGHTNING;
     public static EntityType<FireBallEntity> FIREBALL;
+    public static EntityType<StormBreathEntity> STORM_BREATH_EFFECT;
     
     private static final List<EntityType<?>> entities = Lists.newArrayList();
     
@@ -95,6 +93,7 @@ public class DSEntities
         DRAGON_SPIKE = registerEntity(registry, "dragon_spike", EntityType.Builder.<DragonSpikeEntity>of(DragonSpikeEntity::new, EntityClassification.MISC).sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(1).build("dragon_spike"));
         BALL_LIGHTNING = registerEntity(registry, "ball_lightning", EntityType.Builder.<BallLightningEntity>of(BallLightningEntity::new, EntityClassification.MISC).sized(1F, 1F).clientTrackingRange(4).updateInterval(1).build("ball_lightning"));
         FIREBALL =  registerEntity(registry, "fireball", EntityType.Builder.<FireBallEntity>of(FireBallEntity::new, EntityClassification.MISC).sized(1F, 1F).clientTrackingRange(4).updateInterval(1).build("fireball"));
+        STORM_BREATH_EFFECT =  registerEntity(registry, "storm_breath_effect", EntityType.Builder.<StormBreathEntity>of(StormBreathEntity::new, EntityClassification.MISC).sized(1F, 1F).clientTrackingRange(4).updateInterval(1).build("storm_breath_effect"));
     
     
         for (EntityType entity : entities) {
