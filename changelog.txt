@@ -1,3 +1,32 @@
+1.16.5-0.7 Flight Update:
+ ■ Added:
+- Significant internal code changes.
+- Improved breath source
+- Config: allow ender dragons give a spin or not
+- Config: option for camera movement
+- Config: body in first person always rotate opposite of the camera
+- Localization is temporarily disabled: pt_br, pl_pl, ja_jp, es_es. Now the localization will be disabled if it does not match the current Russian and English translation.
+- Localization update: uk_ua, en_us, he_il, ru_ru
+
+ ■ Fixed:
+- bug with first-person tail
+- crash due to incompatibility with some mods
+- magic debuffs are now player attacks
+- changed the calculation of fall damage. No more strange deaths!
+- fixed castimer on client side,
+- fixed  dragonFoods = false crash
+- fixed glow skins on the skin menu
+- armor rendering back to seperate entity render rather then render layer to support optifine glows
+- fixed claws - swapping to another tool on the hotbar with a damage value overwrites the claw tools damage until reqeuipped
+- fixed claws - crit icon doesnt display with claw sword
+- fixed claws - If you turn into a human, all tools in the claw slot are removed.
+- fixed many server side crash
+- fixed spam in the console on the server with mods (the same problem with the cloud effect)
+- fixes body rotation glitch
+- fixed - the human player gets the phrase about the lack of wings when trying to open them.
+- jaw bug
+
+
 1.16.5-0.6 Flight Update:
 - Added: Updated flight system. Now you can dive, quickly take off, slow down, smoothly land and do many more incredible things! Flying will become one of your favorite fun!
 - Added: Activation of flight mode is now slightly modified. You still need to press a button to turn on the mode, but when your paws touch the ground this mode is automatically turned off. If you want, you can turn on double jump in the config or take off when you look up into the sky.
