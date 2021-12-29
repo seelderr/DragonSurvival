@@ -39,6 +39,9 @@ public class ClientConfig {
 	public final ForgeConfigSpec.IntValue skillbarXOffset;
 	public final ForgeConfigSpec.IntValue skillbarYOffset;
 	
+	public final ForgeConfigSpec.IntValue manabarXOffset;
+	public final ForgeConfigSpec.IntValue manabarYOffset;
+	
 	public final ForgeConfigSpec.IntValue growthXOffset;
 	public final ForgeConfigSpec.IntValue growthYOffset;
 	
@@ -129,6 +132,14 @@ public class ClientConfig {
 		skillbarYOffset = builder
 				.comment("Offset the y position of the magic skill bar in relation to its normal position")
 				.defineInRange("skillbarYOffset", 0, -1000, 1000);
+		
+		manabarXOffset = builder
+				.comment("Offset the x position of the mana bar in relation to its normal position")
+				.defineInRange("manabarXOffset", 0, -1000, 1000);
+		
+		manabarYOffset = builder
+				.comment("Offset the y position of the mana bar in relation to its normal position")
+				.defineInRange("manabarYOffset", 0, -1000, 1000);
 		
 		builder.pop().push("growth");
 		

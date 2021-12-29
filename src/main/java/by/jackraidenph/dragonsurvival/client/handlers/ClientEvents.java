@@ -37,6 +37,7 @@ import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.entity.LivingRenderer;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
+import net.minecraft.client.settings.PointOfView;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
@@ -273,6 +274,31 @@ public class ClientEvents
                         if (f1 > 0.000028) {
                             float f2 = MathHelper.wrapDegrees(f - (float)bodyYaw);
                             bodyYaw += 0.5F * f2;
+    
+                            if (minecraft.options.getCameraType() == PointOfView.FIRST_PERSON) {
+                                float f5 = MathHelper.abs(MathHelper.wrapDegrees(player.yRot) - f);
+                                if (95.0F < f5 && f5 < 265.0F) {
+                                    f -= 180.0F;
+                                }
+        
+                                float _f = MathHelper.wrapDegrees(f - (float) bodyYaw);
+                                bodyYaw += _f * 0.3F;
+                                float _f1 = MathHelper.wrapDegrees(player.yRot - (float) bodyYaw);
+        
+                                if (_f1 < -75.0F) {
+                                    _f1 = -75.0F;
+                                }
+        
+                                if (_f1 >= 75.0F) {
+                                    _f1 = 75.0F;
+    
+                                    bodyYaw = player.yRot - _f1;
+                                    if (_f1 * _f1 > 2500.0F) {
+                                        bodyYaw += _f1 * 0.2F;
+                                    }
+                                }
+                                
+                            }
                             
                             bodyYaw = MathHelper.lerp(0.25, playerStateHandler.getMovementData().bodyYaw, bodyYaw);
                             

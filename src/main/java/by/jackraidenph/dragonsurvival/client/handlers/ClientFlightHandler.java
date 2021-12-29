@@ -447,7 +447,7 @@ public class ClientFlightHandler {
         Vector3d lookVec = player.getLookAngle();
     
         if(ConfigHandler.CLIENT.jumpToFly.get() && !player.isCreative() && !player.isSpectator()) {
-            if (Minecraft.getInstance().options.keyJump.consumeClick()) {
+            if (Minecraft.getInstance().options.keyJump.isDown()) {
                 if(keyInputEvent.getAction() == GLFW.GLFW_PRESS) {
                     if (handler.hasWings() && !currentState && (lookVec.y > 0.8 || !ConfigHandler.CLIENT.lookAtSkyForFlight.get())) {
                         if (!player.isOnGround() && !player.isInLava() && !player.isInWater()) {

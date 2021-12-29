@@ -143,12 +143,19 @@ public class ClientMagicHUDHandler
 					}
 					
 					textureManager.bind(new ResourceLocation("textures/gui/widgets.png"));
-					Screen.blit(event.getMatrixStack(), posX + (sizeX * cap.getMagic().getSelectedAbilitySlot()) - 1, window.getGuiScaledHeight() - 23, 2, 0, 22, 24, 24, 256, 256);
+					Screen.blit(event.getMatrixStack(), posX + (sizeX * cap.getMagic().getSelectedAbilitySlot()) - 1, posY - 3, 2, 0, 22, 24, 24, 256, 256);
 					
 					textureManager.bind(widgetTextures);
 					
 					int maxMana = DragonStateProvider.getMaxMana(playerEntity);
 					int curMana = DragonStateProvider.getCurrentMana(playerEntity);
+			
+			
+			        int manaX = rightSide ? window.getGuiScaledWidth() - (sizeX * count) - 20 : (sizeX * count) + 20;
+			        int manaY = window.getGuiScaledHeight() - (sizeY);
+			
+			        manaX += ConfigHandler.CLIENT.manabarXOffset.get();
+			        manaY += ConfigHandler.CLIENT.manabarYOffset.get();
 					
 					for(int i = 0; i < 1 + Math.ceil(maxMana / 10.0); i++){
 						for(int x = 0; x < 10; x++){
@@ -158,7 +165,7 @@ public class ClientMagicHUDHandler
 								int condiXPos = cap.getType() == DragonType.SEA ? 0 : cap.getType() == DragonType.FOREST ? 18 : 36;;
 								int xPos = curMana <= manaSlot ? (goodCondi ? condiXPos + 72 : 54) : cap.getType() == DragonType.SEA ? 0 : cap.getType() == DragonType.FOREST ? 18 : 36;
 								float rescale = 2.15F;
-								Screen.blit(event.getMatrixStack(), posX + (x * (int)(18 / rescale)), posY - 12 - (i * ((int)(18 / rescale) + 1)), xPos / rescale, 204 / rescale, (int)(18 / rescale), (int)(18 / rescale), (int)(256 / rescale), (int)(256 / rescale));
+								Screen.blit(event.getMatrixStack(), manaX + (x * (int)(18 / rescale)), manaY - 12 - (i * ((int)(18 / rescale) + 1)), xPos / rescale, 204 / rescale, (int)(18 / rescale), (int)(18 / rescale), (int)(256 / rescale), (int)(256 / rescale));
 							}
 						}
 					}
