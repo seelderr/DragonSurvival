@@ -24,7 +24,7 @@ public class SettingsSideScreen extends SettingsScreen
 		);
 		
 		this.addButton(new Button(this.width / 2 - 100, 38 + 27, 200, 20, new TranslationTextComponent("ds.gui.settings.common"), (p_213106_1_) -> {
-			//this.minecraft.setScreen(this.lastScreen);
+			Minecraft.getInstance().setScreen(new CommonSettingsScreen(this, Minecraft.getInstance().options, new TranslationTextComponent("ds.gui.settings.common")));
 			
 		}){
 			@Override
@@ -36,7 +36,7 @@ public class SettingsSideScreen extends SettingsScreen
 		});
 		
 		this.addButton(new Button(this.width / 2 - 100, 38 + 27 * 2, 200, 20, new TranslationTextComponent("ds.gui.settings.server"), (p_213106_1_) -> {
-			//this.minecraft.setScreen(this.lastScreen);
+			Minecraft.getInstance().setScreen(new ServerSettingsScreen(this, Minecraft.getInstance().options, new TranslationTextComponent("ds.gui.settings.server")));
 			
 		}){
 			@Override

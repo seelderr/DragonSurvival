@@ -4,6 +4,9 @@ import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.network.claw.DragonClawsMenuToggle;
 import by.jackraidenph.dragonsurvival.network.claw.SyncDragonClawRender;
 import by.jackraidenph.dragonsurvival.network.claw.SyncDragonClawsMenu;
+import by.jackraidenph.dragonsurvival.network.config.SyncBooleanConfig;
+import by.jackraidenph.dragonsurvival.network.config.SyncEnumConfig;
+import by.jackraidenph.dragonsurvival.network.config.SyncNumberConfig;
 import by.jackraidenph.dragonsurvival.network.container.OpenDragonInventory;
 import by.jackraidenph.dragonsurvival.network.container.OpenInventory;
 import by.jackraidenph.dragonsurvival.network.emotes.SyncEmote;
@@ -93,5 +96,10 @@ public class NetworkHandler
 		 register(SyncEmote.class, new SyncEmote());
 		 register(SyncEmoteStatsServer.class, new SyncEmoteStatsServer());
 		 register(SyncEmoteStats.class, new SyncEmoteStats());
+		 
+		 //Config
+		 register(SyncBooleanConfig.class, new SyncBooleanConfig());
+		 register(SyncNumberConfig.class, new SyncNumberConfig());
+		 register(SyncEnumConfig.class, new SyncEnumConfig());
 	 }
 }

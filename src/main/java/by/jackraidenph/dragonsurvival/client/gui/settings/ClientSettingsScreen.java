@@ -2,9 +2,15 @@ package by.jackraidenph.dragonsurvival.client.gui.settings;
 
 import by.jackraidenph.dragonsurvival.client.gui.widgets.lists.OptionsList;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
+import by.jackraidenph.dragonsurvival.network.NetworkHandler;
+import by.jackraidenph.dragonsurvival.network.config.SyncBooleanConfig;
+import by.jackraidenph.dragonsurvival.network.config.SyncEnumConfig;
+import by.jackraidenph.dragonsurvival.network.config.SyncNumberConfig;
 import com.electronwill.nightconfig.core.AbstractConfig;
+import com.electronwill.nightconfig.core.EnumGetMethod;
 import com.electronwill.nightconfig.core.UnmodifiableConfig.Entry;
 import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.AbstractOption;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.gui.DialogTexts;
@@ -25,6 +31,7 @@ import net.minecraftforge.common.ForgeConfigSpec.*;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ClientSettingsScreen extends SettingsScreen
 {
@@ -41,33 +48,25 @@ public class ClientSettingsScreen extends SettingsScreen
 			
 			if(value instanceof AbstractConfig){
 				AbstractConfig config = (AbstractConfig)value;
-				for(Map.Entry<String, Object> ent : config.valueMap().entrySet()){
-					if(!options.contains(ent.getKey())) {
-						
+				
+				CopyOnWriteArrayList<Pair<String, Set<Map.Entry<String, Object>>>> list = new CopyOnWriteArrayList<>();
+				list.add(Pair.of("", config.valueMap().entrySet()));
+				
+				while(list.size() > 0){
+					Pair<String, Set<Map.Entry<String, Object>>> pair = list.get(0);
+					
+					for(Map.Entry<String, Object> ent : pair.getSecond()){
 						if (ent.getValue() instanceof AbstractConfig) {
 							AbstractConfig config1 = (AbstractConfig)ent.getValue();
-							
-							for (Map.Entry<String, Object> ent1 : config1.valueMap().entrySet()) {
-								if (!options.contains(ent1.getKey())) {
-									
-									if (ent1.getValue() instanceof AbstractConfig) {
-										AbstractConfig config2 = (AbstractConfig)ent1.getValue();
-										for (Map.Entry<String, Object> ent2 : config2.valueMap().entrySet()) {
-											if (!options.contains(ent2.getKey())) {
-	
-												addValue(ent.getKey() + "." + ent1.getKey() + "." + ent2.getKey(), ent1.getKey(), ent2.getKey(), ent2.getValue());
-											}
-										}
-									} else {
-										addValue(ent.getKey() + "." + ent1.getKey(), ent.getKey(), ent1.getKey(), ent1.getValue());
-									}
-								}
-							}
-						} else {
-							addValue(ent.getKey(), null, ent.getKey(), ent.getValue());
+							list.add(Pair.of((!pair.getFirst().isEmpty() ? pair.getFirst() + "." : "") + ent.getKey(), config1.valueMap().entrySet()));
+						}else{
+							addValue((!pair.getFirst().isEmpty() ? pair.getFirst() + "." : "") + ent.getKey(), pair.getFirst(), ent.getKey(), ent.getValue());
 						}
 					}
+					
+					list.remove(0);
 				}
+
 			}else{
 				addValue("", null, entry.getKey(), value);
 			}
@@ -93,65 +92,112 @@ public class ClientSettingsScreen extends SettingsScreen
 	public String getConfigName(){
 		return "client";
 	}
+
 	
 	public void addValue(String key, String category, String path, Object value){
 		if(options.contains(path)) return;
 		
-		ValueSpec spec = (ValueSpec)value;
-		Object ob = getSpec().getValues().get("client." + key);
+		int origLength = path.length();
+		path = path.substring(0, Math.min(path.length(), 20));
 		
-		if(ob instanceof BooleanValue) {
-			BooleanValue booleanValue = (BooleanValue)ob;
+		if(path.length() < origLength){
+			path += "...";
+		}
+		
+		String finalPath = path;
+		
+		if(value instanceof ValueSpec) {
+			ValueSpec spec = (ValueSpec)value;
+			Object ob = getSpec().getValues().get(getConfigName() + "." + key);
 			
-			AbstractOption option = new BooleanOption(path, new StringTextComponent(spec.getComment()), (settings) -> booleanValue.get(), (settings, settingValue) -> {
-				booleanValue.set(settingValue);
-			});
+			if(spec.needsWorldRestart()){
+				return;
+			}
 			
-			addOption(category, path, option);
-		}else if(ob instanceof IntValue) {
-			IntValue value1 = (IntValue)ob;
-			Integer min = (Integer)spec.correct(Integer.MIN_VALUE);
-			Integer max = (Integer)spec.correct(Integer.MAX_VALUE);
-			
-			AbstractOption option = new SliderPercentageOption(path, min, max, 0.1F, (settings) -> Double.valueOf(value1.get()), (settings, settingValue) -> {
-				value1.set(settingValue.intValue());
-			}, (settings, slider) -> {
-				return new TranslationTextComponent("options.generic_value", new TranslationTextComponent(path), slider.get(settings));
-			});
-			
-			addOption(category, path, option);
-		}else if(ob instanceof DoubleValue) {
-			DoubleValue value1 = (DoubleValue)ob;
-			double min = (double)spec.correct(Double.MIN_VALUE);
-			double max = (double)spec.correct(Double.MAX_VALUE);
-			
-			AbstractOption option = new SliderPercentageOption(path, min, max, 0.1F, (settings) -> value1.get(), (settings, settingValue) -> {
-				value1.set(settingValue);
-			}, (settings, slider) -> {
-				return new TranslationTextComponent("options.generic_value", new TranslationTextComponent(path), slider.get(settings));
-			});
-			
-			addOption(category, path, option);
-		}else if(ob instanceof LongValue) {
-			LongValue value1 = (LongValue)ob;
-			Long min = (Long)spec.correct(Long.MIN_VALUE);
-			Long max = (Long)spec.correct(Long.MAX_VALUE);
-			
-			AbstractOption option = new SliderPercentageOption(path, min, max, 0.1F, (settings) -> Double.valueOf(value1.get()), (settings, settingValue) -> {
-				value1.set(settingValue.longValue());
-			}, (settings, slider) -> {
-				return new TranslationTextComponent("options.generic_value", new TranslationTextComponent(path), slider.get(settings));
-			});
-			
-			addOption(category, path, option);
-		}else if(ob instanceof EnumValue) {
-			EnumValue value1 = (EnumValue)ob;
-			
-			AbstractOption option = new IteratableOption(path, (settings, val) -> value1.set(value1.get()), (settings, set) -> {
-				return new TranslationTextComponent("options.generic_value", new TranslationTextComponent(path), set.getMessage(settings));
-			});
-			
-			addOption(category, path, option);
+			if (ob instanceof BooleanValue) {
+				BooleanValue booleanValue = (BooleanValue)ob;
+				
+				AbstractOption option = new BooleanOption(path, new StringTextComponent(spec.getComment()), (settings) -> booleanValue.get(), (settings, settingValue) -> {
+					booleanValue.set(settingValue);
+					
+					if(getConfigName() != "client") {
+						NetworkHandler.CHANNEL.sendToServer(new SyncBooleanConfig(key, settingValue, getConfigName() == "server" ? 0 : 1));
+					}
+				});
+				
+				addOption(category, path, option);
+			} else if (ob instanceof IntValue) {
+				IntValue value1 = (IntValue)ob;
+				Integer min = (Integer)spec.correct(Integer.MIN_VALUE);
+				Integer max = (Integer)spec.correct(Integer.MAX_VALUE);
+				
+				AbstractOption option = new SliderPercentageOption(path, min, max, 0.1F, (settings) -> Double.valueOf(value1.get()), (settings, settingValue) -> {
+					value1.set(settingValue.intValue());
+					
+					if(getConfigName() != "client") {
+						NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(key, settingValue, getConfigName() == "server" ? 0 : 1));
+					}
+				}, (settings, slider) -> {
+					return new TranslationTextComponent("options.generic_value", new StringTextComponent(finalPath), slider.get(settings));
+				});
+				
+				addOption(category, path, option);
+			} else if (ob instanceof DoubleValue) {
+				DoubleValue value1 = (DoubleValue)ob;
+				double min = (double)spec.correct(Double.MIN_VALUE);
+				double max = (double)spec.correct(Double.MAX_VALUE);
+				
+				AbstractOption option = new SliderPercentageOption(path, min, max, 0.1F, (settings) -> value1.get(), (settings, settingValue) -> {
+					value1.set(settingValue);
+					
+					if(getConfigName() != "client") {
+						NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(key, settingValue, getConfigName() == "server" ? 0 : 1));
+					}
+				}, (settings, slider) -> {
+					return new TranslationTextComponent("options.generic_value", new StringTextComponent(finalPath), slider.get(settings));
+				});
+				
+				addOption(category, path, option);
+			} else if (ob instanceof LongValue) {
+				LongValue value1 = (LongValue)ob;
+				Long min = (Long)spec.correct(Long.MIN_VALUE);
+				Long max = (Long)spec.correct(Long.MAX_VALUE);
+				
+				AbstractOption option = new SliderPercentageOption(path, min, max, 0.1F, (settings) -> Double.valueOf(value1.get()), (settings, settingValue) -> {
+					value1.set(settingValue.longValue());
+					
+					if(getConfigName() != "client") {
+						NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(key, settingValue, getConfigName() == "server" ? 0 : 1));
+					}
+				}, (settings, slider) -> {
+					return new TranslationTextComponent("options.generic_value", new StringTextComponent(finalPath), slider.get(settings));
+				});
+				
+				addOption(category, path, option);
+			} else if (ob instanceof EnumValue) {
+				EnumValue value1 = (EnumValue)ob;
+				AbstractOption option = new IteratableOption(path, (settings, val) -> {
+					Class<? extends Enum> cs = (Class<? extends Enum>)value1.get().getClass();
+					int max = cs.getEnumConstants().length;
+					int curVal = ((Enum)value1.get()).ordinal();
+					
+					if(curVal == max - 1){
+						curVal = 0;
+					}else{
+						curVal += 1;
+					}
+					Enum en = EnumGetMethod.ORDINAL_OR_NAME.get(curVal, cs);
+					value1.set(en);
+					
+					if(getConfigName() != "client") {
+						NetworkHandler.CHANNEL.sendToServer(new SyncEnumConfig(key, en, getConfigName() == "server" ? 0 : 1));
+					}
+				}, (settings, set) -> {
+					return new TranslationTextComponent("options.generic_value", new StringTextComponent(finalPath), ((Enum)value1.get()).name());
+				});
+				
+				addOption(category, path, option);
+			}
 		}
 	}
 	

@@ -29,6 +29,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.IndirectEntityDamageSource;
 import net.minecraft.util.math.MathHelper;
@@ -188,7 +189,12 @@ public class MagicHandler
 				if (entity.tickCount % 20 == 0) {
 					GenericCapability cap = Capabilities.getGenericCapability(entity).orElse(null);
 					PlayerEntity player = cap != null && cap.lastAfflicted != -1 && entity.level.getEntity(cap.lastAfflicted) instanceof PlayerEntity ? ((PlayerEntity)entity.level.getEntity(cap.lastAfflicted)) : null;
-					entity.hurt(new EntityDamageSource("magic", player).bypassArmor().setMagic(), 1.0F);
+					if(player != null){
+						entity.hurt(new EntityDamageSource("magic", player).bypassArmor().setMagic(), 1.0F);
+					}else{
+						entity.hurt(DamageSource.MAGIC, 1.0F);
+						
+					}
 				}
 			}
 		}
@@ -224,7 +230,11 @@ public class MagicHandler
 									entity.setRemainingFireTicks(1);
 								}
 								PlayerEntity player = cap != null && cap.lastAfflicted != -1 && entity.level.getEntity(cap.lastAfflicted) instanceof PlayerEntity ? ((PlayerEntity)entity.level.getEntity(cap.lastAfflicted)) : null;
-								entity.hurt(new EntityDamageSource("onFire", player).bypassArmor().setIsFire(), damage);
+								if(player != null){
+									entity.hurt(new EntityDamageSource("onFire", player).bypassArmor().setIsFire(), damage);
+								}else{
+									entity.hurt(DamageSource.ON_FIRE, damage);
+								}
 							}
 						}
 					}

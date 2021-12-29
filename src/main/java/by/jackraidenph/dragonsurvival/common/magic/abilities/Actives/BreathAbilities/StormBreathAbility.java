@@ -1,8 +1,6 @@
 package by.jackraidenph.dragonsurvival.common.magic.abilities.Actives.BreathAbilities;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.client.particles.SeaDragon.LargeLightningParticleData;
-import by.jackraidenph.dragonsurvival.client.particles.SeaDragon.SmallLightningParticleData;
 import by.jackraidenph.dragonsurvival.client.sounds.SoundRegistry;
 import by.jackraidenph.dragonsurvival.client.sounds.StormBreathSound;
 import by.jackraidenph.dragonsurvival.common.DragonEffects;
@@ -142,22 +140,6 @@ public class StormBreathAbility extends BreathAbility
 		tickCost();
 		super.onActivation(player);
 		
-		if(player.level.isClientSide && false) {
-			for (int i = 0; i < 24; i++) {
-				double xSpeed = speed * 1f * xComp;
-				double ySpeed = speed * 1f * yComp;
-				double zSpeed = speed * 1f * zComp;
-				player.level.addParticle(new LargeLightningParticleData(37, true), dx, dy, dz, xSpeed, ySpeed, zSpeed);
-			}
-			
-			for (int i = 0; i < 10; i++) {
-				double xSpeed = speed * xComp + (spread * 0.7 * (player.level.random.nextFloat() * 2 - 1) * (Math.sqrt(1 - xComp * xComp)));
-				double ySpeed = speed * yComp + (spread * 0.7 * (player.level.random.nextFloat() * 2 - 1) * (Math.sqrt(1 - yComp * yComp)));
-				double zSpeed = speed * zComp + (spread * 0.7 * (player.level.random.nextFloat() * 2 - 1) * (Math.sqrt(1 - zComp * zComp)));
-				player.level.addParticle(new SmallLightningParticleData(37, false), dx, dy, dz, xSpeed, ySpeed, zSpeed);
-			}
-		}
-
 		if(player.level.isClientSide) {
 			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (DistExecutor.SafeRunnable)() -> sound());
 		}
@@ -254,12 +236,22 @@ public class StormBreathAbility extends BreathAbility
 			boolean damaged = false;
 			if(target != null && target.getType() != null && target.getType().getRegistryType() != null) {
 				if (ConfigHandler.SERVER.chargedBlacklist.get().contains(target.getType().getRegistryName().toString())) {
-					target.hurt(DamageSource.playerAttack(player), damage);
+					if(player != null) {
+						target.hurt(DamageSource.playerAttack(player), damage);
+					}else{
+						target.hurt(DamageSource.GENERIC, damage);
+					}
+					
 					damaged = true;
 				}
 			}
 			if(!damaged) {
-				target.hurt(DamageSource.indirectMobAttack(source, player), damage);
+				if(player != null){
+					target.hurt(DamageSource.indirectMobAttack(source, player), damage);
+				}else{
+					target.hurt(DamageSource.mobAttack(source), damage);
+					
+				}
 			}
 			onDamageChecks(target);
 			
