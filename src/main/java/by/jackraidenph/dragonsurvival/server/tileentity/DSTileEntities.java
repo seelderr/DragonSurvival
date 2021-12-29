@@ -36,6 +36,7 @@ public class DSTileEntities
                                                     DSBlocks.dragon_altar_red_sandstone,
                                                     DSBlocks.dragon_altar_purpur_block,
                                                     DSBlocks.dragon_altar_oak_log,
+                                                    DSBlocks.dragon_altar_birch_log,
                                                     DSBlocks.dragon_altar_nether_bricks,
                                                     DSBlocks.dragon_altar_mossy_cobblestone,
                                                     DSBlocks.dragon_altar_blackstone

@@ -271,6 +271,9 @@ public class EventHandler {
                 } else if (block == Blocks.OAK_LOG) {
                     world.setBlockAndUpdate(blockPos, DSBlocks.dragon_altar_oak_log.getStateForPlacement(deirection));
                     replace = true;
+                } else if (block == Blocks.BIRCH_LOG) {
+                    world.setBlockAndUpdate(blockPos, DSBlocks.dragon_altar_birch_log.getStateForPlacement(deirection));
+                    replace = true;
                 } else if (block == Blocks.PURPUR_BLOCK) {
                     world.setBlockAndUpdate(blockPos, DSBlocks.dragon_altar_purpur_block.getStateForPlacement(deirection));
                     replace = true;
