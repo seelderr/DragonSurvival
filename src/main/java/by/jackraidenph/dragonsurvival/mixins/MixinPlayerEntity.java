@@ -58,6 +58,9 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 	@Final
 	public PlayerInventory inventory;
 	
+	@Shadow
+	private int sleepCounter;
+	
 	protected MixinPlayerEntity(EntityType<? extends LivingEntity> p_i48577_1_, World p_i48577_2_) {
 		super(p_i48577_1_, p_i48577_2_);
 	}
@@ -79,7 +82,6 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 
 		return mainStack;
 	}
-	
 	
 	@Redirect( method = "getDigSpeed",
 	           at = @At(value="INVOKE", target="Lnet/minecraft/entity/player/PlayerEntity;getMainHandItem()Lnet/minecraft/item/ItemStack;" ))
@@ -126,7 +128,16 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 		return mainStack;
 	}
 	
-	
+	@Inject( method = "isSleepingLongEnough", at = @At("HEAD"), cancellable = true)
+	public void isSleepingLongEnough(CallbackInfoReturnable<Boolean> ci) {
+		if (DragonStateProvider.isDragon(this)) {
+			DragonStateProvider.getCap(this).ifPresent(cap -> {
+				if(cap.treasureResting && cap.treasureSleepTimer >= 100){
+					ci.setReturnValue(true);
+				}
+			});
+		}
+	}
 	
 	
 	

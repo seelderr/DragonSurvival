@@ -17,10 +17,6 @@ public class DragonCapStorage implements Capability.IStorage<DragonStateHandler>
     
         if (instance.isDragon()) {
             DragonStateHandler.DragonMovementData movementData = instance.getMovementData();
-//            tag.putDouble("bodyYaw", movementData.bodyYaw);
-//            tag.putDouble("headYaw", movementData.headYaw);
-//            tag.putDouble("headPitch", movementData.headPitch);
-    
             tag.putInt("spinCooldown", movementData.spinCooldown);
             tag.putInt("spinAttack", movementData.spinAttack);
             tag.putBoolean("spinLearned", movementData.spinLearned);
@@ -41,6 +37,9 @@ public class DragonCapStorage implements Capability.IStorage<DragonStateHandler>
             tag.putBoolean("isFlying", instance.isWingsSpread());
             
             tag.putInt("lavaAirSupply", instance.getLavaAirSupply());
+    
+            tag.putBoolean("resting", instance.treasureResting);
+            tag.putInt("restingTimer", instance.treasureRestTimer);
     
             tag.putDouble("caveSize", instance.caveSize);
             tag.putDouble("seaSize", instance.seaSize);
@@ -66,8 +65,6 @@ public class DragonCapStorage implements Capability.IStorage<DragonStateHandler>
         	instance.setType(DragonType.valueOf(tag.getString("type")));
         
         if (instance.isDragon()) {
-//            instance.setMovementData(tag.getDouble("bodyYaw"), tag.getDouble("headYaw"), tag.getDouble("headPitch"), tag.getBoolean("bite"));
-    
             instance.setHasWings(tag.getBoolean("hasWings"));
             instance.setWingsSpread(tag.getBoolean("isFlying"));
             
@@ -81,7 +78,10 @@ public class DragonCapStorage implements Capability.IStorage<DragonStateHandler>
             
             instance.setSize(tag.getDouble("size"));
             instance.growing = !tag.contains("growing") || tag.getBoolean("growing");
-            
+    
+            instance.growing = tag.getBoolean("resting");
+            instance.treasureRestTimer = tag.getInt("restingTimer");
+    
             instance.caveSize = tag.getDouble("caveSize");
             instance.seaSize = tag.getDouble("seaSize");
             instance.forestSize = tag.getDouble("forestSize");

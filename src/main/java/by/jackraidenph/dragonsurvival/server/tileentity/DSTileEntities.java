@@ -29,7 +29,7 @@ public class DSTileEntities
         registry.registerAll(sourceOfMagicTileEntity.setRegistryName(DragonSurvivalMod.MODID, "dragon_nest"),
                              PREDATOR_STAR_TILE_ENTITY_TYPE.setRegistryName(DragonSurvivalMod.MODID, "predator_star_te"));
         sourceOfMagicPlaceholder = TileEntityType.Builder.of(() -> new SourceOfMagicPlaceholder(sourceOfMagicPlaceholder), DSBlocks.forestSourceOfMagic, DSBlocks.seaSourceOfMagic, DSBlocks.caveSourceOfMagic).build(null);
-        registry.register(sourceOfMagicPlaceholder.setRegistryName("nest_placeholder"));
+        registry.register(sourceOfMagicPlaceholder.setRegistryName("placeholder"));
         altarEntityTile = TileEntityType.Builder.of(() -> new AltarTileEntity(altarEntityTile),
                                                     DSBlocks.dragon_altar_stone,
                                                     DSBlocks.dragon_altar_sandstone,

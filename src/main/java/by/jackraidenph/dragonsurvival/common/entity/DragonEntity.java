@@ -207,9 +207,12 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
         boolean isMovingHorizontal = Math.sqrt(Math.pow(motio.x, 2) + Math.pow(motio.z, 2)) > 0.005;
         
         // Main
-        if (player.isSleeping()) {
+        if (player.isSleeping() || playerStateHandler.treasureResting) {
+            neckLocked = true;
+            tailLocked = true;
             builder.addAnimation("sleep", true);
         }else if (player.isPassenger()) {
+            tailLocked = true;
             builder.addAnimation("sit", true);
         }else if (player.abilities.flying || ServerFlightHandler.isFlying(player)) {
             double preLandDuration = 1;

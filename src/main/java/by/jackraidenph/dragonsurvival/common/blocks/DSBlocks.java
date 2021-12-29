@@ -148,12 +148,12 @@ public class DSBlocks
         registerSingleItem(forestSourceOfMagic, new Item.Properties(), forgeRegistry);
         registerSingleItem(caveSourceOfMagic, new Item.Properties(), forgeRegistry);
     
-        registerSingleItem(treasureDebris, new Item.Properties(), forgeRegistry);
-        registerSingleItem(treasureDiamond, new Item.Properties(), forgeRegistry);
-        registerSingleItem(treasureEmerald, new Item.Properties(), forgeRegistry);
-        registerSingleItem(treasureCopper, new Item.Properties(), forgeRegistry);
-        registerSingleItem(treasureGold, new Item.Properties(), forgeRegistry);
-        registerSingleItem(treasureIron, new Item.Properties(), forgeRegistry);
+        registerItem(treasureDebris, new Item.Properties(), forgeRegistry);
+        registerItem(treasureDiamond, new Item.Properties(), forgeRegistry);
+        registerItem(treasureEmerald, new Item.Properties(), forgeRegistry);
+        registerItem(treasureCopper, new Item.Properties(), forgeRegistry);
+        registerItem(treasureGold, new Item.Properties(), forgeRegistry);
+        registerItem(treasureIron, new Item.Properties(), forgeRegistry);
 
         registerItem(dragon_altar_stone, new Item.Properties(), forgeRegistry);
         registerItem(dragon_altar_sandstone, new Item.Properties(), forgeRegistry);

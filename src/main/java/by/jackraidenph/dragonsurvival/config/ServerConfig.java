@@ -28,6 +28,11 @@ public class ServerConfig {
 	public final ForgeConfigSpec.BooleanValue lethalFlight;
 	public final ForgeConfigSpec.IntValue flightSpinCooldown;
 	
+	public final ForgeConfigSpec.BooleanValue treasureHealthRegen;
+	public final ForgeConfigSpec.IntValue treasureRegenTicks;
+	public final ForgeConfigSpec.IntValue treasureRegenTicksReduce;
+	public final ForgeConfigSpec.IntValue maxTreasures;
+	
 	public final ForgeConfigSpec.IntValue altarUsageCooldown;
 	public final ForgeConfigSpec.DoubleValue newbornJump;
 	public final ForgeConfigSpec.DoubleValue youngJump;
@@ -313,6 +318,20 @@ public class ServerConfig {
 				.comment("The chance for dragon heart shards to drop from mobs with max health above 50")
 				.defineInRange("elderDragonHeartChance", 0.2, 0.0, 1.0);
 		
+		// Treasure
+		builder.pop().push("treasure");
+		treasureHealthRegen = builder
+				.comment("Whether sleeping on treasure will recover health or not. ")
+				.define("treasureHealthRegen", true);
+		treasureRegenTicks = builder
+				.comment("The time in ticks it takes to recover 1hp while sleeping on treasure")
+				.defineInRange("treasureRegenTicks", 24000, 1, 10000000);
+		treasureRegenTicksReduce = builder
+				.comment("The amount of ticks each additional treasure reduces the regen time by")
+				.defineInRange("treasureRegenTicksReduce", 97, 1, 10000000);
+		maxTreasures = builder
+				.comment("The max amount of additional treasure that can be used to reduce the regen time")
+				.defineInRange("maxTreasures", 240, 1, 10000000);
 		// Wings
 		builder.pop().push("wings");
 		maxFlightSpeed = builder

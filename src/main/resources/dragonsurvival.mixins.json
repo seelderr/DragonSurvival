@@ -11,7 +11,8 @@
     "MixinEnchantmentHelper",
     "MixinPlayerInteractionManager",
     "MixinPlayerInventory",
-    "MixinBlock"
+    "MixinBlock",
+    "MixinServerWorld"
   ],
   "client": [
     "AccessorEntityRenderer",

@@ -75,7 +75,9 @@ public class ClientSettingsScreen extends SettingsScreen
 		this.list.addSmall(OPTIONS.toArray(new AbstractOption[0]));
 		
 		for(Map.Entry<String, ArrayList<AbstractOption>> ent : optionMap.entrySet()){
-			this.list.addCategory(ent.getKey());
+			if(!ent.getKey().isEmpty()) {
+				this.list.addCategory(ent.getKey());
+			}
 			this.list.addSmall(ent.getValue().toArray(new AbstractOption[0]));
 		}
 		
@@ -131,7 +133,7 @@ public class ClientSettingsScreen extends SettingsScreen
 				Integer min = (Integer)spec.correct(Integer.MIN_VALUE);
 				Integer max = (Integer)spec.correct(Integer.MAX_VALUE);
 				
-				AbstractOption option = new SliderPercentageOption(path, min, max, 0.1F, (settings) -> Double.valueOf(value1.get()), (settings, settingValue) -> {
+				AbstractOption option = new SliderPercentageOption(path, min, max, 0.01F, (settings) -> Double.valueOf(value1.get()), (settings, settingValue) -> {
 					value1.set(settingValue.intValue());
 					
 					if(getConfigName() != "client") {
@@ -147,7 +149,7 @@ public class ClientSettingsScreen extends SettingsScreen
 				double min = (double)spec.correct(Double.MIN_VALUE);
 				double max = (double)spec.correct(Double.MAX_VALUE);
 				
-				AbstractOption option = new SliderPercentageOption(path, min, max, 0.1F, (settings) -> value1.get(), (settings, settingValue) -> {
+				AbstractOption option = new SliderPercentageOption(path, min, max, 0.01F, (settings) -> value1.get(), (settings, settingValue) -> {
 					value1.set(settingValue);
 					
 					if(getConfigName() != "client") {
@@ -163,7 +165,7 @@ public class ClientSettingsScreen extends SettingsScreen
 				Long min = (Long)spec.correct(Long.MIN_VALUE);
 				Long max = (Long)spec.correct(Long.MAX_VALUE);
 				
-				AbstractOption option = new SliderPercentageOption(path, min, max, 0.1F, (settings) -> Double.valueOf(value1.get()), (settings, settingValue) -> {
+				AbstractOption option = new SliderPercentageOption(path, min, max, 0.01F, (settings) -> Double.valueOf(value1.get()), (settings, settingValue) -> {
 					value1.set(settingValue.longValue());
 					
 					if(getConfigName() != "client") {

@@ -36,6 +36,10 @@ public class DragonStateHandler {
     private double size = 0;
 	public boolean growing = true;
 	
+	public boolean treasureResting = false;
+	public int treasureRestTimer = 0;
+	public int treasureSleepTimer = 0;
+	
 	//Saving status of other types incase the config option for saving all is on
 	public double caveSize;
 	public double seaSize;

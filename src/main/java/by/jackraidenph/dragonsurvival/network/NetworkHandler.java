@@ -45,6 +45,8 @@ public class NetworkHandler
 		 register(DismantleNest.class, new DismantleNest());
 		 register(SleepInNest.class, new SleepInNest());
 //		 register(GiveNest.class, new GiveNest());
+		 
+		 register(SyncTreasureRestStatus.class, new SyncTreasureRestStatus());
 		
 		 //Generic packets
 		 register(SynchronizeDragonCap.class, new SynchronizeDragonCap());

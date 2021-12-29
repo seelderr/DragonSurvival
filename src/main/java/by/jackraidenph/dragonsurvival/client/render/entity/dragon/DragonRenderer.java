@@ -101,7 +101,7 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 					stack.translate(0.0, 0, 0.0);
 					Minecraft.getInstance().getItemRenderer().renderStatic(mainHand, TransformType.THIRD_PERSON_RIGHT_HAND, packedLightIn, packedOverlayIn, stack, rtb);
 					stack.popPose();
-					bufferIn = rtb.getBuffer(RenderType.entityTranslucent(whTexture));
+					bufferIn = rtb.getBuffer(RenderType.entityCutout(whTexture));
 				}
 			}else if (bone.getName().equals("LeftItem") && !offHand.isEmpty()) {
 				if(player != Minecraft.getInstance().player || ConfigHandler.CLIENT.alternateHeldItem.get() || !Minecraft.getInstance().options.getCameraType().isFirstPerson()) {
@@ -114,7 +114,7 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 					stack.translate(0.0, 0, 0.0);
 					Minecraft.getInstance().getItemRenderer().renderStatic(offHand, TransformType.THIRD_PERSON_LEFT_HAND, packedLightIn, packedOverlayIn, stack, rtb);
 					stack.popPose();
-					bufferIn = rtb.getBuffer(RenderType.entityTranslucent(whTexture));
+					bufferIn = rtb.getBuffer(RenderType.entityCutout(whTexture));
 				}
 			}else if(bone.getName().equals("BreathSource")){
 				DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
@@ -131,7 +131,7 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 							//stack.mulPose(Vector3f.ZN.rotationDegrees(player.xRot));//For head pitch
 							EntityRenderer<? super Entity> effectRender = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(((BreathAbility)handler.getMagic().getCurrentlyCasting()).getEffectEntity());
 							effectRender.render(((BreathAbility)handler.getMagic().getCurrentlyCasting()).getEffectEntity(), player.getViewYRot(partialTicks), partialTicks, stack, rtb, 200);
-							bufferIn = rtb.getBuffer(RenderType.entityTranslucent(whTexture));
+							bufferIn = rtb.getBuffer(RenderType.entityCutout(whTexture));
 							
 							stack.popPose();
 						}
