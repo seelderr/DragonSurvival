@@ -24,7 +24,7 @@
                   }
                 }
               ],
-              "name": "dragonsurvival:treasure_glowstone"
+              "name": "dragonsurvival:treasure_copper"
             },
             {
               "type": "minecraft:item",
@@ -33,7 +33,7 @@
                   "condition": "minecraft:survives_explosion"
                 }
               ],
-              "name": "dragonsurvival:treasure_glowstone"
+              "name": "dragonsurvival:treasure_copper"
             }
           ]
         }

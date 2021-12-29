@@ -2,14 +2,14 @@
   "type": "crafting_shapeless",
   "ingredients": [
     {
-      "item": "minecraft:lapis_lazuli"
+      "tag": "dragonsurvival:copper"
     },
     {
       "item": "dragonsurvival:elder_dragon_dust"
     }
   ],
   "result": {
-    "item": "dragonsurvival:treasure_lapis",
+    "item": "dragonsurvival:treasure_copper",
     "count": 1
   }
 }

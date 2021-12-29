@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    {"id": "cavesandcliffs:copper_ore",
+      "required": false}
+  ]
+}

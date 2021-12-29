@@ -35,15 +35,6 @@
   "item.dragonsurvival.spin_grant": "Дар Ускорения",
 
   "block.dragonsurvival.predator_star": "Звезда хищника",
-  "block.dragonsurvival.cave_nest_small": "Маленькое пещерное гнездо",
-  "block.dragonsurvival.forest_nest_small": "Маленькое лесное гнездо",
-  "block.dragonsurvival.water_nest_small": "Маленькое морское гнездо",
-  "block.dragonsurvival.medium_sea_nest": "Среднее морское гнездо",
-  "block.dragonsurvival.medium_cave_nest": "Среднее пещерное гнездо",
-  "block.dragonsurvival.medium_forest_nest": "Среднее лесное гнездо",
-  "block.dragonsurvival.big_forest_nest": "Большое лесное гнездо",
-  "block.dragonsurvival.big_sea_nest": "Большое морское гнездо",
-  "block.dragonsurvival.big_cave_nest": "Большое пещерное гнездо",
   "block.dragonsurvival.broken_helmet": "Сломанный шлем",
   "block.dragonsurvival.broken_knight_helmet_1": "Серый рыцарский шлем",
   "block.dragonsurvival.broken_knight_helmet_2": "Золотой рыцарский шлем",
@@ -80,6 +71,17 @@
   "block.dragonsurvival.sleeper_dragon_door": "Драконья дверь Спящего",
   "block.dragonsurvival.stone_dragon_door": "Каменная драконья дверь",
   "block.dragonsurvival.legacy_dragon_door": "Легендарная драконья дверь",
+
+  "block.dragonsurvival.forest_source_of_magic": "Лесной Источник Магии",
+  "block.dragonsurvival.sea_source_of_magic": "Морской Источник Магии",
+  "block.dragonsurvival.cave_source_of_magic": "Пещерный Источник Магии",
+
+  "block.dragonsurvival.treasure_iron": "Железное драконье сокровище",
+  "block.dragonsurvival.treasure_debris": "Незеритовое драконье сокровище",
+  "block.dragonsurvival.treasure_diamond": "Алмазное драконье сокровище",
+  "block.dragonsurvival.treasure_emerald": "Изумрудное драконье сокровище",
+  "block.dragonsurvival.treasure_copper": "Медное драконье сокровище",
+  "block.dragonsurvival.treasure_gold": "Золотое драконье сокровище",
 
   "effect.dragonsurvival.stress": "Стресс",
   "effect.dragonsurvival.evil_dragon": "Злой Дракон",

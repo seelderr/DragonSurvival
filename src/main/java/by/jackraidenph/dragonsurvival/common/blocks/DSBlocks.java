@@ -43,7 +43,7 @@ public class DSBlocks
     public static DragonBeacon dragonBeacon, peaceDragonBeacon, magicDragonBeacon, fireDragonBeacon;
     public static Block dragonMemoryBlock;
 
-    public static TreasureBlock treasureDebris, treasureDiamond, treasureEmerald, treasureGlowstone, treasureGold, treasureIron, treasureLapis, treasureQuartz, treasureRedstone;
+    public static TreasureBlock treasureDebris, treasureDiamond, treasureEmerald, treasureCopper, treasureGold, treasureIron;
     
     @SubscribeEvent
     public static void registerBlocks(final RegistryEvent.Register<Block> event) {
@@ -100,12 +100,9 @@ public class DSBlocks
         treasureDebris = registerBlock(new TreasureBlock(AbstractBlock.Properties.of(Material.METAL, MaterialColor.COLOR_BLACK)), "treasure_debris", forgeRegistry);
         treasureDiamond = registerBlock(new TreasureBlock(AbstractBlock.Properties.of(Material.METAL, MaterialColor.DIAMOND)), "treasure_diamond", forgeRegistry);
         treasureEmerald = registerBlock(new TreasureBlock(AbstractBlock.Properties.of(Material.METAL, MaterialColor.EMERALD)), "treasure_emerald", forgeRegistry);
-        treasureGlowstone = registerBlock(new TreasureBlock(AbstractBlock.Properties.of(Material.GLASS, MaterialColor.SAND)), "treasure_glowstone", forgeRegistry);
+        treasureCopper = registerBlock(new TreasureBlock(AbstractBlock.Properties.of(Material.GLASS, MaterialColor.SAND)), "treasure_copper", forgeRegistry);
         treasureGold = registerBlock(new TreasureBlock(AbstractBlock.Properties.of(Material.METAL, MaterialColor.GOLD)), "treasure_gold", forgeRegistry);
         treasureIron = registerBlock(new TreasureBlock(AbstractBlock.Properties.of(Material.METAL, MaterialColor.METAL)), "treasure_iron", forgeRegistry);
-        treasureLapis = registerBlock(new TreasureBlock(AbstractBlock.Properties.of(Material.METAL, MaterialColor.LAPIS)), "treasure_lapis", forgeRegistry);
-        treasureQuartz = registerBlock(new TreasureBlock(AbstractBlock.Properties.of(Material.STONE, MaterialColor.QUARTZ)), "treasure_quartz", forgeRegistry);
-        treasureRedstone = registerBlock(new TreasureBlock(AbstractBlock.Properties.of(Material.METAL, MaterialColor.FIRE)), "treasure_redstone", forgeRegistry);
     
         helmet1 = registerBlock(new HelmetBlock(AbstractBlock.Properties.of(Material.METAL)), "broken_knight_helmet_1", forgeRegistry);
         helmet2 = registerBlock(new HelmetBlock(AbstractBlock.Properties.of(Material.METAL)), "broken_knight_helmet_2", forgeRegistry);
@@ -154,12 +151,9 @@ public class DSBlocks
         registerSingleItem(treasureDebris, new Item.Properties(), forgeRegistry);
         registerSingleItem(treasureDiamond, new Item.Properties(), forgeRegistry);
         registerSingleItem(treasureEmerald, new Item.Properties(), forgeRegistry);
-        registerSingleItem(treasureGlowstone, new Item.Properties(), forgeRegistry);
+        registerSingleItem(treasureCopper, new Item.Properties(), forgeRegistry);
         registerSingleItem(treasureGold, new Item.Properties(), forgeRegistry);
         registerSingleItem(treasureIron, new Item.Properties(), forgeRegistry);
-        registerSingleItem(treasureLapis, new Item.Properties(), forgeRegistry);
-        registerSingleItem(treasureQuartz, new Item.Properties(), forgeRegistry);
-        registerSingleItem(treasureRedstone, new Item.Properties(), forgeRegistry);
 
         registerItem(dragon_altar_stone, new Item.Properties(), forgeRegistry);
         registerItem(dragon_altar_sandstone, new Item.Properties(), forgeRegistry);
