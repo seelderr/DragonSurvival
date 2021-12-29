@@ -1,5 +1,5 @@
 1.16.5-0.7 Flight Update:
- ■ Added:
+Added:
 - Significant internal code changes.
 - Improved breath source
 - Config: allow ender dragons give a spin or not
@@ -7,8 +7,7 @@
 - Config: body in first person always rotate opposite of the camera
 - Localization is temporarily disabled: pt_br, pl_pl, ja_jp, es_es. Now the localization will be disabled if it does not match the current Russian and English translation.
 - Localization update: uk_ua, en_us, he_il, ru_ru
-
- ■ Fixed:
+Fixed:
 - bug with first-person tail
 - crash due to incompatibility with some mods
 - magic debuffs are now player attacks
