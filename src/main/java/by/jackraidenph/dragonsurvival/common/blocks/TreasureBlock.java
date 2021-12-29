@@ -4,14 +4,14 @@ import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.status.SyncTreasureRestStatus;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.FallingBlock;
+import net.minecraft.block.*;
 import net.minecraft.entity.item.FallingBlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.FluidState;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.pathfinding.PathType;
+import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.IntegerProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
@@ -24,21 +24,24 @@ import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 
 import javax.annotation.Nullable;
 import java.util.Random;
 
-public class TreasureBlock extends FallingBlock
+public class TreasureBlock extends FallingBlock implements IWaterLoggable
 {
 	public static final IntegerProperty LAYERS = BlockStateProperties.LAYERS;
+	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
+	
 	protected static final VoxelShape[] SHAPE_BY_LAYER = new VoxelShape[]{VoxelShapes.empty(), Block.box(0.0D, 0.0D, 0.0D, 16.0D, 2.0D, 16.0D), Block.box(0.0D, 0.0D, 0.0D, 16.0D, 4.0D, 16.0D), Block.box(0.0D, 0.0D, 0.0D, 16.0D, 6.0D, 16.0D), Block.box(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D), Block.box(0.0D, 0.0D, 0.0D, 16.0D, 10.0D, 16.0D), Block.box(0.0D, 0.0D, 0.0D, 16.0D, 12.0D, 16.0D), Block.box(0.0D, 0.0D, 0.0D, 16.0D, 14.0D, 16.0D), Block.box(0.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D)};
 	
 	public TreasureBlock(Properties p_i48328_1_)
 	{
 		super(p_i48328_1_);
-		this.registerDefaultState(this.stateDefinition.any().setValue(LAYERS, Integer.valueOf(1)));
+		this.registerDefaultState(this.stateDefinition.any().setValue(LAYERS, Integer.valueOf(1)).setValue(WATERLOGGED, false));
 	}
 	
 	
@@ -56,8 +59,24 @@ public class TreasureBlock extends FallingBlock
 						int i = state.getValue(LAYERS);
 						
 						if(i > 0 && i < 8){
-							p_225534_2_.setBlock(p_225534_3_, Blocks.AIR.defaultBlockState(), 3);
-							level.setBlockAndUpdate(blockPosition().below(), state.setValue(LAYERS, Integer.valueOf(Math.min(8, i + 1))));
+							int missingLayers = 8 - i;
+							int newLayers = getBlockState().getValue(LAYERS);
+							int leftOver = 0;
+							
+							if(newLayers > missingLayers){
+								leftOver = newLayers - missingLayers;
+								newLayers = missingLayers;
+							}
+							
+							level.setBlockAndUpdate(blockPosition().below(), state.setValue(LAYERS, Integer.valueOf(Math.min(8, i + newLayers))));
+							
+							if(leftOver > 0){
+								p_225534_2_.setBlock(blockPosition(), getBlock().defaultBlockState().setValue(LAYERS, Integer.valueOf(Math.min(8, leftOver))), 3);
+								
+							}else {
+								p_225534_2_.setBlock(p_225534_3_, Blocks.AIR.defaultBlockState(), 3);
+							}
+							
 							this.remove();
 							return;
 						}
@@ -94,7 +113,7 @@ public class TreasureBlock extends FallingBlock
 			return SHAPE_BY_LAYER[p_220071_1_.getValue(LAYERS)];
 		}
 		
-		return SHAPE_BY_LAYER[Math.max(p_220071_1_.getValue(LAYERS)-2, 0)];
+		return SHAPE_BY_LAYER[Math.max(p_220071_1_.getValue(LAYERS)-1, 0)];
 	}
 	
 	public VoxelShape getBlockSupportShape(BlockState p_230335_1_, IBlockReader p_230335_2_, BlockPos p_230335_3_) {
@@ -146,11 +165,10 @@ public class TreasureBlock extends FallingBlock
 	public void onBroken(World world, BlockPos pos, FallingBlockEntity entity)
 	{
 		BlockState state = world.getBlockState(pos);
-		//TODO Add layers of falling block
 		if(state.getBlock() instanceof TreasureBlock){
 			if(state.getBlock() == entity.getBlockState().getBlock()){
 				int i = state.getValue(LAYERS);
-				world.setBlockAndUpdate(pos, state.setValue(LAYERS, Integer.valueOf(Math.min(8, i + 1))));
+				world.setBlockAndUpdate(pos, state.setValue(LAYERS, Integer.valueOf(Math.min(8, i + entity.getBlockState().getValue(LAYERS)))));
 			}
 		}
 	}
@@ -160,13 +178,27 @@ public class TreasureBlock extends FallingBlock
 		BlockState blockstate = p_196258_1_.getLevel().getBlockState(p_196258_1_.getClickedPos());
 		if (blockstate.is(this)) {
 			int i = blockstate.getValue(LAYERS);
-			return blockstate.setValue(LAYERS, Integer.valueOf(Math.min(8, i + 1)));
+			return blockstate.setValue(LAYERS, Integer.valueOf(Math.min(8, i + 1))).setValue(WATERLOGGED, p_196258_1_.getLevel().getFluidState(p_196258_1_.getClickedPos()).getType() == Fluids.WATER);
 		} else {
-			return super.getStateForPlacement(p_196258_1_);
+			return super.getStateForPlacement(p_196258_1_).setValue(WATERLOGGED, p_196258_1_.getLevel().getFluidState(p_196258_1_.getClickedPos()).getType() == Fluids.WATER);
 		}
 	}
 	
 	protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> p_206840_1_) {
 		p_206840_1_.add(LAYERS);
+		p_206840_1_.add(WATERLOGGED);
+	}
+	
+	@Override
+	public FluidState getFluidState(BlockState state) {
+		return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
+	}
+	
+	@Override
+	public BlockState updateShape(BlockState state, Direction dir, BlockState state2, IWorld level, BlockPos pos, BlockPos pos2) {
+		if (state.getValue(WATERLOGGED)) {
+			level.getLiquidTicks().scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
+		}
+		return super.updateShape(state, dir, state2, level, pos, pos2);
 	}
 }
