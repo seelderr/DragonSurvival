@@ -189,7 +189,6 @@ public class SkinsScreen extends Screen
 		addButton(new TabButton(startX + 128 + 33, startY - 26, 1, this));
 		addButton(new TabButton(startX + 128 + 62, startY - 26, 2, this));
 		addButton(new TabButton(startX + 128 + 91, startY - 28, 3, this));
-		addButton(new TabButton(startX + 128 + 91 + 29, startY - 26, 4, this));
 		
 		addButton(new Button(startX + 128, startY + 45, imageWidth, 20, new TranslationTextComponent("ds.level.newborn"), (button) -> {
 			DragonStateHandler handler = DragonStateProvider.getCap(getMinecraft().player).orElse(null);

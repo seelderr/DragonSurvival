@@ -1,23 +1,24 @@
 package by.jackraidenph.dragonsurvival.client.gui;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.config.ConfigHandler;
-import by.jackraidenph.dragonsurvival.config.ConfigUtils;
-import by.jackraidenph.dragonsurvival.server.containers.DragonContainer;
+import by.jackraidenph.dragonsurvival.client.gui.settings.SettingsSideScreen;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.TabButton;
 import by.jackraidenph.dragonsurvival.client.handlers.ClientEvents;
 import by.jackraidenph.dragonsurvival.client.handlers.KeyInputHandler;
-import by.jackraidenph.dragonsurvival.common.handlers.DragonGrowthHandler;
 import by.jackraidenph.dragonsurvival.client.handlers.magic.ClientMagicHUDHandler;
+import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
+import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.handlers.DragonGrowthHandler;
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
+import by.jackraidenph.dragonsurvival.config.ConfigUtils;
+import by.jackraidenph.dragonsurvival.misc.DragonLevel;
+import by.jackraidenph.dragonsurvival.misc.DragonType;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
-import by.jackraidenph.dragonsurvival.network.entity.player.SortInventoryPacket;
 import by.jackraidenph.dragonsurvival.network.claw.DragonClawsMenuToggle;
 import by.jackraidenph.dragonsurvival.network.claw.SyncDragonClawRender;
 import by.jackraidenph.dragonsurvival.network.container.OpenInventory;
-import by.jackraidenph.dragonsurvival.misc.DragonLevel;
-import by.jackraidenph.dragonsurvival.misc.DragonType;
+import by.jackraidenph.dragonsurvival.network.entity.player.SortInventoryPacket;
+import by.jackraidenph.dragonsurvival.server.containers.DragonContainer;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -49,6 +50,7 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
     static final ResourceLocation BACKGROUND = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_inventory.png");
     public static final ResourceLocation INVENTORY_TOGGLE_BUTTON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/inventory_button.png");
     public static final ResourceLocation SORTING_BUTTON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/sorting_button.png");
+    public static final ResourceLocation SETTINGS_BUTTON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/settings_button.png");
     
     private static final ResourceLocation CLAWS_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_claws.png");
     private static final ResourceLocation DRAGON_CLAW_BUTTON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_claws_button.png");
@@ -324,7 +326,6 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
         addButton(new TabButton(leftPos + 28, topPos - 26, 1, this));
         addButton(new TabButton(leftPos + 57, topPos - 26, 2, this));
         addButton(new TabButton(leftPos + 86, topPos - 26, 3, this));
-        addButton(new TabButton(leftPos + 115, topPos - 26, 4, this));
     
         addButton(new Button(leftPos + 27, topPos + 10, 11, 11, new StringTextComponent(""), p_onPress_1_ -> {
             clawsMenu = !clawsMenu;
@@ -534,6 +535,19 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
                 Minecraft.getInstance().screen.renderComponentTooltip(p_230443_1_, description, p_230443_2_, p_230443_3_);
             }
         });
+    
+        addButton(new ImageButton(this.leftPos + (imageWidth - 28), (this.height / 2) + 40, 18, 18, 0, 0, 18, SETTINGS_BUTTON, p_onPress_1_ -> {
+            Minecraft.getInstance().setScreen(new SettingsSideScreen(this, Minecraft.getInstance().options, new TranslationTextComponent("ds.gui.tab_button.4")));
+        }){
+            @Override
+            public void renderToolTip(MatrixStack p_230443_1_, int p_230443_2_, int p_230443_3_)
+            {
+                ArrayList<ITextComponent> description = new ArrayList<>(Arrays.asList(new TranslationTextComponent("ds.gui.tab_button.4")));
+                Minecraft.getInstance().screen.renderComponentTooltip(p_230443_1_, description, p_230443_2_, p_230443_3_);
+            }
+        });
+        
+    
     }
     
     public void render(MatrixStack p_230450_1_,int p_render_1_, int p_render_2_, float p_render_3_) {

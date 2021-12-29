@@ -152,16 +152,6 @@ public class ClientEvents
                         this.x = screen.getGuiLeft() + 86;
                     }
                 });
-    
-                initGuiEvent.addWidget(new TabButton(screen.getGuiLeft() + 115, screen.getGuiTop() - 26, 4, screen)
-                {
-                    @Override
-                    public void renderButton(MatrixStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_)
-                    {
-                        super.renderButton(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
-                        this.x = screen.getGuiLeft() + 115;
-                    }
-                });
             }
     
             if (ConfigHandler.CLIENT.inventoryToggle.get()) {

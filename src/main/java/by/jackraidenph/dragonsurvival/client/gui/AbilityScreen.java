@@ -73,8 +73,6 @@ public class AbilityScreen extends Screen {
         addButton(new TabButton(startX + 33, startY - 28, 1, this));
         addButton(new TabButton(startX + 62, startY - 26, 2, this));
         addButton(new TabButton(startX + 91, startY - 26, 3, this));
-        addButton(new TabButton(startX + 91 + 29, startY - 26, 4, this));
-    
     
         addButton(new SkillProgressButton(guiLeft + (int)(219 / 2F), startY + 8, 4, this));
         
