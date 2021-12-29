@@ -10,6 +10,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.particles.RedstoneParticleData;
 import net.minecraft.pathfinding.PathType;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.IntegerProperty;
@@ -27,8 +28,11 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
+import java.awt.*;
 import java.util.Random;
 
 public class TreasureBlock extends FallingBlock implements IWaterLoggable
@@ -38,10 +42,13 @@ public class TreasureBlock extends FallingBlock implements IWaterLoggable
 	
 	protected static final VoxelShape[] SHAPE_BY_LAYER = new VoxelShape[]{VoxelShapes.empty(), Block.box(0.0D, 0.0D, 0.0D, 16.0D, 2.0D, 16.0D), Block.box(0.0D, 0.0D, 0.0D, 16.0D, 4.0D, 16.0D), Block.box(0.0D, 0.0D, 0.0D, 16.0D, 6.0D, 16.0D), Block.box(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D), Block.box(0.0D, 0.0D, 0.0D, 16.0D, 10.0D, 16.0D), Block.box(0.0D, 0.0D, 0.0D, 16.0D, 12.0D, 16.0D), Block.box(0.0D, 0.0D, 0.0D, 16.0D, 14.0D, 16.0D), Block.box(0.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D)};
 	
-	public TreasureBlock(Properties p_i48328_1_)
+	private Color effectColor;
+	
+	public TreasureBlock(Color c, Properties p_i48328_1_)
 	{
 		super(p_i48328_1_);
 		this.registerDefaultState(this.stateDefinition.any().setValue(LAYERS, Integer.valueOf(1)).setValue(WATERLOGGED, false));
+		this.effectColor = c;
 	}
 	
 	
@@ -201,4 +208,17 @@ public class TreasureBlock extends FallingBlock implements IWaterLoggable
 		}
 		return super.updateShape(state, dir, state2, level, pos, pos2);
 	}
+	
+	@OnlyIn( Dist.CLIENT)
+	public void animateTick(BlockState block, World world, BlockPos pos, Random random)
+	{
+		double d1 = random.nextDouble();
+		double d2 = block.getValue(LAYERS) * .2;
+		double d3 = random.nextDouble();
+		
+		if (world.isEmptyBlock(pos.above())) {
+			world.addParticle(new RedstoneParticleData(effectColor.getRed() / 255F, effectColor.getBlue() / 255F, effectColor.getGreen() / 255F, 1F), (double)pos.getX() + d1, (double)pos.getY() + d2, (double)pos.getZ() + d3, 0.0D, 0.0D, 0.0D);
+		}
+	}
+	
 }
