@@ -93,6 +93,7 @@ public class ClientModEvents {
         RenderTypeLookup.setRenderLayer(DSBlocks.dragon_altar_nether_bricks, RenderType.cutout());
         RenderTypeLookup.setRenderLayer(DSBlocks.dragon_altar_mossy_cobblestone, RenderType.cutout());
         RenderTypeLookup.setRenderLayer(DSBlocks.dragon_altar_blackstone, RenderType.cutout());
+        RenderTypeLookup.setRenderLayer(DSBlocks.dragon_altar_birch_log, RenderType.cutout());
         RenderTypeLookup.setRenderLayer(DSBlocks.caveSourceOfMagic, RenderType.cutout());
         RenderTypeLookup.setRenderLayer(DSBlocks.forestSourceOfMagic, RenderType.cutout());
         RenderTypeLookup.setRenderLayer(DSBlocks.seaSourceOfMagic, RenderType.cutout());

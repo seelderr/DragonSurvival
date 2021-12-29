@@ -38,6 +38,7 @@ public class DSBlocks
     public static Block dragon_altar_nether_bricks;
     public static Block dragon_altar_mossy_cobblestone;
     public static Block dragon_altar_blackstone;
+    public static Block dragon_altar_birch_log;
 
     public static HelmetBlock helmet1, helmet2, helmet3;
     public static DragonBeacon dragonBeacon, peaceDragonBeacon, magicDragonBeacon, fireDragonBeacon;
@@ -54,6 +55,7 @@ public class DSBlocks
         dragon_altar_red_sandstone = new DragonAltarBlock(Block.Properties.of(Material.STONE).harvestTool(ToolType.PICKAXE).harvestLevel(0).strength(0.8f).sound(SoundType.STONE).requiresCorrectToolForDrops());
         dragon_altar_purpur_block = new DragonAltarBlock(Block.Properties.of(Material.STONE).harvestTool(ToolType.PICKAXE).harvestLevel(0).strength(1.5f).sound(SoundType.STONE).requiresCorrectToolForDrops());
         dragon_altar_oak_log = new DragonAltarBlock(Block.Properties.of(Material.WOOD).harvestTool(ToolType.AXE).harvestLevel(0).strength(2f).sound(SoundType.WOOD));
+        dragon_altar_birch_log = new DragonAltarBlock(Block.Properties.of(Material.WOOD).harvestTool(ToolType.AXE).harvestLevel(0).strength(2f).sound(SoundType.WOOD));
         dragon_altar_nether_bricks = new DragonAltarBlock(Block.Properties.of(Material.STONE).harvestTool(ToolType.PICKAXE).harvestLevel(0).strength(0.4f).sound(SoundType.NETHER_BRICKS).requiresCorrectToolForDrops());
         dragon_altar_mossy_cobblestone = new DragonAltarBlock(Block.Properties.of(Material.STONE).harvestTool(ToolType.PICKAXE).harvestLevel(0).strength(2f).sound(SoundType.STONE).requiresCorrectToolForDrops());
         dragon_altar_blackstone = new DragonAltarBlock(Block.Properties.of(Material.STONE).harvestTool(ToolType.PICKAXE).harvestLevel(0).strength(1.5f).sound(SoundType.STONE).requiresCorrectToolForDrops());
@@ -63,6 +65,7 @@ public class DSBlocks
         forgeRegistry.register(dragon_altar_red_sandstone.setRegistryName(DragonSurvivalMod.MODID, "dragon_altar_red_sandstone"));
         forgeRegistry.register(dragon_altar_purpur_block.setRegistryName(DragonSurvivalMod.MODID, "dragon_altar_purpur_block"));
         forgeRegistry.register(dragon_altar_oak_log.setRegistryName(DragonSurvivalMod.MODID, "dragon_altar_oak_log"));
+        forgeRegistry.register(dragon_altar_birch_log.setRegistryName(DragonSurvivalMod.MODID, "dragon_altar_birch_log"));
         forgeRegistry.register(dragon_altar_nether_bricks.setRegistryName(DragonSurvivalMod.MODID, "dragon_altar_nether_bricks"));
         forgeRegistry.register(dragon_altar_mossy_cobblestone.setRegistryName(DragonSurvivalMod.MODID, "dragon_altar_mossy_cobblestone"));
         forgeRegistry.register(dragon_altar_blackstone.setRegistryName(DragonSurvivalMod.MODID, "dragon_altar_blackstone"));
@@ -163,6 +166,7 @@ public class DSBlocks
         registerItem(dragon_altar_nether_bricks, new Item.Properties(), forgeRegistry);
         registerItem(dragon_altar_mossy_cobblestone, new Item.Properties(), forgeRegistry);
         registerItem(dragon_altar_blackstone, new Item.Properties(), forgeRegistry);
+        registerItem(dragon_altar_birch_log, new Item.Properties(), forgeRegistry);
 
         registerItem(helmet1, new Item.Properties().setISTER(() -> HelmetStackTileEntityRenderer::new), forgeRegistry);
         registerItem(helmet2, new Item.Properties().setISTER(() -> HelmetStackTileEntityRenderer::new), forgeRegistry);
