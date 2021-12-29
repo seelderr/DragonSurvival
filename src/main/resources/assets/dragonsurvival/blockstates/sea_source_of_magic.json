@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "dragonsurvival:block/source_of_magic_sea",
+      "x": 0
+    },
+    "facing=south": {
+      "model": "dragonsurvival:block/source_of_magic_sea",
+      "y": 180
+    },
+    "facing=east": {
+      "model": "dragonsurvival:block/source_of_magic_sea",
+      "y": 90
+    },
+    "facing=west": {
+      "model": "dragonsurvival:block/source_of_magic_sea",
+      "y": 270
+    }
+  }
+}

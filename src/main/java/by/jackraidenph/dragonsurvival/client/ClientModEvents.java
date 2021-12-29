@@ -93,12 +93,9 @@ public class ClientModEvents {
         RenderTypeLookup.setRenderLayer(DSBlocks.dragon_altar_nether_bricks, RenderType.cutout());
         RenderTypeLookup.setRenderLayer(DSBlocks.dragon_altar_mossy_cobblestone, RenderType.cutout());
         RenderTypeLookup.setRenderLayer(DSBlocks.dragon_altar_blackstone, RenderType.cutout());
-        RenderTypeLookup.setRenderLayer(DSBlocks.mediumCaveNest, RenderType.cutout());
-        RenderTypeLookup.setRenderLayer(DSBlocks.mediumForestNest, RenderType.cutout());
-        RenderTypeLookup.setRenderLayer(DSBlocks.mediumSeaNest, RenderType.cutout());
-        RenderTypeLookup.setRenderLayer(DSBlocks.bigCaveNest, RenderType.cutout());
-        RenderTypeLookup.setRenderLayer(DSBlocks.bigForestNest, RenderType.cutout());
-        RenderTypeLookup.setRenderLayer(DSBlocks.bigSeaNest, RenderType.cutout());
+        RenderTypeLookup.setRenderLayer(DSBlocks.caveSourceOfMagic, RenderType.cutout());
+        RenderTypeLookup.setRenderLayer(DSBlocks.forestSourceOfMagic, RenderType.cutout());
+        RenderTypeLookup.setRenderLayer(DSBlocks.seaSourceOfMagic, RenderType.cutout());
         RenderTypeLookup.setRenderLayer(DSBlocks.birchDoor, RenderType.cutout());
         RenderTypeLookup.setRenderLayer(DSBlocks.acaciaDoor, RenderType.cutout());
         RenderTypeLookup.setRenderLayer(DSBlocks.peaceDragonBeacon, RenderType.cutout());

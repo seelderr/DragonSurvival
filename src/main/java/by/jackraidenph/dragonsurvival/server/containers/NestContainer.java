@@ -1,6 +1,6 @@
 package by.jackraidenph.dragonsurvival.server.containers;
 
-import by.jackraidenph.dragonsurvival.server.tileentity.NestTileEntity;
+import by.jackraidenph.dragonsurvival.server.tileentity.SourceOfMagicTileEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -13,11 +13,11 @@ import net.minecraftforge.items.SlotItemHandler;
 import javax.annotation.Nonnull;
 
 public class NestContainer extends Container {
-    public NestTileEntity nestEntity;
+    public SourceOfMagicTileEntity nestEntity;
 
     public NestContainer(int windowId, PlayerInventory inv, PacketBuffer data) {
         super(DSContainers.nestContainer, windowId);
-        nestEntity = (NestTileEntity) inv.player.level.getBlockEntity(data.readBlockPos());
+        nestEntity = (SourceOfMagicTileEntity) inv.player.level.getBlockEntity(data.readBlockPos());
         int index = 0;
         for (int i = 0; i < 9; i++) {
             addSlot(new Slot(inv, index++, 8 + 18 * i, 141));
@@ -33,7 +33,7 @@ public class NestContainer extends Container {
             @Override
             public boolean mayPlace(@Nonnull ItemStack stack) {
                 Item item = stack.getItem();
-                return NestTileEntity.regenValue.containsKey(item);
+                return SourceOfMagicTileEntity.regenValue.containsKey(item);
             }
         });
     }

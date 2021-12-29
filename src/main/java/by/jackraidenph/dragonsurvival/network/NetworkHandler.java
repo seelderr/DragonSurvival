@@ -44,7 +44,7 @@ public class NetworkHandler
 		 register(ToggleRegeneration.class, new ToggleRegeneration());
 		 register(DismantleNest.class, new DismantleNest());
 		 register(SleepInNest.class, new SleepInNest());
-		 register(GiveNest.class, new GiveNest());
+//		 register(GiveNest.class, new GiveNest());
 		
 		 //Generic packets
 		 register(SynchronizeDragonCap.class, new SynchronizeDragonCap());

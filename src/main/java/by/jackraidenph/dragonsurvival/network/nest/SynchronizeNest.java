@@ -1,7 +1,7 @@
 package by.jackraidenph.dragonsurvival.network.nest;
 
 import by.jackraidenph.dragonsurvival.network.IMessage;
-import by.jackraidenph.dragonsurvival.server.tileentity.NestTileEntity;
+import by.jackraidenph.dragonsurvival.server.tileentity.SourceOfMagicTileEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
@@ -58,8 +58,8 @@ public class SynchronizeNest implements IMessage<SynchronizeNest>
             PlayerEntity player = Minecraft.getInstance().player;
             ClientWorld world = Minecraft.getInstance().level;
             TileEntity entity = world.getBlockEntity(message.pos);
-            if (entity instanceof NestTileEntity) {
-                NestTileEntity nestEntity = (NestTileEntity) entity;
+            if (entity instanceof SourceOfMagicTileEntity) {
+                SourceOfMagicTileEntity nestEntity = (SourceOfMagicTileEntity) entity;
                 nestEntity.energy = message.health;
                 nestEntity.damageCooldown = message.cooldown;
                 nestEntity.setChanged();

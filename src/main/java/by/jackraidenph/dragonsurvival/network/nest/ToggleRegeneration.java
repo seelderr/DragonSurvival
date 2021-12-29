@@ -1,7 +1,7 @@
 package by.jackraidenph.dragonsurvival.network.nest;
 
 import by.jackraidenph.dragonsurvival.network.IMessage;
-import by.jackraidenph.dragonsurvival.server.tileentity.NestTileEntity;
+import by.jackraidenph.dragonsurvival.server.tileentity.SourceOfMagicTileEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -41,8 +41,8 @@ public class ToggleRegeneration  implements IMessage<ToggleRegeneration>
     {
         ServerWorld serverWorld = supplier.get().getSender().getLevel();
         TileEntity tileEntity = serverWorld.getBlockEntity(message.nestPos);
-        if (tileEntity instanceof NestTileEntity) {
-            ((NestTileEntity) tileEntity).regenerationMode = message.state;
+        if (tileEntity instanceof SourceOfMagicTileEntity) {
+            ((SourceOfMagicTileEntity) tileEntity).regenerationMode = message.state;
             tileEntity.setChanged();
             supplier.get().setPacketHandled(true);
         }

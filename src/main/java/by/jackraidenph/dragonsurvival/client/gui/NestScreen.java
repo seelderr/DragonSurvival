@@ -5,7 +5,7 @@ import by.jackraidenph.dragonsurvival.network.nest.DismantleNest;
 import by.jackraidenph.dragonsurvival.server.containers.NestContainer;
 import by.jackraidenph.dragonsurvival.network.nest.SleepInNest;
 import by.jackraidenph.dragonsurvival.network.nest.ToggleRegeneration;
-import by.jackraidenph.dragonsurvival.server.tileentity.NestTileEntity;
+import by.jackraidenph.dragonsurvival.server.tileentity.SourceOfMagicTileEntity;
 import org.lwjgl.opengl.GL11;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -30,7 +30,7 @@ public class NestScreen extends ContainerScreen<NestContainer> {
     static final ResourceLocation SEA_NEST0 = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/nest/sea_nest_0.png");
     static final ResourceLocation SEA_NEST1 = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/nest/sea_nest_1.png");
     static final ResourceLocation RED_HEART = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/nest/red_heart.png");
-    private final NestTileEntity nestEntity;
+    private final SourceOfMagicTileEntity nestEntity;
 
     private final PlayerEntity playerEntity;
 

@@ -1,7 +1,7 @@
 package by.jackraidenph.dragonsurvival.network.nest;
 
 import by.jackraidenph.dragonsurvival.network.IMessage;
-import by.jackraidenph.dragonsurvival.server.tileentity.NestTileEntity;
+import by.jackraidenph.dragonsurvival.server.tileentity.SourceOfMagicTileEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -39,7 +39,7 @@ public class DismantleNest implements IMessage<DismantleNest>
     {
         ServerWorld serverWorld = supplier.get().getSender().getLevel();
         TileEntity tileEntity = serverWorld.getBlockEntity(message.nestPos);
-        if (tileEntity instanceof NestTileEntity) {
+        if (tileEntity instanceof SourceOfMagicTileEntity) {
             serverWorld.destroyBlock(message.nestPos, true);
             supplier.get().setPacketHandled(true);
         }

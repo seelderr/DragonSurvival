@@ -3,7 +3,8 @@
 	"parent": "block/cube_all",
 	"texture_size": [256, 256],
 	"textures": {
-		"0": "source_of_magic_sea"
+		"0": "dragonsurvival:block/source_of_magic_sea",
+		"particle": "dragonsurvival:block/source_of_magic_sea"
 	},
 	"elements": [
 		{

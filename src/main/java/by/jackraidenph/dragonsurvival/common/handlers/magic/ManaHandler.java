@@ -55,7 +55,7 @@ public class ManaHandler
 						return true;
 					}
 					
-					if(blockBelow.getBlock() == DSBlocks.smallSeaNest || blockBelow.getBlock() == DSBlocks.mediumSeaNest || blockBelow.getBlock() == DSBlocks.bigSeaNest){
+					if(blockBelow.getBlock() == DSBlocks.seaSourceOfMagic){
 						return true;
 					}
 					
@@ -103,7 +103,7 @@ public class ManaHandler
 						return true;
 					}
 					
-					if(blockBelow.getBlock() == DSBlocks.smallForestNest || blockBelow.getBlock() == DSBlocks.mediumForestNest || blockBelow.getBlock() == DSBlocks.bigForestNest){
+					if(blockBelow.getBlock() == DSBlocks.forestSourceOfMagic){
 						return true;
 					}
 					
@@ -117,7 +117,7 @@ public class ManaHandler
 						return true;
 					}
 					
-					if(blockBelow.getBlock() == DSBlocks.smallCaveNest || blockBelow.getBlock() == DSBlocks.mediumCaveNest || blockBelow.getBlock() == DSBlocks.bigCaveNest){
+					if(blockBelow.getBlock() == DSBlocks.caveSourceOfMagic){
 						return true;
 					}
 					

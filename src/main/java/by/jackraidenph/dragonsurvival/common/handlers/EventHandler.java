@@ -9,7 +9,7 @@ import by.jackraidenph.dragonsurvival.common.entity.monsters.MagicalPredatorEnti
 import by.jackraidenph.dragonsurvival.common.items.DSItems;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.status.PlayerJumpSync;
-import by.jackraidenph.dragonsurvival.server.tileentity.NestTileEntity;
+import by.jackraidenph.dragonsurvival.server.tileentity.SourceOfMagicTileEntity;
 import by.jackraidenph.dragonsurvival.misc.DragonLevel;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import net.minecraft.block.Block;
@@ -146,7 +146,7 @@ public class EventHandler {
     public static void sleepCheck(SleepingLocationCheckEvent sleepingLocationCheckEvent) {
         BlockPos sleepingLocation = sleepingLocationCheckEvent.getSleepingLocation();
         World world = sleepingLocationCheckEvent.getEntity().level;
-        if (world.isNight() && world.getBlockEntity(sleepingLocation) instanceof NestTileEntity)
+        if (world.isNight() && world.getBlockEntity(sleepingLocation) instanceof SourceOfMagicTileEntity)
             sleepingLocationCheckEvent.setResult(Event.Result.ALLOW);
     }
     

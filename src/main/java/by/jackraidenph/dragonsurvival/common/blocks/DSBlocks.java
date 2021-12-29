@@ -1,12 +1,9 @@
 package by.jackraidenph.dragonsurvival.common.blocks;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.common.blocks.nest.BigNestBlock;
-import by.jackraidenph.dragonsurvival.common.blocks.nest.MediumNestBlock;
-import by.jackraidenph.dragonsurvival.common.blocks.nest.NestBlock;
-import by.jackraidenph.dragonsurvival.common.items.DragonDoorItem;
-import by.jackraidenph.dragonsurvival.common.items.DSItems;
 import by.jackraidenph.dragonsurvival.client.render.item.HelmetStackTileEntityRenderer;
+import by.jackraidenph.dragonsurvival.common.items.DSItems;
+import by.jackraidenph.dragonsurvival.common.items.DragonDoorItem;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -27,13 +24,11 @@ import net.minecraftforge.registries.ObjectHolder;
 public class DSBlocks
 {
     public static Block PREDATOR_STAR_BLOCK;
-
-    public static NestBlock smallCaveNest, smallForestNest, smallSeaNest;
+    
     public static DragonDoor spruceDoor, acaciaDoor, birchDoor, jungleDoor, oakDoor, darkOakDoor, crimsonDoor, warpedDoor;
     public static DragonDoor legacyDoor, ironDoor, murdererDoor, sleeperDoor, stoneDoor;
     public static DragonDoor caveDoor, forestDoor, seaDoor;
-    public static MediumNestBlock mediumSeaNest, mediumCaveNest, mediumForestNest;
-    public static BigNestBlock bigForestNest, bigCaveNest, bigSeaNest;
+    public static SourceOfMagicBlock forestSourceOfMagic, caveSourceOfMagic, seaSourceOfMagic;
 
     public static Block dragon_altar_stone;
     public static Block dragon_altar_sandstone;
@@ -48,6 +43,8 @@ public class DSBlocks
     public static DragonBeacon dragonBeacon, peaceDragonBeacon, magicDragonBeacon, fireDragonBeacon;
     public static Block dragonMemoryBlock;
 
+    public static TreasureBlock treasureDebris, treasureDiamond, treasureEmerald, treasureGlowstone, treasureGold, treasureIron, treasureLapis, treasureQuartz, treasureRedstone;
+    
     @SubscribeEvent
     public static void registerBlocks(final RegistryEvent.Register<Block> event) {
         IForgeRegistry<Block> forgeRegistry = event.getRegistry();
@@ -96,19 +93,20 @@ public class DSBlocks
         sleeperDoor = registerBlock(new DragonDoor(AbstractBlock.Properties.copy(oakDoor), DragonDoor.OpenRequirement.NONE), "sleeper_dragon_door", forgeRegistry);
         stoneDoor = registerBlock(new DragonDoor(AbstractBlock.Properties.copy(oakDoor), DragonDoor.OpenRequirement.NONE), "stone_dragon_door", forgeRegistry);
         legacyDoor = registerBlock(new DragonDoor(Block.Properties.of(Material.WOOD, Blocks.SPRUCE_PLANKS.defaultMaterialColor()).strength(3.0F).sound(SoundType.WOOD).noOcclusion(), DragonDoor.OpenRequirement.NONE), "legacy_dragon_door", forgeRegistry);
+        
+        caveSourceOfMagic = registerBlock(new SourceOfMagicBlock(Block.Properties.of(Material.STONE).strength(3, 100).noOcclusion()), "cave_source_of_magic", forgeRegistry);
+        forestSourceOfMagic = registerBlock(new SourceOfMagicBlock(Block.Properties.of(Material.STONE).strength(3, 100).noOcclusion()), "forest_source_of_magic", forgeRegistry);
+        seaSourceOfMagic = registerBlock(new SourceOfMagicBlock(Block.Properties.of(Material.STONE).strength(3, 100).noOcclusion()), "sea_source_of_magic", forgeRegistry);
+        treasureDebris = registerBlock(new TreasureBlock(AbstractBlock.Properties.of(Material.METAL, MaterialColor.COLOR_BLACK)), "treasure_debris", forgeRegistry);
+        treasureDiamond = registerBlock(new TreasureBlock(AbstractBlock.Properties.of(Material.METAL, MaterialColor.DIAMOND)), "treasure_diamond", forgeRegistry);
+        treasureEmerald = registerBlock(new TreasureBlock(AbstractBlock.Properties.of(Material.METAL, MaterialColor.EMERALD)), "treasure_emerald", forgeRegistry);
+        treasureGlowstone = registerBlock(new TreasureBlock(AbstractBlock.Properties.of(Material.GLASS, MaterialColor.SAND)), "treasure_glowstone", forgeRegistry);
+        treasureGold = registerBlock(new TreasureBlock(AbstractBlock.Properties.of(Material.METAL, MaterialColor.GOLD)), "treasure_gold", forgeRegistry);
+        treasureIron = registerBlock(new TreasureBlock(AbstractBlock.Properties.of(Material.METAL, MaterialColor.METAL)), "treasure_iron", forgeRegistry);
+        treasureLapis = registerBlock(new TreasureBlock(AbstractBlock.Properties.of(Material.METAL, MaterialColor.LAPIS)), "treasure_lapis", forgeRegistry);
+        treasureQuartz = registerBlock(new TreasureBlock(AbstractBlock.Properties.of(Material.STONE, MaterialColor.QUARTZ)), "treasure_quartz", forgeRegistry);
+        treasureRedstone = registerBlock(new TreasureBlock(AbstractBlock.Properties.of(Material.METAL, MaterialColor.FIRE)), "treasure_redstone", forgeRegistry);
     
-        smallCaveNest = registerBlock(new NestBlock(Block.Properties.of(Material.STONE).strength(3, 100).noOcclusion()), "cave_nest_small", forgeRegistry);
-        smallSeaNest = registerBlock(new NestBlock(Block.Properties.of(Material.STONE).strength(3, 100).noOcclusion()), "water_nest_small", forgeRegistry);
-        smallForestNest = registerBlock(new NestBlock(Block.Properties.of(Material.STONE).strength(3, 100).noOcclusion()), "forest_nest_small", forgeRegistry);
-    
-        mediumSeaNest = registerBlock(new MediumNestBlock(Block.Properties.copy(smallSeaNest)), "medium_sea_nest", forgeRegistry);
-        mediumCaveNest = registerBlock(new MediumNestBlock(Block.Properties.copy(smallCaveNest)), "medium_cave_nest", forgeRegistry);
-        mediumForestNest = registerBlock(new MediumNestBlock(Block.Properties.copy(smallForestNest)), "medium_forest_nest", forgeRegistry);
-
-        bigCaveNest = registerBlock(new BigNestBlock(Block.Properties.copy(smallCaveNest)), "big_cave_nest", forgeRegistry);
-        bigForestNest = registerBlock(new BigNestBlock(Block.Properties.copy(smallForestNest)), "big_forest_nest", forgeRegistry);
-        bigSeaNest = registerBlock(new BigNestBlock(Block.Properties.copy(smallSeaNest)), "big_sea_nest", forgeRegistry);
-
         helmet1 = registerBlock(new HelmetBlock(AbstractBlock.Properties.of(Material.METAL)), "broken_knight_helmet_1", forgeRegistry);
         helmet2 = registerBlock(new HelmetBlock(AbstractBlock.Properties.of(Material.METAL)), "broken_knight_helmet_2", forgeRegistry);
         helmet3 = registerBlock(new HelmetBlock(AbstractBlock.Properties.of(Material.METAL)), "broken_knight_helmet_3", forgeRegistry);
@@ -148,19 +146,20 @@ public class DSBlocks
         
 
         forgeRegistry.register(new BlockItem(PREDATOR_STAR_BLOCK, new Item.Properties().tab(DSItems.items)).setRegistryName("predator_star"));
-
-        registerSingleItem(smallCaveNest, new Item.Properties(), forgeRegistry);
-        registerSingleItem(smallForestNest, new Item.Properties(), forgeRegistry);
-        registerSingleItem(smallSeaNest, new Item.Properties(), forgeRegistry);
-
-        registerSingleItem(mediumSeaNest, new Item.Properties(), forgeRegistry);
-        registerSingleItem(mediumForestNest, new Item.Properties(), forgeRegistry);
-        registerSingleItem(mediumCaveNest, new Item.Properties(), forgeRegistry);
-
-        registerSingleItem(bigSeaNest, new Item.Properties(), forgeRegistry);
-        registerSingleItem(bigForestNest, new Item.Properties(), forgeRegistry);
-        registerSingleItem(bigCaveNest, new Item.Properties(), forgeRegistry);
-
+        
+        registerSingleItem(seaSourceOfMagic, new Item.Properties(), forgeRegistry);
+        registerSingleItem(forestSourceOfMagic, new Item.Properties(), forgeRegistry);
+        registerSingleItem(caveSourceOfMagic, new Item.Properties(), forgeRegistry);
+    
+        registerSingleItem(treasureDebris, new Item.Properties(), forgeRegistry);
+        registerSingleItem(treasureDiamond, new Item.Properties(), forgeRegistry);
+        registerSingleItem(treasureEmerald, new Item.Properties(), forgeRegistry);
+        registerSingleItem(treasureGlowstone, new Item.Properties(), forgeRegistry);
+        registerSingleItem(treasureGold, new Item.Properties(), forgeRegistry);
+        registerSingleItem(treasureIron, new Item.Properties(), forgeRegistry);
+        registerSingleItem(treasureLapis, new Item.Properties(), forgeRegistry);
+        registerSingleItem(treasureQuartz, new Item.Properties(), forgeRegistry);
+        registerSingleItem(treasureRedstone, new Item.Properties(), forgeRegistry);
 
         registerItem(dragon_altar_stone, new Item.Properties(), forgeRegistry);
         registerItem(dragon_altar_sandstone, new Item.Properties(), forgeRegistry);

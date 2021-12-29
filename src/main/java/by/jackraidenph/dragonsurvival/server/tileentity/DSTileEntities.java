@@ -2,7 +2,7 @@ package by.jackraidenph.dragonsurvival.server.tileentity;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.common.blocks.DSBlocks;
-import by.jackraidenph.dragonsurvival.network.nest.NestPlaceHolder;
+import by.jackraidenph.dragonsurvival.network.nest.SourceOfMagicPlaceholder;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -14,24 +14,22 @@ public class DSTileEntities
 {
 
     public static TileEntityType<PredatorStarTileEntity> PREDATOR_STAR_TILE_ENTITY_TYPE;
-    public static TileEntityType<NestTileEntity> nestEntityTile;
-    public static TileEntityType<NestPlaceHolder> nestPlaceHolder;
+    public static TileEntityType<SourceOfMagicTileEntity> sourceOfMagicTileEntity;
+    public static TileEntityType<SourceOfMagicPlaceholder> sourceOfMagicPlaceholder;
     public static TileEntityType<AltarTileEntity> altarEntityTile;
     public static TileEntityType<HelmetTileEntity> helmetTile;
     public static TileEntityType<DragonBeaconTileEntity> dragonBeacon;
 
     @SubscribeEvent
     public static void registerBlockEntities(RegistryEvent.Register<TileEntityType<?>> event) {
-        nestEntityTile = TileEntityType.Builder.of(() -> new NestTileEntity(nestEntityTile),
-                                                   DSBlocks.smallCaveNest, DSBlocks.smallForestNest, DSBlocks.smallSeaNest,
-                                                   DSBlocks.mediumSeaNest, DSBlocks.mediumCaveNest, DSBlocks.mediumForestNest,
-                                                   DSBlocks.bigCaveNest, DSBlocks.bigSeaNest, DSBlocks.bigForestNest).build(null);
+        sourceOfMagicTileEntity = TileEntityType.Builder.of(() -> new SourceOfMagicTileEntity(sourceOfMagicTileEntity),
+                                                            DSBlocks.caveSourceOfMagic, DSBlocks.seaSourceOfMagic, DSBlocks.forestSourceOfMagic).build(null);
         PREDATOR_STAR_TILE_ENTITY_TYPE = TileEntityType.Builder.of(PredatorStarTileEntity::new, DSBlocks.PREDATOR_STAR_BLOCK).build(null);
         IForgeRegistry<TileEntityType<?>> registry = event.getRegistry();
-        registry.registerAll(nestEntityTile.setRegistryName(DragonSurvivalMod.MODID, "dragon_nest"),
-                PREDATOR_STAR_TILE_ENTITY_TYPE.setRegistryName(DragonSurvivalMod.MODID, "predator_star_te"));
-        nestPlaceHolder = TileEntityType.Builder.of(() -> new NestPlaceHolder(nestPlaceHolder), DSBlocks.mediumSeaNest, DSBlocks.mediumForestNest, DSBlocks.mediumCaveNest, DSBlocks.bigForestNest, DSBlocks.bigSeaNest, DSBlocks.bigCaveNest).build(null);
-        registry.register(nestPlaceHolder.setRegistryName("nest_placeholder"));
+        registry.registerAll(sourceOfMagicTileEntity.setRegistryName(DragonSurvivalMod.MODID, "dragon_nest"),
+                             PREDATOR_STAR_TILE_ENTITY_TYPE.setRegistryName(DragonSurvivalMod.MODID, "predator_star_te"));
+        sourceOfMagicPlaceholder = TileEntityType.Builder.of(() -> new SourceOfMagicPlaceholder(sourceOfMagicPlaceholder), DSBlocks.forestSourceOfMagic, DSBlocks.seaSourceOfMagic, DSBlocks.caveSourceOfMagic).build(null);
+        registry.register(sourceOfMagicPlaceholder.setRegistryName("nest_placeholder"));
         altarEntityTile = TileEntityType.Builder.of(() -> new AltarTileEntity(altarEntityTile),
                                                     DSBlocks.dragon_altar_stone,
                                                     DSBlocks.dragon_altar_sandstone,
