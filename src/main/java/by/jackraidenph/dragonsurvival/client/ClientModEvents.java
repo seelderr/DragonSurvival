@@ -24,7 +24,7 @@ import by.jackraidenph.dragonsurvival.client.handlers.DragonSkins;
 import by.jackraidenph.dragonsurvival.client.handlers.KeyInputHandler;
 import by.jackraidenph.dragonsurvival.client.models.projectiles.FireballModel;
 import by.jackraidenph.dragonsurvival.client.models.projectiles.LightningBallModel;
-import by.jackraidenph.dragonsurvival.client.gui.NestScreen;
+import by.jackraidenph.dragonsurvival.client.gui.SourceOfMagicScreen;
 import by.jackraidenph.dragonsurvival.client.particles.BeaconParticle;
 import by.jackraidenph.dragonsurvival.client.particles.SeaSweepParticle;
 import by.jackraidenph.dragonsurvival.client.render.entity.projectiles.BallLightningRenderer;
@@ -94,9 +94,6 @@ public class ClientModEvents {
         RenderTypeLookup.setRenderLayer(DSBlocks.dragon_altar_mossy_cobblestone, RenderType.cutout());
         RenderTypeLookup.setRenderLayer(DSBlocks.dragon_altar_blackstone, RenderType.cutout());
         RenderTypeLookup.setRenderLayer(DSBlocks.dragon_altar_birch_log, RenderType.cutout());
-        RenderTypeLookup.setRenderLayer(DSBlocks.caveSourceOfMagic, RenderType.cutout());
-        RenderTypeLookup.setRenderLayer(DSBlocks.forestSourceOfMagic, RenderType.cutout());
-        RenderTypeLookup.setRenderLayer(DSBlocks.seaSourceOfMagic, RenderType.cutout());
         RenderTypeLookup.setRenderLayer(DSBlocks.birchDoor, RenderType.cutout());
         RenderTypeLookup.setRenderLayer(DSBlocks.acaciaDoor, RenderType.cutout());
         RenderTypeLookup.setRenderLayer(DSBlocks.peaceDragonBeacon, RenderType.cutout());
@@ -118,7 +115,7 @@ public class ClientModEvents {
         ClientRegistry.bindTileEntityRenderer(DSTileEntities.dragonBeacon, DragonBeaconRenderer::new);
         ShaderHelper.initShaders();
 
-        ScreenManager.register(DSContainers.nestContainer, NestScreen::new);
+        ScreenManager.register(DSContainers.nestContainer, SourceOfMagicScreen::new);
         ScreenManager.register(DSContainers.dragonContainer, DragonScreen::new);
         
         //Gecko renderers

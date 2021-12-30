@@ -1,6 +1,5 @@
-package by.jackraidenph.dragonsurvival.network.nest;
+package by.jackraidenph.dragonsurvival.server.tileentity;
 
-import by.jackraidenph.dragonsurvival.server.tileentity.BaseBlockTileEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntityType;

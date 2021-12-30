@@ -12,13 +12,13 @@ import net.minecraftforge.registries.IForgeRegistry;
 public class DSContainers
 {
 
-    public static ContainerType<NestContainer> nestContainer;
+    public static ContainerType<SourceOfMagicContainer> nestContainer;
     public static ContainerType<CraftingContainer> craftingContainer;
     public static ContainerType<DragonContainer> dragonContainer;
     
     @SubscribeEvent
     public static void registerContainers(RegistryEvent.Register<ContainerType<?>> register) {
-        nestContainer = IForgeContainerType.create(NestContainer::new);
+        nestContainer = IForgeContainerType.create(SourceOfMagicContainer::new);
         IForgeRegistry<ContainerType<?>> forgeRegistry = register.getRegistry();
         forgeRegistry.register(nestContainer.setRegistryName(DragonSurvivalMod.MODID, "dragon_nest"));
 

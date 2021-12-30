@@ -6,10 +6,13 @@ import net.minecraft.entity.EntitySpawnPlacementRegistry;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.DyeColor;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.tileentity.BannerPattern;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -65,8 +68,12 @@ public class Functions {
         serverWorld.addFreshEntity(mobEntity);
     }
 
-    public static boolean isAirOrFluid(BlockPos blockPos, World world) {
-        return !world.getFluidState(blockPos).isEmpty() || world.isEmptyBlock(blockPos);
+    public static boolean isAirOrFluid(BlockPos blockPos, World world, PlayerEntity player, BlockRayTraceResult blockRayTraceResult) {
+        return isAirOrFluid(blockPos, world, new BlockItemUseContext(player, Hand.MAIN_HAND, player.getMainHandItem(), blockRayTraceResult));
+    }
+    
+    public static boolean isAirOrFluid(BlockPos blockPos, World world, BlockItemUseContext context) {
+        return !world.getFluidState(blockPos).isEmpty() || world.isEmptyBlock(blockPos) || world.getBlockState(blockPos).canBeReplaced(context);
     }
 
     public static ListNBT createRandomPattern(BannerPattern.Builder builder, int times) {

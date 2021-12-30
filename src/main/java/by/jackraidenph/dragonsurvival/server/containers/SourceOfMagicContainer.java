@@ -1,21 +1,21 @@
 package by.jackraidenph.dragonsurvival.server.containers;
 
+import by.jackraidenph.dragonsurvival.common.items.DSItems;
 import by.jackraidenph.dragonsurvival.server.tileentity.SourceOfMagicTileEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.items.SlotItemHandler;
 
 import javax.annotation.Nonnull;
 
-public class NestContainer extends Container {
+public class SourceOfMagicContainer extends Container {
     public SourceOfMagicTileEntity nestEntity;
 
-    public NestContainer(int windowId, PlayerInventory inv, PacketBuffer data) {
+    public SourceOfMagicContainer(int windowId, PlayerInventory inv, PacketBuffer data) {
         super(DSContainers.nestContainer, windowId);
         nestEntity = (SourceOfMagicTileEntity) inv.player.level.getBlockEntity(data.readBlockPos());
         int index = 0;
@@ -28,12 +28,10 @@ public class NestContainer extends Container {
             }
         }
 
-        addSlot(new SlotItemHandler(nestEntity.regenItem, 0, 8 + 18 * 7, 85 - 24) {
-
+        addSlot(new SlotItemHandler(nestEntity.regenItem, 0, 80, 62) {
             @Override
             public boolean mayPlace(@Nonnull ItemStack stack) {
-                Item item = stack.getItem();
-                return SourceOfMagicTileEntity.regenValue.containsKey(item);
+                return stack.getItem() == DSItems.elderDragonDust;
             }
         });
     }
@@ -59,9 +57,10 @@ public class NestContainer extends Container {
         }
         return super.quickMoveStack(playerIn, index);
     }
-
+    
     @Override
-    public boolean stillValid(PlayerEntity playerIn) {
-        return nestEntity.ownerUUID.equals(playerIn.getUUID());
+    public boolean stillValid(PlayerEntity p_75145_1_)
+    {
+        return true;
     }
 }
