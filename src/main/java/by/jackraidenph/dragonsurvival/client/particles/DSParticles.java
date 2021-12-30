@@ -75,6 +75,13 @@ public class DSParticles
         }
     });
     
+    public static final RegistryObject<ParticleType<TreasureParticleData>> TREASURE = REGISTRY.register("treasures", () -> new ParticleType<TreasureParticleData>(false, TreasureParticleData.DESERIALIZER) {
+        @Override
+        public Codec<TreasureParticleData> codec() {
+            return TreasureParticleData.CODEC;
+        }
+    });
+    
     
     @SubscribeEvent
     public static void registerParticles(RegistryEvent.Register<ParticleType<?>> registryEvent) {
@@ -104,5 +111,7 @@ public class DSParticles
         Minecraft.getInstance().particleEngine.register(DSParticles.LARGE_POISON.get(), LargePoisonParticle.ForestFactory::new);
         Minecraft.getInstance().particleEngine.register(DSParticles.LIGHTNING.get(), SeaFactory::new);
         Minecraft.getInstance().particleEngine.register(DSParticles.LARGE_LIGHTNING.get(), LargeLightningParticle.SeaFactory::new);
+        Minecraft.getInstance().particleEngine.register(DSParticles.TREASURE.get(), TreasureParticle.Factory::new);
+    
     }
 }

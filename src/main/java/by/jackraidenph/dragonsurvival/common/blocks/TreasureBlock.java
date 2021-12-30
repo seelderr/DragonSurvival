@@ -1,5 +1,6 @@
 package by.jackraidenph.dragonsurvival.common.blocks;
 
+import by.jackraidenph.dragonsurvival.client.particles.TreasureParticleData;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
@@ -10,7 +11,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.particles.RedstoneParticleData;
 import net.minecraft.pathfinding.PathType;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.IntegerProperty;
@@ -127,8 +127,21 @@ public class TreasureBlock extends FallingBlock implements IWaterLoggable
 		return SHAPE_BY_LAYER[p_230335_1_.getValue(LAYERS)];
 	}
 	
+//	public VoxelShape getVisualShape(BlockState p_230322_1_, IBlockReader p_230322_2_, BlockPos p_230322_3_, ISelectionContext p_230322_4_) {
+//		return SHAPE_BY_LAYER[p_230322_1_.getValue(LAYERS)];
+//	}
+	
 	public VoxelShape getVisualShape(BlockState p_230322_1_, IBlockReader p_230322_2_, BlockPos p_230322_3_, ISelectionContext p_230322_4_) {
-		return SHAPE_BY_LAYER[p_230322_1_.getValue(LAYERS)];
+		return VoxelShapes.empty();
+	}
+	
+	@OnlyIn(Dist.CLIENT)
+	public float getShadeBrightness(BlockState p_220080_1_, IBlockReader p_220080_2_, BlockPos p_220080_3_) {
+		return 1.0F;
+	}
+	
+	public boolean propagatesSkylightDown(BlockState p_200123_1_, IBlockReader p_200123_2_, BlockPos p_200123_3_) {
+		return true;
 	}
 	
 	public boolean useShapeForLightOcclusion(BlockState p_220074_1_) {
@@ -213,11 +226,13 @@ public class TreasureBlock extends FallingBlock implements IWaterLoggable
 	public void animateTick(BlockState block, World world, BlockPos pos, Random random)
 	{
 		double d1 = random.nextDouble();
-		double d2 = block.getValue(LAYERS) * .2;
+		double d2 = (block.getValue(LAYERS)-1) * .2;
 		double d3 = random.nextDouble();
 		
 		if (world.isEmptyBlock(pos.above())) {
-			world.addParticle(new RedstoneParticleData(effectColor.getRed() / 255F, effectColor.getBlue() / 255F, effectColor.getGreen() / 255F, 1F), (double)pos.getX() + d1, (double)pos.getY() + d2, (double)pos.getZ() + d3, 0.0D, 0.0D, 0.0D);
+			if (random.nextInt(100) == 0 || true) {
+				world.addParticle(new TreasureParticleData(effectColor.getRed() / 255F, effectColor.getGreen() / 255F, effectColor.getBlue() / 255F, 1F), (double)pos.getX() + d1, (double)pos.getY() + d2, (double)pos.getZ() + d3, 0.0D, 0.0D, 0.0D);
+			}
 		}
 	}
 	
