@@ -230,7 +230,7 @@ public class TreasureBlock extends FallingBlock implements IWaterLoggable
 		double d3 = random.nextDouble();
 		
 		if (world.isEmptyBlock(pos.above())) {
-			if (random.nextInt(100) == 0) {
+			if (random.nextInt(100) == 0 || true) {
 				world.addParticle(new TreasureParticleData(effectColor.getRed() / 255F, effectColor.getGreen() / 255F, effectColor.getBlue() / 255F, 1F), (double)pos.getX() + d1, (double)pos.getY() + d2, (double)pos.getZ() + d3, 0.0D, 0.0D, 0.0D);
 			}
 		}

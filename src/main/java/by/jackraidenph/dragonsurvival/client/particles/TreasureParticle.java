@@ -17,10 +17,9 @@ public class TreasureParticle extends SpriteTexturedParticle
 		this.xd *= (double)0.1F;
 		this.yd *= (double)0.1F;
 		this.zd *= (double)0.1F;
-		float f = (float)Math.random() * 0.4F + 0.6F;
-		this.rCol = ((float)(Math.random() * (double)0.2F) + 0.8F) * p_i232378_14_.getR() * f;
-		this.gCol = ((float)(Math.random() * (double)0.2F) + 0.8F) * p_i232378_14_.getG() * f;
-		this.bCol = ((float)(Math.random() * (double)0.2F) + 0.8F) * p_i232378_14_.getB() * f;
+		this.rCol = p_i232378_14_.getR();
+		this.gCol = p_i232378_14_.getG();
+		this.bCol = p_i232378_14_.getB();
 		this.quadSize *= 0.75F * p_i232378_14_.getScale();
 		int i = (int)(8.0D / (Math.random() * 0.8D + 0.2D));
 		this.lifetime = (int)Math.max((float)i * p_i232378_14_.getScale(), 1.0F);
@@ -34,7 +33,15 @@ public class TreasureParticle extends SpriteTexturedParticle
 	public float getQuadSize(float p_217561_1_) {
 		return this.quadSize * MathHelper.clamp(((float)this.age + p_217561_1_) / (float)this.lifetime * 32.0F, 0.0F, 1.0F);
 	}
-
+	
+	@Override
+	protected int getLightColor(float p_189214_1_)
+	{
+		int i = super.getLightColor(p_189214_1_);
+		int k = i >> 16 & 255;
+		return 240 | k << 16;
+	}
+	
 	public void tick() {
 		this.xo = this.x;
 		this.yo = this.y;
