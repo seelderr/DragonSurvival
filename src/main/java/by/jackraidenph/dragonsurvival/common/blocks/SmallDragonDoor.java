@@ -1,7 +1,8 @@
 package by.jackraidenph.dragonsurvival.common.blocks;
 
-import java.util.Locale;
-
+import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
+import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.misc.DragonType;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -34,40 +35,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nullable;
-
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.misc.DragonType;
+import java.util.Locale;
 
 
-public class DragonDoor extends Block {
-    enum Part implements IStringSerializable {
-        BOTTOM,
-        MIDDLE,
-        TOP;
-
-    	
-        @Override
-        public String getSerializedName() {
-            return name().toLowerCase(Locale.ENGLISH);
-        }
-    }
-
-    public enum OpenRequirement implements IStringSerializable{
-		NONE,
-    	POWER,
-        CAVE,
-        FOREST,
-        SEA,
-        LOCKED;
-    	
-    	@Override
-        public String getSerializedName() {
-            return name().toLowerCase(Locale.ENGLISH);
-        }
-	}
-	
-    
+public class SmallDragonDoor extends DragonDoor {
     public static final DirectionProperty FACING = HorizontalBlock.FACING;
     public static final BooleanProperty OPEN = BlockStateProperties.OPEN;
     public static final EnumProperty<DoorHingeSide> HINGE = BlockStateProperties.DOOR_HINGE;
@@ -75,20 +46,15 @@ public class DragonDoor extends Block {
     public static final EnumProperty<Part> PART = EnumProperty.create("part", Part.class);
     public static final EnumProperty<OpenRequirement> OPEN_REQ = EnumProperty.create("open_req", OpenRequirement.class);
 
+    // These are precalculated bounding boxes, for the door facing various directions + close / open states.
+    // Small doors will need to reduce all of these
     protected static final VoxelShape SOUTH_AABB = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 16.0D, 3.0D);
     protected static final VoxelShape NORTH_AABB = Block.box(0.0D, 0.0D, 13.0D, 16.0D, 16.0D, 16.0D);
     protected static final VoxelShape WEST_AABB = Block.box(13.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D);
     protected static final VoxelShape EAST_AABB = Block.box(0.0D, 0.0D, 0.0D, 3.0D, 16.0D, 16.0D);
 
-    public DragonDoor(Properties properties, OpenRequirement openRequirement) {
-        super(properties);
-        registerDefaultState(getStateDefinition().any()
-        		.setValue(FACING, Direction.NORTH)
-        		.setValue(OPEN, false)
-        		.setValue(HINGE, DoorHingeSide.LEFT)
-        		.setValue(POWERED, false)
-        		.setValue(PART, Part.BOTTOM)
-        		.setValue(OPEN_REQ, openRequirement));
+    public SmallDragonDoor(Properties properties, OpenRequirement openRequirement) {
+        super(properties, openRequirement);
     }
 
     public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
@@ -119,10 +85,6 @@ public class DragonDoor extends Block {
         }
     }
 
-    public void playerDestroy(World worldIn, PlayerEntity player, BlockPos pos, BlockState state, @Nullable TileEntity te, ItemStack stack) {
-        super.playerDestroy(worldIn, player, pos, Blocks.AIR.defaultBlockState(), te, stack);
-    }
-
     public void playerWillDestroy(World worldIn, BlockPos pos, BlockState state, PlayerEntity player) {
     	if (!worldIn.isClientSide) {
     		Part part = state.getValue(PART);
@@ -145,23 +107,6 @@ public class DragonDoor extends Block {
 		super.playerWillDestroy(worldIn, pos, state, player);
      }
 
-    public boolean isPathfindable(BlockState state, IBlockReader worldIn, BlockPos pos, PathType type) {
-        switch (type) {
-            case LAND:
-            case AIR:
-                return state.getValue(OPEN);
-            default:
-                return false;
-        }
-    }
-
-    protected int getCloseSound() {
-        return this.material == Material.METAL ? 1011 : 1012;
-    }
-
-    protected int getOpenSound() {
-        return this.material == Material.METAL ? 1005 : 1006;
-    }
 
     private DoorHingeSide getHinge(BlockItemUseContext blockItemUseContext) {
         //TODO Logic handling aligning doors
@@ -250,23 +195,6 @@ public class DragonDoor extends Block {
             worldIn.setBlock(pos, blockstate.setValue(OPEN, open), 10);
             this.playSound(worldIn, pos, open);
         }
-    }
-
-    public PushReaction getPistonPushReaction(BlockState state) {
-        return state.getValue(OPEN_REQ) == OpenRequirement.NONE ? PushReaction.DESTROY : PushReaction.IGNORE;
-    }
-
-    public BlockState rotate(BlockState state, Rotation rot) {
-        return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
-    }
-
-    public BlockState mirror(BlockState state, Mirror mirrorIn) {
-        return mirrorIn == Mirror.NONE ? state : state.rotate(mirrorIn.getRotation(state.getValue(FACING))).cycle(HINGE);
-    }
-
-    public long getSeed(BlockState state, BlockPos pos) {
-        //TODO
-        return MathHelper.getSeed(pos.getX(), pos.below(state.getValue(PART) == Part.BOTTOM ? 0 : 1).getY(), pos.getZ());
     }
 
     protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
