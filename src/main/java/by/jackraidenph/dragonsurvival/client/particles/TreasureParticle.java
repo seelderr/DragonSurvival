@@ -24,7 +24,7 @@ public class TreasureParticle extends SpriteTexturedParticle
 		this.quadSize *= 0.75F * p_i232378_14_.getScale();
 		int i = (int)(8.0D / (Math.random() * 0.8D + 0.2D));
 		this.lifetime = (int)Math.max((float)i * p_i232378_14_.getScale(), 1.0F);
-		this.setSpriteFromAge(p_i232341_10_);
+		this.pickSprite(p_i232341_10_);
 	}
 	
 	public IParticleRenderType getRenderType() {
@@ -41,8 +41,6 @@ public class TreasureParticle extends SpriteTexturedParticle
 		this.zo = this.z;
 		if (this.age++ >= this.lifetime) {
 			this.remove();
-		} else {
-			this.setSpriteFromAge(this.sprites);
 		}
 	}
 	

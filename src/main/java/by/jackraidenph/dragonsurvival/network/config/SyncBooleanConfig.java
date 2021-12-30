@@ -61,7 +61,10 @@ public class SyncBooleanConfig implements IMessage<SyncBooleanConfig>
 		
 		if (ob instanceof BooleanValue) {
 			BooleanValue booleanValue = (BooleanValue)ob;
-			booleanValue.set(message.value);
+			
+			try {
+				booleanValue.set(message.value);
+			}catch (Exception ignored){}
 		}
 	}
 }

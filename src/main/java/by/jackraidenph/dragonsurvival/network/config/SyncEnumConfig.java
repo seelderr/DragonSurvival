@@ -66,7 +66,10 @@ public class SyncEnumConfig implements IMessage<SyncEnumConfig>
 		
 		if (ob instanceof EnumValue) {
 			EnumValue value1 = (EnumValue)ob;
-			value1.set(message.value);
+			
+			try {
+				value1.set(message.value);
+			}catch (Exception ignored){}
 		}
 	}
 }

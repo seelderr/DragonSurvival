@@ -55,15 +55,22 @@ public class SyncNumberConfig implements IMessage<SyncNumberConfig>
 		
 		if (ob instanceof IntValue) {
 			IntValue value1 = (IntValue)ob;
-			value1.set(message.value.intValue());
-	
+			try {
+				value1.set(message.value.intValue());
+			}catch (Exception ignored){}
 		} else if (ob instanceof DoubleValue) {
 			DoubleValue value1 = (DoubleValue)ob;
-			value1.set(message.value);
+			
+			try {
+				value1.set(message.value);
+			}catch (Exception ignored){}
 			
 		} else if (ob instanceof LongValue) {
 			LongValue value1 = (LongValue)ob;
-			value1.set(message.value.longValue());
+			
+			try {
+				value1.set(message.value.longValue());
+			}catch (Exception ignored){}
 		}
 	}
 }

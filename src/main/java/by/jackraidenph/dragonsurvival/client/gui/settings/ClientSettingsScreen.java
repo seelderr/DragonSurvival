@@ -120,7 +120,9 @@ public class ClientSettingsScreen extends SettingsScreen
 				BooleanValue booleanValue = (BooleanValue)ob;
 				
 				AbstractOption option = new BooleanOption(path, new StringTextComponent(spec.getComment()), (settings) -> booleanValue.get(), (settings, settingValue) -> {
-					booleanValue.set(settingValue);
+					try {
+						booleanValue.set(settingValue);
+					}catch (Exception ignored){}
 					
 					if(getConfigName() != "client") {
 						NetworkHandler.CHANNEL.sendToServer(new SyncBooleanConfig(key, settingValue, getConfigName() == "server" ? 0 : 1));
@@ -134,7 +136,9 @@ public class ClientSettingsScreen extends SettingsScreen
 				Integer max = (Integer)spec.correct(Integer.MAX_VALUE);
 				
 				AbstractOption option = new SliderPercentageOption(path, min, max, 0.01F, (settings) -> Double.valueOf(value1.get()), (settings, settingValue) -> {
-					value1.set(settingValue.intValue());
+					try {
+						value1.set(settingValue.intValue());
+					}catch (Exception ignored){}
 					
 					if(getConfigName() != "client") {
 						NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(key, settingValue, getConfigName() == "server" ? 0 : 1));
@@ -150,7 +154,9 @@ public class ClientSettingsScreen extends SettingsScreen
 				double max = (double)spec.correct(Double.MAX_VALUE);
 				
 				AbstractOption option = new SliderPercentageOption(path, min, max, 0.01F, (settings) -> value1.get(), (settings, settingValue) -> {
-					value1.set(settingValue);
+					try {
+						value1.set(settingValue);
+					}catch (Exception ignored){}
 					
 					if(getConfigName() != "client") {
 						NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(key, settingValue, getConfigName() == "server" ? 0 : 1));
@@ -166,7 +172,9 @@ public class ClientSettingsScreen extends SettingsScreen
 				Long max = (Long)spec.correct(Long.MAX_VALUE);
 				
 				AbstractOption option = new SliderPercentageOption(path, min, max, 0.01F, (settings) -> Double.valueOf(value1.get()), (settings, settingValue) -> {
-					value1.set(settingValue.longValue());
+					try {
+						value1.set(settingValue.longValue());
+					}catch (Exception ignored){}
 					
 					if(getConfigName() != "client") {
 						NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(key, settingValue, getConfigName() == "server" ? 0 : 1));
@@ -189,7 +197,10 @@ public class ClientSettingsScreen extends SettingsScreen
 						curVal += 1;
 					}
 					Enum en = EnumGetMethod.ORDINAL_OR_NAME.get(curVal, cs);
-					value1.set(en);
+					
+					try {
+						value1.set(en);
+					}catch (Exception ignored){}
 					
 					if(getConfigName() != "client") {
 						NetworkHandler.CHANNEL.sendToServer(new SyncEnumConfig(key, en, getConfigName() == "server" ? 0 : 1));
