@@ -226,14 +226,13 @@ public class TreasureBlock extends FallingBlock implements IWaterLoggable
 	public void animateTick(BlockState block, World world, BlockPos pos, Random random)
 	{
 		double d1 = random.nextDouble();
-		double d2 = (block.getValue(LAYERS)-1) * .2;
+		double d2 = (block.getValue(LAYERS)) * (1.0 / 8) + .1;
 		double d3 = random.nextDouble();
 		
 		if (world.isEmptyBlock(pos.above())) {
-			if (random.nextInt(100) == 0 || true) {
+			if (random.nextInt(100) < 35) {
 				world.addParticle(new TreasureParticleData(effectColor.getRed() / 255F, effectColor.getGreen() / 255F, effectColor.getBlue() / 255F, 1F), (double)pos.getX() + d1, (double)pos.getY() + d2, (double)pos.getZ() + d3, 0.0D, 0.0D, 0.0D);
 			}
 		}
 	}
-	
 }

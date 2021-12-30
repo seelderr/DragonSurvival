@@ -14,9 +14,6 @@ public class TreasureParticle extends SpriteTexturedParticle
 	{
 		super(p_i232378_1_, p_i232378_2_, p_i232378_4_, p_i232378_6_, p_i232378_8_, p_i232378_10_, p_i232378_12_);
 		this.sprites = p_i232341_10_;
-		this.xd *= (double)0.1F;
-		this.yd *= (double)0.1F;
-		this.zd *= (double)0.1F;
 		this.rCol = p_i232378_14_.getR();
 		this.gCol = p_i232378_14_.getG();
 		this.bCol = p_i232378_14_.getB();
@@ -43,9 +40,6 @@ public class TreasureParticle extends SpriteTexturedParticle
 	}
 	
 	public void tick() {
-		this.xo = this.x;
-		this.yo = this.y;
-		this.zo = this.z;
 		if (this.age++ >= this.lifetime) {
 			this.remove();
 		}
