@@ -58,6 +58,8 @@ public class SyncTreasureRestStatus implements IMessage<SyncTreasureRestStatus>
 						dragonStateHandler.treasureSleepTimer = 0;
 					}
 					dragonStateHandler.treasureResting = message.state;
+					dragonStateHandler.lastTreasureResync = entity.tickCount;
+					
 				});
 				
 				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new SyncTreasureRestStatus(entity.getId(), message.state));
@@ -80,6 +82,7 @@ public class SyncTreasureRestStatus implements IMessage<SyncTreasureRestStatus>
 							dragonStateHandler.treasureSleepTimer = 0;
 						}
 						dragonStateHandler.treasureResting = message.state;
+						dragonStateHandler.lastTreasureResync = entity.tickCount;
 					});
 				}
 			}
