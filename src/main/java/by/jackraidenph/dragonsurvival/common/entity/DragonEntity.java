@@ -58,6 +58,9 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
     public double lookYaw = 0;
     public double lookPitch = 0;
     
+    public double flightY = 0;
+    public double flightX = 0;
+    
     public final ArrayList<Double> bodyYawAverage = new ArrayList<>();
     public final ArrayList<Double> headYawAverage = new ArrayList<>();
     public final ArrayList<Double> headPitchAverage = new ArrayList<>();

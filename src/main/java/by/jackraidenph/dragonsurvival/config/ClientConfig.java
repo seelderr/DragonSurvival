@@ -7,6 +7,7 @@ public class ClientConfig {
 	public final ForgeConfigSpec.BooleanValue renderInFirstPerson;
 	public final ForgeConfigSpec.BooleanValue firstPersonRotation;
 	public final ForgeConfigSpec.BooleanValue renderFirstPersonFlight;
+	public final ForgeConfigSpec.BooleanValue armorRenderLayer;
 	
 	public final ForgeConfigSpec.BooleanValue notifyWingStatus;
 	public final ForgeConfigSpec.BooleanValue jumpToFly;
@@ -72,6 +73,8 @@ public class ClientConfig {
 		othersSpinParticles = builder.comment("Should other players particles from spin attack be shown for you?").define("othersSpinParticles", true);
 		
 		builder.pop();
+		
+		armorRenderLayer = builder.comment("Should the armor be rendered as a layer on the dragon? Some shaders requires this to be off. Can cause some weird effects with armor when turned off.").define("armorRenderLayer", true);
 		
 		clientDebugMessages = builder.comment("Enable client-side debug messages").define("clientDebugMessages", false);
 		

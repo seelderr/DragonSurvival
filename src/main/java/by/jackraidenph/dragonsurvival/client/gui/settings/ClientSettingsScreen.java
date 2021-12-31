@@ -155,14 +155,14 @@ public class ClientSettingsScreen extends SettingsScreen
 				
 				AbstractOption option = new SliderPercentageOption(path, min, max, 0.01F, (settings) -> value1.get(), (settings, settingValue) -> {
 					try {
-						value1.set(settingValue);
+						value1.set(Math.round(settingValue * 100.0) / 100.0);
 					}catch (Exception ignored){}
 					
 					if(getConfigName() != "client") {
 						NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(key, settingValue, getConfigName() == "server" ? 0 : 1));
 					}
 				}, (settings, slider) -> {
-					return new TranslationTextComponent("options.generic_value", new StringTextComponent(finalPath), slider.get(settings));
+					return new TranslationTextComponent("options.generic_value", new StringTextComponent(finalPath), Math.round(slider.get(settings) * 100.0) / 100.0);
 				});
 				
 				addOption(category, path, option);

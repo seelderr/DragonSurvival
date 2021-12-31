@@ -5,6 +5,7 @@ import by.jackraidenph.dragonsurvival.client.handlers.ClientEvents;
 import by.jackraidenph.dragonsurvival.client.handlers.DragonSkins;
 import by.jackraidenph.dragonsurvival.client.models.DragonArmorModel;
 import by.jackraidenph.dragonsurvival.client.models.DragonModel;
+import by.jackraidenph.dragonsurvival.client.render.entity.dragon.DragonArmorRenderLayer;
 import by.jackraidenph.dragonsurvival.client.render.entity.dragon.DragonRenderer;
 import by.jackraidenph.dragonsurvival.common.DragonEffects;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
@@ -28,9 +29,9 @@ import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.client.renderer.entity.layers.ParrotVariantLayer;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.*;
+import net.minecraft.item.IDyeableArmorItem;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
@@ -188,20 +189,22 @@ public class ClientDragonRender
 					if(player != mc.player || !Minecraft.getInstance().options.getCameraType().isFirstPerson() || !ServerFlightHandler.isGliding(player) || ConfigHandler.CLIENT.renderFirstPersonFlight.get()) {
 						dragonRenderer.render(dummyDragon, yaw, partialRenderTick, matrixStack, renderTypeBuffer, eventLight);
 						
-						ItemStack helmet = player.getItemBySlot(EquipmentSlotType.HEAD);
-						ItemStack chestPlate = player.getItemBySlot(EquipmentSlotType.CHEST);
-						ItemStack legs = player.getItemBySlot(EquipmentSlotType.LEGS);
-						ItemStack boots = player.getItemBySlot(EquipmentSlotType.FEET);
-						
-						ResourceLocation helmetTexture = new ResourceLocation(DragonSurvivalMod.MODID, constructArmorTexture(player, EquipmentSlotType.HEAD));
-						ResourceLocation chestPlateTexture = new ResourceLocation(DragonSurvivalMod.MODID, constructArmorTexture(player, EquipmentSlotType.CHEST));
-						ResourceLocation legsTexture = new ResourceLocation(DragonSurvivalMod.MODID, constructArmorTexture(player, EquipmentSlotType.LEGS));
-						ResourceLocation bootsTexture = new ResourceLocation(DragonSurvivalMod.MODID, constructArmorTexture(player, EquipmentSlotType.FEET));
-						
-						renderArmorPiece(helmet, matrixStack, renderTypeBuffer, yaw, eventLight, dummyDragon, partialRenderTick, helmetTexture);
-						renderArmorPiece(chestPlate, matrixStack, renderTypeBuffer, yaw, eventLight, dummyDragon, partialRenderTick, chestPlateTexture);
-						renderArmorPiece(legs, matrixStack, renderTypeBuffer, yaw, eventLight, dummyDragon, partialRenderTick, legsTexture);
-						renderArmorPiece(boots, matrixStack, renderTypeBuffer, yaw, eventLight, dummyDragon, partialRenderTick, bootsTexture);
+						if(!ConfigHandler.CLIENT.armorRenderLayer.get()) {
+							ItemStack helmet = player.getItemBySlot(EquipmentSlotType.HEAD);
+							ItemStack chestPlate = player.getItemBySlot(EquipmentSlotType.CHEST);
+							ItemStack legs = player.getItemBySlot(EquipmentSlotType.LEGS);
+							ItemStack boots = player.getItemBySlot(EquipmentSlotType.FEET);
+							
+							ResourceLocation helmetTexture = new ResourceLocation(DragonSurvivalMod.MODID, DragonArmorRenderLayer.constructArmorTexture(player, EquipmentSlotType.HEAD));
+							ResourceLocation chestPlateTexture = new ResourceLocation(DragonSurvivalMod.MODID, DragonArmorRenderLayer.constructArmorTexture(player, EquipmentSlotType.CHEST));
+							ResourceLocation legsTexture = new ResourceLocation(DragonSurvivalMod.MODID, DragonArmorRenderLayer.constructArmorTexture(player, EquipmentSlotType.LEGS));
+							ResourceLocation bootsTexture = new ResourceLocation(DragonSurvivalMod.MODID, DragonArmorRenderLayer.constructArmorTexture(player, EquipmentSlotType.FEET));
+							
+							renderArmorPiece(helmet, matrixStack, renderTypeBuffer, yaw, eventLight, dummyDragon, partialRenderTick, helmetTexture);
+							renderArmorPiece(chestPlate, matrixStack, renderTypeBuffer, yaw, eventLight, dummyDragon, partialRenderTick, chestPlateTexture);
+							renderArmorPiece(legs, matrixStack, renderTypeBuffer, yaw, eventLight, dummyDragon, partialRenderTick, legsTexture);
+							renderArmorPiece(boots, matrixStack, renderTypeBuffer, yaw, eventLight, dummyDragon, partialRenderTick, bootsTexture);
+						}
 					}
                 }
 
@@ -259,69 +262,5 @@ public class ClientDragonRender
 			((DragonRenderer)dragonArmorRenderer).renderColor = preColor;
 			((DragonRenderer)dragonArmorRenderer).renderLayers = true;
 		}
-	}
-	
-	private static String constructArmorTexture(PlayerEntity playerEntity, EquipmentSlotType equipmentSlot) {
-		String texture = "textures/armor/";
-		Item item = playerEntity.getItemBySlot(equipmentSlot).getItem();
-		if (item instanceof ArmorItem) {
-			ArmorItem armorItem = (ArmorItem) item;
-			IArmorMaterial armorMaterial = armorItem.getMaterial();
-			if (armorMaterial.getClass() == ArmorMaterial.class) {
-				if (armorMaterial == ArmorMaterial.NETHERITE) {
-					texture += "netherite_";
-				} else if (armorMaterial == ArmorMaterial.DIAMOND) {
-					texture += "diamond_";
-				} else if (armorMaterial == ArmorMaterial.IRON) {
-					texture += "iron_";
-				} else if (armorMaterial == ArmorMaterial.LEATHER) {
-					texture += "leather_";
-				} else if (armorMaterial == ArmorMaterial.GOLD) {
-					texture += "gold_";
-				} else if (armorMaterial == ArmorMaterial.CHAIN) {
-					texture += "chainmail_";
-				} else if (armorMaterial == ArmorMaterial.TURTLE)
-					texture += "turtle_";
-				else {
-					return texture + "empty_armor.png";
-				}
-				
-				texture += "dragon_";
-				switch (equipmentSlot) {
-					case HEAD:
-						texture += "helmet";
-						break;
-					case CHEST:
-						texture += "chestplate";
-						break;
-					case LEGS:
-						texture += "leggings";
-						break;
-					case FEET:
-						texture += "boots";
-						break;
-				}
-				texture += ".png";
-				return texture;
-			} else {
-				int defense = armorItem.getDefense();
-				switch (equipmentSlot) {
-					case FEET:
-						texture += MathHelper.clamp(defense, 1, 4) + "_dragon_boots";
-						break;
-					case CHEST:
-						texture += MathHelper.clamp(defense / 2, 1, 4) + "_dragon_chestplate";
-						break;
-					case HEAD:
-						texture += MathHelper.clamp(defense, 1, 4) + "_dragon_helmet";
-						break;
-					case LEGS:
-						texture += MathHelper.clamp((int) (defense / 1.5), 1, 4) + "_dragon_leggings";
-						break;
-				}
-				return texture + ".png";
-			}
-		}
-		return texture + "empty_armor.png";
 	}
 }
