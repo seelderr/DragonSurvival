@@ -717,6 +717,7 @@ public class ServerConfig {
 		builder.comment("Dragon food formatting: item/tag:modid:id:food:saturation. Food/saturation values are optional as the human values will be used if missing.");
 
 		caveDragonFoods = builder
+				.worldRestart()
 				.defineList("caveDragon", Arrays.asList(
 						"tag:minecraft:coals:1:1",
 						"item:minecraft:charcoal:1:2",
@@ -759,6 +760,7 @@ public class ServerConfig {
 				), this::isValidFoodConfig);
 
 		forestDragonFoods = builder
+				.worldRestart()
 				.defineList("forestDragon", Arrays.asList(
 						"tag:forge:raw_meats:5:7",
 						"item:minecraft:sweet_berries:2:2",
@@ -905,6 +907,7 @@ public class ServerConfig {
 				), this::isValidFoodConfig);
 
 		seaDragonFoods = builder
+				.worldRestart()
 				.defineList("seaDragon", Arrays.asList(
 						"tag:forge:raw_fishes:6:7",
 						"item:minecraft:dried_kelp:1:1",

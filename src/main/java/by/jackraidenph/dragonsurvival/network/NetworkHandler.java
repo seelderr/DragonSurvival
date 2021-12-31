@@ -6,6 +6,7 @@ import by.jackraidenph.dragonsurvival.network.claw.SyncDragonClawRender;
 import by.jackraidenph.dragonsurvival.network.claw.SyncDragonClawsMenu;
 import by.jackraidenph.dragonsurvival.network.config.SyncBooleanConfig;
 import by.jackraidenph.dragonsurvival.network.config.SyncEnumConfig;
+import by.jackraidenph.dragonsurvival.network.config.SyncListConfig;
 import by.jackraidenph.dragonsurvival.network.config.SyncNumberConfig;
 import by.jackraidenph.dragonsurvival.network.container.OpenDragonInventory;
 import by.jackraidenph.dragonsurvival.network.container.OpenInventory;
@@ -103,5 +104,6 @@ public class NetworkHandler
 		 register(SyncBooleanConfig.class, new SyncBooleanConfig());
 		 register(SyncNumberConfig.class, new SyncNumberConfig());
 		 register(SyncEnumConfig.class, new SyncEnumConfig());
+		 register(SyncListConfig.class, new SyncListConfig());
 	 }
 }

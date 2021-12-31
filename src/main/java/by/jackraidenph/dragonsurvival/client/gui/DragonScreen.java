@@ -536,7 +536,7 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
             }
         });
     
-        addButton(new ImageButton(this.leftPos + (imageWidth - 28), (this.height / 2) + 40, 18, 18, 0, 0, 18, SETTINGS_BUTTON, p_onPress_1_ -> {
+        addButton(new ImageButton(this.leftPos + (imageWidth - 27), (this.height / 2) + 40, 18, 18, 0, 0, 18, SETTINGS_BUTTON, p_onPress_1_ -> {
             Minecraft.getInstance().setScreen(new SettingsSideScreen(this, Minecraft.getInstance().options, new TranslationTextComponent("ds.gui.tab_button.4")));
         }){
             @Override

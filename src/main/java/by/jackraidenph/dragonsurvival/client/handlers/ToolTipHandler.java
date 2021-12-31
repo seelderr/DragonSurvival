@@ -1,13 +1,14 @@
 package by.jackraidenph.dragonsurvival.client.handlers;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.util.Functions;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.client.gui.AbilityScreen;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.SkillProgressButton;
-import by.jackraidenph.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.jackraidenph.dragonsurvival.common.blocks.DSBlocks;
+import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.handlers.DragonFoodHandler;
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
+import by.jackraidenph.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -31,7 +32,6 @@ import org.lwjgl.opengl.GL11;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 @Mod.EventBusSubscriber( Dist.CLIENT)
 public class ToolTipHandler
 {
@@ -105,19 +105,11 @@ public class ToolTipHandler
 	}
 	
 	
-	private static boolean userCheck(){
-		if(Minecraft.getInstance().level == null) return false;
-		
-		UUID playerId = Minecraft.getInstance().player != null && Minecraft.getInstance().player.getGameProfile() != null && Minecraft.getInstance().player.getGameProfile().getId() != null ? Minecraft.getInstance().player.getGameProfile().getId() : null;
-		UUID player1 = UUID.fromString("6848748e-f3c1-4c30-91e4-4c7cc3fbeec5");
-		UUID player2 = UUID.fromString("05a6e38f-9cd9-3f4a-849c-68841b773e39");
-		boolean renderAll = playerId != null && (player1 != null && playerId.equals(player1) || player2 != null && playerId.equals(player2));
-		return renderAll;
-	}
-	
 	private static boolean isHelpText(List<ITextProperties> lines){
+		if(!ConfigHandler.CLIENT.tooltipChanges.get() || !ConfigHandler.CLIENT.helpTooltips.get()) return false;
 		if(Minecraft.getInstance().level == null) return false;
-		boolean renderAll = userCheck();
+		if(ConfigHandler.CLIENT.alwaysShowHelpTooltip.get()) return true;
+		
 		boolean text = false;
 		
 		String[] keys = new String[]{
@@ -167,13 +159,12 @@ public class ToolTipHandler
 			}
 		}
 		
-		return text || renderAll;
+		return text;
 	}
 	
 	@SubscribeEvent
 	public static void onPostTooltipEvent(RenderTooltipEvent.PostText event) {
 		boolean render = isHelpText((List<ITextProperties>)event.getLines());
-		boolean renderAll = userCheck();
 		
 		if(!render){
 			return;
@@ -213,14 +204,12 @@ public class ToolTipHandler
 		
 		matrix.translate(0, 0, 410.0);
 		
-		if(!renderAll) {
-			AbstractGui.blit(matrix, x - 8 - 6, y - 8 - 6, 1, 1 % texHeight, 16, 16, texWidth, texHeight);
-			AbstractGui.blit(matrix, x + width - 8 + 6, y - 8 - 6, texWidth - 16 - 1, 1 % texHeight, 16, 16, texWidth, texHeight);
-			
-			AbstractGui.blit(matrix, x - 8 - 6, y + height - 8 + 6, 1, 1 % texHeight + 16, 16, 16, texWidth, texHeight);
-			AbstractGui.blit(matrix, x + width - 8 + 6, y + height - 8 + 6, texWidth - 16 - 1, 1 % texHeight + 16, 16, 16, texWidth, texHeight);
-		}
+		AbstractGui.blit(matrix, x - 8 - 6, y - 8 - 6, 1, 1 % texHeight, 16, 16, texWidth, texHeight);
+		AbstractGui.blit(matrix, x + width - 8 + 6, y - 8 - 6, texWidth - 16 - 1, 1 % texHeight, 16, 16, texWidth, texHeight);
 		
+		AbstractGui.blit(matrix, x - 8 - 6, y + height - 8 + 6, 1, 1 % texHeight + 16, 16, 16, texWidth, texHeight);
+		AbstractGui.blit(matrix, x + width - 8 + 6, y + height - 8 + 6, texWidth - 16 - 1, 1 % texHeight + 16, 16, 16, texWidth, texHeight);
+	
 		AbstractGui.blit(matrix, x + (width / 2) - 47, y - 16, 16 + 2 * texWidth + 1, 1 % texHeight, 94, 16, texWidth, texHeight);
 		AbstractGui.blit(matrix, x + (width / 2) - 47, y + height, 16 + 2 * texWidth + 1, 1 % texHeight + 16, 94, 16, texWidth, texHeight);
 	
@@ -231,14 +220,15 @@ public class ToolTipHandler
 	
 	@SubscribeEvent
 	public static void onTooltipColorEvent(RenderTooltipEvent.Color event) {
+		if(!ConfigHandler.CLIENT.tooltipChanges.get()) return;
 		boolean render = isHelpText((List<ITextProperties>)event.getLines());
 		boolean screen = Minecraft.getInstance().screen instanceof AbilityScreen;
 		
 		ItemStack stack = event.getStack();
 		
-		boolean isSeaFood = !stack.isEmpty() && DragonFoodHandler.getSafeEdibleFoods(DragonType.SEA).contains(stack.getItem());
-		boolean isForestFood = !stack.isEmpty()  && DragonFoodHandler.getSafeEdibleFoods(DragonType.FOREST).contains(stack.getItem());
-		boolean isCaveFood = !stack.isEmpty()  && DragonFoodHandler.getSafeEdibleFoods(DragonType.CAVE).contains(stack.getItem());
+		boolean isSeaFood = ConfigHandler.CLIENT.dragonFoodTooltips.get() && !stack.isEmpty() && DragonFoodHandler.getSafeEdibleFoods(DragonType.SEA).contains(stack.getItem());
+		boolean isForestFood = ConfigHandler.CLIENT.dragonFoodTooltips.get() && !stack.isEmpty()  && DragonFoodHandler.getSafeEdibleFoods(DragonType.FOREST).contains(stack.getItem());
+		boolean isCaveFood = ConfigHandler.CLIENT.dragonFoodTooltips.get() && !stack.isEmpty()  && DragonFoodHandler.getSafeEdibleFoods(DragonType.CAVE).contains(stack.getItem());
 		int foodCount = (isSeaFood ? 1 : 0) + (isForestFood ? 1 : 0) + (isCaveFood ? 1 : 0);
 		
 		boolean isFood = foodCount == 1;

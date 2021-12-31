@@ -14,6 +14,11 @@ public class ClientConfig {
 	public final ForgeConfigSpec.BooleanValue lookAtSkyForFlight;
 	public final ForgeConfigSpec.BooleanValue renderOtherPlayerRotation;
 	
+	public final ForgeConfigSpec.BooleanValue tooltipChanges;
+	public final ForgeConfigSpec.BooleanValue dragonFoodTooltips;
+	public final ForgeConfigSpec.BooleanValue helpTooltips;
+	public final ForgeConfigSpec.BooleanValue alwaysShowHelpTooltip;
+	
 	public final ForgeConfigSpec.BooleanValue flightZoomEffect;
 	public final ForgeConfigSpec.BooleanValue flightCameraMovement;
 	
@@ -72,13 +77,11 @@ public class ClientConfig {
 		ownSpinParticles = builder.comment("Should particles from your own spin attack be displayed for you?").define("ownSpinParticles", true);
 		othersSpinParticles = builder.comment("Should other players particles from spin attack be shown for you?").define("othersSpinParticles", true);
 		
-		builder.pop();
-		
-		armorRenderLayer = builder.comment("Should the armor be rendered as a layer on the dragon? Some shaders requires this to be off. Can cause some weird effects with armor when turned off.").define("armorRenderLayer", true);
+		builder.pop().push("misc");
 		
 		clientDebugMessages = builder.comment("Enable client-side debug messages").define("clientDebugMessages", false);
 		
-		builder.push("inventory");
+		builder.pop().push("inventory");
 		dragonInventory = builder
 				.comment("Should the default inventory be replaced as a dragon?")
 				.define("dragonInventory", true);
@@ -117,6 +120,24 @@ public class ClientConfig {
 				.comment("Should other player skins be rendered?")
 				.define("renderOtherPlayerSkins", true);
 		
+		armorRenderLayer = builder.comment("Should the armor be rendered as a layer on the dragon? Some shaders requires this to be off. Can cause some weird effects with armor when turned off.").define("armorRenderLayer", true);
+		
+		builder.pop().push("tooltips");
+		tooltipChanges = builder
+				.comment("Should the mod be allowed ot change the color and appearance of tooltips?")
+				.define("tooltipChanges", true);
+		
+		dragonFoodTooltips = builder
+				.comment("Should dragon foods have their tooltip color changed to show which type of dragon can consume it?")
+				.define("dragonFoodTooltips", true);
+		
+		helpTooltips = builder
+				.comment("Should the effect of the help tooltips be enabled?")
+				.define("helpTooltips", true);
+		
+		alwaysShowHelpTooltip = builder
+				.comment("Always show the help tooltip border")
+				.define("alwaysShowHelpTooltip", false);
 		
 		builder.pop().push("ui");
 		builder.push("magic");
