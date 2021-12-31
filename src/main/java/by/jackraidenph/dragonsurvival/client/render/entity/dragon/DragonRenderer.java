@@ -37,6 +37,8 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
         super(renderManager, modelProvider);
 		this.addLayer(new DragonGlowLayerRenderer(this));
 		this.addLayer(new ClawsAndTeethRenderLayer(this));
+		this.addLayer(new DragonArmorRenderLayer(this));
+		
 	}
 	
 	public Color renderColor = new Color(255, 255, 255);
