@@ -43,6 +43,7 @@ public class DragonTreasureResting
 			if(handler != null){
 				if(handler.treasureResting){
 					if(player.isCrouching() || !(player.getFeetBlockState().getBlock() instanceof TreasureBlock) || handler.getMovementData().bite){
+						handler.treasureResting = false;
 						NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncTreasureRestStatus(player.getId(), false));
 						return;
 					}
