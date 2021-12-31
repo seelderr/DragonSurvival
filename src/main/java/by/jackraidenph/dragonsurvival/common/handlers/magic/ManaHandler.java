@@ -1,5 +1,6 @@
 package by.jackraidenph.dragonsurvival.common.handlers.magic;
 
+import by.jackraidenph.dragonsurvival.common.blocks.TreasureBlock;
 import by.jackraidenph.dragonsurvival.util.Functions;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
@@ -46,6 +47,10 @@ public class ManaHandler
 	public static boolean isPlayerInGoodConditions(PlayerEntity player){
 		BlockState blockBelow = player.level.getBlockState(player.blockPosition().below());
 		BlockState feetBlock = player.getFeetBlockState();
+		
+		if(feetBlock.getBlock() instanceof TreasureBlock || blockBelow.getBlock() instanceof TreasureBlock){
+			return true;
+		}
 		
 		return DragonStateProvider.getCap(player).map(cap -> {
 			switch (cap.getType()) {
