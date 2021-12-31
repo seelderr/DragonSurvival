@@ -228,7 +228,7 @@ public class ServerFlightHandler {
         });
     }
 	
-	public static final int spinDuration = (int)Math.round(0.85 * 20);
+	public static final int spinDuration = (int)Math.round(0.76 * 20);
 	public static boolean isSpin(PlayerEntity entity){
 		DragonStateHandler handler = DragonStateProvider.getCap(entity).orElse(null);
 		
