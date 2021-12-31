@@ -78,7 +78,7 @@ public class DragonAbilities
 	public static void initAbilities(){
 		//Forest dragon
 		FOREST_BREATH = register(DragonType.FOREST, new ForestBreathAbility(DragonType.FOREST, "poisonous_breath", "forest/poisonous_breath", 1, 4, 2, 10, Functions.secondsToTicks(5), new Integer[]{0, 10, 30, 50}));
-		SPIKE = register(DragonType.FOREST, new SpikeAbility(DragonType.FOREST, "spike", "forest/spike", 0, 4, ConfigHandler.SERVER.spikeManaCost.get(), 0, Functions.secondsToTicks(3), new Integer[]{0, 20, 30, 40}));
+		SPIKE = register(DragonType.FOREST, new SpikeAbility(DragonType.FOREST, "spike", "forest/spike", 0, 4, ConfigHandler.SERVER.spikeManaCost.get(), 1, Functions.secondsToTicks(3), new Integer[]{0, 20, 30, 40}));
 		INSPIRATION = register(DragonType.FOREST, new AoeBuffAbility(DragonType.FOREST, new EffectInstance(Effects.DIG_SPEED, ConfigHandler.SERVER.inspirationDuration.get(), 2), 5, DSParticles.fireBeaconParticle, "inspiration", "forest/inspiration", 0, 3, ConfigHandler.SERVER.inspirationManaCost.get(), Functions.secondsToTicks(5), Functions.secondsToTicks(90), new Integer[]{0, 15, 35}));
 		HUNTER = register(DragonType.FOREST, new HunterAbility(DragonType.FOREST, "hunter", "forest/hunter", 0, 2, ConfigHandler.SERVER.hunterManaCost.get(), Functions.secondsToTicks(3), Functions.secondsToTicks(30), new Integer[]{0, 25}));
 		
