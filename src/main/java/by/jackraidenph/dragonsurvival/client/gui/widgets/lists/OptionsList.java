@@ -254,6 +254,8 @@ public class OptionsList extends AbstractOptionList<OptionsList.Entry>
 				if(widget instanceof Widget) {
 					if (widget instanceof OptionButton && ((OptionButton)widget).getOption() == p_243271_1_) {
 						return (Widget)widget;
+					}if (widget instanceof OptionSlider && ((OptionSlider)widget).option == p_243271_1_) {
+						return (Widget)widget;
 					}
 				}
 			}
@@ -345,10 +347,10 @@ public class OptionsList extends AbstractOptionList<OptionsList.Entry>
 		
 		public static OptionsList.OptionEntry small(GameSettings p_214382_0_, int p_214382_1_, AbstractOption p_214382_2_, @Nullable
 				AbstractOption p_214382_3_, CategoryEntry category) {
-			Widget widget = p_214382_2_.createButton(p_214382_0_, p_214382_1_ / 2 - 155 + (category != null ? category.indent : 0), 0, 135 - (category != null ? category.indent / 2 : 0));
+			Widget widget = p_214382_2_.createButton(p_214382_0_, p_214382_1_ / 2 - 155 + (category != null ? category.indent : 0), 0, 140 - (category != null ? category.indent / 2 : 0));
 			Widget widget2 = p_214382_3_ != null ? p_214382_3_.createButton(p_214382_0_, p_214382_1_ / 2 - 153 + (160 - (category != null ? category.indent / 2 : 0)) + (category != null ? category.indent : 0), 0, 125 - (category != null ? category.indent / 2 : 0)) : null;
 			
-			Widget resetWidget = new ResetSettingsButton(widget.x + widget.getWidth() + (category != null && category.parent != null ? 1 : 0), 0, p_214382_2_);
+			Widget resetWidget = new ResetSettingsButton(widget.x + widget.getWidth() + (category != null && category.parent != null ? 0 : 1), 0, p_214382_2_);
 			Widget resetWidget2 = p_214382_3_ != null ? new ResetSettingsButton(widget2.x + widget2.getWidth() + (category != null && category.parent != null ? 1 : 0), 0, p_214382_3_) : null;
 			
 			return p_214382_3_ == null ? new OptionsList.OptionEntry(ImmutableList.of(widget, resetWidget), category)
