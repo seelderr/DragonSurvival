@@ -154,7 +154,7 @@ public class ClientSettingsScreen extends SettingsScreen
 					}
 				});
 				if(option != null) {
-					OptionsList.configMap.put(option, getConfigName() + "." + key);
+					OptionsList.configMap.put(option, key);
 					OptionsList.config.put(option, Pair.of(spec, booleanValue));
 					addOption(category, path, option);
 				}
@@ -178,7 +178,7 @@ public class ClientSettingsScreen extends SettingsScreen
 				option.setTooltip(tooltip1);
 				
 				if(option != null) {
-					OptionsList.configMap.put(option, getConfigName() + "." + key);
+					OptionsList.configMap.put(option, key);
 					OptionsList.config.put(option, Pair.of(spec, value1));
 					addOption(category, path, option);
 				}
@@ -202,7 +202,7 @@ public class ClientSettingsScreen extends SettingsScreen
 				option.setTooltip(tooltip1);
 				
 				if(option != null) {
-					OptionsList.configMap.put(option, getConfigName() + "." + key);
+					OptionsList.configMap.put(option, key);
 					OptionsList.config.put(option, Pair.of(spec, value1));
 					addOption(category, path, option);
 				}
@@ -225,7 +225,7 @@ public class ClientSettingsScreen extends SettingsScreen
 				option.setTooltip(tooltip1);
 				
 				if(option != null) {
-					OptionsList.configMap.put(option, getConfigName() + "." + key);
+					OptionsList.configMap.put(option, key);
 					OptionsList.config.put(option, Pair.of(spec, value1));
 					addOption(category, path, option);
 				}
@@ -257,7 +257,7 @@ public class ClientSettingsScreen extends SettingsScreen
 				option.setTooltip(tooltip1);
 				
 				if(option != null) {
-					OptionsList.configMap.put(option, getConfigName() + "." + key);
+					OptionsList.configMap.put(option, key);
 					OptionsList.config.put(option, Pair.of(spec, value1));
 					addOption(category, path, option);
 				}
@@ -274,7 +274,7 @@ public class ClientSettingsScreen extends SettingsScreen
 					option.setTooltip(tooltip1);
 					
 					if(option != null) {
-						OptionsList.configMap.put(option, getConfigName() + "." + key);
+						OptionsList.configMap.put(option, key);
 						OptionsList.config.put(option, Pair.of(spec, value1));
 						addOption(category, path, option);
 					}
