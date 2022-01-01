@@ -216,7 +216,11 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
         Vector3d motio = new Vector3d(player.getX() - player.xo, player.getY() - player.yo, player.getZ() - player.zo);
         boolean isMovingHorizontal = Math.sqrt(Math.pow(motio.x, 2) + Math.pow(motio.z, 2)) > 0.005;
         
-        if (player.isSleeping() || playerStateHandler.treasureResting) {
+        if(playerStateHandler.getMagic().onMagicSource){
+            neckLocked = true;
+            tailLocked = true;
+            builder.addAnimation("sit_on_magic_source", true);
+        }else if (player.isSleeping() || playerStateHandler.treasureResting) {
             neckLocked = true;
             tailLocked = true;
             builder.addAnimation("sleep", true);

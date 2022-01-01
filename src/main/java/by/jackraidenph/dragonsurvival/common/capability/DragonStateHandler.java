@@ -39,7 +39,6 @@ public class DragonStateHandler {
 	public boolean treasureResting = false;
 	public int treasureRestTimer = 0;
 	public int treasureSleepTimer = 0;
-	public int lastTreasureResync = 0;
 	
 	//Saving status of other types incase the config option for saving all is on
 	public double caveSize;

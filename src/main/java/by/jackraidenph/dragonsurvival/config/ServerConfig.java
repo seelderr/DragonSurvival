@@ -33,6 +33,15 @@ public class ServerConfig {
 	public final ForgeConfigSpec.IntValue treasureRegenTicksReduce;
 	public final ForgeConfigSpec.IntValue maxTreasures;
 	
+	public final ForgeConfigSpec.BooleanValue sourceOfMagicInfiniteMagic;
+	public final ForgeConfigSpec.BooleanValue damageWrongSourceOfMagic;
+	public final ForgeConfigSpec.BooleanValue canUseAllSourcesOfMagic;
+	public final ForgeConfigSpec.IntValue elderDragonDustTime;
+	public final ForgeConfigSpec.IntValue elderDragonBoneTime;
+	public final ForgeConfigSpec.IntValue weakHeartShardTime;
+	public final ForgeConfigSpec.IntValue weakDragonHeartTime;
+	public final ForgeConfigSpec.IntValue elderDragonHeartTime;
+	
 	public final ForgeConfigSpec.IntValue altarUsageCooldown;
 	public final ForgeConfigSpec.DoubleValue newbornJump;
 	public final ForgeConfigSpec.DoubleValue youngJump;
@@ -332,6 +341,36 @@ public class ServerConfig {
 		maxTreasures = builder
 				.comment("The max amount of additional treasure that can be used to reduce the regen time")
 				.defineInRange("maxTreasures", 240, 1, 10000000);
+		
+		// Source of Magic
+		builder.pop().push("source_of_magic");
+		sourceOfMagicInfiniteMagic = builder
+				.comment("Whether using the source of magic block will grant the infinite magic buff. ")
+				.define("sourceOfMagicInfiniteMagic", true);
+		
+		damageWrongSourceOfMagic = builder
+				.comment("Whether using the the source of magic intended for another dragon type will hurt you. ")
+				.define("damageWrongSourceOfMagic", true);
+		canUseAllSourcesOfMagic = builder
+				.comment("Whether you are able to use all types of source of magic no matter your dragon type")
+				.define("canUseAllSourcesOfMagic", false);
+		
+		elderDragonDustTime = builder
+				.comment("How long duration of the infinite magic effect using elder dragon dust gives in seconds.")
+				.defineInRange("elderDragonDustTime", 20, 1, 10000);
+		elderDragonBoneTime = builder
+				.comment("How long duration of the infinite magic effect using elder dragon bone gives in seconds.")
+				.defineInRange("elderDragonBoneTime", 40, 1, 10000);
+		weakHeartShardTime = builder
+				.comment("How long duration of the infinite magic effect using weak heart shard gives in seconds.")
+				.defineInRange("weakHeartShardTime", 100, 1, 10000);
+		weakDragonHeartTime = builder
+				.comment("How long duration of the infinite magic effect using weak dragon heart gives in seconds.")
+				.defineInRange("weakDragonHeartTime", 300, 1, 10000);
+		elderDragonHeartTime = builder
+				.comment("How long duration of the infinite magic effect using elder dragon heart gives in seconds.")
+				.defineInRange("elderDragonHeartTime", 1000, 1, 10000);
+		
 		// Wings
 		builder.pop().push("wings");
 		maxFlightSpeed = builder
@@ -424,6 +463,7 @@ public class ServerConfig {
 				.defineInRange("lavaSwimTicks", 3600, 0, 100000);
 		caveSpeedupBlocks = builder
 				.comment("Blocks cave dragons gain speed when standing above. Formatting: block/tag:modid:id")
+				.worldRestart()
 				.defineList("caveSpeedupBlocks", Arrays.asList(
 						"tag:minecraft:base_stone_nether",
 						"tag:minecraft:base_stone_overworld",
@@ -451,6 +491,7 @@ public class ServerConfig {
 				.define("cactiImmunity", true);
 		forestSpeedupBlocks = builder
 				.comment("Blocks forest dragons gain speed when standing above. Formatting: block/tag:modid:id")
+				.worldRestart()
 				.defineList("forestSpeedupBlocks", Arrays.asList(
 						"tag:minecraft:logs",
 						"tag:minecraft:leaves",
@@ -465,6 +506,7 @@ public class ServerConfig {
 				.define("waterBonuses", true);
 		seaSpeedupBlocks = builder
 				.comment("Blocks sea dragons gain speed when standing above. Formatting: block/tag:modid:id")
+				.worldRestart()
 				.defineList("seaSpeedupBlocks", Arrays.asList(
 						"tag:minecraft:ice",
 						"tag:minecraft:impermeable",
@@ -657,10 +699,12 @@ public class ServerConfig {
 				.defineInRange("dehydrationDamage", 1.0, 0.5, 100.0);
 		seaHydrationBlocks = builder
 				.comment("When sea dragons stand on these blocks, hydration is restored. Format: block/tag:modid:id")
+				.worldRestart()
 				.defineList("seaHydrationBlocks", Arrays.asList(
 						"tag:minecraft:ice",
 						"block:minecraft:snow",
-						"block:minecraft:snow_block"
+						"block:minecraft:snow_block",
+						"block:dragonsurvival:sea_source_of_magic"
 				), this::isValidBlockConfig);
 		seaAllowWaterBottles = builder
 				.comment("Set to false to disable sea dragons using vanilla water bottles to avoid dehydration.")
@@ -670,6 +714,7 @@ public class ServerConfig {
 				.defineInRange("waterItemRestorationTicks", 5000, 0, 100000);
 		seaAdditionalWaterUseables = builder
 				.comment("Additional modded USEABLE items that restore water when used (called from LivingEntityUseItemEvent.Finish). Format: item/tag:modid:id")
+				.worldRestart()
 				.defineList("seaHydrationItems", Collections.singletonList(
 						"item:minecraft:enchanted_golden_apple"
 				), this::isValidItemConfig);
@@ -1123,6 +1168,7 @@ public class ServerConfig {
 			
 			forestBreathBlockBreaks = builder
 					.comment("Blocks that have a chance to be broken by forest breath. Formatting: block/tag:modid:id")
+					.worldRestart()
 					.defineList("stormBreathBlockBreaks", Arrays.asList(
 							"tag:minecraft:banners"
 					), this::isValidBlockConfig);
@@ -1225,6 +1271,7 @@ public class ServerConfig {
 			
 			stormBreathBlockBreaks = builder
 					.comment("Blocks that have a chance to be broken by storm breath. Formatting: block/tag:modid:id")
+					.worldRestart()
 					.defineList("stormBreathBlockBreaks", Arrays.asList(
 							"tag:minecraft:impermeable",
 							"block:minecraft:snow",
@@ -1239,6 +1286,7 @@ public class ServerConfig {
 			
 			chargedBlacklist = builder
 					.comment("List of entities that do not work with the charged effect. Format: modid:id")
+					.worldRestart()
 					.defineList("chargedBlacklist", Arrays.asList(
 							"upgrade_aquatic:thrasher",
 							"upgrade_aquatic:great_thrasher"
@@ -1348,6 +1396,7 @@ public class ServerConfig {
 			
 			fireBreathBlockBreaks = builder
 					.comment("Blocks that have a chance to be broken by fire breath. Formatting: block/tag:modid:id")
+					.worldRestart()
 					.defineList("fireBreathBlockBreaks", Arrays.asList(
 							"tag:minecraft:ice",
 							"block:minecraft:snow",

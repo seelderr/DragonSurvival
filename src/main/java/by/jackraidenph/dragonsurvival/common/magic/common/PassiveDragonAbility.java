@@ -12,6 +12,7 @@ public class PassiveDragonAbility extends DragonAbility {
 	public int getLevelCost(){
 		return 1 + (int)(0.75 * getLevel());
 	}
+	
 	@Override
 	public PassiveDragonAbility createInstance()
 	{

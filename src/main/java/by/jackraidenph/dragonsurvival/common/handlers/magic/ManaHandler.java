@@ -36,6 +36,10 @@ public class ManaHandler
 			
 			int timeToRecover = goodConditions ? ConfigHandler.SERVER.favorableManaTicks.get() : ConfigHandler.SERVER.normalManaTicks.get();
 			
+			if(player.hasEffect(DragonEffects.SOURCE_OF_MAGIC)){
+				timeToRecover = 1;
+			}
+			
 			if (player.tickCount % Functions.secondsToTicks(timeToRecover) == 0) {
 				if (cap.getMagic().getCurrentMana() < DragonStateProvider.getMaxMana(player)) {
 					DragonStateProvider.replenishMana(player, 1);
@@ -49,6 +53,10 @@ public class ManaHandler
 		BlockState feetBlock = player.getFeetBlockState();
 		
 		if(feetBlock.getBlock() instanceof TreasureBlock || blockBelow.getBlock() instanceof TreasureBlock){
+			return true;
+		}
+		
+		if(player.hasEffect(DragonEffects.SOURCE_OF_MAGIC)){
 			return true;
 		}
 		

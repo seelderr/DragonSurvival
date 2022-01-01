@@ -1,12 +1,15 @@
 package by.jackraidenph.dragonsurvival.client.gui.widgets.lists;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
+import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.ResetSettingsButton;
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.AbstractOption;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.widget.OptionSlider;
@@ -18,28 +21,36 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
+import net.minecraftforge.common.ForgeConfigSpec.ValueSpec;
 
 import javax.annotation.Nullable;
 import java.awt.*;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class OptionsList extends AbstractOptionList<OptionsList.Entry>
 {
+	public static ConcurrentHashMap<AbstractOption, Pair<ValueSpec, ConfigValue>> config = new ConcurrentHashMap<>();
+	public static ConcurrentHashMap<AbstractOption, String> configMap = new ConcurrentHashMap<>();
+	
 	public OptionsList(Minecraft p_i51130_1_, int p_i51130_2_, int p_i51130_3_, int p_i51130_4_, int p_i51130_5_, int p_i51130_6_) {
 		super(p_i51130_1_, p_i51130_2_, p_i51130_3_, p_i51130_4_, p_i51130_5_, p_i51130_6_);
 		this.centerListVertically = false;
+		this.setRenderBackground(false);
 	}
 	
 	public CategoryEntry addCategory(String p_214333_1_, CategoryEntry ent) {
-		CategoryEntry entry = new CategoryEntry(new StringTextComponent(p_214333_1_), ent);
+		String name = p_214333_1_.substring(0, 1).toUpperCase(Locale.ROOT) + p_214333_1_.substring(1).replace("_", " ");
+		CategoryEntry entry = new CategoryEntry(new StringTextComponent(name), ent);
+		entry.origName = p_214333_1_;
 		this.addEntry(entry);
 		return entry;
 	}
@@ -193,7 +204,7 @@ public class OptionsList extends AbstractOptionList<OptionsList.Entry>
 	public CategoryEntry findCategory(String text) {
 		for(OptionsList.Entry optionsrowlist$row : this.children()) {
 			if(optionsrowlist$row instanceof CategoryEntry) {
-				if(((CategoryEntry)optionsrowlist$row).name.getString().equals(text)) {
+				if(((CategoryEntry)optionsrowlist$row).origName.equals(text)) {
 					return (CategoryEntry)optionsrowlist$row;
 				}
 			}
@@ -334,8 +345,14 @@ public class OptionsList extends AbstractOptionList<OptionsList.Entry>
 		
 		public static OptionsList.OptionEntry small(GameSettings p_214382_0_, int p_214382_1_, AbstractOption p_214382_2_, @Nullable
 				AbstractOption p_214382_3_, CategoryEntry category) {
-			Widget widget = p_214382_2_.createButton(p_214382_0_, p_214382_1_ / 2 - 155 + (category != null ? category.indent : 0), 0, 150 - (category != null ? category.indent / 2 : 0));
-			return p_214382_3_ == null ? new OptionsList.OptionEntry(ImmutableList.of(widget), category) : new OptionsList.OptionEntry(ImmutableList.of(widget, p_214382_3_.createButton(p_214382_0_, p_214382_1_ / 2 - 153 + (160 - (category != null ? category.indent / 2 : 0)) + (category != null ? category.indent : 0), 0, 150 - (category != null ? category.indent / 2 : 0))), category);
+			Widget widget = p_214382_2_.createButton(p_214382_0_, p_214382_1_ / 2 - 155 + (category != null ? category.indent : 0), 0, 135 - (category != null ? category.indent / 2 : 0));
+			Widget widget2 = p_214382_3_ != null ? p_214382_3_.createButton(p_214382_0_, p_214382_1_ / 2 - 153 + (160 - (category != null ? category.indent / 2 : 0)) + (category != null ? category.indent : 0), 0, 125 - (category != null ? category.indent / 2 : 0)) : null;
+			
+			Widget resetWidget = new ResetSettingsButton(widget.x + widget.getWidth() + (category != null && category.parent != null ? 1 : 0), 0, p_214382_2_);
+			Widget resetWidget2 = p_214382_3_ != null ? new ResetSettingsButton(widget2.x + widget2.getWidth() + (category != null && category.parent != null ? 1 : 0), 0, p_214382_3_) : null;
+			
+			return p_214382_3_ == null ? new OptionsList.OptionEntry(ImmutableList.of(widget, resetWidget), category)
+					: new OptionsList.OptionEntry(ImmutableList.of(widget, resetWidget, widget2, resetWidget2), category);
 		}
 		
 		public void render(MatrixStack p_230432_1_, int p_230432_2_, int p_230432_3_, int p_230432_4_, int p_230432_5_, int p_230432_6_, int p_230432_7_, int p_230432_8_, boolean p_230432_9_, float p_230432_10_) {
@@ -374,6 +391,7 @@ public class OptionsList extends AbstractOptionList<OptionsList.Entry>
 		private final ResourceLocation BUTTON_DOWN = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/emote/button_down.png");
 		
 		public final ITextComponent name;
+		public String origName;
 		private int width;
 		public boolean enabled = false;
 		public int indent = 0;
@@ -390,6 +408,7 @@ public class OptionsList extends AbstractOptionList<OptionsList.Entry>
 		@Override
 		public boolean mouseClicked(double p_231044_1_, double p_231044_3_, int p_231044_5_)
 		{
+			Minecraft.getInstance().getSoundManager().play(SimpleSound.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 			this.enabled = !this.enabled;
 			return super.mouseClicked(p_231044_1_, p_231044_3_, p_231044_5_);
 		}
@@ -401,7 +420,7 @@ public class OptionsList extends AbstractOptionList<OptionsList.Entry>
 		public void render(MatrixStack p_230432_1_, int p_230432_2_, int p_230432_3_, int p_230432_4_, int p_230432_5_, int p_230432_6_, int p_230432_7_, int p_230432_8_, boolean p_230432_9_, float p_230432_10_) {
 			if(parent != null && !parent.enabled) return;
 		
-			int color = new Color(0.15F, 0.15F, 0.15F, 0.75F).getRGB();
+			int color = new Color(0.05F, 0.05F, 0.05F, 0.85F).getRGB();
 			AbstractGui.fill(p_230432_1_, (OptionsList.this.minecraft.screen.width / 2) - 155 + indent, (p_230432_3_ + p_230432_6_ - 16), (OptionsList.this.minecraft.screen.width / 2) + 155, (p_230432_3_ + p_230432_6_), color);
 			
 			OptionsList.this.minecraft.font.draw(p_230432_1_, this.name, (float)(OptionsList.this.minecraft.screen.width / 2 - this.width / 2), (float)(p_230432_3_ + p_230432_6_ - 12), 16777215);

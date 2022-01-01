@@ -1,5 +1,6 @@
 package by.jackraidenph.dragonsurvival.client.gui.settings;
 
+import by.jackraidenph.dragonsurvival.client.gui.widgets.lists.OptionsList;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
@@ -16,8 +17,11 @@ public class SettingsSideScreen extends SettingsScreen
 	{
 		super(p_i225930_1_, p_i225930_2_, p_i225930_3_);
 	}
+	private OptionsList list;
 	
 	protected void init() {
+		this.list = new OptionsList(this.minecraft, this.width, this.height, 32, this.height - 32, 25);
+		
 		this.addButton(new Button(this.width / 2 - 100, 38, 200, 20, new TranslationTextComponent("ds.gui.settings.client"), (p_213106_1_) -> {
            Minecraft.getInstance().setScreen(new ClientSettingsScreen(this, Minecraft.getInstance().options, new TranslationTextComponent("ds.gui.settings.client")));
 		})
@@ -46,6 +50,7 @@ public class SettingsSideScreen extends SettingsScreen
 				super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
 			}
 		});
+		this.children.add(this.list);
 		
 		this.addButton(new Button(this.width / 2 - 100, this.height - 27, 200, 20, DialogTexts.GUI_BACK, (p_213106_1_) -> {
 			this.minecraft.setScreen(this.lastScreen);
@@ -53,6 +58,7 @@ public class SettingsSideScreen extends SettingsScreen
 	}
 	public void render(MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_) {
 		this.renderBackground(p_230430_1_);
+		this.list.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
 		drawCenteredString(p_230430_1_, this.font, this.title, this.width / 2, 5, 16777215);
 		super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
 	}

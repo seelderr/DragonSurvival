@@ -1,6 +1,7 @@
 package by.jackraidenph.dragonsurvival.client.gui;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
+import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.HelpButton;
 import by.jackraidenph.dragonsurvival.server.containers.SourceOfMagicContainer;
 import by.jackraidenph.dragonsurvival.server.tileentity.SourceOfMagicTileEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -35,7 +36,14 @@ public class SourceOfMagicScreen extends ContainerScreen<SourceOfMagicContainer>
         super.render(matrixStack, p_render_1_, p_render_2_, p_render_3_);
         this.renderTooltip(matrixStack, p_render_1_, p_render_2_);
     }
-
+    
+    @Override
+    protected void init()
+    {
+        super.init();
+        addButton(new HelpButton(leftPos + 12, topPos + 12, 12, 12, "ds.help.source_of_magic"));
+    }
+    
     protected void renderLabels(MatrixStack matrixStack, int mouseX, int mouseY) {};
     
     @Override
@@ -45,7 +53,7 @@ public class SourceOfMagicScreen extends ContainerScreen<SourceOfMagicContainer>
         textureManager.bind(BACKGROUND);
         blit(matrixStack, leftPos, topPos, 0, 0, imageWidth, imageHeight);
         
-        boolean hasItem = !nestEntity.regenItem.getStackInSlot(0).isEmpty();
+        boolean hasItem = !nestEntity.getItem(0).isEmpty();
         
         switch (nestEntity.type) {
             case CAVE:

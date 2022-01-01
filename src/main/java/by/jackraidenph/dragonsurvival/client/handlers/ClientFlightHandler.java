@@ -124,7 +124,7 @@ public class ClientFlightHandler {
                 return;
             }
             
-            if(cap.getMovementData().spinCooldown > 0) {
+            if(cap.getMovementData().spinLearned && cap.getMovementData().spinCooldown > 0) {
                 if (event.getType() == ElementType.HOTBAR) {
                     GL11.glPushMatrix();
     

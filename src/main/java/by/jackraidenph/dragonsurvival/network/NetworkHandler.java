@@ -16,13 +16,12 @@ import by.jackraidenph.dragonsurvival.network.emotes.SyncEmoteStats;
 import by.jackraidenph.dragonsurvival.network.emotes.SyncEmoteStatsServer;
 import by.jackraidenph.dragonsurvival.network.entity.PacketSyncPredatorStats;
 import by.jackraidenph.dragonsurvival.network.entity.PacketSyncXPDevour;
+import by.jackraidenph.dragonsurvival.network.entity.player.*;
 import by.jackraidenph.dragonsurvival.network.flight.RequestSpinResync;
 import by.jackraidenph.dragonsurvival.network.flight.SyncFlightSpeed;
 import by.jackraidenph.dragonsurvival.network.flight.SyncFlyingStatus;
 import by.jackraidenph.dragonsurvival.network.flight.SyncSpinStatus;
 import by.jackraidenph.dragonsurvival.network.magic.*;
-import by.jackraidenph.dragonsurvival.network.nest.*;
-import by.jackraidenph.dragonsurvival.network.entity.player.*;
 import by.jackraidenph.dragonsurvival.network.status.*;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.network.NetworkRegistry;
@@ -40,14 +39,8 @@ public class NetworkHandler
      }
 	 
 	 public static void setup(){
-		 //Nest packets
-		 register(SynchronizeNest.class, new SynchronizeNest());
-		 register(ToggleRegeneration.class, new ToggleRegeneration());
-		 register(DismantleNest.class, new DismantleNest());
-		 register(SleepInNest.class, new SleepInNest());
-//		 register(GiveNest.class, new GiveNest());
-		 
 		 register(SyncTreasureRestStatus.class, new SyncTreasureRestStatus());
+		 register(SyncMagicSourceStatus.class, new SyncMagicSourceStatus());
 		
 		 //Generic packets
 		 register(SynchronizeDragonCap.class, new SynchronizeDragonCap());

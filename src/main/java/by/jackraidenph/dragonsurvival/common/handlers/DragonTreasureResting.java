@@ -7,7 +7,6 @@ import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.mixins.MixinServerWorld;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.status.SyncTreasureRestStatus;
-import by.jackraidenph.dragonsurvival.util.Functions;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.LivingEntity;
@@ -111,11 +110,6 @@ public class DragonTreasureResting
 							DragonStateHandler handler = DragonStateProvider.getCap(serverplayerentity).orElse(null);
 							
 							if (handler != null) {
-								if( handler.lastTreasureResync + Functions.secondsToTicks(10) < serverplayerentity.tickCount){
-									handler.lastTreasureResync = serverplayerentity.tickCount;
-									NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> serverplayerentity), new SyncTreasureRestStatus(serverplayerentity.getId(), handler.treasureResting));
-								}
-								
 								if (handler.treasureResting) {
 									++j;
 								}
@@ -164,6 +158,7 @@ public class DragonTreasureResting
 			if(!player.level.isClientSide) {
 				DragonStateProvider.getCap(player).ifPresent(cap -> {
 					if (cap.treasureResting) {
+						cap.treasureResting = false;
 						NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncTreasureRestStatus(player.getId(), false));
 					}
 				});

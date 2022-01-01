@@ -40,12 +40,15 @@ public class ClientSettingsScreen extends SettingsScreen
 	private ArrayList<AbstractOption> OPTIONS = new ArrayList<>();
 	private TreeMap<String, ArrayList<AbstractOption>> optionMap = new TreeMap<>();
 	private ArrayList<String> options = new ArrayList<>();
-	private OptionsList list;
+	public OptionsList list;
 	
 	protected void init() {
 		OPTIONS.clear();
 		optionMap.clear();
 		options.clear();
+		
+		OptionsList.config.clear();
+		OptionsList.configMap.clear();
 		
 		this.list = new OptionsList(this.minecraft, this.width, this.height, 32, this.height - 32, 25);
 		
@@ -87,7 +90,7 @@ public class ClientSettingsScreen extends SettingsScreen
 				String lastKey = key;
 				for (String s : key.split("\\.")) {
 					if(this.list.findCategory(s) == null
-					   || (this.list.findCategory(s).parent != null && !this.list.findCategory(s).parent.name.getString().equals(lastKey))) {
+					   || (this.list.findCategory(s).parent != null && !this.list.findCategory(s).parent.origName.equals(lastKey))) {
 						entry = this.list.addCategory(s, entry);
 					}else{
 						entry = this.list.findCategory(s);
@@ -119,7 +122,7 @@ public class ClientSettingsScreen extends SettingsScreen
 		
 		int origLength = path.length();
 		String origPath = path;
-		path = path.substring(0, Math.min(path.length(), 20));
+		path = path.substring(0, Math.min(path.length(), 15));
 		
 		if(path.length() < origLength){
 			path += "...";
@@ -138,8 +141,6 @@ public class ClientSettingsScreen extends SettingsScreen
 			}
 			
 			List<IReorderingProcessor> tooltip1 = Minecraft.getInstance().font.split(tooltip, 200);
-			//List<IReorderingProcessor> tooltip2 = Minecraft.getInstance().font.split(tooltip.append("\n\n§8Shift Right-Click to reset to default value.§r"), 200);
-			
 			if (ob instanceof BooleanValue) {
 				BooleanValue booleanValue = (BooleanValue)ob;
 				
@@ -151,14 +152,10 @@ public class ClientSettingsScreen extends SettingsScreen
 					if(getConfigName() != "client") {
 						NetworkHandler.CHANNEL.sendToServer(new SyncBooleanConfig(key, settingValue, getConfigName() == "server" ? 0 : 1));
 					}
-				}){
-//					@Override
-//					public Optional<List<IReorderingProcessor>> getTooltip()
-//					{
-//						return booleanValue.get() != spec.getDefault() ? Optional.of(tooltip2) : Optional.of(tooltip1);
-//					}
-				};
+				});
 				if(option != null) {
+					OptionsList.configMap.put(option, getConfigName() + "." + key);
+					OptionsList.config.put(option, Pair.of(spec, booleanValue));
 					addOption(category, path, option);
 				}
 			} else if (ob instanceof IntValue) {
@@ -176,17 +173,13 @@ public class ClientSettingsScreen extends SettingsScreen
 					}
 				}, (settings, slider) -> {
 					return new TranslationTextComponent("options.generic_value", new StringTextComponent(finalPath), (int)slider.get(settings));
-				}){
-//					@Override
-//					public Optional<List<IReorderingProcessor>> getTooltip()
-//					{
-//						return value1.get() != spec.getDefault() ? Optional.of(tooltip2) : Optional.of(tooltip1);
-//					}
-				};
+				});
 				
 				option.setTooltip(tooltip1);
 				
 				if(option != null) {
+					OptionsList.configMap.put(option, getConfigName() + "." + key);
+					OptionsList.config.put(option, Pair.of(spec, value1));
 					addOption(category, path, option);
 				}
 			} else if (ob instanceof DoubleValue) {
@@ -204,17 +197,13 @@ public class ClientSettingsScreen extends SettingsScreen
 					}
 				}, (settings, slider) -> {
 					return new TranslationTextComponent("options.generic_value", new StringTextComponent(finalPath), Math.round(slider.get(settings) * 100.0) / 100.0);
-				}){
-//					@Override
-//					public Optional<List<IReorderingProcessor>> getTooltip()
-//					{
-//						return (Math.round(value1.get() * 100.0) / 100.0) != (Double)spec.getDefault() ? Optional.of(tooltip2) : Optional.of(tooltip1);
-//					}
-				};
+				});
 				
 				option.setTooltip(tooltip1);
 				
 				if(option != null) {
+					OptionsList.configMap.put(option, getConfigName() + "." + key);
+					OptionsList.config.put(option, Pair.of(spec, value1));
 					addOption(category, path, option);
 				}
 			} else if (ob instanceof LongValue) {
@@ -232,16 +221,12 @@ public class ClientSettingsScreen extends SettingsScreen
 					}
 				}, (settings, slider) -> {
 					return new TranslationTextComponent("options.generic_value", new StringTextComponent(finalPath), (long)slider.get(settings));
-				}){
-//					@Override
-//					public Optional<List<IReorderingProcessor>> getTooltip()
-//					{
-//						return value1.get() != spec.getDefault() ? Optional.of(tooltip2) : Optional.of(tooltip1);
-//					}
-				};
+				});
 				option.setTooltip(tooltip1);
 				
 				if(option != null) {
+					OptionsList.configMap.put(option, getConfigName() + "." + key);
+					OptionsList.config.put(option, Pair.of(spec, value1));
 					addOption(category, path, option);
 				}
 			} else if (ob instanceof EnumValue) {
@@ -267,17 +252,13 @@ public class ClientSettingsScreen extends SettingsScreen
 					}
 				}, (settings, set) -> {
 					return new TranslationTextComponent("options.generic_value", new StringTextComponent(finalPath), ((Enum)value1.get()).name());
-				}){
-//					@Override
-//					public Optional<List<IReorderingProcessor>> getTooltip()
-//					{
-//						return value1.get() != spec.getDefault() ? Optional.of(tooltip2) : Optional.of(tooltip1);
-//					}
-				};
+				});
 				
 				option.setTooltip(tooltip1);
 				
 				if(option != null) {
+					OptionsList.configMap.put(option, getConfigName() + "." + key);
+					OptionsList.config.put(option, Pair.of(spec, value1));
 					addOption(category, path, option);
 				}
 			}else if (ob instanceof ConfigValue) {
@@ -293,6 +274,8 @@ public class ClientSettingsScreen extends SettingsScreen
 					option.setTooltip(tooltip1);
 					
 					if(option != null) {
+						OptionsList.configMap.put(option, getConfigName() + "." + key);
+						OptionsList.config.put(option, Pair.of(spec, value1));
 						addOption(category, path, option);
 					}
 				}

@@ -1,5 +1,9 @@
 package by.jackraidenph.dragonsurvival.common.blocks;
 
+import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
+import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.network.NetworkHandler;
+import by.jackraidenph.dragonsurvival.network.status.SyncMagicSourceStatus;
 import by.jackraidenph.dragonsurvival.server.tileentity.DSTileEntities;
 import by.jackraidenph.dragonsurvival.server.tileentity.SourceOfMagicPlaceholder;
 import by.jackraidenph.dragonsurvival.server.tileentity.SourceOfMagicTileEntity;
@@ -12,6 +16,8 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -34,7 +40,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nullable;
-import java.util.UUID;
 
 public class SourceOfMagicBlock extends HorizontalBlock implements IWaterLoggable {
     
@@ -82,7 +87,6 @@ public class SourceOfMagicBlock extends HorizontalBlock implements IWaterLoggabl
     
     @Override
     public ActionResultType use(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
-        UUID uuid = player.getUUID();
         TileEntity blockEntity = worldIn.getBlockEntity(pos);
         if (blockEntity instanceof SourceOfMagicTileEntity) {
             final Direction playerHorizontalFacing = player.getDirection();
@@ -102,8 +106,39 @@ public class SourceOfMagicBlock extends HorizontalBlock implements IWaterLoggabl
                 }
             }
         }
-        if (player instanceof ServerPlayerEntity) {
-            NetworkHooks.openGui((ServerPlayerEntity) player, getBlockEntity(worldIn, pos), packetBuffer -> packetBuffer.writeBlockPos(pos));
+        BlockPos pos1 = pos;
+    
+        if(blockEntity instanceof SourceOfMagicPlaceholder){
+            pos1 = ((SourceOfMagicPlaceholder)blockEntity).rootPos;
+        }
+        
+        if(!player.isCrouching()) {
+            if (player instanceof ServerPlayerEntity) {
+                BlockPos finalPos = pos1;
+                NetworkHooks.openGui((ServerPlayerEntity)player, getBlockEntity(worldIn, pos1), packetBuffer -> packetBuffer.writeBlockPos(finalPos));
+            }
+        }else{
+            if(DragonStateProvider.isDragon(player) && player.getItemInHand(handIn).isEmpty()) {
+                if (player.getFeetBlockState().getBlock() == state.getBlock()) {
+                    DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+    
+                    if (handler != null) {
+                        if (!handler.getMagic().onMagicSource) {
+                            TileEntity source = getBlockEntity(worldIn, pos1);
+                            
+                            if(source instanceof SourceOfMagicTileEntity) {
+                                SourceOfMagicTileEntity magicTile = (SourceOfMagicTileEntity)source;
+                                
+                                if(!magicTile.isEmpty()) {
+                                    if (worldIn.isClientSide) {
+                                        NetworkHandler.CHANNEL.sendToServer(new SyncMagicSourceStatus(player.getId(), true, 0));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
         return ActionResultType.SUCCESS;
     }
@@ -216,13 +251,19 @@ public class SourceOfMagicBlock extends HorizontalBlock implements IWaterLoggabl
     public BlockRenderType getRenderShape(BlockState state) {
         return state.getValue(PRIMARY_BLOCK) ? BlockRenderType.MODEL : BlockRenderType.INVISIBLE;
     }
-    
+  
     @Override
     public void onRemove(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
         if(!(newState.getBlock() instanceof SourceOfMagicBlock)) {
             if (state.getValue(PRIMARY_BLOCK)) {
+                TileEntity tileentity = worldIn.getBlockEntity(pos);
+                if (tileentity instanceof IInventory) {
+                    InventoryHelper.dropContents(worldIn, pos, (IInventory)tileentity);
+                    worldIn.updateNeighbourForOutputSignal(pos, this);
+                }
+                
                 super.onRemove(state, worldIn, pos, newState, isMoving);
-        
+                
                 Direction direction = state.getValue(FACING).getOpposite();
         
                 breakBlock(worldIn, pos);

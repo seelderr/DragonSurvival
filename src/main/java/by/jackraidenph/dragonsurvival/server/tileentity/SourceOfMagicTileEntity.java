@@ -1,42 +1,54 @@
 package by.jackraidenph.dragonsurvival.server.tileentity;
 
 import by.jackraidenph.dragonsurvival.common.blocks.DSBlocks;
+import by.jackraidenph.dragonsurvival.common.items.DSItems;
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import by.jackraidenph.dragonsurvival.server.containers.SourceOfMagicContainer;
+import by.jackraidenph.dragonsurvival.util.Functions;
 import io.netty.buffer.Unpooled;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraftforge.items.ItemStackHandler;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
-public class SourceOfMagicTileEntity extends BaseBlockTileEntity implements ITickableTileEntity, INamedContainerProvider, IAnimatable
+import java.util.HashMap;
+
+public class SourceOfMagicTileEntity extends BaseBlockTileEntity implements ITickableTileEntity, INamedContainerProvider, IAnimatable, IInventory
 {
-    public int energy = 0;
-    public int damageCooldown;
-    public boolean regenerationMode = true;
     public DragonType type = DragonType.NONE;
-    public ItemStackHandler regenItem = new ItemStackHandler(1);
+    public NonNullList<ItemStack> stacks = NonNullList.withSize(1, ItemStack.EMPTY);
     
     private final AnimationFactory manager = new AnimationFactory(this);
     
     public SourceOfMagicTileEntity(TileEntityType<?> tileEntityTypeIn) {
         super(tileEntityTypeIn);
     }
-
-    //TODO Drop items when broken
-    //TODO Consume items for effect
+    
+    public static HashMap<Item, Integer> consumables = new HashMap<>();
+    
+    static {
+        consumables.put(DSItems.elderDragonDust, Functions.secondsToTicks(ConfigHandler.SERVER.elderDragonDustTime.get()));
+        consumables.put(DSItems.elderDragonBone, Functions.secondsToTicks(ConfigHandler.SERVER.elderDragonBoneTime.get()));
+        consumables.put(DSItems.dragonHeartShard, Functions.secondsToTicks(ConfigHandler.SERVER.weakHeartShardTime.get()));
+        consumables.put(DSItems.weakDragonHeart, Functions.secondsToTicks(ConfigHandler.SERVER.weakDragonHeartTime.get()));
+        consumables.put(DSItems.elderDragonHeart, Functions.secondsToTicks(ConfigHandler.SERVER.elderDragonHeartTime.get()));
+    }
     
     @Override
     public void tick() {
@@ -47,51 +59,21 @@ public class SourceOfMagicTileEntity extends BaseBlockTileEntity implements ITic
         }else if(getBlockState().getBlock() == DSBlocks.caveSourceOfMagic){
             type = DragonType.CAVE;
         }
-        
-        if (damageCooldown > 0) {
-            damageCooldown--;
-        }
-        ItemStack itemStack = regenItem.getStackInSlot(0);
-        if (!itemStack.isEmpty()) {
-//            int value = regenValue.get(itemStack.getItem());
-//            if (energy < 64 - value) {
-//                energy = Math.min(64, energy + value);
-//                itemStack.shrink(1);
-//            }
-        }
-
-//        if (!level.isClientSide) {
-//        	level.blockEvent(worldPosition, getBlockState().getBlock(), 0, energy);
-//        }
     }
-
-    @Override
-    public boolean triggerEvent(int id, int type) {
-        if (id == 0) {
-            energy = type;
-            return true;
-        }
-        return super.triggerEvent(id, type);
-    }
-
+    
     @Override
     public CompoundNBT save(CompoundNBT compound) {
-        compound.putInt("Health", energy);
-        compound.putInt("Damage cooldown", damageCooldown);
         compound.putString("Type", type.name());
-        compound.putBoolean("Regenerating", regenerationMode);
-        compound.put("Item", regenItem.serializeNBT());
+        ItemStackHelper.saveAllItems(compound, stacks);
         return super.save(compound);
     }
 
     @Override
     public void load(BlockState state, CompoundNBT compound) {
         super.load(state, compound);
-        energy = compound.getInt("Health");
-        damageCooldown = compound.getInt("Damage cooldown");
         type = DragonType.valueOf(compound.getString("Type"));
-        regenerationMode = compound.getBoolean("Regenerating");
-        regenItem.deserializeNBT(compound.getCompound("Item"));
+        this.stacks = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
+        ItemStackHelper.loadAllItems(compound, this.stacks);
     }
 
     @Override
@@ -116,5 +98,55 @@ public class SourceOfMagicTileEntity extends BaseBlockTileEntity implements ITic
     public AnimationFactory getFactory()
     {
         return manager;
+    }
+    
+    @Override
+    public int getContainerSize()
+    {
+        return 1;
+    }
+    
+    @Override
+    public boolean isEmpty()
+    {
+        return stacks.isEmpty() || getItem(0).isEmpty();
+    }
+    
+    @Override
+    public ItemStack getItem(int i)
+    {
+        return stacks.get(i);
+    }
+    
+    @Override
+    public ItemStack removeItem(int i, int i1)
+    {
+        return ItemStackHelper.removeItem(stacks, i, i1);
+    }
+    
+    @Override
+    public ItemStack removeItemNoUpdate(int i)
+    {
+        return ItemStackHelper.takeItem(this.stacks, 0);
+    }
+    
+    @Override
+    public void setItem(int i, ItemStack itemStack)
+    {
+        if (i >= 0 && i < this.stacks.size()) {
+            this.stacks.set(i, itemStack);
+        }
+    }
+    
+    @Override
+    public boolean stillValid(PlayerEntity playerEntity)
+    {
+        return true;
+    }
+    
+    @Override
+    public void clearContent()
+    {
+        stacks.clear();
     }
 }

@@ -2,6 +2,7 @@ package by.jackraidenph.dragonsurvival.client.handlers;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.client.gui.AbilityScreen;
+import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.HelpButton;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.SkillProgressButton;
 import by.jackraidenph.dragonsurvival.common.blocks.DSBlocks;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
@@ -15,12 +16,10 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.ITextProperties;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderTooltipEvent;
@@ -30,7 +29,6 @@ import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.List;
 @Mod.EventBusSubscriber( Dist.CLIENT)
 public class ToolTipHandler
@@ -105,66 +103,23 @@ public class ToolTipHandler
 	}
 	
 	
-	private static boolean isHelpText(List<ITextProperties> lines){
+	private static boolean isHelpText(){
 		if(!ConfigHandler.CLIENT.tooltipChanges.get() || !ConfigHandler.CLIENT.helpTooltips.get()) return false;
 		if(Minecraft.getInstance().level == null) return false;
 		if(ConfigHandler.CLIENT.alwaysShowHelpTooltip.get()) return true;
 		
-		boolean text = false;
-		
-		String[] keys = new String[]{
-				"ds.skill.help",
-				"ds.skill.help.claws",
-				"ds.gui.skins.tooltip.help",
-				"ds.gui.growth_help"
-		};
-		
-		ArrayList<String> texts = new ArrayList<>();
-		
-		for(String t : keys){
-			texts.add(I18n.get(t));
-		}
-		
-		String mergedString = "";
-		
-		for(ITextProperties comp : lines) {
-			if (comp instanceof TranslationTextComponent) {
-				TranslationTextComponent textComponent = (TranslationTextComponent)comp;
-				for(String tg : keys){
-					if(textComponent.getKey().contains(tg)){
-						text = true;
-						break;
-					}
-				}
-			}
-			
-			mergedString += comp.getString();
-		}
-		
-		if(!text){
-			String t = mergedString.replace("\n", "").replace(" ", "");
-			
-			for(String tg : texts){
-				String[] ss = tg.split("\n");
-				
-				for(String kl : ss){
-					String temp = kl.replace(" ", "");
-					if(!temp.isEmpty()) {
-						if (t.contains(temp) || t.equalsIgnoreCase(temp)) {
-							text = true;
-							break;
-						}
-					}
-				}
+		for(Widget btn : Minecraft.getInstance().screen.buttons){
+			if(btn.isHovered() && btn instanceof HelpButton){
+				return true;
 			}
 		}
 		
-		return text;
+		return false;
 	}
 	
 	@SubscribeEvent
 	public static void onPostTooltipEvent(RenderTooltipEvent.PostText event) {
-		boolean render = isHelpText((List<ITextProperties>)event.getLines());
+		boolean render = isHelpText();
 		
 		if(!render){
 			return;
@@ -221,7 +176,7 @@ public class ToolTipHandler
 	@SubscribeEvent
 	public static void onTooltipColorEvent(RenderTooltipEvent.Color event) {
 		if(!ConfigHandler.CLIENT.tooltipChanges.get()) return;
-		boolean render = isHelpText((List<ITextProperties>)event.getLines());
+		boolean render = isHelpText();
 		boolean screen = Minecraft.getInstance().screen instanceof AbilityScreen;
 		
 		ItemStack stack = event.getStack();

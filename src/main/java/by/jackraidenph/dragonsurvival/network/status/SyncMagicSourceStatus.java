@@ -20,53 +20,54 @@ import java.util.function.Supplier;
 
 import static net.minecraftforge.fml.network.NetworkDirection.PLAY_TO_SERVER;
 
-public class SyncTreasureRestStatus implements IMessage<SyncTreasureRestStatus>
+public class SyncMagicSourceStatus implements IMessage<SyncMagicSourceStatus>
 {
 	public int playerId;
 	public boolean state;
+	public int timer;
 	
-	public SyncTreasureRestStatus() {}
+	public SyncMagicSourceStatus() {}
 	
-	public SyncTreasureRestStatus(int playerId, boolean state) {
+	public SyncMagicSourceStatus(int playerId, boolean state, int timer) {
 		this.playerId = playerId;
 		this.state = state;
+		this.timer = timer;
 	}
 	
 	@Override
-	public void encode(SyncTreasureRestStatus message, PacketBuffer buffer) {
+	public void encode(SyncMagicSourceStatus message, PacketBuffer buffer) {
 		buffer.writeInt(message.playerId);
 		buffer.writeBoolean(message.state);
+		buffer.writeInt(message.timer);
 	}
 	
 	@Override
-	public SyncTreasureRestStatus decode(PacketBuffer buffer) {
+	public SyncMagicSourceStatus decode(PacketBuffer buffer) {
 		int playerId = buffer.readInt();
 		boolean state = buffer.readBoolean();
-		return new SyncTreasureRestStatus(playerId, state);
+		int timer  = buffer.readInt();
+		return new SyncMagicSourceStatus(playerId, state, timer);
 	}
 	
 	@Override
-	public void handle(SyncTreasureRestStatus message, Supplier<NetworkEvent.Context> supplier) {
+	public void handle(SyncMagicSourceStatus message, Supplier<NetworkEvent.Context> supplier) {
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> runClient(message, supplier));
 		
 		if(supplier.get().getDirection() == PLAY_TO_SERVER){
 			ServerPlayerEntity entity = supplier.get().getSender();
 			if(entity != null){
 				DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
-					if(message.state != dragonStateHandler.treasureResting){
-						dragonStateHandler.treasureRestTimer = 0;
-						dragonStateHandler.treasureSleepTimer = 0;
-					}
-					dragonStateHandler.treasureResting = message.state;
+					dragonStateHandler.getMagic().onMagicSource = message.state;
+					dragonStateHandler.getMagic().magicSourceTimer = message.timer;
 				});
 				
-				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new SyncTreasureRestStatus(entity.getId(), message.state));
+				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new SyncMagicSourceStatus(entity.getId(), message.state, message.timer));
 			}
 		}
 	}
 	
 	@OnlyIn(Dist.CLIENT)
-	public void runClient(SyncTreasureRestStatus message, Supplier<NetworkEvent.Context> supplier){
+	public void runClient(SyncMagicSourceStatus message, Supplier<NetworkEvent.Context> supplier){
 		NetworkEvent.Context context = supplier.get();
 		context.enqueueWork(() -> {
 			PlayerEntity thisPlayer = Minecraft.getInstance().player;
@@ -75,11 +76,8 @@ public class SyncTreasureRestStatus implements IMessage<SyncTreasureRestStatus>
 				Entity entity = world.getEntity(message.playerId);
 				if (entity instanceof PlayerEntity) {
 					DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
-						if(message.state != dragonStateHandler.treasureResting){
-							dragonStateHandler.treasureRestTimer = 0;
-							dragonStateHandler.treasureSleepTimer = 0;
-						}
-						dragonStateHandler.treasureResting = message.state;
+						dragonStateHandler.getMagic().onMagicSource = message.state;
+						dragonStateHandler.getMagic().magicSourceTimer = message.timer;
 					});
 				}
 			}
