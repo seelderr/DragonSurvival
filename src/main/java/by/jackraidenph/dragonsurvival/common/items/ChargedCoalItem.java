@@ -12,6 +12,6 @@ public class ChargedCoalItem extends Item
 	
 	@Override
 	public int getBurnTime(ItemStack itemStack) {
-		return 3200;
+		return 6200;
 	}
 }
