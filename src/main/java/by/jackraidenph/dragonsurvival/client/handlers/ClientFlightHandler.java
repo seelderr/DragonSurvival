@@ -1,16 +1,17 @@
 package by.jackraidenph.dragonsurvival.client.handlers;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
+import by.jackraidenph.dragonsurvival.client.sounds.FastGlideSound;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
+import by.jackraidenph.dragonsurvival.mixins.MixinGameRendererZoom;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.flight.RequestSpinResync;
-import by.jackraidenph.dragonsurvival.server.handlers.ServerFlightHandler;
-import by.jackraidenph.dragonsurvival.mixins.MixinGameRendererZoom;
 import by.jackraidenph.dragonsurvival.network.flight.SyncFlightSpeed;
 import by.jackraidenph.dragonsurvival.network.flight.SyncFlyingStatus;
-import by.jackraidenph.dragonsurvival.client.sounds.FastGlideSound;
+import by.jackraidenph.dragonsurvival.network.flight.SyncSpinStatus;
+import by.jackraidenph.dragonsurvival.server.handlers.ServerFlightHandler;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
@@ -445,7 +446,17 @@ public class ClientFlightHandler {
     
         boolean currentState = handler.isWingsSpread();
         Vector3d lookVec = player.getLookAngle();
-    
+        
+        if(Minecraft.getInstance().options.keyUse.isDown()) {
+            if (!ServerFlightHandler.isSpin(player) && handler.getMovementData().spinCooldown <= 0 && handler.getMovementData().spinLearned && player.isSprinting()) {
+                if(ServerFlightHandler.isFlying(player) || ServerFlightHandler.canSwimSpin(player)) {
+                    handler.getMovementData().spinAttack = ServerFlightHandler.spinDuration;
+                    handler.getMovementData().spinCooldown = ConfigHandler.SERVER.flightSpinCooldown.get() * 20;
+                    NetworkHandler.CHANNEL.sendToServer(new SyncSpinStatus(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
+                }
+            }
+        }
+        
         if(ConfigHandler.CLIENT.jumpToFly.get() && !player.isCreative() && !player.isSpectator()) {
             if (Minecraft.getInstance().options.keyJump.isDown()) {
                 if(keyInputEvent.getAction() == GLFW.GLFW_PRESS) {

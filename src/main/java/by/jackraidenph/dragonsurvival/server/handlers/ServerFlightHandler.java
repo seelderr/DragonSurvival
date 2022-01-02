@@ -183,15 +183,6 @@ public class ServerFlightHandler {
 						NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncSpinStatus(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
 					}
 					
-				}else if(handler.getMovementData().bite && handler.getMovementData().spinCooldown <= 0 && handler.getMovementData().spinLearned && (!canSwimSpin(player) || player.isSprinting())){
-					//Do Spin
-					if(isFlying(player) || canSwimSpin(player)) {
-						if (!player.level.isClientSide) {
-							handler.getMovementData().spinAttack = spinDuration;
-							handler.getMovementData().spinCooldown = ConfigHandler.SERVER.flightSpinCooldown.get() * 20;
-							NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncSpinStatus(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
-						}
-					}
 				}
 			}
 		});

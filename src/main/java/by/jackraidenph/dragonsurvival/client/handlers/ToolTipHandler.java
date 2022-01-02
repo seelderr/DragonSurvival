@@ -99,6 +99,15 @@ public class ToolTipHandler
 			if (item == DSBlocks.dragonMemoryBlock.asItem()){
 				toolTip.add(new TranslationTextComponent("ds.description.dragonMemoryBlock"));
 			}
+			if (item == DSBlocks.seaSourceOfMagic.asItem()){
+				toolTip.add(new TranslationTextComponent("ds.description.sea_source_of_magic"));
+			}
+			if (item == DSBlocks.forestSourceOfMagic.asItem()){
+				toolTip.add(new TranslationTextComponent("ds.description.forest_source_of_magic"));
+			}
+			if (item == DSBlocks.caveSourceOfMagic.asItem()){
+				toolTip.add(new TranslationTextComponent("ds.description.cave_source_of_magic"));
+			}
 		}
 	}
 	

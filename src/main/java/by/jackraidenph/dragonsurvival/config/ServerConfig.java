@@ -1367,7 +1367,7 @@ public class ServerConfig {
 			
 			fireBreathDamage = builder
 					.comment("The amount of damage the firebreath ability deals. This value is multiplied by the skill level.")
-					.defineInRange("fireballDamage", 3.0, 0, 100.0);
+					.defineInRange("fireBreathDamage", 3.0, 0, 100.0);
 			
 			fireBreathInitialMana = builder
 					.comment("The mana cost for starting the firebreath ability")

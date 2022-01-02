@@ -2,6 +2,7 @@ package by.jackraidenph.dragonsurvival.common.blocks;
 
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.status.SyncMagicSourceStatus;
 import by.jackraidenph.dragonsurvival.server.tileentity.DSTileEntities;
@@ -26,6 +27,7 @@ import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -84,6 +86,31 @@ public class SourceOfMagicBlock extends HorizontalBlock implements IWaterLoggabl
         TileEntity entity = world.getBlockEntity(pos);
         return entity instanceof SourceOfMagicTileEntity ? (SourceOfMagicTileEntity)entity : null;
     }
+    
+    @Override
+    public void entityInside(BlockState p_196262_1_, World world, BlockPos pos, Entity entity)
+    {
+        TileEntity blockEntity = world.getBlockEntity(pos);
+        BlockPos pos1 = pos;
+    
+        if(blockEntity instanceof SourceOfMagicPlaceholder){
+            pos1 = ((SourceOfMagicPlaceholder)blockEntity).rootPos;
+        }
+    
+        TileEntity source = getBlockEntity(world, pos1);
+    
+        if(source instanceof SourceOfMagicTileEntity) {
+            SourceOfMagicTileEntity magicTile = (SourceOfMagicTileEntity)source;
+        
+            if(DragonStateProvider.isDragon(entity) && DragonStateProvider.getDragonType(entity) != magicTile.type){
+                if(ConfigHandler.SERVER.damageWrongSourceOfMagic.get()) {
+                    entity.hurt(DamageSource.MAGIC, 1F);
+                }
+            }
+        }
+        super.entityInside(p_196262_1_, world, pos, entity);
+    }
+    
     
     @Override
     public ActionResultType use(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {

@@ -1,5 +1,6 @@
 package by.jackraidenph.dragonsurvival.common.handlers;
 
+import by.jackraidenph.dragonsurvival.client.particles.DSParticles;
 import by.jackraidenph.dragonsurvival.common.DragonEffects;
 import by.jackraidenph.dragonsurvival.common.blocks.SourceOfMagicBlock;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
@@ -30,6 +31,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.network.PacketDistributor;
+
+import java.util.Random;
 
 @Mod.EventBusSubscriber
 public class SourceOfMagicHandler
@@ -95,6 +98,64 @@ public class SourceOfMagicHandler
 							handler.getMagic().magicSourceTimer = 0;
 							handler.getMagic().onMagicSource = false;
 							NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncMagicSourceStatus(player.getId(), false, 0));
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	@SubscribeEvent
+	public static void playerParticles(PlayerTickEvent event){
+		if(event.phase == Phase.START || event.side == LogicalSide.SERVER) return;
+		PlayerEntity player = event.player;
+		
+		if(DragonStateProvider.isDragon(player)){
+			DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+			
+			if(handler != null){
+				if(handler.getMagic().onMagicSource){
+					BlockPos pos1 = player.blockPosition();
+					TileEntity blockEntity = player.level.getBlockEntity(pos1);
+					
+					if(blockEntity instanceof SourceOfMagicPlaceholder){
+						pos1 = ((SourceOfMagicPlaceholder)blockEntity).rootPos;
+					}
+					
+					TileEntity sourceOfMagic = player.level.getBlockEntity(pos1);
+					
+					if(sourceOfMagic instanceof SourceOfMagicTileEntity){
+						SourceOfMagicTileEntity tile = (SourceOfMagicTileEntity)sourceOfMagic;
+						
+						if(!tile.isEmpty()){
+							if(handler.getType() == tile.type || player.isCreative() || ConfigHandler.SERVER.canUseAllSourcesOfMagic.get()) {
+								if(ConfigHandler.SERVER.sourceOfMagicInfiniteMagic.get()) {
+									if(player.level.isClientSide) {
+										Minecraft minecraft = Minecraft.getInstance();
+										Random random = player.level.random;
+										double x = -1 + random.nextDouble() * 2;
+										double z = -1 + random.nextDouble() * 2;
+										
+										switch (handler.getType()) {
+											case SEA:
+												if (!minecraft.isPaused()){
+													player.level.addParticle(DSParticles.peaceBeaconParticle, player.getX() + x, player.getY() + 0.5, player.getZ() + z, 0, 0, 0);
+												}
+												break;
+											case FOREST:
+												if (!minecraft.isPaused()){
+													player.level.addParticle(DSParticles.magicBeaconParticle, player.getX() + x, player.getY() + 0.5, player.getZ() + z, 0, 0, 0);
+												}
+												break;
+											case CAVE:
+												if (!minecraft.isPaused()){
+													player.level.addParticle(DSParticles.fireBeaconParticle, player.getX() + x, player.getY() + 0.5, player.getZ() + z, 0, 0, 0);
+												}
+												break;
+										}
+									}
+								}
+							}
 						}
 					}
 				}
