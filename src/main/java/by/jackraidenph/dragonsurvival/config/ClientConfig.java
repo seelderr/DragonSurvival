@@ -61,8 +61,8 @@ public class ClientConfig {
 		builder.push("client").push("firstperson");
 		//For people who use first person view mods
 		renderInFirstPerson = builder.comment("Render dragon model in first person. If your own tail scares you, write false").define("renderFirstPerson", true);
-		renderFirstPersonFlight = builder.comment("Render dragon model in first person while gliding").define("renderFirstPersonFlight", false);
-		firstPersonRotation = builder.comment("Use rotation of your tail in first person, otherwise the tail is always opposite of your camera").define("firstPersonRotation", true);
+		renderFirstPersonFlight = builder.comment("Render dragon model in first person while gliding. We don't advise you to turn it on.").define("renderFirstPersonFlight", false);
+		firstPersonRotation = builder.comment("Use rotation of your tail in first person, otherwise the tail is always opposite of your camera. If the tail is constantly climbing in your face, put false.").define("firstPersonRotation", false);
 		
 		builder.pop().push("flight");
 		notifyWingStatus = builder.comment("Notifies of wing status in chat message").define("notifyWingStatus", false);
