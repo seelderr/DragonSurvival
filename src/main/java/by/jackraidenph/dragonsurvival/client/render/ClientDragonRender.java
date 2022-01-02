@@ -17,6 +17,8 @@ import by.jackraidenph.dragonsurvival.misc.DragonLevel;
 import by.jackraidenph.dragonsurvival.mixins.AccessorEntityRenderer;
 import by.jackraidenph.dragonsurvival.mixins.AccessorEntityRendererManager;
 import by.jackraidenph.dragonsurvival.mixins.AccessorLivingRenderer;
+import by.jackraidenph.dragonsurvival.network.NetworkHandler;
+import by.jackraidenph.dragonsurvival.network.entity.player.PacketSyncCapabilityMovement;
 import by.jackraidenph.dragonsurvival.server.handlers.ServerFlightHandler;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
@@ -28,6 +30,7 @@ import net.minecraft.client.renderer.entity.LivingRenderer;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.client.renderer.entity.layers.ParrotVariantLayer;
 import net.minecraft.client.renderer.entity.model.EntityModel;
+import net.minecraft.client.settings.PointOfView;
 import net.minecraft.entity.Entity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.IDyeableArmorItem;
@@ -39,6 +42,8 @@ import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
+import net.minecraftforge.event.TickEvent.Phase;
+import net.minecraftforge.event.TickEvent.RenderTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -262,5 +267,147 @@ public class ClientDragonRender
 			((DragonRenderer)dragonArmorRenderer).renderColor = preColor;
 			((DragonRenderer)dragonArmorRenderer).renderLayers = true;
 		}
+	}
+	
+	public static Vector3d getInputVector(Vector3d movement, float fricSpeed, float yRot)
+	{
+	    double d0 = movement.lengthSqr();
+	    if (d0 < 1.0E-7D) {
+	        return Vector3d.ZERO;
+	    } else {
+	        Vector3d vector3d = (d0 > 1.0D ? movement.normalize() : movement).scale((double)fricSpeed);
+	        float f = MathHelper.sin(yRot * ((float)Math.PI / 180F));
+	        float f1 = MathHelper.cos(yRot * ((float)Math.PI / 180F));
+	        return new Vector3d(vector3d.x * (double)f1 - vector3d.z * (double)f, vector3d.y, vector3d.z * (double)f1 + vector3d.x * (double)f);
+	    }
+	}
+	
+	@SubscribeEvent
+	public static void onClientTick(RenderTickEvent renderTickEvent)
+	{
+	    if (renderTickEvent.phase == Phase.START) {
+	        Minecraft minecraft = Minecraft.getInstance();
+	        ClientPlayerEntity player = minecraft.player;
+	        if (player != null) {
+	            DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
+	                if (playerStateHandler.isDragon()) {
+	                    playerStateHandler.getMovementData().headYawLastTick = MathHelper.lerp(0.05, playerStateHandler.getMovementData().headYawLastTick, playerStateHandler.getMovementData().headYaw);
+	                    playerStateHandler.getMovementData().headPitchLastTick = MathHelper.lerp(0.05, playerStateHandler.getMovementData().headPitchLastTick, playerStateHandler.getMovementData().headPitch);
+	                    playerStateHandler.getMovementData().bodyYawLastTick = MathHelper.lerp(0.05, playerStateHandler.getMovementData().bodyYawLastTick, playerStateHandler.getMovementData().bodyYaw);
+	
+	                    float headRot = player.yRot != 0.0 ? player.yRot : player.yHeadRot;
+	                    double bodyYaw = playerStateHandler.getMovementData().bodyYaw;
+	                    float bodyAndHeadYawDiff = (float)(bodyYaw - headRot);
+	                    double headPitch = MathHelper.lerp(0.1, playerStateHandler.getMovementData().headPitch, player.xRot);
+	                    
+	                    boolean bite = (player.attackAnim > 0 && player.getAttackStrengthScale(-3.0f) != 1);
+		
+		                Vector3d moveVector = getInputVector(new Vector3d(player.input.leftImpulse, 0, player.input.forwardImpulse), 1F, player.yRot);
+		
+		                if (ServerFlightHandler.isFlying(player)) {
+			                moveVector = new Vector3d(player.getX() - player.xo, player.getY() - player.yo, player.getZ() - player.zo);
+		                }
+		
+		                float f = (float)MathHelper.atan2(moveVector.z, moveVector.x) * (180F / (float)Math.PI) - 90F;
+		                float f1 = (float)(Math.pow(moveVector.x, 2) + Math.pow(moveVector.z, 2));
+						
+	                    if(!ConfigHandler.CLIENT.firstPersonRotation.get()){
+	                        if(Minecraft.getInstance().options.getCameraType().isFirstPerson()){
+	                            bodyYaw = player.yRot;
+	                            float bodyAndHeadYawDiff1 = (float)(bodyYaw - headRot);
+								
+								if(moveVector.length() > 0) {
+									float f5 = MathHelper.abs(MathHelper.wrapDegrees(player.yRot) - f);
+									if (95.0F < f5 && f5 < 265.0F) {
+										f -= 180.0F;
+									}
+									
+									float _f = MathHelper.wrapDegrees(f - (float)bodyYaw);
+									bodyYaw += _f * 0.3F;
+									float _f1 = MathHelper.wrapDegrees(player.yRot - (float)bodyYaw);
+									
+									if (_f1 < -75.0F) {
+										_f1 = -75.0F;
+									}
+									
+									if (_f1 >= 75.0F) {
+										_f1 = 75.0F;
+										
+										bodyYaw = player.yRot - _f1;
+										if (_f1 * _f1 > 2500.0F) {
+											bodyYaw += _f1 * 0.2F;
+										}
+									}
+								}
+								
+	                            if(bodyAndHeadYawDiff1 > 0 || bodyAndHeadYawDiff != bodyAndHeadYawDiff1) {
+	                                playerStateHandler.setMovementData(bodyYaw, headRot, headPitch, player.attackAnim > 0 && player.getAttackStrengthScale(-3.0f) != 1);
+	                                //playerStateHandler.getMovementData().bodyYawLastTick = bodyYaw;
+	                                NetworkHandler.CHANNEL.sendToServer(new PacketSyncCapabilityMovement(player.getId(), playerStateHandler.getMovementData().bodyYaw, playerStateHandler.getMovementData().headYaw, playerStateHandler.getMovementData().headPitch, playerStateHandler.getMovementData().bite));
+	                                return;
+								}
+	                        }
+	                    }
+						
+	
+	                    if (f1 > 0.000028) {
+	                        float f2 = MathHelper.wrapDegrees(f - (float)bodyYaw);
+	                        bodyYaw += 0.5F * f2;
+	
+	                        if (minecraft.options.getCameraType() == PointOfView.FIRST_PERSON) {
+	                            float f5 = MathHelper.abs(MathHelper.wrapDegrees(player.yRot) - f);
+	                            if (95.0F < f5 && f5 < 265.0F) {
+	                                f -= 180.0F;
+	                            }
+	    
+	                            float _f = MathHelper.wrapDegrees(f - (float) bodyYaw);
+	                            bodyYaw += _f * 0.3F;
+	                            float _f1 = MathHelper.wrapDegrees(player.yRot - (float) bodyYaw);
+	    
+	                            if (_f1 < -75.0F) {
+	                                _f1 = -75.0F;
+	                            }
+	    
+	                            if (_f1 >= 75.0F) {
+	                                _f1 = 75.0F;
+	
+	                                bodyYaw = player.yRot - _f1;
+	                                if (_f1 * _f1 > 2500.0F) {
+	                                    bodyYaw += _f1 * 0.2F;
+	                                }
+	                            }
+	                            
+	                        }
+	                        
+	                        bodyYaw = MathHelper.lerp(0.25, playerStateHandler.getMovementData().bodyYaw, bodyYaw);
+	                        
+	                        if (bodyAndHeadYawDiff > 180) {
+	                            bodyYaw -= 360;
+	                        }
+	    
+	                        if (bodyAndHeadYawDiff <= -180) {
+	                            bodyYaw += 360;
+	                        }
+	                        playerStateHandler.setMovementData(bodyYaw, headRot, headPitch, bite);
+	                        NetworkHandler.CHANNEL.sendToServer(new PacketSyncCapabilityMovement(player.getId(), playerStateHandler.getMovementData().bodyYaw, playerStateHandler.getMovementData().headYaw, playerStateHandler.getMovementData().headPitch, playerStateHandler.getMovementData().bite));
+	                    } else if (Math.abs(bodyAndHeadYawDiff) > 180F) {
+	                        if (Math.abs(bodyAndHeadYawDiff) > 360F) {
+	                            bodyYaw -= bodyAndHeadYawDiff;
+	                        }
+	                        
+	                        float turnSpeed = Math.min(1F + (float)Math.pow(Math.abs(bodyAndHeadYawDiff) - 180F, 1.5F) / 30F, 50F);
+	                        double newYaw = (float)bodyYaw - Math.signum(bodyAndHeadYawDiff) * turnSpeed;
+	                        bodyYaw = MathHelper.lerp(0.25, playerStateHandler.getMovementData().bodyYaw, newYaw);
+	    
+	                        playerStateHandler.setMovementData(bodyYaw, headRot, headPitch, bite);
+	                        NetworkHandler.CHANNEL.sendToServer(new PacketSyncCapabilityMovement(player.getId(), playerStateHandler.getMovementData().bodyYaw, playerStateHandler.getMovementData().headYaw, playerStateHandler.getMovementData().headPitch, playerStateHandler.getMovementData().bite));
+	                    } else if (playerStateHandler.getMovementData().bite != bite || headRot != playerStateHandler.getMovementData().headYaw) {
+	                        playerStateHandler.setMovementData(playerStateHandler.getMovementData().bodyYaw, headRot, headPitch, bite);
+	                        NetworkHandler.CHANNEL.sendToServer(new PacketSyncCapabilityMovement(player.getId(), playerStateHandler.getMovementData().bodyYaw, playerStateHandler.getMovementData().headYaw, playerStateHandler.getMovementData().headPitch, playerStateHandler.getMovementData().bite));
+	                    }
+	                }
+	            });
+	        }
+	    }
 	}
 }

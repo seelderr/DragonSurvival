@@ -19,6 +19,7 @@ import net.minecraft.entity.EntitySpawnPlacementRegistry;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.merchant.villager.VillagerEntity;
+import net.minecraft.entity.merchant.villager.VillagerProfession;
 import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.monster.PillagerEntity;
 import net.minecraft.entity.monster.VindicatorEntity;
@@ -29,6 +30,7 @@ import net.minecraft.item.SpawnEggItem;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.village.PointOfInterestType;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
@@ -118,6 +120,19 @@ public class DSEntities
         if (ConfigHandler.COMMON.spawnKnight.get()) {
             VillagerRelationsHandler.dragonHunters.add(cast(KNIGHT));
         }
+    }
+    
+    public static VillagerProfession PRINCESS_PROFESSION, PRINCE_PROFESSION;
+    
+    @SubscribeEvent
+    public static void registerVillageTypes(RegistryEvent.Register<VillagerProfession> event) {
+        PRINCESS_PROFESSION = new VillagerProfession("princess", PointOfInterestType.UNEMPLOYED, ImmutableSet.of(), ImmutableSet.of(), null);
+        PRINCESS_PROFESSION.setRegistryName(new ResourceLocation(DragonSurvivalMod.MODID, "princess"));
+        event.getRegistry().register(PRINCESS_PROFESSION);
+    
+        PRINCE_PROFESSION = new VillagerProfession("prince", PointOfInterestType.UNEMPLOYED, ImmutableSet.of(), ImmutableSet.of(), null);
+        PRINCE_PROFESSION.setRegistryName(new ResourceLocation(DragonSurvivalMod.MODID, "prince"));
+        event.getRegistry().register(PRINCE_PROFESSION);
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)

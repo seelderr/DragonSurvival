@@ -1,6 +1,7 @@
 package by.jackraidenph.dragonsurvival.client.handlers;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
+import by.jackraidenph.dragonsurvival.client.render.ClientDragonRender;
 import by.jackraidenph.dragonsurvival.client.sounds.FastGlideSound;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
@@ -338,7 +339,7 @@ public class ClientFlightHandler {
                                 wasGliding = false;
                                 double maxForward = 0.5;
     
-                                Vector3d moveVector = ClientEvents.getInputVector(new Vector3d(movement.leftImpulse, 0, movement.forwardImpulse), 1F, playerEntity.yRot);
+                                Vector3d moveVector = ClientDragonRender.getInputVector(new Vector3d(movement.leftImpulse, 0, movement.forwardImpulse), 1F, playerEntity.yRot);
                                 moveVector.multiply(1.3, 0, 1.3);
     
                                 double lookY = lookVec.y;
