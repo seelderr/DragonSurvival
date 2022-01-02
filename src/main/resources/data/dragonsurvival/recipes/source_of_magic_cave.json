@@ -6,22 +6,22 @@
     "OWO"
   ],
   "key": {
-    "Q": {
+    "#": {
       "item": "minecraft:nether_quartz_ore"
     },
-    "B": {
+    "S": {
       "item": "minecraft:basalt"
     },
-    "M": {
+    "O": {
       "item": "minecraft:magma_block"
     },
-    "E": {
+    "D": {
       "item": "dragonsurvival:elder_dragon_heart"
     },
-    "C": {
+    "L": {
       "item": "minecraft:chiseled_polished_blackstone"
     },
-    "L": {
+    "W": {
       "item": "minecraft:lava_bucket"
     }
   },

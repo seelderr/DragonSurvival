@@ -342,7 +342,6 @@ public class ClientDragonRender
 								
 	                            if(bodyAndHeadYawDiff1 > 0 || bodyAndHeadYawDiff != bodyAndHeadYawDiff1) {
 	                                playerStateHandler.setMovementData(bodyYaw, headRot, headPitch, player.attackAnim > 0 && player.getAttackStrengthScale(-3.0f) != 1);
-	                                //playerStateHandler.getMovementData().bodyYawLastTick = bodyYaw;
 	                                NetworkHandler.CHANNEL.sendToServer(new PacketSyncCapabilityMovement(player.getId(), playerStateHandler.getMovementData().bodyYaw, playerStateHandler.getMovementData().headYaw, playerStateHandler.getMovementData().headPitch, playerStateHandler.getMovementData().bite));
 	                                return;
 								}
