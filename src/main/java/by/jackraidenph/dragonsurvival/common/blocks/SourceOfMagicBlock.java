@@ -102,7 +102,7 @@ public class SourceOfMagicBlock extends HorizontalBlock implements IWaterLoggabl
         if(source instanceof SourceOfMagicTileEntity) {
             SourceOfMagicTileEntity magicTile = (SourceOfMagicTileEntity)source;
         
-            if(DragonStateProvider.isDragon(entity) && DragonStateProvider.getDragonType(entity) != magicTile.type){
+            if(DragonStateProvider.getDragonType(entity) != magicTile.type){
                 if(ConfigHandler.SERVER.damageWrongSourceOfMagic.get()) {
                     entity.hurt(DamageSource.MAGIC, 1F);
                 }
