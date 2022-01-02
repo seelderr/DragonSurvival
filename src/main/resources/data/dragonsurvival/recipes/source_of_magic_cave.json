@@ -1,0 +1,32 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#L#",
+    "SDS",
+    "OWO"
+  ],
+  "key": {
+    "Q": {
+      "item": "minecraft:nether_quartz_ore"
+    },
+    "B": {
+      "item": "minecraft:basalt"
+    },
+    "M": {
+      "item": "minecraft:magma_block"
+    },
+    "E": {
+      "item": "dragonsurvival:elder_dragon_heart"
+    },
+    "C": {
+      "item": "minecraft:chiseled_polished_blackstone"
+    },
+    "L": {
+      "item": "minecraft:lava_bucket"
+    }
+  },
+  "result": {
+    "item": "dragonsurvival:cave_source_of_magic",
+    "count": 1
+  }
+}
