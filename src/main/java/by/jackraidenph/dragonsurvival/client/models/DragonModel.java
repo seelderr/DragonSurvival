@@ -129,11 +129,6 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 		dragonEntity.tailMotionUp = MathHelper.lerp(0.25, dragonEntity.tailMotionUp, ServerFlightHandler.isFlying(player) ? 0 : (player.getDeltaMovement().y + g) * 1.5);
 		dragonEntity.tailMotionSide = MathHelper.lerp(0.1, dragonEntity.tailMotionSide, (bodyYawChange / Math.max(1, tailMultiplier)) + dragonEntity.tailSwing);
 		
-		if(((DragonEntity)animatable).tailLocked || !ConfigHandler.CLIENT.enableTailPhysics.get()){
-			dragonEntity.tailMotionUp = 0;
-			dragonEntity.tailMotionSide = 0;
-		}
-		
 		dragonEntity.bodyYawAverage.add(bodyYawChange);
 		while(dragonEntity.bodyYawAverage.size() > 10) dragonEntity.bodyYawAverage.remove(0);
 		
@@ -160,6 +155,17 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 		double query_head_pitch_change = Math.abs(MathHelper.degreesDifference((float)headPitchAvg, (float)dragonEntity.head_pitch_change)) > 0.3 ? MathHelper.lerp(0.1, dragonEntity.head_pitch_change, headPitchAvg) : headPitchAvg;
 		double query_tail_motion_up = Math.abs(MathHelper.degreesDifference((float)tailUpAvg, (float)dragonEntity.tail_motion_up)) > 0.3 ? MathHelper.lerp(0.1, dragonEntity.tail_motion_up, tailUpAvg) : tailUpAvg;
 		double query_tail_motion_side = Math.abs(MathHelper.degreesDifference((float)tailSideAvg, (float)dragonEntity.tail_motion_side)) > 0.3 ? MathHelper.lerp(0.1, dragonEntity.tail_motion_side, tailSideAvg) : tailSideAvg;
+		
+		if(((DragonEntity)animatable).tailLocked || !ConfigHandler.CLIENT.enableTailPhysics.get()){
+			dragonEntity.tailMotionUp = 0;
+			dragonEntity.tailMotionSide = 0;
+			
+			dragonEntity.tail_motion_up = 0;
+			dragonEntity.tail_motion_side = 0;
+			
+			query_tail_motion_up = 0;
+			query_tail_motion_side = 0;
+		}
 		
 		parser.setValue("query.body_yaw_change", query_body_yaw_change);
 		parser.setValue("query.head_yaw_change", query_head_yaw_change);
