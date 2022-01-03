@@ -5,9 +5,11 @@ import net.minecraftforge.common.ForgeConfigSpec;
 public class ClientConfig {
 	public final ForgeConfigSpec.BooleanValue dragonNameTags;
 	public final ForgeConfigSpec.BooleanValue renderInFirstPerson;
+	public final ForgeConfigSpec.BooleanValue rotateBodyWithCamera;
 	public final ForgeConfigSpec.BooleanValue firstPersonRotation;
 	public final ForgeConfigSpec.BooleanValue enableTailPhysics;
 	public final ForgeConfigSpec.BooleanValue renderFirstPersonFlight;
+	
 	public final ForgeConfigSpec.BooleanValue armorRenderLayer;
 	
 	public final ForgeConfigSpec.BooleanValue notifyWingStatus;
@@ -102,6 +104,7 @@ public class ClientConfig {
 		
 		builder.pop().push("rendering");
 		enableTailPhysics = builder.comment("Enable movement based physics on the tail, this is still a working progress and can be buggy.").define("enableTailPhysics", false);
+		rotateBodyWithCamera = builder.comment("Should the body rotate with the camera when turning around.").define("rotateBodyWithCamera", true);
 		
 		renderDragonClaws = builder
 				.comment("Should the tools on the claws and teeth be rendered for your dragon?")

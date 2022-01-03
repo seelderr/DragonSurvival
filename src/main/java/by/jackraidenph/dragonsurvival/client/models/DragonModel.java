@@ -6,6 +6,7 @@ import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.entity.DragonEntity;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.server.handlers.ServerFlightHandler;
+import by.jackraidenph.dragonsurvival.util.Functions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPredicate;
@@ -63,10 +64,6 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 		
 		DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
 		
-		float headRot = player.yRot != 0.0 ? player.yRot : player.yHeadRot;
-		double bodyYaw = handler.getMovementData().bodyYaw;
-		float bodyAndHeadYawDiff = (((float)bodyYaw) - headRot);
-		
 		boolean renderRot = ConfigHandler.CLIENT.renderOtherPlayerRotation.get() || Minecraft.getInstance().player == player;
 		renderRot = false;
 		
@@ -102,32 +99,20 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 		}
 		
 		parser.setValue("query.delta_y", player.getDeltaMovement().y);
-		parser.setValue("query.head_yaw", bodyAndHeadYawDiff);
+		parser.setValue("query.head_yaw", handler.getMovementData().headYaw);
 		parser.setValue("query.head_pitch", handler.getMovementData().headPitch);
 		
-		double bodyYawChange = handler.getMovementData().bodyYawLastTick - handler.getMovementData().bodyYaw;
-		double headYawChange = handler.getMovementData().headYawLastTick - handler.getMovementData().headYaw;
-		double headPitchChange = handler.getMovementData().headPitchLastTick - handler.getMovementData().headPitch;
+		double bodyYawChange = Functions.angleDifference((float)handler.getMovementData().bodyYawLastTick, (float)handler.getMovementData().bodyYaw);
+		double headYawChange = Functions.angleDifference((float)handler.getMovementData().headYawLastTick, (float)handler.getMovementData().headYaw);
+		double headPitchChange = Functions.angleDifference((float)handler.getMovementData().headPitchLastTick, (float)handler.getMovementData().headPitch);
+		
+		double distance = player.position().subtract(player.xo, player.yo, player.zo).length();
+		
 		ModifiableAttributeInstance gravity = player.getAttribute(net.minecraftforge.common.ForgeMod.ENTITY_GRAVITY.get());
 		double g = gravity.getValue();
 		
-		dragonEntity.tailSwing += 0.003 * (dragonEntity.tailSwingDir ? 1 : -1);
-		if(dragonEntity.tailSwing >= 0.4 && dragonEntity.tailSwingDir){
-			dragonEntity.tailSwingDir = false;
-		}else if(dragonEntity.tailSwing <= -0.4 && !dragonEntity.tailSwingDir){
-			dragonEntity.tailSwingDir = true;
-		}
-		
-		dragonEntity.tailMotionMax = Math.max(0, MathHelper.lerp(0.1, dragonEntity.tailMotionMax, 0));
-		
-		if(Math.abs(bodyYawChange) > dragonEntity.tailMotionMax){
-			dragonEntity.tailMotionMax += Math.abs(bodyYawChange);
-		}
-		
-		double tailMultiplier = MathHelper.clamp(dragonEntity.tailMotionMax, 0, 4);
-		
-		dragonEntity.tailMotionUp = MathHelper.lerp(0.25, dragonEntity.tailMotionUp, ServerFlightHandler.isFlying(player) ? 0 : (player.getDeltaMovement().y + g) * 1.5);
-		dragonEntity.tailMotionSide = MathHelper.lerp(0.1, dragonEntity.tailMotionSide, (bodyYawChange / Math.max(1, tailMultiplier)) + dragonEntity.tailSwing);
+		dragonEntity.tailMotionUp = MathHelper.lerp(0.25, dragonEntity.tailMotionUp, ServerFlightHandler.isFlying(player) ? 0 : (player.getDeltaMovement().y + g) * 2);
+		dragonEntity.tailMotionSide = MathHelper.lerp(0.1, dragonEntity.tailMotionSide, bodyYawChange * (distance / 0.2));
 		
 		dragonEntity.bodyYawAverage.add(bodyYawChange);
 		while(dragonEntity.bodyYawAverage.size() > 10) dragonEntity.bodyYawAverage.remove(0);
@@ -243,7 +228,7 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 		PlayerEntity player = entity.getPlayer();
 		if (player != null && !player.isSleeping() && !player.isPassenger()) {
 			DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
-				if(entity.neckLocked){
+				if(entity.neckLocked || true){
 					return;
 				}
 				/*IBone neck = this.getAnimationProcessor().getBone("Neck"); // rot(0, -22.5, 0)
@@ -265,11 +250,11 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 				IBone neck3 = animationProcessor.getBone("Neck3");
 				IBone neck4 = animationProcessor.getBone("Neck4");
 				IBone head = animationProcessor.getBone("Head");
-				float rotation = -1F * (((float) playerStateHandler.getMovementData().bodyYaw) - (float) playerStateHandler.getMovementData().headYaw) * (float) Math.PI / 180F;
-				if (rotation > (float) Math.PI)
-					rotation = (float) Math.PI;
-				if (rotation < -(float) Math.PI)
-					rotation = -(float) Math.PI;
+
+				float rotation = (float)playerStateHandler.getMovementData().headYaw;
+				rotation *= (float) Math.PI / 180F;
+				rotation *= -1;
+				
 				neck.setRotationY(-0.125F * rotation);
 				neck4.setRotationZ(-1F * -0.0555556F * rotation);
 				neck3.setRotationX((rotation >= 0 ? -1F : 1F) * 0.06944F * rotation + 0.523599F);

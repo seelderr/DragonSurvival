@@ -71,12 +71,9 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
     public final ArrayList<Double> tailSideAverage = new ArrayList<>();
     public final ArrayList<Double> tailUpAverage = new ArrayList<>();
     
-    public double tailMotionMax = 0.0;
     public double tailMotionSide;
     public double tailMotionUp;
-    public boolean tailSwingDir = false;
-    public double tailSwing = 0;
-    
+
     public double body_yaw_change = 0;
     public double head_yaw_change = 0;
     public double head_pitch_change = 0;
@@ -99,11 +96,11 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
         animationData.addAnimationController(dragonAnimationController);
         animationData.addAnimationController(biteAnimationController);
         animationData.addAnimationController(tailController);
-        //animationData.addAnimationController(headController);
+        animationData.addAnimationController(headController);
     }
     
     CustomTickAnimationController tailController = new CustomTickAnimationController(this, "5", 10, this::tailPredicate);
-    CustomTickAnimationController headController = new CustomTickAnimationController(this, "4", 10, this::headPredicate);
+    CustomTickAnimationController headController = new CustomTickAnimationController(this, "1", 10, this::headPredicate);
     CustomTickAnimationController emoteController = new CustomTickAnimationController(this, "2", 2, this::emotePredicate);
     CustomTickAnimationController biteAnimationController = new CustomTickAnimationController(this, "4", 2, this::bitePredicate);
     CustomTickAnimationController dragonAnimationController = new CustomTickAnimationController(this, "3", 2, this::predicate);
@@ -122,7 +119,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
     
     private <E extends IAnimatable> PlayState headPredicate(AnimationEvent<E> animationEvent) {
         if(!neckLocked) {
-            animationEvent.getController().setAnimation(new AnimationBuilder().addAnimation("bottom_turn", true));
+            animationEvent.getController().setAnimation(new AnimationBuilder().addAnimation("head_turn", true));
             return PlayState.CONTINUE;
         }else{
             animationEvent.getController().setAnimation(null);
@@ -130,7 +127,6 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
             return PlayState.STOP;
         }
     }
-    
     private <E extends IAnimatable> PlayState bitePredicate(AnimationEvent<E> animationEvent) {
         final PlayerEntity player = getPlayer();
         DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
@@ -145,8 +141,13 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
             if(!ServerFlightHandler.isFlying(player)) {
                 if(animationExists("use_item") && (player.isUsingItem() || (handler.getMovementData().bite || handler.getMovementData().dig) && (!player.getMainHandItem().isEmpty() || !player.getOffhandItem().isEmpty()))){
                     builder.addAnimation("use_item", true);
-                }else if (handler.getMovementData().bite && !handler.getMovementData().dig) {
+                }else if (handler.getMovementData().bite && !handler.getMovementData().dig || animationTimer.getDuration("bite") > 0) {
                     builder.addAnimation("bite", true);
+                    if(animationTimer.getDuration("bite") <= 0){
+                        animationTimer.putAnimation("bite", 0.44 * 20, builder);
+                    }else{
+                        animationTimer.trackAnimation("bite");
+                    }
                 }
             }
         }
