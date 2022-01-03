@@ -306,7 +306,7 @@ public class MagicHandler
 						
 						if (cap.getType() == DragonType.SEA) {
 							SpectralImpactAbility spectralImpact = (SpectralImpactAbility)cap.getMagic().getAbilityOrDefault(DragonAbilities.SPECTRAL_IMPACT);
-							boolean hit = player.level.random.nextInt(100) < spectralImpact.getChance();
+							boolean hit = player.level.random.nextInt(100) <= spectralImpact.getChance();
 							
 							if (hit) {
 								event.getSource().bypassArmor();

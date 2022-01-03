@@ -89,11 +89,12 @@ public class ClientSettingsScreen extends SettingsScreen
 				String key = ent.getKey();
 				String lastKey = key;
 				for (String s : key.split("\\.")) {
-					if(this.list.findCategory(s) == null
-					   || (this.list.findCategory(s).parent != null && !this.list.findCategory(s).parent.origName.equals(lastKey))) {
+					if(this.list.findCategory(s, lastKey) == null
+					   || (this.list.findCategory(s, lastKey).parent != null && !this.list.findCategory(s, lastKey).parent.origName.equals(lastKey))) {
 						entry = this.list.addCategory(s, entry);
+
 					}else{
-						entry = this.list.findCategory(s);
+						entry = this.list.findCategory(s, lastKey);
 					}
 					lastKey = s;
 				}

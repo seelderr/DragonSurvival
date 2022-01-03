@@ -20,6 +20,7 @@ import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.IntegerProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.stats.Stats;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
@@ -193,6 +194,7 @@ public class TreasureBlock extends FallingBlock implements IWaterLoggable
 					}
 					
 					if(!world.isClientSide) {
+						player.resetStat(Stats.CUSTOM.get(Stats.TIME_SINCE_REST));
 						ServerPlayerEntity serverplayerentity = (ServerPlayerEntity)player;
 						if (serverplayerentity.getRespawnPosition() == null || serverplayerentity.getRespawnDimension() != world.dimension() || serverplayerentity.getRespawnPosition() != null && !serverplayerentity.getRespawnPosition().equals(p_225533_3_)) {
 							serverplayerentity.setRespawnPosition(world.dimension(), p_225533_3_, 0.0F, false, true);

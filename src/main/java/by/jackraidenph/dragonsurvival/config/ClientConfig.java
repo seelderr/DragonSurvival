@@ -6,6 +6,7 @@ public class ClientConfig {
 	public final ForgeConfigSpec.BooleanValue dragonNameTags;
 	public final ForgeConfigSpec.BooleanValue renderInFirstPerson;
 	public final ForgeConfigSpec.BooleanValue firstPersonRotation;
+	public final ForgeConfigSpec.BooleanValue enableTailPhysics;
 	public final ForgeConfigSpec.BooleanValue renderFirstPersonFlight;
 	public final ForgeConfigSpec.BooleanValue armorRenderLayer;
 	
@@ -100,6 +101,8 @@ public class ClientConfig {
 		
 		
 		builder.pop().push("rendering");
+		enableTailPhysics = builder.comment("Enable movement based physics on the tail, this is still a working progress and can be buggy.").define("enableTailPhysics", false);
+		
 		renderDragonClaws = builder
 				.comment("Should the tools on the claws and teeth be rendered for your dragon?")
 				.define("renderDragonClaws", true);

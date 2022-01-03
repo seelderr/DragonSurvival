@@ -164,7 +164,7 @@ public class StormBreathAbility extends BreathAbility
 	
 	public void onEntityHit(LivingEntity entityHit){
 		hurtTarget(entityHit);
-		StormBreathAbility.chargedEffectSparkle(player, entityHit, 6, 2, 1);
+		StormBreathAbility.chargedEffectSparkle(player, entityHit, 6, ConfigHandler.SERVER.stormBreathChainCount.get(), 1);
 	}
 	
 	public static void onDamageChecks(LivingEntity entity){
@@ -255,26 +255,27 @@ public class StormBreathAbility extends BreathAbility
 			}
 			onDamageChecks(target);
 			
-			if(target != source) {
-				if(!target.level.isClientSide) {
-					if (target.level.random.nextInt(100) < 40) {
-						GenericCapability cap = Capabilities.getGenericCapability(target).orElse(null);
-						if(cap != null){
-							cap.lastAfflicted = player != null ? player.getId() : -1;
-						}
-						target.addEffect(new EffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(10), 0, false, true));
-					}
-				}
-				
-				if(player != null) {
-					if (player.level.random.nextInt(100) < 50) {
-						if (!player.level.isClientSide) {
-							player.addEffect(new EffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(30)));
+			if(!ConfigHandler.SERVER.chargedSpreadBlacklist.get().contains(source.getType().getRegistryName().toString())) {
+				if (target != source) {
+					if (!target.level.isClientSide) {
+						if (target.level.random.nextInt(100) < 40) {
+							GenericCapability cap = Capabilities.getGenericCapability(target).orElse(null);
+							if (cap != null) {
+								cap.lastAfflicted = player != null ? player.getId() : -1;
+							}
+							target.addEffect(new EffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(10), 0, false, true));
 						}
 					}
+					
+					if (player != null) {
+						if (player.level.random.nextInt(100) < 50) {
+							if (!player.level.isClientSide) {
+								player.addEffect(new EffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(30)));
+							}
+						}
+					}
+					spark(source, target);
 				}
-				
-				spark(source, target);
 			}
 		}
 	}

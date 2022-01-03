@@ -12,6 +12,7 @@ import by.jackraidenph.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.jackraidenph.dragonsurvival.common.magic.common.AbilityAnimation;
 import by.jackraidenph.dragonsurvival.common.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.common.magic.common.ISecondAnimation;
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.server.handlers.ServerFlightHandler;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -109,7 +110,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
     
     
     private <E extends IAnimatable> PlayState tailPredicate(AnimationEvent<E> animationEvent) {
-        if(!tailLocked) {
+        if(!tailLocked || !ConfigHandler.CLIENT.enableTailPhysics.get()) {
             animationEvent.getController().setAnimation(new AnimationBuilder().addAnimation("tail_turn", true));
             return PlayState.CONTINUE;
         }else{
@@ -323,7 +324,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
         }
         
         if(animationEvent.getController().getCurrentAnimation() == null || builder.getRawAnimationList().size() <= 0){
-            builder.addAnimation("idle", true);
+            builder.addAnimation(!ConfigHandler.CLIENT.enableTailPhysics.get() ? "idle_old" : "idle", true);
         }
         
         animationController.setAnimation(builder);

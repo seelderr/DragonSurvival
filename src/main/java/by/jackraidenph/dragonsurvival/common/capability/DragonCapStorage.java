@@ -77,7 +77,7 @@ public class DragonCapStorage implements Capability.IStorage<DragonStateHandler>
             instance.setIsHiding(tag.getBoolean("isHiding"));
             
             instance.setSize(tag.getDouble("size"));
-            instance.growing = !tag.contains("growing") || tag.getBoolean("growing");
+            instance.growing = tag.getBoolean("growing");
     
             instance.growing = tag.getBoolean("resting");
             instance.treasureRestTimer = tag.getInt("restingTimer");

@@ -172,9 +172,9 @@ public class KnightEntity extends CreatureEntity implements IAnimatable, DragonH
             return random.nextBoolean();
         return false;
     }
-
+ 
     @Override
     public boolean removeWhenFarAway(double distance) {
-        return tickCount >= Functions.minutesToTicks(ConfigHandler.COMMON.hunterDespawnDelay.get());
+        return !this.hasCustomName() && tickCount >= Functions.minutesToTicks(ConfigHandler.COMMON.hunterDespawnDelay.get());
     }
 }
