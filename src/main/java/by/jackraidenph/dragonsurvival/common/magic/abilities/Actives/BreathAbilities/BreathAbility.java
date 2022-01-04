@@ -117,7 +117,7 @@ public abstract class BreathAbility extends ActiveDragonAbility implements ISeco
 		yComp = (float) (Math.sin(pitch));
 		zComp = (float) (Math.cos(yaw) * Math.cos(pitch));
 		
-		double headRot = playerStateHandler.getMovementData().bodyYaw - playerStateHandler.getMovementData().headYaw;
+		double headRot = playerStateHandler.getMovementData().headYaw;
 		double pitch = playerStateHandler.getMovementData().headPitch;
 		Vector3f bodyRot = DragonStateProvider.getCameraOffset(player);
 		
@@ -127,7 +127,7 @@ public abstract class BreathAbility extends ActiveDragonAbility implements ISeco
 		{
 			Point2D point = new Double(player.position().x() + bodyRot.x(), player.position().y() + player.getEyeHeight() - 0.2);
 			AffineTransform transform = new AffineTransform();
-			double angleInRadians = ((MathHelper.clamp(pitch, -45, 45) * -1) * Math.PI / 180);
+			double angleInRadians = ((MathHelper.clamp(pitch, -90, 90) * -1) * Math.PI / 180);
 			transform.rotate(angleInRadians, player.position().x(), player.position().y() + player.getEyeHeight()- 0.2);
 			transform.transform(point, result);
 		}
@@ -135,7 +135,7 @@ public abstract class BreathAbility extends ActiveDragonAbility implements ISeco
 		{
 			Point2D point2 = new Double(player.position().x() + bodyRot.x(), player.position().z() + bodyRot.z());
 			AffineTransform transform2 = new AffineTransform();
-			double angleInRadians2 = ((MathHelper.clamp(headRot, -130, 130) * -1) * Math.PI / 180);
+			double angleInRadians2 = ((MathHelper.clamp(headRot, -180, 180) * -1) * Math.PI / 180);
 			transform2.rotate(angleInRadians2, player.position().x(), player.position().z());
 			transform2.transform(point2, result2);
 		}

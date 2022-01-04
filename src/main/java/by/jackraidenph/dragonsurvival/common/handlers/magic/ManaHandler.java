@@ -49,6 +49,10 @@ public class ManaHandler
 	}
 	
 	public static boolean isPlayerInGoodConditions(PlayerEntity player){
+		if(!DragonStateProvider.isDragon(player)){
+			return false;
+		}
+		
 		BlockState blockBelow = player.level.getBlockState(player.blockPosition().below());
 		BlockState feetBlock = player.getFeetBlockState();
 		

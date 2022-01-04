@@ -327,6 +327,8 @@ public class MagicHandler
 								if(cap1 != null){
 									cap1.lastAfflicted = player.getId();
 								}
+								
+								if(!player.level.isClientSide)
 								((LivingEntity)event.getEntity()).addEffect(new EffectInstance(DragonEffects.BURN, Functions.secondsToTicks(30)));
 							}
 						}

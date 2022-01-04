@@ -22,6 +22,8 @@ public class ClientConfig {
 	public final ForgeConfigSpec.BooleanValue helpTooltips;
 	public final ForgeConfigSpec.BooleanValue alwaysShowHelpTooltip;
 	
+	public final ForgeConfigSpec.BooleanValue appleskinSupport;
+	
 	public final ForgeConfigSpec.BooleanValue flightZoomEffect;
 	public final ForgeConfigSpec.BooleanValue flightCameraMovement;
 	
@@ -107,6 +109,10 @@ public class ClientConfig {
 		clientDebugMessages = builder
 				.comment("Enable client-side debug messages")
 				.define("clientDebugMessages", false);
+		
+		appleskinSupport = builder
+				.comment("Disable this setting to disable support for appleskin as a dragon if it is causing ui issues")
+				.define("appleskinSupport", true);
 		
 		builder.pop().push("inventory");
 		dragonInventory = builder

@@ -76,7 +76,7 @@
   },
     "treasure_gem_break": {
     "sounds": [
-      "dragonsurvival:treasure_gem_breaj1",
+      "dragonsurvival:treasure_gem_break1",
 	  "dragonsurvival:treasure_gem_break2",
       "dragonsurvival:treasure_gem_break3",
       "dragonsurvival:treasure_gem_break4"
@@ -94,7 +94,7 @@
   },
     "treasure_metal_break": {
     "sounds": [
-      "dragonsurvival:treasure_metal_brea1",
+      "dragonsurvival:treasure_metal_break1",
 	  "dragonsurvival:treasure_metal_break2",
       "dragonsurvival:treasure_metal_break3",
       "dragonsurvival:treasure_metal_break4"

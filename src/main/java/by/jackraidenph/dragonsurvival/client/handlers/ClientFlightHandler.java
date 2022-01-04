@@ -260,6 +260,10 @@ public class ClientFlightHandler {
     
                         boolean hasFood = playerEntity.getFoodData().getFoodLevel() > ConfigHandler.SERVER.flightHungerThreshold.get() || playerEntity.isCreative() || ConfigHandler.SERVER.allowFlyingWithoutHunger.get();
                         
+                        if(!hasFood){
+                            ay *= 4;
+                        }
+                        
                         //start
                         if (ServerFlightHandler.isFlying(playerEntity)) {
                             Vector3d motion = playerEntity.getDeltaMovement();
@@ -381,7 +385,7 @@ public class ClientFlightHandler {
     
                                 motion = motion.add(ax, ay, az);
     
-                                if(dragonStateHandler.getMovementData().bite){
+                                if(ServerFlightHandler.isSpin(playerEntity)){
                                     motion.multiply(10, 10, 10);
                                 }
     
