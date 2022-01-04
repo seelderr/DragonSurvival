@@ -63,26 +63,50 @@ public class ClientConfig {
 	ClientConfig(ForgeConfigSpec.Builder builder) {
 		builder.push("client").push("firstperson");
 		//For people who use first person view mods
-		renderInFirstPerson = builder.comment("Render dragon model in first person. If your own tail scares you, write false").define("renderFirstPerson", true);
-		renderFirstPersonFlight = builder.comment("Render dragon model in first person while gliding. We don't advise you to turn it on.").define("renderFirstPersonFlight", false);
-		firstPersonRotation = builder.comment("Use rotation of your tail in first person, otherwise the tail is always opposite of your camera. If the tail is constantly climbing in your face, put false.").define("firstPersonRotation", false);
+		renderInFirstPerson = builder
+				.comment("Render dragon model in first person. If your own tail scares you, write false")
+				.define("renderFirstPerson", true);
+		renderFirstPersonFlight = builder
+				.comment("Render dragon model in first person while gliding. We don't advise you to turn it on.")
+				.define("renderFirstPersonFlight", false);
+		firstPersonRotation = builder
+				.comment("Use rotation of your tail in first person, otherwise the tail is always opposite of your camera. If the tail is constantly climbing in your face, put false.")
+				.define("firstPersonRotation", false);
 		
 		builder.pop().push("flight");
-		notifyWingStatus = builder.comment("Notifies of wing status in chat message").define("notifyWingStatus", false);
+		notifyWingStatus = builder
+				.comment("Notifies of wing status in chat message")
+				.define("notifyWingStatus", false);
 		
-		jumpToFly = builder.comment("Should flight be activated when jumping in the air").define("jumpToFly", false);
-		lookAtSkyForFlight = builder.comment("Is it required to look up to start flying while jumping, requires that jumpToFly is on").define("lookAtSkyForFlight", false);
-		renderOtherPlayerRotation = builder.comment("Should the rotation effect during gliding of other players be shown?").define("renderOtherPlayerRotation", true);
+		jumpToFly = builder
+				.comment("Should flight be activated when jumping in the air")
+				.define("jumpToFly", false);
+		lookAtSkyForFlight = builder
+				.comment("Is it required to look up to start flying while jumping, requires that jumpToFly is on")
+				.define("lookAtSkyForFlight", false);
+		renderOtherPlayerRotation = builder
+				.comment("Should the rotation effect during gliding of other players be shown?")
+				.define("renderOtherPlayerRotation", true);
 		
-		flightZoomEffect = builder.comment("Should the zoom effect while gliding as a dragon be enabled").define("flightZoomEffect", true);
-		flightCameraMovement = builder.comment("Should the camera movement while gliding as a dragon be enabled").define("flightCameraMovement", true);
+		flightZoomEffect = builder
+				.comment("Should the zoom effect while gliding as a dragon be enabled")
+				.define("flightZoomEffect", true);
+		flightCameraMovement = builder
+				.comment("Should the camera movement while gliding as a dragon be enabled")
+				.define("flightCameraMovement", true);
 		
-		ownSpinParticles = builder.comment("Should particles from your own spin attack be displayed for you?").define("ownSpinParticles", true);
-		othersSpinParticles = builder.comment("Should other players particles from spin attack be shown for you?").define("othersSpinParticles", true);
+		ownSpinParticles = builder
+				.comment("Should particles from your own spin attack be displayed for you?")
+				.define("ownSpinParticles", true);
+		othersSpinParticles = builder
+				.comment("Should other players particles from spin attack be shown for you?")
+				.define("othersSpinParticles", true);
 		
 		builder.pop().push("misc");
 		
-		clientDebugMessages = builder.comment("Enable client-side debug messages").define("clientDebugMessages", false);
+		clientDebugMessages = builder
+				.comment("Enable client-side debug messages")
+				.define("clientDebugMessages", false);
 		
 		builder.pop().push("inventory");
 		dragonInventory = builder
@@ -103,8 +127,12 @@ public class ClientConfig {
 		
 		
 		builder.pop().push("rendering");
-		enableTailPhysics = builder.comment("Enable movement based physics on the tail, this is still a working progress and can be buggy.").define("enableTailPhysics", false);
-		rotateBodyWithCamera = builder.comment("Should the body rotate with the camera when turning around.").define("rotateBodyWithCamera", true);
+		enableTailPhysics = builder
+				.comment("Enable movement based physics on the tail, this is still a working progress and can be buggy.")
+				.define("enableTailPhysics", false);
+		rotateBodyWithCamera = builder
+				.comment("Should the body rotate with the camera when turning around.")
+				.define("rotateBodyWithCamera", true);
 		
 		renderDragonClaws = builder
 				.comment("Should the tools on the claws and teeth be rendered for your dragon?")
@@ -126,7 +154,9 @@ public class ClientConfig {
 				.comment("Should other player skins be rendered?")
 				.define("renderOtherPlayerSkins", true);
 		
-		armorRenderLayer = builder.comment("Should the armor be rendered as a layer on the dragon? Some shaders requires this to be off. Can cause some weird effects with armor when turned off.").define("armorRenderLayer", true);
+		armorRenderLayer = builder
+				.comment("Should the armor be rendered as a layer on the dragon? Some shaders requires this to be off. Can cause some weird effects with armor when turned off.")
+				.define("armorRenderLayer", true);
 		
 		builder.pop().push("tooltips");
 		tooltipChanges = builder

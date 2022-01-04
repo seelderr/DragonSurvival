@@ -404,7 +404,7 @@ public class ServerConfig {
 				.comment("Whether you use up hunger while flying.")
 				.define("flyingUsesHunger", true);
 		enableFlightFallDamage = builder
-				.comment("Whether fatal fall damage in flight is included. If true dragon will take fatal damage from the fall.")
+				.comment("Whether fall damage in flight is included. If true dragon will take damage from the fall.")
 				.define("enableFlightFallDamage", true);
 		lethalFlight = builder
 				.comment("Whether fall damage from flight is lethal, otherwise it will leave you at half a heart")
@@ -1182,16 +1182,16 @@ public class ServerConfig {
 		consumeEXPAsMana = builder
 				.comment("Whether to use exp instead of mana if mana is empty")
 				.define("consumeEXPAsMana", true);
-		
+
 		initialPassiveCost = builder
 				.comment("The initial exp cost for leveling passive skills.")
-				.defineInRange("initialPassiveCost", 4, 0, 100);
-		
+				.defineInRange("initialPassiveCost", 2, 0, 100);
+
 		passiveScalingCost = builder
 				.comment("The multiplier that is used to increase the passive skill costs per level")
-				.defineInRange("passiveScalingCost", 0.75, 0, 100);
-		
-		
+				.defineInRange("passiveScalingCost", 4.0, 0, 100);
+
+
 		favorableManaTicks = builder
 				.comment("How fast in seconds should mana be recovered in favorable conditions")
 				.defineInRange("favorableManaRegen", 5, 1, 1000);
