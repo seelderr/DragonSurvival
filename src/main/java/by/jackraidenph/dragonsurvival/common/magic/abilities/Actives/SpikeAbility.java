@@ -1,5 +1,6 @@
 package by.jackraidenph.dragonsurvival.common.magic.abilities.Actives;
 
+import by.jackraidenph.dragonsurvival.common.magic.common.AbilityAnimation;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.common.entity.projectiles.DragonSpikeEntity;
 import by.jackraidenph.dragonsurvival.client.handlers.KeyInputHandler;
@@ -85,4 +86,11 @@ public class SpikeAbility extends ActiveDragonAbility
 	}
 	
 	public int getCastingSlowness() { return 0; }
+	
+	@Override
+	public AbilityAnimation getStoppingAnimation()
+	{
+		return new AbilityAnimation("bite", 0.44 * 20, false, false);
+	}
+	
 }

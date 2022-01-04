@@ -2,6 +2,7 @@ package by.jackraidenph.dragonsurvival.common.blocks;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.client.render.item.HelmetStackTileEntityRenderer;
+import by.jackraidenph.dragonsurvival.client.sounds.SoundRegistry;
 import by.jackraidenph.dragonsurvival.common.items.DSItems;
 import by.jackraidenph.dragonsurvival.common.items.DragonDoorItem;
 import net.minecraft.block.AbstractBlock;
@@ -102,12 +103,12 @@ public class DSBlocks
         forestSourceOfMagic = registerBlock(new SourceOfMagicBlock(Block.Properties.of(Material.STONE).strength(3, 100).noOcclusion()), "forest_source_of_magic", forgeRegistry);
         seaSourceOfMagic = registerBlock(new SourceOfMagicBlock(Block.Properties.of(Material.STONE).strength(3, 100).noOcclusion()), "sea_source_of_magic", forgeRegistry);
        
-        treasureDebris = registerBlock(new TreasureBlock(new Color(148, 120, 114), AbstractBlock.Properties.of(Material.METAL, MaterialColor.COLOR_BROWN).noOcclusion().isViewBlocking((c1,c2,c3) -> false)), "treasure_debris", forgeRegistry);
-        treasureDiamond = registerBlock(new TreasureBlock(new Color(212, 255, 255), AbstractBlock.Properties.of(Material.METAL, MaterialColor.DIAMOND).noOcclusion().isViewBlocking((c1,c2,c3) -> false)), "treasure_diamond", forgeRegistry);
-        treasureEmerald = registerBlock(new TreasureBlock(new Color(57, 240, 94), AbstractBlock.Properties.of(Material.METAL, MaterialColor.COLOR_GREEN).noOcclusion().isViewBlocking((c1,c2,c3) -> false)), "treasure_emerald", forgeRegistry);
-        treasureCopper = registerBlock(new TreasureBlock(new Color(255, 255, 208), AbstractBlock.Properties.of(Material.GLASS, MaterialColor.COLOR_ORANGE).noOcclusion().isViewBlocking((c1,c2,c3) -> false)), "treasure_copper", forgeRegistry);
-        treasureGold = registerBlock(new TreasureBlock(new Color(255, 255, 243), AbstractBlock.Properties.of(Material.METAL, MaterialColor.GOLD).noOcclusion().isViewBlocking((c1,c2,c3) -> false)), "treasure_gold", forgeRegistry);
-        treasureIron = registerBlock(new TreasureBlock(new Color(211, 211, 211), AbstractBlock.Properties.of(Material.METAL, MaterialColor.METAL).noOcclusion().isViewBlocking((c1,c2,c3) -> false)), "treasure_iron", forgeRegistry);
+        treasureDebris = registerBlock(new TreasureBlock(new Color(148, 120, 114), AbstractBlock.Properties.of(Material.METAL, MaterialColor.COLOR_BROWN).sound(SoundRegistry.treasureMetal).noOcclusion().isViewBlocking((c1,c2,c3) -> false)), "treasure_debris", forgeRegistry);
+        treasureDiamond = registerBlock(new TreasureBlock(new Color(212, 255, 255), AbstractBlock.Properties.of(Material.METAL, MaterialColor.DIAMOND).sound(SoundRegistry.treasureGem).noOcclusion().isViewBlocking((c1,c2,c3) -> false)), "treasure_diamond", forgeRegistry);
+        treasureEmerald = registerBlock(new TreasureBlock(new Color(57, 240, 94), AbstractBlock.Properties.of(Material.METAL, MaterialColor.COLOR_GREEN).sound(SoundRegistry.treasureGem).noOcclusion().isViewBlocking((c1,c2,c3) -> false)), "treasure_emerald", forgeRegistry);
+        treasureCopper = registerBlock(new TreasureBlock(new Color(255, 255, 208), AbstractBlock.Properties.of(Material.GLASS, MaterialColor.COLOR_ORANGE).sound(SoundRegistry.treasureMetal).noOcclusion().isViewBlocking((c1,c2,c3) -> false)), "treasure_copper", forgeRegistry);
+        treasureGold = registerBlock(new TreasureBlock(new Color(255, 255, 243), AbstractBlock.Properties.of(Material.METAL, MaterialColor.GOLD).sound(SoundRegistry.treasureMetal).noOcclusion().isViewBlocking((c1,c2,c3) -> false)), "treasure_gold", forgeRegistry);
+        treasureIron = registerBlock(new TreasureBlock(new Color(211, 211, 211), AbstractBlock.Properties.of(Material.METAL, MaterialColor.METAL).sound(SoundRegistry.treasureMetal).noOcclusion().isViewBlocking((c1,c2,c3) -> false)), "treasure_iron", forgeRegistry);
         
         helmet1 = registerBlock(new HelmetBlock(AbstractBlock.Properties.of(Material.METAL)), "broken_knight_helmet_1", forgeRegistry);
         helmet2 = registerBlock(new HelmetBlock(AbstractBlock.Properties.of(Material.METAL)), "broken_knight_helmet_2", forgeRegistry);

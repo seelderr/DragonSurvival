@@ -438,6 +438,25 @@ public class ClientFlightHandler {
     private static long lastHungerMessage;
     
     @SubscribeEvent
+    public static void spin(InputEvent.ClickInputEvent keyInputEvent) {
+        ClientPlayerEntity player = Minecraft.getInstance().player;
+        if(player == null) return;
+        
+        DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+        if(handler == null || !handler.isDragon()) return;
+        
+        if(KeyInputHandler.SPIN_ABILITY.consumeClick()) {
+            if (!ServerFlightHandler.isSpin(player) && handler.getMovementData().spinCooldown <= 0 && handler.getMovementData().spinLearned) {
+                if(ServerFlightHandler.isFlying(player) || ServerFlightHandler.canSwimSpin(player)) {
+                    handler.getMovementData().spinAttack = ServerFlightHandler.spinDuration;
+                    handler.getMovementData().spinCooldown = ConfigHandler.SERVER.flightSpinCooldown.get() * 20;
+                    NetworkHandler.CHANNEL.sendToServer(new SyncSpinStatus(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
+                }
+            }
+        }
+    }
+    
+    @SubscribeEvent
     public static void toggleWings(InputEvent.KeyInputEvent keyInputEvent) {
         ClientPlayerEntity player = Minecraft.getInstance().player;
         if(player == null) return;
@@ -447,17 +466,6 @@ public class ClientFlightHandler {
     
         boolean currentState = handler.isWingsSpread();
         Vector3d lookVec = player.getLookAngle();
-        
-        if(Minecraft.getInstance().options.keyUse.isDown()) {
-            if (!ServerFlightHandler.isSpin(player) && handler.getMovementData().spinCooldown <= 0 && handler.getMovementData().spinLearned && player.isSprinting()) {
-                if(ServerFlightHandler.isFlying(player) || ServerFlightHandler.canSwimSpin(player)) {
-                    handler.getMovementData().spinAttack = ServerFlightHandler.spinDuration;
-                    handler.getMovementData().spinCooldown = ConfigHandler.SERVER.flightSpinCooldown.get() * 20;
-                    NetworkHandler.CHANNEL.sendToServer(new SyncSpinStatus(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
-                }
-            }
-        }
-        
         if(ConfigHandler.CLIENT.jumpToFly.get() && !player.isCreative() && !player.isSpectator()) {
             if (Minecraft.getInstance().options.keyJump.isDown()) {
                 if(keyInputEvent.getAction() == GLFW.GLFW_PRESS) {

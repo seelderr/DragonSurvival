@@ -1,6 +1,7 @@
 package by.jackraidenph.dragonsurvival;
 
 import by.jackraidenph.dragonsurvival.client.particles.DSParticles;
+import by.jackraidenph.dragonsurvival.client.sounds.SoundRegistry;
 import by.jackraidenph.dragonsurvival.commands.DragonCommand;
 import by.jackraidenph.dragonsurvival.common.capability.Capabilities;
 import by.jackraidenph.dragonsurvival.common.entity.DSEntities;
@@ -53,7 +54,8 @@ public class DragonSurvivalMod {
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ConfigHandler.serverSpec);
 
         DSParticles.REGISTRY.register(modEventBus);
-    
+        SoundRegistry.SOUNDS.register(modEventBus);
+        
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(new DragonFoodHandler());
         MinecraftForge.EVENT_BUS.register(new Event_busHandler());

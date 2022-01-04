@@ -1391,7 +1391,7 @@ public class ServerConfig {
 			
 			stormBreathChainCount = builder
 					.comment("How many times stormbreath is able to chain to other mobs")
-					.defineInRange("stormBreathManaTicks", 2, 0, 100);
+					.defineInRange("stormBreathChainCount", 2, 0, 100);
 			
 			chargedSpreadBlacklist = builder
 					.comment("List of entities that will not spread the charged effect. Format: modid:id")

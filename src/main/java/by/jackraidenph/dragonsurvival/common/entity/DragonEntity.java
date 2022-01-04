@@ -20,6 +20,7 @@ import net.minecraft.entity.Pose;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Hand;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
@@ -139,11 +140,34 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
             }
             
             if(!ServerFlightHandler.isFlying(player)) {
-                if(animationExists("use_item") && (player.isUsingItem() || (handler.getMovementData().bite || handler.getMovementData().dig) && (!player.getMainHandItem().isEmpty() || !player.getOffhandItem().isEmpty()))){
+                if(animationExists("use_item")
+                   && (player.isUsingItem() || (handler.getMovementData().bite || handler.getMovementData().dig) && (!player.getMainHandItem().isEmpty() || !player.getOffhandItem().isEmpty()))) {
                     builder.addAnimation("use_item", true);
+                    handler.getMovementData().bite = false;
+                }else if(animationExists("use_item_right") && (!player.getMainHandItem().isEmpty()) && (player.isUsingItem() && player.getUsedItemHand() == Hand.MAIN_HAND || (handler.getMovementData().bite || handler.getMovementData().dig) && player.getMainArm() == HandSide.RIGHT) || animationTimer.getDuration("use_item_right") > 0){
+                    if(animationTimer.getDuration("use_item_right") <= 0){
+                        handler.getMovementData().bite = false;
+                        animationTimer.putAnimation("use_item_right", 0.32 * 20, builder);
+                    }else{
+                        animationTimer.trackAnimation("use_item_right");
+                    }
+                    
+                    builder.addAnimation("use_item_right", true);
+    
+                }else if(animationExists("use_item_left") && (!player.getOffhandItem().isEmpty() && player.isUsingItem() && player.getUsedItemHand() == Hand.OFF_HAND || (handler.getMovementData().bite || handler.getMovementData().dig) && player.getMainArm() == HandSide.LEFT) || animationTimer.getDuration("use_item_left") > 0){
+                    if(animationTimer.getDuration("use_item_left") <= 0){
+                        handler.getMovementData().bite = false;
+                        animationTimer.putAnimation("use_item_left", 0.32 * 20, builder);
+                    }else{
+                        animationTimer.trackAnimation("use_item_left");
+                    }
+                   
+                    builder.addAnimation("use_item_left", true);
+    
                 }else if (handler.getMovementData().bite && !handler.getMovementData().dig || animationTimer.getDuration("bite") > 0) {
                     builder.addAnimation("bite", true);
                     if(animationTimer.getDuration("bite") <= 0){
+                        handler.getMovementData().bite = false;
                         animationTimer.putAnimation("bite", 0.44 * 20, builder);
                     }else{
                         animationTimer.trackAnimation("bite");
