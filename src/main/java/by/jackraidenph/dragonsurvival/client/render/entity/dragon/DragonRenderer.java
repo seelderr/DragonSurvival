@@ -95,13 +95,17 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 			if (bone.getName().equals(ConfigHandler.CLIENT.renderItemsInMouth.get() ? "RightItem_jaw" : "RightItem") && !mainHand.isEmpty()) {
 				if(player != Minecraft.getInstance().player || ConfigHandler.CLIENT.alternateHeldItem.get() || !Minecraft.getInstance().options.getCameraType().isFirstPerson()) {
 					stack.pushPose();
+					GeoCube ch = bone.childCubes != null && bone.childCubes.size() > 0 ? bone.childCubes.get(0) : null;
 					RenderUtils.translate(bone, stack);
 					RenderUtils.moveToPivot(bone, stack);
 					RenderUtils.rotate(bone, stack);
 					RenderUtils.scale(bone, stack);
 					stack.mulPose(Vector3f.ZP.rotationDegrees(0));
 					stack.translate(0.0, 0, 0.0);
-					Minecraft.getInstance().getItemRenderer().renderStatic(mainHand, ConfigHandler.CLIENT.renderItemsInMouth.get() ? TransformType.NONE : TransformType.THIRD_PERSON_RIGHT_HAND, packedLightIn, packedOverlayIn, stack, rtb);
+					if(ch != null){
+						stack.scale(ch.size.x(), ch.size.y(), ch.size.z());
+					}
+					Minecraft.getInstance().getItemRenderer().renderStatic(mainHand, TransformType.FIRST_PERSON_RIGHT_HAND, packedLightIn, packedOverlayIn, stack, rtb);
 					stack.popPose();
 					bufferIn = rtb.getBuffer(RenderType.entityCutout(whTexture));
 				}
@@ -112,9 +116,14 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 					RenderUtils.moveToPivot(bone, stack);
 					RenderUtils.rotate(bone, stack);
 					RenderUtils.scale(bone, stack);
+					GeoCube ch = bone.childCubes != null && bone.childCubes.size() > 0 ? bone.childCubes.get(0) : null;
+					
 					stack.mulPose(Vector3f.ZP.rotationDegrees(0));
 					stack.translate(0.0, 0, 0.0);
-					Minecraft.getInstance().getItemRenderer().renderStatic(offHand, ConfigHandler.CLIENT.renderItemsInMouth.get() ? TransformType.NONE : TransformType.THIRD_PERSON_LEFT_HAND, packedLightIn, packedOverlayIn, stack, rtb);
+					if(ch != null){
+						stack.scale(ch.size.x(), ch.size.y(), ch.size.z());
+					}
+					Minecraft.getInstance().getItemRenderer().renderStatic(offHand, TransformType.FIRST_PERSON_RIGHT_HAND, packedLightIn, packedOverlayIn, stack, rtb);
 					stack.popPose();
 					bufferIn = rtb.getBuffer(RenderType.entityCutout(whTexture));
 				}

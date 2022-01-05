@@ -357,7 +357,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
         }
         
         if(animationEvent.getController().getCurrentAnimation() == null || builder.getRawAnimationList().size() <= 0){
-            builder.addAnimation(!ConfigHandler.CLIENT.enableTailPhysics.get() ? "idle_old" : "idle", true);
+           builder.addAnimation("idle", true);
         }
         
         animationController.setAnimation(builder);
