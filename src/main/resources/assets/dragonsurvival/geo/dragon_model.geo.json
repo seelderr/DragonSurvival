@@ -2601,6 +2601,44 @@
 					]
 				},
 				{
+					"name": "RightItem_jaw",
+					"parent": "Jaw",
+					"pivot": [-2, 33, -19.5],
+					"cubes": [
+						{
+							"origin": [-2.5, 32.5, -20],
+							"size": [1, 1, 1],
+							"uv": {
+								"north": {"uv": [0, 0], "uv_size": [0, 0]},
+								"east": {"uv": [0, 0], "uv_size": [0, 0]},
+								"south": {"uv": [0, 0], "uv_size": [0, 0]},
+								"west": {"uv": [0, 0], "uv_size": [0, 0]},
+								"up": {"uv": [0, 0], "uv_size": [0, 0]},
+								"down": {"uv": [0, 0], "uv_size": [0, 0]}
+							}
+						}
+					]
+				},
+				{
+					"name": "LeftItem_jaw",
+					"parent": "Jaw",
+					"pivot": [2, 33, -19.5],
+					"cubes": [
+						{
+							"origin": [1.5, 32.5, -20],
+							"size": [1, 1, 1],
+							"uv": {
+								"north": {"uv": [0, 0], "uv_size": [0, 0]},
+								"east": {"uv": [0, 0], "uv_size": [0, 0]},
+								"south": {"uv": [0, 0], "uv_size": [0, 0]},
+								"west": {"uv": [0, 0], "uv_size": [0, 0]},
+								"up": {"uv": [0, 0], "uv_size": [0, 0]},
+								"down": {"uv": [0, 0], "uv_size": [0, 0]}
+							}
+						}
+					]
+				},
+				{
 					"name": "LowerTeeth",
 					"parent": "Jaw",
 					"pivot": [0, 38.73076, -11.99967],
