@@ -80,6 +80,7 @@ public class SkinsScreen extends Screen
 	private float zoom = 0;
 	
 	private static String playerName = null;
+	private static String lastPlayerName = null;
 	private static DragonLevel level = DragonLevel.ADULT;
 	
 	private DragonEntity dragon;
@@ -123,9 +124,14 @@ public class SkinsScreen extends Screen
 		
 		SkinsScreen.glowTexture = glowTexture;
 		SkinsScreen.skinTexture = skinTexture;
-		zoom = level.size;
+		
+		if(Objects.equals(lastPlayerName, playerName) || lastPlayerName == null) {
+			zoom = level.size;
+		}
+		
 		noSkin = defaultSkin;
 		loading = false;
+		lastPlayerName = playerName;
 	}
 	
 	@Override
