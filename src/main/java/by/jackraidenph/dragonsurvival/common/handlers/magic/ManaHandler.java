@@ -65,34 +65,39 @@ public class ManaHandler
 		}
 		
 		return DragonStateProvider.getCap(player).map(cap -> {
-			if(DragonConfigHandler.DRAGON_MANA_BLOCKS.get(cap.getType()).contains(blockBelow.getBlock()) || DragonConfigHandler.DRAGON_MANA_BLOCKS.get(cap.getType()).contains(feetBlock.getBlock())){
-				if(!(blockBelow.getBlock() instanceof AbstractFurnaceBlock) && !(feetBlock.getBlock() instanceof AbstractFurnaceBlock)
-				&& !(blockBelow.getBlock() instanceof CauldronBlock) && !(feetBlock.getBlock() instanceof CauldronBlock)) {
-					return true;
+			
+			if(DragonConfigHandler.DRAGON_MANA_BLOCKS != null && DragonConfigHandler.DRAGON_MANA_BLOCKS.containsKey(cap.getType())) {
+				if (DragonConfigHandler.DRAGON_MANA_BLOCKS.get(cap.getType()).contains(blockBelow.getBlock()) || DragonConfigHandler.DRAGON_MANA_BLOCKS.get(cap.getType()).contains(feetBlock.getBlock())) {
+					if (!(blockBelow.getBlock() instanceof AbstractFurnaceBlock) && !(feetBlock.getBlock() instanceof AbstractFurnaceBlock) && !(blockBelow.getBlock() instanceof CauldronBlock) && !(feetBlock.getBlock() instanceof CauldronBlock)) {
+						return true;
+					}
 				}
 			}
+			
 				switch (cap.getType()) {
 				case SEA:
 					if (player.isInWaterRainOrBubble() || player.hasEffect(DragonEffects.CHARGED) || player.hasEffect(DragonEffects.PEACE)) {
 						return true;
 					}
-					if(DragonConfigHandler.DRAGON_MANA_BLOCKS.get(DragonType.SEA).contains(blockBelow.getBlock())) {
-						if (blockBelow.getBlock() == Blocks.CAULDRON) {
-							if (blockBelow.hasProperty(CauldronBlock.LEVEL)) {
-								int level = blockBelow.getValue(CauldronBlock.LEVEL);
-								
-								if (level > 0) {
-									return true;
+					if(DragonConfigHandler.DRAGON_MANA_BLOCKS != null && DragonConfigHandler.DRAGON_MANA_BLOCKS.containsKey(DragonType.SEA)) {
+						if (DragonConfigHandler.DRAGON_MANA_BLOCKS.get(DragonType.SEA).contains(blockBelow.getBlock())) {
+							if (blockBelow.getBlock() == Blocks.CAULDRON) {
+								if (blockBelow.hasProperty(CauldronBlock.LEVEL)) {
+									int level = blockBelow.getValue(CauldronBlock.LEVEL);
+									
+									if (level > 0) {
+										return true;
+									}
 								}
 							}
-						}
-						
-						if (feetBlock.getBlock() == Blocks.CAULDRON) {
-							if (feetBlock.hasProperty(CauldronBlock.LEVEL)) {
-								int level = feetBlock.getValue(CauldronBlock.LEVEL);
-								
-								if (level > 0) {
-									return true;
+							
+							if (feetBlock.getBlock() == Blocks.CAULDRON) {
+								if (feetBlock.hasProperty(CauldronBlock.LEVEL)) {
+									int level = feetBlock.getValue(CauldronBlock.LEVEL);
+									
+									if (level > 0) {
+										return true;
+									}
 								}
 							}
 						}
@@ -128,11 +133,13 @@ public class ManaHandler
 					}
 					
 					//If cave dragon is ontop of a burning furnace
-					if(DragonConfigHandler.DRAGON_MANA_BLOCKS.get(DragonType.CAVE).contains(blockBelow.getBlock())) {
-						if (blockBelow.getBlock() instanceof AbstractFurnaceBlock) {
-							if (blockBelow.hasProperty(AbstractFurnaceBlock.LIT)) {
-								if (blockBelow.getValue(AbstractFurnaceBlock.LIT)) {
-									return true;
+					if(DragonConfigHandler.DRAGON_MANA_BLOCKS != null && DragonConfigHandler.DRAGON_MANA_BLOCKS.containsKey(DragonType.CAVE)) {
+						if (DragonConfigHandler.DRAGON_MANA_BLOCKS.get(DragonType.CAVE).contains(blockBelow.getBlock())) {
+							if (blockBelow.getBlock() instanceof AbstractFurnaceBlock) {
+								if (blockBelow.hasProperty(AbstractFurnaceBlock.LIT)) {
+									if (blockBelow.getValue(AbstractFurnaceBlock.LIT)) {
+										return true;
+									}
 								}
 							}
 						}
