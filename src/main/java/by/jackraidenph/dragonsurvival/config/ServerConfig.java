@@ -785,7 +785,7 @@ public class ServerConfig {
 						"item:minecraft:enchanted_golden_apple",
 						"item:dragonsurvival:charged_coal:6:1",
 						"item:dragonsurvival:charred_meat:10:12",
-						"item:dragonsurvival:cave_dragon_treat:10:12",
+						"item:dragonsurvival:cave_dragon_treat:14:12",
 						"item:dragonsurvival:charred_seafood:8:10",
 						"item:dragonsurvival:charred_vegetable:8:9",
 						"item:dragonsurvival:charred_mushroom:8:5",
@@ -823,7 +823,7 @@ public class ServerConfig {
 				.worldRestart()
 				.defineList("forestDragon", Arrays.asList(
 						"tag:forge:raw_meats:5:7",
-						"item:minecraft:sweet_berries:2:2",
+						"item:minecraft:sweet_berries:1:1",
 						"item:minecraft:rotten_flesh:2:3",
 						"item:minecraft:spider_eye:7:8",
 						"item:minecraft:rabbit:7:13",
