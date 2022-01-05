@@ -135,7 +135,7 @@ public class ClientConfig {
 		builder.pop().push("rendering");
 		enableTailPhysics = builder
 				.comment("Enable movement based physics on the tail, this is still a working progress and can be buggy.")
-				.define("enableTailPhysics", false);
+				.define("enableTailPhysics", true);
 		rotateBodyWithCamera = builder
 				.comment("Should the body rotate with the camera when turning around.")
 				.define("rotateBodyWithCamera", true);
