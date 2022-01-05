@@ -34,6 +34,8 @@ public class KeyInputHandler
 	public static KeyBinding ABILITY4;
 	
 	public static KeyBinding SPIN_ABILITY;
+	public static KeyBinding FREE_LOOK;
+	
 	
 	public static void setupKeybinds() {
 		TOGGLE_WINGS = new KeyBinding("ds.keybind.wings", GLFW.GLFW_KEY_G, "Dragon Survival");
@@ -79,6 +81,10 @@ public class KeyInputHandler
 		SPIN_ABILITY = new KeyBinding("ds.keybind.spin", Type.MOUSE, GLFW.GLFW_MOUSE_BUTTON_RIGHT, "Dragon Survival");
 		SPIN_ABILITY.setKeyConflictContext(KeyConflictContext.IN_GAME);
 		ClientRegistry.registerKeyBinding(SPIN_ABILITY);
+		
+		FREE_LOOK = new KeyBinding("ds.keybind.free_look", GLFW.GLFW_KEY_LEFT_ALT, "Dragon Survival");
+		FREE_LOOK.setKeyConflictContext(KeyConflictContext.IN_GAME);
+		ClientRegistry.registerKeyBinding(FREE_LOOK);
 	}
 	
 	@SubscribeEvent

@@ -1,6 +1,8 @@
 package by.jackraidenph.dragonsurvival.common.magic.abilities.Actives.BreathAbilities;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
+import by.jackraidenph.dragonsurvival.client.particles.SeaDragon.LargeLightningParticleData;
+import by.jackraidenph.dragonsurvival.client.particles.SeaDragon.SmallLightningParticleData;
 import by.jackraidenph.dragonsurvival.client.sounds.SoundRegistry;
 import by.jackraidenph.dragonsurvival.client.sounds.StormBreathSound;
 import by.jackraidenph.dragonsurvival.common.DragonEffects;
@@ -144,6 +146,22 @@ public class StormBreathAbility extends BreathAbility
 			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (DistExecutor.SafeRunnable)() -> sound());
 		}
 		
+		if(player.level.isClientSide) {
+			for (int i = 0; i < 6; i++) {
+				double xSpeed = speed * 1f * xComp;
+				double ySpeed = speed * 1f * yComp;
+				double zSpeed = speed * 1f * zComp;
+				player.level.addParticle(new SmallLightningParticleData(37, true), dx, dy, dz, xSpeed, ySpeed, zSpeed);
+			}
+			
+			for (int i = 0; i < 2; i++) {
+				double xSpeed = speed * xComp + (spread * 0.7 * (player.level.random.nextFloat() * 2 - 1) * (Math.sqrt(1 - xComp * xComp)));
+				double ySpeed = speed * yComp + (spread * 0.7 * (player.level.random.nextFloat() * 2 - 1) * (Math.sqrt(1 - yComp * yComp)));
+				double zSpeed = speed * zComp + (spread * 0.7 * (player.level.random.nextFloat() * 2 - 1) * (Math.sqrt(1 - zComp * zComp)));
+				player.level.addParticle(new LargeLightningParticleData(37, false), dx, dy, dz, xSpeed, ySpeed, zSpeed);
+			}
+		}
+		
 		hitEntities();
 		
 		if (player.tickCount % 10 == 0) {
@@ -154,7 +172,7 @@ public class StormBreathAbility extends BreathAbility
 	@Override
 	public boolean canHitEntity(LivingEntity entity)
 	{
-		return true;
+		return !(entity instanceof PlayerEntity) || player.canHarmPlayer(((PlayerEntity)entity));
 	}
 	
 	@Override

@@ -3,6 +3,7 @@ package by.jackraidenph.dragonsurvival.client.render;
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.client.handlers.ClientEvents;
 import by.jackraidenph.dragonsurvival.client.handlers.DragonSkins;
+import by.jackraidenph.dragonsurvival.client.handlers.KeyInputHandler;
 import by.jackraidenph.dragonsurvival.client.models.DragonArmorModel;
 import by.jackraidenph.dragonsurvival.client.models.DragonModel;
 import by.jackraidenph.dragonsurvival.client.render.entity.dragon.DragonArmorRenderLayer;
@@ -336,6 +337,8 @@ public class ClientDragonRender
 		}
 	}
 	
+	private static boolean wasFreeLook = false;
+	
 	@SubscribeEvent
 	public static void onClientTick(RenderTickEvent renderTickEvent)
 	{
@@ -352,7 +355,7 @@ public class ClientDragonRender
 		                double bodyYaw = playerStateHandler.getMovementData().bodyYaw;
 		                float headRot = Functions.angleDifference((float)bodyYaw, MathHelper.wrapDegrees(player.yRot != 0.0 ? player.yRot : player.yHeadRot));
 						
-		                if(ConfigHandler.CLIENT.rotateBodyWithCamera.get()){
+		                if(ConfigHandler.CLIENT.rotateBodyWithCamera.get() && (!KeyInputHandler.FREE_LOOK.isDown() && !wasFreeLook)){
 			                if(headRot > 170){
 				                bodyYaw += 170 - headRot;
 			                }else if(headRot < -170){
@@ -373,10 +376,18 @@ public class ClientDragonRender
 		                float f = (float)MathHelper.atan2(moveVector.z, moveVector.x) * (180F / (float)Math.PI) - 90F;
 		                float f1 = (float)(Math.pow(moveVector.x, 2) + Math.pow(moveVector.z, 2));
 						
-	                    if(!ConfigHandler.CLIENT.firstPersonRotation.get()){
-	                        if(Minecraft.getInstance().options.getCameraType().isFirstPerson()){
+						if(KeyInputHandler.FREE_LOOK.isDown()){
+							wasFreeLook = true;
+						}
+						
+						if(wasFreeLook && !Minecraft.getInstance().options.getCameraType().isFirstPerson()){
+							wasFreeLook = false;
+						}
+						
+	                    if(!ConfigHandler.CLIENT.firstPersonRotation.get() && !KeyInputHandler.FREE_LOOK.isDown()){
+	                        if((!wasFreeLook || moveVector.length() > 0) && Minecraft.getInstance().options.getCameraType().isFirstPerson()){
 	                            bodyYaw = player.yRot;
-								
+		                        wasFreeLook = false;
 								if(moveVector.length() > 0) {
 									float f5 = MathHelper.abs(MathHelper.wrapDegrees(player.yRot) - f);
 									if (95.0F < f5 && f5 < 265.0F) {
@@ -401,7 +412,8 @@ public class ClientDragonRender
 									}
 								}
 								
-								bodyYaw = MathHelper.wrapDegrees(bodyYaw);
+		                        bodyYaw = MathHelper.wrapDegrees(bodyYaw);
+		                        bodyYaw = (float)MathHelper.rotLerp(0.1f, (float)playerStateHandler.getMovementData().bodyYaw,  (float)bodyYaw);
 		
 		                        if (playerStateHandler.getMovementData().bodyYaw != bodyYaw || headRot != playerStateHandler.getMovementData().headYaw) {
 			                        playerStateHandler.setMovementData(bodyYaw, headRot, headPitch, playerStateHandler.getMovementData().bite);

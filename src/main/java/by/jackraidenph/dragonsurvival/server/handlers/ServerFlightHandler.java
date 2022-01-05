@@ -157,6 +157,7 @@ public class ServerFlightHandler {
 					List<Entity> entities = player.level.getEntities(null, new AxisAlignedBB(player.position().x - range, player.position().y - range, player.position().z - range, player.position().x + range, player.position().y + range, player.position().z + range));
 					entities.removeIf((e) -> e.distanceTo(player) > range);
 					entities.remove(player);
+					entities.removeIf((e) -> e instanceof PlayerEntity && !player.canHarmPlayer((PlayerEntity)e));
 					
 					for(Entity ent : entities){
 						if(player.hasPassenger(ent)) continue;

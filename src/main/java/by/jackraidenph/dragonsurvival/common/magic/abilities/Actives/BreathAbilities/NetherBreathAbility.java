@@ -177,7 +177,7 @@ public class NetherBreathAbility extends BreathAbility
 	@Override
 	public boolean canHitEntity(LivingEntity entity)
 	{
-		return !entity.fireImmune();
+		return !(entity instanceof PlayerEntity) && !entity.fireImmune() || player.canHarmPlayer(((PlayerEntity)entity)) && !entity.fireImmune();
 	}
 	
 	@Override

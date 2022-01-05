@@ -20,7 +20,6 @@ import net.minecraft.entity.Pose;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Hand;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
@@ -144,7 +143,16 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                    && (player.isUsingItem() || (handler.getMovementData().bite || handler.getMovementData().dig) && (!player.getMainHandItem().isEmpty() || !player.getOffhandItem().isEmpty()))) {
                     builder.addAnimation("use_item", true);
                     handler.getMovementData().bite = false;
-                }else if(animationExists("use_item_right") && (!player.getMainHandItem().isEmpty()) && (player.isUsingItem() && player.getUsedItemHand() == Hand.MAIN_HAND || (handler.getMovementData().bite || handler.getMovementData().dig) && player.getMainArm() == HandSide.RIGHT) || animationTimer.getDuration("use_item_right") > 0){
+                }else if(animationExists("use_item_eat") && player.isUsingItem() || animationTimer.getDuration("use_item_eat") > 0){
+                    if(animationTimer.getDuration("use_item_eat") <= 0){
+                        handler.getMovementData().bite = false;
+                        animationTimer.putAnimation("use_item_eat", 0.32 * 20, builder);
+                    }else{
+                        animationTimer.trackAnimation("use_item_eat");
+                    }
+
+                    builder.addAnimation("use_item_eat", true);
+                }else if(animationExists("use_item_right") && (!player.getMainHandItem().isEmpty()) && ((handler.getMovementData().bite || handler.getMovementData().dig) && player.getMainArm() == HandSide.RIGHT) || animationTimer.getDuration("use_item_right") > 0){
                     if(animationTimer.getDuration("use_item_right") <= 0){
                         handler.getMovementData().bite = false;
                         animationTimer.putAnimation("use_item_right", 0.32 * 20, builder);
@@ -154,7 +162,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
                     
                     builder.addAnimation("use_item_right", true);
     
-                }else if(animationExists("use_item_left") && (!player.getOffhandItem().isEmpty() && player.isUsingItem() && player.getUsedItemHand() == Hand.OFF_HAND || (handler.getMovementData().bite || handler.getMovementData().dig) && player.getMainArm() == HandSide.LEFT) || animationTimer.getDuration("use_item_left") > 0){
+                }else if(animationExists("use_item_left") && (!player.getOffhandItem().isEmpty() && (handler.getMovementData().bite || handler.getMovementData().dig) && player.getMainArm() == HandSide.LEFT) || animationTimer.getDuration("use_item_left") > 0){
                     if(animationTimer.getDuration("use_item_left") <= 0){
                         handler.getMovementData().bite = false;
                         animationTimer.putAnimation("use_item_left", 0.32 * 20, builder);

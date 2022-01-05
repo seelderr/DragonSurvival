@@ -261,7 +261,7 @@ public class ClientFlightHandler {
                         boolean hasFood = playerEntity.getFoodData().getFoodLevel() > ConfigHandler.SERVER.flightHungerThreshold.get() || playerEntity.isCreative() || ConfigHandler.SERVER.allowFlyingWithoutHunger.get();
                         
                         if(!hasFood){
-                            ay *= 4;
+                            ay = Math.abs(ay * 4);
                         }
                         
                         //start

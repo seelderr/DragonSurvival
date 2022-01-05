@@ -92,7 +92,7 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 		PlayerEntity player = currentEntity != null ? currentEntity.getPlayer() : null;
 		
 		if(!isLayer && player != null) {
-			if (bone.getName().equals("RightItem") && !mainHand.isEmpty()) {
+			if (bone.getName().equals(ConfigHandler.CLIENT.renderItemsInMouth.get() ? "RightItem_jaw" : "RightItem") && !mainHand.isEmpty()) {
 				if(player != Minecraft.getInstance().player || ConfigHandler.CLIENT.alternateHeldItem.get() || !Minecraft.getInstance().options.getCameraType().isFirstPerson()) {
 					stack.pushPose();
 					RenderUtils.translate(bone, stack);
@@ -105,7 +105,7 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 					stack.popPose();
 					bufferIn = rtb.getBuffer(RenderType.entityCutout(whTexture));
 				}
-			}else if (bone.getName().equals("LeftItem") && !offHand.isEmpty()) {
+			}else if (bone.getName().equals(ConfigHandler.CLIENT.renderItemsInMouth.get() ? "LeftItem_jaw" : "LeftItem") && !offHand.isEmpty()) {
 				if(player != Minecraft.getInstance().player || ConfigHandler.CLIENT.alternateHeldItem.get() || !Minecraft.getInstance().options.getCameraType().isFirstPerson()) {
 					stack.pushPose();
 					RenderUtils.translate(bone, stack);

@@ -11,6 +11,7 @@ public class ClientConfig {
 	public final ForgeConfigSpec.BooleanValue renderFirstPersonFlight;
 	
 	public final ForgeConfigSpec.BooleanValue armorRenderLayer;
+	public final ForgeConfigSpec.BooleanValue renderItemsInMouth;
 	
 	public final ForgeConfigSpec.BooleanValue notifyWingStatus;
 	public final ForgeConfigSpec.BooleanValue jumpToFly;
@@ -139,6 +140,10 @@ public class ClientConfig {
 		rotateBodyWithCamera = builder
 				.comment("Should the body rotate with the camera when turning around.")
 				.define("rotateBodyWithCamera", true);
+		
+		renderItemsInMouth = builder
+				.comment("Should items be rendered near the mouth of dragons rather then hovering by their side?")
+				.define("renderItemsInMouth", false);
 		
 		renderDragonClaws = builder
 				.comment("Should the tools on the claws and teeth be rendered for your dragon?")

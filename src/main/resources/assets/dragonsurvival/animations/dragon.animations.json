@@ -37776,29 +37776,23 @@
 			"loop": true,
 			"bones": {
 				"MolangHandlerNeck4": {
-					"rotation": {
-						"vector": [0, 0, "12.5/180 * query.head_yaw"]
-					}
+					"rotation": ["(query.head_pitch*-1)/90 * -22.5", 0, "query.head_yaw/180 * 12.5"],
+					"position": [0, 0, "(query.head_pitch*-1)/90*1.5"]
 				},
 				"MolangHandlerNeck3": {
-					"rotation": {
-						"vector": ["(8.37/180 * math.abs(query.head_yaw)) + -15/90 * (query.head_pitch * -1)", 0, "20/180 * query.head_yaw"]
-					}
+					"rotation": ["query.head_yaw/180 * 0.4332  - ((query.head_pitch*-1)/90 * 10.0264)", "query.head_yaw/180 * 0.0283", "query.head_yaw/180 * 12.5381"]
 				},
 				"MolangHandlerNeck2": {
-					"rotation": {
-						"vector": ["(4/180 * math.abs(query.head_yaw)) + -15/90 * (query.head_pitch * -1)", "-10/180 * query.head_yaw", "20/180 * query.head_yaw"]
-					}
+					"rotation": ["math.abs(query.head_yaw)/180 * -0.661 - ((query.head_pitch*-1)/90*(5+6.7331))", "query.head_yaw/180 * -7.428", "query.head_yaw/180 * 27.5854"],
+					"position": ["query.head_yaw/180 * 0.5", "math.abs(query.head_yaw/180) * 0.25", 0]
 				},
 				"MolangHandlerNeck1": {
-					"rotation": {
-						"vector": ["(20/180 * math.abs(query.head_yaw)) + -5.5/90 * (query.head_pitch * -1)", "1/180 * query.head_yaw/180 * math.abs(query.head_yaw)", "40/180 * query.head_yaw/180 * math.abs(query.head_yaw)"]
-					}
+					"rotation": ["math.abs(query.head_yaw)/180 * 1.5621", "query.head_yaw/180 * -10.1799", "query.head_yaw/180 * 20.2967"],
+					"position": ["query.head_yaw/180 * 0.25", 0, 0]
 				},
 				"MolangHandlerHead": {
-					"rotation": {
-						"vector": ["(1/90 * (math.abs(query.head_pitch) * -1))", "-65/180 * query.head_yaw + 1/90 * (query.head_pitch * -1)", "10/180 * query.head_yaw"]
-					}
+					"rotation": ["math.abs(query.head_yaw/180) * -109.7011", "query.head_yaw/180 * -60.8331", "query.head_yaw/180 *80.0442"],
+					"position": [0, "math.abs(query.head_yaw)/180 * -0.25", 0]
 				}
 			}
 		},

@@ -6,6 +6,7 @@ import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.status.SyncTreasureRestStatus;
 import net.minecraft.block.*;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -15,6 +16,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.item.ItemStack;
 import net.minecraft.pathfinding.PathType;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.IntegerProperty;
@@ -30,6 +32,8 @@ import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
@@ -40,6 +44,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.awt.*;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
@@ -58,7 +63,14 @@ public class TreasureBlock extends FallingBlock implements IWaterLoggable
 		this.registerDefaultState(this.stateDefinition.any().setValue(LAYERS, Integer.valueOf(1)).setValue(WATERLOGGED, false));
 		this.effectColor = c;
 	}
-	
+	@Override
+	public void appendHoverText(ItemStack p_190948_1_,
+			@Nullable
+					IBlockReader p_190948_2_, List<ITextComponent> p_190948_3_, ITooltipFlag p_190948_4_)
+	{
+		super.appendHoverText(p_190948_1_, p_190948_2_, p_190948_3_, p_190948_4_);
+		p_190948_3_.add(new TranslationTextComponent("ds.description.treasures"));
+	}
 	
 	@Override
 	public boolean isBed(BlockState state, IBlockReader world, BlockPos pos, @Nullable Entity player)

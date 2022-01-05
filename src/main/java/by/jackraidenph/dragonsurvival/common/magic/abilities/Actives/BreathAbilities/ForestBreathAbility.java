@@ -204,7 +204,7 @@ public class ForestBreathAbility extends BreathAbility
 	@Override
 	public boolean canHitEntity(LivingEntity entity)
 	{
-		return true;
+		return !(entity instanceof PlayerEntity) || player.canHarmPlayer(((PlayerEntity)entity));
 	}
 	
 	@Override
