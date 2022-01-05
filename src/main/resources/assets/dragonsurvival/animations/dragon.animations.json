@@ -37776,7 +37776,7 @@
 			"loop": true,
 			"bones": {
 				"MolangHandlerNeck4": {
-					"rotation": ["(query.head_pitch*-1)/90 * -22.5", 0, "query.head_yaw/180 * 12.5"],
+					"rotation": ["(query.head_pitch*-1)/90 * -10", 0, "0+query.head_yaw/180 * 12.5"],
 					"position": [0, 0, "(query.head_pitch*-1)/90*1.5"]
 				},
 				"MolangHandlerNeck3": {
@@ -37791,7 +37791,7 @@
 					"position": ["query.head_yaw/180 * 0.25", 0, 0]
 				},
 				"MolangHandlerHead": {
-					"rotation": ["math.abs(query.head_yaw/180) * -109.7011", "query.head_yaw/180 * -60.8331", "query.head_yaw/180 *80.0442"],
+					"rotation": ["math.abs(query.head_yaw/180) * -40", "query.head_yaw/180 * -90.8331", 0],
 					"position": [0, "math.abs(query.head_yaw)/180 * -0.25", 0]
 				}
 			}
