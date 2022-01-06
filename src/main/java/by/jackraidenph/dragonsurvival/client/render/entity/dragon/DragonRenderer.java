@@ -4,6 +4,7 @@ import by.jackraidenph.dragonsurvival.client.render.ClientDragonRender;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.entity.DragonEntity;
+import by.jackraidenph.dragonsurvival.common.magic.DragonAbilities;
 import by.jackraidenph.dragonsurvival.common.magic.abilities.Actives.BreathAbilities.BreathAbility;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -132,8 +133,10 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 				
 				if(handler != null){
 					if(handler.getMagic().getCurrentlyCasting() instanceof BreathAbility){
-						if(handler.getMagic().getCurrentlyCasting().getCurrentCastTimer() >= handler.getMagic().getCurrentlyCasting().getCastingTime()) {
-							if (((BreathAbility)handler.getMagic().getCurrentlyCasting()).getEffectEntity() != null) {
+						BreathAbility ability = (BreathAbility)handler.getMagic().getCurrentlyCasting();
+						int slot = DragonAbilities.getAbilitySlot(ability);
+						if(ability.getCurrentCastTimer() >= ability.getCastingTime() || handler.getMagic().getAbilityFromSlot(slot).getCurrentCastTimer() >= ability.getCastingTime()) {
+							if (ability.getEffectEntity() != null) {
 								stack.pushPose();
 								RenderUtils.translate(bone, stack);
 								RenderUtils.moveToPivot(bone, stack);
@@ -141,8 +144,8 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 								RenderUtils.scale(bone, stack);
 								stack.mulPose(Vector3f.YN.rotationDegrees(-90));
 								//stack.mulPose(Vector3f.ZN.rotationDegrees(player.xRot));//For head pitch
-								EntityRenderer<? super Entity> effectRender = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(((BreathAbility)handler.getMagic().getCurrentlyCasting()).getEffectEntity());
-								effectRender.render(((BreathAbility)handler.getMagic().getCurrentlyCasting()).getEffectEntity(), player.getViewYRot(partialTicks), partialTicks, stack, rtb, 200);
+								EntityRenderer<? super Entity> effectRender = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(ability.getEffectEntity());
+								effectRender.render(ability.getEffectEntity(), player.getViewYRot(partialTicks), partialTicks, stack, rtb, 200);
 								bufferIn = rtb.getBuffer(RenderType.entityCutout(whTexture));
 								
 								stack.popPose();
