@@ -55,8 +55,7 @@ public class SourceOfMagicBlock extends HorizontalBlock implements IWaterLoggabl
     static final BooleanProperty BACK_BLOCK = BooleanProperty.create("back");
     static final BooleanProperty TOP_BLOCK = BooleanProperty.create("top");
     
-    static final BooleanProperty FILLED = BooleanProperty.create("filled");
-    
+    public static final BooleanProperty FILLED = BooleanProperty.create("filled");
     
     public SourceOfMagicBlock(Properties properties) {
         super(properties);

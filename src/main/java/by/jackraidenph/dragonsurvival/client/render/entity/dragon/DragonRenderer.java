@@ -132,19 +132,21 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 				
 				if(handler != null){
 					if(handler.getMagic().getCurrentlyCasting() instanceof BreathAbility){
-						if(((BreathAbility)handler.getMagic().getCurrentlyCasting()).getEffectEntity() != null) {
-							stack.pushPose();
-							RenderUtils.translate(bone, stack);
-							RenderUtils.moveToPivot(bone, stack);
-							RenderUtils.rotate(bone, stack);
-							RenderUtils.scale(bone, stack);
-							stack.mulPose(Vector3f.YN.rotationDegrees(-90));
-							//stack.mulPose(Vector3f.ZN.rotationDegrees(player.xRot));//For head pitch
-							EntityRenderer<? super Entity> effectRender = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(((BreathAbility)handler.getMagic().getCurrentlyCasting()).getEffectEntity());
-							effectRender.render(((BreathAbility)handler.getMagic().getCurrentlyCasting()).getEffectEntity(), player.getViewYRot(partialTicks), partialTicks, stack, rtb, 200);
-							bufferIn = rtb.getBuffer(RenderType.entityCutout(whTexture));
-							
-							stack.popPose();
+						if(handler.getMagic().getCurrentlyCasting().getCurrentCastTimer() >= handler.getMagic().getCurrentlyCasting().getCastingTime()) {
+							if (((BreathAbility)handler.getMagic().getCurrentlyCasting()).getEffectEntity() != null) {
+								stack.pushPose();
+								RenderUtils.translate(bone, stack);
+								RenderUtils.moveToPivot(bone, stack);
+								RenderUtils.rotate(bone, stack);
+								RenderUtils.scale(bone, stack);
+								stack.mulPose(Vector3f.YN.rotationDegrees(-90));
+								//stack.mulPose(Vector3f.ZN.rotationDegrees(player.xRot));//For head pitch
+								EntityRenderer<? super Entity> effectRender = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(((BreathAbility)handler.getMagic().getCurrentlyCasting()).getEffectEntity());
+								effectRender.render(((BreathAbility)handler.getMagic().getCurrentlyCasting()).getEffectEntity(), player.getViewYRot(partialTicks), partialTicks, stack, rtb, 200);
+								bufferIn = rtb.getBuffer(RenderType.entityCutout(whTexture));
+								
+								stack.popPose();
+							}
 						}
 					}
 				}

@@ -166,6 +166,11 @@ public class ServerConfig {
 	public final ForgeConfigSpec.IntValue stormBreathOvertimeMana;
 	public final ForgeConfigSpec.IntValue stormBreathManaTicks;
 	public final ForgeConfigSpec.IntValue stormBreathChainCount;
+	public final ForgeConfigSpec.IntValue chargedEffectChainCount;
+	public final ForgeConfigSpec.IntValue chargedEffectMaxChain;
+	public final ForgeConfigSpec.IntValue chargedChainRange;
+	public final ForgeConfigSpec.IntValue chargedEffectDamage;
+	
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> stormBreathBlockBreaks;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> chargedBlacklist;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> chargedSpreadBlacklist;
@@ -1394,8 +1399,24 @@ public class ServerConfig {
 					), value -> value instanceof String);
 			
 			stormBreathChainCount = builder
-					.comment("How many times stormbreath is able to chain to other mobs")
+					.comment("How many mobs stormbreath is able to chain to at once")
 					.defineInRange("stormBreathChainCount", 2, 0, 100);
+			
+			chargedEffectChainCount = builder
+					.comment("How many mobs the charged effect is able to chain to at once")
+					.defineInRange("chargedEffectChainCount", 2, 0, 100);
+			
+			chargedEffectMaxChain = builder
+					.comment("How many times the charged effect is able to chain. -1 means it can chain infinitely")
+					.defineInRange("chargedEffectMaxChain", -1, -1, 100);
+			
+			chargedChainRange = builder
+					.comment("The max distance in blocks the storm breath and charged effect is able to chain to mobs")
+					.defineInRange("chargedChainRange", 6, 0, 100);
+			
+			chargedEffectDamage = builder
+					.comment("The amount of damage the charged effect deals each second")
+					.defineInRange("chargedEffectDamage", 1, 0, 100);
 			
 			chargedSpreadBlacklist = builder
 					.comment("List of entities that will not spread the charged effect. Format: modid:id")

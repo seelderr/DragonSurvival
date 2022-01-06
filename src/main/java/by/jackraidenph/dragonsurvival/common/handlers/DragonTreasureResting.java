@@ -148,6 +148,7 @@ public class DragonTreasureResting
 					Vector3d velocity = player.getDeltaMovement();
 					float groundSpeed = MathHelper.sqrt((velocity.x * velocity.x) + (velocity.z * velocity.z));
 					if(Math.abs(groundSpeed) > 0.05){
+						handler.treasureResting = false;
 						NetworkHandler.CHANNEL.sendToServer(new SyncTreasureRestStatus(player.getId(), false));
 					}
 				}
@@ -165,26 +166,19 @@ public class DragonTreasureResting
 			return;
 		
 		DragonStateProvider.getCap(playerEntity).ifPresent(cap -> {
-			if(event.getType() == ElementType.HOTBAR){
-				if(cap.treasureResting && playerEntity.level.isNight()) {
-					event.setCanceled(true);
-					return;
-				}
-			}
-			
-			if (event.getType() == ElementType.VIGNETTE) {
+			if (event.getType() == ElementType.ALL) {
 				GL11.glPushMatrix();
 				MainWindow window = Minecraft.getInstance().getWindow();
 				float f = playerEntity.level.getSunAngle(1.0F);
 				
 				float f1 = f < (float)Math.PI ? 0.0F : ((float)Math.PI * 2F);
 				f = f + (f1 - f) * 0.2F;
-				if(cap.treasureResting && MathHelper.cos(f) < 0.2){
+				double val = MathHelper.cos(f);
+				if(cap.treasureResting && val < 0.25 && sleepTimer < 100){
 					sleepTimer++;
 				}else if(sleepTimer > 0){
 					sleepTimer--;
 				}
-				
 				if(sleepTimer > 0){
 					Color darkening = new Color(0.05f, 0.05f, 0.05f, MathHelper.lerp(Math.min(sleepTimer, 100) / 100f, 0, 0.5F));
 					AbstractGui.fill(event.getMatrixStack(), 0, 0, window.getGuiScaledWidth(), window.getGuiScaledHeight(), darkening.getRGB());

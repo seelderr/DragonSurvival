@@ -98,9 +98,9 @@ public class DSBlocks
         stoneDoor = registerBlock(new DragonDoor(AbstractBlock.Properties.copy(oakDoor), DragonDoor.OpenRequirement.NONE), "stone_dragon_door", forgeRegistry);
         legacyDoor = registerBlock(new DragonDoor(Block.Properties.of(Material.WOOD, Blocks.SPRUCE_PLANKS.defaultMaterialColor()).strength(3.0F).sound(SoundType.WOOD).noOcclusion(), DragonDoor.OpenRequirement.NONE), "legacy_dragon_door", forgeRegistry);
         
-        caveSourceOfMagic = registerBlock(new SourceOfMagicBlock(Block.Properties.of(Material.STONE).strength(3, 100).noOcclusion()), "cave_source_of_magic", forgeRegistry);
-        forestSourceOfMagic = registerBlock(new SourceOfMagicBlock(Block.Properties.of(Material.STONE).strength(3, 100).noOcclusion()), "forest_source_of_magic", forgeRegistry);
-        seaSourceOfMagic = registerBlock(new SourceOfMagicBlock(Block.Properties.of(Material.STONE).strength(3, 100).noOcclusion()), "sea_source_of_magic", forgeRegistry);
+        caveSourceOfMagic = registerBlock(new SourceOfMagicBlock(Block.Properties.of(Material.STONE).strength(3, 100).noOcclusion().lightLevel((c1) -> 10)), "cave_source_of_magic", forgeRegistry);
+        forestSourceOfMagic = registerBlock(new SourceOfMagicBlock(Block.Properties.of(Material.STONE).strength(3, 100).noOcclusion().lightLevel((c1) -> 10)), "forest_source_of_magic", forgeRegistry);
+        seaSourceOfMagic = registerBlock(new SourceOfMagicBlock(Block.Properties.of(Material.STONE).strength(3, 100).noOcclusion().lightLevel((c1) -> 10)), "sea_source_of_magic", forgeRegistry);
        
         treasureDebris = registerBlock(new TreasureBlock(new Color(148, 120, 114), AbstractBlock.Properties.of(Material.METAL, MaterialColor.COLOR_BROWN).noOcclusion().sound(SoundRegistry.treasureMetal).strength(0.5F)), "treasure_debris", forgeRegistry);
         treasureDiamond = registerBlock(new TreasureBlock(new Color(212, 255, 255), AbstractBlock.Properties.of(Material.METAL, MaterialColor.DIAMOND).noOcclusion().sound(SoundRegistry.treasureGem).strength(0.5F)), "treasure_diamond", forgeRegistry);

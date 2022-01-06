@@ -182,7 +182,7 @@ public class StormBreathAbility extends BreathAbility
 	
 	public void onEntityHit(LivingEntity entityHit){
 		hurtTarget(entityHit);
-		StormBreathAbility.chargedEffectSparkle(player, entityHit, 6, ConfigHandler.SERVER.stormBreathChainCount.get(), 1);
+		StormBreathAbility.chargedEffectSparkle(player, entityHit, ConfigHandler.SERVER.chargedChainRange.get(), ConfigHandler.SERVER.stormBreathChainCount.get(), ConfigHandler.SERVER.chargedEffectDamage.get());
 	}
 	
 	public static void onDamageChecks(LivingEntity entity){
@@ -211,6 +211,7 @@ public class StormBreathAbility extends BreathAbility
 				
 				if(cap != null){
 					cap.lastAfflicted = player.getId();
+					cap.chainCount = 1;
 				}
 				
 				entity.addEffect(new EffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(10), 0, false, true));
@@ -275,13 +276,19 @@ public class StormBreathAbility extends BreathAbility
 			
 			if(!ConfigHandler.SERVER.chargedSpreadBlacklist.get().contains(source.getType().getRegistryName().toString())) {
 				if (target != source) {
+					GenericCapability capSource = Capabilities.getGenericCapability(source).orElse(null);
+					GenericCapability cap = Capabilities.getGenericCapability(target).orElse(null);
+					
+					if(cap != null && capSource != null){
+						cap.chainCount = capSource.chainCount + 1;
+					}
+					
 					if (!target.level.isClientSide) {
 						if (target.level.random.nextInt(100) < 40) {
-							GenericCapability cap = Capabilities.getGenericCapability(target).orElse(null);
-							if (cap != null) {
+							if (cap != null && (cap.chainCount < ConfigHandler.SERVER.chargedEffectMaxChain.get() || ConfigHandler.SERVER.chargedEffectMaxChain.get() == -1)) {
 								cap.lastAfflicted = player != null ? player.getId() : -1;
+								target.addEffect(new EffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(10), 0, false, true));
 							}
-							target.addEffect(new EffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(10), 0, false, true));
 						}
 					}
 					

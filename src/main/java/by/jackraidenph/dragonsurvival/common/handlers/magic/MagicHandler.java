@@ -205,7 +205,7 @@ public class MagicHandler
 				GenericCapability cap = Capabilities.getGenericCapability(entity).orElse(null);
 				PlayerEntity player = cap != null && cap.lastAfflicted != -1 && entity.level.getEntity(cap.lastAfflicted) instanceof PlayerEntity ? ((PlayerEntity)entity.level.getEntity(cap.lastAfflicted)) : null;
 				if (type != DragonType.SEA) {
-					StormBreathAbility.chargedEffectSparkle(player, entity, 6, 2, 1);
+					StormBreathAbility.chargedEffectSparkle(player, entity, ConfigHandler.SERVER.chargedChainRange.get(), ConfigHandler.SERVER.chargedEffectChainCount.get(), ConfigHandler.SERVER.chargedEffectDamage.get());
 				}
 			}
 		}else{
