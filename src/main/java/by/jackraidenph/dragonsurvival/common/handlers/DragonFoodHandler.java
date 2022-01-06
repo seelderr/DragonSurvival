@@ -232,7 +232,7 @@ public class DragonFoodHandler {
 	
 	public static boolean isDragonEdible(Item item, DragonType type) {
 		if (ConfigHandler.SERVER.customDragonFoods.get() && type != DragonType.NONE)
-			return DRAGON_FOODS.get(type).containsKey(item);
+			return DRAGON_FOODS != null && DRAGON_FOODS.containsKey(type) && item != null && DRAGON_FOODS.get(type).containsKey(item);
 		return item.getFoodProperties() != null;
 	}
 	

@@ -52,7 +52,7 @@ public class SourceOfMagicBlock extends HorizontalBlock implements IWaterLoggabl
     public static final VoxelShape FULL_OUTLINE = VoxelShapes.box(0, 0, 0, 1, 0.99, 1);
     
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
-    static final BooleanProperty PRIMARY_BLOCK = BooleanProperty.create("primary");
+    public static final BooleanProperty PRIMARY_BLOCK = BooleanProperty.create("primary");
     
     static final BooleanProperty BACK_BLOCK = BooleanProperty.create("back");
     static final BooleanProperty TOP_BLOCK = BooleanProperty.create("top");
@@ -91,7 +91,6 @@ public class SourceOfMagicBlock extends HorizontalBlock implements IWaterLoggabl
         TileEntity entity = world.getBlockEntity(pos);
         return entity instanceof SourceOfMagicTileEntity ? (SourceOfMagicTileEntity)entity : null;
     }
-    
     public void randomTick(BlockState p_225542_1_, ServerWorld world, BlockPos pos, Random p_225542_4_) {
         BlockPos blockpos = pos.above();
         if (world.getFluidState(pos).is(FluidTags.WATER)) {
@@ -276,7 +275,7 @@ public class SourceOfMagicBlock extends HorizontalBlock implements IWaterLoggabl
     }
     
     private static void breakBlock(World world, BlockPos pos){
-        world.destroyBlock(pos,false);
+        world.destroyBlock(pos, !(world.getBlockEntity(pos) instanceof SourceOfMagicPlaceholder));
         world.removeBlockEntity(pos);
     }
     
@@ -285,7 +284,6 @@ public class SourceOfMagicBlock extends HorizontalBlock implements IWaterLoggabl
     public BlockRenderType getRenderShape(BlockState state) {
         return state.getValue(PRIMARY_BLOCK) ? BlockRenderType.MODEL : BlockRenderType.INVISIBLE;
     }
-  
     @Override
     public void onRemove(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
         if(!(newState.getBlock() instanceof SourceOfMagicBlock)) {
@@ -294,6 +292,12 @@ public class SourceOfMagicBlock extends HorizontalBlock implements IWaterLoggabl
                 if (tileentity instanceof IInventory) {
                     InventoryHelper.dropContents(worldIn, pos, (IInventory)tileentity);
                     worldIn.updateNeighbourForOutputSignal(pos, this);
+                    
+                    if(!worldIn.isClientSide) {
+                        if(newState != Blocks.BUBBLE_COLUMN.defaultBlockState()) {
+                            InventoryHelper.dropItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(state.getBlock()));
+                        }
+                    }
                 }
                 
                 super.onRemove(state, worldIn, pos, newState, isMoving);
@@ -325,7 +329,7 @@ public class SourceOfMagicBlock extends HorizontalBlock implements IWaterLoggabl
                     BlockPos rootPos = placeholder.rootPos;
             
                     if (worldIn.getBlockEntity(rootPos) instanceof SourceOfMagicTileEntity) {
-                        onRemove(worldIn.getBlockState(rootPos), worldIn, rootPos, Blocks.AIR.defaultBlockState(), isMoving);
+                        onRemove(worldIn.getBlockState(rootPos), worldIn, rootPos, Blocks.BUBBLE_COLUMN.defaultBlockState(), isMoving);
                     }
                 }
             }

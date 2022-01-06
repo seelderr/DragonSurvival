@@ -124,12 +124,22 @@ public class MagicCap implements DragonCapability
 	}
 	
 	
+	public void resetCasting(){
+		for(int i = 0; i < 4; i++){
+			getAbilityFromSlot(i).setCastTime(0);
+		}
+		if(getCurrentlyCasting() != null) {
+			getCurrentlyCasting().setCastTime(0);
+		}
+	}
+	
 	public int getSelectedAbilitySlot() {
 		return this.selectedAbilitySlot;
 	}
 	
 	public void setSelectedAbilitySlot(int newSlot) {
 		this.selectedAbilitySlot = newSlot;
+		resetCasting();
 	}
 	
 	public boolean renderAbilityHotbar()
