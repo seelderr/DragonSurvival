@@ -92,10 +92,6 @@ public class SourceOfMagicBlock extends HorizontalBlock implements IWaterLoggabl
         return entity instanceof SourceOfMagicTileEntity ? (SourceOfMagicTileEntity)entity : null;
     }
     
-    public void onPlace(BlockState p_220082_1_, World p_220082_2_, BlockPos p_220082_3_, BlockState p_220082_4_, boolean p_220082_5_) {
-        p_220082_2_.getBlockTicks().scheduleTick(p_220082_3_, this, 20);
-    }
-    
     public void randomTick(BlockState p_225542_1_, ServerWorld world, BlockPos pos, Random p_225542_4_) {
         BlockPos blockpos = pos.above();
         if (world.getFluidState(pos).is(FluidTags.WATER)) {
@@ -131,11 +127,13 @@ public class SourceOfMagicBlock extends HorizontalBlock implements IWaterLoggabl
     public void animateTick(BlockState p_180655_1_, World p_180655_2_, BlockPos p_180655_3_, Random p_180655_4_)
     {
         if (p_180655_1_.getBlock() == DSBlocks.caveSourceOfMagic) {
-            double d0 = (double)p_180655_3_.getX();
-            double d1 = (double)p_180655_3_.getY();
-            double d2 = (double)p_180655_3_.getZ();
-            p_180655_2_.addAlwaysVisibleParticle(ParticleTypes.BUBBLE_COLUMN_UP, d0 + 0.5D, d1, d2 + 0.5D, 0.0D, 0.04D, 0.0D);
-            p_180655_2_.addAlwaysVisibleParticle(ParticleTypes.BUBBLE_COLUMN_UP, d0 + (double)p_180655_4_.nextFloat(), d1 + (double)p_180655_4_.nextFloat(), d2 + (double)p_180655_4_.nextFloat(), 0.0D, 0.04D, 0.0D);
+            if (p_180655_2_.getFluidState(p_180655_3_).is(FluidTags.WATER)) {
+                double d0 = (double)p_180655_3_.getX();
+                double d1 = (double)p_180655_3_.getY();
+                double d2 = (double)p_180655_3_.getZ();
+                p_180655_2_.addAlwaysVisibleParticle(ParticleTypes.BUBBLE_COLUMN_UP, d0 + 0.5D, d1, d2 + 0.5D, 0.0D, 0.04D, 0.0D);
+                p_180655_2_.addAlwaysVisibleParticle(ParticleTypes.BUBBLE_COLUMN_UP, d0 + (double)p_180655_4_.nextFloat(), d1 + (double)p_180655_4_.nextFloat(), d2 + (double)p_180655_4_.nextFloat(), 0.0D, 0.04D, 0.0D);
+            }
         }
     }
     
