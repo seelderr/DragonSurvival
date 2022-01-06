@@ -442,22 +442,14 @@ public class ClientFlightHandler {
     private static long lastHungerMessage;
     
     @SubscribeEvent
-    public static void spin(InputEvent.ClickInputEvent keyInputEvent) {
+    public static void spin(InputEvent.RawMouseEvent keyInputEvent) {
         ClientPlayerEntity player = Minecraft.getInstance().player;
         if(player == null) return;
         
         DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
         if(handler == null || !handler.isDragon()) return;
-        if(KeyInputHandler.SPIN_ABILITY.isActiveAndMatches(keyInputEvent.getKeyBinding().getKey())) {
-            if (KeyInputHandler.SPIN_ABILITY.consumeClick()) {
-                if (!ServerFlightHandler.isSpin(player) && handler.getMovementData().spinCooldown <= 0 && handler.getMovementData().spinLearned) {
-                    if (ServerFlightHandler.isFlying(player) || ServerFlightHandler.canSwimSpin(player)) {
-                        handler.getMovementData().spinAttack = ServerFlightHandler.spinDuration;
-                        handler.getMovementData().spinCooldown = ConfigHandler.SERVER.flightSpinCooldown.get() * 20;
-                        NetworkHandler.CHANNEL.sendToServer(new SyncSpinStatus(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
-                    }
-                }
-            }
+        if(KeyInputHandler.SPIN_ABILITY.getKey().getValue() == keyInputEvent.getButton()) {
+            spinKeybind(player, handler);
         }
     }
     
@@ -473,15 +465,7 @@ public class ClientFlightHandler {
         Vector3d lookVec = player.getLookAngle();
     
         if(KeyInputHandler.SPIN_ABILITY.getKey().getValue() == keyInputEvent.getKey()) {
-            if (KeyInputHandler.SPIN_ABILITY.consumeClick()) {
-                if (!ServerFlightHandler.isSpin(player) && handler.getMovementData().spinCooldown <= 0 && handler.getMovementData().spinLearned) {
-                    if (ServerFlightHandler.isFlying(player) || ServerFlightHandler.canSwimSpin(player)) {
-                        handler.getMovementData().spinAttack = ServerFlightHandler.spinDuration;
-                        handler.getMovementData().spinCooldown = ConfigHandler.SERVER.flightSpinCooldown.get() * 20;
-                        NetworkHandler.CHANNEL.sendToServer(new SyncSpinStatus(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
-                    }
-                }
-            }
+            spinKeybind(player, handler);
         }
         
         if(ConfigHandler.CLIENT.jumpToFly.get() && !player.isCreative() && !player.isSpectator()) {
@@ -517,6 +501,19 @@ public class ClientFlightHandler {
                 }
             } else {
                 player.sendMessage(new TranslationTextComponent("ds.you.have.no.wings"), player.getUUID());
+            }
+        }
+    }
+    
+    private static void spinKeybind(ClientPlayerEntity player, DragonStateHandler handler)
+    {
+        if (KeyInputHandler.SPIN_ABILITY.consumeClick()) {
+            if (!ServerFlightHandler.isSpin(player) && handler.getMovementData().spinCooldown <= 0 && handler.getMovementData().spinLearned) {
+                if (ServerFlightHandler.isFlying(player) || ServerFlightHandler.canSwimSpin(player)) {
+                    handler.getMovementData().spinAttack = ServerFlightHandler.spinDuration;
+                    handler.getMovementData().spinCooldown = ConfigHandler.SERVER.flightSpinCooldown.get() * 20;
+                    NetworkHandler.CHANNEL.sendToServer(new SyncSpinStatus(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
+                }
             }
         }
     }
