@@ -448,13 +448,14 @@ public class ClientFlightHandler {
         
         DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
         if(handler == null || !handler.isDragon()) return;
-        
-        if(KeyInputHandler.SPIN_ABILITY.consumeClick()) {
-            if (!ServerFlightHandler.isSpin(player) && handler.getMovementData().spinCooldown <= 0 && handler.getMovementData().spinLearned) {
-                if(ServerFlightHandler.isFlying(player) || ServerFlightHandler.canSwimSpin(player)) {
-                    handler.getMovementData().spinAttack = ServerFlightHandler.spinDuration;
-                    handler.getMovementData().spinCooldown = ConfigHandler.SERVER.flightSpinCooldown.get() * 20;
-                    NetworkHandler.CHANNEL.sendToServer(new SyncSpinStatus(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
+        if(KeyInputHandler.SPIN_ABILITY.isActiveAndMatches(keyInputEvent.getKeyBinding().getKey())) {
+            if (KeyInputHandler.SPIN_ABILITY.consumeClick()) {
+                if (!ServerFlightHandler.isSpin(player) && handler.getMovementData().spinCooldown <= 0 && handler.getMovementData().spinLearned) {
+                    if (ServerFlightHandler.isFlying(player) || ServerFlightHandler.canSwimSpin(player)) {
+                        handler.getMovementData().spinAttack = ServerFlightHandler.spinDuration;
+                        handler.getMovementData().spinCooldown = ConfigHandler.SERVER.flightSpinCooldown.get() * 20;
+                        NetworkHandler.CHANNEL.sendToServer(new SyncSpinStatus(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
+                    }
                 }
             }
         }
@@ -467,9 +468,22 @@ public class ClientFlightHandler {
     
         DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
         if(handler == null || !handler.isDragon()) return;
-    
+        
         boolean currentState = handler.isWingsSpread();
         Vector3d lookVec = player.getLookAngle();
+    
+        if(KeyInputHandler.SPIN_ABILITY.getKey().getValue() == keyInputEvent.getKey()) {
+            if (KeyInputHandler.SPIN_ABILITY.consumeClick()) {
+                if (!ServerFlightHandler.isSpin(player) && handler.getMovementData().spinCooldown <= 0 && handler.getMovementData().spinLearned) {
+                    if (ServerFlightHandler.isFlying(player) || ServerFlightHandler.canSwimSpin(player)) {
+                        handler.getMovementData().spinAttack = ServerFlightHandler.spinDuration;
+                        handler.getMovementData().spinCooldown = ConfigHandler.SERVER.flightSpinCooldown.get() * 20;
+                        NetworkHandler.CHANNEL.sendToServer(new SyncSpinStatus(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
+                    }
+                }
+            }
+        }
+        
         if(ConfigHandler.CLIENT.jumpToFly.get() && !player.isCreative() && !player.isSpectator()) {
             if (Minecraft.getInstance().options.keyJump.isDown()) {
                 if(keyInputEvent.getAction() == GLFW.GLFW_PRESS) {
