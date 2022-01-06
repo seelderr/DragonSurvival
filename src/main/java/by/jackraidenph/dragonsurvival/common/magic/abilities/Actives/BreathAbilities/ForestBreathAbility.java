@@ -61,7 +61,7 @@ public class ForestBreathAbility extends BreathAbility
 	@Override
 	public int getManaCost()
 	{
-		return (firstUse ? ConfigHandler.SERVER.forestBreathInitialMana.get() : ConfigHandler.SERVER.forestBreathOvertimeMana.get());
+		return player != null && player.hasEffect(DragonEffects.SOURCE_OF_MAGIC) ? 0 :(firstUse ? ConfigHandler.SERVER.forestBreathInitialMana.get() : ConfigHandler.SERVER.forestBreathOvertimeMana.get());
 	}
 	
 	public void tickCost(){

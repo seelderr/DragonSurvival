@@ -58,7 +58,7 @@ public class NetherBreathAbility extends BreathAbility
 	@Override
 	public int getManaCost()
 	{
-		return (firstUse ? ConfigHandler.SERVER.fireBreathInitialMana.get() : ConfigHandler.SERVER.fireBreathOvertimeMana.get());
+		return player != null && player.hasEffect(DragonEffects.SOURCE_OF_MAGIC) ? 0 :(firstUse ? ConfigHandler.SERVER.fireBreathInitialMana.get() : ConfigHandler.SERVER.fireBreathOvertimeMana.get());
 	}
 	
 	public void tickCost(){

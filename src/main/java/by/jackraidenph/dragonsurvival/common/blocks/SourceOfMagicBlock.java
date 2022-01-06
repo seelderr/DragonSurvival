@@ -54,20 +54,24 @@ public class SourceOfMagicBlock extends HorizontalBlock implements IWaterLoggabl
     
     static final BooleanProperty BACK_BLOCK = BooleanProperty.create("back");
     static final BooleanProperty TOP_BLOCK = BooleanProperty.create("top");
-
+    
+    static final BooleanProperty FILLED = BooleanProperty.create("filled");
+    
+    
     public SourceOfMagicBlock(Properties properties) {
         super(properties);
         registerDefaultState(getStateDefinition().any()
                                      .setValue(WATERLOGGED, false)
                                      .setValue(PRIMARY_BLOCK, true)
                                      .setValue(BACK_BLOCK, false)
-                                     .setValue(TOP_BLOCK, false));
+                                     .setValue(TOP_BLOCK, false)
+                                     .setValue(FILLED, false));
     }
     
     @Override
     protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
-        builder.add(FACING, WATERLOGGED, PRIMARY_BLOCK, BACK_BLOCK, TOP_BLOCK);
+        builder.add(FACING, WATERLOGGED, PRIMARY_BLOCK, BACK_BLOCK, TOP_BLOCK, FILLED);
     }
 
     @Override
@@ -145,7 +149,7 @@ public class SourceOfMagicBlock extends HorizontalBlock implements IWaterLoggabl
                 NetworkHooks.openGui((ServerPlayerEntity)player, getBlockEntity(worldIn, pos1), packetBuffer -> packetBuffer.writeBlockPos(finalPos));
             }
         }else{
-            if(DragonStateProvider.isDragon(player) && player.getItemInHand(handIn).isEmpty()) {
+            if(DragonStateProvider.isDragon(player) && player.getMainHandItem().isEmpty()) {
                 if (player.getFeetBlockState().getBlock() == state.getBlock()) {
                     DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
     

@@ -58,7 +58,7 @@ public class StormBreathAbility extends BreathAbility
 	@Override
 	public int getManaCost()
 	{
-		return (firstUse ? ConfigHandler.SERVER.stormBreathInitialMana.get() : ConfigHandler.SERVER.stormBreathOvertimeMana.get());
+		return player != null && player.hasEffect(DragonEffects.SOURCE_OF_MAGIC) ? 0 :(firstUse ? ConfigHandler.SERVER.stormBreathInitialMana.get() : ConfigHandler.SERVER.stormBreathOvertimeMana.get());
 	}
 	
 	public void tickCost(){

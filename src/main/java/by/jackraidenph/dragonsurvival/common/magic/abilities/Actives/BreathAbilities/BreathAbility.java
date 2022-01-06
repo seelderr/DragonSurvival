@@ -1,6 +1,7 @@
 package by.jackraidenph.dragonsurvival.common.magic.abilities.Actives.BreathAbilities;
 
 import by.jackraidenph.dragonsurvival.client.handlers.KeyInputHandler;
+import by.jackraidenph.dragonsurvival.common.DragonEffects;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.handlers.DragonConfigHandler;
@@ -59,9 +60,8 @@ public abstract class BreathAbility extends ActiveDragonAbility implements ISeco
 	@Override
 	public int getManaCost()
 	{
-		return (firstUse ? super.getManaCost() : channelCost);
+		return player != null && player.hasEffect(DragonEffects.SOURCE_OF_MAGIC) ? 0 :(firstUse ? super.getManaCost() : channelCost);
 	}
-	
 	public void stopCasting() {
 		super.stopCasting();
 

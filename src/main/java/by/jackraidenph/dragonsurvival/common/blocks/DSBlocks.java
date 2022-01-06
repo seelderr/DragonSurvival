@@ -3,7 +3,6 @@ package by.jackraidenph.dragonsurvival.common.blocks;
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.client.render.item.HelmetStackTileEntityRenderer;
 import by.jackraidenph.dragonsurvival.client.sounds.SoundRegistry;
-import by.jackraidenph.dragonsurvival.common.items.DSItems;
 import by.jackraidenph.dragonsurvival.common.items.DragonDoorItem;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
@@ -130,61 +129,61 @@ public class DSBlocks
     @SubscribeEvent
     public static void registerBlockItems(final RegistryEvent.Register<Item> event) {
         IForgeRegistry<Item> forgeRegistry = event.getRegistry();
-        registerDoor(oakDoor, new Item.Properties(), forgeRegistry);
-        registerDoor(spruceDoor, new Item.Properties(), forgeRegistry);
-        registerDoor(acaciaDoor, new Item.Properties(), forgeRegistry);
-        registerDoor(jungleDoor, new Item.Properties(), forgeRegistry);
-        registerDoor(darkOakDoor, new Item.Properties(), forgeRegistry);
-        registerDoor(birchDoor, new Item.Properties(), forgeRegistry);
-        registerDoor(caveDoor, new Item.Properties(), forgeRegistry);
-        registerDoor(seaDoor, new Item.Properties(), forgeRegistry);
-        registerDoor(forestDoor, new Item.Properties(), forgeRegistry);
-        registerDoor(ironDoor, new Item.Properties(), forgeRegistry);
-        registerDoor(murdererDoor, new Item.Properties(), forgeRegistry);
-        registerDoor(warpedDoor, new Item.Properties(), forgeRegistry);
-        registerDoor(crimsonDoor, new Item.Properties(), forgeRegistry);
-        registerDoor(sleeperDoor, new Item.Properties(), forgeRegistry);
-        registerDoor(stoneDoor, new Item.Properties(), forgeRegistry);
-        registerDoor(legacyDoor, new Item.Properties(), forgeRegistry);
+        registerDoor(oakDoor, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
+        registerDoor(spruceDoor, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
+        registerDoor(acaciaDoor, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
+        registerDoor(jungleDoor, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
+        registerDoor(darkOakDoor, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
+        registerDoor(birchDoor, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
+        registerDoor(caveDoor, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
+        registerDoor(seaDoor, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
+        registerDoor(forestDoor, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
+        registerDoor(ironDoor, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
+        registerDoor(murdererDoor, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
+        registerDoor(warpedDoor, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
+        registerDoor(crimsonDoor, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
+        registerDoor(sleeperDoor, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
+        registerDoor(stoneDoor, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
+        registerDoor(legacyDoor, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
         
 
-        forgeRegistry.register(new BlockItem(PREDATOR_STAR_BLOCK, new Item.Properties().tab(DSItems.items)).setRegistryName("predator_star"));
+        forgeRegistry.register(new BlockItem(PREDATOR_STAR_BLOCK, new Item.Properties().tab(DragonSurvivalMod.items)).setRegistryName("predator_star"));
         
-        registerSingleItem(seaSourceOfMagic, new Item.Properties(), forgeRegistry);
-        registerSingleItem(forestSourceOfMagic, new Item.Properties(), forgeRegistry);
-        registerSingleItem(caveSourceOfMagic, new Item.Properties(), forgeRegistry);
+        registerSingleItem(seaSourceOfMagic, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
+        registerSingleItem(forestSourceOfMagic, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
+        registerSingleItem(caveSourceOfMagic, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
     
-        registerItem(treasureDebris, new Item.Properties(), forgeRegistry);
-        registerItem(treasureDiamond, new Item.Properties(), forgeRegistry);
-        registerItem(treasureEmerald, new Item.Properties(), forgeRegistry);
-        registerItem(treasureCopper, new Item.Properties(), forgeRegistry);
-        registerItem(treasureGold, new Item.Properties(), forgeRegistry);
-        registerItem(treasureIron, new Item.Properties(), forgeRegistry);
+        registerItem(treasureDebris, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
+        registerItem(treasureDiamond, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
+        registerItem(treasureEmerald, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
+        registerItem(treasureCopper, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
+        registerItem(treasureGold, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
+        registerItem(treasureIron, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
 
-        registerItem(dragon_altar_stone, new Item.Properties(), forgeRegistry);
-        registerItem(dragon_altar_sandstone, new Item.Properties(), forgeRegistry);
-        registerItem(dragon_altar_red_sandstone, new Item.Properties(), forgeRegistry);
-        registerItem(dragon_altar_purpur_block, new Item.Properties(), forgeRegistry);
-        registerItem(dragon_altar_oak_log, new Item.Properties(), forgeRegistry);
-        registerItem(dragon_altar_nether_bricks, new Item.Properties(), forgeRegistry);
-        registerItem(dragon_altar_mossy_cobblestone, new Item.Properties(), forgeRegistry);
-        registerItem(dragon_altar_blackstone, new Item.Properties(), forgeRegistry);
-        registerItem(dragon_altar_birch_log, new Item.Properties(), forgeRegistry);
+        registerItem(dragon_altar_stone, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
+        registerItem(dragon_altar_sandstone, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
+        registerItem(dragon_altar_red_sandstone, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
+        registerItem(dragon_altar_purpur_block, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
+        registerItem(dragon_altar_oak_log, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
+        registerItem(dragon_altar_nether_bricks, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
+        registerItem(dragon_altar_mossy_cobblestone, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
+        registerItem(dragon_altar_blackstone, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
+        registerItem(dragon_altar_birch_log, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
 
-        registerItem(helmet1, new Item.Properties().setISTER(() -> HelmetStackTileEntityRenderer::new), forgeRegistry);
-        registerItem(helmet2, new Item.Properties().setISTER(() -> HelmetStackTileEntityRenderer::new), forgeRegistry);
-        registerItem(helmet3, new Item.Properties().setISTER(() -> HelmetStackTileEntityRenderer::new), forgeRegistry);
+        registerItem(helmet1, new Item.Properties().setISTER(() -> HelmetStackTileEntityRenderer::new).tab(DragonSurvivalMod.items), forgeRegistry);
+        registerItem(helmet2, new Item.Properties().setISTER(() -> HelmetStackTileEntityRenderer::new).tab(DragonSurvivalMod.items), forgeRegistry);
+        registerItem(helmet3, new Item.Properties().setISTER(() -> HelmetStackTileEntityRenderer::new).tab(DragonSurvivalMod.items), forgeRegistry);
 
-        registerItem(dragonBeacon, new Item.Properties(), forgeRegistry);
-        registerItem(peaceDragonBeacon, new Item.Properties(), forgeRegistry);
-        registerItem(magicDragonBeacon, new Item.Properties(), forgeRegistry);
-        registerItem(fireDragonBeacon, new Item.Properties(), forgeRegistry);
-        registerItem(dragonMemoryBlock, new Item.Properties(), forgeRegistry);
+        registerItem(dragonBeacon, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
+        registerItem(peaceDragonBeacon, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
+        registerItem(magicDragonBeacon, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
+        registerItem(fireDragonBeacon, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
+        registerItem(dragonMemoryBlock, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
     }
     
     @SuppressWarnings("ConstantConditions")
     private static void registerItem(Block block, Item.Properties itemProperties, IForgeRegistry<Item> forgeRegistry) {
-        forgeRegistry.register(new BlockItem(block, itemProperties.tab(DSItems.items)).setRegistryName(block.getRegistryName()));
+        forgeRegistry.register(new BlockItem(block, itemProperties.tab(DragonSurvivalMod.items)).setRegistryName(block.getRegistryName()));
     }
 
     private static void registerSingleItem(Block block, Item.Properties properties, IForgeRegistry<Item> forgeRegistry) {
@@ -193,7 +192,7 @@ public class DSBlocks
 
     @SuppressWarnings("ConstantConditions")
     private static void registerDoor(Block block, Item.Properties itemProps, IForgeRegistry<Item> forgeRegistry) {
-        forgeRegistry.register(new DragonDoorItem(block, itemProps.tab(DSItems.items)).setRegistryName(block.getRegistryName()));
+        forgeRegistry.register(new DragonDoorItem(block, itemProps.tab(DragonSurvivalMod.items)).setRegistryName(block.getRegistryName()));
     }
 
 }

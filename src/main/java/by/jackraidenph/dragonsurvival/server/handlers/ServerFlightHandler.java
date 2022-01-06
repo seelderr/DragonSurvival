@@ -209,7 +209,7 @@ public class ServerFlightHandler {
                     if (ConfigHandler.SERVER.flyingUsesHunger.get()) {
                         if (isFlying(player)) {
 							if(!player.level.isClientSide) {
-								if (player.getFoodData().getFoodLevel() < ConfigHandler.SERVER.flightHungerThreshold.get() && !ConfigHandler.SERVER.allowFlyingWithoutHunger.get() && !player.isCreative()) {
+								if (player.getFoodData().getFoodLevel() <= ConfigHandler.SERVER.foldWingsThreshold.get() && !ConfigHandler.SERVER.allowFlyingWithoutHunger.get() && !player.isCreative()) {
 									player.sendMessage(new TranslationTextComponent("ds.wings.nohunger"), player.getUUID());
 									dragonStateHandler.setWingsSpread(false);
 									NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncFlyingStatus(player.getId(), false));

@@ -8,6 +8,7 @@ import by.jackraidenph.dragonsurvival.common.entity.DSEntities;
 import by.jackraidenph.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.jackraidenph.dragonsurvival.common.handlers.WingObtainmentController;
 import by.jackraidenph.dragonsurvival.common.handlers.magic.ClawToolHandler.Event_busHandler;
+import by.jackraidenph.dragonsurvival.common.items.DragonSurvivalCreativeTab;
 import by.jackraidenph.dragonsurvival.common.magic.DragonAbilities;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
@@ -45,7 +46,9 @@ public class DragonSurvivalMod {
     public static final String MODID = "dragonsurvival";
     public static final Logger LOGGER = LogManager.getLogger("Dragon Survival");
     
-    public DragonSurvivalMod() {
+	public static DragonSurvivalCreativeTab items = new DragonSurvivalCreativeTab("dragon.survival.blocks");
+	
+	public DragonSurvivalMod() {
         GeckoLib.initialize();
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         modEventBus.addListener(this::setup);

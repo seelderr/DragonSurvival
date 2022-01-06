@@ -20,6 +20,7 @@ public class ServerConfig {
 	public final ForgeConfigSpec.BooleanValue startWithWings;
 	public final ForgeConfigSpec.BooleanValue enableFlightFallDamage;
 	public final ForgeConfigSpec.IntValue flightHungerThreshold;
+	public final ForgeConfigSpec.IntValue foldWingsThreshold;
 	public final ForgeConfigSpec.BooleanValue allowFlyingWithoutHunger;
 	public final ForgeConfigSpec.BooleanValue flyingUsesHunger;
 	public final ForgeConfigSpec.BooleanValue creativeFlight;
@@ -400,6 +401,9 @@ public class ServerConfig {
 		flightHungerThreshold = builder
 				.comment("If the player's hunger is below this parameter, he can't open his wings.")
 				.defineInRange("flightHungerThreshold", 6, 0, 20);
+		foldWingsThreshold = builder
+				.comment("If the player's hunger is less then or equal to this parameter, the wings will be folded even during flight.")
+				.defineInRange("flightHungerThreshold", 0, 0, 20);
 		flyingUsesHunger = builder
 				.comment("Whether you use up hunger while flying.")
 				.define("flyingUsesHunger", true);
