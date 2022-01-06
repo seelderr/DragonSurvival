@@ -21,15 +21,13 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.shapes.ISelectionContext;
@@ -39,9 +37,13 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nullable;
+import java.util.Random;
 
 public class SourceOfMagicBlock extends HorizontalBlock implements IWaterLoggable {
     
@@ -90,6 +92,18 @@ public class SourceOfMagicBlock extends HorizontalBlock implements IWaterLoggabl
         return entity instanceof SourceOfMagicTileEntity ? (SourceOfMagicTileEntity)entity : null;
     }
     
+    public void onPlace(BlockState p_220082_1_, World p_220082_2_, BlockPos p_220082_3_, BlockState p_220082_4_, boolean p_220082_5_) {
+        p_220082_2_.getBlockTicks().scheduleTick(p_220082_3_, this, 20);
+    }
+    
+    public void randomTick(BlockState p_225542_1_, ServerWorld world, BlockPos pos, Random p_225542_4_) {
+        BlockPos blockpos = pos.above();
+        if (world.getFluidState(pos).is(FluidTags.WATER)) {
+            world.playSound((PlayerEntity)null, pos, SoundEvents.FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5F, 2.6F + (world.random.nextFloat() - world.random.nextFloat()) * 0.8F);
+            world.sendParticles(ParticleTypes.LARGE_SMOKE, (double)blockpos.getX() + 0.5D, (double)blockpos.getY() + 0.25D, (double)blockpos.getZ() + 0.5D, 8, 0.5D, 0.25D, 0.5D, 0.0D);
+        }
+    }
+    
     @Override
     public void entityInside(BlockState p_196262_1_, World world, BlockPos pos, Entity entity)
     {
@@ -113,29 +127,21 @@ public class SourceOfMagicBlock extends HorizontalBlock implements IWaterLoggabl
         }
         super.entityInside(p_196262_1_, world, pos, entity);
     }
-    
+    @OnlyIn( Dist.CLIENT)
+    public void animateTick(BlockState p_180655_1_, World p_180655_2_, BlockPos p_180655_3_, Random p_180655_4_)
+    {
+        if (p_180655_1_.getBlock() == DSBlocks.caveSourceOfMagic) {
+            double d0 = (double)p_180655_3_.getX();
+            double d1 = (double)p_180655_3_.getY();
+            double d2 = (double)p_180655_3_.getZ();
+            p_180655_2_.addAlwaysVisibleParticle(ParticleTypes.BUBBLE_COLUMN_UP, d0 + 0.5D, d1, d2 + 0.5D, 0.0D, 0.04D, 0.0D);
+            p_180655_2_.addAlwaysVisibleParticle(ParticleTypes.BUBBLE_COLUMN_UP, d0 + (double)p_180655_4_.nextFloat(), d1 + (double)p_180655_4_.nextFloat(), d2 + (double)p_180655_4_.nextFloat(), 0.0D, 0.04D, 0.0D);
+        }
+    }
     
     @Override
     public ActionResultType use(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
         TileEntity blockEntity = worldIn.getBlockEntity(pos);
-        if (blockEntity instanceof SourceOfMagicTileEntity) {
-            final Direction playerHorizontalFacing = player.getDirection();
-            final Direction placementDirection = playerHorizontalFacing.getOpposite();
-            if (state.getBlock().getClass() == SourceOfMagicBlock.class) {
-                if (Functions.isAirOrFluid(pos.north(), worldIn, player, hit) && Functions.isAirOrFluid(pos.south(), worldIn, player, hit) &&
-                    Functions.isAirOrFluid(pos.west(), worldIn, player, hit) && Functions.isAirOrFluid(pos.east(), worldIn, player, hit)
-                    && Functions.isAirOrFluid(pos.north().west(), worldIn, player, hit) && Functions.isAirOrFluid(pos.north().east(), worldIn, player, hit)
-                    && Functions.isAirOrFluid(pos.south().east(), worldIn, player, hit) && Functions.isAirOrFluid(pos.south().west(), worldIn, player, hit)) {
-                    CompoundNBT compoundNBT = blockEntity.save(new CompoundNBT());
-                    worldIn.setBlockAndUpdate(pos, state.setValue(FACING, placementDirection));
-                    SourceOfMagicTileEntity nestEntity = getBlockEntity(worldIn, pos);
-                    BlockState blockState = worldIn.getBlockState(pos);
-                    nestEntity.load(blockState, compoundNBT);
-                    blockState.getBlock().setPlacedBy(worldIn, pos, blockState, player, player.getItemInHand(handIn));
-                    return ActionResultType.SUCCESS;
-                }
-            }
-        }
         BlockPos pos1 = pos;
     
         if(blockEntity instanceof SourceOfMagicPlaceholder){

@@ -41,7 +41,7 @@ public class DragonSurvivalCreativeTab extends ItemGroup
 				DSBlocks.treasureDebris, DSBlocks.treasureDiamond, DSBlocks.treasureEmerald, DSBlocks.treasureCopper, DSBlocks.treasureGold, DSBlocks.treasureIron,
 				DSBlocks.helmet2, DSBlocks.helmet1, DSBlocks.helmet3, DSBlocks.caveDoor, DSBlocks.forestDoor, DSBlocks.seaDoor, DSBlocks.spruceDoor,
 				DSBlocks.acaciaDoor, DSBlocks.birchDoor, DSBlocks.jungleDoor, DSBlocks.oakDoor, DSBlocks.darkOakDoor, DSBlocks.crimsonDoor,
-				DSBlocks.warpedDoor, DSBlocks.legacyDoor, DSBlocks.ironDoor.asItem(), DSBlocks.murdererDoor, DSBlocks.sleeperDoor, DSBlocks.stoneDoor);
+				DSBlocks.warpedDoor, DSBlocks.legacyDoor, DSBlocks.ironDoor, DSBlocks.murdererDoor, DSBlocks.sleeperDoor, DSBlocks.stoneDoor);
 		List<Item> list1 = new ArrayList<>();
 		list.forEach((c) -> list1.add(c.asItem()));
 		Comparator<ItemStack> c = Ordering.explicit(list1).onResultOf(ItemStack::getItem);
