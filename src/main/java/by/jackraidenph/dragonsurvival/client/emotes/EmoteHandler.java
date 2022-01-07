@@ -1,7 +1,6 @@
-package by.jackraidenph.dragonsurvival.client.handlers;
+package by.jackraidenph.dragonsurvival.client.emotes;
 
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.client.emotes.Emote;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.PointOfView;
 import net.minecraft.entity.LivingEntity;

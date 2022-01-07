@@ -22,6 +22,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
@@ -34,6 +35,7 @@ import net.minecraftforge.fml.network.PacketDistributor;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
+import java.util.Optional;
 
 @Mod.EventBusSubscriber
 public class DragonTreasureResting
@@ -101,13 +103,12 @@ public class DragonTreasureResting
 		
 		ServerWorld world = (ServerWorld)event.world;
 		MixinServerWorld serverWorld = (MixinServerWorld)world;
-		
-		if(world.isNight()) {
-			if (!serverWorld.getallPlayersSleeping()) {
-				if (!serverWorld.getPlayers().isEmpty()) {
-					int i = 0;
-					int j = 0;
-					
+		if (!serverWorld.getallPlayersSleeping()) {
+			if (!serverWorld.getPlayers().isEmpty()) {
+				int i = 0;
+				int j = 0;
+				
+				if(world.getGameTime() % 20 == 0) {
 					for (ServerPlayerEntity serverplayerentity : serverWorld.getPlayers()) {
 						if (serverplayerentity.isSpectator()) {
 							++i;
@@ -116,10 +117,15 @@ public class DragonTreasureResting
 						} else if (DragonStateProvider.isDragon(serverplayerentity)) {
 							DragonStateHandler handler = DragonStateProvider.getCap(serverplayerentity).orElse(null);
 							
-							if (handler != null) {
-								if (handler.treasureResting) {
-									++j;
+							if (ForgeEventFactory.fireSleepingTimeCheck(serverplayerentity, Optional.empty())) {
+								
+								if (handler != null) {
+									if (handler.treasureResting) {
+										++j;
+									}
 								}
+							}else{
+								handler.treasureSleepTimer = 0;
 							}
 						}
 					}
