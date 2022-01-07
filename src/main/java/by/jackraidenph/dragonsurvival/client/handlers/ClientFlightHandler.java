@@ -213,6 +213,7 @@ public class ClientFlightHandler {
     }
     
     public static boolean wasGliding = false;
+    public static boolean wasFlying = false;
     
     /**
      * Controls acceleration
@@ -266,6 +267,10 @@ public class ClientFlightHandler {
                         
                         //start
                         if (ServerFlightHandler.isFlying(playerEntity)) {
+                            if(!wasFlying){
+                                wasFlying = true;
+                            }
+                            
                             Vector3d motion = playerEntity.getDeltaMovement();
                             
                             Vector3d lookVec = playerEntity.getLookAngle();
@@ -412,7 +417,7 @@ public class ClientFlightHandler {
                                     return;
                                 }
                                 
-                                if(playerEntity.fallDistance >= 2.5) { //Dont activate on a regular jump
+                                if(wasFlying) { //Dont activate on a regular jump
                                     double yMotion = hasFood ? -g + ay : -(g * 4) + ay;
                                     motion = new Vector3d(motion.x, yMotion, motion.z);
                                     
@@ -425,6 +430,7 @@ public class ClientFlightHandler {
                             }
                         } else {
                             wasGliding = false;
+                            wasFlying = false;
                             ax = 0;
                             az = 0;
                             ay = 0;

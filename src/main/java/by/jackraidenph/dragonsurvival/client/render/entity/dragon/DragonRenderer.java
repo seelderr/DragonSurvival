@@ -106,7 +106,7 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 					if(ch != null){
 						stack.scale(ch.size.x(), ch.size.y(), ch.size.z());
 					}
-					Minecraft.getInstance().getItemRenderer().renderStatic(mainHand, TransformType.GROUND, packedLightIn, packedOverlayIn, stack, rtb);
+					Minecraft.getInstance().getItemRenderer().renderStatic(currentEntity.getPlayer().inventory.getSelected(), TransformType.GROUND, packedLightIn, packedOverlayIn, stack, rtb);
 					stack.popPose();
 					bufferIn = rtb.getBuffer(RenderType.entityCutout(whTexture));
 				}
@@ -124,7 +124,7 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 					if(ch != null){
 						stack.scale(ch.size.x(), ch.size.y(), ch.size.z());
 					}
-					Minecraft.getInstance().getItemRenderer().renderStatic(offHand, TransformType.GROUND, packedLightIn, packedOverlayIn, stack, rtb);
+					Minecraft.getInstance().getItemRenderer().renderStatic(currentEntity.getPlayer().inventory.offhand.get(0), TransformType.GROUND, packedLightIn, packedOverlayIn, stack, rtb);
 					stack.popPose();
 					bufferIn = rtb.getBuffer(RenderType.entityCutout(whTexture));
 				}
