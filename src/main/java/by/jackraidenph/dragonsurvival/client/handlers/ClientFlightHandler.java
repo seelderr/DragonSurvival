@@ -448,6 +448,7 @@ public class ClientFlightHandler {
         
         DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
         if(handler == null || !handler.isDragon()) return;
+        
         if(KeyInputHandler.SPIN_ABILITY.getKey().getValue() == keyInputEvent.getButton()) {
             spinKeybind(player, handler);
         }
@@ -507,13 +508,11 @@ public class ClientFlightHandler {
     
     private static void spinKeybind(ClientPlayerEntity player, DragonStateHandler handler)
     {
-        if (KeyInputHandler.SPIN_ABILITY.consumeClick()) {
-            if (!ServerFlightHandler.isSpin(player) && handler.getMovementData().spinCooldown <= 0 && handler.getMovementData().spinLearned) {
-                if (ServerFlightHandler.isFlying(player) || ServerFlightHandler.canSwimSpin(player)) {
-                    handler.getMovementData().spinAttack = ServerFlightHandler.spinDuration;
-                    handler.getMovementData().spinCooldown = ConfigHandler.SERVER.flightSpinCooldown.get() * 20;
-                    NetworkHandler.CHANNEL.sendToServer(new SyncSpinStatus(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
-                }
+        if (!ServerFlightHandler.isSpin(player) && handler.getMovementData().spinCooldown <= 0 && handler.getMovementData().spinLearned) {
+            if (ServerFlightHandler.isFlying(player) || ServerFlightHandler.canSwimSpin(player)) {
+                handler.getMovementData().spinAttack = ServerFlightHandler.spinDuration;
+                handler.getMovementData().spinCooldown = ConfigHandler.SERVER.flightSpinCooldown.get() * 20;
+                NetworkHandler.CHANNEL.sendToServer(new SyncSpinStatus(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
             }
         }
     }
