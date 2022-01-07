@@ -1,13 +1,17 @@
 package by.jackraidenph.dragonsurvival.common.entity.creatures;
 
-import by.jackraidenph.dragonsurvival.util.Functions;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.common.DragonEffects;
+import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.entity.DSEntities;
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.PrincessTrades;
+import by.jackraidenph.dragonsurvival.util.Functions;
 import com.mojang.serialization.Dynamic;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import net.minecraft.entity.*;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.ILivingEntityData;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.brain.Brain;
 import net.minecraft.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.entity.ai.goal.LookAtGoal;
@@ -17,7 +21,6 @@ import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.merchant.villager.VillagerData;
 import net.minecraft.entity.merchant.villager.VillagerEntity;
-import net.minecraft.entity.merchant.villager.VillagerProfession;
 import net.minecraft.entity.merchant.villager.VillagerTrades;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.villager.VillagerType;
@@ -64,7 +67,7 @@ public class PrincessEntity extends VillagerEntity {
     @Nullable
     public ILivingEntityData finalizeSpawn(IServerWorld serverWorld, DifficultyInstance difficultyInstance, SpawnReason reason, @Nullable ILivingEntityData livingEntityData, @Nullable CompoundNBT compoundNBT) {
         setColor(colors.get(this.random.nextInt(6)).getId());
-        setVillagerData(getVillagerData().setProfession(VillagerProfession.NITWIT));
+        setVillagerData(getVillagerData().setProfession(DSEntities.PRINCESS_PROFESSION));
         return super.finalizeSpawn(serverWorld, difficultyInstance, reason, livingEntityData, compoundNBT);
     }
 

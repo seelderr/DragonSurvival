@@ -2,13 +2,9 @@ package by.jackraidenph.dragonsurvival.client.gui;
 
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.TabButton;
-import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.AbilityButton;
-import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.DecreaseLevelButton;
-import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.IncreaseLevelButton;
-import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.SkillProgressButton;
+import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.*;
 import by.jackraidenph.dragonsurvival.client.handlers.magic.ClientMagicHUDHandler;
+import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.magic.DragonAbilities;
 import by.jackraidenph.dragonsurvival.common.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.common.magic.common.DragonAbility;
@@ -19,17 +15,14 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
@@ -110,26 +103,7 @@ public class AbilityScreen extends Screen {
             }
         });
         
-        addButton(new Button(startX + (218 / 2), startY + (263 / 2) - 2, 16, 16, null, (button) -> {}){
-            @Override
-            public void renderButton(MatrixStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_)
-            {
-                if(isHovered()){
-                    minecraft.getTextureManager().bind(ClientMagicHUDHandler.widgetTextures);
-                    int xP = type == DragonType.SEA ? 0 : type == DragonType.FOREST ? 18 : 36;
-                    GL11.glPushMatrix();
-                    blit(stack, x + 3, y + 6, xP / 2, 204 / 2, 9, 9, 128, 128);
-                    GL11.glPopMatrix();
-                }
-            }
-    
-            @Override
-            public void renderToolTip(MatrixStack stack, int mouseX, int mouseY)
-            {
-                ArrayList<ITextComponent> description = new ArrayList<>(Arrays.asList(new TranslationTextComponent("ds.skill.help")));
-                Minecraft.getInstance().screen.renderComponentTooltip(stack, description, mouseX, mouseY);
-            }
-        });
+        addButton(new HelpButton(startX + (218 / 2) + 3, startY + (263 / 2) + 4, 9, 9, "ds.skill.help"));
     }
     
     @Override

@@ -1,6 +1,8 @@
 package by.jackraidenph.dragonsurvival.common.capability;
 
+import by.jackraidenph.dragonsurvival.common.DragonEffects;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
+import by.jackraidenph.dragonsurvival.misc.DragonType;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.common.magic.DragonAbilities;
 import by.jackraidenph.dragonsurvival.network.magic.SyncMagicStats;
@@ -30,6 +32,11 @@ public class DragonStateProvider implements ICapabilitySerializable<CompoundNBT>
 
     public static boolean isDragon(Entity entity) {
         return getCap(entity).filter(DragonStateHandler::isDragon).isPresent();
+    }
+    
+    public static DragonType getDragonType(Entity entity) {
+        DragonStateHandler handler = getCap(entity).orElse(null);
+        return handler != null ? handler.getType() : DragonType.NONE;
     }
     
     public static int getCurrentMana(PlayerEntity entity) {
@@ -73,6 +80,7 @@ public class DragonStateProvider implements ICapabilitySerializable<CompoundNBT>
     public static void consumeMana(PlayerEntity entity, int mana) {
         if(entity == null) return;
         if(entity.isCreative()) return;
+        if(entity.hasEffect(DragonEffects.SOURCE_OF_MAGIC)) return;
     
         if(ConfigHandler.SERVER.consumeEXPAsMana.get()) {
             if (entity.level.isClientSide) {

@@ -1,12 +1,14 @@
 package by.jackraidenph.dragonsurvival;
 
 import by.jackraidenph.dragonsurvival.client.particles.DSParticles;
+import by.jackraidenph.dragonsurvival.client.sounds.SoundRegistry;
 import by.jackraidenph.dragonsurvival.commands.DragonCommand;
 import by.jackraidenph.dragonsurvival.common.capability.Capabilities;
 import by.jackraidenph.dragonsurvival.common.entity.DSEntities;
 import by.jackraidenph.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.jackraidenph.dragonsurvival.common.handlers.WingObtainmentController;
 import by.jackraidenph.dragonsurvival.common.handlers.magic.ClawToolHandler.Event_busHandler;
+import by.jackraidenph.dragonsurvival.common.items.DragonSurvivalCreativeTab;
 import by.jackraidenph.dragonsurvival.common.magic.DragonAbilities;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
@@ -44,7 +46,9 @@ public class DragonSurvivalMod {
     public static final String MODID = "dragonsurvival";
     public static final Logger LOGGER = LogManager.getLogger("Dragon Survival");
     
-    public DragonSurvivalMod() {
+	public static DragonSurvivalCreativeTab items = new DragonSurvivalCreativeTab("dragon.survival.blocks");
+	
+	public DragonSurvivalMod() {
         GeckoLib.initialize();
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         modEventBus.addListener(this::setup);
@@ -53,7 +57,8 @@ public class DragonSurvivalMod {
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ConfigHandler.serverSpec);
 
         DSParticles.REGISTRY.register(modEventBus);
-    
+        SoundRegistry.SOUNDS.register(modEventBus);
+        
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(new DragonFoodHandler());
         MinecraftForge.EVENT_BUS.register(new Event_busHandler());

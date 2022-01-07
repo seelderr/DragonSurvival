@@ -1,13 +1,14 @@
 package by.jackraidenph.dragonsurvival.common.magic.common;
 
-import by.jackraidenph.dragonsurvival.util.Functions;
+import by.jackraidenph.dragonsurvival.common.DragonEffects;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
-import by.jackraidenph.dragonsurvival.network.NetworkHandler;
-import by.jackraidenph.dragonsurvival.server.handlers.ServerFlightHandler;
-import by.jackraidenph.dragonsurvival.network.magic.SyncAbilityCasting;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
+import by.jackraidenph.dragonsurvival.network.NetworkHandler;
+import by.jackraidenph.dragonsurvival.network.magic.SyncAbilityCasting;
+import by.jackraidenph.dragonsurvival.server.handlers.ServerFlightHandler;
+import by.jackraidenph.dragonsurvival.util.Functions;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.SoundEvents;
@@ -111,7 +112,7 @@ public class ActiveDragonAbility extends DragonAbility
     }
     
     public int getManaCost() {
-        return manaCost;
+        return player != null && player.hasEffect(DragonEffects.SOURCE_OF_MAGIC) ? 0 : manaCost;
     }
     
     public boolean canConsumeMana(PlayerEntity player) {

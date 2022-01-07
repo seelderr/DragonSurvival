@@ -205,7 +205,7 @@ public class MagicHandler
 				GenericCapability cap = Capabilities.getGenericCapability(entity).orElse(null);
 				PlayerEntity player = cap != null && cap.lastAfflicted != -1 && entity.level.getEntity(cap.lastAfflicted) instanceof PlayerEntity ? ((PlayerEntity)entity.level.getEntity(cap.lastAfflicted)) : null;
 				if (type != DragonType.SEA) {
-					StormBreathAbility.chargedEffectSparkle(player, entity, 6, 2, 1);
+					StormBreathAbility.chargedEffectSparkle(player, entity, ConfigHandler.SERVER.chargedChainRange.get(), ConfigHandler.SERVER.chargedEffectChainCount.get(), ConfigHandler.SERVER.chargedEffectDamage.get());
 				}
 			}
 		}else{
@@ -306,7 +306,7 @@ public class MagicHandler
 						
 						if (cap.getType() == DragonType.SEA) {
 							SpectralImpactAbility spectralImpact = (SpectralImpactAbility)cap.getMagic().getAbilityOrDefault(DragonAbilities.SPECTRAL_IMPACT);
-							boolean hit = player.level.random.nextInt(100) < spectralImpact.getChance();
+							boolean hit = player.level.random.nextInt(100) <= spectralImpact.getChance();
 							
 							if (hit) {
 								event.getSource().bypassArmor();
@@ -327,6 +327,8 @@ public class MagicHandler
 								if(cap1 != null){
 									cap1.lastAfflicted = player.getId();
 								}
+								
+								if(!player.level.isClientSide)
 								((LivingEntity)event.getEntity()).addEffect(new EffectInstance(DragonEffects.BURN, Functions.secondsToTicks(30)));
 							}
 						}

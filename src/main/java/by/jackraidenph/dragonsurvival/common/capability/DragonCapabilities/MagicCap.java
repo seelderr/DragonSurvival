@@ -33,6 +33,9 @@ public class MagicCap implements DragonCapability
 	
 	private boolean renderAbilities = true;
 	
+	public boolean onMagicSource = false;
+	public int magicSourceTimer = 0;
+	
 	public void initAbilities(DragonType type){
 		if(DragonAbilities.ACTIVE_ABILITIES.containsKey(type)) {
 			if(instance.getType() != null && instance.getType() != DragonType.NONE) {
@@ -121,12 +124,22 @@ public class MagicCap implements DragonCapability
 	}
 	
 	
+	public void resetCasting(){
+		for(int i = 0; i < 4; i++){
+			getAbilityFromSlot(i).setCastTime(0);
+		}
+		if(getCurrentlyCasting() != null) {
+			getCurrentlyCasting().setCastTime(0);
+		}
+	}
+	
 	public int getSelectedAbilitySlot() {
 		return this.selectedAbilitySlot;
 	}
 	
 	public void setSelectedAbilitySlot(int newSlot) {
 		this.selectedAbilitySlot = newSlot;
+		resetCasting();
 	}
 	
 	public boolean renderAbilityHotbar()
@@ -175,6 +188,8 @@ public class MagicCap implements DragonCapability
 		nbt.putInt("selectedAbilitySlot", getSelectedAbilitySlot());
 		nbt.put("abilitySlots", saveAbilities());
 		tag.put("abilityData", nbt);
+		tag.putBoolean("onMagicSource", onMagicSource);
+		tag.putInt("magicSourceTimer", magicSourceTimer);
 		
 		return tag;
 	}
@@ -183,6 +198,8 @@ public class MagicCap implements DragonCapability
 	public void readNBT(Capability<DragonStateHandler> capability, Direction side, INBT base)
 	{
 		CompoundNBT tag = (CompoundNBT) base;
+		onMagicSource = tag.getBoolean("onMagicSource");
+		magicSourceTimer = tag.getInt("magicSourceTimer");
 		
 		setRenderAbilities(tag.getBoolean("renderSkills"));
 		

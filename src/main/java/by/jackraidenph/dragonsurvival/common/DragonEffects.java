@@ -31,6 +31,8 @@ public class DragonEffects {
     public static Effect ANIMAL_PEACE;
     public static Effect PREDATOR_ANTI_SPAWN;
     
+    public static Effect SOURCE_OF_MAGIC;
+    
     //Magic system effects
     public static Effect WATER_VISION, LAVA_VISION;
     public static Effect HUNTER;
@@ -60,6 +62,9 @@ public class DragonEffects {
         forgeRegistry.register(ANIMAL_PEACE);
         PREDATOR_ANTI_SPAWN = new Effect2(EffectType.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "predator_anti_spawn");
         forgeRegistry.register(PREDATOR_ANTI_SPAWN);
+    
+        SOURCE_OF_MAGIC = new Effect2(EffectType.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "source_of_magic");
+        forgeRegistry.register(SOURCE_OF_MAGIC);
         
         //Magic system effects
         WATER_VISION = new Effect2(EffectType.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "water_vision");

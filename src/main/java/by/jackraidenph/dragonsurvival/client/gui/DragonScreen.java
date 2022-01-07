@@ -2,17 +2,16 @@ package by.jackraidenph.dragonsurvival.client.gui;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.client.gui.settings.SettingsSideScreen;
+import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.HelpButton;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.TabButton;
 import by.jackraidenph.dragonsurvival.client.handlers.ClientEvents;
 import by.jackraidenph.dragonsurvival.client.handlers.KeyInputHandler;
-import by.jackraidenph.dragonsurvival.client.handlers.magic.ClientMagicHUDHandler;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.handlers.DragonGrowthHandler;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.config.ConfigUtils;
 import by.jackraidenph.dragonsurvival.misc.DragonLevel;
-import by.jackraidenph.dragonsurvival.misc.DragonType;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.claw.DragonClawsMenuToggle;
 import by.jackraidenph.dragonsurvival.network.claw.SyncDragonClawRender;
@@ -357,14 +356,20 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
             }
         });
     
-        addButton(new Button(leftPos - 58, topPos - 40, 32, 32, null, (button) -> {}){
+        addButton(new HelpButton(leftPos - 58, topPos - 40, 32, 32, null){
             @Override
             public void renderButton(MatrixStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_)
             {
                 this.visible = clawsMenu;
                 this.active = clawsMenu;
             }
-        
+    
+            @Override
+            public void render(MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_)
+            {
+                this.isHovered = p_230430_2_ >= this.x && p_230430_3_ >= this.y && p_230430_2_ < this.x + this.width && p_230430_3_ < this.y + this.height;
+            }
+    
             @Override
             public void renderToolTip(MatrixStack stack, int mouseX, int mouseY)
             {
@@ -441,44 +446,15 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
                                                                                       new TranslationTextComponent("ds.gui.growth_help", result)));
                 Minecraft.getInstance().screen.renderComponentTooltip(stack, description, mouseX, mouseY);
             }
-    
-            @Override
-            public boolean mouseClicked(double p_231044_1_, double p_231044_3_, int p_231044_5_)
-            {
-                return false;
-            }
         });
         
-        addButton(new Button(leftPos - 80 + 33, topPos + 111, 11, 11, null, (button) -> {}){
+        addButton(new HelpButton(leftPos - 80 + 34, topPos + 112, 9, 9, "ds.skill.help.claws"){
             @Override
-            public void renderButton(MatrixStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_)
+            public void render(MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_)
             {
                 this.visible = clawsMenu;
                 this.active = clawsMenu;
-                
-                if(isHovered()){
-                    minecraft.getTextureManager().bind(ClientMagicHUDHandler.widgetTextures);
-                    DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
-                    if(handler != null) {
-                        int xP = handler.getType() == DragonType.SEA ? 0 : handler.getType() == DragonType.FOREST ? 18 : 36;
-                        GL11.glPushMatrix();
-                        blit(stack, x + 1, y + 1, xP / 2, 204 / 2, 9, 9, 128, 128);
-                        GL11.glPopMatrix();
-                    }
-                }
-            }
-        
-            @Override
-            public void renderToolTip(MatrixStack stack, int mouseX, int mouseY)
-            {
-                ArrayList<ITextComponent> description = new ArrayList<>(Arrays.asList(new TranslationTextComponent("ds.skill.help.claws")));
-                Minecraft.getInstance().screen.renderComponentTooltip(stack, description, mouseX, mouseY);
-            }
-    
-            @Override
-            public boolean mouseClicked(double p_231044_1_, double p_231044_3_, int p_231044_5_)
-            {
-                return false;
+                super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
             }
         });
     
@@ -536,7 +512,7 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
             }
         });
     
-        addButton(new ImageButton(this.leftPos + (imageWidth - 28), (this.height / 2) + 40, 18, 18, 0, 0, 18, SETTINGS_BUTTON, p_onPress_1_ -> {
+        addButton(new ImageButton(this.leftPos + (imageWidth - 27), (this.height / 2) + 40, 18, 18, 0, 0, 18, SETTINGS_BUTTON, p_onPress_1_ -> {
             Minecraft.getInstance().setScreen(new SettingsSideScreen(this, Minecraft.getInstance().options, new TranslationTextComponent("ds.gui.tab_button.4")));
         }){
             @Override

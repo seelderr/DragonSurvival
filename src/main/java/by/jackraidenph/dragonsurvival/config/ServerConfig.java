@@ -11,7 +11,6 @@ import java.util.List;
 
 public class ServerConfig {
 
-	// General
 	public final ForgeConfigSpec.DoubleValue maxFlightSpeed;
 	public final ForgeConfigSpec.BooleanValue mineStarBlock;
     public final ForgeConfigSpec.BooleanValue sizeChangesHitbox;
@@ -21,6 +20,7 @@ public class ServerConfig {
 	public final ForgeConfigSpec.BooleanValue startWithWings;
 	public final ForgeConfigSpec.BooleanValue enableFlightFallDamage;
 	public final ForgeConfigSpec.IntValue flightHungerThreshold;
+	public final ForgeConfigSpec.IntValue foldWingsThreshold;
 	public final ForgeConfigSpec.BooleanValue allowFlyingWithoutHunger;
 	public final ForgeConfigSpec.BooleanValue flyingUsesHunger;
 	public final ForgeConfigSpec.BooleanValue creativeFlight;
@@ -32,6 +32,15 @@ public class ServerConfig {
 	public final ForgeConfigSpec.IntValue treasureRegenTicks;
 	public final ForgeConfigSpec.IntValue treasureRegenTicksReduce;
 	public final ForgeConfigSpec.IntValue maxTreasures;
+	
+	public final ForgeConfigSpec.BooleanValue sourceOfMagicInfiniteMagic;
+	public final ForgeConfigSpec.BooleanValue damageWrongSourceOfMagic;
+	public final ForgeConfigSpec.BooleanValue canUseAllSourcesOfMagic;
+	public final ForgeConfigSpec.IntValue elderDragonDustTime;
+	public final ForgeConfigSpec.IntValue elderDragonBoneTime;
+	public final ForgeConfigSpec.IntValue weakHeartShardTime;
+	public final ForgeConfigSpec.IntValue weakDragonHeartTime;
+	public final ForgeConfigSpec.IntValue elderDragonHeartTime;
 	
 	public final ForgeConfigSpec.IntValue altarUsageCooldown;
 	public final ForgeConfigSpec.DoubleValue newbornJump;
@@ -54,13 +63,9 @@ public class ServerConfig {
 	public final ForgeConfigSpec.DoubleValue maxGrowthModifier;
 	
 	public final ForgeConfigSpec.DoubleValue reachBonus;
-	
 	public final ForgeConfigSpec.BooleanValue saveGrowthStage;
-
-	//Abilities
 	public final ForgeConfigSpec.BooleanValue fireBreathSpreadsFire;
 
-	// Specifics
     public final ForgeConfigSpec.BooleanValue customDragonFoods;
     public final ForgeConfigSpec.BooleanValue healthAdjustments;
     public final ForgeConfigSpec.IntValue minHealth;
@@ -69,7 +74,6 @@ public class ServerConfig {
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> growYoung;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> growAdult;
 
-    // Bonuses
     public final ForgeConfigSpec.BooleanValue bonuses;
     public final ForgeConfigSpec.BooleanValue attackDamage;
     public final ForgeConfigSpec.DoubleValue babyBonusDamage;
@@ -80,32 +84,30 @@ public class ServerConfig {
     public final ForgeConfigSpec.IntValue bonusHarvestLevel;
     public final ForgeConfigSpec.ConfigValue<DragonLevel> bonusUnlockedAt;
     public final ForgeConfigSpec.IntValue speedupEffectLevel; // 0 = Disabled
-    // Cave Dragon
+
     public final ForgeConfigSpec.BooleanValue caveFireImmunity;
     public final ForgeConfigSpec.BooleanValue caveLavaSwimming;
     public final ForgeConfigSpec.IntValue caveLavaSwimmingTicks; // 0 = Disabled
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> caveSpeedupBlocks;
-    // Forest Dragon
+
     public final ForgeConfigSpec.DoubleValue forestFallReduction; // 0.0 = Disabled
     public final ForgeConfigSpec.BooleanValue forestBushImmunity;
 	public final ForgeConfigSpec.BooleanValue forestCactiImmunity;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> forestSpeedupBlocks;
-    // Sea Dragon
     public final ForgeConfigSpec.BooleanValue seaSwimmingBonuses;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> seaSpeedupBlocks;
-    // Penalties
+
     public final ForgeConfigSpec.BooleanValue penalties;
-    // Cave Dragon
+
     public final ForgeConfigSpec.DoubleValue caveWaterDamage; // 0.0 = Disabled
     public final ForgeConfigSpec.DoubleValue caveRainDamage; // 0.0 = Disabled
 	public final ForgeConfigSpec.DoubleValue caveSplashDamage; // 0.0 = Disabled
 	public final ForgeConfigSpec.IntValue chargedSoupBuffDuration; // 0 = Disabled
 
-	// Forest Dragon
     public final ForgeConfigSpec.IntValue forestStressTicks; // 0 = Disabled
     public final ForgeConfigSpec.IntValue forestStressEffectDuration;
     public final ForgeConfigSpec.DoubleValue stressExhaustion;
-    // Sea Dragon
+
     public final ForgeConfigSpec.IntValue seaTicksWithoutWater; // 0 = Disabled
 	public final ForgeConfigSpec.BooleanValue seaTicksBasedOnTemperature;
 	public final ForgeConfigSpec.DoubleValue seaDehydrationDamage;
@@ -114,7 +116,6 @@ public class ServerConfig {
     public final ForgeConfigSpec.IntValue seaTicksWithoutWaterRestored; // 0 = Disabled
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> seaAdditionalWaterUseables;
 
-    // Ore Loot (Networked for JEI)
     public final ForgeConfigSpec.DoubleValue humanOreDustChance;
     public final ForgeConfigSpec.DoubleValue dragonOreDustChance;
     public final ForgeConfigSpec.DoubleValue humanOreBoneChance;
@@ -125,21 +126,25 @@ public class ServerConfig {
 	public final ForgeConfigSpec.DoubleValue weakDragonHeartChance;
 	public final ForgeConfigSpec.DoubleValue elderDragonHeartChance;
 
-	//Items that deal damage when consumed by a specific dragon type
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> seaDragonHurtfulItems;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> caveDragonHurtfulItems;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> forestDragonHurtfulItems;
 
-    // Dragon Food (Networked for Dragonfruit)
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> caveDragonFoods;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> forestDragonFoods;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> seaDragonFoods;
 
-	// Magic System
 	public final ForgeConfigSpec.BooleanValue noEXPRequirements;
 	public final ForgeConfigSpec.BooleanValue consumeEXPAsMana;
+	public final ForgeConfigSpec.IntValue initialPassiveCost;
+	public final ForgeConfigSpec.DoubleValue passiveScalingCost;
+	
 	public final ForgeConfigSpec.IntValue favorableManaTicks;
 	public final ForgeConfigSpec.IntValue normalManaTicks;
+	
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> seaDragonManaBlocks;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> forestDragonManaBlocks;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> caveDragonManaBlocks;
 	
 	public final ForgeConfigSpec.BooleanValue dragonAbilities;
 	public final ForgeConfigSpec.BooleanValue caveDragonAbilities;
@@ -147,6 +152,7 @@ public class ServerConfig {
 	public final ForgeConfigSpec.BooleanValue seaDragonAbilities;
 	
 	public final ForgeConfigSpec.BooleanValue fireBreath;
+	public final ForgeConfigSpec.IntValue fireBreathCooldown;
 	public final ForgeConfigSpec.DoubleValue fireBreathDamage;
 	public final ForgeConfigSpec.IntValue fireBreathInitialMana;
 	public final ForgeConfigSpec.IntValue fireBreathOvertimeMana;
@@ -154,30 +160,43 @@ public class ServerConfig {
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> fireBreathBlockBreaks;
 	
 	public final ForgeConfigSpec.BooleanValue stormBreath;
+	public final ForgeConfigSpec.IntValue stormBreathCooldown;
 	public final ForgeConfigSpec.DoubleValue stormBreathDamage;
 	public final ForgeConfigSpec.IntValue stormBreathInitialMana;
 	public final ForgeConfigSpec.IntValue stormBreathOvertimeMana;
 	public final ForgeConfigSpec.IntValue stormBreathManaTicks;
+	public final ForgeConfigSpec.IntValue stormBreathChainCount;
+	public final ForgeConfigSpec.IntValue chargedEffectChainCount;
+	public final ForgeConfigSpec.IntValue chargedEffectMaxChain;
+	public final ForgeConfigSpec.IntValue chargedChainRange;
+	public final ForgeConfigSpec.IntValue chargedEffectDamage;
+	
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> stormBreathBlockBreaks;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> chargedBlacklist;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> chargedSpreadBlacklist;
 	
 	
 	public final ForgeConfigSpec.BooleanValue forestBreath;
+	public final ForgeConfigSpec.IntValue forestBreathCooldown;
 	public final ForgeConfigSpec.DoubleValue forestBreathDamage;
 	public final ForgeConfigSpec.IntValue forestBreathInitialMana;
 	public final ForgeConfigSpec.IntValue forestBreathOvertimeMana;
 	public final ForgeConfigSpec.IntValue forestBreathManaTicks;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> forestBreathGrowBlacklist;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> forestBreathBlockBreaks;
 	
 	public final ForgeConfigSpec.BooleanValue spike;
+	public final ForgeConfigSpec.IntValue spikeCooldown;
 	public final ForgeConfigSpec.DoubleValue spikeDamage;
 	public final ForgeConfigSpec.IntValue spikeManaCost;
 	
 	public final ForgeConfigSpec.BooleanValue inspiration;
+	public final ForgeConfigSpec.IntValue inspirationCooldown;
 	public final ForgeConfigSpec.IntValue inspirationDuration;
 	public final ForgeConfigSpec.IntValue inspirationManaCost;
 	
 	public final ForgeConfigSpec.BooleanValue hunter;
+	public final ForgeConfigSpec.IntValue hunterCooldown;
 	public final ForgeConfigSpec.IntValue hunterDuration;
 	public final ForgeConfigSpec.DoubleValue hunterDamageBonus;
 	public final ForgeConfigSpec.IntValue hunterManaCost;
@@ -188,34 +207,42 @@ public class ServerConfig {
 	public final ForgeConfigSpec.BooleanValue cliffHanger;
 	
 	public final ForgeConfigSpec.BooleanValue ballLightning;
+	public final ForgeConfigSpec.IntValue ballLightningCooldown;
 	public final ForgeConfigSpec.DoubleValue ballLightningDamage;
 	public final ForgeConfigSpec.IntValue ballLightningManaCost;
 	
 	public final ForgeConfigSpec.BooleanValue revealingTheSoul;
+	public final ForgeConfigSpec.IntValue revealingTheSoulCooldown;
 	public final ForgeConfigSpec.IntValue revealingTheSoulDuration;
 	public final ForgeConfigSpec.IntValue revealingTheSoulManaCost;
 	public final ForgeConfigSpec.IntValue revealingTheSoulMaxEXP;
 	public final ForgeConfigSpec.DoubleValue revealingTheSoulMultiplier;
 	
 	public final ForgeConfigSpec.BooleanValue seaEyes;
+	public final ForgeConfigSpec.IntValue seaEyesCooldown;
 	public final ForgeConfigSpec.IntValue seaEyesDuration;
 	public final ForgeConfigSpec.IntValue seaEyesManaCost;
 	
 	public final ForgeConfigSpec.BooleanValue seaMagic;
 	public final ForgeConfigSpec.BooleanValue seaAthletics;
 	public final ForgeConfigSpec.BooleanValue water;
+	
 	public final ForgeConfigSpec.BooleanValue spectralImpact;
+	public final ForgeConfigSpec.IntValue spectralImpactProcChance;
 	
 	public final ForgeConfigSpec.BooleanValue fireball;
+	public final ForgeConfigSpec.IntValue fireballCooldown;
 	public final ForgeConfigSpec.DoubleValue fireballDamage;
 	public final ForgeConfigSpec.IntValue fireballManaCost;
 	
 	public final ForgeConfigSpec.BooleanValue toughSkin;
+	public final ForgeConfigSpec.IntValue toughSkinCooldown;
 	public final ForgeConfigSpec.IntValue toughSkinDuration;
 	public final ForgeConfigSpec.IntValue toughSkinManaCost;
 	public final ForgeConfigSpec.DoubleValue toughSkinArmorValue;
 	
 	public final ForgeConfigSpec.BooleanValue lavaVision;
+	public final ForgeConfigSpec.IntValue lavaVisionCooldown;
 	public final ForgeConfigSpec.IntValue lavaVisionDuration;
 	public final ForgeConfigSpec.IntValue lavaVisionManaCost;
 	
@@ -240,16 +267,16 @@ public class ServerConfig {
 		
 		keepClawItems = builder
 				.comment("Whether to keep items in the claw slots on death otherwise they will drop on death.")
-				.define("keepClawItems", true);
+				.define("keepClawItems", false);
 		
 		syncClawRender = builder
-				.comment("If players are allowed to hide their claws and teeth from other players.")
+				.comment("If players are allowed to hide their claws and teeth from other players. If it is important to you to see your opponent's weapon during pvp, set false.")
 				.define("syncClawRender", true);
 		
 		// Growth
 		builder.pop().push("growth");
 		sizeChangesHitbox = builder
-				.comment("Whether the dragon size determines its hitbox size.")
+				.comment("Whether the dragon size determines its hitbox size. The bigger the dragon, the bigger the hitbox. If false standard player's hitbox be used.")
 				.define("sizeChangesHitbox", true);
 		hitboxGrowsPastHuman = builder
 				.comment("Whether the dragon hitbox grows past a human hitbox.")
@@ -276,13 +303,13 @@ public class ServerConfig {
 				.comment("Defines if dragon should grow without requirement of catalyst items. Your dragon will just grow over time.")
 				.define("alternateGrowing", true);
 		maxGrowthSize = builder
-				.comment("Defines the max size your dragon can grow to.")
+				.comment("Defines the max size your dragon can grow to. Values that are too high can break your game. It is not advisable to set a number higher than 60.")
 				.defineInRange("maxGrowthSize", 60.0, 14.0, 1000000.0);
 		reachBonus = builder
-				.comment("The bonus that is given to dragons at ever 60 size. Human players have 1.0x reach and a size 60 dragon will have 1.5x distance with default value")
+				.comment("The bonus that is given to dragons at ever 60 size. Human players have 1.0x reach and a size 60 dragon will have 1.5x distance with default value. Only applies to block mining.")
 				.defineInRange("reachBonus", 0.5, 0, 1000000.0);
 		saveGrowthStage = builder
-				.comment("Should the growth stage of a dragon be saved even when you change. Does not affect the saving progress of magic (use saveAllAbilities).")
+				.comment("Should the growth stage of a dragon be saved even when you change. Does not affect the saving progress of magic (use saveAllAbilities). The author does not approve of weredragons, but if you insist...")
 				.define("saveGrowthStage", false);
 		minHealth = builder
 				.comment("Dragon starting health. Minumum health dragons will start off with.")
@@ -292,30 +319,30 @@ public class ServerConfig {
 				.defineInRange("maxHealth", 40, 1, 100);
 		
 		newbornGrowthModifier = builder
-				.comment("A multiplier to change the growth rate from newborn to young.")
+				.comment("A multiplier to change the growth rate from newborn to young. At 1.0 it takes about 3 hours to turn a newborn dragon into a young dragon.")
 				.defineInRange("newbornGrowthModifier", 1.0, 0, 1000);
 		
 		youngGrowthModifier = builder
-				.comment("A multiplier to change the growth rate from young to adult.")
+				.comment("A multiplier to change the growth rate from young to adult. At 1.0 it takes about 1 day to turn a young dragon into a adult dragon.")
 				.defineInRange("youngGrowthModifier", 1.0, 0, 1000);
 		
 		adultGrowthModifier = builder
-				.comment("A multiplier to change the growth rate from adult to a full sized adult.")
+				.comment("A multiplier to change the growth rate from adult to a full sized adult. At 1.0 it takes about 3 days to become a dragon of maximum adult size.")
 				.defineInRange("adultGrowthModifier", 1.0, 0, 1000);
 		
 		maxGrowthModifier = builder
-				.comment("A multiplier to change the growth rate from full sized adult to max size.")
+				.comment("A multiplier to change the growth rate from full sized adult to max size. The change in growth after the maximum adult size is measured in months and years.")
 				.defineInRange("maxGrowthModifier", 1.0, 0, 1000);
 		
 		builder.pop().push("drops");
 		dragonHeartShardChance = builder
-				.comment("The chance for dragon heart shards to drop from mobs with max health between 14-20")
-				.defineInRange("dragonHeartShardChance", 0.05, 0.0, 1.0);
+				.comment("The chance for dragon heart shards to drop from any mobs with max health between 14-20")
+				.defineInRange("dragonHeartShardChance", 0.02, 0.0, 1.0);
 		weakDragonHeartChance = builder
-				.comment("The chance for dragon heart shards to drop from mobs with max health between 20-50")
-				.defineInRange("weakDragonHeartChance", 0.06, 0.0, 1.0);
+				.comment("The chance for dragon heart shards to drop from any mobs with max health between 20-50")
+				.defineInRange("weakDragonHeartChance", 0.02, 0.0, 1.0);
 		elderDragonHeartChance = builder
-				.comment("The chance for dragon heart shards to drop from mobs with max health above 50")
+				.comment("The chance for dragon heart shards to drop from any mobs with max health above 50")
 				.defineInRange("elderDragonHeartChance", 0.2, 0.0, 1.0);
 		
 		// Treasure
@@ -324,7 +351,7 @@ public class ServerConfig {
 				.comment("Whether sleeping on treasure will recover health or not. ")
 				.define("treasureHealthRegen", true);
 		treasureRegenTicks = builder
-				.comment("The time in ticks it takes to recover 1hp while sleeping on treasure")
+				.comment("The time in ticks it takes to recover 1hp while sleeping on treasure. Keep in mind that there is 1 treasure in mind. A large number of treasures in one place reduces time.")
 				.defineInRange("treasureRegenTicks", 24000, 1, 10000000);
 		treasureRegenTicksReduce = builder
 				.comment("The amount of ticks each additional treasure reduces the regen time by")
@@ -332,34 +359,68 @@ public class ServerConfig {
 		maxTreasures = builder
 				.comment("The max amount of additional treasure that can be used to reduce the regen time")
 				.defineInRange("maxTreasures", 240, 1, 10000000);
+		
+		// Source of Magic
+		builder.pop().push("source_of_magic");
+		sourceOfMagicInfiniteMagic = builder
+				.comment("Whether using the source of magic block will grant the infinite magic buff.")
+				.define("sourceOfMagicInfiniteMagic", true);
+		
+		damageWrongSourceOfMagic = builder
+				.comment("Whether using the the source of magic intended for another dragon type will hurt you.")
+				.define("damageWrongSourceOfMagic", true);
+		canUseAllSourcesOfMagic = builder
+				.comment("Whether you are able to use all types of source of magic no matter your dragon type.")
+				.define("canUseAllSourcesOfMagic", false);
+		
+		elderDragonDustTime = builder
+				.comment("How long duration of the infinite magic effect using elder dragon dust gives in seconds. Note that you also spend 10 seconds while waiting.")
+				.defineInRange("elderDragonDustTime", 20, 1, 10000);
+		elderDragonBoneTime = builder
+				.comment("How long duration of the infinite magic effect using elder dragon bone gives in seconds. Note that you also spend 10 seconds while waiting.")
+				.defineInRange("elderDragonBoneTime", 60, 1, 10000);
+		weakHeartShardTime = builder
+				.comment("How long duration of the infinite magic effect using weak heart shard gives in seconds. Note that you also spend 10 seconds while waiting.")
+				.defineInRange("weakHeartShardTime", 110, 1, 10000);
+		weakDragonHeartTime = builder
+				.comment("How long duration of the infinite magic effect using weak dragon heart gives in seconds. Note that you also spend 10 seconds while waiting.")
+				.defineInRange("weakDragonHeartTime", 310, 1, 10000);
+		elderDragonHeartTime = builder
+				.comment("How long duration of the infinite magic effect using elder dragon heart gives in seconds. Note that you also spend 10 seconds while waiting.")
+				.defineInRange("elderDragonHeartTime", 1010, 1, 10000);
+		
 		// Wings
 		builder.pop().push("wings");
 		maxFlightSpeed = builder
-				.defineInRange("maxFlightSpeed", 0.1, 0.1, 1);
+				.comment("Maximum acceleration fly speed up and down. Take into account the chunk load speed. A speed of 0.3 is optimal.")
+				.defineInRange("maxFlightSpeed", 0.3, 0.1, 1);
 		startWithWings = builder
-				.comment("Whether dragons start out with wings.")
+				.comment("Whether dragons born with wings.")
 				.define("startWithWings", true);
 		enderDragonGrantsSpin = builder
 				.comment("Whether you should be able to obtain the spin ability from the ender dragon.")
 				.define("enderDragonGrantsSpin", true);
 		allowFlyingWithoutHunger = builder
-				.comment("Whether dragons can fly when totally hungry.")
+				.comment("Whether dragons can fly when totally hungry. You can't open your wings if you're hungry.")
 				.define("allowFlyingWhenTotallyHungry", false);
 		flightHungerThreshold = builder
 				.comment("If the player's hunger is below this parameter, he can't open his wings.")
 				.defineInRange("flightHungerThreshold", 6, 0, 20);
+		foldWingsThreshold = builder
+				.comment("If the player's hunger is less then or equal to this parameter, the wings will be folded even during flight.")
+				.defineInRange("flightHungerThreshold", 0, 0, 20);
 		flyingUsesHunger = builder
 				.comment("Whether you use up hunger while flying.")
 				.define("flyingUsesHunger", true);
 		enableFlightFallDamage = builder
-				.comment("Whether fatal fall damage in flight is included. If true dragon will take fatal damage from the fall.")
+				.comment("Whether fall damage in flight is included. If true dragon will take damage from the fall.")
 				.define("enableFlightFallDamage", true);
 		lethalFlight = builder
 				.comment("Whether fall damage from flight is lethal, otherwise it will leave you at half a heart")
 				.define("lethalFallDamage", false);
 		foldWingsOnLand = builder
-				.comment("Whether your wings will fold automatically when landing.")
-				.define("foldWingsOnLand", true);
+				.comment("Whether your wings will fold automatically when landing. Has protection against accidental triggering, so the wings do not always close. If you always need to close the wings manually.")
+				.define("foldWingsOnLand", false);
 		creativeFlight = builder
 				.comment("Whether to use flight similar to creative rather then gliding.")
 				.define("alternateFlight", false);
@@ -370,10 +431,10 @@ public class ServerConfig {
 		// Innate dragon bonuses
 		builder.pop().push("bonuses");
 		healthAdjustments = builder
-				.comment("Apply a health modifier for dragons.")
+				.comment("Apply a health modifier for dragons. The older the dragon, the more health it has.")
 				.define("healthMod", true);
 		bonuses = builder
-				.comment("Set to false to toggle off all dragon bonuses.")
+				.comment("Set to false to toggle off all dragon bonuses and play as human.")
 				.define("bonuses", true);
 		attackDamage = builder
 				.comment("Apply an attack damage modifier for dragons.")
@@ -417,13 +478,14 @@ public class ServerConfig {
 				.comment("Whether cave dragons are immune to fire damage types.")
 				.define("fireImmunity", true);
 		caveLavaSwimming = builder
-				.comment("Set to false to disable cave dragon lava swimming.")
+				.comment("Set to false to disable cave dragon fast lava swimming.")
 				.define("lavaSwimming", true);
 		caveLavaSwimmingTicks = builder
 				.comment("The maximum number of ticks a cave dragon can swim in lava. Set to 0 to allow unlimited air while under lava.")
 				.defineInRange("lavaSwimTicks", 3600, 0, 100000);
 		caveSpeedupBlocks = builder
 				.comment("Blocks cave dragons gain speed when standing above. Formatting: block/tag:modid:id")
+				.worldRestart()
 				.defineList("caveSpeedupBlocks", Arrays.asList(
 						"tag:minecraft:base_stone_nether",
 						"tag:minecraft:base_stone_overworld",
@@ -451,6 +513,7 @@ public class ServerConfig {
 				.define("cactiImmunity", true);
 		forestSpeedupBlocks = builder
 				.comment("Blocks forest dragons gain speed when standing above. Formatting: block/tag:modid:id")
+				.worldRestart()
 				.defineList("forestSpeedupBlocks", Arrays.asList(
 						"tag:minecraft:logs",
 						"tag:minecraft:leaves",
@@ -465,6 +528,7 @@ public class ServerConfig {
 				.define("waterBonuses", true);
 		seaSpeedupBlocks = builder
 				.comment("Blocks sea dragons gain speed when standing above. Formatting: block/tag:modid:id")
+				.worldRestart()
 				.defineList("seaSpeedupBlocks", Arrays.asList(
 						"tag:minecraft:ice",
 						"tag:minecraft:impermeable",
@@ -490,7 +554,9 @@ public class ServerConfig {
 				.define("penalties", true);
 		allowedVehicles = builder
 				.comment("List of rideable entities. Format: modid:id")
-				.defineList("allowedVehicles", Lists.newArrayList(), value -> value instanceof String);
+				.defineList("allowedVehicles", Lists.newArrayList(
+						"minecraft:boat"
+				), value -> value instanceof String);
 		
 		ridingBlacklist= builder
 				.comment("Should dragons be limited by which entities they can ride")
@@ -657,10 +723,12 @@ public class ServerConfig {
 				.defineInRange("dehydrationDamage", 1.0, 0.5, 100.0);
 		seaHydrationBlocks = builder
 				.comment("When sea dragons stand on these blocks, hydration is restored. Format: block/tag:modid:id")
+				.worldRestart()
 				.defineList("seaHydrationBlocks", Arrays.asList(
 						"tag:minecraft:ice",
 						"block:minecraft:snow",
-						"block:minecraft:snow_block"
+						"block:minecraft:snow_block",
+						"block:dragonsurvival:sea_source_of_magic"
 				), this::isValidBlockConfig);
 		seaAllowWaterBottles = builder
 				.comment("Set to false to disable sea dragons using vanilla water bottles to avoid dehydration.")
@@ -670,6 +738,7 @@ public class ServerConfig {
 				.defineInRange("waterItemRestorationTicks", 5000, 0, 100000);
 		seaAdditionalWaterUseables = builder
 				.comment("Additional modded USEABLE items that restore water when used (called from LivingEntityUseItemEvent.Finish). Format: item/tag:modid:id")
+				.worldRestart()
 				.defineList("seaHydrationItems", Collections.singletonList(
 						"item:minecraft:enchanted_golden_apple"
 				), this::isValidItemConfig);
@@ -680,7 +749,7 @@ public class ServerConfig {
 				.defineInRange("humanOreDustChance", 0.1, 0.0, 1.0);
         dragonOreDustChance = builder
         		.comment("The odds of dust dropping when a dragon harvests an ore.")
-        		.defineInRange("dragonOreDustChance", 0.4, 0.0, 1.0);
+        		.defineInRange("dragonOreDustChance", 0.2, 0.0, 1.0);
         humanOreBoneChance = builder
         		.comment("The odds of a bone dropping when a human harvests an ore.")
         		.defineInRange("humanOreBoneChance", 0.0, 0.0, 1.0);
@@ -717,14 +786,15 @@ public class ServerConfig {
 		builder.comment("Dragon food formatting: item/tag:modid:id:food:saturation. Food/saturation values are optional as the human values will be used if missing.");
 
 		caveDragonFoods = builder
+				.worldRestart()
 				.defineList("caveDragon", Arrays.asList(
 						"tag:minecraft:coals:1:1",
 						"item:minecraft:charcoal:1:2",
 						"item:minecraft:golden_apple",
 						"item:minecraft:enchanted_golden_apple",
-						"item:dragonsurvival:charged_coal:4:2",
+						"item:dragonsurvival:charged_coal:6:1",
 						"item:dragonsurvival:charred_meat:10:12",
-						"item:dragonsurvival:cave_dragon_treat:10:12",
+						"item:dragonsurvival:cave_dragon_treat:14:12",
 						"item:dragonsurvival:charred_seafood:8:10",
 						"item:dragonsurvival:charred_vegetable:8:9",
 						"item:dragonsurvival:charred_mushroom:8:5",
@@ -759,9 +829,10 @@ public class ServerConfig {
 				), this::isValidFoodConfig);
 
 		forestDragonFoods = builder
+				.worldRestart()
 				.defineList("forestDragon", Arrays.asList(
 						"tag:forge:raw_meats:5:7",
-						"item:minecraft:sweet_berries:2:2",
+						"item:minecraft:sweet_berries:1:1",
 						"item:minecraft:rotten_flesh:2:3",
 						"item:minecraft:spider_eye:7:8",
 						"item:minecraft:rabbit:7:13",
@@ -905,6 +976,7 @@ public class ServerConfig {
 				), this::isValidFoodConfig);
 
 		seaDragonFoods = builder
+				.worldRestart()
 				.defineList("seaDragon", Arrays.asList(
 						"tag:forge:raw_fishes:6:7",
 						"item:minecraft:dried_kelp:1:1",
@@ -1055,6 +1127,46 @@ public class ServerConfig {
 		builder.pop().pop().push("magic");
 		builder.comment("Config values for the magic system");
 		
+		builder.push("Mana");
+		
+		seaDragonManaBlocks = builder
+				.worldRestart()
+				.comment("Blocks that will restore mana quicker when a sea dragon is standing on it. Formatting: block/tag:modid:blockid")
+				.defineList("seaDragonManaBlocks", Arrays.asList(
+						"block:dragonsurvival:sea_source_of_magic",
+						"block:minecraft:ice",
+						"block:minecraft:snow",
+						"block:minecraft:snow_block",
+						"block:minecraft:water",
+						"block:minecraft:wet_sponge",
+						"block:minecraft:cauldron"
+				), this::isValidBlockConfig);
+		
+		forestDragonManaBlocks = builder
+				.worldRestart()
+				.comment("Blocks that will restore mana quicker when a forest dragon is standing on it. Formatting: block/tag:modid:blockid")
+				.defineList("forestDragonManaBlocks", Arrays.asList(
+						"block:dragonsurvival:forest_source_of_magic",
+						"tag:minecraft:small_flowers",
+						"tag:minecraft:flowers",
+						"tag:minecraft:tall_flowers"
+				), this::isValidBlockConfig);
+		
+		caveDragonManaBlocks = builder
+				.worldRestart()
+				.comment("Blocks that will restore mana quicker when a cave dragon is standing on it. Formatting: block/tag:modid:blockid")
+				.defineList("caveDragonManaBlocks", Arrays.asList(
+						"block:dragonsurvival:cave_source_of_magic",
+						"tag:minecraft:campfires",
+						"block:minecraft:lava",
+						"block:minecraft:smoker",
+						"block:minecraft:furnace",
+						"block:minecraft:magma_block",
+						"block:minecraft:blast_furnace"
+				), this::isValidBlockConfig);
+		
+		builder.pop();
+		
 		dragonAbilities = builder
 				.comment("Whether dragon abilities should be enabled")
 				.define("dragonAbilities", true);
@@ -1079,7 +1191,16 @@ public class ServerConfig {
 		consumeEXPAsMana = builder
 				.comment("Whether to use exp instead of mana if mana is empty")
 				.define("consumeEXPAsMana", true);
-		
+
+		initialPassiveCost = builder
+				.comment("The initial exp cost for leveling passive skills.")
+				.defineInRange("initialPassiveCost", 2, 0, 100);
+
+		passiveScalingCost = builder
+				.comment("The multiplier that is used to increase the passive skill costs per level")
+				.defineInRange("passiveScalingCost", 4.0, 0, 100);
+
+
 		favorableManaTicks = builder
 				.comment("How fast in seconds should mana be recovered in favorable conditions")
 				.defineInRange("favorableManaRegen", 5, 1, 1000);
@@ -1098,6 +1219,8 @@ public class ServerConfig {
 		builder.push("actives");
 		
 		{
+			builder.push("forest_breath");
+			
 			forestBreath = builder
 					.comment("Whether the forest breath ability should be enabled")
 					.define("forestBreath", true);
@@ -1105,6 +1228,10 @@ public class ServerConfig {
 			forestBreathDamage = builder
 					.comment("The amount of damage the forest breath ability deals. This value is multiplied by the skill level.")
 					.defineInRange("forestBreathDamage", 2.0, 0, 100.0);
+			
+			forestBreathCooldown = builder
+					.comment("The cooldown in ticks of the forest breath ability")
+					.defineInRange("forestBreathCooldown", Functions.secondsToTicks(5), 1, 10000);
 			
 			forestBreathInitialMana = builder
 					.comment("The mana cost for starting the forest breath ability")
@@ -1120,15 +1247,26 @@ public class ServerConfig {
 			
 			forestBreathBlockBreaks = builder
 					.comment("Blocks that have a chance to be broken by forest breath. Formatting: block/tag:modid:id")
-					.defineList("stormBreathBlockBreaks", Arrays.asList(
+					.worldRestart()
+					.defineList("forestBreathBlockBreaks", Arrays.asList(
 							"tag:minecraft:banners"
 					), this::isValidBlockConfig);
+			
+			forestBreathGrowBlacklist = builder
+					.comment("Blocks that will not be grown by the forest breath. Formatting: block/tag:modid:id")
+					.worldRestart()
+					.defineList("forestBreathGrowBlacklist", Arrays.asList(), this::isValidBlockConfig);
 		}
-		
 		{
+			builder.pop().push("spike");
+			
 			spike = builder
 					.comment("Whether the spike ability should be enabled")
 					.define("spike", true);
+			
+			spikeCooldown = builder
+					.comment("The cooldown in ticks of the spike ability")
+					.defineInRange("spikeCooldown", Functions.secondsToTicks(3), 1, 10000);
 			
 			spikeDamage = builder
 					.comment("The amount of damage the spike ability deals. This value is multiplied by the skill level.")
@@ -1141,9 +1279,15 @@ public class ServerConfig {
 		}
 		
 		{
+			builder.pop().push("inspiration");
+			
 			inspiration = builder
 					.comment("Whether the inspiration ability should be enabled")
 					.define("inspiration", true);
+			
+			inspirationCooldown = builder
+					.comment("The cooldown in ticks of the inspiration ability")
+					.defineInRange("inspirationCooldown", Functions.secondsToTicks(90), 1, 10000);
 			
 			inspirationDuration = builder
 					.comment("The duration in seconds of the inspiration effect given when the ability is used")
@@ -1156,6 +1300,8 @@ public class ServerConfig {
 		}
 		
 		{
+			builder.pop().push("hunter");
+			
 			hunter = builder
 					.comment("Whether the hunter ability should be enabled")
 					.define("hunter", true);
@@ -1163,6 +1309,10 @@ public class ServerConfig {
 			hunterDuration = builder
 					.comment("The duration in seconds of the inspiration effect given when the ability is used")
 					.defineInRange("hunterDuration", 60, 0, 10000);
+			
+			hunterCooldown = builder
+					.comment("The cooldown in ticks of the hunter ability")
+					.defineInRange("hunterCooldown", Functions.secondsToTicks(30), 1, 10000);
 			
 			hunterDamageBonus = builder
 					.comment("The damage bonus the hunter effect gives when invisible. This value is multiplied by the skill level.")
@@ -1174,7 +1324,7 @@ public class ServerConfig {
 			
 		}
 		
-		builder.pop().push("passives");
+		builder.pop().pop().push("passives");
 		
 		{
 			forestMagic = builder
@@ -1200,6 +1350,8 @@ public class ServerConfig {
 		builder.pop().pop().push("sea_dragon");
 		builder.push("actives");
 		{
+			builder.push("storm_breath");
+			
 			stormBreath = builder
 					.comment("Whether the storm breath ability should be enabled")
 					.define("stormBreath", true);
@@ -1212,6 +1364,10 @@ public class ServerConfig {
 					.comment("The mana cost for starting the storm breath ability")
 					.defineInRange("stormBreathInitialMana", 2, 0, 100);
 			
+			stormBreathCooldown = builder
+					.comment("The cooldown in ticks of the storm breath ability")
+					.defineInRange("stormBreathCooldown", Functions.secondsToTicks(5), 1, 10000);
+			
 			stormBreathOvertimeMana = builder
 					.comment("The mana cost of sustaining the storm breath ability")
 					.defineInRange("stormBreathOvertimeMana", 1, 0, 100);
@@ -1222,6 +1378,7 @@ public class ServerConfig {
 			
 			stormBreathBlockBreaks = builder
 					.comment("Blocks that have a chance to be broken by storm breath. Formatting: block/tag:modid:id")
+					.worldRestart()
 					.defineList("stormBreathBlockBreaks", Arrays.asList(
 							"tag:minecraft:impermeable",
 							"block:minecraft:snow",
@@ -1240,12 +1397,43 @@ public class ServerConfig {
 							"upgrade_aquatic:thrasher",
 							"upgrade_aquatic:great_thrasher"
 					), value -> value instanceof String);
+			
+			stormBreathChainCount = builder
+					.comment("How many mobs stormbreath is able to chain to at once")
+					.defineInRange("stormBreathChainCount", 2, 0, 100);
+			
+			chargedEffectChainCount = builder
+					.comment("How many mobs the charged effect is able to chain to at once")
+					.defineInRange("chargedEffectChainCount", 2, 0, 100);
+			
+			chargedEffectMaxChain = builder
+					.comment("How many times the charged effect is able to chain. -1 means it can chain infinitely")
+					.defineInRange("chargedEffectMaxChain", -1, -1, 100);
+			
+			chargedChainRange = builder
+					.comment("The max distance in blocks the storm breath and charged effect is able to chain to mobs")
+					.defineInRange("chargedChainRange", 6, 0, 100);
+			
+			chargedEffectDamage = builder
+					.comment("The amount of damage the charged effect deals each second")
+					.defineInRange("chargedEffectDamage", 1, 0, 100);
+			
+			chargedSpreadBlacklist = builder
+					.comment("List of entities that will not spread the charged effect. Format: modid:id")
+					.defineList("chargedBlacklist", Arrays.asList(), value -> value instanceof String);
+			
 		}
 		
 		{
+			builder.pop().push("ball_lightning");
+			
 			ballLightning = builder
 					.comment("Whether the lightning ball ability should be enabled")
 					.define("ballLightning", true);
+			
+			ballLightningCooldown = builder
+					.comment("The cooldown in ticks of the ball lightning ability")
+					.defineInRange("ballLightningCooldown", Functions.secondsToTicks(60), 1, 10000);
 			
 			ballLightningDamage = builder
 					.comment("The amount of damage the lightning ball ability deals. This value is multiplied by the skill level.")
@@ -1258,6 +1446,8 @@ public class ServerConfig {
 		}
 		
 		{
+			builder.pop().push("revealing_the_soul");
+			
 			revealingTheSoul = builder
 					.comment("Whether the revealing The Soul ability should be enabled")
 					.define("revealingTheSoul", true);
@@ -1265,6 +1455,10 @@ public class ServerConfig {
 			revealingTheSoulDuration = builder
 					.comment("The duration in seconds of the revealing The Soul effect given when the ability is used")
 					.defineInRange("revealingTheSoulDuration", 60, 0, 10000);
+			
+			revealingTheSoulCooldown = builder
+					.comment("The cooldown in ticks of the revealing the soul ability")
+					.defineInRange("revealingTheSoulCooldown", Functions.secondsToTicks(30), 1, 10000);
 			
 			revealingTheSoulManaCost = builder
 					.comment("The mana cost for using the revealing The Soul ability")
@@ -1280,21 +1474,27 @@ public class ServerConfig {
 		}
 		
 		{
+			builder.pop().push("sea_vision");
+			
 			seaEyes = builder
-					.comment("Whether the sea eyes ability should be enabled")
-					.define("seaEyes", true);
+					.comment("Whether the sea vision ability should be enabled")
+					.define("seaVision", true);
 			
 			seaEyesDuration = builder
-					.comment("The duration in seconds of the sea eyes effect given when the ability is used")
-					.defineInRange("seaEyesDuration", 90, 0, 10000);
+					.comment("The duration in seconds of the sea vision effect given when the ability is used")
+					.defineInRange("seaVisionDuration", 90, 0, 10000);
+			
+			seaEyesCooldown = builder
+					.comment("The cooldown in ticks of the sea vision ability")
+					.defineInRange("seaVisionCooldown", Functions.secondsToTicks(60), 1, 10000);
 			
 			seaEyesManaCost = builder
-					.comment("The mana cost for using the sea eyes ability")
-					.defineInRange("seaEyesManaCost", 2, 0, 100);
+					.comment("The mana cost for using the sea vision ability")
+					.defineInRange("seaVisionManaCost", 2, 0, 100);
 			
 		}
 		
-		builder.pop().push("passives");
+		builder.pop().pop().push("passives");
 		
 		{
 			seaMagic = builder
@@ -1313,23 +1513,32 @@ public class ServerConfig {
 					.comment("Whether the spectralImpact ability should be enabled")
 					.define("spectralImpact", true);
 			
+			spectralImpactProcChance = builder
+					.comment("The percentage chance that spectral impact will proc. This is multiplied by the level of the skill.")
+					.defineInRange("spectralImpactProcChance", 15, 0, 100);
 		}
 		
 		builder.pop().pop().push("cave_dragon");
 		builder.push("actives");
 		
 		{
+			builder.push("fire_breath");
+			
 			fireBreath = builder
 					.comment("Whether the firebreath ability should be enabled")
 					.define("fireBreath", true);
 			
 			fireBreathDamage = builder
 					.comment("The amount of damage the firebreath ability deals. This value is multiplied by the skill level.")
-					.defineInRange("fireballDamage", 3.0, 0, 100.0);
+					.defineInRange("fireBreathDamage", 3.0, 0, 100.0);
 			
 			fireBreathInitialMana = builder
 					.comment("The mana cost for starting the firebreath ability")
 					.defineInRange("fireBreathInitialMana", 2, 0, 100);
+			
+			fireBreathCooldown = builder
+					.comment("The cooldown in ticks of the fire breath ability")
+					.defineInRange("fireBreathCooldown", Functions.secondsToTicks(5), 1, 10000);
 			
 			fireBreathOvertimeMana = builder
 					.comment("The mana cost of sustaining the firebreath ability")
@@ -1345,6 +1554,7 @@ public class ServerConfig {
 			
 			fireBreathBlockBreaks = builder
 					.comment("Blocks that have a chance to be broken by fire breath. Formatting: block/tag:modid:id")
+					.worldRestart()
 					.defineList("fireBreathBlockBreaks", Arrays.asList(
 							"tag:minecraft:ice",
 							"block:minecraft:snow",
@@ -1371,9 +1581,16 @@ public class ServerConfig {
 		}
 		
 		{
+			builder.pop().push("fireball");
+			
+			
 			fireball = builder
 					.comment("Whether the fireball ability should be enabled")
 					.define("fireball", true);
+			
+			fireballCooldown = builder
+					.comment("The cooldown in ticks of the fireball ability")
+					.defineInRange("fireballCooldown", Functions.secondsToTicks(40), 1, 10000);
 			
 			fireballDamage = builder
 					.comment("The amount of damage the fireball ability deals. This value is multiplied by the skill level.")
@@ -1386,6 +1603,9 @@ public class ServerConfig {
 		}
 		
 		{
+			builder.pop().push("tough_skin");
+			
+			
 			toughSkin = builder
 					.comment("Whether the tough skin ability should be enabled")
 					.define("toughSkin", true);
@@ -1393,6 +1613,10 @@ public class ServerConfig {
 			toughSkinDuration = builder
 					.comment("The duration in seconds of the tough skin effect given when the ability is used")
 					.defineInRange("toughSkinDuration", 180, 0, 10000);
+			
+			toughSkinCooldown = builder
+					.comment("The cooldown in ticks of the tough skin ability")
+					.defineInRange("toughSkinCooldown", Functions.secondsToTicks(30), 1, 10000);
 			
 			toughSkinManaCost = builder
 					.comment("The mana cost for using the tough skin ability")
@@ -1405,6 +1629,9 @@ public class ServerConfig {
 		}
 		
 		{
+			builder.pop().push("lava_vision");
+			
+			
 			lavaVision = builder
 					.comment("Whether the lava vision ability should be enabled")
 					.define("lavaVision", true);
@@ -1413,13 +1640,17 @@ public class ServerConfig {
 					.comment("The duration in seconds of the lava vision effect given when the ability is used")
 					.defineInRange("lavaVisionDuration", 60, 0, 10000);
 			
+			lavaVisionCooldown = builder
+					.comment("The cooldown in ticks of the lava vision ability")
+					.defineInRange("lavaVisionCooldown", Functions.secondsToTicks(60), 1, 10000);
+			
 			lavaVisionManaCost = builder
 					.comment("The mana cost for using the lava vision ability")
 					.defineInRange("lavaVisionManaCost", 2, 0, 100);
 			
 		}
 		
-		builder.pop().push("passives");
+		builder.pop().pop().push("passives");
 		{
 			caveMagic = builder
 					.comment("Whether the cave magic ability should be enabled")

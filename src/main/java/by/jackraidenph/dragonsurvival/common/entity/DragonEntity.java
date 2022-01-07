@@ -2,6 +2,7 @@ package by.jackraidenph.dragonsurvival.common.entity;
 
 import by.jackraidenph.dragonsurvival.client.emotes.Emote;
 import by.jackraidenph.dragonsurvival.client.handlers.ClientEvents;
+import by.jackraidenph.dragonsurvival.client.render.ClientDragonRender;
 import by.jackraidenph.dragonsurvival.client.render.util.AnimationTimer;
 import by.jackraidenph.dragonsurvival.client.render.util.CommonTraits;
 import by.jackraidenph.dragonsurvival.client.render.util.CustomTickAnimationController;
@@ -11,6 +12,7 @@ import by.jackraidenph.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.jackraidenph.dragonsurvival.common.magic.common.AbilityAnimation;
 import by.jackraidenph.dragonsurvival.common.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.common.magic.common.ISecondAnimation;
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.server.handlers.ServerFlightHandler;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -25,11 +27,13 @@ import net.minecraft.world.World;
 import software.bernie.geckolib3.core.AnimationState;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
+import software.bernie.geckolib3.core.builder.Animation;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
+import software.bernie.geckolib3.resource.GeckoLibCache;
 
 import java.util.ArrayList;
 
@@ -58,18 +62,18 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
     public double lookYaw = 0;
     public double lookPitch = 0;
     
+    public double flightY = 0;
+    public double flightX = 0;
+    
     public final ArrayList<Double> bodyYawAverage = new ArrayList<>();
     public final ArrayList<Double> headYawAverage = new ArrayList<>();
     public final ArrayList<Double> headPitchAverage = new ArrayList<>();
     public final ArrayList<Double> tailSideAverage = new ArrayList<>();
     public final ArrayList<Double> tailUpAverage = new ArrayList<>();
     
-    public double tailMotionMax = 0.0;
     public double tailMotionSide;
     public double tailMotionUp;
-    public boolean tailSwingDir = false;
-    public double tailSwing = 0;
-    
+
     public double body_yaw_change = 0;
     public double head_yaw_change = 0;
     public double head_pitch_change = 0;
@@ -92,18 +96,18 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
         animationData.addAnimationController(dragonAnimationController);
         animationData.addAnimationController(biteAnimationController);
         animationData.addAnimationController(tailController);
-        //animationData.addAnimationController(headController);
+        animationData.addAnimationController(headController);
     }
     
     CustomTickAnimationController tailController = new CustomTickAnimationController(this, "5", 10, this::tailPredicate);
-    CustomTickAnimationController headController = new CustomTickAnimationController(this, "4", 10, this::headPredicate);
+    CustomTickAnimationController headController = new CustomTickAnimationController(this, "1", 10, this::headPredicate);
     CustomTickAnimationController emoteController = new CustomTickAnimationController(this, "2", 2, this::emotePredicate);
     CustomTickAnimationController biteAnimationController = new CustomTickAnimationController(this, "4", 2, this::bitePredicate);
     CustomTickAnimationController dragonAnimationController = new CustomTickAnimationController(this, "3", 2, this::predicate);
     
     
     private <E extends IAnimatable> PlayState tailPredicate(AnimationEvent<E> animationEvent) {
-        if(!tailLocked) {
+        if(!tailLocked || !ConfigHandler.CLIENT.enableTailPhysics.get()) {
             animationEvent.getController().setAnimation(new AnimationBuilder().addAnimation("tail_turn", true));
             return PlayState.CONTINUE;
         }else{
@@ -115,7 +119,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
     
     private <E extends IAnimatable> PlayState headPredicate(AnimationEvent<E> animationEvent) {
         if(!neckLocked) {
-            animationEvent.getController().setAnimation(new AnimationBuilder().addAnimation("bottom_turn", true));
+            animationEvent.getController().setAnimation(new AnimationBuilder().addAnimation("head_turn", true));
             return PlayState.CONTINUE;
         }else{
             animationEvent.getController().setAnimation(null);
@@ -123,7 +127,6 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
             return PlayState.STOP;
         }
     }
-    
     private <E extends IAnimatable> PlayState bitePredicate(AnimationEvent<E> animationEvent) {
         final PlayerEntity player = getPlayer();
         DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
@@ -133,18 +136,67 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
             ActiveDragonAbility curCast = handler.getMagic().getCurrentlyCasting();
             if(curCast instanceof ISecondAnimation || lastCast instanceof ISecondAnimation){
                 renderAbility(builder, curCast);
-                animationEvent.getController().setAnimation(builder);
-                return PlayState.CONTINUE;
             }
             
-            if(!ServerFlightHandler.isFlying(player)) {
-                if (handler.getMovementData().bite && !handler.getMovementData().dig) {
-                    builder.addAnimation("bite", true);
-                    animationEvent.getController().setAnimation(builder);
-                    return PlayState.CONTINUE;
+
+            if(!ConfigHandler.CLIENT.renderItemsInMouth.get() && animationExists("use_item")
+               && (player.isUsingItem() || (handler.getMovementData().bite || handler.getMovementData().dig) && (!player.getMainHandItem().isEmpty() || !player.getOffhandItem().isEmpty()))) {
+                builder.addAnimation("use_item", true);
+                handler.getMovementData().bite = false;
+            }else if(!ConfigHandler.CLIENT.renderItemsInMouth.get() && animationExists("eat_item_right") && player.isUsingItem() && player.getMainHandItem().isEdible() || animationTimer.getDuration("eat_item_right") > 0){
+                if(animationTimer.getDuration("eat_item_right") <= 0){
+                    handler.getMovementData().bite = false;
+                    animationTimer.putAnimation("eat_item_right", 0.32 * 20, builder);
+                }else{
+                    animationTimer.trackAnimation("eat_item_right");
+                }
+
+                builder.addAnimation("eat_item_right", true);
+            }else if(!ConfigHandler.CLIENT.renderItemsInMouth.get() && animationExists("eat_item_left") && player.isUsingItem() && player.getOffhandItem().isEdible() || animationTimer.getDuration("eat_item_right") > 0){
+                if(animationTimer.getDuration("eat_item_left") <= 0){
+                    handler.getMovementData().bite = false;
+                    animationTimer.putAnimation("eat_item_left", 0.32 * 20, builder);
+                }else{
+                    animationTimer.trackAnimation("eat_item_left");
+                }
+
+                builder.addAnimation("eat_item_left", true);
+            }else if(!ConfigHandler.CLIENT.renderItemsInMouth.get() && animationExists("use_item_right") && (!player.getMainHandItem().isEmpty()) && ((handler.getMovementData().bite || handler.getMovementData().dig) && player.getMainArm() == HandSide.RIGHT) || animationTimer.getDuration("use_item_right") > 0){
+                if(animationTimer.getDuration("use_item_right") <= 0){
+                    handler.getMovementData().bite = false;
+                    animationTimer.putAnimation("use_item_right", 0.32 * 20, builder);
+                }else{
+                    animationTimer.trackAnimation("use_item_right");
+                }
+                
+                builder.addAnimation("use_item_right", true);
+
+            }else if(!ConfigHandler.CLIENT.renderItemsInMouth.get() && animationExists("use_item_left") && (!player.getOffhandItem().isEmpty() && (handler.getMovementData().bite || handler.getMovementData().dig) && player.getMainArm() == HandSide.LEFT) || animationTimer.getDuration("use_item_left") > 0){
+                if(animationTimer.getDuration("use_item_left") <= 0){
+                    handler.getMovementData().bite = false;
+                    animationTimer.putAnimation("use_item_left", 0.32 * 20, builder);
+                }else{
+                    animationTimer.trackAnimation("use_item_left");
+                }
+               
+                builder.addAnimation("use_item_left", true);
+
+            }else if (handler.getMovementData().bite && !handler.getMovementData().dig || animationTimer.getDuration("bite") > 0) {
+                builder.addAnimation("bite", true);
+                if(animationTimer.getDuration("bite") <= 0){
+                    handler.getMovementData().bite = false;
+                    animationTimer.putAnimation("bite", 0.44 * 20, builder);
+                }else{
+                    animationTimer.trackAnimation("bite");
                 }
             }
         }
+    
+        if(builder.getRawAnimationList().size() > 0){
+            animationEvent.getController().setAnimation(builder);
+            return PlayState.CONTINUE;
+        }
+        
         return PlayState.STOP;
     }
     
@@ -206,8 +258,11 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
         Vector3d motio = new Vector3d(player.getX() - player.xo, player.getY() - player.yo, player.getZ() - player.zo);
         boolean isMovingHorizontal = Math.sqrt(Math.pow(motio.x, 2) + Math.pow(motio.z, 2)) > 0.005;
         
-        // Main
-        if (player.isSleeping() || playerStateHandler.treasureResting) {
+        if(playerStateHandler.getMagic().onMagicSource){
+            neckLocked = true;
+            tailLocked = true;
+            builder.addAnimation("sit_on_magic_source", true);
+        }else if (player.isSleeping() || playerStateHandler.treasureResting) {
             neckLocked = true;
             tailLocked = true;
             builder.addAnimation("sleep", true);
@@ -310,11 +365,17 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
         }
         
         if(animationEvent.getController().getCurrentAnimation() == null || builder.getRawAnimationList().size() <= 0){
-            builder.addAnimation("idle", true);
+           builder.addAnimation("idle", true);
         }
         
         animationController.setAnimation(builder);
         return PlayState.CONTINUE;
+    }
+    
+    public static boolean animationExists(String key){
+        Animation animation = GeckoLibCache.getInstance().getAnimations().get(ClientDragonRender.dragonModel.getAnimationFileLocation(ClientDragonRender.dragonArmor)).getAnimation(key);;
+    
+        return animation != null;
     }
     
     private void renderAbility(AnimationBuilder builder, ActiveDragonAbility curCast)

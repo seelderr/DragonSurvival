@@ -42,7 +42,7 @@ public class DragonSizeHandler {
     		// Apply changes
 			event.setNewEyeHeight((float)eyeHeight);
 			// Rounding solves floating point issues that caused the dragon to get stuck inside a block at times.
-    		event.setNewSize(new EntitySize((float)(Math.ceil(width * 100.0D) / 100.0D), (float)(Math.ceil(height * 100.0D) / 100.0D), false));
+    		event.setNewSize(new EntitySize((float)(Math.round(width * 100.0D) / 100.0D), (float)(Math.round(height * 100.0D) / 100.0D), false));
     		}
         });
     }

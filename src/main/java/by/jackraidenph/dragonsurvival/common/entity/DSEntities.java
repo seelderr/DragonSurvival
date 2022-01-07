@@ -7,7 +7,6 @@ import by.jackraidenph.dragonsurvival.common.entity.creatures.*;
 import by.jackraidenph.dragonsurvival.common.entity.monsters.MagicalPredatorEntity;
 import by.jackraidenph.dragonsurvival.common.entity.projectiles.*;
 import by.jackraidenph.dragonsurvival.common.handlers.VillagerRelationsHandler;
-import by.jackraidenph.dragonsurvival.common.items.DSItems;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.server.tileentity.DragonBeaconTileEntity;
 import com.google.common.base.Preconditions;
@@ -19,6 +18,7 @@ import net.minecraft.entity.EntitySpawnPlacementRegistry;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.merchant.villager.VillagerEntity;
+import net.minecraft.entity.merchant.villager.VillagerProfession;
 import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.monster.PillagerEntity;
 import net.minecraft.entity.monster.VindicatorEntity;
@@ -29,6 +29,7 @@ import net.minecraft.item.SpawnEggItem;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.village.PointOfInterestType;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
@@ -119,6 +120,19 @@ public class DSEntities
             VillagerRelationsHandler.dragonHunters.add(cast(KNIGHT));
         }
     }
+    
+    public static VillagerProfession PRINCESS_PROFESSION, PRINCE_PROFESSION;
+    
+    @SubscribeEvent
+    public static void registerVillageTypes(RegistryEvent.Register<VillagerProfession> event) {
+        PRINCESS_PROFESSION = new VillagerProfession("princess", PointOfInterestType.UNEMPLOYED, ImmutableSet.of(), ImmutableSet.of(), null);
+        PRINCESS_PROFESSION.setRegistryName(new ResourceLocation(DragonSurvivalMod.MODID, "princess"));
+        event.getRegistry().register(PRINCESS_PROFESSION);
+    
+        PRINCE_PROFESSION = new VillagerProfession("prince", PointOfInterestType.UNEMPLOYED, ImmutableSet.of(), ImmutableSet.of(), null);
+        PRINCE_PROFESSION.setRegistryName(new ResourceLocation(DragonSurvivalMod.MODID, "prince"));
+        event.getRegistry().register(PRINCE_PROFESSION);
+    }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void registerSpawnEggs(RegistryEvent.Register<Item> event) {
@@ -153,7 +167,7 @@ public class DSEntities
     }
     
     private static void registerSpawnEgg(IForgeRegistry<Item> registry, EntityType entity, int eggPrimary, int eggSecondary, EntitySpawnPlacementRegistry.IPlacementPredicate spawnPlacementPredicate) {
-        Item spawnEgg = new SpawnEggItem(entity, eggPrimary, eggSecondary, (new Item.Properties()).tab(DSItems.items));
+        Item spawnEgg = new SpawnEggItem(entity, eggPrimary, eggSecondary, (new Item.Properties()).tab(DragonSurvivalMod.items));
         spawnEgg.setRegistryName(new ResourceLocation(DragonSurvivalMod.MODID, entity.getRegistryName().getPath() + "_spawn_egg"));
         if (spawnPlacementPredicate == null) {
             EntitySpawnPlacementRegistry.register(entity, EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES,

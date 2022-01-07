@@ -1,6 +1,7 @@
 package by.jackraidenph.dragonsurvival.client.gui;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
+import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.HelpButton;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
@@ -79,6 +80,7 @@ public class SkinsScreen extends Screen
 	private float zoom = 0;
 	
 	private static String playerName = null;
+	private static String lastPlayerName = null;
 	private static DragonLevel level = DragonLevel.ADULT;
 	
 	private DragonEntity dragon;
@@ -122,9 +124,14 @@ public class SkinsScreen extends Screen
 		
 		SkinsScreen.glowTexture = glowTexture;
 		SkinsScreen.skinTexture = skinTexture;
-		zoom = level.size;
+		
+		if(Objects.equals(lastPlayerName, playerName) || lastPlayerName == null) {
+			zoom = level.size;
+		}
+		
 		noSkin = defaultSkin;
 		loading = false;
+		lastPlayerName = playerName;
 	}
 	
 	@Override
@@ -310,27 +317,7 @@ public class SkinsScreen extends Screen
 			}
 		});
 		
-		addButton(new Button(startX + 128 + (imageWidth / 2) - 8 - 25, startY + 128 + 30, 16, 16, new StringTextComponent(""), (button) -> {
-		}){
-			@Override
-			public void renderButton(MatrixStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_)
-			{
-				minecraft.getTextureManager().bind(HELP);
-				blit(p_230431_1_, x, y, 0, 0, 16, 16, 16,16);
-			}
-			
-			@Override
-			public void renderToolTip(MatrixStack p_230443_1_, int p_230443_2_, int p_230443_3_)
-			{
-				GuiUtils.drawHoveringText(p_230443_1_, Arrays.asList(new TranslationTextComponent("ds.gui.skins.tooltip.help")), p_230443_2_, p_230443_3_, Minecraft.getInstance().screen.width, Minecraft.getInstance().screen.height, 200, Minecraft.getInstance().font);
-			}
-			
-			@Override
-			public boolean mouseClicked(double p_231044_1_, double p_231044_3_, int p_231044_5_)
-			{
-				return false;
-			}
-		});
+		addButton(new HelpButton(startX + 128 + (imageWidth / 2) - 8 - 25, startY + 128 + 30, 16, 16, "ds.gui.skins.tooltip.help"));
 		
 		addButton(new Button(startX - 60, startY + 128, 90, 20, new TranslationTextComponent("ds.gui.skins.yours"), (button) -> {
 			playerName = minecraft.player.getGameProfile().getName();

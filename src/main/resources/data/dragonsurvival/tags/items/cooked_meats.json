@@ -110,6 +110,10 @@
     {"id": "wyrmroost:cooked_desertwyrm",
       "required": false},
     {"id": "untamedwilds:food_turtle_cooked",
+      "required": false},
+    {"id": "untamedwilds:food_pachyderm_cooked",
+      "required": false},
+    {"id": "untamedwilds:food_bear_cooked",
       "required": false}
   ]
 }

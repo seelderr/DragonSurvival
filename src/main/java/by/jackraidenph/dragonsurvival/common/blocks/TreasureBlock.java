@@ -6,16 +6,23 @@ import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.status.SyncTreasureRestStatus;
 import net.minecraft.block.*;
+import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.FallingBlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.item.ItemStack;
 import net.minecraft.pathfinding.PathType;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.IntegerProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.stats.Stats;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
@@ -24,8 +31,12 @@ import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
+import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
@@ -33,6 +44,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.awt.*;
+import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 public class TreasureBlock extends FallingBlock implements IWaterLoggable
@@ -50,7 +63,35 @@ public class TreasureBlock extends FallingBlock implements IWaterLoggable
 		this.registerDefaultState(this.stateDefinition.any().setValue(LAYERS, Integer.valueOf(1)).setValue(WATERLOGGED, false));
 		this.effectColor = c;
 	}
+	@Override
+	public void appendHoverText(ItemStack p_190948_1_,
+			@Nullable
+					IBlockReader p_190948_2_, List<ITextComponent> p_190948_3_, ITooltipFlag p_190948_4_)
+	{
+		super.appendHoverText(p_190948_1_, p_190948_2_, p_190948_3_, p_190948_4_);
+		p_190948_3_.add(new TranslationTextComponent("ds.description.treasures"));
+	}
 	
+	@Override
+	public boolean isBed(BlockState state, IBlockReader world, BlockPos pos, @Nullable Entity player)
+	{
+		return true;
+	}
+	
+	public Optional<Vector3d> getBedSpawnPosition(EntityType<?> entityType, BlockState state, IWorldReader world, BlockPos pos, float orientation, @Nullable
+			LivingEntity sleeper)
+	{
+		if (world instanceof World)
+		{
+			return RespawnAnchorBlock.findStandUpPosition(entityType, world, pos);
+		}
+		
+		return Optional.empty();
+	}
+	
+	public boolean isPossibleToRespawnInThis() {
+		return true;
+	}
 	
 	public void tick(BlockState p_225534_1_, ServerWorld p_225534_2_, BlockPos p_225534_3_, Random p_225534_4_) {
 		boolean belowEmpty = p_225534_2_.isEmptyBlock(p_225534_3_.below()) || (isFree(p_225534_2_.getBlockState(p_225534_3_.below()))) && p_225534_3_.getY() >= 0;
@@ -160,7 +201,17 @@ public class TreasureBlock extends FallingBlock implements IWaterLoggable
 						if (world.isClientSide) {
 							NetworkHandler.CHANNEL.sendToServer(new SyncTreasureRestStatus(player.getId(), true));
 						}
+						
 						return ActionResultType.SUCCESS;
+					}
+					
+					if(!world.isClientSide) {
+						player.resetStat(Stats.CUSTOM.get(Stats.TIME_SINCE_REST));
+						ServerPlayerEntity serverplayerentity = (ServerPlayerEntity)player;
+						if (serverplayerentity.getRespawnPosition() == null || serverplayerentity.getRespawnDimension() != world.dimension() || serverplayerentity.getRespawnPosition() != null && !serverplayerentity.getRespawnPosition().equals(p_225533_3_)) {
+							serverplayerentity.setRespawnPosition(world.dimension(), p_225533_3_, 0.0F, false, true);
+							return ActionResultType.SUCCESS;
+						}
 					}
 				}
 			}

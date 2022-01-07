@@ -1,13 +1,13 @@
 package by.jackraidenph.dragonsurvival.common.entity.creatures;
 
-import by.jackraidenph.dragonsurvival.util.Functions;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.client.render.util.AnimationTimer;
 import by.jackraidenph.dragonsurvival.client.render.util.CommonTraits;
 import by.jackraidenph.dragonsurvival.common.DragonEffects;
+import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.entity.DSEntities;
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.PrincessTrades;
+import by.jackraidenph.dragonsurvival.util.Functions;
 import com.mojang.serialization.Dynamic;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.entity.EntityType;
@@ -20,7 +20,6 @@ import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.merchant.villager.VillagerData;
 import net.minecraft.entity.merchant.villager.VillagerEntity;
-import net.minecraft.entity.merchant.villager.VillagerProfession;
 import net.minecraft.entity.merchant.villager.VillagerTrades;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.villager.VillagerType;
@@ -81,7 +80,7 @@ public class PrincesHorseEntity extends VillagerEntity implements IAnimatable, C
     @Nullable
     public ILivingEntityData finalizeSpawn(IServerWorld serverWorld, DifficultyInstance difficultyInstance, SpawnReason reason, @Nullable ILivingEntityData livingEntityData, @Nullable CompoundNBT compoundNBT) {
         setColor(colors.get(this.random.nextInt(6)).getId());
-        setVillagerData(getVillagerData().setProfession(VillagerProfession.NITWIT));
+        setVillagerData(getVillagerData().setProfession(DSEntities.PRINCE_PROFESSION));
         return super.finalizeSpawn(serverWorld, difficultyInstance, reason, livingEntityData, compoundNBT);
     }
 
@@ -236,7 +235,7 @@ public class PrincesHorseEntity extends VillagerEntity implements IAnimatable, C
 
     @Override
     public boolean removeWhenFarAway(double distance) {
-        return tickCount >= Functions.minutesToTicks(ConfigHandler.COMMON.princessDespawnDelay.get()) && !hasCustomName();
+        return !this.hasCustomName() && tickCount >= Functions.minutesToTicks(ConfigHandler.COMMON.princessDespawnDelay.get()) && !hasCustomName();
     }
 
     @Override

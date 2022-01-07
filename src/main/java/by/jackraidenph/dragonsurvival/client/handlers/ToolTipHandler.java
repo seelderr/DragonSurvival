@@ -1,25 +1,25 @@
 package by.jackraidenph.dragonsurvival.client.handlers;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.util.Functions;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.client.gui.AbilityScreen;
+import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.HelpButton;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.SkillProgressButton;
-import by.jackraidenph.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.jackraidenph.dragonsurvival.common.blocks.DSBlocks;
+import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.handlers.DragonFoodHandler;
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
+import by.jackraidenph.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.ITextProperties;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderTooltipEvent;
@@ -29,9 +29,7 @@ import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 @Mod.EventBusSubscriber( Dist.CLIENT)
 public class ToolTipHandler
 {
@@ -101,79 +99,36 @@ public class ToolTipHandler
 			if (item == DSBlocks.dragonMemoryBlock.asItem()){
 				toolTip.add(new TranslationTextComponent("ds.description.dragonMemoryBlock"));
 			}
+			if (item == DSBlocks.seaSourceOfMagic.asItem()){
+				toolTip.add(new TranslationTextComponent("ds.description.sea_source_of_magic"));
+			}
+			if (item == DSBlocks.forestSourceOfMagic.asItem()){
+				toolTip.add(new TranslationTextComponent("ds.description.forest_source_of_magic"));
+			}
+			if (item == DSBlocks.caveSourceOfMagic.asItem()){
+				toolTip.add(new TranslationTextComponent("ds.description.cave_source_of_magic"));
+			}
 		}
 	}
 	
 	
-	private static boolean userCheck(){
+	private static boolean isHelpText(){
+		if(!ConfigHandler.CLIENT.tooltipChanges.get() || !ConfigHandler.CLIENT.helpTooltips.get()) return false;
 		if(Minecraft.getInstance().level == null) return false;
+		if(ConfigHandler.CLIENT.alwaysShowHelpTooltip.get()) return true;
 		
-		UUID playerId = Minecraft.getInstance().player != null && Minecraft.getInstance().player.getGameProfile() != null && Minecraft.getInstance().player.getGameProfile().getId() != null ? Minecraft.getInstance().player.getGameProfile().getId() : null;
-		UUID player1 = UUID.fromString("6848748e-f3c1-4c30-91e4-4c7cc3fbeec5");
-		UUID player2 = UUID.fromString("05a6e38f-9cd9-3f4a-849c-68841b773e39");
-		boolean renderAll = playerId != null && (player1 != null && playerId.equals(player1) || player2 != null && playerId.equals(player2));
-		return renderAll;
-	}
-	
-	private static boolean isHelpText(List<ITextProperties> lines){
-		if(Minecraft.getInstance().level == null) return false;
-		boolean renderAll = userCheck();
-		boolean text = false;
-		
-		String[] keys = new String[]{
-				"ds.skill.help",
-				"ds.skill.help.claws",
-				"ds.gui.skins.tooltip.help",
-				"ds.gui.growth_help"
-		};
-		
-		ArrayList<String> texts = new ArrayList<>();
-		
-		for(String t : keys){
-			texts.add(I18n.get(t));
-		}
-		
-		String mergedString = "";
-		
-		for(ITextProperties comp : lines) {
-			if (comp instanceof TranslationTextComponent) {
-				TranslationTextComponent textComponent = (TranslationTextComponent)comp;
-				for(String tg : keys){
-					if(textComponent.getKey().contains(tg)){
-						text = true;
-						break;
-					}
-				}
-			}
-			
-			mergedString += comp.getString();
-		}
-		
-		if(!text){
-			String t = mergedString.replace("\n", "").replace(" ", "");
-			
-			for(String tg : texts){
-				String[] ss = tg.split("\n");
-				
-				for(String kl : ss){
-					String temp = kl.replace(" ", "");
-					if(!temp.isEmpty()) {
-						if (t.contains(temp) || t.equalsIgnoreCase(temp)) {
-							text = true;
-							break;
-						}
-					}
-				}
+		for(Widget btn : Minecraft.getInstance().screen.buttons){
+			if(btn.isHovered() && btn instanceof HelpButton){
+				return true;
 			}
 		}
 		
-		return text || renderAll;
+		return false;
 	}
 	
 	@SubscribeEvent
 	public static void onPostTooltipEvent(RenderTooltipEvent.PostText event) {
-		boolean render = isHelpText((List<ITextProperties>)event.getLines());
-		boolean renderAll = userCheck();
+		boolean render = isHelpText();
 		
 		if(!render){
 			return;
@@ -211,16 +166,14 @@ public class ToolTipHandler
 		
 		RenderSystem.enableBlend();
 		
-		matrix.translate(0, 0, 410.0);
+		matrix.translate(0, 0, 610.0);
 		
-		if(!renderAll) {
-			AbstractGui.blit(matrix, x - 8 - 6, y - 8 - 6, 1, 1 % texHeight, 16, 16, texWidth, texHeight);
-			AbstractGui.blit(matrix, x + width - 8 + 6, y - 8 - 6, texWidth - 16 - 1, 1 % texHeight, 16, 16, texWidth, texHeight);
-			
-			AbstractGui.blit(matrix, x - 8 - 6, y + height - 8 + 6, 1, 1 % texHeight + 16, 16, 16, texWidth, texHeight);
-			AbstractGui.blit(matrix, x + width - 8 + 6, y + height - 8 + 6, texWidth - 16 - 1, 1 % texHeight + 16, 16, 16, texWidth, texHeight);
-		}
+		AbstractGui.blit(matrix, x - 8 - 6, y - 8 - 6, 1, 1 % texHeight, 16, 16, texWidth, texHeight);
+		AbstractGui.blit(matrix, x + width - 8 + 6, y - 8 - 6, texWidth - 16 - 1, 1 % texHeight, 16, 16, texWidth, texHeight);
 		
+		AbstractGui.blit(matrix, x - 8 - 6, y + height - 8 + 6, 1, 1 % texHeight + 16, 16, 16, texWidth, texHeight);
+		AbstractGui.blit(matrix, x + width - 8 + 6, y + height - 8 + 6, texWidth - 16 - 1, 1 % texHeight + 16, 16, 16, texWidth, texHeight);
+	
 		AbstractGui.blit(matrix, x + (width / 2) - 47, y - 16, 16 + 2 * texWidth + 1, 1 % texHeight, 94, 16, texWidth, texHeight);
 		AbstractGui.blit(matrix, x + (width / 2) - 47, y + height, 16 + 2 * texWidth + 1, 1 % texHeight + 16, 94, 16, texWidth, texHeight);
 	
@@ -231,14 +184,15 @@ public class ToolTipHandler
 	
 	@SubscribeEvent
 	public static void onTooltipColorEvent(RenderTooltipEvent.Color event) {
-		boolean render = isHelpText((List<ITextProperties>)event.getLines());
+		if(!ConfigHandler.CLIENT.tooltipChanges.get()) return;
+		boolean render = isHelpText();
 		boolean screen = Minecraft.getInstance().screen instanceof AbilityScreen;
 		
 		ItemStack stack = event.getStack();
 		
-		boolean isSeaFood = !stack.isEmpty() && DragonFoodHandler.getSafeEdibleFoods(DragonType.SEA).contains(stack.getItem());
-		boolean isForestFood = !stack.isEmpty()  && DragonFoodHandler.getSafeEdibleFoods(DragonType.FOREST).contains(stack.getItem());
-		boolean isCaveFood = !stack.isEmpty()  && DragonFoodHandler.getSafeEdibleFoods(DragonType.CAVE).contains(stack.getItem());
+		boolean isSeaFood = ConfigHandler.CLIENT.dragonFoodTooltips.get() && !stack.isEmpty() && DragonFoodHandler.getSafeEdibleFoods(DragonType.SEA).contains(stack.getItem());
+		boolean isForestFood = ConfigHandler.CLIENT.dragonFoodTooltips.get() && !stack.isEmpty()  && DragonFoodHandler.getSafeEdibleFoods(DragonType.FOREST).contains(stack.getItem());
+		boolean isCaveFood = ConfigHandler.CLIENT.dragonFoodTooltips.get() && !stack.isEmpty()  && DragonFoodHandler.getSafeEdibleFoods(DragonType.CAVE).contains(stack.getItem());
 		int foodCount = (isSeaFood ? 1 : 0) + (isForestFood ? 1 : 0) + (isCaveFood ? 1 : 0);
 		
 		boolean isFood = foodCount == 1;

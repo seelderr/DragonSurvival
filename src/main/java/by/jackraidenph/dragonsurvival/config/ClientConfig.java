@@ -5,13 +5,25 @@ import net.minecraftforge.common.ForgeConfigSpec;
 public class ClientConfig {
 	public final ForgeConfigSpec.BooleanValue dragonNameTags;
 	public final ForgeConfigSpec.BooleanValue renderInFirstPerson;
+	public final ForgeConfigSpec.BooleanValue rotateBodyWithCamera;
 	public final ForgeConfigSpec.BooleanValue firstPersonRotation;
+	public final ForgeConfigSpec.BooleanValue enableTailPhysics;
 	public final ForgeConfigSpec.BooleanValue renderFirstPersonFlight;
+	
+	public final ForgeConfigSpec.BooleanValue armorRenderLayer;
+	public final ForgeConfigSpec.BooleanValue renderItemsInMouth;
 	
 	public final ForgeConfigSpec.BooleanValue notifyWingStatus;
 	public final ForgeConfigSpec.BooleanValue jumpToFly;
 	public final ForgeConfigSpec.BooleanValue lookAtSkyForFlight;
 	public final ForgeConfigSpec.BooleanValue renderOtherPlayerRotation;
+	
+	public final ForgeConfigSpec.BooleanValue tooltipChanges;
+	public final ForgeConfigSpec.BooleanValue dragonFoodTooltips;
+	public final ForgeConfigSpec.BooleanValue helpTooltips;
+	public final ForgeConfigSpec.BooleanValue alwaysShowHelpTooltip;
+	
+	public final ForgeConfigSpec.BooleanValue appleskinSupport;
 	
 	public final ForgeConfigSpec.BooleanValue flightZoomEffect;
 	public final ForgeConfigSpec.BooleanValue flightCameraMovement;
@@ -54,28 +66,56 @@ public class ClientConfig {
 	ClientConfig(ForgeConfigSpec.Builder builder) {
 		builder.push("client").push("firstperson");
 		//For people who use first person view mods
-		renderInFirstPerson = builder.comment("Render dragon model in first person. If your own tail scares you, write false").define("renderFirstPerson", true);
-		renderFirstPersonFlight = builder.comment("Render dragon model in first person while gliding").define("renderFirstPersonFlight", false);
-		firstPersonRotation = builder.comment("Use rotation of your tail in first person, otherwise the tail is always opposite of your camera").define("firstPersonRotation", true);
+		renderInFirstPerson = builder
+				.comment("Render dragon model in first person. If your own tail scares you, write false")
+				.define("renderFirstPerson", true);
+		renderFirstPersonFlight = builder
+				.comment("Render dragon model in first person while gliding. We don't advise you to turn it on.")
+				.define("renderFirstPersonFlight", false);
+		firstPersonRotation = builder
+				.comment("Use rotation of your tail in first person, otherwise the tail is always opposite of your camera. If the tail is constantly climbing in your face, put false.")
+				.define("firstPersonRotation", false);
 		
 		builder.pop().push("flight");
-		notifyWingStatus = builder.comment("Notifies of wing status in chat message").define("notifyWingStatus", false);
+		notifyWingStatus = builder
+				.comment("Notifies of wing status in chat message")
+				.define("notifyWingStatus", false);
 		
-		jumpToFly = builder.comment("Should flight be activated when jumping in the air").define("jumpToFly", false);
-		lookAtSkyForFlight = builder.comment("Is it required to look up to start flying while jumping, requires that jumpToFly is on").define("lookAtSkyForFlight", false);
-		renderOtherPlayerRotation = builder.comment("Should the rotation effect during gliding of other players be shown?").define("renderOtherPlayerRotation", true);
+		jumpToFly = builder
+				.comment("Should flight be activated when jumping in the air")
+				.define("jumpToFly", false);
+		lookAtSkyForFlight = builder
+				.comment("Is it required to look up to start flying while jumping, requires that jumpToFly is on")
+				.define("lookAtSkyForFlight", false);
+		renderOtherPlayerRotation = builder
+				.comment("Should the rotation effect during gliding of other players be shown?")
+				.define("renderOtherPlayerRotation", true);
 		
-		flightZoomEffect = builder.comment("Should the zoom effect while gliding as a dragon be enabled").define("flightZoomEffect", true);
-		flightCameraMovement = builder.comment("Should the camera movement while gliding as a dragon be enabled").define("flightCameraMovement", true);
+		flightZoomEffect = builder
+				.comment("Should the zoom effect while gliding as a dragon be enabled")
+				.define("flightZoomEffect", true);
+		flightCameraMovement = builder
+				.comment("Should the camera movement while gliding as a dragon be enabled")
+				.define("flightCameraMovement", true);
 		
-		ownSpinParticles = builder.comment("Should particles from your own spin attack be displayed for you?").define("ownSpinParticles", true);
-		othersSpinParticles = builder.comment("Should other players particles from spin attack be shown for you?").define("othersSpinParticles", true);
+		ownSpinParticles = builder
+				.comment("Should particles from your own spin attack be displayed for you?")
+				.define("ownSpinParticles", true);
+		othersSpinParticles = builder
+				.comment("Should other players particles from spin attack be shown for you?")
+				.define("othersSpinParticles", true);
 		
-		builder.pop();
+		builder.pop().push("misc");
 		
-		clientDebugMessages = builder.comment("Enable client-side debug messages").define("clientDebugMessages", false);
+		clientDebugMessages = builder
+				.comment("Enable client-side debug messages")
+				.define("clientDebugMessages", false);
 		
-		builder.push("inventory");
+		appleskinSupport = builder
+				.comment("Disable this setting to disable support for appleskin as a dragon if it is causing ui issues")
+				.define("appleskinSupport", true);
+		
+		builder.pop().push("inventory");
 		dragonInventory = builder
 				.comment("Should the default inventory be replaced as a dragon?")
 				.define("dragonInventory", true);
@@ -94,6 +134,17 @@ public class ClientConfig {
 		
 		
 		builder.pop().push("rendering");
+		enableTailPhysics = builder
+				.comment("Enable movement based physics on the tail, this is still a working progress and can be buggy.")
+				.define("enableTailPhysics", true);
+		rotateBodyWithCamera = builder
+				.comment("Should the body rotate with the camera when turning around.")
+				.define("rotateBodyWithCamera", true);
+		
+		renderItemsInMouth = builder
+				.comment("Should items be rendered near the mouth of dragons rather then hovering by their side?")
+				.define("renderItemsInMouth", false);
+		
 		renderDragonClaws = builder
 				.comment("Should the tools on the claws and teeth be rendered for your dragon?")
 				.define("renderDragonClaws", true);
@@ -114,6 +165,26 @@ public class ClientConfig {
 				.comment("Should other player skins be rendered?")
 				.define("renderOtherPlayerSkins", true);
 		
+		armorRenderLayer = builder
+				.comment("Should the armor be rendered as a layer on the dragon? Some shaders requires this to be off. Can cause some weird effects with armor when turned off.")
+				.define("armorRenderLayer", true);
+		
+		builder.pop().push("tooltips");
+		tooltipChanges = builder
+				.comment("Should the mod be allowed ot change the color and appearance of tooltips?")
+				.define("tooltipChanges", true);
+		
+		dragonFoodTooltips = builder
+				.comment("Should dragon foods have their tooltip color changed to show which type of dragon can consume it?")
+				.define("dragonFoodTooltips", true);
+		
+		helpTooltips = builder
+				.comment("Should the effect of the help tooltips be enabled?")
+				.define("helpTooltips", true);
+		
+		alwaysShowHelpTooltip = builder
+				.comment("Always show the help tooltip border")
+				.define("alwaysShowHelpTooltip", false);
 		
 		builder.pop().push("ui");
 		builder.push("magic");

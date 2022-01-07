@@ -6,6 +6,7 @@ import by.jackraidenph.dragonsurvival.network.claw.SyncDragonClawRender;
 import by.jackraidenph.dragonsurvival.network.claw.SyncDragonClawsMenu;
 import by.jackraidenph.dragonsurvival.network.config.SyncBooleanConfig;
 import by.jackraidenph.dragonsurvival.network.config.SyncEnumConfig;
+import by.jackraidenph.dragonsurvival.network.config.SyncListConfig;
 import by.jackraidenph.dragonsurvival.network.config.SyncNumberConfig;
 import by.jackraidenph.dragonsurvival.network.container.OpenDragonInventory;
 import by.jackraidenph.dragonsurvival.network.container.OpenInventory;
@@ -15,13 +16,12 @@ import by.jackraidenph.dragonsurvival.network.emotes.SyncEmoteStats;
 import by.jackraidenph.dragonsurvival.network.emotes.SyncEmoteStatsServer;
 import by.jackraidenph.dragonsurvival.network.entity.PacketSyncPredatorStats;
 import by.jackraidenph.dragonsurvival.network.entity.PacketSyncXPDevour;
+import by.jackraidenph.dragonsurvival.network.entity.player.*;
 import by.jackraidenph.dragonsurvival.network.flight.RequestSpinResync;
 import by.jackraidenph.dragonsurvival.network.flight.SyncFlightSpeed;
 import by.jackraidenph.dragonsurvival.network.flight.SyncFlyingStatus;
 import by.jackraidenph.dragonsurvival.network.flight.SyncSpinStatus;
 import by.jackraidenph.dragonsurvival.network.magic.*;
-import by.jackraidenph.dragonsurvival.network.nest.*;
-import by.jackraidenph.dragonsurvival.network.entity.player.*;
 import by.jackraidenph.dragonsurvival.network.status.*;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.network.NetworkRegistry;
@@ -39,14 +39,8 @@ public class NetworkHandler
      }
 	 
 	 public static void setup(){
-		 //Nest packets
-		 register(SynchronizeNest.class, new SynchronizeNest());
-		 register(ToggleRegeneration.class, new ToggleRegeneration());
-		 register(DismantleNest.class, new DismantleNest());
-		 register(SleepInNest.class, new SleepInNest());
-//		 register(GiveNest.class, new GiveNest());
-		 
 		 register(SyncTreasureRestStatus.class, new SyncTreasureRestStatus());
+		 register(SyncMagicSourceStatus.class, new SyncMagicSourceStatus());
 		
 		 //Generic packets
 		 register(SynchronizeDragonCap.class, new SynchronizeDragonCap());
@@ -103,5 +97,6 @@ public class NetworkHandler
 		 register(SyncBooleanConfig.class, new SyncBooleanConfig());
 		 register(SyncNumberConfig.class, new SyncNumberConfig());
 		 register(SyncEnumConfig.class, new SyncEnumConfig());
+		 register(SyncListConfig.class, new SyncListConfig());
 	 }
 }

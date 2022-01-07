@@ -1,16 +1,18 @@
 package by.jackraidenph.dragonsurvival.client.handlers;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
+import by.jackraidenph.dragonsurvival.client.render.ClientDragonRender;
+import by.jackraidenph.dragonsurvival.client.sounds.FastGlideSound;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
+import by.jackraidenph.dragonsurvival.mixins.MixinGameRendererZoom;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.flight.RequestSpinResync;
-import by.jackraidenph.dragonsurvival.server.handlers.ServerFlightHandler;
-import by.jackraidenph.dragonsurvival.mixins.MixinGameRendererZoom;
 import by.jackraidenph.dragonsurvival.network.flight.SyncFlightSpeed;
 import by.jackraidenph.dragonsurvival.network.flight.SyncFlyingStatus;
-import by.jackraidenph.dragonsurvival.client.sounds.FastGlideSound;
+import by.jackraidenph.dragonsurvival.network.flight.SyncSpinStatus;
+import by.jackraidenph.dragonsurvival.server.handlers.ServerFlightHandler;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
@@ -124,7 +126,7 @@ public class ClientFlightHandler {
                 return;
             }
             
-            if(cap.getMovementData().spinCooldown > 0) {
+            if(cap.getMovementData().spinLearned && cap.getMovementData().spinCooldown > 0) {
                 if (event.getType() == ElementType.HOTBAR) {
                     GL11.glPushMatrix();
     
@@ -258,6 +260,10 @@ public class ClientFlightHandler {
     
                         boolean hasFood = playerEntity.getFoodData().getFoodLevel() > ConfigHandler.SERVER.flightHungerThreshold.get() || playerEntity.isCreative() || ConfigHandler.SERVER.allowFlyingWithoutHunger.get();
                         
+                        if(!hasFood){
+                            ay = Math.abs(ay * 4);
+                        }
+                        
                         //start
                         if (ServerFlightHandler.isFlying(playerEntity)) {
                             Vector3d motion = playerEntity.getDeltaMovement();
@@ -337,7 +343,7 @@ public class ClientFlightHandler {
                                 wasGliding = false;
                                 double maxForward = 0.5;
     
-                                Vector3d moveVector = ClientEvents.getInputVector(new Vector3d(movement.leftImpulse, 0, movement.forwardImpulse), 1F, playerEntity.yRot);
+                                Vector3d moveVector = ClientDragonRender.getInputVector(new Vector3d(movement.leftImpulse, 0, movement.forwardImpulse), 1F, playerEntity.yRot);
                                 moveVector.multiply(1.3, 0, 1.3);
     
                                 double lookY = lookVec.y;
@@ -379,7 +385,7 @@ public class ClientFlightHandler {
     
                                 motion = motion.add(ax, ay, az);
     
-                                if(dragonStateHandler.getMovementData().bite){
+                                if(ServerFlightHandler.isSpin(playerEntity)){
                                     motion.multiply(10, 10, 10);
                                 }
     
@@ -436,16 +442,32 @@ public class ClientFlightHandler {
     private static long lastHungerMessage;
     
     @SubscribeEvent
+    public static void spin(InputEvent.RawMouseEvent keyInputEvent) {
+        ClientPlayerEntity player = Minecraft.getInstance().player;
+        if(player == null) return;
+        
+        DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+        if(handler == null || !handler.isDragon()) return;
+        if(KeyInputHandler.SPIN_ABILITY.getKey().getValue() == keyInputEvent.getButton()) {
+            spinKeybind(player, handler);
+        }
+    }
+    
+    @SubscribeEvent
     public static void toggleWings(InputEvent.KeyInputEvent keyInputEvent) {
         ClientPlayerEntity player = Minecraft.getInstance().player;
         if(player == null) return;
     
         DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
         if(handler == null || !handler.isDragon()) return;
-    
+        
         boolean currentState = handler.isWingsSpread();
         Vector3d lookVec = player.getLookAngle();
     
+        if(KeyInputHandler.SPIN_ABILITY.getKey().getValue() == keyInputEvent.getKey()) {
+            spinKeybind(player, handler);
+        }
+        
         if(ConfigHandler.CLIENT.jumpToFly.get() && !player.isCreative() && !player.isSpectator()) {
             if (Minecraft.getInstance().options.keyJump.isDown()) {
                 if(keyInputEvent.getAction() == GLFW.GLFW_PRESS) {
@@ -479,6 +501,19 @@ public class ClientFlightHandler {
                 }
             } else {
                 player.sendMessage(new TranslationTextComponent("ds.you.have.no.wings"), player.getUUID());
+            }
+        }
+    }
+    
+    private static void spinKeybind(ClientPlayerEntity player, DragonStateHandler handler)
+    {
+        if (KeyInputHandler.SPIN_ABILITY.consumeClick()) {
+            if (!ServerFlightHandler.isSpin(player) && handler.getMovementData().spinCooldown <= 0 && handler.getMovementData().spinLearned) {
+                if (ServerFlightHandler.isFlying(player) || ServerFlightHandler.canSwimSpin(player)) {
+                    handler.getMovementData().spinAttack = ServerFlightHandler.spinDuration;
+                    handler.getMovementData().spinCooldown = ConfigHandler.SERVER.flightSpinCooldown.get() * 20;
+                    NetworkHandler.CHANNEL.sendToServer(new SyncSpinStatus(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
+                }
             }
         }
     }

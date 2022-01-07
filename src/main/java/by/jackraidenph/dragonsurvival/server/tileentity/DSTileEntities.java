@@ -2,7 +2,6 @@ package by.jackraidenph.dragonsurvival.server.tileentity;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.common.blocks.DSBlocks;
-import by.jackraidenph.dragonsurvival.network.nest.SourceOfMagicPlaceholder;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
