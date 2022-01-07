@@ -148,10 +148,10 @@ public class DSBlocks
         
 
         forgeRegistry.register(new BlockItem(PREDATOR_STAR_BLOCK, new Item.Properties().tab(DragonSurvivalMod.items)).setRegistryName("predator_star"));
-        
-        registerSingleItem(seaSourceOfMagic, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
-        registerSingleItem(forestSourceOfMagic, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
-        registerSingleItem(caveSourceOfMagic, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
+    
+        registerItem(seaSourceOfMagic, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
+        registerItem(forestSourceOfMagic, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
+        registerItem(caveSourceOfMagic, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
     
         registerItem(treasureDebris, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
         registerItem(treasureDiamond, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
