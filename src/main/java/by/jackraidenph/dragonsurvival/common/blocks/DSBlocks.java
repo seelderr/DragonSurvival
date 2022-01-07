@@ -135,6 +135,7 @@ public class DSBlocks
         IForgeRegistry<Item> forgeRegistry = event.getRegistry();
         registerDoor(oakDoor, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
         registerDoor(spruceDoor, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
+        registerDoor(spruceSmallDoor, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
         registerDoor(acaciaDoor, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
         registerDoor(jungleDoor, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
         registerDoor(darkOakDoor, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
