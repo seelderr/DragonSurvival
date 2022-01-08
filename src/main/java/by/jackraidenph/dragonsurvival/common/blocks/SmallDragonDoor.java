@@ -82,47 +82,47 @@ public class SmallDragonDoor extends Block {
     /**
      * updates the state of the other door components depending on the door component they are currently looking at
      */
-    public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
-        Part part = Part.BOTTOM;
-        //TODO
-        if (
-                // if looking up or down, and looking at up at the bottom or middle block
-                facing.getAxis() == Direction.Axis.Y &&
-                        (
-                                part == Part.BOTTOM == (facing == Direction.UP) ||
-                                part == Part.MIDDLE == (facing == Direction.UP)
-                        )
-        ) {
-            // if user is currently facing this block, but looking at a different part, then updates this parts state from the one they are looking at
-            if (facingState.getBlock() == this &&
-                    facingState.getValue(PART) != part)
-                return
-                        stateIn.setValue(FACING, facingState.getValue(FACING)).
-                                setValue(OPEN, facingState.getValue(OPEN)).
-                                setValue(HINGE, facingState.getValue(HINGE)).
-                                setValue(POWERED, facingState.getValue(POWERED));
-            // do nothing if not facing the block
-            return Blocks.AIR.defaultBlockState();
-        } else {
-            // TODO: figure out what this branch is for
-            if (part == Part.BOTTOM && facing == Direction.DOWN && !stateIn.canSurvive(worldIn, currentPos))
-                return Blocks.AIR.defaultBlockState();
-            Part part1 = stateIn.getValue(PART);
-            //TODO
-            if (facing.getAxis() == Direction.Axis.Y && (part1 == DragonDoor.Part.BOTTOM == (facing == Direction.UP) || part1 == DragonDoor.Part.MIDDLE == (facing == Direction.UP))) {
-                return facingState.getBlock() == this && facingState.getValue(PART) != part1 ? stateIn.setValue(FACING, facingState.getValue(FACING)).setValue(OPEN, facingState.getValue(OPEN)).setValue(HINGE, facingState.getValue(HINGE)).setValue(POWERED, facingState.getValue(POWERED)) :
-                    Blocks.AIR.defaultBlockState();
-            } else {
-                return part1 == DragonDoor.Part.BOTTOM && facing == Direction.DOWN && !stateIn.canSurvive(worldIn, currentPos) ? Blocks.AIR.defaultBlockState() : super.updateShape(stateIn, facing, facingState, worldIn, currentPos, facingPos);
-            }
-        }
-    }
+//    public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
+//        DragonDoor.Part part = DragonDoor.Part.BOTTOM;
+//        //TODO
+//        if (
+//                // if looking up or down, and looking at up at the bottom or middle block
+//                facing.getAxis() == Direction.Axis.Y &&
+//                        (
+//                                part == DragonDoor.Part.BOTTOM == (facing == Direction.UP) ||
+//                                part == DragonDoor.Part.MIDDLE == (facing == Direction.UP)
+//                        )
+//        ) {
+//            // if user is currently facing this block, but looking at a different part, then updates this parts state from the one they are looking at
+//            if (facingState.getBlock() == this &&
+//                    facingState.getValue(PART) != part)
+//                return
+//                        stateIn.setValue(FACING, facingState.getValue(FACING)).
+//                                setValue(OPEN, facingState.getValue(OPEN)).
+//                                setValue(HINGE, facingState.getValue(HINGE)).
+//                                setValue(POWERED, facingState.getValue(POWERED));
+//            // do nothing if not facing the block
+//            return Blocks.AIR.defaultBlockState();
+//        } else {
+//            // TODO: figure out what this branch is for
+//            if (part == Part.BOTTOM && facing == Direction.DOWN && !stateIn.canSurvive(worldIn, currentPos))
+//                return Blocks.AIR.defaultBlockState();
+//            Part part1 = stateIn.getValue(PART);
+//            //TODO
+//            if (facing.getAxis() == Direction.Axis.Y && (part1 == DragonDoor.Part.BOTTOM == (facing == Direction.UP) || part1 == DragonDoor.Part.MIDDLE == (facing == Direction.UP))) {
+//                return facingState.getBlock() == this && facingState.getValue(PART) != part1 ? stateIn.setValue(FACING, facingState.getValue(FACING)).setValue(OPEN, facingState.getValue(OPEN)).setValue(HINGE, facingState.getValue(HINGE)).setValue(POWERED, facingState.getValue(POWERED)) :
+//                    Blocks.AIR.defaultBlockState();
+//            } else {
+//                return part1 == DragonDoor.Part.BOTTOM && facing == Direction.DOWN && !stateIn.canSurvive(worldIn, currentPos) ? Blocks.AIR.defaultBlockState() : super.updateShape(stateIn, facing, facingState, worldIn, currentPos, facingPos);
+//            }
+//        }
+//    }
 
     public void playerWillDestroy(World worldIn, BlockPos pos, BlockState state, PlayerEntity player) {
     	if (!worldIn.isClientSide) {
-            Part part = Part.BOTTOM;
-        	if (part != Part.MIDDLE && !player.isCreative()) {
-        		BlockPos middlePos = part == Part.BOTTOM ? pos.above() : pos.below();
+            DragonDoor.Part part = DragonDoor.Part.BOTTOM;
+        	if (part != DragonDoor.Part.MIDDLE && !player.isCreative()) {
+        		BlockPos middlePos = part == DragonDoor.Part.BOTTOM ? pos.above() : pos.below();
         		BlockState middleState = worldIn.getBlockState(middlePos);
         		if (middleState.getBlock() == state.getBlock()) {
         			worldIn.setBlock(middlePos, Blocks.AIR.defaultBlockState(), 35);
@@ -139,7 +139,7 @@ public class SmallDragonDoor extends Block {
 //        	}
     	}
         if (!worldIn.isClientSide) {
-            Part part = state.getValue(PART);
+            DragonDoor.Part part = DragonDoor.Part.BOTTOM;
             if (part != DragonDoor.Part.MIDDLE && !player.isCreative()) {
                 BlockPos middlePos = part == DragonDoor.Part.BOTTOM ? pos.above() : pos.below();
                 BlockState middleState = worldIn.getBlockState(middlePos);
@@ -164,25 +164,28 @@ public class SmallDragonDoor extends Block {
         //TODO Logic handling aligning doors
         IBlockReader iblockreader = blockItemUseContext.getLevel();
         BlockPos blockpos = blockItemUseContext.getClickedPos();
-        Direction direction = blockItemUseContext.getHorizontalDirection();
-        BlockPos blockpos1 = blockpos.above();
-        Direction direction1 = direction.getCounterClockWise();
-        BlockPos blockpos2 = blockpos.relative(direction1);
+        Direction north = blockItemUseContext.getHorizontalDirection();
+//        BlockPos blockposabove = blockpos.above();
+        // searches blocks around the door, I guess looking for adjacent door block to copy orientation from
+        Direction directionCounterClockWiseHorizontal = north.getCounterClockWise();
+        BlockPos blockpos2 = blockpos.relative(directionCounterClockWiseHorizontal);
         BlockState blockstate = iblockreader.getBlockState(blockpos2);
-        BlockPos blockpos3 = blockpos1.relative(direction1);
-        BlockState blockstate1 = iblockreader.getBlockState(blockpos3);
-        Direction direction2 = direction.getClockWise();
+//        BlockPos blockpos3 = blockposabove.relative(directionCounterClockWiseHorizontal);
+//        BlockState blockstate1 = iblockreader.getBlockState(blockpos3);
+        Direction direction2 = north.getClockWise();
         BlockPos blockpos4 = blockpos.relative(direction2);
         BlockState blockstate2 = iblockreader.getBlockState(blockpos4);
-        BlockPos blockpos5 = blockpos1.relative(direction2);
-        BlockState blockstate3 = iblockreader.getBlockState(blockpos5);
-        int i = (blockstate.isCollisionShapeFullBlock(iblockreader, blockpos2) ? -1 : 0) + (blockstate1.isCollisionShapeFullBlock(iblockreader, blockpos3) ? -1 : 0) + (blockstate2.isCollisionShapeFullBlock(iblockreader, blockpos4) ? 1 : 0) + (blockstate3.isCollisionShapeFullBlock(iblockreader, blockpos5) ? 1 : 0);
-        boolean flag = blockstate.is(this) && blockstate.getValue(PART) == Part.BOTTOM;
-        boolean flag1 = blockstate2.is(this) && blockstate2.getValue(PART) == Part.BOTTOM;
+//        BlockPos blockpos5 = blockposabove.relative(direction2);
+//        BlockState blockstate3 = iblockreader.getBlockState(blockpos5);
+        int i = (blockstate.isCollisionShapeFullBlock(iblockreader, blockpos2) ? -1 : 0) +
+                (blockstate2.isCollisionShapeFullBlock(iblockreader, blockpos4) ? 1 : 0)
+                ;
+        boolean flag = blockstate.is(this);
+        boolean flag1 = blockstate2.is(this);
         if ((!flag || flag1) && i <= 0) {
             if ((!flag1 || flag) && i >= 0) {
-                int j = direction.getStepX();
-                int k = direction.getStepZ();
+                int j = north.getStepX();
+                int k = north.getStepZ();
                 Vector3d vec3d = blockItemUseContext.getClickLocation();
                 double d0 = vec3d.x - (double) blockpos.getX();
                 double d1 = vec3d.z - (double) blockpos.getZ();
@@ -225,10 +228,10 @@ public class SmallDragonDoor extends Block {
     			state = state.cycle(OPEN);
                 worldIn.setBlock(pos, state, 10);
                 worldIn.levelEvent(player, state.getValue(OPEN) ? this.getOpenSound() : this.getCloseSound(), pos, 0);
-                if (state.getValue(PART) == Part.TOP) {
-//                    worldIn.setBlock(pos.below(2), state.setValue(PART, Part.BOTTOM), 10);
-//                    worldIn.setBlock(pos.below(), state.setValue(PART, Part.MIDDLE), 10);
-                }
+//                if (state.getValue(PART) == Part.TOP) {
+////                    worldIn.setBlock(pos.below(2), state.setValue(PART, Part.BOTTOM), 10);
+////                    worldIn.setBlock(pos.below(), state.setValue(PART, Part.MIDDLE), 10);
+//                }
                 return ActionResultType.SUCCESS;
     		}
     	}
@@ -256,7 +259,7 @@ public class SmallDragonDoor extends Block {
 
     public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
     	if (state.getValue(OPEN_REQ) == OpenRequirement.NONE || state.getValue(OPEN_REQ) == OpenRequirement.POWER) {
-    		boolean flag = worldIn.hasNeighborSignal(pos) || worldIn.hasNeighborSignal(pos.relative(state.getValue(PART) == Part.BOTTOM ? Direction.UP : Direction.DOWN));
+    		boolean flag = worldIn.hasNeighborSignal(pos) || worldIn.hasNeighborSignal(pos.relative(Direction.UP));
             if (blockIn != this && flag != state.getValue(POWERED)) {
                 if (flag != state.getValue(OPEN)) {
                     this.playSound(worldIn, pos, flag);
@@ -270,11 +273,7 @@ public class SmallDragonDoor extends Block {
     public boolean canSurvive(BlockState state, IWorldReader worldIn, BlockPos pos) {
         BlockPos blockpos = pos.below();
         BlockState blockstate = worldIn.getBlockState(blockpos);
-        if (state.getValue(PART) == Part.BOTTOM) {
-            return blockstate.isFaceSturdy(worldIn, blockpos, Direction.UP);
-        } else {
-            return blockstate.getBlock() == this;
-        }
+        return blockstate.isFaceSturdy(worldIn, blockpos, Direction.UP);
     }
 
     public void playerDestroy(World worldIn, PlayerEntity player, BlockPos pos, BlockState state, @Nullable TileEntity te, ItemStack stack) {
@@ -312,21 +311,9 @@ public class SmallDragonDoor extends Block {
     }
 
     public long getSeed(BlockState state, BlockPos pos) {
-        //TODO
-        return MathHelper.getSeed(pos.getX(), pos.below(state.getValue(PART) == Part.BOTTOM ? 0 : 1).getY(), pos.getZ());
+        return MathHelper.getSeed(pos.getX(), pos.below(0).getY(), pos.getZ());
     }
 
-    enum Part implements IStringSerializable {
-        BOTTOM,
-        MIDDLE,
-        TOP;
-
-
-        @Override
-        public String getSerializedName() {
-            return name().toLowerCase(Locale.ENGLISH);
-        }
-    }
 
     public enum OpenRequirement implements IStringSerializable{
 		NONE,
