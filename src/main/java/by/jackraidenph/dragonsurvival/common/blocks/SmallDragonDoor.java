@@ -20,6 +20,7 @@ import net.minecraft.state.EnumProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.state.properties.DoorHingeSide;
+import net.minecraft.state.properties.DoubleBlockHalf;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
@@ -78,45 +79,6 @@ public class SmallDragonDoor extends Block {
                 return flag ? NORTH_AABB : (flag1 ? WEST_AABB : EAST_AABB);
         }
     }
-
-    /**
-     * updates the state of the other door components depending on the door component they are currently looking at
-     */
-//    public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
-//        DragonDoor.Part part = DragonDoor.Part.BOTTOM;
-//        //TODO
-//        if (
-//                // if looking up or down, and looking at up at the bottom or middle block
-//                facing.getAxis() == Direction.Axis.Y &&
-//                        (
-//                                part == DragonDoor.Part.BOTTOM == (facing == Direction.UP) ||
-//                                part == DragonDoor.Part.MIDDLE == (facing == Direction.UP)
-//                        )
-//        ) {
-//            // if user is currently facing this block, but looking at a different part, then updates this parts state from the one they are looking at
-//            if (facingState.getBlock() == this &&
-//                    facingState.getValue(PART) != part)
-//                return
-//                        stateIn.setValue(FACING, facingState.getValue(FACING)).
-//                                setValue(OPEN, facingState.getValue(OPEN)).
-//                                setValue(HINGE, facingState.getValue(HINGE)).
-//                                setValue(POWERED, facingState.getValue(POWERED));
-//            // do nothing if not facing the block
-//            return Blocks.AIR.defaultBlockState();
-//        } else {
-//            // TODO: figure out what this branch is for
-//            if (part == Part.BOTTOM && facing == Direction.DOWN && !stateIn.canSurvive(worldIn, currentPos))
-//                return Blocks.AIR.defaultBlockState();
-//            Part part1 = stateIn.getValue(PART);
-//            //TODO
-//            if (facing.getAxis() == Direction.Axis.Y && (part1 == DragonDoor.Part.BOTTOM == (facing == Direction.UP) || part1 == DragonDoor.Part.MIDDLE == (facing == Direction.UP))) {
-//                return facingState.getBlock() == this && facingState.getValue(PART) != part1 ? stateIn.setValue(FACING, facingState.getValue(FACING)).setValue(OPEN, facingState.getValue(OPEN)).setValue(HINGE, facingState.getValue(HINGE)).setValue(POWERED, facingState.getValue(POWERED)) :
-//                    Blocks.AIR.defaultBlockState();
-//            } else {
-//                return part1 == DragonDoor.Part.BOTTOM && facing == Direction.DOWN && !stateIn.canSurvive(worldIn, currentPos) ? Blocks.AIR.defaultBlockState() : super.updateShape(stateIn, facing, facingState, worldIn, currentPos, facingPos);
-//            }
-//        }
-//    }
 
     public void playerWillDestroy(World worldIn, BlockPos pos, BlockState state, PlayerEntity player) {
     	if (!worldIn.isClientSide) {
