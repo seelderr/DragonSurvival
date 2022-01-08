@@ -165,21 +165,15 @@ public class SmallDragonDoor extends Block {
         IBlockReader iblockreader = blockItemUseContext.getLevel();
         BlockPos blockpos = blockItemUseContext.getClickedPos();
         Direction north = blockItemUseContext.getHorizontalDirection();
-//        BlockPos blockposabove = blockpos.above();
         // searches blocks around the door, I guess looking for adjacent door block to copy orientation from
         Direction directionCounterClockWiseHorizontal = north.getCounterClockWise();
         BlockPos blockpos2 = blockpos.relative(directionCounterClockWiseHorizontal);
         BlockState blockstate = iblockreader.getBlockState(blockpos2);
-//        BlockPos blockpos3 = blockposabove.relative(directionCounterClockWiseHorizontal);
-//        BlockState blockstate1 = iblockreader.getBlockState(blockpos3);
         Direction direction2 = north.getClockWise();
         BlockPos blockpos4 = blockpos.relative(direction2);
         BlockState blockstate2 = iblockreader.getBlockState(blockpos4);
-//        BlockPos blockpos5 = blockposabove.relative(direction2);
-//        BlockState blockstate3 = iblockreader.getBlockState(blockpos5);
         int i = (blockstate.isCollisionShapeFullBlock(iblockreader, blockpos2) ? -1 : 0) +
-                (blockstate2.isCollisionShapeFullBlock(iblockreader, blockpos4) ? 1 : 0)
-                ;
+                (blockstate2.isCollisionShapeFullBlock(iblockreader, blockpos4) ? 1 : 0);
         boolean flag = blockstate.is(this);
         boolean flag1 = blockstate2.is(this);
         if ((!flag || flag1) && i <= 0) {
@@ -205,15 +199,9 @@ public class SmallDragonDoor extends Block {
             World world = context.getLevel();
             boolean flag = world.hasNeighborSignal(blockpos) || world.hasNeighborSignal(blockpos.above());
             return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection()).setValue(HINGE, this.getHinge(context)).setValue(POWERED, flag).setValue(OPEN, flag);
-//                    .setValue(PART, Part.BOTTOM);
         } else {
             return null;
         }
-    }
-
-    public void setPlacedBy(World worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
-//        worldIn.setBlock(pos.above(), state.setValue(PART, Part.MIDDLE), 3);
-//        worldIn.setBlock(pos.above(2), state.setValue(PART, Part.TOP), 3);
     }
 
     public ActionResultType use(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
@@ -228,10 +216,6 @@ public class SmallDragonDoor extends Block {
     			state = state.cycle(OPEN);
                 worldIn.setBlock(pos, state, 10);
                 worldIn.levelEvent(player, state.getValue(OPEN) ? this.getOpenSound() : this.getCloseSound(), pos, 0);
-//                if (state.getValue(PART) == Part.TOP) {
-////                    worldIn.setBlock(pos.below(2), state.setValue(PART, Part.BOTTOM), 10);
-////                    worldIn.setBlock(pos.below(), state.setValue(PART, Part.MIDDLE), 10);
-//                }
                 return ActionResultType.SUCCESS;
     		}
     	}
