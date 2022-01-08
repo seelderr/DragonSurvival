@@ -213,6 +213,7 @@ public class ClientFlightHandler {
     }
     
     public static boolean wasGliding = false;
+    public static boolean wasFlying = false;
     
     /**
      * Controls acceleration
@@ -266,6 +267,10 @@ public class ClientFlightHandler {
                         
                         //start
                         if (ServerFlightHandler.isFlying(playerEntity)) {
+                            if(!wasFlying){
+                                wasFlying = true;
+                            }
+                            
                             Vector3d motion = playerEntity.getDeltaMovement();
                             
                             Vector3d lookVec = playerEntity.getLookAngle();
@@ -412,7 +417,7 @@ public class ClientFlightHandler {
                                     return;
                                 }
                                 
-                                if(playerEntity.fallDistance >= 2.5) { //Dont activate on a regular jump
+                                if(wasFlying) { //Dont activate on a regular jump
                                     double yMotion = hasFood ? -g + ay : -(g * 4) + ay;
                                     motion = new Vector3d(motion.x, yMotion, motion.z);
                                     
@@ -425,6 +430,7 @@ public class ClientFlightHandler {
                             }
                         } else {
                             wasGliding = false;
+                            wasFlying = false;
                             ax = 0;
                             az = 0;
                             ay = 0;
@@ -448,6 +454,7 @@ public class ClientFlightHandler {
         
         DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
         if(handler == null || !handler.isDragon()) return;
+        
         if(KeyInputHandler.SPIN_ABILITY.getKey().getValue() == keyInputEvent.getButton()) {
             spinKeybind(player, handler);
         }
@@ -507,13 +514,11 @@ public class ClientFlightHandler {
     
     private static void spinKeybind(ClientPlayerEntity player, DragonStateHandler handler)
     {
-        if (KeyInputHandler.SPIN_ABILITY.consumeClick()) {
-            if (!ServerFlightHandler.isSpin(player) && handler.getMovementData().spinCooldown <= 0 && handler.getMovementData().spinLearned) {
-                if (ServerFlightHandler.isFlying(player) || ServerFlightHandler.canSwimSpin(player)) {
-                    handler.getMovementData().spinAttack = ServerFlightHandler.spinDuration;
-                    handler.getMovementData().spinCooldown = ConfigHandler.SERVER.flightSpinCooldown.get() * 20;
-                    NetworkHandler.CHANNEL.sendToServer(new SyncSpinStatus(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
-                }
+        if (!ServerFlightHandler.isSpin(player) && handler.getMovementData().spinCooldown <= 0 && handler.getMovementData().spinLearned) {
+            if (ServerFlightHandler.isFlying(player) || ServerFlightHandler.canSwimSpin(player)) {
+                handler.getMovementData().spinAttack = ServerFlightHandler.spinDuration;
+                handler.getMovementData().spinCooldown = ConfigHandler.SERVER.flightSpinCooldown.get() * 20;
+                NetworkHandler.CHANNEL.sendToServer(new SyncSpinStatus(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
             }
         }
     }

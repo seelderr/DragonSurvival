@@ -79,7 +79,7 @@ public class KeyInputHandler
 		ClientRegistry.registerKeyBinding(ABILITY4);
 		
 		SPIN_ABILITY = new KeyBinding("ds.keybind.spin", Type.MOUSE, GLFW.GLFW_MOUSE_BUTTON_RIGHT, "Dragon Survival");
-		SPIN_ABILITY.setKeyConflictContext(KeyConflictContext.IN_GAME);
+		SPIN_ABILITY.setKeyConflictContext(KeyConflictContext.GUI);
 		ClientRegistry.registerKeyBinding(SPIN_ABILITY);
 		
 		FREE_LOOK = new KeyBinding("ds.keybind.free_look", GLFW.GLFW_KEY_LEFT_ALT, "Dragon Survival");
