@@ -38,12 +38,11 @@ import javax.annotation.Nullable;
 import java.util.Locale;
 
 
-public class SmallDragonDoor extends DragonDoor {
+public class SmallDragonDoor extends Block {
     public static final DirectionProperty FACING = HorizontalBlock.FACING;
     public static final BooleanProperty OPEN = BlockStateProperties.OPEN;
     public static final EnumProperty<DoorHingeSide> HINGE = BlockStateProperties.DOOR_HINGE;
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
-    public static final EnumProperty<Part> PART = EnumProperty.create("part", Part.class);
     public static final EnumProperty<OpenRequirement> OPEN_REQ = EnumProperty.create("open_req", OpenRequirement.class);
 
     // These are precalculated bounding boxes, for the door facing various directions + close / open states.
@@ -54,7 +53,13 @@ public class SmallDragonDoor extends DragonDoor {
     protected static final VoxelShape EAST_AABB = Block.box(0.0D, 0.0D, 0.0D, 3.0D, 16.0D, 16.0D);
 
     public SmallDragonDoor(Properties properties, OpenRequirement openRequirement) {
-        super(properties, openRequirement);
+        super(properties);
+        registerDefaultState(getStateDefinition().any()
+        		.setValue(FACING, Direction.NORTH)
+        		.setValue(OPEN, false)
+        		.setValue(HINGE, DoorHingeSide.LEFT)
+        		.setValue(POWERED, false)
+        		.setValue(OPEN_REQ, openRequirement));
     }
 
     public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
@@ -74,20 +79,48 @@ public class SmallDragonDoor extends DragonDoor {
         }
     }
 
+    /**
+     * updates the state of the other door components depending on the door component they are currently looking at
+     */
     public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
-        Part part = stateIn.getValue(PART);
+        Part part = Part.BOTTOM;
         //TODO
-        if (facing.getAxis() == Direction.Axis.Y && (part == Part.BOTTOM == (facing == Direction.UP) || part == Part.MIDDLE == (facing == Direction.UP))) {
-        	return facingState.getBlock() == this && facingState.getValue(PART) != part ? stateIn.setValue(FACING, facingState.getValue(FACING)).setValue(OPEN, facingState.getValue(OPEN)).setValue(HINGE, facingState.getValue(HINGE)).setValue(POWERED, facingState.getValue(POWERED)) : 
-        		Blocks.AIR.defaultBlockState();
+        if (
+                // if looking up or down, and looking at up at the bottom or middle block
+                facing.getAxis() == Direction.Axis.Y &&
+                        (
+                                part == Part.BOTTOM == (facing == Direction.UP) ||
+                                part == Part.MIDDLE == (facing == Direction.UP)
+                        )
+        ) {
+            // if user is currently facing this block, but looking at a different part, then updates this parts state from the one they are looking at
+            if (facingState.getBlock() == this &&
+                    facingState.getValue(PART) != part)
+                return
+                        stateIn.setValue(FACING, facingState.getValue(FACING)).
+                                setValue(OPEN, facingState.getValue(OPEN)).
+                                setValue(HINGE, facingState.getValue(HINGE)).
+                                setValue(POWERED, facingState.getValue(POWERED));
+            // do nothing if not facing the block
+            return Blocks.AIR.defaultBlockState();
         } else {
-        	return part == Part.BOTTOM && facing == Direction.DOWN && !stateIn.canSurvive(worldIn, currentPos) ? Blocks.AIR.defaultBlockState() : super.updateShape(stateIn, facing, facingState, worldIn, currentPos, facingPos);
+            // TODO: figure out what this branch is for
+            if (part == Part.BOTTOM && facing == Direction.DOWN && !stateIn.canSurvive(worldIn, currentPos))
+                return Blocks.AIR.defaultBlockState();
+            Part part1 = stateIn.getValue(PART);
+            //TODO
+            if (facing.getAxis() == Direction.Axis.Y && (part1 == DragonDoor.Part.BOTTOM == (facing == Direction.UP) || part1 == DragonDoor.Part.MIDDLE == (facing == Direction.UP))) {
+                return facingState.getBlock() == this && facingState.getValue(PART) != part1 ? stateIn.setValue(FACING, facingState.getValue(FACING)).setValue(OPEN, facingState.getValue(OPEN)).setValue(HINGE, facingState.getValue(HINGE)).setValue(POWERED, facingState.getValue(POWERED)) :
+                    Blocks.AIR.defaultBlockState();
+            } else {
+                return part1 == DragonDoor.Part.BOTTOM && facing == Direction.DOWN && !stateIn.canSurvive(worldIn, currentPos) ? Blocks.AIR.defaultBlockState() : super.updateShape(stateIn, facing, facingState, worldIn, currentPos, facingPos);
+            }
         }
     }
 
     public void playerWillDestroy(World worldIn, BlockPos pos, BlockState state, PlayerEntity player) {
     	if (!worldIn.isClientSide) {
-    		Part part = state.getValue(PART);
+            Part part = Part.BOTTOM;
         	if (part != Part.MIDDLE && !player.isCreative()) {
         		BlockPos middlePos = part == Part.BOTTOM ? pos.above() : pos.below();
         		BlockState middleState = worldIn.getBlockState(middlePos);
@@ -95,17 +128,36 @@ public class SmallDragonDoor extends DragonDoor {
         			worldIn.setBlock(middlePos, Blocks.AIR.defaultBlockState(), 35);
         			worldIn.levelEvent(player, 2001, middlePos, Block.getId(middleState));
             	}
-        	} else if (part != Part.BOTTOM && player.isCreative()) {
-    			BlockPos bottomPos = part == Part.MIDDLE ? pos.below() : pos.below(2);
-    			BlockState bottomState = worldIn.getBlockState(bottomPos);
-    			if (bottomState.getBlock() == state.getBlock()) {
-        			worldIn.setBlock(bottomPos, Blocks.AIR.defaultBlockState(), 35);
-        			worldIn.levelEvent(player, 2001, bottomPos, Block.getId(bottomState));
-            	}
         	}
+//            else if (part != Part.BOTTOM && player.isCreative()) {
+//    			BlockPos bottomPos = part == Part.MIDDLE ? pos.below() : pos.below(2);
+//    			BlockState bottomState = worldIn.getBlockState(bottomPos);
+//    			if (bottomState.getBlock() == state.getBlock()) {
+//        			worldIn.setBlock(bottomPos, Blocks.AIR.defaultBlockState(), 35);
+//        			worldIn.levelEvent(player, 2001, bottomPos, Block.getId(bottomState));
+//            	}
+//        	}
     	}
-		super.playerWillDestroy(worldIn, pos, state, player);
-     }
+        if (!worldIn.isClientSide) {
+            Part part = state.getValue(PART);
+            if (part != DragonDoor.Part.MIDDLE && !player.isCreative()) {
+                BlockPos middlePos = part == DragonDoor.Part.BOTTOM ? pos.above() : pos.below();
+                BlockState middleState = worldIn.getBlockState(middlePos);
+                if (middleState.getBlock() == state.getBlock()) {
+                    worldIn.setBlock(middlePos, Blocks.AIR.defaultBlockState(), 35);
+                    worldIn.levelEvent(player, 2001, middlePos, Block.getId(middleState));
+                }
+            } else if (part != DragonDoor.Part.BOTTOM && player.isCreative()) {
+                BlockPos bottomPos = part == DragonDoor.Part.MIDDLE ? pos.below() : pos.below(2);
+                BlockState bottomState = worldIn.getBlockState(bottomPos);
+                if (bottomState.getBlock() == state.getBlock()) {
+                    worldIn.setBlock(bottomPos, Blocks.AIR.defaultBlockState(), 35);
+                    worldIn.levelEvent(player, 2001, bottomPos, Block.getId(bottomState));
+                }
+            }
+        }
+        super.playerWillDestroy(worldIn, pos, state, player);
+    }
 
 
     private DoorHingeSide getHinge(BlockItemUseContext blockItemUseContext) {
@@ -134,7 +186,7 @@ public class SmallDragonDoor extends DragonDoor {
                 Vector3d vec3d = blockItemUseContext.getClickLocation();
                 double d0 = vec3d.x - (double) blockpos.getX();
                 double d1 = vec3d.z - (double) blockpos.getZ();
-                return (j >= 0 || !(d1 < 0.5D)) && (j <= 0 || !(d1 > 0.5D)) && (k >= 0 || !(d0 > 0.5D)) && (k <= 0 || !(d0 < 0.5D)) ? DoorHingeSide.LEFT : DoorHingeSide.RIGHT; 
+                return (j >= 0 || !(d1 < 0.5D)) && (j <= 0 || !(d1 > 0.5D)) && (k >= 0 || !(d0 > 0.5D)) && (k <= 0 || !(d0 < 0.5D)) ? DoorHingeSide.LEFT : DoorHingeSide.RIGHT;
             } else {
                 return DoorHingeSide.LEFT;
             }
@@ -149,22 +201,23 @@ public class SmallDragonDoor extends DragonDoor {
         if (blockpos.getY() < 255 && context.getLevel().getBlockState(blockpos.above()).canBeReplaced(context) && context.getLevel().getBlockState(blockpos.above(2)).canBeReplaced(context)) {
             World world = context.getLevel();
             boolean flag = world.hasNeighborSignal(blockpos) || world.hasNeighborSignal(blockpos.above());
-            return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection()).setValue(HINGE, this.getHinge(context)).setValue(POWERED, flag).setValue(OPEN, flag).setValue(PART, Part.BOTTOM);
+            return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection()).setValue(HINGE, this.getHinge(context)).setValue(POWERED, flag).setValue(OPEN, flag);
+//                    .setValue(PART, Part.BOTTOM);
         } else {
             return null;
         }
     }
 
     public void setPlacedBy(World worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
-        worldIn.setBlock(pos.above(), state.setValue(PART, Part.MIDDLE), 3);
-        worldIn.setBlock(pos.above(2), state.setValue(PART, Part.TOP), 3);
+//        worldIn.setBlock(pos.above(), state.setValue(PART, Part.MIDDLE), 3);
+//        worldIn.setBlock(pos.above(2), state.setValue(PART, Part.TOP), 3);
     }
 
     public ActionResultType use(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
     	LazyOptional<DragonStateHandler> dragonStateHandlerLazyOptional = player.getCapability(DragonStateProvider.DRAGON_CAPABILITY);
     	if (dragonStateHandlerLazyOptional.isPresent()) {
     		DragonStateHandler dragonStateHandler = dragonStateHandlerLazyOptional.orElseGet(() -> null);
-    		if (state.getValue(OPEN_REQ) == OpenRequirement.NONE || (dragonStateHandler.isDragon() && 
+    		if (state.getValue(OPEN_REQ) == OpenRequirement.NONE || (dragonStateHandler.isDragon() &&
     				(state.getValue(OPEN_REQ) == OpenRequirement.CAVE && dragonStateHandler.getType() == DragonType.CAVE) ||
     				(state.getValue(OPEN_REQ) == OpenRequirement.FOREST && dragonStateHandler.getType() == DragonType.FOREST) ||
     				(state.getValue(OPEN_REQ) == OpenRequirement.SEA && dragonStateHandler.getType() == DragonType.SEA)
@@ -173,8 +226,8 @@ public class SmallDragonDoor extends DragonDoor {
                 worldIn.setBlock(pos, state, 10);
                 worldIn.levelEvent(player, state.getValue(OPEN) ? this.getOpenSound() : this.getCloseSound(), pos, 0);
                 if (state.getValue(PART) == Part.TOP) {
-                    worldIn.setBlock(pos.below(2), state.setValue(PART, Part.BOTTOM), 10);
-                    worldIn.setBlock(pos.below(), state.setValue(PART, Part.MIDDLE), 10);
+//                    worldIn.setBlock(pos.below(2), state.setValue(PART, Part.BOTTOM), 10);
+//                    worldIn.setBlock(pos.below(), state.setValue(PART, Part.MIDDLE), 10);
                 }
                 return ActionResultType.SUCCESS;
     		}
@@ -187,8 +240,8 @@ public class SmallDragonDoor extends DragonDoor {
     }
 
     /**
-     * Used by {@link net.minecraft.entity.ai.brain.task.InteractWithDoorTask}
-     */
+         * Used by {@link net.minecraft.entity.ai.brain.task.InteractWithDoorTask}
+         */
     public void toggleDoor(World worldIn, BlockPos pos, boolean open) { // TODO check this for Open Requirements
         BlockState blockstate = worldIn.getBlockState(pos);
         if (blockstate.getBlock() == this && blockstate.getValue(OPEN) != open) {
@@ -198,7 +251,7 @@ public class SmallDragonDoor extends DragonDoor {
     }
 
     protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
-        builder.add(PART, FACING, OPEN, HINGE, POWERED, OPEN_REQ);
+        builder.add(FACING, OPEN, HINGE, POWERED, OPEN_REQ);
     }
 
     public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
@@ -223,5 +276,70 @@ public class SmallDragonDoor extends DragonDoor {
             return blockstate.getBlock() == this;
         }
     }
+
+    public void playerDestroy(World worldIn, PlayerEntity player, BlockPos pos, BlockState state, @Nullable TileEntity te, ItemStack stack) {
+        super.playerDestroy(worldIn, player, pos, Blocks.AIR.defaultBlockState(), te, stack);
+    }
+
+    public boolean isPathfindable(BlockState state, IBlockReader worldIn, BlockPos pos, PathType type) {
+        switch (type) {
+            case LAND:
+            case AIR:
+                return state.getValue(OPEN);
+            default:
+                return false;
+        }
+    }
+
+    protected int getCloseSound() {
+        return this.material == Material.METAL ? 1011 : 1012;
+    }
+
+    protected int getOpenSound() {
+        return this.material == Material.METAL ? 1005 : 1006;
+    }
+
+    public PushReaction getPistonPushReaction(BlockState state) {
+        return state.getValue(OPEN_REQ) == OpenRequirement.NONE ? PushReaction.DESTROY : PushReaction.IGNORE;
+    }
+
+    public BlockState rotate(BlockState state, Rotation rot) {
+        return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
+    }
+
+    public BlockState mirror(BlockState state, Mirror mirrorIn) {
+        return mirrorIn == Mirror.NONE ? state : state.rotate(mirrorIn.getRotation(state.getValue(FACING))).cycle(HINGE);
+    }
+
+    public long getSeed(BlockState state, BlockPos pos) {
+        //TODO
+        return MathHelper.getSeed(pos.getX(), pos.below(state.getValue(PART) == Part.BOTTOM ? 0 : 1).getY(), pos.getZ());
+    }
+
+    enum Part implements IStringSerializable {
+        BOTTOM,
+        MIDDLE,
+        TOP;
+
+
+        @Override
+        public String getSerializedName() {
+            return name().toLowerCase(Locale.ENGLISH);
+        }
+    }
+
+    public enum OpenRequirement implements IStringSerializable{
+		NONE,
+    	POWER,
+        CAVE,
+        FOREST,
+        SEA,
+        LOCKED;
+
+    	@Override
+        public String getSerializedName() {
+            return name().toLowerCase(Locale.ENGLISH);
+        }
+	}
 }
 
