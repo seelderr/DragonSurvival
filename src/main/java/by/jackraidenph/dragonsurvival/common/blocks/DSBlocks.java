@@ -135,7 +135,6 @@ public class DSBlocks
         IForgeRegistry<Item> forgeRegistry = event.getRegistry();
         registerDoor(oakDoor, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
         registerDoor(spruceDoor, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
-        registerDoor(spruceSmallDoor, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
         registerDoor(acaciaDoor, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
         registerDoor(jungleDoor, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
         registerDoor(darkOakDoor, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
@@ -150,7 +149,8 @@ public class DSBlocks
         registerDoor(sleeperDoor, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
         registerDoor(stoneDoor, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
         registerDoor(legacyDoor, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
-        
+
+        registerSmallDoor(spruceSmallDoor, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
 
         forgeRegistry.register(new BlockItem(PREDATOR_STAR_BLOCK, new Item.Properties().tab(DragonSurvivalMod.items)).setRegistryName("predator_star"));
         
@@ -198,6 +198,10 @@ public class DSBlocks
     @SuppressWarnings("ConstantConditions")
     private static void registerDoor(Block block, Item.Properties itemProps, IForgeRegistry<Item> forgeRegistry) {
         forgeRegistry.register(new DragonDoorItem(block, itemProps.tab(DragonSurvivalMod.items)).setRegistryName(block.getRegistryName()));
+    }
+    @SuppressWarnings("ConstantConditions")
+    private static void registerSmallDoor(Block block, Item.Properties itemProps, IForgeRegistry<Item> forgeRegistry) {
+        forgeRegistry.register(new BlockItem(block, itemProps.tab(DragonSurvivalMod.items)).setRegistryName(block.getRegistryName()));
     }
 
 }
