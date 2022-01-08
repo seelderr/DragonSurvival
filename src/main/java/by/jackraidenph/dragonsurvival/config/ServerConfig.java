@@ -28,6 +28,9 @@ public class ServerConfig {
 	public final ForgeConfigSpec.BooleanValue lethalFlight;
 	public final ForgeConfigSpec.IntValue flightSpinCooldown;
 	
+	public final ForgeConfigSpec.BooleanValue canMoveInEmote;
+	public final ForgeConfigSpec.BooleanValue canMoveWhileCasting;
+	
 	public final ForgeConfigSpec.BooleanValue treasureHealthRegen;
 	public final ForgeConfigSpec.IntValue treasureRegenTicks;
 	public final ForgeConfigSpec.IntValue treasureRegenTicksReduce;
@@ -272,6 +275,14 @@ public class ServerConfig {
 		syncClawRender = builder
 				.comment("If players are allowed to hide their claws and teeth from other players. If it is important to you to see your opponent's weapon during pvp, set false.")
 				.define("syncClawRender", true);
+		
+		canMoveInEmote = builder
+				.comment("If players are allowed to move while performing emotes")
+				.define("canMoveInEmote", true);
+		
+		canMoveWhileCasting = builder
+				.comment("If you should be able to move while casting certain skills or if player movement can be prevented.")
+				.define("canMoveWhileCasting", false);
 		
 		// Growth
 		builder.pop().push("growth");
@@ -1420,7 +1431,9 @@ public class ServerConfig {
 			
 			chargedSpreadBlacklist = builder
 					.comment("List of entities that will not spread the charged effect. Format: modid:id")
-					.defineList("chargedBlacklist", Arrays.asList(), value -> value instanceof String);
+					.defineList("chargedBlacklist", Arrays.asList(
+							"minecraft:armor_stand"
+					), value -> value instanceof String);
 			
 		}
 		

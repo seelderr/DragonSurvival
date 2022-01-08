@@ -64,6 +64,28 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 	protected MixinPlayerEntity(EntityType<? extends LivingEntity> p_i48577_1_, World p_i48577_2_) {
 		super(p_i48577_1_, p_i48577_2_);
 	}
+	@Inject( method = "isImmobile", at = @At("HEAD"), cancellable = true)
+	private void castMovement(CallbackInfoReturnable<Boolean> ci){
+		DragonStateHandler cap = DragonStateProvider.getCap(this).orElse(null);
+		
+		if(!isDeadOrDying() && !isSleeping()) {
+			if (!((PlayerEntity)(LivingEntity)this).isCreative()) {
+				if (cap.getMagic().getCurrentlyCasting() != null) {
+					if (!cap.getMagic().getCurrentlyCasting().canMoveWhileCasting()) {
+						if (!ConfigHandler.SERVER.canMoveWhileCasting.get()) {
+							ci.setReturnValue(true);
+						}
+					}
+				}
+			}
+			
+			if (cap.getEmotes().getCurrentEmote() != null) {
+				if (!ConfigHandler.SERVER.canMoveInEmote.get()) {
+					ci.setReturnValue(true);
+				}
+			}
+		}
+	}
 	
 	@Redirect( method = "attack",
 	           at = @At(value="INVOKE", target="Lnet/minecraft/entity/player/PlayerEntity;getMainHandItem()Lnet/minecraft/item/ItemStack;" ))

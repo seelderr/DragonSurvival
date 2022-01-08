@@ -145,15 +145,6 @@ public class MagicHandler
 				
 				player.addEffect(new EffectInstance(Effects.MOVEMENT_SPEED, 20, 2, false, false));
 			}
-			
-			if(!player.isCreative() && !player.level.isClientSide) {
-				ActiveDragonAbility active = cap.getMagic().getCurrentlyCasting();
-				if (active != null && active.getCastingSlowness() > 0 && (active.getCastingTime() <= 0 || active.getCurrentCastTimer() > 1)) {
-					player.addEffect(new EffectInstance(Effects.MOVEMENT_SLOWDOWN, 10, cap.getMagic().getCurrentlyCasting().getCastingSlowness(), false, false));
-					player.addEffect(new EffectInstance(Effects.JUMP, 10, -cap.getMagic().getCurrentlyCasting().getCastingSlowness(), false, false));
-					player.addEffect(new EffectInstance(Effects.SLOW_FALLING, 10, 0, false, false));
-				}
-			}
 		});
 	}
 	

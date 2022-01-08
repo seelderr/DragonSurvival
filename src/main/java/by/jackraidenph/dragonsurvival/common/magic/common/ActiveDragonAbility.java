@@ -160,7 +160,7 @@ public class ActiveDragonAbility extends DragonAbility
             return false;
         }
     
-        if(getCastingSlowness() >= 10 || ServerFlightHandler.isGliding(player)){
+        if(!canMoveWhileCasting() || ServerFlightHandler.isGliding(player)){
             if(handler.isWingsSpread() && player.isFallFlying()
                || (!player.isOnGround() && player.fallDistance > 0.15F)){
                 if(keyMode == GLFW.GLFW_PRESS) {
@@ -251,8 +251,7 @@ public class ActiveDragonAbility extends DragonAbility
         currentCooldown = nbt.getInt("cooldown");
         currentCastingTime = nbt.getInt("castTime");
     }
-    public int getCastingSlowness() { return 3; }
-    
+    public boolean canMoveWhileCasting(){ return true; }
     public AbilityAnimation getStartingAnimation(){ return null; }
     public AbilityAnimation getLoopingAnimation(){ return null; }
     public AbilityAnimation getStoppingAnimation(){ return null; }

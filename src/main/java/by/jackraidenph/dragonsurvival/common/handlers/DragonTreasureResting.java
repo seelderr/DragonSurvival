@@ -172,7 +172,7 @@ public class DragonTreasureResting
 			return;
 		
 		DragonStateProvider.getCap(playerEntity).ifPresent(cap -> {
-			if (event.getType() == ElementType.ALL) {
+			if (event.getType() == ElementType.HOTBAR) {
 				GL11.glPushMatrix();
 				MainWindow window = Minecraft.getInstance().getWindow();
 				float f = playerEntity.level.getSunAngle(1.0F);

@@ -116,7 +116,7 @@ public class AoeBuffAbility extends ActiveDragonAbility
 		player.level.playLocalSound(player.position().x, player.position().y + 0.5, player.position().z, SoundEvents.UI_TOAST_OUT, SoundCategory.PLAYERS, 5F, 0.1F, false);
 	}
 	
-	public int getCastingSlowness() { return 10; }
+	public boolean canMoveWhileCasting(){ return false; }
 	
 	public int getDuration(){
 		if(effect.getEffect() == Effects.DIG_SPEED){

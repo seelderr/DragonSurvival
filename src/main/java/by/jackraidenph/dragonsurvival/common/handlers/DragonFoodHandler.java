@@ -307,7 +307,7 @@ public class DragonFoodHandler {
 		});
 	}
 	
-	private static int rightHeight = 0;
+	public static int rightHeight = 0;
 	
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	@OnlyIn(Dist.CLIENT)
