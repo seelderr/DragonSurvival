@@ -195,7 +195,7 @@ public class SmallDragonDoor extends Block {
     @Nullable
     public BlockState getStateForPlacement(BlockItemUseContext context) {
         BlockPos blockpos = context.getClickedPos();
-        if (blockpos.getY() < 255 && context.getLevel().getBlockState(blockpos.above()).canBeReplaced(context) && context.getLevel().getBlockState(blockpos.above(2)).canBeReplaced(context)) {
+        if (blockpos.getY() < 255) {
             World world = context.getLevel();
             boolean flag = world.hasNeighborSignal(blockpos) || world.hasNeighborSignal(blockpos.above());
             return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection()).setValue(HINGE, this.getHinge(context)).setValue(POWERED, flag).setValue(OPEN, flag);
