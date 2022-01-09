@@ -20,8 +20,6 @@ import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.ObjectHolder;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @ObjectHolder(DragonSurvivalMod.MODID)
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
