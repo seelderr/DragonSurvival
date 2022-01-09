@@ -1,6 +1,9 @@
 package by.jackraidenph.dragonsurvival.network;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
+import by.jackraidenph.dragonsurvival.network.SkinCustomization.OpenDragonCustomization;
+import by.jackraidenph.dragonsurvival.network.SkinCustomization.SyncPlayerAllCustomization;
+import by.jackraidenph.dragonsurvival.network.SkinCustomization.SyncPlayerCustomization;
 import by.jackraidenph.dragonsurvival.network.claw.DragonClawsMenuToggle;
 import by.jackraidenph.dragonsurvival.network.claw.SyncDragonClawRender;
 import by.jackraidenph.dragonsurvival.network.claw.SyncDragonClawsMenu;
@@ -51,11 +54,17 @@ public class NetworkHandler
 		 register(PlayerJumpSync.class, new PlayerJumpSync());
 		 register(RefreshDragons.class, new RefreshDragons());
 		
+		 register(RequestClientData.class, new RequestClientData());
+		
 		 //Status
 		 register(SyncGrowthState.class, new SyncGrowthState());
 		 register(SyncSize.class, new SyncSize());
 		 register(DiggingStatus.class, new DiggingStatus());
-		 
+		
+		 register(SyncPlayerAllCustomization.class, new SyncPlayerAllCustomization());
+		 register(SyncPlayerCustomization.class, new SyncPlayerCustomization());
+		 register(OpenDragonCustomization.class, new OpenDragonCustomization());
+		
 		 //Flight
 		 register(SyncFlyingStatus.class, new SyncFlyingStatus());
 		 register(SyncFlightSpeed.class, new SyncFlightSpeed());

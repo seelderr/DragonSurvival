@@ -70,7 +70,10 @@ public class DragonCapStorage implements Capability.IStorage<DragonStateHandler>
         
         if (instance.isDragon()) {
             instance.setMovementData(tag.getDouble("bodyYaw"), tag.getDouble("headYaw"), tag.getDouble("headPitch"), tag.getBoolean("bite"));
-    
+            instance.getMovementData().headYawLastTick = instance.getMovementData().headYaw;
+            instance.getMovementData().bodyYawLastTick = instance.getMovementData().bodyYaw;
+            instance.getMovementData().headPitchLastTick = instance.getMovementData().headPitch;
+            
             instance.setHasWings(tag.getBoolean("hasWings"));
             instance.setWingsSpread(tag.getBoolean("isFlying"));
             

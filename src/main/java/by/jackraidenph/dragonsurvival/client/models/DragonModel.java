@@ -1,6 +1,8 @@
 package by.jackraidenph.dragonsurvival.client.models;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
+import by.jackraidenph.dragonsurvival.client.SkinCustomization.CustomizationLayer;
+import by.jackraidenph.dragonsurvival.client.SkinCustomization.DragonCustomizationHandler;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.entity.DragonEntity;
@@ -21,6 +23,8 @@ import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.resource.GeckoLibCache;
 import software.bernie.shadowed.eliotlash.molang.MolangParser;
 
+import java.util.HashMap;
+
 public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 
     private ResourceLocation currentTexture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/cave_newborn.png");
@@ -36,6 +40,14 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 
     @Override
     public ResourceLocation getTextureLocation(DragonEntity dragonEntity) {
+		if(currentTexture == null){
+			DragonStateHandler handler = DragonStateProvider.getCap(dragonEntity.getPlayer()).orElse(null);
+			ResourceLocation location = DragonCustomizationHandler.getSkinTexture(dragonEntity.getPlayer(), CustomizationLayer.BASE, handler.getSkin().playerSkinLayers.getOrDefault(handler.getLevel(), new HashMap<>()).getOrDefault(CustomizationLayer.BASE, "Skin"), DragonStateProvider.getDragonType(dragonEntity.getPlayer()));
+		
+			if(location != null){
+				return location;
+			}
+		}
         return currentTexture;
     }
 

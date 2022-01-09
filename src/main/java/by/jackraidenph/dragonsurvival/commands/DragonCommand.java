@@ -32,7 +32,7 @@ import static net.minecraft.command.Commands.literal;
 public class DragonCommand
 {
 	public static void register(CommandDispatcher<CommandSource> commandDispatcher)
-{
+	{
     RootCommandNode<CommandSource> rootCommandNode = commandDispatcher.getRoot();
     LiteralCommandNode<CommandSource> dragon = literal("dragon").requires(commandSource -> commandSource.hasPermission(2)).executes(context -> {
         String type = context.getArgument("dragon_type", String.class);

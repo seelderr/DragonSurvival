@@ -3,6 +3,7 @@ package by.jackraidenph.dragonsurvival;
 import by.jackraidenph.dragonsurvival.api.appleskin.AppleSkinSupport;
 import by.jackraidenph.dragonsurvival.client.particles.DSParticles;
 import by.jackraidenph.dragonsurvival.client.sounds.SoundRegistry;
+import by.jackraidenph.dragonsurvival.commands.CustomizationCommand;
 import by.jackraidenph.dragonsurvival.commands.DragonCommand;
 import by.jackraidenph.dragonsurvival.common.capability.Capabilities;
 import by.jackraidenph.dragonsurvival.common.entity.DSEntities;
@@ -21,6 +22,7 @@ import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.MobSpawnInfo;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
@@ -28,6 +30,8 @@ import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.DistExecutor.SafeRunnable;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -66,7 +70,7 @@ public class DragonSurvivalMod {
         MinecraftForge.EVENT_BUS.register(new Event_busHandler());
         
         if(ModList.get().isLoaded("appleskin")){
-            MinecraftForge.EVENT_BUS.register(new AppleSkinSupport());
+            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> MinecraftForge.EVENT_BUS.register(new AppleSkinSupport()));
         }
         
         MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGH, this::biomeLoadingEvent);
@@ -104,6 +108,7 @@ public class DragonSurvivalMod {
     public void serverRegisterCommandsEvent(RegisterCommandsEvent event) {
     	CommandDispatcher<CommandSource> commandDispatcher = event.getDispatcher();
         DragonCommand.register(commandDispatcher);
+        CustomizationCommand.register(commandDispatcher);
         LOGGER.info("Registered commands");
     }
 }

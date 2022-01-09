@@ -112,7 +112,7 @@ public class SkinsScreen extends Screen
 		boolean defaultSkin = false;
 		
 		if((!DragonSkins.renderStage(minecraft.player, level) && playerName == minecraft.player.getGameProfile().getName()) || skinTexture == null){
-			skinTexture = DragonSkins.getDefaultSkin(handler.getType(), level);
+			skinTexture = null;
 			defaultSkin = true;
 		}
 		
