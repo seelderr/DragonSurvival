@@ -1,5 +1,6 @@
 package by.jackraidenph.dragonsurvival;
 
+import by.jackraidenph.dragonsurvival.api.appleskin.AppleSkinSupport;
 import by.jackraidenph.dragonsurvival.client.particles.DSParticles;
 import by.jackraidenph.dragonsurvival.client.sounds.SoundRegistry;
 import by.jackraidenph.dragonsurvival.commands.DragonCommand;
@@ -27,6 +28,7 @@ import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -62,6 +64,11 @@ public class DragonSurvivalMod {
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(new DragonFoodHandler());
         MinecraftForge.EVENT_BUS.register(new Event_busHandler());
+        
+        if(ModList.get().isLoaded("appleskin")){
+            MinecraftForge.EVENT_BUS.register(new AppleSkinSupport());
+        }
+        
         MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGH, this::biomeLoadingEvent);
         MinecraftForge.EVENT_BUS.addListener(this::serverRegisterCommandsEvent);
     }

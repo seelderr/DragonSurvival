@@ -27,7 +27,6 @@ import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import squeek.appleskin.api.event.HUDOverlayEvent.HungerRestored;
 import squeek.appleskin.api.event.HUDOverlayEvent.Saturation;
 import squeek.appleskin.api.event.TooltipOverlayEvent;
@@ -43,7 +42,6 @@ import java.util.Vector;
  */
 
 @OnlyIn( Dist.CLIENT)
-@EventBusSubscriber
 public class AppleSkinSupport
 {
 	public static ResourceLocation appleSkinTexture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/appleskin.png");
@@ -58,7 +56,7 @@ public class AppleSkinSupport
 	private static final TextureOffsets rottenBarTextureOffsets;
 	
 	@SubscribeEvent
-	public static void onClientTick(ClientTickEvent event) {
+	public void onClientTick(ClientTickEvent event) {
 		if (event.phase == Phase.END) {
 			unclampedFlashAlpha += (float)alphaDir * 0.125F;
 			if (unclampedFlashAlpha >= 1.5F) {
@@ -72,7 +70,7 @@ public class AppleSkinSupport
 	}
 	
 	@SubscribeEvent
-	public static void hudSaturation(Saturation event){
+	public void hudSaturation(Saturation event){
 		if(DragonStateProvider.isDragon(Minecraft.getInstance().player)){
 			event.setCanceled(true);
 			Minecraft mc = Minecraft.getInstance();
@@ -118,7 +116,7 @@ public class AppleSkinSupport
 		Reimplementing the code for rendertooltip from AppleSkin due to bug of not rendering food values if tooltip was wrapped
 	 */
 	@SubscribeEvent
-	public static void onRenderTooltip(PostText event)
+	public void onRenderTooltip(PostText event)
 	{
 		if(!ModList.get().isLoaded("appleskin")) return;
 		
@@ -271,14 +269,14 @@ public class AppleSkinSupport
 	
 	
 	@SubscribeEvent
-	public static void tooltip(TooltipOverlayEvent.Render renderEvent){
+	public void tooltip(TooltipOverlayEvent.Render renderEvent){
 		if(DragonStateProvider.isDragon(Minecraft.getInstance().player)) {
 			renderEvent.setCanceled(true);
 		}
 	}
 	
 	@SubscribeEvent
-	public static void hudHunger(HungerRestored event){
+	public void hudHunger(HungerRestored event){
 		if(DragonStateProvider.isDragon(Minecraft.getInstance().player)){
 			event.setCanceled(true);
 			

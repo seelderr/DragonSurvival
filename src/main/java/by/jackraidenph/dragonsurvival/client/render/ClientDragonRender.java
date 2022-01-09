@@ -301,7 +301,7 @@ public class ClientDragonRender
 		DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
 		if(handler == null || !handler.isDragon()) return;
 		
-		if(keyInputEvent.isAttack() && keyInputEvent.shouldSwingHand()){
+		if(keyInputEvent.isAttack() && keyInputEvent.shouldSwingHand() && !handler.getMovementData().dig){
 			handler.getMovementData().bite = true;
 		}
 	}

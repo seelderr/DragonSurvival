@@ -203,7 +203,6 @@ public class PrincesHorseEntity extends VillagerEntity implements IAnimatable, C
                     String name = animation.animationName;
                     switch (name) {
                         case "idle_princess":
-                            animationTimer.trackAnimation("idle_princess");
                             if (animationTimer.getDuration("idle_princess") <= 0) {
                                 if (random.nextInt(2000) == 1) {
                                     animationTimer.putAnimation("idle_princess_2", 145d, builder);
@@ -215,7 +214,6 @@ public class PrincesHorseEntity extends VillagerEntity implements IAnimatable, C
                             animationTimer.putAnimation("idle_princess", 88d, builder);
                             break;
                         case "idle_princess_2":
-                            animationTimer.trackAnimation("idle_princess_2");
                             if (animationTimer.getDuration("idle_princess_2") <= 0) {
                                 animationTimer.putAnimation("idle_princess", 88d, builder);
                             }
