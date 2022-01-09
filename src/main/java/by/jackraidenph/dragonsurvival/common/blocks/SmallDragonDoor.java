@@ -1,5 +1,6 @@
 package by.jackraidenph.dragonsurvival.common.blocks;
 
+import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
@@ -21,6 +22,7 @@ import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.state.properties.DoorHingeSide;
 import net.minecraft.state.properties.DoubleBlockHalf;
+import net.minecraft.stats.Stats;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
@@ -45,9 +47,7 @@ public class SmallDragonDoor extends Block {
     public static final EnumProperty<DoorHingeSide> HINGE = BlockStateProperties.DOOR_HINGE;
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
     public static final EnumProperty<OpenRequirement> OPEN_REQ = EnumProperty.create("open_req", OpenRequirement.class);
-
-    // These are precalculated bounding boxes, for the door facing various directions + close / open states.
-    // Small doors will need to reduce all of these
+    
     protected static final VoxelShape SOUTH_AABB = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 16.0D, 3.0D);
     protected static final VoxelShape NORTH_AABB = Block.box(0.0D, 0.0D, 13.0D, 16.0D, 16.0D, 16.0D);
     protected static final VoxelShape WEST_AABB = Block.box(13.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D);
@@ -80,54 +80,18 @@ public class SmallDragonDoor extends Block {
         }
     }
 
-    public void playerWillDestroy(World worldIn, BlockPos pos, BlockState state, PlayerEntity player) {
-    	if (!worldIn.isClientSide) {
-            DragonDoor.Part part = DragonDoor.Part.BOTTOM;
-        	if (part != DragonDoor.Part.MIDDLE && !player.isCreative()) {
-        		BlockPos middlePos = part == DragonDoor.Part.BOTTOM ? pos.above() : pos.below();
-        		BlockState middleState = worldIn.getBlockState(middlePos);
-        		if (middleState.getBlock() == state.getBlock()) {
-        			worldIn.setBlock(middlePos, Blocks.AIR.defaultBlockState(), 35);
-        			worldIn.levelEvent(player, 2001, middlePos, Block.getId(middleState));
-            	}
-        	}
-//            else if (part != Part.BOTTOM && player.isCreative()) {
-//    			BlockPos bottomPos = part == Part.MIDDLE ? pos.below() : pos.below(2);
-//    			BlockState bottomState = worldIn.getBlockState(bottomPos);
-//    			if (bottomState.getBlock() == state.getBlock()) {
-//        			worldIn.setBlock(bottomPos, Blocks.AIR.defaultBlockState(), 35);
-//        			worldIn.levelEvent(player, 2001, bottomPos, Block.getId(bottomState));
-//            	}
-//        	}
-    	}
-        if (!worldIn.isClientSide) {
-            DragonDoor.Part part = DragonDoor.Part.BOTTOM;
-            if (part != DragonDoor.Part.MIDDLE && !player.isCreative()) {
-                BlockPos middlePos = part == DragonDoor.Part.BOTTOM ? pos.above() : pos.below();
-                BlockState middleState = worldIn.getBlockState(middlePos);
-                if (middleState.getBlock() == state.getBlock()) {
-                    worldIn.setBlock(middlePos, Blocks.AIR.defaultBlockState(), 35);
-                    worldIn.levelEvent(player, 2001, middlePos, Block.getId(middleState));
-                }
-            } else if (part != DragonDoor.Part.BOTTOM && player.isCreative()) {
-                BlockPos bottomPos = part == DragonDoor.Part.MIDDLE ? pos.below() : pos.below(2);
-                BlockState bottomState = worldIn.getBlockState(bottomPos);
-                if (bottomState.getBlock() == state.getBlock()) {
-                    worldIn.setBlock(bottomPos, Blocks.AIR.defaultBlockState(), 35);
-                    worldIn.levelEvent(player, 2001, bottomPos, Block.getId(bottomState));
-                }
-            }
-        }
-        super.playerWillDestroy(worldIn, pos, state, player);
+    // not sure why inheriting this behaviour doesn't work, but confirmed it doesn't
+    public void playerDestroy(World p_180657_1_, PlayerEntity p_180657_2_, BlockPos p_180657_3_, BlockState p_180657_4_, @Nullable TileEntity p_180657_5_, ItemStack p_180657_6_) {
+        p_180657_2_.awardStat(Stats.BLOCK_MINED.get(this));
+        p_180657_2_.causeFoodExhaustion(0.005F);
+        dropResources(p_180657_4_, p_180657_1_, p_180657_3_, p_180657_5_, p_180657_2_, p_180657_6_);
     }
-
 
     private DoorHingeSide getHinge(BlockItemUseContext blockItemUseContext) {
         //TODO Logic handling aligning doors
         IBlockReader iblockreader = blockItemUseContext.getLevel();
         BlockPos blockpos = blockItemUseContext.getClickedPos();
         Direction north = blockItemUseContext.getHorizontalDirection();
-        // searches blocks around the door, I guess looking for adjacent door block to copy orientation from
         Direction directionCounterClockWiseHorizontal = north.getCounterClockWise();
         BlockPos blockpos2 = blockpos.relative(directionCounterClockWiseHorizontal);
         BlockState blockstate = iblockreader.getBlockState(blockpos2);
@@ -220,10 +184,6 @@ public class SmallDragonDoor extends Block {
         BlockPos blockpos = pos.below();
         BlockState blockstate = worldIn.getBlockState(blockpos);
         return blockstate.isFaceSturdy(worldIn, blockpos, Direction.UP);
-    }
-
-    public void playerDestroy(World worldIn, PlayerEntity player, BlockPos pos, BlockState state, @Nullable TileEntity te, ItemStack stack) {
-        super.playerDestroy(worldIn, player, pos, Blocks.AIR.defaultBlockState(), te, stack);
     }
 
     public boolean isPathfindable(BlockState state, IBlockReader worldIn, BlockPos pos, PathType type) {
