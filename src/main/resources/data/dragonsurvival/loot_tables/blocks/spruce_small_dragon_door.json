@@ -6,15 +6,6 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "conditions": [
-            {
-              "condition": "minecraft:block_state_property",
-              "block": "dragonsurvival:spruce_small_dragon_door",
-              "properties": {
-                "part": "bottom"
-              }
-            }
-          ],
           "name": "dragonsurvival:spruce_small_dragon_door"
         }
       ],
