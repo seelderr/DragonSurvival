@@ -155,11 +155,11 @@ public class DragonDoor extends Block {
         }
     }
 
-    protected int getCloseSound() {
+    private int getCloseSound() {
         return this.material == Material.METAL ? 1011 : 1012;
     }
 
-    protected int getOpenSound() {
+    private int getOpenSound() {
         return this.material == Material.METAL ? 1005 : 1006;
     }
 
