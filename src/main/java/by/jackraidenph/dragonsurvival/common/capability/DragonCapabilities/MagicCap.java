@@ -126,7 +126,9 @@ public class MagicCap implements DragonCapability
 	
 	public void resetCasting(){
 		for(int i = 0; i < 4; i++){
-			getAbilityFromSlot(i).setCastTime(0);
+			if(getAbilityFromSlot(i) != null) {
+				getAbilityFromSlot(i).setCastTime(0);
+			}
 		}
 		if(getCurrentlyCasting() != null) {
 			getCurrentlyCasting().setCastTime(0);

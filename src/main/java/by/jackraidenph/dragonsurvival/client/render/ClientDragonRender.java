@@ -23,7 +23,6 @@ import by.jackraidenph.dragonsurvival.network.entity.player.PacketSyncCapability
 import by.jackraidenph.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.jackraidenph.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
@@ -35,7 +34,6 @@ import net.minecraft.client.renderer.entity.layers.ParrotVariantLayer;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.settings.PointOfView;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.IDyeableArmorItem;
 import net.minecraft.item.ItemStack;
@@ -45,15 +43,12 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.RenderTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -67,6 +62,8 @@ public class ClientDragonRender
 	 * First-person armor instance
 	 */
 	public static DragonEntity dragonArmor;
+	public static DragonEntity dummyDragon;
+	
 	/**
 	 * Instances used for rendering third-person dragon models
 	 */
@@ -108,6 +105,12 @@ public class ClientDragonRender
 			dragonArmor = DSEntities.DRAGON_ARMOR.create(player.level);
 			assert dragonArmor != null;
 			dragonArmor.player = player.getId();
+		}
+		
+		if (dummyDragon == null) {
+			dummyDragon = DSEntities.DRAGON.create(player.level);
+			assert dummyDragon != null;
+			dummyDragon.player = player.getId();
 		}
 		
 		DragonStateHandler cap = DragonStateProvider.getCap(player).orElse( null);
@@ -288,40 +291,6 @@ public class ClientDragonRender
 	        float f1 = MathHelper.cos(yRot * ((float)Math.PI / 180F));
 	        return new Vector3d(vector3d.x * (double)f1 - vector3d.z * (double)f, vector3d.y, vector3d.z * (double)f1 + vector3d.x * (double)f);
 	    }
-	}
-	
-	@SubscribeEvent
-	public static void debugRender(RenderGameOverlayEvent.Post event) {
-		PlayerEntity playerEntity = Minecraft.getInstance().player;
-		
-		if (playerEntity == null || !DragonStateProvider.isDragon(playerEntity) || playerEntity.isSpectator())
-			return;
-		
-		DragonStateProvider.getCap(playerEntity).ifPresent(cap -> {
-			if (event.getType() == ElementType.HOTBAR) {
-				GL11.glPushMatrix();
-				
-				MainWindow window = Minecraft.getInstance().getWindow();
-				
-				DragonEntity dragon = playerDragonHashMap.get(playerEntity.getId()).get();
-				
-				double body = (Math.round(cap.getMovementData().bodyYaw * 100.0) / 100.0);
-				double head = (Math.round( cap.getMovementData().headYaw * 100.0) / 100.0);
-				double headPitch = (Math.round( cap.getMovementData().headPitch * 100.0) / 100.0);
-				
-				double tailSide = (Math.round(dragon.tail_motion_side * 100.0) / 100.0);
-				double tailUp = (Math.round( dragon.tail_motion_up * 100.0) / 100.0);
-				double bodyYawChange = (Math.round( dragon.body_yaw_change * 100.0) / 100.0);
-				
-				String message = "Body: " + body + " | Head: " + head + " | Head pitch: " + headPitch;
-				String message2 = "Tail side: " + tailSide + " | Tail up: " + tailUp + " | Body change: " + bodyYawChange;
-				
-//				Minecraft.getInstance().font.draw(event.getMatrixStack(), message, (window.getGuiScaledWidth() / 2) - (Minecraft.getInstance().font.width(message) / 2), window.getGuiScaledHeight() - 82, DyeColor.WHITE.getTextColor());
-//				Minecraft.getInstance().font.draw(event.getMatrixStack(), message2, (window.getGuiScaledWidth() / 2) - (Minecraft.getInstance().font.width(message2) / 2), window.getGuiScaledHeight() - 70, DyeColor.WHITE.getTextColor());
-
-				GL11.glPopMatrix();
-			}
-		});
 	}
 	
 	@SubscribeEvent

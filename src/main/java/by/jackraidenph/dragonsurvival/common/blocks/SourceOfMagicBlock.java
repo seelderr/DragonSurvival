@@ -3,6 +3,7 @@ package by.jackraidenph.dragonsurvival.common.blocks;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
+import by.jackraidenph.dragonsurvival.misc.DragonType;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.status.SyncMagicSourceStatus;
 import by.jackraidenph.dragonsurvival.server.tileentity.DSTileEntities;
@@ -12,6 +13,7 @@ import by.jackraidenph.dragonsurvival.util.Functions;
 import net.minecraft.block.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.fluid.Fluid;
@@ -109,14 +111,33 @@ public class SourceOfMagicBlock extends HorizontalBlock implements IWaterLoggabl
             pos1 = ((SourceOfMagicPlaceholder)blockEntity).rootPos;
         }
     
-        TileEntity source = getBlockEntity(world, pos1);
+        SourceOfMagicTileEntity source = getBlockEntity(world, pos1);
     
-        if(source instanceof SourceOfMagicTileEntity) {
-            SourceOfMagicTileEntity magicTile = (SourceOfMagicTileEntity)source;
-        
-            if(DragonStateProvider.getDragonType(entity) != magicTile.type){
+        if(source != null) {
+            if(DragonStateProvider.getDragonType(entity) != source.type){
+                if(entity instanceof ItemEntity){
+                    ItemEntity itemE = (ItemEntity)entity;
+                    ItemStack stack = itemE.getItem();
+                    ItemStack tileStack = source.getItem(0);
+                    if(SourceOfMagicTileEntity.consumables.containsKey(stack.getItem())){
+                        if(source.isEmpty()){
+                            source.setItem(0, stack);
+                            itemE.kill();
+                        }else if(ItemStack.isSame(tileStack, stack) && tileStack.getCount() < tileStack.getMaxStackSize()){
+                            int left = tileStack.getMaxStackSize() - tileStack.getCount();
+                            int toAdd = Math.min(stack.getCount(), left);
+                            itemE.getItem().shrink(toAdd);
+                            tileStack.setCount(tileStack.getCount() + toAdd);
+                        }
+                        return;
+                    }
+                }
+                
                 if(ConfigHandler.SERVER.damageWrongSourceOfMagic.get()) {
-                    entity.hurt(DamageSource.MAGIC, 1F);
+                    entity.hurt(source.type == DragonType.CAVE
+                                        ? DamageSource.HOT_FLOOR
+                                        : source.type == DragonType.SEA ? DamageSource.DROWN
+                                        : DamageSource.CACTUS, 1F);
                 }
             }
         }

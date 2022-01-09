@@ -168,10 +168,6 @@ public class TreasureBlock extends FallingBlock implements IWaterLoggable
 		return SHAPE_BY_LAYER[p_230335_1_.getValue(LAYERS)];
 	}
 	
-//	public VoxelShape getVisualShape(BlockState p_230322_1_, IBlockReader p_230322_2_, BlockPos p_230322_3_, ISelectionContext p_230322_4_) {
-//		return SHAPE_BY_LAYER[p_230322_1_.getValue(LAYERS)];
-//	}
-	
 	public VoxelShape getVisualShape(BlockState p_230322_1_, IBlockReader p_230322_2_, BlockPos p_230322_3_, ISelectionContext p_230322_4_) {
 		return VoxelShapes.empty();
 	}
@@ -208,7 +204,9 @@ public class TreasureBlock extends FallingBlock implements IWaterLoggable
 					if(!world.isClientSide) {
 						player.resetStat(Stats.CUSTOM.get(Stats.TIME_SINCE_REST));
 						ServerPlayerEntity serverplayerentity = (ServerPlayerEntity)player;
-						if (serverplayerentity.getRespawnPosition() == null || serverplayerentity.getRespawnDimension() != world.dimension() || serverplayerentity.getRespawnPosition() != null && !serverplayerentity.getRespawnPosition().equals(p_225533_3_)) {
+						if (serverplayerentity.getRespawnPosition() == null
+						    || serverplayerentity.getRespawnDimension() != world.dimension()
+						    || serverplayerentity.getRespawnPosition() != null && !serverplayerentity.getRespawnPosition().equals(p_225533_3_) && serverplayerentity.getRespawnPosition().distSqr(p_225533_3_) > 40) {
 							serverplayerentity.setRespawnPosition(world.dimension(), p_225533_3_, 0.0F, false, true);
 							return ActionResultType.SUCCESS;
 						}

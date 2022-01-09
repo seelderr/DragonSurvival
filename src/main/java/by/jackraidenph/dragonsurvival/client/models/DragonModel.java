@@ -103,7 +103,7 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 		double headYawChange = Functions.angleDifference((float)handler.getMovementData().headYawLastTick, (float)handler.getMovementData().headYaw);
 		double headPitchChange = Functions.angleDifference((float)handler.getMovementData().headPitchLastTick, (float)handler.getMovementData().headPitch);
 		
-		double distance = player.position().subtract(player.xo, player.yo, player.zo).length();
+		double distance = Math.min( player.position().subtract(player.xo, player.yo, player.zo).length(), 10);
 		
 		ModifiableAttributeInstance gravity = player.getAttribute(net.minecraftforge.common.ForgeMod.ENTITY_GRAVITY.get());
 		double g = gravity.getValue();
