@@ -54,5 +54,41 @@
           }
         ]
       }
+  },
+  "sea_dragon": {
+    "layers": {
+      "BASE": [
+        {
+          "key": "sea_base_0",
+          "texture": "dragonsurvival:textures/dragon/custom/sea_base_0.png"
+        },
+        {
+          "key": "sea_base_1",
+          "texture": "dragonsurvival:textures/dragon/custom/sea_base_1.png"
+        },
+        {
+          "key": "sea_base_2",
+          "texture": "dragonsurvival:textures/dragon/custom/sea_base_2.png"
+        }
+       ]
+    }
+  },
+  "forest_dragon": {
+    "layers": {
+      "BASE": [
+        {
+          "key": "forest_base_0",
+          "texture": "dragonsurvival:textures/dragon/custom/forest_base_0.png"
+        },
+        {
+          "key": "forest_base_1",
+          "texture": "dragonsurvival:textures/dragon/custom/forest_base_1.png"
+        },
+        {
+          "key": "forest_base_2",
+          "texture": "dragonsurvival:textures/dragon/custom/forest_base_2.png"
+        }
+      ]
+    }
   }
 }

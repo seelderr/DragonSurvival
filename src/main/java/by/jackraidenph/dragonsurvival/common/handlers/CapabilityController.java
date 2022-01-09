@@ -55,6 +55,8 @@ public class CapabilityController {
                         DragonStateHandler.DragonMovementData movementData = capOld.getMovementData();
                         capNew.setMovementData(movementData.bodyYaw, movementData.headYaw, movementData.headPitch, movementData.bite);
                         
+                        capNew.altarCooldown = capOld.altarCooldown;
+                        
                         capNew.getMovementData().spinCooldown = capOld.getMovementData().spinCooldown;
                         capNew.getMovementData().spinLearned = capOld.getMovementData().spinLearned;
                         

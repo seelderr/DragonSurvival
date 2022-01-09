@@ -21,6 +21,8 @@ public class DragonCapStorage implements Capability.IStorage<DragonStateHandler>
             tag.putDouble("headYaw", movementData.headYaw);
             tag.putDouble("headPitch", movementData.headPitch);
             
+            tag.putInt("altarCooldown", instance.altarCooldown);
+            
             tag.putInt("spinCooldown", movementData.spinCooldown);
             tag.putInt("spinAttack", movementData.spinAttack);
             tag.putBoolean("spinLearned", movementData.spinLearned);
@@ -73,7 +75,9 @@ public class DragonCapStorage implements Capability.IStorage<DragonStateHandler>
             instance.getMovementData().headYawLastTick = instance.getMovementData().headYaw;
             instance.getMovementData().bodyYawLastTick = instance.getMovementData().bodyYaw;
             instance.getMovementData().headPitchLastTick = instance.getMovementData().headPitch;
-            
+    
+            instance.altarCooldown = tag.getInt("altarCooldown");
+    
             instance.setHasWings(tag.getBoolean("hasWings"));
             instance.setWingsSpread(tag.getBoolean("isFlying"));
             

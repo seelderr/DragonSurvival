@@ -1,11 +1,10 @@
 package by.jackraidenph.dragonsurvival.common.blocks;
 
 
-import by.jackraidenph.dragonsurvival.util.Functions;
-import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.client.gui.DragonAltarGUI;
-import by.jackraidenph.dragonsurvival.server.tileentity.DSTileEntities;
-import by.jackraidenph.dragonsurvival.server.tileentity.AltarTileEntity;
+import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
+import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.util.Functions;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalBlock;
@@ -16,7 +15,6 @@ import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
@@ -67,10 +65,9 @@ public class DragonAltarBlock extends Block {
     
     @Override
     public ActionResultType use(BlockState blockState, World worldIn, BlockPos blockPos, PlayerEntity player, Hand handIn, BlockRayTraceResult p_225533_6_) {
-    	TileEntity tileEntity = worldIn.getBlockEntity(blockPos);
-        if (tileEntity instanceof AltarTileEntity) {
-            AltarTileEntity altarEntity = (AltarTileEntity) tileEntity;
-            int cooldown = altarEntity.usageCooldowns.getOrDefault(player.getUUID(),0);
+        DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+        if (handler != null) {
+            int cooldown = handler.altarCooldown;
             if (cooldown > 0) {
                 if (worldIn.isClientSide){
                     //Show the current cooldown in minutes and seconds in cases where the cooldown is set high in the config
@@ -83,7 +80,6 @@ public class DragonAltarBlock extends Block {
                 if (worldIn.isClientSide) {
                     openGUi();
                 }
-                altarEntity.usageCooldowns.put(player.getUUID(),Functions.secondsToTicks(ConfigHandler.SERVER.altarUsageCooldown.get()));
             }
         }
         return ActionResultType.SUCCESS;
@@ -110,15 +106,5 @@ public class DragonAltarBlock extends Block {
         return SHAPE;
     }
     
-    @Override
-    public boolean hasTileEntity(BlockState state) {
-        return true;
-    }
-
-    @Nullable
-    @Override
-    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        return DSTileEntities.altarEntityTile.create();
-    }
 
 }

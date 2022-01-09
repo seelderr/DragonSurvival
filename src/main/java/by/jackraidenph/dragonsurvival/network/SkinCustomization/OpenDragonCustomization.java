@@ -4,7 +4,6 @@ import by.jackraidenph.dragonsurvival.client.gui.DragonCustomizationScreen;
 import by.jackraidenph.dragonsurvival.network.IMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.DistExecutor;
@@ -37,7 +36,7 @@ public class OpenDragonCustomization implements IMessage<OpenDragonCustomization
 	public void runClient(OpenDragonCustomization message, Supplier<NetworkEvent.Context> supplier){
 		NetworkEvent.Context context = supplier.get();
 		context.enqueueWork(() -> {
-			Minecraft.getInstance().setScreen(new DragonCustomizationScreen(Minecraft.getInstance().screen, new TranslationTextComponent("ds.gui.customization")));
+			Minecraft.getInstance().setScreen(new DragonCustomizationScreen(Minecraft.getInstance().screen));
 			context.setPacketHandled(true);
 		});
 	}

@@ -28,7 +28,6 @@ import net.minecraft.client.entity.player.RemoteClientPlayerEntity;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.client.gui.widget.button.CheckboxButton;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.entity.LivingEntity;
@@ -38,10 +37,10 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.client.gui.GuiUtils;
+import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
 import software.bernie.geckolib3.core.controller.AnimationController;
@@ -55,10 +54,16 @@ import java.util.*;
 
 public class DragonCustomizationScreen extends Screen
 {
-	public DragonCustomizationScreen(Screen source, ITextComponent p_i51108_1_)
+	public DragonCustomizationScreen(Screen source)
 	{
-		super(p_i51108_1_);
+		this(source, DragonType.NONE);
+	}
+	
+	public DragonCustomizationScreen(Screen source, DragonType type)
+	{
+		super(new TranslationTextComponent("ds.gui.customization"));
 		this.source = source;
+		this.type = type;
 	}
 	
 	private int guiLeft;
@@ -67,6 +72,8 @@ public class DragonCustomizationScreen extends Screen
 	private Screen source;
 	
 	public DragonLevel level = DragonLevel.ADULT;
+	public DragonType type;
+	
 	public HashMap<DragonLevel, HashMap<CustomizationLayer, String>> map = new HashMap<>();
 	
 	private float yRot = -3;
@@ -82,13 +89,17 @@ public class DragonCustomizationScreen extends Screen
 	public int currentSelected;
 	private int lastSelected;
 	
-	//TODO Darken the background
+	private boolean hasInit = false;
 	
 	public void update(){
 		DragonStateHandler clientHandler = DragonStateProvider.getCap(clientPlayer).orElse(null);
 		
 		clientHandler.getSkin().playerSkinLayers = map;
 		clientHandler.setSize(level.size);
+		
+		if(type != DragonType.NONE) {
+			clientHandler.setType(type);
+		}
 		
 		if(currentSelected != lastSelected){
 			CustomizationRegistry.savedCustomizations.saved.computeIfAbsent(clientHandler.getType(), (b) -> new HashMap<>());
@@ -112,54 +123,57 @@ public class DragonCustomizationScreen extends Screen
 	protected void init()
 	{
 		super.init();
-		
 		DragonStateHandler handler = DragonStateProvider.getCap(getMinecraft().player).orElse(null);
-		if(handler != null){
-			level = handler.getLevel();
-			zoom = level.size;
-			
-			currentSelected = CustomizationRegistry.savedCustomizations.current.getOrDefault(handler.getType(), new HashMap<>()).getOrDefault(level, 0);
-			HashMap<DragonLevel, HashMap<CustomizationLayer, String>> mp1 = CustomizationRegistry.savedCustomizations.saved.getOrDefault(handler.getType(), new HashMap<>()).getOrDefault(currentSelected, new HashMap<>());
-			
-			mp1.forEach((level, mp) -> {
-				mp.forEach((layer, key) -> {
-					map.computeIfAbsent(level, (b) -> new HashMap<>());
-					map.get(level).put(layer, key);
-				});
-			});
-		}
 		
-		if(clientPlayer == null) {
-			clientPlayer = new RemoteClientPlayerEntity(minecraft.level, new GameProfile(UUID.randomUUID(), "DRAGON_RENDER"));
-			
-			DragonStateProvider.getCap(clientPlayer).ifPresent((cap) -> {
-				cap.setHasWings(true);
+		if(!hasInit){
+			if(handler != null){
+				level = handler.getLevel();
+				zoom = level.size;
 				
-				if(handler != null){
-					cap.setType(handler.getType());
+				if(type == DragonType.NONE){
+					type = handler.getType();
 				}
-			});
-		}
-		
-		dragon = new DragonEntity(DSEntities.DRAGON, minecraft.level){
-			@Override
-			public void registerControllers(AnimationData animationData) {
-				animationData.addAnimationController(new AnimationController<DragonEntity>(this, "controller", 2, (event) -> {
-					AnimationBuilder builder = new AnimationBuilder();
-					builder.addAnimation(animations[curAnimation], true);
-					event.getController().setAnimation(builder);
-					return PlayState.CONTINUE;
-				}));
+				
+				currentSelected = CustomizationRegistry.savedCustomizations.current.getOrDefault(type, new HashMap<>()).getOrDefault(level, 0);
+				HashMap<DragonLevel, HashMap<CustomizationLayer, String>> mp1 = CustomizationRegistry.savedCustomizations.saved.getOrDefault(type, new HashMap<>()).getOrDefault(currentSelected, new HashMap<>());
+				
+				mp1.forEach((level, mp) -> {
+					mp.forEach((layer, key) -> {
+						map.computeIfAbsent(level, (b) -> new HashMap<>());
+						map.get(level).put(layer, key);
+					});
+				});
 			}
 			
-			@Override
-			public PlayerEntity getPlayer()
-			{
-				return clientPlayer;
+			if(clientPlayer == null) {
+				clientPlayer = new RemoteClientPlayerEntity(minecraft.level, new GameProfile(UUID.randomUUID(), "DRAGON_RENDER"));
+				
+				DragonStateProvider.getCap(clientPlayer).ifPresent((cap) -> {
+					cap.setHasWings(true);
+					cap.setType(type);
+				});
 			}
-		};
-		
-		update();
+			
+			dragon = new DragonEntity(DSEntities.DRAGON, minecraft.level){
+				@Override
+				public void registerControllers(AnimationData animationData) {
+					animationData.addAnimationController(new AnimationController<DragonEntity>(this, "controller", 2, (event) -> {
+						AnimationBuilder builder = new AnimationBuilder();
+						builder.addAnimation(animations[curAnimation], true);
+						event.getController().setAnimation(builder);
+						return PlayState.CONTINUE;
+					}));
+				}
+				
+				@Override
+				public PlayerEntity getPlayer()
+				{
+					return clientPlayer;
+				}
+			};
+			hasInit = true;
+			update();
+		}
 		
 		this.guiLeft = (this.width - 256) / 2;
 		this.guiTop = (this.height - 256) / 2;
@@ -279,17 +293,17 @@ public class DragonCustomizationScreen extends Screen
 			addButton(new CustomizationSlotButton(7, (this.height/4) + 10 + ((num-1) * 10) + 5 + 20, num, this));
 		}
 		
-		addButton(new CheckboxButton(guiLeft - 10, this.height - (this.height / 6) + 10, 20, 20, new StringTextComponent(""), true, false){
+		addButton(new ExtendedButton(guiLeft - 10, this.height - (this.height / 6) + 10, 20, 20, new StringTextComponent(""), null){
 			@Override
-			public boolean selected()
+			public void renderButton(MatrixStack mStack, int mouseX, int mouseY, float partial)
 			{
-				return true;
-			}
-			
-			@Override
-			public void renderToolTip(MatrixStack p_230443_1_, int p_230443_2_, int p_230443_3_)
-			{
-				GuiUtils.drawHoveringText(p_230443_1_, Arrays.asList(new TranslationTextComponent("ds.gui.customization.done")), p_230443_2_, p_230443_3_, Minecraft.getInstance().screen.width, Minecraft.getInstance().screen.height, 200, Minecraft.getInstance().font);
+				super.renderButton(mStack, mouseX, mouseY, partial);
+				Minecraft.getInstance().getTextureManager().bind(DragonAltarGUI.CONFIRM_BUTTON);
+				blit(mStack, x + 1, y, 0, 0, 20, 20, 20, 20);
+				
+				if(isHovered){
+					GuiUtils.drawHoveringText(mStack, Arrays.asList(new TranslationTextComponent("ds.gui.customization.tooltip.done")), mouseX, mouseY, Minecraft.getInstance().screen.width, Minecraft.getInstance().screen.height, 200, Minecraft.getInstance().font);
+				}
 			}
 			
 			@Override
@@ -313,12 +327,32 @@ public class DragonCustomizationScreen extends Screen
 			}
 		});
 		
+		addButton(new ExtendedButton(guiLeft - 70, this.height - (this.height / 6) + 10, 50, 20, new TranslationTextComponent("ds.gui.customization.back"), null){
+			@Override
+			public void renderButton(MatrixStack mStack, int mouseX, int mouseY, float partial)
+			{
+				super.renderButton(mStack, mouseX, mouseY, partial);
+//				Minecraft.getInstance().getTextureManager().bind(DragonAltarGUI.CONFIRM_BUTTON);
+//				blit(mStack, x, y, 0, 0, width, height, width, height);
+				
+				if(isHovered){
+					GuiUtils.drawHoveringText(mStack, Arrays.asList(new TranslationTextComponent("ds.gui.customization.tooltip.back")), mouseX, mouseY, Minecraft.getInstance().screen.width, Minecraft.getInstance().screen.height, 200, Minecraft.getInstance().font);
+				}
+			}
+			
+			@Override
+			public void onPress()
+			{
+				Minecraft.getInstance().setScreen(source);
+			}
+		});
+		
 		addButton(new Button(width - 70, 12, 19, 19, new TranslationTextComponent(""), (btn) -> {
 			map.computeIfAbsent(level, (b) -> new HashMap<>());
-			map.get(level).put(CustomizationLayer.HORNS, handler.getType().name().toLowerCase() + "_horns_" + level.ordinal());
-			map.get(level).put(CustomizationLayer.SPIKES, handler.getType().name().toLowerCase() + "_spikes_" + level.ordinal());
-			map.get(level).put(CustomizationLayer.BOTTOM, handler.getType().name().toLowerCase() + "_bottom_" + level.ordinal());
-			map.get(level).put(CustomizationLayer.BASE, handler.getType().name().toLowerCase() + "_base_" + level.ordinal());
+			map.get(level).put(CustomizationLayer.HORNS, type.name().toLowerCase() + "_horns_" + level.ordinal());
+			map.get(level).put(CustomizationLayer.SPIKES, type.name().toLowerCase() + "_spikes_" + level.ordinal());
+			map.get(level).put(CustomizationLayer.BOTTOM, type.name().toLowerCase() + "_bottom_" + level.ordinal());
+			map.get(level).put(CustomizationLayer.BASE, type.name().toLowerCase() + "_base_" + level.ordinal());
 			update();
 		}){
 			@Override
@@ -380,6 +414,9 @@ public class DragonCustomizationScreen extends Screen
 	{
 		DragonStateHandler handler = DragonStateProvider.getCap(getMinecraft().player).orElse(null);
 		
+		Color darkening = new Color(0.05f, 0.05f, 0.05f, 0.5f);
+		AbstractGui.fill(stack, 0, 0, width, height, darkening.getRGB());
+		
 		AbstractGui.fill(stack, 0, (this.height/4) + 10, this.width, this.height - (this.height/6), new Color(0.05F, 0.05F, 0.05F, 0.75F).getRGB());
 		AbstractGui.fill(stack, 0, 10, this.width, 10 + 25, new Color(0.05F, 0.05F, 0.05F, 0.75F).getRGB());
 		AbstractGui.fill(stack, 0, 40, this.width, 40 + 20, new Color(0.05F, 0.05F, 0.05F, 0.75F).getRGB());
@@ -408,7 +445,7 @@ public class DragonCustomizationScreen extends Screen
 		
 		float scale = zoom;
 		stack.scale(scale, scale, scale);
-		stack.translate(0, 0, 100);
+		stack.translate(0, 0, 400);
 		ClientDragonRender.dragonModel.setCurrentTexture(null);
 		renderEntityInInventory(guiLeft, this.height - (this.height/6) - 40, scale, xRot, yRot, dragon);
 		stack.popPose();
@@ -433,7 +470,7 @@ public class DragonCustomizationScreen extends Screen
 		RenderSystem.translatef((float)p_228187_0_, (float)p_228187_1_, 0);
 		RenderSystem.scalef(1.0F, 1.0F, -1.0F);
 		MatrixStack matrixstack = new MatrixStack();
-		matrixstack.translate(0, (Math.abs(yRot) / 17) * -70, 0);
+		matrixstack.translate(0, (Math.abs(yRot) / 17) * -(Math.abs(zoom)), 0);
 		matrixstack.scale((float)p_228187_2_, (float)p_228187_2_, (float)p_228187_2_);
 		Quaternion quaternion = Vector3f.ZP.rotationDegrees(180.0F);
 		Quaternion quaternion1 = Vector3f.XP.rotationDegrees(f1 * 10.0F);

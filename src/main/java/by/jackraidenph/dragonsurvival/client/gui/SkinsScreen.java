@@ -487,7 +487,7 @@ public class SkinsScreen extends Screen
 		RenderSystem.translatef((float)p_228187_0_, (float)p_228187_1_, 1050.0F);
 		RenderSystem.scalef(1.0F, 1.0F, -1.0F);
 		MatrixStack matrixstack = new MatrixStack();
-		matrixstack.translate(0, (Math.abs(yRot) / 17) * -70, 0);
+		matrixstack.translate(0, (Math.abs(yRot) / 17) * -(Math.abs(zoom)), 0);
 		matrixstack.translate(0.0D, 0.0D, 1000.0D);
 		matrixstack.scale((float)p_228187_2_, (float)p_228187_2_, (float)p_228187_2_);
 		Quaternion quaternion = Vector3f.ZP.rotationDegrees(180.0F);

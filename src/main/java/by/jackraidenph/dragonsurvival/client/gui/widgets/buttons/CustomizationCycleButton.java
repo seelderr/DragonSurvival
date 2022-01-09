@@ -3,18 +3,13 @@ package by.jackraidenph.dragonsurvival.client.gui.widgets.buttons;
 import by.jackraidenph.dragonsurvival.client.SkinCustomization.CustomizationLayer;
 import by.jackraidenph.dragonsurvival.client.SkinCustomization.DragonCustomizationHandler;
 import by.jackraidenph.dragonsurvival.client.gui.DragonCustomizationScreen;
-import by.jackraidenph.dragonsurvival.client.handlers.magic.ClientMagicHUDHandler;
 import by.jackraidenph.dragonsurvival.common.capability.DragonCapabilities.SkinCap;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
-import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.widget.button.Button;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class CustomizationCycleButton extends Button
+public class CustomizationCycleButton extends ArrowButton
 {
 	public boolean next;
 	public CustomizationLayer layer;
@@ -22,7 +17,7 @@ public class CustomizationCycleButton extends Button
 	
 	public CustomizationCycleButton(int p_i232255_1_, int p_i232255_2_, boolean next, CustomizationLayer layer, DragonCustomizationScreen parent)
 	{
-		super(p_i232255_1_, p_i232255_2_, 15, 15, null, (btn) -> {});
+		super(p_i232255_1_, p_i232255_2_, 15, 17, next, (btn) -> {});
 		this.next = next;
 		this.layer = layer;
 		this.screen = parent;
@@ -31,7 +26,6 @@ public class CustomizationCycleButton extends Button
 	@Override
 	public void onPress()
 	{
-		DragonStateHandler handler = DragonStateProvider.getCap(Minecraft.getInstance().player).orElse(null);
 		ArrayList<String> keys = DragonCustomizationHandler.getKeys(Minecraft.getInstance().player, layer);
 		
 		if(layer != CustomizationLayer.BASE) {
@@ -65,25 +59,5 @@ public class CustomizationCycleButton extends Button
 		}
 		
 		screen.update();
-	}
-	
-	@Override
-	public void renderButton(MatrixStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_)
-	{
-		Minecraft.getInstance().getTextureManager().bind(ClientMagicHUDHandler.widgetTextures);
-		
-		if(next) {
-			if (isHovered()) {
-				blit(stack, x, y, 66 / 2, 222 / 2, 11, 17, 128, 128);
-			} else {
-				blit(stack, x, y, 44 / 2, 222 / 2, 11, 17, 128, 128);
-			}
-		}else{
-			if(isHovered()){
-				blit(stack, x, y, 22 / 2, 222 / 2, 11, 17,128, 128);
-			}else{
-				blit(stack, x, y, 0, 222 / 2, 11, 17, 128, 128);
-			}
-		}
 	}
 }

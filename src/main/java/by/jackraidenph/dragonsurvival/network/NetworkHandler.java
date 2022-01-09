@@ -53,6 +53,7 @@ public class NetworkHandler
 		 register(PacketSyncPredatorStats.class, new PacketSyncPredatorStats());
 		 register(PlayerJumpSync.class, new PlayerJumpSync());
 		 register(RefreshDragons.class, new RefreshDragons());
+		 register(SyncAltarCooldown.class, new SyncAltarCooldown());
 		
 		 register(RequestClientData.class, new RequestClientData());
 		
