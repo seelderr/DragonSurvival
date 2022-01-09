@@ -51,11 +51,11 @@ public class SmallDragonDoor extends Block {
     public SmallDragonDoor(Properties properties, OpenRequirement openRequirement) {
         super(properties);
         registerDefaultState(getStateDefinition().any()
-        		.setValue(FACING, Direction.NORTH)
-        		.setValue(OPEN, false)
-        		.setValue(HINGE, DoorHingeSide.LEFT)
-        		.setValue(POWERED, false)
-        		.setValue(OPEN_REQ, openRequirement));
+                .setValue(FACING, Direction.NORTH)
+                .setValue(OPEN, false)
+                .setValue(HINGE, DoorHingeSide.LEFT)
+                .setValue(POWERED, false)
+                .setValue(OPEN_REQ, openRequirement));
     }
 
     public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
@@ -126,21 +126,21 @@ public class SmallDragonDoor extends Block {
     }
 
     public ActionResultType use(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
-    	LazyOptional<DragonStateHandler> dragonStateHandlerLazyOptional = player.getCapability(DragonStateProvider.DRAGON_CAPABILITY);
-    	if (dragonStateHandlerLazyOptional.isPresent()) {
-    		DragonStateHandler dragonStateHandler = dragonStateHandlerLazyOptional.orElseGet(() -> null);
-    		if (state.getValue(OPEN_REQ) == OpenRequirement.NONE || (dragonStateHandler.isDragon() &&
-    				(state.getValue(OPEN_REQ) == OpenRequirement.CAVE && dragonStateHandler.getType() == DragonType.CAVE) ||
-    				(state.getValue(OPEN_REQ) == OpenRequirement.FOREST && dragonStateHandler.getType() == DragonType.FOREST) ||
-    				(state.getValue(OPEN_REQ) == OpenRequirement.SEA && dragonStateHandler.getType() == DragonType.SEA)
-    				)) {
-    			state = state.cycle(OPEN);
+        LazyOptional<DragonStateHandler> dragonStateHandlerLazyOptional = player.getCapability(DragonStateProvider.DRAGON_CAPABILITY);
+        if (dragonStateHandlerLazyOptional.isPresent()) {
+            DragonStateHandler dragonStateHandler = dragonStateHandlerLazyOptional.orElseGet(() -> null);
+            if (state.getValue(OPEN_REQ) == OpenRequirement.NONE || (dragonStateHandler.isDragon() &&
+                    (state.getValue(OPEN_REQ) == OpenRequirement.CAVE && dragonStateHandler.getType() == DragonType.CAVE) ||
+                    (state.getValue(OPEN_REQ) == OpenRequirement.FOREST && dragonStateHandler.getType() == DragonType.FOREST) ||
+                    (state.getValue(OPEN_REQ) == OpenRequirement.SEA && dragonStateHandler.getType() == DragonType.SEA)
+            )) {
+                state = state.cycle(OPEN);
                 worldIn.setBlock(pos, state, 10);
                 worldIn.levelEvent(player, state.getValue(OPEN) ? this.getOpenSound() : this.getCloseSound(), pos, 0);
                 return ActionResultType.SUCCESS;
-    		}
-    	}
-    	return ActionResultType.PASS;
+            }
+        }
+        return ActionResultType.PASS;
     }
 
     private void playSound(World worldIn, BlockPos pos, boolean isOpening) {
@@ -148,8 +148,8 @@ public class SmallDragonDoor extends Block {
     }
 
     /**
-         * Used by {@link net.minecraft.entity.ai.brain.task.InteractWithDoorTask}
-         */
+     * Used by {@link net.minecraft.entity.ai.brain.task.InteractWithDoorTask}
+     */
     public void toggleDoor(World worldIn, BlockPos pos, boolean open) { // TODO check this for Open Requirements
         BlockState blockstate = worldIn.getBlockState(pos);
         if (blockstate.getBlock() == this && blockstate.getValue(OPEN) != open) {
@@ -163,8 +163,8 @@ public class SmallDragonDoor extends Block {
     }
 
     public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
-    	if (state.getValue(OPEN_REQ) == OpenRequirement.NONE || state.getValue(OPEN_REQ) == OpenRequirement.POWER) {
-    		boolean flag = worldIn.hasNeighborSignal(pos) || worldIn.hasNeighborSignal(pos.relative(Direction.UP));
+        if (state.getValue(OPEN_REQ) == OpenRequirement.NONE || state.getValue(OPEN_REQ) == OpenRequirement.POWER) {
+            boolean flag = worldIn.hasNeighborSignal(pos) || worldIn.hasNeighborSignal(pos.relative(Direction.UP));
             if (blockIn != this && flag != state.getValue(POWERED)) {
                 if (flag != state.getValue(OPEN)) {
                     this.playSound(worldIn, pos, flag);
@@ -172,7 +172,7 @@ public class SmallDragonDoor extends Block {
 
                 worldIn.setBlock(pos, state.setValue(POWERED, flag).setValue(OPEN, flag), 2);
             }
-    	}
+        }
     }
 
     public boolean canSurvive(BlockState state, IWorldReader worldIn, BlockPos pos) {
@@ -217,17 +217,17 @@ public class SmallDragonDoor extends Block {
 
 
     public enum OpenRequirement implements IStringSerializable{
-		NONE,
-    	POWER,
+        NONE,
+        POWER,
         CAVE,
         FOREST,
         SEA,
         LOCKED;
 
-    	@Override
+        @Override
         public String getSerializedName() {
             return name().toLowerCase(Locale.ENGLISH);
         }
-	}
+    }
 }
 
