@@ -161,9 +161,9 @@
   "ds.endmessage.2": "This is my land, {0}, show some respect. Go away, but first answer, why have you come here. Is it for spin wings?",
   "ds.endmessage.3": "You have gone through lot to get here, {0}, what do you wish?",
 
-  "ds.altar_dragon_info.cave_dragon": "§c■ Cave dragon.§r\n§2■ Features:§f§r fire resistance, pickaxe claws, fire magic, faster movement on cave blocks.\n§4■ Weakness:§r water.",
-  "ds.altar_dragon_info.forest_dragon": "§a■ Forest dragon.§r\n§2■ Features:§f§r soft fall, axe claws, poison magic, faster movement on forest blocks.\n§4■ Weakness:§r dark caves.",
-  "ds.altar_dragon_info.sea_dragon": "§3■ Sea dragon.§r\n§2■ Features:§f§r underwater breathing, shovel claws, electric magic, faster movement on sea blocks.\n§4■ Weakness:§r dry air.",
+  "ds.altar_dragon_info.cave_dragon": "§c■ Cave dragon.§r\n§2■ Features:§f§r fire resistance, pickaxe claws, fire magic, faster movement on cave blocks.\n§4■ Weakness:§r water.\n§6■ Ration:§r\n{0}",
+  "ds.altar_dragon_info.forest_dragon": "§a■ Forest dragon.§r\n§2■ Features:§f§r soft fall, axe claws, poison magic, faster movement on forest blocks.\n§4■ Weakness:§r dark caves.\n§6■ Ration:§r\n{0}",
+  "ds.altar_dragon_info.sea_dragon": "§3■ Sea dragon.§r\n§2■ Features:§f§r underwater breathing, shovel claws, electric magic, faster movement on sea blocks.\n§4■ Weakness:§r dry air.\n§6■ Ration:§r\n{0}",
   "ds.altar_dragon_info.human": "■ §nHuman.§r\n■ Homo sapiens.§r\nTraveler, builder and creator.",
 
   "ds.keybind.wings": "Toggle wings",
