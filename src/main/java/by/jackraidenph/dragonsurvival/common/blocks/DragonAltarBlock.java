@@ -24,7 +24,6 @@ import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
@@ -87,18 +86,7 @@ public class DragonAltarBlock extends Block {
 
     @OnlyIn(Dist.CLIENT)
     private void openGUi() {
-        Minecraft.getInstance().setScreen(new DragonAltarGUI(new TextComponent() {
-            @Override
-            public String getContents() {
-                return "Dragon altar";
-            }
-
-            @Override
-            public TextComponent plainCopy() {
-                return this;
-            }
-
-        }));
+        Minecraft.getInstance().setScreen(new DragonAltarGUI());
     }
 
     @Override

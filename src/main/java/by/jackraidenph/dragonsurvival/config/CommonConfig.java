@@ -18,7 +18,9 @@ public class CommonConfig {
 	// General
 	public final ForgeConfigSpec.BooleanValue endVoidTeleport;
 	public final ForgeConfigSpec.BooleanValue dragonsAllowedToUseElytra;
-
+	
+	public final ForgeConfigSpec.BooleanValue startWithDragonChoice;
+	
 	// Predator
 	public final ForgeConfigSpec.DoubleValue predatorDamageFactor;
 	public final ForgeConfigSpec.DoubleValue predatorHealthFactor;
@@ -85,6 +87,11 @@ public class CommonConfig {
 				.comment("Should the player be teleported to the overworld when they fall in the end?")
 				.define("endVoidTeleport", true);
 		dragonsAllowedToUseElytra = builder.comment("Whether dragons are allowed to use Elytra").define("elytraForDragon", false);
+		
+		startWithDragonChoice = builder
+				.comment("Should the dragon altar interface be opened when the player first joins the world?")
+				.define("startWithDragonChoice", false);
+		
 		// Predator
 		builder.pop().push("predator");
 		predatorDamageFactor = builder

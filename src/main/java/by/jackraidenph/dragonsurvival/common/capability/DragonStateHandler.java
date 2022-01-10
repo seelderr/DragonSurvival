@@ -37,6 +37,7 @@ public class DragonStateHandler {
 	public boolean growing = true;
 	
 	public int altarCooldown;
+	public boolean hasUsedAltar;
 	
 	public boolean treasureResting = false;
 	public int treasureRestTimer = 0;

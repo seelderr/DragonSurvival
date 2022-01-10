@@ -121,7 +121,7 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 		double g = gravity.getValue();
 		
 		dragonEntity.tailMotionUp = MathHelper.lerp(0.25, dragonEntity.tailMotionUp, ServerFlightHandler.isFlying(player) ? 0 : (player.getDeltaMovement().y + g) * 2);
-		dragonEntity.tailMotionSide = MathHelper.lerp(0.1, dragonEntity.tailMotionSide, ServerFlightHandler.isFlying(player) ? 0 : bodyYawChange * (distance / 0.2));
+		dragonEntity.tailMotionSide = MathHelper.lerp(0.1, dragonEntity.tailMotionSide, ServerFlightHandler.isGliding(player) ? 0 : bodyYawChange * (distance / 0.2));
 		
 		dragonEntity.bodyYawAverage.add(bodyYawChange);
 		while(dragonEntity.bodyYawAverage.size() > 10) dragonEntity.bodyYawAverage.remove(0);

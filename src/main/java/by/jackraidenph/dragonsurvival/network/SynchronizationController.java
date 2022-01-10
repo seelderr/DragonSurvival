@@ -8,6 +8,7 @@ import by.jackraidenph.dragonsurvival.misc.DragonLevel;
 import by.jackraidenph.dragonsurvival.network.SkinCustomization.SyncPlayerAllCustomization;
 import by.jackraidenph.dragonsurvival.network.claw.SyncDragonClawRender;
 import by.jackraidenph.dragonsurvival.network.claw.SyncDragonClawsMenu;
+import by.jackraidenph.dragonsurvival.network.container.OpenDragonAltar;
 import by.jackraidenph.dragonsurvival.network.emotes.SyncEmote;
 import by.jackraidenph.dragonsurvival.network.emotes.SyncEmoteStats;
 import by.jackraidenph.dragonsurvival.network.entity.player.*;
@@ -25,6 +26,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.network.PacketDistributor;
@@ -51,11 +53,18 @@ public class SynchronizationController {
         });
     }
     
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onLoggedIn(PlayerEvent.PlayerLoggedInEvent loggedInEvent) {
         PlayerEntity player = loggedInEvent.getPlayer();
         if (!player.level.isClientSide) {
             DragonStateProvider.getCap(player).ifPresent(cap -> {
+                cap.hasUsedAltar = cap.hasUsedAltar || cap.isDragon();
+                
+                if(!cap.hasUsedAltar && ConfigHandler.COMMON.startWithDragonChoice.get()){
+                    NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new OpenDragonAltar());
+                    cap.hasUsedAltar = true;
+                }
+                
                 NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new RequestClientData(cap));
     
                 NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SynchronizeDragonCap(player.getId(), cap.isHiding(), cap.getType(), cap.getSize(), cap.hasWings(), cap.getLavaAirSupply(), 0));

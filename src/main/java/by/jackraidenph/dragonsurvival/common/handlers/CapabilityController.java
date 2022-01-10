@@ -56,6 +56,7 @@ public class CapabilityController {
                         capNew.setMovementData(movementData.bodyYaw, movementData.headYaw, movementData.headPitch, movementData.bite);
                         
                         capNew.altarCooldown = capOld.altarCooldown;
+                        capNew.hasUsedAltar = capOld.hasUsedAltar;
                         
                         capNew.getMovementData().spinCooldown = capOld.getMovementData().spinCooldown;
                         capNew.getMovementData().spinLearned = capOld.getMovementData().spinLearned;

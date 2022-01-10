@@ -54,6 +54,7 @@ public class SyncAltarCooldown implements IMessage<SyncAltarCooldown>
 			if(entity != null){
 				DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
 					dragonStateHandler.altarCooldown = message.cooldown;
+					dragonStateHandler.hasUsedAltar = true;
 				});
 				
 				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new SyncAltarCooldown(entity.getId(), message.cooldown));

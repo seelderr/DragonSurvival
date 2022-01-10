@@ -34,6 +34,7 @@ import software.bernie.geckolib3.core.manager.AnimationData;
 
 import java.awt.*;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class DragonAltarGUI extends Screen {
     public static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_altar_texture.png");
@@ -47,8 +48,8 @@ public class DragonAltarGUI extends Screen {
     private static RemoteClientPlayerEntity clientPlayer;
     
     
-    public DragonAltarGUI(ITextComponent title) {
-        super(title);
+    public DragonAltarGUI() {
+        super(new StringTextComponent("Dragon altar"));
     }
 
     @Override
@@ -80,7 +81,21 @@ public class DragonAltarGUI extends Screen {
                     matrixStack.scale(scale, scale, scale);
                     matrixStack.translate(0, 0, 400);
                     ClientDragonRender.dragonModel.setCurrentTexture(null);
-                    renderEntityInInventory(guiLeft, (int)(guiTop + 7 + 100), scale, -5, -3, DragonStateProvider.isDragon(clientPlayer) ? dragon : clientPlayer);
+                    if(ClientDragonRender.dragonArmor != null && ClientDragonRender.dragonModel != null) {
+                        renderEntityInInventory(guiLeft, (int)(guiTop + 7 + 100), scale, -5, -3, DragonStateProvider.isDragon(clientPlayer) ? dragon : clientPlayer);
+                    }else{
+                        if (ClientDragonRender.dragonArmor == null) {
+                            ClientDragonRender.dragonArmor = DSEntities.DRAGON_ARMOR.create(Minecraft.getInstance().player.level);
+                            assert ClientDragonRender.dragonArmor != null;
+                            ClientDragonRender. dragonArmor.player = Minecraft.getInstance().player.getId();
+                        }
+    
+                        if (!ClientDragonRender.playerDragonHashMap.containsKey(Minecraft.getInstance().player.getId())) {
+                            DragonEntity dummyDragon = DSEntities.DRAGON.create(Minecraft.getInstance().player.level);
+                            dummyDragon.player = Minecraft.getInstance().player.getId();
+                            ClientDragonRender.playerDragonHashMap.put(Minecraft.getInstance().player.getId(), new AtomicReference<>(dummyDragon));
+                        }
+                    }
                     matrixStack.popPose();
                 }
             }
@@ -96,7 +111,19 @@ public class DragonAltarGUI extends Screen {
 
         if(!hasInit){
             if(clientPlayer == null) {
-                clientPlayer = new RemoteClientPlayerEntity(minecraft.level, new GameProfile(UUID.randomUUID(), "DRAGON_RENDER"));
+                clientPlayer = new RemoteClientPlayerEntity(minecraft.level, new GameProfile(UUID.randomUUID(), "DRAGON_RENDER")){
+                    @Override
+                    public boolean shouldShowName()
+                    {
+                        return false;
+                    }
+    
+                    @Override
+                    public ITextComponent getDisplayName()
+                    {
+                        return StringTextComponent.EMPTY;
+                    }
+                };
             
                 DragonStateProvider.getCap(clientPlayer).ifPresent((cap) -> {
                     cap.setHasWings(true);
@@ -107,6 +134,7 @@ public class DragonAltarGUI extends Screen {
             dragon = new DragonEntity(DSEntities.DRAGON, minecraft.level){
                 @Override
                 public void registerControllers(AnimationData animationData) {
+                    animationData.shouldPlayWhilePaused = true;
                     animationData.addAnimationController(new AnimationController<DragonEntity>(this, "controller", 2, (event) -> {
                         AnimationBuilder builder = new AnimationBuilder();
                         builder.addAnimation("sit", true);
@@ -216,6 +244,7 @@ public class DragonAltarGUI extends Screen {
             entityrenderermanager.render(p_228187_5_, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, matrixstack, irendertypebuffer$impl, 15728880);
             entityrenderermanager.setRenderHitBoxes(renderHitbox);
         });
+        
         irendertypebuffer$impl.endBatch();
         entityrenderermanager.setRenderShadow(true);
         

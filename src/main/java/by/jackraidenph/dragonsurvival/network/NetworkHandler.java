@@ -11,6 +11,7 @@ import by.jackraidenph.dragonsurvival.network.config.SyncBooleanConfig;
 import by.jackraidenph.dragonsurvival.network.config.SyncEnumConfig;
 import by.jackraidenph.dragonsurvival.network.config.SyncListConfig;
 import by.jackraidenph.dragonsurvival.network.config.SyncNumberConfig;
+import by.jackraidenph.dragonsurvival.network.container.OpenDragonAltar;
 import by.jackraidenph.dragonsurvival.network.container.OpenDragonInventory;
 import by.jackraidenph.dragonsurvival.network.container.OpenInventory;
 import by.jackraidenph.dragonsurvival.network.emotes.SyncEmote;
@@ -54,6 +55,7 @@ public class NetworkHandler
 		 register(PlayerJumpSync.class, new PlayerJumpSync());
 		 register(RefreshDragons.class, new RefreshDragons());
 		 register(SyncAltarCooldown.class, new SyncAltarCooldown());
+		 register(OpenDragonAltar.class, new OpenDragonAltar());
 		
 		 register(RequestClientData.class, new RequestClientData());
 		
