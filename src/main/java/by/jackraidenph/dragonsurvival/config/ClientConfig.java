@@ -34,6 +34,7 @@ public class ClientConfig {
 	public final ForgeConfigSpec.BooleanValue clientDebugMessages;
 	
 	public final ForgeConfigSpec.BooleanValue alternateHeldItem;
+	public final ForgeConfigSpec.BooleanValue thirdPersonItemRender;
 	
 	public final ForgeConfigSpec.BooleanValue renderDragonClaws;
 	public final ForgeConfigSpec.BooleanValue renderNewbornSkin;
@@ -132,6 +133,9 @@ public class ClientConfig {
 				.comment("Should held items be rendered as if you are in third-person even in first person as a dragon?")
 				.define("alternateHeldItem", false);
 		
+		thirdPersonItemRender = builder
+				.comment("Should the third person item render for dragons use the default rotations? Use this if modded items are rendering weird when held.")
+				.define("thirdPersonItemRender", false);
 		
 		builder.pop().push("rendering");
 		enableTailPhysics = builder
