@@ -1,16 +1,18 @@
 package by.jackraidenph.dragonsurvival.common.handlers;
 
-import by.jackraidenph.dragonsurvival.common.DragonEffects;
 import by.jackraidenph.dragonsurvival.common.blocks.DSBlocks;
+import by.jackraidenph.dragonsurvival.common.DragonEffects;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.entity.DSEntities;
+import by.jackraidenph.dragonsurvival.common.handlers.magic.ClawToolHandler;
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.common.entity.monsters.MagicalPredatorEntity;
 import by.jackraidenph.dragonsurvival.common.items.DSItems;
-import by.jackraidenph.dragonsurvival.config.ConfigHandler;
-import by.jackraidenph.dragonsurvival.misc.DragonLevel;
-import by.jackraidenph.dragonsurvival.misc.DragonType;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.status.PlayerJumpSync;
+import by.jackraidenph.dragonsurvival.server.tileentity.SourceOfMagicTileEntity;
+import by.jackraidenph.dragonsurvival.misc.DragonLevel;
+import by.jackraidenph.dragonsurvival.misc.DragonType;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -42,17 +44,17 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.TickEvent.Phase;
-import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.entity.player.SleepingLocationCheckEvent;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.network.PacketDistributor;
 
@@ -61,28 +63,12 @@ import java.util.List;
 @SuppressWarnings("unused")
 @Mod.EventBusSubscriber
 public class EventHandler {
-    
-    @SubscribeEvent
-    public static void altarCooldown(PlayerTickEvent event)
-    {
-        if (event.phase == Phase.START || event.side == LogicalSide.CLIENT) return;
-        
-        PlayerEntity playerEntity = event.player;
-        DragonStateProvider.getCap(playerEntity).ifPresent(dragonStateHandler -> {
-            if (dragonStateHandler.isDragon() && playerEntity instanceof ServerPlayerEntity) {
-                if(dragonStateHandler.altarCooldown > 0){
-                    dragonStateHandler.altarCooldown--;
-                }
-            }
-        });
-    }
-    
+
+    static int cycle = 0;
+
     /**
      * Check every 2 seconds
      */
-
-    static int cycle = 0;
-    
     @SubscribeEvent
     public static void removeElytraFromDragon(TickEvent.PlayerTickEvent playerTickEvent) {
         if (!ConfigHandler.COMMON.dragonsAllowedToUseElytra.get() && playerTickEvent.phase == TickEvent.Phase.START) {
@@ -159,13 +145,32 @@ public class EventHandler {
     }
     
     @SubscribeEvent
+    public static void sleepCheck(SleepingLocationCheckEvent sleepingLocationCheckEvent) {
+        BlockPos sleepingLocation = sleepingLocationCheckEvent.getSleepingLocation();
+        World world = sleepingLocationCheckEvent.getEntity().level;
+        if (world.isNight() && world.getBlockEntity(sleepingLocation) instanceof SourceOfMagicTileEntity)
+            sleepingLocationCheckEvent.setResult(Event.Result.ALLOW);
+    }
+    
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void expDrops(BlockEvent.BreakEvent breakEvent) {
+       if(DragonStateProvider.isDragon(breakEvent.getPlayer())){
+           if(breakEvent.getExpToDrop() > 0){
+               int bonusLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.BLOCK_FORTUNE, breakEvent.getPlayer());
+               int silklevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, breakEvent.getPlayer());
+               breakEvent.setExpToDrop(breakEvent.getState().getExpDrop(breakEvent.getWorld(), breakEvent.getPos(), bonusLevel, silklevel));
+           }
+       }
+    }
+    
+    @SubscribeEvent
     public static void blockBroken(BlockEvent.BreakEvent breakEvent) {
         if(breakEvent.isCanceled()) return;
         
         PlayerEntity playerEntity = breakEvent.getPlayer();
         if(playerEntity.isCreative()) return;
     
-        int i = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, playerEntity.getMainHandItem());
+        int i = EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, playerEntity);
     
         if(i <= 0) {
             IWorld world = breakEvent.getWorld();
@@ -173,7 +178,7 @@ public class EventHandler {
                 BlockState blockState = breakEvent.getState();
                 BlockPos blockPos = breakEvent.getPos();
                 Block block = blockState.getBlock();
-                ItemStack mainHandItem = playerEntity.getMainHandItem();
+                ItemStack mainHandItem = ClawToolHandler.getDragonTools(playerEntity);
                 double random;
                 // Modded Ore Support
                 String[] tagStringSplit = ConfigHandler.SERVER.oresTag.get().split(":");
@@ -189,7 +194,7 @@ public class EventHandler {
                         .withParameter(LootParameters.ORIGIN, new Vector3d(blockPos.getX(), blockPos.getY(), blockPos.getZ()))
                         .withParameter(LootParameters.TOOL, mainHandItem));
                 DragonStateProvider.getCap(playerEntity).ifPresent(dragonStateHandler -> {
-                    final boolean suitableOre = (playerEntity.getMainHandItem().isCorrectToolForDrops(blockState) ||
+                    final boolean suitableOre = (mainHandItem.isCorrectToolForDrops(blockState) ||
                                                  (dragonStateHandler.isDragon() && dragonStateHandler.canHarvestWithPaw(playerEntity, blockState)))
                                                 && drops.stream().noneMatch(item -> oresTag.contains(item.getItem()));
                     if (suitableOre && !playerEntity.isCreative()) {
@@ -333,9 +338,9 @@ public class EventHandler {
                 }
                 if (livingEntity instanceof ServerPlayerEntity) {
                     if (livingEntity.getServer().isSingleplayer())
-                        NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> livingEntity), new PlayerJumpSync(livingEntity.getId(), 20)); // 42
+                        NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new PlayerJumpSync(livingEntity.getId(), 20)); // 42
                     else
-                        NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> livingEntity), new PlayerJumpSync(livingEntity.getId(), 10)); // 21
+                        NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new PlayerJumpSync(livingEntity.getId(), 10)); // 21
                 }
             }
         });
