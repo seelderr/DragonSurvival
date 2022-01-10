@@ -20,7 +20,6 @@ import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.DyeColor;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3f;
@@ -33,6 +32,7 @@ import software.bernie.geckolib3.core.builder.AnimationBuilder;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.manager.AnimationData;
 
+import java.awt.*;
 import java.util.UUID;
 
 public class DragonAltarGUI extends Screen {
@@ -155,7 +155,7 @@ public class DragonAltarGUI extends Screen {
             @Override
             public int getFGColor()
             {
-                return DyeColor.GRAY.getTextColor();
+                return Color.darkGray.getRGB();
             }
     
             @Override
