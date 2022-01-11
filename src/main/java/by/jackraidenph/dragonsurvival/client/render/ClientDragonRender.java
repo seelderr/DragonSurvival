@@ -325,10 +325,10 @@ public class ClientDragonRender
 		                float headRot = Functions.angleDifference((float)bodyYaw, MathHelper.wrapDegrees(player.yRot != 0.0 ? player.yRot : player.yHeadRot));
 						
 		                if(ConfigHandler.CLIENT.rotateBodyWithCamera.get() && (!KeyInputHandler.FREE_LOOK.isDown() && !wasFreeLook)){
-			                if(headRot > 170){
-				                bodyYaw += 170 - headRot;
-			                }else if(headRot < -170){
-				                bodyYaw -= 170 + headRot;
+			                if(headRot > 150){
+				                bodyYaw += 150 - headRot;
+			                }else if(headRot < -150){
+				                bodyYaw -= 150 + headRot;
 			                }
 		                }
 						headRot = (float)MathHelper.lerp(0.05, playerStateHandler.getMovementData().headYaw, headRot);

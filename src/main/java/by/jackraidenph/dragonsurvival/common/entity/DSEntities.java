@@ -4,6 +4,7 @@ import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.common.DragonEffects;
 import by.jackraidenph.dragonsurvival.common.blocks.DragonBeacon;
 import by.jackraidenph.dragonsurvival.common.entity.creatures.*;
+import by.jackraidenph.dragonsurvival.common.entity.creatures.hitbox.DragonHitBox;
 import by.jackraidenph.dragonsurvival.common.entity.monsters.MagicalPredatorEntity;
 import by.jackraidenph.dragonsurvival.common.entity.projectiles.*;
 import by.jackraidenph.dragonsurvival.common.handlers.VillagerRelationsHandler;
@@ -61,6 +62,7 @@ public class DSEntities
     
     public static EntityType<BolasEntity> BOLAS_ENTITY;
     
+    public static EntityType<DragonHitBox> DRAGON_HITBOX;
     
     //Magic abilities
     public static EntityType<DragonSpikeEntity> DRAGON_SPIKE;
@@ -89,6 +91,8 @@ public class DSEntities
         IForgeRegistry<EntityType<?>> registry = event.getRegistry();
         DRAGON = registerEntity(registry, "dummy_dragon", new EntityType<>(DragonEntity::new, EntityClassification.MISC, true, false, false, false, ImmutableSet.of(), EntitySize.fixed(0.9f, 1.9f), 0, 0));
         DRAGON_ARMOR = registerEntity(registry, "dragon_armor", new EntityType<>(DragonEntity::new, EntityClassification.MISC, true, false, false, false, ImmutableSet.of(), EntitySize.fixed(0.9f, 1.9f), 0, 0));
+        DRAGON_HITBOX = registerEntity(registry, "dragon_hitbox", EntityType.Builder.<DragonHitBox>of(DragonHitBox::new, EntityClassification.MISC).sized(0, 0).clientTrackingRange(1).updateInterval(1).build("dragon_hitbox"));
+    
         BOLAS_ENTITY = registerEntity(registry, "bolas", cast(EntityType.Builder.of((p_create_1_, p_create_2_) -> new BolasEntity(p_create_2_), EntityClassification.MISC).sized(0.25F, 0.25F).clientTrackingRange(4).updateInterval(10).build("bolas")));
     
         DRAGON_SPIKE = registerEntity(registry, "dragon_spike", EntityType.Builder.<DragonSpikeEntity>of(DragonSpikeEntity::new, EntityClassification.MISC).sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(1).build("dragon_spike"));
