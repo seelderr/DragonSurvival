@@ -116,9 +116,10 @@ public class ToolTipHandler
 		if(!ConfigHandler.CLIENT.tooltipChanges.get() || !ConfigHandler.CLIENT.helpTooltips.get()) return false;
 		if(Minecraft.getInstance().level == null) return false;
 		if(ConfigHandler.CLIENT.alwaysShowHelpTooltip.get()) return true;
+		if(Minecraft.getInstance().screen == null) return false;
 		
 		for(Widget btn : Minecraft.getInstance().screen.buttons){
-			if(btn.isHovered() && btn instanceof HelpButton){
+			if(btn instanceof HelpButton && btn.isHovered()){
 				return true;
 			}
 		}
