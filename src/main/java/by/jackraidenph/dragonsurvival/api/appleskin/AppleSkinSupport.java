@@ -416,8 +416,12 @@ public class AppleSkinSupport
 	}
 	
 	public static boolean isRotten(ItemStack itemStack) {
+		if(itemStack == null || itemStack.getItem() == null || itemStack.getItem().getFoodProperties() == null || itemStack.getItem().getFoodProperties().getEffects() == null)
+			return false;
+		
 		if (!DragonFoodHandler.isDragonEdible(itemStack.getItem(), DragonStateProvider.getDragonType(Minecraft.getInstance().player))) {
 			return false;
+			
 		} else {
 			Iterator var1 = itemStack.getItem().getFoodProperties().getEffects().iterator();
 			
