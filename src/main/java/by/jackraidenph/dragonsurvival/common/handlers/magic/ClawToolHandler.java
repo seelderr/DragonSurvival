@@ -14,9 +14,8 @@ import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.RayTraceContext;
+import net.minecraft.util.math.RayTraceContext.FluidMode;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
@@ -106,44 +105,41 @@ public class ClawToolHandler
 	public static ItemStack getDragonTools(PlayerEntity player)
 	{
 		ItemStack mainStack = player.inventory.getSelected();
+		ItemStack harvestTool = mainStack;
+		float newSpeed = 0F;
+		
 		DragonStateHandler cap = DragonStateProvider.getCap(player).orElse(null);
 		
 		if(!(mainStack.getItem() instanceof TieredItem) && cap != null) {
-			float newSpeed = 0F;
-			ItemStack harvestTool = null;
-			
 			World world = player.level;
-			Vector3d vector3d = player.getEyePosition(1f);
-			Vector3d vector3d1 = player.getViewVector(1f);
-			Vector3d vector3d2 = vector3d.add(vector3d1.x, vector3d1.y, vector3d1.z);
-			BlockRayTraceResult raytraceresult = world.clip(new RayTraceContext(vector3d1, vector3d2, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, player));
+			BlockRayTraceResult raytraceresult = Item.getPlayerPOVHitResult(world, player, FluidMode.NONE);
 			
-			if (raytraceresult != null && raytraceresult.getType() != RayTraceResult.Type.MISS) {
+			if (raytraceresult.getType() != RayTraceResult.Type.MISS) {
 				BlockState state = world.getBlockState(raytraceresult.getBlockPos());
 				
 				if(state != null) {
 					for (int i = 1; i < 4; i++) {
-						if (state.getHarvestTool() == null || state.getHarvestTool() == DragonStateHandler.CLAW_TOOL_TYPES[i]) {
-							ItemStack breakingItem = cap.getClawInventory().getClawsInventory().getItem(i);
-							if (!breakingItem.isEmpty()) {
-								float tempSpeed = breakingItem.getDestroySpeed(state);
-								
-								if (tempSpeed > newSpeed) {
-									newSpeed = tempSpeed;
-									harvestTool = breakingItem;
-								}
+						ItemStack breakingItem = cap.getClawInventory().getClawsInventory().getItem(i);
+						
+						if (!breakingItem.isEmpty() && breakingItem.getToolTypes().stream().anyMatch(state::isToolEffective)) {
+							float tempSpeed = breakingItem.getDestroySpeed(state);
+							
+							if(breakingItem.getItem() instanceof ToolItem){
+								ToolItem item = (ToolItem)breakingItem.getItem();
+								tempSpeed = item.getDestroySpeed(breakingItem, state);
+							}
+							
+							if (tempSpeed > newSpeed) {
+								newSpeed = tempSpeed;
+								harvestTool = breakingItem;
 							}
 						}
 					}
 				}
 			}
-			
-			if(harvestTool != null && !harvestTool.isEmpty()){
-				return harvestTool;
-			}
 		}
-		
-		return mainStack;
+
+		return harvestTool;
 	}
 	
 	

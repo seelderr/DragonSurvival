@@ -37728,19 +37728,19 @@
 			"animation_length": 11.16667,
 			"bones": {
 				"MolangHandlerTail5": {
-					"rotation": ["17.5/ 3 * query.tail_motion_up", "0+20/ 3 * query.tail_motion_side", 0]
+					"rotation": ["math.clamp(query.tail_motion_up, -50, 50)", "math.clamp(query.tail_motion_side, -50, 50)", 0]
 				},
 				"MolangHandlerTail4": {
-					"rotation": ["25/ 3 * query.tail_motion_up", "30/ 3 * query.tail_motion_side", 0]
+					"rotation": ["math.clamp(query.tail_motion_up, -50, 50)", "math.clamp(query.tail_motion_side, -50, 50)", 0]
 				},
 				"MolangHandlerTail3": {
-					"rotation": ["22.5/ 3 * query.tail_motion_up", "22.5/ 3 * query.tail_motion_side", 0]
+					"rotation": ["math.clamp(query.tail_motion_up, -50, 50)", "math.clamp(query.tail_motion_side, -50, 50)", 0]
 				},
 				"MolangHandlerTail2": {
-					"rotation": ["22.5/ 3 * query.tail_motion_up", "37.5/ 3 * query.tail_motion_side", 0]
+					"rotation": ["math.clamp(query.tail_motion_up, -50, 50)", "math.clamp(query.tail_motion_side, -50, 50)", 0]
 				},
 				"MolangHandlerTail1": {
-					"rotation": ["7.5 / 3 * query.tail_motion_up", "0+32.5 / 3 * query.tail_motion_side", 0]
+					"rotation": ["math.clamp(query.tail_motion_up, -50, 50)", "math.clamp(query.tail_motion_side, -50, 50)", 0]
 				}
 			}
 		},

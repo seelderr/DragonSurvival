@@ -39,14 +39,12 @@ public class MixinItem {
 	public void getFoodPropertiesClientSide(CallbackInfoReturnable<Food> ci){
 		PlayerEntity player = Minecraft.getInstance().player;
 		
-		if(player.level.isClientSide) {
+		if(player != null && player.level != null && player.level.isClientSide) {
 			if (ConfigHandler.SERVER.customDragonFoods.get()) {
 				if (DragonStateProvider.isDragon(player)) {
-					if (player.isUsingItem() && player.getUseItem().getItem() == ((Item)(Object)this)) {
-						if (DragonFoodHandler.isDragonEdible((Item)(Object)this, DragonStateProvider.getDragonType(player))) {
-							Food effectiveFood = DragonFood.getEffectiveFoodProperties((Item)(Object)this, player);
-							ci.setReturnValue(effectiveFood);
-						}
+					if (DragonFoodHandler.isDragonEdible((Item)(Object)this, DragonStateProvider.getDragonType(player))) {
+						Food effectiveFood = DragonFood.getEffectiveFoodProperties((Item)(Object)this, player);
+						ci.setReturnValue(effectiveFood);
 					}
 				}
 			}

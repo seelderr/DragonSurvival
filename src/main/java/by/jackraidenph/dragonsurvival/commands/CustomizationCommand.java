@@ -17,7 +17,7 @@ public class CustomizationCommand
 	public static void register(CommandDispatcher<CommandSource> commandDispatcher)
 	{
 		RootCommandNode<CommandSource> rootCommandNode = commandDispatcher.getRoot();
-		LiteralCommandNode<CommandSource> dragon = literal("dragon_customization").requires(commandSource -> commandSource.hasPermission(2)).executes(context -> {
+		LiteralCommandNode<CommandSource> dragon = literal("dragon-creator").requires(commandSource -> commandSource.hasPermission(2)).executes(context -> {
 			return runCommand(context.getSource().getPlayerOrException());
 		}).build();
 		

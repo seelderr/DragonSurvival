@@ -1,12 +1,10 @@
 package by.jackraidenph.dragonsurvival.mixins;
 
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.handlers.magic.ClawToolHandler;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.TieredItem;
 import net.minecraft.util.NonNullList;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -29,28 +27,11 @@ public class MixinPlayerInventory
 	@Inject( at = @At("HEAD"), method = "getDestroySpeed", cancellable = true)
 	public void getDestroySpeed(BlockState state, CallbackInfoReturnable<Float> ci){
 		ItemStack mainStack = player.inventory.getSelected();
-		DragonStateHandler cap = DragonStateProvider.getCap(player).orElse(null);
+		ItemStack breakStack = ClawToolHandler.getDragonTools(player);
 		
-		if(!(mainStack.getItem() instanceof TieredItem) && cap != null && state != null && player != null) {
-			float newSpeed = 0F;
-			ItemStack harvestTool = null;
-			
-			for (int i = 1; i < 4; i++) {
-				if (state.getHarvestTool() == null || state.getHarvestTool() == DragonStateHandler.CLAW_TOOL_TYPES[i]) {
-					ItemStack breakingItem = cap.getClawInventory().getClawsInventory().getItem(i);
-					if (breakingItem != null && !breakingItem.isEmpty()) {
-						float tempSpeed = breakingItem.getDestroySpeed(state);
-						
-						if (tempSpeed > newSpeed) {
-							newSpeed = tempSpeed;
-							harvestTool = breakingItem;
-						}
-					}
-				}
-			}
-			if(harvestTool != null && !harvestTool.isEmpty()){
-				ci.setReturnValue(newSpeed);
-			}
+		if(!ItemStack.isSame(mainStack, breakStack)){
+			float tempSpeed = breakStack.getDestroySpeed(state);
+			ci.setReturnValue(tempSpeed);
 		}
 	}
 }

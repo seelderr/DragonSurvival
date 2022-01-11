@@ -335,7 +335,6 @@ public class ClientDragonRender
 						
 						
 	                    double headPitch = MathHelper.lerp(0.1, playerStateHandler.getMovementData().headPitch, player.xRot);
-		
 		                Vector3d moveVector = getInputVector(new Vector3d(player.input.leftImpulse, 0, player.input.forwardImpulse), 1F, player.yRot);
 		
 		                if (ServerFlightHandler.isFlying(player)) {
@@ -381,10 +380,10 @@ public class ClientDragonRender
 									}
 								}
 								
-		                        bodyYaw = MathHelper.wrapDegrees(bodyYaw);
-		                        bodyYaw = (float)MathHelper.rotLerp(0.1f, (float)playerStateHandler.getMovementData().bodyYaw,  (float)bodyYaw);
-		
 		                        if (playerStateHandler.getMovementData().bodyYaw != bodyYaw || headRot != playerStateHandler.getMovementData().headYaw) {
+			                        bodyYaw = (float)MathHelper.rotLerp(0.1f, (float)playerStateHandler.getMovementData().bodyYaw,  (float)bodyYaw);
+			                        bodyYaw = MathHelper.wrapDegrees(bodyYaw);
+			
 			                        playerStateHandler.setMovementData(bodyYaw, headRot, headPitch, playerStateHandler.getMovementData().bite);
 			                        NetworkHandler.CHANNEL.sendToServer(new PacketSyncCapabilityMovement(player.getId(), playerStateHandler.getMovementData().bodyYaw, playerStateHandler.getMovementData().headYaw, playerStateHandler.getMovementData().headPitch, playerStateHandler.getMovementData().bite));
 		                            return;
@@ -420,13 +419,13 @@ public class ClientDragonRender
 	                                }
 	                            }
 	                        }
-							
-		                    bodyYaw = MathHelper.rotLerp(0.1f, (float)playerStateHandler.getMovementData().bodyYaw, (float)bodyYaw);
-		                    bodyYaw = MathHelper.wrapDegrees(bodyYaw);
 	                    }
 						
 						if (playerStateHandler.getMovementData().bodyYaw != bodyYaw || headRot != playerStateHandler.getMovementData().headYaw) {
-	                        playerStateHandler.setMovementData(bodyYaw, headRot, headPitch, playerStateHandler.getMovementData().bite);
+							bodyYaw = (float)MathHelper.rotLerp(0.1f, (float)playerStateHandler.getMovementData().bodyYaw,  (float)bodyYaw);
+							bodyYaw = MathHelper.wrapDegrees(bodyYaw);
+							
+							playerStateHandler.setMovementData(bodyYaw, headRot, headPitch, playerStateHandler.getMovementData().bite);
 	                        NetworkHandler.CHANNEL.sendToServer(new PacketSyncCapabilityMovement(player.getId(), playerStateHandler.getMovementData().bodyYaw, playerStateHandler.getMovementData().headYaw, playerStateHandler.getMovementData().headPitch, playerStateHandler.getMovementData().bite));
 	                    }
 	                }
