@@ -67,18 +67,24 @@ public class DragonHitboxHandler
 				double height = DragonSizeHandler.calculateDragonHeight(size, ConfigHandler.SERVER.hitboxGrowsPastHuman.get());
 				double width = DragonSizeHandler.calculateDragonWidth(size, ConfigHandler.SERVER.hitboxGrowsPastHuman.get());
 				
-				if (part.name == "body") {
-					width *= 2;
-				} else if (part.name == "head") {
-					height = width;
-				} else if (part.name == "tail1") {
-					height /= 3;
-				} else if (part.name == "tail2") {
-					height /= 3;
-					width *= 0.8;
-				}else if (part.name == "tail3") {
-					height /= 3;
-					width *= 0.6;
+				switch (part.name) {
+					case "body":
+						width *= 2;
+						break;
+					case "head":
+						height = width;
+						break;
+					case "tail1":
+						height /= 3;
+						break;
+					case "tail2":
+						height /= 3;
+						width *= 0.8;
+						break;
+					case "tail3":
+						height /= 3;
+						width *= 0.6;
+						break;
 				}
 				
 				event.setNewSize(new EntitySize((float)(Math.round(width * 100.0D) / 100.0D), (float)(Math.round(height * 100.0D) / 100.0D), false));

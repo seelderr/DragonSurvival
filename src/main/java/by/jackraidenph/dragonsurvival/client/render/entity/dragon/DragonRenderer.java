@@ -73,7 +73,7 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 		if (rightWing != null) {
 			rightWing.setHidden(!hasWings);
 		}
-		
+		if(getGeoModelProvider().getTextureLocation(entity) == null) return;
 		super.render(entity, entityYaw, partialTicks, stack, bufferIn, packedLightIn);
 	}
 	

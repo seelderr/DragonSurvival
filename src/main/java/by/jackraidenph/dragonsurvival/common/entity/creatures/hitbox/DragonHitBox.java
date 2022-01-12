@@ -17,7 +17,6 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.World;
 import net.minecraftforge.entity.PartEntity;
@@ -104,11 +103,7 @@ public class DragonHitBox extends Entity
 			return;
 		}
 		
-		Vector3d[] avector3d = new Vector3d[this.subEntities.length];
-		
-		for(int j = 0; j < this.subEntities.length; ++j) {
-			avector3d[j] = new Vector3d(this.subEntities[j].getX(), this.subEntities[j].getY(), this.subEntities[j].getZ());
-		}
+
 		
 		DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
 		
@@ -162,14 +157,14 @@ public class DragonHitBox extends Entity
 			tail3.setPose(tail3.getPose() == Pose.STANDING ? null : Pose.STANDING);
 			lastSize = size;
 		}
-		
+
 		for(int l = 0; l < this.subEntities.length; ++l) {
-			this.subEntities[l].xo = avector3d[l].x;
-			this.subEntities[l].yo = avector3d[l].y;
-			this.subEntities[l].zo = avector3d[l].z;
-			this.subEntities[l].xOld = avector3d[l].x;
-			this.subEntities[l].yOld = avector3d[l].y;
-			this.subEntities[l].zOld = avector3d[l].z;
+			this.subEntities[l].xo = this.subEntities[l].getX();
+			this.subEntities[l].yo = this.subEntities[l].getY();
+			this.subEntities[l].zo = this.subEntities[l].getZ();
+			this.subEntities[l].xOld = this.subEntities[l].getX();
+			this.subEntities[l].yOld = this.subEntities[l].getY();
+			this.subEntities[l].zOld = this.subEntities[l].getZ();
 		}
 	}
 	

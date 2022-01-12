@@ -1,7 +1,10 @@
 package by.jackraidenph.dragonsurvival.util;
 
 import by.jackraidenph.dragonsurvival.common.entity.DSEntities;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.block.Blocks;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.entity.EntitySpawnPlacementRegistry;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SpawnReason;
@@ -110,5 +113,21 @@ public class Functions {
                 }
             }
         }
+    }
+    
+    public static void renderScaledText(MatrixStack matrix, int x, int y, float scale, String text, int color) {
+        matrix.pushPose();
+        matrix.translate(x - x * scale, y - y * scale, 0);
+        matrix.scale(scale, scale, 1);
+        Minecraft.getInstance().font.draw(matrix, text, x, y, color);
+        matrix.popPose();
+    }
+    
+    public static void renderCenteredScaledText(MatrixStack matrix, int x, int y, float scale, String text, int color) {
+        matrix.pushPose();
+        matrix.translate(x - x * scale, y - y * scale, 0);
+        matrix.scale(scale, scale, 1);
+        AbstractGui.drawCenteredString(matrix, Minecraft.getInstance().font, text, x, y, color);
+        matrix.popPose();
     }
 }

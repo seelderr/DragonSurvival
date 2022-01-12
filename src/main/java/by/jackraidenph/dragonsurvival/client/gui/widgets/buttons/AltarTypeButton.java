@@ -2,12 +2,14 @@ package by.jackraidenph.dragonsurvival.client.gui.widgets.buttons;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.client.gui.DragonAltarGUI;
+import by.jackraidenph.dragonsurvival.client.gui.DragonCustomizationScreen;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
-import by.jackraidenph.dragonsurvival.misc.DragonLevel;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
+import by.jackraidenph.dragonsurvival.network.RequestClientData;
+import by.jackraidenph.dragonsurvival.network.SynchronizationController;
 import by.jackraidenph.dragonsurvival.network.entity.player.SynchronizeDragonCap;
 import by.jackraidenph.dragonsurvival.network.flight.SyncSpinStatus;
 import by.jackraidenph.dragonsurvival.network.status.SyncAltarCooldown;
@@ -86,7 +88,6 @@ public class AltarTypeButton extends Button
 	public void onPress()
 	{
 		initiateDragonForm(type);
-		Minecraft.getInstance().player.sendMessage(new TranslationTextComponent("ds." + (type == DragonType.NONE ? "choice_human" : type.name().toLowerCase() + "_dragon_choice")), Minecraft.getInstance().player.getUUID());
 	}
 	
 	private void initiateDragonForm(DragonType type)
@@ -95,29 +96,30 @@ public class AltarTypeButton extends Button
 		
 		if (player == null) return;
 		
-		player.closeContainer();
-		DragonStateProvider.getCap(player).ifPresent(cap -> {
-			player.level.playSound(player, player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundCategory.PLAYERS, 1, 0.7f);
+		if(type == DragonType.NONE){
+			Minecraft.getInstance().player.sendMessage(new TranslationTextComponent("ds.choice_human"), Minecraft.getInstance().player.getUUID());
 			
-			cap.setType(type);
-			
-			if (type == DragonType.NONE) {
-				cap.setSize(20F);
-				cap.setHasWings(false);
-			} else {
-				if (!ConfigHandler.SERVER.saveGrowthStage.get() || cap.getSize() == 0) {
-					cap.setSize(DragonLevel.BABY.size);
+			DragonStateProvider.getCap(player).ifPresent(cap -> {
+				player.level.playSound(player, player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundCategory.PLAYERS, 1, 0.7f);
+				
+				cap.setType(type);
+				
+				if (type == DragonType.NONE) {
+					cap.setSize(20F);
+					cap.setHasWings(false);
 				}
 				
-				cap.setHasWings(ConfigHandler.SERVER.saveGrowthStage.get() ? cap.hasWings() || ConfigHandler.SERVER.startWithWings.get() : ConfigHandler.SERVER.startWithWings.get());
-			}
-			
-			cap.setIsHiding(false);
-			cap.getMovementData().spinLearned = false;
-			
-			NetworkHandler.CHANNEL.sendToServer(new SyncAltarCooldown(Minecraft.getInstance().player.getId(), Functions.secondsToTicks(ConfigHandler.SERVER.altarUsageCooldown.get())));
-			NetworkHandler.CHANNEL.sendToServer(new SynchronizeDragonCap(player.getId(), cap.isHiding(), cap.getType(), cap.getSize(), cap.hasWings(), ConfigHandler.SERVER.caveLavaSwimmingTicks.get(), 0));
-			NetworkHandler.CHANNEL.sendToServer(new SyncSpinStatus(Minecraft.getInstance().player.getId(), cap.getMovementData().spinAttack, cap.getMovementData().spinCooldown, cap.getMovementData().spinLearned));
-		});
+				cap.setIsHiding(false);
+				cap.getMovementData().spinLearned = false;
+				
+				NetworkHandler.CHANNEL.sendToServer(new SyncAltarCooldown(Minecraft.getInstance().player.getId(), Functions.secondsToTicks(ConfigHandler.SERVER.altarUsageCooldown.get())));
+				NetworkHandler.CHANNEL.sendToServer(new SynchronizeDragonCap(player.getId(), cap.isHiding(), cap.getType(), cap.getSize(), cap.hasWings(), ConfigHandler.SERVER.caveLavaSwimmingTicks.get(), 0));
+				NetworkHandler.CHANNEL.sendToServer(new SyncSpinStatus(Minecraft.getInstance().player.getId(), cap.getMovementData().spinAttack, cap.getMovementData().spinCooldown, cap.getMovementData().spinLearned));
+				SynchronizationController.sendClientData(new RequestClientData(cap.getType(), cap.getLevel()));
+			});
+			player.closeContainer();
+		}else{
+			Minecraft.getInstance().setScreen(new DragonCustomizationScreen(gui, type));
+		}
 	}
 }
