@@ -8,9 +8,6 @@ buildscript {
             name = "SpongePowered"
         	url = 'https://repo.spongepowered.org/repository/maven-public/' 
         }
-
-        maven { url = 'https://maven.parchmentmc.org' }
-
         mavenCentral()
     }
     dependencies {
@@ -36,12 +33,6 @@ sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = co
 //Print out JVM information so that we know what version is running. Extremely useful for people to know when helping you.
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 
-processResources {
-    from(sourceSets.main.resources) {
-        include "META-INF/mods.toml"
-        expand version:project.version
-    }
-}
 
 sourceSets {
     api
@@ -161,7 +152,7 @@ dependencies {
     runtimeOnly fg.deobf("mezz.jei:jei-${property('mc_version')}:${property('jei_version')}")
 
     compileOnly files("lib/appleskin-api.jar")
-    //implementation fg.deobf("curse.maven:appleskin-248787:3549846")
+    //implementation fg.deobf("curse.maven:appleskin-248787:3512372")
 
     annotationProcessor 'org.spongepowered:mixin:0.8.3:processor'
 }
