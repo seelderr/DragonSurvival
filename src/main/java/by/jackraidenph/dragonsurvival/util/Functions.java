@@ -115,7 +115,7 @@ public class Functions {
         }
     }
     
-    public static void renderScaledText(MatrixStack matrix, int x, int y, float scale, String text, int color) {
+    public static void renderScaledText(MatrixStack matrix, float x, float y, float scale, String text, int color) {
         matrix.pushPose();
         matrix.translate(x - x * scale, y - y * scale, 0);
         matrix.scale(scale, scale, 1);

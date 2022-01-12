@@ -1,12 +1,11 @@
 package by.jackraidenph.dragonsurvival.client.gui.widgets.buttons;
 
 import by.jackraidenph.dragonsurvival.client.gui.DragonCustomizationScreen;
+import by.jackraidenph.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.item.DyeColor;
-import net.minecraft.util.text.StringTextComponent;
 
 import java.awt.*;
 
@@ -17,7 +16,7 @@ public class CustomizationSlotButton extends Button
 	
 	public CustomizationSlotButton(int p_i232255_1_, int p_i232255_2_, int num, DragonCustomizationScreen parent)
 	{
-		super(p_i232255_1_, p_i232255_2_, 10, 10, null, (btn) -> {});
+		super(p_i232255_1_, p_i232255_2_, 12, 12, null, (btn) -> {});
 		this.num = num;
 		this.screen = parent;
 	}
@@ -39,6 +38,6 @@ public class CustomizationSlotButton extends Button
 			AbstractGui.fill(stack, x, y, x + this.width, y + this.width, new Color(0.05F, 0.05F, 0.05F, isHovered ? 0.95F : 0.75F).getRGB());
 		}
 		
-		Minecraft.getInstance().font.draw(stack, new StringTextComponent(Integer.toString(num)), x + 2.5f, y + 1.5f, DyeColor.WHITE.getTextColor());
+		Functions.renderScaledText(stack, x + 2.5f, y + 1.5f, 1.5F, Integer.toString(num), DyeColor.WHITE.getTextColor());
 	}
 }

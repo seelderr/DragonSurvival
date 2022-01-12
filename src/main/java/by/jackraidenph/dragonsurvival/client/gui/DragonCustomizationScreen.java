@@ -185,11 +185,11 @@ public class DragonCustomizationScreen extends Screen
 		}
 		
 		this.guiLeft = (this.width - 256) / 2;
-		this.guiTop = (this.height - 256) / 2;
+		this.guiTop = (this.height - 120) / 2;
 		
-		addButton(new HelpButton(guiLeft - 20, (this.height/4) - 65 + 10, 16, 16,"ds.help.customization"));
+		addButton(new HelpButton(type, guiLeft - 20, guiTop - 58, 16, 16,"ds.help.customization"));
 		
-		addButton(new Button(guiLeft - 120, (this.height/4) - 22, 120, 20, new TranslationTextComponent("ds.level.newborn"), (btn) -> {
+		addButton(new Button(guiLeft - 120, guiTop - 22, 120, 20, new TranslationTextComponent("ds.level.newborn"), (btn) -> {
 			level = DragonLevel.BABY;
 			zoom = level.size;
 			update();
@@ -201,7 +201,7 @@ public class DragonCustomizationScreen extends Screen
 				Functions.renderCenteredScaledText(stack, x + (width / 2), y + 4, 1.5f, this.getMessage().getString(), j | MathHelper.ceil(this.alpha * 255.0F) << 24);
 			}
 		});
-		addButton(new Button(((width) / 2) - 60, (this.height/4) - 22, 120, 20, new TranslationTextComponent("ds.level.young"), (btn) -> {
+		addButton(new Button(((width) / 2) - 60, guiTop - 22, 120, 20, new TranslationTextComponent("ds.level.young"), (btn) -> {
 			level = DragonLevel.YOUNG;
 			zoom = level.size;
 			update();
@@ -213,7 +213,7 @@ public class DragonCustomizationScreen extends Screen
 				Functions.renderCenteredScaledText(stack, x + (width / 2), y + 4, 1.5f, this.getMessage().getString(), j | MathHelper.ceil(this.alpha * 255.0F) << 24);
 			}
 		});
-		addButton(new Button(((width) / 2) + 120, (this.height/4) - 22, 120, 20, new TranslationTextComponent("ds.level.adult"), (btn) -> {
+		addButton(new Button(((width) / 2) + 120, guiTop - 22, 120, 20, new TranslationTextComponent("ds.level.adult"), (btn) -> {
 			level = DragonLevel.ADULT;
 			zoom = level.size;
 			update();
@@ -235,12 +235,12 @@ public class DragonCustomizationScreen extends Screen
 		
 		int i = 0;
 		for(CustomizationLayer layers : CustomizationLayer.values()){
-			addButton(new CustomizationCycleButton(width / 2 + (15 + (i % 2 != 0 ? 130 : 0)) - 6 + maxWidth, (this.height/4) + 15 + (i / 2) * 45 + 15, true, layers, this));
-			addButton(new CustomizationCycleButton(width / 2 + (15 + (i % 2 != 0 ? 130 : 0)) - 6 - maxWidth, (this.height/4) + 15 + (i / 2) * 45 + 15, false, layers, this));
+			addButton(new CustomizationCycleButton(width / 2 + (15 + (i % 2 != 0 ? 130 : 0)) - 6 + maxWidth, guiTop + 15 + (i / 2) * 45 + 15, true, layers, this));
+			addButton(new CustomizationCycleButton(width / 2 + (15 + (i % 2 != 0 ? 130 : 0)) - 6 - maxWidth, guiTop + 15 + (i / 2) * 45 + 15, false, layers, this));
 			i++;
 		}
 		
-		addButton(new Button(guiLeft + 40, (this.height/4) + 15 + 45 + 60 + 5, 15, 15, new TranslationTextComponent(""), (btn) -> {
+		addButton(new Button(guiLeft + 40, guiTop + 15 + 45 + 60 + 5, 15, 15, new TranslationTextComponent(""), (btn) -> {
 			curAnimation += 1;
 			
 			if(curAnimation >= animations.length){
@@ -260,7 +260,7 @@ public class DragonCustomizationScreen extends Screen
 			}
 		});
 		
-		addButton(new Button(guiLeft - 50, (this.height/4) + 15 + 45 + 60 + 5, 15, 15, new TranslationTextComponent(""), (btn) -> {
+		addButton(new Button(guiLeft - 50, guiTop + 15 + 45 + 60 + 5, 15, 15, new TranslationTextComponent(""), (btn) -> {
 			curAnimation -= 1;
 			
 			if(curAnimation < 0){
@@ -281,10 +281,10 @@ public class DragonCustomizationScreen extends Screen
 		});
 		
 		for(int num = 1; num <= 9; num++){
-			addButton(new CustomizationSlotButton(guiLeft - 90, (this.height/4) + 10 + ((num-1) * 10) + 5 + 20, num, this));
+			addButton(new CustomizationSlotButton(guiLeft - 90, guiTop + 10 + ((num-1) * 12) + 5 + 20, num, this));
 		}
 		
-		addButton(new ExtendedButton(guiLeft - 10, this.height - (this.height / 6) + 10, 20, 20, new StringTextComponent(""), null){
+		addButton(new ExtendedButton(guiLeft - 10, guiTop + 150 + 10, 20, 20, new StringTextComponent(""), null){
 			@Override
 			public void renderButton(MatrixStack mStack, int mouseX, int mouseY, float partial)
 			{
@@ -303,29 +303,24 @@ public class DragonCustomizationScreen extends Screen
 				DragonStateProvider.getCap(minecraft.player).ifPresent(cap -> {
 					minecraft.player.level.playSound(minecraft.player, minecraft.player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundCategory.PLAYERS, 1, 0.7f);
 					
-					cap.setType(type);
-					
-					if (type == DragonType.NONE) {
-						cap.setSize(20F);
-						cap.setHasWings(false);
-					} else {
+					if(cap.getType() != type) {
+						Minecraft.getInstance().player.sendMessage(new TranslationTextComponent("ds." + type.name().toLowerCase() + "_dragon_choice"), Minecraft.getInstance().player.getUUID());
+						cap.setType(type);
+						
 						if (!ConfigHandler.SERVER.saveGrowthStage.get() || cap.getSize() == 0) {
 							cap.setSize(DragonLevel.BABY.size);
 						}
 						
 						cap.setHasWings(ConfigHandler.SERVER.saveGrowthStage.get() ? cap.hasWings() || ConfigHandler.SERVER.startWithWings.get() : ConfigHandler.SERVER.startWithWings.get());
+						cap.setIsHiding(false);
+						cap.getMovementData().spinLearned = false;
+						
+						NetworkHandler.CHANNEL.sendToServer(new SyncAltarCooldown(Minecraft.getInstance().player.getId(), Functions.secondsToTicks(ConfigHandler.SERVER.altarUsageCooldown.get())));
+						NetworkHandler.CHANNEL.sendToServer(new SynchronizeDragonCap(minecraft.player.getId(), cap.isHiding(), cap.getType(), cap.getSize(), cap.hasWings(), ConfigHandler.SERVER.caveLavaSwimmingTicks.get(), 0));
+						NetworkHandler.CHANNEL.sendToServer(new SyncSpinStatus(Minecraft.getInstance().player.getId(), cap.getMovementData().spinAttack, cap.getMovementData().spinCooldown, cap.getMovementData().spinLearned));
+						SynchronizationController.sendClientData(new RequestClientData(cap.getType(), cap.getLevel()));
 					}
-					
-					cap.setIsHiding(false);
-					cap.getMovementData().spinLearned = false;
-					
-					NetworkHandler.CHANNEL.sendToServer(new SyncAltarCooldown(Minecraft.getInstance().player.getId(), Functions.secondsToTicks(ConfigHandler.SERVER.altarUsageCooldown.get())));
-					NetworkHandler.CHANNEL.sendToServer(new SynchronizeDragonCap(minecraft.player.getId(), cap.isHiding(), cap.getType(), cap.getSize(), cap.hasWings(), ConfigHandler.SERVER.caveLavaSwimmingTicks.get(), 0));
-					NetworkHandler.CHANNEL.sendToServer(new SyncSpinStatus(Minecraft.getInstance().player.getId(), cap.getMovementData().spinAttack, cap.getMovementData().spinCooldown, cap.getMovementData().spinLearned));
-					SynchronizationController.sendClientData(new RequestClientData(cap.getType(), cap.getLevel()));
 				});
-				
-				Minecraft.getInstance().player.sendMessage(new TranslationTextComponent("ds." + type.name().toLowerCase() + "_dragon_choice"), Minecraft.getInstance().player.getUUID());
 				
 				DragonType type = DragonStateProvider.getDragonType(minecraft.player);
 				NetworkHandler.CHANNEL.sendToServer(new SyncPlayerAllCustomization(minecraft.player.getId(), map));
@@ -345,7 +340,7 @@ public class DragonCustomizationScreen extends Screen
 			}
 		});
 		
-		addButton(new ExtendedButton(guiLeft - 70, this.height - (this.height / 6) + 10, 50, 20, new TranslationTextComponent("ds.gui.customization.back"), null){
+		addButton(new ExtendedButton(guiLeft - 70, guiTop + 150 + 10, 50, 20, new TranslationTextComponent("ds.gui.customization.back"), null){
 			@Override
 			public void renderButton(MatrixStack mStack, int mouseX, int mouseY, float partial)
 			{
@@ -363,7 +358,7 @@ public class DragonCustomizationScreen extends Screen
 			}
 		});
 		
-		addButton(new Button(guiLeft + 256, (this.height/4) - 65 + 8, 19, 19, new TranslationTextComponent(""), (btn) -> {
+		addButton(new Button(guiLeft + 256, guiTop - 65 + 8, 19, 19, new TranslationTextComponent(""), (btn) -> {
 			map.computeIfAbsent(level, (b) -> new HashMap<>());
 			map.get(level).put(CustomizationLayer.HORNS, type.name().toLowerCase() + "_horns_" + level.ordinal());
 			map.get(level).put(CustomizationLayer.SPIKES, type.name().toLowerCase() + "_spikes_" + level.ordinal());
@@ -389,7 +384,7 @@ public class DragonCustomizationScreen extends Screen
 			}
 		});
 		
-		addButton(new Button(guiLeft + 256 + 30, (this.height/4) - 65 + 8, 19, 19, new TranslationTextComponent(""), (btn) -> {
+		addButton(new Button(guiLeft + 256 + 30, guiTop - 65 + 8, 19, 19, new TranslationTextComponent(""), (btn) -> {
 			map.computeIfAbsent(level, (b) -> new HashMap<>());
 			
 			for(CustomizationLayer layer : CustomizationLayer.values()){
@@ -432,8 +427,8 @@ public class DragonCustomizationScreen extends Screen
 		
 		Color darkening = new Color(0.05f, 0.05f, 0.05f, 0.5f);
 		AbstractGui.fill(stack, 0, 0, width, height, darkening.getRGB());
-		int startHeight = (this.height/4) + 10;
-		int endHeight = this.height - (this.height/6);
+		int startHeight = guiTop + 10;
+		int endHeight = guiTop + 150;
 		
 		AbstractGui.fill(stack, 0, startHeight, this.width, endHeight, new Color(0.05F, 0.05F, 0.05F, 0.75F).getRGB());
 		AbstractGui.fill(stack, 0, startHeight - 75, this.width, startHeight - 40, new Color(0.05F, 0.05F, 0.05F, 0.75F).getRGB());
@@ -445,8 +440,8 @@ public class DragonCustomizationScreen extends Screen
 		for(CustomizationLayer layers : CustomizationLayer.values()){
 			String name = layers.name;
 			String value = map.getOrDefault(level, new HashMap<>()).getOrDefault(layers, SkinCap.defaultSkinValue);
-			SkinsScreen.drawNonShadowLineBreak(stack, font, new StringTextComponent(name), width / 2 + (15 + (i % 2 != 0 ? 130 : 0)), (this.height/4) + 15 + (i / 2) * 45, DyeColor.WHITE.getTextColor());
-			SkinsScreen.drawNonShadowLineBreak(stack, font, new StringTextComponent(value), width / 2 + (15 + (i % 2 != 0 ? 130 : 0)), (this.height/4) + 15 + (i / 2) * 45 + 20, DyeColor.GRAY.getTextColor());
+			SkinsScreen.drawNonShadowLineBreak(stack, font, new StringTextComponent(name), width / 2 + (15 + (i % 2 != 0 ? 130 : 0)), guiTop + 15 + (i / 2) * 45, DyeColor.WHITE.getTextColor());
+			SkinsScreen.drawNonShadowLineBreak(stack, font, new StringTextComponent(value), width / 2 + (15 + (i % 2 != 0 ? 130 : 0)), guiTop + 15 + (i / 2) * 45 + 20, DyeColor.GRAY.getTextColor());
 			i++;
 		}
 		
@@ -461,13 +456,13 @@ public class DragonCustomizationScreen extends Screen
 		stack.scale(scale, scale, scale);
 		stack.translate(0, 0, 400);
 		ClientDragonRender.dragonModel.setCurrentTexture(null);
-		renderEntityInInventory(guiLeft, (this.height/4) + 15 + 45 + 50, scale, xRot, yRot, dragon);
+		renderEntityInInventory(guiLeft, guiTop + 15 + 45 + 50, scale, xRot, yRot, dragon);
 		stack.popPose();
 		
-		SkinsScreen.drawNonShadowLineBreak(stack, font, new StringTextComponent(animations[curAnimation]), guiLeft, (this.height/4) + 15 + 45 + 60 + 10, DyeColor.GRAY.getTextColor());
+		SkinsScreen.drawNonShadowLineBreak(stack, font, new StringTextComponent(animations[curAnimation]), guiLeft, guiTop + 15 + 45 + 60 + 10, DyeColor.GRAY.getTextColor());
 		
 		Minecraft.getInstance().getTextureManager().bind(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/save_icon.png"));
-		blit(stack,guiLeft - 92, (this.height/4) + 10 + 5, 0, 0, 16, 16,16, 16);
+		blit(stack,guiLeft - 92, guiTop + 10 + 5, 0, 0, 16, 16,16, 16);
 		
 		super.render(stack, p_230430_2_, p_230430_3_, p_230430_4_);
 	}
