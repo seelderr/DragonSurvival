@@ -13,6 +13,7 @@ public class Emote
 	public boolean locksHead = false;
 	public boolean locksTail = true;
 	public boolean thirdPerson = false;
+	public boolean blend = false;
 	
 	public String id;
 	public String name;
