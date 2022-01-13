@@ -1,13 +1,10 @@
 package by.jackraidenph.dragonsurvival.common.entity.creatures.hitbox;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.Pose;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.IPacket;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.entity.PartEntity;
 
 public class DragonHitboxPart extends PartEntity<DragonHitBox>
@@ -25,6 +22,12 @@ public class DragonHitboxPart extends PartEntity<DragonHitBox>
 	}
 	
 	@Override
+	public boolean isInvulnerableTo(DamageSource pSource)
+	{
+		return super.isInvulnerableTo(pSource) || pSource == DamageSource.IN_WALL;
+	}
+	
+	@Override
 	protected void defineSynchedData() {}
 	
 	@Override
@@ -33,60 +36,23 @@ public class DragonHitboxPart extends PartEntity<DragonHitBox>
 	@Override
 	protected void addAdditionalSaveData(CompoundNBT p_213281_1_) {}
 	
-	public boolean hurt(DamageSource p_70097_1_, float p_70097_2_) {
-		return !this.isInvulnerableTo(p_70097_1_) && this.parentMob.hurt(this, p_70097_1_, p_70097_2_);
+	public boolean hurt(DamageSource pSource, float pAmount) {
+		return !this.isInvulnerableTo(pSource) && this.parentMob.hurt(this, pSource, pAmount);
 	}
 	
 	@Override
-	public boolean skipAttackInteraction(Entity p_85031_1_)
+	public boolean isPickable()
 	{
-		return super.skipAttackInteraction(p_85031_1_) || is(p_85031_1_);
+		return parentMob.isPickable();
 	}
 	
-	public boolean is(Entity entity) {
-		return this == entity || this.parentMob == entity || this.parentMob.player == entity || this.getParent().getPlayerId() == entity.getId();
-	}
-	
-	
-	public IPacket<?> getAddEntityPacket() {
-		throw new UnsupportedOperationException();
+	@Override
+	public Vector3d getDeltaMovement()
+	{
+		return parentMob.getDeltaMovement();
 	}
 	
 	public EntitySize getDimensions(Pose p_213305_1_) {
 		return this.size;
 	}
-	@Override
-	public boolean isColliding(BlockPos p_242278_1_, BlockState p_242278_2_)
-	{
-		return false;
-	}
-	
-	@Override
-	public boolean canCollideWith(Entity p_241849_1_)
-	{
-		return false;
-	}
-	
-	@Override
-	public boolean canBeCollidedWith()
-	{
-		return false;
-	}
-	
-	@Override
-	public void checkDespawn() {}
-	
-	@Override
-	public boolean isPushable()
-	{
-		return false;
-	}
-	
-	@Override
-	public boolean isPushedByFluid()
-	{
-		return false;
-	}
-	
-	
 }

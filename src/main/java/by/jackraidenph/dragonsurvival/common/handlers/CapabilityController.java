@@ -6,6 +6,8 @@ import by.jackraidenph.dragonsurvival.common.capability.Capabilities.GenericCapa
 import by.jackraidenph.dragonsurvival.common.capability.Capabilities.VillageRelationshipsProvider;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.entity.creatures.hitbox.DragonHitBox;
+import by.jackraidenph.dragonsurvival.common.entity.creatures.hitbox.DragonHitboxPart;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.status.DiggingStatus;
@@ -127,9 +129,17 @@ public class CapabilityController {
      */
     @SubscribeEvent
     public static void onEntityInteract(PlayerInteractEvent.EntityInteractSpecific event) {
-        if (!(event.getTarget() instanceof PlayerEntity) || event.getHand() != Hand.MAIN_HAND)
+        Entity ent = event.getEntity();
+        
+        if(ent instanceof DragonHitBox){
+            ent = ((DragonHitBox)ent).player;
+        }else if(ent instanceof DragonHitboxPart){
+            ent = (((DragonHitboxPart)ent).parentMob).player;
+        }
+        
+        if (!(ent instanceof PlayerEntity) || event.getHand() != Hand.MAIN_HAND)
             return;
-        PlayerEntity target = (PlayerEntity) event.getTarget();
+        PlayerEntity target = (PlayerEntity) ent;
         PlayerEntity self = event.getPlayer();
         DragonStateProvider.getCap(target).ifPresent(targetCap -> {
             if (targetCap.isDragon() && target.getPose() == Pose.CROUCHING && targetCap.getSize() >= 40 && !target.isVehicle()) {

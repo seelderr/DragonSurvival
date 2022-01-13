@@ -121,6 +121,4 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
     public double getZ(){
         throw new IllegalStateException("Mixin failed to shadow getZ()");
     }
-
-
 }

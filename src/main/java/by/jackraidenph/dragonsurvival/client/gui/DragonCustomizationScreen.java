@@ -187,7 +187,7 @@ public class DragonCustomizationScreen extends Screen
 		this.guiLeft = (this.width - 256) / 2;
 		this.guiTop = (this.height - 120) / 2;
 		
-		addButton(new HelpButton(type, guiLeft - 20, guiTop - 58, 16, 16,"ds.help.customization"));
+		addButton(new HelpButton(type, guiLeft - 20, guiTop - 55, 16, 16,"ds.help.customization"));
 		
 		addButton(new Button(guiLeft - 120, guiTop - 22, 120, 20, new TranslationTextComponent("ds.level.newborn"), (btn) -> {
 			level = DragonLevel.BABY;
