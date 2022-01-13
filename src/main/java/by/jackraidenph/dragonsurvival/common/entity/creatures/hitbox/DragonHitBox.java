@@ -150,7 +150,7 @@ public class DragonHitBox extends MobEntity
 			lastSize = size;
 			player.refreshDimensions();
 		}else{
-			moveTo(player.getX() - offset.x(), player.getY(), player.getZ() - offset.z());
+			setPos(player.getX() - offset.x(), player.getY(), player.getZ() - offset.z());
 			xRot = (float)handler.getMovementData().headPitch;
 			yRot = (float)handler.getMovementData().bodyYaw;
 			
@@ -234,23 +234,4 @@ public class DragonHitBox extends MobEntity
 	{
 		return player != null ? player.getDeltaMovement() : super.getDeltaMovement();
 	}
-	
-	@Override
-	public boolean canPickUpLoot()
-	{
-		return false;
-	}
-	
-	@Override
-	public boolean canBeCollidedWith()
-	{
-		return true;
-	}
-	
-	@Override
-	public boolean canCollideWith(Entity pEntity)
-	{
-		return !is(pEntity);
-	}
-	
 }
