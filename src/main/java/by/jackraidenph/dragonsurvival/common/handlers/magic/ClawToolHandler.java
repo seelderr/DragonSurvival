@@ -110,7 +110,11 @@ public class ClawToolHandler
 		
 		DragonStateHandler cap = DragonStateProvider.getCap(player).orElse(null);
 		
-		if(!(mainStack.getItem() instanceof TieredItem) && cap != null) {
+		if ((mainStack.getItem() instanceof ToolItem || mainStack.getItem() instanceof SwordItem || mainStack.getItem() instanceof ShearsItem || (mainStack.getItem() instanceof TieredItem))) {
+			return mainStack;
+		}
+		
+		if(cap != null) {
 			World world = player.level;
 			BlockRayTraceResult raytraceresult = Item.getPlayerPOVHitResult(world, player, FluidMode.NONE);
 			
@@ -160,7 +164,7 @@ public class ClawToolHandler
 			
 			float originalSpeed = breakSpeedEvent.getOriginalSpeed();
 			
-			if(!(item instanceof ToolItem)){
+			if (!(mainStack.getItem() instanceof ToolItem || mainStack.getItem() instanceof SwordItem || mainStack.getItem() instanceof ShearsItem || (mainStack.getItem() instanceof TieredItem))) {
 				for (int i = 1; i < 4; i++) {
 					if (blockState.getHarvestTool() == null || blockState.getHarvestTool() == DragonStateHandler.CLAW_TOOL_TYPES[i]) {
 						ItemStack breakingItem = dragonStateHandler.getClawInventory().getClawsInventory().getItem(i);
@@ -171,13 +175,13 @@ public class ClawToolHandler
 				}
 			}
 			
-			if (!(item instanceof ToolItem || item instanceof SwordItem || item instanceof ShearsItem)) {
+			if (!(mainStack.getItem() instanceof ToolItem || mainStack.getItem() instanceof SwordItem || mainStack.getItem() instanceof ShearsItem || (mainStack.getItem() instanceof TieredItem))) {
 				float bonus = dragonStateHandler.getLevel() == DragonLevel.ADULT ? (
 						blockState.getHarvestTool() == ToolType.AXE && dragonStateHandler.getType() == DragonType.FOREST ? 4 :
 						blockState.getHarvestTool() == ToolType.PICKAXE && dragonStateHandler.getType() == DragonType.CAVE ? 4 :
 						blockState.getHarvestTool() == ToolType.SHOVEL && dragonStateHandler.getType() == DragonType.SEA ? 4 : 2F
-						) : dragonStateHandler.getLevel() == DragonLevel.BABY ? ConfigHandler.SERVER.bonusUnlockedAt.get() != DragonLevel.BABY ? 2F : 1F
-						: dragonStateHandler.getLevel() == DragonLevel.YOUNG ? ConfigHandler.SERVER.bonusUnlockedAt.get() == DragonLevel.ADULT && dragonStateHandler.getLevel() != DragonLevel.BABY ? 2F : 1F
+						) : dragonStateHandler.getLevel() == DragonLevel.BABY ? ConfigHandler.SERVER.bonusUnlockedAt.get() == DragonLevel.BABY ? 2F : 1F
+						: dragonStateHandler.getLevel() == DragonLevel.YOUNG ? ConfigHandler.SERVER.bonusUnlockedAt.get() != DragonLevel.ADULT ? 2F : 1F
 						: 2F;
 				
 				breakSpeedEvent.setNewSpeed((originalSpeed * bonus));
