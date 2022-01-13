@@ -4,6 +4,7 @@ import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.handlers.DragonFoodHandler;
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -57,6 +58,8 @@ public class AppleSkinSupport
 	
 	@SubscribeEvent
 	public void onClientTick(ClientTickEvent event) {
+		if(!ConfigHandler.SERVER.customDragonFoods.get() || !ConfigHandler.CLIENT.appleskinSupport.get()) return;
+		
 		if (event.phase == Phase.END) {
 			unclampedFlashAlpha += (float)alphaDir * 0.125F;
 			if (unclampedFlashAlpha >= 1.5F) {
@@ -71,6 +74,8 @@ public class AppleSkinSupport
 	
 	@SubscribeEvent
 	public void hudSaturation(Saturation event){
+		if(!ConfigHandler.SERVER.customDragonFoods.get() || !ConfigHandler.CLIENT.appleskinSupport.get()) return;
+		
 		if(DragonStateProvider.isDragon(Minecraft.getInstance().player)){
 			event.setCanceled(true);
 			Minecraft mc = Minecraft.getInstance();
@@ -119,6 +124,7 @@ public class AppleSkinSupport
 	public void onRenderTooltip(PostText event)
 	{
 		if(!ModList.get().isLoaded("appleskin")) return;
+		if(!ConfigHandler.SERVER.customDragonFoods.get() || !ConfigHandler.CLIENT.appleskinSupport.get()) return;
 		
 		if (!event.isCanceled()) {
 			ItemStack hoveredStack = event.getStack();
@@ -270,6 +276,8 @@ public class AppleSkinSupport
 	
 	@SubscribeEvent
 	public void tooltip(TooltipOverlayEvent.Render renderEvent){
+		if(!ConfigHandler.SERVER.customDragonFoods.get()) return;
+		
 		if(DragonStateProvider.isDragon(Minecraft.getInstance().player)) {
 			renderEvent.setCanceled(true);
 		}
@@ -277,6 +285,8 @@ public class AppleSkinSupport
 	
 	@SubscribeEvent
 	public void hudHunger(HungerRestored event){
+		if(!ConfigHandler.SERVER.customDragonFoods.get() || !ConfigHandler.CLIENT.appleskinSupport.get()) return;
+		
 		if(DragonStateProvider.isDragon(Minecraft.getInstance().player)){
 			event.setCanceled(true);
 			
