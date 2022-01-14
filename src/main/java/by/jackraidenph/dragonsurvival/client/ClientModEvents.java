@@ -99,6 +99,10 @@ public class ClientModEvents {
         RenderTypeLookup.setRenderLayer(DSBlocks.peaceDragonBeacon, RenderType.cutout());
         RenderTypeLookup.setRenderLayer(DSBlocks.fireDragonBeacon, RenderType.cutout());
         RenderTypeLookup.setRenderLayer(DSBlocks.magicDragonBeacon, RenderType.cutout());
+
+        // enable transparency for certain small doors
+        RenderTypeLookup.setRenderLayer(DSBlocks.birchSmallDoor, RenderType.cutout());
+        RenderTypeLookup.setRenderLayer(DSBlocks.acaciaSmallDoor, RenderType.cutout());
     
         RenderingRegistry.registerEntityRenderingHandler(DSEntities.DRAGON_SPIKE, DragonSpikeRenderer::new);
     
