@@ -1,6 +1,8 @@
 package by.jackraidenph.dragonsurvival.common.capability;
 
 import by.jackraidenph.dragonsurvival.common.DragonEffects;
+import by.jackraidenph.dragonsurvival.common.entity.creatures.hitbox.DragonHitBox;
+import by.jackraidenph.dragonsurvival.common.entity.creatures.hitbox.DragonHitboxPart;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
@@ -27,6 +29,11 @@ public class DragonStateProvider implements ICapabilitySerializable<CompoundNBT>
     private final LazyOptional<DragonStateHandler> instance = LazyOptional.of(DRAGON_CAPABILITY::getDefaultInstance);
 
     public static LazyOptional<DragonStateHandler> getCap(Entity entity) {
+        if(entity instanceof DragonHitBox){
+            return ((DragonHitBox)entity).player == null ? LazyOptional.empty() : ((DragonHitBox)entity).player.getCapability(DragonStateProvider.DRAGON_CAPABILITY);
+        }else  if(entity instanceof DragonHitboxPart){
+            return ((DragonHitboxPart)entity).parentMob.player == null ? LazyOptional.empty() : ((DragonHitboxPart)entity).parentMob.player.getCapability(DragonStateProvider.DRAGON_CAPABILITY);
+        }
         return entity == null ? LazyOptional.empty() : entity.getCapability(DragonStateProvider.DRAGON_CAPABILITY);
     }
 

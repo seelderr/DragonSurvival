@@ -9,10 +9,7 @@ import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MoverType;
-import net.minecraft.entity.Pose;
+import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.passive.IFlyingAnimal;
@@ -84,6 +81,17 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 				if (!ConfigHandler.SERVER.canMoveInEmote.get()) {
 					ci.setReturnValue(true);
 				}
+			}
+		}
+	}
+	
+	@Inject( method = "push", at = @At("HEAD"), cancellable = true)
+	public void push(Entity pEntity, CallbackInfo info) {
+		DragonStateHandler cap = DragonStateProvider.getCap(pEntity).orElse(null);
+		
+		if(cap != null){
+			if(cap.getEmotes().getCurrentEmote() != null){
+				info.cancel();
 			}
 		}
 	}

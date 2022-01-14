@@ -138,6 +138,7 @@ repositories {
         url = "https://dvs1.progwml6.com/files/maven/"
     }
     maven { url = "https://cursemaven.com" }
+    maven { url "https://maven.shedaniel.me/" }
 }
 
 dependencies {
@@ -151,6 +152,7 @@ dependencies {
     compileOnly fg.deobf("mezz.jei:jei-${property('mc_version')}:${property('jei_version')}:api")
     runtimeOnly fg.deobf("mezz.jei:jei-${property('mc_version')}:${property('jei_version')}")
 
+    implementation(fg.deobf("me.shedaniel.cloth:cloth-config-forge:4.13.49"))
     implementation files("lib/appleskin-api.jar")
     //implementation fg.deobf("curse.maven:appleskin-248787:3512372")
 

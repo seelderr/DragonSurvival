@@ -35,8 +35,12 @@ public class DragonHitBox extends MobEntity
 	private final DragonHitboxPart tail1;
 	private final DragonHitboxPart tail2;
 	private final DragonHitboxPart tail3;
+	private final DragonHitboxPart tail4;
+	private final DragonHitboxPart tail5;
 	
 	private double lastSize;
+	private Pose lastPose;
+	
 	public EntitySize size;
 	
 	public DragonHitBox(EntityType<? extends MobEntity> p_i48577_1_, World p_i48580_2_)
@@ -47,8 +51,10 @@ public class DragonHitBox extends MobEntity
 		this.tail1 = new DragonHitboxPart(this, "tail1", 1.0F, 1.0F);
 		this.tail2 = new DragonHitboxPart(this, "tail2", 1.0F, 1.0F);
 		this.tail3 = new DragonHitboxPart(this, "tail3", 1.0F, 1.0F);
+		this.tail4 = new DragonHitboxPart(this, "tail4", 1.0F, 1.0F);
+		this.tail5 = new DragonHitboxPart(this, "tail5", 1.0F, 1.0F);
 		
-		this.subEntities = new DragonHitboxPart[]{this.head, this.tail1, this.tail2, this.tail3};
+		this.subEntities = new DragonHitboxPart[]{this.head, this.tail1, this.tail2, this.tail3, this.tail4, this.tail5};
 		
 		this.size = EntitySize.scalable(1f, 1f);
 		this.refreshDimensions();
@@ -102,6 +108,10 @@ public class DragonHitBox extends MobEntity
 		double height = DragonSizeHandler.calculateDragonHeight(size, ConfigHandler.SERVER.hitboxGrowsPastHuman.get());
 		double width = DragonSizeHandler.calculateDragonWidth(size, ConfigHandler.SERVER.hitboxGrowsPastHuman.get());
 		
+		Pose overridePose = DragonSizeHandler.overridePose(player);
+		height = DragonSizeHandler.calculateModifiedHeight(height, overridePose, true);
+
+		
 		double headRot = handler.getMovementData().headYaw;
 		double pitch = handler.getMovementData().headPitch*-1;
 		Vector3f bodyRot = DragonStateProvider.getCameraOffset(player);
@@ -131,8 +141,8 @@ public class DragonHitBox extends MobEntity
 		double dy = result.getY() - (Math.abs(headRot) / 180 * .5);
 		double dz = result2.getY();
 		
-		if(lastSize != size) {
-			this.size = EntitySize.scalable((float)width * 1.7f, (float)height);
+		if(lastSize != size || lastPose != overridePose) {
+			this.size = EntitySize.scalable((float)width * 1.6f, (float)height);
 			refreshDimensions();
 			
 			head.size = EntitySize.scalable((float)width, (float)width);
@@ -144,21 +154,46 @@ public class DragonHitBox extends MobEntity
 			tail2.size = EntitySize.scalable((float)width * 0.8f, (float)height/3);
 			tail2.refreshDimensions();
 			
-			tail3.size = EntitySize.scalable((float)width * 0.6f, (float)height/3);
+			tail3.size = EntitySize.scalable((float)width * 0.7f, (float)height/3);
 			tail3.refreshDimensions();
 			
+			tail4.size = EntitySize.scalable((float)width * 0.7f, (float)height/3);
+			tail4.refreshDimensions();
+			
+			tail5.size = EntitySize.scalable((float)width * 0.7f, (float)height/3);
+			tail5.refreshDimensions();
+			
 			lastSize = size;
+			lastPose = overridePose;
 			player.refreshDimensions();
 		}else{
 			setPos(player.getX() - offset.x(), player.getY(), player.getZ() - offset.z());
 			xRot = (float)handler.getMovementData().headPitch;
 			yRot = (float)handler.getMovementData().bodyYaw;
 			
+//			double bodyYawChange = Functions.angleDifference((float)handler.getMovementData().bodyYawLastTick, (float)handler.getMovementData().bodyYaw);
+//
+//			ModifiableAttributeInstance gravity = player.getAttribute(net.minecraftforge.common.ForgeMod.ENTITY_GRAVITY.get());
+//			double g = gravity.getValue();
+//
+//			double tailMotionUp = ServerFlightHandler.isFlying(player) ? 0 : (player.getDeltaMovement().y + g);
+//			double tailMotionSide = MathHelper.lerp(0.1, MathHelper.clamp(bodyYawChange, -50, 50), 0);
+//
+			
 			head.setPos(dx, dy - (DragonSizeHandler.calculateDragonWidth(handler.getSize(), ConfigHandler.SERVER.hitboxGrowsPastHuman.get()) / 2), dz);
 			tail1.setPos(getX() - offset.x(), getY() + (player.getEyeHeight() / 2) - (height / 9), getZ() - offset.z());
-			tail2.setPos(getX() - offset.x() * 1.8, getY() + (player.getEyeHeight() / 2) - (height / 9), getZ() - offset.z() * 1.8);
-			tail3.setPos(getX() - offset.x() * 2.8, getY() + (player.getEyeHeight() / 2) - (height / 9), getZ() - offset.z() * 2.8);
+			tail2.setPos(getX() - offset.x() * 1.5, getY() + (player.getEyeHeight() / 2) - (height / 9), getZ() - offset.z() * 1.5);
+			tail3.setPos(getX() - offset.x() * 2, getY() + (player.getEyeHeight() / 2) - (height / 9), getZ() - offset.z() * 2);
+			tail4.setPos(getX() - offset.x() * 2.5, getY() + (player.getEyeHeight() / 2) - (height / 9), getZ() - offset.z() * 2.5);
+			tail5.setPos(getX() - offset.x() * 3, getY() + (player.getEyeHeight() / 2) - (height / 9), getZ() - offset.z() * 3);
 		}
+	}
+	
+	@Override
+	public void tick()
+	{
+		super.tick();
+		this.checkInsideBlocks();
 	}
 	
 	@Override
@@ -186,7 +221,7 @@ public class DragonHitBox extends MobEntity
 	@Override
 	public boolean hurt(DamageSource source, float damage)
 	{
-		return player != null && this.isInvulnerableTo(source) && player.hurt(source, damage);
+		return player != null && !this.isInvulnerableTo(source) && player.hurt(source, damage);
 	}
 	
 	@Override

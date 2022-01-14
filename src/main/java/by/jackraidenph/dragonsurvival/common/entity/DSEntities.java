@@ -89,7 +89,7 @@ public class DSEntities
         IForgeRegistry<EntityType<?>> registry = event.getRegistry();
         DRAGON = registerEntity(registry, "dummy_dragon", new EntityType<>(DragonEntity::new, EntityClassification.MISC, true, false, false, false, ImmutableSet.of(), EntitySize.fixed(0.9f, 1.9f), 0, 0));
         DRAGON_ARMOR = registerEntity(registry, "dragon_armor", new EntityType<>(DragonEntity::new, EntityClassification.MISC, true, false, false, false, ImmutableSet.of(), EntitySize.fixed(0.9f, 1.9f), 0, 0));
-        DRAGON_HITBOX = registerEntity(registry, "dragon_hitbox", EntityType.Builder.of(DragonHitBox::new, EntityClassification.MONSTER).sized(0.5f, 0.5f).clientTrackingRange(1).build("dragon_hitbox"));
+        DRAGON_HITBOX = registerEntity(registry, "dragon_hitbox", EntityType.Builder.of(DragonHitBox::new, EntityClassification.MONSTER).sized(0.5f, 0.5f).updateInterval(1).clientTrackingRange(1).build("dragon_hitbox"));
     
         BOLAS_ENTITY = registerEntity(registry, "bolas", cast(EntityType.Builder.of((p_create_1_, p_create_2_) -> new BolasEntity(p_create_2_), EntityClassification.MISC).sized(0.25F, 0.25F).clientTrackingRange(4).updateInterval(10).build("bolas")));
     

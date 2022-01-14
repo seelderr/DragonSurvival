@@ -2,6 +2,7 @@ package by.jackraidenph.dragonsurvival.client.gui.widgets.buttons;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.client.gui.settings.ClientSettingsScreen;
+import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.settings.DSDropDownOption;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.lists.OptionsList;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.config.SyncBooleanConfig;
@@ -17,7 +18,6 @@ import net.minecraft.client.gui.widget.AbstractSlider;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.settings.BooleanOption;
-import net.minecraft.client.settings.IteratableOption;
 import net.minecraft.client.settings.SliderPercentageOption;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
@@ -47,30 +47,36 @@ public class ResetSettingsButton extends Button
 						
 						Object ob = pair.getSecond().get();
 						if (ob instanceof Boolean) {
-							widget.setMessage(((BooleanOption)option).getMessage(Minecraft.getInstance().options));
+							if(widget != null) widget.setMessage(((BooleanOption)option).getMessage(Minecraft.getInstance().options));
 							if(screen.getConfigName() != "client") {
 								NetworkHandler.CHANNEL.sendToServer(new SyncBooleanConfig(configKey, (Boolean)ob, screen.getConfigName() == "server" ? 0 : 1));
 							}
 						}else if(ob instanceof Integer){
-							widget.setMessage(((SliderPercentageOption)option).getMessage(Minecraft.getInstance().options));
-							((AbstractSlider)widget).value = ((SliderPercentageOption)option).toPct((Integer)ob);
+							if(widget != null) widget.setMessage(((SliderPercentageOption)option).getMessage(Minecraft.getInstance().options));
+							if(widget != null) ((AbstractSlider)widget).value = ((SliderPercentageOption)option).toPct((Integer)ob);
 							if(screen.getConfigName() != "client") {
 								NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(configKey, (Integer)ob, screen.getConfigName() == "server" ? 0 : 1));
 							}
 						}else if(ob instanceof Double){
-							widget.setMessage(((SliderPercentageOption)option).getMessage(Minecraft.getInstance().options));
-							((AbstractSlider)widget).value = ((SliderPercentageOption)option).toPct((Double)ob);
+							if(widget != null) widget.setMessage(((SliderPercentageOption)option).getMessage(Minecraft.getInstance().options));
+							if(widget != null) ((AbstractSlider)widget).value = ((SliderPercentageOption)option).toPct((Double)ob);
 							if(screen.getConfigName() != "client") {
 								NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(configKey, (Double)ob, screen.getConfigName() == "server" ? 0 : 1));
 							}
 						}else if(ob instanceof Long){
-							widget.setMessage(((SliderPercentageOption)option).getMessage(Minecraft.getInstance().options));
-							((AbstractSlider)widget).value = ((SliderPercentageOption)option).toPct((Long)ob);
+							if(widget != null) widget.setMessage(((SliderPercentageOption)option).getMessage(Minecraft.getInstance().options));
+							if(widget != null) ((AbstractSlider)widget).value = ((SliderPercentageOption)option).toPct((Long)ob);
 							if(screen.getConfigName() != "client") {
 								NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(configKey, (Long)ob, screen.getConfigName() == "server" ? 0 : 1));
 							}
 						}else if(ob instanceof Enum){
-							widget.setMessage(((IteratableOption)option).getMessage(Minecraft.getInstance().options));
+							
+							System.out.println(((DSDropDownOption)option).btn);
+							System.out.println(((DSDropDownOption)option).getMessage(Minecraft.getInstance().options));
+							
+							((DSDropDownOption)option).btn.value = (Enum)ob;
+							((DSDropDownOption)option).btn.updateMessage();
+							
 							if(screen.getConfigName() != "client") {
 								NetworkHandler.CHANNEL.sendToServer(new SyncEnumConfig(configKey, (Enum)ob, screen.getConfigName() == "server" ? 0 : 1));
 							}
