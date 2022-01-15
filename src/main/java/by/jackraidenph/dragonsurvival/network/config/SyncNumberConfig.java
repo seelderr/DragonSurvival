@@ -2,9 +2,9 @@ package by.jackraidenph.dragonsurvival.network.config;
 
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.network.IMessage;
+import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
 import net.minecraftforge.common.ForgeConfigSpec.IntValue;
 import net.minecraftforge.common.ForgeConfigSpec.LongValue;
@@ -18,9 +18,9 @@ public class SyncNumberConfig implements IMessage<SyncNumberConfig>
 	
 	public String key;
 	public Double value;
-	public int type;
+	public String type;
 	
-	public SyncNumberConfig(String key, double value, int type)
+	public SyncNumberConfig(String key, double value, String type)
 	{
 		this.key = key;
 		this.value = value;
@@ -30,7 +30,7 @@ public class SyncNumberConfig implements IMessage<SyncNumberConfig>
 	@Override
 	public void encode(SyncNumberConfig message, PacketBuffer buffer)
 	{
-		buffer.writeInt(message.type);
+		buffer.writeUtf(message.type);
 		buffer.writeDouble(message.value);
 		buffer.writeUtf(message.key);
 	}
@@ -38,7 +38,7 @@ public class SyncNumberConfig implements IMessage<SyncNumberConfig>
 	@Override
 	public SyncNumberConfig decode(PacketBuffer buffer)
 	{
-		int type = buffer.readInt();
+		String type = buffer.readUtf();
 		Double value = buffer.readDouble();
 		String key = buffer.readUtf();
 		return new SyncNumberConfig(key, value, type);
@@ -49,20 +49,22 @@ public class SyncNumberConfig implements IMessage<SyncNumberConfig>
 	{
 		ServerPlayerEntity entity = supplier.get().getSender();
 		if(entity == null || !entity.hasPermissions(2)) return;
-		ForgeConfigSpec spec = message.type == 0 ? ConfigHandler.serverSpec : ConfigHandler.commonSpec;
 		
-		Object ob = spec.getValues().get((message.type == 0 ? "server" : "common") + "." +  message.key);
+		UnmodifiableConfig spec = message.type.equalsIgnoreCase("server") ? ConfigHandler.serverSpec.getValues() : ConfigHandler.commonSpec.getValues();
+		Object ob = spec.get(message.type + "." + message.key);
 		
 		if (ob instanceof IntValue) {
 			IntValue value1 = (IntValue)ob;
 			try {
 				value1.set(message.value.intValue());
+				value1.save();
 			}catch (Exception ignored){}
 		} else if (ob instanceof DoubleValue) {
 			DoubleValue value1 = (DoubleValue)ob;
 			
 			try {
 				value1.set(message.value);
+				value1.save();
 			}catch (Exception ignored){}
 			
 		} else if (ob instanceof LongValue) {
@@ -70,6 +72,7 @@ public class SyncNumberConfig implements IMessage<SyncNumberConfig>
 			
 			try {
 				value1.set(message.value.longValue());
+				value1.save();
 			}catch (Exception ignored){}
 		}
 	}

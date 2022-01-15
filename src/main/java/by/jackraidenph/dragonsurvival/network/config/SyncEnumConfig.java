@@ -2,9 +2,9 @@ package by.jackraidenph.dragonsurvival.network.config;
 
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.network.IMessage;
+import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.EnumValue;
 import net.minecraftforge.fml.network.NetworkEvent.Context;
 
@@ -16,9 +16,9 @@ public class SyncEnumConfig implements IMessage<SyncEnumConfig>
 	
 	public String key;
 	public Enum value;
-	public int type;
+	public String type;
 	
-	public SyncEnumConfig(String key, Enum value, int type)
+	public SyncEnumConfig(String key, Enum value, String type)
 	{
 		this.key = key;
 		this.value = value;
@@ -28,7 +28,7 @@ public class SyncEnumConfig implements IMessage<SyncEnumConfig>
 	@Override
 	public void encode(SyncEnumConfig message, PacketBuffer buffer)
 	{
-		buffer.writeInt(message.type);
+		buffer.writeUtf(message.type);
 		buffer.writeUtf(message.value.getDeclaringClass().getName());
 		buffer.writeEnum(message.value);
 		buffer.writeUtf(message.key);
@@ -37,7 +37,7 @@ public class SyncEnumConfig implements IMessage<SyncEnumConfig>
 	@Override
 	public SyncEnumConfig decode(PacketBuffer buffer)
 	{
-		int type = buffer.readInt();
+		String type = buffer.readUtf();
 		String classType = buffer.readUtf();
 		Enum enm = null;
 		
@@ -60,15 +60,15 @@ public class SyncEnumConfig implements IMessage<SyncEnumConfig>
 	{
 		ServerPlayerEntity entity = supplier.get().getSender();
 		if(entity == null || !entity.hasPermissions(2)) return;
-		ForgeConfigSpec spec = message.type == 0 ? ConfigHandler.serverSpec : ConfigHandler.commonSpec;
-		
-		Object ob = spec.getValues().get((message.type == 0 ? "server" : "common") + "." + message.key);
+		UnmodifiableConfig spec = message.type.equalsIgnoreCase("server") ? ConfigHandler.serverSpec.getValues() : ConfigHandler.commonSpec.getValues();
+		Object ob = spec.get(message.type + "." + message.key);
 		
 		if (ob instanceof EnumValue) {
 			EnumValue value1 = (EnumValue)ob;
 			
 			try {
 				value1.set(message.value);
+				value1.save();
 			}catch (Exception ignored){}
 		}
 	}

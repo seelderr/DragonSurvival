@@ -15,11 +15,11 @@ import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.config.SyncBooleanConfig;
 import by.jackraidenph.dragonsurvival.network.config.SyncEnumConfig;
 import by.jackraidenph.dragonsurvival.network.config.SyncNumberConfig;
-import com.electronwill.nightconfig.core.AbstractConfig;
-import com.electronwill.nightconfig.core.EnumGetMethod;
+import com.electronwill.nightconfig.core.*;
 import com.electronwill.nightconfig.core.UnmodifiableConfig.Entry;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.datafixers.util.Pair;
+import com.sun.imageio.plugins.common.I18N;
 import net.minecraft.client.AbstractOption;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
@@ -45,12 +45,14 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ClientSettingsScreen extends SettingsScreen
 {
-	private ArrayList<AbstractOption> OPTIONS = new ArrayList<>();
-	private TreeMap<String, ArrayList<AbstractOption>> optionMap = new TreeMap<>();
-	private ArrayList<String> options = new ArrayList<>();
+	private final ArrayList<AbstractOption> OPTIONS = new ArrayList<>();
+	private final TreeMap<String, ArrayList<AbstractOption>> optionMap = new TreeMap<>();
+	private final ArrayList<String> options = new ArrayList<>();
 	public OptionsList list;
 	
 	public DropDownButton hoveredButton;
+	
+	private AbstractConfig config;
 	
 	protected void init() {
 		if(list != null){
@@ -64,36 +66,11 @@ public class ClientSettingsScreen extends SettingsScreen
 		OptionsList.config.clear();
 		OptionsList.configMap.clear();
 		
+		config = (AbstractConfig)getSpec().getValues();
+		
 		this.list = new OptionsList(this.width, this.height, 32, this.height - 32);
 		
-		for (Entry entry : getSpec().entrySet()) {
-			Object value = getSpec().get(entry.getKey());
-			
-			if(value instanceof AbstractConfig){
-				AbstractConfig config = (AbstractConfig)value;
-				
-				CopyOnWriteArrayList<Pair<String, Set<Map.Entry<String, Object>>>> list = new CopyOnWriteArrayList<>();
-				list.add(Pair.of("", config.valueMap().entrySet()));
-				
-				while(list.size() > 0){
-					Pair<String, Set<Map.Entry<String, Object>>> pair = list.get(0);
-					
-					for(Map.Entry<String, Object> ent : pair.getSecond()){
-						if (ent.getValue() instanceof AbstractConfig) {
-							AbstractConfig config1 = (AbstractConfig)ent.getValue();
-							list.add(Pair.of((!pair.getFirst().isEmpty() ? pair.getFirst() + "." : "") + ent.getKey(), config1.valueMap().entrySet()));
-						}else{
-							addValue((!pair.getFirst().isEmpty() ? pair.getFirst() + "." : "") + ent.getKey(), pair.getFirst(), ent.getKey(), ent.getValue());
-						}
-					}
-					
-					list.remove(0);
-				}
-
-			}else{
-				addValue("", null, entry.getKey(), value);
-			}
-		}
+		addConfigs();
 		
 		this.list.add(OPTIONS.toArray(new AbstractOption[0]), null);
 		
@@ -105,7 +82,7 @@ public class ClientSettingsScreen extends SettingsScreen
 				String lastKey = key;
 				for (String s : key.split("\\.")) {
 					if(this.list.findCategory(s, lastKey) == null
-					   || (this.list.findCategory(s, lastKey).parent != null && !this.list.findCategory(s, lastKey).parent.origName.equals(lastKey))) {
+					   || (Objects.requireNonNull(this.list.findCategory(s, lastKey)).parent != null && !Objects.requireNonNull(this.list.findCategory(s, lastKey)).parent.origName.equals(lastKey))) {
 						entry = this.list.addCategory(s, entry, catNum);
 						catNum++;
 
@@ -120,6 +97,7 @@ public class ClientSettingsScreen extends SettingsScreen
 		
 		this.children.add(this.list);
 		this.addButton(new Button(32, this.height - 27, 120 + 32, 20, DialogTexts.GUI_DONE, (p_213106_1_) -> {
+			getSpec().save();
 			this.minecraft.setScreen(this.lastScreen);
 		}));
 		
@@ -152,6 +130,38 @@ public class ClientSettingsScreen extends SettingsScreen
 		});
 	}
 	
+	private void addConfigs()
+	{
+		for (Entry entry : config.entrySet()) {
+			Object value = config.get(entry.getKey());
+			
+			if(value instanceof AbstractConfig){
+				AbstractConfig config = (AbstractConfig)value;
+				
+				CopyOnWriteArrayList<Pair<String, Set<Map.Entry<String, Object>>>> list = new CopyOnWriteArrayList<>();
+				list.add(Pair.of("", config.valueMap().entrySet()));
+				
+				while(list.size() > 0){
+					Pair<String, Set<Map.Entry<String, Object>>> pair = list.get(0);
+					
+					for(Map.Entry<String, Object> ent : pair.getSecond()){
+						if (ent.getValue() instanceof AbstractConfig) {
+							AbstractConfig config1 = (AbstractConfig)ent.getValue();
+							list.add(Pair.of((!pair.getFirst().isEmpty() ? pair.getFirst() + "." : "") + ent.getKey(), config1.valueMap().entrySet()));
+						}else{
+							addValue((!pair.getFirst().isEmpty() ? pair.getFirst() + "." : "") + ent.getKey(), pair.getFirst(), ent.getKey(), ent.getValue());
+						}
+					}
+					
+					list.remove(0);
+				}
+
+			}else{
+				addValue("", null, entry.getKey(), value);
+			}
+		}
+	}
+	
 	public ForgeConfigSpec getSpec(){
 		return ConfigHandler.clientSpec;
 	}
@@ -162,199 +172,194 @@ public class ClientSettingsScreen extends SettingsScreen
 	
 	private static final Float sliderPerc = 0.1F;
 	
-	public void addValue(String key, String category, String path, Object value){
-		if(options.contains(path)) return;
+	public void addValue(String key, String category, String pName, Object value){
+		if(options.contains(pName)) return;
 		
-		if(value instanceof ValueSpec) {
-			ValueSpec spec = (ValueSpec)value;
-			Object ob = getSpec().getValues().get(getConfigName() + "." + key);
+		String fullpath = getConfigName() + "." + key;
+		ValueSpec spec = getSpec().getSpec().get(fullpath);
+		
+		String name = spec.getTranslationKey() != null && !Objects.equals(I18N.getString(spec.getTranslationKey()), spec.getTranslationKey()) ? I18N.getString(spec.getTranslationKey()) : pName;
+		IFormattableTextComponent tooltip = spec.getTranslationKey() != null && !Objects.equals(I18N.getString(spec.getTranslationKey() + ".tooltip"), spec.getTranslationKey() + ".tooltip") ? new StringTextComponent((spec.getComment() != null ? spec.getComment() : "")) : new TranslationTextComponent(spec.getTranslationKey() + ".tooltip");
+		
+		if(spec.needsWorldRestart()){
+			tooltip.append("\n§4This setting requires a server restart!§r");
+		}
 			
-			IFormattableTextComponent tooltip = spec.getTranslationKey() == null ? new StringTextComponent(  (spec.getComment() != null ? spec.getComment() : ""))
-					: new TranslationTextComponent(spec.getTranslationKey());
-			if(spec.needsWorldRestart()){
-				tooltip.append("\n§4This setting requires a server restart!§r");
+		List<IReorderingProcessor> tooltip1 = Minecraft.getInstance().font.split(tooltip, 200);
+		if (value instanceof BooleanValue) {
+			BooleanValue booleanValue = (BooleanValue)value;
+			DSBooleanOption option = new DSBooleanOption(name, tooltip, (settings) -> booleanValue.get(), (settings, settingValue) -> {
+				try {
+					booleanValue.set(settingValue);
+					booleanValue.save();
+					
+				}catch (Exception ignored){}
+				
+				if(!Objects.equals(getConfigName(), "client")) {
+					NetworkHandler.CHANNEL.sendToServer(new SyncBooleanConfig(key, settingValue, getConfigName()));
+				}
+			});
+			
+			OptionsList.configMap.put(option, key);
+			OptionsList.config.put(option, Pair.of(spec, booleanValue));
+			addOption(category, name, option);
+		} else if (value instanceof IntValue) {
+			IntValue value1 = (IntValue)value;
+			Integer min = (Integer)spec.correct(Integer.MIN_VALUE);
+			Integer max = (Integer)spec.correct(Integer.MAX_VALUE);
+			int dif = max - min;
+			AbstractOption option = null;
+			if(dif <= 10) {
+				option = new SliderPercentageOption(name, min, max, sliderPerc, (settings) -> Double.valueOf(value1.get()), (settings, settingValue) -> {
+					try {
+						value1.set(settingValue.intValue());
+						value1.save();
+					} catch (Exception ignored) {}
+					
+					if (!Objects.equals(getConfigName(), "client")) {
+						NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(key, settingValue, getConfigName()));
+					}
+				}, (settings, slider) -> {
+					return new StringTextComponent(slider.get(settings) + "");
+				});
+			}else{
+				option = new DSNumberFieldOption(name, min, max, (settings) -> value1.get(), (settings, settingValue) -> {
+					try {
+						value1.set(settingValue.intValue());
+						value1.save();
+					} catch (Exception ignored) {}
+					
+					if (!Objects.equals(getConfigName(), "client")) {
+						NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(key, settingValue.intValue(), getConfigName()));
+					}
+				});
 			}
 			
-			List<IReorderingProcessor> tooltip1 = Minecraft.getInstance().font.split(tooltip, 200);
-			if (ob instanceof BooleanValue) {
-				BooleanValue booleanValue = (BooleanValue)ob;
-				
-				DSBooleanOption option = new DSBooleanOption(path, tooltip, (settings) -> booleanValue.get(), (settings, settingValue) -> {
+			option.setTooltip(tooltip1);
+			
+			OptionsList.configMap.put(option, key);
+			OptionsList.config.put(option, Pair.of(spec, value1));
+			addOption(category, name, option);
+		} else if (value instanceof DoubleValue) {
+			DoubleValue value1 = (DoubleValue)value;
+			double min = (double)spec.correct(Double.MIN_VALUE);
+			double max = (double)spec.correct(Double.MAX_VALUE);
+			double dif = max-min;
+			AbstractOption option = null;
+			if(dif <= 10) {
+				 option = new SliderPercentageOption(name, min, max, sliderPerc, (settings) -> value1.get(), (settings, settingValue) -> {
 					try {
-						booleanValue.set(settingValue);
-					}catch (Exception ignored){}
+						value1.set(Math.round(settingValue * 100.0) / 100.0);
+						value1.save();
+					} catch (Exception ignored) {}
 					
-					if(getConfigName() != "client") {
-						NetworkHandler.CHANNEL.sendToServer(new SyncBooleanConfig(key, settingValue, getConfigName() == "server" ? 0 : 1));
+					if (!Objects.equals(getConfigName(), "client")) {
+						NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(key, settingValue, getConfigName()));
+					}
+				}, (settings, slider) -> {
+					return new StringTextComponent(Math.round(slider.get(settings) * 100.0) / 100.0 + "");
+				});
+			}else{
+				option = new DSNumberFieldOption(name, min, max, (settings) -> value1.get(), (settings, settingValue) -> {
+					try {
+						value1.set(Math.round(settingValue.doubleValue() * 100.0) / 100.0);
+						value1.save();
+					} catch (Exception ignored) {}
+					
+					if (!Objects.equals(getConfigName(), "client")) {
+						NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(key, settingValue.doubleValue(), getConfigName()));
 					}
 				});
-
-				if(option != null) {
-					OptionsList.configMap.put(option, key);
-					OptionsList.config.put(option, Pair.of(spec, booleanValue));
-					addOption(category, path, option);
-				}
-			} else if (ob instanceof IntValue) {
-				IntValue value1 = (IntValue)ob;
-				Integer min = (Integer)spec.correct(Integer.MIN_VALUE);
-				Integer max = (Integer)spec.correct(Integer.MAX_VALUE);
-				int dif = max - min;
-				AbstractOption option = null;
-				if(dif <= 10) {
-					option = new SliderPercentageOption(path, min, max, sliderPerc, (settings) -> Double.valueOf(value1.get()), (settings, settingValue) -> {
-						try {
-							value1.set(settingValue.intValue());
-						} catch (Exception ignored) {}
-						
-						if (getConfigName() != "client") {
-							NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(key, settingValue, getConfigName() == "server" ? 0 : 1));
-						}
-					}, (settings, slider) -> {
-						return new StringTextComponent(slider.get(settings) + "");
-					});
-				}else{
-					option = new DSNumberFieldOption(path, min, max, (settings) -> value1.get(), (settings, settingValue) -> {
-						try {
-							value1.set(settingValue.intValue());
-						} catch (Exception ignored) {}
-						
-						if (getConfigName() != "client") {
-							NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(key, settingValue.intValue(), getConfigName() == "server" ? 0 : 1));
-						}
-					});
-				}
-				
-				option.setTooltip(tooltip1);
-				
-				if(option != null) {
-					OptionsList.configMap.put(option, key);
-					OptionsList.config.put(option, Pair.of(spec, value1));
-					addOption(category, path, option);
-				}
-			} else if (ob instanceof DoubleValue) {
-				DoubleValue value1 = (DoubleValue)ob;
-				double min = (double)spec.correct(Double.MIN_VALUE);
-				double max = (double)spec.correct(Double.MAX_VALUE);
-				double dif = max-min;
-				AbstractOption option = null;
-				if(dif <= 10) {
-					 option = new SliderPercentageOption(path, min, max, sliderPerc, (settings) -> value1.get(), (settings, settingValue) -> {
-						try {
-							value1.set(Math.round(settingValue * 100.0) / 100.0);
-						} catch (Exception ignored) {}
-						
-						if (getConfigName() != "client") {
-							NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(key, settingValue, getConfigName() == "server" ? 0 : 1));
-						}
-					}, (settings, slider) -> {
-						return new StringTextComponent(Math.round(slider.get(settings) * 100.0) / 100.0 + "");
-					});
-				}else{
-					option = new DSNumberFieldOption(path, min, max, (settings) -> value1.get(), (settings, settingValue) -> {
-						try {
-							value1.set(Math.round(settingValue.doubleValue() * 100.0) / 100.0);
-						} catch (Exception ignored) {}
-						
-						if (getConfigName() != "client") {
-							NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(key, settingValue.doubleValue(), getConfigName() == "server" ? 0 : 1));
-						}
-					});
-				}
-				
-				option.setTooltip(tooltip1);
-				
-				if(option != null) {
-					OptionsList.configMap.put(option, key);
-					OptionsList.config.put(option, Pair.of(spec, value1));
-					addOption(category, path, option);
-				}
-			} else if (ob instanceof LongValue) {
-				LongValue value1 = (LongValue)ob;
-				Long min = (Long)spec.correct(Long.MIN_VALUE);
-				Long max = (Long)spec.correct(Long.MAX_VALUE);
-				long dif = max - min;
-				AbstractOption option = null;
-				if(dif <= 10) {
-					option = new SliderPercentageOption(path, min, max, sliderPerc, (settings) -> Double.valueOf(value1.get()), (settings, settingValue) -> {
-						try {
-							value1.set(settingValue.longValue());
-						} catch (Exception ignored) {}
-						
-						if (getConfigName() != "client") {
-							NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(key, settingValue, getConfigName() == "server" ? 0 : 1));
-						}
-					}, (settings, slider) -> {
-						return new StringTextComponent(slider.get(settings) + "");
-					});
-				}else{
-					option = new DSNumberFieldOption(path, min, max, (settings) -> value1.get(), (settings, settingValue) -> {
-						try {
-							value1.set(settingValue.longValue());
-						} catch (Exception ignored) {}
-						
-						if (getConfigName() != "client") {
-							NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(key, settingValue.longValue(), getConfigName() == "server" ? 0 : 1));
-						}
-					});
-				}
-				
-				option.setTooltip(tooltip1);
-				
-				if(option != null) {
-					OptionsList.configMap.put(option, key);
-					OptionsList.config.put(option, Pair.of(spec, value1));
-					addOption(category, path, option);
-				}
-			} else if (ob instanceof EnumValue) {
-				EnumValue value1 = (EnumValue)ob;
-				Class<? extends Enum> cs = (Class<? extends Enum>)value1.get().getClass();
-				Enum vale = EnumGetMethod.ORDINAL_OR_NAME.get(((Enum)value1.get()).ordinal(), cs);
-				
-				AbstractOption option = new DSDropDownOption(path, vale, (val) -> {
+			}
+			
+			option.setTooltip(tooltip1);
+			
+			OptionsList.configMap.put(option, key);
+			OptionsList.config.put(option, Pair.of(spec, value1));
+			addOption(category, name, option);
+		} else if (value instanceof LongValue) {
+			LongValue value1 = (LongValue)value;
+			Long min = (Long)spec.correct(Long.MIN_VALUE);
+			Long max = (Long)spec.correct(Long.MAX_VALUE);
+			long dif = max - min;
+			AbstractOption option = null;
+			if(dif <= 10) {
+				option = new SliderPercentageOption(name, min, max, sliderPerc, (settings) -> Double.valueOf(value1.get()), (settings, settingValue) -> {
 					try {
-						value1.set(val);
-					}catch (Exception ignored){}
+						value1.set(settingValue.longValue());
+						value1.save();
+					} catch (Exception ignored) {}
 					
-					if(getConfigName() != "client") {
-						NetworkHandler.CHANNEL.sendToServer(new SyncEnumConfig(key, val, getConfigName() == "server" ? 0 : 1));
+					if (!Objects.equals(getConfigName(), "client")) {
+						NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(key, settingValue, getConfigName()));
 					}
+				}, (settings, slider) -> {
+					return new StringTextComponent(slider.get(settings) + "");
+				});
+			}else{
+				option = new DSNumberFieldOption(name, min, max, (settings) -> value1.get(), (settings, settingValue) -> {
+					try {
+						value1.set(settingValue.longValue());
+						value1.save();
+					} catch (Exception ignored) {}
+					
+					if (!Objects.equals(getConfigName(), "client")) {
+						NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(key, settingValue.longValue(), getConfigName()));
+					}
+				});
+			}
+			
+			option.setTooltip(tooltip1);
+			
+			OptionsList.configMap.put(option, key);
+			OptionsList.config.put(option, Pair.of(spec, value1));
+			addOption(category, name, option);
+		} else if (value instanceof EnumValue) {
+			EnumValue value1 = (EnumValue)value;
+			Class<? extends Enum> cs = (Class<? extends Enum>)value1.get().getClass();
+			Enum vale = EnumGetMethod.ORDINAL_OR_NAME.get(((Enum)value1.get()).ordinal(), cs);
+			
+			AbstractOption option = new DSDropDownOption(name, vale, (val) -> {
+				try {
+					value1.set(val);
+					value1.save();
+				}catch (Exception ignored){}
+				
+				if(!Objects.equals(getConfigName(), "client")) {
+					NetworkHandler.CHANNEL.sendToServer(new SyncEnumConfig(key, val, getConfigName()));
+				}
+			});
+			
+			option.setTooltip(tooltip1);
+			
+			OptionsList.configMap.put(option, key);
+			OptionsList.config.put(option, Pair.of(spec, value1));
+			addOption(category, name, option);
+		}else if (value instanceof ConfigValue) {
+			ConfigValue value1 = (ConfigValue)value;
+			if(value1.get() instanceof List && (((List)value1.get()).isEmpty() || ((List)value1.get()).get(0) instanceof String)) {
+				String finalPath1 = name;
+				StringJoiner joiner = new StringJoiner(",");
+				
+				if(((List<?>)value1.get()).size() > 0) {
+					for (Object ob1 : (List)value1.get()) {
+						joiner.add("[" + ob1.toString() + "]");
+					}
+				}else{
+					joiner.add("[]");
+				}
+				
+				DSIteratableOption option = new DSIteratableOption(name, (settings, val) -> {
+					this.minecraft.setScreen(new ListConfigSettingsScreen(this, minecraft.options, new StringTextComponent(finalPath1), spec, value1, getSpec(), getConfigName() + "." + key));
+				}, (settings, set) -> {
+					return new StringTextComponent(Minecraft.getInstance().font.substrByWidth(new StringTextComponent(joiner.toString()), 120).getString());
 				});
 				
 				option.setTooltip(tooltip1);
 				
-				if(option != null) {
-					OptionsList.configMap.put(option, key);
-					OptionsList.config.put(option, Pair.of(spec, value1));
-					addOption(category, path, option);
-				}
-			}else if (ob instanceof ConfigValue) {
-				ConfigValue value1 = (ConfigValue)ob;
-				if(value1.get() instanceof List && (((List)value1.get()).isEmpty() || ((List)value1.get()).get(0) instanceof String)) {
-					String finalPath1 = path;
-					StringJoiner joiner = new StringJoiner(",");
-					
-					if(((List<?>)value1.get()).size() > 0) {
-						for (Object ob1 : (List)value1.get()) {
-							joiner.add("[" + ob1.toString() + "]");
-						}
-					}else{
-						joiner.add("[]");
-					}
-					
-					DSIteratableOption option = new DSIteratableOption(path, (settings, val) -> {
-						this.minecraft.setScreen(new ListConfigSettingsScreen(this, minecraft.options, new StringTextComponent(finalPath1), spec, value1, getSpec(), getConfigName() + "." + key));
-					}, (settings, set) -> {
-						return new StringTextComponent(Minecraft.getInstance().font.substrByWidth(new StringTextComponent(joiner.toString()), 120).getString());
-					});
-					
-					option.setTooltip(tooltip1);
-					
-					if(option != null) {
-						OptionsList.configMap.put(option, key);
-						OptionsList.config.put(option, Pair.of(spec, value1));
-						addOption(category, path, option);
-					}
-				}
+				OptionsList.configMap.put(option, key);
+				OptionsList.config.put(option, Pair.of(spec, value1));
+				addOption(category, name, option);
 			}
 		}
 	}

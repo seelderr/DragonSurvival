@@ -3,9 +3,9 @@ package by.jackraidenph.dragonsurvival.network.config;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.network.IMessage;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
+import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 import net.minecraftforge.fml.network.NetworkEvent.Context;
 import net.minecraftforge.fml.network.PacketDistributor;
@@ -22,9 +22,9 @@ public class SyncListConfig implements IMessage<SyncListConfig>
 	
 	public String key;
 	public List<String> value;
-	public int type;
+	public String type;
 	
-	public SyncListConfig(String key, List<String> value, int type)
+	public SyncListConfig(String key, List<String> value, String type)
 	{
 		this.key = key;
 		this.value = value;
@@ -34,7 +34,7 @@ public class SyncListConfig implements IMessage<SyncListConfig>
 	@Override
 	public void encode(SyncListConfig message, PacketBuffer buffer)
 	{
-		buffer.writeInt(message.type);
+		buffer.writeUtf(message.type);
 		buffer.writeInt(message.value.size());
 		message.value.forEach((val) -> buffer.writeUtf(val));
 		buffer.writeUtf(message.key);
@@ -43,7 +43,7 @@ public class SyncListConfig implements IMessage<SyncListConfig>
 	@Override
 	public SyncListConfig decode(PacketBuffer buffer)
 	{
-		int type = buffer.readInt();
+		String type = buffer.readUtf();
 		int size = buffer.readInt();
 		ArrayList<String> list = new ArrayList<>();
 		
@@ -64,15 +64,15 @@ public class SyncListConfig implements IMessage<SyncListConfig>
 			NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg() , new SyncListConfig(message.key, message.value, message.type));
 		}
 		
-		ForgeConfigSpec spec = message.type == 0 ? ConfigHandler.serverSpec : ConfigHandler.commonSpec;
-		
-		Object ob = spec.getValues().get((message.type == 0 ? "server" : "common") + "." + message.key);
+		UnmodifiableConfig spec = message.type.equalsIgnoreCase("server") ? ConfigHandler.serverSpec.getValues() : ConfigHandler.commonSpec.getValues();
+		Object ob = spec.get(message.type + "." + message.key);
 		
 		if (ob instanceof ConfigValue) {
 			ConfigValue value = (ConfigValue)ob;
 			
 			try {
 				value.set(message.value);
+				value.save();
 			}catch (Exception ignored){}
 		}
 	}

@@ -106,7 +106,7 @@ public class ListConfigSettingsScreen extends SettingsScreen
 			value.set(output);
 			
 			if(spec != ConfigHandler.clientSpec){
-				NetworkHandler.CHANNEL.sendToServer(new SyncListConfig(configKey, output, spec == ConfigHandler.serverSpec ? 0 : 1));
+				NetworkHandler.CHANNEL.sendToServer(new SyncListConfig(configKey, output, spec == ConfigHandler.serverSpec ? "server" : "common"));
 			}
 			
 			this.minecraft.setScreen(this.lastScreen);
