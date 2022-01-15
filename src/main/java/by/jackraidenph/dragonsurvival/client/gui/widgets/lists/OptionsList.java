@@ -1,5 +1,6 @@
 package by.jackraidenph.dragonsurvival.client.gui.widgets.lists;
 
+import by.jackraidenph.dragonsurvival.client.gui.widgets.ItemStackField;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.DropDownButton;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.datafixers.util.Pair;
@@ -76,7 +77,7 @@ public class OptionsList extends AbstractOptionList<OptionListEntry>
 		return this.y0 + 4 - (int)this.getScrollAmount() + height - 4;
 	}
 	
-	private int getRowBottom(int p_230948_1_) {
+	public int getRowBottom(int p_230948_1_) {
 		OptionListEntry e = this.getEntry(p_230948_1_);
 		return this.getRowTop(p_230948_1_) + e.getHeight();
 	}
@@ -107,6 +108,12 @@ public class OptionsList extends AbstractOptionList<OptionListEntry>
 					
 					if(entry.widget instanceof DropDownButton) {
 						((DropDownButton)entry.widget).renderPost(p_238478_1_, p_238478_4_, p_238478_5_, p_238478_6_);
+					}
+				}else if(child instanceof TextBoxEntry){
+					TextBoxEntry entry = (TextBoxEntry)child;
+					
+					if(entry.widget instanceof ItemStackField) {
+						((ItemStackField)entry.widget).renderPost(p_238478_1_, p_238478_4_, p_238478_5_, p_238478_6_);
 					}
 				}
 			}

@@ -1,8 +1,10 @@
 package by.jackraidenph.dragonsurvival.client.gui.settings;
 
+import by.jackraidenph.dragonsurvival.client.gui.widgets.ItemStackField;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.TextField;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.settings.DSItemStackFieldOption;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.settings.DSTextBoxOption;
+import by.jackraidenph.dragonsurvival.client.gui.widgets.lists.OptionListEntry;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.lists.OptionsList;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.lists.TextBoxEntry;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
@@ -36,6 +38,9 @@ public class ListConfigSettingsScreen extends SettingsScreen
 	
 	private OptionsList list;
 	
+	public ItemStackField selectedField;
+	private List<OptionListEntry> oldVals;
+	
 	public ListConfigSettingsScreen(Screen p_i225930_1_, GameSettings p_i225930_2_, ITextComponent p_i225930_3_, ValueSpec valueSpec, ConfigValue value, ForgeConfigSpec spec, String configKey)
 	{
 		super(p_i225930_1_, p_i225930_2_, p_i225930_3_);
@@ -47,12 +52,35 @@ public class ListConfigSettingsScreen extends SettingsScreen
 	
 	
 	protected void init() {
-		this.list = new OptionsList(this.width, this.height, 32, this.height - 32);
+		if(list != null){
+			oldVals = list.children();
+		}
 		
-		List<String> list = (List<String>)value.get();
+		selectedField = null;
+		this.list = new OptionsList(this.width, this.height, 32, this.height - 32){
+			
+			@Override
+			protected int getMaxPosition()
+			{
+				return super.getMaxPosition() + 120;
+			}
+		};
 		
-		for(String t : list){
-			createOption(t);
+		if(oldVals == null || oldVals.isEmpty()) {
+			List<String> list = (List<String>)value.get();
+			
+			for (String t : list) {
+				createOption(t);
+			}
+		}else{
+			for (OptionListEntry oldVal : oldVals) {
+				if(oldVal instanceof TextBoxEntry){
+					TextBoxEntry textBoxEntry = (TextBoxEntry)oldVal;
+					createOption(((TextFieldWidget)textBoxEntry.widget).getValue());
+				}
+			}
+			
+			oldVals = null;
 		}
 		
 		this.children.add(this.list);
@@ -90,7 +118,7 @@ public class ListConfigSettingsScreen extends SettingsScreen
 		String text = valueSpec.getComment();
 		AbstractOption option;
 		
-		if(text.toLowerCase(Locale.ROOT).replace(" ", "").contains(":item/tag") || text.toLowerCase(Locale.ROOT).replace(" ", "").contains(":block/tag")){
+		if(text != null && !text.isEmpty() && (text.toLowerCase(Locale.ROOT).replace(" ", "").contains(":item/tag") || text.toLowerCase(Locale.ROOT).replace(" ", "").contains(":block/tag"))){
 			option = new DSItemStackFieldOption(t, (settings) -> t);
 		}else{
 			option = new DSTextBoxOption(t, (settings) -> t);
@@ -101,8 +129,26 @@ public class ListConfigSettingsScreen extends SettingsScreen
 	}
 	
 	@Override
+	public boolean mouseScrolled(double pMouseX, double pMouseY, double pDelta)
+	{
+		if(selectedField != null && selectedField.isMouseOver(pMouseX, pMouseY)){
+			return selectedField.mouseScrolled(pMouseX, pMouseY, pDelta);
+		}
+		return super.mouseScrolled(pMouseX, pMouseY, pDelta);
+	}
+	
+	@Override
 	public boolean mouseClicked(double p_231044_1_, double p_231044_3_, int p_231044_5_)
 	{
+		if(selectedField != null && selectedField.isMouseOver(p_231044_1_, p_231044_3_)){
+			return selectedField.mouseClicked(p_231044_1_, p_231044_3_, p_231044_5_);
+		}
+		
+		if(selectedField != null) {
+			selectedField.setFocus(false);
+			selectedField = null;
+		}
+		
 		list.children().forEach((ent) -> {
 			ent.children().forEach(child -> {
 				if(child instanceof TextField) {

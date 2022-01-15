@@ -107,62 +107,62 @@ public class DropDownButton extends ExtendedButton
 			Minecraft.getInstance().textureManager.bind(BACKGROUND_TEXTURE);
 			GuiUtils.drawContinuousTexturedBox(mStack, x, y + height, 0, 0, width, Math.min(maxItems, value.getDeclaringClass().getEnumConstants().length) * height, 32, 32, 10, 0);
 		
-			int maxElement = (int)(Math.min(1, scroll) * value.getDeclaringClass().getEnumConstants().length);
+			//int maxElement = (int)(Math.min(1, scroll) * value.getDeclaringClass().getEnumConstants().length);
 			{
-				int i = 0;
+				int maxElement = (int)(scroll / 20);
 				int renderNum = 0;
-				for (Object obj : value.getDeclaringClass().getEnumConstants()) {
-					Enum en = (Enum)obj;
+				
+				for (int i1 = Math.max(0, maxElement-maxItems); i1 < Math.min(Math.max(maxElement, maxItems), value.getDeclaringClass().getEnumConstants().length); i1++) {
+					Enum en = (Enum)value.getDeclaringClass().getEnumConstants()[i1];
 					
+					int startY = y + (height);
+					int level = renderNum * (height);
 					
-					if (i >= maxElement - maxItems && i <= maxItems) {
-						int startY = y + (height);
-						int level = renderNum * (height);
-						
-						
-						int color = new Color(0.1F, 0.1F, 0.1F, 1F).getRGB();
-						
-						if (i % 2 == 0) {
-							color = new Color(0.2F, 0.2F, 0.2F, 1F).getRGB();
-						}
-						
-						if (value == en) {
-							color = new Color(0.3F, 0.3F, 0.3F, 1F).getRGB();
-						}
-						
-						if (mouseX >= x + 2 && mouseY >= startY + level + 2 - (renderNum > 0 ? 4 : 0) && mouseX < x + width - 2 && mouseY < startY + height + level - 2) {
-							color = new Color(0.4F, 0.4F, 0.4F, 1F).getRGB();
-						}
-						
-						AbstractGui.fill(mStack, x + 2, startY + level + 2 - (renderNum > 0 ? 4 : 0), x + width - 2, startY + height + level - 2, color);
-						
-						StringTextComponent text = new StringTextComponent(en.name().substring(0, 1).toUpperCase(Locale.ROOT) + en.name().substring(1).toLowerCase(Locale.ROOT));
-						if (!text.getString().isEmpty()) {
-							Minecraft.getInstance().font.drawShadow(mStack, new StringTextComponent(Minecraft.getInstance().font.substrByWidth(text, width - 4).getString()), x + 5, y + 5 + height + (renderNum * height), value == en ? DyeColor.WHITE.getTextColor() : DyeColor.LIGHT_GRAY.getTextColor());
-						}
-						renderNum++;
+					int color = new Color(0.1F, 0.1F, 0.1F, 1F).getRGB();
+					
+					if (renderNum % 2 == 0) {
+						color = new Color(0.2F, 0.2F, 0.2F, 1F).getRGB();
 					}
 					
-					i++;
+					if (value == en) {
+						color = new Color(0.3F, 0.3F, 0.3F, 1F).getRGB();
+					}
+					
+					if (mouseX >= x + 2 && mouseY >= startY + level + 2 - (renderNum > 0 ? 4 : 0) && mouseX < x + width - 2 && mouseY < startY + height + level - 2) {
+						color = new Color(0.4F, 0.4F, 0.4F, 1F).getRGB();
+					}
+					
+					AbstractGui.fill(mStack, x + 2, startY + level + 2 - (renderNum > 0 ? 4 : 0), x + width - 2, startY + height + level - 2, color);
+					
+					StringTextComponent text = new StringTextComponent(en.name().substring(0, 1).toUpperCase(Locale.ROOT) + en.name().substring(1).toLowerCase(Locale.ROOT));
+					if (!text.getString().isEmpty()) {
+						Minecraft.getInstance().font.drawShadow(mStack, new StringTextComponent(Minecraft.getInstance().font.substrByWidth(text, width - 4).getString()), x + 5, y + 5 + height + (renderNum * height), value == en ? DyeColor.WHITE.getTextColor() : DyeColor.LIGHT_GRAY.getTextColor());
+					}
+					renderNum++;
 				}
+				
 			}
+			int amount = Math.min(maxItems, value.getDeclaringClass().getEnumConstants().length);
 			
 			Tessellator tessellator = Tessellator.getInstance();
 			BufferBuilder bufferbuilder = tessellator.getBuilder();
 			
-			float maxPos = Math.min(maxItems, value.getDeclaringClass().getEnumConstants().length) * height;
+			float maxPosition = (value.getDeclaringClass().getEnumConstants().length) * height;
+			float maxScroll = Math.max(0, maxPosition);
 			
-			int y0 = y + height;
-			int y1 = (int)(y + height + maxPos);
+			scroll = MathHelper.clamp(scroll, 0, maxScroll);
+			
+			int y0 = y + height + 2;
+			int y1 = (y + height + (amount * height)) - 2;
 			int x0 = x;
 			int x1 = x + width;
 			
-			int i = x1 - 6;
+			int i = x1 - 8;
 			int j = i + 6;
-			int k1 = (int)Math.max(0, maxPos - (y1 - y0 - 4));
+			int k1 = (int)maxScroll;
 			if (k1 > 0) {
 				RenderSystem.disableTexture();
-				int l1 = (int)((float)((y1 - y0) * (y1 - y0)) / (float)maxPos);
+				int l1 = (int)((float)((y1 - y0) * (y1 - y0)) / maxPosition);
 				l1 = MathHelper.clamp(l1, 32, y1 - y0 - 8);
 				int i2 = (int)scroll * (y1 - y0 - l1) / k1 + y0;
 				if (i2 < y0) {
@@ -209,30 +209,24 @@ public class DropDownButton extends ExtendedButton
 	public boolean mouseClicked(double pMouseX, double pMouseY, int pButton)
 	{
 		if(toggled){
-			int maxElement = (int)(Math.min(1, scroll) * value.getDeclaringClass().getEnumConstants().length);
-			
-			int i = 0;
+			int maxElement = (int)(scroll / 20);
 			int renderNum = 0;
-			for(Object obj : value.getDeclaringClass().getEnumConstants()){
-				Enum en = (Enum)obj;
+			
+			for (int i1 = Math.max(0, maxElement-maxItems); i1 < Math.min(Math.max(maxElement, maxItems), value.getDeclaringClass().getEnumConstants().length); i1++) {
+				Enum en = (Enum)value.getDeclaringClass().getEnumConstants()[i1];
 				
+				int startY = y + (height);
+				int level = renderNum * (height);
 				
-				if(i >= maxElement - maxItems && i <= maxItems) {
-					int startY = y + (height);
-					int level = renderNum * (height);
-					
-					if(pMouseX >= x + 2 && pMouseY >= startY + level + 2 - (renderNum > 0 ? 4 : 0) && pMouseX < x + width - 2 && pMouseY < startY + height + level - 2){
-						setter.accept(en);
-						value = en;
-						toggled = false;
-						updateMessage();
-						return true;
-					}
-					
-					renderNum++;
+				if(pMouseX >= x + 2 && pMouseY >= startY + level + 2 - (renderNum > 0 ? 4 : 0) && pMouseX < x + width - 2 && pMouseY < startY + height + level - 2){
+					setter.accept(en);
+					value = en;
+					toggled = false;
+					updateMessage();
+					return true;
 				}
 				
-				i++;
+				renderNum++;
 			}
 		}
 		
@@ -243,9 +237,7 @@ public class DropDownButton extends ExtendedButton
 	@Override
 	public boolean mouseScrolled(double pMouseX, double pMouseY, double pDelta)
 	{
-		scroll -= - pDelta;
-		scroll = Math.max(0, Math.min(4, scroll));
-		
+		scroll -= pDelta;
 		return super.mouseScrolled(pMouseX, pMouseY, pDelta);
 	}
 	

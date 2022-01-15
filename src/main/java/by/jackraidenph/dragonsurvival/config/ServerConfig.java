@@ -793,11 +793,11 @@ public class ServerConfig {
 				.defineInRange("chargedSoupBuffDuration", 300, 0, 10000);
 
 		// Dragon Food List
-		builder.push("list");
 		builder.comment("Dragon food formatting: item/tag:modid:id:food:saturation. Food/saturation values are optional as the human values will be used if missing.");
 
 		caveDragonFoods = builder
 				.worldRestart()
+				.comment("Dragon food formatting: item/tag:modid:id:food:saturation")
 				.defineList("caveDragon", Arrays.asList(
 						"tag:minecraft:coals:1:1",
 						"item:minecraft:charcoal:1:2",
@@ -841,6 +841,7 @@ public class ServerConfig {
 
 		forestDragonFoods = builder
 				.worldRestart()
+				.comment("Dragon food formatting: item/tag:modid:id:food:saturation")
 				.defineList("forestDragon", Arrays.asList(
 						"tag:forge:raw_meats:5:7",
 						"item:minecraft:sweet_berries:1:1",
@@ -988,6 +989,7 @@ public class ServerConfig {
 
 		seaDragonFoods = builder
 				.worldRestart()
+				.comment("Dragon food formatting: item/tag:modid:id:food:saturation")
 				.defineList("seaDragon", Arrays.asList(
 						"tag:forge:raw_fishes:6:7",
 						"item:minecraft:dried_kelp:1:1",
@@ -1135,7 +1137,7 @@ public class ServerConfig {
 						"item:aquafina:raw_stingray_slice:4:1"
 				), this::isValidFoodConfig);
 		//Magic
-		builder.pop().pop().push("magic");
+		builder.pop().push("magic");
 		builder.comment("Config values for the magic system");
 		
 		builder.push("Mana");
