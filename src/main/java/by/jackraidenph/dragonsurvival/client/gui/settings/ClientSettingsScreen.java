@@ -15,11 +15,11 @@ import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.config.SyncBooleanConfig;
 import by.jackraidenph.dragonsurvival.network.config.SyncEnumConfig;
 import by.jackraidenph.dragonsurvival.network.config.SyncNumberConfig;
-import com.electronwill.nightconfig.core.*;
+import com.electronwill.nightconfig.core.AbstractConfig;
+import com.electronwill.nightconfig.core.EnumGetMethod;
 import com.electronwill.nightconfig.core.UnmodifiableConfig.Entry;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.datafixers.util.Pair;
-import com.sun.imageio.plugins.common.I18N;
 import net.minecraft.client.AbstractOption;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
@@ -178,8 +178,15 @@ public class ClientSettingsScreen extends SettingsScreen
 		String fullpath = getConfigName() + "." + key;
 		ValueSpec spec = getSpec().getSpec().get(fullpath);
 		
-		String name = spec.getTranslationKey() != null && !Objects.equals(I18N.getString(spec.getTranslationKey()), spec.getTranslationKey()) ? I18N.getString(spec.getTranslationKey()) : pName;
-		IFormattableTextComponent tooltip = spec.getTranslationKey() != null && !Objects.equals(I18N.getString(spec.getTranslationKey() + ".tooltip"), spec.getTranslationKey() + ".tooltip") ? new StringTextComponent((spec.getComment() != null ? spec.getComment() : "")) : new TranslationTextComponent(spec.getTranslationKey() + ".tooltip");
+		String translatedName = new TranslationTextComponent(spec.getTranslationKey() != null ? spec.getTranslationKey() : "").getString();
+		String translateTooltip = new TranslationTextComponent((spec.getTranslationKey() != null ? spec.getTranslationKey() : "") + ".tooltip").getString();
+		
+		String name = translatedName != null && spec.getTranslationKey() != null && !Objects.equals(spec.getTranslationKey(), translatedName)
+		? translatedName : pName;
+		
+		IFormattableTextComponent tooltip = new StringTextComponent( translateTooltip != null && spec.getTranslationKey() != null
+         && !Objects.equals(spec.getTranslationKey() + ".tooltip", translateTooltip)
+         ? translateTooltip : (spec.getComment() != null ? spec.getComment() : ""));
 		
 		if(spec.needsWorldRestart()){
 			tooltip.append("\n§4This setting requires a server restart!§r");

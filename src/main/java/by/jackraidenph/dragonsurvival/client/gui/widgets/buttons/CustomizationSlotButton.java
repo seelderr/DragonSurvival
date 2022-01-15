@@ -1,7 +1,7 @@
 package by.jackraidenph.dragonsurvival.client.gui.widgets.buttons;
 
 import by.jackraidenph.dragonsurvival.client.gui.DragonCustomizationScreen;
-import by.jackraidenph.dragonsurvival.util.Functions;
+import by.jackraidenph.dragonsurvival.client.util.TextRenderUtil;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.widget.button.Button;
@@ -38,6 +38,6 @@ public class CustomizationSlotButton extends Button
 			AbstractGui.fill(stack, x, y, x + this.width, y + this.width, new Color(0.05F, 0.05F, 0.05F, isHovered ? 1F : 0.5F).getRGB());
 		}
 		
-		Functions.renderScaledText(stack, x + 2.5f, y + 1f, 1.5F, Integer.toString(num), DyeColor.WHITE.getTextColor());
+		TextRenderUtil.drawScaledText(stack, x + 2.5f, y + 1f, 1.5F, Integer.toString(num), DyeColor.WHITE.getTextColor());
 	}
 }

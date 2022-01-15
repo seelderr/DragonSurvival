@@ -257,9 +257,9 @@ public class ServerConfig {
 	public final ForgeConfigSpec.BooleanValue saveAllAbilities;
 
 	ServerConfig(ForgeConfigSpec.Builder builder){
-		builder.push("server").translation("ds.config.server");
+		builder.push("server");
 		// General
-		builder.push("general").translation("ds.config.server.general");
+		builder.push("general");
 		mineStarBlock = builder
 				.translation("ds.config.server.general.mineStarBlock")
 				.comment("Whether silk touch hoes can be used to harvest Predator Stars.")
@@ -291,7 +291,7 @@ public class ServerConfig {
 				.define("canMoveWhileCasting", false);
 		
 		// Growth
-		builder.pop().push("growth").translation("ds.config.server.growth")
+		builder.pop().push("growth")
 		;
 		sizeChangesHitbox = builder
 				.translation("ds.config.server.growth.sizeChangesHitbox")
@@ -367,7 +367,7 @@ public class ServerConfig {
 				.comment("A multiplier to change the growth rate from full sized adult to max size. The change in growth after the maximum adult size is measured in months and years.")
 				.defineInRange("maxGrowthModifier", 1.0, 0, 1000);
 		
-		builder.pop().push("drops").translation("ds.config.server.drops");
+		builder.pop().push("drops");
 		dragonHeartShardChance = builder
 				.translation("ds.config.server.drops.dragonHeartShardChance")
 				.comment("The chance for dragon heart shards to drop from any mobs with max health between 14-20")
@@ -384,7 +384,7 @@ public class ServerConfig {
 				.defineInRange("elderDragonHeartChance", 0.2, 0.0, 1.0);
 		
 		// Treasure
-		builder.pop().push("treasure").translation("ds.config.server.treasure");
+		builder.pop().push("treasure");
 		treasureHealthRegen = builder
 				.translation("ds.config.server.treasure.treasureHealthRegen")
 				.comment("Whether sleeping on treasure will recover health or not. ")
@@ -406,7 +406,7 @@ public class ServerConfig {
 				.defineInRange("maxTreasures", 240, 1, 10000000);
 		
 		// Source of Magic
-		builder.pop().push("source_of_magic").translation("ds.config.server.source_of_magic");
+		builder.pop().push("source_of_magic");
 		
 		sourceOfMagicInfiniteMagic = builder
 				.translation("ds.config.server.source_of_magic.sourceOfMagicInfiniteMagic")
@@ -449,7 +449,7 @@ public class ServerConfig {
 				.defineInRange("elderDragonHeartTime", 1010, 1, 10000);
 		
 		// Wings
-		builder.pop().push("wings").translation("ds.config.server.wings");
+		builder.pop().push("wings");
 		maxFlightSpeed = builder
 				.translation("ds.config.server.wings.maxFlightSpeed")
 				.comment("Maximum acceleration fly speed up and down. Take into account the chunk load speed. A speed of 0.3 is optimal.")
@@ -511,7 +511,7 @@ public class ServerConfig {
 				.defineInRange("flightSpinCooldown", 5, 0, 100000);
 		
 		// Innate dragon bonuses
-		builder.pop().push("bonuses").translation("ds.config.server.bonuses");
+		builder.pop().push("bonuses");
 		healthAdjustments = builder
 				.translation("ds.config.server.bonuses.healthAdjustments")
 				.comment("Apply a health modifier for dragons. The older the dragon, the more health it has.")
@@ -582,7 +582,7 @@ public class ServerConfig {
 				.comment("The speed effect level for dragon block-specific speedups. Set to 0 to disable.")
 				.defineInRange("speedupEffectLevel", 2, 0, 100);
 		// Cave Dragon Bonuses
-		builder.push("cave").translation("ds.config.server.bonuses.cave");
+		builder.push("cave");
 		caveFireImmunity = builder
 				.translation("ds.config.server.bonuses.cave.caveFireImmunity")
 				.comment("Whether cave dragons are immune to fire damage types.")
@@ -617,7 +617,7 @@ public class ServerConfig {
 				), this::isValidBlockConfig);
 
 		// Forest Dragon Bonuses
-		builder.pop().push("forest").translation("ds.config.server.bonuses.forest");
+		builder.pop().push("forest");
 		forestFallReduction = builder
 				.translation("ds.config.server.bonuses.forest.forestFallReduction")
 				.comment("How many blocks of fall damage is mitigated for forest dragons. Set to 0.0 to disable.")
@@ -645,7 +645,7 @@ public class ServerConfig {
 				), this::isValidBlockConfig);
 
 		// Sea Dragon Bonuses
-		builder.pop().push("sea").translation("ds.config.server.bonuses.sea");
+		builder.pop().push("sea");
 		seaSwimmingBonuses = builder
 				.translation("ds.config.server.bonuses.sea.seaSwimmingBonuses")
 				.comment("Whether sea dragons gain bonus swim speed and unlimited air.")
@@ -674,7 +674,7 @@ public class ServerConfig {
 				), this::isValidBlockConfig);
 
 		//Dragon Penalties
-		builder.pop().pop().push("penalties").translation("ds.config.server.penalties");
+		builder.pop().pop().push("penalties");
 		penalties = builder
 				.translation("ds.config.server.penalties.penalties")
 				.comment("Set to false to toggle off all dragon penalties.")
@@ -820,7 +820,7 @@ public class ServerConfig {
 				), value -> value instanceof Integer);
 
 		// Cave Dragon Penalties
-		builder.push("cave").translation("ds.config.server.penalties.cave");
+		builder.push("cave");
 		caveWaterDamage = builder
 				.translation("ds.config.server.penalties.cave.caveWaterDamage")
 				.comment("The amount of damage taken per water damage tick (once every 10 ticks). Set to 0.0 to disable water damage.")
@@ -837,7 +837,7 @@ public class ServerConfig {
 				.defineInRange("splashDamage", 2.0, 0.0, 100.0);
 
 		// Forest Dragon Penalties
-		builder.pop().push("forest").translation("ds.config.server.penalties.forest");
+		builder.pop().push("forest");
 		forestStressTicks = builder
 				.translation("ds.config.server.penalties.forest.forestStressTicks")
 				.comment("The number of ticks in darkness before the forest dragon gets Stress effect. Set to 0 to disable to stress effect.")
@@ -854,7 +854,7 @@ public class ServerConfig {
 				.defineInRange("stressExhaustion", 1.0, 0.1, 4.0);
 
 		// Sea Dragon Penalties
-		builder.pop().push("sea").translation("ds.config.server.penalties.sea");
+		builder.pop().push("sea");
 		seaTicksWithoutWater = builder
 				.translation("ds.config.server.penalties.sea.seaTicksWithoutWater")
 				.comment("The number of ticks out of water before the sea dragon will start taking dehydration damage. Set to 0 to disable. Note: This value can stack up to double while dehydrated.")
@@ -899,7 +899,7 @@ public class ServerConfig {
 						"item:minecraft:enchanted_golden_apple"
 				), this::isValidItemConfig);
 		// Ore Loot
-		builder.pop().pop().push("ore").translation("ds.config.server.ore");
+		builder.pop().pop().push("ore");
 		humanOreDustChance = builder
 				.translation("ds.config.server.ore.humanOreDustChance")
 				.comment("The odds of dust dropping when a human harvests an ore.")
@@ -925,7 +925,7 @@ public class ServerConfig {
 		        .comment("The tag that contains all ores that can drop dust/bones when harvested. Will not drop if the ore drops another of the items in this tag. Format: modid:id")
         		.define("oresTag", "forge:ores");
 		// Food general
-		builder.pop().push("food").translation("ds.config.server.food");
+		builder.pop().push("food");
 		customDragonFoods = builder
 				.translation("ds.config.server.food.customDragonFoods")
 				.comment("Force dragons to eat a unique diet for their type.")
@@ -1303,10 +1303,10 @@ public class ServerConfig {
 						"item:aquafina:raw_stingray_slice:4:1"
 				), this::isValidFoodConfig);
 		//Magic
-		builder.pop().push("magic").translation("ds.config.server.magic");
+		builder.pop().push("magic");
 		builder.comment("Config values for the magic system");
 		
-		builder.push("Mana").translation("ds.config.server.magic.mana");
+		builder.push("Mana");
 		
 		seaDragonManaBlocks = builder
 				.translation("ds.config.server.magic.mana.seaDragonManaBlocks")
@@ -1401,15 +1401,15 @@ public class ServerConfig {
 				.comment("How fast in seconds should mana be recovered in normal conditions")
 				.defineInRange("normalManaRegen", 15, 1, 1000);
 		
-		builder.push("abilities").translation("ds.config.server.magic.abilities");
+		builder.push("abilities");
 		
 		saveAllAbilities = builder
 				.translation("ds.config.server.magic.abilities.saveAllAbilities")
 				.comment("Whether to save passives skills when changing dragon type")
 				.define("saveAllAbilities", false);
 		
-		builder.push("forest_dragon").translation("ds.config.server.magic.abilities.forest_dragon");
-		builder.push("actives").translation("ds.config.server.magic.abilities.forest_dragon.actives");
+		builder.push("forest_dragon");
+		builder.push("actives");
 		
 		{
 			builder.push("forest_breath");
