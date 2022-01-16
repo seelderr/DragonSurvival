@@ -18,6 +18,7 @@
   "item.dragonsurvival.princess_spawn_egg": "Яйце виклику принцесі на коні",
   "item.dragonsurvival.prince_spawn_egg": "Яйце виклику принца",
   "item.dragonsurvival.magical_predator_entity_spawn_egg": "Яйце виклику чарівного хижака",
+  
   "item.dragonsurvival.star_bone": "Зоряна кістка",
   "item.dragonsurvival.star_heart": "Зоряне серце",
   "item.dragonsurvival.heart_element": "Уламок серця дракона",
@@ -31,23 +32,17 @@
   "item.dragonsurvival.charred_vegetable": "Обвуглений овоч",
   "item.dragonsurvival.charred_seafood": "Обвуглений морепродукт",
   "item.dragonsurvival.charred_mushroom": "Обвуглений гриб",
+  "item.dragonsurvival.sea_dragon_treat": "Ласощі морського дракона",
+  "item.dragonsurvival.cave_dragon_treat": "Ласощі печерного дракона",
+  "item.dragonsurvival.forest_dragon_treat": "Ласощі лісового дракона",
   "item.dragonsurvival.wing_grant": "Дар Польоту",
   "item.dragonsurvival.spin_grant": "Дар Прискорення",
 
   "block.dragonsurvival.predator_star": "Зірка хижака",
-  "block.dragonsurvival.cave_nest_small": "Маленьке печерне гніздо",
-  "block.dragonsurvival.forest_nest_small": "Маленьке лісове гніздо",
-  "block.dragonsurvival.water_nest_small": "Маленьке морське гніздо",
-  "block.dragonsurvival.medium_sea_nest": "Середнє морське гніздо",
-  "block.dragonsurvival.medium_cave_nest": "Середнє печерне гніздо",
-  "block.dragonsurvival.medium_forest_nest": "Середнє лісове гніздо",
-  "block.dragonsurvival.big_forest_nest": "Велике лісове гніздо",
-  "block.dragonsurvival.big_sea_nest": "Велике морське гніздо",
-  "block.dragonsurvival.big_cave_nest": "Велике печерне гніздо",
   "block.dragonsurvival.broken_helmet": "Зламаний шолом",
-  "block.dragonsurvival.broken_knight_helmet_1": "Сірий лицарський шолом",
-  "block.dragonsurvival.broken_knight_helmet_2": "Золотий лицарський шолом",
-  "block.dragonsurvival.broken_knight_helmet_3": "Чорний лицарський шолом",
+   "block.dragonsurvival.broken_knight_helmet_1": "Сірий лицарський шолом",
+   "block.dragonsurvival.broken_knight_helmet_2": "Золотий лицарський шолом",
+   "block.dragonsurvival.broken_knight_helmet_3": "Чорний лицарський шолом",
 
   "block.dragonsurvival.dragon_altar_stone": "Алтар драконів з каменю",
   "block.dragonsurvival.dragon_altar_sandstone": "Алтар драконів з пісковику",
@@ -57,8 +52,9 @@
   "block.dragonsurvival.dragon_altar_nether_bricks": "Алтар драконів з незерського кирпича",
   "block.dragonsurvival.dragon_altar_mossy_cobblestone": "Алтар драконів з замшевого каменю",
   "block.dragonsurvival.dragon_altar_blackstone": "Алтар драконів з чернокаменю",
+   "block.dragonsurvival.dragon_altar_birch_log": "Алтар драконів з берези",
 
-  "block.dragonsurvival.empty_dragon_beacon": "Пустий маяк дракона",
+  "block.dragonsurvival.empty_dragon_beacon": "Опустошений маяк дракона",
   "block.dragonsurvival.dragon_beacon_peace": "Морський маяк Спокою",
   "block.dragonsurvival.dragon_beacon_magic": "Лісовий маяк Магії",
   "block.dragonsurvival.dragon_beacon_fire": "Печерний маяк Вогню",
@@ -80,6 +76,17 @@
   "block.dragonsurvival.sleeper_dragon_door": "Драконові двері сплячого",
   "block.dragonsurvival.stone_dragon_door": "Кам'яні драконові двері",
   "block.dragonsurvival.legacy_dragon_door": "Легендарні драконові двері",
+  
+  "block.dragonsurvival.forest_source_of_magic": "Лісове Джерело МагіЇ",
+  "block.dragonsurvival.sea_source_of_magic": "Морське Джерело Магії",
+  "block.dragonsurvival.cave_source_of_magic": "Печерне Джерело Магії",
+
+  "block.dragonsurvival.treasure_iron": "Залізний драконовий скарб",
+  "block.dragonsurvival.treasure_debris": "Незеритовий драконовий скарб",
+  "block.dragonsurvival.treasure_diamond": "Діамантовий драконовий скарб",
+  "block.dragonsurvival.treasure_emerald": "Смарагдовий драконовий скарб",
+  "block.dragonsurvival.treasure_copper": "Мідний драконовий скарб",
+  "block.dragonsurvival.treasure_gold": "Золотий драконовий скарб",
 
   "effect.dragonsurvival.stress": "Стрес",
   "effect.dragonsurvival.evil_dragon": "Злий Дракон",
@@ -100,6 +107,7 @@
   "effect.dragonsurvival.wings_cave": "Печерні Крила",
    "effect.dragonsurvival.wings_forest": "Лісові Крила",
    "effect.dragonsurvival.wings_sea": "Морські Крила",
+   "effect.dragonsurvival.source_of_magic": "Вічна Магія",
 
   "dragonsurvival:config.category.general.tooltip": "Спільні параметри конфігурації для Dragons Survival",
   "dragonsurvival:config.category.spawnchances.tooltip": "Налаштування спавна сутностей",
@@ -121,9 +129,6 @@
   "ds.space.occupied": "Нема вільного місця для збільшення розміру",
   "ds.cooldown.active": "Ви виснажили магію алтарю. Потрібен час, щоб відновити її: {0}",
   "ds.wings.nohunger": "Ви занадто голодні та не можете літати.",
-  
-  "ds.regen.on": "Регенерація в гнізді включена.",
-  "ds.regen.off": "Гніздо більше не відновлює здоров'я.",
   
   "ds.endmessage.1": "Не смій наближатися до мого гнізда, {0}. Навіщо ти прийшов сюди? Я захищатимусь.",
   "ds.endmessage.2": "Я не терплю чужинців на своїй території, {0}. Тримайся від мене подалі. Які твої наміри?",
@@ -192,11 +197,14 @@
     "ds.keybind.ability2": "Вміння #2",
     "ds.keybind.ability3": "Вміння #3",
     "ds.keybind.ability4": "Вміння #4",
+    "ds.keybind.spin": "Використати прискорення",
+     "ds.keybind.free_look": "Оглянути себе",
 
     "ds.gui.tab_button.0": "Інвентар",
     "ds.gui.tab_button.1": "Магія драконів",
     "ds.gui.tab_button.2": "Лор DS буде не скоро",
     "ds.gui.tab_button.3": "Скін дракона",
+    "ds.gui.tab_button.4": "Налаштування Конфігів",
 
     "ds.skill.harvest_level": "§d■ Рівень:§r {0}",
     "ds.skill.harvest_level.wood": "Деревина",
@@ -324,10 +332,6 @@
   "ds.skill.description.cave_dragon": "■ Печерні дракони складаються з незериту та лави. Їх раціон складається з обвугленого м'яса та вугілля. Мирні тварини бояться драконів.\n\n■ Мають вроджений §2імунітет до вогню§r та найкраще всього почувають себе у Незері.",
   "ds.skill.description.hot_blood": "■ Печерні дракони через свою вогняну природу здобувають §cшкоди від води§r, снігу, дощу та інших рідин.\n\n■ Вміння «Контрасный Душ» та эфект «Печерный Вогонь» §7можуть облегчити ваше життя.\n\n■ Шкоди: §c{0} одиниць у {1}s§r",
 
-  "item.dragonsurvival.sea_dragon_treat": "Ласощі морського дракона",
-  "item.dragonsurvival.cave_dragon_treat": "Ласощі печерного дракона",
-  "item.dragonsurvival.forest_dragon_treat": "Ласощі лісового дракона",
-
   "ds.description.caveDoor": "■ Великі двері, яких може відкрити тільки печерный дракон.",
   "ds.description.forestDoor": "■ Великі двері, яких може відкрити тільки лісовий дракон.",
   "ds.description.seaDoor": "■ Великі двері, яких може відкрити тільки морський дракон.",
@@ -342,19 +346,24 @@
   "ds.description.dragonMemoryBlock": "■ Якщо встановити під будь-яким драконячим маяком, ви зможете здобути його эфект в області без необхідності купувати його.",
   "ds.description.dragonAltar": "■ Блок для перетворення у дракона та декору.",
   "ds.description.predatorStar": "■ Блок, який ви будете ненавидіти усією душею.",
-  "ds.description.heartElement": "§6■ Частина стародавнього дракона.§r\n■ Уламок від серця маленького дракона. Використовується для росту новонародженого дракона.",
-  "ds.description.weakDragonHeart": "§6■ Частина стародавнього дракона.§r\n■ Посилене, але все ще нестабільне серце. Використовується для росту молодого дракона.",
-  "ds.description.elderDragonHeart": "§6■ Частина стародавнього дракона.§r\n■ Сияюче та повне энергії Серце. Якщо прислухатися, можна почути стародавній голос, кличущий вас з глибини. Використовується для росту дорослого дракона.",
+ "ds.description.elderDragonDust": "§6■ Частина стародавнього дракона.§r\n■§7 Найменша частинка, залишившаяся від стародавньої істоти. Використовується у багатьох крафтів для драконів.",
+ "ds.description.elderDragonBone": "§6■ Частина стародавнього дракона.§r\n■§7 Залишки маленьких драконів, які були створені з тіла страродавньої істоти. Використовується у багатьох крафтів для драконів.",
+ "ds.description.heartElement": "§6■ Частина стародавнього дракона.§r\n■§7 Уламок від сердця маленького дракона. Використовується для росту новонародженого дракона.",
+ "ds.description.weakDragonHeart": "§6■ Частина стародавнього дракона.§r\n■§7 Посилине, але все ще нестабильне серце. Використовується для росту молодого дракона.",
+ "ds.description.elderDragonHeart": "§6■ Частина стародавнього дракона.§r\n■§7 Сяюче та повне енергії Серце. Якщо прислухатися, можна почути стародавній голос, кличущий вас з глибини. Використовується для росту дорослого дракона.",
   "ds.description.wing_grant": "■ Цей предмет дає вашому дракону вміння польоту.",
   "ds.description.spin_grant": "■ Цей предмет дає вашому дракону вміння прискорюватися обертаючись у поітрі та воді/лаві.",
-  "ds.description.starBone": "■ Якщо кинути правильную частину стародавнього дракона у зірку, можна здобути предмет, дозволяющий зменшувати ріст дракона.",
+  "ds.description.starBone": "■§7 Трохи зменшує ріст дракона. Киньте кістку стародавнього дракона у зірку магічного хижака для отримання.",
   "ds.description.starHeart": "■ Повністю зупиняє ріст дракона. При повторному застосуванні повертає. Не витрачається.",
-  "ds.description.caveDragonTreat": "■ Повністю відновлює ману печерного дракона.",
-  "ds.description.forestDragonTreat": "■ Повністю відновлює ману лісового дракона.",
-  "ds.description.seaDragonTreat": "■ Повністю відновлює ману морського дракона.",
+  "ds.description.caveDragonTreat": "■ Повністю відновлює ману печерного дракона та втамовує голод.",
+  "ds.description.forestDragonTreat": "■ Повністю відновлює ману лісового дракона та втамовує голод.",
+  "ds.description.seaDragonTreat": "■ Повністю відновлює ману морського дракона та втамовує голод.",
+  "ds.description.chargedCoal": "■§7 Можна використовувати для переплавленні великій кількості предметів",
   "ds.description.chargedSoup": "■ Найкраща їжа для печерного дракона. Дає эфект «Печерный вогонь», захищающий від губливого впливу воды.",
-  "ds.description.elderDragonDust": "§6■ Частина стародавнього дракона.§r\n■ Найменша частица, лишившаяся від стародавньої істоти. Використовується у безлічі крафтів для драконів.",
-  "ds.description.elderDragonBone": "§6■ Частина стародавнього дракона.§r\n■ Залишки маленьких драконів, які були утворені з тіла стародавньої істоти. Використовується у безлічі крафтів для драконів.",
+ "ds.description.treasures": "■§7 Тут дракони можуть спати та дуже повільно відновлювати здоров'я та ману. Щоб прискорити цей процес, накопичіть дійсно дуже багато скарбів. Основне призначення - показати багатство дракона.",
+  "ds.description.cave_source_of_magic": "■§7 Печерні дракони можуть здобувати тут нескінченну ману. Наносить урон іншим істотам.",
+  "ds.description.forest_source_of_magic": "■§7 Лісові дракони можуть здобувати тут нескінченну ману. Наносить урон іншим істотам.",
+  "ds.description.sea_source_of_magic": "■§7 Морські дракони можуть здобувати тут нескінченну ману. Наносить урон іншим істотам.",
 
   "ds.emote.toggle": " ■ §6Емоції Дракона§r ■",
   "ds.emote.sad": "■ Сумний",
@@ -395,6 +404,7 @@
   "ds.gui.skins.tooltip.help": "■ §6Скін§r - це створена вами текстура для дракона. У цій вкладці ви можете вимкнути відображення скіна вашого дракона на різных стадіях, а також скінів інших гравців.\n§7■ Якщо вас цікавить, як зробити свій скін або замовити його, скористуйтесь кнопками справа.",
   "ds.gui.skins.tooltip.discord": "■ Присоединяйся к нашему ламповому §6discord серверу§r!§7 Прочти Rules, FAQ и Wiki прежде чем задавать вопросы. Скорее всего на них уже есть ответ.",
   "ds.gui.skins.tooltip.wiki": "■ Посилання на §6WikiFandom§r о створенні власних скінів!§7 Пом'ятайте, що це буде дуже складно та потребує знання графічних редакторів.",
+  "ds.help.source_of_magic": "■ Джерело магії повинен бути заповнений частинами Стародавнього дракона. Витрачає 1 предмет кожні 10 секунд.\n■ Для використання присядьте та нажміть правою кнопкою миші.\n\n■ §6+10 с§r - Пил Стародавнього Дракона\n■ §6+50 с§r - Кістка Стародавнього Дракона\n■ §6+100 с§r - Уламок Серця Давнього Дракона\n■ §6+300 с§r - Слабке Серце Стародавнього Дракона\n■ §6+1000 с§r - Серце Стародавнього Дракона",
 
   "ds.gui.skins": "Налаштування Скіна",
   "ds.gui.skins.other_skins": "Скіни гравців",
@@ -418,5 +428,9 @@
   "ds.gui.growth_help": "\n■ Дракон поступово росте з часом. Чим старший дракон, тим повільніше він росте. Ви можете використовувати ці предмети для прискорення росту:§r\n§6■ {0}\n\n§7■ Зіркова кістка зменшить дракона, а Зіркове серце повністю зупинить ріст. Обидва предмети створюються киданням правильних артефактів у Зірку Хижака.",
 
   "ds.growth.now_growing": "Поступовий ріст §2ввімкнен§r",
-  "ds.growth.no_growth": "Поступовий ріст §2ввимкнен§r"
+  "ds.growth.no_growth": "Поступовий ріст §2ввимкнен§r",
+  
+  "ds.gui.settings.client": "■ Клієнт Налаштувань ■",
+  "ds.gui.settings.common": "■ Спільні Налаштування ■",
+  "ds.gui.settings.server": "■ Сервер Налаштування ■"
 }

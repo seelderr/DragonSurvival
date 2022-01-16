@@ -76,6 +76,15 @@
   "block.dragonsurvival.stone_dragon_door": "Stone Dragon door",
   "block.dragonsurvival.legacy_dragon_door": "Legacy Dragon door",
 
+  "block.dragonsurvival.oak_small_dragon_door": "Oak Small Dragon door",
+  "block.dragonsurvival.spruce_small_dragon_door": "Spruce Small Dragon door",
+  "block.dragonsurvival.acacia_small_dragon_door": "Acacia Small Dragon door",
+  "block.dragonsurvival.birch_small_dragon_door": "Birch Small Dragon door",
+  "block.dragonsurvival.jungle_small_dragon_door": "Jungle Small Dragon door",
+  "block.dragonsurvival.dark_oak_small_dragon_door": "Dark Oak Small Dragon door",
+  "block.dragonsurvival.warped_small_dragon_door": "Warped Small Dragon door",
+  "block.dragonsurvival.crimson_small_dragon_door": "Crimson Small Dragon door",
+
   "block.dragonsurvival.forest_source_of_magic": "Forest Source of Magic",
   "block.dragonsurvival.sea_source_of_magic": "Sea Source of Magic",
   "block.dragonsurvival.cave_source_of_magic": "Cave Source of Magic",
