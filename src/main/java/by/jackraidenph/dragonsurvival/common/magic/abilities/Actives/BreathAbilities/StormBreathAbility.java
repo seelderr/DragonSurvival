@@ -12,6 +12,7 @@ import by.jackraidenph.dragonsurvival.common.capability.GenericCapability;
 import by.jackraidenph.dragonsurvival.common.entity.DSEntities;
 import by.jackraidenph.dragonsurvival.common.entity.projectiles.StormBreathEntity;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
+import by.jackraidenph.dragonsurvival.config.ConfigUtils;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import by.jackraidenph.dragonsurvival.util.Functions;
 import net.minecraft.block.BlockState;
@@ -254,7 +255,7 @@ public class StormBreathAbility extends BreathAbility
 		for(LivingEntity target : secondaryTargets){
 			boolean damaged = false;
 			if(target != null && target.getType() != null && target.getType().getRegistryType() != null) {
-				if (ConfigHandler.SERVER.chargedBlacklist.get().contains(target.getType().getRegistryName().toString())) {
+				if (ConfigUtils.containsEntity(ConfigHandler.SERVER.chargedBlacklist.get(), target)) {
 					if(player != null) {
 						target.hurt(DamageSource.playerAttack(player), damage);
 					}else{
@@ -273,8 +274,7 @@ public class StormBreathAbility extends BreathAbility
 				}
 			}
 			onDamageChecks(target);
-			
-			if(!ConfigHandler.SERVER.chargedSpreadBlacklist.get().contains(source.getType().getRegistryName().toString())) {
+			if(!ConfigUtils.containsEntity(ConfigHandler.SERVER.chargedSpreadBlacklist.get(), source)) {
 				if (target != source) {
 					GenericCapability capSource = Capabilities.getGenericCapability(source).orElse(null);
 					GenericCapability cap = Capabilities.getGenericCapability(target).orElse(null);

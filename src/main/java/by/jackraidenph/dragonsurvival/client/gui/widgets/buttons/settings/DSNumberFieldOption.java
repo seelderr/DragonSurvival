@@ -1,6 +1,6 @@
 package by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.settings;
 
-import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.TextField;
+import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.fields.TextField;
 import net.minecraft.client.AbstractOption;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;

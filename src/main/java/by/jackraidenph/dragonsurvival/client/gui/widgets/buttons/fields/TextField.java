@@ -1,4 +1,4 @@
-package by.jackraidenph.dragonsurvival.client.gui.widgets.buttons;
+package by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.fields;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import com.mojang.blaze3d.matrix.MatrixStack;

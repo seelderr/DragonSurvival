@@ -1314,7 +1314,7 @@ public class ServerConfig {
 				.comment("Blocks that will restore mana quicker when a sea dragon is standing on it. Formatting: block/tag:modid:blockid")
 				.defineList("seaDragonManaBlocks", Arrays.asList(
 						"block:dragonsurvival:sea_source_of_magic",
-						"block:minecraft:ice",
+						"tag:minecraft:ice",
 						"block:minecraft:snow",
 						"block:minecraft:snow_block",
 						"block:minecraft:water",

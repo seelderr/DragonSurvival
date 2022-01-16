@@ -1,4 +1,4 @@
-package by.jackraidenph.dragonsurvival.client.gui.widgets;
+package by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.fields;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.client.gui.settings.ListConfigSettingsScreen;
@@ -23,7 +23,6 @@ import net.minecraft.client.util.ITooltipFlag.TooltipFlags;
 import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.command.arguments.BlockStateParser;
 import net.minecraft.command.arguments.ItemParser;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.*;
 import net.minecraft.potion.Effect;
@@ -33,7 +32,6 @@ import net.minecraft.potion.Potions;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.util.IItemProvider;
 import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
@@ -64,12 +62,12 @@ public class ResourceTextField extends TextFieldWidget implements IBidiTooltip
 	private static final int maxItems = 5;
 	
 	public double scroll;
-	
-	
-	public ResourceTextField(int pX, int pY, int pWidth, int pHeight, ITextComponent pMessage)
-	{
-		this(null, null, pX, pY, pWidth, pHeight, pMessage);
-	}
+	boolean isItem;
+	boolean isBlock;
+	boolean isEntity;
+	boolean isEffect;
+	boolean isBiome;
+	boolean isTag;
 	
 	public ResourceTextField(ValueSpec spec, ResourceTextFieldOption option, int pX, int pY, int pWidth, int pHeight, ITextComponent pMessage)
 	{
@@ -77,6 +75,26 @@ public class ResourceTextField extends TextFieldWidget implements IBidiTooltip
 		setBordered(false);
 		this.option = option;
 		this.spec = spec;
+		
+		isItem = ConfigHandler.isItemPredicate(spec::test);
+		isBlock = ConfigHandler.isBlockPredicate(spec::test);
+		isEntity = ConfigHandler.isEntityPredicate(spec::test);
+		isEffect = ConfigHandler.isEffectPredicate(spec::test);
+		isBiome = ConfigHandler.isBiomePredicate(spec::test);
+		isTag = ConfigHandler.isTagPredicate(spec::test);
+		update();
+	}
+	
+	public ResourceTextField(int pX, int pY, int pWidth, int pHeight, ITextComponent pMessage, boolean isItem, boolean isBlock, boolean isEntity, boolean isEffect, boolean isBiome, boolean isTag)
+	{
+		super(Minecraft.getInstance().font, pX, pY, pWidth, pHeight, pMessage);
+		this.isItem = isItem;
+		this.isBlock = isBlock;
+		this.isEntity = isEntity;
+		this.isEffect = isEffect;
+		this.isBiome = isBiome;
+		this.isTag = isTag;
+		setBordered(false);
 		update();
 	}
 	
@@ -250,35 +268,34 @@ public class ResourceTextField extends TextFieldWidget implements IBidiTooltip
 		stack = null;
 		suggestions.clear();
 		
-		boolean isItem = ConfigHandler.isItemPredicate((obj) -> spec.test(obj));
-		boolean isBlock = ConfigHandler.isBlockPredicate((obj) -> spec.test(obj));
-		boolean isEntity = ConfigHandler.isEntityPredicate((obj) -> spec.test(obj));
-		boolean isEffect = ConfigHandler.isEffectPredicate((obj) -> spec.test(obj));
-		boolean isBiome = ConfigHandler.isBiomePredicate((obj) -> spec.test(obj));
-		boolean isTag = ConfigHandler.isTagPredicate((obj) -> spec.test(obj));
-		
-		String value = getValue().isEmpty() ? option.getter.apply(Minecraft.getInstance().options) : getValue();
+		String value = getValue().isEmpty() && option != null ? option.getter.apply(Minecraft.getInstance().options) : getValue();
 		String type = (isItem ? "item" : isBlock ? "block" : isEntity ? "entity" : isEffect ? "effect" : isBiome ? "biome" : "") + ":";
 		String tagType = "tag:";
 		
 		String resource = value.toLowerCase(Locale.ROOT).startsWith(type) ? value.substring(type.length()) : value;
-		String resource1 = resource.toLowerCase(Locale.ROOT).startsWith(tagType) ? resource.substring(tagType.length()) : resource;
+		resource = resource.toLowerCase(Locale.ROOT).startsWith(tagType) ? resource.substring(tagType.length()) : resource;
+		String start = value.substring(0, value.length() - resource.length());
 		
-		List<ItemStack> sk = parseCombinedList(Collections.singletonList(type + resource1), isTag, isBlock, isItem, isEntity, isBiome);
-		stack = new ResourceEntry(value, sk);
+		while(StringUtils.countMatches(resource, ":") > 1){
+			resource = resource.substring(0, resource.lastIndexOf(":"));
+		}
+		
+		stack = parseCombinedList(Collections.singletonList(resource), isTag).stream().findFirst().orElse(null);
 		if(!isFocused()) return;
 		
-		run(isItem, isBlock, isEntity, isEffect, isBiome, isTag, type, resource, resource1);
+		run(resource);
 		
 		if(suggestions.size() == 0 && !resource.isEmpty()){
-			run(isItem, isBlock, isEntity, isEffect, isBiome, isTag, type, "", resource1);
+			run("");
 		}
 		
 		suggestions.sort((c1, c2) -> c2.mod.compareTo(c1.mod));
 		suggestions.sort(Comparator.comparing(c -> c.id));
+		suggestions.removeIf((s) -> !start.isEmpty() && !s.id.startsWith(start));
+		suggestions.removeIf(ResourceEntry::isEmpty);
 	}
 	
-	private void run(boolean isItem, boolean isBlock, boolean isEntity, boolean isEffect, boolean isBiome, boolean isTag, String type, String resource, String resource1)
+	private void run(String resource)
 	{
 		SuggestionsBuilder builder = new SuggestionsBuilder(resource, 0);
 		
@@ -288,79 +305,54 @@ public class ResourceTextField extends TextFieldWidget implements IBidiTooltip
 		if(isEffect) ISuggestionProvider.suggestResource(ForgeRegistries.POTIONS.getKeys(), builder);
 		if(isBiome) ISuggestionProvider.suggestResource(ForgeRegistries.BIOMES.getKeys(), builder);
 		
-		runSuggestions(type, builder, false, isBlock, isItem, isEntity, isBiome);
-		
 		if(isTag) {
-			builder = new SuggestionsBuilder(resource1, 0);
-			
-			if(isBlock) ISuggestionProvider.suggestResource(BlockTags.getAllTags().getAvailableTags(), builder);
-			if(isItem) ISuggestionProvider.suggestResource(ItemTags.getAllTags().getAvailableTags(), builder);
-			if(isEntity) ISuggestionProvider.suggestResource(EntityTypeTags.getAllTags().getAvailableTags(), builder);
-			
-			runSuggestions(type, builder, true, isBlock, isItem, isEntity, isBiome);
+			if (isBlock) ISuggestionProvider.suggestResource(BlockTags.getAllTags().getAvailableTags(), builder);
+			if (isItem) ISuggestionProvider.suggestResource(ItemTags.getAllTags().getAvailableTags(), builder);
+			if (isEntity) ISuggestionProvider.suggestResource(EntityTypeTags.getAllTags().getAvailableTags(), builder);
 		}
-	}
-	
-	private void runSuggestions(String type, SuggestionsBuilder builder, boolean isTag, boolean isBlock, boolean isItem, boolean isEntity, boolean isBiome)
-	{
-		Suggestions sgs = builder.build();
 		
+		Suggestions sgs = builder.build();
 		List<String> suggestions = sgs.getList().stream().map(Suggestion::getText).collect(Collectors.toList());
 		suggestions.removeIf((s) -> s == null || s.isEmpty());
-		
-		for(String bl : suggestions){
-			List<ItemStack> items = parseCombinedList(Collections.singletonList(type + bl), isTag, isBlock, isItem, isEntity, isBiome);
-			
-			if(!items.isEmpty()) {
-				ResourceEntry entry = new ResourceEntry((isTag ? "tag:" : type) + bl, items);
-				this.suggestions.add(entry);
-			}
-		}
+		suggestions.forEach((s) -> this.suggestions.addAll(parseCombinedList(Collections.singletonList(s), isTag)));
 	}
 	
-	public static List<ItemStack> parseCombinedList(List<String> values, boolean isTag, boolean isBlock, boolean isItem, boolean isEntity, boolean isBiome){
-		List<IItemProvider> result = new ArrayList<>();
-		List<ItemStack> itemStacks = new ArrayList<>();
+	
+	public List<ResourceEntry> parseCombinedList(List<String> values, boolean isTag){
+		List<ResourceEntry> results = new ArrayList<>();
 		
 		for(String value : values) {
-			if(value.isEmpty() || StringUtils.countMatches(value, ":") == 0) continue;
+			if (value.isEmpty() || StringUtils.countMatches(value, ":") == 0) continue;
 			
-			String type = value.substring(0, value.indexOf(":"));
-			String resource = value.substring(value.indexOf(":")+1);
-			
-			while (StringUtils.countMatches(resource, ":") > 1) {
-				resource = resource.substring(0, resource.lastIndexOf(":"));
-			}
-			
-			ResourceLocation location = ResourceLocation.tryParse(resource);
-			if(location == null) continue;
+			ResourceLocation location = ResourceLocation.tryParse(value);
+			if (location == null) continue;
 			
 			if (isTag) {
-				if(isItem) {
+				if (isItem) {
 					try {
-						result.addAll(Objects.requireNonNull(ItemTags.getAllTags().getTag(location)).getValues());
+						results.add(new ResourceEntry("tag:" + value, Objects.requireNonNull(ItemTags.getAllTags().getTag(location)).getValues().stream().map(ItemStack::new).collect(Collectors.toList())));
 					} catch (Exception ignored) {}
 				}
 				
 				if (isBlock) {
 					try {
-						result.addAll(Objects.requireNonNull(BlockTags.getAllTags().getTag(location)).getValues());
+						results.add(new ResourceEntry("tag:" + value, Objects.requireNonNull(BlockTags.getAllTags().getTag(location)).getValues().stream().map(ItemStack::new).collect(Collectors.toList())));
 					} catch (Exception ignored) {}
 				}
 				
-				if(isEntity) {
+				if (isEntity) {
 					try {
-						Objects.requireNonNull(EntityTypeTags.getAllTags().getTag(location)).getValues().forEach(ForgeSpawnEggItem::fromEntityType);
+						results.add(new ResourceEntry("tag:" + value, Objects.requireNonNull(EntityTypeTags.getAllTags().getTag(location)).getValues().stream().map((s) -> new ItemStack(ForgeSpawnEggItem.fromEntityType(s))).collect(Collectors.toList())));
 					} catch (Exception ignored) {}
 				}
 				
-				if(isBiome) {
+				if (isBiome) {
 					try {
 						Set<RegistryKey<Biome>> biomes = BiomeDictionary.getBiomes(BiomeDictionaryHelper.getType(value));
-						result.addAll(biomes.stream().map((bi) -> {
+						results.addAll(biomes.stream().map((bi) -> {
 							try {
 								Biome biome = ForgeRegistries.BIOMES.getValue(bi.location());
-								return biome.getGenerationSettings().getSurfaceBuilderConfig().getTopMaterial().getBlock();
+								return new ResourceEntry("tag:" + value, Collections.singletonList(new ItemStack(biome.getGenerationSettings().getSurfaceBuilderConfig().getTopMaterial().getBlock())));
 							} catch (Exception ignored) {}
 							return null;
 						}).collect(Collectors.toList()));
@@ -368,66 +360,63 @@ public class ResourceTextField extends TextFieldWidget implements IBidiTooltip
 				}
 			}
 			
-			
-			if (type.equalsIgnoreCase("item")) {
+			if (isItem) {
 				try {
-					result.add(new ItemParser(new StringReader(resource), false).parse().getItem());
+					results.add(new ResourceEntry("item:" + value, Collections.singletonList(new ItemStack(new ItemParser(new StringReader(value), false).parse().getItem()))));
 				} catch (Exception ignored) {}
 			}
 			
-			if (type.equalsIgnoreCase("block")) {
-				
+			if (isBlock) {
 				try {
-					result.add(Objects.requireNonNull(new BlockStateParser(new StringReader(resource), false).parse(false).getState()).getBlock());
+					results.add(new ResourceEntry("block:" + value, Collections.singletonList(new ItemStack(Objects.requireNonNull(new BlockStateParser(new StringReader(value), false).parse(false).getState()).getBlock()))));
 				} catch (Exception ignored) {}
 			}
 			
-			if (type.equalsIgnoreCase("entity")) {
-				
+			if (isEntity) {
 				try {
 					EntityType<?> entityType = ForgeRegistries.ENTITIES.getValue(location);
-					if(entityType != null){
+					if (entityType != null) {
 						SpawnEggItem item = ForgeSpawnEggItem.fromEntityType(entityType);
 						
-						if(item != null){
-							result.add(item);
-						}else{
-							result.add(new ItemParser(new StringReader(resource), false).parse().getItem());
+						if (item != null) {
+							results.add(new ResourceEntry("entity:" + value, Collections.singletonList(new ItemStack(item))));
+						} else {
+							results.add(new ResourceEntry("entity:" + value, Collections.singletonList(new ItemStack(new ItemParser(new StringReader(value), false).parse().getItem()))));
 						}
 					}
 				} catch (Exception ignored) {}
 			}
 			
-			if (type.equalsIgnoreCase("effect")) {
+			if (isEffect) {
 				try {
 					Effect effect = ForgeRegistries.POTIONS.getValue(location);
 					EffectInstance instance = new EffectInstance(effect, 20);
 					ItemStack stack = new ItemStack(Items.POTION);
 					PotionUtils.setPotion(stack, Potions.WATER);
 					PotionUtils.setCustomEffects(stack, Collections.singletonList(instance));
-					itemStacks.add(stack);
+					results.add(new ResourceEntry("effect:"+value, Collections.singletonList(stack)));
 				} catch (Exception ignored) {}
 			}
 			
-			if (type.equalsIgnoreCase("biome")) {
+			if (isBiome) {
 				try {
 					Biome biome = ForgeRegistries.BIOMES.getValue(location);
-					result.add(biome.getGenerationSettings().getSurfaceBuilderConfig().getTopMaterial().getBlock());
+					results.add(new ResourceEntry("biome:"+value, Collections.singletonList(new ItemStack(biome.getGenerationSettings().getSurfaceBuilderConfig().getTopMaterial().getBlock()))));
 				} catch (Exception ignored) {}
 			}
 		}
-		
-		result.removeIf(Objects::isNull);
-		itemStacks.removeIf(Objects::isNull);
-		
-		result = result.stream().distinct().collect(Collectors.toList());
-		itemStacks.addAll(result.stream().map(ItemStack::new).collect(Collectors.toList()));
-		
-		if(isItem && !isBlock){
-			itemStacks.removeIf((it) -> it.getItem() instanceof BlockItem);
-		}
-		
-		return itemStacks;
+		results.forEach((s) -> {
+			if(s.displayItems != null && !s.displayItems.isEmpty()) {
+				s.displayItems = s.displayItems.stream().filter((c) -> {
+					boolean blItem = c.getItem() instanceof BlockItem;
+					boolean nameBlItem = c.getItem() instanceof BlockNamedItem;
+					
+					return !isItem ? !nameBlItem : isBlock || (nameBlItem || !blItem);
+				}).collect(Collectors.toList());
+				s.displayItems = s.displayItems.stream().filter((c) -> !c.isEmpty()).collect(Collectors.toList());
+			}
+		});
+		return results;
 	}
 	
 	@Override
@@ -502,59 +491,4 @@ public class ResourceTextField extends TextFieldWidget implements IBidiTooltip
 		return super.mouseScrolled(pMouseX, pMouseY, pDelta);
 	}
 	
-	public class ResourceEntry{
-		public Entity ent;
-		public String id;
-		public String mod;
-		
-		public List<ItemStack> displayItems;
-		private ItemStack cachedDisplay = ItemStack.EMPTY;
-		
-		private int index;
-		private int tick;
-		
-		public ResourceEntry(String id, List<ItemStack> displayItems)
-		{
-			this.id = id;
-			this.displayItems = displayItems;
-			
-			String[] split = id.split(":");
-			mod = split[0];
-		}
-		
-		public boolean isEmpty(){
-			return displayItems == null || displayItems.isEmpty();
-		}
-		
-		public void tick(){
-			tick++;
-			
-			if(cachedDisplay == null || cachedDisplay.isEmpty()){
-				if(displayItems != null && !displayItems.isEmpty()){
-					cachedDisplay = displayItems.get(0);
-				}
-			}
-			
-			if(displayItems != null && displayItems.size() > 1){
-				if(tick % 120 == 0){
-					index++;
-					
-					if(index >= displayItems.size()){
-						index = 0;
-					}
-					
-					cachedDisplay = displayItems.get(index);
-				}
-			}else{
-				if(index > 0){
-					cachedDisplay = displayItems.get(0);
-					index = 0;
-				}
-			}
-		}
-		
-		public ItemStack getDisplayItem(){
-			return cachedDisplay;
-		}
-	}
 }

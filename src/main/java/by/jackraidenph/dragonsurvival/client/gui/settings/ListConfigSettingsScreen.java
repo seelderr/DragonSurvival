@@ -1,7 +1,7 @@
 package by.jackraidenph.dragonsurvival.client.gui.settings;
 
-import by.jackraidenph.dragonsurvival.client.gui.widgets.ResourceTextField;
-import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.TextField;
+import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.fields.ResourceTextField;
+import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.fields.TextField;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.settings.ResourceTextFieldOption;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.settings.DSTextBoxOption;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.lists.OptionListEntry;

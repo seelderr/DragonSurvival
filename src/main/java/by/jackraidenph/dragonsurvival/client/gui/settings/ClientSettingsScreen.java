@@ -1,7 +1,7 @@
 package by.jackraidenph.dragonsurvival.client.gui.settings;
 
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.DropDownButton;
-import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.TextField;
+import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.fields.TextField;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.settings.DSBooleanOption;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.settings.DSDropDownOption;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.settings.DSIteratableOption;

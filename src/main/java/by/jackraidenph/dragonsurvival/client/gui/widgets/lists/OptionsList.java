@@ -1,6 +1,6 @@
 package by.jackraidenph.dragonsurvival.client.gui.widgets.lists;
 
-import by.jackraidenph.dragonsurvival.client.gui.widgets.ResourceTextField;
+import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.fields.ResourceTextField;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.DropDownButton;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.datafixers.util.Pair;
