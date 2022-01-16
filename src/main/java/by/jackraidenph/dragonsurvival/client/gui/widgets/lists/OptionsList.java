@@ -1,6 +1,6 @@
 package by.jackraidenph.dragonsurvival.client.gui.widgets.lists;
 
-import by.jackraidenph.dragonsurvival.client.gui.widgets.ItemStackField;
+import by.jackraidenph.dragonsurvival.client.gui.widgets.ResourceTextField;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.DropDownButton;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.datafixers.util.Pair;
@@ -112,8 +112,8 @@ public class OptionsList extends AbstractOptionList<OptionListEntry>
 				}else if(child instanceof TextBoxEntry){
 					TextBoxEntry entry = (TextBoxEntry)child;
 					
-					if(entry.widget instanceof ItemStackField) {
-						((ItemStackField)entry.widget).renderPost(p_238478_1_, p_238478_4_, p_238478_5_, p_238478_6_);
+					if(entry.widget instanceof ResourceTextField) {
+						((ResourceTextField)entry.widget).renderPost(p_238478_1_, p_238478_4_, p_238478_5_, p_238478_6_);
 					}
 				}
 			}

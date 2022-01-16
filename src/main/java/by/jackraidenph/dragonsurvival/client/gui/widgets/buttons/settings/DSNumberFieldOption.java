@@ -30,7 +30,7 @@ public class DSNumberFieldOption extends AbstractOption
 	@Override
 	public Widget createButton(GameSettings gameSettings, int i, int i1, int i2)
 	{
-		TextField widget = new TextField(this, i, i1, i2, 18, this.getCaption()){
+		TextField widget = new TextField(null, this, i, i1, i2, 18, this.getCaption()){
 			@Override
 			public boolean charTyped(char pCodePoint, int pModifiers)
 			{

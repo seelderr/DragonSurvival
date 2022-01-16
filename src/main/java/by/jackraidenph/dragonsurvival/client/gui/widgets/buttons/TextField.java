@@ -9,6 +9,7 @@ import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraftforge.common.ForgeConfigSpec.ValueSpec;
 import net.minecraftforge.fml.client.gui.GuiUtils;
 
 import java.util.List;
@@ -18,17 +19,19 @@ public class TextField extends TextFieldWidget implements IBidiTooltip
 {
 	private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/textbox.png");
 	private AbstractOption option;
+	private ValueSpec spec;
 	
 	public TextField(int pX, int pY, int pWidth, int pHeight, ITextComponent pMessage)
 	{
-		this(null, pX, pY, pWidth, pHeight, pMessage);
+		this(null, null, pX, pY, pWidth, pHeight, pMessage);
 	}
 	
-	public TextField(AbstractOption option, int pX, int pY, int pWidth, int pHeight, ITextComponent pMessage)
+	public TextField(ValueSpec spec, AbstractOption option, int pX, int pY, int pWidth, int pHeight, ITextComponent pMessage)
 	{
 		super(Minecraft.getInstance().font, pX, pY, pWidth, pHeight, pMessage);
 		setBordered(false);
 		this.option = option;
+		this.spec = spec;
 	}
 	
 	@Override
@@ -42,11 +45,17 @@ public class TextField extends TextFieldWidget implements IBidiTooltip
 		super.renderButton(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 		
 		if(getValue().isEmpty()){
+			boolean isFocus = isFocused();
+			setFocus(false);
+			int curser = getCursorPosition();
+			setCursorPosition(0);
 			setTextColor(7368816);
 			setValue(this.getMessage().getString());
 			super.renderButton(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 			setValue("");
 			setTextColor(14737632);
+			setCursorPosition(curser);
+			setFocus(isFocus);
 		}
 		
 		this.x -= 5;

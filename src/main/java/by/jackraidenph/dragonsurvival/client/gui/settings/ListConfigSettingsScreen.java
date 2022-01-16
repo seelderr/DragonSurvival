@@ -1,8 +1,8 @@
 package by.jackraidenph.dragonsurvival.client.gui.settings;
 
-import by.jackraidenph.dragonsurvival.client.gui.widgets.ItemStackField;
+import by.jackraidenph.dragonsurvival.client.gui.widgets.ResourceTextField;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.TextField;
-import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.settings.DSItemStackFieldOption;
+import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.settings.ResourceTextFieldOption;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.settings.DSTextBoxOption;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.lists.OptionListEntry;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.lists.OptionsList;
@@ -27,7 +27,6 @@ import net.minecraftforge.common.ForgeConfigSpec.ValueSpec;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class ListConfigSettingsScreen extends SettingsScreen
 {
@@ -38,8 +37,10 @@ public class ListConfigSettingsScreen extends SettingsScreen
 	
 	private OptionsList list;
 	
-	public ItemStackField selectedField;
+	public ResourceTextField selectedField;
 	private List<OptionListEntry> oldVals;
+	
+	private boolean isItems = false;
 	
 	public ListConfigSettingsScreen(Screen p_i225930_1_, GameSettings p_i225930_2_, ITextComponent p_i225930_3_, ValueSpec valueSpec, ConfigValue value, ForgeConfigSpec spec, String configKey)
 	{
@@ -52,8 +53,10 @@ public class ListConfigSettingsScreen extends SettingsScreen
 	
 	
 	protected void init() {
+		double scroll = 0;
 		if(list != null){
 			oldVals = list.children();
+			scroll = list.getScrollAmount();
 		}
 		
 		selectedField = null;
@@ -65,6 +68,12 @@ public class ListConfigSettingsScreen extends SettingsScreen
 				return super.getMaxPosition() + 120;
 			}
 		};
+		
+		if(!isItems){
+			if(ConfigHandler.isResourcePredicate((obj) -> valueSpec.test(obj))){
+				isItems = true;
+			}
+		}
 		
 		if(oldVals == null || oldVals.isEmpty()) {
 			List<String> list = (List<String>)value.get();
@@ -86,6 +95,7 @@ public class ListConfigSettingsScreen extends SettingsScreen
 		this.children.add(this.list);
 		this.addButton(new Button(this.width / 2 + 20, this.height - 27, 100, 20, new StringTextComponent("Add new"), (p_213106_1_) -> {
 			createOption("");
+			list.setScrollAmount(list.getMaxScroll());
 		}));
 		
 		this.addButton(new Button(this.width / 2 - 120, this.height - 27, 100, 20, DialogTexts.GUI_DONE, (p_213106_1_) -> {
@@ -111,17 +121,18 @@ public class ListConfigSettingsScreen extends SettingsScreen
 			
 			this.minecraft.setScreen(this.lastScreen);
 		}));
+		
+		this.list.setScrollAmount(scroll);
 	}
 	
 	private void createOption(String t)
 	{
-		String text = valueSpec.getComment();
 		AbstractOption option;
 		
-		if(text != null && !text.isEmpty() && (text.toLowerCase(Locale.ROOT).replace(" ", "").contains(":item/tag") || text.toLowerCase(Locale.ROOT).replace(" ", "").contains(":block/tag"))){
-			option = new DSItemStackFieldOption(t, (settings) -> t);
+		if(isItems){
+			option = new ResourceTextFieldOption(valueSpec, t, (settings) -> t);
 		}else{
-			option = new DSTextBoxOption(t, (settings) -> t);
+			option = new DSTextBoxOption(valueSpec, t, (settings) -> t);
 		}
 		Widget widget1 = option.createButton(this.minecraft.options, 32, 0, this.list.getScrollbarPosition() - 32 - 60);
 		

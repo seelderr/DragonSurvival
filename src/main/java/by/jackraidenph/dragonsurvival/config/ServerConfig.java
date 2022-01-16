@@ -308,20 +308,20 @@ public class ServerConfig {
 						"item:dragonsurvival:heart_element",
 						"item:dragonsurvival:weak_dragon_heart",
 						"item:dragonsurvival:elder_dragon_heart"
-				), this::isValidItemConfig);
+				), ConfigHandler.itemsAndTagsPredicate);
 		growYoung = builder
 				.translation("ds.config.server.growth.growYoung")
 				.comment("List of items to grow young dragon. Format: item/tag:modid:id")
 				.defineList("growYoung", Arrays.asList(
 						"item:dragonsurvival:weak_dragon_heart",
 						"item:dragonsurvival:elder_dragon_heart"
-				), this::isValidItemConfig);
+				), ConfigHandler.itemsAndTagsPredicate);
 		growAdult = builder
 				.translation("ds.config.server.growth.growAdult")
 				.comment("List of items to grow adult dragon. Format: item/tag:modid:id")
 				.defineList("growAdult", Collections.singletonList(
 						"item:dragonsurvival:elder_dragon_heart"
-				), this::isValidItemConfig);
+				), ConfigHandler.itemsAndTagsPredicate);
 		alternateGrowing = builder
 				.translation("ds.config.server.growth.alternateGrowing")
 				.comment("Defines if dragon should grow without requirement of catalyst items. Your dragon will just grow over time.")
@@ -614,7 +614,7 @@ public class ServerConfig {
 						"block:quark:deepslate",
 						"block:quark:deepslate_bricks",
 						"block:quark:cobbled_deepslate"
-				), this::isValidBlockConfig);
+				), ConfigHandler.blocksAndTagsPredicate);
 
 		// Forest Dragon Bonuses
 		builder.pop().push("forest");
@@ -642,7 +642,7 @@ public class ServerConfig {
 						"tag:minecraft:leaves",
 						"tag:minecraft:planks",
 						"tag:forge:dirt"
-				), this::isValidBlockConfig);
+				), ConfigHandler.blocksAndTagsPredicate);
 
 		// Sea Dragon Bonuses
 		builder.pop().push("sea");
@@ -671,7 +671,7 @@ public class ServerConfig {
 						"block:minecraft:chiseled_red_sandstone",
 						"block:minecraft:smooth_red_sandstone",
 						"block:minecraft:water"
-				), this::isValidBlockConfig);
+				), ConfigHandler.blocksAndTagsPredicate);
 
 		//Dragon Penalties
 		builder.pop().pop().push("penalties");
@@ -685,7 +685,7 @@ public class ServerConfig {
 				.comment("List of rideable entities. Format: modid:id")
 				.defineList("allowedVehicles", Lists.newArrayList(
 						"minecraft:boat"
-				), value -> value instanceof String);
+				), ConfigHandler.entitiesAndTagsPredicate);
 		
 		ridingBlacklist= builder
 				.translation("ds.config.server.penalties.ridingBlacklist")
@@ -810,7 +810,7 @@ public class ServerConfig {
 						"item:spartanweaponry:boomerang_lead",
 						"item:spartanweaponry:boomerang_invar",
 						"item:spartanweaponry:boomerang_nickel"
-				), this::isValidItemConfig);
+				), ConfigHandler.itemsAndTagsPredicate);
 		
 		blacklistedSlots = builder
 				.translation("ds.config.server.penalties.blacklistedSlots")
@@ -879,7 +879,7 @@ public class ServerConfig {
 						"block:minecraft:snow",
 						"block:minecraft:snow_block",
 						"block:dragonsurvival:sea_source_of_magic"
-				), this::isValidBlockConfig);
+				), ConfigHandler.blocksAndTagsPredicate);
 		
 		seaAllowWaterBottles = builder
 				.translation("ds.config.server.penalties.sea.seaAllowWaterBottles")
@@ -897,7 +897,7 @@ public class ServerConfig {
 				.worldRestart()
 				.defineList("seaHydrationItems", Collections.singletonList(
 						"item:minecraft:enchanted_golden_apple"
-				), this::isValidItemConfig);
+				), ConfigHandler.itemsAndTagsPredicate);
 		// Ore Loot
 		builder.pop().pop().push("ore");
 		humanOreDustChance = builder
@@ -938,17 +938,17 @@ public class ServerConfig {
 						"item:minecraft:potion:2",
 						"item:minecraft:water_bottle:2",
 						"item:minecraft:milk_bucket:2"
-				), this::isValidHurtfulItem);
+				), ConfigHandler.itemsAndTagsPredicate.and(this::isValidHurtfulItem));
 		
 		seaDragonHurtfulItems = builder
 				.translation("ds.config.server.food.seaDragonHurtfulItems")
 				.comment("Items which will cause damage to sea dragons when consumed. Formatting: item/tag:modid:itemid:damage")
-				.defineList("hurtfulToSeaDragon", Arrays.asList(), this::isValidHurtfulItem);
+				.defineList("hurtfulToSeaDragon", Arrays.asList(), ConfigHandler.itemsAndTagsPredicate.and(this::isValidHurtfulItem));
 		
 		forestDragonHurtfulItems = builder
 				.translation("ds.config.server.food.forestDragonHurtfulItems")
 				.comment("Items which will cause damage to forest dragons when consumed. Formatting: item/tag:modid:itemid:damage")
-				.defineList("hurtfulToForestDragon", Arrays.asList(),  this::isValidHurtfulItem);
+				.defineList("hurtfulToForestDragon", Arrays.asList(),  ConfigHandler.itemsAndTagsPredicate.and(this::isValidHurtfulItem));
 		
 		chargedSoupBuffDuration = builder
 				.translation("ds.config.server.food.chargedSoupBuffDuration")
@@ -1001,7 +1001,7 @@ public class ServerConfig {
 						"item:thermal:basalz_rod:2:4",
 						"item:thermal:basalz_powder:1:2",
 						"item:druidcraft:fiery_glass:2:2"
-				), this::isValidFoodConfig);
+				), ConfigHandler.itemsAndTagsPredicate.and(this::isValidFoodConfig));
 
 		forestDragonFoods = builder
 				.worldRestart()
@@ -1150,7 +1150,7 @@ public class ServerConfig {
 						"item:leescreatures:raw_boarlin:6:6",
 						"item:mysticalworld:venison:5:5",
 						"item:toadterror:toad_chops:8:7"
-				), this::isValidFoodConfig);
+				), ConfigHandler.itemsAndTagsPredicate.and(this::isValidFoodConfig));
 
 		seaDragonFoods = builder
 				.worldRestart()
@@ -1301,7 +1301,7 @@ public class ServerConfig {
 						"item:aquafina:raw_starfish:4:1",
 						"item:aquafina:spider_crab_leg:4:1",
 						"item:aquafina:raw_stingray_slice:4:1"
-				), this::isValidFoodConfig);
+				), ConfigHandler.itemsAndTagsPredicate.and(this::isValidFoodConfig));
 		//Magic
 		builder.pop().push("magic");
 		builder.comment("Config values for the magic system");
@@ -1320,7 +1320,7 @@ public class ServerConfig {
 						"block:minecraft:water",
 						"block:minecraft:wet_sponge",
 						"block:minecraft:cauldron"
-				), this::isValidBlockConfig);
+				), ConfigHandler.blocksAndTagsPredicate);
 		
 		forestDragonManaBlocks = builder
 				.translation("ds.config.server.magic.mana.forestDragonManaBlocks")
@@ -1331,7 +1331,7 @@ public class ServerConfig {
 						"tag:minecraft:small_flowers",
 						"tag:minecraft:flowers",
 						"tag:minecraft:tall_flowers"
-				), this::isValidBlockConfig);
+				), ConfigHandler.blocksAndTagsPredicate);
 		
 		caveDragonManaBlocks = builder
 				.translation("ds.config.server.magic.mana.caveDragonManaBlocks")
@@ -1345,7 +1345,7 @@ public class ServerConfig {
 						"block:minecraft:furnace",
 						"block:minecraft:magma_block",
 						"block:minecraft:blast_furnace"
-				), this::isValidBlockConfig);
+				), ConfigHandler.blocksAndTagsPredicate);
 		
 		builder.pop();
 		
@@ -1443,12 +1443,12 @@ public class ServerConfig {
 					.worldRestart()
 					.defineList("forestBreathBlockBreaks", Arrays.asList(
 							"tag:minecraft:banners"
-					), this::isValidBlockConfig);
+					), ConfigHandler.blocksAndTagsPredicate);
 			
 			forestBreathGrowBlacklist = builder
 					.comment("Blocks that will not be grown by the forest breath. Formatting: block/tag:modid:id")
 					.worldRestart()
-					.defineList("forestBreathGrowBlacklist", Arrays.asList(), this::isValidBlockConfig);
+					.defineList("forestBreathGrowBlacklist", Arrays.asList(), ConfigHandler.blocksAndTagsPredicate);
 		}
 		{
 			builder.pop().push("spike");
@@ -1582,14 +1582,14 @@ public class ServerConfig {
 							"tag:minecraft:azalea_log_replaceable",
 							"tag:minecraft:replaceable_plants",
 							"tag:minecraft:leaves"
-							), this::isValidBlockConfig);
+							), ConfigHandler.blocksAndTagsPredicate);
 			
 			chargedBlacklist = builder
 					.comment("List of entities that do not work with the charged effect. Format: modid:id")
 					.defineList("chargedBlacklist", Arrays.asList(
 							"upgrade_aquatic:thrasher",
 							"upgrade_aquatic:great_thrasher"
-					), value -> value instanceof String);
+					), ConfigHandler.entitiesAndTagsPredicate);
 			
 			stormBreathChainCount = builder
 					.comment("How many mobs stormbreath is able to chain to at once")
@@ -1615,8 +1615,7 @@ public class ServerConfig {
 					.comment("List of entities that will not spread the charged effect. Format: modid:id")
 					.defineList("chargedBlacklist", Arrays.asList(
 							"minecraft:armor_stand"
-					), value -> value instanceof String);
-			
+					), ConfigHandler.entitiesAndTagsPredicate);
 		}
 		
 		{
@@ -1772,7 +1771,7 @@ public class ServerConfig {
 							"block:minecraft:large_fern",
 							"block:minecraft:sugar_cane",
 							"block:minecraft:snow_block"
-					), this::isValidBlockConfig);
+					), ConfigHandler.blocksAndTagsPredicate);
 		}
 		
 		{
@@ -1870,41 +1869,30 @@ public class ServerConfig {
 
 	private boolean isValidHurtfulItem(Object food){
 		final String[] foodSplit = String.valueOf(food).split(":");
-		if (foodSplit.length != 4 || !(foodSplit[0].equalsIgnoreCase("item") || foodSplit[0].equalsIgnoreCase("tag")))
-			return false;
-		try {
-			final float damage = Float.parseFloat(foodSplit[3]);
-		} catch (NumberFormatException ex) {
-			return false;
+
+		if(foodSplit.length == 4) {
+			try {
+				final float damage = Float.parseFloat(foodSplit[3]);
+			} catch (NumberFormatException ignored) {
+				return false;
+			}
 		}
+		
 		return true;
 	}
 
 	private boolean isValidFoodConfig(Object food) {
 		final String[] foodSplit = String.valueOf(food).split(":");
-		if (foodSplit.length < 3 || foodSplit.length > 5 || foodSplit.length == 4 ||!(foodSplit[0].equalsIgnoreCase("item") || foodSplit[0].equalsIgnoreCase("tag")))
-			return false;
 		try {
 			if (foodSplit.length == 5) {
 				final int value = Integer.parseInt(foodSplit[3]);
 				final int saturation = Integer.parseInt(foodSplit[4]);
-				if (value > 20 || value < 1 || saturation < 1 || saturation > 20)
-					return false;
+				return value <= 20 && value >= 1 && saturation >= 1 && saturation <= 20;
 			}
-		} catch (NumberFormatException ex) {
+		} catch (NumberFormatException ignored) {
 			return false;
 		}
+		
 		return true;
 	}
-
-	private boolean isValidBlockConfig(Object block) {
-		final String[] blockSplit = String.valueOf(block).split(":");
-		return blockSplit.length == 3 && (blockSplit[0].equalsIgnoreCase("block") || blockSplit[0].equalsIgnoreCase("tag"));
-	}
-
-	private boolean isValidItemConfig(Object item) {
-		final String[] itemSplit = String.valueOf(item).split(":");
-		return itemSplit.length == 3 && (itemSplit[0].equalsIgnoreCase("item") || itemSplit[0].equalsIgnoreCase("tag"));
-	}
-
 }

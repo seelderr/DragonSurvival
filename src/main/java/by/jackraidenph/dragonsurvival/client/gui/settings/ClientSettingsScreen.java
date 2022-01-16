@@ -49,6 +49,7 @@ public class ClientSettingsScreen extends SettingsScreen
 	private final TreeMap<String, ArrayList<AbstractOption>> optionMap = new TreeMap<>();
 	private final ArrayList<String> options = new ArrayList<>();
 	public OptionsList list;
+	private double scroll;
 	
 	public DropDownButton hoveredButton;
 	
@@ -56,6 +57,7 @@ public class ClientSettingsScreen extends SettingsScreen
 	
 	protected void init() {
 		if(list != null){
+			scroll = list.getScrollAmount();
 			OptionsList.savedScroll = list.getScrollAmount();
 		}
 		
@@ -128,6 +130,8 @@ public class ClientSettingsScreen extends SettingsScreen
 				return super.charTyped(pCodePoint, pModifiers);
 			}
 		});
+		
+		this.list.setScrollAmount(scroll);
 	}
 	
 	private void addConfigs()
