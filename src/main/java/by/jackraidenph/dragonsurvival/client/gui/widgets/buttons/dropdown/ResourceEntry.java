@@ -1,4 +1,4 @@
-package by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.fields;
+package by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.dropdown;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;

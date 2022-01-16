@@ -1,6 +1,5 @@
 package by.jackraidenph.dragonsurvival.client.gui.settings;
 
-import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.DropDownButton;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.fields.TextField;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.settings.DSBooleanOption;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.settings.DSDropDownOption;
@@ -25,7 +24,6 @@ import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.client.gui.IBidiTooltip;
-import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.SettingsScreen;
 import net.minecraft.client.gui.widget.Widget;
@@ -51,14 +49,11 @@ public class ClientSettingsScreen extends SettingsScreen
 	public OptionsList list;
 	private double scroll;
 	
-	public DropDownButton hoveredButton;
-	
 	private AbstractConfig config;
 	
 	protected void init() {
 		if(list != null){
 			scroll = list.getScrollAmount();
-			OptionsList.savedScroll = list.getScrollAmount();
 		}
 		
 		OPTIONS.clear();
@@ -393,40 +388,8 @@ public class ClientSettingsScreen extends SettingsScreen
 	{
 		super(p_i225930_1_, p_i225930_2_, p_i225930_3_);
 		OptionsList.activeCats.clear();
-		OptionsList.savedScroll = 0;
 	}
 	
-	@Override
-	public boolean mouseScrolled(double pMouseX, double pMouseY, double pDelta)
-	{
-		if(hoveredButton != null){
-			return hoveredButton.mouseScrolled(pMouseX, pMouseY, pDelta);
-		}
-		return super.mouseScrolled(pMouseX, pMouseY, pDelta);
-	}
-	
-	@Override
-	public boolean mouseClicked(double pMouseX, double pMouseY, int pButton)
-	{
-		if(hoveredButton != null){
-			return hoveredButton.mouseClicked(pMouseX, pMouseY, pButton);
-		}
-		
-		for(IGuiEventListener iguieventlistener : this.children()) {
-			if(hoveredButton == null || iguieventlistener == hoveredButton) {
-				if (iguieventlistener.mouseClicked(pMouseX, pMouseY, pButton)) {
-					this.setFocused(iguieventlistener);
-					if (pButton == 0) {
-						this.setDragging(true);
-					}
-					
-					return true;
-				}
-			}
-		}
-		
-		return false;
-	}
 	
 	public void render(MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_) {
 		this.renderBackground(p_230430_1_);
@@ -446,10 +409,6 @@ public class ClientSettingsScreen extends SettingsScreen
 		OptionListEntry optional2 = p_243293_0_.getEntryAtPos(p_243293_1_, p_243293_2_);
 		
 		ClientSettingsScreen settingsScreen = (ClientSettingsScreen)Minecraft.getInstance().screen;
-		
-		if(settingsScreen.hoveredButton != null){
-			return null;
-		}
 		
 		if(!optional.isPresent() || !(optional.get() instanceof IBidiTooltip)){
 			if(optional2 instanceof OptionEntry){

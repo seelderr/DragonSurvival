@@ -1,9 +1,7 @@
 package by.jackraidenph.dragonsurvival.client.gui.settings;
 
-import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.fields.ResourceTextField;
-import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.fields.TextField;
-import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.settings.ResourceTextFieldOption;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.settings.DSTextBoxOption;
+import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.settings.ResourceTextFieldOption;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.lists.OptionListEntry;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.lists.OptionsList;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.lists.TextBoxEntry;
@@ -37,7 +35,6 @@ public class ListConfigSettingsScreen extends SettingsScreen
 	
 	private OptionsList list;
 	
-	public ResourceTextField selectedField;
 	private List<OptionListEntry> oldVals;
 	
 	private boolean isItems = false;
@@ -59,9 +56,7 @@ public class ListConfigSettingsScreen extends SettingsScreen
 			scroll = list.getScrollAmount();
 		}
 		
-		selectedField = null;
 		this.list = new OptionsList(this.width, this.height, 32, this.height - 32){
-			
 			@Override
 			protected int getMaxPosition()
 			{
@@ -137,37 +132,6 @@ public class ListConfigSettingsScreen extends SettingsScreen
 		Widget widget1 = option.createButton(this.minecraft.options, 32, 0, this.list.getScrollbarPosition() - 32 - 60);
 		
 		this.list.addEntry(new TextBoxEntry(this.list, widget1, null));
-	}
-	
-	@Override
-	public boolean mouseScrolled(double pMouseX, double pMouseY, double pDelta)
-	{
-		if(selectedField != null && selectedField.isMouseOver(pMouseX, pMouseY)){
-			return selectedField.mouseScrolled(pMouseX, pMouseY, pDelta);
-		}
-		return super.mouseScrolled(pMouseX, pMouseY, pDelta);
-	}
-	
-	@Override
-	public boolean mouseClicked(double p_231044_1_, double p_231044_3_, int p_231044_5_)
-	{
-		if(selectedField != null && selectedField.isMouseOver(p_231044_1_, p_231044_3_)){
-			return selectedField.mouseClicked(p_231044_1_, p_231044_3_, p_231044_5_);
-		}
-		
-		if(selectedField != null) {
-			selectedField.setFocus(false);
-			selectedField = null;
-		}
-		
-		list.children().forEach((ent) -> {
-			ent.children().forEach(child -> {
-				if(child instanceof TextField) {
-					child.mouseClicked(p_231044_1_, p_231044_3_, p_231044_5_);
-				}
-			});
-		});
-		return super.mouseClicked(p_231044_1_, p_231044_3_, p_231044_5_);
 	}
 	
 	public void render(MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_) {

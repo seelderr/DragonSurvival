@@ -1,7 +1,5 @@
 package by.jackraidenph.dragonsurvival.client.gui.widgets.lists;
 
-import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.fields.ResourceTextField;
-import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.DropDownButton;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.AbstractOption;
@@ -29,7 +27,6 @@ public class OptionsList extends AbstractOptionList<OptionListEntry>
 	public static ConcurrentHashMap<AbstractOption, Pair<ValueSpec, ConfigValue>> config = new ConcurrentHashMap<>();
 	public static ConcurrentHashMap<AbstractOption, String> configMap = new ConcurrentHashMap<>();
 	public static CopyOnWriteArrayList<Integer> activeCats = new CopyOnWriteArrayList<>();
-	public static double savedScroll;
 	public int listWidth;
 	
 	public OptionsList(int listWidth, int height, int top, int bottom)
@@ -37,8 +34,6 @@ public class OptionsList extends AbstractOptionList<OptionListEntry>
 		super(Minecraft.getInstance(), listWidth, height, top, bottom, Minecraft.getInstance().font.lineHeight * 2 + 8);
 		this.listWidth = listWidth;
 		this.setRenderBackground(false);
-		setScrollAmount(savedScroll);
-		this.listWidth = listWidth;
 	}
 	
 	
@@ -98,24 +93,6 @@ public class OptionsList extends AbstractOptionList<OptionListEntry>
 				int j2 = this.getRowLeft();
 				boolean mouseOver = this.isMouseOver((double)p_238478_4_, (double)p_238478_5_) && Objects.equals(this.getEntryAtPos((double)p_238478_4_, (double)p_238478_5_), e);
 				e.render(p_238478_1_, j, k, j2, k1, j1, p_238478_4_, p_238478_5_, mouseOver, p_238478_6_);
-			}
-		}
-		
-		for (OptionListEntry child : children()) {
-			if(child.visible){
-				if(child instanceof OptionEntry){
-					OptionEntry entry = (OptionEntry)child;
-					
-					if(entry.widget instanceof DropDownButton) {
-						((DropDownButton)entry.widget).renderPost(p_238478_1_, p_238478_4_, p_238478_5_, p_238478_6_);
-					}
-				}else if(child instanceof TextBoxEntry){
-					TextBoxEntry entry = (TextBoxEntry)child;
-					
-					if(entry.widget instanceof ResourceTextField) {
-						((ResourceTextField)entry.widget).renderPost(p_238478_1_, p_238478_4_, p_238478_5_, p_238478_6_);
-					}
-				}
 			}
 		}
 	}

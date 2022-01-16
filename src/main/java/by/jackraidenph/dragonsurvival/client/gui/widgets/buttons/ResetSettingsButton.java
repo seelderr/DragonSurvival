@@ -71,11 +71,7 @@ public class ResetSettingsButton extends Button
 								NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(configKey, (Long)ob, screen.getConfigName()));
 							}
 						}else if(ob instanceof Enum){
-							
-							System.out.println(((DSDropDownOption)option).btn);
-							System.out.println(((DSDropDownOption)option).getMessage(Minecraft.getInstance().options));
-							
-							((DSDropDownOption)option).btn.value = (Enum)ob;
+							((DSDropDownOption)option).btn.current = ((Enum<?>)ob).name();
 							((DSDropDownOption)option).btn.updateMessage();
 							
 							if(!Objects.equals(screen.getConfigName(), "client")) {
