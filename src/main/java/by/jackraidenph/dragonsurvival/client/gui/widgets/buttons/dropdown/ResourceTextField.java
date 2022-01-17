@@ -167,8 +167,8 @@ public class ResourceTextField extends TextFieldWidget implements IBidiTooltip
 			};
 			screen.buttons.add(renderButton);
 		}else{
-			screen.children.remove(list);
-			screen.buttons.remove(renderButton);
+			screen.children.removeIf((s) -> s == list);
+			screen.buttons.removeIf((s) -> s == renderButton);
 			list = null;
 		}
 	}

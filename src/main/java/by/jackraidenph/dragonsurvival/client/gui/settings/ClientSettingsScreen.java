@@ -408,8 +408,6 @@ public class ClientSettingsScreen extends SettingsScreen
 		Optional<Widget> optional = p_243293_0_.getMouseOver(p_243293_1_, p_243293_2_);
 		OptionListEntry optional2 = p_243293_0_.getEntryAtPos(p_243293_1_, p_243293_2_);
 		
-		ClientSettingsScreen settingsScreen = (ClientSettingsScreen)Minecraft.getInstance().screen;
-		
 		if(!optional.isPresent() || !(optional.get() instanceof IBidiTooltip)){
 			if(optional2 instanceof OptionEntry){
 				optional = Optional.of(((OptionEntry)optional2).widget);

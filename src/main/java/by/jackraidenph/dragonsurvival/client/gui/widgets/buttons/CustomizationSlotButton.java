@@ -34,10 +34,7 @@ public class CustomizationSlotButton extends Button
 		if(screen.currentSelected == (num - 1)){
 			AbstractGui.fill(stack, x, y, x + this.width, y + this.height, new Color(1, 1, 1, isHovered ? 0.95F : 0.75F).getRGB());
 			AbstractGui.fill(stack, x+1, y+1, x + this.width-1, y + this.height-1, new Color(0.05F, 0.05F, 0.05F, isHovered ? 0.95F : 0.75F).getRGB());
-		}else {
-			AbstractGui.fill(stack, x, y, x + this.width, y + this.width, new Color(0.05F, 0.05F, 0.05F, isHovered ? 1F : 0.5F).getRGB());
 		}
-		
 		TextRenderUtil.drawScaledText(stack, x + 2.5f, y + 1f, 1.5F, Integer.toString(num), DyeColor.WHITE.getTextColor());
 	}
 }

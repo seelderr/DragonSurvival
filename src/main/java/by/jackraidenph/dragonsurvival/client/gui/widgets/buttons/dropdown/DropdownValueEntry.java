@@ -43,7 +43,7 @@ public class DropdownValueEntry extends DropdownEntry
 	{
 		if(button == null) {
 			if(list != null) {
-				button = new ExtendedButton(list.getLeft() + 3, 0, list.getWidth() - 3 - 7, pHeight+1, null, null)
+				button = new ExtendedButton(list.getLeft() + 3, 0, list.getWidth() - 12, pHeight+1, null, null)
 				{
 					@Override
 					public ITextComponent getMessage()

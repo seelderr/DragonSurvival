@@ -27,6 +27,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -53,6 +54,7 @@ public class AltarTypeButton extends Button
 		
 		Minecraft.getInstance().getTextureManager().bind(BACKGROUND_TEXTURE);
 		
+		fill(mStack, x-1, y-1, x + width+1, y + height+1, new Color(0.5f, 0.5f, 0.5f).getRGB());
 		blit(mStack, x, y, (type.ordinal() * 49), isHovered ? 0 : 147, 49, 147, 512, 512);
 		
 		if (isHovered && atTheTopOrBottom) {

@@ -148,7 +148,8 @@
   "ds.gui.settings.common": "■ Common Settings ■",
   "ds.gui.settings.server": "■ Server Settings ■",
 
-  "ds.gui.customization": "DRAGON CREATOR",
+  "ds.gui.dragon_altar": "Choose a Dragon Species",
+  "ds.gui.customization": "DRAGON EDITOR",
   "ds.gui.customization.tooltip.done": "Confirm changes",
   "ds.gui.customization.tooltip.cancel": "Cancel",
   "ds.gui.customization.back": "Back",

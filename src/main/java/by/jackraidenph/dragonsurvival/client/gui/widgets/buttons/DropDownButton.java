@@ -1,5 +1,6 @@
 package by.jackraidenph.dragonsurvival.client.gui.widgets.buttons;
 
+import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownEntry;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownList;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownValueEntry;
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -20,7 +21,7 @@ public class DropDownButton extends ExtendedButton
 {
 	public String current;
 	private String[] values;
-	private Consumer<String> setter;
+	public Consumer<String> setter;
 	
 	private boolean toggled;
 	private static final int maxItems = 4;
@@ -44,15 +45,16 @@ public class DropDownButton extends ExtendedButton
 	{
 		super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
 		
-		if(toggled && !visible){
+		if(toggled && (!visible || (!isMouseOver(p_230430_2_, p_230430_3_) && !list.isMouseOver(p_230430_2_, p_230430_3_)))){
 			toggled = false;
 			Screen screen = Minecraft.getInstance().screen;
-			screen.children.remove(list);
-			screen.buttons.remove(renderButton);
+			screen.children.removeIf((s) -> s == list);
+			screen.buttons.removeIf((s) -> s == renderButton);
 		}
 		
+		
 		if(toggled && list != null){
-			list.reposition(x, y + height, width, Math.min(values.length, maxItems) * height);
+			list.reposition(x, y + height, width, (int)(Math.max(1, Math.min(values.length, maxItems)) * (height * 1.5f)));
 		}
 	}
 	
@@ -68,17 +70,21 @@ public class DropDownButton extends ExtendedButton
 		return message;
 	}
 	
+	public DropdownEntry createEntry(int pos, String val){
+		return new DropdownValueEntry(this, pos, val, setter);
+	}
+	
 	@Override
 	public void onPress()
 	{
 		Screen screen = Minecraft.getInstance().screen;
 		
 		if(!toggled){
-			list = new DropdownList(x, y + height, width, Math.min(values.length, maxItems) * height, 19);
+			list = new DropdownList(x, y + height, width, (int)(Math.max(1, Math.min(values.length, maxItems)) * (height * 1.5f)), 19);
 			
 			for (int i = 0; i < values.length; i++) {
 				String val = values[i];
-				list.addEntry(new DropdownValueEntry(this, i, val, setter));
+				list.addEntry(createEntry(i, val));
 			}
 			
 			boolean hasBorder = false;
@@ -121,14 +127,13 @@ public class DropDownButton extends ExtendedButton
 					
 					if(finalHasBorder){
 						GL11.glDisable(GL11.GL_SCISSOR_TEST);
-						
 					}
 				}
 			};
 			screen.buttons.add(renderButton);
 		}else{
-			screen.children.remove(list);
-			screen.buttons.remove(renderButton);
+			screen.children.removeIf((s) -> s == list);
+			screen.buttons.removeIf((s) -> s == renderButton);
 		}
 		
 		toggled = !toggled;
