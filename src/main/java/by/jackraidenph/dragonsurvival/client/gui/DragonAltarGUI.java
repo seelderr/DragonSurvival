@@ -4,42 +4,27 @@ import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.AltarTypeButton;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.HelpButton;
 import by.jackraidenph.dragonsurvival.client.render.ClientDragonRender;
+import by.jackraidenph.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.jackraidenph.dragonsurvival.client.util.TextRenderUtil;
+import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.common.entity.DSEntities;
 import by.jackraidenph.dragonsurvival.common.entity.DragonEntity;
 import by.jackraidenph.dragonsurvival.misc.DragonLevel;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
-import com.mojang.authlib.GameProfile;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.RemoteClientPlayerEntity;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.DyeColor;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Quaternion;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
-import software.bernie.geckolib3.core.PlayState;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
-import software.bernie.geckolib3.core.controller.AnimationController;
-import software.bernie.geckolib3.core.manager.AnimationData;
-
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class DragonAltarGUI extends Screen {
     public static final ResourceLocation CONFIRM_BUTTON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/confirm_button.png");
@@ -49,17 +34,17 @@ public class DragonAltarGUI extends Screen {
     private int guiTop;
     private boolean hasInit = false;
     
-    private DragonEntity dragon1;
-    private DragonEntity dragon2;
     
-    private static RemoteClientPlayerEntity clientPlayer1;
-    private static RemoteClientPlayerEntity clientPlayer2;
+    private String[] animations = {"sit", "idle", "fly", "swim_fast", "run"};
+    private int animation1 = 1;
+    private int animation2 = 0;
     
+    public DragonStateHandler handler1 = new DragonStateHandler();
+    public DragonStateHandler handler2 = new DragonStateHandler();
     
     public DragonAltarGUI() {
         super(new TranslationTextComponent("ds.gui.dragon_altar"));
     }
-    
     
     
     public static void renderBorders(ResourceLocation texture, int x0, int x1, int y0, int y1, int width, int height){
@@ -110,29 +95,45 @@ public class DragonAltarGUI extends Screen {
         super.renderBackground(pMatrixStack);
         renderBorders(backgroundTexture, 0, width, 32, height - 32, width, height);
     }
-    
+    private int tick;
     @Override
     public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         if (this.minecraft == null)
             return;
         this.renderBackground(matrixStack);
         
+        tick++;
+        
+        if((tick % 200 * 20) == 0){
+            animation1++;
+            animation2++;
+            
+            if(animation1 >= animations.length){
+                animation1 = 0;
+            }
+    
+            if(animation2 >= animations.length){
+                animation2 = 0;
+            }
+        }
+        
         for(Widget btn : buttons){
             if(btn instanceof AltarTypeButton){
                 AltarTypeButton button = (AltarTypeButton)btn;
                 
                 if(button.isHovered()) {
-                    DragonStateProvider.getCap(clientPlayer1).ifPresent((cap) -> {
-                        cap.setType(button.type);
-                    });
-    
-                    DragonStateProvider.getCap(clientPlayer2).ifPresent((cap) -> {
-                        cap.setType(button.type);
-                        cap.setSize(button.type == DragonType.NONE ? DragonLevel.ADULT.size : DragonLevel.BABY.size);
-                    });
+                    handler1.setType(button.type);
+                    handler1.setHasWings(true);
+                    handler1.setSize(DragonLevel.ADULT.size);
                     
-                    renderDragon(width / 2 + 170, button.y + (button.getHeight() / 2) + 32, 5, matrixStack, DragonLevel.ADULT.size, clientPlayer1, dragon1);
-                    renderDragon(width / 2 - 170, button.y + (button.getHeight() / 2) + 32, -5, matrixStack, button.type == DragonType.NONE ? DragonLevel.ADULT.size : DragonLevel.BABY.size, clientPlayer2, dragon2);
+                    handler2.setType(button.type);
+                    handler2.setSize(button.type == DragonType.NONE ? DragonLevel.ADULT.size : DragonLevel.BABY.size);
+    
+                    FakeClientPlayerUtils.getFakePlayer(0, handler1).animationSupplier = () -> animations[animation1];
+                    FakeClientPlayerUtils.getFakePlayer(1, handler2).animationSupplier = () -> animations[animation2];
+    
+                    renderDragon(width / 2 + 170, button.y + (button.getHeight() / 2) + 32, 5, matrixStack, DragonLevel.ADULT.size, FakeClientPlayerUtils.getFakePlayer(0, handler1), FakeClientPlayerUtils.getFakeDragon(0, handler1));
+                    renderDragon(width / 2 - 170, button.y + (button.getHeight() / 2) + 32, -5, matrixStack, button.type == DragonType.NONE ? DragonLevel.ADULT.size : DragonLevel.BABY.size, FakeClientPlayerUtils.getFakePlayer(1, handler2), FakeClientPlayerUtils.getFakeDragon(1, handler2));
                 }
             }
         }
@@ -149,21 +150,7 @@ public class DragonAltarGUI extends Screen {
         matrixStack.scale(scale, scale, scale);
         matrixStack.translate(0, 0, 400);
         ClientDragonRender.dragonModel.setCurrentTexture(null);
-        if(ClientDragonRender.dragonArmor != null && ClientDragonRender.dragonModel != null) {
-            renderEntityInInventory(x, y, scale, xrot, -3, DragonStateProvider.isDragon(player) ? dragon : player);
-        }else{
-            if (ClientDragonRender.dragonArmor == null) {
-                ClientDragonRender.dragonArmor = DSEntities.DRAGON_ARMOR.create(Minecraft.getInstance().player.level);
-                assert ClientDragonRender.dragonArmor != null;
-                ClientDragonRender. dragonArmor.player = Minecraft.getInstance().player.getId();
-            }
-
-            if (!ClientDragonRender.playerDragonHashMap.containsKey(Minecraft.getInstance().player.getId())) {
-                DragonEntity dummyDragon = DSEntities.DRAGON.create(Minecraft.getInstance().player.level);
-                dummyDragon.player = Minecraft.getInstance().player.getId();
-                ClientDragonRender.playerDragonHashMap.put(Minecraft.getInstance().player.getId(), new AtomicReference<>(dummyDragon));
-            }
-        }
+        ClientDragonRender.renderEntityInInventory(DragonStateProvider.isDragon(player) ? dragon : player, x, y, scale, xrot, -3);
         matrixStack.popPose();
     }
     
@@ -173,98 +160,6 @@ public class DragonAltarGUI extends Screen {
         super.init();
 
         if(!hasInit){
-            if(clientPlayer1 == null) {
-                clientPlayer1 = new RemoteClientPlayerEntity(minecraft.level, new GameProfile(UUID.randomUUID(), "DRAGON_RENDER")){
-                    @Override
-                    public boolean shouldShowName()
-                    {
-                        return false;
-                    }
-    
-                    @Override
-                    public ITextComponent getDisplayName()
-                    {
-                        return StringTextComponent.EMPTY;
-                    }
-                    ResourceLocation skin = new ResourceLocation("textures/entity/steve.png");
-                    @Override
-                    public ResourceLocation getSkinTextureLocation()
-                    {
-                        return skin;
-                    }
-                };
-            
-                DragonStateProvider.getCap(clientPlayer1).ifPresent((cap) -> {
-                    cap.setHasWings(true);
-                    cap.setSize(DragonLevel.ADULT.size);
-                });
-            }
-    
-            if(clientPlayer2 == null) {
-                clientPlayer2 = new RemoteClientPlayerEntity(minecraft.level, new GameProfile(UUID.randomUUID(), "DRAGON_RENDER")){
-                    @Override
-                    public boolean shouldShowName()
-                    {
-                        return false;
-                    }
-            
-                    @Override
-                    public ITextComponent getDisplayName()
-                    {
-                        return StringTextComponent.EMPTY;
-                    }
-    
-                    ResourceLocation skin = new ResourceLocation("textures/entity/alex.png");
-                    @Override
-                    public ResourceLocation getSkinTextureLocation()
-                    {
-                        return skin;
-                    }
-                };
-        
-                DragonStateProvider.getCap(clientPlayer2).ifPresent((cap) -> {
-                    cap.setHasWings(false);
-                    cap.setSize(DragonLevel.BABY.size);
-                });
-            }
-        
-            dragon1 = new DragonEntity(DSEntities.DRAGON, minecraft.level){
-                @Override
-                public void registerControllers(AnimationData animationData) {
-                    animationData.shouldPlayWhilePaused = true;
-                    animationData.addAnimationController(new AnimationController<DragonEntity>(this, "controller", 2, (event) -> {
-                        AnimationBuilder builder = new AnimationBuilder();
-                        builder.addAnimation("sit", true);
-                        event.getController().setAnimation(builder);
-                        return PlayState.CONTINUE;
-                    }));
-                }
-            
-                @Override
-                public PlayerEntity getPlayer()
-                {
-                    return clientPlayer1;
-                }
-            };
-    
-            dragon2 = new DragonEntity(DSEntities.DRAGON, minecraft.level){
-                @Override
-                public void registerControllers(AnimationData animationData) {
-                    animationData.shouldPlayWhilePaused = true;
-                    animationData.addAnimationController(new AnimationController<DragonEntity>(this, "controller", 2, (event) -> {
-                        AnimationBuilder builder = new AnimationBuilder();
-                        builder.addAnimation("idle", true);
-                        event.getController().setAnimation(builder);
-                        return PlayState.CONTINUE;
-                    }));
-                }
-        
-                @Override
-                public PlayerEntity getPlayer()
-                {
-                    return clientPlayer2;
-                }
-            };
             hasInit = true;
         }
         
@@ -296,52 +191,5 @@ public class DragonAltarGUI extends Screen {
                 super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
             }
         });
-    }
-    
-    public static void renderEntityInInventory(int p_228187_0_, int p_228187_1_, float p_228187_2_, float p_228187_3_, float p_228187_4_, LivingEntity p_228187_5_) {
-       if(p_228187_5_ == null) return;
-       
-        float f = p_228187_3_;
-        float f1 = p_228187_4_;
-        RenderSystem.pushMatrix();
-        RenderSystem.translatef((float)p_228187_0_, (float)p_228187_1_, 0);
-        RenderSystem.scalef(1.0F, 1.0F, -1.0F);
-        MatrixStack matrixstack = new MatrixStack();
-        matrixstack.scale((float)p_228187_2_, (float)p_228187_2_, (float)p_228187_2_);
-        Quaternion quaternion = Vector3f.ZP.rotationDegrees(180.0F);
-        Quaternion quaternion1 = Vector3f.XP.rotationDegrees(f1 * 10.0F);
-        quaternion.mul(quaternion1);
-        matrixstack.mulPose(quaternion);
-        float f2 = p_228187_5_.yBodyRot;
-        float f3 = p_228187_5_.yRot;
-        float f4 = p_228187_5_.xRot;
-        float f5 = p_228187_5_.yHeadRotO;
-        float f6 = p_228187_5_.yHeadRot;
-        p_228187_5_.yBodyRot = 180.0F + f * 10.0F;
-        p_228187_5_.yRot = 180.0F + f * 10.0F;
-        p_228187_5_.xRot = -f1 * 10.0F;
-        p_228187_5_.yHeadRot = p_228187_5_.yRot;
-        p_228187_5_.yHeadRotO = p_228187_5_.yRot;
-        EntityRendererManager entityrenderermanager = Minecraft.getInstance().getEntityRenderDispatcher();
-        boolean renderHitbox = entityrenderermanager.shouldRenderHitBoxes();
-        quaternion1.conj();
-        entityrenderermanager.overrideCameraOrientation(quaternion1);
-        entityrenderermanager.setRenderShadow(false);
-        IRenderTypeBuffer.Impl irendertypebuffer$impl = Minecraft.getInstance().renderBuffers().bufferSource();
-        RenderSystem.runAsFancy(() -> {
-            entityrenderermanager.setRenderHitBoxes(false);
-            entityrenderermanager.render(p_228187_5_, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, matrixstack, irendertypebuffer$impl, 15728880);
-            entityrenderermanager.setRenderHitBoxes(renderHitbox);
-        });
-        
-        irendertypebuffer$impl.endBatch();
-        entityrenderermanager.setRenderShadow(true);
-        
-        p_228187_5_.yBodyRot = f2;
-        p_228187_5_.yRot = f3;
-        p_228187_5_.xRot = f4;
-        p_228187_5_.yHeadRotO = f5;
-        p_228187_5_.yHeadRot = f6;
-        RenderSystem.popMatrix();
     }
 }

@@ -1,6 +1,5 @@
 package by.jackraidenph.dragonsurvival.client.gui.widgets;
 
-import by.jackraidenph.dragonsurvival.client.gui.DragonAltarGUI;
 import by.jackraidenph.dragonsurvival.client.render.ClientDragonRender;
 import by.jackraidenph.dragonsurvival.common.entity.DragonEntity;
 import com.google.common.collect.ImmutableList;
@@ -56,7 +55,7 @@ public class DragonUIRenderComponent extends FocusableGui implements IRenderable
 		pMatrixStack.scale(scale, scale, scale);
 		pMatrixStack.translate(0, 0, 400);
 		ClientDragonRender.dragonModel.setCurrentTexture(null);
-		DragonAltarGUI.renderEntityInInventory(x + width / 2, y + height - 30, scale, xRot, yRot, getter.get());
+		ClientDragonRender.renderEntityInInventory(getter.get(), x + width / 2, y + height - 30, scale, xRot, yRot);
 		pMatrixStack.popPose();
 	}
 	

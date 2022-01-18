@@ -16,6 +16,7 @@ import by.jackraidenph.dragonsurvival.network.entity.player.SynchronizeDragonCap
 import by.jackraidenph.dragonsurvival.common.DragonEffects;
 import by.jackraidenph.dragonsurvival.misc.DragonLevel;
 import by.jackraidenph.dragonsurvival.common.EffectInstance2;
+import by.jackraidenph.dragonsurvival.client.util.FakeClientPlayer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.Pose;
 import net.minecraft.entity.player.PlayerEntity;
@@ -39,7 +40,7 @@ public class CapabilityController {
     public static void attachCapabilities(AttachCapabilitiesEvent<Entity> event) {
         event.addCapability(new ResourceLocation("dragonsurvival", "generic_capability_data"), new GenericCapabilityProvider());
     
-        if (event.getObject() instanceof PlayerEntity) {
+        if (event.getObject() instanceof PlayerEntity && !(event.getObject() instanceof FakeClientPlayer)) {
             event.addCapability(new ResourceLocation("dragonsurvival", "playerstatehandler"), new DragonStateProvider());
             event.addCapability(new ResourceLocation("dragonsurvival", "village_relations"), new VillageRelationshipsProvider());
             DragonSurvivalMod.LOGGER.info("Successfully attached capabilities to the " + event.getObject().getClass().getSimpleName());

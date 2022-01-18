@@ -12,12 +12,11 @@ import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.HelpButton;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.dropdown.ColoredDropdownValueEntry;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownEntry;
 import by.jackraidenph.dragonsurvival.client.handlers.magic.ClientMagicHUDHandler;
+import by.jackraidenph.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.jackraidenph.dragonsurvival.client.util.TextRenderUtil;
 import by.jackraidenph.dragonsurvival.common.capability.DragonCapabilities.SkinCap;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.common.entity.DSEntities;
-import by.jackraidenph.dragonsurvival.common.entity.DragonEntity;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonLevel;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
@@ -31,14 +30,11 @@ import by.jackraidenph.dragonsurvival.network.status.SyncAltarCooldown;
 import by.jackraidenph.dragonsurvival.util.Functions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.mojang.authlib.GameProfile;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.RemoteClientPlayerEntity;
 import net.minecraft.client.gui.IRenderable;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.DyeColor;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
@@ -48,14 +44,13 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.client.gui.GuiUtils;
 import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
-import software.bernie.geckolib3.core.PlayState;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
-import software.bernie.geckolib3.core.controller.AnimationController;
-import software.bernie.geckolib3.core.manager.AnimationData;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Locale;
 
 public class DragonCustomizationScreen extends Screen
 {
@@ -83,9 +78,6 @@ public class DragonCustomizationScreen extends Screen
 	
 	public boolean confirmation = false;
 	
-	private DragonEntity dragon;
-	private static RemoteClientPlayerEntity clientPlayer;
-	
 	private String[] animations = {"sit", "idle", "fly", "swim_fast", "run"};
 	private int curAnimation = 0;
 	
@@ -95,31 +87,30 @@ public class DragonCustomizationScreen extends Screen
 	private boolean hasInit = false;
 	
 	private DragonUIRenderComponent dragonRender;
+	public DragonStateHandler handler = new DragonStateHandler();
 	
 	public void update()
 	{
-		DragonStateHandler clientHandler = DragonStateProvider.getCap(clientPlayer).orElse(null);
-		
-		clientHandler.getSkin().playerSkinLayers = map;
-		clientHandler.setSize(level.size);
+		handler.getSkin().playerSkinLayers = map;
+		handler.setSize(level.size);
 		
 		if (type != DragonType.NONE) {
-			clientHandler.setType(type);
+			handler.setType(type);
 		}
 		
 		if (currentSelected != lastSelected) {
-			CustomizationRegistry.savedCustomizations.saved.computeIfAbsent(clientHandler.getType(), (b) -> new HashMap<>());
-			CustomizationRegistry.savedCustomizations.saved.get(clientHandler.getType()).computeIfAbsent(currentSelected, (b) -> new HashMap<>());
+			CustomizationRegistry.savedCustomizations.saved.computeIfAbsent(handler.getType(), (b) -> new HashMap<>());
+			CustomizationRegistry.savedCustomizations.saved.get(handler.getType()).computeIfAbsent(currentSelected, (b) -> new HashMap<>());
 			
 			map = new HashMap<>();
-			CustomizationRegistry.savedCustomizations.saved.get(clientHandler.getType()).get(currentSelected).forEach((level, mp) -> {
+			CustomizationRegistry.savedCustomizations.saved.get(handler.getType()).get(currentSelected).forEach((level, mp) -> {
 				mp.forEach((layer, key) -> {
 					map.computeIfAbsent(level, (b) -> new HashMap<>());
 					map.get(level).put(layer, key);
 				});
 			});
 			
-			clientHandler.getSkin().playerSkinLayers = map;
+			handler.getSkin().playerSkinLayers = map;
 		}
 		
 		lastSelected = currentSelected;
@@ -133,7 +124,7 @@ public class DragonCustomizationScreen extends Screen
 		this.guiLeft = (this.width - 256) / 2;
 		this.guiTop = (this.height - 120) / 2;
 		
-		dragonRender = new DragonUIRenderComponent(this, width / 2 - 100, guiTop, 200, 125, () -> dragon);
+		dragonRender = new DragonUIRenderComponent(this, width / 2 - 100, guiTop, 200, 125, () -> FakeClientPlayerUtils.getFakeDragon(0, handler));
 		children.add(dragonRender);
 		
 		DragonStateHandler handler = DragonStateProvider.getCap(getMinecraft().player).orElse(null);
@@ -162,35 +153,8 @@ public class DragonCustomizationScreen extends Screen
 				});
 			}
 			
-			if (clientPlayer == null) {
-				clientPlayer = new RemoteClientPlayerEntity(minecraft.level, new GameProfile(UUID.randomUUID(), "DRAGON_RENDER"));
-				
-				DragonStateProvider.getCap(clientPlayer).ifPresent((cap) -> {
-					cap.setHasWings(true);
-					cap.setType(type);
-				});
-			}
-			
-			dragon = new DragonEntity(DSEntities.DRAGON, minecraft.level)
-			{
-				@Override
-				public void registerControllers(AnimationData animationData)
-				{
-					animationData.shouldPlayWhilePaused = true;
-					animationData.addAnimationController(new AnimationController<DragonEntity>(this, "controller", 2, (event) -> {
-						AnimationBuilder builder = new AnimationBuilder();
-						builder.addAnimation(animations[curAnimation], true);
-						event.getController().setAnimation(builder);
-						return PlayState.CONTINUE;
-					}));
-				}
-				
-				@Override
-				public PlayerEntity getPlayer()
-				{
-					return clientPlayer;
-				}
-			};
+			this.handler.setHasWings(true);
+			this.handler.setType(type);
 			hasInit = true;
 			update();
 		}
@@ -246,7 +210,15 @@ public class DragonCustomizationScreen extends Screen
 		
 		int i = 0;
 		for (CustomizationLayer layers : CustomizationLayer.values()) {
-			addButton(new DropDownButton(i < 4 ? width / 2 - 100 - 100 : width / 2 + 70, guiTop + 10 + ((i >= 4 ? i - 4 : i) * 40), 100, 15, map.getOrDefault(level, new HashMap<>()).getOrDefault(layers, SkinCap.defaultSkinValue), DragonCustomizationHandler.getKeys(Minecraft.getInstance().player, layers).toArray(new String[0]), (s) -> {
+			ArrayList<String> valueList = DragonCustomizationHandler.getKeys(Minecraft.getInstance().player, layers);
+			
+			if(layers != CustomizationLayer.BASE){
+				valueList.add(0, SkinCap.defaultSkinValue);
+			}
+			
+			String[] values = valueList.toArray(new String[0]);
+			String curValue = map.getOrDefault(level, new HashMap<>()).getOrDefault(layers, SkinCap.defaultSkinValue);
+			addButton(new DropDownButton(i < 4 ? width / 2 - 100 - 100 : width / 2 + 70, guiTop + 10 + ((i >= 4 ? i - 4 : i) * 40), 100, 15, curValue, values, (s) -> {
 				map.get(level).put(layers, s);
 				update();
 			}){
@@ -431,6 +403,8 @@ public class DragonCustomizationScreen extends Screen
 	@Override
 	public void render(MatrixStack stack, int p_230430_2_, int p_230430_3_, float p_230430_4_)
 	{
+		FakeClientPlayerUtils.getFakePlayer(0, handler).animationSupplier = () -> animations[curAnimation];
+		
 		this.renderBackground(stack);
 		TextRenderUtil.drawCenteredScaledText(stack, width / 2, 10, 2f, title.getString(), DyeColor.WHITE.getTextColor());
 		
