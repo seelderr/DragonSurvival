@@ -1,6 +1,7 @@
 package by.jackraidenph.dragonsurvival.mixins;
 
 import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.util.DragonUtils;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
@@ -63,7 +64,7 @@ public abstract class MixinInventoryScreen extends EffectRenderingInventoryScree
             target="Ljava/lang/Math;atan(D)D"
     ), require = 2)
     private static double dragonScreenEntityRenderAtan(double a) {
-        if (DragonStateProvider.isDragon(Minecraft.getInstance().player))
+        if (DragonUtils.isDragon(Minecraft.getInstance().player))
             return Math.atan(a / 40.0);
         return Math.atan(a);
     }

@@ -253,14 +253,11 @@ public class OptionsList extends ContainerObjectSelectionList<OptionListEntry>
 		
 		this.setScrollAmount((double)(size + p_230951_1_.getHeight() / 2 - (this.y1 - this.y0) / 2));
 	}
-	
 	public Optional<AbstractWidget> getMouseOver(double p_238518_1_, double p_238518_3_) {
 		for(OptionListEntry optionsrowlist$row : this.children()) {
-			for(GuiEventListener widget : optionsrowlist$row.children()) {
-				if(widget instanceof AbstractWidget) {
-					if (widget.isMouseOver(p_238518_1_, p_238518_3_)) {
-						return Optional.of((AbstractWidget)widget);
-					}
+			for(AbstractWidget widget : optionsrowlist$row.children) {
+				if (widget.isMouseOver(p_238518_1_, p_238518_3_)) {
+					return Optional.of((AbstractWidget)widget);
 				}
 			}
 		}

@@ -1,6 +1,7 @@
 package by.jackraidenph.dragonsurvival.client.gui.widgets.lists;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
+import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -36,6 +37,7 @@ public class CategoryEntry extends OptionListEntry
 	
 	public CategoryEntry(OptionsList optionsList, TextComponent p_i232280_2_, CategoryEntry entry, int catNum)
 	{
+		super(ImmutableMap.of());
 		this.optionsList = optionsList;
 		this.name = p_i232280_2_;
 		this.width = Minecraft.getInstance().font.width(this.name);

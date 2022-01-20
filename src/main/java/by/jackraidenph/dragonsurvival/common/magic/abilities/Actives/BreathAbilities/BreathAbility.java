@@ -11,6 +11,7 @@ import by.jackraidenph.dragonsurvival.common.magic.common.ISecondAnimation;
 import by.jackraidenph.dragonsurvival.misc.DragonLevel;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import by.jackraidenph.dragonsurvival.server.handlers.ServerFlightHandler;
+import by.jackraidenph.dragonsurvival.util.DragonUtils;
 import by.jackraidenph.dragonsurvival.util.Functions;
 import com.mojang.math.Vector3f;
 import net.minecraft.core.BlockPos;
@@ -76,7 +77,7 @@ public abstract class BreathAbility extends ActiveDragonAbility implements ISeco
 	
 	public void tickCost(){
 		if(firstUse || castingTicks % Functions.secondsToTicks(2) == 0){
-			DragonStateProvider.consumeMana(player, this.getManaCost());
+			DragonUtils.consumeMana(player, this.getManaCost());
 			firstUse = false;
 		}
 	}
@@ -121,7 +122,7 @@ public abstract class BreathAbility extends ActiveDragonAbility implements ISeco
 		
 		double headRot = playerStateHandler.getMovementData().headYaw;
 		double pitch = playerStateHandler.getMovementData().headPitch;
-		Vector3f bodyRot = DragonStateProvider.getCameraOffset(player);
+		Vector3f bodyRot = DragonUtils.getCameraOffset(player);
 		
 		Point2D result = new Point2D.Double();
 		Point2D result2 = new Point2D.Double();

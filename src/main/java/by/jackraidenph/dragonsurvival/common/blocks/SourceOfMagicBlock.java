@@ -9,6 +9,7 @@ import by.jackraidenph.dragonsurvival.network.status.SyncMagicSourceStatus;
 import by.jackraidenph.dragonsurvival.server.tileentity.DSTileEntities;
 import by.jackraidenph.dragonsurvival.server.tileentity.SourceOfMagicPlaceholder;
 import by.jackraidenph.dragonsurvival.server.tileentity.SourceOfMagicTileEntity;
+import by.jackraidenph.dragonsurvival.util.DragonUtils;
 import by.jackraidenph.dragonsurvival.util.Functions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -108,7 +109,7 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
     
         if(source != null) {
             boolean harm = false;
-            DragonType type = DragonStateProvider.getDragonType(entity);
+            DragonType type = DragonUtils.getDragonType(entity);
             
             if(type != DragonType.CAVE && pState.getBlock() == DSBlocks.caveSourceOfMagic) harm = true;
             if(type != DragonType.SEA && pState.getBlock() == DSBlocks.seaSourceOfMagic) harm = true;
@@ -181,7 +182,7 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
                 NetworkHooks.openGui((ServerPlayer)player, (MenuProvider)blockEntity1, packetBuffer -> packetBuffer.writeBlockPos(finalPos));
             }
         }else{
-            if(DragonStateProvider.isDragon(player) && player.getMainHandItem().isEmpty()) {
+            if(DragonUtils.isDragon(player) && player.getMainHandItem().isEmpty()) {
                 if (player.getFeetBlockState().getBlock() == state.getBlock()) {
                     DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
     

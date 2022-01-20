@@ -7,6 +7,7 @@ import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProv
 import by.jackraidenph.dragonsurvival.common.handlers.DragonGrowthHandler;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonLevel;
+import by.jackraidenph.dragonsurvival.util.DragonUtils;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
@@ -30,7 +31,7 @@ public class ClientGrowthHudHandler
 	public static void renderAbilityHud(RenderGameOverlayEvent.Post event) {
 		Player playerEntity = Minecraft.getInstance().player;
 		
-		if (playerEntity == null || !DragonStateProvider.isDragon(playerEntity) || playerEntity.isSpectator())
+		if (playerEntity == null || !DragonUtils.isDragon(playerEntity) || playerEntity.isSpectator())
 			return;
 		
 		DragonStateHandler handler = DragonStateProvider.getCap(playerEntity).orElse(null);

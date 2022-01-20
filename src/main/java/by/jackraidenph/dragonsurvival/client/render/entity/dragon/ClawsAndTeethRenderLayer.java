@@ -5,6 +5,7 @@ import by.jackraidenph.dragonsurvival.client.handlers.ClientEvents;
 import by.jackraidenph.dragonsurvival.common.capability.caps.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.entity.DragonEntity;
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -38,7 +39,7 @@ public class ClawsAndTeethRenderLayer extends GeoLayerRenderer<DragonEntity>
 		if(entitylivingbaseIn.hasEffect(MobEffects.INVISIBILITY)) return;
 		
 		DragonStateHandler handler = DragonStateProvider.getCap(entitylivingbaseIn.getPlayer()).orElse(null);
-		if (handler == null || !handler.getClawInventory().renderClaws) return;
+		if (handler == null || (!handler.getClawInventory().renderClaws && ConfigHandler.SERVER.syncClawRender.get())) return;
 		
 		String clawTexture = constructClaws(entitylivingbaseIn.getPlayer());
 		

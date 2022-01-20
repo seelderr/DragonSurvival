@@ -58,6 +58,7 @@ public class NetworkHandler
 		 register(OpenDragonAltar.class, new OpenDragonAltar());
 		
 		 register(RequestClientData.class, new RequestClientData());
+		 register(CompleteHandlerDataPacket.class, new CompleteHandlerDataPacket());
 		
 		 //Status
 		 register(SyncGrowthState.class, new SyncGrowthState());

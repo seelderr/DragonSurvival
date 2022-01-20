@@ -7,6 +7,7 @@ import by.jackraidenph.dragonsurvival.common.DragonEffects;
 import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
+import by.jackraidenph.dragonsurvival.util.DragonUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.particles.ParticleOptions;
@@ -63,7 +64,7 @@ public class ClientMagicHandler
 			return;
 		}
 		
-		if(entity == Minecraft.getInstance().player || DragonStateProvider.isDragon(entity)){
+		if(entity == Minecraft.getInstance().player || DragonUtils.isDragon(entity)){
 			return;
 		}
 		if (entity.hasEffect(DragonEffects.BURN)) {

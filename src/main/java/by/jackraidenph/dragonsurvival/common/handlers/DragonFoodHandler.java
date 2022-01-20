@@ -4,6 +4,7 @@ import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
+import by.jackraidenph.dragonsurvival.util.DragonUtils;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
@@ -308,7 +309,7 @@ public class DragonFoodHandler {
 		LocalPlayer player = Minecraft.getInstance().player;
 		
 		if(Minecraft.getInstance().options.hideGui || !gui.shouldDrawSurvivalElements()) return;
-		if (!ConfigHandler.SERVER.customDragonFoods.get() || !DragonStateProvider.isDragon(player)) {
+		if (!ConfigHandler.SERVER.customDragonFoods.get() || !DragonUtils.isDragon(player)) {
 			ForgeIngameGui.FOOD_LEVEL_ELEMENT.render(gui, mStack, partialTicks, width, height);
 			return;
 		}

@@ -57,9 +57,7 @@ public class SyncDragonClawRender implements IMessage<SyncDragonClawRender>
 					dragonStateHandler.getClawInventory().renderClaws = message.state;
 				});
 				
-				if(ConfigHandler.SERVER.syncClawRender.get()){
-					NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new SyncDragonClawRender(entity.getId(), message.state));
-				}
+				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new SyncDragonClawRender(entity.getId(), message.state));
 			}
 		}
 	}

@@ -6,6 +6,7 @@ import by.jackraidenph.dragonsurvival.common.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.magic.SyncAbilityCastTime;
 import by.jackraidenph.dragonsurvival.network.magic.SyncAbilityCasting;
+import by.jackraidenph.dragonsurvival.util.DragonUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
@@ -24,7 +25,7 @@ public class ClientCastingHandler
 	    if ((Minecraft.getInstance().player == null) ||
 	        (Minecraft.getInstance().level == null) ||
 	        (clientTickEvent.phase != TickEvent.Phase.END) ||
-	        (!DragonStateProvider.isDragon(Minecraft.getInstance().player)))
+	        (!DragonUtils.isDragon(Minecraft.getInstance().player)))
 	        return;
 	    
 	    Player playerEntity = Minecraft.getInstance().player;

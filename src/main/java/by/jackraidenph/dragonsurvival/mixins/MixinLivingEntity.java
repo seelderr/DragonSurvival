@@ -3,6 +3,7 @@ package by.jackraidenph.dragonsurvival.mixins;
 import by.jackraidenph.dragonsurvival.common.capability.caps.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.handlers.DragonFoodHandler;
+import by.jackraidenph.dragonsurvival.util.DragonUtils;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.sounds.SoundEvent;
@@ -79,7 +80,7 @@ public abstract class MixinLivingEntity extends Entity
 	
 	@Inject(at = @At("HEAD"), method = "Lnet/minecraft/world/entity/LivingEntity;rideableUnderWater()Z", cancellable = true)
 	public void dragonRideableUnderWater(CallbackInfoReturnable<Boolean> ci){
-		if (DragonStateProvider.isDragon(this))
+		if (DragonUtils.isDragon(this))
 			ci.setReturnValue(true);
 	}
 

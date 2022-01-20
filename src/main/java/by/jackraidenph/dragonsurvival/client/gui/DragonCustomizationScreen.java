@@ -11,6 +11,7 @@ import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.DropDownButton;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.HelpButton;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.dropdown.ColoredDropdownValueEntry;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownEntry;
+import by.jackraidenph.dragonsurvival.client.handlers.ClientEvents;
 import by.jackraidenph.dragonsurvival.client.handlers.magic.ClientMagicHUDHandler;
 import by.jackraidenph.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.jackraidenph.dragonsurvival.client.util.TextRenderUtil;
@@ -23,10 +24,10 @@ import by.jackraidenph.dragonsurvival.misc.DragonType;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.RequestClientData;
 import by.jackraidenph.dragonsurvival.network.SkinCustomization.SyncPlayerAllCustomization;
-import by.jackraidenph.dragonsurvival.network.SynchronizationController;
 import by.jackraidenph.dragonsurvival.network.entity.player.SynchronizeDragonCap;
 import by.jackraidenph.dragonsurvival.network.flight.SyncSpinStatus;
 import by.jackraidenph.dragonsurvival.network.status.SyncAltarCooldown;
+import by.jackraidenph.dragonsurvival.util.DragonUtils;
 import by.jackraidenph.dragonsurvival.util.Functions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -456,11 +457,11 @@ public class DragonCustomizationScreen extends Screen
 				NetworkHandler.CHANNEL.sendToServer(new SyncAltarCooldown(Minecraft.getInstance().player.getId(), Functions.secondsToTicks(ConfigHandler.SERVER.altarUsageCooldown.get())));
 				NetworkHandler.CHANNEL.sendToServer(new SynchronizeDragonCap(minecraft.player.getId(), cap.isHiding(), cap.getType(), cap.getSize(), cap.hasWings(), ConfigHandler.SERVER.caveLavaSwimmingTicks.get(), 0));
 				NetworkHandler.CHANNEL.sendToServer(new SyncSpinStatus(Minecraft.getInstance().player.getId(), cap.getMovementData().spinAttack, cap.getMovementData().spinCooldown, cap.getMovementData().spinLearned));
-				SynchronizationController.sendClientData(new RequestClientData(cap.getType(), cap.getLevel()));
+				ClientEvents.sendClientData(new RequestClientData(cap.getType(), cap.getLevel()));
 			}
 		});
 		
-		DragonType type = DragonStateProvider.getDragonType(minecraft.player);
+		DragonType type = DragonUtils.getDragonType(minecraft.player);
 		NetworkHandler.CHANNEL.sendToServer(new SyncPlayerAllCustomization(minecraft.player.getId(), map));
 		CustomizationRegistry.savedCustomizations.saved.computeIfAbsent(type, (t) -> new HashMap<>());
 		CustomizationRegistry.savedCustomizations.saved.get(type).put(currentSelected, map);

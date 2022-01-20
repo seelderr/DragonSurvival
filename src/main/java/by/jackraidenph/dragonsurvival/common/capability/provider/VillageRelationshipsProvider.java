@@ -2,46 +2,38 @@ package by.jackraidenph.dragonsurvival.common.capability.provider;
 
 import by.jackraidenph.dragonsurvival.common.capability.Capabilities;
 import by.jackraidenph.dragonsurvival.common.capability.caps.VillageRelationShips;
-import by.jackraidenph.dragonsurvival.common.capability.storage.VillageRelationshipsStorage;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.world.entity.Entity;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 public class VillageRelationshipsProvider implements ICapabilitySerializable<CompoundTag>
 {
-	private final LazyOptional<VillageRelationShips> instance;
-	private final VillageRelationshipsStorage storage;
+	private final VillageRelationShips handlerObject = new VillageRelationShips();
+	private final LazyOptional<VillageRelationShips> instance = LazyOptional.of(() -> handlerObject);
 	
-	public VillageRelationshipsProvider()
-	{
-		instance = LazyOptional.of(VillageRelationShips::new);
-		storage  = new VillageRelationshipsStorage();
+	public static LazyOptional<VillageRelationShips> getVillageRelationships(Entity entity) {
+	    return entity.getCapability(Capabilities.VILLAGE_RELATIONSHIP, null);
 	}
 	
-	@Nonnull
-	public <T> LazyOptional<T> getCapability(
-			@Nonnull
-					Capability<T> cap,
-			@Nullable
-					Direction side)
-	{
-		return (cap == Capabilities.VILLAGE_RELATIONSHIP) ? this.instance.cast() : LazyOptional.empty();
+	public void invalidate(){
+//		instance.invalidate();
 	}
 	
-	public CompoundTag serializeNBT()
-	{
-		return (CompoundTag)storage.writeNBT(Capabilities.VILLAGE_RELATIONSHIP, this.instance.orElse(null), null);
+	@Override
+	public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side) {
+		return cap == Capabilities.VILLAGE_RELATIONSHIP ? instance.cast() : LazyOptional.empty();
 	}
 	
-	public void deserializeNBT(CompoundTag nbt)
-	{
-		storage.readNBT(Capabilities.VILLAGE_RELATIONSHIP, this.instance.orElse(null), null, (Tag)nbt);
+	@Override
+	public CompoundTag serializeNBT() {
+		return this.instance.orElseThrow(() -> new IllegalArgumentException("LazyOptional must not be empty!")).writeNBT();
 	}
 	
+	@Override
+	public void deserializeNBT(CompoundTag nbt) {
+		this.instance.orElseThrow(() -> new IllegalArgumentException("LazyOptional must not be empty!")).readNBT(nbt);
+	}
 }

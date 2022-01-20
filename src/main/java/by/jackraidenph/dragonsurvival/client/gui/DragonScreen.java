@@ -486,7 +486,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
             });
         }
     
-        addRenderableWidget(new ImageButton(this.leftPos + (imageWidth - 28), (this.height / 2), 20, 18, 40, 0, 20, INVENTORY_TOGGLE_BUTTON, p_onPress_1_ -> {
+        addRenderableWidget(new ImageButton(this.leftPos + (imageWidth - 28), (this.height / 2), 20, 18, 40, 0, 19, INVENTORY_TOGGLE_BUTTON, p_onPress_1_ -> {
             NetworkHandler.CHANNEL.sendToServer(new SortInventoryPacket());
         }){
             @Override

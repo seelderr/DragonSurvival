@@ -7,10 +7,8 @@ import by.jackraidenph.dragonsurvival.common.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.common.magic.common.PassiveDragonAbility;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraftforge.common.capabilities.Capability;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -179,17 +177,14 @@ public class MagicCap implements DragonCapability
 	}
 	
 	@Override
-	public Tag writeNBT(Capability<DragonStateHandler> capability,  Direction side)
+	public Tag writeNBT()
 	{
 		CompoundTag tag = new CompoundTag();
 		
 		tag.putBoolean("renderSkills",renderAbilityHotbar());
-		
-		CompoundTag nbt = new CompoundTag();
-		nbt.putInt("mana", getCurrentMana());
-		nbt.putInt("selectedAbilitySlot", getSelectedAbilitySlot());
-		nbt.put("abilitySlots", saveAbilities());
-		tag.put("abilityData", nbt);
+		tag.putInt("mana", getCurrentMana());
+		tag.putInt("selectedAbilitySlot", getSelectedAbilitySlot());
+		tag.put("abilitySlots", saveAbilities());
 		tag.putBoolean("onMagicSource", onMagicSource);
 		tag.putInt("magicSourceTimer", magicSourceTimer);
 		
@@ -197,32 +192,16 @@ public class MagicCap implements DragonCapability
 	}
 	
 	@Override
-	public void readNBT(Capability<DragonStateHandler> capability, Direction side, Tag base)
+	public void readNBT(Tag base)
 	{
 		CompoundTag tag = (CompoundTag) base;
 		onMagicSource = tag.getBoolean("onMagicSource");
 		magicSourceTimer = tag.getInt("magicSourceTimer");
 		
 		setRenderAbilities(tag.getBoolean("renderSkills"));
-		
-		if(tag.contains("abilityData")) {
-			CompoundTag ability = tag.getCompound("abilityData");
-			
-			if (ability != null) {
-				setSelectedAbilitySlot(ability.getInt("selectedAbilitySlot"));
-				setCurrentMana(ability.getInt("mana"));
-				loadAbilities(ability);
-			}
-		}
+		setSelectedAbilitySlot(tag.getInt("selectedAbilitySlot"));
+		setCurrentMana(tag.getInt("mana"));
+		loadAbilities(tag);
 	}
 	
-	@Override
-	public void clone(DragonStateHandler oldCap)
-	{
-		getAbilities().clear();
-		getAbilities().addAll(oldCap.getMagic().getAbilities());
-		setCurrentMana(oldCap.getMagic().getCurrentMana());
-		setSelectedAbilitySlot(oldCap.getMagic().getSelectedAbilitySlot());
-		setRenderAbilities(oldCap.getMagic().renderAbilityHotbar());
-	}
 }

@@ -12,6 +12,7 @@ import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.status.SyncMagicSourceStatus;
 import by.jackraidenph.dragonsurvival.server.tileentity.SourceOfMagicPlaceholder;
 import by.jackraidenph.dragonsurvival.server.tileentity.SourceOfMagicTileEntity;
+import by.jackraidenph.dragonsurvival.util.DragonUtils;
 import by.jackraidenph.dragonsurvival.util.Functions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -45,7 +46,7 @@ public class SourceOfMagicHandler
 		if(event.phase == Phase.START || event.side == LogicalSide.CLIENT) return;
 		Player player = event.player;
 		
-		if(DragonStateProvider.isDragon(player)){
+		if(DragonUtils.isDragon(player)){
 			DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
 			
 			if(handler != null){
@@ -72,7 +73,7 @@ public class SourceOfMagicHandler
 						if(!tile.isEmpty()){
 							BlockState pState = sourceOfMagic.getBlockState();
 							boolean harm = false;
-							DragonType type = DragonStateProvider.getDragonType(player);
+							DragonType type = DragonUtils.getDragonType(player);
 							
 							if(type != DragonType.CAVE && pState.getBlock() == DSBlocks.caveSourceOfMagic) harm = true;
 							if(type != DragonType.SEA && pState.getBlock() == DSBlocks.seaSourceOfMagic) harm = true;
@@ -121,7 +122,7 @@ public class SourceOfMagicHandler
 		if(event.phase == Phase.START || event.side == LogicalSide.SERVER) return;
 		Player player = event.player;
 		
-		if(DragonStateProvider.isDragon(player)){
+		if(DragonUtils.isDragon(player)){
 			DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
 			
 			if(handler != null){
@@ -141,7 +142,7 @@ public class SourceOfMagicHandler
 						if(!tile.isEmpty()){
 							BlockState pState = sourceOfMagic.getBlockState();
 							boolean harm = false;
-							DragonType type = DragonStateProvider.getDragonType(player);
+							DragonType type = DragonUtils.getDragonType(player);
 							
 							if(type != DragonType.CAVE && pState.getBlock() == DSBlocks.caveSourceOfMagic) harm = true;
 							if(type != DragonType.SEA && pState.getBlock() == DSBlocks.seaSourceOfMagic) harm = true;
@@ -181,7 +182,7 @@ public class SourceOfMagicHandler
 		if(event.phase == Phase.START) return;
 		Player player = Minecraft.getInstance().player;
 		
-		if(DragonStateProvider.isDragon(player)){
+		if(DragonUtils.isDragon(player)){
 			DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
 			
 			if(handler != null){

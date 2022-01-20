@@ -156,7 +156,6 @@ public class ResourceTextField extends EditBox implements TooltipAccessor
 					
 					if(finalHasBorder){
 						RenderSystem.disableScissor();
-						
 					}
 				}
 			};
@@ -171,8 +170,7 @@ public class ResourceTextField extends EditBox implements TooltipAccessor
 	@Override
 	public void renderButton(PoseStack  pPoseStack , int pMouseX, int pMouseY, float pPartialTicks)
 	{
-		RenderSystem.setShaderTexture(0, BACKGROUND_TEXTURE);
-		GuiUtils.drawContinuousTexturedBox(pPoseStack , x, y + 1, 0, isHovered ? 32 : 0, width, height, 32, 32, 10, 0);
+		GuiUtils.drawContinuousTexturedBox(pPoseStack, BACKGROUND_TEXTURE, x, y + 1, 0, isHovered ? 32 : 0, width, height, 32, 32, 10, 0);
 		
 		if (stack != null && !stack.isEmpty()) {
 			stack.tick();

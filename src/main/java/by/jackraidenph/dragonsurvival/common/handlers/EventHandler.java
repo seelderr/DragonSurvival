@@ -14,6 +14,7 @@ import by.jackraidenph.dragonsurvival.misc.DragonType;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.status.PlayerJumpSync;
 import by.jackraidenph.dragonsurvival.server.tileentity.SourceOfMagicTileEntity;
+import by.jackraidenph.dragonsurvival.util.DragonUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -102,7 +103,7 @@ public class EventHandler {
         
         //if(entity instanceof AnimalEntity) return;
         if(event.getSource() == null || !(event.getSource().getEntity() instanceof Player)) return;
-        if(!DragonStateProvider.isDragon(event.getSource().getEntity())) return;
+        if(!DragonUtils.isDragon(event.getSource().getEntity())) return;
 
         if(health >= 14 && health < 20){
             if (entity.level.random.nextInt(100) <= (ConfigHandler.SERVER.dragonHeartShardChance.get() * 100) + (event.getLootingLevel() * ((ConfigHandler.SERVER.dragonHeartShardChance.get() * 100) / 4))) {
@@ -129,7 +130,7 @@ public class EventHandler {
 
             ((Animal) entity).goalSelector.addGoal(5, new AvoidEntityGoal(
                     (Animal) entity, Player.class,
-                    livingEntity -> DragonStateProvider.isDragon((Player) livingEntity) && !((Player) livingEntity).hasEffect(DragonEffects.ANIMAL_PEACE),
+                    livingEntity -> DragonUtils.isDragon((Player) livingEntity) && !((Player) livingEntity).hasEffect(DragonEffects.ANIMAL_PEACE),
                     20.0F, 1.3F, 1.5F, living -> false));
         }
         if (entity instanceof Horse) {
@@ -162,7 +163,7 @@ public class EventHandler {
     
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void expDrops(BlockEvent.BreakEvent breakEvent) {
-       if(DragonStateProvider.isDragon(breakEvent.getPlayer())){
+       if(DragonUtils.isDragon(breakEvent.getPlayer())){
            if(breakEvent.getExpToDrop() > 0){
                int bonusLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.BLOCK_FORTUNE, breakEvent.getPlayer());
                int silklevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, breakEvent.getPlayer());

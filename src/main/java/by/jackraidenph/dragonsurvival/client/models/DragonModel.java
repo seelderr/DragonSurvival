@@ -8,6 +8,7 @@ import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProv
 import by.jackraidenph.dragonsurvival.common.entity.DragonEntity;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.server.handlers.ServerFlightHandler;
+import by.jackraidenph.dragonsurvival.util.DragonUtils;
 import by.jackraidenph.dragonsurvival.util.Functions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
@@ -39,7 +40,7 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity> {
     public ResourceLocation getTextureLocation(DragonEntity dragonEntity) {
 		if(currentTexture == null){
 			DragonStateHandler handler = DragonStateProvider.getCap(dragonEntity.getPlayer()).orElse(null);
-			ResourceLocation location = DragonCustomizationHandler.getSkinTexture(dragonEntity.getPlayer(), CustomizationLayer.BASE, handler.getSkin().playerSkinLayers.getOrDefault(handler.getLevel(), new HashMap<>()).getOrDefault(CustomizationLayer.BASE, "Skin"), DragonStateProvider.getDragonType(dragonEntity.getPlayer()));
+			ResourceLocation location = DragonCustomizationHandler.getSkinTexture(dragonEntity.getPlayer(), CustomizationLayer.BASE, handler.getSkin().playerSkinLayers.getOrDefault(handler.getLevel(), new HashMap<>()).getOrDefault(CustomizationLayer.BASE, "Skin"), DragonUtils.getDragonType(dragonEntity.getPlayer()));
 		
 			if(location != null){
 				return location;

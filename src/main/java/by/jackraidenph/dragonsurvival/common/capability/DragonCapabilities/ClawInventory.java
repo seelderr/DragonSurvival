@@ -1,13 +1,10 @@
 package by.jackraidenph.dragonsurvival.common.capability.DragonCapabilities;
 
-import by.jackraidenph.dragonsurvival.common.capability.caps.DragonStateHandler;
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.capabilities.Capability;
 
 public class ClawInventory implements DragonCapability
 {
@@ -43,35 +40,27 @@ public class ClawInventory implements DragonCapability
 	}
 	
 	@Override
-	public Tag writeNBT(Capability<DragonStateHandler> capability,  Direction side)
+	public Tag writeNBT()
 	{
 		CompoundTag tag = new CompoundTag();
 		
-		tag.putBoolean("clawsMenu", isClawsMenuOpen());
-		tag.put("clawsInventory", saveClawInventory(getClawsInventory()));
+		tag.putBoolean("clawsMenu", clawsMenuOpen);
+		tag.put("clawsInventory", saveClawInventory(clawsInventory));
 		tag.putBoolean("renderClaws", renderClaws);
 		
 		return tag;
 	}
 	
 	@Override
-	public void readNBT(Capability<DragonStateHandler> capability, Direction side, Tag base)
+	public void readNBT(Tag base)
 	{
 		CompoundTag tag = (CompoundTag) base;
 		
-		setClawsMenuOpen(tag.getBoolean("clawsMenu"));
+		clawsMenuOpen = tag.getBoolean("clawsMenu");
 		renderClaws = tag.getBoolean("renderClaws");
 		
 		ListTag clawInv = tag.getList("clawsInventory", 10);
-		setClawsInventory(readClawInventory(clawInv));
-	}
-	
-	@Override
-	public void clone(DragonStateHandler oldCap)
-	{
-		setClawsInventory(oldCap.getClawInventory().getClawsInventory());
-		setClawsMenuOpen(oldCap.getClawInventory().isClawsMenuOpen());
-		renderClaws = oldCap.getClawInventory().renderClaws;
+		clawsInventory = readClawInventory(clawInv);
 	}
 	
 	

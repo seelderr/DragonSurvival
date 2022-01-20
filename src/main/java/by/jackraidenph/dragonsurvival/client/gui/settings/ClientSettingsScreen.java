@@ -15,11 +15,14 @@ import by.jackraidenph.dragonsurvival.network.config.SyncNumberConfig;
 import com.electronwill.nightconfig.core.AbstractConfig;
 import com.electronwill.nightconfig.core.EnumGetMethod;
 import com.electronwill.nightconfig.core.UnmodifiableConfig.Entry;
+import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.*;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.components.TooltipAccessor;
 import net.minecraft.client.gui.screens.OptionsSubScreen;
 import net.minecraft.client.gui.screens.Screen;
@@ -190,7 +193,8 @@ public class ClientSettingsScreen extends OptionsSubScreen
 		
 		if (value instanceof BooleanValue) {
 			BooleanValue booleanValue = (BooleanValue)value;
-			CycleOption option = CycleOption.createOnOff(name, tooltip, (settings) -> booleanValue.get(), (settings, optionO, settingValue) -> {
+			
+			CycleOption<Boolean> option = new CycleOption<>(name, (val) -> booleanValue.get(), (settings, optionO, settingValue) -> {
 				try {
 					booleanValue.set(settingValue);
 					booleanValue.save();
@@ -200,13 +204,7 @@ public class ClientSettingsScreen extends OptionsSubScreen
 				if(!Objects.equals(getConfigName(), "client")) {
 					NetworkHandler.CHANNEL.sendToServer(new SyncBooleanConfig(key, settingValue, getConfigName()));
 				}
-			}).setTooltip((p_167791_) -> {
-				List<FormattedCharSequence> list = p_167791_.font.split(tooltip, 200);
-				return (p_167772_) -> {
-					return list;
-				};
-			});
-			
+			}, () -> CycleButton.booleanBuilder(((BaseComponent)CommonComponents.OPTION_ON).withStyle(ChatFormatting.GREEN), ((BaseComponent)CommonComponents.OPTION_OFF).withStyle(ChatFormatting.RED)).displayOnlyValue().withTooltip((va) -> Minecraft.getInstance().font.split(tooltip, 200)));
 			OptionsList.configMap.put(option, key);
 			OptionsList.config.put(option, Pair.of(spec, booleanValue));
 			addOption(category, name, option);
@@ -277,7 +275,6 @@ public class ClientSettingsScreen extends OptionsSubScreen
 					}
 				}, (m) -> Minecraft.getInstance().font.split(tooltip, 200));
 			}
-			System.out.println(option);
 			OptionsList.configMap.put(option, key);
 			OptionsList.config.put(option, Pair.of(spec, value1));
 			addOption(category, name, option);
@@ -348,15 +345,10 @@ public class ClientSettingsScreen extends OptionsSubScreen
 				}else{
 					joiner.add("[]");
 				}
-				CycleOption option = CycleOption.createBinaryOption(name, new TextComponent(Minecraft.getInstance().font.substrByWidth(new TextComponent(joiner.toString()), 120).getString()), TextComponent.EMPTY, (val) -> true, (val1, val2, val3) -> {
-					this.minecraft.setScreen(new ListConfigSettingsScreen(this, minecraft.options, new TextComponent(finalPath1), spec, value1, getSpec(), getConfigName() + "." + key));
-				}).setTooltip((p_167791_) -> {
-					List<FormattedCharSequence> list = p_167791_.font.split(tooltip, 200);
-					return (p_167772_) -> {
-						return list;
-					};
+				String text = Minecraft.getInstance().font.substrByWidth(new TextComponent(joiner.toString()), 120).getString();
+				CycleOption<String> option = new CycleOption(name, (val) -> text, (val1, val2, val3) -> this.minecraft.setScreen(new ListConfigSettingsScreen(this, minecraft.options, new TextComponent(finalPath1), spec, value1, getSpec(), getConfigName() + "." + key)), () -> {
+					return CycleButton.builder((t) -> new TextComponent(text)).displayOnlyValue().withValues(text).withInitialValue(text).withTooltip((va) -> Minecraft.getInstance().font.split(tooltip, 200));
 				});
-				
 				
 				OptionsList.configMap.put(option, key);
 				OptionsList.config.put(option, Pair.of(spec, value1));
@@ -410,10 +402,9 @@ public class ClientSettingsScreen extends OptionsSubScreen
 		}
 		
 		if (optional.isPresent() && optional.get() instanceof TooltipAccessor && optional.get().visible && !optional.get().isHoveredOrFocused()) {
-			Optional<List<FormattedCharSequence>> optional1 = Optional.of(((TooltipAccessor)optional.get()).getTooltip());
-			return optional1.orElse(null);
+			return ((TooltipAccessor)optional.get()).getTooltip();
 		}else {
-			return null;
+			return ImmutableList.of();
 		}
 	}
 }

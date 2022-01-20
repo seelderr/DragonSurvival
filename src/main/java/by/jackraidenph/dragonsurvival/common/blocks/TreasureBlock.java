@@ -5,6 +5,7 @@ import by.jackraidenph.dragonsurvival.common.capability.caps.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.status.SyncTreasureRestStatus;
+import by.jackraidenph.dragonsurvival.util.DragonUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -189,7 +190,7 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 	@Override
 	public InteractionResult use(BlockState p_225533_1_, Level  world, BlockPos p_225533_3_, Player player, InteractionHand hand, BlockHitResult p_225533_6_)
 	{
-		if(DragonStateProvider.isDragon(player) && player.getItemInHand(hand).isEmpty()){
+		if(DragonUtils.isDragon(player) && player.getItemInHand(hand).isEmpty()){
 			if(player.getFeetBlockState().getBlock() == p_225533_1_.getBlock()) {
 				DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
 				

@@ -10,12 +10,13 @@ import by.jackraidenph.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import by.jackraidenph.dragonsurvival.util.Functions;
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -26,7 +27,6 @@ import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
 import java.util.List;
@@ -149,24 +149,30 @@ public class ToolTipHandler
 		
 		tick++;
 		
-		int x = event.getX();
-		int y = event.getY();
-		int width = event.getComponents().stream().map((s) -> s.getWidth(Minecraft.getInstance().font)).max(Integer::compareTo).orElse(0);
-		int height = event.getComponents().stream().map((s) -> s.getHeight()).max(Integer::compareTo).orElse(0);
-		PoseStack matrix = event.getPoseStack();
+		Screen screen = Minecraft.getInstance().screen;
 		
+		int width = event.getComponents().stream().map((s) -> s.getWidth(Minecraft.getInstance().font)).max(Integer::compareTo).orElse(0);
+		int height = event.getComponents().stream().map(ClientTooltipComponent::getHeight).reduce(Integer::sum).orElse(0);
+		
+		int x = event.getX() + 12;
+		int y = event.getY() - 12;
+		
+		if (x + width > screen.width) {
+			x -= 28 + width;
+		}
+		
+		if (y + height + 6 > screen.height) {
+			y = screen.height - height - 6;
+		}
+		
+		PoseStack matrix = event.getPoseStack();
 		RenderSystem.setShaderTexture(0, blink ? tooltip_2 : tooltip_1);
 		
-		int texWidth = GlStateManager._getTexLevelParameter(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_WIDTH);
-		int texHeight = GlStateManager._getTexLevelParameter(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_WIDTH);
-		
-		if (texHeight == 0 || texWidth == 0)
-			return;
+		int texWidth = 128;
+		int texHeight = 128;
 		
 		matrix.pushPose();
-		
 		RenderSystem.enableBlend();
-		
 		matrix.translate(0, 0, 610.0);
 		
 		Gui.blit(matrix, x - 8 - 6, y - 8 - 6, 1, 1 % texHeight, 16, 16, texWidth, texHeight);
@@ -179,7 +185,6 @@ public class ToolTipHandler
 		Gui.blit(matrix, x + (width / 2) - 47, y + height, 16 + 2 * texWidth + 1, 1 % texHeight + 16, 94, 16, texWidth, texHeight);
 	
 		RenderSystem.disableBlend();
-		
 		matrix.popPose();
 	}
 	

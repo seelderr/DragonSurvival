@@ -1,12 +1,9 @@
 package by.jackraidenph.dragonsurvival.common.capability;
 
-import by.jackraidenph.dragonsurvival.common.DragonEffects;
-import by.jackraidenph.dragonsurvival.common.EffectInstance2;
 import by.jackraidenph.dragonsurvival.common.capability.caps.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.entity.creatures.hitbox.DragonHitBox;
 import by.jackraidenph.dragonsurvival.common.entity.creatures.hitbox.DragonHitboxPart;
-import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonLevel;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.entity.player.SynchronizeDragonCap;
@@ -30,64 +27,6 @@ import net.minecraftforge.network.PacketDistributor;
 @EventBusSubscriber
 public class CapabilityController {
     
-    @SubscribeEvent
-    public static void onClone(PlayerEvent.Clone e) {
-        Player player = e.getPlayer();
-        Player original = e.getOriginal();
-        
-        DragonStateProvider.getCap(player).ifPresent(capNew ->
-                DragonStateProvider.getCap(original).ifPresent(capOld -> {
-                    if (capOld.isDragon()) {
-                        DragonStateHandler.DragonMovementData movementData = capOld.getMovementData();
-                        capNew.setMovementData(movementData.bodyYaw, movementData.headYaw, movementData.headPitch, movementData.bite);
-                        
-                        capNew.altarCooldown = capOld.altarCooldown;
-                        capNew.hasUsedAltar = capOld.hasUsedAltar;
-                        
-                        capNew.getMovementData().spinCooldown = capOld.getMovementData().spinCooldown;
-                        capNew.getMovementData().spinLearned = capOld.getMovementData().spinLearned;
-                        
-                        capNew.growing = capOld.growing;
-                        
-                        capNew.forestSize = capOld.forestSize;
-                        capNew.caveSize = capOld.caveSize;
-                        capNew.seaSize = capOld.seaSize;
-    
-                        capNew.setHasWings(capOld.hasWings());
-                        capNew.setWingsSpread(capOld.isWingsSpread());
-                        
-                        capNew.forestWings = capOld.forestWings;
-                        capNew.caveWings = capOld.caveWings;
-                        capNew.seaWings = capOld.seaWings;
-                        
-                        capNew.getClawInventory().clone(capOld);
-                        capNew.getEmotes().clone(capOld);
-                        capNew.getMagic().clone(capOld);
-                        capNew.getSkin().clone(capOld);
-    
-                        capNew.setSize(capOld.getSize());
-                        capNew.setType(capOld.getType());
-                        capNew.setLavaAirSupply(ConfigHandler.SERVER.caveLavaSwimmingTicks.get());
-                        
-                        DragonStateHandler.updateModifiers(original, player);
-
-                        player.refreshDimensions();
-                    }
-                }));
-        
-        Capabilities.getVillageRelationships(player).ifPresent(villageRelationShips -> {
-            Capabilities.getVillageRelationships(original).ifPresent(old -> {
-                villageRelationShips.evilStatusDuration = old.evilStatusDuration;
-                villageRelationShips.crimeLevel = old.crimeLevel;
-                villageRelationShips.hunterSpawnDelay = old.hunterSpawnDelay;
-                if (ConfigHandler.COMMON.preserveEvilDragonEffectAfterDeath.get() && villageRelationShips.evilStatusDuration > 0) {
-                    player.addEffect(new EffectInstance2(DragonEffects.EVIL_DRAGON, villageRelationShips.evilStatusDuration));
-                }
-            });
-        });
-
-    }
-
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent playerTickEvent) {
         if (playerTickEvent.phase != TickEvent.Phase.START)

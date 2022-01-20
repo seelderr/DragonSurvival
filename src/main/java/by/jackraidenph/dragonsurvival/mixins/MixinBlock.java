@@ -3,6 +3,7 @@ package by.jackraidenph.dragonsurvival.mixins;
 import by.jackraidenph.dragonsurvival.common.capability.caps.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
+import by.jackraidenph.dragonsurvival.util.DragonUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
@@ -28,7 +29,7 @@ public class MixinBlock
 	@Inject( at = @At("HEAD"), method = "dropResources(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/entity/BlockEntity;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/item/ItemStack;)V", cancellable = true)
 	private static void dropResources(BlockState p_220054_0_, Level p_220054_1_, BlockPos p_220054_2_, @Nullable
 			BlockEntity p_220054_3_, Entity entity, ItemStack p_220054_5_, CallbackInfo ci) {
-		if(!DragonStateProvider.isDragon(entity)) return;
+		if(!DragonUtils.isDragon(entity)) return;
 		DragonStateHandler handler = DragonStateProvider.getCap(entity).orElse(null);
 		if(handler == null || handler.getType() != DragonType.CAVE) return;
 		

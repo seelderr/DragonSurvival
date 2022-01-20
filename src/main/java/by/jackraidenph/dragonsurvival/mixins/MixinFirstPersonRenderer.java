@@ -2,6 +2,7 @@ package by.jackraidenph.dragonsurvival.mixins;
 
 import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.handlers.DragonFoodHandler;
+import by.jackraidenph.dragonsurvival.util.DragonUtils;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
@@ -59,13 +60,13 @@ public abstract class MixinFirstPersonRenderer {
 
 	@Inject(at = @At(value = "HEAD"), method = "renderPlayerArm", cancellable = true)
 	private void renderDragonArm(PoseStack  p_228401_1_, MultiBufferSource p_228401_2_, int p_228401_3_, float p_228401_4_, float p_228401_5_, HumanoidArm p_228401_6_, CallbackInfo ci){
-		if (DragonStateProvider.isDragon(minecraft.player))
+		if (DragonUtils.isDragon(minecraft.player))
 			ci.cancel();
 	}
 
 	@Redirect(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/FirstPersonRenderer;renderMapHand(Lcom/mojang/blaze3d/matrix/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/entity/HumanoidArm;)V"), method = "renderTwoHandedMap")
 	private void removeTwoHandsMapForDragon(ItemInHandRenderer firstPersonRenderer, PoseStack  p_228403_1_, MultiBufferSource p_228403_2_, int p_228403_3_, HumanoidArm p_228403_4_){
-		if (!DragonStateProvider.isDragon(minecraft.player))
+		if (!DragonUtils.isDragon(minecraft.player))
 			this.renderMapHand(p_228403_1_, p_228403_2_, p_228403_3_, p_228403_4_);
 	}
 

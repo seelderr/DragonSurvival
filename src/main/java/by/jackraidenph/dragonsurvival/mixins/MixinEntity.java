@@ -5,6 +5,7 @@ import by.jackraidenph.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.config.ConfigUtils;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
+import by.jackraidenph.dragonsurvival.util.DragonUtils;
 import com.mojang.math.Vector3f;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
@@ -30,10 +31,10 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
     
     @Inject(at = @At(value = "HEAD"), method = "Lnet/minecraft/world/entity/Entity;positionRider(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/entity/Entity$MoveFunction;)V", cancellable = true)
     private void positionRider(Entity p_226266_1_, Entity.MoveFunction p_226266_2_, CallbackInfo callbackInfo) {
-        if(DragonStateProvider.isDragon((Entity) (net.minecraftforge.common.capabilities.CapabilityProvider<Entity>)this)){
+        if(DragonUtils.isDragon((Entity) (net.minecraftforge.common.capabilities.CapabilityProvider<Entity>)this)){
             if (hasPassenger(p_226266_1_)) {
                 double d0 = this.getY() + this.getPassengersRidingOffset() + p_226266_1_.getMyRidingOffset();
-                Vector3f cameraOffset = DragonStateProvider.getCameraOffset((Entity) (net.minecraftforge.common.capabilities.CapabilityProvider<Entity>)this);
+                Vector3f cameraOffset = DragonUtils.getCameraOffset((Entity) (net.minecraftforge.common.capabilities.CapabilityProvider<Entity>)this);
                 p_226266_2_.accept(p_226266_1_, this.getX() - cameraOffset.x(), d0, this.getZ() - cameraOffset.z());
                 callbackInfo.cancel();
             }
@@ -60,7 +61,7 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
 
     @Inject(at = @At(value = "HEAD"), method = "Lnet/minecraft/world/entity/Entity;getPassengersRidingOffset()D", cancellable = true)
     public void getDragonPassengersRidingOffset(CallbackInfoReturnable<Double> ci) {
-        if (DragonStateProvider.isDragon((Entity)(Object)this)){
+        if (DragonUtils.isDragon((Entity)(Object)this)){
             switch (((Entity)(Object)this).getPose()){
                 case FALL_FLYING:
                 case SWIMMING:
@@ -78,13 +79,13 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
 
     @Inject(at = @At(value = "HEAD"), method = "Lnet/minecraft/world/entity/Entity;isVisuallyCrawling()Z", cancellable = true)
     public void isDragonVisuallyCrawling(CallbackInfoReturnable<Boolean> ci){
-        if (DragonStateProvider.isDragon((Entity)(Object)this))
+        if (DragonUtils.isDragon((Entity)(Object)this))
             ci.setReturnValue(false);
     }
 
     @Inject(at = @At(value = "RETURN"), method = "canRide", cancellable = true)
     public void canRide(Entity entity, CallbackInfoReturnable<Boolean> ci) {
-        if (ci.getReturnValue() && DragonStateProvider.isDragon((Entity) (Object) this) && !DragonStateProvider.isDragon(entity))
+        if (ci.getReturnValue() && DragonUtils.isDragon((Entity) (Object) this) && !DragonUtils.isDragon(entity))
             if(ConfigHandler.SERVER.ridingBlacklist.get()) {
                 ci.setReturnValue(ConfigUtils.containsEntity(ConfigHandler.SERVER.allowedVehicles.get(), entity));
             }
@@ -94,7 +95,7 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
             target="Lnet/minecraft/world/entity/Entity;getBoundingBoxForPose(Lnet/minecraft/world/entity/Pose;)Lnet/minecraft/world/phys/AABB;"
     ))
     public AABB dragonPoseBB(Entity entity, Pose pose) {
-        if (DragonStateProvider.isDragon(entity) && ConfigHandler.SERVER.sizeChangesHitbox.get()){
+        if (DragonUtils.isDragon(entity) && ConfigHandler.SERVER.sizeChangesHitbox.get()){
             double size = DragonStateProvider.getCap(entity).orElseGet(null).getSize();
             double height = DragonSizeHandler.calculateModifiedHeight(DragonSizeHandler.calculateDragonHeight(size, ConfigHandler.SERVER.hitboxGrowsPastHuman.get()), pose, ConfigHandler.SERVER.sizeChangesHitbox.get());
             double width = DragonSizeHandler.calculateDragonWidth(size, ConfigHandler.SERVER.hitboxGrowsPastHuman.get()) / 2.0D;

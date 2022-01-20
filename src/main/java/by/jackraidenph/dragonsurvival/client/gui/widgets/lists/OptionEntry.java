@@ -35,6 +35,7 @@ public class OptionEntry extends OptionListEntry
 	
 	public OptionEntry(Map<Option, AbstractWidget> pOptions, Option option, Component textComponent, AbstractWidget widget, CategoryEntry categoryEntry)
 	{
+		super(pOptions);
 		this.widget = widget;
 		this.category = categoryEntry;
 		this.key = textComponent;

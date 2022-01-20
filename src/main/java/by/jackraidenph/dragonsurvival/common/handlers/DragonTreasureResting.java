@@ -6,6 +6,7 @@ import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProv
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.status.SyncTreasureRestStatus;
+import by.jackraidenph.dragonsurvival.util.DragonUtils;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -31,7 +32,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
-import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
 import java.util.List;
@@ -45,7 +45,7 @@ public class DragonTreasureResting
 		if(event.phase == Phase.START || event.side == LogicalSide.CLIENT) return;
 		Player player = event.player;
 		
-		if(DragonStateProvider.isDragon(player)){
+		if(DragonUtils.isDragon(player)){
 			DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
 			
 			if(handler != null){
@@ -104,7 +104,7 @@ public class DragonTreasureResting
 		ServerLevel world = (ServerLevel)event.world;
 		List<ServerPlayer> playerList = world.players();
 		playerList.removeIf((pl) -> {
-			if(DragonStateProvider.isDragon(pl)) {
+			if(DragonUtils.isDragon(pl)) {
 				DragonStateHandler handler = DragonStateProvider.getCap(pl).orElse(null);
 				
 				if (ForgeEventFactory.fireSleepingTimeCheck(pl, Optional.empty())) {
@@ -130,7 +130,7 @@ public class DragonTreasureResting
 		if(event.phase == Phase.START) return;
 		Player player = Minecraft.getInstance().player;
 		
-		if(DragonStateProvider.isDragon(player)){
+		if(DragonUtils.isDragon(player)){
 			DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
 			
 			if(handler != null){
@@ -152,7 +152,7 @@ public class DragonTreasureResting
 	public static void sleepScreenRender(RenderGameOverlayEvent.Post event) {
 		Player playerEntity = Minecraft.getInstance().player;
 		
-		if (playerEntity == null || !DragonStateProvider.isDragon(playerEntity) || playerEntity.isSpectator())
+		if (playerEntity == null || !DragonUtils.isDragon(playerEntity) || playerEntity.isSpectator())
 			return;
 		
 		DragonStateProvider.getCap(playerEntity).ifPresent(cap -> {

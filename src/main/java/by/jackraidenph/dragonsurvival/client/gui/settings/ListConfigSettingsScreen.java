@@ -132,7 +132,7 @@ public class ListConfigSettingsScreen extends OptionsSubScreen
 		}
 		AbstractWidget widget1 = option.createButton(this.minecraft.options, 32, 0, this.list.getScrollbarPosition() - 32 - 60);
 		
-		this.list.addEntry(new TextBoxEntry(this.list, widget1, null));
+		this.list.addEntry(new TextBoxEntry(option, this.list, widget1, null));
 	}
 	
 	public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_)

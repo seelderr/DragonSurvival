@@ -1,10 +1,10 @@
 package by.jackraidenph.dragonsurvival.common.entity.creatures;
 
-import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.entity.goals.AlertExceptHunters;
 import by.jackraidenph.dragonsurvival.common.entity.goals.CrossbowAttackGoal;
 import by.jackraidenph.dragonsurvival.common.entity.projectiles.BolasEntity;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
+import by.jackraidenph.dragonsurvival.util.DragonUtils;
 import by.jackraidenph.dragonsurvival.util.Functions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -80,7 +80,7 @@ public class ShooterEntity extends Hunter implements CrossbowAttackMob
         super.tick();
         if (ConfigHandler.COMMON.hunterHasBolas.get()) {
             LivingEntity target = getTarget();
-            if (target instanceof Player && DragonStateProvider.isDragon(target))
+            if (target instanceof Player && DragonUtils.isDragon(target))
                 if (this.bolasCooldown == 0) {
                     performBolasThrow(target);
                     this.bolasCooldown = Functions.secondsToTicks(15);

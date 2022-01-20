@@ -8,6 +8,7 @@ import by.jackraidenph.dragonsurvival.config.ConfigUtils;
 import by.jackraidenph.dragonsurvival.misc.DragonLevel;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.entity.player.SyncSize;
+import by.jackraidenph.dragonsurvival.util.DragonUtils;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -165,7 +166,7 @@ public class DragonGrowthHandler {
         if (world.isClientSide || event.phase == Phase.END)
             return;
         
-        if(!DragonStateProvider.isDragon(player)) return;
+        if(!DragonUtils.isDragon(player)) return;
         
         if (player.tickCount % (60 * 20) != 0)
             return;

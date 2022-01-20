@@ -4,6 +4,7 @@ import by.jackraidenph.dragonsurvival.common.capability.caps.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
+import by.jackraidenph.dragonsurvival.util.DragonUtils;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.protocol.Packet;
@@ -32,6 +33,7 @@ public class DragonHitBox extends Mob
 	
 	private final DragonHitboxPart[] subEntities;
 	private final DragonHitboxPart head;
+	private final DragonHitboxPart body;
 	private final DragonHitboxPart tail1;
 	private final DragonHitboxPart tail2;
 	private final DragonHitboxPart tail3;
@@ -48,13 +50,14 @@ public class DragonHitBox extends Mob
 		super(p_i48577_1_, p_i48580_2_);
 		
 		this.head = new DragonHitboxPart(this, "head", 0.5F, 0.5F);
+		this.body = new DragonHitboxPart(this, "body", 0.5F, 0.5F);
 		this.tail1 = new DragonHitboxPart(this, "tail1", 1.0F, 1.0F);
 		this.tail2 = new DragonHitboxPart(this, "tail2", 1.0F, 1.0F);
 		this.tail3 = new DragonHitboxPart(this, "tail3", 1.0F, 1.0F);
 		this.tail4 = new DragonHitboxPart(this, "tail4", 1.0F, 1.0F);
 		this.tail5 = new DragonHitboxPart(this, "tail5", 1.0F, 1.0F);
 		
-		this.subEntities = new DragonHitboxPart[]{this.head, this.tail1, this.tail2, this.tail3, this.tail4, this.tail5};
+		this.subEntities = new DragonHitboxPart[]{this.head, this.body, this.tail1, this.tail2, this.tail3, this.tail4, this.tail5};
 		
 		this.size = EntityDimensions.scalable(1f, 1f);
 		this.refreshDimensions();
@@ -91,7 +94,7 @@ public class DragonHitBox extends Mob
 				return;
 			}
 		}else{
-			if(player == null || player.isDeadOrDying() || !DragonStateProvider.isDragon(player)){
+			if(player == null || player.isDeadOrDying() || !DragonUtils.isDragon(player)){
 				if (!level.isClientSide) {
 					this.remove(RemovalReason.DISCARDED);
 				}
@@ -102,7 +105,7 @@ public class DragonHitBox extends Mob
 		DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
 		
 		if(handler == null || handler.getMovementData() == null) return;
-		Vector3f offset = DragonStateProvider.getCameraOffset(player);
+		Vector3f offset = DragonUtils.getCameraOffset(player);
 		
 		double size = handler.getSize();
 		double height = DragonSizeHandler.calculateDragonHeight(size, ConfigHandler.SERVER.hitboxGrowsPastHuman.get());
@@ -114,7 +117,7 @@ public class DragonHitBox extends Mob
 		
 		double headRot = handler.getMovementData().headYaw;
 		double pitch = handler.getMovementData().headPitch*-1;
-		Vector3f bodyRot = DragonStateProvider.getCameraOffset(player);
+		Vector3f bodyRot = DragonUtils.getCameraOffset(player);
 		
 		bodyRot = new Vector3f(bodyRot.x() / 2, bodyRot.y() / 2, bodyRot.z() / 2);
 		
@@ -144,6 +147,9 @@ public class DragonHitBox extends Mob
 		if(lastSize != size || lastPose != overridePose) {
 			this.size = EntityDimensions.scalable((float)width * 1.6f, (float)height);
 			refreshDimensions();
+			
+			body.size = EntityDimensions.scalable((float)width * 1.6f, (float)height);
+			body.refreshDimensions();
 			
 			head.size = EntityDimensions.scalable((float)width, (float)width);
 			head.refreshDimensions();
@@ -179,7 +185,7 @@ public class DragonHitBox extends Mob
 //			double tailMotionUp = ServerFlightHandler.isFlying(player) ? 0 : (player.getDeltaMovement().y + g);
 //			double tailMotionSide = Mth.lerp(0.1, Mth.clamp(bodyYawChange, -50, 50), 0);
 //
-			
+			body.setPos(player.getX() - offset.x(), player.getY(), player.getZ() - offset.z());
 			head.setPos(dx, dy - (DragonSizeHandler.calculateDragonWidth(handler.getSize(), ConfigHandler.SERVER.hitboxGrowsPastHuman.get()) / 2), dz);
 			tail1.setPos(getX() - offset.x(), getY() + (player.getEyeHeight() / 2) - (height / 9), getZ() - offset.z());
 			tail2.setPos(getX() - offset.x() * 1.5, getY() + (player.getEyeHeight() / 2) - (height / 9), getZ() - offset.z() * 1.5);

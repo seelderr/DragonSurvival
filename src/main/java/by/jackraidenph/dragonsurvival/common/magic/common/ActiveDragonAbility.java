@@ -8,6 +8,7 @@ import by.jackraidenph.dragonsurvival.misc.DragonType;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.magic.SyncAbilityCasting;
 import by.jackraidenph.dragonsurvival.server.handlers.ServerFlightHandler;
+import by.jackraidenph.dragonsurvival.util.DragonUtils;
 import by.jackraidenph.dragonsurvival.util.Functions;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
@@ -116,11 +117,11 @@ public class ActiveDragonAbility extends DragonAbility
     }
     
     public boolean canConsumeMana(Player player) {
-        return DragonStateProvider.getCurrentMana(player) >= this.getManaCost() || ConfigHandler.SERVER.consumeEXPAsMana.get() && ((player.totalExperience / 10) >= getManaCost() || player.experienceLevel > 0);
+        return DragonUtils.getCurrentMana(player) >= this.getManaCost() || ConfigHandler.SERVER.consumeEXPAsMana.get() && ((player.totalExperience / 10) >= getManaCost() || player.experienceLevel > 0);
     }
     
     public void consumeMana(Player player) {
-        DragonStateProvider.consumeMana(player, this.getManaCost());
+        DragonUtils.consumeMana(player, this.getManaCost());
     }
     
     public void onActivation(Player player) {

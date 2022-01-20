@@ -2,9 +2,9 @@ package by.jackraidenph.dragonsurvival.common.handlers.magic;
 
 import by.jackraidenph.dragonsurvival.client.particles.DSParticles;
 import by.jackraidenph.dragonsurvival.common.DragonEffects;
-import by.jackraidenph.dragonsurvival.common.capability.Capabilities;
 import by.jackraidenph.dragonsurvival.common.capability.caps.GenericCapability;
 import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.provider.GenericCapabilityProvider;
 import by.jackraidenph.dragonsurvival.common.magic.DragonAbilities;
 import by.jackraidenph.dragonsurvival.common.magic.abilities.Actives.BreathAbilities.BreathAbility.BreathDamage;
 import by.jackraidenph.dragonsurvival.common.magic.abilities.Actives.BreathAbilities.StormBreathAbility;
@@ -178,7 +178,7 @@ public class MagicHandler
 			
 			if(type != DragonType.FOREST){
 				if (entity.tickCount % 20 == 0) {
-					GenericCapability cap = Capabilities.getGenericCapability(entity).orElse(null);
+					GenericCapability cap = GenericCapabilityProvider.getGenericCapability(entity).orElse(null);
 					Player player = cap != null && cap.lastAfflicted != -1 && entity.level.getEntity(cap.lastAfflicted) instanceof Player ? ((Player)entity.level.getEntity(cap.lastAfflicted)) : null;
 					if(player != null){
 						entity.hurt(new EntityDamageSource("magic", player).bypassArmor().setMagic(), 1.0F);
@@ -193,21 +193,21 @@ public class MagicHandler
 		if(entity.hasEffect(DragonEffects.CHARGED)){
 			if (entity.tickCount % 20 == 0) {
 				DragonType type = DragonStateProvider.getCap(entity).map(cap -> cap.getType()).orElse(null);
-				GenericCapability cap = Capabilities.getGenericCapability(entity).orElse(null);
+				GenericCapability cap = GenericCapabilityProvider.getGenericCapability(entity).orElse(null);
 				Player player = cap != null && cap.lastAfflicted != -1 && entity.level.getEntity(cap.lastAfflicted) instanceof Player ? ((Player)entity.level.getEntity(cap.lastAfflicted)) : null;
 				if (type != DragonType.SEA) {
 					StormBreathAbility.chargedEffectSparkle(player, entity, ConfigHandler.SERVER.chargedChainRange.get(), ConfigHandler.SERVER.chargedEffectChainCount.get(), ConfigHandler.SERVER.chargedEffectDamage.get());
 				}
 			}
 		}else{
-			GenericCapability cap = Capabilities.getGenericCapability(entity).orElse(null);
+			GenericCapability cap = GenericCapabilityProvider.getGenericCapability(entity).orElse(null);
 			
 			if(cap != null && cap.lastAfflicted != -1){
 				cap.lastAfflicted = -1;
 			}
 		}
 		
-		Capabilities.getGenericCapability(entity).ifPresent(cap -> {
+		GenericCapabilityProvider.getGenericCapability(entity).ifPresent(cap -> {
 			if (entity.tickCount % 20 == 0) {
 				if (entity.hasEffect(DragonEffects.BURN)) {
 					if(!entity.fireImmune()){
@@ -313,7 +313,7 @@ public class MagicHandler
 							boolean hit = player.level.random.nextInt(100) < burnAbility.getChance();
 							
 							if (hit) {
-								GenericCapability cap1 = Capabilities.getGenericCapability(event.getEntity()).orElse(null);
+								GenericCapability cap1 = GenericCapabilityProvider.getGenericCapability(event.getEntity()).orElse(null);
 								
 								if(cap1 != null){
 									cap1.lastAfflicted = player.getId();

@@ -6,6 +6,7 @@ import by.jackraidenph.dragonsurvival.common.handlers.magic.ManaHandler;
 import by.jackraidenph.dragonsurvival.common.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
+import by.jackraidenph.dragonsurvival.util.DragonUtils;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -29,7 +30,7 @@ public class ClientMagicHUDHandler
 		if(Minecraft.getInstance().options.hideGui || !gui.shouldDrawSurvivalElements() || !Minecraft.getInstance().gameMode.hasExperience()) return;
 		int x = width / 2 - 91;
 		
-		if(!ConfigHandler.SERVER.consumeEXPAsMana.get() || !DragonStateProvider.isDragon(playerEntity)){
+		if(!ConfigHandler.SERVER.consumeEXPAsMana.get() || !DragonUtils.isDragon(playerEntity)){
 			ForgeIngameGui.EXPERIENCE_BAR_ELEMENT.render(gui, mStack, partialTicks, width, height);
 			return;
 		}
@@ -38,7 +39,7 @@ public class ClientMagicHUDHandler
 				ActiveDragonAbility ability = cap.getMagic().getAbilityFromSlot(cap.getMagic().getSelectedAbilitySlot());
 				if(ability == null) return;
 				
-				if(DragonStateProvider.getCurrentMana(playerEntity) < ability.getManaCost() && ((DragonStateProvider.getCurrentMana(playerEntity) + (playerEntity.totalExperience / 10) >= ability.getManaCost()) || playerEntity.experienceLevel > 0)){
+				if(DragonUtils.getCurrentMana(playerEntity) < ability.getManaCost() && ((DragonUtils.getCurrentMana(playerEntity) + (playerEntity.totalExperience / 10) >= ability.getManaCost()) || playerEntity.experienceLevel > 0)){
 					Window window = Minecraft.getInstance().getWindow();
 					
 					int screenWidth = window.getGuiScaledWidth();
@@ -83,7 +84,7 @@ public class ClientMagicHUDHandler
 		
 		Player playerEntity = Minecraft.getInstance().player;
 	    
-	    if (playerEntity == null || !DragonStateProvider.isDragon(playerEntity) || playerEntity.isSpectator())
+	    if (playerEntity == null || !DragonUtils.isDragon(playerEntity) || playerEntity.isSpectator())
 	        return;
 	    
 	    DragonStateProvider.getCap(playerEntity).ifPresent(cap -> {
@@ -136,8 +137,8 @@ public class ClientMagicHUDHandler
 				
 				RenderSystem.setShaderTexture(0,widgetTextures);
 				
-				int maxMana = DragonStateProvider.getMaxMana(playerEntity);
-				int curMana = DragonStateProvider.getCurrentMana(playerEntity);
+				int maxMana = DragonUtils.getMaxMana(playerEntity);
+				int curMana = DragonUtils.getCurrentMana(playerEntity);
 		
 		
 		        int manaX = rightSide ? width - (sizeX * count) - 20 : (sizeX * count) + 20;

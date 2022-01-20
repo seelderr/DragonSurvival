@@ -6,6 +6,7 @@ import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProv
 import by.jackraidenph.dragonsurvival.common.handlers.DragonConfigHandler;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
+import by.jackraidenph.dragonsurvival.util.DragonUtils;
 import by.jackraidenph.dragonsurvival.util.Functions;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
@@ -41,15 +42,15 @@ public class ManaHandler
 			}
 			
 			if (player.tickCount % Functions.secondsToTicks(timeToRecover) == 0) {
-				if (cap.getMagic().getCurrentMana() < DragonStateProvider.getMaxMana(player)) {
-					DragonStateProvider.replenishMana(player, 1);
+				if (cap.getMagic().getCurrentMana() < DragonUtils.getMaxMana(player)) {
+					DragonUtils.replenishMana(player, 1);
 				}
 			}
 		});
 	}
 	
 	public static boolean isPlayerInGoodConditions(Player player){
-		if(!DragonStateProvider.isDragon(player)){
+		if(!DragonUtils.isDragon(player)){
 			return false;
 		}
 		

@@ -1,7 +1,9 @@
 package by.jackraidenph.dragonsurvival.client.gui.widgets.lists;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Option;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
@@ -20,8 +22,9 @@ public class TextBoxEntry extends OptionListEntry
 	
 	private CategoryEntry category;
 	
-	public TextBoxEntry(OptionsList optionsList, AbstractWidget widget, CategoryEntry categoryEntry)
+	public TextBoxEntry(Option option, OptionsList optionsList, AbstractWidget widget, CategoryEntry categoryEntry)
 	{
+		super(ImmutableMap.of(option, widget));
 		this.widget = widget;
 		this.category = categoryEntry;
 		

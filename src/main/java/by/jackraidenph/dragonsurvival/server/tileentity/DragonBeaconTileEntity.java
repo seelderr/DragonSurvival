@@ -4,8 +4,8 @@ import by.jackraidenph.dragonsurvival.client.sounds.SoundRegistry;
 import by.jackraidenph.dragonsurvival.common.EffectInstance2;
 import by.jackraidenph.dragonsurvival.common.blocks.DSBlocks;
 import by.jackraidenph.dragonsurvival.common.blocks.DragonBeacon;
-import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
+import by.jackraidenph.dragonsurvival.util.DragonUtils;
 import by.jackraidenph.dragonsurvival.util.Functions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -54,7 +54,7 @@ public class DragonBeaconTileEntity extends BaseBlockTileEntity{
                 pLevel.playSound(null, pPos, SoundRegistry.activateBeacon, SoundSource.BLOCKS, 1, 1);
             }
             if (!pLevel.isClientSide) {
-                List<Player> dragons = pLevel.getEntitiesOfClass(Player.class, new AABB(pPos).inflate(50).expandTowards(0, pLevel.getMaxBuildHeight(), 0), DragonStateProvider::isDragon);
+                List<Player> dragons = pLevel.getEntitiesOfClass(Player.class, new AABB(pPos).inflate(50).expandTowards(0, pLevel.getMaxBuildHeight(), 0), DragonUtils::isDragon);
                 switch (pBlockEntity.type) {
                     case PEACE:
                         dragons.forEach(playerEntity -> {

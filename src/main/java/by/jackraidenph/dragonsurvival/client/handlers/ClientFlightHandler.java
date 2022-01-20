@@ -13,6 +13,7 @@ import by.jackraidenph.dragonsurvival.network.flight.SyncFlightSpeed;
 import by.jackraidenph.dragonsurvival.network.flight.SyncFlyingStatus;
 import by.jackraidenph.dragonsurvival.network.flight.SyncSpinStatus;
 import by.jackraidenph.dragonsurvival.server.handlers.ServerFlightHandler;
+import by.jackraidenph.dragonsurvival.util.DragonUtils;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.math.Vector3f;
@@ -45,7 +46,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.opengl.GL11;
 
 import java.util.concurrent.TimeUnit;
 
@@ -119,7 +119,7 @@ public class ClientFlightHandler {
     public static void renderFlightCooldown(RenderGameOverlayEvent.Post event) {
         Player playerEntity = Minecraft.getInstance().player;
         
-        if (playerEntity == null || !DragonStateProvider.isDragon(playerEntity) || playerEntity.isSpectator())
+        if (playerEntity == null || !DragonUtils.isDragon(playerEntity) || playerEntity.isSpectator())
             return;
         
         DragonStateProvider.getCap(playerEntity).ifPresent(cap -> {

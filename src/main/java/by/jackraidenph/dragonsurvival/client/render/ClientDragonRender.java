@@ -21,6 +21,7 @@ import by.jackraidenph.dragonsurvival.mixins.AccessorLivingRenderer;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.entity.player.PacketSyncCapabilityMovement;
 import by.jackraidenph.dragonsurvival.server.handlers.ServerFlightHandler;
+import by.jackraidenph.dragonsurvival.util.DragonUtils;
 import by.jackraidenph.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -130,7 +131,7 @@ public class ClientDragonRender
             try {
                 PoseStack .pushPose();
 	
-	            Vector3f lookVector = DragonStateProvider.getCameraOffset(player);
+	            Vector3f lookVector = DragonUtils.getCameraOffset(player);
 	            PoseStack .translate(-lookVector.x(), lookVector.y(), -lookVector.z());
 				
 	            double size = cap.getSize();

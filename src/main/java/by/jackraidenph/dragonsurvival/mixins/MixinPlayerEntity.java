@@ -7,6 +7,7 @@ import by.jackraidenph.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.jackraidenph.dragonsurvival.common.handlers.magic.ClawToolHandler;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
+import by.jackraidenph.dragonsurvival.util.DragonUtils;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -126,7 +127,7 @@ public abstract class MixinPlayerEntity extends LivingEntity
 	
 	@Inject( method = "isSleepingLongEnough", at = @At("HEAD"), cancellable = true)
 	public void isSleepingLongEnough(CallbackInfoReturnable<Boolean> ci) {
-		if (DragonStateProvider.isDragon(this)) {
+		if (DragonUtils.isDragon(this)) {
 			DragonStateProvider.getCap(this).ifPresent(cap -> {
 				if(cap.treasureResting && cap.treasureSleepTimer >= 100){
 					ci.setReturnValue(true);
@@ -142,7 +143,7 @@ public abstract class MixinPlayerEntity extends LivingEntity
 	
 	@Inject( method = "travel", at = @At("HEAD"), cancellable = true)
 	public void travel(Vec3 p_213352_1_, CallbackInfo ci) {
-		if (DragonStateProvider.isDragon(this)) {
+		if (DragonUtils.isDragon(this)) {
 			double d0 = this.getX();
 			double d1 = this.getY();
 			double d2 = this.getZ();
@@ -175,7 +176,7 @@ public abstract class MixinPlayerEntity extends LivingEntity
     }
 	
 	public void dragonTravel(Vec3 p_213352_1_) {
-		if (!DragonStateProvider.isDragon(this)) {
+		if (!DragonUtils.isDragon(this)) {
 			super.travel(p_213352_1_);
 			return;
 		}

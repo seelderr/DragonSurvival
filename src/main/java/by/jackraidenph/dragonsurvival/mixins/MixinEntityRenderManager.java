@@ -1,7 +1,7 @@
 package by.jackraidenph.dragonsurvival.mixins;
 
-import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.entity.creatures.hitbox.DragonHitBox;
+import by.jackraidenph.dragonsurvival.util.DragonUtils;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Vector3f;
@@ -31,7 +31,7 @@ public class MixinEntityRenderManager
 	
 	@Inject( at = @At("HEAD"), method = "renderShadow", cancellable = true)
 	private static void renderShadow(PoseStack p_229096_0_, MultiBufferSource p_229096_1_, Entity p_229096_2_, float p_229096_3_, float p_229096_4_, LevelReader p_229096_5_, float p_229096_6_, CallbackInfo ci) {
-		if(!DragonStateProvider.isDragon(p_229096_2_)) return;
+		if(!DragonUtils.isDragon(p_229096_2_)) return;
 		if(ci.isCancelled()) return;
 		
 		float f = p_229096_6_;
@@ -42,7 +42,7 @@ public class MixinEntityRenderManager
 			}
 		}
 		
-		Vector3f lookVector = DragonStateProvider.getCameraOffset(p_229096_2_);
+		Vector3f lookVector = DragonUtils.getCameraOffset(p_229096_2_);
 		
 		p_229096_0_.pushPose();
 		p_229096_0_.translate(-lookVector.x(), -lookVector.y(), -lookVector.z());

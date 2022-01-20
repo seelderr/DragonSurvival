@@ -1,10 +1,10 @@
 package by.jackraidenph.dragonsurvival.common.magic.abilities.Passives;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.magic.common.PassiveDragonAbility;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
+import by.jackraidenph.dragonsurvival.util.DragonUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -43,7 +43,7 @@ public class MagicAbility extends PassiveDragonAbility
 	@Override
 	public ResourceLocation getIcon()
 	{
-		String levelKey = Integer.toString(DragonStateProvider.getMaxMana(player == null ? Minecraft.getInstance().player : player));
+		String levelKey = Integer.toString(DragonUtils.getMaxMana(player == null ? Minecraft.getInstance().player : player));
 		
 		if(!iconCache.containsKey(levelKey + "_" + getId())){
 			ResourceLocation texture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/" + icon + "_" + levelKey + ".png");
@@ -60,6 +60,6 @@ public class MagicAbility extends PassiveDragonAbility
 		String points = getPoints() > 0 ? "+" + getPoints() : "0";
 		String levels = level > 0 ? "+" + level : "0";
 		
-		return new TranslatableComponent("ds.skill.description." + getId(), DragonStateProvider.getMaxMana(player), points, levels);
+		return new TranslatableComponent("ds.skill.description." + getId(), DragonUtils.getMaxMana(player), points, levels);
 	}
 }

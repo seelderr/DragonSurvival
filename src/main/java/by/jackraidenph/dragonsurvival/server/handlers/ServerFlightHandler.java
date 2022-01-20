@@ -4,11 +4,14 @@ import by.jackraidenph.dragonsurvival.client.handlers.ClientFlightHandler;
 import by.jackraidenph.dragonsurvival.common.DragonEffects;
 import by.jackraidenph.dragonsurvival.common.capability.caps.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.entity.creatures.hitbox.DragonHitBox;
+import by.jackraidenph.dragonsurvival.common.entity.creatures.hitbox.DragonHitboxPart;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.flight.SyncFlyingStatus;
 import by.jackraidenph.dragonsurvival.network.flight.SyncSpinStatus;
+import by.jackraidenph.dragonsurvival.util.DragonUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.Mth;
@@ -56,7 +59,7 @@ public class ServerFlightHandler {
 		            return;
 	            }
 	
-	            if (livingEntity.isPassenger() && DragonStateProvider.isDragon(livingEntity.getVehicle())) {
+	            if (livingEntity.isPassenger() && DragonUtils.isDragon(livingEntity.getVehicle())) {
 		            event.setCanceled(true);
 					return;
 	            }
@@ -87,7 +90,7 @@ public class ServerFlightHandler {
 	@SubscribeEvent
 	public static void foldWings(PlayerTickEvent tickEvent){
 		Player player = tickEvent.player;
-		if(tickEvent.phase ==  Phase.START || !DragonStateProvider.isDragon(player) || player.level.isClientSide) return;
+		if(tickEvent.phase ==  Phase.START || !DragonUtils.isDragon(player) || player.level.isClientSide) return;
 		if(!ConfigHandler.SERVER.foldWingsOnLand.get()) return;
 		
 		DragonStateHandler dragonStateHandler = DragonStateProvider.getCap(player).orElse(null);
@@ -159,6 +162,8 @@ public class ServerFlightHandler {
 					entities.removeIf((e) -> e.distanceTo(player) > range);
 					entities.remove(player);
 					entities.removeIf((e) -> e instanceof Player && !player.canHarmPlayer((Player)e));
+					entities.removeIf((e) -> e instanceof DragonHitBox && ((DragonHitBox)e).player == player);
+					entities.removeIf((e) -> e instanceof DragonHitboxPart && ((DragonHitboxPart)e).parentMob.player == player);
 					
 					for(Entity ent : entities){
 						if(player.hasPassenger(ent)) continue;

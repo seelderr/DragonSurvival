@@ -1,10 +1,10 @@
 package by.jackraidenph.dragonsurvival.common.entity.creatures;
 
 import by.jackraidenph.dragonsurvival.common.DragonEffects;
-import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.entity.DSEntities;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.PrincessTrades;
+import by.jackraidenph.dragonsurvival.util.DragonUtils;
 import by.jackraidenph.dragonsurvival.util.Functions;
 import com.mojang.serialization.Dynamic;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -161,7 +161,7 @@ public class PrincessEntity extends Villager
         });
         this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, LivingEntity.class, 8.0F));
         goalSelector.addGoal(6, new AvoidEntityGoal<>(this, Player.class, 16, 1, 1, livingEntity -> {
-            return DragonStateProvider.isDragon(livingEntity) && livingEntity.hasEffect(DragonEffects.EVIL_DRAGON);
+            return DragonUtils.isDragon(livingEntity) && livingEntity.hasEffect(DragonEffects.EVIL_DRAGON);
         }));
         goalSelector.addGoal(7, new PanicGoal(this, 1));
     }

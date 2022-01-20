@@ -8,6 +8,7 @@ import by.jackraidenph.dragonsurvival.misc.DragonLevel;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import com.google.gson.Gson;
 import com.mojang.blaze3d.platform.NativeImage;
+import com.mojang.blaze3d.platform.NativeImage.Format;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.ResourceLocation;
@@ -144,7 +145,7 @@ public class DragonSkins
 		try{
 			URL url = new URL(SKINS + searchText + ".png");
 			InputStream inputStream = url.openConnection().getInputStream();
-			NativeImage customTexture = NativeImage.read(inputStream);
+			NativeImage customTexture = NativeImage.read(Format.RGBA, inputStream);
 			resourceLocation = new ResourceLocation(DragonSurvivalMod.MODID, searchText.toLowerCase(Locale.ROOT));
 			Minecraft.getInstance().getTextureManager().register(resourceLocation, new DynamicTexture(customTexture));
 			

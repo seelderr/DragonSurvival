@@ -1,8 +1,8 @@
 package by.jackraidenph.dragonsurvival.commands;
 
-import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.SkinCustomization.OpenDragonCustomization;
+import by.jackraidenph.dragonsurvival.util.DragonUtils;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.mojang.brigadier.tree.RootCommandNode;
@@ -25,7 +25,7 @@ public class CustomizationCommand
 	
 	private static int runCommand( ServerPlayer serverPlayer)
 	{
-		if(DragonStateProvider.isDragon(serverPlayer)){
+		if(DragonUtils.isDragon(serverPlayer)){
 			NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> serverPlayer), new OpenDragonCustomization());
 		}
 		return 1;

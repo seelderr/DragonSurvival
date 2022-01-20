@@ -2,6 +2,7 @@ package by.jackraidenph.dragonsurvival.common.items;
 
 import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
+import by.jackraidenph.dragonsurvival.util.DragonUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -42,7 +43,7 @@ public class DragonTreatItem extends Item
 			Player player = (Player)entity;
 			
 			if(DragonStateProvider.getCap(player).map((cap) -> cap.getType()).get() == type) {
-				DragonStateProvider.replenishMana(player, DragonStateProvider.getMaxMana(player));
+				DragonUtils.replenishMana(player, DragonUtils.getMaxMana(player));
 			}
 		}
 		
