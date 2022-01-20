@@ -5,18 +5,18 @@ import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.particles.IParticleData;
-import net.minecraft.particles.ParticleType;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.core.Registry;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleType;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.Locale;
 
-public class SmallLightningParticleData implements IParticleData
+public class SmallLightningParticleData implements ParticleOptions
 {
-	public static final IDeserializer<SmallLightningParticleData> DESERIALIZER = new IDeserializer<SmallLightningParticleData>()
+	public static final Deserializer<SmallLightningParticleData> DESERIALIZER = new Deserializer<SmallLightningParticleData>()
 	{
 		public SmallLightningParticleData fromCommand(ParticleType<SmallLightningParticleData> particleTypeIn, StringReader reader) throws CommandSyntaxException
 		{
@@ -27,7 +27,7 @@ public class SmallLightningParticleData implements IParticleData
 			return new SmallLightningParticleData(duration, swirls);
 		}
 		
-		public SmallLightningParticleData fromNetwork(ParticleType<SmallLightningParticleData> particleTypeIn, PacketBuffer buffer)
+		public SmallLightningParticleData fromNetwork(ParticleType<SmallLightningParticleData> particleTypeIn, FriendlyByteBuf buffer)
 		{
 			return new SmallLightningParticleData(buffer.readFloat(), buffer.readBoolean());
 		}
@@ -43,7 +43,7 @@ public class SmallLightningParticleData implements IParticleData
 	}
 	
 	@Override
-	public void writeToNetwork(PacketBuffer buffer)
+	public void writeToNetwork(FriendlyByteBuf buffer)
 	{
 		buffer.writeFloat(this.duration);
 		buffer.writeBoolean(this.swirls);

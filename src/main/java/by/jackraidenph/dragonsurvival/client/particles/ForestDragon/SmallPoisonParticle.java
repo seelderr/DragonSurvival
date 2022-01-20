@@ -1,29 +1,23 @@
 package by.jackraidenph.dragonsurvival.client.particles.ForestDragon;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Quaternion;
+import com.mojang.math.Vector3f;
+import net.minecraft.client.Camera;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
-import net.minecraft.client.renderer.ActiveRenderInfo;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.texture.AtlasTexture;
-import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.math.vector.Quaternion;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class SmallPoisonParticle extends SpriteTexturedParticle {
+public class SmallPoisonParticle extends TextureSheetParticle
+{
 	private int swirlTick;
 	private final float spread;
 	boolean swirls;
-	private final IAnimatedSprite sprites;
+	private final SpriteSet sprites;
 
-	public SmallPoisonParticle(ClientWorld world, double x, double y, double z, double vX, double vY, double vZ, double duration, boolean swirls, IAnimatedSprite sprite) {
+	public SmallPoisonParticle(ClientLevel world, double x, double y, double z, double vX, double vY, double vZ, double duration, boolean swirls, SpriteSet sprite) {
 		super(world, x, y, z);
 		setSize(1, 1);
 		xd = vX;
@@ -56,30 +50,10 @@ public class SmallPoisonParticle extends SpriteTexturedParticle {
 	}
 	
 	@Override
-	public IParticleRenderType getRenderType() {
-		return PARTICLE_SHEET_TRANSLUCENT_NO_DEPTH;
+	public ParticleRenderType getRenderType() {
+		return ParticleRenderType.PARTICLE_SHEET_OPAQUE;
 	}
-
-	public static IParticleRenderType PARTICLE_SHEET_TRANSLUCENT_NO_DEPTH = new IParticleRenderType() {
-		public void begin(BufferBuilder p_217600_1_, TextureManager p_217600_2_) {
-			RenderSystem.depthMask(true);
-			RenderSystem.disableCull();
-			p_217600_2_.bind(AtlasTexture.LOCATION_PARTICLES);
-			RenderSystem.enableBlend();
-			RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-			RenderSystem.alphaFunc(516, 0.003921569F);
-			p_217600_1_.begin(7, DefaultVertexFormats.PARTICLE);
-		}
-
-		public void end(Tessellator p_217599_1_) {
-			p_217599_1_.end();
-		}
-
-		public String toString() {
-			return "PARTICLE_SHEET_TRANSLUCENT_NO_DEPTH";
-		}
-	};
-
+	
 	@Override
 	public void tick() {
 		super.tick();
@@ -109,7 +83,7 @@ public class SmallPoisonParticle extends SpriteTexturedParticle {
 	}
 
 	@Override
-	public void render(IVertexBuilder buffer, ActiveRenderInfo renderInfo, float partialTicks) {
+	public void render(VertexConsumer buffer, Camera renderInfo, float partialTicks) {
 		float var = (age + partialTicks)/(float)lifetime;
 		alpha = (float) (1 - Math.exp(10 * (var - 1)) - Math.pow(2000, -var));
 		if (alpha < 0.1) alpha = 0.1f;
@@ -118,15 +92,16 @@ public class SmallPoisonParticle extends SpriteTexturedParticle {
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	public static final class ForestFactory implements IParticleFactory<SmallPoisonParticleData> {
-		private final IAnimatedSprite spriteSet;
+	public static final class ForestFactory implements ParticleProvider<SmallPoisonParticleData>
+	{
+		private final SpriteSet spriteSet;
 
-		public ForestFactory(IAnimatedSprite sprite) {
+		public ForestFactory(SpriteSet sprite) {
 			this.spriteSet = sprite;
 		}
 
 		@Override
-		public Particle createParticle(SmallPoisonParticleData typeIn, ClientWorld worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
+		public Particle createParticle(SmallPoisonParticleData typeIn, ClientLevel worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
 			SmallPoisonParticle particle = new SmallPoisonParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, typeIn.getDuration(), typeIn.getSwirls(), spriteSet);
 			particle.setSpriteFromAge(spriteSet);
 			return particle;

@@ -1,41 +1,46 @@
 package by.jackraidenph.dragonsurvival.common.entity.monsters;
 
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.blocks.DSBlocks;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.entity.PacketSyncXPDevour;
-import by.jackraidenph.dragonsurvival.common.blocks.DSBlocks;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.*;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.AttributeModifierMap;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.ai.goal.*;
-import net.minecraft.entity.monster.MonsterEntity;
-import net.minecraft.entity.monster.SkeletonEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.Direction;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.IServerWorld;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.monster.Skeleton;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.network.PacketDistributor;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class MagicalPredatorEntity extends MonsterEntity {
+public class MagicalPredatorEntity extends Monster
+{
 	
     public int type;
     public float size;
@@ -43,7 +48,7 @@ public class MagicalPredatorEntity extends MonsterEntity {
     private boolean deathStar;
     private int teleportationCooldown;
 
-    public MagicalPredatorEntity(EntityType<? extends MonsterEntity> entityIn, World worldIn) {
+    public MagicalPredatorEntity(EntityType<? extends Monster> entityIn, Level worldIn) {
         super(entityIn, worldIn);
         this.type = worldIn.getRandom().nextInt(10);
         this.size = worldIn.getRandom().nextFloat() + 0.95F;
@@ -51,11 +56,11 @@ public class MagicalPredatorEntity extends MonsterEntity {
         deathStar = false;
     }
     
-    protected int getExperienceReward(PlayerEntity p_70693_1_) {
+    protected int getExperienceReward(Player p_70693_1_) {
         return 1 + this.level.random.nextInt(2);
     }
     
-    private static int getActualDistance(PlayerEntity player) {
+    private static int getActualDistance(Player player) {
 
         AtomicInteger distance = new AtomicInteger();
 
@@ -85,8 +90,7 @@ public class MagicalPredatorEntity extends MonsterEntity {
         	for (int i = 1; i < 10; ++i)
     		for (int r = 0; r < 5; ++r) {
     			BlockPos blockpos = this.blockPosition().offset(level.random.nextInt(i) - level.random.nextInt(i), level.random.nextInt(i) - level.random.nextInt(i), level.random.nextInt(i) - level.random.nextInt(i));
-				if (level.getBlockState(blockpos).getBlockState().canBeReplaced(Fluids.LAVA) && level.getEntityCollisions(null, new AxisAlignedBB(blockpos), (entity) -> { 
-					return entity instanceof LivingEntity; }).count() == 0) {
+				if (level.getBlockState(blockpos).canBeReplaced(Fluids.LAVA) && level.getEntityCollisions(null, new AABB(blockpos)).size() == 0) {
                 	if (level.isClientSide)
                 		this.spawnAnim();
                 	else {
@@ -107,7 +111,7 @@ public class MagicalPredatorEntity extends MonsterEntity {
         super.aiStep();
         this.level.addParticle(ParticleTypes.SMOKE, this.getX() + this.level.getRandom().nextFloat() * 1.25 - 0.75F,
                 this.getY() + this.getBbHeight() / 1.5F * scale, this.getZ() + this.level.getRandom().nextFloat() * 1.25 - 0.75F,
-                0, this.level.getRandom().nextFloat() / 12.5f, 0);
+                               0, this.level.getRandom().nextFloat() / 12.5f, 0);
         if (teleportationCooldown > 0)
             teleportationCooldown--;
     }
@@ -127,33 +131,34 @@ public class MagicalPredatorEntity extends MonsterEntity {
     protected SoundEvent getAmbientSound() {
         return SoundEvents.SKELETON_AMBIENT;
     }
-
+    
+    
+    @org.jetbrains.annotations.Nullable
     @Override
-    @Nullable
-    public ILivingEntityData finalizeSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
-        super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
-
-        
-        if (worldIn.getRandom().nextInt(10) == 0) {
-            SkeletonEntity skeletonentity = EntityType.SKELETON.create(this.level);
-            skeletonentity.absMoveTo(this.getX(), this.getY(), this.getZ(), this.yRot, 0.0F);
-            skeletonentity.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
-            worldIn.addFreshEntity(skeletonentity);
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @org.jetbrains.annotations.Nullable SpawnGroupData pSpawnData, @org.jetbrains.annotations.Nullable CompoundTag pDataTag)
+    {
+        super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
+        if (pLevel.getRandom().nextInt(10) == 0) {
+            Skeleton skeletonentity = EntityType.SKELETON.create(this.level);
+            skeletonentity.absMoveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
+            skeletonentity.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
+            pLevel.addFreshEntity(skeletonentity);
             skeletonentity.startRiding(this);
         }
         this.getAttribute(Attributes.MAX_HEALTH).addPermanentModifier(new AttributeModifier("healthBoost", scale, AttributeModifier.Operation.MULTIPLY_BASE));
         this.setHealth((float)this.getAttribute(Attributes.MAX_HEALTH).getValue());
         this.getAttribute(Attributes.ATTACK_DAMAGE).addPermanentModifier(new AttributeModifier("damageBoost", scale, AttributeModifier.Operation.MULTIPLY_BASE));
         this.getAttribute(Attributes.ATTACK_KNOCKBACK).addPermanentModifier(new AttributeModifier("attackBoost", scale, AttributeModifier.Operation.MULTIPLY_BASE));
-        return spawnDataIn;
+        return pSpawnData;
     }
+    
 
     @Override
     protected void registerGoals() {
         super.registerGoals();
-        this.goalSelector.addGoal(1, new SwimGoal(this));
+        this.goalSelector.addGoal(1, new WaterAvoidingRandomStrollGoal(this, 1.0d));
         this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0D, true));
-        this.goalSelector.addGoal(3, new LookAtGoal(this, PlayerEntity.class, 8.0F));
+        this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(4, new DevourXP(this.level, this));
         this.targetSelector.addGoal(1, new FindPlayerGoal(this));
         this.targetSelector.addGoal(2, new IsNearestDragonTargetGoal(this, true));
@@ -165,20 +170,20 @@ public class MagicalPredatorEntity extends MonsterEntity {
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundNBT compound) {
+    public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.putInt("teleportationCooldown", teleportationCooldown);
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundNBT compound) {
+    public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
         teleportationCooldown = compound.getInt("teleportationCooldown");
     }
     
     
-    public static AttributeModifierMap.MutableAttribute createMonsterAttributes() {
-        return MobEntity.createMobAttributes()
+    public static AttributeSupplier.Builder createMonsterAttributes() {
+        return Mob.createMobAttributes()
                 .add(Attributes.MOVEMENT_SPEED, 0.375D)
                 .add(Attributes.ARMOR, 2.0F)
                 .add(Attributes.ATTACK_DAMAGE, 2.0F * ConfigHandler.COMMON.predatorDamageFactor.get())
@@ -205,7 +210,7 @@ public class MagicalPredatorEntity extends MonsterEntity {
      }
     
     private void teleportToEntity(Entity p_70816_1_) {
-    	Vector3d vec = p_70816_1_.position().subtract(p_70816_1_.getLookAngle().multiply(2, 1, 2));
+    	Vec3 vec = p_70816_1_.position().subtract(p_70816_1_.getLookAngle().multiply(2, 1, 2));
         double d1 = vec.x();
         double d2 = 256;
         double d3 = vec.z();
@@ -214,8 +219,7 @@ public class MagicalPredatorEntity extends MonsterEntity {
     }
 
     private void _teleportTo(double x, double y, double z) {
-        BlockPos.Mutable blockpos$mutable = new BlockPos.Mutable(x, y, z);
-        
+        BlockPos.MutableBlockPos blockpos$mutable = new BlockPos(x, y, z).mutable();
         while (blockpos$mutable.getY() > 0 && !this.level.getBlockState(blockpos$mutable).getMaterial().blocksMotion()) {
             blockpos$mutable.move(Direction.DOWN);
         }
@@ -237,7 +241,7 @@ public class MagicalPredatorEntity extends MonsterEntity {
         double d3 = p_213373_3_;
         boolean flag = false;
         BlockPos blockpos = new BlockPos(p_213373_1_, p_213373_3_, p_213373_5_);
-        World world = this.level;
+        Level  world = this.level;
         boolean flag1 = false;
 
         while (!flag1 && blockpos.getY() > 0) {
@@ -272,12 +276,13 @@ public class MagicalPredatorEntity extends MonsterEntity {
         }
     }
 
-    static class DevourXP extends Goal {
+    static class DevourXP extends Goal
+    {
 
-        World world;
+        Level  world;
         MagicalPredatorEntity entity;
 
-        public DevourXP(World worldIn, MagicalPredatorEntity entityIn) {
+        public DevourXP(Level  worldIn, MagicalPredatorEntity entityIn) {
             this.world = worldIn;
             this.entity = entityIn;
         }
@@ -296,39 +301,40 @@ public class MagicalPredatorEntity extends MonsterEntity {
         }
     }
 
-    static class IsNearestDragonTargetGoal extends NearestAttackableTargetGoal<PlayerEntity> {
+    static class IsNearestDragonTargetGoal extends NearestAttackableTargetGoal<Player>
+    {
 
-        public IsNearestDragonTargetGoal(MobEntity p_i50313_1_, boolean p_i50313_3_) {
-            super(p_i50313_1_, PlayerEntity.class, p_i50313_3_);
+        public IsNearestDragonTargetGoal(Mob p_i50313_1_, boolean p_i50313_3_) {
+            super(p_i50313_1_, Player.class, p_i50313_3_);
         }
 
         @Override
-        protected AxisAlignedBB getTargetSearchArea(double p_188511_1_) {
-            PlayerEntity player = (PlayerEntity) this.target;
+        protected AABB getTargetSearchArea(double p_188511_1_) {
+            Player player = (Player) this.target;
             return this.mob.getBoundingBox().inflate(getActualDistance(player));
         }
     }
 
-    static class FindPlayerGoal extends NearestAttackableTargetGoal<PlayerEntity> {
+    static class FindPlayerGoal extends NearestAttackableTargetGoal<Player> {
         private final MagicalPredatorEntity beast;
 
         public FindPlayerGoal(MagicalPredatorEntity beastIn) {
-            super(beastIn, PlayerEntity.class, false);
+            super(beastIn, Player.class, false);
             this.beast = beastIn;
         }
 
         @Override
-        protected AxisAlignedBB getTargetSearchArea(double p_188511_1_) {
-            PlayerEntity player = (PlayerEntity) this.target;
+        protected AABB getTargetSearchArea(double p_188511_1_) {
+            Player player = (Player) this.target;
             return this.mob.getBoundingBox().inflate(getActualDistance(player));
         }
 
         @Override
         public void tick() {
             if (this.target != null) {
-                if (this.target instanceof PlayerEntity) {
+                if (this.target instanceof Player) {
                 	if (beast.teleportationCooldown == 0) {
-                        float diff = getActualDistance((PlayerEntity) this.target) - beast.distanceTo(this.target);
+                        float diff = getActualDistance((Player) this.target) - beast.distanceTo(this.target);
                         if (diff <= 16 & diff >= -2) {
                             beast.teleportToEntity(this.target);
                             beast.teleportationCooldown = 10;

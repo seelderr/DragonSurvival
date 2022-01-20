@@ -1,15 +1,15 @@
 package by.jackraidenph.dragonsurvival.common.capability.DragonCapabilities;
 
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
-import by.jackraidenph.dragonsurvival.config.ConfigHandler;
+import by.jackraidenph.dragonsurvival.common.capability.caps.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.magic.DragonAbilities;
 import by.jackraidenph.dragonsurvival.common.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.common.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.common.magic.common.PassiveDragonAbility;
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.Direction;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraftforge.common.capabilities.Capability;
 
 import java.util.ArrayList;
@@ -154,8 +154,8 @@ public class MagicCap implements DragonCapability
 		this.renderAbilities = renderAbilities;
 	}
 	
-	public CompoundNBT saveAbilities(){
-		CompoundNBT tag = new CompoundNBT();
+	public CompoundTag saveAbilities(){
+		CompoundTag tag = new CompoundTag();
 		
 		for(DragonAbility ability : abilities){
 			tag.put(ability.getId(), ability.saveNBT());
@@ -164,8 +164,8 @@ public class MagicCap implements DragonCapability
 		return tag;
 	}
 	
-	public void loadAbilities(CompoundNBT nbt){
-		CompoundNBT tag = nbt.contains("abilitySlots") ? nbt.getCompound("abilitySlots") : null;
+	public void loadAbilities(CompoundTag nbt){
+		CompoundTag tag = nbt.contains("abilitySlots") ? nbt.getCompound("abilitySlots") : null;
 		
 		if(tag != null){
 			for(DragonAbility staticAbility : DragonAbilities.ABILITY_LOOKUP.values()){
@@ -179,13 +179,13 @@ public class MagicCap implements DragonCapability
 	}
 	
 	@Override
-	public INBT writeNBT(Capability<DragonStateHandler> capability,  Direction side)
+	public Tag writeNBT(Capability<DragonStateHandler> capability,  Direction side)
 	{
-		CompoundNBT tag = new CompoundNBT();
+		CompoundTag tag = new CompoundTag();
 		
 		tag.putBoolean("renderSkills",renderAbilityHotbar());
 		
-		CompoundNBT nbt = new CompoundNBT();
+		CompoundTag nbt = new CompoundTag();
 		nbt.putInt("mana", getCurrentMana());
 		nbt.putInt("selectedAbilitySlot", getSelectedAbilitySlot());
 		nbt.put("abilitySlots", saveAbilities());
@@ -197,16 +197,16 @@ public class MagicCap implements DragonCapability
 	}
 	
 	@Override
-	public void readNBT(Capability<DragonStateHandler> capability, Direction side, INBT base)
+	public void readNBT(Capability<DragonStateHandler> capability, Direction side, Tag base)
 	{
-		CompoundNBT tag = (CompoundNBT) base;
+		CompoundTag tag = (CompoundTag) base;
 		onMagicSource = tag.getBoolean("onMagicSource");
 		magicSourceTimer = tag.getInt("magicSourceTimer");
 		
 		setRenderAbilities(tag.getBoolean("renderSkills"));
 		
 		if(tag.contains("abilityData")) {
-			CompoundNBT ability = tag.getCompound("abilityData");
+			CompoundTag ability = tag.getCompound("abilityData");
 			
 			if (ability != null) {
 				setSelectedAbilitySlot(ability.getInt("selectedAbilitySlot"));

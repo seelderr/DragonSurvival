@@ -1,12 +1,12 @@
 package by.jackraidenph.dragonsurvival.common.capability.DragonCapabilities;
 
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.Direction;
+import by.jackraidenph.dragonsurvival.common.capability.caps.DragonStateHandler;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.Capability;
 
 public class ClawInventory implements DragonCapability
@@ -17,12 +17,12 @@ public class ClawInventory implements DragonCapability
 		Slot 2: Axe
 		Slot 3: Shovel
 	 */
-	private Inventory clawsInventory = new Inventory(4);
+	private SimpleContainer clawsInventory = new SimpleContainer(4);
 	
 	private boolean clawsMenuOpen = false;
 	public boolean renderClaws = true;
 	
-	public Inventory getClawsInventory()
+	public SimpleContainer getClawsInventory()
 	{
 		return clawsInventory;
 	}
@@ -37,15 +37,15 @@ public class ClawInventory implements DragonCapability
 		this.clawsMenuOpen = clawsMenuOpen;
 	}
 	
-	public void setClawsInventory(Inventory clawsInventory)
+	public void setClawsInventory(SimpleContainer clawsInventory)
 	{
 		this.clawsInventory = clawsInventory;
 	}
 	
 	@Override
-	public INBT writeNBT(Capability<DragonStateHandler> capability,  Direction side)
+	public Tag writeNBT(Capability<DragonStateHandler> capability,  Direction side)
 	{
-		CompoundNBT tag = new CompoundNBT();
+		CompoundTag tag = new CompoundTag();
 		
 		tag.putBoolean("clawsMenu", isClawsMenuOpen());
 		tag.put("clawsInventory", saveClawInventory(getClawsInventory()));
@@ -55,14 +55,14 @@ public class ClawInventory implements DragonCapability
 	}
 	
 	@Override
-	public void readNBT(Capability<DragonStateHandler> capability, Direction side, INBT base)
+	public void readNBT(Capability<DragonStateHandler> capability, Direction side, Tag base)
 	{
-		CompoundNBT tag = (CompoundNBT) base;
+		CompoundTag tag = (CompoundTag) base;
 		
 		setClawsMenuOpen(tag.getBoolean("clawsMenu"));
 		renderClaws = tag.getBoolean("renderClaws");
 		
-		ListNBT clawInv = tag.getList("clawsInventory", 10);
+		ListTag clawInv = tag.getList("clawsInventory", 10);
 		setClawsInventory(readClawInventory(clawInv));
 	}
 	
@@ -75,12 +75,12 @@ public class ClawInventory implements DragonCapability
 	}
 	
 	
-	public static Inventory readClawInventory(ListNBT clawInv)
+	public static SimpleContainer readClawInventory(ListTag clawInv)
 	{
-		Inventory inventory = new Inventory(4);
+		SimpleContainer inventory = new SimpleContainer(4);
 		
 		for(int i = 0; i < clawInv.size(); ++i) {
-			CompoundNBT compoundnbt = clawInv.getCompound(i);
+			CompoundTag compoundnbt = clawInv.getCompound(i);
 			int j = compoundnbt.getByte("Slot") & 255;
 			ItemStack itemstack = ItemStack.of(compoundnbt);
 			if (!itemstack.isEmpty()) {
@@ -93,13 +93,13 @@ public class ClawInventory implements DragonCapability
 		return inventory;
 	}
 	
-	public static ListNBT saveClawInventory(Inventory inv)
+	public static ListTag saveClawInventory(SimpleContainer inv)
 	{
-		ListNBT nbt = new ListNBT();
+		ListTag nbt = new ListTag();
 		
 		for(int i = 0; i < inv.getContainerSize(); ++i) {
 			if (!inv.getItem(i).isEmpty()) {
-				CompoundNBT compoundnbt = new CompoundNBT();
+				CompoundTag compoundnbt = new CompoundTag();
 				compoundnbt.putByte("Slot", (byte)i);
 				inv.getItem(i).save(compoundnbt);
 				nbt.add(compoundnbt);

@@ -2,12 +2,12 @@ package by.jackraidenph.dragonsurvival.client.models.projectiles;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.common.entity.projectiles.FireBallEntity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 
 public class FireballModel extends AnimatedGeoModel<FireBallEntity>
 {
-	private  ResourceLocation currentTexture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/entity/fireball_texture.png");
+	private ResourceLocation currentTexture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/entity/fireball_texture.png");
 	
 	@Override
 	public ResourceLocation getModelLocation(FireBallEntity dragonEntity) {

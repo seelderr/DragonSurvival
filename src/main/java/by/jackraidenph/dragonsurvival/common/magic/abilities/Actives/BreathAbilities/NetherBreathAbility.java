@@ -7,34 +7,33 @@ import by.jackraidenph.dragonsurvival.client.sounds.FireBreathSound;
 import by.jackraidenph.dragonsurvival.client.sounds.SoundRegistry;
 import by.jackraidenph.dragonsurvival.common.DragonEffects;
 import by.jackraidenph.dragonsurvival.common.capability.Capabilities;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.common.capability.GenericCapability;
+import by.jackraidenph.dragonsurvival.common.capability.caps.DragonStateHandler;
+import by.jackraidenph.dragonsurvival.common.capability.caps.GenericCapability;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.magic.DragonAbilities;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import by.jackraidenph.dragonsurvival.util.Functions;
-import net.minecraft.block.AbstractFireBlock;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.ISound;
-import net.minecraft.client.audio.SimpleSound;
-import net.minecraft.client.audio.TickableSound;
-import net.minecraft.entity.AreaEffectCloudEntity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Potion;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.client.resources.sounds.TickableSoundInstance;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.AreaEffectCloud;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.level.block.BaseFireBlock;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.DistExecutor;
@@ -89,7 +88,7 @@ public class NetherBreathAbility extends BreathAbility
 	
 
 	@Override
-	public void onActivation(PlayerEntity player)
+	public void onActivation(Player player)
 	{
 		tickCost();
 		super.onActivation(player);
@@ -137,24 +136,24 @@ public class NetherBreathAbility extends BreathAbility
 		}
 	}
 	@OnlyIn(Dist.CLIENT)
-	private ISound startingSound;
+	private SimpleSoundInstance startingSound;
 	
 	@OnlyIn(Dist.CLIENT)
-	private TickableSound loopingSound;
+	private TickableSoundInstance loopingSound;
 	
 	@OnlyIn(Dist.CLIENT)
-	private ISound endSound;
+	private SimpleSoundInstance endSound;
 	
 	@OnlyIn(Dist.CLIENT)
 	public void sound(){
 		if (castingTicks == 2) {
 			if(startingSound == null){
-				startingSound = SimpleSound.forAmbientAddition(SoundRegistry.fireBreathStart);
+				startingSound = SimpleSoundInstance.forAmbientAddition(SoundRegistry.fireBreathStart);
 			}
 			Minecraft.getInstance().getSoundManager().play(startingSound);
 			loopingSound = new FireBreathSound(this);
 			
-			Minecraft.getInstance().getSoundManager().stop(new ResourceLocation(DragonSurvivalMod.MODID, "fire_breath_loop"), SoundCategory.PLAYERS);
+			Minecraft.getInstance().getSoundManager().stop(new ResourceLocation(DragonSurvivalMod.MODID, "fire_breath_loop"), SoundSource.PLAYERS);
 			Minecraft.getInstance().getSoundManager().play(loopingSound);
 		}
 	}
@@ -165,19 +164,19 @@ public class NetherBreathAbility extends BreathAbility
 		
 		if(SoundRegistry.fireBreathEnd != null) {
 			if (endSound == null) {
-				endSound = SimpleSound.forAmbientAddition(SoundRegistry.fireBreathEnd);
+				endSound = SimpleSoundInstance.forAmbientAddition(SoundRegistry.fireBreathEnd);
 			}
 			
 			Minecraft.getInstance().getSoundManager().play(endSound);
 		}
 		
-		Minecraft.getInstance().getSoundManager().stop(new ResourceLocation(DragonSurvivalMod.MODID, "fire_breath_loop"), SoundCategory.PLAYERS);
+		Minecraft.getInstance().getSoundManager().stop(new ResourceLocation(DragonSurvivalMod.MODID, "fire_breath_loop"), SoundSource.PLAYERS);
 	}
 	
 	@Override
 	public boolean canHitEntity(LivingEntity entity)
 	{
-		return (!(entity instanceof PlayerEntity) || player.canHarmPlayer(((PlayerEntity)entity))) && !entity.fireImmune();
+		return (!(entity instanceof Player) || player.canHarmPlayer(((Player)entity))) && !entity.fireImmune();
 	}
 	
 	@Override
@@ -200,7 +199,7 @@ public class NetherBreathAbility extends BreathAbility
 						cap.lastAfflicted = player != null ? player.getId() : -1;
 					}
 					
-					entityHit.addEffect(new EffectInstance(DragonEffects.BURN, Functions.secondsToTicks(10), 0, false, true));
+					entityHit.addEffect(new MobEffectInstance(DragonEffects.BURN, Functions.secondsToTicks(10), 0, false, true));
 				}
 			}
 		}
@@ -219,12 +218,12 @@ public class NetherBreathAbility extends BreathAbility
 			if (ConfigHandler.SERVER.fireBreathSpreadsFire.get()) {
 				BlockPos blockPos = pos.relative(direction);
 				
-				if(AbstractFireBlock.canBePlacedAt(player.level, blockPos, direction)) {
+				if(BaseFireBlock.canBePlacedAt(player.level, blockPos, direction)) {
 					boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(player.level, player);
 					
 					if (flag) {
 						if (player.level.random.nextInt(100) < 50) {
-							BlockState blockstate1 = AbstractFireBlock.getState(player.level, blockPos);
+							BlockState blockstate1 = BaseFireBlock.getState(player.level, blockPos);
 							player.level.setBlock(blockPos, blockstate1, 3);
 						}
 					}
@@ -237,10 +236,10 @@ public class NetherBreathAbility extends BreathAbility
 					BlockState blockAbove = player.level.getBlockState(pos.above());
 					
 					if(blockAbove.getBlock() == Blocks.AIR) {
-						AreaEffectCloudEntity entity = new AreaEffectCloudEntity(EntityType.AREA_EFFECT_CLOUD, player.level);
+						AreaEffectCloud entity = new AreaEffectCloud(EntityType.AREA_EFFECT_CLOUD, player.level);
 						entity.setWaitTime(0);
 						entity.setPos(pos.above().getX(), pos.above().getY(), pos.above().getZ());
-						entity.setPotion(new Potion(new EffectInstance(DragonEffects.BURN, Functions.secondsToTicks(10) * 4))); //Effect duration is divided by 4 normaly
+						entity.setPotion(new Potion(new MobEffectInstance(DragonEffects.BURN, Functions.secondsToTicks(10) * 4))); //Effect duration is divided by 4 normaly
 						entity.setDuration(Functions.secondsToTicks(2));
 						entity.setRadius(1);
 						entity.setParticle(new SmallFireParticleData(37, false));
@@ -280,9 +279,9 @@ public class NetherBreathAbility extends BreathAbility
 	}
 	
 	@OnlyIn( Dist.CLIENT )
-	public ArrayList<ITextComponent> getLevelUpInfo(){
-		ArrayList<ITextComponent> list = super.getLevelUpInfo();
-		list.add(new TranslationTextComponent("ds.skill.damage", "+" + ConfigHandler.SERVER.fireBreathDamage.get()));
+	public ArrayList<Component> getLevelUpInfo(){
+		ArrayList<Component> list = super.getLevelUpInfo();
+		list.add(new TranslatableComponent("ds.skill.damage", "+" + ConfigHandler.SERVER.fireBreathDamage.get()));
 		return list;
 	}
 }

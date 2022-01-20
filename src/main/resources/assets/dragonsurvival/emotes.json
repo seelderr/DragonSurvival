@@ -13,12 +13,6 @@
 		  "locksHead": true
 	  },
 	  {
-		  "name": "ds.emote.sit_look",
-		  "animation": "sit_look",
-		  "loops": true,
-		  "locksHead": true
-	  },
-	  {
 		  "name": "ds.emote.sit2",
 		  "animation": "sit2",
 		  "loops": true,

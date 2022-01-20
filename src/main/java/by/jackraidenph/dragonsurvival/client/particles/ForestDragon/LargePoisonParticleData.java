@@ -5,18 +5,18 @@ import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.particles.IParticleData;
-import net.minecraft.particles.ParticleType;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.core.Registry;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleType;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.Locale;
 
-public class LargePoisonParticleData implements IParticleData
+public class LargePoisonParticleData implements ParticleOptions
 {
-	public static final IDeserializer<LargePoisonParticleData> DESERIALIZER = new IDeserializer<LargePoisonParticleData>()
+	public static final Deserializer<LargePoisonParticleData> DESERIALIZER = new Deserializer<LargePoisonParticleData>()
 	{
 		public LargePoisonParticleData fromCommand(ParticleType<LargePoisonParticleData> particleTypeIn, StringReader reader) throws CommandSyntaxException
 		{
@@ -27,7 +27,7 @@ public class LargePoisonParticleData implements IParticleData
 			return new LargePoisonParticleData(duration, swirls);
 		}
 		
-		public LargePoisonParticleData fromNetwork(ParticleType<LargePoisonParticleData> particleTypeIn, PacketBuffer buffer)
+		public LargePoisonParticleData fromNetwork(ParticleType<LargePoisonParticleData> particleTypeIn, FriendlyByteBuf buffer)
 		{
 			return new LargePoisonParticleData(buffer.readFloat(), buffer.readBoolean());
 		}
@@ -43,7 +43,7 @@ public class LargePoisonParticleData implements IParticleData
 	}
 	
 	@Override
-	public void writeToNetwork(PacketBuffer buffer)
+	public void writeToNetwork(FriendlyByteBuf buffer)
 	{
 		buffer.writeFloat(this.duration);
 		buffer.writeBoolean(this.swirls);

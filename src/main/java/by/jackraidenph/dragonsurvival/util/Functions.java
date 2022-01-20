@@ -1,24 +1,24 @@
 package by.jackraidenph.dragonsurvival.util;
 
 import by.jackraidenph.dragonsurvival.common.entity.DSEntities;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.EntitySpawnPlacementRegistry;
-import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.DyeColor;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.tileentity.BannerPattern;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
-import net.minecraft.world.gen.Heightmap;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraft.world.spawner.WorldEntitySpawner;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.SpawnPlacements.Type;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.NaturalSpawner;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BannerPattern;
+import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.phys.BlockHitResult;
 import software.bernie.geckolib3.geo.render.built.GeoBone;
 
 import javax.annotation.Nullable;
@@ -53,38 +53,41 @@ public class Functions {
     }
     
     @Nullable
-    public static BlockPos findRandomSpawnPosition(PlayerEntity playerEntity, int p_221298_1_, int timesToCheck, float distance) {
+    public static BlockPos findRandomSpawnPosition(Player playerEntity, int p_221298_1_, int timesToCheck, float distance) {
         int i = (p_221298_1_ == 0) ? 2 : (2 - p_221298_1_);
-        BlockPos.Mutable blockpos$mutable = new BlockPos.Mutable();
+        BlockPos.MutableBlockPos blockpos$mutable = new BlockPos(0,0,0).mutable();
 
         for (int i1 = 0; i1 < timesToCheck; i1++) {
             float f = playerEntity.level.random.nextFloat() * 6.2831855F;
-            double xRandom = playerEntity.getX() + MathHelper.floor(MathHelper.cos(f) * distance * i) + playerEntity.level.random.nextInt(5);
-            double zRandom = playerEntity.getZ() + MathHelper.floor(MathHelper.sin(f) * distance * i) + playerEntity.level.random.nextInt(5);
-            int y = playerEntity.level.getHeight(Heightmap.Type.WORLD_SURFACE, (int) xRandom, (int) zRandom);
+            double xRandom = playerEntity.getX() + Mth.floor(Mth.cos(f) * distance * i) + playerEntity.level.random.nextInt(5);
+            double zRandom = playerEntity.getZ() + Mth.floor(Mth.sin(f) * distance * i) + playerEntity.level.random.nextInt(5);
+            int y = playerEntity.level.getHeight(Heightmap.Types.WORLD_SURFACE, (int) xRandom, (int) zRandom);
             blockpos$mutable.set(xRandom, y, zRandom);
-            if (playerEntity.level.hasChunksAt(blockpos$mutable.getX() - 10, blockpos$mutable.getY() - 10, blockpos$mutable.getZ() - 10, blockpos$mutable.getX() + 10, blockpos$mutable.getY() + 10, blockpos$mutable.getZ() + 10) && playerEntity.level.getChunkSource().isEntityTickingChunk(new ChunkPos((BlockPos) blockpos$mutable)) && (WorldEntitySpawner.canSpawnAtBody(EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, playerEntity.level, (BlockPos) blockpos$mutable, DSEntities.HUNTER_HOUND) || (playerEntity.level.getBlockState(blockpos$mutable).is(Blocks.SNOW) && playerEntity.level.getBlockState((BlockPos) blockpos$mutable).isAir()))) {
+            ChunkPos pos = new ChunkPos((BlockPos) blockpos$mutable);
+            if (playerEntity.level.hasChunksAt(blockpos$mutable.getX() - 10, blockpos$mutable.getY() - 10, blockpos$mutable.getZ() - 10, blockpos$mutable.getX() + 10, blockpos$mutable.getY() + 10, blockpos$mutable.getZ() + 10)
+                && playerEntity.level.hasNearbyAlivePlayer(xRandom, y, zRandom, 10) && (NaturalSpawner.canSpawnAtBody(Type.ON_GROUND, playerEntity.level, (BlockPos) blockpos$mutable, DSEntities.HUNTER_HOUND) || (playerEntity.level.getBlockState(blockpos$mutable).is(
+                    Blocks.SNOW) && playerEntity.level.getBlockState((BlockPos) blockpos$mutable).isAir()))) {
                 return blockpos$mutable;
             }
         }
         return null;
     }
 
-    public static void spawn(MobEntity mobEntity, BlockPos blockPos, ServerWorld serverWorld) {
+    public static void spawn(Mob mobEntity, BlockPos blockPos, ServerLevel serverWorld) {
         mobEntity.setPos(blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5);
-        mobEntity.finalizeSpawn(serverWorld, serverWorld.getCurrentDifficultyAt(blockPos), SpawnReason.NATURAL, null, null);
+        mobEntity.finalizeSpawn(serverWorld, serverWorld.getCurrentDifficultyAt(blockPos), MobSpawnType.NATURAL, null, null);
         serverWorld.addFreshEntity(mobEntity);
     }
 
-    public static boolean isAirOrFluid(BlockPos blockPos, World world, PlayerEntity player, BlockRayTraceResult blockRayTraceResult) {
-        return isAirOrFluid(blockPos, world, new BlockItemUseContext(player, Hand.MAIN_HAND, player.getMainHandItem(), blockRayTraceResult));
+    public static boolean isAirOrFluid(BlockPos blockPos, Level  world, Player player, BlockHitResult blockHitResult) {
+        return isAirOrFluid(blockPos, world, new BlockPlaceContext(player, InteractionHand.MAIN_HAND, player.getMainHandItem(), blockHitResult));
     }
     
-    public static boolean isAirOrFluid(BlockPos blockPos, World world, BlockItemUseContext context) {
+    public static boolean isAirOrFluid(BlockPos blockPos, Level world, BlockPlaceContext context) {
         return !world.getFluidState(blockPos).isEmpty() || world.isEmptyBlock(blockPos) || world.getBlockState(blockPos).canBeReplaced(context);
     }
 
-    public static ListNBT createRandomPattern(BannerPattern.Builder builder, int times) {
+    public static ListTag createRandomPattern(BannerPattern.Builder builder, int times) {
         if (times > 16)
             times = 16;
         if (times < 1)

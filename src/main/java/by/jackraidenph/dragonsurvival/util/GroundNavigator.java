@@ -1,17 +1,19 @@
 package by.jackraidenph.dragonsurvival.util;
 
-import net.minecraft.entity.MobEntity;
-import net.minecraft.pathfinding.GroundPathNavigator;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.World;
 
-public class GroundNavigator extends GroundPathNavigator {
-    public GroundNavigator(MobEntity p_i45875_1_, World p_i45875_2_) {
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
+
+public class GroundNavigator extends GroundPathNavigation
+{
+    public GroundNavigator(Mob p_i45875_1_, Level p_i45875_2_) {
         super(p_i45875_1_, p_i45875_2_);
     }
 
     @Override
-    protected void doStuckDetection(Vector3d v) {
+    protected void doStuckDetection(Vec3 v) {
         if (tick - lastStuckCheck > 60 && v.distanceToSqr(this.lastStuckCheckPos) < 5) {
             this.stop();
         }

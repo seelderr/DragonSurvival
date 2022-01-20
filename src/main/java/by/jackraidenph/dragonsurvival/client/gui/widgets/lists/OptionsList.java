@@ -1,16 +1,15 @@
 package by.jackraidenph.dragonsurvival.client.gui.widgets.lists;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+
+import com.google.common.collect.ImmutableMap;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.client.AbstractOption;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.IGuiEventListener;
-import net.minecraft.client.gui.widget.OptionSlider;
-import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.client.gui.widget.button.OptionButton;
-import net.minecraft.client.gui.widget.list.AbstractOptionList;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.client.Option;
+import net.minecraft.client.gui.components.*;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.util.Mth;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 import net.minecraftforge.common.ForgeConfigSpec.ValueSpec;
 import org.apache.commons.lang3.StringUtils;
@@ -22,10 +21,10 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class OptionsList extends AbstractOptionList<OptionListEntry>
+public class OptionsList extends ContainerObjectSelectionList<OptionListEntry>
 {
-	public static ConcurrentHashMap<AbstractOption, Pair<ValueSpec, ConfigValue>> config = new ConcurrentHashMap<>();
-	public static ConcurrentHashMap<AbstractOption, String> configMap = new ConcurrentHashMap<>();
+	public static ConcurrentHashMap<Option, Pair<ValueSpec, ConfigValue>> config = new ConcurrentHashMap<>();
+	public static ConcurrentHashMap<Option, String> configMap = new ConcurrentHashMap<>();
 	public static CopyOnWriteArrayList<Integer> activeCats = new CopyOnWriteArrayList<>();
 	public int listWidth;
 	
@@ -40,7 +39,7 @@ public class OptionsList extends AbstractOptionList<OptionListEntry>
 	
 	public CategoryEntry addCategory(String p_214333_1_, CategoryEntry ent, int catNum) {
 		String name = p_214333_1_.substring(0, 1).toUpperCase(Locale.ROOT) + p_214333_1_.substring(1).replace("_", " ");
-		CategoryEntry entry = new CategoryEntry(this, new StringTextComponent(name), ent, catNum);
+		CategoryEntry entry = new CategoryEntry(this, new TextComponent(name), ent, catNum);
 		entry.origName = p_214333_1_;
 		this.addEntry(entry);
 		return entry;
@@ -52,15 +51,15 @@ public class OptionsList extends AbstractOptionList<OptionListEntry>
 		return super.addEntry(p_230513_1_);
 	}
 	
-	public void add(AbstractOption[] p_214335_1_, CategoryEntry entry) {
+	public void add(Option[] p_214335_1_, CategoryEntry entry) {
 		for(int i = 0; i < p_214335_1_.length; i ++) {
 			add(p_214335_1_[i], entry);
 		}
 	}
 	
-	public void add(AbstractOption option, CategoryEntry entry){
-		Widget widget = option.createButton(this.minecraft.options, getScrollbarPosition() - 165, 0, 140);
-		this.addEntry(new OptionEntry(option, option.getCaption(), widget, entry));
+	public void add(Option option, CategoryEntry entry){
+		AbstractWidget widget = option.createButton(this.minecraft.options, getScrollbarPosition() - 165, 0, 140);
+		this.addEntry(new OptionEntry(ImmutableMap.of(option, widget), option, option.getCaption(), widget, entry));
 	}
 	
 	protected int getRowTop(int p_230962_1_) {
@@ -78,7 +77,7 @@ public class OptionsList extends AbstractOptionList<OptionListEntry>
 	}
 	
 	
-	protected void renderList(MatrixStack p_238478_1_, int p_238478_2_, int p_238478_3_, int p_238478_4_, int p_238478_5_, float p_238478_6_) {
+	protected void renderList(PoseStack p_238478_1_, int p_238478_2_, int p_238478_3_, int p_238478_4_, int p_238478_5_, float p_238478_6_) {
 		int i = this.getItemCount();
 
 		for(int j = 0; j < i; ++j) {
@@ -179,11 +178,11 @@ public class OptionsList extends AbstractOptionList<OptionListEntry>
 	@Nullable
 	public Widget findWidget(String text) {
 		for(OptionListEntry optionsrowlist$row : this.children()) {
-			for(IGuiEventListener widget : optionsrowlist$row.children()) {
+			for(GuiEventListener widget : optionsrowlist$row.children()) {
 				if(widget instanceof Widget) {
-					if (widget instanceof OptionButton && ((OptionButton)widget).getMessage().getString().equals(text)) {
+					if (widget instanceof CycleButton && ((CycleButton)widget).getMessage().getString().equals(text)) {
 						return (Widget)widget;
-					}else if (widget instanceof OptionSlider && ((OptionSlider)widget).getMessage().getString().equals(text)) {
+					}else if (widget instanceof SliderButton && ((SliderButton)widget).getMessage().getString().equals(text)) {
 						return (Widget)widget;
 					}
 				}
@@ -196,11 +195,11 @@ public class OptionsList extends AbstractOptionList<OptionListEntry>
 	@Nullable
 	public OptionListEntry findEntry(String text) {
 		for(OptionListEntry optionsrowlist$row : this.children()) {
-			for(IGuiEventListener widget : optionsrowlist$row.children()) {
+			for(GuiEventListener widget : optionsrowlist$row.children()) {
 				if(widget instanceof Widget) {
-					if (widget instanceof OptionButton && ((OptionButton)widget).getMessage().getString().equals(text)) {
+					if (widget instanceof CycleButton && ((CycleButton)widget).getMessage().getString().equals(text)) {
 						return optionsrowlist$row;
-					}else if (widget instanceof OptionSlider && ((OptionSlider)widget).getMessage().getString().equals(text)) {
+					}else if (widget instanceof SliderButton && ((SliderButton)widget).getMessage().getString().equals(text)) {
 						return optionsrowlist$row;
 					}
 				}
@@ -232,17 +231,12 @@ public class OptionsList extends AbstractOptionList<OptionListEntry>
 	}
 	
 	@Nullable
-	public Widget findOption(AbstractOption p_243271_1_) {
-		for(OptionListEntry optionsrowlist$row : this.children()) {
-			for(IGuiEventListener widget : optionsrowlist$row.children()) {
-				if(widget instanceof Widget) {
-					if (widget instanceof OptionButton && ((OptionButton)widget).getOption() == p_243271_1_) {
-						return (Widget)widget;
-					}else if (widget instanceof OptionSlider && ((OptionSlider)widget).option == p_243271_1_) {
-						return (Widget)widget;
-					}else if (widget instanceof OptionSlider && ((OptionSlider)widget).option == p_243271_1_) {
-						return (Widget)widget;
-					}
+	public AbstractWidget findOption(Option pOption) {
+		for(OptionListEntry optionslist$entry : this.children()) {
+			if(optionslist$entry instanceof OptionEntry) {
+				AbstractWidget abstractwidget = ((OptionEntry)optionslist$entry).options.get(pOption);
+				if (abstractwidget != null) {
+					return abstractwidget;
 				}
 			}
 		}
@@ -260,12 +254,12 @@ public class OptionsList extends AbstractOptionList<OptionListEntry>
 		this.setScrollAmount((double)(size + p_230951_1_.getHeight() / 2 - (this.y1 - this.y0) / 2));
 	}
 	
-	public Optional<Widget> getMouseOver(double p_238518_1_, double p_238518_3_) {
+	public Optional<AbstractWidget> getMouseOver(double p_238518_1_, double p_238518_3_) {
 		for(OptionListEntry optionsrowlist$row : this.children()) {
-			for(IGuiEventListener widget : optionsrowlist$row.children()) {
+			for(GuiEventListener widget : optionsrowlist$row.children()) {
 				if(widget instanceof Widget) {
-					if (((Widget)widget).isMouseOver(p_238518_1_, p_238518_3_)) {
-						return Optional.of((Widget)widget);
+					if (((Button)widget).isMouseOver(p_238518_1_, p_238518_3_)) {
+						return Optional.of((Button)widget);
 					}
 				}
 			}
@@ -279,7 +273,7 @@ public class OptionsList extends AbstractOptionList<OptionListEntry>
 		int j = this.x0 + this.width / 2;
 		int k = j - i;
 		int l = j + i;
-		int i1 = MathHelper.floor(p_230933_3_ - (double)this.y0) - this.headerHeight + (int)this.getScrollAmount() - 4;
+		int i1 = Mth.floor(p_230933_3_ - (double)this.y0) - this.headerHeight + (int)this.getScrollAmount() - 4;
 		int curSize = 0;
 		int j1 = 0;
 		for(int g = 0; g < children().size(); g++){

@@ -5,22 +5,22 @@ import by.jackraidenph.dragonsurvival.client.gui.AbilityScreen;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.HelpButton;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.SkillProgressButton;
 import by.jackraidenph.dragonsurvival.common.blocks.DSBlocks;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import by.jackraidenph.dragonsurvival.util.Functions;
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
@@ -28,7 +28,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.opengl.GL11;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.List;
 @Mod.EventBusSubscriber( Dist.CLIENT)
 public class ToolTipHandler
@@ -43,15 +43,15 @@ public class ToolTipHandler
 	public static void checkIfDragonFood(ItemTooltipEvent tooltipEvent) {
 		if (tooltipEvent.getPlayer() != null) {
 			Item item = tooltipEvent.getItemStack().getItem();
-			List<ITextComponent> toolTip = tooltipEvent.getToolTip();
+			List<Component> toolTip = tooltipEvent.getToolTip();
 			if (DragonFoodHandler.getSafeEdibleFoods(DragonType.CAVE).contains(item)) {
-				toolTip.add(new TranslationTextComponent("ds.cave.dragon.food"));
+				toolTip.add(new TranslatableComponent("ds.cave.dragon.food"));
 			}
 			if (DragonFoodHandler.getSafeEdibleFoods(DragonType.FOREST).contains(item)) {
-				toolTip.add(new TranslationTextComponent("ds.forest.dragon.food"));
+				toolTip.add(new TranslatableComponent("ds.forest.dragon.food"));
 			}
 			if (DragonFoodHandler.getSafeEdibleFoods(DragonType.SEA).contains(item)) {
-				toolTip.add(new TranslationTextComponent("ds.sea.dragon.food"));
+				toolTip.add(new TranslatableComponent("ds.sea.dragon.food"));
 			}
 		}
 	}
@@ -61,52 +61,52 @@ public class ToolTipHandler
 	public static void itemDescriptions(ItemTooltipEvent event){
 		if(event.getPlayer() != null){
 			Item item = event.getItemStack().getItem();
-			List<ITextComponent> toolTip = event.getToolTip();
+			List<Component> toolTip = event.getToolTip();
 			
 			if (item == DSBlocks.fireDragonBeacon.asItem()){
-				toolTip.add(new TranslationTextComponent("ds.description.passiveFireBeacon"));
+				toolTip.add(new TranslatableComponent("ds.description.passiveFireBeacon"));
 			}
 			if (item == DSBlocks.magicDragonBeacon.asItem()){
-				toolTip.add(new TranslationTextComponent("ds.description.passiveMagicBeacon"));
+				toolTip.add(new TranslatableComponent("ds.description.passiveMagicBeacon"));
 			}
 			if (item == DSBlocks.peaceDragonBeacon.asItem()){
-				toolTip.add(new TranslationTextComponent("ds.description.passivePeaceBeacon"));
+				toolTip.add(new TranslatableComponent("ds.description.passivePeaceBeacon"));
 			}
 			if (item == DSBlocks.caveDoor.asItem()){
-				toolTip.add(new TranslationTextComponent("ds.description.caveDoor"));
+				toolTip.add(new TranslatableComponent("ds.description.caveDoor"));
 			}
 			if (item == DSBlocks.forestDoor.asItem()){
-				toolTip.add(new TranslationTextComponent("ds.description.forestDoor"));
+				toolTip.add(new TranslatableComponent("ds.description.forestDoor"));
 			}
 			if (item == DSBlocks.seaDoor.asItem()){
-				toolTip.add(new TranslationTextComponent("ds.description.seaDoor"));
+				toolTip.add(new TranslatableComponent("ds.description.seaDoor"));
 			}
 			if (item == DSBlocks.legacyDoor.asItem()){
-				toolTip.add(new TranslationTextComponent("ds.description.legacyDoor"));
+				toolTip.add(new TranslatableComponent("ds.description.legacyDoor"));
 			}
 			if (item == DSBlocks.helmet1.asItem()){
-				toolTip.add(new TranslationTextComponent("ds.description.grayHelmet"));
+				toolTip.add(new TranslatableComponent("ds.description.grayHelmet"));
 			}
 			if (item == DSBlocks.helmet2.asItem()){
-				toolTip.add(new TranslationTextComponent("ds.description.goldHelmet"));
+				toolTip.add(new TranslatableComponent("ds.description.goldHelmet"));
 			}
 			if (item == DSBlocks.helmet3.asItem()){
-				toolTip.add(new TranslationTextComponent("ds.description.blackHelmet"));
+				toolTip.add(new TranslatableComponent("ds.description.blackHelmet"));
 			}
 			if (item == DSBlocks.dragonBeacon.asItem()){
-				toolTip.add(new TranslationTextComponent("ds.description.dragonBeacon"));
+				toolTip.add(new TranslatableComponent("ds.description.dragonBeacon"));
 			}
 			if (item == DSBlocks.dragonMemoryBlock.asItem()){
-				toolTip.add(new TranslationTextComponent("ds.description.dragonMemoryBlock"));
+				toolTip.add(new TranslatableComponent("ds.description.dragonMemoryBlock"));
 			}
 			if (item == DSBlocks.seaSourceOfMagic.asItem()){
-				toolTip.add(new TranslationTextComponent("ds.description.sea_source_of_magic"));
+				toolTip.add(new TranslatableComponent("ds.description.sea_source_of_magic"));
 			}
 			if (item == DSBlocks.forestSourceOfMagic.asItem()){
-				toolTip.add(new TranslationTextComponent("ds.description.forest_source_of_magic"));
+				toolTip.add(new TranslatableComponent("ds.description.forest_source_of_magic"));
 			}
 			if (item == DSBlocks.caveSourceOfMagic.asItem()){
-				toolTip.add(new TranslationTextComponent("ds.description.cave_source_of_magic"));
+				toolTip.add(new TranslatableComponent("ds.description.cave_source_of_magic"));
 			}
 		}
 	}
@@ -118,8 +118,8 @@ public class ToolTipHandler
 		if(ConfigHandler.CLIENT.alwaysShowHelpTooltip.get()) return true;
 		if(Minecraft.getInstance().screen == null) return false;
 		
-		for(Widget btn : Minecraft.getInstance().screen.buttons){
-			if(btn instanceof HelpButton && btn.isHovered()){
+		for(GuiEventListener btn : Minecraft.getInstance().screen.children){
+			if(btn instanceof HelpButton && ((HelpButton)btn).isHoveredOrFocused()){
 				return true;
 			}
 		}
@@ -128,7 +128,7 @@ public class ToolTipHandler
 	}
 	
 	@SubscribeEvent
-	public static void onPostTooltipEvent(RenderTooltipEvent.PostText event) {
+	public static void onPostTooltipEvent(RenderTooltipEvent.Pre event) {
 		boolean render = isHelpText();
 		
 		if(!render){
@@ -151,11 +151,11 @@ public class ToolTipHandler
 		
 		int x = event.getX();
 		int y = event.getY();
-		int width = event.getWidth();
-		int height = event.getHeight();
-		MatrixStack matrix = event.getMatrixStack();
+		int width = event.getComponents().stream().map((s) -> s.getWidth(Minecraft.getInstance().font)).max(Integer::compareTo).orElse(0);
+		int height = event.getComponents().stream().map((s) -> s.getHeight()).max(Integer::compareTo).orElse(0);
+		PoseStack matrix = event.getPoseStack();
 		
-		Minecraft.getInstance().getTextureManager().bind(blink ? tooltip_2 : tooltip_1);
+		RenderSystem.setShaderTexture(0, blink ? tooltip_2 : tooltip_1);
 		
 		int texWidth = GlStateManager._getTexLevelParameter(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_WIDTH);
 		int texHeight = GlStateManager._getTexLevelParameter(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_WIDTH);
@@ -169,14 +169,14 @@ public class ToolTipHandler
 		
 		matrix.translate(0, 0, 610.0);
 		
-		AbstractGui.blit(matrix, x - 8 - 6, y - 8 - 6, 1, 1 % texHeight, 16, 16, texWidth, texHeight);
-		AbstractGui.blit(matrix, x + width - 8 + 6, y - 8 - 6, texWidth - 16 - 1, 1 % texHeight, 16, 16, texWidth, texHeight);
+		Gui.blit(matrix, x - 8 - 6, y - 8 - 6, 1, 1 % texHeight, 16, 16, texWidth, texHeight);
+		Gui.blit(matrix, x + width - 8 + 6, y - 8 - 6, texWidth - 16 - 1, 1 % texHeight, 16, 16, texWidth, texHeight);
 		
-		AbstractGui.blit(matrix, x - 8 - 6, y + height - 8 + 6, 1, 1 % texHeight + 16, 16, 16, texWidth, texHeight);
-		AbstractGui.blit(matrix, x + width - 8 + 6, y + height - 8 + 6, texWidth - 16 - 1, 1 % texHeight + 16, 16, 16, texWidth, texHeight);
+		Gui.blit(matrix, x - 8 - 6, y + height - 8 + 6, 1, 1 % texHeight + 16, 16, 16, texWidth, texHeight);
+		Gui.blit(matrix, x + width - 8 + 6, y + height - 8 + 6, texWidth - 16 - 1, 1 % texHeight + 16, 16, 16, texWidth, texHeight);
 	
-		AbstractGui.blit(matrix, x + (width / 2) - 47, y - 16, 16 + 2 * texWidth + 1, 1 % texHeight, 94, 16, texWidth, texHeight);
-		AbstractGui.blit(matrix, x + (width / 2) - 47, y + height, 16 + 2 * texWidth + 1, 1 % texHeight + 16, 94, 16, texWidth, texHeight);
+		Gui.blit(matrix, x + (width / 2) - 47, y - 16, 16 + 2 * texWidth + 1, 1 % texHeight, 94, 16, texWidth, texHeight);
+		Gui.blit(matrix, x + (width / 2) - 47, y + height, 16 + 2 * texWidth + 1, 1 % texHeight + 16, 94, 16, texWidth, texHeight);
 	
 		RenderSystem.disableBlend();
 		
@@ -189,7 +189,7 @@ public class ToolTipHandler
 		boolean render = isHelpText();
 		boolean screen = Minecraft.getInstance().screen instanceof AbilityScreen;
 		
-		ItemStack stack = event.getStack();
+		ItemStack stack = event.getItemStack();
 		
 		boolean isSeaFood = ConfigHandler.CLIENT.dragonFoodTooltips.get() && !stack.isEmpty() && DragonFoodHandler.getSafeEdibleFoods(DragonType.SEA).contains(stack.getItem());
 		boolean isForestFood = ConfigHandler.CLIENT.dragonFoodTooltips.get() && !stack.isEmpty()  && DragonFoodHandler.getSafeEdibleFoods(DragonType.FOREST).contains(stack.getItem());
@@ -201,8 +201,8 @@ public class ToolTipHandler
 		boolean button = false;
 		
 		if(screen) {
-			for (Widget widget : ((AbilityScreen)Minecraft.getInstance().screen).widgetList()) {
-				if(widget instanceof SkillProgressButton && widget.isHovered()){
+			for (GuiEventListener widget : ((AbilityScreen)Minecraft.getInstance().screen).children()) {
+				if(widget instanceof SkillProgressButton && ((SkillProgressButton)widget).isHoveredOrFocused()){
 					button = true;
 					break;
 				}

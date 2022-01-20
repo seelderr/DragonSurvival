@@ -5,18 +5,18 @@ import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.particles.IParticleData;
-import net.minecraft.particles.ParticleType;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.core.Registry;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleType;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.Locale;
 
-public class LargeFireParticleData implements IParticleData
+public class LargeFireParticleData implements ParticleOptions
 {
-	public static final IDeserializer<LargeFireParticleData> DESERIALIZER = new IDeserializer<LargeFireParticleData>()
+	public static final Deserializer<LargeFireParticleData> DESERIALIZER = new Deserializer<LargeFireParticleData>()
 	{
 		public LargeFireParticleData fromCommand(ParticleType<LargeFireParticleData> particleTypeIn, StringReader reader) throws CommandSyntaxException
 		{
@@ -27,7 +27,7 @@ public class LargeFireParticleData implements IParticleData
 			return new LargeFireParticleData(duration, swirls);
 		}
 		
-		public LargeFireParticleData fromNetwork(ParticleType<LargeFireParticleData> particleTypeIn, PacketBuffer buffer)
+		public LargeFireParticleData fromNetwork(ParticleType<LargeFireParticleData> particleTypeIn, FriendlyByteBuf buffer)
 		{
 			return new LargeFireParticleData(buffer.readFloat(), buffer.readBoolean());
 		}
@@ -43,7 +43,7 @@ public class LargeFireParticleData implements IParticleData
 	}
 	
 	@Override
-	public void writeToNetwork(PacketBuffer buffer)
+	public void writeToNetwork(FriendlyByteBuf buffer)
 	{
 		buffer.writeFloat(this.duration);
 		buffer.writeBoolean(this.swirls);

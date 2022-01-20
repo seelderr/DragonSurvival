@@ -9,19 +9,20 @@ import by.jackraidenph.dragonsurvival.network.config.SyncBooleanConfig;
 import by.jackraidenph.dragonsurvival.network.config.SyncEnumConfig;
 import by.jackraidenph.dragonsurvival.network.config.SyncListConfig;
 import by.jackraidenph.dragonsurvival.network.config.SyncNumberConfig;
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.client.AbstractOption;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.widget.AbstractSlider;
-import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.client.settings.BooleanOption;
-import net.minecraft.client.settings.SliderPercentageOption;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.Option;
+import net.minecraft.client.ProgressOption;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.CycleButton;
+import net.minecraft.client.gui.components.SliderButton;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 import net.minecraftforge.common.ForgeConfigSpec.ValueSpec;
+import org.lwjgl.opengl.GL11;
 
 import java.util.List;
 import java.util.Objects;
@@ -30,8 +31,8 @@ public class ResetSettingsButton extends Button
 {
 	public static final ResourceLocation texture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/reset_icon.png");
 	
-	private AbstractOption option;
-	public ResetSettingsButton(int x, int y, AbstractOption option)
+	private Option option;
+	public ResetSettingsButton(int x, int y, Option option)
 	{
 		super(x, y, 20, 20, null, (btn) -> {
 			if(btn.active) {
@@ -44,29 +45,29 @@ public class ResetSettingsButton extends Button
 						pair.getSecond().set(pair.getFirst().getDefault());
 						
 						String configKey = OptionsList.configMap.get(option);
-						Widget widget = screen.list.findOption(option);
+						AbstractWidget widget = screen.list.findOption(option);
 						
 						Object ob = pair.getSecond().get();
 						if (ob instanceof Boolean) {
-							if(widget != null) widget.setMessage(((BooleanOption)option).getMessage(Minecraft.getInstance().options));
+							if(widget != null) ((CycleButton)widget).setValue(ob);
 							if(!Objects.equals(screen.getConfigName(), "client")) {
 								NetworkHandler.CHANNEL.sendToServer(new SyncBooleanConfig(configKey, (Boolean)ob, screen.getConfigName()));
 							}
 						}else if(ob instanceof Integer){
-							if(widget != null) widget.setMessage(((SliderPercentageOption)option).getMessage(Minecraft.getInstance().options));
-							if(widget != null) ((AbstractSlider)widget).value = ((SliderPercentageOption)option).toPct((Integer)ob);
+							if(widget != null) widget.setMessage(((ProgressOption)option).getMessage(Minecraft.getInstance().options));
+							if(widget != null) ((SliderButton)widget).value = ((ProgressOption)option).toPct((Integer)ob);
 							if(!Objects.equals(screen.getConfigName(), "client")) {
 								NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(configKey, (Integer)ob, screen.getConfigName()));
 							}
 						}else if(ob instanceof Double){
-							if(widget != null) widget.setMessage(((SliderPercentageOption)option).getMessage(Minecraft.getInstance().options));
-							if(widget != null) ((AbstractSlider)widget).value = ((SliderPercentageOption)option).toPct((Double)ob);
+							if(widget != null) widget.setMessage(((ProgressOption)option).getMessage(Minecraft.getInstance().options));
+							if(widget != null) ((SliderButton)widget).value = ((ProgressOption)option).toPct((Double)ob);
 							if(!Objects.equals(screen.getConfigName(), "client")) {
 								NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(configKey, (Double)ob, screen.getConfigName()));
 							}
 						}else if(ob instanceof Long){
-							if(widget != null) widget.setMessage(((SliderPercentageOption)option).getMessage(Minecraft.getInstance().options));
-							if(widget != null) ((AbstractSlider)widget).value = ((SliderPercentageOption)option).toPct((Long)ob);
+							if(widget != null) widget.setMessage(((ProgressOption)option).getMessage(Minecraft.getInstance().options));
+							if(widget != null) ((SliderButton)widget).value = ((ProgressOption)option).toPct((Long)ob);
 							if(!Objects.equals(screen.getConfigName(), "client")) {
 								NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(configKey, (Long)ob, screen.getConfigName()));
 							}
@@ -91,7 +92,7 @@ public class ResetSettingsButton extends Button
 	}
 	
 	@Override
-	public void render(MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_)
+	public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_)
 	{
 		if(this.visible) {
 			this.active = false;
@@ -103,9 +104,9 @@ public class ResetSettingsButton extends Button
 			}
 			
 			Minecraft minecraft = Minecraft.getInstance();
-			minecraft.getTextureManager().bind(WIDGETS_LOCATION);
-			RenderSystem.color4f(1.0F, 1.0F, 1.0F, this.alpha);
-			int i = this.getYImage(this.isHovered());
+			minecraft.getTextureManager().bindForSetup(WIDGETS_LOCATION);
+			GL11.glColor4f(1.0F, 1.0F, 1.0F, this.alpha);
+			int i = this.getYImage(this.isHovered);
 			RenderSystem.enableBlend();
 			RenderSystem.defaultBlendFunc();
 			RenderSystem.enableDepthTest();
@@ -113,7 +114,7 @@ public class ResetSettingsButton extends Button
 			this.blit(p_230430_1_, this.x + this.width / 2, this.y, 200 - this.width / 2, 46 + i * 20, this.width / 2, this.height);
 			this.renderBg(p_230430_1_, minecraft, p_230430_2_, p_230430_3_);
 			
-			Minecraft.getInstance().getTextureManager().bind(texture);
+			RenderSystem.setShaderTexture(0, texture);
 			blit(p_230430_1_, x + 2, y + 2, 0, 0, 16, 16, 16, 16);
 		}
 	}

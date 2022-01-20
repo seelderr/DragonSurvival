@@ -2,7 +2,7 @@ package by.jackraidenph.dragonsurvival.client.models.creatures;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.common.entity.creatures.PrinceHorseEntity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 
 public class PrinceModel extends AnimatedGeoModel<PrinceHorseEntity> {

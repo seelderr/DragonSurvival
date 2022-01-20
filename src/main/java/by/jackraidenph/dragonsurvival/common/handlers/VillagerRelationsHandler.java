@@ -1,42 +1,41 @@
 package by.jackraidenph.dragonsurvival.common.handlers;
 
-import by.jackraidenph.dragonsurvival.util.Functions;
-import by.jackraidenph.dragonsurvival.common.capability.Capabilities;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.config.ConfigHandler;
-import by.jackraidenph.dragonsurvival.common.entity.creatures.DragonHunter;
-import by.jackraidenph.dragonsurvival.common.entity.creatures.PrincessEntity;
-import by.jackraidenph.dragonsurvival.common.entity.creatures.KnightEntity;
-import by.jackraidenph.dragonsurvival.common.entity.creatures.PrinceHorseEntity;
-import by.jackraidenph.dragonsurvival.common.entity.creatures.PrincesHorseEntity;
-import by.jackraidenph.dragonsurvival.common.entity.goals.FollowMobGoal;
 import by.jackraidenph.dragonsurvival.common.DragonEffects;
-import by.jackraidenph.dragonsurvival.common.entity.DSEntities;
 import by.jackraidenph.dragonsurvival.common.EffectInstance2;
-import net.minecraft.entity.*;
-import net.minecraft.entity.ai.goal.AvoidEntityGoal;
-import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.merchant.villager.AbstractVillagerEntity;
-import net.minecraft.entity.merchant.villager.VillagerEntity;
-import net.minecraft.entity.merchant.villager.WanderingTraderEntity;
-import net.minecraft.entity.monster.ZombieEntity;
-import net.minecraft.entity.passive.IronGolemEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.*;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
-import net.minecraft.tileentity.BannerPattern;
-import net.minecraft.util.EntityPredicates;
-import net.minecraft.util.Hand;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.server.ServerWorld;
+import by.jackraidenph.dragonsurvival.common.capability.Capabilities;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.entity.DSEntities;
+import by.jackraidenph.dragonsurvival.common.entity.creatures.*;
+import by.jackraidenph.dragonsurvival.common.entity.goals.FollowMobGoal;
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
+import by.jackraidenph.dragonsurvival.util.Functions;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.animal.IronGolem;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.monster.Zombie;
+import net.minecraft.world.entity.npc.AbstractVillager;
+import net.minecraft.world.entity.npc.Villager;
+import net.minecraft.world.entity.npc.WanderingTrader;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.trading.MerchantOffer;
+import net.minecraft.world.item.trading.MerchantOffers;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.entity.BannerPattern;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -60,20 +59,20 @@ public class VillagerRelationsHandler {
     public static void onDeath(LivingDeathEvent deathEvent) {
         LivingEntity livingEntity = deathEvent.getEntityLiving();
         Entity killer = deathEvent.getSource().getEntity();
-        if (killer instanceof PlayerEntity) {
-            PlayerEntity playerEntity = (PlayerEntity) killer;
-            if (livingEntity instanceof AbstractVillagerEntity) {
-                World world = killer.level;
+        if (killer instanceof Player) {
+            Player playerEntity = (Player) killer;
+            if (livingEntity instanceof AbstractVillager) {
+                Level world = killer.level;
                 livingEntity.getType().getRegistryName();
                 if (!(livingEntity instanceof PrincesHorseEntity)) {
 
                     if (DragonStateProvider.isDragon(killer)) {
-                        AbstractVillagerEntity villagerEntity = (AbstractVillagerEntity) livingEntity;
+                        AbstractVillager villagerEntity = (AbstractVillager) livingEntity;
 
                         MerchantOffers merchantOffers = villagerEntity.getOffers();
 
-                        if (villagerEntity instanceof VillagerEntity) {
-                            VillagerEntity villager = (VillagerEntity) villagerEntity;
+                        if (villagerEntity instanceof Villager) {
+                            Villager villager = (Villager) villagerEntity;
 
                             int level = villager.getVillagerData().getLevel();
 
@@ -87,8 +86,8 @@ public class VillagerRelationsHandler {
                                 playerEntity.giveExperiencePoints(level * ConfigHandler.COMMON.xpGain.get());
 //                                applyEvilMarker(playerEntity);
                             }
-                        } else if (villagerEntity instanceof WanderingTraderEntity) {
-                            WanderingTraderEntity wanderingTrader = (WanderingTraderEntity) villagerEntity;
+                        } else if (villagerEntity instanceof WanderingTrader) {
+                            WanderingTrader wanderingTrader = (WanderingTrader) villagerEntity;
                             if (!world.isClientSide) {
                                 playerEntity.giveExperiencePoints(2 * ConfigHandler.COMMON.xpGain.get());
                                 if (world.random.nextInt(100) < 30) {
@@ -105,7 +104,7 @@ public class VillagerRelationsHandler {
                 if (DragonStateProvider.isDragon(playerEntity)) {
 //                    applyEvilMarker(playerEntity);
                 } else if (livingEntity instanceof KnightEntity) {
-                    playerEntity.addEffect(new EffectInstance(Effects.BAD_OMEN, Functions.minutesToTicks(5)));
+                    playerEntity.addEffect(new MobEffectInstance(MobEffects.BAD_OMEN, Functions.minutesToTicks(5)));
                 }
             }
             String typeName = livingEntity.getType().getRegistryName().toString();
@@ -115,25 +114,25 @@ public class VillagerRelationsHandler {
         }
     }
 
-    public static List<? extends EntityType<? extends CreatureEntity>> dragonHunters;
+    public static List<? extends EntityType<? extends PathfinderMob>> dragonHunters;
 
     @SubscribeEvent
     public static void entityTargets(LivingSetAttackTargetEvent setAttackTargetEvent) {
         Entity entity = setAttackTargetEvent.getEntity();
         LivingEntity target = setAttackTargetEvent.getTarget();
-        if (entity instanceof IronGolemEntity) {
+        if (entity instanceof IronGolem) {
             if (target instanceof DragonHunter)
-                ((IronGolemEntity) entity).setTarget(null);
-        } else if (entity instanceof ZombieEntity &&
-                (target instanceof PrincessEntity || target instanceof PrincesHorseEntity)) {
-            ((ZombieEntity) entity).setTarget(null);
+                ((IronGolem) entity).setTarget(null);
+        } else if (entity instanceof Zombie &&
+                   (target instanceof PrincessEntity || target instanceof PrincesHorseEntity)) {
+            ((Zombie) entity).setTarget(null);
         }
     }
 
-    public static void applyEvilMarker(PlayerEntity playerEntity) {
+    public static void applyEvilMarker(Player playerEntity) {
         DragonStateProvider.getCap(playerEntity).ifPresent(dragonStateHandler -> {
             if (dragonStateHandler.isDragon()) {
-                EffectInstance effectInstance = playerEntity.getEffect(DragonEffects.EVIL_DRAGON);
+                MobEffectInstance effectInstance = playerEntity.getEffect(DragonEffects.EVIL_DRAGON);
                 if (effectInstance == null) {
                     playerEntity.addEffect(new EffectInstance2(DragonEffects.EVIL_DRAGON, Functions.minutesToTicks(1)));
                 } else {
@@ -164,9 +163,9 @@ public class VillagerRelationsHandler {
         });
     }
 
-    public static int computeLevelOfEvil(PlayerEntity playerEntity) {
+    public static int computeLevelOfEvil(Player playerEntity) {
         if (DragonStateProvider.isDragon(playerEntity) && playerEntity.hasEffect(DragonEffects.EVIL_DRAGON)) {
-            EffectInstance effectInstance = playerEntity.getEffect(DragonEffects.EVIL_DRAGON);
+            MobEffectInstance effectInstance = playerEntity.getEffect(DragonEffects.EVIL_DRAGON);
             assert effectInstance != null;
             int timeLeft = effectInstance.getDuration();
             if (timeLeft >= Functions.minutesToTicks(240))
@@ -195,35 +194,37 @@ public class VillagerRelationsHandler {
 
     @SubscribeEvent
     public static void voidEvilStatus(PotionEvent.PotionAddedEvent potionAddedEvent) {
-        EffectInstance effectInstance = potionAddedEvent.getPotionEffect();
+        MobEffectInstance effectInstance = potionAddedEvent.getPotionEffect();
         LivingEntity livingEntity = potionAddedEvent.getEntityLiving();
-        if (effectInstance.getEffect() == Effects.HERO_OF_THE_VILLAGE)
+        if (effectInstance.getEffect() == MobEffects.HERO_OF_THE_VILLAGE)
             livingEntity.removeEffect(DragonEffects.EVIL_DRAGON);
     }
 
     @SubscribeEvent
     public static void specialTasks(EntityJoinWorldEvent joinWorldEvent) {
-        World world = joinWorldEvent.getWorld();
+        Level  world = joinWorldEvent.getWorld();
         Entity entity = joinWorldEvent.getEntity();
-        if (entity instanceof IronGolemEntity) {
-            IronGolemEntity golemEntity = (IronGolemEntity) entity;
-            golemEntity.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(golemEntity, PlayerEntity.class, 0, true, false, livingEntity ->
+        if (entity instanceof IronGolem) {
+            IronGolem golemEntity = (IronGolem) entity;
+            golemEntity.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(golemEntity, Player.class, 0, true, false, livingEntity ->
 
                     (DragonStateProvider.isDragon(livingEntity) && livingEntity.hasEffect(DragonEffects.EVIL_DRAGON))));
         }
 
-        if (entity instanceof AbstractVillagerEntity && !(entity instanceof PrinceHorseEntity)) {
-            AbstractVillagerEntity abstractVillagerEntity = (AbstractVillagerEntity) entity;
-            abstractVillagerEntity.goalSelector.addGoal(10, new AvoidEntityGoal<>(abstractVillagerEntity, PlayerEntity.class, livingEntity ->
-                    (DragonStateProvider.isDragon(livingEntity) && livingEntity.hasEffect(DragonEffects.EVIL_DRAGON)), 16.0F, 1.0D, 1.0D, EntityPredicates.NO_CREATIVE_OR_SPECTATOR::test));
+        if (entity instanceof AbstractVillager && !(entity instanceof PrinceHorseEntity)) {
+            AbstractVillager abstractVillager = (AbstractVillager) entity;
+            abstractVillager.goalSelector.addGoal(10, new AvoidEntityGoal<>(abstractVillager, Player.class, livingEntity ->
+                    (DragonStateProvider.isDragon(livingEntity) && livingEntity.hasEffect(DragonEffects.EVIL_DRAGON)), 16.0F, 1.0D, 1.0D, (pMob) -> {
+                        return true;
+                    }));
         }
     }
 
     @SubscribeEvent
     public static void interactions(PlayerInteractEvent.EntityInteract event) {
-        PlayerEntity playerEntity = event.getPlayer();
+        Player playerEntity = event.getPlayer();
         Entity livingEntity = event.getTarget();
-        if (livingEntity instanceof AbstractVillagerEntity) {
+        if (livingEntity instanceof AbstractVillager) {
             if (DragonStateProvider.isDragon(playerEntity) && playerEntity.hasEffect(DragonEffects.EVIL_DRAGON)) {
                 event.setCanceled(true);
             }
@@ -233,11 +234,11 @@ public class VillagerRelationsHandler {
     @SubscribeEvent
     public static void hurtEntity(LivingDamageEvent attackEntityEvent) {
         Entity attacked = attackEntityEvent.getEntity();
-        PlayerEntity attacker = attackEntityEvent.getSource().getEntity() instanceof PlayerEntity ? ((PlayerEntity)attackEntityEvent.getSource().getEntity()) : null;
+        Player attacker = attackEntityEvent.getSource().getEntity() instanceof Player ? ((Player)attackEntityEvent.getSource().getEntity()) : null;
        
         if(attacker == null) return;
         
-        if (attacked instanceof AbstractVillagerEntity || attacked instanceof DragonHunter) {
+        if (attacked instanceof AbstractVillager || attacked instanceof DragonHunter) {
            if(DragonStateProvider.isDragon(attacker)) {
                 if (attacker.hasEffect(DragonEffects.EVIL_DRAGON)) {
                     int duration = attacker.getEffect(DragonEffects.EVIL_DRAGON).getDuration();
@@ -253,18 +254,18 @@ public class VillagerRelationsHandler {
     @SubscribeEvent
     public static void spawnHunters(TickEvent.PlayerTickEvent playerTickEvent) {
         if (!dragonHunters.isEmpty() && playerTickEvent.phase == TickEvent.Phase.END) {
-            PlayerEntity player = playerTickEvent.player;
+            Player player = playerTickEvent.player;
             if (DragonStateProvider.isDragon(player) && player.hasEffect(DragonEffects.EVIL_DRAGON) && !player.level.isClientSide &&
                     !player.isCreative() && !player.isSpectator() && player.isAlive()) {
-                ServerWorld serverWorld = (ServerWorld) player.level;
-                if (serverWorld.dimension() == World.OVERWORLD) {
+                ServerLevel serverWorld = (ServerLevel) player.level;
+                if (serverWorld.dimension() == Level.OVERWORLD) {
                     Capabilities.getVillageRelationships(player).ifPresent(villageRelationShips -> {
                         if (villageRelationShips.hunterSpawnDelay == 0) {
                             BlockPos spawnPosition = Functions.findRandomSpawnPosition(player, 1, 4, 14.0F);
                             if (spawnPosition != null && spawnPosition.getY() >= ConfigHandler.COMMON.riderSpawnLowerBound.get() && spawnPosition.getY() <= ConfigHandler.COMMON.riderSpawnUpperBound.get()) {
-                                Optional<RegistryKey<Biome>> biomeRegistryKey = serverWorld.getBiomeName(spawnPosition);
+                                Optional<ResourceKey<Biome>> biomeRegistryKey = serverWorld.getBiomeName(spawnPosition);
                                 if (biomeRegistryKey.isPresent()) {
-                                    RegistryKey<Biome> biome = biomeRegistryKey.get();
+                                   ResourceKey<Biome> biome = biomeRegistryKey.get();
                                     if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.OCEAN))
                                         return;
                                 }
@@ -293,42 +294,42 @@ public class VillagerRelationsHandler {
     @SubscribeEvent
     public static void spawnPrinceOrPrincess(TickEvent.WorldTickEvent serverTickEvent) {
         if (ConfigHandler.COMMON.spawnPrinceAndPrincess.get()) {
-            World world = serverTickEvent.world;
-            if (world instanceof ServerWorld) {
-                ServerWorld serverWorld = (ServerWorld) world;
-                if (!serverWorld.players().isEmpty() && serverWorld.dimension() == World.OVERWORLD)
+            Level  world = serverTickEvent.world;
+            if (world instanceof ServerLevel) {
+                ServerLevel serverWorld = (ServerLevel) world;
+                if (!serverWorld.players().isEmpty() && serverWorld.dimension() == Level.OVERWORLD)
                     if (timeLeft == 0) {
-                        ServerPlayerEntity player = serverWorld.getRandomPlayer();
+                        ServerPlayer player = serverWorld.getRandomPlayer();
                         if (player != null && player.isAlive() && !player.isCreative() && !player.isSpectator()) {
                             BlockPos blockPos = Functions.findRandomSpawnPosition(player, 1, 2, 20.0F);
                             if (blockPos != null && blockPos.getY() >= ConfigHandler.COMMON.riderSpawnLowerBound.get() && blockPos.getY() <= ConfigHandler.COMMON.riderSpawnUpperBound.get()) {
-                                Optional<RegistryKey<Biome>> biomeRegistryKey = serverWorld.getBiomeName(blockPos);
+                                Optional<ResourceKey<Biome>> biomeRegistryKey = serverWorld.getBiomeName(blockPos);
                                 if (biomeRegistryKey.isPresent()) {
-                                    RegistryKey<Biome> biome = biomeRegistryKey.get();
+                                   ResourceKey<Biome> biome = biomeRegistryKey.get();
                                     if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.OCEAN))
                                         return;
                                 }
                                 EntityType<? extends PrincesHorseEntity> entityType = world.random.nextBoolean() ? DSEntities.PRINCESS_ON_HORSE : DSEntities.PRINCE_ON_HORSE;
                                 PrincesHorseEntity princessEntity = entityType.create(world);
                                 princessEntity.setPos(blockPos.getX(), blockPos.getY(), blockPos.getZ());
-                                princessEntity.finalizeSpawn(serverWorld, serverWorld.getCurrentDifficultyAt(player.blockPosition()), SpawnReason.NATURAL, null, null);
+                                princessEntity.finalizeSpawn(serverWorld, serverWorld.getCurrentDifficultyAt(player.blockPosition()), MobSpawnType.NATURAL, null, null);
 
                                 serverWorld.addFreshEntity(princessEntity);
 
-                                ListNBT pattern = (new BannerPattern.Builder()).addPattern(BannerPattern.values()[world.random.nextInt((BannerPattern.values()).length)], DyeColor.values()[world.random.nextInt((DyeColor.values()).length)]).toListTag();
+                                ListTag pattern = (new BannerPattern.Builder()).addPattern(BannerPattern.values()[world.random.nextInt((BannerPattern.values()).length)], DyeColor.values()[world.random.nextInt((DyeColor.values()).length)]).toListTag();
 
                                 int knights = world.random.nextInt(3) + 3;
                                 for (int i = 0; i < knights; i++) {
                                     KnightEntity knightHunter = DSEntities.KNIGHT.create(serverWorld);
                                     knightHunter.setPos(blockPos.getX(), blockPos.getY(), blockPos.getZ());
                                     knightHunter.goalSelector.addGoal(5, new FollowMobGoal(PrincesHorseEntity.class, knightHunter, 8));
-                                    knightHunter.finalizeSpawn(serverWorld, serverWorld.getCurrentDifficultyAt(player.blockPosition()), SpawnReason.NATURAL, null, null);
+                                    knightHunter.finalizeSpawn(serverWorld, serverWorld.getCurrentDifficultyAt(player.blockPosition()), MobSpawnType.NATURAL, null, null);
                                     ItemStack itemStack = new ItemStack(Items.SHIELD);
-                                    CompoundNBT compoundNBT = new CompoundNBT();
+                                    CompoundTag compoundNBT = new CompoundTag();
                                     compoundNBT.putInt("Base", princessEntity.getColor());
                                     compoundNBT.put("Patterns", pattern);
                                     itemStack.addTagElement("BlockEntityTag", compoundNBT);
-                                    knightHunter.setItemInHand(Hand.OFF_HAND, itemStack);
+                                    knightHunter.setItemInHand(InteractionHand.OFF_HAND, itemStack);
                                     serverWorld.addFreshEntity(knightHunter);
                                 }
 
@@ -348,7 +349,7 @@ public class VillagerRelationsHandler {
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent playerTickEvent) {
         if (playerTickEvent.phase == TickEvent.Phase.END) {
-            PlayerEntity playerEntity = playerTickEvent.player;
+            Player playerEntity = playerTickEvent.player;
             if (!playerEntity.level.isClientSide) {
                 if (playerEntity.hasEffect(DragonEffects.EVIL_DRAGON)) {
                     Capabilities.getVillageRelationships(playerEntity).ifPresent(villageRelationShips -> villageRelationShips.evilStatusDuration = playerEntity.getEffect(DragonEffects.EVIL_DRAGON).getDuration());

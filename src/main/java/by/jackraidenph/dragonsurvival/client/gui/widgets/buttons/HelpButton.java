@@ -1,14 +1,13 @@
 package by.jackraidenph.dragonsurvival.client.gui.widgets.buttons;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.widget.button.ImageButton;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.fml.client.gui.GuiUtils;
+import net.minecraft.client.gui.components.ImageButton;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.Arrays;
 
@@ -30,11 +29,11 @@ public class HelpButton extends ImageButton
 	}
 	
 	@Override
-	public void render(MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_)
+	public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_)
 	{
 		super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
-		if(isHovered() && this.visible){
-			GuiUtils.drawHoveringText(p_230430_1_, Arrays.asList(new TranslationTextComponent(text)), p_230430_2_, p_230430_3_, Minecraft.getInstance().screen.width, Minecraft.getInstance().screen.height, 200, Minecraft.getInstance().font);
+		if(isHovered && this.visible){
+			Minecraft.getInstance().screen.renderComponentTooltip(p_230430_1_, Arrays.asList(new TranslatableComponent(text)), p_230430_2_, p_230430_3_, Minecraft.getInstance().font);
 		}
 	}
 	

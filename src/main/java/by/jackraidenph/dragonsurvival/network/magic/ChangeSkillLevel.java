@@ -1,15 +1,15 @@
 package by.jackraidenph.dragonsurvival.network.magic;
 
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.network.NetworkHandler;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.magic.DragonAbilities;
 import by.jackraidenph.dragonsurvival.common.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.common.magic.common.PassiveDragonAbility;
 import by.jackraidenph.dragonsurvival.network.IMessage;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent;
-import net.minecraftforge.fml.network.PacketDistributor;
+import by.jackraidenph.dragonsurvival.network.NetworkHandler;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.network.PacketDistributor;
 
 import java.util.function.Supplier;
 
@@ -29,14 +29,14 @@ public class ChangeSkillLevel implements IMessage<ChangeSkillLevel>
     public ChangeSkillLevel() {}
     
     @Override
-    public void encode(ChangeSkillLevel message, PacketBuffer buffer) {
+    public void encode(ChangeSkillLevel message, FriendlyByteBuf buffer) {
         buffer.writeInt(message.level);
         buffer.writeUtf(message.skill);
         buffer.writeInt(message.levelChange);
     }
 
     @Override
-    public ChangeSkillLevel decode(PacketBuffer buffer) {
+    public ChangeSkillLevel decode(FriendlyByteBuf buffer) {
         int level = buffer.readInt();
         String skill = buffer.readUtf();
         int levelChange = buffer.readInt();
@@ -45,7 +45,7 @@ public class ChangeSkillLevel implements IMessage<ChangeSkillLevel>
 
     @Override
     public void handle(ChangeSkillLevel message, Supplier<NetworkEvent.Context> supplier) {
-        ServerPlayerEntity playerEntity = supplier.get().getSender();
+        ServerPlayer playerEntity = supplier.get().getSender();
 
         if(playerEntity == null)
             return;

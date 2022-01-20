@@ -1,17 +1,17 @@
 package by.jackraidenph.dragonsurvival.common.entity.creatures;
 
 import by.jackraidenph.dragonsurvival.common.entity.goals.AlertExceptHunters;
-import net.minecraft.entity.CreatureEntity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.util.Hand;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.World;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
 
 public class SquireEntity extends Hunter {
-    public SquireEntity(EntityType<? extends CreatureEntity> entityType, World world) {
+    public SquireEntity(EntityType<? extends PathfinderMob> entityType, Level world) {
         super(entityType, world);
     }
 
@@ -23,6 +23,6 @@ public class SquireEntity extends Hunter {
     }
 
     protected void populateDefaultEquipmentSlots(DifficultyInstance difficultyInstance) {
-        setItemInHand(Hand.MAIN_HAND, new ItemStack(Items.IRON_SWORD));
+        setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.IRON_SWORD));
     }
 }

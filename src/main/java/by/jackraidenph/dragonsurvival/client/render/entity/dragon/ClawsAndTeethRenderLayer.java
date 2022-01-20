@@ -1,21 +1,21 @@
 package by.jackraidenph.dragonsurvival.client.render.entity.dragon;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.common.entity.DragonEntity;
 import by.jackraidenph.dragonsurvival.client.handlers.ClientEvents;
+import by.jackraidenph.dragonsurvival.common.capability.caps.DragonStateHandler;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.entity.DragonEntity;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.TieredItem;
-import net.minecraft.potion.Effects;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TieredItem;
 import software.bernie.geckolib3.model.provider.GeoModelProvider;
 import software.bernie.geckolib3.renderers.geo.GeoLayerRenderer;
 import software.bernie.geckolib3.renderers.geo.IGeoRenderer;
@@ -32,10 +32,10 @@ public class ClawsAndTeethRenderLayer extends GeoLayerRenderer<DragonEntity>
 	}
 	
 	@Override
-	public void render(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, DragonEntity entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch)
+	public void render(PoseStack pStack, MultiBufferSource bufferIn, int packedLightIn, DragonEntity entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch)
 	{
 		if(!((DragonRenderer)renderer).renderLayers) return;
-		if(entitylivingbaseIn.hasEffect(Effects.INVISIBILITY)) return;
+		if(entitylivingbaseIn.hasEffect(MobEffects.INVISIBILITY)) return;
 		
 		DragonStateHandler handler = DragonStateProvider.getCap(entitylivingbaseIn.getPlayer()).orElse(null);
 		if (handler == null || !handler.getClawInventory().renderClaws) return;
@@ -45,7 +45,7 @@ public class ClawsAndTeethRenderLayer extends GeoLayerRenderer<DragonEntity>
 		if (clawTexture != null) {
 			ResourceLocation texture = new ResourceLocation(DragonSurvivalMod.MODID, clawTexture);
 			((DragonRenderer)renderer).isLayer = true;
-			renderToolLayer(matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, texture, renderer, getEntityModel());
+			renderToolLayer(pStack, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, texture, renderer, getEntityModel());
 			((DragonRenderer)renderer).isLayer = false;
 		}
 		
@@ -54,12 +54,12 @@ public class ClawsAndTeethRenderLayer extends GeoLayerRenderer<DragonEntity>
 		if (teethTexture != null) {
 			ResourceLocation texture = new ResourceLocation(DragonSurvivalMod.MODID, teethTexture);
 			((DragonRenderer)renderer).isLayer = true;
-			renderToolLayer(matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, texture, renderer, getEntityModel());
+			renderToolLayer(pStack, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, texture, renderer, getEntityModel());
 			((DragonRenderer)renderer).isLayer = false;
 		}
 	}
 	
-	public String constructClaws(PlayerEntity playerEntity)
+	public String constructClaws(Player playerEntity)
 	{
 		String texture = "textures/armor/";
 		DragonStateHandler handler = DragonStateProvider.getCap(playerEntity).orElse(null);
@@ -73,7 +73,7 @@ public class ClawsAndTeethRenderLayer extends GeoLayerRenderer<DragonEntity>
 		return texture + "dragon_claws.png";
 	}
 	
-	public String constructTeethTexture(PlayerEntity playerEntity)
+	public String constructTeethTexture(Player playerEntity)
 	{
 		String texture = "textures/armor/";
 		ItemStack swordItem = DragonStateProvider.getCap(playerEntity).orElse(null).getClawInventory().getClawsInventory().getItem(0);
@@ -87,11 +87,11 @@ public class ClawsAndTeethRenderLayer extends GeoLayerRenderer<DragonEntity>
 		return texture + "dragon_teeth.png";
 	}
 	
-	private void renderToolLayer(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, DragonEntity entitylivingbaseIn, float partialTicks, ResourceLocation texture, IGeoRenderer<DragonEntity> renderer, GeoModelProvider entityModel)
+	private void renderToolLayer(PoseStack  pStack, MultiBufferSource bufferIn, int packedLightIn, DragonEntity entitylivingbaseIn, float partialTicks, ResourceLocation texture, IGeoRenderer<DragonEntity> renderer, GeoModelProvider entityModel)
 	{
-		RenderType type = renderer.getRenderType(entitylivingbaseIn, partialTicks, matrixStackIn, bufferIn, null, packedLightIn, texture);
-		IVertexBuilder vertexConsumer = bufferIn.getBuffer(type);
+		RenderType type = renderer.getRenderType(entitylivingbaseIn, partialTicks, pStack, bufferIn, null, packedLightIn, texture);
+		VertexConsumer vertexConsumer = bufferIn.getBuffer(type);
 		
-		renderer.render(entityModel.getModel(entityModel.getModelLocation(entitylivingbaseIn)), entitylivingbaseIn, partialTicks, type, matrixStackIn, bufferIn, vertexConsumer, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+		renderer.render(entityModel.getModel(entityModel.getModelLocation(entitylivingbaseIn)), entitylivingbaseIn, partialTicks, type, pStack, bufferIn, vertexConsumer, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
 	}
 }

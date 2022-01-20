@@ -1,48 +1,56 @@
 package by.jackraidenph.dragonsurvival.common.handlers;
 
-import by.jackraidenph.dragonsurvival.common.blocks.DSBlocks;
 import by.jackraidenph.dragonsurvival.common.DragonEffects;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.blocks.DSBlocks;
+import by.jackraidenph.dragonsurvival.common.capability.Capabilities;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.entity.DSEntities;
-import by.jackraidenph.dragonsurvival.common.handlers.magic.ClawToolHandler;
-import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.common.entity.monsters.MagicalPredatorEntity;
+import by.jackraidenph.dragonsurvival.common.handlers.magic.ClawToolHandler;
 import by.jackraidenph.dragonsurvival.common.items.DSItems;
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
+import by.jackraidenph.dragonsurvival.misc.DragonLevel;
+import by.jackraidenph.dragonsurvival.misc.DragonType;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.status.PlayerJumpSync;
 import by.jackraidenph.dragonsurvival.server.tileentity.SourceOfMagicTileEntity;
-import by.jackraidenph.dragonsurvival.misc.DragonLevel;
-import by.jackraidenph.dragonsurvival.misc.DragonType;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.goal.AvoidEntityGoal;
-import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.monster.HoglinEntity;
-import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.passive.WolfEntity;
-import net.minecraft.entity.passive.horse.HorseEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.*;
-import net.minecraft.loot.LootContext;
-import net.minecraft.loot.LootParameters;
-import net.minecraft.tags.ITag;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.util.*;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.tags.Tag;
+import net.minecraft.world.Container;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.animal.Wolf;
+import net.minecraft.world.entity.animal.horse.Horse;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.monster.hoglin.Hoglin;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ElytraItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -56,7 +64,7 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.network.PacketDistributor;
 
 import java.util.List;
 
@@ -72,14 +80,14 @@ public class EventHandler {
     @SubscribeEvent
     public static void removeElytraFromDragon(TickEvent.PlayerTickEvent playerTickEvent) {
         if (!ConfigHandler.COMMON.dragonsAllowedToUseElytra.get() && playerTickEvent.phase == TickEvent.Phase.START) {
-            PlayerEntity playerEntity = playerTickEvent.player;
+            Player playerEntity = playerTickEvent.player;
             DragonStateProvider.getCap(playerEntity).ifPresent(dragonStateHandler -> {
-                if (dragonStateHandler.isDragon() && playerEntity instanceof ServerPlayerEntity && cycle >= 40) {
+                if (dragonStateHandler.isDragon() && playerEntity instanceof ServerPlayer && cycle >= 40) {
                     //chestplate slot is #38
-                    ItemStack stack = playerEntity.inventory.getItem(38);
+                    ItemStack stack = playerEntity.getInventory().getItem(38);
                     Item item = stack.getItem();
                     if (item instanceof ElytraItem) {
-                        playerEntity.drop(playerEntity.inventory.removeItemNoUpdate(38), true, false);
+                        playerEntity.drop(playerEntity.getInventory().removeItemNoUpdate(38), true, false);
                     }
                     cycle = 0;
                 } else cycle++;
@@ -93,7 +101,7 @@ public class EventHandler {
         float health = entity.getMaxHealth();
         
         //if(entity instanceof AnimalEntity) return;
-        if(event.getSource() == null || !(event.getSource().getEntity() instanceof PlayerEntity)) return;
+        if(event.getSource() == null || !(event.getSource().getEntity() instanceof Player)) return;
         if(!DragonStateProvider.isDragon(event.getSource().getEntity())) return;
 
         if(health >= 14 && health < 20){
@@ -117,26 +125,26 @@ public class EventHandler {
     @SubscribeEvent
     public static void onJoin(EntityJoinWorldEvent joinWorldEvent) {
         Entity entity = joinWorldEvent.getEntity();
-        if (entity instanceof AnimalEntity && !(entity instanceof WolfEntity || entity instanceof HoglinEntity)) {
+        if (entity instanceof Animal && !(entity instanceof Wolf || entity instanceof Hoglin)) {
 
-            ((AnimalEntity) entity).goalSelector.addGoal(5, new AvoidEntityGoal(
-                    (AnimalEntity) entity, PlayerEntity.class,
-                    livingEntity -> DragonStateProvider.isDragon((PlayerEntity) livingEntity) && !((PlayerEntity) livingEntity).hasEffect(DragonEffects.ANIMAL_PEACE),
-                    20.0F, 1.3F, 1.5F, EntityPredicates.ATTACK_ALLOWED));
+            ((Animal) entity).goalSelector.addGoal(5, new AvoidEntityGoal(
+                    (Animal) entity, Player.class,
+                    livingEntity -> DragonStateProvider.isDragon((Player) livingEntity) && !((Player) livingEntity).hasEffect(DragonEffects.ANIMAL_PEACE),
+                    20.0F, 1.3F, 1.5F, living -> false));
         }
-        if (entity instanceof HorseEntity) {
-            HorseEntity horseEntity = (HorseEntity) entity;
-            horseEntity.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(horseEntity, PlayerEntity.class, 0, true, false, livingEntity -> livingEntity.getCapability(DragonStateProvider.DRAGON_CAPABILITY).orElseGet(null).getLevel() != DragonLevel.ADULT));
-            horseEntity.targetSelector.addGoal(4, new AvoidEntityGoal<>(horseEntity, PlayerEntity.class, livingEntity -> livingEntity.getCapability(DragonStateProvider.DRAGON_CAPABILITY).orElse(null).getLevel() == DragonLevel.ADULT && !livingEntity.hasEffect(DragonEffects.ANIMAL_PEACE), 20, 1.3, 1.5, EntityPredicates.ATTACK_ALLOWED::test));
+        if (entity instanceof Horse) {
+            Horse horseEntity = (Horse) entity;
+            horseEntity.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(horseEntity, Player.class, 0, true, false, livingEntity -> livingEntity.getCapability(Capabilities.DRAGON_CAPABILITY).orElseGet(null).getLevel() != DragonLevel.ADULT));
+            horseEntity.targetSelector.addGoal(4, new AvoidEntityGoal<>(horseEntity, Player.class, livingEntity -> livingEntity.getCapability(Capabilities.DRAGON_CAPABILITY).orElse(null).getLevel() == DragonLevel.ADULT && !livingEntity.hasEffect(DragonEffects.ANIMAL_PEACE), 20, 1.3, 1.5, (ent) -> false));
         }
     }
 
     @SubscribeEvent
     public static void onDeath(LivingDeathEvent e) {
         LivingEntity livingEntity = e.getEntityLiving();
-        World world = livingEntity.level;
-        if (livingEntity instanceof AnimalEntity && livingEntity.level.getRandom().nextDouble() < ConfigHandler.COMMON.predatorAnimalSpawnChance.get()) {
-            if (world.getEntitiesOfClass(PlayerEntity.class, new AxisAlignedBB(livingEntity.blockPosition()).inflate(50), playerEntity -> playerEntity.hasEffect(DragonEffects.PREDATOR_ANTI_SPAWN)).isEmpty()) {
+        Level world = livingEntity.level;
+        if (livingEntity instanceof Animal && livingEntity.level.getRandom().nextDouble() < ConfigHandler.COMMON.predatorAnimalSpawnChance.get()) {
+            if (world.getEntitiesOfClass(Player.class, new AABB(livingEntity.blockPosition()).inflate(50), playerEntity -> playerEntity.hasEffect(DragonEffects.PREDATOR_ANTI_SPAWN)).isEmpty()) {
                 MagicalPredatorEntity beast = DSEntities.MAGICAL_BEAST.create(livingEntity.level);
                 livingEntity.level.addFreshEntity(beast);
                 beast.teleportToWithTicket(livingEntity.getX(), livingEntity.getY(), livingEntity.getZ());
@@ -147,7 +155,7 @@ public class EventHandler {
     @SubscribeEvent
     public static void sleepCheck(SleepingLocationCheckEvent sleepingLocationCheckEvent) {
         BlockPos sleepingLocation = sleepingLocationCheckEvent.getSleepingLocation();
-        World world = sleepingLocationCheckEvent.getEntity().level;
+        Level  world = sleepingLocationCheckEvent.getEntity().level;
         if (world.isNight() && world.getBlockEntity(sleepingLocation) instanceof SourceOfMagicTileEntity)
             sleepingLocationCheckEvent.setResult(Event.Result.ALLOW);
     }
@@ -167,14 +175,14 @@ public class EventHandler {
     public static void blockBroken(BlockEvent.BreakEvent breakEvent) {
         if(breakEvent.isCanceled()) return;
         
-        PlayerEntity playerEntity = breakEvent.getPlayer();
+        Player playerEntity = breakEvent.getPlayer();
         if(playerEntity.isCreative()) return;
     
         int i = EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, playerEntity);
     
         if(i <= 0) {
-            IWorld world = breakEvent.getWorld();
-            if (world instanceof ServerWorld) {
+            LevelAccessor world = breakEvent.getWorld();
+            if (world instanceof ServerLevel) {
                 BlockState blockState = breakEvent.getState();
                 BlockPos blockPos = breakEvent.getPos();
                 Block block = blockState.getBlock();
@@ -184,15 +192,15 @@ public class EventHandler {
                 String[] tagStringSplit = ConfigHandler.SERVER.oresTag.get().split(":");
                 ResourceLocation ores = new ResourceLocation(tagStringSplit[0], tagStringSplit[1]);
                 // Checks to make sure the ore does not drop itself or another ore from the tag (no going infinite with ores)
-                ITag<Item> oresTag = ItemTags.getAllTags().getTag(ores);
+                Tag<Item> oresTag = ItemTags.getAllTags().getTag(ores);
                 
                 if (!oresTag.contains(block.asItem())){
                     return;
                 }
                 
-                List<ItemStack> drops = block.getDrops(blockState, new LootContext.Builder((ServerWorld) world)
-                        .withParameter(LootParameters.ORIGIN, new Vector3d(blockPos.getX(), blockPos.getY(), blockPos.getZ()))
-                        .withParameter(LootParameters.TOOL, mainHandItem));
+                List<ItemStack> drops = block.getDrops(blockState, new LootContext.Builder((ServerLevel) world)
+                        .withParameter(LootContextParams.ORIGIN, new Vec3(blockPos.getX(), blockPos.getY(), blockPos.getZ()))
+                        .withParameter(LootContextParams.TOOL, mainHandItem));
                 DragonStateProvider.getCap(playerEntity).ifPresent(dragonStateHandler -> {
                     final boolean suitableOre = (mainHandItem.isCorrectToolForDrops(blockState) ||
                                                  (dragonStateHandler.isDragon() && dragonStateHandler.canHarvestWithPaw(playerEntity, blockState)))
@@ -202,7 +210,7 @@ public class EventHandler {
                         
                         if (dragonStateHandler.isDragon()) {
                             if (playerEntity.getRandom().nextDouble() < ConfigHandler.SERVER.dragonOreDustChance.get()) {
-                                world.addFreshEntity(new ItemEntity((World) world, blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, new ItemStack(DSItems.elderDragonDust)){
+                                world.addFreshEntity(new ItemEntity((Level ) world, blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, new ItemStack(DSItems.elderDragonDust)){
                                     @Override
                                     public boolean fireImmune()
                                     {
@@ -211,7 +219,7 @@ public class EventHandler {
                                 });
                             }
                             if (playerEntity.getRandom().nextDouble() < ConfigHandler.SERVER.dragonOreBoneChance.get()) {
-                                world.addFreshEntity(new ItemEntity((World) world, blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, new ItemStack(DSItems.elderDragonBone)){
+                                world.addFreshEntity(new ItemEntity((Level ) world, blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, new ItemStack(DSItems.elderDragonBone)){
                                     @Override
                                     public boolean fireImmune()
                                     {
@@ -221,7 +229,7 @@ public class EventHandler {
                             }
                         } else {
                             if (playerEntity.getRandom().nextDouble() < ConfigHandler.SERVER.humanOreDustChance.get()) {
-                                world.addFreshEntity(new ItemEntity((World) world, blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, new ItemStack(DSItems.elderDragonDust)){
+                                world.addFreshEntity(new ItemEntity((Level ) world, blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, new ItemStack(DSItems.elderDragonDust)){
                                     @Override
                                     public boolean fireImmune()
                                     {
@@ -230,7 +238,7 @@ public class EventHandler {
                                 });
                             }
                             if (playerEntity.getRandom().nextDouble() < ConfigHandler.SERVER.humanOreBoneChance.get()) {
-                                world.addFreshEntity(new ItemEntity((World) world, blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, new ItemStack(DSItems.elderDragonBone)){
+                                world.addFreshEntity(new ItemEntity((Level ) world, blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, new ItemStack(DSItems.elderDragonBone)){
                                     @Override
                                     public boolean fireImmune()
                                     {
@@ -252,7 +260,7 @@ public class EventHandler {
         if (itemStack.getItem() == DSItems.elderDragonBone) {
             if(!rightClickBlock.getPlayer().isSpectator()) {
 
-                final World world = rightClickBlock.getWorld();
+                final Level  world = rightClickBlock.getWorld();
                 final BlockPos blockPos = rightClickBlock.getPos();
                 BlockState blockState = world.getBlockState(blockPos);
                 final Block block = blockState.getBlock();
@@ -260,12 +268,12 @@ public class EventHandler {
                 boolean replace = false;
                 rightClickBlock.getPlayer().isSpectator();
                 rightClickBlock.getPlayer().isCreative();
-                BlockItemUseContext deirection = new BlockItemUseContext(
+                BlockPlaceContext deirection = new BlockPlaceContext(
                         rightClickBlock.getPlayer(),
                         rightClickBlock.getHand(),
                         rightClickBlock.getItemStack(),
-                        new BlockRayTraceResult(
-                                new Vector3d(0, 0, 0),
+                        new BlockHitResult(
+                                new Vec3(0, 0, 0),
                                 rightClickBlock.getPlayer().getDirection(),
                                 blockPos,
                                 false));
@@ -304,8 +312,8 @@ public class EventHandler {
                         itemStack.shrink(1);
                     }
                     rightClickBlock.setCanceled(true);
-                    world.playSound(rightClickBlock.getPlayer(), blockPos, SoundEvents.WITHER_SPAWN, SoundCategory.PLAYERS, 1, 1);
-                    rightClickBlock.setCancellationResult(ActionResultType.SUCCESS);
+                    world.playSound(rightClickBlock.getPlayer(), blockPos, SoundEvents.WITHER_SPAWN, SoundSource.PLAYERS, 1, 1);
+                    rightClickBlock.setCancellationResult(InteractionResult.SUCCESS);
                 }
             }
         }
@@ -313,7 +321,7 @@ public class EventHandler {
 
     @SubscribeEvent
     public static void returnBeacon(PlayerEvent.ItemCraftedEvent craftedEvent) {
-        IInventory inventory = craftedEvent.getInventory();
+        Container inventory = craftedEvent.getInventory();
         ItemStack result = craftedEvent.getCrafting();
         if (result.getItem() == DSBlocks.dragonBeacon.asItem()) {
             craftedEvent.getPlayer().addItem(new ItemStack(Items.BEACON));
@@ -336,7 +344,7 @@ public class EventHandler {
                         livingEntity.push(0, ConfigHandler.SERVER.adultJump.get(), 0); //2+ blocks
                         break;
                 }
-                if (livingEntity instanceof ServerPlayerEntity) {
+                if (livingEntity instanceof ServerPlayer) {
                     if (livingEntity.getServer().isSingleplayer())
                         NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new PlayerJumpSync(livingEntity.getId(), 20)); // 42
                     else

@@ -1,30 +1,32 @@
 package by.jackraidenph.dragonsurvival.mixins;
 
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.client.gui.DisplayEffectsScreen;
-import net.minecraft.client.gui.recipebook.IRecipeShownListener;
-import net.minecraft.client.gui.screen.inventory.InventoryScreen;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.PlayerContainer;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.client.gui.screens.recipebook.RecipeUpdateListener;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.InventoryMenu;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-@Mixin(InventoryScreen.class)
-public abstract class MixinInventoryScreen extends DisplayEffectsScreen<PlayerContainer> implements IRecipeShownListener {
-    public MixinInventoryScreen(PlayerContainer p_i51091_1_, PlayerInventory p_i51091_2_, ITextComponent p_i51091_3_) {
-        super(p_i51091_1_, p_i51091_2_, p_i51091_3_);
+@Mixin( InventoryScreen.class)
+public abstract class MixinInventoryScreen extends EffectRenderingInventoryScreen<InventoryMenu> implements RecipeUpdateListener
+{
+    public MixinInventoryScreen(InventoryMenu p_98701_, Inventory p_98702_, Component p_98703_)
+    {
+        super(p_98701_, p_98702_, p_98703_);
     }
-
-    @Redirect(method = "Lnet/minecraft/client/gui/screen/inventory/InventoryScreen;renderEntityInInventory(IIIFFLnet/minecraft/entity/LivingEntity;)V", at = @At(value="INVOKE",
-            target="Lcom/mojang/blaze3d/systems/RenderSystem;runAsFancy(Ljava/lang/Runnable;)V"
+    
+    @Redirect( method = "Lnet/minecraft/client/gui/screens/inventory/InventoryScreen;renderEntityInInventory(IIIFFLnet/minecraft/world/entity/LivingEntity;)V", at = @At( value="INVOKE",
+                                                                                                                                                                         target="Lcom/mojang/blaze3d/systems/RenderSystem;runAsFancy(Ljava/lang/Runnable;)V"
     ))
     private static void dragonScreenEntityRender(Runnable p_runAsFancy_0_){
-        ClientPlayerEntity player = Minecraft.getInstance().player;
+        LocalPlayer player = Minecraft.getInstance().player;
         if (DragonStateProvider.getCap(player).isPresent() && DragonStateProvider.getCap(player).orElseGet(null).isDragon())
             DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
                 double bodyYaw = dragonStateHandler.getMovementData().bodyYaw;
@@ -57,7 +59,7 @@ public abstract class MixinInventoryScreen extends DisplayEffectsScreen<PlayerCo
             RenderSystem.runAsFancy(p_runAsFancy_0_);
     }
 
-    @Redirect(method = "Lnet/minecraft/client/gui/screen/inventory/InventoryScreen;renderEntityInInventory(IIIFFLnet/minecraft/entity/LivingEntity;)V", at = @At(value="INVOKE",
+    @Redirect(method = "Lnet/minecraft/client/gui/screens/inventory/InventoryScreen;renderEntityInInventory(IIIFFLnet/minecraft/world/entity/LivingEntity;)V", at = @At(value="INVOKE",
             target="Ljava/lang/Math;atan(D)D"
     ), require = 2)
     private static double dragonScreenEntityRenderAtan(double a) {

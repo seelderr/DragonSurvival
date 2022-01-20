@@ -1,18 +1,20 @@
 package by.jackraidenph.dragonsurvival.client.gui.widgets.lists;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.SimpleSound;
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.gui.IGuiEventListener;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.narration.NarratableEntry;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -24,7 +26,7 @@ public class CategoryEntry extends OptionListEntry
 	private final ResourceLocation BUTTON_UP = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/emote/button_up.png");
 	private final ResourceLocation BUTTON_DOWN = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/emote/button_down.png");
 	
-	public final ITextComponent name;
+	public final TextComponent name;
 	public String origName;
 	private int width;
 	public boolean enabled = false;
@@ -32,7 +34,7 @@ public class CategoryEntry extends OptionListEntry
 	public CategoryEntry parent;
 	public int catNum;
 	
-	public CategoryEntry(OptionsList optionsList, ITextComponent p_i232280_2_, CategoryEntry entry, int catNum)
+	public CategoryEntry(OptionsList optionsList, TextComponent p_i232280_2_, CategoryEntry entry, int catNum)
 	{
 		this.optionsList = optionsList;
 		this.name = p_i232280_2_;
@@ -51,7 +53,7 @@ public class CategoryEntry extends OptionListEntry
 	@Override
 	public boolean mouseClicked(double p_231044_1_, double p_231044_3_, int p_231044_5_)
 	{
-		Minecraft.getInstance().getSoundManager().play(SimpleSound.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+		Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 		this.enabled = !this.enabled;
 		
 		if (enabled) {
@@ -68,21 +70,21 @@ public class CategoryEntry extends OptionListEntry
 		return Objects.equals(((OptionsList)this.list).getEntryAtPos(p_231047_1_, p_231047_3_), this);
 	}
 	
-	public void render(MatrixStack p_230432_1_, int p_230432_2_, int p_230432_3_, int p_230432_4_, int p_230432_5_, int p_230432_6_, int p_230432_7_, int p_230432_8_, boolean p_230432_9_, float p_230432_10_)
+	public void render(PoseStack p_230432_1_, int p_230432_2_, int p_230432_3_, int p_230432_4_, int p_230432_5_, int p_230432_6_, int p_230432_7_, int p_230432_8_, boolean p_230432_9_, float p_230432_10_)
 	{
 		if (parent != null && !parent.enabled) return;
 		
 		int color = new Color(0.05F, 0.05F, 0.05F, 0.85F).getRGB();
-		AbstractGui.fill(p_230432_1_, 32 + indent, (p_230432_3_ + p_230432_6_ - 16), ((OptionsList)list).getScrollbarPosition(), (p_230432_3_ + p_230432_6_), color);
+		Gui.fill(p_230432_1_, 32 + indent, (p_230432_3_ + p_230432_6_ - 16), ((OptionsList)list).getScrollbarPosition(), (p_230432_3_ + p_230432_6_), color);
 		
 		Minecraft.getInstance().font.draw(p_230432_1_, name, (float)(Minecraft.getInstance().screen.width / 2 - this.width / 2) + indent, (float)(p_230432_3_ + p_230432_6_ - 12), 16777215);
 		
 		if (!enabled) {
-			Minecraft.getInstance().getTextureManager().bind(BUTTON_UP);
-			AbstractGui.blit(p_230432_1_, ((OptionsList)list).getScrollbarPosition() - 30, (p_230432_3_ + p_230432_6_ - 16), 0, 0, 16, 16, 16, 16);
+			RenderSystem.setShaderTexture(0, BUTTON_UP);
+			Gui.blit(p_230432_1_, ((OptionsList)list).getScrollbarPosition() - 30, (p_230432_3_ + p_230432_6_ - 16), 0, 0, 16, 16, 16, 16);
 		} else {
-			Minecraft.getInstance().getTextureManager().bind(BUTTON_DOWN);
-			AbstractGui.blit(p_230432_1_, ((OptionsList)list).getScrollbarPosition() - 30, (p_230432_3_ + p_230432_6_ - 16), 0, 0, 16, 16, 16, 16);
+			RenderSystem.setShaderTexture(0, BUTTON_DOWN);
+			Gui.blit(p_230432_1_, ((OptionsList)list).getScrollbarPosition() - 30, (p_230432_3_ + p_230432_6_ - 16), 0, 0, 16, 16, 16, 16);
 		}
 	}
 	
@@ -91,7 +93,7 @@ public class CategoryEntry extends OptionListEntry
 		return false;
 	}
 	
-	public List<? extends IGuiEventListener> children()
+	public List<? extends GuiEventListener> children()
 	{
 		return Collections.emptyList();
 	}
@@ -100,5 +102,11 @@ public class CategoryEntry extends OptionListEntry
 	public int getHeight()
 	{
 		return parent == null || parent.enabled ? 20 : 0;
+	}
+	
+	@Override
+	public List<? extends NarratableEntry> narratables()
+	{
+		return null;
 	}
 }

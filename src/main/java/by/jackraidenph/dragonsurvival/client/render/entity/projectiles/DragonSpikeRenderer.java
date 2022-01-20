@@ -3,15 +3,15 @@ package by.jackraidenph.dragonsurvival.client.render.entity.projectiles;
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.common.entity.projectiles.DragonSpikeEntity;
 import net.minecraft.client.renderer.entity.ArrowRenderer;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn( Dist.CLIENT)
 public class DragonSpikeRenderer extends ArrowRenderer<DragonSpikeEntity>
 {
-	public DragonSpikeRenderer(EntityRendererManager p_i46179_1_)
+	public DragonSpikeRenderer(EntityRendererProvider.Context p_i46179_1_)
 	{
 		super(p_i46179_1_);
 	}

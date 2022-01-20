@@ -3,21 +3,24 @@ package by.jackraidenph.dragonsurvival.client.gui.widgets.buttons;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownEntry;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownList;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownValueEntry;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.IGuiEventListener;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.client.gui.widget.list.AbstractList;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.ContainerObjectSelectionList;
+import net.minecraft.client.gui.components.TooltipAccessor;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.util.FormattedCharSequence;
+import net.minecraftforge.client.gui.widget.ExtendedButton;
 import org.lwjgl.opengl.GL11;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.function.Consumer;
 
-public class DropDownButton extends ExtendedButton
+
+public class DropDownButton extends ExtendedButton implements TooltipAccessor
 {
 	public String current;
 	private String[] values;
@@ -27,9 +30,10 @@ public class DropDownButton extends ExtendedButton
 	private static final int maxItems = 4;
 	
 	private DropdownList list;
-	private Widget renderButton;
+	private AbstractWidget renderButton;
+	public List<FormattedCharSequence> tooltip;
 	
-	private ITextComponent message;
+	private TextComponent message;
 	
 	public DropDownButton(int x, int y, int xSize, int ySize, String current, String[] values, Consumer<String> setter)
 	{
@@ -41,7 +45,7 @@ public class DropDownButton extends ExtendedButton
 	}
 	
 	@Override
-	public void render(MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_)
+	public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_)
 	{
 		super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
 		
@@ -49,7 +53,9 @@ public class DropDownButton extends ExtendedButton
 			toggled = false;
 			Screen screen = Minecraft.getInstance().screen;
 			screen.children.removeIf((s) -> s == list);
-			screen.buttons.removeIf((s) -> s == renderButton);
+			screen.children.removeIf((s) -> s == renderButton);
+			
+			//screen.buttons.removeIf((s) -> s == renderButton);
 		}
 		
 		
@@ -60,12 +66,12 @@ public class DropDownButton extends ExtendedButton
 	
 	public void updateMessage(){
 		if(current != null) {
-			message = new StringTextComponent(current.substring(0, 1).toUpperCase(Locale.ROOT) + current.substring(1).toLowerCase(Locale.ROOT));
+			message = new TextComponent(current.substring(0, 1).toUpperCase(Locale.ROOT) + current.substring(1).toLowerCase(Locale.ROOT));
 		}
 	}
 	
 	@Override
-	public ITextComponent getMessage()
+	public TextComponent getMessage()
 	{
 		return message;
 	}
@@ -92,9 +98,9 @@ public class DropDownButton extends ExtendedButton
 				screen.children.add(0, list);
 				screen.children.add(list);
 				
-				for (IGuiEventListener child : screen.children) {
-					if(child instanceof AbstractList){
-						if(((AbstractList)child).renderTopAndBottom){
+				for (GuiEventListener child : screen.children) {
+					if(child instanceof ContainerObjectSelectionList){
+						if(((ContainerObjectSelectionList)child).renderTopAndBottom){
 							hasBorder = true;
 							break;
 						}
@@ -106,9 +112,9 @@ public class DropDownButton extends ExtendedButton
 			}
 			
 			boolean finalHasBorder = hasBorder;
-			renderButton = new ExtendedButton(0, 0, 0, 0, StringTextComponent.EMPTY, null){
+			renderButton = new ExtendedButton(0, 0, 0, 0, TextComponent.EMPTY, null){
 				@Override
-				public void render(MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_)
+				public void render(PoseStack  p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_)
 				{
 					this.active = this.visible = false;
 					list.visible = DropDownButton.this.visible;
@@ -130,13 +136,19 @@ public class DropDownButton extends ExtendedButton
 					}
 				}
 			};
-			screen.buttons.add(renderButton);
+			screen.children.add(renderButton);
 		}else{
 			screen.children.removeIf((s) -> s == list);
-			screen.buttons.removeIf((s) -> s == renderButton);
+			screen.children.removeIf((s) -> s == renderButton);
 		}
 		
 		toggled = !toggled;
 		updateMessage();
+	}
+	
+	@Override
+	public List<FormattedCharSequence> getTooltip()
+	{
+		return tooltip;
 	}
 }

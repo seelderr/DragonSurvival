@@ -1,18 +1,17 @@
 package by.jackraidenph.dragonsurvival.common.magic.abilities.Actives;
 
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.client.handlers.KeyInputHandler;
-import by.jackraidenph.dragonsurvival.common.magic.common.ActiveDragonAbility;
+import by.jackraidenph.dragonsurvival.common.capability.caps.DragonStateHandler;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.entity.projectiles.FireBallEntity;
+import by.jackraidenph.dragonsurvival.common.magic.common.ActiveDragonAbility;
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -34,11 +33,11 @@ public class FireBallAbility extends ActiveDragonAbility
 	}
 	
 	@Override
-	public void onActivation(PlayerEntity player)
+	public void onActivation(Player player)
 	{
 		super.onActivation(player);
 		
-		Vector3d vector3d = player.getViewVector(1.0F);
+		Vec3 vector3d = player.getViewVector(1.0F);
 		double speed = 1d;
 		
 		double d2 = vector3d.x * speed;
@@ -50,8 +49,8 @@ public class FireBallAbility extends ActiveDragonAbility
 		
 		float f1 = -(float)handler.getMovementData().bodyYaw * ((float)Math.PI / 180F);
 		
-		float f4 = MathHelper.sin(f1);
-		float f5 = MathHelper.cos(f1);
+		float f4 = Mth.sin(f1);
+		float f5 = Mth.cos(f1);
 		
 		Double size = DragonStateProvider.getCap(player).map((cap) -> cap.getSize()).get();
 		
@@ -75,18 +74,18 @@ public class FireBallAbility extends ActiveDragonAbility
 	}
 	
 	@OnlyIn( Dist.CLIENT )
-	public ArrayList<ITextComponent> getLevelUpInfo(){
-		ArrayList<ITextComponent> list = super.getLevelUpInfo();
-		list.add(new TranslationTextComponent("ds.skill.damage", "+" + ConfigHandler.SERVER.fireballDamage.get().floatValue()));
-		list.add(new TranslationTextComponent("ds.skill.aoe", "+1"));
+	public ArrayList<Component> getLevelUpInfo(){
+		ArrayList<Component> list = super.getLevelUpInfo();
+		list.add(new TranslatableComponent("ds.skill.damage", "+" + ConfigHandler.SERVER.fireballDamage.get().floatValue()));
+		list.add(new TranslatableComponent("ds.skill.aoe", "+1"));
 		return list;
 	}
 	
 	@Override
-	public ArrayList<ITextComponent> getInfo()
+	public ArrayList<Component> getInfo()
 	{
-		ArrayList<ITextComponent> components = super.getInfo();
-		components.add(new TranslationTextComponent("ds.skill.damage", getDamage()));
+		ArrayList<Component> components = super.getInfo();
+		components.add(new TranslatableComponent("ds.skill.damage", getDamage()));
 		
 		if(!KeyInputHandler.ABILITY2.isUnbound()) {
 			String key = KeyInputHandler.ABILITY2.getKey().getDisplayName().getContents().toUpperCase(Locale.ROOT);
@@ -94,15 +93,15 @@ public class FireBallAbility extends ActiveDragonAbility
 			if(key.isEmpty()){
 				key = KeyInputHandler.ABILITY2.getKey().getDisplayName().getString();
 			}
-			components.add(new TranslationTextComponent("ds.skill.keybind", key));
+			components.add(new TranslatableComponent("ds.skill.keybind", key));
 		}
 		
 		return components;
 	}
 	@Override
-	public IFormattableTextComponent getDescription()
+	public Component getDescription()
 	{
-		return new TranslationTextComponent("ds.skill.description." + getId(), getDamage());
+		return new TranslatableComponent("ds.skill.description." + getId(), getDamage());
 	}
 	
 	@Override

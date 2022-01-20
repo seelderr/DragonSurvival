@@ -4,12 +4,12 @@ import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.config.ConfigUtils;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
-import net.minecraft.block.Block;
-import net.minecraft.item.Item;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.config.ModConfig.Type;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 
 import java.util.HashMap;
 import java.util.List;
@@ -28,7 +28,7 @@ public class DragonConfigHandler
 	public static Map<DragonType, List<Block>> DRAGON_MANA_BLOCKS;
 	
 	@SubscribeEvent
-	public static void onConfigLoad(ModConfig.Loading event) {
+	public static void onConfigLoad(ModConfigEvent.Loading event) {
 		if (event.getConfig().getType() == Type.SERVER) {
 			rebuildSpeedupBlocksMap();
 			rebuildSeaDragonConfigs();

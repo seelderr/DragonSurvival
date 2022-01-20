@@ -1,10 +1,10 @@
 package by.jackraidenph.dragonsurvival.client.render.entity.creatures;
 
 import by.jackraidenph.dragonsurvival.common.entity.creatures.HunterHoundEntity;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.WolfRenderer;
-import net.minecraft.entity.passive.WolfEntity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.animal.Wolf;
 
 import java.util.Arrays;
 import java.util.List;
@@ -14,11 +14,11 @@ public class HunterHoundRenderer extends WolfRenderer {
 
     static final ResourceLocation HECTOR_SKIN = new ResourceLocation("dragonsurvival", "textures/hounds/dragon_hound_hector.png");
 
-    public HunterHoundRenderer(EntityRendererManager rendererManager) {
+    public HunterHoundRenderer(EntityRendererProvider.Context rendererManager) {
         super(rendererManager);
     }
 
-    public ResourceLocation getTextureLocation(WolfEntity entity) {
+    public ResourceLocation getTextureLocation(Wolf entity) {
         if (entity.getDisplayName().getString().equals("Hector") || entity.getDisplayName().getString().equals("Гектор"))
             return HECTOR_SKIN;
         return SKINS.get(entity.getEntityData().get(HunterHoundEntity.variety));

@@ -1,19 +1,19 @@
 package by.jackraidenph.dragonsurvival.client.handlers;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.client.gui.DragonScreen;
+import by.jackraidenph.dragonsurvival.common.capability.caps.DragonStateHandler;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.handlers.DragonGrowthHandler;
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonLevel;
-import net.minecraft.client.MainWindow;
+import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
@@ -21,14 +21,14 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.opengl.GL11;
 
-import java.awt.*;
+import java.awt.Color;
 
 @Mod.EventBusSubscriber( Dist.CLIENT)
 public class ClientGrowthHudHandler
 {
 	@SubscribeEvent
 	public static void renderAbilityHud(RenderGameOverlayEvent.Post event) {
-		PlayerEntity playerEntity = Minecraft.getInstance().player;
+		Player playerEntity = Minecraft.getInstance().player;
 		
 		if (playerEntity == null || !DragonStateProvider.isDragon(playerEntity) || playerEntity.isSpectator())
 			return;
@@ -38,11 +38,11 @@ public class ClientGrowthHudHandler
 		
 		if(handler == null || stack == null || stack.isEmpty()) return;
 		
-		if (event.getType() == ElementType.HOTBAR) {
+		if (event.getType() == ElementType.ALL) {
 			GL11.glPushMatrix();
 			
 			TextureManager textureManager = Minecraft.getInstance().getTextureManager();
-			MainWindow window = Minecraft.getInstance().getWindow();
+			Window window = Minecraft.getInstance().getWindow();
 			
 			int increment = DragonGrowthHandler.getIncrement(stack.getItem(), handler.getLevel());
 			
@@ -96,16 +96,16 @@ public class ClientGrowthHudHandler
 						num = 2;
 					}
 					
-					textureManager.bind(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_" + num + ".png"));
+					textureManager.bindForSetup(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_" + num + ".png"));
 					DragonScreen.drawTexturedCircle(circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, 6, nextProgess, -0.5);
 					
-					textureManager.bind(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_" + handler.getType().name().toLowerCase() + ".png"));
+					textureManager.bindForSetup(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_" + handler.getType().name().toLowerCase() + ".png"));
 					DragonScreen.drawTexturedCircle(circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, 6, progress, -0.5);
 				}else if(increment < 0){
-					textureManager.bind(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_3.png"));
+					textureManager.bindForSetup(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_3.png"));
 					DragonScreen.drawTexturedCircle(circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, 6, progress, -0.5);
 					
-					textureManager.bind(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_" + handler.getType().name().toLowerCase() + ".png"));
+					textureManager.bindForSetup(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_" + handler.getType().name().toLowerCase() + ".png"));
 					DragonScreen.drawTexturedCircle(circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, 6, nextProgess, -0.5);
 				}
 				
@@ -129,7 +129,7 @@ public class ClientGrowthHudHandler
 				GL11.glEnable(GL11.GL_TEXTURE_2D);
 				GL11.glColor4d(1F, 1F, 1F, 1.0);
 				
-				textureManager.bind(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/growth_" + handler.getType().name().toLowerCase() + "_" + (handler.getLevel().ordinal() + 1) + ".png"));
+				textureManager.bindForSetup(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/growth_" + handler.getType().name().toLowerCase() + "_" + (handler.getLevel().ordinal() + 1) + ".png"));
 				Screen.blit(event.getMatrixStack(), circleX + 6, circleY + 6, 0, 0, 20, 20, 20, 20);
 			}
 			

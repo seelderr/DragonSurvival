@@ -2,11 +2,11 @@ package by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.dropdown;
 
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.DropDownButton;
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.gui.IGuiEventListener;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.narration.NarratableEntry;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraftforge.client.gui.widget.ExtendedButton;
 
 import java.util.List;
 import java.util.Locale;
@@ -21,7 +21,7 @@ public class ColoredDropdownValueEntry extends DropdownEntry
 	private ExtendedButton button;
 	private DropDownButton source;
 	
-	private StringTextComponent message;
+	private TextComponent message;
 	
 	public ColoredDropdownValueEntry(DropDownButton source, int num, String value, Consumer<String> setter)
 	{
@@ -29,7 +29,7 @@ public class ColoredDropdownValueEntry extends DropdownEntry
 		this.value = value;
 		this.setter = setter;
 		this.source = source;
-		message = new StringTextComponent(value.substring(0, 1).toUpperCase(Locale.ROOT) + value.substring(1).toLowerCase(Locale.ROOT));
+		message = new TextComponent(value.substring(0, 1).toUpperCase(Locale.ROOT) + value.substring(1).toLowerCase(Locale.ROOT));
 	}
 	
 	/*
@@ -42,20 +42,20 @@ public class ColoredDropdownValueEntry extends DropdownEntry
 	 */
 	
 	@Override
-	public List<? extends IGuiEventListener> children()
+	public List<? extends GuiEventListener> children()
 	{
 		return ImmutableList.of(button);
 	}
 	
 	@Override
-	public void render(MatrixStack pMatrixStack, int pIndex, int pTop, int pLeft, int pWidth, int pHeight, int pMouseX, int pMouseY, boolean pIsMouseOver, float pPartialTicks)
+	public void render(PoseStack pPoseStack , int pIndex, int pTop, int pLeft, int pWidth, int pHeight, int pMouseX, int pMouseY, boolean pIsMouseOver, float pPartialTicks)
 	{
 		if(button == null) {
 			if(list != null) {
 				button = new ExtendedButton(list.getLeft() + 3, 0, list.getWidth() - 12, pHeight+1, null, null)
 				{
 					@Override
-					public ITextComponent getMessage()
+					public TextComponent getMessage()
 					{
 						return message;
 					}
@@ -69,7 +69,7 @@ public class ColoredDropdownValueEntry extends DropdownEntry
 					}
 					/*
 					@Override
-					public void renderButton(MatrixStack mStack, int mouseX, int mouseY, float partial)
+					public void renderButton(PoseStack  mStack, int mouseX, int mouseY, float partial)
 					{
 						RenderSystem.pushMatrix();
 						RenderSystem.enableAlphaTest();
@@ -77,25 +77,25 @@ public class ColoredDropdownValueEntry extends DropdownEntry
 						RenderSystem.defaultBlendFunc();
 						RenderSystem.defaultAlphaFunc();
 						
-						Minecraft.getInstance().textureManager.bind(color1);
+						Minecraft.getInstance().textureManager.bindForSetup(color1);
 						GL11.glColor3f(c1.getRed() / 255f, c1.getGreen() / 255f, c1.getBlue() / 255f);
 						blit(mStack, x, y, 0, 0, width, height, width, height);
 						
-						Minecraft.getInstance().textureManager.bind(color2);
+						Minecraft.getInstance().textureManager.bindForSetup(color2);
 						GL11.glColor3f(c2.getRed() / 255f, c2.getGreen() / 255f, c2.getBlue() / 255f);
 						blit(mStack, x, y, 0, 0, width, height, width, height);
 						
-						Minecraft.getInstance().textureManager.bind(color3);
+						Minecraft.getInstance().textureManager.bindForSetup(color3);
 						GL11.glColor3f(c3.getRed() / 255f, c3.getGreen() / 255f, c3.getBlue() / 255f);
 						blit(mStack, x, y, 0, 0, width, height, width, height);
 						RenderSystem.popMatrix();
 						
-						ITextComponent buttonText = this.getMessage();
+						TextComponent buttonText = this.getMessage();
 						int strWidth = Minecraft.getInstance().font.width(buttonText);
 						int ellipsisWidth = Minecraft.getInstance().font.width("...");
 						
 						if (strWidth > width - 6 && strWidth > ellipsisWidth)
-							buttonText = new StringTextComponent(Minecraft.getInstance().font.substrByWidth(buttonText, width - 6 - ellipsisWidth).getString() + "...");
+							buttonText = new TextComponent(Minecraft.getInstance().font.substrByWidth(buttonText, width - 6 - ellipsisWidth).getString() + "...");
 						
 						drawCenteredString(mStack, Minecraft.getInstance().font, buttonText, this.x + this.width / 2, this.y + (this.height - 8) / 2, getFGColor());
 					}
@@ -111,7 +111,13 @@ public class ColoredDropdownValueEntry extends DropdownEntry
 		}else {
 			button.y = pTop;
 			button.visible = source.visible;
-			button.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
+			button.render(pPoseStack , pMouseX, pMouseY, pPartialTicks);
 		}
+	}
+	
+	@Override
+	public List<? extends NarratableEntry> narratables()
+	{
+		return null;
 	}
 }

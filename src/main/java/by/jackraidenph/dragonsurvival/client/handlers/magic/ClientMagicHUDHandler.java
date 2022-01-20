@@ -1,20 +1,21 @@
 package by.jackraidenph.dragonsurvival.client.handlers.magic;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.handlers.magic.ManaHandler;
-import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.common.magic.common.ActiveDragonAbility;
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.MainWindow;
+import com.mojang.blaze3d.platform.Window;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
@@ -22,7 +23,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.opengl.GL11;
 
-import java.awt.*;
+import java.awt.Color;
 
 @Mod.EventBusSubscriber( Dist.CLIENT)
 public class ClientMagicHUDHandler
@@ -32,27 +33,27 @@ public class ClientMagicHUDHandler
 	
 	@SubscribeEvent
 	public static void cancelExpBar(RenderGameOverlayEvent event) {
-		PlayerEntity playerEntity = Minecraft.getInstance().player;
+		Player playerEntity = Minecraft.getInstance().player;
 		
 		if (playerEntity == null || !DragonStateProvider.isDragon(playerEntity) || playerEntity.isSpectator() || playerEntity.isCreative())
 			return;
 		
 		if(!ConfigHandler.SERVER.consumeEXPAsMana.get()) return;
 		
-		if(event.getType() == ElementType.EXPERIENCE){
+		if(event.getType() == ElementType.ALL){
 			DragonStateProvider.getCap(playerEntity).ifPresent(cap -> {
 				ActiveDragonAbility ability = cap.getMagic().getAbilityFromSlot(cap.getMagic().getSelectedAbilitySlot());
 				if(ability == null) return;
 				
 				if(DragonStateProvider.getCurrentMana(playerEntity) < ability.getManaCost() && ((DragonStateProvider.getCurrentMana(playerEntity) + (playerEntity.totalExperience / 10) >= ability.getManaCost()) || playerEntity.experienceLevel > 0)){
 					event.setCanceled(true);
-					MainWindow window = Minecraft.getInstance().getWindow();
+					Window window = Minecraft.getInstance().getWindow();
 					
 					int screenWidth = window.getGuiScaledWidth();
 					int screenHeight =  window.getGuiScaledHeight();
 					
-					Minecraft.getInstance().getTextureManager().bind(widgetTextures);
-					MatrixStack stack = event.getMatrixStack();
+					RenderSystem.setShaderTexture(0, widgetTextures);
+					PoseStack stack = event.getMatrixStack();
 					int x = window.getGuiScaledWidth() / 2 - 91;
 					int i = Minecraft.getInstance().player.getXpNeededForNextLevel();
 					if (i > 0) {
@@ -80,23 +81,23 @@ public class ClientMagicHUDHandler
 		}
 	}
 	
-	public static void blit(MatrixStack p_238474_1_, int p_238474_2_, int p_238474_3_, int p_238474_4_, int p_238474_5_, int p_238474_6_, int p_238474_7_) {
+	public static void blit(PoseStack  p_238474_1_, int p_238474_2_, int p_238474_3_, int p_238474_4_, int p_238474_5_, int p_238474_6_, int p_238474_7_) {
 		Screen.blit(p_238474_1_, p_238474_2_, p_238474_3_, 0, (float)p_238474_4_, (float)p_238474_5_, p_238474_6_, p_238474_7_, 256, 256);
 	}
 	
 	@SubscribeEvent
 	public static void renderAbilityHud(RenderGameOverlayEvent.Post event) {
-	    PlayerEntity playerEntity = Minecraft.getInstance().player;
+	    Player playerEntity = Minecraft.getInstance().player;
 	    
 	    if (playerEntity == null || !DragonStateProvider.isDragon(playerEntity) || playerEntity.isSpectator())
 	        return;
 	    
 	    DragonStateProvider.getCap(playerEntity).ifPresent(cap -> {
-	        if (event.getType() == ElementType.HOTBAR) {
+	        if (event.getType() == ElementType.ALL) {
 	            GL11.glPushMatrix();
 
 	            TextureManager textureManager = Minecraft.getInstance().getTextureManager();
-	            MainWindow window = Minecraft.getInstance().getWindow();
+	            Window window = Minecraft.getInstance().getWindow();
 				
 	            int count = 4;
 	            int sizeX = 20;
@@ -110,7 +111,7 @@ public class ClientMagicHUDHandler
 		        posY += ConfigHandler.CLIENT.skillbarYOffset.get();
 				
 		        if(cap.getMagic().renderAbilityHotbar()) {
-					textureManager.bind(new ResourceLocation("textures/gui/widgets.png"));
+					textureManager.bindForSetup(new ResourceLocation("textures/gui/widgets.png"));
 					Screen.blit(event.getMatrixStack(), posX, posY - 2, 0, 0, 0, 41, 22, 256, 256);
 					Screen.blit(event.getMatrixStack(), posX + 41, posY - 2, 0, 141, 0, 41, 22, 256, 256);
 					
@@ -118,17 +119,17 @@ public class ClientMagicHUDHandler
 						ActiveDragonAbility ability = cap.getMagic().getAbilityFromSlot(x);
 						
 						if (ability != null && ability.getIcon() != null) {
-							textureManager.bind(ability.getIcon());
+							textureManager.bindForSetup(ability.getIcon());
 							Screen.blit(event.getMatrixStack(), posX + (x * sizeX) + 3, posY + 1, 0, 0, 16, 16, 16, 16);
 							
 							if (ability.getMaxCooldown() > 0 && ability.getCooldown() > 0 && ability.getMaxCooldown() != ability.getCooldown()) {
-								float f = MathHelper.clamp((float)ability.getCooldown() / (float)ability.getMaxCooldown(), 0, 1);
+								float f = Mth.clamp((float)ability.getCooldown() / (float)ability.getMaxCooldown(), 0, 1);
 								int boxX = posX + (x * sizeX) + 3;
 								int boxY = posY + 1;
 								int offset = 16 - (16 - (int)(f * 16));
 								int color = new Color(0.15F, 0.15F, 0.15F, 0.75F).getRGB();
 								int fColor = ability.errorTicks > 0 ? new Color(1F, 0F, 0F, 0.75F).getRGB() : color;
-								AbstractGui.fill(event.getMatrixStack(), boxX, boxY, boxX + 16, boxY + (offset), fColor);
+								Gui.fill(event.getMatrixStack(), boxX, boxY, boxX + 16, boxY + (offset), fColor);
 							}
 						}
 						
@@ -141,10 +142,10 @@ public class ClientMagicHUDHandler
 						}
 					}
 					
-					textureManager.bind(new ResourceLocation("textures/gui/widgets.png"));
+					textureManager.bindForSetup(new ResourceLocation("textures/gui/widgets.png"));
 					Screen.blit(event.getMatrixStack(), posX + (sizeX * cap.getMagic().getSelectedAbilitySlot()) - 1, posY - 3, 2, 0, 22, 24, 24, 256, 256);
 					
-					textureManager.bind(widgetTextures);
+					textureManager.bindForSetup(widgetTextures);
 					
 					int maxMana = DragonStateProvider.getMaxMana(playerEntity);
 					int curMana = DragonStateProvider.getCurrentMana(playerEntity);
@@ -190,11 +191,11 @@ public class ClientMagicHUDHandler
 		            GL11.glTranslatef(startX, startY, 0);
 		
 		
-		            textureManager.bind(castBars);
+		            textureManager.bindForSetup(castBars);
 		            Screen.blit(event.getMatrixStack(), startX, startY, 0, yPos1,  width, height, 256, 256);
 					Screen.blit(event.getMatrixStack(), startX + 2, startY + 41, 0, yPos2,  (int)((191) * perc), 4, 256, 256);
 		
-		            textureManager.bind(ability.getIcon());
+		            textureManager.bindForSetup(ability.getIcon());
 		            Screen.blit(event.getMatrixStack(), startX + 78, startY + 3,
 		                        0, 0, 36, 36, 36, 36);
 		

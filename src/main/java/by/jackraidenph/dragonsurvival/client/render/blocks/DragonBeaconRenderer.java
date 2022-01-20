@@ -1,35 +1,34 @@
 package by.jackraidenph.dragonsurvival.client.render.blocks;
 
+import by.jackraidenph.dragonsurvival.client.particles.DSParticles;
 import by.jackraidenph.dragonsurvival.common.blocks.DSBlocks;
 import by.jackraidenph.dragonsurvival.common.items.DSItems;
-import by.jackraidenph.dragonsurvival.client.particles.DSParticles;
 import by.jackraidenph.dragonsurvival.server.tileentity.DragonBeaconTileEntity;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.Random;
 
-public class DragonBeaconRenderer extends TileEntityRenderer<DragonBeaconTileEntity> {
-    public DragonBeaconRenderer(TileEntityRendererDispatcher p_i226006_1_) {
-        super(p_i226006_1_);
-    }
-
+public class DragonBeaconRenderer implements BlockEntityRenderer<DragonBeaconTileEntity>
+{
+    public DragonBeaconRenderer(BlockEntityRendererProvider.Context pContext) {}
+    
     @Override
-    public void render(DragonBeaconTileEntity dragonBeaconEntity, float v, MatrixStack matrixStack, IRenderTypeBuffer iRenderTypeBuffer, int light, int overlay) {
-        matrixStack.pushPose();
+    public void render(DragonBeaconTileEntity dragonBeaconEntity, float v, PoseStack PoseStack , MultiBufferSource iRenderTypeBuffer, int light, int overlay) {
+        PoseStack .pushPose();
         DragonBeaconTileEntity.Type type = dragonBeaconEntity.type;
         Item item = DSBlocks.dragonBeacon.asItem();
-        ClientWorld clientWorld = (ClientWorld) dragonBeaconEntity.getLevel();
+        ClientLevel clientWorld = (ClientLevel) dragonBeaconEntity.getLevel();
         if (dragonBeaconEntity.getLevel().getBlockState(dragonBeaconEntity.getBlockPos().below()).is(DSBlocks.dragonMemoryBlock)) {
             Minecraft minecraft = Minecraft.getInstance();
             Random random = clientWorld.random;
@@ -78,10 +77,10 @@ public class DragonBeaconRenderer extends TileEntityRenderer<DragonBeaconTileEnt
                     break;
             }
         }
-        matrixStack.translate(0.5, 0.25, 0.5);
-        matrixStack.mulPose(Vector3f.YP.rotationDegrees(dragonBeaconEntity.tick));
-        matrixStack.scale(2, 2, 2);
-        Minecraft.getInstance().getItemRenderer().renderStatic(new ItemStack(item), ItemCameraTransforms.TransformType.GROUND, light, overlay, matrixStack, iRenderTypeBuffer);
-        matrixStack.popPose();
+        PoseStack .translate(0.5, 0.25, 0.5);
+        PoseStack .mulPose(Vector3f.YP.rotationDegrees(dragonBeaconEntity.tick));
+        PoseStack .scale(2, 2, 2);
+        Minecraft.getInstance().getItemRenderer().renderStatic(new ItemStack(item), TransformType.GROUND, light, overlay, PoseStack , iRenderTypeBuffer, 0);
+        PoseStack .popPose();
     }
 }

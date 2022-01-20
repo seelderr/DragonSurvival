@@ -2,8 +2,8 @@ package by.jackraidenph.dragonsurvival.client.models.creatures;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.common.entity.creatures.PrincesHorseEntity;
-import net.minecraft.item.DyeColor;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.DyeColor;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 
 public class PrincessHorseModel extends AnimatedGeoModel<PrincesHorseEntity> {

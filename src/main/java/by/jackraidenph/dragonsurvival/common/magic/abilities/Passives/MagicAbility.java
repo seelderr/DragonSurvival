@@ -1,14 +1,14 @@
 package by.jackraidenph.dragonsurvival.common.magic.abilities.Passives;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.config.ConfigHandler;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.magic.common.PassiveDragonAbility;
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -54,12 +54,12 @@ public class MagicAbility extends PassiveDragonAbility
 	}
 	
 	@Override
-	public IFormattableTextComponent getDescription()
+	public Component getDescription()
 	{
 		int level = Math.max(0, (Math.min(50, getPlayer().experienceLevel) - 5) / 5);
 		String points = getPoints() > 0 ? "+" + getPoints() : "0";
 		String levels = level > 0 ? "+" + level : "0";
 		
-		return new TranslationTextComponent("ds.skill.description." + getId(), DragonStateProvider.getMaxMana(player), points, levels);
+		return new TranslatableComponent("ds.skill.description." + getId(), DragonStateProvider.getMaxMana(player), points, levels);
 	}
 }

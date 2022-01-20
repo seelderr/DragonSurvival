@@ -1,13 +1,13 @@
 package by.jackraidenph.dragonsurvival.client.handlers.magic;
 
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.client.handlers.KeyInputHandler;
-import by.jackraidenph.dragonsurvival.network.NetworkHandler;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.magic.common.ActiveDragonAbility;
+import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.magic.SyncAbilityCastTime;
 import by.jackraidenph.dragonsurvival.network.magic.SyncAbilityCasting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -27,7 +27,7 @@ public class ClientCastingHandler
 	        (!DragonStateProvider.isDragon(Minecraft.getInstance().player)))
 	        return;
 	    
-	    PlayerEntity playerEntity = Minecraft.getInstance().player;
+	    Player playerEntity = Minecraft.getInstance().player;
 	    
 	    abilityHoldTimer = (byte) (KeyInputHandler.USE_ABILITY.isDown() ? abilityHoldTimer < 3 ? abilityHoldTimer + 1 : abilityHoldTimer : 0);
 	    byte modeAbility;

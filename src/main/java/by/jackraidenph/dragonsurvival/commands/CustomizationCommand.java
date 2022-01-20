@@ -1,33 +1,32 @@
 package by.jackraidenph.dragonsurvival.commands;
 
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.SkinCustomization.OpenDragonCustomization;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.mojang.brigadier.tree.RootCommandNode;
-import net.minecraft.command.CommandSource;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraftforge.fml.network.PacketDistributor;
-
-import static net.minecraft.command.Commands.literal;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.network.PacketDistributor;
 
 public class CustomizationCommand
 {
-	public static void register(CommandDispatcher<CommandSource> commandDispatcher)
+	public static void register(CommandDispatcher<CommandSourceStack> commandDispatcher)
 	{
-		RootCommandNode<CommandSource> rootCommandNode = commandDispatcher.getRoot();
-		LiteralCommandNode<CommandSource> dragon = literal("dragon-creator").requires(commandSource -> commandSource.hasPermission(2)).executes(context -> {
+		RootCommandNode<CommandSourceStack> rootCommandNode = commandDispatcher.getRoot();
+		LiteralCommandNode<CommandSourceStack> dragon = Commands.literal("dragon-creator").requires(commandSource -> commandSource.hasPermission(2)).executes(context -> {
 			return runCommand(context.getSource().getPlayerOrException());
 		}).build();
 		
 		rootCommandNode.addChild(dragon);
 	}
 	
-	private static int runCommand( ServerPlayerEntity serverPlayerEntity)
+	private static int runCommand( ServerPlayer serverPlayer)
 	{
-		if(DragonStateProvider.isDragon(serverPlayerEntity)){
-			NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> serverPlayerEntity), new OpenDragonCustomization());
+		if(DragonStateProvider.isDragon(serverPlayer)){
+			NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> serverPlayer), new OpenDragonCustomization());
 		}
 		return 1;
 	}

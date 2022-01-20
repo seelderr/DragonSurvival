@@ -1,16 +1,16 @@
 package by.jackraidenph.dragonsurvival.client.sounds;
 
 import by.jackraidenph.dragonsurvival.server.handlers.ServerFlightHandler;
-import net.minecraft.client.audio.ElytraSound;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.resources.sounds.ElytraOnPlayerSoundInstance;
+import net.minecraft.util.Mth;
 
-public class FastGlideSound extends ElytraSound
+public class FastGlideSound extends ElytraOnPlayerSoundInstance
 {
-	private  ClientPlayerEntity player;
+	private  LocalPlayer   player;
 	private int time;
 	
-	public FastGlideSound(ClientPlayerEntity p_i47113_1_) {
+	public FastGlideSound(LocalPlayer p_i47113_1_) {
 		super(p_i47113_1_);
 		this.player = p_i47113_1_;
 		this.looping = true;
@@ -20,13 +20,13 @@ public class FastGlideSound extends ElytraSound
 	
 	public void tick() {
 		++this.time;
-		if (!this.player.removed && (this.time <= 20 || ServerFlightHandler.isGliding(player))) {
+		if (!this.player.isRemoved() && (this.time <= 20 || ServerFlightHandler.isGliding(player))) {
 			this.x = (double)((float)this.player.getX());
 			this.y = (double)((float)this.player.getY());
 			this.z = (double)((float)this.player.getZ());
 			float f = (float)this.player.getDeltaMovement().lengthSqr();
 			if ((double)f >= 1.0E-7D) {
-				this.volume = MathHelper.clamp(f / 4.0F, 0.0F, 1.0F);
+				this.volume = Mth.clamp(f / 4.0F, 0.0F, 1.0F);
 			} else {
 				this.volume = 0.0F;
 			}

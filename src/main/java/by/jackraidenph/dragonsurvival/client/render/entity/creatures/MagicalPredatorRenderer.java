@@ -2,18 +2,17 @@ package by.jackraidenph.dragonsurvival.client.render.entity.creatures;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.common.entity.monsters.MagicalPredatorEntity;
-import by.jackraidenph.dragonsurvival.client.models.MagicalPredatorModel;
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class MagicalPredatorRenderer extends MobRenderer<MagicalPredatorEntity, MagicalPredatorModel> {
+public class MagicalPredatorRenderer <MagicalPredatorModel extends EntityModel<MagicalPredatorEntity>> extends MobRenderer<MagicalPredatorEntity, MagicalPredatorModel> {
 
     public static List<ResourceLocation> MAGICAL_BEAST_TEXTURES = new ArrayList<>(Arrays.asList(
             new ResourceLocation(DragonSurvivalMod.MODID, "textures/magical_beast/magical_predator_dark.png"),
@@ -28,15 +27,16 @@ public class MagicalPredatorRenderer extends MobRenderer<MagicalPredatorEntity, 
             new ResourceLocation(DragonSurvivalMod.MODID, "textures/magical_beast/magical_predator_zombie.png")
     ));
 
-    public MagicalPredatorRenderer(EntityRendererManager p_i50961_1_) {
-        super(p_i50961_1_, new MagicalPredatorModel(RenderType::entityTranslucent), 0.66F);
+    //TODO Do this
+    public MagicalPredatorRenderer(EntityRendererProvider.Context p_i50961_1_) {
+        super(p_i50961_1_, null, 0.66F);//new MagicalPredatorModel(RenderType::entityTranslucent)
     }
 
     @Override
-    protected void scale(MagicalPredatorEntity entitylivingbaseIn, MatrixStack matrixStackIn, float partialTickTime) {
+    protected void scale(MagicalPredatorEntity entitylivingbaseIn, PoseStack pStack, float partialTickTime) {
         this.shadowRadius = entitylivingbaseIn.size / entitylivingbaseIn.getBbHeight() / 1.44F;
         float scale = entitylivingbaseIn.size / entitylivingbaseIn.getBbHeight();
-        matrixStackIn.scale(scale, scale, scale);
+        pStack.scale(scale, scale, scale);
     }
 
 

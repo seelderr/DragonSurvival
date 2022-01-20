@@ -3,12 +3,12 @@ package by.jackraidenph.dragonsurvival.network.config;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.network.IMessage;
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
 import net.minecraftforge.common.ForgeConfigSpec.IntValue;
 import net.minecraftforge.common.ForgeConfigSpec.LongValue;
-import net.minecraftforge.fml.network.NetworkEvent.Context;
+import net.minecraftforge.network.NetworkEvent.Context;
 
 import java.util.function.Supplier;
 
@@ -28,7 +28,7 @@ public class SyncNumberConfig implements IMessage<SyncNumberConfig>
 	}
 	
 	@Override
-	public void encode(SyncNumberConfig message, PacketBuffer buffer)
+	public void encode(SyncNumberConfig message, FriendlyByteBuf buffer)
 	{
 		buffer.writeUtf(message.type);
 		buffer.writeDouble(message.value);
@@ -36,7 +36,7 @@ public class SyncNumberConfig implements IMessage<SyncNumberConfig>
 	}
 	
 	@Override
-	public SyncNumberConfig decode(PacketBuffer buffer)
+	public SyncNumberConfig decode(FriendlyByteBuf buffer)
 	{
 		String type = buffer.readUtf();
 		Double value = buffer.readDouble();
@@ -47,7 +47,7 @@ public class SyncNumberConfig implements IMessage<SyncNumberConfig>
 	@Override
 	public void handle(SyncNumberConfig message, Supplier<Context> supplier)
 	{
-		ServerPlayerEntity entity = supplier.get().getSender();
+		ServerPlayer entity = supplier.get().getSender();
 		if(entity == null || !entity.hasPermissions(2)) return;
 		
 		UnmodifiableConfig spec = message.type.equalsIgnoreCase("server") ? ConfigHandler.serverSpec.getValues() : ConfigHandler.commonSpec.getValues();

@@ -1,24 +1,24 @@
 package by.jackraidenph.dragonsurvival.common.handlers;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.items.DSItems;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.config.ConfigUtils;
+import by.jackraidenph.dragonsurvival.misc.DragonLevel;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.entity.player.SyncSize;
-import by.jackraidenph.dragonsurvival.common.items.DSItems;
-import by.jackraidenph.dragonsurvival.misc.DragonLevel;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.network.PacketDistributor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,8 +32,8 @@ public class DragonGrowthHandler {
         ItemStack stack = event.getItemStack();
         Item item = stack.getItem();
 
-        PlayerEntity player = event.getPlayer();
-        World world = player.getCommandSenderWorld();
+        Player player = event.getPlayer();
+        Level world = player.getCommandSenderWorld();
 
         DragonStateProvider.getCap(player).ifPresent(handler -> {
             if (!handler.isDragon())
@@ -89,7 +89,7 @@ public class DragonGrowthHandler {
                         result.append(entry).append(i + 1 < displayData.size() ? ", " : "");
                     }
 
-                    player.displayClientMessage(new TranslationTextComponent("ds.invalid_grow_item", result), false);
+                    player.displayClientMessage(new TranslatableComponent("ds.invalid_grow_item", result), false);
                 }
 
                 return;
@@ -159,8 +159,8 @@ public class DragonGrowthHandler {
         if (!ConfigHandler.SERVER.alternateGrowing.get())
             return;
         
-        PlayerEntity player = event.player;
-        World world = player.getCommandSenderWorld();
+        Player player = event.player;
+        Level  world = player.getCommandSenderWorld();
         
         if (world.isClientSide || event.phase == Phase.END)
             return;

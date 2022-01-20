@@ -1,13 +1,13 @@
 package by.jackraidenph.dragonsurvival.client.gui.widgets.lists;
 
-import net.minecraft.client.gui.widget.list.AbstractOptionList;
+import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.Objects;
 
 @OnlyIn( Dist.CLIENT )
-public abstract class OptionListEntry extends AbstractOptionList.Entry<OptionListEntry>
+public abstract class OptionListEntry extends ContainerObjectSelectionList.Entry<OptionListEntry>
 {
 	public boolean visible = false;
 	public abstract int getHeight();

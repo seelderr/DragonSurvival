@@ -1,11 +1,11 @@
 package by.jackraidenph.dragonsurvival.network.claw;
 
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.server.containers.DragonContainer;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.network.IMessage;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent;
+import by.jackraidenph.dragonsurvival.server.containers.DragonContainer;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
@@ -19,19 +19,19 @@ public class DragonClawsMenuToggle implements IMessage<DragonClawsMenuToggle>
 	}
 	
 	@Override
-	public void encode(DragonClawsMenuToggle message, PacketBuffer buffer) {
+	public void encode(DragonClawsMenuToggle message, FriendlyByteBuf buffer) {
 		buffer.writeBoolean(message.state);
 	}
 	
 	@Override
-	public DragonClawsMenuToggle decode(PacketBuffer buffer) {
+	public DragonClawsMenuToggle decode(FriendlyByteBuf buffer) {
 		boolean state = buffer.readBoolean();
 		return new DragonClawsMenuToggle(state);
 	}
 	
 	@Override
 	public void handle(DragonClawsMenuToggle message, Supplier<NetworkEvent.Context> supplier) {
-		ServerPlayerEntity player = supplier.get().getSender();
+		ServerPlayer player = supplier.get().getSender();
 		
 		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
 			dragonStateHandler.getClawInventory().setClawsMenuOpen(message.state);

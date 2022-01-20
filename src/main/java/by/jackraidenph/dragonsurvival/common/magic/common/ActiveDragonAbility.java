@@ -1,21 +1,21 @@
 package by.jackraidenph.dragonsurvival.common.magic.common;
 
 import by.jackraidenph.dragonsurvival.common.DragonEffects;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.caps.DragonStateHandler;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.magic.SyncAbilityCasting;
 import by.jackraidenph.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.jackraidenph.dragonsurvival.util.Functions;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.network.PacketDistributor;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
@@ -43,18 +43,18 @@ public class ActiveDragonAbility extends DragonAbility
     }
     
     @Override
-    public ArrayList<ITextComponent> getInfo()
+    public ArrayList<Component> getInfo()
     {
-        ArrayList<ITextComponent> components = super.getInfo();
+        ArrayList<Component> components = super.getInfo();
     
-        components.add(new TranslationTextComponent("ds.skill.mana_cost", getManaCost()));
+        components.add(new TranslatableComponent("ds.skill.mana_cost", getManaCost()));
     
         if(getCastingTime() > 0){
-            components.add(new TranslationTextComponent("ds.skill.cast_time", Functions.ticksToSeconds(getCastingTime())));
+            components.add(new TranslatableComponent("ds.skill.cast_time", Functions.ticksToSeconds(getCastingTime())));
         }
     
         if(getMaxCooldown() > 0){
-            components.add(new TranslationTextComponent("ds.skill.cooldown", Functions.ticksToSeconds(getMaxCooldown())));
+            components.add(new TranslatableComponent("ds.skill.cooldown", Functions.ticksToSeconds(getMaxCooldown())));
         }
         
         return components;
@@ -115,15 +115,15 @@ public class ActiveDragonAbility extends DragonAbility
         return player != null && player.hasEffect(DragonEffects.SOURCE_OF_MAGIC) ? 0 : manaCost;
     }
     
-    public boolean canConsumeMana(PlayerEntity player) {
+    public boolean canConsumeMana(Player player) {
         return DragonStateProvider.getCurrentMana(player) >= this.getManaCost() || ConfigHandler.SERVER.consumeEXPAsMana.get() && ((player.totalExperience / 10) >= getManaCost() || player.experienceLevel > 0);
     }
     
-    public void consumeMana(PlayerEntity player) {
+    public void consumeMana(Player player) {
         DragonStateProvider.consumeMana(player, this.getManaCost());
     }
     
-    public void onActivation(PlayerEntity player) {
+    public void onActivation(Player player) {
         if(player == null) return;
         
        resetSkill();
@@ -131,9 +131,9 @@ public class ActiveDragonAbility extends DragonAbility
     }
 
     public int errorTicks;
-    public ITextComponent errorMessage;
+    public Component errorMessage;
     
-    public boolean canRun(PlayerEntity player, int keyMode){
+    public boolean canRun(Player player, int keyMode){
         if(player.isCreative()) return true;
         if(player.isSpectator()) return false;
     
@@ -142,7 +142,7 @@ public class ActiveDragonAbility extends DragonAbility
         
         if (!this.canConsumeMana(player)){
             if(keyMode == GLFW.GLFW_PRESS){
-                errorMessage = new TranslationTextComponent("ds.skill_mana_check_failure");
+                errorMessage = new TranslatableComponent("ds.skill_mana_check_failure");
                 errorTicks = Functions.secondsToTicks(5);
                 player.playSound(SoundEvents.GENERIC_SPLASH, 0.15f, 100f);
             }
@@ -152,7 +152,7 @@ public class ActiveDragonAbility extends DragonAbility
     
         if (this.getCooldown() != 0) {
             if(keyMode == GLFW.GLFW_PRESS){
-                errorMessage = new TranslationTextComponent("ds.skill_cooldown_check_failure", nf.format(this.getCooldown() / 20F) + "s").withStyle(TextFormatting.RED);
+                errorMessage = new TranslatableComponent("ds.skill_cooldown_check_failure", nf.format(this.getCooldown() / 20F) + "s").withStyle(ChatFormatting.RED);
                 errorTicks = Functions.secondsToTicks(5);
                 player.playSound(SoundEvents.WITHER_SHOOT, 0.05f, 100f);
             }
@@ -164,7 +164,7 @@ public class ActiveDragonAbility extends DragonAbility
             if(handler.isWingsSpread() && player.isFallFlying()
                || (!player.isOnGround() && player.fallDistance > 0.15F)){
                 if(keyMode == GLFW.GLFW_PRESS) {
-                    errorMessage = new TranslationTextComponent("ds.skill.nofly");
+                    errorMessage = new TranslatableComponent("ds.skill.nofly");
                     errorTicks = Functions.secondsToTicks(5);
                     player.playSound(SoundEvents.WITHER_SHOOT, 0.05f, 100f);
                 }
@@ -177,7 +177,7 @@ public class ActiveDragonAbility extends DragonAbility
     }
     
     @Override
-    public void onKeyPressed(PlayerEntity player) {
+    public void onKeyPressed(Player player) {
         this.onActivation(player);
     }
     
@@ -238,15 +238,15 @@ public class ActiveDragonAbility extends DragonAbility
         return castTime;
     }
     
-    public CompoundNBT saveNBT(){
-        CompoundNBT nbt = super.saveNBT();
+    public CompoundTag saveNBT(){
+        CompoundTag nbt = super.saveNBT();
         nbt.putInt("cooldown", currentCooldown);
         nbt.putInt("castTime", currentCastingTime);
     
         return nbt;
     }
     
-    public void loadNBT(CompoundNBT nbt){
+    public void loadNBT(CompoundTag nbt){
         super.loadNBT(nbt);
         currentCooldown = nbt.getInt("cooldown");
         currentCastingTime = nbt.getInt("castTime");

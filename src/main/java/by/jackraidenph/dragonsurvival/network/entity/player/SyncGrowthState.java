@@ -1,15 +1,15 @@
 package by.jackraidenph.dragonsurvival.network.entity.player;
 
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.network.IMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.DistExecutor.SafeRunnable;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
@@ -28,12 +28,12 @@ public class SyncGrowthState implements IMessage<SyncGrowthState>
     }
 
     @Override
-    public void encode(SyncGrowthState message, PacketBuffer buffer) {
+    public void encode(SyncGrowthState message, FriendlyByteBuf buffer) {
         buffer.writeBoolean(message.growing);
     }
 
     @Override
-    public SyncGrowthState decode(PacketBuffer buffer) {
+    public SyncGrowthState decode(FriendlyByteBuf buffer) {
         return new SyncGrowthState(buffer.readBoolean());
     }
     
@@ -46,7 +46,7 @@ public class SyncGrowthState implements IMessage<SyncGrowthState>
     public void run(SyncGrowthState message, Supplier<NetworkEvent.Context> supplier){
         NetworkEvent.Context context = supplier.get();
         context.enqueueWork(() -> {
-            PlayerEntity thisPlayer = Minecraft.getInstance().player;
+            Player thisPlayer = Minecraft.getInstance().player;
             if (thisPlayer != null) {
                 DragonStateProvider.getCap(thisPlayer).ifPresent(dragonStateHandler -> {
                     dragonStateHandler.growing = message.growing;

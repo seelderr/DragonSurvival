@@ -1,10 +1,13 @@
 package by.jackraidenph.dragonsurvival.server.tileentity;
 
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 
-public class HelmetTileEntity extends TileEntity {
-    public HelmetTileEntity() {
-        super(DSTileEntities.helmetTile);
+public class HelmetTileEntity extends BlockEntity
+{
+    public HelmetTileEntity(BlockPos pWorldPosition, BlockState pBlockState)
+    {
+        super(DSTileEntities.helmetTile, pWorldPosition, pBlockState);
     }
-
 }

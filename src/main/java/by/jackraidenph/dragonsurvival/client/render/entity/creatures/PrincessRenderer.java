@@ -1,12 +1,13 @@
 package by.jackraidenph.dragonsurvival.client.render.entity.creatures;
 
 import by.jackraidenph.dragonsurvival.common.entity.creatures.PrincessEntity;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.VillagerRenderer;
-import net.minecraft.entity.merchant.villager.VillagerEntity;
-import net.minecraft.item.DyeColor;
-import net.minecraft.resources.IReloadableResourceManager;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.renderer.entity.layers.VillagerProfessionLayer;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.npc.Villager;
+import net.minecraft.world.item.DyeColor;
+
 
 public class PrincessRenderer extends VillagerRenderer {
     private static final ResourceLocation BLACK = new ResourceLocation("dragonsurvival", "textures/princess/princess_black.png");
@@ -16,12 +17,12 @@ public class PrincessRenderer extends VillagerRenderer {
     private static final ResourceLocation WHITE = new ResourceLocation("dragonsurvival", "textures/princess/princess_white.png");
     private static final ResourceLocation YELLOW = new ResourceLocation("dragonsurvival", "textures/princess/princess_yellow.png");
 
-    public PrincessRenderer(EntityRendererManager rendererManager, IReloadableResourceManager reloadableResourceManager) {
-        super(rendererManager, reloadableResourceManager);
-        this.layers.removeIf(villagerEntityVillagerModelLayerRenderer -> villagerEntityVillagerModelLayerRenderer instanceof net.minecraft.client.renderer.entity.layers.VillagerLevelPendantLayer);
+    public PrincessRenderer(EntityRendererProvider.Context rendererManager) {
+        super(rendererManager);
+        this.layers.removeIf(villagerEntityVillagerModelLayerRenderer -> villagerEntityVillagerModelLayerRenderer instanceof VillagerProfessionLayer);
     }
 
-    public ResourceLocation getTextureLocation(VillagerEntity villagerEntity) {
+    public ResourceLocation getTextureLocation(Villager villagerEntity) {
         PrincessEntity princessEntity = (PrincessEntity) villagerEntity;
         switch (DyeColor.byId(princessEntity.getColor())) {
             case RED:

@@ -1,21 +1,22 @@
 package by.jackraidenph.dragonsurvival.client.render.entity.creatures;
 
-import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.VillagerRenderer;
-import net.minecraft.entity.merchant.villager.VillagerEntity;
-import net.minecraft.resources.IReloadableResourceManager;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.renderer.entity.layers.VillagerProfessionLayer;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.npc.Villager;
+
 
 public class PrinceRenderer extends VillagerRenderer {
  private static final ResourceLocation TEXTURE = new ResourceLocation("dragonsurvival", "textures/dragon_prince.png");
 
- public PrinceRenderer(EntityRendererManager entityRendererManager, IReloadableResourceManager reloadableResourceManager) {
-  super(entityRendererManager, reloadableResourceManager);
-  this.layers.removeIf(villagerEntityVillagerModelLayerRenderer -> villagerEntityVillagerModelLayerRenderer instanceof net.minecraft.client.renderer.entity.layers.VillagerLevelPendantLayer);
+ public PrinceRenderer(EntityRendererProvider.Context entityRendererManager) {
+  super(entityRendererManager);
+  this.layers.removeIf(villagerEntityVillagerModelLayerRenderer -> villagerEntityVillagerModelLayerRenderer instanceof VillagerProfessionLayer);
  }
 
 
- public ResourceLocation getTextureLocation(VillagerEntity villagerEntity) {
+ public ResourceLocation getTextureLocation(Villager villagerEntity) {
   return TEXTURE;
  }
 }

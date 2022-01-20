@@ -1,11 +1,11 @@
 package by.jackraidenph.dragonsurvival.common.capability.DragonCapabilities;
 
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.client.emotes.Emote;
 import by.jackraidenph.dragonsurvival.client.emotes.EmoteRegistry;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.Direction;
+import by.jackraidenph.dragonsurvival.common.capability.caps.DragonStateHandler;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraftforge.common.capabilities.Capability;
 
 import java.util.Objects;
@@ -32,9 +32,9 @@ public class EmoteCap implements DragonCapability
 	}
 	
 	@Override
-	public INBT writeNBT(Capability<DragonStateHandler> capability, Direction side)
+	public Tag writeNBT(Capability<DragonStateHandler> capability, Direction side)
 	{
-		CompoundNBT tag = new CompoundNBT();
+		CompoundTag tag = new CompoundTag();
 		
 		tag.putString("emote", getCurrentEmote() != null ? getCurrentEmote().animation : "nil");
 		tag.putBoolean("emoteOpen", emoteMenuOpen);
@@ -43,9 +43,9 @@ public class EmoteCap implements DragonCapability
 	}
 	
 	@Override
-	public void readNBT(Capability<DragonStateHandler> capability, Direction side, INBT base)
+	public void readNBT(Capability<DragonStateHandler> capability, Direction side, Tag base)
 	{
-		CompoundNBT tag = (CompoundNBT) base;
+		CompoundTag tag = (CompoundTag) base;
 		
 		String emoteId = tag.getString("emote");
 		

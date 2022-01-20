@@ -2,26 +2,26 @@ package by.jackraidenph.dragonsurvival.network.entity.player;
 
 import by.jackraidenph.dragonsurvival.client.render.ClientDragonRender;
 import by.jackraidenph.dragonsurvival.commands.DragonCommand;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.entity.DSEntities;
 import by.jackraidenph.dragonsurvival.common.entity.DragonEntity;
+import by.jackraidenph.dragonsurvival.misc.DragonType;
 import by.jackraidenph.dragonsurvival.network.IMessage;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
-import by.jackraidenph.dragonsurvival.misc.DragonType;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.world.World;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.DistExecutor.SafeRunnable;
 import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.network.NetworkEvent;
-import net.minecraftforge.fml.network.NetworkEvent.Context;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent.Context;
+import net.minecraftforge.network.PacketDistributor;
 
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
@@ -51,7 +51,7 @@ public class SynchronizeDragonCap implements IMessage<SynchronizeDragonCap>
     }
     
     @Override
-    public void encode(SynchronizeDragonCap message, PacketBuffer buffer)
+    public void encode(SynchronizeDragonCap message, FriendlyByteBuf buffer)
     {
         buffer.writeInt(message.playerId);
         buffer.writeByte(message.dragonType.ordinal());
@@ -63,7 +63,7 @@ public class SynchronizeDragonCap implements IMessage<SynchronizeDragonCap>
     }
     
     @Override
-    public SynchronizeDragonCap decode(PacketBuffer buffer)
+    public SynchronizeDragonCap decode(FriendlyByteBuf buffer)
     {
         int id = buffer.readInt();
         DragonType type = DragonType.values()[buffer.readByte()];
@@ -80,21 +80,21 @@ public class SynchronizeDragonCap implements IMessage<SynchronizeDragonCap>
     {
         if (supplier.get().getDirection().getReceptionSide() == LogicalSide.SERVER) {
             NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), message);
-            ServerPlayerEntity serverPlayerEntity = supplier.get().getSender();
-            DragonStateProvider.getCap(serverPlayerEntity).ifPresent(dragonStateHandler -> {
+            ServerPlayer serverPlayer = supplier.get().getSender();
+            DragonStateProvider.getCap(serverPlayer).ifPresent(dragonStateHandler -> {
             
                 if(message.dragonType == DragonType.NONE && dragonStateHandler.getType() != DragonType.NONE){
-                    DragonCommand.reInsertClawTools(serverPlayerEntity, dragonStateHandler);
+                    DragonCommand.reInsertClawTools(serverPlayer, dragonStateHandler);
                 }
             
                 dragonStateHandler.setIsHiding(message.hiding);
                 dragonStateHandler.setType(message.dragonType);
-                dragonStateHandler.setSize(message.size, serverPlayerEntity);
+                dragonStateHandler.setSize(message.size, serverPlayer);
                 dragonStateHandler.setHasWings(message.hasWings);
                 dragonStateHandler.setLavaAirSupply(message.lavaAirSupply);
                 dragonStateHandler.setPassengerId(message.passengerId);
-                serverPlayerEntity.setForcedPose(null);
-                serverPlayerEntity.refreshDimensions();
+                serverPlayer.setForcedPose(null);
+                serverPlayer.refreshDimensions();
             });
         } else {
             DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> runClient(message, supplier));
@@ -105,14 +105,14 @@ public class SynchronizeDragonCap implements IMessage<SynchronizeDragonCap>
     public void runClient(SynchronizeDragonCap message, Supplier<NetworkEvent.Context> supplier){
         NetworkEvent.Context context = supplier.get();
         context.enqueueWork(() -> {
-            ClientPlayerEntity myPlayer = Minecraft.getInstance().player;
+            LocalPlayer myPlayer = Minecraft.getInstance().player;
             if (myPlayer != null) {
-                World world = myPlayer.level;
+                Level world = myPlayer.level;
                 
                 if (ClientDragonRender.dragonArmor != null) {
                     ClientDragonRender.dragonArmor.player = myPlayer.getId();
                 }
-                PlayerEntity thatPlayer = (PlayerEntity) world.getEntity(message.playerId);
+                Player thatPlayer = (Player) world.getEntity(message.playerId);
         
                 if (thatPlayer != null) {
                     DragonStateProvider.getCap(thatPlayer).ifPresent(dragonStateHandler -> {

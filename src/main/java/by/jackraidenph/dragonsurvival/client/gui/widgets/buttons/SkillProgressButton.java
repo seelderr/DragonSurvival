@@ -1,24 +1,26 @@
 package by.jackraidenph.dragonsurvival.client.gui.widgets.buttons;
 
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.client.gui.AbilityScreen;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.fml.client.gui.GuiUtils;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class SkillProgressButton extends Button {
+
+public class SkillProgressButton extends Button
+{
 	private int slot;
 	
 	private ActiveDragonAbility ability;
@@ -32,7 +34,7 @@ public class SkillProgressButton extends Button {
 	}
 	
 	@Override
-	public void renderButton(MatrixStack stack, int mouseX, int mouseY, float p_230431_4_)
+	public void renderButton(PoseStack stack, int mouseX, int mouseY, float p_230431_4_)
 	{
 		ResourceLocation texture = AbilityButton.BLANK_TEXTURE;
 		
@@ -49,27 +51,27 @@ public class SkillProgressButton extends Button {
 			this.ability = null;
 		}
 		
-		Minecraft.getInstance().getTextureManager().bind(AbilityButton.BLANK_2_TEXTURE);
+		RenderSystem.setShaderTexture(0, AbilityButton.BLANK_2_TEXTURE);
 		blit(stack, x - 1, y - 1, 0, 0, 18, 18, 18, 18);
 		
-		Minecraft.getInstance().getTextureManager().bind(texture);
+		RenderSystem.setShaderTexture(0, texture);
 		blit(stack, x, y, 0, 0, 16, 16, 16, 16);
 		
 		if(ability != null) {
 			DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {
 				if (ability.getLevel() > cap.getMagic().getAbilityLevel(ability) + 1) {
-					AbstractGui.fill(stack, x, y, x + 16, y + 16, new Color(0.25F, 0.25F, 0.25F, 0.75F).getRGB());
+					Gui.fill(stack, x, y, x + 16, y + 16, new Color(0.25F, 0.25F, 0.25F, 0.75F).getRGB());
 				}
 			});
 		}
 	}
 	@Override
-	public void renderToolTip(MatrixStack stack, int mouseX, int mouseY)
+	public void renderToolTip(PoseStack  stack, int mouseX, int mouseY)
 	{
 		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {
 			if(ability != null) {
-				TextFormatting format = cap.getType() == DragonType.CAVE ? TextFormatting.DARK_RED : cap.getType() == DragonType.SEA ? TextFormatting.AQUA : cap.getType() == DragonType.FOREST ? TextFormatting.GREEN : TextFormatting.WHITE;
-				ArrayList<ITextComponent> description = new ArrayList<>(Arrays.asList(ability.getTitle().withStyle(format).append(" (" + ability.getLevel() + " / " + ability.getMaxLevel() + ")")));
+				ChatFormatting format = cap.getType() == DragonType.CAVE ? ChatFormatting.DARK_RED : cap.getType() == DragonType.SEA ? ChatFormatting.AQUA : cap.getType() == DragonType.FOREST ? ChatFormatting.GREEN : ChatFormatting.WHITE;
+				ArrayList<Component> description = new ArrayList<>(Arrays.asList(ability.getTitle().withStyle(format).append(" (" + ability.getLevel() + " / " + ability.getMaxLevel() + ")")));
 				
 				if(ability.getLevelUpInfo().size() > 0){
 					description.addAll(ability.getLevelUpInfo());
@@ -78,10 +80,10 @@ public class SkillProgressButton extends Button {
 				int requiredLevel = ability.getCurrentRequiredLevel();
 				
 				if (requiredLevel != -1) {
-					description.add(new TranslationTextComponent("ds.skill.required_level", requiredLevel).withStyle(TextFormatting.WHITE));
+					description.add(new TranslatableComponent("ds.skill.required_level", requiredLevel).withStyle(ChatFormatting.WHITE));
 				}
 				
-				GuiUtils.drawHoveringText(stack, description, mouseX, mouseY, Minecraft.getInstance().screen.width, Minecraft.getInstance().screen.height, 200, Minecraft.getInstance().font);
+				screen.renderComponentTooltip(stack, description, mouseX, mouseY);
 			}
 		});
 	}

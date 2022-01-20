@@ -7,10 +7,10 @@ import by.jackraidenph.dragonsurvival.misc.DragonType;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.IReloadableResourceManager;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.resources.IResourceManagerReloadListener;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ReloadableResourceManager;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -92,16 +92,16 @@ public class CustomizationRegistry
 		
 		CustomizationRegistry.reload(Minecraft.getInstance().getResourceManager(), CUSTOMIZATION);
 		
-		if (Minecraft.getInstance().getResourceManager() instanceof IReloadableResourceManager) {
-			((IReloadableResourceManager) Minecraft.getInstance().getResourceManager()).registerReloadListener(
-					(IResourceManagerReloadListener) manager -> {
+		if (Minecraft.getInstance().getResourceManager() instanceof ReloadableResourceManager) {
+			((ReloadableResourceManager) Minecraft.getInstance().getResourceManager()).registerReloadListener(
+					(ResourceManagerReloadListener) manager -> {
 						CUSTOMIZATIONS.clear();
 						CustomizationRegistry.reload(Minecraft.getInstance().getResourceManager(), CUSTOMIZATION);
 					});
 		}
 	}
 	
-	protected static void reload(IResourceManager manager, ResourceLocation location){
+	protected static void reload(ResourceManager manager, ResourceLocation location){
 		try {
 			Gson gson = new Gson();
 			InputStream in = manager.getResource(location).getInputStream();

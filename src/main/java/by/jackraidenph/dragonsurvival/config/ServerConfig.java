@@ -1,7 +1,7 @@
 package by.jackraidenph.dragonsurvival.config;
 
-import by.jackraidenph.dragonsurvival.util.Functions;
 import by.jackraidenph.dragonsurvival.misc.DragonLevel;
+import by.jackraidenph.dragonsurvival.util.Functions;
 import com.google.common.collect.Lists;
 import net.minecraftforge.common.ForgeConfigSpec;
 

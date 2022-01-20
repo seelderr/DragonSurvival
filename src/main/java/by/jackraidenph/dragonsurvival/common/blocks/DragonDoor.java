@@ -1,47 +1,44 @@
 package by.jackraidenph.dragonsurvival.common.blocks;
 
-import java.util.Locale;
-
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.HorizontalBlock;
-import net.minecraft.block.material.Material;
-import net.minecraft.block.material.PushReaction;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.pathfinding.PathType;
-import net.minecraft.state.BooleanProperty;
-import net.minecraft.state.DirectionProperty;
-import net.minecraft.state.EnumProperty;
-import net.minecraft.state.StateContainer;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.state.properties.DoorHingeSide;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.World;
+import by.jackraidenph.dragonsurvival.common.capability.Capabilities;
+import by.jackraidenph.dragonsurvival.common.capability.caps.DragonStateHandler;
+import by.jackraidenph.dragonsurvival.misc.DragonType;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.util.Mth;
+import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition.Builder;
+import net.minecraft.world.level.block.state.properties.*;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.PushReaction;
+import net.minecraft.world.level.pathfinder.PathComputationType;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nullable;
-
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.misc.DragonType;
+import java.util.Locale;
 
 
-public class DragonDoor extends Block {
-    enum Part implements IStringSerializable {
+public class DragonDoor extends Block
+{
+    enum Part implements StringRepresentable
+    {
         BOTTOM,
         MIDDLE,
         TOP;
@@ -53,7 +50,7 @@ public class DragonDoor extends Block {
         }
     }
 
-    public enum OpenRequirement implements IStringSerializable{
+    public enum OpenRequirement implements StringRepresentable{
 		NONE,
     	POWER,
         CAVE,
@@ -68,7 +65,7 @@ public class DragonDoor extends Block {
 	}
 	
     
-    public static final DirectionProperty FACING = HorizontalBlock.FACING;
+    public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public static final BooleanProperty OPEN = BlockStateProperties.OPEN;
     public static final EnumProperty<DoorHingeSide> HINGE = BlockStateProperties.DOOR_HINGE;
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
@@ -90,27 +87,29 @@ public class DragonDoor extends Block {
         		.setValue(PART, Part.BOTTOM)
         		.setValue(OPEN_REQ, openRequirement));
     }
-
-    public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
-        Direction direction = state.getValue(FACING);
-        boolean flag = !state.getValue(OPEN);
-        boolean flag1 = state.getValue(HINGE) == DoorHingeSide.RIGHT;
-        switch (direction) {
-            case EAST:
-            default:
-                return flag ? EAST_AABB : (flag1 ? NORTH_AABB : SOUTH_AABB);
-            case SOUTH:
-                return flag ? SOUTH_AABB : (flag1 ? EAST_AABB : WEST_AABB);
-            case WEST:
-                return flag ? WEST_AABB : (flag1 ? SOUTH_AABB : NORTH_AABB);
-            case NORTH:
-                return flag ? NORTH_AABB : (flag1 ? WEST_AABB : EAST_AABB);
-        }
-    }
-
-    public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
+	
+	@Override
+	public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext)
+	{
+		Direction direction = pState.getValue(FACING);
+		boolean flag = !pState.getValue(OPEN);
+		boolean flag1 = pState.getValue(HINGE) == DoorHingeSide.RIGHT;
+		switch (direction) {
+			case EAST:
+			default:
+				return flag ? EAST_AABB : (flag1 ? NORTH_AABB : SOUTH_AABB);
+			case SOUTH:
+				return flag ? SOUTH_AABB : (flag1 ? EAST_AABB : WEST_AABB);
+			case WEST:
+				return flag ? WEST_AABB : (flag1 ? SOUTH_AABB : NORTH_AABB);
+			case NORTH:
+				return flag ? NORTH_AABB : (flag1 ? WEST_AABB : EAST_AABB);
+		}
+	
+	}
+	@Override
+    public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos) {
         Part part = stateIn.getValue(PART);
-        //TODO
         if (facing.getAxis() == Direction.Axis.Y && (part == Part.BOTTOM == (facing == Direction.UP) || part == Part.MIDDLE == (facing == Direction.UP))) {
         	return facingState.getBlock() == this && facingState.getValue(PART) != part ? stateIn.setValue(FACING, facingState.getValue(FACING)).setValue(OPEN, facingState.getValue(OPEN)).setValue(HINGE, facingState.getValue(HINGE)).setValue(POWERED, facingState.getValue(POWERED)) : 
         		Blocks.AIR.defaultBlockState();
@@ -118,12 +117,13 @@ public class DragonDoor extends Block {
         	return part == Part.BOTTOM && facing == Direction.DOWN && !stateIn.canSurvive(worldIn, currentPos) ? Blocks.AIR.defaultBlockState() : super.updateShape(stateIn, facing, facingState, worldIn, currentPos, facingPos);
         }
     }
-
-    public void playerDestroy(World worldIn, PlayerEntity player, BlockPos pos, BlockState state, @Nullable TileEntity te, ItemStack stack) {
+	
+	public void playerDestroy(Level worldIn, Player player, BlockPos pos, BlockState state, @Nullable
+		    BlockEntity te, ItemStack stack) {
         super.playerDestroy(worldIn, player, pos, Blocks.AIR.defaultBlockState(), te, stack);
     }
 
-    public void playerWillDestroy(World worldIn, BlockPos pos, BlockState state, PlayerEntity player) {
+    public void playerWillDestroy(Level worldIn, BlockPos pos, BlockState state, Player player) {
     	if (!worldIn.isClientSide) {
     		Part part = state.getValue(PART);
         	if (part != Part.MIDDLE && !player.isCreative()) {
@@ -144,8 +144,8 @@ public class DragonDoor extends Block {
     	}
 		super.playerWillDestroy(worldIn, pos, state, player);
      }
-
-    public boolean isPathfindable(BlockState state, IBlockReader worldIn, BlockPos pos, PathType type) {
+	 
+	public boolean isPathfindable(BlockState state, BlockGetter worldIn, BlockPos pos, PathComputationType type) {
         switch (type) {
             case LAND:
             case AIR:
@@ -163,9 +163,10 @@ public class DragonDoor extends Block {
         return this.material == Material.METAL ? 1005 : 1006;
     }
 
-    private DoorHingeSide getHinge(BlockItemUseContext blockItemUseContext) {
+	
+    private DoorHingeSide getHinge(BlockPlaceContext blockItemUseContext) {
         //TODO Logic handling aligning doors
-        IBlockReader iblockreader = blockItemUseContext.getLevel();
+        BlockGetter iblockreader = blockItemUseContext.getLevel();
         BlockPos blockpos = blockItemUseContext.getClickedPos();
         Direction direction = blockItemUseContext.getHorizontalDirection();
         BlockPos blockpos1 = blockpos.above();
@@ -186,7 +187,7 @@ public class DragonDoor extends Block {
             if ((!flag1 || flag) && i >= 0) {
                 int j = direction.getStepX();
                 int k = direction.getStepZ();
-                Vector3d vec3d = blockItemUseContext.getClickLocation();
+                Vec3 vec3d = blockItemUseContext.getClickLocation();
                 double d0 = vec3d.x - (double) blockpos.getX();
                 double d1 = vec3d.z - (double) blockpos.getZ();
                 return (j >= 0 || !(d1 < 0.5D)) && (j <= 0 || !(d1 > 0.5D)) && (k >= 0 || !(d0 > 0.5D)) && (k <= 0 || !(d0 < 0.5D)) ? DoorHingeSide.LEFT : DoorHingeSide.RIGHT; 
@@ -199,10 +200,10 @@ public class DragonDoor extends Block {
     }
 
     @Nullable
-    public BlockState getStateForPlacement(BlockItemUseContext context) {
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
         BlockPos blockpos = context.getClickedPos();
         if (blockpos.getY() < 255 && context.getLevel().getBlockState(blockpos.above()).canBeReplaced(context) && context.getLevel().getBlockState(blockpos.above(2)).canBeReplaced(context)) {
-            World world = context.getLevel();
+            Level  world = context.getLevel();
             boolean flag = world.hasNeighborSignal(blockpos) || world.hasNeighborSignal(blockpos.above());
             return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection()).setValue(HINGE, this.getHinge(context)).setValue(POWERED, flag).setValue(OPEN, flag).setValue(PART, Part.BOTTOM);
         } else {
@@ -210,13 +211,13 @@ public class DragonDoor extends Block {
         }
     }
 
-    public void setPlacedBy(World worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
+    public void setPlacedBy(Level  worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
         worldIn.setBlock(pos.above(), state.setValue(PART, Part.MIDDLE), 3);
         worldIn.setBlock(pos.above(2), state.setValue(PART, Part.TOP), 3);
     }
 
-    public ActionResultType use(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
-    	LazyOptional<DragonStateHandler> dragonStateHandlerLazyOptional = player.getCapability(DragonStateProvider.DRAGON_CAPABILITY);
+    public InteractionResult use(BlockState state, Level  worldIn, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit) {
+    	LazyOptional<DragonStateHandler> dragonStateHandlerLazyOptional = player.getCapability(Capabilities.DRAGON_CAPABILITY);
     	if (dragonStateHandlerLazyOptional.isPresent()) {
     		DragonStateHandler dragonStateHandler = dragonStateHandlerLazyOptional.orElseGet(() -> null);
     		if (state.getValue(OPEN_REQ) == OpenRequirement.NONE || (dragonStateHandler.isDragon() && 
@@ -231,27 +232,17 @@ public class DragonDoor extends Block {
                     worldIn.setBlock(pos.below(2), state.setValue(PART, Part.BOTTOM), 10);
                     worldIn.setBlock(pos.below(), state.setValue(PART, Part.MIDDLE), 10);
                 }
-                return ActionResultType.SUCCESS;
+                return InteractionResult.SUCCESS;
     		}
     	}
-    	return ActionResultType.PASS;
+    	return InteractionResult.PASS;
     }
 
-    private void playSound(World worldIn, BlockPos pos, boolean isOpening) {
+    private void playSound(Level  worldIn, BlockPos pos, boolean isOpening) {
         worldIn.levelEvent(null, isOpening ? this.getOpenSound() : this.getCloseSound(), pos, 0);
     }
 
-    /**
-     * Used by {@link net.minecraft.entity.ai.brain.task.InteractWithDoorTask}
-     */
-    public void toggleDoor(World worldIn, BlockPos pos, boolean open) { // TODO check this for Open Requirements
-        BlockState blockstate = worldIn.getBlockState(pos);
-        if (blockstate.getBlock() == this && blockstate.getValue(OPEN) != open) {
-            worldIn.setBlock(pos, blockstate.setValue(OPEN, open), 10);
-            this.playSound(worldIn, pos, open);
-        }
-    }
-
+	
     public PushReaction getPistonPushReaction(BlockState state) {
         return state.getValue(OPEN_REQ) == OpenRequirement.NONE ? PushReaction.DESTROY : PushReaction.IGNORE;
     }
@@ -266,14 +257,14 @@ public class DragonDoor extends Block {
 
     public long getSeed(BlockState state, BlockPos pos) {
         //TODO
-        return MathHelper.getSeed(pos.getX(), pos.below(state.getValue(PART) == Part.BOTTOM ? 0 : 1).getY(), pos.getZ());
+        return Mth.getSeed(pos.getX(), pos.below(state.getValue(PART) == Part.BOTTOM ? 0 : 1).getY(), pos.getZ());
     }
-
-    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
+	
+	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
         builder.add(PART, FACING, OPEN, HINGE, POWERED, OPEN_REQ);
     }
 
-    public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
+    public void neighborChanged(BlockState state, Level  worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
     	if (state.getValue(OPEN_REQ) == OpenRequirement.NONE || state.getValue(OPEN_REQ) == OpenRequirement.POWER) {
     		boolean flag = worldIn.hasNeighborSignal(pos) || worldIn.hasNeighborSignal(pos.relative(state.getValue(PART) == Part.BOTTOM ? Direction.UP : Direction.DOWN));
             if (blockIn != this && flag != state.getValue(POWERED)) {
@@ -286,7 +277,7 @@ public class DragonDoor extends Block {
     	}
     }
 
-    public boolean canSurvive(BlockState state, IWorldReader worldIn, BlockPos pos) {
+    public boolean canSurvive(BlockState state, LevelReader worldIn, BlockPos pos) {
         BlockPos blockpos = pos.below();
         BlockState blockstate = worldIn.getBlockState(blockpos);
         if (state.getValue(PART) == Part.BOTTOM) {

@@ -1,39 +1,45 @@
 package by.jackraidenph.dragonsurvival.server.tileentity;
 
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SUpdateTileEntityPacket;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nullable;
 
-public class BaseBlockTileEntity extends TileEntity {
-    public BaseBlockTileEntity(TileEntityType<?> tileEntityTypeIn) {
-        super(tileEntityTypeIn);
+public class BaseBlockTileEntity extends BlockEntity
+{
+    public BaseBlockTileEntity(BlockEntityType<?> pType, BlockPos pWorldPosition, BlockState pBlockState)
+    {
+        super(pType, pWorldPosition, pBlockState);
     }
-
+    
     @Nullable
     @Override
-    public SUpdateTileEntityPacket getUpdatePacket() {
-        BlockPos blockPos = getBlockPos();
-        return new SUpdateTileEntityPacket(blockPos, 0, getUpdateTag());
+    public Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
 
     @Override
-    public CompoundNBT getUpdateTag() {
-        CompoundNBT supertag = super.getUpdateTag();
+    public CompoundTag getUpdateTag() {
+        CompoundTag supertag = super.getUpdateTag();
         save(supertag);
         return supertag;
     }
-
+    
     @Override
-    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
-        CompoundNBT nbtTagCompound = pkt.getTag();
-        load(getBlockState(), nbtTagCompound);
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt)
+    {
+        super.onDataPacket(net, pkt);
+        load(pkt.getTag());
     }
+    
 
     public int getX() {
         return getBlockPos().getX();

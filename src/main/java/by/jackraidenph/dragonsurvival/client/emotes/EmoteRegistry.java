@@ -4,10 +4,9 @@ import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.client.render.ClientDragonRender;
 import com.google.gson.Gson;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.IReloadableResourceManager;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.resources.IResourceManagerReloadListener;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ReloadableResourceManager;
+import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -42,15 +41,16 @@ public class EmoteRegistry
 	public static void clientStart(FMLClientSetupEvent event){
 		EmoteRegistry.reload(Minecraft.getInstance().getResourceManager(), EmoteRegistry.CLIENT_EMOTES);
 		
-		if (Minecraft.getInstance().getResourceManager() instanceof IReloadableResourceManager) {
-			((IReloadableResourceManager) Minecraft.getInstance().getResourceManager()).registerReloadListener(
-					(IResourceManagerReloadListener) manager -> {
-						EmoteRegistry.EMOTES.clear();
-						EmoteRegistry.reload(Minecraft.getInstance().getResourceManager(), EmoteRegistry.CLIENT_EMOTES);
-						initEmoteRotation();
-					});
+		if (Minecraft.getInstance().getResourceManager() instanceof ReloadableResourceManager) {
+			((ReloadableResourceManager) Minecraft.getInstance().getResourceManager()).registerReloadListener((barrier, manager, profiler, backgroundExecutor, gameExecutor, val) ->{
+				EmoteRegistry.EMOTES.clear();
+				EmoteRegistry.reload(Minecraft.getInstance().getResourceManager(), EmoteRegistry.CLIENT_EMOTES);
+				initEmoteRotation();
+				return null;
+			});
 		}
 	}
+	
 	@Mod.EventBusSubscriber( Dist.CLIENT)
 	public static class clientStart {
 		@OnlyIn( Dist.CLIENT)
@@ -64,7 +64,7 @@ public class EmoteRegistry
 	}
 
 	
-	protected static void reload(IResourceManager manager, ResourceLocation location){
+	protected static void reload(ResourceManager manager, ResourceLocation location){
 		try {
 			Gson gson = new Gson();
 			InputStream in = manager.getResource(location).getInputStream();

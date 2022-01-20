@@ -1,34 +1,34 @@
 package by.jackraidenph.dragonsurvival.common.entity.creatures.hitbox;
 
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.caps.DragonStateHandler;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
+import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.*;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.IPacket;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.world.World;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.util.Mth;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.entity.PartEntity;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraftforge.network.NetworkHooks;
 
 import javax.annotation.Nullable;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
 
-public class DragonHitBox extends MobEntity
+public class DragonHitBox extends Mob
 {
-	public static final DataParameter<Integer> PLAYER_ID = EntityDataManager.defineId(DragonHitBox.class, DataSerializers.INT);
+	public static final EntityDataAccessor<Integer> PLAYER_ID = SynchedEntityData.defineId(DragonHitBox.class, EntityDataSerializers.INT);
 	
 	private final DragonHitboxPart[] subEntities;
 	private final DragonHitboxPart head;
@@ -41,9 +41,9 @@ public class DragonHitBox extends MobEntity
 	private double lastSize;
 	private Pose lastPose;
 	
-	public EntitySize size;
+	public EntityDimensions size;
 	
-	public DragonHitBox(EntityType<? extends MobEntity> p_i48577_1_, World p_i48580_2_)
+	public DragonHitBox(EntityType<? extends Mob> p_i48577_1_, Level p_i48580_2_)
 	{
 		super(p_i48577_1_, p_i48580_2_);
 		
@@ -56,7 +56,7 @@ public class DragonHitBox extends MobEntity
 		
 		this.subEntities = new DragonHitboxPart[]{this.head, this.tail1, this.tail2, this.tail3, this.tail4, this.tail5};
 		
-		this.size = EntitySize.scalable(1f, 1f);
+		this.size = EntityDimensions.scalable(1f, 1f);
 		this.refreshDimensions();
 	}
 	@Override
@@ -74,7 +74,7 @@ public class DragonHitBox extends MobEntity
 	}
 	
 	
-	public PlayerEntity player;
+	public Player player;
 	
 	@Override
 	public void aiStep()
@@ -84,8 +84,8 @@ public class DragonHitBox extends MobEntity
 				if(getPlayerId() != -1){
 					Entity ent = level.getEntity(getPlayerId());
 					
-					if(ent instanceof PlayerEntity){
-						player = (PlayerEntity)ent;
+					if(ent instanceof Player){
+						player = (Player)ent;
 					}
 				}
 				return;
@@ -93,7 +93,7 @@ public class DragonHitBox extends MobEntity
 		}else{
 			if(player == null || player.isDeadOrDying() || !DragonStateProvider.isDragon(player)){
 				if (!level.isClientSide) {
-					this.remove();
+					this.remove(RemovalReason.DISCARDED);
 				}
 			}
 		}
@@ -124,7 +124,7 @@ public class DragonHitBox extends MobEntity
 		{
 			Point2D point = new Double(player.position().x() + bodyRot.x(), player.position().y() + player.getEyeHeight());
 			AffineTransform transform = new AffineTransform();
-			double angleInRadians = ((MathHelper.clamp(pitch, -90, 90) * -1) * Math.PI / 360);
+			double angleInRadians = ((Mth.clamp(pitch, -90, 90) * -1) * Math.PI / 360);
 			transform.rotate(angleInRadians, player.position().x(), player.position().y() + player.getEyeHeight());
 			transform.transform(point, result);
 		}
@@ -132,7 +132,7 @@ public class DragonHitBox extends MobEntity
 		{
 			Point2D point2 = new Double(player.position().x() + bodyRot.x(), player.position().z() + bodyRot.z());
 			AffineTransform transform2 = new AffineTransform();
-			double angleInRadians2 = ((MathHelper.clamp(headRot, -180, 180) * -1) * Math.PI / 360);
+			double angleInRadians2 = ((Mth.clamp(headRot, -180, 180) * -1) * Math.PI / 360);
 			transform2.rotate(angleInRadians2, player.position().x(), player.position().z());
 			transform2.transform(point2, result2);
 		}
@@ -142,25 +142,25 @@ public class DragonHitBox extends MobEntity
 		double dz = result2.getY();
 		
 		if(lastSize != size || lastPose != overridePose) {
-			this.size = EntitySize.scalable((float)width * 1.6f, (float)height);
+			this.size = EntityDimensions.scalable((float)width * 1.6f, (float)height);
 			refreshDimensions();
 			
-			head.size = EntitySize.scalable((float)width, (float)width);
+			head.size = EntityDimensions.scalable((float)width, (float)width);
 			head.refreshDimensions();
 			
-			tail1.size = EntitySize.scalable((float)width, (float)height/3);
+			tail1.size = EntityDimensions.scalable((float)width, (float)height/3);
 			tail1.refreshDimensions();
 			
-			tail2.size = EntitySize.scalable((float)width * 0.8f, (float)height/3);
+			tail2.size = EntityDimensions.scalable((float)width * 0.8f, (float)height/3);
 			tail2.refreshDimensions();
 			
-			tail3.size = EntitySize.scalable((float)width * 0.7f, (float)height/3);
+			tail3.size = EntityDimensions.scalable((float)width * 0.7f, (float)height/3);
 			tail3.refreshDimensions();
 			
-			tail4.size = EntitySize.scalable((float)width * 0.7f, (float)height/3);
+			tail4.size = EntityDimensions.scalable((float)width * 0.7f, (float)height/3);
 			tail4.refreshDimensions();
 			
-			tail5.size = EntitySize.scalable((float)width * 0.7f, (float)height/3);
+			tail5.size = EntityDimensions.scalable((float)width * 0.7f, (float)height/3);
 			tail5.refreshDimensions();
 			
 			lastSize = size;
@@ -168,16 +168,16 @@ public class DragonHitBox extends MobEntity
 			player.refreshDimensions();
 		}else{
 			setPos(player.getX() - offset.x(), player.getY(), player.getZ() - offset.z());
-			xRot = (float)handler.getMovementData().headPitch;
-			yRot = (float)handler.getMovementData().bodyYaw;
+			setXRot((float)handler.getMovementData().headPitch);
+			setYRot((float)handler.getMovementData().bodyYaw);
 			
 //			double bodyYawChange = Functions.angleDifference((float)handler.getMovementData().bodyYawLastTick, (float)handler.getMovementData().bodyYaw);
 //
-//			ModifiableAttributeInstance gravity = player.getAttribute(net.minecraftforge.common.ForgeMod.ENTITY_GRAVITY.get());
+//			AttributeInstance gravity = player.getAttribute(net.minecraftforge.common.ForgeMod.ENTITY_GRAVITY.get());
 //			double g = gravity.getValue();
 //
 //			double tailMotionUp = ServerFlightHandler.isFlying(player) ? 0 : (player.getDeltaMovement().y + g);
-//			double tailMotionSide = MathHelper.lerp(0.1, MathHelper.clamp(bodyYawChange, -50, 50), 0);
+//			double tailMotionSide = Mth.lerp(0.1, Mth.clamp(bodyYawChange, -50, 50), 0);
 //
 			
 			head.setPos(dx, dy - (DragonSizeHandler.calculateDragonWidth(handler.getSize(), ConfigHandler.SERVER.hitboxGrowsPastHuman.get()) / 2), dz);
@@ -197,7 +197,7 @@ public class DragonHitBox extends MobEntity
 	}
 	
 	@Override
-	public EntitySize getDimensions(Pose pPose)
+	public EntityDimensions getDimensions(Pose pPose)
 	{
 		return size;
 	}
@@ -231,7 +231,7 @@ public class DragonHitBox extends MobEntity
 	}
 	
 	@Override
-	public IPacket<?> getAddEntityPacket() {
+	public Packet<?> getAddEntityPacket() {
 		return NetworkHooks.getEntitySpawningPacket(this);
 	}
 	
@@ -265,7 +265,7 @@ public class DragonHitBox extends MobEntity
 	}
 	
 	@Override
-	public Vector3d getDeltaMovement()
+	public Vec3 getDeltaMovement()
 	{
 		return player != null ? player.getDeltaMovement() : super.getDeltaMovement();
 	}

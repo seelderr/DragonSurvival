@@ -2,12 +2,12 @@ package by.jackraidenph.dragonsurvival.client.models.projectiles;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.common.entity.projectiles.StormBreathEntity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 
 public class StormBreathEffectModel extends AnimatedGeoModel<StormBreathEntity>
 {
-	private  ResourceLocation currentTexture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/entity/storms_breath.png");
+	private ResourceLocation currentTexture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/entity/storms_breath.png");
 	
 	@Override
 	public ResourceLocation getModelLocation(StormBreathEntity dragonEntity) {

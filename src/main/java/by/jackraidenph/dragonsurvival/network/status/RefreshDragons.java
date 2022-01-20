@@ -5,11 +5,11 @@ import by.jackraidenph.dragonsurvival.common.entity.DSEntities;
 import by.jackraidenph.dragonsurvival.common.entity.DragonEntity;
 import by.jackraidenph.dragonsurvival.network.IMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.network.NetworkEvent.Context;
+import net.minecraftforge.network.NetworkEvent.Context;
 
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
@@ -26,13 +26,13 @@ public class RefreshDragons implements IMessage<RefreshDragons>
     }
     
     @Override
-    public void encode(RefreshDragons message, PacketBuffer buffer)
+    public void encode(RefreshDragons message, FriendlyByteBuf buffer)
     {
         buffer.writeInt(message.playerId);
     }
     
     @Override
-    public RefreshDragons decode(PacketBuffer buffer)
+    public RefreshDragons decode(FriendlyByteBuf buffer)
     {
         return new RefreshDragons(buffer.readInt());
     }
@@ -47,11 +47,11 @@ public class RefreshDragons implements IMessage<RefreshDragons>
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                ClientPlayerEntity myPlayer = Minecraft.getInstance().player;
+                LocalPlayer myPlayer = Minecraft.getInstance().player;
                 ClientDragonRender.dragonArmor = DSEntities.DRAGON_ARMOR.create(myPlayer.level);
                 if (ClientDragonRender.dragonArmor != null)
                     ClientDragonRender.dragonArmor.player = myPlayer.getId();
-                PlayerEntity thatPlayer = (PlayerEntity) myPlayer.level.getEntity(message.playerId);
+                Player thatPlayer = (Player) myPlayer.level.getEntity(message.playerId);
                 if (thatPlayer != null) {
                     DragonEntity dragonEntity = DSEntities.DRAGON.create(myPlayer.level);
                     dragonEntity.player = thatPlayer.getId();

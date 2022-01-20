@@ -1,12 +1,12 @@
 package by.jackraidenph.dragonsurvival.network.emotes;
 
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.network.NetworkHandler;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.network.IMessage;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent;
-import net.minecraftforge.fml.network.PacketDistributor;
+import by.jackraidenph.dragonsurvival.network.NetworkHandler;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.network.PacketDistributor;
 
 import java.util.function.Supplier;
 
@@ -24,19 +24,19 @@ public class SyncEmoteServer implements IMessage<SyncEmoteServer>
     }
     
     @Override
-    public void encode(SyncEmoteServer message, PacketBuffer buffer) {
+    public void encode(SyncEmoteServer message, FriendlyByteBuf buffer) {
         buffer.writeUtf(message.emote);
     }
 
     @Override
-    public SyncEmoteServer decode(PacketBuffer buffer) {
+    public SyncEmoteServer decode(FriendlyByteBuf buffer) {
         String emote = buffer.readUtf();
         return new SyncEmoteServer(emote);
     }
 
     @Override
     public void handle(SyncEmoteServer message, Supplier<NetworkEvent.Context> supplier) {
-        ServerPlayerEntity playerEntity = supplier.get().getSender();
+        ServerPlayer playerEntity = supplier.get().getSender();
 
         if(playerEntity == null)
             return;

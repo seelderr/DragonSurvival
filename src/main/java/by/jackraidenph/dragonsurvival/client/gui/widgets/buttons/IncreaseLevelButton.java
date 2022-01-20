@@ -1,20 +1,19 @@
 package by.jackraidenph.dragonsurvival.client.gui.widgets.buttons;
 
 import by.jackraidenph.dragonsurvival.client.gui.AbilityScreen;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.magic.DragonAbilities;
 import by.jackraidenph.dragonsurvival.common.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.common.magic.common.PassiveDragonAbility;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.magic.ChangeSkillLevel;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.fml.client.gui.GuiUtils;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -74,12 +73,12 @@ public class IncreaseLevelButton extends ArrowButton
 		});
 	}
 	@Override
-	public void renderToolTip(MatrixStack stack, int mouseX, int mouseY)
+	public void renderToolTip(PoseStack stack, int mouseX, int mouseY)
 	{
 		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {
 			ability = DragonAbilities.PASSIVE_ABILITIES.get(type).get(slot);
-			TextFormatting format = cap.getType() == DragonType.CAVE ? TextFormatting.DARK_RED : cap.getType() == DragonType.SEA ? TextFormatting.AQUA : cap.getType() == DragonType.FOREST ? TextFormatting.GREEN : TextFormatting.WHITE;
-			ArrayList<ITextComponent> description = new ArrayList<>(Arrays.asList(new TranslationTextComponent("ds.skill.level.up", skillCost).withStyle(format)));
+			ChatFormatting format = cap.getType() == DragonType.CAVE ? ChatFormatting.DARK_RED : cap.getType() == DragonType.SEA ? ChatFormatting.AQUA : cap.getType() == DragonType.FOREST ? ChatFormatting.GREEN : ChatFormatting.WHITE;
+			ArrayList<Component> description = new ArrayList<>(Arrays.asList(new TranslatableComponent("ds.skill.level.up", skillCost).withStyle(format)));
 			
 			if(ability != null) {
 				PassiveDragonAbility currentAbility = (PassiveDragonAbility)cap.getMagic().getAbility(ability);
@@ -89,7 +88,7 @@ public class IncreaseLevelButton extends ArrowButton
 				}
 				
 				if(ability.getLevelUpInfo().size() > 0){
-					description.add(new StringTextComponent(""));
+					description.add(new TextComponent(""));
 					description.addAll(ability.getLevelUpInfo());
 				}
 				
@@ -98,7 +97,7 @@ public class IncreaseLevelButton extends ArrowButton
 					PassiveDragonAbility newActivty = currentAbility.createInstance();
 					newActivty.setLevel(currentAbility.getLevel() + 1);
 					skillCost = newActivty.getLevelCost();
-					GuiUtils.drawHoveringText(stack, description, mouseX, mouseY, Minecraft.getInstance().screen.width, Minecraft.getInstance().screen.height, 200, Minecraft.getInstance().font);
+					screen.renderComponentTooltip(stack, description, mouseX, mouseY);
 				}
 			}
 		});

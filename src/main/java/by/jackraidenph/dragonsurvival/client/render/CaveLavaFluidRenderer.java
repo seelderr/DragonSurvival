@@ -1,55 +1,57 @@
 package by.jackraidenph.dragonsurvival.client.render;
 
-import com.mojang.blaze3d.vertex.IVertexBuilder;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.FluidBlockRenderer;
-import net.minecraft.client.renderer.WorldRenderer;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.block.LiquidBlockRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.FluidState;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.IBlockDisplayReader;
-import net.minecraft.world.IBlockReader;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class CaveLavaFluidRenderer extends FluidBlockRenderer {
+public class CaveLavaFluidRenderer extends LiquidBlockRenderer
+{
 
-	private static boolean isNeighborSameFluid(IBlockReader p_209557_0_, BlockPos p_209557_1_, Direction p_209557_2_, FluidState p_209557_3_) {
+	private static boolean isNeighborSameFluid(BlockAndTintGetter p_209557_0_, BlockPos p_209557_1_, Direction p_209557_2_, FluidState p_209557_3_) {
 	      BlockPos blockpos = p_209557_1_.relative(p_209557_2_);
 	      FluidState fluidstate = p_209557_0_.getFluidState(blockpos);
 	      return fluidstate.getType().isSame(p_209557_3_.getType());
 	}
 
-	private static boolean isFaceOccludedByState(IBlockReader p_239284_0_, Direction p_239284_1_, float p_239284_2_, BlockPos p_239284_3_, BlockState p_239284_4_) {
+	private static boolean isFaceOccludedByState(BlockAndTintGetter p_239284_0_, Direction p_239284_1_, float p_239284_2_, BlockPos p_239284_3_, BlockState p_239284_4_) {
 	      if (p_239284_4_.canOcclude()) {
-	         VoxelShape voxelshape = VoxelShapes.box(0.0D, 0.0D, 0.0D, 1.0D, p_239284_2_, 1.0D);
+	         VoxelShape voxelshape = Shapes.box(0.0D, 0.0D, 0.0D, 1.0D, p_239284_2_, 1.0D);
              VoxelShape voxelshape1 = p_239284_4_.getOcclusionShape(p_239284_0_, p_239284_3_);
-	         return VoxelShapes.blockOccudes(voxelshape, voxelshape1, p_239284_1_);
+	         return Shapes.blockOccudes(voxelshape, voxelshape1, p_239284_1_);
 	      } else {
 	         return false;
 	      }
    }
 
-   private static boolean isFaceOccludedByNeighbor(IBlockReader p_239283_0_, BlockPos p_239283_1_, Direction p_239283_2_, float p_239283_3_) {
+   private static boolean isFaceOccludedByNeighbor(BlockAndTintGetter p_239283_0_, BlockPos p_239283_1_, Direction p_239283_2_, float p_239283_3_) {
       BlockPos blockpos = p_239283_1_.relative(p_239283_2_);
       BlockState blockstate = p_239283_0_.getBlockState(blockpos);
       return isFaceOccludedByState(p_239283_0_, p_239283_2_, p_239283_3_, blockpos, blockstate);
    }
 
-   private static boolean isFaceOccludedBySelf(IBlockReader p_239282_0_, BlockPos p_239282_1_, BlockState p_239282_2_, Direction p_239282_3_) {
+   private static boolean isFaceOccludedBySelf(BlockAndTintGetter p_239282_0_, BlockPos p_239282_1_, BlockState p_239282_2_, Direction p_239282_3_) {
       return isFaceOccludedByState(p_239282_0_, p_239282_3_.getOpposite(), 1.0F, p_239282_1_, p_239282_2_);
    }
 
-   public static boolean shouldRenderFace(IBlockDisplayReader p_239281_0_, BlockPos p_239281_1_, FluidState p_239281_2_, BlockState p_239281_3_, Direction p_239281_4_) {
+   public static boolean shouldRenderFace(BlockAndTintGetter p_239281_0_, BlockPos p_239281_1_, FluidState p_239281_2_, BlockState p_239281_3_, Direction p_239281_4_) {
       return !isFaceOccludedBySelf(p_239281_0_, p_239281_1_, p_239281_3_, p_239281_4_) && !isNeighborSameFluid(p_239281_0_, p_239281_1_, p_239281_4_, p_239281_2_);
    }
-	
-   public boolean tesselate(IBlockDisplayReader p_228796_1_, BlockPos p_228796_2_, IVertexBuilder p_228796_3_, FluidState p_228796_4_) {
+   
+   
+   public boolean tesselate(BlockAndTintGetter p_228796_1_, BlockPos p_228796_2_, VertexConsumer p_228796_3_, FluidState p_228796_4_) {
       try {
     	  if (p_228796_4_.is(FluidTags.LAVA)) {
         	  TextureAtlasSprite[] atextureatlassprite = net.minecraftforge.client.ForgeHooksClient.getFluidSprites(p_228796_1_, p_228796_2_, p_228796_4_);
@@ -87,7 +89,7 @@ public class CaveLavaFluidRenderer extends FluidBlockRenderer {
                     f8 -= 0.001F;
                     f9 -= 0.001F;
                     f10 -= 0.001F;
-                    Vector3d vector3d = p_228796_4_.getFlow(p_228796_1_, p_228796_2_);
+                    Vec3 vector3d = p_228796_4_.getFlow(p_228796_1_, p_228796_2_);
                     float f13;
                     float f14;
                     float f15;
@@ -108,9 +110,9 @@ public class CaveLavaFluidRenderer extends FluidBlockRenderer {
                        f20 = f17;
                     } else {
                        TextureAtlasSprite textureatlassprite = atextureatlassprite[1];
-                       float f21 = (float) MathHelper.atan2(vector3d.z, vector3d.x) - ((float) Math.PI / 2F);
-                       float f22 = MathHelper.sin(f21) * 0.25F;
-                       float f23 = MathHelper.cos(f21) * 0.25F;
+                       float f21 = (float) Mth.atan2(vector3d.z, vector3d.x) - ((float) Math.PI / 2F);
+                       float f22 = Mth.sin(f21) * 0.25F;
+                       float f23 = Mth.cos(f21) * 0.25F;
                        f13 = textureatlassprite.getU(8.0F + (-f23 - f22) * 16.0F);
                        f17 = textureatlassprite.getV(8.0F + (-f23 + f22) * 16.0F);
                        f14 = textureatlassprite.getU(8.0F + (-f23 + f22) * 16.0F);
@@ -126,14 +128,14 @@ public class CaveLavaFluidRenderer extends FluidBlockRenderer {
                     float f45 = (float)atextureatlassprite[0].getWidth() / (atextureatlassprite[0].getU1() - atextureatlassprite[0].getU0());
                     float f46 = (float)atextureatlassprite[0].getHeight() / (atextureatlassprite[0].getV1() - atextureatlassprite[0].getV0());
                     float f47 = 4.0F / Math.max(f46, f45);
-                    f13 = MathHelper.lerp(f47, f13, f43);
-                    f14 = MathHelper.lerp(f47, f14, f43);
-                    f15 = MathHelper.lerp(f47, f15, f43);
-                    f16 = MathHelper.lerp(f47, f16, f43);
-                    f17 = MathHelper.lerp(f47, f17, f44);
-                    f18 = MathHelper.lerp(f47, f18, f44);
-                    f19 = MathHelper.lerp(f47, f19, f44);
-                    f20 = MathHelper.lerp(f47, f20, f44);
+                    f13 = Mth.lerp(f47, f13, f43);
+                    f14 = Mth.lerp(f47, f14, f43);
+                    f15 = Mth.lerp(f47, f15, f43);
+                    f16 = Mth.lerp(f47, f16, f43);
+                    f17 = Mth.lerp(f47, f17, f44);
+                    f18 = Mth.lerp(f47, f18, f44);
+                    f19 = Mth.lerp(f47, f19, f44);
+                    f20 = Mth.lerp(f47, f20, f44);
                     int j = this.getLightColor(p_228796_1_, p_228796_2_);
                     float f25 = f4 * f;
                     float f26 = f4 * f1;
@@ -255,13 +257,13 @@ public class CaveLavaFluidRenderer extends FluidBlockRenderer {
 	   
    }
 	   
-   private void vertexVanilla(IVertexBuilder vertexBuilderIn, double x, double y, double z, float red, float green, float blue, float alpha, float u, float v, int packedLight) {
+   private void vertexVanilla(VertexConsumer vertexBuilderIn, double x, double y, double z, float red, float green, float blue, float alpha, float u, float v, int packedLight) {
 	      vertexBuilderIn.vertex(x, y, z).color(red, green, blue, alpha).uv(u, v).uv2(packedLight).normal(0.0F, 1.0F, 0.0F).endVertex();
    }
 	   
-   private int getLightColor(IBlockDisplayReader p_228795_1_, BlockPos p_228795_2_) {
-	      int i = WorldRenderer.getLightColor(p_228795_1_, p_228795_2_);
-	      int j = WorldRenderer.getLightColor(p_228795_1_, p_228795_2_.above());
+   private int getLightColor(BlockAndTintGetter p_228795_1_, BlockPos p_228795_2_) {
+	      int i = LevelRenderer.getLightColor(p_228795_1_, p_228795_2_);
+	      int j = LevelRenderer.getLightColor(p_228795_1_, p_228795_2_.above());
 	      int k = i & 255;
 	      int l = j & 255;
 	      int i1 = i >> 16 & 255;
@@ -269,7 +271,7 @@ public class CaveLavaFluidRenderer extends FluidBlockRenderer {
       return (Math.max(k, l)) | (Math.max(i1, j1)) << 16;
 	   }
 
-	   private float getWaterHeight(IBlockReader p_217640_1_, BlockPos p_217640_2_, Fluid p_217640_3_) {
+	   private float getWaterHeight(BlockGetter p_217640_1_, BlockPos p_217640_2_, Fluid p_217640_3_) {
 	      int i = 0;
 	      float f = 0.0F;
 

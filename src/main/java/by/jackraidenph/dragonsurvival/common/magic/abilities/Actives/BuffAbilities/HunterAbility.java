@@ -1,19 +1,18 @@
 package by.jackraidenph.dragonsurvival.common.magic.abilities.Actives.BuffAbilities;
 
-import by.jackraidenph.dragonsurvival.util.Functions;
-import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.client.handlers.KeyInputHandler;
+import by.jackraidenph.dragonsurvival.common.DragonEffects;
 import by.jackraidenph.dragonsurvival.common.magic.common.AbilityAnimation;
 import by.jackraidenph.dragonsurvival.common.magic.common.ActiveDragonAbility;
-import by.jackraidenph.dragonsurvival.common.DragonEffects;
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import by.jackraidenph.dragonsurvival.util.Functions;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -42,17 +41,17 @@ public class HunterAbility extends ActiveDragonAbility
 	}
 	
 	@Override
-	public IFormattableTextComponent getDescription()
+	public Component getDescription()
 	{
-		return new TranslationTextComponent("ds.skill.description." + getId(), (1.5 * getLevel() + "x"), getDuration());
+		return new TranslatableComponent("ds.skill.description." + getId(), (1.5 * getLevel() + "x"), getDuration());
 	}
 	
 	@Override
-	public void onActivation(PlayerEntity player)
+	public void onActivation(Player player)
 	{
 		super.onActivation(player);
-		player.addEffect(new EffectInstance(DragonEffects.HUNTER, Functions.secondsToTicks(getDuration()), getLevel() - 1));
-		player.level.playLocalSound(player.position().x, player.position().y + 0.5, player.position().z, SoundEvents.UI_TOAST_IN, SoundCategory.PLAYERS, 5F, 0.1F, false);
+		player.addEffect(new MobEffectInstance(DragonEffects.HUNTER, Functions.secondsToTicks(getDuration()), getLevel() - 1));
+		player.level.playLocalSound(player.position().x, player.position().y + 0.5, player.position().z, SoundEvents.UI_TOAST_IN, SoundSource.PLAYERS, 5F, 0.1F, false);
 	}
 	
 	@Override
@@ -69,9 +68,9 @@ public class HunterAbility extends ActiveDragonAbility
 	
 	public boolean canMoveWhileCasting(){ return false; }
 	@Override
-	public ArrayList<ITextComponent> getInfo()
+	public ArrayList<Component> getInfo()
 	{
-		ArrayList<ITextComponent> components = super.getInfo();
+		ArrayList<Component> components = super.getInfo();
 		
 		if(!KeyInputHandler.ABILITY4.isUnbound()) {
 			String key = KeyInputHandler.ABILITY4.getKey().getDisplayName().getContents().toUpperCase(Locale.ROOT);
@@ -79,17 +78,17 @@ public class HunterAbility extends ActiveDragonAbility
 			if(key.isEmpty()){
 				key = KeyInputHandler.ABILITY4.getKey().getDisplayName().getString();
 			}
-			components.add(new TranslationTextComponent("ds.skill.keybind", key));
+			components.add(new TranslatableComponent("ds.skill.keybind", key));
 		}
 		
 		return components;
 	}
 	
 	@OnlyIn( Dist.CLIENT )
-	public ArrayList<ITextComponent> getLevelUpInfo(){
-		ArrayList<ITextComponent> list = super.getLevelUpInfo();
-		list.add(new TranslationTextComponent("ds.skill.duration.seconds", "+" + ConfigHandler.SERVER.hunterDuration.get()));
-		list.add(new TranslationTextComponent("ds.skill.damage", "+" + ConfigHandler.SERVER.hunterDamageBonus.get() + "X"));
+	public ArrayList<Component> getLevelUpInfo(){
+		ArrayList<Component> list = super.getLevelUpInfo();
+		list.add(new TranslatableComponent("ds.skill.duration.seconds", "+" + ConfigHandler.SERVER.hunterDuration.get()));
+		list.add(new TranslatableComponent("ds.skill.damage", "+" + ConfigHandler.SERVER.hunterDamageBonus.get() + "X"));
 		return list;
 	}
 	

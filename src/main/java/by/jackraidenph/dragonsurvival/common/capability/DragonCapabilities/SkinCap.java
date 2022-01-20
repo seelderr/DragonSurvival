@@ -1,11 +1,11 @@
 package by.jackraidenph.dragonsurvival.common.capability.DragonCapabilities;
 
 import by.jackraidenph.dragonsurvival.client.SkinCustomization.CustomizationLayer;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
+import by.jackraidenph.dragonsurvival.common.capability.caps.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonLevel;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.Direction;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraftforge.common.capabilities.Capability;
 
 import java.util.HashMap;
@@ -21,9 +21,9 @@ public class SkinCap implements DragonCapability
 	public HashMap<DragonLevel, HashMap<CustomizationLayer, String>> playerSkinLayers = new HashMap();
 	
 	@Override
-	public INBT writeNBT(Capability<DragonStateHandler> capability, Direction side)
+	public Tag writeNBT(Capability<DragonStateHandler> capability, Direction side)
 	{
-		CompoundNBT tag = new CompoundNBT();
+		CompoundTag tag = new CompoundTag();
 		
 		tag.putBoolean("renderNewborn", renderNewborn);
 		tag.putBoolean("renderYoung", renderYoung);
@@ -39,9 +39,9 @@ public class SkinCap implements DragonCapability
 	}
 	
 	@Override
-	public void readNBT(Capability<DragonStateHandler> capability, Direction side, INBT base)
+	public void readNBT(Capability<DragonStateHandler> capability, Direction side, Tag base)
 	{
-		CompoundNBT tag = (CompoundNBT) base;
+		CompoundTag tag = (CompoundTag) base;
 
 		renderNewborn = tag.getBoolean("renderNewborn");
 		renderYoung = tag.getBoolean("renderYoung");

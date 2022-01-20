@@ -1,18 +1,18 @@
 package by.jackraidenph.dragonsurvival.common.handlers;
 
 import by.jackraidenph.dragonsurvival.common.DragonEffects;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.magic.DragonAbilities;
 import by.jackraidenph.dragonsurvival.common.magic.abilities.Passives.CliffhangerAbility;
 import by.jackraidenph.dragonsurvival.common.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.Pose;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.SnowballEntity;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.IndirectEntityDamageSource;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.IndirectEntityDamageSource;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Snowball;
 import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
@@ -47,7 +47,7 @@ public class DragonBonusHandler
 				if(ConfigHandler.SERVER.caveSplashDamage.get() != 0.0) {
 					if (dragonStateHandler.getType() == DragonType.CAVE && !livingEntity.hasEffect(DragonEffects.FIRE)) {
 						if (damageSource instanceof IndirectEntityDamageSource) {
-							if (damageSource.getDirectEntity() instanceof SnowballEntity) {
+							if (damageSource.getDirectEntity() instanceof Snowball) {
 								livingEntity.hurt(DamageSource.GENERIC, ConfigHandler.SERVER.caveSplashDamage.get().floatValue());
 							}
 						}
@@ -59,9 +59,9 @@ public class DragonBonusHandler
 	
 	@SubscribeEvent
     public static void removeLavaFootsteps(PlaySoundAtEntityEvent event) {
-    	if (!(event.getEntity() instanceof PlayerEntity))
+    	if (!(event.getEntity() instanceof Player))
     		return;
-    	PlayerEntity player = (PlayerEntity)event.getEntity();
+    	Player player = (Player)event.getEntity();
     	DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
     		if (dragonStateHandler.getType() == DragonType.CAVE && ConfigHandler.SERVER.bonuses.get() && ConfigHandler.SERVER.caveLavaSwimming.get() && DragonSizeHandler.getOverridePose(player) == Pose.SWIMMING && event.getSound().getRegistryName().getPath().contains(".step"))
     			event.setCanceled(true);

@@ -1,23 +1,22 @@
 package by.jackraidenph.dragonsurvival.common.handlers;
 
 import by.jackraidenph.dragonsurvival.common.blocks.TreasureBlock;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.caps.DragonStateHandler;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
-import by.jackraidenph.dragonsurvival.mixins.MixinServerWorld;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.status.SyncTreasureRestStatus;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.MainWindow;
+import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -31,10 +30,11 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.network.PacketDistributor;
 import org.lwjgl.opengl.GL11;
 
-import java.awt.*;
+import java.awt.Color;
+import java.util.List;
 import java.util.Optional;
 
 @Mod.EventBusSubscriber
@@ -43,7 +43,7 @@ public class DragonTreasureResting
 	@SubscribeEvent
 	public static void playerTick(PlayerTickEvent event){
 		if(event.phase == Phase.START || event.side == LogicalSide.CLIENT) return;
-		PlayerEntity player = event.player;
+		Player player = event.player;
 		
 		if(DragonStateProvider.isDragon(player)){
 			DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
@@ -76,7 +76,7 @@ public class DragonTreasureResting
 								}
 							}
 						}
-						treasureNearby = MathHelper.clamp(treasureNearby, 0, ConfigHandler.SERVER.maxTreasures.get());
+						treasureNearby = Mth.clamp(treasureNearby, 0, ConfigHandler.SERVER.maxTreasures.get());
 						
 						int totalTime = ConfigHandler.SERVER.treasureRegenTicks.get();
 						int restTimer = totalTime - (ConfigHandler.SERVER.treasureRegenTicksReduce.get() * treasureNearby);
@@ -101,58 +101,42 @@ public class DragonTreasureResting
 		if(event.phase == Phase.START) return;
 		if(event.side == LogicalSide.CLIENT) return;
 		
-		ServerWorld world = (ServerWorld)event.world;
-		MixinServerWorld serverWorld = (MixinServerWorld)world;
-		if (!serverWorld.getallPlayersSleeping()) {
-			if (!serverWorld.getPlayers().isEmpty()) {
-				int i = 0;
-				int j = 0;
+		ServerLevel world = (ServerLevel)event.world;
+		List<ServerPlayer> playerList = world.players();
+		playerList.removeIf((pl) -> {
+			if(DragonStateProvider.isDragon(pl)) {
+				DragonStateHandler handler = DragonStateProvider.getCap(pl).orElse(null);
 				
-				if(world.getGameTime() % 20 == 0) {
-					for (ServerPlayerEntity serverplayerentity : serverWorld.getPlayers()) {
-						if (serverplayerentity.isSpectator()) {
-							++i;
-						} else if (serverplayerentity.isSleeping()) {
-							++j;
-						} else if (DragonStateProvider.isDragon(serverplayerentity)) {
-							DragonStateHandler handler = DragonStateProvider.getCap(serverplayerentity).orElse(null);
-							
-							if (ForgeEventFactory.fireSleepingTimeCheck(serverplayerentity, Optional.empty())) {
-								
-								if (handler != null) {
-									if (handler.treasureResting) {
-										++j;
-									}
-								}
-							}else{
-								handler.treasureSleepTimer = 0;
-							}
+				if (ForgeEventFactory.fireSleepingTimeCheck(pl, Optional.empty())) {
+					
+					if (handler != null) {
+						if (handler.treasureResting) {
+							return true;
 						}
 					}
-					
-					boolean all = j > 0 && j >= serverWorld.getPlayers().size() - i;
-					
-					if (all) {
-						serverWorld.setallPlayersSleeping(true);
-					}
+				}else{
+					handler.treasureSleepTimer = 0;
 				}
 			}
-		}
+			return false;
+		});
+		
+		world.sleepStatus.update(playerList);
 	}
 	
 	@OnlyIn( Dist.CLIENT)
 	@SubscribeEvent
 	public static void playerTick(ClientTickEvent event){
 		if(event.phase == Phase.START) return;
-		PlayerEntity player = Minecraft.getInstance().player;
+		Player player = Minecraft.getInstance().player;
 		
 		if(DragonStateProvider.isDragon(player)){
 			DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
 			
 			if(handler != null){
 				if(handler.treasureResting){
-					Vector3d velocity = player.getDeltaMovement();
-					float groundSpeed = MathHelper.sqrt((velocity.x * velocity.x) + (velocity.z * velocity.z));
+					Vec3 velocity = player.getDeltaMovement();
+					float groundSpeed = Mth.sqrt((float)((velocity.x * velocity.x) + (velocity.z * velocity.z)));
 					if(Math.abs(groundSpeed) > 0.05){
 						handler.treasureResting = false;
 						NetworkHandler.CHANNEL.sendToServer(new SyncTreasureRestStatus(player.getId(), false));
@@ -166,28 +150,28 @@ public class DragonTreasureResting
 	@OnlyIn( Dist.CLIENT)
 	@SubscribeEvent
 	public static void sleepScreenRender(RenderGameOverlayEvent.Post event) {
-		PlayerEntity playerEntity = Minecraft.getInstance().player;
+		Player playerEntity = Minecraft.getInstance().player;
 		
 		if (playerEntity == null || !DragonStateProvider.isDragon(playerEntity) || playerEntity.isSpectator())
 			return;
 		
 		DragonStateProvider.getCap(playerEntity).ifPresent(cap -> {
-			if (event.getType() == ElementType.HOTBAR) {
+			if (event.getType() == ElementType.ALL) {
 				GL11.glPushMatrix();
-				MainWindow window = Minecraft.getInstance().getWindow();
+				Window window = Minecraft.getInstance().getWindow();
 				float f = playerEntity.level.getSunAngle(1.0F);
 				
 				float f1 = f < (float)Math.PI ? 0.0F : ((float)Math.PI * 2F);
 				f = f + (f1 - f) * 0.2F;
-				double val = MathHelper.cos(f);
+				double val = Mth.cos(f);
 				if(cap.treasureResting && val < 0.25 && sleepTimer < 100){
 					sleepTimer++;
 				}else if(sleepTimer > 0){
 					sleepTimer--;
 				}
 				if(sleepTimer > 0){
-					Color darkening = new Color(0.05f, 0.05f, 0.05f, MathHelper.lerp(Math.min(sleepTimer, 100) / 100f, 0, 0.5F));
-					AbstractGui.fill(event.getMatrixStack(), 0, 0, window.getGuiScaledWidth(), window.getGuiScaledHeight(), darkening.getRGB());
+					Color darkening = new Color(0.05f, 0.05f, 0.05f, Mth.lerp(Math.min(sleepTimer, 100) / 100f, 0, 0.5F));
+					Gui.fill(event.getMatrixStack(), 0, 0, window.getGuiScaledWidth(), window.getGuiScaledHeight(), darkening.getRGB());
 				}
 				
 				GL11.glPopMatrix();
@@ -199,8 +183,8 @@ public class DragonTreasureResting
 	public static void playerAttacked(LivingHurtEvent event){
 		LivingEntity entity = event.getEntityLiving();
 		
-		if(entity instanceof PlayerEntity){
-			PlayerEntity player = (PlayerEntity)entity;
+		if(entity instanceof Player){
+			Player player = (Player)entity;
 			
 			if(!player.level.isClientSide) {
 				DragonStateProvider.getCap(player).ifPresent(cap -> {

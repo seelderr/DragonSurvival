@@ -2,16 +2,16 @@ package by.jackraidenph.dragonsurvival.mixins;
 
 import by.jackraidenph.dragonsurvival.common.blocks.SourceOfMagicBlock;
 import by.jackraidenph.dragonsurvival.server.tileentity.SourceOfMagicPlaceholder;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.profiler.IProfiler;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.DimensionType;
-import net.minecraft.world.World;
-import net.minecraft.world.storage.ISpawnWorldInfo;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.dimension.DimensionType;
+import net.minecraft.world.level.storage.WritableLevelData;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -21,17 +21,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.function.Supplier;
 
-@Mixin( ClientWorld.class )
-public abstract class MixinClientWorld extends World
+@Mixin( ClientLevel.class )
+public abstract class MixinClientWorld extends Level
 {
 	@Shadow
 	@Final
-	private WorldRenderer levelRenderer;
+	private LevelRenderer levelRenderer;
 	
-	protected MixinClientWorld(ISpawnWorldInfo p_i241925_1_, RegistryKey<World> p_i241925_2_, DimensionType p_i241925_3_, Supplier<IProfiler> p_i241925_4_, boolean p_i241925_5_, boolean p_i241925_6_, long p_i241925_7_)
+	protected MixinClientWorld(WritableLevelData pLevelData, ResourceKey<Level> pDimension, DimensionType pDimensionType, Supplier<ProfilerFiller> pProfiler, boolean pIsClientSide, boolean pIsDebug, long pBiomeZoomSeed)
 	{
-		super(p_i241925_1_, p_i241925_2_, p_i241925_3_, p_i241925_4_, p_i241925_5_, p_i241925_6_, p_i241925_7_);
+		super(pLevelData, pDimension, pDimensionType, pProfiler, pIsClientSide, pIsDebug, pBiomeZoomSeed);
 	}
+	
 	
 	@Inject( at = @At("HEAD"), method = "destroyBlockProgress", cancellable = true)
 	public void destroyBlockProgress(int playerId, BlockPos pos, int progress, CallbackInfo ci) {
@@ -39,7 +40,7 @@ public abstract class MixinClientWorld extends World
 		
 		if(state.getBlock() instanceof SourceOfMagicBlock){
 			if(!state.getValue(SourceOfMagicBlock.PRIMARY_BLOCK)){
-				TileEntity blockEntity = getBlockEntity(pos);
+				BlockEntity blockEntity = getBlockEntity(pos);
 				BlockPos pos1 = pos;
 				
 				if(blockEntity instanceof SourceOfMagicPlaceholder){

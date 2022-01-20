@@ -1,21 +1,22 @@
 package by.jackraidenph.dragonsurvival.client.particles.SeaDragon;
 
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Quaternion;
+import com.mojang.math.Vector3f;
+import net.minecraft.client.Camera;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
-import net.minecraft.client.renderer.ActiveRenderInfo;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.util.math.vector.Quaternion;
-import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class SmallLightningParticle extends SpriteTexturedParticle {
+public class SmallLightningParticle extends TextureSheetParticle
+{
 	private int swirlTick;
 	private final float spread;
 	boolean swirls;
-	private final IAnimatedSprite sprites;
+	private final SpriteSet sprites;
 
-	public SmallLightningParticle(ClientWorld world, double x, double y, double z, double vX, double vY, double vZ, double duration, boolean swirls, IAnimatedSprite sprite) {
+	public SmallLightningParticle(ClientLevel world, double x, double y, double z, double vX, double vY, double vZ, double duration, boolean swirls, SpriteSet sprite) {
 		super(world, x, y, z);
 		setSize(1, 1);
 		xd = vX;
@@ -41,8 +42,8 @@ public class SmallLightningParticle extends SpriteTexturedParticle {
 	}
 	
 	@Override
-	public IParticleRenderType getRenderType() {
-		return IParticleRenderType.PARTICLE_SHEET_OPAQUE;
+	public ParticleRenderType getRenderType() {
+		return ParticleRenderType.PARTICLE_SHEET_OPAQUE;
 	}
 	
 	@Override
@@ -82,7 +83,7 @@ public class SmallLightningParticle extends SpriteTexturedParticle {
 	}
 
 	@Override
-	public void render(IVertexBuilder buffer, ActiveRenderInfo renderInfo, float partialTicks) {
+	public void render(VertexConsumer buffer, Camera renderInfo, float partialTicks) {
 		float var = (age + partialTicks)/(float)lifetime;
 		alpha = (float) (1 - Math.exp(10 * (var - 1)) - Math.pow(2000, -var));
 		if (alpha < 0.1) alpha = 0.1f;
@@ -91,15 +92,16 @@ public class SmallLightningParticle extends SpriteTexturedParticle {
 	}
 	
 	@OnlyIn(Dist.CLIENT)
-	public static final class SeaFactory implements IParticleFactory<SmallLightningParticleData> {
-		private final IAnimatedSprite spriteSet;
+	public static final class SeaFactory implements ParticleProvider<SmallLightningParticleData>
+	{
+		private final SpriteSet spriteSet;
 
-		public SeaFactory(IAnimatedSprite sprite) {
+		public SeaFactory(SpriteSet sprite) {
 			this.spriteSet = sprite;
 		}
 
 		@Override
-		public Particle createParticle(SmallLightningParticleData typeIn, ClientWorld worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
+		public Particle createParticle(SmallLightningParticleData typeIn, ClientLevel worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
 			SmallLightningParticle particle = new SmallLightningParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, typeIn.getDuration(), typeIn.getSwirls(), spriteSet);
 			particle.setSpriteFromAge(spriteSet);
 			return particle;

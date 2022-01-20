@@ -1,27 +1,30 @@
 package by.jackraidenph.dragonsurvival.common.entity.creatures;
 
-import by.jackraidenph.dragonsurvival.util.Functions;
-import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.client.render.util.AnimationTimer;
 import by.jackraidenph.dragonsurvival.client.render.util.CommonTraits;
 import by.jackraidenph.dragonsurvival.common.DragonEffects;
-import net.minecraft.entity.CreatureEntity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.ILivingEntityData;
-import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.ai.goal.*;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.DyeColor;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.potion.Effects;
-import net.minecraft.tileentity.BannerPattern;
-import net.minecraft.util.Hand;
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
+import by.jackraidenph.dragonsurvival.util.Functions;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.IServerWorld;
-import net.minecraft.world.World;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.entity.BannerPattern;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.Animation;
@@ -30,17 +33,15 @@ import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
-import javax.annotation.Nullable;
-
-public class KnightEntity extends CreatureEntity implements IAnimatable, DragonHunter, CommonTraits
+public class KnightEntity extends PathfinderMob implements IAnimatable, DragonHunter, CommonTraits
 {
     AnimationFactory animationFactory = new AnimationFactory(this);
 
-    public KnightEntity(EntityType<? extends CreatureEntity> p_i48576_1_, World world) {
+    public KnightEntity(EntityType<? extends PathfinderMob> p_i48576_1_, Level world) {
         super(p_i48576_1_, world);
     }
     
-    protected int getExperienceReward(PlayerEntity p_70693_1_) {
+    protected int getExperienceReward(Player p_70693_1_) {
         return 5 + this.level.random.nextInt(5);
     }
     
@@ -126,36 +127,35 @@ public class KnightEntity extends CreatureEntity implements IAnimatable, DragonH
     @Override
     protected void registerGoals() {
         super.registerGoals();
-        goalSelector.addGoal(0, new SwimGoal(this));
-        goalSelector.addGoal(5, new WaterAvoidingRandomWalkingGoal(this, 1));
+        goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1));
         goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.5, true));
-        targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, 1, true, false, livingEntity -> {
-            return livingEntity.hasEffect(Effects.BAD_OMEN) || livingEntity.hasEffect(DragonEffects.EVIL_DRAGON);
+        targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Player.class, 1, true, false, livingEntity -> {
+            return livingEntity.hasEffect(MobEffects.BAD_OMEN) || livingEntity.hasEffect(DragonEffects.EVIL_DRAGON);
         }));
         targetSelector.addGoal(6, new HurtByTargetGoal(this, ShooterEntity.class).setAlertOthers());
     }
 
     @Override
     protected void populateDefaultEquipmentSlots(DifficultyInstance difficultyInstance) {
-        setItemInHand(Hand.MAIN_HAND, new ItemStack(Items.IRON_SWORD));
+        setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.IRON_SWORD));
         if (random.nextDouble() < ConfigHandler.COMMON.knightShieldChance.get()) {
             ItemStack itemStack = new ItemStack(Items.SHIELD);
-            ListNBT listNBT = Functions.createRandomPattern(new BannerPattern.Builder(), 16);
-            CompoundNBT compoundNBT = new CompoundNBT();
+            ListTag listNBT = Functions.createRandomPattern(new BannerPattern.Builder(), 16);
+            CompoundTag compoundNBT = new CompoundTag();
             compoundNBT.putInt("Base", DyeColor.values()[this.random.nextInt((DyeColor.values()).length)].getId());
             compoundNBT.put("Patterns", listNBT);
             itemStack.addTagElement("BlockEntityTag", compoundNBT);
-            setItemInHand(Hand.OFF_HAND, itemStack);
+            setItemInHand(InteractionHand.OFF_HAND, itemStack);
         }
     }
-
-    @Nullable
+    
+    @org.jetbrains.annotations.Nullable
     @Override
-    public ILivingEntityData finalizeSpawn(IServerWorld serverWorld, DifficultyInstance difficultyInstance, SpawnReason spawnReason, @Nullable ILivingEntityData entityData, @Nullable CompoundNBT nbt) {
-        populateDefaultEquipmentSlots(difficultyInstance);
-        return super.finalizeSpawn(serverWorld, difficultyInstance, spawnReason, entityData, nbt);
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @org.jetbrains.annotations.Nullable SpawnGroupData pSpawnData, @org.jetbrains.annotations.Nullable CompoundTag pDataTag)
+    {
+        populateDefaultEquipmentSlots(pDifficulty);
+        return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
     }
-
     @Override
     public void tick() {
         updateSwingTime();
@@ -164,7 +164,7 @@ public class KnightEntity extends CreatureEntity implements IAnimatable, DragonH
 
     @Override
     public boolean isBlocking() {
-        if (getOffhandItem().isShield(this))
+        if (getOffhandItem().getItem() == Items.SHIELD)
             return random.nextBoolean();
         return false;
     }

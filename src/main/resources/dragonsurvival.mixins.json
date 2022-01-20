@@ -11,8 +11,7 @@
     "MixinEnchantmentHelper",
     "MixinPlayerInteractionManager",
     "MixinPlayerInventory",
-    "MixinBlock",
-    "MixinServerWorld"
+    "MixinBlock"
   ],
   "client": [
     "AccessorEntityRenderer",
@@ -20,7 +19,6 @@
     "AccessorLivingRenderer",
     "MixinFirstPersonRenderer",
     "MixinInventoryScreen",
-    "MixinProjectileHelper",
     "MixinGameRenderer",
     "MixinWorldRenderer",
     "MixinEntityRenderManager",

@@ -1,9 +1,9 @@
 package by.jackraidenph.dragonsurvival.network.magic;
 
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.network.IMessage;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
@@ -25,14 +25,14 @@ public class SyncDragonAbilitySlot implements IMessage<SyncDragonAbilitySlot>
 	}
 	
 	@Override
-	public void encode(SyncDragonAbilitySlot message, PacketBuffer buffer) {
+	public void encode(SyncDragonAbilitySlot message, FriendlyByteBuf buffer) {
 		buffer.writeInt(message.playerId);
 		buffer.writeInt(message.selectedSlot);
 		buffer.writeBoolean(message.displayHotbar);
 	}
 	
 	@Override
-	public SyncDragonAbilitySlot decode(PacketBuffer buffer) {
+	public SyncDragonAbilitySlot decode(FriendlyByteBuf buffer) {
 		int playerId = buffer.readInt();
 		int selectedSlot = buffer.readInt();
 		boolean hideHotbar = buffer.readBoolean();

@@ -3,7 +3,7 @@ package by.jackraidenph.dragonsurvival.client.gui.widgets.buttons;
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.client.gui.DragonAltarGUI;
 import by.jackraidenph.dragonsurvival.client.gui.DragonCustomizationScreen;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
@@ -14,20 +14,21 @@ import by.jackraidenph.dragonsurvival.network.entity.player.SynchronizeDragonCap
 import by.jackraidenph.dragonsurvival.network.flight.SyncSpinStatus;
 import by.jackraidenph.dragonsurvival.network.status.SyncAltarCooldown;
 import by.jackraidenph.dragonsurvival.util.Functions;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -48,23 +49,23 @@ public class AltarTypeButton extends Button
 	}
 	
 	@Override
-	public void renderButton(MatrixStack mStack, int mouseX, int mouseY, float p_230431_4_)
+	public void renderButton(PoseStack mStack, int mouseX, int mouseY, float p_230431_4_)
 	{
 		final boolean atTheTopOrBottom = (mouseY > y + 6 && mouseY < y + 26) || (mouseY > y + 133 && mouseY < y + 153);
 		
-		Minecraft.getInstance().getTextureManager().bind(BACKGROUND_TEXTURE);
+		RenderSystem.setShaderTexture(0, BACKGROUND_TEXTURE);
 		
 		fill(mStack, x-1, y-1, x + width+1, y + height+1, new Color(0.5f, 0.5f, 0.5f).getRGB());
 		blit(mStack, x, y, (type.ordinal() * 49), isHovered ? 0 : 147, 49, 147, 512, 512);
 		
 		if (isHovered && atTheTopOrBottom) {
-			gui.renderWrappedToolTip(mStack, altarDragonInfoLocalized((type == DragonType.NONE ? "human" : type.name().toLowerCase() + "_dragon"), type == DragonType.NONE ? Collections.emptyList() : DragonFoodHandler.getSafeEdibleFoods(type)), mouseX, mouseY, Minecraft.getInstance().font);
+			gui.renderComponentTooltip(mStack, altarDragonInfoLocalized((type == DragonType.NONE ? "human" : type.name().toLowerCase() + "_dragon"), type == DragonType.NONE ? Collections.emptyList() : DragonFoodHandler.getSafeEdibleFoods(type)), mouseX, mouseY);
 		}
 	}
 	
-	private ArrayList<ITextComponent> altarDragonInfoLocalized(String dragonType, List<Item> foodList) {
-		ArrayList<ITextComponent> info = new ArrayList<ITextComponent>();
-		ITextComponent foodInfo = StringTextComponent.EMPTY;
+	private ArrayList<Component> altarDragonInfoLocalized(String dragonType, List<Item> foodList) {
+		ArrayList<Component> info = new ArrayList<Component>();
+		Component foodInfo = (TextComponent)TextComponent.EMPTY;
 		
 		if (gui.hasShiftDown()) {
 			if (!Objects.equals(dragonType, "human")) {
@@ -72,16 +73,16 @@ public class AltarTypeButton extends Button
 				for (Item item : foodList) {
 					food += (item.getName(new ItemStack(item)).getString() + "; ");
 				}
-				foodInfo = ITextComponent.nullToEmpty(food);
+				foodInfo = Component.nullToEmpty(food);
 			}
 		} else {
-			foodInfo = new TranslationTextComponent("ds.hold_shift.for_food");
+			foodInfo = new TranslatableComponent("ds.hold_shift.for_food");
 		}
 		
-		TranslationTextComponent textComponent = new TranslationTextComponent("ds.altar_dragon_info." + dragonType, foodInfo.getString());
+		TranslatableComponent textComponent = new TranslatableComponent("ds.altar_dragon_info." + dragonType, foodInfo.getString());
 		String text = textComponent.getString();
 		for (String s : text.split("\n")) {
-			info.add(new StringTextComponent(s));
+			info.add(new TextComponent(s));
 		}
 		return info;
 	}
@@ -94,15 +95,15 @@ public class AltarTypeButton extends Button
 	
 	private void initiateDragonForm(DragonType type)
 	{
-		ClientPlayerEntity player = Minecraft.getInstance().player;
+		LocalPlayer player = Minecraft.getInstance().player;
 		
 		if (player == null) return;
 		
 		if(type == DragonType.NONE){
-			Minecraft.getInstance().player.sendMessage(new TranslationTextComponent("ds.choice_human"), Minecraft.getInstance().player.getUUID());
+			Minecraft.getInstance().player.sendMessage(new TranslatableComponent("ds.choice_human"), Minecraft.getInstance().player.getUUID());
 			
 			DragonStateProvider.getCap(player).ifPresent(cap -> {
-				player.level.playSound(player, player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundCategory.PLAYERS, 1, 0.7f);
+				player.level.playSound(player, player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 1, 0.7f);
 				
 				cap.setType(type);
 				

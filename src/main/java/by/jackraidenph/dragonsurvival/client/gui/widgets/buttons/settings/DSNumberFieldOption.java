@@ -1,34 +1,38 @@
 package by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.settings;
 
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.fields.TextField;
-import net.minecraft.client.AbstractOption;
-import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.widget.Widget;
+import net.minecraft.client.Option;
+import net.minecraft.client.Options;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.util.FormattedCharSequence;
 import org.apache.commons.lang3.math.NumberUtils;
 
+import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-public class DSNumberFieldOption extends AbstractOption
+public class DSNumberFieldOption extends Option
 {
-	private final Function<GameSettings, Number> getter;
-	private final BiConsumer<GameSettings, Number> setter;
+	private final Function<Options, Number> getter;
+	private final BiConsumer<Options, Number> setter;
+	private final Function<Minecraft, List<FormattedCharSequence>> tooltipSupplier;
 	
 	private Number min;
 	private Number max;
 	
-	public DSNumberFieldOption(String key, Number min, Number max, Function<GameSettings, Number> getter, BiConsumer<GameSettings, Number> setter)
+	public DSNumberFieldOption(String key, Number min, Number max, Function<Options, Number> getter, BiConsumer<Options, Number> setter, Function<Minecraft, List<FormattedCharSequence>> pTooltipSupplier)
 	{
 		super(key);
 		this.getter = getter;
 		this.setter = setter;
 		this.min = min;
 		this.max = max;
+		this.tooltipSupplier = pTooltipSupplier;
 	}
 	
 	@Override
-	public Widget createButton(GameSettings gameSettings, int i, int i1, int i2)
+	public AbstractWidget createButton(Options gameSettings, int i, int i1, int i2)
 	{
 		TextField widget = new TextField(null, this, i, i1, i2, 18, this.getCaption()){
 			@Override
@@ -47,6 +51,7 @@ public class DSNumberFieldOption extends AbstractOption
 				return val;
 			}
 		};
+		widget.tooltip = tooltipSupplier.apply(Minecraft.getInstance());
 		widget.setFilter((s) -> NumberUtils.isCreatable(s) || s.isEmpty());
 		widget.setMaxLength(10);
 		widget.setValue(getter.apply(Minecraft.getInstance().options).toString());

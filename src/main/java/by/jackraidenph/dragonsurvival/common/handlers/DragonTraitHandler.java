@@ -2,8 +2,8 @@ package by.jackraidenph.dragonsurvival.common.handlers;
 
 import by.jackraidenph.dragonsurvival.common.DamageSources;
 import by.jackraidenph.dragonsurvival.common.DragonEffects;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.caps.DragonStateHandler;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.magic.DragonAbilities;
 import by.jackraidenph.dragonsurvival.common.magic.abilities.Passives.AthleticsAbility;
 import by.jackraidenph.dragonsurvival.common.magic.abilities.Passives.ContrastShowerAbility;
@@ -15,27 +15,27 @@ import by.jackraidenph.dragonsurvival.misc.DragonType;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.entity.player.SyncCapabilityDebuff;
 import by.jackraidenph.dragonsurvival.util.Functions;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.CauldronBlock;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.world.LightType;
-import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.Biome.RainType;
-import net.minecraft.world.lighting.WorldLightManager;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LightLayer;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LayeredCauldronBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.lighting.LevelLightEngine;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.network.PacketDistributor;
+
 
 @Mod.EventBusSubscriber
 public class DragonTraitHandler {
@@ -43,10 +43,10 @@ public class DragonTraitHandler {
     public static void onPlayerTick(TickEvent.PlayerTickEvent playerTickEvent) {
         if (playerTickEvent.phase != Phase.END)
             return;
-        PlayerEntity playerEntity = playerTickEvent.player;
+        Player playerEntity = playerTickEvent.player;
         DragonStateProvider.getCap(playerEntity).ifPresent(dragonStateHandler -> {
             if (dragonStateHandler.isDragon()) {
-                World world = playerEntity.level;
+                Level world = playerEntity.level;
                 BlockState feetBlock = playerEntity.getFeetBlockState();
                 BlockState blockUnder = world.getBlockState(playerEntity.blockPosition().below());
                 Block block = blockUnder.getBlock();
@@ -55,17 +55,17 @@ public class DragonTraitHandler {
                 
                 //Because it is used for both cave and sea dragon it is added here
                 boolean isInCauldron = false;
-                if(blockUnder.getBlock() == Blocks.CAULDRON){
-                    if(blockUnder.hasProperty(CauldronBlock.LEVEL)) {
-                        int level = blockUnder.getValue(CauldronBlock.LEVEL);
+                if(blockUnder.getBlock() == Blocks.WATER_CAULDRON){
+                    if(blockUnder.hasProperty(LayeredCauldronBlock.LEVEL)) {
+                        int level = blockUnder.getValue(LayeredCauldronBlock.LEVEL);
             
                         if(level > 0){
                             isInCauldron = true;
                         }
                     }
-                }else if(feetBlock.getBlock() == Blocks.CAULDRON){
-                    if(feetBlock.hasProperty(CauldronBlock.LEVEL)) {
-                        int level = feetBlock.getValue(CauldronBlock.LEVEL);
+                }else if(feetBlock.getBlock() == Blocks.WATER_CAULDRON){
+                    if(feetBlock.hasProperty(LayeredCauldronBlock.LEVEL)) {
+                        int level = feetBlock.getValue(LayeredCauldronBlock.LEVEL);
         
                         if(level > 0){
                             isInCauldron = true;
@@ -95,7 +95,7 @@ public class DragonTraitHandler {
                                             dragonStateHandler.getType() == DragonType.CAVE && dragonStateHandler.getMagic().getAbility(DragonAbilities.CAVE_ATHLETICS) != null ? ((AthleticsAbility)dragonStateHandler.getMagic().getAbility(DragonAbilities.CAVE_ATHLETICS)).getMaxLevel() :
                                                     0;
                     if(duration > 0){
-                        playerEntity.addEffect(new EffectInstance(Effects.MOVEMENT_SPEED, Functions.secondsToTicks(duration), (ConfigHandler.SERVER.speedupEffectLevel.get() - 1) + (level == maxLevel ? 1 : 0), false, false));
+                        playerEntity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, Functions.secondsToTicks(duration), (ConfigHandler.SERVER.speedupEffectLevel.get() - 1) + (level == maxLevel ? 1 : 0), false, false));
                     }
                 }
                 
@@ -166,7 +166,7 @@ public class DragonTraitHandler {
                         }
                         
                         if (playerEntity.isEyeInFluid(FluidTags.LAVA) && ConfigHandler.SERVER.bonuses.get() && ConfigHandler.SERVER.caveLavaSwimming.get() && ConfigHandler.SERVER.caveLavaSwimmingTicks.get() != 0) {
-                            if (!playerEntity.canBreatheUnderwater() && !playerEntity.abilities.invulnerable) {
+                            if (!playerEntity.canBreatheUnderwater() && !playerEntity.getAbilities().invulnerable) {
                                 dragonStateHandler.setLavaAirSupply(dragonStateHandler.getLavaAirSupply() - 1);
                                 if (dragonStateHandler.getLavaAirSupply() == -20) {
                                     dragonStateHandler.setLavaAirSupply(0);
@@ -192,15 +192,15 @@ public class DragonTraitHandler {
                             double oldDarknessTime = dragonStateHandler.getDebuffData().timeInDarkness;
     
                             if(!playerEntity.level.isClientSide) {
-                                WorldLightManager lightManager = world.getChunkSource().getLightEngine();
-                                if ((lightManager.getLayerListener(LightType.BLOCK).getLightValue(playerEntity.blockPosition()) < 3 && (lightManager.getLayerListener(LightType.SKY).getLightValue(playerEntity.blockPosition()) < 3 && lightManager.getLayerListener(LightType.SKY).getLightValue(
+                                LevelLightEngine lightManager = world.getChunkSource().getLightEngine();
+                                if ((lightManager.getLayerListener(LightLayer.BLOCK).getLightValue(playerEntity.blockPosition()) < 3 && (lightManager.getLayerListener(LightLayer.SKY).getLightValue(playerEntity.blockPosition()) < 3 && lightManager.getLayerListener(LightLayer.SKY).getLightValue(
                                         playerEntity.blockPosition().above()) < 3))) {
                                     if (dragonStateHandler.getDebuffData().timeInDarkness < maxStressTicks) {
                                         dragonStateHandler.getDebuffData().timeInDarkness++;
                                     }
         
                                     if (dragonStateHandler.getDebuffData().timeInDarkness >= maxStressTicks && playerEntity.tickCount % 21 == 0) {
-                                        playerEntity.addEffect(new EffectInstance(DragonEffects.STRESS, ConfigHandler.SERVER.forestStressEffectDuration.get() * 20));
+                                        playerEntity.addEffect(new MobEffectInstance(DragonEffects.STRESS, ConfigHandler.SERVER.forestStressEffectDuration.get() * 20));
                                     }
         
                                 } else  {
@@ -233,7 +233,7 @@ public class DragonTraitHandler {
                             
                             if(!playerEntity.level.isClientSide) {
                                 if (!playerEntity.isInWaterRainOrBubble() && !isInSeaBlock) {
-                                    boolean hotBiome = biome.getPrecipitation() == RainType.NONE && biome.getBaseTemperature() > 1.0;
+                                    boolean hotBiome = biome.getPrecipitation() == Biome.Precipitation.NONE && biome.getBaseTemperature() > 1.0;
                                     double timeIncrement = (world.isNight() ? 0.5F : 1.0) * (hotBiome ? biome.getBaseTemperature() : 1F);
                                     debuffData.timeWithoutWater += ConfigHandler.SERVER.seaTicksBasedOnTemperature.get() ? timeIncrement : 1;
                                 }

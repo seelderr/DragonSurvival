@@ -1,22 +1,23 @@
 package by.jackraidenph.dragonsurvival.common.entity.creatures.hitbox;
 
-import net.minecraft.entity.EntitySize;
-import net.minecraft.entity.Pose;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.math.vector.Vector3d;
+
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.entity.PartEntity;
 
 public class DragonHitboxPart extends PartEntity<DragonHitBox>
 {
-	public EntitySize size;
+	public EntityDimensions size;
 	public final DragonHitBox parentMob;
 	public String name;
 	
 	public DragonHitboxPart(DragonHitBox parent, String name, float sizeX, float sizeY)
 	{
 		super(parent);
-		this.size = EntitySize.scalable(sizeX, sizeY);
+		this.size = EntityDimensions.scalable(sizeX, sizeY);
 		this.parentMob = parent;
 		this.name = name;
 	}
@@ -31,10 +32,10 @@ public class DragonHitboxPart extends PartEntity<DragonHitBox>
 	protected void defineSynchedData() {}
 	
 	@Override
-	protected void readAdditionalSaveData(CompoundNBT p_70037_1_) {}
+	protected void readAdditionalSaveData(CompoundTag p_70037_1_) {}
 	
 	@Override
-	protected void addAdditionalSaveData(CompoundNBT p_213281_1_) {}
+	protected void addAdditionalSaveData(CompoundTag p_213281_1_) {}
 	
 	public boolean hurt(DamageSource pSource, float pAmount) {
 		return !this.isInvulnerableTo(pSource) && this.parentMob.hurt(this, pSource, pAmount);
@@ -47,12 +48,12 @@ public class DragonHitboxPart extends PartEntity<DragonHitBox>
 	}
 	
 	@Override
-	public Vector3d getDeltaMovement()
+	public Vec3 getDeltaMovement()
 	{
 		return parentMob.getDeltaMovement();
 	}
 	
-	public EntitySize getDimensions(Pose p_213305_1_) {
+	public EntityDimensions getDimensions(Pose p_213305_1_) {
 		return this.size;
 	}
 }

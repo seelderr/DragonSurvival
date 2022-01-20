@@ -4,17 +4,17 @@ import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.network.IMessage;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
-import net.minecraftforge.fml.network.NetworkEvent.Context;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.network.NetworkDirection;
+import net.minecraftforge.network.NetworkEvent.Context;
+import net.minecraftforge.network.PacketDistributor;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-import static net.minecraftforge.fml.network.NetworkDirection.PLAY_TO_SERVER;
 
 public class SyncListConfig implements IMessage<SyncListConfig>
 {
@@ -32,7 +32,7 @@ public class SyncListConfig implements IMessage<SyncListConfig>
 	}
 	
 	@Override
-	public void encode(SyncListConfig message, PacketBuffer buffer)
+	public void encode(SyncListConfig message, FriendlyByteBuf buffer)
 	{
 		buffer.writeUtf(message.type);
 		buffer.writeInt(message.value.size());
@@ -41,7 +41,7 @@ public class SyncListConfig implements IMessage<SyncListConfig>
 	}
 	
 	@Override
-	public SyncListConfig decode(PacketBuffer buffer)
+	public SyncListConfig decode(FriendlyByteBuf buffer)
 	{
 		String type = buffer.readUtf();
 		int size = buffer.readInt();
@@ -58,8 +58,8 @@ public class SyncListConfig implements IMessage<SyncListConfig>
 	@Override
 	public void handle(SyncListConfig message, Supplier<Context> supplier)
 	{
-		if(supplier.get().getDirection() == PLAY_TO_SERVER){
-			ServerPlayerEntity entity = supplier.get().getSender();
+		if(supplier.get().getDirection() == NetworkDirection.PLAY_TO_SERVER){
+			ServerPlayer entity = supplier.get().getSender();
 			if(entity == null || !entity.hasPermissions(2)) return;
 			NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg() , new SyncListConfig(message.key, message.value, message.type));
 		}

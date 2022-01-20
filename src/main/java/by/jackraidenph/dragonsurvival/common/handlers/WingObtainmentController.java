@@ -1,24 +1,24 @@
 package by.jackraidenph.dragonsurvival.common.handlers;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
-import by.jackraidenph.dragonsurvival.network.status.RefreshDragons;
 import by.jackraidenph.dragonsurvival.network.entity.player.SynchronizeDragonCap;
 import by.jackraidenph.dragonsurvival.network.flight.SyncSpinStatus;
+import by.jackraidenph.dragonsurvival.network.status.RefreshDragons;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.mojang.bridge.game.Language;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.client.resources.Language;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.event.ServerChatEvent;
@@ -27,7 +27,7 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.loading.FMLLoader;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.network.PacketDistributor;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -81,14 +81,14 @@ public class WingObtainmentController {
 	
     @SubscribeEvent
     public static void inTheEnd(PlayerEvent.PlayerChangedDimensionEvent changedDimensionEvent) {
-        PlayerEntity playerEntity = changedDimensionEvent.getPlayer();
-        if (changedDimensionEvent.getTo() == World.END) {
+        Player playerEntity = changedDimensionEvent.getPlayer();
+        if (changedDimensionEvent.getTo() == Level.END) {
             DragonStateProvider.getCap(playerEntity).ifPresent(dragonStateHandler -> {
                 if (dragonStateHandler.isDragon() && dragonStateHandler.hasWings() && !dragonStateHandler.getMovementData().spinLearned && ConfigHandler.SERVER.enderDragonGrantsSpin.get()) {
                     Thread thread = new Thread(() -> {
                         try {
                             Thread.sleep(3000);
-                            playerEntity.sendMessage(new StringTextComponent("ds.endmessage"), enderDragonUUID);
+                            playerEntity.sendMessage(new TextComponent("ds.endmessage"), enderDragonUUID);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -105,11 +105,11 @@ public class WingObtainmentController {
     	if (event.getSenderUUID().equals(enderDragonUUID)) { 
 			if (event.getMessage().getString().equals("ds.endmessage")) {
 	    		Language language = Minecraft.getInstance().getLanguageManager().getSelected();
-	    		ClientPlayerEntity player = Minecraft.getInstance().player;
+	    		LocalPlayer player = Minecraft.getInstance().player;
 	    		int messageId = player.getRandom().nextInt(dragonPhrases.getOrDefault(language.getCode(), dragonPhrases.getOrDefault("en_us", 1))) + 1;
-	    		event.setMessage(new TranslationTextComponent("ds.endmessage." + messageId, player.getDisplayName().getString()));
+	    		event.setMessage(new TranslatableComponent("ds.endmessage." + messageId, player.getDisplayName().getString()));
 			} else if (event.getMessage().getString().equals("ds.dragon.grants.wings")) {
-				event.setMessage(new TranslationTextComponent("ds.dragon.grants.wings"));
+				event.setMessage(new TranslatableComponent("ds.dragon.grants.wings"));
 			}
     	}
     }
@@ -118,17 +118,17 @@ public class WingObtainmentController {
     @SubscribeEvent
     public static void serverChatEvent(ServerChatEvent chatEvent) {
         String message = chatEvent.getMessage();
-        ServerPlayerEntity playerEntity = chatEvent.getPlayer();
+        ServerPlayer playerEntity = chatEvent.getPlayer();
         String lowercase = message.toLowerCase();
         DragonStateProvider.getCap(playerEntity).ifPresent(dragonStateHandler -> {
             if (dragonStateHandler.isDragon() && dragonStateHandler.hasWings() && !dragonStateHandler.getMovementData().spinLearned && ConfigHandler.SERVER.enderDragonGrantsSpin.get()) {
-                if (playerEntity.getLevel().dimension() == World.END) {
+                if (playerEntity.getLevel().dimension() == Level.END) {
                     if (!playerEntity.getLevel().getDragons().isEmpty()) {
                         if (!lowercase.isEmpty()) {
                             Thread thread = new Thread(() -> {
                                 try {
                                     Thread.sleep(2000);
-                                    playerEntity.sendMessage(new StringTextComponent("ds.dragon.grants.wings"), enderDragonUUID);
+                                    playerEntity.sendMessage(new TextComponent("ds.dragon.grants.wings"), enderDragonUUID);
                                 } catch (InterruptedException e) {
                                     e.printStackTrace();
                                 }
@@ -150,9 +150,9 @@ public class WingObtainmentController {
         if (!ConfigHandler.COMMON.endVoidTeleport.get())
             return;
         LivingEntity livingEntity = damageEvent.getEntityLiving();
-        if (livingEntity instanceof PlayerEntity) {
+        if (livingEntity instanceof Player) {
             DamageSource damageSource = damageEvent.getSource();
-            if (livingEntity.level.dimension() == World.END && damageSource == DamageSource.OUT_OF_WORLD && livingEntity.position().y < -60) {
+            if (livingEntity.level.dimension() == Level.END && damageSource == DamageSource.OUT_OF_WORLD && livingEntity.position().y < -60) {
                 DragonStateProvider.getCap(livingEntity).ifPresent(dragonStateHandler -> {
                     if (dragonStateHandler.isDragon()) {
                         livingEntity.changeDimension(livingEntity.getServer().overworld());

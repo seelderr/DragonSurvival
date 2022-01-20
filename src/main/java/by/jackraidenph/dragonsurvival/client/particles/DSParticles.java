@@ -9,27 +9,29 @@ import by.jackraidenph.dragonsurvival.client.particles.ForestDragon.LargePoisonP
 import by.jackraidenph.dragonsurvival.client.particles.ForestDragon.LargePoisonParticleData;
 import by.jackraidenph.dragonsurvival.client.particles.ForestDragon.SmallPoisonParticle.ForestFactory;
 import by.jackraidenph.dragonsurvival.client.particles.ForestDragon.SmallPoisonParticleData;
-import by.jackraidenph.dragonsurvival.client.particles.SeaDragon.*;
+import by.jackraidenph.dragonsurvival.client.particles.SeaDragon.LargeLightningParticle;
+import by.jackraidenph.dragonsurvival.client.particles.SeaDragon.LargeLightningParticleData;
 import by.jackraidenph.dragonsurvival.client.particles.SeaDragon.SmallLightningParticle.SeaFactory;
+import by.jackraidenph.dragonsurvival.client.particles.SeaDragon.SmallLightningParticleData;
 import com.mojang.serialization.Codec;
 import net.minecraft.client.Minecraft;
-import net.minecraft.particles.BasicParticleType;
-import net.minecraft.particles.ParticleType;
+import net.minecraft.core.particles.ParticleType;
+import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.RegistryObject;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class DSParticles
 {
-    public static BasicParticleType fireBeaconParticle, magicBeaconParticle, peaceBeaconParticle;
-    public static BasicParticleType seaSweep;
+    public static SimpleParticleType fireBeaconParticle, magicBeaconParticle, peaceBeaconParticle;
+    public static SimpleParticleType seaSweep;
     
     public static final DeferredRegister<ParticleType<?>> REGISTRY = DeferredRegister.create(ForgeRegistries.PARTICLE_TYPES, DragonSurvivalMod.MODID);
     
@@ -86,19 +88,19 @@ public class DSParticles
     @SubscribeEvent
     public static void registerParticles(RegistryEvent.Register<ParticleType<?>> registryEvent) {
         IForgeRegistry<ParticleType<?>> particleTypes = registryEvent.getRegistry();
-        fireBeaconParticle = new BasicParticleType(false);
+        fireBeaconParticle = new SimpleParticleType(false);
         fireBeaconParticle.setRegistryName(DragonSurvivalMod.MODID, "netherite_particle");
         particleTypes.register(fireBeaconParticle);
         
-        peaceBeaconParticle = new BasicParticleType(false);
+        peaceBeaconParticle = new SimpleParticleType(false);
         peaceBeaconParticle.setRegistryName(DragonSurvivalMod.MODID, "gold_particle");
         particleTypes.register(peaceBeaconParticle);
         
-        magicBeaconParticle = new BasicParticleType(false);
+        magicBeaconParticle = new SimpleParticleType(false);
         magicBeaconParticle.setRegistryName(DragonSurvivalMod.MODID, "diamond_particle");
         particleTypes.register(magicBeaconParticle);
     
-        seaSweep = new BasicParticleType(false);
+        seaSweep = new SimpleParticleType(false);
         seaSweep.setRegistryName(DragonSurvivalMod.MODID, "sea_sweep");
         particleTypes.register(seaSweep);
     }

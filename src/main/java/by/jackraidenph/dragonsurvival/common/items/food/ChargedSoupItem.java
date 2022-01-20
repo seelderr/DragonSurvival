@@ -3,15 +3,15 @@ package by.jackraidenph.dragonsurvival.common.items.food;
 import by.jackraidenph.dragonsurvival.common.DragonEffects;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.util.Functions;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.item.Food;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -20,18 +20,17 @@ public class ChargedSoupItem extends Item
 {
 	public ChargedSoupItem(Properties p_i48487_1_)
 	{
-		super(p_i48487_1_.food(new Food.Builder().nutrition(1).saturationMod(0.4F).meat().alwaysEat()
-				                       .effect(() -> new EffectInstance(Effects.POISON, 20 * 15, 0), 1.0F)
-				                       .effect(() -> new EffectInstance(DragonEffects.FIRE, Functions.secondsToTicks(ConfigHandler.SERVER.chargedSoupBuffDuration.get()), 0), 1.0F)
+		super(p_i48487_1_.food(new FoodProperties.Builder().nutrition(1).saturationMod(0.4F).meat().alwaysEat()
+				                       .effect(() -> new MobEffectInstance(MobEffects.POISON, 20 * 15, 0), 1.0F)
+				                       .effect(() -> new MobEffectInstance(DragonEffects.FIRE, Functions.secondsToTicks(ConfigHandler.SERVER.chargedSoupBuffDuration.get()), 0), 1.0F)
 				                       .build()));
 	}
 	
 	@Override
-	public void appendHoverText(ItemStack p_77624_1_,
-			@Nullable
-					World p_77624_2_, List<ITextComponent> p_77624_3_, ITooltipFlag p_77624_4_)
+	public void appendHoverText(ItemStack p_77624_1_, @Nullable
+			Level p_77624_2_, List<Component> p_77624_3_, TooltipFlag p_77624_4_)
 	{
 		super.appendHoverText(p_77624_1_, p_77624_2_, p_77624_3_, p_77624_4_);
-		p_77624_3_.add(new TranslationTextComponent("ds.description.chargedSoup"));
+		p_77624_3_.add(new TranslatableComponent("ds.description.chargedSoup"));
 	}
 }

@@ -4,17 +4,17 @@ import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.particles.IParticleData;
-import net.minecraft.particles.ParticleType;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.core.Registry;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleType;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.Locale;
 
-public class TreasureParticleData  implements IParticleData
+public class TreasureParticleData  implements ParticleOptions
 {
 	public static final Codec<TreasureParticleData> CODEC = RecordCodecBuilder.create((p_239803_0_) -> {
 		return p_239803_0_.group(Codec.FLOAT.fieldOf("r").forGetter((p_239807_0_) -> {
@@ -27,7 +27,7 @@ public class TreasureParticleData  implements IParticleData
 			return p_239804_0_.scale;
 		})).apply(p_239803_0_, TreasureParticleData::new);
 	});
-	public static final IParticleData.IDeserializer<TreasureParticleData> DESERIALIZER = new IParticleData.IDeserializer<TreasureParticleData>() {
+	public static final ParticleOptions.Deserializer<TreasureParticleData> DESERIALIZER = new ParticleOptions.Deserializer<TreasureParticleData>() {
 		public TreasureParticleData fromCommand(ParticleType<TreasureParticleData> p_197544_1_, StringReader p_197544_2_) throws CommandSyntaxException
 		{
 			p_197544_2_.expect(' ');
@@ -41,7 +41,7 @@ public class TreasureParticleData  implements IParticleData
 			return new TreasureParticleData(f, f1, f2, f3);
 		}
 		
-		public TreasureParticleData fromNetwork(ParticleType<TreasureParticleData> p_197543_1_, PacketBuffer p_197543_2_) {
+		public TreasureParticleData fromNetwork(ParticleType<TreasureParticleData> p_197543_1_, FriendlyByteBuf p_197543_2_) {
 			return new TreasureParticleData(p_197543_2_.readFloat(), p_197543_2_.readFloat(), p_197543_2_.readFloat(), p_197543_2_.readFloat());
 		}
 	};
@@ -54,10 +54,10 @@ public class TreasureParticleData  implements IParticleData
 		this.r = p_i47950_1_;
 		this.g = p_i47950_2_;
 		this.b = p_i47950_3_;
-		this.scale = MathHelper.clamp(p_i47950_4_, 0.01F, 4.0F);
+		this.scale = Mth.clamp(p_i47950_4_, 0.01F, 4.0F);
 	}
 	
-	public void writeToNetwork(PacketBuffer p_197553_1_) {
+	public void writeToNetwork(FriendlyByteBuf p_197553_1_) {
 		p_197553_1_.writeFloat(this.r);
 		p_197553_1_.writeFloat(this.g);
 		p_197553_1_.writeFloat(this.b);

@@ -4,15 +4,15 @@ import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.network.IMessage;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
-import net.minecraftforge.fml.network.NetworkEvent.Context;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.network.NetworkEvent.Context;
+import net.minecraftforge.network.NetworkDirection;
+import net.minecraftforge.network.PacketDistributor;
 
 import java.util.function.Supplier;
 
-import static net.minecraftforge.fml.network.NetworkDirection.PLAY_TO_SERVER;
 
 public class SyncBooleanConfig implements IMessage<SyncBooleanConfig>
 {
@@ -30,7 +30,7 @@ public class SyncBooleanConfig implements IMessage<SyncBooleanConfig>
 	}
 	
 	@Override
-	public void encode(SyncBooleanConfig message, PacketBuffer buffer)
+	public void encode(SyncBooleanConfig message, FriendlyByteBuf buffer)
 	{
 		buffer.writeUtf(message.type);
 		buffer.writeBoolean(message.value);
@@ -38,7 +38,7 @@ public class SyncBooleanConfig implements IMessage<SyncBooleanConfig>
 	}
 	
 	@Override
-	public SyncBooleanConfig decode(PacketBuffer buffer)
+	public SyncBooleanConfig decode(FriendlyByteBuf buffer)
 	{
 		String type = buffer.readUtf();
 		boolean value = buffer.readBoolean();
@@ -49,8 +49,8 @@ public class SyncBooleanConfig implements IMessage<SyncBooleanConfig>
 	@Override
 	public void handle(SyncBooleanConfig message, Supplier<Context> supplier)
 	{
-		if(supplier.get().getDirection() == PLAY_TO_SERVER){
-			ServerPlayerEntity entity = supplier.get().getSender();
+		if(supplier.get().getDirection() == NetworkDirection.PLAY_TO_SERVER){
+			ServerPlayer entity = supplier.get().getSender();
 			if(entity == null || !entity.hasPermissions(2)) return;
 			NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg() , new SyncBooleanConfig(message.key, message.value, message.type));
 		}

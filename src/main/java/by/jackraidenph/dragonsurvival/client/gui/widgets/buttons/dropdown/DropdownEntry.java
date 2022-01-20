@@ -1,5 +1,5 @@
 package by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.dropdown;
 
-import net.minecraft.client.gui.widget.list.AbstractOptionList;
+import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 
-public abstract class DropdownEntry extends AbstractOptionList.Entry<DropdownEntry> {}
+public abstract class DropdownEntry extends ContainerObjectSelectionList.Entry<DropdownEntry> {}

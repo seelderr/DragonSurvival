@@ -1,7 +1,7 @@
 package by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.dropdown;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
 

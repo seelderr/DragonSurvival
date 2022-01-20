@@ -3,18 +3,19 @@ package by.jackraidenph.dragonsurvival.client.gui.widgets;
 import by.jackraidenph.dragonsurvival.client.render.ClientDragonRender;
 import by.jackraidenph.dragonsurvival.common.entity.DragonEntity;
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.gui.FocusableGui;
-import net.minecraft.client.gui.IGuiEventListener;
-import net.minecraft.client.gui.IRenderable;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.util.math.MathHelper;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.components.events.AbstractContainerEventHandler;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.util.Mth;
 import software.bernie.geckolib3.core.processor.IBone;
 
 import java.util.List;
 import java.util.function.Supplier;
 
-public class DragonUIRenderComponent extends FocusableGui implements IRenderable{
+public class DragonUIRenderComponent extends AbstractContainerEventHandler implements Widget
+{
 	public float yRot = -3;
 	public float xRot = -5;
 	public float zoom = 0;
@@ -38,13 +39,13 @@ public class DragonUIRenderComponent extends FocusableGui implements IRenderable
 	}
 	
 	@Override
-	public void render(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks)
+	public void render(PoseStack pPoseStack , int pMouseX, int pMouseY, float pPartialTicks)
 	{
 		if(isMouseOver(pMouseX, pMouseY)){
 			screen.setFocused(this);
 		}
 		
-		pMatrixStack.pushPose();
+		pPoseStack .pushPose();
 		final IBone neckandHead = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("Neck");
 		
 		if (neckandHead != null) {
@@ -52,11 +53,11 @@ public class DragonUIRenderComponent extends FocusableGui implements IRenderable
 		}
 		
 		float scale = zoom;
-		pMatrixStack.scale(scale, scale, scale);
-		pMatrixStack.translate(0, 0, 400);
+		pPoseStack .scale(scale, scale, scale);
+		pPoseStack .translate(0, 0, 400);
 		ClientDragonRender.dragonModel.setCurrentTexture(null);
 		ClientDragonRender.renderEntityInInventory(getter.get(), x + width / 2, y + height - 30, scale, xRot, yRot);
-		pMatrixStack.popPose();
+		pPoseStack .popPose();
 	}
 	
 	@Override
@@ -65,25 +66,27 @@ public class DragonUIRenderComponent extends FocusableGui implements IRenderable
 		xRot -= x2 / 6;
 		yRot -= y2 / 6;
 		
-		xRot = MathHelper.clamp(xRot, -17, 17);
-		yRot = MathHelper.clamp(yRot, -17, 17);
+		xRot = Mth.clamp(xRot, -17, 17);
+		yRot = Mth.clamp(yRot, -17, 17);
 		return true;
 	}
+	
 	
 	@Override
 	public boolean mouseScrolled(double mouseX, double mouseY, double amount)
 	{
 		if(isMouseOver(mouseX, mouseY)) {
 			zoom += amount;
-			zoom = MathHelper.clamp(zoom, 10, 80);
+			zoom = Mth.clamp(zoom, 10, 80);
 			return true;
 		}
 		return super.mouseScrolled(mouseX, mouseY, amount);
 	}
 	
 	@Override
-	public List<? extends IGuiEventListener> children()
+	public List<? extends GuiEventListener> children()
 	{
 		return ImmutableList.of();
 	}
+	
 }

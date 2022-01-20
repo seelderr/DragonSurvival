@@ -1,18 +1,19 @@
 package by.jackraidenph.dragonsurvival.common.handlers;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.*;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
+
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.Container;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.*;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 
@@ -56,12 +57,12 @@ public final class SortingHandler {
 			SortingHandler::enchantmentCompare,
 			SortingHandler::damageCompare);
 	
-	public static void sortInventory(PlayerEntity player) {
-		Container c = player.containerMenu;
+	public static void sortInventory(Player player) {
+		AbstractContainerMenu c = player.containerMenu;
 		
 		for (Slot s : c.slots) {
-			IInventory inv = s.container;
-			if (inv == player.inventory) {
+			Container inv = s.container;
+			if (inv == player.getInventory()) {
 				InvWrapper wrapper = new InvWrapper(inv);
 				sortInventory(wrapper, 9, 36);
 				break;
@@ -83,17 +84,17 @@ public final class SortingHandler {
 		mergeStacks(stacks);
 		sortStackList(stacks);
 		
-		if (setInventory(handler, stacks, iStart, iEnd) == ActionResultType.FAIL)
+		if (setInventory(handler, stacks, iStart, iEnd) == InteractionResult.FAIL)
 			setInventory(handler, restore, iStart, iEnd);
 	}
 	
-	private static ActionResultType setInventory(IItemHandler inventory, List<ItemStack> stacks, int iStart, int iEnd) {
+	private static InteractionResult setInventory(IItemHandler inventory, List<ItemStack> stacks, int iStart, int iEnd) {
 		for (int i = iStart; i < iEnd; i++) {
 			int j = i - iStart;
 			ItemStack stack = j >= stacks.size() ? ItemStack.EMPTY : stacks.get(j);
 			
 			if (!stack.isEmpty() && !inventory.isItemValid(i, stack))
-				return ActionResultType.PASS;
+				return InteractionResult.PASS;
 		}
 		
 		for (int i = iStart; i < iEnd; i++) {
@@ -103,10 +104,10 @@ public final class SortingHandler {
 			inventory.extractItem(i, inventory.getSlotLimit(i), false);
 			if (!stack.isEmpty())
 				if (!inventory.insertItem(i, stack, false).isEmpty())
-					return ActionResultType.FAIL;
+					return InteractionResult.FAIL;
 		}
 		
-		return ActionResultType.SUCCESS;
+		return InteractionResult.SUCCESS;
 	}
 	
 	public static void mergeStacks(List<ItemStack> list) {
@@ -284,14 +285,14 @@ public final class SortingHandler {
 	}
 	
 	private static int toolPowerCompare(ItemStack stack1, ItemStack stack2) {
-		IItemTier mat1 = ((ToolItem) stack1.getItem()).getTier();
-		IItemTier mat2 = ((ToolItem) stack2.getItem()).getTier();
+		Tier mat1 = ((TieredItem) stack1.getItem()).getTier();
+		Tier mat2 = ((TieredItem) stack2.getItem()).getTier();
 		return (int) (mat2.getSpeed() * 100 - mat1.getSpeed() * 100);
 	}
 	
 	private static int swordPowerCompare(ItemStack stack1, ItemStack stack2) {
-		IItemTier mat1 = ((SwordItem) stack1.getItem()).getTier();
-		IItemTier mat2 = ((SwordItem) stack2.getItem()).getTier();
+		Tier mat1 = ((SwordItem) stack1.getItem()).getTier();
+		Tier mat2 = ((SwordItem) stack2.getItem()).getTier();
 		return (int) (mat2.getAttackDamageBonus() * 100 - mat1.getAttackDamageBonus() * 100);
 	}
 	
@@ -299,8 +300,8 @@ public final class SortingHandler {
 		ArmorItem armor1 = (ArmorItem) stack1.getItem();
 		ArmorItem armor2 = (ArmorItem) stack2.getItem();
 		
-		EquipmentSlotType slot1 = armor1.getSlot();
-		EquipmentSlotType slot2 = armor2.getSlot();
+		EquipmentSlot slot1 = armor1.getSlot();
+		EquipmentSlot slot2 = armor2.getSlot();
 		
 		if (slot1 == slot2)
 			return armor2.getMaterial().getDefenseForSlot(slot2) - armor2.getMaterial().getDefenseForSlot(slot1);
@@ -320,7 +321,7 @@ public final class SortingHandler {
 		TOOL_SHOVEL(classPredicate(ShovelItem.class), TOOL_COMPARATOR),
 		TOOL_AXE(classPredicate(AxeItem.class), TOOL_COMPARATOR),
 		TOOL_SWORD(classPredicate(SwordItem.class), SWORD_COMPARATOR),
-		TOOL_GENERIC(classPredicate(ToolItem.class), TOOL_COMPARATOR),
+		TOOL_GENERIC(classPredicate(TieredItem.class), TOOL_COMPARATOR),
 		ARMOR(classPredicate(ArmorItem.class), ARMOR_COMPARATOR),
 		BOW(classPredicate(BowItem.class), BOW_COMPARATOR),
 		CROSSBOW(classPredicate(CrossbowItem.class), BOW_COMPARATOR),

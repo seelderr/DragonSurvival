@@ -7,34 +7,34 @@ import by.jackraidenph.dragonsurvival.client.sounds.SoundRegistry;
 import by.jackraidenph.dragonsurvival.client.sounds.StormBreathSound;
 import by.jackraidenph.dragonsurvival.common.DragonEffects;
 import by.jackraidenph.dragonsurvival.common.capability.Capabilities;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.common.capability.GenericCapability;
+import by.jackraidenph.dragonsurvival.common.capability.caps.GenericCapability;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.entity.DSEntities;
 import by.jackraidenph.dragonsurvival.common.entity.projectiles.StormBreathEntity;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.config.ConfigUtils;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import by.jackraidenph.dragonsurvival.util.Functions;
-import net.minecraft.block.BlockState;
+import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.ISound;
-import net.minecraft.client.audio.SimpleSound;
-import net.minecraft.client.audio.TickableSound;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.effect.LightningBoltEntity;
-import net.minecraft.entity.monster.CreeperEntity;
-import net.minecraft.entity.passive.TameableEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.particles.RedstoneParticleData;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.util.*;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.client.resources.sounds.TickableSoundInstance;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.monster.Creeper;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.FakePlayer;
@@ -72,24 +72,24 @@ public class StormBreathAbility extends BreathAbility
 	public static StormBreathEntity EFFECT_ENTITY;
 	
 	@OnlyIn(Dist.CLIENT)
-	private ISound startingSound;
+	private SimpleSoundInstance startingSound;
 
 	@OnlyIn(Dist.CLIENT)
-	private TickableSound loopingSound;
+	private TickableSoundInstance loopingSound;
 
 	@OnlyIn(Dist.CLIENT)
-	private ISound endSound;
+	private SimpleSoundInstance endSound;
 	
 	@OnlyIn(Dist.CLIENT)
 	public void sound(){
 		if (castingTicks == 2) {
 			if(startingSound == null){
-				startingSound = SimpleSound.forAmbientAddition(SoundRegistry.stormBreathStart);
+				startingSound = SimpleSoundInstance.forAmbientAddition(SoundRegistry.stormBreathStart);
 			}
 			Minecraft.getInstance().getSoundManager().play(startingSound);
 			loopingSound = new StormBreathSound(this);
 			
-			Minecraft.getInstance().getSoundManager().stop(new ResourceLocation(DragonSurvivalMod.MODID, "storm_breath_loop"), SoundCategory.PLAYERS);
+			Minecraft.getInstance().getSoundManager().stop(new ResourceLocation(DragonSurvivalMod.MODID, "storm_breath_loop"), SoundSource.PLAYERS);
 			Minecraft.getInstance().getSoundManager().play(loopingSound);
 		}
 	}
@@ -100,13 +100,13 @@ public class StormBreathAbility extends BreathAbility
 		
 		if(SoundRegistry.stormBreathEnd != null) {
 			if (endSound == null) {
-				endSound = SimpleSound.forAmbientAddition(SoundRegistry.stormBreathEnd);
+				endSound = SimpleSoundInstance.forAmbientAddition(SoundRegistry.stormBreathEnd);
 			}
 
 			Minecraft.getInstance().getSoundManager().play(endSound);
 		}
 		
-		Minecraft.getInstance().getSoundManager().stop(new ResourceLocation(DragonSurvivalMod.MODID, "storm_breath_loop"), SoundCategory.PLAYERS);
+		Minecraft.getInstance().getSoundManager().stop(new ResourceLocation(DragonSurvivalMod.MODID, "storm_breath_loop"), SoundSource.PLAYERS);
 	}
 
 	@Override
@@ -134,7 +134,7 @@ public class StormBreathAbility extends BreathAbility
 	}
 	
 	@Override
-	public void onActivation(PlayerEntity player)
+	public void onActivation(Player player)
 	{
 		if(EFFECT_ENTITY == null){
 			EFFECT_ENTITY = DSEntities.STORM_BREATH_EFFECT.create(player.level);
@@ -173,7 +173,7 @@ public class StormBreathAbility extends BreathAbility
 	@Override
 	public boolean canHitEntity(LivingEntity entity)
 	{
-		return !(entity instanceof PlayerEntity) || player.canHarmPlayer(((PlayerEntity)entity));
+		return !(entity instanceof Player) || player.canHarmPlayer(((Player)entity));
 	}
 	
 	@Override
@@ -187,11 +187,11 @@ public class StormBreathAbility extends BreathAbility
 	}
 	
 	public static void onDamageChecks(LivingEntity entity){
-		if(entity instanceof CreeperEntity){
-			CreeperEntity creeper = (CreeperEntity)entity;
+		if(entity instanceof Creeper){
+			Creeper creeper = (Creeper)entity;
 			
 			if(!creeper.isPowered()){
-				creeper.getEntityData().set(CreeperEntity.DATA_IS_POWERED, true);
+				creeper.getEntityData().set(Creeper.DATA_IS_POWERED, true);
 			}
 		}
 	}
@@ -202,7 +202,7 @@ public class StormBreathAbility extends BreathAbility
 		
 		if(player.level.random.nextInt(100) < 50){
 			if(!player.level.isClientSide) {
-				player.addEffect(new EffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(30)));
+				player.addEffect(new MobEffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(30)));
 			}
 		}
 		
@@ -215,16 +215,16 @@ public class StormBreathAbility extends BreathAbility
 					cap.chainCount = 1;
 				}
 				
-				entity.addEffect(new EffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(10), 0, false, true));
+				entity.addEffect(new MobEffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(10), 0, false, true));
 			}
 		}
 	}
 	
 	public static void spark(LivingEntity source, LivingEntity target){
 		if(source.level.isClientSide) {
-			float eyeHeight = source instanceof PlayerEntity ? 0f : source.getEyeHeight();
-			Vector3d start = source.getPosition(eyeHeight);
-			Vector3d end = target.getPosition(target.getEyeHeight());
+			float eyeHeight = source instanceof Player ? 0f : source.getEyeHeight();
+			Vec3 start = source.getPosition(eyeHeight);
+			Vec3 end = target.getPosition(target.getEyeHeight());
 			
 			int parts = 20;
 			
@@ -236,12 +236,12 @@ public class StormBreathAbility extends BreathAbility
 				double x = start.x + (xDif * i);
 				double y = start.y + (yDif * i) + eyeHeight;
 				double z = start.z + (zDif * i);
-				source.level.addParticle(new RedstoneParticleData(0f, 1F, 1F, 1f), x, y, z, 0, 0, 0);
+				source.level.addParticle(new DustParticleOptions(new Vector3f(0f, 1F, 1F), 1f), x, y, z, 0, 0, 0);
 			}
 		}
 	}
 	
-	public static void chargedEffectSparkle(PlayerEntity player, LivingEntity source, int chainRange, int maxChainTargets, int damage){
+	public static void chargedEffectSparkle(Player player, LivingEntity source, int chainRange, int maxChainTargets, int damage){
 		List<LivingEntity> secondaryTargets = getEntityLivingBaseNearby(source, source.getX(), source.getY() + source.getBbHeight() / 2, source.getZ(), chainRange);
 		secondaryTargets.removeIf(e -> !isValidTarget(source, e));
 		
@@ -287,7 +287,7 @@ public class StormBreathAbility extends BreathAbility
 						if (target.level.random.nextInt(100) < 40) {
 							if (cap != null && (cap.chainCount < ConfigHandler.SERVER.chargedEffectMaxChain.get() || ConfigHandler.SERVER.chargedEffectMaxChain.get() == -1)) {
 								cap.lastAfflicted = player != null ? player.getId() : -1;
-								target.addEffect(new EffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(10), 0, false, true));
+								target.addEffect(new MobEffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(10), 0, false, true));
 							}
 						}
 					}
@@ -295,7 +295,7 @@ public class StormBreathAbility extends BreathAbility
 					if (player != null) {
 						if (player.level.random.nextInt(100) < 50) {
 							if (!player.level.isClientSide) {
-								player.addEffect(new EffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(30)));
+								player.addEffect(new MobEffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(30)));
 							}
 						}
 					}
@@ -313,11 +313,11 @@ public class StormBreathAbility extends BreathAbility
 				if (player.level.isThundering()) {
 					if (player.level.random.nextInt(100) < 30) {
 						if (player.level.canSeeSky(pos)) {
-							LightningBoltEntity lightningboltentity = EntityType.LIGHTNING_BOLT.create(player.level);
-							lightningboltentity.moveTo(new Vector3d(pos.getX(), pos.getY(), pos.getZ()));
-							lightningboltentity.setCause((ServerPlayerEntity)player);
+							LightningBolt lightningboltentity = EntityType.LIGHTNING_BOLT.create(player.level);
+							lightningboltentity.moveTo(new Vec3(pos.getX(), pos.getY(), pos.getZ()));
+							lightningboltentity.setCause((ServerPlayer)player);
 							player.level.addFreshEntity(lightningboltentity);
-							player.level.playSound(player, pos, SoundEvents.LIGHTNING_BOLT_THUNDER, SoundCategory.WEATHER, 5F, 1.0F);
+							player.level.playSound(player, pos, SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.WEATHER, 5F, 1.0F);
 						}
 					}
 				}
@@ -334,9 +334,9 @@ public class StormBreathAbility extends BreathAbility
 	}
 	
 	@OnlyIn( Dist.CLIENT )
-	public ArrayList<ITextComponent> getLevelUpInfo(){
-		ArrayList<ITextComponent> list = super.getLevelUpInfo();
-		list.add(new TranslationTextComponent("ds.skill.damage", "+" + ConfigHandler.SERVER.stormBreathDamage.get()));
+	public ArrayList<Component> getLevelUpInfo(){
+		ArrayList<Component> list = super.getLevelUpInfo();
+		list.add(new TranslatableComponent("ds.skill.damage", "+" + ConfigHandler.SERVER.stormBreathDamage.get()));
 		return list;
 	}
 	
@@ -344,8 +344,8 @@ public class StormBreathAbility extends BreathAbility
 		if(target == null || attacker == null) return false;
 		if(target == attacker) return false;
 		if(target instanceof FakePlayer) return false;
-		if(target instanceof TameableEntity && ((TameableEntity)target).getOwner() == attacker) return false;
-		if(attacker instanceof TameableEntity && !isValidTarget(((TameableEntity)attacker).getOwner(), target)) return false;
+		if(target instanceof TamableAnimal && ((TamableAnimal)target).getOwner() == attacker) return false;
+		if(attacker instanceof TamableAnimal && !isValidTarget(((TamableAnimal)attacker).getOwner(), target)) return false;
 		if(target.getLastHurtByMob() == attacker && target.getLastHurtByMobTimestamp() + Functions.secondsToTicks(1) < target.tickCount) return false;
 		if(DragonStateProvider.getCap(target).map(cap -> cap.getType()).orElse(null) == DragonType.SEA) return false;
 		

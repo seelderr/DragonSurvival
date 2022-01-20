@@ -3,12 +3,12 @@ package by.jackraidenph.dragonsurvival.network.SkinCustomization;
 import by.jackraidenph.dragonsurvival.client.gui.DragonCustomizationScreen;
 import by.jackraidenph.dragonsurvival.network.IMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.DistExecutor.SafeRunnable;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
@@ -18,12 +18,12 @@ public class OpenDragonCustomization implements IMessage<OpenDragonCustomization
 	public OpenDragonCustomization() {}
 
 	@Override
-	public void encode(OpenDragonCustomization message, PacketBuffer buffer) {
+	public void encode(OpenDragonCustomization message, FriendlyByteBuf buffer) {
 
 	}
 	
 	@Override
-	public OpenDragonCustomization decode(PacketBuffer buffer) {
+	public OpenDragonCustomization decode(FriendlyByteBuf buffer) {
 		return new OpenDragonCustomization();
 	}
 	

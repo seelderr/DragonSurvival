@@ -1,17 +1,17 @@
 package by.jackraidenph.dragonsurvival.client.handlers;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.caps.DragonStateHandler;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonLevel;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import com.google.gson.Gson;
+import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.client.renderer.texture.NativeImage;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -20,7 +20,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Locale;
 
 public class DragonSkins
 {
@@ -34,7 +37,7 @@ public class DragonSkins
 	
 	private static ArrayList<String> hasFailedFetch = new ArrayList<>();
 	
-	public static boolean renderStage(PlayerEntity player, DragonLevel level){
+	public static boolean renderStage(Player player, DragonLevel level){
 		DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
 		
 		if(handler != null){
@@ -82,7 +85,7 @@ public class DragonSkins
 	}
 	
 	
-	public static ResourceLocation getPlayerSkin(PlayerEntity player, DragonType type, DragonLevel dragonStage) {
+	public static ResourceLocation getPlayerSkin(Player player, DragonType type, DragonLevel dragonStage) {
 		ResourceLocation texture = null;
 		String playerKey = player.getGameProfile().getName() + "_" + dragonStage.name;
 		
@@ -106,7 +109,7 @@ public class DragonSkins
 	}
 	
 	
-	public static ResourceLocation getGlowTexture(PlayerEntity player, DragonType type, DragonLevel dragonStage) {
+	public static ResourceLocation getGlowTexture(Player player, DragonType type, DragonLevel dragonStage) {
 		ResourceLocation texture = null;
 		String playerKey = player.getGameProfile().getName() + "_" + dragonStage.name;
 		boolean renderStage = renderStage(player, dragonStage);
@@ -130,7 +133,7 @@ public class DragonSkins
 		return texture;
 	}
 	
-	public static ResourceLocation fetchSkinFile(PlayerEntity playerEntity, DragonLevel dragonStage, String... extra) {
+	public static ResourceLocation fetchSkinFile(Player playerEntity, DragonLevel dragonStage, String... extra) {
 		ResourceLocation resourceLocation = null;
 		String name = playerEntity.getGameProfile().getName();
 		String playerKey = playerEntity.getGameProfile().getName() + "_" + dragonStage.name;

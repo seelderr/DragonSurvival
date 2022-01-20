@@ -7,37 +7,36 @@ import by.jackraidenph.dragonsurvival.client.sounds.PoisonBreathSound;
 import by.jackraidenph.dragonsurvival.client.sounds.SoundRegistry;
 import by.jackraidenph.dragonsurvival.common.DragonEffects;
 import by.jackraidenph.dragonsurvival.common.capability.Capabilities;
-import by.jackraidenph.dragonsurvival.common.capability.GenericCapability;
+import by.jackraidenph.dragonsurvival.common.capability.caps.GenericCapability;
 import by.jackraidenph.dragonsurvival.common.handlers.DragonConfigHandler;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import by.jackraidenph.dragonsurvival.util.Functions;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.IGrowable;
-import net.minecraft.block.PotatoBlock;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.ISound;
-import net.minecraft.client.audio.SimpleSound;
-import net.minecraft.client.audio.TickableSound;
-import net.minecraft.entity.AreaEffectCloudEntity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Potion;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.client.resources.sounds.TickableSoundInstance;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.AreaEffectCloud;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.BonemealableBlock;
+import net.minecraft.world.level.block.PotatoBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.DistExecutor;
@@ -86,24 +85,24 @@ public class ForestBreathAbility extends BreathAbility
 	}
 	
 	@OnlyIn(Dist.CLIENT)
-	private ISound startingSound;
+	private SimpleSoundInstance startingSound;
 	
 	@OnlyIn(Dist.CLIENT)
-	private TickableSound loopingSound;
+	private TickableSoundInstance loopingSound;
 	
 	@OnlyIn(Dist.CLIENT)
-	private ISound endSound;
+	private SimpleSoundInstance endSound;
 	
 	@OnlyIn(Dist.CLIENT)
 	public void sound(){
 		if (castingTicks == 2) {
 			if(startingSound == null){
-				startingSound = SimpleSound.forAmbientAddition(SoundRegistry.forestBreathStart);
+				startingSound = SimpleSoundInstance.forAmbientAddition(SoundRegistry.forestBreathStart);
 			}
 			Minecraft.getInstance().getSoundManager().play(startingSound);
 			loopingSound = new PoisonBreathSound(this);
 			
-			Minecraft.getInstance().getSoundManager().stop(new ResourceLocation(DragonSurvivalMod.MODID, "forest_breath_loop"), SoundCategory.PLAYERS);
+			Minecraft.getInstance().getSoundManager().stop(new ResourceLocation(DragonSurvivalMod.MODID, "forest_breath_loop"), SoundSource.PLAYERS);
 			Minecraft.getInstance().getSoundManager().play(loopingSound);
 		}
 	}
@@ -115,13 +114,13 @@ public class ForestBreathAbility extends BreathAbility
 		
 		if(SoundRegistry.forestBreathEnd != null) {
 			if (endSound == null) {
-				endSound = SimpleSound.forAmbientAddition(SoundRegistry.forestBreathEnd);
+				endSound = SimpleSoundInstance.forAmbientAddition(SoundRegistry.forestBreathEnd);
 			}
 			
 			Minecraft.getInstance().getSoundManager().play(endSound);
 		}
 		
-		Minecraft.getInstance().getSoundManager().stop(new ResourceLocation(DragonSurvivalMod.MODID, "forest_breath_loop"), SoundCategory.PLAYERS);
+		Minecraft.getInstance().getSoundManager().stop(new ResourceLocation(DragonSurvivalMod.MODID, "forest_breath_loop"), SoundSource.PLAYERS);
 	}
 	
 	@Override
@@ -137,7 +136,7 @@ public class ForestBreathAbility extends BreathAbility
 	}
 	
 	@Override
-	public void onActivation(PlayerEntity player)
+	public void onActivation(Player player)
 	{
 		tickCost();
 		super.onActivation(player);
@@ -196,7 +195,7 @@ public class ForestBreathAbility extends BreathAbility
 				if(cap != null){
 					cap.lastAfflicted = player != null ? player.getId() : -1;
 				}
-				entityHit.addEffect(new EffectInstance(DragonEffects.DRAIN, Functions.secondsToTicks(10), 0, false, true));
+				entityHit.addEffect(new MobEffectInstance(DragonEffects.DRAIN, Functions.secondsToTicks(10), 0, false, true));
 			}
 		}
 	}
@@ -204,7 +203,7 @@ public class ForestBreathAbility extends BreathAbility
 	@Override
 	public boolean canHitEntity(LivingEntity entity)
 	{
-		return !(entity instanceof PlayerEntity) || player.canHarmPlayer(((PlayerEntity)entity));
+		return !(entity instanceof Player) || player.canHarmPlayer(((Player)entity));
 	}
 	
 	@Override
@@ -216,10 +215,10 @@ public class ForestBreathAbility extends BreathAbility
 		if(blockState.getMaterial().isSolidBlocking()) {
 			if(!player.level.isClientSide) {
 				if(player.level.random.nextInt(100) < 30){
-					AreaEffectCloudEntity entity = new AreaEffectCloudEntity(EntityType.AREA_EFFECT_CLOUD, player.level);
+					AreaEffectCloud entity = new AreaEffectCloud(EntityType.AREA_EFFECT_CLOUD, player.level);
 					entity.setWaitTime(0);
 					entity.setPos(pos.above().getX(), pos.above().getY(), pos.above().getZ());
-					entity.setPotion(new Potion(new EffectInstance(DragonEffects.DRAIN, Functions.secondsToTicks(10) * 4))); //Effect duration is divided by 4 normaly
+					entity.setPotion(new Potion(new MobEffectInstance(DragonEffects.DRAIN, Functions.secondsToTicks(10) * 4))); //Effect duration is divided by 4 normaly
 					entity.setDuration(Functions.secondsToTicks(2));
 					entity.setRadius(1);
 					entity.setParticle(new LargePoisonParticleData(37, false));
@@ -239,15 +238,15 @@ public class ForestBreathAbility extends BreathAbility
 		
 		if(blockState.getBlock() != Blocks.GRASS_BLOCK && blockState.getBlock() != Blocks.GRASS) {
 			if (player.level.random.nextInt(100) < 50) {
-				if (blockState.getBlock() instanceof IGrowable) {
+				if (blockState.getBlock() instanceof BonemealableBlock) {
 					if (!DragonConfigHandler.FOREST_DRAGON_BREATH_GROW_BLACKLIST.contains(blockState.getBlock())) {
-						IGrowable igrowable = (IGrowable)blockState.getBlock();
+						BonemealableBlock igrowable = (BonemealableBlock)blockState.getBlock();
 						if (igrowable.isValidBonemealTarget(player.level, pos, blockState, player.level.isClientSide)) {
-							if (player.level instanceof ServerWorld) {
+							if (player.level instanceof ServerLevel) {
 								if (igrowable.isBonemealSuccess(player.level, player.level.random, pos, blockState)) {
 									for (int i = 0; i < 3; i++) {
 										if (igrowable != null) {
-											igrowable.performBonemeal((ServerWorld)player.level, player.level.random, pos, blockState);
+											igrowable.performBonemeal((ServerLevel)player.level, player.level.random, pos, blockState);
 										}
 									}
 								}
@@ -260,9 +259,9 @@ public class ForestBreathAbility extends BreathAbility
 	}
 	
 	@OnlyIn( Dist.CLIENT )
-	public ArrayList<ITextComponent> getLevelUpInfo(){
-		ArrayList<ITextComponent> list = super.getLevelUpInfo();
-		list.add(new TranslationTextComponent("ds.skill.damage", "+" + ConfigHandler.SERVER.forestBreathDamage.get()));
+	public ArrayList<Component> getLevelUpInfo(){
+		ArrayList<Component> list = super.getLevelUpInfo();
+		list.add(new TranslatableComponent("ds.skill.damage", "+" + ConfigHandler.SERVER.forestBreathDamage.get()));
 		return list;
 	}
 	

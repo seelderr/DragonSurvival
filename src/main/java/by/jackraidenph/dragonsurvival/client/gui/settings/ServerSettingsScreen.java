@@ -1,15 +1,15 @@
 package by.jackraidenph.dragonsurvival.client.gui.settings;
 
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
-import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.client.Options;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.BaseComponent;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 public class ServerSettingsScreen extends ClientSettingsScreen
 {
-	public ServerSettingsScreen(Screen p_i225930_1_, GameSettings p_i225930_2_, ITextComponent p_i225930_3_)
+	public ServerSettingsScreen(Screen p_i225930_1_, Options p_i225930_2_, BaseComponent p_i225930_3_)
 	{
 		super(p_i225930_1_, p_i225930_2_, p_i225930_3_);
 	}

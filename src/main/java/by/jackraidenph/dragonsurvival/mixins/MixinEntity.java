@@ -1,16 +1,16 @@
 package by.jackraidenph.dragonsurvival.mixins;
 
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.config.ConfigHandler;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.handlers.DragonSizeHandler;
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.config.ConfigUtils;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntitySize;
-import net.minecraft.entity.Pose;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.math.vector.Vector3f;
+import com.mojang.math.Vector3f;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -19,17 +19,17 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(Entity.class)
+@Mixin( Entity.class)
 public abstract class MixinEntity extends net.minecraftforge.common.capabilities.CapabilityProvider<Entity>{
     @Shadow
-    private EntitySize dimensions;
+    private EntityDimensions dimensions;
 
     protected MixinEntity(Class<Entity> baseClass) {
         super(baseClass);
     }
     
-    @Inject(at = @At(value = "HEAD"), method = "Lnet/minecraft/entity/Entity;positionRider(Lnet/minecraft/entity/Entity;Lnet/minecraft/entity/Entity$IMoveCallback;)V", cancellable = true)
-    private void positionRider(Entity p_226266_1_, Entity.IMoveCallback p_226266_2_, CallbackInfo callbackInfo) {
+    @Inject(at = @At(value = "HEAD"), method = "Lnet/minecraft/world/entity/Entity;positionRider(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/entity/Entity$MoveFunction;)V", cancellable = true)
+    private void positionRider(Entity p_226266_1_, Entity.MoveFunction p_226266_2_, CallbackInfo callbackInfo) {
         if(DragonStateProvider.isDragon((Entity) (net.minecraftforge.common.capabilities.CapabilityProvider<Entity>)this)){
             if (hasPassenger(p_226266_1_)) {
                 double d0 = this.getY() + this.getPassengersRidingOffset() + p_226266_1_.getMyRidingOffset();
@@ -50,7 +50,7 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
         throw new IllegalStateException("Mixin failed to shadow getPassengersRidingOffset()");
     }
     
-    @Inject(at = @At(value = "HEAD"), method = "Lnet/minecraft/entity/Entity;displayFireAnimation()Z", cancellable = true)
+    @Inject(at = @At(value = "HEAD"), method = "Lnet/minecraft/world/entity/Entity;displayFireAnimation()Z", cancellable = true)
     private void hideCaveDragonFireAnimation(CallbackInfoReturnable<Boolean> ci){
         DragonStateProvider.getCap((Entity)(Object)this).ifPresent(dragonStateHandler -> {
             if (dragonStateHandler.getType() == DragonType.CAVE)
@@ -58,7 +58,7 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
         });
     }
 
-    @Inject(at = @At(value = "HEAD"), method = "Lnet/minecraft/entity/Entity;getPassengersRidingOffset()D", cancellable = true)
+    @Inject(at = @At(value = "HEAD"), method = "Lnet/minecraft/world/entity/Entity;getPassengersRidingOffset()D", cancellable = true)
     public void getDragonPassengersRidingOffset(CallbackInfoReturnable<Double> ci) {
         if (DragonStateProvider.isDragon((Entity)(Object)this)){
             switch (((Entity)(Object)this).getPose()){
@@ -76,7 +76,7 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
         }
     }
 
-    @Inject(at = @At(value = "HEAD"), method = "Lnet/minecraft/entity/Entity;isVisuallyCrawling()Z", cancellable = true)
+    @Inject(at = @At(value = "HEAD"), method = "Lnet/minecraft/world/entity/Entity;isVisuallyCrawling()Z", cancellable = true)
     public void isDragonVisuallyCrawling(CallbackInfoReturnable<Boolean> ci){
         if (DragonStateProvider.isDragon((Entity)(Object)this))
             ci.setReturnValue(false);
@@ -90,22 +90,22 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
             }
     }
 
-    @Redirect(method = "canEnterPose(Lnet/minecraft/entity/Pose;)Z", at = @At(value="INVOKE",
-            target="Lnet/minecraft/entity/Entity;getBoundingBoxForPose(Lnet/minecraft/entity/Pose;)Lnet/minecraft/util/math/AxisAlignedBB;"
+    @Redirect(method = "canEnterPose(Lnet/minecraft/world/entity/Pose;)Z", at = @At(value="INVOKE",
+            target="Lnet/minecraft/world/entity/Entity;getBoundingBoxForPose(Lnet/minecraft/world/entity/Pose;)Lnet/minecraft/world/phys/AABB;"
     ))
-    public AxisAlignedBB dragonPoseBB(Entity entity, Pose pose) {
+    public AABB dragonPoseBB(Entity entity, Pose pose) {
         if (DragonStateProvider.isDragon(entity) && ConfigHandler.SERVER.sizeChangesHitbox.get()){
             double size = DragonStateProvider.getCap(entity).orElseGet(null).getSize();
             double height = DragonSizeHandler.calculateModifiedHeight(DragonSizeHandler.calculateDragonHeight(size, ConfigHandler.SERVER.hitboxGrowsPastHuman.get()), pose, ConfigHandler.SERVER.sizeChangesHitbox.get());
             double width = DragonSizeHandler.calculateDragonWidth(size, ConfigHandler.SERVER.hitboxGrowsPastHuman.get()) / 2.0D;
-            Vector3d vector3d = new Vector3d(getX() - width, getY(), getZ() - width);
-            Vector3d vector3d1 = new Vector3d(getX() + width, getY() + height, getZ() + width);
-            return new AxisAlignedBB(vector3d, vector3d1);
+            Vec3 vector3d = new Vec3(getX() - width, getY(), getZ() - width);
+            Vec3 vector3d1 = new Vec3(getX() + width, getY() + height, getZ() + width);
+            return new AABB(vector3d, vector3d1);
         } else
             return getBoundingBoxForPose(pose);
     }
     @Shadow
-    public AxisAlignedBB getBoundingBoxForPose(Pose pose){
+    public AABB getBoundingBoxForPose(Pose pose){
         throw new IllegalStateException("Mixin failed to shadow getBoundingBoxForPose()");
     }
 

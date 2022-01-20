@@ -1,9 +1,10 @@
 package by.jackraidenph.dragonsurvival.client.util;
 
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
+import by.jackraidenph.dragonsurvival.common.capability.caps.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.entity.DSEntities;
 import by.jackraidenph.dragonsurvival.common.entity.DragonEntity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.Entity.RemovalReason;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
@@ -36,7 +37,7 @@ public class FakeClientPlayerUtils
 		
 		fakeDragons.computeIfAbsent(num, (n) -> new DragonEntity(DSEntities.DRAGON, clientPlayer.level){
 			@Override
-			public PlayerEntity getPlayer()
+			public Player getPlayer()
 			{
 				return clientPlayer;
 			}
@@ -69,8 +70,8 @@ public class FakeClientPlayerUtils
 	public static void clientTick(ClientTickEvent event){
 		fakePlayers.forEach((i, v) -> {
 			if (System.currentTimeMillis() - v.lastAccessed >= TimeUnit.MILLISECONDS.convert(10, TimeUnit.MINUTES)) {
-				v.remove();
-				fakeDragons.get(i).remove();
+				v.remove(RemovalReason.DISCARDED);
+				fakeDragons.get(i).remove(RemovalReason.DISCARDED);
 				
 				fakeDragons.remove(i);
 				fakePlayers.remove(i);
