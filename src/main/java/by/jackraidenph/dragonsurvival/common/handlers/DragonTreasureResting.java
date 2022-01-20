@@ -157,7 +157,7 @@ public class DragonTreasureResting
 		
 		DragonStateProvider.getCap(playerEntity).ifPresent(cap -> {
 			if (event.getType() == ElementType.ALL) {
-				GL11.glPushMatrix();
+				
 				Window window = Minecraft.getInstance().getWindow();
 				float f = playerEntity.level.getSunAngle(1.0F);
 				
@@ -174,7 +174,7 @@ public class DragonTreasureResting
 					Gui.fill(event.getMatrixStack(), 0, 0, window.getGuiScaledWidth(), window.getGuiScaledHeight(), darkening.getRGB());
 				}
 				
-				GL11.glPopMatrix();
+				
 			}
 		});
 	}

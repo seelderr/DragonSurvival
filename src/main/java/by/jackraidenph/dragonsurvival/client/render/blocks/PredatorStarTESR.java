@@ -94,7 +94,7 @@ public class PredatorStarTESR {
 //        pStack.pop();*/
 //
 //        Camera activerenderinfo = this.renderer.camera;
-//        GL11.glPushMatrix();
+//        
 //        RenderSystem.enableBlend();
 //        pStack.pushPose();
 //
@@ -108,7 +108,7 @@ public class PredatorStarTESR {
 //        this.field_228872_h_.render(pStack, OPEN_EYE_TEXTURE.buffer(bufferIn, RenderType::entityTranslucent), combinedLightIn, combinedOverlayIn);
 //
 //        pStack.popPose();
-//        GL11.glPopMatrix();
+//        
 //    }
 //    */
 }

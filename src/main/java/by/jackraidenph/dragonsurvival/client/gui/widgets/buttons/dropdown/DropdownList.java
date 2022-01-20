@@ -9,7 +9,6 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraftforge.client.gui.GuiUtils;
-import org.lwjgl.opengl.GL11;
 
 public class DropdownList extends AbstractSelectionList<DropdownEntry>
 {
@@ -56,13 +55,10 @@ public class DropdownList extends AbstractSelectionList<DropdownEntry>
 	@Override
 	protected void renderBackground(PoseStack  stack)
 	{
-		Minecraft.getInstance().textureManager.bindForSetup(BACKGROUND_TEXTURE);
-		GuiUtils.drawContinuousTexturedBox(stack, x0, y0 - 3, 0, 0, width, height + 6, 32, 32, 10, 10);
+		GuiUtils.drawContinuousTexturedBox(stack, BACKGROUND_TEXTURE, x0, y0 - 3, 0, 0, width, height + 6, 32, 32, 10, 10);
 		if(children().size() > 0) {
-			GL11.glScissor((int)(x0 * Minecraft.getInstance().getWindow().getGuiScale()), (int)(Minecraft.getInstance().getWindow().getScreenHeight() - ((y1 - 3) * Minecraft.getInstance().getWindow().getGuiScale())), (int)(width * Minecraft.getInstance().getWindow().getGuiScale()), (int)((height - 6) * Minecraft.getInstance().getWindow().getGuiScale()));
-			GL11.glEnable(GL11.GL_SCISSOR_TEST);
+			RenderSystem.enableScissor((int)(x0 * Minecraft.getInstance().getWindow().getGuiScale()), (int)(Minecraft.getInstance().getWindow().getScreenHeight() - ((y1 - 3) * Minecraft.getInstance().getWindow().getGuiScale())), (int)(width * Minecraft.getInstance().getWindow().getGuiScale()), (int)((height - 6) * Minecraft.getInstance().getWindow().getGuiScale()));
 		}
-		
 	}
 	
 	@Override
@@ -86,7 +82,7 @@ public class DropdownList extends AbstractSelectionList<DropdownEntry>
 				i2 = this.y0;
 			}
 			
-			bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+			bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 			bufferbuilder.vertex((double)i, (double)this.y1, 0.0D).uv(0.0F, 1.0F).color(0, 0, 0, 255).endVertex();
 			bufferbuilder.vertex((double)j, (double)this.y1, 0.0D).uv(1.0F, 1.0F).color(0, 0, 0, 255).endVertex();
 			bufferbuilder.vertex((double)j, (double)this.y0, 0.0D).uv(1.0F, 0.0F).color(0, 0, 0, 255).endVertex();
@@ -107,7 +103,7 @@ public class DropdownList extends AbstractSelectionList<DropdownEntry>
 		RenderSystem.disableBlend();
 		
 		if(children().size() > 0) {
-			GL11.glDisable(GL11.GL_SCISSOR_TEST);
+			RenderSystem.disableScissor();
 		}
 	}
 	

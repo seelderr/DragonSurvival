@@ -480,17 +480,16 @@ public class ClientDragonRender
 	    boolean renderHitbox = entityrenderermanager.shouldRenderHitBoxes();
 	    quaternion1.conj();
 	    entityrenderermanager.overrideCameraOrientation(quaternion1);
-	    entityrenderermanager.setRenderShadow(false);
 	    MultiBufferSource irendertypebuffer$impl = Minecraft.getInstance().renderBuffers().bufferSource();
 	    RenderSystem.runAsFancy(() -> {
-	        entityrenderermanager.setRenderHitBoxes(false);
+		    entityrenderermanager.setRenderShadow(false);
+		    entityrenderermanager.setRenderHitBoxes(false);
 	        entityrenderermanager.render(entity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, PoseStack , irendertypebuffer$impl, 15728880);
 	        entityrenderermanager.setRenderHitBoxes(renderHitbox);
+		    entityrenderermanager.setRenderShadow(true);
+		
 	    });
-	    
-//	    irendertypebuffer$impl.endBatch();
-	    entityrenderermanager.setRenderShadow(true);
-	    
+		
 	    entity.yBodyRot = f2;
 	    entity.setYRot(f3);
 	    entity.setXRot(f4);

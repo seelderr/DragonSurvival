@@ -11,6 +11,7 @@ import by.jackraidenph.dragonsurvival.common.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.common.magic.common.InnateDragonAbility;
 import by.jackraidenph.dragonsurvival.common.magic.common.PassiveDragonAbility;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -21,7 +22,6 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -140,20 +140,20 @@ public class AbilityScreen extends Screen
         int startX = this.guiLeft;
         int startY = this.guiTop;
         
-        this.minecraft.getTextureManager().bindForSetup(BACKGROUND_TEXTURE);
+        RenderSystem.setShaderTexture(0,BACKGROUND_TEXTURE);
         blit(stack, startX, startY, 0, 0, 256, 256);
         
         if(type != null) {
             int barYPos = type == DragonType.SEA ? 198 : type == DragonType.FOREST ? 186 : 192;
     
-            minecraft.getTextureManager().bindForSetup(ClientMagicHUDHandler.widgetTextures);
+            RenderSystem.setShaderTexture(0, ClientMagicHUDHandler.widgetTextures);
     
             float progress = Mth.clamp((minecraft.player.experienceLevel / 50F), 0, 1);
             float progress1 = Math.min(1F, (Math.min(0.5F, progress) * 2F));
             float progress2 = Math.min(1F, (Math.min(0.5F, progress - 0.5F) * 2F));
     
-            GL11.glPushMatrix();
-            GL11.glTranslatef(0.5F, 0.75F, 0F);
+            stack.pushPose();
+            stack.translate(0.5F, 0.75F, 0F);
             blit(stack, startX + (23 / 2), startY + 28, 0, 180 / 2, 105, 3, 128, 128);
             blit(stack, startX + (254 / 2), startY + 28,  0, 180 / 2,105, 3, 128, 128);
 
@@ -162,6 +162,7 @@ public class AbilityScreen extends Screen
             if (progress > 0.5) {
                 blit(stack, startX + (254 / 2), startY + 28, 0, barYPos / 2, (int)(105 * progress2), 3, 128, 128);
             }
+            stack.popPose();
             
             int expChange = -1;
             
@@ -186,14 +187,14 @@ public class AbilityScreen extends Screen
                 }
             }
     
-            GL11.glPopMatrix();
             
-            GL11.glPushMatrix();
+            
+            
             MutableComponent textComponent = new TextComponent(Integer.toString(minecraft.player.experienceLevel)).withStyle(ChatFormatting.DARK_GRAY);
             int xPos = startX + 117 + 1;
             float finalXPos = (float)(xPos - minecraft.font.width(textComponent) / 2);
             minecraft.font.draw(stack, textComponent, finalXPos, startY + 26, 0);
-            GL11.glPopMatrix();
+            
         }
     
         super.render(stack, mouseX, mouseY, partialTicks);

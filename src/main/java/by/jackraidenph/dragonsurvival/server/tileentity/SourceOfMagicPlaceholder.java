@@ -12,13 +12,13 @@ public class SourceOfMagicPlaceholder extends BaseBlockTileEntity
     }
     
     public BlockPos rootPos = BlockPos.ZERO;
-
+    
     @Override
-    public CompoundTag save(CompoundTag compound) {
-        compound.putLong("Root", rootPos.asLong());
-        return super.save(compound);
+    protected void saveAdditional(CompoundTag pTag)
+    {
+        pTag.putLong("Root", rootPos.asLong());
     }
-
+    
     @Override
     public void load(CompoundTag compound) {
         super.load(compound);

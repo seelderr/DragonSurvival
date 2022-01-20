@@ -3,6 +3,7 @@ package by.jackraidenph.dragonsurvival.client.gui.widgets.buttons;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownEntry;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownList;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownValueEntry;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -13,7 +14,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
-import org.lwjgl.opengl.GL11;
 
 import java.util.List;
 import java.util.Locale;
@@ -120,11 +120,10 @@ public class DropDownButton extends ExtendedButton implements TooltipAccessor
 					list.visible = DropDownButton.this.visible;
 					
 					if(finalHasBorder){
-						GL11.glScissor(0,
+						RenderSystem.enableScissor(0,
 						               (int)(32 * Minecraft.getInstance().getWindow().getGuiScale()),
 						               Minecraft.getInstance().getWindow().getScreenWidth(),
 						               Minecraft.getInstance().getWindow().getScreenHeight() - (int)((32) * Minecraft.getInstance().getWindow().getGuiScale())*2);
-						GL11.glEnable(GL11.GL_SCISSOR_TEST);
 					}
 					
 					if(list.visible) {
@@ -132,7 +131,7 @@ public class DropDownButton extends ExtendedButton implements TooltipAccessor
 					}
 					
 					if(finalHasBorder){
-						GL11.glDisable(GL11.GL_SCISSOR_TEST);
+						RenderSystem.disableScissor();
 					}
 				}
 			};

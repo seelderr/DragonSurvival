@@ -4,7 +4,6 @@ import by.jackraidenph.dragonsurvival.common.blocks.DSBlocks;
 import by.jackraidenph.dragonsurvival.common.blocks.SourceOfMagicBlock;
 import by.jackraidenph.dragonsurvival.common.items.DSItems;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
-import by.jackraidenph.dragonsurvival.misc.DragonType;
 import by.jackraidenph.dragonsurvival.server.containers.SourceOfMagicContainer;
 import by.jackraidenph.dragonsurvival.util.Functions;
 import io.netty.buffer.Unpooled;
@@ -33,7 +32,6 @@ import java.util.HashMap;
 
 public class SourceOfMagicTileEntity extends BaseBlockTileEntity implements Container, MenuProvider, IAnimatable
 {
-    public DragonType type = DragonType.NONE;
     public NonNullList<ItemStack> stacks = NonNullList.withSize(1, ItemStack.EMPTY);
     
     private final AnimationFactory manager = new AnimationFactory(this);
@@ -57,14 +55,6 @@ public class SourceOfMagicTileEntity extends BaseBlockTileEntity implements Cont
     private int ticks;
     
     public static void serverTick(Level pLevel, BlockPos pPos, BlockState pState, SourceOfMagicTileEntity pBlockEntity) {
-        if(pState.getBlock() == DSBlocks.seaSourceOfMagic){
-            pBlockEntity.type = DragonType.SEA;
-        }else if(pState.getBlock() == DSBlocks.forestSourceOfMagic){
-            pBlockEntity. type = DragonType.FOREST;
-        }else if(pState.getBlock() == DSBlocks.caveSourceOfMagic){
-            pBlockEntity.type = DragonType.CAVE;
-        }
-        
         BlockState state = pState;
         
         if(!state.getValue(SourceOfMagicBlock.FILLED) && !pBlockEntity.isEmpty()){
@@ -75,7 +65,7 @@ public class SourceOfMagicTileEntity extends BaseBlockTileEntity implements Cont
         
         if(! pBlockEntity.isEmpty()) {
             if ( pBlockEntity.ticks % 120 == 0) {
-                pBlockEntity.level.playLocalSound(pPos.getX(), pPos.getY(), pPos.getZ(), pBlockEntity.type == DragonType.CAVE ? SoundEvents.LAVA_AMBIENT : SoundEvents.WATER_AMBIENT, SoundSource.BLOCKS, 0.5f, 1f, true);
+                pBlockEntity.level.playLocalSound(pPos.getX(), pPos.getY(), pPos.getZ(), pState.getBlock() == DSBlocks.caveSourceOfMagic ? SoundEvents.LAVA_AMBIENT : SoundEvents.WATER_AMBIENT, SoundSource.BLOCKS, 0.5f, 1f, true);
             }
         }
     
@@ -83,16 +73,13 @@ public class SourceOfMagicTileEntity extends BaseBlockTileEntity implements Cont
     }
     
     @Override
-    public CompoundTag save(CompoundTag compound) {
-        compound.putString("Type", type.name());
+    public void saveAdditional(CompoundTag compound) {
         ContainerHelper.saveAllItems(compound, stacks);
-        return super.save(compound);
     }
 
     @Override
     public void load(CompoundTag compound) {
         super.load(compound);
-        type = DragonType.valueOf(compound.getString("Type"));
         this.stacks = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
         ContainerHelper.loadAllItems(compound, this.stacks);
     }

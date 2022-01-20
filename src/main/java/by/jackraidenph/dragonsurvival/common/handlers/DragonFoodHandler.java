@@ -5,6 +5,7 @@ import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProv
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -26,13 +27,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.client.gui.ForgeIngameGui;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig.Type;
@@ -55,19 +52,16 @@ public class DragonFoodHandler {
 	public static CopyOnWriteArrayList<Item> CAVE_D_FOOD;
 	public static CopyOnWriteArrayList<Item> FOREST_D_FOOD;
 	public static CopyOnWriteArrayList<Item> SEA_D_FOOD;
-	public static boolean isDrawingOverlay;
+	public static boolean isDrawingOverlay = false;
 
 	private Minecraft mc;
-	private final ResourceLocation FOOD_ICONS;
-	private final Random rand;
+	private static final ResourceLocation FOOD_ICONS= new ResourceLocation(DragonSurvivalMod.MODID + ":textures/gui/dragon_hud.png");
+	private static final Random rand = new Random();
 
 
 	public DragonFoodHandler() {
 		if (FMLLoader.getDist() == Dist.CLIENT)
 			mc = Minecraft.getInstance();
-		rand = new Random();
-		FOOD_ICONS = new ResourceLocation(DragonSurvivalMod.MODID + ":textures/gui/dragon_hud.png");
-		isDrawingOverlay = false;
 	}
 	
 	@SubscribeEvent
@@ -310,35 +304,30 @@ public class DragonFoodHandler {
 	
 	public static int rightHeight = 0;
 	
-	@SubscribeEvent(priority = EventPriority.LOWEST)
-	@OnlyIn(Dist.CLIENT)
-	public void onRenderFoodBar(RenderGameOverlayEvent.Pre event) {
-		LocalPlayer player = this.mc.player;
+	public static void onRenderFoodBar(ForgeIngameGui gui, PoseStack mStack, float partialTicks, int width, int height) {
+		LocalPlayer player = Minecraft.getInstance().player;
 		
-		isDrawingOverlay = !event.isCanceled() && ConfigHandler.SERVER.customDragonFoods.get();
-		if (!isDrawingOverlay)
+		if(Minecraft.getInstance().options.hideGui || !gui.shouldDrawSurvivalElements()) return;
+		if (!ConfigHandler.SERVER.customDragonFoods.get() || !DragonStateProvider.isDragon(player)) {
+			ForgeIngameGui.FOOD_LEVEL_ELEMENT.render(gui, mStack, partialTicks, width, height);
 			return;
+		}
 		
 		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
 			if (dragonStateHandler.isDragon()) {
 				
-				if (event.getType() != ElementType.ALL || player.isCreative() || player.isSpectator())
-					return;
-				
-				//event.setCanceled(true);
-				
 				rand.setSeed(player.tickCount * 312871L);
 				
 				RenderSystem.enableBlend();
-				this.mc.getTextureManager().bindForSetup(FOOD_ICONS);
+				RenderSystem.setShaderTexture(0,FOOD_ICONS);
 				
 				if(Minecraft.getInstance().gui instanceof ForgeIngameGui) {
 					rightHeight = ((ForgeIngameGui)Minecraft.getInstance().gui).right_height;
 					((ForgeIngameGui)Minecraft.getInstance().gui).right_height += 10;
 				}
 				
-				final int left = this.mc.getWindow().getGuiScaledWidth() / 2 + 91;
-                final int top = this.mc.getWindow().getGuiScaledHeight() - rightHeight;
+				final int left = width / 2 + 91;
+                final int top = height - rightHeight;
 				rightHeight += 10;
                 final FoodData food = player.getFoodData();
 
@@ -353,15 +342,15 @@ public class DragonFoodHandler {
                 	if (food.getSaturationLevel() <= 0.0F && player.tickCount % (food.getFoodLevel() * 3 + 1) == 0)
                 		y = top + (rand.nextInt(3) - 1);
 
-					mc.gui.blit(event.getMatrixStack(), left - i * 8 - 9, y, (hunger ? 117 : 0), type, 9, 9);
+					gui.blit(mStack, left - i * 8 - 9, y, (hunger ? 117 : 0), type, 9, 9);
                 	
                 	if (idx < food.getFoodLevel())
-                		mc.gui.blit(event.getMatrixStack(), left - i * 8 - 9, y, (hunger ? 72 : 36), type, 9, 9);
+                		gui.blit(mStack, left - i * 8 - 9, y, (hunger ? 72 : 36), type, 9, 9);
                 	else if (idx == food.getFoodLevel())
-                		mc.gui.blit(event.getMatrixStack(), left - i * 8 - 9, y, (hunger ? 81 : 45), type, 9, 9);
+                		gui.blit(mStack, left - i * 8 - 9, y, (hunger ? 81 : 45), type, 9, 9);
                 }
                 
-        		this.mc.getTextureManager().bindForSetup(Gui.GUI_ICONS_LOCATION);
+        		RenderSystem.setShaderTexture(0,Gui.GUI_ICONS_LOCATION);
         		RenderSystem.disableBlend();
 			} else
 				isDrawingOverlay = false;

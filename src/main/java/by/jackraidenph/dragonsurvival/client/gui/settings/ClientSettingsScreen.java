@@ -32,6 +32,8 @@ import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.*;
 
 import javax.annotation.Nullable;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -186,7 +188,6 @@ public class ClientSettingsScreen extends OptionsSubScreen
 		}
 		TextComponent tooltip = new TextComponent(tooltip0);
 		
-		List<FormattedCharSequence> tooltip1 = Minecraft.getInstance().font.split(tooltip, 200);
 		if (value instanceof BooleanValue) {
 			BooleanValue booleanValue = (BooleanValue)value;
 			CycleOption option = CycleOption.createOnOff(name, tooltip, (settings) -> booleanValue.get(), (settings, optionO, settingValue) -> {
@@ -199,9 +200,11 @@ public class ClientSettingsScreen extends OptionsSubScreen
 				if(!Objects.equals(getConfigName(), "client")) {
 					NetworkHandler.CHANNEL.sendToServer(new SyncBooleanConfig(key, settingValue, getConfigName()));
 				}
-			});
-			option.setTooltip((m) -> {
-				return tooltip1;
+			}).setTooltip((p_167791_) -> {
+				List<FormattedCharSequence> list = p_167791_.font.split(tooltip, 200);
+				return (p_167772_) -> {
+					return list;
+				};
 			});
 			
 			OptionsList.configMap.put(option, key);
@@ -245,12 +248,12 @@ public class ClientSettingsScreen extends OptionsSubScreen
 			addOption(category, name, option);
 		} else if (value instanceof DoubleValue) {
 			DoubleValue value1 = (DoubleValue)value;
-			double min = (double)spec.correct(Double.MIN_VALUE);
-			double max = (double)spec.correct(Double.MAX_VALUE);
-			double dif = max-min;
+			BigDecimal min = new BigDecimal((double)spec.correct(Double.MIN_VALUE)).setScale(5, RoundingMode.FLOOR);
+			BigDecimal max = new BigDecimal((double)spec.correct(Double.MAX_VALUE)).setScale(5, RoundingMode.FLOOR);
+			double dif = max.subtract(min).doubleValue();
 			Option option = null;
 			if(dif <= 10) {
-				 option = new ProgressOption(name, min, max, sliderPerc, (settings) -> value1.get(), (settings, settingValue) -> {
+				 option = new ProgressOption(name, min.doubleValue(), max.doubleValue(), sliderPerc, (settings) -> value1.get(), (settings, settingValue) -> {
 					try {
 						value1.set(Math.round(settingValue * 100.0) / 100.0);
 						value1.save();
@@ -274,7 +277,7 @@ public class ClientSettingsScreen extends OptionsSubScreen
 					}
 				}, (m) -> Minecraft.getInstance().font.split(tooltip, 200));
 			}
-			
+			System.out.println(option);
 			OptionsList.configMap.put(option, key);
 			OptionsList.config.put(option, Pair.of(spec, value1));
 			addOption(category, name, option);
@@ -347,11 +350,13 @@ public class ClientSettingsScreen extends OptionsSubScreen
 				}
 				CycleOption option = CycleOption.createBinaryOption(name, new TextComponent(Minecraft.getInstance().font.substrByWidth(new TextComponent(joiner.toString()), 120).getString()), TextComponent.EMPTY, (val) -> true, (val1, val2, val3) -> {
 					this.minecraft.setScreen(new ListConfigSettingsScreen(this, minecraft.options, new TextComponent(finalPath1), spec, value1, getSpec(), getConfigName() + "." + key));
+				}).setTooltip((p_167791_) -> {
+					List<FormattedCharSequence> list = p_167791_.font.split(tooltip, 200);
+					return (p_167772_) -> {
+						return list;
+					};
 				});
 				
-				option.setTooltip((m) -> {
-					return tooltip1;
-				});
 				
 				OptionsList.configMap.put(option, key);
 				OptionsList.config.put(option, Pair.of(spec, value1));

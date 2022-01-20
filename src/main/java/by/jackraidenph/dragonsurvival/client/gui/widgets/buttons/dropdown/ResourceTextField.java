@@ -3,6 +3,7 @@ package by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.dropdown;
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.settings.ResourceTextFieldOption;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.suggestion.Suggestion;
@@ -38,7 +39,6 @@ import net.minecraftforge.common.ForgeConfigSpec.ValueSpec;
 import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.codehaus.plexus.util.StringUtils;
-import org.lwjgl.opengl.GL11;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -144,11 +144,10 @@ public class ResourceTextField extends EditBox implements TooltipAccessor
 					list.visible = ResourceTextField.this.visible;
 					
 					if(finalHasBorder){
-						GL11.glScissor(0,
+						RenderSystem.enableScissor(0,
 						               (int)(32 * Minecraft.getInstance().getWindow().getGuiScale()),
 						               Minecraft.getInstance().getWindow().getScreenWidth(),
 						               Minecraft.getInstance().getWindow().getScreenHeight() - (int)((32) * Minecraft.getInstance().getWindow().getGuiScale())*2);
-						GL11.glEnable(GL11.GL_SCISSOR_TEST);
 					}
 					
 					if(list.visible) {
@@ -156,7 +155,7 @@ public class ResourceTextField extends EditBox implements TooltipAccessor
 					}
 					
 					if(finalHasBorder){
-						GL11.glDisable(GL11.GL_SCISSOR_TEST);
+						RenderSystem.disableScissor();
 						
 					}
 				}
@@ -172,7 +171,7 @@ public class ResourceTextField extends EditBox implements TooltipAccessor
 	@Override
 	public void renderButton(PoseStack  pPoseStack , int pMouseX, int pMouseY, float pPartialTicks)
 	{
-		Minecraft.getInstance().textureManager.bindForSetup(BACKGROUND_TEXTURE);
+		RenderSystem.setShaderTexture(0, BACKGROUND_TEXTURE);
 		GuiUtils.drawContinuousTexturedBox(pPoseStack , x, y + 1, 0, isHovered ? 32 : 0, width, height, 32, 32, 10, 0);
 		
 		if (stack != null && !stack.isEmpty()) {

@@ -95,7 +95,7 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
     }
     
     @Override
-    public void entityInside(BlockState p_196262_1_, Level  world, BlockPos pos, Entity entity)
+    public void entityInside(BlockState pState, Level  world, BlockPos pos, Entity entity)
     {
         BlockEntity blockEntity = world.getBlockEntity(pos);
         BlockPos pos1 = pos;
@@ -107,7 +107,14 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
         SourceOfMagicTileEntity source = getBlockEntity(world, pos1);
     
         if(source != null) {
-            if(DragonStateProvider.getDragonType(entity) != source.type){
+            boolean harm = false;
+            DragonType type = DragonStateProvider.getDragonType(entity);
+            
+            if(type != DragonType.CAVE && pState.getBlock() == DSBlocks.caveSourceOfMagic) harm = true;
+            if(type != DragonType.SEA && pState.getBlock() == DSBlocks.seaSourceOfMagic) harm = true;
+            if(type != DragonType.FOREST && pState.getBlock() == DSBlocks.forestSourceOfMagic) harm = true;
+    
+            if(harm){
                 if(entity instanceof ItemEntity){
                     ItemEntity itemE = (ItemEntity)entity;
                     ItemStack stack = itemE.getItem();
@@ -127,14 +134,14 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
                 }
                 
                 if(ConfigHandler.SERVER.damageWrongSourceOfMagic.get()) {
-                    entity.hurt(source.type == DragonType.CAVE
+                    entity.hurt(pState.getBlock() == DSBlocks.caveSourceOfMagic
                                         ? DamageSource.HOT_FLOOR
-                                        : source.type == DragonType.SEA ? DamageSource.DROWN
+                                        : pState.getBlock() == DSBlocks.seaSourceOfMagic ? DamageSource.DROWN
                                         : DamageSource.CACTUS, 1F);
                 }
             }
         }
-        super.entityInside(p_196262_1_, world, pos, entity);
+        super.entityInside(pState, world, pos, entity);
     }
     @OnlyIn( Dist.CLIENT)
     public void animateTick(BlockState p_180655_1_, Level  p_180655_2_, BlockPos p_180655_3_, Random p_180655_4_)
@@ -170,7 +177,8 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
         if(!player.isCrouching()) {
             if (player instanceof ServerPlayer) {
                 BlockPos finalPos = pos1;
-                NetworkHooks.openGui((ServerPlayer)player, getBlockEntity(worldIn, pos1), packetBuffer -> packetBuffer.writeBlockPos(finalPos));
+                BlockEntity blockEntity1 = getBlockEntity(worldIn, pos1);
+                NetworkHooks.openGui((ServerPlayer)player, (MenuProvider)blockEntity1, packetBuffer -> packetBuffer.writeBlockPos(finalPos));
             }
         }else{
             if(DragonStateProvider.isDragon(player) && player.getMainHandItem().isEmpty()) {

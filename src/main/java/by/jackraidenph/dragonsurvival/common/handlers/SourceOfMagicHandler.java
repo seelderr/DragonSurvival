@@ -2,10 +2,12 @@ package by.jackraidenph.dragonsurvival.common.handlers;
 
 import by.jackraidenph.dragonsurvival.client.particles.DSParticles;
 import by.jackraidenph.dragonsurvival.common.DragonEffects;
+import by.jackraidenph.dragonsurvival.common.blocks.DSBlocks;
 import by.jackraidenph.dragonsurvival.common.blocks.SourceOfMagicBlock;
 import by.jackraidenph.dragonsurvival.common.capability.caps.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
+import by.jackraidenph.dragonsurvival.misc.DragonType;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.status.SyncMagicSourceStatus;
 import by.jackraidenph.dragonsurvival.server.tileentity.SourceOfMagicPlaceholder;
@@ -20,6 +22,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -67,7 +70,15 @@ public class SourceOfMagicHandler
 						SourceOfMagicTileEntity tile = (SourceOfMagicTileEntity)sourceOfMagic;
 						
 						if(!tile.isEmpty()){
-							if(handler.getType() == tile.type || player.isCreative() || ConfigHandler.SERVER.canUseAllSourcesOfMagic.get()) {
+							BlockState pState = sourceOfMagic.getBlockState();
+							boolean harm = false;
+							DragonType type = DragonStateProvider.getDragonType(player);
+							
+							if(type != DragonType.CAVE && pState.getBlock() == DSBlocks.caveSourceOfMagic) harm = true;
+							if(type != DragonType.SEA && pState.getBlock() == DSBlocks.seaSourceOfMagic) harm = true;
+							if(type != DragonType.FOREST && pState.getBlock() == DSBlocks.forestSourceOfMagic) harm = true;
+							
+							if(!harm || player.isCreative() || ConfigHandler.SERVER.canUseAllSourcesOfMagic.get()) {
 								if(ConfigHandler.SERVER.sourceOfMagicInfiniteMagic.get()) {
 									if (handler.getMagic().magicSourceTimer >= Functions.secondsToTicks(10)) {
 										handler.getMagic().magicSourceTimer = 0;
@@ -128,7 +139,16 @@ public class SourceOfMagicHandler
 						SourceOfMagicTileEntity tile = (SourceOfMagicTileEntity)sourceOfMagic;
 						
 						if(!tile.isEmpty()){
-							if(handler.getType() == tile.type || player.isCreative() || ConfigHandler.SERVER.canUseAllSourcesOfMagic.get()) {
+							BlockState pState = sourceOfMagic.getBlockState();
+							boolean harm = false;
+							DragonType type = DragonStateProvider.getDragonType(player);
+							
+							if(type != DragonType.CAVE && pState.getBlock() == DSBlocks.caveSourceOfMagic) harm = true;
+							if(type != DragonType.SEA && pState.getBlock() == DSBlocks.seaSourceOfMagic) harm = true;
+							if(type != DragonType.FOREST && pState.getBlock() == DSBlocks.forestSourceOfMagic) harm = true;
+							
+							
+							if(!harm || player.isCreative() || ConfigHandler.SERVER.canUseAllSourcesOfMagic.get()) {
 								if(ConfigHandler.SERVER.sourceOfMagicInfiniteMagic.get()) {
 									if(player.level.isClientSide) {
 										Minecraft minecraft = Minecraft.getInstance();
@@ -136,18 +156,14 @@ public class SourceOfMagicHandler
 										double x = -1 + random.nextDouble() * 2;
 										double z = -1 + random.nextDouble() * 2;
 										
-										switch (tile.type) {
-											case SEA:
-											case FOREST:
-												if (!minecraft.isPaused()){
-													player.level.addParticle(DSParticles.magicBeaconParticle, player.getX() + x, player.getY() + 0.5, player.getZ() + z, 0, 0, 0);
-												}
-												break;
-											case CAVE:
-												if (!minecraft.isPaused()){
-													player.level.addParticle(DSParticles.fireBeaconParticle, player.getX() + x, player.getY() + 0.5, player.getZ() + z, 0, 0, 0);
-												}
-												break;
+										if (pState.getBlock() == DSBlocks.seaSourceOfMagic || pState.getBlock() == DSBlocks.forestSourceOfMagic) {
+											if (!minecraft.isPaused()) {
+												player.level.addParticle(DSParticles.magicBeaconParticle, player.getX() + x, player.getY() + 0.5, player.getZ() + z, 0, 0, 0);
+											}
+										} else if (pState.getBlock() == DSBlocks.caveSourceOfMagic) {
+											if (!minecraft.isPaused()) {
+												player.level.addParticle(DSParticles.fireBeaconParticle, player.getX() + x, player.getY() + 0.5, player.getZ() + z, 0, 0, 0);
+											}
 										}
 									}
 								}

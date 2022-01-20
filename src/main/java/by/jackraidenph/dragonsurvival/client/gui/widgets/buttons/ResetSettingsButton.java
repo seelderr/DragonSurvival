@@ -104,8 +104,8 @@ public class ResetSettingsButton extends Button
 			}
 			
 			Minecraft minecraft = Minecraft.getInstance();
-			minecraft.getTextureManager().bindForSetup(WIDGETS_LOCATION);
-			GL11.glColor4f(1.0F, 1.0F, 1.0F, this.alpha);
+			RenderSystem.setShaderTexture(0,WIDGETS_LOCATION);
+			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, this.alpha);
 			int i = this.getYImage(this.isHovered);
 			RenderSystem.enableBlend();
 			RenderSystem.defaultBlendFunc();

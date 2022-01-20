@@ -38,8 +38,7 @@ public class TextField extends EditBox implements TooltipAccessor
 	@Override
 	public void renderButton(PoseStack pPoseStack , int pMouseX, int pMouseY, float pPartialTicks)
 	{
-		Minecraft.getInstance().textureManager.bindForSetup(BACKGROUND_TEXTURE);
-		GuiUtils.drawContinuousTexturedBox(pPoseStack , x, y + 1, 0, isHovered ? 32 : 0, width, height, 32, 32, 10, 0);
+		GuiUtils.drawContinuousTexturedBox(pPoseStack, BACKGROUND_TEXTURE , x, y + 1, 0, isHovered ? 32 : 0, width, height, 32, 32, 10, 0);
 		
 		this.x += 5;
 		this.y += 6;

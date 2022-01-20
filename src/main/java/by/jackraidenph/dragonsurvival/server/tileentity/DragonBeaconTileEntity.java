@@ -96,9 +96,8 @@ public class DragonBeaconTileEntity extends BaseBlockTileEntity{
     }
 
     @Override
-    public CompoundTag save(CompoundTag compoundNBT) {
+    public void saveAdditional(CompoundTag compoundNBT) {
         compoundNBT.putString("Type", type.name());
-        return super.save(compoundNBT);
     }
 
     @Override

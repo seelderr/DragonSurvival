@@ -2,15 +2,17 @@ package by.jackraidenph.dragonsurvival.client.gui;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.HelpButton;
+import by.jackraidenph.dragonsurvival.common.blocks.DSBlocks;
 import by.jackraidenph.dragonsurvival.server.containers.SourceOfMagicContainer;
 import by.jackraidenph.dragonsurvival.server.tileentity.SourceOfMagicTileEntity;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.Block;
 import org.lwjgl.opengl.GL11;
 
 public class SourceOfMagicScreen extends AbstractContainerScreen<SourceOfMagicContainer>
@@ -50,25 +52,23 @@ public class SourceOfMagicScreen extends AbstractContainerScreen<SourceOfMagicCo
     @Override
     protected void renderBg(PoseStack  PoseStack , float partialTicks, int mouseX, int mouseY) { // WIP
         renderBackground(PoseStack );
-        TextureManager textureManager = minecraft.getTextureManager();
-        textureManager.bindForSetup(BACKGROUND);
+        RenderSystem.setShaderTexture(0, BACKGROUND);
         blit(PoseStack , leftPos, topPos, 0, 0, imageWidth, imageHeight);
         
         boolean hasItem = !nestEntity.getItem(0).isEmpty();
-        
-        switch (nestEntity.type) {
-            case CAVE:
-                textureManager.bindForSetup(hasItem ? CAVE_NEST1 : CAVE_NEST0);
-                break;
-            case FOREST:
-                textureManager.bindForSetup(hasItem ? FOREST_NEST1 : FOREST_NEST0);
-                break;
-            case SEA:
-                textureManager.bindForSetup(hasItem ? SEA_NEST1 : SEA_NEST0);
-                break;
+    
+        Block block = nestEntity.getBlockState().getBlock();
+        if (DSBlocks.caveSourceOfMagic.equals(block)) {
+            RenderSystem.setShaderTexture(0, hasItem ? CAVE_NEST1 : CAVE_NEST0);
+        } else if (DSBlocks.forestSourceOfMagic.equals(block)) {
+            RenderSystem.setShaderTexture(0, hasItem ? FOREST_NEST1 : FOREST_NEST0);
+        } else if (DSBlocks.seaSourceOfMagic.equals(block)) {
+            RenderSystem.setShaderTexture(0, hasItem ? SEA_NEST1 : SEA_NEST0);
         }
-        GL11.glEnable(GL11.GL_BLEND);
+       
+        RenderSystem.enableBlend();
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         blit(PoseStack , leftPos + 8, topPos + 8, 0, 0, 160, 49, 160, 49);
+        RenderSystem.disableBlend();
     }
 }

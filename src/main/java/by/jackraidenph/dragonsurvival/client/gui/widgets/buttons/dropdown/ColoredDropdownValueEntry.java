@@ -77,15 +77,15 @@ public class ColoredDropdownValueEntry extends DropdownEntry
 						RenderSystem.defaultBlendFunc();
 						RenderSystem.defaultAlphaFunc();
 						
-						Minecraft.getInstance().textureManager.bindForSetup(color1);
+						RenderSystem.setShaderTexture(0,color1);
 						GL11.glColor3f(c1.getRed() / 255f, c1.getGreen() / 255f, c1.getBlue() / 255f);
 						blit(mStack, x, y, 0, 0, width, height, width, height);
 						
-						Minecraft.getInstance().textureManager.bindForSetup(color2);
+						RenderSystem.setShaderTexture(0,color2);
 						GL11.glColor3f(c2.getRed() / 255f, c2.getGreen() / 255f, c2.getBlue() / 255f);
 						blit(mStack, x, y, 0, 0, width, height, width, height);
 						
-						Minecraft.getInstance().textureManager.bindForSetup(color3);
+						RenderSystem.setShaderTexture(0,color3);
 						GL11.glColor3f(c3.getRed() / 255f, c3.getGreen() / 255f, c3.getBlue() / 255f);
 						blit(mStack, x, y, 0, 0, width, height, width, height);
 						RenderSystem.popMatrix();

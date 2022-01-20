@@ -22,7 +22,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ScreenEvent.InitScreenEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -107,6 +106,7 @@ public class EmoteMenuHandler
 				@Override
 				public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks)
 				{
+					stack.pushPose();
 					this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
 					DragonStateHandler handler = DragonStateProvider.getCap(Minecraft.getInstance().player).orElse(null);
 					this.active = this.visible = (handler != null && handler.getEmotes().emoteMenuOpen);
@@ -118,14 +118,13 @@ public class EmoteMenuHandler
 					
 					RenderSystem.setShaderTexture(0, BUTTON_LEFT);
 					
-					GL11.glPushMatrix();
-					GL11.glScalef(0.25F, 0.25F, 0F);
-					GL11.glTranslatef(x * 3, y * 3, 0);
-					GL11.glTranslatef(15, (height / 2) - 2, 0);
+					
+					stack.scale(0.25F, 0.25F, 0F);
+					stack.translate(x * 3, y * 3, 0);
+					stack.translate(15, (height / 2) - 2, 0);
 					
 					blit(stack, x, y, 0, 0, 32, 32, 32, 32);
-					
-					GL11.glPopMatrix();
+					stack.popPose();
 				}
 			});
 			
@@ -139,6 +138,7 @@ public class EmoteMenuHandler
 				@Override
 				public void render(PoseStack  stack, int mouseX, int mouseY, float partialTicks)
 				{
+					stack.pushPose();
 					this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
 					DragonStateHandler handler = DragonStateProvider.getCap(Minecraft.getInstance().player).orElse(null);
 					this.active = this.visible = (handler != null && handler.getEmotes().emoteMenuOpen);
@@ -150,14 +150,13 @@ public class EmoteMenuHandler
 					
 					RenderSystem.setShaderTexture(0, BUTTON_RIGHT);
 					
-					GL11.glPushMatrix();
-					GL11.glScalef(0.25F, 0.25F, 0F);
-					GL11.glTranslatef(x * 3, y * 3, 0);
-					GL11.glTranslatef(20, (height / 2) - 2, 0);
+					
+					stack.scale(0.25F, 0.25F, 0F);
+					stack.translate(x * 3, y * 3, 0);
+					stack.translate(20, (height / 2) - 2, 0);
 					
 					blit(stack, x, y, 0, 0, 32, 32, 32, 32);
-					
-					GL11.glPopMatrix();
+					stack.popPose();
 				}
 			});
 			
@@ -170,8 +169,9 @@ public class EmoteMenuHandler
 				}
 			}){
 				@Override
-				public void render(PoseStack  stack, int mouseX, int mouseY, float partialTicks)
+				public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks)
 				{
+					stack.pushPose();
 					this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
 					DragonStateHandler handler = DragonStateProvider.getCap(Minecraft.getInstance().player).orElse(null);
 					if(handler == null) return;
@@ -182,10 +182,9 @@ public class EmoteMenuHandler
 					drawCenteredString(stack, Minecraft.getInstance().font, new TranslatableComponent("ds.emote.toggle"), this.x + this.width / 2, this.y + (this.height - 8) / 2, j | Mth.ceil(this.alpha * 255.0F) << 24);
 					
 					
-					GL11.glPushMatrix();
-					GL11.glScalef(0.25F, 0.25F, 0F);
-					GL11.glTranslatef(x * 3, y * 3, 0);
-					GL11.glTranslatef(15, (height / 2), 0);
+					stack.scale(0.25F, 0.25F, 0F);
+					stack.translate(x * 3, y * 3, 0);
+					stack.translate(15, (height / 2), 0);
 					
 					if(handler.getEmotes().emoteMenuOpen) {
 						RenderSystem.setShaderTexture(0, BUTTON_UP);
@@ -195,7 +194,7 @@ public class EmoteMenuHandler
 						blit(stack, x, y, 0, 0, 32, 32, 32, 32);
 					}
 					
-					GL11.glPopMatrix();
+					stack.popPose();
 				}
 			});
 			
@@ -224,12 +223,7 @@ public class EmoteMenuHandler
 						Emote emote = emotes.size() > finalI ? emotes.get(finalI) : null;
 						
 						if(emote != null) {
-							GL11.glPushMatrix();
-							
 							drawString(stack, Minecraft.getInstance().font, new TranslatableComponent(emote.name), this.x + 22, this.y + (this.height - 8) / 2, Color.lightGray.getRGB());
-							
-							GL11.glPopMatrix();
-							
 							
 							RenderSystem.setShaderTexture(0, emote.loops ? PLAY_LOOPED : PLAY_ONCE);
 							blit(stack, x, y, 0, 0, 10, 10, 10, 10);

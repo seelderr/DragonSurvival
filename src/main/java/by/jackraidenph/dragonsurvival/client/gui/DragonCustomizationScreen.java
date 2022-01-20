@@ -162,7 +162,7 @@ public class DragonCustomizationScreen extends Screen
 		
 		addRenderableWidget(new HelpButton(type, guiLeft - 10, 10, 16, 16, "ds.help.customization"));
 		
-		addRenderableWidget(new Button(width / 2 - 60, guiTop - 30, 120, 20, new TranslatableComponent("ds.level.newborn"), (btn) -> {
+		addRenderableWidget(new Button(width / 2 - 180, guiTop - 30, 120, 20, new TranslatableComponent("ds.level.newborn"), (btn) -> {
 			level = DragonLevel.BABY;
 			dragonRender.zoom = level.size;
 			update();
@@ -175,7 +175,7 @@ public class DragonCustomizationScreen extends Screen
 				TextRenderUtil.drawCenteredScaledText(stack, x + (width / 2), y + 4, 1.5f, this.getMessage().getString(), j | Mth.ceil(this.alpha * 255.0F) << 24);
 			}
 		});
-		addRenderableWidget(new Button(width / 2 - 180, guiTop - 30, 120, 20, new TranslatableComponent("ds.level.young"), (btn) -> {
+		addRenderableWidget(new Button(width / 2 - 60, guiTop - 30, 120, 20, new TranslatableComponent("ds.level.young"), (btn) -> {
 			level = DragonLevel.YOUNG;
 			dragonRender.zoom = level.size;
 			update();

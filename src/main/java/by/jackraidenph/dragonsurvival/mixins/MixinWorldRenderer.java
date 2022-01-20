@@ -26,8 +26,7 @@ public class MixinWorldRenderer
 	@Final
 	private RenderBuffers renderBuffers;
 	
-	@Inject(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/LevelRenderer;checkPoseStack(Lcom/mojang/blaze3d/matrix/PoseStack;)V", ordinal = 0))
-	public void render(PoseStack matrices, float tickDelta, long limitTime, boolean renderBlockOutline, Camera camera,
+	@Inject(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/LevelRenderer;checkPoseStack(Lcom/mojang/blaze3d/vertex/PoseStack;)V", ordinal = 0))	public void render(PoseStack matrices, float tickDelta, long limitTime, boolean renderBlockOutline, Camera camera,
 			GameRenderer gameRenderer, LightTexture lightmapTextureManager, Matrix4f matrix4f, CallbackInfo info) {
 		if(camera.isDetached()) return;
 		if(!ConfigHandler.CLIENT.renderInFirstPerson.get()) return;
@@ -57,7 +56,7 @@ public class MixinWorldRenderer
 	
 	@Shadow
 	private void renderEntity(Entity entity, double cameraX, double cameraY, double cameraZ, float tickDelta,
-			PoseStack  matrices, MultiBufferSource vertexConsumers) {
+			PoseStack matrices, MultiBufferSource vertexConsumers) {
 		
 	}
 }

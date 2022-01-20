@@ -257,9 +257,9 @@ public class OptionsList extends ContainerObjectSelectionList<OptionListEntry>
 	public Optional<AbstractWidget> getMouseOver(double p_238518_1_, double p_238518_3_) {
 		for(OptionListEntry optionsrowlist$row : this.children()) {
 			for(GuiEventListener widget : optionsrowlist$row.children()) {
-				if(widget instanceof Widget) {
-					if (((Button)widget).isMouseOver(p_238518_1_, p_238518_3_)) {
-						return Optional.of((Button)widget);
+				if(widget instanceof AbstractWidget) {
+					if (widget.isMouseOver(p_238518_1_, p_238518_3_)) {
+						return Optional.of((AbstractWidget)widget);
 					}
 				}
 			}

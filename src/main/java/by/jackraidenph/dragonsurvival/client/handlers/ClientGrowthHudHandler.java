@@ -8,6 +8,7 @@ import by.jackraidenph.dragonsurvival.common.handlers.DragonGrowthHandler;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonLevel;
 import com.mojang.blaze3d.platform.Window;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.texture.TextureManager;
@@ -19,7 +20,6 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
 
@@ -39,7 +39,7 @@ public class ClientGrowthHudHandler
 		if(handler == null || stack == null || stack.isEmpty()) return;
 		
 		if (event.getType() == ElementType.ALL) {
-			GL11.glPushMatrix();
+			
 			
 			TextureManager textureManager = Minecraft.getInstance().getTextureManager();
 			Window window = Minecraft.getInstance().getWindow();
@@ -81,12 +81,12 @@ public class ClientGrowthHudHandler
 				circleX += ConfigHandler.CLIENT.growthXOffset.get();
 				circleY += ConfigHandler.CLIENT.growthYOffset.get();
 				
-				GL11.glDisable(GL11.GL_TEXTURE_2D);
+				RenderSystem.disableTexture();
 				Color c = new Color(99, 99, 99);
-				GL11.glColor4d(c.getRed()  / 255.0, c.getGreen() / 255.0, c.getBlue() / 255.0, 1.0);
+				RenderSystem.setShaderColor(c.getRed()  / 255.0f, c.getGreen() / 255.0f, c.getBlue() / 255.0f, 1.0f);
 				DragonScreen.drawTexturedRing(circleX + radius, circleY + radius, radius - thickness, radius, 0, 0, 0, 128, 6, 1, 0);
-				GL11.glEnable(GL11.GL_TEXTURE_2D);
-				GL11.glColor4d(1F, 1F, 1F, 1.0);
+				RenderSystem.enableTexture();
+				RenderSystem.setShaderColor(1F, 1F, 1F, 1.0f);
 				
 				if(nextProgess > progress) {
 					int num = 1;
@@ -96,44 +96,42 @@ public class ClientGrowthHudHandler
 						num = 2;
 					}
 					
-					textureManager.bindForSetup(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_" + num + ".png"));
+					RenderSystem.setShaderTexture(0,new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_" + num + ".png"));
 					DragonScreen.drawTexturedCircle(circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, 6, nextProgess, -0.5);
 					
-					textureManager.bindForSetup(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_" + handler.getType().name().toLowerCase() + ".png"));
+					RenderSystem.setShaderTexture(0,new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_" + handler.getType().name().toLowerCase() + ".png"));
 					DragonScreen.drawTexturedCircle(circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, 6, progress, -0.5);
 				}else if(increment < 0){
-					textureManager.bindForSetup(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_3.png"));
+					RenderSystem.setShaderTexture(0,new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_3.png"));
 					DragonScreen.drawTexturedCircle(circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, 6, progress, -0.5);
 					
-					textureManager.bindForSetup(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_" + handler.getType().name().toLowerCase() + ".png"));
+					RenderSystem.setShaderTexture(0,new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_" + handler.getType().name().toLowerCase() + ".png"));
 					DragonScreen.drawTexturedCircle(circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, 6, nextProgess, -0.5);
 				}
 				
-				GL11.glDisable(GL11.GL_TEXTURE_2D);
-				GL11.glLineWidth(4.0F);
+				RenderSystem.disableTexture();
+				RenderSystem.lineWidth(4.0F);
 				if(handler.growing){
-					GL11.glColor4f(0F, 0F, 0F, 1F);
+					RenderSystem.setShaderColor(0F, 0F, 0F, 1F);
 				}else{
-					GL11.glColor4f(76 / 255F, 0F, 0F, 1F);
+					RenderSystem.setShaderColor(76 / 255F, 0F, 0F, 1F);
 				}
 				DragonScreen.drawSmoothCircle(circleX + radius, circleY + radius, radius, 6, 1, 0);
 				
-				GL11.glColor4d(c.getRed()  / 255.0, c.getGreen() / 255.0, c.getBlue() / 255.0, 1.0);
+				RenderSystem.setShaderColor(c.getRed()  / 255.0f, c.getGreen() / 255.0f, c.getBlue() / 255.0f, 1.0f);
 				DragonScreen.drawSmoothCircle(circleX + radius, circleY + radius, radius - thickness, 6, 1, 0);
-				GL11.glLineWidth(1.0F);
+				RenderSystem.lineWidth(1.0F);
 				
 				c = c.brighter();
-				GL11.glColor4d(c.getRed()  / 255.0, c.getGreen() / 255.0, c.getBlue() / 255.0, 1.0);
+				RenderSystem.setShaderColor(c.getRed()  / 255.0f, c.getGreen() / 255.0f, c.getBlue() / 255.0f, 1.0f);
 				DragonScreen.drawTexturedRing(circleX + radius, circleY + radius, 0, radius - thickness, 0, 0,0,0, 6, 1, 0);
 				
-				GL11.glEnable(GL11.GL_TEXTURE_2D);
-				GL11.glColor4d(1F, 1F, 1F, 1.0);
+				RenderSystem.enableTexture();
+				RenderSystem.setShaderColor(1F, 1F, 1F, 1.0f);
 				
-				textureManager.bindForSetup(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/growth_" + handler.getType().name().toLowerCase() + "_" + (handler.getLevel().ordinal() + 1) + ".png"));
+				RenderSystem.setShaderTexture(0,new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/growth_" + handler.getType().name().toLowerCase() + "_" + (handler.getLevel().ordinal() + 1) + ".png"));
 				Screen.blit(event.getMatrixStack(), circleX + 6, circleY + 6, 0, 0, 20, 20, 20, 20);
 			}
-			
-			GL11.glPopMatrix();
 		}
 	}
 }

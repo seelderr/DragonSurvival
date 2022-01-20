@@ -22,6 +22,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
@@ -32,7 +33,6 @@ import net.minecraft.network.chat.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
-import org.lwjgl.opengl.GL11;
 import software.bernie.geckolib3.core.processor.IBone;
 
 import java.net.URI;
@@ -162,7 +162,7 @@ public class SkinsScreen extends Screen
 				super.renderButton(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
 				
 				DragonStateHandler handler = DragonStateProvider.getCap(getMinecraft().player).orElse(null);
-				minecraft.getTextureManager().bindForSetup(handler == null || !handler.getSkin().renderNewborn ? UNCHECKED : CHECKED);
+				RenderSystem.setShaderTexture(0,handler == null || !handler.getSkin().renderNewborn ? UNCHECKED : CHECKED);
 				blit(p_230431_1_, x + 3, y + 3, 0, 0, 13, 13, 13,13);
 			}
 		});
@@ -182,7 +182,7 @@ public class SkinsScreen extends Screen
 				super.renderButton(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
 				
 				DragonStateHandler handler = DragonStateProvider.getCap(getMinecraft().player).orElse(null);
-				minecraft.getTextureManager().bindForSetup(handler == null || !handler.getSkin().renderYoung ? UNCHECKED : CHECKED);
+				RenderSystem.setShaderTexture(0,handler == null || !handler.getSkin().renderYoung ? UNCHECKED : CHECKED);
 				blit(p_230431_1_, x + 3, y + 3, 0, 0, 13, 13, 13,13);
 			}
 		});
@@ -202,7 +202,7 @@ public class SkinsScreen extends Screen
 				super.renderButton(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
 				
 				DragonStateHandler handler = DragonStateProvider.getCap(getMinecraft().player).orElse(null);
-				minecraft.getTextureManager().bindForSetup(handler == null || !handler.getSkin().renderAdult ? UNCHECKED : CHECKED);
+				RenderSystem.setShaderTexture(0,handler == null || !handler.getSkin().renderAdult ? UNCHECKED : CHECKED);
 				blit(p_230431_1_, x + 3, y + 3, 0, 0, 13, 13, 13,13);
 			}
 		});
@@ -216,7 +216,7 @@ public class SkinsScreen extends Screen
 			{
 				super.renderButton(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
 				
-				minecraft.getTextureManager().bindForSetup(ConfigHandler.CLIENT.renderOtherPlayerSkins.get() ? CHECKED : UNCHECKED);
+				RenderSystem.setShaderTexture(0,ConfigHandler.CLIENT.renderOtherPlayerSkins.get() ? CHECKED : UNCHECKED);
 				blit(p_230431_1_, x + 3, y + 3, 0, 0, 13, 13, 13,13);
 			}
 		});
@@ -233,7 +233,7 @@ public class SkinsScreen extends Screen
 			@Override
 			public void renderButton(PoseStack  p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_)
 			{
-				minecraft.getTextureManager().bindForSetup(DISCORD);
+				RenderSystem.setShaderTexture(0,DISCORD);
 				blit(p_230431_1_, x, y, 0, 0, 16, 16, 16,16);
 			}
 			
@@ -256,7 +256,7 @@ public class SkinsScreen extends Screen
 			@Override
 			public void renderButton(PoseStack  p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_)
 			{
-				minecraft.getTextureManager().bindForSetup(WIKI);
+				RenderSystem.setShaderTexture(0,WIKI);
 				blit(p_230431_1_, x, y, 0, 0, 16, 16, 16,16);
 			}
 			
@@ -364,9 +364,9 @@ public class SkinsScreen extends Screen
 		if (this.minecraft == null)
 			return;
 		
-		GL11.glTranslatef(0F, 0F, -100);
+		stack.translate(0F, 0F, -100);
 		this.renderBackground(stack);
-		GL11.glTranslatef(0F, 0F, 100);
+		stack.translate(0F, 0F, 100);
 		
 		int startX = this.guiLeft;
 		int startY = this.guiTop;
@@ -401,9 +401,9 @@ public class SkinsScreen extends Screen
 			
 			stack.popPose();
 			
-			GL11.glTranslatef(0F, 0F, 400);
+			stack.translate(0F, 0F, 400);
 			
-			this.minecraft.getTextureManager().bindForSetup(BACKGROUND_TEXTURE);
+			RenderSystem.setShaderTexture(0,BACKGROUND_TEXTURE);
 			blit(stack, startX + 128, startY, 0, 0, 164, 256);
 			
 			drawNonShadowString(stack, minecraft.font, new TranslatableComponent("ds.gui.skins").withStyle(ChatFormatting.DARK_GRAY), startX + 128 + ((imageWidth) / 2), startY + 7, -1);
@@ -425,12 +425,12 @@ public class SkinsScreen extends Screen
 			super.render(stack, mouseX, mouseY, partialTicks);
 			
 			for(GuiEventListener btn : children){
-				if(btn instanceof Button && ((Button)btn).isHoveredOrFocused()){
-					((Button)btn).renderToolTip(stack, mouseX, mouseY);
+				if(btn instanceof AbstractButton && ((AbstractButton)btn).isHoveredOrFocused()){
+					((AbstractButton)btn).renderToolTip(stack, mouseX, mouseY);
 				}
 			}
 			
-			GL11.glTranslatef(0F, 0F, -400f);
+			stack.translate(0F, 0F, -400f);
 			
 		}
 	}

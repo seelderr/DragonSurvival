@@ -62,7 +62,7 @@ public class SettingsSideScreen extends OptionsSubScreen
 				this.isHovered = p_230430_2_ >= this.x && p_230430_3_ >= this.y && p_230430_2_ < this.x + this.width && p_230430_3_ < this.y + this.height;
 				
 				Minecraft minecraft = Minecraft.getInstance();
-				minecraft.getTextureManager().bindForSetup(WIDGETS_LOCATION);
+				RenderSystem.setShaderTexture(0,WIDGETS_LOCATION);
 				RenderSystem.color4f(1.0F, 1.0F, 1.0F, this.alpha);
 				int i = this.getYImage(this.isHovered);
 				RenderSystem.enableBlend();
@@ -87,7 +87,7 @@ public class SettingsSideScreen extends OptionsSubScreen
 				this.isHovered = p_230430_2_ >= this.x && p_230430_3_ >= this.y && p_230430_2_ < this.x + this.width && p_230430_3_ < this.y + this.height;
 				
 				Minecraft minecraft = Minecraft.getInstance();
-				minecraft.getTextureManager().bindForSetup(WIDGETS_LOCATION);
+				RenderSystem.setShaderTexture(0,WIDGETS_LOCATION);
 				RenderSystem.color4f(1.0F, 1.0F, 1.0F, this.alpha);
 				int i = this.getYImage(this.isHovered);
 				RenderSystem.enableBlend();
@@ -112,7 +112,7 @@ public class SettingsSideScreen extends OptionsSubScreen
 				this.isHovered = p_230430_2_ >= this.x && p_230430_3_ >= this.y && p_230430_2_ < this.x + this.width && p_230430_3_ < this.y + this.height;
 				
 				Minecraft minecraft = Minecraft.getInstance();
-				minecraft.getTextureManager().bindForSetup(WIDGETS_LOCATION);
+				RenderSystem.setShaderTexture(0,WIDGETS_LOCATION);
 				RenderSystem.color4f(1.0F, 1.0F, 1.0F, this.alpha);
 				int i = this.getYImage(this.isHovered);
 				RenderSystem.enableBlend();

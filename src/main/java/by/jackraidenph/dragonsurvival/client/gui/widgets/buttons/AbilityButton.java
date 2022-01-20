@@ -22,7 +22,6 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
-import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
 import java.util.List;
@@ -73,10 +72,10 @@ public class AbilityButton extends Button
 		GuiComponent.blit(stack, x, y, 0, 0, 18, 18, 18, 18);
 		
 		if(ability.isDisabled()){
-			GL11.glEnable(GL11.GL_BLEND);
-			Minecraft.getInstance().textureManager.bindForSetup(INVALID_ICON);
+			RenderSystem.enableBlend();
+			RenderSystem.setShaderTexture(0,INVALID_ICON);
 			blit(stack, x, y, 0, 0, 18, 18, 18, 18);
-			GL11.glDisable(GL11.GL_BLEND);
+			RenderSystem.disableBlend();
 		}
 	}
 	
@@ -188,14 +187,14 @@ public class AbilityButton extends Button
 			Gui.drawCenteredString(stack, Minecraft.getInstance().font, new TranslatableComponent("ds.skill.info.hold_shift").withStyle(ChatFormatting.DARK_GRAY), this.x + (width / 2), (origYPos + 47 + (description.size() - 1) * 9), 0);
 		}
 		
-		Minecraft.getInstance().textureManager.bindForSetup(ability.getIcon());
+		RenderSystem.setShaderTexture(0,ability.getIcon());
 		blit(stack, this.x + 5, origYPos + 5, 0, 0, 16, 16, 16, 16);
 		
 		if(ability.isDisabled()){
-			GL11.glEnable(GL11.GL_BLEND);
-			Minecraft.getInstance().textureManager.bindForSetup(INVALID_ICON);
+			 RenderSystem.enableBlend();
+			RenderSystem.setShaderTexture(0,INVALID_ICON);
 			blit(stack, this.x + 5, origYPos + 5, 0, 0, 16, 16, 16, 16);
-			GL11.glDisable(GL11.GL_BLEND);
+			RenderSystem.disableBlend();
 		}
 	}
 	

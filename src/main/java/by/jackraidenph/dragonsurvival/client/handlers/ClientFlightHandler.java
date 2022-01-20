@@ -129,7 +129,7 @@ public class ClientFlightHandler {
             
             if(cap.getMovementData().spinLearned && cap.getMovementData().spinCooldown > 0) {
                 if (event.getType() == ElementType.ALL) {
-                    GL11.glPushMatrix();
+                    
     
                     TextureManager textureManager = Minecraft.getInstance().getTextureManager();
                     Window window = Minecraft.getInstance().getWindow();
@@ -148,7 +148,7 @@ public class ClientFlightHandler {
                     Screen.blit(event.getMatrixStack(), k, j, 0, 0, 66, 21, 256, 256);
                     Screen.blit(event.getMatrixStack(), k + 4, j + 1, 4, 21, l, 21, 256, 256);
     
-                    GL11.glPopMatrix();
+                    
                 }
             }
         });

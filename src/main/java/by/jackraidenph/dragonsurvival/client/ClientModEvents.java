@@ -3,8 +3,10 @@ package by.jackraidenph.dragonsurvival.client;
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.client.gui.DragonScreen;
 import by.jackraidenph.dragonsurvival.client.gui.SourceOfMagicScreen;
+import by.jackraidenph.dragonsurvival.client.handlers.ClientEvents;
 import by.jackraidenph.dragonsurvival.client.handlers.DragonSkins;
 import by.jackraidenph.dragonsurvival.client.handlers.KeyInputHandler;
+import by.jackraidenph.dragonsurvival.client.handlers.magic.ClientMagicHUDHandler;
 import by.jackraidenph.dragonsurvival.client.models.creatures.KnightModel;
 import by.jackraidenph.dragonsurvival.client.models.creatures.PrinceModel;
 import by.jackraidenph.dragonsurvival.client.models.creatures.PrincessHorseModel;
@@ -26,6 +28,7 @@ import by.jackraidenph.dragonsurvival.client.render.entity.projectiles.FireBallR
 import by.jackraidenph.dragonsurvival.client.render.entity.projectiles.StormBreathRender;
 import by.jackraidenph.dragonsurvival.common.blocks.DSBlocks;
 import by.jackraidenph.dragonsurvival.common.entity.DSEntities;
+import by.jackraidenph.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.jackraidenph.dragonsurvival.server.containers.DSContainers;
 import by.jackraidenph.dragonsurvival.server.tileentity.DSTileEntities;
 import net.minecraft.client.Minecraft;
@@ -44,6 +47,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.client.gui.ForgeIngameGui;
+import net.minecraftforge.client.gui.OverlayRegistry;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -78,6 +83,16 @@ public class ClientModEvents {
         DragonSkins.init();
         
         KeyInputHandler.setupKeybinds();
+        
+        OverlayRegistry.enableOverlay(ForgeIngameGui.FOOD_LEVEL_ELEMENT, false);
+        OverlayRegistry.enableOverlay(ForgeIngameGui.EXPERIENCE_BAR_ELEMENT, false);
+        OverlayRegistry.enableOverlay(ForgeIngameGui.AIR_LEVEL_ELEMENT, false);
+    
+        OverlayRegistry.registerOverlayAbove(ForgeIngameGui.FOOD_LEVEL_ELEMENT, "DRAGON_FOOD_BAR", DragonFoodHandler::onRenderFoodBar);
+        OverlayRegistry.registerOverlayAbove(ForgeIngameGui.EXPERIENCE_BAR_ELEMENT, "MAGIC_EXP_BAR", ClientMagicHUDHandler::cancelExpBar);
+        OverlayRegistry.registerOverlayAbove(ForgeIngameGui.AIR_LEVEL_ELEMENT, "DRAGON_TRAIT_BAR", ClientEvents::onRenderOverlayPreTick);
+    
+        OverlayRegistry.registerOverlayTop("MAGIC_ABILITY_ELEMENT", ClientMagicHUDHandler::renderAbilityHud);
     
         ItemBlockRenderTypes.setRenderLayer(DSBlocks.dragon_altar_stone, RenderType.cutout());
         ItemBlockRenderTypes.setRenderLayer(DSBlocks.dragon_altar_sandstone, RenderType.cutout());

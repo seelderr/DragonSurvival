@@ -19,8 +19,10 @@ import by.jackraidenph.dragonsurvival.network.container.OpenInventory;
 import by.jackraidenph.dragonsurvival.network.entity.player.SortInventoryPacket;
 import by.jackraidenph.dragonsurvival.server.containers.DragonContainer;
 import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -35,7 +37,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL20;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -48,7 +50,6 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 {
     static final ResourceLocation BACKGROUND = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_inventory.png");
     public static final ResourceLocation INVENTORY_TOGGLE_BUTTON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/inventory_button.png");
-    public static final ResourceLocation SORTING_BUTTON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/sorting_button.png");
     public static final ResourceLocation SETTINGS_BUTTON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/settings_button.png");
     
     private static final ResourceLocation CLAWS_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_claws.png");
@@ -73,35 +74,32 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
     
     @Override
     protected void renderBg(PoseStack stack, float partialTicks, int mouseX, int mouseY) {
-        minecraft.getTextureManager().bindForSetup(BACKGROUND);
+        RenderSystem.setShaderTexture(0, BACKGROUND);
         int i = leftPos;
         int j = topPos;
 
         this.blit(stack,leftPos, topPos, 0, 0, imageWidth, imageHeight);
-        
-        GL11.glScissor((int)((leftPos + 26) * Minecraft.getInstance().getWindow().getGuiScale()),
+        RenderSystem.enableScissor((int)((leftPos + 26) * Minecraft.getInstance().getWindow().getGuiScale()),
                        (int)((height * Minecraft.getInstance().getWindow().getGuiScale()) - (topPos + 79) * Minecraft.getInstance().getWindow().getGuiScale()),
                        (int)(76 * Minecraft.getInstance().getWindow().getGuiScale()),
                        (int)(70 * Minecraft.getInstance().getWindow().getGuiScale()));
-        GL11.glEnable(GL11.GL_SCISSOR_TEST);
-    
-        GL11.glTranslatef(0F, 0F, 100F);
+        stack.translate(0F, 0F, 100F);
     
         DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
         int sizeOffset = (int)(handler.getSize() - handler.getLevel().size) / 2;
         InventoryScreen.renderEntityInInventory(i + 60, j + 70, (int)(30 - sizeOffset), (float)(i + 51) - mouseX * 20, (float)(j + 75 - 50) - mouseY * 20, this.minecraft.player);
     
-        GL11.glTranslatef(0F, 0F, -100F);
-        GL11.glDisable(GL11.GL_SCISSOR_TEST);
+        stack.translate(0F, 0F, -100F);
+        RenderSystem.disableScissor();
         
         
         if(clawsMenu){
-            minecraft.getTextureManager().bindForSetup(CLAWS_TEXTURE);
+            RenderSystem.setShaderTexture(0,CLAWS_TEXTURE);
             this.blit(stack,leftPos - 80, topPos, 0, 0, 77, 170);
         }
     
 
-        if(clawsMenu) {
+        if(clawsMenu && false) { //TODO Fix this
             double curSize = handler.getSize();
             float progress = 0;
     
@@ -126,37 +124,39 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
             int radius = size / 2;
             
             
-            GL11.glDisable(GL11.GL_TEXTURE_2D);
+            RenderSystem.disableTexture();
             Color c = new Color(99, 99, 99);
-            GL11.glColor4d(c.getRed()  / 255.0, c.getBlue() / 255.0, c.getGreen() / 255.0, 1.0);
+            RenderSystem.setShaderColor(c.getRed()  / 255.0f, c.getBlue() / 255.0f, c.getGreen() / 255.0f, 1.0f);
             drawTexturedRing(circleX + radius, circleY + radius, radius - thickness, radius, 0, 0, 0, 128, sides, 1, 0);
-            GL11.glEnable(GL11.GL_TEXTURE_2D);
+            RenderSystem.enableTexture();
             
-            GL11.glColor4d(1F, 1F, 1F, 1.0);
-            minecraft.getTextureManager().bindForSetup(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_" + handler.getType().name().toLowerCase() + ".png"));
+            
+            RenderSystem.setShaderColor(1F, 1F, 1F, 1.0f);
+            RenderSystem.setShaderTexture(0,new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_" + handler.getType().name().toLowerCase() + ".png"));
             drawTexturedCircle(circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, sides, progress, -0.5);
     
-            GL11.glDisable(GL11.GL_TEXTURE_2D);
-            GL11.glLineWidth(4.0F);
+            RenderSystem.disableTexture();
+            
+            RenderSystem.lineWidth(4.0F);
             if(handler.growing){
-                GL11.glColor4f(0F, 0F, 0F, 1F);
+                RenderSystem.setShaderColor(0F, 0F, 0F, 1F);
             }else{
-                GL11.glColor4f(76 / 255F, 0F, 0F, 1F);
+                RenderSystem.setShaderColor(76 / 255F, 0F, 0F, 1F);
             }
             drawSmoothCircle(circleX + radius, circleY + radius, radius, sides, 1, 0);
     
-            GL11.glColor4d(c.getRed()  / 255.0, c.getBlue() / 255.0, c.getGreen() / 255.0, 1.0);
+            RenderSystem.setShaderColor(c.getRed()  / 255.0f, c.getBlue() / 255.0f, c.getGreen() / 255.0f, 1.0f);
             drawSmoothCircle(circleX + radius, circleY + radius, radius - thickness, sides, 1, 0);
-            GL11.glLineWidth(1.0F);
+            RenderSystem.lineWidth(1.0F);
     
             c = c.brighter();
-            GL11.glColor4d(c.getRed()  / 255.0, c.getBlue() / 255.0, c.getGreen() / 255.0, 1.0);
+            RenderSystem.setShaderColor(c.getRed()  / 255.0f, c.getBlue() / 255.0f, c.getGreen() / 255.0f, 1.0f);
             drawTexturedRing(circleX + radius, circleY + radius, 0, radius - thickness, 0, 0,0,0, sides, 1, 0);
     
-            GL11.glEnable(GL11.GL_TEXTURE_2D);
-            GL11.glColor4d(1F, 1F, 1F, 1.0);
+            RenderSystem.enableTexture();
+            RenderSystem.setShaderColor(1F, 1F, 1F, 1.0f);
     
-            minecraft.getTextureManager().bindForSetup(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/growth_" + handler.getType().name().toLowerCase() + "_" + (handler.getLevel().ordinal() + 1) + ".png"));
+            RenderSystem.setShaderTexture(0,new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/growth_" + handler.getType().name().toLowerCase() + "_" + (handler.getLevel().ordinal() + 1) + ".png"));
             this.blit(stack, circleX + 6, circleY + 6, 0, 0, 20, 20, 20, 20);
     
         }
@@ -167,17 +167,17 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
         double sin;
         double cos;
         
-        GL11.glBegin(GL11.GL_TRIANGLE_FAN);
-        GL11.glTexCoord2d(u, v);
-        GL11.glVertex2d(x, y);
+        GL20.glBegin(GL20.GL_TRIANGLE_FAN);
+        GL20.glTexCoord2d(u, v);
+        GL20.glVertex2d(x, y);
         
         for (int i = 0; i <= percent * sides; i++) {
             rad = PI_TWO * ((double) i / (double) sides + startAngle);
             sin = Math.sin(rad);
             cos = Math.cos(rad);
             
-            GL11.glTexCoord2d(u + sin * texRadius, v + cos * texRadius);
-            GL11.glVertex2d(x + sin * radius, y + cos * radius);
+            GL20.glTexCoord2d(u + sin * texRadius, v + cos * texRadius);
+            GL20.glVertex2d(x + sin * radius, y + cos * radius);
         }
         
         if(percent == 1.0){
@@ -185,52 +185,52 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
             sin = Math.sin(rad);
             cos = Math.cos(rad);
     
-            GL11.glTexCoord2d(u + sin * texRadius, v + cos * texRadius);
-            GL11.glVertex2d(x + sin * radius, y + cos * radius);
+            GL20.glTexCoord2d(u + sin * texRadius, v + cos * texRadius);
+            GL20.glVertex2d(x + sin * radius, y + cos * radius);
         }
         
-        GL11.glEnd();
+        GL20.glEnd();
     }
     
     static final double PI_TWO = (Math.PI * 2.0);
     
     public static void drawSmoothCircle(double x, double y, double radius, int sides, double percent, double startAngle) {
-        boolean blend = GL11.glGetBoolean(GL11.GL_BLEND);
-        boolean lineSmooth = GL11.glGetBoolean(GL11.GL_LINE_SMOOTH);
+        boolean blend = GL20.glGetBoolean(GL20.GL_BLEND);
+        boolean lineSmooth = GL20.glGetBoolean(GL20.GL_LINE_SMOOTH);
         
         double rad;
         double sin;
         double cos;
         
-        GL11.glPushMatrix();
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glEnable(GL11.GL_LINE_SMOOTH);
-        GL11.glHint(GL11.GL_LINE_SMOOTH_HINT, GL11.GL_NICEST);
-        GL11.glBegin(GL11.GL_LINE_STRIP);
+        
+        RenderSystem.enableBlend();
+        GL20.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+        GL20.glEnable(GL20.GL_LINE_SMOOTH);
+        GL20.glHint(GL20.GL_LINE_SMOOTH_HINT, GL20.GL_NICEST);
+        GL20.glBegin(GL20.GL_LINE_STRIP);
         
         for (int i = 0; i <= percent * sides; i++) {
             rad = PI_TWO * ((double) i / (double) sides + startAngle);
             sin = Math.sin(rad);
             cos = -Math.cos(rad);
             
-            GL11.glVertex2d(x + sin * radius, y + cos * radius);
+            GL20.glVertex2d(x + sin * radius, y + cos * radius);
         }
         
         rad = PI_TWO * (percent + startAngle);
         sin = Math.sin(rad);
         cos = -Math.cos(rad);
         
-        GL11.glVertex2d(x + sin * radius, y + cos * radius);
+        GL20.glVertex2d(x + sin * radius, y + cos * radius);
         
-        GL11.glEnd();
+        GL20.glEnd();
         if (!lineSmooth) {
-            GL11.glDisable(GL11.GL_LINE_SMOOTH);
+            GL20.glDisable(GL20.GL_LINE_SMOOTH);
         }
         if (!blend) {
-            GL11.glDisable(GL11.GL_BLEND);
+            RenderSystem.disableBlend();
         }
-        GL11.glPopMatrix();
+        
     }
     
     
@@ -238,48 +238,47 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
         double rad;
         double sin;
         double cos;
-    
-        boolean blend = GL11.glGetBoolean(GL11.GL_BLEND);
-        boolean lineSmooth = GL11.glGetBoolean(GL11.GL_LINE_SMOOTH);
         
-        GL11.glPushMatrix();
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glEnable(GL11.GL_LINE_SMOOTH);
-        GL11.glHint(GL11.GL_LINE_SMOOTH_HINT, GL11.GL_NICEST);
-        GL11.glBegin(GL11.GL_QUAD_STRIP);
+        boolean blend = GL20.glGetBoolean(GL20.GL_BLEND);
+        boolean lineSmooth = GL20.glGetBoolean(GL20.GL_LINE_SMOOTH);
+        
+        RenderSystem.enableBlend();
+        RenderSystem.blendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+        GL20.glEnable(GL20.GL_LINE_SMOOTH);
+        GL20.glHint(GL20.GL_LINE_SMOOTH_HINT, GL20.GL_NICEST);
+        GL20.glBegin(GL20.GL_QUAD_STRIP);
         
         for (int i = 0; i <= percent * sides; i++) {
             rad = PI_TWO * ((double) i / (double) sides + startAngle);
             sin = Math.sin(rad);
             cos = -Math.cos(rad);
-            
-            GL11.glTexCoord2d(u + sin * texOuterRadius, v + cos * texOuterRadius);
-            GL11.glVertex2d(x + sin * outerRadius, y + cos * outerRadius);
-            
-            GL11.glTexCoord2d(u + sin * texInnerRadius, v + cos * texInnerRadius);
-            GL11.glVertex2d(x + sin * innerRadius, y + cos * innerRadius);
+    
+            GL20.glTexCoord2d(u + sin * texOuterRadius, v + cos * texOuterRadius);
+            GL20.glVertex2d(x + sin * outerRadius, y + cos * outerRadius);
+    
+            GL20.glTexCoord2d(u + sin * texInnerRadius, v + cos * texInnerRadius);
+            GL20.glVertex2d(x + sin * innerRadius, y + cos * innerRadius);
         }
         
         rad = PI_TWO * (percent + startAngle);
         sin = Math.sin(rad);
         cos = -Math.cos(rad);
-        
-        GL11.glTexCoord2d(u + sin * texOuterRadius, v + cos * texOuterRadius);
-        GL11.glVertex2d(x + sin * outerRadius, y + cos * outerRadius);
-        
-        GL11.glTexCoord2d(u + sin * texInnerRadius, v + cos * texInnerRadius);
-        GL11.glVertex2d(x + sin * innerRadius, y + cos * innerRadius);
-        
-        GL11.glEnd();
+    
+        GL20.glTexCoord2d(u + sin * texOuterRadius, v + cos * texOuterRadius);
+        GL20.glVertex2d(x + sin * outerRadius, y + cos * outerRadius);
+    
+        GL20.glTexCoord2d(u + sin * texInnerRadius, v + cos * texInnerRadius);
+        GL20.glVertex2d(x + sin * innerRadius, y + cos * innerRadius);
+    
+        GL20.glEnd();
         
         if (!lineSmooth) {
-            GL11.glDisable(GL11.GL_LINE_SMOOTH);
+            GL20.glDisable(GL20.GL_LINE_SMOOTH);
         }
         if (!blend) {
-            GL11.glDisable(GL11.GL_BLEND);
+            RenderSystem.disableBlend();
         }
-        GL11.glPopMatrix();
+        
     }
     
     
@@ -328,14 +327,10 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
             @Override
             public void renderButton(PoseStack  stack, int p_230431_2_, int p_230431_3_, float p_230431_4_)
             {
-                GL11.glPushMatrix();
-                GL11.glDisable(GL11.GL_DEPTH_TEST);
-    
-                minecraft.getTextureManager().bindForSetup(DRAGON_CLAW_BUTTON);
+                RenderSystem.disableDepthTest();
+                RenderSystem.setShaderTexture(0,DRAGON_CLAW_BUTTON);
                 this.blit(stack,x, y, 0, 0, 11, 11, 11, 11);
-                
-                GL11.glEnable(GL11.GL_DEPTH_TEST);
-                GL11.glPopMatrix();
+                RenderSystem.enableDepthTest();
             }
     
             @Override
@@ -465,7 +460,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
                 DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
                 
                 if(handler != null && handler.getClawInventory().renderClaws && clawsMenu){
-                    minecraft.getTextureManager().bindForSetup(DRAGON_CLAW_CHECKMARK);
+                    RenderSystem.setShaderTexture(0,DRAGON_CLAW_CHECKMARK);
                     this.blit(p_230430_1_,x, y, 0, 0, 9, 9, 9, 9);
                 }
                 this.isHovered = p_230430_2_ >= this.x && p_230430_3_ >= this.y && p_230430_2_ < this.x + this.width && p_230430_3_ < this.y + this.height;
@@ -491,7 +486,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
             });
         }
     
-        addRenderableWidget(new ImageButton(this.leftPos + (imageWidth - 28), (this.height / 2), 20, 18, 0, 0, 18, SORTING_BUTTON, p_onPress_1_ -> {
+        addRenderableWidget(new ImageButton(this.leftPos + (imageWidth - 28), (this.height / 2), 20, 18, 40, 0, 20, INVENTORY_TOGGLE_BUTTON, p_onPress_1_ -> {
             NetworkHandler.CHANNEL.sendToServer(new SortInventoryPacket());
         }){
             @Override
@@ -523,8 +518,8 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
         this.renderTooltip(p_230450_1_, p_render_1_, p_render_2_);
         
         for(GuiEventListener w : children){
-            if(w instanceof Button && ((Button)w).isHoveredOrFocused()){
-                ((Button)w).renderToolTip(p_230450_1_, p_render_1_, p_render_2_);
+            if(w instanceof AbstractButton && ((AbstractButton)w).isHoveredOrFocused()){
+                ((AbstractButton)w).renderToolTip(p_230450_1_, p_render_1_, p_render_2_);
             }
         }
     }
