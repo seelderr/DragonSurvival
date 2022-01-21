@@ -37,9 +37,8 @@ public class OptionsList extends ContainerObjectSelectionList<OptionListEntry>
 	
 	
 	
-	public CategoryEntry addCategory(String p_214333_1_, CategoryEntry ent, int catNum) {
-		String name = p_214333_1_.substring(0, 1).toUpperCase(Locale.ROOT) + p_214333_1_.substring(1).replace("_", " ");
-		CategoryEntry entry = new CategoryEntry(this, new TextComponent(name), ent, catNum);
+	public CategoryEntry addCategory(String displayName, String p_214333_1_, CategoryEntry ent, int catNum) {
+		CategoryEntry entry = new CategoryEntry(this, new TextComponent(displayName), ent, catNum);
 		entry.origName = p_214333_1_;
 		this.addEntry(entry);
 		return entry;
@@ -223,6 +222,9 @@ public class OptionsList extends ContainerObjectSelectionList<OptionListEntry>
 						closest = ent;
 						dif = difText.length();
 					}
+				}else if(dif == -1 && ent.key.getString().toLowerCase(Locale.ROOT).replace(" ", "").contains(text.toLowerCase(Locale.ROOT).replace(" ", ""))){
+					closest = ent;
+					dif = difText.length();
 				}
 			}
 		}

@@ -33,6 +33,7 @@ public class HelmetEntityRenderer implements BlockEntityRenderer<HelmetTileEntit
         resourceLocationHashMap.put(DSBlocks.helmet2, new ResourceLocation(DragonSurvivalMod.MODID, "textures/block/broken_knight_helmet_1.png"));
         resourceLocationHashMap.put(DSBlocks.helmet3, new ResourceLocation(DragonSurvivalMod.MODID, "textures/block/broken_knight_helmet_2.png"));
     });
+    
     static SkullModel humanoidHeadModel = new SkullModel(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.PLAYER_HEAD));
 
     public void render(HelmetTileEntity helmetEntity, float p_225616_2_, PoseStack PoseStack , MultiBufferSource renderTypeBuffer, int p_225616_5_, int p_225616_6_) {

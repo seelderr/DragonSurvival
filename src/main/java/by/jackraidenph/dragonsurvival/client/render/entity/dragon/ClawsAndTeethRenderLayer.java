@@ -9,6 +9,7 @@ import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -39,7 +40,7 @@ public class ClawsAndTeethRenderLayer extends GeoLayerRenderer<DragonEntity>
 		if(entitylivingbaseIn.hasEffect(MobEffects.INVISIBILITY)) return;
 		
 		DragonStateHandler handler = DragonStateProvider.getCap(entitylivingbaseIn.getPlayer()).orElse(null);
-		if (handler == null || (!handler.getClawInventory().renderClaws && ConfigHandler.SERVER.syncClawRender.get())) return;
+		if (handler == null || (!handler.getClawInventory().renderClaws && (ConfigHandler.SERVER.syncClawRender.get() || entitylivingbaseIn.getPlayer() == Minecraft.getInstance().player))) return;
 		
 		String clawTexture = constructClaws(entitylivingbaseIn.getPlayer());
 		

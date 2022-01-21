@@ -22,10 +22,7 @@ import by.jackraidenph.dragonsurvival.client.render.blocks.HelmetEntityRenderer;
 import by.jackraidenph.dragonsurvival.client.render.entity.creatures.*;
 import by.jackraidenph.dragonsurvival.client.render.entity.dragon.DragonHitboxRender;
 import by.jackraidenph.dragonsurvival.client.render.entity.dragon.DragonRenderer;
-import by.jackraidenph.dragonsurvival.client.render.entity.projectiles.BallLightningRenderer;
-import by.jackraidenph.dragonsurvival.client.render.entity.projectiles.DragonSpikeRenderer;
-import by.jackraidenph.dragonsurvival.client.render.entity.projectiles.FireBallRenderer;
-import by.jackraidenph.dragonsurvival.client.render.entity.projectiles.StormBreathRender;
+import by.jackraidenph.dragonsurvival.client.render.entity.projectiles.*;
 import by.jackraidenph.dragonsurvival.common.blocks.DSBlocks;
 import by.jackraidenph.dragonsurvival.common.entity.DSEntities;
 import by.jackraidenph.dragonsurvival.common.handlers.DragonFoodHandler;
@@ -117,8 +114,7 @@ public class ClientModEvents {
     
         EntityRenderers.register(DSEntities.MAGICAL_BEAST, MagicalPredatorRenderer::new);
         
-        //TODO Fix this
-       // EntityRenderers.register(DSEntities.BOLAS_ENTITY, ItemEntityRenderer::new);
+        EntityRenderers.register(DSEntities.BOLAS_ENTITY, BolasEntityRenderer::new);
         EntityRenderers.register(DSEntities.DRAGON_HITBOX, DragonHitboxRender::new);
 
         EntityRenderers.register(DSEntities.PRINCESS, PrincessRenderer::new);

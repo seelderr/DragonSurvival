@@ -46,7 +46,7 @@ public class ConfigHandler {
 				return ResourceLocation.isValidResourceLocation(String.join(":", itemSplit[1], itemSplit[2]));
 			}else if(itemSplit.length == 2){
 				ResourceLocation location = ResourceLocation.tryParse(text);
-				return location != null && ForgeRegistries.POTIONS.containsKey(location);
+				return location != null && ForgeRegistries.MOB_EFFECTS.containsKey(location);
 			}
 		}catch (Exception ignored){}
 		return false;

@@ -20,12 +20,10 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.*;
-import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.CycleButton;
-import net.minecraft.client.gui.components.TooltipAccessor;
+import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.screens.OptionsSubScreen;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.BaseComponent;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.TextComponent;
@@ -33,6 +31,7 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.*;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
@@ -76,16 +75,33 @@ public class ClientSettingsScreen extends OptionsSubScreen
 			if(!ent.getKey().isEmpty()) {
 				String key = ent.getKey();
 				String lastKey = key;
+				StringJoiner keys = new StringJoiner(".");
 				for (String s : key.split("\\.")) {
+					
+					String prevKeys = keys.toString() + (!keys.toString().isEmpty() && !keys.toString().endsWith(".") ? "." : "");
+					String fullpath = "ds." + getConfigName() + ".category." + prevKeys + s;
+					String translatedCategory = I18n.get(fullpath);
+					
+					if(translatedCategory.equalsIgnoreCase(fullpath)){
+						translatedCategory = StringUtils.capitalize(StringUtils.join(StringUtils.splitByCharacterTypeCamelCase(StringUtils.join(StringUtils.split(s, "_"), " ")), " "));
+					}
+					
+//					if(!configList.containsKey(fullpath)){
+//						configList.put(fullpath, StringUtils.capitalize(StringUtils.join(StringUtils.splitByCharacterTypeCamelCase(StringUtils.join(StringUtils.split(s, "_"), " ")), " ")));
+//					}
+					
 					if(this.list.findCategory(s, lastKey) == null
 					   || (Objects.requireNonNull(this.list.findCategory(s, lastKey)).parent != null && !Objects.requireNonNull(this.list.findCategory(s, lastKey)).parent.origName.equals(lastKey))) {
-						entry = this.list.addCategory(s, entry, catNum);
+						entry = this.list.addCategory(translatedCategory, s, entry, catNum);
 						catNum++;
 
 					}else{
 						entry = this.list.findCategory(s, lastKey);
 					}
 					lastKey = s;
+					if(!s.isEmpty()) {
+						keys.add(s);
+					}
 				}
 			}
 			this.list.add(ent.getValue().toArray(new Option[0]), entry);
@@ -126,6 +142,9 @@ public class ClientSettingsScreen extends OptionsSubScreen
 		});
 		
 		this.list.setScrollAmount(scroll);
+		
+//		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+//		System.out.println(gson.toJson(configList));
 	}
 	
 	private void addConfigs()
@@ -170,24 +189,32 @@ public class ClientSettingsScreen extends OptionsSubScreen
 	
 	private static final Float sliderPerc = 0.1F;
 	
+	//static TreeMap<String, String> configList = new TreeMap<>();
+	
 	public void addValue(String key, String category, String pName, Object value){
 		if(options.contains(pName)) return;
 		
 		String fullpath = getConfigName() + "." + key;
 		ValueSpec spec = getSpec().getSpec().get(fullpath);
 		
-		String translatedName = new TranslatableComponent(spec.getTranslationKey() != null ? spec.getTranslationKey() : "").getString();
-		String translateTooltip = new TranslatableComponent((spec.getTranslationKey() != null ? spec.getTranslationKey() : "") + ".tooltip").getString();
+		String translatedName = new TranslatableComponent("ds." + fullpath).getString();
+		String translateTooltip = new TranslatableComponent("ds." + fullpath + ".tooltip", spec.getRange() != null ? spec.getRange() : "").getString();
 		
-		String name = translatedName != null && spec.getTranslationKey() != null && !Objects.equals(spec.getTranslationKey(), translatedName)
-		? translatedName : pName;
+		String name = !translatedName.equalsIgnoreCase("ds." + fullpath) ? translatedName : pName;
+		String tooltip0 = !translateTooltip.equalsIgnoreCase("ds." + fullpath + ".tooltip") ? translateTooltip : (spec.getComment() != null ? spec.getComment() : "");
 		
-		String tooltip0 = translateTooltip != null && spec.getTranslationKey() != null
-		                 && !Objects.equals(spec.getTranslationKey() + ".tooltip", translateTooltip)
-				? translateTooltip : (spec.getComment() != null ? spec.getComment() : "");
+		
+//		if(!configList.containsKey("ds." + fullpath)){
+//			if(tooltip0.contains("Range:")){
+//				tooltip0 = tooltip0.substring(0, tooltip0.indexOf("Range:") + "Range:".length());
+//			}
+//			configList.put("ds." + fullpath, StringUtils.capitalize(StringUtils.join(StringUtils.splitByCharacterTypeCamelCase(name), " ")));
+//			configList.put("ds." + fullpath + ".tooltip", tooltip0 + (spec.getRange() != null ? " {0}" : ""));
+//			configList.put("ds.config.server_restart", "§4This setting requires a server restart!§r");
+//		}
 		
 		if(spec.needsWorldRestart()){
-			tooltip0+= ("\n§4This setting requires a server restart!§r");
+			tooltip0 += "\n" + I18n.get("ds.config.server_restart");
 		}
 		TextComponent tooltip = new TextComponent(tooltip0);
 		
@@ -204,7 +231,16 @@ public class ClientSettingsScreen extends OptionsSubScreen
 				if(!Objects.equals(getConfigName(), "client")) {
 					NetworkHandler.CHANNEL.sendToServer(new SyncBooleanConfig(key, settingValue, getConfigName()));
 				}
-			}, () -> CycleButton.booleanBuilder(((BaseComponent)CommonComponents.OPTION_ON).withStyle(ChatFormatting.GREEN), ((BaseComponent)CommonComponents.OPTION_OFF).withStyle(ChatFormatting.RED)).displayOnlyValue().withTooltip((va) -> Minecraft.getInstance().font.split(tooltip, 200)));
+			}, () -> CycleButton.booleanBuilder(((BaseComponent)CommonComponents.OPTION_ON).withStyle(ChatFormatting.GREEN), ((BaseComponent)CommonComponents.OPTION_OFF).withStyle(ChatFormatting.RED)).displayOnlyValue()){
+				@Override
+				public CycleButton<Boolean> createButton(Options pOptions, int pX, int pY, int pWidth)
+				{
+					CycleButton<Boolean> btn = (CycleButton<Boolean>)super.createButton(pOptions, pX, pY, pWidth);
+					CycleButton.TooltipSupplier tooltipsupplier = (va) -> Minecraft.getInstance().font.split(tooltip, 200);
+					btn.tooltipSupplier = tooltipsupplier;
+					return btn;
+				}
+			};
 			OptionsList.configMap.put(option, key);
 			OptionsList.config.put(option, Pair.of(spec, booleanValue));
 			addOption(category, name, option);
@@ -226,7 +262,15 @@ public class ClientSettingsScreen extends OptionsSubScreen
 					}
 				}, (settings, slider) -> {
 					return new TextComponent(slider.get(settings) + "");
-				}, (m) -> Minecraft.getInstance().font.split(tooltip, 200));
+				}){
+					@Override
+					public SliderButton createButton(Options pOptions, int pX, int pY, int pWidth)
+					{
+						SliderButton btn = (SliderButton)super.createButton(pOptions, pX, pY, pWidth);
+						btn.tooltip = Minecraft.getInstance().font.split(tooltip, 200);
+						return btn;
+					}
+				};
 			}else{
 				option = new DSNumberFieldOption(name, min, max, (settings) -> value1.get(), (settings, settingValue) -> {
 					try {
@@ -262,7 +306,15 @@ public class ClientSettingsScreen extends OptionsSubScreen
 					}
 				}, (settings, slider) -> {
 					return new TextComponent(Math.round(slider.get(settings) * 100.0) / 100.0 + "");
-				}, (m) -> Minecraft.getInstance().font.split(tooltip, 200));
+				}){
+					 @Override
+					 public SliderButton createButton(Options pOptions, int pX, int pY, int pWidth)
+					 {
+						 SliderButton btn = (SliderButton)super.createButton(pOptions, pX, pY, pWidth);
+						 btn.tooltip = Minecraft.getInstance().font.split(tooltip, 200);
+						 return btn;
+					 }
+				 };
 			}else{
 				option = new DSNumberFieldOption(name, min, max, (settings) -> value1.get(), (settings, settingValue) -> {
 					try {
@@ -296,7 +348,15 @@ public class ClientSettingsScreen extends OptionsSubScreen
 					}
 				}, (settings, slider) -> {
 					return new TextComponent(slider.get(settings) + "");
-				}, (m) -> Minecraft.getInstance().font.split(tooltip, 200));
+				}, (m) -> Minecraft.getInstance().font.split(tooltip, 200)){
+					@Override
+					public SliderButton createButton(Options pOptions, int pX, int pY, int pWidth)
+					{
+						SliderButton btn = (SliderButton)super.createButton(pOptions, pX, pY, pWidth);
+						btn.tooltip = Minecraft.getInstance().font.split(tooltip, 200);
+						return btn;
+					}
+				};
 			}else{
 				option = new DSNumberFieldOption(name, min, max, (settings) -> value1.get(), (settings, settingValue) -> {
 					try {
@@ -347,8 +407,17 @@ public class ClientSettingsScreen extends OptionsSubScreen
 				}
 				String text = Minecraft.getInstance().font.substrByWidth(new TextComponent(joiner.toString()), 120).getString();
 				CycleOption<String> option = new CycleOption(name, (val) -> text, (val1, val2, val3) -> this.minecraft.setScreen(new ListConfigSettingsScreen(this, minecraft.options, new TextComponent(finalPath1), spec, value1, getSpec(), getConfigName() + "." + key)), () -> {
-					return CycleButton.builder((t) -> new TextComponent(text)).displayOnlyValue().withValues(text).withInitialValue(text).withTooltip((va) -> Minecraft.getInstance().font.split(tooltip, 200));
-				});
+					return CycleButton.builder((t) -> new TextComponent(text)).displayOnlyValue().withValues(text).withInitialValue(text);
+				}){
+					@Override
+					public CycleButton<Boolean> createButton(Options pOptions, int pX, int pY, int pWidth)
+					{
+						CycleButton<Boolean> btn = (CycleButton<Boolean>)super.createButton(pOptions, pX, pY, pWidth);
+						CycleButton.TooltipSupplier tooltipsupplier = (va) -> Minecraft.getInstance().font.split(tooltip, 200);
+						btn.tooltipSupplier = tooltipsupplier;
+						return btn;
+					}
+				};
 				
 				OptionsList.configMap.put(option, key);
 				OptionsList.config.put(option, Pair.of(spec, value1));

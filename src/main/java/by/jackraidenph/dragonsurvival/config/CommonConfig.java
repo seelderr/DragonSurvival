@@ -162,9 +162,9 @@ public class CommonConfig {
 		builder.push("dragonBeacons");
 		secondsOfBeaconEffect = builder.comment("Duration of effect given by beacon constantly in seconds").defineInRange("constantEffect", 20, 1, 60 * 60);
 		minutesOfDragonEffect = builder.comment("Duration of effect given in exchange for experience in minutes").defineInRange("temporaryEffect", 10, 1, 60 * 2);
-		peaceBeaconEffects = builder.comment("Effects of Peace beacon").defineList("peaceBeaconEffects", Arrays.asList("dragonsurvival:peace", "dragonsurvival:animal_peace"), ConfigHandler.effectPredicate);
-		magicBeaconEffects = builder.comment("Effects of Magic beacon").defineList("magicBeaconEffects", Arrays.asList("dragonsurvival:magic", "dragonsurvival:predator_anti_spawn"), ConfigHandler.effectPredicate);
-		fireBeaconEffects = builder.comment("Effects of Fire beacon").defineList("fireBeaconEffects", Arrays.asList("dragonsurvival:fire", "dragonsurvival:strong_leather"), ConfigHandler.effectPredicate);
+		peaceBeaconEffects = builder.comment("Effects of Peace beacon").defineList("peaceBeaconEffects", Arrays.asList("effect:dragonsurvival:peace", "effect:dragonsurvival:animal_peace"), ConfigHandler.effectPredicate);
+		magicBeaconEffects = builder.comment("Effects of Magic beacon").defineList("magicBeaconEffects", Arrays.asList("effect:dragonsurvival:magic", "effect:dragonsurvival:predator_anti_spawn"), ConfigHandler.effectPredicate);
+		fireBeaconEffects = builder.comment("Effects of Fire beacon").defineList("fireBeaconEffects", Arrays.asList("effect:dragonsurvival:fire", "effect:dragonsurvival:strong_leather"), ConfigHandler.effectPredicate);
 		builder.pop();
 	}
 }

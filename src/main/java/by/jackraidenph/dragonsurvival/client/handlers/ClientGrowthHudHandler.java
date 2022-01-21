@@ -98,16 +98,16 @@ public class ClientGrowthHudHandler
 					}
 					
 					RenderSystem.setShaderTexture(0,new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_" + num + ".png"));
-					DragonScreen.drawTexturedCircle(circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, 6, nextProgess, -0.5);
+					DragonScreen.drawTexturedCircle(circleX + radius, circleY + radius, 100, radius, 0.5, 0.5, 0.5, 6, nextProgess, -0.5);
 					
 					RenderSystem.setShaderTexture(0,new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_" + handler.getType().name().toLowerCase() + ".png"));
-					DragonScreen.drawTexturedCircle(circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, 6, progress, -0.5);
+					DragonScreen.drawTexturedCircle(circleX + radius, circleY + radius, 100, radius, 0.5, 0.5, 0.5, 6, progress, -0.5);
 				}else if(increment < 0){
 					RenderSystem.setShaderTexture(0,new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_3.png"));
-					DragonScreen.drawTexturedCircle(circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, 6, progress, -0.5);
+					DragonScreen.drawTexturedCircle(circleX + radius, circleY + radius, 100, radius, 0.5, 0.5, 0.5, 6, progress, -0.5);
 					
 					RenderSystem.setShaderTexture(0,new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_" + handler.getType().name().toLowerCase() + ".png"));
-					DragonScreen.drawTexturedCircle(circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, 6, nextProgess, -0.5);
+					DragonScreen.drawTexturedCircle(circleX + radius, circleY + radius, 100, radius, 0.5, 0.5, 0.5, 6, nextProgess, -0.5);
 				}
 				
 				RenderSystem.disableTexture();

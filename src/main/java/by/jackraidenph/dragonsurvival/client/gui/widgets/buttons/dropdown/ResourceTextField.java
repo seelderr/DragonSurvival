@@ -122,6 +122,9 @@ public class ResourceTextField extends EditBox implements TooltipAccessor
 				screen.children.add(0, list);
 				screen.children.add(list);
 				
+				screen.renderables.add(0, list);
+				screen.renderables.add(list);
+				
 				for (GuiEventListener child : screen.children) {
 					if(child instanceof AbstractSelectionList){
 						if(((AbstractSelectionList)child).renderTopAndBottom){
@@ -133,6 +136,7 @@ public class ResourceTextField extends EditBox implements TooltipAccessor
 				
 			}else{
 				screen.children.add(list);
+				screen.renderables.add(list);
 			}
 			
 			boolean finalHasBorder = hasBorder;
@@ -160,9 +164,14 @@ public class ResourceTextField extends EditBox implements TooltipAccessor
 				}
 			};
 			screen.children.add(renderButton);
+			screen.renderables.add(renderButton);
+			
 		}else{
 			screen.children.removeIf((s) -> s == list);
 			screen.children.removeIf((s) -> s == renderButton);
+			
+			screen.renderables.removeIf((s) -> s == list);
+			screen.renderables.removeIf((s) -> s == renderButton);
 			list = null;
 		}
 	}

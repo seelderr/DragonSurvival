@@ -2,13 +2,12 @@ package by.jackraidenph.dragonsurvival.common.blocks;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.client.sounds.SoundRegistry;
+import by.jackraidenph.dragonsurvival.common.items.BrokenKnightIHelmettem;
 import by.jackraidenph.dragonsurvival.common.items.DragonDoorItem;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.SkullBlock;
-import net.minecraft.world.level.block.SkullBlock.Types;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
@@ -44,7 +43,7 @@ public class DSBlocks
     public static Block dragon_altar_blackstone;
     public static Block dragon_altar_birch_log;
 
-    public static SkullBlock helmet1, helmet2, helmet3;
+    public static BrokenKnightHelmet helmet1, helmet2, helmet3;
     public static DragonBeacon dragonBeacon, peaceDragonBeacon, magicDragonBeacon, fireDragonBeacon;
     public static Block dragonMemoryBlock;
 
@@ -121,9 +120,9 @@ public class DSBlocks
         treasureGold = registerBlock(new TreasureBlock(new Color(255, 255, 243), Block.Properties.of(Material.METAL, MaterialColor.GOLD).noOcclusion().sound(SoundRegistry.treasureMetal).strength(0.5F)), "treasure_gold", forgeRegistry);
         treasureIron = registerBlock(new TreasureBlock(new Color(211, 211, 211), Block.Properties.of(Material.METAL, MaterialColor.METAL).noOcclusion().sound(SoundRegistry.treasureMetal).strength(0.5F)), "treasure_iron", forgeRegistry);
         
-        helmet1 = registerBlock(new SkullBlock(Types.PLAYER, Block.Properties.of(Material.METAL)), "broken_knight_helmet_1", forgeRegistry);
-        helmet2 = registerBlock(new SkullBlock(Types.PLAYER, Block.Properties.of(Material.METAL)), "broken_knight_helmet_2", forgeRegistry);
-        helmet3 = registerBlock(new SkullBlock(Types.PLAYER, Block.Properties.of(Material.METAL)), "broken_knight_helmet_3", forgeRegistry);
+        helmet1 = registerBlock(new BrokenKnightHelmet(Block.Properties.of(Material.METAL)), "broken_knight_helmet_1", forgeRegistry);
+        helmet2 = registerBlock(new BrokenKnightHelmet(Block.Properties.of(Material.METAL)), "broken_knight_helmet_2", forgeRegistry);
+        helmet3 = registerBlock(new BrokenKnightHelmet(Block.Properties.of(Material.METAL)), "broken_knight_helmet_3", forgeRegistry);
 
         dragonBeacon = registerBlock(new DragonBeacon(Block.Properties.of(Material.HEAVY_METAL).strength(15, 50).requiresCorrectToolForDrops().noOcclusion().noCollission()), "empty_dragon_beacon", forgeRegistry);
         dragonMemoryBlock = registerBlock(new Block(Block.Properties.of(Material.HEAVY_METAL).strength(3, 30).requiresCorrectToolForDrops()), "dragon_memory_block", forgeRegistry);
@@ -173,6 +172,10 @@ public class DSBlocks
         registerItem(forestSourceOfMagic, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
         registerItem(caveSourceOfMagic, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
     
+        registerItem(new BrokenKnightIHelmettem(helmet1, new Item.Properties().tab(DragonSurvivalMod.items)), forgeRegistry);
+        registerItem(new BrokenKnightIHelmettem(helmet2, new Item.Properties().tab(DragonSurvivalMod.items)), forgeRegistry);
+        registerItem(new BrokenKnightIHelmettem(helmet3, new Item.Properties().tab(DragonSurvivalMod.items)), forgeRegistry);
+        
         registerItem(treasureDebris, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
         registerItem(treasureDiamond, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
         registerItem(treasureEmerald, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
@@ -198,6 +201,9 @@ public class DSBlocks
     }
     
     @SuppressWarnings("ConstantConditions")
+    private static void registerItem(BlockItem block, IForgeRegistry<Item> forgeRegistry) {
+        forgeRegistry.register(block.setRegistryName(block.getBlock().getRegistryName()));
+    }
     private static void registerItem(Block block, Item.Properties itemProperties, IForgeRegistry<Item> forgeRegistry) {
         forgeRegistry.register(new BlockItem(block, itemProperties.tab(DragonSurvivalMod.items)).setRegistryName(block.getRegistryName()));
     }
