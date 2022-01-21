@@ -488,7 +488,6 @@ public class ClientDragonRender
 	        entityrenderermanager.render(entity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, PoseStack , irendertypebuffer$impl, 15728880);
 	        entityrenderermanager.setRenderHitBoxes(renderHitbox);
 		    entityrenderermanager.setRenderShadow(true);
-		
 	    });
 		
 	    entity.yBodyRot = f2;

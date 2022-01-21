@@ -3,6 +3,7 @@ package by.jackraidenph.dragonsurvival.client.gui.widgets.buttons;
 import by.jackraidenph.dragonsurvival.client.gui.AbilityScreen;
 import by.jackraidenph.dragonsurvival.client.gui.DragonScreen;
 import by.jackraidenph.dragonsurvival.client.gui.SkinsScreen;
+import by.jackraidenph.dragonsurvival.client.gui.utils.TooltipProvider;
 import by.jackraidenph.dragonsurvival.client.handlers.ClientEvents;
 import by.jackraidenph.dragonsurvival.client.handlers.magic.ClientMagicHUDHandler;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
@@ -16,10 +17,11 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.util.FormattedCharSequence;
 
-import java.util.Arrays;
+import java.util.List;
 
-public class TabButton extends Button
+public class TabButton extends Button implements TooltipProvider
 {
 	private int index;
 	private Screen parent;
@@ -47,17 +49,14 @@ public class TabButton extends Button
 			}
 		}
 		
-		
 		if(isHovered || isCurrent()){
 			blit(stack, x + 2, y + 2 + (isCurrent() ? 2 : 0), (index * 24), 67, 24, 24);
 		}else{
 			blit(stack, x + 2, y + 2 + (isCurrent() ? 2 : 0), (index * 24), 41, 24, 24);
 		}
-		
-		if(isHovered){
-			parent.renderComponentTooltip(stack, Arrays.asList(new TranslatableComponent("ds.gui.tab_button." + index)), mouseX, mouseY);
-		}
 	}
+	
+	
 	
 	public boolean isCurrent(){
 		switch(index){
@@ -127,5 +126,11 @@ public class TabButton extends Button
 					break;
 			}
 		}
+	}
+	
+	@Override
+	public List<FormattedCharSequence> getTooltip()
+	{
+		return Minecraft.getInstance().font.split(new TranslatableComponent("ds.gui.tab_button." + index), 200);
 	}
 }

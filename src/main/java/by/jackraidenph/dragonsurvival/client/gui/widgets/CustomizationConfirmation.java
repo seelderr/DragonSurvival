@@ -2,6 +2,7 @@ package by.jackraidenph.dragonsurvival.client.gui.widgets;
 
 import by.jackraidenph.dragonsurvival.client.gui.DragonAltarGUI;
 import by.jackraidenph.dragonsurvival.client.gui.DragonCustomizationScreen;
+import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.TooltipButton;
 import by.jackraidenph.dragonsurvival.client.util.TextRenderUtil;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import com.google.common.collect.ImmutableList;
@@ -15,10 +16,8 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.item.DyeColor;
 import net.minecraftforge.client.gui.GuiUtils;
-import net.minecraftforge.client.gui.widget.ExtendedButton;
 
 import java.util.List;
 
@@ -36,7 +35,7 @@ public class CustomizationConfirmation extends AbstractContainerEventHandler imp
 		this.xSize = xSize;
 		this.ySize = ySize;
 		
-		btn1 = new ExtendedButton(x + (xSize / 2 - 30), y + ySize - 30, 20, 20, null, null)
+		btn1 = new TooltipButton(x + (xSize / 2 - 30), y + ySize - 30, 20, 20, null, null, Minecraft.getInstance().font.split(new TranslatableComponent("ds.gui.customization.tooltip.done"), 200))
 		{
 			@Override
 			public void render(PoseStack pPoseStack , int pMouseX, int pMouseY, float pPartialTicks)
@@ -56,11 +55,6 @@ public class CustomizationConfirmation extends AbstractContainerEventHandler imp
 				RenderSystem.setShaderTexture(0, DragonAltarGUI.CONFIRM_BUTTON);
 				blit(mStack, x + 1, y, 0, 0, 20, 20, 20, 20);
 				mStack.popPose();
-				
-				if (isHovered) {
-					List<FormattedCharSequence> list = Minecraft.getInstance().font.split(new TranslatableComponent("ds.gui.customization.tooltip.done"), 200);
-					screen.renderTooltip(mStack, list, mouseX, mouseY);
-				}
 			}
 			
 			@Override
@@ -70,7 +64,7 @@ public class CustomizationConfirmation extends AbstractContainerEventHandler imp
 			}
 		};
 		
-		btn2 = new ExtendedButton(x + (xSize / 2 + 30), y + ySize - 30, 20, 20, null, null)
+		btn2 = new TooltipButton(x + (xSize / 2 + 30), y + ySize - 30, 20, 20, null, null, Minecraft.getInstance().font.split(new TranslatableComponent("ds.gui.customization.tooltip.cancel"), 200))
 		{
 			@Override
 			public void render(PoseStack  pPoseStack , int pMouseX, int pMouseY, float pPartialTicks)
@@ -90,11 +84,6 @@ public class CustomizationConfirmation extends AbstractContainerEventHandler imp
 				RenderSystem.setShaderTexture(0, DragonAltarGUI.CANCEL_BUTTON);
 				blit(mStack, x, y, 0, 0, 20, 20, 20, 20);
 				mStack.popPose();
-				
-				if (isHovered) {
-					List<FormattedCharSequence> list = Minecraft.getInstance().font.split(new TranslatableComponent("ds.gui.customization.tooltip.cancel"), 200);
-					screen.renderTooltip(mStack, list, mouseX, mouseY);
-				}
 			}
 			
 			

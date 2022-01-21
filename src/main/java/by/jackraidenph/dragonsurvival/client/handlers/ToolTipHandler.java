@@ -173,7 +173,7 @@ public class ToolTipHandler
 		
 		matrix.pushPose();
 		RenderSystem.enableBlend();
-		matrix.translate(0, 0, 610.0);
+		matrix.translate(0, 0, 710.0);
 		
 		Gui.blit(matrix, x - 8 - 6, y - 8 - 6, 1, 1 % texHeight, 16, 16, texWidth, texHeight);
 		Gui.blit(matrix, x + width - 8 + 6, y - 8 - 6, texWidth - 16 - 1, 1 % texHeight, 16, 16, texWidth, texHeight);

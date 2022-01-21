@@ -3,6 +3,7 @@ package by.jackraidenph.dragonsurvival.client.gui;
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.HelpButton;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.TabButton;
+import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.TooltipButton;
 import by.jackraidenph.dragonsurvival.client.handlers.DragonSkins;
 import by.jackraidenph.dragonsurvival.client.handlers.magic.ClientMagicHUDHandler;
 import by.jackraidenph.dragonsurvival.client.render.ClientDragonRender;
@@ -22,9 +23,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -221,7 +220,7 @@ public class SkinsScreen extends Screen
 			}
 		});
 		
-		addRenderableWidget(new Button(startX + 128 + (imageWidth / 2) - 8, startY + 128 + 30, 16, 16, new TextComponent(""), (button) -> {
+		addRenderableWidget(new TooltipButton(startX + 128 + (imageWidth / 2) - 8, startY + 128 + 30, 16, 16, new TextComponent(""), (button) -> {
 			try {
 				URI uri = new URI(DISCORD_URL);
 				this.clickedLink = uri;
@@ -229,22 +228,16 @@ public class SkinsScreen extends Screen
 			} catch (URISyntaxException urisyntaxexception) {
 				urisyntaxexception.printStackTrace();
 			}
-		}){
+		}, Minecraft.getInstance().font.split(new TranslatableComponent("ds.gui.skins.tooltip.discord"), 200)){
 			@Override
 			public void renderButton(PoseStack  p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_)
 			{
 				RenderSystem.setShaderTexture(0,DISCORD);
 				blit(p_230431_1_, x, y, 0, 0, 16, 16, 16,16);
 			}
-			
-			@Override
-			public void renderToolTip(PoseStack  p_230443_1_, int p_230443_2_, int p_230443_3_)
-			{
-				renderComponentTooltip(p_230443_1_, Arrays.asList(new TranslatableComponent("ds.gui.skins.tooltip.discord")), p_230443_2_, p_230443_3_);
-			}
 		});
 		
-		addRenderableWidget(new Button(startX + 128 + (imageWidth / 2) - 8 + 25, startY + 128 + 30, 16, 16, new TextComponent(""), (button) -> {
+		addRenderableWidget(new TooltipButton(startX + 128 + (imageWidth / 2) - 8 + 25, startY + 128 + 30, 16, 16, new TextComponent(""), (button) -> {
 			try {
 				URI uri = new URI(WIKI_URL);
 				this.clickedLink = uri;
@@ -252,35 +245,23 @@ public class SkinsScreen extends Screen
 			} catch (URISyntaxException urisyntaxexception) {
 				urisyntaxexception.printStackTrace();
 			}
-		}){
+		}, Minecraft.getInstance().font.split(new TranslatableComponent("ds.gui.skins.tooltip.wiki"), 200)){
 			@Override
 			public void renderButton(PoseStack  p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_)
 			{
 				RenderSystem.setShaderTexture(0,WIKI);
 				blit(p_230431_1_, x, y, 0, 0, 16, 16, 16,16);
 			}
-			
-			@Override
-			public void renderToolTip(PoseStack  p_230443_1_, int p_230443_2_, int p_230443_3_)
-			{
-				renderComponentTooltip(p_230443_1_, Arrays.asList(new TranslatableComponent("ds.gui.skins.tooltip.wiki")), p_230443_2_, p_230443_3_);
-			}
 		});
 		
 		addRenderableWidget(new HelpButton(startX + 128 + (imageWidth / 2) - 8 - 25, startY + 128 + 30, 16, 16, "ds.gui.skins.tooltip.help"));
 		
-		addRenderableWidget(new Button(startX - 60, startY + 128, 90, 20, new TranslatableComponent("ds.gui.skins.yours"), (button) -> {
+		addRenderableWidget(new TooltipButton(startX - 60, startY + 128, 90, 20, new TranslatableComponent("ds.gui.skins.yours"), (button) -> {
 			playerName = minecraft.player.getGameProfile().getName();
 			setTextures();
-		}){
-			@Override
-			public void renderToolTip(PoseStack  p_230443_1_, int p_230443_2_, int p_230443_3_)
-			{
-				renderComponentTooltip(p_230443_1_, Arrays.asList(new TranslatableComponent("ds.gui.skins.tooltip.yours")), p_230443_2_, p_230443_3_);
-			}
-		});
+		}, Minecraft.getInstance().font.split(new TranslatableComponent("ds.gui.skins.tooltip.yours"), 200)));
 		
-		addRenderableWidget(new Button(startX + 35, startY + 128, 60, 20, new TranslatableComponent("ds.gui.skins.random"), (button) -> {
+		addRenderableWidget(new TooltipButton(startX + 35, startY + 128, 60, 20, new TranslatableComponent("ds.gui.skins.random"), (button) -> {
 			ArrayList<Pair<DragonLevel, String>> skins = new ArrayList<>();
 			ArrayList<String> users = new ArrayList<>();
 			Random random = new Random();
@@ -312,13 +293,7 @@ public class SkinsScreen extends Screen
 					executor.execute(() -> setTextures());
 				}
 			}
-		}){
-			@Override
-			public void renderToolTip(PoseStack  p_230443_1_, int p_230443_2_, int p_230443_3_)
-			{
-				renderComponentTooltip(p_230443_1_, Arrays.asList(new TranslatableComponent("ds.gui.skins.tooltip.random")), p_230443_2_, p_230443_3_);
-			}
-		});
+		}, Minecraft.getInstance().font.split(new TranslatableComponent("ds.gui.skins.tooltip.random"), 200)));
 		
 		addRenderableWidget(new Button(startX + 90, startY + 10, 11, 17, new TextComponent(""), (button) -> {
 			int pos = Mth.clamp(level.ordinal() + 1, 0, DragonLevel.values().length - 1);
@@ -368,6 +343,8 @@ public class SkinsScreen extends Screen
 		this.renderBackground(stack);
 		stack.translate(0F, 0F, 100);
 		
+		super.render(stack, mouseX, mouseY, partialTicks);
+		
 		int startX = this.guiLeft;
 		int startY = this.guiTop;
 		
@@ -393,15 +370,11 @@ public class SkinsScreen extends Screen
 				this.handler.setSize(level.size);
 				
 				FakeClientPlayerUtils.getFakePlayer(0, this.handler).animationSupplier = () -> "fly";
-				
 				ClientDragonRender.renderEntityInInventory(dragon, startX + 10, startY + 90, scale, xRot, yRot);
 			}
 			
 			((DragonRenderer)dragonRenderer).glowTexture = null;
-			
 			stack.popPose();
-			
-			stack.translate(0F, 0F, 400);
 			
 			RenderSystem.setShaderTexture(0,BACKGROUND_TEXTURE);
 			blit(stack, startX + 128, startY, 0, 0, 164, 256);
@@ -421,17 +394,6 @@ public class SkinsScreen extends Screen
 					}
 				}
 			}
-			
-			super.render(stack, mouseX, mouseY, partialTicks);
-			
-			for(GuiEventListener btn : children){
-				if(btn instanceof AbstractButton && ((AbstractButton)btn).isHoveredOrFocused()){
-					((AbstractButton)btn).renderToolTip(stack, mouseX, mouseY);
-				}
-			}
-			
-			stack.translate(0F, 0F, -400f);
-			
 		}
 	}
 	

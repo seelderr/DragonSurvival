@@ -4,6 +4,7 @@ import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.client.gui.DragonScreen;
 import by.jackraidenph.dragonsurvival.client.gui.SourceOfMagicScreen;
 import by.jackraidenph.dragonsurvival.client.handlers.ClientEvents;
+import by.jackraidenph.dragonsurvival.client.handlers.ClientGrowthHudHandler;
 import by.jackraidenph.dragonsurvival.client.handlers.DragonSkins;
 import by.jackraidenph.dragonsurvival.client.handlers.KeyInputHandler;
 import by.jackraidenph.dragonsurvival.client.handlers.magic.ClientMagicHUDHandler;
@@ -88,8 +89,9 @@ public class ClientModEvents {
         OverlayRegistry.registerOverlayAbove(ForgeIngameGui.FOOD_LEVEL_ELEMENT, "DRAGON_FOOD_BAR", DragonFoodHandler::onRenderFoodBar);
         OverlayRegistry.registerOverlayAbove(ForgeIngameGui.EXPERIENCE_BAR_ELEMENT, "MAGIC_EXP_BAR", ClientMagicHUDHandler::cancelExpBar);
         OverlayRegistry.registerOverlayAbove(ForgeIngameGui.AIR_LEVEL_ELEMENT, "DRAGON_TRAIT_BAR", ClientEvents::onRenderOverlayPreTick);
-    
+        
         OverlayRegistry.registerOverlayTop("MAGIC_ABILITY_ELEMENT", ClientMagicHUDHandler::renderAbilityHud);
+        OverlayRegistry.registerOverlayTop("GROWTH_UI", ClientGrowthHudHandler::renderGrowth);
     
         ItemBlockRenderTypes.setRenderLayer(DSBlocks.dragon_altar_stone, RenderType.cutout());
         ItemBlockRenderTypes.setRenderLayer(DSBlocks.dragon_altar_sandstone, RenderType.cutout());

@@ -7,6 +7,7 @@ import by.jackraidenph.dragonsurvival.client.SkinCustomization.DragonCustomizati
 import by.jackraidenph.dragonsurvival.client.gui.widgets.CustomizationConfirmation;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.DragonUIRenderComponent;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.CustomizationSlotButton;
+import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.TooltipButton;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.DropDownButton;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.HelpButton;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.dropdown.ColoredDropdownValueEntry;
@@ -42,16 +43,13 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.DyeColor;
-import net.minecraftforge.client.gui.widget.ExtendedButton;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 
 public class DragonCustomizationScreen extends Screen
@@ -279,18 +277,8 @@ public class DragonCustomizationScreen extends Screen
 			addRenderableWidget(new CustomizationSlotButton(width / 2 + 190, guiTop + ((num - 1) * 12) + 5 + 20, num, this));
 		}
 		
-		addRenderableWidget(new ExtendedButton(width / 2 - 75 - 10, height - 25, 75, 20, new TextComponent("Save"), null)
+		addRenderableWidget(new TooltipButton(width / 2 - 75 - 10, height - 25, 75, 20, new TextComponent("Save"), null, Minecraft.getInstance().font.split(new TranslatableComponent("ds.gui.customization.tooltip.done"), 200))
 		{
-			@Override
-			public void renderButton(PoseStack  mStack, int mouseX, int mouseY, float partial)
-			{
-				super.renderButton(mStack, mouseX, mouseY, partial);
-				if (isHovered) {
-					List<FormattedCharSequence> list = Minecraft.getInstance().font.split(new TranslatableComponent("ds.gui.customization.tooltip.done"), 200);
-					renderTooltip(mStack, list, mouseX, mouseY);
-				}
-			}
-			
 			@Override
 			public void onPress()
 			{
@@ -308,19 +296,8 @@ public class DragonCustomizationScreen extends Screen
 			}
 		});
 		
-		addRenderableWidget(new ExtendedButton(width / 2 + 10, height - 25, 75, 20, new TranslatableComponent("ds.gui.customization.back"), null)
+		addRenderableWidget(new TooltipButton(width / 2 + 10, height - 25, 75, 20, new TranslatableComponent("ds.gui.customization.back"), null, Minecraft.getInstance().font.split(new TranslatableComponent("ds.gui.customization.tooltip.back"), 200))
 		{
-			@Override
-			public void renderButton(PoseStack  mStack, int mouseX, int mouseY, float partial)
-			{
-				super.renderButton(mStack, mouseX, mouseY, partial);
-				
-				if (isHovered) {
-					List<FormattedCharSequence> list = Minecraft.getInstance().font.split(new TranslatableComponent("ds.gui.customization.tooltip.back"), 200);
-					renderTooltip(mStack, list, mouseX, mouseY);
-				}
-			}
-			
 			@Override
 			public void onPress()
 			{
@@ -328,35 +305,24 @@ public class DragonCustomizationScreen extends Screen
 			}
 		});
 		
-		addRenderableWidget(new Button(guiLeft + 256, 9, 19, 19, new TranslatableComponent(""), (btn) -> {
+		addRenderableWidget(new TooltipButton(guiLeft + 256, 9, 19, 19, new TranslatableComponent(""), (btn) -> {
 			map.computeIfAbsent(level, (b) -> new HashMap<>());
 			map.get(level).put(CustomizationLayer.HORNS, type.name().toLowerCase() + "_horns_" + level.ordinal());
 			map.get(level).put(CustomizationLayer.SPIKES, type.name().toLowerCase() + "_spikes_" + level.ordinal());
 			map.get(level).put(CustomizationLayer.BOTTOM, type.name().toLowerCase() + "_bottom_" + level.ordinal());
 			map.get(level).put(CustomizationLayer.BASE, type.name().toLowerCase() + "_base_" + level.ordinal());
 			update();
-		})
+		}, Minecraft.getInstance().font.split(new TranslatableComponent("ds.gui.customization.reset"), 200))
 		{
-			@Override
-			public void renderToolTip(PoseStack  p_230443_1_, int p_230443_2_, int p_230443_3_)
-			{
-				List<FormattedCharSequence> list = Minecraft.getInstance().font.split(new TranslatableComponent("ds.gui.customization.reset"), 200);
-				renderTooltip(p_230443_1_, list, p_230443_2_, p_230443_3_);
-			}
-			
 			@Override
 			public void renderButton(PoseStack  stack, int p_230431_2_, int p_230431_3_, float p_230431_4_)
 			{
 				RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/reset_button.png"));
 				blit(stack, x, y, 0, 0, width, height, width, height);
-				
-				if (this.isHovered) {
-					this.renderToolTip(stack, p_230431_2_, p_230431_3_);
-				}
 			}
 		});
 		
-		addRenderableWidget(new Button(guiLeft + 256 + 30, 9, 19, 19, new TranslatableComponent(""), (btn) -> {
+		addRenderableWidget(new TooltipButton(guiLeft + 256 + 30, 9, 19, 19, new TranslatableComponent(""), (btn) -> {
 			map.computeIfAbsent(level, (b) -> new HashMap<>());
 			
 			for (CustomizationLayer layer : CustomizationLayer.values()) {
@@ -372,24 +338,13 @@ public class DragonCustomizationScreen extends Screen
 			}
 			
 			update();
-		})
+		}, Minecraft.getInstance().font.split(new TranslatableComponent("ds.gui.customization.random"), 200))
 		{
-			@Override
-			public void renderToolTip(PoseStack  p_230443_1_, int p_230443_2_, int p_230443_3_)
-			{
-				List<FormattedCharSequence> list = Minecraft.getInstance().font.split(new TranslatableComponent("ds.gui.customization.random"), 200);
-				renderTooltip(p_230443_1_, list, p_230443_2_, p_230443_3_);
-			}
-			
 			@Override
 			public void renderButton(PoseStack  stack, int p_230431_2_, int p_230431_3_, float p_230431_4_)
 			{
 				RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/random_icon.png"));
 				blit(stack, x, y, 0, 0, width, height, width, height);
-				
-				if (this.isHovered) {
-					this.renderToolTip(stack, p_230431_2_, p_230431_3_);
-				}
 			}
 		});
 		
