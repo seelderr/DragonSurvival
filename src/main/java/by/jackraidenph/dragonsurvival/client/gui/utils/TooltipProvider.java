@@ -1,6 +1,10 @@
 package by.jackraidenph.dragonsurvival.client.gui.utils;
 
-import net.minecraft.client.gui.components.TooltipAccessor;
+import net.minecraft.network.chat.Component;
 
-public interface TooltipProvider extends TooltipAccessor
-{}
+import java.util.List;
+
+public interface TooltipProvider
+{
+	List<Component> getTooltip();
+}

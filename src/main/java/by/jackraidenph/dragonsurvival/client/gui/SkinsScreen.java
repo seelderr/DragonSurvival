@@ -32,6 +32,8 @@ import net.minecraft.network.chat.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import software.bernie.geckolib3.core.processor.IBone;
 
 import java.net.URI;
@@ -40,6 +42,7 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+@OnlyIn( Dist.CLIENT)
 public class SkinsScreen extends Screen
 {
 	private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/skin_interface.png");
@@ -228,7 +231,7 @@ public class SkinsScreen extends Screen
 			} catch (URISyntaxException urisyntaxexception) {
 				urisyntaxexception.printStackTrace();
 			}
-		}, Minecraft.getInstance().font.split(new TranslatableComponent("ds.gui.skins.tooltip.discord"), 200)){
+		}, List.of(new TranslatableComponent("ds.gui.skins.tooltip.discord"))){
 			@Override
 			public void renderButton(PoseStack  p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_)
 			{
@@ -245,7 +248,7 @@ public class SkinsScreen extends Screen
 			} catch (URISyntaxException urisyntaxexception) {
 				urisyntaxexception.printStackTrace();
 			}
-		}, Minecraft.getInstance().font.split(new TranslatableComponent("ds.gui.skins.tooltip.wiki"), 200)){
+		}, List.of(new TranslatableComponent("ds.gui.skins.tooltip.wiki"))){
 			@Override
 			public void renderButton(PoseStack  p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_)
 			{
@@ -259,7 +262,7 @@ public class SkinsScreen extends Screen
 		addRenderableWidget(new TooltipButton(startX - 60, startY + 128, 90, 20, new TranslatableComponent("ds.gui.skins.yours"), (button) -> {
 			playerName = minecraft.player.getGameProfile().getName();
 			setTextures();
-		}, Minecraft.getInstance().font.split(new TranslatableComponent("ds.gui.skins.tooltip.yours"), 200)));
+		}, List.of(new TranslatableComponent("ds.gui.skins.tooltip.yours"))));
 		
 		addRenderableWidget(new TooltipButton(startX + 35, startY + 128, 60, 20, new TranslatableComponent("ds.gui.skins.random"), (button) -> {
 			ArrayList<Pair<DragonLevel, String>> skins = new ArrayList<>();
@@ -293,7 +296,7 @@ public class SkinsScreen extends Screen
 					executor.execute(() -> setTextures());
 				}
 			}
-		}, Minecraft.getInstance().font.split(new TranslatableComponent("ds.gui.skins.tooltip.random"), 200)));
+		}, List.of(new TranslatableComponent("ds.gui.skins.tooltip.random"))));
 		
 		addRenderableWidget(new Button(startX + 90, startY + 10, 11, 17, new TextComponent(""), (button) -> {
 			int pos = Mth.clamp(level.ordinal() + 1, 0, DragonLevel.values().length - 1);

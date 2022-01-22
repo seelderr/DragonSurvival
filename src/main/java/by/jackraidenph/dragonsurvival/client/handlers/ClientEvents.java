@@ -4,7 +4,6 @@ import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.client.SkinCustomization.CustomizationLayer;
 import by.jackraidenph.dragonsurvival.client.SkinCustomization.CustomizationRegistry;
 import by.jackraidenph.dragonsurvival.client.gui.DragonScreen;
-import by.jackraidenph.dragonsurvival.client.gui.utils.TooltipProvider;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.TabButton;
 import by.jackraidenph.dragonsurvival.client.render.CaveLavaFluidRenderer;
 import by.jackraidenph.dragonsurvival.client.render.ClientDragonRender;
@@ -33,9 +32,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.ImageButton;
-import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
@@ -50,7 +47,6 @@ import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -91,24 +87,6 @@ public class ClientEvents
         if (playerTickEvent.phase == TickEvent.Phase.END) {
             Player playerEntity = playerTickEvent.player;
             dragonsJumpingTicks.computeIfPresent(playerEntity.getId(), (playerEntity1, integer) -> integer > 0 ? integer - 1 : integer);
-        }
-    }
-    
-    @SubscribeEvent
-    public static void renderTooltips(ScreenEvent.DrawScreenEvent.Post event){
-        Screen screen = event.getScreen();
-    
-        for (GuiEventListener child : screen.children) {
-            if(child instanceof AbstractWidget){
-                AbstractWidget widget = (AbstractWidget)child;
-                
-                if(widget.isHoveredOrFocused()){
-                    if(widget instanceof TooltipProvider){
-                        List<FormattedCharSequence> lines = ((TooltipProvider)widget).getTooltip();
-                        screen.renderTooltip(event.getPoseStack(), lines, event.getMouseX(), event.getMouseY());
-                    }
-                }
-            }
         }
     }
     

@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 @OnlyIn( Dist.CLIENT)
-@EventBusSubscriber
+@EventBusSubscriber( Dist.CLIENT )
 public class FakeClientPlayerUtils
 {
 	private static final ConcurrentHashMap<Integer, FakeClientPlayer> fakePlayers = new ConcurrentHashMap<>();

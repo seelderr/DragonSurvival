@@ -57,9 +57,6 @@ public class DropdownList extends AbstractSelectionList<DropdownEntry>
 	protected void renderBackground(PoseStack  stack)
 	{
 		GuiUtils.drawContinuousTexturedBox(stack, BACKGROUND_TEXTURE, x0, y0 - 3, 0, 0, width, height + 6, 32, 32, 10, 10);
-		if(children().size() > 0) {
-			RenderSystem.enableScissor((int)(x0 * Minecraft.getInstance().getWindow().getGuiScale()), (int)(Minecraft.getInstance().getWindow().getScreenHeight() - ((y1 - 3) * Minecraft.getInstance().getWindow().getGuiScale())), (int)(width * Minecraft.getInstance().getWindow().getGuiScale()), (int)((height - 6) * Minecraft.getInstance().getWindow().getGuiScale()));
-		}
 	}
 	
 	@Override
@@ -73,6 +70,11 @@ public class DropdownList extends AbstractSelectionList<DropdownEntry>
 		int j1 = this.getRowLeft();
 		int k = this.y0 + 4 - (int)this.getScrollAmount();
 		this.renderList(pPoseStack , j1, k, pMouseX, pMouseY, pPartialTicks);
+		
+		if(children().size() > 0) {
+			RenderSystem.disableScissor();
+		}
+		
 		int k1 = this.getMaxScroll();
 		if (k1 > 0) {
 			RenderSystem.disableTexture();
@@ -83,29 +85,27 @@ public class DropdownList extends AbstractSelectionList<DropdownEntry>
 			if (i2 < this.y0) {
 				i2 = this.y0;
 			}
+			double z = getBlitOffset() + 10;
+			
 			bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-			bufferbuilder.vertex((double)i, (double)this.y1, 0.0D).color(0, 0, 0, 255).endVertex();
-			bufferbuilder.vertex((double)j, (double)this.y1, 0.0D).color(0, 0, 0, 255).endVertex();
-			bufferbuilder.vertex((double)j, (double)this.y0, 0.0D).color(0, 0, 0, 255).endVertex();
-			bufferbuilder.vertex((double)i, (double)this.y0, 0.0D).color(0, 0, 0, 255).endVertex();
-			bufferbuilder.vertex((double)i, (double)(i2 + l1), 0.0D).color(128, 128, 128, 255).endVertex();
+			bufferbuilder.vertex((double)i, (double)this.y1, z).color(0, 0, 0, 255).endVertex();
+			bufferbuilder.vertex((double)j, (double)this.y1, z).color(0, 0, 0, 255).endVertex();
+			bufferbuilder.vertex((double)j, (double)this.y0, z).color(0, 0, 0, 255).endVertex();
+			bufferbuilder.vertex((double)i, (double)this.y0, z).color(0, 0, 0, 255).endVertex();
+			bufferbuilder.vertex((double)i, (double)(i2 + l1), z).color(128, 128, 128, 255).endVertex();
 			bufferbuilder.vertex((double)j, (double)(i2 + l1), 0.0D).color(128, 128, 128, 255).endVertex();
-			bufferbuilder.vertex((double)j, (double)i2, 0.0D).color(128, 128, 128, 255).endVertex();
-			bufferbuilder.vertex((double)i, (double)i2, 0.0D).color(128, 128, 128, 255).endVertex();
-			bufferbuilder.vertex((double)i, (double)(i2 + l1 - 1), 0.0D).color(192, 192, 192, 255).endVertex();
-			bufferbuilder.vertex((double)(j - 1), (double)(i2 + l1 - 1), 0.0D).color(192, 192, 192, 255).endVertex();
-			bufferbuilder.vertex((double)(j - 1), (double)i2, 0.0D).color(192, 192, 192, 255).endVertex();
-			bufferbuilder.vertex((double)i, (double)i2, 0.0D).color(192, 192, 192, 255).endVertex();
+			bufferbuilder.vertex((double)j, (double)i2, z).color(128, 128, 128, 255).endVertex();
+			bufferbuilder.vertex((double)i, (double)i2, z).color(128, 128, 128, 255).endVertex();
+			bufferbuilder.vertex((double)i, (double)(i2 + l1 - 1), z).color(192, 192, 192, 255).endVertex();
+			bufferbuilder.vertex((double)(j - 1), (double)(i2 + l1 - 1), z).color(192, 192, 192, 255).endVertex();
+			bufferbuilder.vertex((double)(j - 1), (double)i2, z).color(192, 192, 192, 255).endVertex();
+			bufferbuilder.vertex((double)i, (double)i2, z).color(192, 192, 192, 255).endVertex();
 			tesselator.end();
 		}
 		
 		this.renderDecorations(pPoseStack , pMouseX, pMouseY);
 		RenderSystem.enableTexture();
 		RenderSystem.disableBlend();
-		
-		if(children().size() > 0) {
-			RenderSystem.disableScissor();
-		}
 	}
 	
 	@Override

@@ -114,7 +114,7 @@ public class ClientModEvents {
     
         EntityRenderers.register(DSEntities.DRAGON_SPIKE, DragonSpikeRenderer::new);
     
-        EntityRenderers.register(DSEntities.MAGICAL_BEAST, MagicalPredatorRenderer::new);
+        //EntityRenderers.register(DSEntities.MAGICAL_BEAST, MagicalPredatorRenderer::new);
         
         EntityRenderers.register(DSEntities.BOLAS_ENTITY, BolasEntityRenderer::new);
         EntityRenderers.register(DSEntities.DRAGON_HITBOX, DragonHitboxRender::new);

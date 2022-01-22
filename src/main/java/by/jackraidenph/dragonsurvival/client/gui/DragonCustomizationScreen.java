@@ -7,9 +7,9 @@ import by.jackraidenph.dragonsurvival.client.SkinCustomization.DragonCustomizati
 import by.jackraidenph.dragonsurvival.client.gui.widgets.CustomizationConfirmation;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.DragonUIRenderComponent;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.CustomizationSlotButton;
-import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.TooltipButton;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.DropDownButton;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.HelpButton;
+import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.TooltipButton;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.dropdown.ColoredDropdownValueEntry;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownEntry;
 import by.jackraidenph.dragonsurvival.client.handlers.ClientEvents;
@@ -45,13 +45,17 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.DyeColor;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
+@OnlyIn( Dist.CLIENT)
 public class DragonCustomizationScreen extends Screen
 {
 	public DragonCustomizationScreen(Screen source)
@@ -277,7 +281,7 @@ public class DragonCustomizationScreen extends Screen
 			addRenderableWidget(new CustomizationSlotButton(width / 2 + 190, guiTop + ((num - 1) * 12) + 5 + 20, num, this));
 		}
 		
-		addRenderableWidget(new TooltipButton(width / 2 - 75 - 10, height - 25, 75, 20, new TextComponent("Save"), null, Minecraft.getInstance().font.split(new TranslatableComponent("ds.gui.customization.tooltip.done"), 200))
+		addRenderableWidget(new TooltipButton(width / 2 - 75 - 10, height - 25, 75, 20, new TextComponent("Save"), null, List.of(new TranslatableComponent("ds.gui.customization.tooltip.done")))
 		{
 			@Override
 			public void onPress()
@@ -296,7 +300,7 @@ public class DragonCustomizationScreen extends Screen
 			}
 		});
 		
-		addRenderableWidget(new TooltipButton(width / 2 + 10, height - 25, 75, 20, new TranslatableComponent("ds.gui.customization.back"), null, Minecraft.getInstance().font.split(new TranslatableComponent("ds.gui.customization.tooltip.back"), 200))
+		addRenderableWidget(new TooltipButton(width / 2 + 10, height - 25, 75, 20, new TranslatableComponent("ds.gui.customization.back"), null, List.of(new TranslatableComponent("ds.gui.customization.tooltip.back")))
 		{
 			@Override
 			public void onPress()
@@ -312,7 +316,7 @@ public class DragonCustomizationScreen extends Screen
 			map.get(level).put(CustomizationLayer.BOTTOM, type.name().toLowerCase() + "_bottom_" + level.ordinal());
 			map.get(level).put(CustomizationLayer.BASE, type.name().toLowerCase() + "_base_" + level.ordinal());
 			update();
-		}, Minecraft.getInstance().font.split(new TranslatableComponent("ds.gui.customization.reset"), 200))
+		}, List.of(new TranslatableComponent("ds.gui.customization.reset")))
 		{
 			@Override
 			public void renderButton(PoseStack  stack, int p_230431_2_, int p_230431_3_, float p_230431_4_)
@@ -338,7 +342,7 @@ public class DragonCustomizationScreen extends Screen
 			}
 			
 			update();
-		}, Minecraft.getInstance().font.split(new TranslatableComponent("ds.gui.customization.random"), 200))
+		}, List.of(new TranslatableComponent("ds.gui.customization.random")))
 		{
 			@Override
 			public void renderButton(PoseStack  stack, int p_230431_2_, int p_230431_3_, float p_230431_4_)

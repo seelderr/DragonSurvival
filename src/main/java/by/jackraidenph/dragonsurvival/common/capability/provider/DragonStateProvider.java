@@ -5,9 +5,12 @@ import by.jackraidenph.dragonsurvival.common.capability.Capabilities;
 import by.jackraidenph.dragonsurvival.common.capability.caps.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.entity.creatures.hitbox.DragonHitBox;
 import by.jackraidenph.dragonsurvival.common.entity.creatures.hitbox.DragonHitboxPart;
+import com.ibm.icu.impl.Pair;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
@@ -21,9 +24,24 @@ public class DragonStateProvider implements ICapabilitySerializable<CompoundTag>
       //  instance.invalidate();
     }
     
-    public static LazyOptional<DragonStateHandler> getCap(Entity entity) {
+    @OnlyIn( Dist.CLIENT)
+    private static Pair<Boolean, LazyOptional<DragonStateHandler>> getFakePlayer(Entity entity){
         if(entity instanceof FakeClientPlayer){
-            return ((FakeClientPlayer)entity).handler != null ? LazyOptional.of(() -> ((FakeClientPlayer)entity).handler) : LazyOptional.empty();
+            if(((FakeClientPlayer)entity).handler != null){
+                return Pair.of(true, LazyOptional.of(() -> ((FakeClientPlayer)entity).handler));
+            }
+        }
+        
+        return Pair.of(false, LazyOptional.empty());
+    }
+    
+    public static LazyOptional<DragonStateHandler> getCap(Entity entity) {
+        if(entity.level.isClientSide){
+            Pair<Boolean, LazyOptional<DragonStateHandler>> fakeState = getFakePlayer(entity);
+            
+            if(fakeState.first){
+                return fakeState.second;
+            }
         }
         
         if(entity instanceof DragonHitBox){

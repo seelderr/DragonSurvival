@@ -8,7 +8,6 @@ import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.components.events.AbstractContainerEventHandler;
@@ -35,7 +34,7 @@ public class CustomizationConfirmation extends AbstractContainerEventHandler imp
 		this.xSize = xSize;
 		this.ySize = ySize;
 		
-		btn1 = new TooltipButton(x + (xSize / 2 - 30), y + ySize - 30, 20, 20, null, null, Minecraft.getInstance().font.split(new TranslatableComponent("ds.gui.customization.tooltip.done"), 200))
+		btn1 = new TooltipButton(x + (xSize / 2 - 30), y + ySize - 30, 20, 20, null, null, List.of(new TranslatableComponent("ds.gui.customization.tooltip.done")))
 		{
 			@Override
 			public void render(PoseStack pPoseStack , int pMouseX, int pMouseY, float pPartialTicks)
@@ -64,7 +63,7 @@ public class CustomizationConfirmation extends AbstractContainerEventHandler imp
 			}
 		};
 		
-		btn2 = new TooltipButton(x + (xSize / 2 + 30), y + ySize - 30, 20, 20, null, null, Minecraft.getInstance().font.split(new TranslatableComponent("ds.gui.customization.tooltip.cancel"), 200))
+		btn2 = new TooltipButton(x + (xSize / 2 + 30), y + ySize - 30, 20, 20, null, null, List.of(new TranslatableComponent("ds.gui.customization.tooltip.cancel")))
 		{
 			@Override
 			public void render(PoseStack  pPoseStack , int pMouseX, int pMouseY, float pPartialTicks)

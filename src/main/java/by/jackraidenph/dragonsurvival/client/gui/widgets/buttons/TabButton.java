@@ -16,8 +16,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.util.FormattedCharSequence;
 
 import java.util.List;
 
@@ -129,8 +129,8 @@ public class TabButton extends Button implements TooltipProvider
 	}
 	
 	@Override
-	public List<FormattedCharSequence> getTooltip()
+	public List<Component> getTooltip()
 	{
-		return Minecraft.getInstance().font.split(new TranslatableComponent("ds.gui.tab_button." + index), 200);
+		return List.of(new TranslatableComponent("ds.gui.tab_button." + index));
 	}
 }

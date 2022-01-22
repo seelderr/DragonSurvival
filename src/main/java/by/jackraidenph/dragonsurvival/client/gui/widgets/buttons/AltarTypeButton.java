@@ -3,6 +3,7 @@ package by.jackraidenph.dragonsurvival.client.gui.widgets.buttons;
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.client.gui.DragonAltarGUI;
 import by.jackraidenph.dragonsurvival.client.gui.DragonCustomizationScreen;
+import by.jackraidenph.dragonsurvival.client.gui.utils.TooltipProvider;
 import by.jackraidenph.dragonsurvival.client.handlers.ClientEvents;
 import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.handlers.DragonFoodHandler;
@@ -18,6 +19,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
@@ -34,40 +36,46 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class AltarTypeButton extends Button
+public class AltarTypeButton extends Button implements TooltipProvider
 {
 	private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_altar_icons.png");
 	
 	public DragonType type;
-	DragonAltarGUI gui;
-	
+	private DragonAltarGUI gui;
+	private boolean atTheTopOrBottom;
+
 	public AltarTypeButton(DragonAltarGUI gui, DragonType type, int x, int y)
 	{
 		super(x, y, 49, 147, null, null);
 		this.gui = gui;
 		this.type = type;
+		
 	}
 	
 	@Override
 	public void renderButton(PoseStack mStack, int mouseX, int mouseY, float p_230431_4_)
 	{
-		final boolean atTheTopOrBottom = (mouseY > y + 6 && mouseY < y + 26) || (mouseY > y + 133 && mouseY < y + 153);
-		
+		atTheTopOrBottom = (mouseY > y + 6 && mouseY < y + 26) || (mouseY > y + 133 && mouseY < y + 153);
 		RenderSystem.setShaderTexture(0, BACKGROUND_TEXTURE);
 		
 		fill(mStack, x-1, y-1, x + width+1, y + height+1, new Color(0.5f, 0.5f, 0.5f).getRGB());
 		blit(mStack, x, y, (type.ordinal() * 49), isHovered ? 0 : 147, 49, 147, 512, 512);
-		
-		if (isHovered && atTheTopOrBottom) {
-			gui.renderComponentTooltip(mStack, altarDragonInfoLocalized((type == DragonType.NONE ? "human" : type.name().toLowerCase() + "_dragon"), type == DragonType.NONE ? Collections.emptyList() : DragonFoodHandler.getSafeEdibleFoods(type)), mouseX, mouseY);
+	}
+	
+	@Override
+	public List<Component> getTooltip()
+	{
+		if(atTheTopOrBottom){
+			return altarDragonInfoLocalized((type == DragonType.NONE ? "human" : type.name().toLowerCase() + "_dragon"), type == DragonType.NONE ? Collections.emptyList() : DragonFoodHandler.getSafeEdibleFoods(type));
 		}
+		return List.of();
 	}
 	
 	private ArrayList<Component> altarDragonInfoLocalized(String dragonType, List<Item> foodList) {
-		ArrayList<Component> info = new ArrayList<Component>();
-		Component foodInfo = (TextComponent)TextComponent.EMPTY;
+		ArrayList<Component> info = new ArrayList<>();
+		Component foodInfo = TextComponent.EMPTY;
 		
-		if (gui.hasShiftDown()) {
+		if (Screen.hasShiftDown()) {
 			if (!Objects.equals(dragonType, "human")) {
 				String food = "";
 				for (Item item : foodList) {

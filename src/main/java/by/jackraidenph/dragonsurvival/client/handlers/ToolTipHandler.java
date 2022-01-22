@@ -2,6 +2,7 @@ package by.jackraidenph.dragonsurvival.client.handlers;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.client.gui.AbilityScreen;
+import by.jackraidenph.dragonsurvival.client.gui.utils.TooltipProvider;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.HelpButton;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.SkillProgressButton;
 import by.jackraidenph.dragonsurvival.common.blocks.DSBlocks;
@@ -14,6 +15,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
@@ -24,12 +26,15 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderTooltipEvent;
+import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import java.awt.Color;
 import java.util.List;
+import java.util.Optional;
+
 @Mod.EventBusSubscriber( Dist.CLIENT)
 public class ToolTipHandler
 {
@@ -246,5 +251,21 @@ public class ToolTipHandler
 				event.setBorderEnd(bottomColor.getRGB());
 			}
 		}
+	}
+	
+	@SubscribeEvent
+	public static void renderTooltips(ScreenEvent.DrawScreenEvent.Post event){
+	    Screen screen = event.getScreen();
+	
+	    for (GuiEventListener child : screen.children) {
+	        if(child instanceof AbstractWidget widget){
+	            if(widget.isHoveredOrFocused()){
+	                if(widget instanceof TooltipProvider){
+	                    List<Component> lines = ((TooltipProvider)widget).getTooltip();
+	                    screen.renderTooltip(event.getPoseStack(), lines, Optional.empty(), event.getMouseX(), event.getMouseY());
+	                }
+	            }
+	        }
+	    }
 	}
 }

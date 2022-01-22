@@ -54,7 +54,8 @@ public class DropDownButton extends ExtendedButton implements TooltipAccessor
 			Screen screen = Minecraft.getInstance().screen;
 			screen.children.removeIf((s) -> s == list);
 			screen.children.removeIf((s) -> s == renderButton);
-			
+			screen.renderables.removeIf((s) -> s == list);
+			screen.renderables.removeIf((s) -> s == renderButton);
 			//screen.buttons.removeIf((s) -> s == renderButton);
 		}
 		

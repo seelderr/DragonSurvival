@@ -1,19 +1,15 @@
 package by.jackraidenph.dragonsurvival.common.entity;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.common.DragonEffects;
-import by.jackraidenph.dragonsurvival.common.blocks.DragonBeacon;
 import by.jackraidenph.dragonsurvival.common.entity.creatures.*;
 import by.jackraidenph.dragonsurvival.common.entity.creatures.hitbox.DragonHitBox;
 import by.jackraidenph.dragonsurvival.common.entity.monsters.MagicalPredatorEntity;
 import by.jackraidenph.dragonsurvival.common.entity.projectiles.*;
 import by.jackraidenph.dragonsurvival.common.handlers.VillagerRelationsHandler;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
-import by.jackraidenph.dragonsurvival.server.tileentity.DragonBeaconTileEntity;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
@@ -27,11 +23,9 @@ import net.minecraft.world.entity.monster.Pillager;
 import net.minecraft.world.entity.monster.Vindicator;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.npc.VillagerProfession;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.phys.AABB;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -142,7 +136,7 @@ public class DSEntities
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void registerSpawnEggs(RegistryEvent.Register<Item> event) {
         IForgeRegistry<Item> registry = event.getRegistry();
-        MAGICAL_BEAST = registerEntity(null, "magical_predator_entity", EntityType.Builder.of(MagicalPredatorEntity::new, MobCategory.MONSTER).sized(1.1f, 1.5625f).clientTrackingRange(64).updateInterval(1).build("magical_predator_entity"));
+//        MAGICAL_BEAST = registerEntity(null, "magical_predator_entity", EntityType.Builder.of(MagicalPredatorEntity::new, MobCategory.MONSTER).sized(1.1f, 1.5625f).clientTrackingRange(64).updateInterval(1).build("magical_predator_entity"));
     
         HUNTER_HOUND = registerEntity(null, "hunter_hound", EntityType.Builder.of(HunterHoundEntity::new, MobCategory.MONSTER).sized(0.6F, 0.85F).clientTrackingRange(64).updateInterval(1).build("hunter_hound"));
         SHOOTER_HUNTER = registerEntity(null, "shooter", EntityType.Builder.of(ShooterEntity::new, MobCategory.MONSTER).sized(0.6F, 1.95F).clientTrackingRange(64).updateInterval(1).build("shooter"));
@@ -152,15 +146,15 @@ public class DSEntities
         PRINCE_ON_HORSE = registerEntity(null, "prince", EntityType.Builder.<PrinceHorseEntity>of(PrinceHorseEntity::new, MobCategory.MONSTER).sized(0.8f, 2.5f).clientTrackingRange(64).updateInterval(1).build("prince"));
         PRINCESS_ON_HORSE = registerEntity(null, "princess", EntityType.Builder.<PrincesHorseEntity>of(PrincesHorseEntity::new, MobCategory.MONSTER).sized(0.8f, 2.5f).clientTrackingRange(64).updateInterval(1).build("princess"));
     
-        registerSpawnEgg(registry, MAGICAL_BEAST, 0x000000, 0xFFFFFF, (p_test_1_, serverWorld, p_test_3_, p_test_4_, p_test_5_) -> serverWorld.getEntitiesOfClass(Player.class, new AABB(p_test_4_).inflate(50), playerEntity -> playerEntity.hasEffect(
-                DragonEffects.PREDATOR_ANTI_SPAWN)).isEmpty() && !BlockPos.findClosestMatch(p_test_4_, 10, 64, blockPos -> {
-            //this is expensive, might need to remove
-            if (serverWorld.getBlockEntity(blockPos) instanceof DragonBeaconTileEntity) {
-                DragonBeaconTileEntity dbe = (DragonBeaconTileEntity) serverWorld.getBlockEntity(blockPos);
-                return dbe.type == DragonBeaconTileEntity.Type.MAGIC && serverWorld.getBlockState(blockPos).getValue(DragonBeacon.LIT);
-            }
-            return false;
-        }).isPresent());
+//        registerSpawnEgg(registry, MAGICAL_BEAST, 0x000000, 0xFFFFFF, (p_test_1_, serverWorld, p_test_3_, p_test_4_, p_test_5_) -> serverWorld.getEntitiesOfClass(Player.class, new AABB(p_test_4_).inflate(50), playerEntity -> playerEntity.hasEffect(
+//                DragonEffects.PREDATOR_ANTI_SPAWN)).isEmpty() && !BlockPos.findClosestMatch(p_test_4_, 10, 64, blockPos -> {
+//            //this is expensive, might need to remove
+//            if (serverWorld.getBlockEntity(blockPos) instanceof DragonBeaconTileEntity) {
+//                DragonBeaconTileEntity dbe = (DragonBeaconTileEntity) serverWorld.getBlockEntity(blockPos);
+//                return dbe.type == DragonBeaconTileEntity.Type.MAGIC && serverWorld.getBlockState(blockPos).getValue(DragonBeacon.LIT);
+//            }
+//            return false;
+//        }).isPresent());
         
         registerSpawnEgg(registry, HUNTER_HOUND, 10510648, 8934192, null);
         registerSpawnEgg(registry, SHOOTER_HUNTER, 12486764, 2690565, null);

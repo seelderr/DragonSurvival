@@ -197,7 +197,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
             NetworkHandler.CHANNEL.sendToServer(new DragonClawsMenuToggle(clawsMenu));
             DragonStateProvider.getCap(player).ifPresent((cap) -> cap.getClawInventory().setClawsMenuOpen(clawsMenu));
             
-        }, Minecraft.getInstance().font.split(new TranslatableComponent("ds.gui.claws"), 200)){
+        }, List.of(new TranslatableComponent("ds.gui.claws"))){
             @Override
             public void renderButton(PoseStack  stack, int p_230431_2_, int p_230431_3_, float p_230431_4_)
             {
@@ -319,7 +319,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
                handler.getClawInventory().renderClaws = claws;
                NetworkHandler.CHANNEL.sendToServer(new SyncDragonClawRender(player.getId(), claws));
             }
-        }, Minecraft.getInstance().font.split(new TranslatableComponent("ds.gui.claws.rendering"), 200)){
+        }, List.of(new TranslatableComponent("ds.gui.claws.rendering"))){
             @Override
             public void render(PoseStack  p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_)
             {
