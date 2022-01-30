@@ -120,11 +120,11 @@ public class AoeBuffAbility extends ActiveDragonAbility
 	
 	public int getDuration(){
 		if(effect.getEffect() == Effects.DIG_SPEED){
-			return ConfigHandler.SERVER.inspirationDuration.get();
+			return getLevel() * ConfigHandler.SERVER.inspirationDuration.get();
 		}else if(effect.getEffect() == DragonEffects.REVEALING_THE_SOUL){
-			return ConfigHandler.SERVER.revealingTheSoulDuration.get();
+			return getLevel() * ConfigHandler.SERVER.revealingTheSoulDuration.get();
 		}else if(effect.getEffect() == DragonEffects.STRONG_LEATHER){
-			return ConfigHandler.SERVER.toughSkinDuration.get();
+			return getLevel() * ConfigHandler.SERVER.toughSkinDuration.get();
 		}
 		return getLevel() * (effect.getDuration() > 0 ? effect.getDuration() : 30);
 	}
