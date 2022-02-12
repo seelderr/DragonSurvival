@@ -107,7 +107,7 @@ body:
     id: crash-report
     attributes:
       label: ■ Crash Report
-      description: If your game or server crashes, the game creates a file here: Roaming\.minecraft\crash-reports or curseforge\minecraft\Instances\modpack-name\crash-reports. Send us the contents of this file or the file itself.
+      description: If your game or server crashes, the game creates a file in crash-reports folder. Send us the contents of this file or the file itself.
     validations:
       required: false
       
