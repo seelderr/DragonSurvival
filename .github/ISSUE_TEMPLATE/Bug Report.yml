@@ -58,8 +58,8 @@ body:
       label: ■ Do you delete old configs before writing a bug report?
       description: Removing old configs after major updates is essential for clean operation of many modifications.
       options:
-        - No (Default)
-        - Yes
+        - Nope (Default)
+        - I always delete configs
         - Usually yes, but this time no.
     validations:
       required: true
