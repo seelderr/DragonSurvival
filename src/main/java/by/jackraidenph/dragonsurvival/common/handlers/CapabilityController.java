@@ -6,6 +6,8 @@ import by.jackraidenph.dragonsurvival.common.capability.Capabilities.GenericCapa
 import by.jackraidenph.dragonsurvival.common.capability.Capabilities.VillageRelationshipsProvider;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.entity.creatures.hitbox.DragonHitBox;
+import by.jackraidenph.dragonsurvival.common.entity.creatures.hitbox.DragonHitboxPart;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.status.DiggingStatus;
@@ -14,6 +16,7 @@ import by.jackraidenph.dragonsurvival.network.entity.player.SynchronizeDragonCap
 import by.jackraidenph.dragonsurvival.common.DragonEffects;
 import by.jackraidenph.dragonsurvival.misc.DragonLevel;
 import by.jackraidenph.dragonsurvival.common.EffectInstance2;
+import by.jackraidenph.dragonsurvival.client.util.FakeClientPlayer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.Pose;
 import net.minecraft.entity.player.PlayerEntity;
@@ -37,7 +40,7 @@ public class CapabilityController {
     public static void attachCapabilities(AttachCapabilitiesEvent<Entity> event) {
         event.addCapability(new ResourceLocation("dragonsurvival", "generic_capability_data"), new GenericCapabilityProvider());
     
-        if (event.getObject() instanceof PlayerEntity) {
+        if (event.getObject() instanceof PlayerEntity && !(event.getObject() instanceof FakeClientPlayer)) {
             event.addCapability(new ResourceLocation("dragonsurvival", "playerstatehandler"), new DragonStateProvider());
             event.addCapability(new ResourceLocation("dragonsurvival", "village_relations"), new VillageRelationshipsProvider());
             DragonSurvivalMod.LOGGER.info("Successfully attached capabilities to the " + event.getObject().getClass().getSimpleName());
@@ -54,6 +57,9 @@ public class CapabilityController {
                     if (capOld.isDragon()) {
                         DragonStateHandler.DragonMovementData movementData = capOld.getMovementData();
                         capNew.setMovementData(movementData.bodyYaw, movementData.headYaw, movementData.headPitch, movementData.bite);
+                        
+                        capNew.altarCooldown = capOld.altarCooldown;
+                        capNew.hasUsedAltar = capOld.hasUsedAltar;
                         
                         capNew.getMovementData().spinCooldown = capOld.getMovementData().spinCooldown;
                         capNew.getMovementData().spinLearned = capOld.getMovementData().spinLearned;
@@ -124,9 +130,17 @@ public class CapabilityController {
      */
     @SubscribeEvent
     public static void onEntityInteract(PlayerInteractEvent.EntityInteractSpecific event) {
-        if (!(event.getTarget() instanceof PlayerEntity) || event.getHand() != Hand.MAIN_HAND)
+        Entity ent = event.getEntity();
+        
+        if(ent instanceof DragonHitBox){
+            ent = ((DragonHitBox)ent).player;
+        }else if(ent instanceof DragonHitboxPart){
+            ent = (((DragonHitboxPart)ent).parentMob).player;
+        }
+        
+        if (!(ent instanceof PlayerEntity) || event.getHand() != Hand.MAIN_HAND)
             return;
-        PlayerEntity target = (PlayerEntity) event.getTarget();
+        PlayerEntity target = (PlayerEntity) ent;
         PlayerEntity self = event.getPlayer();
         DragonStateProvider.getCap(target).ifPresent(targetCap -> {
             if (targetCap.isDragon() && target.getPose() == Pose.CROUCHING && targetCap.getSize() >= 40 && !target.isVehicle()) {

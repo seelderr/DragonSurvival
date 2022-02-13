@@ -23,22 +23,26 @@ import by.jackraidenph.dragonsurvival.network.entity.player.PacketSyncCapability
 import by.jackraidenph.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.jackraidenph.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.LivingRenderer;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.client.renderer.entity.layers.ParrotVariantLayer;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.settings.PointOfView;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.IDyeableArmorItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
@@ -156,7 +160,7 @@ public class ClientDragonRender
 		            matrixStack.translate(0, -0.15, 0);
 		
 	            }else if (player.isCrouching()) {
-					matrixStack.translate(0, 0.325 - ((size / DragonLevel.ADULT.size) * 0.150), 0);
+					matrixStack.translate(0, 0.325 - ((size / DragonLevel.ADULT.size) * 0.140), 0);
 					
 				} else if (player.isSwimming() || player.isAutoSpinAttack() || (cap.isWingsSpread() && !player.isOnGround() && !player.isInWater() && !player.isInLava())) {
 					matrixStack.translate(0, -0.15 - ((size / DragonLevel.ADULT.size) * 0.2), 0);
@@ -325,10 +329,10 @@ public class ClientDragonRender
 		                float headRot = Functions.angleDifference((float)bodyYaw, MathHelper.wrapDegrees(player.yRot != 0.0 ? player.yRot : player.yHeadRot));
 						
 		                if(ConfigHandler.CLIENT.rotateBodyWithCamera.get() && (!KeyInputHandler.FREE_LOOK.isDown() && !wasFreeLook)){
-			                if(headRot > 170){
-				                bodyYaw += 170 - headRot;
-			                }else if(headRot < -170){
-				                bodyYaw -= 170 + headRot;
+			                if(headRot > 150){
+				                bodyYaw += 150 - headRot;
+			                }else if(headRot < -150){
+				                bodyYaw -= 150 + headRot;
 			                }
 		                }
 						headRot = (float)MathHelper.lerp(0.05, playerStateHandler.getMovementData().headYaw, headRot);
@@ -432,5 +436,66 @@ public class ClientDragonRender
 	            });
 	        }
 	    }
+	}
+	
+	public static void renderEntityInInventory(LivingEntity entity, int x, int y, float scale, float xRot, float yRot) {
+	   if(entity == null) return;
+		
+	   if(entity instanceof DragonEntity) {
+		   if (ClientDragonRender.dragonArmor == null) {
+			   ClientDragonRender.dragonArmor = DSEntities.DRAGON_ARMOR.create(Minecraft.getInstance().player.level);
+			   assert ClientDragonRender.dragonArmor != null;
+			   ClientDragonRender.dragonArmor.player = Minecraft.getInstance().player.getId();
+		   }
+		
+		   if (!ClientDragonRender.playerDragonHashMap.containsKey(Minecraft.getInstance().player.getId())) {
+			   DragonEntity dummyDragon = DSEntities.DRAGON.create(Minecraft.getInstance().player.level);
+			   dummyDragon.player = Minecraft.getInstance().player.getId();
+			   ClientDragonRender.playerDragonHashMap.put(Minecraft.getInstance().player.getId(), new AtomicReference<>(dummyDragon));
+		   }
+	   }
+	   
+	    float f = xRot;
+	    float f1 = yRot;
+	    RenderSystem.pushMatrix();
+	    RenderSystem.translatef((float)x, (float)y, 0);
+	    RenderSystem.scalef(1.0F, 1.0F, -1.0F);
+	    MatrixStack matrixstack = new MatrixStack();
+	    matrixstack.scale((float)scale, (float)scale, (float)scale);
+	    Quaternion quaternion = Vector3f.ZP.rotationDegrees(180.0F);
+	    Quaternion quaternion1 = Vector3f.XP.rotationDegrees(f1 * 10.0F);
+	    quaternion.mul(quaternion1);
+	    matrixstack.mulPose(quaternion);
+	    float f2 = entity.yBodyRot;
+	    float f3 = entity.yRot;
+	    float f4 = entity.xRot;
+	    float f5 = entity.yHeadRotO;
+	    float f6 = entity.yHeadRot;
+	    entity.yBodyRot = 180.0F + f * 10.0F;
+	    entity.yRot = 180.0F + f * 10.0F;
+	    entity.xRot = -f1 * 10.0F;
+	    entity.yHeadRot = entity.yRot;
+	    entity.yHeadRotO = entity.yRot;
+	    EntityRendererManager entityrenderermanager = Minecraft.getInstance().getEntityRenderDispatcher();
+	    boolean renderHitbox = entityrenderermanager.shouldRenderHitBoxes();
+	    quaternion1.conj();
+	    entityrenderermanager.overrideCameraOrientation(quaternion1);
+	    entityrenderermanager.setRenderShadow(false);
+	    IRenderTypeBuffer.Impl irendertypebuffer$impl = Minecraft.getInstance().renderBuffers().bufferSource();
+	    RenderSystem.runAsFancy(() -> {
+	        entityrenderermanager.setRenderHitBoxes(false);
+	        entityrenderermanager.render(entity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, matrixstack, irendertypebuffer$impl, 15728880);
+	        entityrenderermanager.setRenderHitBoxes(renderHitbox);
+	    });
+	    
+	    irendertypebuffer$impl.endBatch();
+	    entityrenderermanager.setRenderShadow(true);
+	    
+	    entity.yBodyRot = f2;
+	    entity.yRot = f3;
+	    entity.xRot = f4;
+	    entity.yHeadRotO = f5;
+	    entity.yHeadRot = f6;
+	    RenderSystem.popMatrix();
 	}
 }

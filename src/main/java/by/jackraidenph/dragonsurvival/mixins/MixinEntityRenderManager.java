@@ -1,8 +1,10 @@
 package by.jackraidenph.dragonsurvival.mixins;
 
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.entity.creatures.hitbox.DragonHitBox;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
@@ -62,6 +64,30 @@ public class MixinEntityRenderManager
 		
 		ci.cancel();
 	}
+	
+	@Inject( at = @At("HEAD"), method = "renderHitbox", cancellable = true)
+	private void renderHitbox(MatrixStack pMatrixStack, IVertexBuilder pBuffer, Entity pEntity, float pPartialTicks, CallbackInfo callbackInfo) {
+		if (pEntity instanceof DragonHitBox) {
+			callbackInfo.cancel();
+			
+			DragonHitBox hitBox = (DragonHitBox)pEntity;
+			if(hitBox.player == Minecraft.getInstance().player && Minecraft.getInstance().options.getCameraType().isFirstPerson()){
+				return;
+			}
+			
+			this.renderBox(pMatrixStack, pBuffer, pEntity, 1.0F, 1.0F, 1.0F);
+			
+			for(net.minecraftforge.entity.PartEntity<?> enderdragonpartentity : hitBox.getParts()) {
+				pMatrixStack.pushPose();
+				pMatrixStack.translate(enderdragonpartentity.getX() - pEntity.getX(), enderdragonpartentity.getY() - pEntity.getY(), enderdragonpartentity.getZ() - pEntity.getZ());
+				this.renderBox(pMatrixStack, pBuffer, enderdragonpartentity, 0.25F, 1.0F, 0.0F);
+				pMatrixStack.popPose();
+			}
+		}
+	}
+	
+	@Shadow
+	private void renderBox(MatrixStack p_229094_1_, IVertexBuilder p_229094_2_, Entity p_229094_3_, float p_229094_4_, float p_229094_5_, float p_229094_6_) {}
 	
 	@Shadow
 	private static void renderBlockShadow(MatrixStack.Entry p_229092_0_, IVertexBuilder p_229092_1_, IWorldReader p_229092_2_, BlockPos p_229092_3_, double p_229092_4_, double p_229092_6_, double p_229092_8_, float p_229092_10_, float p_229092_11_)

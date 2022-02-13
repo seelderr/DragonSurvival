@@ -2,6 +2,7 @@ package by.jackraidenph.dragonsurvival.client.gui.widgets.buttons;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.misc.DragonType;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.button.ImageButton;
@@ -19,10 +20,14 @@ public class HelpButton extends ImageButton
 	
 	public HelpButton(int x, int y, int sizeX, int sizeY, String text)
 	{
-		super(x, y, sizeX, sizeY, 0, 0, (int)(((DragonStateProvider.getDragonType(Minecraft.getInstance().player).ordinal() + 1) * 18f) *((float)sizeY / 18f)), texture, (int)(256f * ((float)sizeX / 18f)), (int)(256f * ((float)sizeY / 18f)), (btn) -> {});
-		this.text = text;
+		this(DragonStateProvider.getDragonType(Minecraft.getInstance().player), x, y, sizeX, sizeY, text);
 	}
 	
+	public HelpButton(DragonType type, int x, int y, int sizeX, int sizeY, String text)
+	{
+		super(x, y, sizeX, sizeY, 0, 0, (int)(((type.ordinal() + 1) * 18f) *((float)sizeY / 18f)), texture, (int)(256f * ((float)sizeX / 18f)), (int)(256f * ((float)sizeY / 18f)), (btn) -> {});
+		this.text = text;
+	}
 	
 	@Override
 	public void render(MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_)

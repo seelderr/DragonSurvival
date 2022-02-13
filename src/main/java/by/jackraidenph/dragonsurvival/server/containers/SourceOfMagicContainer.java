@@ -36,23 +36,29 @@ public class SourceOfMagicContainer extends Container {
         });
     }
     
-    public ItemStack quickMoveStack(PlayerEntity p_82846_1_, int p_82846_2_) {
+    public ItemStack quickMoveStack(PlayerEntity pPlayer, int pIndex) {
         ItemStack itemstack = ItemStack.EMPTY;
-        Slot slot = this.slots.get(p_82846_2_);
+        Slot slot = this.slots.get(pIndex);
         if (slot != null && slot.hasItem()) {
             ItemStack itemstack1 = slot.getItem();
             itemstack = itemstack1.copy();
-            if (this.moveItemStackTo(itemstack1, 36, 36, false)) {
+            if (pIndex == 0) {
+                if (!this.moveItemStackTo(itemstack1, 1, 37, true)) {
+                    return ItemStack.EMPTY;
+                }
+                
+                slot.onQuickCraft(itemstack1, itemstack);
+            } else if (this.moveItemStackTo(itemstack1, 0, 1, false)) {
                 return ItemStack.EMPTY;
-            }else if (p_82846_2_ >= 9 && p_82846_2_ < 28) {
-                if (!this.moveItemStackTo(itemstack1, 0, 37, false)) {
+            } else if (pIndex >= 1 && pIndex < 28) {
+                if (!this.moveItemStackTo(itemstack1, 28, 37, false)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (p_82846_2_ < 37) {
-                if (!this.moveItemStackTo(itemstack1, 9, 37, false)) {
+            } else if (pIndex >= 28 && pIndex < 37) {
+                if (!this.moveItemStackTo(itemstack1, 1, 28, false)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (!this.moveItemStackTo(itemstack1, 0, 37, false)) {
+            } else if (!this.moveItemStackTo(itemstack1, 1, 37, false)) {
                 return ItemStack.EMPTY;
             }
             
@@ -66,7 +72,7 @@ public class SourceOfMagicContainer extends Container {
                 return ItemStack.EMPTY;
             }
             
-            slot.onTake(p_82846_1_, itemstack1);
+            slot.onTake(pPlayer, itemstack1);
         }
         
         return itemstack;

@@ -1,210 +1,195 @@
 package by.jackraidenph.dragonsurvival.client.gui;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
+import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.AltarTypeButton;
+import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.HelpButton;
+import by.jackraidenph.dragonsurvival.client.render.ClientDragonRender;
+import by.jackraidenph.dragonsurvival.client.util.FakeClientPlayerUtils;
+import by.jackraidenph.dragonsurvival.client.util.TextRenderUtil;
+import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.config.ConfigHandler;
-import by.jackraidenph.dragonsurvival.common.handlers.DragonFoodHandler;
-import by.jackraidenph.dragonsurvival.network.NetworkHandler;
-import by.jackraidenph.dragonsurvival.network.entity.player.SynchronizeDragonCap;
-import by.jackraidenph.dragonsurvival.network.flight.SyncSpinStatus;
+import by.jackraidenph.dragonsurvival.common.entity.DragonEntity;
 import by.jackraidenph.dragonsurvival.misc.DragonLevel;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.client.gui.widget.Widget;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.DyeColor;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-
 public class DragonAltarGUI extends Screen {
-    private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_altar_texture.png");
+    public static final ResourceLocation CONFIRM_BUTTON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/confirm_button.png");
+    public static final ResourceLocation CANCEL_BUTTON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/cancel_button.png");
+    
     private int guiLeft;
     private int guiTop;
-
-    public DragonAltarGUI(ITextComponent title) {
-        super(title);
+    private boolean hasInit = false;
+    
+    
+    private String[] animations = {"sit", "idle", "fly", "swim_fast", "run"};
+    private int animation1 = 1;
+    private int animation2 = 0;
+    
+    public DragonStateHandler handler1 = new DragonStateHandler();
+    public DragonStateHandler handler2 = new DragonStateHandler();
+    
+    public DragonAltarGUI() {
+        super(new TranslationTextComponent("ds.gui.dragon_altar"));
     }
-
+    
+    
+    public static void renderBorders(ResourceLocation texture, int x0, int x1, int y0, int y1, int width, int height){
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder bufferbuilder = tessellator.getBuilder();
+        Minecraft.getInstance().getTextureManager().bind(texture);
+        RenderSystem.enableDepthTest();
+        RenderSystem.depthFunc(519);
+        bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
+        bufferbuilder.vertex((double)x0, (double)y0, -100.0D).uv(0.0F, (float)y0 / 32.0F).color(64, 64, 64, 255).endVertex();
+        bufferbuilder.vertex((double)(x0 + width), (double)y0, -100.0D).uv((float)width / 32.0F, (float)y0 / 32.0F).color(64, 64, 64, 255).endVertex();
+        bufferbuilder.vertex((double)(x0 + width), 0.0D, -100.0D).uv((float)width / 32.0F, 0.0F).color(64, 64, 64, 255).endVertex();
+        bufferbuilder.vertex((double)x0, 0.0D, -100.0D).uv(0.0F, 0.0F).color(64, 64, 64, 255).endVertex();
+        bufferbuilder.vertex((double)x0, (double)height, -100.0D).uv(0.0F, (float)height / 32.0F).color(64, 64, 64, 255).endVertex();
+        bufferbuilder.vertex((double)(x0 + width), (double)height, -100.0D).uv((float)width / 32.0F, (float)height / 32.0F).color(64, 64, 64, 255).endVertex();
+        bufferbuilder.vertex((double)(x0 + width), (double)y1, -100.0D).uv((float)width / 32.0F, (float)y1 / 32.0F).color(64, 64, 64, 255).endVertex();
+        bufferbuilder.vertex((double)x0, (double)y1, -100.0D).uv(0.0F, (float)y1 / 32.0F).color(64, 64, 64, 255).endVertex();
+        tessellator.end();
+        RenderSystem.depthFunc(515);
+        RenderSystem.disableDepthTest();
+        RenderSystem.enableBlend();
+        RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ZERO, GlStateManager.DestFactor.ONE);
+        RenderSystem.disableAlphaTest();
+        RenderSystem.shadeModel(7425);
+        RenderSystem.disableTexture();
+        bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
+        bufferbuilder.vertex((double)x0, (double)(y0 + 4), 0.0D).uv(0.0F, 1.0F).color(0, 0, 0, 0).endVertex();
+        bufferbuilder.vertex((double)x1, (double)(y0 + 4), 0.0D).uv(1.0F, 1.0F).color(0, 0, 0, 0).endVertex();
+        bufferbuilder.vertex((double)x1, (double)y0, 0.0D).uv(1.0F, 0.0F).color(0, 0, 0, 255).endVertex();
+        bufferbuilder.vertex((double)x0, (double)y0, 0.0D).uv(0.0F, 0.0F).color(0, 0, 0, 255).endVertex();
+        bufferbuilder.vertex((double)x0, (double)y1, 0.0D).uv(0.0F, 1.0F).color(0, 0, 0, 255).endVertex();
+        bufferbuilder.vertex((double)x1, (double)y1, 0.0D).uv(1.0F, 1.0F).color(0, 0, 0, 255).endVertex();
+        bufferbuilder.vertex((double)x1, (double)(y1 - 4), 0.0D).uv(1.0F, 0.0F).color(0, 0, 0, 0).endVertex();
+        bufferbuilder.vertex((double)x0, (double)(y1 - 4), 0.0D).uv(0.0F, 0.0F).color(0, 0, 0, 0).endVertex();
+        tessellator.end();
+    
+        RenderSystem.enableTexture();
+        RenderSystem.shadeModel(7424);
+        RenderSystem.enableAlphaTest();
+        RenderSystem.disableBlend();
+    }
+    
+    private static ResourceLocation backgroundTexture = new ResourceLocation("textures/block/dirt.png");
+    
     @Override
-    public boolean isPauseScreen() {
-        return false;
+    public void renderBackground(MatrixStack pMatrixStack)
+    {
+        super.renderBackground(pMatrixStack);
+        renderBorders(backgroundTexture, 0, width, 32, height - 32, width, height);
     }
-
+    private int tick;
     @Override
     public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         if (this.minecraft == null)
             return;
         this.renderBackground(matrixStack);
-        int startX = this.guiLeft;
-        int startY = this.guiTop;
-        super.render(matrixStack, mouseX, mouseY, partialTicks);
-
-        this.minecraft.getTextureManager().bind(BACKGROUND_TEXTURE);
-
-        blit(matrixStack, startX, startY, 0, 0, 215, 158, 512, 512);
-
-
-        if (mouseY > startY + 6 && mouseY < startY + 153) {
-            final boolean atTheTopOrBottom = (mouseY > startY + 6 && mouseY < startY + 26) || (mouseY > startY + 133 && mouseY < startY + 153);
-            if (mouseX > startX + 5 && mouseX < startX + 55) {
-                blit(matrixStack, startX + 6, startY + 6, 217, 0, 49, 149, 512, 512);
-                if (atTheTopOrBottom) {
-                    renderWrappedToolTip(matrixStack, altarDragonInfoLocalized("cave_dragon", DragonFoodHandler.getSafeEdibleFoods(DragonType.CAVE)), mouseX, mouseY, font);
-                }
+        
+        tick++;
+        
+        if((tick % 200 * 20) == 0){
+            animation1++;
+            animation2++;
+            
+            if(animation1 >= animations.length){
+                animation1 = 0;
             }
-
-            if (mouseX > startX + 57 && mouseX < startX + 107) {
-                blit(matrixStack, startX + 58, startY + 6, 266, 0, 49, 149, 512, 512);
-                if (atTheTopOrBottom) {
-                    renderWrappedToolTip(matrixStack, altarDragonInfoLocalized("forest_dragon", DragonFoodHandler.getSafeEdibleFoods(DragonType.FOREST)), mouseX, mouseY, font);
-                }
+    
+            if(animation2 >= animations.length){
+                animation2 = 0;
             }
-
-            if (mouseX > startX + 109 && mouseX < startX + 159) {
-                blit(matrixStack, startX + 110, startY + 6, 315, 0, 49, 149, 512, 512);
-                if (atTheTopOrBottom) {
-                    renderWrappedToolTip(matrixStack, altarDragonInfoLocalized("sea_dragon", DragonFoodHandler.getSafeEdibleFoods(DragonType.SEA)), mouseX, mouseY, font);
-                }
-            }
-
-            if (mouseX > startX + 161 && mouseX < startX + 211) {
-                blit(matrixStack, startX + 161, startY + 6, 364, 0, 49, 149, 512, 512);
-                if (atTheTopOrBottom) {
-                    renderWrappedToolTip(matrixStack, altarDragonInfoLocalized("human", Collections.emptyList()), mouseX, mouseY, font);
-                }
-            }
-            //warning
-//            if(mouseX>startX+5 && mouseX<startX+211) {
-//                fill(startX + 8, startY + 166, guiLeft + 210, guiTop + 242, 0xff333333);
-//                String warning =TextFormatting.RED + new TranslationTextComponent( "ds.dragon_altar_warning1").getString()+ TextFormatting.RESET + new TranslationTextComponent("ds.dragon_altar_warning2").getString();
-//                font.drawSplitString(warning, startX + 10, startY + 153 + 20, 200, 0xffffff);
-//            }
         }
+        
+        for(Widget btn : buttons){
+            if(btn instanceof AltarTypeButton){
+                AltarTypeButton button = (AltarTypeButton)btn;
+                
+                if(button.isHovered()) {
+                    handler1.setType(button.type);
+                    handler1.setHasWings(true);
+                    handler1.setSize(DragonLevel.ADULT.size);
+                    
+                    handler2.setType(button.type);
+                    handler2.setSize(button.type == DragonType.NONE ? DragonLevel.ADULT.size : DragonLevel.BABY.size);
+    
+                    FakeClientPlayerUtils.getFakePlayer(0, handler1).animationSupplier = () -> animations[animation1];
+                    FakeClientPlayerUtils.getFakePlayer(1, handler2).animationSupplier = () -> animations[animation2];
+    
+                    renderDragon(width / 2 + 170, button.y + (button.getHeight() / 2) + 32, 5, matrixStack, DragonLevel.ADULT.size, FakeClientPlayerUtils.getFakePlayer(0, handler1), FakeClientPlayerUtils.getFakeDragon(0, handler1));
+                    renderDragon(width / 2 - 170, button.y + (button.getHeight() / 2) + 32, -5, matrixStack, button.type == DragonType.NONE ? DragonLevel.ADULT.size : DragonLevel.BABY.size, FakeClientPlayerUtils.getFakePlayer(1, handler2), FakeClientPlayerUtils.getFakeDragon(1, handler2));
+                }
+            }
+        }
+    
+        TextRenderUtil.drawCenteredScaledText(matrixStack, width / 2, 10, 2f, title.getString(), DyeColor.WHITE.getTextColor());
+    
+        super.render(matrixStack, mouseX, mouseY, partialTicks);
     }
-
+    
+    private void renderDragon(int x, int y, int xrot, MatrixStack matrixStack, float size, PlayerEntity player, DragonEntity dragon)
+    {
+        matrixStack.pushPose();
+        float scale = size * 1.5f;
+        matrixStack.scale(scale, scale, scale);
+        matrixStack.translate(0, 0, 400);
+        ClientDragonRender.dragonModel.setCurrentTexture(null);
+        ClientDragonRender.renderEntityInInventory(DragonStateProvider.isDragon(player) ? dragon : player, x, y, scale, xrot, -3);
+        matrixStack.popPose();
+    }
+    
+    
     @Override
     protected void init() {
         super.init();
 
-        int xSize = 852 / 2;
-        this.guiLeft = (this.width - xSize / 2) / 2;
-        int ySize = 500 / 2;
-        this.guiTop = (this.height - ySize) / 2;
-
-        this.addButton(new ExtendedButton(this.guiLeft + 6, this.guiTop + 6, 49, 147, new StringTextComponent("CAVE"),
-                button -> {
-                    initiateDragonForm(DragonType.CAVE);
-                    minecraft.player.sendMessage(new TranslationTextComponent("ds.cave_dragon_choice"), minecraft.player.getUUID());
-                })
-        );
-
-        this.addButton(new ExtendedButton(this.guiLeft + 58, this.guiTop + 6, 49, 147, new StringTextComponent("FOREST"),
-                button -> {
-                    initiateDragonForm(DragonType.FOREST);
-                    minecraft.player.sendMessage(new TranslationTextComponent("ds.forest_dragon_choice"), minecraft.player.getUUID());
-                })
-
-        );
-
-        this.addButton(new ExtendedButton(this.guiLeft + 110, this.guiTop + 6, 49, 147, new StringTextComponent("SEA"),
-                button -> {
-                    initiateDragonForm(DragonType.SEA);
-                    minecraft.player.sendMessage(new TranslationTextComponent("ds.sea_dragon_choice"), minecraft.player.getUUID());
-                })
-
-        );
-
-        addButton(new ExtendedButton(guiLeft + 162, guiTop + 6, 49, 147, new StringTextComponent("Human"), b -> {
-            DragonStateProvider.getCap(minecraft.player).ifPresent(playerStateHandler -> {
-                playerStateHandler.setIsHiding(false);
-                playerStateHandler.setType(DragonType.NONE);
-                playerStateHandler.setHasWings(false);
-                playerStateHandler.getMovementData().spinLearned = false;
-                playerStateHandler.setSize(20F);
-                NetworkHandler.CHANNEL.sendToServer(new SyncSpinStatus(minecraft.player.getId(), playerStateHandler.getMovementData().spinAttack, playerStateHandler.getMovementData().spinCooldown, playerStateHandler.getMovementData().spinLearned));
-                NetworkHandler.CHANNEL.sendToServer(new SynchronizeDragonCap(minecraft.player.getId(), false, DragonType.NONE, 20, false, ConfigHandler.SERVER.caveLavaSwimmingTicks.get(), 0));
-                minecraft.player.closeContainer();
-                minecraft.player.sendMessage(new TranslationTextComponent("ds.choice_human"), minecraft.player.getUUID());
-            });
-        }));
-    }
-
-    private void initiateDragonForm(DragonType type) {
-        ClientPlayerEntity player = Minecraft.getInstance().player;
-        if (player == null)
-            return;
-        player.closeContainer();
-        DragonStateProvider.getCap(player).ifPresent(cap -> {
-            if(ConfigHandler.SERVER.saveGrowthStage.get()) {
-                cap.setType(type);
-            }
-            
-            NetworkHandler.CHANNEL.sendToServer(new SynchronizeDragonCap(player.getId(), false, type, !ConfigHandler.SERVER.saveGrowthStage.get() || cap.getSize() == 0 ? DragonLevel.BABY.size : cap.getSize(), ConfigHandler.SERVER.saveGrowthStage.get() ? cap.hasWings() || ConfigHandler.SERVER.startWithWings.get() : ConfigHandler.SERVER.startWithWings.get(), ConfigHandler.SERVER.caveLavaSwimmingTicks.get(), 0));
-            //DragonSurvivalMod.CHANNEL.sendToServer(new GiveNest(type)); //gives a nest to the player after transforming into a dragon
-            player.level.playSound(player, player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundCategory.PLAYERS, 1, 0.7f);
-            
-            if(!ConfigHandler.SERVER.saveGrowthStage.get()){
-                cap.setType(type);
-            }
-            
-            if(cap.getSize() == 0){
-                cap.setSize(DragonLevel.BABY.size, player);
-            }
-            
-            cap.setHasWings(false);
-            cap.getMovementData().spinLearned = false;
-    
-            NetworkHandler.CHANNEL.sendToServer(new SyncSpinStatus(minecraft.player.getId(), cap.getMovementData().spinAttack, cap.getMovementData().spinCooldown, cap.getMovementData().spinLearned));
-        });
-    }
-
-    private ArrayList<ITextComponent> altarDragonInfoLocalized(String dragonType, List<Item> foodList) {
-        ArrayList<ITextComponent> info = new ArrayList<ITextComponent>();
-        String b = "ds.altar_dragon_info." + dragonType + ".";
-        int i = 0;
-        if (new TranslationTextComponent(b + i).getString().equals(b + i)) {
-            info.add(ITextComponent.nullToEmpty("none"));
-        } else {
-            boolean c = true;
-            while (c) {
-                String d = new TranslationTextComponent(b + i).getString();
-                if (d.equals(b + i)) {
-                    c = false;
-                } else {
-                    if (d.contains("--food--") && hasShiftDown()) {
-                        if (!Objects.equals(dragonType, "human")) {
-                            String food = "";
-                            for (Item item : foodList) {
-                                food += (item.getName(new ItemStack(item)).getString() + "; ");
-                            }
-                            info.add(ITextComponent.nullToEmpty(d.replaceAll("--food--", food)));
-                        } else {
-                            info.add(ITextComponent.nullToEmpty(d));
-                        }
-                    } else {
-                        info.add(ITextComponent.nullToEmpty(d));
-                        if (d.equals("--food--")) {
-                            info.remove(new StringTextComponent("--food--"));
-                            info.add(new TranslationTextComponent("ds.hold_shift.for_food"));
-                        }
-                    }
-                    i++;
-
-                }
-            }
+        if(!hasInit){
+            hasInit = true;
         }
-        return info;
+        
+        this.guiLeft = (this.width - 304) / 2;
+        this.guiTop = (this.height - 190) / 2;
+    
+        this.addButton(new HelpButton(this.guiLeft, 10, 18, 18, "ds.help.altar"){
+            @Override
+            public void render(MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_)
+            {
+                p_230430_1_.pushPose();
+                p_230430_1_.translate(0, 0, 200);
+                super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
+                p_230430_1_.popPose();
+            }
+        });
+        addButton(new AltarTypeButton(this, DragonType.CAVE, width / 2 - 104, this.guiTop + 20));
+        addButton(new AltarTypeButton(this, DragonType.FOREST, width / 2 - 51, this.guiTop + 20));
+        addButton(new AltarTypeButton(this, DragonType.SEA, width / 2 + 2, this.guiTop + 20));
+        addButton(new AltarTypeButton(this, DragonType.NONE, width / 2 + 55, guiTop + 20));
+        //ds.gui.customization
+        addButton(new ExtendedButton(width / 2 - 50, height - 25, 100, 20, new TranslationTextComponent("ds.gui.customization"), (btn) -> {
+            Minecraft.getInstance().setScreen(new DragonCustomizationScreen(Minecraft.getInstance().screen));
+        }){
+            @Override
+            public void render(MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_)
+            {
+                this.visible = DragonStateProvider.isDragon(minecraft.player);
+                super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
+            }
+        });
     }
 }

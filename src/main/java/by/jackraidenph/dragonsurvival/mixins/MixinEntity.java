@@ -3,6 +3,7 @@ package by.jackraidenph.dragonsurvival.mixins;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.common.handlers.DragonSizeHandler;
+import by.jackraidenph.dragonsurvival.config.ConfigUtils;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntitySize;
@@ -84,8 +85,9 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
     @Inject(at = @At(value = "RETURN"), method = "canRide", cancellable = true)
     public void canRide(Entity entity, CallbackInfoReturnable<Boolean> ci) {
         if (ci.getReturnValue() && DragonStateProvider.isDragon((Entity) (Object) this) && !DragonStateProvider.isDragon(entity))
-            if(ConfigHandler.SERVER.ridingBlacklist.get())
-                ci.setReturnValue(ConfigHandler.SERVER.allowedVehicles.get().contains(entity.getType().getRegistryName().toString()));
+            if(ConfigHandler.SERVER.ridingBlacklist.get()) {
+                ci.setReturnValue(ConfigUtils.containsEntity(ConfigHandler.SERVER.allowedVehicles.get(), entity));
+            }
     }
 
     @Redirect(method = "canEnterPose(Lnet/minecraft/entity/Pose;)Z", at = @At(value="INVOKE",
@@ -121,6 +123,4 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
     public double getZ(){
         throw new IllegalStateException("Mixin failed to shadow getZ()");
     }
-
-
 }

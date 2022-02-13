@@ -1,0 +1,94 @@
+{
+  "cave_dragon": {
+      "layers": {
+        "BASE": [
+          {
+            "key": "cave_base_0",
+            "texture": "dragonsurvival:textures/dragon/custom/cave_base_0.png"
+          },
+          {
+            "key": "cave_base_1",
+            "texture": "dragonsurvival:textures/dragon/custom/cave_base_1.png"
+          },
+          {
+            "key": "cave_base_2",
+            "texture": "dragonsurvival:textures/dragon/custom/cave_base_2.png"
+          },
+          {
+            "key": "cave_base_3",
+            "texture": "dragonsurvival:textures/dragon/custom/cave_base_3.png"
+          },
+          {
+            "key": "cave_base_4",
+            "texture": "dragonsurvival:textures/dragon/custom/cave_base_4.png"
+          }
+        ],
+        "HORNS": [
+          {
+            "key": "cave_horns_3",
+            "texture": "dragonsurvival:textures/dragon/custom/cave_horns_3.png"
+          },
+          {
+            "key": "cave_horns_4",
+            "texture": "dragonsurvival:textures/dragon/custom/cave_horns_4.png"
+          }
+        ],
+        "BOTTOM": [
+          {
+            "key": "cave_bottom_3",
+            "texture": "dragonsurvival:textures/dragon/custom/cave_bottom_3.png"
+          },
+          {
+            "key": "cave_bottom_4",
+            "texture": "dragonsurvival:textures/dragon/custom/cave_bottom_4.png"
+          }
+        ],
+        "SPIKES": [
+          {
+            "key": "cave_spikes_3",
+            "texture": "dragonsurvival:textures/dragon/custom/cave_spikes_3.png"
+          },
+          {
+            "key": "cave_spikes_4",
+            "texture": "dragonsurvival:textures/dragon/custom/cave_spikes_4.png"
+          }
+        ]
+      }
+  },
+  "sea_dragon": {
+    "layers": {
+      "BASE": [
+        {
+          "key": "sea_base_0",
+          "texture": "dragonsurvival:textures/dragon/custom/sea_base_0.png"
+        },
+        {
+          "key": "sea_base_1",
+          "texture": "dragonsurvival:textures/dragon/custom/sea_base_1.png"
+        },
+        {
+          "key": "sea_base_2",
+          "texture": "dragonsurvival:textures/dragon/custom/sea_base_2.png"
+        }
+       ]
+    }
+  },
+  "forest_dragon": {
+    "layers": {
+      "BASE": [
+        {
+          "key": "forest_base_0",
+          "texture": "dragonsurvival:textures/dragon/custom/forest_base_0.png"
+        },
+        {
+          "key": "forest_base_1",
+          "texture": "dragonsurvival:textures/dragon/custom/forest_base_1.png"
+        },
+        {
+          "key": "forest_base_2",
+          "texture": "dragonsurvival:textures/dragon/custom/forest_base_2.png"
+        }
+      ]
+    }
+  }
+}

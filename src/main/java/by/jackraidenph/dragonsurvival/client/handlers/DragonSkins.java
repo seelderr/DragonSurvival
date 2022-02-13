@@ -29,10 +29,7 @@ public class DragonSkins
 	
 	public static HashMap<DragonLevel, ArrayList<String>> SKIN_USERS = new HashMap<>();
 	
-	public static HashMap<String, ResourceLocation> defaultSkinCache = new HashMap<>();
 	public static HashMap<String, ResourceLocation> playerSkinCache = new HashMap<>();
-	
-	public static HashMap<String, ResourceLocation> defaultGlowCache = new HashMap<>();
 	public static HashMap<String, ResourceLocation> playerGlowCache = new HashMap<>();
 	
 	private static ArrayList<String> hasFailedFetch = new ArrayList<>();
@@ -105,30 +102,13 @@ public class DragonSkins
 			}
 		}
 		
-		texture = getDefaultSkin(type, dragonStage);
-		
 		return texture;
 	}
 	
-	public static ResourceLocation getDefaultSkin(DragonType type, DragonLevel dragonStage)
-	{
-		String defaultKey = type + "_" + dragonStage.name;
-		
-		ResourceLocation texture = null;
-		if(defaultSkinCache.containsKey(defaultKey)){
-			texture = defaultSkinCache.get(defaultKey);
-		}else {
-			texture = constructTexture(type, dragonStage);
-			defaultSkinCache.put(defaultKey, texture);
-		}
-		return texture;
-	}
 	
 	public static ResourceLocation getGlowTexture(PlayerEntity player, DragonType type, DragonLevel dragonStage) {
 		ResourceLocation texture = null;
 		String playerKey = player.getGameProfile().getName() + "_" + dragonStage.name;
-		String defaultKey = type + "_" + dragonStage.name;
-		
 		boolean renderStage = renderStage(player, dragonStage);
 		
 		
@@ -145,18 +125,6 @@ public class DragonSkins
 				}
 			}
 			
-		} else {
-			if(defaultGlowCache.containsKey(defaultKey)){
-				texture = defaultGlowCache.get(defaultKey);
-				
-			}else {
-				texture = constructTexture(type, dragonStage, "glow");
-				defaultGlowCache.put(defaultKey, texture);
-				
-				if(texture == null){
-					DragonSurvivalMod.LOGGER.info("Default glow for {} {} doesn't exist", dragonStage.name, type.name().toLowerCase(Locale.ROOT));
-				}
-			}
 		}
 		
 		return texture;

@@ -153,6 +153,14 @@ public class SourceOfMagicBlock extends HorizontalBlock implements IWaterLoggabl
                 double d2 = (double)p_180655_3_.getZ();
                 p_180655_2_.addAlwaysVisibleParticle(ParticleTypes.BUBBLE_COLUMN_UP, d0 + 0.5D, d1, d2 + 0.5D, 0.0D, 0.04D, 0.0D);
                 p_180655_2_.addAlwaysVisibleParticle(ParticleTypes.BUBBLE_COLUMN_UP, d0 + (double)p_180655_4_.nextFloat(), d1 + (double)p_180655_4_.nextFloat(), d2 + (double)p_180655_4_.nextFloat(), 0.0D, 0.04D, 0.0D);
+            }else {
+                if (p_180655_1_.getValue(FILLED)) {
+                    double d0 = (double)p_180655_3_.getX();
+                    double d1 = (double)p_180655_3_.getY();
+                    double d2 = (double)p_180655_3_.getZ();
+                  //  p_180655_2_.addAlwaysVisibleParticle(ParticleTypes.DRIPPING_LAVA, d0 + 0.5D, d1, d2 + 0.5D, 0.0D, 0.04D, 0.0D);
+                    p_180655_2_.addAlwaysVisibleParticle(ParticleTypes.LAVA, d0 + (double)p_180655_4_.nextFloat(), d1 + (double)p_180655_4_.nextFloat(), d2 + (double)p_180655_4_.nextFloat(), 0.0D, 0.04D, 0.0D);
+                }
             }
         }
     }
@@ -206,20 +214,6 @@ public class SourceOfMagicBlock extends HorizontalBlock implements IWaterLoggabl
     public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
         return state.getValue(TOP_BLOCK) || state.getValue(BACK_BLOCK) ? FULL_OUTLINE : OUTLINE;
     }
-
-    @Override
-    public boolean triggerEvent(BlockState state, World worldIn, BlockPos pos, int id, int param) {
-        TileEntity tileentity = worldIn.getBlockEntity(pos);
-        return tileentity != null && tileentity.triggerEvent(id, param);
-    }
-
-    @Override
-    public boolean isBed(BlockState state, IBlockReader world, BlockPos pos, @Nullable Entity player) {
-        return true;
-    }
-
-    @Override
-    public void setBedOccupied(BlockState state, World world, BlockPos pos, LivingEntity sleeper, boolean occupied) {}
     
     public BlockState updateShape(BlockState blockState, Direction direction, BlockState blockState1, IWorld world, BlockPos blockPos, BlockPos blockPos1) {
         if (blockState.getValue(WATERLOGGED)) {

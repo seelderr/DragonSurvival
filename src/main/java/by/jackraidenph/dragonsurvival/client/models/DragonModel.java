@@ -1,6 +1,8 @@
 package by.jackraidenph.dragonsurvival.client.models;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
+import by.jackraidenph.dragonsurvival.client.SkinCustomization.CustomizationLayer;
+import by.jackraidenph.dragonsurvival.client.SkinCustomization.DragonCustomizationHandler;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.entity.DragonEntity;
@@ -21,6 +23,8 @@ import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.resource.GeckoLibCache;
 import software.bernie.shadowed.eliotlash.molang.MolangParser;
 
+import java.util.HashMap;
+
 public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 
     private ResourceLocation currentTexture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/cave_newborn.png");
@@ -36,6 +40,14 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 
     @Override
     public ResourceLocation getTextureLocation(DragonEntity dragonEntity) {
+		if(currentTexture == null){
+			DragonStateHandler handler = DragonStateProvider.getCap(dragonEntity.getPlayer()).orElse(null);
+			ResourceLocation location = DragonCustomizationHandler.getSkinTexture(dragonEntity.getPlayer(), CustomizationLayer.BASE, handler.getSkin().playerSkinLayers.getOrDefault(handler.getLevel(), new HashMap<>()).getOrDefault(CustomizationLayer.BASE, "Skin"), DragonStateProvider.getDragonType(dragonEntity.getPlayer()));
+		
+			if(location != null){
+				return location;
+			}
+		}
         return currentTexture;
     }
 
@@ -103,13 +115,11 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 		double headYawChange = Functions.angleDifference((float)handler.getMovementData().headYawLastTick, (float)handler.getMovementData().headYaw);
 		double headPitchChange = Functions.angleDifference((float)handler.getMovementData().headPitchLastTick, (float)handler.getMovementData().headPitch);
 		
-		double distance = Math.min( player.position().subtract(player.xo, player.yo, player.zo).length(), 10);
-		
 		ModifiableAttributeInstance gravity = player.getAttribute(net.minecraftforge.common.ForgeMod.ENTITY_GRAVITY.get());
 		double g = gravity.getValue();
 		
-		dragonEntity.tailMotionUp = MathHelper.lerp(0.25, dragonEntity.tailMotionUp, ServerFlightHandler.isFlying(player) ? 0 : (player.getDeltaMovement().y + g) * 2);
-		dragonEntity.tailMotionSide = MathHelper.lerp(0.1, dragonEntity.tailMotionSide, ServerFlightHandler.isFlying(player) ? 0 : bodyYawChange * (distance / 0.2));
+		dragonEntity.tailMotionUp = MathHelper.lerp(0.25, dragonEntity.tailMotionUp, ServerFlightHandler.isFlying(player) ? 0 : (player.getDeltaMovement().y + g) * 50);
+		dragonEntity.tailMotionSide = MathHelper.lerp(0.1, MathHelper.clamp(dragonEntity.tailMotionSide + (ServerFlightHandler.isGliding(player) ? 0 : bodyYawChange), -50, 50), 0);
 		
 		dragonEntity.bodyYawAverage.add(bodyYawChange);
 		while(dragonEntity.bodyYawAverage.size() > 10) dragonEntity.bodyYawAverage.remove(0);
@@ -129,14 +139,14 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 		double bodyYawAvg = dragonEntity.bodyYawAverage.stream().mapToDouble(a -> a).sum() / dragonEntity.bodyYawAverage.size();
 		double headYawAvg = dragonEntity.headYawAverage.stream().mapToDouble(a -> a).sum() / dragonEntity.headYawAverage.size();
 		double headPitchAvg = dragonEntity.headPitchAverage.stream().mapToDouble(a -> a).sum() / dragonEntity.headPitchAverage.size();
-		double tailSideAvg = MathHelper.clamp(dragonEntity.tailSideAverage.stream().mapToDouble(a -> a).sum() / dragonEntity.tailSideAverage.size(), -3, 3);
-		double tailUpAvg = MathHelper.clamp(dragonEntity.tailUpAverage.stream().mapToDouble(a -> a).sum() / dragonEntity.tailUpAverage.size(), -3, 2);
+		double tailSideAvg = dragonEntity.tailSideAverage.stream().mapToDouble(a -> a).sum() / dragonEntity.tailSideAverage.size();
+		double tailUpAvg = dragonEntity.tailUpAverage.stream().mapToDouble(a -> a).sum() / dragonEntity.tailUpAverage.size();
 		
-		double query_body_yaw_change = Math.abs(MathHelper.degreesDifference((float)bodyYawAvg, (float)dragonEntity.body_yaw_change)) > 0.3 ? MathHelper.lerp(0.1, dragonEntity.body_yaw_change, bodyYawAvg) : bodyYawAvg;
-		double query_head_yaw_change = Math.abs(MathHelper.degreesDifference((float)headYawAvg, (float)dragonEntity.head_yaw_change)) > 0.3 ? MathHelper.lerp(0.1, dragonEntity.head_yaw_change, headYawAvg) : headYawAvg;
-		double query_head_pitch_change = Math.abs(MathHelper.degreesDifference((float)headPitchAvg, (float)dragonEntity.head_pitch_change)) > 0.3 ? MathHelper.lerp(0.1, dragonEntity.head_pitch_change, headPitchAvg) : headPitchAvg;
-		double query_tail_motion_up = Math.abs(MathHelper.degreesDifference((float)tailUpAvg, (float)dragonEntity.tail_motion_up)) > 0.3 ? MathHelper.lerp(0.1, dragonEntity.tail_motion_up, tailUpAvg) : tailUpAvg;
-		double query_tail_motion_side = Math.abs(MathHelper.degreesDifference((float)tailSideAvg, (float)dragonEntity.tail_motion_side)) > 0.3 ? MathHelper.lerp(0.1, dragonEntity.tail_motion_side, tailSideAvg) : tailSideAvg;
+		double query_body_yaw_change = MathHelper.lerp(0.1, dragonEntity.body_yaw_change, bodyYawAvg);
+		double query_head_yaw_change = MathHelper.lerp(0.1, dragonEntity.head_yaw_change, headYawAvg);
+		double query_head_pitch_change = MathHelper.lerp(0.1, dragonEntity.head_pitch_change, headPitchAvg);
+		double query_tail_motion_up = MathHelper.lerp(0.1, dragonEntity.tail_motion_up, tailUpAvg);
+		double query_tail_motion_side =  MathHelper.lerp(0.1, dragonEntity.tail_motion_side, tailSideAvg);
 		
 		if(((DragonEntity)animatable).tailLocked || !ConfigHandler.CLIENT.enableTailPhysics.get()){
 			dragonEntity.tailMotionUp = 0;

@@ -1,6 +1,9 @@
 package by.jackraidenph.dragonsurvival.network;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
+import by.jackraidenph.dragonsurvival.network.SkinCustomization.OpenDragonCustomization;
+import by.jackraidenph.dragonsurvival.network.SkinCustomization.SyncPlayerAllCustomization;
+import by.jackraidenph.dragonsurvival.network.SkinCustomization.SyncPlayerCustomization;
 import by.jackraidenph.dragonsurvival.network.claw.DragonClawsMenuToggle;
 import by.jackraidenph.dragonsurvival.network.claw.SyncDragonClawRender;
 import by.jackraidenph.dragonsurvival.network.claw.SyncDragonClawsMenu;
@@ -8,6 +11,7 @@ import by.jackraidenph.dragonsurvival.network.config.SyncBooleanConfig;
 import by.jackraidenph.dragonsurvival.network.config.SyncEnumConfig;
 import by.jackraidenph.dragonsurvival.network.config.SyncListConfig;
 import by.jackraidenph.dragonsurvival.network.config.SyncNumberConfig;
+import by.jackraidenph.dragonsurvival.network.container.OpenDragonAltar;
 import by.jackraidenph.dragonsurvival.network.container.OpenDragonInventory;
 import by.jackraidenph.dragonsurvival.network.container.OpenInventory;
 import by.jackraidenph.dragonsurvival.network.emotes.SyncEmote;
@@ -50,12 +54,20 @@ public class NetworkHandler
 		 register(PacketSyncPredatorStats.class, new PacketSyncPredatorStats());
 		 register(PlayerJumpSync.class, new PlayerJumpSync());
 		 register(RefreshDragons.class, new RefreshDragons());
+		 register(SyncAltarCooldown.class, new SyncAltarCooldown());
+		 register(OpenDragonAltar.class, new OpenDragonAltar());
+		
+		 register(RequestClientData.class, new RequestClientData());
 		
 		 //Status
 		 register(SyncGrowthState.class, new SyncGrowthState());
 		 register(SyncSize.class, new SyncSize());
 		 register(DiggingStatus.class, new DiggingStatus());
-		 
+		
+		 register(SyncPlayerAllCustomization.class, new SyncPlayerAllCustomization());
+		 register(SyncPlayerCustomization.class, new SyncPlayerCustomization());
+		 register(OpenDragonCustomization.class, new OpenDragonCustomization());
+		
 		 //Flight
 		 register(SyncFlyingStatus.class, new SyncFlyingStatus());
 		 register(SyncFlightSpeed.class, new SyncFlightSpeed());

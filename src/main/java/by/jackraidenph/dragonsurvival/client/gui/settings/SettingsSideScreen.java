@@ -20,7 +20,7 @@ public class SettingsSideScreen extends SettingsScreen
 	private OptionsList list;
 	
 	protected void init() {
-		this.list = new OptionsList(this.minecraft, this.width, this.height, 32, this.height - 32, 25);
+		this.list = new OptionsList(this.width, this.height, 32, this.height - 32);
 		
 		this.addButton(new Button(this.width / 2 - 100, 38, 200, 20, new TranslationTextComponent("ds.gui.settings.client"), (p_213106_1_) -> {
            Minecraft.getInstance().setScreen(new ClientSettingsScreen(this, Minecraft.getInstance().options, new TranslationTextComponent("ds.gui.settings.client")));

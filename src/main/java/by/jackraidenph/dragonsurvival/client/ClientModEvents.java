@@ -2,6 +2,7 @@ package by.jackraidenph.dragonsurvival.client;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.client.models.projectiles.StormBreathEffectModel;
+import by.jackraidenph.dragonsurvival.client.render.entity.dragon.DragonHitboxRender;
 import by.jackraidenph.dragonsurvival.client.render.entity.projectiles.StormBreathRender;
 import by.jackraidenph.dragonsurvival.common.blocks.DSBlocks;
 import by.jackraidenph.dragonsurvival.client.models.creatures.KnightModel;
@@ -108,6 +109,7 @@ public class ClientModEvents {
     
         RenderingRegistry.registerEntityRenderingHandler(DSEntities.MAGICAL_BEAST, MagicalPredatorRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(DSEntities.BOLAS_ENTITY, manager -> new SpriteRenderer<>(manager, minecraft.getItemRenderer()));
+        RenderingRegistry.registerEntityRenderingHandler(DSEntities.DRAGON_HITBOX, DragonHitboxRender::new);
 
         RenderingRegistry.registerEntityRenderingHandler(DSEntities.PRINCESS, manager -> new PrincessRenderer(manager, (IReloadableResourceManager) minecraft.getResourceManager()));
         RenderingRegistry.registerEntityRenderingHandler(DSEntities.HUNTER_HOUND, HunterHoundRenderer::new);

@@ -26,7 +26,8 @@
     "MixinEntityRenderManager",
     "MixinGameRendererZoom",
     "MixinShaderRender",
-    "MixinClientWorld"
+    "MixinClientWorld",
+    "MixinPlayerController"
   ],
   "minVersion": "0.8"
 }

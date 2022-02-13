@@ -2,48 +2,35 @@ package by.jackraidenph.dragonsurvival.client.gui;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.HelpButton;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.config.ConfigHandler;
-import by.jackraidenph.dragonsurvival.common.entity.DragonEntity;
-import by.jackraidenph.dragonsurvival.client.render.entity.dragon.DragonRenderer;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.TabButton;
-import by.jackraidenph.dragonsurvival.client.render.ClientDragonRender;
 import by.jackraidenph.dragonsurvival.client.handlers.DragonSkins;
 import by.jackraidenph.dragonsurvival.client.handlers.magic.ClientMagicHUDHandler;
+import by.jackraidenph.dragonsurvival.client.render.ClientDragonRender;
+import by.jackraidenph.dragonsurvival.client.render.entity.dragon.DragonRenderer;
+import by.jackraidenph.dragonsurvival.client.util.FakeClientPlayerUtils;
+import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
+import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.entity.DragonEntity;
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
+import by.jackraidenph.dragonsurvival.misc.DragonLevel;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.entity.player.SyncDragonSkinSettings;
-import by.jackraidenph.dragonsurvival.common.entity.DSEntities;
-import by.jackraidenph.dragonsurvival.misc.DragonLevel;
 import com.ibm.icu.impl.Pair;
-import com.mojang.authlib.GameProfile;
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.RemoteClientPlayerEntity;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.ConfirmOpenLinkScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Quaternion;
-import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.*;
 import net.minecraftforge.fml.client.gui.GuiUtils;
 import org.lwjgl.opengl.GL11;
-import software.bernie.geckolib3.core.PlayState;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
-import software.bernie.geckolib3.core.controller.AnimationController;
-import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.processor.IBone;
 
 import java.net.URI;
@@ -83,9 +70,6 @@ public class SkinsScreen extends Screen
 	private static String lastPlayerName = null;
 	private static DragonLevel level = DragonLevel.ADULT;
 	
-	private DragonEntity dragon;
-	private static RemoteClientPlayerEntity clientPlayer;
-	
 	
 	private static ArrayList<String> seenSkins = new ArrayList<>();
 	
@@ -94,6 +78,7 @@ public class SkinsScreen extends Screen
 	private static boolean noSkin = false;
 	private static boolean loading = false;
 	
+	private DragonStateHandler handler = new DragonStateHandler();
 	
 	private static ExecutorService executor = Executors.newSingleThreadExecutor();
 	
@@ -112,7 +97,7 @@ public class SkinsScreen extends Screen
 		boolean defaultSkin = false;
 		
 		if((!DragonSkins.renderStage(minecraft.player, level) && playerName == minecraft.player.getGameProfile().getName()) || skinTexture == null){
-			skinTexture = DragonSkins.getDefaultSkin(handler.getType(), level);
+			skinTexture = null;
 			defaultSkin = true;
 		}
 		
@@ -144,37 +129,6 @@ public class SkinsScreen extends Screen
 		if(playerName == null) {
 			playerName = minecraft.player.getGameProfile().getName();
 		}
-		
-		if(clientPlayer == null) {
-			clientPlayer = new RemoteClientPlayerEntity(minecraft.level, new GameProfile(UUID.randomUUID(), "DRAGON_RENDER"));
-			DragonStateHandler handler = DragonStateProvider.getCap(Minecraft.getInstance().player).orElse(null);
-			
-			DragonStateProvider.getCap(clientPlayer).ifPresent((cap) -> {
-				cap.setHasWings(true);
-				
-				if(handler != null){
-					cap.setType(handler.getType());
-				}
-			});
-		}
-		
-		dragon = new DragonEntity(DSEntities.DRAGON, minecraft.level){
-			@Override
-			public void registerControllers(AnimationData animationData) {
-				animationData.addAnimationController(new AnimationController<DragonEntity>(this, "controller", 2, (event) -> {
-					AnimationBuilder builder = new AnimationBuilder();
-					builder.addAnimation("fly", true);
-					event.getController().setAnimation(builder);
-					return PlayState.CONTINUE;
-				}));
-			}
-			
-			@Override
-			public PlayerEntity getPlayer()
-			{
-				return clientPlayer;
-			}
-		};
 		
 		setTextures();
 	}
@@ -430,7 +384,7 @@ public class SkinsScreen extends Screen
 			if (neckandHead != null) {
 				neckandHead.setHidden(false);
 			}
-			
+			DragonEntity dragon = FakeClientPlayerUtils.getFakeDragon(0, this.handler);
 			EntityRenderer<? super DragonEntity> dragonRenderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(dragon);
 
 			ClientDragonRender.dragonModel.setCurrentTexture(skinTexture);
@@ -439,7 +393,12 @@ public class SkinsScreen extends Screen
 			stack.scale(scale, scale, scale);
 			
 			if(!loading) {
-				renderEntityInInventory(startX + 10, startY + 90, scale, xRot, yRot, dragon);
+				this.handler.setHasWings(true);
+				this.handler.setSize(level.size);
+				
+				FakeClientPlayerUtils.getFakePlayer(0, this.handler).animationSupplier = () -> "fly";
+				
+				ClientDragonRender.renderEntityInInventory(dragon, startX + 10, startY + 90, scale, xRot, yRot);
 			}
 			
 			((DragonRenderer)dragonRenderer).glowTexture = null;
@@ -478,52 +437,6 @@ public class SkinsScreen extends Screen
 			GL11.glTranslatef(0F, 0F, -400f);
 			
 		}
-	}
-	
-	public void renderEntityInInventory(int p_228187_0_, int p_228187_1_, float p_228187_2_, float p_228187_3_, float p_228187_4_, LivingEntity p_228187_5_) {
-		float f = p_228187_3_;
-		float f1 = p_228187_4_;
-		RenderSystem.pushMatrix();
-		RenderSystem.translatef((float)p_228187_0_, (float)p_228187_1_, 1050.0F);
-		RenderSystem.scalef(1.0F, 1.0F, -1.0F);
-		MatrixStack matrixstack = new MatrixStack();
-		matrixstack.translate(0, (Math.abs(yRot) / 17) * -70, 0);
-		matrixstack.translate(0.0D, 0.0D, 1000.0D);
-		matrixstack.scale((float)p_228187_2_, (float)p_228187_2_, (float)p_228187_2_);
-		Quaternion quaternion = Vector3f.ZP.rotationDegrees(180.0F);
-		Quaternion quaternion1 = Vector3f.XP.rotationDegrees(f1 * 10.0F);
-		quaternion.mul(quaternion1);
-		matrixstack.mulPose(quaternion);
-		float f2 = p_228187_5_.yBodyRot;
-		float f3 = p_228187_5_.yRot;
-		float f4 = p_228187_5_.xRot;
-		float f5 = p_228187_5_.yHeadRotO;
-		float f6 = p_228187_5_.yHeadRot;
-		p_228187_5_.yBodyRot = 180.0F + f * 10.0F;
-		p_228187_5_.yRot = 180.0F + f * 10.0F;
-		p_228187_5_.xRot = -f1 * 10.0F;
-		p_228187_5_.yHeadRot = p_228187_5_.yRot;
-		p_228187_5_.yHeadRotO = p_228187_5_.yRot;
-		EntityRendererManager entityrenderermanager = Minecraft.getInstance().getEntityRenderDispatcher();
-		boolean renderHitbox = entityrenderermanager.shouldRenderHitBoxes();
-		quaternion1.conj();
-		entityrenderermanager.overrideCameraOrientation(quaternion1);
-		entityrenderermanager.setRenderShadow(false);
-		IRenderTypeBuffer.Impl irendertypebuffer$impl = Minecraft.getInstance().renderBuffers().bufferSource();
-		RenderSystem.runAsFancy(() -> {
-			entityrenderermanager.setRenderHitBoxes(false);
-			entityrenderermanager.render(p_228187_5_, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, matrixstack, irendertypebuffer$impl, 15728880);
-			entityrenderermanager.setRenderHitBoxes(renderHitbox);
-		});
-		irendertypebuffer$impl.endBatch();
-		entityrenderermanager.setRenderShadow(true);
-		
-		p_228187_5_.yBodyRot = f2;
-		p_228187_5_.yRot = f3;
-		p_228187_5_.xRot = f4;
-		p_228187_5_.yHeadRotO = f5;
-		p_228187_5_.yHeadRot = f6;
-		RenderSystem.popMatrix();
 	}
 	
 	@Override

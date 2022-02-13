@@ -37,9 +37,10 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 	public DragonRenderer(EntityRendererManager renderManager, AnimatedGeoModel<DragonEntity> modelProvider) {
         super(renderManager, modelProvider);
 		this.addLayer(new DragonGlowLayerRenderer(this));
+		this.addLayer(new DragonCustomizationLayer(this));
+		this.addLayer(new DragonGlowCustomizationLayer(this));
 		this.addLayer(new ClawsAndTeethRenderLayer(this));
 		this.addLayer(new DragonArmorRenderLayer(this));
-		
 	}
 	
 	public Color renderColor = new Color(255, 255, 255);
@@ -72,7 +73,7 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 		if (rightWing != null) {
 			rightWing.setHidden(!hasWings);
 		}
-		
+		if(getGeoModelProvider().getTextureLocation(entity) == null) return;
 		super.render(entity, entityYaw, partialTicks, stack, bufferIn, packedLightIn);
 	}
 	

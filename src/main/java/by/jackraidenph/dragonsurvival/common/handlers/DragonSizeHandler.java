@@ -100,12 +100,12 @@ public class DragonSizeHandler {
 	    double height = calculateModifiedHeight(calculateDragonHeight((float)size, ConfigHandler.SERVER.hitboxGrowsPastHuman.get()), pose, ConfigHandler.SERVER.sizeChangesHitbox.get());
 	    double width = calculateDragonWidth((float)size, ConfigHandler.SERVER.hitboxGrowsPastHuman.get());
 		return (player.level.getBlockCollisions(null, new AxisAlignedBB(
-				player.position().subtract(width * 0.5D, 0.0D, width * 0.5D), 
+				player.position().subtract(width * 0.5D, 0.0D, width * 0.5D),
 				player.position().add(width * 0.5D, height, width * 0.5D)))
 		.count() == 0);
     }
     
-    private static Pose overridePose(PlayerEntity player) {
+    public static Pose overridePose(PlayerEntity player) {
 		Pose overridePose = getOverridePose(player);
 		if (player.getForcedPose() != overridePose) {
 			player.setForcedPose(overridePose);

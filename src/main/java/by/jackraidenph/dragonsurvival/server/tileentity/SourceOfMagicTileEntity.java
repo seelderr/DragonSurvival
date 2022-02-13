@@ -22,6 +22,8 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import software.bernie.geckolib3.core.IAnimatable;
@@ -51,6 +53,9 @@ public class SourceOfMagicTileEntity extends BaseBlockTileEntity implements ITic
         consumables.put(DSItems.elderDragonHeart, Functions.secondsToTicks(ConfigHandler.SERVER.elderDragonHeartTime.get()));
     }
     
+    
+    private int ticks;
+    
     @Override
     public void tick() {
         if(getBlockState().getBlock() == DSBlocks.seaSourceOfMagic){
@@ -68,6 +73,14 @@ public class SourceOfMagicTileEntity extends BaseBlockTileEntity implements ITic
         }else if(state.getValue(SourceOfMagicBlock.FILLED) && isEmpty()){
             level.setBlockAndUpdate(getBlockPos(), state.setValue(SourceOfMagicBlock.FILLED, false));
         }
+        
+        if(!isEmpty()) {
+            if (ticks % 120 == 0) {
+                level.playLocalSound(getX(), getY(), getZ(), type == DragonType.CAVE ? SoundEvents.LAVA_AMBIENT : SoundEvents.WATER_AMBIENT, SoundCategory.BLOCKS, 0.5f, 1f, true);
+            }
+        }
+        
+        ticks += 1;
     }
     
     @Override

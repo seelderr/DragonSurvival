@@ -1,11 +1,6 @@
 package by.jackraidenph.dragonsurvival.config;
 
-import by.jackraidenph.dragonsurvival.util.BiomeDictionaryHelper;
-import net.minecraft.entity.EntityType;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -18,7 +13,9 @@ public class CommonConfig {
 	// General
 	public final ForgeConfigSpec.BooleanValue endVoidTeleport;
 	public final ForgeConfigSpec.BooleanValue dragonsAllowedToUseElytra;
-
+	
+	public final ForgeConfigSpec.BooleanValue startWithDragonChoice;
+	
 	// Predator
 	public final ForgeConfigSpec.DoubleValue predatorDamageFactor;
 	public final ForgeConfigSpec.DoubleValue predatorHealthFactor;
@@ -85,6 +82,11 @@ public class CommonConfig {
 				.comment("Should the player be teleported to the overworld when they fall in the end?")
 				.define("endVoidTeleport", true);
 		dragonsAllowedToUseElytra = builder.comment("Whether dragons are allowed to use Elytra").define("elytraForDragon", false);
+		
+		startWithDragonChoice = builder
+				.comment("Should the dragon altar interface be opened when the player first joins the world?")
+				.define("startWithDragonChoice", false);
+		
 		// Predator
 		builder.pop().push("predator");
 		predatorDamageFactor = builder
@@ -108,10 +110,10 @@ public class CommonConfig {
 		builder.pop().push("spawnBiomes");
 		predatorBiomesInclude = builder
 				.comment("The predator can only spawn in biomes with the included types.")
-				.defineList("include", Collections.singletonList(END.toString()), o -> BiomeDictionary.Type.getAll().contains(BiomeDictionaryHelper.getType(String.valueOf(o))));
+				.defineList("predatorBiomesInclude", Collections.singletonList(END.toString()), ConfigHandler.biomePredicate);
 		predatorBiomesExclude = builder
 				.comment("The predator cannot spawn in biomes with excluded types.")
-				.defineList("exclude", Arrays.asList(OVERWORLD.toString(), NETHER.toString()), o -> BiomeDictionary.Type.getAll().contains(BiomeDictionaryHelper.getType(String.valueOf(o))));
+				.defineList("predatorBiomesExclude", Arrays.asList(OVERWORLD.toString(), NETHER.toString()), ConfigHandler.biomePredicate);
 		builder.pop();
 		// Dragon Hunters
 		builder.pop().push("dragonHunters");
@@ -125,7 +127,7 @@ public class CommonConfig {
 		spawnHound = builder.comment("Dragon Knight hound spawning enabled?").define("allowHoundSpawning", true);
 		spawnPrinceAndPrincess = builder.comment("Princess and prince spawning enabled?").define("allowPrinceAndPrincessSpawning", true);
 		xpGain = builder.comment("How many experience points are gained for killing a villager").defineInRange("villagerKillxp", 10, 10, 1000);
-		evilDragonStatusGivers = builder.comment("Entities which give 'Evil dragon' status on death").defineList("evilDragonStatusGivers", () -> Arrays.asList("minecraft:villager", "dragonsurvival:hunter_hound", "dragonsurvival:knight", "dragonsurvival:shooter", "dragonsurvival:squire", "dragonsurvival:prince", "dragonsurvival:princess", "dragonsurvival:princess_entity"), o -> EntityType.byString((String) o).isPresent());
+		evilDragonStatusGivers = builder.comment("Entities which give 'Evil dragon' status on death").defineList("evilDragonStatusGivers", () -> Arrays.asList("minecraft:villager", "dragonsurvival:hunter_hound", "dragonsurvival:knight", "dragonsurvival:shooter", "dragonsurvival:squire", "dragonsurvival:prince", "dragonsurvival:princess", "dragonsurvival:princess_entity"), ConfigHandler.entitiesAndTagsPredicate);
 		preserveEvilDragonEffectAfterDeath = builder.comment("Preserve effect 'Evil dragon' after death?").define("preserveEvilDragonAfterDeath", false);
 		riderSpawnLowerBound = builder.comment("Lowest Y value allowed for princess and hunter spawning").defineInRange("princessAndHuntersLowerSpawnBound", 32, 6, 128);
 		riderSpawnUpperBound = builder.comment("Highest Y value allowed for princess and hunter spawning").defineInRange("princessAndHuntersUpperSpawnBound", 80, 64, 250);
@@ -160,9 +162,9 @@ public class CommonConfig {
 		builder.push("dragonBeacons");
 		secondsOfBeaconEffect = builder.comment("Duration of effect given by beacon constantly in seconds").defineInRange("constantEffect", 20, 1, 60 * 60);
 		minutesOfDragonEffect = builder.comment("Duration of effect given in exchange for experience in minutes").defineInRange("temporaryEffect", 10, 1, 60 * 2);
-		peaceBeaconEffects = builder.comment("Effects of Peace beacon").defineList("peaceBeaconEffects", Arrays.asList("dragonsurvival:peace", "dragonsurvival:animal_peace"), o -> o instanceof String && ForgeRegistries.POTIONS.containsKey(new ResourceLocation((String) o)));
-		magicBeaconEffects = builder.comment("Effects of Magic beacon").defineList("magicBeaconEffects", Arrays.asList("dragonsurvival:magic", "dragonsurvival:predator_anti_spawn"), o -> o instanceof String && ForgeRegistries.POTIONS.containsKey(new ResourceLocation((String) o)));
-		fireBeaconEffects = builder.comment("Effects of Fire beacon").defineList("fireBeaconEffects", Arrays.asList("dragonsurvival:fire", "dragonsurvival:strong_leather"), o -> o instanceof String && ForgeRegistries.POTIONS.containsKey(new ResourceLocation((String) o)));
+		peaceBeaconEffects = builder.comment("Effects of Peace beacon").defineList("peaceBeaconEffects", Arrays.asList("dragonsurvival:peace", "dragonsurvival:animal_peace"), ConfigHandler.effectPredicate);
+		magicBeaconEffects = builder.comment("Effects of Magic beacon").defineList("magicBeaconEffects", Arrays.asList("dragonsurvival:magic", "dragonsurvival:predator_anti_spawn"), ConfigHandler.effectPredicate);
+		fireBeaconEffects = builder.comment("Effects of Fire beacon").defineList("fireBeaconEffects", Arrays.asList("dragonsurvival:fire", "dragonsurvival:strong_leather"), ConfigHandler.effectPredicate);
 		builder.pop();
 	}
 }

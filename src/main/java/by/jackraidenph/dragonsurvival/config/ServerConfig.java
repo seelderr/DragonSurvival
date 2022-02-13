@@ -261,240 +261,345 @@ public class ServerConfig {
 		// General
 		builder.push("general");
 		mineStarBlock = builder
+				.translation("ds.config.server.general.mineStarBlock")
 				.comment("Whether silk touch hoes can be used to harvest Predator Stars.")
 				.define("harvestableStarBlock", false);
 		
 		altarUsageCooldown = builder
+				.translation("ds.config.server.general.altarUsageCooldown")
 				.comment("How long of a cooldown in seconds the altar has after each use.")
 				.defineInRange("altarUsageCooldown", 0, 0, 1000);
 		
 		keepClawItems = builder
+				.translation("ds.config.server.general.keepClawItems")
 				.comment("Whether to keep items in the claw slots on death otherwise they will drop on death.")
 				.define("keepClawItems", false);
 		
 		syncClawRender = builder
+				.translation("ds.config.server.general.syncClawRender")
 				.comment("If players are allowed to hide their claws and teeth from other players. If it is important to you to see your opponent's weapon during pvp, set false.")
 				.define("syncClawRender", true);
 		
 		canMoveInEmote = builder
+				.translation("ds.config.server.general.canMoveInEmote")
 				.comment("If players are allowed to move while performing emotes")
 				.define("canMoveInEmote", true);
 		
 		canMoveWhileCasting = builder
+				.translation("ds.config.server.general.canMoveWhileCasting")
 				.comment("If you should be able to move while casting certain skills or if player movement can be prevented.")
 				.define("canMoveWhileCasting", false);
 		
 		// Growth
-		builder.pop().push("growth");
+		builder.pop().push("growth")
+		;
 		sizeChangesHitbox = builder
+				.translation("ds.config.server.growth.sizeChangesHitbox")
 				.comment("Whether the dragon size determines its hitbox size. The bigger the dragon, the bigger the hitbox. If false standard player's hitbox be used.")
 				.define("sizeChangesHitbox", true);
 		hitboxGrowsPastHuman = builder
+				.translation("ds.config.server.growth.hitboxGrowsPastHuman")
 				.comment("Whether the dragon hitbox grows past a human hitbox.")
 				.define("largerDragonHitbox", true);
 		growNewborn = builder
+				.translation("ds.config.server.growth.growNewborn")
 				.comment("List of items to grow newborn dragon. Format: item/tag:modid:id")
 				.defineList("growNewborn", Arrays.asList(
 						"item:dragonsurvival:heart_element",
 						"item:dragonsurvival:weak_dragon_heart",
 						"item:dragonsurvival:elder_dragon_heart"
-				), this::isValidItemConfig);
+				), ConfigHandler.itemsAndTagsPredicate);
 		growYoung = builder
+				.translation("ds.config.server.growth.growYoung")
 				.comment("List of items to grow young dragon. Format: item/tag:modid:id")
 				.defineList("growYoung", Arrays.asList(
 						"item:dragonsurvival:weak_dragon_heart",
 						"item:dragonsurvival:elder_dragon_heart"
-				), this::isValidItemConfig);
+				), ConfigHandler.itemsAndTagsPredicate);
 		growAdult = builder
+				.translation("ds.config.server.growth.growAdult")
 				.comment("List of items to grow adult dragon. Format: item/tag:modid:id")
 				.defineList("growAdult", Collections.singletonList(
 						"item:dragonsurvival:elder_dragon_heart"
-				), this::isValidItemConfig);
+				), ConfigHandler.itemsAndTagsPredicate);
 		alternateGrowing = builder
+				.translation("ds.config.server.growth.alternateGrowing")
 				.comment("Defines if dragon should grow without requirement of catalyst items. Your dragon will just grow over time.")
 				.define("alternateGrowing", true);
 		maxGrowthSize = builder
+				.translation("ds.config.server.growth.maxGrowthSize")
 				.comment("Defines the max size your dragon can grow to. Values that are too high can break your game. It is not advisable to set a number higher than 60.")
 				.defineInRange("maxGrowthSize", 60.0, 14.0, 1000000.0);
 		reachBonus = builder
+				.translation("ds.config.server.growth.reachBonus")
 				.comment("The bonus that is given to dragons at ever 60 size. Human players have 1.0x reach and a size 60 dragon will have 1.5x distance with default value. Only applies to block mining.")
 				.defineInRange("reachBonus", 0.5, 0, 1000000.0);
 		saveGrowthStage = builder
+				.translation("ds.config.server.growth.saveGrowthStage")
 				.comment("Should the growth stage of a dragon be saved even when you change. Does not affect the saving progress of magic (use saveAllAbilities). The author does not approve of weredragons, but if you insist...")
 				.define("saveGrowthStage", false);
 		minHealth = builder
+				.translation("ds.config.server.growth.minHealth")
 				.comment("Dragon starting health. Minumum health dragons will start off with.")
 				.defineInRange("minHealth", 14, 1, 100);
 		maxHealth = builder
+				.translation("ds.config.server.growth.maxHealth")
 				.comment("Maximum health dragons can grow to.")
 				.defineInRange("maxHealth", 40, 1, 100);
 		
 		newbornGrowthModifier = builder
+				.translation("ds.config.server.growth.newbornGrowthModifier")
 				.comment("A multiplier to change the growth rate from newborn to young. At 1.0 it takes about 3 hours to turn a newborn dragon into a young dragon.")
 				.defineInRange("newbornGrowthModifier", 1.0, 0, 1000);
 		
 		youngGrowthModifier = builder
+				.translation("ds.config.server.growth.youngGrowthModifier")
 				.comment("A multiplier to change the growth rate from young to adult. At 1.0 it takes about 1 day to turn a young dragon into a adult dragon.")
 				.defineInRange("youngGrowthModifier", 1.0, 0, 1000);
 		
 		adultGrowthModifier = builder
+				.translation("ds.config.server.growth.adultGrowthModifier")
 				.comment("A multiplier to change the growth rate from adult to a full sized adult. At 1.0 it takes about 3 days to become a dragon of maximum adult size.")
 				.defineInRange("adultGrowthModifier", 1.0, 0, 1000);
 		
 		maxGrowthModifier = builder
+				.translation("ds.config.server.growth.maxGrowthModifier")
 				.comment("A multiplier to change the growth rate from full sized adult to max size. The change in growth after the maximum adult size is measured in months and years.")
 				.defineInRange("maxGrowthModifier", 1.0, 0, 1000);
 		
 		builder.pop().push("drops");
 		dragonHeartShardChance = builder
+				.translation("ds.config.server.drops.dragonHeartShardChance")
 				.comment("The chance for dragon heart shards to drop from any mobs with max health between 14-20")
 				.defineInRange("dragonHeartShardChance", 0.02, 0.0, 1.0);
+		
 		weakDragonHeartChance = builder
+				.translation("ds.config.server.drops.weakDragonHeartChance")
 				.comment("The chance for dragon heart shards to drop from any mobs with max health between 20-50")
 				.defineInRange("weakDragonHeartChance", 0.02, 0.0, 1.0);
+		
 		elderDragonHeartChance = builder
+				.translation("ds.config.server.drops.elderDragonHeartChance")
 				.comment("The chance for dragon heart shards to drop from any mobs with max health above 50")
 				.defineInRange("elderDragonHeartChance", 0.2, 0.0, 1.0);
 		
 		// Treasure
 		builder.pop().push("treasure");
 		treasureHealthRegen = builder
+				.translation("ds.config.server.treasure.treasureHealthRegen")
 				.comment("Whether sleeping on treasure will recover health or not. ")
 				.define("treasureHealthRegen", true);
+		
 		treasureRegenTicks = builder
+				.translation("ds.config.server.treasure.treasureRegenTicks")
 				.comment("The time in ticks it takes to recover 1hp while sleeping on treasure. Keep in mind that there is 1 treasure in mind. A large number of treasures in one place reduces time.")
 				.defineInRange("treasureRegenTicks", 24000, 1, 10000000);
+		
 		treasureRegenTicksReduce = builder
+				.translation("ds.config.server.treasure.treasureRegenTicksReduce")
 				.comment("The amount of ticks each additional treasure reduces the regen time by")
 				.defineInRange("treasureRegenTicksReduce", 97, 1, 10000000);
+		
 		maxTreasures = builder
+				.translation("ds.config.server.treasure.maxTreasures")
 				.comment("The max amount of additional treasure that can be used to reduce the regen time")
 				.defineInRange("maxTreasures", 240, 1, 10000000);
 		
 		// Source of Magic
 		builder.pop().push("source_of_magic");
+		
 		sourceOfMagicInfiniteMagic = builder
+				.translation("ds.config.server.source_of_magic.sourceOfMagicInfiniteMagic")
 				.comment("Whether using the source of magic block will grant the infinite magic buff.")
 				.define("sourceOfMagicInfiniteMagic", true);
 		
 		damageWrongSourceOfMagic = builder
+				.translation("ds.config.server.source_of_magic.damageWrongSourceOfMagic")
 				.comment("Whether using the the source of magic intended for another dragon type will hurt you.")
 				.define("damageWrongSourceOfMagic", true);
+		
 		canUseAllSourcesOfMagic = builder
+				.translation("ds.config.server.source_of_magic.canUseAllSourcesOfMagic")
 				.comment("Whether you are able to use all types of source of magic no matter your dragon type.")
 				.define("canUseAllSourcesOfMagic", false);
 		
 		elderDragonDustTime = builder
+				.translation("ds.config.server.source_of_magic.elderDragonDustTime")
 				.comment("How long duration of the infinite magic effect using elder dragon dust gives in seconds. Note that you also spend 10 seconds while waiting.")
 				.defineInRange("elderDragonDustTime", 20, 1, 10000);
+		
 		elderDragonBoneTime = builder
+				.translation("ds.config.server.source_of_magic.elderDragonBoneTime")
 				.comment("How long duration of the infinite magic effect using elder dragon bone gives in seconds. Note that you also spend 10 seconds while waiting.")
 				.defineInRange("elderDragonBoneTime", 60, 1, 10000);
+		
 		weakHeartShardTime = builder
+				.translation("ds.config.server.source_of_magic.weakHeartShardTime")
 				.comment("How long duration of the infinite magic effect using weak heart shard gives in seconds. Note that you also spend 10 seconds while waiting.")
 				.defineInRange("weakHeartShardTime", 110, 1, 10000);
+		
 		weakDragonHeartTime = builder
+				.translation("ds.config.server.source_of_magic.weakDragonHeartTime")
 				.comment("How long duration of the infinite magic effect using weak dragon heart gives in seconds. Note that you also spend 10 seconds while waiting.")
 				.defineInRange("weakDragonHeartTime", 310, 1, 10000);
+		
 		elderDragonHeartTime = builder
+				.translation("ds.config.server.source_of_magic.elderDragonHeartTime")
 				.comment("How long duration of the infinite magic effect using elder dragon heart gives in seconds. Note that you also spend 10 seconds while waiting.")
 				.defineInRange("elderDragonHeartTime", 1010, 1, 10000);
 		
 		// Wings
 		builder.pop().push("wings");
 		maxFlightSpeed = builder
+				.translation("ds.config.server.wings.maxFlightSpeed")
 				.comment("Maximum acceleration fly speed up and down. Take into account the chunk load speed. A speed of 0.3 is optimal.")
 				.defineInRange("maxFlightSpeed", 0.3, 0.1, 1);
+		
 		startWithWings = builder
+				.translation("ds.config.server.wings.startWithWings")
 				.comment("Whether dragons born with wings.")
 				.define("startWithWings", true);
+		
 		enderDragonGrantsSpin = builder
+				.translation("ds.config.server.wings.enderDragonGrantsSpin")
 				.comment("Whether you should be able to obtain the spin ability from the ender dragon.")
 				.define("enderDragonGrantsSpin", true);
+		
 		allowFlyingWithoutHunger = builder
+				.translation("ds.config.server.wings.allowFlyingWithoutHunger")
 				.comment("Whether dragons can fly when totally hungry. You can't open your wings if you're hungry.")
 				.define("allowFlyingWhenTotallyHungry", false);
+		
 		flightHungerThreshold = builder
+				.translation("ds.config.server.wings.flightHungerThreshold")
 				.comment("If the player's hunger is below this parameter, he can't open his wings.")
 				.defineInRange("flightHungerThreshold", 6, 0, 20);
+		
 		foldWingsThreshold = builder
+				.translation("ds.config.server.wings.foldWingsThreshold")
 				.comment("If the player's hunger is less then or equal to this parameter, the wings will be folded even during flight.")
 				.defineInRange("flightHungerThreshold", 0, 0, 20);
+		
 		flyingUsesHunger = builder
+				.translation("ds.config.server.wings.flyingUsesHunger")
 				.comment("Whether you use up hunger while flying.")
 				.define("flyingUsesHunger", true);
+		
 		enableFlightFallDamage = builder
+				.translation("ds.config.server.wings.enableFlightFallDamage")
 				.comment("Whether fall damage in flight is included. If true dragon will take damage from the fall.")
 				.define("enableFlightFallDamage", true);
+		
 		lethalFlight = builder
+				.translation("ds.config.server.wings.lethalFlight")
 				.comment("Whether fall damage from flight is lethal, otherwise it will leave you at half a heart")
 				.define("lethalFallDamage", false);
+		
 		foldWingsOnLand = builder
+				.translation("ds.config.server.wings.foldWingsOnLand")
 				.comment("Whether your wings will fold automatically when landing. Has protection against accidental triggering, so the wings do not always close. If you always need to close the wings manually.")
 				.define("foldWingsOnLand", false);
+		
 		creativeFlight = builder
+				.translation("ds.config.server.wings.creativeFlight")
 				.comment("Whether to use flight similar to creative rather then gliding.")
 				.define("alternateFlight", false);
+		
 		flightSpinCooldown = builder
+				.translation("ds.config.server.wings.flightSpinCooldown")
 				.comment("The cooldown in seconds in between uses of the spin attack in flight")
 				.defineInRange("flightSpinCooldown", 5, 0, 100000);
 		
 		// Innate dragon bonuses
 		builder.pop().push("bonuses");
 		healthAdjustments = builder
+				.translation("ds.config.server.bonuses.healthAdjustments")
 				.comment("Apply a health modifier for dragons. The older the dragon, the more health it has.")
 				.define("healthMod", true);
+		
 		bonuses = builder
+				.translation("ds.config.server.bonuses.bonuses")
 				.comment("Set to false to toggle off all dragon bonuses and play as human.")
 				.define("bonuses", true);
+		
 		attackDamage = builder
+				.translation("ds.config.server.bonuses.attackDamage")
 				.comment("Apply an attack damage modifier for dragons.")
 				.define("attackMod", true);
+		
 		babyBonusDamage = builder
+				.translation("ds.config.server.bonuses.babyBonusDamage")
 				.comment("Attack modifier for baby dragons.")
 				.defineInRange("babyAttackMod", 1.0, 0.0, 100.0);
+		
 		youngBonusDamage = builder
+				.translation("ds.config.server.bonuses.youngBonusDamage")
 				.comment("Attack modifier for young dragons.")
 				.defineInRange("youngAttackMod", 2.0, 0.0, 100.0);
+		
 		adultBonusDamage = builder
+				.translation("ds.config.server.bonuses.adultBonusDamage")
 				.comment("Attack modifier for adult dragons.")
 				.defineInRange("adultAttackMod", 3.0, 0.0, 100.0);
+		
 		newbornJump = builder
+				.translation("ds.config.server.bonuses.newbornJump")
 				.comment("Jumping height for a newborn dragon. Default is 1 block.")
-				.defineInRange("newbornJump", 0.025, 0, 0.9);
+				.defineInRange("newbornJump", 0.025, 0.0, 0.9);
+		
 		youngJump = builder
+				.translation("ds.config.server.bonuses.youngJump")
 				.comment("Jumping height for a young dragon. Default is 1.5 block.")
-				.defineInRange("youngJump", 0.1, 0, 0.9);
+				.defineInRange("youngJump", 0.1, 0.0, 0.9);
+		
 		adultJump = builder
+				.translation("ds.config.server.bonuses.adultJump")
 				.comment("Jumping height for a adult dragon. Default is 2 block.")
-				.defineInRange("adultJump", 0.15, 0, 0.9);
+				.defineInRange("adultJump", 0.15, 0.0, 0.9);
+		
 		clawsAreTools = builder
+				.translation("ds.config.server.bonuses.clawsAreTools")
 				.comment("Whether dragon claws function as tools.")
 				.define("clawsAreTools", true);
+		
 		baseHarvestLevel = builder
+				.translation("ds.config.server.bonuses.baseHarvestLevel")
 				.comment("The harvest level to apply when dragons breaks a block, regardless of dragon/tool type.")
 				.defineInRange("baseHarvestLevel", 0, -1, 100);
+		
 		bonusHarvestLevel = builder
+				.translation("ds.config.server.bonuses.bonusHarvestLevel")
 				.comment("The harvest level to apply to a dragons specific tool type once unlocked.")
 				.defineInRange("bonusHarvestLevel", 1, -1, 100);
+		
 		bonusUnlockedAt = builder
+				.translation("ds.config.server.bonuses.bonusUnlockedAt")
 				.comment("The stage that dragons unlock the bonus harvest level.")
 				.defineEnum("bonusUnlockedAt", DragonLevel.YOUNG, DragonLevel.values());
+		
 		speedupEffectLevel = builder
+				.translation("ds.config.server.bonuses.speedupEffectLevel")
 				.comment("The speed effect level for dragon block-specific speedups. Set to 0 to disable.")
 				.defineInRange("speedupEffectLevel", 2, 0, 100);
 		// Cave Dragon Bonuses
 		builder.push("cave");
 		caveFireImmunity = builder
+				.translation("ds.config.server.bonuses.cave.caveFireImmunity")
 				.comment("Whether cave dragons are immune to fire damage types.")
 				.define("fireImmunity", true);
+		
 		caveLavaSwimming = builder
+				.translation("ds.config.server.bonuses.cave.caveLavaSwimming")
 				.comment("Set to false to disable cave dragon fast lava swimming.")
 				.define("lavaSwimming", true);
+		
 		caveLavaSwimmingTicks = builder
+				.translation("ds.config.server.bonuses.cave.caveLavaSwimmingTicks")
 				.comment("The maximum number of ticks a cave dragon can swim in lava. Set to 0 to allow unlimited air while under lava.")
 				.defineInRange("lavaSwimTicks", 3600, 0, 100000);
+		
 		caveSpeedupBlocks = builder
+				.translation("ds.config.server.bonuses.cave.caveSpeedupBlocks")
 				.comment("Blocks cave dragons gain speed when standing above. Formatting: block/tag:modid:id")
 				.worldRestart()
 				.defineList("caveSpeedupBlocks", Arrays.asList(
@@ -509,20 +614,27 @@ public class ServerConfig {
 						"block:quark:deepslate",
 						"block:quark:deepslate_bricks",
 						"block:quark:cobbled_deepslate"
-				), this::isValidBlockConfig);
+				), ConfigHandler.blocksAndTagsPredicate);
 
 		// Forest Dragon Bonuses
 		builder.pop().push("forest");
 		forestFallReduction = builder
+				.translation("ds.config.server.bonuses.forest.forestFallReduction")
 				.comment("How many blocks of fall damage is mitigated for forest dragons. Set to 0.0 to disable.")
 				.defineInRange("fallReduction", 5.0, 0.0, 100.0);
+		
 		forestBushImmunity = builder
+				.translation("ds.config.server.bonuses.forest.forestBushImmunity")
 				.comment("Whether forest dragons are immune to Sweet Berry Bush damage.")
 				.define("bushImmunity", true);
+		
 		forestCactiImmunity = builder
+				.translation("ds.config.server.bonuses.forest.forestCactiImmunity")
 				.comment("Whether forest dragons are immune to Cactus damage.")
 				.define("cactiImmunity", true);
+		
 		forestSpeedupBlocks = builder
+				.translation("ds.config.server.bonuses.forest.forestSpeedupBlocks")
 				.comment("Blocks forest dragons gain speed when standing above. Formatting: block/tag:modid:id")
 				.worldRestart()
 				.defineList("forestSpeedupBlocks", Arrays.asList(
@@ -530,14 +642,17 @@ public class ServerConfig {
 						"tag:minecraft:leaves",
 						"tag:minecraft:planks",
 						"tag:forge:dirt"
-				), this::isValidBlockConfig);
+				), ConfigHandler.blocksAndTagsPredicate);
 
 		// Sea Dragon Bonuses
 		builder.pop().push("sea");
 		seaSwimmingBonuses = builder
+				.translation("ds.config.server.bonuses.sea.seaSwimmingBonuses")
 				.comment("Whether sea dragons gain bonus swim speed and unlimited air.")
 				.define("waterBonuses", true);
+		
 		seaSpeedupBlocks = builder
+				.translation("ds.config.server.bonuses.sea.seaSpeedupBlocks")
 				.comment("Blocks sea dragons gain speed when standing above. Formatting: block/tag:modid:id")
 				.worldRestart()
 				.defineList("seaSpeedupBlocks", Arrays.asList(
@@ -556,24 +671,29 @@ public class ServerConfig {
 						"block:minecraft:chiseled_red_sandstone",
 						"block:minecraft:smooth_red_sandstone",
 						"block:minecraft:water"
-				), this::isValidBlockConfig);
+				), ConfigHandler.blocksAndTagsPredicate);
 
 		//Dragon Penalties
 		builder.pop().pop().push("penalties");
 		penalties = builder
+				.translation("ds.config.server.penalties.penalties")
 				.comment("Set to false to toggle off all dragon penalties.")
 				.define("penalties", true);
+		
 		allowedVehicles = builder
+				.translation("ds.config.server.penalties.allowedVehicles")
 				.comment("List of rideable entities. Format: modid:id")
 				.defineList("allowedVehicles", Lists.newArrayList(
 						"minecraft:boat"
-				), value -> value instanceof String);
+				), ConfigHandler.entitiesAndTagsPredicate);
 		
 		ridingBlacklist= builder
+				.translation("ds.config.server.penalties.ridingBlacklist")
 				.comment("Should dragons be limited by which entities they can ride")
 				.define("limitedRiding", true);
 		
 		blacklistedItems = builder
+				.translation("ds.config.server.penalties.blacklistedItems")
 				.comment("List of items that disallowed to be used by dragons. Format: item/tag:modid:id")
 				.defineList("blacklistedItems", Arrays.asList(
 						"item:minecraft:bow",
@@ -690,8 +810,10 @@ public class ServerConfig {
 						"item:spartanweaponry:boomerang_lead",
 						"item:spartanweaponry:boomerang_invar",
 						"item:spartanweaponry:boomerang_nickel"
-				), this::isValidItemConfig);
+				), ConfigHandler.itemsAndTagsPredicate);
+		
 		blacklistedSlots = builder
+				.translation("ds.config.server.penalties.blacklistedSlots")
 				.comment("List of slots to handle blacklistedItems option")
 				.defineList("blacklistedSlots", Arrays.asList(
 						0, 1, 2, 3, 4, 5, 6, 7, 8, 45
@@ -700,39 +822,56 @@ public class ServerConfig {
 		// Cave Dragon Penalties
 		builder.push("cave");
 		caveWaterDamage = builder
+				.translation("ds.config.server.penalties.cave.caveWaterDamage")
 				.comment("The amount of damage taken per water damage tick (once every 10 ticks). Set to 0.0 to disable water damage.")
 				.defineInRange("waterDamage", 1.0, 0.0, 100.0);
+		
 		caveRainDamage = builder
+				.translation("ds.config.server.penalties.cave.caveRainDamage")
 				.comment("The amount of damage taken per rain damage tick (once every 40 ticks). Set to 0.0 to disable rain damage.")
 				.defineInRange("rainDamage", 1.0, 0.0, 100.0);
+		
 		caveSplashDamage = builder
+				.translation("ds.config.server.penalties.cave.caveSplashDamage")
 				.comment("The amount of damage taken when hit with a snowball or a water bottle. Set to 0.0 to disable splash damage.")
 				.defineInRange("splashDamage", 2.0, 0.0, 100.0);
 
 		// Forest Dragon Penalties
 		builder.pop().push("forest");
 		forestStressTicks = builder
+				.translation("ds.config.server.penalties.forest.forestStressTicks")
 				.comment("The number of ticks in darkness before the forest dragon gets Stress effect. Set to 0 to disable to stress effect.")
 				.defineInRange("ticksBeforeStressed", 70, 0, 10000);
+		
 		forestStressEffectDuration = builder
+				.translation("ds.config.server.penalties.forest.forestStressEffectDuration")
 				.comment("The number of seconds the stress effect lasts for.")
 				.defineInRange("stressEffectDuration", 50, 2, 100000);
+		
 		stressExhaustion = builder
+				.translation("ds.config.server.penalties.forest.stressExhaustion")
 				.comment("The amount of exhaustion applied per 10 ticks during the stress effect.")
 				.defineInRange("stressExhaustion", 1.0, 0.1, 4.0);
 
 		// Sea Dragon Penalties
 		builder.pop().push("sea");
 		seaTicksWithoutWater = builder
+				.translation("ds.config.server.penalties.sea.seaTicksWithoutWater")
 				.comment("The number of ticks out of water before the sea dragon will start taking dehydration damage. Set to 0 to disable. Note: This value can stack up to double while dehydrated.")
 				.defineInRange("ticksWithoutWater", 1200, 0, 100000);
+		
 		seaTicksBasedOnTemperature = builder
+				.translation("ds.config.server.penalties.sea.seaTicksBasedOnTemperature")
 				.comment("Whether the sea dragon should lose more water in warmer biomes and less during the night.")
 				.define("waterConsumptionDependsOnTemperature", true);
+		
 		seaDehydrationDamage = builder
+				.translation("ds.config.server.penalties.sea.seaDehydrationDamage")
 				.comment("The amount of damage taken per tick while dehydrated (once every 40 ticks unless fully dehydrated, then once every 20 ticks).")
 				.defineInRange("dehydrationDamage", 1.0, 0.5, 100.0);
+		
 		seaHydrationBlocks = builder
+				.translation("ds.config.server.penalties.sea.seaHydrationBlocks")
 				.comment("When sea dragons stand on these blocks, hydration is restored. Format: block/tag:modid:id")
 				.worldRestart()
 				.defineList("seaHydrationBlocks", Arrays.asList(
@@ -740,64 +879,89 @@ public class ServerConfig {
 						"block:minecraft:snow",
 						"block:minecraft:snow_block",
 						"block:dragonsurvival:sea_source_of_magic"
-				), this::isValidBlockConfig);
+				), ConfigHandler.blocksAndTagsPredicate);
+		
 		seaAllowWaterBottles = builder
+				.translation("ds.config.server.penalties.sea.seaAllowWaterBottles")
 				.comment("Set to false to disable sea dragons using vanilla water bottles to avoid dehydration.")
 				.define("allowWaterBottles", true);
+		
 		seaTicksWithoutWaterRestored = builder
+				.translation("ds.config.server.penalties.sea.seaTicksWithoutWaterRestored")
 				.comment("How many ticks do water restoration items restore when used. Set to 0 to disable.")
 				.defineInRange("waterItemRestorationTicks", 5000, 0, 100000);
+		
 		seaAdditionalWaterUseables = builder
+				.translation("ds.config.server.penalties.sea.seaAdditionalWaterUseables")
 				.comment("Additional modded USEABLE items that restore water when used (called from LivingEntityUseItemEvent.Finish). Format: item/tag:modid:id")
 				.worldRestart()
 				.defineList("seaHydrationItems", Collections.singletonList(
 						"item:minecraft:enchanted_golden_apple"
-				), this::isValidItemConfig);
+				), ConfigHandler.itemsAndTagsPredicate);
 		// Ore Loot
 		builder.pop().pop().push("ore");
 		humanOreDustChance = builder
+				.translation("ds.config.server.ore.humanOreDustChance")
 				.comment("The odds of dust dropping when a human harvests an ore.")
 				.defineInRange("humanOreDustChance", 0.1, 0.0, 1.0);
+		
         dragonOreDustChance = builder
-        		.comment("The odds of dust dropping when a dragon harvests an ore.")
+		        .translation("ds.config.server.ore.dragonOreDustChance")
+		        .comment("The odds of dust dropping when a dragon harvests an ore.")
         		.defineInRange("dragonOreDustChance", 0.2, 0.0, 1.0);
+		
         humanOreBoneChance = builder
-        		.comment("The odds of a bone dropping when a human harvests an ore.")
+		        .translation("ds.config.server.ore.humanOreBoneChance")
+		        .comment("The odds of a bone dropping when a human harvests an ore.")
         		.defineInRange("humanOreBoneChance", 0.0, 0.0, 1.0);
+		
         dragonOreBoneChance = builder
-        		.comment("The odds of a bone dropping when a dragon harvests an ore.")
+		        .translation("ds.config.server.ore.dragonOreBoneChance")
+		        .comment("The odds of a bone dropping when a dragon harvests an ore.")
         		.defineInRange("dragonOreBoneChance", 0.01, 0.0, 1.0);
+		
         oresTag = builder
-        		.comment("The tag that contains all ores that can drop dust/bones when harvested. Will not drop if the ore drops another of the items in this tag. Format: modid:id")
+		        .translation("ds.config.server.ore.oresTag")
+		        .comment("The tag that contains all ores that can drop dust/bones when harvested. Will not drop if the ore drops another of the items in this tag. Format: modid:id")
         		.define("oresTag", "forge:ores");
 		// Food general
 		builder.pop().push("food");
 		customDragonFoods = builder
+				.translation("ds.config.server.food.customDragonFoods")
 				.comment("Force dragons to eat a unique diet for their type.")
 				.define("dragonFoods", true);
+		
 		caveDragonHurtfulItems = builder
+				.translation("ds.config.server.food.caveDragonHurtfulItems")
 				.comment("Items which will cause damage to cave dragons when consumed. Formatting: item/tag:modid:itemid:damage")
 				.defineList("hurtfulToCaveDragon", Arrays.asList(
 						"item:minecraft:potion:2",
 						"item:minecraft:water_bottle:2",
 						"item:minecraft:milk_bucket:2"
-				), this::isValidHurtfulItem);
+				), ConfigHandler.itemsAndTagsPredicate.and(this::isValidHurtfulItem));
+		
 		seaDragonHurtfulItems = builder
+				.translation("ds.config.server.food.seaDragonHurtfulItems")
 				.comment("Items which will cause damage to sea dragons when consumed. Formatting: item/tag:modid:itemid:damage")
-				.defineList("hurtfulToSeaDragon", Arrays.asList(), this::isValidHurtfulItem);
+				.defineList("hurtfulToSeaDragon", Arrays.asList(), ConfigHandler.itemsAndTagsPredicate.and(this::isValidHurtfulItem));
+		
 		forestDragonHurtfulItems = builder
+				.translation("ds.config.server.food.forestDragonHurtfulItems")
 				.comment("Items which will cause damage to forest dragons when consumed. Formatting: item/tag:modid:itemid:damage")
-				.defineList("hurtfulToForestDragon", Arrays.asList(),  this::isValidHurtfulItem);
+				.defineList("hurtfulToForestDragon", Arrays.asList(),  ConfigHandler.itemsAndTagsPredicate.and(this::isValidHurtfulItem));
+		
 		chargedSoupBuffDuration = builder
+				.translation("ds.config.server.food.chargedSoupBuffDuration")
 				.comment("How long in seconds should the cave fire effect from charged soup last. (Default to 5min) Set to 0 to disable.")
 				.defineInRange("chargedSoupBuffDuration", 300, 0, 10000);
 
 		// Dragon Food List
-		builder.push("list");
 		builder.comment("Dragon food formatting: item/tag:modid:id:food:saturation. Food/saturation values are optional as the human values will be used if missing.");
 
 		caveDragonFoods = builder
 				.worldRestart()
+				.translation("ds.config.server.food.caveDragonFoods")
+				.comment("Dragon food formatting: item/tag:modid:id:food:saturation")
 				.defineList("caveDragon", Arrays.asList(
 						"tag:minecraft:coals:1:1",
 						"item:minecraft:charcoal:1:2",
@@ -837,10 +1001,12 @@ public class ServerConfig {
 						"item:thermal:basalz_rod:2:4",
 						"item:thermal:basalz_powder:1:2",
 						"item:druidcraft:fiery_glass:2:2"
-				), this::isValidFoodConfig);
+				), ConfigHandler.itemsAndTagsPredicate.and(this::isValidFoodConfig));
 
 		forestDragonFoods = builder
 				.worldRestart()
+				.translation("ds.config.server.food.forestDragonFoods")
+				.comment("Dragon food formatting: item/tag:modid:id:food:saturation")
 				.defineList("forestDragon", Arrays.asList(
 						"tag:forge:raw_meats:5:7",
 						"item:minecraft:sweet_berries:1:1",
@@ -984,10 +1150,12 @@ public class ServerConfig {
 						"item:leescreatures:raw_boarlin:6:6",
 						"item:mysticalworld:venison:5:5",
 						"item:toadterror:toad_chops:8:7"
-				), this::isValidFoodConfig);
+				), ConfigHandler.itemsAndTagsPredicate.and(this::isValidFoodConfig));
 
 		seaDragonFoods = builder
 				.worldRestart()
+				.translation("ds.config.server.food.seaDragonFoods")
+				.comment("Dragon food formatting: item/tag:modid:id:food:saturation")
 				.defineList("seaDragon", Arrays.asList(
 						"tag:forge:raw_fishes:6:7",
 						"item:minecraft:dried_kelp:1:1",
@@ -1133,27 +1301,29 @@ public class ServerConfig {
 						"item:aquafina:raw_starfish:4:1",
 						"item:aquafina:spider_crab_leg:4:1",
 						"item:aquafina:raw_stingray_slice:4:1"
-				), this::isValidFoodConfig);
+				), ConfigHandler.itemsAndTagsPredicate.and(this::isValidFoodConfig));
 		//Magic
-		builder.pop().pop().push("magic");
+		builder.pop().push("magic");
 		builder.comment("Config values for the magic system");
 		
 		builder.push("Mana");
 		
 		seaDragonManaBlocks = builder
+				.translation("ds.config.server.magic.mana.seaDragonManaBlocks")
 				.worldRestart()
 				.comment("Blocks that will restore mana quicker when a sea dragon is standing on it. Formatting: block/tag:modid:blockid")
 				.defineList("seaDragonManaBlocks", Arrays.asList(
 						"block:dragonsurvival:sea_source_of_magic",
-						"block:minecraft:ice",
+						"tag:minecraft:ice",
 						"block:minecraft:snow",
 						"block:minecraft:snow_block",
 						"block:minecraft:water",
 						"block:minecraft:wet_sponge",
 						"block:minecraft:cauldron"
-				), this::isValidBlockConfig);
+				), ConfigHandler.blocksAndTagsPredicate);
 		
 		forestDragonManaBlocks = builder
+				.translation("ds.config.server.magic.mana.forestDragonManaBlocks")
 				.worldRestart()
 				.comment("Blocks that will restore mana quicker when a forest dragon is standing on it. Formatting: block/tag:modid:blockid")
 				.defineList("forestDragonManaBlocks", Arrays.asList(
@@ -1161,9 +1331,10 @@ public class ServerConfig {
 						"tag:minecraft:small_flowers",
 						"tag:minecraft:flowers",
 						"tag:minecraft:tall_flowers"
-				), this::isValidBlockConfig);
+				), ConfigHandler.blocksAndTagsPredicate);
 		
 		caveDragonManaBlocks = builder
+				.translation("ds.config.server.magic.mana.caveDragonManaBlocks")
 				.worldRestart()
 				.comment("Blocks that will restore mana quicker when a cave dragon is standing on it. Formatting: block/tag:modid:blockid")
 				.defineList("caveDragonManaBlocks", Arrays.asList(
@@ -1174,55 +1345,66 @@ public class ServerConfig {
 						"block:minecraft:furnace",
 						"block:minecraft:magma_block",
 						"block:minecraft:blast_furnace"
-				), this::isValidBlockConfig);
+				), ConfigHandler.blocksAndTagsPredicate);
 		
 		builder.pop();
 		
 		dragonAbilities = builder
+				.translation("ds.config.server.magic.dragonAbilities")
 				.comment("Whether dragon abilities should be enabled")
 				.define("dragonAbilities", true);
 		
 		caveDragonAbilities = builder
+				.translation("ds.config.server.magic.caveDragonAbilities")
 				.comment("Whether cave dragon abilities should be enabled")
 				.define("caveDragonAbilities", true);
 		
 		forestDragonAbilities = builder
+				.translation("ds.config.server.magic.forestDragonAbilities")
 				.comment("Whether forest dragon abilities should be enabled")
 				.define("forestDragonAbilities", true);
 		
 		seaDragonAbilities = builder
+				.translation("ds.config.server.magic.seaDragonAbilities")
 				.comment("Whether sea dragon abilities should be enabled")
 				.define("seaDragonAbilities", true);
 		
 		
 		noEXPRequirements = builder
+				.translation("ds.config.server.magic.noEXPRequirements")
 				.comment("Disable the exp requirements for leveling up active skills")
 				.define("noEXPRequirements", false);
 		
 		consumeEXPAsMana = builder
+				.translation("ds.config.server.magic.consumeEXPAsMana")
 				.comment("Whether to use exp instead of mana if mana is empty")
 				.define("consumeEXPAsMana", true);
 
 		initialPassiveCost = builder
+				.translation("ds.config.server.magic.initialPassiveCost")
 				.comment("The initial exp cost for leveling passive skills.")
 				.defineInRange("initialPassiveCost", 2, 0, 100);
 
 		passiveScalingCost = builder
+				.translation("ds.config.server.magic.passiveScalingCost")
 				.comment("The multiplier that is used to increase the passive skill costs per level")
 				.defineInRange("passiveScalingCost", 4.0, 0, 100);
 
 
 		favorableManaTicks = builder
+				.translation("ds.config.server.magic.favorableManaTicks")
 				.comment("How fast in seconds should mana be recovered in favorable conditions")
 				.defineInRange("favorableManaRegen", 5, 1, 1000);
 		
 		normalManaTicks = builder
+				.translation("ds.config.server.magic.normalManaTicks")
 				.comment("How fast in seconds should mana be recovered in normal conditions")
 				.defineInRange("normalManaRegen", 15, 1, 1000);
 		
 		builder.push("abilities");
 		
 		saveAllAbilities = builder
+				.translation("ds.config.server.magic.abilities.saveAllAbilities")
 				.comment("Whether to save passives skills when changing dragon type")
 				.define("saveAllAbilities", false);
 		
@@ -1261,12 +1443,12 @@ public class ServerConfig {
 					.worldRestart()
 					.defineList("forestBreathBlockBreaks", Arrays.asList(
 							"tag:minecraft:banners"
-					), this::isValidBlockConfig);
+					), ConfigHandler.blocksAndTagsPredicate);
 			
 			forestBreathGrowBlacklist = builder
 					.comment("Blocks that will not be grown by the forest breath. Formatting: block/tag:modid:id")
 					.worldRestart()
-					.defineList("forestBreathGrowBlacklist", Arrays.asList(), this::isValidBlockConfig);
+					.defineList("forestBreathGrowBlacklist", Arrays.asList(), ConfigHandler.blocksAndTagsPredicate);
 		}
 		{
 			builder.pop().push("spike");
@@ -1400,14 +1582,14 @@ public class ServerConfig {
 							"tag:minecraft:azalea_log_replaceable",
 							"tag:minecraft:replaceable_plants",
 							"tag:minecraft:leaves"
-							), this::isValidBlockConfig);
+							), ConfigHandler.blocksAndTagsPredicate);
 			
 			chargedBlacklist = builder
 					.comment("List of entities that do not work with the charged effect. Format: modid:id")
 					.defineList("chargedBlacklist", Arrays.asList(
 							"upgrade_aquatic:thrasher",
 							"upgrade_aquatic:great_thrasher"
-					), value -> value instanceof String);
+					), ConfigHandler.entitiesAndTagsPredicate);
 			
 			stormBreathChainCount = builder
 					.comment("How many mobs stormbreath is able to chain to at once")
@@ -1433,8 +1615,7 @@ public class ServerConfig {
 					.comment("List of entities that will not spread the charged effect. Format: modid:id")
 					.defineList("chargedBlacklist", Arrays.asList(
 							"minecraft:armor_stand"
-					), value -> value instanceof String);
-			
+					), ConfigHandler.entitiesAndTagsPredicate);
 		}
 		
 		{
@@ -1590,7 +1771,7 @@ public class ServerConfig {
 							"block:minecraft:large_fern",
 							"block:minecraft:sugar_cane",
 							"block:minecraft:snow_block"
-					), this::isValidBlockConfig);
+					), ConfigHandler.blocksAndTagsPredicate);
 		}
 		
 		{
@@ -1688,41 +1869,30 @@ public class ServerConfig {
 
 	private boolean isValidHurtfulItem(Object food){
 		final String[] foodSplit = String.valueOf(food).split(":");
-		if (foodSplit.length != 4 || !(foodSplit[0].equalsIgnoreCase("item") || foodSplit[0].equalsIgnoreCase("tag")))
-			return false;
-		try {
-			final float damage = Float.parseFloat(foodSplit[3]);
-		} catch (NumberFormatException ex) {
-			return false;
+
+		if(foodSplit.length == 4) {
+			try {
+				final float damage = Float.parseFloat(foodSplit[3]);
+			} catch (NumberFormatException ignored) {
+				return false;
+			}
 		}
+		
 		return true;
 	}
 
 	private boolean isValidFoodConfig(Object food) {
 		final String[] foodSplit = String.valueOf(food).split(":");
-		if (foodSplit.length < 3 || foodSplit.length > 5 || foodSplit.length == 4 ||!(foodSplit[0].equalsIgnoreCase("item") || foodSplit[0].equalsIgnoreCase("tag")))
-			return false;
 		try {
 			if (foodSplit.length == 5) {
 				final int value = Integer.parseInt(foodSplit[3]);
 				final int saturation = Integer.parseInt(foodSplit[4]);
-				if (value > 20 || value < 1 || saturation < 1 || saturation > 20)
-					return false;
+				return value <= 20 && value >= 1 && saturation >= 1 && saturation <= 20;
 			}
-		} catch (NumberFormatException ex) {
+		} catch (NumberFormatException ignored) {
 			return false;
 		}
+		
 		return true;
 	}
-
-	private boolean isValidBlockConfig(Object block) {
-		final String[] blockSplit = String.valueOf(block).split(":");
-		return blockSplit.length == 3 && (blockSplit[0].equalsIgnoreCase("block") || blockSplit[0].equalsIgnoreCase("tag"));
-	}
-
-	private boolean isValidItemConfig(Object item) {
-		final String[] itemSplit = String.valueOf(item).split(":");
-		return itemSplit.length == 3 && (itemSplit[0].equalsIgnoreCase("item") || itemSplit[0].equalsIgnoreCase("tag"));
-	}
-
 }

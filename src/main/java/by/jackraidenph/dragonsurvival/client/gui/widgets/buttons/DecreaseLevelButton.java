@@ -1,23 +1,21 @@
 package by.jackraidenph.dragonsurvival.client.gui.widgets.buttons;
 
-import by.jackraidenph.dragonsurvival.client.handlers.magic.ClientMagicHUDHandler;
-import by.jackraidenph.dragonsurvival.network.NetworkHandler;
+import by.jackraidenph.dragonsurvival.client.gui.AbilityScreen;
+import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.magic.DragonAbilities;
 import by.jackraidenph.dragonsurvival.common.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.common.magic.common.PassiveDragonAbility;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.client.gui.AbilityScreen;
-import by.jackraidenph.dragonsurvival.network.magic.ChangeSkillLevel;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
+import by.jackraidenph.dragonsurvival.network.NetworkHandler;
+import by.jackraidenph.dragonsurvival.network.magic.ChangeSkillLevel;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.client.gui.GuiUtils;
 
 import java.util.Arrays;
 
-public class DecreaseLevelButton extends Button
+public class DecreaseLevelButton extends ArrowButton
 {
 	private int slot;
 	
@@ -27,25 +25,13 @@ public class DecreaseLevelButton extends Button
 	
 	public DecreaseLevelButton(int x, int y, int slot, AbilityScreen screen)
 	{
-		super(x, y, 11, 17, null, (button) -> {});
+		super(x, y, 15, 17, false, (button) -> {});
 		this.slot = slot;
 		this.screen = screen;
 		
 		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {
 			type = cap.getType();
 		});
-	}
-	
-	@Override
-	public void renderButton(MatrixStack stack, int mouseX, int mouseY, float p_230431_4_)
-	{
-		Minecraft.getInstance().getTextureManager().bind(ClientMagicHUDHandler.widgetTextures);
-		
-		if(isHovered()){
-			blit(stack, x, y, 22 / 2, 222 / 2, 11, 17,128, 128);
-		}else{
-			blit(stack, x, y, 0, 222 / 2, 11, 17, 128, 128);
-		}
 	}
 	
 	@Override
