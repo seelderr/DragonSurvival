@@ -19,8 +19,10 @@ import net.minecraftforge.fml.DistExecutor.SafeRunnable;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static net.minecraftforge.fml.network.NetworkDirection.PLAY_TO_SERVER;
 
@@ -28,12 +30,14 @@ public class SyncPlayerAllCustomization implements IMessage<SyncPlayerAllCustomi
 {
 	public int playerId;
 	public HashMap<DragonLevel, HashMap<CustomizationLayer, String>> values;
+	public HashMap<DragonLevel, HashMap<CustomizationLayer, Double>> hues;
 	
 	public SyncPlayerAllCustomization() {}
 	
-	public SyncPlayerAllCustomization(int playerId, HashMap<DragonLevel, HashMap<CustomizationLayer, String>> state) {
+	public SyncPlayerAllCustomization(int playerId, HashMap<DragonLevel, HashMap<CustomizationLayer, String>> state, HashMap<DragonLevel, HashMap<CustomizationLayer, Double>> hues) {
 		this.playerId = playerId;
 		this.values = state;
+		this.hues = hues;
 	}
 	
 	@Override
@@ -43,6 +47,7 @@ public class SyncPlayerAllCustomization implements IMessage<SyncPlayerAllCustomi
 		for(DragonLevel level : DragonLevel.values()) {
 			for (CustomizationLayer layers : CustomizationLayer.values()) {
 				buffer.writeUtf(message.values.getOrDefault(level, new HashMap<>()).getOrDefault(layers, SkinCap.defaultSkinValue));
+				buffer.writeDouble(message.hues.getOrDefault(level, new HashMap<>()).getOrDefault(layers, 0.0));
 			}
 		}
 	}
@@ -51,14 +56,18 @@ public class SyncPlayerAllCustomization implements IMessage<SyncPlayerAllCustomi
 	public SyncPlayerAllCustomization decode(PacketBuffer buffer) {
 		int playerId = buffer.readInt();
 		HashMap<DragonLevel, HashMap<CustomizationLayer, String>> map = new HashMap<>();
+		HashMap<DragonLevel, HashMap<CustomizationLayer, Double>> hueMap = new HashMap<>();
 		
 		for(DragonLevel level : DragonLevel.values()) {
 			for (CustomizationLayer layers : CustomizationLayer.values()) {
 				map.computeIfAbsent(level, (b) -> new HashMap<>());
 				map.get(level).put(layers, buffer.readUtf());
+				
+				hueMap.computeIfAbsent(level, (b) -> new HashMap<>());
+				hueMap.get(level).put(layers, buffer.readDouble());
 			}
 		}
-		return new SyncPlayerAllCustomization(playerId, map);
+		return new SyncPlayerAllCustomization(playerId, map, hueMap);
 	}
 	
 	@Override
@@ -71,9 +80,13 @@ public class SyncPlayerAllCustomization implements IMessage<SyncPlayerAllCustomi
 				DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
 					dragonStateHandler.getSkin().playerSkinLayers.clear();
 					dragonStateHandler.getSkin().playerSkinLayers.putAll(message.values);
+					
+					dragonStateHandler.getSkin().skinLayerHue.clear();
+					dragonStateHandler.getSkin().skinLayerHue.putAll(message.hues);
+					dragonStateHandler.getSkin().hueChanged.addAll(Arrays.stream(CustomizationLayer.values()).distinct().collect(Collectors.toList()));
 				});
 				
-				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new SyncPlayerAllCustomization(entity.getId(), message.values));
+				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new SyncPlayerAllCustomization(entity.getId(), message.values, message.hues));
 			}
 		}
 	}
@@ -90,6 +103,10 @@ public class SyncPlayerAllCustomization implements IMessage<SyncPlayerAllCustomi
 					DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
 						dragonStateHandler.getSkin().playerSkinLayers.clear();
 						dragonStateHandler.getSkin().playerSkinLayers.putAll(message.values);
+						
+						dragonStateHandler.getSkin().skinLayerHue.clear();
+						dragonStateHandler.getSkin().skinLayerHue.putAll(message.hues);
+						dragonStateHandler.getSkin().hueChanged.addAll(Arrays.stream(CustomizationLayer.values()).distinct().collect(Collectors.toList()));
 					});
 				}
 			}

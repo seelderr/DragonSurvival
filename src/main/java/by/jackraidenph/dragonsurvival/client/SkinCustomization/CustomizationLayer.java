@@ -3,8 +3,9 @@ package by.jackraidenph.dragonsurvival.client.SkinCustomization;
 public enum CustomizationLayer
 {
 	BASE("Base"),
-	HORNS("Horns"),
 	BOTTOM("Bottom"),
+	EYES("Eyes"),
+	HORNS("Horns"),
 	SPIKES("Spikes"),
 	EXTRA("Extra"),
 	EXTRA1("Extra"),

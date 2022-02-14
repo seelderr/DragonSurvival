@@ -14,8 +14,10 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
 import org.lwjgl.opengl.GL11;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class DropDownButton extends ExtendedButton
 {
@@ -74,9 +76,18 @@ public class DropDownButton extends ExtendedButton
 		return new DropdownValueEntry(this, pos, val, setter);
 	}
 	
+	public void onClick(double pMouseX, double pMouseY) {
+		List<IGuiEventListener> list = Minecraft.getInstance().screen.children.stream().filter((s) -> s.isMouseOver(pMouseX, pMouseY)).collect(Collectors.toList());
+		
+		if(list.size() == 1 && list.get(0) == this) {
+			this.onPress();
+		}
+	}
+	
 	@Override
 	public void onPress()
 	{
+		
 		Screen screen = Minecraft.getInstance().screen;
 		
 		if(!toggled){

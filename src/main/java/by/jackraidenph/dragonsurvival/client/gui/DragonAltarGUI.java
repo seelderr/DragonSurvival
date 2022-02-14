@@ -100,7 +100,11 @@ public class DragonAltarGUI extends Screen {
     public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         if (this.minecraft == null)
             return;
+        
+        matrixStack.pushPose();
+        matrixStack.translate(0,0,-600);
         this.renderBackground(matrixStack);
+        matrixStack.popPose();
         
         tick++;
         

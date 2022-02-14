@@ -9,6 +9,7 @@ import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class SkinCap implements DragonCapability
 {
@@ -19,6 +20,8 @@ public class SkinCap implements DragonCapability
 	public static final String defaultSkinValue = "None";
 	
 	public HashMap<DragonLevel, HashMap<CustomizationLayer, String>> playerSkinLayers = new HashMap();
+	public HashMap<DragonLevel, HashMap<CustomizationLayer, Double>> skinLayerHue = new HashMap();
+	public HashSet<CustomizationLayer> hueChanged = new HashSet<>();
 	
 	@Override
 	public INBT writeNBT(Capability<DragonStateHandler> capability, Direction side)
@@ -32,6 +35,12 @@ public class SkinCap implements DragonCapability
 		for(DragonLevel level : DragonLevel.values()) {
 			for (CustomizationLayer layer : CustomizationLayer.values()) {
 				tag.putString(level.name + "_skin_layer_" + layer.name(), playerSkinLayers.getOrDefault(level, new HashMap<>()).getOrDefault(layer, defaultSkinValue));
+			}
+		}
+		
+		for(DragonLevel level : DragonLevel.values()) {
+			for (CustomizationLayer layer : CustomizationLayer.values()) {
+				tag.putDouble(level.name + "_skin_layer_hue_" + layer.name(), skinLayerHue.getOrDefault(level, new HashMap<>()).getOrDefault(layer, 0.0));
 			}
 		}
 		
@@ -53,6 +62,13 @@ public class SkinCap implements DragonCapability
 				playerSkinLayers.get(level).put(layer, tag.getString(level.name + "_skin_layer_" + layer.name()));
 			}
 		}
+		
+		for(DragonLevel level : DragonLevel.values()) {
+			for (CustomizationLayer layer : CustomizationLayer.values()) {
+				skinLayerHue.computeIfAbsent(level, (b) -> new HashMap<>());
+				skinLayerHue.get(level).put(layer, tag.getDouble(level.name + "_skin_layer_hue_" + layer.name()));
+			}
+		}
 	}
 	
 	@Override
@@ -62,5 +78,6 @@ public class SkinCap implements DragonCapability
 		renderYoung = oldCap.getSkin().renderYoung;
 		renderAdult = oldCap.getSkin().renderAdult;
 		playerSkinLayers = oldCap.getSkin().playerSkinLayers;
+		skinLayerHue = oldCap.getSkin().skinLayerHue;
 	}
 }

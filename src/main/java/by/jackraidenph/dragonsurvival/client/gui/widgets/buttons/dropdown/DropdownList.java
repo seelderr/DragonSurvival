@@ -17,7 +17,7 @@ public class DropdownList extends AbstractOptionList<DropdownEntry>
 {
 	public int listWidth;
 	public boolean visible;
-	private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/textbox.png");
+	public static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/textbox.png");
 	
 	public DropdownList(int x, int y, int xSize, int ySize, int itemHeight)
 	{

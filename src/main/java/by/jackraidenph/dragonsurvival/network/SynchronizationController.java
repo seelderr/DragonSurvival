@@ -48,7 +48,9 @@ public class SynchronizationController {
             if(CustomizationRegistry.savedCustomizations != null){
                 int currentSelected = CustomizationRegistry.savedCustomizations.current.getOrDefault(message.type, new HashMap<>()).getOrDefault(message.level, 0);
                 HashMap<DragonLevel, HashMap<CustomizationLayer, String>> map = CustomizationRegistry.savedCustomizations.saved.getOrDefault(message.type, new HashMap<>()).getOrDefault(currentSelected, new HashMap<>());
-                NetworkHandler.CHANNEL.sendToServer(new SyncPlayerAllCustomization(player.getId(), map));
+                HashMap<DragonLevel, HashMap<CustomizationLayer, Double>> savedHue = CustomizationRegistry.savedCustomizations.savedHue.getOrDefault(message.type, new HashMap<>()).getOrDefault(currentSelected, new HashMap<>());
+    
+                NetworkHandler.CHANNEL.sendToServer(new SyncPlayerAllCustomization(player.getId(), map, savedHue));
             }
         });
     }
@@ -78,7 +80,7 @@ public class SynchronizationController {
                 NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncMagicAbilities(player.getId(), cap.getMagic().getAbilities()));
     
                 NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncDragonClawRender(player.getId(), cap.getClawInventory().renderClaws));
-                NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncPlayerAllCustomization(player.getId(), cap.getSkin().playerSkinLayers));
+                NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncPlayerAllCustomization(player.getId(), cap.getSkin().playerSkinLayers, cap.getSkin().skinLayerHue));
     
                 NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncTreasureRestStatus(player.getId(), cap.treasureResting));
                 NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncMagicSourceStatus(player.getId(), cap.getMagic().onMagicSource, cap.getMagic().magicSourceTimer));
@@ -110,7 +112,7 @@ public class SynchronizationController {
                 NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncDragonClawRender(player.getId(), cap.getClawInventory().renderClaws));
                 NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncDragonSkinSettings(player.getId(), cap.getSkin().renderNewborn, cap.getSkin().renderYoung, cap.getSkin().renderAdult));
     
-                NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncPlayerAllCustomization(player.getId(), cap.getSkin().playerSkinLayers));
+                NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncPlayerAllCustomization(player.getId(), cap.getSkin().playerSkinLayers, cap.getSkin().skinLayerHue));
     
                 NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncTreasureRestStatus(player.getId(), false));
                 NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncMagicSourceStatus(player.getId(), false, 0));
@@ -139,7 +141,7 @@ public class SynchronizationController {
                     NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) trackingPlayer), new SyncMagicAbilities(trackedEntity.getId(), dragonStateHandler.getMagic().getAbilities()));
                     NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) trackingPlayer), new SyncDragonClawsMenu(trackedEntity.getId(), dragonStateHandler.getClawInventory().isClawsMenuOpen(), dragonStateHandler.getClawInventory().getClawsInventory()));
                     
-                    NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) trackingPlayer), new SyncPlayerAllCustomization(trackedEntity.getId(), dragonStateHandler.getSkin().playerSkinLayers));
+                    NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) trackingPlayer), new SyncPlayerAllCustomization(trackedEntity.getId(), dragonStateHandler.getSkin().playerSkinLayers, dragonStateHandler.getSkin().skinLayerHue));
     
                     NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) trackingPlayer), new SyncDragonSkinSettings(trackedEntity.getId(), dragonStateHandler.getSkin().renderNewborn, dragonStateHandler.getSkin().renderYoung, dragonStateHandler.getSkin().renderAdult));
                     NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() ->  (ServerPlayerEntity) trackingPlayer), new SyncSpinStatus(trackedEntity.getId(), dragonStateHandler.getMovementData().spinAttack, dragonStateHandler.getMovementData().spinCooldown, dragonStateHandler.getMovementData().spinLearned));
@@ -177,7 +179,7 @@ public class SynchronizationController {
             NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncDragonClawsMenu(player.getId(), dragonStateHandler.getClawInventory().isClawsMenuOpen(), dragonStateHandler.getClawInventory().getClawsInventory()));
             NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncEmoteStats(player.getId(), dragonStateHandler.getEmotes().emoteMenuOpen));
     
-            NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncPlayerAllCustomization(player.getId(), dragonStateHandler.getSkin().playerSkinLayers));
+            NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncPlayerAllCustomization(player.getId(), dragonStateHandler.getSkin().playerSkinLayers, dragonStateHandler.getSkin().skinLayerHue));
     
             NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncTreasureRestStatus(player.getId(), dragonStateHandler.treasureResting));
             NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncMagicSourceStatus(player.getId(), dragonStateHandler.getMagic().onMagicSource, dragonStateHandler.getMagic().magicSourceTimer));

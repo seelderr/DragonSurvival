@@ -57,30 +57,29 @@ public class DragonCustomizationHandler
 		NetworkHandler.CHANNEL.sendToServer(new SyncPlayerCustomization(player.getId(), layers, key));
 	}
 	
-	public static ArrayList<String> getKeys(PlayerEntity player, CustomizationLayer layers){
+	public static ArrayList<String> getKeys(DragonType type, CustomizationLayer layers){
 		ArrayList<String> list = new ArrayList<>();
-		DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
 		
 		if(layers == CustomizationLayer.EXTRA || layers == CustomizationLayer.EXTRA1 || layers == CustomizationLayer.EXTRA2 || layers == CustomizationLayer.EXTRA3){
-			if(handler != null){
-				for(CustomizationLayer la : new CustomizationLayer[]{CustomizationLayer.EXTRA, CustomizationLayer.EXTRA1, CustomizationLayer.EXTRA2, CustomizationLayer.EXTRA3}){
-				Texture[] texts = CustomizationRegistry.CUSTOMIZATIONS.getOrDefault(handler.getType(), new HashMap<>()).getOrDefault(la, new Texture[0]);
-					for(Texture texture : texts){
-						list.add(texture.key);
-					}
+			for(CustomizationLayer la : new CustomizationLayer[]{CustomizationLayer.EXTRA, CustomizationLayer.EXTRA1, CustomizationLayer.EXTRA2, CustomizationLayer.EXTRA3}){
+				Texture[] texts = CustomizationRegistry.CUSTOMIZATIONS.getOrDefault(type, new HashMap<>()).getOrDefault(la, new Texture[0]);
+				for(Texture texture : texts){
+					list.add(texture.key);
 				}
 			}
 			
 			return list;
 		}
 		
-		if(handler != null){
-			Texture[] texts = CustomizationRegistry.CUSTOMIZATIONS.getOrDefault(handler.getType(), new HashMap<>()).getOrDefault(layers, new Texture[0]);
-			for(Texture texture : texts){
-				list.add(texture.key);
-			}
+		Texture[] texts = CustomizationRegistry.CUSTOMIZATIONS.getOrDefault(type, new HashMap<>()).getOrDefault(layers, new Texture[0]);
+		for(Texture texture : texts){
+			list.add(texture.key);
 		}
 		
 		return list;
+	}
+	
+	public static ArrayList<String> getKeys(PlayerEntity player, CustomizationLayer layers){
+		return getKeys(DragonStateProvider.getCap(player).orElse(null).getType(), layers);
 	}
 }

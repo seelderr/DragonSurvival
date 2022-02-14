@@ -14,7 +14,7 @@ import software.bernie.geckolib3.core.processor.IBone;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class DragonUIRenderComponent extends FocusableGui implements IRenderable{
+public class DragonUIRenderComponent extends FocusableGui implements IRenderable {
 	public float yRot = -3;
 	public float xRot = -5;
 	public float zoom = 0;
@@ -53,21 +53,28 @@ public class DragonUIRenderComponent extends FocusableGui implements IRenderable
 		
 		float scale = zoom;
 		pMatrixStack.scale(scale, scale, scale);
-		pMatrixStack.translate(0, 0, 400);
+		pMatrixStack.translate(0, 0, 600);
 		ClientDragonRender.dragonModel.setCurrentTexture(null);
 		ClientDragonRender.renderEntityInInventory(getter.get(), x + width / 2, y + height - 30, scale, xRot, yRot);
 		pMatrixStack.popPose();
 	}
 	
+	
 	@Override
 	public boolean mouseDragged(double x1, double y1, int p_231045_5_, double x2, double y2)
 	{
-		xRot -= x2 / 6;
-		yRot -= y2 / 6;
+		if(isMouseOver(x1, y1)) {
+			xRot -= x2 / 6;
+			yRot -= y2 / 6;
+			
+			xRot = MathHelper.clamp(xRot, -17, 17);
+			yRot = MathHelper.clamp(yRot, -17, 17);
+			return true;
+		}else{
+			setDragging(false);
+		}
 		
-		xRot = MathHelper.clamp(xRot, -17, 17);
-		yRot = MathHelper.clamp(yRot, -17, 17);
-		return true;
+		return false;
 	}
 	
 	@Override

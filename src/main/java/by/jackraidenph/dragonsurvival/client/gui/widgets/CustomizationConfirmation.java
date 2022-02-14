@@ -35,7 +35,7 @@ public class CustomizationConfirmation extends FocusableGui implements IRenderab
 		this.xSize = xSize;
 		this.ySize = ySize;
 		
-		btn1 = new ExtendedButton(x + (xSize / 2 - 30), y + ySize - 30, 20, 20, null, null)
+		btn1 = new ExtendedButton(x + (xSize / 2 - 30) - 20, y + ySize - 30, 20, 20, StringTextComponent.EMPTY, null)
 		{
 			@Override
 			public void render(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks)
@@ -49,7 +49,7 @@ public class CustomizationConfirmation extends FocusableGui implements IRenderab
 			{
 				mStack.pushPose();
 				mStack.translate(0, 0, 100);
-				setMessage(new StringTextComponent(""));
+				setMessage(StringTextComponent.EMPTY);
 				super.renderButton(mStack, mouseX, mouseY, partial);
 				setMessage(new StringTextComponent("_confirm_"));
 				Minecraft.getInstance().getTextureManager().bind(DragonAltarGUI.CONFIRM_BUTTON);
@@ -68,7 +68,7 @@ public class CustomizationConfirmation extends FocusableGui implements IRenderab
 			}
 		};
 		
-		btn2 = new ExtendedButton(x + (xSize / 2 + 30), y + ySize - 30, 20, 20, null, null)
+		btn2 = new ExtendedButton(x + (xSize / 2 + 30), y + ySize - 30, 20, 20, StringTextComponent.EMPTY, null)
 		{
 			@Override
 			public void render(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks)
@@ -82,7 +82,7 @@ public class CustomizationConfirmation extends FocusableGui implements IRenderab
 			{
 				mStack.pushPose();
 				mStack.translate(0, 0, 100);
-				setMessage(new StringTextComponent(""));
+				setMessage(StringTextComponent.EMPTY);
 				super.renderButton(mStack, mouseX, mouseY, partial);
 				setMessage(new StringTextComponent("_confirm_"));
 				Minecraft.getInstance().getTextureManager().bind(DragonAltarGUI.CANCEL_BUTTON);
