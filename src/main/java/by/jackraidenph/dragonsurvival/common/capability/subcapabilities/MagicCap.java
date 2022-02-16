@@ -1,5 +1,6 @@
-package by.jackraidenph.dragonsurvival.common.capability.DragonCapabilities;
+package by.jackraidenph.dragonsurvival.common.capability.subcapabilities;
 
+import by.jackraidenph.dragonsurvival.common.capability.NBTInterface;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.common.magic.DragonAbilities;
@@ -8,14 +9,11 @@ import by.jackraidenph.dragonsurvival.common.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.common.magic.common.PassiveDragonAbility;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.Direction;
-import net.minecraftforge.common.capabilities.Capability;
 
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class MagicCap implements DragonCapability
+public class MagicCap implements NBTInterface
 {
 	
 	private DragonStateHandler instance;
@@ -179,7 +177,7 @@ public class MagicCap implements DragonCapability
 	}
 	
 	@Override
-	public INBT writeNBT(Capability<DragonStateHandler> capability,  Direction side)
+	public CompoundNBT writeNBT()
 	{
 		CompoundNBT tag = new CompoundNBT();
 		
@@ -197,9 +195,8 @@ public class MagicCap implements DragonCapability
 	}
 	
 	@Override
-	public void readNBT(Capability<DragonStateHandler> capability, Direction side, INBT base)
+	public void readNBT(CompoundNBT tag)
 	{
-		CompoundNBT tag = (CompoundNBT) base;
 		onMagicSource = tag.getBoolean("onMagicSource");
 		magicSourceTimer = tag.getInt("magicSourceTimer");
 		
@@ -214,15 +211,5 @@ public class MagicCap implements DragonCapability
 				loadAbilities(ability);
 			}
 		}
-	}
-	
-	@Override
-	public void clone(DragonStateHandler oldCap)
-	{
-		getAbilities().clear();
-		getAbilities().addAll(oldCap.getMagic().getAbilities());
-		setCurrentMana(oldCap.getMagic().getCurrentMana());
-		setSelectedAbilitySlot(oldCap.getMagic().getSelectedAbilitySlot());
-		setRenderAbilities(oldCap.getMagic().renderAbilityHotbar());
 	}
 }

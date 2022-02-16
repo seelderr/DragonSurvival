@@ -1,7 +1,7 @@
 package by.jackraidenph.dragonsurvival.client.gui.widgets.buttons;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.util.DragonUtils;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
@@ -20,7 +20,7 @@ public class HelpButton extends ImageButton
 	
 	public HelpButton(int x, int y, int sizeX, int sizeY, String text)
 	{
-		this(DragonStateProvider.getDragonType(Minecraft.getInstance().player), x, y, sizeX, sizeY, text);
+		this(DragonUtils.getDragonType(Minecraft.getInstance().player), x, y, sizeX, sizeY, text);
 	}
 	
 	public HelpButton(DragonType type, int x, int y, int sizeX, int sizeY, String text)

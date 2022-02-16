@@ -7,7 +7,7 @@ import by.jackraidenph.dragonsurvival.client.render.util.AnimationTimer;
 import by.jackraidenph.dragonsurvival.client.render.util.CommonTraits;
 import by.jackraidenph.dragonsurvival.client.render.util.CustomTickAnimationController;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.jackraidenph.dragonsurvival.common.magic.common.AbilityAnimation;
 import by.jackraidenph.dragonsurvival.common.magic.common.ActiveDragonAbility;
@@ -92,6 +92,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
     
     @Override
     public void registerControllers(AnimationData animationData) {
+        animationData.shouldPlayWhilePaused = true;
         animationData.addAnimationController(emoteController = new CustomTickAnimationController(this, "2", 0, this::emotePredicate));
         animationData.addAnimationController(dragonAnimationController = new CustomTickAnimationController(this, "3", 2, this::predicate));
         animationData.addAnimationController(biteAnimationController = new CustomTickAnimationController(this, "4", 0, this::bitePredicate));

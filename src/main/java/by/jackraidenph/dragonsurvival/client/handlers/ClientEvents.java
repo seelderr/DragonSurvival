@@ -1,12 +1,14 @@
 package by.jackraidenph.dragonsurvival.client.handlers;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
+import by.jackraidenph.dragonsurvival.client.SkinCustomization.CustomizationLayer;
+import by.jackraidenph.dragonsurvival.client.SkinCustomization.CustomizationRegistry;
 import by.jackraidenph.dragonsurvival.client.gui.DragonScreen;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.TabButton;
 import by.jackraidenph.dragonsurvival.client.render.CaveLavaFluidRenderer;
 import by.jackraidenph.dragonsurvival.client.render.ClientDragonRender;
 import by.jackraidenph.dragonsurvival.common.DragonEffects;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.entity.projectiles.BolasEntity;
 import by.jackraidenph.dragonsurvival.common.items.DSItems;
 import by.jackraidenph.dragonsurvival.common.magic.DragonAbilities;
@@ -14,10 +16,17 @@ import by.jackraidenph.dragonsurvival.common.magic.abilities.Passives.ContrastSh
 import by.jackraidenph.dragonsurvival.common.magic.abilities.Passives.LightInDarknessAbility;
 import by.jackraidenph.dragonsurvival.common.magic.abilities.Passives.WaterAbility;
 import by.jackraidenph.dragonsurvival.common.magic.common.DragonAbility;
+import by.jackraidenph.dragonsurvival.common.util.DragonUtils;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
+import by.jackraidenph.dragonsurvival.misc.DragonLevel;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
+import by.jackraidenph.dragonsurvival.network.RequestClientData;
+import by.jackraidenph.dragonsurvival.network.dragon_editor.SyncPlayerAllCustomization;
+import by.jackraidenph.dragonsurvival.network.claw.SyncDragonClawRender;
+import by.jackraidenph.dragonsurvival.network.container.OpenDragonAltar;
 import by.jackraidenph.dragonsurvival.network.container.OpenDragonInventory;
+import by.jackraidenph.dragonsurvival.network.entity.player.SyncDragonSkinSettings;
 import by.jackraidenph.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -39,6 +48,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.*;
 import net.minecraft.util.ResourceLocation;
@@ -51,12 +61,16 @@ import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType;
 import net.minecraftforge.client.gui.ForgeIngameGui;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.network.PacketDistributor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Mod.EventBusSubscriber(Dist.CLIENT)
@@ -78,6 +92,40 @@ public class ClientEvents
         }
     }
     
+    @OnlyIn(Dist.CLIENT)
+    public static void sendClientData(RequestClientData message){
+        PlayerEntity player = Minecraft.getInstance().player;
+        
+        NetworkHandler.CHANNEL.sendToServer(new SyncDragonClawRender(player.getId(), ConfigHandler.CLIENT.renderDragonClaws.get()));
+        NetworkHandler.CHANNEL.sendToServer(new SyncDragonSkinSettings(player.getId(), ConfigHandler.CLIENT.renderNewbornSkin.get(), ConfigHandler.CLIENT.renderYoungSkin.get(), ConfigHandler.CLIENT.renderAdultSkin.get()));
+        
+        DragonStateProvider.getCap(player).ifPresent(cap -> {
+            cap.getMagic().getAbilities();
+            
+            if(CustomizationRegistry.savedCustomizations != null){
+                int currentSelected = CustomizationRegistry.savedCustomizations.current.getOrDefault(message.type, new HashMap<>()).getOrDefault(message.level, 0);
+                HashMap<DragonLevel, HashMap<CustomizationLayer, String>> map = CustomizationRegistry.savedCustomizations.saved.getOrDefault(message.type, new HashMap<>()).getOrDefault(currentSelected, new HashMap<>());
+                HashMap<DragonLevel, HashMap<CustomizationLayer, Integer>> savedHue = CustomizationRegistry.savedCustomizations.savedColor.getOrDefault(message.type, new HashMap<>()).getOrDefault(currentSelected, new HashMap<>());
+                NetworkHandler.CHANNEL.sendToServer(new SyncPlayerAllCustomization(player.getId(), map, savedHue));
+            }
+        });
+    }
+    
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void syncClientData(PlayerEvent.PlayerLoggedInEvent loggedInEvent) {
+        PlayerEntity player = loggedInEvent.getPlayer();
+        if (!player.level.isClientSide) {
+            DragonStateProvider.getCap(player).ifPresent(cap -> {
+                cap.hasUsedAltar = cap.hasUsedAltar || cap.isDragon();
+                
+                if(!cap.hasUsedAltar && ConfigHandler.COMMON.startWithDragonChoice.get()){
+                    NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new OpenDragonAltar());
+                    cap.hasUsedAltar = true;
+                }
+            });
+        }
+    }
+    
     public static double mouseX = -1;
     public static double mouseY = -1;
     
@@ -88,7 +136,7 @@ public class ClientEvents
         
         if (!ConfigHandler.CLIENT.dragonInventory.get()) return;
         if (Minecraft.getInstance().screen != null) return;
-        if (player == null || player.isCreative() || !DragonStateProvider.isDragon(player)) return;
+        if (player == null || player.isCreative() || !DragonUtils.isDragon(player)) return;
         
         if (openEvent.getGui() instanceof InventoryScreen) {
             openEvent.setCanceled(true);
@@ -101,7 +149,7 @@ public class ClientEvents
     {
         Screen sc = initGuiEvent.getGui();
         
-        if (!DragonStateProvider.isDragon(Minecraft.getInstance().player)) return;
+        if (!DragonUtils.isDragon(Minecraft.getInstance().player)) return;
         
         if (sc instanceof InventoryScreen) {
             InventoryScreen screen = (InventoryScreen)sc;

@@ -4,7 +4,8 @@ import by.jackraidenph.dragonsurvival.client.particles.DSParticles;
 import by.jackraidenph.dragonsurvival.common.DragonEffects;
 import by.jackraidenph.dragonsurvival.common.blocks.SourceOfMagicBlock;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.util.DragonUtils;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.status.SyncMagicSourceStatus;
@@ -42,7 +43,7 @@ public class SourceOfMagicHandler
 		if(event.phase == Phase.START || event.side == LogicalSide.CLIENT) return;
 		PlayerEntity player = event.player;
 		
-		if(DragonStateProvider.isDragon(player)){
+		if(DragonUtils.isDragon(player)){
 			DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
 			
 			if(handler != null){
@@ -110,7 +111,7 @@ public class SourceOfMagicHandler
 		if(event.phase == Phase.START || event.side == LogicalSide.SERVER) return;
 		PlayerEntity player = event.player;
 		
-		if(DragonStateProvider.isDragon(player)){
+		if(DragonUtils.isDragon(player)){
 			DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
 			
 			if(handler != null){
@@ -165,7 +166,7 @@ public class SourceOfMagicHandler
 		if(event.phase == Phase.START) return;
 		PlayerEntity player = Minecraft.getInstance().player;
 		
-		if(DragonStateProvider.isDragon(player)){
+		if(DragonUtils.isDragon(player)){
 			DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
 			
 			if(handler != null){

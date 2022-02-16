@@ -1,16 +1,13 @@
-package by.jackraidenph.dragonsurvival.common.capability.DragonCapabilities;
+package by.jackraidenph.dragonsurvival.common.capability.subcapabilities;
 
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.client.emotes.Emote;
 import by.jackraidenph.dragonsurvival.client.emotes.EmoteRegistry;
+import by.jackraidenph.dragonsurvival.common.capability.NBTInterface;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.Direction;
-import net.minecraftforge.common.capabilities.Capability;
 
 import java.util.Objects;
 
-public class EmoteCap implements DragonCapability
+public class EmoteCap implements NBTInterface
 {
 	private Emote currentEmote;
 	public int emoteTick;
@@ -32,7 +29,7 @@ public class EmoteCap implements DragonCapability
 	}
 	
 	@Override
-	public INBT writeNBT(Capability<DragonStateHandler> capability, Direction side)
+	public CompoundNBT writeNBT()
 	{
 		CompoundNBT tag = new CompoundNBT();
 		
@@ -43,10 +40,8 @@ public class EmoteCap implements DragonCapability
 	}
 	
 	@Override
-	public void readNBT(Capability<DragonStateHandler> capability, Direction side, INBT base)
+	public void readNBT(CompoundNBT tag)
 	{
-		CompoundNBT tag = (CompoundNBT) base;
-		
 		String emoteId = tag.getString("emote");
 		
 		if(!emoteId.equals("nil")){
@@ -59,17 +54,5 @@ public class EmoteCap implements DragonCapability
 		}
 		
 		emoteMenuOpen = tag.getBoolean("emoteOpen");
-	}
-	
-	@Override
-	public void clone(DragonStateHandler oldCap)
-	{
-		emoteMenuOpen = oldCap.getEmotes().emoteMenuOpen;
-		
-		currentEmote = oldCap.getEmotes().getCurrentEmote();
-		emoteTick = oldCap.getEmotes().emoteTick;
-		
-		serverEmote = oldCap.getEmotes().serverEmote;
-		serverTick = oldCap.getEmotes().serverTick;
 	}
 }

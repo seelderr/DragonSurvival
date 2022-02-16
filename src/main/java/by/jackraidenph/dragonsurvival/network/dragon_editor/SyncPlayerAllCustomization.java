@@ -1,8 +1,8 @@
-package by.jackraidenph.dragonsurvival.network.SkinCustomization;
+package by.jackraidenph.dragonsurvival.network.dragon_editor;
 
 import by.jackraidenph.dragonsurvival.client.SkinCustomization.CustomizationLayer;
-import by.jackraidenph.dragonsurvival.common.capability.DragonCapabilities.SkinCap;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.subcapabilities.SkinCap;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.misc.DragonLevel;
 import by.jackraidenph.dragonsurvival.network.IMessage;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
@@ -30,11 +30,11 @@ public class SyncPlayerAllCustomization implements IMessage<SyncPlayerAllCustomi
 {
 	public int playerId;
 	public HashMap<DragonLevel, HashMap<CustomizationLayer, String>> values;
-	public HashMap<DragonLevel, HashMap<CustomizationLayer, Double>> hues;
+	public HashMap<DragonLevel, HashMap<CustomizationLayer, Integer>> hues;
 	
 	public SyncPlayerAllCustomization() {}
 	
-	public SyncPlayerAllCustomization(int playerId, HashMap<DragonLevel, HashMap<CustomizationLayer, String>> state, HashMap<DragonLevel, HashMap<CustomizationLayer, Double>> hues) {
+	public SyncPlayerAllCustomization(int playerId, HashMap<DragonLevel, HashMap<CustomizationLayer, String>> state, HashMap<DragonLevel, HashMap<CustomizationLayer, Integer>> hues) {
 		this.playerId = playerId;
 		this.values = state;
 		this.hues = hues;
@@ -47,7 +47,7 @@ public class SyncPlayerAllCustomization implements IMessage<SyncPlayerAllCustomi
 		for(DragonLevel level : DragonLevel.values()) {
 			for (CustomizationLayer layers : CustomizationLayer.values()) {
 				buffer.writeUtf(message.values.getOrDefault(level, new HashMap<>()).getOrDefault(layers, SkinCap.defaultSkinValue));
-				buffer.writeDouble(message.hues.getOrDefault(level, new HashMap<>()).getOrDefault(layers, 0.0));
+				buffer.writeInt(message.hues.getOrDefault(level, new HashMap<>()).getOrDefault(layers, 0));
 			}
 		}
 	}
@@ -56,7 +56,7 @@ public class SyncPlayerAllCustomization implements IMessage<SyncPlayerAllCustomi
 	public SyncPlayerAllCustomization decode(PacketBuffer buffer) {
 		int playerId = buffer.readInt();
 		HashMap<DragonLevel, HashMap<CustomizationLayer, String>> map = new HashMap<>();
-		HashMap<DragonLevel, HashMap<CustomizationLayer, Double>> hueMap = new HashMap<>();
+		HashMap<DragonLevel, HashMap<CustomizationLayer, Integer>> hueMap = new HashMap<>();
 		
 		for(DragonLevel level : DragonLevel.values()) {
 			for (CustomizationLayer layers : CustomizationLayer.values()) {
@@ -64,7 +64,7 @@ public class SyncPlayerAllCustomization implements IMessage<SyncPlayerAllCustomi
 				map.get(level).put(layers, buffer.readUtf());
 				
 				hueMap.computeIfAbsent(level, (b) -> new HashMap<>());
-				hueMap.get(level).put(layers, buffer.readDouble());
+				hueMap.get(level).put(layers, buffer.readInt());
 			}
 		}
 		return new SyncPlayerAllCustomization(playerId, map, hueMap);

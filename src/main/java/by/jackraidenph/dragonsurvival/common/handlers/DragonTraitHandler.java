@@ -2,8 +2,8 @@ package by.jackraidenph.dragonsurvival.common.handlers;
 
 import by.jackraidenph.dragonsurvival.common.DamageSources;
 import by.jackraidenph.dragonsurvival.common.DragonEffects;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.objects.DragonDebuffData;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.magic.DragonAbilities;
 import by.jackraidenph.dragonsurvival.common.magic.abilities.Passives.AthleticsAbility;
 import by.jackraidenph.dragonsurvival.common.magic.abilities.Passives.ContrastShowerAbility;
@@ -228,7 +228,7 @@ public class DragonTraitHandler {
                             playerEntity.setAirSupply(playerEntity.getMaxAirSupply());
                         
                         if (ConfigHandler.SERVER.penalties.get() && !playerEntity.hasEffect(DragonEffects.PEACE) && maxTicksOutofWater > 0 && !playerEntity.isCreative() && !playerEntity.isSpectator()) {
-                            DragonStateHandler.DragonDebuffData debuffData = dragonStateHandler.getDebuffData();
+                            DragonDebuffData debuffData = dragonStateHandler.getDebuffData();
                             double oldWaterTime = debuffData.timeWithoutWater;
                             
                             if(!playerEntity.level.isClientSide) {
@@ -262,7 +262,7 @@ public class DragonTraitHandler {
                             }
                         } else if (playerEntity.hasEffect(DragonEffects.PEACE)) {
                             if(!playerEntity.level.isClientSide) {
-                                DragonStateHandler.DragonDebuffData debuffData = dragonStateHandler.getDebuffData();
+                                DragonDebuffData debuffData = dragonStateHandler.getDebuffData();
                                 if (debuffData.timeWithoutWater > 0) {
                                     debuffData.timeWithoutWater = 0;
                                     NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new SyncCapabilityDebuff(playerEntity.getId(), debuffData.timeWithoutWater, debuffData.timeInDarkness, dragonStateHandler.getDebuffData().timeInRain));

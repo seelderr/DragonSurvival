@@ -1,9 +1,9 @@
 package by.jackraidenph.dragonsurvival.network;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.network.SkinCustomization.OpenDragonCustomization;
-import by.jackraidenph.dragonsurvival.network.SkinCustomization.SyncPlayerAllCustomization;
-import by.jackraidenph.dragonsurvival.network.SkinCustomization.SyncPlayerCustomization;
+import by.jackraidenph.dragonsurvival.network.dragon_editor.OpenDragonCustomization;
+import by.jackraidenph.dragonsurvival.network.dragon_editor.SyncPlayerAllCustomization;
+import by.jackraidenph.dragonsurvival.network.dragon_editor.SyncPlayerCustomization;
 import by.jackraidenph.dragonsurvival.network.claw.DragonClawsMenuToggle;
 import by.jackraidenph.dragonsurvival.network.claw.SyncDragonClawRender;
 import by.jackraidenph.dragonsurvival.network.claw.SyncDragonClawsMenu;
@@ -27,6 +27,7 @@ import by.jackraidenph.dragonsurvival.network.flight.SyncFlyingStatus;
 import by.jackraidenph.dragonsurvival.network.flight.SyncSpinStatus;
 import by.jackraidenph.dragonsurvival.network.magic.*;
 import by.jackraidenph.dragonsurvival.network.status.*;
+import by.jackraidenph.dragonsurvival.network.syncing.CompleteDataSync;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
@@ -58,7 +59,8 @@ public class NetworkHandler
 		 register(OpenDragonAltar.class, new OpenDragonAltar());
 		
 		 register(RequestClientData.class, new RequestClientData());
-		
+		 register(CompleteDataSync.class, new CompleteDataSync());
+		 
 		 //Status
 		 register(SyncGrowthState.class, new SyncGrowthState());
 		 register(SyncSize.class, new SyncSize());

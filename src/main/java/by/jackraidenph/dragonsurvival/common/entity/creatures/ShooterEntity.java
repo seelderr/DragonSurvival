@@ -1,8 +1,8 @@
 package by.jackraidenph.dragonsurvival.common.entity.creatures;
 
 import by.jackraidenph.dragonsurvival.common.entity.projectiles.BolasEntity;
+import by.jackraidenph.dragonsurvival.common.util.DragonUtils;
 import by.jackraidenph.dragonsurvival.util.Functions;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.common.entity.goals.AlertExceptHunters;
 import by.jackraidenph.dragonsurvival.common.entity.goals.CrossbowAttackGoal;
@@ -69,7 +69,7 @@ public class ShooterEntity extends Hunter implements ICrossbowUser {
         super.tick();
         if (ConfigHandler.COMMON.hunterHasBolas.get()) {
             LivingEntity target = getTarget();
-            if (target instanceof PlayerEntity && DragonStateProvider.isDragon(target))
+            if (target instanceof PlayerEntity && DragonUtils.isDragon(target))
                 if (this.bolasCooldown == 0) {
                     performBolasThrow(target);
                     this.bolasCooldown = Functions.secondsToTicks(15);

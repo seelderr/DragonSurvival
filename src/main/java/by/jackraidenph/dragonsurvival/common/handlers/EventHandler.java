@@ -2,9 +2,10 @@ package by.jackraidenph.dragonsurvival.common.handlers;
 
 import by.jackraidenph.dragonsurvival.common.blocks.DSBlocks;
 import by.jackraidenph.dragonsurvival.common.DragonEffects;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.entity.DSEntities;
 import by.jackraidenph.dragonsurvival.common.handlers.magic.ClawToolHandler;
+import by.jackraidenph.dragonsurvival.common.util.DragonUtils;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.common.entity.monsters.MagicalPredatorEntity;
 import by.jackraidenph.dragonsurvival.common.items.DSItems;
@@ -94,7 +95,7 @@ public class EventHandler {
         
         //if(entity instanceof AnimalEntity) return;
         if(event.getSource() == null || !(event.getSource().getEntity() instanceof PlayerEntity)) return;
-        if(!DragonStateProvider.isDragon(event.getSource().getEntity())) return;
+        if(!DragonUtils.isDragon(event.getSource().getEntity())) return;
 
         if(health >= 14 && health < 20){
             if (entity.level.random.nextInt(100) <= (ConfigHandler.SERVER.dragonHeartShardChance.get() * 100) + (event.getLootingLevel() * ((ConfigHandler.SERVER.dragonHeartShardChance.get() * 100) / 4))) {
@@ -121,7 +122,7 @@ public class EventHandler {
 
             ((AnimalEntity) entity).goalSelector.addGoal(5, new AvoidEntityGoal(
                     (AnimalEntity) entity, PlayerEntity.class,
-                    livingEntity -> DragonStateProvider.isDragon((PlayerEntity) livingEntity) && !((PlayerEntity) livingEntity).hasEffect(DragonEffects.ANIMAL_PEACE),
+                    livingEntity -> DragonUtils.isDragon((PlayerEntity) livingEntity) && !((PlayerEntity) livingEntity).hasEffect(DragonEffects.ANIMAL_PEACE),
                     20.0F, 1.3F, 1.5F, EntityPredicates.ATTACK_ALLOWED));
         }
         if (entity instanceof HorseEntity) {
@@ -154,7 +155,7 @@ public class EventHandler {
     
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void expDrops(BlockEvent.BreakEvent breakEvent) {
-       if(DragonStateProvider.isDragon(breakEvent.getPlayer())){
+       if(DragonUtils.isDragon(breakEvent.getPlayer())){
            if(breakEvent.getExpToDrop() > 0){
                int bonusLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.BLOCK_FORTUNE, breakEvent.getPlayer());
                int silklevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, breakEvent.getPlayer());

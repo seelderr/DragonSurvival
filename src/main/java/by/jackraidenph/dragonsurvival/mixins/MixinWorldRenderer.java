@@ -1,7 +1,7 @@
 package by.jackraidenph.dragonsurvival.mixins;
 
 import by.jackraidenph.dragonsurvival.client.render.ClientDragonRender;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.util.DragonUtils;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
@@ -30,7 +30,7 @@ public class MixinWorldRenderer
 			GameRenderer gameRenderer, LightTexture lightmapTextureManager, Matrix4f matrix4f, CallbackInfo info) {
 		if(camera.isDetached()) return;
 		if(!ConfigHandler.CLIENT.renderInFirstPerson.get()) return;
-		if(!DragonStateProvider.isDragon(camera.getEntity())) return;
+		if(!DragonUtils.isDragon(camera.getEntity())) return;
 		
 		Vector3d vec3d = camera.getPosition();
 		double d = vec3d.x();

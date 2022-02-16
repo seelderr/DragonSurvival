@@ -1,8 +1,8 @@
 package by.jackraidenph.dragonsurvival.common.handlers;
 
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.entity.DSEntities;
 import by.jackraidenph.dragonsurvival.common.entity.creatures.hitbox.DragonHitBox;
+import by.jackraidenph.dragonsurvival.common.util.DragonUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
@@ -21,7 +21,7 @@ public class DragonHitboxHandler
 		PlayerEntity player = playerTickEvent.player;
 		
 		if(!player.level.isClientSide) {
-			if (DragonStateProvider.isDragon(player)) {
+			if (DragonUtils.isDragon(player)) {
 				if (dragonHitboxes.containsKey(player.getId())) {
 					int id = dragonHitboxes.get(player.getId());
 					Entity ent = player.level.getEntity(id);

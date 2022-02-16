@@ -1,7 +1,7 @@
 package by.jackraidenph.dragonsurvival.network.flight;
 
 import by.jackraidenph.dragonsurvival.client.handlers.ClientFlightHandler;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.IMessage;
 import net.minecraft.client.Minecraft;

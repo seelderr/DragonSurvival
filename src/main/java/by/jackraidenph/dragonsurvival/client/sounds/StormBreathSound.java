@@ -1,6 +1,6 @@
 package by.jackraidenph.dragonsurvival.client.sounds;
 
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.magic.abilities.Actives.BreathAbilities.StormBreathAbility;
 import net.minecraft.client.audio.TickableSound;
 import net.minecraft.util.SoundCategory;

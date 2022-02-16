@@ -1,7 +1,8 @@
 package by.jackraidenph.dragonsurvival.client.handlers.magic;
 
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.client.handlers.KeyInputHandler;
+import by.jackraidenph.dragonsurvival.common.util.DragonUtils;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.common.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.network.magic.SyncAbilityCastTime;
@@ -24,7 +25,7 @@ public class ClientCastingHandler
 	    if ((Minecraft.getInstance().player == null) ||
 	        (Minecraft.getInstance().level == null) ||
 	        (clientTickEvent.phase != TickEvent.Phase.END) ||
-	        (!DragonStateProvider.isDragon(Minecraft.getInstance().player)))
+	        (!DragonUtils.isDragon(Minecraft.getInstance().player)))
 	        return;
 	    
 	    PlayerEntity playerEntity = Minecraft.getInstance().player;

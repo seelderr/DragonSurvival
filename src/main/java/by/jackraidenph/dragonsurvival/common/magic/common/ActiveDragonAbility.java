@@ -2,7 +2,8 @@ package by.jackraidenph.dragonsurvival.common.magic.common;
 
 import by.jackraidenph.dragonsurvival.common.DragonEffects;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.handlers.magic.ManaHandler;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
@@ -116,11 +117,11 @@ public class ActiveDragonAbility extends DragonAbility
     }
     
     public boolean canConsumeMana(PlayerEntity player) {
-        return DragonStateProvider.getCurrentMana(player) >= this.getManaCost() || ConfigHandler.SERVER.consumeEXPAsMana.get() && ((player.totalExperience / 10) >= getManaCost() || player.experienceLevel > 0);
+        return ManaHandler.getCurrentMana(player) >= this.getManaCost() || ConfigHandler.SERVER.consumeEXPAsMana.get() && ((player.totalExperience / 10) >= getManaCost() || player.experienceLevel > 0);
     }
     
     public void consumeMana(PlayerEntity player) {
-        DragonStateProvider.consumeMana(player, this.getManaCost());
+        ManaHandler.consumeMana(player, this.getManaCost());
     }
     
     public void onActivation(PlayerEntity player) {

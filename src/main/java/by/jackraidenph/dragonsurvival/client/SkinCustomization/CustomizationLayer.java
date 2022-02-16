@@ -10,7 +10,9 @@ public enum CustomizationLayer
 	EXTRA("Extra"),
 	EXTRA1("Extra"),
 	EXTRA2("Extra"),
-	EXTRA3("Extra");
+	EXTRA3("Extra"),
+	EXTRA4("Extra");
+	
 	public String name;
 	
 	CustomizationLayer(String name)

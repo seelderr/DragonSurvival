@@ -1,11 +1,12 @@
 package by.jackraidenph.dragonsurvival.client.handlers.magic;
 
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.client.particles.CaveDragon.SmallFireParticleData;
 import by.jackraidenph.dragonsurvival.client.particles.ForestDragon.SmallPoisonParticleData;
 import by.jackraidenph.dragonsurvival.client.particles.SeaDragon.LargeLightningParticleData;
 import by.jackraidenph.dragonsurvival.common.DragonEffects;
+import by.jackraidenph.dragonsurvival.common.util.DragonUtils;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
@@ -63,7 +64,7 @@ public class ClientMagicHandler
 			return;
 		}
 		
-		if(entity == Minecraft.getInstance().player || DragonStateProvider.isDragon(entity)){
+		if(entity == Minecraft.getInstance().player || DragonUtils.isDragon(entity)){
 			return;
 		}
 		if (entity.hasEffect(DragonEffects.BURN)) {

@@ -6,25 +6,26 @@ import by.jackraidenph.dragonsurvival.client.SkinCustomization.CustomizationRegi
 import by.jackraidenph.dragonsurvival.client.SkinCustomization.DragonCustomizationHandler;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.CustomizationConfirmation;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.DragonUIRenderComponent;
+import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.ColorSelectorButton;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.CustomizationSlotButton;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.DropDownButton;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.HelpButton;
-import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.HueSelectorButton;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.dropdown.ColoredDropdownValueEntry;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownEntry;
+import by.jackraidenph.dragonsurvival.client.handlers.ClientEvents;
 import by.jackraidenph.dragonsurvival.client.handlers.magic.ClientMagicHUDHandler;
 import by.jackraidenph.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.jackraidenph.dragonsurvival.client.util.TextRenderUtil;
-import by.jackraidenph.dragonsurvival.common.capability.DragonCapabilities.SkinCap;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.subcapabilities.SkinCap;
+import by.jackraidenph.dragonsurvival.common.util.DragonUtils;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonLevel;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.RequestClientData;
-import by.jackraidenph.dragonsurvival.network.SkinCustomization.SyncPlayerAllCustomization;
-import by.jackraidenph.dragonsurvival.network.SynchronizationController;
+import by.jackraidenph.dragonsurvival.network.dragon_editor.SyncPlayerAllCustomization;
 import by.jackraidenph.dragonsurvival.network.entity.player.SynchronizeDragonCap;
 import by.jackraidenph.dragonsurvival.network.flight.SyncSpinStatus;
 import by.jackraidenph.dragonsurvival.network.status.SyncAltarCooldown;
@@ -33,9 +34,11 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.IRenderable;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.client.gui.widget.button.CheckboxButton;
 import net.minecraft.item.DyeColor;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
@@ -45,7 +48,9 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.client.gui.GuiUtils;
 import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
+import org.apache.commons.lang3.text.WordUtils;
 
+import java.awt.Color;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -77,7 +82,7 @@ public class DragonCustomizationScreen extends Screen
 	public DragonType type;
 	
 	public HashMap<DragonLevel, HashMap<CustomizationLayer, String>> map = new HashMap<>();
-	public HashMap<DragonLevel, HashMap<CustomizationLayer, Double>> hueMap = new HashMap<>();
+	public HashMap<DragonLevel, HashMap<CustomizationLayer, Integer>> hueMap = new HashMap<>();
 	
 	//TODO Update sliders when you load a saved preset
 	//TODO Cleanup skin key and hue saving to support the possibility of brightness and saturation
@@ -95,6 +100,8 @@ public class DragonCustomizationScreen extends Screen
 	private DragonUIRenderComponent dragonRender;
 	public DragonStateHandler handler = new DragonStateHandler();
 	
+	private CheckboxButton autoSaveButton;
+	
 	public void update()
 	{
 		handler.getSkin().playerSkinLayers = map;
@@ -110,8 +117,8 @@ public class DragonCustomizationScreen extends Screen
 			CustomizationRegistry.savedCustomizations.saved.computeIfAbsent(handler.getType(), (b) -> new HashMap<>());
 			CustomizationRegistry.savedCustomizations.saved.get(handler.getType()).computeIfAbsent(currentSelected, (b) -> new HashMap<>());
 			
-			CustomizationRegistry.savedCustomizations.savedHue.computeIfAbsent(handler.getType(), (b) -> new HashMap<>());
-			CustomizationRegistry.savedCustomizations.savedHue.get(handler.getType()).computeIfAbsent(currentSelected, (b) -> new HashMap<>());
+			CustomizationRegistry.savedCustomizations.savedColor.computeIfAbsent(handler.getType(), (b) -> new HashMap<>());
+			CustomizationRegistry.savedCustomizations.savedColor.get(handler.getType()).computeIfAbsent(currentSelected, (b) -> new HashMap<>());
 			
 			map = new HashMap<>();
 			hueMap = new HashMap<>();
@@ -123,7 +130,7 @@ public class DragonCustomizationScreen extends Screen
 				});
 			});
 			
-			CustomizationRegistry.savedCustomizations.savedHue.get(handler.getType()).get(currentSelected).forEach((level, mp) -> {
+			CustomizationRegistry.savedCustomizations.savedColor.get(handler.getType()).get(currentSelected).forEach((level, mp) -> {
 				mp.forEach((layer, key) -> {
 					hueMap.computeIfAbsent(level, (b) -> new HashMap<>());
 					hueMap.get(level).put(layer, key);
@@ -145,7 +152,7 @@ public class DragonCustomizationScreen extends Screen
 		this.guiLeft = (this.width - 256) / 2;
 		this.guiTop = (this.height - 120) / 2;
 		
-		dragonRender = new DragonUIRenderComponent(this, width / 2 - 100, guiTop, 200, 125, () -> FakeClientPlayerUtils.getFakeDragon(0, handler));
+		dragonRender = new DragonUIRenderComponent(this, width / 2 - 70, guiTop, 140, 125, () -> FakeClientPlayerUtils.getFakeDragon(0, handler));
 		children.add(dragonRender);
 		
 		DragonStateHandler handler = DragonStateProvider.getCap(getMinecraft().player).orElse(null);
@@ -173,7 +180,7 @@ public class DragonCustomizationScreen extends Screen
 					});
 				});
 				
-				HashMap<DragonLevel, HashMap<CustomizationLayer, Double>> mp2 = CustomizationRegistry.savedCustomizations.savedHue.getOrDefault(type, new HashMap<>()).getOrDefault(currentSelected, new HashMap<>());
+				HashMap<DragonLevel, HashMap<CustomizationLayer, Integer>> mp2 = CustomizationRegistry.savedCustomizations.savedColor.getOrDefault(type, new HashMap<>()).getOrDefault(currentSelected, new HashMap<>());
 				
 				mp2.forEach((level, mp) -> {
 					mp.forEach((layer, key) -> {
@@ -251,7 +258,7 @@ public class DragonCustomizationScreen extends Screen
 			
 			String[] values = valueList.toArray(new String[0]);
 			String curValue = map.getOrDefault(level, new HashMap<>()).getOrDefault(layers, SkinCap.defaultSkinValue);
-			DropDownButton btn = new DropDownButton(i < 5 ? width / 2 - 100 - 100 : width / 2 + 70, guiTop + 10 + ((i >= 5 ? (i - 5) * 40 : i * 30)), 100, 15, curValue, values, (s) -> {
+			DropDownButton btn = new DropDownButton(i < 5 ? width / 2 - 100 - 100 : width / 2 + 70, guiTop + 10 + ((i >= 5 ? (i - 5) * 30 : i * 30)), 100, 15, curValue, values, (s) -> {
 				map.get(level).put(layers, s);
 				handler.getSkin().hueChanged.add(layers);
 				update();
@@ -264,10 +271,10 @@ public class DragonCustomizationScreen extends Screen
 			};
 			
 			addButton(btn);
-			
-			addButton(new HueSelectorButton(this, layers, btn.x + btn.getWidth() + 2, btn.y, btn.getHeight(), btn.getHeight(), -180, 180, hueMap.getOrDefault(level, new HashMap<>()).getOrDefault(layers, 0.0), (s) -> {
+
+			addButton(new ColorSelectorButton(this, layers, btn.x + btn.getWidth() + 2, btn.y, btn.getHeight(), btn.getHeight(), (s) -> {
 				hueMap.computeIfAbsent(level, (s1) -> new HashMap<>());
-				hueMap.get(level).put(layers, s);
+				hueMap.get(level).put(layers, Color.HSBtoRGB(s.floatValue(), 1f, 1f));
 				update();
 			}));
 			i++;
@@ -318,6 +325,8 @@ public class DragonCustomizationScreen extends Screen
 		for (int num = 1; num <= 9; num++) {
 			addButton(new CustomizationSlotButton(width / 2 + 195, guiTop + ((num - 1) * 12) + 5 + 20, num, this));
 		}
+		
+		autoSaveButton = addButton(new CheckboxButton(guiLeft - 75, height - 25, 20, 20, new TranslationTextComponent("ds.gui.customization.auto_save"), autoSaveButton == null || autoSaveButton.selected()));
 		
 		addButton(new ExtendedButton(width / 2 - 75 - 10, height - 25, 75, 20, new StringTextComponent("Save"), null)
 		{
@@ -444,9 +453,20 @@ public class DragonCustomizationScreen extends Screen
 		DragonAltarGUI.renderBorders(backgroundTexture, 0, width, 32, height - 32, width, height);
 	}
 	
+	float tick = 0;
+	
 	@Override
 	public void render(MatrixStack stack, int p_230430_2_, int p_230430_3_, float p_230430_4_)
 	{
+		if(autoSaveButton.selected()){
+			tick += p_230430_4_;
+			
+			if(tick % Functions.minutesToTicks(1) == 0){
+				save();
+				tick = 0;
+			}
+		}
+		
 		FakeClientPlayerUtils.getFakePlayer(0, handler).animationSupplier = () -> animations[curAnimation];
 		
 		stack.pushPose();
@@ -459,26 +479,26 @@ public class DragonCustomizationScreen extends Screen
 		int i = 0;
 		for (CustomizationLayer layers : CustomizationLayer.values()) {
 			String name = layers.name;
-			SkinsScreen.drawNonShadowLineBreak(stack, font, new StringTextComponent(name), (i < 5 ? width / 2 - 100 - 100 : width / 2 + 70) + 50, guiTop + 10 + ((i >= 5 ? (i - 5) * 40 : i * 30)) - 12, DyeColor.WHITE.getTextColor());
+			SkinsScreen.drawNonShadowLineBreak(stack, font, new StringTextComponent(name), (i < 5 ? width / 2 - 100 - 100 : width / 2 + 70) + 50, guiTop + 10 + ((i >= 5 ? (i - 5) * 30 : i * 30)) - 12, DyeColor.WHITE.getTextColor());
 			i++;
 		}
 		
-		SkinsScreen.drawNonShadowLineBreak(stack, font, new StringTextComponent(animations[curAnimation]), width / 2, height / 2 + 72, DyeColor.GRAY.getTextColor());
+		SkinsScreen.drawNonShadowLineBreak(stack, font, new StringTextComponent(WordUtils.capitalize(animations[curAnimation].replace("_", " "))), width / 2, height / 2 + 72, DyeColor.GRAY.getTextColor());
 		
 		Minecraft.getInstance().getTextureManager().bind(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/save_icon.png"));
 		blit(stack,width / 2 + 193, guiTop + 5, 0, 0, 16, 16,16, 16);
 		
 		super.render(stack, p_230430_2_, p_230430_3_, p_230430_4_);
 		
-		children.forEach((ch) -> {
+		for(int x = 0; x < this.children.size(); ++x) {
+			IGuiEventListener ch = children.get(x);
 			if(ch instanceof IRenderable){
 				((IRenderable)ch).render(stack, p_230430_2_, p_230430_3_, p_230430_4_);
 			}
-		});
+		}
 	}
 	
 	
-
 	public void confirm()
 	{
 		DragonStateProvider.getCap(minecraft.player).ifPresent(cap -> {
@@ -494,24 +514,30 @@ public class DragonCustomizationScreen extends Screen
 				
 				cap.setHasWings(ConfigHandler.SERVER.saveGrowthStage.get() ? cap.hasWings() || ConfigHandler.SERVER.startWithWings.get() : ConfigHandler.SERVER.startWithWings.get());
 				cap.setIsHiding(false);
-				cap.getMovementData().spinLearned = false;
+				cap.getMovementData().spinLearned = ConfigHandler.SERVER.saveGrowthStage.get() && cap.getMovementData().spinLearned;
 				
 				NetworkHandler.CHANNEL.sendToServer(new SyncAltarCooldown(Minecraft.getInstance().player.getId(), Functions.secondsToTicks(ConfigHandler.SERVER.altarUsageCooldown.get())));
 				NetworkHandler.CHANNEL.sendToServer(new SynchronizeDragonCap(minecraft.player.getId(), cap.isHiding(), cap.getType(), cap.getSize(), cap.hasWings(), ConfigHandler.SERVER.caveLavaSwimmingTicks.get(), 0));
 				NetworkHandler.CHANNEL.sendToServer(new SyncSpinStatus(Minecraft.getInstance().player.getId(), cap.getMovementData().spinAttack, cap.getMovementData().spinCooldown, cap.getMovementData().spinLearned));
-				SynchronizationController.sendClientData(new RequestClientData(cap.getType(), cap.getLevel()));
+				ClientEvents.sendClientData(new RequestClientData(cap.getType(), cap.getLevel()));
 				
 			}
 		});
 		
-		DragonType type = DragonStateProvider.getDragonType(minecraft.player);
+		save();
+		
+		Minecraft.getInstance().player.closeContainer();
+	}
+	
+	public void save(){
+		DragonType type = DragonUtils.getDragonType(minecraft.player);
 		NetworkHandler.CHANNEL.sendToServer(new SyncPlayerAllCustomization(minecraft.player.getId(), map, hueMap));
 		
 		CustomizationRegistry.savedCustomizations.saved.computeIfAbsent(type, (t) -> new HashMap<>());
 		CustomizationRegistry.savedCustomizations.saved.get(type).put(currentSelected, map);
 		
-		CustomizationRegistry.savedCustomizations.savedHue.computeIfAbsent(type, (t) -> new HashMap<>());
-		CustomizationRegistry.savedCustomizations.savedHue.get(type).put(currentSelected, hueMap);
+		CustomizationRegistry.savedCustomizations.savedColor.computeIfAbsent(type, (t) -> new HashMap<>());
+		CustomizationRegistry.savedCustomizations.savedColor.get(type).put(currentSelected, hueMap);
 		
 		try {
 			Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -521,8 +547,6 @@ public class DragonCustomizationScreen extends Screen
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		Minecraft.getInstance().player.closeContainer();
 	}
 	
 	@Override

@@ -1,6 +1,6 @@
 package by.jackraidenph.dragonsurvival.network.emotes;
 
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.client.emotes.Emote;
 import by.jackraidenph.dragonsurvival.client.emotes.EmoteRegistry;
 import by.jackraidenph.dragonsurvival.network.IMessage;

@@ -2,16 +2,22 @@ package by.jackraidenph.dragonsurvival.common.handlers.magic;
 
 import by.jackraidenph.dragonsurvival.common.DragonEffects;
 import by.jackraidenph.dragonsurvival.common.blocks.TreasureBlock;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.handlers.DragonConfigHandler;
+import by.jackraidenph.dragonsurvival.common.magic.DragonAbilities;
+import by.jackraidenph.dragonsurvival.common.util.DragonUtils;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
+import by.jackraidenph.dragonsurvival.network.NetworkHandler;
+import by.jackraidenph.dragonsurvival.network.magic.SyncMagicStats;
 import by.jackraidenph.dragonsurvival.util.Functions;
 import net.minecraft.block.AbstractFurnaceBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.CauldronBlock;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.LightType;
 import net.minecraft.world.lighting.WorldLightManager;
@@ -19,6 +25,7 @@ import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.network.PacketDistributor;
 
 @EventBusSubscriber
 public class ManaHandler
@@ -41,15 +48,15 @@ public class ManaHandler
 			}
 			
 			if (player.tickCount % Functions.secondsToTicks(timeToRecover) == 0) {
-				if (cap.getMagic().getCurrentMana() < DragonStateProvider.getMaxMana(player)) {
-					DragonStateProvider.replenishMana(player, 1);
+				if (cap.getMagic().getCurrentMana() < getMaxMana(player)) {
+					replenishMana(player, 1);
 				}
 			}
 		});
 	}
 	
 	public static boolean isPlayerInGoodConditions(PlayerEntity player){
-		if(!DragonStateProvider.isDragon(player)){
+		if(!DragonUtils.isDragon(player)){
 			return false;
 		}
 		
@@ -150,5 +157,79 @@ public class ManaHandler
 			
 			return false;
 		}).orElse(false);
+	}
+	
+	public static int getCurrentMana(PlayerEntity entity) {
+	    return DragonStateProvider.getCap(entity).map(cap -> Math.min(cap.getMagic().getCurrentMana(), getMaxMana(entity))).orElse(0);
+	}
+	
+	public static int getMaxMana(PlayerEntity entity) {
+	    return DragonStateProvider.getCap(entity).map(cap -> {
+	        int mana = 1;
+	
+	        mana += ConfigHandler.SERVER.noEXPRequirements.get() ? 9 : Math.max(0, (Math.min(50, entity.experienceLevel) - 5) / 5);
+	
+	        switch(cap.getType()){
+	            case SEA:
+	                mana += cap.getMagic().getAbilityLevel(DragonAbilities.SEA_MAGIC);
+	                break;
+	    
+	            case CAVE:
+	                mana += cap.getMagic().getAbilityLevel(DragonAbilities.CAVE_MAGIC);
+	                break;
+	    
+	            case FOREST:
+	                mana += cap.getMagic().getAbilityLevel(DragonAbilities.FOREST_MAGIC);
+	                break;
+	        }
+	
+	        return mana;
+	    }).orElse(0);
+	}
+	
+	public static void replenishMana(PlayerEntity entity, int mana) {
+	    if(entity.level.isClientSide){
+	        return;
+	    }
+	    
+	    DragonStateProvider.getCap(entity).ifPresent(cap -> {
+	        cap.getMagic().setCurrentMana(Math.min(getMaxMana(entity), cap.getMagic().getCurrentMana() + mana));
+	        NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) entity), new SyncMagicStats(entity.getId(), cap.getMagic().getSelectedAbilitySlot(), cap.getMagic().getCurrentMana(), cap.getMagic().renderAbilityHotbar()));
+	    });
+	}
+	
+	public static void consumeMana(PlayerEntity entity, int mana) {
+	    if(entity == null) return;
+	    if(entity.isCreative()) return;
+	    if(entity.hasEffect(DragonEffects.SOURCE_OF_MAGIC)) return;
+	
+	    if(ConfigHandler.SERVER.consumeEXPAsMana.get()) {
+	        if (entity.level.isClientSide) {
+	            if (getCurrentMana(entity) < mana && (getCurrentMana(entity) + (entity.totalExperience / 10) >= mana || entity.experienceLevel > 0)) {
+	                entity.playSound(SoundEvents.EXPERIENCE_ORB_PICKUP, 0.01F, 0.01F);
+	            }
+	        }
+	    }
+	    
+	    if(entity.level.isClientSide){
+	        return;
+	    }
+	    
+	    DragonStateProvider.getCap(entity).ifPresent(cap -> {
+	        if(ConfigHandler.SERVER.consumeEXPAsMana.get()) {
+	            if (getCurrentMana(entity) < mana && (getCurrentMana(entity) + (entity.totalExperience / 10) >= mana || entity.experienceLevel > 0)) {
+	                int missingMana = mana - getCurrentMana(entity);
+	                int missingExp = (missingMana * 10);
+	                entity.giveExperiencePoints(-missingExp);
+	                cap.getMagic().setCurrentMana(0);
+	            } else {
+	                cap.getMagic().setCurrentMana(Math.max(0, cap.getMagic().getCurrentMana() - mana));
+	            }
+	        } else {
+	            cap.getMagic().setCurrentMana(Math.max(0, cap.getMagic().getCurrentMana() - mana));
+	        }
+	
+	        NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) entity), new SyncMagicStats(entity.getId(), cap.getMagic().getSelectedAbilitySlot(), cap.getMagic().getCurrentMana(), cap.getMagic().renderAbilityHotbar()));
+	    });
 	}
 }

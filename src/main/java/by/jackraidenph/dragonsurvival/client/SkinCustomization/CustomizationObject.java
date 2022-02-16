@@ -16,6 +16,7 @@ public class CustomizationObject
 		public String key;
 		public String texture;
 		public boolean glowing;
-		public boolean recolor = true;
+		public boolean colorable = true;
+		public String defaultColor;
 	}
 }

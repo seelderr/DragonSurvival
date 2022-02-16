@@ -7,7 +7,7 @@ import by.jackraidenph.dragonsurvival.client.SkinCustomization.DragonCustomizati
 import by.jackraidenph.dragonsurvival.client.handlers.DragonSkins;
 import by.jackraidenph.dragonsurvival.client.render.ClientDragonRender;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.entity.DragonEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
@@ -55,56 +55,85 @@ public class DragonCustomizationLayer extends GeoLayerRenderer<DragonEntity>
 			if(key != null){
 				Texture text = DragonCustomizationHandler.getSkin(entitylivingbaseIn.getPlayer(), layer, key, handler.getType());
 				
-				if(text != null && !text.glowing) {
+				if(text != null) {
 					ResourceLocation texture = DragonCustomizationHandler.getSkinTexture(entitylivingbaseIn.getPlayer(), layer, key, handler.getType());
 					if(ClientDragonRender.dragonModel.getTextureLocation(entitylivingbaseIn) == texture) return;
 					
 					if(DragonSkins.getPlayerSkin(entitylivingbaseIn.getPlayer(), handler.getType(), handler.getLevel()) != null) {
 						return;
 					}
+					ResourceLocation dynamicTexture = text.colorable && text.defaultColor == null ? new ResourceLocation(DragonSurvivalMod.MODID, "dynamic_" + texture.getPath()) : texture;
 					
-					Double curHue = handler.getSkin().skinLayerHue.getOrDefault(handler.getLevel(), new HashMap<>()).getOrDefault(layer, 0.0);
-					ResourceLocation dynamicTexture = new ResourceLocation(DragonSurvivalMod.MODID, "dynamic_" + texture.getPath());
+					Color renderColor = new Color(1f, 1f, 1f, 1f);
 					
-					if(!dynamicTextures.containsKey(dynamicTexture) || handler.getSkin().hueChanged.contains(layer)) {
-						handler.getSkin().hueChanged.remove(layer);
+					if(text.colorable && text.defaultColor == null) {
+						Integer color = handler.getSkin().skinLayerHue.getOrDefault(handler.getLevel(), new HashMap<>()).getOrDefault(layer, 0);
+						Color hue = new Color(color);
 						
-						if(!dynamicTextures.containsKey(dynamicTexture)) {
-							DynamicTexture texture1 = new DynamicTexture(512, 512, false);
-							Minecraft.getInstance().getTextureManager().register(dynamicTexture, texture1);
-							dynamicTextures.put(dynamicTexture, texture1);
+						if (!dynamicTextures.containsKey(dynamicTexture) || handler.getSkin().hueChanged.contains(layer)) {
+							handler.getSkin().hueChanged.remove(layer);
+							
+							if (!dynamicTextures.containsKey(dynamicTexture)) {
+								DynamicTexture texture1 = new DynamicTexture(512, 512, false);
+								Minecraft.getInstance().getTextureManager().register(dynamicTexture, texture1);
+								dynamicTextures.put(dynamicTexture, texture1);
+							}
+							float[] hsb = Color.RGBtoHSB(hue.getRed(), hue.getGreen(), hue.getBlue(), null);
+							updateSkin(text, texture, dynamicTexture, hsb);
 						}
-						
-						updateSkin(text, texture, dynamicTexture, curHue);
+					}else if(text.colorable && text.defaultColor != null){
+						Integer color = handler.getSkin().skinLayerHue.getOrDefault(handler.getLevel(), new HashMap<>()).getOrDefault(layer, 0);
+						if(color == 0){
+							renderColor = Color.decode(text.defaultColor);
+						}else {
+							renderColor = new Color(color);
+						}
 					}
-					
-					RenderType type = renderer.getRenderType(entitylivingbaseIn, partialTicks, matrixStackIn, bufferIn, null, packedLightIn, dynamicTexture);
-					IVertexBuilder vertexConsumer = bufferIn.getBuffer(type);
 					((DragonRenderer)renderer).isLayer = true;
-					renderer.render(ClientDragonRender.dragonModel.getModel(ClientDragonRender.dragonModel.getModelLocation(null)), entitylivingbaseIn, partialTicks, type, matrixStackIn, bufferIn, vertexConsumer, packedLightIn, OverlayTexture.NO_OVERLAY, 1f, 1f, 1f, 1F);
+					
+					if(text.glowing){
+						RenderType type = RenderType.eyes(texture);
+						IVertexBuilder vertexConsumer = bufferIn.getBuffer(type);
+						renderer.render(getEntityModel().getModel(getEntityModel().getModelLocation(entitylivingbaseIn)), entitylivingbaseIn, partialTicks, type, matrixStackIn, bufferIn, vertexConsumer, 0, OverlayTexture.NO_OVERLAY, renderColor.getRed() / 255f, renderColor.getGreen() / 255f, renderColor.getBlue() / 255f, renderColor.getAlpha() / 255f);
+					}else {
+						RenderType type = renderer.getRenderType(entitylivingbaseIn, partialTicks, matrixStackIn, bufferIn, null, packedLightIn, dynamicTexture);
+						IVertexBuilder vertexConsumer = bufferIn.getBuffer(type);
+						renderer.render(ClientDragonRender.dragonModel.getModel(ClientDragonRender.dragonModel.getModelLocation(null)), entitylivingbaseIn, partialTicks, type, matrixStackIn, bufferIn, vertexConsumer, packedLightIn, OverlayTexture.NO_OVERLAY, renderColor.getRed() / 255f, renderColor.getGreen() / 255f, renderColor.getBlue() / 255f, renderColor.getAlpha() / 255f);
+					}
 					((DragonRenderer)renderer).isLayer = false;
+					
 				}
 			}
 		}
 	}
-	public void updateSkin(Texture text, ResourceLocation input, ResourceLocation output, double hue){
+	public void updateSkin(Texture text, ResourceLocation input, ResourceLocation output, float[] hsb1){
 		Runnable run = () -> {
 			try {
 				InputStream textureStream = Minecraft.getInstance().getResourceManager().getResource(input).getInputStream();
 				NativeImage img = NativeImage.read(textureStream);
 				textureStream.close();
 				
-				if(text.recolor) {
+				if(text.colorable) {
+					float hueVal = hsb1[0] - 0.5f;
+					float satVal = hsb1[1] - 0.5f;
+					
+					
 					float[] hsb = new float[3];
 					for (int x = 0; x < img.getWidth(); x++) {
 						for (int y = 0; y < img.getHeight(); y++) {
 							Color color = new Color(img.getPixelRGBA(x, y), true);
 							Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), hsb);
 							
-							if(hue > 0){
-								hsb[0] = (float)MathHelper.lerp(hue / 180f, hsb[0], 1.0);
+							if(hueVal > 0){
+								hsb[0] = (float)MathHelper.lerp(Math.abs(hueVal) * 2, hsb[0], 1.0);
 							}else{
-								hsb[0] = (float)MathHelper.lerp(hue / -180f, hsb[0], 0.0);
+								hsb[0] = (float)MathHelper.lerp(Math.abs(hueVal) * 2, hsb[0], 0.0);
+							}
+							
+							if(satVal > 0){
+								hsb[1] = (float)MathHelper.lerp(Math.abs(satVal), hsb[1], 1.0);
+							}else{
+								hsb[1] = (float)MathHelper.lerp(Math.abs(satVal), hsb[1], 0.0);
 							}
 							
 							Color c = new Color(Color.HSBtoRGB(hsb[0], hsb[1], hsb[2]));

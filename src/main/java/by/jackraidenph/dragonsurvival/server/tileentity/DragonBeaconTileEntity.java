@@ -1,8 +1,8 @@
 package by.jackraidenph.dragonsurvival.server.tileentity;
 
+import by.jackraidenph.dragonsurvival.common.util.DragonUtils;
 import by.jackraidenph.dragonsurvival.util.Functions;
 import by.jackraidenph.dragonsurvival.common.blocks.DragonBeacon;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.common.blocks.DSBlocks;
 import by.jackraidenph.dragonsurvival.client.sounds.SoundRegistry;
@@ -53,7 +53,7 @@ public class DragonBeaconTileEntity extends BaseBlockTileEntity implements ITick
                 level.playSound(null, getBlockPos(), SoundRegistry.activateBeacon, SoundCategory.BLOCKS, 1, 1);
             }
             if (!level.isClientSide) {
-                List<PlayerEntity> dragons = level.getEntitiesOfClass(PlayerEntity.class, new AxisAlignedBB(getBlockPos()).inflate(50).expandTowards(0, level.getMaxBuildHeight(), 0), DragonStateProvider::isDragon);
+                List<PlayerEntity> dragons = level.getEntitiesOfClass(PlayerEntity.class, new AxisAlignedBB(getBlockPos()).inflate(50).expandTowards(0, level.getMaxBuildHeight(), 0), DragonUtils::isDragon);
                 switch (type) {
                     case PEACE:
                         dragons.forEach(playerEntity -> {

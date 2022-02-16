@@ -1,7 +1,8 @@
 package by.jackraidenph.dragonsurvival.common.blocks;
 
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.util.DragonUtils;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
@@ -114,7 +115,7 @@ public class SourceOfMagicBlock extends HorizontalBlock implements IWaterLoggabl
         SourceOfMagicTileEntity source = getBlockEntity(world, pos1);
     
         if(source != null) {
-            if(DragonStateProvider.getDragonType(entity) != source.type){
+            if(DragonUtils.getDragonType(entity) != source.type){
                 if(entity instanceof ItemEntity){
                     ItemEntity itemE = (ItemEntity)entity;
                     ItemStack stack = itemE.getItem();
@@ -180,7 +181,7 @@ public class SourceOfMagicBlock extends HorizontalBlock implements IWaterLoggabl
                 NetworkHooks.openGui((ServerPlayerEntity)player, getBlockEntity(worldIn, pos1), packetBuffer -> packetBuffer.writeBlockPos(finalPos));
             }
         }else{
-            if(DragonStateProvider.isDragon(player) && player.getMainHandItem().isEmpty()) {
+            if(DragonUtils.isDragon(player) && player.getMainHandItem().isEmpty()) {
                 if (player.getFeetBlockState().getBlock() == state.getBlock()) {
                     DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
     

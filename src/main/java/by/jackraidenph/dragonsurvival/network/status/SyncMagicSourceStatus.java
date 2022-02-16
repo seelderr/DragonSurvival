@@ -1,6 +1,6 @@
 package by.jackraidenph.dragonsurvival.network.status;
 
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.network.IMessage;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import net.minecraft.client.Minecraft;

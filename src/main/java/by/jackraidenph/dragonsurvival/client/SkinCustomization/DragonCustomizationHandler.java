@@ -1,12 +1,12 @@
 package by.jackraidenph.dragonsurvival.client.SkinCustomization;
 
 import by.jackraidenph.dragonsurvival.client.SkinCustomization.CustomizationObject.Texture;
-import by.jackraidenph.dragonsurvival.common.capability.DragonCapabilities.SkinCap;
+import by.jackraidenph.dragonsurvival.common.capability.subcapabilities.SkinCap;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
-import by.jackraidenph.dragonsurvival.network.SkinCustomization.SyncPlayerCustomization;
+import by.jackraidenph.dragonsurvival.network.dragon_editor.SyncPlayerCustomization;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -19,6 +19,10 @@ import java.util.Objects;
 public class DragonCustomizationHandler
 {
 	public static ResourceLocation getSkinTexture(PlayerEntity player, CustomizationLayer layer, String key, DragonType type){
+		if(Objects.equals(layer.name, "Extra")){
+			layer = CustomizationLayer.EXTRA;
+		}
+		
 		if(layer == CustomizationLayer.BASE && (key.equalsIgnoreCase("Skin") || key.equalsIgnoreCase(SkinCap.defaultSkinValue))){
 			DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
 			return getSkinTexture(player, layer, type.name().toLowerCase() + "_base_" + handler.getLevel().ordinal(), type);
@@ -36,6 +40,10 @@ public class DragonCustomizationHandler
 	}
 	
 	public static Texture getSkin(PlayerEntity player, CustomizationLayer layer, String key, DragonType type){
+		if(Objects.equals(layer.name, "Extra")){
+			layer = CustomizationLayer.EXTRA;
+		}
+		
 		if(layer == CustomizationLayer.BASE && (key.equalsIgnoreCase("Skin") || key.equalsIgnoreCase(SkinCap.defaultSkinValue))){
 			DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
 			return getSkin(player, layer, type.name().toLowerCase() + "_base_" + handler.getLevel().ordinal(), type);
@@ -58,18 +66,10 @@ public class DragonCustomizationHandler
 	}
 	
 	public static ArrayList<String> getKeys(DragonType type, CustomizationLayer layers){
-		ArrayList<String> list = new ArrayList<>();
-		
-		if(layers == CustomizationLayer.EXTRA || layers == CustomizationLayer.EXTRA1 || layers == CustomizationLayer.EXTRA2 || layers == CustomizationLayer.EXTRA3){
-			for(CustomizationLayer la : new CustomizationLayer[]{CustomizationLayer.EXTRA, CustomizationLayer.EXTRA1, CustomizationLayer.EXTRA2, CustomizationLayer.EXTRA3}){
-				Texture[] texts = CustomizationRegistry.CUSTOMIZATIONS.getOrDefault(type, new HashMap<>()).getOrDefault(la, new Texture[0]);
-				for(Texture texture : texts){
-					list.add(texture.key);
-				}
-			}
-			
-			return list;
+		if(Objects.equals(layers.name, "Extra")){
+			layers = CustomizationLayer.EXTRA;
 		}
+		ArrayList<String> list = new ArrayList<>();
 		
 		Texture[] texts = CustomizationRegistry.CUSTOMIZATIONS.getOrDefault(type, new HashMap<>()).getOrDefault(layers, new Texture[0]);
 		for(Texture texture : texts){

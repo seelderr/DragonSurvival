@@ -1,7 +1,7 @@
-package by.jackraidenph.dragonsurvival.network.SkinCustomization;
+package by.jackraidenph.dragonsurvival.network.dragon_editor;
 
 import by.jackraidenph.dragonsurvival.client.SkinCustomization.CustomizationLayer;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.network.IMessage;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import net.minecraft.client.Minecraft;
@@ -17,20 +17,22 @@ import net.minecraftforge.fml.DistExecutor.SafeRunnable;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static net.minecraftforge.fml.network.NetworkDirection.PLAY_TO_SERVER;
 
-public class SyncPlayerCustomization implements IMessage<SyncPlayerCustomization>
+public class SyncPlayerHue implements IMessage<SyncPlayerHue>
 {
 	public int playerId;
 	public CustomizationLayer layers;
-	public String key;
+	public Integer key;
 	
-	public SyncPlayerCustomization() {}
+	public SyncPlayerHue() {}
 	
-	public SyncPlayerCustomization(int playerId, CustomizationLayer layers, String key)
+	public SyncPlayerHue(int playerId, CustomizationLayer layers, Integer key)
 	{
 		this.playerId = playerId;
 		this.layers = layers;
@@ -38,39 +40,40 @@ public class SyncPlayerCustomization implements IMessage<SyncPlayerCustomization
 	}
 	
 	@Override
-	public void encode(SyncPlayerCustomization message, PacketBuffer buffer) {
+	public void encode(SyncPlayerHue message, PacketBuffer buffer) {
 		buffer.writeInt(message.playerId);
 		buffer.writeEnum(message.layers);
-		buffer.writeUtf(message.key);
+		buffer.writeInt(message.key);
 	}
 	
 	@Override
-	public SyncPlayerCustomization decode(PacketBuffer buffer) {
+	public SyncPlayerHue decode(PacketBuffer buffer) {
 		int playerId = buffer.readInt();
 		CustomizationLayer layer = buffer.readEnum(CustomizationLayer.class);
-		String key = buffer.readUtf();
-		return new SyncPlayerCustomization(playerId, layer, key);
+		Integer key = buffer.readInt();
+		return new SyncPlayerHue(playerId, layer, key);
 	}
 	
 	@Override
-	public void handle(SyncPlayerCustomization message, Supplier<NetworkEvent.Context> supplier) {
+	public void handle(SyncPlayerHue message, Supplier<NetworkEvent.Context> supplier) {
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> runClient(message, supplier));
 		
 		if(supplier.get().getDirection() == PLAY_TO_SERVER){
 			ServerPlayerEntity entity = supplier.get().getSender();
 			if(entity != null){
 				DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
-					dragonStateHandler.getSkin().playerSkinLayers.computeIfAbsent(dragonStateHandler.getLevel(), (b) -> new HashMap<>());
-					dragonStateHandler.getSkin().playerSkinLayers.getOrDefault(dragonStateHandler.getLevel(), new HashMap<>()).put(message.layers, message.key);
+					dragonStateHandler.getSkin().skinLayerHue.computeIfAbsent(dragonStateHandler.getLevel(), (b) -> new HashMap<>());
+					dragonStateHandler.getSkin().skinLayerHue.getOrDefault(dragonStateHandler.getLevel(), new HashMap<>()).put(message.layers, message.key);
+					dragonStateHandler.getSkin().hueChanged.addAll(Arrays.stream(CustomizationLayer.values()).distinct().collect(Collectors.toList()));
 				});
 				
-				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new SyncPlayerCustomization(entity.getId(), message.layers, message.key));
+				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new SyncPlayerHue(entity.getId(), message.layers, message.key));
 			}
 		}
 	}
 	
 	@OnlyIn(Dist.CLIENT)
-	public void runClient(SyncPlayerCustomization message, Supplier<NetworkEvent.Context> supplier){
+	public void runClient(SyncPlayerHue message, Supplier<NetworkEvent.Context> supplier){
 		NetworkEvent.Context context = supplier.get();
 		context.enqueueWork(() -> {
 			PlayerEntity thisPlayer = Minecraft.getInstance().player;
@@ -79,8 +82,9 @@ public class SyncPlayerCustomization implements IMessage<SyncPlayerCustomization
 				Entity entity = world.getEntity(message.playerId);
 				if (entity instanceof PlayerEntity) {
 					DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
-						dragonStateHandler.getSkin().playerSkinLayers.computeIfAbsent(dragonStateHandler.getLevel(), (b) -> new HashMap<>());
-						dragonStateHandler.getSkin().playerSkinLayers.getOrDefault(dragonStateHandler.getLevel(), new HashMap<>()).put(message.layers, message.key);
+						dragonStateHandler.getSkin().skinLayerHue.computeIfAbsent(dragonStateHandler.getLevel(), (b) -> new HashMap<>());
+						dragonStateHandler.getSkin().skinLayerHue.getOrDefault(dragonStateHandler.getLevel(), new HashMap<>()).put(message.layers, message.key);
+						dragonStateHandler.getSkin().hueChanged.addAll(Arrays.stream(CustomizationLayer.values()).distinct().collect(Collectors.toList()));
 					});
 				}
 			}

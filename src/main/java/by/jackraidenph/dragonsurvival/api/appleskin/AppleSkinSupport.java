@@ -2,8 +2,9 @@ package by.jackraidenph.dragonsurvival.api.appleskin;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.handlers.DragonFoodHandler;
+import by.jackraidenph.dragonsurvival.common.util.DragonUtils;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -76,7 +77,7 @@ public class AppleSkinSupport
 	public void hudSaturation(Saturation event){
 		if(!ConfigHandler.SERVER.customDragonFoods.get() || !ConfigHandler.CLIENT.appleskinSupport.get()) return;
 		
-		if(DragonStateProvider.isDragon(Minecraft.getInstance().player)){
+		if(DragonUtils.isDragon(Minecraft.getInstance().player)){
 			event.setCanceled(true);
 			Minecraft mc = Minecraft.getInstance();
 			PlayerEntity player = mc.player;
@@ -128,8 +129,8 @@ public class AppleSkinSupport
 		
 		if (!event.isCanceled()) {
 			ItemStack hoveredStack = event.getStack();
-			if(DragonStateProvider.isDragon(Minecraft.getInstance().player)){
-				if(DragonFoodHandler.isDragonEdible(hoveredStack.getItem(), DragonStateProvider.getDragonType(Minecraft.getInstance().player))){
+			if(DragonUtils.isDragon(Minecraft.getInstance().player)){
+				if(DragonFoodHandler.isDragonEdible(hoveredStack.getItem(), DragonUtils.getDragonType(Minecraft.getInstance().player))){
 					Minecraft mc = Minecraft.getInstance();
 					Screen gui = mc.screen;
 					
@@ -152,7 +153,7 @@ public class AppleSkinSupport
 					
 					ItemStack itemStack = hoveredStack;
 					
-					Food food = DragonFoodHandler.getDragonFoodProperties(hoveredStack.getItem(), DragonStateProvider.getDragonType(Minecraft.getInstance().player));
+					Food food = DragonFoodHandler.getDragonFoodProperties(hoveredStack.getItem(), DragonUtils.getDragonType(Minecraft.getInstance().player));
 					FoodValues values = new FoodValues(food.getNutrition(), food.getSaturationModifier());
 					FoodValues defaultFood = values;
 					FoodValues modifiedFood = values;
@@ -278,7 +279,7 @@ public class AppleSkinSupport
 	public void tooltip(TooltipOverlayEvent.Render renderEvent){
 		if(!ConfigHandler.SERVER.customDragonFoods.get()) return;
 		
-		if(DragonStateProvider.isDragon(Minecraft.getInstance().player)) {
+		if(DragonUtils.isDragon(Minecraft.getInstance().player)) {
 			renderEvent.setCanceled(true);
 		}
 	}
@@ -287,7 +288,7 @@ public class AppleSkinSupport
 	public void hudHunger(HungerRestored event){
 		if(!ConfigHandler.SERVER.customDragonFoods.get() || !ConfigHandler.CLIENT.appleskinSupport.get()) return;
 		
-		if(DragonStateProvider.isDragon(Minecraft.getInstance().player)){
+		if(DragonUtils.isDragon(Minecraft.getInstance().player)){
 			event.setCanceled(true);
 			
 			Minecraft mc = Minecraft.getInstance();
@@ -313,7 +314,7 @@ public class AppleSkinSupport
 			int endFoodBars = (int)Math.ceil((double)((float)modifiedFood / 2.0F));
 			int iconStartOffset = 0;
 			int iconSize = 9;
-			DragonType type = DragonStateProvider.getDragonType(Minecraft.getInstance().player);
+			DragonType type = DragonUtils.getDragonType(Minecraft.getInstance().player);
 			for(int i = startFoodBars; i < endFoodBars; ++i) {
 				Point offset = (Point)foodBarOffsets.get(i);
 				if (offset != null) {
@@ -429,7 +430,7 @@ public class AppleSkinSupport
 		if(itemStack == null || itemStack.getItem() == null || itemStack.getItem().getFoodProperties() == null || itemStack.getItem().getFoodProperties().getEffects() == null)
 			return false;
 		
-		if (!DragonFoodHandler.isDragonEdible(itemStack.getItem(), DragonStateProvider.getDragonType(Minecraft.getInstance().player))) {
+		if (!DragonFoodHandler.isDragonEdible(itemStack.getItem(), DragonUtils.getDragonType(Minecraft.getInstance().player))) {
 			return false;
 			
 		} else {

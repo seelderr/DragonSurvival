@@ -1,17 +1,14 @@
-package by.jackraidenph.dragonsurvival.common.capability.DragonCapabilities;
+package by.jackraidenph.dragonsurvival.common.capability.subcapabilities;
 
 import by.jackraidenph.dragonsurvival.client.SkinCustomization.CustomizationLayer;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
+import by.jackraidenph.dragonsurvival.common.capability.NBTInterface;
 import by.jackraidenph.dragonsurvival.misc.DragonLevel;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.Direction;
-import net.minecraftforge.common.capabilities.Capability;
 
 import java.util.HashMap;
 import java.util.HashSet;
 
-public class SkinCap implements DragonCapability
+public class SkinCap implements NBTInterface
 {
 	public boolean renderNewborn;
 	public boolean renderYoung;
@@ -20,11 +17,11 @@ public class SkinCap implements DragonCapability
 	public static final String defaultSkinValue = "None";
 	
 	public HashMap<DragonLevel, HashMap<CustomizationLayer, String>> playerSkinLayers = new HashMap();
-	public HashMap<DragonLevel, HashMap<CustomizationLayer, Double>> skinLayerHue = new HashMap();
+	public HashMap<DragonLevel, HashMap<CustomizationLayer, Integer>> skinLayerHue = new HashMap();
 	public HashSet<CustomizationLayer> hueChanged = new HashSet<>();
 	
 	@Override
-	public INBT writeNBT(Capability<DragonStateHandler> capability, Direction side)
+	public CompoundNBT writeNBT()
 	{
 		CompoundNBT tag = new CompoundNBT();
 		
@@ -40,7 +37,7 @@ public class SkinCap implements DragonCapability
 		
 		for(DragonLevel level : DragonLevel.values()) {
 			for (CustomizationLayer layer : CustomizationLayer.values()) {
-				tag.putDouble(level.name + "_skin_layer_hue_" + layer.name(), skinLayerHue.getOrDefault(level, new HashMap<>()).getOrDefault(layer, 0.0));
+				tag.putInt(level.name + "_skin_layer_hue_" + layer.name(), skinLayerHue.getOrDefault(level, new HashMap<>()).getOrDefault(layer, 0));
 			}
 		}
 		
@@ -48,10 +45,8 @@ public class SkinCap implements DragonCapability
 	}
 	
 	@Override
-	public void readNBT(Capability<DragonStateHandler> capability, Direction side, INBT base)
+	public void readNBT(CompoundNBT tag)
 	{
-		CompoundNBT tag = (CompoundNBT) base;
-
 		renderNewborn = tag.getBoolean("renderNewborn");
 		renderYoung = tag.getBoolean("renderYoung");
 		renderAdult = tag.getBoolean("renderAdult");
@@ -66,18 +61,8 @@ public class SkinCap implements DragonCapability
 		for(DragonLevel level : DragonLevel.values()) {
 			for (CustomizationLayer layer : CustomizationLayer.values()) {
 				skinLayerHue.computeIfAbsent(level, (b) -> new HashMap<>());
-				skinLayerHue.get(level).put(layer, tag.getDouble(level.name + "_skin_layer_hue_" + layer.name()));
+				skinLayerHue.get(level).put(layer, tag.getInt(level.name + "_skin_layer_hue_" + layer.name()));
 			}
 		}
-	}
-	
-	@Override
-	public void clone(DragonStateHandler oldCap)
-	{
-		renderNewborn = oldCap.getSkin().renderNewborn;
-		renderYoung = oldCap.getSkin().renderYoung;
-		renderAdult = oldCap.getSkin().renderAdult;
-		playerSkinLayers = oldCap.getSkin().playerSkinLayers;
-		skinLayerHue = oldCap.getSkin().skinLayerHue;
 	}
 }

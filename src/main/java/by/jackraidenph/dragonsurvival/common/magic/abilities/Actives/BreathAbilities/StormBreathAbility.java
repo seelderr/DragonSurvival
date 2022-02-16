@@ -6,8 +6,8 @@ import by.jackraidenph.dragonsurvival.client.particles.SeaDragon.SmallLightningP
 import by.jackraidenph.dragonsurvival.client.sounds.SoundRegistry;
 import by.jackraidenph.dragonsurvival.client.sounds.StormBreathSound;
 import by.jackraidenph.dragonsurvival.common.DragonEffects;
-import by.jackraidenph.dragonsurvival.common.capability.Capabilities;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.provider.GenericCapabilityProvider;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.capability.GenericCapability;
 import by.jackraidenph.dragonsurvival.common.entity.DSEntities;
 import by.jackraidenph.dragonsurvival.common.entity.projectiles.StormBreathEntity;
@@ -208,7 +208,7 @@ public class StormBreathAbility extends BreathAbility
 		
 		if(!entity.level.isClientSide) {
 			if (entity.level.random.nextInt(100) < 40) {
-				GenericCapability cap = Capabilities.getGenericCapability(entity).orElse(null);
+				GenericCapability cap = GenericCapabilityProvider.getGenericCapability(entity).orElse(null);
 				
 				if(cap != null){
 					cap.lastAfflicted = player.getId();
@@ -276,8 +276,8 @@ public class StormBreathAbility extends BreathAbility
 			onDamageChecks(target);
 			if(!ConfigUtils.containsEntity(ConfigHandler.SERVER.chargedSpreadBlacklist.get(), source)) {
 				if (target != source) {
-					GenericCapability capSource = Capabilities.getGenericCapability(source).orElse(null);
-					GenericCapability cap = Capabilities.getGenericCapability(target).orElse(null);
+					GenericCapability capSource = GenericCapabilityProvider.getGenericCapability(source).orElse(null);
+					GenericCapability cap = GenericCapabilityProvider.getGenericCapability(target).orElse(null);
 					
 					if(cap != null && capSource != null){
 						cap.chainCount = capSource.chainCount + 1;

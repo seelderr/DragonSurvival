@@ -2,7 +2,7 @@ package by.jackraidenph.dragonsurvival.client.render.entity.dragon;
 
 import by.jackraidenph.dragonsurvival.client.render.ClientDragonRender;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.entity.DragonEntity;
 import by.jackraidenph.dragonsurvival.client.handlers.DragonSkins;
 import com.mojang.blaze3d.matrix.MatrixStack;

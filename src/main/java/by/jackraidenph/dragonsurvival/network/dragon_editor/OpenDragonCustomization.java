@@ -1,4 +1,4 @@
-package by.jackraidenph.dragonsurvival.network.SkinCustomization;
+package by.jackraidenph.dragonsurvival.network.dragon_editor;
 
 import by.jackraidenph.dragonsurvival.client.gui.DragonCustomizationScreen;
 import by.jackraidenph.dragonsurvival.network.IMessage;

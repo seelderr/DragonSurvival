@@ -4,7 +4,8 @@ import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.client.render.ClientDragonRender;
 import by.jackraidenph.dragonsurvival.client.sounds.FastGlideSound;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.util.DragonUtils;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.mixins.MixinGameRendererZoom;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
@@ -118,7 +119,7 @@ public class ClientFlightHandler {
     public static void renderFlightCooldown(RenderGameOverlayEvent.Post event) {
         PlayerEntity playerEntity = Minecraft.getInstance().player;
         
-        if (playerEntity == null || !DragonStateProvider.isDragon(playerEntity) || playerEntity.isSpectator())
+        if (playerEntity == null || !DragonUtils.isDragon(playerEntity) || playerEntity.isSpectator())
             return;
         
         DragonStateProvider.getCap(playerEntity).ifPresent(cap -> {

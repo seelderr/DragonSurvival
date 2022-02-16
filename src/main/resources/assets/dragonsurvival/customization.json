@@ -21,6 +21,14 @@
           {
             "key": "cave_base_4",
             "texture": "dragonsurvival:textures/dragon/custom/cave_base_4.png"
+          },
+          {
+            "key": "cave_base_5",
+            "texture": "dragonsurvival:textures/dragon/custom/cave_base_5.png"
+          },
+          {
+            "key": "cave_base_6",
+            "texture": "dragonsurvival:textures/dragon/custom/cave_base_6.png"
           }
         ],
         "HORNS": [
@@ -51,6 +59,13 @@
           {
             "key": "cave_spikes_4",
             "texture": "dragonsurvival:textures/dragon/custom/cave_spikes_4.png"
+          }
+        ],
+        "EYES": [
+          {
+            "key": "cave_eyes_0",
+            "texture": "dragonsurvival:textures/dragon/custom/cave_eyes_0.png",
+            "defaultColor": "#0026FF"
           }
         ]
       }
@@ -87,6 +102,49 @@
         {
           "key": "forest_base_2",
           "texture": "dragonsurvival:textures/dragon/custom/forest_base_2.png"
+        }
+      ],
+      "BOTTOM": [
+        {
+          "key": "forest_bottom_1",
+          "texture": "dragonsurvival:textures/dragon/custom/forest_bottom_1.png"
+        }
+      ],
+      "EXTRA": [
+        {
+          "key": "forest_extra_1",
+          "texture": "dragonsurvival:textures/dragon/custom/forest_extra_1.png"
+        },
+        {
+          "key": "forest_extra_2",
+          "texture": "dragonsurvival:textures/dragon/custom/forest_extra_2.png"
+        },
+        {
+          "key": "forest_extra_3",
+          "texture": "dragonsurvival:textures/dragon/custom/forest_extra_3.png"
+        },
+        {
+          "key": "forest_extra_4",
+          "texture": "dragonsurvival:textures/dragon/custom/forest_extra_4.png"
+        }
+      ],
+      "SPIKES": [
+        {
+          "key": "forest_spikes_1",
+          "texture": "dragonsurvival:textures/dragon/custom/forest_spikes_1.png"
+        }
+      ],
+      "HORNS": [
+        {
+          "key": "forest_horns_1",
+          "texture": "dragonsurvival:textures/dragon/custom/forest_horns_1.png"
+        }
+      ],
+      "EYES": [
+        {
+          "key": "forest_eyes_0",
+          "texture": "dragonsurvival:textures/dragon/custom/forest_eyes_0.png",
+          "defaultColor": "#0026FF"
         }
       ]
     }

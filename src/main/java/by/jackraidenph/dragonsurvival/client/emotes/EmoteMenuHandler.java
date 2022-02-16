@@ -2,7 +2,8 @@ package by.jackraidenph.dragonsurvival.client.emotes;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.util.DragonUtils;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.emotes.SyncEmoteServer;
@@ -59,7 +60,7 @@ public class EmoteMenuHandler
 	{
 		Screen sc = initGuiEvent.getGui();
 		
-		if(sc instanceof ChatScreen && DragonStateProvider.isDragon(Minecraft.getInstance().player)) {
+		if(sc instanceof ChatScreen && DragonUtils.isDragon(Minecraft.getInstance().player)) {
 			ChatScreen screen = (ChatScreen)sc;
 			
 			emotePage = MathHelper.clamp(emotePage, 0, maxPages() - 1);

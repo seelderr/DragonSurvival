@@ -3,11 +3,13 @@ package by.jackraidenph.dragonsurvival.common.magic.abilities.Actives.BreathAbil
 import by.jackraidenph.dragonsurvival.client.handlers.KeyInputHandler;
 import by.jackraidenph.dragonsurvival.common.DragonEffects;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.handlers.DragonConfigHandler;
+import by.jackraidenph.dragonsurvival.common.handlers.magic.ManaHandler;
 import by.jackraidenph.dragonsurvival.common.magic.common.AbilityAnimation;
 import by.jackraidenph.dragonsurvival.common.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.common.magic.common.ISecondAnimation;
+import by.jackraidenph.dragonsurvival.common.util.DragonUtils;
 import by.jackraidenph.dragonsurvival.misc.DragonLevel;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import by.jackraidenph.dragonsurvival.server.handlers.ServerFlightHandler;
@@ -74,7 +76,7 @@ public abstract class BreathAbility extends ActiveDragonAbility implements ISeco
 	
 	public void tickCost(){
 		if(firstUse || castingTicks % Functions.secondsToTicks(2) == 0){
-			DragonStateProvider.consumeMana(player, this.getManaCost());
+			ManaHandler.consumeMana(player, this.getManaCost());
 			firstUse = false;
 		}
 	}
@@ -119,7 +121,7 @@ public abstract class BreathAbility extends ActiveDragonAbility implements ISeco
 		
 		double headRot = playerStateHandler.getMovementData().headYaw;
 		double pitch = playerStateHandler.getMovementData().headPitch;
-		Vector3f bodyRot = DragonStateProvider.getCameraOffset(player);
+		Vector3f bodyRot = DragonUtils.getCameraOffset(player);
 		
 		Point2D result = new Point2D.Double();
 		Point2D result2 = new Point2D.Double();

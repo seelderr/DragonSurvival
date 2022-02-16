@@ -1,6 +1,7 @@
 package by.jackraidenph.dragonsurvival.client.handlers;
 
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.util.DragonUtils;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.container.OpenDragonInventory;
 import by.jackraidenph.dragonsurvival.network.magic.SyncDragonAbilitySlot;
@@ -95,7 +96,7 @@ public class KeyInputHandler
 		if(player == null) return;
 		
 	    if (DRAGON_INVENTORY.consumeClick()) {
-	        if(DragonStateProvider.isDragon(minecraft.player)){
+	        if(DragonUtils.isDragon(minecraft.player)){
 				if(minecraft.screen == null) {
 					NetworkHandler.CHANNEL.sendToServer(new OpenDragonInventory());
 				}else{
@@ -103,14 +104,14 @@ public class KeyInputHandler
 				}
 	        }
 	    }else  if (TOGGLE_ABILITIES.consumeClick()) {
-	        if(DragonStateProvider.isDragon(minecraft.player)){
+	        if(DragonUtils.isDragon(minecraft.player)){
 	            DragonStateProvider.getCap(minecraft.player).ifPresent(dragonStateHandler -> {
 	                dragonStateHandler.getMagic().setRenderAbilities(!dragonStateHandler.getMagic().renderAbilityHotbar());
 	                NetworkHandler.CHANNEL.sendToServer(new SyncDragonAbilitySlot(player.getId(), dragonStateHandler.getMagic().getSelectedAbilitySlot(), dragonStateHandler.getMagic().renderAbilityHotbar()));
 	            });
 	        }
 	    }else  if (NEXT_ABILITY.consumeClick()) {
-	        if(DragonStateProvider.isDragon(minecraft.player)){
+	        if(DragonUtils.isDragon(minecraft.player)){
 	            DragonStateProvider.getCap(minecraft.player).ifPresent(dragonStateHandler -> {
 	                int nextSlot = dragonStateHandler.getMagic().getSelectedAbilitySlot() == 3 ? 0 : dragonStateHandler.getMagic().getSelectedAbilitySlot() + 1;
 	                dragonStateHandler.getMagic().setSelectedAbilitySlot(nextSlot);
@@ -118,7 +119,7 @@ public class KeyInputHandler
 	            });
 	        }
 	    }else  if (PREV_ABILITY.consumeClick()) {
-	        if(DragonStateProvider.isDragon(minecraft.player)){
+	        if(DragonUtils.isDragon(minecraft.player)){
 	            DragonStateProvider.getCap(minecraft.player).ifPresent(dragonStateHandler -> {
 	                int nextSlot = dragonStateHandler.getMagic().getSelectedAbilitySlot() == 0 ? 3 : dragonStateHandler.getMagic().getSelectedAbilitySlot() - 1;
 	                dragonStateHandler.getMagic().setSelectedAbilitySlot(nextSlot);
@@ -126,28 +127,28 @@ public class KeyInputHandler
 	            });
 	        }
 	    }else  if (ABILITY1.consumeClick()) {
-	        if(DragonStateProvider.isDragon(minecraft.player)){
+	        if(DragonUtils.isDragon(minecraft.player)){
 	            DragonStateProvider.getCap(minecraft.player).ifPresent(dragonStateHandler -> {
 	                dragonStateHandler.getMagic().setSelectedAbilitySlot(0);
 	                NetworkHandler.CHANNEL.sendToServer(new SyncDragonAbilitySlot(player.getId(), dragonStateHandler.getMagic().getSelectedAbilitySlot(), dragonStateHandler.getMagic().renderAbilityHotbar()));
 	            });
 	        }
 	    }else  if (ABILITY2.consumeClick()) {
-	        if(DragonStateProvider.isDragon(minecraft.player)){
+	        if(DragonUtils.isDragon(minecraft.player)){
 	            DragonStateProvider.getCap(minecraft.player).ifPresent(dragonStateHandler -> {
 	                dragonStateHandler.getMagic().setSelectedAbilitySlot(1);
 	                NetworkHandler.CHANNEL.sendToServer(new SyncDragonAbilitySlot(player.getId(), dragonStateHandler.getMagic().getSelectedAbilitySlot(), dragonStateHandler.getMagic().renderAbilityHotbar()));
 	            });
 	        }
 	    }else  if (ABILITY3.consumeClick()) {
-	        if(DragonStateProvider.isDragon(minecraft.player)){
+	        if(DragonUtils.isDragon(minecraft.player)){
 	            DragonStateProvider.getCap(minecraft.player).ifPresent(dragonStateHandler -> {
 	                dragonStateHandler.getMagic().setSelectedAbilitySlot(2);
 	                NetworkHandler.CHANNEL.sendToServer(new SyncDragonAbilitySlot(player.getId(), dragonStateHandler.getMagic().getSelectedAbilitySlot(), dragonStateHandler.getMagic().renderAbilityHotbar()));
 	            });
 	        }
 	    }else  if (ABILITY4.consumeClick()) {
-	        if(DragonStateProvider.isDragon(minecraft.player)){
+	        if(DragonUtils.isDragon(minecraft.player)){
 	            DragonStateProvider.getCap(minecraft.player).ifPresent(dragonStateHandler -> {
 	                dragonStateHandler.getMagic().setSelectedAbilitySlot(3);
 	                NetworkHandler.CHANNEL.sendToServer(new SyncDragonAbilitySlot(player.getId(), dragonStateHandler.getMagic().getSelectedAbilitySlot(), dragonStateHandler.getMagic().renderAbilityHotbar()));

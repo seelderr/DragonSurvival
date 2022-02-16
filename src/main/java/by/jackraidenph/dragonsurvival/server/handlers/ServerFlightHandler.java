@@ -3,7 +3,8 @@ package by.jackraidenph.dragonsurvival.server.handlers;
 import by.jackraidenph.dragonsurvival.client.handlers.ClientFlightHandler;
 import by.jackraidenph.dragonsurvival.common.DragonEffects;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.util.DragonUtils;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
@@ -56,7 +57,7 @@ public class ServerFlightHandler {
 		            return;
 	            }
 	
-	            if (livingEntity.isPassenger() && DragonStateProvider.isDragon(livingEntity.getVehicle())) {
+	            if (livingEntity.isPassenger() && DragonUtils.isDragon(livingEntity.getVehicle())) {
 		            event.setCanceled(true);
 					return;
 	            }
@@ -87,7 +88,7 @@ public class ServerFlightHandler {
 	@SubscribeEvent
 	public static void foldWings(PlayerTickEvent tickEvent){
 		PlayerEntity player = tickEvent.player;
-		if(tickEvent.phase ==  Phase.START || !DragonStateProvider.isDragon(player) || player.level.isClientSide) return;
+		if(tickEvent.phase ==  Phase.START || !DragonUtils.isDragon(player) || player.level.isClientSide) return;
 		if(!ConfigHandler.SERVER.foldWingsOnLand.get()) return;
 		
 		DragonStateHandler dragonStateHandler = DragonStateProvider.getCap(player).orElse(null);

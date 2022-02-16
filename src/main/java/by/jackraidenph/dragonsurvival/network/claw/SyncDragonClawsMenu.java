@@ -1,7 +1,7 @@
 package by.jackraidenph.dragonsurvival.network.claw;
 
-import by.jackraidenph.dragonsurvival.common.capability.DragonCapabilities.ClawInventory;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.subcapabilities.ClawInventory;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.network.IMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;

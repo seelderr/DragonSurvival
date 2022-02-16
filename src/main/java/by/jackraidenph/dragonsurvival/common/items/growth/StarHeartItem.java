@@ -1,7 +1,7 @@
 package by.jackraidenph.dragonsurvival.common.items.growth;
 
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.entity.player.SyncGrowthState;
 import net.minecraft.client.util.ITooltipFlag;

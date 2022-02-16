@@ -7,8 +7,8 @@ import by.jackraidenph.dragonsurvival.client.render.ClientDragonRender;
 import by.jackraidenph.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.jackraidenph.dragonsurvival.client.util.TextRenderUtil;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.entity.DragonEntity;
+import by.jackraidenph.dragonsurvival.common.util.DragonUtils;
 import by.jackraidenph.dragonsurvival.misc.DragonLevel;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -154,7 +154,7 @@ public class DragonAltarGUI extends Screen {
         matrixStack.scale(scale, scale, scale);
         matrixStack.translate(0, 0, 400);
         ClientDragonRender.dragonModel.setCurrentTexture(null);
-        ClientDragonRender.renderEntityInInventory(DragonStateProvider.isDragon(player) ? dragon : player, x, y, scale, xrot, -3);
+        ClientDragonRender.renderEntityInInventory(DragonUtils.isDragon(player) ? dragon : player, x, y, scale, xrot, -3);
         matrixStack.popPose();
     }
     
@@ -191,7 +191,7 @@ public class DragonAltarGUI extends Screen {
             @Override
             public void render(MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_)
             {
-                this.visible = DragonStateProvider.isDragon(minecraft.player);
+                this.visible = DragonUtils.isDragon(minecraft.player);
                 super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
             }
         });

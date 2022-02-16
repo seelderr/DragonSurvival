@@ -9,7 +9,7 @@ import by.jackraidenph.dragonsurvival.client.render.ClientDragonRender;
 import by.jackraidenph.dragonsurvival.client.render.entity.dragon.DragonRenderer;
 import by.jackraidenph.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.entity.DragonEntity;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonLevel;
@@ -157,7 +157,8 @@ public class SkinsScreen extends Screen
 			if(handler != null){
 				handler.getSkin().renderNewborn = !handler.getSkin().renderNewborn;
 				NetworkHandler.CHANNEL.sendToServer(new SyncDragonSkinSettings(getMinecraft().player.getId(), handler.getSkin().renderNewborn, handler.getSkin().renderYoung, handler.getSkin().renderAdult));
-				executor.execute(() -> setTextures());
+//				executor.execute(() -> setTextures());
+				setTextures();
 			}
 		}){
 			@Override
@@ -177,7 +178,8 @@ public class SkinsScreen extends Screen
 			if(handler != null){
 				handler.getSkin().renderYoung = !handler.getSkin().renderYoung;
 				NetworkHandler.CHANNEL.sendToServer(new SyncDragonSkinSettings(getMinecraft().player.getId(), handler.getSkin().renderNewborn, handler.getSkin().renderYoung, handler.getSkin().renderAdult));
-				executor.execute(() -> setTextures());
+//				executor.execute(() -> setTextures());
+				setTextures();
 			}
 		}){
 			@Override
@@ -197,7 +199,8 @@ public class SkinsScreen extends Screen
 			if(handler != null){
 				handler.getSkin().renderAdult = !handler.getSkin().renderAdult;
 				NetworkHandler.CHANNEL.sendToServer(new SyncDragonSkinSettings(getMinecraft().player.getId(), handler.getSkin().renderNewborn, handler.getSkin().renderYoung, handler.getSkin().renderAdult));
-				executor.execute(() -> setTextures());
+//				executor.execute(() -> setTextures());
+				setTextures();
 			}
 		}){
 			@Override
@@ -213,7 +216,8 @@ public class SkinsScreen extends Screen
 		
 		addButton(new Button(startX + 128, startY + 128, imageWidth, 20, new TranslationTextComponent("ds.gui.skins.other_skins"), (button) -> {
 			ConfigHandler.CLIENT.renderOtherPlayerSkins.set(!ConfigHandler.CLIENT.renderOtherPlayerSkins.get());
-			executor.execute(() -> setTextures());
+//			executor.execute(() -> setTextures());
+			setTextures();
 		}){
 			@Override
 			public void renderButton(MatrixStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_)
@@ -313,7 +317,8 @@ public class SkinsScreen extends Screen
 						seenSkins.remove(0);
 					}
 					
-					executor.execute(() -> setTextures());
+//					executor.execute(() -> setTextures());
+					setTextures();
 				}
 			}
 		}){
@@ -328,7 +333,8 @@ public class SkinsScreen extends Screen
 			int pos = MathHelper.clamp(level.ordinal() + 1, 0, DragonLevel.values().length - 1);
 			level = DragonLevel.values()[pos];
 			
-			executor.execute(() -> setTextures());
+//			executor.execute(() -> setTextures());
+			setTextures();
 		}){
 			@Override
 			public void renderButton(MatrixStack stack, int mouseX, int mouseY, float p_230431_4_)
@@ -347,7 +353,8 @@ public class SkinsScreen extends Screen
 			int pos = MathHelper.clamp(level.ordinal() - 1, 0, DragonLevel.values().length - 1);
 			level = DragonLevel.values()[pos];
 			
-			executor.execute(() -> setTextures());
+//			executor.execute(() -> setTextures());
+			setTextures();
 		}){
 			@Override
 			public void renderButton(MatrixStack stack, int mouseX, int mouseY, float p_230431_4_)

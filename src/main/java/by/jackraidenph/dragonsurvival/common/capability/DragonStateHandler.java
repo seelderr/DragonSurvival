@@ -1,9 +1,12 @@
 package by.jackraidenph.dragonsurvival.common.capability;
 
-import by.jackraidenph.dragonsurvival.common.capability.DragonCapabilities.ClawInventory;
-import by.jackraidenph.dragonsurvival.common.capability.DragonCapabilities.EmoteCap;
-import by.jackraidenph.dragonsurvival.common.capability.DragonCapabilities.MagicCap;
-import by.jackraidenph.dragonsurvival.common.capability.DragonCapabilities.SkinCap;
+import by.jackraidenph.dragonsurvival.common.capability.objects.DragonDebuffData;
+import by.jackraidenph.dragonsurvival.common.capability.objects.DragonMovementData;
+import by.jackraidenph.dragonsurvival.common.capability.subcapabilities.ClawInventory;
+import by.jackraidenph.dragonsurvival.common.capability.subcapabilities.EmoteCap;
+import by.jackraidenph.dragonsurvival.common.capability.subcapabilities.MagicCap;
+import by.jackraidenph.dragonsurvival.common.capability.subcapabilities.SkinCap;
+import by.jackraidenph.dragonsurvival.common.util.DragonUtils;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonLevel;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
@@ -14,15 +17,24 @@ import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.ToolType;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 
 public class DragonStateHandler {
+	public final Supplier<NBTInterface>[] caps = new Supplier[]{
+			this::getSkin,
+			this::getMagic,
+			this::getEmotes,
+			this::getClawInventory
+	};
+	
 	public static final ToolType[] CLAW_TOOL_TYPES = new ToolType[]{null, ToolType.PICKAXE, ToolType.AXE, ToolType.SHOVEL};
 	
 	private boolean isHiding;
@@ -305,7 +317,7 @@ public class DragonStateHandler {
     }
 
     public static void updateModifiers(PlayerEntity oldPlayer, PlayerEntity newPlayer) {
-		if(!DragonStateProvider.isDragon(newPlayer)) return;
+		if(!DragonUtils.isDragon(newPlayer)) return;
 		
     	AttributeModifier oldMod = getHealthModifier(oldPlayer);
         if (oldMod != null)
@@ -429,58 +441,124 @@ public class DragonStateHandler {
         this.passengerId = passengerId;
     }
 	
-	public static class DragonMovementData {
-        public double bodyYaw;
-        public double headYaw;
-        public double headPitch;
-
-        public double headYawLastTick;
-        public double headPitchLastTick;
-        public double bodyYawLastTick;
-
-        public boolean bite;
-		public boolean dig;
-		
-		public boolean spinLearned;
-		public int spinCooldown;
-		public int spinAttack;
-        
-        public DragonMovementData(double bodyYaw, double headYaw, double headPitch, boolean bite) {
-            this.bodyYaw = bodyYaw;
-            this.headYaw = headYaw;
-            this.headPitch = headPitch;
-            this.bite = bite;
-        }
-    }
-    
-    public static class DragonDebuffData {
-    	public double timeWithoutWater;
-		public int timeInRain;
-    	public int timeInDarkness;
-    	
-    	public DragonDebuffData(double timeWithoutWater, int timeInDarkness, int timeInRain) {
-    		this.timeWithoutWater = timeWithoutWater;
-    		this.timeInDarkness = timeInDarkness;
-			this.timeInRain = timeInRain;
-    	}
-    }
-	
 	public ClawInventory getClawInventory()
 	{
 		return clawInventory;
 	}
-	
 	public EmoteCap getEmotes()
 	{
 		return emotes;
 	}
-	
 	public MagicCap getMagic()
 	{
 		return magic;
 	}
-	
 	public SkinCap getSkin(){
 		return skin;
+	}
+	
+	public void readNBT(CompoundNBT tag){
+		if (tag.getString("type").equals(""))
+			setType(DragonType.NONE);
+		else
+			setType(DragonType.valueOf(tag.getString("type")));
+		
+		if (isDragon()) {
+			setMovementData(tag.getDouble("bodyYaw"), tag.getDouble("headYaw"), tag.getDouble("headPitch"), tag.getBoolean("bite"));
+			getMovementData().headYawLastTick = getMovementData().headYaw;
+			getMovementData().bodyYawLastTick = getMovementData().bodyYaw;
+			getMovementData().headPitchLastTick = getMovementData().headPitch;
+			
+			altarCooldown = tag.getInt("altarCooldown");
+			hasUsedAltar = tag.getBoolean("usedAltar");
+			
+			setHasWings(tag.getBoolean("hasWings"));
+			setWingsSpread(tag.getBoolean("isFlying"));
+			
+			getMovementData().dig = tag.getBoolean("dig");
+			getMovementData().spinCooldown = tag.getInt("spinCooldown");
+			getMovementData().spinAttack = tag.getInt("spinAttack");
+			getMovementData().spinLearned = tag.getBoolean("spinLearned");
+			
+			setDebuffData(tag.getInt("timeWithoutWater"), tag.getInt("timeInDarkness"), tag.getInt("timeInRain"));
+			setIsHiding(tag.getBoolean("isHiding"));
+			
+			setSize(tag.getDouble("size"));
+			growing =!tag.contains("growing") || tag.getBoolean("growing");
+			
+			treasureResting = tag.getBoolean("resting");
+			treasureRestTimer = tag.getInt("restingTimer");
+			
+			caveSize = tag.getDouble("caveSize");
+			seaSize = tag.getDouble("seaSize");
+			forestSize = tag.getDouble("forestSize");
+			
+			caveWings = tag.getBoolean("caveWings");
+			seaWings = tag.getBoolean("seaWings");
+			forestWings = tag.getBoolean("forestWings");
+
+			for(int i = 0; i < caps.length; i++){
+				if(tag.contains("cap_" + i)){
+					caps[i].get().readNBT((CompoundNBT)tag.get("cap_" + i));
+				}
+			}
+			
+			if (getSize() == 0)
+				setSize(DragonLevel.BABY.size);
+			
+			setLavaAirSupply(tag.getInt("lavaAirSupply"));
+		}
+	}
+	
+	public CompoundNBT writeNBT(){
+		CompoundNBT tag = new CompoundNBT();
+		tag.putString("type", getType().toString());
+		
+		if (isDragon()) {
+			DragonMovementData movementData = getMovementData();
+			tag.putDouble("bodyYaw", movementData.bodyYaw);
+			tag.putDouble("headYaw", movementData.headYaw);
+			tag.putDouble("headPitch", movementData.headPitch);
+			
+			tag.putInt("altarCooldown", altarCooldown);
+			tag.putBoolean("usedAltar", hasUsedAltar);
+			
+			tag.putInt("spinCooldown", movementData.spinCooldown);
+			tag.putInt("spinAttack", movementData.spinAttack);
+			tag.putBoolean("spinLearned", movementData.spinLearned);
+			
+			tag.putBoolean("bite", movementData.bite);
+			tag.putBoolean("dig", movementData.dig);
+			
+			DragonDebuffData debuffData = getDebuffData();
+			tag.putDouble("timeWithoutWater", debuffData.timeWithoutWater);
+			tag.putInt("timeInDarkness", debuffData.timeInDarkness);
+			tag.putInt("timeInRain", debuffData.timeInRain);
+			tag.putBoolean("isHiding", isHiding());
+			
+			tag.putDouble("size", getSize());
+			tag.putBoolean("growing", growing);
+			
+			tag.putBoolean("hasWings", hasWings());
+			tag.putBoolean("isFlying", isWingsSpread());
+			
+			tag.putInt("lavaAirSupply", getLavaAirSupply());
+			
+			tag.putBoolean("resting", treasureResting);
+			tag.putInt("restingTimer", treasureRestTimer);
+			
+			tag.putDouble("caveSize", caveSize);
+			tag.putDouble("seaSize", seaSize);
+			tag.putDouble("forestSize", forestSize);
+			
+			tag.putBoolean("caveWings", caveWings);
+			tag.putBoolean("seaWings", seaWings);
+			tag.putBoolean("forestWings", forestWings);
+			
+			for(int i = 0; i < caps.length; i++){
+				tag.put("cap_" + i, caps[i].get().writeNBT());
+			}
+		}
+		return tag;
 	}
 }

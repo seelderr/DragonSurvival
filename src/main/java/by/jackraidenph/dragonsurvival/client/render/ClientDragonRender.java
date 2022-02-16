@@ -10,9 +10,10 @@ import by.jackraidenph.dragonsurvival.client.render.entity.dragon.DragonArmorRen
 import by.jackraidenph.dragonsurvival.client.render.entity.dragon.DragonRenderer;
 import by.jackraidenph.dragonsurvival.common.DragonEffects;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.entity.DSEntities;
 import by.jackraidenph.dragonsurvival.common.entity.DragonEntity;
+import by.jackraidenph.dragonsurvival.common.util.DragonUtils;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonLevel;
 import by.jackraidenph.dragonsurvival.mixins.AccessorEntityRenderer;
@@ -130,7 +131,7 @@ public class ClientDragonRender
             try {
                 matrixStack.pushPose();
 	
-	            Vector3f lookVector = DragonStateProvider.getCameraOffset(player);
+	            Vector3f lookVector = DragonUtils.getCameraOffset(player);
 	            matrixStack.translate(-lookVector.x(), lookVector.y(), -lookVector.z());
 				
 	            double size = cap.getSize();

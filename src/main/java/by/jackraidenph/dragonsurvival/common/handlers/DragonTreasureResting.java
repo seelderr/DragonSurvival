@@ -2,7 +2,8 @@ package by.jackraidenph.dragonsurvival.common.handlers;
 
 import by.jackraidenph.dragonsurvival.common.blocks.TreasureBlock;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.util.DragonUtils;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.mixins.MixinServerWorld;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
@@ -45,7 +46,7 @@ public class DragonTreasureResting
 		if(event.phase == Phase.START || event.side == LogicalSide.CLIENT) return;
 		PlayerEntity player = event.player;
 		
-		if(DragonStateProvider.isDragon(player)){
+		if(DragonUtils.isDragon(player)){
 			DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
 			
 			if(handler != null){
@@ -114,7 +115,7 @@ public class DragonTreasureResting
 							++i;
 						} else if (serverplayerentity.isSleeping()) {
 							++j;
-						} else if (DragonStateProvider.isDragon(serverplayerentity)) {
+						} else if (DragonUtils.isDragon(serverplayerentity)) {
 							DragonStateHandler handler = DragonStateProvider.getCap(serverplayerentity).orElse(null);
 							
 							if (ForgeEventFactory.fireSleepingTimeCheck(serverplayerentity, Optional.empty())) {
@@ -146,7 +147,7 @@ public class DragonTreasureResting
 		if(event.phase == Phase.START) return;
 		PlayerEntity player = Minecraft.getInstance().player;
 		
-		if(DragonStateProvider.isDragon(player)){
+		if(DragonUtils.isDragon(player)){
 			DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
 			
 			if(handler != null){
@@ -168,7 +169,7 @@ public class DragonTreasureResting
 	public static void sleepScreenRender(RenderGameOverlayEvent.Post event) {
 		PlayerEntity playerEntity = Minecraft.getInstance().player;
 		
-		if (playerEntity == null || !DragonStateProvider.isDragon(playerEntity) || playerEntity.isSpectator())
+		if (playerEntity == null || !DragonUtils.isDragon(playerEntity) || playerEntity.isSpectator())
 			return;
 		
 		DragonStateProvider.getCap(playerEntity).ifPresent(cap -> {

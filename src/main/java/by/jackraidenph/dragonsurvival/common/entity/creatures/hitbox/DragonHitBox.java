@@ -1,8 +1,9 @@
 package by.jackraidenph.dragonsurvival.common.entity.creatures.hitbox;
 
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.handlers.DragonSizeHandler;
+import by.jackraidenph.dragonsurvival.common.util.DragonUtils;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.*;
@@ -91,7 +92,7 @@ public class DragonHitBox extends MobEntity
 				return;
 			}
 		}else{
-			if(player == null || player.isDeadOrDying() || !DragonStateProvider.isDragon(player)){
+			if(player == null || player.isDeadOrDying() || !DragonUtils.isDragon(player)){
 				if (!level.isClientSide) {
 					this.remove();
 				}
@@ -102,7 +103,7 @@ public class DragonHitBox extends MobEntity
 		DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
 		
 		if(handler == null || handler.getMovementData() == null) return;
-		Vector3f offset = DragonStateProvider.getCameraOffset(player);
+		Vector3f offset = DragonUtils.getCameraOffset(player);
 		
 		double size = handler.getSize();
 		double height = DragonSizeHandler.calculateDragonHeight(size, ConfigHandler.SERVER.hitboxGrowsPastHuman.get());
@@ -114,7 +115,7 @@ public class DragonHitBox extends MobEntity
 		
 		double headRot = handler.getMovementData().headYaw;
 		double pitch = handler.getMovementData().headPitch*-1;
-		Vector3f bodyRot = DragonStateProvider.getCameraOffset(player);
+		Vector3f bodyRot = DragonUtils.getCameraOffset(player);
 		
 		bodyRot = new Vector3f(bodyRot.x() / 2, bodyRot.y() / 2, bodyRot.z() / 2);
 		

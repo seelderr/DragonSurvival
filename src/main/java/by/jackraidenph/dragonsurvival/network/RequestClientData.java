@@ -1,5 +1,6 @@
 package by.jackraidenph.dragonsurvival.network;
 
+import by.jackraidenph.dragonsurvival.client.handlers.ClientEvents;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonLevel;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
@@ -17,9 +18,9 @@ import java.util.function.Supplier;
 
 public class RequestClientData implements IMessage<RequestClientData>
 {
-	DragonStateHandler handler;
-	DragonType type;
-	DragonLevel level;
+	public DragonStateHandler handler;
+	public DragonType type;
+	public DragonLevel level;
 	
 	public RequestClientData(DragonStateHandler handler) {
 		this.handler = handler;
@@ -59,7 +60,7 @@ public class RequestClientData implements IMessage<RequestClientData>
 		context.enqueueWork(() -> {
 			PlayerEntity thisPlayer = Minecraft.getInstance().player;
 			if (thisPlayer != null) {
-				SynchronizationController.sendClientData(message);
+				ClientEvents.sendClientData(message);
 			}
 			context.setPacketHandled(true);
 		});

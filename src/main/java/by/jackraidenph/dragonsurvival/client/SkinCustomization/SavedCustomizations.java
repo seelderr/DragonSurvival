@@ -8,6 +8,6 @@ import java.util.HashMap;
 public class SavedCustomizations
 {
 	public HashMap<DragonType, HashMap<Integer, HashMap<DragonLevel, HashMap<CustomizationLayer, String>>>> saved = new HashMap<>();
-	public HashMap<DragonType, HashMap<Integer, HashMap<DragonLevel, HashMap<CustomizationLayer, Double>>>> savedHue = new HashMap<>();
+	public HashMap<DragonType, HashMap<Integer, HashMap<DragonLevel, HashMap<CustomizationLayer, Integer>>>> savedColor = new HashMap<>();
 	public HashMap<DragonType, HashMap<DragonLevel, Integer>> current = new HashMap<>();
 }

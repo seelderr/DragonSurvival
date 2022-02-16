@@ -1,6 +1,6 @@
 package by.jackraidenph.dragonsurvival.network.container;
 
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.util.DragonUtils;
 import by.jackraidenph.dragonsurvival.server.containers.DragonContainer;
 import by.jackraidenph.dragonsurvival.network.IMessage;
 import net.minecraft.entity.player.PlayerEntity;
@@ -29,7 +29,7 @@ public class OpenDragonInventory implements IMessage<OpenDragonInventory>
     @Override
     public void handle(OpenDragonInventory message, Supplier<NetworkEvent.Context> supplier) {
         ServerPlayerEntity serverPlayerEntity = supplier.get().getSender();
-        if(DragonStateProvider.isDragon(serverPlayerEntity)) {
+        if(DragonUtils.isDragon(serverPlayerEntity)) {
             
             if(serverPlayerEntity.containerMenu != null){
                 serverPlayerEntity.containerMenu.removed(serverPlayerEntity);

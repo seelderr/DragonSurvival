@@ -1,7 +1,8 @@
 package by.jackraidenph.dragonsurvival.mixins;
 
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.util.DragonUtils;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -37,7 +38,7 @@ public class MixinEnchantmentHelper
 			if(entity.getMainHandItem().getItem() instanceof TieredItem) return;
 		}
 		
-		if(DragonStateProvider.isDragon(entity)){
+		if(DragonUtils.isDragon(entity)){
 			DragonStateHandler handler = DragonStateProvider.getCap(entity).orElse(null);
 			
 			if(handler != null){

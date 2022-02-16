@@ -2,7 +2,7 @@ package by.jackraidenph.dragonsurvival.client.render.entity.dragon;
 
 import by.jackraidenph.dragonsurvival.client.render.ClientDragonRender;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.entity.DragonEntity;
 import by.jackraidenph.dragonsurvival.common.magic.DragonAbilities;
 import by.jackraidenph.dragonsurvival.common.magic.abilities.Actives.BreathAbilities.BreathAbility;
@@ -38,7 +38,6 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
         super(renderManager, modelProvider);
 		this.addLayer(new DragonGlowLayerRenderer(this));
 		this.addLayer(new DragonCustomizationLayer(this));
-		this.addLayer(new DragonGlowCustomizationLayer(this));
 		this.addLayer(new ClawsAndTeethRenderLayer(this));
 		this.addLayer(new DragonArmorRenderLayer(this));
 	}
