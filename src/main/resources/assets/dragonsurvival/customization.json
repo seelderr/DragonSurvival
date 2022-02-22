@@ -102,12 +102,28 @@
         {
           "key": "forest_base_2",
           "texture": "dragonsurvival:textures/dragon/custom/forest_base_2.png"
+        },
+        {
+          "key": "forest_base_3",
+          "texture": "dragonsurvival:textures/dragon/custom/forest_base_3.png"
+        },
+        {
+          "key": "forest_base_4",
+          "texture": "dragonsurvival:textures/dragon/custom/forest_base_4.png"
         }
       ],
       "BOTTOM": [
         {
           "key": "forest_bottom_1",
           "texture": "dragonsurvival:textures/dragon/custom/forest_bottom_1.png"
+        },
+        {
+          "key": "forest_bottom_2",
+          "texture": "dragonsurvival:textures/dragon/custom/forest_bottom_2.png"
+        },
+        {
+          "key": "forest_bottom_3",
+          "texture": "dragonsurvival:textures/dragon/custom/forest_bottom_3.png"
         }
       ],
       "EXTRA": [
@@ -124,20 +140,80 @@
           "texture": "dragonsurvival:textures/dragon/custom/forest_extra_3.png"
         },
         {
-          "key": "forest_extra_4",
-          "texture": "dragonsurvival:textures/dragon/custom/forest_extra_4.png"
+          "key": "forest_extra_5",
+          "texture": "dragonsurvival:textures/dragon/custom/forest_extra_5.png"
+        },
+        {
+          "key": "forest_extra_6",
+          "texture": "dragonsurvival:textures/dragon/custom/forest_extra_6.png"
+        },
+        {
+          "key": "forest_extra_7",
+          "texture": "dragonsurvival:textures/dragon/custom/forest_extra_7.png"
+        },
+        {
+          "key": "forest_extra_8",
+          "texture": "dragonsurvival:textures/dragon/custom/forest_extra_8.png"
+        },
+        {
+          "key": "forest_extra_9",
+          "texture": "dragonsurvival:textures/dragon/custom/forest_extra_9.png"
+        },
+        {
+          "key": "forest_10",
+          "texture": "dragonsurvival:textures/dragon/custom/forest_extra_10.png"
+        },
+        {
+          "key": "forest_11",
+          "texture": "dragonsurvival:textures/dragon/custom/forest_extra_11.png"
+        },
+        {
+          "key": "forest_12",
+          "texture": "dragonsurvival:textures/dragon/custom/forest_extra_12.png"
+        },
+        {
+          "key": "forest_13",
+          "texture": "dragonsurvival:textures/dragon/custom/forest_extra_13.png"
+        },
+        {
+          "key": "forest_14",
+          "texture": "dragonsurvival:textures/dragon/custom/forest_extra_14.png"
+        },
+        {
+          "key": "forest_15",
+          "texture": "dragonsurvival:textures/dragon/custom/forest_extra_15.png"
         }
       ],
       "SPIKES": [
         {
           "key": "forest_spikes_1",
           "texture": "dragonsurvival:textures/dragon/custom/forest_spikes_1.png"
+        },
+        {
+          "key": "forest_spikes_2",
+          "texture": "dragonsurvival:textures/dragon/custom/forest_spikes_2.png"
+        },
+        {
+          "key": "forest_spikes_3",
+          "texture": "dragonsurvival:textures/dragon/custom/forest_spikes_3.png"
+        },
+        {
+          "key": "forest_spikes_4",
+          "texture": "dragonsurvival:textures/dragon/custom/forest_spikes_4.png"
         }
       ],
       "HORNS": [
         {
           "key": "forest_horns_1",
           "texture": "dragonsurvival:textures/dragon/custom/forest_horns_1.png"
+        },
+        {
+          "key": "forest_horns_2",
+          "texture": "dragonsurvival:textures/dragon/custom/forest_horns_2.png"
+        },
+        {
+          "key": "forest_horns_3",
+          "texture": "dragonsurvival:textures/dragon/custom/forest_horns_3.png"
         }
       ],
       "EYES": [
