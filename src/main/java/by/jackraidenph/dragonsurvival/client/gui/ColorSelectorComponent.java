@@ -37,7 +37,15 @@ public class ColorSelectorComponent extends FocusableGui implements IRenderable
 		this.ySize = ySize;
 		Texture text = DragonCustomizationHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, screen.handler), layer, screen.map.getOrDefault(screen.handler.getLevel(), new HashMap<>()).getOrDefault(layer, null), screen.handler.getType());
 		
-		colorPicker = new ColorPickerButton(x + 3, y, xSize - 5, ySize, Color.decode(text.defaultColor), (c) -> {
+		Color defaultC = Color.decode(text.defaultColor);
+		
+		if(screen.hueMap.containsKey(screen.level)){
+			if(screen.hueMap.get(screen.level).containsKey(layer)){
+				defaultC = new Color(screen.hueMap.get(screen.level).get(layer));
+			}
+		}
+		
+		colorPicker = new ColorPickerButton(x + 3, y, xSize - 5, ySize, defaultC, (c) -> {
 			screen.hueMap.computeIfAbsent(screen.level, (s) -> new HashMap<>());
 			screen.hueMap.get(screen.level).put(layer, c.getRGB());
 			this.screen.handler.getSkin().hueChanged.add(layer);

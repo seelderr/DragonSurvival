@@ -17,7 +17,7 @@ public class KnightRenderer extends GeoEntityRenderer<KnightEntity> {
     public KnightRenderer(EntityRendererManager renderManager, AnimatedGeoModel<KnightEntity> modelProvider) {
         super(renderManager, modelProvider);
     }
-
+    
     @Override
     public void renderRecursively(GeoBone bone, MatrixStack stack, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
         if (bone.getName().equals("left_item")) {
@@ -27,7 +27,9 @@ public class KnightRenderer extends GeoEntityRenderer<KnightEntity> {
             stack.translate(0.0, -0.3, -0.5);
             Minecraft.getInstance().getItemRenderer().renderStatic(mainHand, ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND, packedLightIn, packedOverlayIn, stack, rtb);
             stack.popPose();
-            bufferIn = rtb.getBuffer(RenderType.entityTranslucent(whTexture));
+           // bufferIn = rtb.getBuffer(RenderType.entityTranslucent(whTexture));
+            bufferIn = rtb.getBuffer(RenderType.entitySmoothCutout(whTexture));
+    
         } else if (bone.getName().equals("right_item")) {
             stack.pushPose();
             RenderUtils.moveToPivot(bone, stack);
@@ -36,7 +38,8 @@ public class KnightRenderer extends GeoEntityRenderer<KnightEntity> {
             stack.mulPose(Vector3f.XP.rotationDegrees(90));
             Minecraft.getInstance().getItemRenderer().renderStatic(offHand, ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND, packedLightIn, packedOverlayIn, stack, rtb);
             stack.popPose();
-            bufferIn = rtb.getBuffer(RenderType.entityTranslucent(whTexture));
+            //bufferIn = rtb.getBuffer(RenderType.entityTranslucent(whTexture));
+            bufferIn = rtb.getBuffer(RenderType.entitySmoothCutout(whTexture));
         }
         super.renderRecursively(bone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
     }

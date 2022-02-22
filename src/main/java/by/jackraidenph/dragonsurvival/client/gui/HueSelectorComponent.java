@@ -51,13 +51,20 @@ public class HueSelectorComponent extends FocusableGui implements IRenderable
 			}
 		};
 		
-		Color c = new Color(screen.hueMap.getOrDefault(screen.level, new HashMap<>()).getOrDefault(layer, 0));
+		Integer cCode = screen.hueMap.getOrDefault(screen.level, new HashMap<>()).getOrDefault(layer, 0);
+		Color c = new Color(cCode);
 		float[] hsb = Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), null);
+		
+		if(cCode == 0){
+			hsb[0] = 0;
+			hsb[1] = 0.5f;
+		}
 		
 		hueSlider = new Slider(x + 3, y, xSize - 26, 20, StringTextComponent.EMPTY, StringTextComponent.EMPTY, -180, 180, Math.round(hsb[0] * 360 - 180), true, true, (val) -> {}, (val) -> {
 			screen.hueMap.computeIfAbsent(screen.level, (s) -> new HashMap<>());
 			float value = (hueSlider.getValueInt() + 180) / 360f;
-			screen.hueMap.get(screen.level).put(layer, Color.HSBtoRGB(value, 1f, 1f));
+			float value1 = (saturationSlider.getValueInt() + 180) / 360f;
+			screen.hueMap.get(screen.level).put(layer, Color.HSBtoRGB(value, value1, 1f));
 			this.screen.handler.getSkin().hueChanged.add(layer);
 			screen.update();
 		}){
@@ -111,7 +118,7 @@ public class HueSelectorComponent extends FocusableGui implements IRenderable
 		};
 		
 		saturationReset = new ExtendedButton(x + 3 + xSize - 26, y + 22, 20, 20, StringTextComponent.EMPTY, (s) ->{
-			saturationSlider.setValue(180.0);
+			saturationSlider.setValue(0);
 			saturationSlider.updateSlider();
 		}){
 			@Override

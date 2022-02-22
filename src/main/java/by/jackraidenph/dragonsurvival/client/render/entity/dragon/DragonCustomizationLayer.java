@@ -131,9 +131,9 @@ public class DragonCustomizationLayer extends GeoLayerRenderer<DragonEntity>
 							}
 							
 							if(satVal > 0){
-								hsb[1] = (float)MathHelper.lerp(Math.abs(satVal), hsb[1], 1.0);
+								hsb[1] = (float)MathHelper.lerp(Math.abs(satVal) * 2, hsb[1], 1.0);
 							}else{
-								hsb[1] = (float)MathHelper.lerp(Math.abs(satVal), hsb[1], 0.0);
+								hsb[1] = (float)MathHelper.lerp(Math.abs(satVal) * 2, hsb[1], 0.0);
 							}
 							
 							Color c = new Color(Color.HSBtoRGB(hsb[0], hsb[1], hsb[2]));

@@ -53,9 +53,8 @@ public class DragonUIRenderComponent extends FocusableGui implements IRenderable
 		
 		float scale = zoom;
 		pMatrixStack.scale(scale, scale, scale);
-		pMatrixStack.translate(0, 0, 600);
 		ClientDragonRender.dragonModel.setCurrentTexture(null);
-		ClientDragonRender.renderEntityInInventory(getter.get(), x + width / 2, y + height - 30, scale, xRot, yRot);
+		ClientDragonRender.renderEntityInInventory(getter.get(), x + width / 2, (int)(y + height - 50 + scale), scale, xRot, yRot);
 		pMatrixStack.popPose();
 	}
 	
