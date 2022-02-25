@@ -8,7 +8,7 @@ public class LayerSettings implements NBTInterface
 {
 	public String selectedSkin = SkinCap.defaultSkinValue;
 	
-	public float hue = 0f, saturation = 0f, brightness = 1f;
+	public float hue = 0.5f, saturation = 0.5f, brightness = 1f;
 	public boolean modifiedColor = false;
 	
 	public boolean glowing = false;
