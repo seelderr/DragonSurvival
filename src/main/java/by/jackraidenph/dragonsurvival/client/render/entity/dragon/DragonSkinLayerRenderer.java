@@ -1,11 +1,14 @@
 package by.jackraidenph.dragonsurvival.client.render.entity.dragon;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.client.SkinCustomization.CustomizationLayer;
-import by.jackraidenph.dragonsurvival.client.SkinCustomization.CustomizationObject.Texture;
-import by.jackraidenph.dragonsurvival.client.SkinCustomization.DragonCustomizationHandler;
 import by.jackraidenph.dragonsurvival.client.handlers.DragonSkins;
 import by.jackraidenph.dragonsurvival.client.render.ClientDragonRender;
+import by.jackraidenph.dragonsurvival.client.skinPartSystem.DragonCustomizationHandler;
+import by.jackraidenph.dragonsurvival.client.skinPartSystem.EnumSkinLayer;
+import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.CustomizationObject.Texture;
+import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.LayerSettings;
+import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.SkinPreset;
+import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.SkinPreset.SkinAgeGroup;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.entity.DragonEntity;
@@ -26,14 +29,13 @@ import software.bernie.geckolib3.renderers.geo.IGeoRenderer;
 import java.awt.Color;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class DragonCustomizationLayer extends GeoLayerRenderer<DragonEntity>
+public class DragonSkinLayerRenderer extends GeoLayerRenderer<DragonEntity>
 {
 	private final IGeoRenderer<DragonEntity> renderer;
 	
-	public DragonCustomizationLayer(IGeoRenderer<DragonEntity> entityRendererIn)
+	public DragonSkinLayerRenderer(IGeoRenderer<DragonEntity> entityRendererIn)
 	{
 		super(entityRendererIn);
 		this.renderer = entityRendererIn;
@@ -49,8 +51,11 @@ public class DragonCustomizationLayer extends GeoLayerRenderer<DragonEntity>
 		DragonStateHandler handler = DragonStateProvider.getCap(entitylivingbaseIn.getPlayer()).orElse(null);
 		if (handler == null) return;
 		
-		for(CustomizationLayer layer : CustomizationLayer.values()){
-			String key = handler.getSkin().playerSkinLayers.getOrDefault(handler.getLevel(), new HashMap<>()).getOrDefault(layer, null);
+		for(EnumSkinLayer layer : EnumSkinLayer.values()){
+			SkinPreset preset = handler.getSkin().skinPreset;
+			SkinAgeGroup ageGroup = preset.skinAges.get(handler.getLevel());
+			LayerSettings settings = ageGroup.layerSettings.get(layer);
+			String key = settings.selectedSkin;
 			
 			if(key != null){
 				Texture text = DragonCustomizationHandler.getSkin(entitylivingbaseIn.getPlayer(), layer, key, handler.getType());
@@ -67,32 +72,29 @@ public class DragonCustomizationLayer extends GeoLayerRenderer<DragonEntity>
 					Color renderColor = new Color(1f, 1f, 1f, 1f);
 					
 					if(text.colorable && text.defaultColor == null) {
-						Integer color = handler.getSkin().skinLayerHue.getOrDefault(handler.getLevel(), new HashMap<>()).getOrDefault(layer, 0);
-						Color hue = new Color(color);
-						
-						if (!dynamicTextures.containsKey(dynamicTexture) || handler.getSkin().hueChanged.contains(layer)) {
-							handler.getSkin().hueChanged.remove(layer);
+						if (!dynamicTextures.containsKey(dynamicTexture) || handler.getSkin().updateLayers.contains(layer)) {
+							handler.getSkin().updateLayers.remove(layer);
 							
 							if (!dynamicTextures.containsKey(dynamicTexture)) {
 								DynamicTexture texture1 = new DynamicTexture(512, 512, false);
 								Minecraft.getInstance().getTextureManager().register(dynamicTexture, texture1);
 								dynamicTextures.put(dynamicTexture, texture1);
 							}
-							float[] hsb = Color.RGBtoHSB(hue.getRed(), hue.getGreen(), hue.getBlue(), null);
-							updateSkin(text, texture, dynamicTexture, hsb);
+							updateSkin(text, texture, dynamicTexture, settings);
 						}
-					}else if(text.colorable && text.defaultColor != null){
-						Integer color = handler.getSkin().skinLayerHue.getOrDefault(handler.getLevel(), new HashMap<>()).getOrDefault(layer, 0);
-						if(color == 0){
-							renderColor = Color.decode(text.defaultColor);
+					}else if(text.colorable){
+						Color defaultColor = Color.decode(text.defaultColor);
+						Color curColor = Color.getHSBColor(settings.hue, settings.saturation, settings.brightness);
+						if(curColor.getRGB() == defaultColor.getRGB()){
+							renderColor = defaultColor;
 						}else {
-							renderColor = new Color(color);
+							renderColor = curColor;
 						}
 					}
 					((DragonRenderer)renderer).isLayer = true;
 					
-					if(text.glowing){
-						RenderType type = RenderType.eyes(texture);
+					if(settings.glowing){
+						RenderType type = RenderType.eyes(dynamicTexture);
 						IVertexBuilder vertexConsumer = bufferIn.getBuffer(type);
 						renderer.render(getEntityModel().getModel(getEntityModel().getModelLocation(entitylivingbaseIn)), entitylivingbaseIn, partialTicks, type, matrixStackIn, bufferIn, vertexConsumer, 0, OverlayTexture.NO_OVERLAY, renderColor.getRed() / 255f, renderColor.getGreen() / 255f, renderColor.getBlue() / 255f, renderColor.getAlpha() / 255f);
 					}else {
@@ -106,7 +108,7 @@ public class DragonCustomizationLayer extends GeoLayerRenderer<DragonEntity>
 			}
 		}
 	}
-	public void updateSkin(Texture text, ResourceLocation input, ResourceLocation output, float[] hsb1){
+	public void updateSkin(Texture text, ResourceLocation input, ResourceLocation output, LayerSettings settings){
 		Runnable run = () -> {
 			try {
 				InputStream textureStream = Minecraft.getInstance().getResourceManager().getResource(input).getInputStream();
@@ -114,8 +116,8 @@ public class DragonCustomizationLayer extends GeoLayerRenderer<DragonEntity>
 				textureStream.close();
 				
 				if(text.colorable) {
-					float hueVal = hsb1[0] - 0.5f;
-					float satVal = hsb1[1] - 0.5f;
+					float hueVal = settings.hue - 0.5f;
+					float satVal = settings.saturation - 0.5f;
 					
 					
 					float[] hsb = new float[3];

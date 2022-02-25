@@ -1,4 +1,6 @@
-package by.jackraidenph.dragonsurvival.client.SkinCustomization;
+package by.jackraidenph.dragonsurvival.client.skinPartSystem.objects;
+
+import by.jackraidenph.dragonsurvival.client.skinPartSystem.EnumSkinLayer;
 
 import java.util.HashMap;
 
@@ -9,13 +11,12 @@ public class CustomizationObject
 	public Dragon cave_dragon;
 	
 	public static class Dragon{
-		public HashMap<CustomizationLayer, Texture[]> layers;
+		public HashMap<EnumSkinLayer, Texture[]> layers;
 	}
 	
 	public static class Texture{
 		public String key;
 		public String texture;
-		public boolean glowing;
 		public boolean colorable = true;
 		public String defaultColor;
 	}

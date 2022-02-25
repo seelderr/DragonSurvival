@@ -37,7 +37,7 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 	public DragonRenderer(EntityRendererManager renderManager, AnimatedGeoModel<DragonEntity> modelProvider) {
         super(renderManager, modelProvider);
 		this.addLayer(new DragonGlowLayerRenderer(this));
-		this.addLayer(new DragonCustomizationLayer(this));
+		this.addLayer(new DragonSkinLayerRenderer(this));
 		this.addLayer(new ClawsAndTeethRenderLayer(this));
 		this.addLayer(new DragonArmorRenderLayer(this));
 	}
@@ -59,7 +59,7 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 		boolean hasWings = true;
 		
 		if(handler != null){
-			hasWings = handler.hasWings();
+			hasWings = handler.hasWings() && handler.getSkin().skinPreset.skinAges.get(handler.getLevel()).wings;
 		}
 		
 		final IBone leftwing = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("WingLeft");

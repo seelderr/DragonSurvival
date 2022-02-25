@@ -1,7 +1,10 @@
-package by.jackraidenph.dragonsurvival.client.SkinCustomization;
+package by.jackraidenph.dragonsurvival.client.skinPartSystem;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.client.SkinCustomization.CustomizationObject.Texture;
+import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.CustomizationObject;
+import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.CustomizationObject.Texture;
+import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.SavedSkinPresets;
+import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.SkinPreset;
 import by.jackraidenph.dragonsurvival.misc.DragonLevel;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import com.google.gson.Gson;
@@ -25,8 +28,8 @@ public class CustomizationRegistry
 {
 	public static final String SAVED_FILE_NAME = "saved_customizations.json";
 	public static final ResourceLocation CUSTOMIZATION = new ResourceLocation(DragonSurvivalMod.MODID, "customization.json");
-	public static final HashMap<DragonType, HashMap<CustomizationLayer, CustomizationObject.Texture[]>> CUSTOMIZATIONS = new HashMap<>();
-	public static SavedCustomizations savedCustomizations = null;
+	public static final HashMap<DragonType, HashMap<EnumSkinLayer, CustomizationObject.Texture[]>> CUSTOMIZATIONS = new HashMap<>();
+	public static SavedSkinPresets savedCustomizations = null;
 	private static boolean init = false;
 	
 	public static File folder;
@@ -46,23 +49,16 @@ public class CustomizationRegistry
 			try {
 				savedFile.createNewFile();
 				Gson gson = new GsonBuilder().setPrettyPrinting().create();
-				savedCustomizations = new SavedCustomizations();
+				savedCustomizations = new SavedSkinPresets();
 				
 				for (DragonType type : DragonType.values()) {
 					if (type == DragonType.NONE) continue;
 					
-					savedCustomizations.saved.computeIfAbsent(type, (b) -> new HashMap<>());
+					savedCustomizations.skinPresets.computeIfAbsent(type, (b) -> new HashMap<>());
 					savedCustomizations.current.computeIfAbsent(type, (b) -> new HashMap<>());
 					
 					for (int i = 0; i < 9; i++) {
-						savedCustomizations.saved.get(type).computeIfAbsent(i, (b) -> new HashMap<>());
-						for (DragonLevel level : DragonLevel.values()) {
-							savedCustomizations.saved.get(type).get(i).computeIfAbsent(level, (b) -> new HashMap<>());
-							savedCustomizations.saved.get(type).get(i).get(level).put(CustomizationLayer.HORNS, type.name().toLowerCase() + "_horns_" + level.ordinal());
-							savedCustomizations.saved.get(type).get(i).get(level).put(CustomizationLayer.SPIKES, type.name().toLowerCase() + "_spikes_" + level.ordinal());
-							savedCustomizations.saved.get(type).get(i).get(level).put(CustomizationLayer.BOTTOM, type.name().toLowerCase() + "_bottom_" + level.ordinal());
-							savedCustomizations.saved.get(type).get(i).get(level).put(CustomizationLayer.BASE, type.name().toLowerCase() + "_base_" + level.ordinal());
-						}
+						savedCustomizations.skinPresets.get(type).computeIfAbsent(i, (b) -> new SkinPreset());
 					}
 					
 					for (DragonLevel level : DragonLevel.values()) {
@@ -83,7 +79,7 @@ public class CustomizationRegistry
 				Gson gson = new Gson();
 				InputStream in = new FileInputStream(savedFile);
 				BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-				savedCustomizations = gson.fromJson(reader, SavedCustomizations.class);
+				savedCustomizations = gson.fromJson(reader, SavedSkinPresets.class);
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}

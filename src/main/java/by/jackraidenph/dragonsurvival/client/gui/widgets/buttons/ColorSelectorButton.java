@@ -1,11 +1,11 @@
 package by.jackraidenph.dragonsurvival.client.gui.widgets.buttons;
 
-import by.jackraidenph.dragonsurvival.client.SkinCustomization.CustomizationLayer;
-import by.jackraidenph.dragonsurvival.client.SkinCustomization.CustomizationObject.Texture;
-import by.jackraidenph.dragonsurvival.client.SkinCustomization.DragonCustomizationHandler;
 import by.jackraidenph.dragonsurvival.client.gui.ColorSelectorComponent;
 import by.jackraidenph.dragonsurvival.client.gui.DragonCustomizationScreen;
 import by.jackraidenph.dragonsurvival.client.gui.HueSelectorComponent;
+import by.jackraidenph.dragonsurvival.client.skinPartSystem.DragonCustomizationHandler;
+import by.jackraidenph.dragonsurvival.client.skinPartSystem.EnumSkinLayer;
+import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.CustomizationObject.Texture;
 import by.jackraidenph.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.jackraidenph.dragonsurvival.client.util.RenderingUtils;
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -17,7 +17,6 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
 
 import java.awt.Color;
-import java.util.HashMap;
 import java.util.function.Consumer;
 
 public class ColorSelectorButton extends ExtendedButton
@@ -32,10 +31,10 @@ public class ColorSelectorButton extends ExtendedButton
 	private Widget renderButton;
 	
 	private DragonCustomizationScreen screen;
-	private CustomizationLayer layer;
+	private EnumSkinLayer layer;
 	public int xSize, ySize;
 	
-	public ColorSelectorButton(DragonCustomizationScreen screen, CustomizationLayer layer, int x, int y, int xSize, int ySize, Consumer<Double> setter)
+	public ColorSelectorButton(DragonCustomizationScreen screen, EnumSkinLayer layer, int x, int y, int xSize, int ySize, Consumer<Double> setter)
 	{
 		super(x, y, xSize, ySize, null, null);
 		this.xSize = xSize;
@@ -64,7 +63,7 @@ public class ColorSelectorButton extends ExtendedButton
 			screen.buttons.removeIf((s) -> s == renderButton);
 		}
 		
-		Texture text = DragonCustomizationHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, screen.handler), layer, screen.map.getOrDefault(screen.handler.getLevel(), new HashMap<>()).getOrDefault(layer, null), screen.handler.getType());
+		Texture text = DragonCustomizationHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, screen.handler), layer, screen.preset.skinAges.get(screen.level).layerSettings.get(layer).selectedSkin, screen.handler.getType());
 		
 		if(text != null && text.colorable){
 			visible = true;
@@ -82,7 +81,7 @@ public class ColorSelectorButton extends ExtendedButton
 	@Override
 	public void onPress()
 	{
-		Texture text = DragonCustomizationHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, screen.handler), layer, screen.map.getOrDefault(screen.handler.getLevel(), new HashMap<>()).getOrDefault(layer, null), screen.handler.getType());
+		Texture text = DragonCustomizationHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, screen.handler), layer, screen.preset.skinAges.get(screen.level).layerSettings.get(layer).selectedSkin, screen.handler.getType());
 		
 		if(!toggled){
 			renderButton = new ExtendedButton(0, 0, 0, 0, StringTextComponent.EMPTY, null){
@@ -108,11 +107,11 @@ public class ColorSelectorButton extends ExtendedButton
 			};
 			
 			if(text.defaultColor == null) {
-				hueComponent = new HueSelectorComponent(this.screen, x + xSize - 120, y, 120, 42, layer);
+				hueComponent = new HueSelectorComponent(this.screen, x + xSize - 120, y, 120, 54, layer);
 				screen.children.add(0, hueComponent);
 				screen.children.add(hueComponent);
 			}else{
-				colorComponent = new ColorSelectorComponent(this.screen, x + xSize - 120, y, 120, 60, layer);
+				colorComponent = new ColorSelectorComponent(this.screen, x + xSize - 120, y, 120, 71, layer);
 				screen.children.add(0, colorComponent);
 				screen.children.add(colorComponent);
 			}

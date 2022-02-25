@@ -1,16 +1,12 @@
-package by.jackraidenph.dragonsurvival.client.SkinCustomization;
+package by.jackraidenph.dragonsurvival.client.skinPartSystem;
 
-import by.jackraidenph.dragonsurvival.client.SkinCustomization.CustomizationObject.Texture;
-import by.jackraidenph.dragonsurvival.common.capability.subcapabilities.SkinCap;
+import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.CustomizationObject.Texture;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.subcapabilities.SkinCap;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
-import by.jackraidenph.dragonsurvival.network.NetworkHandler;
-import by.jackraidenph.dragonsurvival.network.dragon_editor.SyncPlayerCustomization;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,12 +14,12 @@ import java.util.Objects;
 
 public class DragonCustomizationHandler
 {
-	public static ResourceLocation getSkinTexture(PlayerEntity player, CustomizationLayer layer, String key, DragonType type){
+	public static ResourceLocation getSkinTexture(PlayerEntity player, EnumSkinLayer layer, String key, DragonType type){
 		if(Objects.equals(layer.name, "Extra")){
-			layer = CustomizationLayer.EXTRA;
+			layer = EnumSkinLayer.EXTRA;
 		}
 		
-		if(layer == CustomizationLayer.BASE && (key.equalsIgnoreCase("Skin") || key.equalsIgnoreCase(SkinCap.defaultSkinValue))){
+		if(layer == EnumSkinLayer.BASE && (key.equalsIgnoreCase("Skin") || key.equalsIgnoreCase(SkinCap.defaultSkinValue))){
 			DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
 			return getSkinTexture(player, layer, type.name().toLowerCase() + "_base_" + handler.getLevel().ordinal(), type);
 		}
@@ -39,12 +35,12 @@ public class DragonCustomizationHandler
 		return null;
 	}
 	
-	public static Texture getSkin(PlayerEntity player, CustomizationLayer layer, String key, DragonType type){
+	public static Texture getSkin(PlayerEntity player, EnumSkinLayer layer, String key, DragonType type){
 		if(Objects.equals(layer.name, "Extra")){
-			layer = CustomizationLayer.EXTRA;
+			layer = EnumSkinLayer.EXTRA;
 		}
 		
-		if(layer == CustomizationLayer.BASE && (key.equalsIgnoreCase("Skin") || key.equalsIgnoreCase(SkinCap.defaultSkinValue))){
+		if(layer == EnumSkinLayer.BASE && (key.equalsIgnoreCase("Skin") || key.equalsIgnoreCase(SkinCap.defaultSkinValue))){
 			DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
 			return getSkin(player, layer, type.name().toLowerCase() + "_base_" + handler.getLevel().ordinal(), type);
 		}
@@ -60,14 +56,9 @@ public class DragonCustomizationHandler
 		return null;
 	}
 	
-	@OnlyIn( Dist.CLIENT)
-	public static void setSkinLayer(PlayerEntity player, CustomizationLayer layers, String key){
-		NetworkHandler.CHANNEL.sendToServer(new SyncPlayerCustomization(player.getId(), layers, key));
-	}
-	
-	public static ArrayList<String> getKeys(DragonType type, CustomizationLayer layers){
+	public static ArrayList<String> getKeys(DragonType type, EnumSkinLayer layers){
 		if(Objects.equals(layers.name, "Extra")){
-			layers = CustomizationLayer.EXTRA;
+			layers = EnumSkinLayer.EXTRA;
 		}
 		ArrayList<String> list = new ArrayList<>();
 		
@@ -79,7 +70,7 @@ public class DragonCustomizationHandler
 		return list;
 	}
 	
-	public static ArrayList<String> getKeys(PlayerEntity player, CustomizationLayer layers){
+	public static ArrayList<String> getKeys(PlayerEntity player, EnumSkinLayer layers){
 		return getKeys(DragonStateProvider.getCap(player).orElse(null).getType(), layers);
 	}
 }

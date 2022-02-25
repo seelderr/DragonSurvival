@@ -1,12 +1,12 @@
 package by.jackraidenph.dragonsurvival.client.handlers;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.client.SkinCustomization.CustomizationLayer;
-import by.jackraidenph.dragonsurvival.client.SkinCustomization.CustomizationRegistry;
 import by.jackraidenph.dragonsurvival.client.gui.DragonScreen;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.TabButton;
 import by.jackraidenph.dragonsurvival.client.render.CaveLavaFluidRenderer;
 import by.jackraidenph.dragonsurvival.client.render.ClientDragonRender;
+import by.jackraidenph.dragonsurvival.client.skinPartSystem.CustomizationRegistry;
+import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.SkinPreset;
 import by.jackraidenph.dragonsurvival.common.DragonEffects;
 import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.entity.projectiles.BolasEntity;
@@ -18,14 +18,13 @@ import by.jackraidenph.dragonsurvival.common.magic.abilities.Passives.WaterAbili
 import by.jackraidenph.dragonsurvival.common.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.common.util.DragonUtils;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
-import by.jackraidenph.dragonsurvival.misc.DragonLevel;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.RequestClientData;
-import by.jackraidenph.dragonsurvival.network.dragon_editor.SyncPlayerAllCustomization;
 import by.jackraidenph.dragonsurvival.network.claw.SyncDragonClawRender;
 import by.jackraidenph.dragonsurvival.network.container.OpenDragonAltar;
 import by.jackraidenph.dragonsurvival.network.container.OpenDragonInventory;
+import by.jackraidenph.dragonsurvival.network.dragon_editor.SyncPlayerSkinPreset;
 import by.jackraidenph.dragonsurvival.network.entity.player.SyncDragonSkinSettings;
 import by.jackraidenph.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -104,9 +103,8 @@ public class ClientEvents
             
             if(CustomizationRegistry.savedCustomizations != null){
                 int currentSelected = CustomizationRegistry.savedCustomizations.current.getOrDefault(message.type, new HashMap<>()).getOrDefault(message.level, 0);
-                HashMap<DragonLevel, HashMap<CustomizationLayer, String>> map = CustomizationRegistry.savedCustomizations.saved.getOrDefault(message.type, new HashMap<>()).getOrDefault(currentSelected, new HashMap<>());
-                HashMap<DragonLevel, HashMap<CustomizationLayer, Integer>> savedHue = CustomizationRegistry.savedCustomizations.savedColor.getOrDefault(message.type, new HashMap<>()).getOrDefault(currentSelected, new HashMap<>());
-                NetworkHandler.CHANNEL.sendToServer(new SyncPlayerAllCustomization(player.getId(), map, savedHue));
+                SkinPreset preset = CustomizationRegistry.savedCustomizations.skinPresets.getOrDefault(message.type, new HashMap<>()).getOrDefault(currentSelected, new SkinPreset());
+                NetworkHandler.CHANNEL.sendToServer(new SyncPlayerSkinPreset(player.getId(), preset));
             }
         });
     }

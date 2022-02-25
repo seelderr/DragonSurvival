@@ -1,6 +1,7 @@
 package by.jackraidenph.dragonsurvival.network.dragon_editor;
 
-import by.jackraidenph.dragonsurvival.client.SkinCustomization.CustomizationLayer;
+import by.jackraidenph.dragonsurvival.client.skinPartSystem.EnumSkinLayer;
+import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.SkinPreset;
 import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.network.IMessage;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
@@ -18,62 +19,56 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static net.minecraftforge.fml.network.NetworkDirection.PLAY_TO_SERVER;
 
-public class SyncPlayerHue implements IMessage<SyncPlayerHue>
+public class SyncPlayerSkinPreset implements IMessage<SyncPlayerSkinPreset>
 {
 	public int playerId;
-	public CustomizationLayer layers;
-	public Integer key;
+	public SkinPreset preset;
 	
-	public SyncPlayerHue() {}
+	public SyncPlayerSkinPreset() {}
 	
-	public SyncPlayerHue(int playerId, CustomizationLayer layers, Integer key)
-	{
+	public SyncPlayerSkinPreset(int playerId, SkinPreset preset) {
 		this.playerId = playerId;
-		this.layers = layers;
-		this.key = key;
+		this.preset = preset;
 	}
 	
 	@Override
-	public void encode(SyncPlayerHue message, PacketBuffer buffer) {
+	public void encode(SyncPlayerSkinPreset message, PacketBuffer buffer) {
 		buffer.writeInt(message.playerId);
-		buffer.writeEnum(message.layers);
-		buffer.writeInt(message.key);
+		buffer.writeNbt(message.preset.writeNBT());
 	}
 	
 	@Override
-	public SyncPlayerHue decode(PacketBuffer buffer) {
+	public SyncPlayerSkinPreset decode(PacketBuffer buffer) {
 		int playerId = buffer.readInt();
-		CustomizationLayer layer = buffer.readEnum(CustomizationLayer.class);
-		Integer key = buffer.readInt();
-		return new SyncPlayerHue(playerId, layer, key);
+		SkinPreset preset = new SkinPreset();
+		preset.readNBT(buffer.readNbt());
+		return new SyncPlayerSkinPreset(playerId, preset);
 	}
 	
 	@Override
-	public void handle(SyncPlayerHue message, Supplier<NetworkEvent.Context> supplier) {
+	public void handle(SyncPlayerSkinPreset message, Supplier<NetworkEvent.Context> supplier) {
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> runClient(message, supplier));
 		
 		if(supplier.get().getDirection() == PLAY_TO_SERVER){
 			ServerPlayerEntity entity = supplier.get().getSender();
 			if(entity != null){
 				DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
-					dragonStateHandler.getSkin().skinLayerHue.computeIfAbsent(dragonStateHandler.getLevel(), (b) -> new HashMap<>());
-					dragonStateHandler.getSkin().skinLayerHue.getOrDefault(dragonStateHandler.getLevel(), new HashMap<>()).put(message.layers, message.key);
-					dragonStateHandler.getSkin().hueChanged.addAll(Arrays.stream(CustomizationLayer.values()).distinct().collect(Collectors.toList()));
+					dragonStateHandler.getSkin().skinPreset = message.preset;
+					dragonStateHandler.getSkin().updateLayers.addAll(Arrays.stream(EnumSkinLayer.values()).distinct().collect(Collectors.toList()));
 				});
 				
-				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new SyncPlayerHue(entity.getId(), message.layers, message.key));
+				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new SyncPlayerSkinPreset(entity.getId(), message.preset));
 			}
 		}
 	}
 	
 	@OnlyIn(Dist.CLIENT)
-	public void runClient(SyncPlayerHue message, Supplier<NetworkEvent.Context> supplier){
+	public void runClient(SyncPlayerSkinPreset message, Supplier<NetworkEvent.Context> supplier){
 		NetworkEvent.Context context = supplier.get();
 		context.enqueueWork(() -> {
 			PlayerEntity thisPlayer = Minecraft.getInstance().player;
@@ -82,9 +77,8 @@ public class SyncPlayerHue implements IMessage<SyncPlayerHue>
 				Entity entity = world.getEntity(message.playerId);
 				if (entity instanceof PlayerEntity) {
 					DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
-						dragonStateHandler.getSkin().skinLayerHue.computeIfAbsent(dragonStateHandler.getLevel(), (b) -> new HashMap<>());
-						dragonStateHandler.getSkin().skinLayerHue.getOrDefault(dragonStateHandler.getLevel(), new HashMap<>()).put(message.layers, message.key);
-						dragonStateHandler.getSkin().hueChanged.addAll(Arrays.stream(CustomizationLayer.values()).distinct().collect(Collectors.toList()));
+						dragonStateHandler.getSkin().skinPreset = message.preset;
+						dragonStateHandler.getSkin().updateLayers.addAll(Arrays.stream(EnumSkinLayer.values()).distinct().collect(Collectors.toList()));
 					});
 				}
 			}

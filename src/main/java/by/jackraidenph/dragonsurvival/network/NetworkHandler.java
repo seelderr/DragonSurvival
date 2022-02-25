@@ -1,9 +1,6 @@
 package by.jackraidenph.dragonsurvival.network;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.network.dragon_editor.OpenDragonCustomization;
-import by.jackraidenph.dragonsurvival.network.dragon_editor.SyncPlayerAllCustomization;
-import by.jackraidenph.dragonsurvival.network.dragon_editor.SyncPlayerCustomization;
 import by.jackraidenph.dragonsurvival.network.claw.DragonClawsMenuToggle;
 import by.jackraidenph.dragonsurvival.network.claw.SyncDragonClawRender;
 import by.jackraidenph.dragonsurvival.network.claw.SyncDragonClawsMenu;
@@ -14,6 +11,8 @@ import by.jackraidenph.dragonsurvival.network.config.SyncNumberConfig;
 import by.jackraidenph.dragonsurvival.network.container.OpenDragonAltar;
 import by.jackraidenph.dragonsurvival.network.container.OpenDragonInventory;
 import by.jackraidenph.dragonsurvival.network.container.OpenInventory;
+import by.jackraidenph.dragonsurvival.network.dragon_editor.OpenDragonCustomization;
+import by.jackraidenph.dragonsurvival.network.dragon_editor.SyncPlayerSkinPreset;
 import by.jackraidenph.dragonsurvival.network.emotes.SyncEmote;
 import by.jackraidenph.dragonsurvival.network.emotes.SyncEmoteServer;
 import by.jackraidenph.dragonsurvival.network.emotes.SyncEmoteStats;
@@ -66,8 +65,7 @@ public class NetworkHandler
 		 register(SyncSize.class, new SyncSize());
 		 register(DiggingStatus.class, new DiggingStatus());
 		
-		 register(SyncPlayerAllCustomization.class, new SyncPlayerAllCustomization());
-		 register(SyncPlayerCustomization.class, new SyncPlayerCustomization());
+		 register(SyncPlayerSkinPreset.class, new SyncPlayerSkinPreset());
 		 register(OpenDragonCustomization.class, new OpenDragonCustomization());
 		
 		 //Flight

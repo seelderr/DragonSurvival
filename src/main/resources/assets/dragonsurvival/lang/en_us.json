@@ -150,6 +150,7 @@
 
   "ds.gui.dragon_altar": "Choose a Dragon Species",
   "ds.gui.customization": "DRAGON EDITOR",
+  "ds.gui.customization.glowing": "Glowing?",
   "ds.gui.customization.auto_save": "Auto save",
   "ds.gui.customization.tooltip.done": "Confirm changes",
   "ds.gui.customization.tooltip.cancel": "Cancel",

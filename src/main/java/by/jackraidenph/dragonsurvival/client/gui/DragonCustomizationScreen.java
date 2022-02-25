@@ -1,9 +1,6 @@
 package by.jackraidenph.dragonsurvival.client.gui;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.client.SkinCustomization.CustomizationLayer;
-import by.jackraidenph.dragonsurvival.client.SkinCustomization.CustomizationRegistry;
-import by.jackraidenph.dragonsurvival.client.SkinCustomization.DragonCustomizationHandler;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.CustomizationConfirmation;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.DragonUIRenderComponent;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.ColorSelectorButton;
@@ -14,6 +11,10 @@ import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.dropdown.Colore
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownEntry;
 import by.jackraidenph.dragonsurvival.client.handlers.ClientEvents;
 import by.jackraidenph.dragonsurvival.client.handlers.magic.ClientMagicHUDHandler;
+import by.jackraidenph.dragonsurvival.client.skinPartSystem.CustomizationRegistry;
+import by.jackraidenph.dragonsurvival.client.skinPartSystem.DragonCustomizationHandler;
+import by.jackraidenph.dragonsurvival.client.skinPartSystem.EnumSkinLayer;
+import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.SkinPreset;
 import by.jackraidenph.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.jackraidenph.dragonsurvival.client.util.TextRenderUtil;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
@@ -25,7 +26,7 @@ import by.jackraidenph.dragonsurvival.misc.DragonLevel;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.RequestClientData;
-import by.jackraidenph.dragonsurvival.network.dragon_editor.SyncPlayerAllCustomization;
+import by.jackraidenph.dragonsurvival.network.dragon_editor.SyncPlayerSkinPreset;
 import by.jackraidenph.dragonsurvival.network.entity.player.SynchronizeDragonCap;
 import by.jackraidenph.dragonsurvival.network.flight.SyncSpinStatus;
 import by.jackraidenph.dragonsurvival.network.status.SyncAltarCooldown;
@@ -50,7 +51,6 @@ import net.minecraftforge.fml.client.gui.GuiUtils;
 import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
 import org.apache.commons.lang3.text.WordUtils;
 
-import java.awt.Color;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -81,8 +81,7 @@ public class DragonCustomizationScreen extends Screen
 	public DragonLevel level = DragonLevel.ADULT;
 	public DragonType type;
 	
-	public HashMap<DragonLevel, HashMap<CustomizationLayer, String>> map = new HashMap<>();
-	public HashMap<DragonLevel, HashMap<CustomizationLayer, Integer>> hueMap = new HashMap<>();
+	public SkinPreset preset = new SkinPreset();
 	
 	//TODO Update sliders when you load a saved preset
 	//TODO Cleanup skin key and hue saving to support the possibility of brightness and saturation
@@ -104,8 +103,7 @@ public class DragonCustomizationScreen extends Screen
 	
 	public void update()
 	{
-		handler.getSkin().playerSkinLayers = map;
-		handler.getSkin().skinLayerHue = hueMap;
+		handler.getSkin().skinPreset = preset;
 		handler.setSize(level.size);
 		handler.setHasWings(true);
 		
@@ -114,31 +112,8 @@ public class DragonCustomizationScreen extends Screen
 		}
 		
 		if (currentSelected != lastSelected) {
-			CustomizationRegistry.savedCustomizations.saved.computeIfAbsent(handler.getType(), (b) -> new HashMap<>());
-			CustomizationRegistry.savedCustomizations.saved.get(handler.getType()).computeIfAbsent(currentSelected, (b) -> new HashMap<>());
-			
-			CustomizationRegistry.savedCustomizations.savedColor.computeIfAbsent(handler.getType(), (b) -> new HashMap<>());
-			CustomizationRegistry.savedCustomizations.savedColor.get(handler.getType()).computeIfAbsent(currentSelected, (b) -> new HashMap<>());
-			
-			map = new HashMap<>();
-			hueMap = new HashMap<>();
-			
-			CustomizationRegistry.savedCustomizations.saved.get(handler.getType()).get(currentSelected).forEach((level, mp) -> {
-				mp.forEach((layer, key) -> {
-					map.computeIfAbsent(level, (b) -> new HashMap<>());
-					map.get(level).put(layer, key);
-				});
-			});
-			
-			CustomizationRegistry.savedCustomizations.savedColor.get(handler.getType()).get(currentSelected).forEach((level, mp) -> {
-				mp.forEach((layer, key) -> {
-					hueMap.computeIfAbsent(level, (b) -> new HashMap<>());
-					hueMap.get(level).put(layer, key);
-				});
-			});
-			
-			handler.getSkin().playerSkinLayers = map;
-			handler.getSkin().skinLayerHue = hueMap;
+			preset = CustomizationRegistry.savedCustomizations.skinPresets.get(handler.getType()).get(currentSelected);
+			handler.getSkin().skinPreset = preset;
 		}
 		
 		lastSelected = currentSelected;
@@ -171,23 +146,8 @@ public class DragonCustomizationScreen extends Screen
 				}
 				
 				currentSelected = CustomizationRegistry.savedCustomizations.current.getOrDefault(type, new HashMap<>()).getOrDefault(level, 0);
-				HashMap<DragonLevel, HashMap<CustomizationLayer, String>> mp1 = CustomizationRegistry.savedCustomizations.saved.getOrDefault(type, new HashMap<>()).getOrDefault(currentSelected, new HashMap<>());
-				
-				mp1.forEach((level, mp) -> {
-					mp.forEach((layer, key) -> {
-						map.computeIfAbsent(level, (b) -> new HashMap<>());
-						map.get(level).put(layer, key);
-					});
-				});
-				
-				HashMap<DragonLevel, HashMap<CustomizationLayer, Integer>> mp2 = CustomizationRegistry.savedCustomizations.savedColor.getOrDefault(type, new HashMap<>()).getOrDefault(currentSelected, new HashMap<>());
-				
-				mp2.forEach((level, mp) -> {
-					mp.forEach((layer, key) -> {
-						hueMap.computeIfAbsent(level, (b) -> new HashMap<>());
-						hueMap.get(level).put(layer, key);
-					});
-				});
+				preset = CustomizationRegistry.savedCustomizations.skinPresets.get(handler.getType()).get(currentSelected);
+				handler.getSkin().skinPreset = preset;
 			}
 			
 			this.handler.setHasWings(true);
@@ -201,7 +161,7 @@ public class DragonCustomizationScreen extends Screen
 		addButton(new Button(width / 2 - 180, guiTop - 30, 120, 20, new TranslationTextComponent("ds.level.newborn"), (btn) -> {
 			level = DragonLevel.BABY;
 			dragonRender.zoom = level.size;
-			handler.getSkin().hueChanged.addAll(Arrays.stream(CustomizationLayer.values()).distinct().collect(Collectors.toList()));
+			handler.getSkin().updateLayers.addAll(Arrays.stream(EnumSkinLayer.values()).distinct().collect(Collectors.toList()));
 			update();
 		})
 		{
@@ -215,7 +175,7 @@ public class DragonCustomizationScreen extends Screen
 		addButton(new Button(width / 2 - 60, guiTop - 30, 120, 20, new TranslationTextComponent("ds.level.young"), (btn) -> {
 			level = DragonLevel.YOUNG;
 			dragonRender.zoom = level.size;
-			handler.getSkin().hueChanged.addAll(Arrays.stream(CustomizationLayer.values()).distinct().collect(Collectors.toList()));
+			handler.getSkin().updateLayers.addAll(Arrays.stream(EnumSkinLayer.values()).distinct().collect(Collectors.toList()));
 			update();
 		})
 		{
@@ -229,7 +189,7 @@ public class DragonCustomizationScreen extends Screen
 		addButton(new Button(width / 2 + 60, guiTop - 30, 120, 20, new TranslationTextComponent("ds.level.adult"), (btn) -> {
 			level = DragonLevel.ADULT;
 			dragonRender.zoom = level.size;
-			handler.getSkin().hueChanged.addAll(Arrays.stream(CustomizationLayer.values()).distinct().collect(Collectors.toList()));
+			handler.getSkin().updateLayers.addAll(Arrays.stream(EnumSkinLayer.values()).distinct().collect(Collectors.toList()));
 			update();
 		})
 		{
@@ -243,24 +203,24 @@ public class DragonCustomizationScreen extends Screen
 		
 		int maxWidth = -1;
 		
-		for (CustomizationLayer layers : CustomizationLayer.values()) {
+		for (EnumSkinLayer layers : EnumSkinLayer.values()) {
 			String name = layers.name().substring(0, 1).toUpperCase(Locale.ROOT) + layers.name().toLowerCase().substring(1).replace("_", " ");
 			maxWidth = (int)Math.max(maxWidth, font.width(name) * 1.45F);
 		}
 		
 		int i = 0;
-		for (CustomizationLayer layers : CustomizationLayer.values()) {
+		for (EnumSkinLayer layers : EnumSkinLayer.values()) {
 			ArrayList<String> valueList = DragonCustomizationHandler.getKeys(type, layers);
 			
-			if(layers != CustomizationLayer.BASE){
+			if(layers != EnumSkinLayer.BASE){
 				valueList.add(0, SkinCap.defaultSkinValue);
 			}
 			
 			String[] values = valueList.toArray(new String[0]);
-			String curValue = map.getOrDefault(level, new HashMap<>()).getOrDefault(layers, SkinCap.defaultSkinValue);
+			String curValue = preset.skinAges.get(level).layerSettings.get(layers).selectedSkin;
 			DropDownButton btn = new DropDownButton(i < 5 ? width / 2 - 100 - 100 : width / 2 + 70, guiTop + 10 + ((i >= 5 ? (i - 5) * 30 : i * 30)), 100, 15, curValue, values, (s) -> {
-				map.get(level).put(layers, s);
-				handler.getSkin().hueChanged.add(layers);
+				preset.skinAges.get(level).layerSettings.get(layers).selectedSkin = s;
+				handler.getSkin().updateLayers.add(layers);
 				update();
 			}){
 				@Override
@@ -273,8 +233,8 @@ public class DragonCustomizationScreen extends Screen
 			addButton(btn);
 
 			addButton(new ColorSelectorButton(this, layers, btn.x + btn.getWidth() + 2, btn.y, btn.getHeight(), btn.getHeight(), (s) -> {
-				hueMap.computeIfAbsent(level, (s1) -> new HashMap<>());
-				hueMap.get(level).put(layers, Color.HSBtoRGB(s.floatValue(), 1f, 1f));
+				preset.skinAges.get(level).layerSettings.get(layers).hue = s.floatValue();
+				handler.getSkin().updateLayers.add(layers);
 				update();
 			}));
 			i++;
@@ -378,11 +338,7 @@ public class DragonCustomizationScreen extends Screen
 		});
 		
 		addButton(new Button(guiLeft + 256, 9, 19, 19, new TranslationTextComponent(""), (btn) -> {
-			map.computeIfAbsent(level, (b) -> new HashMap<>());
-			map.get(level).put(CustomizationLayer.HORNS, type.name().toLowerCase() + "_horns_" + level.ordinal());
-			map.get(level).put(CustomizationLayer.SPIKES, type.name().toLowerCase() + "_spikes_" + level.ordinal());
-			map.get(level).put(CustomizationLayer.BOTTOM, type.name().toLowerCase() + "_bottom_" + level.ordinal());
-			map.get(level).put(CustomizationLayer.BASE, type.name().toLowerCase() + "_base_" + level.ordinal());
+			preset = new SkinPreset();
 			update();
 		})
 		{
@@ -405,17 +361,15 @@ public class DragonCustomizationScreen extends Screen
 		});
 		
 		addButton(new Button(guiLeft + 256 + 30, 9, 19, 19, new TranslationTextComponent(""), (btn) -> {
-			map.computeIfAbsent(level, (b) -> new HashMap<>());
-			
-			for (CustomizationLayer layer : CustomizationLayer.values()) {
+			for (EnumSkinLayer layer : EnumSkinLayer.values()) {
 				ArrayList<String> keys = DragonCustomizationHandler.getKeys(minecraft.player, layer);
 				
-				if (layer != CustomizationLayer.BASE) {
+				if (layer != EnumSkinLayer.BASE) {
 					keys.add(SkinCap.defaultSkinValue);
 				}
 				
 				if (keys.size() > 0) {
-					map.get(level).put(layer, keys.get(minecraft.player.level.random.nextInt(keys.size())));
+					preset.skinAges.get(level).layerSettings.get(layer).selectedSkin = keys.get(minecraft.player.level.random.nextInt(keys.size()));
 				}
 			}
 			
@@ -477,7 +431,7 @@ public class DragonCustomizationScreen extends Screen
 		TextRenderUtil.drawCenteredScaledText(stack, width / 2, 10, 2f, title.getString(), DyeColor.WHITE.getTextColor());
 		
 		int i = 0;
-		for (CustomizationLayer layers : CustomizationLayer.values()) {
+		for (EnumSkinLayer layers : EnumSkinLayer.values()) {
 			String name = layers.name;
 			SkinsScreen.drawNonShadowLineBreak(stack, font, new StringTextComponent(name), (i < 5 ? width / 2 - 100 - 100 : width / 2 + 70) + 50, guiTop + 10 + ((i >= 5 ? (i - 5) * 30 : i * 30)) - 12, DyeColor.WHITE.getTextColor());
 			i++;
@@ -531,13 +485,10 @@ public class DragonCustomizationScreen extends Screen
 	
 	public void save(){
 		DragonType type = DragonUtils.getDragonType(minecraft.player);
-		NetworkHandler.CHANNEL.sendToServer(new SyncPlayerAllCustomization(minecraft.player.getId(), map, hueMap));
+		NetworkHandler.CHANNEL.sendToServer(new SyncPlayerSkinPreset(minecraft.player.getId(), preset));
 		
-		CustomizationRegistry.savedCustomizations.saved.computeIfAbsent(type, (t) -> new HashMap<>());
-		CustomizationRegistry.savedCustomizations.saved.get(type).put(currentSelected, map);
-		
-		CustomizationRegistry.savedCustomizations.savedColor.computeIfAbsent(type, (t) -> new HashMap<>());
-		CustomizationRegistry.savedCustomizations.savedColor.get(type).put(currentSelected, hueMap);
+		CustomizationRegistry.savedCustomizations.skinPresets.computeIfAbsent(type, (t) -> new HashMap<>());
+		CustomizationRegistry.savedCustomizations.skinPresets.get(type).put(currentSelected, preset);
 		
 		try {
 			Gson gson = new GsonBuilder().setPrettyPrinting().create();
