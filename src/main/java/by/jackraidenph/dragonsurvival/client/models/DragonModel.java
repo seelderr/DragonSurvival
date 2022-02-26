@@ -49,7 +49,7 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 			SkinAgeGroup ageGroup = handler.getSkin().skinPreset.skinAges.get(handler.getLevel());
 			
 			if(ageGroup.defaultSkin){
-				return new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/" + handler.getType().name().toLowerCase(Locale.ROOT) + "_" + handler.getLevel().getName().toLowerCase(Locale.ROOT) + ".png");
+				return new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/" + handler.getType().name().toLowerCase(Locale.ROOT) + "_" + handler.getLevel().name().toLowerCase(Locale.ROOT) + ".png");
 			}else {
 				String skin = ageGroup.layerSettings.get(EnumSkinLayer.BASE).selectedSkin;
 				ResourceLocation location = DragonCustomizationHandler.getSkinTexture(dragonEntity.getPlayer(), EnumSkinLayer.BASE, Objects.equals(skin, SkinCap.defaultSkinValue) ? "Skin" : skin, DragonUtils.getDragonType(dragonEntity.getPlayer()));
