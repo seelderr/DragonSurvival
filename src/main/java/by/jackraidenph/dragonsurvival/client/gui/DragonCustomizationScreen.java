@@ -146,7 +146,7 @@ public class DragonCustomizationScreen extends Screen
 				}
 				
 				currentSelected = CustomizationRegistry.savedCustomizations.current.getOrDefault(type, new HashMap<>()).getOrDefault(level, 0);
-				preset = CustomizationRegistry.savedCustomizations.skinPresets.get(handler.getType()).get(currentSelected);
+				preset = CustomizationRegistry.savedCustomizations.skinPresets.getOrDefault(handler.getType(), new HashMap<>()).getOrDefault(currentSelected, new SkinPreset());
 				handler.getSkin().skinPreset = preset;
 			}
 			

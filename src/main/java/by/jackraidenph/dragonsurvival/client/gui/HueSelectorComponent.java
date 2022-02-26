@@ -2,11 +2,8 @@ package by.jackraidenph.dragonsurvival.client.gui;
 
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.ResetSettingsButton;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownList;
-import by.jackraidenph.dragonsurvival.client.skinPartSystem.DragonCustomizationHandler;
 import by.jackraidenph.dragonsurvival.client.skinPartSystem.EnumSkinLayer;
-import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.CustomizationObject.Texture;
 import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.LayerSettings;
-import by.jackraidenph.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.jackraidenph.dragonsurvival.client.util.RenderingUtils;
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -36,7 +33,8 @@ public class HueSelectorComponent extends FocusableGui implements IRenderable
 	
 	private Slider hueSlider;
 	private Slider saturationSlider;
-	private ExtendedButton hueReset, saturationReset;
+	private Slider brightnessSlider;
+	private ExtendedButton hueReset, saturationReset, brightnessReset;
 	private CheckboxButton glowing;
 	
 	private DragonCustomizationScreen screen;
@@ -54,8 +52,6 @@ public class HueSelectorComponent extends FocusableGui implements IRenderable
 		
 		settings = () -> screen.preset.skinAges.get(screen.level).layerSettings.get(layer);
 		LayerSettings set = settings.get();
-		
-		Texture text = DragonCustomizationHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, screen.handler), layer, screen.preset.skinAges.get(screen.level).layerSettings.get(layer).selectedSkin, screen.handler.getType());
 		
 		glowing = new CheckboxButton(x + 3, y, xSize - 5, 10, new TranslationTextComponent("ds.gui.customization.glowing"), set.glowing){
 			 final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/checkbox.png");
@@ -108,13 +104,14 @@ public class HueSelectorComponent extends FocusableGui implements IRenderable
 			hsb[1] = 0.5f;
 		}
 		
-		hueSlider = new Slider(x + 3, y + 12, xSize - 26, 20, StringTextComponent.EMPTY, StringTextComponent.EMPTY, -180, 180, Math.round(hsb[0] * 360 - 180), true, true, (val) -> {}, (val) -> {
+		hueSlider = new Slider(x + 3, y + 12, xSize - 26, 20, StringTextComponent.EMPTY, StringTextComponent.EMPTY, -180, 180, set.modifiedColor ? Math.round(hsb[0] * 360 - 180) : 0, true, true, (val) -> {}, (val) -> {
 			float value = (hueSlider.getValueInt() + 180) / 360f;
 			float value1 = (saturationSlider.getValueInt() + 180) / 360f;
+			float value2 = (brightnessSlider.getValueInt() + 180) / 360f;
 			
 			settings.get().hue = value;
 			settings.get().saturation = value1;
-			settings.get().brightness = 1f;
+			settings.get().brightness = value2;
 			settings.get().modifiedColor = true;
 			
 			this.screen.handler.getSkin().updateLayers.add(layer);
@@ -138,13 +135,14 @@ public class HueSelectorComponent extends FocusableGui implements IRenderable
 			}
 		};
 		
-		saturationSlider = new Slider(x + 3, y + 22 + 12, xSize - 26, 20, StringTextComponent.EMPTY, StringTextComponent.EMPTY, -180, 180, Math.round(hsb[1] * 360 - 180), true, true, (val) -> {}, (val) -> {
+		saturationSlider = new Slider(x + 3, y + 22 + 12, xSize - 26, 20, StringTextComponent.EMPTY, StringTextComponent.EMPTY, -180, 180, set.modifiedColor ? Math.round(hsb[1] * 360 - 180) : 0, true, true, (val) -> {}, (val) -> {
 			float value = (hueSlider.getValueInt() + 180) / 360f;
 			float value1 = (saturationSlider.getValueInt() + 180) / 360f;
+			float value2 = (brightnessSlider.getValueInt() + 180) / 360f;
 			
 			settings.get().hue = value;
 			settings.get().saturation = value1;
-			settings.get().brightness = 1f;
+			settings.get().brightness = value2;
 			settings.get().modifiedColor = true;
 			
 			this.screen.handler.getSkin().updateLayers.add(layer);
@@ -187,6 +185,57 @@ public class HueSelectorComponent extends FocusableGui implements IRenderable
 				mStack.popPose();
 			}
 		};
+		
+		brightnessReset = new ExtendedButton(x + 3 + xSize - 26, y + 44 + 12, 20, 20, StringTextComponent.EMPTY, (s) ->{
+			brightnessSlider.setValue(0.0);
+			brightnessSlider.updateSlider();
+		}){
+			@Override
+			public void renderButton(MatrixStack mStack, int mouseX, int mouseY, float partial)
+			{
+				mStack.pushPose();
+				super.renderButton(mStack, mouseX, mouseY, partial);
+				Minecraft.getInstance().getTextureManager().bind(ResetSettingsButton.texture);
+				blit(mStack, x + 2, y + 2, 0, 0, 16, 16, 16, 16);
+				mStack.popPose();
+			}
+		};
+		
+		brightnessSlider = new Slider(x + 3, y + 44 + 12, xSize - 26, 20, StringTextComponent.EMPTY, StringTextComponent.EMPTY, -180, 180, set.modifiedColor ? Math.round(hsb[2] * 360 - 180) : 0, true, true, (val) -> {}, (val) -> {
+			float value = (hueSlider.getValueInt() + 180) / 360f;
+			float value1 = (saturationSlider.getValueInt() + 180) / 360f;
+			float value2 = (brightnessSlider.getValueInt() + 180) / 360f;
+			
+			settings.get().hue = value;
+			settings.get().saturation = value1;
+			settings.get().brightness = value2;
+			settings.get().modifiedColor = true;
+			
+			this.screen.handler.getSkin().updateLayers.add(layer);
+			screen.update();
+		}){
+			@Override
+			public void renderButton(MatrixStack mStack, int mouseX, int mouseY, float partial)
+			{
+				if (this.visible) {
+					this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
+					float value1 = (hueSlider.getValueInt() + 180) / 360f;
+					
+					mStack.pushPose();
+					int col1 = Color.getHSBColor(value1, 1f, 0f).getRGB();
+					int col2 = Color.getHSBColor(value1, 1f, 1f).getRGB();
+					
+					RenderingUtils.drawGradientRect(mStack.last().pose(), 100, x, y, x + width, y + height, new int[]{col2, col1, col1, col2});
+					mStack.translate(0, 0, 100);
+					this.renderBg(mStack, Minecraft.getInstance(), mouseX, mouseY);
+					mStack.popPose();
+					
+					if (!isMouseOver(mouseX, mouseY) && isDragging()) {
+						mouseReleased(mouseX, mouseY, 0);
+					}
+				}
+			}
+		};
 	}
 	
 	@Override
@@ -198,7 +247,7 @@ public class HueSelectorComponent extends FocusableGui implements IRenderable
 	@Override
 	public List<? extends IGuiEventListener> children()
 	{
-		return ImmutableList.of(hueSlider, saturationSlider, hueReset, saturationReset, glowing);
+		return ImmutableList.of(hueSlider, saturationSlider, brightnessSlider, hueReset, saturationReset, brightnessReset, glowing);
 	}
 	
 	@Override
@@ -211,8 +260,10 @@ public class HueSelectorComponent extends FocusableGui implements IRenderable
 		
 		hueReset.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 		saturationReset.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
+		brightnessReset.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 		
 		hueSlider.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 		saturationSlider.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
+		brightnessSlider.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 	}
 }

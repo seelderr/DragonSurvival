@@ -107,7 +107,7 @@ public class ColorSelectorButton extends ExtendedButton
 			};
 			
 			if(text.defaultColor == null) {
-				hueComponent = new HueSelectorComponent(this.screen, x + xSize - 120, y, 120, 54, layer);
+				hueComponent = new HueSelectorComponent(this.screen, x + xSize - 120, y, 120, 76, layer);
 				screen.children.add(0, hueComponent);
 				screen.children.add(hueComponent);
 			}else{

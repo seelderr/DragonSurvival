@@ -118,7 +118,7 @@ public class DragonSkinLayerRenderer extends GeoLayerRenderer<DragonEntity>
 				if(text.colorable) {
 					float hueVal = settings.hue - 0.5f;
 					float satVal = settings.saturation - 0.5f;
-					
+					float brightVal = settings.brightness - 0.5f;
 					
 					float[] hsb = new float[3];
 					for (int x = 0; x < img.getWidth(); x++) {
@@ -136,6 +136,12 @@ public class DragonSkinLayerRenderer extends GeoLayerRenderer<DragonEntity>
 								hsb[1] = (float)MathHelper.lerp(Math.abs(satVal) * 2, hsb[1], 1.0);
 							}else{
 								hsb[1] = (float)MathHelper.lerp(Math.abs(satVal) * 2, hsb[1], 0.0);
+							}
+							
+							if(brightVal > 0){
+								hsb[2] = (float)MathHelper.lerp(Math.abs(brightVal) * 2, hsb[2], 1.0);
+							}else{
+								hsb[2] = (float)MathHelper.lerp(Math.abs(brightVal) * 2, hsb[2], 0.0);
 							}
 							
 							Color c = new Color(Color.HSBtoRGB(hsb[0], hsb[1], hsb[2]));
