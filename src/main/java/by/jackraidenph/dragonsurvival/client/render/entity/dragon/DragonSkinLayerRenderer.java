@@ -128,6 +128,8 @@ public class DragonSkinLayerRenderer extends GeoLayerRenderer<DragonEntity>
 							Color color = new Color(img.getPixelRGBA(x, y), true);
 							Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), hsb);
 							
+							if(settings.glowing && hsb[0] == 0 && hsb[1] == 0) continue;
+							
 							if(hueVal > 0){
 								hsb[0] = (float)MathHelper.lerp(Math.abs(hueVal) * 2, hsb[0], 1.0);
 							}else{
