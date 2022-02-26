@@ -51,9 +51,11 @@ public class DragonSkinLayerRenderer extends GeoLayerRenderer<DragonEntity>
 		DragonStateHandler handler = DragonStateProvider.getCap(entitylivingbaseIn.getPlayer()).orElse(null);
 		if (handler == null) return;
 		
+		SkinPreset preset = handler.getSkin().skinPreset;
+		SkinAgeGroup ageGroup = preset.skinAges.get(handler.getLevel());
+		if(ageGroup.defaultSkin) return;
+		
 		for(EnumSkinLayer layer : EnumSkinLayer.values()){
-			SkinPreset preset = handler.getSkin().skinPreset;
-			SkinAgeGroup ageGroup = preset.skinAges.get(handler.getLevel());
 			LayerSettings settings = ageGroup.layerSettings.get(layer);
 			String key = settings.selectedSkin;
 			

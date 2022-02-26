@@ -3,6 +3,7 @@ package by.jackraidenph.dragonsurvival.client.models;
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.client.skinPartSystem.DragonCustomizationHandler;
 import by.jackraidenph.dragonsurvival.client.skinPartSystem.EnumSkinLayer;
+import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.SkinPreset.SkinAgeGroup;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.capability.subcapabilities.SkinCap;
@@ -25,6 +26,7 @@ import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.resource.GeckoLibCache;
 import software.bernie.shadowed.eliotlash.molang.MolangParser;
 
+import java.util.Locale;
 import java.util.Objects;
 
 public class DragonModel extends AnimatedGeoModel<DragonEntity> {
@@ -44,11 +46,17 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity> {
     public ResourceLocation getTextureLocation(DragonEntity dragonEntity) {
 		if(currentTexture == null){
 			DragonStateHandler handler = DragonStateProvider.getCap(dragonEntity.getPlayer()).orElse(null);
-			String skin = handler.getSkin().skinPreset.skinAges.get(handler.getLevel()).layerSettings.get(EnumSkinLayer.BASE).selectedSkin;
-			ResourceLocation location = DragonCustomizationHandler.getSkinTexture(dragonEntity.getPlayer(), EnumSkinLayer.BASE, Objects.equals(skin, SkinCap.defaultSkinValue) ? "Skin" : skin, DragonUtils.getDragonType(dragonEntity.getPlayer()));
-		
-			if(location != null){
-				return location;
+			SkinAgeGroup ageGroup = handler.getSkin().skinPreset.skinAges.get(handler.getLevel());
+			
+			if(ageGroup.defaultSkin){
+				return new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/" + handler.getType().name().toLowerCase(Locale.ROOT) + "_" + handler.getLevel().getName().toLowerCase(Locale.ROOT) + ".png");
+			}else {
+				String skin = ageGroup.layerSettings.get(EnumSkinLayer.BASE).selectedSkin;
+				ResourceLocation location = DragonCustomizationHandler.getSkinTexture(dragonEntity.getPlayer(), EnumSkinLayer.BASE, Objects.equals(skin, SkinCap.defaultSkinValue) ? "Skin" : skin, DragonUtils.getDragonType(dragonEntity.getPlayer()));
+				
+				if (location != null) {
+					return location;
+				}
 			}
 		}
         return currentTexture;

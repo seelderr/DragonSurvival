@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 public class DropDownButton extends ExtendedButton
 {
 	public String current;
-	private String[] values;
+	public String[] values;
 	public Consumer<String> setter;
 	
 	private boolean toggled;

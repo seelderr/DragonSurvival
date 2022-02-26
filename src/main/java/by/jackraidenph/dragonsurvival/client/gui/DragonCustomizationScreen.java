@@ -14,6 +14,7 @@ import by.jackraidenph.dragonsurvival.client.handlers.magic.ClientMagicHUDHandle
 import by.jackraidenph.dragonsurvival.client.skinPartSystem.CustomizationRegistry;
 import by.jackraidenph.dragonsurvival.client.skinPartSystem.DragonCustomizationHandler;
 import by.jackraidenph.dragonsurvival.client.skinPartSystem.EnumSkinLayer;
+import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.LayerSettings;
 import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.SkinPreset;
 import by.jackraidenph.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.jackraidenph.dragonsurvival.client.util.TextRenderUtil;
@@ -34,7 +35,10 @@ import by.jackraidenph.dragonsurvival.util.Functions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.IRenderable;
 import net.minecraft.client.gui.screen.Screen;
@@ -57,6 +61,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class DragonCustomizationScreen extends Screen
@@ -123,32 +128,38 @@ public class DragonCustomizationScreen extends Screen
 	public void init()
 	{
 		super.init();
-		update();
+		
 		this.guiLeft = (this.width - 256) / 2;
 		this.guiTop = (this.height - 120) / 2;
 		
-		dragonRender = new DragonUIRenderComponent(this, width / 2 - 70, guiTop, 140, 125, () -> FakeClientPlayerUtils.getFakeDragon(0, handler));
-		children.add(dragonRender);
 		
-		DragonStateHandler handler = DragonStateProvider.getCap(getMinecraft().player).orElse(null);
-		if(handler != null){
-			level = handler.getLevel();
-			dragonRender.zoom = level.size;
+		float yRot = -3, xRot = -5, zoom = 0;
+		if(dragonRender != null){
+			yRot = dragonRender.yRot;
+			xRot = dragonRender.xRot;
+			zoom = dragonRender.zoom;
 		}
 		
+		dragonRender = new DragonUIRenderComponent(this, width / 2 - 70, guiTop, 140, 125, () -> FakeClientPlayerUtils.getFakeDragon(0, handler));
+		dragonRender.xRot = xRot;
+		dragonRender.yRot = yRot;
+		dragonRender.zoom = zoom;
+	
+		children.add(dragonRender);
+		
+		DragonStateHandler localHandler = DragonStateProvider.getCap(getMinecraft().player).orElse(null);
+		
 		if (!hasInit) {
-			if (handler != null) {
-				level = handler.getLevel();
-				dragonRender.zoom = level.size;
-				
-				if (type == DragonType.NONE) {
-					type = handler.getType();
-				}
-				
-				currentSelected = CustomizationRegistry.savedCustomizations.current.getOrDefault(type, new HashMap<>()).getOrDefault(level, 0);
-				preset = CustomizationRegistry.savedCustomizations.skinPresets.getOrDefault(handler.getType(), new HashMap<>()).getOrDefault(currentSelected, new SkinPreset());
-				handler.getSkin().skinPreset = preset;
+			level = localHandler.getLevel();
+			dragonRender.zoom = level.size;
+			
+			if (type == DragonType.NONE) {
+				type = localHandler.getType();
 			}
+			
+			currentSelected = CustomizationRegistry.savedCustomizations.current.getOrDefault(type, new HashMap<>()).getOrDefault(level, 0);
+			preset = CustomizationRegistry.savedCustomizations.skinPresets.getOrDefault(localHandler.getType(), new HashMap<>()).getOrDefault(currentSelected, new SkinPreset());
+			handler.getSkin().skinPreset = preset;
 			
 			this.handler.setHasWings(true);
 			this.handler.setType(type);
@@ -228,6 +239,28 @@ public class DragonCustomizationScreen extends Screen
 				{
 					return new ColoredDropdownValueEntry(this, pos, val, setter);
 				}
+				
+				@Override
+				public void render(MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_)
+				{
+					super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
+					String curValue = preset.skinAges.get(level).layerSettings.get(layers).selectedSkin;
+					
+					if(curValue != this.current){
+						this.current = curValue;
+						updateMessage();
+					}
+					
+					ArrayList<String> valueList = DragonCustomizationHandler.getKeys(type, layers);
+					
+					if(layers != EnumSkinLayer.BASE){
+						valueList.add(0, SkinCap.defaultSkinValue);
+					}
+					
+					this.values = valueList.toArray(new String[0]);
+					
+					this.active = !preset.skinAges.get(level).defaultSkin;
+				}
 			};
 			
 			addButton(btn);
@@ -287,6 +320,66 @@ public class DragonCustomizationScreen extends Screen
 		}
 		
 		autoSaveButton = addButton(new CheckboxButton(guiLeft - 75, height - 25, 20, 20, new TranslationTextComponent("ds.gui.customization.auto_save"), autoSaveButton == null || autoSaveButton.selected()));
+		
+		addButton(new CheckboxButton(guiLeft + (width / 2), height - 15, 100, 10, new TranslationTextComponent("ds.gui.customization.wings"), preset.skinAges.get(level).wings){
+			final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/checkbox.png");
+			
+			@Override
+			public void renderButton(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks)
+			{
+				pMatrixStack.pushPose();
+				pMatrixStack.translate(0,0,100);
+				Minecraft minecraft = Minecraft.getInstance();
+				minecraft.getTextureManager().bind(TEXTURE);
+				RenderSystem.enableDepthTest();
+				FontRenderer fontrenderer = minecraft.font;
+				RenderSystem.color4f(1.0F, 1.0F, 1.0F, this.alpha);
+				RenderSystem.enableBlend();
+				RenderSystem.defaultBlendFunc();
+				RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+				blit(pMatrixStack, this.x, this.y, this.isHovered() || this.isFocused() ? 10.0F : 0.0F, this.selected() ? 10.0F : 0.0F, 10, this.height, 64/2, 64/2);
+				this.renderBg(pMatrixStack, minecraft, pMouseX, pMouseY);
+				drawString(pMatrixStack, fontrenderer, this.getMessage(), this.x + 14, this.y + (this.height - 8) / 2, 14737632 | MathHelper.ceil(this.alpha * 255.0F) << 24);
+				pMatrixStack.popPose();
+				this.selected = preset.skinAges.get(level).wings;
+			}
+			
+			@Override
+			public void onPress()
+			{
+				preset.skinAges.get(level).wings = !preset.skinAges.get(level).wings;
+			}
+		});
+		
+		addButton(new CheckboxButton(guiLeft + (width / 2), height - 28, 100, 10, new TranslationTextComponent("ds.gui.customization.default_skin"), preset.skinAges.get(level).defaultSkin){
+			final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/checkbox.png");
+			
+			@Override
+			public void renderButton(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks)
+			{
+				pMatrixStack.pushPose();
+				pMatrixStack.translate(0,0,100);
+				Minecraft minecraft = Minecraft.getInstance();
+				minecraft.getTextureManager().bind(TEXTURE);
+				RenderSystem.enableDepthTest();
+				FontRenderer fontrenderer = minecraft.font;
+				RenderSystem.color4f(1.0F, 1.0F, 1.0F, this.alpha);
+				RenderSystem.enableBlend();
+				RenderSystem.defaultBlendFunc();
+				RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+				blit(pMatrixStack, this.x, this.y, this.isHovered() || this.isFocused() ? 10.0F : 0.0F, this.selected() ? 10.0F : 0.0F, 10, this.height, 64/2, 64/2);
+				this.renderBg(pMatrixStack, minecraft, pMouseX, pMouseY);
+				drawString(pMatrixStack, fontrenderer, this.getMessage(), this.x + 14, this.y + (this.height - 8) / 2, 14737632 | MathHelper.ceil(this.alpha * 255.0F) << 24);
+				pMatrixStack.popPose();
+				this.selected = preset.skinAges.get(level).defaultSkin;
+			}
+			
+			@Override
+			public void onPress()
+			{
+				preset.skinAges.get(level).defaultSkin = !preset.skinAges.get(level).defaultSkin;
+			}
+		});
 		
 		addButton(new ExtendedButton(width / 2 - 75 - 10, height - 25, 75, 20, new StringTextComponent("Save"), null)
 		{
@@ -369,7 +462,13 @@ public class DragonCustomizationScreen extends Screen
 				}
 				
 				if (keys.size() > 0) {
-					preset.skinAges.get(level).layerSettings.get(layer).selectedSkin = keys.get(minecraft.player.level.random.nextInt(keys.size()));
+					Supplier<LayerSettings> set = () -> preset.skinAges.get(level).layerSettings.get(layer);
+					
+					set.get().selectedSkin = keys.get(minecraft.player.level.random.nextInt(keys.size()));
+					set.get().hue = 0.5f + (minecraft.player.level.random.nextFloat() / 2);
+					set.get().saturation = 0.5f + (minecraft.player.level.random.nextFloat() / 2);
+					set.get().brightness = 0.5f + (minecraft.player.level.random.nextFloat() / 2);
+					set.get().modifiedColor = true;
 				}
 			}
 			

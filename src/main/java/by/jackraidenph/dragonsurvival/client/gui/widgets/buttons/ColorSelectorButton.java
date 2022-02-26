@@ -42,13 +42,14 @@ public class ColorSelectorButton extends ExtendedButton
 		this.setter = setter;
 		this.screen = screen;
 		this.layer = layer;
+		this.visible = false;
 	}
 	
 	@Override
 	public void render(MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_)
 	{
 		super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
-		
+		this.active = !screen.preset.skinAges.get(screen.level).defaultSkin;
 		if(visible) {
 			RenderingUtils.drawGradientRect(p_230430_1_.last().pose(), 100, x + 2, y + 2, x + xSize - 2, y + ySize - 2, new int[]{Color.red.getRGB(), Color.GREEN.getRGB(), Color.BLUE.getRGB(), Color.yellow.getRGB()});
 		}

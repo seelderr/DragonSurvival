@@ -45,7 +45,9 @@ public class SkinPreset implements NBTInterface
 	{
 		public DragonLevel level;
 		public HashMap<EnumSkinLayer, LayerSettings> layerSettings = new HashMap<>();
+		
 		public boolean wings = true;
+		public boolean defaultSkin = false;
 		
 		public SkinAgeGroup(DragonLevel level)
 		{
@@ -62,6 +64,7 @@ public class SkinPreset implements NBTInterface
 			CompoundNBT nbt = new CompoundNBT();
 			
 			nbt.putBoolean("wings", wings);
+			nbt.putBoolean("defaultSkin", defaultSkin);
 			
 			for(EnumSkinLayer layer : EnumSkinLayer.values()){
 				nbt.put(layer.name, layerSettings.getOrDefault(layer, new LayerSettings()).writeNBT());
@@ -74,6 +77,7 @@ public class SkinPreset implements NBTInterface
 		public void readNBT(CompoundNBT base)
 		{
 			wings = base.getBoolean("wings");
+			defaultSkin = base.getBoolean("defaultSkin");
 			
 			for(EnumSkinLayer layer : EnumSkinLayer.values()){
 				LayerSettings ageGroup = new LayerSettings();
