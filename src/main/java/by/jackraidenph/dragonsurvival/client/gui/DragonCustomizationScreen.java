@@ -14,7 +14,6 @@ import by.jackraidenph.dragonsurvival.client.handlers.magic.ClientMagicHUDHandle
 import by.jackraidenph.dragonsurvival.client.skinPartSystem.CustomizationRegistry;
 import by.jackraidenph.dragonsurvival.client.skinPartSystem.DragonCustomizationHandler;
 import by.jackraidenph.dragonsurvival.client.skinPartSystem.EnumSkinLayer;
-import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.LayerSettings;
 import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.SkinPreset;
 import by.jackraidenph.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.jackraidenph.dragonsurvival.client.util.TextRenderUtil;
@@ -61,7 +60,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class DragonCustomizationScreen extends Screen
@@ -122,6 +120,22 @@ public class DragonCustomizationScreen extends Screen
 		}
 		
 		lastSelected = currentSelected;
+		
+		children.removeIf((s) -> s instanceof DragonUIRenderComponent);
+		
+		float yRot = -3, xRot = -5, zoom = 0;
+		if(dragonRender != null){
+			yRot = dragonRender.yRot;
+			xRot = dragonRender.xRot;
+			zoom = dragonRender.zoom;
+		}
+		
+		dragonRender = new DragonUIRenderComponent(this, width / 2 - 70, guiTop, 140, 125, () -> FakeClientPlayerUtils.getFakeDragon(0, handler));
+		dragonRender.xRot = xRot;
+		dragonRender.yRot = yRot;
+		dragonRender.zoom = zoom;
+		
+		children.add(dragonRender);
 	}
 	
 	@Override
@@ -455,20 +469,18 @@ public class DragonCustomizationScreen extends Screen
 		
 		addButton(new Button(guiLeft + 256 + 30, 9, 19, 19, new TranslationTextComponent(""), (btn) -> {
 			for (EnumSkinLayer layer : EnumSkinLayer.values()) {
-				ArrayList<String> keys = DragonCustomizationHandler.getKeys(minecraft.player, layer);
+				ArrayList<String> keys = DragonCustomizationHandler.getKeys(FakeClientPlayerUtils.getFakePlayer(0, handler), layer);
 				
 				if (layer != EnumSkinLayer.BASE) {
 					keys.add(SkinCap.defaultSkinValue);
 				}
 				
 				if (keys.size() > 0) {
-					Supplier<LayerSettings> set = () -> preset.skinAges.get(level).layerSettings.get(layer);
-					
-					set.get().selectedSkin = keys.get(minecraft.player.level.random.nextInt(keys.size()));
-					set.get().hue = 0.5f + (minecraft.player.level.random.nextFloat() / 2);
-					set.get().saturation = 0.5f + (minecraft.player.level.random.nextFloat() / 2);
-					set.get().brightness = 0.5f + (minecraft.player.level.random.nextFloat() / 2);
-					set.get().modifiedColor = true;
+					preset.skinAges.get(level).layerSettings.get(layer).selectedSkin = keys.get(minecraft.player.level.random.nextInt(keys.size()));
+					preset.skinAges.get(level).layerSettings.get(layer).hue = 0.25f + (minecraft.player.level.random.nextFloat() * 0.5f);
+					preset.skinAges.get(level).layerSettings.get(layer).saturation = 0.25f + (minecraft.player.level.random.nextFloat() * 0.5f);
+					preset.skinAges.get(level).layerSettings.get(layer).brightness = 0.25f + (minecraft.player.level.random.nextFloat() * 0.5f);
+					preset.skinAges.get(level).layerSettings.get(layer).modifiedColor = true;
 				}
 			}
 			

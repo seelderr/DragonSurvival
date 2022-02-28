@@ -66,9 +66,10 @@ public class DragonSkinLayerRenderer extends GeoLayerRenderer<DragonEntity>
 					ResourceLocation texture = DragonCustomizationHandler.getSkinTexture(entitylivingbaseIn.getPlayer(), layer, key, handler.getType());
 					if(ClientDragonRender.dragonModel.getTextureLocation(entitylivingbaseIn) == texture) return;
 					
-					if(DragonSkins.getPlayerSkin(entitylivingbaseIn.getPlayer(), handler.getType(), handler.getLevel()) != null) {
+					if(texture == null || DragonSkins.getPlayerSkin(entitylivingbaseIn.getPlayer(), handler.getType(), handler.getLevel()) != null) {
 						return;
 					}
+					
 					ResourceLocation dynamicTexture = text.colorable && text.defaultColor == null ? new ResourceLocation(DragonSurvivalMod.MODID, "dynamic_" + texture.getPath()) : texture;
 					
 					Color renderColor = new Color(1f, 1f, 1f, 1f);

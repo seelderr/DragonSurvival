@@ -11,12 +11,14 @@ import by.jackraidenph.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.entity.DragonEntity;
+import by.jackraidenph.dragonsurvival.common.util.DragonUtils;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonLevel;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.entity.player.SyncDragonSkinSettings;
 import com.ibm.icu.impl.Pair;
 import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.ConfirmOpenLinkScreen;
@@ -402,10 +404,14 @@ public class SkinsScreen extends Screen
 			if(!loading) {
 				this.handler.setHasWings(true);
 				this.handler.setSize(level.size);
+				this.handler.setType(DragonUtils.getDragonType(minecraft.player));
+				this.handler.getSkin().skinPreset.skinAges.get(level).defaultSkin = true;
 				
 				FakeClientPlayerUtils.getFakePlayer(0, this.handler).animationSupplier = () -> "fly";
-				
-				ClientDragonRender.renderEntityInInventory(dragon, startX + 10, startY + 90, scale, xRot, yRot);
+				RenderSystem.pushMatrix();
+				RenderSystem.translatef(0, 0, 500);
+				ClientDragonRender.renderEntityInInventory(dragon, startX + 15, startY + 100, scale, xRot, yRot);
+				RenderSystem.popMatrix();
 			}
 			
 			((DragonRenderer)dragonRenderer).glowTexture = null;
