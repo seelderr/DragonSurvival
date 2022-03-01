@@ -1,5 +1,0 @@
-files:
-  - source: en_us.json
-    ignore:
-      - needfix*
-    translation: /%locale_with_underscore%.json
