@@ -26,4 +26,4 @@ server
 forge*changelog.txt
 run2
 logs
-crowdin.properties
+gradle/crowdin.properties
