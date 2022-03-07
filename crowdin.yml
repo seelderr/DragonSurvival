@@ -1,5 +1,12 @@
-files:
-  - source: /src/main/resources/assets/dragonsurvival/lang/en_us.json
-    ignore:
-      - needfix*
-    translation: /src/main/resources/assets/dragonsurvival/lang/%locale_with_underscore%.json
+projects:
+  - id: 500962
+    sources:
+      - dir: "%crowdin_download_path%"
+        crowdinPath:
+          dir: "/%branch_name%"
+          filename: "en_us.json"
+        exportPattern:
+          dir: "/%branch_name%"
+          filename: "%locale_with_underscore%.json"
+        includes:
+          - pattern: "en_us.json"

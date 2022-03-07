@@ -123,6 +123,11 @@ public class DragonCustomizationScreen extends Screen
 		
 		children.removeIf((s) -> s instanceof DragonUIRenderComponent);
 		
+		initDragonRender();
+	}
+	
+	private void initDragonRender()
+	{
 		float yRot = -3, xRot = -5, zoom = 0;
 		if(dragonRender != null){
 			yRot = dragonRender.yRot;
@@ -147,19 +152,7 @@ public class DragonCustomizationScreen extends Screen
 		this.guiTop = (this.height - 120) / 2;
 		
 		
-		float yRot = -3, xRot = -5, zoom = 0;
-		if(dragonRender != null){
-			yRot = dragonRender.yRot;
-			xRot = dragonRender.xRot;
-			zoom = dragonRender.zoom;
-		}
-		
-		dragonRender = new DragonUIRenderComponent(this, width / 2 - 70, guiTop, 140, 125, () -> FakeClientPlayerUtils.getFakeDragon(0, handler));
-		dragonRender.xRot = xRot;
-		dragonRender.yRot = yRot;
-		dragonRender.zoom = zoom;
-	
-		children.add(dragonRender);
+		initDragonRender();
 		
 		DragonStateHandler localHandler = DragonStateProvider.getCap(getMinecraft().player).orElse(null);
 		

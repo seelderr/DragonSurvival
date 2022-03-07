@@ -8,13 +8,20 @@ buildscript {
             name = "SpongePowered"
         	url = 'https://repo.spongepowered.org/repository/maven-public/' 
         }
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
         mavenCentral()
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
         classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7-SNAPSHOT'
         classpath group: 'org.parchmentmc', name: 'librarian', version: '1.+'
-    }
+        classpath "org.zaproxy.gradle:gradle-plugin-crowdin:0.2.1"    }
+}
+
+plugins {
+    id "org.zaproxy.crowdin" version "0.2.1"
 }
 
 apply plugin: 'net.minecraftforge.gradle'
@@ -22,13 +29,13 @@ apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
+apply plugin: "org.zaproxy.crowdin"
 
 version =  property("mc_version")+"-"+property("mod_version")
 group = property("mod_group")
-archivesBaseName = property("mod_file")
+archivesBaseName = property("mod_name") + "_" + property("version_name")
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(8) // Mojang ships Java 8 to end users, so your mod should target Java 8.
-
+java.toolchain.languageVersion = JavaLanguageVersion.of(8)
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 
 sourceSets {
@@ -47,7 +54,7 @@ configurations {
 }
 
 minecraft {
-    mappings channel: 'parchment', version: '2021.10.17-1.16.5'
+    mappings channel: property("mapping_channel"), version: property("mappings_version") + "-" + property("mc_version")
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
     runs {
@@ -94,16 +101,15 @@ repositories {
         name = "Progwml6 maven"
         url = "https://dvs1.progwml6.com/files/maven/"
     }
-    maven { url = "https://cursemaven.com" }
 }
 
 dependencies {
     minecraft "net.minecraftforge:forge:$mc_version-$forge_version"
 
-    implementation fg.deobf("software.bernie.geckolib:geckolib-forge-${property('mc_version')}:${property('geckolib_version')}")
+    implementation ("software.bernie.geckolib:geckolib-forge-${property('mc_version')}:${property('geckolib_version')}")
 
-    compileOnly fg.deobf("mezz.jei:jei-${property('mc_version')}:${property('jei_version')}:api")
-    runtimeOnly fg.deobf("mezz.jei:jei-${property('mc_version')}:${property('jei_version')}")
+    compileOnly ("mezz.jei:jei-${property('mc_version')}:${property('jei_version')}:api")
+    runtimeOnly ("mezz.jei:jei-${property('mc_version')}:${property('jei_version')}")
 
     compileOnly files("lib/appleskin-api.jar")
 
@@ -128,5 +134,18 @@ if (System.getProperty("idea.sync.active") == "true") {
         tasks.withType(JavaCompile).all {
             it.options.annotationProcessorPath = files()
         }
+    }
+}
+def props = new Properties()
+file("crowdin.properties").withInputStream { props.load(it) }
+
+project.crowdin { crowdinSpec ->
+    crowdinSpec.credentials { credentialsSpec ->
+        credentialsSpec.getToken().set(props.getProperty("access_token"))
+    }
+
+    crowdinSpec.configuration { configurationSpec ->
+        configurationSpec.getFile().set(file("crowdin.yml"))
+        configurationSpec.tokens.put("%crowdin_download_path%", props.getProperty("download_dir"))
     }
 }
