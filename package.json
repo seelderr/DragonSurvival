@@ -17,15 +17,27 @@
       "@semantic-release/commit-analyzer",
       "@semantic-release/release-notes-generator",
       "@semantic-release/changelog",
+      "semantic-release-license",
       "gradle-semantic-release-plugin",
       [
         "@semantic-release/git",
         {
           "assets": [
-            "gradle.properties",
-            "CHANGELOG.md"
+            "gradle.properties"
           ]
         }
+      ],
+      [
+        "semantic-release-license", {
+          "license": {
+            "path": "LICENSE.txt"
+          }
+        }
+      ],
+      [
+        "@semantic-release/changelog", {
+        "changelogFile": "changelog.md"
+      }
       ]
     ]
   },
