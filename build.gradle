@@ -8,25 +8,18 @@ buildscript {
             name = "SpongePowered"
         	url = 'https://repo.spongepowered.org/repository/maven-public/' 
         }
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
         mavenCentral()
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
         classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7-SNAPSHOT'
         classpath group: 'org.parchmentmc', name: 'librarian', version: '1.+'
-        classpath "org.zaproxy.gradle:gradle-plugin-crowdin:0.2.1"
     }
 }
 
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: 'org.spongepowered.mixin'
-apply plugin: 'eclipse'
-apply plugin: 'maven-publish'
-apply plugin: org.zaproxy.gradle.crowdin.CrowdinPlugin
 
 version =  property("mc_version")+"-"+property("mod_version")
 group = property("mod_group")
@@ -51,7 +44,7 @@ configurations {
 }
 
 minecraft {
-    mappings channel: property("mapping_channel"), version: property("mappings_version") + "-" + property("mc_version")
+    mappings (channel: property("mapping_channel"), version: (property("mappings_version") + "-" + property("mc_version")))
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
     runs {
@@ -131,59 +124,5 @@ if (System.getProperty("idea.sync.active") == "true") {
         tasks.withType(JavaCompile).all {
             it.options.annotationProcessorPath = files()
         }
-    }
-}
-def props = new Properties()
-file("gradle/crowdin.properties").withInputStream { props.load(it) }
-
-if (props.containsKey("access_token")) {
-    project.crowdin { crowdinSpec ->
-        crowdinSpec.credentials { credentialsSpec ->
-            credentialsSpec.getToken().set(props.getProperty("access_token"))
-        }
-
-        crowdinSpec.configuration { configurationSpec ->
-            configurationSpec.getFile().set(file("gradle/crowdin.yml"))
-            configurationSpec.tokens.put("%crowdin_download_path%", props.getProperty("download_dir"))
-        }
-    }
-
-    task deleteTranslationFilesInBuildDir(type: Delete) {
-        group "crowdin"
-        dependsOn crowdinCopyProjectTranslations
-        delete project.buildDir.toPath().resolve("temp").resolve("translations")
-        followSymlinks = true
-    }
-
-    task normalizeTranslationFilesToBuildDir(type: Copy) {
-        group "crowdin"
-        dependsOn deleteTranslationFilesInBuildDir
-        from project.rootDir.toPath().resolve(props.getProperty("download_dir")).toFile()
-        into project.buildDir.toPath().resolve("temp").resolve("translations")
-        rename { String name -> name.toLowerCase() }
-    }
-
-    task deleteTranslationFilesInRuntimeDir(type: Delete) {
-        group "crowdin"
-        dependsOn normalizeTranslationFilesToBuildDir
-        delete project.rootDir.toPath().resolve(props.getProperty("download_dir")).toFile()
-        followSymlinks = true
-    }
-
-    task normalizeTranslationFilesToRuntimeDir(type: Copy) {
-        group "crowdin"
-        dependsOn deleteTranslationFilesInRuntimeDir
-        from project.buildDir.toPath().resolve("temp").resolve("translations")
-        into project.rootDir.toPath().resolve(props.getProperty("download_dir")).toFile()
-        rename { String name -> name.toLowerCase() }
-    }
-
-    tasks.crowdinCopyProjectTranslations.dependsOn crowdinDownloadProjectTranslation
-    tasks.processResources.dependsOn normalizeTranslationFilesToRuntimeDir
-}
-else
-{
-    project.afterEvaluate {
-        project.logger.lifecycle "No CrowdIn API Key was provided. Can not sync translations!"
     }
 }

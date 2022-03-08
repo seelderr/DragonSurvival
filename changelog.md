@@ -1,5 +1,5 @@
-1.16.5-0.7 Flight Update:
-Added:
+##1.16.5-0.7 Flight Update:
+###Added:
 - Significant internal code changes.
 - Improved breath source
 - Config: allow ender dragons give a spin or not
@@ -7,7 +7,7 @@ Added:
 - Config: body in first person always rotate opposite of the camera
 - Localization is temporarily disabled: pt_br, pl_pl, ja_jp, es_es. Now the localization will be disabled if it does not match the current Russian and English translation.
 - Localization update: uk_ua, en_us, he_il, ru_ru
-Fixed:
+###Fixed:
 - bug with first-person tail
 - crash due to incompatibility with some mods
 - magic debuffs are now player attacks
@@ -26,7 +26,7 @@ Fixed:
 - jaw bug
 
 
-1.16.5-0.6 Flight Update:
+##1.16.5-0.6 Flight Update:
 - Added: Updated flight system. Now you can dive, quickly take off, slow down, smoothly land and do many more incredible things! Flying will become one of your favorite fun!
 - Added: Activation of flight mode is now slightly modified. You still need to press a button to turn on the mode, but when your paws touch the ground this mode is automatically turned off. If you want, you can turn on double jump in the config or take off when you look up into the sky.
 - Added: Dragons are now born with the skill to fly, but to get the ability to accelerate (Flight Spin), you need to ask the Ender dragon.
@@ -68,7 +68,7 @@ Fixed:
 - Configs added: Growth modifier config, max growth size, growth over time, position of the growth indicator, render the items in first person, flight settings
 - Localization: update ru_ru, en_us, fr_fr
 
-1.16.5-0.5 Magic Update:
+##1.16.5-0.5 Magic Update:
 - Fixed: Claw and Teeth Damage
 - Fixed: Claws and teeth no longer render with invisibility or spectator
 - Fixed: carry on  no longer damaging mobs
@@ -86,7 +86,7 @@ Fixed:
 - Added: sea_sweep particle
 - Localization: update ru_ru, en_us, zh_cn, he_il
 
-1.16.5-0.4 Magic Update:
+##1.16.5-0.4 Magic Update:
 - Fixed: mending breaks tools, not fixes them
 - Fixed: digging animation freezes
 - Fixed: should fix skill casting desync
@@ -120,7 +120,7 @@ Fixed:
 - ball lightning now has many more visual effects and make  lightning strike when it's raining and stormy
 - accelerated expenditure of hunger during the use of skills.
 
-1.16.5-0.3 Magic Update:
+##1.16.5-0.3 Magic Update:
 - Fixed: Passive skills can disappear after death
 - Fixed: If the tool in the claw is broken the blocks are destroyed at the same rate until the inventory is opened again. (the tool is not considered broken until the inventory is opened)
 - Fixed: If you put items in the dragon's craft and switch to the human inventory - the items in the craft will disappear.
@@ -131,7 +131,7 @@ Fixed:
 - Fixed: Rare dragon inventory dup
 - Configs added: Config for keeping claw items (saved by default) and possible solution for gravestones.
 
-1.16.5-0.2 Magic Update:
+##1.16.5-0.2 Magic Update:
 - Fixed: Game no longer freezes when you try to use the recipe book (we removed it from the dragon's inventory). The JEI recipes work fine.
 - Fixed: Fixed all (hopefully) desynchronization on the server: emotions, casting, mana, sound, dimension, and so on.
 - Fixed: Using the animation that turns off the first-person view no longer turns it off to all players around.
@@ -144,7 +144,7 @@ Fixed:
 - Configs added: mana recovery rate (under favorable and unfavorable factors)
 - Now, when creating your own animations, you can also specify requirements for the age and species of the dragon.
 
-1.16.5-0.1 Magic Update:
+##1.16.5-0.1 Magic Update:
 - Special thanks to Horeak for this update! He did a great job. It took us a year to prepare for this update. And in 3 weeks of very intensive work, we did it!
 There are a total of 14,000 lines in DS. The update with magic adds another 10,000 lines and changes about 4,000 old lines of code. Just look at this amount of code: https://github.com/DragonSurvivalTeam/DragonSurvival/pull/74/commits/04c8ebf2fd65a8f7cf28eba36aaf6daa9ffba2f9
 - Added 36 dragon skills. Each dragon species now has 4 active skills, 4 passive skills, and 4 innate skills.
@@ -175,10 +175,10 @@ There are a total of 14,000 lines in DS. The update with magic adds another 10,0
 - Slightly changed the code for the glowing parts of the skins. Now they can be used on membranes, but there are requirements to transparency. Its RGB color must be 000 (not 255). For you it is visually no different, but the code is very sensitive to this.
 - Configs: All magic settings, Whether to save passives skills and grow stage when changing dragon type,  List of rideable entities, List of slots to handle blacklistedItems option, List of items that disallowed to be used by dragons,  How long of a cooldown in seconds the altar has after each use, Speed of alternateGrowing effect in seconds, Defines if dragon should grow without requirement of catalyst items, Amount of additional dragon size per each iteration of alternateGrowingFrequency for alternateGrowing effect, Items which will cause damage to dragons when consumed, List of items to grow dragons, The amount of damage taken when hit with a snowball or a water bottle (cave dragon), Additional modded USEABLE items that restore water when used (called from LivingEntityUseItemEvent.Finish), Whether the sea dragon should lose more water in warmer biomes and less during the night, How long in seconds should the cave fire effect from charged soup last, Should the default inventory be replaced as a dragon, The y position of the cast bar from the bottom of the screen.
 
-1.16.5-0.0.9999:
+##1.16.5-0.0.9999:
 - added a magic system
 
-1.16.5-0.0.47:
+##1.16.5-0.0.47:
 - fixed water not rendering in first person;
 - fixed dragon not rendering in first person;
 - fixed off-hand item rendering;
@@ -196,11 +196,11 @@ There are a total of 14,000 lines in DS. The update with magic adds another 10,0
 - added auto complete for the dragon_stage argument to make it easier;
 - added config option for creative like flight;
 
-1.16.5-0.0.46:
+##1.16.5-0.0.46:
 - missing armor fix;
 - fix for first-person shaders.
 
-1.16.5-0.0.45:
+##1.16.5-0.0.45:
 - changes in dragon model: fixed ancient bug with UV shoulder cubes location, fixed location of all ridges, partly fixed "gap" between ridge cubes during animation, fixed z-fighting of ridges, fixed jaw, all dragon parts united into common group, body sections now have separate parent-groups with suffix _sThanks, AIS!;
 - new decorative parts added to dragon model (about 100 new parts): several types of horns, two pairs of "ear" cubes with different angles, horizontal tail ridges, moustache, beard, one horn on the nose and one on the forehead. Thanks, AIS!;
 - changed dragon textures: fixes standard dragon textures to the new UV and fixes asymmetry/transitions/ladder pixels/missUV, etc. Thanks, AIS!;
@@ -219,7 +219,7 @@ There are a total of 14,000 lines in DS. The update with magic adds another 10,0
 - fixed a very important and old bug with armor rendering!
 - English, Chinese (Ice flare+Gairlading), and Russian translations updated.
 
-1.16.5-0.0.44:
+##1.16.5-0.0.44:
 - added effects: sea peace, forest magic, cave fire, calm animals, anti-predators;
 - added blocks: dragon memory, beacon empty, sea beacon peace, forest beacon magic, cave beacon fire;
 - added mechanics: buying an effect from a lighthouse for experience, damaging the player when he lacks experience, improving the lighthouse with items, creating a protected area with effects thanks to the memory block.
@@ -235,7 +235,7 @@ There are a total of 14,000 lines in DS. The update with magic adds another 10,0
 - improved the spawn of dragon hunters;
 - vanilla beacon returns in recipes.
 
-1.16.5-0.0.43:
+##1.16.5-0.0.43:
 - required forge version - 36.2.0;
 - fixed knight helmet block drops;
 - fixed bolas/net rendering on other entities;
@@ -243,13 +243,13 @@ There are a total of 14,000 lines in DS. The update with magic adds another 10,0
 - knight won't block attacks without a shield;
 - noses are returned to princesses.
 
-1.16.5-0.0.42:
+##1.16.5-0.0.42:
 - updated Chinese, Russian;
 - dragon hunter textures updated;
 - charged charcoal recipe is more complicated;
 - charged soup recipe requires less charged charcoal;
 
-1.16.5-0.0.41:
+##1.16.5-0.0.41:
 - added Armored Knight, Hunter, Knight Hound, Prince, Princesses (with config options);
 - added 3 Knight Helmets (trophy);
 - hitting or killing villagers (and princesses) gives "Evil dragon" effect to the dragon player;
@@ -257,7 +257,7 @@ There are a total of 14,000 lines in DS. The update with magic adds another 10,0
 - Princess or Prince can spawn around random player in overworld, and they have special trades;
 - added an option to toggle wing status notification and an option to toggle first person model;
 
-1.16.5-0.0.40:
+##1.16.5-0.0.40:
 - added a config option to enable fall damage from dragon flight;
 - fall damage from dragon flight is now calculated based on speed and his size, and is non-lethal;
 - fixed 'Unknown custom packet identifier' spam in console;
@@ -267,7 +267,7 @@ There are a total of 14,000 lines in DS. The update with magic adds another 10,0
 - added an option to prevent dragons from using Elytra;
 - the nests can be placed in water now, and are waterloggable;
 
-1.16.5-0.0.39:
+##1.16.5-0.0.39:
 - new languages have been added: Brazilian Portuguese and Traditional Chinese
 - chance of dust falling out for humans is increased to 1%
 - predators spawn only in End.
@@ -279,7 +279,7 @@ There are a total of 14,000 lines in DS. The update with magic adds another 10,0
 - nutritional value of charcoal was decreased from 5:6 to 4:2
 - added food compatibility with eanimod, environmental, untamedwilds, creatures and beast, snow pig, lees creatures, mystical world, toad terror and freshwarriors
 
-1.16.5-0.0.38:
+##1.16.5-0.0.38:
 - updated and added items: charred meat, charred seafood, charred mushrooms, charred vegetables, which are obtained by re-cooking fried foods in furnace, smoker, and campfire.
 - all charred/charred foods can now be made into 1 coal unit
 - added charged soup for the cave dragon. Best food for a cave dragons and worst for a human. Recipe: put 3 fresh charged charcoal on top of 1 charred seafood/meat, 1 charred vegetable and 1 charred mushroom, then heat it all up on several buckets of lava in the workbench.
@@ -293,8 +293,8 @@ There are a total of 14,000 lines in DS. The update with magic adds another 10,0
 - minor animation fix;
 - extra models and files removed.
 
-1.16.5-0.0.37:
-New:
+##1.16.5-0.0.37:
+###New:
 - added new altars of blackstone, nether brick, purple and red sandstone (special thanks to NoCube for textures and to mina987 for code)
 - added text help when selecting a dragon, compatible with the configuration file (features, weaknesses, diet)
 - when hitting an elder dragon to create an altar, sound is played
@@ -310,13 +310,13 @@ New:
 - altar names fixed
 - russian, french (Shaenarys), chinese (Ice flare-dragon ice) and english (Contra) localization updated
 
-1.16.5-0.0.36:
+##1.16.5-0.0.36:
 fixed parrots not rendering while riding on dragons
 fixed missing nametags, added config option to enable >:(
 dragons no longer drop various items like shields and bows
 fixed item use being fired twice in mutiplayer
 
-1.16.5-0.0.35:
+##1.16.5-0.0.35:
 fixed items in 3x3 crafting window not returning to player;
 implemented dragon riding - humans and baby dragons can now ride max size dragons
 fixed dragon inventory display
@@ -325,7 +325,7 @@ fixed specifics sync issues when traveling between dimensions
 dragon shadows now scale off dragon size
 fixed flying dragon fall damage
 
-1.16.5-0.0.34:
+##1.16.5-0.0.34:
 many new (and perhaps unnecessary) config options
 revamped dragon diet system, completely configurable
 lowered chances of poison from eating incorrect food (50%, 90%, 100% to 25%, 50%, 100%)
@@ -338,7 +338,7 @@ added temp fix for the dragon crafting inventory
 tweaked dragon animations, item textures, dragon textures, and more
 Dragon altar now tracks cooldowns separately for each player.
 
-1.16.5-0.0.33:
+##1.16.5-0.0.33:
 added hitbox and eye position adjustments according to dragon growth.
 overrode and rewrote minecraft auto-crouch functionality.
 fixed the French lang file.
@@ -357,7 +357,7 @@ implemented lava vision and swimming for cave dragons;
 fixed issues with predator stars;
 added and improved many config options;
 
-1.16.5-0.0.32:
+##1.16.5-0.0.32:
 added netherite armor textures;
 improved nest item consumption logic;
 added nest background transparency based on energy;
@@ -368,11 +368,11 @@ fixed issues with dragon doors;
 added reverse recipes for elder dragon bone and heart element;
 non-vanilla armor will show no texture
 
-1.16.5-0.0.31:
+##1.16.5-0.0.31:
 update;
 fixed crash happening when skeleton horses are spawned by lightning
 
-1.15.2-0.0.30:
+##1.15.2-0.0.30:
 disabled NPE spam;
 command 'dragon' requires permission 4;
 dragons can't ride pigs;
@@ -380,5 +380,5 @@ fixed crash when Shift + clicking in nest GUI;
 added teleportation cooldown to the Magical Predator;
 added usage cooldown to Dragon altar;
 
-1.15.2-0.0.29:
+##1.15.2-0.0.29:
 neutralized crashes
