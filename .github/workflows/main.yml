@@ -1,0 +1,18 @@
+name: CI Semantic Releaser
+
+on:
+  push:
+    branches: [ v1.16.x ]
+  pull_request:
+    branches: [ v1.16.x ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Semantic Releaser
+      uses: brpaz/action-semantic-release@v1
