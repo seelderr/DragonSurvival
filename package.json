@@ -4,6 +4,10 @@
   "homepage": "https://github.com/DragonSurvivalTeam/DragonSurvival",
   "license": "UNLICENSED",
   "private": true,
+  "devDependencies": {
+    "gradle-semantic-release-plugin": "1.4.1",
+    "semantic-release": "17.0.4"
+  },
   "release": {
     "plugins": [
       "gradle-semantic-release-plugin",
