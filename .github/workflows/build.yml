@@ -27,7 +27,7 @@ jobs:
         id: read_property
         uses: christian-draeger/read-properties@1.0.1
         with:
-          path: './gradle.properties'
+          path: '../gradle.properties'
           property: 'java_version'
 
 
@@ -68,7 +68,7 @@ jobs:
         id: read_property
         uses: christian-draeger/read-properties@1.0.1
         with:
-          path: './gradle.properties'
+          path: '../gradle.properties'
           property: 'java_version'
 
 
@@ -118,7 +118,7 @@ jobs:
         id: read_property
         uses: christian-draeger/read-properties@1.0.1
         with:
-          path: './gradle.properties'
+          path: '../gradle.properties'
           property: 'java_version'
 
 
