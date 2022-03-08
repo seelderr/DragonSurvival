@@ -3,5 +3,18 @@
   "version": "0.0.0",
   "homepage": "https://github.com/DragonSurvivalTeam/DragonSurvival",
   "license": "UNLICENSED",
-  "private": true
+  "private": true,
+  "release": {
+    "plugins": [
+      "gradle-semantic-release-plugin",
+      [
+        "@semantic-release/git",
+        {
+          "assets": [
+            "gradle.properties"
+          ]
+        }
+      ]
+    ]
+  },
 }
