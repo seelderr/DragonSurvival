@@ -6,13 +6,19 @@
     "@semantic-release/github": "7.2.0",
     "@semantic-release/release-notes-generator": "9.0.1",
     "conventional-changelog-conventionalcommits": "4.5.0",
-    "gradle-semantic-release-plugin": "1.4.13",
-    "semantic-release": "17.3.0"
+    "gradle-semantic-release-plugin": "1.6.6",
+    "semantic-release": "19.0.2"
   },
   "scripts": {
     "semantic-release": "npx semantic-release"
   },
   "release": {
+    "tagFormat": "${version}",
+    "branches": [
+      {
+        "name": "v1.16.x"
+      }
+    ],
     "plugins": [
       "@semantic-release/commit-analyzer",
       "@semantic-release/release-notes-generator",
@@ -38,10 +44,18 @@
         "@semantic-release/changelog", {
         "changelogFile": "changelog.md"
       }
+      ],
+      [
+        "@semantic-release/github",
+        {
+          "assets": [
+            "build/libs/*.jar"
+          ]
+        }
       ]
     ]
   },
   "engines": {
-    "node": ">=14.16"
+    "node": "^16.13.0"
   }
 }
