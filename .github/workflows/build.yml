@@ -8,6 +8,7 @@ on:
 
 env:
   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  JAVA_VERSION: 1.8
 
 permissions:
   contents: write
@@ -23,18 +24,10 @@ jobs:
     if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
 
     steps:
-      - name: Read Properties
-        id: read_property
-        uses: christian-draeger/read-properties@1.0.1
-        with:
-          path: '../gradle.properties'
-          property: 'java_version'
-
-
-      - name: Set up JDK ${{ steps.read_property.outputs.value }}
+      - name: Set up JDK ${{ JAVA_VERSION }}
         uses: actions/setup-java@v2
         with:
-          java-version: ${{ steps.read_property.outputs.value }}
+          java-version: ${{ JAVA_VERSION }}
 
 
       - name: Cache Gradle
@@ -64,18 +57,10 @@ jobs:
     runs-on: ubuntu-18.04
 
     steps:
-      - name: Read Properties
-        id: read_property
-        uses: christian-draeger/read-properties@1.0.1
-        with:
-          path: '../gradle.properties'
-          property: 'java_version'
-
-
-      - name: Set up JDK ${{ steps.read_property.outputs.value }}
+      - name: Set up JDK ${{ JAVA_VERSION }}
         uses: actions/setup-java@v2
         with:
-          java-version: ${{ steps.read_property.outputs.value }}
+          java-version: ${{ JAVA_VERSION }}
 
 
       - name: Cache Gradle
@@ -114,18 +99,10 @@ jobs:
     runs-on: ubuntu-18.04
 
     steps:
-      - name: Read Properties
-        id: read_property
-        uses: christian-draeger/read-properties@1.0.1
-        with:
-          path: '../gradle.properties'
-          property: 'java_version'
-
-
-      - name: Set up JDK ${{ steps.read_property.outputs.value }}
+      - name: Set up JDK ${{ JAVA_VERSION }}
         uses: actions/setup-java@v2
         with:
-          java-version: ${{ steps.read_property.outputs.value }}
+          java-version: ${{ JAVA_VERSION }}
 
 
       - name: Set up Node.js v12.x
