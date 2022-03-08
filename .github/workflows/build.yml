@@ -34,5 +34,5 @@ jobs:
       - name: Build mod
         uses: brpaz/action-semantic-release@v1
         with:
-          install_plugins: "@semantic-release/git gradle-semantic-release-plugin semantic-release-license @semantic-release/changelog"
+          install_plugins: "@semantic-release/git gradle-semantic-release-plugin @semantic-release/changelog"
           branch: v1.16.x
