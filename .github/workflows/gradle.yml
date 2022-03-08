@@ -6,27 +6,19 @@ on: pull_request
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-    - name: Read Properties
-      id: read_property
-      uses: christian-draeger/read-properties@1.0.1
-      with:
-        path: './gradle.properties'
-        property: 'java_version'
-
     - uses: actions/checkout@v2
-
-    - name: Set up JDK ${{ steps.read_property.outputs.value }}
-      uses: actions/setup-java@v2
+    - name: Set up JDK 1.8
+      uses: actions/setup-java@v1
       with:
-        java-version: ${{ steps.read_property.outputs.value }}
+        java-version: 1.8
+
+    - name: Setup Gradle
+      uses: gradle/gradle-build-action@v2
 
     - name: Setup forge mdk
-      uses: gradle/gradle-build-action@v2
-    - id: gradle
-      run: ./gradlew init
+      run: gradle init
 
     - name: Build with Gradle
-      uses: gradle/gradle-build-action@v2
-    - id: gradle
-      run: ./gradlew build
+      run: gradle build
