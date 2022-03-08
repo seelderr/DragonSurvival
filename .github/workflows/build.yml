@@ -15,18 +15,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Set up JDK 1.8
+      - name: Set up JDK
         uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
           java-version: 8
           cache: gradle
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '16'
-          cache: npm
 
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
