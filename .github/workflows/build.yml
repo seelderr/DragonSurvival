@@ -1,0 +1,25 @@
+name: CI Semantic Releaser
+
+on:
+  push:
+    branches: [ v1.16.x ]
+  pull_request:
+    branches: [ v1.16.x ]
+    
+env:
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Semantic Releaser
+        uses: brpaz/action-semantic-release@v1
+        with:
+            branch: v1.16.x
