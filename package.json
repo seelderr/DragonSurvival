@@ -23,15 +23,6 @@
       "@semantic-release/commit-analyzer",
       "@semantic-release/release-notes-generator",
       "@semantic-release/changelog",
-      "gradle-semantic-release-plugin",
-      [
-        "@semantic-release/git",
-        {
-          "assets": [
-            "gradle.properties"
-          ]
-        }
-      ],
       [
         "@semantic-release/changelog", {
         "changelogFile": "changelog.md"
