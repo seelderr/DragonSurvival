@@ -12,6 +12,8 @@
     "semantic-release": "npx semantic-release"
   },
   "release": {
+    "preset": "conventionalcommits",
+    "presetConfig": "conventional-changelog-conventionalcommits",
     "tagFormat": "${version}",
     "branches": [
       {
@@ -21,9 +23,6 @@
     "plugins": [
       "@semantic-release/commit-analyzer",
       "@semantic-release/release-notes-generator",
-      "@semantic-release/changelog",
-      "@semantic-release/github",
-      "@semantic-release/git",
       [
         "@semantic-release/changelog", {
           "changelogFile": "changelog.md"
@@ -41,21 +40,6 @@
           "assets": [
             "build/libs/*.jar"
           ]
-        }
-      ],
-      [
-        "@semantic-release/commit-analyzer",
-        {
-          "preset": "conventionalcommits",
-          "config": "conventional-changelog-conventionalcommits"
-        }
-      ],
-      [
-        "@semantic-release/release-notes-generator",
-        {
-          "preset": "conventionalcommits",
-          "commit": "commits",
-          "config": "conventional-changelog-conventionalcommits"
         }
       ]
     ]
