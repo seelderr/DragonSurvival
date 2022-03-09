@@ -4,11 +4,11 @@
   "private": true,
   "devDependencies": {
     "@semantic-release/changelog": "5.0.1",
+    "@semantic-release/exec": "6.0.3",
     "@semantic-release/commit-analyzer": "8.0.1",
     "@semantic-release/git": "9.0.0",
     "@semantic-release/github": "7.2.0",
     "@semantic-release/release-notes-generator": "9.0.1",
-    "gradle-semantic-release-plugin": "1.6.7",
     "conventional-changelog-conventionalcommits": "4.5.0",
     "semantic-release": "19.0.2"
   },
@@ -25,7 +25,13 @@
       "@semantic-release/commit-analyzer",
       "@semantic-release/release-notes-generator",
       "@semantic-release/changelog",
-      "gradle-semantic-release-plugin",
+      [
+        "@semantic-release/exec",
+        {
+          "generateNotesCmd": "sed -i \"/mod_version=/ s/=.*/=${nextRelease.version}/\" gradle.properties",
+          "prepareCmd": "./gradlew build"
+        }
+      ],
       [
         "@semantic-release/github",
         {
