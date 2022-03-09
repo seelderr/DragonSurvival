@@ -1,4 +1,7 @@
 {
+  "name": "dragon-survival",
+  "version": "0.9.2",
+  "private": true,
   "devDependencies": {
     "@semantic-release/changelog": "5.0.1",
     "@semantic-release/commit-analyzer": "8.0.1",
@@ -23,11 +26,7 @@
     "plugins": [
       "@semantic-release/commit-analyzer",
       "@semantic-release/release-notes-generator",
-      [
-        "@semantic-release/changelog", {
-          "changelogFile": "changelog.md"
-      }
-      ],
+      "@semantic-release/changelog",
       [
         "@semantic-release/git",
         {
