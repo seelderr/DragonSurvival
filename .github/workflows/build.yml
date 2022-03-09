@@ -37,5 +37,5 @@ jobs:
       - name: Semantic Release
         uses: brpaz/action-semantic-release@v1
         with:
-          install_plugins: "@semantic-release/git @semantic-release/changelog conventional-changelog-conventionalcommits"
+          install_plugins: "conventional-changelog-conventionalcommits"
           branch: v1.16.x

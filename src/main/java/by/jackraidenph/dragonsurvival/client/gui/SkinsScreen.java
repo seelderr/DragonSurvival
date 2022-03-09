@@ -455,7 +455,7 @@ public class SkinsScreen extends Screen
 	@Override
 	public boolean mouseScrolled(double mouseX, double mouseY, double amount)
 	{
-		zoom += amount;
+		zoom += (float)amount;
 		zoom = MathHelper.clamp(zoom, 10, 80);
 		
 		return true;

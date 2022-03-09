@@ -149,11 +149,11 @@ public abstract class BreathAbility extends ActiveDragonAbility implements ISeco
 		Vector3d delta = player.getDeltaMovement();
 		
 		if(player.isFallFlying() || player.abilities.flying) {
-			yComp += delta.y * 6;
+			yComp += (float)delta.y * 6;
 		}
 		
-		xComp += delta.x * 6;
-		zComp += delta.z * 6;
+		xComp += (float)delta.x * 6;
+		zComp += (float)delta.z * 6;
 	}
 
 	public void hitEntities() {

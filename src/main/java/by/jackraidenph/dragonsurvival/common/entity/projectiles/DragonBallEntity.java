@@ -113,7 +113,7 @@ public class DragonBallEntity extends AbstractFireballEntity implements IAnimata
 			if (this.isInWater()) {
 				f = 0.8F;
 			}
-			moveDist += distanceToSqr(d0, d1, d2);
+			moveDist += (float)distanceToSqr(d0, d1, d2);
 			this.setDeltaMovement(vector3d.add(this.xPower, this.yPower, this.zPower).scale((double)f));
 			this.level.addParticle(this.getTrailParticle(), d0, d1, d2, 0.0D, 0.0D, 0.0D);
 			this.setPos(d0, d1, d2);

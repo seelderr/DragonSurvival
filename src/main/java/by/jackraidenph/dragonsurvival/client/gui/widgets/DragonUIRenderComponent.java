@@ -80,7 +80,7 @@ public class DragonUIRenderComponent extends FocusableGui implements IRenderable
 	public boolean mouseScrolled(double mouseX, double mouseY, double amount)
 	{
 		if(isMouseOver(mouseX, mouseY)) {
-			zoom += amount;
+			zoom += (float)amount;
 			zoom = MathHelper.clamp(zoom, 10, 80);
 			return true;
 		}
