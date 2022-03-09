@@ -3,11 +3,13 @@ name: CI Semantic Releaser
 on:
   push:
     branches: [ v1.16.x ]
-  pull_request:
-    branches: [ v1.16.x ]
 
 env:
-  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  GIT_AUTHOR_EMAIL: ${{ secrets.GIT_AUTHOR_EMAIL }}
+  GIT_AUTHOR_NAME: CI
+  GIT_COMMITTER_NAME: CI
+  GIT_COMMITTER_EMAIL: ${{ secrets.GIT_COMMITTER_EMAIL }}
 
 jobs:
   build:
@@ -32,10 +34,10 @@ jobs:
         run: gradle init
 
       - name: Build with Gradle
-        run: gradle build
+        run: gradle build --no-daemon
 
       - name: Semantic Release
         uses: brpaz/action-semantic-release@v1
         with:
-          install_plugins: "conventional-changelog-conventionalcommits"
+          install_plugins: "conventional-changelog-conventionalcommits gradle-semantic-release-plugin"
           branch: v1.16.x

@@ -21,7 +21,7 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: 'org.spongepowered.mixin'
 
-version =  property("mc_version")+"-"+property("mod_version")
+version =  property("mc_version")+"-"+property("version")
 group = property("mod_group")
 archivesBaseName = property("mod_name") + "_" + property("version_name")
 
