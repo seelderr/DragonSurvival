@@ -34,7 +34,7 @@ jobs:
       - name: Build with Gradle
         run: gradle build
 
-      - name: Build mod
+      - name: Semantic Release
         uses: brpaz/action-semantic-release@v1
         with:
           install_plugins: "@semantic-release/git @semantic-release/changelog"
