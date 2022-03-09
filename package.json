@@ -30,7 +30,7 @@
       [
         "@semantic-release/git",
         {
-          "assets": ["changelog.md"]
+          "assets": ["package.json", "./src/**/*.{json, java}", "./docs/CHANGELOG.md"]
         }
       ],
       [
@@ -44,16 +44,16 @@
       [
         "@semantic-release/commit-analyzer",
         {
-        "path": "sr-commit-analyzer",
-        "preset": "metahub",
-        "releaseRules": "conventional-changelog-metahub/release-rules"
+          "preset": "conventionalcommits",
+          "config": "conventional-changelog-conventionalcommits"
         }
       ],
       [
         "@semantic-release/release-notes-generator",
         {
-          "path": "sr-release-notes-generator",
-          "preset": "metahub"
+          "preset": "conventionalcommits",
+          "commit": "commits",
+          "config": "conventional-changelog-conventionalcommits"
         }
       ]
     ]
