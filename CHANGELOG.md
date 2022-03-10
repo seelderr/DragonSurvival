@@ -1,3 +1,10 @@
+### [0.10.6](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/v0.10.5...v0.10.6) (2022-03-10)
+
+
+### Bug Fixes
+
+* github is annoying ([3edb727](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/3edb72799beddd4b9f9f989546f4111c15b0265f))
+
 ### [0.10.5](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/v0.10.4...v0.10.5) (2022-03-10)
 
 
