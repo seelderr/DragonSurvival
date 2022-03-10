@@ -37,8 +37,7 @@
           "preset": "conventionalcommits",
           "releaseRules": [
             {
-              "type": "fix",
-              "release": "patch"
+              "type": "fix"
             }
           ]
         }
