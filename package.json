@@ -7,6 +7,8 @@
     "@semantic-release/exec": "6.0.3",
     "@semantic-release/commit-analyzer": "9.0.2",
     "@semantic-release/git": "10.0.1",
+    "@semantic-release/github": "8.0.2",
+
     "@semantic-release/release-notes-generator": "10.0.3",
     "semantic-release": "19.0.2",
     "@semantic-release/npm": "9.0.1",
@@ -52,6 +54,12 @@
         "@semantic-release/exec",
         {
           "generateNotesCmd": "sed -ie s/^mod_version=.*/mod_version=${nextRelease.version}/ gradle.properties"
+        }
+      ],
+      [
+        "@semantic-release/github",
+        {
+          "assets": []
         }
       ],
       [
