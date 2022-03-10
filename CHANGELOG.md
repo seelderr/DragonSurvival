@@ -1,3 +1,10 @@
+### [0.10.2](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/v0.10.1...v0.10.2) (2022-03-10)
+
+
+### Bug Fixes
+
+* try to fix npm publish ([293f09c](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/293f09cbe812b0a48a75efc85498c16766253d5c))
+
 ### [0.10.1](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/v0.10.0...v0.10.1) (2022-03-10)
 
 
