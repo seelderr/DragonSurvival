@@ -1,3 +1,10 @@
+### [0.10.5](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/v0.10.4...v0.10.5) (2022-03-10)
+
+
+### Bug Fixes
+
+* update ([99af2c0](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/99af2c08d0dc857d39bedf7e983348820257ab52))
+
 ### [0.10.4](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/v0.10.3...v0.10.4) (2022-03-10)
 
 
