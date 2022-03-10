@@ -4,8 +4,6 @@ on:
   push:
     branches: [ v1.16.x ]
 
-env:
-  GITHUB_TOKEN: ${{ secrets.RELEASE_KEY }}
 
 jobs:
   build:
@@ -30,9 +28,7 @@ jobs:
         uses: cycjimmy/semantic-release-action@v3
         with:
           extra_plugins: "semantic-release @semantic-release/exec conventional-changelog-conventionalcommits"
-          branches: |
-            [
-              {
-                name: "v1.16.x"
-              }
-            ]
+          branches:  [ { name: "v1.16.x"} ]
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_KEY }}
+          GH_TOKEN: ${{ secrets.RELEASE_KEY }}

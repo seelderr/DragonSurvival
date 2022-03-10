@@ -16,7 +16,7 @@
   "release": {
     "preset": "conventionalcommits",
     "presetConfig": "conventional-changelog-conventionalcommits",
-    "repositoryUrl": "https://github.com/DragonSurvivalTeam/DragonSurvivalReleases.git",
+    "repositoryUrl": "git://github.com/DragonSurvivalTeam/DragonSurvivalReleases.git",
     "branches": [
       {
         "name": "v1.16.x"
