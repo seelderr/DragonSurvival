@@ -27,3 +27,4 @@ forge*changelog.txt
 run2
 logs
 gradle/crowdin.properties
+*.sh
