@@ -6,7 +6,6 @@ on:
       - 'v*'
     branches: [ v1.16.x ]
   release:
-    types: [ created, published ]
     branches: [ v1.16.x ]
 
 env:
