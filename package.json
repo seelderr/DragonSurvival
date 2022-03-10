@@ -1,5 +1,7 @@
 {
   "name": "dragon-survival",
+  "version": "0.10.2",
+  "private": true,
   "devDependencies": {
     "@semantic-release/changelog": "6.0.1",
     "@semantic-release/exec": "6.0.3",
@@ -8,22 +10,21 @@
     "@semantic-release/github": "8.0.2",
     "@semantic-release/release-notes-generator": "10.0.3",
     "semantic-release": "19.0.2",
+    "@semantic-release/npm": "9.0.1",
     "conventional-changelog-conventionalcommits": "4.6.3"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/DragonSurvivalTeam/DragonSurvivalReleases.git"
-  },
-  "files": [
-    "build/libs/*.jar"
-  ],
   "release": {
     "preset": "conventionalcommits",
     "presetConfig": "conventional-changelog-conventionalcommits",
+    "repositoryUrl": "https://github.com/DragonSurvivalTeam/DragonSurvivalReleases.git",
     "branches": [
       {
         "name": "v1.16.x"
       }
+    ],
+    "repository": "github:DragonSurvivalTeam/DragonSurvivalReleases",
+    "files": [
+      "build/libs/*.jar"
     ],
     "plugins": [
       [
@@ -40,15 +41,26 @@
       ],
       "@semantic-release/changelog",
       [
+        "@semantic-release/npm",
+        {
+          "npmPublish": false,
+          "tarballDir": "dist"
+        }
+      ],
+      [
         "@semantic-release/exec",
         {
-          "generateNotesCmd": "sed -ie s/^mod_version=.*/mod_version=${nextRelease.version}/ gradle.properties"
+          "generateNotesCmd": "sed -ie s/^mod_version=.*/mod_version=${nextRelease.version}/ gradle.properties",
+          "prepareCmd": "./gradlew build"
         }
       ],
       [
         "@semantic-release/github",
         {
-          "assets": []
+          "githubUrl": "git://github.com/DragonSurvivalTeam/DragonSurvivalReleases.git",
+          "assets": [
+            "build/libs/*.jar"
+          ]
         }
       ],
       [
