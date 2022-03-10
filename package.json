@@ -1,6 +1,5 @@
 {
   "name": "dragon-survival",
-  "version": "0.10.8",
   "devDependencies": {
     "@semantic-release/changelog": "6.0.1",
     "@semantic-release/exec": "6.0.3",
@@ -9,7 +8,6 @@
     "@semantic-release/github": "8.0.2",
     "@semantic-release/release-notes-generator": "10.0.3",
     "semantic-release": "19.0.2",
-    "@semantic-release/npm": "9.0.1",
     "conventional-changelog-conventionalcommits": "4.6.3"
   },
   "repository": {
@@ -41,13 +39,6 @@
         }
       ],
       "@semantic-release/changelog",
-      [
-        "@semantic-release/npm",
-        {
-          "npmPublish": false,
-          "tarballDir": "dist"
-        }
-      ],
       [
         "@semantic-release/exec",
         {
