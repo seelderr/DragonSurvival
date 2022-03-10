@@ -1,8 +1,12 @@
 name: CI Package builder
 
 on:
+  push:
+    tags:
+      - 'v*'
+    branches: [ v1.16.x ]
   release:
-    types: [created]
+    types: [ created, published ]
     branches: [ v1.16.x ]
 
 env:
