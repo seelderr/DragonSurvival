@@ -1,0 +1,43 @@
+name: CI Package builder
+
+on:
+  release:
+    types: [created]
+    branches: [ v1.16.x ]
+
+env:
+  GITHUB_TOKEN: ${{ secrets.RELEASE_KEY }}
+  NODE_AUTH_TOKEN: ${{ secrets.RELEASE_KEY }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 8
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Setup forge mdk
+        run: ./gradlew init
+
+      - name: Build with Gradle
+        run: ./gradlew build
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+          registry-url: 'https://npm.pkg.github.com'
+
+      - run: npm ci
+      - run: npm publish

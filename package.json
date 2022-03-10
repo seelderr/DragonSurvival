@@ -12,9 +12,6 @@
     "@semantic-release/npm": "9.0.1",
     "conventional-changelog-conventionalcommits": "4.6.3"
   },
-  "scripts": {
-    "semantic-release": "npx semantic-release"
-  },
   "release": {
     "preset": "conventionalcommits",
     "presetConfig": "conventional-changelog-conventionalcommits",
@@ -23,7 +20,10 @@
         "name": "v1.16.x"
       }
     ],
-    "repository": "github:DragonSurvivalTeam/DragonSurvivalReleases",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/DragonSurvivalTeam/DragonSurvivalReleases.git"
+    },
     "files": [
       "build/libs/*.jar"
     ],
@@ -52,8 +52,6 @@
         "@semantic-release/exec",
         {
           "generateNotesCmd": "sed -ie s/^mod_version=.*/mod_version=${nextRelease.version}/ gradle.properties",
-          "prepareCmd": "./gradlew build",
-          "publishCmd": "npm install ; npm publish"
         }
       ],
       [

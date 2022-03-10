@@ -14,23 +14,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: 8
-
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '16.x'
-          registry-url: 'https://npm.pkg.github.com'
-
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-
       - name: Semantic Release
         uses: cycjimmy/semantic-release-action@v3
         with:
-          extra_plugins: "semantic-release @semantic-release/exec conventional-changelog-conventionalcommits"
+          extra_plugins: "semantic-release conventional-changelog-conventionalcommits"
           branches: |
             [
               {
