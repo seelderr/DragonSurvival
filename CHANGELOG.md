@@ -1,3 +1,10 @@
+### [0.10.10](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/v0.10.9...v0.10.10) (2022-03-10)
+
+
+### Bug Fixes
+
+* Send help ([551c00f](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/551c00f252a7a0dd79dc33fb26e0481c079a3dca))
+
 ### [0.10.9](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/v0.10.8...v0.10.9) (2022-03-10)
 
 
