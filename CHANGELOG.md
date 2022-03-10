@@ -1,3 +1,12 @@
+### [0.10.9](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/v0.10.8...v0.10.9) (2022-03-10)
+
+
+### Bug Fixes
+
+* Maybe, totaly the last update? ([a8c8ae3](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/a8c8ae3096d06510a1408b0e6ec934cfd96fcb89))
+* one day it will work ([715fd30](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/715fd302bb392c7c67a60b60e5d97d3799631b51))
+* This is not going to work ([ee7add3](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/ee7add305a37e2d64da203816c2dc48192ead866))
+
 ### [0.10.8](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/v0.10.7...v0.10.8) (2022-03-10)
 
 
