@@ -1,3 +1,11 @@
+### [0.10.1](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/v0.10.0...v0.10.1) (2022-03-10)
+
+
+### Bug Fixes
+
+* A fix to fix the fix by removing the fix type ([6d5f7bd](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/6d5f7bd4dacfe2f868044cf3da3d205d452788d8))
+* Change build system again ([605c826](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/605c8262ab5bff0af59c3fe493eddcf661d292cb))
+
 ## [0.10.0](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/v0.9.3...v0.10.0) (2022-03-10)
 
 
