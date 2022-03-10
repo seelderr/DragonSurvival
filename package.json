@@ -23,10 +23,7 @@
         "name": "v1.16.x"
       }
     ],
-    "repository": {
-      "type": "git",
-      "url": "https://github.com/DragonSurvivalTeam/DragonSurvivalReleases.git"
-    },
+    "repository": "github:DragonSurvivalTeam/DragonSurvivalReleases",
     "files": [
       "build/libs/*.jar"
     ],
@@ -56,7 +53,7 @@
         {
           "generateNotesCmd": "sed -ie s/^mod_version=.*/mod_version=${nextRelease.version}/ gradle.properties",
           "prepareCmd": "./gradlew build",
-          "publishCmd": "npm ci ; npm publish"
+          "publishCmd": "npm install ; npm publish"
         }
       ],
       [
