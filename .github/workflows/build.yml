@@ -31,3 +31,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_KEY }}
           GH_TOKEN: ${{ secrets.RELEASE_KEY }}
+          GH_URL: "https://api.github.com/"
