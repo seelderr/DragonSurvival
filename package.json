@@ -12,6 +12,13 @@
     "@semantic-release/npm": "9.0.1",
     "conventional-changelog-conventionalcommits": "4.6.3"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DragonSurvivalTeam/DragonSurvivalReleases.git"
+  },
+  "files": [
+    "build/libs/*.jar"
+  ],
   "release": {
     "preset": "conventionalcommits",
     "presetConfig": "conventional-changelog-conventionalcommits",
@@ -19,13 +26,6 @@
       {
         "name": "v1.16.x"
       }
-    ],
-    "repository": {
-      "type": "git",
-      "url": "https://github.com/DragonSurvivalTeam/DragonSurvivalReleases.git"
-    },
-    "files": [
-      "build/libs/*.jar"
     ],
     "plugins": [
       [
