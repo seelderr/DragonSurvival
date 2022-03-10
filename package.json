@@ -1,6 +1,6 @@
 {
   "name": "dragon-survival",
-  "version": "1.0.1",
+  "version": "0.9.2",
   "private": true,
   "devDependencies": {
     "@semantic-release/changelog": "6.0.1",
@@ -31,7 +31,7 @@
           "preset": "conventionalcommits",
           "releaseRules": [
             {
-              "type": "build",
+              "type": "fix",
               "release": "patch"
             }
           ]
@@ -55,7 +55,7 @@
         "@semantic-release/exec",
         {
           "generateNotesCmd": "sed -ie s/^mod_version=.*/mod_version=${nextRelease.version}/ gradle.properties",
-          "prepareCmd": "./gradlew init ; ./gradlew build"
+          "prepareCmd": "./gradlew build"
         }
       ],
       [
@@ -71,7 +71,6 @@
         {
           "assets": [
             "package.json",
-            "./src/**/*.{json, java}",
             "CHANGELOG.md",
             "gradle.properties"
           ],
