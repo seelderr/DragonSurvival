@@ -1,3 +1,10 @@
+### [1.0.1](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/v1.0.0...v1.0.1) (2022-03-10)
+
+
+### Bug Fixes
+
+* Fix some casting issues ([d367d06](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/d367d068efd7ba654054aba374a7252ccb511ca3))
+
 ##1.16.5-0.7 Flight Update:
 ###Added:
 - Significant internal code changes.
