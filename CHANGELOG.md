@@ -1,3 +1,10 @@
+## [0.10.0](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/v0.9.3...v0.10.0) (2022-03-10)
+
+
+### Features
+
+* Added new build system for changelogs and releases ([96293da](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/96293da100f3ca064f81df15184eb784fd46bc1c))
+
 ##1.16.5-0.7 Flight Update:
 ###Added:
 - Significant internal code changes.
