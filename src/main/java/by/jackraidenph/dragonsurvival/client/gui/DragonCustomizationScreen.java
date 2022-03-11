@@ -27,7 +27,6 @@ import by.jackraidenph.dragonsurvival.misc.DragonType;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.RequestClientData;
 import by.jackraidenph.dragonsurvival.network.dragon_editor.SyncPlayerSkinPreset;
-import by.jackraidenph.dragonsurvival.network.entity.player.SynchronizeDragonCap;
 import by.jackraidenph.dragonsurvival.network.flight.SyncSpinStatus;
 import by.jackraidenph.dragonsurvival.network.status.SyncAltarCooldown;
 import by.jackraidenph.dragonsurvival.util.Functions;
@@ -575,7 +574,6 @@ public class DragonCustomizationScreen extends Screen
 				cap.getMovementData().spinLearned = ConfigHandler.SERVER.saveGrowthStage.get() && cap.getMovementData().spinLearned;
 				
 				NetworkHandler.CHANNEL.sendToServer(new SyncAltarCooldown(Minecraft.getInstance().player.getId(), Functions.secondsToTicks(ConfigHandler.SERVER.altarUsageCooldown.get())));
-				NetworkHandler.CHANNEL.sendToServer(new SynchronizeDragonCap(minecraft.player.getId(), cap.isHiding(), cap.getType(), cap.getSize(), cap.hasWings(), ConfigHandler.SERVER.caveLavaSwimmingTicks.get(), 0));
 				NetworkHandler.CHANNEL.sendToServer(new SyncSpinStatus(Minecraft.getInstance().player.getId(), cap.getMovementData().spinAttack, cap.getMovementData().spinCooldown, cap.getMovementData().spinLearned));
 				ClientEvents.sendClientData(new RequestClientData(cap.getType(), cap.getLevel()));
 				

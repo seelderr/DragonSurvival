@@ -7,7 +7,6 @@ import by.jackraidenph.dragonsurvival.common.EffectInstance2;
 import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.capability.provider.GenericCapabilityProvider;
 import by.jackraidenph.dragonsurvival.common.capability.provider.VillageRelationshipsProvider;
-import by.jackraidenph.dragonsurvival.common.util.DragonUtils;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.RequestClientData;
@@ -132,9 +131,12 @@ public class Capabilities {
         PlayerEntity player = e.getPlayer();
         PlayerEntity original = e.getOriginal();
         if(!e.isWasDeath()) return;
-        original.revive();
         
-        DragonStateProvider.getCap(player).ifPresent(capNew -> DragonStateProvider.getCap(original).ifPresent(capOld -> capNew.readNBT(capOld.writeNBT())));
+        DragonStateProvider.getCap(player).ifPresent(capNew -> DragonStateProvider.getCap(original).ifPresent(capOld -> {
+            CompoundNBT nbt = capOld.writeNBT();
+            capNew.readNBT(nbt);
+            NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new CompleteDataSync(player.getId(), nbt));
+        }));
         
         VillageRelationshipsProvider.getVillageRelationships(player).ifPresent(villageRelationShips -> {
             VillageRelationshipsProvider.getVillageRelationships(original).ifPresent(old -> {
@@ -145,14 +147,11 @@ public class Capabilities {
             });
         });
         
-        original.remove();
         DragonStateHandler.updateModifiers(original, player);
         player.refreshDimensions();
     }
     
     public static void syncCapability(PlayerEntity player){
-        if(DragonUtils.isDragon(player)) {
-            NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new CompleteDataSync(player));
-        }
+        NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new CompleteDataSync(player));
     }
 }

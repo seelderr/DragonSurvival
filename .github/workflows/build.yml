@@ -1,6 +1,7 @@
 name: CI Semantic Releaser
 
 on:
+  workflow_dispatch:
   push:
     branches: [ v1.16.x ]
 
@@ -34,17 +35,11 @@ jobs:
 
       - name: Setup forge mdk
         if: steps.semantic.outputs.new_release_published == 'true'
-        uses: gradle/gradle-build-action@v2
-        with:
-          arguments: init
-          gradle-executable: ./gradlew
+        run: ./gradlew init
 
       - name: Build with Gradle
         if: steps.semantic.outputs.new_release_published == 'true'
-        uses: gradle/gradle-build-action@v2
-        with:
-          arguments: build
-          gradle-executable: ./gradlew
+        run: ./gradlew build
 
       - name: Upload Release Asset
         if: steps.semantic.outputs.new_release_published == 'true'

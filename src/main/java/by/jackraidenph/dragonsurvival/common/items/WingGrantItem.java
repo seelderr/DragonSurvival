@@ -3,7 +3,7 @@ package by.jackraidenph.dragonsurvival.common.items;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
-import by.jackraidenph.dragonsurvival.network.entity.player.SynchronizeDragonCap;
+import by.jackraidenph.dragonsurvival.network.syncing.CompleteDataSync;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -34,7 +34,7 @@ public class WingGrantItem extends Item
 		if (handler != null && handler.isDragon()) {
 			if(!world.isClientSide) {
 				handler.setHasWings(!handler.hasWings());
-				NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new SynchronizeDragonCap(player.getId(), handler.isHiding(), handler.getType(), handler.getSize(), handler.hasWings(), handler.getLavaAirSupply(), handler.getPassengerId()));
+				NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new CompleteDataSync(player));
 				
 				if (!player.isCreative()) {
 					player.getItemInHand(p_77659_3_).shrink(1);

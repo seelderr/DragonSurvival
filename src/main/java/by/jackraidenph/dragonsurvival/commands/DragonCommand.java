@@ -2,12 +2,11 @@ package by.jackraidenph.dragonsurvival.commands;
 
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.config.ConfigHandler;
-import by.jackraidenph.dragonsurvival.network.NetworkHandler;
-import by.jackraidenph.dragonsurvival.network.entity.player.SynchronizeDragonCap;
-import by.jackraidenph.dragonsurvival.network.flight.SyncSpinStatus;
 import by.jackraidenph.dragonsurvival.misc.DragonLevel;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
+import by.jackraidenph.dragonsurvival.network.NetworkHandler;
+import by.jackraidenph.dragonsurvival.network.flight.SyncSpinStatus;
+import by.jackraidenph.dragonsurvival.network.syncing.CompleteDataSync;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
@@ -95,7 +94,7 @@ public class DragonCommand
 			
 			dragonStateHandler.growing = true;
 		    NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> serverPlayerEntity), new SyncSpinStatus(serverPlayerEntity.getId(), dragonStateHandler.getMovementData().spinAttack, dragonStateHandler.getMovementData().spinCooldown, dragonStateHandler.getMovementData().spinLearned));
-		    NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> serverPlayerEntity), new SynchronizeDragonCap(serverPlayerEntity.getId(), false, dragonType1, dragonLevel.size, wings, ConfigHandler.SERVER.caveLavaSwimmingTicks.get(), dragonStateHandler.getPassengerId()));
+		    NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> serverPlayerEntity), new CompleteDataSync(serverPlayerEntity));
 	        serverPlayerEntity.refreshDimensions();
 	    });
 	    return 1;

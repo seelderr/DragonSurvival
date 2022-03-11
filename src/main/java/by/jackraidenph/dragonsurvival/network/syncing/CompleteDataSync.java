@@ -46,7 +46,7 @@ public class CompleteDataSync extends ISidedMessage<CompleteDataSync>
 	@Override
 	public CompleteDataSync decode(PacketBuffer buffer)
 	{
-		return null;
+		return new CompleteDataSync(buffer.readInt(), buffer.readNbt());
 	}
 	
 	@Override
@@ -75,5 +75,7 @@ public class CompleteDataSync extends ISidedMessage<CompleteDataSync>
 		DragonStateProvider.getCap(sender).ifPresent((cap) -> {
 			cap.readNBT(message.nbt);
 		});
+		
+		sender.refreshDimensions();
 	}
 }

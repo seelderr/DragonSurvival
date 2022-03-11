@@ -207,7 +207,7 @@ public class TreasureBlock extends FallingBlock implements IWaterLoggable
 						ServerPlayerEntity serverplayerentity = (ServerPlayerEntity)player;
 						if (serverplayerentity.getRespawnPosition() == null
 						    || serverplayerentity.getRespawnDimension() != world.dimension()
-						    || serverplayerentity.level.getBlockState(serverplayerentity.getRespawnPosition()).isAir()
+						    || !(serverplayerentity.level.getBlockState(serverplayerentity.getRespawnPosition()).getBlock() instanceof TreasureBlock)
 						    || serverplayerentity.getRespawnPosition() != null && !serverplayerentity.getRespawnPosition().equals(p_225533_3_) && serverplayerentity.getRespawnPosition().distSqr(p_225533_3_) > 40) {
 							serverplayerentity.setRespawnPosition(world.dimension(), p_225533_3_, 0.0F, false, true);
 							return ActionResultType.SUCCESS;

@@ -6,6 +6,11 @@ on:
     # runs every day at 12:00 noon UTC
     - cron: '0 12 * * *'
 
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
+  CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+
 jobs:
   i18n-download-docs-translations:
     name: Language

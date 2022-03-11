@@ -5,7 +5,7 @@ import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProv
 import by.jackraidenph.dragonsurvival.misc.DragonLevel;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.entity.player.SyncSize;
-import by.jackraidenph.dragonsurvival.network.entity.player.SynchronizeDragonCap;
+import by.jackraidenph.dragonsurvival.network.syncing.CompleteDataSync;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -64,7 +64,7 @@ public class StarBoneItem extends Item
 							if (mount != null){
 								mount.stopRiding();
 								((ServerPlayerEntity)playerIn).connection.send(new SSetPassengersPacket(playerIn));
-								NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) playerIn), new SynchronizeDragonCap(playerIn.getId(), dragonStateHandler.isHiding(), dragonStateHandler.getType(), dragonStateHandler.getSize(), dragonStateHandler.hasWings(), dragonStateHandler.getLavaAirSupply(), 0));
+								NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) playerIn), new CompleteDataSync(playerIn));
 							}
 						}
 					}

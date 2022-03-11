@@ -121,9 +121,7 @@ public class CapabilityController {
             }
             if (flag || passenger == null || !player.hasPassenger(passenger) || passenger.isSpectator() || player.isSpectator()) {
                 dragonStateHandler.setPassengerId(0);
-                NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new SynchronizeDragonCap(player.getId(), dragonStateHandler.isHiding(), dragonStateHandler.getType(), dragonStateHandler.getSize(), dragonStateHandler.hasWings(), dragonStateHandler.getLavaAirSupply(), 0));
             }
-
         });
     }
 
