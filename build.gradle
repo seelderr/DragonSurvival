@@ -102,10 +102,10 @@ repositories {
 dependencies {
     minecraft "net.minecraftforge:forge:$mc_version-$forge_version"
 
-    implementation ("software.bernie.geckolib:geckolib-forge-${property('mc_version')}:${property('geckolib_version')}")
+    implementation fg.deobf("software.bernie.geckolib:geckolib-forge-${property('mc_version')}:${property('geckolib_version')}")
 
-    compileOnly ("mezz.jei:jei-${property('mc_version')}:${property('jei_version')}:api")
-    runtimeOnly ("mezz.jei:jei-${property('mc_version')}:${property('jei_version')}")
+    compileOnly fg.deobf("mezz.jei:jei-${property('mc_version')}:${property('jei_version')}:api")
+    runtimeOnly fg.deobf("mezz.jei:jei-${property('mc_version')}:${property('jei_version')}")
 
     compileOnly files("lib/appleskin-api.jar")
 

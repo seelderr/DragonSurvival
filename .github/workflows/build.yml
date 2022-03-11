@@ -34,11 +34,17 @@ jobs:
 
       - name: Setup forge mdk
         if: steps.semantic.outputs.new_release_published == 'true'
-        run: ./gradlew init
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: init
+          gradle-executable: ./gradlew
 
       - name: Build with Gradle
         if: steps.semantic.outputs.new_release_published == 'true'
-        run: ./gradlew build
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: build
+          gradle-executable: ./gradlew
 
       - name: Upload Release Asset
         if: steps.semantic.outputs.new_release_published == 'true'
