@@ -1,3 +1,10 @@
+### [0.10.16](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.10.15...0.10.16) (2022-03-11)
+
+
+### Bug Fixes
+
+* Fixes a issues causing player data not to be saved. ([240d7e2](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/240d7e274c8a8321122d1c546de4467245938b09))
+
 ### [0.10.15](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.10.14...0.10.15) (2022-03-11)
 
 
