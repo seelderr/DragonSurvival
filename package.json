@@ -20,6 +20,7 @@
   },
   "release": {
     "preset": "conventionalcommits",
+    "tagFormat": "${version}",
     "presetConfig": "conventional-changelog-conventionalcommits",
     "branches": [
       {
