@@ -1,13 +1,12 @@
 {
   "name": "dragon-survival",
-  "version": "0.10.10",
+  "version": "0.10.9",
   "private": true,
   "devDependencies": {
     "@semantic-release/changelog": "6.0.1",
     "@semantic-release/exec": "6.0.3",
     "@semantic-release/commit-analyzer": "9.0.2",
     "@semantic-release/git": "10.0.1",
-    "@semantic-release/github": "8.0.2",
     "@semantic-release/release-notes-generator": "10.0.3",
     "semantic-release": "19.0.2",
     "@semantic-release/npm": "9.0.1",
@@ -16,10 +15,12 @@
   "files": [
     "build/libs/*.jar"
   ],
+  "engines": {
+    "node": "^16.13.0"
+  },
   "release": {
     "preset": "conventionalcommits",
     "presetConfig": "conventional-changelog-conventionalcommits",
-    "repositoryUrl": "git://github.com/DragonSurvivalTeam/DragonSurvival.git",
     "branches": [
       {
         "name": "v1.16.x"
@@ -50,16 +51,6 @@
         "@semantic-release/exec",
         {
           "generateNotesCmd": "sed -ie s/^mod_version=.*/mod_version=${nextRelease.version}/ gradle.properties",
-          "prepareCmd": "./gradlew build"
-        }
-      ],
-      [
-        "@semantic-release/github",
-        {
-          "githubUrl": "https://github.com/DragonSurvivalTeam/DragonSurvivalReleases.git",
-          "assets": [
-            "build/libs/*.jar"
-          ]
         }
       ],
       [
@@ -74,8 +65,5 @@
         }
       ]
     ]
-  },
-  "engines": {
-    "node": "^16.13.0"
   }
 }
