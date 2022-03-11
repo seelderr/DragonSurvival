@@ -40,25 +40,6 @@ jobs:
         if: steps.semantic.outputs.new_release_published == 'true'
         run: ./gradlew build
 
-      - uses: actions/upload-artifact@v3
-        if: steps.semantic.outputs.new_release_published == 'true'
-        with:
-          path:  build/libs/*.jar
-        env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_KEY }}
-
-      - name: Create Release
-        if: steps.semantic.outputs.new_release_published == 'true'
-        id: create_release
-        uses: actions/create-release@v1
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          draft: false
-          prerelease: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_KEY }}
-
       - name: Upload Release Asset
         if: steps.semantic.outputs.new_release_published == 'true'
         id: upload-release-asset
@@ -67,4 +48,5 @@ jobs:
           repo_name: DragonSurvivalTeam/DragonSurvivalReleases
           repo_token: ${{ secrets.RELEASE_KEY }}
           file: build/libs/*.jar
-          tag: ${{ github.ref }}
+          tag: ${{ steps.semantic.outputs.new_release_version }}
+          file_glob: true
