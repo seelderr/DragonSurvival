@@ -1,3 +1,10 @@
+### [0.10.12](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/v0.10.11...v0.10.12) (2022-03-11)
+
+
+### Bug Fixes
+
+* Another day, another build script update ([afc6125](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/afc6125717fc06f1556ce713273dddfc72aa6cdb))
+
 ### [0.10.11](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/v0.10.10...v0.10.11) (2022-03-10)
 
 
