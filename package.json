@@ -62,7 +62,7 @@
             "CHANGELOG.md",
             "gradle.properties"
           ],
-          "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+          "message": "Bump version to ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
         }
       ]
     ]

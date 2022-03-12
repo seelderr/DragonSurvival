@@ -10,6 +10,10 @@ import net.minecraft.util.math.vector.Vector3f;
 
 public class DragonUtils
 {
+	public static DragonStateHandler getHandler(Entity entity){
+		return DragonStateProvider.getCap(entity).orElse(new DragonStateHandler());
+	}
+	
 	public static boolean isDragon(Entity entity) {
 	    return DragonStateProvider.getCap(entity).filter(DragonStateHandler::isDragon).isPresent();
 	}

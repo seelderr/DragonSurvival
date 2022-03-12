@@ -51,10 +51,12 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.client.gui.GuiUtils;
 import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
+import net.minecraftforge.fml.client.gui.widget.Slider;
 import org.apache.commons.lang3.text.WordUtils;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -101,7 +103,6 @@ public class DragonCustomizationScreen extends Screen
 	private DragonUIRenderComponent dragonRender;
 	public DragonStateHandler handler = new DragonStateHandler();
 	
-	private CheckboxButton autoSaveButton;
 	
 	public void update()
 	{
@@ -157,7 +158,7 @@ public class DragonCustomizationScreen extends Screen
 		
 		if (!hasInit) {
 			level = localHandler.getLevel();
-			dragonRender.zoom = level.size;
+			dragonRender.zoom = (float)(level.size * preset.skinAges.get(level).sizeMul);
 			
 			if (type == DragonType.NONE) {
 				type = localHandler.getType();
@@ -324,8 +325,23 @@ public class DragonCustomizationScreen extends Screen
 		for (int num = 1; num <= 9; num++) {
 			addButton(new CustomizationSlotButton(width / 2 + 195, guiTop + ((num - 1) * 12) + 5 + 20, num, this));
 		}
+		DecimalFormat df = new DecimalFormat("#.#");
 		
-		autoSaveButton = addButton(new CheckboxButton(guiLeft - 75, height - 25, 20, 20, new TranslationTextComponent("ds.gui.customization.auto_save"), autoSaveButton == null || autoSaveButton.selected()));
+		addButton(new Slider(width / 2 - 100 - 100, height - 25, 100, 20, new TranslationTextComponent("ds.gui.customization.size"), new StringTextComponent("%"), ConfigHandler.SERVER.minSizeVari.get(), ConfigHandler.SERVER.maxSizeVari.get(), Double.parseDouble(df.format((preset.skinAges.get(level).sizeMul - 1.0) * 100)), true, true, (p) -> {}, (p) -> {
+			preset.skinAges.get(level).sizeMul = 1.0 + (p.getValueInt() / 100.0);
+			dragonRender.zoom = (float)(level.size * preset.skinAges.get(level).sizeMul);
+		}){
+			@Override
+			public void render(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks)
+			{
+				super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
+				setValue(Double.parseDouble(df.format((preset.skinAges.get(level).sizeMul - 1.0) * 100)));
+				
+				if (!isMouseOver(pMouseX, pMouseY) && isDragging()) {
+					mouseReleased(pMouseX, pMouseY, 0);
+				}
+			}
+		});
 		
 		addButton(new CheckboxButton(guiLeft + (width / 2), height - 15, 100, 10, new TranslationTextComponent("ds.gui.customization.wings"), preset.skinAges.get(level).wings){
 			final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/checkbox.png");
@@ -333,6 +349,7 @@ public class DragonCustomizationScreen extends Screen
 			@Override
 			public void renderButton(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks)
 			{
+				RenderSystem.pushMatrix();
 				pMatrixStack.pushPose();
 				pMatrixStack.translate(0,0,100);
 				Minecraft minecraft = Minecraft.getInstance();
@@ -348,6 +365,7 @@ public class DragonCustomizationScreen extends Screen
 				drawString(pMatrixStack, fontrenderer, this.getMessage(), this.x + 14, this.y + (this.height - 8) / 2, 14737632 | MathHelper.ceil(this.alpha * 255.0F) << 24);
 				pMatrixStack.popPose();
 				this.selected = preset.skinAges.get(level).wings;
+				RenderSystem.popMatrix();
 			}
 			
 			@Override
@@ -363,6 +381,7 @@ public class DragonCustomizationScreen extends Screen
 			@Override
 			public void renderButton(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks)
 			{
+				RenderSystem.pushMatrix();
 				pMatrixStack.pushPose();
 				pMatrixStack.translate(0,0,100);
 				Minecraft minecraft = Minecraft.getInstance();
@@ -378,6 +397,7 @@ public class DragonCustomizationScreen extends Screen
 				drawString(pMatrixStack, fontrenderer, this.getMessage(), this.x + 14, this.y + (this.height - 8) / 2, 14737632 | MathHelper.ceil(this.alpha * 255.0F) << 24);
 				pMatrixStack.popPose();
 				this.selected = preset.skinAges.get(level).defaultSkin;
+				RenderSystem.popMatrix();
 			}
 			
 			@Override
@@ -438,6 +458,7 @@ public class DragonCustomizationScreen extends Screen
 		
 		addButton(new Button(guiLeft + 256, 9, 19, 19, new TranslationTextComponent(""), (btn) -> {
 			preset = new SkinPreset();
+			handler.getSkin().updateLayers.addAll(Arrays.stream(EnumSkinLayer.values()).distinct().collect(Collectors.toList()));
 			update();
 		})
 		{
@@ -474,6 +495,7 @@ public class DragonCustomizationScreen extends Screen
 					preset.skinAges.get(level).layerSettings.get(layer).brightness = 0.25f + (minecraft.player.level.random.nextFloat() * 0.5f);
 					preset.skinAges.get(level).layerSettings.get(layer).modifiedColor = true;
 				}
+				handler.getSkin().updateLayers.add(layer);
 			}
 			
 			update();
@@ -515,13 +537,10 @@ public class DragonCustomizationScreen extends Screen
 	@Override
 	public void render(MatrixStack stack, int p_230430_2_, int p_230430_3_, float p_230430_4_)
 	{
-		if(autoSaveButton.selected()){
-			tick += p_230430_4_;
-			
-			if(tick % Functions.minutesToTicks(1) == 0){
-				save();
-				tick = 0;
-			}
+		tick += p_230430_4_;
+		if(tick % Functions.minutesToTicks(1) == 0){
+			save();
+			tick = 0;
 		}
 		
 		FakeClientPlayerUtils.getFakePlayer(0, handler).animationSupplier = () -> animations[curAnimation];

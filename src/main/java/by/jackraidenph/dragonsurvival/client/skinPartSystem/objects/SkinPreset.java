@@ -46,6 +46,8 @@ public class SkinPreset implements NBTInterface
 		public DragonLevel level;
 		public HashMap<EnumSkinLayer, LayerSettings> layerSettings = new HashMap<>();
 		
+		public double sizeMul = 1.0;
+		
 		public boolean wings = true;
 		public boolean defaultSkin = false;
 		
@@ -63,6 +65,7 @@ public class SkinPreset implements NBTInterface
 		{
 			CompoundNBT nbt = new CompoundNBT();
 			
+			nbt.putDouble("sizeMul", sizeMul);
 			nbt.putBoolean("wings", wings);
 			nbt.putBoolean("defaultSkin", defaultSkin);
 			
@@ -76,6 +79,7 @@ public class SkinPreset implements NBTInterface
 		@Override
 		public void readNBT(CompoundNBT base)
 		{
+			sizeMul = base.getDouble("sizeMul");
 			wings = base.getBoolean("wings");
 			defaultSkin = base.getBoolean("defaultSkin");
 			

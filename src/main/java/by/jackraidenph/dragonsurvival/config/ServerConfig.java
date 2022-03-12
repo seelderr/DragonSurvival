@@ -28,6 +28,9 @@ public class ServerConfig {
 	public final ForgeConfigSpec.BooleanValue lethalFlight;
 	public final ForgeConfigSpec.IntValue flightSpinCooldown;
 	
+	public final ForgeConfigSpec.DoubleValue maxSizeVari;
+	public final ForgeConfigSpec.DoubleValue minSizeVari;
+	
 	public final ForgeConfigSpec.BooleanValue canMoveInEmote;
 	public final ForgeConfigSpec.BooleanValue canMoveWhileCasting;
 	
@@ -290,9 +293,16 @@ public class ServerConfig {
 				.comment("If you should be able to move while casting certain skills or if player movement can be prevented.")
 				.define("canMoveWhileCasting", false);
 		
+		maxSizeVari = builder
+				.comment("The maximum size variation in percentage")
+				.defineInRange("maxSizeVari", 20.0, 0.0, 10000.0);
+		
+		minSizeVari = builder
+				.comment("The minimum size variation in percentage")
+				.defineInRange("minSizeVari", -20.0, -10000.0, 0);
+		
 		// Growth
-		builder.pop().push("growth")
-		;
+		builder.pop().push("growth");
 		sizeChangesHitbox = builder
 				.translation("ds.config.server.growth.sizeChangesHitbox")
 				.comment("Whether the dragon size determines its hitbox size. The bigger the dragon, the bigger the hitbox. If false standard player's hitbox be used.")

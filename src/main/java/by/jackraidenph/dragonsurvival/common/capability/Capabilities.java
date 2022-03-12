@@ -31,127 +31,127 @@ import javax.annotation.Nullable;
 
 @EventBusSubscriber
 public class Capabilities {
-    
-    public static void register() {
-        CapabilityManager.INSTANCE.register(DragonStateHandler.class, new IStorage<DragonStateHandler>() {
-            @Nullable
-            @Override
-            public INBT writeNBT(Capability<DragonStateHandler> capability, DragonStateHandler instance, Direction side)
-            {
-                return instance.writeNBT();
-            }
-    
-            @Override
-            public void readNBT(Capability<DragonStateHandler> capability, DragonStateHandler instance, Direction side, INBT nbt)
-            {
-                instance.readNBT((CompoundNBT)nbt);
-            }
-        }, DragonStateHandler::new);
-        
-        CapabilityManager.INSTANCE.register(VillageRelationShips.class, new IStorage<VillageRelationShips>() {
-            @Nullable
-            @Override
-            public INBT writeNBT(Capability<VillageRelationShips> capability, VillageRelationShips instance, Direction side)
-            {
-                return instance.writeNBT();
-            }
-    
-            @Override
-            public void readNBT(Capability<VillageRelationShips> capability, VillageRelationShips instance, Direction side, INBT nbt)
-            {
-                instance.readNBT((CompoundNBT)nbt);
-            }
-        }, VillageRelationShips::new);
-        
-        CapabilityManager.INSTANCE.register(GenericCapability.class, new IStorage<GenericCapability>() {
-            @Nullable
-            @Override
-            public INBT writeNBT(Capability<GenericCapability> capability, GenericCapability instance, Direction side)
-            {
-                return instance.writeNBT();
-            }
-    
-            @Override
-            public void readNBT(Capability<GenericCapability> capability, GenericCapability instance, Direction side, INBT nbt)
-            {
-                instance.readNBT((CompoundNBT)nbt);
-            }
-        }, GenericCapability::new);
-    }
-    
-    @SubscribeEvent
-    public static void attachCapabilities(AttachCapabilitiesEvent<Entity> event) {
-        event.addCapability(new ResourceLocation("dragonsurvival", "generic_capability_data"), new GenericCapabilityProvider());
-        
-        if (event.getObject() instanceof PlayerEntity && !(event.getObject() instanceof FakeClientPlayer)) {
-            event.addCapability(new ResourceLocation("dragonsurvival", "playerstatehandler"), new DragonStateProvider());
-            event.addCapability(new ResourceLocation("dragonsurvival", "village_relations"), new VillageRelationshipsProvider());
-            DragonSurvivalMod.LOGGER.info("Successfully attached capabilities to the " + event.getObject().getClass().getSimpleName());
-        }
-    }
-    
-    @SubscribeEvent
-    public static void onLoggedIn(PlayerEvent.PlayerLoggedInEvent loggedInEvent) {
-        PlayerEntity player = loggedInEvent.getPlayer();
-        if (!player.level.isClientSide) {
-            DragonStateProvider.getCap(player).ifPresent(cap -> NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)player), new RequestClientData(cap.getType(), cap.getLevel())));
-            syncCapability(player);
-        }
-    }
-    
-    @SubscribeEvent
-    public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent playerRespawnEvent) {
-        PlayerEntity player = playerRespawnEvent.getPlayer();
-        if (!player.level.isClientSide) {
-            syncCapability(player);
-        }
-    }
-    
-    @SubscribeEvent
-    public static void onDimensionChange(PlayerEvent.PlayerChangedDimensionEvent event) {
-        PlayerEntity player = event.getPlayer();
-        if (!player.level.isClientSide()) {
-            syncCapability(player);
-        }
-    }
-    
-    @SubscribeEvent
-    public static void onTrackingStart(PlayerEvent.StartTracking startTracking) {
-        PlayerEntity trackingPlayer = startTracking.getPlayer();
-        if (trackingPlayer instanceof ServerPlayerEntity) {
-            Entity trackedEntity = startTracking.getTarget();
-            if (trackedEntity instanceof ServerPlayerEntity) {
-                DragonStateProvider.getCap(trackedEntity).ifPresent(dragonStateHandler -> NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)trackingPlayer), new CompleteDataSync(trackedEntity.getId(), dragonStateHandler.writeNBT())));
-            }
-        }
-    }
-    
-    @SubscribeEvent
-    public static void onClone(PlayerEvent.Clone e) {
-        PlayerEntity player = e.getPlayer();
-        PlayerEntity original = e.getOriginal();
-        if(!e.isWasDeath()) return;
-        
-        DragonStateProvider.getCap(player).ifPresent(capNew -> DragonStateProvider.getCap(original).ifPresent(capOld -> {
-            CompoundNBT nbt = capOld.writeNBT();
-            capNew.readNBT(nbt);
-            NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new CompleteDataSync(player.getId(), nbt));
-        }));
-        
-        VillageRelationshipsProvider.getVillageRelationships(player).ifPresent(villageRelationShips -> {
-            VillageRelationshipsProvider.getVillageRelationships(original).ifPresent(old -> {
-                villageRelationShips.readNBT(old.writeNBT());
-                if (ConfigHandler.COMMON.preserveEvilDragonEffectAfterDeath.get() && villageRelationShips.evilStatusDuration > 0) {
-                    player.addEffect(new EffectInstance2(DragonEffects.EVIL_DRAGON, villageRelationShips.evilStatusDuration));
-                }
-            });
-        });
-        
-        DragonStateHandler.updateModifiers(original, player);
-        player.refreshDimensions();
-    }
-    
-    public static void syncCapability(PlayerEntity player){
-        NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new CompleteDataSync(player));
-    }
+	
+	public static void register() {
+		CapabilityManager.INSTANCE.register(DragonStateHandler.class, new IStorage<DragonStateHandler>() {
+			@Nullable
+			@Override
+			public INBT writeNBT(Capability<DragonStateHandler> capability, DragonStateHandler instance, Direction side)
+			{
+				return instance.writeNBT();
+			}
+			
+			@Override
+			public void readNBT(Capability<DragonStateHandler> capability, DragonStateHandler instance, Direction side, INBT nbt)
+			{
+				instance.readNBT((CompoundNBT)nbt);
+			}
+		}, DragonStateHandler::new);
+		
+		CapabilityManager.INSTANCE.register(VillageRelationShips.class, new IStorage<VillageRelationShips>() {
+			@Nullable
+			@Override
+			public INBT writeNBT(Capability<VillageRelationShips> capability, VillageRelationShips instance, Direction side)
+			{
+				return instance.writeNBT();
+			}
+			
+			@Override
+			public void readNBT(Capability<VillageRelationShips> capability, VillageRelationShips instance, Direction side, INBT nbt)
+			{
+				instance.readNBT((CompoundNBT)nbt);
+			}
+		}, VillageRelationShips::new);
+		
+		CapabilityManager.INSTANCE.register(GenericCapability.class, new IStorage<GenericCapability>() {
+			@Nullable
+			@Override
+			public INBT writeNBT(Capability<GenericCapability> capability, GenericCapability instance, Direction side)
+			{
+				return instance.writeNBT();
+			}
+			
+			@Override
+			public void readNBT(Capability<GenericCapability> capability, GenericCapability instance, Direction side, INBT nbt)
+			{
+				instance.readNBT((CompoundNBT)nbt);
+			}
+		}, GenericCapability::new);
+	}
+	
+	@SubscribeEvent
+	public static void attachCapabilities(AttachCapabilitiesEvent<Entity> event) {
+		event.addCapability(new ResourceLocation("dragonsurvival", "generic_capability_data"), new GenericCapabilityProvider());
+		
+		if (event.getObject() instanceof PlayerEntity && !(event.getObject() instanceof FakeClientPlayer)) {
+			event.addCapability(new ResourceLocation("dragonsurvival", "playerstatehandler"), new DragonStateProvider());
+			event.addCapability(new ResourceLocation("dragonsurvival", "village_relations"), new VillageRelationshipsProvider());
+			DragonSurvivalMod.LOGGER.info("Successfully attached capabilities to the " + event.getObject().getClass().getSimpleName());
+		}
+	}
+	
+	@SubscribeEvent
+	public static void onLoggedIn(PlayerEvent.PlayerLoggedInEvent loggedInEvent) {
+		PlayerEntity player = loggedInEvent.getPlayer();
+		if (!player.level.isClientSide) {
+			DragonStateProvider.getCap(player).ifPresent(cap -> NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)player), new RequestClientData(cap.getType(), cap.getLevel())));
+			syncCapability(player);
+		}
+	}
+	
+	@SubscribeEvent
+	public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent playerRespawnEvent) {
+		PlayerEntity player = playerRespawnEvent.getPlayer();
+		if (!player.level.isClientSide) {
+			syncCapability(player);
+		}
+	}
+	
+	@SubscribeEvent
+	public static void onDimensionChange(PlayerEvent.PlayerChangedDimensionEvent event) {
+		PlayerEntity player = event.getPlayer();
+		if (!player.level.isClientSide()) {
+			syncCapability(player);
+		}
+	}
+	
+	@SubscribeEvent
+	public static void onTrackingStart(PlayerEvent.StartTracking startTracking) {
+		PlayerEntity trackingPlayer = startTracking.getPlayer();
+		if (trackingPlayer instanceof ServerPlayerEntity) {
+			Entity trackedEntity = startTracking.getTarget();
+			if (trackedEntity instanceof ServerPlayerEntity) {
+				DragonStateProvider.getCap(trackedEntity).ifPresent(dragonStateHandler -> NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)trackingPlayer), new CompleteDataSync(trackedEntity.getId(), dragonStateHandler.writeNBT())));
+			}
+		}
+	}
+	
+	@SubscribeEvent
+	public static void onClone(PlayerEvent.Clone e) {
+		PlayerEntity player = e.getPlayer();
+		PlayerEntity original = e.getOriginal();
+		if(!e.isWasDeath()) return;
+		
+		DragonStateProvider.getCap(player).ifPresent(capNew -> DragonStateProvider.getCap(original).ifPresent(capOld -> {
+			CompoundNBT nbt = capOld.writeNBT();
+			capNew.readNBT(nbt);
+			NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new CompleteDataSync(player.getId(), nbt));
+		}));
+		
+		VillageRelationshipsProvider.getVillageRelationships(player).ifPresent(villageRelationShips -> {
+			VillageRelationshipsProvider.getVillageRelationships(original).ifPresent(old -> {
+				villageRelationShips.readNBT(old.writeNBT());
+				if (ConfigHandler.COMMON.preserveEvilDragonEffectAfterDeath.get() && villageRelationShips.evilStatusDuration > 0) {
+					player.addEffect(new EffectInstance2(DragonEffects.EVIL_DRAGON, villageRelationShips.evilStatusDuration));
+				}
+			});
+		});
+		
+		DragonStateHandler.updateModifiers(original, player);
+		player.refreshDimensions();
+	}
+	
+	public static void syncCapability(PlayerEntity player){
+		NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new CompleteDataSync(player));
+	}
 }

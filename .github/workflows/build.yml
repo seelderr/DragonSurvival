@@ -46,6 +46,7 @@ jobs:
         id: upload-release-asset
         uses: svenstaro/upload-release-action@v2
         with:
+          body: "Version ${{steps.semantic.outputs.new_release_version}}"
           repo_name: DragonSurvivalTeam/DragonSurvivalReleases
           repo_token: ${{ secrets.RELEASE_KEY }}
           file: build/libs/*.jar

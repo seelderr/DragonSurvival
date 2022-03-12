@@ -107,12 +107,16 @@ public class ColorSelectorButton extends ExtendedButton
 				}
 			};
 			
+			Screen screen = Minecraft.getInstance().screen;
+			
 			if(text.defaultColor == null) {
-				hueComponent = new HueSelectorComponent(this.screen, x + xSize - 120, y, 120, 76, layer);
+				int offset = screen.height - (y + 80);
+				hueComponent = new HueSelectorComponent(this.screen, x + xSize - 120, y + (Math.min(offset, 0)), 120, 76, layer);
 				screen.children.add(0, hueComponent);
 				screen.children.add(hueComponent);
 			}else{
-				colorComponent = new ColorSelectorComponent(this.screen, x + xSize - 120, y, 120, 71, layer);
+				int offset = screen.height - (y + 80);
+				colorComponent = new ColorSelectorComponent(this.screen, x + xSize - 120, y + (Math.min(offset, 0)), 120, 71, layer);
 				screen.children.add(0, colorComponent);
 				screen.children.add(colorComponent);
 			}

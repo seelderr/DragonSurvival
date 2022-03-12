@@ -24,9 +24,17 @@ import net.minecraftforge.common.ToolType;
 import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 
 public class DragonStateHandler {
+	public final Supplier<NBTInterface>[] caps = new Supplier[]{
+			this::getSkin,
+			this::getMagic,
+			this::getEmotes,
+			this::getClawInventory
+	};
+	
 	public static final ToolType[] CLAW_TOOL_TYPES = new ToolType[]{null, ToolType.PICKAXE, ToolType.AXE, ToolType.SHOVEL};
 	
 	private boolean isHiding;
@@ -488,11 +496,12 @@ public class DragonStateHandler {
 			caveWings = tag.getBoolean("caveWings");
 			seaWings = tag.getBoolean("seaWings");
 			forestWings = tag.getBoolean("forestWings");
-			
-			if(tag.contains("cap_skin")) getSkin().readNBT((CompoundNBT)tag.get("cap_skin"));
-			if(tag.contains("cap_magic")) getMagic().readNBT((CompoundNBT)tag.get("cap_magic"));
-			if(tag.contains("cap_emote")) getEmotes().readNBT((CompoundNBT)tag.get("cap_emote"));
-			if(tag.contains("cap_claw")) getClawInventory().readNBT((CompoundNBT)tag.get("cap_claw"));
+
+			for(int i = 0; i < caps.length; i++){
+				if(tag.contains("cap_" + i)){
+					caps[i].get().readNBT((CompoundNBT)tag.get("cap_" + i));
+				}
+			}
 			
 			if (getSize() == 0)
 				setSize(DragonLevel.BABY.size);
@@ -546,10 +555,9 @@ public class DragonStateHandler {
 			tag.putBoolean("seaWings", seaWings);
 			tag.putBoolean("forestWings", forestWings);
 			
-			tag.put("cap_skin", getSkin().writeNBT());
-			tag.put("cap_magic", getMagic().writeNBT());
-			tag.put("cap_emote", getEmotes().writeNBT());
-			tag.put("cap_claw", getClawInventory().writeNBT());
+			for(int i = 0; i < caps.length; i++){
+				tag.put("cap_" + i, caps[i].get().writeNBT());
+			}
 		}
 		return tag;
 	}
