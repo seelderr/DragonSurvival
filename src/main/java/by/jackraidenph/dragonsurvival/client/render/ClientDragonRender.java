@@ -134,7 +134,7 @@ public class ClientDragonRender
 	            Vector3f lookVector = DragonUtils.getCameraOffset(player);
 	            matrixStack.translate(-lookVector.x(), lookVector.y(), -lookVector.z());
 				
-	            double size = cap.getSize() * cap.getSkin().skinPreset.skinAges.get(cap.getLevel()).sizeMul;
+	            double size = cap.getSize() * cap.getSkin().skinPreset.sizeMul;
 				// This is some arbitrary scaling that was created back when the maximum size was hard capped at 40. Touching it will cause the render to desync from the hitbox.
                 float scale = (float)Math.max(size / 40.0D, 0.4D);
                 String playerModelType = player.getModelName();

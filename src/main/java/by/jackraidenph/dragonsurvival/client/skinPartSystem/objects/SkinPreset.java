@@ -10,6 +10,7 @@ import java.util.HashMap;
 public class SkinPreset implements NBTInterface
 {
 	public HashMap<DragonLevel, SkinAgeGroup> skinAges = new HashMap<>();
+	public double sizeMul = 1.0;
 	
 	public SkinPreset()
 	{
@@ -23,6 +24,8 @@ public class SkinPreset implements NBTInterface
 	{
 		CompoundNBT nbt = new CompoundNBT();
 		
+		nbt.putDouble("sizeMul", sizeMul);
+		
 		for(DragonLevel level : DragonLevel.values()){
 			nbt.put(level.name, skinAges.getOrDefault(level, new SkinAgeGroup(level)).writeNBT());
 		}
@@ -33,6 +36,8 @@ public class SkinPreset implements NBTInterface
 	@Override
 	public void readNBT(CompoundNBT base)
 	{
+		sizeMul = base.getDouble("sizeMul");
+		
 		for(DragonLevel level : DragonLevel.values()){
 			SkinAgeGroup ageGroup = new SkinAgeGroup(level);
 			CompoundNBT nbt = base.getCompound(level.name);
@@ -45,8 +50,6 @@ public class SkinPreset implements NBTInterface
 	{
 		public DragonLevel level;
 		public HashMap<EnumSkinLayer, LayerSettings> layerSettings = new HashMap<>();
-		
-		public double sizeMul = 1.0;
 		
 		public boolean wings = true;
 		public boolean defaultSkin = false;
@@ -65,7 +68,6 @@ public class SkinPreset implements NBTInterface
 		{
 			CompoundNBT nbt = new CompoundNBT();
 			
-			nbt.putDouble("sizeMul", sizeMul);
 			nbt.putBoolean("wings", wings);
 			nbt.putBoolean("defaultSkin", defaultSkin);
 			
@@ -79,7 +81,6 @@ public class SkinPreset implements NBTInterface
 		@Override
 		public void readNBT(CompoundNBT base)
 		{
-			sizeMul = base.getDouble("sizeMul");
 			wings = base.getBoolean("wings");
 			defaultSkin = base.getBoolean("defaultSkin");
 			
