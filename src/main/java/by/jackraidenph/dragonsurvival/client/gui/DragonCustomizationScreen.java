@@ -328,15 +328,21 @@ public class DragonCustomizationScreen extends Screen
 		DecimalFormat df = new DecimalFormat("#.#");
 		
 		addButton(new Slider(width / 2 - 100 - 100, height - 25, 100, 20, new TranslationTextComponent("ds.gui.customization.size"), new StringTextComponent("%"), ConfigHandler.SERVER.minSizeVari.get(), ConfigHandler.SERVER.maxSizeVari.get(), Double.parseDouble(df.format((preset.sizeMul - 1.0) * 100)), true, true, (p) -> {}, (p) -> {
-			preset.sizeMul = 1.0 + (p.getValueInt() / 100.0);
-			dragonRender.zoom = (float)(level.size * preset.sizeMul);
+			double val = 1.0 + (p.getValueInt() / 100.0);
+			if(preset.sizeMul != val) {
+				preset.sizeMul = val;
+				dragonRender.zoom = (float)(level.size * preset.sizeMul);
+			}
 		}){
 			@Override
 			public void render(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks)
 			{
 				super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
-				setValue(Double.parseDouble(df.format((preset.sizeMul - 1.0) * 100)));
-				updateSlider();
+				double val = Double.parseDouble(df.format((preset.sizeMul - 1.0) * 100));
+				if(getValue() != val) {
+					setValue(val);
+					updateSlider();
+				}
 				
 				if (!isMouseOver(pMouseX, pMouseY) && isDragging()) {
 					mouseReleased(pMouseX, pMouseY, 0);

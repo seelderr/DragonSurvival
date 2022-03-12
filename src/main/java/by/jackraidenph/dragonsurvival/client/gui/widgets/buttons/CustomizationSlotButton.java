@@ -1,13 +1,16 @@
 package by.jackraidenph.dragonsurvival.client.gui.widgets.buttons;
 
 import by.jackraidenph.dragonsurvival.client.gui.DragonCustomizationScreen;
+import by.jackraidenph.dragonsurvival.client.skinPartSystem.EnumSkinLayer;
 import by.jackraidenph.dragonsurvival.client.util.TextRenderUtil;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.item.DyeColor;
 
-import java.awt.*;
+import java.awt.Color;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class CustomizationSlotButton extends Button
 {
@@ -26,6 +29,7 @@ public class CustomizationSlotButton extends Button
 	{
 		screen.currentSelected = num - 1;
 		screen.update();
+		screen.handler.getSkin().updateLayers.addAll(Arrays.stream(EnumSkinLayer.values()).distinct().collect(Collectors.toList()));
 	}
 	
 	@Override
