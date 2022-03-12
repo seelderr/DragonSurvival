@@ -1,3 +1,10 @@
+## [0.11.0](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.10.16...0.11.0) (2022-03-12)
+
+
+### Features
+
+* Added size variation slider to dragon editor. ([cbbce38](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/cbbce388bab15b9c36bf6a96babc2d578af50c1f))
+
 ### [0.10.16](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.10.15...0.10.16) (2022-03-11)
 
 
