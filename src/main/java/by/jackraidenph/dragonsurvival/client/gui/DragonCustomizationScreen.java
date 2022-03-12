@@ -336,6 +336,7 @@ public class DragonCustomizationScreen extends Screen
 			{
 				super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 				setValue(Double.parseDouble(df.format((preset.skinAges.get(level).sizeMul - 1.0) * 100)));
+				updateSlider();
 				
 				if (!isMouseOver(pMouseX, pMouseY) && isDragging()) {
 					mouseReleased(pMouseX, pMouseY, 0);
