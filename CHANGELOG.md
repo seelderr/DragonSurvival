@@ -1,3 +1,10 @@
+### [0.11.2](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.11.1...0.11.2) (2022-03-12)
+
+
+### Bug Fixes
+
+* Fixes zooming in the dragon editor ([4a19b51](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/4a19b5133d59d9a6082010b6cbaf15e35c0d6686))
+
 ### [0.11.1](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.11.0...0.11.1) (2022-03-12)
 
 
