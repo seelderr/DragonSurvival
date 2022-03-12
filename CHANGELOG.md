@@ -1,3 +1,10 @@
+### [0.11.1](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.11.0...0.11.1) (2022-03-12)
+
+
+### Bug Fixes
+
+* Fixes resetting size slider showing wrong value ([0b35904](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/0b3590413c0f53ae9833aaa2fb4c2f220f2421f7))
+
 ## [0.11.0](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.10.16...0.11.0) (2022-03-12)
 
 
