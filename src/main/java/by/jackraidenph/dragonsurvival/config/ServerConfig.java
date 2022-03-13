@@ -1615,7 +1615,7 @@ public class ServerConfig {
 			
 			chargedChainRange = builder
 					.comment("The max distance in blocks the storm breath and charged effect is able to chain to mobs")
-					.defineInRange("chargedChainRange", 6, 0, 100);
+					.defineInRange("chargedChainRange", 10, 0, 100);
 			
 			chargedEffectDamage = builder
 					.comment("The amount of damage the charged effect deals each second")

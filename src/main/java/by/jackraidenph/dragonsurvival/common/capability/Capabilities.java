@@ -7,6 +7,7 @@ import by.jackraidenph.dragonsurvival.common.EffectInstance2;
 import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.capability.provider.GenericCapabilityProvider;
 import by.jackraidenph.dragonsurvival.common.capability.provider.VillageRelationshipsProvider;
+import by.jackraidenph.dragonsurvival.common.util.DragonModifiers;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.RequestClientData;
@@ -147,7 +148,7 @@ public class Capabilities {
 			});
 		});
 		
-		DragonStateHandler.updateModifiers(original, player);
+		DragonModifiers.updateModifiers(original, player);
 		player.refreshDimensions();
 	}
 	

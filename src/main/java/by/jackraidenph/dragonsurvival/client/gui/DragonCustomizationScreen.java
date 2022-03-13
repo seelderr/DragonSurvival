@@ -1,12 +1,9 @@
 package by.jackraidenph.dragonsurvival.client.gui;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.client.gui.widgets.CustomizationConfirmation;
-import by.jackraidenph.dragonsurvival.client.gui.widgets.DragonUIRenderComponent;
-import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.ColorSelectorButton;
-import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.CustomizationSlotButton;
-import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.DropDownButton;
-import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.HelpButton;
+import by.jackraidenph.dragonsurvival.client.gui.components.CustomizationConfirmation;
+import by.jackraidenph.dragonsurvival.client.gui.components.DragonUIRenderComponent;
+import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.*;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.dropdown.ColoredDropdownValueEntry;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownEntry;
 import by.jackraidenph.dragonsurvival.client.handlers.ClientEvents;
@@ -56,7 +53,6 @@ import org.apache.commons.lang3.text.WordUtils;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -86,9 +82,6 @@ public class DragonCustomizationScreen extends Screen
 	public DragonType type;
 	
 	public SkinPreset preset = new SkinPreset();
-	
-	//TODO Update sliders when you load a saved preset
-	//TODO Cleanup skin key and hue saving to support the possibility of brightness and saturation
 	
 	public boolean confirmation = false;
 	
@@ -325,9 +318,8 @@ public class DragonCustomizationScreen extends Screen
 		for (int num = 1; num <= 9; num++) {
 			addButton(new CustomizationSlotButton(width / 2 + 195, guiTop + ((num - 1) * 12) + 5 + 20, num, this));
 		}
-		DecimalFormat df = new DecimalFormat("#.#");
 		
-		addButton(new Slider(width / 2 - 100 - 100, height - 25, 100, 20, new TranslationTextComponent("ds.gui.customization.size"), new StringTextComponent("%"), ConfigHandler.SERVER.minSizeVari.get(), ConfigHandler.SERVER.maxSizeVari.get(), Double.parseDouble(df.format((preset.sizeMul - 1.0) * 100)), true, true, (p) -> {}, (p) -> {
+		addButton(new Slider(width / 2 - 100 - 100, height - 25, 100, 20, new TranslationTextComponent("ds.gui.customization.size"), new StringTextComponent("%"), ConfigHandler.SERVER.minSizeVari.get(), ConfigHandler.SERVER.maxSizeVari.get(), Math.round((preset.sizeMul - 1.0) * 100), false, true, (p) -> {}, (p) -> {
 			double val = 1.0 + (p.getValueInt() / 100.0);
 			if(preset.sizeMul != val) {
 				preset.sizeMul = val;
@@ -338,7 +330,14 @@ public class DragonCustomizationScreen extends Screen
 			public void render(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks)
 			{
 				super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
-				double val = Double.parseDouble(df.format((preset.sizeMul - 1.0) * 100));
+				double val = Math.round((preset.sizeMul - 1.0) * 100);
+				
+				if(val > 0){
+					dispString = new TranslationTextComponent("ds.gui.customization.size").append("+");
+				}else{
+					dispString = new TranslationTextComponent("ds.gui.customization.size");
+				}
+				
 				if(getValue() != val) {
 					setValue(val);
 					updateSlider();
@@ -350,7 +349,7 @@ public class DragonCustomizationScreen extends Screen
 			}
 		});
 		
-		addButton(new CheckboxButton(guiLeft + (width / 2), height - 15, 100, 10, new TranslationTextComponent("ds.gui.customization.wings"), preset.skinAges.get(level).wings){
+		addButton(new CheckboxButton(width / 2 + 100, height - 15, 100, 10, new TranslationTextComponent("ds.gui.customization.wings"), preset.skinAges.get(level).wings){
 			final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/checkbox.png");
 			
 			@Override
@@ -382,7 +381,7 @@ public class DragonCustomizationScreen extends Screen
 			}
 		});
 		
-		addButton(new CheckboxButton(guiLeft + (width / 2), height - 28, 100, 10, new TranslationTextComponent("ds.gui.customization.default_skin"), preset.skinAges.get(level).defaultSkin){
+		addButton(new CheckboxButton(width / 2 + 100, height - 28, 100, 10, new TranslationTextComponent("ds.gui.customization.default_skin"), preset.skinAges.get(level).defaultSkin){
 			final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/checkbox.png");
 			
 			@Override
@@ -526,6 +525,30 @@ public class DragonCustomizationScreen extends Screen
 			}
 		});
 		
+		addButton(new ExtendedButton(width / 2 + 193, guiTop + 5, 16,16, StringTextComponent.EMPTY, (p) -> {}){
+			@Override
+			public void render(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks)
+			{
+				super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
+				Minecraft.getInstance().getTextureManager().bind(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/save_icon.png"));
+				blit(pMatrixStack,x, y, 0, 0, 16, 16,16, 16);
+				
+				if (this.isHovered()) {
+					this.renderToolTip(pMatrixStack, pMouseX, pMouseY);
+				}
+			}
+			
+			@Override
+			public void renderToolTip(MatrixStack p_230443_1_, int p_230443_2_, int p_230443_3_)
+			{
+				GuiUtils.drawHoveringText(p_230443_1_, Arrays.asList(new TranslationTextComponent("ds.gui.customization.save_slot")), p_230443_2_, p_230443_3_, Minecraft.getInstance().screen.width, Minecraft.getInstance().screen.height, 200, Minecraft.getInstance().font);
+			}
+			
+			@Override
+			public void renderButton(MatrixStack mStack, int mouseX, int mouseY, float partial) {}
+		});
+		
+		addButton(new CopySettingsButton(this, width / 2 + 193, guiTop - 16, 16,16, StringTextComponent.EMPTY, (p) -> {}));
 		children.add(new CustomizationConfirmation(this, width / 2 - 100, height / 2 - (150 / 2), 200, 150));
 	}
 	
@@ -567,9 +590,6 @@ public class DragonCustomizationScreen extends Screen
 		}
 		
 		SkinsScreen.drawNonShadowLineBreak(stack, font, new StringTextComponent(WordUtils.capitalize(animations[curAnimation].replace("_", " "))), width / 2, height / 2 + 72, DyeColor.GRAY.getTextColor());
-		
-		Minecraft.getInstance().getTextureManager().bind(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/save_icon.png"));
-		blit(stack,width / 2 + 193, guiTop + 5, 0, 0, 16, 16,16, 16);
 		
 		super.render(stack, p_230430_2_, p_230430_3_, p_230430_4_);
 		

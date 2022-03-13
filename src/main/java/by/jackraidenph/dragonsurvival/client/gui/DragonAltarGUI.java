@@ -187,7 +187,7 @@ public class DragonAltarGUI extends Screen {
         addButton(new AltarTypeButton(this, DragonType.SEA, width / 2 + 2, this.guiTop + 20));
         addButton(new AltarTypeButton(this, DragonType.NONE, width / 2 + 55, guiTop + 20));
         //ds.gui.customization
-        addButton(new ExtendedButton(width / 2 - 50, height - 25, 100, 20, new TranslationTextComponent("ds.gui.customization"), (btn) -> {
+        addButton(new ExtendedButton(width / 2 - 75, height - 25, 150, 20, new TranslationTextComponent("ds.gui.customization"), (btn) -> {
             Minecraft.getInstance().setScreen(new DragonCustomizationScreen(Minecraft.getInstance().screen));
         }){
             @Override

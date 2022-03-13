@@ -1,4 +1,4 @@
-package by.jackraidenph.dragonsurvival.client.gui.widgets;
+package by.jackraidenph.dragonsurvival.client.gui.components;
 
 import by.jackraidenph.dragonsurvival.client.render.ClientDragonRender;
 import by.jackraidenph.dragonsurvival.common.entity.DragonEntity;

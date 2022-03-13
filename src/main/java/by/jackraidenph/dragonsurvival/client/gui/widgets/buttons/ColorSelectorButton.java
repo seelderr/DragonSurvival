@@ -1,8 +1,8 @@
 package by.jackraidenph.dragonsurvival.client.gui.widgets.buttons;
 
-import by.jackraidenph.dragonsurvival.client.gui.ColorSelectorComponent;
+import by.jackraidenph.dragonsurvival.client.gui.components.ColorSelectorComponent;
 import by.jackraidenph.dragonsurvival.client.gui.DragonCustomizationScreen;
-import by.jackraidenph.dragonsurvival.client.gui.HueSelectorComponent;
+import by.jackraidenph.dragonsurvival.client.gui.components.HueSelectorComponent;
 import by.jackraidenph.dragonsurvival.client.skinPartSystem.DragonCustomizationHandler;
 import by.jackraidenph.dragonsurvival.client.skinPartSystem.EnumSkinLayer;
 import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.CustomizationObject.Texture;

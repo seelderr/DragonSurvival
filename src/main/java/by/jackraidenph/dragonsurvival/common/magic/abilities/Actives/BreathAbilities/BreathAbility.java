@@ -292,12 +292,12 @@ public abstract class BreathAbility extends ActiveDragonAbility implements ISeco
 		}
 	}
 	
-	public static List<LivingEntity> getEntityLivingBaseNearby(LivingEntity source, double distanceX, double distanceY, double distanceZ, double radius) {
-		return getEntitiesNearby(source, LivingEntity.class, distanceX, distanceY, distanceZ, radius);
+	public static List<LivingEntity> getEntityLivingBaseNearby(LivingEntity source, double radius) {
+		return getEntitiesNearby(source, LivingEntity.class, radius);
 	}
 	
-	public static <T extends Entity> List<T> getEntitiesNearby(LivingEntity source, Class<T> entityClass, double dX, double dY, double dZ, double r) {
-		return source.level.getEntitiesOfClass(entityClass, source.getBoundingBox().inflate(dX, dY, dZ), e -> e != source && source.distanceTo(e) <= r + e.getBbWidth() / 2f && e.getY() <= source.getY() + dY);
+	public static <T extends Entity> List<T> getEntitiesNearby(LivingEntity source, Class<T> entityClass, double r) {
+		return source.level.getEntitiesOfClass(entityClass, source.getBoundingBox().inflate(r, r, r), e -> e != source && source.distanceTo(e) <= r + e.getBbWidth() / 2f && e.getY() <= source.getY() + r);
 	}
 
 	public List<LivingEntity> getEntityLivingBaseNearby(double distanceX, double distanceY, double distanceZ, double radius) {

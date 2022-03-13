@@ -1,5 +1,6 @@
-package by.jackraidenph.dragonsurvival.client.gui;
+package by.jackraidenph.dragonsurvival.client.gui.components;
 
+import by.jackraidenph.dragonsurvival.client.gui.DragonCustomizationScreen;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.ResetSettingsButton;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownList;
 import by.jackraidenph.dragonsurvival.client.skinPartSystem.EnumSkinLayer;

@@ -232,6 +232,8 @@ public class StormBreathAbility extends BreathAbility
 			double yDif = (end.y - start.y) / parts;
 			double zDif = (end.z - start.z) / parts;
 			
+			if((end.x - start.x) >= 64 || (end.y - start.y) >= 64 || (end.z - start.z) >= 64) return;
+			
 			for (int i = 0; i < parts; i++) {
 				double x = start.x + (xDif * i);
 				double y = start.y + (yDif * i) + eyeHeight;
@@ -242,7 +244,7 @@ public class StormBreathAbility extends BreathAbility
 	}
 	
 	public static void chargedEffectSparkle(PlayerEntity player, LivingEntity source, int chainRange, int maxChainTargets, int damage){
-		List<LivingEntity> secondaryTargets = getEntityLivingBaseNearby(source, source.getX(), source.getY() + source.getBbHeight() / 2, source.getZ(), chainRange);
+		List<LivingEntity> secondaryTargets = getEntityLivingBaseNearby(source, chainRange);
 		secondaryTargets.removeIf(e -> !isValidTarget(source, e));
 		
 		if(secondaryTargets.size() > maxChainTargets){

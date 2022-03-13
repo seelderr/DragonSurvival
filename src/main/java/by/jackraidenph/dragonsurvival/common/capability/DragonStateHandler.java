@@ -6,13 +6,12 @@ import by.jackraidenph.dragonsurvival.common.capability.subcapabilities.ClawInve
 import by.jackraidenph.dragonsurvival.common.capability.subcapabilities.EmoteCap;
 import by.jackraidenph.dragonsurvival.common.capability.subcapabilities.MagicCap;
 import by.jackraidenph.dragonsurvival.common.capability.subcapabilities.SkinCap;
-import by.jackraidenph.dragonsurvival.common.util.DragonUtils;
+import by.jackraidenph.dragonsurvival.common.util.DragonModifiers;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonLevel;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.AttributeModifier.Operation;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.player.PlayerEntity;
@@ -21,9 +20,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.ToolType;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
-import java.util.UUID;
 import java.util.function.Supplier;
 
 
@@ -73,11 +70,6 @@ public class DragonStateHandler {
 	private int lavaAirSupply;
     private int passengerId;
 	
-	public static final UUID REACH_MODIFIER_UUID = UUID.fromString("7455d5c7-4e1f-4cca-ab46-d79353764020");
-	public static final UUID HEALTH_MODIFIER_UUID = UUID.fromString("03574e62-f9e4-4f1b-85ad-fde00915e446");
-    public static final UUID DAMAGE_MODIFIER_UUID = UUID.fromString("5bd3cebc-132e-4f9d-88ef-b686c7ad1e2c");
-    public static final UUID SWIM_SPEED_MODIFIER_UUID = UUID.fromString("2a9341f3-d19e-446c-924b-7cf2e5259e10");
-	
 	
 	public double getSize() {
         return size;
@@ -88,41 +80,46 @@ public class DragonStateHandler {
      */
     public void setSize(double size, PlayerEntity playerEntity) {
         setSize(size);
+	    updateModifiers(size, playerEntity);
+    }
+	
+	private void updateModifiers(double size, PlayerEntity playerEntity)
+	{
 		if(isDragon()) {
-			AttributeModifier healthMod = buildHealthMod(size);
-			updateHealthModifier(playerEntity, healthMod);
-			AttributeModifier damageMod = buildDamageMod(this, isDragon());
-			updateDamageModifier(playerEntity, damageMod);
-			AttributeModifier swimSpeedMod = buildSwimSpeedMod(getType());
-			updateSwimSpeedModifier(playerEntity, swimSpeedMod);
-			AttributeModifier reachMod = buildReachMod(size);
-			updateReachModifier(playerEntity, reachMod);
+			AttributeModifier healthMod = DragonModifiers.buildHealthMod(size);
+			DragonModifiers.updateHealthModifier(playerEntity, healthMod);
+			AttributeModifier damageMod = DragonModifiers.buildDamageMod(this, isDragon());
+			DragonModifiers.updateDamageModifier(playerEntity, damageMod);
+			AttributeModifier swimSpeedMod = DragonModifiers.buildSwimSpeedMod(getType());
+			DragonModifiers.updateSwimSpeedModifier(playerEntity, swimSpeedMod);
+			AttributeModifier reachMod = DragonModifiers.buildReachMod(size);
+			DragonModifiers.updateReachModifier(playerEntity, reachMod);
 		}else{
-			AttributeModifier oldMod = getHealthModifier(playerEntity);
+			AttributeModifier oldMod = DragonModifiers.getHealthModifier(playerEntity);
 			if (oldMod != null) {
 				ModifiableAttributeInstance max = Objects.requireNonNull(playerEntity.getAttribute(Attributes.MAX_HEALTH));
 				max.removeModifier(oldMod);
 			}
 			
-			oldMod = getDamageModifier(playerEntity);
+			oldMod = DragonModifiers.getDamageModifier(playerEntity);
 			if (oldMod != null) {
 				ModifiableAttributeInstance max = Objects.requireNonNull(playerEntity.getAttribute(Attributes.ATTACK_DAMAGE));
 				max.removeModifier(oldMod);
 			}
 			
-			oldMod =getSwimSpeedModifier(playerEntity);
+			oldMod = DragonModifiers.getSwimSpeedModifier(playerEntity);
 			if (oldMod != null) {
 				ModifiableAttributeInstance max = Objects.requireNonNull(playerEntity.getAttribute(ForgeMod.SWIM_SPEED.get()));
 				max.removeModifier(oldMod);
 			}
 			
-			oldMod = getReachModifier(playerEntity);
+			oldMod = DragonModifiers.getReachModifier(playerEntity);
 			if (oldMod != null) {
 				ModifiableAttributeInstance max = Objects.requireNonNull(playerEntity.getAttribute(ForgeMod.REACH_DISTANCE.get()));
 				max.removeModifier(oldMod);
 			}
 		}
-    }
+	}
 	
 	public void setSize(double size) {
 		if(size != this.size) {
@@ -251,124 +248,8 @@ public class DragonStateHandler {
     	return false;
     }
 	
-	@Nullable
-	public static AttributeModifier getReachModifier(PlayerEntity player) {
-		return Objects.requireNonNull(player.getAttribute(ForgeMod.REACH_DISTANCE.get())).getModifier(REACH_MODIFIER_UUID);
-	}
 	
-	@Nullable
-    public static AttributeModifier getHealthModifier(PlayerEntity player) {
-    	return Objects.requireNonNull(player.getAttribute(Attributes.MAX_HEALTH)).getModifier(HEALTH_MODIFIER_UUID);
-    }
-    
-    @Nullable
-    public static AttributeModifier getDamageModifier(PlayerEntity player) {
-    	return Objects.requireNonNull(player.getAttribute(Attributes.ATTACK_DAMAGE)).getModifier(DAMAGE_MODIFIER_UUID);
-    }
-    
-    @Nullable
-    public static AttributeModifier getSwimSpeedModifier(PlayerEntity player) {
-    	return Objects.requireNonNull(player.getAttribute(ForgeMod.SWIM_SPEED.get())).getModifier(SWIM_SPEED_MODIFIER_UUID);
-    }
-    
-    
-    public static AttributeModifier buildHealthMod(double size) {
-		double healthMod = ((float)ConfigHandler.SERVER.minHealth.get() + (((size - 14) / 26F) * ((float)ConfigHandler.SERVER.maxHealth.get() - (float)ConfigHandler.SERVER.minHealth.get()))) - 20;
-		healthMod = Math.min(healthMod, ConfigHandler.SERVER.maxHealth.get() - 20);
-		
-		
-		return new AttributeModifier(
-    			HEALTH_MODIFIER_UUID,
-    			"Dragon Health Adjustment",
-			    healthMod,
-    			AttributeModifier.Operation.ADDITION
-    		);
-    }
-	
-	public static AttributeModifier buildReachMod(double size) {
-		double reachMod = (((size - DragonLevel.BABY.size) / (60.0 - DragonLevel.BABY.size)) * (ConfigHandler.SERVER.reachBonus.get()));
-		
-		return new AttributeModifier(
-				REACH_MODIFIER_UUID,
-				"Dragon Reach Adjustment",
-				reachMod,
-				Operation.MULTIPLY_BASE
-		);
-	}
-    
-    public static AttributeModifier buildDamageMod(DragonStateHandler handler, boolean isDragon) {
-		double ageBonus = isDragon ? (handler.getLevel() == DragonLevel.ADULT ? ConfigHandler.SERVER.adultBonusDamage.get() : handler.getLevel() == DragonLevel.YOUNG ? ConfigHandler.SERVER.youngBonusDamage.get() : ConfigHandler.SERVER.babyBonusDamage.get()) : 0;
-
-    	return new AttributeModifier(
-    			DAMAGE_MODIFIER_UUID,
-    			"Dragon Damage Adjustment",
-			    ageBonus,
-    			AttributeModifier.Operation.ADDITION
-    		);
-    }
-    
-    public static AttributeModifier buildSwimSpeedMod(DragonType dragonType) {
-    	return new AttributeModifier(
-    			SWIM_SPEED_MODIFIER_UUID,
-    			"Dragon Swim Speed Adjustment",
-    			dragonType == DragonType.SEA && ConfigHandler.SERVER.seaSwimmingBonuses.get() ? 1 : 0,
-    			AttributeModifier.Operation.ADDITION
-    		);
-    }
-
-    public static void updateModifiers(PlayerEntity oldPlayer, PlayerEntity newPlayer) {
-		if(!DragonUtils.isDragon(newPlayer)) return;
-		
-    	AttributeModifier oldMod = getHealthModifier(oldPlayer);
-        if (oldMod != null)
-            updateHealthModifier(newPlayer, oldMod);
-        oldMod = getDamageModifier(oldPlayer);
-        if (oldMod != null)
-            updateDamageModifier(newPlayer, oldMod);
-        oldMod =getSwimSpeedModifier(oldPlayer);
-        if (oldMod != null)
-        	updateSwimSpeedModifier(newPlayer, oldMod);
-	    oldMod = getReachModifier(oldPlayer);
-	    if (oldMod != null)
-		    updateReachModifier(newPlayer, oldMod);
-    }
-	
-	public static void updateReachModifier(PlayerEntity player, AttributeModifier mod) {
-		if (!ConfigHandler.SERVER.bonuses.get())
-			return;
-		ModifiableAttributeInstance max = Objects.requireNonNull(player.getAttribute(ForgeMod.REACH_DISTANCE.get()));
-		max.removeModifier(mod);
-		max.addPermanentModifier(mod);
-	}
-	
-    public static void updateHealthModifier(PlayerEntity player, AttributeModifier mod) {
-    	if (!ConfigHandler.SERVER.healthAdjustments.get())
-    		return;
-    	float oldMax = player.getMaxHealth();
-    	ModifiableAttributeInstance max = Objects.requireNonNull(player.getAttribute(Attributes.MAX_HEALTH));
-    	max.removeModifier(mod);
-	    max.addPermanentModifier(mod);
-	    float newHealth = player.getHealth() * player.getMaxHealth() / oldMax;
-	    player.setHealth(newHealth);
-    }
-    
-    public static void updateDamageModifier(PlayerEntity player, AttributeModifier mod) {
-    	if (!ConfigHandler.SERVER.bonuses.get() || !ConfigHandler.SERVER.attackDamage.get())
-    		return;
-    	ModifiableAttributeInstance max = Objects.requireNonNull(player.getAttribute(Attributes.ATTACK_DAMAGE));
-    	max.removeModifier(mod);
-    	max.addPermanentModifier(mod);
-    }
-    
-    public static void updateSwimSpeedModifier(PlayerEntity player, AttributeModifier mod) {
-    	if (!ConfigHandler.SERVER.bonuses.get() || !ConfigHandler.SERVER.seaSwimmingBonuses.get())
-    		return;
-    	ModifiableAttributeInstance max = Objects.requireNonNull(player.getAttribute(ForgeMod.SWIM_SPEED.get()));
-    	max.removeModifier(mod);
-    	max.addPermanentModifier(mod);
-    }
-    
-    public void setMovementData(double bodyYaw, double headYaw, double headPitch, boolean bite) {
+	public void setMovementData(double bodyYaw, double headYaw, double headPitch, boolean bite) {
 		movementData.headYawLastTick = movementData.headYaw;
 	    movementData.bodyYawLastTick = movementData.bodyYaw;
 	    movementData.headPitchLastTick = movementData.headPitch;

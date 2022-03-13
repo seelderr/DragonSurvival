@@ -27,7 +27,7 @@ public class PrinceHorseRenderer extends GeoEntityRenderer<PrinceHorseEntity> {
             stack.translate(0.0, -0.3, -0.5);
             Minecraft.getInstance().getItemRenderer().renderStatic(mainHand, ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND, packedLightIn, packedOverlayIn, stack, rtb);
             stack.popPose();
-            bufferIn = rtb.getBuffer(RenderType.entityTranslucent(whTexture));
+            bufferIn = rtb.getBuffer(RenderType.entitySmoothCutout(whTexture));
         }
         super.renderRecursively(bone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
     }
