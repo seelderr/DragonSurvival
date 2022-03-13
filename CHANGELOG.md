@@ -1,3 +1,10 @@
+### [0.12.1](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.12.0...0.12.1) (2022-03-13)
+
+
+### Bug Fixes
+
+* Fixes skin changes, confirmation box clipping and tail physics ([def31be](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/def31be3b70df01d7ee96e7a87cc88a11f80ef9f))
+
 ## [0.12.0](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.11.2...0.12.0) (2022-03-13)
 
 
