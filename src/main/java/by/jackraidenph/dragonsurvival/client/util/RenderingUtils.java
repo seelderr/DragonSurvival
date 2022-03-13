@@ -2,6 +2,7 @@ package by.jackraidenph.dragonsurvival.client.util;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldVertexBufferUploader;
@@ -13,6 +14,42 @@ import java.awt.Color;
 
 public class RenderingUtils
 {
+	public static void clipRendering(int xPos, int yPos, int width, int height){
+		double scale = Minecraft.getInstance().getWindow().getGuiScale();
+		RenderSystem.enableScissor((int)(xPos * scale), (int)(yPos * scale), (int)(width * scale), (int)(height * scale));
+	}
+	
+	public static void clipRendering(int xPos, int yPos, int width, int height, Runnable runnable){
+		double scale = Minecraft.getInstance().getWindow().getGuiScale();
+		RenderSystem.enableScissor((int)(xPos * scale), (int)(yPos * scale), (int)(width * scale), (int)(height * scale));
+		runnable.run();
+		RenderSystem.disableScissor();
+	}
+	
+	
+	public static void drawRect(MatrixStack mStack, int x, int y, int width, int height, int color){
+		Minecraft.getInstance().screen.hLine(mStack, x, x + width, y, color);
+		Minecraft.getInstance().screen.hLine(mStack, x, x + width, y + height, color);
+		Minecraft.getInstance().screen.vLine(mStack, x, y, y + height, color);
+		Minecraft.getInstance().screen.vLine(mStack, x + width, y, y + height, color);
+	}
+	
+	public static void drawRect(MatrixStack mStack, int zLevel, int xPos, int yPos, int width, int heigth, int color){
+		Color cc = new Color(color);
+		Matrix4f mat = mStack.last().pose();
+		Tessellator tessellator = Tessellator.getInstance();
+		BufferBuilder buffer = tessellator.getBuilder();
+		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+		buffer.vertex(mat,xPos + width, yPos, zLevel).color(cc.getRed(), cc.getGreen(), cc.getBlue(), cc.getAlpha()).endVertex();
+		buffer.vertex(mat,  xPos,    yPos, zLevel).color(cc.getRed(), cc.getGreen(), cc.getBlue(), cc.getAlpha()).endVertex();
+		buffer.vertex(mat,  xPos, yPos + heigth, zLevel).color(cc.getRed(), cc.getGreen(), cc.getBlue(), cc.getAlpha()).endVertex();
+		buffer.vertex(mat, xPos + width, yPos + heigth, zLevel).color(cc.getRed(), cc.getGreen(), cc.getBlue(), cc.getAlpha()).endVertex();
+		tessellator.end();
+	}
+	public static void drawGradientRect(MatrixStack mat, int zLevel, int left, int top, int right, int bottom, int[] color)
+	{
+		drawGradientRect(mat.last().pose(), zLevel, left, top, right, bottom, color);
+	}
 	public static void drawGradientRect(Matrix4f mat, int zLevel, int left, int top, int right, int bottom, int[] color)
 	{
 		float[] alpha = new float[4];

@@ -438,8 +438,10 @@ public class ClientDragonRender
 	        }
 	    }
 	}
-	
 	public static void renderEntityInInventory(LivingEntity entity, int x, int y, float scale, float xRot, float yRot) {
+		renderEntityInInventory(entity, x, y, scale, xRot, yRot, 0, 0);
+	}
+	public static void renderEntityInInventory(LivingEntity entity, int x, int y, float scale, float xRot, float yRot, float xOffset, float yOffset) {
 	   if(entity == null) return;
 		
 	   if(entity instanceof DragonEntity) {
@@ -459,7 +461,7 @@ public class ClientDragonRender
 	    float f = xRot;
 	    float f1 = yRot;
 	    RenderSystem.pushMatrix();
-	    RenderSystem.translatef((float)x, (float)y - (scale / 2), -200);
+	    RenderSystem.translatef((float)x, (float)y, -200);
 	    RenderSystem.scalef(1.0F, 1.0F, -1.0F);
 	    MatrixStack matrixstack = new MatrixStack();
 	    matrixstack.scale((float)scale, (float)scale, (float)scale);
@@ -467,6 +469,7 @@ public class ClientDragonRender
 	    Quaternion quaternion1 = Vector3f.XP.rotationDegrees(f1 * 10.0F);
 	    quaternion.mul(quaternion1);
 	    matrixstack.mulPose(quaternion);
+		matrixstack.translate(xOffset, -1 + yOffset, 0);
 	    float f2 = entity.yBodyRot;
 	    float f3 = entity.yRot;
 	    float f4 = entity.xRot;

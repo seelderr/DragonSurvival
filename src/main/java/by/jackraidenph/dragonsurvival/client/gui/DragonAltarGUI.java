@@ -138,8 +138,8 @@ public class DragonAltarGUI extends Screen {
                     FakeClientPlayerUtils.getFakePlayer(0, handler1).animationSupplier = () -> animations[animation1];
                     FakeClientPlayerUtils.getFakePlayer(1, handler2).animationSupplier = () -> animations[animation2];
     
-                    renderDragon(width / 2 + 170, button.y + (button.getHeight() / 2) + 32, 5, matrixStack, DragonLevel.ADULT.size, FakeClientPlayerUtils.getFakePlayer(0, handler1), FakeClientPlayerUtils.getFakeDragon(0, handler1));
-                    renderDragon(width / 2 - 170, button.y + (button.getHeight() / 2) + 32, -5, matrixStack, button.type == DragonType.NONE ? DragonLevel.ADULT.size : DragonLevel.BABY.size, FakeClientPlayerUtils.getFakePlayer(1, handler2), FakeClientPlayerUtils.getFakeDragon(1, handler2));
+                    renderDragon(width / 2 + 170, button.y + (button.getHeight() / 2) + 32, 5, matrixStack, 20, FakeClientPlayerUtils.getFakePlayer(0, handler1), FakeClientPlayerUtils.getFakeDragon(0, handler1));
+                    renderDragon(width / 2 - 170, button.y + (button.getHeight() / 2) + 32, -5, matrixStack, 20, FakeClientPlayerUtils.getFakePlayer(1, handler2), FakeClientPlayerUtils.getFakeDragon(1, handler2));
                 }
             }
         }

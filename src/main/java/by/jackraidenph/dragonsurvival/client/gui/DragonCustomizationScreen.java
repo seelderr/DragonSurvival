@@ -234,7 +234,7 @@ public class DragonCustomizationScreen extends Screen
 			
 			String[] values = valueList.toArray(new String[0]);
 			String curValue = preset.skinAges.get(level).layerSettings.get(layers).selectedSkin;
-			DropDownButton btn = new DropDownButton(i < 5 ? width / 2 - 100 - 100 : width / 2 + 70, guiTop + 10 + ((i >= 5 ? (i - 5) * 30 : i * 30)), 100, 15, curValue, values, (s) -> {
+			DropDownButton btn = new DropDownButton(i < 5 ? width / 2 - 100 - 100 : width / 2 + 83, guiTop + 10 + ((i >= 5 ? (i - 5) * 30 : i * 30)), 100, 15, curValue, values, (s) -> {
 				preset.skinAges.get(level).layerSettings.get(layers).selectedSkin = s;
 				handler.getSkin().updateLayers.add(layers);
 				update();
@@ -321,7 +321,7 @@ public class DragonCustomizationScreen extends Screen
 		});
 		
 		for (int num = 1; num <= 9; num++) {
-			addButton(new CustomizationSlotButton(width / 2 + 195, guiTop + ((num - 1) * 12) + 5 + 20, num, this));
+			addButton(new CustomizationSlotButton(width / 2 + 195 + 13, guiTop + ((num - 1) * 12) + 5 + 20, num, this));
 		}
 		
 		addButton(new Slider(width / 2 - 100 - 100, height - 25, 100, 20, new TranslationTextComponent("ds.gui.customization.size"), new StringTextComponent("%"), ConfigHandler.SERVER.minSizeVari.get(), ConfigHandler.SERVER.maxSizeVari.get(), Math.round((preset.sizeMul - 1.0) * 100), false, true, (p) -> {}, (p) -> {
@@ -362,7 +362,6 @@ public class DragonCustomizationScreen extends Screen
 			{
 				RenderSystem.pushMatrix();
 				pMatrixStack.pushPose();
-				pMatrixStack.translate(0,0,100);
 				Minecraft minecraft = Minecraft.getInstance();
 				minecraft.getTextureManager().bind(TEXTURE);
 				RenderSystem.enableDepthTest();
@@ -394,7 +393,6 @@ public class DragonCustomizationScreen extends Screen
 			{
 				RenderSystem.pushMatrix();
 				pMatrixStack.pushPose();
-				pMatrixStack.translate(0,0,100);
 				Minecraft minecraft = Minecraft.getInstance();
 				minecraft.getTextureManager().bind(TEXTURE);
 				RenderSystem.enableDepthTest();
@@ -564,7 +562,7 @@ public class DragonCustomizationScreen extends Screen
 			}
 		});
 		
-		addButton(new ExtendedButton(width / 2 + 193, guiTop + 5, 16,16, StringTextComponent.EMPTY, (p) -> {}){
+		addButton(new ExtendedButton(width / 2 + 193 + 13, guiTop + 5, 16,16, StringTextComponent.EMPTY, (p) -> {}){
 			@Override
 			public void render(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks)
 			{
@@ -587,7 +585,33 @@ public class DragonCustomizationScreen extends Screen
 			public void renderButton(MatrixStack mStack, int mouseX, int mouseY, float partial) {}
 		});
 		
-		addButton(new CopySettingsButton(this, width / 2 + 193, guiTop - 16, 16,16, StringTextComponent.EMPTY, (p) -> {}));
+		addButton(new CopySettingsButton(this, width / 2 + 193 + 13, guiTop - 16, 16,16, StringTextComponent.EMPTY, (p) -> {}));
+		
+		addButton(new Button(dragonRender.x + dragonRender.width - 17, dragonRender.y + dragonRender.height - 17, 15, 15, new TranslationTextComponent(""), (btn) -> {
+			dragonRender.yRot = -3;
+			dragonRender.xRot = -5;
+			dragonRender.xOffset = 0;
+			dragonRender.yOffset = 0;
+			dragonRender.zoom = (float)(level.size * preset.sizeMul);
+		})
+		{
+			@Override
+			public void renderToolTip(MatrixStack p_230443_1_, int p_230443_2_, int p_230443_3_)
+			{
+				GuiUtils.drawHoveringText(p_230443_1_, Arrays.asList(new TranslationTextComponent("ds.gui.customization.reset")), p_230443_2_, p_230443_3_, Minecraft.getInstance().screen.width, Minecraft.getInstance().screen.height, 200, Minecraft.getInstance().font);
+			}
+			
+			@Override
+			public void renderButton(MatrixStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_)
+			{
+				Minecraft.getInstance().getTextureManager().bind(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/reset_button.png"));
+				blit(stack, x, y, 0, 0, width, height, width, height);
+				
+				if (this.isHovered()) {
+					this.renderToolTip(stack, p_230431_2_, p_230431_3_);
+				}
+			}
+		});
 	}
 	
 	
@@ -626,7 +650,7 @@ public class DragonCustomizationScreen extends Screen
 		int i = 0;
 		for (EnumSkinLayer layers : EnumSkinLayer.values()) {
 			String name = layers.name;
-			SkinsScreen.drawNonShadowLineBreak(stack, font, new StringTextComponent(name), (i < 5 ? width / 2 - 100 - 100 : width / 2 + 70) + 50, guiTop + 10 + ((i >= 5 ? (i - 5) * 30 : i * 30)) - 12, DyeColor.WHITE.getTextColor());
+			SkinsScreen.drawNonShadowLineBreak(stack, font, new StringTextComponent(name), (i < 5 ? width / 2 - 100 - 100 : width / 2 + 83) + 50, guiTop + 10 + ((i >= 5 ? (i - 5) * 30 : i * 30)) - 12, DyeColor.WHITE.getTextColor());
 			i++;
 		}
 		

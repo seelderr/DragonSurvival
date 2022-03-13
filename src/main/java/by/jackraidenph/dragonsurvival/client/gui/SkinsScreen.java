@@ -38,8 +38,6 @@ import software.bernie.geckolib3.core.processor.IBone;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class SkinsScreen extends Screen
 {
@@ -82,8 +80,6 @@ public class SkinsScreen extends Screen
 	
 	private DragonStateHandler handler = new DragonStateHandler();
 	
-	private static ExecutorService executor = Executors.newSingleThreadExecutor();
-	
 	public SkinsScreen(Screen sourceScreen)
 	{
 		super(new StringTextComponent(""));
@@ -93,7 +89,6 @@ public class SkinsScreen extends Screen
 	public void setTextures(){
 		loading = true;
 		
-		DragonStateHandler handler = DragonStateProvider.getCap(Minecraft.getInstance().player).orElse(null);
 		ResourceLocation skinTexture = DragonSkins.getPlayerSkin(playerName + "_" + level.name);
 		ResourceLocation glowTexture = null;
 		boolean defaultSkin = false;
@@ -377,9 +372,10 @@ public class SkinsScreen extends Screen
 		if (this.minecraft == null)
 			return;
 		
-		GL11.glTranslatef(0F, 0F, -100);
+		GL11.glPushMatrix();
+		GL11.glTranslatef(0F, 0F, -500);
 		this.renderBackground(stack);
-		GL11.glTranslatef(0F, 0F, 100);
+		GL11.glPopMatrix();
 		
 		int startX = this.guiLeft;
 		int startY = this.guiTop;
@@ -409,8 +405,8 @@ public class SkinsScreen extends Screen
 				
 				FakeClientPlayerUtils.getFakePlayer(0, this.handler).animationSupplier = () -> "fly";
 				RenderSystem.pushMatrix();
-				RenderSystem.translatef(0, 0, 500);
-				ClientDragonRender.renderEntityInInventory(dragon, startX + 15, startY + 100, scale, xRot, yRot);
+				RenderSystem.translatef(0, 0, 100);
+				ClientDragonRender.renderEntityInInventory(dragon, startX + 15, (int)(startY + 70), scale, xRot, yRot);
 				RenderSystem.popMatrix();
 			}
 			
@@ -479,11 +475,11 @@ public class SkinsScreen extends Screen
 	@Override
 	public boolean mouseDragged(double x1, double y1, int p_231045_5_, double x2, double y2)
 	{
-		xRot -= x2 / 6;
-		yRot -= y2 / 6;
+		xRot -= x2 / 5;
+		yRot -= y2 / 5;
 		
-		xRot = MathHelper.clamp(xRot, -17, 17);
-		yRot = MathHelper.clamp(yRot, -17, 17);
+//		xRot = MathHelper.clamp(xRot, -17, 17);
+//		yRot = MathHelper.clamp(yRot, -17, 17);
 		
 		return super.mouseDragged(x1, y1, p_231045_5_, x2, y2);
 	}
