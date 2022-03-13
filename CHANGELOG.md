@@ -1,3 +1,10 @@
+### [0.12.2](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.12.1...0.12.2) (2022-03-13)
+
+
+### Bug Fixes
+
+* Fixes saving editor when changing slots, should fix hitbox not updating when changing dragon type. ([e2aecd0](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/e2aecd0b04957c97111d364e76b005acb7035a49))
+
 ### [0.12.1](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.12.0...0.12.1) (2022-03-13)
 
 
