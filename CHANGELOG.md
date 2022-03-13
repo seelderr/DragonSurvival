@@ -1,3 +1,10 @@
+## [0.12.0](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.11.2...0.12.0) (2022-03-13)
+
+
+### Features
+
+* Added copy feature in editor ([cbeb263](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/cbeb263e6c8e92138d59bdd07f92645bc39d5f0e))
+
 ### [0.11.2](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.11.1...0.11.2) (2022-03-12)
 
 
