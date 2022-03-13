@@ -1,6 +1,7 @@
 package by.jackraidenph.dragonsurvival.client.gui.widgets.buttons;
 
 import by.jackraidenph.dragonsurvival.client.gui.DragonCustomizationScreen;
+import by.jackraidenph.dragonsurvival.client.skinPartSystem.CustomizationRegistry;
 import by.jackraidenph.dragonsurvival.client.skinPartSystem.EnumSkinLayer;
 import by.jackraidenph.dragonsurvival.client.util.TextRenderUtil;
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -10,6 +11,7 @@ import net.minecraft.item.DyeColor;
 
 import java.awt.Color;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.stream.Collectors;
 
 public class CustomizationSlotButton extends Button
@@ -27,6 +29,9 @@ public class CustomizationSlotButton extends Button
 	@Override
 	public void onPress()
 	{
+		CustomizationRegistry.savedCustomizations.skinPresets.computeIfAbsent(screen.type, (t) -> new HashMap<>());
+		CustomizationRegistry.savedCustomizations.skinPresets.get(screen.type).put(screen.currentSelected, screen.preset);
+		
 		screen.currentSelected = num - 1;
 		screen.update();
 		screen.handler.getSkin().updateLayers.addAll(Arrays.stream(EnumSkinLayer.values()).distinct().collect(Collectors.toList()));
