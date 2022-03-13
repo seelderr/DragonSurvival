@@ -129,7 +129,7 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 		ModifiableAttributeInstance gravity = player.getAttribute(net.minecraftforge.common.ForgeMod.ENTITY_GRAVITY.get());
 		double g = gravity.getValue();
 		
-		dragonEntity.tailMotionUp = MathHelper.lerp(0.25, dragonEntity.tailMotionUp, ServerFlightHandler.isFlying(player) ? 0 : (player.getDeltaMovement().y + g) * 50);
+		dragonEntity.tailMotionUp = MathHelper.clamp(MathHelper.lerp(0.25, dragonEntity.tailMotionUp, ServerFlightHandler.isFlying(player) ? 0 : (player.getDeltaMovement().y + g) * 50), -10, 10);
 		dragonEntity.tailMotionSide = MathHelper.lerp(0.1, MathHelper.clamp(dragonEntity.tailMotionSide + (ServerFlightHandler.isGliding(player) ? 0 : bodyYawChange), -50, 50), 0);
 		
 		dragonEntity.bodyYawAverage.add(bodyYawChange);

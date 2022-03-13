@@ -97,7 +97,7 @@ public class ColorSelectorComponent extends FocusableGui implements IRenderable
 			settings.get().brightness = hsb[2];
 			settings.get().modifiedColor = true;
 			
-			this.screen.handler.getSkin().updateLayers.add(layer);
+			screen.handler.getSkin().updateLayers.add(layer);
 			screen.update();
 		});
 	}

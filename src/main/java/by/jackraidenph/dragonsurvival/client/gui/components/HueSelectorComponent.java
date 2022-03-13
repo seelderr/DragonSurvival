@@ -115,7 +115,7 @@ public class HueSelectorComponent extends FocusableGui implements IRenderable
 			settings.get().brightness = value2;
 			settings.get().modifiedColor = true;
 			
-			this.screen.handler.getSkin().updateLayers.add(layer);
+			screen.handler.getSkin().updateLayers.add(layer);
 			screen.update();
 		}){
 			@Override
@@ -146,7 +146,7 @@ public class HueSelectorComponent extends FocusableGui implements IRenderable
 			settings.get().brightness = value2;
 			settings.get().modifiedColor = true;
 			
-			this.screen.handler.getSkin().updateLayers.add(layer);
+			screen.handler.getSkin().updateLayers.add(layer);
 			screen.update();
 		}){
 			@Override
@@ -212,7 +212,7 @@ public class HueSelectorComponent extends FocusableGui implements IRenderable
 			settings.get().brightness = value2;
 			settings.get().modifiedColor = true;
 			
-			this.screen.handler.getSkin().updateLayers.add(layer);
+			screen.handler.getSkin().updateLayers.add(layer);
 			screen.update();
 		}){
 			@Override

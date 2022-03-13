@@ -37,6 +37,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.IRenderable;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.widget.button.CheckboxButton;
 import net.minecraft.item.DyeColor;
@@ -95,7 +96,7 @@ public class DragonCustomizationScreen extends Screen
 	
 	private DragonUIRenderComponent dragonRender;
 	public DragonStateHandler handler = new DragonStateHandler();
-	
+	private CustomizationConfirmation conf;
 	
 	public void update()
 	{
@@ -108,7 +109,8 @@ public class DragonCustomizationScreen extends Screen
 		}
 		
 		if (currentSelected != lastSelected) {
-			preset = CustomizationRegistry.savedCustomizations.skinPresets.get(handler.getType()).get(currentSelected);
+			preset = new SkinPreset();
+			preset.readNBT(CustomizationRegistry.savedCustomizations.skinPresets.get(type).get(currentSelected).writeNBT());
 			handler.getSkin().skinPreset = preset;
 		}
 		
@@ -144,7 +146,7 @@ public class DragonCustomizationScreen extends Screen
 		this.guiLeft = (this.width - 256) / 2;
 		this.guiTop = (this.height - 120) / 2;
 		
-		
+		conf = new CustomizationConfirmation(this, width / 2 - 100, height / 2 - (150 / 2), 200, 150);
 		initDragonRender();
 		
 		DragonStateHandler localHandler = DragonStateProvider.getCap(getMinecraft().player).orElse(null);
@@ -158,12 +160,14 @@ public class DragonCustomizationScreen extends Screen
 			}
 			
 			currentSelected = CustomizationRegistry.savedCustomizations.current.getOrDefault(type, new HashMap<>()).getOrDefault(level, 0);
-			preset = CustomizationRegistry.savedCustomizations.skinPresets.getOrDefault(localHandler.getType(), new HashMap<>()).getOrDefault(currentSelected, new SkinPreset());
+			preset = new SkinPreset();
+			preset.readNBT(CustomizationRegistry.savedCustomizations.skinPresets.getOrDefault(type, new HashMap<>()).getOrDefault(currentSelected, new SkinPreset()).writeNBT());
 			handler.getSkin().skinPreset = preset;
 			
 			this.handler.setHasWings(true);
 			this.handler.setType(type);
 			hasInit = true;
+			handler.getSkin().updateLayers.addAll(Arrays.stream(EnumSkinLayer.values()).distinct().collect(Collectors.toList()));
 			update();
 		}
 		
@@ -413,14 +417,24 @@ public class DragonCustomizationScreen extends Screen
 			}
 		});
 		
-		addButton(new ExtendedButton(width / 2 - 75 - 10, height - 25, 75, 20, new StringTextComponent("Save"), null)
+		addButton(new ExtendedButton(width / 2 - 75 - 10, height - 25, 75, 20, new TranslationTextComponent("ds.gui.customization.save"), null)
 		{
+			Widget renderButton;
+			boolean toggled;
+			
 			@Override
 			public void renderButton(MatrixStack mStack, int mouseX, int mouseY, float partial)
 			{
 				super.renderButton(mStack, mouseX, mouseY, partial);
 				if (isHovered) {
 					GuiUtils.drawHoveringText(mStack, Arrays.asList(new TranslationTextComponent("ds.gui.customization.tooltip.done")), mouseX, mouseY, Minecraft.getInstance().screen.width, Minecraft.getInstance().screen.height, 200, Minecraft.getInstance().font);
+				}
+				
+				if(toggled && (!visible || !confirmation)){
+					toggled = false;
+					Screen screen = Minecraft.getInstance().screen;
+					screen.children.removeIf((s) -> s == conf);
+					screen.buttons.removeIf((s) -> s == renderButton);
 				}
 			}
 			
@@ -440,6 +454,30 @@ public class DragonCustomizationScreen extends Screen
 						confirm();
 					}
 				});
+				
+				if(confirmation) {
+					if (!toggled) {
+						renderButton = new ExtendedButton(0, 0, 0, 0, StringTextComponent.EMPTY, null)
+						{
+							@Override
+							public void render(MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_)
+							{
+								this.active = this.visible = false;
+								
+								if (conf != null && confirmation) {
+									conf.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
+								}
+							}
+						};
+						children.add(0, conf);
+						children.add(conf);
+						buttons.add(renderButton);
+					}
+					toggled = !toggled;
+				} else {
+					children.removeIf((s) -> s == conf);
+					buttons.removeIf((s) -> s == renderButton);
+				}
 			}
 		});
 		
@@ -549,7 +587,6 @@ public class DragonCustomizationScreen extends Screen
 		});
 		
 		addButton(new CopySettingsButton(this, width / 2 + 193, guiTop - 16, 16,16, StringTextComponent.EMPTY, (p) -> {}));
-		children.add(new CustomizationConfirmation(this, width / 2 - 100, height / 2 - (150 / 2), 200, 150));
 	}
 	
 	
@@ -563,13 +600,16 @@ public class DragonCustomizationScreen extends Screen
 	}
 	
 	float tick = 0;
+	boolean autosave = false;
 	
 	@Override
 	public void render(MatrixStack stack, int p_230430_2_, int p_230430_3_, float p_230430_4_)
 	{
 		tick += p_230430_4_;
-		if(tick % Functions.minutesToTicks(1) == 0){
+		if(tick >= (60 * 20)){
+			autosave = true;
 			save();
+			autosave = false;
 			tick = 0;
 		}
 		
@@ -622,7 +662,6 @@ public class DragonCustomizationScreen extends Screen
 				NetworkHandler.CHANNEL.sendToServer(new SyncAltarCooldown(Minecraft.getInstance().player.getId(), Functions.secondsToTicks(ConfigHandler.SERVER.altarUsageCooldown.get())));
 				NetworkHandler.CHANNEL.sendToServer(new SyncSpinStatus(Minecraft.getInstance().player.getId(), cap.getMovementData().spinAttack, cap.getMovementData().spinCooldown, cap.getMovementData().spinLearned));
 				ClientEvents.sendClientData(new RequestClientData(cap.getType(), cap.getLevel()));
-				
 			}
 		});
 		
@@ -632,11 +671,12 @@ public class DragonCustomizationScreen extends Screen
 	}
 	
 	public void save(){
-		DragonType type = DragonUtils.getDragonType(minecraft.player);
-		NetworkHandler.CHANNEL.sendToServer(new SyncPlayerSkinPreset(minecraft.player.getId(), preset));
+		if(DragonUtils.getDragonType(minecraft.player) == this.type) {
+			NetworkHandler.CHANNEL.sendToServer(new SyncPlayerSkinPreset(minecraft.player.getId(), preset));
+		}
 		
-		CustomizationRegistry.savedCustomizations.skinPresets.computeIfAbsent(type, (t) -> new HashMap<>());
-		CustomizationRegistry.savedCustomizations.skinPresets.get(type).put(currentSelected, preset);
+		CustomizationRegistry.savedCustomizations.skinPresets.computeIfAbsent(this.type, (t) -> new HashMap<>());
+		CustomizationRegistry.savedCustomizations.skinPresets.get(this.type).put(currentSelected, preset);
 		
 		try {
 			Gson gson = new GsonBuilder().setPrettyPrinting().create();

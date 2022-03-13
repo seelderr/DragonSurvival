@@ -29,6 +29,7 @@ import software.bernie.geckolib3.renderers.geo.IGeoRenderer;
 import java.awt.Color;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Locale;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class DragonSkinLayerRenderer extends GeoLayerRenderer<DragonEntity>
@@ -70,7 +71,7 @@ public class DragonSkinLayerRenderer extends GeoLayerRenderer<DragonEntity>
 						return;
 					}
 					
-					ResourceLocation dynamicTexture = text.colorable && text.defaultColor == null ? new ResourceLocation(DragonSurvivalMod.MODID, "dynamic_" + texture.getPath()) : texture;
+					ResourceLocation dynamicTexture = text.colorable && text.defaultColor == null ? new ResourceLocation(DragonSurvivalMod.MODID, "dynamic_" + texture.getPath() + "_" + entitylivingbaseIn.getPlayer().getName().getString().toLowerCase(Locale.ROOT)) : texture;
 					
 					Color renderColor = new Color(1f, 1f, 1f, 1f);
 					

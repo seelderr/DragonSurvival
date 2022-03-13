@@ -157,6 +157,7 @@
   "ds.gui.customization.tooltip.done": "Confirm changes",
   "ds.gui.customization.tooltip.cancel": "Cancel",
   "ds.gui.customization.back": "Back",
+  "ds.gui.customization.save": "Save",
   "ds.gui.customization.tooltip.back": "Discard changes",
   "ds.gui.customization.reset": "Reset to default",
   "ds.gui.customization.random": "Randomize changes",

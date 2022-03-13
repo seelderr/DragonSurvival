@@ -26,6 +26,7 @@ public class CustomizationConfirmation extends FocusableGui implements IRenderab
 	private DragonCustomizationScreen screen;
 	private Widget btn1, btn2;
 	private int x, y, xSize, ySize;
+	public boolean visible;
 	
 	public CustomizationConfirmation(DragonCustomizationScreen screen, int x, int y, int xSize, int ySize)
 	{
@@ -37,13 +38,6 @@ public class CustomizationConfirmation extends FocusableGui implements IRenderab
 		
 		btn1 = new ExtendedButton(x + (xSize / 2 - 30) - 20, y + ySize - 30, 20, 20, StringTextComponent.EMPTY, null)
 		{
-			@Override
-			public void render(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks)
-			{
-				this.visible = active = screen.confirmation;
-				super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
-			}
-			
 			@Override
 			public void renderButton(MatrixStack mStack, int mouseX, int mouseY, float partial)
 			{
@@ -70,13 +64,6 @@ public class CustomizationConfirmation extends FocusableGui implements IRenderab
 		
 		btn2 = new ExtendedButton(x + (xSize / 2 + 30), y + ySize - 30, 20, 20, StringTextComponent.EMPTY, null)
 		{
-			@Override
-			public void render(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks)
-			{
-				this.visible = active = screen.confirmation;
-				super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
-			}
-			
 			@Override
 			public void renderButton(MatrixStack mStack, int mouseX, int mouseY, float partial)
 			{
@@ -120,19 +107,17 @@ public class CustomizationConfirmation extends FocusableGui implements IRenderab
 	@Override
 	public void render(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks)
 	{
-		if(screen.confirmation){
-			Minecraft.getInstance().getTextureManager().bind(confirmationTexture);
-			String key = "ds.gui.customization.confirm." +
-			             (!ConfigHandler.SERVER.saveAllAbilities.get() && !ConfigHandler.SERVER.saveGrowthStage.get() ? "all"
-		               : (ConfigHandler.SERVER.saveAllAbilities.get() && !ConfigHandler.SERVER.saveGrowthStage.get() ? "ability"
-		               : !ConfigHandler.SERVER.saveAllAbilities.get() && ConfigHandler.SERVER.saveGrowthStage.get() ? "growth" : ""));
-			String text = new TranslationTextComponent(key).getString();
-			GuiUtils.drawContinuousTexturedBox(x, y, 0, 0, xSize, ySize, 160, 32, 4, 100);
-			TextRenderUtil.drawCenteredScaledTextSplit(pMatrixStack, x + xSize / 2, y + 5, 1.25f, text, DyeColor.WHITE.getTextColor(), xSize - 10, 101);
-			
-			
-			btn1.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
-			btn2.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
-		}
+		Minecraft.getInstance().getTextureManager().bind(confirmationTexture);
+		String key = "ds.gui.customization.confirm." +
+		             (!ConfigHandler.SERVER.saveAllAbilities.get() && !ConfigHandler.SERVER.saveGrowthStage.get() ? "all"
+	               : (ConfigHandler.SERVER.saveAllAbilities.get() && !ConfigHandler.SERVER.saveGrowthStage.get() ? "ability"
+	               : !ConfigHandler.SERVER.saveAllAbilities.get() && ConfigHandler.SERVER.saveGrowthStage.get() ? "growth" : ""));
+		String text = new TranslationTextComponent(key).getString();
+		GuiUtils.drawContinuousTexturedBox(x, y, 0, 0, xSize, ySize, 160, 32, 4, 101);
+		TextRenderUtil.drawCenteredScaledTextSplit(pMatrixStack, x + xSize / 2, y + 5, 1.25f, text, DyeColor.WHITE.getTextColor(), xSize - 10, 101);
+		
+		
+		btn1.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
+		btn2.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 	}
 }
