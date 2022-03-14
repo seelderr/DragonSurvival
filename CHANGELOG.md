@@ -1,3 +1,10 @@
+### [0.12.3](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.12.2...0.12.3) (2022-03-14)
+
+
+### Bug Fixes
+
+* Got rid of the box and hid the ui ([1c4de2b](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/1c4de2bf334feb348435563d2e0c9c78d3b6b754))
+
 ### [0.12.2](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.12.1...0.12.2) (2022-03-13)
 
 
