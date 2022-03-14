@@ -30,10 +30,17 @@ public class CopySettingsButton extends ExtendedButton
 		this.screen = screen;
 	}
 	
+	
 	@Override
 	public void render(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks)
 	{
-		super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks); Minecraft.getInstance().getTextureManager().bind(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/copy_icon.png")); blit(pMatrixStack, x, y, 0, 0, 16, 16, 16, 16);
+		this.active = this.visible = screen.showUi;
+		super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
+		
+		if(visible) {
+			Minecraft.getInstance().getTextureManager().bind(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/copy_icon.png"));
+			blit(pMatrixStack, x, y, 0, 0, 16, 16, 16, 16);
+		}
 		
 		if (toggled && (!visible || (!isMouseOver(pMouseX, pMouseY) && (component == null || !component.isMouseOver(pMouseX, pMouseY))))) {
 			toggled = false;

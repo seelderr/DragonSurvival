@@ -31,16 +31,12 @@ import by.jackraidenph.dragonsurvival.util.Functions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.IRenderable;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.client.gui.widget.button.CheckboxButton;
 import net.minecraft.item.DyeColor;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
@@ -86,6 +82,7 @@ public class DragonCustomizationScreen extends Screen
 	public SkinPreset preset = new SkinPreset();
 	
 	public boolean confirmation = false;
+	public boolean showUi = true;
 	
 	private String[] animations = {"sit", "idle", "fly", "swim_fast", "run"};
 	private int curAnimation = 0;
@@ -182,6 +179,13 @@ public class DragonCustomizationScreen extends Screen
 		})
 		{
 			@Override
+			public void render(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks)
+			{
+				this.active = this.visible = showUi;
+				super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
+			}
+			
+			@Override
 			public void renderButton(MatrixStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_)
 			{
 				int j = isHovered || level == DragonLevel.BABY ? 16777215 : 10526880;
@@ -196,6 +200,13 @@ public class DragonCustomizationScreen extends Screen
 		})
 		{
 			@Override
+			public void render(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks)
+			{
+				this.active = this.visible = showUi;
+				super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
+			}
+			
+			@Override
 			public void renderButton(MatrixStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_)
 			{
 				int j = isHovered || level == DragonLevel.YOUNG ? 16777215 : 10526880;
@@ -209,6 +220,13 @@ public class DragonCustomizationScreen extends Screen
 			update();
 		})
 		{
+			@Override
+			public void render(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks)
+			{
+				this.active = this.visible = showUi;
+				super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
+			}
+			
 			@Override
 			public void renderButton(MatrixStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_)
 			{
@@ -248,6 +266,7 @@ public class DragonCustomizationScreen extends Screen
 				@Override
 				public void render(MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_)
 				{
+					this.active = this.visible = showUi;
 					super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
 					String curValue = preset.skinAges.get(level).layerSettings.get(layers).selectedSkin;
 					
@@ -278,7 +297,7 @@ public class DragonCustomizationScreen extends Screen
 			i++;
 		}
 		
-		addButton(new Button(width / 2 + 30, height / 2 + 75 - 7, 15, 15, new TranslationTextComponent(""), (btn) -> {
+		addButton(new Button(width / 2 + 30, height / 2 + 75 - 7, 15, 15, StringTextComponent.EMPTY, (btn) -> {
 			curAnimation += 1;
 			
 			if (curAnimation >= animations.length) {
@@ -286,6 +305,13 @@ public class DragonCustomizationScreen extends Screen
 			}
 		})
 		{
+			@Override
+			public void render(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks)
+			{
+				this.active = this.visible = showUi;
+				super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
+			}
+			
 			@Override
 			public void renderButton(MatrixStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_)
 			{
@@ -299,7 +325,7 @@ public class DragonCustomizationScreen extends Screen
 			}
 		});
 		
-		addButton(new Button(width / 2 - 30 - 15, height / 2 + 75 - 7, 15, 15, new TranslationTextComponent(""), (btn) -> {
+		addButton(new Button(width / 2 - 30 - 15, height / 2 + 75 - 7, 15, 15, StringTextComponent.EMPTY, (btn) -> {
 			curAnimation -= 1;
 			
 			if (curAnimation < 0) {
@@ -307,6 +333,13 @@ public class DragonCustomizationScreen extends Screen
 			}
 		})
 		{
+			@Override
+			public void render(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks)
+			{
+				this.active = this.visible = showUi;
+				super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
+			}
+			
 			@Override
 			public void renderButton(MatrixStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_)
 			{
@@ -354,67 +387,8 @@ public class DragonCustomizationScreen extends Screen
 			}
 		});
 		
-		addButton(new CheckboxButton(width / 2 + 100, height - 15, 100, 10, new TranslationTextComponent("ds.gui.customization.wings"), preset.skinAges.get(level).wings){
-			final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/checkbox.png");
-			
-			@Override
-			public void renderButton(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks)
-			{
-				RenderSystem.pushMatrix();
-				pMatrixStack.pushPose();
-				Minecraft minecraft = Minecraft.getInstance();
-				minecraft.getTextureManager().bind(TEXTURE);
-				RenderSystem.enableDepthTest();
-				FontRenderer fontrenderer = minecraft.font;
-				RenderSystem.color4f(1.0F, 1.0F, 1.0F, this.alpha);
-				RenderSystem.enableBlend();
-				RenderSystem.defaultBlendFunc();
-				RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-				blit(pMatrixStack, this.x, this.y, this.isHovered() || this.isFocused() ? 10.0F : 0.0F, this.selected() ? 10.0F : 0.0F, 10, this.height, 64/2, 64/2);
-				this.renderBg(pMatrixStack, minecraft, pMouseX, pMouseY);
-				drawString(pMatrixStack, fontrenderer, this.getMessage(), this.x + 14, this.y + (this.height - 8) / 2, 14737632 | MathHelper.ceil(this.alpha * 255.0F) << 24);
-				pMatrixStack.popPose();
-				this.selected = preset.skinAges.get(level).wings;
-				RenderSystem.popMatrix();
-			}
-			
-			@Override
-			public void onPress()
-			{
-				preset.skinAges.get(level).wings = !preset.skinAges.get(level).wings;
-			}
-		});
-		
-		addButton(new CheckboxButton(width / 2 + 100, height - 28, 100, 10, new TranslationTextComponent("ds.gui.customization.default_skin"), preset.skinAges.get(level).defaultSkin){
-			final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/checkbox.png");
-			
-			@Override
-			public void renderButton(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks)
-			{
-				RenderSystem.pushMatrix();
-				pMatrixStack.pushPose();
-				Minecraft minecraft = Minecraft.getInstance();
-				minecraft.getTextureManager().bind(TEXTURE);
-				RenderSystem.enableDepthTest();
-				FontRenderer fontrenderer = minecraft.font;
-				RenderSystem.color4f(1.0F, 1.0F, 1.0F, this.alpha);
-				RenderSystem.enableBlend();
-				RenderSystem.defaultBlendFunc();
-				RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-				blit(pMatrixStack, this.x, this.y, this.isHovered() || this.isFocused() ? 10.0F : 0.0F, this.selected() ? 10.0F : 0.0F, 10, this.height, 64/2, 64/2);
-				this.renderBg(pMatrixStack, minecraft, pMouseX, pMouseY);
-				drawString(pMatrixStack, fontrenderer, this.getMessage(), this.x + 14, this.y + (this.height - 8) / 2, 14737632 | MathHelper.ceil(this.alpha * 255.0F) << 24);
-				pMatrixStack.popPose();
-				this.selected = preset.skinAges.get(level).defaultSkin;
-				RenderSystem.popMatrix();
-			}
-			
-			@Override
-			public void onPress()
-			{
-				preset.skinAges.get(level).defaultSkin = !preset.skinAges.get(level).defaultSkin;
-			}
-		});
+		addButton(new ExtendedCheckbox(width / 2 + 100, height - 15, 100, 10,10, new TranslationTextComponent("ds.gui.customization.wings"), preset.skinAges.get(level).wings, (p) -> preset.skinAges.get(level).wings = p.selected()));
+		addButton(new ExtendedCheckbox(width / 2 + 100, height - 28, 100, 10, 10, new TranslationTextComponent("ds.gui.customization.default_skin"), preset.skinAges.get(level).defaultSkin, (p) -> preset.skinAges.get(level).defaultSkin = p.selected()));
 		
 		addButton(new ExtendedButton(width / 2 - 75 - 10, height - 25, 75, 20, new TranslationTextComponent("ds.gui.customization.save"), null)
 		{
@@ -499,7 +473,7 @@ public class DragonCustomizationScreen extends Screen
 			}
 		});
 		
-		addButton(new Button(guiLeft + 256, 9, 19, 19, new TranslationTextComponent(""), (btn) -> {
+		addButton(new ExtendedButton(guiLeft + 256 + 16, 9, 19, 19, StringTextComponent.EMPTY, (btn) -> {
 			preset = new SkinPreset();
 			handler.getSkin().updateLayers.addAll(Arrays.stream(EnumSkinLayer.values()).distinct().collect(Collectors.toList()));
 			update();
@@ -523,7 +497,7 @@ public class DragonCustomizationScreen extends Screen
 			}
 		});
 		
-		addButton(new Button(guiLeft + 256 + 30, 9, 19, 19, new TranslationTextComponent(""), (btn) -> {
+		addButton(new ExtendedButton(guiLeft + 256 + 30 + 16, 9, 19, 19, StringTextComponent.EMPTY, (btn) -> {
 			for (EnumSkinLayer layer : EnumSkinLayer.values()) {
 				ArrayList<String> keys = DragonCustomizationHandler.getKeys(FakeClientPlayerUtils.getFakePlayer(0, handler), layer);
 				
@@ -566,12 +540,16 @@ public class DragonCustomizationScreen extends Screen
 			@Override
 			public void render(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks)
 			{
+				this.active = this.visible = showUi;
 				super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
-				Minecraft.getInstance().getTextureManager().bind(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/save_icon.png"));
-				blit(pMatrixStack,x, y, 0, 0, 16, 16,16, 16);
 				
-				if (this.isHovered()) {
-					this.renderToolTip(pMatrixStack, pMouseX, pMouseY);
+				if(visible) {
+					Minecraft.getInstance().getTextureManager().bind(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/save_icon.png"));
+					blit(pMatrixStack, x, y, 0, 0, 16, 16, 16, 16);
+					
+					if (this.isHovered()) {
+						this.renderToolTip(pMatrixStack, pMouseX, pMouseY);
+					}
 				}
 			}
 			
@@ -587,7 +565,7 @@ public class DragonCustomizationScreen extends Screen
 		
 		addButton(new CopySettingsButton(this, width / 2 + 193 + 13, guiTop - 16, 16,16, StringTextComponent.EMPTY, (p) -> {}));
 		
-		addButton(new Button(dragonRender.x + dragonRender.width - 17, dragonRender.y + dragonRender.height - 17, 15, 15, new TranslationTextComponent(""), (btn) -> {
+		addButton(new ExtendedButton(dragonRender.x + dragonRender.width - 17, dragonRender.y + dragonRender.height + 3, 15, 15, new TranslationTextComponent(""), (btn) -> {
 			dragonRender.yRot = -3;
 			dragonRender.xRot = -5;
 			dragonRender.xOffset = 0;
@@ -611,7 +589,16 @@ public class DragonCustomizationScreen extends Screen
 					this.renderToolTip(stack, p_230431_2_, p_230431_3_);
 				}
 			}
+			
+			@Override
+			public void render(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks)
+			{
+				this.active = this.visible = showUi;
+				super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
+			}
 		});
+		
+		addButton(new ExtendedCheckbox(guiLeft + 230, 11, 100, 16, 16, new TranslationTextComponent("ds.gui.customization.show_ui"), showUi, (p) -> showUi = p.selected()));
 	}
 	
 	
@@ -638,6 +625,16 @@ public class DragonCustomizationScreen extends Screen
 			tick = 0;
 		}
 		
+		if(showUi){
+			dragonRender.x = width / 2 - 70;
+			dragonRender.y = guiTop;
+			dragonRender.width = 140;
+			dragonRender.height = 125;
+		}else{
+			dragonRender.x = 0;
+			dragonRender.width = width;
+		}
+		
 		FakeClientPlayerUtils.getFakePlayer(0, handler).animationSupplier = () -> animations[curAnimation];
 		
 		stack.pushPose();
@@ -647,16 +644,18 @@ public class DragonCustomizationScreen extends Screen
 		
 		TextRenderUtil.drawCenteredScaledText(stack, width / 2, 10, 2f, title.getString(), DyeColor.WHITE.getTextColor());
 		
-		int i = 0;
-		for (EnumSkinLayer layers : EnumSkinLayer.values()) {
-			String name = layers.name;
-			SkinsScreen.drawNonShadowLineBreak(stack, font, new StringTextComponent(name), (i < 5 ? width / 2 - 100 - 100 : width / 2 + 83) + 50, guiTop + 10 + ((i >= 5 ? (i - 5) * 30 : i * 30)) - 12, DyeColor.WHITE.getTextColor());
-			i++;
+		if(showUi) {
+			int i = 0;
+			for (EnumSkinLayer layers : EnumSkinLayer.values()) {
+				String name = layers.name;
+				SkinsScreen.drawNonShadowLineBreak(stack, font, new StringTextComponent(name), (i < 5 ? width / 2 - 100 - 100 : width / 2 + 83) + 50, guiTop + 10 + ((i >= 5 ? (i - 5) * 30 : i * 30)) - 12, DyeColor.WHITE.getTextColor());
+				i++;
+			}
 		}
 		
-		SkinsScreen.drawNonShadowLineBreak(stack, font, new StringTextComponent(WordUtils.capitalize(animations[curAnimation].replace("_", " "))), width / 2, height / 2 + 72, DyeColor.GRAY.getTextColor());
-		
-		super.render(stack, p_230430_2_, p_230430_3_, p_230430_4_);
+		if(showUi) {
+			SkinsScreen.drawNonShadowLineBreak(stack, font, new StringTextComponent(WordUtils.capitalize(animations[curAnimation].replace("_", " "))), width / 2, height / 2 + 72, DyeColor.GRAY.getTextColor());
+		}
 		
 		for(int x = 0; x < this.children.size(); ++x) {
 			IGuiEventListener ch = children.get(x);

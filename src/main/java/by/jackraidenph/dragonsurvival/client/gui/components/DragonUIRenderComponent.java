@@ -1,7 +1,6 @@
 package by.jackraidenph.dragonsurvival.client.gui.components;
 
 import by.jackraidenph.dragonsurvival.client.render.ClientDragonRender;
-import by.jackraidenph.dragonsurvival.client.util.RenderingUtils;
 import by.jackraidenph.dragonsurvival.common.entity.DragonEntity;
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -12,7 +11,6 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.math.MathHelper;
 import software.bernie.geckolib3.core.processor.IBone;
 
-import java.awt.Color;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -46,22 +44,18 @@ public class DragonUIRenderComponent extends FocusableGui implements IRenderable
 			screen.setFocused(this);
 		}
 		
-		RenderingUtils.clipRendering(x, y - 5, width, height, () -> {
-			pMatrixStack.pushPose();
-			final IBone neckandHead = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("Neck");
-			
-			if (neckandHead != null) {
-				neckandHead.setHidden(false);
-			}
-			
-			float scale = zoom;
-			pMatrixStack.scale(scale, scale, scale);
-			ClientDragonRender.dragonModel.setCurrentTexture(null);
-			ClientDragonRender.renderEntityInInventory(getter.get(), (int)((x + width / 2)), (int)((int)(y + height - 50)), scale, xRot, yRot, xOffset / 10, yOffset / 10);
-			pMatrixStack.popPose();
-		});
+		pMatrixStack.pushPose();
+		final IBone neckandHead = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("Neck");
 		
-		RenderingUtils.drawRect(pMatrixStack, x, y, width, height, Color.darkGray.getRGB());
+		if (neckandHead != null) {
+			neckandHead.setHidden(false);
+		}
+		
+		float scale = zoom;
+		pMatrixStack.scale(scale, scale, scale);
+		ClientDragonRender.dragonModel.setCurrentTexture(null);
+		ClientDragonRender.renderEntityInInventory(getter.get(), (int)((x + width / 2)), (int)((int)(y + height - 50)), scale, xRot, yRot, xOffset / 10, yOffset / 10);
+		pMatrixStack.popPose();
 	}
 	
 	

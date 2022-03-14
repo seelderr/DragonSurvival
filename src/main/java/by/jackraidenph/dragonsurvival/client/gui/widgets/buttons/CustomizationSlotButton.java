@@ -38,6 +38,13 @@ public class CustomizationSlotButton extends Button
 	}
 	
 	@Override
+	public void render(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks)
+	{
+		this.active = this.visible = screen.showUi;
+		super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
+	}
+	
+	@Override
 	public void renderButton(MatrixStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_)
 	{
 		if(screen.currentSelected == (num - 1)){
