@@ -1,3 +1,5 @@
+### [0.12.4](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.12.3...0.12.4) (2022-03-14)
+
 ### [0.12.3](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.12.2...0.12.3) (2022-03-14)
 
 
