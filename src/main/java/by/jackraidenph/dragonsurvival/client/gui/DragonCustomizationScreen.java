@@ -126,17 +126,21 @@ public class DragonCustomizationScreen extends Screen
 	
 	private void initDragonRender()
 	{
-		float yRot = -3, xRot = -5, zoom = 0;
+		float yRot = -3, xRot = -5, zoom = 0, xOffset = 0, yOffset = 0;
 		if(dragonRender != null){
 			yRot = dragonRender.yRot;
 			xRot = dragonRender.xRot;
 			zoom = dragonRender.zoom;
+			xOffset = dragonRender.xOffset;
+			yOffset = dragonRender.yOffset;
 		}
 		
 		dragonRender = new DragonUIRenderComponent(this, width / 2 - 70, guiTop, 140, 125, () -> FakeClientPlayerUtils.getFakeDragon(0, handler));
 		dragonRender.xRot = xRot;
 		dragonRender.yRot = yRot;
 		dragonRender.zoom = zoom;
+		dragonRender.xOffset = xOffset;
+		dragonRender.yOffset = yOffset;
 		
 		children.add(dragonRender);
 	}
@@ -609,44 +613,42 @@ public class DragonCustomizationScreen extends Screen
 		addButton(new ExtendedCheckbox(guiLeft + 230, 11, 100, 16, 16, new TranslationTextComponent("ds.gui.customization.show_ui"), showUi, (p) -> showUi = p.selected()));
 		
 		addButton(new ExtendedButton(guiLeft - 35, 10, 18, 18, StringTextComponent.EMPTY, (p) -> {
-			RenderSystem.recordRenderCall(() -> {
-				int width = 512;
-				int height = 512;
-				
-				RenderSystem.pushMatrix();
-				RenderSystem.clear(16640, Minecraft.ON_OSX);
-				
-				Framebuffer framebuffer = new Framebuffer(width, height, true, false);
-				framebuffer.setClearColor(1f, 1f, 1f, 0f);
-				framebuffer.bindWrite(true);
-				framebuffer.blitToScreen(width, height);
-				
-				ClientDragonRender.renderEntityInInventory(FakeClientPlayerUtils.getFakeDragon(0, handler), width / 2, height / 2, dragonRender.zoom * 4, dragonRender.xRot, dragonRender.yRot, 0, 0);
-				
-				NativeImage nativeimage = new NativeImage(width, height, false);
-				RenderSystem.bindTexture(framebuffer.getColorTextureId());
-				nativeimage.downloadTexture(0, false);
-				nativeimage.flipY();
-				
-				File file1 = new File(Minecraft.getInstance().gameDirectory, "screenshots/dragon-survival");
-				file1.mkdir();
-				File target = getFile(file1);
-				
-				Util.ioPool().execute(() -> {
-					try {
-						nativeimage.writeToFile(target);
-					} catch (Exception ignored) {
-					} finally {
-						nativeimage.close();
-					}
-				});
-				
-				framebuffer.unbindWrite();
-				framebuffer.destroyBuffers();
-				RenderSystem.popMatrix();
-				
-				Minecraft.getInstance().getMainRenderTarget().bindWrite(false);
+			int width = 1024;
+			int height = 1024;
+			
+			RenderSystem.pushMatrix();
+			RenderSystem.clear(16640, Minecraft.ON_OSX);
+			
+			Framebuffer framebuffer = new Framebuffer(width, height, true, false);
+			framebuffer.setClearColor(1f, 1f, 1f, 0f);
+			framebuffer.bindWrite(true);
+			framebuffer.blitToScreen(width, height);
+			
+			ClientDragonRender.renderEntityInInventory(FakeClientPlayerUtils.getFakeDragon(0, handler), width / 2, height / 2, dragonRender.zoom * 4, dragonRender.xRot, dragonRender.yRot, 0, 0);
+			
+			NativeImage nativeimage = new NativeImage(width, height, false);
+			RenderSystem.bindTexture(framebuffer.getColorTextureId());
+			nativeimage.downloadTexture(0, false);
+			nativeimage.flipY();
+			
+			File file1 = new File(Minecraft.getInstance().gameDirectory, "screenshots/dragon-survival");
+			file1.mkdir();
+			File target = getFile(file1);
+			
+			Util.ioPool().execute(() -> {
+				try {
+					nativeimage.writeToFile(target);
+				} catch (Exception ignored) {
+				} finally {
+					nativeimage.close();
+				}
 			});
+			
+			framebuffer.unbindWrite();
+			framebuffer.destroyBuffers();
+			RenderSystem.popMatrix();
+			
+			Minecraft.getInstance().getMainRenderTarget().bindWrite(false);
 		}){
 			@Override
 			public void renderButton(MatrixStack mStack, int mouseX, int mouseY, float partial)
