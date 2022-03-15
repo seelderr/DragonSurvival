@@ -3,6 +3,7 @@ package by.jackraidenph.dragonsurvival.common.blocks;
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.client.render.item.HelmetStackTileEntityRenderer;
 import by.jackraidenph.dragonsurvival.client.sounds.SoundRegistry;
+import by.jackraidenph.dragonsurvival.common.blocks.DragonPressurePlates.PressurePlateType;
 import by.jackraidenph.dragonsurvival.common.items.DragonDoorItem;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
@@ -51,6 +52,8 @@ public class DSBlocks
 
     public static TreasureBlock treasureDebris, treasureDiamond, treasureEmerald, treasureCopper, treasureGold, treasureIron;
 
+    public static DragonPressurePlates dragonPressurePlate, humanPressurePlate, seaPressurePlate, forestPressurePlate, cavePressurePlate;
+    
     @SubscribeEvent
     public static void registerBlocks(final RegistryEvent.Register<Block> event) {
         IForgeRegistry<Block> forgeRegistry = event.getRegistry();
@@ -131,6 +134,12 @@ public class DSBlocks
         peaceDragonBeacon = registerBlock(new DragonBeacon(AbstractBlock.Properties.copy(dragonBeacon).lightLevel(value -> value.getValue(DragonBeacon.LIT) ? 15 : 0)), "dragon_beacon_peace", forgeRegistry);
         magicDragonBeacon = registerBlock(new DragonBeacon(AbstractBlock.Properties.copy(dragonBeacon).lightLevel(value -> value.getValue(DragonBeacon.LIT) ? 15 : 0)), "dragon_beacon_magic", forgeRegistry);
         fireDragonBeacon = registerBlock(new DragonBeacon(AbstractBlock.Properties.copy(dragonBeacon).lightLevel(value -> value.getValue(DragonBeacon.LIT) ? 15 : 0)), "dragon_beacon_fire", forgeRegistry);
+    
+        dragonPressurePlate = registerBlock(new DragonPressurePlates(AbstractBlock.Properties.of(Material.STONE).strength(15, 50).requiresCorrectToolForDrops(), PressurePlateType.DRAGON), "dragon_pressure_plate", forgeRegistry);
+        humanPressurePlate = registerBlock(new DragonPressurePlates(AbstractBlock.Properties.of(Material.STONE).strength(15, 50).requiresCorrectToolForDrops(), PressurePlateType.HUMAN), "human_pressure_plate", forgeRegistry);
+        seaPressurePlate = registerBlock(new DragonPressurePlates(AbstractBlock.Properties.of(Material.STONE).strength(15, 50).requiresCorrectToolForDrops(), PressurePlateType.SEA), "sea_dragon_pressure_plate", forgeRegistry);
+        forestPressurePlate = registerBlock(new DragonPressurePlates(AbstractBlock.Properties.of(Material.STONE).strength(15, 50).requiresCorrectToolForDrops(), PressurePlateType.FOREST), "forest_dragon_pressure_plate", forgeRegistry);
+        cavePressurePlate = registerBlock(new DragonPressurePlates(AbstractBlock.Properties.of(Material.STONE).strength(15, 50).requiresCorrectToolForDrops(), PressurePlateType.CAVE), "cave_dragon_pressure_plate", forgeRegistry);
     }
 
     private static <B extends Block> B registerBlock(B block, String identifier, IForgeRegistry<Block> forgeRegistry) {
@@ -200,6 +209,12 @@ public class DSBlocks
         registerItem(magicDragonBeacon, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
         registerItem(fireDragonBeacon, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
         registerItem(dragonMemoryBlock, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
+    
+        registerItem(dragonPressurePlate, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
+        registerItem(humanPressurePlate, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
+        registerItem(seaPressurePlate, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
+        registerItem(forestPressurePlate, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
+        registerItem(cavePressurePlate, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
     }
     
     @SuppressWarnings("ConstantConditions")

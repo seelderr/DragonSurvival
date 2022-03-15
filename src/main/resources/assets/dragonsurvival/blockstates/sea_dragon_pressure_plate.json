@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "powered=false": {
+      "model": "dragonsurvival:block/sea_dragon_pressure_plate"
+    },
+    "powered=true": {
+      "model": "dragonsurvival:block/sea_dragon_pressure_plate_down"
+    }
+  }
+}

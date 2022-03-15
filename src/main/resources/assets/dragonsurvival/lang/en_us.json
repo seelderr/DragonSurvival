@@ -85,6 +85,12 @@
   "block.dragonsurvival.warped_small_dragon_door": "Warped Small Dragon door",
   "block.dragonsurvival.crimson_small_dragon_door": "Crimson Small Dragon door",
 
+  "block.dragonsurvival.dragon_pressure_plate": "Dragon pressure plate",
+  "block.dragonsurvival.sea_dragon_pressure_plate": "Sea dragon pressure plate",
+  "block.dragonsurvival.forest_dragon_pressure_plate": "Forest dragon pressure plate",
+  "block.dragonsurvival.cave_dragon_pressure_plate": "Cave dragon pressure plate",
+  "block.dragonsurvival.human_pressure_plate": "Human pressure plate",
+
   "block.dragonsurvival.forest_source_of_magic": "Forest Source of Magic",
   "block.dragonsurvival.sea_source_of_magic": "Sea Source of Magic",
   "block.dragonsurvival.cave_source_of_magic": "Cave Source of Magic",
