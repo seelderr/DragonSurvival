@@ -1,3 +1,10 @@
+## [0.13.0](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.12.4...0.13.0) (2022-03-15)
+
+
+### Features
+
+* Adds early version of pressure plates ([a63a24c](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/a63a24c0148c964ccdb653fa54a9549e3a4415db))
+
 ### [0.12.4](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.12.3...0.12.4) (2022-03-14)
 
 ### [0.12.3](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.12.2...0.12.3) (2022-03-14)
