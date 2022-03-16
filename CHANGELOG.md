@@ -1,3 +1,10 @@
+### [0.13.6](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.5...0.13.6) (2022-03-16)
+
+
+### Bug Fixes
+
+* More fixes for aures to break ([a53ba27](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/a53ba27501d9b6b3b418efaa8007769bd61a4c4b))
+
 ### [0.13.5](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.4...0.13.5) (2022-03-16)
 
 
