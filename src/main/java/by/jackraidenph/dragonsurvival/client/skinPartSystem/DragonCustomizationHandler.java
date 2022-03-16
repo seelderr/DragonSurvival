@@ -15,6 +15,10 @@ import java.util.Objects;
 public class DragonCustomizationHandler
 {
 	public static ResourceLocation getSkinTexture(PlayerEntity player, EnumSkinLayer layer, String key, DragonType type){
+		if(Objects.equals(layer.name, "Extra")){
+			layer = EnumSkinLayer.EXTRA;
+		}
+		
 		if(layer == EnumSkinLayer.BASE && (key.equalsIgnoreCase("Skin") || key.equalsIgnoreCase(SkinCap.defaultSkinValue))){
 			DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
 			return getSkinTexture(player, layer, type.name().toLowerCase() + "_base_" + handler.getLevel().ordinal(), type);
