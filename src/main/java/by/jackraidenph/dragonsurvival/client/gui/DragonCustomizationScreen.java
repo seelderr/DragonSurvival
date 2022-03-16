@@ -520,7 +520,7 @@ public class DragonCustomizationScreen extends Screen
 					preset.skinAges.get(level).layerSettings.get(layer).selectedSkin = keys.get(minecraft.player.level.random.nextInt(keys.size()));
 					preset.skinAges.get(level).layerSettings.get(layer).hue = 0.25f + (minecraft.player.level.random.nextFloat() * 0.5f);
 					preset.skinAges.get(level).layerSettings.get(layer).saturation = 0.25f + (minecraft.player.level.random.nextFloat() * 0.5f);
-					preset.skinAges.get(level).layerSettings.get(layer).brightness = 0.1f + (minecraft.player.level.random.nextFloat() * 0.4f);
+					preset.skinAges.get(level).layerSettings.get(layer).brightness = 0.3f + (minecraft.player.level.random.nextFloat() * 0.2f);
 					preset.skinAges.get(level).layerSettings.get(layer).modifiedColor = true;
 				}
 				handler.getSkin().updateLayers.add(layer);
