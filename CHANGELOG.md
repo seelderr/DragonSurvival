@@ -1,3 +1,10 @@
+### [0.13.3](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.2...0.13.3) (2022-03-16)
+
+
+### Bug Fixes
+
+* Fixes extra skin parts not rendering ([b04f865](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/b04f86546bccab5175297e1bbd491367129c4fec))
+
 ### [0.13.2](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.1...0.13.2) (2022-03-16)
 
 
