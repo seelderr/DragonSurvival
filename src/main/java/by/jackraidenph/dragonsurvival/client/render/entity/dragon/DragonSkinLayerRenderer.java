@@ -3,9 +3,9 @@ package by.jackraidenph.dragonsurvival.client.render.entity.dragon;
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.client.handlers.DragonSkins;
 import by.jackraidenph.dragonsurvival.client.render.ClientDragonRender;
-import by.jackraidenph.dragonsurvival.client.skinPartSystem.DragonCustomizationHandler;
+import by.jackraidenph.dragonsurvival.client.skinPartSystem.DragonEditorHandler;
 import by.jackraidenph.dragonsurvival.client.skinPartSystem.EnumSkinLayer;
-import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.CustomizationObject.Texture;
+import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.DragonEditorObject.Texture;
 import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.LayerSettings;
 import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.SkinPreset;
 import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.SkinPreset.SkinAgeGroup;
@@ -61,10 +61,10 @@ public class DragonSkinLayerRenderer extends GeoLayerRenderer<DragonEntity>
 			String key = settings.selectedSkin;
 			
 			if(key != null){
-				Texture text = DragonCustomizationHandler.getSkin(entitylivingbaseIn.getPlayer(), layer, key, handler.getType());
+				Texture text = DragonEditorHandler.getSkin(entitylivingbaseIn.getPlayer(), layer, key, handler.getType());
 				
 				if(text != null) {
-					ResourceLocation texture = DragonCustomizationHandler.getSkinTexture(entitylivingbaseIn.getPlayer(), layer, key, handler.getType());
+					ResourceLocation texture = DragonEditorHandler.getSkinTexture(entitylivingbaseIn.getPlayer(), layer, key, handler.getType());
 					if(ClientDragonRender.dragonModel.getTextureLocation(entitylivingbaseIn) == texture) return;
 					
 					if(texture == null || DragonSkins.getPlayerSkin(entitylivingbaseIn.getPlayer(), handler.getType(), handler.getLevel()) != null) {

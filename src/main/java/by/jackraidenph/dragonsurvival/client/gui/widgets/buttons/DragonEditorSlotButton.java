@@ -1,7 +1,7 @@
 package by.jackraidenph.dragonsurvival.client.gui.widgets.buttons;
 
-import by.jackraidenph.dragonsurvival.client.gui.DragonCustomizationScreen;
-import by.jackraidenph.dragonsurvival.client.skinPartSystem.CustomizationRegistry;
+import by.jackraidenph.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
+import by.jackraidenph.dragonsurvival.client.skinPartSystem.DragonEditorRegistry;
 import by.jackraidenph.dragonsurvival.client.skinPartSystem.EnumSkinLayer;
 import by.jackraidenph.dragonsurvival.client.util.TextRenderUtil;
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -14,12 +14,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.stream.Collectors;
 
-public class CustomizationSlotButton extends Button
+public class DragonEditorSlotButton extends Button
 {
 	public int num;
-	private DragonCustomizationScreen screen;
+	private DragonEditorScreen screen;
 	
-	public CustomizationSlotButton(int p_i232255_1_, int p_i232255_2_, int num, DragonCustomizationScreen parent)
+	public DragonEditorSlotButton(int p_i232255_1_, int p_i232255_2_, int num, DragonEditorScreen parent)
 	{
 		super(p_i232255_1_, p_i232255_2_, 12, 12, null, (btn) -> {});
 		this.num = num;
@@ -29,8 +29,8 @@ public class CustomizationSlotButton extends Button
 	@Override
 	public void onPress()
 	{
-		CustomizationRegistry.savedCustomizations.skinPresets.computeIfAbsent(screen.type, (t) -> new HashMap<>());
-		CustomizationRegistry.savedCustomizations.skinPresets.get(screen.type).put(screen.currentSelected, screen.preset);
+		DragonEditorRegistry.savedCustomizations.skinPresets.computeIfAbsent(screen.type, (t) -> new HashMap<>());
+		DragonEditorRegistry.savedCustomizations.skinPresets.get(screen.type).put(screen.currentSelected, screen.preset);
 		
 		screen.currentSelected = num - 1;
 		screen.update();

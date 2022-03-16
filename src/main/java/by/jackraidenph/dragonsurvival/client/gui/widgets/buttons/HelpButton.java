@@ -15,18 +15,20 @@ import java.util.Arrays;
 public class HelpButton extends ImageButton
 {
 	public String text;
+	public int variation;
+	public static final ResourceLocation texture0 = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/help_button.png");
+	public static final ResourceLocation texture1 = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/help_button_white.png");
 	
-	public static final ResourceLocation texture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/help_button.png");
-	
-	public HelpButton(int x, int y, int sizeX, int sizeY, String text)
+	public HelpButton(int x, int y, int sizeX, int sizeY, String text, int variation)
 	{
-		this(DragonUtils.getDragonType(Minecraft.getInstance().player), x, y, sizeX, sizeY, text);
+		this(DragonUtils.getDragonType(Minecraft.getInstance().player), x, y, sizeX, sizeY, text, variation);
 	}
 	
-	public HelpButton(DragonType type, int x, int y, int sizeX, int sizeY, String text)
+	public HelpButton(DragonType type, int x, int y, int sizeX, int sizeY, String text, int variation)
 	{
-		super(x, y, sizeX, sizeY, 0, 0, (int)(((type.ordinal() + 1) * 18f) *((float)sizeY / 18f)), texture, (int)(256f * ((float)sizeX / 18f)), (int)(256f * ((float)sizeY / 18f)), (btn) -> {});
+		super(x, y, sizeX, sizeY, 0, 0, (int)(((type.ordinal() + 1) * 18f) *((float)sizeY / 18f)), variation == 0 ? texture0 : texture1, (int)(256f * ((float)sizeX / 18f)), (int)(256f * ((float)sizeY / 18f)), (btn) -> {});
 		this.text = text;
+		this.variation = variation;
 	}
 	
 	@Override

@@ -59,7 +59,7 @@ public class SkinPreset implements NBTInterface
 			this.level = level;
 			
 			for(EnumSkinLayer layer : EnumSkinLayer.values()){
-				layerSettings.computeIfAbsent(layer, (s) -> layer.base ? new LayerSettings(layer.name.toLowerCase() + "_" + level.ordinal()) : new LayerSettings());
+				layerSettings.computeIfAbsent(layer, (s) -> layer.base ? new LayerSettings(layer.name().toLowerCase() + "_" + level.ordinal()) : new LayerSettings());
 			}
 		}
 		
@@ -72,7 +72,7 @@ public class SkinPreset implements NBTInterface
 			nbt.putBoolean("defaultSkin", defaultSkin);
 			
 			for(EnumSkinLayer layer : EnumSkinLayer.values()){
-				nbt.put(layer.name, layerSettings.getOrDefault(layer, new LayerSettings()).writeNBT());
+				nbt.put(layer.name(), layerSettings.getOrDefault(layer, new LayerSettings()).writeNBT());
 			}
 			
 			return nbt;
@@ -86,7 +86,7 @@ public class SkinPreset implements NBTInterface
 			
 			for(EnumSkinLayer layer : EnumSkinLayer.values()){
 				LayerSettings ageGroup = new LayerSettings();
-				CompoundNBT nbt = base.getCompound(layer.name);
+				CompoundNBT nbt = base.getCompound(layer.name());
 				ageGroup.readNBT(nbt);
 				layerSettings.put(layer, ageGroup);
 			}

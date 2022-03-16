@@ -1,11 +1,11 @@
 package by.jackraidenph.dragonsurvival.client.gui.components;
 
-import by.jackraidenph.dragonsurvival.client.gui.DragonCustomizationScreen;
+import by.jackraidenph.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.ColorPickerButton;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownList;
-import by.jackraidenph.dragonsurvival.client.skinPartSystem.DragonCustomizationHandler;
+import by.jackraidenph.dragonsurvival.client.skinPartSystem.DragonEditorHandler;
 import by.jackraidenph.dragonsurvival.client.skinPartSystem.EnumSkinLayer;
-import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.CustomizationObject.Texture;
+import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.DragonEditorObject.Texture;
 import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.LayerSettings;
 import by.jackraidenph.dragonsurvival.client.util.FakeClientPlayerUtils;
 import com.google.common.collect.ImmutableList;
@@ -35,11 +35,11 @@ public class ColorSelectorComponent extends FocusableGui implements IRenderable
 	private ExtendedButton colorPicker;
 	private CheckboxButton glowing;
 	
-	private DragonCustomizationScreen screen;
+	private DragonEditorScreen screen;
 	private int x, y, xSize, ySize;
 	private Supplier<LayerSettings> settings;
 	
-	public ColorSelectorComponent(DragonCustomizationScreen screen, int x, int y, int xSize, int ySize, EnumSkinLayer layer)
+	public ColorSelectorComponent(DragonEditorScreen screen, int x, int y, int xSize, int ySize, EnumSkinLayer layer)
 	{
 		this.screen = screen;
 		this.x = x;
@@ -50,9 +50,9 @@ public class ColorSelectorComponent extends FocusableGui implements IRenderable
 		settings = () -> screen.preset.skinAges.get(screen.level).layerSettings.get(layer);
 		
 		LayerSettings set = settings.get();
-		Texture text = DragonCustomizationHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, screen.handler), layer, set.selectedSkin, screen.handler.getType());
+		Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, screen.handler), layer, set.selectedSkin, screen.handler.getType());
 		
-		glowing = new CheckboxButton(x + 3, y, xSize - 5, 10, new TranslationTextComponent("ds.gui.customization.glowing"), set.glowing){
+		glowing = new CheckboxButton(x + 3, y, xSize - 5, 10, new TranslationTextComponent("ds.gui.dragon_editor.glowing"), set.glowing){
 			final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/checkbox.png");
 			
 			@Override

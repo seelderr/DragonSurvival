@@ -1,6 +1,7 @@
 package by.jackraidenph.dragonsurvival.client.gui;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
+import by.jackraidenph.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.AltarTypeButton;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.HelpButton;
 import by.jackraidenph.dragonsurvival.client.render.ClientDragonRender;
@@ -172,7 +173,7 @@ public class DragonAltarGUI extends Screen {
         this.guiLeft = (this.width - 304) / 2;
         this.guiTop = (this.height - 190) / 2;
     
-        this.addButton(new HelpButton(this.guiLeft, 10, 18, 18, "ds.help.altar"){
+        this.addButton(new HelpButton(this.guiLeft, 10, 18, 18, "ds.help.altar", 1){
             @Override
             public void render(MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_)
             {
@@ -186,9 +187,9 @@ public class DragonAltarGUI extends Screen {
         addButton(new AltarTypeButton(this, DragonType.FOREST, width / 2 - 51, this.guiTop + 20));
         addButton(new AltarTypeButton(this, DragonType.SEA, width / 2 + 2, this.guiTop + 20));
         addButton(new AltarTypeButton(this, DragonType.NONE, width / 2 + 55, guiTop + 20));
-        //ds.gui.customization
-        addButton(new ExtendedButton(width / 2 - 75, height - 25, 150, 20, new TranslationTextComponent("ds.gui.customization"), (btn) -> {
-            Minecraft.getInstance().setScreen(new DragonCustomizationScreen(Minecraft.getInstance().screen));
+        //ds.gui.dragon_editor
+        addButton(new ExtendedButton(width / 2 - 75, height - 25, 150, 20, new TranslationTextComponent("ds.gui.dragon_editor"), (btn) -> {
+            Minecraft.getInstance().setScreen(new DragonEditorScreen(Minecraft.getInstance().screen));
         }){
             @Override
             public void render(MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_)

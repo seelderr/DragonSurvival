@@ -356,7 +356,7 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
             }
         });
     
-        addButton(new HelpButton(leftPos - 58, topPos - 40, 32, 32, null){
+        addButton(new HelpButton(leftPos - 58, topPos - 40, 32, 32, null, 0){
             @Override
             public void renderButton(MatrixStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_)
             {
@@ -448,7 +448,7 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
             }
         });
         
-        addButton(new HelpButton(leftPos - 80 + 34, topPos + 112, 9, 9, "ds.skill.help.claws"){
+        addButton(new HelpButton(leftPos - 80 + 34, topPos + 112, 9, 9, "ds.skill.help.claws", 0){
             @Override
             public void render(MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_)
             {

@@ -2,7 +2,7 @@ package by.jackraidenph.dragonsurvival.commands;
 
 import by.jackraidenph.dragonsurvival.common.util.DragonUtils;
 import by.jackraidenph.dragonsurvival.network.NetworkHandler;
-import by.jackraidenph.dragonsurvival.network.dragon_editor.OpenDragonCustomization;
+import by.jackraidenph.dragonsurvival.network.dragon_editor.OpenDragonEditorPacket;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.mojang.brigadier.tree.RootCommandNode;
@@ -12,12 +12,12 @@ import net.minecraftforge.fml.network.PacketDistributor;
 
 import static net.minecraft.command.Commands.literal;
 
-public class CustomizationCommand
+public class DragonEditorCommand
 {
 	public static void register(CommandDispatcher<CommandSource> commandDispatcher)
 	{
 		RootCommandNode<CommandSource> rootCommandNode = commandDispatcher.getRoot();
-		LiteralCommandNode<CommandSource> dragon = literal("dragon-creator").requires(commandSource -> commandSource.hasPermission(2)).executes(context -> {
+		LiteralCommandNode<CommandSource> dragon = literal("dragon-editor").requires(commandSource -> commandSource.hasPermission(2)).executes(context -> {
 			return runCommand(context.getSource().getPlayerOrException());
 		}).build();
 		
@@ -27,7 +27,7 @@ public class CustomizationCommand
 	private static int runCommand( ServerPlayerEntity serverPlayerEntity)
 	{
 		if(DragonUtils.isDragon(serverPlayerEntity)){
-			NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> serverPlayerEntity), new OpenDragonCustomization());
+			NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> serverPlayerEntity), new OpenDragonEditorPacket());
 		}
 		return 1;
 	}

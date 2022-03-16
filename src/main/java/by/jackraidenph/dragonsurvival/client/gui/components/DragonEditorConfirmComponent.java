@@ -1,7 +1,7 @@
 package by.jackraidenph.dragonsurvival.client.gui.components;
 
 import by.jackraidenph.dragonsurvival.client.gui.DragonAltarGUI;
-import by.jackraidenph.dragonsurvival.client.gui.DragonCustomizationScreen;
+import by.jackraidenph.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
 import by.jackraidenph.dragonsurvival.client.util.TextRenderUtil;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import com.google.common.collect.ImmutableList;
@@ -21,14 +21,14 @@ import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
 import java.util.Arrays;
 import java.util.List;
 
-public class CustomizationConfirmation extends FocusableGui implements IRenderable
+public class DragonEditorConfirmComponent extends FocusableGui implements IRenderable
 {
-	private DragonCustomizationScreen screen;
+	private DragonEditorScreen screen;
 	private Widget btn1, btn2;
 	private int x, y, xSize, ySize;
 	public boolean visible;
 	
-	public CustomizationConfirmation(DragonCustomizationScreen screen, int x, int y, int xSize, int ySize)
+	public DragonEditorConfirmComponent(DragonEditorScreen screen, int x, int y, int xSize, int ySize)
 	{
 		this.screen = screen;
 		this.x = x;
@@ -51,7 +51,7 @@ public class CustomizationConfirmation extends FocusableGui implements IRenderab
 				mStack.popPose();
 				
 				if (isHovered) {
-					GuiUtils.drawHoveringText(mStack, Arrays.asList(new TranslationTextComponent("ds.gui.customization.tooltip.done")), mouseX, mouseY, Minecraft.getInstance().screen.width, Minecraft.getInstance().screen.height, 200, Minecraft.getInstance().font);
+					GuiUtils.drawHoveringText(mStack, Arrays.asList(new TranslationTextComponent("ds.gui.dragon_editor.tooltip.done")), mouseX, mouseY, Minecraft.getInstance().screen.width, Minecraft.getInstance().screen.height, 200, Minecraft.getInstance().font);
 				}
 			}
 			
@@ -77,7 +77,7 @@ public class CustomizationConfirmation extends FocusableGui implements IRenderab
 				mStack.popPose();
 				
 				if (isHovered) {
-					GuiUtils.drawHoveringText(mStack, Arrays.asList(new TranslationTextComponent("ds.gui.customization.tooltip.cancel")), mouseX, mouseY, Minecraft.getInstance().screen.width, Minecraft.getInstance().screen.height, 200, Minecraft.getInstance().font);
+					GuiUtils.drawHoveringText(mStack, Arrays.asList(new TranslationTextComponent("ds.gui.dragon_editor.tooltip.cancel")), mouseX, mouseY, Minecraft.getInstance().screen.width, Minecraft.getInstance().screen.height, 200, Minecraft.getInstance().font);
 				}
 			}
 			
@@ -108,7 +108,7 @@ public class CustomizationConfirmation extends FocusableGui implements IRenderab
 	public void render(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks)
 	{
 		Minecraft.getInstance().getTextureManager().bind(confirmationTexture);
-		String key = "ds.gui.customization.confirm." +
+		String key = "ds.gui.dragon_editor.confirm." +
 		             (!ConfigHandler.SERVER.saveAllAbilities.get() && !ConfigHandler.SERVER.saveGrowthStage.get() ? "all"
 	               : (ConfigHandler.SERVER.saveAllAbilities.get() && !ConfigHandler.SERVER.saveGrowthStage.get() ? "ability"
 	               : !ConfigHandler.SERVER.saveAllAbilities.get() && ConfigHandler.SERVER.saveGrowthStage.get() ? "growth" : ""));

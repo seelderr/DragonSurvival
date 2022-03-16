@@ -1,6 +1,6 @@
 package by.jackraidenph.dragonsurvival.network.dragon_editor;
 
-import by.jackraidenph.dragonsurvival.client.gui.DragonCustomizationScreen;
+import by.jackraidenph.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
 import by.jackraidenph.dragonsurvival.network.IMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.PacketBuffer;
@@ -12,31 +12,31 @@ import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class OpenDragonCustomization implements IMessage<OpenDragonCustomization>
+public class OpenDragonEditorPacket implements IMessage<OpenDragonEditorPacket>
 {
 	
-	public OpenDragonCustomization() {}
+	public OpenDragonEditorPacket() {}
 
 	@Override
-	public void encode(OpenDragonCustomization message, PacketBuffer buffer) {
+	public void encode(OpenDragonEditorPacket message, PacketBuffer buffer) {
 
 	}
 	
 	@Override
-	public OpenDragonCustomization decode(PacketBuffer buffer) {
-		return new OpenDragonCustomization();
+	public OpenDragonEditorPacket decode(PacketBuffer buffer) {
+		return new OpenDragonEditorPacket();
 	}
 	
 	@Override
-	public void handle(OpenDragonCustomization message, Supplier<NetworkEvent.Context> supplier) {
+	public void handle(OpenDragonEditorPacket message, Supplier<NetworkEvent.Context> supplier) {
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> runClient(message, supplier));
 	}
 	
 	@OnlyIn(Dist.CLIENT)
-	public void runClient(OpenDragonCustomization message, Supplier<NetworkEvent.Context> supplier){
+	public void runClient(OpenDragonEditorPacket message, Supplier<NetworkEvent.Context> supplier){
 		NetworkEvent.Context context = supplier.get();
 		context.enqueueWork(() -> {
-			Minecraft.getInstance().setScreen(new DragonCustomizationScreen(Minecraft.getInstance().screen));
+			Minecraft.getInstance().setScreen(new DragonEditorScreen(Minecraft.getInstance().screen));
 			context.setPacketHandled(true);
 		});
 	}

@@ -1,7 +1,7 @@
 package by.jackraidenph.dragonsurvival.client.gui.components;
 
 import by.jackraidenph.dragonsurvival.client.gui.DragonAltarGUI;
-import by.jackraidenph.dragonsurvival.client.gui.DragonCustomizationScreen;
+import by.jackraidenph.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.CopySettingsButton;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownList;
 import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.SkinPreset.SkinAgeGroup;
@@ -32,10 +32,10 @@ public class CopyEditorSettingsComponent  extends FocusableGui implements IRende
 	private CheckboxButton newborn, young, adult;
 	
 	private CopySettingsButton btn;
-	private DragonCustomizationScreen screen;
+	private DragonEditorScreen screen;
 	private int x, y, xSize, ySize;
 	
-	public CopyEditorSettingsComponent(DragonCustomizationScreen screen, CopySettingsButton btn, int x, int y, int xSize, int ySize)
+	public CopyEditorSettingsComponent(DragonEditorScreen screen, CopySettingsButton btn, int x, int y, int xSize, int ySize)
 	{
 		this.screen = screen;
 		this.x = x;
@@ -58,7 +58,7 @@ public class CopyEditorSettingsComponent  extends FocusableGui implements IRende
 				mStack.popPose();
 				
 				if (isHovered) {
-					GuiUtils.drawHoveringText(mStack, Arrays.asList(new TranslationTextComponent("ds.gui.customization.tooltip.done")), mouseX, mouseY, Minecraft.getInstance().screen.width, Minecraft.getInstance().screen.height, 200, Minecraft.getInstance().font);
+					GuiUtils.drawHoveringText(mStack, Arrays.asList(new TranslationTextComponent("ds.gui.dragon_editor.tooltip.done")), mouseX, mouseY, Minecraft.getInstance().screen.width, Minecraft.getInstance().screen.height, 200, Minecraft.getInstance().font);
 				}
 			}
 			
@@ -104,7 +104,7 @@ public class CopyEditorSettingsComponent  extends FocusableGui implements IRende
 				mStack.popPose();
 				
 				if (isHovered) {
-					GuiUtils.drawHoveringText(mStack, Arrays.asList(new TranslationTextComponent("ds.gui.customization.tooltip.cancel")), mouseX, mouseY, Minecraft.getInstance().screen.width, Minecraft.getInstance().screen.height, 200, Minecraft.getInstance().font);
+					GuiUtils.drawHoveringText(mStack, Arrays.asList(new TranslationTextComponent("ds.gui.dragon_editor.tooltip.cancel")), mouseX, mouseY, Minecraft.getInstance().screen.width, Minecraft.getInstance().screen.height, 200, Minecraft.getInstance().font);
 				}
 			}
 			
@@ -211,7 +211,7 @@ public class CopyEditorSettingsComponent  extends FocusableGui implements IRende
 		newborn.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 		young.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 		adult.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
-		AbstractGui.drawCenteredString(pMatrixStack, Minecraft.getInstance().font, new TranslationTextComponent("ds.gui.customization.copy_to"), x + (xSize / 2), y + 1, 14737632);
+		AbstractGui.drawCenteredString(pMatrixStack, Minecraft.getInstance().font, new TranslationTextComponent("ds.gui.dragon_editor.copy_to"), x + (xSize / 2), y + 1, 14737632);
 		
 	}
 }

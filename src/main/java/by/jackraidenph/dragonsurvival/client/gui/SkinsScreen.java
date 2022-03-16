@@ -272,7 +272,7 @@ public class SkinsScreen extends Screen
 			}
 		});
 		
-		addButton(new HelpButton(startX + 128 + (imageWidth / 2) - 8 - 25, startY + 128 + 30, 16, 16, "ds.gui.skins.tooltip.help"));
+		addButton(new HelpButton(startX + 128 + (imageWidth / 2) - 8 - 25, startY + 128 + 30, 16, 16, "ds.gui.skins.tooltip.help", 1));
 		
 		addButton(new Button(startX - 60, startY + 128, 90, 20, new TranslationTextComponent("ds.gui.skins.yours"), (button) -> {
 			playerName = minecraft.player.getGameProfile().getName();

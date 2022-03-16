@@ -1,7 +1,7 @@
 package by.jackraidenph.dragonsurvival.client.models;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.client.skinPartSystem.DragonCustomizationHandler;
+import by.jackraidenph.dragonsurvival.client.skinPartSystem.DragonEditorHandler;
 import by.jackraidenph.dragonsurvival.client.skinPartSystem.EnumSkinLayer;
 import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.SkinPreset.SkinAgeGroup;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
@@ -52,7 +52,7 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 				return new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/" + handler.getType().name().toLowerCase(Locale.ROOT) + "_" + handler.getLevel().name.toLowerCase(Locale.ROOT) + ".png");
 			}else {
 				String skin = ageGroup.layerSettings.get(EnumSkinLayer.BASE).selectedSkin;
-				ResourceLocation location = DragonCustomizationHandler.getSkinTexture(dragonEntity.getPlayer(), EnumSkinLayer.BASE, Objects.equals(skin, SkinCap.defaultSkinValue) ? "Skin" : skin, DragonUtils.getDragonType(dragonEntity.getPlayer()));
+				ResourceLocation location = DragonEditorHandler.getSkinTexture(dragonEntity.getPlayer(), EnumSkinLayer.BASE, Objects.equals(skin, SkinCap.defaultSkinValue) ? "Skin" : skin, DragonUtils.getDragonType(dragonEntity.getPlayer()));
 				
 				if (location != null) {
 					return location;

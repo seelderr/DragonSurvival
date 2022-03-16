@@ -41,7 +41,7 @@ public class SourceOfMagicScreen extends ContainerScreen<SourceOfMagicContainer>
     protected void init()
     {
         super.init();
-        addButton(new HelpButton(leftPos + 12, topPos + 12, 12, 12, "ds.help.source_of_magic"));
+        addButton(new HelpButton(leftPos + 12, topPos + 12, 12, 12, "ds.help.source_of_magic", 0));
     }
     
     protected void renderLabels(MatrixStack matrixStack, int mouseX, int mouseY) {};

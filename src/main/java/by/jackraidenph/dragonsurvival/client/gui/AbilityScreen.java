@@ -103,7 +103,7 @@ public class AbilityScreen extends Screen {
             }
         });
         
-        addButton(new HelpButton(startX + (218 / 2) + 3, startY + (263 / 2) + 4, 9, 9, "ds.skill.help"));
+        addButton(new HelpButton(startX + (218 / 2) + 3, startY + (263 / 2) + 4, 9, 9, "ds.skill.help", 0));
     }
     
     @Override

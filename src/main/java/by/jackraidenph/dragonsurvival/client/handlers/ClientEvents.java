@@ -5,7 +5,7 @@ import by.jackraidenph.dragonsurvival.client.gui.DragonScreen;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.TabButton;
 import by.jackraidenph.dragonsurvival.client.render.CaveLavaFluidRenderer;
 import by.jackraidenph.dragonsurvival.client.render.ClientDragonRender;
-import by.jackraidenph.dragonsurvival.client.skinPartSystem.CustomizationRegistry;
+import by.jackraidenph.dragonsurvival.client.skinPartSystem.DragonEditorRegistry;
 import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.SkinPreset;
 import by.jackraidenph.dragonsurvival.common.DragonEffects;
 import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
@@ -102,9 +102,9 @@ public class ClientEvents
             DragonStateProvider.getCap(player).ifPresent(cap -> {
                 cap.getMagic().getAbilities();
         
-                if (CustomizationRegistry.savedCustomizations != null) {
-                    int currentSelected = CustomizationRegistry.savedCustomizations.current.getOrDefault(message.type, new HashMap<>()).getOrDefault(message.level, 0);
-                    SkinPreset preset = CustomizationRegistry.savedCustomizations.skinPresets.getOrDefault(message.type, new HashMap<>()).getOrDefault(currentSelected, new SkinPreset());
+                if (DragonEditorRegistry.savedCustomizations != null) {
+                    int currentSelected = DragonEditorRegistry.savedCustomizations.current.getOrDefault(message.type, new HashMap<>()).getOrDefault(message.level, 0);
+                    SkinPreset preset = DragonEditorRegistry.savedCustomizations.skinPresets.getOrDefault(message.type, new HashMap<>()).getOrDefault(currentSelected, new SkinPreset());
                     NetworkHandler.CHANNEL.sendToServer(new SyncPlayerSkinPreset(player.getId(), preset));
                 }
             });

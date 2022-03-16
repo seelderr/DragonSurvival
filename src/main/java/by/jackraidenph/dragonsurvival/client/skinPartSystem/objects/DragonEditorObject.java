@@ -4,7 +4,7 @@ import by.jackraidenph.dragonsurvival.client.skinPartSystem.EnumSkinLayer;
 
 import java.util.HashMap;
 
-public class CustomizationObject
+public class DragonEditorObject
 {
 	public Dragon sea_dragon;
 	public Dragon forest_dragon;

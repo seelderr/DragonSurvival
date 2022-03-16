@@ -1,6 +1,6 @@
 package by.jackraidenph.dragonsurvival.client.gui.components;
 
-import by.jackraidenph.dragonsurvival.client.gui.DragonCustomizationScreen;
+import by.jackraidenph.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.ResetSettingsButton;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownList;
 import by.jackraidenph.dragonsurvival.client.skinPartSystem.EnumSkinLayer;
@@ -38,12 +38,12 @@ public class HueSelectorComponent extends FocusableGui implements IRenderable
 	private ExtendedButton hueReset, saturationReset, brightnessReset;
 	private CheckboxButton glowing;
 	
-	private DragonCustomizationScreen screen;
+	private DragonEditorScreen screen;
 	private int x, y, xSize, ySize;
 	
 	private Supplier<LayerSettings> settings;
 	
-	public HueSelectorComponent(DragonCustomizationScreen screen, int x, int y, int xSize, int ySize, EnumSkinLayer layer)
+	public HueSelectorComponent(DragonEditorScreen screen, int x, int y, int xSize, int ySize, EnumSkinLayer layer)
 	{
 		this.screen = screen;
 		this.x = x;
@@ -54,7 +54,7 @@ public class HueSelectorComponent extends FocusableGui implements IRenderable
 		settings = () -> screen.preset.skinAges.get(screen.level).layerSettings.get(layer);
 		LayerSettings set = settings.get();
 		
-		glowing = new CheckboxButton(x + 3, y, xSize - 5, 10, new TranslationTextComponent("ds.gui.customization.glowing"), set.glowing){
+		glowing = new CheckboxButton(x + 3, y, xSize - 5, 10, new TranslationTextComponent("ds.gui.dragon_editor.glowing"), set.glowing){
 			 final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/checkbox.png");
 			
 			@Override

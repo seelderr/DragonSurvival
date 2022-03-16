@@ -1,7 +1,7 @@
 package by.jackraidenph.dragonsurvival.client.gui.widgets.buttons;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.client.gui.DragonCustomizationScreen;
+import by.jackraidenph.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
 import by.jackraidenph.dragonsurvival.client.gui.components.CopyEditorSettingsComponent;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
@@ -22,9 +22,9 @@ public class CopySettingsButton extends ExtendedButton
 	public boolean toggled;
 	private CopyEditorSettingsComponent component;
 	private Widget renderButton;
-	private DragonCustomizationScreen screen;
+	private DragonEditorScreen screen;
 	
-	public CopySettingsButton(DragonCustomizationScreen screen, int xPos, int yPos, int width, int height, ITextComponent displayString, IPressable handler)
+	public CopySettingsButton(DragonEditorScreen screen, int xPos, int yPos, int width, int height, ITextComponent displayString, IPressable handler)
 	{
 		super(xPos, yPos, width, height, displayString, handler);
 		this.screen = screen;
@@ -57,7 +57,7 @@ public class CopySettingsButton extends ExtendedButton
 	@Override
 	public void renderToolTip(MatrixStack p_230443_1_, int p_230443_2_, int p_230443_3_)
 	{
-		GuiUtils.drawHoveringText(p_230443_1_, Arrays.asList(new TranslationTextComponent("ds.gui.customization.copy")), p_230443_2_, p_230443_3_, Minecraft.getInstance().screen.width, Minecraft.getInstance().screen.height, 200, Minecraft.getInstance().font);
+		GuiUtils.drawHoveringText(p_230443_1_, Arrays.asList(new TranslationTextComponent("ds.gui.dragon_editor.copy")), p_230443_2_, p_230443_3_, Minecraft.getInstance().screen.width, Minecraft.getInstance().screen.height, 200, Minecraft.getInstance().font);
 	}
 	
 	@Override

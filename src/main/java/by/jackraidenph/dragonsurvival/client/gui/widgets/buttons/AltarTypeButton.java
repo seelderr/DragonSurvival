@@ -2,7 +2,7 @@ package by.jackraidenph.dragonsurvival.client.gui.widgets.buttons;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import by.jackraidenph.dragonsurvival.client.gui.DragonAltarGUI;
-import by.jackraidenph.dragonsurvival.client.gui.DragonCustomizationScreen;
+import by.jackraidenph.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
 import by.jackraidenph.dragonsurvival.client.handlers.ClientEvents;
 import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.handlers.DragonFoodHandler;
@@ -121,7 +121,7 @@ public class AltarTypeButton extends Button
 			});
 			player.closeContainer();
 		}else{
-			Minecraft.getInstance().setScreen(new DragonCustomizationScreen(gui, type));
+			Minecraft.getInstance().setScreen(new DragonEditorScreen(gui, type));
 		}
 	}
 }

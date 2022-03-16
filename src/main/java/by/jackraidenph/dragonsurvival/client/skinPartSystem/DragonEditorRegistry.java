@@ -1,8 +1,8 @@
 package by.jackraidenph.dragonsurvival.client.skinPartSystem;
 
 import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.CustomizationObject;
-import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.CustomizationObject.Texture;
+import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.DragonEditorObject;
+import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.DragonEditorObject.Texture;
 import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.SavedSkinPresets;
 import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.SkinPreset;
 import by.jackraidenph.dragonsurvival.misc.DragonLevel;
@@ -24,11 +24,11 @@ import java.io.*;
 import java.util.HashMap;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
-public class CustomizationRegistry
+public class DragonEditorRegistry
 {
 	public static final String SAVED_FILE_NAME = "saved_customizations.json";
 	public static final ResourceLocation CUSTOMIZATION = new ResourceLocation(DragonSurvivalMod.MODID, "customization.json");
-	public static final HashMap<DragonType, HashMap<EnumSkinLayer, CustomizationObject.Texture[]>> CUSTOMIZATIONS = new HashMap<>();
+	public static final HashMap<DragonType, HashMap<EnumSkinLayer, DragonEditorObject.Texture[]>> CUSTOMIZATIONS = new HashMap<>();
 	public static SavedSkinPresets savedCustomizations = null;
 	private static boolean init = false;
 	
@@ -86,13 +86,13 @@ public class CustomizationRegistry
 		}
 		
 		
-		CustomizationRegistry.reload(Minecraft.getInstance().getResourceManager(), CUSTOMIZATION);
+		DragonEditorRegistry.reload(Minecraft.getInstance().getResourceManager(), CUSTOMIZATION);
 		
 		if (Minecraft.getInstance().getResourceManager() instanceof IReloadableResourceManager) {
 			((IReloadableResourceManager) Minecraft.getInstance().getResourceManager()).registerReloadListener(
 					(IResourceManagerReloadListener) manager -> {
 						CUSTOMIZATIONS.clear();
-						CustomizationRegistry.reload(Minecraft.getInstance().getResourceManager(), CUSTOMIZATION);
+						DragonEditorRegistry.reload(Minecraft.getInstance().getResourceManager(), CUSTOMIZATION);
 					});
 		}
 	}
@@ -103,7 +103,7 @@ public class CustomizationRegistry
 			InputStream in = manager.getResource(location).getInputStream();
 			
 			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-			CustomizationObject je = gson.fromJson(reader, CustomizationObject.class);
+			DragonEditorObject je = gson.fromJson(reader, DragonEditorObject.class);
 			
 			CUSTOMIZATIONS.computeIfAbsent(DragonType.SEA, (type) -> new HashMap<>());
 			CUSTOMIZATIONS.computeIfAbsent(DragonType.CAVE, (type) -> new HashMap<>());
@@ -118,7 +118,7 @@ public class CustomizationRegistry
 		}
 	}
 	
-	private static void dragonType(DragonType type, CustomizationObject.Dragon je)
+	private static void dragonType(DragonType type, DragonEditorObject.Dragon je)
 	{
 		if(je != null){
 			if(je.layers != null){

@@ -11,7 +11,7 @@ import by.jackraidenph.dragonsurvival.network.config.SyncNumberConfig;
 import by.jackraidenph.dragonsurvival.network.container.OpenDragonAltar;
 import by.jackraidenph.dragonsurvival.network.container.OpenDragonInventory;
 import by.jackraidenph.dragonsurvival.network.container.OpenInventory;
-import by.jackraidenph.dragonsurvival.network.dragon_editor.OpenDragonCustomization;
+import by.jackraidenph.dragonsurvival.network.dragon_editor.OpenDragonEditorPacket;
 import by.jackraidenph.dragonsurvival.network.dragon_editor.SyncPlayerSkinPreset;
 import by.jackraidenph.dragonsurvival.network.emotes.SyncEmote;
 import by.jackraidenph.dragonsurvival.network.emotes.SyncEmoteServer;
@@ -66,7 +66,7 @@ public class NetworkHandler
 		 register(DiggingStatus.class, new DiggingStatus());
 		
 		 register(SyncPlayerSkinPreset.class, new SyncPlayerSkinPreset());
-		 register(OpenDragonCustomization.class, new OpenDragonCustomization());
+		 register(OpenDragonEditorPacket.class, new OpenDragonEditorPacket());
 		
 		 //Flight
 		 register(SyncFlyingStatus.class, new SyncFlyingStatus());
