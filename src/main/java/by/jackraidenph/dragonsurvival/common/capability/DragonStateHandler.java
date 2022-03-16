@@ -1,5 +1,6 @@
 package by.jackraidenph.dragonsurvival.common.capability;
 
+import by.jackraidenph.dragonsurvival.client.handlers.ClientEvents;
 import by.jackraidenph.dragonsurvival.common.capability.objects.DragonDebuffData;
 import by.jackraidenph.dragonsurvival.common.capability.objects.DragonMovementData;
 import by.jackraidenph.dragonsurvival.common.capability.subcapabilities.ClawInventory;
@@ -7,18 +8,25 @@ import by.jackraidenph.dragonsurvival.common.capability.subcapabilities.EmoteCap
 import by.jackraidenph.dragonsurvival.common.capability.subcapabilities.MagicCap;
 import by.jackraidenph.dragonsurvival.common.capability.subcapabilities.SkinCap;
 import by.jackraidenph.dragonsurvival.common.util.DragonModifiers;
+import by.jackraidenph.dragonsurvival.common.util.DragonUtils;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonLevel;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
+import by.jackraidenph.dragonsurvival.network.RequestClientData;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.ToolType;
+import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.DistExecutor.SafeRunnable;
 
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -121,9 +129,25 @@ public class DragonStateHandler {
 		}
 	}
 	
+	@OnlyIn( Dist.CLIENT)
+	public void requestSkinUpdate(){
+		if(this == DragonUtils.getHandler(Minecraft.getInstance().player)) {
+			ClientEvents.sendClientData(new RequestClientData(getType(), getLevel()));
+		}
+	}
+	
+	public void onGrow(){
+		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)this::requestSkinUpdate);
+	}
+	
 	public void setSize(double size) {
 		if(size != this.size) {
+			DragonLevel oldLevel = getLevel();
 			this.size = size;
+			
+			if(oldLevel != getLevel()){
+				onGrow();
+			}
 			
 			switch (type) {
 				case SEA:

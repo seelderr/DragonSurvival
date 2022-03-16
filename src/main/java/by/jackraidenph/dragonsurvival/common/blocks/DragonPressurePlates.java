@@ -45,13 +45,13 @@ public class DragonPressurePlates extends PressurePlateBlock
 							return !DragonUtils.isDragon(entity) ? 15 : 0;
 						
 						case SEA:
-							return DragonUtils.getDragonType(entity) == DragonType.SEA ? 15 : 0;
+							return DragonUtils.isDragon(entity) && DragonUtils.getDragonType(entity) == DragonType.SEA ? 15 : 0;
 						
 						case FOREST:
-							return DragonUtils.getDragonType(entity) == DragonType.FOREST ? 15 : 0;
+							return DragonUtils.isDragon(entity) && DragonUtils.getDragonType(entity) == DragonType.FOREST ? 15 : 0;
 						
 						case CAVE:
-							return DragonUtils.getDragonType(entity) == DragonType.CAVE ? 15 : 0;
+							return DragonUtils.isDragon(entity)&& DragonUtils.getDragonType(entity) == DragonType.CAVE ? 15 : 0;
 							
 					}
 				}

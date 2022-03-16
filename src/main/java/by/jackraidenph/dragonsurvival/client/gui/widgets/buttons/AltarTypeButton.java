@@ -12,6 +12,7 @@ import by.jackraidenph.dragonsurvival.network.NetworkHandler;
 import by.jackraidenph.dragonsurvival.network.RequestClientData;
 import by.jackraidenph.dragonsurvival.network.flight.SyncSpinStatus;
 import by.jackraidenph.dragonsurvival.network.status.SyncAltarCooldown;
+import by.jackraidenph.dragonsurvival.network.syncing.CompleteDataSync;
 import by.jackraidenph.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
@@ -113,6 +114,7 @@ public class AltarTypeButton extends Button
 				cap.setIsHiding(false);
 				cap.getMovementData().spinLearned = false;
 				
+				NetworkHandler.CHANNEL.sendToServer(new CompleteDataSync(Minecraft.getInstance().player.getId(), cap.writeNBT()));
 				NetworkHandler.CHANNEL.sendToServer(new SyncAltarCooldown(Minecraft.getInstance().player.getId(), Functions.secondsToTicks(ConfigHandler.SERVER.altarUsageCooldown.get())));
 				NetworkHandler.CHANNEL.sendToServer(new SyncSpinStatus(Minecraft.getInstance().player.getId(), cap.getMovementData().spinAttack, cap.getMovementData().spinCooldown, cap.getMovementData().spinLearned));
 				ClientEvents.sendClientData(new RequestClientData(cap.getType(), cap.getLevel()));

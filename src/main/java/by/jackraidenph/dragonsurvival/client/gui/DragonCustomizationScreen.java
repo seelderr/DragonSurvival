@@ -13,6 +13,7 @@ import by.jackraidenph.dragonsurvival.client.skinPartSystem.CustomizationRegistr
 import by.jackraidenph.dragonsurvival.client.skinPartSystem.DragonCustomizationHandler;
 import by.jackraidenph.dragonsurvival.client.skinPartSystem.EnumSkinLayer;
 import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.SkinPreset;
+import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.SkinPreset.SkinAgeGroup;
 import by.jackraidenph.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.jackraidenph.dragonsurvival.client.util.TextRenderUtil;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
@@ -485,7 +486,7 @@ public class DragonCustomizationScreen extends Screen
 		});
 		
 		addButton(new ExtendedButton(guiLeft + 256 + 16, 9, 19, 19, StringTextComponent.EMPTY, (btn) -> {
-			preset = new SkinPreset();
+			preset.skinAges.put(level, new SkinAgeGroup(level));
 			handler.getSkin().updateLayers.addAll(Arrays.stream(EnumSkinLayer.values()).distinct().collect(Collectors.toList()));
 			update();
 		})
@@ -785,6 +786,8 @@ public class DragonCustomizationScreen extends Screen
 		
 		CustomizationRegistry.savedCustomizations.skinPresets.computeIfAbsent(this.type, (t) -> new HashMap<>());
 		CustomizationRegistry.savedCustomizations.skinPresets.get(this.type).put(currentSelected, preset);
+		
+		CustomizationRegistry.savedCustomizations.current.get(this.type).put(level, currentSelected);
 		
 		try {
 			Gson gson = new GsonBuilder().setPrettyPrinting().create();

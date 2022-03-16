@@ -95,18 +95,20 @@ public class ClientEvents
     public static void sendClientData(RequestClientData message){
         PlayerEntity player = Minecraft.getInstance().player;
         
-        NetworkHandler.CHANNEL.sendToServer(new SyncDragonClawRender(player.getId(), ConfigHandler.CLIENT.renderDragonClaws.get()));
-        NetworkHandler.CHANNEL.sendToServer(new SyncDragonSkinSettings(player.getId(), ConfigHandler.CLIENT.renderNewbornSkin.get(), ConfigHandler.CLIENT.renderYoungSkin.get(), ConfigHandler.CLIENT.renderAdultSkin.get()));
+        if(player != null && player.level != null) {
+            NetworkHandler.CHANNEL.sendToServer(new SyncDragonClawRender(player.getId(), ConfigHandler.CLIENT.renderDragonClaws.get()));
+            NetworkHandler.CHANNEL.sendToServer(new SyncDragonSkinSettings(player.getId(), ConfigHandler.CLIENT.renderNewbornSkin.get(), ConfigHandler.CLIENT.renderYoungSkin.get(), ConfigHandler.CLIENT.renderAdultSkin.get()));
+    
+            DragonStateProvider.getCap(player).ifPresent(cap -> {
+                cap.getMagic().getAbilities();
         
-        DragonStateProvider.getCap(player).ifPresent(cap -> {
-            cap.getMagic().getAbilities();
-            
-            if(CustomizationRegistry.savedCustomizations != null){
-                int currentSelected = CustomizationRegistry.savedCustomizations.current.getOrDefault(message.type, new HashMap<>()).getOrDefault(message.level, 0);
-                SkinPreset preset = CustomizationRegistry.savedCustomizations.skinPresets.getOrDefault(message.type, new HashMap<>()).getOrDefault(currentSelected, new SkinPreset());
-                NetworkHandler.CHANNEL.sendToServer(new SyncPlayerSkinPreset(player.getId(), preset));
-            }
-        });
+                if (CustomizationRegistry.savedCustomizations != null) {
+                    int currentSelected = CustomizationRegistry.savedCustomizations.current.getOrDefault(message.type, new HashMap<>()).getOrDefault(message.level, 0);
+                    SkinPreset preset = CustomizationRegistry.savedCustomizations.skinPresets.getOrDefault(message.type, new HashMap<>()).getOrDefault(currentSelected, new SkinPreset());
+                    NetworkHandler.CHANNEL.sendToServer(new SyncPlayerSkinPreset(player.getId(), preset));
+                }
+            });
+        }
     }
     
     @SubscribeEvent(priority = EventPriority.LOWEST)
