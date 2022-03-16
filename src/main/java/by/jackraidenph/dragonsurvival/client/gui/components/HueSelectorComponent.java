@@ -160,8 +160,8 @@ public class HueSelectorComponent extends FocusableGui implements IRenderable
 					int col1 = Color.getHSBColor(value1, 0f, 1f).getRGB();
 					int col2 = Color.getHSBColor(value1, 1f, 1f).getRGB();
 					
-					RenderingUtils.drawGradientRect(mStack.last().pose(), 100, x, y, x + width, y + height, new int[]{col2, col1, col1, col2});
-					mStack.translate(0, 0, 100);
+					RenderingUtils.drawGradientRect(mStack.last().pose(), 200, x, y, x + width, y + height, new int[]{col2, col1, col1, col2});
+					mStack.translate(0, 0, 200);
 					this.renderBg(mStack, Minecraft.getInstance(), mouseX, mouseY);
 					mStack.popPose();
 					
@@ -226,8 +226,8 @@ public class HueSelectorComponent extends FocusableGui implements IRenderable
 					int col1 = Color.getHSBColor(value1, 1f, 0f).getRGB();
 					int col2 = Color.getHSBColor(value1, 1f, 1f).getRGB();
 					
-					RenderingUtils.drawGradientRect(mStack.last().pose(), 100, x, y, x + width, y + height, new int[]{col2, col1, col1, col2});
-					mStack.translate(0, 0, 100);
+					RenderingUtils.drawGradientRect(mStack.last().pose(), 200, x, y, x + width, y + height, new int[]{col2, col1, col1, col2});
+					mStack.translate(0, 0, 200);
 					this.renderBg(mStack, Minecraft.getInstance(), mouseX, mouseY);
 					mStack.popPose();
 					

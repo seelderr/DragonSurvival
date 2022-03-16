@@ -115,7 +115,7 @@ public class RenderingUtils
 	public static void renderColorSquare(MatrixStack mStack, int x, int y, int width, int height)
 	{
 		Matrix4f mat = mStack.last().pose();
-		int zLevel = 100;
+		int zLevel = 200;
 		RenderSystem.enableDepthTest();
 		RenderSystem.disableTexture();
 		RenderSystem.enableBlend();

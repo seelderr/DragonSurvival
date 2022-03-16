@@ -82,7 +82,7 @@ public class DragonBeacon extends Block implements IWaterLoggable {
             LazyOptional<DragonStateHandler> dragonState = DragonStateProvider.getCap(playerEntity);
             if (dragonState.isPresent()) {
                 DragonStateHandler dragonStateHandler = dragonState.orElse(null);
-                if (dragonStateHandler.isDragon() && (playerEntity.totalExperience >= 60 || playerEntity.isCreative())) {
+                if (dragonStateHandler.isDragon() && ((playerEntity.totalExperience >= 60 || playerEntity.experienceLevel >= 6) || playerEntity.isCreative())) {
                     if (this == DSBlocks.peaceDragonBeacon) {
                         if (!world.isClientSide) {
                             ConfigHandler.COMMON.peaceBeaconEffects.get().forEach(s -> {

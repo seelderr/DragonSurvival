@@ -441,6 +441,7 @@ public class ClientDragonRender
 	public static void renderEntityInInventory(LivingEntity entity, int x, int y, float scale, float xRot, float yRot) {
 		renderEntityInInventory(entity, x, y, scale, xRot, yRot, 0, 0);
 	}
+	
 	public static void renderEntityInInventory(LivingEntity entity, int x, int y, float scale, float xRot, float yRot, float xOffset, float yOffset) {
 	   if(entity == null) return;
 		
@@ -457,16 +458,14 @@ public class ClientDragonRender
 			   ClientDragonRender.playerDragonHashMap.put(Minecraft.getInstance().player.getId(), new AtomicReference<>(dummyDragon));
 		   }
 	   }
-	   
-	    float f = xRot;
-	    float f1 = yRot;
-	    RenderSystem.pushMatrix();
+		
+		RenderSystem.pushMatrix();
 	    RenderSystem.translatef((float)x, (float)y, -300);
 	    RenderSystem.scalef(1.0F, 1.0F, -1.0F);
 	    MatrixStack matrixstack = new MatrixStack();
 	    matrixstack.scale((float)scale, (float)scale, (float)scale);
 	    Quaternion quaternion = Vector3f.ZP.rotationDegrees(180.0F);
-	    Quaternion quaternion1 = Vector3f.XP.rotationDegrees(f1 * 10.0F);
+	    Quaternion quaternion1 = Vector3f.XP.rotationDegrees(yRot * 10.0F);
 	    quaternion.mul(quaternion1);
 	    matrixstack.mulPose(quaternion);
 		matrixstack.translate(xOffset, -1 + yOffset, 0);
@@ -475,9 +474,9 @@ public class ClientDragonRender
 	    float f4 = entity.xRot;
 	    float f5 = entity.yHeadRotO;
 	    float f6 = entity.yHeadRot;
-	    entity.yBodyRot = 180.0F + f * 10.0F;
-	    entity.yRot = 180.0F + f * 10.0F;
-	    entity.xRot = -f1 * 10.0F;
+	    entity.yBodyRot = 180.0F + xRot * 10.0F;
+	    entity.yRot = 180.0F + xRot * 10.0F;
+	    entity.xRot = -yRot * 10.0F;
 	    entity.yHeadRot = entity.yRot;
 	    entity.yHeadRotO = entity.yRot;
 	    EntityRendererManager entityrenderermanager = Minecraft.getInstance().getEntityRenderDispatcher();

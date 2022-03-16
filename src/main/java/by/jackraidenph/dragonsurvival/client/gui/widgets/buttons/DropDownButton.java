@@ -43,6 +43,15 @@ public class DropDownButton extends ExtendedButton
 	}
 	
 	@Override
+	public void renderButton(MatrixStack mStack, int mouseX, int mouseY, float partial)
+	{
+		mStack.pushPose();
+		mStack.translate(0, 0, 100);
+		super.renderButton(mStack, mouseX, mouseY, partial);
+		mStack.popPose();
+	}
+	
+	@Override
 	public void render(MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_)
 	{
 		super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
@@ -87,7 +96,6 @@ public class DropDownButton extends ExtendedButton
 	@Override
 	public void onPress()
 	{
-		
 		Screen screen = Minecraft.getInstance().screen;
 		
 		if(!toggled){

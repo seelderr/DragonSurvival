@@ -610,7 +610,7 @@ public class DragonCustomizationScreen extends Screen
 			}
 		});
 		
-		addButton(new ExtendedCheckbox(guiLeft + 230, 11, 100, 16, 16, new TranslationTextComponent("ds.gui.customization.show_ui"), showUi, (p) -> showUi = p.selected()));
+		addButton(new ExtendedCheckbox(guiLeft + 230, 11, 32, 16, 16, new TranslationTextComponent("ds.gui.customization.show_ui"), showUi, (p) -> showUi = p.selected()));
 		
 		addButton(new ExtendedButton(guiLeft - 35, 10, 18, 18, StringTextComponent.EMPTY, (p) -> {
 			int width = 1024;
@@ -766,7 +766,7 @@ public class DragonCustomizationScreen extends Screen
 				cap.setIsHiding(false);
 				cap.getMovementData().spinLearned = ConfigHandler.SERVER.saveGrowthStage.get() && cap.getMovementData().spinLearned;
 				
-				NetworkHandler.CHANNEL.sendToServer(new CompleteDataSync(Minecraft.getInstance().player.getId()));
+				NetworkHandler.CHANNEL.sendToServer(new CompleteDataSync(Minecraft.getInstance().player.getId(), cap.writeNBT()));
 				NetworkHandler.CHANNEL.sendToServer(new SyncAltarCooldown(Minecraft.getInstance().player.getId(), Functions.secondsToTicks(ConfigHandler.SERVER.altarUsageCooldown.get())));
 				NetworkHandler.CHANNEL.sendToServer(new SyncSpinStatus(Minecraft.getInstance().player.getId(), cap.getMovementData().spinAttack, cap.getMovementData().spinCooldown, cap.getMovementData().spinLearned));
 				ClientEvents.sendClientData(new RequestClientData(cap.getType(), cap.getLevel()));
