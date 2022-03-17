@@ -295,11 +295,11 @@ public class ServerConfig {
 		
 		maxSizeVari = builder
 				.comment("The maximum size variation in percentage")
-				.defineInRange("maxSizeVari", 20.0, 0.0, 10000.0);
+				.defineInRange("maxSizeVari", 10.0, 0.0, 1000.0);
 		
 		minSizeVari = builder
 				.comment("The minimum size variation in percentage")
-				.defineInRange("minSizeVari", -20.0, -10000.0, 0);
+				.defineInRange("minSizeVari", -10.0, -1000.0, 0);
 		
 		// Growth
 		builder.pop().push("growth");
@@ -360,12 +360,12 @@ public class ServerConfig {
 		newbornGrowthModifier = builder
 				.translation("ds.config.server.growth.newbornGrowthModifier")
 				.comment("A multiplier to change the growth rate from newborn to young. At 1.0 it takes about 3 hours to turn a newborn dragon into a young dragon.")
-				.defineInRange("newbornGrowthModifier", 1.0, 0, 1000);
+				.defineInRange("newbornGrowthModifier", 0.7, 0, 1000);
 		
 		youngGrowthModifier = builder
 				.translation("ds.config.server.growth.youngGrowthModifier")
 				.comment("A multiplier to change the growth rate from young to adult. At 1.0 it takes about 1 day to turn a young dragon into a adult dragon.")
-				.defineInRange("youngGrowthModifier", 1.0, 0, 1000);
+				.defineInRange("youngGrowthModifier", 0.7, 0, 1000);
 		
 		adultGrowthModifier = builder
 				.translation("ds.config.server.growth.adultGrowthModifier")
@@ -381,17 +381,17 @@ public class ServerConfig {
 		dragonHeartShardChance = builder
 				.translation("ds.config.server.drops.dragonHeartShardChance")
 				.comment("The chance for dragon heart shards to drop from any mobs with max health between 14-20")
-				.defineInRange("dragonHeartShardChance", 0.02, 0.0, 1.0);
+				.defineInRange("dragonHeartShardChance", 0.01, 0.0, 1.0);
 		
 		weakDragonHeartChance = builder
 				.translation("ds.config.server.drops.weakDragonHeartChance")
-				.comment("The chance for dragon heart shards to drop from any mobs with max health between 20-50")
-				.defineInRange("weakDragonHeartChance", 0.02, 0.0, 1.0);
+				.comment("The chance for weak dragon heart to drop from any mobs with max health between 20-50")
+				.defineInRange("weakDragonHeartChance", 0.01, 0.0, 1.0);
 		
 		elderDragonHeartChance = builder
 				.translation("ds.config.server.drops.elderDragonHeartChance")
-				.comment("The chance for dragon heart shards to drop from any mobs with max health above 50")
-				.defineInRange("elderDragonHeartChance", 0.2, 0.0, 1.0);
+				.comment("The chance for dragon heart to drop from any mobs with max health above 50")
+				.defineInRange("elderDragonHeartChance", 0.1, 0.0, 1.0);
 		
 		// Treasure
 		builder.pop().push("treasure");
@@ -402,13 +402,13 @@ public class ServerConfig {
 		
 		treasureRegenTicks = builder
 				.translation("ds.config.server.treasure.treasureRegenTicks")
-				.comment("The time in ticks it takes to recover 1hp while sleeping on treasure. Keep in mind that there is 1 treasure in mind. A large number of treasures in one place reduces time.")
-				.defineInRange("treasureRegenTicks", 24000, 1, 10000000);
+				.comment("The time in ticks it takes to recover 1hp while sleeping on one treasure. A large number of treasures in one place reduces time.")
+				.defineInRange("treasureRegenTicks", 24100, 1, 10000000);
 		
 		treasureRegenTicksReduce = builder
 				.translation("ds.config.server.treasure.treasureRegenTicksReduce")
 				.comment("The amount of ticks each additional treasure reduces the regen time by")
-				.defineInRange("treasureRegenTicksReduce", 97, 1, 10000000);
+				.defineInRange("treasureRegenTicksReduce", 100, 1, 10000000);
 		
 		maxTreasures = builder
 				.translation("ds.config.server.treasure.maxTreasures")
@@ -507,7 +507,7 @@ public class ServerConfig {
 		
 		foldWingsOnLand = builder
 				.translation("ds.config.server.wings.foldWingsOnLand")
-				.comment("Whether your wings will fold automatically when landing. Has protection against accidental triggering, so the wings do not always close. If you always need to close the wings manually.")
+				.comment("Whether your wings will fold automatically when landing. Has protection against accidental triggering, so the wings do not always close. If False you must close the wings manually.")
 				.define("foldWingsOnLand", false);
 		
 		creativeFlight = builder

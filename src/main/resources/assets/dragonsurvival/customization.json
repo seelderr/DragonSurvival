@@ -1,7 +1,7 @@
 {
   "cave_dragon": {
       "layers": {
-        "BASE": [
+        "BASE": 	[
           {
             "key": "base_1",
             "texture": "dragonsurvival:textures/dragon/custom/cave_base_1.png"
@@ -9,16 +9,36 @@
           {
             "key": "base_2",
             "texture": "dragonsurvival:textures/dragon/custom/cave_base_2.png"
+          },
+          {
+            "key": "base_3",
+            "texture": "dragonsurvival:textures/dragon/custom/cave_base_3.png"
+          },
+          {
+            "key": "base_4",
+            "texture": "dragonsurvival:textures/dragon/custom/cave_base_4.png"
+          },
+          {
+            "key": "base_5",
+            "texture": "dragonsurvival:textures/dragon/custom/cave_base_5.png"
           }
         ],
-        "BOTTOM": [
+		"BOTTOM":	[
           {
             "key": "bottom_1",
             "texture": "dragonsurvival:textures/dragon/custom/cave_bottom_1.png"
+          },          {
+            "key": "bottom_2",
+            "texture": "dragonsurvival:textures/dragon/custom/cave_bottom_2.png"
+          },          {
+            "key": "bottom_3",
+            "texture": "dragonsurvival:textures/dragon/custom/cave_bottom_3.png"
+          },          {
+            "key": "bottom_4",
+            "texture": "dragonsurvival:textures/dragon/custom/cave_bottom_4.png"
           }
         ],
-     "EXTRA": 
-	 [
+		"EXTRA": 	[
         {
           "key": "extra_1",
           "texture": "dragonsurvival:textures/dragon/custom/cave_extra_1.png"
@@ -38,10 +58,41 @@
 		{
           "key": "extra_5",
           "texture": "dragonsurvival:textures/dragon/custom/cave_extra_5.png"
+        },
+		{
+          "key": "extra_6",
+          "texture": "dragonsurvival:textures/dragon/custom/cave_extra_6.png"
+        },
+		{
+          "key": "extra_7",
+          "texture": "dragonsurvival:textures/dragon/custom/cave_extra_7.png"
+        },
+		{
+          "key": "extra_9",
+          "texture": "dragonsurvival:textures/dragon/custom/cave_extra_9.png"
+        },
+		{
+          "key": "extra_10",
+          "texture": "dragonsurvival:textures/dragon/custom/cave_extra_10.png"
+        },
+		{
+          "key": "extra_11",
+          "texture": "dragonsurvival:textures/dragon/custom/cave_extra_11.png"
+        },
+		{
+          "key": "extra_12",
+          "texture": "dragonsurvival:textures/dragon/custom/cave_extra_12.png"
+        },
+		{
+          "key": "extra_13",
+          "texture": "dragonsurvival:textures/dragon/custom/cave_extra_13.png"
+        },
+		{
+          "key": "extra_14",
+          "texture": "dragonsurvival:textures/dragon/custom/cave_extra_14.png"
         }
 		],
-        "EYES": 
-		[
+        "EYES": 	[
           {
             "key": "eyes_1",
             "texture": "dragonsurvival:textures/dragon/custom/cave_eyes_1.png",
@@ -107,24 +158,136 @@
             "texture": "dragonsurvival:textures/dragon/custom/cave_eyes_13.png",
             "defaultColor": "#0026FF"
           }
+        ],
+	  "HORNS": [
+        {
+          "key": "horns_1",
+          "texture": "dragonsurvival:textures/dragon/custom/horns_1.png"
+        },
+        {
+          "key": "horns_2",
+          "texture": "dragonsurvival:textures/dragon/custom/horns_2.png"
+        },
+        {
+          "key": "horns_3",
+          "texture": "dragonsurvival:textures/dragon/custom/horns_3.png"
+        },
+        {
+          "key": "horns_4",
+          "texture": "dragonsurvival:textures/dragon/custom/horns_4.png"
+        },
+        {
+          "key": "horns_5",
+          "texture": "dragonsurvival:textures/dragon/custom/horns_5.png"
+        },
+        {
+          "key": "horns_6",
+          "texture": "dragonsurvival:textures/dragon/custom/horns_6.png"
+        },
+        {
+          "key": "horns_7",
+          "texture": "dragonsurvival:textures/dragon/custom/horns_7.png"
+        },
+        {
+          "key": "horns_8",
+          "texture": "dragonsurvival:textures/dragon/custom/horns_8.png"
+        },
+        {
+          "key": "horns_9",
+          "texture": "dragonsurvival:textures/dragon/custom/horns_9.png"
+        },
+        {
+          "key": "horns_10",
+          "texture": "dragonsurvival:textures/dragon/custom/horns_10.png"
+        },
+        {
+          "key": "horns_11",
+          "texture": "dragonsurvival:textures/dragon/custom/horns_11.png"
+        },
+        {
+          "key": "horns_12",
+          "texture": "dragonsurvival:textures/dragon/custom/horns_12.png"
+        },
+        {
+          "key": "horns_13",
+          "texture": "dragonsurvival:textures/dragon/custom/horns_13.png"
+        },
+        {
+          "key": "horns_14",
+          "texture": "dragonsurvival:textures/dragon/custom/horns_14.png"
+        },
+        {
+          "key": "horns_15",
+          "texture": "dragonsurvival:textures/dragon/custom/horns_15.png"
+        }
+      ],
+	  "SPIKES":	[
+          {
+            "key": "spikes_2",
+            "texture": "dragonsurvival:textures/dragon/custom/cave_spikes_2.png"
+          },
+          {
+            "key": "spikes_3",
+            "texture": "dragonsurvival:textures/dragon/custom/cave_spikes_3.png"
+          },
+          {
+            "key": "spikes_4",
+            "texture": "dragonsurvival:textures/dragon/custom/cave_spikes_4.png"
+          }
         ]
       }
   },
   "sea_dragon": {
     "layers": {
-      "BASE": [
+		"BASE": 	[
         {
           "key": "base_1",
           "texture": "dragonsurvival:textures/dragon/custom/sea_base_1.png"
+        },
+		{
+          "key": "base_2",
+          "texture": "dragonsurvival:textures/dragon/custom/sea_base_2.png"
+        },
+		{
+          "key": "base_3",
+          "texture": "dragonsurvival:textures/dragon/custom/sea_base_3.png"
+        },
+		{
+          "key": "base_4",
+          "texture": "dragonsurvival:textures/dragon/custom/sea_base_4.png"
+        },
+		{
+          "key": "base_5",
+          "texture": "dragonsurvival:textures/dragon/custom/sea_base_5.png"
         }
        ],
-        "BOTTOM": [
+		"BOTTOM": 	[
           {
             "key": "bottom_1",
             "texture": "dragonsurvival:textures/dragon/custom/sea_bottom_1.png"
+          },
+		  {
+            "key": "bottom_2",
+            "texture": "dragonsurvival:textures/dragon/custom/sea_bottom_2.png"
+          },
+		  {
+            "key": "bottom_3",
+            "texture": "dragonsurvival:textures/dragon/custom/sea_bottom_3.png"
+          },
+		  {
+            "key": "bottom_4",
+            "texture": "dragonsurvival:textures/dragon/custom/sea_bottom_4.png"
+          },
+		  {
+            "key": "bottom_50",
+            "texture": "dragonsurvival:textures/dragon/custom/sea_bottom_50.png"
+          },
+		  {
+            "key": "bottom_51",
+            "texture": "dragonsurvival:textures/dragon/custom/sea_bottom_51.png"
           }
        ],
-     "EXTRA": [
+		"EXTRA":	[
         {
           "key": "extra_1",
           "texture": "dragonsurvival:textures/dragon/custom/sea_extra_1.png"
@@ -148,9 +311,57 @@
 		{
           "key": "extra_6",
           "texture": "dragonsurvival:textures/dragon/custom/sea_extra_6.png"
+        },
+		{
+          "key": "extra_50",
+          "texture": "dragonsurvival:textures/dragon/custom/sea_extra_50.png"
+        },
+		{
+          "key": "extra_51",
+          "texture": "dragonsurvival:textures/dragon/custom/sea_extra_51.png"
+        },
+		{
+          "key": "extra_52",
+          "texture": "dragonsurvival:textures/dragon/custom/sea_extra_52.png"
+        },
+		{
+          "key": "extra_53",
+          "texture": "dragonsurvival:textures/dragon/custom/sea_extra_53.png"
+        },
+		{
+          "key": "extra_54",
+          "texture": "dragonsurvival:textures/dragon/custom/sea_extra_54.png"
+        },
+		{
+          "key": "extra_55",
+          "texture": "dragonsurvival:textures/dragon/custom/sea_extra_55.png"
+        },
+		{
+          "key": "extra_56",
+          "texture": "dragonsurvival:textures/dragon/custom/sea_extra_56.png"
+        },
+		{
+          "key": "extra_57",
+          "texture": "dragonsurvival:textures/dragon/custom/sea_extra_57.png"
+        },
+		{
+          "key": "extra_58",
+          "texture": "dragonsurvival:textures/dragon/custom/sea_extra_58.png"
+        },
+		{
+          "key": "extra_59",
+          "texture": "dragonsurvival:textures/dragon/custom/sea_extra_59.png"
+        },
+		{
+          "key": "extra_60",
+          "texture": "dragonsurvival:textures/dragon/custom/sea_extra_60.png"
+        },
+		{
+          "key": "extra_61",
+          "texture": "dragonsurvival:textures/dragon/custom/sea_extra_61.png"
         }
 		],
-"EYES": [
+		"EYES": 	[
           {
             "key": "eyes_1",
             "texture": "dragonsurvival:textures/dragon/custom/sea_eyes_1.png",
@@ -217,7 +428,69 @@
             "defaultColor": "#0026FF"
           }
         ],
-        "SPIKES": [
+	  "HORNS": [
+        {
+          "key": "horns_1",
+          "texture": "dragonsurvival:textures/dragon/custom/horns_1.png"
+        },
+        {
+          "key": "horns_2",
+          "texture": "dragonsurvival:textures/dragon/custom/horns_2.png"
+        },
+        {
+          "key": "horns_3",
+          "texture": "dragonsurvival:textures/dragon/custom/horns_3.png"
+        },
+        {
+          "key": "horns_4",
+          "texture": "dragonsurvival:textures/dragon/custom/horns_4.png"
+        },
+        {
+          "key": "horns_5",
+          "texture": "dragonsurvival:textures/dragon/custom/horns_5.png"
+        },
+        {
+          "key": "horns_6",
+          "texture": "dragonsurvival:textures/dragon/custom/horns_6.png"
+        },
+        {
+          "key": "horns_7",
+          "texture": "dragonsurvival:textures/dragon/custom/horns_7.png"
+        },
+        {
+          "key": "horns_8",
+          "texture": "dragonsurvival:textures/dragon/custom/horns_8.png"
+        },
+        {
+          "key": "horns_9",
+          "texture": "dragonsurvival:textures/dragon/custom/horns_9.png"
+        },
+        {
+          "key": "horns_10",
+          "texture": "dragonsurvival:textures/dragon/custom/horns_10.png"
+        },
+        {
+          "key": "horns_11",
+          "texture": "dragonsurvival:textures/dragon/custom/horns_11.png"
+        },
+        {
+          "key": "horns_12",
+          "texture": "dragonsurvival:textures/dragon/custom/horns_12.png"
+        },
+        {
+          "key": "horns_13",
+          "texture": "dragonsurvival:textures/dragon/custom/horns_13.png"
+        },
+        {
+          "key": "horns_14",
+          "texture": "dragonsurvival:textures/dragon/custom/horns_14.png"
+        },
+        {
+          "key": "horns_15",
+          "texture": "dragonsurvival:textures/dragon/custom/horns_15.png"
+        }
+      ],
+	  "SPIKES": [
           {
             "key": "spikes_1",
             "texture": "dragonsurvival:textures/dragon/custom/sea_spikes_1.png"
@@ -225,6 +498,22 @@
           {
             "key": "spikes_2",
             "texture": "dragonsurvival:textures/dragon/custom/sea_spikes_2.png"
+          },
+          {
+            "key": "spikes_3",
+            "texture": "dragonsurvival:textures/dragon/custom/sea_spikes_3.png"
+          },
+          {
+            "key": "spikes_4",
+            "texture": "dragonsurvival:textures/dragon/custom/sea_spikes_4.png"
+          },
+          {
+            "key": "spikes_50",
+            "texture": "dragonsurvival:textures/dragon/custom/sea_spikes_50.png"
+          },
+          {
+            "key": "spikes_51",
+            "texture": "dragonsurvival:textures/dragon/custom/sea_spikes_51.png"
           }
         ]
     }
@@ -346,15 +635,63 @@
       "HORNS": [
         {
           "key": "horns_1",
-          "texture": "dragonsurvival:textures/dragon/custom/forest_horns_1.png"
+          "texture": "dragonsurvival:textures/dragon/custom/horns_1.png"
         },
         {
           "key": "horns_2",
-          "texture": "dragonsurvival:textures/dragon/custom/forest_horns_2.png"
+          "texture": "dragonsurvival:textures/dragon/custom/horns_2.png"
         },
         {
           "key": "horns_3",
-          "texture": "dragonsurvival:textures/dragon/custom/forest_horns_3.png"
+          "texture": "dragonsurvival:textures/dragon/custom/horns_3.png"
+        },
+        {
+          "key": "horns_4",
+          "texture": "dragonsurvival:textures/dragon/custom/horns_4.png"
+        },
+        {
+          "key": "horns_5",
+          "texture": "dragonsurvival:textures/dragon/custom/horns_5.png"
+        },
+        {
+          "key": "horns_6",
+          "texture": "dragonsurvival:textures/dragon/custom/horns_6.png"
+        },
+        {
+          "key": "horns_7",
+          "texture": "dragonsurvival:textures/dragon/custom/horns_7.png"
+        },
+        {
+          "key": "horns_8",
+          "texture": "dragonsurvival:textures/dragon/custom/horns_8.png"
+        },
+        {
+          "key": "horns_9",
+          "texture": "dragonsurvival:textures/dragon/custom/horns_9.png"
+        },
+        {
+          "key": "horns_10",
+          "texture": "dragonsurvival:textures/dragon/custom/horns_10.png"
+        },
+        {
+          "key": "horns_11",
+          "texture": "dragonsurvival:textures/dragon/custom/horns_11.png"
+        },
+        {
+          "key": "horns_12",
+          "texture": "dragonsurvival:textures/dragon/custom/horns_12.png"
+        },
+        {
+          "key": "horns_13",
+          "texture": "dragonsurvival:textures/dragon/custom/horns_13.png"
+        },
+        {
+          "key": "horns_14",
+          "texture": "dragonsurvival:textures/dragon/custom/horns_14.png"
+        },
+        {
+          "key": "horns_15",
+          "texture": "dragonsurvival:textures/dragon/custom/horns_15.png"
         }
       ],
       "EYES": [
