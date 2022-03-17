@@ -16,6 +16,7 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -103,10 +104,20 @@ public class DropDownButton extends ExtendedButton
 		if(!toggled){
 			int offset = screen.height - (y + height + 80);
 			list = new DropdownList(x, y + height + (Math.min(offset, 0)), width, (int)(Math.max(1, Math.min(values.length, maxItems)) * (height * 1.5f)), 19);
+			DropdownEntry center = null;
 			
 			for (int i = 0; i < values.length; i++) {
 				String val = values[i];
-				list.addEntry(createEntry(i, val));
+				DropdownEntry ent = createEntry(i, val);
+				list.addEntry(ent);
+				
+				if(Objects.equals(val, current)){
+					center = ent;
+				}
+			}
+			
+			if(center != null){
+				list.centerScrollOn(center);
 			}
 			
 			boolean hasBorder = false;

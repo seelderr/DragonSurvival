@@ -10,6 +10,7 @@ import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 public class DropdownValueEntry extends DropdownEntry
@@ -69,6 +70,7 @@ public class DropdownValueEntry extends DropdownEntry
 		}else {
 			button.y = pTop;
 			button.visible = source.visible;
+			button.active = (!Objects.equals(source.current, value));
 			button.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 		}
 	}

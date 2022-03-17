@@ -63,8 +63,11 @@ public class DropdownList extends AbstractOptionList<DropdownEntry>
 			GL11.glScissor((int)(x0 * Minecraft.getInstance().getWindow().getGuiScale()), (int)(Minecraft.getInstance().getWindow().getScreenHeight() - ((y1 - 3) * Minecraft.getInstance().getWindow().getGuiScale())), (int)(width * Minecraft.getInstance().getWindow().getGuiScale()), (int)((height - 6) * Minecraft.getInstance().getWindow().getGuiScale()));
 			GL11.glEnable(GL11.GL_SCISSOR_TEST);
 		}
-		
 	}
+	public void centerScrollOn(DropdownEntry pEntry) {
+		this.setScrollAmount((double)(this.children().indexOf(pEntry) * this.itemHeight + this.itemHeight / 2 - (this.y1 - this.y0) / 2));
+	}
+	
 	
 	@Override
 	public void render(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks)

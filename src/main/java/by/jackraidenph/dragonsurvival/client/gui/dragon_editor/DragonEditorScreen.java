@@ -232,11 +232,6 @@ public class DragonEditorScreen extends Screen
 					
 					this.values = valueList.toArray(new String[0]);
 					this.active = !preset.skinAges.get(level).defaultSkin;
-					
-					list.children().forEach((btn) -> {
-						ColoredDropdownValueEntry ent = (ColoredDropdownValueEntry)btn;
-						ent.button.active = !Objects.equals(curValue, ent.value);
-					});
 				}
 			};
 			
