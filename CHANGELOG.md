@@ -1,3 +1,10 @@
+### [0.13.7](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.6...0.13.7) (2022-03-17)
+
+
+### Bug Fixes
+
+* Some minor ui bug fixes for the editor and skins screen ([0b4e969](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/0b4e969a74bc3012f44b08c012d49d0358e35a8b))
+
 ### [0.13.6](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.5...0.13.6) (2022-03-16)
 
 
