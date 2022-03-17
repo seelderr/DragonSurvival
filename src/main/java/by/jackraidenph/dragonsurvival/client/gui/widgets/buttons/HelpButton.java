@@ -38,23 +38,26 @@ public class HelpButton extends ExtendedButton
 	{
 		Minecraft minecraft = Minecraft.getInstance();
 		minecraft.getTextureManager().bind(texture);
+		
+		float size = variation == 0 ? 18f : 22f;
+		float xSize = (float)(width + (variation == 0 ? 0 : 2)) / size;
+		float ySize = (float)(height + (variation == 0 ? 0 : 2)) / size;
+		
 		int i = 0;
 		if (this.isHovered()) {
-			i += (int)(((type.ordinal() + 1) * 18f));
+			i += (int)(((type.ordinal() + 1) * size));
 		}
 		
 		pMatrixStack.pushPose();
 		pMatrixStack.translate(0, 0, 200);
-		float xSize = (float)width / 18F;
-		float ySize = (float)height / 18F;
 		
 		pMatrixStack.translate(x - x * xSize, y - y * ySize, 0);
 		pMatrixStack.scale(xSize, ySize, 0);
 		
-		blit(pMatrixStack, this.x, this.y, 0, (float)i, 18, 18, 256, 256);
-		
-		if(variation == 1){
-			blit(pMatrixStack, this.x, this.y, 18, 0, 18, 18, 256, 256);
+		if(variation == 0) {
+			blit(pMatrixStack, this.x, this.y, 0, (float)i, 18, 18, 256, 256);
+		}else{
+			blit(pMatrixStack, this.x - 1, this.y - 1, 18, (float)i, 22, 22, 256, 256);
 		}
 		
 		pMatrixStack.popPose();

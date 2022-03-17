@@ -681,7 +681,7 @@ public class DragonEditorScreen extends Screen
 			int i = 0;
 			for (EnumSkinLayer layers : EnumSkinLayer.values()) {
 				String name = layers.name;
-				SkinsScreen.drawNonShadowLineBreak(stack, font, new StringTextComponent(name), (i < 5 ? width / 2 - 100 - 100 : width / 2 + 83) + 45, guiTop + 10 + ((i >= 5 ? (i - 5) * 30 : i * 30)) - 12, DyeColor.WHITE.getTextColor());
+				SkinsScreen.drawNonShadowLineBreak(stack, font, new TranslationTextComponent("ds.gui.dragon_editor.part." + name.toLowerCase()), (i < 5 ? width / 2 - 100 - 100 : width / 2 + 83) + 45, guiTop + 10 + ((i >= 5 ? (i - 5) * 30 : i * 30)) - 12, DyeColor.WHITE.getTextColor());
 				i++;
 			}
 		}

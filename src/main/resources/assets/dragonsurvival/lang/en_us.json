@@ -175,6 +175,12 @@
   "ds.gui.dragon_editor.confirm.all": "With your current settings all progress will be lost when you change.\n\n\n\nWould you still like to continue?",
   "ds.gui.dragon_editor.confirm.ability": "With your current settings your growth progress will be lost when you change.\nYou will still keep your ability progress\n\nWould you still like to continue?",
   "ds.gui.dragon_editor.confirm.growth": "With your current settings your ability progress will be lost when you change.\nYou will still keep your growth progress\n\nWould you still like to continue?",
+  "ds.gui.dragon_editor.part.base": "Base",
+  "ds.gui.dragon_editor.part.bottom": "Bottom",
+  "ds.gui.dragon_editor.part.eyes": "Eyes",
+  "ds.gui.dragon_editor.part.horns": "Horns",
+  "ds.gui.dragon_editor.part.spikes": "Spikes",
+  "ds.gui.dragon_editor.part.extra": "Extra",
 
   "ds.hold_shift.for_food": "Hold 'Shift' for food info",
   "ds.cave.dragon.food": "§c■ Cave dragon food§r",
