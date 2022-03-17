@@ -1,3 +1,10 @@
+### [0.13.8](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.7...0.13.8) (2022-03-17)
+
+
+### Bug Fixes
+
+* Small NPE crash fix ([1f1a8af](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/1f1a8af49d4a94cb547e217f8a044571f6ba0957))
+
 ### [0.13.7](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.6...0.13.7) (2022-03-17)
 
 
