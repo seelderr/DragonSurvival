@@ -200,7 +200,8 @@ public class DragonEditorScreen extends Screen
 			String[] values = valueList.toArray(new String[0]);
 			String curValue = preset.skinAges.get(level).layerSettings.get(layers).selectedSkin;
 			
-			DropDownButton btn = new DropDownButton(i < 5 ? width / 2 - 100 - 100 : width / 2 + 83, guiTop + 10 + ((i >= 5 ? (i - 5) * 30 : i * 30)), 100, 15, curValue, values, (s) -> {
+			
+			DropDownButton btn = new DropDownButton(i < 5 ? width / 2 - 100 - 100 : width / 2 + 83, guiTop + 10 + ((i >= 5 ? (i - 5) * 30 : i * 30)), 90, 15, curValue, values, (s) -> {
 				preset.skinAges.get(level).layerSettings.get(layers).selectedSkin = s;
 				handler.getSkin().updateLayers.add(layers);
 				update();
@@ -237,7 +238,51 @@ public class DragonEditorScreen extends Screen
 			
 			addButton(btn);
 			
-			addButton(new ColorSelectorButton(this, layers, btn.x + btn.getWidth() + 2, btn.y, btn.getHeight(), btn.getHeight(), (s) -> {
+			addButton(new ArrowButton(btn.x - 15, btn.y + 1, 13, 13, false, (s) -> {
+				int index = -1;
+				
+				for (int i1 = 0; i1 < btn.values.length; i1++) {
+					if(Objects.equals(btn.values[i1], btn.current)){
+						index = i1;
+						break;
+					}
+				}
+				if(index != -1){
+					if((index - 1) < 0){
+						index = btn.values.length;
+					}else{
+						index--;
+					}
+					
+					btn.current = btn.values[index];
+					btn.setter.accept(btn.current);
+					btn.updateMessage();
+				}
+			}));
+			
+			addButton(new ArrowButton(btn.x + btn.getWidth() + 2, btn.y + 1, 13, 13, true, (s) -> {
+				int index = -1;
+				
+				for (int i1 = 0; i1 < btn.values.length; i1++) {
+					if(Objects.equals(btn.values[i1], btn.current)){
+						index = i1;
+						break;
+					}
+				}
+				if(index != -1){
+					if((index + 1) >= btn.values.length){
+						index = 0;
+					}else{
+						index++;
+					}
+					
+					btn.current = btn.values[index];
+					btn.setter.accept(btn.current);
+					btn.updateMessage();
+				}
+			}));
+			
+			addButton(new ColorSelectorButton(this, layers, btn.x + 15 + btn.getWidth() + 2, btn.y, btn.getHeight(), btn.getHeight(), (s) -> {
 				preset.skinAges.get(level).layerSettings.get(layers).hue = s.floatValue();
 				handler.getSkin().updateLayers.add(layers);
 				update();
@@ -302,7 +347,7 @@ public class DragonEditorScreen extends Screen
 		});
 		
 		for (int num = 1; num <= 9; num++) {
-			addButton(new DragonEditorSlotButton(width / 2 + 195 + 13, guiTop + ((num - 1) * 12) + 5 + 20, num, this));
+			addButton(new DragonEditorSlotButton(width / 2 + 195 + 15, guiTop + ((num - 1) * 12) + 5 + 20, num, this));
 		}
 		
 		addButton(new Slider(width / 2 - 100 - 100, height - 25, 100, 20, new TranslationTextComponent("ds.gui.dragon_editor.size"), new StringTextComponent("%"), ConfigHandler.SERVER.minSizeVari.get(), ConfigHandler.SERVER.maxSizeVari.get(), Math.round((preset.sizeMul - 1.0) * 100), false, true, (p) -> {}, (p) -> {
@@ -513,7 +558,7 @@ public class DragonEditorScreen extends Screen
 			}
 		});
 		
-		addButton(new ExtendedButton(width / 2 + 193 + 13, guiTop + 5, 16, 16, StringTextComponent.EMPTY, (p) -> {})
+		addButton(new ExtendedButton(width / 2 + 193 + 15, guiTop + 5, 16, 16, StringTextComponent.EMPTY, (p) -> {})
 		{
 			@Override
 			public void render(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks)
@@ -541,7 +586,7 @@ public class DragonEditorScreen extends Screen
 			public void renderButton(MatrixStack mStack, int mouseX, int mouseY, float partial) {}
 		});
 		
-		addButton(new CopySettingsButton(this, width / 2 + 193 + 13, guiTop - 16, 16, 16, StringTextComponent.EMPTY, (p) -> {}));
+		addButton(new CopySettingsButton(this, width / 2 + 193 + 15, guiTop - 16, 16, 16, StringTextComponent.EMPTY, (p) -> {}));
 		
 		addButton(new ExtendedButton(dragonRender.x + dragonRender.width - 17, dragonRender.y + dragonRender.height + 3, 15, 15, new TranslationTextComponent(""), (btn) -> {
 			dragonRender.yRot = -3;
@@ -625,7 +670,7 @@ public class DragonEditorScreen extends Screen
 			int i = 0;
 			for (EnumSkinLayer layers : EnumSkinLayer.values()) {
 				String name = layers.name;
-				SkinsScreen.drawNonShadowLineBreak(stack, font, new StringTextComponent(name), (i < 5 ? width / 2 - 100 - 100 : width / 2 + 83) + 50, guiTop + 10 + ((i >= 5 ? (i - 5) * 30 : i * 30)) - 12, DyeColor.WHITE.getTextColor());
+				SkinsScreen.drawNonShadowLineBreak(stack, font, new StringTextComponent(name), (i < 5 ? width / 2 - 100 - 100 : width / 2 + 83) + 45, guiTop + 10 + ((i >= 5 ? (i - 5) * 30 : i * 30)) - 12, DyeColor.WHITE.getTextColor());
 				i++;
 			}
 		}

@@ -89,7 +89,7 @@ public class ServerFlightHandler {
 	public static void foldWings(PlayerTickEvent tickEvent){
 		PlayerEntity player = tickEvent.player;
 		if(tickEvent.phase ==  Phase.START || !DragonUtils.isDragon(player) || player.level.isClientSide) return;
-		if(!ConfigHandler.SERVER.foldWingsOnLand.get()) return;
+		if(!ConfigHandler.SERVER.foldWingsOnLand.get() || (player.getFoodData().getFoodLevel() <= ConfigHandler.SERVER.flightHungerThreshold.get() && !player.isCreative() && !ConfigHandler.SERVER.allowFlyingWithoutHunger.get())) return;
 		
 		DragonStateHandler dragonStateHandler = DragonStateProvider.getCap(player).orElse(null);
 		if(dragonStateHandler != null){

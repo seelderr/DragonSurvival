@@ -1,13 +1,15 @@
 package by.jackraidenph.dragonsurvival.client.gui.widgets.buttons;
 
-import by.jackraidenph.dragonsurvival.client.handlers.magic.ClientMagicHUDHandler;
+import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.util.ResourceLocation;
 
 public class ArrowButton extends Button
 {
 	public boolean next;
+	public static final ResourceLocation texture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/arrows.png");
 	
 	public ArrowButton(int x, int y, int xSize, int ySize, boolean next, IPressable pressable)
 	{
@@ -20,21 +22,24 @@ public class ArrowButton extends Button
 	{
 		stack.pushPose();
 		stack.translate(0, 0, 200);
-		Minecraft.getInstance().getTextureManager().bind(ClientMagicHUDHandler.widgetTextures);
-		float xSize = ((float)width / 15f) / 2;
-		float ySize = ((float)height / 17f) / 2;
+		float xSize = (float)width / 34F;
+		float ySize = (float)height / 34F;
+		
+		stack.translate(x - x * xSize, y - y * ySize, 0);
+		stack.scale(xSize, ySize, 0);
+		Minecraft.getInstance().getTextureManager().bind(texture);
 		
 		if(next) {
 			if (isHovered()) {
-				blit(stack, x, y, 66 * xSize, 222 * ySize, (int)(xSize*2 * 11), (int)(ySize*2  * 17), (int)(256f * xSize), (int)(256f * ySize));
+				blit(stack, x, y, 34, 34, 34,34);
 			} else {
-				blit(stack, x, y, 44 * xSize, 222 * ySize, (int)(xSize*2 * 11), (int)(ySize*2  * 17), (int)(256f * xSize), (int)(256f * ySize));
+				blit(stack, x, y, 0, 34, 34, 34);
 			}
 		}else{
 			if(isHovered()){
-				blit(stack, x, y, 22 * xSize, 222 * ySize, (int)(xSize*2 * 11), (int)(ySize*2  * 17),(int)(256f * xSize), (int)(256f * ySize));
+				blit(stack, x, y, 34, 0, 34, 34);
 			}else{
-				blit(stack, x, y, 0, 222 * ySize, (int)(xSize*2 * 11), (int)(ySize*2 * 17), (int)(256f * xSize), (int)(256f * ySize));
+				blit(stack, x, y, 0, 0, 34, 34);
 			}
 		}
 		stack.popPose();
