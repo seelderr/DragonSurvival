@@ -1,3 +1,10 @@
+### [0.13.9](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.8...0.13.9) (2022-03-17)
+
+
+### Bug Fixes
+
+* Fixed dragons rendering into the background ([d784395](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/d7843959a16ac4007dfd19105cf9a0454e2cf940))
+
 ### [0.13.8](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.7...0.13.8) (2022-03-17)
 
 
