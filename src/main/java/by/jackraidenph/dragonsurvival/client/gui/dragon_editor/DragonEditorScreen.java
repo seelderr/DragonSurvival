@@ -258,7 +258,17 @@ public class DragonEditorScreen extends Screen
 					btn.setter.accept(btn.current);
 					btn.updateMessage();
 				}
-			}));
+			}){
+				@Override
+				public void render(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks)
+				{
+					active = showUi;
+					
+					if(active) {
+						super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
+					}
+				}
+			});
 			
 			addButton(new ArrowButton(btn.x + btn.getWidth() + 2, btn.y + 1, 13, 13, true, (s) -> {
 				int index = -1;
@@ -280,7 +290,17 @@ public class DragonEditorScreen extends Screen
 					btn.setter.accept(btn.current);
 					btn.updateMessage();
 				}
-			}));
+			}){
+				@Override
+				public void render(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks)
+				{
+					active = showUi;
+					
+					if(active) {
+						super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
+					}
+				}
+			});
 			
 			addButton(new ColorSelectorButton(this, layers, btn.x + 15 + btn.getWidth() + 2, btn.y, btn.getHeight(), btn.getHeight(), (s) -> {
 				preset.skinAges.get(level).layerSettings.get(layers).hue = s.floatValue();

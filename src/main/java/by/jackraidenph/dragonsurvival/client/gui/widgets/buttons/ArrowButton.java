@@ -20,6 +20,8 @@ public class ArrowButton extends Button
 	@Override
 	public void renderButton(MatrixStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_)
 	{
+		Minecraft.getInstance().getTextureManager().bind(texture);
+		
 		stack.pushPose();
 		stack.translate(0, 0, 200);
 		float xSize = (float)width / 34F;
@@ -27,7 +29,6 @@ public class ArrowButton extends Button
 		
 		stack.translate(x - x * xSize, y - y * ySize, 0);
 		stack.scale(xSize, ySize, 0);
-		Minecraft.getInstance().getTextureManager().bind(texture);
 		
 		if(next) {
 			if (isHovered()) {
