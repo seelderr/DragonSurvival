@@ -1,3 +1,10 @@
+### [0.13.12](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.11...0.13.12) (2022-03-17)
+
+
+### Bug Fixes
+
+* fixed animations, button texture, cooked food compatibility, ([3171ad4](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/3171ad449e4db7e136140ebc7fc99fd621e60579))
+
 ### [0.13.11](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.10...0.13.11) (2022-03-17)
 
 
