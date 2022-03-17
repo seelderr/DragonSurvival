@@ -1,5 +1,6 @@
 package by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.dropdown;
 
+import by.jackraidenph.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.DropDownButton;
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -10,25 +11,28 @@ import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 public class ColoredDropdownValueEntry extends DropdownEntry
 {
-	private int num;
-	private String value;
-	private Consumer<String> setter;
+	public int num;
+	public String value;
+	public Consumer<String> setter;
 	
-	private ExtendedButton button;
-	private DropDownButton source;
+	public ExtendedButton button;
+	public DropDownButton source;
+	private DragonEditorScreen screen;
 	
 	private StringTextComponent message;
 	
-	public ColoredDropdownValueEntry(DropDownButton source, int num, String value, Consumer<String> setter)
+	public ColoredDropdownValueEntry(DragonEditorScreen screen, DropDownButton source, int num, String value, Consumer<String> setter)
 	{
 		this.num = num;
 		this.value = value;
 		this.setter = setter;
 		this.source = source;
+		this.screen = screen;
 		message = new StringTextComponent(value.substring(0, 1).toUpperCase(Locale.ROOT) + value.substring(1).toLowerCase(Locale.ROOT));
 	}
 	
@@ -72,6 +76,7 @@ public class ColoredDropdownValueEntry extends DropdownEntry
 		}else {
 			button.y = pTop;
 			button.visible = source.visible;
+			button.active = (!Objects.equals(source.current, value));
 			button.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 		}
 	}

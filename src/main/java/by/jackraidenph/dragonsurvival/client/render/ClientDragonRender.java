@@ -460,7 +460,7 @@ public class ClientDragonRender
 	   }
 		
 		RenderSystem.pushMatrix();
-	    RenderSystem.translatef((float)x, (float)y, -300);
+	    RenderSystem.translatef((float)x, (float)y, -600);
 	    RenderSystem.scalef(1.0F, 1.0F, -1.0F);
 	    MatrixStack matrixstack = new MatrixStack();
 	    matrixstack.scale((float)scale, (float)scale, (float)scale);

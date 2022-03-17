@@ -28,7 +28,7 @@ public class DropDownButton extends ExtendedButton
 	private boolean toggled;
 	private static final int maxItems = 4;
 	
-	private DropdownList list;
+	public DropdownList list;
 	private Widget renderButton;
 	
 	private ITextComponent message;
@@ -65,7 +65,9 @@ public class DropDownButton extends ExtendedButton
 		
 		
 		if(toggled && list != null){
-			list.reposition(x, y + height, width, (int)(Math.max(1, Math.min(values.length, maxItems)) * (height * 1.5f)));
+			Screen screen = Minecraft.getInstance().screen;
+			int offset = screen.height - (y + height + 80);
+			list.reposition(x, y + height + (Math.min(offset, 0)), width, (int)(Math.max(1, Math.min(values.length, maxItems)) * (height * 1.5f)));
 		}
 	}
 	
@@ -99,7 +101,8 @@ public class DropDownButton extends ExtendedButton
 		Screen screen = Minecraft.getInstance().screen;
 		
 		if(!toggled){
-			list = new DropdownList(x, y + height, width, (int)(Math.max(1, Math.min(values.length, maxItems)) * (height * 1.5f)), 19);
+			int offset = screen.height - (y + height + 80);
+			list = new DropdownList(x, y + height + (Math.min(offset, 0)), width, (int)(Math.max(1, Math.min(values.length, maxItems)) * (height * 1.5f)), 19);
 			
 			for (int i = 0; i < values.length; i++) {
 				String val = values[i];

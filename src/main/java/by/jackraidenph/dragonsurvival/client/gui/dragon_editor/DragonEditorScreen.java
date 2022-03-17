@@ -57,10 +57,7 @@ import org.apache.commons.lang3.text.WordUtils;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Locale;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class DragonEditorScreen extends Screen
@@ -143,7 +140,7 @@ public class DragonEditorScreen extends Screen
 		dragonRender.xOffset = xOffset;
 		dragonRender.yOffset = yOffset;
 		
-		children.add(dragonRender);
+		children.add(0, dragonRender);
 	}
 	
 	@Override
@@ -212,7 +209,7 @@ public class DragonEditorScreen extends Screen
 				@Override
 				public DropdownEntry createEntry(int pos, String val)
 				{
-					return new ColoredDropdownValueEntry(this, pos, val, setter);
+					return new ColoredDropdownValueEntry(DragonEditorScreen.this, this, pos, val, setter);
 				}
 				
 				@Override
@@ -234,8 +231,12 @@ public class DragonEditorScreen extends Screen
 					}
 					
 					this.values = valueList.toArray(new String[0]);
-					
 					this.active = !preset.skinAges.get(level).defaultSkin;
+					
+					list.children().forEach((btn) -> {
+						ColoredDropdownValueEntry ent = (ColoredDropdownValueEntry)btn;
+						ent.button.active = !Objects.equals(curValue, ent.value);
+					});
 				}
 			};
 			
@@ -340,8 +341,22 @@ public class DragonEditorScreen extends Screen
 			}
 		});
 		
-		addButton(new ExtendedCheckbox(width / 2 + 100, height - 15, 100, 10, 10, new TranslationTextComponent("ds.gui.dragon_editor.wings"), preset.skinAges.get(level).wings, (p) -> preset.skinAges.get(level).wings = p.selected()));
-		addButton(new ExtendedCheckbox(width / 2 + 100, height - 28, 100, 10, 10, new TranslationTextComponent("ds.gui.dragon_editor.default_skin"), preset.skinAges.get(level).defaultSkin, (p) -> preset.skinAges.get(level).defaultSkin = p.selected()));
+		addButton(new ExtendedCheckbox(width / 2 + 100, height - 15, 100, 10, 10, new TranslationTextComponent("ds.gui.dragon_editor.wings"), preset.skinAges.get(level).wings, (p) -> preset.skinAges.get(level).wings = p.selected()){
+			@Override
+			public void renderButton(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks)
+			{
+				selected = preset.skinAges.get(level).wings;
+				super.renderButton(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
+			}
+		});
+		addButton(new ExtendedCheckbox(width / 2 + 100, height - 28, 100, 10, 10, new TranslationTextComponent("ds.gui.dragon_editor.default_skin"), preset.skinAges.get(level).defaultSkin, (p) -> preset.skinAges.get(level).defaultSkin = p.selected()){
+			@Override
+			public void renderButton(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks)
+			{
+				selected = preset.skinAges.get(level).defaultSkin;
+				super.renderButton(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
+			}
+		});
 		
 		addButton(new ExtendedButton(width / 2 - 75 - 10, height - 25, 75, 20, new TranslationTextComponent("ds.gui.dragon_editor.save"), null)
 		{
@@ -451,15 +466,29 @@ public class DragonEditorScreen extends Screen
 		});
 		
 		addButton(new ExtendedButton(guiLeft + 256 + 30 + 16, 9, 19, 19, StringTextComponent.EMPTY, (btn) -> {
+			ArrayList<String> extraKeys = DragonEditorHandler.getKeys(FakeClientPlayerUtils.getFakePlayer(0, handler), EnumSkinLayer.EXTRA);
+			
 			for (EnumSkinLayer layer : EnumSkinLayer.values()) {
 				ArrayList<String> keys = DragonEditorHandler.getKeys(FakeClientPlayerUtils.getFakePlayer(0, handler), layer);
+				
+				if(Objects.equals(layer.name, "Extra")){
+					keys = extraKeys;
+				}
 				
 				if (layer != EnumSkinLayer.BASE) {
 					keys.add(SkinCap.defaultSkinValue);
 				}
 				
+				
+				
 				if (keys.size() > 0) {
-					preset.skinAges.get(level).layerSettings.get(layer).selectedSkin = keys.get(minecraft.player.level.random.nextInt(keys.size()));
+					
+					String key = keys.get(minecraft.player.level.random.nextInt(keys.size()));
+					if(Objects.equals(layer.name, "Extra")){
+						extraKeys.remove(key);
+					}
+					
+					preset.skinAges.get(level).layerSettings.get(layer).selectedSkin = key;
 					preset.skinAges.get(level).layerSettings.get(layer).hue = 0.25f + (minecraft.player.level.random.nextFloat() * 0.5f);
 					preset.skinAges.get(level).layerSettings.get(layer).saturation = 0.25f + (minecraft.player.level.random.nextFloat() * 0.5f);
 					preset.skinAges.get(level).layerSettings.get(layer).brightness = 0.3f + (minecraft.player.level.random.nextFloat() * 0.2f);

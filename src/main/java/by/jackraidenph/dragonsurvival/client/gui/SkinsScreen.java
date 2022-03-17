@@ -401,7 +401,14 @@ public class SkinsScreen extends Screen
 				this.handler.setHasWings(true);
 				this.handler.setSize(level.size);
 				this.handler.setType(DragonUtils.getDragonType(minecraft.player));
-				this.handler.getSkin().skinPreset.skinAges.get(level).defaultSkin = true;
+				
+				if(noSkin && playerName == minecraft.player.getGameProfile().getName()){
+					this.handler.getSkin().skinPreset = DragonUtils.getHandler(minecraft.player).getSkin().skinPreset;
+					this.handler.getSkin().skinPreset.skinAges.get(level).defaultSkin = false;
+					
+				}else{
+					this.handler.getSkin().skinPreset.skinAges.get(level).defaultSkin = true;
+				}
 				
 				FakeClientPlayerUtils.getFakePlayer(0, this.handler).animationSupplier = () -> "fly";
 				RenderSystem.pushMatrix();

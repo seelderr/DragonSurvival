@@ -54,7 +54,6 @@ public class DropdownList extends AbstractOptionList<DropdownEntry>
 	}
 	
 	
-	
 	@Override
 	protected void renderBackground(MatrixStack stack)
 	{
