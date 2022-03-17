@@ -1,3 +1,10 @@
+### [0.13.11](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.10...0.13.11) (2022-03-17)
+
+
+### Bug Fixes
+
+* Aures broke something again ([89e6ed3](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/89e6ed3ff20a8148b8b9e45efa5b364e05a64fef))
+
 ### [0.13.10](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.9...0.13.10) (2022-03-17)
 
 ### [0.13.9](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.8...0.13.9) (2022-03-17)
