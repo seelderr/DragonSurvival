@@ -5,19 +5,20 @@ import by.jackraidenph.dragonsurvival.common.util.DragonUtils;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.widget.button.ImageButton;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.client.gui.GuiUtils;
+import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
 
 import java.util.Arrays;
 
-public class HelpButton extends ImageButton
+public class HelpButton extends ExtendedButton
 {
 	public String text;
 	public int variation;
-	public static final ResourceLocation texture0 = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/help_button.png");
-	public static final ResourceLocation texture1 = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/help_button_white.png");
+	public DragonType type;
+	public static final ResourceLocation texture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/help_button.png");
 	
 	public HelpButton(int x, int y, int sizeX, int sizeY, String text, int variation)
 	{
@@ -26,9 +27,41 @@ public class HelpButton extends ImageButton
 	
 	public HelpButton(DragonType type, int x, int y, int sizeX, int sizeY, String text, int variation)
 	{
-		super(x, y, sizeX, sizeY, 0, 0, (int)(((type.ordinal() + 1) * 18f) *((float)sizeY / 18f)), variation == 0 ? texture0 : texture1, (int)(256f * ((float)sizeX / 18f)), (int)(256f * ((float)sizeY / 18f)), (btn) -> {});
+		super(x, y, sizeX, sizeY, StringTextComponent.EMPTY, (s) -> {});
 		this.text = text;
 		this.variation = variation;
+		this.type = type;
+	}
+	
+	@Override
+	public void renderButton(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks)
+	{
+		Minecraft minecraft = Minecraft.getInstance();
+		minecraft.getTextureManager().bind(texture);
+		int i = 0;
+		if (this.isHovered()) {
+			i += (int)(((type.ordinal() + 1) * 18f));
+		}
+		
+		pMatrixStack.pushPose();
+		pMatrixStack.translate(0, 0, 200);
+		float xSize = (float)width / 18F;
+		float ySize = (float)height / 18F;
+		
+		pMatrixStack.translate(x - x * xSize, y - y * ySize, 0);
+		pMatrixStack.scale(xSize, ySize, 0);
+		
+		blit(pMatrixStack, this.x, this.y, 0, (float)i, 18, 18, 256, 256);
+		
+		if(variation == 1){
+			blit(pMatrixStack, this.x, this.y, 18, 0, 18, 18, 256, 256);
+		}
+		
+		pMatrixStack.popPose();
+		
+		if (this.isHovered()) {
+			this.renderToolTip(pMatrixStack, pMouseX, pMouseY);
+		}
 	}
 	
 	@Override

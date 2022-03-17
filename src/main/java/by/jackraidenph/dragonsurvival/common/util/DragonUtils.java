@@ -23,6 +23,10 @@ public class DragonUtils
 	    return handler != null ? handler.getType() : DragonType.NONE;
 	}
 	
+	public static int wrap(int value, int min, int max) {
+		return value < min ? max : value > max ? min : value;
+	}
+	
 	public static Vector3f getCameraOffset(Entity entity){
 		Vector3f lookVector = new Vector3f(0,0,0);
 		

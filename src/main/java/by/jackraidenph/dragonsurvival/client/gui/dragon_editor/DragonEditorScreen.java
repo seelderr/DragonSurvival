@@ -248,12 +248,7 @@ public class DragonEditorScreen extends Screen
 					}
 				}
 				if(index != -1){
-					if((index - 1) < 0){
-						index = btn.values.length;
-					}else{
-						index--;
-					}
-					
+					index = DragonUtils.wrap(index - 1, 0, btn.values.length-1);
 					btn.current = btn.values[index];
 					btn.setter.accept(btn.current);
 					btn.updateMessage();
@@ -279,13 +274,9 @@ public class DragonEditorScreen extends Screen
 						break;
 					}
 				}
+				
 				if(index != -1){
-					if((index + 1) >= btn.values.length){
-						index = 0;
-					}else{
-						index++;
-					}
-					
+					index = DragonUtils.wrap(index + 1, 0, btn.values.length-1);
 					btn.current = btn.values[index];
 					btn.setter.accept(btn.current);
 					btn.updateMessage();
@@ -294,9 +285,9 @@ public class DragonEditorScreen extends Screen
 				@Override
 				public void render(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks)
 				{
-					active = showUi;
+					active = showUi || btn.values == null || btn.values.length <= 1;
 					
-					if(active) {
+					if(showUi) {
 						super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 					}
 				}
