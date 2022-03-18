@@ -2,6 +2,7 @@ package by.jackraidenph.dragonsurvival.common.util;
 
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.misc.DragonLevel;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -19,8 +20,11 @@ public class DragonUtils
 	}
 	
 	public static DragonType getDragonType(Entity entity) {
-	    DragonStateHandler handler = DragonStateProvider.getCap(entity).orElse(null);
-	    return handler != null ? handler.getType() : DragonType.NONE;
+	    return getHandler(entity).getType();
+	}
+	
+	public static DragonLevel getDragonLevel(Entity entity) {
+		return getHandler(entity).getLevel();
 	}
 	
 	public static int wrap(int value, int min, int max) {

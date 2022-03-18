@@ -1,7 +1,8 @@
 package by.jackraidenph.dragonsurvival.common.blocks;
 
-import java.util.Locale;
-
+import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.misc.DragonType;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -34,10 +35,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nullable;
-
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
-import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.misc.DragonType;
+import java.util.Locale;
 
 
 public class DragonDoor extends Block {
@@ -274,7 +272,11 @@ public class DragonDoor extends Block {
     }
 
     public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
-    	if (state.getValue(OPEN_REQ) == OpenRequirement.NONE || state.getValue(OPEN_REQ) == OpenRequirement.POWER) {
+		boolean validPower = state.getValue(OPEN_REQ) == OpenRequirement.NONE || state.getValue(OPEN_REQ) == OpenRequirement.POWER;
+		boolean validType = (state.getValue(OPEN_REQ) == OpenRequirement.SEA && blockIn == DSBlocks.seaPressurePlate)
+				|| (state.getValue(OPEN_REQ) == OpenRequirement.FOREST && blockIn == DSBlocks.forestPressurePlate)
+				|| (state.getValue(OPEN_REQ) == OpenRequirement.CAVE && blockIn == DSBlocks.cavePressurePlate);
+    	if (validPower || validType) {
     		boolean flag = worldIn.hasNeighborSignal(pos) || worldIn.hasNeighborSignal(pos.relative(state.getValue(PART) == Part.BOTTOM ? Direction.UP : Direction.DOWN));
             if (blockIn != this && flag != state.getValue(POWERED)) {
                 if (flag != state.getValue(OPEN)) {
