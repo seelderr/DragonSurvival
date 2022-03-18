@@ -24,7 +24,7 @@
           },
 		{
           "key": "base_6",
-          "texture": "dragonsurvival:textures/dragon/custom/sea_base_4.png"
+          "texture": "dragonsurvival:textures/dragon/custom/cave_base_6.png"
         }
         ],
 		"BOTTOM":	[
@@ -263,6 +263,14 @@
         {
           "key": "horns_15",
           "texture": "dragonsurvival:textures/dragon/custom/horns_15.png"
+        },
+        {
+          "key": "horns_19",
+          "texture": "dragonsurvival:textures/dragon/custom/horns_19.png"
+        },
+        {
+          "key": "horns_20",
+          "texture": "dragonsurvival:textures/dragon/custom/horns_20.png"
         }
       ],
 	  "SPIKES":	[
@@ -540,6 +548,10 @@
         {
           "key": "horns_15",
           "texture": "dragonsurvival:textures/dragon/custom/horns_15.png"
+        },
+        {
+          "key": "horns_20",
+          "texture": "dragonsurvival:textures/dragon/custom/horns_21.png"
         }
       ],
 	  "SPIKES": [
@@ -678,6 +690,10 @@
         {
           "key": "spikes_4",
           "texture": "dragonsurvival:textures/dragon/custom/forest_spikes_4.png"
+        },
+        {
+          "key": "spikes_5",
+          "texture": "dragonsurvival:textures/dragon/custom/forest_spikes_5.png"
         }
       ],
       "HORNS": [
@@ -740,6 +756,10 @@
         {
           "key": "horns_15",
           "texture": "dragonsurvival:textures/dragon/custom/horns_15.png"
+        },
+        {
+          "key": "horns_20",
+          "texture": "dragonsurvival:textures/dragon/custom/horns_20.png"
         }
       ],
       "EYES": [
