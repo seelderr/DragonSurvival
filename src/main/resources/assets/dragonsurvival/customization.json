@@ -21,7 +21,11 @@
           {
             "key": "base_5",
             "texture": "dragonsurvival:textures/dragon/custom/cave_base_5.png"
-          }
+          },
+		{
+          "key": "base_6",
+          "texture": "dragonsurvival:textures/dragon/custom/sea_base_4.png"
+        }
         ],
 		"BOTTOM":	[
           {
@@ -90,6 +94,46 @@
 		{
           "key": "extra_14",
           "texture": "dragonsurvival:textures/dragon/custom/cave_extra_14.png"
+        },
+		{
+          "key": "extra_15",
+          "texture": "dragonsurvival:textures/dragon/custom/cave_extra_15.png"
+        },
+		{
+          "key": "extra_16",
+          "texture": "dragonsurvival:textures/dragon/custom/cave_extra_16.png"
+        },
+		{
+          "key": "extra_17",
+          "texture": "dragonsurvival:textures/dragon/custom/cave_extra_17.png"
+        },
+		{
+          "key": "extra_18",
+          "texture": "dragonsurvival:textures/dragon/custom/cave_extra_18.png"
+        },
+		{
+          "key": "extra_19",
+          "texture": "dragonsurvival:textures/dragon/custom/cave_extra_19.png"
+        },
+		{
+          "key": "extra_20",
+          "texture": "dragonsurvival:textures/dragon/custom/cave_extra_20.png"
+        },
+		{
+          "key": "extra_21",
+          "texture": "dragonsurvival:textures/dragon/custom/cave_extra_21.png"
+        },
+		{
+          "key": "extra_22",
+          "texture": "dragonsurvival:textures/dragon/custom/cave_extra_22.png"
+        },
+		{
+          "key": "extra_23",
+          "texture": "dragonsurvival:textures/dragon/custom/cave_extra_23.png"
+        },
+		{
+          "key": "extra_24",
+          "texture": "dragonsurvival:textures/dragon/custom/cave_extra_24.png"
         }
 		],
         "EYES": 	[
@@ -313,6 +357,18 @@
           "texture": "dragonsurvival:textures/dragon/custom/sea_extra_6.png"
         },
 		{
+          "key": "extra_7",
+          "texture": "dragonsurvival:textures/dragon/custom/sea_extra_7.png"
+        },
+		{
+          "key": "extra_8",
+          "texture": "dragonsurvival:textures/dragon/custom/sea_extra_8.png"
+        },
+		{
+          "key": "extra_9",
+          "texture": "dragonsurvival:textures/dragon/custom/sea_extra_9.png"
+        },
+		{
           "key": "extra_50",
           "texture": "dragonsurvival:textures/dragon/custom/sea_extra_50.png"
         },
@@ -345,20 +401,16 @@
           "texture": "dragonsurvival:textures/dragon/custom/sea_extra_57.png"
         },
 		{
-          "key": "extra_58",
-          "texture": "dragonsurvival:textures/dragon/custom/sea_extra_58.png"
-        },
-		{
-          "key": "extra_59",
-          "texture": "dragonsurvival:textures/dragon/custom/sea_extra_59.png"
-        },
-		{
-          "key": "extra_60",
-          "texture": "dragonsurvival:textures/dragon/custom/sea_extra_60.png"
-        },
-		{
           "key": "extra_61",
           "texture": "dragonsurvival:textures/dragon/custom/sea_extra_61.png"
+        },
+		{
+          "key": "extra_62",
+          "texture": "dragonsurvival:textures/dragon/custom/sea_extra_62.png"
+        },
+		{
+          "key": "extra_63",
+          "texture": "dragonsurvival:textures/dragon/custom/sea_extra_63.png"
         }
 		],
 		"EYES": 	[
@@ -510,10 +562,6 @@
           {
             "key": "spikes_50",
             "texture": "dragonsurvival:textures/dragon/custom/sea_spikes_50.png"
-          },
-          {
-            "key": "spikes_51",
-            "texture": "dragonsurvival:textures/dragon/custom/sea_spikes_51.png"
           }
         ]
     }
@@ -536,10 +584,6 @@
         {
           "key": "base_3",
           "texture": "dragonsurvival:textures/dragon/custom/forest_base_3.png"
-        },
-        {
-          "key": "base_4",
-          "texture": "dragonsurvival:textures/dragon/custom/forest_base_4.png"
         }
       ],
       "BOTTOM": [
@@ -612,6 +656,10 @@
         {
           "key": "extra_15",
           "texture": "dragonsurvival:textures/dragon/custom/forest_extra_15.png"
+        },
+        {
+          "key": "extra_16",
+          "texture": "dragonsurvival:textures/dragon/custom/forest_extra_16.png"
         }
       ],
       "SPIKES": [
