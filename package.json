@@ -1,6 +1,6 @@
 {
   "name": "dragon-survival",
-  "version": "0.13.14",
+  "version": "0.13.15",
   "private": true,
   "devDependencies": {
     "@semantic-release/changelog": "6.0.1",
