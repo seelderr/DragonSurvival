@@ -1,3 +1,16 @@
+### [0.13.16](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.15...0.13.16) (2022-03-19)
+
+
+### Features
+
+* Work in progress part preview ([ab80824](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/ab80824784ab5a799fdb9dd25131c4e515668b8a))
+
+
+### Bug Fixes
+
+* correcting textures and animation ([c1a12e4](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/c1a12e4c4cdf61e7483fc33dae7ee4da4d8b5eab))
+* correcting the small weight of the mod, textures ([11387d5](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/11387d58d7038a9f9399b798874cff5172fa5686))
+
 ### [0.13.15](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.14...0.13.15) (2022-03-18)
 
 ### [0.13.14](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.13...0.13.14) (2022-03-18)
