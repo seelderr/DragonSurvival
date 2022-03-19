@@ -164,6 +164,7 @@ public class DragonEditorDropdownEntry extends DropdownEntry
 			               (int)(71 * Minecraft.getInstance().getWindow().getGuiScale()));
 			GL11.glEnable(GL11.GL_SCISSOR_TEST);
 
+			RenderSystem.translatef(0f, 0f, 500f);
 			ClientDragonRender.dragonModel.setCurrentTexture(null);
 			ClientDragonRender.renderEntityInInventory(FakeClientPlayerUtils.getFakeDragon(1, handler), Objects.equals(layer.name, "Extra") ?  source.list.getLeft()  - 75 + 37 :  source.list.getRight() + 37, source.list.getTop() - 3 + 37, 20 + zoom, xRot, yRot , xOffset, yOffset);
 			

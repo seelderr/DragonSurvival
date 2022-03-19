@@ -53,8 +53,9 @@ public class DragonAltarGUI extends Screen {
         BufferBuilder bufferbuilder = tessellator.getBuilder();
         Minecraft.getInstance().getTextureManager().bind(texture);
         
-        double zLevel = -600;
-        
+        RenderSystem.pushMatrix();
+        double zLevel = 0;
+    
         bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
         bufferbuilder.vertex((double)x0, (double)y0, zLevel).uv(0.0F, (float)y0 / 32.0F).color(64, 64, 64, 255).endVertex();
         bufferbuilder.vertex((double)(x0 + width), (double)y0, zLevel).uv((float)width / 32.0F, (float)y0 / 32.0F).color(64, 64, 64, 255).endVertex();
@@ -65,6 +66,7 @@ public class DragonAltarGUI extends Screen {
         bufferbuilder.vertex((double)(x0 + width), (double)y1, zLevel).uv((float)width / 32.0F, (float)y1 / 32.0F).color(64, 64, 64, 255).endVertex();
         bufferbuilder.vertex((double)x0, (double)y1, zLevel).uv(0.0F, (float)y1 / 32.0F).color(64, 64, 64, 255).endVertex();
         tessellator.end();
+        
         
         RenderSystem.enableBlend();
         RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ZERO, GlStateManager.DestFactor.ONE);
@@ -81,11 +83,7 @@ public class DragonAltarGUI extends Screen {
         bufferbuilder.vertex((double)x1, (double)(y1 - 4), zLevel).uv(1.0F, 0.0F).color(0, 0, 0, 0).endVertex();
         bufferbuilder.vertex((double)x0, (double)(y1 - 4), zLevel).uv(0.0F, 0.0F).color(0, 0, 0, 0).endVertex();
         tessellator.end();
-    
-        RenderSystem.enableTexture();
-        RenderSystem.shadeModel(7424);
-        RenderSystem.enableAlphaTest();
-        RenderSystem.disableBlend();
+        RenderSystem.popMatrix();
     }
     
     private static ResourceLocation backgroundTexture = new ResourceLocation("textures/block/dirt.png");

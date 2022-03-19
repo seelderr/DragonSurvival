@@ -38,7 +38,7 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.lwjgl.opengl.GL11;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -90,14 +90,13 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer> {
                        (int)(76 * Minecraft.getInstance().getWindow().getGuiScale()),
                        (int)(70 * Minecraft.getInstance().getWindow().getGuiScale()));
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
-    
-        GL11.glTranslatef(0F, 0F, 100F);
-    
         DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
         int sizeOffset = (int)(handler.getSize() - handler.getLevel().size) / 2;
-        InventoryScreen.renderEntityInInventory(i + 60, j + 70, (int)(30 - sizeOffset), (float)(i + 51) - mouseX * 20, (float)(j + 75 - 50) - mouseY * 20, this.minecraft.player);
-    
-        GL11.glTranslatef(0F, 0F, -100F);
+        float sizef = Math.min(30 - sizeOffset, 30);
+        RenderSystem.pushMatrix();
+        RenderSystem.translatef(0f, sizef / 10f, 0f);
+        InventoryScreen.renderEntityInInventory(i + 65, j + 60, (int)sizef, (float)(i + 51 - mouseX), (float)(j + 75 - 50 - mouseY), this.minecraft.player);
+        RenderSystem.popMatrix();
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
         
         

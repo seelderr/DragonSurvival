@@ -41,10 +41,7 @@ public class ScreenshotButton extends ExtendedButton
 		int height = 1024;
 		
 		RenderSystem.pushMatrix();
-		RenderSystem.clear(16640, Minecraft.ON_OSX);
-		
 		Framebuffer framebuffer = new Framebuffer(width, height, true, false);
-		framebuffer.setClearColor(1f, 1f, 1f, 0f);
 		framebuffer.bindWrite(true);
 		framebuffer.blitToScreen(width, height);
 		

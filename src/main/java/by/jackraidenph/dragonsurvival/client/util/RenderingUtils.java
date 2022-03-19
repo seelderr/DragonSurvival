@@ -127,12 +127,22 @@ public class RenderingUtils
 		
 		for(int i = 0; i < width; i++){
 			float val = ((((float)i / width) * 360f) / 360f);
+			Color top = new Color(Color.HSBtoRGB(val, 1f, 0f));
+			Color bot = new Color(Color.HSBtoRGB(val, 1f, 1f));
+			
+			buffer.vertex(mat, x + i, y, zLevel).color(top.getRed() / 255f, top.getGreen() / 255f, top.getBlue() / 255f, top.getAlpha() / 255f).endVertex();
+			buffer.vertex(mat, x + i, y + (height / 2f), zLevel).color(bot.getRed() / 255f, bot.getGreen() / 255f, bot.getBlue() / 255f, bot.getAlpha() / 255f).endVertex();
+		}
+		
+		for(int i = 0; i < width; i++){
+			float val = ((((float)i / width) * 360f) / 360f);
 			Color top = new Color(Color.HSBtoRGB(val, 1f, 1f));
 			Color bot = new Color(Color.HSBtoRGB(val, 0f, 1f));
 			
-			buffer.vertex(mat, x + i, y, zLevel).color(top.getRed() / 255f, top.getGreen() / 255f, top.getBlue() / 255f, top.getAlpha() / 255f).endVertex();
+			buffer.vertex(mat, x + i, y + (height / 2f), zLevel).color(top.getRed() / 255f, top.getGreen() / 255f, top.getBlue() / 255f, top.getAlpha() / 255f).endVertex();
 			buffer.vertex(mat, x + i, y + height, zLevel).color(bot.getRed() / 255f, bot.getGreen() / 255f, bot.getBlue() / 255f, bot.getAlpha() / 255f).endVertex();
 		}
+		
 		tessellator.end();
 		
 		RenderSystem.shadeModel(GL11.GL_FLAT);

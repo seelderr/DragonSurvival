@@ -6,10 +6,11 @@ import by.jackraidenph.dragonsurvival.client.particles.SeaDragon.SmallLightningP
 import by.jackraidenph.dragonsurvival.client.sounds.SoundRegistry;
 import by.jackraidenph.dragonsurvival.client.sounds.StormBreathSound;
 import by.jackraidenph.dragonsurvival.common.DragonEffects;
-import by.jackraidenph.dragonsurvival.common.capability.provider.GenericCapabilityProvider;
-import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.capability.GenericCapability;
+import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.jackraidenph.dragonsurvival.common.capability.provider.GenericCapabilityProvider;
 import by.jackraidenph.dragonsurvival.common.entity.DSEntities;
+import by.jackraidenph.dragonsurvival.common.entity.creatures.hitbox.DragonHitBox;
 import by.jackraidenph.dragonsurvival.common.entity.projectiles.StormBreathEntity;
 import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.config.ConfigUtils;
@@ -173,6 +174,7 @@ public class StormBreathAbility extends BreathAbility
 	@Override
 	public boolean canHitEntity(LivingEntity entity)
 	{
+		if(entity instanceof DragonHitBox) return false;
 		return !(entity instanceof PlayerEntity) || player.canHarmPlayer(((PlayerEntity)entity));
 	}
 	
@@ -346,6 +348,7 @@ public class StormBreathAbility extends BreathAbility
 		if(target == null || attacker == null) return false;
 		if(target == attacker) return false;
 		if(target instanceof FakePlayer) return false;
+		if(target instanceof DragonHitBox) return false;
 		if(target instanceof TameableEntity && ((TameableEntity)target).getOwner() == attacker) return false;
 		if(attacker instanceof TameableEntity && !isValidTarget(((TameableEntity)attacker).getOwner(), target)) return false;
 		if(target.getLastHurtByMob() == attacker && target.getLastHurtByMobTimestamp() + Functions.secondsToTicks(1) < target.tickCount) return false;

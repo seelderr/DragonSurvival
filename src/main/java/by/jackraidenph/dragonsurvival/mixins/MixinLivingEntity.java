@@ -1,8 +1,8 @@
 package by.jackraidenph.dragonsurvival.mixins;
 
-import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.handlers.DragonFoodHandler;
+import by.jackraidenph.dragonsurvival.common.handlers.magic.ClawToolHandler;
 import by.jackraidenph.dragonsurvival.common.util.DragonUtils;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.entity.Entity;
@@ -49,15 +49,8 @@ public abstract class MixinLivingEntity extends Entity{
 		ItemStack mainStack = entity.getMainHandItem();
 		
 		if (slotType == EquipmentSlotType.MAINHAND) {
-			DragonStateHandler cap = DragonStateProvider.getCap(entity).orElse(null);
-			
-			if(!(mainStack.getItem() instanceof TieredItem) && cap != null) {
-				ItemStack sword = cap.getClawInventory().getClawsInventory().getItem(0);
-				
-				if(sword != null && !sword.isEmpty()){
-					return sword;
-				}
-			}
+			ItemStack sword = ClawToolHandler.getWeapon(entity, mainStack);
+			if (sword != null) return sword;
 			
 			return entity.getMainHandItem();
 		} else if (slotType == EquipmentSlotType.OFFHAND) {

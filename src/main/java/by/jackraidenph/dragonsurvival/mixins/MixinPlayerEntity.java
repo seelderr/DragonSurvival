@@ -10,7 +10,10 @@ import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.*;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MoverType;
+import net.minecraft.entity.Pose;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.passive.IFlyingAnimal;
@@ -21,7 +24,6 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.TieredItem;
 import net.minecraft.potion.Effects;
 import net.minecraft.stats.Stat;
 import net.minecraft.stats.Stats;
@@ -86,32 +88,14 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 		}
 	}
 	
-	@Inject( method = "push", at = @At("HEAD"), cancellable = true)
-	public void push(Entity pEntity, CallbackInfo info) {
-		DragonStateHandler cap = DragonStateProvider.getCap(pEntity).orElse(null);
-		
-		if(cap != null){
-			if(cap.getEmotes().getCurrentEmote() != null){
-				info.cancel();
-			}
-		}
-	}
-	
 	@Redirect( method = "attack",
 	           at = @At(value="INVOKE", target="Lnet/minecraft/entity/player/PlayerEntity;getMainHandItem()Lnet/minecraft/item/ItemStack;" ))
 	private ItemStack getDragonSword(PlayerEntity entity)
 	{
 		ItemStack mainStack = entity.getMainHandItem();
-		DragonStateHandler cap = DragonStateProvider.getCap(entity).orElse(null);
+		ItemStack sword = ClawToolHandler.getWeapon(entity, mainStack);
+		if (sword != null) return sword;
 		
-		if(!(mainStack.getItem() instanceof TieredItem) && cap != null) {
-			ItemStack sword = cap.getClawInventory().getClawsInventory().getItem(0);
-
-			if(sword != null && !sword.isEmpty()){
-				return sword;
-			}
-		}
-
 		return mainStack;
 	}
 	

@@ -25,7 +25,8 @@ public class ColorPickerButton extends ExtendedButton
 		
 		float[] hsb = Color.RGBtoHSB(defaultColor.getRed(), defaultColor.getGreen(), defaultColor.getBlue(), null);
 		selectorX = hsb[0] * width;
-		selectorY = (1 - hsb[1]) * height;
+		
+		selectorY = hsb[2] < 1.0f ? (hsb[2]) * (height / 2f) : (height / 2f) +  (1 - hsb[1]) * (height / 2f);
 	}
 	
 	@Override
@@ -41,8 +42,14 @@ public class ColorPickerButton extends ExtendedButton
 	
 	public Color getColor(){
 		double hue = ((selectorX / width) * 360.0) / 360.0;
-		double saturation = 1f - ((selectorY / height) * 360.0) / 360.0;
-		return Color.getHSBColor((float)hue, (float)saturation, 1f);
+		
+		if(selectorY > (height / 2f)){
+			double saturation = 1f - (((selectorY - (height / 2f)) / (height / 2f)) * 360.0) / 360.0;
+			return Color.getHSBColor((float)hue, (float)saturation, 1f);
+		}else{
+			double brightness = ((selectorY / (height / 2f)) * 360.0) / 360.0;
+			return Color.getHSBColor((float)hue, 1f, (float)brightness);
+		}
 	}
 	
 	@Override

@@ -10,6 +10,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
@@ -144,6 +145,20 @@ public class ClawToolHandler
 		}
 
 		return harvestTool;
+	}
+	
+	public static ItemStack getWeapon(LivingEntity entity, ItemStack mainStack)
+	{
+		DragonStateHandler cap = DragonStateProvider.getCap(entity).orElse(null);
+		
+		if(!(mainStack.getItem() instanceof TieredItem) && cap != null) {
+			ItemStack sword = cap.getClawInventory().getClawsInventory().getItem(0);
+			
+			if(!sword.isEmpty()){
+				return sword;
+			}
+		}
+		return null;
 	}
 	
 	

@@ -37,6 +37,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.IRenderable;
 import net.minecraft.client.gui.screen.Screen;
@@ -148,7 +149,7 @@ public class DragonEditorScreen extends Screen
 		this.guiLeft = (this.width - 256) / 2;
 		this.guiTop = (this.height - 120) / 2;
 		
-		conf = new DragonEditorConfirmComponent(this, width / 2 - 100, height / 2 - (150 / 2), 200, 150);
+		conf = new DragonEditorConfirmComponent(this, width / 2 - (130/2), height / 2 - (141 / 2), 130, 141);
 		initDragonRender();
 		
 		DragonStateHandler localHandler = DragonStateProvider.getCap(getMinecraft().player).orElse(null);
@@ -173,8 +174,6 @@ public class DragonEditorScreen extends Screen
 			handler.getSkin().updateLayers.addAll(Arrays.stream(EnumSkinLayer.values()).distinct().collect(Collectors.toList()));
 			update();
 		}
-		
-		addButton(new HelpButton(type, guiLeft - 75, 10, 16, 16, "ds.help.customization", 1));
 		
 		addButton(new NewbornEditorButton(this));
 		addButton(new YoungEditorButton(this));
@@ -387,7 +386,7 @@ public class DragonEditorScreen extends Screen
 			}
 		});
 		
-		addButton(new ExtendedCheckbox(width / 2 + 100, height - 15, 100, 10, 10, new TranslationTextComponent("ds.gui.dragon_editor.wings"), preset.skinAges.get(level).wings, (p) -> preset.skinAges.get(level).wings = p.selected()){
+		addButton(new ExtendedCheckbox(width / 2 + 100, height - 16, 100, 14, 14, new TranslationTextComponent("ds.gui.dragon_editor.wings"), preset.skinAges.get(level).wings, (p) -> preset.skinAges.get(level).wings = p.selected()){
 			@Override
 			public void renderButton(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks)
 			{
@@ -395,7 +394,7 @@ public class DragonEditorScreen extends Screen
 				super.renderButton(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 			}
 		});
-		addButton(new ExtendedCheckbox(width / 2 + 100, height - 28, 100, 10, 10, new TranslationTextComponent("ds.gui.dragon_editor.default_skin"), preset.skinAges.get(level).defaultSkin, (p) -> preset.skinAges.get(level).defaultSkin = p.selected()){
+		addButton(new ExtendedCheckbox(width / 2 + 100, height - 31, 100, 14, 14, new TranslationTextComponent("ds.gui.dragon_editor.default_skin"), preset.skinAges.get(level).defaultSkin, (p) -> preset.skinAges.get(level).defaultSkin = p.selected()){
 			@Override
 			public void renderButton(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks)
 			{
@@ -504,10 +503,6 @@ public class DragonEditorScreen extends Screen
 			{
 				Minecraft.getInstance().getTextureManager().bind(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/reset_button.png"));
 				blit(stack, x, y, 0, 0, width, height, width, height);
-				
-				if (this.isHovered()) {
-					this.renderToolTip(stack, p_230431_2_, p_230431_3_);
-				}
 			}
 		});
 		
@@ -563,10 +558,6 @@ public class DragonEditorScreen extends Screen
 			{
 				Minecraft.getInstance().getTextureManager().bind(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/random_icon.png"));
 				blit(stack, x, y, 0, 0, width, height, width, height);
-				
-				if (this.isHovered()) {
-					this.renderToolTip(stack, p_230431_2_, p_230431_3_);
-				}
 			}
 		});
 		
@@ -581,10 +572,6 @@ public class DragonEditorScreen extends Screen
 				if (visible) {
 					Minecraft.getInstance().getTextureManager().bind(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/save_icon.png"));
 					blit(pMatrixStack, x, y, 0, 0, 16, 16, 16, 16);
-					
-					if (this.isHovered()) {
-						this.renderToolTip(pMatrixStack, pMouseX, pMouseY);
-					}
 				}
 			}
 			
@@ -619,10 +606,6 @@ public class DragonEditorScreen extends Screen
 			{
 				Minecraft.getInstance().getTextureManager().bind(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/reset_position_button.png"));
 				blit(stack, x, y, 0, 0, width, height, width, height);
-				
-				if (this.isHovered()) {
-					this.renderToolTip(stack, p_230431_2_, p_230431_3_);
-				}
 			}
 			
 			@Override
@@ -633,16 +616,20 @@ public class DragonEditorScreen extends Screen
 			}
 		});
 		addButton(new ExtendedCheckbox(guiLeft - 15, 11, 32, 16, 16, new TranslationTextComponent("ds.gui.dragon_editor.show_ui"), showUi, (p) -> showUi = p.selected()));
-		addButton(new ScreenshotButton( guiLeft + 240, 10, 18, 18, StringTextComponent.EMPTY, (s) -> {}, this));
 		addButton(new BackgroundColorButton(guiLeft - 45, 10, 18, 18, StringTextComponent.EMPTY, (s) -> {}, this));
+		addButton(new HelpButton(type, guiLeft - 75, 11, 15, 15, "ds.help.customization", 1));
+		addButton(new ScreenshotButton( guiLeft + 240, 10, 18, 18, StringTextComponent.EMPTY, (s) -> {}, this));
+		
 	}
 	
 	private static ResourceLocation backgroundTexture = new ResourceLocation("textures/block/dirt.png");
+	
+	public int backgroundColor = -804253680;
+	
 	@Override
 	public void renderBackground(MatrixStack pMatrixStack)
 	{
-		super.renderBackground(pMatrixStack);
-		DragonAltarGUI.renderBorders(backgroundTexture, 0, width, 32, height - 32, width, height);
+		AbstractGui.fill(pMatrixStack, 0, 0, this.width, this.height, backgroundColor);
 	}
 	
 	float tick = 0;
@@ -672,9 +659,12 @@ public class DragonEditorScreen extends Screen
 		FakeClientPlayerUtils.getFakePlayer(0, handler).animationSupplier = () -> animations[curAnimation];
 		
 		stack.pushPose();
-		stack.translate(0,0,-600);
+		//stack.translate(0,0,-600);
 		this.renderBackground(stack);
 		stack.popPose();
+		
+		children().stream().filter((s) -> s instanceof DragonUIRenderComponent).collect(Collectors.toList()).forEach((s) -> ((DragonUIRenderComponent)s).render(stack, pMouseX, pMouseY, pPartialTicks));
+		DragonAltarGUI.renderBorders(backgroundTexture, 0, width, 32, height - 32, width, height);
 		
 		TextRenderUtil.drawCenteredScaledText(stack, width / 2, 10, 2f, title.getString(), DyeColor.WHITE.getTextColor());
 		
@@ -695,11 +685,9 @@ public class DragonEditorScreen extends Screen
 		
 		for(int x = 0; x < this.children.size(); ++x) {
 			IGuiEventListener ch = children.get(x);
-			if(ch instanceof IRenderable){
-				((IRenderable)ch).render(stack, pMouseX, pMouseY, pPartialTicks);
-			}
+			if(!(ch instanceof DragonUIRenderComponent))
+			((IRenderable)ch).render(stack, pMouseX, pMouseY, pPartialTicks);
 		}
-		
 		
 		for(int x = 0; x < this.children.size(); ++x) {
 			IGuiEventListener ch = children.get(x);
@@ -715,6 +703,15 @@ public class DragonEditorScreen extends Screen
 							}
 						}
 					}
+				}
+			}
+		}
+		
+		for(int x = 0; x < this.children.size(); ++x) {
+			IGuiEventListener ch = children.get(x);
+			if(ch instanceof Widget){
+				if (((Widget)ch).isHovered()) {
+					((Widget)ch).renderToolTip(stack, pMouseX, pMouseY);
 				}
 			}
 		}

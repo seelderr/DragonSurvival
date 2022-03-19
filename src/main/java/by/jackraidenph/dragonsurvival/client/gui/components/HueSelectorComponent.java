@@ -1,6 +1,7 @@
 package by.jackraidenph.dragonsurvival.client.gui.components;
 
 import by.jackraidenph.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
+import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.ExtendedCheckbox;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.ResetSettingsButton;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownList;
 import by.jackraidenph.dragonsurvival.client.skinPartSystem.EnumSkinLayer;
@@ -8,16 +9,11 @@ import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.LayerSetting
 import by.jackraidenph.dragonsurvival.client.util.RenderingUtils;
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FocusableGui;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.IRenderable;
 import net.minecraft.client.gui.widget.button.CheckboxButton;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.client.gui.GuiUtils;
@@ -54,36 +50,10 @@ public class HueSelectorComponent extends FocusableGui implements IRenderable
 		settings = () -> screen.preset.skinAges.get(screen.level).layerSettings.get(layer);
 		LayerSettings set = settings.get();
 		
-		glowing = new CheckboxButton(x + 3, y, xSize - 5, 10, new TranslationTextComponent("ds.gui.dragon_editor.glowing"), set.glowing){
-			 final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/checkbox.png");
-			
-			@Override
-			public void renderButton(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks)
-			{
-				pMatrixStack.pushPose();
-				pMatrixStack.translate(0,0,100);
-				Minecraft minecraft = Minecraft.getInstance();
-				minecraft.getTextureManager().bind(TEXTURE);
-				RenderSystem.enableDepthTest();
-				FontRenderer fontrenderer = minecraft.font;
-				RenderSystem.color4f(1.0F, 1.0F, 1.0F, this.alpha);
-				RenderSystem.enableBlend();
-				RenderSystem.defaultBlendFunc();
-				RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-				blit(pMatrixStack, this.x, this.y, this.isHovered() || this.isFocused() ? 10.0F : 0.0F, this.selected() ? 10.0F : 0.0F, 10, this.height, 64/2, 64/2);
-				this.renderBg(pMatrixStack, minecraft, pMouseX, pMouseY);
-				drawString(pMatrixStack, fontrenderer, this.getMessage(), this.x + 14, this.y + (this.height - 8) / 2, 14737632 | MathHelper.ceil(this.alpha * 255.0F) << 24);
-				pMatrixStack.popPose();
-			}
-			
-			@Override
-			public void onPress()
-			{
-				super.onPress();
-				settings.get().glowing = selected();
-				screen.handler.getSkin().updateLayers.add(layer);
-			}
-		};
+		glowing = new ExtendedCheckbox(x + 3, y, xSize - 5, 10, 10, new TranslationTextComponent("ds.gui.dragon_editor.glowing"), set.glowing, (s) -> {
+			settings.get().glowing = s.selected();
+			screen.handler.getSkin().updateLayers.add(layer);
+		});
 		
 		hueReset = new ExtendedButton(x + 3 + xSize - 26, y + 12, 20, 20, StringTextComponent.EMPTY, (s) ->{
 			hueSlider.setValue(0.0);
