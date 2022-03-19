@@ -4,6 +4,7 @@ import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.DragonEditor
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.jackraidenph.dragonsurvival.common.capability.subcapabilities.SkinCap;
+import by.jackraidenph.dragonsurvival.common.util.DragonUtils;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
@@ -41,8 +42,7 @@ public class DragonEditorHandler
 		}
 		
 		if(layer == EnumSkinLayer.BASE && (key.equalsIgnoreCase("Skin") || key.equalsIgnoreCase(SkinCap.defaultSkinValue))){
-			DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
-			return getSkin(player, layer, type.name().toLowerCase() + "_base_" + handler.getLevel().ordinal(), type);
+			return getSkin(player, layer, type.name().toLowerCase() + "_base_" + DragonUtils.getDragonLevel(player).ordinal(), type);
 		}
 		
 		Texture[] texts = DragonEditorRegistry.CUSTOMIZATIONS.getOrDefault(type, new HashMap<>()).getOrDefault(layer, new Texture[0]);
@@ -72,6 +72,6 @@ public class DragonEditorHandler
 	}
 	
 	public static ArrayList<String> getKeys(PlayerEntity player, EnumSkinLayer layers){
-		return getKeys(DragonStateProvider.getCap(player).orElse(null).getType(), layers);
+		return getKeys(DragonUtils.getDragonType(player), layers);
 	}
 }

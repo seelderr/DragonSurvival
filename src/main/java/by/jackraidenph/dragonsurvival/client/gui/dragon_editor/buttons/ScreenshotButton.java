@@ -11,7 +11,7 @@ import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Util;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.client.gui.GuiUtils;
 import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
@@ -27,47 +27,52 @@ public class ScreenshotButton extends ExtendedButton
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss");
 	private final DragonEditorScreen dragonEditorScreen;
 	
-	public ScreenshotButton(DragonEditorScreen dragonEditorScreen)
+	public ScreenshotButton(int xPos, int yPos, int width, int height, ITextComponent displayString, IPressable handler, DragonEditorScreen dragonEditorScreen)
 	{
-		super(dragonEditorScreen.guiLeft - 35, 10, 18, 18, StringTextComponent.EMPTY, (p) -> {
-			int width = 1024;
-			int height = 1024;
-			
-			RenderSystem.pushMatrix();
-			RenderSystem.clear(16640, Minecraft.ON_OSX);
-			
-			Framebuffer framebuffer = new Framebuffer(width, height, true, false);
-			framebuffer.setClearColor(1f, 1f, 1f, 0f);
-			framebuffer.bindWrite(true);
-			framebuffer.blitToScreen(width, height);
-			
-			ClientDragonRender.renderEntityInInventory(FakeClientPlayerUtils.getFakeDragon(0, dragonEditorScreen.handler), width / 2, height / 2, dragonEditorScreen.dragonRender.zoom * 4, dragonEditorScreen.dragonRender.xRot, dragonEditorScreen.dragonRender.yRot, 0, 0);
-			
-			NativeImage nativeimage = new NativeImage(width, height, false);
-			RenderSystem.bindTexture(framebuffer.getColorTextureId());
-			nativeimage.downloadTexture(0, false);
-			nativeimage.flipY();
-			
-			File file1 = new File(Minecraft.getInstance().gameDirectory, "screenshots/dragon-survival");
-			file1.mkdir();
-			File target = getFile(file1);
-			
-			Util.ioPool().execute(() -> {
-				try {
-					nativeimage.writeToFile(target);
-				} catch (Exception ignored) {
-				} finally {
-					nativeimage.close();
-				}
-			});
-			
-			framebuffer.unbindWrite();
-			framebuffer.destroyBuffers();
-			RenderSystem.popMatrix();
-			
-			Minecraft.getInstance().getMainRenderTarget().bindWrite(false);
-		});
+		super(xPos, yPos, width, height, displayString, handler);
 		this.dragonEditorScreen = dragonEditorScreen;
+	}
+	
+	@Override
+	public void onPress()
+	{
+		super.onPress();
+		int width = 1024;
+		int height = 1024;
+		
+		RenderSystem.pushMatrix();
+		RenderSystem.clear(16640, Minecraft.ON_OSX);
+		
+		Framebuffer framebuffer = new Framebuffer(width, height, true, false);
+		framebuffer.setClearColor(1f, 1f, 1f, 0f);
+		framebuffer.bindWrite(true);
+		framebuffer.blitToScreen(width, height);
+		
+		ClientDragonRender.renderEntityInInventory(FakeClientPlayerUtils.getFakeDragon(0, dragonEditorScreen.handler), width / 2, height / 2, dragonEditorScreen.dragonRender.zoom * 4, dragonEditorScreen.dragonRender.xRot, dragonEditorScreen.dragonRender.yRot, 0, 0);
+		
+		NativeImage nativeimage = new NativeImage(width, height, false);
+		RenderSystem.bindTexture(framebuffer.getColorTextureId());
+		nativeimage.downloadTexture(0, false);
+		nativeimage.flipY();
+		
+		File file1 = new File(Minecraft.getInstance().gameDirectory, "screenshots/dragon-survival");
+		file1.mkdir();
+		File target = getFile(file1);
+		
+		Util.ioPool().execute(() -> {
+			try {
+				nativeimage.writeToFile(target);
+			} catch (Exception ignored) {
+			} finally {
+				nativeimage.close();
+			}
+		});
+		
+		framebuffer.unbindWrite();
+		framebuffer.destroyBuffers();
+		RenderSystem.popMatrix();
+		
+		Minecraft.getInstance().getMainRenderTarget().bindWrite(false);
 	}
 	
 	private static File getFile(File pGameDirectory) {

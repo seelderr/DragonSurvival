@@ -26,7 +26,7 @@ public class DropDownButton extends ExtendedButton
 	public String[] values;
 	public Consumer<String> setter;
 	
-	private boolean toggled;
+	public boolean toggled;
 	private static final int maxItems = 4;
 	
 	public DropdownList list;

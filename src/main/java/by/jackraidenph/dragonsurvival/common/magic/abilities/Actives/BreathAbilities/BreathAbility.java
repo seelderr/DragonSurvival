@@ -128,10 +128,10 @@ public abstract class BreathAbility extends ActiveDragonAbility implements ISeco
 		Point2D result2 = new Point2D.Double();
 		
 		{
-			Point2D point = new Double(player.position().x() + bodyRot.x(), player.position().y() + (player.getEyeHeight() * sizeScale) - 0.2);
+			Point2D point = new Double(player.position().x() + bodyRot.x(), player.position().y() + player.getEyeHeight() - 0.2);
 			AffineTransform transform = new AffineTransform();
 			double angleInRadians = ((MathHelper.clamp(pitch, -90, 90) * -1) * Math.PI / 180);
-			transform.rotate(angleInRadians, player.position().x(), player.position().y() + (player.getEyeHeight() * sizeScale) - 0.2);
+			transform.rotate(angleInRadians, player.position().x(), player.position().y() + player.getEyeHeight() - 0.2);
 			transform.transform(point, result);
 		}
 		
@@ -144,7 +144,7 @@ public abstract class BreathAbility extends ActiveDragonAbility implements ISeco
 		}
 		
 		dx = result2.getX();
-		dy = result.getY() - (Math.abs(headRot) / 180 * .5);
+		dy = (result.getY() - (Math.abs(headRot) / 180 * .5)) * sizeScale;
 		dz = result2.getY();
 		
 		Vector3d delta = player.getDeltaMovement();

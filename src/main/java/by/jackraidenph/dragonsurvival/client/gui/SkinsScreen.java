@@ -50,7 +50,6 @@ public class SkinsScreen extends Screen
 	private static final ResourceLocation WIKI = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/wiki_button.png");
 	private static final ResourceLocation HELP = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_claws_button.png");
 	
-	
 	private static final String DISCORD_URL = "http://discord.gg/8SsB8ar";
 	private static final String WIKI_URL = "https://dragons-survival.fandom.com/wiki/Skins";
 	
@@ -401,6 +400,8 @@ public class SkinsScreen extends Screen
 				this.handler.setHasWings(true);
 				this.handler.setSize(level.size);
 				this.handler.setType(DragonUtils.getDragonType(minecraft.player));
+				
+				handler.getSkin().skinPreset.initDefaults(handler);
 				
 				if(noSkin && playerName == minecraft.player.getGameProfile().getName()){
 					this.handler.getSkin().skinPreset = DragonUtils.getHandler(minecraft.player).getSkin().skinPreset;

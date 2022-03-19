@@ -16,7 +16,7 @@ public class RenderingUtils
 {
 	public static void clipRendering(int xPos, int yPos, int width, int height){
 		double scale = Minecraft.getInstance().getWindow().getGuiScale();
-		RenderSystem.enableScissor((int)(xPos * scale), (int)(yPos * scale), (int)(width * scale), (int)(height * scale));
+		RenderSystem.enableScissor((int)(xPos * scale), (int)((height * scale) - (yPos * scale)), (int)(width * scale), (int)(height * scale));
 	}
 	
 	public static void clipRendering(int xPos, int yPos, int width, int height, Runnable runnable){
@@ -64,7 +64,6 @@ public class RenderingUtils
 			blue[i]  = (float)(color[i]       & 255) / 255.0F;
 		}
 		
-		RenderSystem.enableDepthTest();
 		RenderSystem.disableTexture();
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();

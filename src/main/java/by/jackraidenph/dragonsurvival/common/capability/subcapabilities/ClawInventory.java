@@ -1,12 +1,12 @@
 package by.jackraidenph.dragonsurvival.common.capability.subcapabilities;
 
-import by.jackraidenph.dragonsurvival.common.capability.NBTInterface;
+import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 
-public class ClawInventory implements NBTInterface
+public class ClawInventory extends SubCap
 {
 	/*
 		Slot 0: Sword
@@ -18,6 +18,11 @@ public class ClawInventory implements NBTInterface
 	
 	private boolean clawsMenuOpen = false;
 	public boolean renderClaws = true;
+	
+	public ClawInventory(DragonStateHandler handler)
+	{
+		super(handler);
+	}
 	
 	public Inventory getClawsInventory()
 	{

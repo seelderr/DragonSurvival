@@ -2,12 +2,12 @@ package by.jackraidenph.dragonsurvival.common.capability.subcapabilities;
 
 import by.jackraidenph.dragonsurvival.client.skinPartSystem.EnumSkinLayer;
 import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.SkinPreset;
-import by.jackraidenph.dragonsurvival.common.capability.NBTInterface;
+import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
 import net.minecraft.nbt.CompoundNBT;
 
 import java.util.HashSet;
 
-public class SkinCap implements NBTInterface
+public class SkinCap extends SubCap
 {
 	public boolean renderNewborn;
 	public boolean renderYoung;
@@ -17,6 +17,13 @@ public class SkinCap implements NBTInterface
 	public HashSet<EnumSkinLayer> updateLayers = new HashSet<>();
 	
 	public static final String defaultSkinValue = "None";
+	
+	public boolean blankSkin = false;
+	
+	public SkinCap(DragonStateHandler handler)
+	{
+		super(handler);
+	}
 	
 	@Override
 	public CompoundNBT writeNBT()

@@ -52,34 +52,34 @@ public class DragonAltarGUI extends Screen {
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferbuilder = tessellator.getBuilder();
         Minecraft.getInstance().getTextureManager().bind(texture);
-        RenderSystem.enableDepthTest();
-        RenderSystem.depthFunc(519);
+        
+        double zLevel = -600;
+        
         bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-        bufferbuilder.vertex((double)x0, (double)y0, -100.0D).uv(0.0F, (float)y0 / 32.0F).color(64, 64, 64, 255).endVertex();
-        bufferbuilder.vertex((double)(x0 + width), (double)y0, -100.0D).uv((float)width / 32.0F, (float)y0 / 32.0F).color(64, 64, 64, 255).endVertex();
-        bufferbuilder.vertex((double)(x0 + width), 0.0D, -100.0D).uv((float)width / 32.0F, 0.0F).color(64, 64, 64, 255).endVertex();
-        bufferbuilder.vertex((double)x0, 0.0D, -100.0D).uv(0.0F, 0.0F).color(64, 64, 64, 255).endVertex();
-        bufferbuilder.vertex((double)x0, (double)height, -100.0D).uv(0.0F, (float)height / 32.0F).color(64, 64, 64, 255).endVertex();
-        bufferbuilder.vertex((double)(x0 + width), (double)height, -100.0D).uv((float)width / 32.0F, (float)height / 32.0F).color(64, 64, 64, 255).endVertex();
-        bufferbuilder.vertex((double)(x0 + width), (double)y1, -100.0D).uv((float)width / 32.0F, (float)y1 / 32.0F).color(64, 64, 64, 255).endVertex();
-        bufferbuilder.vertex((double)x0, (double)y1, -100.0D).uv(0.0F, (float)y1 / 32.0F).color(64, 64, 64, 255).endVertex();
+        bufferbuilder.vertex((double)x0, (double)y0, zLevel).uv(0.0F, (float)y0 / 32.0F).color(64, 64, 64, 255).endVertex();
+        bufferbuilder.vertex((double)(x0 + width), (double)y0, zLevel).uv((float)width / 32.0F, (float)y0 / 32.0F).color(64, 64, 64, 255).endVertex();
+        bufferbuilder.vertex((double)(x0 + width), 0.0D, zLevel).uv((float)width / 32.0F, 0.0F).color(64, 64, 64, 255).endVertex();
+        bufferbuilder.vertex((double)x0, 0.0D, zLevel).uv(0.0F, 0.0F).color(64, 64, 64, 255).endVertex();
+        bufferbuilder.vertex((double)x0, (double)height, zLevel).uv(0.0F, (float)height / 32.0F).color(64, 64, 64, 255).endVertex();
+        bufferbuilder.vertex((double)(x0 + width), (double)height, zLevel).uv((float)width / 32.0F, (float)height / 32.0F).color(64, 64, 64, 255).endVertex();
+        bufferbuilder.vertex((double)(x0 + width), (double)y1, zLevel).uv((float)width / 32.0F, (float)y1 / 32.0F).color(64, 64, 64, 255).endVertex();
+        bufferbuilder.vertex((double)x0, (double)y1, zLevel).uv(0.0F, (float)y1 / 32.0F).color(64, 64, 64, 255).endVertex();
         tessellator.end();
-        RenderSystem.depthFunc(515);
-        RenderSystem.disableDepthTest();
+        
         RenderSystem.enableBlend();
         RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ZERO, GlStateManager.DestFactor.ONE);
         RenderSystem.disableAlphaTest();
         RenderSystem.shadeModel(7425);
         RenderSystem.disableTexture();
         bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-        bufferbuilder.vertex((double)x0, (double)(y0 + 4), 0.0D).uv(0.0F, 1.0F).color(0, 0, 0, 0).endVertex();
-        bufferbuilder.vertex((double)x1, (double)(y0 + 4), 0.0D).uv(1.0F, 1.0F).color(0, 0, 0, 0).endVertex();
-        bufferbuilder.vertex((double)x1, (double)y0, 0.0D).uv(1.0F, 0.0F).color(0, 0, 0, 255).endVertex();
-        bufferbuilder.vertex((double)x0, (double)y0, 0.0D).uv(0.0F, 0.0F).color(0, 0, 0, 255).endVertex();
-        bufferbuilder.vertex((double)x0, (double)y1, 0.0D).uv(0.0F, 1.0F).color(0, 0, 0, 255).endVertex();
-        bufferbuilder.vertex((double)x1, (double)y1, 0.0D).uv(1.0F, 1.0F).color(0, 0, 0, 255).endVertex();
-        bufferbuilder.vertex((double)x1, (double)(y1 - 4), 0.0D).uv(1.0F, 0.0F).color(0, 0, 0, 0).endVertex();
-        bufferbuilder.vertex((double)x0, (double)(y1 - 4), 0.0D).uv(0.0F, 0.0F).color(0, 0, 0, 0).endVertex();
+        bufferbuilder.vertex((double)x0, (double)(y0 + 4), zLevel).uv(0.0F, 1.0F).color(0, 0, 0, 0).endVertex();
+        bufferbuilder.vertex((double)x1, (double)(y0 + 4), zLevel).uv(1.0F, 1.0F).color(0, 0, 0, 0).endVertex();
+        bufferbuilder.vertex((double)x1, (double)y0, zLevel).uv(1.0F, 0.0F).color(0, 0, 0, 255).endVertex();
+        bufferbuilder.vertex((double)x0, (double)y0, zLevel).uv(0.0F, 0.0F).color(0, 0, 0, 255).endVertex();
+        bufferbuilder.vertex((double)x0, (double)y1, zLevel).uv(0.0F, 1.0F).color(0, 0, 0, 255).endVertex();
+        bufferbuilder.vertex((double)x1, (double)y1, zLevel).uv(1.0F, 1.0F).color(0, 0, 0, 255).endVertex();
+        bufferbuilder.vertex((double)x1, (double)(y1 - 4), zLevel).uv(1.0F, 0.0F).color(0, 0, 0, 0).endVertex();
+        bufferbuilder.vertex((double)x0, (double)(y1 - 4), zLevel).uv(0.0F, 0.0F).color(0, 0, 0, 0).endVertex();
         tessellator.end();
     
         RenderSystem.enableTexture();
@@ -131,11 +131,11 @@ public class DragonAltarGUI extends Screen {
                     handler1.setHasWings(true);
                     handler1.setSize(DragonLevel.ADULT.size);
                     handler1.getSkin().skinPreset.skinAges.get(DragonLevel.ADULT).defaultSkin = true;
-                    
+    
                     handler2.setType(button.type);
                     handler2.setSize(button.type == DragonType.NONE ? DragonLevel.ADULT.size : DragonLevel.BABY.size);
                     handler2.getSkin().skinPreset.skinAges.get(button.type == DragonType.NONE ? DragonLevel.ADULT : DragonLevel.BABY).defaultSkin = true;
-    
+                    
                     FakeClientPlayerUtils.getFakePlayer(0, handler1).animationSupplier = () -> animations[animation1];
                     FakeClientPlayerUtils.getFakePlayer(1, handler2).animationSupplier = () -> animations[animation2];
     
@@ -173,7 +173,7 @@ public class DragonAltarGUI extends Screen {
         this.guiLeft = (this.width - 304) / 2;
         this.guiTop = (this.height - 190) / 2;
     
-        this.addButton(new HelpButton(this.guiLeft, 10, 18, 18, "ds.help.altar", 1){
+        this.addButton(new HelpButton(width / 2 - 9, guiTop + 10, 16, 16, "ds.help.altar", 1){
             @Override
             public void render(MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_)
             {
@@ -183,10 +183,10 @@ public class DragonAltarGUI extends Screen {
                 p_230430_1_.popPose();
             }
         });
-        addButton(new AltarTypeButton(this, DragonType.CAVE, width / 2 - 104, this.guiTop + 20));
-        addButton(new AltarTypeButton(this, DragonType.FOREST, width / 2 - 51, this.guiTop + 20));
-        addButton(new AltarTypeButton(this, DragonType.SEA, width / 2 + 2, this.guiTop + 20));
-        addButton(new AltarTypeButton(this, DragonType.NONE, width / 2 + 55, guiTop + 20));
+        addButton(new AltarTypeButton(this, DragonType.CAVE, width / 2 - 104, this.guiTop + 30));
+        addButton(new AltarTypeButton(this, DragonType.FOREST, width / 2 - 51, this.guiTop + 30));
+        addButton(new AltarTypeButton(this, DragonType.SEA, width / 2 + 2, this.guiTop + 30));
+        addButton(new AltarTypeButton(this, DragonType.NONE, width / 2 + 55, guiTop + 30));
         //ds.gui.dragon_editor
         addButton(new ExtendedButton(width / 2 - 75, height - 25, 150, 20, new TranslationTextComponent("ds.gui.dragon_editor"), (btn) -> {
             Minecraft.getInstance().setScreen(new DragonEditorScreen(Minecraft.getInstance().screen));

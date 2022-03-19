@@ -1,8 +1,11 @@
 package by.jackraidenph.dragonsurvival.client.skinPartSystem.objects;
 
+import by.jackraidenph.dragonsurvival.client.skinPartSystem.DragonEditorRegistry;
 import by.jackraidenph.dragonsurvival.client.skinPartSystem.EnumSkinLayer;
+import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
 import by.jackraidenph.dragonsurvival.common.capability.NBTInterface;
 import by.jackraidenph.dragonsurvival.misc.DragonLevel;
+import by.jackraidenph.dragonsurvival.misc.DragonType;
 import net.minecraft.nbt.CompoundNBT;
 
 import java.util.HashMap;
@@ -19,11 +22,19 @@ public class SkinPreset implements NBTInterface
 		}
 	}
 	
+	public void initDefaults(DragonStateHandler handler){
+		initDefaults(handler.getType());
+	}
+	
+	public void initDefaults(DragonType type){
+		for(DragonLevel level : DragonLevel.values()) {
+			skinAges.put(level, new SkinAgeGroup(level, type));
+		}
+	}
 	@Override
 	public CompoundNBT writeNBT()
 	{
 		CompoundNBT nbt = new CompoundNBT();
-		
 		nbt.putDouble("sizeMul", sizeMul);
 		
 		for(DragonLevel level : DragonLevel.values()){
@@ -59,7 +70,15 @@ public class SkinPreset implements NBTInterface
 			this.level = level;
 			
 			for(EnumSkinLayer layer : EnumSkinLayer.values()){
-				layerSettings.computeIfAbsent(layer, (s) -> layer.base ? new LayerSettings(layer.name().toLowerCase() + "_" + level.ordinal()) : new LayerSettings());
+				layerSettings.computeIfAbsent(layer, (s) -> new LayerSettings());
+			}
+		}
+		
+		public SkinAgeGroup(DragonLevel level, DragonType type)
+		{
+			this(level);
+			for(EnumSkinLayer layer : EnumSkinLayer.values()){
+				layerSettings.put(layer,new LayerSettings(DragonEditorRegistry.getDefaultPart(type, level, layer)));
 			}
 		}
 		

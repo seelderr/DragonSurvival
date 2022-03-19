@@ -32,6 +32,7 @@ import java.util.Objects;
 public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 
     private ResourceLocation currentTexture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/cave_newborn.png");
+	private ResourceLocation blankSkin = new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/blank_skin.png");
 
     @Override
     public ResourceLocation getModelLocation(DragonEntity dragonEntity) {
@@ -44,8 +45,13 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 
     @Override
     public ResourceLocation getTextureLocation(DragonEntity dragonEntity) {
+	    DragonStateHandler handler = DragonStateProvider.getCap(dragonEntity.getPlayer()).orElse(null);
+	
+	    if(handler.getSkin().blankSkin){
+			return blankSkin;
+	    }
+		
 		if(currentTexture == null){
-			DragonStateHandler handler = DragonStateProvider.getCap(dragonEntity.getPlayer()).orElse(null);
 			SkinAgeGroup ageGroup = handler.getSkin().skinPreset.skinAges.get(handler.getLevel());
 			
 			if(ageGroup.defaultSkin){

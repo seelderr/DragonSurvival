@@ -1,4 +1,82 @@
 {
+  "defaults": {
+    "CAVE": {
+      "BABY": {
+        "BASE": "base_1",
+        "BOTTOM": "bottom_1",
+        "EYES": "eyes_0",
+        "HORNS": "horns_19",
+        "EXTRA": "extra_12"
+      },
+      "YOUNG": {
+        "BASE": "base_2",
+        "BOTTOM": "bottom_2",
+        "EYES": "eyes_0",
+        "HORNS": "horns_19",
+        "SPIKES": "spikes_3",
+        "EXTRA": "extra_13",
+        "EXTRA1": "extra_11"
+      },
+      "ADULT": {
+        "BASE": "base_3",
+        "BOTTOM": "bottom_3",
+        "EYES": "eyes_2",
+        "HORNS": "horns_19",
+        "SPIKES": "spikes_2",
+        "EXTRA": "extra_14"
+      }
+    },
+    "SEA": {
+      "BABY": {
+        "BASE": "base_1",
+        "BOTTOM": "bottom_1",
+        "EYES": "eyes_0",
+        "HORNS": "horns_21",
+        "SPIKES": "spikes_1"
+      },
+      "YOUNG": {
+        "BASE": "base_2",
+        "BOTTOM": "bottom_2",
+        "HORNS": "horns_21",
+        "SPIKES": "spikes_2",
+        "EXTRA": "extra_63"
+      },
+      "ADULT": {
+        "BASE": "base_4",
+        "BOTTOM": "bottom_3",
+        "HORNS": "horns_21",
+        "SPIKES": "spikes_3",
+        "EXTRA": "extra_62"
+      }
+    },
+    "FOREST": {
+      "BABY": {
+        "BASE": "base_0",
+        "BOTTOM": "bottom_2",
+        "EYES": "eyes_0",
+        "HORNS": "horns_20",
+        "SPIKES": "spikes_4",
+        "EXTRA": "extra_5",
+        "EXTRA1": "extra_6"
+      },
+      "YOUNG": {
+        "BASE": "base_0",
+        "BOTTOM": "bottom_3",
+        "HORNS": "horns_20",
+        "SPIKES": "spikes_5",
+        "EXTRA": "extra_5",
+        "EXTRA1": "extra_6"
+      },
+      "ADULT": {
+        "BASE": "base_0",
+        "BOTTOM": "bottom_1",
+        "HORNS": "horns_20",
+        "SPIKES": "spikes_2",
+        "EXTRA": "extra_6",
+        "EXTRA1": "extra_15"
+      }
+    }
+  },
   "cave_dragon": {
       "layers": {
         "BASE": 	[

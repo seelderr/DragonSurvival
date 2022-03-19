@@ -50,20 +50,6 @@ public class DragonDoor extends Block {
             return name().toLowerCase(Locale.ENGLISH);
         }
     }
-
-    public enum OpenRequirement implements IStringSerializable{
-		NONE,
-    	POWER,
-        CAVE,
-        FOREST,
-        SEA,
-        LOCKED;
-    	
-    	@Override
-        public String getSerializedName() {
-            return name().toLowerCase(Locale.ENGLISH);
-        }
-	}
 	
     
     public static final DirectionProperty FACING = HorizontalBlock.FACING;
@@ -71,14 +57,14 @@ public class DragonDoor extends Block {
     public static final EnumProperty<DoorHingeSide> HINGE = BlockStateProperties.DOOR_HINGE;
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
     public static final EnumProperty<Part> PART = EnumProperty.create("part", Part.class);
-    public static final EnumProperty<OpenRequirement> OPEN_REQ = EnumProperty.create("open_req", OpenRequirement.class);
+    public static final EnumProperty<DragonDoorOpenRequirement> OPEN_REQ = EnumProperty.create("open_req", DragonDoorOpenRequirement.class);
 
     protected static final VoxelShape SOUTH_AABB = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 16.0D, 3.0D);
     protected static final VoxelShape NORTH_AABB = Block.box(0.0D, 0.0D, 13.0D, 16.0D, 16.0D, 16.0D);
     protected static final VoxelShape WEST_AABB = Block.box(13.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D);
     protected static final VoxelShape EAST_AABB = Block.box(0.0D, 0.0D, 0.0D, 3.0D, 16.0D, 16.0D);
 
-    public DragonDoor(Properties properties, OpenRequirement openRequirement) {
+    public DragonDoor(Properties properties, DragonDoorOpenRequirement DragonDoorOpenRequirement) {
         super(properties);
         registerDefaultState(getStateDefinition().any()
         		.setValue(FACING, Direction.NORTH)
@@ -86,7 +72,7 @@ public class DragonDoor extends Block {
         		.setValue(HINGE, DoorHingeSide.LEFT)
         		.setValue(POWERED, false)
         		.setValue(PART, Part.BOTTOM)
-        		.setValue(OPEN_REQ, openRequirement));
+        		.setValue(OPEN_REQ, DragonDoorOpenRequirement));
     }
 
     public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
@@ -217,10 +203,10 @@ public class DragonDoor extends Block {
     	LazyOptional<DragonStateHandler> dragonStateHandlerLazyOptional = player.getCapability(DragonStateProvider.DRAGON_CAPABILITY);
     	if (dragonStateHandlerLazyOptional.isPresent()) {
     		DragonStateHandler dragonStateHandler = dragonStateHandlerLazyOptional.orElseGet(() -> null);
-    		if (state.getValue(OPEN_REQ) == OpenRequirement.NONE || (dragonStateHandler.isDragon() && 
-    				(state.getValue(OPEN_REQ) == OpenRequirement.CAVE && dragonStateHandler.getType() == DragonType.CAVE) ||
-    				(state.getValue(OPEN_REQ) == OpenRequirement.FOREST && dragonStateHandler.getType() == DragonType.FOREST) ||
-    				(state.getValue(OPEN_REQ) == OpenRequirement.SEA && dragonStateHandler.getType() == DragonType.SEA)
+    		if (state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.NONE || (dragonStateHandler.isDragon() && 
+    				(state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.CAVE && dragonStateHandler.getType() == DragonType.CAVE) ||
+    				(state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.FOREST && dragonStateHandler.getType() == DragonType.FOREST) ||
+    				(state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.SEA && dragonStateHandler.getType() == DragonType.SEA)
     				)) {
     			state = state.cycle(OPEN);
                 worldIn.setBlock(pos, state, 10);
@@ -251,7 +237,7 @@ public class DragonDoor extends Block {
     }
 
     public PushReaction getPistonPushReaction(BlockState state) {
-        return state.getValue(OPEN_REQ) == OpenRequirement.NONE ? PushReaction.DESTROY : PushReaction.IGNORE;
+        return state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.NONE ? PushReaction.DESTROY : PushReaction.IGNORE;
     }
 
     public BlockState rotate(BlockState state, Rotation rot) {
@@ -272,10 +258,10 @@ public class DragonDoor extends Block {
     }
 
     public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
-		boolean validPower = state.getValue(OPEN_REQ) == OpenRequirement.NONE || state.getValue(OPEN_REQ) == OpenRequirement.POWER;
-		boolean validType = (state.getValue(OPEN_REQ) == OpenRequirement.SEA && blockIn == DSBlocks.seaPressurePlate)
-				|| (state.getValue(OPEN_REQ) == OpenRequirement.FOREST && blockIn == DSBlocks.forestPressurePlate)
-				|| (state.getValue(OPEN_REQ) == OpenRequirement.CAVE && blockIn == DSBlocks.cavePressurePlate);
+		boolean validPower = state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.NONE || state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.POWER;
+		boolean validType = (state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.SEA && blockIn == DSBlocks.seaPressurePlate)
+				|| (state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.FOREST && blockIn == DSBlocks.forestPressurePlate)
+				|| (state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.CAVE && blockIn == DSBlocks.cavePressurePlate);
     	if (validPower || validType) {
     		boolean flag = worldIn.hasNeighborSignal(pos) || worldIn.hasNeighborSignal(pos.relative(state.getValue(PART) == Part.BOTTOM ? Direction.UP : Direction.DOWN));
             if (blockIn != this && flag != state.getValue(POWERED)) {

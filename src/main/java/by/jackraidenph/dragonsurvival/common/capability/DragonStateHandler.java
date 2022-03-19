@@ -70,10 +70,10 @@ public class DragonStateHandler {
 	
     private final DragonDebuffData debuffData = new DragonDebuffData(0, 0, 0);
 	
-	private final ClawInventory clawInventory = new ClawInventory();
-	private final EmoteCap emotes = new EmoteCap();
+	private final ClawInventory clawInventory = new ClawInventory(this);
+	private final EmoteCap emotes = new EmoteCap(this);
 	private final MagicCap magic = new MagicCap(this);
-	private final SkinCap skin = new SkinCap();
+	private final SkinCap skin = new SkinCap(this);
 	
 	private int lavaAirSupply;
     private int passengerId;

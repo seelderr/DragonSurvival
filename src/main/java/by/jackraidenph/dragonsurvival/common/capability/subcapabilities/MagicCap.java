@@ -1,27 +1,19 @@
 package by.jackraidenph.dragonsurvival.common.capability.subcapabilities;
 
-import by.jackraidenph.dragonsurvival.common.capability.NBTInterface;
 import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
-import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.common.magic.DragonAbilities;
 import by.jackraidenph.dragonsurvival.common.magic.common.ActiveDragonAbility;
 import by.jackraidenph.dragonsurvival.common.magic.common.DragonAbility;
 import by.jackraidenph.dragonsurvival.common.magic.common.PassiveDragonAbility;
+import by.jackraidenph.dragonsurvival.config.ConfigHandler;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import net.minecraft.nbt.CompoundNBT;
 
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class MagicCap implements NBTInterface
+public class MagicCap extends SubCap
 {
-	
-	private DragonStateHandler instance;
-	
-	public MagicCap(DragonStateHandler instance)
-	{
-		this.instance = instance;
-	}
 	
 	private ArrayList<DragonAbility> abilities = new ArrayList<>();
 	
@@ -34,9 +26,14 @@ public class MagicCap implements NBTInterface
 	public boolean onMagicSource = false;
 	public int magicSourceTimer = 0;
 	
+	public MagicCap(DragonStateHandler handler)
+	{
+		super(handler);
+	}
+	
 	public void initAbilities(DragonType type){
 		if(DragonAbilities.ACTIVE_ABILITIES.containsKey(type)) {
-			if(instance.getType() != null && instance.getType() != DragonType.NONE) {
+			if(handler.getType() != null && handler.getType() != DragonType.NONE) {
 				if (!ConfigHandler.SERVER.saveAllAbilities.get()) {
 					abilities.clear();
 				}
@@ -102,8 +99,8 @@ public class MagicCap implements NBTInterface
 	
 	public ArrayList<DragonAbility> getAbilities()
 	{
-		if(abilities.size() <= 0 && this.instance.getType() != null && this.instance.getType() != DragonType.NONE){
-			initAbilities(this.instance.getType());
+		if(abilities.size() <= 0 && this.handler.getType() != null && this.handler.getType() != DragonType.NONE){
+			initAbilities(this.handler.getType());
 		}
 		
 		return abilities;
@@ -115,7 +112,7 @@ public class MagicCap implements NBTInterface
 	}
 	
 	public ActiveDragonAbility getAbilityFromSlot(int slot) {
-		ActiveDragonAbility dragonAbility = instance.getType() != null && DragonAbilities.ACTIVE_ABILITIES.get(instance.getType()) != null && DragonAbilities.ACTIVE_ABILITIES.get(instance.getType()).size() >= slot ? DragonAbilities.ACTIVE_ABILITIES.get(instance.getType()).get(slot) : null;
+		ActiveDragonAbility dragonAbility = handler.getType() != null && DragonAbilities.ACTIVE_ABILITIES.get(handler.getType()) != null && DragonAbilities.ACTIVE_ABILITIES.get(handler.getType()).size() >= slot ? DragonAbilities.ACTIVE_ABILITIES.get(handler.getType()).get(slot) : null;
 		ActiveDragonAbility actual = (ActiveDragonAbility)getAbility(dragonAbility);
 		
 		return actual == null ? dragonAbility : actual;

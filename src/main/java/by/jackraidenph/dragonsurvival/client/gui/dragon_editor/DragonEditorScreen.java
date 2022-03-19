@@ -5,18 +5,16 @@ import by.jackraidenph.dragonsurvival.client.gui.DragonAltarGUI;
 import by.jackraidenph.dragonsurvival.client.gui.SkinsScreen;
 import by.jackraidenph.dragonsurvival.client.gui.components.DragonEditorConfirmComponent;
 import by.jackraidenph.dragonsurvival.client.gui.components.DragonUIRenderComponent;
-import by.jackraidenph.dragonsurvival.client.gui.dragon_editor.buttons.AdultEditorButton;
-import by.jackraidenph.dragonsurvival.client.gui.dragon_editor.buttons.NewbornEditorButton;
-import by.jackraidenph.dragonsurvival.client.gui.dragon_editor.buttons.ScreenshotButton;
-import by.jackraidenph.dragonsurvival.client.gui.dragon_editor.buttons.YoungEditorButton;
+import by.jackraidenph.dragonsurvival.client.gui.dragon_editor.buttons.*;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.*;
-import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.dropdown.ColoredDropdownValueEntry;
+import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.dropdown.DragonEditorDropdownEntry;
 import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownEntry;
 import by.jackraidenph.dragonsurvival.client.handlers.ClientEvents;
 import by.jackraidenph.dragonsurvival.client.handlers.magic.ClientMagicHUDHandler;
 import by.jackraidenph.dragonsurvival.client.skinPartSystem.DragonEditorHandler;
 import by.jackraidenph.dragonsurvival.client.skinPartSystem.DragonEditorRegistry;
 import by.jackraidenph.dragonsurvival.client.skinPartSystem.EnumSkinLayer;
+import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.DragonEditorObject.Texture;
 import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.SkinPreset;
 import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.SkinPreset.SkinAgeGroup;
 import by.jackraidenph.dragonsurvival.client.util.FakeClientPlayerUtils;
@@ -82,7 +80,7 @@ public class DragonEditorScreen extends Screen
 	public DragonLevel level = DragonLevel.ADULT;
 	public DragonType type;
 	
-	public SkinPreset preset = new SkinPreset();
+	public SkinPreset preset;
 	
 	public boolean confirmation = false;
 	public boolean showUi = true;
@@ -101,13 +99,12 @@ public class DragonEditorScreen extends Screen
 	
 	public void update()
 	{
-		handler.getSkin().skinPreset = preset;
-		handler.setSize(level.size);
-		handler.setHasWings(true);
-		
 		if (type != DragonType.NONE) {
 			handler.setType(type);
 		}
+		handler.getSkin().skinPreset = preset;
+		handler.setSize(level.size);
+		handler.setHasWings(true);
 		
 		if (currentSelected != lastSelected) {
 			preset = new SkinPreset();
@@ -158,7 +155,6 @@ public class DragonEditorScreen extends Screen
 		
 		if (!hasInit) {
 			level = localHandler.getLevel();
-			dragonRender.zoom = (float)(level.size * preset.sizeMul);
 			
 			if (type == DragonType.NONE) {
 				type = localHandler.getType();
@@ -169,6 +165,8 @@ public class DragonEditorScreen extends Screen
 			preset.readNBT(DragonEditorRegistry.savedCustomizations.skinPresets.get(type).get(currentSelected).writeNBT());
 			handler.getSkin().skinPreset = preset;
 			
+			dragonRender.zoom = (float)(level.size * preset.sizeMul);
+			
 			this.handler.setHasWings(true);
 			this.handler.setType(type);
 			hasInit = true;
@@ -176,7 +174,7 @@ public class DragonEditorScreen extends Screen
 			update();
 		}
 		
-		addButton(new HelpButton(type, guiLeft, 10, 16, 16, "ds.help.customization", 1));
+		addButton(new HelpButton(type, guiLeft - 75, 10, 16, 16, "ds.help.customization", 1));
 		
 		addButton(new NewbornEditorButton(this));
 		addButton(new YoungEditorButton(this));
@@ -210,7 +208,7 @@ public class DragonEditorScreen extends Screen
 				@Override
 				public DropdownEntry createEntry(int pos, String val)
 				{
-					return new ColoredDropdownValueEntry(DragonEditorScreen.this, this, pos, val, setter);
+					return new DragonEditorDropdownEntry(DragonEditorScreen.this, this, pos, val, setter, layers);
 				}
 				
 				@Override
@@ -239,7 +237,7 @@ public class DragonEditorScreen extends Screen
 			addButton(btn);
 			
 			addButton(new ArrowButton(btn.x - 15, btn.y + 1, 13, 13, false, (s) -> {
-				int index = -1;
+				int index = 0;
 				
 				for (int i1 = 0; i1 < btn.values.length; i1++) {
 					if(Objects.equals(btn.values[i1], btn.current)){
@@ -247,12 +245,11 @@ public class DragonEditorScreen extends Screen
 						break;
 					}
 				}
-				if(index != -1){
-					index = DragonUtils.wrap(index - 1, 0, btn.values.length-1);
-					btn.current = btn.values[index];
-					btn.setter.accept(btn.current);
-					btn.updateMessage();
-				}
+				
+				index = DragonUtils.wrap(index - 1, 0, btn.values.length-1);
+				btn.current = btn.values[index];
+				btn.setter.accept(btn.current);
+				btn.updateMessage();
 			}){
 				@Override
 				public void render(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks)
@@ -266,7 +263,7 @@ public class DragonEditorScreen extends Screen
 			});
 			
 			addButton(new ArrowButton(btn.x + btn.getWidth() + 2, btn.y + 1, 13, 13, true, (s) -> {
-				int index = -1;
+				int index = 0;
 				
 				for (int i1 = 0; i1 < btn.values.length; i1++) {
 					if(Objects.equals(btn.values[i1], btn.current)){
@@ -275,12 +272,10 @@ public class DragonEditorScreen extends Screen
 					}
 				}
 				
-				if(index != -1){
-					index = DragonUtils.wrap(index + 1, 0, btn.values.length-1);
-					btn.current = btn.values[index];
-					btn.setter.accept(btn.current);
-					btn.updateMessage();
-				}
+				index = DragonUtils.wrap(index + 1, 0, btn.values.length-1);
+				btn.current = btn.values[index];
+				btn.setter.accept(btn.current);
+				btn.updateMessage();
 			}){
 				@Override
 				public void render(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks)
@@ -493,7 +488,7 @@ public class DragonEditorScreen extends Screen
 		});
 		
 		addButton(new ExtendedButton(guiLeft + 256 + 16, 9, 19, 19, StringTextComponent.EMPTY, (btn) -> {
-			preset.skinAges.put(level, new SkinAgeGroup(level));
+			preset.skinAges.put(level, new SkinAgeGroup(level, type));
 			handler.getSkin().updateLayers.addAll(Arrays.stream(EnumSkinLayer.values()).distinct().collect(Collectors.toList()));
 			update();
 		})
@@ -519,6 +514,11 @@ public class DragonEditorScreen extends Screen
 		addButton(new ExtendedButton(guiLeft + 256 + 30 + 16, 9, 19, 19, StringTextComponent.EMPTY, (btn) -> {
 			ArrayList<String> extraKeys = DragonEditorHandler.getKeys(FakeClientPlayerUtils.getFakePlayer(0, handler), EnumSkinLayer.EXTRA);
 			
+			extraKeys.removeIf((s) -> {
+				Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, handler), EnumSkinLayer.EXTRA, s, type);
+				return !text.random;
+			});
+			
 			for (EnumSkinLayer layer : EnumSkinLayer.values()) {
 				ArrayList<String> keys = DragonEditorHandler.getKeys(FakeClientPlayerUtils.getFakePlayer(0, handler), layer);
 				
@@ -530,20 +530,21 @@ public class DragonEditorScreen extends Screen
 					keys.add(SkinCap.defaultSkinValue);
 				}
 				
-				
-				
 				if (keys.size() > 0) {
-					
 					String key = keys.get(minecraft.player.level.random.nextInt(keys.size()));
 					if(Objects.equals(layer.name, "Extra")){
 						extraKeys.remove(key);
 					}
 					
 					preset.skinAges.get(level).layerSettings.get(layer).selectedSkin = key;
-					preset.skinAges.get(level).layerSettings.get(layer).hue = 0.25f + (minecraft.player.level.random.nextFloat() * 0.5f);
-					preset.skinAges.get(level).layerSettings.get(layer).saturation = 0.25f + (minecraft.player.level.random.nextFloat() * 0.5f);
-					preset.skinAges.get(level).layerSettings.get(layer).brightness = 0.3f + (minecraft.player.level.random.nextFloat() * 0.2f);
-					preset.skinAges.get(level).layerSettings.get(layer).modifiedColor = true;
+					Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, handler), layer, key, type);
+					
+					if(text != null && text.randomHue) {
+						preset.skinAges.get(level).layerSettings.get(layer).hue = 0.25f + (minecraft.player.level.random.nextFloat() * 0.5f);
+						preset.skinAges.get(level).layerSettings.get(layer).saturation = 0.25f + (minecraft.player.level.random.nextFloat() * 0.5f);
+						preset.skinAges.get(level).layerSettings.get(layer).brightness = 0.3f + (minecraft.player.level.random.nextFloat() * 0.2f);
+						preset.skinAges.get(level).layerSettings.get(layer).modifiedColor = true;
+					}
 				}
 				handler.getSkin().updateLayers.add(layer);
 			}
@@ -616,7 +617,7 @@ public class DragonEditorScreen extends Screen
 			@Override
 			public void renderButton(MatrixStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_)
 			{
-				Minecraft.getInstance().getTextureManager().bind(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/reset_button.png"));
+				Minecraft.getInstance().getTextureManager().bind(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/reset_position_button.png"));
 				blit(stack, x, y, 0, 0, width, height, width, height);
 				
 				if (this.isHovered()) {
@@ -631,9 +632,9 @@ public class DragonEditorScreen extends Screen
 				super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 			}
 		});
-		
-		addButton(new ExtendedCheckbox(guiLeft + 230, 11, 32, 16, 16, new TranslationTextComponent("ds.gui.dragon_editor.show_ui"), showUi, (p) -> showUi = p.selected()));
-		addButton(new ScreenshotButton(this));
+		addButton(new ExtendedCheckbox(guiLeft - 15, 11, 32, 16, 16, new TranslationTextComponent("ds.gui.dragon_editor.show_ui"), showUi, (p) -> showUi = p.selected()));
+		addButton(new ScreenshotButton( guiLeft + 240, 10, 18, 18, StringTextComponent.EMPTY, (s) -> {}, this));
+		addButton(new BackgroundColorButton(guiLeft - 45, 10, 18, 18, StringTextComponent.EMPTY, (s) -> {}, this));
 	}
 	
 	private static ResourceLocation backgroundTexture = new ResourceLocation("textures/block/dirt.png");
@@ -648,9 +649,9 @@ public class DragonEditorScreen extends Screen
 	boolean autosave = false;
 	
 	@Override
-	public void render(MatrixStack stack, int p_230430_2_, int p_230430_3_, float p_230430_4_)
+	public void render(MatrixStack stack, int pMouseX, int pMouseY, float pPartialTicks)
 	{
-		tick += p_230430_4_;
+		tick += pPartialTicks;
 		if(tick >= (60 * 20)){
 			autosave = true;
 			save();
@@ -690,16 +691,40 @@ public class DragonEditorScreen extends Screen
 			SkinsScreen.drawNonShadowLineBreak(stack, font, new StringTextComponent(WordUtils.capitalize(animations[curAnimation].replace("_", " "))), width / 2, height / 2 + 72, DyeColor.GRAY.getTextColor());
 		}
 		
-		super.render(stack, p_230430_2_, p_230430_3_, p_230430_4_);
+		super.render(stack, pMouseX, pMouseY, pPartialTicks);
 		
 		for(int x = 0; x < this.children.size(); ++x) {
 			IGuiEventListener ch = children.get(x);
 			if(ch instanceof IRenderable){
-				((IRenderable)ch).render(stack, p_230430_2_, p_230430_3_, p_230430_4_);
+				((IRenderable)ch).render(stack, pMouseX, pMouseY, pPartialTicks);
+			}
+		}
+		
+		
+		for(int x = 0; x < this.children.size(); ++x) {
+			IGuiEventListener ch = children.get(x);
+			if(ch instanceof DropDownButton) {
+				DropDownButton btn = (DropDownButton)ch;
+				if (btn.toggled && btn.list != null) {
+					for (DropdownEntry child : btn.list.children()) {
+						if(child instanceof DragonEditorDropdownEntry){
+							DragonEditorDropdownEntry ent = (DragonEditorDropdownEntry)child;
+							
+							if(ent.button != null && ent.button.isHovered()){
+								ent.lateRender(stack, pMouseX, pMouseY, pPartialTicks);
+							}
+						}
+					}
+				}
 			}
 		}
 	}
 	
+	@Override
+	public void renderBackground(MatrixStack pMatrixStack, int pVOffset)
+	{
+		super.renderBackground(pMatrixStack, pVOffset);
+	}
 	
 	public void confirm()
 	{

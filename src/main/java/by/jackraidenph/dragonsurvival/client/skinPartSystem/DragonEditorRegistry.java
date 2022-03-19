@@ -5,6 +5,7 @@ import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.DragonEditor
 import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.DragonEditorObject.Texture;
 import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.SavedSkinPresets;
 import by.jackraidenph.dragonsurvival.client.skinPartSystem.objects.SkinPreset;
+import by.jackraidenph.dragonsurvival.common.capability.subcapabilities.SkinCap;
 import by.jackraidenph.dragonsurvival.misc.DragonLevel;
 import by.jackraidenph.dragonsurvival.misc.DragonType;
 import com.google.gson.Gson;
@@ -32,12 +33,28 @@ public class DragonEditorRegistry
 	public static SavedSkinPresets savedCustomizations = null;
 	private static boolean init = false;
 	
+	public static HashMap<DragonType, HashMap<DragonLevel, HashMap<EnumSkinLayer, String>>> defaultSkinValues = new HashMap<>();
+	
+	public static String getDefaultPart(DragonType type, DragonLevel level, EnumSkinLayer layer){
+		return defaultSkinValues.getOrDefault(type, new HashMap<>()).getOrDefault(level, new HashMap<>()).getOrDefault(layer, SkinCap.defaultSkinValue);
+	}
+	
 	public static File folder;
 	public static File savedFile;
 	
 	@OnlyIn( Dist.CLIENT)
 	@SubscribeEvent
 	public static void clientStart(FMLClientSetupEvent event){
+		DragonEditorRegistry.reload(Minecraft.getInstance().getResourceManager(), CUSTOMIZATION);
+		
+		if (Minecraft.getInstance().getResourceManager() instanceof IReloadableResourceManager) {
+			((IReloadableResourceManager) Minecraft.getInstance().getResourceManager()).registerReloadListener(
+					(IResourceManagerReloadListener) manager -> {
+						CUSTOMIZATIONS.clear();
+						DragonEditorRegistry.reload(Minecraft.getInstance().getResourceManager(), CUSTOMIZATION);
+					});
+		}
+		
 		folder = new File(Minecraft.getInstance().gameDirectory + "/config/dragon-survival/");
 		savedFile = new File(folder + "/" + SAVED_FILE_NAME);
 		
@@ -58,7 +75,11 @@ public class DragonEditorRegistry
 					savedCustomizations.current.computeIfAbsent(type, (b) -> new HashMap<>());
 					
 					for (int i = 0; i < 9; i++) {
-						savedCustomizations.skinPresets.get(type).computeIfAbsent(i, (b) -> new SkinPreset());
+						savedCustomizations.skinPresets.get(type).computeIfAbsent(i, (b) -> {
+							SkinPreset preset = new SkinPreset();
+							preset.initDefaults(type);
+							return preset;
+						});
 					}
 					
 					for (DragonLevel level : DragonLevel.values()) {
@@ -84,17 +105,6 @@ public class DragonEditorRegistry
 				e.printStackTrace();
 			}
 		}
-		
-		
-		DragonEditorRegistry.reload(Minecraft.getInstance().getResourceManager(), CUSTOMIZATION);
-		
-		if (Minecraft.getInstance().getResourceManager() instanceof IReloadableResourceManager) {
-			((IReloadableResourceManager) Minecraft.getInstance().getResourceManager()).registerReloadListener(
-					(IResourceManagerReloadListener) manager -> {
-						CUSTOMIZATIONS.clear();
-						DragonEditorRegistry.reload(Minecraft.getInstance().getResourceManager(), CUSTOMIZATION);
-					});
-		}
 	}
 	
 	protected static void reload(IResourceManager manager, ResourceLocation location){
@@ -112,6 +122,8 @@ public class DragonEditorRegistry
 			dragonType(DragonType.SEA, je.sea_dragon);
 			dragonType(DragonType.CAVE, je.cave_dragon);
 			dragonType(DragonType.FOREST, je.forest_dragon);
+			
+			defaultSkinValues = je.defaults;
 			
 		} catch (IOException e) {
 			e.printStackTrace();

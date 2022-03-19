@@ -2,12 +2,12 @@ package by.jackraidenph.dragonsurvival.common.capability.subcapabilities;
 
 import by.jackraidenph.dragonsurvival.client.emotes.Emote;
 import by.jackraidenph.dragonsurvival.client.emotes.EmoteRegistry;
-import by.jackraidenph.dragonsurvival.common.capability.NBTInterface;
+import by.jackraidenph.dragonsurvival.common.capability.DragonStateHandler;
 import net.minecraft.nbt.CompoundNBT;
 
 import java.util.Objects;
 
-public class EmoteCap implements NBTInterface
+public class EmoteCap extends SubCap
 {
 	private Emote currentEmote;
 	public int emoteTick;
@@ -16,6 +16,11 @@ public class EmoteCap implements NBTInterface
 	public int serverTick;
 	
 	public boolean emoteMenuOpen = false;
+	
+	public EmoteCap(DragonStateHandler handler)
+	{
+		super(handler);
+	}
 	
 	public Emote getCurrentEmote()
 	{
