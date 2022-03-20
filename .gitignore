@@ -28,3 +28,4 @@ run2
 logs
 gradle/crowdin.properties
 *.sh
+package-lock.json

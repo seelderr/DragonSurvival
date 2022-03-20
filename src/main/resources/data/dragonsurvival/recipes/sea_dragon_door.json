@@ -1,12 +1,12 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-     {
-       "item": "minecraft:prismarine"
-     },
-     {
-       "tag": "dragonsurvival:wooden_dragon_doors"
-     }
+    {
+      "item": "minecraft:prismarine"
+    },
+    {
+      "tag": "dragonsurvival:wooden_dragon_doors"
+    }
   ],
   "result": {
     "item": "dragonsurvival:sea_dragon_door",

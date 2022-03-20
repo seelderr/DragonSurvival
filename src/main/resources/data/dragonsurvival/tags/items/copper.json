@@ -1,7 +1,9 @@
 {
   "replace": false,
   "values": [
-    {"id": "cavesandcliffs:raw_copper",
-      "required": false}
+    {
+      "id": "cavesandcliffs:raw_copper",
+      "required": false
+    }
   ]
 }
