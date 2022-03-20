@@ -1,3 +1,10 @@
+### [0.13.18](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.17...0.13.18) (2022-03-20)
+
+
+### Features
+
+* Editor part preview buttons, and some "light" reformatting ([ffdf406](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/ffdf40650bfac889f8daa37451161a6e0dc79249))
+
 ### [0.13.17](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.16...0.13.17) (2022-03-19)
 
 ### [0.13.16](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.15...0.13.16) (2022-03-19)
