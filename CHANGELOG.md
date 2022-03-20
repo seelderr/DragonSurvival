@@ -1,3 +1,10 @@
+### [0.13.20](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.19...0.13.20) (2022-03-20)
+
+
+### Bug Fixes
+
+* Stupid github ([a495a7b](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/a495a7be33c055b4d9293b6758a970af3003de17))
+
 ### [0.13.19](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.18...0.13.19) (2022-03-20)
 
 ### [0.13.18](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.17...0.13.18) (2022-03-20)
