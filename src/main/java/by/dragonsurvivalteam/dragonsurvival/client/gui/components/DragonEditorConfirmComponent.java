@@ -40,7 +40,7 @@ public class DragonEditorConfirmComponent extends FocusableGui implements IRende
 		this.xSize = xSize;
 		this.ySize = ySize;
 
-		btn1 = new ExtendedButton(x + 19, y + 120, 41, 21, DialogTexts.GUI_YES, null){
+		btn1 = new ExtendedButton(x + 19, y + 133, 41, 21, DialogTexts.GUI_YES, null){
 			@Override
 			public void renderButton(MatrixStack mStack, int mouseX, int mouseY, float partial){
 				drawCenteredString(mStack, Minecraft.getInstance().font, getMessage(), this.x + this.width / 2, this.y + (this.height - 8) / 2, getFGColor());
@@ -56,7 +56,7 @@ public class DragonEditorConfirmComponent extends FocusableGui implements IRende
 			}
 		};
 
-		btn2 = new ExtendedButton(x + 66, y + 120, 41, 21, DialogTexts.GUI_NO, null){
+		btn2 = new ExtendedButton(x + 66, y + 133, 41, 21, DialogTexts.GUI_NO, null){
 			@Override
 			public void renderButton(MatrixStack mStack, int mouseX, int mouseY, float partial){
 				drawCenteredString(mStack, Minecraft.getInstance().font, getMessage(), this.x + this.width / 2, this.y + (this.height - 8) / 2, getFGColor());
@@ -92,7 +92,7 @@ public class DragonEditorConfirmComponent extends FocusableGui implements IRende
 		String key = "ds.gui.dragon_editor.confirm." + (!ConfigHandler.SERVER.saveAllAbilities.get() && !ConfigHandler.SERVER.saveGrowthStage.get() ? "all" : (ConfigHandler.SERVER.saveAllAbilities.get() && !ConfigHandler.SERVER.saveGrowthStage.get() ? "ability" : !ConfigHandler.SERVER.saveAllAbilities.get() && ConfigHandler.SERVER.saveGrowthStage.get() ? "growth" : ""));
 		String text = new TranslationTextComponent(key).getString();
 		blit(pMatrixStack, x, y, 0, 0, xSize, ySize);
-		TextRenderUtil.drawCenteredScaledTextSplit(pMatrixStack, x + xSize / 2, y + 42, 0.65f, text, DyeColor.WHITE.getTextColor(), xSize - 10, 101);
+		TextRenderUtil.drawCenteredScaledTextSplit(pMatrixStack, x + xSize / 2, y + 42, 1f, text, DyeColor.WHITE.getTextColor(), xSize - 10, 101);
 
 
 		btn1.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
