@@ -90,7 +90,6 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer>{
 		int sizeOffset = (int)(handler.getSize() - handler.getLevel().size) / 2;
 
 		float sizef = Math.min(30 - sizeOffset, 30);
-		RenderSystem.pushMatrix();
 		RenderSystem.translatef(0f, sizef / 10f, 0f);
 		InventoryScreen.renderEntityInInventory(i + 65, j + 60, (int)sizef, (float)(i + 51 - mouseX), (float)(j + 75 - 50 - mouseY), this.minecraft.player);
 

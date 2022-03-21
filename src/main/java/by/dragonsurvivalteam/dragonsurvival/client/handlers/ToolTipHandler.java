@@ -22,6 +22,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -112,6 +113,15 @@ public class ToolTipHandler{
 	}
 
 	@SubscribeEvent
+	public static void postScreenRender(GuiScreenEvent.DrawScreenEvent.Post event){
+		for(Widget btn : Minecraft.getInstance().screen.buttons){
+			if(btn instanceof HelpButton && btn.isHovered()){
+				btn.renderToolTip(event.getMatrixStack(), event.getMouseX(), event.getMouseY());
+			}
+		}
+	}
+
+	@SubscribeEvent
 	public static void onPostTooltipEvent(RenderTooltipEvent.PostText event){
 		boolean render = isHelpText();
 
@@ -148,24 +158,25 @@ public class ToolTipHandler{
 			return;
 		}
 
-		matrix.pushPose();
 
+		int zLevel = 400;
+
+		RenderSystem.disableRescaleNormal();
+		RenderSystem.disableDepthTest();
 		RenderSystem.enableBlend();
 
-		matrix.translate(0, 0, 610.0);
+		AbstractGui.blit(matrix, x - 8 - 6, y - 8 - 6, zLevel, 1, 1 % texHeight , 16, 16, texWidth, texHeight);
+		AbstractGui.blit(matrix, x + width - 8 + 6, y - 8 - 6, zLevel, texWidth - 16 - 1, 1 % texHeight, 16, 16, texWidth, texHeight);
 
-		AbstractGui.blit(matrix, x - 8 - 6, y - 8 - 6, 1, 1 % texHeight, 16, 16, texWidth, texHeight);
-		AbstractGui.blit(matrix, x + width - 8 + 6, y - 8 - 6, texWidth - 16 - 1, 1 % texHeight, 16, 16, texWidth, texHeight);
+		AbstractGui.blit(matrix, x - 8 - 6, y + height - 8 + 6, zLevel, 1, 1 % texHeight + 16, 16, 16, texWidth, texHeight);
+		AbstractGui.blit(matrix, x + width - 8 + 6, y + height - 8 + 6, zLevel, texWidth - 16 - 1, 1 % texHeight + 16, 16, 16, texWidth, texHeight);
 
-		AbstractGui.blit(matrix, x - 8 - 6, y + height - 8 + 6, 1, 1 % texHeight + 16, 16, 16, texWidth, texHeight);
-		AbstractGui.blit(matrix, x + width - 8 + 6, y + height - 8 + 6, texWidth - 16 - 1, 1 % texHeight + 16, 16, 16, texWidth, texHeight);
-
-		AbstractGui.blit(matrix, x + (width / 2) - 47, y - 16, 16 + 2 * texWidth + 1, 1 % texHeight, 94, 16, texWidth, texHeight);
-		AbstractGui.blit(matrix, x + (width / 2) - 47, y + height, 16 + 2 * texWidth + 1, 1 % texHeight + 16, 94, 16, texWidth, texHeight);
+		AbstractGui.blit(matrix, x + (width / 2) - 47, y - 16, zLevel, 16 + 2 * texWidth + 1, 1 % texHeight, 94, 16, texWidth, texHeight);
+		AbstractGui.blit(matrix, x + (width / 2) - 47, y + height, zLevel, 16 + 2 * texWidth + 1, 1 % texHeight + 16, 94, 16, texWidth, texHeight);
 
 		RenderSystem.disableBlend();
-
-		matrix.popPose();
+		RenderSystem.enableDepthTest();
+		RenderSystem.enableRescaleNormal();
 	}
 
 	private static boolean isHelpText(){

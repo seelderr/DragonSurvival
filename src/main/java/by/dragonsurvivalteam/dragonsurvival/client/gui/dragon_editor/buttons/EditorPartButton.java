@@ -97,8 +97,8 @@ public class EditorPartButton extends ExtendedButton {
 
 		if(layer == EnumSkinLayer.EYES){
 			handler.getSkin().skinPreset.skinAges.get(DragonLevel.ADULT).wings = false;
-			zoom = 100;
-			yOffset = -1f;
+			zoom = 250;
+			yOffset = -1.05f;
 			xOffset = 1f;
 			xRot = -10;
 			yRot = 0;

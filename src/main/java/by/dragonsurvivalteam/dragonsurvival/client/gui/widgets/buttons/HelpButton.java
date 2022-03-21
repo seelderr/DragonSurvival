@@ -57,20 +57,13 @@ public class HelpButton extends ExtendedButton{
 		}
 
 		pMatrixStack.popPose();
-
-		if(this.isHovered()){
-			this.renderToolTip(pMatrixStack, pMouseX, pMouseY);
-		}
 	}
 
 	@Override
-	public void render(MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
-		super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
-		if(isHovered() && this.visible){
-			GuiUtils.drawHoveringText(p_230430_1_, Arrays.asList(new TranslationTextComponent(text)), p_230430_2_, p_230430_3_, Minecraft.getInstance().screen.width, Minecraft.getInstance().screen.height, 200, Minecraft.getInstance().font);
-		}
-	}
+	public void renderToolTip(MatrixStack pPoseStack, int pMouseX, int pMouseY){
+		GuiUtils.drawHoveringText(pPoseStack, Arrays.asList(new TranslationTextComponent(text)), pMouseX, pMouseY, Minecraft.getInstance().screen.width, Minecraft.getInstance().screen.height, 200, Minecraft.getInstance().font);
 
+	}
 	@Override
 	public boolean mouseClicked(double p_231044_1_, double p_231044_3_, int p_231044_5_){
 		return false;
