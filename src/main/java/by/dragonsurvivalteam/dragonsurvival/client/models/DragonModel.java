@@ -34,7 +34,6 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity>{
 	private final double lookSpeed = 0.05;
 	private final double lookDistance = 10;
 	private ResourceLocation currentTexture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/cave_newborn.png");
-	private final ResourceLocation blankSkin = new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/blank_skin.png");
 
 	@Override
 	public ResourceLocation getModelLocation(DragonEntity dragonEntity){
@@ -46,7 +45,7 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity>{
 		DragonStateHandler handler = DragonStateProvider.getCap(dragonEntity.getPlayer()).orElse(null);
 
 		if(handler.getSkin().blankSkin){
-			return blankSkin;
+			return new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/blank_skin_" + handler.getType().name().toLowerCase(Locale.ROOT) + ".png");
 		}
 
 		if(currentTexture == null){
