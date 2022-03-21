@@ -575,6 +575,7 @@ public class DragonEditorScreen extends Screen{
 		if(currentSelected != lastSelected){
 			preset = new SkinPreset();
 			preset.readNBT(DragonEditorRegistry.savedCustomizations.skinPresets.get(type).get(currentSelected).writeNBT());
+
 			handler.getSkin().skinPreset = preset;
 		}
 

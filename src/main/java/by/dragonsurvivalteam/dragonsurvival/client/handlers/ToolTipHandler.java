@@ -114,9 +114,11 @@ public class ToolTipHandler{
 
 	@SubscribeEvent
 	public static void postScreenRender(GuiScreenEvent.DrawScreenEvent.Post event){
-		for(Widget btn : Minecraft.getInstance().screen.buttons){
-			if(btn instanceof HelpButton && btn.isHovered()){
-				btn.renderToolTip(event.getMatrixStack(), event.getMouseX(), event.getMouseY());
+		if(Minecraft.getInstance().screen != null && Minecraft.getInstance().screen.buttons != null){
+			for(Widget btn : Minecraft.getInstance().screen.buttons){
+				if(btn instanceof HelpButton && btn.isHovered()){
+					btn.renderToolTip(event.getMatrixStack(), event.getMouseX(), event.getMouseY());
+				}
 			}
 		}
 	}

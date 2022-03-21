@@ -88,78 +88,81 @@ public class SkinsScreen extends Screen{
 		int startX = this.guiLeft;
 		int startY = this.guiTop;
 
-		DragonStateHandler handler = DragonStateProvider.getCap(getMinecraft().player).orElse(null);
+		stack.pushPose();
+		final IBone neckandHead = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("Neck");
 
-		if(handler != null){
-			stack.pushPose();
-			final IBone neckandHead = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("Neck");
+		if(neckandHead != null){
+			neckandHead.setHidden(false);
+		}
 
-			if(neckandHead != null){
-				neckandHead.setHidden(false);
-			}
-			DragonEntity dragon = FakeClientPlayerUtils.getFakeDragon(0, this.handler);
-			EntityRenderer<? super DragonEntity> dragonRenderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(dragon);
+		DragonEntity dragon = FakeClientPlayerUtils.getFakeDragon(0, this.handler);
+		EntityRenderer<? super DragonEntity> dragonRenderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(dragon);
 
+		if(noSkin && Objects.equals(playerName, minecraft.player.getGameProfile().getName())){
+			ClientDragonRender.dragonModel.setCurrentTexture(null);
+			((DragonRenderer)dragonRenderer).glowTexture = null;
+		}else{
 			ClientDragonRender.dragonModel.setCurrentTexture(skinTexture);
 			((DragonRenderer)dragonRenderer).glowTexture = glowTexture;
-			float scale = zoom;
-			stack.scale(scale, scale, scale);
-
-			if(!loading){
-				this.handler.setHasWings(true);
-				this.handler.setSize(level.size);
-				this.handler.setType(DragonUtils.getDragonType(minecraft.player));
-
-				handler.getSkin().skinPreset.initDefaults(handler);
-
-				if(noSkin && playerName == minecraft.player.getGameProfile().getName()){
-					this.handler.getSkin().skinPreset = DragonUtils.getHandler(minecraft.player).getSkin().skinPreset;
-					this.handler.getSkin().skinPreset.skinAges.get(level).defaultSkin = false;
-				}else{
-					this.handler.getSkin().skinPreset.skinAges.get(level).defaultSkin = true;
-				}
-
-				FakeClientPlayerUtils.getFakePlayer(0, this.handler).animationSupplier = () -> "fly";
-				RenderSystem.pushMatrix();
-				RenderSystem.translatef(0, 0, 100);
-				ClientDragonRender.renderEntityInInventory(dragon, startX + 15, startY + 70, scale, xRot, yRot);
-				RenderSystem.popMatrix();
-			}
-
-			((DragonRenderer)dragonRenderer).glowTexture = null;
-
-			stack.popPose();
-
-			RenderSystem.translatef(0F, 0F, 400);
-
-			this.minecraft.getTextureManager().bind(BACKGROUND_TEXTURE);
-			blit(stack, startX + 128, startY, 0, 0, 164, 256);
-
-			drawNonShadowString(stack, minecraft.font, new TranslationTextComponent("ds.gui.skins").withStyle(TextFormatting.DARK_GRAY), startX + 128 + ((imageWidth) / 2), startY + 7, -1);
-			drawCenteredString(stack, minecraft.font, new TranslationTextComponent("ds.gui.skins.toggle"), startX + 128 + ((imageWidth) / 2), startY + 30, -1);
-
-			drawNonShadowString(stack, minecraft.font, new StringTextComponent(playerName + " - " + level.getName()).withStyle(TextFormatting.GRAY), startX + 15, startY - 15, -1);
-
-			if(!loading){
-				if(noSkin){
-					if(playerName == minecraft.player.getGameProfile().getName()){
-						drawNonShadowLineBreak(stack, minecraft.font, new TranslationTextComponent("ds.gui.skins.noskin.yours").withStyle(TextFormatting.DARK_GRAY), startX + 40, startY + this.imageHeight - 20, -1);
-					}else{
-						drawNonShadowLineBreak(stack, minecraft.font, new TranslationTextComponent("ds.gui.skins.noskin").withStyle(TextFormatting.DARK_GRAY), startX + 65, startY + this.imageHeight - 20, -1);
-					}
-				}
-			}
-
-			super.render(stack, mouseX, mouseY, partialTicks);
-
-			for(Widget btn : buttons){
-				if(btn.isHovered()){
-					btn.renderToolTip(stack, mouseX, mouseY);
-				}
-			}
-
-			RenderSystem.translatef(0F, 0F, -400f);
 		}
+
+		float scale = zoom;
+		stack.scale(scale, scale, scale);
+
+		if(!loading){
+			this.handler.setHasWings(true);
+			this.handler.setSize(level.size);
+			this.handler.setType(DragonUtils.getDragonType(minecraft.player));
+
+			this.handler.getSkin().skinPreset.initDefaults(this.handler);
+
+			if(noSkin && Objects.equals(playerName, minecraft.player.getGameProfile().getName())){
+				this.handler.getSkin().skinPreset.readNBT(DragonUtils.getHandler(minecraft.player).getSkin().skinPreset.writeNBT());;
+				this.handler.getSkin().skinPreset.skinAges.get(level).defaultSkin = false;
+			}else{
+				this.handler.getSkin().skinPreset.skinAges.get(level).defaultSkin = true;
+			}
+
+			FakeClientPlayerUtils.getFakePlayer(0, this.handler).animationSupplier = () -> "fly";
+			RenderSystem.pushMatrix();
+			RenderSystem.translatef(0, 0, 100);
+			ClientDragonRender.renderEntityInInventory(dragon, startX + 15, startY + 70, scale, xRot, yRot);
+			RenderSystem.popMatrix();
+		}
+
+		((DragonRenderer)dragonRenderer).glowTexture = null;
+
+		stack.popPose();
+
+		RenderSystem.translatef(0F, 0F, 400);
+
+		this.minecraft.getTextureManager().bind(BACKGROUND_TEXTURE);
+		blit(stack, startX + 128, startY, 0, 0, 164, 256);
+
+		drawNonShadowString(stack, minecraft.font, new TranslationTextComponent("ds.gui.skins").withStyle(TextFormatting.DARK_GRAY), startX + 128 + ((imageWidth) / 2), startY + 7, -1);
+		drawCenteredString(stack, minecraft.font, new TranslationTextComponent("ds.gui.skins.toggle"), startX + 128 + ((imageWidth) / 2), startY + 30, -1);
+
+		drawNonShadowString(stack, minecraft.font, new StringTextComponent(playerName + " - " + level.getName()).withStyle(TextFormatting.GRAY), startX + 15, startY - 15, -1);
+
+		if(!loading){
+			if(noSkin){
+				if(playerName == minecraft.player.getGameProfile().getName()){
+					drawNonShadowLineBreak(stack, minecraft.font, new TranslationTextComponent("ds.gui.skins.noskin.yours").withStyle(TextFormatting.DARK_GRAY), startX + 40, startY + this.imageHeight - 20, -1);
+				}else{
+					drawNonShadowLineBreak(stack, minecraft.font, new TranslationTextComponent("ds.gui.skins.noskin").withStyle(TextFormatting.DARK_GRAY), startX + 65, startY + this.imageHeight - 20, -1);
+				}
+			}
+		}
+
+		super.render(stack, mouseX, mouseY, partialTicks);
+
+		for(Widget btn : buttons){
+			if(btn.isHovered()){
+				btn.renderToolTip(stack, mouseX, mouseY);
+			}
+		}
+
+		RenderSystem.translatef(0F, 0F, -400f);
 	}
 
 	@Override
