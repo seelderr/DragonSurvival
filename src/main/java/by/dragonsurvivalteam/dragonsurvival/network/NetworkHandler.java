@@ -14,9 +14,6 @@ import by.dragonsurvivalteam.dragonsurvival.network.container.OpenInventory;
 import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.OpenDragonEditorPacket;
 import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncPlayerSkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.network.emotes.SyncEmote;
-import by.dragonsurvivalteam.dragonsurvival.network.emotes.SyncEmoteServer;
-import by.dragonsurvivalteam.dragonsurvival.network.emotes.SyncEmoteStats;
-import by.dragonsurvivalteam.dragonsurvival.network.emotes.SyncEmoteStatsServer;
 import by.dragonsurvivalteam.dragonsurvival.network.entity.PacketSyncPredatorStats;
 import by.dragonsurvivalteam.dragonsurvival.network.entity.PacketSyncXPDevour;
 import by.dragonsurvivalteam.dragonsurvival.network.entity.player.*;
@@ -94,10 +91,7 @@ public class NetworkHandler{
 		register(SyncPotionAddedEffect.class, new SyncPotionAddedEffect());
 
 		//Emote packets
-		register(SyncEmoteServer.class, new SyncEmoteServer());
 		register(SyncEmote.class, new SyncEmote());
-		register(SyncEmoteStatsServer.class, new SyncEmoteStatsServer());
-		register(SyncEmoteStats.class, new SyncEmoteStats());
 
 		//Config
 		register(SyncBooleanConfig.class, new SyncBooleanConfig());

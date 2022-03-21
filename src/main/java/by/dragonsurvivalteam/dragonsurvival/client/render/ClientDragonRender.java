@@ -447,24 +447,11 @@ public class ClientDragonRender{
 			return;
 		}
 
-		if(entity instanceof DragonEntity){
-			if(ClientDragonRender.dragonArmor == null){
-				ClientDragonRender.dragonArmor = DSEntities.DRAGON_ARMOR.create(Minecraft.getInstance().player.level);
-				assert ClientDragonRender.dragonArmor != null;
-				ClientDragonRender.dragonArmor.player = Minecraft.getInstance().player.getId();
-			}
-
-			if(!ClientDragonRender.playerDragonHashMap.containsKey(Minecraft.getInstance().player.getId())){
-				DragonEntity dummyDragon = DSEntities.DRAGON.create(Minecraft.getInstance().player.level);
-				dummyDragon.player = Minecraft.getInstance().player.getId();
-				ClientDragonRender.playerDragonHashMap.put(Minecraft.getInstance().player.getId(), new AtomicReference<>(dummyDragon));
-			}
-		}
-
 		RenderSystem.pushMatrix();
-		RenderSystem.translatef((float)x, (float)y, -200);
+		RenderSystem.translatef((float)x, (float)y, 1050.0F);
 		RenderSystem.scalef(1.0F, 1.0F, -1.0F);
 		MatrixStack matrixstack = new MatrixStack();
+		matrixstack.translate(0.0D, 0.0D, 1000.0D);
 		matrixstack.scale(scale, scale, scale);
 		Quaternion quaternion = Vector3f.ZP.rotationDegrees(180.0F);
 		Quaternion quaternion1 = Vector3f.XP.rotationDegrees(yRot * 10.0F);

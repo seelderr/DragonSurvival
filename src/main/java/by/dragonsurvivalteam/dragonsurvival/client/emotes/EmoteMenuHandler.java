@@ -6,8 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonSta
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
-import by.dragonsurvivalteam.dragonsurvival.network.emotes.SyncEmoteServer;
-import by.dragonsurvivalteam.dragonsurvival.network.emotes.SyncEmoteStatsServer;
+import by.dragonsurvivalteam.dragonsurvival.network.emotes.SyncEmote;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
@@ -159,7 +158,7 @@ public class EmoteMenuHandler{
 
 				if(handler != null){
 					handler.getEmotes().emoteMenuOpen = !handler.getEmotes().emoteMenuOpen;
-					NetworkHandler.CHANNEL.sendToServer(new SyncEmoteStatsServer(handler.getEmotes().emoteMenuOpen));
+					NetworkHandler.CHANNEL.sendToServer(new SyncEmote(Minecraft.getInstance().player.getId(), handler.getEmotes()));
 				}
 			}){
 				@Override
@@ -241,8 +240,10 @@ public class EmoteMenuHandler{
 	}
 
 	public static void setEmote(Emote emote){
-		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent((cap) -> cap.getEmotes().setCurrentEmote(emote));
-		NetworkHandler.CHANNEL.sendToServer(new SyncEmoteServer(emote != null ? emote.id : "nil"));
+		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent((cap) -> {
+			cap.getEmotes().setCurrentEmote(emote);
+			NetworkHandler.CHANNEL.sendToServer(new SyncEmote(Minecraft.getInstance().player.getId(), cap.getEmotes()));
+		});
 	}
 
 	public static List<Emote> getEmotes(){

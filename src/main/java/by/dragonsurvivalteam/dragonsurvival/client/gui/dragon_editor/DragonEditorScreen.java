@@ -160,7 +160,7 @@ public class DragonEditorScreen extends Screen{
 		this.guiLeft = (this.width - 256) / 2;
 		this.guiTop = (this.height - 120) / 2;
 
-		conf = new DragonEditorConfirmComponent(this, width / 2 - (130 / 2), height / 2 - (141 / 2), 130, 141);
+		conf = new DragonEditorConfirmComponent(this, width / 2 - (130 / 2), height / 2 - (141 / 2), 130, 154);
 		initDragonRender();
 
 		DragonStateHandler localHandler = DragonStateProvider.getCap(getMinecraft().player).orElse(null);

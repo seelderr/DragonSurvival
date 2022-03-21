@@ -6,6 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonSta
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.abilities.Actives.BreathAbilities.BreathAbility;
+import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
@@ -48,13 +49,9 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity>{
 	@Override
 	public void render(DragonEntity entity, float entityYaw, float partialTicks, MatrixStack stack, IRenderTypeBuffer bufferIn, int packedLightIn){
 		PlayerEntity player = entity.getPlayer();
-		DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+		DragonStateHandler handler = DragonUtils.getHandler(player);
 
-		boolean hasWings = true;
-
-		if(handler != null){
-			hasWings = handler.hasWings() && handler.getSkin().skinPreset.skinAges.get(handler.getLevel()).wings;
-		}
+		boolean hasWings = handler.hasWings() && handler.getSkin().skinPreset.skinAges.get(handler.getLevel()).wings;
 
 		final IBone leftwing = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("WingLeft");
 		final IBone rightWing = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("WingRight");
@@ -66,9 +63,11 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity>{
 		if(rightWing != null){
 			rightWing.setHidden(!hasWings);
 		}
+
 		if(getGeoModelProvider().getTextureLocation(entity) == null){
 			return;
 		}
+
 		super.render(entity, entityYaw, partialTicks, stack, bufferIn, packedLightIn);
 	}
 

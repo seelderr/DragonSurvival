@@ -9,8 +9,6 @@ import java.util.Objects;
 
 public class EmoteCap extends SubCap{
 	public int emoteTick;
-	public String serverEmote;
-	public int serverTick;
 	public boolean emoteMenuOpen = false;
 	private Emote currentEmote;
 
@@ -24,6 +22,7 @@ public class EmoteCap extends SubCap{
 
 		tag.putString("emote", getCurrentEmote() != null ? getCurrentEmote().animation : "nil");
 		tag.putBoolean("emoteOpen", emoteMenuOpen);
+		tag.putInt("emoteTick", emoteTick);
 
 		return tag;
 	}
@@ -46,6 +45,7 @@ public class EmoteCap extends SubCap{
 		}
 
 		emoteMenuOpen = tag.getBoolean("emoteOpen");
+		emoteTick = tag.getInt("emoteTick");
 	}
 
 	public void setCurrentEmote(Emote currentEmote){

@@ -12,7 +12,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPredicate;
 import net.minecraft.entity.LivingEntity;
@@ -20,7 +19,6 @@ import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3d;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.resource.GeckoLibCache;
@@ -90,40 +88,6 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity>{
 		}
 
 		DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
-
-		boolean renderRot = ConfigHandler.CLIENT.renderOtherPlayerRotation.get() || Minecraft.getInstance().player == player;
-		renderRot = false;
-
-		{
-			double curFlightY = MathHelper.lerp(0.1, dragonEntity.flightY, player.getDeltaMovement().y);
-			if(Float.isNaN((float)curFlightY)){
-				curFlightY = 0;
-			}
-
-			dragonEntity.flightY = curFlightY;
-
-			parser.setValue("query.flight_y", renderRot ? curFlightY : 0);
-		}
-
-		{
-			Vector3d vector3d1 = player.getDeltaMovement();
-			Vector3d vector3d = player.getViewVector(1f);
-			double d0 = Entity.getHorizontalDistanceSqr(vector3d1);
-			double d1 = Entity.getHorizontalDistanceSqr(vector3d);
-			double d2 = (vector3d1.x * vector3d.x + vector3d1.z * vector3d.z) / Math.sqrt(d0 * d1);
-			double d3 = vector3d1.x * vector3d.z - vector3d1.z * vector3d.x;
-
-			float rot = ((float)(Math.signum(d3) * Math.acos(d2))) * 2;
-
-			double curFlightX = MathHelper.lerp(0.1, Float.isNaN((float)dragonEntity.flightX) ? 0 : dragonEntity.flightX, rot);
-			if(Float.isNaN((float)curFlightX)){
-				curFlightX = 0;
-			}
-
-			dragonEntity.flightX = curFlightX;
-
-			parser.setValue("query.flight_x", renderRot ? curFlightX : 0);
-		}
 
 		parser.setValue("query.delta_y", player.getDeltaMovement().y);
 		parser.setValue("query.head_yaw", handler.getMovementData().headYaw);

@@ -1,82 +1,70 @@
 package by.dragonsurvivalteam.dragonsurvival.network.emotes;
 
-import by.dragonsurvivalteam.dragonsurvival.client.emotes.Emote;
-import by.dragonsurvivalteam.dragonsurvival.client.emotes.EmoteRegistry;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.EmoteCap;
+import by.dragonsurvivalteam.dragonsurvival.network.ISidedMessage;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.DistExecutor.SafeRunnable;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.fml.network.NetworkEvent.Context;
 
-import java.util.Objects;
 import java.util.function.Supplier;
 
-public class SyncEmote implements IMessage<SyncEmote>{
-	public int playerId;
-	public int emoteTick;
-	private String emote;
+public class SyncEmote extends ISidedMessage<SyncEmote>{
 
-	public SyncEmote(int playerId, String emote, int emoteTick){
-		this.emote = emote;
-		this.playerId = playerId;
-		this.emoteTick = emoteTick;
+	private CompoundNBT nbt;
+
+	public SyncEmote(int playerId, EmoteCap cap){
+		super(playerId);
+		nbt = cap.writeNBT();
+	}
+
+	public SyncEmote(int playerId, CompoundNBT nbt){
+		super(playerId);
+		this.nbt = nbt;
 	}
 
 	public SyncEmote(){
+		super(-1);
 	}
 
 	@Override
 	public void encode(SyncEmote message, PacketBuffer buffer){
 		buffer.writeInt(message.playerId);
-		buffer.writeUtf(message.emote);
-		buffer.writeInt(message.emoteTick);
+		buffer.writeNbt(message.nbt);
 	}
 
 	@Override
 	public SyncEmote decode(PacketBuffer buffer){
 		int playerId = buffer.readInt();
-		String emote = buffer.readUtf();
-		int emoteTick = buffer.readInt();
-		return new SyncEmote(playerId, emote, emoteTick);
+		CompoundNBT nbt = buffer.readNbt();
+		return new SyncEmote(playerId, nbt);
 	}
 
 	@Override
-	public void handle(SyncEmote message, Supplier<NetworkEvent.Context> supplier){
-		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> run(message, supplier));
+	public SyncEmote create(SyncEmote message){
+		return new SyncEmote(message.playerId, message.nbt);
 	}
 
-	@OnlyIn( Dist.CLIENT )
-	public void run(SyncEmote message, Supplier<NetworkEvent.Context> supplier){
-		NetworkEvent.Context context = supplier.get();
-		context.enqueueWork(() -> {
-			PlayerEntity thisPlayer = Minecraft.getInstance().player;
-			if(thisPlayer != null){
-				World world = thisPlayer.level;
-				Entity entity = world.getEntity(message.playerId);
-				if(entity instanceof PlayerEntity){
-					DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
-						if(!message.emote.equals("nil")){
-							for(Emote emote : EmoteRegistry.EMOTES){
-								if(Objects.equals(emote.id, message.emote)){
-									dragonStateHandler.getEmotes().setCurrentEmote(emote);
-									dragonStateHandler.getEmotes().emoteTick = message.emoteTick;
-									break;
-								}
-							}
-						}else{
-							dragonStateHandler.getEmotes().setCurrentEmote(null);
-						}
-					});
-				}
-			}
-			context.setPacketHandled(true);
+	@Override
+	public void runCommon(SyncEmote message, Supplier<Context> supplier){
+
+	}
+
+	@Override
+	public void runServer(SyncEmote message, Supplier<Context> supplier, ServerPlayerEntity sender){
+
+	}
+
+	@OnlyIn(Dist.CLIENT)
+	@Override
+	public void runClient(SyncEmote message, Supplier<Context> supplier, PlayerEntity targetPlayer){
+		DragonStateProvider.getCap(targetPlayer).ifPresent(dragonStateHandler -> {
+			dragonStateHandler.getEmotes().readNBT(message.nbt);
+
 		});
 	}
 }
