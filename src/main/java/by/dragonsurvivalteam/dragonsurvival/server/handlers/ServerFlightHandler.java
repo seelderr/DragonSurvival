@@ -98,7 +98,7 @@ public class ServerFlightHandler{
 			return;
 		}
 
-		DragonStateHandler dragonStateHandler = DragonStateProvider.getCap(player).orElse(null);
+		DragonStateHandler dragonStateHandler = DragonUtils.getHandler(player);
 		if(dragonStateHandler != null){
 			if(dragonStateHandler.hasFlown && player.isOnGround()){
 				if(dragonStateHandler.isWingsSpread() && player.isCreative()){
@@ -115,7 +115,7 @@ public class ServerFlightHandler{
 	}
 
 	public static boolean isFlying(LivingEntity player){
-		DragonStateHandler dragonStateHandler = DragonStateProvider.getCap(player).orElse(null);
+		DragonStateHandler dragonStateHandler = DragonUtils.getHandler(player);
 		return dragonStateHandler != null && dragonStateHandler.hasWings() && dragonStateHandler.isWingsSpread() && !player.isOnGround() && !player.isInWater() && !player.isInLava();
 	}
 
@@ -225,7 +225,7 @@ public class ServerFlightHandler{
 	}
 
 	public static boolean canSwimSpin(LivingEntity player){
-		DragonStateHandler dragonStateHandler = DragonStateProvider.getCap(player).orElse(null);
+		DragonStateHandler dragonStateHandler = DragonUtils.getHandler(player);
 		boolean validSwim = ((dragonStateHandler.getType() == SEA || dragonStateHandler.getType() == FOREST) && player.isInWater()) || (player.isInLava() && dragonStateHandler.getType() == CAVE);
 		return dragonStateHandler != null && validSwim && dragonStateHandler.hasWings() && !player.isOnGround();
 	}
@@ -274,7 +274,7 @@ public class ServerFlightHandler{
 	}
 
 	public static boolean isGliding(PlayerEntity player){
-		DragonStateHandler dragonStateHandler = DragonStateProvider.getCap(player).orElse(null);
+		DragonStateHandler dragonStateHandler = DragonUtils.getHandler(player);
 		boolean hasFood = player.getFoodData().getFoodLevel() > ConfigHandler.SERVER.flightHungerThreshold.get() || player.isCreative() || ConfigHandler.SERVER.allowFlyingWithoutHunger.get();
 		return hasFood && player.isSprinting() && isFlying(player);
 	}

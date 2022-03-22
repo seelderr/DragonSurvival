@@ -78,7 +78,7 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 				}
 			}
 
-			if(cap.getEmotes().getCurrentEmote() != null){
+			if(!cap.getEmotes().currentEmotes.isEmpty()){
 				if(!ConfigHandler.SERVER.canMoveInEmote.get()){
 					ci.setReturnValue(true);
 				}

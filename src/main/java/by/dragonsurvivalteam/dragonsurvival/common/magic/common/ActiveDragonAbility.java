@@ -4,6 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ManaHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
@@ -196,7 +197,7 @@ public class ActiveDragonAbility extends DragonAbility{
 			return false;
 		}
 
-		DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+		DragonStateHandler handler = DragonUtils.getHandler(player);
 		if(handler == null){
 			return false;
 		}

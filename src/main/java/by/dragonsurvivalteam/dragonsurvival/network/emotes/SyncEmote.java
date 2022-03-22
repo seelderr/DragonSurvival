@@ -56,7 +56,9 @@ public class SyncEmote extends ISidedMessage<SyncEmote>{
 
 	@Override
 	public void runServer(SyncEmote message, Supplier<Context> supplier, ServerPlayerEntity sender){
-
+		DragonStateProvider.getCap(sender).ifPresent(dragonStateHandler -> {
+			dragonStateHandler.getEmotes().readNBT(message.nbt);
+		});
 	}
 
 	@OnlyIn(Dist.CLIENT)
@@ -64,7 +66,6 @@ public class SyncEmote extends ISidedMessage<SyncEmote>{
 	public void runClient(SyncEmote message, Supplier<Context> supplier, PlayerEntity targetPlayer){
 		DragonStateProvider.getCap(targetPlayer).ifPresent(dragonStateHandler -> {
 			dragonStateHandler.getEmotes().readNBT(message.nbt);
-
 		});
 	}
 }

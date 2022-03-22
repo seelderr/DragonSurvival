@@ -1,7 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.hitbox;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
@@ -91,12 +90,16 @@ public class DragonHitBox extends MobEntity{
 			}
 		}
 
-
-		DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
-
-		if(handler == null || handler.getMovementData() == null){
+		if(player == null){
 			return;
 		}
+
+		DragonStateHandler handler = DragonUtils.getHandler(player);
+
+		if(handler.getMovementData() == null){
+			return;
+		}
+
 		Vector3f offset = DragonUtils.getCameraOffset(player);
 
 		double size = handler.getSize();
@@ -105,7 +108,6 @@ public class DragonHitBox extends MobEntity{
 
 		Pose overridePose = DragonSizeHandler.overridePose(player);
 		height = DragonSizeHandler.calculateModifiedHeight(height, overridePose, true);
-
 
 		double headRot = handler.getMovementData().headYaw;
 		double pitch = handler.getMovementData().headPitch * -1;

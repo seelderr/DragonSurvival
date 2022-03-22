@@ -119,7 +119,7 @@ public class ClientDragonRender{
 			dummyDragon.player = player.getId();
 		}
 
-		DragonStateHandler cap = DragonStateProvider.getCap(player).orElse(null);
+		DragonStateHandler cap = DragonUtils.getHandler(player);
 		if(cap != null && cap.isDragon()){
 			renderPlayerEvent.setCanceled(true);
 			final float partialRenderTick = renderPlayerEvent.getPartialRenderTick();
@@ -291,7 +291,7 @@ public class ClientDragonRender{
 			return;
 		}
 
-		DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+		DragonStateHandler handler = DragonUtils.getHandler(player);
 		if(handler == null || !handler.isDragon()){
 			return;
 		}

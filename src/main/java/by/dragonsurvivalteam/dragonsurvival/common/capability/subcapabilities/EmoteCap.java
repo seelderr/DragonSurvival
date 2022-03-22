@@ -6,11 +6,14 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import net.minecraft.nbt.CompoundNBT;
 
 import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class EmoteCap extends SubCap{
-	public int emoteTick;
 	public boolean emoteMenuOpen = false;
-	private Emote currentEmote;
+
+	public static final int MAX_EMOTES = 4;
+	public CopyOnWriteArrayList<Emote> currentEmotes = new CopyOnWriteArrayList<>();
+	public CopyOnWriteArrayList<Integer> emoteTicks = new CopyOnWriteArrayList<>();
 
 	public EmoteCap(DragonStateHandler handler){
 		super(handler);
@@ -20,36 +23,40 @@ public class EmoteCap extends SubCap{
 	public CompoundNBT writeNBT(){
 		CompoundNBT tag = new CompoundNBT();
 
-		tag.putString("emote", getCurrentEmote() != null ? getCurrentEmote().animation : "nil");
-		tag.putBoolean("emoteOpen", emoteMenuOpen);
-		tag.putInt("emoteTick", emoteTick);
+		tag.putInt("emoteCount", currentEmotes.size());
 
-		return tag;
-	}
-
-	public Emote getCurrentEmote(){
-		return currentEmote;
-	}
-
-	@Override
-	public void readNBT(CompoundNBT tag){
-		String emoteId = tag.getString("emote");
-
-		if(!emoteId.equals("nil")){
-			for(Emote emote : EmoteRegistry.EMOTES){
-				if(Objects.equals(emote.animation, emoteId)){
-					setCurrentEmote(emote);
-					break;
-				}
+		for(int i = 0; i < MAX_EMOTES; i++){
+			if(currentEmotes.size() > i){
+				tag.putString("emote_" + i, currentEmotes.get(i).animation);
+				tag.putInt("emote_tick_" + i, emoteTicks.size() > i ? emoteTicks.get(i) : 0);
 			}
 		}
 
-		emoteMenuOpen = tag.getBoolean("emoteOpen");
-		emoteTick = tag.getInt("emoteTick");
-	}
+		tag.putBoolean("emoteOpen", emoteMenuOpen);
 
-	public void setCurrentEmote(Emote currentEmote){
-		this.currentEmote = currentEmote;
-		emoteTick = 0;
+		return tag;
+	}
+	@Override
+	public void readNBT(CompoundNBT tag){
+		int count = tag.getInt("emoteCount");
+
+		currentEmotes = new CopyOnWriteArrayList<>();
+		emoteTicks = new CopyOnWriteArrayList<>();
+
+		for(int i = 0; i < count; i++){
+			String emoteId = tag.getString("emote_" + i);
+			int emoteTick = tag.getInt("emote_tick_" + i);
+
+			Emote emote = EmoteRegistry.EMOTES.stream().filter((s) -> Objects.equals(s.animation, emoteId)).findFirst().orElseGet(() -> {
+				Emote em = new Emote();
+				em.animation = emoteId;
+				return em;
+			});
+
+			currentEmotes.add(0, emote);
+			emoteTicks.add(0, emoteTick);
+		}
+
+		emoteMenuOpen = tag.getBoolean("emoteOpen");
 	}
 }

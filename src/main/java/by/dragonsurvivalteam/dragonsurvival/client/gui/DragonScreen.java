@@ -9,6 +9,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonGrowthHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigUtils;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonLevel;
@@ -86,7 +87,7 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer>{
 		RenderSystem.disableBlend();
 
 		RenderSystem.enableScissor((int)((leftPos + 26) * Minecraft.getInstance().getWindow().getGuiScale()), (int)((height * Minecraft.getInstance().getWindow().getGuiScale()) - (topPos + 79) * Minecraft.getInstance().getWindow().getGuiScale()), (int)(76 * Minecraft.getInstance().getWindow().getGuiScale()), (int)(70 * Minecraft.getInstance().getWindow().getGuiScale()));
-		DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+		DragonStateHandler handler = DragonUtils.getHandler(player);
 		int sizeOffset = (int)(handler.getSize() - handler.getLevel().size) / 2;
 
 		float sizef = Math.min(30 - sizeOffset, 30);
@@ -323,7 +324,7 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer>{
 
 		this.leftPos = (this.width - this.imageWidth) / 2;
 
-		DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+		DragonStateHandler handler = DragonUtils.getHandler(player);
 
 		addButton(new TabButton(leftPos, topPos - 28, 0, this));
 		addButton(new TabButton(leftPos + 28, topPos - 26, 1, this));
@@ -460,7 +461,7 @@ public class DragonScreen extends DisplayEffectsScreen<DragonContainer>{
 			@Override
 			public void render(MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
 				this.active = clawsMenu;
-				DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+				DragonStateHandler handler = DragonUtils.getHandler(player);
 
 				if(handler != null && handler.getClawInventory().renderClaws && clawsMenu){
 					minecraft.getTextureManager().bind(DRAGON_CLAW_CHECKMARK);

@@ -170,6 +170,7 @@
       "animation": "",
       "locksHead": false,
       "duration": 40,
+      "blend": true,
       "sound": {
         "key": "minecraft:entity.polar_bear.warning",
         "interval": 30,
@@ -182,6 +183,7 @@
       "animation": "",
       "locksHead": false,
       "duration": 40,
+      "blend": true,
       "sound": {
         "key": "minecraft:entity.wolf.growl",
         "interval": 30,
@@ -194,6 +196,7 @@
       "animation": "",
       "locksHead": false,
       "duration": 40,
+      "blend": true,
       "sound": {
         "key": "minecraft:entity.cat.hiss",
         "interval": 30,
@@ -206,6 +209,7 @@
       "animation": "",
       "locksHead": false,
       "duration": 40,
+      "blend": true,
       "sound": {
         "key": "minecraft:entity.cat.purreow",
         "interval": 30,
@@ -218,6 +222,7 @@
       "animation": "sleep",
       "locksHead": true,
       "loops": true,
+      "blend": true,
       "sound": {
         "key": "minecraft:entity.fox.sleep",
         "interval": 100,
@@ -230,6 +235,7 @@
       "animation": "",
       "locksHead": false,
       "duration": 40,
+      "blend": true,
       "sound": {
         "key": "minecraft:entity.polar_bear.ambient_baby",
         "interval": 30,
@@ -242,6 +248,7 @@
       "animation": "",
       "locksHead": false,
       "duration": 100,
+      "blend": true,
       "sound": {
         "key": "minecraft:entity.cat.purr",
         "interval": 50,

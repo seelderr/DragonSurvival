@@ -19,6 +19,7 @@ import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.resources.IResourceManagerReloadListener;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -40,7 +41,7 @@ public class EditorPartButton extends ExtendedButton {
 	public Consumer<String> setter;
 	public DropDownButton source;
 	private final DragonEditorScreen screen;
-	private final StringTextComponent message;
+	private final TranslationTextComponent message;
 
 	private final DragonStateHandler handler = new DragonStateHandler();
 	private static final ConcurrentHashMap<String, ResourceLocation> textures = new ConcurrentHashMap<>();
@@ -52,14 +53,7 @@ public class EditorPartButton extends ExtendedButton {
 		this.source = source;
 		this.screen = screen;
 		this.layer = layer;
-		String val = (value.substring(0, 1).toUpperCase(Locale.ROOT) + value.substring(1).toLowerCase(Locale.ROOT)).replace("_", " ");
-
-		if(val.length() >= 30){
-			val = val.substring(0, 27) + "...";
-		}
-
-		message = new StringTextComponent(val);
-
+		message = new TranslationTextComponent("ds.skin_part." + value);
 		generateImage();
 	}
 
@@ -131,8 +125,8 @@ public class EditorPartButton extends ExtendedButton {
 		framebuffer.blitToScreen(width, height);
 
 		ClientDragonRender.dragonModel.setCurrentTexture(null);
-		FakeClientPlayerUtils.getFakePlayer(1, handler).animationSupplier = () -> "sit";
-		ClientDragonRender.renderEntityInInventory(FakeClientPlayerUtils.getFakeDragon(1, handler), width / 2, height / 2, 80 + (zoom * 2), xRot, yRot, xOffset, yOffset);
+		FakeClientPlayerUtils.getFakePlayer(2, handler).animationSupplier = () -> "sit";
+		ClientDragonRender.renderEntityInInventory(FakeClientPlayerUtils.getFakeDragon(2, handler), width / 2, height / 2, 80 + (zoom * 2), xRot, yRot, xOffset, yOffset);
 
 		NativeImage nativeimage = new NativeImage(width, height, false);
 		RenderSystem.bindTexture(framebuffer.getColorTextureId());

@@ -2,7 +2,6 @@ package by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem;
 
 import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.objects.DragonEditorObject.Texture;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.SkinCap;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
@@ -20,7 +19,7 @@ public class DragonEditorHandler{
 		}
 
 		if(layer == EnumSkinLayer.BASE && (key.equalsIgnoreCase("Skin") || key.equalsIgnoreCase(SkinCap.defaultSkinValue))){
-			DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+			DragonStateHandler handler = DragonUtils.getHandler(player);
 			return getSkinTexture(player, layer, type.name().toLowerCase() + "_base_" + handler.getLevel().ordinal(), type);
 		}
 

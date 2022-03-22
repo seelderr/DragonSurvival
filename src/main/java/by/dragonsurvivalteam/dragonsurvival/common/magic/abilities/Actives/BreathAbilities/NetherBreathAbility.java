@@ -8,9 +8,9 @@ import by.dragonsurvivalteam.dragonsurvival.client.sounds.SoundRegistry;
 import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.GenericCapability;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.GenericCapabilityProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.DragonAbilities;
+import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
@@ -184,7 +184,7 @@ public class NetherBreathAbility extends BreathAbility{
 		super.onEntityHit(entityHit);
 
 		if(!entityHit.level.isClientSide){
-			DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+			DragonStateHandler handler = DragonUtils.getHandler(player);
 
 			if(handler != null){
 				if(entityHit.level.random.nextInt(100) < (handler.getMagic().getAbilityLevel(DragonAbilities.BURN) * 15)){
@@ -221,7 +221,7 @@ public class NetherBreathAbility extends BreathAbility{
 					}
 				}
 			}
-			DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+			DragonStateHandler handler = DragonUtils.getHandler(player);
 
 			if(handler != null){
 				if(player.level.random.nextInt(100) < (handler.getMagic().getAbilityLevel(DragonAbilities.BURN) * 15)){

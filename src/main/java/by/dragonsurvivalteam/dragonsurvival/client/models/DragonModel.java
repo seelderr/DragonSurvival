@@ -87,7 +87,7 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity>{
 			return;
 		}
 
-		DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+		DragonStateHandler handler = DragonUtils.getHandler(player);
 
 		parser.setValue("query.delta_y", player.getDeltaMovement().y);
 		parser.setValue("query.head_yaw", handler.getMovementData().headYaw);
@@ -163,7 +163,7 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity>{
 		dragonEntity.tail_motion_up = query_tail_motion_up;
 		dragonEntity.tail_motion_side = query_tail_motion_side;
 
-		if(handler.getEmotes().getCurrentEmote() != null){
+		if(!handler.getEmotes().currentEmotes.isEmpty()){
 			EntityPredicate predicate = new EntityPredicate().range(lookDistance).allowSameTeam().allowInvulnerable().allowNonAttackable().selector(player::canSee);
 			Entity lookAt = player.level.getNearestLoadedEntity(LivingEntity.class, predicate, player, player.getX(), player.getEyeY(), player.getZ(), player.getBoundingBox().inflate(lookDistance, 3.0D, lookDistance));
 

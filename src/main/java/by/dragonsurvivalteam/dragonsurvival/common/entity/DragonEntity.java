@@ -7,11 +7,12 @@ import by.dragonsurvivalteam.dragonsurvival.client.render.util.AnimationTimer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.util.CommonTraits;
 import by.dragonsurvivalteam.dragonsurvival.client.render.util.CustomTickAnimationController;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.EmoteCap;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.common.AbilityAnimation;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.common.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.common.ISecondAnimation;
+import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import net.minecraft.entity.EntityType;
@@ -24,12 +25,12 @@ import net.minecraft.util.HandSide;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
-import software.bernie.geckolib3.core.AnimationState;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.Animation;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
 import software.bernie.geckolib3.core.controller.AnimationController;
+import software.bernie.geckolib3.core.controller.AnimationController.IAnimationPredicate;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
@@ -74,7 +75,6 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 	Emote lastEmote;
 	CustomTickAnimationController tailController;
 	CustomTickAnimationController headController;
-	CustomTickAnimationController emoteController;
 	CustomTickAnimationController biteAnimationController;
 	CustomTickAnimationController dragonAnimationController;
 	public DragonEntity(EntityType<? extends LivingEntity> type, World worldIn){
@@ -84,7 +84,13 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 	@Override
 	public void registerControllers(AnimationData animationData){
 		animationData.shouldPlayWhilePaused = true;
-		animationData.addAnimationController(emoteController = new CustomTickAnimationController(this, "2", 0, this::emotePredicate));
+
+		for(int i = 0; i < EmoteCap.MAX_EMOTES; i++){
+			int finalI = i;
+			IAnimationPredicate<DragonEntity> predicate = (s) -> emotePredicate(finalI, s);
+			animationData.addAnimationController(new CustomTickAnimationController(this, "2_" + i, 0, predicate));
+		}
+
 		animationData.addAnimationController(dragonAnimationController = new CustomTickAnimationController(this, "3", 2, this::predicate));
 		animationData.addAnimationController(biteAnimationController = new CustomTickAnimationController(this, "4", 0, this::bitePredicate));
 		animationData.addAnimationController(tailController = new CustomTickAnimationController(this, "5", 0, this::tailPredicate));
@@ -115,7 +121,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 
 	private <E extends IAnimatable> PlayState bitePredicate(AnimationEvent<E> animationEvent){
 		final PlayerEntity player = getPlayer();
-		DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+		DragonStateHandler handler = DragonUtils.getHandler(player);
 		AnimationBuilder builder = new AnimationBuilder();
 
 		if(handler != null){
@@ -179,26 +185,24 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 		return animation != null;
 	}
 
-	private <E extends IAnimatable> PlayState emotePredicate(AnimationEvent<E> animationEvent){
+	private <E extends IAnimatable> PlayState emotePredicate(int num, AnimationEvent<E> animationEvent){
 		final PlayerEntity player = getPlayer();
-		DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+		DragonStateHandler handler = DragonUtils.getHandler(player);
 
-		if(handler != null){
-			if(handler.getEmotes().getCurrentEmote() != null){
-				Emote emote = handler.getEmotes().getCurrentEmote();
+		if(handler.getEmotes().currentEmotes.size() > num){
+			Emote emote = handler.getEmotes().currentEmotes.get(num);
 
-				neckLocked = emote.locksHead;
-				tailLocked = emote.locksTail;
+			neckLocked = emote.locksHead;
+			tailLocked = emote.locksTail;
 
-				dragonAnimationController.speed = emote.speed;
+			dragonAnimationController.speed = emote.speed;
 
-				if(emote.animation != null && !emote.animation.isEmpty()){
-					animationEvent.getController().setAnimation(new AnimationBuilder().addAnimation(emote.animation, emote.loops));
-				}
-
-				lastEmote = emote;
-				return PlayState.CONTINUE;
+			if(emote.animation != null && !emote.animation.isEmpty()){
+				animationEvent.getController().setAnimation(new AnimationBuilder().addAnimation(emote.animation, emote.loops));
 			}
+
+			lastEmote = emote;
+			return PlayState.CONTINUE;
 		}
 
 		return PlayState.STOP;
@@ -216,13 +220,13 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 	private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> animationEvent){
 		final PlayerEntity player = getPlayer();
 		final AnimationController animationController = animationEvent.getController();
-		DragonStateHandler playerStateHandler = DragonStateProvider.getCap(player).orElse(null);
+		DragonStateHandler playerStateHandler = DragonUtils.getHandler(player);
 
 		AnimationBuilder builder = new AnimationBuilder();
 
 		dragonAnimationController.speed = 1;
 
-		if(player == null || playerStateHandler == null || (emoteController.getAnimationState() != AnimationState.Stopped && (playerStateHandler.getEmotes().getCurrentEmote() == null || !playerStateHandler.getEmotes().getCurrentEmote().blend))){
+		if(player == null || (!playerStateHandler.getEmotes().currentEmotes.isEmpty())){
 			animationEvent.getController().setAnimation(null);
 			animationEvent.getController().clearAnimationCache();
 			return PlayState.STOP;

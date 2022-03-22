@@ -31,6 +31,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncAltarCooldown;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.CompleteDataSync;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+import com.google.common.collect.EvictingQueue;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -55,6 +56,7 @@ import org.apache.commons.lang3.text.WordUtils;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class DragonEditorScreen extends Screen{
@@ -71,13 +73,46 @@ public class DragonEditorScreen extends Screen{
 	public DragonStateHandler handler = new DragonStateHandler();
 	public int backgroundColor = -804253680;
 	float tick = 0;
-	boolean autosave = false;
 	private final Screen source;
 	private final String[] animations = {"sit", "idle", "fly", "swim_fast", "run"};
 	private int curAnimation = 0;
 	private int lastSelected;
 	private boolean hasInit = false;
 	private DragonEditorConfirmComponent conf;
+
+	public static final int HISTORY_SIZE = 5;
+	public static final ConcurrentHashMap<Integer, EvictingQueue<SkinPreset>> UNDO_QUEUES = new ConcurrentHashMap<>();
+	public static final ConcurrentHashMap<Integer, EvictingQueue<SkinPreset>> REDO_QUEUES = new ConcurrentHashMap<>();
+
+	public void doAction(){
+		UNDO_QUEUES.computeIfAbsent(currentSelected, (s) -> EvictingQueue.create(HISTORY_SIZE));
+		REDO_QUEUES.computeIfAbsent(currentSelected, (s) -> EvictingQueue.create(HISTORY_SIZE));
+
+		REDO_QUEUES.get(currentSelected).clear();
+		UNDO_QUEUES.get(currentSelected).add(preset);
+	}
+
+	public void undoAction(){
+		UNDO_QUEUES.computeIfAbsent(currentSelected, (s) -> EvictingQueue.create(HISTORY_SIZE));
+		REDO_QUEUES.computeIfAbsent(currentSelected, (s) -> EvictingQueue.create(HISTORY_SIZE));
+
+		REDO_QUEUES.get(currentSelected).add(preset);
+		SkinPreset undoTemp = UNDO_QUEUES.get(currentSelected).poll();
+
+		preset = new SkinPreset();
+		preset.readNBT(undoTemp.writeNBT());
+	}
+
+	public void redoAction(){
+		UNDO_QUEUES.computeIfAbsent(currentSelected, (s) -> EvictingQueue.create(HISTORY_SIZE));
+		REDO_QUEUES.computeIfAbsent(currentSelected, (s) -> EvictingQueue.create(HISTORY_SIZE));
+
+		UNDO_QUEUES.get(currentSelected).add(preset);
+		SkinPreset redoTemp = REDO_QUEUES.get(currentSelected).poll();
+
+		preset = new SkinPreset();
+		preset.readNBT(redoTemp.writeNBT());
+	}
 
 	public DragonEditorScreen(Screen source){
 		this(source, DragonType.NONE);
@@ -93,9 +128,7 @@ public class DragonEditorScreen extends Screen{
 	public void render(MatrixStack stack, int pMouseX, int pMouseY, float pPartialTicks){
 		tick += pPartialTicks;
 		if(tick >= (60 * 20)){
-			autosave = true;
 			save();
-			autosave = false;
 			tick = 0;
 		}
 
@@ -112,7 +145,7 @@ public class DragonEditorScreen extends Screen{
 		FakeClientPlayerUtils.getFakePlayer(0, handler).animationSupplier = () -> animations[curAnimation];
 
 		stack.pushPose();
-		//stack.translate(0,0,-600);
+		stack.translate(0,0,-600);
 		this.renderBackground(stack);
 		stack.popPose();
 
@@ -209,7 +242,13 @@ public class DragonEditorScreen extends Screen{
 			String curValue = preset.skinAges.get(level).layerSettings.get(layers).selectedSkin;
 
 
-			DropDownButton btn = new DragonEditorDropdownButton(this, i < 5 ? DragonEditorScreen.this.width / 2 - 100 - 100 : DragonEditorScreen.this.width / 2 + 83, DragonEditorScreen.this.guiTop + 10 + ((i >= 5 ? (i - 5) * 30 : i * 30)), 90, 15, curValue, values, layers);
+			DropDownButton btn = new DragonEditorDropdownButton(this, i < 5 ? DragonEditorScreen.this.width / 2 - 100 - 100 : DragonEditorScreen.this.width / 2 + 83, DragonEditorScreen.this.guiTop + 10 + ((i >= 5 ? (i - 5) * 30 : i * 30)), 90, 15, curValue, values, layers){
+				public void updateMessage(){
+					if(current != null){
+						message = new TranslationTextComponent("ds.skin_part." + current);
+					}
+				}
+			};
 			addButton(btn);
 			addButton(new ArrowButton(btn.x - 15, btn.y + 1, 13, 13, false, (s) -> {
 				int index = 0;

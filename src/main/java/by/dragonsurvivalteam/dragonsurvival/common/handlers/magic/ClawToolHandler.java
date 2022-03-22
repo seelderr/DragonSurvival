@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.handlers.magic;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
@@ -73,7 +74,7 @@ public class ClawToolHandler{
 			PlayerEntity player = (PlayerEntity)ent;
 
 			if(!player.level.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) && !ConfigHandler.SERVER.keepClawItems.get()){
-				DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+				DragonStateHandler handler = DragonUtils.getHandler(player);
 
 				if(handler != null){
 					for(int i = 0; i < handler.getClawInventory().getClawsInventory().getContainerSize(); i++){
@@ -112,7 +113,7 @@ public class ClawToolHandler{
 		ItemStack harvestTool = mainStack;
 		float newSpeed = 0F;
 
-		DragonStateHandler cap = DragonStateProvider.getCap(player).orElse(null);
+		DragonStateHandler cap = DragonUtils.getHandler(player);
 
 		if((mainStack.getItem() instanceof ToolItem || mainStack.getItem() instanceof SwordItem || mainStack.getItem() instanceof ShearsItem || (mainStack.getItem() instanceof TieredItem))){
 			return mainStack;

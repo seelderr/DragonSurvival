@@ -2,7 +2,6 @@ package by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon;
 
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.abilities.Actives.BreathAbilities.BreathAbility;
@@ -112,7 +111,7 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity>{
 					bufferIn = rtb.getBuffer(RenderType.entityCutout(whTexture));
 				}
 			}else if(bone.getName().equals("BreathSource")){
-				DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+				DragonStateHandler handler = DragonUtils.getHandler(player);
 
 				if(handler != null){
 					if(handler.getMagic().getCurrentlyCasting() instanceof BreathAbility){

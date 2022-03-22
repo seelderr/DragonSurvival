@@ -1,7 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.blocks;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
@@ -242,7 +241,7 @@ public class SourceOfMagicBlock extends HorizontalBlock implements IWaterLoggabl
 		}else{
 			if(DragonUtils.isDragon(player) && player.getMainHandItem().isEmpty()){
 				if(player.getFeetBlockState().getBlock() == state.getBlock()){
-					DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+					DragonStateHandler handler = DragonUtils.getHandler(player);
 
 					if(handler != null){
 						if(!handler.getMagic().onMagicSource){

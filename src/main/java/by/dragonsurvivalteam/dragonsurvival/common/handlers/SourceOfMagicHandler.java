@@ -45,7 +45,7 @@ public class SourceOfMagicHandler{
 		PlayerEntity player = event.player;
 
 		if(DragonUtils.isDragon(player)){
-			DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+			DragonStateHandler handler = DragonUtils.getHandler(player);
 
 			if(handler != null){
 				if(handler.getMagic().onMagicSource){
@@ -114,7 +114,7 @@ public class SourceOfMagicHandler{
 		PlayerEntity player = event.player;
 
 		if(DragonUtils.isDragon(player)){
-			DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+			DragonStateHandler handler = DragonUtils.getHandler(player);
 
 			if(handler != null){
 				if(handler.getMagic().onMagicSource){
@@ -171,7 +171,7 @@ public class SourceOfMagicHandler{
 		PlayerEntity player = Minecraft.getInstance().player;
 
 		if(DragonUtils.isDragon(player)){
-			DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+			DragonStateHandler handler = DragonUtils.getHandler(player);
 
 			if(handler != null){
 				if(handler.getMagic().onMagicSource){

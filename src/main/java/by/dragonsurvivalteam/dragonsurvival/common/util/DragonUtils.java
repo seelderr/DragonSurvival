@@ -19,7 +19,7 @@ public class DragonUtils{
 	}
 
 	public static DragonStateHandler getHandler(Entity entity){
-		return DragonStateProvider.getCap(entity).orElse(new DragonStateHandler());
+		return entity != null ? DragonStateProvider.getCap(entity).orElse(new DragonStateHandler()) : new DragonStateHandler();
 	}
 
 	public static DragonLevel getDragonLevel(Entity entity){
@@ -35,7 +35,7 @@ public class DragonUtils{
 
 		if(entity instanceof PlayerEntity){
 			PlayerEntity player = (PlayerEntity)entity;
-			DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+			DragonStateHandler handler = DragonUtils.getHandler(player);
 			if(handler != null && handler.isDragon()){
 				float f1 = -(float)handler.getMovementData().bodyYaw * ((float)Math.PI / 180F);
 

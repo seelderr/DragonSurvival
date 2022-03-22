@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
@@ -99,20 +100,22 @@ public class DragonSizeHandler{
 	}
 
 	public static Pose getOverridePose(LivingEntity player){
-		DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+		DragonStateHandler handler = DragonUtils.getHandler(player);
 
-		boolean swimming = (player.isInWaterOrBubble() || (player.isInLava() && ConfigHandler.SERVER.bonuses.get() && ConfigHandler.SERVER.caveLavaSwimming.get() && handler.getType() == DragonType.CAVE)) && player.isSprinting() && !player.isPassenger();
-		boolean flying = ServerFlightHandler.isFlying(player);
-		boolean spinning = player.isAutoSpinAttack();
-		boolean crouching = player.isShiftKeyDown();
-		if(flying && !player.isSleeping()){
-			return Pose.FALL_FLYING;
-		}else if(swimming || ((player.isInWaterOrBubble() || player.isInLava()) && !canPoseFit(player, Pose.STANDING) && canPoseFit(player, Pose.SWIMMING))){
-			return Pose.SWIMMING;
-		}else if(spinning){
-			return Pose.SPIN_ATTACK;
-		}else if(crouching || (!canPoseFit(player, Pose.STANDING) && canPoseFit(player, Pose.CROUCHING))){
-			return Pose.CROUCHING;
+		if(player != null){
+			boolean swimming = (player.isInWaterOrBubble() || (player.isInLava() && ConfigHandler.SERVER.bonuses.get() && ConfigHandler.SERVER.caveLavaSwimming.get() && handler.getType() == DragonType.CAVE)) && player.isSprinting() && !player.isPassenger();
+			boolean flying = ServerFlightHandler.isFlying(player);
+			boolean spinning = player.isAutoSpinAttack();
+			boolean crouching = player.isShiftKeyDown();
+			if(flying && !player.isSleeping()){
+				return Pose.FALL_FLYING;
+			}else if(swimming || ((player.isInWaterOrBubble() || player.isInLava()) && !canPoseFit(player, Pose.STANDING) && canPoseFit(player, Pose.SWIMMING))){
+				return Pose.SWIMMING;
+			}else if(spinning){
+				return Pose.SPIN_ATTACK;
+			}else if(crouching || (!canPoseFit(player, Pose.STANDING) && canPoseFit(player, Pose.CROUCHING))){
+				return Pose.CROUCHING;
+			}
 		}
 		return Pose.STANDING;
 	}

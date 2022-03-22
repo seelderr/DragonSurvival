@@ -2,7 +2,6 @@ package by.dragonsurvivalteam.dragonsurvival.common.blocks;
 
 import by.dragonsurvivalteam.dragonsurvival.client.particles.TreasureParticleData;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncTreasureRestStatus;
@@ -97,7 +96,7 @@ public class TreasureBlock extends FallingBlock implements IWaterLoggable{
 	public ActionResultType use(BlockState p_225533_1_, World world, BlockPos p_225533_3_, PlayerEntity player, Hand hand, BlockRayTraceResult p_225533_6_){
 		if(DragonUtils.isDragon(player) && player.getItemInHand(hand).isEmpty()){
 			if(player.getFeetBlockState().getBlock() == p_225533_1_.getBlock()){
-				DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+				DragonStateHandler handler = DragonUtils.getHandler(player);
 
 				if(handler != null){
 					if(!handler.treasureResting){

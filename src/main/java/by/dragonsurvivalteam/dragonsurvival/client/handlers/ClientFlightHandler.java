@@ -454,7 +454,7 @@ public class ClientFlightHandler{
 			return;
 		}
 
-		DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+		DragonStateHandler handler = DragonUtils.getHandler(player);
 		if(handler == null || !handler.isDragon()){
 			return;
 		}
@@ -481,7 +481,7 @@ public class ClientFlightHandler{
 			return;
 		}
 
-		DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+		DragonStateHandler handler = DragonUtils.getHandler(player);
 		if(handler == null || !handler.isDragon()){
 			return;
 		}

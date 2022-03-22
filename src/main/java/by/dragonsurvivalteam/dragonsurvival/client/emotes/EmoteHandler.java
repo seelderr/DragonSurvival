@@ -2,9 +2,10 @@ package by.dragonsurvivalteam.dragonsurvival.client.emotes;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
+import by.dragonsurvivalteam.dragonsurvival.network.emotes.SyncEmote;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.PointOfView;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
@@ -39,27 +40,21 @@ public class EmoteHandler{
 
 		if(player != null){
 			DragonStateProvider.getCap(player).ifPresent(cap -> {
-				if(cap.getEmotes().getCurrentEmote() != null){
-					Emote emote = cap.getEmotes().getCurrentEmote();
-					cap.getEmotes().emoteTick++;
+				for(Emote emote : cap.getEmotes().currentEmotes){
+					int index = cap.getEmotes().currentEmotes.indexOf(emote);
+					cap.getEmotes().emoteTicks.set(index, cap.getEmotes().emoteTicks.get(index) + 1);
 
 					//Cancel emote if its duration is expired, this should happen even if it isnt local
-					if(emote.duration != -1 && cap.getEmotes().emoteTick > emote.duration){
-						cap.getEmotes().setCurrentEmote(null);
-						return;
+					if(emote.duration != -1 && cap.getEmotes().emoteTicks.get(index) > emote.duration){
+						cap.getEmotes().currentEmotes.remove(index);
+						cap.getEmotes().emoteTicks.remove(index);
+						NetworkHandler.CHANNEL.sendToServer(new SyncEmote(player.getId(), cap.getEmotes()));
+						break;
 					}
 
 					if(player.getId() == Minecraft.getInstance().player.getId()){
-					/*
-					//Enable this code to fix emotes being usable while flying and jumping
-					if(!player.isOnGround()){
-						EmoteMenuHandler.setEmote(null);
-						return;
-					}
-					*/
-
 						if(player.isCrouching() || player.swinging){
-							EmoteMenuHandler.setEmote(null);
+							EmoteMenuHandler.clearEmotes();
 							return;
 						}
 
@@ -77,30 +72,32 @@ public class EmoteHandler{
 						}
 					}
 
-					if(emote.sound != null && emote.sound.interval > 0){
-						if(cap.getEmotes().emoteTick % emote.sound.interval == 0){
-							player.level.playLocalSound(player.position().x, player.position().y, player.position().z, new SoundEvent(new ResourceLocation(emote.sound.key)), SoundCategory.PLAYERS, emote.sound.volume, emote.sound.pitch, false);
+					if(!cap.getEmotes().currentEmotes.isEmpty()){
+						if(emote.sound != null && emote.sound.interval > 0){
+							if(cap.getEmotes().emoteTicks.get(index) % emote.sound.interval == 0){
+								player.level.playLocalSound(player.position().x, player.position().y, player.position().z, new SoundEvent(new ResourceLocation(emote.sound.key)), SoundCategory.PLAYERS, emote.sound.volume, emote.sound.pitch, false);
+							}
 						}
-					}
 
-					if(ConfigHandler.SERVER.canMoveInEmote.get()){
-						if(emote.animation != null && !emote.animation.isEmpty()){
-							ModifiableAttributeInstance attributeInstance = player.getAttribute(Attributes.MOVEMENT_SPEED);
-							AttributeModifier noMove = new AttributeModifier(EMOTE_NO_MOVE, "EMOTE", -attributeInstance.getValue(), AttributeModifier.Operation.ADDITION);
+						if(ConfigHandler.SERVER.canMoveInEmote.get()){
+							if(emote.animation != null && !emote.animation.isEmpty()){
+								ModifiableAttributeInstance attributeInstance = player.getAttribute(Attributes.MOVEMENT_SPEED);
+								AttributeModifier noMove = new AttributeModifier(EMOTE_NO_MOVE, "EMOTE", -attributeInstance.getValue(), AttributeModifier.Operation.ADDITION);
 
-							if(!attributeInstance.hasModifier(noMove)){
-								attributeInstance.addTransientModifier(noMove);
+								if(!attributeInstance.hasModifier(noMove)){
+									attributeInstance.addTransientModifier(noMove);
+								}
 							}
 						}
 					}
-				}else{
-					if(ConfigHandler.SERVER.canMoveInEmote.get()){
-						ModifiableAttributeInstance attributeInstance = player.getAttribute(Attributes.MOVEMENT_SPEED);
-						AttributeModifier noMove = new AttributeModifier(EMOTE_NO_MOVE, "EMOTE", -attributeInstance.getValue(), AttributeModifier.Operation.ADDITION);
+				}
 
-						if(attributeInstance.hasModifier(noMove)){
-							attributeInstance.removeModifier(EMOTE_NO_MOVE);
-						}
+				if(cap.getEmotes().currentEmotes.isEmpty() && ConfigHandler.SERVER.canMoveInEmote.get()){
+					ModifiableAttributeInstance attributeInstance = player.getAttribute(Attributes.MOVEMENT_SPEED);
+					AttributeModifier noMove = new AttributeModifier(EMOTE_NO_MOVE, "EMOTE", -attributeInstance.getValue(), AttributeModifier.Operation.ADDITION);
+
+					if(attributeInstance.hasModifier(noMove)){
+						attributeInstance.removeModifier(EMOTE_NO_MOVE);
 					}
 				}
 			});
@@ -109,17 +106,7 @@ public class EmoteHandler{
 
 	@SubscribeEvent
 	public static void playerAttacked(LivingHurtEvent event){
-		LivingEntity entity = event.getEntityLiving();
-
-		if(entity instanceof PlayerEntity){
-			PlayerEntity player = (PlayerEntity)entity;
-
-			DragonStateProvider.getCap(player).ifPresent(cap -> {
-				if(cap.getEmotes().getCurrentEmote() != null){
-					EmoteMenuHandler.setEmote(null);
-				}
-			});
-		}
+		EmoteMenuHandler.clearEmotes();
 	}
 
 	@SubscribeEvent
@@ -129,9 +116,17 @@ public class EmoteHandler{
 		}
 
 		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent((cap) -> {
-			if(cap.getEmotes().getCurrentEmote() != null && !cap.getEmotes().getCurrentEmote().loops){
-				if(cap.getEmotes().emoteTick >= cap.getEmotes().getCurrentEmote().duration){
-					EmoteMenuHandler.setEmote(null);
+			if(!cap.getEmotes().currentEmotes.isEmpty()){
+				for(Emote emote : cap.getEmotes().currentEmotes){
+					if(!emote.loops){
+						int index = cap.getEmotes().currentEmotes.indexOf(emote);
+
+						if(cap.getEmotes().emoteTicks.get(index) >= emote.duration){
+							cap.getEmotes().currentEmotes.remove(index);
+							cap.getEmotes().emoteTicks.remove(index);
+							NetworkHandler.CHANNEL.sendToServer(new SyncEmote(Minecraft.getInstance().player.getId(), cap.getEmotes()));
+						}
+					}
 				}
 			}
 		});

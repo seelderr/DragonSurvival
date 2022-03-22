@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.common.items;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
 import net.minecraft.client.util.ITooltipFlag;
@@ -26,7 +26,7 @@ public class SpinGrantItem extends Item{
 
 	@Override
 	public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand p_77659_3_){
-		DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+		DragonStateHandler handler = DragonUtils.getHandler(player);
 
 		if(handler != null && handler.isDragon()){
 			if(!world.isClientSide){

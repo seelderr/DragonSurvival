@@ -31,7 +31,7 @@ public class ClientMagicHandler{
 		PlayerEntity player = event.getEntity();
 
 		DragonStateProvider.getCap(player).ifPresent(cap -> {
-			if(cap.getEmotes().getCurrentEmote() != null){
+			if(!cap.getEmotes().currentEmotes.isEmpty() && DragonUtils.isDragon(player)){
 				event.setNewfov(1f);
 				return;
 			}
@@ -56,7 +56,6 @@ public class ClientMagicHandler{
 	@SubscribeEvent
 	public static void livingTick(LivingUpdateEvent event){
 		LivingEntity entity = event.getEntityLiving();
-
 
 		if(!entity.level.isClientSide){
 			return;

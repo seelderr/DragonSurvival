@@ -107,7 +107,7 @@ public class AppleSkinSupport{
 			FoodStats stats = player.getFoodData();
 			MatrixStack matrixStack = event.matrixStack;
 
-			DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+			DragonStateHandler handler = DragonUtils.getHandler(player);
 
 			ItemStack heldItem = ItemStack.EMPTY;
 			Food food = null;

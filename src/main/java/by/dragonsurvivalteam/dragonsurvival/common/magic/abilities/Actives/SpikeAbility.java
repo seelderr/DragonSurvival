@@ -2,10 +2,10 @@ package by.dragonsurvivalteam.dragonsurvival.common.magic.abilities.Actives;
 
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.DragonSpikeEntity;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.common.ActiveDragonAbility;
+import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -77,7 +77,7 @@ public class SpikeAbility extends ActiveDragonAbility{
 		double d3 = vector3d.y * speed;
 		double d4 = vector3d.z * speed;
 
-		DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+		DragonStateHandler handler = DragonUtils.getHandler(player);
 		if(handler == null){
 			return;
 		}
