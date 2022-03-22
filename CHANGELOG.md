@@ -1,3 +1,10 @@
+### [0.13.25](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.24...0.13.25) (2022-03-22)
+
+
+### Features
+
+* Probably broke emotes by adding support for multiple emotes at once. ([010e107](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/010e1071a27ed0df7364e5fc3709110eebbe4089))
+
 ### [0.13.24](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.23...0.13.24) (2022-03-21)
 
 
