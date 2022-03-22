@@ -1,3 +1,11 @@
+### [0.13.28](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.27...0.13.28) (2022-03-22)
+
+
+### Bug Fixes
+
+* Fix emotes ([f00c6e0](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/f00c6e028d3b3184094a8df41ec2d6c207f1ff8e))
+* textures, names for dragon parts, plate polishing ([3455df1](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/3455df1bf914eb20eabd1a76f3dadbba3d7aa1f9))
+
 ### [0.13.27](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.26...0.13.27) (2022-03-22)
 
 
