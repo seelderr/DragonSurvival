@@ -4,14 +4,18 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.DropDownButton;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
+import by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon.DragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.EnumSkinLayer;
+import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayer;
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TextRenderUtil;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonLevel;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.shader.Framebuffer;
@@ -27,7 +31,10 @@ import net.minecraftforge.fml.client.gui.GuiUtils;
 import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
+import software.bernie.geckolib3.resource.GeckoLibCache;
 
+import java.util.Collections;
 import java.util.Locale;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
@@ -53,7 +60,7 @@ public class EditorPartButton extends ExtendedButton {
 		this.source = source;
 		this.screen = screen;
 		this.layer = layer;
-		message = new TranslationTextComponent("ds.skin_part." + value);
+		message = new TranslationTextComponent("ds.skin_part." + screen.type.name().toLowerCase(Locale.ROOT) + "." + value.toLowerCase(Locale.ROOT));
 		generateImage();
 	}
 
@@ -66,6 +73,7 @@ public class EditorPartButton extends ExtendedButton {
 			});
 		}
 	}
+
 	public void generateImage(){
 		String key = layer.name().toLowerCase(Locale.ROOT) + "_" + screen.type.name().toLowerCase(Locale.ROOT) + "_" + value.toLowerCase(Locale.ROOT);
 
@@ -124,9 +132,17 @@ public class EditorPartButton extends ExtendedButton {
 		framebuffer.bindWrite(true);
 		framebuffer.blitToScreen(width, height);
 
+		FakeClientPlayer player = FakeClientPlayerUtils.getFakePlayer(2, handler);
+		DragonEntity dragon = FakeClientPlayerUtils.getFakeDragon(2, handler);
+
+		EntityRenderer<? super DragonEntity> dragonRenderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(dragon);
+		int id = ((DragonRenderer)dragonRenderer).getUniqueID(dragon);
+
 		ClientDragonRender.dragonModel.setCurrentTexture(null);
-		FakeClientPlayerUtils.getFakePlayer(2, handler).animationSupplier = () -> "sit";
-		ClientDragonRender.renderEntityInInventory(FakeClientPlayerUtils.getFakeDragon(2, handler), width / 2, height / 2, 80 + (zoom * 2), xRot, yRot, xOffset, yOffset);
+		ClientDragonRender.dragonModel.getAnimationProcessor().tickAnimation(dragon, id, 20.0, new AnimationEvent(dragon, 0, 0, 0, false, Collections.emptyList()), GeckoLibCache.getInstance().parser, false);
+		player.animationSupplier = () -> "sit";
+		player.tickCount += 20;
+		ClientDragonRender.renderEntityInInventory(dragon, width / 2, height / 2, 80 + (zoom * 2), xRot, yRot, xOffset, yOffset);
 
 		NativeImage nativeimage = new NativeImage(width, height, false);
 		RenderSystem.bindTexture(framebuffer.getColorTextureId());
@@ -161,7 +177,7 @@ public class EditorPartButton extends ExtendedButton {
 			blit(mStack, x + 3, y + 3, 0, 0, width - 6, height - 6, width - 6, height - 6);
 		}
 
-		TextRenderUtil.drawScaledTextSplit(mStack , this.x + 4, this.y + (this.height - 10), 0.4f, message.getContents(), getFGColor(), width - 9, 200);
+		TextRenderUtil.drawScaledTextSplit(mStack , this.x + 4, this.y + (this.height - 10), 0.4f, message, getFGColor(), width - 9, 200);
 	}
 
 	@Override

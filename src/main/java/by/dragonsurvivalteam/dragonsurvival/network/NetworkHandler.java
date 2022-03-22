@@ -11,7 +11,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.config.SyncNumberConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.container.OpenDragonAltar;
 import by.dragonsurvivalteam.dragonsurvival.network.container.OpenDragonInventory;
 import by.dragonsurvivalteam.dragonsurvival.network.container.OpenInventory;
-import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.OpenDragonEditorPacket;
+import by.dragonsurvivalteam.dragonsurvival.network.container.OpenDragonEditorPacket;
 import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncPlayerSkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.network.emotes.SyncEmote;
 import by.dragonsurvivalteam.dragonsurvival.network.entity.PacketSyncPredatorStats;

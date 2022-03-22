@@ -476,7 +476,7 @@ public class ClientDragonRender{
 		IRenderTypeBuffer.Impl irendertypebuffer$impl = Minecraft.getInstance().renderBuffers().bufferSource();
 		RenderSystem.runAsFancy(() -> {
 			entityrenderermanager.setRenderHitBoxes(false);
-			entityrenderermanager.render(entity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, matrixstack, irendertypebuffer$impl, 15728880);
+			entityrenderermanager.render(entity, 0.0D, 0.0D, 0.0D, 0.0F, 1F, matrixstack, irendertypebuffer$impl, 15728880);
 			entityrenderermanager.setRenderHitBoxes(renderHitbox);
 		});
 

@@ -1,4 +1,4 @@
-package by.dragonsurvivalteam.dragonsurvival.network.dragon_editor;
+package by.dragonsurvivalteam.dragonsurvival.network.container;
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;

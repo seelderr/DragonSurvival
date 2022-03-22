@@ -159,7 +159,7 @@ public class AbilityScreen extends Screen{
 			for(PassiveDragonAbility ability : DragonAbilities.PASSIVE_ABILITIES.get(cap.getType())){
 				if(ability != null){
 					addButton(new AbilityButton(guiLeft + (int)(217 / 2F), (guiTop + 40 + (num * 23)), ability, this));
-					addButton(new IncreaseLevelButton(guiLeft + (int)(219 / 2F) + 30, (guiTop + 40 + (num * 23)), num, this));
+					addButton(new IncreaseLevelButton(guiLeft + (int)(219 / 2F) + 25, (guiTop + 40 + (num * 23)), num, this));
 					addButton(new DecreaseLevelButton(guiLeft + (int)(219 / 2F) - 25, (guiTop + 40 + (num * 23)), num, this));
 					num++;
 				}

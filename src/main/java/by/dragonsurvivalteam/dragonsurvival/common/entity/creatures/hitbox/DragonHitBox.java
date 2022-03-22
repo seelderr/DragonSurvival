@@ -229,6 +229,11 @@ public class DragonHitBox extends MobEntity{
 	}
 
 	@Override
+	public int getAirSupply(){
+		return getMaxAirSupply();
+	}
+
+	@Override
 	public Vector3d getDeltaMovement(){
 		return player != null ? player.getDeltaMovement() : super.getDeltaMovement();
 	}

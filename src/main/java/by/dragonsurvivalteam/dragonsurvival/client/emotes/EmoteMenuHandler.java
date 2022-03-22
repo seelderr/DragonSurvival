@@ -197,7 +197,8 @@ public class EmoteMenuHandler{
 						return;
 					}
 
-					if(!emote.blend || handler.getEmotes().currentEmotes.stream().anyMatch((s) -> !s.blend)){
+					if(emote.blend && handler.getEmotes().currentEmotes.stream().anyMatch((s) -> s.blend)
+					|| !emote.blend && handler.getEmotes().currentEmotes.stream().anyMatch((s) -> !s.blend)){
 						clearEmotes();
 					}
 

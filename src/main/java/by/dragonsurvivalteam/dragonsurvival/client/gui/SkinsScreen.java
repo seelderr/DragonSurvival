@@ -118,7 +118,6 @@ public class SkinsScreen extends Screen{
 
 			if(noSkin && Objects.equals(playerName, minecraft.player.getGameProfile().getName())){
 				this.handler.getSkin().skinPreset.readNBT(DragonUtils.getHandler(minecraft.player).getSkin().skinPreset.writeNBT());;
-				this.handler.getSkin().skinPreset.skinAges.get(level).defaultSkin = false;
 			}else{
 				this.handler.getSkin().skinPreset.skinAges.get(level).defaultSkin = true;
 			}

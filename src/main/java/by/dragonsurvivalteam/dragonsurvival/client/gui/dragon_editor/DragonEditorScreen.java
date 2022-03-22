@@ -245,7 +245,7 @@ public class DragonEditorScreen extends Screen{
 			DropDownButton btn = new DragonEditorDropdownButton(this, i < 5 ? DragonEditorScreen.this.width / 2 - 100 - 100 : DragonEditorScreen.this.width / 2 + 83, DragonEditorScreen.this.guiTop + 10 + ((i >= 5 ? (i - 5) * 30 : i * 30)), 90, 15, curValue, values, layers){
 				public void updateMessage(){
 					if(current != null){
-						message = new TranslationTextComponent("ds.skin_part." + current);
+						message = new TranslationTextComponent("ds.skin_part." + type.name().toLowerCase(Locale.ROOT) + "." + current.toLowerCase(Locale.ROOT));
 					}
 				}
 			};

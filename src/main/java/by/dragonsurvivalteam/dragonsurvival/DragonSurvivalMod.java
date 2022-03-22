@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival;
 import by.dragonsurvivalteam.dragonsurvival.api.appleskin.AppleSkinSupport;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.DSParticles;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.SoundRegistry;
+import by.dragonsurvivalteam.dragonsurvival.commands.DragonAltarCommand;
 import by.dragonsurvivalteam.dragonsurvival.commands.DragonCommand;
 import by.dragonsurvivalteam.dragonsurvival.commands.DragonEditorCommand;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.Capabilities;
@@ -109,6 +110,7 @@ public class DragonSurvivalMod{
 		CommandDispatcher<CommandSource> commandDispatcher = event.getDispatcher();
 		DragonCommand.register(commandDispatcher);
 		DragonEditorCommand.register(commandDispatcher);
+		DragonAltarCommand.register(commandDispatcher);
 		LOGGER.info("Registered commands");
 	}
 }

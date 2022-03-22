@@ -226,7 +226,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 
 		dragonAnimationController.speed = 1;
 
-		if(player == null || (!playerStateHandler.getEmotes().currentEmotes.isEmpty())){
+		if(player == null || (playerStateHandler.getEmotes().currentEmotes.stream().anyMatch((s) -> !s.blend))){
 			animationEvent.getController().setAnimation(null);
 			animationEvent.getController().clearAnimationCache();
 			return PlayState.STOP;
