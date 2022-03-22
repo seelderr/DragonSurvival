@@ -14,6 +14,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
@@ -26,10 +27,12 @@ import java.util.UUID;
 import static net.minecraft.client.settings.PointOfView.THIRD_PERSON_BACK;
 
 
+@OnlyIn(Dist.CLIENT)
 @Mod.EventBusSubscriber( Dist.CLIENT )
 public class EmoteHandler{
 	private static final UUID EMOTE_NO_MOVE = UUID.fromString("09c2716e-0da9-430b-aaaf-8653c643dc09");
 
+	@OnlyIn(Dist.CLIENT)
 	@SubscribeEvent
 	public static void playerTick(PlayerTickEvent event){
 		if(event.phase == Phase.START){
@@ -42,6 +45,14 @@ public class EmoteHandler{
 			DragonStateProvider.getCap(player).ifPresent(cap -> {
 				for(Emote emote : cap.getEmotes().currentEmotes){
 					int index = cap.getEmotes().currentEmotes.indexOf(emote);
+
+					if(cap.getEmotes().emoteTicks.size() < index){
+						cap.getEmotes().currentEmotes.remove(index);
+						cap.getEmotes().emoteTicks.remove(index);
+						NetworkHandler.CHANNEL.sendToServer(new SyncEmote(player.getId(), cap.getEmotes()));
+						return; //How did you get to this!?
+					}
+
 					cap.getEmotes().emoteTicks.set(index, cap.getEmotes().emoteTicks.get(index) + 1);
 
 					//Cancel emote if its duration is expired, this should happen even if it isnt local
@@ -52,7 +63,7 @@ public class EmoteHandler{
 						break;
 					}
 
-					if(player.getId() == Minecraft.getInstance().player.getId()){
+					if(Minecraft.getInstance().player != null && player.getId() == Minecraft.getInstance().player.getId()){
 						if(player.isCrouching() || player.swinging){
 							EmoteMenuHandler.clearEmotes();
 							return;
