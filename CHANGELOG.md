@@ -1,3 +1,10 @@
+### [0.13.26](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.25...0.13.26) (2022-03-22)
+
+
+### Bug Fixes
+
+* textures, localization, preliminary names for dragon parts ([4c3bf6c](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/4c3bf6ccb759533c189392df6ad7cb784b07ddb8))
+
 ### [0.13.25](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.24...0.13.25) (2022-03-22)
 
 
