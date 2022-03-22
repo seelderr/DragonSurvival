@@ -290,10 +290,6 @@
           "texture": "dragonsurvival:textures/dragon/custom/horns_1.png"
         },
         {
-          "key": "horns_2",
-          "texture": "dragonsurvival:textures/dragon/custom/horns_2.png"
-        },
-        {
           "key": "horns_3",
           "texture": "dragonsurvival:textures/dragon/custom/horns_3.png"
         },
@@ -777,10 +773,6 @@
         {
           "key": "horns_1",
           "texture": "dragonsurvival:textures/dragon/custom/horns_1.png"
-        },
-        {
-          "key": "horns_2",
-          "texture": "dragonsurvival:textures/dragon/custom/horns_2.png"
         },
         {
           "key": "horns_3",
