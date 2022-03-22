@@ -109,6 +109,21 @@ public class ToolTipHandler{
 			if(item == DSBlocks.caveSourceOfMagic.asItem()){
 				toolTip.add(new TranslationTextComponent("ds.description.cave_source_of_magic"));
 			}
+			if(item == DSBlocks.dragonPressurePlate.asItem()){
+				toolTip.add(new TranslationTextComponent("ds.description.dragon_pressure_plate"));
+			}
+			if(item == DSBlocks.humanPressurePlate.asItem()){
+				toolTip.add(new TranslationTextComponent("ds.description.human_pressure_plate"));
+			}
+			if(item == DSBlocks.seaPressurePlate.asItem()){
+				toolTip.add(new TranslationTextComponent("ds.description.sea_dragon_pressure_plate"));
+			}
+			if(item == DSBlocks.forestPressurePlate.asItem()){
+				toolTip.add(new TranslationTextComponent("ds.description.forest_dragon_pressure_plate"));
+			}
+			if(item == DSBlocks.cavePressurePlate.asItem()){
+				toolTip.add(new TranslationTextComponent("ds.description.cave_dragon_pressure_plate"));
+			}
 		}
 	}
 

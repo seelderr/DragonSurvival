@@ -1,3 +1,17 @@
+### [0.13.24](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.23...0.13.24) (2022-03-21)
+
+
+### Features
+
+* polishing + recipes + GUI improvements + item description + GUI improvements + hints ([2652d37](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/2652d37a3a4676ff6617fccac33459e3ce33213c))
+
+### [0.13.23](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.22...0.13.23) (2022-03-21)
+
+
+### Bug Fixes
+
+* Hopefully? ([c0a07d0](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/c0a07d098aad06b269673841ff235b4139d4e7c2))
+
 ### [0.13.22](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.21...0.13.22) (2022-03-21)
 
 

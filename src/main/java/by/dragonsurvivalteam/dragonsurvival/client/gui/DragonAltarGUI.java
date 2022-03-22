@@ -78,18 +78,19 @@ public class DragonAltarGUI extends Screen{
 				if(button.isHovered()){
 					handler1.setType(button.type);
 					handler1.setHasWings(true);
-					handler1.setSize(DragonLevel.ADULT.size);
-					handler1.getSkin().skinPreset.skinAges.get(DragonLevel.ADULT).defaultSkin = true;
+					handler1.setSize(DragonLevel.BABY.size);
+					handler1.getSkin().skinPreset.skinAges.get(DragonLevel.BABY).defaultSkin = true;
 
 					handler2.setType(button.type);
-					handler2.setSize(button.type == DragonType.NONE ? DragonLevel.ADULT.size : DragonLevel.BABY.size);
-					handler2.getSkin().skinPreset.skinAges.get(button.type == DragonType.NONE ? DragonLevel.ADULT : DragonLevel.BABY).defaultSkin = true;
+					handler2.setHasWings(true);
+					handler2.setSize(button.type == DragonType.NONE ? DragonLevel.BABY.size : DragonLevel.ADULT.size);
+					handler2.getSkin().skinPreset.skinAges.get(button.type == DragonType.NONE ? DragonLevel.BABY : DragonLevel.ADULT).defaultSkin = true;
 
 					FakeClientPlayerUtils.getFakePlayer(0, handler1).animationSupplier = () -> animations[animation1];
 					FakeClientPlayerUtils.getFakePlayer(1, handler2).animationSupplier = () -> animations[animation2];
 
-					renderDragon(width / 2 + 170, button.y + (button.getHeight() / 2) + 32, 5, matrixStack, 20, FakeClientPlayerUtils.getFakePlayer(0, handler1), FakeClientPlayerUtils.getFakeDragon(0, handler1));
-					renderDragon(width / 2 - 170, button.y + (button.getHeight() / 2) + 32, -5, matrixStack, 20, FakeClientPlayerUtils.getFakePlayer(1, handler2), FakeClientPlayerUtils.getFakeDragon(1, handler2));
+					renderDragon(width / 2 + 170, button.y + (button.getHeight() / 2) + 20, 5, matrixStack, 20, FakeClientPlayerUtils.getFakePlayer(0, handler1), FakeClientPlayerUtils.getFakeDragon(0, handler1));
+					renderDragon(width / 2 - 205, button.y + (button.getHeight() / 2) + 1, -4, matrixStack, 40, FakeClientPlayerUtils.getFakePlayer(1, handler2), FakeClientPlayerUtils.getFakeDragon(1, handler2));
 				}
 			}
 		}
@@ -165,7 +166,7 @@ public class DragonAltarGUI extends Screen{
 		this.guiLeft = (this.width - 304) / 2;
 		this.guiTop = (this.height - 190) / 2;
 
-		this.addButton(new HelpButton(width / 2 - 9, 32 + 3, 16, 16, "ds.help.altar", 1));
+		this.addButton(new HelpButton(width / 2 - 9, 32 + 0, 16, 16, "ds.help.altar", 1));
 
 		addButton(new AltarTypeButton(this, DragonType.CAVE, width / 2 - 104, this.guiTop + 30));
 		addButton(new AltarTypeButton(this, DragonType.FOREST, width / 2 - 51, this.guiTop + 30));
