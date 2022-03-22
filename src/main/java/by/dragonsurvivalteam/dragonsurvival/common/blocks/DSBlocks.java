@@ -132,11 +132,11 @@ public class DSBlocks{
 		magicDragonBeacon = registerBlock(new DragonBeacon(AbstractBlock.Properties.copy(dragonBeacon).lightLevel(value -> value.getValue(DragonBeacon.LIT) ? 15 : 0)), "dragon_beacon_magic", forgeRegistry);
 		fireDragonBeacon = registerBlock(new DragonBeacon(AbstractBlock.Properties.copy(dragonBeacon).lightLevel(value -> value.getValue(DragonBeacon.LIT) ? 15 : 0)), "dragon_beacon_fire", forgeRegistry);
 
-		dragonPressurePlate = registerBlock(new DragonPressurePlates(AbstractBlock.Properties.of(Material.STONE).strength(15, 50).requiresCorrectToolForDrops(), PressurePlateType.DRAGON), "dragon_pressure_plate", forgeRegistry);
-		humanPressurePlate = registerBlock(new DragonPressurePlates(AbstractBlock.Properties.of(Material.STONE).strength(15, 50).requiresCorrectToolForDrops(), PressurePlateType.HUMAN), "human_pressure_plate", forgeRegistry);
-		seaPressurePlate = registerBlock(new DragonPressurePlates(AbstractBlock.Properties.of(Material.STONE).strength(15, 50).requiresCorrectToolForDrops(), PressurePlateType.SEA), "sea_dragon_pressure_plate", forgeRegistry);
-		forestPressurePlate = registerBlock(new DragonPressurePlates(AbstractBlock.Properties.of(Material.STONE).strength(15, 50).requiresCorrectToolForDrops(), PressurePlateType.FOREST), "forest_dragon_pressure_plate", forgeRegistry);
-		cavePressurePlate = registerBlock(new DragonPressurePlates(AbstractBlock.Properties.of(Material.STONE).strength(15, 50).requiresCorrectToolForDrops(), PressurePlateType.CAVE), "cave_dragon_pressure_plate", forgeRegistry);
+		dragonPressurePlate = registerBlock(new DragonPressurePlates(AbstractBlock.Properties.of(Material.STONE).harvestTool(ToolType.PICKAXE).harvestLevel(0).strength(1.5f).sound(SoundType.STONE).requiresCorrectToolForDrops(), PressurePlateType.DRAGON), "dragon_pressure_plate", forgeRegistry);
+		humanPressurePlate = registerBlock(new DragonPressurePlates(AbstractBlock.Properties.of(Material.STONE).harvestTool(ToolType.PICKAXE).harvestLevel(0).strength(1.5f).sound(SoundType.STONE).requiresCorrectToolForDrops(), PressurePlateType.HUMAN), "human_pressure_plate", forgeRegistry);
+		seaPressurePlate = registerBlock(new DragonPressurePlates(AbstractBlock.Properties.of(Material.STONE).harvestTool(ToolType.PICKAXE).harvestLevel(0).strength(1.5f).sound(SoundType.STONE).requiresCorrectToolForDrops(), PressurePlateType.SEA), "sea_dragon_pressure_plate", forgeRegistry);
+		forestPressurePlate = registerBlock(new DragonPressurePlates(AbstractBlock.Properties.of(Material.WOOD).harvestTool(ToolType.AXE).harvestLevel(0).strength(2.0F).sound(SoundType.WOOD).requiresCorrectToolForDrops(), PressurePlateType.FOREST), "forest_dragon_pressure_plate", forgeRegistry);
+		cavePressurePlate = registerBlock(new DragonPressurePlates(AbstractBlock.Properties.of(Material.STONE).harvestTool(ToolType.PICKAXE).harvestLevel(0).strength(1.5f).sound(SoundType.STONE).requiresCorrectToolForDrops(), PressurePlateType.CAVE), "cave_dragon_pressure_plate", forgeRegistry);
 	}
 
 	private static <B extends Block> B registerBlock(B block, String identifier, IForgeRegistry<Block> forgeRegistry){
