@@ -200,6 +200,7 @@ public class DragonHitBox extends MobEntity{
 
 	@Override
 	public boolean hurt(DamageSource source, float damage){
+		if(source.getEntity() == player || source.getDirectEntity() == player) return false;
 		return player != null && !this.isInvulnerableTo(source) && player.hurt(source, damage);
 	}
 

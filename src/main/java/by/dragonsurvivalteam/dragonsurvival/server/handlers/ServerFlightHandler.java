@@ -182,7 +182,7 @@ public class ServerFlightHandler{
 					entities.removeIf((e) -> e.distanceTo(player) > range);
 					entities.remove(player);
 					entities.removeIf((e) -> e instanceof PlayerEntity && !player.canHarmPlayer((PlayerEntity)e));
-					entities.removeIf((e) -> e instanceof DragonHitBox && !player.canHarmPlayer((((DragonHitBox)e).player)));
+					entities.removeIf((e) -> e instanceof DragonHitBox && player == (((DragonHitBox)e).player));
 
 					for(Entity ent : entities){
 						if(player.hasPassenger(ent)){
