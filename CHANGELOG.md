@@ -1,3 +1,10 @@
+### [0.13.30](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.29...0.13.30) (2022-03-23)
+
+
+### Bug Fixes
+
+* no more hitting yourself ([30e4b05](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/30e4b05d5d8333e41623e004fd22fe562e8b37b5))
+
 ### [0.13.29](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.28...0.13.29) (2022-03-23)
 
 
