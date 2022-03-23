@@ -1,6 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.client.emotes;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
+import by.dragonsurvivalteam.dragonsurvival.client.util.TextRenderUtil;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.EmoteCap;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
@@ -14,20 +16,23 @@ import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.client.util.InputMappings;
+import net.minecraft.client.util.InputMappings.Input;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
 import net.minecraftforge.fml.common.Mod;
+import org.lwjgl.glfw.GLFW;
 
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Mod.EventBusSubscriber( Dist.CLIENT )
@@ -43,11 +48,13 @@ public class EmoteMenuHandler{
 	private static final ResourceLocation BUTTON_LEFT = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/emote/button_left.png");
 	private static final ResourceLocation BUTTON_RIGHT = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/emote/button_right.png");
 	private static int emotePage = 0;
+	private static boolean keybinding = false;
+	private static String currentlyKeybinding = null;
 
 	@SubscribeEvent
 	public static void addEmoteButton(GuiScreenEvent.InitGuiEvent.Post initGuiEvent){
 		Screen sc = initGuiEvent.getGui();
-
+		currentlyKeybinding = null;
 		if(sc instanceof ChatScreen && DragonUtils.isDragon(Minecraft.getInstance().player)){
 			ChatScreen screen = (ChatScreen)sc;
 
@@ -94,6 +101,8 @@ public class EmoteMenuHandler{
 					emotes.clear();
 					emotes.addAll(getEmotes());
 				}
+				currentlyKeybinding = null;
+
 			}){
 				@Override
 				public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks){
@@ -127,6 +136,8 @@ public class EmoteMenuHandler{
 					emotes.clear();
 					emotes.addAll(getEmotes());
 				}
+				currentlyKeybinding = null;
+
 			}){
 				@Override
 				public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks){
@@ -158,6 +169,8 @@ public class EmoteMenuHandler{
 				DragonStateHandler handler = DragonUtils.getHandler(Minecraft.getInstance().player);
 				handler.getEmotes().emoteMenuOpen = !handler.getEmotes().emoteMenuOpen;
 				NetworkHandler.CHANNEL.sendToServer(new SyncEmote(Minecraft.getInstance().player.getId(), handler.getEmotes()));
+				currentlyKeybinding = null;
+
 			}){
 				@Override
 				public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks){
@@ -230,11 +243,126 @@ public class EmoteMenuHandler{
 						}
 					}
 				});
+
+				initGuiEvent.addWidget(new ExtendedButton(startX - 70, startY - 20 - (height * ((PER_PAGE - 1) - finalI)), 60, height, StringTextComponent.EMPTY, (btn) -> {
+					Emote emote = emotes.size() > finalI ? emotes.get(finalI) : null;
+
+					if(emote != null){
+						currentlyKeybinding = emote.id;
+					}
+				}){
+					@Override
+					public boolean mouseClicked(double pMouseX, double pMouseY, int pButton){
+						if(pButton == GLFW.GLFW_MOUSE_BUTTON_RIGHT){
+							DragonStateHandler handler = DragonUtils.getHandler(Minecraft.getInstance().player);
+							Emote emote = emotes.size() > finalI ? emotes.get(finalI) : null;
+
+							if(emote != null){
+								handler.getEmotes().emoteKeybinds.remove(emote.id);
+								NetworkHandler.CHANNEL.sendToServer(new SyncEmote(Minecraft.getInstance().player.getId(), handler.getEmotes()));
+								return true;
+							}
+						}
+						return super.mouseClicked(pMouseX, pMouseY, pButton);
+					}
+
+					@Override
+					public void render(MatrixStack stack, int mouseX, int mouseY, float partialTick){
+						DragonStateHandler handler = DragonUtils.getHandler(Minecraft.getInstance().player);
+						this.active = this.visible = handler.getEmotes().emoteMenuOpen && keybinding;
+						this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
+
+						if(!handler.getEmotes().emoteMenuOpen || !keybinding){
+							return;
+						}
+
+						int color = isHovered && emotes.size() > finalI ? new Color(0.1F, 0.1F, 0.1F, 0.8F).getRGB() : new Color(0.1F, 0.1F, 0.1F, 0.5F).getRGB();
+						AbstractGui.fill(stack, x, y, x + this.width, y + this.height, color);
+
+
+						Emote emote = emotes.size() > finalI ? emotes.get(finalI) : null;
+
+						if(emote != null){
+							if(Objects.equals(currentlyKeybinding, emote.id)){
+								RenderingUtils.drawRect(stack, x, y, width-1, height, new Color(0.1F, 0.1F, 0.1F, 0.8F).getRGB());
+								TextRenderUtil.drawCenteredScaledText(stack, x + (width / 2), y + 1, 1f, "...", -1);
+							}else if(handler.getEmotes().emoteKeybinds.containsKey(emote.id)){
+								Input input = InputMappings.Type.KEYSYM.getOrCreate(handler.getEmotes().emoteKeybinds.get(emote.id));
+								TextRenderUtil.drawCenteredScaledText(stack, x + (width / 2), y + 1, 1f, input.getDisplayName(), -1);
+							}
+						}
+					}
+				});
+			}
+
+			initGuiEvent.addWidget(new ExtendedButton(startX + (width / 2) - (width / 4), startY - height, width / 2, height, StringTextComponent.EMPTY, (btn) -> {
+				keybinding = !keybinding;
+				currentlyKeybinding = null;
+			}){
+				@Override
+				public void render(MatrixStack stack, int mouseX, int mouseY, float partialTick){
+					DragonStateHandler handler = DragonUtils.getHandler(Minecraft.getInstance().player);
+					this.active = this.visible = handler.getEmotes().emoteMenuOpen;
+					this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
+
+					if(!handler.getEmotes().emoteMenuOpen){
+						return;
+					}
+
+					int color = isHovered  ? new Color(0.1F, 0.1F, 0.1F, 0.8F).getRGB() : new Color(0.1F, 0.1F, 0.1F, 0.5F).getRGB();
+					AbstractGui.fill(stack, x, y, x + this.width, y + this.height, color);
+
+					int j = getFGColor();
+					drawCenteredString(stack, Minecraft.getInstance().font, new TranslationTextComponent("ds.emote.keybinds"), this.x + this.width / 2, this.y + (this.height - 8) / 2, j | MathHelper.ceil(this.alpha * 255.0F) << 24);
+				}
+			});
+		}
+	}
+
+	@OnlyIn(Dist.CLIENT)
+	@SubscribeEvent
+	public static void onKey(InputEvent.KeyInputEvent keyInputEvent){
+		Screen sc = Minecraft.getInstance().screen;
+		int pKeyCode = keyInputEvent.getKey();
+
+		if(DragonUtils.isDragon(Minecraft.getInstance().player)){
+			if(sc instanceof ChatScreen){
+				DragonStateHandler handler = DragonUtils.getHandler(Minecraft.getInstance().player);
+				if(currentlyKeybinding != null){
+					if(pKeyCode == 256){
+						handler.getEmotes().emoteKeybinds.remove(currentlyKeybinding);
+					}else{
+						handler.getEmotes().emoteKeybinds.put(currentlyKeybinding, keyInputEvent.getKey());
+					}
+					NetworkHandler.CHANNEL.sendToServer(new SyncEmote(Minecraft.getInstance().player.getId(), handler.getEmotes()));
+					currentlyKeybinding = null;
+				}
+			}else{
+				DragonStateHandler handler = DragonUtils.getHandler(Minecraft.getInstance().player);
+				if(handler.getEmotes().emoteKeybinds.contains(pKeyCode)){
+					Map.Entry<String, Integer> entry = handler.getEmotes().emoteKeybinds.entrySet().stream().filter((s) -> s.getValue() == pKeyCode).findFirst().orElse(null);
+					if(entry != null){
+						Emote emote = EmoteRegistry.EMOTES.stream().filter((s) -> Objects.equals(s.id, entry.getKey())).findFirst().orElse(null);
+
+						if(emote == null || handler.getEmotes().currentEmotes.stream().anyMatch((s) -> Objects.equals(s.animation, emote.animation))){
+							return;
+						}
+
+						if(emote.blend && handler.getEmotes().currentEmotes.stream().anyMatch((s) -> s.blend) || !emote.blend && handler.getEmotes().currentEmotes.stream().anyMatch((s) -> !s.blend)){
+							clearEmotes();
+						}
+
+						addEmote(emote);
+					}
+				}
 			}
 		}
 	}
 
+
 	public static void clearEmotes(){
+		if(Minecraft.getInstance().player == null) return;
+
 		DragonStateHandler handler = DragonUtils.getHandler(Minecraft.getInstance().player);
 		handler.getEmotes().currentEmotes.clear();
 		handler.getEmotes().emoteTicks.clear();

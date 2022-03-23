@@ -136,7 +136,7 @@ public abstract class BreathAbility extends ActiveDragonAbility implements ISeco
 		}
 
 		dx = result2.getX();
-		dy = (result.getY() - (Math.abs(headRot) / 180 * .5)) * sizeScale;
+		dy = (result.getY() - (Math.abs(headRot) / 180 * .5));// * sizeScale;
 		dz = result2.getY();
 
 		Vector3d delta = player.getDeltaMovement();

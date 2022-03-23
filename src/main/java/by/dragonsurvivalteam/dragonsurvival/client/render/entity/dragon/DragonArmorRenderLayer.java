@@ -59,6 +59,8 @@ public class DragonArmorRenderLayer extends GeoLayerRenderer<DragonEntity>{
 	}
 
 	private void renderArmorPiece(ItemStack stack, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, DragonEntity entitylivingbaseIn, float partialTicks, ResourceLocation helmetTexture){
+		if(entitylivingbaseIn == null) return;
+
 		Color armorColor = new Color(1f, 1f, 1f);
 
 		if(stack.getItem() instanceof IDyeableArmorItem){

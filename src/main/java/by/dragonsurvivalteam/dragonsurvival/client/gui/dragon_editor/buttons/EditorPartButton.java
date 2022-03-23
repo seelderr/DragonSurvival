@@ -183,6 +183,7 @@ public class EditorPartButton extends ExtendedButton {
 	@Override
 	public void onPress(){
 		super.onPress();
+		screen.doAction();
 		source.current = value;
 		source.onPress();
 		setter.accept(value);

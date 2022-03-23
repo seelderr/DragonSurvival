@@ -43,6 +43,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.item.DyeColor;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
@@ -81,37 +82,60 @@ public class DragonEditorScreen extends Screen{
 	private DragonEditorConfirmComponent conf;
 
 	public static final int HISTORY_SIZE = 5;
-	public static final ConcurrentHashMap<Integer, EvictingQueue<SkinPreset>> UNDO_QUEUES = new ConcurrentHashMap<>();
-	public static final ConcurrentHashMap<Integer, EvictingQueue<SkinPreset>> REDO_QUEUES = new ConcurrentHashMap<>();
+	public final ConcurrentHashMap<Integer, EvictingQueue<CompoundNBT>> UNDO_QUEUES = new ConcurrentHashMap<>();
+	public final ConcurrentHashMap<Integer, EvictingQueue<CompoundNBT>> REDO_QUEUES = new ConcurrentHashMap<>();
 
 	public void doAction(){
 		UNDO_QUEUES.computeIfAbsent(currentSelected, (s) -> EvictingQueue.create(HISTORY_SIZE));
 		REDO_QUEUES.computeIfAbsent(currentSelected, (s) -> EvictingQueue.create(HISTORY_SIZE));
 
 		REDO_QUEUES.get(currentSelected).clear();
-		UNDO_QUEUES.get(currentSelected).add(preset);
+		reverseQueue(UNDO_QUEUES.get(currentSelected));
+		UNDO_QUEUES.get(currentSelected).add(preset.writeNBT());
+		reverseQueue(UNDO_QUEUES.get(currentSelected));
 	}
 
 	public void undoAction(){
 		UNDO_QUEUES.computeIfAbsent(currentSelected, (s) -> EvictingQueue.create(HISTORY_SIZE));
 		REDO_QUEUES.computeIfAbsent(currentSelected, (s) -> EvictingQueue.create(HISTORY_SIZE));
 
-		REDO_QUEUES.get(currentSelected).add(preset);
-		SkinPreset undoTemp = UNDO_QUEUES.get(currentSelected).poll();
+		if(UNDO_QUEUES.get(currentSelected).size() > 0){
+			reverseQueue(REDO_QUEUES.get(currentSelected));
+			REDO_QUEUES.get(currentSelected).add(preset.writeNBT());
+			reverseQueue(REDO_QUEUES.get(currentSelected));
 
-		preset = new SkinPreset();
-		preset.readNBT(undoTemp.writeNBT());
+			this.preset.readNBT(UNDO_QUEUES.get(currentSelected).poll());
+			handler.getSkin().updateLayers.addAll(Arrays.stream(EnumSkinLayer.values()).distinct().collect(Collectors.toList()));
+			update();
+		}
 	}
 
 	public void redoAction(){
 		UNDO_QUEUES.computeIfAbsent(currentSelected, (s) -> EvictingQueue.create(HISTORY_SIZE));
 		REDO_QUEUES.computeIfAbsent(currentSelected, (s) -> EvictingQueue.create(HISTORY_SIZE));
 
-		UNDO_QUEUES.get(currentSelected).add(preset);
-		SkinPreset redoTemp = REDO_QUEUES.get(currentSelected).poll();
+		if(REDO_QUEUES.get(currentSelected).size() > 0){
+			reverseQueue(UNDO_QUEUES.get(currentSelected));
+			UNDO_QUEUES.get(currentSelected).add(preset.writeNBT());
+			reverseQueue(UNDO_QUEUES.get(currentSelected));
 
-		preset = new SkinPreset();
-		preset.readNBT(redoTemp.writeNBT());
+			this.preset.readNBT(REDO_QUEUES.get(currentSelected).poll());
+			handler.getSkin().updateLayers.addAll(Arrays.stream(EnumSkinLayer.values()).distinct().collect(Collectors.toList()));
+			update();
+		}
+	}
+
+	private static void reverseQueue(Queue<CompoundNBT> queue) {
+		int n = queue.size();
+		Stack<CompoundNBT> stack = new Stack<>();
+		for (int i = 0; i < n; i++) {
+			CompoundNBT curr = queue.poll();
+			stack.push(curr);
+		}
+		for (int i = 0; i < n; i++) {
+			CompoundNBT curr = stack.pop();
+			queue.add(curr);
+		}
 	}
 
 	public DragonEditorScreen(Screen source){
@@ -261,6 +285,7 @@ public class DragonEditorScreen extends Screen{
 				}
 
 				index = DragonUtils.wrap(index - 1, 0, btn.values.length - 1);
+				doAction();
 				btn.current = btn.values[index];
 				btn.setter.accept(btn.current);
 				btn.updateMessage();
@@ -286,6 +311,7 @@ public class DragonEditorScreen extends Screen{
 				}
 
 				index = DragonUtils.wrap(index + 1, 0, btn.values.length - 1);
+				doAction();
 				btn.current = btn.values[index];
 				btn.setter.accept(btn.current);
 				btn.updateMessage();
@@ -301,6 +327,7 @@ public class DragonEditorScreen extends Screen{
 			});
 
 			addButton(new ColorSelectorButton(this, layers, btn.x + 15 + btn.getWidth() + 2, btn.y, btn.getHeight(), btn.getHeight(), (s) -> {
+				doAction();
 				preset.skinAges.get(level).layerSettings.get(layers).hue = s.floatValue();
 				handler.getSkin().updateLayers.add(layers);
 				update();
@@ -363,6 +390,7 @@ public class DragonEditorScreen extends Screen{
 		}
 
 		addButton(new Slider(width / 2 - 100 - 100, height - 25, 100, 20, new TranslationTextComponent("ds.gui.dragon_editor.size"), new StringTextComponent("%"), ConfigHandler.SERVER.minSizeVari.get(), ConfigHandler.SERVER.maxSizeVari.get(), Math.round((preset.sizeMul - 1.0) * 100), false, true, (p) -> {}, (p) -> {
+
 			double val = 1.0 + (p.getValueInt() / 100.0);
 			if(preset.sizeMul != val){
 				preset.sizeMul = val;
@@ -388,6 +416,15 @@ public class DragonEditorScreen extends Screen{
 				if(!isMouseOver(pMouseX, pMouseY) && isDragging()){
 					mouseReleased(pMouseX, pMouseY, 0);
 				}
+
+				if(isHovered()){
+					renderToolTip(pMatrixStack, pMouseX, pMouseY);
+				}
+			}
+
+			@Override
+			public void renderToolTip(MatrixStack pPoseStack, int pMouseX, int pMouseY){
+				GuiUtils.drawHoveringText(pPoseStack, Arrays.asList(new TranslationTextComponent("ds.gui.dragon_editor.size_info")), pMouseX, pMouseY, Minecraft.getInstance().screen.width, Minecraft.getInstance().screen.height, 200, Minecraft.getInstance().font);
 			}
 		});
 
@@ -403,6 +440,15 @@ public class DragonEditorScreen extends Screen{
 			public void renderButton(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
 				selected = preset.skinAges.get(level).defaultSkin;
 				super.renderButton(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
+
+				if(isHovered()){
+					renderToolTip(pMatrixStack, pMouseX, pMouseY);
+				}
+			}
+
+			@Override
+			public void renderToolTip(MatrixStack p_230443_1_, int p_230443_2_, int p_230443_3_){
+				GuiUtils.drawHoveringText(p_230443_1_, Arrays.asList(new TranslationTextComponent("ds.gui.dragon_editor.default_skin.tooltip")), p_230443_2_, p_230443_3_, Minecraft.getInstance().screen.width, Minecraft.getInstance().screen.height, 200, Minecraft.getInstance().font);
 			}
 		});
 
@@ -482,6 +528,7 @@ public class DragonEditorScreen extends Screen{
 		});
 
 		addButton(new ExtendedButton(guiLeft + 256 + 16, 9, 19, 19, StringTextComponent.EMPTY, (btn) -> {
+			doAction();
 			preset.skinAges.put(level, new SkinAgeGroup(level, type));
 			handler.getSkin().updateLayers.addAll(Arrays.stream(EnumSkinLayer.values()).distinct().collect(Collectors.toList()));
 			update();
@@ -499,6 +546,8 @@ public class DragonEditorScreen extends Screen{
 		});
 
 		addButton(new ExtendedButton(guiLeft + 256 + 30 + 16, 9, 19, 19, StringTextComponent.EMPTY, (btn) -> {
+			doAction();
+
 			ArrayList<String> extraKeys = DragonEditorHandler.getKeys(FakeClientPlayerUtils.getFakePlayer(0, handler), EnumSkinLayer.EXTRA);
 
 			extraKeys.removeIf((s) -> {
@@ -531,6 +580,11 @@ public class DragonEditorScreen extends Screen{
 						preset.skinAges.get(level).layerSettings.get(layer).saturation = 0.25f + (minecraft.player.level.random.nextFloat() * 0.5f);
 						preset.skinAges.get(level).layerSettings.get(layer).brightness = 0.3f + (minecraft.player.level.random.nextFloat() * 0.2f);
 						preset.skinAges.get(level).layerSettings.get(layer).modifiedColor = true;
+					}else{
+						preset.skinAges.get(level).layerSettings.get(layer).hue = 0.5f;
+						preset.skinAges.get(level).layerSettings.get(layer).saturation = 0.5f;
+						preset.skinAges.get(level).layerSettings.get(layer).brightness = 0.5f;
+						preset.skinAges.get(level).layerSettings.get(layer).modifiedColor = true;
 					}
 				}
 				handler.getSkin().updateLayers.add(layer);
@@ -547,6 +601,36 @@ public class DragonEditorScreen extends Screen{
 			public void renderButton(MatrixStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_){
 				Minecraft.getInstance().getTextureManager().bind(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/random_icon.png"));
 				blit(stack, x, y, 0, 0, width, height, width, height);
+			}
+		});
+
+		addButton(new ArrowButton(guiLeft + 327, 11, 16, 16, false, (s) -> {
+			undoAction();
+		}){
+			@Override
+			public void renderToolTip(MatrixStack p_230443_1_, int p_230443_2_, int p_230443_3_){
+				GuiUtils.drawHoveringText(p_230443_1_, Arrays.asList(new TranslationTextComponent("ds.gui.dragon_editor.undo")), p_230443_2_, p_230443_3_, Minecraft.getInstance().screen.width, Minecraft.getInstance().screen.height, 200, Minecraft.getInstance().font);
+			}
+
+			@Override
+			public void render(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
+				this.active = UNDO_QUEUES.containsKey(currentSelected) && UNDO_QUEUES.get(currentSelected).size() > 0;
+				super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
+			}
+		});
+
+		addButton(new ArrowButton(guiLeft + 347, 11, 16, 16, true, (s) -> {
+			redoAction();
+		}){
+			@Override
+			public void renderToolTip(MatrixStack p_230443_1_, int p_230443_2_, int p_230443_3_){
+				GuiUtils.drawHoveringText(p_230443_1_, Arrays.asList(new TranslationTextComponent("ds.gui.dragon_editor.redo")), p_230443_2_, p_230443_3_, Minecraft.getInstance().screen.width, Minecraft.getInstance().screen.height, 200, Minecraft.getInstance().font);
+			}
+
+			@Override
+			public void render(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
+				this.active = REDO_QUEUES.containsKey(currentSelected) && REDO_QUEUES.get(currentSelected).size() > 0;
+				super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 			}
 		});
 

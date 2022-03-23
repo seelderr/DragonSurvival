@@ -185,20 +185,8 @@ public class ClawToolHandler{
 			}
 
 			BlockState blockState = breakSpeedEvent.getState();
-			Item item = mainStack.getItem();
 
 			float originalSpeed = breakSpeedEvent.getOriginalSpeed();
-
-			if(!(mainStack.getItem() instanceof ToolItem || mainStack.getItem() instanceof SwordItem || mainStack.getItem() instanceof ShearsItem || (mainStack.getItem() instanceof TieredItem))){
-				for(int i = 1; i < 4; i++){
-					if(blockState.getHarvestTool() == null || blockState.getHarvestTool() == DragonStateHandler.CLAW_TOOL_TYPES[i]){
-						ItemStack breakingItem = dragonStateHandler.getClawInventory().getClawsInventory().getItem(i);
-						if(breakingItem != null && !breakingItem.isEmpty()){
-							return;
-						}
-					}
-				}
-			}
 
 			if(!(mainStack.getItem() instanceof ToolItem || mainStack.getItem() instanceof SwordItem || mainStack.getItem() instanceof ShearsItem || (mainStack.getItem() instanceof TieredItem))){
 				float bonus = dragonStateHandler.getLevel() == DragonLevel.ADULT

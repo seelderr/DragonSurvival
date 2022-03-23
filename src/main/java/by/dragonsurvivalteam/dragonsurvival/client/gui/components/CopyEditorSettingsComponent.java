@@ -67,6 +67,8 @@ public class CopyEditorSettingsComponent extends FocusableGui implements IRender
 			public void onPress(){
 				SkinAgeGroup preset = screen.preset.skinAges.getOrDefault(screen.level, new SkinAgeGroup(screen.level));
 
+				screen.doAction();
+
 				if(newborn.active && newborn.selected()){
 					SkinAgeGroup ageGroup = new SkinAgeGroup(DragonLevel.BABY);
 					ageGroup.readNBT(preset.writeNBT());

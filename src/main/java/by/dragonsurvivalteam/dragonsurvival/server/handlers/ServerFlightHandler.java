@@ -4,6 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.hitbox.DragonHitBox;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
@@ -181,6 +182,7 @@ public class ServerFlightHandler{
 					entities.removeIf((e) -> e.distanceTo(player) > range);
 					entities.remove(player);
 					entities.removeIf((e) -> e instanceof PlayerEntity && !player.canHarmPlayer((PlayerEntity)e));
+					entities.removeIf((e) -> e instanceof DragonHitBox && !player.canHarmPlayer((((DragonHitBox)e).player)));
 
 					for(Entity ent : entities){
 						if(player.hasPassenger(ent)){
