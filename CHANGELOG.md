@@ -1,3 +1,11 @@
+### [0.13.29](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.28...0.13.29) (2022-03-23)
+
+
+### Features
+
+* textures, arrows, configs, localization ([1ac2928](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/1ac29284af483359284462ba61d0e9337b05eb5a))
+* Undo/redo feature, waterlog, emote keybinds ([c605a4c](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/c605a4cf81b33fc8acf8e7452994d57c607c137e))
+
 ### [0.13.28](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.27...0.13.28) (2022-03-22)
 
 
