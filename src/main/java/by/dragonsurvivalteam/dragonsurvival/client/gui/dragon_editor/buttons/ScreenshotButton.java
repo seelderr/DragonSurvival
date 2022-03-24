@@ -66,7 +66,7 @@ public class ScreenshotButton extends ExtendedButton{
 		framebuffer.destroyBuffers();
 		RenderSystem.popMatrix();
 
-		Minecraft.getInstance().getMainRenderTarget().bindWrite(false);
+		Minecraft.getInstance().getMainRenderTarget().bindWrite(true);
 	}
 
 	public static File getFile(File pGameDirectory){

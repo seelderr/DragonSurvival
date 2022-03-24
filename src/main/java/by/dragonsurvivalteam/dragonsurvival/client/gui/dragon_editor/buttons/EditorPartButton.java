@@ -136,7 +136,7 @@ public class EditorPartButton extends ExtendedButton {
 		framebuffer.destroyBuffers();
 		RenderSystem.popMatrix();
 
-		Minecraft.getInstance().getMainRenderTarget().bindWrite(false);
+		Minecraft.getInstance().getMainRenderTarget().bindWrite(true);
 	}
 
 	@Override

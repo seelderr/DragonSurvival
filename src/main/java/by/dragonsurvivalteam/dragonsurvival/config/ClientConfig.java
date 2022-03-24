@@ -46,6 +46,9 @@ public class ClientConfig{
 	public final ForgeConfigSpec.BooleanValue dragonTabs;
 	public final ForgeConfigSpec.BooleanValue inventoryToggle;
 
+	public final ForgeConfigSpec.IntValue editorHistory;
+
+
 	public final ForgeConfigSpec.IntValue castbarXOffset;
 	public final ForgeConfigSpec.IntValue castbarYOffset;
 
@@ -89,6 +92,9 @@ public class ClientConfig{
 		clientDebugMessages = builder.comment("Enable client-side debug messages").define("clientDebugMessages", false);
 
 		appleskinSupport = builder.comment("Disable this setting to disable support for appleskin as a dragon if it is causing ui issues").define("appleskinSupport", true);
+
+		editorHistory = builder.comment("The amount of undos and redos that are saved in the dragon editor.").defineInRange("editorHistory", 10, 1, 1000);
+
 
 		builder.pop().push("inventory");
 		dragonInventory = builder.comment("Should the default inventory be replaced as a dragon?").define("dragonInventory", true);

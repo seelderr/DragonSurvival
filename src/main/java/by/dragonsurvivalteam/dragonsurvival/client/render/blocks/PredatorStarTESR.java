@@ -61,6 +61,7 @@ public class PredatorStarTESR extends TileEntityRenderer<PredatorStarTileEntity>
 		vector3f.normalize();
 		matrixStackIn.mulPose(new Quaternion(vector3f, f1, true));
 		this.field_228875_k_.render(matrixStackIn, CAGE_TEXTURE.buffer(bufferIn, RenderType::entityTranslucent), combinedLightIn, combinedOverlayIn);
+		matrixStackIn.popPose();
 
 
 		ActiveRenderInfo activerenderinfo = this.renderer.camera;

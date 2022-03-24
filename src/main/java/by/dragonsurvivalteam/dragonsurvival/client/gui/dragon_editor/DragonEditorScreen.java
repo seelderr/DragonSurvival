@@ -81,7 +81,7 @@ public class DragonEditorScreen extends Screen{
 	private boolean hasInit = false;
 	private DragonEditorConfirmComponent conf;
 
-	public static final int HISTORY_SIZE = 5;
+	public static final int HISTORY_SIZE = ConfigHandler.CLIENT.editorHistory.get();
 	public final ConcurrentHashMap<Integer, EvictingQueue<CompoundNBT>> UNDO_QUEUES = new ConcurrentHashMap<>();
 	public final ConcurrentHashMap<Integer, EvictingQueue<CompoundNBT>> REDO_QUEUES = new ConcurrentHashMap<>();
 
@@ -428,14 +428,14 @@ public class DragonEditorScreen extends Screen{
 			}
 		});
 
-		addButton(new ExtendedCheckbox(width / 2 + 100, height - 16, 100, 14, 14, new TranslationTextComponent("ds.gui.dragon_editor.wings"), preset.skinAges.get(level).wings, (p) -> preset.skinAges.get(level).wings = p.selected()){
+		addButton(new ExtendedCheckbox(width / 2 + 100, height - 16, 120, 14, 14, new TranslationTextComponent("ds.gui.dragon_editor.wings"), preset.skinAges.get(level).wings, (p) -> preset.skinAges.get(level).wings = p.selected()){
 			@Override
 			public void renderButton(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
 				selected = preset.skinAges.get(level).wings;
 				super.renderButton(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 			}
 		});
-		addButton(new ExtendedCheckbox(width / 2 + 100, height - 31, 100, 14, 14, new TranslationTextComponent("ds.gui.dragon_editor.default_skin"), preset.skinAges.get(level).defaultSkin, (p) -> preset.skinAges.get(level).defaultSkin = p.selected()){
+		addButton(new ExtendedCheckbox(width / 2 + 100, height - 31, 120, 14, 14, new TranslationTextComponent("ds.gui.dragon_editor.default_skin"), preset.skinAges.get(level).defaultSkin, (p) -> preset.skinAges.get(level).defaultSkin = p.selected()){
 			@Override
 			public void renderButton(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
 				selected = preset.skinAges.get(level).defaultSkin;
@@ -681,7 +681,7 @@ public class DragonEditorScreen extends Screen{
 				super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 			}
 		});
-		addButton(new ExtendedCheckbox(guiLeft - 15, 11, 32, 16, 16, new TranslationTextComponent("ds.gui.dragon_editor.show_ui"), showUi, (p) -> showUi = p.selected()));
+		addButton(new ExtendedCheckbox(guiLeft - 15, 11, 40, 16, 16, new TranslationTextComponent("ds.gui.dragon_editor.show_ui"), showUi, (p) -> showUi = p.selected()));
 		addButton(new BackgroundColorButton(guiLeft - 45, 10, 18, 18, StringTextComponent.EMPTY, (s) -> {}, this));
 		addButton(new HelpButton(type, guiLeft - 75, 11, 15, 15, "ds.help.customization", 1));
 		addButton(new ScreenshotButton(guiLeft + 240, 10, 18, 18, StringTextComponent.EMPTY, (s) -> {}, this));
