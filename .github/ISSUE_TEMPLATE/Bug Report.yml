@@ -1,0 +1,113 @@
+name: Bug Report
+description: File a bug report
+title: "[Bug]: "
+labels: ["bug", "triage"]
+assignees:
+  - octocat
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+        
+  - type: input
+    id: contact
+    attributes:
+      label: ■ Your Discord ID
+      description: How can we get in touch with you if we need more info?
+      placeholder: BlackAures#7759
+    validations:
+      required: false
+      
+  - type: textarea
+    id: version
+    attributes:
+      label: ■ Dragon Survival version
+      description: Copy the full name of the file.
+      placeholder: Example - DragonSurvival_TreasureUpdate-1.16.5-0.9.2
+    validations:
+      required: true
+      
+  - type: dropdown
+    id: version-mc
+    attributes:
+      label: ■ Minecraft version
+      description: 1.16.5 or...?
+      options:
+        - 1.16.5 (Default)
+        - 1.15
+        - 1.18
+    validations:
+      required: true  
+      
+  - type: dropdown
+    id: server
+    attributes:
+      label: ■ Single game or server?
+      description: There can be huge differences between the single-player game and the server. If you are a host or player on a server, indicate this.
+      options:
+        - Single (Default)
+        - Forge Server or host
+        - Playing with friends over a local network (Hamachi, etc.)
+    validations:
+      required: true
+      
+  - type: dropdown
+    id: configs
+    attributes:
+      label: ■ Do you delete old configs before writing a bug report?
+      description: Removing old configs after major updates is essential for clean operation of many modifications.
+      options:
+        - Nope (Default)
+        - I always delete configs
+        - Usually yes, but this time no.
+    validations:
+      required: true
+      
+  - type: dropdown
+    id: compatibility
+    attributes:
+      label: ■ Do you play pure MC + DS and Geckolib or do you have some kind of modpack?
+      description: Try the clean version first. Many problems arise because of a conflict with some third-party mod.
+      options:
+        - I only play with DS and Geckolib (Default)
+        - I have other mods
+        - I want to report a compatibility problem
+    validations:
+      required: true
+
+  - type: textarea
+    id: bug
+    attributes:
+      label: ■ Describe the bug
+      description:  A clear and concise description of what the bug is. If applicable, add screenshots to help explain your problem.
+      placeholder: I have been lying on the treasure for five minutes now, but nothing happens.
+    validations:
+      required: true
+      
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: ■ To Reproduce
+      description: Is this error repeatable? If so, please describe how we can get the same result as yours.
+      placeholder: 1. Put the treasure on the ground 2. Right-click on them 3. Just wait and nothing happens
+    validations:
+      required: true
+      
+  - type: textarea
+    id: expected
+    attributes:
+      label: ■ Expected behavior
+      description:  A clear and concise description of what you expected to happen.
+      placeholder: I use treasures and expect them to give healing.
+    validations:
+      required: true
+       
+  - type: textarea
+    id: crash-report
+    attributes:
+      label: ■ Crash Report
+      description: If your game or server crashes, the game creates a file in crash-reports folder. Send us the contents of this file or the file itself.
+    validations:
+      required: false
+      

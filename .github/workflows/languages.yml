@@ -1,0 +1,37 @@
+name: Crowdin Download
+
+on:
+  workflow_dispatch:
+  schedule:
+    # runs every day at 12:00 noon UTC
+    - cron: '0 12 * * *'
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
+  CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+
+jobs:
+  i18n-download-docs-translations:
+    name: Language
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Fetch newest translations
+        uses: crowdin/github-action@master
+        with:
+          upload_translations: true
+          download_translations: true
+          token: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+          project_id: ${{ secrets.CROWDIN_PROJECT_ID }}
+          base_url: https://dragonsurvivalteam.crowdin.com
+          upload_language: "us"
+          skip_untranslated_strings: true
+          skip_untranslated_files: true
+          create_pull_request: false
+          export_only_approved: true
+          push_translations: true
+          commit_message: 'New Crowdin translations by Github Action'
+          source: "/src/main/resources/assets/dragonsurvival/lang/en_us.json"
+          translation: "/src/main/resources/assets/dragonsurvival/lang/%locale_with_underscore%.json"
+          localization_branch_name: "v1.16.x"

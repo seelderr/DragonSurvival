@@ -1,8 +1,6 @@
 {
   "itemGroup.dragon.survival.blocks": "Dragons Survival",
-
   "entity.dragonsurvival.magical_predator_entity": "Predador Mágico",
-
   "item.dragonsurvival.magical_predator_entity_spawn_egg": "Ovo de invocação de Predador Mágico",
   "item.dragonsurvival.star_bone": "Osso estelar",
   "item.dragonsurvival.heart_element": "Coração elemental",
@@ -14,8 +12,6 @@
   "item.dragonsurvival.charred_vegetable": "Vegetais carbonizados",
   "item.dragonsurvival.charred_seafood": "Frutos do Mar carbonizados",
   "item.dragonsurvival.charred_mushroom": "Cogumelo Carbonizado",
-
-
   "block.dragonsurvival.predator_star": "Estrela do predador",
   "block.dragonsurvival.dragon_altar": "Altar dos Dragões",
   "block.dragonsurvival.cave_nest_small": "Ninho Pequeno da Caverna",
@@ -27,7 +23,6 @@
   "block.dragonsurvival.big_forest_nest": "Ninho grande da floresta",
   "block.dragonsurvival.big_sea_nest": "Ninho grande do mar",
   "block.dragonsurvival.big_cave_nest": "Ninho grande da Caverna",
-
   "block.dragonsurvival.dragon_altar1": "Altar Draconico de Carvalho",
   "block.dragonsurvival.dragon_altar2": "Altar Draconico de Pedra",
   "block.dragonsurvival.dragon_altar3": "Altar Draconico de Arenito",
@@ -40,7 +35,6 @@
   "block.dragonsurvival.dragon_altar_nether_bricks": "Altar Draconico de Tijolo do Nheter",
   "block.dragonsurvival.dragon_altar_mossy_cobblestone": "Altar Draconico de Pedregulho Musgoso",
   "block.dragonsurvival.dragon_altar_blackstone": "Altar Draconico de Pedra-negra",
-
   "block.dragonsurvival.spruce_dragon_door": "Porta de abeto para dragões",
   "block.dragonsurvival.acacia_dragon_door": "Porta de Acacia para dragões",
   "block.dragonsurvival.jungle_dragon_door": "Porta de madeira da selva para dragões",
@@ -57,18 +51,14 @@
   "block.dragonsurvival.sleeper_dragon_door": "Porta para dragões estilo Gotico",
   "block.dragonsurvival.stone_dragon_door": "Porta de Pedra para dragões",
   "block.dragonsurvival.legacy_dragon_door": "Porta para dragões estilo Legado",
-
   "effect.dragonsurvival.stress": "Estresse",
-
   "dragonsurvival:config.category.general.tooltip": "Opções gerais de configuração para Dragon Survival",
   "dragonsurvival:config.category.spawnchances.tooltip": "Opções de configuração para geração de entidades",
-
   "death.attack.starDrain": "%1$s tiveram sua vida e energia drenadas por magia.",
   "death.attack.waterBurn": "%1$s tentou nadar na água.",
   "death.attack.waterBurn.player": "%1$s tentou nadar na água tentando escapar de %2$s.",
   "death.attack.dehydration": "%1$s secou.",
   "death.attack.dehydration.player": "%1$s secou tentando escapar de %2$s.",
-  
   "ds.cave_dragon_choice": "Você escolheu ser um dragão da caverna.",
   "ds.forest_dragon_choice": "Você escolheu ser um dragão da floresta.",
   "ds.sea_dragon_choice": "Você escolheu ser um dragão do mar.",
@@ -79,14 +69,11 @@
   "ds.dragon.grants.wings": "<Ender dragon> Eu concedo asas para você. Agora dá o Fora!",
   "ds.space.occupied": "Espaço livre insuficiente ao redor",
   "ds.cooldown.active": "O altar está em tempo de recarrega: {0}",
-  
   "ds.regen.on": "Regeneração de ninho ativada.",
   "ds.regen.off": "Regeneração de ninho desativada.",
-  
   "ds.endmessage.1": "Você veio aqui pelas asas, {0}? Saia, antes que seja tarde demais.",
   "ds.endmessage.2": "Esta é minha terra, {0}, mostre algum respeito. Vá embora, mas primeiro, responda por que você veio aqui, é para asas?",
   "ds.endmessage.3": "Você passou por muita coisa para chegar até aqui, {0}, o que você deseja?",
-
   "ds.altar_dragon_info.cave_dragon.0": "§c■ Dragão da caverna.§r",
   "ds.altar_dragon_info.cave_dragon.1": "",
   "ds.altar_dragon_info.cave_dragon.2": "§2■ Recursos:§f§r resistência ao fogo, garras de picareta, magia de fogo, movimento mais rápido em blocos de cavernas.",

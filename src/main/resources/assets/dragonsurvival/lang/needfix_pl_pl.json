@@ -1,8 +1,6 @@
 {
   "itemGroup.dragon.survival.blocks": "Dragons Survival",
-
   "entity.dragonsurvival.magical_predator_entity": "Drapieżca Magii",
-
   "item.dragonsurvival.magical_predator_entity_spawn_egg": "Jajo przyzywające drapieżcę magii",
   "item.dragonsurvival.star_bone": "Gwiezdna Kość",
   "item.dragonsurvival.heart_element": "Fragment Serca",
@@ -14,9 +12,6 @@
   "item.dragonsurvival.charred_vegetable": "Zwęglone Warzywo",
   "item.dragonsurvival.charred_seafood": "Zwęglone Owoce Morza",
   "item.dragonsurvival.charred_mushroom": "Zwęglony Grzyb",
-
-
-  
   "block.dragonsurvival.predator_star": "Gwiazda Drapieżcy",
   "block.dragonsurvival.dragon_altar": "Ołtarz Smoków",
   "block.dragonsurvival.cave_nest_small": "Małe Jaskiniowe Gniazdo",
@@ -28,13 +23,10 @@
   "block.dragonsurvival.big_forest_nest": "Duże Leśne Gniazdo",
   "block.dragonsurvival.big_sea_nest": "Duże Morskie Gniazdo",
   "block.dragonsurvival.big_cave_nest": "Duże Jaskiniowe Gniazdo",
-  
-  
   "block.dragonsurvival.dragon_altar1": "Dębowy Ołtarz Smoków",
   "block.dragonsurvival.dragon_altar2": "Kamienny Ołtarz Smoków",
   "block.dragonsurvival.dragon_altar3": "Piaskowcowy Ołtarz Smoków",
   "block.dragonsurvival.dragon_altar0": "Zamszony Ołtarz Smoków",
-
   "block.dragonsurvival.dragon_altar_stone": "Kamienny ołtarz smoków",
   "block.dragonsurvival.dragon_altar_sandstone": "Piaskowcowy ołtarz smoków",
   "block.dragonsurvival.dragon_altar_red_sandstone": "Czerwony piaskowcowy ołtarz smoków",
@@ -43,8 +35,6 @@
   "block.dragonsurvival.dragon_altar_nether_bricks": "Netherowy ceglany ołtarz smoków",
   "block.dragonsurvival.dragon_altar_mossy_cobblestone": "Zamszowy brukowy ołtarz smoków",
   "block.dragonsurvival.dragon_altar_blackstone": "Czernitowy ołtarz smoków",
-
-
   "block.dragonsurvival.spruce_dragon_door": "Świerkowe Smocze Drzwi",
   "block.dragonsurvival.acacia_dragon_door": "Akacjowe Smocze Drzwi",
   "block.dragonsurvival.jungle_dragon_door": "Tropikalne Smocze Drzwi",
@@ -61,18 +51,14 @@
   "block.dragonsurvival.sleeper_dragon_door": "Gotyckie Smocze Drzwi",
   "block.dragonsurvival.stone_dragon_door": "Kamienne Smocze Drzwi",
   "block.dragonsurvival.legacy_dragon_door": "Smocze Drzwi",
-
   "effect.dragonsurvival.stress": "Stres",
-
   "dragonsurvival:config.category.general.tooltip": "Główne ustawienia Dragon Survival",
   "dragonsurvival:config.category.spawnchances.tooltip": "Konfigurowalne szanse na spawn istot.",
-
   "death.attack.starDrain": "Energia życiowa %1$s została wyssana przez magię.",
   "death.attack.waterBurn": "%1$s sparzyła woda.",
   "death.attack.waterBurn.player": "%1$s sparzyła woda uciekając przed %2$s.",
   "death.attack.dehydration": "%1$s wysechł na wiór.",
   "death.attack.dehydration.player": "%1$s wysechł na wiór uciekając przed %2$s.",
-  
   "ds.cave_dragon_choice": "Twym wyborem jest żywot Jaskiniowego smoka.",
   "ds.forest_dragon_choice": "Twym wyborem jest żywot Leśnego smoka.",
   "ds.sea_dragon_choice": "Twym wyborem jest żywot Morskiego smoka.",
@@ -83,10 +69,8 @@
   "ds.dragon.grants.wings": "<Smok Endu> Proszę, obdarowuję cię darem posiadania skrzydeł. A teraz wynoś się stąd!",
   "ds.space.occupied": "Za mało miejsca aby powiększyć gniazdo",
   "ds.cooldown.active": "Korzystanie z ołtarza jeszcze nie jest możliwe: {0}",
-  
   "ds.regen.on": "Regeneracja w gnieździe włączona.",
   "ds.regen.off": "Regeneracja w gnieździe wyłączona.",
-  
   "ds.endmessage.1": "Przybywasz tu w celu zdobycia skrzydeł, {0}? Wynoś się stąd, nim będzie za późno.",
   "ds.endmessage.2": "To moje królestwo, {0}, okaż trochę szacunku. Opuść to miejsce, lecz pierw powiedz... Po co tu przybywasz? Po skrzydła?",
   "ds.endmessage.3": "Przeszedłeś wiele, aby się tu dostać, {0}. Czegoż pragniesz?",
@@ -94,7 +78,6 @@
   "ds.endmessage.5": "Kto ma czelność zakłócać mój spokój? {0}, masz szczęście, że jestem teraz w dobrym humorze. Czego szukasz?",
   "ds.endmessage.6": "Kolejna zbłąkana dusza przeszła przez portal, by mnie wygnać... Och, chwila. {0}, jesteś... inny. Czuję to. Czuję w tobie ukrytą moc. Mogę pomóc Ci ją wyzwolić, ale tylko jeśli zostawisz mnie potem w spokoju. Zgoda?",
   "ds.endmessage.7": "Ani się waż zbliżać do mojego gniazda, {0}. Zróbmy małą wymianę... Ja dam ci coś, czego pragniesz, a ty dasz mi spokój i nigdy tu nie wrócisz. Umowa?",
-
   "ds.altar_dragon_info.cave_dragon.0": "§c■ Smok Jaskiniowy.§r",
   "ds.altar_dragon_info.cave_dragon.1": "",
   "ds.altar_dragon_info.cave_dragon.2": "§2■ Cechy:§f§r odporność na ogień, pazury-kilofy, magia ognia, szybsze poruszanie się na jaskiniowych blokach.",

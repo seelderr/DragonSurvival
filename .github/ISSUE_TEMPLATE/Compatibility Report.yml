@@ -1,0 +1,93 @@
+name: Compatibility Report
+description: Crashes the game in the modpack? Write about it here.
+title: "[Compatibility]: "
+labels: ["compatibility", "triage"]
+assignees:
+  - octocat
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please only crash reports, not suggestions like "Don't let the dragons of mod X attack the dragons of Dragon Survival".
+        
+  - type: input
+    id: contact
+    attributes:
+      label: ■ Your Discord ID
+      description: How can we get in touch with you if we need more info?
+      placeholder: BlackAures#7759
+    validations:
+      required: false
+      
+  - type: textarea
+    id: version
+    attributes:
+      label: ■ Dragon Survival version
+      description: Copy the full name of the file.
+      placeholder: Example - DragonSurvival_TreasureUpdate-1.16.5-0.9.2
+    validations:
+      required: true
+      
+  - type: dropdown
+    id: version-mc
+    attributes:
+      label: ■ Minecraft version
+      description: 1.16.5 or...?
+      options:
+        - 1.16.5 (Default)
+        - 1.15
+        - 1.18
+    validations:
+      required: true  
+      
+  - type: dropdown
+    id: server
+    attributes:
+      label: ■ Single game or server?
+      description: There can be huge differences between the single-player game and the server. If you are a host or player on a server, indicate this.
+      options:
+        - Single (Default)
+        - Forge Server or host
+        - Playing with friends over a local network (Hamachi, etc.)
+    validations:
+      required: true
+      
+  - type: dropdown
+    id: configs
+    attributes:
+      label: ■ Do you delete old configs before writing a bug report?
+      description: Removing old configs after major updates is essential for clean operation of many modifications.
+      options:
+        - Nope (Default)
+        - I always delete configs
+        - Usually yes, but this time no.
+    validations:
+      required: true
+
+  - type: textarea
+    id: incompatibility
+    attributes:
+      label: ■ Description of incompatibility
+      description:  A clear and concise description of what the incompatibility is. If applicable, add screenshots to help explain your problem. Please only crash reports, not suggestions.
+      placeholder: I remove Dragon Survival or mod X and the game starts working, but together this causes the game crashes.
+    validations:
+      required: true
+      
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: ■ To Reproduce
+      description: Is this error repeatable? If so, please describe how we can get the same result as yours.
+      placeholder: 1. Install Dragon Survival and mod X 2. Try to open the game or interact with the item from X mod 3. Crash
+    validations:
+      required: true
+      
+       
+  - type: textarea
+    id: crash-report
+    attributes:
+      label: ■ Crash Report
+      description: If your game crashes, Minecraft creates a file in crash-reports folder. Send us the contents of this file or the file itself. Just drag the file here and it will upload.
+    validations:
+      required: false
+      

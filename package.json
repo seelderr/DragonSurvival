@@ -1,0 +1,88 @@
+{
+  "name": "dragon-survival",
+  "version": "0.13.34",
+  "private": true,
+  "devDependencies": {
+    "@semantic-release/changelog": "6.0.1",
+    "@semantic-release/exec": "6.0.3",
+    "@semantic-release/commit-analyzer": "9.0.2",
+    "@semantic-release/git": "10.0.1",
+    "@semantic-release/release-notes-generator": "10.0.3",
+    "semantic-release": "19.0.2",
+    "@semantic-release/npm": "9.0.1",
+    "conventional-changelog-conventionalcommits": "4.6.3"
+  },
+  "files": [
+    "build/libs/*.jar"
+  ],
+  "engines": {
+    "node": "^16.13.0"
+  },
+  "release": {
+    "preset": "conventionalcommits",
+    "tagFormat": "${version}",
+    "presetConfig": "conventional-changelog-conventionalcommits",
+    "branches": [
+      {
+        "name": "v1.16.x"
+      }
+    ],
+    "plugins": [
+      [
+        "@semantic-release/commit-analyzer",
+        {
+          "preset": "conventionalcommits",
+          "releaseRules": [
+            {
+              "type": "patch",
+              "release": "patch"
+            },
+            {
+              "type": "minor",
+              "release": "minor"
+            },
+            {
+              "type": "major",
+              "release": "major"
+            },
+            {
+              "type": "feat",
+              "release": "patch"
+            }
+          ]
+        }
+      ],
+      [
+        "@semantic-release/release-notes-generator",
+        {
+          "preset": "conventionalcommits"
+        }
+      ],
+      "@semantic-release/changelog",
+      [
+        "@semantic-release/npm",
+        {
+          "npmPublish": false,
+          "tarballDir": "dist"
+        }
+      ],
+      [
+        "@semantic-release/exec",
+        {
+          "generateNotesCmd": "sed -ie s/^mod_version=.*/mod_version=${nextRelease.version}/ gradle.properties"
+        }
+      ],
+      [
+        "@semantic-release/git",
+        {
+          "assets": [
+            "package.json",
+            "CHANGELOG.md",
+            "gradle.properties"
+          ],
+          "message": "Bump version to ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+        }
+      ]
+    ]
+  }
+}

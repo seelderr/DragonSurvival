@@ -1,8 +1,20 @@
 {
-    "variants": {
-        "facing=south": { "model": "dragonsurvival:block/dragon_altar_birch_log", "y": 0 },
-        "facing=west":  { "model": "dragonsurvival:block/dragon_altar_birch_log", "y": 90 },
-        "facing=north": { "model": "dragonsurvival:block/dragon_altar_birch_log", "y": 180 },
-        "facing=east":  { "model": "dragonsurvival:block/dragon_altar_birch_log", "y": 270 }
+  "variants": {
+    "facing=south": {
+      "model": "dragonsurvival:block/dragon_altar_birch_log",
+      "y": 0
+    },
+    "facing=west": {
+      "model": "dragonsurvival:block/dragon_altar_birch_log",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "dragonsurvival:block/dragon_altar_birch_log",
+      "y": 180
+    },
+    "facing=east": {
+      "model": "dragonsurvival:block/dragon_altar_birch_log",
+      "y": 270
     }
+  }
 }
