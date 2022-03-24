@@ -42,7 +42,7 @@ import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.fml.client.gui.GuiUtils;
 import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.codehaus.plexus.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
