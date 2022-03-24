@@ -1,3 +1,17 @@
+### [0.13.34](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.33...0.13.34) (2022-03-24)
+
+
+### Bug Fixes
+
+* wrong sounds and material blocks, Russian localization, server configs ([3e67553](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/3e675535d86dabf0a2f8ca3c7d30d9120dbdd800))
+
+### [0.13.33](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.32...0.13.33) (2022-03-24)
+
+
+### Bug Fixes
+
+* First round of fixes ([2440aa0](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/2440aa029c373ab4a1a0b2e2c81e873cdf74e397))
+
 ### [0.13.32](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.31...0.13.32) (2022-03-24)
 
 

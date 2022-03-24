@@ -90,8 +90,8 @@ public class DSBlocks{
 		crimsonDoor = registerBlock(new DragonDoor(Block.Properties.of(Material.WOOD, Blocks.CRIMSON_PLANKS.defaultMaterialColor()).strength(3.0F).sound(SoundType.WOOD).noOcclusion(), DragonDoorOpenRequirement.NONE), "crimson_dragon_door", forgeRegistry);
 
 		caveDoor = registerBlock(new DragonDoor(Block.Properties.of(Material.STONE, Blocks.BLACKSTONE.defaultMaterialColor()).requiresCorrectToolForDrops().strength(7.0F).sound(SoundType.GILDED_BLACKSTONE).noOcclusion(), DragonDoorOpenRequirement.CAVE), "cave_dragon_door", forgeRegistry);
-		forestDoor = registerBlock(new DragonDoor(Block.Properties.of(Material.STONE, Blocks.DARK_PRISMARINE.defaultMaterialColor()).requiresCorrectToolForDrops().strength(7.0F).sound(SoundType.STONE).noOcclusion(), DragonDoorOpenRequirement.FOREST), "forest_dragon_door", forgeRegistry);
-		seaDoor = registerBlock(new DragonDoor(Block.Properties.of(Material.WOOD, MaterialColor.COLOR_BROWN).requiresCorrectToolForDrops().strength(7.0F).sound(SoundType.WOOD).noOcclusion(), DragonDoorOpenRequirement.SEA), "sea_dragon_door", forgeRegistry);
+		forestDoor = registerBlock(new DragonDoor(Block.Properties.of(Material.WOOD, Blocks.DARK_PRISMARINE.defaultMaterialColor()).requiresCorrectToolForDrops().strength(7.0F).sound(SoundType.WOOD).noOcclusion(), DragonDoorOpenRequirement.FOREST), "forest_dragon_door", forgeRegistry);
+		seaDoor = registerBlock(new DragonDoor(Block.Properties.of(Material.STONE, MaterialColor.COLOR_BROWN).requiresCorrectToolForDrops().strength(7.0F).sound(SoundType.STONE).noOcclusion(), DragonDoorOpenRequirement.SEA), "sea_dragon_door", forgeRegistry);
 
 		ironDoor = registerBlock(new DragonDoor(Block.Properties.of(Material.METAL, MaterialColor.METAL).requiresCorrectToolForDrops().strength(5.0F).sound(SoundType.METAL).noOcclusion(), DragonDoorOpenRequirement.POWER), "iron_dragon_door", forgeRegistry);
 
