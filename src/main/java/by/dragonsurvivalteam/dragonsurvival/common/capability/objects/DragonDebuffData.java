@@ -10,4 +10,10 @@ public class DragonDebuffData{
 		this.timeInDarkness = timeInDarkness;
 		this.timeInRain = timeInRain;
 	}
+
+	public void onDeath(){
+		timeWithoutWater = 0;
+		timeInDarkness = 0;
+		timeInRain = 0;
+	}
 }

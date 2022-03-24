@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.common.DamageSources;
 import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.objects.DragonDebuffData;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.DragonAbilities;
@@ -10,6 +11,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.magic.abilities.Passives.Cont
 import by.dragonsurvivalteam.dragonsurvival.common.magic.abilities.Passives.LightInDarknessAbility;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.abilities.Passives.WaterAbility;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.common.DragonAbility;
+import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.entity.player.SyncCapabilityDebuff;
@@ -32,6 +34,7 @@ import net.minecraft.world.biome.Biome.RainType;
 import net.minecraft.world.lighting.WorldLightManager;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.network.PacketDistributor;
@@ -279,5 +282,14 @@ public class DragonTraitHandler{
 				}
 			}
 		});
+	}
+
+	@SubscribeEvent
+	public static void onDeath(LivingDeathEvent event){
+		if(event.getEntity() instanceof PlayerEntity){
+			DragonStateHandler handler = DragonUtils.getHandler(event.getEntity());
+			handler.getDebuffData().onDeath();
+
+		}
 	}
 }
