@@ -1,3 +1,10 @@
+### [0.13.36](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.35...0.13.36) (2022-03-24)
+
+
+### Bug Fixes
+
+* Should fix server side crash ([2b1a733](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/2b1a733a022b4eeaef269bfe9f3fd2686339f0bd))
+
 ### [0.13.35](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.34...0.13.35) (2022-03-24)
 
 
