@@ -1,9 +1,13 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.settings;
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.fields.TextField;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.OptionListEntry;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.OptionsList;
 import net.minecraft.client.AbstractOption;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.IGuiEventListener;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.Widget;
 import org.apache.commons.lang3.math.NumberUtils;
 
@@ -33,6 +37,7 @@ public class DSNumberFieldOption extends AbstractOption{
 				boolean val = super.charTyped(pCodePoint, pModifiers);
 				if(val){
 					Number num = NumberUtils.createNumber(getValue());
+
 					if(num.doubleValue() > max.doubleValue()){
 						setValue(max.toString());
 					}else if(num.doubleValue() < min.doubleValue()){
@@ -41,6 +46,25 @@ public class DSNumberFieldOption extends AbstractOption{
 					setter.accept(gameSettings, num);
 				}
 				return val;
+			}
+
+			@Override
+			public boolean mouseClicked(double pMouseX, double pMouseY, int pButton){
+				Screen screen = Minecraft.getInstance().screen;
+
+				for(IGuiEventListener child : screen.children){
+					if(child instanceof OptionsList){
+						for(OptionListEntry optionListEntry : ((OptionsList)child).children()){
+							for(IGuiEventListener button : optionListEntry.children()){
+								if(button != this && button instanceof TextField){
+									((TextField)button).setFocus(false);
+								}
+							}
+						}
+					}
+				}
+
+				return super.mouseClicked(pMouseX, pMouseY, pButton);
 			}
 		};
 		widget.setFilter((s) -> NumberUtils.isCreatable(s) || s.isEmpty());

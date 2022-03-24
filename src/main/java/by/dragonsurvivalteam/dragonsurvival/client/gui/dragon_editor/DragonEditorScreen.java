@@ -604,7 +604,7 @@ public class DragonEditorScreen extends Screen{
 			}
 		});
 
-		addButton(new ArrowButton(guiLeft + 327, 11, 16, 16, false, (s) -> {
+		addButton(new UndoRedoButton(guiLeft + 327, 11, 16, 16, false, (s) -> {
 			undoAction();
 		}){
 			@Override
@@ -619,7 +619,7 @@ public class DragonEditorScreen extends Screen{
 			}
 		});
 
-		addButton(new ArrowButton(guiLeft + 347, 11, 16, 16, true, (s) -> {
+		addButton(new UndoRedoButton(guiLeft + 347, 11, 16, 16, true, (s) -> {
 			redoAction();
 		}){
 			@Override

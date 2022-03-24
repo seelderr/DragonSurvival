@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists;
 
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.fields.TextField;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.AbstractOption;
@@ -262,7 +263,7 @@ public class OptionsList extends AbstractOptionList<OptionListEntry>{
 						return (Widget)widget;
 					}else if(widget instanceof OptionSlider && ((OptionSlider)widget).option == p_243271_1_){
 						return (Widget)widget;
-					}else if(widget instanceof OptionSlider && ((OptionSlider)widget).option == p_243271_1_){
+					}else if(widget instanceof TextField && ((TextField)widget).option == p_243271_1_){
 						return (Widget)widget;
 					}
 				}

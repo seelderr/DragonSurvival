@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.settings.ClientSettingsScreen;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.fields.TextField;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.settings.DSDropDownOption;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.OptionsList;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
@@ -55,30 +56,36 @@ public class ResetSettingsButton extends Button{
 							}
 						}else if(ob instanceof Integer){
 							if(widget != null){
-								widget.setMessage(((SliderPercentageOption)option).getMessage(Minecraft.getInstance().options));
-							}
-							if(widget != null){
-								((AbstractSlider)widget).value = ((SliderPercentageOption)option).toPct((Integer)ob);
+								if(widget instanceof AbstractSlider){
+									widget.setMessage(((SliderPercentageOption)option).getMessage(Minecraft.getInstance().options));
+									((AbstractSlider)widget).value = ((SliderPercentageOption)option).toPct((Integer)ob);
+								}else if(widget instanceof TextField){
+									((TextField)widget).setValue(ob.toString());
+								}
 							}
 							if(!Objects.equals(screen.getConfigName(), "client")){
 								NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(configKey, (Integer)ob, screen.getConfigName()));
 							}
 						}else if(ob instanceof Double){
 							if(widget != null){
-								widget.setMessage(((SliderPercentageOption)option).getMessage(Minecraft.getInstance().options));
-							}
-							if(widget != null){
-								((AbstractSlider)widget).value = ((SliderPercentageOption)option).toPct((Double)ob);
+								if(widget instanceof AbstractSlider){
+									widget.setMessage(((SliderPercentageOption)option).getMessage(Minecraft.getInstance().options));
+									((AbstractSlider)widget).value = ((SliderPercentageOption)option).toPct((Double)ob);
+								}else if(widget instanceof TextField){
+									((TextField)widget).setValue(ob.toString());
+								}
 							}
 							if(!Objects.equals(screen.getConfigName(), "client")){
 								NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(configKey, (Double)ob, screen.getConfigName()));
 							}
 						}else if(ob instanceof Long){
 							if(widget != null){
-								widget.setMessage(((SliderPercentageOption)option).getMessage(Minecraft.getInstance().options));
-							}
-							if(widget != null){
-								((AbstractSlider)widget).value = ((SliderPercentageOption)option).toPct((Long)ob);
+								if(widget instanceof AbstractSlider){
+									widget.setMessage(((SliderPercentageOption)option).getMessage(Minecraft.getInstance().options));
+									((AbstractSlider)widget).value = ((SliderPercentageOption)option).toPct((Long)ob);
+								}else if(widget instanceof TextField){
+									((TextField)widget).setValue(ob.toString());
+								}
 							}
 							if(!Objects.equals(screen.getConfigName(), "client")){
 								NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(configKey, (Long)ob, screen.getConfigName()));

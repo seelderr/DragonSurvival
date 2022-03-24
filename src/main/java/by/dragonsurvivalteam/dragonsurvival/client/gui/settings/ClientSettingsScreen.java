@@ -250,7 +250,7 @@ public class ClientSettingsScreen extends SettingsScreen{
 			addOption(category, name, option);
 		}else if(value instanceof DoubleValue){
 			DoubleValue value1 = (DoubleValue)value;
-			double min = (double)spec.correct(Double.MIN_VALUE);
+			double min = (double)spec.correct(-Double.MAX_VALUE);
 			double max = (double)spec.correct(Double.MAX_VALUE);
 			double dif = max - min;
 			AbstractOption option = null;

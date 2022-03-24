@@ -17,7 +17,7 @@ import java.util.Optional;
 
 public class TextField extends TextFieldWidget implements IBidiTooltip{
 	private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/textbox.png");
-	private final AbstractOption option;
+	public final AbstractOption option;
 	private final ValueSpec spec;
 
 	public TextField(int pX, int pY, int pWidth, int pHeight, ITextComponent pMessage){

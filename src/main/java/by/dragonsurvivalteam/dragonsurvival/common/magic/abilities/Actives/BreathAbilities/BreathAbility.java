@@ -94,16 +94,10 @@ public abstract class BreathAbility extends ActiveDragonAbility implements ISeco
 
 		castingTicks++;
 
-		DragonStateHandler playerStateHandler = DragonStateProvider.getCap(player).orElseGet(null);
-		double sizeScale = playerStateHandler.getSkin().skinPreset.sizeMul;
-
-		if(playerStateHandler == null){
-			return;
-		}
+		DragonStateHandler playerStateHandler = DragonUtils.getHandler(player);
 
 		DragonLevel growthLevel = DragonStateProvider.getCap(player).map(cap -> cap.getLevel()).get();
-		//		RANGE = growthLevel == DragonLevel.BABY ? 4 : growthLevel == DragonLevel.YOUNG ? 7 : 10;
-		RANGE = (int)Math.round(4 + ((playerStateHandler.getSize() - DragonLevel.BABY.size) / (DragonLevel.ADULT.size - DragonLevel.BABY.size)) * 6);
+		RANGE = (int)Math.round(4 + ((playerStateHandler.getSize() - DragonLevel.BABY.size) / (DragonLevel.ADULT.size - DragonLevel.BABY.size)) * 4);
 		yaw = (float)Math.toRadians(-player.yRot);
 		pitch = (float)Math.toRadians(-player.xRot);
 		speed = growthLevel == DragonLevel.BABY ? 0.1F : growthLevel == DragonLevel.YOUNG ? 0.2F : 0.3F; //Changes distance

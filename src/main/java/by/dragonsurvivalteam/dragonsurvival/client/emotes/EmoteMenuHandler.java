@@ -287,8 +287,11 @@ public class EmoteMenuHandler{
 								RenderingUtils.drawRect(stack, x, y, width-1, height, new Color(0.1F, 0.1F, 0.1F, 0.8F).getRGB());
 								TextRenderUtil.drawCenteredScaledText(stack, x + (width / 2), y + 1, 1f, "...", -1);
 							}else if(handler.getEmotes().emoteKeybinds.containsKey(emote.id)){
-								Input input = InputMappings.Type.KEYSYM.getOrCreate(handler.getEmotes().emoteKeybinds.get(emote.id));
-								TextRenderUtil.drawCenteredScaledText(stack, x + (width / 2), y + 1, 1f, input.getDisplayName(), -1);
+								int id = handler.getEmotes().emoteKeybinds.get(emote.id);
+								if(id != 0){
+									Input input = InputMappings.Type.KEYSYM.getOrCreate(id);
+									TextRenderUtil.drawCenteredScaledText(stack, x + (width / 2), y + 1, 1f, input.getDisplayName(), -1);
+								}
 							}
 						}
 					}

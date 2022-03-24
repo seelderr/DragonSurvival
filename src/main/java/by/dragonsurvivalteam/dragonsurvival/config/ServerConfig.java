@@ -297,13 +297,13 @@ public class ServerConfig{
 		minHealth = builder.translation("ds.config.server.growth.minHealth").comment("Dragon starting health. Minumum health dragons will start off with.").defineInRange("minHealth", 14, 1, 100);
 		maxHealth = builder.translation("ds.config.server.growth.maxHealth").comment("Maximum health dragons can grow to.").defineInRange("maxHealth", 40, 1, 100);
 
-		newbornGrowthModifier = builder.translation("ds.config.server.growth.newbornGrowthModifier").comment("A multiplier to change the growth rate from newborn to young. At 1.0 it takes about 3 hours to turn a newborn dragon into a young dragon.").defineInRange("newbornGrowthModifier", 0.7, 0, 1000);
+		newbornGrowthModifier = builder.translation("ds.config.server.growth.newbornGrowthModifier").comment("A multiplier to change the growth rate from newborn to young. At 1.0 it takes about 3 hours to turn a newborn dragon into a young dragon.").defineInRange("newbornGrowthModifier", 0.7, 0.0, 1000);
 
-		youngGrowthModifier = builder.translation("ds.config.server.growth.youngGrowthModifier").comment("A multiplier to change the growth rate from young to adult. At 1.0 it takes about 1 day to turn a young dragon into a adult dragon.").defineInRange("youngGrowthModifier", 0.7, 0, 1000);
+		youngGrowthModifier = builder.translation("ds.config.server.growth.youngGrowthModifier").comment("A multiplier to change the growth rate from young to adult. At 1.0 it takes about 1 day to turn a young dragon into a adult dragon.").defineInRange("youngGrowthModifier", 0.7, 0.0, 1000);
 
-		adultGrowthModifier = builder.translation("ds.config.server.growth.adultGrowthModifier").comment("A multiplier to change the growth rate from adult to a full sized adult. At 1.0 it takes about 3 days to become a dragon of maximum adult size.").defineInRange("adultGrowthModifier", 1.0, 0, 1000);
+		adultGrowthModifier = builder.translation("ds.config.server.growth.adultGrowthModifier").comment("A multiplier to change the growth rate from adult to a full sized adult. At 1.0 it takes about 3 days to become a dragon of maximum adult size.").defineInRange("adultGrowthModifier", 1.0, 0.0, 1000);
 
-		maxGrowthModifier = builder.translation("ds.config.server.growth.maxGrowthModifier").comment("A multiplier to change the growth rate from full sized adult to max size. The change in growth after the maximum adult size is measured in months and years.").defineInRange("maxGrowthModifier", 1.0, 0, 1000);
+		maxGrowthModifier = builder.translation("ds.config.server.growth.maxGrowthModifier").comment("A multiplier to change the growth rate from full sized adult to max size. The change in growth after the maximum adult size is measured in months and years.").defineInRange("maxGrowthModifier", 1.0, 0.0, 1000);
 
 		builder.pop().push("drops");
 		dragonHeartShardChance = builder.translation("ds.config.server.drops.dragonHeartShardChance").comment("The chance for dragon heart shards to drop from any mobs with max health between 14-20").defineInRange("dragonHeartShardChance", 0.01, 0.0, 1.0);

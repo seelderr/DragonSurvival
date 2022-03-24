@@ -19,6 +19,9 @@ import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.shapes.ISelectionContext;
+import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 
@@ -37,6 +40,10 @@ public class DragonPressurePlates extends PressurePlateBlock implements IWaterLo
 		SEA,
 		CAVE,
 		FOREST
+	}
+
+	public VoxelShape getShape(BlockState pState, IBlockReader pLevel, BlockPos pPos, ISelectionContext pContext) {
+		return PRESSED_AABB;
 	}
 
 	protected DragonPressurePlates(Properties p_i48445_1_, PressurePlateType type){

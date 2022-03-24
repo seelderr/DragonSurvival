@@ -19,27 +19,18 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.shader.Framebuffer;
-import net.minecraft.resources.IReloadableResourceManager;
-import net.minecraft.resources.IResourceManagerReloadListener;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.gui.GuiUtils;
 import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.resource.GeckoLibCache;
 
 import java.util.Collections;
 import java.util.Locale;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
-@EventBusSubscriber
 public class EditorPartButton extends ExtendedButton {
 	public static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/textbox.png");
 
@@ -51,7 +42,6 @@ public class EditorPartButton extends ExtendedButton {
 	private final TranslationTextComponent message;
 
 	private final DragonStateHandler handler = new DragonStateHandler();
-	private static final ConcurrentHashMap<String, ResourceLocation> textures = new ConcurrentHashMap<>();
 	private ResourceLocation texture;
 	public EditorPartButton(DragonEditorScreen screen, DropDownButton source, int xPos, int yPos, int width, int height, String value, Consumer<String> setter, EnumSkinLayer layer){
 		super(xPos, yPos, width, height, StringTextComponent.EMPTY, (s) -> {});
@@ -64,24 +54,7 @@ public class EditorPartButton extends ExtendedButton {
 		generateImage();
 	}
 
-	@OnlyIn( Dist.CLIENT )
-	@SubscribeEvent
-	public static void clientStart(FMLClientSetupEvent event){
-		if(Minecraft.getInstance().getResourceManager() instanceof IReloadableResourceManager){
-			((IReloadableResourceManager)Minecraft.getInstance().getResourceManager()).registerReloadListener((IResourceManagerReloadListener)manager -> {
-				textures.clear();
-			});
-		}
-	}
-
 	public void generateImage(){
-		String key = layer.name().toLowerCase(Locale.ROOT) + "_" + screen.type.name().toLowerCase(Locale.ROOT) + "_" + value.toLowerCase(Locale.ROOT);
-
-		if(textures.containsKey(key)){
-			texture = textures.get(key);
-			return;
-		}
-
 		handler.getSkin().blankSkin = true;
 		handler.setSize(DragonLevel.ADULT.size);
 		handler.setType(screen.type);
@@ -150,7 +123,6 @@ public class EditorPartButton extends ExtendedButton {
 		nativeimage.flipY();
 
 		texture = new ResourceLocation(DragonSurvivalMod.MODID, "dynamic_preview_" + value.toLowerCase() + "_" + layer.name().toLowerCase());
-		textures.put(key, texture);
 
 		DynamicTexture dynamicTexture = new DynamicTexture(width, height, false);
 		dynamicTexture.setPixels(nativeimage);

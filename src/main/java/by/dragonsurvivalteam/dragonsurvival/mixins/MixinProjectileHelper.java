@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.mixins;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
@@ -20,7 +21,7 @@ public abstract class MixinProjectileHelper{
 	private static AxisAlignedBB dragonEntityHitboxHack(Entity entity){
 		ClientPlayerEntity player = Minecraft.getInstance().player;
 		if(DragonStateProvider.getCap(player).isPresent() && entity instanceof PlayerEntity){
-			DragonStateHandler cap = DragonStateProvider.getCap(player).orElseGet(null);
+			DragonStateHandler cap = DragonUtils.getHandler(player);
 			if((player.getRootVehicle() == entity.getRootVehicle() && !entity.canRiderInteract()) || (cap.isDragon() && entity.getId() == cap.getPassengerId())){
 				return new AxisAlignedBB(0, -1000, 0, 0, -1000, 0);
 			}

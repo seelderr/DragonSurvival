@@ -49,7 +49,8 @@ public class StormBreathAbility extends BreathAbility{
 	@OnlyIn( Dist.CLIENT )
 	private ISound startingSound;
 	@OnlyIn( Dist.CLIENT )
-	private TickableSound loopingSound;	@Override
+	private TickableSound loopingSound;
+	@Override
 	public int getManaCost(){
 		return player != null && player.hasEffect(DragonEffects.SOURCE_OF_MAGIC) ? 0 : (firstUse ? ConfigHandler.SERVER.stormBreathInitialMana.get() : ConfigHandler.SERVER.stormBreathOvertimeMana.get());
 	}

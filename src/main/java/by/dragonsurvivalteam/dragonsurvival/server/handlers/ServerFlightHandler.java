@@ -127,9 +127,11 @@ public class ServerFlightHandler{
 		}
 		PlayerEntity player = playerTickEvent.player;
 		DragonStateProvider.getCap(player).ifPresent(handler -> {
+			boolean remove = true;
 			if(handler.isDragon()){
 				if(player.tickCount % 10 == 0){
 					if(handler.isWingsSpread()){
+						remove = false;
 						switch(handler.getType()){
 							case SEA:
 								player.addEffect(new EffectInstance(DragonEffects.sea_wings, 500));
@@ -143,17 +145,19 @@ public class ServerFlightHandler{
 								player.addEffect(new EffectInstance(DragonEffects.forest_wings, 500));
 								break;
 						}
-					}else{
-						if(player.hasEffect(DragonEffects.sea_wings)){
-							player.removeEffect(DragonEffects.sea_wings);
-						}
-						if(player.hasEffect(DragonEffects.cave_wings)){
-							player.removeEffect(DragonEffects.cave_wings);
-						}
-						if(player.hasEffect(DragonEffects.forest_wings)){
-							player.removeEffect(DragonEffects.forest_wings);
-						}
 					}
+				}
+			}
+
+			if(remove){
+				if(player.hasEffect(DragonEffects.sea_wings)){
+					player.removeEffect(DragonEffects.sea_wings);
+				}
+				if(player.hasEffect(DragonEffects.cave_wings)){
+					player.removeEffect(DragonEffects.cave_wings);
+				}
+				if(player.hasEffect(DragonEffects.forest_wings)){
+					player.removeEffect(DragonEffects.forest_wings);
 				}
 			}
 		});
