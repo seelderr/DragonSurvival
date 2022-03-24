@@ -1,3 +1,10 @@
+### [0.13.35](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.34...0.13.35) (2022-03-24)
+
+
+### Bug Fixes
+
+* This should fix missing class crash ([704cedf](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/704cedfd372e26eb232b744ffb51e49b93637f67))
+
 ### [0.13.34](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.33...0.13.34) (2022-03-24)
 
 
