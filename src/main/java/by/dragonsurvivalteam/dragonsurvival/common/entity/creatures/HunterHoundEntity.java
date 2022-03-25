@@ -10,25 +10,22 @@ import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.HurtByTargetGoal;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
-import net.minecraft.entity.monster.MonsterEntity;
-import net.minecraft.entity.passive.WolfEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
+import net.minecraft.entity.monster.Monster;
+import net.minecraft.entity.passive.Wolf;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.datasync.EntityDataAccessor;
+import net.minecraft.network.datasync.EntityDataSerializers;
+import net.minecraft.network.datasync.SynchedEntityData;
+import net.minecraft.potion.MobEffectInstance;
+import net.minecraft.potion.MobEffects;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.IServerWorld;
-import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 
-public class HunterHoundEntity extends WolfEntity implements DragonHunter{
-	public static final DataParameter<Integer> variety = EntityDataManager.defineId(HunterHoundEntity.class, DataSerializers.INT);
+public class HunterHound extends Wolf implements DragonHunter{
+	public static final EntityDataAccessor<Integer> variety = SynchedEntityData.defineId(HunterHound.class, EntityDataSerializers.INT);
 
-	public HunterHoundEntity(EntityType<? extends WolfEntity> type, World world){
+	public HunterHound(EntityType<? extends Wolf> type, Level world){
 		super(type, world);
 	}
 
@@ -42,11 +39,11 @@ public class HunterHoundEntity extends WolfEntity implements DragonHunter{
 			Goal goal = prioritizedGoal.getGoal();
 			return (goal instanceof NearestAttackableTargetGoal || goal instanceof net.minecraft.entity.ai.goal.OwnerHurtByTargetGoal || goal instanceof HurtByTargetGoal);
 		});
-		this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, 0, true, false, livingEntity -> (livingEntity.hasEffect(Effects.BAD_OMEN) || livingEntity.hasEffect(DragonEffects.EVIL_DRAGON))));
-		this.targetSelector.addGoal(6, new NearestAttackableTargetGoal<>(this, MonsterEntity.class, 0, true, false, livingEntity -> (livingEntity instanceof net.minecraft.entity.monster.IMob && !(livingEntity instanceof DragonHunter))));
-		targetSelector.addGoal(4, new HurtByTargetGoal(this, ShooterEntity.class).setAlertOthers());
-		this.goalSelector.addGoal(7, new FollowMobGoal<>(KnightEntity.class, this, 15));
-		this.goalSelector.addGoal(8, new AlertExceptHunters(this, KnightEntity.class, ShooterEntity.class, SquireEntity.class));
+		this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Player.class, 0, true, false, living -> (living.hasEffect(MobEffects.BAD_OMEN) || living.hasEffect(DragonEffects.EVIL_DRAGON))));
+		this.targetSelector.addGoal(6, new NearestAttackableTargetGoal<>(this, Monster.class, 0, true, false, living -> (living instanceof net.minecraft.entity.monster.IMob && !(living instanceof DragonHunter))));
+		targetSelector.addGoal(4, new HurtByTargetGoal(this, Shooter.class).setAlertOthers());
+		this.goalSelector.addGoal(7, new FollowMobGoal<>(Knight.class, this, 15));
+		this.goalSelector.addGoal(8, new AlertExceptHunters(this, Knight.class, Shooter.class, Squire.class));
 	}
 
 	protected void defineSynchedData(){
@@ -54,32 +51,32 @@ public class HunterHoundEntity extends WolfEntity implements DragonHunter{
 		this.entityData.define(variety, 0);
 	}
 
-	public void addAdditionalSaveData(CompoundNBT compoundNBT){
+	public void addAdditionalSaveData(CompoundTag compoundNBT){
 		super.addAdditionalSaveData(compoundNBT);
 		compoundNBT.putInt("Variety", this.entityData.get(variety));
 	}
 
-	public void readAdditionalSaveData(CompoundNBT compoundNBT){
+	public void readAdditionalSaveData(CompoundTag compoundNBT){
 		super.readAdditionalSaveData(compoundNBT);
 		this.entityData.set(variety, compoundNBT.getInt("Variety"));
 	}
 
 	public boolean doHurtTarget(Entity entity){
 		if(ConfigHandler.COMMON.houndDoesSlowdown.get() && entity instanceof LivingEntity){
-			if(((LivingEntity)entity).hasEffect(Effects.MOVEMENT_SLOWDOWN)){
-				((LivingEntity)entity).addEffect(new EffectInstance2(Effects.MOVEMENT_SLOWDOWN, 200, 1));
+			if(((LivingEntity)entity).hasEffect(MobEffects.MOVEMENT_SLOWDOWN)){
+				((LivingEntity)entity).addEffect(new EffectInstance2(MobEffects.MOVEMENT_SLOWDOWN, 200, 1));
 			}else{
-				((LivingEntity)entity).addEffect(new EffectInstance(Effects.MOVEMENT_SLOWDOWN, 200));
+				((LivingEntity)entity).addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 200));
 			}
 		}
 		return super.doHurtTarget(entity);
 	}
 
-	public ILivingEntityData finalizeSpawn(IServerWorld serverWorld, DifficultyInstance difficultyInstance, SpawnReason reason,
+	public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverWorld, DifficultyInstance difficultyInstance, MobSpawnType reason,
 		@Nullable
-			ILivingEntityData livingEntityData,
+			SpawnGroupData livingEntityData,
 		@Nullable
-			CompoundNBT compoundNBT){
+			CompoundTag compoundNBT){
 		this.entityData.set(variety, this.random.nextInt(8));
 		return super.finalizeSpawn(serverWorld, difficultyInstance, reason, livingEntityData, compoundNBT);
 	}
@@ -89,7 +86,7 @@ public class HunterHoundEntity extends WolfEntity implements DragonHunter{
 		return !this.hasCustomName() && tickCount >= Functions.minutesToTicks(ConfigHandler.COMMON.hunterDespawnDelay.get());
 	}
 
-	protected int getExperienceReward(PlayerEntity p_70693_1_){
+	protected int getExperienceReward(Player p_70693_1_){
 		return 1 + this.level.random.nextInt(2);
 	}
 }

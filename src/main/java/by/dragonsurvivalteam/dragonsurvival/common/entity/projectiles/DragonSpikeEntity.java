@@ -1,8 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles;
 
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/common/entity/projectiles/DragonSpikeEntity.java
-import by.jackraidenph.dragonsurvival.common.entity.DSEntities;
-import by.jackraidenph.dragonsurvival.config.ConfigHandler;
+
+import by.dragonsurvivalteam.dragonsurvival.common.entity.DSEntities;
+import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -24,113 +24,32 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraftforge.network.NetworkHooks;
 
-public class DragonSpikeEntity extends AbstractArrow
-{
+
+public class DragonSpikeEntity extends AbstractArrow{
 	public static final EntityDataAccessor<Integer> ARROW_LEVEL = SynchedEntityData.defineId(DragonSpikeEntity.class, EntityDataSerializers.INT);
-	
-	public DragonSpikeEntity(Level p_i50172_2_)
-	{
-		super(DSEntities.DRAGON_SPIKE, p_i50172_2_);
-	}
-	
-	public DragonSpikeEntity(EntityType<? extends AbstractArrow> type, Level  worldIn) {
-		super(type, worldIn);
-	}
-	
-	public DragonSpikeEntity(EntityType<? extends AbstractArrow> type, Level world, LivingEntity entity)
-	{
-		super(type, entity, world);
-	}
-	
-	@Override
-	protected ItemStack getPickupItem()
-	{
-		return ItemStack.EMPTY;
-	}
-	
-	@Override
-	protected SoundEvent getDefaultHitGroundSoundEvent()
-	{
-		return SoundEvents.AXE_STRIP;
-	}
-	
-	@Override
-	protected void onHitBlock(BlockHitResult p_230299_1_) {
-		super.onHitBlock(p_230299_1_);
-	}
-	
-=======
-import by.dragonsurvivalteam.dragonsurvival.common.entity.DSEntities;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.entity.projectile.AbstractArrowEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.IPacket;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.network.play.server.SChangeGameStatePacket;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.EntityRayTraceResult;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.network.NetworkHooks;
 
-public class DragonSpikeEntity extends AbstractArrowEntity{
-	public static final DataParameter<Integer> ARROW_LEVEL = EntityDataManager.defineId(DragonSpikeEntity.class, DataSerializers.INT);
-
-	public DragonSpikeEntity(World p_i50172_2_){
+	public DragonSpikeEntity(Level p_i50172_2_){
 		super(DSEntities.DRAGON_SPIKE, p_i50172_2_);
 	}
 
-	public DragonSpikeEntity(EntityType<? extends AbstractArrowEntity> type, World worldIn){
+	public DragonSpikeEntity(EntityType<? extends AbstractArrow> type, Level worldIn){
 		super(type, worldIn);
 	}
 
-	public DragonSpikeEntity(EntityType<? extends AbstractArrowEntity> type, World world, LivingEntity entity){
+	public DragonSpikeEntity(EntityType<? extends AbstractArrow> type, Level world, LivingEntity entity){
 		super(type, entity, world);
 	}
 
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/common/entity/projectiles/DragonSpikeEntity.java
+
 	@Override
 	protected void defineSynchedData(){
 		super.defineSynchedData();
 		this.entityData.define(ARROW_LEVEL, 1);
 	}
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/common/entity/projectiles/DragonSpikeEntity.java
-	
-	public void setArrow_level(int arrow_level){
-		this.entityData.set(ARROW_LEVEL, arrow_level);
-	}
-	
-	public int getArrow_level(){
-		return this.entityData.get(ARROW_LEVEL);
-	}
-	
-	@Override
-	public boolean isCritArrow()
-	{
-		return false;
-	}
-	
-	@Override
-	public double getBaseDamage()
-	{
-		return getArrow_level() * ConfigHandler.SERVER.spikeDamage.get();
-	}
-	
-	protected void onHitEntity(EntityHitResult p_213868_1_) {
-=======
 
-	protected void onHitEntity(EntityRayTraceResult p_213868_1_){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/common/entity/projectiles/DragonSpikeEntity.java
+
+	protected void onHitEntity(EntityHitResult p_213868_1_){
+
 		Entity entity = p_213868_1_.getEntity();
 		Entity entity1 = this.getOwner();
 		DamageSource damagesource;
@@ -157,55 +76,24 @@ public class DragonSpikeEntity extends AbstractArrowEntity{
 				}
 
 				this.doPostHurtEffects(livingentity);
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/common/entity/projectiles/DragonSpikeEntity.java
-				if (entity1 != null && livingentity != entity1 && livingentity instanceof Player && entity1 instanceof ServerPlayer && !this.isSilent()) {
+
+				if(entity1 != null && livingentity != entity1 && livingentity instanceof Player && entity1 instanceof ServerPlayer && !this.isSilent()){
 					((ServerPlayer)entity1).connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.ARROW_HIT_PLAYER, 0.0F));
-				}
-			}
-			
-			if (this.getPierceLevel() <= 0) {
-				this.remove(RemovalReason.DISCARDED);
-=======
-				if(entity1 != null && livingentity != entity1 && livingentity instanceof PlayerEntity && entity1 instanceof ServerPlayerEntity && !this.isSilent()){
-					((ServerPlayerEntity)entity1).connection.send(new SChangeGameStatePacket(SChangeGameStatePacket.ARROW_HIT_PLAYER, 0.0F));
 				}
 			}
 
 			if(this.getPierceLevel() <= 0){
-				this.remove();
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/common/entity/projectiles/DragonSpikeEntity.java
+				this.remove(RemovalReason.DISCARDED);
 			}
 		}else{
 			this.setDeltaMovement(this.getDeltaMovement().scale(-0.1D));
 			this.setYRot(getYRot() + 180.0F);
 			this.yRotO += 180.0F;
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/common/entity/projectiles/DragonSpikeEntity.java
-			if (!this.level.isClientSide && this.getDeltaMovement().lengthSqr() < 1.0E-7D) {
-				this.remove(RemovalReason.DISCARDED);
-=======
+
 			if(!this.level.isClientSide && this.getDeltaMovement().lengthSqr() < 1.0E-7D){
-				this.remove();
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/common/entity/projectiles/DragonSpikeEntity.java
+				this.remove(RemovalReason.DISCARDED);
 			}
 		}
-	}
-
-	@Override
-	protected void onHitBlock(BlockRayTraceResult p_230299_1_){
-		super.onHitBlock(p_230299_1_);
-	}
-
-	@Override
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/common/entity/projectiles/DragonSpikeEntity.java
-	public Packet<?> getAddEntityPacket() {
-=======
-	protected SoundEvent getDefaultHitGroundSoundEvent(){
-		return SoundEvents.AXE_STRIP;
-	}
-
-	@Override
-	protected ItemStack getPickupItem(){
-		return ItemStack.EMPTY;
 	}
 
 	@Override
@@ -217,18 +105,34 @@ public class DragonSpikeEntity extends AbstractArrowEntity{
 		return this.entityData.get(ARROW_LEVEL);
 	}
 
+	public void setArrow_level(int arrow_level){
+		this.entityData.set(ARROW_LEVEL, arrow_level);
+	}
+
+	@Override
+	protected void onHitBlock(BlockHitResult p_230299_1_){
+		super.onHitBlock(p_230299_1_);
+	}
+
+	@Override
+
+	protected SoundEvent getDefaultHitGroundSoundEvent(){
+		return SoundEvents.AXE_STRIP;
+	}
+
+	@Override
+	protected ItemStack getPickupItem(){
+		return ItemStack.EMPTY;
+	}
+
 	@Override
 	public boolean isCritArrow(){
 		return false;
 	}
 
 	@Override
-	public IPacket<?> getAddEntityPacket(){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/common/entity/projectiles/DragonSpikeEntity.java
-		return NetworkHooks.getEntitySpawningPacket(this);
-	}
+	public Packet<?> getAddEntityPacket(){
 
-	public void setArrow_level(int arrow_level){
-		this.entityData.set(ARROW_LEVEL, arrow_level);
+		return NetworkHooks.getEntitySpawningPacket(this);
 	}
 }

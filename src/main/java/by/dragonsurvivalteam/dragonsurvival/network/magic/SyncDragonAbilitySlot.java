@@ -1,16 +1,10 @@
 package by.dragonsurvivalteam.dragonsurvival.network.magic;
 
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/network/magic/SyncDragonAbilitySlot.java
-import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.network.IMessage;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
-=======
+
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent;
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/network/magic/SyncDragonAbilitySlot.java
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
@@ -31,22 +25,18 @@ public class SyncDragonAbilitySlot implements IMessage<SyncDragonAbilitySlot>{
 	}
 
 	@Override
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/network/magic/SyncDragonAbilitySlot.java
-	public void encode(SyncDragonAbilitySlot message, FriendlyByteBuf buffer) {
-=======
-	public void encode(SyncDragonAbilitySlot message, PacketBuffer buffer){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/network/magic/SyncDragonAbilitySlot.java
+
+	public void encode(SyncDragonAbilitySlot message, FriendlyByteBuf buffer){
+
 		buffer.writeInt(message.playerId);
 		buffer.writeInt(message.selectedSlot);
 		buffer.writeBoolean(message.displayHotbar);
 	}
 
 	@Override
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/network/magic/SyncDragonAbilitySlot.java
-	public SyncDragonAbilitySlot decode(FriendlyByteBuf buffer) {
-=======
-	public SyncDragonAbilitySlot decode(PacketBuffer buffer){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/network/magic/SyncDragonAbilitySlot.java
+
+	public SyncDragonAbilitySlot decode(FriendlyByteBuf buffer){
+
 		int playerId = buffer.readInt();
 		int selectedSlot = buffer.readInt();
 		boolean hideHotbar = buffer.readBoolean();

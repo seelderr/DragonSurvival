@@ -1,14 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.network.claw;
 
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/network/claw/SyncDragonClawsMenu.java
-import by.jackraidenph.dragonsurvival.common.capability.DragonCapabilities.ClawInventory;
-import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.network.IMessage;
-=======
+
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.ClawInventory;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/network/claw/SyncDragonClawsMenu.java
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -27,30 +22,22 @@ import java.util.function.Supplier;
 public class SyncDragonClawsMenu implements IMessage<SyncDragonClawsMenu>{
 	public int playerId;
 	public boolean state;
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/network/claw/SyncDragonClawsMenu.java
+
 	public SimpleContainer inv;
-	
-	public SyncDragonClawsMenu() {}
-	
-	public SyncDragonClawsMenu(int playerId, boolean state, SimpleContainer inv) {
-=======
-	public Inventory inv;
 
 	public SyncDragonClawsMenu(){}
 
-	public SyncDragonClawsMenu(int playerId, boolean state, Inventory inv){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/network/claw/SyncDragonClawsMenu.java
+	public SyncDragonClawsMenu(int playerId, boolean state, SimpleContainer inv){
+
 		this.playerId = playerId;
 		this.state = state;
 		this.inv = inv;
 	}
 
 	@Override
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/network/claw/SyncDragonClawsMenu.java
-	public void encode(SyncDragonClawsMenu message, FriendlyByteBuf buffer) {
-=======
-	public void encode(SyncDragonClawsMenu message, PacketBuffer buffer){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/network/claw/SyncDragonClawsMenu.java
+
+	public void encode(SyncDragonClawsMenu message, FriendlyByteBuf buffer){
+
 		buffer.writeInt(message.playerId);
 		buffer.writeBoolean(message.state);
 		CompoundTag nbt = new CompoundTag();
@@ -59,11 +46,9 @@ public class SyncDragonClawsMenu implements IMessage<SyncDragonClawsMenu>{
 	}
 
 	@Override
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/network/claw/SyncDragonClawsMenu.java
-	public SyncDragonClawsMenu decode(FriendlyByteBuf buffer) {
-=======
-	public SyncDragonClawsMenu decode(PacketBuffer buffer){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/network/claw/SyncDragonClawsMenu.java
+
+	public SyncDragonClawsMenu decode(FriendlyByteBuf buffer){
+
 		int playerId = buffer.readInt();
 		boolean state = buffer.readBoolean();
 		CompoundTag tag = buffer.readNbt();
@@ -80,19 +65,13 @@ public class SyncDragonClawsMenu implements IMessage<SyncDragonClawsMenu>{
 	public void run(SyncDragonClawsMenu message, Supplier<NetworkEvent.Context> supplier){
 		NetworkEvent.Context context = supplier.get();
 		context.enqueueWork(() -> {
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/network/claw/SyncDragonClawsMenu.java
+
 			Player thisPlayer = Minecraft.getInstance().player;
-			if (thisPlayer != null) {
+			if(thisPlayer != null){
 				Level world = thisPlayer.level;
 				Entity entity = world.getEntity(message.playerId);
-				if (entity instanceof Player) {
-=======
-			PlayerEntity thisPlayer = Minecraft.getInstance().player;
-			if(thisPlayer != null){
-				World world = thisPlayer.level;
-				Entity entity = world.getEntity(message.playerId);
-				if(entity instanceof PlayerEntity){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/network/claw/SyncDragonClawsMenu.java
+				if(entity instanceof Player){
+
 					DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
 						dragonStateHandler.getClawInventory().setClawsMenuOpen(message.state);
 						dragonStateHandler.getClawInventory().setClawsInventory(message.inv);

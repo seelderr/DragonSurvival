@@ -3,16 +3,15 @@ package by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities;
 import by.dragonsurvivalteam.dragonsurvival.client.emotes.Emote;
 import by.dragonsurvivalteam.dragonsurvival.client.emotes.EmoteRegistry;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
 
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class EmoteCap extends SubCap{
-	public boolean emoteMenuOpen = false;
-
 	public static final int MAX_EMOTES = 4;
+	public boolean emoteMenuOpen = false;
 	public CopyOnWriteArrayList<Emote> currentEmotes = new CopyOnWriteArrayList<>();
 	public CopyOnWriteArrayList<Integer> emoteTicks = new CopyOnWriteArrayList<>();
 	public ConcurrentHashMap<String, Integer> emoteKeybinds = new ConcurrentHashMap<>();
@@ -22,8 +21,8 @@ public class EmoteCap extends SubCap{
 	}
 
 	@Override
-	public CompoundNBT writeNBT(){
-		CompoundNBT tag = new CompoundNBT();
+	public CompoundTag writeNBT(){
+		CompoundTag tag = new CompoundTag();
 
 		tag.putInt("emoteCount", currentEmotes.size());
 
@@ -42,8 +41,9 @@ public class EmoteCap extends SubCap{
 
 		return tag;
 	}
+
 	@Override
-	public void readNBT(CompoundNBT tag){
+	public void readNBT(CompoundTag tag){
 		int count = tag.getInt("emoteCount");
 
 		currentEmotes = new CopyOnWriteArrayList<>();

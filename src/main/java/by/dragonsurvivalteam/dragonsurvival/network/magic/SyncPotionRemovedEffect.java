@@ -29,21 +29,17 @@ public class SyncPotionRemovedEffect implements IMessage<SyncPotionRemovedEffect
 	}
 
 	@Override
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/network/magic/SyncPotionRemovedEffect.java
-	public void encode(SyncPotionRemovedEffect message, FriendlyByteBuf buffer) {
-=======
-	public void encode(SyncPotionRemovedEffect message, PacketBuffer buffer){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/network/magic/SyncPotionRemovedEffect.java
+
+	public void encode(SyncPotionRemovedEffect message, FriendlyByteBuf buffer){
+
 		buffer.writeInt(message.entityId);
 		buffer.writeInt(message.effectId);
 	}
 
 	@Override
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/network/magic/SyncPotionRemovedEffect.java
-	public SyncPotionRemovedEffect decode(FriendlyByteBuf buffer) {
-=======
-	public SyncPotionRemovedEffect decode(PacketBuffer buffer){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/network/magic/SyncPotionRemovedEffect.java
+
+	public SyncPotionRemovedEffect decode(FriendlyByteBuf buffer){
+
 		int playerId = buffer.readInt();
 		int effectId = buffer.readInt();
 
@@ -59,21 +55,14 @@ public class SyncPotionRemovedEffect implements IMessage<SyncPotionRemovedEffect
 	public void run(SyncPotionRemovedEffect message, Supplier<NetworkEvent.Context> supplier){
 		NetworkEvent.Context context = supplier.get();
 		context.enqueueWork(() -> {
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/network/magic/SyncPotionRemovedEffect.java
+
 			Player thisPlayer = Minecraft.getInstance().player;
-			if (thisPlayer != null) {
+			if(thisPlayer != null){
 				Level world = thisPlayer.level;
 				Entity entity = world.getEntity(message.entityId);
 				MobEffect ef = MobEffect.byId(message.effectId);
-				
-=======
-			PlayerEntity thisPlayer = Minecraft.getInstance().player;
-			if(thisPlayer != null){
-				World world = thisPlayer.level;
-				Entity entity = world.getEntity(message.entityId);
-				Effect ef = Effect.byId(message.effectId);
 
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/network/magic/SyncPotionRemovedEffect.java
+
 				if(ef != null){
 					if(entity instanceof LivingEntity){
 						((LivingEntity)entity).removeEffect(ef);

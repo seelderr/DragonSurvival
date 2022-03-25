@@ -1,4 +1,4 @@
-package by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.dropdown;
+package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -19,113 +19,111 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class ResourceDropdownEntry extends DropdownEntry
-{
-	private int num;
-	private ResourceEntry entry;
-	private Consumer<ResourceEntry> setter;
+public class ResourceDropdownEntry extends by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownEntry{
+	private final int num;
+	private final by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.ResourceEntry entry;
+	private final Consumer<by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.ResourceEntry> setter;
+	private final by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.ResourceTextField source;
 	private ExtendedButton button;
-	private ResourceTextField source;
-	
-	public ResourceDropdownEntry(ResourceTextField source, int num, ResourceEntry entry, Consumer<ResourceEntry> setter)
-	{
+
+	public ResourceDropdownEntry(by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.ResourceTextField source, int num, by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.ResourceEntry entry, Consumer<by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.ResourceEntry> setter){
 		this.num = num;
 		this.entry = entry;
 		this.setter = setter;
 		this.source = source;
 	}
-	
+
 	@Override
-	public List<? extends GuiEventListener> children()
-	{
+	public List<? extends GuiEventListener> children(){
 		return button != null ? ImmutableList.of(button) : new ArrayList<>();
 	}
-	
+
 	@Override
-	public void render(PoseStack pPoseStack , int pIndex, int pTop, int pLeft, int pWidth, int pHeight, int pMouseX, int pMouseY, boolean pIsMouseOver, float pPartialTicks)
-	{
-		if(button == null) {
-			if(list != null) {
-				button = new ExtendedButton(list.getLeft() + 3, 0, list.getWidth() - 12, pHeight, null, null)
-				{
+	public void render(PoseStack pPoseStack, int pIndex, int pTop, int pLeft, int pWidth, int pHeight, int pMouseX, int pMouseY, boolean pIsMouseOver, float pPartialTicks){
+		if(button == null){
+			if(list != null){
+				button = new ExtendedButton(list.getLeft() + 3, 0, list.getWidth() - 12, pHeight, null, null){
+					private int tick = 0;
+
 					@Override
-					public TextComponent getMessage()
-					{
+					public TextComponent getMessage(){
 						return (TextComponent)TextComponent.EMPTY;
 					}
-					
+
 					@Override
-					public void onPress()
-					{
-						if(!source.isFocused()) return;
+					public void onPress(){
+						if(!source.isFocused()){
+							return;
+						}
 						setter.accept(entry);
 					}
-					
+
 					@Override
-					public int getBlitOffset()
-					{
+					public int getBlitOffset(){
 						return 10;
 					}
-					private int tick = 0;
+
 					@Override
-					public void renderButton(PoseStack  mStack, int mouseX, int mouseY, float partial)
-					{
-						if(!source.isFocused()) return;
-						if(y + height > list.getBottom()-3 || y < list.getTop()+3) return;
-						
+					public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){
+						if(!source.isFocused()){
+							return;
+						}
+						if(y + height > list.getBottom() - 3 || y < list.getTop() + 3){
+							return;
+						}
+
 						if(entry != null){
-							if(tick >= 1) {
+							if(tick >= 1){
 								entry.tick();
 								tick = 0;
 							}else{
 								tick++;
 							}
-							
+
 							mStack.pushPose();
-							mStack.translate(0,0, 200);
-							
+							mStack.translate(0, 0, 200);
+
 							int color = new Color(0.1F, 0.1F, 0.1F, 1F).getRGB();
-							
-							if (num % 2 == 0) {
+
+							if(num % 2 == 0){
 								color = new Color(0.2F, 0.2F, 0.2F, 1F).getRGB();
 							}
-							
+
 							if(isHovered){
 								color = new Color(color).brighter().getRGB();
 							}
-							
+
 							Gui.fill(mStack, x, y, x + width, y + height, color);
-							
+
 							String text = entry.id;
 							Minecraft.getInstance().font.drawShadow(mStack, new TextComponent(Minecraft.getInstance().font.substrByWidth(new TextComponent(text), width - 20).getString()), x + 25, y + 5, DyeColor.WHITE.getTextColor());
-							
-							if (!entry.isEmpty()) {
+
+							if(!entry.isEmpty()){
 								ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
 								itemRenderer.blitOffset = 100;
 								itemRenderer.renderAndDecorateItem(entry.getDisplayItem(), x + 3, y + 1);
 								itemRenderer.blitOffset = 0;
-								
-								if(isHovered) {
+
+								if(isHovered){
 									List<Component> lines = entry.getDisplayItem().getTooltipLines(Minecraft.getInstance().player, Default.NORMAL);
 									Minecraft.getInstance().screen.renderTooltip(mStack, lines, Optional.empty(), mouseX, mouseY, Minecraft.getInstance().font);
 								}
 							}
-							
+
 							mStack.popPose();
 						}
 					}
 				};
 			}
-		}else {
+		}else{
 			button.y = pTop;
 			button.visible = source.visible;
-			button.render(pPoseStack , pMouseX, pMouseY, pPartialTicks);
+			button.render(pPoseStack, pMouseX, pMouseY, pPartialTicks);
 		}
 	}
-	
+
 	@Override
-	public List<? extends NarratableEntry> narratables()
-	{
+	public List<? extends NarratableEntry> narratables(){
 		return null;
 	}
 }

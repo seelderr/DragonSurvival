@@ -1,6 +1,6 @@
-package by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.settings;
+package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.settings;
 
-import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.fields.TextField;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.fields.TextField;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Option;
 import net.minecraft.client.Options;
@@ -12,17 +12,15 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-public class DSNumberFieldOption extends Option
-{
+public class DSNumberFieldOption extends Option{
 	private final Function<Options, Number> getter;
 	private final BiConsumer<Options, Number> setter;
 	private final Function<Minecraft, List<FormattedCharSequence>> tooltipSupplier;
-	
-	private Number min;
-	private Number max;
-	
-	public DSNumberFieldOption(String key, Number min, Number max, Function<Options, Number> getter, BiConsumer<Options, Number> setter, Function<Minecraft, List<FormattedCharSequence>> pTooltipSupplier)
-	{
+
+	private final Number min;
+	private final Number max;
+
+	public DSNumberFieldOption(String key, Number min, Number max, Function<Options, Number> getter, BiConsumer<Options, Number> setter, Function<Minecraft, List<FormattedCharSequence>> pTooltipSupplier){
 		super(key);
 		this.getter = getter;
 		this.setter = setter;
@@ -30,14 +28,12 @@ public class DSNumberFieldOption extends Option
 		this.max = max;
 		this.tooltipSupplier = pTooltipSupplier;
 	}
-	
+
 	@Override
-	public AbstractWidget createButton(Options gameSettings, int i, int i1, int i2)
-	{
+	public AbstractWidget createButton(Options gameSettings, int i, int i1, int i2){
 		TextField widget = new TextField(null, this, i, i1, i2, 18, this.getCaption()){
 			@Override
-			public boolean charTyped(char pCodePoint, int pModifiers)
-			{
+			public boolean charTyped(char pCodePoint, int pModifiers){
 				boolean val = super.charTyped(pCodePoint, pModifiers);
 				if(val){
 					Number num = NumberUtils.createNumber(getValue());

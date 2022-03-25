@@ -1,12 +1,12 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles;
 
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/common/entity/projectiles/BallLightningEntity.java
-import by.jackraidenph.dragonsurvival.client.particles.SeaDragon.LargeLightningParticleData;
-import by.jackraidenph.dragonsurvival.common.DragonEffects;
-import by.jackraidenph.dragonsurvival.common.entity.DSEntities;
-import by.jackraidenph.dragonsurvival.common.magic.DragonAbilities;
-import by.jackraidenph.dragonsurvival.common.magic.abilities.Actives.BallLightningAbility;
-import by.jackraidenph.dragonsurvival.util.Functions;
+
+import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaDragon.LargeLightningParticleData;
+import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.DSEntities;
+import by.dragonsurvivalteam.dragonsurvival.common.magic.DragonAbilities;
+import by.dragonsurvivalteam.dragonsurvival.common.magic.abilities.Actives.BallLightningAbility;
+import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
@@ -25,61 +25,21 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
-public class BallLightningEntity extends DragonBallEntity
-{
-	public BallLightningEntity(Level p_i50168_9_, LivingEntity p_i50168_2_, double p_i50168_3_, double p_i50168_5_, double p_i50168_7_)
-	{
-		super(DSEntities.BALL_LIGHTNING, p_i50168_2_, p_i50168_3_, p_i50168_5_, p_i50168_7_, p_i50168_9_);
-	}
-	
-	public BallLightningEntity(EntityType<? extends Fireball> p_i50166_1_, Level  p_i50166_2_) {
-=======
-import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaDragon.LargeLightningParticleData;
-import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.DSEntities;
-import by.dragonsurvivalteam.dragonsurvival.common.magic.DragonAbilities;
-import by.dragonsurvivalteam.dragonsurvival.common.magic.abilities.Actives.BallLightningAbility;
-import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.effect.LightningBoltEntity;
-import net.minecraft.entity.projectile.AbstractFireballEntity;
-import net.minecraft.particles.IParticleData;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.World;
-
-import java.util.List;
-
 public class BallLightningEntity extends DragonBallEntity{
-	public BallLightningEntity(World p_i50168_9_, LivingEntity p_i50168_2_, double p_i50168_3_, double p_i50168_5_, double p_i50168_7_){
+	public BallLightningEntity(Level p_i50168_9_, LivingEntity p_i50168_2_, double p_i50168_3_, double p_i50168_5_, double p_i50168_7_){
 		super(DSEntities.BALL_LIGHTNING, p_i50168_2_, p_i50168_3_, p_i50168_5_, p_i50168_7_, p_i50168_9_);
 	}
 
-	public BallLightningEntity(EntityType<? extends AbstractFireballEntity> p_i50166_1_, World p_i50166_2_){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/common/entity/projectiles/BallLightningEntity.java
+	public BallLightningEntity(EntityType<? extends Fireball> p_i50166_1_, Level p_i50166_2_){
+
 		super(p_i50166_1_, p_i50166_2_);
 	}
 
 	@Override
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/common/entity/projectiles/BallLightningEntity.java
-	protected ParticleOptions getTrailParticle()
-	{
-=======
-	protected IParticleData getTrailParticle(){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/common/entity/projectiles/BallLightningEntity.java
-		return ParticleTypes.WHITE_ASH;
-	}
 
-	protected boolean shouldBurn(){
-		return false;
+	protected ParticleOptions getTrailParticle(){
+
+		return ParticleTypes.WHITE_ASH;
 	}
 
 	public void attackMobs(){
@@ -90,26 +50,16 @@ public class BallLightningEntity extends DragonBallEntity{
 		entities.removeIf((e) -> !(e instanceof LivingEntity));
 
 		for(Entity ent : entities){
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/common/entity/projectiles/BallLightningEntity.java
-			if (!this.level.isClientSide) {
-				ent.hurt(DamageSource.LIGHTNING_BOLT, BallLightningAbility.getDamage(getSkillLevel()));
-				
-				if(ent instanceof LivingEntity) {
-					LivingEntity livingEntity = (LivingEntity)ent;
-					if (livingEntity.level.random.nextInt(100) < 40) {
-						if(!livingEntity.level.isClientSide)
-							livingEntity.addEffect(new MobEffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(10), 0, false, true));
-=======
+
 			if(!this.level.isClientSide){
-				ent.hurt(DamageSource.LIGHTNING_BOLT, BallLightningAbility.getDamage(getLevel()));
+				ent.hurt(DamageSource.LIGHTNING_BOLT, BallLightningAbility.getDamage(getSkillLevel()));
 
 				if(ent instanceof LivingEntity){
 					LivingEntity livingEntity = (LivingEntity)ent;
 					if(livingEntity.level.random.nextInt(100) < 40){
 						if(!livingEntity.level.isClientSide){
-							livingEntity.addEffect(new EffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(10), 0, false, true));
+							livingEntity.addEffect(new MobEffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(10), 0, false, true));
 						}
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/common/entity/projectiles/BallLightningEntity.java
 					}
 				}
 
@@ -129,19 +79,13 @@ public class BallLightningEntity extends DragonBallEntity{
 		}
 
 		if(!level.isClientSide){
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/common/entity/projectiles/BallLightningEntity.java
-			if (level.isThundering()) {
-				if (level.random.nextInt(100) < 30) {
-					if (level.canSeeSky(blockPosition())) {
-						LightningBolt lightningboltentity = EntityType.LIGHTNING_BOLT.create(level);
-						lightningboltentity.moveTo(new Vec3(position().x, position().y, position().z));
-=======
+
 			if(level.isThundering()){
 				if(level.random.nextInt(100) < 30){
 					if(level.canSeeSky(blockPosition())){
-						LightningBoltEntity lightningboltentity = EntityType.LIGHTNING_BOLT.create(level);
-						lightningboltentity.moveTo(new Vector3d(position().x, position().y, position().z));
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/common/entity/projectiles/BallLightningEntity.java
+						LightningBolt lightningboltentity = EntityType.LIGHTNING_BOLT.create(level);
+						lightningboltentity.moveTo(new Vec3(position().x, position().y, position().z));
+
 						level.addFreshEntity(lightningboltentity);
 					}
 				}
@@ -160,12 +104,12 @@ public class BallLightningEntity extends DragonBallEntity{
 				level.addParticle(new LargeLightningParticleData(37F, false), this.getX() + (double)f8, this.getY(), this.getZ() + (double)f9, 0, 0, 0);
 			}
 		}
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/common/entity/projectiles/BallLightningEntity.java
-		
-		level.playLocalSound(getX(), getY(), getZ(), SoundEvents.LIGHTNING_BOLT_IMPACT, SoundSource.HOSTILE, 3.0F, 0.5f, false);
-=======
 
-		level.playLocalSound(getX(), getY(), getZ(), SoundEvents.LIGHTNING_BOLT_IMPACT, SoundCategory.HOSTILE, 3.0F, 0.5f, false);
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/common/entity/projectiles/BallLightningEntity.java
+
+		level.playLocalSound(getX(), getY(), getZ(), SoundEvents.LIGHTNING_BOLT_IMPACT, SoundSource.HOSTILE, 3.0F, 0.5f, false);
+	}
+
+	protected boolean shouldBurn(){
+		return false;
 	}
 }

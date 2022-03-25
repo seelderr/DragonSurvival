@@ -23,45 +23,27 @@ import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/common/entity/projectiles/DragonBallEntity.java
-public class DragonBallEntity extends Fireball implements IAnimatable
-{
+
+public class DragonBallEntity extends Fireball implements IAnimatable{
 	public static final EntityDataAccessor<Integer> SKILL_LEVEL = SynchedEntityData.defineId(DragonBallEntity.class, EntityDataSerializers.INT);
-	
-	public int getSkillLevel(){
-		return this.entityData.get(SKILL_LEVEL);
-	}
-	
-	public DragonBallEntity(EntityType<? extends Fireball> p_i50168_1_, LivingEntity p_i50168_2_, double p_i50168_3_, double p_i50168_5_, double p_i50168_7_, Level p_i50168_9_)
-	{
-		super(p_i50168_1_, p_i50168_2_, p_i50168_3_, p_i50168_5_, p_i50168_7_, p_i50168_9_);
-	}
-	
-	public DragonBallEntity(EntityType<? extends Fireball> p_i50166_1_, Level  p_i50166_2_) {
-		super(p_i50166_1_, p_i50166_2_);
-	}
-	
-	@Override
-	public Packet<?> getAddEntityPacket() {
-		return NetworkHooks.getEntitySpawningPacket(this);
-=======
-public class DragonBallEntity extends AbstractFireballEntity implements IAnimatable{
-	public static final DataParameter<Integer> SKILL_LEVEL = EntityDataManager.defineId(DragonBallEntity.class, DataSerializers.INT);
 	AnimationFactory animationFactory = new AnimationFactory(this);
 	protected boolean isDead;
 	protected int deadTicks;
 
-	public DragonBallEntity(EntityType<? extends AbstractFireballEntity> p_i50168_1_, LivingEntity p_i50168_2_, double p_i50168_3_, double p_i50168_5_, double p_i50168_7_, World p_i50168_9_){
+	public DragonBallEntity(EntityType<? extends Fireball> p_i50168_1_, LivingEntity p_i50168_2_, double p_i50168_3_, double p_i50168_5_, double p_i50168_7_, Level p_i50168_9_){
 		super(p_i50168_1_, p_i50168_2_, p_i50168_3_, p_i50168_5_, p_i50168_7_, p_i50168_9_);
 	}
 
-	public DragonBallEntity(EntityType<? extends AbstractFireballEntity> p_i50166_1_, World p_i50166_2_){
+	public DragonBallEntity(EntityType<? extends Fireball> p_i50166_1_, Level p_i50166_2_){
 		super(p_i50166_1_, p_i50166_2_);
 	}
 
-	public int getLevel(){
+	public int getSkillLevel(){
 		return this.entityData.get(SKILL_LEVEL);
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/common/entity/projectiles/DragonBallEntity.java
+	}
+
+	public void setLevel(int level){
+		this.entityData.set(SKILL_LEVEL, level);
 	}
 
 	@Override
@@ -70,43 +52,6 @@ public class DragonBallEntity extends AbstractFireballEntity implements IAnimata
 		this.entityData.define(SKILL_LEVEL, 1);
 	}
 
-	public void setLevel(int level){
-		this.entityData.set(SKILL_LEVEL, level);
-	}
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/common/entity/projectiles/DragonBallEntity.java
-	
-	
-	
-	@Override
-	protected ParticleOptions getTrailParticle()
-	{
-		return ParticleTypes.WHITE_ASH;
-	}
-	
-	protected boolean shouldBurn() {
-		return false;
-	}
-	
-	public void attackMobs() {}
-	
-	protected boolean canHitEntity(Entity p_230298_1_) {
-		return true;
-	}
-	
-	@Override
-	protected void onHit(HitResult p_70227_1_)
-	{
-		attackMobs();
-		setDeltaMovement(0,0,0);
-		isDead = true;
-	}
-	
-	protected boolean isDead;
-	protected int deadTicks;
-	
-=======
-
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/common/entity/projectiles/DragonBallEntity.java
 	@Override
 	public void tick(){
 		if(isDead){
@@ -119,17 +64,12 @@ public class DragonBallEntity extends AbstractFireballEntity implements IAnimata
 		}
 
 		Entity entity = this.getOwner();
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/common/entity/projectiles/DragonBallEntity.java
-		if (this.level.isClientSide || (entity == null || !entity.isRemoved()) && this.level.hasChunkAt(this.blockPosition())) {
-			HitResult raytraceresult = ProjectileUtil.getHitResult(this, this::canHitEntity);
-			
-			if (raytraceresult.getType() != HitResult.Type.MISS) {
-=======
-		if(this.level.isClientSide || (entity == null || !entity.removed) && this.level.hasChunkAt(this.blockPosition())){
-			RayTraceResult raytraceresult = ProjectileHelper.getHitResult(this, this::canHitEntity);
 
-			if(raytraceresult.getType() != RayTraceResult.Type.MISS){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/common/entity/projectiles/DragonBallEntity.java
+		if(this.level.isClientSide || (entity == null || !entity.isRemoved()) && this.level.hasChunkAt(this.blockPosition())){
+			HitResult raytraceresult = ProjectileUtil.getHitResult(this, this::canHitEntity);
+
+			if(raytraceresult.getType() != HitResult.Type.MISS){
+
 				this.onHit(raytraceresult);
 			}
 
@@ -158,31 +98,31 @@ public class DragonBallEntity extends AbstractFireballEntity implements IAnimata
 	}
 
 	@Override
-	protected IParticleData getTrailParticle(){
+	protected ParticleOptions getTrailParticle(){
 		return ParticleTypes.WHITE_ASH;
-	}
-
-	@Override
-	public IPacket<?> getAddEntityPacket(){
-		return NetworkHooks.getEntitySpawningPacket(this);
 	}
 
 	protected boolean canHitEntity(Entity p_230298_1_){
 		return true;
 	}
 
-	protected boolean shouldBurn(){
-		return false;
-	}
-
 	@Override
-	protected void onHit(RayTraceResult p_70227_1_){
+	protected void onHit(HitResult p_70227_1_){
 		attackMobs();
 		setDeltaMovement(0, 0, 0);
 		isDead = true;
 	}
 
 	public void attackMobs(){}
+
+	@Override
+	public Packet<?> getAddEntityPacket(){
+		return NetworkHooks.getEntitySpawningPacket(this);
+	}
+
+	protected boolean shouldBurn(){
+		return false;
+	}
 
 	@Override
 	public void registerControllers(AnimationData data){

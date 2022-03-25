@@ -14,32 +14,17 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.Locale;
 
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/client/particles/SeaDragon/LargeLightningParticleData.java
-public class LargeLightningParticleData implements ParticleOptions
-{
-	public static final Deserializer<LargeLightningParticleData> DESERIALIZER = new Deserializer<LargeLightningParticleData>()
-	{
-		public LargeLightningParticleData fromCommand(ParticleType<LargeLightningParticleData> particleTypeIn, StringReader reader) throws CommandSyntaxException
-		{
-=======
-public class LargeLightningParticleData implements IParticleData{
-	public static final IDeserializer<LargeLightningParticleData> DESERIALIZER = new IDeserializer<LargeLightningParticleData>(){
+public class LargeLightningParticleData implements ParticleOptions{
+	public static final Deserializer<LargeLightningParticleData> DESERIALIZER = new Deserializer<LargeLightningParticleData>(){
 		public LargeLightningParticleData fromCommand(ParticleType<LargeLightningParticleData> particleTypeIn, StringReader reader) throws CommandSyntaxException{
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/client/particles/SeaDragon/LargeLightningParticleData.java
 			reader.expect(' ');
 			float duration = (float)reader.readDouble();
 			reader.expect(' ');
 			boolean swirls = reader.readBoolean();
 			return new LargeLightningParticleData(duration, swirls);
 		}
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/client/particles/SeaDragon/LargeLightningParticleData.java
-		
-		public LargeLightningParticleData fromNetwork(ParticleType<LargeLightningParticleData> particleTypeIn, FriendlyByteBuf buffer)
-		{
-=======
 
-		public LargeLightningParticleData fromNetwork(ParticleType<LargeLightningParticleData> particleTypeIn, PacketBuffer buffer){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/client/particles/SeaDragon/LargeLightningParticleData.java
+		public LargeLightningParticleData fromNetwork(ParticleType<LargeLightningParticleData> particleTypeIn, FriendlyByteBuf buffer){
 			return new LargeLightningParticleData(buffer.readFloat(), buffer.readBoolean());
 		}
 	};
@@ -54,16 +39,8 @@ public class LargeLightningParticleData implements IParticleData{
 	public LargeLightningParticleData(float duration, boolean spins){
 		this.duration = duration;
 		this.swirls = spins;
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/client/particles/SeaDragon/LargeLightningParticleData.java
-	}
-	
-	@Override
-	public void writeToNetwork(FriendlyByteBuf buffer)
-	{
-=======
 	}	@Override
-	public void writeToNetwork(PacketBuffer buffer){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/client/particles/SeaDragon/LargeLightningParticleData.java
+	public void writeToNetwork(FriendlyByteBuf buffer){
 		buffer.writeFloat(this.duration);
 		buffer.writeBoolean(this.swirls);
 	}

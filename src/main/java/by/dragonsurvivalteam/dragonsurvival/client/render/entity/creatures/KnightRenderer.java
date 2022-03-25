@@ -1,8 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render.entity.creatures;
 
-import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.KnightEntity;
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.Knight;
+import com.mojang.blaze3d.matrix.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
@@ -13,13 +13,13 @@ import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
 import software.bernie.geckolib3.util.RenderUtils;
 
-public class KnightRenderer extends GeoEntityRenderer<KnightEntity>{
-	public KnightRenderer(EntityRendererManager renderManager, AnimatedGeoModel<KnightEntity> modelProvider){
+public class KnightRenderer extends GeoEntityRenderer<Knight>{
+	public KnightRenderer(EntityRendererManager renderManager, AnimatedGeoModel<Knight> modelProvider){
 		super(renderManager, modelProvider);
 	}
 
 	@Override
-	public void renderRecursively(GeoBone bone, MatrixStack stack, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha){
+	public void renderRecursively(GeoBone bone, PoseStack stack, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha){
 		if(bone.getName().equals("left_item")){
 			stack.pushPose();
 			RenderUtils.moveToPivot(bone, stack);

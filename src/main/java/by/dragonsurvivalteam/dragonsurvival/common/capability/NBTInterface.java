@@ -1,8 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.common.capability;
 
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
 
 public interface NBTInterface{
-	CompoundNBT writeNBT();
-	void readNBT(CompoundNBT base);
+	CompoundTag writeNBT();
+	void readNBT(CompoundTag base);
 }

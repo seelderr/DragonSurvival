@@ -10,24 +10,15 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/client/particles/CaveDragon/SmallFireParticle.java
-public class SmallFireParticle extends TextureSheetParticle
-{
-	private int swirlTick;
+
+public class SmallFireParticle extends TextureSheetParticle{
 	private final float spread;
-	boolean swirls;
 	private final SpriteSet sprites;
-
-	public SmallFireParticle(ClientLevel world, double x, double y, double z, double vX, double vY, double vZ, double duration, boolean swirls, SpriteSet sprite) {
-=======
-public class SmallFireParticle extends SpriteTexturedParticle{
-	private final float spread;
-	private final IAnimatedSprite sprites;
 	boolean swirls;
 	private int swirlTick;
 
-	public SmallFireParticle(ClientWorld world, double x, double y, double z, double vX, double vY, double vZ, double duration, boolean swirls, IAnimatedSprite sprite){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/client/particles/CaveDragon/SmallFireParticle.java
+	public SmallFireParticle(ClientLevel world, double x, double y, double z, double vX, double vY, double vZ, double duration, boolean swirls, SpriteSet sprite){
+
 		super(world, x, y, z);
 		setSize(1, 1);
 		xd = vX;
@@ -48,21 +39,9 @@ public class SmallFireParticle extends SpriteTexturedParticle{
 	}
 
 	@Override
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/client/particles/CaveDragon/SmallFireParticle.java
-	protected float getV1() {
-		return super.getV1() - (super.getV1() - super.getV0())/8f;
-	}
-	
-	@Override
-	protected int getLightColor(float p_189214_1_)
-	{
-		int i = super.getLightColor(p_189214_1_);
-		int k = i >> 16 & 255;
-		return 240 | k << 16;
-=======
+
 	protected float getV1(){
 		return super.getV1() - (super.getV1() - super.getV0()) / 8f;
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/client/particles/CaveDragon/SmallFireParticle.java
 	}
 
 	@Override
@@ -94,39 +73,13 @@ public class SmallFireParticle extends SpriteTexturedParticle{
 	}
 
 	@Override
-	public IParticleRenderType getRenderType(){
-		return IParticleRenderType.PARTICLE_SHEET_OPAQUE;
-	}
-
-	@Override
 	public void remove(){
 		level.addParticle(ParticleTypes.SMOKE, x, y, z, 0, 0.01, 0);
 		super.remove();
 	}
 
 	@Override
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/client/particles/CaveDragon/SmallFireParticle.java
-	public void render(VertexConsumer buffer, Camera renderInfo, float partialTicks) {
-		float var = (age + partialTicks)/(float)lifetime;
-		alpha = (float) (1 - Math.exp(10 * (var - 1)) - Math.pow(2000, -var));
-		if (alpha < 0.1) alpha = 0.1f;
 
-		super.render(buffer, renderInfo, partialTicks);
-	}
-	
-	@Override
-	public ParticleRenderType getRenderType()
-	{
-		return ParticleRenderType.PARTICLE_SHEET_OPAQUE;
-	}
-	
-	@OnlyIn(Dist.CLIENT)
-	public static final class FireFactory implements ParticleProvider<SmallFireParticleData>
-	{
-		private final SpriteSet spriteSet;
-
-		public FireFactory(SpriteSet sprite) {
-=======
 	protected int getLightColor(float p_189214_1_){
 		int i = super.getLightColor(p_189214_1_);
 		int k = i >> 16 & 255;
@@ -134,7 +87,12 @@ public class SmallFireParticle extends SpriteTexturedParticle{
 	}
 
 	@Override
-	public void render(IVertexBuilder buffer, ActiveRenderInfo renderInfo, float partialTicks){
+	public ParticleRenderType getRenderType(){
+		return ParticleRenderType.PARTICLE_SHEET_OPAQUE;
+	}
+
+	@Override
+	public void render(VertexConsumer buffer, Camera renderInfo, float partialTicks){
 		float var = (age + partialTicks) / (float)lifetime;
 		alpha = (float)(1 - Math.exp(10 * (var - 1)) - Math.pow(2000, -var));
 		if(alpha < 0.1){
@@ -145,20 +103,15 @@ public class SmallFireParticle extends SpriteTexturedParticle{
 	}
 
 	@OnlyIn( Dist.CLIENT )
-	public static final class FireFactory implements IParticleFactory<SmallFireParticleData>{
-		private final IAnimatedSprite spriteSet;
+	public static final class FireFactory implements ParticleProvider<SmallFireParticleData>{
+		private final SpriteSet spriteSet;
 
-		public FireFactory(IAnimatedSprite sprite){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/client/particles/CaveDragon/SmallFireParticle.java
+		public FireFactory(SpriteSet sprite){
 			this.spriteSet = sprite;
 		}
 
 		@Override
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/client/particles/CaveDragon/SmallFireParticle.java
-		public Particle createParticle(SmallFireParticleData typeIn, ClientLevel worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
-=======
-		public Particle createParticle(SmallFireParticleData typeIn, ClientWorld worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/client/particles/CaveDragon/SmallFireParticle.java
+		public Particle createParticle(SmallFireParticleData typeIn, ClientLevel worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed){
 			SmallFireParticle particle = new SmallFireParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, typeIn.getDuration(), typeIn.getSwirls(), spriteSet);
 			particle.setSpriteFromAge(spriteSet);
 			return particle;

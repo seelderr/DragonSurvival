@@ -8,7 +8,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncAbilityCastTime;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncAbilityCasting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -26,7 +26,7 @@ public class ClientCastingHandler{
 			return;
 		}
 
-		PlayerEntity playerEntity = Minecraft.getInstance().player;
+		Player player = Minecraft.getInstance().player;
 
 		abilityHoldTimer = (byte)(KeyInputHandler.USE_ABILITY.isDown() ? abilityHoldTimer < 3 ? abilityHoldTimer + 1 : abilityHoldTimer : 0);
 		byte modeAbility;
@@ -38,48 +38,48 @@ public class ClientCastingHandler{
 			modeAbility = GLFW.GLFW_RELEASE;
 		}
 
-		int slot = DragonStateProvider.getCap(playerEntity).map((i) -> i.getMagic().getSelectedAbilitySlot()).orElse(0);
+		int slot = DragonStateProvider.getCap(player).map((i) -> i.getMagic().getSelectedAbilitySlot()).orElse(0);
 		timer = (byte)((modeAbility == GLFW.GLFW_RELEASE) ? timer < 3 ? timer + 1 : timer : 0);
 
 		if(timer > 1){
 			return;
 		}
 
-		if(playerEntity.isSpectator()){
+		if(player.isSpectator()){
 			return;
 		}
 
-		DragonStateProvider.getCap(playerEntity).ifPresent(dragonStateHandler -> {
+		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
 			ActiveDragonAbility ability = dragonStateHandler.getMagic().getAbilityFromSlot(slot);
 			if(ability.getLevel() > 0){
-				if(ability.canRun(playerEntity, modeAbility) && !ability.isDisabled()){
+				if(ability.canRun(player, modeAbility) && !ability.isDisabled()){
 					ability.errorTicks = 0;
 					ability.errorMessage = null;
 
 					if(ability.getCurrentCastTimer() < ability.getCastingTime() && modeAbility == GLFW.GLFW_REPEAT){
 						if(dragonStateHandler.getMagic().getCurrentlyCasting() == null || dragonStateHandler.getMagic().getCurrentlyCasting().getId() != ability.getId()){
 							dragonStateHandler.getMagic().setCurrentlyCasting(ability);
-							NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCasting(playerEntity.getId(), ability));
-							NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCastTime(playerEntity.getId(), 0));
+							NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCasting(player.getId(), ability));
+							NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCastTime(player.getId(), 0));
 						}
 					}else if(modeAbility == GLFW.GLFW_RELEASE){
 						ability.stopCasting();
 
 						if(dragonStateHandler.getMagic().getCurrentlyCasting() != null){
-							NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCasting(playerEntity.getId(), null));
-							NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCastTime(playerEntity.getId(), 0));
+							NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCasting(player.getId(), null));
+							NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCastTime(player.getId(), 0));
 							dragonStateHandler.getMagic().setCurrentlyCasting(null);
 						}
 					}else if(ability.getCastingTime() <= 0 || ability.getCurrentCastTimer() >= ability.getCastingTime()){
 						if(ability != null && (dragonStateHandler.getMagic().getCurrentlyCasting() == null || ability.getCastingTime() != dragonStateHandler.getMagic().getCurrentlyCasting().getCastingTime())){
 							dragonStateHandler.getMagic().setCurrentlyCasting(ability);
-							NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCastTime(playerEntity.getId(), ability.getCurrentCastTimer()));
+							NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCastTime(player.getId(), ability.getCurrentCastTimer()));
 						}
 					}
 				}else{
 					if(dragonStateHandler.getMagic().getCurrentlyCasting() != null){
-						NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCasting(playerEntity.getId(), null));
-						NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCastTime(playerEntity.getId(), 0));
+						NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCasting(player.getId(), null));
+						NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCastTime(player.getId(), 0));
 						dragonStateHandler.getMagic().setCurrentlyCasting(null);
 					}
 				}

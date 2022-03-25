@@ -4,7 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DSEntities;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.monsters.MagicalPredatorEntity;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.monsters.MagicalPredator;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ClawToolHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.items.DSItems;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
@@ -12,42 +12,36 @@ import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.status.PlayerJumpSync;
-import by.dragonsurvivalteam.dragonsurvival.server.tileentity.SourceOfMagicTileEntity;
+import by.dragonsurvivalteam.dragonsurvival.server.tileentity.SourceOfMagicBlockEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.monster.HoglinEntity;
-import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.passive.WolfEntity;
-import net.minecraft.entity.passive.horse.HorseEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.item.Item;
+import net.minecraft.entity.monster.Hoglin;
+import net.minecraft.entity.passive.Animal;
+import net.minecraft.entity.passive.Wolf;
+import net.minecraft.entity.passive.horse.Horse;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.*;
 import net.minecraft.loot.LootContext;
 import net.minecraft.loot.LootParameters;
 import net.minecraft.tags.ITag;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.util.*;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.AABB;
+import net.minecraft.util.math.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.Level;
+import net.minecraft.world.server.ServerLevel;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.living.LivingDropsEvent;
-import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.living.LivingEntityDeathEvent;
+import net.minecraftforge.event.entity.living.LivingEntityDropsEvent;
+import net.minecraftforge.event.entity.living.LivingEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.SleepingLocationCheckEvent;
@@ -56,7 +50,6 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.network.PacketDistributor;
 
 import java.util.List;
 
@@ -74,14 +67,14 @@ public class EventHandler{
 	@SubscribeEvent
 	public static void removeElytraFromDragon(TickEvent.PlayerTickEvent playerTickEvent){
 		if(!ConfigHandler.COMMON.dragonsAllowedToUseElytra.get() && playerTickEvent.phase == TickEvent.Phase.START){
-			PlayerEntity playerEntity = playerTickEvent.player;
-			DragonStateProvider.getCap(playerEntity).ifPresent(dragonStateHandler -> {
-				if(dragonStateHandler.isDragon() && playerEntity instanceof ServerPlayerEntity && cycle >= 40){
+			Player player = playerTickEvent.player;
+			DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
+				if(dragonStateHandler.isDragon() && player instanceof ServerPlayer && cycle >= 40){
 					//chestplate slot is #38
-					ItemStack stack = playerEntity.inventory.getItem(38);
+					ItemStack stack = player.inventory.getItem(38);
 					Item item = stack.getItem();
 					if(item instanceof ElytraItem){
-						playerEntity.drop(playerEntity.inventory.removeItemNoUpdate(38), true, false);
+						player.drop(player.inventory.removeItemNoUpdate(38), true, false);
 					}
 					cycle = 0;
 				}else{
@@ -92,29 +85,29 @@ public class EventHandler{
 	}
 
 	@SubscribeEvent
-	public static void mobDeath(LivingDropsEvent event){
-		LivingEntity entity = event.getEntityLiving();
+	public static void mobDeath(LivingEntityDropsEvent event){
+		LivingEntity entity = event.getEntityLivingEntity();
 		float health = entity.getMaxHealth();
 
 		//if(entity instanceof AnimalEntity) return;
-		if(event.getSource() == null || !(event.getSource().getEntity() instanceof PlayerEntity)){
+		if(event.getSource() == null || !(event.getSource().get() instanceof Player)){
 			return;
 		}
-		if(!DragonUtils.isDragon(event.getSource().getEntity())){
+		if(!DragonUtils.isDragon(event.getSource().get())){
 			return;
 		}
 
 		if(health >= 14 && health < 20){
 			if(entity.level.random.nextInt(100) <= (ConfigHandler.SERVER.dragonHeartShardChance.get() * 100) + (event.getLootingLevel() * ((ConfigHandler.SERVER.dragonHeartShardChance.get() * 100) / 4))){
-				event.getDrops().add(new ItemEntity(entity.level, entity.position().x, entity.position().y, entity.position().z, new ItemStack(DSItems.dragonHeartShard)));
+				event.getDrops().add(new Item(entity.level, entity.position().x, entity.position().y, entity.position().z, new ItemStack(DSItems.dragonHeartShard)));
 			}
 		}else if(health >= 20 && health < 50){
 			if(entity.level.random.nextInt(100) <= (ConfigHandler.SERVER.weakDragonHeartChance.get() * 100) + (event.getLootingLevel() * ((ConfigHandler.SERVER.weakDragonHeartChance.get() * 100) / 4))){
-				event.getDrops().add(new ItemEntity(entity.level, entity.position().x, entity.position().y, entity.position().z, new ItemStack(DSItems.weakDragonHeart)));
+				event.getDrops().add(new Item(entity.level, entity.position().x, entity.position().y, entity.position().z, new ItemStack(DSItems.weakDragonHeart)));
 			}
 		}else if(health >= 50){
 			if(entity.level.random.nextInt(100) <= (ConfigHandler.SERVER.elderDragonHeartChance.get() * 100) + (event.getLootingLevel() * ((ConfigHandler.SERVER.elderDragonHeartChance.get() * 100) / 4))){
-				event.getDrops().add(new ItemEntity(entity.level, entity.position().x, entity.position().y, entity.position().z, new ItemStack(DSItems.elderDragonHeart)));
+				event.getDrops().add(new Item(entity.level, entity.position().x, entity.position().y, entity.position().z, new ItemStack(DSItems.elderDragonHeart)));
 			}
 		}
 	}
@@ -124,27 +117,27 @@ public class EventHandler{
 	 */
 	@SubscribeEvent
 	public static void onJoin(EntityJoinWorldEvent joinWorldEvent){
-		Entity entity = joinWorldEvent.getEntity();
-		if(entity instanceof AnimalEntity && !(entity instanceof WolfEntity || entity instanceof HoglinEntity)){
+		Entity entity = joinWorldEvent.get();
+		if(entity instanceof Animal && !(entity instanceof Wolf || entity instanceof Hoglin)){
 
-			((AnimalEntity)entity).goalSelector.addGoal(5, new AvoidEntityGoal((AnimalEntity)entity, PlayerEntity.class, livingEntity -> DragonUtils.isDragon((PlayerEntity)livingEntity) && !((PlayerEntity)livingEntity).hasEffect(DragonEffects.ANIMAL_PEACE), 20.0F, 1.3F, 1.5F, EntityPredicates.ATTACK_ALLOWED));
+			((Animal)entity).goalSelector.addGoal(5, new AvoidEntityGoal((Animal)entity, Player.class, living -> DragonUtils.isDragon((Player)living) && !((Player)living).hasEffect(DragonEffects.ANIMAL_PEACE), 20.0F, 1.3F, 1.5F, EntityPredicates.ATTACK_ALLOWED));
 		}
-		if(entity instanceof HorseEntity){
-			HorseEntity horseEntity = (HorseEntity)entity;
-			horseEntity.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(horseEntity, PlayerEntity.class, 0, true, false, livingEntity -> livingEntity.getCapability(DragonStateProvider.DRAGON_CAPABILITY).orElseGet(null).getLevel() != ADULT));
-			horseEntity.targetSelector.addGoal(4, new AvoidEntityGoal<>(horseEntity, PlayerEntity.class, livingEntity -> livingEntity.getCapability(DragonStateProvider.DRAGON_CAPABILITY).orElse(null).getLevel() == ADULT && !livingEntity.hasEffect(DragonEffects.ANIMAL_PEACE), 20, 1.3, 1.5, EntityPredicates.ATTACK_ALLOWED::test));
+		if(entity instanceof Horse){
+			Horse horse = (Horse)entity;
+			horse.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(horse, Player.class, 0, true, false, living -> living.getCapability(Capabilities.DRAGON_CAPABILITY).orElseGet(null).getLevel() != ADULT));
+			horse.targetSelector.addGoal(4, new AvoidEntityGoal<>(horse, Player.class, living -> living.getCapability(Capabilities.DRAGON_CAPABILITY).orElse(null).getLevel() == ADULT && !living.hasEffect(DragonEffects.ANIMAL_PEACE), 20, 1.3, 1.5, EntityPredicates.ATTACK_ALLOWED::test));
 		}
 	}
 
 	@SubscribeEvent
-	public static void onDeath(LivingDeathEvent e){
-		LivingEntity livingEntity = e.getEntityLiving();
-		World world = livingEntity.level;
-		if(livingEntity instanceof AnimalEntity && livingEntity.level.getRandom().nextDouble() < ConfigHandler.COMMON.predatorAnimalSpawnChance.get()){
-			if(world.getEntitiesOfClass(PlayerEntity.class, new AxisAlignedBB(livingEntity.blockPosition()).inflate(50), playerEntity -> playerEntity.hasEffect(DragonEffects.PREDATOR_ANTI_SPAWN)).isEmpty()){
-				MagicalPredatorEntity beast = DSEntities.MAGICAL_BEAST.create(livingEntity.level);
-				livingEntity.level.addFreshEntity(beast);
-				beast.teleportToWithTicket(livingEntity.getX(), livingEntity.getY(), livingEntity.getZ());
+	public static void onDeath(LivingEntityDeathEvent e){
+		LivingEntity living = e.getEntityLivingEntity();
+		Level world = living.level;
+		if(living instanceof Animal && living.level.getRandom().nextDouble() < ConfigHandler.COMMON.predatorAnimalSpawnChance.get()){
+			if(world.getEntitiesOfClass(Player.class, new AABB(living.blockPosition()).inflate(50), player -> player.hasEffect(DragonEffects.PREDATOR_ANTI_SPAWN)).isEmpty()){
+				MagicalPredator beast = DSEntities.MAGICAL_BEAST.create(living.level);
+				living.level.addFreshEntity(beast);
+				beast.teleportToWithTicket(living.getX(), living.getY(), living.getZ());
 			}
 		}
 	}
@@ -152,8 +145,8 @@ public class EventHandler{
 	@SubscribeEvent
 	public static void sleepCheck(SleepingLocationCheckEvent sleepingLocationCheckEvent){
 		BlockPos sleepingLocation = sleepingLocationCheckEvent.getSleepingLocation();
-		World world = sleepingLocationCheckEvent.getEntity().level;
-		if(world.isNight() && world.getBlockEntity(sleepingLocation) instanceof SourceOfMagicTileEntity){
+		Level world = sleepingLocationCheckEvent.get().level;
+		if(world.isNight() && world.getBlockEntity(sleepingLocation) instanceof SourceOfMagicBlockEntity){
 			sleepingLocationCheckEvent.setResult(Event.Result.ALLOW);
 		}
 	}
@@ -175,20 +168,20 @@ public class EventHandler{
 			return;
 		}
 
-		PlayerEntity playerEntity = breakEvent.getPlayer();
-		if(playerEntity.isCreative()){
+		Player player = breakEvent.getPlayer();
+		if(player.isCreative()){
 			return;
 		}
 
-		int i = EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, playerEntity);
+		int i = EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, player);
 
 		if(i <= 0){
-			IWorld world = breakEvent.getWorld();
-			if(world instanceof ServerWorld){
+			LevelAccessor world = breakEvent.getWorld();
+			if(world instanceof ServerLevel){
 				BlockState blockState = breakEvent.getState();
 				BlockPos blockPos = breakEvent.getPos();
 				Block block = blockState.getBlock();
-				ItemStack mainHandItem = ClawToolHandler.getDragonTools(playerEntity);
+				ItemStack mainHandItem = ClawToolHandler.getDragonTools(player);
 				double random;
 				// Modded Ore Support
 				String[] tagStringSplit = ConfigHandler.SERVER.oresTag.get().split(":");
@@ -200,23 +193,23 @@ public class EventHandler{
 					return;
 				}
 
-				List<ItemStack> drops = block.getDrops(blockState, new LootContext.Builder((ServerWorld)world).withParameter(LootParameters.ORIGIN, new Vector3d(blockPos.getX(), blockPos.getY(), blockPos.getZ())).withParameter(LootParameters.TOOL, mainHandItem));
-				DragonStateProvider.getCap(playerEntity).ifPresent(dragonStateHandler -> {
-					final boolean suitableOre = (mainHandItem.isCorrectToolForDrops(blockState) || (dragonStateHandler.isDragon() && dragonStateHandler.canHarvestWithPaw(playerEntity, blockState))) && drops.stream().noneMatch(item -> oresTag.contains(item.getItem()));
-					if(suitableOre && !playerEntity.isCreative()){
+				List<ItemStack> drops = block.getDrops(blockState, new LootContext.Builder((ServerLevel)world).withParameter(LootParameters.ORIGIN, new Vec3(blockPos.getX(), blockPos.getY(), blockPos.getZ())).withParameter(LootParameters.TOOL, mainHandItem));
+				DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
+					final boolean suitableOre = (mainHandItem.isCorrectToolForDrops(blockState) || (dragonStateHandler.isDragon() && dragonStateHandler.canHarvestWithPaw(player, blockState))) && drops.stream().noneMatch(item -> oresTag.contains(item.getItem()));
+					if(suitableOre && !player.isCreative()){
 						boolean isCave = dragonStateHandler.getType() == DragonType.CAVE;
 
 						if(dragonStateHandler.isDragon()){
-							if(playerEntity.getRandom().nextDouble() < ConfigHandler.SERVER.dragonOreDustChance.get()){
-								world.addFreshEntity(new ItemEntity((World)world, blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, new ItemStack(DSItems.elderDragonDust)){
+							if(player.getRandom().nextDouble() < ConfigHandler.SERVER.dragonOreDustChance.get()){
+								world.addFreshEntity(new Item((Level)world, blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, new ItemStack(DSItems.elderDragonDust)){
 									@Override
 									public boolean fireImmune(){
 										return isCave || super.fireImmune();
 									}
 								});
 							}
-							if(playerEntity.getRandom().nextDouble() < ConfigHandler.SERVER.dragonOreBoneChance.get()){
-								world.addFreshEntity(new ItemEntity((World)world, blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, new ItemStack(DSItems.elderDragonBone)){
+							if(player.getRandom().nextDouble() < ConfigHandler.SERVER.dragonOreBoneChance.get()){
+								world.addFreshEntity(new Item((Level)world, blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, new ItemStack(DSItems.elderDragonBone)){
 									@Override
 									public boolean fireImmune(){
 										return isCave || super.fireImmune();
@@ -224,16 +217,16 @@ public class EventHandler{
 								});
 							}
 						}else{
-							if(playerEntity.getRandom().nextDouble() < ConfigHandler.SERVER.humanOreDustChance.get()){
-								world.addFreshEntity(new ItemEntity((World)world, blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, new ItemStack(DSItems.elderDragonDust)){
+							if(player.getRandom().nextDouble() < ConfigHandler.SERVER.humanOreDustChance.get()){
+								world.addFreshEntity(new Item((Level)world, blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, new ItemStack(DSItems.elderDragonDust)){
 									@Override
 									public boolean fireImmune(){
 										return isCave || super.fireImmune();
 									}
 								});
 							}
-							if(playerEntity.getRandom().nextDouble() < ConfigHandler.SERVER.humanOreBoneChance.get()){
-								world.addFreshEntity(new ItemEntity((World)world, blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, new ItemStack(DSItems.elderDragonBone)){
+							if(player.getRandom().nextDouble() < ConfigHandler.SERVER.humanOreBoneChance.get()){
+								world.addFreshEntity(new Item((Level)world, blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, new ItemStack(DSItems.elderDragonBone)){
 									@Override
 									public boolean fireImmune(){
 										return isCave || super.fireImmune();
@@ -258,7 +251,7 @@ public class EventHandler{
 		if(itemStack.getItem() == DSItems.elderDragonBone){
 			if(!rightClickBlock.getPlayer().isSpectator()){
 
-				final World world = rightClickBlock.getWorld();
+				final Level world = rightClickBlock.getWorld();
 				final BlockPos blockPos = rightClickBlock.getPos();
 				BlockState blockState = world.getBlockState(blockPos);
 				final Block block = blockState.getBlock();
@@ -266,7 +259,7 @@ public class EventHandler{
 				boolean replace = false;
 				rightClickBlock.getPlayer().isSpectator();
 				rightClickBlock.getPlayer().isCreative();
-				BlockItemUseContext deirection = new BlockItemUseContext(rightClickBlock.getPlayer(), rightClickBlock.getHand(), rightClickBlock.getItemStack(), new BlockRayTraceResult(new Vector3d(0, 0, 0), rightClickBlock.getPlayer().getDirection(), blockPos, false));
+				BlockPlaceContext deirection = new BlockPlaceContext(rightClickBlock.getPlayer(), rightClickBlock.getHand(), rightClickBlock.getItemStack(), new BlockHitResult(new Vec3(0, 0, 0), rightClickBlock.getPlayer().getDirection(), blockPos, false));
 				if(block == Blocks.STONE){
 					world.setBlockAndUpdate(blockPos, DSBlocks.dragon_altar_stone.getStateForPlacement(deirection));
 					replace = true;
@@ -302,8 +295,8 @@ public class EventHandler{
 						itemStack.shrink(1);
 					}
 					rightClickBlock.setCanceled(true);
-					world.playSound(rightClickBlock.getPlayer(), blockPos, SoundEvents.WITHER_SPAWN, SoundCategory.PLAYERS, 1, 1);
-					rightClickBlock.setCancellationResult(ActionResultType.SUCCESS);
+					world.playSound(rightClickBlock.getPlayer(), blockPos, SoundEvents.WITHER_SPAWN, SoundSource.PLAYERS, 1, 1);
+					rightClickBlock.setCancellationResult(InteractionResult.SUCCESS);
 				}
 			}
 		}
@@ -319,26 +312,26 @@ public class EventHandler{
 	}
 
 	@SubscribeEvent
-	public static void onJump(LivingEvent.LivingJumpEvent jumpEvent){
-		final LivingEntity livingEntity = jumpEvent.getEntityLiving();
-		DragonStateProvider.getCap(livingEntity).ifPresent(dragonStateHandler -> {
+	public static void onJump(LivingEntityEvent.LivingEntityJumpEvent jumpEvent){
+		final LivingEntity living = jumpEvent.getEntityLivingEntity();
+		DragonStateProvider.getCap(living).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon()){
 				switch(dragonStateHandler.getLevel()){
 					case BABY:
-						livingEntity.push(0, ConfigHandler.SERVER.newbornJump.get(), 0); //1+ block
+						living.push(0, ConfigHandler.SERVER.newbornJump.get(), 0); //1+ block
 						break;
 					case YOUNG:
-						livingEntity.push(0, ConfigHandler.SERVER.youngJump.get(), 0); //1.5+ block
+						living.push(0, ConfigHandler.SERVER.youngJump.get(), 0); //1.5+ block
 						break;
 					case ADULT:
-						livingEntity.push(0, ConfigHandler.SERVER.adultJump.get(), 0); //2+ blocks
+						living.push(0, ConfigHandler.SERVER.adultJump.get(), 0); //2+ blocks
 						break;
 				}
-				if(livingEntity instanceof ServerPlayerEntity){
-					if(livingEntity.getServer().isSingleplayer()){
-						NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new PlayerJumpSync(livingEntity.getId(), 20)); // 42
+				if(living instanceof ServerPlayer){
+					if(living.getServer().isSingleplayer()){
+						NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new PlayerJumpSync(living.getId(), 20)); // 42
 					}else{
-						NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new PlayerJumpSync(livingEntity.getId(), 10)); // 21
+						NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new PlayerJumpSync(living.getId(), 10)); // 21
 					}
 				}
 			}

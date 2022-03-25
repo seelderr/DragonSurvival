@@ -1,28 +1,28 @@
 package by.dragonsurvivalteam.dragonsurvival.network.container;
 
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Container;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
 public class OpenInventory implements IMessage<OpenInventory>{
 	@Override
-	public void encode(OpenInventory message, PacketBuffer buffer){
+	public void encode(OpenInventory message, FriendlyByteBuf buffer){
 
 	}
 
 	@Override
-	public OpenInventory decode(PacketBuffer buffer){
+	public OpenInventory decode(FriendlyByteBuf buffer){
 		return new OpenInventory();
 	}
 
 	@Override
 	public void handle(OpenInventory message, Supplier<NetworkEvent.Context> supplier){
 		NetworkEvent.Context context = supplier.get();
-		ServerPlayerEntity player = context.getSender();
+		ServerPlayer player = context.getSender();
 
 		if(player.containerMenu != null){
 			player.containerMenu.removed(player);

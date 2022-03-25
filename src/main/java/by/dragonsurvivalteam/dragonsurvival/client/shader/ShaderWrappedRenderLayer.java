@@ -43,14 +43,14 @@ public class ShaderWrappedRenderLayer extends RenderType{
 	}
 
 	@Override
+	public int hashCode(){
+		return Objects.hash(delegate, shader, cb);
+	}
+
+	@Override
 	public boolean equals(
 		@Nullable
 			Object other){
 		return other instanceof ShaderWrappedRenderLayer && delegate.equals(((ShaderWrappedRenderLayer)other).delegate) && shader == ((ShaderWrappedRenderLayer)other).shader && Objects.equals(cb, ((ShaderWrappedRenderLayer)other).cb);
-	}
-
-	@Override
-	public int hashCode(){
-		return Objects.hash(delegate, shader, cb);
 	}
 }

@@ -14,32 +14,17 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.Locale;
 
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/client/particles/ForestDragon/SmallPoisonParticleData.java
-public class SmallPoisonParticleData implements ParticleOptions
-{
-	public static final Deserializer<SmallPoisonParticleData> DESERIALIZER = new Deserializer<SmallPoisonParticleData>()
-	{
-		public SmallPoisonParticleData fromCommand(ParticleType<SmallPoisonParticleData> particleTypeIn, StringReader reader) throws CommandSyntaxException
-		{
-=======
-public class SmallPoisonParticleData implements IParticleData{
-	public static final IDeserializer<SmallPoisonParticleData> DESERIALIZER = new IDeserializer<SmallPoisonParticleData>(){
+public class SmallPoisonParticleData implements ParticleOptions{
+	public static final Deserializer<SmallPoisonParticleData> DESERIALIZER = new Deserializer<SmallPoisonParticleData>(){
 		public SmallPoisonParticleData fromCommand(ParticleType<SmallPoisonParticleData> particleTypeIn, StringReader reader) throws CommandSyntaxException{
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/client/particles/ForestDragon/SmallPoisonParticleData.java
 			reader.expect(' ');
 			float duration = (float)reader.readDouble();
 			reader.expect(' ');
 			boolean swirls = reader.readBoolean();
 			return new SmallPoisonParticleData(duration, swirls);
 		}
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/client/particles/ForestDragon/SmallPoisonParticleData.java
-		
-		public SmallPoisonParticleData fromNetwork(ParticleType<SmallPoisonParticleData> particleTypeIn, FriendlyByteBuf buffer)
-		{
-=======
 
-		public SmallPoisonParticleData fromNetwork(ParticleType<SmallPoisonParticleData> particleTypeIn, PacketBuffer buffer){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/client/particles/ForestDragon/SmallPoisonParticleData.java
+		public SmallPoisonParticleData fromNetwork(ParticleType<SmallPoisonParticleData> particleTypeIn, FriendlyByteBuf buffer){
 			return new SmallPoisonParticleData(buffer.readFloat(), buffer.readBoolean());
 		}
 	};
@@ -54,16 +39,8 @@ public class SmallPoisonParticleData implements IParticleData{
 	public SmallPoisonParticleData(float duration, boolean spins){
 		this.duration = duration;
 		this.swirls = spins;
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/client/particles/ForestDragon/SmallPoisonParticleData.java
-	}
-	
-	@Override
-	public void writeToNetwork(FriendlyByteBuf buffer)
-	{
-=======
 	}	@Override
-	public void writeToNetwork(PacketBuffer buffer){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/client/particles/ForestDragon/SmallPoisonParticleData.java
+	public void writeToNetwork(FriendlyByteBuf buffer){
 		buffer.writeFloat(this.duration);
 		buffer.writeBoolean(this.swirls);
 	}

@@ -1,21 +1,21 @@
 package by.dragonsurvivalteam.dragonsurvival.server.containers;
 
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.SourceOfMagicTileEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.SlotItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 
 import javax.annotation.Nonnull;
 
-public class SourceOfMagicContainer extends Container{
+public class SourceOfMagicContainer extends AbstractContainerMenu{
 	public SourceOfMagicTileEntity nestEntity;
 
-	public SourceOfMagicContainer(int windowId, PlayerInventory inv, PacketBuffer data){
+	public SourceOfMagicContainer(int windowId, Inventory inv, FriendlyByteBuf data){
 		super(DSContainers.nestContainer, windowId);
 		nestEntity = (SourceOfMagicTileEntity)inv.player.level.getBlockEntity(data.readBlockPos());
 		int index = 0;
@@ -38,7 +38,7 @@ public class SourceOfMagicContainer extends Container{
 		});
 	}
 
-	public ItemStack quickMoveStack(PlayerEntity pPlayer, int pIndex){
+	public ItemStack quickMoveStack(Player pPlayer, int pIndex){
 		ItemStack itemstack = ItemStack.EMPTY;
 		Slot slot = this.slots.get(pIndex);
 		if(slot != null && slot.hasItem()){
@@ -81,7 +81,7 @@ public class SourceOfMagicContainer extends Container{
 	}
 
 	@Override
-	public boolean stillValid(PlayerEntity p_75145_1_){
+	public boolean stillValid(Player p_75145_1_){
 		return true;
 	}
 }

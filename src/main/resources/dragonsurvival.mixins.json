@@ -12,7 +12,6 @@
 	"MixinPlayerEntity",
 	"MixinPlayerInteractionManager",
 	"MixinPlayerInventory",
-	"MixinServerWorld"
   ],
   "client": [
 	"AccessorEntityRenderer",

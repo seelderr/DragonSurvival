@@ -2,7 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.objects;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.NBTInterface;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.SkinCap;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
 
 public class LayerSettings implements NBTInterface{
 	public String selectedSkin = SkinCap.defaultSkinValue;
@@ -19,8 +19,8 @@ public class LayerSettings implements NBTInterface{
 	}
 
 	@Override
-	public CompoundNBT writeNBT(){
-		CompoundNBT nbt = new CompoundNBT();
+	public CompoundTag writeNBT(){
+		CompoundTag nbt = new CompoundTag();
 		nbt.putString("skin", selectedSkin);
 
 		nbt.putFloat("hue", hue);
@@ -33,7 +33,7 @@ public class LayerSettings implements NBTInterface{
 	}
 
 	@Override
-	public void readNBT(CompoundNBT base){
+	public void readNBT(CompoundTag base){
 		selectedSkin = base.getString("skin");
 
 		hue = base.getFloat("hue");

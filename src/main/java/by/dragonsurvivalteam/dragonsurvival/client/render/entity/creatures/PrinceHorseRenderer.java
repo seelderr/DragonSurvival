@@ -1,8 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render.entity.creatures;
 
-import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.PrinceHorseEntity;
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.PrinceHorse;
+import com.mojang.blaze3d.matrix.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
@@ -13,13 +13,13 @@ import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
 import software.bernie.geckolib3.util.RenderUtils;
 
-public class PrinceHorseRenderer extends GeoEntityRenderer<PrinceHorseEntity>{
-	public PrinceHorseRenderer(EntityRendererManager renderManager, AnimatedGeoModel<PrinceHorseEntity> modelProvider){
+public class PrinceHorseRenderer extends GeoEntityRenderer<PrinceHorse>{
+	public PrinceHorseRenderer(EntityRendererManager renderManager, AnimatedGeoModel<PrinceHorse> modelProvider){
 		super(renderManager, modelProvider);
 	}
 
 	@Override
-	public void renderRecursively(GeoBone bone, MatrixStack stack, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha){
+	public void renderRecursively(GeoBone bone, PoseStack stack, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha){
 		if(bone.getName().equals("left_item")){
 			stack.pushPose();
 			RenderUtils.moveToPivot(bone, stack);

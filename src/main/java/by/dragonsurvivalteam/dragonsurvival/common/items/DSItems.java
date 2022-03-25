@@ -6,12 +6,12 @@ import by.dragonsurvivalteam.dragonsurvival.common.items.food.CharredFoodItem;
 import by.dragonsurvivalteam.dragonsurvival.common.items.growth.StarBoneItem;
 import by.dragonsurvivalteam.dragonsurvival.common.items.growth.StarHeartItem;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -77,9 +77,9 @@ public class DSItems{
 			@Override
 			public void appendHoverText(ItemStack stack,
 				@Nullable
-					World world, List<ITextComponent> list, ITooltipFlag tooltipFlag){
+					Level world, List<Component> list, TooltipFlag tooltipFlag){
 				super.appendHoverText(stack, world, list, tooltipFlag);
-				list.add(new TranslationTextComponent(description));
+				list.add(new TranslatableComponent(description));
 			}
 		};
 		item.setRegistryName(DragonSurvivalMod.MODID, name);

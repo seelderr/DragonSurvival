@@ -9,24 +9,15 @@ import net.minecraft.client.particle.*;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/client/particles/CaveDragon/LargeFireParticle.java
-public class LargeFireParticle extends TextureSheetParticle
-{
-	private int swirlTick;
+
+public class LargeFireParticle extends TextureSheetParticle{
 	private final float spread;
-	boolean swirls;
 	private final SpriteSet sprites;
-	
-	public LargeFireParticle(ClientLevel world, double x, double y, double z, double vX, double vY, double vZ, double duration, boolean swirls, SpriteSet sprite) {
-=======
-public class LargeFireParticle extends SpriteTexturedParticle{
-	private final float spread;
-	private final IAnimatedSprite sprites;
 	boolean swirls;
 	private int swirlTick;
 
-	public LargeFireParticle(ClientWorld world, double x, double y, double z, double vX, double vY, double vZ, double duration, boolean swirls, IAnimatedSprite sprite){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/client/particles/CaveDragon/LargeFireParticle.java
+	public LargeFireParticle(ClientLevel world, double x, double y, double z, double vX, double vY, double vZ, double duration, boolean swirls, SpriteSet sprite){
+
 		super(world, x, y, z);
 		setSize(3, 3);
 		xd = vX;
@@ -42,13 +33,8 @@ public class LargeFireParticle extends SpriteTexturedParticle{
 	}
 
 	@Override
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/client/particles/CaveDragon/LargeFireParticle.java
-	public ParticleRenderType getRenderType() {
-		return ParticleRenderType.PARTICLE_SHEET_OPAQUE;
-=======
 	protected float getU1(){
 		return super.getU1() - (super.getU1() - super.getU0()) / 8f;
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/client/particles/CaveDragon/LargeFireParticle.java
 	}
 
 	@Override
@@ -85,24 +71,9 @@ public class LargeFireParticle extends SpriteTexturedParticle{
 	}
 
 	@Override
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/client/particles/CaveDragon/LargeFireParticle.java
-	public void render(VertexConsumer buffer, Camera renderInfo, float partialTicks) {
-		float var = (age + partialTicks)/(float)lifetime;
-		alpha = (float) (1 - Math.exp(10 * (var - 1)) - Math.pow(2000, -var));
-		if (alpha < 0.1) alpha = 0.1f;
-		
-		super.render(buffer, renderInfo, partialTicks);
-	}
-	
-	@OnlyIn(Dist.CLIENT)
-	public static final class FireFactory implements ParticleProvider<LargeFireParticleData>
-	{
-		private final SpriteSet spriteSet;
-		
-		public FireFactory(SpriteSet sprite) {
-=======
-	public IParticleRenderType getRenderType(){
-		return IParticleRenderType.PARTICLE_SHEET_OPAQUE;
+
+	public ParticleRenderType getRenderType(){
+		return ParticleRenderType.PARTICLE_SHEET_OPAQUE;
 	}
 
 	@Override
@@ -113,7 +84,7 @@ public class LargeFireParticle extends SpriteTexturedParticle{
 	}
 
 	@Override
-	public void render(IVertexBuilder buffer, ActiveRenderInfo renderInfo, float partialTicks){
+	public void render(VertexConsumer buffer, Camera renderInfo, float partialTicks){
 		float var = (age + partialTicks) / (float)lifetime;
 		alpha = (float)(1 - Math.exp(10 * (var - 1)) - Math.pow(2000, -var));
 		if(alpha < 0.1){
@@ -124,20 +95,17 @@ public class LargeFireParticle extends SpriteTexturedParticle{
 	}
 
 	@OnlyIn( Dist.CLIENT )
-	public static final class FireFactory implements IParticleFactory<LargeFireParticleData>{
-		private final IAnimatedSprite spriteSet;
+	public static final class FireFactory implements ParticleProvider<LargeFireParticleData>{
+		private final SpriteSet spriteSet;
 
-		public FireFactory(IAnimatedSprite sprite){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/client/particles/CaveDragon/LargeFireParticle.java
+		public FireFactory(SpriteSet sprite){
+
 			this.spriteSet = sprite;
 		}
 
 		@Override
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/client/particles/CaveDragon/LargeFireParticle.java
-		public Particle createParticle(LargeFireParticleData typeIn, ClientLevel worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
-=======
-		public Particle createParticle(LargeFireParticleData typeIn, ClientWorld worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/client/particles/CaveDragon/LargeFireParticle.java
+		public Particle createParticle(LargeFireParticleData typeIn, ClientLevel worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed){
+
 			LargeFireParticle particle = new LargeFireParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, typeIn.getDuration(), typeIn.getSwirls(), spriteSet);
 			particle.setSpriteFromAge(spriteSet);
 			return particle;

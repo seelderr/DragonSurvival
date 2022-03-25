@@ -3,12 +3,11 @@ package by.dragonsurvivalteam.dragonsurvival.common.magic.common;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -23,7 +22,7 @@ public abstract class DragonAbility{
 	protected final int minLevel;
 	protected static NumberFormat nf = NumberFormat.getInstance();
 	protected static HashMap<String, ResourceLocation> iconCache = new HashMap<>();
-	public PlayerEntity player;
+	public Player player;
 	protected int level;
 	protected DragonType type;
 
@@ -38,51 +37,39 @@ public abstract class DragonAbility{
 		this.type = type;
 	}
 
-	public PlayerEntity getPlayer(){
+	public Player getPlayer(){
 		return player;
 	}
 
 	public abstract DragonAbility createInstance();
 
 	@OnlyIn( Dist.CLIENT )
-	public IFormattableTextComponent getTitle(){
-		return new TranslationTextComponent("ds.skill." + getId());
+	public Component getTitle(){
+		return new TranslatableComponent("ds.skill." + getId());
 	}
 
 	public String getId(){return id;}
 
 	@OnlyIn( Dist.CLIENT )
-	public IFormattableTextComponent getDescription(){
-		return new TranslationTextComponent("ds.skill.description." + getId());
+	public Component getDescription(){
+		return new TranslatableComponent("ds.skill.description." + getId());
 	}
 
 	@OnlyIn( Dist.CLIENT )
-	public ArrayList<ITextComponent> getInfo(){return new ArrayList<>();}
+	public ArrayList<Component> getInfo(){return new ArrayList<>();}
 
 	@OnlyIn( Dist.CLIENT )
-	public ArrayList<ITextComponent> getLevelUpInfo(){return new ArrayList<>();}
+	public ArrayList<Component> getLevelUpInfo(){return new ArrayList<>();}
 
-	public void setLevel(int level){
-		this.level = Math.min(getMaxLevel(), Math.max(getMinLevel(), level));
-	}
+	public void onKeyPressed(Player player){}
 
-	public int getMaxLevel(){
-		return maxLevel;
-	}
-
-	public int getMinLevel(){
-		return minLevel;
-	}
-
-	public void onKeyPressed(PlayerEntity player){}
-
-	public CompoundNBT saveNBT(){
-		CompoundNBT nbt = new CompoundNBT();
+	public CompoundTag saveNBT(){
+		CompoundTag nbt = new CompoundTag();
 		nbt.putInt("level", level);
 		return nbt;
 	}
 
-	public void loadNBT(CompoundNBT nbt){
+	public void loadNBT(CompoundTag nbt){
 		level = nbt.getInt("level");
 	}
 
@@ -120,6 +107,10 @@ public abstract class DragonAbility{
 		return this.level;
 	}
 
+	public void setLevel(int level){
+		this.level = Math.min(getMaxLevel(), Math.max(getMinLevel(), level));
+	}
+
 	public boolean isDisabled(){
 		if(!ConfigHandler.SERVER.dragonAbilities.get()){
 			return true;
@@ -131,5 +122,13 @@ public abstract class DragonAbility{
 			return true;
 		}
 		return type == DragonType.FOREST && !ConfigHandler.SERVER.forestDragonAbilities.get();
+	}
+
+	public int getMaxLevel(){
+		return maxLevel;
+	}
+
+	public int getMinLevel(){
+		return minLevel;
 	}
 }

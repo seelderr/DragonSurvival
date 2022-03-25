@@ -1,20 +1,11 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/common/handlers/DragonConfigHandler.java
-import by.jackraidenph.dragonsurvival.DragonSurvivalMod;
-import by.jackraidenph.dragonsurvival.config.ConfigHandler;
-import by.jackraidenph.dragonsurvival.config.ConfigUtils;
-import by.jackraidenph.dragonsurvival.misc.DragonType;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
-=======
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigUtils;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
-import net.minecraft.block.Block;
-import net.minecraft.item.Item;
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/common/handlers/DragonConfigHandler.java
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig.Type;
@@ -24,8 +15,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Mod.EventBusSubscriber( modid = DragonSurvivalMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD )
-public class DragonConfigHandler{
+@Mod.EventBusSubscriber(modid = DragonSurvivalMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+public class DragonConfigHandler
+{
 	public static List<Block> SEA_DRAGON_HYDRATION_BLOCKS;
 	public static List<Item> SEA_DRAGON_HYDRATION_USE_ALTERNATIVES;
 
@@ -36,13 +28,8 @@ public class DragonConfigHandler{
 	public static Map<DragonType, List<Block>> DRAGON_MANA_BLOCKS;
 
 	@SubscribeEvent
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/common/handlers/DragonConfigHandler.java
 	public static void onConfigLoad(ModConfigEvent.Loading event) {
 		if (event.getConfig().getType() == Type.SERVER) {
-=======
-	public static void onConfigLoad(ModConfig.Loading event){
-		if(event.getConfig().getType() == Type.SERVER){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/common/handlers/DragonConfigHandler.java
 			rebuildSpeedupBlocksMap();
 			rebuildSeaDragonConfigs();
 			rebuildBreathBlocks();
@@ -51,7 +38,7 @@ public class DragonConfigHandler{
 		}
 	}
 
-	private static void rebuildSpeedupBlocksMap(){
+	private static void rebuildSpeedupBlocksMap() {
 		HashMap<DragonType, List<Block>> speedupMap = new HashMap<>();
 		speedupMap.put(DragonType.CAVE, ConfigUtils.parseConfigBlockList(ConfigHandler.SERVER.caveSpeedupBlocks.get()));
 		speedupMap.put(DragonType.FOREST, ConfigUtils.parseConfigBlockList(ConfigHandler.SERVER.forestSpeedupBlocks.get()));
@@ -59,7 +46,7 @@ public class DragonConfigHandler{
 		DRAGON_SPEEDUP_BLOCKS = speedupMap;
 	}
 
-	public static void rebuildBreathBlocks(){
+	public static void rebuildBreathBlocks() {
 		HashMap<DragonType, List<Block>> breathMap = new HashMap<>();
 		breathMap.put(DragonType.CAVE, ConfigUtils.parseConfigBlockList(ConfigHandler.SERVER.fireBreathBlockBreaks.get()));
 		breathMap.put(DragonType.FOREST, ConfigUtils.parseConfigBlockList(ConfigHandler.SERVER.forestBreathBlockBreaks.get()));
@@ -67,7 +54,7 @@ public class DragonConfigHandler{
 		DRAGON_BREATH_BLOCKS = breathMap;
 	}
 
-	public static void rebuildManaBlocks(){
+	public static void rebuildManaBlocks() {
 		HashMap<DragonType, List<Block>> map = new HashMap<>();
 		map.put(DragonType.CAVE, ConfigUtils.parseConfigBlockList(ConfigHandler.SERVER.caveDragonManaBlocks.get()));
 		map.put(DragonType.FOREST, ConfigUtils.parseConfigBlockList(ConfigHandler.SERVER.forestDragonManaBlocks.get()));
@@ -75,12 +62,12 @@ public class DragonConfigHandler{
 		DRAGON_MANA_BLOCKS = map;
 	}
 
-	private static void rebuildSeaDragonConfigs(){
+	private static void rebuildSeaDragonConfigs() {
 		SEA_DRAGON_HYDRATION_BLOCKS = ConfigUtils.parseConfigBlockList(ConfigHandler.SERVER.seaHydrationBlocks.get());
 		SEA_DRAGON_HYDRATION_USE_ALTERNATIVES = ConfigUtils.parseConfigItemList(ConfigHandler.SERVER.seaAdditionalWaterUseables.get());
 	}
 
-	private static void rebuildForestDragonConfigs(){
+	private static void rebuildForestDragonConfigs() {
 		FOREST_DRAGON_BREATH_GROW_BLACKLIST = ConfigUtils.parseConfigBlockList(ConfigHandler.SERVER.forestBreathGrowBlacklist.get());
 	}
 }

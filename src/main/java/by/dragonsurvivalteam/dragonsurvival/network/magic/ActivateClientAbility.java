@@ -1,14 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.network.magic;
 
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/network/magic/ActivateClientAbility.java
-import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.common.magic.common.ActiveDragonAbility;
-import by.jackraidenph.dragonsurvival.network.IMessage;
-=======
+
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.common.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/network/magic/ActivateClientAbility.java
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
@@ -33,20 +28,16 @@ public class ActivateClientAbility implements IMessage<ActivateClientAbility>{
 	}
 
 	@Override
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/network/magic/ActivateClientAbility.java
-	public void encode(ActivateClientAbility message, FriendlyByteBuf buffer) {
-=======
-	public void encode(ActivateClientAbility message, PacketBuffer buffer){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/network/magic/ActivateClientAbility.java
+
+	public void encode(ActivateClientAbility message, FriendlyByteBuf buffer){
+
 		buffer.writeInt(message.playerId);
 	}
 
 	@Override
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/network/magic/ActivateClientAbility.java
-	public ActivateClientAbility decode(FriendlyByteBuf buffer) {
-=======
-	public ActivateClientAbility decode(PacketBuffer buffer){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/network/magic/ActivateClientAbility.java
+
+	public ActivateClientAbility decode(FriendlyByteBuf buffer){
+
 		int playerId = buffer.readInt();
 		return new ActivateClientAbility(playerId);
 	}
@@ -60,19 +51,13 @@ public class ActivateClientAbility implements IMessage<ActivateClientAbility>{
 	public void run(ActivateClientAbility message, Supplier<NetworkEvent.Context> supplier){
 		NetworkEvent.Context context = supplier.get();
 		context.enqueueWork(() -> {
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/network/magic/ActivateClientAbility.java
+
 			Player thisPlayer = Minecraft.getInstance().player;
-			if (thisPlayer != null) {
+			if(thisPlayer != null){
 				Level world = thisPlayer.level;
 				Entity entity = world.getEntity(message.playerId);
-				if (entity instanceof Player) {
-=======
-			PlayerEntity thisPlayer = Minecraft.getInstance().player;
-			if(thisPlayer != null){
-				World world = thisPlayer.level;
-				Entity entity = world.getEntity(message.playerId);
-				if(entity instanceof PlayerEntity){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/network/magic/ActivateClientAbility.java
+				if(entity instanceof Player){
+
 					DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
 						ActiveDragonAbility ability = dragonStateHandler.getMagic().getCurrentlyCasting();
 

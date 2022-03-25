@@ -14,32 +14,17 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.Locale;
 
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/client/particles/CaveDragon/SmallFireParticleData.java
-public class SmallFireParticleData implements ParticleOptions
-{
-	public static final Deserializer<SmallFireParticleData> DESERIALIZER = new Deserializer<SmallFireParticleData>()
-	{
-		public SmallFireParticleData fromCommand(ParticleType<SmallFireParticleData> particleTypeIn, StringReader reader) throws CommandSyntaxException
-		{
-=======
-public class SmallFireParticleData implements IParticleData{
-	public static final IDeserializer<SmallFireParticleData> DESERIALIZER = new IDeserializer<SmallFireParticleData>(){
+public class SmallFireParticleData implements ParticleOptions{
+	public static final Deserializer<SmallFireParticleData> DESERIALIZER = new Deserializer<SmallFireParticleData>(){
 		public SmallFireParticleData fromCommand(ParticleType<SmallFireParticleData> particleTypeIn, StringReader reader) throws CommandSyntaxException{
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/client/particles/CaveDragon/SmallFireParticleData.java
 			reader.expect(' ');
 			float duration = (float)reader.readDouble();
 			reader.expect(' ');
 			boolean swirls = reader.readBoolean();
 			return new SmallFireParticleData(duration, swirls);
 		}
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/client/particles/CaveDragon/SmallFireParticleData.java
-		
-		public SmallFireParticleData fromNetwork(ParticleType<SmallFireParticleData> particleTypeIn, FriendlyByteBuf buffer)
-		{
-=======
 
-		public SmallFireParticleData fromNetwork(ParticleType<SmallFireParticleData> particleTypeIn, PacketBuffer buffer){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/client/particles/CaveDragon/SmallFireParticleData.java
+		public SmallFireParticleData fromNetwork(ParticleType<SmallFireParticleData> particleTypeIn, FriendlyByteBuf buffer){
 			return new SmallFireParticleData(buffer.readFloat(), buffer.readBoolean());
 		}
 	};
@@ -54,40 +39,32 @@ public class SmallFireParticleData implements IParticleData{
 	public SmallFireParticleData(float duration, boolean spins){
 		this.duration = duration;
 		this.swirls = spins;
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/client/particles/CaveDragon/SmallFireParticleData.java
-	}
-	
-	@Override
-	public void writeToNetwork(FriendlyByteBuf buffer)
-	{
-=======
-	}	@Override
-	public void writeToNetwork(PacketBuffer buffer){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/client/particles/CaveDragon/SmallFireParticleData.java
-		buffer.writeFloat(this.duration);
-		buffer.writeBoolean(this.swirls);
 	}
 
 	@OnlyIn( Dist.CLIENT )
 	public float getDuration(){
 		return this.duration;
-	}	@SuppressWarnings( "deprecation" )
-	@Override
-	public String writeToString(){
-		return String.format(Locale.ROOT, "%s %.2f %b", Registry.PARTICLE_TYPE.getKey(this.getType()), this.duration, this.swirls);
 	}
 
 	@OnlyIn( Dist.CLIENT )
 	public boolean getSwirls(){
 		return this.swirls;
-	}	@Override
+	}
+
+	@Override
+	public void writeToNetwork(FriendlyByteBuf buffer){
+		buffer.writeFloat(this.duration);
+		buffer.writeBoolean(this.swirls);
+	}
+
+	@SuppressWarnings( "deprecation" )
+	@Override
+	public String writeToString(){
+		return String.format(Locale.ROOT, "%s %.2f %b", Registry.PARTICLE_TYPE.getKey(this.getType()), this.duration, this.swirls);
+	}
+
+	@Override
 	public ParticleType<SmallFireParticleData> getType(){
 		return DSParticles.FIRE.get();
 	}
-
-
-
-
-
-
 }

@@ -6,19 +6,19 @@ import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.emotes.SyncEmote;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.PointOfView;
+import net.minecraft.entity.ai.attributes.AttributeInstance;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundSource;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.living.LivingEntityHurtEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -27,19 +27,19 @@ import java.util.UUID;
 import static net.minecraft.client.settings.PointOfView.THIRD_PERSON_BACK;
 
 
-@OnlyIn(Dist.CLIENT)
+@OnlyIn( Dist.CLIENT )
 @Mod.EventBusSubscriber( Dist.CLIENT )
 public class EmoteHandler{
 	private static final UUID EMOTE_NO_MOVE = UUID.fromString("09c2716e-0da9-430b-aaaf-8653c643dc09");
 
-	@OnlyIn(Dist.CLIENT)
+	@OnlyIn( Dist.CLIENT )
 	@SubscribeEvent
 	public static void playerTick(PlayerTickEvent event){
 		if(event.phase == Phase.START){
 			return;
 		}
 
-		PlayerEntity player = event.player;
+		Player player = event.player;
 
 		if(player != null){
 			DragonStateProvider.getCap(player).ifPresent(cap -> {
@@ -77,7 +77,7 @@ public class EmoteHandler{
 								Minecraft.getInstance().options.setCameraType(THIRD_PERSON_BACK);
 
 								if(pointofview.isFirstPerson() != Minecraft.getInstance().options.getCameraType().isFirstPerson()){
-									Minecraft.getInstance().gameRenderer.checkEntityPostEffect(Minecraft.getInstance().options.getCameraType().isFirstPerson() ? Minecraft.getInstance().getCameraEntity() : null);
+									Minecraft.getInstance().gameRenderer.checkEntityPostEffect(Minecraft.getInstance().options.getCameraType().isFirstPerson() ? Minecraft.getInstance().getCamera() : null);
 								}
 							}
 						}
@@ -86,13 +86,13 @@ public class EmoteHandler{
 					if(!cap.getEmotes().currentEmotes.isEmpty()){
 						if(emote.sound != null && emote.sound.interval > 0){
 							if(cap.getEmotes().emoteTicks.get(index) % emote.sound.interval == 0){
-								player.level.playLocalSound(player.position().x, player.position().y, player.position().z, new SoundEvent(new ResourceLocation(emote.sound.key)), SoundCategory.PLAYERS, emote.sound.volume, emote.sound.pitch, false);
+								player.level.playLocalSound(player.position().x, player.position().y, player.position().z, new SoundEvent(new ResourceLocation(emote.sound.key)), SoundSource.PLAYERS, emote.sound.volume, emote.sound.pitch, false);
 							}
 						}
 
 						if(ConfigHandler.SERVER.canMoveInEmote.get()){
 							if(emote.animation != null && !emote.animation.isEmpty()){
-								ModifiableAttributeInstance attributeInstance = player.getAttribute(Attributes.MOVEMENT_SPEED);
+								AttributeInstance attributeInstance = player.getAttribute(Attributes.MOVEMENT_SPEED);
 								AttributeModifier noMove = new AttributeModifier(EMOTE_NO_MOVE, "EMOTE", -attributeInstance.getValue(), AttributeModifier.Operation.ADDITION);
 
 								if(!attributeInstance.hasModifier(noMove)){
@@ -104,7 +104,7 @@ public class EmoteHandler{
 				}
 
 				if(cap.getEmotes().currentEmotes.isEmpty() && ConfigHandler.SERVER.canMoveInEmote.get()){
-					ModifiableAttributeInstance attributeInstance = player.getAttribute(Attributes.MOVEMENT_SPEED);
+					AttributeInstance attributeInstance = player.getAttribute(Attributes.MOVEMENT_SPEED);
 					AttributeModifier noMove = new AttributeModifier(EMOTE_NO_MOVE, "EMOTE", -attributeInstance.getValue(), AttributeModifier.Operation.ADDITION);
 
 					if(attributeInstance.hasModifier(noMove)){
@@ -116,7 +116,7 @@ public class EmoteHandler{
 	}
 
 	@SubscribeEvent
-	public static void playerAttacked(LivingHurtEvent event){
+	public static void playerAttacked(LivingEntityHurtEvent event){
 		EmoteMenuHandler.clearEmotes();
 	}
 

@@ -5,51 +5,49 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEdito
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.AltarTypeButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.HelpButton;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
-import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
+import by.dragonsurvivalteam.dragonsurvival.client.util.FakeLocalPlayerUtils;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TextRenderUtil;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.Dragon;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.DyeColor;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
+import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeColor;
+import net.minecraftforge.client.gui.widget.ExtendedButton;
 
 public class DragonAltarGUI extends Screen{
 	public static final ResourceLocation CONFIRM_BUTTON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/confirm_button.png");
 	public static final ResourceLocation CANCEL_BUTTON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/cancel_button.png");
 	private static final ResourceLocation backgroundTexture = new ResourceLocation("textures/block/dirt.png");
+	private final String[] animations = {"sit", "idle", "fly", "swim_fast", "run"};
 	public DragonStateHandler handler1 = new DragonStateHandler();
 	public DragonStateHandler handler2 = new DragonStateHandler();
 	private int guiLeft;
 	private int guiTop;
 	private boolean hasInit = false;
-	private final String[] animations = {"sit", "idle", "fly", "swim_fast", "run"};
 	private int animation1 = 1;
 	private int animation2 = 0;
 	private int tick;
 
 	public DragonAltarGUI(){
-		super(new TranslationTextComponent("ds.gui.dragon_altar"));
+		super(new TranslatableComponent("ds.gui.dragon_altar"));
 	}
 
 	@Override
-	public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks){
-        if(this.minecraft == null){
-            return;
-        }
+	public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks){
+		if(this.minecraft == null){
+			return;
+		}
 
 		matrixStack.pushPose();
 		matrixStack.translate(0, 0, -600);
@@ -71,11 +69,11 @@ public class DragonAltarGUI extends Screen{
 			}
 		}
 
-		for(Widget btn : buttons){
+		for(Widget btn : renderables){
 			if(btn instanceof AltarTypeButton){
 				AltarTypeButton button = (AltarTypeButton)btn;
 
-				if(button.isHovered()){
+				if(button.isHoveredOrFocused()){
 					handler1.setType(button.type);
 					handler1.setHasWings(true);
 					handler1.setSize(DragonLevel.BABY.size);
@@ -86,11 +84,11 @@ public class DragonAltarGUI extends Screen{
 					handler2.setSize(button.type == DragonType.NONE ? DragonLevel.BABY.size : DragonLevel.ADULT.size);
 					handler2.getSkin().skinPreset.skinAges.get(button.type == DragonType.NONE ? DragonLevel.BABY : DragonLevel.ADULT).defaultSkin = true;
 
-					FakeClientPlayerUtils.getFakePlayer(0, handler1).animationSupplier = () -> animations[animation1];
-					FakeClientPlayerUtils.getFakePlayer(1, handler2).animationSupplier = () -> animations[animation2];
+					FakeLocalPlayerUtils.getFakePlayer(0, handler1).animationSupplier = () -> animations[animation1];
+					FakeLocalPlayerUtils.getFakePlayer(1, handler2).animationSupplier = () -> animations[animation2];
 
-					renderDragon(width / 2 + 170, button.y + (button.getHeight() / 2) + 20, 5, matrixStack, 20, FakeClientPlayerUtils.getFakePlayer(0, handler1), FakeClientPlayerUtils.getFakeDragon(0, handler1));
-					renderDragon(width / 2 - 205, button.y + (button.getHeight() / 2) + 1, -4, matrixStack, 40, FakeClientPlayerUtils.getFakePlayer(1, handler2), FakeClientPlayerUtils.getFakeDragon(1, handler2));
+					renderDragon(width / 2 + 170, button.y + (button.getHeight() / 2) + 20, 5, matrixStack, 20, FakeLocalPlayerUtils.getFakePlayer(0, handler1), FakeLocalPlayerUtils.getFakeDragon(0, handler1));
+					renderDragon(width / 2 - 205, button.y + (button.getHeight() / 2) + 1, -4, matrixStack, 40, FakeLocalPlayerUtils.getFakePlayer(1, handler2), FakeLocalPlayerUtils.getFakeDragon(1, handler2));
 				}
 			}
 		}
@@ -101,7 +99,7 @@ public class DragonAltarGUI extends Screen{
 	}
 
 	@Override
-	public void renderBackground(MatrixStack pMatrixStack){
+	public void renderBackground(PoseStack pMatrixStack){
 		super.renderBackground(pMatrixStack);
 		renderBorders(backgroundTexture, 0, width, 32, height - 32, width, height);
 	}
@@ -109,7 +107,7 @@ public class DragonAltarGUI extends Screen{
 	public static void renderBorders(ResourceLocation texture, int x0, int x1, int y0, int y1, int width, int height){
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder bufferbuilder = tessellator.getBuilder();
-		Minecraft.getInstance().getTextureManager().bind(texture);
+		Minecraft.getInstance().getTextureManager().bindForSetup(texture);
 
 		RenderSystem.pushMatrix();
 		double zLevel = 0;
@@ -144,7 +142,7 @@ public class DragonAltarGUI extends Screen{
 		RenderSystem.popMatrix();
 	}
 
-	private void renderDragon(int x, int y, int xrot, MatrixStack matrixStack, float size, PlayerEntity player, DragonEntity dragon){
+	private void renderDragon(int x, int y, int xrot, PoseStack matrixStack, float size, Player player, Dragon dragon){
 		matrixStack.pushPose();
 		float scale = size * 1.5f;
 		matrixStack.scale(scale, scale, scale);
@@ -166,18 +164,18 @@ public class DragonAltarGUI extends Screen{
 		this.guiLeft = (this.width - 304) / 2;
 		this.guiTop = (this.height - 190) / 2;
 
-		this.addButton(new HelpButton(width / 2 - 9, 32 + 0, 16, 16, "ds.help.altar", 1));
+		this.addRenderableWidget(new HelpButton(width / 2 - 9, 32 + 0, 16, 16, "ds.help.altar", 1));
 
-		addButton(new AltarTypeButton(this, DragonType.CAVE, width / 2 - 104, this.guiTop + 30));
-		addButton(new AltarTypeButton(this, DragonType.FOREST, width / 2 - 51, this.guiTop + 30));
-		addButton(new AltarTypeButton(this, DragonType.SEA, width / 2 + 2, this.guiTop + 30));
-		addButton(new AltarTypeButton(this, DragonType.NONE, width / 2 + 55, guiTop + 30));
+		addRenderableWidget(new AltarTypeButton(this, DragonType.CAVE, width / 2 - 104, this.guiTop + 30));
+		addRenderableWidget(new AltarTypeButton(this, DragonType.FOREST, width / 2 - 51, this.guiTop + 30));
+		addRenderableWidget(new AltarTypeButton(this, DragonType.SEA, width / 2 + 2, this.guiTop + 30));
+		addRenderableWidget(new AltarTypeButton(this, DragonType.NONE, width / 2 + 55, guiTop + 30));
 
-		addButton(new ExtendedButton(width / 2 - 75, height - 25, 150, 20, new TranslationTextComponent("ds.gui.dragon_editor"), (btn) -> {
+		addRenderableWidget(new ExtendedButton(width / 2 - 75, height - 25, 150, 20, new TranslatableComponent("ds.gui.dragon_editor"), (btn) -> {
 			Minecraft.getInstance().setScreen(new DragonEditorScreen(Minecraft.getInstance().screen));
 		}){
 			@Override
-			public void render(MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
+			public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
 				this.visible = DragonUtils.isDragon(minecraft.player);
 				super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
 			}

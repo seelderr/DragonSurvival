@@ -8,16 +8,9 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 import java.util.Map;
 
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/mixins/AccessorEntityRendererManager.java
+
 @Mixin( EntityRenderDispatcher.class)
 public interface AccessorEntityRendererManager {
-    @Accessor("playerRenderers")
-    Map<String, EntityRenderer<? extends Player>> getPlayerRenderers();
+	@Accessor("playerRenderers")
+	Map<String, EntityRenderer<? extends Player>> getPlayerRenderers();
 }
-=======
-@Mixin( EntityRendererManager.class )
-public interface AccessorEntityRendererManager{
-	@Accessor( "playerRenderers" )
-	Map<String, PlayerRenderer> getPlayerRenderers();
-}
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/mixins/AccessorEntityRendererManager.java

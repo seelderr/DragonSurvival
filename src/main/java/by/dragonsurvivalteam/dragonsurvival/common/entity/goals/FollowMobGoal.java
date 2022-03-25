@@ -1,20 +1,20 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.goals;
 
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.Mob;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.AABB;
 
 import java.util.List;
 
 public class FollowMobGoal<T extends Class<? extends LivingEntity>> extends Goal{
 	T classs;
-	MobEntity follower;
+	Mob follower;
 	LivingEntity target;
 	int distance;
 
-	public FollowMobGoal(T classs, MobEntity follower, int distance){
+	public FollowMobGoal(T classs, Mob follower, int distance){
 		this.classs = classs;
 		this.follower = follower;
 		this.distance = distance;
@@ -22,7 +22,7 @@ public class FollowMobGoal<T extends Class<? extends LivingEntity>> extends Goal
 
 	public boolean canUse(){
 		if(this.target == null){
-			List<LivingEntity> list = this.follower.level.getEntitiesOfClass(this.classs, (new AxisAlignedBB(this.follower.blockPosition())).inflate(this.follower.getAttributeValue(Attributes.FOLLOW_RANGE)));
+			List<LivingEntity> list = this.follower.level.getEntitiesOfClass(this.classs, (new AABB(this.follower.blockPosition())).inflate(this.follower.getAttributeValue(Attributes.FOLLOW_RANGE)));
 			if(!list.isEmpty()){
 				this.target = list.get(this.follower.getRandom().nextInt(list.size()));
 			}

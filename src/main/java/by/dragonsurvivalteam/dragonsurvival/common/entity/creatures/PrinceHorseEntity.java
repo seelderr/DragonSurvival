@@ -3,22 +3,18 @@ package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 import by.dragonsurvivalteam.dragonsurvival.misc.PrinceTrades;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.ILivingEntityData;
-import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.MobSpawnType;
+import net.minecraft.entity.SpawnGroupData;
 import net.minecraft.entity.ai.goal.*;
+import net.minecraft.entity.merchant.villager.Villager;
 import net.minecraft.entity.merchant.villager.VillagerData;
-import net.minecraft.entity.merchant.villager.VillagerEntity;
 import net.minecraft.entity.merchant.villager.VillagerTrades;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.villager.VillagerType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.MerchantOffers;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Hand;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.IServerWorld;
-import net.minecraft.world.World;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.Animation;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
@@ -27,34 +23,30 @@ import software.bernie.geckolib3.core.manager.AnimationData;
 
 import javax.annotation.Nullable;
 
-public class PrinceHorseEntity extends PrincesHorseEntity{
-	public PrinceHorseEntity(EntityType<? extends VillagerEntity> entityType, World world){
+public class PrinceHorse extends PrincesHorse{
+	public PrinceHorse(EntityType<? extends Villager> entityType, Level world){
 		super(entityType, world);
 	}
 
-	public PrinceHorseEntity(EntityType<? extends VillagerEntity> entityType, World world, VillagerType villagerType){
+	public PrinceHorse(EntityType<? extends Villager> entityType, Level world, VillagerType villagerType){
 		super(entityType, world, villagerType);
 	}
 
-	protected int getExperienceReward(PlayerEntity p_70693_1_){
-		return 1 + this.level.random.nextInt(2);
-	}
-
 	@Nullable
-	public ILivingEntityData finalizeSpawn(IServerWorld serverWorld, DifficultyInstance difficultyInstance, SpawnReason reason,
+	public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverWorld, DifficultyInstance difficultyInstance, MobSpawnType reason,
 		@Nullable
-			ILivingEntityData livingEntityData,
+			SpawnGroupData livingEntityData,
 		@Nullable
-			CompoundNBT compoundNBT){
-		setItemInHand(Hand.MAIN_HAND, new ItemStack(Items.GOLDEN_SWORD));
+			CompoundTag compoundNBT){
+		setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.GOLDEN_SWORD));
 		return super.finalizeSpawn(serverWorld, difficultyInstance, reason, livingEntityData, compoundNBT);
 	}
 
 	protected void updateTrades(){
 		VillagerData villagerdata = getVillagerData();
-		Int2ObjectMap<VillagerTrades.ITrade[]> int2objectmap = PrinceTrades.colorToTrades.get(getColor());
+		Int2ObjectMap<VillagerTrades.ItemListing[]> int2objectmap = PrinceTrades.colorToTrades.get(getColor());
 		if(int2objectmap != null && !int2objectmap.isEmpty()){
-			VillagerTrades.ITrade[] trades = int2objectmap.get(villagerdata.getLevel());
+			VillagerTrades.ItemListing[] trades = int2objectmap.get(villagerdata.getLevel());
 			if(trades != null){
 				MerchantOffers merchantoffers = getOffers();
 				addOffersFromItemListings(merchantoffers, trades, 2);
@@ -143,6 +135,10 @@ public class PrinceHorseEntity extends PrincesHorseEntity{
 			animationController.setAnimation(animationBuilder);
 			return PlayState.CONTINUE;
 		}));
+	}
+
+	protected int getExperienceReward(Player p_70693_1_){
+		return 1 + this.level.random.nextInt(2);
 	}
 
 	@Override

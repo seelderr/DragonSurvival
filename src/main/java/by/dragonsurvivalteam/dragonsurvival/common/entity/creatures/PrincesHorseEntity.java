@@ -10,35 +10,28 @@ import by.dragonsurvivalteam.dragonsurvival.misc.PrincessTrades;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.serialization.Dynamic;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.ILivingEntityData;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.ai.brain.Brain;
-import net.minecraft.entity.ai.goal.*;
-import net.minecraft.entity.effect.LightningBoltEntity;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.merchant.villager.VillagerData;
-import net.minecraft.entity.merchant.villager.VillagerEntity;
-import net.minecraft.entity.merchant.villager.VillagerTrades;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.villager.VillagerType;
-import net.minecraft.item.DyeColor;
-import net.minecraft.item.MerchantOffers;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.IServerWorld;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.ai.Brain;
+import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
+import net.minecraft.world.entity.ai.goal.PanicGoal;
+import net.minecraft.world.entity.item.Item;
+import net.minecraft.world.entity.npc.Villager;
+import net.minecraft.world.entity.npc.VillagerData;
+import net.minecraft.world.entity.npc.VillagerTrades;
+import net.minecraft.world.entity.npc.VillagerType;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.trading.MerchantOffers;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.Animation;
@@ -52,17 +45,17 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-public class PrincesHorseEntity extends VillagerEntity implements IAnimatable, CommonTraits{
+public class PrincesHorse extends Villager implements IAnimatable, CommonTraits{
 	private static final List<DyeColor> colors = Arrays.asList(DyeColor.RED, DyeColor.YELLOW, DyeColor.PURPLE, DyeColor.BLUE, DyeColor.BLACK, DyeColor.WHITE);
-	public static DataParameter<Integer> color = EntityDataManager.defineId(PrincesHorseEntity.class, DataSerializers.INT);
+	public static EntityDataAccessor<Integer> color = SynchedEntityData.defineId(PrincesHorse.class, EntityDataSerializers.INT);
 	AnimationFactory animationFactory = new AnimationFactory(this);
 	AnimationTimer animationTimer = new AnimationTimer();
 
-	public PrincesHorseEntity(EntityType<? extends VillagerEntity> entityType, World world){
+	public PrincesHorse(EntityType<? extends Villager> entityType, Level world){
 		super(entityType, world);
 	}
 
-	public PrincesHorseEntity(EntityType<? extends VillagerEntity> entityType, World world, VillagerType villagerType){
+	public PrincesHorse(EntityType<? extends Villager> entityType, Level world, VillagerType villagerType){
 		super(entityType, world, villagerType);
 	}
 
@@ -84,7 +77,7 @@ public class PrincesHorseEntity extends VillagerEntity implements IAnimatable, C
 		return brainProvider().makeBrain(p_213364_1_);
 	}
 
-	public void refreshBrain(ServerWorld p_213770_1_){
+	public void refreshBrain(ServerLevel p_213770_1_){
 	}
 
 	protected void defineSynchedData(){
@@ -92,14 +85,22 @@ public class PrincesHorseEntity extends VillagerEntity implements IAnimatable, C
 		this.entityData.define(color, 0);
 	}
 
-	public void addAdditionalSaveData(CompoundNBT compoundNBT){
+	public void addAdditionalSaveData(CompoundTag compoundNBT){
 		super.addAdditionalSaveData(compoundNBT);
 		compoundNBT.putInt("Color", getColor());
 	}
 
-	public void readAdditionalSaveData(CompoundNBT compoundNBT){
+	public int getColor(){
+		return this.entityData.get(color);
+	}
+
+	public void readAdditionalSaveData(CompoundTag compoundNBT){
 		super.readAdditionalSaveData(compoundNBT);
 		setColor(compoundNBT.getInt("Color"));
+	}
+
+	public void setColor(int i){
+		this.entityData.set(color, i);
 	}
 
 	@Override
@@ -125,17 +126,17 @@ public class PrincesHorseEntity extends VillagerEntity implements IAnimatable, C
 
 	@Override
 	public void die(DamageSource damageSource){
-		if(level instanceof ServerWorld && !(this instanceof PrinceHorseEntity)){
-			PrincessEntity princess = DSEntities.PRINCESS.create(level);
+		if(level instanceof ServerLevel && !(this instanceof PrinceHorse)){
+			Princess princess = DSEntities.PRINCESS.create(level);
 			princess.setPos(getX(), getY(), getZ());
-			princess.finalizeSpawn((IServerWorld)level, level.getCurrentDifficultyAt(blockPosition()), SpawnReason.NATURAL, null, null);
+			princess.finalizeSpawn((IServerLevel)level, level.getCurrentDifficultyAt(blockPosition()), MobSpawnType.NATURAL, null, null);
 			princess.setColor(getColor());
 			princess.setUUID(UUID.randomUUID());
 			level.addFreshEntity(princess);
 		}
 		super.die(damageSource);
-		//        if (damageSource.getEntity() instanceof PlayerEntity) {
-		//            VillagerRelationsHandler.applyEvilMarker((PlayerEntity) damageSource.getEntity());
+		//        if (damageSource.getEntity() instanceof Player) {
+		//            VillagerRelationsHandler.applyEvilMarker((Player) damageSource.getEntity());
 		//        }
 	}
 
@@ -143,36 +144,29 @@ public class PrincesHorseEntity extends VillagerEntity implements IAnimatable, C
 		return false;
 	}
 
-	protected ITextComponent getTypeName(){
-		return new TranslationTextComponent(this.getType().getDescriptionId());
+	protected Component getTypeName(){
+		return new TranslatableComponent(this.getType().getDescriptionId());
 	}
 
 	@Nullable
-	public ILivingEntityData finalizeSpawn(IServerWorld serverWorld, DifficultyInstance difficultyInstance, SpawnReason reason,
+	public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverWorld, DifficultyInstance difficultyInstance, MobSpawnType reason,
 		@Nullable
-			ILivingEntityData livingEntityData,
+			SpawnGroupData livingEntityData,
 		@Nullable
-			CompoundNBT compoundNBT){
+			CompoundTag compoundNBT){
 		setColor(colors.get(this.random.nextInt(6)).getId());
 		setVillagerData(getVillagerData().setProfession(DSEntities.PRINCE_PROFESSION));
 		return super.finalizeSpawn(serverWorld, difficultyInstance, reason, livingEntityData, compoundNBT);
 	}
 
-	public void setColor(int i){
-		this.entityData.set(color, i);
-	}
-
-	public void thunderHit(ServerWorld p_241841_1_, LightningBoltEntity p_241841_2_){
-	}
-
-	protected void pickUpItem(ItemEntity p_175445_1_){
+	public void thunderHit(ServerLevel p_241841_1_, LightningBolt p_241841_2_){
 	}
 
 	protected void updateTrades(){
 		VillagerData villagerdata = getVillagerData();
-		Int2ObjectMap<VillagerTrades.ITrade[]> int2objectmap = PrincessTrades.colorToTrades.get(getColor());
+		Int2ObjectMap<VillagerTrades.ItemListing[]> int2objectmap = PrincessTrades.colorToTrades.get(getColor());
 		if(int2objectmap != null && !int2objectmap.isEmpty()){
-			VillagerTrades.ITrade[] trades = int2objectmap.get(villagerdata.getLevel());
+			VillagerTrades.ItemListing[] trades = int2objectmap.get(villagerdata.getLevel());
 			if(trades != null){
 				MerchantOffers merchantoffers = getOffers();
 				addOffersFromItemListings(merchantoffers, trades, 2);
@@ -180,31 +174,30 @@ public class PrincesHorseEntity extends VillagerEntity implements IAnimatable, C
 		}
 	}
 
-	public void gossip(ServerWorld p_242368_1_, VillagerEntity p_242368_2_, long p_242368_3_){
+	public void gossip(ServerLevel p_242368_1_, Villager p_242368_2_, long p_242368_3_){
 	}
 
 	public void startSleeping(BlockPos p_213342_1_){
 	}
 
-	public int getColor(){
-		return this.entityData.get(color);
+	protected void pickUpItem(Item p_175445_1_){
 	}
 
 	protected void registerGoals(){
 		this.goalSelector.addGoal(0, new SwimGoal(this));
 		this.goalSelector.addGoal(5, new WaterAvoidingRandomWalkingGoal(this, 1){
 			public boolean canUse(){
-				return (!PrincesHorseEntity.this.isTrading() && super.canUse());
+				return (!PrincesHorse.this.isTrading() && super.canUse());
 			}
 		});
 		this.goalSelector.addGoal(6, new LookAtGoal(this, LivingEntity.class, 8.0F));
-		goalSelector.addGoal(6, new AvoidEntityGoal<>(this, PlayerEntity.class, 16, 1, 1, livingEntity -> {
-			return DragonUtils.isDragon(livingEntity) && livingEntity.hasEffect(DragonEffects.EVIL_DRAGON);
+		goalSelector.addGoal(6, new AvoidEntityGoal<>(this, Player.class, 16, 1, 1, living -> {
+			return DragonUtils.isDragon(living) && living.hasEffect(DragonEffects.EVIL_DRAGON);
 		}));
 		goalSelector.addGoal(7, new PanicGoal(this, 1.5));
 	}
 
-	protected int getExperienceReward(PlayerEntity p_70693_1_){
+	protected int getExperienceReward(Player p_70693_1_){
 		return 1 + this.level.random.nextInt(2);
 	}
 

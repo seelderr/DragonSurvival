@@ -1,9 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render.entity.creatures;
 
-import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.PrincessEntity;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.Princess;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.VillagerRenderer;
-import net.minecraft.entity.merchant.villager.VillagerEntity;
+import net.minecraft.entity.merchant.villager.Villager;
 import net.minecraft.item.DyeColor;
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.util.ResourceLocation;
@@ -21,9 +21,9 @@ public class PrincessRenderer extends VillagerRenderer{
 		this.layers.removeIf(villagerEntityVillagerModelLayerRenderer -> villagerEntityVillagerModelLayerRenderer instanceof net.minecraft.client.renderer.entity.layers.VillagerLevelPendantLayer);
 	}
 
-	public ResourceLocation getTextureLocation(VillagerEntity villagerEntity){
-		PrincessEntity princessEntity = (PrincessEntity)villagerEntity;
-		switch(DyeColor.byId(princessEntity.getColor())){
+	public ResourceLocation getTextureLocation(Villager villager){
+		Princess princess = (Princess)villager;
+		switch(DyeColor.byId(princess.getColor())){
 			case RED:
 				return RED;
 			case BLUE:
@@ -37,6 +37,6 @@ public class PrincessRenderer extends VillagerRenderer{
 			case WHITE:
 				return WHITE;
 		}
-		return super.getTextureLocation(villagerEntity);
+		return super.getTextureLocation(villager);
 	}
 }

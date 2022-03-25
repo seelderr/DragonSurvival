@@ -2,7 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.render.entity.creatures;
 
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.VillagerRenderer;
-import net.minecraft.entity.merchant.villager.VillagerEntity;
+import net.minecraft.entity.merchant.villager.Villager;
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.util.ResourceLocation;
 
@@ -15,7 +15,7 @@ public class PrinceRenderer extends VillagerRenderer{
 	}
 
 
-	public ResourceLocation getTextureLocation(VillagerEntity villagerEntity){
+	public ResourceLocation getTextureLocation(Villager villager){
 		return TEXTURE;
 	}
 }

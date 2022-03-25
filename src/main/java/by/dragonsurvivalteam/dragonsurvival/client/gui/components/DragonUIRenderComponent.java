@@ -1,28 +1,27 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.components;
 
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.matrix.PoseStack;
 import net.minecraft.client.gui.FocusableGui;
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.IRenderable;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Mth;
 import software.bernie.geckolib3.core.processor.IBone;
 
 import java.util.List;
 import java.util.function.Supplier;
 
 public class DragonUIRenderComponent extends FocusableGui implements IRenderable{
+	private final Screen screen;
+	private final Supplier<Dragon> getter;
 	public float yRot = -3, xRot = -5;
 	public float xOffset = 0, yOffset = 0;
 	public float zoom = 0;
 	public int x, y, width, height;
-	private final Screen screen;
-	private final Supplier<DragonEntity> getter;
 
-	public DragonUIRenderComponent(Screen screen, int x, int y, int xSize, int ySize, Supplier<DragonEntity> dragonGetter){
+	public DragonUIRenderComponent(Screen screen, int x, int y, int xSize, int ySize, Supplier<Dragon> dragonGetter){
 		this.screen = screen;
 		this.x = x;
 		this.y = y;
@@ -32,7 +31,7 @@ public class DragonUIRenderComponent extends FocusableGui implements IRenderable
 	}
 
 	@Override
-	public void render(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
+	public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
 		if(isMouseOver(pMouseX, pMouseY)){
 			screen.setFocused(this);
 		}
@@ -70,8 +69,8 @@ public class DragonUIRenderComponent extends FocusableGui implements IRenderable
 				xOffset -= x2 / 5;
 				yOffset -= y2 / 5;
 
-				xOffset = MathHelper.clamp(xOffset, -(width / 8), (width / 8));
-				yOffset = MathHelper.clamp(yOffset, -(height / 8), (height / 8));
+				xOffset = Mth.clamp(xOffset, -(width / 8), (width / 8));
+				yOffset = Mth.clamp(yOffset, -(height / 8), (height / 8));
 			}
 
 			return true;
@@ -86,7 +85,7 @@ public class DragonUIRenderComponent extends FocusableGui implements IRenderable
 	public boolean mouseScrolled(double mouseX, double mouseY, double amount){
 		if(isMouseOver(mouseX, mouseY)){
 			zoom += (float)amount * 2;
-			zoom = MathHelper.clamp(zoom, 10, 100);
+			zoom = Mth.clamp(zoom, 10, 100);
 			return true;
 		}
 		return super.mouseScrolled(mouseX, mouseY, amount);

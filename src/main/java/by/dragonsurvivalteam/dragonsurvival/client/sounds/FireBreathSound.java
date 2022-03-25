@@ -1,35 +1,18 @@
 package by.dragonsurvivalteam.dragonsurvival.client.sounds;
 
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/client/sounds/FireBreathSound.java
-import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.common.magic.abilities.Actives.BreathAbilities.NetherBreathAbility;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.magic.abilities.Actives.BreathAbilities.NetherBreathAbility;
 import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
 import net.minecraft.sounds.SoundSource;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-@OnlyIn( Dist.CLIENT)
-public class FireBreathSound extends AbstractTickableSoundInstance
-{
-	private NetherBreathAbility ability;
-	public FireBreathSound(NetherBreathAbility ability)
-	{
-		super(SoundRegistry.fireBreathLoop, SoundSource.PLAYERS);
-=======
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.magic.abilities.Actives.BreathAbilities.NetherBreathAbility;
-import net.minecraft.client.audio.TickableSound;
-import net.minecraft.util.SoundCategory;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-
 @OnlyIn( Dist.CLIENT )
-public class FireBreathSound extends TickableSound{
+public class FireBreathSound extends AbstractTickableSoundInstance{
 	private final NetherBreathAbility ability;
 
 	public FireBreathSound(NetherBreathAbility ability){
-		super(SoundRegistry.fireBreathLoop, SoundCategory.PLAYERS);
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/client/sounds/FireBreathSound.java
+		super(SoundRegistry.fireBreathLoop, SoundSource.PLAYERS);
 		this.looping = true;
 
 		this.ability = ability;

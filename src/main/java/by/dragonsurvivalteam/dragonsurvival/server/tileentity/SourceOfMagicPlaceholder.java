@@ -1,26 +1,24 @@
 package by.dragonsurvivalteam.dragonsurvival.server.tileentity;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class SourceOfMagicPlaceholder extends BaseBlockTileEntity{
 	public BlockPos rootPos = BlockPos.ZERO;
 
-	public SourceOfMagicPlaceholder(TileEntityType<?> tileEntityTypeIn){
-		super(tileEntityTypeIn);
+	public SourceOfMagicPlaceholder(BlockPos pWorldPosition, BlockState pBlockState){
+		super(DSTileEntities.sourceOfMagicPlaceholder, pWorldPosition, pBlockState);
 	}
 
 	@Override
-	public void load(BlockState state, CompoundNBT compound){
-		super.load(state, compound);
+	public void load(CompoundTag compound){
+		super.load(compound);
 		rootPos = BlockPos.of(compound.getLong("Root"));
 	}
 
 	@Override
-	public CompoundNBT save(CompoundNBT compound){
-		compound.putLong("Root", rootPos.asLong());
-		return super.save(compound);
+	protected void saveAdditional(CompoundTag pTag){
+		pTag.putLong("Root", rootPos.asLong());
 	}
 }

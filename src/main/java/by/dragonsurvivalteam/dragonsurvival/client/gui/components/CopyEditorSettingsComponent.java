@@ -8,15 +8,15 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.
 import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.objects.SkinPreset.SkinAgeGroup;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonLevel;
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.matrix.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.FocusableGui;
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.IRenderable;
 import net.minecraft.client.gui.widget.button.CheckboxButton;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.TextComponent;
+ 
 import net.minecraftforge.fml.client.gui.GuiUtils;
 import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
 
@@ -24,20 +24,18 @@ import java.util.Arrays;
 import java.util.List;
 
 public class CopyEditorSettingsComponent extends FocusableGui implements IRenderable{
-	public boolean visible;
-
 	private final ExtendedButton confirm;
 	private final ExtendedButton cancel;
 	private final CheckboxButton newborn;
 	private final CheckboxButton young;
 	private final CheckboxButton adult;
-
 	private final CopySettingsButton btn;
 	private final DragonEditorScreen screen;
 	private final int x;
 	private final int y;
 	private final int xSize;
 	private final int ySize;
+	public boolean visible;
 
 	public CopyEditorSettingsComponent(DragonEditorScreen screen, CopySettingsButton btn, int x, int y, int xSize, int ySize){
 		this.screen = screen;
@@ -47,19 +45,19 @@ public class CopyEditorSettingsComponent extends FocusableGui implements IRender
 		this.ySize = ySize;
 		this.btn = btn;
 
-		confirm = new ExtendedButton(x + (xSize / 2) - 18, y + ySize - 15, 15, 15, StringTextComponent.EMPTY, null){
+		confirm = new ExtendedButton(x + (xSize / 2) - 18, y + ySize - 15, 15, 15, TextComponent.EMPTY, null){
 			@Override
-			public void renderButton(MatrixStack mStack, int mouseX, int mouseY, float partial){
+			public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){
 				mStack.pushPose();
 				mStack.translate(0, 0, 100);
-				setMessage(StringTextComponent.EMPTY);
+				setMessage(TextComponent.EMPTY);
 				super.renderButton(mStack, mouseX, mouseY, partial);
-				Minecraft.getInstance().getTextureManager().bind(DragonAltarGUI.CONFIRM_BUTTON);
+				Minecraft.getInstance().getTextureManager().bindForSetup(DragonAltarGUI.CONFIRM_BUTTON);
 				blit(mStack, x + 1, y, 0, 0, 15, 15, 15, 15);
 				mStack.popPose();
 
 				if(isHovered){
-					GuiUtils.drawHoveringText(mStack, Arrays.asList(new TranslationTextComponent("ds.gui.dragon_editor.tooltip.done")), mouseX, mouseY, Minecraft.getInstance().screen.width, Minecraft.getInstance().screen.height, 200, Minecraft.getInstance().font);
+					Minecraft.getInstance().screen.renderTooltip(mStack, Arrays.asList(new TranslatableComponent("ds.gui.dragon_editor.tooltip.done")), mouseX, mouseY);
 				}
 			}
 
@@ -92,19 +90,19 @@ public class CopyEditorSettingsComponent extends FocusableGui implements IRender
 			}
 		};
 
-		cancel = new ExtendedButton(x + (xSize / 2) + 3, y + ySize - 15, 15, 15, StringTextComponent.EMPTY, null){
+		cancel = new ExtendedButton(x + (xSize / 2) + 3, y + ySize - 15, 15, 15, TextComponent.EMPTY, null){
 			@Override
-			public void renderButton(MatrixStack mStack, int mouseX, int mouseY, float partial){
+			public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){
 				mStack.pushPose();
 				mStack.translate(0, 0, 100);
-				setMessage(StringTextComponent.EMPTY);
+				setMessage(TextComponent.EMPTY);
 				super.renderButton(mStack, mouseX, mouseY, partial);
-				Minecraft.getInstance().getTextureManager().bind(DragonAltarGUI.CANCEL_BUTTON);
+				Minecraft.getInstance().getTextureManager().bindForSetup(DragonAltarGUI.CANCEL_BUTTON);
 				blit(mStack, x, y, 0, 0, 15, 15, 15, 15);
 				mStack.popPose();
 
 				if(isHovered){
-					GuiUtils.drawHoveringText(mStack, Arrays.asList(new TranslationTextComponent("ds.gui.dragon_editor.tooltip.cancel")), mouseX, mouseY, Minecraft.getInstance().screen.width, Minecraft.getInstance().screen.height, 200, Minecraft.getInstance().font);
+					Minecraft.getInstance().screen.renderTooltip(mStack, Arrays.asList(new TranslatableComponent("ds.gui.dragon_editor.tooltip.cancel")), mouseX, mouseY);
 				}
 			}
 
@@ -115,9 +113,9 @@ public class CopyEditorSettingsComponent extends FocusableGui implements IRender
 			}
 		};
 
-		newborn = new ExtendedCheckbox(x + 5, y + 12, xSize - 10, 10, 10, new TranslationTextComponent("ds.level.newborn"), false, (s) -> {}){
+		newborn = new ExtendedCheckbox(x + 5, y + 12, xSize - 10, 10, 10, new TranslatableComponent("ds.level.newborn"), false, (s) -> {}){
 			@Override
-			public void render(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
+			public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
 				super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 				if(screen.level == DragonLevel.BABY){
 					selected = true;
@@ -127,9 +125,9 @@ public class CopyEditorSettingsComponent extends FocusableGui implements IRender
 				}
 			}
 		};
-		young = new ExtendedCheckbox(x + 5, y + 27, xSize - 10, 10, 10, new TranslationTextComponent("ds.level.young"), false, (s) -> {}){
+		young = new ExtendedCheckbox(x + 5, y + 27, xSize - 10, 10, 10, new TranslatableComponent("ds.level.young"), false, (s) -> {}){
 			@Override
-			public void render(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
+			public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
 				super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 				if(screen.level == DragonLevel.YOUNG){
 					selected = true;
@@ -139,9 +137,9 @@ public class CopyEditorSettingsComponent extends FocusableGui implements IRender
 				}
 			}
 		};
-		adult = new ExtendedCheckbox(x + 5, y + 27 + 15, xSize - 10, 10, 10, new TranslationTextComponent("ds.level.adult"), false, (s) -> {}){
+		adult = new ExtendedCheckbox(x + 5, y + 27 + 15, xSize - 10, 10, 10, new TranslatableComponent("ds.level.adult"), false, (s) -> {}){
 			@Override
-			public void render(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
+			public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
 				super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 				if(screen.level == DragonLevel.ADULT){
 					selected = true;
@@ -164,7 +162,7 @@ public class CopyEditorSettingsComponent extends FocusableGui implements IRender
 	}
 
 	@Override
-	public void render(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
+	public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
 		Minecraft.getInstance().textureManager.bind(DropdownList.BACKGROUND_TEXTURE);
 		GuiUtils.drawContinuousTexturedBox(pMatrixStack, x, y - 3, 0, 0, xSize, ySize + 6, 32, 32, 10, 10);
 		confirm.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
@@ -172,6 +170,6 @@ public class CopyEditorSettingsComponent extends FocusableGui implements IRender
 		newborn.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 		young.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 		adult.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
-		AbstractGui.drawCenteredString(pMatrixStack, Minecraft.getInstance().font, new TranslationTextComponent("ds.gui.dragon_editor.copy_to"), x + (xSize / 2), y + 1, 14737632);
+		AbstractGui.drawCenteredString(pMatrixStack, Minecraft.getInstance().font, new TranslatableComponent("ds.gui.dragon_editor.copy_to"), x + (xSize / 2), y + 1, 14737632);
 	}
 }

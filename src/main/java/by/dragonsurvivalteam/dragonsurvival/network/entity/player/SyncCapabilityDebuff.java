@@ -1,12 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.network.entity.player;
 
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/network/entity/player/SyncCapabilityDebuff.java
-import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.network.IMessage;
-=======
+
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/network/entity/player/SyncCapabilityDebuff.java
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
@@ -17,7 +13,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.DistExecutor.SafeRunnable;
 import net.minecraftforge.network.NetworkEvent;
-import net.minecraftforge.network.NetworkEvent.Context;
 
 import java.util.function.Supplier;
 
@@ -39,11 +34,9 @@ public class SyncCapabilityDebuff implements IMessage<SyncCapabilityDebuff>{
 	}
 
 	@Override
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/network/entity/player/SyncCapabilityDebuff.java
-	public void encode(SyncCapabilityDebuff message, FriendlyByteBuf buffer) {
-=======
-	public void encode(SyncCapabilityDebuff message, PacketBuffer buffer){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/network/entity/player/SyncCapabilityDebuff.java
+
+	public void encode(SyncCapabilityDebuff message, FriendlyByteBuf buffer){
+
 		buffer.writeInt(message.playerId);
 		buffer.writeDouble(message.timeWithoutWater);
 		buffer.writeInt(message.timeInDarkness);
@@ -51,16 +44,14 @@ public class SyncCapabilityDebuff implements IMessage<SyncCapabilityDebuff>{
 	}
 
 	@Override
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/network/entity/player/SyncCapabilityDebuff.java
-	public SyncCapabilityDebuff decode(FriendlyByteBuf buffer) {
-=======
-	public SyncCapabilityDebuff decode(PacketBuffer buffer){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/network/entity/player/SyncCapabilityDebuff.java
+
+	public SyncCapabilityDebuff decode(FriendlyByteBuf buffer){
+
 		return new SyncCapabilityDebuff(buffer.readInt(), buffer.readDouble(), buffer.readInt(), buffer.readInt());
 	}
 
 	@Override
-	public void handle(SyncCapabilityDebuff message, Supplier<Context> supplier){
+	public void handle(SyncCapabilityDebuff message, Supplier<NetworkEvent.Context> supplier){
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> runClient(message, supplier));
 	}
 
@@ -68,19 +59,13 @@ public class SyncCapabilityDebuff implements IMessage<SyncCapabilityDebuff>{
 	public void runClient(SyncCapabilityDebuff message, Supplier<NetworkEvent.Context> supplier){
 		NetworkEvent.Context context = supplier.get();
 		context.enqueueWork(() -> {
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/network/entity/player/SyncCapabilityDebuff.java
+
 			Player thisPlayer = Minecraft.getInstance().player;
-			if (thisPlayer != null) {
+			if(thisPlayer != null){
 				Level world = thisPlayer.level;
 				Entity entity = world.getEntity(message.playerId);
-				if (entity instanceof Player) {
-=======
-			PlayerEntity thisPlayer = Minecraft.getInstance().player;
-			if(thisPlayer != null){
-				World world = thisPlayer.level;
-				Entity entity = world.getEntity(message.playerId);
-				if(entity instanceof PlayerEntity){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/network/entity/player/SyncCapabilityDebuff.java
+				if(entity instanceof Player){
+
 					DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
 						dragonStateHandler.setDebuffData(message.timeWithoutWater, message.timeInDarkness, message.timeInRain);
 					});

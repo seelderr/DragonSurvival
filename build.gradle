@@ -124,7 +124,7 @@ dependencies {
 
     compileOnly files("lib/appleskin-api.jar")
 
-    annotationProcessor 'org.spongepowered:mixin:0.8.3:processor'
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
 
 jar.manifest.attributes([

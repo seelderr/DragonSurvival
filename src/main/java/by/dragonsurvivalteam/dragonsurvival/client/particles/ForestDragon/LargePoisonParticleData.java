@@ -14,32 +14,17 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.Locale;
 
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/client/particles/ForestDragon/LargePoisonParticleData.java
-public class LargePoisonParticleData implements ParticleOptions
-{
-	public static final Deserializer<LargePoisonParticleData> DESERIALIZER = new Deserializer<LargePoisonParticleData>()
-	{
-		public LargePoisonParticleData fromCommand(ParticleType<LargePoisonParticleData> particleTypeIn, StringReader reader) throws CommandSyntaxException
-		{
-=======
-public class LargePoisonParticleData implements IParticleData{
-	public static final IDeserializer<LargePoisonParticleData> DESERIALIZER = new IDeserializer<LargePoisonParticleData>(){
+public class LargePoisonParticleData implements ParticleOptions{
+	public static final Deserializer<LargePoisonParticleData> DESERIALIZER = new Deserializer<LargePoisonParticleData>(){
 		public LargePoisonParticleData fromCommand(ParticleType<LargePoisonParticleData> particleTypeIn, StringReader reader) throws CommandSyntaxException{
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/client/particles/ForestDragon/LargePoisonParticleData.java
 			reader.expect(' ');
 			float duration = (float)reader.readDouble();
 			reader.expect(' ');
 			boolean swirls = reader.readBoolean();
 			return new LargePoisonParticleData(duration, swirls);
 		}
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/client/particles/ForestDragon/LargePoisonParticleData.java
-		
-		public LargePoisonParticleData fromNetwork(ParticleType<LargePoisonParticleData> particleTypeIn, FriendlyByteBuf buffer)
-		{
-=======
 
-		public LargePoisonParticleData fromNetwork(ParticleType<LargePoisonParticleData> particleTypeIn, PacketBuffer buffer){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/client/particles/ForestDragon/LargePoisonParticleData.java
+		public LargePoisonParticleData fromNetwork(ParticleType<LargePoisonParticleData> particleTypeIn, FriendlyByteBuf buffer){
 			return new LargePoisonParticleData(buffer.readFloat(), buffer.readBoolean());
 		}
 	};
@@ -54,16 +39,8 @@ public class LargePoisonParticleData implements IParticleData{
 	public LargePoisonParticleData(float duration, boolean spins){
 		this.duration = duration;
 		this.swirls = spins;
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/client/particles/ForestDragon/LargePoisonParticleData.java
-	}
-	
-	@Override
-	public void writeToNetwork(FriendlyByteBuf buffer)
-	{
-=======
 	}	@Override
-	public void writeToNetwork(PacketBuffer buffer){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/client/particles/ForestDragon/LargePoisonParticleData.java
+	public void writeToNetwork(FriendlyByteBuf buffer){
 		buffer.writeFloat(this.duration);
 		buffer.writeBoolean(this.swirls);
 	}

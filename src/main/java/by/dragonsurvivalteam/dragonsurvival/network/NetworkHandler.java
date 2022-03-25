@@ -9,9 +9,9 @@ import by.dragonsurvivalteam.dragonsurvival.network.config.SyncEnumConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.config.SyncListConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.config.SyncNumberConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.container.OpenDragonAltar;
+import by.dragonsurvivalteam.dragonsurvival.network.container.OpenDragonEditorPacket;
 import by.dragonsurvivalteam.dragonsurvival.network.container.OpenDragonInventory;
 import by.dragonsurvivalteam.dragonsurvival.network.container.OpenInventory;
-import by.dragonsurvivalteam.dragonsurvival.network.container.OpenDragonEditorPacket;
 import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncPlayerSkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.network.emotes.SyncEmote;
 import by.dragonsurvivalteam.dragonsurvival.network.entity.PacketSyncPredatorStats;
@@ -24,9 +24,10 @@ import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.*;
 import by.dragonsurvivalteam.dragonsurvival.network.status.*;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.CompleteDataSync;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.network.NetworkRegistry;
-import net.minecraftforge.fml.network.simple.SimpleChannel;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.simple.SimpleChannel;
+
 
 public class NetworkHandler{
 	private static final String PROTOCOL_VERSION = "2";
@@ -45,10 +46,10 @@ public class NetworkHandler{
 		register(PacketSyncPredatorStats.class, new PacketSyncPredatorStats());
 		register(PlayerJumpSync.class, new PlayerJumpSync());
 		register(RefreshDragons.class, new RefreshDragons());
-		register(SyncAltarCooldown.class, new SyncAltarCooldown());
+		register(by.dragonsurvivalteam.dragonsurvival.network.status.SyncAltarCooldown.class, new by.dragonsurvivalteam.dragonsurvival.network.status.SyncAltarCooldown());
 		register(OpenDragonAltar.class, new OpenDragonAltar());
 
-		register(RequestClientData.class, new RequestClientData());
+		register(by.dragonsurvivalteam.dragonsurvival.network.RequestClientData.class, new by.dragonsurvivalteam.dragonsurvival.network.RequestClientData());
 		register(CompleteDataSync.class, new CompleteDataSync());
 
 		//Status

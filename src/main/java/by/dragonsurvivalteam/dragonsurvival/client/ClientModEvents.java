@@ -32,15 +32,15 @@ import by.dragonsurvivalteam.dragonsurvival.server.containers.DSContainers;
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.DSTileEntities;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScreenManager;
-import net.minecraft.client.particle.IParticleFactory;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleManager;
+import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.entity.SpriteRenderer;
 import net.minecraft.client.renderer.texture.AtlasTexture;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.particles.BasicParticleType;
+import net.minecraft.particles.SimpleParticleType;
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -113,9 +113,9 @@ public class ClientModEvents{
 		RenderingRegistry.registerEntityRenderingHandler(DSEntities.SHOOTER_HUNTER, ShooterHunterRenderer::new);
 		RenderingRegistry.registerEntityRenderingHandler(DSEntities.SQUIRE_HUNTER, SquireHunterRenderer::new);
 
-		ClientRegistry.bindTileEntityRenderer(DSTileEntities.PREDATOR_STAR_TILE_ENTITY_TYPE, PredatorStarTESR::new);
-		ClientRegistry.bindTileEntityRenderer(DSTileEntities.helmetTile, HelmetEntityRenderer::new);
-		ClientRegistry.bindTileEntityRenderer(DSTileEntities.dragonBeacon, DragonBeaconRenderer::new);
+		ClientRegistry.bindBlockEntityRenderer(DSTileEntities.PREDATOR_STAR_TILE_ENTITY_TYPE, PredatorStarTESR::new);
+		ClientRegistry.bindBlockEntityRenderer(DSTileEntities.helmetTile, HelmetEntityRenderer::new);
+		ClientRegistry.bindBlockEntityRenderer(DSTileEntities.dragonBeacon, DragonBeaconRenderer::new);
 		ShaderHelper.initShaders();
 
 		ScreenManager.register(DSContainers.nestContainer, SourceOfMagicScreen::new);
@@ -136,38 +136,38 @@ public class ClientModEvents{
 	@SubscribeEvent
 	public static void registerParticleFactories(ParticleFactoryRegisterEvent factoryRegisterEvent){
 		ParticleManager particleManager = Minecraft.getInstance().particleEngine;
-		particleManager.register(DSParticles.fireBeaconParticle, p_create_1_ -> new IParticleFactory<BasicParticleType>(){
+		particleManager.register(DSParticles.fireBeaconParticle, p_create_1_ -> new ParticleProvider<SimpleParticleType>(){
 			@Nullable
 			@Override
-			public Particle createParticle(BasicParticleType p_199234_1_, ClientWorld clientWorld, double v, double v1, double v2, double v3, double v4, double v5){
+			public Particle createParticle(SimpleParticleType p_199234_1_, ClientLevel clientWorld, double v, double v1, double v2, double v3, double v4, double v5){
 				BeaconParticle beaconParticle = new BeaconParticle(clientWorld, v, v1, v2, v3, v4, v5);
 				beaconParticle.pickSprite(p_create_1_);
 				return beaconParticle;
 			}
 		});
-		particleManager.register(DSParticles.magicBeaconParticle, p_create_1_ -> new IParticleFactory<BasicParticleType>(){
+		particleManager.register(DSParticles.magicBeaconParticle, p_create_1_ -> new ParticleProvider<SimpleParticleType>(){
 			@Nullable
 			@Override
-			public Particle createParticle(BasicParticleType p_199234_1_, ClientWorld clientWorld, double v, double v1, double v2, double v3, double v4, double v5){
+			public Particle createParticle(SimpleParticleType p_199234_1_, ClientLevel clientWorld, double v, double v1, double v2, double v3, double v4, double v5){
 				BeaconParticle beaconParticle = new BeaconParticle(clientWorld, v, v1, v2, v3, v4, v5);
 				beaconParticle.pickSprite(p_create_1_);
 				return beaconParticle;
 			}
 		});
-		particleManager.register(DSParticles.peaceBeaconParticle, p_create_1_ -> new IParticleFactory<BasicParticleType>(){
+		particleManager.register(DSParticles.peaceBeaconParticle, p_create_1_ -> new ParticleProvider<SimpleParticleType>(){
 			@Nullable
 			@Override
-			public Particle createParticle(BasicParticleType p_199234_1_, ClientWorld clientWorld, double v, double v1, double v2, double v3, double v4, double v5){
+			public Particle createParticle(SimpleParticleType p_199234_1_, ClientLevel clientWorld, double v, double v1, double v2, double v3, double v4, double v5){
 				BeaconParticle beaconParticle = new BeaconParticle(clientWorld, v, v1, v2, v3, v4, v5);
 				beaconParticle.pickSprite(p_create_1_);
 				return beaconParticle;
 			}
 		});
 
-		particleManager.register(DSParticles.seaSweep, p_create_1_ -> new IParticleFactory<BasicParticleType>(){
+		particleManager.register(DSParticles.seaSweep, p_create_1_ -> new ParticleProvider<SimpleParticleType>(){
 			@Nullable
 			@Override
-			public Particle createParticle(BasicParticleType p_199234_1_, ClientWorld clientWorld, double v, double v1, double v2, double v3, double v4, double v5){
+			public Particle createParticle(SimpleParticleType p_199234_1_, ClientLevel clientWorld, double v, double v1, double v2, double v3, double v4, double v5){
 				SeaSweepParticle beaconParticle = new SeaSweepParticle(clientWorld, v, v1, v2, v3, p_create_1_);
 				beaconParticle.pickSprite(p_create_1_);
 				return beaconParticle;

@@ -14,32 +14,17 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.Locale;
 
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/client/particles/SeaDragon/SmallLightningParticleData.java
-public class SmallLightningParticleData implements ParticleOptions
-{
-	public static final Deserializer<SmallLightningParticleData> DESERIALIZER = new Deserializer<SmallLightningParticleData>()
-	{
-		public SmallLightningParticleData fromCommand(ParticleType<SmallLightningParticleData> particleTypeIn, StringReader reader) throws CommandSyntaxException
-		{
-=======
-public class SmallLightningParticleData implements IParticleData{
-	public static final IDeserializer<SmallLightningParticleData> DESERIALIZER = new IDeserializer<SmallLightningParticleData>(){
+public class SmallLightningParticleData implements ParticleOptions{
+	public static final Deserializer<SmallLightningParticleData> DESERIALIZER = new Deserializer<SmallLightningParticleData>(){
 		public SmallLightningParticleData fromCommand(ParticleType<SmallLightningParticleData> particleTypeIn, StringReader reader) throws CommandSyntaxException{
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/client/particles/SeaDragon/SmallLightningParticleData.java
 			reader.expect(' ');
 			float duration = (float)reader.readDouble();
 			reader.expect(' ');
 			boolean swirls = reader.readBoolean();
 			return new SmallLightningParticleData(duration, swirls);
 		}
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/client/particles/SeaDragon/SmallLightningParticleData.java
-		
-		public SmallLightningParticleData fromNetwork(ParticleType<SmallLightningParticleData> particleTypeIn, FriendlyByteBuf buffer)
-		{
-=======
 
-		public SmallLightningParticleData fromNetwork(ParticleType<SmallLightningParticleData> particleTypeIn, PacketBuffer buffer){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/client/particles/SeaDragon/SmallLightningParticleData.java
+		public SmallLightningParticleData fromNetwork(ParticleType<SmallLightningParticleData> particleTypeIn, FriendlyByteBuf buffer){
 			return new SmallLightningParticleData(buffer.readFloat(), buffer.readBoolean());
 		}
 	};
@@ -54,16 +39,8 @@ public class SmallLightningParticleData implements IParticleData{
 	public SmallLightningParticleData(float duration, boolean spins){
 		this.duration = duration;
 		this.swirls = spins;
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/client/particles/SeaDragon/SmallLightningParticleData.java
-	}
-	
-	@Override
-	public void writeToNetwork(FriendlyByteBuf buffer)
-	{
-=======
 	}	@Override
-	public void writeToNetwork(PacketBuffer buffer){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/client/particles/SeaDragon/SmallLightningParticleData.java
+	public void writeToNetwork(FriendlyByteBuf buffer){
 		buffer.writeFloat(this.duration);
 		buffer.writeBoolean(this.swirls);
 	}

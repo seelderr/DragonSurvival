@@ -34,11 +34,9 @@ public class SyncPotionAddedEffect implements IMessage<SyncPotionAddedEffect>{
 	}
 
 	@Override
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/network/magic/SyncPotionAddedEffect.java
-	public void encode(SyncPotionAddedEffect message, FriendlyByteBuf buffer) {
-=======
-	public void encode(SyncPotionAddedEffect message, PacketBuffer buffer){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/network/magic/SyncPotionAddedEffect.java
+
+	public void encode(SyncPotionAddedEffect message, FriendlyByteBuf buffer){
+
 		buffer.writeInt(message.entityId);
 		buffer.writeInt(message.effectId);
 		buffer.writeInt(message.duration);
@@ -46,11 +44,9 @@ public class SyncPotionAddedEffect implements IMessage<SyncPotionAddedEffect>{
 	}
 
 	@Override
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/network/magic/SyncPotionAddedEffect.java
-	public SyncPotionAddedEffect decode(FriendlyByteBuf buffer) {
-=======
-	public SyncPotionAddedEffect decode(PacketBuffer buffer){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/network/magic/SyncPotionAddedEffect.java
+
+	public SyncPotionAddedEffect decode(FriendlyByteBuf buffer){
+
 		int playerId = buffer.readInt();
 		int effectId = buffer.readInt();
 		int duration = buffer.readInt();
@@ -68,21 +64,14 @@ public class SyncPotionAddedEffect implements IMessage<SyncPotionAddedEffect>{
 	public void run(SyncPotionAddedEffect message, Supplier<NetworkEvent.Context> supplier){
 		NetworkEvent.Context context = supplier.get();
 		context.enqueueWork(() -> {
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/network/magic/SyncPotionAddedEffect.java
+
 			Player thisPlayer = Minecraft.getInstance().player;
-			if (thisPlayer != null) {
+			if(thisPlayer != null){
 				Level world = thisPlayer.level;
 				Entity entity = world.getEntity(message.entityId);
 				MobEffect ef = MobEffect.byId(message.effectId);
-				
-=======
-			PlayerEntity thisPlayer = Minecraft.getInstance().player;
-			if(thisPlayer != null){
-				World world = thisPlayer.level;
-				Entity entity = world.getEntity(message.entityId);
-				Effect ef = Effect.byId(message.effectId);
 
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/network/magic/SyncPotionAddedEffect.java
+
 				if(ef != null){
 					if(entity instanceof LivingEntity){
 						((LivingEntity)entity).addEffect(new MobEffectInstance(ef, message.duration, message.amplifier));

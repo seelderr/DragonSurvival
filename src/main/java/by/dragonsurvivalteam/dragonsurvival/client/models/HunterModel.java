@@ -2,15 +2,15 @@ package by.dragonsurvivalteam.dragonsurvival.client.models;
 
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.Hunter;
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.matrix.PoseStack;
 import net.minecraft.client.renderer.entity.model.IHasArm;
 import net.minecraft.client.renderer.entity.model.IHasHead;
 import net.minecraft.client.renderer.entity.model.SegmentedModel;
 import net.minecraft.client.renderer.model.ModelHelper;
 import net.minecraft.client.renderer.model.ModelRenderer;
-import net.minecraft.entity.monster.AbstractIllagerEntity;
-import net.minecraft.util.HandSide;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.entity.monster.AbstractIllager;
+import net.minecraft.util.HumanoidArm;
+import net.minecraft.util.math.Mth;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -89,62 +89,62 @@ public class HunterModel<T extends Hunter> extends SegmentedModel<T> implements 
 			this.rightLeg.yRot = (-(float)Math.PI / 10F);
 			this.rightLeg.zRot = -0.07853982F;
 		}else{
-			this.rightArm.xRot = MathHelper.cos(p_225597_2_ * 0.6662F + (float)Math.PI) * 2.0F * p_225597_3_ * 0.5F;
+			this.rightArm.xRot = Mth.cos(p_225597_2_ * 0.6662F + (float)Math.PI) * 2.0F * p_225597_3_ * 0.5F;
 			this.rightArm.yRot = 0.0F;
 			this.rightArm.zRot = 0.0F;
-			this.leftArm.xRot = MathHelper.cos(p_225597_2_ * 0.6662F) * 2.0F * p_225597_3_ * 0.5F;
+			this.leftArm.xRot = Mth.cos(p_225597_2_ * 0.6662F) * 2.0F * p_225597_3_ * 0.5F;
 			this.leftArm.yRot = 0.0F;
 			this.leftArm.zRot = 0.0F;
-			this.leftLeg.xRot = MathHelper.cos(p_225597_2_ * 0.6662F) * 1.4F * p_225597_3_ * 0.5F;
+			this.leftLeg.xRot = Mth.cos(p_225597_2_ * 0.6662F) * 1.4F * p_225597_3_ * 0.5F;
 			this.leftLeg.yRot = 0.0F;
 			this.leftLeg.zRot = 0.0F;
-			this.rightLeg.xRot = MathHelper.cos(p_225597_2_ * 0.6662F + (float)Math.PI) * 1.4F * p_225597_3_ * 0.5F;
+			this.rightLeg.xRot = Mth.cos(p_225597_2_ * 0.6662F + (float)Math.PI) * 1.4F * p_225597_3_ * 0.5F;
 			this.rightLeg.yRot = 0.0F;
 			this.rightLeg.zRot = 0.0F;
 		}
 
-		AbstractIllagerEntity.ArmPose armPose = entity.getArmPose();
-		if(armPose == AbstractIllagerEntity.ArmPose.ATTACKING){
+		AbstractIllager.ArmPose armPose = entity.getArmPose();
+		if(armPose == AbstractIllager.ArmPose.ATTACKING){
 			if(entity.getMainHandItem().isEmpty()){
 				ModelHelper.animateZombieArms(this.leftArm, this.rightArm, true, this.attackTime, p_225597_4_);
 			}else{
 				ModelHelper.swingWeaponDown(this.rightArm, this.leftArm, entity, attackTime, p_225597_4_);
 			}
-		}else if(armPose == AbstractIllagerEntity.ArmPose.SPELLCASTING){
+		}else if(armPose == AbstractIllager.ArmPose.SPELLCASTING){
 			this.rightArm.z = 0.0F;
 			this.rightArm.x = -5.0F;
 			this.leftArm.z = 0.0F;
 			this.leftArm.x = 5.0F;
-			this.rightArm.xRot = MathHelper.cos(p_225597_4_ * 0.6662F) * 0.25F;
-			this.leftArm.xRot = MathHelper.cos(p_225597_4_ * 0.6662F) * 0.25F;
+			this.rightArm.xRot = Mth.cos(p_225597_4_ * 0.6662F) * 0.25F;
+			this.leftArm.xRot = Mth.cos(p_225597_4_ * 0.6662F) * 0.25F;
 			this.rightArm.zRot = 2.3561945F;
 			this.leftArm.zRot = -2.3561945F;
 			this.rightArm.yRot = 0.0F;
 			this.leftArm.yRot = 0.0F;
-		}else if(armPose == AbstractIllagerEntity.ArmPose.BOW_AND_ARROW){
+		}else if(armPose == AbstractIllager.ArmPose.BOW_AND_ARROW){
 			this.rightArm.yRot = -0.1F + this.head.yRot;
 			this.rightArm.xRot = (-(float)Math.PI / 2F) + this.head.xRot;
 			this.leftArm.xRot = -0.9424779F + this.head.xRot;
 			this.leftArm.yRot = this.head.yRot - 0.4F;
 			this.leftArm.zRot = ((float)Math.PI / 2F);
-		}else if(armPose == AbstractIllagerEntity.ArmPose.CROSSBOW_HOLD){
+		}else if(armPose == AbstractIllager.ArmPose.CROSSBOW_HOLD){
 			ModelHelper.animateCrossbowHold(this.rightArm, this.leftArm, this.head, true);
-		}else if(armPose == AbstractIllagerEntity.ArmPose.CROSSBOW_CHARGE){
+		}else if(armPose == AbstractIllager.ArmPose.CROSSBOW_CHARGE){
 			ModelHelper.animateCrossbowCharge(this.rightArm, this.leftArm, entity, true);
-		}else if(armPose == AbstractIllagerEntity.ArmPose.CELEBRATING){
+		}else if(armPose == AbstractIllager.ArmPose.CELEBRATING){
 			this.rightArm.z = 0.0F;
 			this.rightArm.x = -5.0F;
-			this.rightArm.xRot = MathHelper.cos(p_225597_4_ * 0.6662F) * 0.05F;
+			this.rightArm.xRot = Mth.cos(p_225597_4_ * 0.6662F) * 0.05F;
 			this.rightArm.zRot = 2.670354F;
 			this.rightArm.yRot = 0.0F;
 			this.leftArm.z = 0.0F;
 			this.leftArm.x = 5.0F;
-			this.leftArm.xRot = MathHelper.cos(p_225597_4_ * 0.6662F) * 0.05F;
+			this.leftArm.xRot = Mth.cos(p_225597_4_ * 0.6662F) * 0.05F;
 			this.leftArm.zRot = -2.3561945F;
 			this.leftArm.yRot = 0.0F;
 		}
 
-		boolean flag = armPose == AbstractIllagerEntity.ArmPose.CROSSED;
+		boolean flag = armPose == AbstractIllager.ArmPose.CROSSED;
 		this.arms.visible = flag;
 		this.leftArm.visible = !flag;
 		this.rightArm.visible = !flag;
@@ -158,11 +158,11 @@ public class HunterModel<T extends Hunter> extends SegmentedModel<T> implements 
 		return this.head;
 	}
 
-	public void translateToHand(HandSide p_225599_1_, MatrixStack p_225599_2_){
+	public void translateToHand(HumanoidArm p_225599_1_, PoseStack p_225599_2_){
 		this.getArm(p_225599_1_).translateAndRotate(p_225599_2_);
 	}
 
-	private ModelRenderer getArm(HandSide p_191216_1_){
-		return p_191216_1_ == HandSide.LEFT ? this.leftArm : this.rightArm;
+	private ModelRenderer getArm(HumanoidArm p_191216_1_){
+		return p_191216_1_ == HumanoidArm.LEFT ? this.leftArm : this.rightArm;
 	}
 }

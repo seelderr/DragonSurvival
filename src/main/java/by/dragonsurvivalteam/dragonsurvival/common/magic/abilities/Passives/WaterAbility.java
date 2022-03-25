@@ -1,21 +1,14 @@
 package by.dragonsurvivalteam.dragonsurvival.common.magic.abilities.Passives;
 
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/common/magic/abilities/Passives/WaterAbility.java
-import by.jackraidenph.dragonsurvival.common.magic.common.PassiveDragonAbility;
-import by.jackraidenph.dragonsurvival.config.ConfigHandler;
-import by.jackraidenph.dragonsurvival.misc.DragonType;
-import by.jackraidenph.dragonsurvival.util.Functions;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
-=======
+
 import by.dragonsurvivalteam.dragonsurvival.common.magic.common.PassiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/common/magic/abilities/Passives/WaterAbility.java
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+ 
+ 
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -32,14 +25,9 @@ public class WaterAbility extends PassiveDragonAbility{
 	}
 
 	@Override
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/common/magic/abilities/Passives/WaterAbility.java
-	public Component getDescription()
-	{
+
+	public Component getDescription(){
 		return new TranslatableComponent("ds.skill.description." + getId(), getDuration() + Functions.ticksToSeconds(ConfigHandler.SERVER.seaTicksWithoutWater.get()));
-=======
-	public IFormattableTextComponent getDescription(){
-		return new TranslationTextComponent("ds.skill.description." + getId(), getDuration() + Functions.ticksToSeconds(ConfigHandler.SERVER.seaTicksWithoutWater.get()));
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/common/magic/abilities/Passives/WaterAbility.java
 	}
 
 	public int getDuration(){

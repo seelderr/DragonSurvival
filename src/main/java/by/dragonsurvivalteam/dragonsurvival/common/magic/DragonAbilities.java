@@ -1,30 +1,3 @@
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/common/magic/DragonAbilities.java
-package by.jackraidenph.dragonsurvival.common.magic;
-
-import by.jackraidenph.dragonsurvival.client.particles.DSParticles;
-import by.jackraidenph.dragonsurvival.common.DragonEffects;
-import by.jackraidenph.dragonsurvival.common.magic.abilities.Actives.BallLightningAbility;
-import by.jackraidenph.dragonsurvival.common.magic.abilities.Actives.BreathAbilities.ForestBreathAbility;
-import by.jackraidenph.dragonsurvival.common.magic.abilities.Actives.BreathAbilities.NetherBreathAbility;
-import by.jackraidenph.dragonsurvival.common.magic.abilities.Actives.BreathAbilities.StormBreathAbility;
-import by.jackraidenph.dragonsurvival.common.magic.abilities.Actives.BuffAbilities.AoeBuffAbility;
-import by.jackraidenph.dragonsurvival.common.magic.abilities.Actives.BuffAbilities.EyesBuffAbility;
-import by.jackraidenph.dragonsurvival.common.magic.abilities.Actives.BuffAbilities.HunterAbility;
-import by.jackraidenph.dragonsurvival.common.magic.abilities.Actives.BuffAbilities.ToughSkinAbility;
-import by.jackraidenph.dragonsurvival.common.magic.abilities.Actives.FireBallAbility;
-import by.jackraidenph.dragonsurvival.common.magic.abilities.Actives.SpikeAbility;
-import by.jackraidenph.dragonsurvival.common.magic.abilities.Innate.*;
-import by.jackraidenph.dragonsurvival.common.magic.abilities.Passives.*;
-import by.jackraidenph.dragonsurvival.common.magic.common.ActiveDragonAbility;
-import by.jackraidenph.dragonsurvival.common.magic.common.DragonAbility;
-import by.jackraidenph.dragonsurvival.common.magic.common.InnateDragonAbility;
-import by.jackraidenph.dragonsurvival.common.magic.common.PassiveDragonAbility;
-import by.jackraidenph.dragonsurvival.config.ConfigHandler;
-import by.jackraidenph.dragonsurvival.misc.DragonType;
-import by.jackraidenph.dragonsurvival.util.Functions;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
-=======
 package by.dragonsurvivalteam.dragonsurvival.common.magic;
 
 import by.dragonsurvivalteam.dragonsurvival.client.particles.DSParticles;
@@ -48,9 +21,8 @@ import by.dragonsurvivalteam.dragonsurvival.common.magic.common.PassiveDragonAbi
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/common/magic/DragonAbilities.java
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -144,13 +116,12 @@ public class DragonAbilities{
 
 		//Cave dragon
 		NETHER_BREATH = register(DragonType.CAVE, new NetherBreathAbility(DragonType.CAVE, "nether_breath", "cave/nether_breath", 1, 4, 2, 10, ConfigHandler.SERVER.fireBreathCooldown.get(), new Integer[]{0, 10, 30, 50}));
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/common/magic/DragonAbilities.java
-		FIREBALL = register(DragonType.CAVE, new FireBallAbility(DragonType.CAVE, "fireball", "cave/fireball", 0, 4,ConfigHandler.SERVER.fireballManaCost.get(), Functions.secondsToTicks(4), ConfigHandler.SERVER.fireballCooldown.get(),  new Integer[]{0, 20, 40, 45}));
-		TOUGH_SKIN = register(DragonType.CAVE, new ToughSkinAbility(DragonType.CAVE, new MobEffectInstance(DragonEffects.STRONG_LEATHER, ConfigHandler.SERVER.toughSkinDuration.get()), 5, DSParticles.peaceBeaconParticle, "strong_leather", "cave/strong_leather", 0, 3, ConfigHandler.SERVER.toughSkinManaCost.get(), Functions.secondsToTicks(5), ConfigHandler.SERVER.toughSkinCooldown.get(), new Integer[]{0, 15, 35}));
-=======
+
 		FIREBALL = register(DragonType.CAVE, new FireBallAbility(DragonType.CAVE, "fireball", "cave/fireball", 0, 4, ConfigHandler.SERVER.fireballManaCost.get(), Functions.secondsToTicks(4), ConfigHandler.SERVER.fireballCooldown.get(), new Integer[]{0, 20, 40, 45}));
-		TOUGH_SKIN = register(DragonType.CAVE, new ToughSkinAbility(DragonType.CAVE, new EffectInstance(DragonEffects.STRONG_LEATHER, ConfigHandler.SERVER.toughSkinDuration.get()), 5, DSParticles.peaceBeaconParticle, "strong_leather", "cave/strong_leather", 0, 3, ConfigHandler.SERVER.toughSkinManaCost.get(), Functions.secondsToTicks(5), ConfigHandler.SERVER.toughSkinCooldown.get(), new Integer[]{0, 15, 35}));
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/common/magic/DragonAbilities.java
+		TOUGH_SKIN = register(DragonType.CAVE, new ToughSkinAbility(DragonType.CAVE, new MobEffectInstance(DragonEffects.STRONG_LEATHER, ConfigHandler.SERVER.toughSkinDuration.get()), 5, DSParticles.peaceBeaconParticle, "strong_leather", "cave/strong_leather", 0, 3, ConfigHandler.SERVER.toughSkinManaCost.get(), Functions.secondsToTicks(5), ConfigHandler.SERVER.toughSkinCooldown.get(), new Integer[]{0, 15, 35}));
+
+		FIREBALL = register(DragonType.CAVE, new FireBallAbility(DragonType.CAVE, "fireball", "cave/fireball", 0, 4, ConfigHandler.SERVER.fireballManaCost.get(), Functions.secondsToTicks(4), ConfigHandler.SERVER.fireballCooldown.get(), new Integer[]{0, 20, 40, 45}));
+		TOUGH_SKIN = register(DragonType.CAVE, new ToughSkinAbility(DragonType.CAVE, new MobEffectInstance(DragonEffects.STRONG_LEATHER, ConfigHandler.SERVER.toughSkinDuration.get()), 5, DSParticles.peaceBeaconParticle, "strong_leather", "cave/strong_leather", 0, 3, ConfigHandler.SERVER.toughSkinManaCost.get(), Functions.secondsToTicks(5), ConfigHandler.SERVER.toughSkinCooldown.get(), new Integer[]{0, 15, 35}));
 		LAVA_VISION = register(DragonType.CAVE, new EyesBuffAbility(DragonType.CAVE, DragonEffects.LAVA_VISION, "lava_vision", "cave/lava_vision", 0, 2, ConfigHandler.SERVER.lavaVisionManaCost.get(), Functions.secondsToTicks(2), ConfigHandler.SERVER.lavaVisionCooldown.get(), new Integer[]{0, 25}));
 
 		CAVE_MAGIC = register(DragonType.CAVE, new MagicAbility(DragonType.CAVE, "cave_magic", "cave/cave_magic", 0, 10));

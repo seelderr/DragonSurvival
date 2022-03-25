@@ -1,12 +1,12 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.goals;
 
-import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.Mob;
 import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.entity.passive.horse.HorseEntity;
+import net.minecraft.entity.passive.horse.Horse;
 import net.minecraft.pathfinding.Path;
 
 @SuppressWarnings( "unused" )
-public class RideHorse<E extends MobEntity> extends Goal{
+public class RideHorse<E extends Mob> extends Goal{
 	protected E mob;
 
 	public RideHorse(E mob){
@@ -15,15 +15,15 @@ public class RideHorse<E extends MobEntity> extends Goal{
 
 	@Override
 	public boolean canUse(){
-		return mob.getVehicle() instanceof HorseEntity;
+		return mob.getVehicle() instanceof Horse;
 	}
 
 	@Override
 	public void tick(){
-		HorseEntity horseEntity = (HorseEntity)mob.getVehicle();
-		horseEntity.yRot = mob.yRot;
-		horseEntity.yBodyRot = mob.yBodyRot;
+		Horse horse = (Horse)mob.getVehicle();
+		horse.yRot = mob.yRot;
+		horse.yBodyRot = mob.yBodyRot;
 		Path path = mob.getNavigation().getPath();
-		horseEntity.getNavigation().moveTo(path, 2.5);
+		horse.getNavigation().moveTo(path, 2.5);
 	}
 }

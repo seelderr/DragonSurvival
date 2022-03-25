@@ -14,32 +14,17 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.Locale;
 
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/client/particles/CaveDragon/LargeFireParticleData.java
-public class LargeFireParticleData implements ParticleOptions
-{
-	public static final Deserializer<LargeFireParticleData> DESERIALIZER = new Deserializer<LargeFireParticleData>()
-	{
-		public LargeFireParticleData fromCommand(ParticleType<LargeFireParticleData> particleTypeIn, StringReader reader) throws CommandSyntaxException
-		{
-=======
-public class LargeFireParticleData implements IParticleData{
-	public static final IDeserializer<LargeFireParticleData> DESERIALIZER = new IDeserializer<LargeFireParticleData>(){
+public class LargeFireParticleData implements ParticleOptions{
+	public static final Deserializer<LargeFireParticleData> DESERIALIZER = new Deserializer<LargeFireParticleData>(){
 		public LargeFireParticleData fromCommand(ParticleType<LargeFireParticleData> particleTypeIn, StringReader reader) throws CommandSyntaxException{
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/client/particles/CaveDragon/LargeFireParticleData.java
 			reader.expect(' ');
 			float duration = (float)reader.readDouble();
 			reader.expect(' ');
 			boolean swirls = reader.readBoolean();
 			return new LargeFireParticleData(duration, swirls);
 		}
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/client/particles/CaveDragon/LargeFireParticleData.java
-		
-		public LargeFireParticleData fromNetwork(ParticleType<LargeFireParticleData> particleTypeIn, FriendlyByteBuf buffer)
-		{
-=======
 
-		public LargeFireParticleData fromNetwork(ParticleType<LargeFireParticleData> particleTypeIn, PacketBuffer buffer){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/client/particles/CaveDragon/LargeFireParticleData.java
+		public LargeFireParticleData fromNetwork(ParticleType<LargeFireParticleData> particleTypeIn, FriendlyByteBuf buffer){
 			return new LargeFireParticleData(buffer.readFloat(), buffer.readBoolean());
 		}
 	};
@@ -54,16 +39,8 @@ public class LargeFireParticleData implements IParticleData{
 	public LargeFireParticleData(float duration, boolean spins){
 		this.duration = duration;
 		this.swirls = spins;
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/client/particles/CaveDragon/LargeFireParticleData.java
-	}
-	
-	@Override
-	public void writeToNetwork(FriendlyByteBuf buffer)
-	{
-=======
 	}	@Override
-	public void writeToNetwork(PacketBuffer buffer){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/client/particles/CaveDragon/LargeFireParticleData.java
+	public void writeToNetwork(FriendlyByteBuf buffer){
 		buffer.writeFloat(this.duration);
 		buffer.writeBoolean(this.swirls);
 	}

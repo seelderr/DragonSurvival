@@ -1,7 +1,6 @@
-package by.jackraidenph.dragonsurvival.client.SkinCustomization;
+package by.dragonsurvivalteam.dragonsurvival.client.SkinCustomization;
 
-public enum CustomizationLayer
-{
+public enum CustomizationLayer{
 	BASE("Base"),
 	HORNS("Horns"),
 	BOTTOM("Bottom"),
@@ -11,9 +10,8 @@ public enum CustomizationLayer
 	EXTRA2("Extra"),
 	EXTRA3("Extra");
 	public String name;
-	
-	CustomizationLayer(String name)
-	{
+
+	CustomizationLayer(String name){
 		this.name = name;
 	}
 }

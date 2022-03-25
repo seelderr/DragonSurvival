@@ -10,43 +10,15 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/client/particles/ForestDragon/SmallPoisonParticle.java
-public class SmallPoisonParticle extends TextureSheetParticle
-{
-	private int swirlTick;
+
+public class SmallPoisonParticle extends TextureSheetParticle{
 	private final float spread;
-	boolean swirls;
 	private final SpriteSet sprites;
-
-	public SmallPoisonParticle(ClientLevel world, double x, double y, double z, double vX, double vY, double vZ, double duration, boolean swirls, SpriteSet sprite) {
-=======
-public class SmallPoisonParticle extends SpriteTexturedParticle{
-	private final float spread;
-	private final IAnimatedSprite sprites;
-	public static IParticleRenderType PARTICLE_SHEET_TRANSLUCENT_NO_DEPTH = new IParticleRenderType(){
-		public void begin(BufferBuilder p_217600_1_, TextureManager p_217600_2_){
-			RenderSystem.depthMask(true);
-			RenderSystem.disableCull();
-			p_217600_2_.bind(AtlasTexture.LOCATION_PARTICLES);
-			RenderSystem.enableBlend();
-			RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-			RenderSystem.alphaFunc(516, 0.003921569F);
-			p_217600_1_.begin(7, DefaultVertexFormats.PARTICLE);
-		}
-
-		public void end(Tessellator p_217599_1_){
-			p_217599_1_.end();
-		}
-
-		public String toString(){
-			return "PARTICLE_SHEET_TRANSLUCENT_NO_DEPTH";
-		}
-	};
 	boolean swirls;
 	private int swirlTick;
 
-	public SmallPoisonParticle(ClientWorld world, double x, double y, double z, double vX, double vY, double vZ, double duration, boolean swirls, IAnimatedSprite sprite){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/client/particles/ForestDragon/SmallPoisonParticle.java
+	public SmallPoisonParticle(ClientLevel world, double x, double y, double z, double vX, double vY, double vZ, double duration, boolean swirls, SpriteSet sprite){
+
 		super(world, x, y, z);
 		setSize(1, 1);
 		xd = vX;
@@ -67,29 +39,12 @@ public class SmallPoisonParticle extends SpriteTexturedParticle{
 	}
 
 	@Override
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/client/particles/ForestDragon/SmallPoisonParticle.java
-	protected float getV1() {
-		return super.getV1() - (super.getV1() - super.getV0())/8f;
-	}
-	
-	@Override
-	public void remove()
-	{
-		level.addParticle(ParticleTypes.DRAGON_BREATH, x, y, z, 0, 0.01, 0);
-		super.remove();
-	}
-	
-	@Override
-	public ParticleRenderType getRenderType() {
-		return ParticleRenderType.PARTICLE_SHEET_OPAQUE;
-	}
-	
-=======
+
 	protected float getV1(){
 		return super.getV1() - (super.getV1() - super.getV0()) / 8f;
 	}
 
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/client/particles/ForestDragon/SmallPoisonParticle.java
+
 	@Override
 	public void tick(){
 		super.tick();
@@ -119,57 +74,42 @@ public class SmallPoisonParticle extends SpriteTexturedParticle{
 	}
 
 	@Override
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/client/particles/ForestDragon/SmallPoisonParticle.java
-	public void render(VertexConsumer buffer, Camera renderInfo, float partialTicks) {
-		float var = (age + partialTicks)/(float)lifetime;
-		alpha = (float) (1 - Math.exp(10 * (var - 1)) - Math.pow(2000, -var));
-		if (alpha < 0.1) alpha = 0.1f;
-=======
+
 	public void remove(){
 		level.addParticle(ParticleTypes.DRAGON_BREATH, x, y, z, 0, 0.01, 0);
 		super.remove();
 	}
 
 	@Override
-	public IParticleRenderType getRenderType(){
-		return PARTICLE_SHEET_TRANSLUCENT_NO_DEPTH;
+	public ParticleRenderType getRenderType(){
+		return ParticleRenderType.PARTICLE_SHEET_OPAQUE;
 	}
 
 	@Override
-	public void render(IVertexBuilder buffer, ActiveRenderInfo renderInfo, float partialTicks){
+	public void render(VertexConsumer buffer, Camera renderInfo, float partialTicks){
 		float var = (age + partialTicks) / (float)lifetime;
 		alpha = (float)(1 - Math.exp(10 * (var - 1)) - Math.pow(2000, -var));
 		if(alpha < 0.1){
 			alpha = 0.1f;
 		}
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/client/particles/ForestDragon/SmallPoisonParticle.java
+
 
 		super.render(buffer, renderInfo, partialTicks);
 	}
 
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/client/particles/ForestDragon/SmallPoisonParticle.java
-	@OnlyIn(Dist.CLIENT)
-	public static final class ForestFactory implements ParticleProvider<SmallPoisonParticleData>
-	{
+
+	@OnlyIn( Dist.CLIENT )
+	public static final class ForestFactory implements ParticleProvider<SmallPoisonParticleData>{
 		private final SpriteSet spriteSet;
 
-		public ForestFactory(SpriteSet sprite) {
-=======
-	@OnlyIn( Dist.CLIENT )
-	public static final class ForestFactory implements IParticleFactory<SmallPoisonParticleData>{
-		private final IAnimatedSprite spriteSet;
+		public ForestFactory(SpriteSet sprite){
 
-		public ForestFactory(IAnimatedSprite sprite){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/client/particles/ForestDragon/SmallPoisonParticle.java
 			this.spriteSet = sprite;
 		}
 
 		@Override
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/client/particles/ForestDragon/SmallPoisonParticle.java
-		public Particle createParticle(SmallPoisonParticleData typeIn, ClientLevel worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
-=======
-		public Particle createParticle(SmallPoisonParticleData typeIn, ClientWorld worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/client/particles/ForestDragon/SmallPoisonParticle.java
+
+		public Particle createParticle(SmallPoisonParticleData typeIn, ClientLevel worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed){
 			SmallPoisonParticle particle = new SmallPoisonParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, typeIn.getDuration(), typeIn.getSwirls(), spriteSet);
 			particle.setSpriteFromAge(spriteSet);
 			return particle;

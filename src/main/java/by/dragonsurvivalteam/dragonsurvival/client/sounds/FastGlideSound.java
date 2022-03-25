@@ -2,14 +2,14 @@ package by.dragonsurvivalteam.dragonsurvival.client.sounds;
 
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import net.minecraft.client.audio.ElytraSound;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.client.entity.player.LocalPlayer;
+import net.minecraft.util.math.Mth;
 
 public class FastGlideSound extends ElytraSound{
-	private final ClientPlayerEntity player;
+	private final LocalPlayer player;
 	private int time;
 
-	public FastGlideSound(ClientPlayerEntity p_i47113_1_){
+	public FastGlideSound(LocalPlayer p_i47113_1_){
 		super(p_i47113_1_);
 		this.player = p_i47113_1_;
 		this.looping = true;
@@ -25,7 +25,7 @@ public class FastGlideSound extends ElytraSound{
 			this.z = (float)this.player.getZ();
 			float f = (float)this.player.getDeltaMovement().lengthSqr();
 			if((double)f >= 1.0E-7D){
-				this.volume = MathHelper.clamp(f / 4.0F, 0.0F, 1.0F);
+				this.volume = Mth.clamp(f / 4.0F, 0.0F, 1.0F);
 			}else{
 				this.volume = 0.0F;
 			}

@@ -1,6 +1,6 @@
-package by.jackraidenph.dragonsurvival.client.gui.widgets.lists;
+package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists;
 
-import by.jackraidenph.dragonsurvival.client.gui.widgets.buttons.ResetSettingsButton;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.ResetSettingsButton;
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -21,81 +21,73 @@ import java.util.List;
 import java.util.Map;
 
 @OnlyIn( Dist.CLIENT )
-public class OptionEntry extends OptionListEntry
-{
-	final Map<Option, AbstractWidget> options;
-	
+public class OptionEntry extends by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.OptionListEntry{
 	public final AbstractWidget widget;
+	final Map<Option, AbstractWidget> options;
+	private final int width;
+	private final Option option;
 	public AbstractWidget resetButton;
-	
 	public Component key;
 	public CategoryEntry category;
-	private Option option;
-	private final int width;
-	
-	public OptionEntry(Map<Option, AbstractWidget> pOptions, Option option, Component textComponent, AbstractWidget widget, CategoryEntry categoryEntry)
-	{
+
+	public OptionEntry(Map<Option, AbstractWidget> pOptions, Option option, Component textComponent, AbstractWidget widget, CategoryEntry categoryEntry){
 		super(pOptions);
 		this.widget = widget;
 		this.category = categoryEntry;
 		this.key = textComponent;
 		this.option = option;
-		this.width = Minecraft.getInstance().font.width((FormattedText)key);
+		this.width = Minecraft.getInstance().font.width(key);
 		this.options = pOptions;
 
 		resetButton = new ResetSettingsButton(widget.x + 3 + widget.getWidth() + (categoryEntry != null && categoryEntry.parent != null ? 0 : 1), 0, option);
 	}
-	
-	public void render(PoseStack pPoseStack , int pIndex, int pTop, int pLeft, int pWidth, int pHeight, int pMouseX, int pMouseY, boolean pIsMouseOver, float pPartialTicks)
-	{
+
+	public void render(PoseStack pPoseStack, int pIndex, int pTop, int pLeft, int pWidth, int pHeight, int pMouseX, int pMouseY, boolean pIsMouseOver, float pPartialTicks){
 		int indent = (category != null ? category.indent : 0);
-		
-		if(getHeight() != 0) {
+
+		if(getHeight() != 0){
 			int color = new Color(0.1F, 0.1F, 0.1F, 0.85F).getRGB();
-			
+
 			if(isMouseOver(pMouseX, pMouseY)){
 				color = new Color(0.2F, 0.2F, 0.2F, 0.85F).getRGB();
 			}
-			
-			Gui.fill(pPoseStack , 32 + indent, pTop, ((OptionsList)list).getScrollbarPosition(), (pTop + getHeight()), color);
-			
+
+			Gui.fill(pPoseStack, 32 + indent, pTop, ((OptionsList)list).getScrollbarPosition(), (pTop + getHeight()), color);
+
 			Font font = Minecraft.getInstance().font;
-			font.draw(pPoseStack , Language.getInstance().getVisualOrder(FormattedText.composite(font.substrByWidth((FormattedText)key, ((OptionsList)list).getScrollbarPosition() - 32 - indent - 180))), 40 + indent, (float)(pTop + 6), 16777215);
+			font.draw(pPoseStack, Language.getInstance().getVisualOrder(FormattedText.composite(font.substrByWidth(key, ((OptionsList)list).getScrollbarPosition() - 32 - indent - 180))), 40 + indent, (float)(pTop + 6), 16777215);
 		}
 		widget.y = pTop;
 		widget.visible = getHeight() != 0 && visible;
-		widget.render(pPoseStack , pMouseX, pMouseY, pPartialTicks);
-		
+		widget.render(pPoseStack, pMouseX, pMouseY, pPartialTicks);
+
 		resetButton.y = pTop;
 		resetButton.visible = getHeight() != 0 && visible;
-		resetButton.render(pPoseStack , pMouseX, pMouseY, pPartialTicks);
+		resetButton.render(pPoseStack, pMouseX, pMouseY, pPartialTicks);
 	}
-	
-	
-	public List<? extends GuiEventListener> children() {
-		return ImmutableList.of(this.widget, this.resetButton);
-	}
-	
+
 	@Override
-	public int getHeight()
-	{
-		if (category != null) {
+	public int getHeight(){
+		if(category != null){
 			CategoryEntry entry = category.parent;
-			while (entry != null) {
-				if (!entry.enabled) {
+			while(entry != null){
+				if(!entry.enabled){
 					return 0;
-				} else {
+				}else{
 					entry = entry.parent;
 				}
 			}
 		}
-		
+
 		return category == null || category.enabled ? 20 : 0;
 	}
-	
+
+	public List<? extends GuiEventListener> children(){
+		return ImmutableList.of(this.widget, this.resetButton);
+	}
+
 	@Override
-	public List<? extends NarratableEntry> narratables()
-	{
+	public List<? extends NarratableEntry> narratables(){
 		return null;
 	}
 }

@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.util;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.matrix.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -26,14 +26,14 @@ public class RenderingUtils{
 	}
 
 
-	public static void drawRect(MatrixStack mStack, int x, int y, int width, int height, int color){
+	public static void drawRect(PoseStack mStack, int x, int y, int width, int height, int color){
 		Minecraft.getInstance().screen.hLine(mStack, x, x + width, y, color);
 		Minecraft.getInstance().screen.hLine(mStack, x, x + width, y + height, color);
 		Minecraft.getInstance().screen.vLine(mStack, x, y, y + height, color);
 		Minecraft.getInstance().screen.vLine(mStack, x + width, y, y + height, color);
 	}
 
-	public static void drawRect(MatrixStack mStack, int zLevel, int xPos, int yPos, int width, int heigth, int color){
+	public static void drawRect(PoseStack mStack, int zLevel, int xPos, int yPos, int width, int heigth, int color){
 		Color cc = new Color(color);
 		Matrix4f mat = mStack.last().pose();
 		Tessellator tessellator = Tessellator.getInstance();
@@ -46,7 +46,7 @@ public class RenderingUtils{
 		tessellator.end();
 	}
 
-	public static void drawGradientRect(MatrixStack mat, int zLevel, int left, int top, int right, int bottom, int[] color){
+	public static void drawGradientRect(PoseStack mat, int zLevel, int left, int top, int right, int bottom, int[] color){
 		drawGradientRect(mat.last().pose(), zLevel, left, top, right, bottom, color);
 	}
 
@@ -82,7 +82,7 @@ public class RenderingUtils{
 		RenderSystem.enableTexture();
 	}
 
-	public static void renderPureColorSquare(MatrixStack mStack, int x, int y, int width, int height){
+	public static void renderPureColorSquare(PoseStack mStack, int x, int y, int width, int height){
 		Matrix4f mat = mStack.last().pose();
 		int zLevel = 100;
 		RenderSystem.enableDepthTest();
@@ -109,7 +109,7 @@ public class RenderingUtils{
 		RenderSystem.disableDepthTest();
 	}
 
-	public static void renderColorSquare(MatrixStack mStack, int x, int y, int width, int height){
+	public static void renderColorSquare(PoseStack mStack, int x, int y, int width, int height){
 		Matrix4f mat = mStack.last().pose();
 		int zLevel = 200;
 		RenderSystem.enableDepthTest();
@@ -147,7 +147,7 @@ public class RenderingUtils{
 		RenderSystem.enableTexture();
 	}
 
-	public static void fill(MatrixStack mStack, double pMinX, double pMinY, double pMaxX, double pMaxY, int pColor){
+	public static void fill(PoseStack mStack, double pMinX, double pMinY, double pMaxX, double pMaxY, int pColor){
 		Matrix4f pMatrix = mStack.last().pose();
 
 		if(pMinX < pMaxX){

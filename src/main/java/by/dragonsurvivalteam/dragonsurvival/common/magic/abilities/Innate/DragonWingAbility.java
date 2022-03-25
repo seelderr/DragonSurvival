@@ -6,8 +6,8 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonSta
 import by.dragonsurvivalteam.dragonsurvival.common.magic.common.InnateDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 
 import java.util.Locale;
 
@@ -22,7 +22,7 @@ public class DragonWingAbility extends InnateDragonAbility{
 	}
 
 	@Override
-	public IFormattableTextComponent getDescription(){
+	public Component getDescription(){
 		String key = KeyInputHandler.TOGGLE_WINGS.getKey().getDisplayName().getContents().toUpperCase(Locale.ROOT);
 
 		if(key.isEmpty()){
@@ -31,7 +31,7 @@ public class DragonWingAbility extends InnateDragonAbility{
 
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 
-		return new TranslationTextComponent("ds.skill.description." + getId(), key).append("\n").append(new TranslationTextComponent("ds.skill.description." + getId() + (handler != null && handler.getMovementData().spinLearned ? ".has_spin" : ".no_spin")));
+		return new TranslatableComponent("ds.skill.description." + getId(), key).append("\n").append(new TranslatableComponent("ds.skill.description." + getId() + (handler != null && handler.getMovementData().spinLearned ? ".has_spin" : ".no_spin")));
 	}
 
 	@Override

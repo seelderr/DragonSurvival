@@ -9,24 +9,15 @@ import net.minecraft.client.particle.*;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/client/particles/SeaDragon/SmallLightningParticle.java
-public class SmallLightningParticle extends TextureSheetParticle
-{
-	private int swirlTick;
+
+public class SmallLightningParticle extends TextureSheetParticle{
 	private final float spread;
-	boolean swirls;
 	private final SpriteSet sprites;
-
-	public SmallLightningParticle(ClientLevel world, double x, double y, double z, double vX, double vY, double vZ, double duration, boolean swirls, SpriteSet sprite) {
-=======
-public class SmallLightningParticle extends SpriteTexturedParticle{
-	private final float spread;
-	private final IAnimatedSprite sprites;
 	boolean swirls;
 	private int swirlTick;
 
-	public SmallLightningParticle(ClientWorld world, double x, double y, double z, double vX, double vY, double vZ, double duration, boolean swirls, IAnimatedSprite sprite){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/client/particles/SeaDragon/SmallLightningParticle.java
+	public SmallLightningParticle(ClientLevel world, double x, double y, double z, double vX, double vY, double vZ, double duration, boolean swirls, SpriteSet sprite){
+
 		super(world, x, y, z);
 		setSize(1, 1);
 		xd = vX;
@@ -47,18 +38,9 @@ public class SmallLightningParticle extends SpriteTexturedParticle{
 	}
 
 	@Override
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/client/particles/SeaDragon/SmallLightningParticle.java
-	protected float getV1() {
-		return super.getV1() - (super.getV1() - super.getV0())/8f;
-	}
-	
-	@Override
-	public ParticleRenderType getRenderType() {
-		return ParticleRenderType.PARTICLE_SHEET_OPAQUE;
-=======
+
 	protected float getV1(){
 		return super.getV1() - (super.getV1() - super.getV0()) / 8f;
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/client/particles/SeaDragon/SmallLightningParticle.java
 	}
 
 	@Override
@@ -90,24 +72,9 @@ public class SmallLightningParticle extends SpriteTexturedParticle{
 	}
 
 	@Override
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/client/particles/SeaDragon/SmallLightningParticle.java
-	public void render(VertexConsumer buffer, Camera renderInfo, float partialTicks) {
-		float var = (age + partialTicks)/(float)lifetime;
-		alpha = (float) (1 - Math.exp(10 * (var - 1)) - Math.pow(2000, -var));
-		if (alpha < 0.1) alpha = 0.1f;
 
-		super.render(buffer, renderInfo, partialTicks);
-	}
-	
-	@OnlyIn(Dist.CLIENT)
-	public static final class SeaFactory implements ParticleProvider<SmallLightningParticleData>
-	{
-		private final SpriteSet spriteSet;
-
-		public SeaFactory(SpriteSet sprite) {
-=======
-	public IParticleRenderType getRenderType(){
-		return IParticleRenderType.PARTICLE_SHEET_OPAQUE;
+	public ParticleRenderType getRenderType(){
+		return ParticleRenderType.PARTICLE_SHEET_OPAQUE;
 	}
 
 	@Override
@@ -118,7 +85,7 @@ public class SmallLightningParticle extends SpriteTexturedParticle{
 	}
 
 	@Override
-	public void render(IVertexBuilder buffer, ActiveRenderInfo renderInfo, float partialTicks){
+	public void render(VertexConsumer buffer, Camera renderInfo, float partialTicks){
 		float var = (age + partialTicks) / (float)lifetime;
 		alpha = (float)(1 - Math.exp(10 * (var - 1)) - Math.pow(2000, -var));
 		if(alpha < 0.1){
@@ -129,20 +96,18 @@ public class SmallLightningParticle extends SpriteTexturedParticle{
 	}
 
 	@OnlyIn( Dist.CLIENT )
-	public static final class SeaFactory implements IParticleFactory<SmallLightningParticleData>{
-		private final IAnimatedSprite spriteSet;
+	public static final class SeaFactory implements ParticleProvider<SmallLightningParticleData>{
+		private final SpriteSet spriteSet;
 
-		public SeaFactory(IAnimatedSprite sprite){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/client/particles/SeaDragon/SmallLightningParticle.java
+		public SeaFactory(SpriteSet sprite){
+
 			this.spriteSet = sprite;
 		}
 
 		@Override
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/client/particles/SeaDragon/SmallLightningParticle.java
-		public Particle createParticle(SmallLightningParticleData typeIn, ClientLevel worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
-=======
-		public Particle createParticle(SmallLightningParticleData typeIn, ClientWorld worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/client/particles/SeaDragon/SmallLightningParticle.java
+
+		public Particle createParticle(SmallLightningParticleData typeIn, ClientLevel worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed){
+
 			SmallLightningParticle particle = new SmallLightningParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, typeIn.getDuration(), typeIn.getSwirls(), spriteSet);
 			particle.setSpriteFromAge(spriteSet);
 			return particle;

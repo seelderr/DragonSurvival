@@ -3,14 +3,14 @@ package by.dragonsurvivalteam.dragonsurvival.network.entity.player;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.DistExecutor.SafeRunnable;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
@@ -32,13 +32,13 @@ public class SyncSize implements IMessage<SyncSize>{
 	}
 
 	@Override
-	public void encode(SyncSize message, PacketBuffer buffer){
+	public void encode(SyncSize message, FriendlyByteBuf buffer){
 		buffer.writeInt(message.playerId);
 		buffer.writeDouble(message.size);
 	}
 
 	@Override
-	public SyncSize decode(PacketBuffer buffer){
+	public SyncSize decode(FriendlyByteBuf buffer){
 		return new SyncSize(buffer.readInt(), buffer.readDouble());
 	}
 
@@ -53,9 +53,9 @@ public class SyncSize implements IMessage<SyncSize>{
 		context.enqueueWork(() -> {
 			Minecraft minecraft = Minecraft.getInstance();
 			Entity entity = minecraft.level.getEntity(message.playerId);
-			if(entity instanceof PlayerEntity){
+			if(entity instanceof Player){
 				DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
-					dragonStateHandler.setSize(message.size, (PlayerEntity)entity);
+					dragonStateHandler.setSize(message.size, (Player)entity);
 				});
 			}
 			supplier.get().setPacketHandled(true);

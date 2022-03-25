@@ -3,15 +3,15 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.HelpButton;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.SourceOfMagicContainer;
-import by.dragonsurvivalteam.dragonsurvival.server.tileentity.SourceOfMagicTileEntity;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import by.dragonsurvivalteam.dragonsurvival.server.tileentity.SourceOfMagicBlockEntity;
+import com.mojang.blaze3d.matrix.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
+ 
+import net.minecraft.world.entity.player.Player;
 import org.lwjgl.opengl.GL11;
 
 public class SourceOfMagicScreen extends ContainerScreen<SourceOfMagicContainer>{
@@ -22,40 +22,40 @@ public class SourceOfMagicScreen extends ContainerScreen<SourceOfMagicContainer>
 	static final ResourceLocation FOREST_NEST1 = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/source_of_magic/forest_source_of_magic_1.png");
 	static final ResourceLocation SEA_NEST0 = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/source_of_magic/sea_source_of_magic_0.png");
 	static final ResourceLocation SEA_NEST1 = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/source_of_magic/sea_source_of_magic_1.png");
-	private final SourceOfMagicTileEntity nestEntity;
+	private final SourceOfMagicBlockEntity nest;
 
-	private final PlayerEntity playerEntity;
+	private final Player player;
 
-	public SourceOfMagicScreen(SourceOfMagicContainer screenContainer, PlayerInventory inv, ITextComponent titleIn){
+	public SourceOfMagicScreen(SourceOfMagicContainer screenContainer, PlayerInventory inv, Component titleIn){
 		super(screenContainer, inv, titleIn);
-		nestEntity = screenContainer.nestEntity;
-		playerEntity = inv.player;
+		nest = screenContainer.nest;
+		player = inv.player;
 	}
 
 	@Override
 	protected void init(){
 		super.init();
-		addButton(new HelpButton(leftPos + 12, topPos + 12, 12, 12, "ds.help.source_of_magic", 0));
+		addRenderableWidget(new HelpButton(leftPos + 12, topPos + 12, 12, 12, "ds.help.source_of_magic", 0));
 	}
 
-	public void render(MatrixStack matrixStack, int p_render_1_, int p_render_2_, float p_render_3_){
+	public void render(PoseStack matrixStack, int p_render_1_, int p_render_2_, float p_render_3_){
 		this.renderBackground(matrixStack);
 		super.render(matrixStack, p_render_1_, p_render_2_, p_render_3_);
 		this.renderTooltip(matrixStack, p_render_1_, p_render_2_);
 	}
 
-	protected void renderLabels(MatrixStack matrixStack, int mouseX, int mouseY){}
+	protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY){}
 
 	@Override
-	protected void renderBg(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY){ // WIP
+	protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY){ // WIP
 		renderBackground(matrixStack);
 		TextureManager textureManager = minecraft.getTextureManager();
 		textureManager.bind(BACKGROUND);
 		blit(matrixStack, leftPos, topPos, 0, 0, imageWidth, imageHeight);
 
-		boolean hasItem = !nestEntity.getItem(0).isEmpty();
+		boolean hasItem = !nest.getItem(0).isEmpty();
 
-		switch(nestEntity.type){
+		switch(nest.type){
 			case CAVE:
 				textureManager.bind(hasItem ? CAVE_NEST1 : CAVE_NEST0);
 				break;

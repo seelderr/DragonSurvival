@@ -1,12 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.network.magic;
 
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/network/magic/SyncMagicStats.java
-import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.network.IMessage;
-=======
+
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/network/magic/SyncMagicStats.java
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
@@ -37,11 +33,9 @@ public class SyncMagicStats implements IMessage<SyncMagicStats>{
 	}
 
 	@Override
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/network/magic/SyncMagicStats.java
-	public void encode(SyncMagicStats message, FriendlyByteBuf buffer) {
-=======
-	public void encode(SyncMagicStats message, PacketBuffer buffer){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/network/magic/SyncMagicStats.java
+
+	public void encode(SyncMagicStats message, FriendlyByteBuf buffer){
+
 		buffer.writeInt(message.playerid);
 		buffer.writeInt(message.selectedSlot);
 		buffer.writeInt(message.currentMana);
@@ -49,11 +43,9 @@ public class SyncMagicStats implements IMessage<SyncMagicStats>{
 	}
 
 	@Override
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/network/magic/SyncMagicStats.java
-	public SyncMagicStats decode(FriendlyByteBuf buffer) {
-=======
-	public SyncMagicStats decode(PacketBuffer buffer){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/network/magic/SyncMagicStats.java
+
+	public SyncMagicStats decode(FriendlyByteBuf buffer){
+
 		int playerid = buffer.readInt();
 		int selectedSlot = buffer.readInt();
 		int currentMana = buffer.readInt();
@@ -71,19 +63,13 @@ public class SyncMagicStats implements IMessage<SyncMagicStats>{
 	public void run(SyncMagicStats message, Supplier<NetworkEvent.Context> supplier){
 		NetworkEvent.Context context = supplier.get();
 		context.enqueueWork(() -> {
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/network/magic/SyncMagicStats.java
+
 			Player thisPlayer = Minecraft.getInstance().player;
-			if (thisPlayer != null) {
+			if(thisPlayer != null){
 				Level world = thisPlayer.level;
 				Entity entity = world.getEntity(message.playerid);
-				if (entity instanceof Player) {
-=======
-			PlayerEntity thisPlayer = Minecraft.getInstance().player;
-			if(thisPlayer != null){
-				World world = thisPlayer.level;
-				Entity entity = world.getEntity(message.playerid);
-				if(entity instanceof PlayerEntity){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/network/magic/SyncMagicStats.java
+				if(entity instanceof Player){
+
 					DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
 						dragonStateHandler.getMagic().setCurrentMana(message.currentMana);
 						dragonStateHandler.getMagic().setSelectedAbilitySlot(message.selectedSlot);

@@ -1,29 +1,26 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render.entity.projectiles;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.DragonSpikeEntity;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.DragonSpike;
 import net.minecraft.client.renderer.entity.ArrowRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/client/render/entity/projectiles/DragonSpikeRenderer.java
-@OnlyIn( Dist.CLIENT)
-public class DragonSpikeRenderer extends ArrowRenderer<DragonSpikeEntity>
-{
-	public DragonSpikeRenderer(EntityRendererProvider.Context p_i46179_1_)
-	{
-=======
-@OnlyIn( Dist.CLIENT )
-public class DragonSpikeRenderer extends ArrowRenderer<DragonSpikeEntity>{
-	public DragonSpikeRenderer(EntityRendererManager p_i46179_1_){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/client/render/entity/projectiles/DragonSpikeRenderer.java
-		super(p_i46179_1_);
-	}
 
-	@Override
-	public ResourceLocation getTextureLocation(DragonSpikeEntity entity){
-		return new ResourceLocation(DragonSurvivalMod.MODID, "textures/entity/dragon_spike_" + entity.getArrow_level() + ".png");
-	}
-}
+@OnlyIn( Dist.CLIENT )
+public class DragonSpikeRenderer extends ArrowRenderer<DragonSpike>{
+	public DragonSpikeRenderer(EntityRendererProvider.Context p_i46179_1_){
+
+		@OnlyIn( Dist.CLIENT )
+		public class DragonSpikeRenderer extends ArrowRenderer<DragonSpike>{
+			public DragonSpikeRenderer(EntityRendererManager p_i46179_1_){
+				super(p_i46179_1_);
+			}
+
+			@Override
+			public ResourceLocation getTextureLocation(DragonSpike entity){
+				return new ResourceLocation(DragonSurvivalMod.MODID, "textures/entity/dragon_spike_" + entity.getArrow_level() + ".png");
+			}
+		}

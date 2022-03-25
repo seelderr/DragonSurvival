@@ -1,16 +1,10 @@
 package by.dragonsurvivalteam.dragonsurvival.network.entity.player;
 
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/network/entity/player/SyncDragonSkinSettings.java
-import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.config.ConfigHandler;
-import by.jackraidenph.dragonsurvival.network.IMessage;
-import by.jackraidenph.dragonsurvival.network.NetworkHandler;
-=======
+
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/network/entity/player/SyncDragonSkinSettings.java
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -44,11 +38,9 @@ public class SyncDragonSkinSettings implements IMessage<SyncDragonSkinSettings>{
 	}
 
 	@Override
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/network/entity/player/SyncDragonSkinSettings.java
-	public void encode(SyncDragonSkinSettings message, FriendlyByteBuf buffer) {
-=======
-	public void encode(SyncDragonSkinSettings message, PacketBuffer buffer){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/network/entity/player/SyncDragonSkinSettings.java
+
+	public void encode(SyncDragonSkinSettings message, FriendlyByteBuf buffer){
+
 		buffer.writeInt(message.playerId);
 		buffer.writeBoolean(message.newborn);
 		buffer.writeBoolean(message.young);
@@ -56,11 +48,9 @@ public class SyncDragonSkinSettings implements IMessage<SyncDragonSkinSettings>{
 	}
 
 	@Override
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/network/entity/player/SyncDragonSkinSettings.java
-	public SyncDragonSkinSettings decode(FriendlyByteBuf buffer) {
-=======
-	public SyncDragonSkinSettings decode(PacketBuffer buffer){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/network/entity/player/SyncDragonSkinSettings.java
+
+	public SyncDragonSkinSettings decode(FriendlyByteBuf buffer){
+
 		int playerId = buffer.readInt();
 		boolean newborn = buffer.readBoolean();
 		boolean young = buffer.readBoolean();
@@ -71,15 +61,11 @@ public class SyncDragonSkinSettings implements IMessage<SyncDragonSkinSettings>{
 	@Override
 	public void handle(SyncDragonSkinSettings message, Supplier<NetworkEvent.Context> supplier){
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> runClient(message, supplier));
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/network/entity/player/SyncDragonSkinSettings.java
-		
+
+
 		if(supplier.get().getDirection() == NetworkDirection.PLAY_TO_SERVER){
 			ServerPlayer entity = supplier.get().getSender();
-=======
 
-		if(supplier.get().getDirection() == PLAY_TO_SERVER){
-			ServerPlayerEntity entity = supplier.get().getSender();
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/network/entity/player/SyncDragonSkinSettings.java
 			if(entity != null){
 				DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
 					dragonStateHandler.getSkin().renderNewborn = message.newborn;
@@ -96,19 +82,13 @@ public class SyncDragonSkinSettings implements IMessage<SyncDragonSkinSettings>{
 	public void runClient(SyncDragonSkinSettings message, Supplier<NetworkEvent.Context> supplier){
 		NetworkEvent.Context context = supplier.get();
 		context.enqueueWork(() -> {
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/network/entity/player/SyncDragonSkinSettings.java
+
 			Player thisPlayer = Minecraft.getInstance().player;
-			if (thisPlayer != null) {
+			if(thisPlayer != null){
 				Level world = thisPlayer.level;
 				Entity entity = world.getEntity(message.playerId);
-				if (entity instanceof Player) {
-=======
-			PlayerEntity thisPlayer = Minecraft.getInstance().player;
-			if(thisPlayer != null){
-				World world = thisPlayer.level;
-				Entity entity = world.getEntity(message.playerId);
-				if(entity instanceof PlayerEntity){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/network/entity/player/SyncDragonSkinSettings.java
+				if(entity instanceof Player){
+
 					DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
 						dragonStateHandler.getSkin().renderNewborn = message.newborn;
 						dragonStateHandler.getSkin().renderYoung = message.young;

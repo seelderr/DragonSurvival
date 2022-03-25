@@ -10,24 +10,24 @@ import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncFlyingStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.gen.Heightmap.Type;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.util.Mth;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.levelgen.Heightmap.Types;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.network.PacketDistributor;
 
 import java.util.List;
 
@@ -67,11 +67,11 @@ public class ServerFlightHandler{
 				}
 
 
-				EffectInstance effectinstance = livingEntity.getEffect(Effects.JUMP);
+				MobEffectInstance effectinstance = livingEntity.getEffect(MobEffects.JUMP);
 				float f = effectinstance == null ? 0.0F : (float)(effectinstance.getAmplifier() + 1);
 
 				double damage = livingEntity.getDeltaMovement().lengthSqr() * (dragonStateHandler.getSize() / 20);
-				damage = MathHelper.clamp(damage, 0, livingEntity.getHealth() - (ConfigHandler.SERVER.lethalFlight.get() ? 0 : 1));
+				damage = Mth.clamp(damage, 0, livingEntity.getHealth() - (ConfigHandler.SERVER.lethalFlight.get() ? 0 : 1));
 
 				if(!livingEntity.level.isClientSide && dragonStateHandler.isWingsSpread()){
 					event.setDistance((float)Math.floor(((damage + 3.0F + f) / event.getDamageMultiplier())));
@@ -91,7 +91,7 @@ public class ServerFlightHandler{
 
 	@SubscribeEvent
 	public static void foldWings(PlayerTickEvent tickEvent){
-		PlayerEntity player = tickEvent.player;
+		Player player = tickEvent.player;
 		if(tickEvent.phase == Phase.START || !DragonUtils.isDragon(player) || player.level.isClientSide){
 			return;
 		}
@@ -125,22 +125,22 @@ public class ServerFlightHandler{
 		if(playerTickEvent.phase == Phase.START){
 			return;
 		}
-		PlayerEntity player = playerTickEvent.player;
+		Player player = playerTickEvent.player;
 		DragonStateProvider.getCap(player).ifPresent(handler -> {
 			if(handler.isDragon()){
 				if(player.tickCount % 10 == 0){
 					if(handler.isWingsSpread()){
 						switch(handler.getType()){
 							case SEA:
-								player.addEffect(new EffectInstance(DragonEffects.sea_wings, 500));
+								player.addEffect(new MobEffectInstance(DragonEffects.sea_wings, 500));
 								break;
 
 							case CAVE:
-								player.addEffect(new EffectInstance(DragonEffects.cave_wings, 500));
+								player.addEffect(new MobEffectInstance(DragonEffects.cave_wings, 500));
 								break;
 
 							case FOREST:
-								player.addEffect(new EffectInstance(DragonEffects.forest_wings, 500));
+								player.addEffect(new MobEffectInstance(DragonEffects.forest_wings, 500));
 								break;
 						}
 					}
@@ -166,7 +166,7 @@ public class ServerFlightHandler{
 		if(playerTickEvent.phase == Phase.START){
 			return;
 		}
-		PlayerEntity player = playerTickEvent.player;
+		Player player = playerTickEvent.player;
 		DragonStateProvider.getCap(player).ifPresent(handler -> {
 			if(handler.isDragon()){
 				if(handler.getMovementData().spinAttack > 0){
@@ -180,10 +180,10 @@ public class ServerFlightHandler{
 
 				if(isSpin(player)){
 					int range = 5;
-					List<Entity> entities = player.level.getEntities(null, new AxisAlignedBB(player.position().x - range, player.position().y - range, player.position().z - range, player.position().x + range, player.position().y + range, player.position().z + range));
+					List<Entity> entities = player.level.getEntities(null, new AABB(player.position().x - range, player.position().y - range, player.position().z - range, player.position().x + range, player.position().y + range, player.position().z + range));
 					entities.removeIf((e) -> e.distanceTo(player) > range);
 					entities.remove(player);
-					entities.removeIf((e) -> e instanceof PlayerEntity && !player.canHarmPlayer((PlayerEntity)e));
+					entities.removeIf((e) -> e instanceof Player && !player.canHarmPlayer((Player)e));
 					entities.removeIf((e) -> e instanceof DragonHitBox && player == (((DragonHitBox)e).player));
 
 					for(Entity ent : entities){
@@ -216,7 +216,7 @@ public class ServerFlightHandler{
 		});
 	}
 
-	public static boolean isSpin(PlayerEntity entity){
+	public static boolean isSpin(Player entity){
 		DragonStateHandler handler = DragonStateProvider.getCap(entity).orElse(null);
 
 		if(handler != null){
@@ -239,14 +239,14 @@ public class ServerFlightHandler{
 		if(playerTickEvent.phase == Phase.START){
 			return;
 		}
-		PlayerEntity player = playerTickEvent.player;
+		Player player = playerTickEvent.player;
 
 		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon()){
 				boolean wingsSpread = dragonStateHandler.isWingsSpread();
 				if(ConfigHandler.SERVER.creativeFlight.get() && !player.level.isClientSide){
-					if(player.abilities.flying != wingsSpread && (!player.isCreative() && !player.isSpectator())){
-						player.abilities.flying = wingsSpread;
+					if(player.getAbilities().flying != wingsSpread && (!player.isCreative() && !player.isSpectator())){
+						player.getAbilities().flying = wingsSpread;
 						player.onUpdateAbilities();
 					}
 				}
@@ -256,19 +256,19 @@ public class ServerFlightHandler{
 						if(isFlying(player)){
 							if(!player.level.isClientSide){
 								if(player.getFoodData().getFoodLevel() <= ConfigHandler.SERVER.foldWingsThreshold.get() && !ConfigHandler.SERVER.allowFlyingWithoutHunger.get() && !player.isCreative()){
-									player.sendMessage(new TranslationTextComponent("ds.wings.nohunger"), player.getUUID());
+									player.sendMessage(new TranslatableComponent("ds.wings.nohunger"), player.getUUID());
 									dragonStateHandler.setWingsSpread(false);
 									NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncFlyingStatus(player.getId(), false));
 									return;
 								}
 							}
 
-							Vector3d delta = player.getDeltaMovement();
+							Vec3 delta = player.getDeltaMovement();
 							double l = delta.length();
 							if(delta.x == 0 && delta.z == 0){
 								l = 15;
 							}
-							float exhaustion = ConfigHandler.SERVER.creativeFlight.get() ? (player.abilities.flying ? player.flyingSpeed : 0F) : (float)(0.005F * l);
+							float exhaustion = ConfigHandler.SERVER.creativeFlight.get() ? (player.getAbilities().flying ? player.flyingSpeed : 0F) : (float)(0.005F * l);
 							player.causeFoodExhaustion(exhaustion);
 						}
 					}
@@ -277,20 +277,20 @@ public class ServerFlightHandler{
 		});
 	}
 
-	public static boolean isGliding(PlayerEntity player){
+	public static boolean isGliding(Player player){
 		DragonStateHandler dragonStateHandler = DragonUtils.getHandler(player);
 		boolean hasFood = player.getFoodData().getFoodLevel() > ConfigHandler.SERVER.flightHungerThreshold.get() || player.isCreative() || ConfigHandler.SERVER.allowFlyingWithoutHunger.get();
 		return hasFood && player.isSprinting() && isFlying(player);
 	}
 
-	public static double getLandTime(PlayerEntity playerEntity, double goalTime){
-		if(isFlying(playerEntity)){
-			Vector3d motion = playerEntity.getDeltaMovement();
-			BlockPos blockHeight = playerEntity.level.getHeightmapPos(Type.MOTION_BLOCKING, playerEntity.blockPosition());
+	public static double getLandTime(Player player, double goalTime){
+		if(isFlying(player)){
+			Vec3 motion = player.getDeltaMovement();
+			BlockPos blockHeight = player.level.getHeightmapPos(Types.MOTION_BLOCKING, player.blockPosition());
 			int height = blockHeight.getY();
-			double aboveGround = Math.max(0, playerEntity.position().y - height);
+			double aboveGround = Math.max(0, player.position().y - height);
 			double timeToGround = (aboveGround / Math.abs(motion.y));
-			if(playerEntity.fallDistance > 5 && motion.y < 0){
+			if(player.fallDistance > 5 && motion.y < 0){
 				if(aboveGround < 20 && timeToGround <= goalTime){
 					return timeToGround;
 				}

@@ -1,72 +1,61 @@
-package by.jackraidenph.dragonsurvival.network;
+package by.dragonsurvivalteam.dragonsurvival.network;
 
-import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.network.NetworkEvent.Context;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class CompleteHandlerDataPacket extends ISidedMessage<CompleteHandlerDataPacket>
-{
+public class CompleteHandlerDataPacket extends by.dragonsurvivalteam.dragonsurvival.network.ISidedMessage<CompleteHandlerDataPacket>{
 	private CompoundTag nbt;
-	
-	public CompleteHandlerDataPacket()
-	{
+
+	public CompleteHandlerDataPacket(){
 		super(-1);
 	}
-	
-	public CompleteHandlerDataPacket(Player player)
-	{
+
+	public CompleteHandlerDataPacket(Player player){
 		super(player.getId());
 		DragonStateProvider.getCap(player).ifPresent((cap) -> nbt = cap.writeNBT());
 	}
-	
-	public CompleteHandlerDataPacket(int playerId, CompoundTag nbt)
-	{
+
+	public CompleteHandlerDataPacket(int playerId, CompoundTag nbt){
 		super(playerId);
 		this.nbt = nbt;
 	}
-	
+
 	@Override
-	public void encode(CompleteHandlerDataPacket message, FriendlyByteBuf buffer)
-	{
+	public void encode(CompleteHandlerDataPacket message, FriendlyByteBuf buffer){
 		buffer.writeInt(message.playerId);
 		buffer.writeNbt(message.nbt);
 	}
-	
+
 	@Override
-	public CompleteHandlerDataPacket create(CompleteHandlerDataPacket message)
-	{
-		return new CompleteHandlerDataPacket(message.playerId, message.nbt);
-	}
-	
-	@Override
-	public CompleteHandlerDataPacket decode(FriendlyByteBuf buffer)
-	{
+	public CompleteHandlerDataPacket decode(FriendlyByteBuf buffer){
 		return new CompleteHandlerDataPacket(buffer.readInt(), buffer.readNbt());
 	}
-	
-	
+
 	@Override
-	public void runClient(CompleteHandlerDataPacket message, Supplier<Context> supplier, Player targetPlayer)
-	{
-		DragonStateProvider.getCap(targetPlayer).ifPresent((cap) -> {
-			cap.readNBT(message.nbt);
-		});
+	public CompleteHandlerDataPacket create(CompleteHandlerDataPacket message){
+		return new CompleteHandlerDataPacket(message.playerId, message.nbt);
 	}
-	
+
 	@Override
-	public void runCommon(CompleteHandlerDataPacket message, Supplier<Context> supplier) {}
-	
+	public void runCommon(CompleteHandlerDataPacket message, Supplier<NetworkEvent.Context> supplier){}
+
 	@Override
-	public void runServer(CompleteHandlerDataPacket message, Supplier<Context> supplier, ServerPlayer sender)
-	{
+	public void runServer(CompleteHandlerDataPacket message, Supplier<NetworkEvent.Context> supplier, ServerPlayer sender){
 		DragonStateProvider.getCap(sender).ifPresent((cap) -> {
 			cap.readNBT(message.nbt);
 		});
 	}
-	
+
+	@Override
+	public void runClient(CompleteHandlerDataPacket message, Supplier<NetworkEvent.Context> supplier, Player targetPlayer){
+		DragonStateProvider.getCap(targetPlayer).ifPresent((cap) -> {
+			cap.readNBT(message.nbt);
+		});
+	}
 }

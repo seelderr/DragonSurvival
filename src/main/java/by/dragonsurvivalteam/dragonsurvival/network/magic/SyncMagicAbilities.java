@@ -1,16 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.network.magic;
 
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/network/magic/SyncMagicAbilities.java
-import by.jackraidenph.dragonsurvival.common.capability.provider.DragonStateProvider;
-import by.jackraidenph.dragonsurvival.common.magic.DragonAbilities;
-import by.jackraidenph.dragonsurvival.common.magic.common.DragonAbility;
-import by.jackraidenph.dragonsurvival.network.IMessage;
-=======
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/network/magic/SyncMagicAbilities.java
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -38,17 +31,12 @@ public class SyncMagicAbilities implements IMessage<SyncMagicAbilities>{
 	}
 
 	@Override
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/network/magic/SyncMagicAbilities.java
-	public void encode(SyncMagicAbilities message, FriendlyByteBuf buffer) {
-		buffer.writeInt(message.playerId);
-		
-		CompoundTag tag = new CompoundTag();
-=======
-	public void encode(SyncMagicAbilities message, PacketBuffer buffer){
+
+	public void encode(SyncMagicAbilities message, FriendlyByteBuf buffer){
 		buffer.writeInt(message.playerId);
 
-		CompoundNBT tag = new CompoundNBT();
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/network/magic/SyncMagicAbilities.java
+		CompoundTag tag = new CompoundTag();
+
 		for(DragonAbility ab : message.abilities){
 			tag.put(ab.getId(), ab.saveNBT());
 		}
@@ -57,21 +45,13 @@ public class SyncMagicAbilities implements IMessage<SyncMagicAbilities>{
 	}
 
 	@Override
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/network/magic/SyncMagicAbilities.java
-	public SyncMagicAbilities decode(FriendlyByteBuf buffer) {
-=======
-	public SyncMagicAbilities decode(PacketBuffer buffer){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/network/magic/SyncMagicAbilities.java
+	public SyncMagicAbilities decode(FriendlyByteBuf buffer){
 		int playerId = buffer.readInt();
 
 		ArrayList<DragonAbility> abilities = new ArrayList<>();
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/network/magic/SyncMagicAbilities.java
 		CompoundTag tag = buffer.readNbt();
-		
-=======
-		CompoundNBT tag = buffer.readNbt();
 
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/network/magic/SyncMagicAbilities.java
+
 		for(DragonAbility staticAbility : DragonAbilities.ABILITY_LOOKUP.values()){
 			if(tag.contains(staticAbility.getId())){
 				DragonAbility ability = staticAbility.createInstance();
@@ -92,19 +72,12 @@ public class SyncMagicAbilities implements IMessage<SyncMagicAbilities>{
 	public void run(SyncMagicAbilities message, Supplier<NetworkEvent.Context> supplier){
 		NetworkEvent.Context context = supplier.get();
 		context.enqueueWork(() -> {
-<<<<<<< HEAD:src/main/java/by/jackraidenph/dragonsurvival/network/magic/SyncMagicAbilities.java
 			Player thisPlayer = Minecraft.getInstance().player;
-			if (thisPlayer != null) {
+			if(thisPlayer != null){
 				Level world = thisPlayer.level;
 				Entity entity = world.getEntity(message.playerId);
-				if (entity instanceof Player) {
-=======
-			PlayerEntity thisPlayer = Minecraft.getInstance().player;
-			if(thisPlayer != null){
-				World world = thisPlayer.level;
-				Entity entity = world.getEntity(message.playerId);
-				if(entity instanceof PlayerEntity){
->>>>>>> v1.16.x:src/main/java/by/dragonsurvivalteam/dragonsurvival/network/magic/SyncMagicAbilities.java
+				if(entity instanceof Player){
+
 					DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
 						message.abilities.forEach((ab) -> ab.player = (Player)entity);
 						dragonStateHandler.getMagic().getAbilities().clear();
