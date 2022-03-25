@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities;
 import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.EnumSkinLayer;
 import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.objects.SkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import net.minecraft.nbt.CompoundNBT;
 
 import java.util.HashSet;
@@ -18,6 +19,9 @@ public class SkinCap extends SubCap{
 
 	public SkinCap(DragonStateHandler handler){
 		super(handler);
+		for(DragonType value : DragonType.values()){
+			skinPreset.initDefaults(value);
+		}
 	}
 
 	@Override

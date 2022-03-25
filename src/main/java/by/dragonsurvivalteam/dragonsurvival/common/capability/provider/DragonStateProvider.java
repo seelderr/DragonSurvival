@@ -19,8 +19,10 @@ public class DragonStateProvider implements ICapabilitySerializable<CompoundNBT>
 	public static Capability<DragonStateHandler> DRAGON_CAPABILITY;
 
 	public static LazyOptional<DragonStateHandler> getCap(Entity entity){
-		if(entity instanceof FakeClientPlayer){
-			return ((FakeClientPlayer)entity).handler != null ? LazyOptional.of(() -> ((FakeClientPlayer)entity).handler) : LazyOptional.empty();
+		if(entity != null && entity.level != null && entity.level.isClientSide){
+			if(entity instanceof FakeClientPlayer){
+				return ((FakeClientPlayer)entity).handler != null ? LazyOptional.of(() -> ((FakeClientPlayer)entity).handler) : LazyOptional.empty();
+			}
 		}
 
 		if(entity instanceof DragonHitBox){

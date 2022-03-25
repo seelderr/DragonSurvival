@@ -1,7 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.capability;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayer;
 import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.common.EffectInstance2;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
@@ -78,7 +77,7 @@ public class Capabilities{
 	public static void attachCapabilities(AttachCapabilitiesEvent<Entity> event){
 		event.addCapability(new ResourceLocation("dragonsurvival", "generic_capability_data"), new GenericCapabilityProvider());
 
-		if(event.getObject() instanceof PlayerEntity && !(event.getObject() instanceof FakeClientPlayer)){
+		if(event.getObject() instanceof PlayerEntity){
 			event.addCapability(new ResourceLocation("dragonsurvival", "playerstatehandler"), new DragonStateProvider());
 			event.addCapability(new ResourceLocation("dragonsurvival", "village_relations"), new VillageRelationshipsProvider());
 			DragonSurvivalMod.LOGGER.info("Successfully attached capabilities to the " + event.getObject().getClass().getSimpleName());
