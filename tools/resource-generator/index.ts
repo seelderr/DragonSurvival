@@ -155,7 +155,7 @@ async function main() {
         await saveJson(path.join(...assetsRoot, 'models','block', `${smallDoorMaterialName}_small_dragon_door_hinge.json`), generateSmallDoorBlockModelHinge(smallDoorMaterialName))
         await saveJson(path.join(...assetsRoot, 'models','item', `${smallDoorMaterialName}_small_dragon_door.json`), generateSmallDoorItem(smallDoorMaterialName))
         await saveJson(path.join(...assetsRoot, 'blockstates', `${smallDoorMaterialName}_small_dragon_door.json`), generateSmallDoorBlockState(smallDoorMaterialName))
-        await saveJson(path.join(...dataRoot, 'loot_tables', 'blocks', `${smallDoorMaterialName}_small_dragon_door.json `), generateSmallDoorLootTable(smallDoorMaterialName))
+        await saveJson(path.join(...dataRoot, 'loot_tables', 'blocks', `${smallDoorMaterialName}_small_dragon_door.json`), generateSmallDoorLootTable(smallDoorMaterialName))
     }
 }
 
