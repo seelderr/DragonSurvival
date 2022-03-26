@@ -1,3 +1,10 @@
+### [0.13.39](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.38...0.13.39) (2022-03-26)
+
+
+### Bug Fixes
+
+* fix emote server crash, and updated translations ([f303189](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/f303189f415227b701aa0dbb4c445384be4abb77))
+
 ### [0.13.38](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.37...0.13.38) (2022-03-25)
 
 
