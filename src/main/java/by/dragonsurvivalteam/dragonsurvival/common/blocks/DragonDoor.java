@@ -117,12 +117,12 @@ public class DragonDoor extends Block implements IWaterLoggable{
 		if(dragonStateHandlerLazyOptional.isPresent()){
 			DragonStateHandler dragonStateHandler = dragonStateHandlerLazyOptional.orElseGet(() -> null);
 			if(state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.NONE || (dragonStateHandler.isDragon() && (state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.CAVE && dragonStateHandler.getType() == DragonType.CAVE) || (state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.FOREST && dragonStateHandler.getType() == DragonType.FOREST) || (state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.SEA && dragonStateHandler.getType() == DragonType.SEA))){
-				state = state.cycle(OPEN).setValue(WATERLOGGED, worldIn.getFluidState(pos).getType() == Fluids.WATER && state.getBlock() == DSBlocks.seaDoor);
+				state = state.cycle(OPEN).setValue(WATERLOGGED, worldIn.getFluidState(pos).getType() == Fluids.WATER);
 				worldIn.setBlock(pos, state, 10);
 				worldIn.levelEvent(player, state.getValue(OPEN) ? this.getOpenSound() : this.getCloseSound(), pos, 0);
 				if(state.getValue(PART) == Part.TOP){
-					worldIn.setBlock(pos.below(2), state.setValue(PART, Part.BOTTOM).setValue(WATERLOGGED, worldIn.getFluidState(pos.below(2)).getType() == Fluids.WATER && state.getBlock() == DSBlocks.seaDoor), 10);
-					worldIn.setBlock(pos.below(), state.setValue(PART, Part.MIDDLE).setValue(WATERLOGGED, worldIn.getFluidState(pos.below()).getType() == Fluids.WATER && state.getBlock() == DSBlocks.seaDoor), 10);
+					worldIn.setBlock(pos.below(2), state.setValue(PART, Part.BOTTOM).setValue(WATERLOGGED, worldIn.getFluidState(pos.below(2)).getType() == Fluids.WATER), 10);
+					worldIn.setBlock(pos.below(), state.setValue(PART, Part.MIDDLE).setValue(WATERLOGGED, worldIn.getFluidState(pos.below()).getType() == Fluids.WATER), 10);
 				}
 				return ActionResultType.SUCCESS;
 			}
@@ -187,7 +187,7 @@ public class DragonDoor extends Block implements IWaterLoggable{
 		if(blockpos.getY() < 255 && context.getLevel().getBlockState(blockpos.above()).canBeReplaced(context) && context.getLevel().getBlockState(blockpos.above(2)).canBeReplaced(context)){
 			World world = context.getLevel();
 			boolean flag = world.hasNeighborSignal(blockpos) || world.hasNeighborSignal(blockpos.above());
-			return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection()).setValue(HINGE, this.getHinge(context)).setValue(POWERED, flag).setValue(OPEN, flag).setValue(PART, Part.BOTTOM).setValue(WATERLOGGED, context.getLevel().getFluidState(context.getClickedPos()).getType() == Fluids.WATER && context.getLevel().getBlockState(blockpos).getBlock() == DSBlocks.seaDoor);
+			return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection()).setValue(HINGE, this.getHinge(context)).setValue(POWERED, flag).setValue(OPEN, flag).setValue(PART, Part.BOTTOM).setValue(WATERLOGGED, context.getLevel().getFluidState(context.getClickedPos()).getType() == Fluids.WATER);
 		}else{
 			return null;
 		}
@@ -200,8 +200,8 @@ public class DragonDoor extends Block implements IWaterLoggable{
 	}
 
 	public void setPlacedBy(World worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack){
-		worldIn.setBlock(pos.above(), state.setValue(PART, Part.MIDDLE).setValue(WATERLOGGED, worldIn.getFluidState(pos.above()).getType() == Fluids.WATER && state.getBlock() == DSBlocks.seaDoor), 3);
-		worldIn.setBlock(pos.above(2), state.setValue(PART, Part.TOP).setValue(WATERLOGGED, worldIn.getFluidState(pos.above(2)).getType() == Fluids.WATER && state.getBlock() == DSBlocks.seaDoor), 3);
+		worldIn.setBlock(pos.above(), state.setValue(PART, Part.MIDDLE).setValue(WATERLOGGED, worldIn.getFluidState(pos.above()).getType() == Fluids.WATER), 3);
+		worldIn.setBlock(pos.above(2), state.setValue(PART, Part.TOP).setValue(WATERLOGGED, worldIn.getFluidState(pos.above(2)).getType() == Fluids.WATER), 3);
 	}
 
 	public void playerWillDestroy(World worldIn, BlockPos pos, BlockState state, PlayerEntity player){
