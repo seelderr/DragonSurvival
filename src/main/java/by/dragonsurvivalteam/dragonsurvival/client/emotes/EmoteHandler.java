@@ -46,14 +46,16 @@ public class EmoteHandler{
 				for(Emote emote : cap.getEmotes().currentEmotes){
 					int index = cap.getEmotes().currentEmotes.indexOf(emote);
 
-					if(cap.getEmotes().emoteTicks.size() < index){
+					if(cap.getEmotes().emoteTicks.size() <= index){
 						cap.getEmotes().currentEmotes.remove(index);
-						cap.getEmotes().emoteTicks.remove(index);
+						//cap.getEmotes().emoteTicks.remove(index);
 						NetworkHandler.CHANNEL.sendToServer(new SyncEmote(player.getId(), cap.getEmotes()));
 						return; //How did you get to this!?
 					}
 
-					cap.getEmotes().emoteTicks.set(index, cap.getEmotes().emoteTicks.get(index) + 1);
+					if(cap.getEmotes().emoteTicks.size() > index){
+						cap.getEmotes().emoteTicks.set(index, cap.getEmotes().emoteTicks.get(index) + 1);
+					}
 
 					//Cancel emote if its duration is expired, this should happen even if it isnt local
 					if(emote.duration != -1 && cap.getEmotes().emoteTicks.get(index) > emote.duration){
