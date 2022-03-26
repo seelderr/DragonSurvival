@@ -52,6 +52,14 @@ public class DSBlocks{
 	public static TreasureBlock treasureDebris, treasureDiamond, treasureEmerald, treasureCopper, treasureGold, treasureIron;
 
 	public static DragonPressurePlates dragonPressurePlate, humanPressurePlate, seaPressurePlate, forestPressurePlate, cavePressurePlate;
+	private static SmallDragonDoor basaltSmallDoor;
+	private static SmallDragonDoor forestSmallDoor;
+	private static SmallDragonDoor dioriteSmallDoor;
+	private static SmallDragonDoor caveSmallDoor;
+	private static SmallDragonDoor seaSmallDoor;
+	private static SmallDragonDoor ironSmallDoor;
+	private static SmallDragonDoor quartzSmallDoor;
+	private static SmallDragonDoor iron2SmallDoor;
 
 	@SubscribeEvent
 	public static void registerBlocks(final RegistryEvent.Register<Block> event){
@@ -104,6 +112,15 @@ public class DSBlocks{
 		darkOakSmallDoor = registerBlock(new SmallDragonDoor(Block.Properties.of(Material.WOOD, Blocks.DARK_OAK_PLANKS.defaultMaterialColor()).strength(3.0F).sound(SoundType.WOOD).noOcclusion(), DragonDoorOpenRequirement.NONE), "dark_oak_small_dragon_door", forgeRegistry);
 		warpedSmallDoor = registerBlock(new SmallDragonDoor(Block.Properties.of(Material.WOOD, Blocks.WARPED_PLANKS.defaultMaterialColor()).strength(3.0F).sound(SoundType.WOOD).noOcclusion(), DragonDoorOpenRequirement.NONE), "warped_small_dragon_door", forgeRegistry);
 		crimsonSmallDoor = registerBlock(new SmallDragonDoor(Block.Properties.of(Material.WOOD, Blocks.CRIMSON_PLANKS.defaultMaterialColor()).strength(3.0F).sound(SoundType.WOOD).noOcclusion(), DragonDoorOpenRequirement.NONE), "crimson_small_dragon_door", forgeRegistry);
+		basaltSmallDoor = registerBlock(new SmallDragonDoor(Block.Properties.of(Material.WOOD, Blocks.BASALT.defaultMaterialColor()).strength(3.0F).sound(SoundType.WOOD).noOcclusion(), DragonDoorOpenRequirement.NONE), "basalt_small_dragon_door", forgeRegistry);
+		forestSmallDoor = registerBlock(new SmallDragonDoor(Block.Properties.of(Material.WOOD, Blocks.CRIMSON_PLANKS.defaultMaterialColor()).strength(3.0F).sound(SoundType.WOOD).noOcclusion(), DragonDoorOpenRequirement.NONE), "forest_small_dragon_door", forgeRegistry);
+		dioriteSmallDoor = registerBlock(new SmallDragonDoor(Block.Properties.of(Material.WOOD, Blocks.CRIMSON_PLANKS.defaultMaterialColor()).strength(3.0F).sound(SoundType.WOOD).noOcclusion(), DragonDoorOpenRequirement.NONE), "diorite_small_dragon_door", forgeRegistry);
+		caveSmallDoor = registerBlock(new SmallDragonDoor(Block.Properties.of(Material.STONE, Blocks.BLACKSTONE.defaultMaterialColor()).strength(3.0F).sound(SoundType.WOOD).noOcclusion(), DragonDoorOpenRequirement.NONE), "cave_small_dragon_door", forgeRegistry);
+		seaSmallDoor = registerBlock(new SmallDragonDoor(Block.Properties.of(Material.STONE, MaterialColor.COLOR_BROWN).strength(3.0F).sound(SoundType.WOOD).noOcclusion(), DragonDoorOpenRequirement.NONE), "sea_small_dragon_door", forgeRegistry);
+
+		ironSmallDoor = registerBlock(new SmallDragonDoor(Block.Properties.of(Material.METAL, MaterialColor.METAL).requiresCorrectToolForDrops().strength(5.0F).sound(SoundType.METAL).noOcclusion(), DragonDoorOpenRequirement.POWER), "iron_small_dragon_door", forgeRegistry);
+		iron2SmallDoor = registerBlock(new SmallDragonDoor(Block.Properties.of(Material.METAL, MaterialColor.METAL).requiresCorrectToolForDrops().strength(5.0F).sound(SoundType.METAL).noOcclusion(), DragonDoorOpenRequirement.POWER), "iron2_small_dragon_door", forgeRegistry);
+		quartzSmallDoor = registerBlock(new SmallDragonDoor(Block.Properties.of(Material.WOOD, Blocks.CRIMSON_PLANKS.defaultMaterialColor()).strength(3.0F).sound(SoundType.WOOD).noOcclusion(), DragonDoorOpenRequirement.NONE), "quartz_small_dragon_door", forgeRegistry);
 
 		// TODO set properties for these doors
 		murdererDoor = registerBlock(new DragonDoor(AbstractBlock.Properties.copy(oakDoor), DragonDoorOpenRequirement.NONE), "murderer_dragon_door", forgeRegistry);
