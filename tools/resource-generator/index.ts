@@ -126,36 +126,55 @@ function generateSmallDoorLootTable(doorMaterialName: string){
     }
 }
 
+function generateSmallDoorRecipe(doorMaterialName: string){
+    return {
+        "type": "minecraft:crafting_shapeless",
+        "ingredients": [
+            {
+                "item": `dragonsurvival:${doorMaterialName}_dragon_door`
+            },
+        ],
+        "result": {
+            "item": `dragonsurvival:${doorMaterialName}_small_dragon_door`,
+            "count": 3
+        }
+    }
+}
+
 async function main() {
     const projectRoot = [__dirname, '..','..'];
     const assetsRoot = [...projectRoot, 'src', 'main', 'resources', 'assets', 'dragonsurvival'];
     const dataRoot = [...projectRoot, 'src', 'main', 'resources', 'data', 'dragonsurvival'];
 
-    const smallDoorMaterialNames = [
-        "basalt",
-        "acacia",
-        "jungle",
-        "forest",
-        "oak",
-        "birch",
-        "diorite",
-        "cave",
-        "iron2",
-        "warped",
-        "sea",
-        "iron",
-        "spruce",
-        "quartz",
-        "dark_oak",
-        "crimson"
+    // generateRecipe, only switch to true if large version of the door is available
+    const smallDoorVariants = [
+        {doorMaterial: "acacia", generateRecipe: true},
+        {doorMaterial: "jungle", generateRecipe: true},
+        {doorMaterial: "oak", generateRecipe: true},
+        {doorMaterial: "dark_oak", generateRecipe: true},
+        {doorMaterial: "birch", generateRecipe: true},
+        {doorMaterial: "spruce", generateRecipe: true},
+        {doorMaterial: "basalt",  generateRecipe: false},
+        {doorMaterial: "diorite", generateRecipe: false},
+        {doorMaterial: "warped", generateRecipe: true},
+        {doorMaterial: "cave", generateRecipe: true},
+        {doorMaterial: "forest", generateRecipe: true},
+        {doorMaterial: "sea", generateRecipe: true},
+        {doorMaterial: "iron", generateRecipe: true},
+        {doorMaterial: "iron2", generateRecipe: false},
+        {doorMaterial: "quartz", generateRecipe: false},
+        {doorMaterial: "crimson", generateRecipe: true },
     ];
 
-    for (const smallDoorMaterialName of smallDoorMaterialNames) {
-        await saveJson(path.join(...assetsRoot, 'models', 'block', `${smallDoorMaterialName}_small_dragon_door.json`), generateSmallDoorBlockModel(smallDoorMaterialName))
-        await saveJson(path.join(...assetsRoot, 'models','block', `${smallDoorMaterialName}_small_dragon_door_hinge.json`), generateSmallDoorBlockModelHinge(smallDoorMaterialName))
-        await saveJson(path.join(...assetsRoot, 'models','item', `${smallDoorMaterialName}_small_dragon_door.json`), generateSmallDoorItem(smallDoorMaterialName))
-        await saveJson(path.join(...assetsRoot, 'blockstates', `${smallDoorMaterialName}_small_dragon_door.json`), generateSmallDoorBlockState(smallDoorMaterialName))
-        await saveJson(path.join(...dataRoot, 'loot_tables', 'blocks', `${smallDoorMaterialName}_small_dragon_door.json`), generateSmallDoorLootTable(smallDoorMaterialName))
+    for (const smallDoorVariant of smallDoorVariants) {
+        await saveJson(path.join(...assetsRoot, 'models', 'block', `${smallDoorVariant.doorMaterial}_small_dragon_door.json`), generateSmallDoorBlockModel(smallDoorVariant.doorMaterial))
+        await saveJson(path.join(...assetsRoot, 'models','block', `${smallDoorVariant.doorMaterial}_small_dragon_door_hinge.json`), generateSmallDoorBlockModelHinge(smallDoorVariant.doorMaterial))
+        await saveJson(path.join(...assetsRoot, 'models','item', `${smallDoorVariant.doorMaterial}_small_dragon_door.json`), generateSmallDoorItem(smallDoorVariant.doorMaterial))
+        await saveJson(path.join(...assetsRoot, 'blockstates', `${smallDoorVariant.doorMaterial}_small_dragon_door.json`), generateSmallDoorBlockState(smallDoorVariant.doorMaterial))
+        await saveJson(path.join(...dataRoot, 'loot_tables', 'blocks', `${smallDoorVariant.doorMaterial}_small_dragon_door.json`), generateSmallDoorLootTable(smallDoorVariant.doorMaterial))
+        if (smallDoorVariant.generateRecipe) {
+            await saveJson(path.join(...dataRoot, 'recipes', `${smallDoorVariant.doorMaterial}_small_dragon_door.json`), generateSmallDoorRecipe(smallDoorVariant.doorMaterial))
+        }
     }
 }
 
