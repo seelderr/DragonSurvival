@@ -1,7 +1,7 @@
 {
   "parent": "dragonsurvival:block/small_dragon_door",
   "textures": {
-    "bottom": "dragonsurvival:block/acacia_small_dragon_door_bottom",
-    "top": "dragonsurvival:block/acacia_small_dragon_door_bottom"
+    "bottom": "dragonsurvival:block/acacia_small_dragon_door",
+    "top": "dragonsurvival:block/acacia_small_dragon_door"
   }
 }
