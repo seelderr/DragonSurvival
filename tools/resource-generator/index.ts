@@ -127,7 +127,10 @@ function generateSmallDoorLootTable(doorMaterialName: string){
 }
 
 async function main() {
-    const pathRoot = [__dirname, '..','..', 'src', 'main', 'resources', 'assets','dragonsurvival'];
+    const projectRoot = [__dirname, '..','..'];
+    const assetsRoot = [...projectRoot, 'src', 'main', 'resources', 'assets', 'dragonsurvival'];
+    const dataRoot = [...projectRoot, 'src', 'main', 'resources', 'data', 'dragonsurvival'];
+    //src/main/resources/data/dragonsurvival/loot_tables/blocks/crimson_small_dragon_door.json
 
     const smallDoorMaterialNames = [
         "basalt",
@@ -149,11 +152,11 @@ async function main() {
     ];
 
     for (const smallDoorMaterialName of smallDoorMaterialNames) {
-        await saveJson(path.join(...pathRoot, 'models', 'block', `${smallDoorMaterialName}_small_dragon_door.json`), generateSmallDoorBlockModel(smallDoorMaterialName))
-        await saveJson(path.join(...pathRoot, 'models','block', `${smallDoorMaterialName}_small_dragon_door_hinge.json`), generateSmallDoorBlockModelHinge(smallDoorMaterialName))
-        await saveJson(path.join(...pathRoot, 'models','item', `${smallDoorMaterialName}_small_dragon_door.json`), generateSmallDoorItem(smallDoorMaterialName))
-        await saveJson(path.join(...pathRoot, 'blockstates', `${smallDoorMaterialName}_small_dragon_door.json`), generateSmallDoorBlockState(smallDoorMaterialName))
-        await saveJson(path.join(...pathRoot, 'loot_tables', 'blocks', `${smallDoorMaterialName}_small_dragon_door.json `), generateSmallDoorBlockState(smallDoorMaterialName))
+        await saveJson(path.join(...assetsRoot, 'models', 'block', `${smallDoorMaterialName}_small_dragon_door.json`), generateSmallDoorBlockModel(smallDoorMaterialName))
+        await saveJson(path.join(...assetsRoot, 'models','block', `${smallDoorMaterialName}_small_dragon_door_hinge.json`), generateSmallDoorBlockModelHinge(smallDoorMaterialName))
+        await saveJson(path.join(...assetsRoot, 'models','item', `${smallDoorMaterialName}_small_dragon_door.json`), generateSmallDoorItem(smallDoorMaterialName))
+        await saveJson(path.join(...assetsRoot, 'blockstates', `${smallDoorMaterialName}_small_dragon_door.json`), generateSmallDoorBlockState(smallDoorMaterialName))
+        await saveJson(path.join(...dataRoot, 'loot_tables', 'blocks', `${smallDoorMaterialName}_small_dragon_door.json `), generateSmallDoorLootTable(smallDoorMaterialName))
     }
 }
 
