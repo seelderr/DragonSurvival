@@ -1,3 +1,11 @@
+### [0.13.40](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.39...0.13.40) (2022-03-26)
+
+
+### Bug Fixes
+
+* removed translations of the mod name and hid cs_CZ due to too low a percentage of translation. ([63809b5](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/63809b5160a3c118b8b80ca63796d4dbde5d22cc))
+* Russian localization ([2396a8f](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/2396a8fb16d7cdf96e76ecec1fe90c3edefd1eef))
+
 ### [0.13.39](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.38...0.13.39) (2022-03-26)
 
 
