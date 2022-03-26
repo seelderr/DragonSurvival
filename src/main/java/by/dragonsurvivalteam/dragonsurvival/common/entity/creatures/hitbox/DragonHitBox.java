@@ -226,7 +226,7 @@ public class DragonHitBox extends MobEntity{
 
 	@Override
 	public boolean isInvulnerableTo(DamageSource pSource){
-		return super.isInvulnerableTo(pSource) || pSource == DamageSource.IN_WALL || pSource == DamageSource.LIGHTNING_BOLT || player.isInvulnerableTo(pSource);
+		return super.isInvulnerableTo(pSource) || pSource == DamageSource.IN_WALL || pSource == DamageSource.LIGHTNING_BOLT || player != null && player.isInvulnerableTo(pSource);
 	}
 
 	@Override
