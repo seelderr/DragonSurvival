@@ -130,7 +130,6 @@ async function main() {
     const projectRoot = [__dirname, '..','..'];
     const assetsRoot = [...projectRoot, 'src', 'main', 'resources', 'assets', 'dragonsurvival'];
     const dataRoot = [...projectRoot, 'src', 'main', 'resources', 'data', 'dragonsurvival'];
-    //src/main/resources/data/dragonsurvival/loot_tables/blocks/crimson_small_dragon_door.json
 
     const smallDoorMaterialNames = [
         "basalt",
