@@ -1,3 +1,46 @@
+### [0.13.40](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.39...0.13.40) (2022-03-26)
+
+
+### Bug Fixes
+
+* removed translations of the mod name and hid cs_CZ due to too low a percentage of translation. ([63809b5](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/63809b5160a3c118b8b80ca63796d4dbde5d22cc))
+* Russian localization ([2396a8f](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/2396a8fb16d7cdf96e76ecec1fe90c3edefd1eef))
+
+### [0.13.39](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.38...0.13.39) (2022-03-26)
+
+
+### Bug Fixes
+
+* fix emote server crash, and updated translations ([f303189](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/f303189f415227b701aa0dbb4c445384be4abb77))
+
+### [0.13.38](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.37...0.13.38) (2022-03-25)
+
+
+### Bug Fixes
+
+* Another server side issue ([ab12760](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/ab12760804796f649d5b7c986595a571893f19ba))
+
+### [0.13.37](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.36...0.13.37) (2022-03-25)
+
+
+### Bug Fixes
+
+* server crash ([6c9926e](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/6c9926e79cd311c33554300133d3bc9ad60e182a))
+
+### [0.13.36](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.35...0.13.36) (2022-03-24)
+
+
+### Bug Fixes
+
+* Should fix server side crash ([2b1a733](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/2b1a733a022b4eeaef269bfe9f3fd2686339f0bd))
+
+### [0.13.35](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.34...0.13.35) (2022-03-24)
+
+
+### Bug Fixes
+
+* This should fix missing class crash ([704cedf](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/704cedfd372e26eb232b744ffb51e49b93637f67))
+
 ### [0.13.34](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.33...0.13.34) (2022-03-24)
 
 

@@ -18,6 +18,9 @@ public class SkinCap extends SubCap{
 
 	public SkinCap(DragonStateHandler handler){
 		super(handler);
+		for(DragonType value : DragonType.values()){
+			skinPreset.initDefaults(value);
+		}
 	}
 
 	@Override

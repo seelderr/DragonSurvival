@@ -272,10 +272,10 @@ public class EventHandler{
 				}else if(block == Blocks.RED_SANDSTONE){
 					world.setBlockAndUpdate(blockPos, DSBlocks.dragon_altar_red_sandstone.getStateForPlacement(deirection));
 					replace = true;
-				}else if(block == Blocks.OAK_LOG){
+				}else if(block.getRegistryName().getPath().contains(Blocks.OAK_LOG.getRegistryName().getPath())){
 					world.setBlockAndUpdate(blockPos, DSBlocks.dragon_altar_oak_log.getStateForPlacement(deirection));
 					replace = true;
-				}else if(block == Blocks.BIRCH_LOG){
+				}else if(block.getRegistryName().getPath().contains(Blocks.BIRCH_LOG.getRegistryName().getPath())){
 					world.setBlockAndUpdate(blockPos, DSBlocks.dragon_altar_birch_log.getStateForPlacement(deirection));
 					replace = true;
 				}else if(block == Blocks.PURPUR_BLOCK){

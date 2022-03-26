@@ -29,7 +29,7 @@ public class ConfigHandler{
 			String text = String.valueOf(obj);
 			String[] itemSplit = text.split(":");
 			if(itemSplit.length >= 3 && itemSplit[0].equalsIgnoreCase("biome")){
-				return ResourceLocation.isValidResourceLocation(String.join(":", itemSplit[1], itemSplit[2]));
+				return isValidResourceLocation(String.join(":", itemSplit[1], itemSplit[2]));
 			}else if(itemSplit.length == 2){
 				ResourceLocation location = ResourceLocation.tryParse(text);
 				return location != null && ForgeRegistries.BIOMES.containsKey(location);
@@ -44,7 +44,7 @@ public class ConfigHandler{
 			String text = String.valueOf(obj);
 			String[] itemSplit = text.split(":");
 			if(itemSplit.length >= 3 && itemSplit[0].equalsIgnoreCase("effect")){
-				return ResourceLocation.isValidResourceLocation(String.join(":", itemSplit[1], itemSplit[2]));
+				return isValidResourceLocation(String.join(":", itemSplit[1], itemSplit[2]));
 			}else if(itemSplit.length == 2){
 				ResourceLocation location = ResourceLocation.tryParse(text);
 				return location != null && ForgeRegistries.MOB_EFFECTS.containsKey(location);
@@ -59,7 +59,7 @@ public class ConfigHandler{
 			String text = String.valueOf(obj);
 			String[] itemSplit = text.split(":");
 			if(itemSplit.length >= 3 && itemSplit[0].equalsIgnoreCase("entity")){
-				return ResourceLocation.isValidResourceLocation(String.join(":", itemSplit[1], itemSplit[2]));
+				return isValidResourceLocation(String.join(":", itemSplit[1], itemSplit[2]));
 			}else if(itemSplit.length == 2){
 				ResourceLocation location = ResourceLocation.tryParse(text);
 				return location != null && ForgeRegistries.ENTITIES.containsKey(location);
@@ -69,12 +69,17 @@ public class ConfigHandler{
 		return false;
 	};
 
+
+	public static boolean isValidResourceLocation(String pResourceName) {
+		String[] astring = ResourceLocation.decompose(pResourceName, ':');
+		return ResourceLocation.isValidNamespace(org.apache.commons.lang3.StringUtils.isEmpty(astring[0]) ? "minecraft" : astring[0]) && ResourceLocation.isValidPath(astring[1]);
+	}
 	public static final Predicate<Object> itemPredicate = (obj) -> {
 		try{
 			String text = String.valueOf(obj);
 			String[] itemSplit = text.split(":");
 			if(itemSplit.length >= 3 && itemSplit[0].equalsIgnoreCase("item")){
-				return ResourceLocation.isValidResourceLocation(String.join(":", itemSplit[1], itemSplit[2]));
+				return isValidResourceLocation(String.join(":", itemSplit[1], itemSplit[2]));
 			}else if(itemSplit.length == 2){
 				ResourceLocation location = ResourceLocation.tryParse(text);
 				return location != null && ForgeRegistries.ITEMS.containsKey(location);
@@ -89,7 +94,7 @@ public class ConfigHandler{
 			String text = String.valueOf(obj);
 			String[] itemSplit = text.split(":");
 			if(itemSplit.length >= 3 && itemSplit[0].equalsIgnoreCase("block")){
-				return ResourceLocation.isValidResourceLocation(String.join(":", itemSplit[1], itemSplit[2]));
+				return isValidResourceLocation(String.join(":", itemSplit[1], itemSplit[2]));
 			}else if(itemSplit.length == 2){
 				ResourceLocation location = ResourceLocation.tryParse(text);
 				return location != null && ForgeRegistries.BLOCKS.containsKey(location);
@@ -104,7 +109,7 @@ public class ConfigHandler{
 			String text = String.valueOf(obj);
 			String[] itemSplit = text.split(":");
 			if(itemSplit.length >= 3 && itemSplit[0].equalsIgnoreCase("tag")){
-				return ResourceLocation.isValidResourceLocation(String.join(":", itemSplit[1], itemSplit[2]));
+				return isValidResourceLocation(String.join(":", itemSplit[1], itemSplit[2]));
 			}else if(itemSplit.length == 2){
 				ResourceLocation location = ResourceLocation.tryParse(text);
 				return location != null && (BlockTags.getAllTags().getTag(location) != null || ItemTags.getAllTags().getTag(location) != null || EntityTypeTags.getAllTags().getTag(location) != null);
@@ -119,9 +124,9 @@ public class ConfigHandler{
 			String text = String.valueOf(obj);
 			String[] itemSplit = text.split(":");
 			if(itemSplit.length >= 3){
-				return ResourceLocation.isValidResourceLocation(String.join(":", itemSplit[1], itemSplit[2]));
+				return isValidResourceLocation(String.join(":", itemSplit[1], itemSplit[2]));
 			}else if(itemSplit.length == 2){
-				return ResourceLocation.isValidResourceLocation(String.join(":", itemSplit[0], itemSplit[1]));
+				return isValidResourceLocation(String.join(":", itemSplit[0], itemSplit[1]));
 			}
 		}catch(Exception ignored){
 		}
