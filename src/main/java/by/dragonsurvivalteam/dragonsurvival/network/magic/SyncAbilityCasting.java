@@ -7,21 +7,21 @@ import by.dragonsurvivalteam.dragonsurvival.common.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.world.World;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.DistExecutor.SafeRunnable;
-import net.minecraftforge.fml.network.NetworkEvent;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.network.NetworkDirection;
+import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.network.PacketDistributor;
 
 import java.util.function.Supplier;
 
-import static net.minecraftforge.fml.network.NetworkDirection.PLAY_TO_SERVER;
 
 public class SyncAbilityCasting implements IMessage<SyncAbilityCasting>{
 
@@ -38,7 +38,9 @@ public class SyncAbilityCasting implements IMessage<SyncAbilityCasting>{
 	}
 
 	@Override
-	public void encode(SyncAbilityCasting message, PacketBuffer buffer){
+
+	public void encode(SyncAbilityCasting message, FriendlyByteBuf buffer){
+
 		buffer.writeInt(message.playerId);
 		buffer.writeBoolean(message.currentAbility != null);
 
@@ -49,7 +51,9 @@ public class SyncAbilityCasting implements IMessage<SyncAbilityCasting>{
 	}
 
 	@Override
-	public SyncAbilityCasting decode(PacketBuffer buffer){
+
+	public SyncAbilityCasting decode(FriendlyByteBuf buffer){
+
 		int playerId = buffer.readInt();
 		DragonAbility ability = null;
 		boolean hasAbility = buffer.readBoolean();
@@ -67,8 +71,10 @@ public class SyncAbilityCasting implements IMessage<SyncAbilityCasting>{
 	public void handle(SyncAbilityCasting message, Supplier<NetworkEvent.Context> supplier){
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> runClient(message, supplier));
 
-		if(supplier.get().getDirection() == PLAY_TO_SERVER){
-			ServerPlayerEntity player = supplier.get().getSender();
+
+		if(supplier.get().getDirection() == NetworkDirection.PLAY_TO_SERVER){
+			ServerPlayer player = supplier.get().getSender();
+
 
 			DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
 				if(message.currentAbility != dragonStateHandler.getMagic().getCurrentlyCasting() && dragonStateHandler.getMagic().getCurrentlyCasting() != null){
@@ -86,11 +92,13 @@ public class SyncAbilityCasting implements IMessage<SyncAbilityCasting>{
 	public void runClient(SyncAbilityCasting message, Supplier<NetworkEvent.Context> supplier){
 		NetworkEvent.Context context = supplier.get();
 		context.enqueueWork(() -> {
-			PlayerEntity thisPlayer = Minecraft.getInstance().player;
+
+			Player thisPlayer = Minecraft.getInstance().player;
 			if(thisPlayer != null){
-				World world = thisPlayer.level;
+				Level world = thisPlayer.level;
 				Entity entity = world.getEntity(message.playerId);
-				if(entity instanceof PlayerEntity){
+				if(entity instanceof Player){
+
 					DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
 						if(message.currentAbility == null && dragonStateHandler.getMagic().getCurrentlyCasting() != null){
 							dragonStateHandler.getMagic().getCurrentlyCasting().stopCasting();

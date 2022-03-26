@@ -1,15 +1,15 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render.entity.creatures;
 
 import by.dragonsurvivalteam.dragonsurvival.client.models.HunterModel;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.ShooterEntity;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.Shooter;
+import com.mojang.blaze3d.matrix.PoseStack;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.layers.HeadLayer;
 import net.minecraft.client.renderer.entity.layers.HeldItemLayer;
 import net.minecraft.util.ResourceLocation;
 
-public class ShooterHunterRenderer extends MobRenderer<ShooterEntity, HunterModel<ShooterEntity>>{
+public class ShooterHunterRenderer extends MobRenderer<Shooter, HunterModel<Shooter>>{
 	private static final ResourceLocation TEXTURE = new ResourceLocation("dragonsurvival", "textures/dragon_hunter.png");
 
 	public ShooterHunterRenderer(EntityRendererManager rendererManager){
@@ -18,11 +18,11 @@ public class ShooterHunterRenderer extends MobRenderer<ShooterEntity, HunterMode
 		addLayer(new HeldItemLayer<>(this));
 	}
 
-	public ResourceLocation getTextureLocation(ShooterEntity p_110775_1_){
+	public ResourceLocation getTextureLocation(Shooter p_110775_1_){
 		return TEXTURE;
 	}
 
-	protected void scale(ShooterEntity shooter, MatrixStack matrixStack, float p_225620_3_){
+	protected void scale(Shooter shooter, PoseStack matrixStack, float p_225620_3_){
 		float f = 0.9375F;
 		matrixStack.scale(f, f, f);
 	}

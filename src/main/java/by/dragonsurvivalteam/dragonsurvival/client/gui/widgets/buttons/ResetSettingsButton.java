@@ -10,7 +10,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.config.SyncBooleanConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.config.SyncEnumConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.config.SyncListConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.config.SyncNumberConfig;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.matrix.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.AbstractOption;
@@ -111,7 +111,7 @@ public class ResetSettingsButton extends Button{
 	}
 
 	@Override
-	public void render(MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
+	public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
 		if(this.visible){
 			this.active = false;
 			this.isHovered = p_230430_2_ >= this.x && p_230430_3_ >= this.y && p_230430_2_ < this.x + this.width && p_230430_3_ < this.y + this.height;
@@ -122,9 +122,9 @@ public class ResetSettingsButton extends Button{
 			}
 
 			Minecraft minecraft = Minecraft.getInstance();
-			minecraft.getTextureManager().bind(WIDGETS_LOCATION);
+			minecraft.getTextureManager().bindForSetup(WIDGETS_LOCATION);
 			RenderSystem.color4f(1.0F, 1.0F, 1.0F, this.alpha);
-			int i = this.getYImage(this.isHovered());
+			int i = this.getYImage(this.isHoveredOrFocused());
 			RenderSystem.enableBlend();
 			RenderSystem.defaultBlendFunc();
 			RenderSystem.enableDepthTest();
@@ -132,7 +132,7 @@ public class ResetSettingsButton extends Button{
 			this.blit(p_230430_1_, this.x + this.width / 2, this.y, 200 - this.width / 2, 46 + i * 20, this.width / 2, this.height);
 			this.renderBg(p_230430_1_, minecraft, p_230430_2_, p_230430_3_);
 
-			Minecraft.getInstance().getTextureManager().bind(texture);
+			Minecraft.getInstance().getTextureManager().bindForSetup(texture);
 			blit(p_230430_1_, x + 2, y + 2, 0, 0, 16, 16, 16, 16);
 		}
 	}

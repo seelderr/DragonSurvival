@@ -11,23 +11,25 @@ import by.dragonsurvivalteam.dragonsurvival.network.container.OpenDragonInventor
 import by.dragonsurvivalteam.dragonsurvival.network.container.OpenInventory;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.inventory.InventoryScreen;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.fml.client.gui.GuiUtils;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraftforge.client.gui.GuiUtils;
 
 import java.util.Arrays;
+
 
 public class TabButton extends Button{
 	private final int index;
 	private final Screen parent;
 
 	public TabButton(int x, int y, int index, Screen parent){
+
 		super(x, y, 28, 32, null, (button) -> {});
 		this.index = index;
 		this.parent = parent;
 	}
+
 
 	@Override
 	public void onPress(){
@@ -83,6 +85,20 @@ public class TabButton extends Button{
 		}
 	}
 
+	public boolean isCurrent(){
+		switch(index){
+			case 0:
+				return parent instanceof DragonScreen || parent instanceof InventoryScreen;
+
+			case 1:
+				return parent instanceof AbilityScreen;
+
+			case 3:
+				return parent instanceof SkinsScreen;
+		}
+		return false;
+	}
+
 	@Override
 	public void renderButton(MatrixStack stack, int mouseX, int mouseY, float p_230431_4_){
 		Minecraft.getInstance().getTextureManager().bind(ClientMagicHUDHandler.widgetTextures);
@@ -105,21 +121,7 @@ public class TabButton extends Button{
 		}
 
 		if(isHovered()){
-			GuiUtils.drawHoveringText(stack, Arrays.asList(new TranslationTextComponent("ds.gui.tab_button." + index)), mouseX, mouseY, Minecraft.getInstance().screen.width, Minecraft.getInstance().screen.height, 200, Minecraft.getInstance().font);
+			GuiUtils.drawHoveringText(stack, Arrays.asList(new TranslatableComponent("ds.gui.tab_button." + index)), mouseX, mouseY, Minecraft.getInstance().screen.width, Minecraft.getInstance().screen.height, 200, Minecraft.getInstance().font);
 		}
-	}
-
-	public boolean isCurrent(){
-		switch(index){
-			case 0:
-				return parent instanceof DragonScreen || parent instanceof InventoryScreen;
-
-			case 1:
-				return parent instanceof AbilityScreen;
-
-			case 3:
-				return parent instanceof SkinsScreen;
-		}
-		return false;
 	}
 }

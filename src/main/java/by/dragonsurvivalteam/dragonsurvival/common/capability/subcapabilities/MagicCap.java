@@ -7,16 +7,16 @@ import by.dragonsurvivalteam.dragonsurvival.common.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.common.PassiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
 
 import java.util.ArrayList;
 import java.util.Objects;
 
 public class MagicCap extends SubCap{
 
+	private final ArrayList<DragonAbility> abilities = new ArrayList<>();
 	public boolean onMagicSource = false;
 	public int magicSourceTimer = 0;
-	private final ArrayList<DragonAbility> abilities = new ArrayList<>();
 	private ActiveDragonAbility currentlyCasting = null;
 	private int selectedAbilitySlot = 0;
 	private int currentMana = 0;
@@ -24,10 +24,6 @@ public class MagicCap extends SubCap{
 
 	public MagicCap(DragonStateHandler handler){
 		super(handler);
-	}
-
-	public void setCurrentlyCasting(ActiveDragonAbility currentlyCasting){
-		this.currentlyCasting = currentlyCasting;
 	}
 
 	public DragonAbility getAbilityOrDefault(DragonAbility ability){
@@ -90,12 +86,12 @@ public class MagicCap extends SubCap{
 	}
 
 	@Override
-	public CompoundNBT writeNBT(){
-		CompoundNBT tag = new CompoundNBT();
+	public CompoundTag writeNBT(){
+		CompoundTag tag = new CompoundTag();
 
 		tag.putBoolean("renderSkills", renderAbilityHotbar());
 
-		CompoundNBT nbt = new CompoundNBT();
+		CompoundTag nbt = new CompoundTag();
 		nbt.putInt("mana", getCurrentMana());
 		nbt.putInt("selectedAbilitySlot", getSelectedAbilitySlot());
 		nbt.put("abilitySlots", saveAbilities());
@@ -118,25 +114,15 @@ public class MagicCap extends SubCap{
 		return renderAbilities;
 	}
 
-	public CompoundNBT saveAbilities(){
-		CompoundNBT tag = new CompoundNBT();
-
-		for(DragonAbility ability : abilities){
-			tag.put(ability.getId(), ability.saveNBT());
-		}
-
-		return tag;
-	}
-
 	@Override
-	public void readNBT(CompoundNBT tag){
+	public void readNBT(CompoundTag tag){
 		onMagicSource = tag.getBoolean("onMagicSource");
 		magicSourceTimer = tag.getInt("magicSourceTimer");
 
 		setRenderAbilities(tag.getBoolean("renderSkills"));
 
 		if(tag.contains("abilityData")){
-			CompoundNBT ability = tag.getCompound("abilityData");
+			CompoundTag ability = tag.getCompound("abilityData");
 
 			if(ability != null){
 				setSelectedAbilitySlot(ability.getInt("selectedAbilitySlot"));
@@ -170,6 +156,10 @@ public class MagicCap extends SubCap{
 		return currentlyCasting;
 	}
 
+	public void setCurrentlyCasting(ActiveDragonAbility currentlyCasting){
+		this.currentlyCasting = currentlyCasting;
+	}
+
 	public ActiveDragonAbility getAbilityFromSlot(int slot){
 		ActiveDragonAbility dragonAbility = handler.getType() != null && DragonAbilities.ACTIVE_ABILITIES.get(handler.getType()) != null && DragonAbilities.ACTIVE_ABILITIES.get(handler.getType()).size() >= slot ? DragonAbilities.ACTIVE_ABILITIES.get(handler.getType()).get(slot) : null;
 		ActiveDragonAbility actual = (ActiveDragonAbility)getAbility(dragonAbility);
@@ -181,16 +171,15 @@ public class MagicCap extends SubCap{
 		this.renderAbilities = renderAbilities;
 	}
 
-	public void loadAbilities(CompoundNBT nbt){
-		CompoundNBT tag = nbt.contains("abilitySlots") ? nbt.getCompound("abilitySlots") : null;
+	public void loadAbilities(CompoundTag nbt){
+		CompoundTag tag = nbt.contains("abilitySlots") ? nbt.getCompound("abilitySlots") : null;
 
-		if(tag != null){
-			for(DragonAbility staticAbility : DragonAbilities.ABILITY_LOOKUP.values()){
-				if(tag.contains(staticAbility.getId())){
-					DragonAbility ability = staticAbility.createInstance();
-					ability.loadNBT(tag.getCompound(staticAbility.getId()));
-					addAbility(ability);
-				}
+
+		for(DragonAbility staticAbility : DragonAbilities.ABILITY_LOOKUP.values()){
+			if(tag.contains(staticAbility.getId())){
+				DragonAbility ability = staticAbility.createInstance();
+				ability.loadNBT(tag.getCompound(staticAbility.getId()));
+				addAbility(ability);
 			}
 		}
 	}
@@ -198,5 +187,15 @@ public class MagicCap extends SubCap{
 	public void addAbility(DragonAbility ability){
 		abilities.removeIf((c) -> c.getId() == ability.getId());
 		abilities.add(ability);
+	}
+
+	public CompoundTag saveAbilities(){
+		CompoundTag tag = new CompoundTag();
+
+		for(DragonAbility ability : abilities){
+			tag.put(ability.getId(), ability.saveNBT());
+		}
+
+		return tag;
 	}
 }

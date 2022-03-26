@@ -5,16 +5,16 @@ import by.dragonsurvivalteam.dragonsurvival.common.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.world.World;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.DistExecutor.SafeRunnable;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.ArrayList;
 import java.util.function.Supplier;
@@ -31,10 +31,12 @@ public class SyncMagicAbilities implements IMessage<SyncMagicAbilities>{
 	}
 
 	@Override
-	public void encode(SyncMagicAbilities message, PacketBuffer buffer){
+
+	public void encode(SyncMagicAbilities message, FriendlyByteBuf buffer){
 		buffer.writeInt(message.playerId);
 
-		CompoundNBT tag = new CompoundNBT();
+		CompoundTag tag = new CompoundTag();
+
 		for(DragonAbility ab : message.abilities){
 			tag.put(ab.getId(), ab.saveNBT());
 		}
@@ -43,11 +45,12 @@ public class SyncMagicAbilities implements IMessage<SyncMagicAbilities>{
 	}
 
 	@Override
-	public SyncMagicAbilities decode(PacketBuffer buffer){
+	public SyncMagicAbilities decode(FriendlyByteBuf buffer){
 		int playerId = buffer.readInt();
 
 		ArrayList<DragonAbility> abilities = new ArrayList<>();
-		CompoundNBT tag = buffer.readNbt();
+		CompoundTag tag = buffer.readNbt();
+
 
 		for(DragonAbility staticAbility : DragonAbilities.ABILITY_LOOKUP.values()){
 			if(tag.contains(staticAbility.getId())){
@@ -69,13 +72,14 @@ public class SyncMagicAbilities implements IMessage<SyncMagicAbilities>{
 	public void run(SyncMagicAbilities message, Supplier<NetworkEvent.Context> supplier){
 		NetworkEvent.Context context = supplier.get();
 		context.enqueueWork(() -> {
-			PlayerEntity thisPlayer = Minecraft.getInstance().player;
+			Player thisPlayer = Minecraft.getInstance().player;
 			if(thisPlayer != null){
-				World world = thisPlayer.level;
+				Level world = thisPlayer.level;
 				Entity entity = world.getEntity(message.playerId);
-				if(entity instanceof PlayerEntity){
+				if(entity instanceof Player){
+
 					DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
-						message.abilities.forEach((ab) -> ab.player = (PlayerEntity)entity);
+						message.abilities.forEach((ab) -> ab.player = (Player)entity);
 						dragonStateHandler.getMagic().getAbilities().clear();
 						dragonStateHandler.getMagic().getAbilities().addAll(message.abilities);
 					});

@@ -1,17 +1,18 @@
 package by.dragonsurvivalteam.dragonsurvival.client.particles;
 
-import net.minecraft.client.particle.IParticleRenderType;
-import net.minecraft.client.particle.SpriteTexturedParticle;
-import net.minecraft.client.world.ClientWorld;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.particle.ParticleRenderType;
+import net.minecraft.client.particle.TextureSheetParticle;
+import net.minecraft.world.entity.Entity.RemovalReason;
 
-public class BeaconParticle extends SpriteTexturedParticle{
+public class BeaconParticle extends TextureSheetParticle{
 	private double fallSpeed;
 
-	public BeaconParticle(ClientWorld p_i232447_1_, double p_i232447_2_, double p_i232447_4_, double p_i232447_6_){
+	public BeaconParticle(ClientLevel p_i232447_1_, double p_i232447_2_, double p_i232447_4_, double p_i232447_6_){
 		super(p_i232447_1_, p_i232447_2_, p_i232447_4_, p_i232447_6_);
 	}
 
-	public BeaconParticle(ClientWorld p_i232448_1_, double x, double y, double z, double xd, double yd, double zd){
+	public BeaconParticle(ClientLevel p_i232448_1_, double x, double y, double z, double xd, double yd, double zd){
 		super(p_i232448_1_, x, y, z, xd, yd, zd);
 		this.gravity = 0.9f;
 		fallSpeed = 0.02;
@@ -22,7 +23,7 @@ public class BeaconParticle extends SpriteTexturedParticle{
 		this.yo = this.y;
 		this.zo = this.z;
 		if(this.age++ >= this.lifetime){
-			this.remove();
+			this.remove(RemovalReason.DISCARDED);
 		}else{
 			//            this.setSpriteFromAge(this.sprites);
 			this.yd += this.fallSpeed;
@@ -40,7 +41,7 @@ public class BeaconParticle extends SpriteTexturedParticle{
 	}
 
 	@Override
-	public IParticleRenderType getRenderType(){
-		return IParticleRenderType.PARTICLE_SHEET_OPAQUE;
+	public ParticleRenderType getRenderType(){
+		return ParticleRenderType.PARTICLE_SHEET_OPAQUE;
 	}
 }

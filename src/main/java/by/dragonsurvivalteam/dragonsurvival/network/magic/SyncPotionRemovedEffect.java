@@ -2,17 +2,17 @@ package by.dragonsurvivalteam.dragonsurvival.network.magic;
 
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.potion.Effect;
-import net.minecraft.world.World;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.DistExecutor.SafeRunnable;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
@@ -29,13 +29,17 @@ public class SyncPotionRemovedEffect implements IMessage<SyncPotionRemovedEffect
 	}
 
 	@Override
-	public void encode(SyncPotionRemovedEffect message, PacketBuffer buffer){
+
+	public void encode(SyncPotionRemovedEffect message, FriendlyByteBuf buffer){
+
 		buffer.writeInt(message.entityId);
 		buffer.writeInt(message.effectId);
 	}
 
 	@Override
-	public SyncPotionRemovedEffect decode(PacketBuffer buffer){
+
+	public SyncPotionRemovedEffect decode(FriendlyByteBuf buffer){
+
 		int playerId = buffer.readInt();
 		int effectId = buffer.readInt();
 
@@ -51,11 +55,13 @@ public class SyncPotionRemovedEffect implements IMessage<SyncPotionRemovedEffect
 	public void run(SyncPotionRemovedEffect message, Supplier<NetworkEvent.Context> supplier){
 		NetworkEvent.Context context = supplier.get();
 		context.enqueueWork(() -> {
-			PlayerEntity thisPlayer = Minecraft.getInstance().player;
+
+			Player thisPlayer = Minecraft.getInstance().player;
 			if(thisPlayer != null){
-				World world = thisPlayer.level;
+				Level world = thisPlayer.level;
 				Entity entity = world.getEntity(message.entityId);
-				Effect ef = Effect.byId(message.effectId);
+				MobEffect ef = MobEffect.byId(message.effectId);
+
 
 				if(ef != null){
 					if(entity instanceof LivingEntity){

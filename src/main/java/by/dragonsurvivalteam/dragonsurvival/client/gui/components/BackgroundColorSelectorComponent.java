@@ -4,7 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEdito
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.ColorPickerButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownList;
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.matrix.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FocusableGui;
 import net.minecraft.client.gui.IGuiEventListener;
@@ -16,15 +16,13 @@ import java.awt.Color;
 import java.util.List;
 
 public class BackgroundColorSelectorComponent extends FocusableGui implements IRenderable{
-	public boolean visible;
-
 	private final ExtendedButton colorPicker;
-
 	private final DragonEditorScreen screen;
 	private final int x;
 	private final int y;
 	private final int xSize;
 	private final int ySize;
+	public boolean visible;
 
 	public BackgroundColorSelectorComponent(DragonEditorScreen screen, int x, int y, int xSize, int ySize){
 		this.screen = screen;
@@ -54,7 +52,7 @@ public class BackgroundColorSelectorComponent extends FocusableGui implements IR
 	}
 
 	@Override
-	public void render(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
+	public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
 		Minecraft.getInstance().textureManager.bind(DropdownList.BACKGROUND_TEXTURE);
 		GuiUtils.drawContinuousTexturedBox(pMatrixStack, x, y - 3, 0, 0, xSize, ySize + 6, 32, 32, 10, 10);
 		colorPicker.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);

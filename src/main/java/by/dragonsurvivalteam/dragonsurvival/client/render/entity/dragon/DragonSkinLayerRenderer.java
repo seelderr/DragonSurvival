@@ -10,19 +10,19 @@ import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.objects.LayerS
 import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.objects.SkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.objects.SkinPreset.SkinAgeGroup;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.Dragon;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.blaze3d.matrix.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.potion.Effects;
+import net.minecraft.potion.MobEffects;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Mth;
 import software.bernie.geckolib3.renderers.geo.GeoLayerRenderer;
 import software.bernie.geckolib3.renderers.geo.IGeoRenderer;
 
@@ -32,18 +32,18 @@ import java.io.InputStream;
 import java.util.Locale;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class DragonSkinLayerRenderer extends GeoLayerRenderer<DragonEntity>{
-	private final IGeoRenderer<DragonEntity> renderer;
+public class DragonSkinLayerRenderer extends GeoLayerRenderer<Dragon>{
+	private final IGeoRenderer<Dragon> renderer;
 	public ConcurrentHashMap<ResourceLocation, DynamicTexture> dynamicTextures = new ConcurrentHashMap<>();
 
-	public DragonSkinLayerRenderer(IGeoRenderer<DragonEntity> entityRendererIn){
+	public DragonSkinLayerRenderer(IGeoRenderer<Dragon> entityRendererIn){
 		super(entityRendererIn);
 		this.renderer = entityRendererIn;
 	}
 
 	@Override
-	public void render(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, DragonEntity entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch){
-		if(entitylivingbaseIn.hasEffect(Effects.INVISIBILITY)){
+	public void render(PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn, Dragon entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch){
+		if(entitylivingbaseIn.hasEffect(MobEffects.INVISIBILITY)){
 			return;
 		}
 
@@ -73,7 +73,7 @@ public class DragonSkinLayerRenderer extends GeoLayerRenderer<DragonEntity>{
 						return;
 					}
 
-					ResourceLocation dynamicTexture = text.colorable && text.defaultColor == null ? new ResourceLocation(DragonSurvivalMod.MODID, "dynamic_" +  entitylivingbaseIn.getPlayer().getName().getString().toLowerCase(Locale.ROOT)  + "_" + texture.getPath()) : texture;
+					ResourceLocation dynamicTexture = text.colorable && text.defaultColor == null ? new ResourceLocation(DragonSurvivalMod.MODID, "dynamic_" + entitylivingbaseIn.getPlayer().getName().getString().toLowerCase(Locale.ROOT) + "_" + texture.getPath()) : texture;
 
 					Color renderColor = new Color(1f, 1f, 1f, 1f);
 
@@ -101,11 +101,11 @@ public class DragonSkinLayerRenderer extends GeoLayerRenderer<DragonEntity>{
 
 					if(settings.glowing){
 						RenderType type = RenderType.eyes(dynamicTexture);
-						IVertexBuilder vertexConsumer = bufferIn.getBuffer(type);
+						VertexConsumer vertexConsumer = bufferIn.getBuffer(type);
 						renderer.render(getEntityModel().getModel(getEntityModel().getModelLocation(entitylivingbaseIn)), entitylivingbaseIn, partialTicks, type, matrixStackIn, bufferIn, vertexConsumer, 0, OverlayTexture.NO_OVERLAY, renderColor.getRed() / 255f, renderColor.getGreen() / 255f, renderColor.getBlue() / 255f, renderColor.getAlpha() / 255f);
 					}else{
 						RenderType type = renderer.getRenderType(entitylivingbaseIn, partialTicks, matrixStackIn, bufferIn, null, packedLightIn, dynamicTexture);
-						IVertexBuilder vertexConsumer = bufferIn.getBuffer(type);
+						VertexConsumer vertexConsumer = bufferIn.getBuffer(type);
 						renderer.render(ClientDragonRender.dragonModel.getModel(ClientDragonRender.dragonModel.getModelLocation(null)), entitylivingbaseIn, partialTicks, type, matrixStackIn, bufferIn, vertexConsumer, packedLightIn, OverlayTexture.NO_OVERLAY, renderColor.getRed() / 255f, renderColor.getGreen() / 255f, renderColor.getBlue() / 255f, renderColor.getAlpha() / 255f);
 					}
 					((DragonRenderer)renderer).isLayer = false;
@@ -136,21 +136,21 @@ public class DragonSkinLayerRenderer extends GeoLayerRenderer<DragonEntity>{
 						}
 
 						if(hueVal > 0){
-							hsb[0] = (float)MathHelper.lerp(Math.abs(hueVal) * 2, hsb[0], 1.0);
+							hsb[0] = (float)Mth.lerp(Math.abs(hueVal) * 2, hsb[0], 1.0);
 						}else{
-							hsb[0] = (float)MathHelper.lerp(Math.abs(hueVal) * 2, hsb[0], 0.0);
+							hsb[0] = (float)Mth.lerp(Math.abs(hueVal) * 2, hsb[0], 0.0);
 						}
 
 						if(satVal > 0){
-							hsb[1] = (float)MathHelper.lerp(Math.abs(satVal) * 2, hsb[1], 1.0);
+							hsb[1] = (float)Mth.lerp(Math.abs(satVal) * 2, hsb[1], 1.0);
 						}else{
-							hsb[1] = (float)MathHelper.lerp(Math.abs(satVal) * 2, hsb[1], 0.0);
+							hsb[1] = (float)Mth.lerp(Math.abs(satVal) * 2, hsb[1], 0.0);
 						}
 
 						if(brightVal > 0){
-							hsb[2] = (float)MathHelper.lerp(Math.abs(brightVal) * 2, hsb[2], 1.0);
+							hsb[2] = (float)Mth.lerp(Math.abs(brightVal) * 2, hsb[2], 1.0);
 						}else{
-							hsb[2] = (float)MathHelper.lerp(Math.abs(brightVal) * 2, hsb[2], 0.0);
+							hsb[2] = (float)Mth.lerp(Math.abs(brightVal) * 2, hsb[2], 0.0);
 						}
 
 						Color c = new Color(Color.HSBtoRGB(hsb[0], hsb[1], hsb[2]));

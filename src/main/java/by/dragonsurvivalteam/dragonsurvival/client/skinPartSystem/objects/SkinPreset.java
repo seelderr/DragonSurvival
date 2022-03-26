@@ -6,7 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.common.capability.NBTInterface;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
 
 import java.util.HashMap;
 
@@ -31,8 +31,8 @@ public class SkinPreset implements NBTInterface{
 	}
 
 	@Override
-	public CompoundNBT writeNBT(){
-		CompoundNBT nbt = new CompoundNBT();
+	public CompoundTag writeNBT(){
+		CompoundTag nbt = new CompoundTag();
 		nbt.putDouble("sizeMul", sizeMul);
 
 		for(DragonLevel level : DragonLevel.values()){
@@ -43,12 +43,12 @@ public class SkinPreset implements NBTInterface{
 	}
 
 	@Override
-	public void readNBT(CompoundNBT base){
+	public void readNBT(CompoundTag base){
 		sizeMul = base.getDouble("sizeMul");
 
 		for(DragonLevel level : DragonLevel.values()){
 			SkinAgeGroup ageGroup = new SkinAgeGroup(level);
-			CompoundNBT nbt = base.getCompound(level.name);
+			CompoundTag nbt = base.getCompound(level.name);
 			ageGroup.readNBT(nbt);
 			skinAges.put(level, ageGroup);
 		}
@@ -77,8 +77,8 @@ public class SkinPreset implements NBTInterface{
 		}
 
 		@Override
-		public CompoundNBT writeNBT(){
-			CompoundNBT nbt = new CompoundNBT();
+		public CompoundTag writeNBT(){
+			CompoundTag nbt = new CompoundTag();
 
 			nbt.putBoolean("wings", wings);
 			nbt.putBoolean("defaultSkin", defaultSkin);
@@ -91,13 +91,13 @@ public class SkinPreset implements NBTInterface{
 		}
 
 		@Override
-		public void readNBT(CompoundNBT base){
+		public void readNBT(CompoundTag base){
 			wings = base.getBoolean("wings");
 			defaultSkin = base.getBoolean("defaultSkin");
 
 			for(EnumSkinLayer layer : EnumSkinLayer.values()){
 				LayerSettings ageGroup = new LayerSettings();
-				CompoundNBT nbt = base.getCompound(layer.name());
+				CompoundTag nbt = base.getCompound(layer.name());
 				ageGroup.readNBT(nbt);
 				layerSettings.put(layer, ageGroup);
 			}

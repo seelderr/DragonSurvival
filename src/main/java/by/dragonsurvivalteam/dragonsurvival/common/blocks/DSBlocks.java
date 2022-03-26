@@ -1,19 +1,17 @@
 package by.dragonsurvivalteam.dragonsurvival.common.blocks;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.client.render.item.HelmetStackTileEntityRenderer;
+import by.dragonsurvivalteam.dragonsurvival.client.render.item.HelmetStackBlockEntityRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.SoundRegistry;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.DragonPressurePlates.PressurePlateType;
 import by.dragonsurvivalteam.dragonsurvival.common.items.DragonDoorItem;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.SoundType;
-import net.minecraft.block.material.Material;
-import net.minecraft.block.material.MaterialColor;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraftforge.common.ToolType;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.MaterialColor;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -65,15 +63,15 @@ public class DSBlocks{
 	public static void registerBlocks(final RegistryEvent.Register<Block> event){
 		IForgeRegistry<Block> forgeRegistry = event.getRegistry();
 
-		dragon_altar_stone = new DragonAltarBlock(Block.Properties.of(Material.STONE).harvestTool(ToolType.PICKAXE).harvestLevel(0).strength(1.5f).sound(SoundType.STONE).requiresCorrectToolForDrops());
-		dragon_altar_sandstone = new DragonAltarBlock(Block.Properties.of(Material.STONE).harvestTool(ToolType.PICKAXE).harvestLevel(0).strength(0.8f).sound(SoundType.STONE).requiresCorrectToolForDrops());
-		dragon_altar_red_sandstone = new DragonAltarBlock(Block.Properties.of(Material.STONE).harvestTool(ToolType.PICKAXE).harvestLevel(0).strength(0.8f).sound(SoundType.STONE).requiresCorrectToolForDrops());
-		dragon_altar_purpur_block = new DragonAltarBlock(Block.Properties.of(Material.STONE).harvestTool(ToolType.PICKAXE).harvestLevel(0).strength(1.5f).sound(SoundType.STONE).requiresCorrectToolForDrops());
-		dragon_altar_oak_log = new DragonAltarBlock(Block.Properties.of(Material.WOOD).harvestTool(ToolType.AXE).harvestLevel(0).strength(2f).sound(SoundType.WOOD));
-		dragon_altar_birch_log = new DragonAltarBlock(Block.Properties.of(Material.WOOD).harvestTool(ToolType.AXE).harvestLevel(0).strength(2f).sound(SoundType.WOOD));
-		dragon_altar_nether_bricks = new DragonAltarBlock(Block.Properties.of(Material.STONE).harvestTool(ToolType.PICKAXE).harvestLevel(0).strength(0.4f).sound(SoundType.NETHER_BRICKS).requiresCorrectToolForDrops());
-		dragon_altar_mossy_cobblestone = new DragonAltarBlock(Block.Properties.of(Material.STONE).harvestTool(ToolType.PICKAXE).harvestLevel(0).strength(2f).sound(SoundType.STONE).requiresCorrectToolForDrops());
-		dragon_altar_blackstone = new DragonAltarBlock(Block.Properties.of(Material.STONE).harvestTool(ToolType.PICKAXE).harvestLevel(0).strength(1.5f).sound(SoundType.STONE).requiresCorrectToolForDrops());
+		dragon_altar_stone = new DragonAltarBlock(Block.Properties.of(Material.STONE).strength(1.5f).sound(SoundType.STONE).requiresCorrectToolForDrops());
+		dragon_altar_sandstone = new DragonAltarBlock(Block.Properties.of(Material.STONE).strength(0.8f).sound(SoundType.STONE).requiresCorrectToolForDrops());
+		dragon_altar_red_sandstone = new DragonAltarBlock(Block.Properties.of(Material.STONE).strength(0.8f).sound(SoundType.STONE).requiresCorrectToolForDrops());
+		dragon_altar_purpur_block = new DragonAltarBlock(Block.Properties.of(Material.STONE).strength(1.5f).sound(SoundType.STONE).requiresCorrectToolForDrops());
+		dragon_altar_oak_log = new DragonAltarBlock(Block.Properties.of(Material.WOOD).harvestTool(ToolType.AXE).strength(2f).sound(SoundType.WOOD));
+		dragon_altar_birch_log = new DragonAltarBlock(Block.Properties.of(Material.WOOD).harvestTool(ToolType.AXE).strength(2f).sound(SoundType.WOOD));
+		dragon_altar_nether_bricks = new DragonAltarBlock(Block.Properties.of(Material.STONE).strength(0.4f).sound(SoundType.NETHER_BRICKS).requiresCorrectToolForDrops());
+		dragon_altar_mossy_cobblestone = new DragonAltarBlock(Block.Properties.of(Material.STONE).strength(2f).sound(SoundType.STONE).requiresCorrectToolForDrops());
+		dragon_altar_blackstone = new DragonAltarBlock(Block.Properties.of(Material.STONE).strength(1.5f).sound(SoundType.STONE).requiresCorrectToolForDrops());
 
 		forgeRegistry.register(dragon_altar_stone.setRegistryName(DragonSurvivalMod.MODID, "dragon_altar_stone"));
 		forgeRegistry.register(dragon_altar_sandstone.setRegistryName(DragonSurvivalMod.MODID, "dragon_altar_sandstone"));
@@ -125,37 +123,37 @@ public class DSBlocks{
 		quartzSmallDoor = registerBlock(new SmallDragonDoor(Block.Properties.of(Material.STONE, Blocks.CRIMSON_PLANKS.defaultMaterialColor()).strength(3.0F).sound(SoundType.STONE).noOcclusion(), DragonDoorOpenRequirement.NONE), "quartz_small_dragon_door", forgeRegistry);
 
 		// TODO set properties for these doors
-		murdererDoor = registerBlock(new DragonDoor(AbstractBlock.Properties.copy(oakDoor), DragonDoorOpenRequirement.NONE), "murderer_dragon_door", forgeRegistry);
-		sleeperDoor = registerBlock(new DragonDoor(AbstractBlock.Properties.copy(oakDoor), DragonDoorOpenRequirement.NONE), "sleeper_dragon_door", forgeRegistry);
-		stoneDoor = registerBlock(new DragonDoor(AbstractBlock.Properties.copy(oakDoor), DragonDoorOpenRequirement.NONE), "stone_dragon_door", forgeRegistry);
+		murdererDoor = registerBlock(new DragonDoor(Block.Properties.copy(oakDoor), DragonDoorOpenRequirement.NONE), "murderer_dragon_door", forgeRegistry);
+		sleeperDoor = registerBlock(new DragonDoor(Block.Properties.copy(oakDoor), DragonDoorOpenRequirement.NONE), "sleeper_dragon_door", forgeRegistry);
+		stoneDoor = registerBlock(new DragonDoor(Block.Properties.copy(oakDoor), DragonDoorOpenRequirement.NONE), "stone_dragon_door", forgeRegistry);
 		legacyDoor = registerBlock(new DragonDoor(Block.Properties.of(Material.WOOD, Blocks.SPRUCE_PLANKS.defaultMaterialColor()).strength(3.0F).sound(SoundType.WOOD).noOcclusion(), DragonDoorOpenRequirement.NONE), "legacy_dragon_door", forgeRegistry);
 
 		caveSourceOfMagic = registerBlock(new SourceOfMagicBlock(Block.Properties.of(Material.STONE).randomTicks().strength(3, 100).noOcclusion().lightLevel((c1) -> 10)), "cave_source_of_magic", forgeRegistry);
 		forestSourceOfMagic = registerBlock(new SourceOfMagicBlock(Block.Properties.of(Material.STONE).strength(3, 100).noOcclusion().lightLevel((c1) -> 10)), "forest_source_of_magic", forgeRegistry);
 		seaSourceOfMagic = registerBlock(new SourceOfMagicBlock(Block.Properties.of(Material.STONE).strength(3, 100).noOcclusion().lightLevel((c1) -> 10)), "sea_source_of_magic", forgeRegistry);
 
-		treasureDebris = registerBlock(new TreasureBlock(new Color(148, 120, 114), AbstractBlock.Properties.of(Material.METAL, MaterialColor.COLOR_BROWN).noOcclusion().sound(SoundRegistry.treasureMetal).strength(0.5F)), "treasure_debris", forgeRegistry);
-		treasureDiamond = registerBlock(new TreasureBlock(new Color(212, 255, 255), AbstractBlock.Properties.of(Material.METAL, MaterialColor.DIAMOND).noOcclusion().sound(SoundRegistry.treasureGem).strength(0.5F)), "treasure_diamond", forgeRegistry);
-		treasureEmerald = registerBlock(new TreasureBlock(new Color(57, 240, 94), AbstractBlock.Properties.of(Material.METAL, MaterialColor.COLOR_GREEN).noOcclusion().sound(SoundRegistry.treasureGem).strength(0.5F)), "treasure_emerald", forgeRegistry);
-		treasureCopper = registerBlock(new TreasureBlock(new Color(255, 255, 208), AbstractBlock.Properties.of(Material.GLASS, MaterialColor.COLOR_ORANGE).noOcclusion().sound(SoundRegistry.treasureMetal).strength(0.5F)), "treasure_copper", forgeRegistry);
-		treasureGold = registerBlock(new TreasureBlock(new Color(255, 255, 243), AbstractBlock.Properties.of(Material.METAL, MaterialColor.GOLD).noOcclusion().sound(SoundRegistry.treasureMetal).strength(0.5F)), "treasure_gold", forgeRegistry);
-		treasureIron = registerBlock(new TreasureBlock(new Color(211, 211, 211), AbstractBlock.Properties.of(Material.METAL, MaterialColor.METAL).noOcclusion().sound(SoundRegistry.treasureMetal).strength(0.5F)), "treasure_iron", forgeRegistry);
+		treasureDebris = registerBlock(new TreasureBlock(new Color(148, 120, 114), Block.Properties.of(Material.METAL, MaterialColor.COLOR_BROWN).noOcclusion().sound(SoundRegistry.treasureMetal).strength(0.5F)), "treasure_debris", forgeRegistry);
+		treasureDiamond = registerBlock(new TreasureBlock(new Color(212, 255, 255), Block.Properties.of(Material.METAL, MaterialColor.DIAMOND).noOcclusion().sound(SoundRegistry.treasureGem).strength(0.5F)), "treasure_diamond", forgeRegistry);
+		treasureEmerald = registerBlock(new TreasureBlock(new Color(57, 240, 94), Block.Properties.of(Material.METAL, MaterialColor.COLOR_GREEN).noOcclusion().sound(SoundRegistry.treasureGem).strength(0.5F)), "treasure_emerald", forgeRegistry);
+		treasureCopper = registerBlock(new TreasureBlock(new Color(255, 255, 208), Block.Properties.of(Material.GLASS, MaterialColor.COLOR_ORANGE).noOcclusion().sound(SoundRegistry.treasureMetal).strength(0.5F)), "treasure_copper", forgeRegistry);
+		treasureGold = registerBlock(new TreasureBlock(new Color(255, 255, 243), Block.Properties.of(Material.METAL, MaterialColor.GOLD).noOcclusion().sound(SoundRegistry.treasureMetal).strength(0.5F)), "treasure_gold", forgeRegistry);
+		treasureIron = registerBlock(new TreasureBlock(new Color(211, 211, 211), Block.Properties.of(Material.METAL, MaterialColor.METAL).noOcclusion().sound(SoundRegistry.treasureMetal).strength(0.5F)), "treasure_iron", forgeRegistry);
 
-		helmet1 = registerBlock(new HelmetBlock(AbstractBlock.Properties.of(Material.METAL)), "broken_knight_helmet_1", forgeRegistry);
-		helmet2 = registerBlock(new HelmetBlock(AbstractBlock.Properties.of(Material.METAL)), "broken_knight_helmet_2", forgeRegistry);
-		helmet3 = registerBlock(new HelmetBlock(AbstractBlock.Properties.of(Material.METAL)), "broken_knight_helmet_3", forgeRegistry);
+		helmet1 = registerBlock(new HelmetBlock(Block.Properties.of(Material.METAL)), "broken_knight_helmet_1", forgeRegistry);
+		helmet2 = registerBlock(new HelmetBlock(Block.Properties.of(Material.METAL)), "broken_knight_helmet_2", forgeRegistry);
+		helmet3 = registerBlock(new HelmetBlock(Block.Properties.of(Material.METAL)), "broken_knight_helmet_3", forgeRegistry);
 
-		dragonBeacon = registerBlock(new DragonBeacon(AbstractBlock.Properties.of(Material.HEAVY_METAL).strength(15, 50).requiresCorrectToolForDrops().noOcclusion().noCollission()), "empty_dragon_beacon", forgeRegistry);
-		dragonMemoryBlock = registerBlock(new Block(AbstractBlock.Properties.of(Material.HEAVY_METAL).strength(3, 30).requiresCorrectToolForDrops()), "dragon_memory_block", forgeRegistry);
-		peaceDragonBeacon = registerBlock(new DragonBeacon(AbstractBlock.Properties.copy(dragonBeacon).lightLevel(value -> value.getValue(DragonBeacon.LIT) ? 15 : 0)), "dragon_beacon_peace", forgeRegistry);
-		magicDragonBeacon = registerBlock(new DragonBeacon(AbstractBlock.Properties.copy(dragonBeacon).lightLevel(value -> value.getValue(DragonBeacon.LIT) ? 15 : 0)), "dragon_beacon_magic", forgeRegistry);
-		fireDragonBeacon = registerBlock(new DragonBeacon(AbstractBlock.Properties.copy(dragonBeacon).lightLevel(value -> value.getValue(DragonBeacon.LIT) ? 15 : 0)), "dragon_beacon_fire", forgeRegistry);
+		dragonBeacon = registerBlock(new DragonBeacon(Block.Properties.of(Material.HEAVY_METAL).strength(15, 50).requiresCorrectToolForDrops().noOcclusion().noCollission()), "empty_dragon_beacon", forgeRegistry);
+		dragonMemoryBlock = registerBlock(new Block(Block.Properties.of(Material.HEAVY_METAL).strength(3, 30).requiresCorrectToolForDrops()), "dragon_memory_block", forgeRegistry);
+		peaceDragonBeacon = registerBlock(new DragonBeacon(Block.Properties.copy(dragonBeacon).lightLevel(value -> value.getValue(DragonBeacon.LIT) ? 15 : 0)), "dragon_beacon_peace", forgeRegistry);
+		magicDragonBeacon = registerBlock(new DragonBeacon(Block.Properties.copy(dragonBeacon).lightLevel(value -> value.getValue(DragonBeacon.LIT) ? 15 : 0)), "dragon_beacon_magic", forgeRegistry);
+		fireDragonBeacon = registerBlock(new DragonBeacon(Block.Properties.copy(dragonBeacon).lightLevel(value -> value.getValue(DragonBeacon.LIT) ? 15 : 0)), "dragon_beacon_fire", forgeRegistry);
 
-		dragonPressurePlate = registerBlock(new DragonPressurePlates(AbstractBlock.Properties.of(Material.STONE).harvestTool(ToolType.PICKAXE).harvestLevel(0).strength(1.5f).sound(SoundType.STONE).requiresCorrectToolForDrops(), PressurePlateType.DRAGON), "dragon_pressure_plate", forgeRegistry);
-		humanPressurePlate = registerBlock(new DragonPressurePlates(AbstractBlock.Properties.of(Material.STONE).harvestTool(ToolType.PICKAXE).harvestLevel(0).strength(1.5f).sound(SoundType.STONE).requiresCorrectToolForDrops(), PressurePlateType.HUMAN), "human_pressure_plate", forgeRegistry);
-		seaPressurePlate = registerBlock(new DragonPressurePlates(AbstractBlock.Properties.of(Material.STONE).harvestTool(ToolType.PICKAXE).harvestLevel(0).strength(1.5f).sound(SoundType.STONE).requiresCorrectToolForDrops(), PressurePlateType.SEA), "sea_dragon_pressure_plate", forgeRegistry);
-		forestPressurePlate = registerBlock(new DragonPressurePlates(AbstractBlock.Properties.of(Material.WOOD).harvestTool(ToolType.AXE).harvestLevel(0).strength(2.0F).sound(SoundType.WOOD).requiresCorrectToolForDrops(), PressurePlateType.FOREST), "forest_dragon_pressure_plate", forgeRegistry);
-		cavePressurePlate = registerBlock(new DragonPressurePlates(AbstractBlock.Properties.of(Material.STONE).harvestTool(ToolType.PICKAXE).harvestLevel(0).strength(1.5f).sound(SoundType.STONE).requiresCorrectToolForDrops(), PressurePlateType.CAVE), "cave_dragon_pressure_plate", forgeRegistry);
+		dragonPressurePlate = registerBlock(new DragonPressurePlates(Block.Properties.of(Material.STONE).strength(1.5f).sound(SoundType.STONE).requiresCorrectToolForDrops(), PressurePlateType.DRAGON), "dragon_pressure_plate", forgeRegistry);
+		humanPressurePlate = registerBlock(new DragonPressurePlates(Block.Properties.of(Material.STONE).strength(1.5f).sound(SoundType.STONE).requiresCorrectToolForDrops(), PressurePlateType.HUMAN), "human_pressure_plate", forgeRegistry);
+		seaPressurePlate = registerBlock(new DragonPressurePlates(Block.Properties.of(Material.STONE).strength(1.5f).sound(SoundType.STONE).requiresCorrectToolForDrops(), PressurePlateType.SEA), "sea_dragon_pressure_plate", forgeRegistry);
+		forestPressurePlate = registerBlock(new DragonPressurePlates(Block.Properties.of(Material.WOOD).strength(2.0F).sound(SoundType.WOOD).requiresCorrectToolForDrops(), PressurePlateType.FOREST), "forest_dragon_pressure_plate", forgeRegistry);
+		cavePressurePlate = registerBlock(new DragonPressurePlates(Block.Properties.of(Material.STONE).strength(1.5f).sound(SoundType.STONE).requiresCorrectToolForDrops(), PressurePlateType.CAVE), "cave_dragon_pressure_plate", forgeRegistry);
 	}
 
 	private static <B extends Block> B registerBlock(B block, String identifier, IForgeRegistry<Block> forgeRegistry){
@@ -225,9 +223,9 @@ public class DSBlocks{
 		registerItem(dragon_altar_blackstone, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
 		registerItem(dragon_altar_birch_log, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
 
-		registerItem(helmet1, new Item.Properties().setISTER(() -> HelmetStackTileEntityRenderer::new).tab(DragonSurvivalMod.items), forgeRegistry);
-		registerItem(helmet2, new Item.Properties().setISTER(() -> HelmetStackTileEntityRenderer::new).tab(DragonSurvivalMod.items), forgeRegistry);
-		registerItem(helmet3, new Item.Properties().setISTER(() -> HelmetStackTileEntityRenderer::new).tab(DragonSurvivalMod.items), forgeRegistry);
+		registerItem(helmet1, new Item.Properties().setISTER(() -> HelmetStackBlockEntityRenderer::new).tab(DragonSurvivalMod.items), forgeRegistry);
+		registerItem(helmet2, new Item.Properties().setISTER(() -> HelmetStackBlockEntityRenderer::new).tab(DragonSurvivalMod.items), forgeRegistry);
+		registerItem(helmet3, new Item.Properties().setISTER(() -> HelmetStackBlockEntityRenderer::new).tab(DragonSurvivalMod.items), forgeRegistry);
 
 		registerItem(dragonBeacon, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
 		registerItem(peaceDragonBeacon, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);

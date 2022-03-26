@@ -6,10 +6,10 @@ import by.dragonsurvivalteam.dragonsurvival.common.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.common.PassiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.network.PacketDistributor;
 
 import java.util.function.Supplier;
 
@@ -27,14 +27,14 @@ public class ChangeSkillLevel implements IMessage<ChangeSkillLevel>{
 	public ChangeSkillLevel(){}
 
 	@Override
-	public void encode(ChangeSkillLevel message, PacketBuffer buffer){
+	public void encode(ChangeSkillLevel message, FriendlyByteBuf buffer){
 		buffer.writeInt(message.level);
 		buffer.writeUtf(message.skill);
 		buffer.writeInt(message.levelChange);
 	}
 
 	@Override
-	public ChangeSkillLevel decode(PacketBuffer buffer){
+	public ChangeSkillLevel decode(FriendlyByteBuf buffer){
 		int level = buffer.readInt();
 		String skill = buffer.readUtf();
 		int levelChange = buffer.readInt();
@@ -43,13 +43,13 @@ public class ChangeSkillLevel implements IMessage<ChangeSkillLevel>{
 
 	@Override
 	public void handle(ChangeSkillLevel message, Supplier<NetworkEvent.Context> supplier){
-		ServerPlayerEntity playerEntity = supplier.get().getSender();
+		ServerPlayer player = supplier.get().getSender();
 
-		if(playerEntity == null){
+		if(player == null){
 			return;
 		}
 
-		DragonStateProvider.getCap(playerEntity).ifPresent(dragonStateHandler -> {
+		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
 			DragonAbility staticAbility = DragonAbilities.ABILITY_LOOKUP.get(message.skill);
 
 			if(staticAbility != null){
@@ -61,7 +61,7 @@ public class ChangeSkillLevel implements IMessage<ChangeSkillLevel>{
 				}
 
 				if(playerAbility.player == null){
-					playerAbility.player = playerEntity;
+					playerAbility.player = player;
 				}
 
 				PassiveDragonAbility newActivty = (PassiveDragonAbility)playerAbility.createInstance();
@@ -71,12 +71,12 @@ public class ChangeSkillLevel implements IMessage<ChangeSkillLevel>{
 				dragonStateHandler.getMagic().getAbilities().removeIf((c) -> c.getId() == newActivty.getId());
 				dragonStateHandler.getMagic().addAbility(newActivty);
 
-				if(levelCost != 0 && !playerEntity.isCreative()){
-					playerEntity.giveExperienceLevels(levelCost);
+				if(levelCost != 0 && !player.isCreative()){
+					player.giveExperienceLevels(levelCost);
 				}
 
 				playerAbility.setLevel(message.level);
-				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new SyncMagicAbilities(playerEntity.getId(), dragonStateHandler.getMagic().getAbilities()));
+				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncMagicAbilities(player.getId(), dragonStateHandler.getMagic().getAbilities()));
 			}
 		});
 	}

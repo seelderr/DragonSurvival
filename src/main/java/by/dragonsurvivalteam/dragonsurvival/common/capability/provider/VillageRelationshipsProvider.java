@@ -1,41 +1,38 @@
 package by.dragonsurvivalteam.dragonsurvival.common.capability.provider;
 
+import by.dragonsurvivalteam.dragonsurvival.common.capability.Capabilities;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.VillageRelationShips;
-import net.minecraft.entity.Entity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.Entity;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.Objects;
-
-public class VillageRelationshipsProvider implements ICapabilitySerializable<CompoundNBT>{
-	private final LazyOptional<VillageRelationShips> instance = LazyOptional.of(() -> (VillageRelationShips)Objects.<Object>requireNonNull(VILLAGE_RELATIONSHIP.getDefaultInstance()));
-	@CapabilityInject( VillageRelationShips.class )
-	public static Capability<VillageRelationShips> VILLAGE_RELATIONSHIP;
+public class VillageRelationshipsProvider implements ICapabilitySerializable<CompoundTag>{
+	private final VillageRelationShips handlerObject = new VillageRelationShips();
+	private final LazyOptional<VillageRelationShips> instance = LazyOptional.of(() -> handlerObject);
 
 	public static LazyOptional<VillageRelationShips> getVillageRelationships(Entity entity){
-		return entity.getCapability(VILLAGE_RELATIONSHIP, null);
+		return entity.getCapability(Capabilities.VILLAGE_RELATIONSHIP, null);
 	}
 
-	@Nonnull
-	public <T> LazyOptional<T> getCapability(
-		@Nonnull
-			Capability<T> cap,
-		@Nullable
-			Direction side){
-		return (cap == VILLAGE_RELATIONSHIP) ? this.instance.cast() : LazyOptional.empty();
+	public void invalidate(){
+		//		instance.invalidate();
 	}
 
-	public CompoundNBT serializeNBT(){
-		return (CompoundNBT)VILLAGE_RELATIONSHIP.getStorage().writeNBT(VILLAGE_RELATIONSHIP, this.instance.orElse(null), null);
+	@Override
+	public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side){
+		return cap == Capabilities.VILLAGE_RELATIONSHIP ? instance.cast() : LazyOptional.empty();
 	}
 
-	public void deserializeNBT(CompoundNBT nbt){
-		VILLAGE_RELATIONSHIP.getStorage().readNBT(VILLAGE_RELATIONSHIP, this.instance.orElse(null), null, nbt);
+	@Override
+	public CompoundTag serializeNBT(){
+		return this.instance.orElseThrow(() -> new IllegalArgumentException("LazyOptional must not be empty!")).writeNBT();
+	}
+
+	@Override
+	public void deserializeNBT(CompoundTag nbt){
+		this.instance.orElseThrow(() -> new IllegalArgumentException("LazyOptional must not be empty!")).readNBT(nbt);
 	}
 }

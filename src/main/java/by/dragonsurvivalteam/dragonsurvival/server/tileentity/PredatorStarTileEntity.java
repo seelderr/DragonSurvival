@@ -1,22 +1,27 @@
 package by.dragonsurvivalteam.dragonsurvival.server.tileentity;
 
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 
-public class PredatorStarTileEntity extends TileEntity implements ITickableTileEntity{
+public class PredatorStarTileEntity extends BlockEntity{
 	private int ticksExisted;
 	private float activeRotation;
 
-	public PredatorStarTileEntity(TileEntityType<?> tileEntityTypeIn){
-		super(tileEntityTypeIn);
-	}
-
-	public PredatorStarTileEntity(){
-		super(DSTileEntities.PREDATOR_STAR_TILE_ENTITY_TYPE);
+	public PredatorStarTileEntity(BlockPos pWorldPosition, BlockState pBlockState){
+		super(DSTileEntities.PREDATOR_STAR_TILE_ENTITY_TYPE, pWorldPosition, pBlockState);
 
 		ticksExisted = 0;
 		activeRotation = 0;
+	}
+
+	public static void serverTick(Level pLevel, BlockPos pPos, BlockState pState, PredatorStarTileEntity pBlockEntity){
+		++pBlockEntity.ticksExisted;
+
+		if(pLevel.isClientSide){
+			++pBlockEntity.activeRotation;
+		}
 	}
 
 	public int getTicksExisted(){
@@ -25,23 +30,5 @@ public class PredatorStarTileEntity extends TileEntity implements ITickableTileE
 
 	public float getActiveRotation(float partialTicks){
 		return (this.activeRotation + partialTicks) * -0.0375F;
-	}
-
-	@Override
-	public void tick(){
-		++this.ticksExisted;
-
-		// :(
-        /*List<Entity> l = this.world.getEntitiesWithinAABB(CreatureEntity.class, new AxisAlignedBB(pos, pos.add(1, 1, 1)).grow(16.0F));
-        for (Entity e : l) {
-            if (!(e instanceof MagicalPredatorEntity))
-                if (((CreatureEntity) e).goalSelector.getRunningGoals().noneMatch(prioritizedGoal -> (prioritizedGoal.getGoal() instanceof PredatorStarBlock.CallEntity))) {
-                    ((CreatureEntity) e).goalSelector.addGoal(-1, new PredatorStarBlock.CallEntity((CreatureEntity) e, pos));
-                }
-        }*/
-
-		if(this.level.isClientSide){
-			++this.activeRotation;
-		}
 	}
 }

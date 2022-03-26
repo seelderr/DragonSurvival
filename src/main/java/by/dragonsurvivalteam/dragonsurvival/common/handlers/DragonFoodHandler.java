@@ -1,39 +1,44 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
+
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.Food;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.potion.Effect;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
-import net.minecraft.tags.ITag;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.util.*;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.food.FoodData;
+import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.gui.ForgeIngameGui;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.config.ModConfig.Type;
+import net.minecraftforge.fml.event.config.ModConfigEvent.Loading;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.tags.ITag;
 
 import javax.annotation.Nullable;
 import java.util.Comparator;
@@ -46,42 +51,48 @@ import java.util.stream.Stream;
 @Mod.EventBusSubscriber( modid = DragonSurvivalMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD )
 public class DragonFoodHandler{
 
-	private final ResourceLocation FOOD_ICONS;
-	private final Random rand;
+
+	private static final ResourceLocation FOOD_ICONS = new ResourceLocation(DragonSurvivalMod.MODID + ":textures/gui/dragon_hud.png");
+	private static final Random rand = new Random();
 	public static CopyOnWriteArrayList<Item> CAVE_D_FOOD;
 	public static CopyOnWriteArrayList<Item> FOREST_D_FOOD;
 	public static CopyOnWriteArrayList<Item> SEA_D_FOOD;
 	public static boolean isDrawingOverlay;
 	public static int rightHeight = 0;
-	private static ConcurrentHashMap<DragonType, Map<Item, Food>> DRAGON_FOODS;
+	private static ConcurrentHashMap<DragonType, Map<Item, FoodProperties>> DRAGON_FOODS;
 	private Minecraft mc;
+
 
 	public DragonFoodHandler(){
 		if(FMLLoader.getDist() == Dist.CLIENT){
 			mc = Minecraft.getInstance();
 		}
-		rand = new Random();
-		FOOD_ICONS = new ResourceLocation(DragonSurvivalMod.MODID + ":textures/gui/dragon_hud.png");
 		isDrawingOverlay = false;
 	}
 
 	@SubscribeEvent
-	public static void onConfigLoad(ModConfig.Loading event){
+
+	public static void onConfigLoad(Loading event){
 		if(event.getConfig().getType() == Type.SERVER){
+
 			rebuildFoodMap();
 		}
 	}
 
+
 	private static void rebuildFoodMap(){
-		ConcurrentHashMap<DragonType, ConcurrentHashMap<Item, Food>> dragonMap = new ConcurrentHashMap<DragonType, ConcurrentHashMap<Item, Food>>();
+		ConcurrentHashMap<DragonType, ConcurrentHashMap<Item, FoodProperties>> dragonMap = new ConcurrentHashMap<DragonType, ConcurrentHashMap<Item, FoodProperties>>();
+
 		dragonMap.put(DragonType.CAVE, buildDragonFoodMap(DragonType.CAVE));
 		dragonMap.put(DragonType.FOREST, buildDragonFoodMap(DragonType.FOREST));
 		dragonMap.put(DragonType.SEA, buildDragonFoodMap(DragonType.SEA));
 		DRAGON_FOODS = new ConcurrentHashMap<>(dragonMap);
 	}
 
-	private static ConcurrentHashMap<Item, Food> buildDragonFoodMap(DragonType type){
-		ConcurrentHashMap<Item, Food> foodMap = new ConcurrentHashMap<Item, Food>();
+
+	private static ConcurrentHashMap<Item, FoodProperties> buildDragonFoodMap(DragonType type){
+		ConcurrentHashMap<Item, FoodProperties> foodMap = new ConcurrentHashMap<Item, FoodProperties>();
+
 
 		if(!ConfigHandler.SERVER.customDragonFoods.get()){
 			return foodMap;
@@ -106,37 +117,43 @@ public class DragonFoodHandler{
 		for(String entry : configFood){
 			final String[] sEntry = entry.split(":");
 			final ResourceLocation rlEntry = new ResourceLocation(sEntry[1], sEntry[2]);
+
 			if(sEntry[0].equalsIgnoreCase("tag")){
 				final ITag<Item> tag = ItemTags.getAllTags().getTag(rlEntry);
 				if(tag != null && tag.getValues().size() != 0){
 					for(Item item : tag.getValues()){
-						Food food = calculateDragonFoodProperties(item, type, sEntry.length == 5 ? Integer.parseInt(sEntry[3]) : item.getFoodProperties() != null ? item.getFoodProperties().getNutrition() : 1, sEntry.length == 5 ? Integer.parseInt(sEntry[4]) : item.getFoodProperties() != null ? (int)(item.getFoodProperties().getNutrition() * (item.getFoodProperties().getSaturationModifier() * 2.0F)) : 0, true);
-						if(food != null){
-							foodMap.put(item, food);
+						FoodProperties FoodProperties = calculateDragonFoodProperties(item, type, sEntry.length == 5 ? Integer.parseInt(sEntry[3]) : item.getFoodProperties() != null ? item.getFoodProperties().getNutrition() : 1, sEntry.length == 5 ? Integer.parseInt(sEntry[4]) : item.getFoodProperties() != null ? (int)(item.getFoodProperties().getNutrition() * (item.getFoodProperties().getSaturationModifier() * 2.0F)) : 0, true);
+
+						if(FoodProperties != null){
+							foodMap.put(item, FoodProperties);
 						}
 					}
 				}else{
-					DragonSurvivalMod.LOGGER.warn("Null or empty tag '{}:{}' in {} dragon food config.", sEntry[1], sEntry[2], type.toString().toLowerCase());
+					DragonSurvivalMod.LOGGER.warn("Null or empty tag '{}:{}' in {} dragon FoodProperties config.", sEntry[1], sEntry[2], type.toString().toLowerCase());
 				}
 			}else{
 				final Item item = ForgeRegistries.ITEMS.getValue(rlEntry);
-				if(item != null && item != Items.AIR){
-					Food food = calculateDragonFoodProperties(item, type, sEntry.length == 5 ? Integer.parseInt(sEntry[3]) : item.getFoodProperties() != null ? item.getFoodProperties().getNutrition() : 1, sEntry.length == 5 ? Integer.parseInt(sEntry[4]) : item.getFoodProperties() != null ? (int)(item.getFoodProperties().getNutrition() * (item.getFoodProperties().getSaturationModifier() * 2.0F)) : 0, true);
 
-					if(food != null){
-						foodMap.put(item, food);
+				if(item != null && item != Items.AIR){
+					FoodProperties FoodProperties = calculateDragonFoodProperties(item, type, sEntry.length == 5 ? Integer.parseInt(sEntry[3]) : item.getFoodProperties() != null ? item.getFoodProperties().getNutrition() : 1, sEntry.length == 5 ? Integer.parseInt(sEntry[4]) : item.getFoodProperties() != null ? (int)(item.getFoodProperties().getNutrition() * (item.getFoodProperties().getSaturationModifier() * 2.0F)) : 0, true);
+
+					if(FoodProperties != null){
+
+						foodMap.put(item, FoodProperties);
 					}
 				}else{
-					DragonSurvivalMod.LOGGER.warn("Unknown item '{}:{}' in {} dragon food config.", sEntry[1], sEntry[2], type.toString().toLowerCase());
+					DragonSurvivalMod.LOGGER.warn("Unknown item '{}:{}' in {} dragon FoodProperties config.", sEntry[1], sEntry[2], type.toString().toLowerCase());
 				}
 			}
 		}
+
 		for(Item item : ForgeRegistries.ITEMS.getValues()){
 			if(!foodMap.containsKey(item) && item.isEdible()){
-				Food food = calculateDragonFoodProperties(item, type, 0, 0, false);
+				FoodProperties FoodProperties = calculateDragonFoodProperties(item, type, 0, 0, false);
 
-				if(food != null){
-					foodMap.put(item, food);
+				if(FoodProperties != null){
+
+					foodMap.put(item, FoodProperties);
 				}
 			}
 		}
@@ -144,16 +161,18 @@ public class DragonFoodHandler{
 	}
 
 	@Nullable
-	private static Food calculateDragonFoodProperties(Item item, DragonType type, int nutrition, int saturation, boolean dragonFood){
+
+	private static FoodProperties calculateDragonFoodProperties(Item item, DragonType type, int nutrition, int saturation, boolean dragonFood){
 		if(!ConfigHandler.SERVER.customDragonFoods.get() || type == DragonType.NONE){
 			return item.getFoodProperties();
 		}
-		Food.Builder builder = new Food.Builder();
+		FoodProperties.Builder builder = new FoodProperties.Builder();
 		if(dragonFood){
 			builder.nutrition(nutrition).saturationMod(((float)saturation / (float)nutrition) / 2.0F);
 			if(item.getFoodProperties() != null){
-				Food humanFood = item.getFoodProperties();
+				FoodProperties humanFood = item.getFoodProperties();
 				if(humanFood.isMeat()){
+
 					builder.meat();
 				}
 				if(humanFood.canAlwaysEat()){
@@ -162,16 +181,18 @@ public class DragonFoodHandler{
 				if(humanFood.isFastFood()){
 					builder.fast();
 				}
-				for(Pair<EffectInstance, Float> effect : humanFood.getEffects()){
-					if(effect.getFirst().getEffect() != Effects.HUNGER && effect.getFirst().getEffect() != Effects.POISON){
+				for(Pair<MobEffectInstance, Float> effect : humanFood.getEffects()){
+					if(effect.getFirst().getEffect() != MobEffects.HUNGER && effect.getFirst().getEffect() != MobEffects.POISON){
+
 						builder.effect(() -> effect.getFirst(), effect.getSecond());
 					}
 				}
 			}
 		}else{
-			Food humanFood = item.getFoodProperties();
+			FoodProperties humanFood = item.getFoodProperties();
 			builder.nutrition(humanFood.getNutrition()).saturationMod(humanFood.getSaturationModifier());
 			if(humanFood.isMeat()){
+
 				builder.meat();
 			}
 			if(humanFood.canAlwaysEat()){
@@ -180,12 +201,12 @@ public class DragonFoodHandler{
 			if(humanFood.isFastFood()){
 				builder.fast();
 			}
-			for(Pair<EffectInstance, Float> effect : humanFood.getEffects()){
-				if(effect.getFirst().getEffect() != Effects.HUNGER){
+			for(Pair<MobEffectInstance, Float> effect : humanFood.getEffects()){
+				if(effect.getFirst().getEffect() != MobEffects.HUNGER){
 					builder.effect(() -> effect.getFirst(), effect.getSecond());
 				}
 			}
-			builder.effect(() -> new EffectInstance(Effects.HUNGER, 20 * 60, 0), 1.0F);
+			builder.effect(() -> new MobEffectInstance(MobEffects.HUNGER, 20 * 60, 0), 1.0F);
 		}
 		return builder.build();
 	}
@@ -206,11 +227,11 @@ public class DragonFoodHandler{
 		CopyOnWriteArrayList<Item> foods = new CopyOnWriteArrayList<>();
 		for(Item item : DRAGON_FOODS.get(dragonType).keySet()){
 			boolean safe = true;
-			final Food food = DRAGON_FOODS.get(dragonType).get(item);
-			if(food != null){
-				for(Pair<EffectInstance, Float> effect : food.getEffects()){
-					Effect e = effect.getFirst().getEffect();
-					if(!e.isBeneficial() && e != Effects.CONFUSION){ // Because we decided to leave confusion on pufferfish
+			final FoodProperties FoodProperties = DRAGON_FOODS.get(dragonType).get(item);
+			if(FoodProperties != null){
+				for(Pair<MobEffectInstance, Float> effect : FoodProperties.getEffects()){
+					MobEffect e = effect.getFirst().getEffect();
+					if(!e.isBeneficial() && e != MobEffects.CONFUSION){ // Because we decided to leave confusion on pufferfish
 						safe = false;
 						break;
 					}
@@ -230,16 +251,18 @@ public class DragonFoodHandler{
 		return foods;
 	}
 
-	public static void dragonEat(FoodStats foodStats, Item item, ItemStack itemStack, DragonType type){
+	public static void dragonEat(FoodData foodStats, Item item, ItemStack itemStack, DragonType type){
 		if(isDragonEdible(item, type)){
-			Food food = getDragonFoodProperties(item, type);
-			foodStats.eat(food.getNutrition(), food.getSaturationModifier());
+			FoodProperties FoodProperties = getDragonFoodProperties(item, type);
+			foodStats.eat(FoodProperties.getNutrition(), FoodProperties.getSaturationModifier());
 		}
 	}
 
 	@Nullable
-	public static Food getDragonFoodProperties(Item item, DragonType type){
+
+	public static FoodProperties getDragonFoodProperties(Item item, DragonType type){
 		if(DRAGON_FOODS == null || !ConfigHandler.SERVER.customDragonFoods.get() || type == DragonType.NONE){
+
 			return item.getFoodProperties();
 		}
 		if(DRAGON_FOODS.get(type).containsKey(item)){
@@ -253,6 +276,65 @@ public class DragonFoodHandler{
 			return DRAGON_FOODS != null && DRAGON_FOODS.containsKey(type) && item != null && DRAGON_FOODS.get(type).containsKey(item);
 		}
 		return item.getFoodProperties() != null;
+	}
+
+	@OnlyIn( Dist.CLIENT )
+	public static void onRenderFoodBar(ForgeIngameGui gui, PoseStack mStack, float partialTicks, int width, int height){
+		LocalPlayer player = Minecraft.getInstance().player;
+
+		if(Minecraft.getInstance().options.hideGui || !gui.shouldDrawSurvivalElements()){
+			return;
+		}
+		if(!ConfigHandler.SERVER.customDragonFoods.get() || !DragonUtils.isDragon(player)){
+			ForgeIngameGui.FOOD_LEVEL_ELEMENT.render(gui, mStack, partialTicks, width, height);
+			return;
+		}
+
+		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
+			if(dragonStateHandler.isDragon()){
+
+				rand.setSeed(player.tickCount * 312871L);
+
+				RenderSystem.enableBlend();
+				RenderSystem.setShaderTexture(0, FOOD_ICONS);
+
+				if(Minecraft.getInstance().gui instanceof ForgeIngameGui){
+					rightHeight = ((ForgeIngameGui)Minecraft.getInstance().gui).right_height;
+					((ForgeIngameGui)Minecraft.getInstance().gui).right_height += 10;
+				}
+
+				final int left = width / 2 + 91;
+				final int top = height - rightHeight;
+				rightHeight += 10;
+				final FoodData food = player.getFoodData();
+
+				final int type = dragonStateHandler.getType() == DragonType.FOREST ? 0 : dragonStateHandler.getType() == DragonType.CAVE ? 9 : 18;
+
+				final boolean hunger = player.hasEffect(MobEffects.HUNGER);
+
+				for(int i = 0; i < 10; ++i){
+					int idx = i * 2 + 1;
+					int y = top;
+
+					if(food.getSaturationLevel() <= 0.0F && player.tickCount % (food.getFoodLevel() * 3 + 1) == 0){
+						y = top + (rand.nextInt(3) - 1);
+					}
+
+					gui.blit(mStack, left - i * 8 - 9, y, (hunger ? 117 : 0), type, 9, 9);
+
+					if(idx < food.getFoodLevel()){
+						gui.blit(mStack, left - i * 8 - 9, y, (hunger ? 72 : 36), type, 9, 9);
+					}else if(idx == food.getFoodLevel()){
+						gui.blit(mStack, left - i * 8 - 9, y, (hunger ? 81 : 45), type, 9, 9);
+					}
+				}
+
+				RenderSystem.setShaderTexture(0, Gui.GUI_ICONS_LOCATION);
+				RenderSystem.disableBlend();
+			}else{
+				isDrawingOverlay = false;
+			}
+		});
 	}
 
 	@SubscribeEvent
@@ -275,22 +357,25 @@ public class DragonFoodHandler{
 	@SubscribeEvent
 	public void onItemRightClick(PlayerInteractEvent.RightClickItem event){
 		DragonStateProvider.getCap(event.getEntityLiving()).ifPresent(dragonStateHandler -> {
+
 			if(dragonStateHandler.isDragon()){
 				if(!event.getPlayer().level.isClientSide){
-					ServerPlayerEntity player = (ServerPlayerEntity)event.getPlayer();
-					ServerWorld level = player.getLevel();
-					Hand hand = event.getHand();
+					ServerPlayer player = (ServerPlayer)event.getPlayer();
+					ServerLevel level = player.getLevel();
+					InteractionHand hand = event.getHand();
+
 					ItemStack stack = player.getItemInHand(event.getHand());
 					if(isDragonEdible(stack.getItem(), dragonStateHandler.getType())){
 						int i = stack.getCount();
 						int j = stack.getDamageValue();
-						ActionResult<ItemStack> actionresult = stack.use(level, player, hand);
+						InteractionResultHolder<ItemStack> actionresult = stack.use(level, player, hand);
 						ItemStack itemstack = actionresult.getObject();
 						if(itemstack == stack && itemstack.getCount() == i && getUseDuration(itemstack, dragonStateHandler.getType()) <= 0 && itemstack.getDamageValue() == j){
 							{
 								event.setCancellationResult(actionresult.getResult());
 							}
-						}else if(actionresult.getResult() == ActionResultType.FAIL && getUseDuration(itemstack, dragonStateHandler.getType()) > 0 && !player.isUsingItem()){
+						}else if(actionresult.getResult() == InteractionResult.FAIL && getUseDuration(itemstack, dragonStateHandler.getType()) > 0 && !player.isUsingItem()){
+
 							{
 								event.setCancellationResult(actionresult.getResult());
 								event.setCanceled(true);
@@ -308,109 +393,12 @@ public class DragonFoodHandler{
 								player.setItemInHand(hand, ItemStack.EMPTY);
 							}
 
-							if(!player.isUsingItem()){
-								player.refreshContainer(player.inventoryMenu);
-							}
 
 							event.setCancellationResult(actionresult.getResult());
 							event.setCanceled(true);
 						}
 					}
 				}
-			}
-		});
-	}
-
-	@SubscribeEvent( priority = EventPriority.LOWEST )
-	@OnlyIn( Dist.CLIENT )
-	public void onRenderFoodBar(RenderGameOverlayEvent.Pre event){
-		ClientPlayerEntity player = this.mc.player;
-
-		isDrawingOverlay = !event.isCanceled() && ConfigHandler.SERVER.customDragonFoods.get();
-		if(!isDrawingOverlay){
-			return;
-		}
-
-		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
-			if(dragonStateHandler.isDragon()){
-
-				if(event.getType() != RenderGameOverlayEvent.ElementType.FOOD || player.isCreative() || player.isSpectator()){
-					return;
-				}
-
-				//event.setCanceled(true);
-
-				rand.setSeed(player.tickCount * 312871L);
-
-				RenderSystem.enableBlend();
-				this.mc.getTextureManager().bind(FOOD_ICONS);
-
-				if(ConfigHandler.CLIENT.appleskinSupport.get()){
-					rightHeight = ForgeIngameGui.right_height;
-					ForgeIngameGui.right_height = 0;
-				}else{
-					rightHeight = ForgeIngameGui.right_height;
-					ForgeIngameGui.right_height += 10;
-				}
-
-				final int left = this.mc.getWindow().getGuiScaledWidth() / 2 + 91;
-				final int top = this.mc.getWindow().getGuiScaledHeight() - rightHeight;
-				rightHeight += 10;
-				final FoodStats food = player.getFoodData();
-
-				final int type = dragonStateHandler.getType() == DragonType.FOREST ? 0 : dragonStateHandler.getType() == DragonType.CAVE ? 9 : 18;
-
-				final boolean hunger = player.hasEffect(Effects.HUNGER);
-
-				for(int i = 0; i < 10; ++i){
-					int idx = i * 2 + 1;
-					int y = top;
-
-					if(food.getSaturationLevel() <= 0.0F && player.tickCount % (food.getFoodLevel() * 3 + 1) == 0){
-						y = top + (rand.nextInt(3) - 1);
-					}
-
-					mc.gui.blit(event.getMatrixStack(), left - i * 8 - 9, y, (hunger ? 117 : 0), type, 9, 9);
-
-					if(idx < food.getFoodLevel()){
-						mc.gui.blit(event.getMatrixStack(), left - i * 8 - 9, y, (hunger ? 72 : 36), type, 9, 9);
-					}else if(idx == food.getFoodLevel()){
-						mc.gui.blit(event.getMatrixStack(), left - i * 8 - 9, y, (hunger ? 81 : 45), type, 9, 9);
-					}
-				}
-
-				this.mc.getTextureManager().bind(AbstractGui.GUI_ICONS_LOCATION);
-				RenderSystem.disableBlend();
-			}else{
-				isDrawingOverlay = false;
-			}
-		});
-	}
-
-	@SubscribeEvent( priority = EventPriority.LOWEST )
-	@OnlyIn( Dist.CLIENT )
-	public void onPostRenderFood(RenderGameOverlayEvent.Post event){
-		if(!ConfigHandler.CLIENT.appleskinSupport.get()){
-			return;
-		}
-
-		ClientPlayerEntity player = this.mc.player;
-
-		isDrawingOverlay = !event.isCanceled() && ConfigHandler.SERVER.customDragonFoods.get();
-		if(!isDrawingOverlay){
-			return;
-		}
-
-		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
-			if(dragonStateHandler.isDragon()){
-
-				if(event.getType() != RenderGameOverlayEvent.ElementType.FOOD || player.isCreative() || player.isSpectator()){
-					return;
-				}
-
-				ForgeIngameGui.right_height = rightHeight;
-			}else{
-				isDrawingOverlay = false;
 			}
 		});
 	}

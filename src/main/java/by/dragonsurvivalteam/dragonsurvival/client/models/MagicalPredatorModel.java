@@ -3,18 +3,18 @@ package by.dragonsurvivalteam.dragonsurvival.client.models;// Made with Blockben
 // Paste this class into your mod and generate all required imports
 
 
-import by.dragonsurvivalteam.dragonsurvival.common.entity.monsters.MagicalPredatorEntity;
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.monsters.MagicalPredator;
+import com.mojang.blaze3d.matrix.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Mth;
 
 import java.util.function.Function;
 
-public class MagicalPredatorModel extends EntityModel<MagicalPredatorEntity>{
+public class MagicalPredatorModel extends EntityModel<MagicalPredator>{
 	private final ModelRenderer Main;
 	private final ModelRenderer All_body;
 	private final ModelRenderer body;
@@ -286,29 +286,29 @@ public class MagicalPredatorModel extends EntityModel<MagicalPredatorEntity>{
 	}
 
 	@Override
-	public void setupAnim(MagicalPredatorEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch){
+	public void setupAnim(MagicalPredator entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch){
 
-		this.lower_jaw.xRot = MathHelper.cos(entity.attackAnim * 100 * 0.183f) * 0.0575f;
+		this.lower_jaw.xRot = Mth.cos(entity.attackAnim * 100 * 0.183f) * 0.0575f;
 
-		this.back_leg_left.zRot = (((MathHelper.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount) * 0.33F) + ((MathHelper.cos((float)(limbSwing * 0.6662F + Math.PI)) * 1.4F * limbSwingAmount) * 0.2F)) / -2.0F;
-		this.back_leg_right.zRot = (((MathHelper.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount) * 0.33F) + ((MathHelper.cos((float)(limbSwing * 0.6662F + Math.PI)) * 1.4F * limbSwingAmount) * 0.2F)) / -2.0F;
+		this.back_leg_left.zRot = (((Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount) * 0.33F) + ((Mth.cos((float)(limbSwing * 0.6662F + Math.PI)) * 1.4F * limbSwingAmount) * 0.2F)) / -2.0F;
+		this.back_leg_right.zRot = (((Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount) * 0.33F) + ((Mth.cos((float)(limbSwing * 0.6662F + Math.PI)) * 1.4F * limbSwingAmount) * 0.2F)) / -2.0F;
 
-		this.back_leg_right.xRot = -0.2618F + (MathHelper.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount) * 0.4F;
-		this.right_front_leg.xRot = -0.2618F + (MathHelper.cos((float)(limbSwing * 0.6662F + Math.PI)) * 1.4F * limbSwingAmount) * 0.4F;
+		this.back_leg_right.xRot = -0.2618F + (Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount) * 0.4F;
+		this.right_front_leg.xRot = -0.2618F + (Mth.cos((float)(limbSwing * 0.6662F + Math.PI)) * 1.4F * limbSwingAmount) * 0.4F;
 
-		this.left_front_leg.xRot = -0.2618F + (MathHelper.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount) * 0.4F;
-		this.back_leg_left.xRot = -0.2618F + (MathHelper.cos((float)(limbSwing * 0.6662F + Math.PI)) * 1.4F * limbSwingAmount) * 0.4F;
+		this.left_front_leg.xRot = -0.2618F + (Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount) * 0.4F;
+		this.back_leg_left.xRot = -0.2618F + (Mth.cos((float)(limbSwing * 0.6662F + Math.PI)) * 1.4F * limbSwingAmount) * 0.4F;
 
-		this.Neck_and_head.yRot = MathHelper.wrapDegrees((float)(netHeadYaw * (Math.PI / 180.0F)));
-		this.head.xRot = 0.5236F + MathHelper.wrapDegrees((float)(headPitch * (Math.PI / 180.0F)));
+		this.Neck_and_head.yRot = Mth.wrapDegrees((float)(netHeadYaw * (Math.PI / 180.0F)));
+		this.head.xRot = 0.5236F + Mth.wrapDegrees((float)(headPitch * (Math.PI / 180.0F)));
 
-		this.lower_jaw.xRot = MathHelper.cos(ageInTicks * 0.183f) * 0.0575f;
+		this.lower_jaw.xRot = Mth.cos(ageInTicks * 0.183f) * 0.0575f;
 
 		setRotationAngle(star, (float)Math.sin(ageInTicks * 0.225F), (float)Math.cos(ageInTicks * 0.225F), (float)Math.sin(ageInTicks * 0.225F));
 	}
 
 	@Override
-	public void renderToBuffer(MatrixStack matrixStack, IVertexBuilder buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha){
+	public void renderToBuffer(PoseStack matrixStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha){
 		Main.render(matrixStack, buffer, packedLight, packedOverlay);
 	}
 }

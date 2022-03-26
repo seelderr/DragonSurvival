@@ -6,13 +6,13 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.DropDownB
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon.DragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.EnumSkinLayer;
-import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayer;
-import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
+import by.dragonsurvivalteam.dragonsurvival.client.util.FakeLocalPlayer;
+import by.dragonsurvivalteam.dragonsurvival.client.util.FakeLocalPlayerUtils;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TextRenderUtil;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.Dragon;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonLevel;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.matrix.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -20,8 +20,8 @@ import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.TextComponent;
+ 
 import net.minecraftforge.fml.client.gui.GuiUtils;
 import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
@@ -31,26 +31,25 @@ import java.util.Collections;
 import java.util.Locale;
 import java.util.function.Consumer;
 
-public class EditorPartButton extends ExtendedButton {
+public class EditorPartButton extends ExtendedButton{
 	public static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/textbox.png");
-
-	private EnumSkinLayer layer;
+	private final DragonEditorScreen screen;
+	private final TranslatableComponent message;
+	private final DragonStateHandler handler = new DragonStateHandler();
+	private final EnumSkinLayer layer;
 	public String value;
 	public Consumer<String> setter;
 	public DropDownButton source;
-	private final DragonEditorScreen screen;
-	private final TranslationTextComponent message;
-
-	private final DragonStateHandler handler = new DragonStateHandler();
 	private ResourceLocation texture;
+
 	public EditorPartButton(DragonEditorScreen screen, DropDownButton source, int xPos, int yPos, int width, int height, String value, Consumer<String> setter, EnumSkinLayer layer){
-		super(xPos, yPos, width, height, StringTextComponent.EMPTY, (s) -> {});
+		super(xPos, yPos, width, height, TextComponent.EMPTY, (s) -> {});
 		this.value = value;
 		this.setter = setter;
 		this.source = source;
 		this.screen = screen;
 		this.layer = layer;
-		message = new TranslationTextComponent("ds.skin_part." + screen.type.name().toLowerCase(Locale.ROOT) + "." + value.toLowerCase(Locale.ROOT));
+		message = new TranslatableComponent("ds.skin_part." + screen.type.name().toLowerCase(Locale.ROOT) + "." + value.toLowerCase(Locale.ROOT));
 		generateImage();
 	}
 
@@ -105,10 +104,10 @@ public class EditorPartButton extends ExtendedButton {
 		framebuffer.bindWrite(true);
 		framebuffer.blitToScreen(width, height);
 
-		FakeClientPlayer player = FakeClientPlayerUtils.getFakePlayer(2, handler);
-		DragonEntity dragon = FakeClientPlayerUtils.getFakeDragon(2, handler);
+		FakeLocalPlayer player = FakeLocalPlayerUtils.getFakePlayer(2, handler);
+		Dragon dragon = FakeLocalPlayerUtils.getFakeDragon(2, handler);
 
-		EntityRenderer<? super DragonEntity> dragonRenderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(dragon);
+		EntityRenderer<? super Dragon> dragonRenderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(dragon);
 		int id = ((DragonRenderer)dragonRenderer).getUniqueID(dragon);
 
 		ClientDragonRender.dragonModel.setCurrentTexture(null);
@@ -140,16 +139,16 @@ public class EditorPartButton extends ExtendedButton {
 	}
 
 	@Override
-	public void renderButton(MatrixStack mStack, int mouseX, int mouseY, float partial){
+	public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){
 		Minecraft.getInstance().textureManager.bind(BACKGROUND_TEXTURE);
-		GuiUtils.drawContinuousTexturedBox(mStack, x, y, !active ? 32 : 0, isHovered() && active ? 32 : 0, width, height, 32, 32, 10, 0);
+		GuiUtils.drawContinuousTexturedBox(mStack, x, y, !active ? 32 : 0, isHoveredOrFocused() && active ? 32 : 0, width, height, 32, 32, 10, 0);
 
 		if(texture != null){
 			Minecraft.getInstance().textureManager.bind(texture);
 			blit(mStack, x + 3, y + 3, 0, 0, width - 6, height - 6, width - 6, height - 6);
 		}
 
-		TextRenderUtil.drawScaledTextSplit(mStack , this.x + 4, this.y + (this.height - 10), 0.4f, message, getFGColor(), width - 9, 200);
+		TextRenderUtil.drawScaledTextSplit(mStack, this.x + 4, this.y + (this.height - 10), 0.4f, message, getFGColor(), width - 9, 200);
 	}
 
 	@Override

@@ -1,22 +1,24 @@
 package by.dragonsurvivalteam.dragonsurvival.client.particles.CaveDragon;
 
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Quaternion;
+import com.mojang.math.Vector3f;
+import net.minecraft.client.Camera;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
-import net.minecraft.client.renderer.ActiveRenderInfo;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.math.vector.Quaternion;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class SmallFireParticle extends SpriteTexturedParticle{
+
+public class SmallFireParticle extends TextureSheetParticle{
 	private final float spread;
-	private final IAnimatedSprite sprites;
+	private final SpriteSet sprites;
 	boolean swirls;
 	private int swirlTick;
 
-	public SmallFireParticle(ClientWorld world, double x, double y, double z, double vX, double vY, double vZ, double duration, boolean swirls, IAnimatedSprite sprite){
+	public SmallFireParticle(ClientLevel world, double x, double y, double z, double vX, double vY, double vZ, double duration, boolean swirls, SpriteSet sprite){
+
 		super(world, x, y, z);
 		setSize(1, 1);
 		xd = vX;
@@ -37,6 +39,7 @@ public class SmallFireParticle extends SpriteTexturedParticle{
 	}
 
 	@Override
+
 	protected float getV1(){
 		return super.getV1() - (super.getV1() - super.getV0()) / 8f;
 	}
@@ -70,17 +73,13 @@ public class SmallFireParticle extends SpriteTexturedParticle{
 	}
 
 	@Override
-	public IParticleRenderType getRenderType(){
-		return IParticleRenderType.PARTICLE_SHEET_OPAQUE;
-	}
-
-	@Override
 	public void remove(){
 		level.addParticle(ParticleTypes.SMOKE, x, y, z, 0, 0.01, 0);
 		super.remove();
 	}
 
 	@Override
+
 	protected int getLightColor(float p_189214_1_){
 		int i = super.getLightColor(p_189214_1_);
 		int k = i >> 16 & 255;
@@ -88,7 +87,12 @@ public class SmallFireParticle extends SpriteTexturedParticle{
 	}
 
 	@Override
-	public void render(IVertexBuilder buffer, ActiveRenderInfo renderInfo, float partialTicks){
+	public ParticleRenderType getRenderType(){
+		return ParticleRenderType.PARTICLE_SHEET_OPAQUE;
+	}
+
+	@Override
+	public void render(VertexConsumer buffer, Camera renderInfo, float partialTicks){
 		float var = (age + partialTicks) / (float)lifetime;
 		alpha = (float)(1 - Math.exp(10 * (var - 1)) - Math.pow(2000, -var));
 		if(alpha < 0.1){
@@ -99,15 +103,15 @@ public class SmallFireParticle extends SpriteTexturedParticle{
 	}
 
 	@OnlyIn( Dist.CLIENT )
-	public static final class FireFactory implements IParticleFactory<SmallFireParticleData>{
-		private final IAnimatedSprite spriteSet;
+	public static final class FireFactory implements ParticleProvider<SmallFireParticleData>{
+		private final SpriteSet spriteSet;
 
-		public FireFactory(IAnimatedSprite sprite){
+		public FireFactory(SpriteSet sprite){
 			this.spriteSet = sprite;
 		}
 
 		@Override
-		public Particle createParticle(SmallFireParticleData typeIn, ClientWorld worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed){
+		public Particle createParticle(SmallFireParticleData typeIn, ClientLevel worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed){
 			SmallFireParticle particle = new SmallFireParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, typeIn.getDuration(), typeIn.getSwirls(), spriteSet);
 			particle.setSpriteFromAge(spriteSet);
 			return particle;

@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
+import by.dragonsurvivalteam.dragonsurvival.common.capability.Capabilities;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
@@ -7,11 +8,11 @@ import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.EntitySize;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.Pose;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.AABB;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -21,15 +22,15 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Mod.EventBusSubscriber
 public class DragonSizeHandler{
-	public static ConcurrentHashMap<Integer, Double> lastSize = new ConcurrentHashMap<Integer, Double>(20);
 	private static final ConcurrentHashMap<Integer, Boolean> wasDragon = new ConcurrentHashMap<Integer, Boolean>(20);
+	public static ConcurrentHashMap<Integer, Double> lastSize = new ConcurrentHashMap<Integer, Double>(20);
 
 	@SubscribeEvent
 	public static void getDragonSize(EntityEvent.Size event){
-		if(!(event.getEntity() instanceof PlayerEntity)){
+		if(!(event.get() instanceof Player)){
 			return;
 		}
-		PlayerEntity player = (PlayerEntity)event.getEntity();
+		Player player = (Player)event.get();
 
 		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
 			if(!dragonStateHandler.isDragon()){
@@ -48,7 +49,7 @@ public class DragonSizeHandler{
 				// Apply changes
 				event.setNewEyeHeight((float)eyeHeight);
 				// Rounding solves floating point issues that caused the dragon to get stuck inside a block at times.
-				event.setNewSize(new EntitySize((float)(Math.round(width * 100.0D) / 100.0D), (float)(Math.round(height * 100.0D) / 100.0D), false));
+				event.setNewSize(new EntityDimensions((float)(Math.round(width * 100.0D) / 100.0D), (float)(Math.round(height * 100.0D) / 100.0D), false));
 			}
 		});
 	}
@@ -86,11 +87,11 @@ public class DragonSizeHandler{
 		return eyeHeight;
 	}
 
-	public static Pose overridePose(PlayerEntity player){
+	public static Pose overridePose(Player player){
 		Pose overridePose = getOverridePose(player);
 		if(player.getForcedPose() != overridePose){
 			player.setForcedPose(overridePose);
-			if(player.level.isClientSide() && Minecraft.getInstance().cameraEntity != player){
+			if(player.level.isClientSide() && Minecraft.getInstance().camera != player){
 				player.refreshDimensions();
 			}
 		}
@@ -124,10 +125,10 @@ public class DragonSizeHandler{
 		if(!DragonStateProvider.getCap(player).isPresent()){
 			return false;
 		}
-		double size = player.getCapability(DragonStateProvider.DRAGON_CAPABILITY).orElse(null).getSize();
+		double size = player.getCapability(Capabilities.DRAGON_CAPABILITY).orElse(null).getSize();
 		double height = calculateModifiedHeight(calculateDragonHeight((float)size, ConfigHandler.SERVER.hitboxGrowsPastHuman.get()), pose, ConfigHandler.SERVER.sizeChangesHitbox.get());
 		double width = calculateDragonWidth((float)size, ConfigHandler.SERVER.hitboxGrowsPastHuman.get());
-		return (player.level.getBlockCollisions(null, new AxisAlignedBB(player.position().subtract(width * 0.5D, 0.0D, width * 0.5D), player.position().add(width * 0.5D, height, width * 0.5D))).count() == 0);
+		return (player.level.getBlockCollisions(null, new AABB(player.position().subtract(width * 0.5D, 0.0D, width * 0.5D), player.position().add(width * 0.5D, height, width * 0.5D))).spliterator().estimateSize() == 0);
 	}
 
 	public static double calculateModifiedHeight(double height, Pose pose, boolean sizeChangesHitbox){
@@ -149,7 +150,7 @@ public class DragonSizeHandler{
 
 	@SubscribeEvent
 	public static void playerTick(TickEvent.PlayerTickEvent event){
-		PlayerEntity player = event.player;
+		Player player = event.player;
 		if(player == null || event.phase == TickEvent.Phase.END || !ConfigHandler.SERVER.sizeChangesHitbox.get()){
 			return;
 		}

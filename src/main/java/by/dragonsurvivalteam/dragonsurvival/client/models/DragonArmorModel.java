@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client.models;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.Dragon;
 import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib3.core.processor.IBone;
 import software.bernie.geckolib3.geo.render.built.GeoBone;
@@ -9,7 +9,7 @@ import software.bernie.geckolib3.model.AnimatedGeoModel;
 
 import java.util.List;
 
-public class DragonArmorModel extends AnimatedGeoModel<DragonEntity>{
+public class DragonArmorModel extends AnimatedGeoModel<Dragon>{
 
 	private ResourceLocation armorTexture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/armor/empty_armor.png");
 
@@ -30,12 +30,12 @@ public class DragonArmorModel extends AnimatedGeoModel<DragonEntity>{
 	}
 
 	@Override
-	public ResourceLocation getModelLocation(DragonEntity object){
+	public ResourceLocation getModelLocation(Dragon object){
 		return new ResourceLocation(DragonSurvivalMod.MODID, "geo/dragon_armor_model.geo.json");
 	}
 
 	@Override
-	public ResourceLocation getTextureLocation(DragonEntity object){
+	public ResourceLocation getTextureLocation(Dragon object){
 		return armorTexture;
 	}
 
@@ -44,7 +44,7 @@ public class DragonArmorModel extends AnimatedGeoModel<DragonEntity>{
 	}
 
 	@Override
-	public ResourceLocation getAnimationFileLocation(DragonEntity animatable){
+	public ResourceLocation getAnimationFileLocation(Dragon animatable){
 		return new ResourceLocation(DragonSurvivalMod.MODID, "animations/dragon.animations.json");
 	}
 }

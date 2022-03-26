@@ -1,28 +1,22 @@
 package by.dragonsurvivalteam.dragonsurvival.server.containers;
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.slots.ClawToolSlot;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.CraftResultInventory;
-import net.minecraft.inventory.CraftingInventory;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.CraftingResultSlot;
-import net.minecraft.inventory.container.PlayerContainer;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.ICraftingRecipe;
-import net.minecraft.item.crafting.IRecipeType;
-import net.minecraft.network.play.server.SSetSlotPacket;
-import net.minecraft.util.IIntArray;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Container;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.EquipmentSlot.Type;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.*;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -31,18 +25,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class DragonContainer extends Container{
-	private static final EquipmentSlotType[] VALID_EQUIPMENT_SLOTS = new EquipmentSlotType[]{EquipmentSlotType.HEAD, EquipmentSlotType.CHEST, EquipmentSlotType.LEGS, EquipmentSlotType.FEET};
-	private static final ResourceLocation[] ARMOR_SLOT_TEXTURES = new ResourceLocation[]{PlayerContainer.EMPTY_ARMOR_SLOT_BOOTS, PlayerContainer.EMPTY_ARMOR_SLOT_LEGGINGS, PlayerContainer.EMPTY_ARMOR_SLOT_CHESTPLATE, PlayerContainer.EMPTY_ARMOR_SLOT_HELMET};
-	public final CraftingInventory craftMatrix = new CraftingInventory(this, 3, 3);
-	public final CraftResultInventory craftResult = new CraftResultInventory();
+public class DragonContainer extends AbstractContainerMenu{
+	private static final EquipmentSlot[] VALID_EQUIPMENT_SLOTS = new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
+	private static final ResourceLocation[] ARMOR_SLOT_TEXTURES = new ResourceLocation[]{InventoryMenu.EMPTY_ARMOR_SLOT_BOOTS, InventoryMenu.EMPTY_ARMOR_SLOT_LEGGINGS, InventoryMenu.EMPTY_ARMOR_SLOT_CHESTPLATE, InventoryMenu.EMPTY_ARMOR_SLOT_HELMET};
+	public final CraftingContainer craftMatrix = new CraftingContainer(this, 3, 3);
+	public final ResultContainer craftResult = new ResultContainer();
 	public final boolean isLocalWorld;
-	public final PlayerEntity player;
+	public final Player player;
 	public List<Slot> craftingSlots = new ArrayList<>();
 	public List<Slot> inventorySlots = new ArrayList<>();
-	public PlayerInventory playerInventory;
+	public Inventory playerInventory;
 	public int menuStatus = 0;
-	protected final IIntArray dataStatus = new IIntArray(){
+	protected final ContainerData dataStatus = new ContainerData(){
 		public int get(int p_221476_1_){
 			switch(p_221476_1_){
 				case 0:
@@ -67,7 +61,7 @@ public class DragonContainer extends Container{
 	};
 	private final int craftingSlot;
 
-	public DragonContainer(int id, PlayerInventory playerInventory, boolean localWorld){
+	public DragonContainer(int id, Inventory playerInventory, boolean localWorld){
 		super(DSContainers.dragonContainer, id);
 		this.isLocalWorld = localWorld;
 		this.player = playerInventory.player;
@@ -76,7 +70,7 @@ public class DragonContainer extends Container{
 		this.addDataSlots(dataStatus);
 
 		for(int k = 0; k < 4; ++k){
-			final EquipmentSlotType equipmentslottype = VALID_EQUIPMENT_SLOTS[k];
+			final EquipmentSlot equipmentslottype = VALID_EQUIPMENT_SLOTS[k];
 			this.addSlot(new Slot(playerInventory, 39 - k, 8, 8 + k * 18){
 				@Override
 				public boolean mayPlace(ItemStack stack){
@@ -86,11 +80,11 @@ public class DragonContainer extends Container{
 				@Override
 				@OnlyIn( Dist.CLIENT )
 				public Pair<ResourceLocation, ResourceLocation> getNoItemIcon(){
-					return Pair.of(PlayerContainer.BLOCK_ATLAS, ARMOR_SLOT_TEXTURES[equipmentslottype.getIndex()]);
+					return Pair.of(InventoryMenu.BLOCK_ATLAS, ARMOR_SLOT_TEXTURES[equipmentslottype.getIndex()]);
 				}
 
 				@Override
-				public boolean mayPickup(PlayerEntity playerIn){
+				public boolean mayPickup(Player playerIn){
 					ItemStack itemstack = this.getItem();
 					return (itemstack.isEmpty() || playerIn.isCreative() || !EnchantmentHelper.hasBindingCurse(itemstack)) && super.mayPickup(playerIn);
 				}
@@ -116,7 +110,7 @@ public class DragonContainer extends Container{
 
 		DragonStateProvider.getCap(player).ifPresent((cap) -> {
 			for(int i = 0; i < 4; ++i){
-				ClawToolSlot s = new ClawToolSlot(this, cap.getClawInventory().getClawsInventory(), DragonStateHandler.CLAW_TOOL_TYPES[i], i, -50, 35 + (i * 18));
+				ClawToolSlot s = new ClawToolSlot(this, cap.getClawInventory().getClawsInventory(), i, -50, 35 + (i * 18), i);
 				this.addSlot(s);
 				inventorySlots.add(s);
 			}
@@ -125,7 +119,7 @@ public class DragonContainer extends Container{
 		//Offhand
 		this.addSlot(new Slot(playerInventory, 40, 26, 62));
 
-		this.addSlot(new CraftingResultSlot(playerInventory.player, this.craftMatrix, this.craftResult, 0, 178, 33));
+		this.addSlot(new ResultSlot(playerInventory.player, this.craftMatrix, this.craftResult, 0, 178, 33));
 		craftingSlot = slots.size();
 
 		for(int i = 0; i < craftMatrix.getWidth(); ++i){
@@ -148,20 +142,20 @@ public class DragonContainer extends Container{
 	}
 
 	@Override
-	public ItemStack quickMoveStack(PlayerEntity playerIn, int index){
+	public ItemStack quickMoveStack(Player playerIn, int index){
 		ItemStack itemstack = ItemStack.EMPTY;
 		Slot slot = this.slots.get(index);
 		if(slot != null && slot.hasItem()){
 			ItemStack itemstack1 = slot.getItem();
 			itemstack = itemstack1.copy();
-			EquipmentSlotType equipmentslottype = MobEntity.getEquipmentSlotForItem(itemstack);
+			EquipmentSlot equipmentslottype = Mob.getEquipmentSlotForItem(itemstack);
 
 			if(index == craftingSlot){
 				if(!this.moveItemStackTo(itemstack1, 4, 46, true)){
 					return ItemStack.EMPTY;
 				}
 				slot.onQuickCraft(itemstack1, itemstack);
-			}else if(equipmentslottype.getType() == EquipmentSlotType.Group.ARMOR && !this.slots.get(3 - equipmentslottype.getIndex()).hasItem()){
+			}else if(equipmentslottype.getType() == Type.ARMOR && !this.slots.get(3 - equipmentslottype.getIndex()).hasItem()){
 				int i = 3 - equipmentslottype.getIndex();
 				if(!this.moveItemStackTo(itemstack1, i, i + 1, false)){
 					return ItemStack.EMPTY;
@@ -174,7 +168,7 @@ public class DragonContainer extends Container{
 				if(!this.moveItemStackTo(itemstack1, 31, 40, false)){
 					return ItemStack.EMPTY;
 				}
-			}else if(equipmentslottype == EquipmentSlotType.OFFHAND && !this.slots.get(44).hasItem()){
+			}else if(equipmentslottype == EquipmentSlot.OFFHAND && !this.slots.get(44).hasItem()){
 				if(!this.moveItemStackTo(itemstack1, 44, 46, false)){
 					return ItemStack.EMPTY;
 				}
@@ -202,9 +196,9 @@ public class DragonContainer extends Container{
 				return ItemStack.EMPTY;
 			}
 
-			ItemStack itemstack2 = slot.onTake(playerIn, itemstack1);
+			slot.onTake(playerIn, itemstack1);
 			if(index == 0){
-				playerIn.drop(itemstack2, false);
+				playerIn.drop(itemstack1, false);
 			}
 		}
 
@@ -219,34 +213,35 @@ public class DragonContainer extends Container{
 	}
 
 	@Override
-	public void removed(PlayerEntity playerEntity){
+	public void removed(Player playerEntity){
 		super.removed(playerEntity);
-		clearContainer(playerEntity, playerEntity.level, craftMatrix);
+		clearContainer(playerEntity, craftMatrix);
 	}
 
 	/**
 	 * Callback for when the crafting matrix is changed.
 	 */
 	@Override
-	public void slotsChanged(IInventory inventory){
+	public void slotsChanged(Container inventory){
 		if(!player.level.isClientSide){
-			ServerPlayerEntity serverplayerentity = (ServerPlayerEntity)player;
+			ServerPlayer serverplayerentity = (ServerPlayer)player;
 			ItemStack itemstack = ItemStack.EMPTY;
-			Optional<ICraftingRecipe> optional = player.level.getServer().getRecipeManager().getRecipeFor(IRecipeType.CRAFTING, craftMatrix, player.level);
+			Optional<CraftingRecipe> optional = player.level.getServer().getRecipeManager().getRecipeFor(RecipeType.CRAFTING, craftMatrix, player.level);
 			if(optional.isPresent()){
-				ICraftingRecipe icraftingrecipe = optional.get();
+				CraftingRecipe icraftingrecipe = optional.get();
 				if(craftResult.setRecipeUsed(player.level, serverplayerentity, icraftingrecipe)){
 					itemstack = icraftingrecipe.assemble(craftMatrix);
 				}
 			}
 
 			craftResult.setItem(45, itemstack);
-			serverplayerentity.connection.send(new SSetSlotPacket(containerId, 45, itemstack));
+			this.setRemoteSlot(45, itemstack);
+			serverplayerentity.connection.send(new ClientboundContainerSetSlotPacket(containerId, incrementStateId(), 45, itemstack));
 		}
 	}
 
 	@Override
-	public boolean stillValid(PlayerEntity p_75145_1_){
+	public boolean stillValid(Player p_75145_1_){
 		return true;
 	}
 }

@@ -1,55 +1,58 @@
 package by.dragonsurvivalteam.dragonsurvival.common.items;
 
+
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
-import by.dragonsurvivalteam.dragonsurvival.network.syncing.CompleteDataSync;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.network.PacketDistributor;
+import by.dragonsurvivalteam.dragonsurvival.network.entity.player.SynchronizeDragonCap;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.network.PacketDistributor;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class WingGrantItem extends Item{
-	public WingGrantItem(Properties p_i48487_1_){
+public class WingGrantItem extends Item
+{
+	public WingGrantItem(Properties p_i48487_1_)
+	{
 		super(p_i48487_1_);
 	}
 
 	@Override
-	public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand p_77659_3_){
-		DragonStateHandler handler = DragonUtils.getHandler(player);
+	public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand p_77659_3_)
+	{
+		DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
 
-		if(handler != null && handler.isDragon()){
-			if(!world.isClientSide){
+		if (handler != null && handler.isDragon()) {
+			if(!world.isClientSide) {
 				handler.setHasWings(!handler.hasWings());
-				NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new CompleteDataSync(player));
+				NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new SynchronizeDragonCap(player.getId(), handler.isHiding(), handler.getType(), handler.getSize(), handler.hasWings(), handler.getLavaAirSupply(), handler.getPassengerId()));
 
-				if(!player.isCreative()){
+				if (!player.isCreative()) {
 					player.getItemInHand(p_77659_3_).shrink(1);
 				}
 			}
 
 			player.playSound(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, 1F, 0F);
-			return ActionResult.success(player.getItemInHand(p_77659_3_));
+			return InteractionResultHolder.success(player.getItemInHand(p_77659_3_));
 		}
 
 		return super.use(world, player, p_77659_3_);
 	}
 
 	@Override
-	public void appendHoverText(ItemStack p_77624_1_,
-		@Nullable
-			World p_77624_2_, List<ITextComponent> p_77624_3_, ITooltipFlag p_77624_4_){
+	public void appendHoverText(ItemStack p_77624_1_, @Nullable Level p_77624_2_, List<Component> p_77624_3_, TooltipFlag p_77624_4_)
+	{
 		super.appendHoverText(p_77624_1_, p_77624_2_, p_77624_3_, p_77624_4_);
-		p_77624_3_.add(new TranslationTextComponent("ds.description.wing_grant"));
+		p_77624_3_.add(new TranslatableComponent("ds.description.wing_grant"));
 	}
 }

@@ -5,15 +5,15 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.SkinCap;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 
 public class DragonEditorHandler{
-	public static ResourceLocation getSkinTexture(PlayerEntity player, EnumSkinLayer layer, String key, DragonType type){
+	public static ResourceLocation getSkinTexture(Player player, EnumSkinLayer layer, String key, DragonType type){
 		if(Objects.equals(layer.name, "Extra") && layer != EnumSkinLayer.EXTRA){
 			return getSkinTexture(player, EnumSkinLayer.EXTRA, key, type);
 		}
@@ -34,7 +34,7 @@ public class DragonEditorHandler{
 		return null;
 	}
 
-	public static Texture getSkin(PlayerEntity player, EnumSkinLayer layer, String key, DragonType type){
+	public static Texture getSkin(Player player, EnumSkinLayer layer, String key, DragonType type){
 		if(Objects.equals(layer.name, "Extra") && layer != EnumSkinLayer.EXTRA){
 			return getSkin(player, EnumSkinLayer.EXTRA, key, type);
 		}
@@ -69,7 +69,7 @@ public class DragonEditorHandler{
 		return list;
 	}
 
-	public static ArrayList<String> getKeys(PlayerEntity player, EnumSkinLayer layers){
+	public static ArrayList<String> getKeys(Player player, EnumSkinLayer layers){
 		return getKeys(DragonUtils.getDragonType(player), layers);
 	}
 }

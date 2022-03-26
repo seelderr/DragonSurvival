@@ -1,43 +1,42 @@
 package by.dragonsurvivalteam.dragonsurvival.common.blocks;
 
+import by.dragonsurvivalteam.dragonsurvival.common.capability.Capabilities;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
-import net.minecraft.block.*;
-import net.minecraft.block.material.Material;
-import net.minecraft.block.material.PushReaction;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.pathfinding.PathType;
-import net.minecraft.state.BooleanProperty;
-import net.minecraft.state.DirectionProperty;
-import net.minecraft.state.EnumProperty;
-import net.minecraft.state.StateContainer;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.state.properties.DoorHingeSide;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.stats.Stats;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.World;
+import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.*;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.PushReaction;
+import net.minecraft.world.level.pathfinder.PathComputationType;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nullable;
 
 
-public class SmallDragonDoor extends Block  implements IWaterLoggable{
-	public static final DirectionProperty FACING = HorizontalBlock.FACING;
+public class SmallDragonDoor extends Block implements SimpleWaterloggedBlock{
+	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	public static final BooleanProperty OPEN = BlockStateProperties.OPEN;
 	public static final EnumProperty<DoorHingeSide> HINGE = BlockStateProperties.DOOR_HINGE;
 	public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
@@ -55,10 +54,10 @@ public class SmallDragonDoor extends Block  implements IWaterLoggable{
 	}
 
 	@Nullable
-	public BlockState getStateForPlacement(BlockItemUseContext context){
+	public BlockState getStateForPlacement(BlockPlaceContext context){
 		BlockPos blockpos = context.getClickedPos();
 		if(blockpos.getY() < 255){
-			World world = context.getLevel();
+			Level world = context.getLevel();
 			boolean flag = world.hasNeighborSignal(blockpos) || world.hasNeighborSignal(blockpos.above());
 			return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection()).setValue(HINGE, this.getHinge(context)).setValue(POWERED, flag).setValue(OPEN, flag).setValue(WATERLOGGED, context.getLevel().getFluidState(context.getClickedPos()).getType() == Fluids.WATER && defaultBlockState().getBlock() == DSBlocks.seaDoor);
 		}else{
@@ -66,22 +65,9 @@ public class SmallDragonDoor extends Block  implements IWaterLoggable{
 		}
 	}
 
-	// not sure why inheriting this behaviour doesn't work, but confirmed it doesn't
-	public void playerDestroy(World p_180657_1_, PlayerEntity p_180657_2_, BlockPos p_180657_3_, BlockState p_180657_4_,
-		@Nullable
-			TileEntity p_180657_5_, ItemStack p_180657_6_){
-		p_180657_2_.awardStat(Stats.BLOCK_MINED.get(this));
-		p_180657_2_.causeFoodExhaustion(0.005F);
-		dropResources(p_180657_4_, p_180657_1_, p_180657_3_, p_180657_5_, p_180657_2_, p_180657_6_);
-	}
-
-	protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder){
-		builder.add(FACING, OPEN, HINGE, POWERED, OPEN_REQ, WATERLOGGED);
-	}
-
-	private DoorHingeSide getHinge(BlockItemUseContext blockItemUseContext){
+	private DoorHingeSide getHinge(BlockPlaceContext blockItemUseContext){
 		//TODO Logic handling aligning doors
-		IBlockReader iblockreader = blockItemUseContext.getLevel();
+		BlockGetter iblockreader = blockItemUseContext.getLevel();
 		BlockPos blockpos = blockItemUseContext.getClickedPos();
 		Direction north = blockItemUseContext.getHorizontalDirection();
 		Direction directionCounterClockWiseHorizontal = north.getCounterClockWise();
@@ -97,7 +83,7 @@ public class SmallDragonDoor extends Block  implements IWaterLoggable{
 			if((!flag1 || flag) && i >= 0){
 				int j = north.getStepX();
 				int k = north.getStepZ();
-				Vector3d vec3d = blockItemUseContext.getClickLocation();
+				Vec3 vec3d = blockItemUseContext.getClickLocation();
 				double d0 = vec3d.x - (double)blockpos.getX();
 				double d1 = vec3d.z - (double)blockpos.getZ();
 				return (j >= 0 || !(d1 < 0.5D)) && (j <= 0 || !(d1 > 0.5D)) && (k >= 0 || !(d0 > 0.5D)) && (k <= 0 || !(d0 < 0.5D)) ? DoorHingeSide.LEFT : DoorHingeSide.RIGHT;
@@ -109,22 +95,20 @@ public class SmallDragonDoor extends Block  implements IWaterLoggable{
 		}
 	}
 
-	/**
-	 * Used by {@link net.minecraft.entity.ai.brain.task.InteractWithDoorTask}
-	 */
-	public void toggleDoor(World worldIn, BlockPos pos, boolean open){ // TODO check this for Open Requirements
-		BlockState blockstate = worldIn.getBlockState(pos);
-		if(blockstate.getBlock() == this && blockstate.getValue(OPEN) != open){
-			worldIn.setBlock(pos, blockstate.setValue(OPEN, open), 10);
-			this.playSound(worldIn, pos, open);
-		}
+	// not sure why inheriting this behaviour doesn't work, but confirmed it doesn't
+	public void playerDestroy(Level p_180657_1_, Player p_180657_2_, BlockPos p_180657_3_, BlockState p_180657_4_,
+		@Nullable
+			BlockEntity p_180657_5_, ItemStack p_180657_6_){
+		p_180657_2_.awardStat(Stats.BLOCK_MINED.get(this));
+		p_180657_2_.causeFoodExhaustion(0.005F);
+		dropResources(p_180657_4_, p_180657_1_, p_180657_3_, p_180657_5_, p_180657_2_, p_180657_6_);
 	}
 
-	private void playSound(World worldIn, BlockPos pos, boolean isOpening){
-		worldIn.levelEvent(null, isOpening ? this.getOpenSound() : this.getCloseSound(), pos, 0);
+	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder){
+		builder.add(FACING, OPEN, HINGE, POWERED, OPEN_REQ, WATERLOGGED);
 	}
 
-	public boolean isPathfindable(BlockState state, IBlockReader worldIn, BlockPos pos, PathType type){
+	public boolean isPathfindable(BlockState state, BlockGetter worldIn, BlockPos pos, PathComputationType type){
 		switch(type){
 			case LAND:
 			case AIR:
@@ -135,23 +119,17 @@ public class SmallDragonDoor extends Block  implements IWaterLoggable{
 	}
 
 	// handles destruction of door when block underneath destroyed
-	public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos){
+	public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos){
 		if(facing == Direction.DOWN && !stateIn.canSurvive(worldIn, currentPos)){
 			return Blocks.AIR.defaultBlockState();
 		}
 		if(stateIn.getValue(WATERLOGGED)){
-			worldIn.getLiquidTicks().scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(worldIn));
+			worldIn.scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(worldIn));
 		}
 		return super.updateShape(stateIn, facing, facingState, worldIn, currentPos, facingPos);
 	}
 
-	@Override
-	public FluidState getFluidState(BlockState state){
-		return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
-	}
-
-
-	public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving){
+	public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving){
 		boolean validPower = state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.NONE || state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.POWER;
 		boolean validType = (state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.SEA && blockIn == DSBlocks.seaPressurePlate) || (state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.FOREST && blockIn == DSBlocks.forestPressurePlate) || (state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.CAVE && blockIn == DSBlocks.cavePressurePlate);
 		if(validPower || validType){
@@ -166,18 +144,8 @@ public class SmallDragonDoor extends Block  implements IWaterLoggable{
 		}
 	}
 
-	public ActionResultType use(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit){
-		LazyOptional<DragonStateHandler> dragonStateHandlerLazyOptional = player.getCapability(DragonStateProvider.DRAGON_CAPABILITY);
-		if(dragonStateHandlerLazyOptional.isPresent()){
-			DragonStateHandler dragonStateHandler = dragonStateHandlerLazyOptional.orElseGet(() -> null);
-			if(state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.NONE || (dragonStateHandler.isDragon() && (state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.CAVE && dragonStateHandler.getType() == DragonType.CAVE) || (state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.FOREST && dragonStateHandler.getType() == DragonType.FOREST) || (state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.SEA && dragonStateHandler.getType() == DragonType.SEA))){
-				state = state.cycle(OPEN);
-				worldIn.setBlock(pos, state, 10);
-				worldIn.levelEvent(player, state.getValue(OPEN) ? this.getOpenSound() : this.getCloseSound(), pos, 0);
-				return ActionResultType.SUCCESS;
-			}
-		}
-		return ActionResultType.PASS;
+	private void playSound(Level worldIn, BlockPos pos, boolean isOpening){
+		worldIn.levelEvent(null, isOpening ? this.getOpenSound() : this.getCloseSound(), pos, 0);
 	}
 
 	protected int getCloseSound(){
@@ -188,8 +156,27 @@ public class SmallDragonDoor extends Block  implements IWaterLoggable{
 		return this.material == Material.METAL ? 1005 : 1006;
 	}
 
+	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit){
+		LazyOptional<DragonStateHandler> dragonStateHandlerLazyOptional = player.getCapability(Capabilities.DRAGON_CAPABILITY);
+		if(dragonStateHandlerLazyOptional.isPresent()){
+			DragonStateHandler dragonStateHandler = dragonStateHandlerLazyOptional.orElseGet(() -> null);
+			if(state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.NONE || (dragonStateHandler.isDragon() && (state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.CAVE && dragonStateHandler.getType() == DragonType.CAVE) || (state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.FOREST && dragonStateHandler.getType() == DragonType.FOREST) || (state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.SEA && dragonStateHandler.getType() == DragonType.SEA))){
+				state = state.cycle(OPEN);
+				worldIn.setBlock(pos, state, 10);
+				worldIn.levelEvent(player, state.getValue(OPEN) ? this.getOpenSound() : this.getCloseSound(), pos, 0);
+				return InteractionResult.SUCCESS;
+			}
+		}
+		return InteractionResult.PASS;
+	}
+
 	public PushReaction getPistonPushReaction(BlockState state){
 		return state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.NONE ? PushReaction.DESTROY : PushReaction.IGNORE;
+	}
+
+	@Override
+	public FluidState getFluidState(BlockState state){
+		return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
 	}
 
 	public BlockState rotate(BlockState state, Rotation rot){
@@ -201,16 +188,16 @@ public class SmallDragonDoor extends Block  implements IWaterLoggable{
 	}
 
 	public long getSeed(BlockState state, BlockPos pos){
-		return MathHelper.getSeed(pos.getX(), pos.below(0).getY(), pos.getZ());
+		return Mth.getSeed(pos.getX(), pos.below(0).getY(), pos.getZ());
 	}
 
-	public boolean canSurvive(BlockState state, IWorldReader worldIn, BlockPos pos){
+	public boolean canSurvive(BlockState state, LevelReader worldIn, BlockPos pos){
 		BlockPos blockpos = pos.below();
 		BlockState blockstate = worldIn.getBlockState(blockpos);
 		return blockstate.isFaceSturdy(worldIn, blockpos, Direction.UP);
 	}
 
-	public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context){
+	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context){
 		Direction direction = state.getValue(FACING);
 		boolean flag = !state.getValue(OPEN);
 		boolean flag1 = state.getValue(HINGE) == DoorHingeSide.RIGHT;

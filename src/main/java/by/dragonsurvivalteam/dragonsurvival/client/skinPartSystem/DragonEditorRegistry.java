@@ -29,11 +29,11 @@ public class DragonEditorRegistry{
 	public static final String SAVED_FILE_NAME = "saved_customizations.json";
 	public static final ResourceLocation CUSTOMIZATION = new ResourceLocation(DragonSurvivalMod.MODID, "customization.json");
 	public static final HashMap<DragonType, HashMap<EnumSkinLayer, Texture[]>> CUSTOMIZATIONS = new HashMap<>();
+	private static final boolean init = false;
 	public static SavedSkinPresets savedCustomizations = null;
 	public static HashMap<DragonType, HashMap<DragonLevel, HashMap<EnumSkinLayer, String>>> defaultSkinValues = new HashMap<>();
 	public static File folder;
 	public static File savedFile;
-	private static final boolean init = false;
 
 	public static String getDefaultPart(DragonType type, DragonLevel level, EnumSkinLayer layer){
 		return defaultSkinValues.getOrDefault(type, new HashMap<>()).getOrDefault(level, new HashMap<>()).getOrDefault(layer, SkinCap.defaultSkinValue);

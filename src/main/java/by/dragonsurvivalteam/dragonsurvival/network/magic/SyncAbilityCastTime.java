@@ -1,24 +1,25 @@
 package by.dragonsurvivalteam.dragonsurvival.network.magic;
 
+
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.world.World;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.DistExecutor.SafeRunnable;
-import net.minecraftforge.fml.network.NetworkEvent;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.network.NetworkDirection;
+import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.network.PacketDistributor;
 
 import java.util.function.Supplier;
 
-import static net.minecraftforge.fml.network.NetworkDirection.PLAY_TO_SERVER;
 
 public class SyncAbilityCastTime implements IMessage<SyncAbilityCastTime>{
 
@@ -35,13 +36,17 @@ public class SyncAbilityCastTime implements IMessage<SyncAbilityCastTime>{
 	}
 
 	@Override
-	public void encode(SyncAbilityCastTime message, PacketBuffer buffer){
+
+	public void encode(SyncAbilityCastTime message, FriendlyByteBuf buffer){
+
 		buffer.writeInt(message.playerId);
 		buffer.writeInt(message.castTime);
 	}
 
 	@Override
-	public SyncAbilityCastTime decode(PacketBuffer buffer){
+
+	public SyncAbilityCastTime decode(FriendlyByteBuf buffer){
+
 		int playerId = buffer.readInt();
 		int castTime = buffer.readInt();
 
@@ -52,8 +57,10 @@ public class SyncAbilityCastTime implements IMessage<SyncAbilityCastTime>{
 	public void handle(SyncAbilityCastTime message, Supplier<NetworkEvent.Context> supplier){
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> runClient(message, supplier));
 
-		if(supplier.get().getDirection() == PLAY_TO_SERVER){
-			ServerPlayerEntity player = supplier.get().getSender();
+
+		if(supplier.get().getDirection() == NetworkDirection.PLAY_TO_SERVER){
+			ServerPlayer player = supplier.get().getSender();
+
 
 			DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
 				dragonStateHandler.getMagic().getAbilityFromSlot(dragonStateHandler.getMagic().getSelectedAbilitySlot()).setCastTime(message.castTime);
@@ -67,11 +74,13 @@ public class SyncAbilityCastTime implements IMessage<SyncAbilityCastTime>{
 	public void runClient(SyncAbilityCastTime message, Supplier<NetworkEvent.Context> supplier){
 		NetworkEvent.Context context = supplier.get();
 		context.enqueueWork(() -> {
-			PlayerEntity thisPlayer = Minecraft.getInstance().player;
+
+			Player thisPlayer = Minecraft.getInstance().player;
 			if(thisPlayer != null){
-				World world = thisPlayer.level;
+				Level world = thisPlayer.level;
 				Entity entity = world.getEntity(message.playerId);
-				if(entity instanceof PlayerEntity){
+				if(entity instanceof Player){
+
 					DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
 						if(message.castTime == 0 || message.castTime > dragonStateHandler.getMagic().getAbilityFromSlot(dragonStateHandler.getMagic().getSelectedAbilitySlot()).getCurrentCastTimer()){
 							dragonStateHandler.getMagic().getAbilityFromSlot(dragonStateHandler.getMagic().getSelectedAbilitySlot()).setCastTime(message.castTime);

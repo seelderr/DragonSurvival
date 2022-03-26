@@ -1,50 +1,75 @@
 package by.dragonsurvivalteam.dragonsurvival.common.capability.provider;
 
-import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayer;
+import by.dragonsurvivalteam.dragonsurvival.client.util.FakeLocalPlayer;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.Capabilities;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.hitbox.DragonHitBox;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.hitbox.DragonHitboxPart;
-import net.minecraft.entity.Entity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
+import com.ibm.icu.impl.Pair;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.Entity;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
 
-public class DragonStateProvider implements ICapabilitySerializable<CompoundNBT>{
+public class DragonStateProvider implements ICapabilitySerializable<CompoundTag>{
 
-	private final LazyOptional<DragonStateHandler> instance = LazyOptional.of(DRAGON_CAPABILITY::getDefaultInstance);
-	@CapabilityInject( DragonStateHandler.class )
-	public static Capability<DragonStateHandler> DRAGON_CAPABILITY;
+	private final DragonStateHandler handlerObject = new DragonStateHandler();
+	private final LazyOptional<DragonStateHandler> instance = LazyOptional.of(() -> handlerObject);
+
+	@OnlyIn( Dist.CLIENT )
+	private static Pair<Boolean, LazyOptional<DragonStateHandler>> getFakePlayer(Entity entity){
+		if(entity instanceof FakeLocalPlayer){
+			if(((FakeLocalPlayer)entity).handler != null){
+				return Pair.of(true, LazyOptional.of(() -> ((FakeLocalPlayer)entity).handler));
+			}
+		}
+
+		return Pair.of(false, LazyOptional.empty());
+	}
 
 	public static LazyOptional<DragonStateHandler> getCap(Entity entity){
-		if(entity != null && entity.level != null && entity.level.isClientSide){
-			if(entity instanceof FakeClientPlayer){
-				return ((FakeClientPlayer)entity).handler != null ? LazyOptional.of(() -> ((FakeClientPlayer)entity).handler) : LazyOptional.empty();
+		if(entity.level.isClientSide){
+			Pair<Boolean, LazyOptional<DragonStateHandler>> fakeState = getFakePlayer(entity);
+
+			if(fakeState.first){
+				return fakeState.second;
 			}
 		}
 
 		if(entity instanceof DragonHitBox){
-			return ((DragonHitBox)entity).player == null ? LazyOptional.empty() : ((DragonHitBox)entity).player.getCapability(DragonStateProvider.DRAGON_CAPABILITY);
+			return ((DragonHitBox)entity).player == null ? LazyOptional.empty() : getCap(((DragonHitBox)entity).player);
 		}else if(entity instanceof DragonHitboxPart){
-			return ((DragonHitboxPart)entity).parentMob.player == null ? LazyOptional.empty() : ((DragonHitboxPart)entity).parentMob.player.getCapability(DragonStateProvider.DRAGON_CAPABILITY);
+			return ((DragonHitboxPart)entity).parentMob.player == null ? LazyOptional.empty() : getCap(((DragonHitboxPart)entity).parentMob.player);
 		}
-		return entity == null ? LazyOptional.empty() : entity.getCapability(DragonStateProvider.DRAGON_CAPABILITY);
+
+		if(entity == null){
+			return LazyOptional.empty();
+		}else{
+			LazyOptional<DragonStateHandler> cap = entity.getCapability(Capabilities.DRAGON_CAPABILITY);
+			return cap;
+		}
+	}
+
+	public void invalidate(){
+		//  instance.invalidate();
 	}
 
 	@Override
 	public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side){
-		return cap == DRAGON_CAPABILITY ? instance.cast() : LazyOptional.empty();
+		return cap == Capabilities.DRAGON_CAPABILITY ? instance.cast() : LazyOptional.empty();
 	}
 
 	@Override
-	public CompoundNBT serializeNBT(){
-		return (CompoundNBT)DRAGON_CAPABILITY.getStorage().writeNBT(DRAGON_CAPABILITY, this.instance.orElseThrow(() -> new IllegalArgumentException("LazyOptional must not be empty!")), null);
+	public CompoundTag serializeNBT(){
+		return this.instance.orElseThrow(() -> new IllegalArgumentException("LazyOptional must not be empty!")).writeNBT();
 	}
 
 	@Override
-	public void deserializeNBT(CompoundNBT nbt){
-		DRAGON_CAPABILITY.getStorage().readNBT(DRAGON_CAPABILITY, this.instance.orElseThrow(() -> new IllegalArgumentException("LazyOptional must not be empty!")), null, nbt);
+	public void deserializeNBT(CompoundTag nbt){
+		this.instance.orElseThrow(() -> new IllegalArgumentException("LazyOptional must not be empty!")).readNBT(nbt);
 	}
 }

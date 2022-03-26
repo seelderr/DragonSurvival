@@ -1,20 +1,21 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.projectile.AbstractFireballEntity;
-import net.minecraft.entity.projectile.ProjectileHelper;
-import net.minecraft.network.IPacket;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.particles.IParticleData;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.network.NetworkHooks;
+
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.projectile.Fireball;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.network.NetworkHooks;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
@@ -22,22 +23,27 @@ import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
-public class DragonBallEntity extends AbstractFireballEntity implements IAnimatable{
-	public static final DataParameter<Integer> SKILL_LEVEL = EntityDataManager.defineId(DragonBallEntity.class, DataSerializers.INT);
+
+public class DragonBallEntity extends Fireball implements IAnimatable{
+	public static final EntityDataAccessor<Integer> SKILL_LEVEL = SynchedEntityData.defineId(DragonBallEntity.class, EntityDataSerializers.INT);
 	AnimationFactory animationFactory = new AnimationFactory(this);
 	protected boolean isDead;
 	protected int deadTicks;
 
-	public DragonBallEntity(EntityType<? extends AbstractFireballEntity> p_i50168_1_, LivingEntity p_i50168_2_, double p_i50168_3_, double p_i50168_5_, double p_i50168_7_, World p_i50168_9_){
+	public DragonBallEntity(EntityType<? extends Fireball> p_i50168_1_, LivingEntity p_i50168_2_, double p_i50168_3_, double p_i50168_5_, double p_i50168_7_, Level p_i50168_9_){
 		super(p_i50168_1_, p_i50168_2_, p_i50168_3_, p_i50168_5_, p_i50168_7_, p_i50168_9_);
 	}
 
-	public DragonBallEntity(EntityType<? extends AbstractFireballEntity> p_i50166_1_, World p_i50166_2_){
+	public DragonBallEntity(EntityType<? extends Fireball> p_i50166_1_, Level p_i50166_2_){
 		super(p_i50166_1_, p_i50166_2_);
 	}
 
-	public int getLevel(){
+	public int getSkillLevel(){
 		return this.entityData.get(SKILL_LEVEL);
+	}
+
+	public void setLevel(int level){
+		this.entityData.set(SKILL_LEVEL, level);
 	}
 
 	@Override
@@ -46,35 +52,33 @@ public class DragonBallEntity extends AbstractFireballEntity implements IAnimata
 		this.entityData.define(SKILL_LEVEL, 1);
 	}
 
-	public void setLevel(int level){
-		this.entityData.set(SKILL_LEVEL, level);
-	}
-
 	@Override
 	public void tick(){
 		if(isDead){
 			deadTicks++;
 
 			if(deadTicks >= 26){
-				this.remove();
+				this.remove(RemovalReason.DISCARDED);
 			}
 			return;
 		}
 
 		Entity entity = this.getOwner();
-		if(this.level.isClientSide || (entity == null || !entity.removed) && this.level.hasChunkAt(this.blockPosition())){
-			RayTraceResult raytraceresult = ProjectileHelper.getHitResult(this, this::canHitEntity);
 
-			if(raytraceresult.getType() != RayTraceResult.Type.MISS){
+		if(this.level.isClientSide || (entity == null || !entity.isRemoved()) && this.level.hasChunkAt(this.blockPosition())){
+			HitResult raytraceresult = ProjectileUtil.getHitResult(this, this::canHitEntity);
+
+			if(raytraceresult.getType() != HitResult.Type.MISS){
+
 				this.onHit(raytraceresult);
 			}
 
 			this.checkInsideBlocks();
-			Vector3d vector3d = this.getDeltaMovement();
+			Vec3 vector3d = this.getDeltaMovement();
 			double d0 = this.getX() + vector3d.x;
 			double d1 = this.getY() + vector3d.y;
 			double d2 = this.getZ() + vector3d.z;
-			ProjectileHelper.rotateTowardsMovement(this, 0.2F);
+			ProjectileUtil.rotateTowardsMovement(this, 0.2F);
 			float f = this.getInertia();
 			if(this.isInWater()){
 				f = 0.8F;
@@ -89,36 +93,36 @@ public class DragonBallEntity extends AbstractFireballEntity implements IAnimata
 		}
 
 		if(moveDist >= 32){
-			onHit(ProjectileHelper.getHitResult(this, this::canHitEntity));
+			onHit(ProjectileUtil.getHitResult(this, this::canHitEntity));
 		}
 	}
 
 	@Override
-	protected IParticleData getTrailParticle(){
+	protected ParticleOptions getTrailParticle(){
 		return ParticleTypes.WHITE_ASH;
-	}
-
-	@Override
-	public IPacket<?> getAddEntityPacket(){
-		return NetworkHooks.getEntitySpawningPacket(this);
 	}
 
 	protected boolean canHitEntity(Entity p_230298_1_){
 		return true;
 	}
 
-	protected boolean shouldBurn(){
-		return false;
-	}
-
 	@Override
-	protected void onHit(RayTraceResult p_70227_1_){
+	protected void onHit(HitResult p_70227_1_){
 		attackMobs();
 		setDeltaMovement(0, 0, 0);
 		isDead = true;
 	}
 
 	public void attackMobs(){}
+
+	@Override
+	public Packet<?> getAddEntityPacket(){
+		return NetworkHooks.getEntitySpawningPacket(this);
+	}
+
+	protected boolean shouldBurn(){
+		return false;
+	}
 
 	@Override
 	public void registerControllers(AnimationData data){

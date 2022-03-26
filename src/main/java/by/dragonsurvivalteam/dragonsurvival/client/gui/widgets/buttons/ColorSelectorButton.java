@@ -6,29 +6,28 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEdito
 import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.DragonEditorHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.EnumSkinLayer;
 import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.objects.DragonEditorObject.Texture;
-import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
+import by.dragonsurvivalteam.dragonsurvival.client.util.FakeLocalPlayerUtils;
 import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.matrix.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
+ 
+import net.minecraft.util.text.TextComponent;
 import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
 
 import java.awt.Color;
 import java.util.function.Consumer;
 
 public class ColorSelectorButton extends ExtendedButton{
+	private final DragonEditorScreen screen;
+	private final EnumSkinLayer layer;
 	public Consumer<Double> setter;
-
 	public boolean toggled;
 	public int xSize, ySize;
 	private HueSelectorComponent hueComponent;
 	private ColorSelectorComponent colorComponent;
 	private Widget renderButton;
-	private final DragonEditorScreen screen;
-	private final EnumSkinLayer layer;
 
 	public ColorSelectorButton(DragonEditorScreen screen, EnumSkinLayer layer, int x, int y, int xSize, int ySize, Consumer<Double> setter){
 		super(x, y, xSize, ySize, null, null);
@@ -41,7 +40,7 @@ public class ColorSelectorButton extends ExtendedButton{
 	}
 
 	@Override
-	public void render(MatrixStack stack, int p_230430_2_, int p_230430_3_, float p_230430_4_){
+	public void render(PoseStack stack, int p_230430_2_, int p_230430_3_, float p_230430_4_){
 		if(!screen.showUi){
 			active = false;
 			return;
@@ -61,18 +60,18 @@ public class ColorSelectorButton extends ExtendedButton{
 			screen.buttons.removeIf((s) -> s == renderButton);
 		}
 
-		Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, screen.handler), layer, screen.preset.skinAges.get(screen.level).layerSettings.get(layer).selectedSkin, screen.handler.getType());
+		Texture text = DragonEditorHandler.getSkin(FakeLocalPlayerUtils.getFakePlayer(0, screen.handler), layer, screen.preset.skinAges.get(screen.level).layerSettings.get(layer).selectedSkin, screen.handler.getType());
 
 		visible = text != null && text.colorable;
 	}
 
 	@Override
-	public ITextComponent getMessage(){
-		return StringTextComponent.EMPTY;
+	public Component getMessage(){
+		return TextComponent.EMPTY;
 	}
 
 	@Override
-	public void renderButton(MatrixStack mStack, int mouseX, int mouseY, float partial){
+	public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){
 		mStack.pushPose();
 		mStack.translate(0, 0, 100);
 		super.renderButton(mStack, mouseX, mouseY, partial);
@@ -81,12 +80,12 @@ public class ColorSelectorButton extends ExtendedButton{
 
 	@Override
 	public void onPress(){
-		Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, screen.handler), layer, screen.preset.skinAges.get(screen.level).layerSettings.get(layer).selectedSkin, screen.handler.getType());
+		Texture text = DragonEditorHandler.getSkin(FakeLocalPlayerUtils.getFakePlayer(0, screen.handler), layer, screen.preset.skinAges.get(screen.level).layerSettings.get(layer).selectedSkin, screen.handler.getType());
 
 		if(!toggled){
-			renderButton = new ExtendedButton(0, 0, 0, 0, StringTextComponent.EMPTY, null){
+			renderButton = new ExtendedButton(0, 0, 0, 0, TextComponent.EMPTY, null){
 				@Override
-				public void render(MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
+				public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
 					this.active = this.visible = false;
 
 					if(hueComponent != null && text.defaultColor == null){

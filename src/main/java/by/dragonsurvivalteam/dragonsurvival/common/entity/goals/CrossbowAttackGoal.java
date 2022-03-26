@@ -1,18 +1,19 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.goals;
 
-import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.ICrossbowUser;
 import net.minecraft.entity.IRangedAttackMob;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.Mob;
 import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.entity.projectile.ProjectileHelper;
+import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.item.CrossbowItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.RangedInteger;
+import net.minecraft.world.entity.ai.goal.Goal.Flag;
 
 import java.util.EnumSet;
 
-public class CrossbowAttackGoal<T extends CreatureEntity&IRangedAttackMob&ICrossbowUser> extends Goal{
+public class CrossbowAttackGoal<T extends Mob&IRangedAttackMob&ICrossbowUser> extends Goal{
 	public static final RangedInteger PATHFINDING_DELAY_RANGE = new RangedInteger(20, 40);
 	private final T mob;
 	private final double speedModifier;
@@ -34,16 +35,18 @@ public class CrossbowAttackGoal<T extends CreatureEntity&IRangedAttackMob&ICross
 		this.speedModifier = p_i50322_2_;
 		this.attackRadiusSqr = p_i50322_4_ * p_i50322_4_;
 		this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
-	}	public boolean canUse(){
+	}
+
+	public boolean canContinueToUse(){
+		return this.isValidTarget() && (this.canUse() || !this.mob.getNavigation().isDone()) && this.isHoldingCrossbow();
+	}
+
+	public boolean canUse(){
 		return this.isValidTarget() && this.isHoldingCrossbow();
 	}
 
 	private boolean isHoldingCrossbow(){
 		return this.mob.isHolding(item -> item instanceof CrossbowItem);
-	}
-
-	public boolean canContinueToUse(){
-		return this.isValidTarget() && (this.canUse() || !this.mob.getNavigation().isDone()) && this.isHoldingCrossbow();
 	}
 
 	private boolean isValidTarget(){
@@ -93,7 +96,7 @@ public class CrossbowAttackGoal<T extends CreatureEntity&IRangedAttackMob&ICross
 			this.mob.getLookControl().setLookAt(livingentity, 30.0F, 30.0F);
 			if(this.crossbowState == CrossbowAttackGoal.CrossbowState.UNCHARGED){
 				if(!flag2){
-					this.mob.startUsingItem(ProjectileHelper.getWeaponHoldingHand(this.mob, item -> item instanceof CrossbowItem));
+					this.mob.startUsingItem(ProjectileUtil.getWeaponHoldingHand(this.mob, item -> item instanceof CrossbowItem));
 					this.crossbowState = CrossbowAttackGoal.CrossbowState.CHARGING;
 					this.mob.setChargingCrossbow(true);
 				}
@@ -117,7 +120,7 @@ public class CrossbowAttackGoal<T extends CreatureEntity&IRangedAttackMob&ICross
 				}
 			}else if(this.crossbowState == CrossbowAttackGoal.CrossbowState.READY_TO_ATTACK && flag){
 				this.mob.performRangedAttack(livingentity, 1.0F);
-				ItemStack itemstack1 = this.mob.getItemInHand(ProjectileHelper.getWeaponHoldingHand(this.mob, item -> item instanceof CrossbowItem));
+				ItemStack itemstack1 = this.mob.getItemInHand(ProjectileUtil.getWeaponHoldingHand(this.mob, item -> item instanceof CrossbowItem));
 				CrossbowItem.setCharged(itemstack1, false);
 				this.crossbowState = CrossbowAttackGoal.CrossbowState.UNCHARGED;
 			}
@@ -127,6 +130,4 @@ public class CrossbowAttackGoal<T extends CreatureEntity&IRangedAttackMob&ICross
 	private boolean canRun(){
 		return this.crossbowState == CrossbowAttackGoal.CrossbowState.UNCHARGED;
 	}
-
-
 }

@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.magic.common;
 
-public class AbilityAnimation {
+public class AbilityAnimation{
 	public String animationKey;
 	public double duration;
 	public boolean locksNeck;

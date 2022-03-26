@@ -8,13 +8,13 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.
 import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.DragonEditorHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.EnumSkinLayer;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.SkinCap;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.matrix.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.list.AbstractList;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextComponent;
 import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
 
 import java.util.ArrayList;
@@ -36,7 +36,7 @@ public class DragonEditorDropdownButton extends DropDownButton{
 	}
 
 	@Override
-	public void render(MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
+	public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
 		this.active = this.visible = dragonEditorScreen.showUi;
 		super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
 		String curValue = dragonEditorScreen.preset.skinAges.get(dragonEditorScreen.level).layerSettings.get(layers).selectedSkin;
@@ -58,7 +58,7 @@ public class DragonEditorDropdownButton extends DropDownButton{
 
 	public void updateMessage(){
 		if(current != null){
-			message = new StringTextComponent((current.substring(0, 1).toUpperCase(Locale.ROOT) + current.substring(1).toLowerCase(Locale.ROOT)).replace("_", " "));
+			message = new TextComponent((current.substring(0, 1).toUpperCase(Locale.ROOT) + current.substring(1).toLowerCase(Locale.ROOT)).replace("_", " "));
 		}
 	}
 
@@ -71,7 +71,7 @@ public class DragonEditorDropdownButton extends DropDownButton{
 			list = new DropdownList(x, y + height + (Math.min(offset, 0)), width, (int)(Math.max(1, Math.min(values.length, maxItems)) * (height * 1.5f)), (width / 2) - 6);
 			DropdownEntry center = null;
 
-			for(int i = 0; i < values.length; i+=2){
+			for(int i = 0; i < values.length; i += 2){
 				String val = values[i];
 				String val2 = i < values.length - 1 ? values[i + 1] : null;
 
@@ -79,10 +79,10 @@ public class DragonEditorDropdownButton extends DropDownButton{
 
 				int width = (list.getWidth() / 2) - 6;
 
-				ent.children.add(new EditorPartButton(dragonEditorScreen, this, x + 3,y,width,width, val, setter, layers));
+				ent.children.add(new EditorPartButton(dragonEditorScreen, this, x + 3, y, width, width, val, setter, layers));
 
 				if(val2 != null){
-					ent.children.add(new EditorPartButton(dragonEditorScreen, this,x + 3 + width,y,width,width, val2, setter, layers));
+					ent.children.add(new EditorPartButton(dragonEditorScreen, this, x + 3 + width, y, width, width, val2, setter, layers));
 				}
 
 				list.addEntry(ent);
@@ -114,15 +114,14 @@ public class DragonEditorDropdownButton extends DropDownButton{
 			}
 
 			boolean finalHasBorder = hasBorder;
-			renderButton = new ExtendedButton(0, 0, 0, 0, StringTextComponent.EMPTY, null){
+			renderButton = new ExtendedButton(0, 0, 0, 0, TextComponent.EMPTY, null){
 				@Override
-				public void render(MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
+				public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
 					this.active = this.visible = false;
 					list.visible = DragonEditorDropdownButton.this.visible;
 
 					if(finalHasBorder){
 						RenderSystem.enableScissor(0, (int)(32 * Minecraft.getInstance().getWindow().getGuiScale()), Minecraft.getInstance().getWindow().getScreenWidth(), Minecraft.getInstance().getWindow().getScreenHeight() - (int)((32) * Minecraft.getInstance().getWindow().getGuiScale()) * 2);
-
 					}
 
 					if(list.visible){

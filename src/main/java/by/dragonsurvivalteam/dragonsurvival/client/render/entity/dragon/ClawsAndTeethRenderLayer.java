@@ -7,15 +7,14 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonSta
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.TieredItem;
-import net.minecraft.potion.Effects;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TieredItem;
 import software.bernie.geckolib3.model.provider.GeoModelProvider;
 import software.bernie.geckolib3.renderers.geo.GeoLayerRenderer;
 import software.bernie.geckolib3.renderers.geo.IGeoRenderer;
@@ -30,6 +29,7 @@ public class ClawsAndTeethRenderLayer extends GeoLayerRenderer<DragonEntity>{
 	}
 
 	@Override
+
 	public void render(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, DragonEntity entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch){
 		if(!((DragonRenderer)renderer).renderLayers){
 			return;
@@ -43,12 +43,13 @@ public class ClawsAndTeethRenderLayer extends GeoLayerRenderer<DragonEntity>{
 			return;
 		}
 
+
 		String clawTexture = constructClaws(entitylivingbaseIn.getPlayer());
 
 		if(clawTexture != null){
 			ResourceLocation texture = new ResourceLocation(DragonSurvivalMod.MODID, clawTexture);
 			((DragonRenderer)renderer).isLayer = true;
-			renderToolLayer(matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, texture, renderer, getEntityModel());
+			renderToolLayer(pStack, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, texture, renderer, getEntityModel());
 			((DragonRenderer)renderer).isLayer = false;
 		}
 
@@ -57,12 +58,14 @@ public class ClawsAndTeethRenderLayer extends GeoLayerRenderer<DragonEntity>{
 		if(teethTexture != null){
 			ResourceLocation texture = new ResourceLocation(DragonSurvivalMod.MODID, teethTexture);
 			((DragonRenderer)renderer).isLayer = true;
-			renderToolLayer(matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, texture, renderer, getEntityModel());
+			renderToolLayer(pStack, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, texture, renderer, getEntityModel());
 			((DragonRenderer)renderer).isLayer = false;
 		}
 	}
 
-	public String constructClaws(PlayerEntity playerEntity){
+
+	public String constructClaws(Player playerEntity){
+
 		String texture = "textures/armor/";
 		DragonStateHandler handler = DragonStateProvider.getCap(playerEntity).orElse(null);
 		ItemStack clawItem = handler.getClawInventory().getClawsInventory().getItem(handler.getType() == DragonType.CAVE ? 1 : handler.getType() == DragonType.FOREST ? 2 : 3);
@@ -75,7 +78,9 @@ public class ClawsAndTeethRenderLayer extends GeoLayerRenderer<DragonEntity>{
 		return texture + "dragon_claws.png";
 	}
 
-	public String constructTeethTexture(PlayerEntity playerEntity){
+
+	public String constructTeethTexture(Player playerEntity){
+
 		String texture = "textures/armor/";
 		ItemStack swordItem = DragonStateProvider.getCap(playerEntity).orElse(null).getClawInventory().getClawsInventory().getItem(0);
 
@@ -88,9 +93,10 @@ public class ClawsAndTeethRenderLayer extends GeoLayerRenderer<DragonEntity>{
 		return texture + "dragon_teeth.png";
 	}
 
+
 	private void renderToolLayer(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, DragonEntity entitylivingbaseIn, float partialTicks, ResourceLocation texture, IGeoRenderer<DragonEntity> renderer, GeoModelProvider entityModel){
 		RenderType type = renderer.getRenderType(entitylivingbaseIn, partialTicks, matrixStackIn, bufferIn, null, packedLightIn, texture);
-		IVertexBuilder vertexConsumer = bufferIn.getBuffer(type);
+		VertexConsumer vertexConsumer = bufferIn.getBuffer(type);
 
 		renderer.render(entityModel.getModel(entityModel.getModelLocation(entitylivingbaseIn)), entitylivingbaseIn, partialTicks, type, matrixStackIn, bufferIn, vertexConsumer, packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
 	}

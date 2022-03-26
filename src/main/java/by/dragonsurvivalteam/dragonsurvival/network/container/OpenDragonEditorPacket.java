@@ -3,12 +3,12 @@ package by.dragonsurvivalteam.dragonsurvival.network.container;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.DistExecutor.SafeRunnable;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
@@ -17,12 +17,12 @@ public class OpenDragonEditorPacket implements IMessage<OpenDragonEditorPacket>{
 	public OpenDragonEditorPacket(){}
 
 	@Override
-	public void encode(OpenDragonEditorPacket message, PacketBuffer buffer){
+	public void encode(OpenDragonEditorPacket message, FriendlyByteBuf buffer){
 
 	}
 
 	@Override
-	public OpenDragonEditorPacket decode(PacketBuffer buffer){
+	public OpenDragonEditorPacket decode(FriendlyByteBuf buffer){
 		return new OpenDragonEditorPacket();
 	}
 

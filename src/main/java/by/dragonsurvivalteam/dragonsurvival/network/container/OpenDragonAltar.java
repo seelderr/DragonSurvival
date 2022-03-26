@@ -3,12 +3,12 @@ package by.dragonsurvivalteam.dragonsurvival.network.container;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.DragonAltarGUI;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.DistExecutor.SafeRunnable;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
@@ -17,12 +17,12 @@ public class OpenDragonAltar implements IMessage<OpenDragonAltar>{
 	public OpenDragonAltar(){}
 
 	@Override
-	public void encode(OpenDragonAltar message, PacketBuffer buffer){
+	public void encode(OpenDragonAltar message, FriendlyByteBuf buffer){
 
 	}
 
 	@Override
-	public OpenDragonAltar decode(PacketBuffer buffer){
+	public OpenDragonAltar decode(FriendlyByteBuf buffer){
 		return new OpenDragonAltar();
 	}
 

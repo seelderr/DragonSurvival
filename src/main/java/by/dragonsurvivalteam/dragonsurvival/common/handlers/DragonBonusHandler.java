@@ -7,12 +7,12 @@ import by.dragonsurvivalteam.dragonsurvival.common.magic.abilities.Passives.Clif
 import by.dragonsurvivalteam.dragonsurvival.common.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.Pose;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.SnowballEntity;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.IndirectEntityDamageSource;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.IndirectEntityDamageSource;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Snowball;
 import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
@@ -23,9 +23,9 @@ import net.minecraftforge.fml.common.Mod;
 public class DragonBonusHandler{
 	@SubscribeEvent
 	public static void dragonDamageImmunities(LivingAttackEvent event){
-		LivingEntity livingEntity = event.getEntityLiving();
+		LivingEntity living = event.getEntityLiving();
 		DamageSource damageSource = event.getSource();
-		DragonStateProvider.getCap(livingEntity).ifPresent(dragonStateHandler -> {
+		DragonStateProvider.getCap(living).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon()){
 				if(ConfigHandler.SERVER.bonuses.get()){
 					if(dragonStateHandler.getType() == DragonType.CAVE && ConfigHandler.SERVER.caveFireImmunity.get()){
@@ -43,10 +43,10 @@ public class DragonBonusHandler{
 
 
 				if(ConfigHandler.SERVER.caveSplashDamage.get() != 0.0){
-					if(dragonStateHandler.getType() == DragonType.CAVE && !livingEntity.hasEffect(DragonEffects.FIRE)){
+					if(dragonStateHandler.getType() == DragonType.CAVE && !living.hasEffect(DragonEffects.FIRE)){
 						if(damageSource instanceof IndirectEntityDamageSource){
-							if(damageSource.getDirectEntity() instanceof SnowballEntity){
-								livingEntity.hurt(DamageSource.GENERIC, ConfigHandler.SERVER.caveSplashDamage.get().floatValue());
+							if(damageSource.getDirectEntity() instanceof Snowball){
+								living.hurt(DamageSource.GENERIC, ConfigHandler.SERVER.caveSplashDamage.get().floatValue());
 							}
 						}
 					}
@@ -57,10 +57,10 @@ public class DragonBonusHandler{
 
 	@SubscribeEvent
 	public static void removeLavaFootsteps(PlaySoundAtEntityEvent event){
-		if(!(event.getEntity() instanceof PlayerEntity)){
+		if(!(event.getEntity() instanceof Player)){
 			return;
 		}
-		PlayerEntity player = (PlayerEntity)event.getEntity();
+		Player player = (Player)event.getEntity();
 		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.getType() == DragonType.CAVE && ConfigHandler.SERVER.bonuses.get() && ConfigHandler.SERVER.caveLavaSwimming.get() && DragonSizeHandler.getOverridePose(player) == Pose.SWIMMING && event.getSound().getRegistryName().getPath().contains(".step")){
 				event.setCanceled(true);
@@ -70,8 +70,8 @@ public class DragonBonusHandler{
 
 	@SubscribeEvent
 	public static void reduceFallDistance(LivingFallEvent livingFallEvent){
-		LivingEntity livingEntity = livingFallEvent.getEntityLiving();
-		DragonStateProvider.getCap(livingEntity).ifPresent(dragonStateHandler -> {
+		LivingEntity living = livingFallEvent.getEntityLiving();
+		DragonStateProvider.getCap(living).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon()){
 				float distance = livingFallEvent.getDistance();
 

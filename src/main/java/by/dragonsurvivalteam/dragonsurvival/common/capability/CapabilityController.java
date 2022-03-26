@@ -1,6 +1,5 @@
-package by.dragonsurvivalteam.dragonsurvival.common.handlers;
+package by.dragonsurvivalteam.dragonsurvival.common.capability;
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.hitbox.DragonHitBox;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.hitbox.DragonHitboxPart;
@@ -9,38 +8,39 @@ import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.entity.player.SynchronizeDragonCap;
 import by.dragonsurvivalteam.dragonsurvival.network.status.DiggingStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.status.RefreshDragons;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.Pose;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.play.server.SSetPassengersPacket;
-import net.minecraft.server.management.PlayerInteractionManager;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
+import net.minecraft.network.protocol.game.ClientboundSetPassengersPacket;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.ServerPlayerGameMode;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.network.PacketDistributor;
 
 @EventBusSubscriber
 public class CapabilityController{
+
 	@SubscribeEvent
 	public static void onPlayerTick(TickEvent.PlayerTickEvent playerTickEvent){
 		if(playerTickEvent.phase != TickEvent.Phase.START){
 			return;
 		}
-		PlayerEntity playerEntity = playerTickEvent.player;
-		DragonStateProvider.getCap(playerEntity).ifPresent(dragonStateHandler -> {
+		Player player = playerTickEvent.player;
+		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon()){
-				if(playerEntity instanceof ServerPlayerEntity){
-					PlayerInteractionManager interactionManager = ((ServerPlayerEntity)playerEntity).gameMode;
-					boolean isMining = interactionManager.isDestroyingBlock && playerEntity.swinging;
+				if(player instanceof ServerPlayer){
+					ServerPlayerGameMode interactionManager = ((ServerPlayer)player).gameMode;
+					boolean isMining = interactionManager.isDestroyingBlock && player.swinging;
 
 					if(isMining != dragonStateHandler.getMovementData().dig){
 						dragonStateHandler.getMovementData().dig = isMining;
-						NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerEntity), new DiggingStatus(playerEntity.getId(), isMining));
+						NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new DiggingStatus(player.getId(), isMining));
 					}
 				}
 			}
@@ -60,22 +60,22 @@ public class CapabilityController{
 			ent = (((DragonHitboxPart)ent).parentMob).player;
 		}
 
-		if(!(ent instanceof PlayerEntity) || event.getHand() != Hand.MAIN_HAND){
+		if(!(ent instanceof Player) || event.getHand() != InteractionHand.MAIN_HAND){
 			return;
 		}
-		PlayerEntity target = (PlayerEntity)ent;
-		PlayerEntity self = event.getPlayer();
+		Player target = (Player)ent;
+		Player self = event.getPlayer();
 		DragonStateProvider.getCap(target).ifPresent(targetCap -> {
 			if(targetCap.isDragon() && target.getPose() == Pose.CROUCHING && targetCap.getSize() >= 40 && !target.isVehicle()){
 				DragonStateProvider.getCap(self).ifPresent(selfCap -> {
 					if(!selfCap.isDragon() || selfCap.getLevel() == DragonLevel.BABY){
-						if(event.getTarget() instanceof ServerPlayerEntity){
+						if(event.getTarget() instanceof ServerPlayer){
 							self.startRiding(target);
-							((ServerPlayerEntity)event.getTarget()).connection.send(new SSetPassengersPacket(target));
+							((ServerPlayer)event.getTarget()).connection.send(new ClientboundSetPassengersPacket(target));
 							targetCap.setPassengerId(self.getId());
 							NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> target), new SynchronizeDragonCap(target.getId(), targetCap.isHiding(), targetCap.getType(), targetCap.getSize(), targetCap.hasWings(), targetCap.getLavaAirSupply(), self.getId()));
 						}
-						event.setCancellationResult(ActionResultType.SUCCESS);
+						event.setCancellationResult(InteractionResult.SUCCESS);
 						event.setCanceled(true);
 					}
 				});
@@ -85,60 +85,61 @@ public class CapabilityController{
 
 	@SubscribeEvent
 	public static void onServerPlayerTick(TickEvent.PlayerTickEvent event){ // TODO: Find a better way of doing this.
-		if(!(event.player instanceof ServerPlayerEntity)){
+		if(!(event.player instanceof ServerPlayer)){
 			return;
 		}
-		ServerPlayerEntity player = (ServerPlayerEntity)event.player;
+		ServerPlayer player = (ServerPlayer)event.player;
 		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
 			int passengerId = dragonStateHandler.getPassengerId();
 			Entity passenger = player.level.getEntity(passengerId);
 			boolean flag = false;
-			if(!dragonStateHandler.isDragon() && player.isVehicle() && player.getPassengers().get(0) instanceof ServerPlayerEntity){
+			if(!dragonStateHandler.isDragon() && player.isVehicle() && player.getPassengers().get(0) instanceof ServerPlayer){
 				flag = true;
 				player.getPassengers().get(0).stopRiding();
-				player.connection.send(new SSetPassengersPacket(player));
-			}else if(player.isSpectator() && passenger != null && player.getPassengers().get(0) instanceof ServerPlayerEntity){
+				player.connection.send(new ClientboundSetPassengersPacket(player));
+			}else if(player.isSpectator() && passenger != null && player.getPassengers().get(0) instanceof ServerPlayer){
 				flag = true;
 				player.getPassengers().get(0).stopRiding();
-				player.connection.send(new SSetPassengersPacket(player));
-			}else if(dragonStateHandler.isDragon() && dragonStateHandler.getSize() < 40 && player.isVehicle() && player.getPassengers().get(0) instanceof ServerPlayerEntity){
+				player.connection.send(new ClientboundSetPassengersPacket(player));
+			}else if(dragonStateHandler.isDragon() && dragonStateHandler.getSize() < 40 && player.isVehicle() && player.getPassengers().get(0) instanceof ServerPlayer){
 				flag = true;
 				player.getPassengers().get(0).stopRiding();
-				player.connection.send(new SSetPassengersPacket(player));
-			}else if(player.isSleeping() && player.isVehicle() && player.getPassengers().get(0) instanceof ServerPlayerEntity){
+				player.connection.send(new ClientboundSetPassengersPacket(player));
+			}else if(player.isSleeping() && player.isVehicle() && player.getPassengers().get(0) instanceof ServerPlayer){
 				flag = true;
 				player.getPassengers().get(0).stopRiding();
-				player.connection.send(new SSetPassengersPacket(player));
+				player.connection.send(new ClientboundSetPassengersPacket(player));
 			}
-			if(passenger instanceof ServerPlayerEntity){
+			if(passenger instanceof ServerPlayer){
 				DragonStateHandler passengerCap = DragonStateProvider.getCap(passenger).orElseGet(null);
 				if(passengerCap.isDragon() && passengerCap.getLevel() != DragonLevel.BABY){
 					flag = true;
 					passenger.stopRiding();
-					player.connection.send(new SSetPassengersPacket(player));
+					player.connection.send(new ClientboundSetPassengersPacket(player));
 				}else if(passenger.getRootVehicle() != player.getRootVehicle()){
 					flag = true;
 					passenger.stopRiding();
-					player.connection.send(new SSetPassengersPacket(player));
+					player.connection.send(new ClientboundSetPassengersPacket(player));
 				}
 			}
 			if(flag || passenger == null || !player.hasPassenger(passenger) || passenger.isSpectator() || player.isSpectator()){
 				dragonStateHandler.setPassengerId(0);
+				NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new SynchronizeDragonCap(player.getId(), dragonStateHandler.isHiding(), dragonStateHandler.getType(), dragonStateHandler.getSize(), dragonStateHandler.hasWings(), dragonStateHandler.getLavaAirSupply(), 0));
 			}
 		});
 	}
 
 	@SubscribeEvent
 	public static void onPlayerDisconnect(PlayerEvent.PlayerLoggedOutEvent event){
-		ServerPlayerEntity player = (ServerPlayerEntity)event.getPlayer();
-		if(player.getVehicle() == null || !(player.getVehicle() instanceof ServerPlayerEntity)){
+		ServerPlayer player = (ServerPlayer)event.getPlayer();
+		if(player.getVehicle() == null || !(player.getVehicle() instanceof ServerPlayer)){
 			return;
 		}
-		ServerPlayerEntity vehicle = (ServerPlayerEntity)player.getVehicle();
+		ServerPlayer vehicle = (ServerPlayer)player.getVehicle();
 		DragonStateProvider.getCap(player).ifPresent(playerCap -> {
 			DragonStateProvider.getCap(vehicle).ifPresent(vehicleCap -> {
 				player.stopRiding();
-				vehicle.connection.send(new SSetPassengersPacket(vehicle));
+				vehicle.connection.send(new ClientboundSetPassengersPacket(vehicle));
 				vehicleCap.setPassengerId(0);
 				NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> vehicle), new SynchronizeDragonCap(player.getId(), vehicleCap.isHiding(), vehicleCap.getType(), vehicleCap.getSize(), vehicleCap.hasWings(), vehicleCap.getLavaAirSupply(), 0));
 			});
@@ -147,10 +148,10 @@ public class CapabilityController{
 
 	@SubscribeEvent
 	public static void changedDimension(PlayerEvent.PlayerChangedDimensionEvent changedDimensionEvent){
-		PlayerEntity playerEntity = changedDimensionEvent.getPlayer();
-		DragonStateProvider.getCap(playerEntity).ifPresent(dragonStateHandler -> {
-			NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new SynchronizeDragonCap(playerEntity.getId(), dragonStateHandler.isHiding(), dragonStateHandler.getType(), dragonStateHandler.getSize(), dragonStateHandler.hasWings(), dragonStateHandler.getLavaAirSupply(), 0));
-			NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new RefreshDragons(playerEntity.getId()));
+		Player player = changedDimensionEvent.getPlayer();
+		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
+			NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new SynchronizeDragonCap(player.getId(), dragonStateHandler.isHiding(), dragonStateHandler.getType(), dragonStateHandler.getSize(), dragonStateHandler.hasWings(), dragonStateHandler.getLavaAirSupply(), 0));
+			NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new RefreshDragons(player.getId()));
 		});
 	}
 }

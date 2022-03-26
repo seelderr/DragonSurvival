@@ -1,11 +1,13 @@
 package by.dragonsurvivalteam.dragonsurvival.common.magic.abilities.Passives;
 
+
 import by.dragonsurvivalteam.dragonsurvival.common.magic.common.PassiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+ 
+ 
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -22,8 +24,9 @@ public class SpectralImpactAbility extends PassiveDragonAbility{
 	}
 
 	@Override
-	public IFormattableTextComponent getDescription(){
-		return new TranslationTextComponent("ds.skill.description." + getId(), getChance());
+
+	public Component getDescription(){
+		return new TranslatableComponent("ds.skill.description." + getId(), getChance());
 	}
 
 	public int getChance(){
@@ -31,9 +34,9 @@ public class SpectralImpactAbility extends PassiveDragonAbility{
 	}
 
 	@OnlyIn( Dist.CLIENT )
-	public ArrayList<ITextComponent> getLevelUpInfo(){
-		ArrayList<ITextComponent> list = super.getLevelUpInfo();
-		list.add(new TranslationTextComponent("ds.skill.chance", "+" + ConfigHandler.SERVER.spectralImpactProcChance.get()));
+	public ArrayList<Component> getLevelUpInfo(){
+		ArrayList<Component> list = super.getLevelUpInfo();
+		list.add(new TranslatableComponent("ds.skill.chance", "+" + ConfigHandler.SERVER.spectralImpactProcChance.get()));
 		return list;
 	}
 

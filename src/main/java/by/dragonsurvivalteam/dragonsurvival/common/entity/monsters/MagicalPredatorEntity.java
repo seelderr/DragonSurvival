@@ -5,37 +5,39 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonSta
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.entity.PacketSyncXPDevour;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.*;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.AttributeModifierMap;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.ai.goal.*;
-import net.minecraft.entity.monster.MonsterEntity;
-import net.minecraft.entity.monster.SkeletonEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.Direction;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.IServerWorld;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier.Builder;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.monster.Skeleton;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.network.PacketDistributor;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class MagicalPredatorEntity extends MonsterEntity{
+public class MagicalPredator extends Monster{
 
 	private final float scale;
 	public int type;
@@ -43,7 +45,7 @@ public class MagicalPredatorEntity extends MonsterEntity{
 	private boolean deathStar;
 	private int teleportationCooldown;
 
-	public MagicalPredatorEntity(EntityType<? extends MonsterEntity> entityIn, World worldIn){
+	public MagicalPredator(EntityType<? extends Monster> entityIn, Level worldIn){
 		super(entityIn, worldIn);
 		this.type = worldIn.getRandom().nextInt(10);
 		this.size = worldIn.getRandom().nextFloat() + 0.95F;
@@ -51,7 +53,7 @@ public class MagicalPredatorEntity extends MonsterEntity{
 		deathStar = false;
 	}
 
-	private static int getActualDistance(PlayerEntity player){
+	private static int getActualDistance(Player player){
 
 		AtomicInteger distance = new AtomicInteger();
 
@@ -69,8 +71,8 @@ public class MagicalPredatorEntity extends MonsterEntity{
 		return distance.get();
 	}
 
-	public static AttributeModifierMap.MutableAttribute createMonsterAttributes(){
-		return MobEntity.createMobAttributes().add(Attributes.MOVEMENT_SPEED, 0.375D).add(Attributes.ARMOR, 2.0F).add(Attributes.ATTACK_DAMAGE, 2.0F * ConfigHandler.COMMON.predatorDamageFactor.get()).add(Attributes.ATTACK_KNOCKBACK, 1.0F).add(Attributes.MAX_HEALTH, 29.5F * ConfigHandler.COMMON.predatorHealthFactor.get());
+	public static Builder createMonsterAttributes(){
+		return Mob.createMobAttributes().add(Attributes.MOVEMENT_SPEED, 0.375D).add(Attributes.ARMOR, 2.0F).add(Attributes.ATTACK_DAMAGE, 2.0F * ConfigHandler.COMMON.predatorDamageFactor.get()).add(Attributes.ATTACK_KNOCKBACK, 1.0F).add(Attributes.MAX_HEALTH, 29.5F * ConfigHandler.COMMON.predatorHealthFactor.get());
 	}
 
 	@Override
@@ -81,9 +83,7 @@ public class MagicalPredatorEntity extends MonsterEntity{
 			for(int i = 1; i < 10; ++i){
 				for(int r = 0; r < 5; ++r){
 					BlockPos blockpos = this.blockPosition().offset(level.random.nextInt(i) - level.random.nextInt(i), level.random.nextInt(i) - level.random.nextInt(i), level.random.nextInt(i) - level.random.nextInt(i));
-					if(level.getBlockState(blockpos).getBlockState().canBeReplaced(Fluids.LAVA) && level.getEntityCollisions(null, new AxisAlignedBB(blockpos), (entity) -> {
-						return entity instanceof LivingEntity;
-					}).count() == 0){
+					if(level.getBlockState(blockpos).canBeReplaced(Fluids.LAVA) && level.getEntityCollisions(null, new AABB(blockpos)).isEmpty()){
 						if(level.isClientSide){
 							this.spawnAnim();
 						}else{
@@ -101,6 +101,15 @@ public class MagicalPredatorEntity extends MonsterEntity{
 		}
 	}
 
+	public boolean hurt(DamageSource source, float damage){
+		if(this.isInvulnerableTo(source)){
+			return false;
+		}else if(source.getEntity() instanceof LivingEntity){
+			teleportationCooldown = 30;
+		}
+		return super.hurt(source, damage);
+	}
+
 	@Override
 	public void aiStep(){
 		super.aiStep();
@@ -113,15 +122,6 @@ public class MagicalPredatorEntity extends MonsterEntity{
 	@Override
 	protected boolean shouldDespawnInPeaceful(){
 		return true;
-	}
-
-	public boolean hurt(DamageSource source, float damage){
-		if(this.isInvulnerableTo(source)){
-			return false;
-		}else if(source.getEntity() instanceof LivingEntity){
-			teleportationCooldown = 30;
-		}
-		return super.hurt(source, damage);
 	}
 
 	@Override
@@ -139,13 +139,13 @@ public class MagicalPredatorEntity extends MonsterEntity{
 		super.registerGoals();
 		this.goalSelector.addGoal(1, new SwimGoal(this));
 		this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0D, true));
-		this.goalSelector.addGoal(3, new LookAtGoal(this, PlayerEntity.class, 8.0F));
+		this.goalSelector.addGoal(3, new LookAtGoal(this, Player.class, 8.0F));
 		this.goalSelector.addGoal(4, new DevourXP(this.level, this));
 		this.targetSelector.addGoal(1, new FindPlayerGoal(this));
 		this.targetSelector.addGoal(2, new IsNearestDragonTargetGoal(this, true));
 	}
 
-	protected int getExperienceReward(PlayerEntity p_70693_1_){
+	protected int getExperienceReward(Player p_70693_1_){
 		return 1 + this.level.random.nextInt(2);
 	}
 
@@ -156,29 +156,29 @@ public class MagicalPredatorEntity extends MonsterEntity{
 	}
 
 	@Override
-	public void addAdditionalSaveData(CompoundNBT compound){
+	public void addAdditionalSaveData(CompoundTag compound){
 		super.addAdditionalSaveData(compound);
 		compound.putInt("teleportationCooldown", teleportationCooldown);
 	}
 
 	@Override
-	public void readAdditionalSaveData(CompoundNBT compound){
+	public void readAdditionalSaveData(CompoundTag compound){
 		super.readAdditionalSaveData(compound);
 		teleportationCooldown = compound.getInt("teleportationCooldown");
 	}
 
 	@Override
 	@Nullable
-	public ILivingEntityData finalizeSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
+	public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficultyIn, MobSpawnType reason,
 		@Nullable
-			ILivingEntityData spawnDataIn,
+			SpawnGroupData spawnDataIn,
 		@Nullable
-			CompoundNBT dataTag){
+			CompoundTag dataTag){
 		super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
 
 
 		if(worldIn.getRandom().nextInt(10) == 0){
-			SkeletonEntity skeletonentity = EntityType.SKELETON.create(this.level);
+			Skeleton skeletonentity = EntityType.SKELETON.create(this.level);
 			skeletonentity.absMoveTo(this.getX(), this.getY(), this.getZ(), this.yRot, 0.0F);
 			skeletonentity.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
 			worldIn.addFreshEntity(skeletonentity);
@@ -205,8 +205,8 @@ public class MagicalPredatorEntity extends MonsterEntity{
 		return (this.getBbHeight() * scale * 0.75D);
 	}
 
-	private void teleportToEntity(Entity p_70816_1_){
-		Vector3d vec = p_70816_1_.position().subtract(p_70816_1_.getLookAngle().multiply(2, 1, 2));
+	private void teleportTo(Entity p_70816_1_){
+		Vec3 vec = p_70816_1_.position().subtract(p_70816_1_.getLookAngle().multiply(2, 1, 2));
 		double d1 = vec.x();
 		double d2 = 256;
 		double d3 = vec.z();
@@ -215,7 +215,7 @@ public class MagicalPredatorEntity extends MonsterEntity{
 	}
 
 	private void _teleportTo(double x, double y, double z){
-		BlockPos.Mutable blockpos$mutable = new BlockPos.Mutable(x, y, z);
+		BlockPos.MutableBlockPos blockpos$mutable = new BlockPos.MutableBlockPos(x, y, z);
 
 		while(blockpos$mutable.getY() > 0 && !this.level.getBlockState(blockpos$mutable).getMaterial().blocksMotion()){
 			blockpos$mutable.move(Direction.DOWN);
@@ -238,7 +238,7 @@ public class MagicalPredatorEntity extends MonsterEntity{
 		double d3 = p_213373_3_;
 		boolean flag = false;
 		BlockPos blockpos = new BlockPos(p_213373_1_, p_213373_3_, p_213373_5_);
-		World world = this.level;
+		Level world = this.level;
 		boolean flag1 = false;
 
 		while(!flag1 && blockpos.getY() > 0){
@@ -275,10 +275,10 @@ public class MagicalPredatorEntity extends MonsterEntity{
 
 	static class DevourXP extends Goal{
 
-		World world;
-		MagicalPredatorEntity entity;
+		Level world;
+		MagicalPredator entity;
 
-		public DevourXP(World worldIn, MagicalPredatorEntity entityIn){
+		public DevourXP(Level worldIn, MagicalPredator entityIn){
 			this.world = worldIn;
 			this.entity = entityIn;
 		}
@@ -295,41 +295,41 @@ public class MagicalPredatorEntity extends MonsterEntity{
 		}
 	}
 
-	static class IsNearestDragonTargetGoal extends NearestAttackableTargetGoal<PlayerEntity>{
+	static class IsNearestDragonTargetGoal extends NearestAttackableTargetGoal<Player>{
 
-		public IsNearestDragonTargetGoal(MobEntity p_i50313_1_, boolean p_i50313_3_){
-			super(p_i50313_1_, PlayerEntity.class, p_i50313_3_);
+		public IsNearestDragonTargetGoal(Mob p_i50313_1_, boolean p_i50313_3_){
+			super(p_i50313_1_, Player.class, p_i50313_3_);
 		}
 
 		@Override
-		protected AxisAlignedBB getTargetSearchArea(double p_188511_1_){
-			PlayerEntity player = (PlayerEntity)this.target;
+		protected AABB getTargetSearchArea(double p_188511_1_){
+			Player player = (Player)this.target;
 			return this.mob.getBoundingBox().inflate(getActualDistance(player));
 		}
 	}
 
-	static class FindPlayerGoal extends NearestAttackableTargetGoal<PlayerEntity>{
-		private final MagicalPredatorEntity beast;
+	static class FindPlayerGoal extends NearestAttackableTargetGoal<Player>{
+		private final MagicalPredator beast;
 
-		public FindPlayerGoal(MagicalPredatorEntity beastIn){
-			super(beastIn, PlayerEntity.class, false);
+		public FindPlayerGoal(MagicalPredator beastIn){
+			super(beastIn, Player.class, false);
 			this.beast = beastIn;
 		}
 
 		@Override
-		protected AxisAlignedBB getTargetSearchArea(double p_188511_1_){
-			PlayerEntity player = (PlayerEntity)this.target;
+		protected AABB getTargetSearchArea(double p_188511_1_){
+			Player player = (Player)this.target;
 			return this.mob.getBoundingBox().inflate(getActualDistance(player));
 		}
 
 		@Override
 		public void tick(){
 			if(this.target != null){
-				if(this.target instanceof PlayerEntity){
+				if(this.target instanceof Player){
 					if(beast.teleportationCooldown == 0){
-						float diff = getActualDistance((PlayerEntity)this.target) - beast.distanceTo(this.target);
+						float diff = getActualDistance((Player)this.target) - beast.distanceTo(this.target);
 						if(diff <= 16 & diff >= -2){
-							beast.teleportToEntity(this.target);
+							beast.teleportTo(this.target);
 							beast.teleportationCooldown = 10;
 						}
 					}

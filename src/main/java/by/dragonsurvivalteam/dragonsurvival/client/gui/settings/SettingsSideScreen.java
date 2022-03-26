@@ -1,24 +1,24 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.settings;
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.OptionsList;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.matrix.PoseStack;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.SettingsScreen;
 import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+ 
+ 
 
 public class SettingsSideScreen extends SettingsScreen{
 	private OptionsList list;
 
-	public SettingsSideScreen(Screen p_i225930_1_, GameSettings p_i225930_2_, ITextComponent p_i225930_3_){
+	public SettingsSideScreen(Screen p_i225930_1_, GameSettings p_i225930_2_, Component p_i225930_3_){
 		super(p_i225930_1_, p_i225930_2_, p_i225930_3_);
 	}
 
-	public void render(MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
+	public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
 		this.renderBackground(p_230430_1_);
 		this.list.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
 		drawCenteredString(p_230430_1_, this.font, this.title, this.width / 2, 5, 16777215);
@@ -28,25 +28,25 @@ public class SettingsSideScreen extends SettingsScreen{
 	protected void init(){
 		this.list = new OptionsList(this.width, this.height, 32, this.height - 32);
 
-		this.addButton(new Button(this.width / 2 - 100, 38, 200, 20, new TranslationTextComponent("ds.gui.settings.client"), (p_213106_1_) -> {
-			Minecraft.getInstance().setScreen(new ClientSettingsScreen(this, Minecraft.getInstance().options, new TranslationTextComponent("ds.gui.settings.client")));
+		this.addRenderableWidget(new Button(this.width / 2 - 100, 38, 200, 20, new TranslatableComponent("ds.gui.settings.client"), (p_213106_1_) -> {
+			Minecraft.getInstance().setScreen(new ClientSettingsScreen(this, Minecraft.getInstance().options, new TranslatableComponent("ds.gui.settings.client")));
 		}));
 
-		this.addButton(new Button(this.width / 2 - 100, 38 + 27, 200, 20, new TranslationTextComponent("ds.gui.settings.common"), (p_213106_1_) -> {
-			Minecraft.getInstance().setScreen(new CommonSettingsScreen(this, Minecraft.getInstance().options, new TranslationTextComponent("ds.gui.settings.common")));
+		this.addRenderableWidget(new Button(this.width / 2 - 100, 38 + 27, 200, 20, new TranslatableComponent("ds.gui.settings.common"), (p_213106_1_) -> {
+			Minecraft.getInstance().setScreen(new CommonSettingsScreen(this, Minecraft.getInstance().options, new TranslatableComponent("ds.gui.settings.common")));
 		}){
 			@Override
-			public void render(MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
+			public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
 				this.active = Minecraft.getInstance().player.hasPermissions(2);
 				super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
 			}
 		});
 
-		this.addButton(new Button(this.width / 2 - 100, 38 + 27 * 2, 200, 20, new TranslationTextComponent("ds.gui.settings.server"), (p_213106_1_) -> {
-			Minecraft.getInstance().setScreen(new ServerSettingsScreen(this, Minecraft.getInstance().options, new TranslationTextComponent("ds.gui.settings.server")));
+		this.addRenderableWidget(new Button(this.width / 2 - 100, 38 + 27 * 2, 200, 20, new TranslatableComponent("ds.gui.settings.server"), (p_213106_1_) -> {
+			Minecraft.getInstance().setScreen(new ServerSettingsScreen(this, Minecraft.getInstance().options, new TranslatableComponent("ds.gui.settings.server")));
 		}){
 			@Override
-			public void render(MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
+			public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
 				this.active = Minecraft.getInstance().player.hasPermissions(2);
 				super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
 			}
@@ -131,7 +131,7 @@ public class SettingsSideScreen extends SettingsScreen{
 
 		this.children.add(this.list);
 
-		this.addButton(new Button(this.width / 2 - 100, this.height - 27, 200, 20, DialogTexts.GUI_BACK, (p_213106_1_) -> {
+		this.addRenderableWidget(new Button(this.width / 2 - 100, this.height - 27, 200, 20, DialogTexts.GUI_BACK, (p_213106_1_) -> {
 			this.minecraft.setScreen(this.lastScreen);
 		}));
 	}

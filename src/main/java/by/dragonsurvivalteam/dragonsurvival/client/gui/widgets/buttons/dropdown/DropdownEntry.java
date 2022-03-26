@@ -1,8 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.gui.widget.list.AbstractOptionList;
+import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 
-public abstract class DropdownEntry extends AbstractOptionList.Entry<DropdownEntry>{
-	public void lateRender(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){}
+public abstract class DropdownEntry extends ContainerObjectSelectionList.Entry<DropdownEntry>{
 }

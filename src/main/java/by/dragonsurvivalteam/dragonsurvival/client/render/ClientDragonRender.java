@@ -12,40 +12,34 @@ import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DSEntities;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.Dragon;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorEntityRenderer;
 import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorEntityRendererManager;
-import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorLivingRenderer;
+import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorLivingEntityRenderer;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.entity.player.PacketSyncCapabilityMovement;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Quaternion;
+import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.renderer.entity.LivingRenderer;
-import net.minecraft.client.renderer.entity.layers.LayerRenderer;
-import net.minecraft.client.renderer.entity.layers.ParrotVariantLayer;
-import net.minecraft.client.renderer.entity.model.EntityModel;
-import net.minecraft.client.settings.PointOfView;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.IDyeableArmorItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Quaternion;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
@@ -66,19 +60,19 @@ public class ClientDragonRender{
 	/**
 	 * First-person armor instance
 	 */
-	public static DragonEntity dragonArmor;
-	public static DragonEntity dummyDragon;
+	public static Dragon dragonArmor;
+	public static Dragon dummyDragon;
 
 	/**
 	 * Instances used for rendering third-person dragon models
 	 */
-	public static ConcurrentHashMap<Integer, AtomicReference<DragonEntity>> playerDragonHashMap = new ConcurrentHashMap<>(20);
+	public static ConcurrentHashMap<Integer, AtomicReference<Dragon>> playerDragonHashMap = new ConcurrentHashMap<>(20);
 	private static boolean wasFreeLook = false;
 
 	@SubscribeEvent
 	public static void renderFirstPerson(RenderHandEvent renderHandEvent){
 		if(ConfigHandler.CLIENT.renderInFirstPerson.get()){
-			ClientPlayerEntity player = Minecraft.getInstance().player;
+			LocalPlayer player = Minecraft.getInstance().player;
 			DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
 				if(playerStateHandler.isDragon()){
 					if(ConfigHandler.CLIENT.alternateHeldItem.get()){
@@ -94,15 +88,15 @@ public class ClientDragonRender{
 	 */
 	@SubscribeEvent
 	public static void thirdPersonPreRender(RenderPlayerEvent.Pre renderPlayerEvent){
-		if(!(renderPlayerEvent.getPlayer() instanceof AbstractClientPlayerEntity)){
+		if(!(renderPlayerEvent.getPlayer() instanceof LocalPlayer)){
 			return;
 		}
 
-		AbstractClientPlayerEntity player = (AbstractClientPlayerEntity)renderPlayerEvent.getPlayer();
+		LocalPlayer player = (LocalPlayer)renderPlayerEvent.getPlayer();
 		Minecraft mc = Minecraft.getInstance();
 
 		if(!playerDragonHashMap.containsKey(player.getId())){
-			DragonEntity dummyDragon = DSEntities.DRAGON.create(player.level);
+			Dragon dummyDragon = DSEntities.DRAGON.create(player.level);
 			dummyDragon.player = player.getId();
 			playerDragonHashMap.put(player.getId(), new AtomicReference<>(dummyDragon));
 		}
@@ -122,12 +116,12 @@ public class ClientDragonRender{
 		DragonStateHandler cap = DragonUtils.getHandler(player);
 		if(cap != null && cap.isDragon()){
 			renderPlayerEvent.setCanceled(true);
-			final float partialRenderTick = renderPlayerEvent.getPartialRenderTick();
+			final float partialRenderTick = renderPlayerEvent.getPartialTick();
 			final float yaw = player.getViewYRot(partialRenderTick);
 
 			DragonLevel dragonStage = cap.getLevel();
 			ResourceLocation texture = DragonSkins.getPlayerSkin(player, cap.getType(), dragonStage);
-			MatrixStack matrixStack = renderPlayerEvent.getMatrixStack();
+			PoseStack matrixStack = renderPlayerEvent.getPoseStack();
 
 			try{
 				matrixStack.pushPose();
@@ -139,13 +133,13 @@ public class ClientDragonRender{
 				// This is some arbitrary scaling that was created back when the maximum size was hard capped at 40. Touching it will cause the render to desync from the hitbox.
 				float scale = (float)Math.max(size / 40.0D, 0.4D);
 				String playerModelType = player.getModelName();
-				LivingRenderer playerRenderer = ((AccessorEntityRendererManager)mc.getEntityRenderDispatcher()).getPlayerRenderers().get(playerModelType);
-				int eventLight = renderPlayerEvent.getLight();
-				final IRenderTypeBuffer renderTypeBuffer = renderPlayerEvent.getBuffers();
+				EntityRenderer playerRenderer = ((AccessorEntityRendererManager)mc.getEntityRenderDispatcher()).getPlayerRenderers().get(playerModelType);
+				int eventLight = renderPlayerEvent.getPackedLight();
+				final MultiBufferSource renderTypeBuffer = renderPlayerEvent.getMultiBufferSource();
 				if(ConfigHandler.CLIENT.dragonNameTags.get()){
 					net.minecraftforge.client.event.RenderNameplateEvent renderNameplateEvent = new net.minecraftforge.client.event.RenderNameplateEvent(player, player.getDisplayName(), playerRenderer, matrixStack, renderTypeBuffer, eventLight, partialRenderTick);
 					net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(renderNameplateEvent);
-					if(renderNameplateEvent.getResult() != net.minecraftforge.eventbus.api.Event.Result.DENY && (renderNameplateEvent.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || ((AccessorLivingRenderer)playerRenderer).callShouldShowName(player))){
+					if(renderNameplateEvent.getResult() != net.minecraftforge.eventbus.api.Event.Result.DENY && (renderNameplateEvent.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || ((AccessorLivingEntityRenderer)playerRenderer).callShouldShowName(player))){
 						((AccessorEntityRenderer)playerRenderer).callRenderNameTag(player, renderNameplateEvent.getContent(), matrixStack, renderTypeBuffer, eventLight);
 					}
 				}
@@ -153,9 +147,9 @@ public class ClientDragonRender{
 				matrixStack.mulPose(Vector3f.YN.rotationDegrees((float)cap.getMovementData().bodyYaw));
 				matrixStack.scale(scale, scale, scale);
 				((AccessorEntityRenderer)renderPlayerEvent.getRenderer()).setShadowRadius((float)((3.0F * size + 62.0F) / 260.0F));
-				DragonEntity dummyDragon = playerDragonHashMap.get(player.getId()).get();
+				Dragon dummyDragon = playerDragonHashMap.get(player.getId()).get();
 
-				EntityRenderer<? super DragonEntity> dragonRenderer = mc.getEntityRenderDispatcher().getRenderer(dummyDragon);
+				EntityRenderer<? super Dragon> dragonRenderer = mc.getEntityRenderDispatcher().getRenderer(dummyDragon);
 				dragonModel.setCurrentTexture(texture);
 
 				if(player.isCrouching() && cap.isWingsSpread() && !player.isOnGround()){
@@ -168,10 +162,10 @@ public class ClientDragonRender{
 				if(!player.isInvisible()){
 					if(ServerFlightHandler.isGliding(player)){
 						if(ConfigHandler.CLIENT.renderOtherPlayerRotation.get() || mc.player == player){
-							float upRot = MathHelper.clamp((float)(player.getDeltaMovement().y * 20), -80, 80);
+							float upRot = Mth.clamp((float)(player.getDeltaMovement().y * 20), -80, 80);
 
-							dummyDragon.prevXRot = MathHelper.lerp(0.1F, dummyDragon.prevXRot, upRot);
-							dummyDragon.prevXRot = MathHelper.clamp(dummyDragon.prevXRot, -80, 80);
+							dummyDragon.prevXRot = Mth.lerp(0.1F, dummyDragon.prevXRot, upRot);
+							dummyDragon.prevXRot = Mth.clamp(dummyDragon.prevXRot, -80, 80);
 
 							if(Float.isNaN(dummyDragon.prevXRot)){
 								dummyDragon.prevXRot = upRot;
@@ -183,17 +177,17 @@ public class ClientDragonRender{
 
 							matrixStack.mulPose(Vector3f.XN.rotationDegrees(dummyDragon.prevXRot));
 
-							Vector3d vector3d1 = player.getDeltaMovement();
-							Vector3d vector3d = player.getViewVector(1f);
-							double d0 = Entity.getHorizontalDistanceSqr(vector3d1);
-							double d1 = Entity.getHorizontalDistanceSqr(vector3d);
+							Vec3 vector3d1 = player.getDeltaMovement();
+							Vec3 vector3d = player.getViewVector(1f);
+							double d0 = vector3d1.horizontalDistanceSqr();
+							double d1 = vector3d.horizontalDistanceSqr();
 							double d2 = (vector3d1.x * vector3d.x + vector3d1.z * vector3d.z) / Math.sqrt(d0 * d1);
 							double d3 = vector3d1.x * vector3d.z - vector3d1.z * vector3d.x;
 
-							float rot = MathHelper.clamp(((float)(Math.signum(d3) * Math.acos(d2))) * 2, -1, 1);
+							float rot = Mth.clamp(((float)(Math.signum(d3) * Math.acos(d2))) * 2, -1, 1);
 
-							dummyDragon.prevZRot = MathHelper.lerp(0.1F, dummyDragon.prevZRot, rot);
-							dummyDragon.prevZRot = MathHelper.clamp(dummyDragon.prevZRot, -1, 1);
+							dummyDragon.prevZRot = Mth.lerp(0.1F, dummyDragon.prevZRot, rot);
+							dummyDragon.prevZRot = Mth.clamp(dummyDragon.prevZRot, -1, 1);
 
 							if(Float.isNaN(dummyDragon.prevZRot)){
 								dummyDragon.prevZRot = rot;
@@ -210,15 +204,15 @@ public class ClientDragonRender{
 						dragonRenderer.render(dummyDragon, yaw, partialRenderTick, matrixStack, renderTypeBuffer, eventLight);
 
 						if(!ConfigHandler.CLIENT.armorRenderLayer.get()){
-							ItemStack helmet = player.getItemBySlot(EquipmentSlotType.HEAD);
-							ItemStack chestPlate = player.getItemBySlot(EquipmentSlotType.CHEST);
-							ItemStack legs = player.getItemBySlot(EquipmentSlotType.LEGS);
-							ItemStack boots = player.getItemBySlot(EquipmentSlotType.FEET);
+							ItemStack helmet = player.getItemBySlot(EquipmentSlot.HEAD);
+							ItemStack chestPlate = player.getItemBySlot(EquipmentSlot.CHEST);
+							ItemStack legs = player.getItemBySlot(EquipmentSlot.LEGS);
+							ItemStack boots = player.getItemBySlot(EquipmentSlot.FEET);
 
-							ResourceLocation helmetTexture = new ResourceLocation(DragonSurvivalMod.MODID, DragonArmorRenderLayer.constructArmorTexture(player, EquipmentSlotType.HEAD));
-							ResourceLocation chestPlateTexture = new ResourceLocation(DragonSurvivalMod.MODID, DragonArmorRenderLayer.constructArmorTexture(player, EquipmentSlotType.CHEST));
-							ResourceLocation legsTexture = new ResourceLocation(DragonSurvivalMod.MODID, DragonArmorRenderLayer.constructArmorTexture(player, EquipmentSlotType.LEGS));
-							ResourceLocation bootsTexture = new ResourceLocation(DragonSurvivalMod.MODID, DragonArmorRenderLayer.constructArmorTexture(player, EquipmentSlotType.FEET));
+							ResourceLocation helmetTexture = new ResourceLocation(DragonSurvivalMod.MODID, DragonArmorRenderLayer.constructArmorTexture(player, EquipmentSlot.HEAD));
+							ResourceLocation chestPlateTexture = new ResourceLocation(DragonSurvivalMod.MODID, DragonArmorRenderLayer.constructArmorTexture(player, EquipmentSlot.CHEST));
+							ResourceLocation legsTexture = new ResourceLocation(DragonSurvivalMod.MODID, DragonArmorRenderLayer.constructArmorTexture(player, EquipmentSlot.LEGS));
+							ResourceLocation bootsTexture = new ResourceLocation(DragonSurvivalMod.MODID, DragonArmorRenderLayer.constructArmorTexture(player, EquipmentSlot.FEET));
 
 							renderArmorPiece(helmet, matrixStack, renderTypeBuffer, yaw, eventLight, dummyDragon, partialRenderTick, helmetTexture);
 							renderArmorPiece(chestPlate, matrixStack, renderTypeBuffer, yaw, eventLight, dummyDragon, partialRenderTick, chestPlateTexture);
@@ -229,13 +223,13 @@ public class ClientDragonRender{
 				}
 
 				if(!player.isSpectator()){
-					for(LayerRenderer<Entity, EntityModel<Entity>> layer : ((AccessorLivingRenderer)playerRenderer).getRenderLayers()){
+					for(LayerRenderer<Entity, EntityModel<Entity>> layer : ((AccessorLivingEntityRenderer)playerRenderer).getRenderLayers()){
 						if(layer instanceof ParrotVariantLayer){
 							matrixStack.scale(1.0F / scale, 1.0F / scale, 1.0F / scale);
 							matrixStack.mulPose(Vector3f.XN.rotationDegrees(180.0F));
 							double height = 1.3 * scale;
 							double forward = 0.3 * scale;
-							float parrotHeadYaw = MathHelper.clamp(-1.0F * (((float)cap.getMovementData().bodyYaw) - (float)cap.getMovementData().headYaw), -75.0F, 75.0F);
+							float parrotHeadYaw = Mth.clamp(-1.0F * (((float)cap.getMovementData().bodyYaw) - (float)cap.getMovementData().headYaw), -75.0F, 75.0F);
 							matrixStack.translate(0, -height, -forward);
 							layer.render(matrixStack, renderTypeBuffer, eventLight, player, 0.0F, 0.0F, partialRenderTick, (float)player.tickCount + partialRenderTick, parrotHeadYaw, (float)cap.getMovementData().headPitch);
 							matrixStack.translate(0, height, forward);
@@ -245,7 +239,7 @@ public class ClientDragonRender{
 						}
 					}
 
-					final int combinedOverlayIn = LivingRenderer.getOverlayCoords(player, 0);
+					final int combinedOverlayIn = LivingEntityRenderer.getOverlayCoords(player, 0);
 					if(player.hasEffect(DragonEffects.TRAPPED)){
 						ClientEvents.renderBolas(eventLight, combinedOverlayIn, renderTypeBuffer, matrixStack);
 					}
@@ -263,7 +257,7 @@ public class ClientDragonRender{
 		}
 	}
 
-	private static void renderArmorPiece(ItemStack stack, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, float yaw, int packedLightIn, DragonEntity entitylivingbaseIn, float partialTicks, ResourceLocation helmetTexture){
+	private static void renderArmorPiece(ItemStack stack, PoseStack matrixStackIn, MultiBufferSource bufferIn, float yaw, int packedLightIn, Dragon entitylivingbaseIn, float partialTicks, ResourceLocation helmetTexture){
 		Color armorColor = new Color(1f, 1f, 1f);
 
 		if(stack.getItem() instanceof IDyeableArmorItem){
@@ -272,7 +266,7 @@ public class ClientDragonRender{
 		}
 
 		if(!stack.isEmpty()){
-			EntityRenderer<? super DragonEntity> dragonArmorRenderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(ClientDragonRender.dragonArmor);
+			EntityRenderer<? super Dragon> dragonArmorRenderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(ClientDragonRender.dragonArmor);
 			ClientDragonRender.dragonArmor.copyPosition(entitylivingbaseIn);
 			ClientDragonRender.dragonArmorModel.setArmorTexture(helmetTexture);
 			Color preColor = ((DragonRenderer)dragonArmorRenderer).renderColor;
@@ -286,7 +280,7 @@ public class ClientDragonRender{
 
 	@SubscribeEvent
 	public static void spin(InputEvent.ClickInputEvent keyInputEvent){
-		ClientPlayerEntity player = Minecraft.getInstance().player;
+		LocalPlayer player = Minecraft.getInstance().player;
 		if(player == null){
 			return;
 		}
@@ -305,16 +299,16 @@ public class ClientDragonRender{
 	public static void onClientTick(RenderTickEvent renderTickEvent){
 		if(renderTickEvent.phase == Phase.START){
 			Minecraft minecraft = Minecraft.getInstance();
-			ClientPlayerEntity player = minecraft.player;
+			LocalPlayer player = minecraft.player;
 			if(player != null){
 				DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
 					if(playerStateHandler.isDragon()){
-						playerStateHandler.getMovementData().headYawLastTick = MathHelper.lerp(0.05, playerStateHandler.getMovementData().headYawLastTick, playerStateHandler.getMovementData().headYaw);
-						playerStateHandler.getMovementData().headPitchLastTick = MathHelper.lerp(0.05, playerStateHandler.getMovementData().headPitchLastTick, playerStateHandler.getMovementData().headPitch);
-						playerStateHandler.getMovementData().bodyYawLastTick = MathHelper.lerp(0.05, playerStateHandler.getMovementData().bodyYawLastTick, playerStateHandler.getMovementData().bodyYaw);
+						playerStateHandler.getMovementData().headYawLastTick = Mth.lerp(0.05, playerStateHandler.getMovementData().headYawLastTick, playerStateHandler.getMovementData().headYaw);
+						playerStateHandler.getMovementData().headPitchLastTick = Mth.lerp(0.05, playerStateHandler.getMovementData().headPitchLastTick, playerStateHandler.getMovementData().headPitch);
+						playerStateHandler.getMovementData().bodyYawLastTick = Mth.lerp(0.05, playerStateHandler.getMovementData().bodyYawLastTick, playerStateHandler.getMovementData().bodyYaw);
 
 						double bodyYaw = playerStateHandler.getMovementData().bodyYaw;
-						float headRot = Functions.angleDifference((float)bodyYaw, MathHelper.wrapDegrees(player.yRot != 0.0 ? player.yRot : player.yHeadRot));
+						float headRot = Functions.angleDifference((float)bodyYaw, Mth.wrapDegrees(player.yRot != 0.0 ? player.yRot : player.yHeadRot));
 
 						if(ConfigHandler.CLIENT.rotateBodyWithCamera.get() && (!KeyInputHandler.FREE_LOOK.isDown() && !wasFreeLook)){
 							if(headRot > 150){
@@ -323,17 +317,17 @@ public class ClientDragonRender{
 								bodyYaw -= 150 + headRot;
 							}
 						}
-						headRot = (float)MathHelper.lerp(0.05, playerStateHandler.getMovementData().headYaw, headRot);
+						headRot = (float)Mth.lerp(0.05, playerStateHandler.getMovementData().headYaw, headRot);
 
 
-						double headPitch = MathHelper.lerp(0.1, playerStateHandler.getMovementData().headPitch, player.xRot);
-						Vector3d moveVector = getInputVector(new Vector3d(player.input.leftImpulse, 0, player.input.forwardImpulse), 1F, player.yRot);
+						double headPitch = Mth.lerp(0.1, playerStateHandler.getMovementData().headPitch, player.xRot);
+						Vec3 moveVector = getInputVector(new Vec3(player.input.leftImpulse, 0, player.input.forwardImpulse), 1F, player.yRot);
 
 						if(ServerFlightHandler.isFlying(player)){
-							moveVector = new Vector3d(player.getX() - player.xo, player.getY() - player.yo, player.getZ() - player.zo);
+							moveVector = new Vec3(player.getX() - player.xo, player.getY() - player.yo, player.getZ() - player.zo);
 						}
 
-						float f = (float)MathHelper.atan2(moveVector.z, moveVector.x) * (180F / (float)Math.PI) - 90F;
+						float f = (float)Mth.atan2(moveVector.z, moveVector.x) * (180F / (float)Math.PI) - 90F;
 						float f1 = (float)(Math.pow(moveVector.x, 2) + Math.pow(moveVector.z, 2));
 
 						if(KeyInputHandler.FREE_LOOK.isDown()){
@@ -349,14 +343,14 @@ public class ClientDragonRender{
 								bodyYaw = player.yRot;
 								wasFreeLook = false;
 								if(moveVector.length() > 0){
-									float f5 = MathHelper.abs(MathHelper.wrapDegrees(player.yRot) - f);
+									float f5 = Mth.abs(Mth.wrapDegrees(player.yRot) - f);
 									if(95.0F < f5 && f5 < 265.0F){
 										f -= 180.0F;
 									}
 
-									float _f = MathHelper.wrapDegrees(f - (float)bodyYaw);
+									float _f = Mth.wrapDegrees(f - (float)bodyYaw);
 									bodyYaw += _f * 0.3F;
-									float _f1 = MathHelper.wrapDegrees(player.yRot - (float)bodyYaw);
+									float _f1 = Mth.wrapDegrees(player.yRot - (float)bodyYaw);
 
 									if(_f1 < -75.0F){
 										_f1 = -75.0F;
@@ -373,8 +367,8 @@ public class ClientDragonRender{
 								}
 
 								if(playerStateHandler.getMovementData().bodyYaw != bodyYaw || headRot != playerStateHandler.getMovementData().headYaw){
-									bodyYaw = MathHelper.rotLerp(0.1f, (float)playerStateHandler.getMovementData().bodyYaw, (float)bodyYaw);
-									bodyYaw = MathHelper.wrapDegrees(bodyYaw);
+									bodyYaw = Mth.rotLerp(0.1f, (float)playerStateHandler.getMovementData().bodyYaw, (float)bodyYaw);
+									bodyYaw = Mth.wrapDegrees(bodyYaw);
 
 									playerStateHandler.setMovementData(bodyYaw, headRot, headPitch, playerStateHandler.getMovementData().bite);
 									NetworkHandler.CHANNEL.sendToServer(new PacketSyncCapabilityMovement(player.getId(), playerStateHandler.getMovementData().bodyYaw, playerStateHandler.getMovementData().headYaw, playerStateHandler.getMovementData().headPitch, playerStateHandler.getMovementData().bite));
@@ -385,18 +379,18 @@ public class ClientDragonRender{
 
 
 						if(f1 > 0.000028){
-							float f2 = MathHelper.wrapDegrees(f - (float)bodyYaw);
+							float f2 = Mth.wrapDegrees(f - (float)bodyYaw);
 							bodyYaw += 0.5F * f2;
 
 							if(minecraft.options.getCameraType() == PointOfView.FIRST_PERSON){
-								float f5 = MathHelper.abs(MathHelper.wrapDegrees(player.yRot) - f);
+								float f5 = Mth.abs(Mth.wrapDegrees(player.yRot) - f);
 								if(95.0F < f5 && f5 < 265.0F){
 									f -= 180.0F;
 								}
 
-								float _f = MathHelper.wrapDegrees(f - (float)bodyYaw);
+								float _f = Mth.wrapDegrees(f - (float)bodyYaw);
 								bodyYaw += _f * 0.3F;
-								float _f1 = MathHelper.wrapDegrees(player.yRot - (float)bodyYaw);
+								float _f1 = Mth.wrapDegrees(player.yRot - (float)bodyYaw);
 
 								if(_f1 < -75.0F){
 									_f1 = -75.0F;
@@ -414,8 +408,8 @@ public class ClientDragonRender{
 						}
 
 						if(playerStateHandler.getMovementData().bodyYaw != bodyYaw || headRot != playerStateHandler.getMovementData().headYaw){
-							bodyYaw = MathHelper.rotLerp(0.1f, (float)playerStateHandler.getMovementData().bodyYaw, (float)bodyYaw);
-							bodyYaw = MathHelper.wrapDegrees(bodyYaw);
+							bodyYaw = Mth.rotLerp(0.1f, (float)playerStateHandler.getMovementData().bodyYaw, (float)bodyYaw);
+							bodyYaw = Mth.wrapDegrees(bodyYaw);
 
 							playerStateHandler.setMovementData(bodyYaw, headRot, headPitch, playerStateHandler.getMovementData().bite);
 							NetworkHandler.CHANNEL.sendToServer(new PacketSyncCapabilityMovement(player.getId(), playerStateHandler.getMovementData().bodyYaw, playerStateHandler.getMovementData().headYaw, playerStateHandler.getMovementData().headPitch, playerStateHandler.getMovementData().bite));
@@ -426,15 +420,15 @@ public class ClientDragonRender{
 		}
 	}
 
-	public static Vector3d getInputVector(Vector3d movement, float fricSpeed, float yRot){
+	public static Vec3 getInputVector(Vec3 movement, float fricSpeed, float yRot){
 		double d0 = movement.lengthSqr();
 		if(d0 < 1.0E-7D){
-			return Vector3d.ZERO;
+			return Vec3.ZERO;
 		}else{
-			Vector3d vector3d = (d0 > 1.0D ? movement.normalize() : movement).scale(fricSpeed);
-			float f = MathHelper.sin(yRot * ((float)Math.PI / 180F));
-			float f1 = MathHelper.cos(yRot * ((float)Math.PI / 180F));
-			return new Vector3d(vector3d.x * (double)f1 - vector3d.z * (double)f, vector3d.y, vector3d.z * (double)f1 + vector3d.x * (double)f);
+			Vec3 vector3d = (d0 > 1.0D ? movement.normalize() : movement).scale(fricSpeed);
+			float f = Mth.sin(yRot * ((float)Math.PI / 180F));
+			float f1 = Mth.cos(yRot * ((float)Math.PI / 180F));
+			return new Vec3(vector3d.x * (double)f1 - vector3d.z * (double)f, vector3d.y, vector3d.z * (double)f1 + vector3d.x * (double)f);
 		}
 	}
 
@@ -447,7 +441,7 @@ public class ClientDragonRender{
 			return;
 		}
 
-		if(entity instanceof DragonEntity){
+		if(entity instanceof Dragon){
 			if(ClientDragonRender.dragonArmor == null){
 				ClientDragonRender.dragonArmor = DSEntities.DRAGON_ARMOR.create(Minecraft.getInstance().player.level);
 				assert ClientDragonRender.dragonArmor != null;
@@ -455,7 +449,7 @@ public class ClientDragonRender{
 			}
 
 			if(!ClientDragonRender.playerDragonHashMap.containsKey(Minecraft.getInstance().player.getId())){
-				DragonEntity dummyDragon = DSEntities.DRAGON.create(Minecraft.getInstance().player.level);
+				Dragon dummyDragon = DSEntities.DRAGON.create(Minecraft.getInstance().player.level);
 				dummyDragon.player = Minecraft.getInstance().player.getId();
 				ClientDragonRender.playerDragonHashMap.put(Minecraft.getInstance().player.getId(), new AtomicReference<>(dummyDragon));
 			}
@@ -464,7 +458,7 @@ public class ClientDragonRender{
 		RenderSystem.pushMatrix();
 		RenderSystem.translatef((float)x, (float)y, 1050.0F);
 		RenderSystem.scalef(1.0F, 1.0F, -1.0F);
-		MatrixStack matrixstack = new MatrixStack();
+		PoseStack matrixstack = new PoseStack();
 		matrixstack.translate(0.0D, 0.0D, 1000.0D);
 		matrixstack.scale(scale, scale, scale);
 		Quaternion quaternion = Vector3f.ZP.rotationDegrees(180.0F);
@@ -487,7 +481,7 @@ public class ClientDragonRender{
 		quaternion1.conj();
 		entityrenderermanager.overrideCameraOrientation(quaternion1);
 		entityrenderermanager.setRenderShadow(false);
-		IRenderTypeBuffer.Impl irendertypebuffer$impl = Minecraft.getInstance().renderBuffers().bufferSource();
+		MultiBufferSource.Impl irendertypebuffer$impl = Minecraft.getInstance().renderBuffers().bufferSource();
 		RenderSystem.runAsFancy(() -> {
 			entityrenderermanager.setRenderHitBoxes(false);
 			entityrenderermanager.render(entity, 0.0D, 0.0D, 0.0D, 0.0F, 1F, matrixstack, irendertypebuffer$impl, 15728880);

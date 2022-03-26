@@ -1,11 +1,11 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.IPacket;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.network.NetworkHooks;
+
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.network.NetworkHooks;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
@@ -13,10 +13,12 @@ import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
+
 public class StormBreathEntity extends Entity implements IAnimatable{
 	AnimationFactory animationFactory = new AnimationFactory(this);
 
-	public StormBreathEntity(EntityType<?> p_i48580_1_, World p_i48580_2_){
+	public StormBreathEntity(EntityType<?> p_i48580_1_, Level p_i48580_2_){
+
 		super(p_i48580_1_, p_i48580_2_);
 	}
 
@@ -24,13 +26,15 @@ public class StormBreathEntity extends Entity implements IAnimatable{
 	protected void defineSynchedData(){}
 
 	@Override
-	protected void readAdditionalSaveData(CompoundNBT p_70037_1_){}
+
+	protected void readAdditionalSaveData(CompoundTag p_70037_1_){}
 
 	@Override
-	protected void addAdditionalSaveData(CompoundNBT p_213281_1_){}
+	protected void addAdditionalSaveData(CompoundTag p_213281_1_){}
 
 	@Override
-	public IPacket<?> getAddEntityPacket(){
+	public Packet<?> getAddEntityPacket(){
+
 		return NetworkHooks.getEntitySpawningPacket(this);
 	}
 

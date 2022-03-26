@@ -7,20 +7,20 @@ import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
-import net.minecraft.block.BlockState;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.*;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.RayTraceContext.FluidMode;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.world.GameRules;
-import net.minecraft.world.World;
-import net.minecraftforge.common.ToolType;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.*;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -38,7 +38,7 @@ public class ClawToolHandler{
 
 	@SubscribeEvent
 	public static void experiencePickup(PickupXp event){
-		PlayerEntity player = event.getPlayer();
+		Player player = event.getPlayer();
 
 		DragonStateProvider.getCap(player).ifPresent(cap -> {
 			ArrayList<ItemStack> stacks = new ArrayList<>();
@@ -70,8 +70,8 @@ public class ClawToolHandler{
 	public static void playerDieEvent(LivingDropsEvent event){
 		Entity ent = event.getEntity();
 
-		if(ent instanceof PlayerEntity){
-			PlayerEntity player = (PlayerEntity)ent;
+		if(ent instanceof Player){
+			Player player = (Player)ent;
 
 			if(!player.level.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) && !ConfigHandler.SERVER.keepClawItems.get()){
 				DragonStateHandler handler = DragonUtils.getHandler(player);
@@ -95,46 +95,46 @@ public class ClawToolHandler{
 		if(!ConfigHandler.SERVER.bonuses.get() || !ConfigHandler.SERVER.clawsAreTools.get()){
 			return;
 		}
-		PlayerEntity playerEntity = harvestCheck.getPlayer();
+		Player playerEntity = harvestCheck.getPlayer();
 		DragonStateProvider.getCap(playerEntity).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon()){
 				ItemStack stack = playerEntity.getMainHandItem();
 				Item item = stack.getItem();
 				BlockState blockState = harvestCheck.getTargetBlock();
-				if(!(item instanceof ToolItem || item instanceof SwordItem || item instanceof ShearsItem) && !harvestCheck.canHarvest()){
+				if(!(item instanceof DiggerItem || item instanceof SwordItem || item instanceof ShearsItem) && !harvestCheck.canHarvest()){
 					harvestCheck.setCanHarvest(dragonStateHandler.canHarvestWithPaw(playerEntity, blockState));
 				}
 			}
 		});
 	}
 
-	public static ItemStack getDragonTools(PlayerEntity player){
-		ItemStack mainStack = player.inventory.getSelected();
+	public static ItemStack getDragonTools(Player player){
+		ItemStack mainStack = player.getInventory().getSelected();
 		ItemStack harvestTool = mainStack;
 		float newSpeed = 0F;
 
-		DragonStateHandler cap = DragonUtils.getHandler(player);
+		DragonStateHandler cap = DragonStateProvider.getCap(player).orElse(null);
 
-		if((mainStack.getItem() instanceof ToolItem || mainStack.getItem() instanceof SwordItem || mainStack.getItem() instanceof ShearsItem || (mainStack.getItem() instanceof TieredItem))){
+		if((mainStack.getItem() instanceof DiggerItem || mainStack.getItem() instanceof SwordItem || mainStack.getItem() instanceof ShearsItem || (mainStack.getItem() instanceof TieredItem))){
 			return mainStack;
 		}
 
 		if(cap != null){
-			World world = player.level;
-			BlockRayTraceResult raytraceresult = Item.getPlayerPOVHitResult(world, player, FluidMode.NONE);
+			Level world = player.level;
+			BlockHitResult raytraceresult = Item.getPlayerPOVHitResult(world, player, ClipContext.Fluid.NONE);
 
-			if(raytraceresult.getType() != RayTraceResult.Type.MISS){
+			if(raytraceresult.getType() != HitResult.Type.MISS){
 				BlockState state = world.getBlockState(raytraceresult.getBlockPos());
 
 				if(state != null){
 					for(int i = 1; i < 4; i++){
 						ItemStack breakingItem = cap.getClawInventory().getClawsInventory().getItem(i);
 
-						if(!breakingItem.isEmpty() && breakingItem.getToolTypes().stream().anyMatch(state::isToolEffective)){
+						if(!breakingItem.isEmpty() && breakingItem.isCorrectToolForDrops(state)){
 							float tempSpeed = breakingItem.getDestroySpeed(state);
 
-							if(breakingItem.getItem() instanceof ToolItem){
-								ToolItem item = (ToolItem)breakingItem.getItem();
+							if(breakingItem.getItem() instanceof DiggerItem){
+								DiggerItem item = (DiggerItem)breakingItem.getItem();
 								tempSpeed = item.getDestroySpeed(breakingItem, state);
 							}
 
@@ -176,7 +176,7 @@ public class ClawToolHandler{
 			if(!ConfigHandler.SERVER.bonuses.get() || !ConfigHandler.SERVER.clawsAreTools.get()){
 				return;
 			}
-			PlayerEntity playerEntity = breakSpeedEvent.getPlayer();
+			Player playerEntity = breakSpeedEvent.getPlayer();
 
 			ItemStack mainStack = playerEntity.getMainHandItem();
 			DragonStateHandler dragonStateHandler = DragonStateProvider.getCap(playerEntity).orElse(null);
@@ -185,12 +185,11 @@ public class ClawToolHandler{
 			}
 
 			BlockState blockState = breakSpeedEvent.getState();
-
 			float originalSpeed = breakSpeedEvent.getOriginalSpeed();
 
-			if(!(mainStack.getItem() instanceof ToolItem || mainStack.getItem() instanceof SwordItem || mainStack.getItem() instanceof ShearsItem || (mainStack.getItem() instanceof TieredItem))){
+			if(!(mainStack.getItem() instanceof DiggerItem || mainStack.getItem() instanceof SwordItem || mainStack.getItem() instanceof ShearsItem || (mainStack.getItem() instanceof TieredItem))){
 				float bonus = dragonStateHandler.getLevel() == DragonLevel.ADULT
-					? (blockState.getHarvestTool() == ToolType.AXE && dragonStateHandler.getType() == DragonType.FOREST ? 4 : blockState.getHarvestTool() == ToolType.PICKAXE && dragonStateHandler.getType() == DragonType.CAVE ? 4 : blockState.getHarvestTool() == ToolType.SHOVEL && dragonStateHandler.getType() == DragonType.SEA ? 4 : 2F)
+					? (blockState.is(BlockTags.MINEABLE_WITH_AXE) && dragonStateHandler.getType() == DragonType.FOREST ? 4 : blockState.is(BlockTags.MINEABLE_WITH_PICKAXE) && dragonStateHandler.getType() == DragonType.CAVE ? 4 : blockState.is(BlockTags.MINEABLE_WITH_SHOVEL) && dragonStateHandler.getType() == DragonType.SEA ? 4 : 2F)
 					: dragonStateHandler.getLevel() == DragonLevel.BABY ? ConfigHandler.SERVER.bonusUnlockedAt.get() == DragonLevel.BABY ? 2F : 1F : dragonStateHandler.getLevel() == DragonLevel.YOUNG ? ConfigHandler.SERVER.bonusUnlockedAt.get() != DragonLevel.ADULT ? 2F : 1F : 2F;
 
 				breakSpeedEvent.setNewSpeed((originalSpeed * bonus));

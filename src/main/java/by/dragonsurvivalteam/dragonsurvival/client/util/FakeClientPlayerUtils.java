@@ -2,8 +2,9 @@ package by.dragonsurvivalteam.dragonsurvival.client.util;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DSEntities;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
-import net.minecraft.entity.player.PlayerEntity;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.Dragon;
+import net.minecraft.world.entity.Entity.RemovalReason;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
@@ -18,21 +19,21 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 @OnlyIn( Dist.CLIENT )
-@EventBusSubscriber(Dist.CLIENT)
-public class FakeClientPlayerUtils{
-	private static final ConcurrentHashMap<Integer, FakeClientPlayer> fakePlayers = new ConcurrentHashMap<>();
-	private static final ConcurrentHashMap<Integer, DragonEntity> fakeDragons = new ConcurrentHashMap<>();
+@EventBusSubscriber( Dist.CLIENT )
+public class FakeLocalPlayerUtils{
+	private static final ConcurrentHashMap<Integer, FakeLocalPlayer> fakePlayers = new ConcurrentHashMap<>();
+	private static final ConcurrentHashMap<Integer, Dragon> fakeDragons = new ConcurrentHashMap<>();
 
-	public static DragonEntity getFakeDragon(int num, DragonStateHandler handler){
-		FakeClientPlayer clientPlayer = getFakePlayer(num, handler);
+	public static Dragon getFakeDragon(int num, DragonStateHandler handler){
+		FakeLocalPlayer clientPlayer = getFakePlayer(num, handler);
 
-		fakeDragons.computeIfAbsent(num, (n) -> new DragonEntity(DSEntities.DRAGON, clientPlayer.level){
+		fakeDragons.computeIfAbsent(num, (n) -> new Dragon(DSEntities.DRAGON, clientPlayer.level){
 			@Override
 			public void registerControllers(AnimationData animationData){
 				animationData.shouldPlayWhilePaused = true;
-				animationData.addAnimationController(new AnimationController<DragonEntity>(this, "fake_player_controller", 2, (event) -> {
+				animationData.addAnimationController(new AnimationController<Dragon>(this, "fake_player_controller", 2, (event) -> {
 
-					if(getPlayer() instanceof FakeClientPlayer){
+					if(getPlayer() instanceof FakeLocalPlayer){
 						AnimationBuilder builder = new AnimationBuilder();
 
 						if(clientPlayer.animationSupplier != null){
@@ -48,7 +49,7 @@ public class FakeClientPlayerUtils{
 			}
 
 			@Override
-			public PlayerEntity getPlayer(){
+			public Player getPlayer(){
 				return clientPlayer;
 			}
 		});
@@ -56,8 +57,8 @@ public class FakeClientPlayerUtils{
 		return fakeDragons.get(num);
 	}
 
-	public static FakeClientPlayer getFakePlayer(int num, DragonStateHandler handler){
-		fakePlayers.computeIfAbsent(num, FakeClientPlayer::new);
+	public static FakeLocalPlayer getFakePlayer(int num, DragonStateHandler handler){
+		fakePlayers.computeIfAbsent(num, FakeLocalPlayer::new);
 		fakePlayers.get(num).handler = handler;
 		fakePlayers.get(num).lastAccessed = System.currentTimeMillis();
 		return fakePlayers.get(num);
@@ -67,8 +68,8 @@ public class FakeClientPlayerUtils{
 	public static void clientTick(ClientTickEvent event){
 		fakePlayers.forEach((i, v) -> {
 			if(System.currentTimeMillis() - v.lastAccessed >= TimeUnit.MILLISECONDS.convert(10, TimeUnit.MINUTES)){
-				v.remove();
-				fakeDragons.get(i).remove();
+				v.remove(RemovalReason.DISCARDED);
+				fakeDragons.get(i).remove(RemovalReason.DISCARDED);
 
 				fakeDragons.remove(i);
 				fakePlayers.remove(i);

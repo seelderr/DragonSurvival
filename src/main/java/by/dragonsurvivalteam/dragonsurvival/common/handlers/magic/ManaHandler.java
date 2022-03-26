@@ -10,21 +10,20 @@ import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncMagicStats;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-import net.minecraft.block.AbstractFurnaceBlock;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.CauldronBlock;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.LightType;
-import net.minecraft.world.lighting.WorldLightManager;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.LightLayer;
+import net.minecraft.world.level.block.AbstractFurnaceBlock;
+import net.minecraft.world.level.block.CauldronBlock;
+import net.minecraft.world.level.block.LayeredCauldronBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.network.PacketDistributor;
 
 import static by.dragonsurvivalteam.dragonsurvival.misc.DragonType.CAVE;
 import static by.dragonsurvivalteam.dragonsurvival.misc.DragonType.SEA;
@@ -37,7 +36,7 @@ public class ManaHandler{
 			return;
 		}
 
-		PlayerEntity player = event.player;
+		Player player = event.player;
 
 		DragonStateProvider.getCap(player).ifPresent(cap -> {
 			if(cap.getMagic().getCurrentlyCasting() != null){
@@ -60,7 +59,7 @@ public class ManaHandler{
 		});
 	}
 
-	public static boolean isPlayerInGoodConditions(PlayerEntity player){
+	public static boolean isPlayerInGoodConditions(Player player){
 		if(!DragonUtils.isDragon(player)){
 			return false;
 		}
@@ -93,9 +92,9 @@ public class ManaHandler{
 					}
 					if(DragonConfigHandler.DRAGON_MANA_BLOCKS != null && DragonConfigHandler.DRAGON_MANA_BLOCKS.containsKey(SEA)){
 						if(DragonConfigHandler.DRAGON_MANA_BLOCKS.get(SEA).contains(blockBelow.getBlock())){
-							if(blockBelow.getBlock() == Blocks.CAULDRON){
-								if(blockBelow.hasProperty(CauldronBlock.LEVEL)){
-									int level = blockBelow.getValue(CauldronBlock.LEVEL);
+							if(blockBelow.getBlock() instanceof LayeredCauldronBlock){
+								if(blockBelow.hasProperty(LayeredCauldronBlock.LEVEL)){
+									int level = blockBelow.getValue(LayeredCauldronBlock.LEVEL);
 
 									if(level > 0){
 										return true;
@@ -103,9 +102,9 @@ public class ManaHandler{
 								}
 							}
 
-							if(feetBlock.getBlock() == Blocks.CAULDRON){
-								if(feetBlock.hasProperty(CauldronBlock.LEVEL)){
-									int level = feetBlock.getValue(CauldronBlock.LEVEL);
+							if(feetBlock.getBlock() instanceof LayeredCauldronBlock){
+								if(feetBlock.hasProperty(LayeredCauldronBlock.LEVEL)){
+									int level = feetBlock.getValue(LayeredCauldronBlock.LEVEL);
 
 									if(level > 0){
 										return true;
@@ -118,15 +117,14 @@ public class ManaHandler{
 					break;
 
 				case FOREST:
-					WorldLightManager lightManager = player.level.getChunkSource().getLightEngine();
 					if(player.level.canSeeSky(player.blockPosition())){
-						int light = player.level.getBrightness(LightType.SKY, player.blockPosition()) - player.level.getSkyDarken();
+						int light = player.level.getBrightness(LightLayer.SKY, player.blockPosition()) - player.level.getSkyDarken();
 						float f = player.level.getSunAngle(1.0F);
 
 						float f1 = f < (float)Math.PI ? 0.0F : ((float)Math.PI * 2F);
 						f = f + (f1 - f) * 0.2F;
-						light = Math.round((float)light * MathHelper.cos(f));
-						light = MathHelper.clamp(light, 0, 15);
+						light = Math.round((float)light * Mth.cos(f));
+						light = Mth.clamp(light, 0, 15);
 
 						if(light >= 14){
 							return true;
@@ -164,7 +162,7 @@ public class ManaHandler{
 		}).orElse(false);
 	}
 
-	public static int getMaxMana(PlayerEntity entity){
+	public static int getMaxMana(Player entity){
 		return DragonStateProvider.getCap(entity).map(cap -> {
 			int mana = 1;
 
@@ -188,18 +186,18 @@ public class ManaHandler{
 		}).orElse(0);
 	}
 
-	public static void replenishMana(PlayerEntity entity, int mana){
+	public static void replenishMana(Player entity, int mana){
 		if(entity.level.isClientSide){
 			return;
 		}
 
 		DragonStateProvider.getCap(entity).ifPresent(cap -> {
 			cap.getMagic().setCurrentMana(Math.min(getMaxMana(entity), cap.getMagic().getCurrentMana() + mana));
-			NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)entity), new SyncMagicStats(entity.getId(), cap.getMagic().getSelectedAbilitySlot(), cap.getMagic().getCurrentMana(), cap.getMagic().renderAbilityHotbar()));
+			NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)entity), new SyncMagicStats(entity.getId(), cap.getMagic().getSelectedAbilitySlot(), cap.getMagic().getCurrentMana(), cap.getMagic().renderAbilityHotbar()));
 		});
 	}
 
-	public static void consumeMana(PlayerEntity entity, int mana){
+	public static void consumeMana(Player entity, int mana){
 		if(entity == null){
 			return;
 		}
@@ -236,11 +234,11 @@ public class ManaHandler{
 				cap.getMagic().setCurrentMana(Math.max(0, cap.getMagic().getCurrentMana() - mana));
 			}
 
-			NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)entity), new SyncMagicStats(entity.getId(), cap.getMagic().getSelectedAbilitySlot(), cap.getMagic().getCurrentMana(), cap.getMagic().renderAbilityHotbar()));
+			NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)entity), new SyncMagicStats(entity.getId(), cap.getMagic().getSelectedAbilitySlot(), cap.getMagic().getCurrentMana(), cap.getMagic().renderAbilityHotbar()));
 		});
 	}
 
-	public static int getCurrentMana(PlayerEntity entity){
+	public static int getCurrentMana(Player entity){
 		return DragonStateProvider.getCap(entity).map(cap -> Math.min(cap.getMagic().getCurrentMana(), getMaxMana(entity))).orElse(0);
 	}
 }

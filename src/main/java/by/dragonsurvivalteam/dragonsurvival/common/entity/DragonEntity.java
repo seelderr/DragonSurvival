@@ -15,16 +15,12 @@ import by.dragonsurvivalteam.dragonsurvival.common.magic.common.ISecondAnimation
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.Pose;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.HandSide;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.World;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.Animation;
@@ -38,7 +34,7 @@ import software.bernie.geckolib3.resource.GeckoLibCache;
 
 import java.util.ArrayList;
 
-public class DragonEntity extends LivingEntity implements IAnimatable, CommonTraits{
+public class Dragon extends LivingEntity implements IAnimatable, CommonTraits{
 	public final ArrayList<Double> bodyYawAverage = new ArrayList<>();
 	public final ArrayList<Double> headYawAverage = new ArrayList<>();
 	public final ArrayList<Double> headPitchAverage = new ArrayList<>();
@@ -66,8 +62,6 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 	public double head_pitch_change = 0;
 	public double tail_motion_up = 0;
 	public double tail_motion_side = 0;
-	public double look_at_yaw = 0;
-	public double look_at_pitch = 0;
 	AnimationFactory animationFactory = new AnimationFactory(this);
 	ActiveDragonAbility lastCast = null;
 	boolean started, ended;
@@ -77,7 +71,8 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 	CustomTickAnimationController headController;
 	CustomTickAnimationController biteAnimationController;
 	CustomTickAnimationController dragonAnimationController;
-	public DragonEntity(EntityType<? extends LivingEntity> type, World worldIn){
+
+	public Dragon(EntityType<? extends LivingEntity> type, Level worldIn){
 		super(type, worldIn);
 	}
 
@@ -87,7 +82,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 
 		for(int i = 0; i < EmoteCap.MAX_EMOTES; i++){
 			int finalI = i;
-			IAnimationPredicate<DragonEntity> predicate = (s) -> emotePredicate(finalI, s);
+			IAnimationPredicate<Dragon> predicate = (s) -> emotePredicate(finalI, s);
 			animationData.addAnimationController(new CustomTickAnimationController(this, "2_" + i, 0, predicate));
 		}
 
@@ -120,7 +115,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 	}
 
 	private <E extends IAnimatable> PlayState bitePredicate(AnimationEvent<E> animationEvent){
-		final PlayerEntity player = getPlayer();
+		final Player player = getPlayer();
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 		AnimationBuilder builder = new AnimationBuilder();
 
@@ -148,14 +143,14 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 				}
 
 				builder.addAnimation("eat_item_left", true);
-			}else if(!ConfigHandler.CLIENT.renderItemsInMouth.get() && animationExists("use_item_right") && (!player.getMainHandItem().isEmpty()) && (handler.getMovementData().bite && player.getMainArm() == HandSide.RIGHT) || animationTimer.getDuration("use_item_right") > 0){
+			}else if(!ConfigHandler.CLIENT.renderItemsInMouth.get() && animationExists("use_item_right") && (!player.getMainHandItem().isEmpty()) && (handler.getMovementData().bite && player.getMainArm() == HumanoidArm.RIGHT) || animationTimer.getDuration("use_item_right") > 0){
 				if(animationTimer.getDuration("use_item_right") <= 0){
 					handler.getMovementData().bite = false;
 					animationTimer.putAnimation("use_item_right", 0.32 * 20, builder);
 				}
 
 				builder.addAnimation("use_item_right", true);
-			}else if(!ConfigHandler.CLIENT.renderItemsInMouth.get() && animationExists("use_item_left") && (!player.getOffhandItem().isEmpty() && handler.getMovementData().bite && player.getMainArm() == HandSide.LEFT) || animationTimer.getDuration("use_item_left") > 0){
+			}else if(!ConfigHandler.CLIENT.renderItemsInMouth.get() && animationExists("use_item_left") && (!player.getOffhandItem().isEmpty() && handler.getMovementData().bite && player.getMainArm() == HumanoidArm.LEFT) || animationTimer.getDuration("use_item_left") > 0){
 				if(animationTimer.getDuration("use_item_left") <= 0){
 					handler.getMovementData().bite = false;
 					animationTimer.putAnimation("use_item_left", 0.32 * 20, builder);
@@ -186,7 +181,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 	}
 
 	private <E extends IAnimatable> PlayState emotePredicate(int num, AnimationEvent<E> animationEvent){
-		final PlayerEntity player = getPlayer();
+		final Player player = getPlayer();
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 
 		if(handler.getEmotes().currentEmotes.size() > num){
@@ -208,8 +203,8 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 		return PlayState.STOP;
 	}
 
-	public PlayerEntity getPlayer(){
-		return (PlayerEntity)level.getEntity(player);
+	public Player getPlayer(){
+		return (Player)level.getEntity(player);
 	}
 
 	@Override
@@ -218,7 +213,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 	}
 
 	private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> animationEvent){
-		final PlayerEntity player = getPlayer();
+		final Player player = getPlayer();
 		final AnimationController animationController = animationEvent.getController();
 		DragonStateHandler playerStateHandler = DragonUtils.getHandler(player);
 
@@ -242,7 +237,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 			renderAbility(builder, curCast);
 		}
 
-		Vector3d motio = new Vector3d(player.getX() - player.xo, player.getY() - player.yo, player.getZ() - player.zo);
+		Vec3 motio = new Vec3(player.getX() - player.xo, player.getY() - player.yo, player.getZ() - player.zo);
 		boolean isMovingHorizontal = Math.sqrt(Math.pow(motio.x, 2) + Math.pow(motio.z, 2)) > 0.005;
 
 		if(playerStateHandler.getMagic().onMagicSource){
@@ -256,7 +251,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 		}else if(player.isPassenger()){
 			tailLocked = true;
 			builder.addAnimation("sit", true);
-		}else if(player.abilities.flying || ServerFlightHandler.isFlying(player)){
+		}else if(player.getAbilities().flying || ServerFlightHandler.isFlying(player)){
 			double preLandDuration = 1;
 			double hoverLand = ServerFlightHandler.getLandTime(player, (2.24 + preLandDuration) * 20);
 			double fullLand = ServerFlightHandler.getLandTime(player, 2.24 * 20);
@@ -304,7 +299,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 				tailLocked = true;
 				builder.addAnimation("fly_spin_fast", true);
 			}else{
-				dragonAnimationController.speed = 1 + ((double)MathHelper.sqrt(player.getDeltaMovement().x * player.getDeltaMovement().x + player.getDeltaMovement().z * player.getDeltaMovement().z) / 10);
+				dragonAnimationController.speed = 1 + ((double)Mth.sqrt((float)(player.getDeltaMovement().x * player.getDeltaMovement().x + player.getDeltaMovement().z * player.getDeltaMovement().z)) / 10);
 				builder.addAnimation("swim_fast", true);
 			}
 		}else if((player.isInLava() || player.isInWaterOrBubble()) && !player.isOnGround()){
@@ -313,7 +308,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 				tailLocked = true;
 				builder.addAnimation("fly_spin_fast", true);
 			}else{
-				dragonAnimationController.speed = 1 + ((double)MathHelper.sqrt(player.getDeltaMovement().x * player.getDeltaMovement().x + player.getDeltaMovement().z * player.getDeltaMovement().z) / 10);
+				dragonAnimationController.speed = 1 + ((double)Mth.sqrt((float)(player.getDeltaMovement().x * player.getDeltaMovement().x + player.getDeltaMovement().z * player.getDeltaMovement().z)) / 10);
 				builder.addAnimation("swim", true);
 			}
 		}else if(!player.isOnGround() && motio.y() < 0){
@@ -332,10 +327,10 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 				builder.addAnimation("sneak", true);
 			}
 		}else if(player.isSprinting()){
-			dragonAnimationController.speed = 1 + ((double)MathHelper.sqrt(player.getDeltaMovement().x * player.getDeltaMovement().x + player.getDeltaMovement().z * player.getDeltaMovement().z) / 10);
+			dragonAnimationController.speed = 1 + ((double)Mth.sqrt((float)(player.getDeltaMovement().x * player.getDeltaMovement().x + player.getDeltaMovement().z * player.getDeltaMovement().z)) / 10);
 			builder.addAnimation("run", true);
 		}else if(isMovingHorizontal && player.animationSpeed != 0f){
-			dragonAnimationController.speed = 1 + ((double)MathHelper.sqrt(player.getDeltaMovement().x * player.getDeltaMovement().x + player.getDeltaMovement().z * player.getDeltaMovement().z) / 10);
+			dragonAnimationController.speed = 1 + ((double)Mth.sqrt((float)(player.getDeltaMovement().x * player.getDeltaMovement().x + player.getDeltaMovement().z * player.getDeltaMovement().z)) / 10);
 			builder.addAnimation("walk", true);
 		}else if(playerStateHandler.getMovementData().dig){
 			builder.addAnimation("dig", true);
@@ -414,17 +409,17 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 	}
 
 	@Override
-	public ItemStack getItemBySlot(EquipmentSlotType slotIn){
+	public ItemStack getItemBySlot(EquipmentSlot slotIn){
 		return getPlayer().getItemBySlot(slotIn);
 	}
 
 	@Override
-	public void setItemSlot(EquipmentSlotType slotIn, ItemStack stack){
+	public void setItemSlot(EquipmentSlot slotIn, ItemStack stack){
 		getPlayer().setItemSlot(slotIn, stack);
 	}
 
 	@Override
-	public HandSide getMainArm(){
+	public HumanoidArm getMainArm(){
 		return getPlayer().getMainArm();
 	}
 }

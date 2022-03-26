@@ -8,16 +8,12 @@ import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemTier;
-import net.minecraft.item.SwordItem;
-import net.minecraft.item.TieredItem;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.item.*;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.ToolType;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 
 import java.util.ArrayList;
@@ -32,41 +28,6 @@ public class DragonClawsAbility extends InnateDragonAbility{
 		return new DragonClawsAbility(type, id, icon, minLevel, maxLevel);
 	}
 
-	@OnlyIn( Dist.CLIENT )
-	@Override
-	public ArrayList<ITextComponent> getInfo(){
-		int harvestLevel = getHarvestLevel();
-		ItemTier tier = null;
-
-		for(ItemTier t : ItemTier.values()){
-			if(t.getLevel() <= harvestLevel){
-				if(tier == null || t.getLevel() > tier.getLevel()){
-					tier = t;
-				}
-			}
-		}
-
-		ArrayList<ITextComponent> components = super.getInfo();
-		components.add(new TranslationTextComponent("ds.skill.tool_type." + getId()));
-
-		if(tier != null){
-			components.add(new TranslationTextComponent("ds.skill.harvest_level", I18n.get("ds.skill.harvest_level." + tier.name().toLowerCase())));
-		}
-		DragonStateHandler handler = DragonStateProvider.getCap(Minecraft.getInstance().player).orElse(null);
-
-		if(handler != null){
-			ItemStack swordStack = handler.getClawInventory().getClawsInventory().getItem(0);
-			double ageBonus = handler.isDragon() ? (handler.getLevel() == DragonLevel.ADULT ? ConfigHandler.SERVER.adultBonusDamage.get() : handler.getLevel() == DragonLevel.YOUNG ? ConfigHandler.SERVER.youngBonusDamage.get() : ConfigHandler.SERVER.babyBonusDamage.get()) : 0;
-			double swordBonus = swordStack.isEmpty() ? 0 : swordStack.getItem() instanceof SwordItem ? ((((SwordItem)swordStack.getItem()).getDamage())) : 0;
-			double bonus = Math.max(ageBonus, swordBonus - 1);
-
-			if(bonus > 0.0){
-				components.add(new TranslationTextComponent("ds.skill.claws.damage", "+" + bonus));
-			}
-		}
-
-		return components;
-	}
 
 	@Override
 	public int getLevel(){
@@ -76,11 +37,9 @@ public class DragonClawsAbility extends InnateDragonAbility{
 	@OnlyIn( Dist.CLIENT )
 	public int getHarvestTexture(){
 		DragonStateHandler handler = DragonStateProvider.getCap(Minecraft.getInstance().player).orElse(null);
-		if(handler == null){
-			return 0;
-		}
+		if(handler == null) return 0;
 
-		ItemTier tier = ItemTier.STONE;
+		Tier tier = Tiers.STONE;
 		ItemStack stack = null;
 
 		switch(handler.getType()){
@@ -102,75 +61,60 @@ public class DragonClawsAbility extends InnateDragonAbility{
 
 		if(stack != null && !stack.isEmpty() && stack.getItem() instanceof TieredItem){
 			TieredItem tieredItem = (TieredItem)stack.getItem();
-			if(tieredItem.getTier() instanceof ItemTier){
-				tier = (ItemTier)tieredItem.getTier();
-			}
+			tieredItem.getTier();
+			tier = tieredItem.getTier();
 		}
 
-		switch(tier){
-			case WOOD:
-				return 1;
-
-			case STONE:
-				return 2;
-
-			case IRON:
-				return 3;
-
-			case GOLD:
-				return 4;
-
-			case DIAMOND:
-				return 5;
-
-			case NETHERITE:
-				return 6;
-
-			default:
-				return 0;
+		if (Tiers.WOOD.equals(tier)) {
+			return 1;
+		} else if (Tiers.STONE.equals(tier)) {
+			return 2;
+		} else if (Tiers.IRON.equals(tier)) {
+			return 3;
+		} else if (Tiers.GOLD.equals(tier)) {
+			return 4;
+		} else if (Tiers.DIAMOND.equals(tier)) {
+			return 5;
+		} else if (Tiers.NETHERITE.equals(tier)) {
+			return 6;
 		}
+		return 0;
 	}
 
-	@OnlyIn( Dist.CLIENT )
-	public int getHarvestLevel(){
-		int harvestLevel = 0;
+	@OnlyIn( Dist.CLIENT)
+	@Override
+	public ArrayList<Component> getInfo()
+	{
+		int harvestLevel = getHarvestTexture() - 1;
+		Tier tier = null;
 
-		DragonStateHandler handler = DragonStateProvider.getCap(Minecraft.getInstance().player).orElse(null);
-		if(handler != null){
-			DragonLevel level = handler.getLevel();
-			if(level.ordinal() >= ConfigHandler.SERVER.bonusUnlockedAt.get().ordinal()){
-				harvestLevel = ConfigHandler.SERVER.bonusHarvestLevel.get();
-			}else{
-				harvestLevel = ConfigHandler.SERVER.baseHarvestLevel.get();
-			}
-
-			switch(handler.getType()){
-				case SEA:{
-					ItemStack item = handler.getClawInventory().getClawsInventory().getItem(3);
-					if(!item.isEmpty()){
-						harvestLevel += item.getHarvestLevel(ToolType.SHOVEL, Minecraft.getInstance().player, null);
-					}
-					break;
-				}
-
-				case FOREST:{
-					ItemStack item = handler.getClawInventory().getClawsInventory().getItem(2);
-					if(!item.isEmpty()){
-						harvestLevel += item.getHarvestLevel(ToolType.AXE, Minecraft.getInstance().player, null);
-					}
-					break;
-				}
-
-				case CAVE:{
-					ItemStack item = handler.getClawInventory().getClawsInventory().getItem(1);
-					if(!item.isEmpty()){
-						harvestLevel += item.getHarvestLevel(ToolType.PICKAXE, Minecraft.getInstance().player, null);
-					}
-					break;
+		for(Tier t : Tiers.values()){
+			if(t.getLevel() <= harvestLevel){
+				if(tier == null || t.getLevel() > tier.getLevel()){
+					tier = t;
 				}
 			}
 		}
 
-		return harvestLevel;
+		ArrayList<Component> components = super.getInfo();
+		components.add(new TranslatableComponent("ds.skill.tool_type." + getId()));
+
+		if(tier != null) {
+			components.add(new TranslatableComponent("ds.skill.harvest_level", I18n.get("ds.skill.harvest_level." + ((Tiers)tier).name().toLowerCase())));
+		}
+		DragonStateHandler handler = DragonStateProvider.getCap(Minecraft.getInstance().player).orElse(null);
+
+		if(handler != null) {
+			ItemStack swordStack = handler.getClawInventory().getClawsInventory().getItem(0);
+			double ageBonus = handler.isDragon() ? (handler.getLevel() == DragonLevel.ADULT ? ConfigHandler.SERVER.adultBonusDamage.get() : handler.getLevel() == DragonLevel.YOUNG ? ConfigHandler.SERVER.youngBonusDamage.get() : ConfigHandler.SERVER.babyBonusDamage.get()) : 0;
+			double swordBonus = swordStack.isEmpty() ? 0 : swordStack.getItem() instanceof SwordItem ? ((((SwordItem)swordStack.getItem()).getDamage())) : 0;
+			double bonus = Math.max(ageBonus, swordBonus - 1);
+
+			if(bonus > 0.0) {
+				components.add(new TranslatableComponent("ds.skill.claws.damage", "+" + bonus));
+			}
+		}
+
+		return components;
 	}
 }

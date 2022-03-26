@@ -1,41 +1,38 @@
 package by.dragonsurvivalteam.dragonsurvival.common.capability.provider;
 
+import by.dragonsurvivalteam.dragonsurvival.common.capability.Capabilities;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.GenericCapability;
-import net.minecraft.entity.Entity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.Entity;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.Objects;
-
-public class GenericCapabilityProvider implements ICapabilitySerializable<CompoundNBT>{
-	private final LazyOptional<GenericCapability> instance = LazyOptional.of(() -> (GenericCapability)Objects.<Object>requireNonNull(GENERIC_CAPABILITY.getDefaultInstance()));
-	@CapabilityInject( GenericCapability.class )
-	public static Capability<GenericCapability> GENERIC_CAPABILITY;
+public class GenericCapabilityProvider implements ICapabilitySerializable<CompoundTag>{
+	private final GenericCapability handlerObject = new GenericCapability();
+	private final LazyOptional<GenericCapability> instance = LazyOptional.of(() -> handlerObject);
 
 	public static LazyOptional<GenericCapability> getGenericCapability(Entity entity){
-		return entity.getCapability(GENERIC_CAPABILITY, null);
+		return entity.getCapability(Capabilities.GENERIC_CAPABILITY, null);
 	}
 
-	@Nonnull
-	public <T> LazyOptional<T> getCapability(
-		@Nonnull
-			Capability<T> cap,
-		@Nullable
-			Direction side){
-		return (cap == GENERIC_CAPABILITY) ? this.instance.cast() : LazyOptional.empty();
+	public void invalidate(){
+		//		instance.invalidate();
 	}
 
-	public CompoundNBT serializeNBT(){
-		return (CompoundNBT)GENERIC_CAPABILITY.getStorage().writeNBT(GENERIC_CAPABILITY, this.instance.orElse(null), null);
+	@Override
+	public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side){
+		return cap == Capabilities.GENERIC_CAPABILITY ? instance.cast() : LazyOptional.empty();
 	}
 
-	public void deserializeNBT(CompoundNBT nbt){
-		GENERIC_CAPABILITY.getStorage().readNBT(GENERIC_CAPABILITY, this.instance.orElse(null), null, nbt);
+	@Override
+	public CompoundTag serializeNBT(){
+		return this.instance.orElseThrow(() -> new IllegalArgumentException("LazyOptional must not be empty!")).writeNBT();
+	}
+
+	@Override
+	public void deserializeNBT(CompoundTag nbt){
+		this.instance.orElseThrow(() -> new IllegalArgumentException("LazyOptional must not be empty!")).readNBT(nbt);
 	}
 }

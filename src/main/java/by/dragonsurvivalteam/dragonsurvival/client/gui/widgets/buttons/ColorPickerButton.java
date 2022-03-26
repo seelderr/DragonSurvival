@@ -1,10 +1,10 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons;
 
 import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.matrix.PoseStack;
 import net.minecraft.client.audio.SoundHandler;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.math.Mth;
+import net.minecraft.util.text.TextComponent;
 import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
 
 import java.awt.Color;
@@ -17,7 +17,7 @@ public class ColorPickerButton extends ExtendedButton{
 	double selectorY;
 
 	public ColorPickerButton(int xPos, int yPos, int width, int height, Color defaultColor, Consumer<Color> colorConsumer){
-		super(xPos, yPos, width, height, StringTextComponent.EMPTY, null);
+		super(xPos, yPos, width, height, TextComponent.EMPTY, null);
 		this.defaultColor = defaultColor;
 		this.colorConsumer = colorConsumer;
 
@@ -28,7 +28,7 @@ public class ColorPickerButton extends ExtendedButton{
 	}
 
 	@Override
-	public void renderButton(MatrixStack mStack, int mouseX, int mouseY, float partial){
+	public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){
 		RenderingUtils.renderColorSquare(mStack, x, y, width, height);
 		mStack.pushPose();
 		mStack.translate(0, 0, 200);
@@ -51,15 +51,15 @@ public class ColorPickerButton extends ExtendedButton{
 
 	@Override
 	public void onClick(double pMouseX, double pMouseY){
-		selectorX = MathHelper.clamp(pMouseX - x, 0, width);
-		selectorY = MathHelper.clamp(pMouseY - y, 0, height);
+		selectorX = Mth.clamp(pMouseX - x, 0, width);
+		selectorY = Mth.clamp(pMouseY - y, 0, height);
 		colorConsumer.accept(getColor());
 	}
 
 	@Override
 	public boolean mouseDragged(double pMouseX, double pMouseY, int pButton, double pDragX, double pDragY){
-		selectorX = MathHelper.clamp(pMouseX - x, 0, width);
-		selectorY = MathHelper.clamp(pMouseY - y, 0, height);
+		selectorX = Mth.clamp(pMouseX - x, 0, width);
+		selectorY = Mth.clamp(pMouseY - y, 0, height);
 		colorConsumer.accept(getColor());
 
 		return super.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY);

@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common;
 
-import net.minecraft.util.DamageSource;
+import net.minecraft.world.damagesource.DamageSource;
 
 public class DamageSources{
 	public static final DamageSource STAR_DRAIN = (new DamageSource("starDrain")).bypassArmor().bypassMagic();

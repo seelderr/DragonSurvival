@@ -5,14 +5,13 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.DistExecutor.SafeRunnable;
-import net.minecraftforge.fml.network.NetworkEvent;
-import net.minecraftforge.fml.network.NetworkEvent.Context;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
@@ -35,18 +34,18 @@ public class RequestClientData implements IMessage<RequestClientData>{
 	public RequestClientData(){}
 
 	@Override
-	public void encode(RequestClientData message, PacketBuffer buffer){
+	public void encode(RequestClientData message, FriendlyByteBuf buffer){
 		buffer.writeEnum(message.type);
 		buffer.writeEnum(message.level);
 	}
 
 	@Override
-	public RequestClientData decode(PacketBuffer buffer){
+	public RequestClientData decode(FriendlyByteBuf buffer){
 		return new RequestClientData(buffer.readEnum(DragonType.class), buffer.readEnum(DragonLevel.class));
 	}
 
 	@Override
-	public void handle(RequestClientData message, Supplier<Context> supplier){
+	public void handle(RequestClientData message, Supplier<NetworkEvent.Context> supplier){
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> runClient(message, supplier));
 	}
 
@@ -54,7 +53,7 @@ public class RequestClientData implements IMessage<RequestClientData>{
 	public void runClient(RequestClientData message, Supplier<NetworkEvent.Context> supplier){
 		NetworkEvent.Context context = supplier.get();
 		context.enqueueWork(() -> {
-			PlayerEntity thisPlayer = Minecraft.getInstance().player;
+			Player thisPlayer = Minecraft.getInstance().player;
 			if(thisPlayer != null){
 				ClientEvents.sendClientData(message);
 			}

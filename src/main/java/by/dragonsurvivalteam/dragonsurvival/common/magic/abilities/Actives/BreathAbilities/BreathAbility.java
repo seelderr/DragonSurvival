@@ -14,23 +14,27 @@ import by.dragonsurvivalteam.dragonsurvival.misc.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.ProjectileHelper;
-import net.minecraft.util.Direction;
-import net.minecraft.util.EntityDamageSource;
-import net.minecraft.util.math.*;
-import net.minecraft.util.math.RayTraceContext.BlockMode;
-import net.minecraft.util.math.RayTraceContext.FluidMode;
-import net.minecraft.util.math.RayTraceResult.Type;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import com.mojang.math.Vector3f;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.util.Mth;
+import net.minecraft.world.damagesource.EntityDamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.ClipContext.Block;
+import net.minecraft.world.level.ClipContext.Fluid;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.HitResult.Type;
+import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
 import java.awt.geom.AffineTransform;
@@ -57,6 +61,7 @@ public abstract class BreathAbility extends ActiveDragonAbility implements ISeco
 	double dz;
 	private int RANGE = 5;
 	protected boolean firstUse = true;
+
 	public BreathAbility(DragonType type, String id, String icon, int minLevel, int maxLevel, int manaCost, int castTime, int cooldown, Integer[] requiredLevels){
 		super(type, id, icon, minLevel, maxLevel, manaCost, castTime, cooldown, requiredLevels);
 	}
@@ -86,7 +91,7 @@ public abstract class BreathAbility extends ActiveDragonAbility implements ISeco
 	}
 
 	@Override
-	public void onActivation(PlayerEntity player){
+	public void onActivation(Player player){
 		if(ServerFlightHandler.isGliding(player)){
 			stopCasting();
 			return;
@@ -98,8 +103,8 @@ public abstract class BreathAbility extends ActiveDragonAbility implements ISeco
 
 		DragonLevel growthLevel = DragonStateProvider.getCap(player).map(cap -> cap.getLevel()).get();
 		RANGE = (int)Math.round(4 + ((playerStateHandler.getSize() - DragonLevel.BABY.size) / (DragonLevel.ADULT.size - DragonLevel.BABY.size)) * 4);
-		yaw = (float)Math.toRadians(-player.yRot);
-		pitch = (float)Math.toRadians(-player.xRot);
+		yaw = (float)Math.toRadians(-player.getYRot());
+		pitch = (float)Math.toRadians(-player.getXRot());
 		speed = growthLevel == DragonLevel.BABY ? 0.1F : growthLevel == DragonLevel.YOUNG ? 0.2F : 0.3F; //Changes distance
 		spread = 0.1f;
 		xComp = (float)(Math.sin(yaw) * Math.cos(pitch));
@@ -116,7 +121,7 @@ public abstract class BreathAbility extends ActiveDragonAbility implements ISeco
 		{
 			Point2D point = new Double(player.position().x() + bodyRot.x(), player.position().y() + player.getEyeHeight() - 0.2);
 			AffineTransform transform = new AffineTransform();
-			double angleInRadians = ((MathHelper.clamp(pitch, -90, 90) * -1) * Math.PI / 180);
+			double angleInRadians = ((Mth.clamp(pitch, -90, 90) * -1) * Math.PI / 180);
 			transform.rotate(angleInRadians, player.position().x(), player.position().y() + player.getEyeHeight() - 0.2);
 			transform.transform(point, result);
 		}
@@ -124,7 +129,7 @@ public abstract class BreathAbility extends ActiveDragonAbility implements ISeco
 		{
 			Point2D point2 = new Double(player.position().x() + bodyRot.x(), player.position().z() + bodyRot.z());
 			AffineTransform transform2 = new AffineTransform();
-			double angleInRadians2 = ((MathHelper.clamp(headRot, -180, 180) * -1) * Math.PI / 180);
+			double angleInRadians2 = ((Mth.clamp(headRot, -180, 180) * -1) * Math.PI / 180);
 			transform2.rotate(angleInRadians2, player.position().x(), player.position().z());
 			transform2.transform(point2, result2);
 		}
@@ -133,9 +138,9 @@ public abstract class BreathAbility extends ActiveDragonAbility implements ISeco
 		dy = (result.getY() - (Math.abs(headRot) / 180 * .5));// * sizeScale;
 		dz = result2.getY();
 
-		Vector3d delta = player.getDeltaMovement();
+		Vec3 delta = player.getDeltaMovement();
 
-		if(player.isFallFlying() || player.abilities.flying){
+		if(player.isFallFlying() || player.getAbilities().flying){
 			yComp += (float)delta.y * 6;
 		}
 
@@ -167,7 +172,7 @@ public abstract class BreathAbility extends ActiveDragonAbility implements ISeco
 			}
 
 			float entityHitYaw = (float)((Math.atan2(entityHit.getZ() - player.getZ(), entityHit.getX() - player.getX()) * (180 / Math.PI) - 90) % 360);
-			float entityAttackingYaw = player.yRot % 360;
+			float entityAttackingYaw = player.getYRot() % 360;
 			if(entityHitYaw < 0){
 				entityHitYaw += 360;
 			}
@@ -179,7 +184,7 @@ public abstract class BreathAbility extends ActiveDragonAbility implements ISeco
 			float xzDistance = (float)Math.sqrt((entityHit.getZ() - player.getZ()) * (entityHit.getZ() - player.getZ()) + (entityHit.getX() - player.getX()) * (entityHit.getX() - player.getX()));
 			double hitY = entityHit.getY() + entityHit.getBbHeight() / 2.0;
 			float entityHitPitch = (float)((Math.atan2((hitY - player.getY()), xzDistance) * (180 / Math.PI)) % 360);
-			float entityAttackingPitch = -player.xRot % 360;
+			float entityAttackingPitch = -player.getXRot() % 360;
 			if(entityHitPitch < 0){
 				entityHitPitch += 360;
 			}
@@ -196,11 +201,11 @@ public abstract class BreathAbility extends ActiveDragonAbility implements ISeco
 
 			if(inRange && yawCheck && pitchCheck){
 				// Raytrace to mob center to avoid damaging through walls
-				Vector3d from = player.getEyePosition(1.0F);
-				Vector3d to = entityHit.position().add(0, entityHit.getEyeHeight() / 2.0f, 0);
-				BlockRayTraceResult result = player.level.clip(new RayTraceContext(from, to, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, player));
+				Vec3 from = player.getEyePosition(1.0F);
+				Vec3 to = entityHit.position().add(0, entityHit.getEyeHeight() / 2.0f, 0);
+				BlockHitResult result = player.level.clip(new ClipContext(from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player));
 
-				if(result.getType() == RayTraceResult.Type.BLOCK){
+				if(result.getType() == HitResult.Type.BLOCK){
 					continue;
 				}
 
@@ -218,12 +223,12 @@ public abstract class BreathAbility extends ActiveDragonAbility implements ISeco
 		}
 
 		if(!found){
-			Vector3d vector3d = player.getEyePosition(1.0F);
+			Vec3 vector3d = player.getEyePosition(1.0F);
 			Predicate<Entity> predicate = (entity) -> entity instanceof LivingEntity && !entity.isSpectator() && entity.isPickable();
-			RayTraceResult result = ProjectileHelper.getHitResult(player, predicate);
+			HitResult result = ProjectileUtil.getHitResult(player, predicate);
 
 			if(result.getType() == Type.ENTITY){
-				LivingEntity entity = (LivingEntity)((EntityRayTraceResult)result).getEntity();
+				LivingEntity entity = (LivingEntity)((EntityHitResult)result).getEntity();
 				if(vector3d.distanceToSqr(result.getLocation()) <= RANGE){
 					onEntityHit(entity);
 				}
@@ -254,10 +259,10 @@ public abstract class BreathAbility extends ActiveDragonAbility implements ISeco
 
 	public void hitBlocks(){
 		{
-			Vector3d vector3d = player.getEyePosition(1.0F);
-			Vector3d vector3d1 = player.getViewVector(1.0F).scale(RANGE);
-			Vector3d vector3d2 = vector3d.add(vector3d1);
-			BlockRayTraceResult result = player.level.clip(new RayTraceContext(vector3d, vector3d2, BlockMode.OUTLINE, this instanceof StormBreathAbility ? FluidMode.NONE : FluidMode.ANY, null));
+			Vec3 vector3d = player.getEyePosition(1.0F);
+			Vec3 vector3d1 = player.getViewVector(1.0F).scale(RANGE);
+			Vec3 vector3d2 = vector3d.add(vector3d1);
+			BlockHitResult result = player.level.clip(new ClipContext(vector3d, vector3d2, Block.OUTLINE, this instanceof StormBreathAbility ? Fluid.NONE : Fluid.ANY, null));
 
 			BlockPos pos = null;
 
@@ -304,25 +309,25 @@ public abstract class BreathAbility extends ActiveDragonAbility implements ISeco
 	}
 
 	@Override
-	public IFormattableTextComponent getDescription(){
-		return new TranslationTextComponent("ds.skill.description." + getId(), getDamage());
+	public TranslatableComponent getDescription(){
+		return new TranslatableComponent("ds.skill.description." + getId(), getDamage());
 	}
 
 	@Override
-	public ArrayList<ITextComponent> getInfo(){
-		ArrayList<ITextComponent> components = new ArrayList<ITextComponent>();
+	public ArrayList<Component> getInfo(){
+		ArrayList<Component> components = new ArrayList<Component>();
 
 		DragonLevel growthLevel = DragonStateProvider.getCap(player).map(cap -> cap.getLevel()).get();
 		int RANGE = growthLevel == DragonLevel.BABY ? 4 : growthLevel == DragonLevel.YOUNG ? 7 : 10;
 
-		components.add(new TranslationTextComponent("ds.skill.mana_cost", getManaCost()));
-		components.add(new TranslationTextComponent("ds.skill.channel_cost", channelCost, 2));
+		components.add(new TranslatableComponent("ds.skill.mana_cost", getManaCost()));
+		components.add(new TranslatableComponent("ds.skill.channel_cost", channelCost, 2));
 
-		components.add(new TranslationTextComponent("ds.skill.cast_time", nf.format((double)getCastingTime() / 20)));
-		components.add(new TranslationTextComponent("ds.skill.cooldown", Functions.ticksToSeconds(getMaxCooldown())));
+		components.add(new TranslatableComponent("ds.skill.cast_time", nf.format((double)getCastingTime() / 20)));
+		components.add(new TranslatableComponent("ds.skill.cooldown", Functions.ticksToSeconds(getMaxCooldown())));
 
-		components.add(new TranslationTextComponent("ds.skill.damage", getDamage()));
-		components.add(new TranslationTextComponent("ds.skill.range.blocks", RANGE));
+		components.add(new TranslatableComponent("ds.skill.damage", getDamage()));
+		components.add(new TranslatableComponent("ds.skill.range.blocks", RANGE));
 
 		if(!KeyInputHandler.ABILITY1.isUnbound()){
 			String key = KeyInputHandler.ABILITY1.getKey().getDisplayName().getContents().toUpperCase(Locale.ROOT);
@@ -330,7 +335,7 @@ public abstract class BreathAbility extends ActiveDragonAbility implements ISeco
 			if(key.isEmpty()){
 				key = KeyInputHandler.ABILITY1.getKey().getDisplayName().getString();
 			}
-			components.add(new TranslationTextComponent("ds.skill.keybind", key));
+			components.add(new TranslatableComponent("ds.skill.keybind", key));
 		}
 
 		return components;

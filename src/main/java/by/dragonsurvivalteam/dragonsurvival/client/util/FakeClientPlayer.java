@@ -3,18 +3,18 @@ package by.dragonsurvivalteam.dragonsurvival.client.util;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.IPacket;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.stats.Stat;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
@@ -26,14 +26,15 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 @OnlyIn( Dist.CLIENT )
-public class FakeClientPlayer extends AbstractClientPlayerEntity{
+public class FakeLocalPlayer extends LocalPlayer{
 	private static final ResourceLocation STEVE_SKIN_LOCATION = new ResourceLocation("textures/entity/steve.png");
 	private static final ResourceLocation ALEX_SKIN_LOCATION = new ResourceLocation("textures/entity/alex.png");
 	public DragonStateHandler handler = new DragonStateHandler();
 	public Supplier<String> animationSupplier = null;
 	public Long lastAccessed;
 	public int number;
-	public FakeClientPlayer(int number){
+
+	public FakeLocalPlayer(int number){
 		super(Minecraft.getInstance().level, new GameProfile(UUID.randomUUID(), "FAKE_PLAYER_" + number));
 		this.number = number;
 	}
@@ -44,28 +45,31 @@ public class FakeClientPlayer extends AbstractClientPlayerEntity{
 	}
 
 	@Override
-	public IPacket<?> getAddEntityPacket(){return null;}
+	public Packet<?> getAddEntityPacket(){return null;}
 
 	@Override
 	public void tick(){return;}
 
 	@Override
+	public void displayClientMessage(Component chatComponent, boolean actionBar){}
+
+	@Override
+	public void sendMessage(Component component, UUID senderUUID){}
+
+	@Override
 	public void die(DamageSource source){return;}
 
 	@Override
-	public void readAdditionalSaveData(CompoundNBT pCompound){}
+	public void readAdditionalSaveData(CompoundTag pCompound){}
 
 	@Override
-	public void addAdditionalSaveData(CompoundNBT pCompound){}
+	public void addAdditionalSaveData(CompoundTag pCompound){}
 
 	@Override
 	public boolean isInvulnerableTo(DamageSource source){return true;}
 
 	@Override
-	public boolean canHarmPlayer(PlayerEntity player){return false;}
-
-	@Override
-	public void displayClientMessage(ITextComponent chatComponent, boolean actionBar){}
+	public boolean canHarmPlayer(Player player){return false;}
 
 	@Override
 	public void awardStat(Stat par1StatBase, int par2){}
@@ -76,8 +80,8 @@ public class FakeClientPlayer extends AbstractClientPlayerEntity{
 	}
 
 	@Override
-	public ITextComponent getDisplayName(){
-		return StringTextComponent.EMPTY;
+	public Component getDisplayName(){
+		return TextComponent.EMPTY;
 	}
 
 	@Nonnull
@@ -87,23 +91,17 @@ public class FakeClientPlayer extends AbstractClientPlayerEntity{
 			Capability<T> cap){return LazyOptional.empty();}
 
 	@Override
-	protected void reviveCaps(){}
+	public boolean saveAsPassenger(CompoundTag pCompound){return false;}
 
 	@Override
-	public boolean saveAsPassenger(CompoundNBT pCompound){return false;}
-
-	@Override
-	public boolean save(CompoundNBT pCompound){return false;}
-
-	@Override
-	public void sendMessage(ITextComponent component, UUID senderUUID){}
+	public boolean save(CompoundTag pCompound){return false;}
 
 	@Override
 	@Nullable
 	public MinecraftServer getServer(){return Minecraft.getInstance().getSingleplayerServer();}
 
 	@Override
-	public Vector3d position(){return new Vector3d(0, 0, 0);}
+	public Vec3 position(){return new Vec3(0, 0, 0);}
 
 	@Override
 	public BlockPos blockPosition(){return BlockPos.ZERO;}

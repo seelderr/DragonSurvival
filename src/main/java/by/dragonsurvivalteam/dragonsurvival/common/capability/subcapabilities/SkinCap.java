@@ -3,8 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities;
 import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.EnumSkinLayer;
 import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.objects.SkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
 
 import java.util.HashSet;
 
@@ -25,8 +24,8 @@ public class SkinCap extends SubCap{
 	}
 
 	@Override
-	public CompoundNBT writeNBT(){
-		CompoundNBT tag = new CompoundNBT();
+	public CompoundTag writeNBT(){
+		CompoundTag tag = new CompoundTag();
 
 		tag.putBoolean("renderNewborn", renderNewborn);
 		tag.putBoolean("renderYoung", renderYoung);
@@ -38,12 +37,12 @@ public class SkinCap extends SubCap{
 	}
 
 	@Override
-	public void readNBT(CompoundNBT tag){
+	public void readNBT(CompoundTag tag){
 		renderNewborn = tag.getBoolean("renderNewborn");
 		renderYoung = tag.getBoolean("renderYoung");
 		renderAdult = tag.getBoolean("renderAdult");
 
-		CompoundNBT skinNbt = tag.getCompound("skinPreset");
+		CompoundTag skinNbt = tag.getCompound("skinPreset");
 		skinPreset = new SkinPreset();
 		skinPreset.readNBT(skinNbt);
 	}

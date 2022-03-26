@@ -1,18 +1,21 @@
 package by.dragonsurvivalteam.dragonsurvival.client.sounds;
 
+
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.abilities.Actives.BreathAbilities.ForestBreathAbility;
-import net.minecraft.client.audio.TickableSound;
-import net.minecraft.util.SoundCategory;
+import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
+import net.minecraft.sounds.SoundSource;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-@OnlyIn( Dist.CLIENT )
-public class PoisonBreathSound extends TickableSound{
-	private final ForestBreathAbility ability;
+@OnlyIn( Dist.CLIENT)
+public class PoisonBreathSound extends AbstractTickableSoundInstance
+{
+	private ForestBreathAbility ability;
+	public PoisonBreathSound(ForestBreathAbility ability)
+	{
+		super(SoundRegistry.forestBreathLoop, SoundSource.PLAYERS);
 
-	public PoisonBreathSound(ForestBreathAbility ability){
-		super(SoundRegistry.forestBreathLoop, SoundCategory.PLAYERS);
 		this.looping = true;
 
 		this.ability = ability;

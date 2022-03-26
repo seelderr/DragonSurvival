@@ -1,16 +1,16 @@
 package by.dragonsurvivalteam.dragonsurvival.client.sounds;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraftforge.common.util.ForgeSoundType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.RegistryObject;
 
 @Mod.EventBusSubscriber( bus = Mod.EventBusSubscriber.Bus.MOD )
 public class SoundRegistry{

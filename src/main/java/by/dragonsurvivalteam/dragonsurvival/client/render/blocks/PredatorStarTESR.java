@@ -3,23 +3,23 @@ package by.dragonsurvivalteam.dragonsurvival.client.render.blocks;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.shader.ShaderHelper;
 import by.dragonsurvivalteam.dragonsurvival.client.shader.ShaderWrappedRenderLayer;
-import by.dragonsurvivalteam.dragonsurvival.server.tileentity.PredatorStarTileEntity;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import by.dragonsurvivalteam.dragonsurvival.server.tileentity.PredatorStarBlock;
+import com.mojang.blaze3d.matrix.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.renderer.ActiveRenderInfo;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.Camera;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.client.renderer.model.RenderMaterial;
-import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.client.renderer.tileentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.tileentity.BlockEntityRendererDispatcher;
 import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Mth;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3f;
 
-public class PredatorStarTESR extends TileEntityRenderer<PredatorStarTileEntity>{
+public class PredatorStarTESR extends BlockEntityRenderer<PredatorStarBlock>{
 
 	public static final RenderMaterial CAGE_TEXTURE = new RenderMaterial(PlayerContainer.BLOCK_ATLAS, new ResourceLocation(DragonSurvivalMod.MODID, "te/star/cage"));
 	public static final RenderMaterial WIND_TEXTURE = new RenderMaterial(PlayerContainer.BLOCK_ATLAS, new ResourceLocation(DragonSurvivalMod.MODID, "te/star/wind"));
@@ -31,7 +31,7 @@ public class PredatorStarTESR extends TileEntityRenderer<PredatorStarTileEntity>
 	private final ModelRenderer field_228874_j_;
 	private final ModelRenderer field_228875_k_;
 
-	public PredatorStarTESR(TileEntityRendererDispatcher p_i226009_1_){
+	public PredatorStarTESR(BlockEntityRendererDispatcher p_i226009_1_){
 		super(p_i226009_1_);
 
 		this.field_228872_h_.addBox(-4.0F, -4.0F, 0.0F, 8.0F, 8.0F, 0.0F, 0.01F);
@@ -49,10 +49,10 @@ public class PredatorStarTESR extends TileEntityRenderer<PredatorStarTileEntity>
 	}
 
 	@Override
-	public void render(PredatorStarTileEntity tileEntityIn, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn){
+	public void render(PredatorStarBlock tileEntityIn, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn){
 		float f = (float)tileEntityIn.getTicksExisted() + partialTicks;
 		float f1 = tileEntityIn.getActiveRotation(partialTicks) * (180F / (float)Math.PI);
-		float f2 = MathHelper.sin(f * 0.1F) / 2.0F + 0.5F;
+		float f2 = Mth.sin(f * 0.1F) / 2.0F + 0.5F;
 		f2 = f2 * f2 + f2;
 		matrixStackIn.pushPose();
 
@@ -64,7 +64,7 @@ public class PredatorStarTESR extends TileEntityRenderer<PredatorStarTileEntity>
 		matrixStackIn.popPose();
 
 
-		ActiveRenderInfo activerenderinfo = this.renderer.camera;
+		Camera activerenderinfo = this.renderer.camera;
 		RenderSystem.pushMatrix();
 		RenderSystem.enableBlend();
 		matrixStackIn.pushPose();

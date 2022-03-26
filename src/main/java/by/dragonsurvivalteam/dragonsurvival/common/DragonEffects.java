@@ -1,16 +1,16 @@
 package by.dragonsurvivalteam.dragonsurvival.common;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.BolasEntity;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.Bolas;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.attributes.AttributeModifier.Operation;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.potion.Effect;
-import net.minecraft.potion.EffectType;
-import net.minecraft.util.FoodStats;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectCategory;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.food.FoodData;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -24,88 +24,88 @@ import java.util.List;
 public class DragonEffects{
 
 
-	public static Effect STRESS;
-	public static Effect TRAPPED;
-	public static Effect EVIL_DRAGON;
-	public static Effect PEACE, MAGIC, FIRE;
-	public static Effect ANIMAL_PEACE;
-	public static Effect PREDATOR_ANTI_SPAWN;
+	public static MobEffect STRESS;
+	public static MobEffect TRAPPED;
+	public static MobEffect EVIL_DRAGON;
+	public static MobEffect PEACE, MAGIC, FIRE;
+	public static MobEffect ANIMAL_PEACE;
+	public static MobEffect PREDATOR_ANTI_SPAWN;
 
-	public static Effect SOURCE_OF_MAGIC;
+	public static MobEffect SOURCE_OF_MAGIC;
 
 	//Magic system effects
-	public static Effect WATER_VISION, LAVA_VISION;
-	public static Effect HUNTER;
-	public static Effect REVEALING_THE_SOUL;
-	public static Effect BURN, CHARGED, DRAIN;
-	public static Effect STRONG_LEATHER;
+	public static MobEffect WATER_VISION, LAVA_VISION;
+	public static MobEffect HUNTER;
+	public static MobEffect REVEALING_THE_SOUL;
+	public static MobEffect BURN, CHARGED, DRAIN;
+	public static MobEffect STRONG_LEATHER;
 
-	public static Effect cave_wings, sea_wings, forest_wings;
+	public static MobEffect cave_wings, sea_wings, forest_wings;
 
 	@SuppressWarnings( "unused" )
 	@SubscribeEvent
-	public static void registerEffects(RegistryEvent.Register<Effect> effectRegister){
-		IForgeRegistry<Effect> forgeRegistry = effectRegister.getRegistry();
+	public static void registerEffects(RegistryEvent.Register<MobEffect> effectRegister){
+		IForgeRegistry<MobEffect> forgeRegistry = effectRegister.getRegistry();
 		STRESS = new Stress(0xf4a2e8).setRegistryName(DragonSurvivalMod.MODID, "stress");
 		forgeRegistry.register(STRESS);
-		TRAPPED = new Trapped(EffectType.NEUTRAL, 0xdddddd).setRegistryName(DragonSurvivalMod.MODID, "trapped");
+		TRAPPED = new Trapped(MobEffectCategory.NEUTRAL, 0xdddddd).setRegistryName(DragonSurvivalMod.MODID, "trapped");
 		forgeRegistry.register(TRAPPED);
-		EVIL_DRAGON = new EvilDragon(EffectType.NEUTRAL).setRegistryName(DragonSurvivalMod.MODID, "evil_dragon");
+		EVIL_DRAGON = new EvilDragon(MobEffectCategory.NEUTRAL).setRegistryName(DragonSurvivalMod.MODID, "evil_dragon");
 		forgeRegistry.register(EVIL_DRAGON);
-		PEACE = new Effect2(EffectType.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "peace");
+		PEACE = new Effect2(MobEffectCategory.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "peace");
 		forgeRegistry.register(PEACE);
-		MAGIC = new Effect2(EffectType.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "magic");
+		MAGIC = new Effect2(MobEffectCategory.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "magic");
 		forgeRegistry.register(MAGIC);
-		FIRE = new Effect2(EffectType.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "fire");
+		FIRE = new Effect2(MobEffectCategory.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "fire");
 		forgeRegistry.register(FIRE);
-		ANIMAL_PEACE = new Effect2(EffectType.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "animal_peace");
+		ANIMAL_PEACE = new Effect2(MobEffectCategory.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "animal_peace");
 		forgeRegistry.register(ANIMAL_PEACE);
-		PREDATOR_ANTI_SPAWN = new Effect2(EffectType.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "predator_anti_spawn");
+		PREDATOR_ANTI_SPAWN = new Effect2(MobEffectCategory.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "predator_anti_spawn");
 		forgeRegistry.register(PREDATOR_ANTI_SPAWN);
 
-		SOURCE_OF_MAGIC = new Effect2(EffectType.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "source_of_magic");
+		SOURCE_OF_MAGIC = new Effect2(MobEffectCategory.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "source_of_magic");
 		forgeRegistry.register(SOURCE_OF_MAGIC);
 
 		//Magic system effects
-		WATER_VISION = new Effect2(EffectType.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "water_vision");
+		WATER_VISION = new Effect2(MobEffectCategory.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "water_vision");
 		forgeRegistry.register(WATER_VISION);
 
-		LAVA_VISION = new Effect2(EffectType.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "lava_vision");
+		LAVA_VISION = new Effect2(MobEffectCategory.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "lava_vision");
 		forgeRegistry.register(LAVA_VISION);
 
-		HUNTER = new Effect2(EffectType.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "hunter");
+		HUNTER = new Effect2(MobEffectCategory.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "hunter");
 		forgeRegistry.register(HUNTER);
 
-		REVEALING_THE_SOUL = new Effect2(EffectType.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "revealing_the_soul");
+		REVEALING_THE_SOUL = new Effect2(MobEffectCategory.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "revealing_the_soul");
 		forgeRegistry.register(REVEALING_THE_SOUL);
 
-		STRONG_LEATHER = new Effect2(EffectType.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "strong_leather");
+		STRONG_LEATHER = new Effect2(MobEffectCategory.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "strong_leather");
 		STRONG_LEATHER.addAttributeModifier(Attributes.ARMOR, "1640719a-4c40-11ec-81d3-0242ac130003", ConfigHandler.SERVER.toughSkinArmorValue.get(), Operation.ADDITION);
 		forgeRegistry.register(STRONG_LEATHER);
 
-		BURN = new Effect2(EffectType.HARMFUL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "burn");
+		BURN = new Effect2(MobEffectCategory.HARMFUL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "burn");
 		forgeRegistry.register(BURN);
 
-		CHARGED = new Effect2(EffectType.HARMFUL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "charged");
+		CHARGED = new Effect2(MobEffectCategory.HARMFUL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "charged");
 		forgeRegistry.register(CHARGED);
 
-		DRAIN = new Effect2(EffectType.HARMFUL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "drain");
+		DRAIN = new Effect2(MobEffectCategory.HARMFUL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "drain");
 		forgeRegistry.register(DRAIN);
 
-		forest_wings = new Effect2(EffectType.BENEFICIAL, 0x0, true).setRegistryName(DragonSurvivalMod.MODID, "wings_forest");
+		forest_wings = new Effect2(MobEffectCategory.BENEFICIAL, 0x0, true).setRegistryName(DragonSurvivalMod.MODID, "wings_forest");
 		forgeRegistry.register(forest_wings);
 
-		sea_wings = new Effect2(EffectType.BENEFICIAL, 0x0, true).setRegistryName(DragonSurvivalMod.MODID, "wings_sea");
+		sea_wings = new Effect2(MobEffectCategory.BENEFICIAL, 0x0, true).setRegistryName(DragonSurvivalMod.MODID, "wings_sea");
 		forgeRegistry.register(sea_wings);
 
-		cave_wings = new Effect2(EffectType.BENEFICIAL, 0x0, true).setRegistryName(DragonSurvivalMod.MODID, "wings_cave");
+		cave_wings = new Effect2(MobEffectCategory.BENEFICIAL, 0x0, true).setRegistryName(DragonSurvivalMod.MODID, "wings_cave");
 		forgeRegistry.register(cave_wings);
 	}
 
-	private static class Effect2 extends Effect{
+	private static class Effect2 extends MobEffect{
 		private final boolean uncurable;
 
-		protected Effect2(EffectType type, int color, boolean uncurable){
+		protected Effect2(MobEffectCategory type, int color, boolean uncurable){
 			super(type, color);
 			this.uncurable = uncurable;
 		}
@@ -116,17 +116,17 @@ public class DragonEffects{
 		}
 	}
 
-	private static class Stress extends Effect{
+	private static class Stress extends MobEffect{
 
 		protected Stress(int color){
-			super(EffectType.HARMFUL, color);
+			super(MobEffectCategory.HARMFUL, color);
 		}
 
 		@Override
-		public void applyEffectTick(LivingEntity livingEntity, int p_76394_2_){
-			if(livingEntity instanceof PlayerEntity){
-				PlayerEntity playerEntity = (PlayerEntity)livingEntity;
-				FoodStats food = playerEntity.getFoodData();
+		public void applyEffectTick(LivingEntity living, int p_76394_2_){
+			if(living instanceof Player){
+				Player player = (Player)living;
+				FoodData food = player.getFoodData();
 				if(food.getSaturationLevel() > 0){
 					int oldFood = food.getFoodLevel();
 					food.eat(1, -0.5F * food.getSaturationLevel());
@@ -134,7 +134,7 @@ public class DragonEffects{
 						food.setFoodLevel(food.getFoodLevel() - 1);
 					}
 				}
-				playerEntity.causeFoodExhaustion(1.0f);
+				player.causeFoodExhaustion(1.0f);
 			}
 		}
 
@@ -149,8 +149,8 @@ public class DragonEffects{
 		}
 	}
 
-	private static class Trapped extends Effect{
-		protected Trapped(EffectType effectType, int color){
+	private static class Trapped extends MobEffect{
+		protected Trapped(MobEffectCategory effectType, int color){
 			super(effectType, color);
 		}
 
@@ -158,9 +158,9 @@ public class DragonEffects{
 			return Collections.emptyList();
 		}
 
-		public void applyEffectTick(LivingEntity livingEntity, int strength){
-			livingEntity.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(BolasEntity.DISABLE_MOVEMENT);
-			livingEntity.getAttribute(ForgeMod.ENTITY_GRAVITY.get()).removeModifier(BolasEntity.DISABLE_JUMP);
+		public void applyEffectTick(LivingEntity living, int strength){
+			living.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(Bolas.DISABLE_MOVEMENT);
+			living.getAttribute(ForgeMod.ENTITY_GRAVITY.get()).removeModifier(Bolas.DISABLE_JUMP);
 		}
 
 		public boolean isDurationEffectTick(int timeLeft, int p_76397_2_){
@@ -168,9 +168,9 @@ public class DragonEffects{
 		}
 	}
 
-	private static class EvilDragon extends Effect{
+	private static class EvilDragon extends MobEffect{
 
-		protected EvilDragon(EffectType p_i50391_1_){
+		protected EvilDragon(MobEffectCategory p_i50391_1_){
 			super(p_i50391_1_, 0x0);
 		}
 

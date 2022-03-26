@@ -4,10 +4,11 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3f;
+import com.mojang.math.Vector3f;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+
 
 public class DragonUtils{
 	public static boolean isDragon(Entity entity){
@@ -33,14 +34,14 @@ public class DragonUtils{
 	public static Vector3f getCameraOffset(Entity entity){
 		Vector3f lookVector = new Vector3f(0, 0, 0);
 
-		if(entity instanceof PlayerEntity){
-			PlayerEntity player = (PlayerEntity)entity;
+		if(entity instanceof Player){
+			Player player = (Player)entity;
 			DragonStateHandler handler = DragonUtils.getHandler(player);
 			if(handler != null && handler.isDragon()){
 				float f1 = -(float)handler.getMovementData().bodyYaw * ((float)Math.PI / 180F);
 
-				float f4 = MathHelper.sin(f1);
-				float f5 = MathHelper.cos(f1);
+				float f4 = Mth.sin(f1);
+				float f5 = Mth.cos(f1);
 				lookVector.set((float)(f4 * (handler.getSize() / 40)), 0, (float)(f5 * (handler.getSize() / 40)));
 			}
 		}

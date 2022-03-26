@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.commands;
 
+import by.dragonsurvivalteam.dragonsurvival.common.capability.Capabilities;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
@@ -15,55 +15,54 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.tree.ArgumentCommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.mojang.brigadier.tree.RootCommandNode;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.ISuggestionProvider;
-import net.minecraft.command.arguments.EntityArgument;
-import net.minecraft.command.arguments.EntitySelector;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.network.PacketDistributor;
 
 import java.util.List;
 
-import static net.minecraft.command.Commands.argument;
-import static net.minecraft.command.Commands.literal;
+import static net.minecraft.commands.Commands.argument;
+import static net.minecraft.commands.Commands.literal;
+
 
 public class DragonCommand{
-	public static void register(CommandDispatcher<CommandSource> commandDispatcher){
-		RootCommandNode<CommandSource> rootCommandNode = commandDispatcher.getRoot();
-		LiteralCommandNode<CommandSource> dragon = literal("dragon").requires(commandSource -> commandSource.hasPermission(2)).executes(context -> {
+	public static void register(CommandDispatcher<CommandSourceStack> commandDispatcher){
+		RootCommandNode<CommandSourceStack> rootCommandNode = commandDispatcher.getRoot();
+		LiteralCommandNode<CommandSourceStack> dragon = literal("dragon").requires(commandSource -> commandSource.hasPermission(2)).executes(context -> {
 			String type = context.getArgument("dragon_type", String.class);
 			return runCommand(type, 1, false, context.getSource().getPlayerOrException());
 		}).build();
 
-		ArgumentCommandNode<CommandSource, String> dragonType = argument("dragon_type", StringArgumentType.string()).suggests((context, builder) -> ISuggestionProvider.suggest(new String[]{"cave", "sea", "forest", "human"}, builder)).executes(context -> {
+		ArgumentCommandNode<CommandSourceStack, String> dragonType = argument("dragon_type", StringArgumentType.string()).suggests((context, builder) -> ISuggestionProvider.suggest(new String[]{"cave", "sea", "forest", "human"}, builder)).executes(context -> {
 			String type = context.getArgument("dragon_type", String.class);
-			ServerPlayerEntity serverPlayerEntity = context.getSource().getPlayerOrException();
-			return runCommand(type, 1, false, serverPlayerEntity);
+			ServerPlayer serverPlayer = context.getSource().getPlayerOrException();
+			return runCommand(type, 1, false, serverPlayer);
 		}).build();
 
-		ArgumentCommandNode<CommandSource, Integer> dragonStage = argument("dragon_stage", IntegerArgumentType.integer(1, 3)).suggests((context, builder) -> ISuggestionProvider.suggest(new String[]{"1", "2", "3"}, builder)).executes(context -> {
+		ArgumentCommandNode<CommandSourceStack, Integer> dragonStage = argument("dragon_stage", IntegerArgumentType.integer(1, 3)).suggests((context, builder) -> ISuggestionProvider.suggest(new String[]{"1", "2", "3"}, builder)).executes(context -> {
 			String type = context.getArgument("dragon_type", String.class);
 			int stage = context.getArgument("dragon_stage", Integer.TYPE);
-			ServerPlayerEntity serverPlayerEntity = context.getSource().getPlayerOrException();
-			return runCommand(type, stage, false, serverPlayerEntity);
+			ServerPlayer serverPlayer = context.getSource().getPlayerOrException();
+			return runCommand(type, stage, false, serverPlayer);
 		}).build();
 
-		ArgumentCommandNode<CommandSource, Boolean> giveWings = argument("wings", BoolArgumentType.bool()).executes(context -> {
+		ArgumentCommandNode<CommandSourceStack, Boolean> giveWings = argument("wings", BoolArgumentType.bool()).executes(context -> {
 			String type = context.getArgument("dragon_type", String.class);
 			int stage = context.getArgument("dragon_stage", Integer.TYPE);
 			boolean wings = context.getArgument("wings", Boolean.TYPE);
-			ServerPlayerEntity serverPlayerEntity = context.getSource().getPlayerOrException();
-			return runCommand(type, stage, wings, serverPlayerEntity);
+			ServerPlayer serverPlayer = context.getSource().getPlayerOrException();
+			return runCommand(type, stage, wings, serverPlayer);
 		}).build();
 
-		ArgumentCommandNode<CommandSource, EntitySelector> target = argument("target", EntityArgument.players()).executes(context -> {
+		ArgumentCommandNode<CommandSourceStack, EntitySelector> target = argument("target", EntityArgument.players()).executes(context -> {
 			String type = context.getArgument("dragon_type", String.class);
 			int stage = context.getArgument("dragon_stage", Integer.TYPE);
 			boolean wings = context.getArgument("wings", Boolean.TYPE);
 			EntitySelector selector = context.getArgument("target", EntitySelector.class);
-			List<ServerPlayerEntity> serverPlayers = selector.findPlayers(context.getSource());
+			List<ServerPlayer> serverPlayers = selector.findPlayers(context.getSource());
 			serverPlayers.forEach((player) -> runCommand(type, stage, wings, player));
 			return 1;
 		}).build();
@@ -75,19 +74,19 @@ public class DragonCommand{
 		giveWings.addChild(target);
 	}
 
-	private static int runCommand(String type, int stage, boolean wings, ServerPlayerEntity serverPlayerEntity){
-		serverPlayerEntity.getCapability(DragonStateProvider.DRAGON_CAPABILITY).ifPresent(dragonStateHandler -> {
+	private static int runCommand(String type, int stage, boolean wings, ServerPlayer serverPlayer){
+		serverPlayer.getCapability(Capabilities.DRAGON_CAPABILITY).ifPresent(dragonStateHandler -> {
 			DragonType dragonType1 = type.equalsIgnoreCase("human") ? DragonType.NONE : DragonType.valueOf(type.toUpperCase());
 
 			if(dragonType1 == DragonType.NONE && dragonStateHandler.getType() != DragonType.NONE){
-				reInsertClawTools(serverPlayerEntity, dragonStateHandler);
+				reInsertClawTools(serverPlayer, dragonStateHandler);
 			}
 
 			dragonStateHandler.setType(dragonType1);
 			DragonLevel dragonLevel = DragonLevel.values()[stage - 1];
 			dragonStateHandler.setHasWings(wings);
 			dragonStateHandler.getMovementData().spinLearned = wings;
-			dragonStateHandler.setSize(dragonLevel.size, serverPlayerEntity);
+			dragonStateHandler.setSize(dragonLevel.size, serverPlayer);
 			dragonStateHandler.setPassengerId(0);
 
 			dragonStateHandler.growing = true;
@@ -99,12 +98,12 @@ public class DragonCommand{
 		return 1;
 	}
 
-	public static void reInsertClawTools(ServerPlayerEntity serverPlayerEntity, DragonStateHandler dragonStateHandler){
+	public static void reInsertClawTools(ServerPlayer serverPlayer, DragonStateHandler dragonStateHandler){
 		for(int i = 0; i < 4; i++){
 			ItemStack stack = dragonStateHandler.getClawInventory().getClawsInventory().getItem(i);
 
-			if(!serverPlayerEntity.addItem(stack)){
-				if(serverPlayerEntity.level.addFreshEntity(new ItemEntity(serverPlayerEntity.level, serverPlayerEntity.position().x, serverPlayerEntity.position().y, serverPlayerEntity.position().z, stack))){
+			if(!serverPlayer.addItem(stack)){
+				if(serverPlayer.level.addFreshEntity(new Item(serverPlayer.level, serverPlayer.position().x, serverPlayer.position().y, serverPlayer.position().z, stack))){
 					dragonStateHandler.getClawInventory().getClawsInventory().removeItem(i, stack.getCount());
 				}
 			}else{

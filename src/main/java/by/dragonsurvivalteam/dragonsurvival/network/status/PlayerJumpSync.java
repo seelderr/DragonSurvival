@@ -3,11 +3,11 @@ package by.dragonsurvivalteam.dragonsurvival.network.status;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientEvents;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.network.NetworkEvent.Context;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
@@ -27,21 +27,21 @@ public class PlayerJumpSync implements IMessage<PlayerJumpSync>{
 	}
 
 	@Override
-	public void encode(PlayerJumpSync message, PacketBuffer buffer){
+	public void encode(PlayerJumpSync message, FriendlyByteBuf buffer){
 		buffer.writeInt(message.playerId);
 		buffer.writeByte(message.ticks);
 	}
 
 	@Override
-	public PlayerJumpSync decode(PacketBuffer buffer){
+	public PlayerJumpSync decode(FriendlyByteBuf buffer){
 		return new PlayerJumpSync(buffer.readInt(), buffer.readByte());
 	}
 
 	@Override
-	public void handle(PlayerJumpSync message, Supplier<Context> supplier){
+	public void handle(PlayerJumpSync message, Supplier<NetworkEvent.Context> supplier){
 		if(supplier.get().getDirection().getReceptionSide() == LogicalSide.CLIENT){
 			Entity entity = Minecraft.getInstance().level.getEntity(message.playerId);
-			if(entity instanceof PlayerEntity){
+			if(entity instanceof Player){
 				ClientEvents.dragonsJumpingTicks.put(entity.getId(), message.ticks);
 			}
 		}

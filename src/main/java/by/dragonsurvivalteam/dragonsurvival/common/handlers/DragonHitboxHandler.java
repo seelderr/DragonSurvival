@@ -2,9 +2,9 @@ package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.hitbox.DragonHitBox;
-import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -17,15 +17,15 @@ public class DragonHitboxHandler{
 
 	@SubscribeEvent
 	public static void playerTick(PlayerTickEvent playerTickEvent){
-		PlayerEntity player = playerTickEvent.player;
+		Player player = playerTickEvent.player;
 
 		if(!player.level.isClientSide){
 			if(DragonUtils.isDragon(player)){
 				if(dragonHitboxes.containsKey(player.getId())){
 					int id = dragonHitboxes.get(player.getId());
-					Entity ent = player.level.getEntity(id);
+					Entity ent = player.level.getEntity(;
 
-					if(ent == null || !(ent instanceof DragonHitBox) || !ent.isAlive() || ent.removed){
+					if(ent == null || !(ent instanceof DragonHitBox) || !ent.isAlive() || ent.isRemoved()){
 						dragonHitboxes.remove(player.getId());
 						addPlayerHitbox(player);
 					}
@@ -37,7 +37,7 @@ public class DragonHitboxHandler{
 		}
 	}
 
-	private static void addPlayerHitbox(PlayerEntity player){
+	private static void addPlayerHitbox(Player player){
 		if(player.level != null){
 			DragonHitBox hitbox = DSEntities.DRAGON_HITBOX.create(player.level);
 			hitbox.copyPosition(player);

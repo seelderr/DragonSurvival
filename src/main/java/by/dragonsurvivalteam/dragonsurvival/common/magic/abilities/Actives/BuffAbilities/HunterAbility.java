@@ -7,13 +7,12 @@ import by.dragonsurvivalteam.dragonsurvival.common.magic.common.ActiveDragonAbil
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -31,8 +30,9 @@ public class HunterAbility extends ActiveDragonAbility{
 	}
 
 	@Override
-	public ArrayList<ITextComponent> getInfo(){
-		ArrayList<ITextComponent> components = super.getInfo();
+
+	public ArrayList<Component> getInfo(){
+		ArrayList<Component> components = super.getInfo();
 
 		if(!KeyInputHandler.ABILITY4.isUnbound()){
 			String key = KeyInputHandler.ABILITY4.getKey().getDisplayName().getContents().toUpperCase(Locale.ROOT);
@@ -40,17 +40,10 @@ public class HunterAbility extends ActiveDragonAbility{
 			if(key.isEmpty()){
 				key = KeyInputHandler.ABILITY4.getKey().getDisplayName().getString();
 			}
-			components.add(new TranslationTextComponent("ds.skill.keybind", key));
+			components.add(new TranslatableComponent("ds.skill.keybind", key));
 		}
 
 		return components;
-	}
-
-	@Override
-	public void onActivation(PlayerEntity player){
-		super.onActivation(player);
-		player.addEffect(new EffectInstance(DragonEffects.HUNTER, Functions.secondsToTicks(getDuration()), getLevel() - 1));
-		player.level.playLocalSound(player.position().x, player.position().y + 0.5, player.position().z, SoundEvents.UI_TOAST_IN, SoundCategory.PLAYERS, 5F, 0.1F, false);
 	}
 
 	public boolean canMoveWhileCasting(){return false;}
@@ -65,24 +58,34 @@ public class HunterAbility extends ActiveDragonAbility{
 		return new AbilityAnimation("self_buff", 0.52 * 20, true, false);
 	}
 
-	public double getDamage(){
-		return ConfigHandler.SERVER.hunterDamageBonus.get() * getLevel();
-	}
-
 	@Override
-	public IFormattableTextComponent getDescription(){
-		return new TranslationTextComponent("ds.skill.description." + getId(), (1.5 * getLevel() + "x"), getDuration());
+
+	public void onActivation(Player player){
+
+		super.onActivation(player);
+		player.addEffect(new MobEffectInstance(DragonEffects.HUNTER, Functions.secondsToTicks(getDuration()), getLevel() - 1));
+		player.level.playLocalSound(player.position().x, player.position().y + 0.5, player.position().z, SoundEvents.UI_TOAST_IN, SoundSource.PLAYERS, 5F, 0.1F, false);
 	}
 
 	public int getDuration(){
 		return ConfigHandler.SERVER.hunterDuration.get() * getLevel();
 	}
 
+	public double getDamage(){
+		return ConfigHandler.SERVER.hunterDamageBonus.get() * getLevel();
+	}
+
+	@Override
+
+	public Component getDescription(){
+		return new TranslatableComponent("ds.skill.description." + getId(), (1.5 * getLevel() + "x"), getDuration());
+	}
+
 	@OnlyIn( Dist.CLIENT )
-	public ArrayList<ITextComponent> getLevelUpInfo(){
-		ArrayList<ITextComponent> list = super.getLevelUpInfo();
-		list.add(new TranslationTextComponent("ds.skill.duration.seconds", "+" + ConfigHandler.SERVER.hunterDuration.get()));
-		list.add(new TranslationTextComponent("ds.skill.damage", "+" + ConfigHandler.SERVER.hunterDamageBonus.get() + "X"));
+	public ArrayList<Component> getLevelUpInfo(){
+		ArrayList<Component> list = super.getLevelUpInfo();
+		list.add(new TranslatableComponent("ds.skill.duration.seconds", "+" + ConfigHandler.SERVER.hunterDuration.get()));
+		list.add(new TranslatableComponent("ds.skill.damage", "+" + ConfigHandler.SERVER.hunterDamageBonus.get() + "X"));
 		return list;
 	}
 

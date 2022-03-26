@@ -1,21 +1,20 @@
 package by.dragonsurvivalteam.dragonsurvival.common.blocks;
 
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.DSTileEntities;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.pathfinding.PathType;
-import net.minecraft.state.IntegerProperty;
-import net.minecraft.state.StateContainer;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Mirror;
-import net.minecraft.util.Rotation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.world.IBlockReader;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.pathfinder.PathComputationType;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nullable;
 
@@ -29,7 +28,7 @@ public class HelmetBlock extends Block{
 	}
 
 	@Override
-	public boolean isPathfindable(BlockState p_196266_1_, IBlockReader p_196266_2_, BlockPos p_196266_3_, PathType p_196266_4_){
+	public boolean isPathfindable(BlockState p_196266_1_, BlockGetter p_196266_2_, BlockPos p_196266_3_, PathComputationType p_196266_4_){
 		return false;
 	}
 
@@ -42,26 +41,27 @@ public class HelmetBlock extends Block{
 	}
 
 	@Override
-	public VoxelShape getShape(BlockState p_220053_1_, IBlockReader p_220053_2_, BlockPos p_220053_3_, ISelectionContext p_220053_4_){
+	public VoxelShape getShape(BlockState p_220053_1_, BlockGetter p_220053_2_, BlockPos p_220053_3_, CollisionContext p_220053_4_){
 		return SHAPE;
 	}
 
-	public BlockState getStateForPlacement(BlockItemUseContext useContext){
-		return this.defaultBlockState().setValue(ROTATION, MathHelper.floor((double)(useContext.getRotation() * 16.0F / 360.0F) + 0.5D) & 15);
+	public BlockState getStateForPlacement(BlockPlaceContext useContext){
+
+		return this.defaultBlockState().setValue(ROTATION, Mth.floor((double)(useContext.getRotation() * 16.0F / 360.0F) + 0.5D) & 15);
 	}
 
-	protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> stateBuilder){
+	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> stateBuilder){
 		stateBuilder.add(ROTATION);
 	}
 
 	@Override
-	public boolean hasTileEntity(BlockState state){
+	public boolean hasBlock(BlockState state){
 		return true;
 	}
 
 	@Nullable
 	@Override
-	public TileEntity createTileEntity(BlockState state, IBlockReader world){
+	public Block createBlockEntity(BlockState state, BlockGetter world){
 		return DSTileEntities.helmetTile.create();
 	}
 }

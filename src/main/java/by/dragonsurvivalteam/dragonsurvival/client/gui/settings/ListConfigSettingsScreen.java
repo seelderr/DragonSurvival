@@ -8,7 +8,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.TextBoxEntr
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.config.SyncListConfig;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.matrix.PoseStack;
 import net.minecraft.client.AbstractOption;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.gui.DialogTexts;
@@ -17,8 +17,8 @@ import net.minecraft.client.gui.screen.SettingsScreen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
+ 
+import net.minecraft.util.text.TextComponent;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 import net.minecraftforge.common.ForgeConfigSpec.ValueSpec;
@@ -38,7 +38,7 @@ public class ListConfigSettingsScreen extends SettingsScreen{
 
 	private boolean isItems = false;
 
-	public ListConfigSettingsScreen(Screen p_i225930_1_, GameSettings p_i225930_2_, ITextComponent p_i225930_3_, ValueSpec valueSpec, ConfigValue value, ForgeConfigSpec spec, String configKey){
+	public ListConfigSettingsScreen(Screen p_i225930_1_, GameSettings p_i225930_2_, Component p_i225930_3_, ValueSpec valueSpec, ConfigValue value, ForgeConfigSpec spec, String configKey){
 		super(p_i225930_1_, p_i225930_2_, p_i225930_3_);
 		this.value = value;
 		this.spec = spec;
@@ -46,7 +46,7 @@ public class ListConfigSettingsScreen extends SettingsScreen{
 		this.valueSpec = valueSpec;
 	}
 
-	public void render(MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
+	public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
 		this.renderBackground(p_230430_1_);
 		this.list.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
 		drawCenteredString(p_230430_1_, this.font, this.title, this.width / 2, 5, 16777215);
@@ -91,12 +91,12 @@ public class ListConfigSettingsScreen extends SettingsScreen{
 		}
 
 		this.children.add(this.list);
-		this.addButton(new Button(this.width / 2 + 20, this.height - 27, 100, 20, new StringTextComponent("Add new"), (p_213106_1_) -> {
+		this.addRenderableWidget(new Button(this.width / 2 + 20, this.height - 27, 100, 20, new TextComponent("Add new"), (p_213106_1_) -> {
 			createOption("");
 			list.setScrollAmount(list.getMaxScroll());
 		}));
 
-		this.addButton(new Button(this.width / 2 - 120, this.height - 27, 100, 20, DialogTexts.GUI_DONE, (p_213106_1_) -> {
+		this.addRenderableWidget(new Button(this.width / 2 - 120, this.height - 27, 100, 20, DialogTexts.GUI_DONE, (p_213106_1_) -> {
 			ArrayList<String> output = new ArrayList<>();
 
 			this.list.children().forEach((ent) -> {

@@ -1,14 +1,15 @@
 package by.dragonsurvivalteam.dragonsurvival.config;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
-import net.minecraft.item.Item;
+
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.ITag;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.tags.ITag;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +29,7 @@ public class ConfigUtils{
 			final ResourceLocation rlEntry = new ResourceLocation(sEntry[1], sEntry[2]);
 
 			if(sEntry[0].equalsIgnoreCase("tag")){
-				final ITag<Item> tag = ItemTags.getAllTags().getTag(rlEntry);
+				final ITag<Item> tag = ItemTags.get().getTag(rlEntry);
 
 				if(tag != null){
 					result.addAll(tag.getValues());

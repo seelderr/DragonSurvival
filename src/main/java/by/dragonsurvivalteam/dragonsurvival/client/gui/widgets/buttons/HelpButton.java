@@ -3,15 +3,12 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.fml.client.gui.GuiUtils;
-import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
-
-import java.util.Arrays;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.client.gui.widget.ExtendedButton;
 
 public class HelpButton extends ExtendedButton{
 	public static final ResourceLocation texture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/help_button.png");
@@ -24,23 +21,23 @@ public class HelpButton extends ExtendedButton{
 	}
 
 	public HelpButton(DragonType type, int x, int y, int sizeX, int sizeY, String text, int variation){
-		super(x, y, sizeX, sizeY, StringTextComponent.EMPTY, (s) -> {});
+		super(x, y, sizeX, sizeY, TextComponent.EMPTY, (s) -> {});
 		this.text = text;
 		this.variation = variation;
 		this.type = type;
 	}
 
 	@Override
-	public void renderButton(MatrixStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
+	public void renderButton(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
 		Minecraft minecraft = Minecraft.getInstance();
-		minecraft.getTextureManager().bind(texture);
+		minecraft.getTextureManager().bindForSetup(texture);
 
 		float size = variation == 0 ? 18f : 22f;
 		float xSize = (float)(width + (variation == 0 ? 0 : 2)) / size;
 		float ySize = (float)(height + (variation == 0 ? 0 : 2)) / size;
 
 		int i = 0;
-		if(this.isHovered()){
+		if(this.isHoveredOrFocused()){
 			i += (int)(((type.ordinal() + 1) * size));
 		}
 
@@ -60,10 +57,10 @@ public class HelpButton extends ExtendedButton{
 	}
 
 	@Override
-	public void renderToolTip(MatrixStack pPoseStack, int pMouseX, int pMouseY){
-		GuiUtils.drawHoveringText(pPoseStack, Arrays.asList(new TranslationTextComponent(text)), pMouseX, pMouseY, Minecraft.getInstance().screen.width, Minecraft.getInstance().screen.height, 200, Minecraft.getInstance().font);
-
+	public void renderToolTip(PoseStack pPoseStack, int pMouseX, int pMouseY){
+		Minecraft.getInstance().screen.renderTooltip(pPoseStack, new TranslatableComponent(text), pMouseX, pMouseY);
 	}
+
 	@Override
 	public boolean mouseClicked(double p_231044_1_, double p_231044_3_, int p_231044_5_){
 		return false;

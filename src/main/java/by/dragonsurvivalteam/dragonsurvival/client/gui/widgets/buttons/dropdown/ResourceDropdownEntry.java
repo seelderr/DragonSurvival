@@ -1,31 +1,32 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown;
 
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.gui.IGuiEventListener;
-import net.minecraft.client.renderer.ItemRenderer;
-import net.minecraft.client.util.ITooltipFlag.TooltipFlags;
-import net.minecraft.item.DyeColor;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraftforge.fml.client.gui.GuiUtils;
-import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.narration.NarratableEntry;
+import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.TooltipFlag.Default;
+import net.minecraftforge.client.gui.widget.ExtendedButton;
 
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
-public class ResourceDropdownEntry extends DropdownEntry{
+public class ResourceDropdownEntry extends by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownEntry{
 	private final int num;
-	private final ResourceEntry entry;
-	private final Consumer<ResourceEntry> setter;
+	private final by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.ResourceEntry entry;
+	private final Consumer<by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.ResourceEntry> setter;
+	private final by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.ResourceTextField source;
 	private ExtendedButton button;
-	private final ResourceTextField source;
 
-	public ResourceDropdownEntry(ResourceTextField source, int num, ResourceEntry entry, Consumer<ResourceEntry> setter){
+	public ResourceDropdownEntry(by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.ResourceTextField source, int num, by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.ResourceEntry entry, Consumer<by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.ResourceEntry> setter){
 		this.num = num;
 		this.entry = entry;
 		this.setter = setter;
@@ -33,20 +34,20 @@ public class ResourceDropdownEntry extends DropdownEntry{
 	}
 
 	@Override
-	public List<? extends IGuiEventListener> children(){
+	public List<? extends GuiEventListener> children(){
 		return button != null ? ImmutableList.of(button) : new ArrayList<>();
 	}
 
 	@Override
-	public void render(MatrixStack pMatrixStack, int pIndex, int pTop, int pLeft, int pWidth, int pHeight, int pMouseX, int pMouseY, boolean pIsMouseOver, float pPartialTicks){
+	public void render(PoseStack pPoseStack, int pIndex, int pTop, int pLeft, int pWidth, int pHeight, int pMouseX, int pMouseY, boolean pIsMouseOver, float pPartialTicks){
 		if(button == null){
 			if(list != null){
 				button = new ExtendedButton(list.getLeft() + 3, 0, list.getWidth() - 12, pHeight, null, null){
 					private int tick = 0;
 
 					@Override
-					public ITextComponent getMessage(){
-						return StringTextComponent.EMPTY;
+					public TextComponent getMessage(){
+						return (TextComponent)TextComponent.EMPTY;
 					}
 
 					@Override
@@ -63,7 +64,7 @@ public class ResourceDropdownEntry extends DropdownEntry{
 					}
 
 					@Override
-					public void renderButton(MatrixStack mStack, int mouseX, int mouseY, float partial){
+					public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){
 						if(!source.isFocused()){
 							return;
 						}
@@ -92,10 +93,10 @@ public class ResourceDropdownEntry extends DropdownEntry{
 								color = new Color(color).brighter().getRGB();
 							}
 
-							AbstractGui.fill(mStack, x, y, x + width, y + height, color);
+							Gui.fill(mStack, x, y, x + width, y + height, color);
 
 							String text = entry.id;
-							Minecraft.getInstance().font.drawShadow(mStack, new StringTextComponent(Minecraft.getInstance().font.substrByWidth(new StringTextComponent(text), width - 20).getString()), x + 25, y + 5, DyeColor.WHITE.getTextColor());
+							Minecraft.getInstance().font.drawShadow(mStack, new TextComponent(Minecraft.getInstance().font.substrByWidth(new TextComponent(text), width - 20).getString()), x + 25, y + 5, DyeColor.WHITE.getTextColor());
 
 							if(!entry.isEmpty()){
 								ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
@@ -104,8 +105,8 @@ public class ResourceDropdownEntry extends DropdownEntry{
 								itemRenderer.blitOffset = 0;
 
 								if(isHovered){
-									List<ITextComponent> lines = entry.getDisplayItem().getTooltipLines(Minecraft.getInstance().player, TooltipFlags.NORMAL);
-									GuiUtils.drawHoveringText(mStack, lines, mouseX, mouseY, Minecraft.getInstance().screen.width, Minecraft.getInstance().screen.height, 200, Minecraft.getInstance().font);
+									List<Component> lines = entry.getDisplayItem().getTooltipLines(Minecraft.getInstance().player, Default.NORMAL);
+									Minecraft.getInstance().screen.renderTooltip(mStack, lines, Optional.empty(), mouseX, mouseY, Minecraft.getInstance().font);
 								}
 							}
 
@@ -117,7 +118,12 @@ public class ResourceDropdownEntry extends DropdownEntry{
 		}else{
 			button.y = pTop;
 			button.visible = source.visible;
-			button.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
+			button.render(pPoseStack, pMouseX, pMouseY, pPartialTicks);
 		}
+	}
+
+	@Override
+	public List<? extends NarratableEntry> narratables(){
+		return null;
 	}
 }

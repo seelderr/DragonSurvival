@@ -1,16 +1,16 @@
 package by.dragonsurvivalteam.dragonsurvival.network.entity;
 
-import by.dragonsurvivalteam.dragonsurvival.common.entity.monsters.MagicalPredatorEntity;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.monsters.MagicalPredator;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.world.World;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.DistExecutor.SafeRunnable;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
@@ -30,14 +30,14 @@ public class PacketSyncPredatorStats implements IMessage<PacketSyncPredatorStats
 	}
 
 	@Override
-	public void encode(PacketSyncPredatorStats m, PacketBuffer b){
+	public void encode(PacketSyncPredatorStats m, FriendlyByteBuf b){
 		b.writeInt(m.type);
 		b.writeFloat(m.size);
 		b.writeInt(m.id);
 	}
 
 	@Override
-	public PacketSyncPredatorStats decode(PacketBuffer b){
+	public PacketSyncPredatorStats decode(FriendlyByteBuf b){
 		return new PacketSyncPredatorStats(b.readInt(), b.readFloat(), b.readInt());
 	}
 
@@ -50,13 +50,13 @@ public class PacketSyncPredatorStats implements IMessage<PacketSyncPredatorStats
 	public void runClient(PacketSyncPredatorStats message, Supplier<NetworkEvent.Context> supplier){
 		NetworkEvent.Context context = supplier.get();
 		context.enqueueWork(() -> {
-			World world = Minecraft.getInstance().level;
+			Level world = Minecraft.getInstance().level;
 
 			if(world != null){
 				Entity entity = world.getEntity(message.id);
 				if(entity != null){
-					((MagicalPredatorEntity)entity).size = message.size;
-					((MagicalPredatorEntity)entity).type = message.type;
+					((MagicalPredator)entity).size = message.size;
+					((MagicalPredator)entity).type = message.type;
 				}
 			}
 
