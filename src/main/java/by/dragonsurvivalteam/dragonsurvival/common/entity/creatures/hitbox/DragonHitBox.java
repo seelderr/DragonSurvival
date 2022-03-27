@@ -65,8 +65,10 @@ public class DragonHitBox extends MobEntity{
 
 	@Override
 	public void tick(){
+		this.noPhysics = true;
 		super.tick();
 		this.checkInsideBlocks();
+		this.noPhysics = false;
 	}
 
 	@Override
