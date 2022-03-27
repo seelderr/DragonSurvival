@@ -1,3 +1,10 @@
+### [0.13.42](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.41...0.13.42) (2022-03-27)
+
+
+### Bug Fixes
+
+* Should fix emotes being canceled on server ([2fa997b](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/2fa997b325a5a8dbcac9a17d2c8cc23b11b4ceed))
+
 ### [0.13.41](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.40...0.13.41) (2022-03-26)
 
 
