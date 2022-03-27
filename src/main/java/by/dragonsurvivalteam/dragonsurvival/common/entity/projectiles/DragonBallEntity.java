@@ -102,8 +102,17 @@ public class DragonBallEntity extends Fireball implements IAnimatable{
 		return ParticleTypes.WHITE_ASH;
 	}
 
+	@Override
+	public Packet<?> getAddEntityPacket(){
+		return NetworkHooks.getEntitySpawningPacket(this);
+	}
+
 	protected boolean canHitEntity(Entity p_230298_1_){
 		return true;
+	}
+
+	protected boolean shouldBurn(){
+		return false;
 	}
 
 	@Override
@@ -114,15 +123,6 @@ public class DragonBallEntity extends Fireball implements IAnimatable{
 	}
 
 	public void attackMobs(){}
-
-	@Override
-	public Packet<?> getAddEntityPacket(){
-		return NetworkHooks.getEntitySpawningPacket(this);
-	}
-
-	protected boolean shouldBurn(){
-		return false;
-	}
 
 	@Override
 	public void registerControllers(AnimationData data){

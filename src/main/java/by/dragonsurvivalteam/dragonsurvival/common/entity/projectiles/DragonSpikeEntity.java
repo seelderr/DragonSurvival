@@ -110,6 +110,11 @@ public class DragonSpikeEntity extends AbstractArrow{
 	}
 
 	@Override
+	public boolean isCritArrow(){
+		return false;
+	}
+
+	@Override
 	protected void onHitBlock(BlockHitResult p_230299_1_){
 		super.onHitBlock(p_230299_1_);
 	}
@@ -123,11 +128,6 @@ public class DragonSpikeEntity extends AbstractArrow{
 	@Override
 	protected ItemStack getPickupItem(){
 		return ItemStack.EMPTY;
-	}
-
-	@Override
-	public boolean isCritArrow(){
-		return false;
 	}
 
 	@Override

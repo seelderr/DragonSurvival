@@ -1,20 +1,21 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.goals;
 
-import net.minecraft.entity.ICrossbowUser;
-import net.minecraft.entity.IRangedAttackMob;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.Mob;
-import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.entity.projectile.ProjectileUtil;
-import net.minecraft.item.CrossbowItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.RangedInteger;
-import net.minecraft.world.entity.ai.goal.Goal.Flag;
+
+import net.minecraft.util.TimeUtil;
+import net.minecraft.util.valueproviders.UniformInt;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.monster.CrossbowAttackMob;
+import net.minecraft.world.entity.monster.RangedAttackMob;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
+import net.minecraft.world.item.CrossbowItem;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.EnumSet;
 
-public class CrossbowAttackGoal<T extends Mob&IRangedAttackMob&ICrossbowUser> extends Goal{
-	public static final RangedInteger PATHFINDING_DELAY_RANGE = new RangedInteger(20, 40);
+public class CrossbowAttackGoal<T extends Mob&RangedAttackMob&CrossbowAttackMob> extends Goal{
+	public static final UniformInt PATHFINDING_DELAY_RANGE = TimeUtil.rangeOfSeconds(20, 40);
 	private final T mob;
 	private final double speedModifier;
 	private final float attackRadiusSqr;
@@ -46,7 +47,7 @@ public class CrossbowAttackGoal<T extends Mob&IRangedAttackMob&ICrossbowUser> ex
 	}
 
 	private boolean isHoldingCrossbow(){
-		return this.mob.isHolding(item -> item instanceof CrossbowItem);
+		return this.mob.isHolding(item -> item.getItem() instanceof CrossbowItem);
 	}
 
 	private boolean isValidTarget(){
@@ -68,7 +69,7 @@ public class CrossbowAttackGoal<T extends Mob&IRangedAttackMob&ICrossbowUser> ex
 	public void tick(){
 		LivingEntity livingentity = this.mob.getTarget();
 		if(livingentity != null){
-			boolean flag = this.mob.getSensing().canSee(livingentity);
+			boolean flag = this.mob.getSensing().hasLineOfSight(livingentity);
 			boolean flag1 = this.seeTime > 0;
 			if(flag != flag1){
 				this.seeTime = 0;
@@ -86,7 +87,7 @@ public class CrossbowAttackGoal<T extends Mob&IRangedAttackMob&ICrossbowUser> ex
 				--this.updatePathDelay;
 				if(this.updatePathDelay <= 0){
 					this.mob.getNavigation().moveTo(livingentity, this.canRun() ? this.speedModifier : this.speedModifier * 0.5D);
-					this.updatePathDelay = PATHFINDING_DELAY_RANGE.randomValue(this.mob.getRandom());
+					this.updatePathDelay = PATHFINDING_DELAY_RANGE.sample(this.mob.getRandom());
 				}
 			}else{
 				this.updatePathDelay = 0;

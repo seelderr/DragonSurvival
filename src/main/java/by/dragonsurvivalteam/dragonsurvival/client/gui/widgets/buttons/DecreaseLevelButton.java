@@ -9,12 +9,9 @@ import by.dragonsurvivalteam.dragonsurvival.common.magic.common.PassiveDragonAbi
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.ChangeSkillLevel;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
- 
-import net.minecraftforge.fml.client.gui.GuiUtils;
-
-import java.util.Arrays;
+import net.minecraft.network.chat.TranslatableComponent;
 
 public class DecreaseLevelButton extends ArrowButton{
 	private final int slot;
@@ -51,8 +48,7 @@ public class DecreaseLevelButton extends ArrowButton{
 	}
 
 	@Override
-
-	public void renderToolTip(MatrixStack stack, int mouseX, int mouseY){
+	public void renderToolTip(PoseStack stack, int mouseX, int mouseY){
 
 		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {
 			ability = DragonAbilities.PASSIVE_ABILITIES.get(type).get(slot);
@@ -66,7 +62,7 @@ public class DecreaseLevelButton extends ArrowButton{
 
 
 				if(currentAbility != null && currentAbility.getLevel() > currentAbility.getMinLevel()){
-					GuiUtils.drawHoveringText(stack, Arrays.asList(new TranslatableComponent("ds.skill.level.down", (int)Math.max(1, currentAbility.getLevelCost() * 0.8F))), mouseX, mouseY, Minecraft.getInstance().screen.width, Minecraft.getInstance().screen.height, 200, Minecraft.getInstance().font);
+					Minecraft.getInstance().screen.renderTooltip(stack, new TranslatableComponent("ds.skill.level.down", (int)Math.max(1, currentAbility.getLevelCost() * 0.8F)), mouseX, mouseY);
 				}
 			}
 		});

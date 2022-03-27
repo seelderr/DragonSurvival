@@ -11,6 +11,7 @@ import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 import net.minecraft.client.gui.components.TooltipAccessor;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
@@ -21,15 +22,15 @@ import java.util.function.Consumer;
 
 
 public class DropDownButton extends ExtendedButton implements TooltipAccessor{
-	private static final int maxItems = 4;
-	private final String[] values;
+	public static final int maxItems = 4;
+	public String[] values;
 	public String current;
 	public Consumer<String> setter;
 	public List<FormattedCharSequence> tooltip;
-	private boolean toggled;
-	private DropdownList list;
-	private AbstractWidget renderButton;
-	private TextComponent message;
+	public boolean toggled;
+	public DropdownList list;
+	public AbstractWidget renderButton;
+	public Component message;
 
 	public DropDownButton(int x, int y, int xSize, int ySize, String current, String[] values, Consumer<String> setter){
 		super(x, y, xSize, ySize, null, null);
@@ -66,7 +67,7 @@ public class DropDownButton extends ExtendedButton implements TooltipAccessor{
 	}
 
 	@Override
-	public TextComponent getMessage(){
+	public Component getMessage(){
 		return message;
 	}
 

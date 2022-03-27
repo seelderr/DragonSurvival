@@ -14,12 +14,7 @@ public class CommonConfig{
 	public final ForgeConfigSpec.BooleanValue endVoidTeleport;
 	public final ForgeConfigSpec.BooleanValue dragonsAllowedToUseElytra;
 
-
 	public final ForgeConfigSpec.BooleanValue startWithDragonChoice;
-
-
-	public final ForgeConfigSpec.BooleanValue startWithDragonChoice;
-
 
 	// Predator
 	public final ForgeConfigSpec.DoubleValue predatorDamageFactor;
@@ -86,12 +81,7 @@ public class CommonConfig{
 		endVoidTeleport = builder.comment("Should the player be teleported to the overworld when they fall in the end?").define("endVoidTeleport", true);
 		dragonsAllowedToUseElytra = builder.comment("Whether dragons are allowed to use Elytra").define("elytraForDragon", false);
 
-
 		startWithDragonChoice = builder.comment("Should the dragon altar interface be opened when the player first joins the world?").define("startWithDragonChoice", false);
-
-
-		startWithDragonChoice = builder.comment("Should the dragon altar interface be opened when the player first joins the world?").define("startWithDragonChoice", false);
-
 
 		// Predator
 		builder.pop().push("predator");
@@ -108,8 +98,6 @@ public class CommonConfig{
 		predatorBiomesInclude = builder.comment("The predator can only spawn in biomes with the included types.").defineList("predatorBiomesInclude", Collections.singletonList(END.toString()), ConfigHandler.biomePredicate);
 		predatorBiomesExclude = builder.comment("The predator cannot spawn in biomes with excluded types.").defineList("predatorBiomesExclude", Arrays.asList(OVERWORLD.toString(), NETHER.toString()), ConfigHandler.biomePredicate);
 
-		predatorBiomesInclude = builder.comment("The predator can only spawn in biomes with the included types.").defineList("predatorBiomesInclude", Collections.singletonList(END.toString()), ConfigHandler.biomePredicate);
-		predatorBiomesExclude = builder.comment("The predator cannot spawn in biomes with excluded types.").defineList("predatorBiomesExclude", Arrays.asList(OVERWORLD.toString(), NETHER.toString()), ConfigHandler.biomePredicate);
 		builder.pop();
 		// Dragon Hunters
 		builder.pop().push("dragonHunters");
@@ -162,10 +150,6 @@ public class CommonConfig{
 		peaceBeaconEffects = builder.comment("Effects of Peace beacon").defineList("peaceBeaconEffects", Arrays.asList("effect:dragonsurvival:peace", "effect:dragonsurvival:animal_peace"), ConfigHandler.effectPredicate);
 		magicBeaconEffects = builder.comment("Effects of Magic beacon").defineList("magicBeaconEffects", Arrays.asList("effect:dragonsurvival:magic", "effect:dragonsurvival:predator_anti_spawn"), ConfigHandler.effectPredicate);
 		fireBeaconEffects = builder.comment("Effects of Fire beacon").defineList("fireBeaconEffects", Arrays.asList("effect:dragonsurvival:fire", "effect:dragonsurvival:strong_leather"), ConfigHandler.effectPredicate);
-
-		peaceBeaconEffects = builder.comment("Effects of Peace beacon").defineList("peaceBeaconEffects", Arrays.asList("dragonsurvival:peace", "dragonsurvival:animal_peace"), ConfigHandler.effectPredicate);
-		magicBeaconEffects = builder.comment("Effects of Magic beacon").defineList("magicBeaconEffects", Arrays.asList("dragonsurvival:magic", "dragonsurvival:predator_anti_spawn"), ConfigHandler.effectPredicate);
-		fireBeaconEffects = builder.comment("Effects of Fire beacon").defineList("fireBeaconEffects", Arrays.asList("dragonsurvival:fire", "dragonsurvival:strong_leather"), ConfigHandler.effectPredicate);
 		builder.pop();
 	}
 }

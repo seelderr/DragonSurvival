@@ -8,12 +8,12 @@ import by.dragonsurvivalteam.dragonsurvival.common.magic.common.PassiveDragonAbi
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.ChangeSkillLevel;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
- 
-import net.minecraft.util.text.TextFormatting;
- 
+import net.minecraft.network.chat.TranslatableComponent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -73,11 +73,10 @@ public class IncreaseLevelButton extends ArrowButton{
 	}
 
 	@Override
-
-	public void renderToolTip(MatrixStack stack, int mouseX, int mouseY){
+	public void renderToolTip(PoseStack stack, int mouseX, int mouseY){
 		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {
 			ability = DragonAbilities.PASSIVE_ABILITIES.get(type).get(slot);
-			TextFormatting format = cap.getType() == DragonType.CAVE ? TextFormatting.DARK_RED : cap.getType() == DragonType.SEA ? TextFormatting.AQUA : cap.getType() == DragonType.FOREST ? TextFormatting.GREEN : TextFormatting.WHITE;
+			ChatFormatting format = cap.getType() == DragonType.CAVE ? ChatFormatting.DARK_RED : cap.getType() == DragonType.SEA ? ChatFormatting.AQUA : cap.getType() == DragonType.FOREST ? ChatFormatting.GREEN : ChatFormatting.WHITE;
 			ArrayList<Component> description = new ArrayList<>(Arrays.asList(new TranslatableComponent("ds.skill.level.up", skillCost).withStyle(format)));
 
 			if(ability != null){

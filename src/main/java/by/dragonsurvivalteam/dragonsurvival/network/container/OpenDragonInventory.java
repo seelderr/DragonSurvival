@@ -3,17 +3,12 @@ package by.dragonsurvivalteam.dragonsurvival.network.container;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.DragonContainer;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerPlayer;
- 
-import net.minecraft.util.text.TextComponent;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.SimpleMenuProvider;
 import net.minecraftforge.network.NetworkEvent;
 
-import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
 public class OpenDragonInventory implements IMessage<OpenDragonInventory>{
@@ -34,18 +29,7 @@ public class OpenDragonInventory implements IMessage<OpenDragonInventory>{
 				serverPlayer.containerMenu.removed(serverPlayer);
 			}
 
-			serverPlayer.openMenu(new INamedContainerProvider(){
-				@Override
-				public Component getDisplayName(){
-					return new TextComponent("");
-				}
-
-				@Nullable
-				@Override
-				public Container createMenu(int p_createMenu_1_, PlayerInventory p_createMenu_2_, Player p_createMenu_3_){
-					return new DragonContainer(p_createMenu_1_, p_createMenu_2_, false);
-				}
-			});
+			serverPlayer.openMenu(new SimpleMenuProvider((val1, inv, player) -> new DragonContainer(val1, inv, false), new TextComponent("")));
 		}
 	}
 }

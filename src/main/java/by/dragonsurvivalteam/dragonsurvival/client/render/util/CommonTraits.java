@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render.util;
 
-import net.minecraft.entity.LivingEntity;
+
+import net.minecraft.world.entity.LivingEntity;
 
 public interface CommonTraits{
 

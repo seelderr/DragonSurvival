@@ -15,7 +15,7 @@ import net.minecraftforge.client.gui.widget.ExtendedButton;
 import java.util.List;
 
 @OnlyIn( Dist.CLIENT )
-public class TextBoxEntry extends by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.OptionListEntry{
+public class TextBoxEntry extends OptionListEntry{
 	public final AbstractWidget widget;
 	private final CategoryEntry category;
 	public AbstractWidget removeButton;

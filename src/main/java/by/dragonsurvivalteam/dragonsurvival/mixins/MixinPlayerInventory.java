@@ -2,7 +2,6 @@ package by.dragonsurvivalteam.dragonsurvival.mixins;
 
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ClawToolHandler;
 import net.minecraft.core.NonNullList;
-
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -15,9 +14,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 
-@Mixin( Inventory.class)
-public class MixinPlayerInventory
-{
+@Mixin( Inventory.class )
+public class MixinPlayerInventory{
 	@Shadow
 	@Final
 	public Player player;
@@ -26,7 +24,7 @@ public class MixinPlayerInventory
 	@Final
 	public NonNullList<ItemStack> items;
 
-	@Inject( at = @At("HEAD"), method = "getDestroySpeed", cancellable = true)
+	@Inject( at = @At( "HEAD" ), method = "getDestroySpeed", cancellable = true )
 	public void getDestroySpeed(BlockState state, CallbackInfoReturnable<Float> ci){
 		ItemStack mainStack = player.getInventory().getSelected();
 		ItemStack breakStack = ClawToolHandler.getDragonTools(player);

@@ -1,18 +1,16 @@
 package by.dragonsurvivalteam.dragonsurvival.network.container;
 
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
-import net.minecraft.inventory.container.Container;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
 public class OpenInventory implements IMessage<OpenInventory>{
 	@Override
-	public void encode(OpenInventory message, FriendlyByteBuf buffer){
-
-	}
+	public void encode(OpenInventory message, FriendlyByteBuf buffer){}
 
 	@Override
 	public OpenInventory decode(FriendlyByteBuf buffer){
@@ -28,11 +26,8 @@ public class OpenInventory implements IMessage<OpenInventory>{
 			player.containerMenu.removed(player);
 		}
 
-		Container container = player.inventoryMenu;
-
-		container.addSlotListener(player);
-		player.containerMenu = container;
-
+		InventoryMenu container = player.inventoryMenu;
+		player.initMenu(container);
 		context.setPacketHandled(true);
 	}
 }

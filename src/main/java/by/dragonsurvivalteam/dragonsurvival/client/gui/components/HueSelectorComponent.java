@@ -8,27 +8,28 @@ import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.EnumSkinLayer;
 import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.objects.LayerSettings;
 import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.matrix.PoseStack;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FocusableGui;
-import net.minecraft.client.gui.IGuiEventListener;
-import net.minecraft.client.gui.IRenderable;
-import net.minecraft.client.gui.widget.button.CheckboxButton;
-import net.minecraft.util.text.TextComponent;
- 
-import net.minecraftforge.fml.client.gui.GuiUtils;
-import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
-import net.minecraftforge.fml.client.gui.widget.Slider;
+import net.minecraft.client.gui.components.Checkbox;
+import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.components.events.AbstractContainerEventHandler;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraftforge.client.gui.GuiUtils;
+import net.minecraftforge.client.gui.widget.ExtendedButton;
+import net.minecraftforge.client.gui.widget.Slider;
 
 import java.awt.Color;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class HueSelectorComponent extends FocusableGui implements IRenderable{
+public class HueSelectorComponent extends AbstractContainerEventHandler implements Widget{
 	private final ExtendedButton hueReset;
 	private final ExtendedButton saturationReset;
 	private final ExtendedButton brightnessReset;
-	private final CheckboxButton glowing;
+	private final Checkbox glowing;
 	private final DragonEditorScreen screen;
 	private final int x;
 	private final int y;
@@ -62,7 +63,7 @@ public class HueSelectorComponent extends FocusableGui implements IRenderable{
 			@Override
 			public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){
 				super.renderButton(mStack, mouseX, mouseY, partial);
-				Minecraft.getInstance().getTextureManager().bindForSetup(ResetSettingsButton.texture);
+				RenderSystem.setShaderTexture(0, ResetSettingsButton.texture);
 				blit(mStack, x + 2, y + 2, 0, 0, 16, 16, 16, 16);
 			}
 		};
@@ -147,7 +148,7 @@ public class HueSelectorComponent extends FocusableGui implements IRenderable{
 			public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){
 				mStack.pushPose();
 				super.renderButton(mStack, mouseX, mouseY, partial);
-				Minecraft.getInstance().getTextureManager().bindForSetup(ResetSettingsButton.texture);
+				RenderSystem.setShaderTexture(0, ResetSettingsButton.texture);
 				blit(mStack, x + 2, y + 2, 0, 0, 16, 16, 16, 16);
 				mStack.popPose();
 			}
@@ -161,7 +162,7 @@ public class HueSelectorComponent extends FocusableGui implements IRenderable{
 			public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){
 				mStack.pushPose();
 				super.renderButton(mStack, mouseX, mouseY, partial);
-				Minecraft.getInstance().getTextureManager().bindForSetup(ResetSettingsButton.texture);
+				RenderSystem.setShaderTexture(0, ResetSettingsButton.texture);
 				blit(mStack, x + 2, y + 2, 0, 0, 16, 16, 16, 16);
 				mStack.popPose();
 			}
@@ -209,14 +210,13 @@ public class HueSelectorComponent extends FocusableGui implements IRenderable{
 	}
 
 	@Override
-	public List<? extends IGuiEventListener> children(){
+	public List<? extends GuiEventListener> children(){
 		return ImmutableList.of(hueSlider, saturationSlider, brightnessSlider, hueReset, saturationReset, brightnessReset, glowing);
 	}
 
 	@Override
 	public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
-		Minecraft.getInstance().textureManager.bind(DropdownList.BACKGROUND_TEXTURE);
-		GuiUtils.drawContinuousTexturedBox(pMatrixStack, x, y - 3, 0, 0, xSize, ySize + 6, 32, 32, 10, 10);
+		GuiUtils.drawContinuousTexturedBox(pMatrixStack, DropdownList.BACKGROUND_TEXTURE, x, y - 3, 0, 0, xSize, ySize + 6, 32, 32, 10, 10);
 
 		glowing.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 

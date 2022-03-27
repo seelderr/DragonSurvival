@@ -8,14 +8,14 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.
 import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.DragonEditorHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.EnumSkinLayer;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.SkinCap;
-import com.mojang.blaze3d.matrix.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.IGuiEventListener;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.list.AbstractList;
-import net.minecraft.util.text.TextComponent;
-import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
+import net.minecraft.client.gui.components.AbstractSelectionList;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraftforge.client.gui.widget.ExtendedButton;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -101,9 +101,9 @@ public class DragonEditorDropdownButton extends DropDownButton{
 				screen.children.add(0, list);
 				screen.children.add(list);
 
-				for(IGuiEventListener child : screen.children){
-					if(child instanceof AbstractList){
-						if(((AbstractList)child).renderTopAndBottom){
+				for(GuiEventListener child : screen.children){
+					if(child instanceof AbstractSelectionList){
+						if(((AbstractSelectionList)child).renderTopAndBottom){
 							hasBorder = true;
 							break;
 						}
@@ -133,10 +133,10 @@ public class DragonEditorDropdownButton extends DropDownButton{
 					}
 				}
 			};
-			screen.buttons.add(renderButton);
+			screen.renderables.add(renderButton);
 		}else{
 			screen.children.removeIf((s) -> s == list);
-			screen.buttons.removeIf((s) -> s == renderButton);
+			screen.renderables.removeIf((s) -> s == renderButton);
 		}
 
 		toggled = !toggled;

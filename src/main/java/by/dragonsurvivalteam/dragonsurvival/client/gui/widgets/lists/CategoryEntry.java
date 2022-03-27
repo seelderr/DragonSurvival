@@ -8,7 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
-import net.minecraft.client.resources.sounds.SimpleSoundInstanceInstance;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
@@ -74,7 +74,7 @@ public class CategoryEntry extends by.dragonsurvivalteam.dragonsurvival.client.g
 
 	@Override
 	public boolean mouseClicked(double p_231044_1_, double p_231044_3_, int p_231044_5_){
-		Minecraft.getInstance().getSoundManager().play(SimpleSoundInstanceInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+		Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 		this.enabled = !this.enabled;
 
 		if(enabled){

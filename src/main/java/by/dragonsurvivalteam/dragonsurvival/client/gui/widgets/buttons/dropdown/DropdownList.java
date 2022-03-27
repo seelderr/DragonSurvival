@@ -12,7 +12,7 @@ import net.minecraft.util.Mth;
 import net.minecraftforge.client.gui.GuiUtils;
 
 public class DropdownList extends AbstractSelectionList<by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownEntry>{
-	private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/textbox.png");
+	public static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/textbox.png");
 	public int listWidth;
 	public boolean visible;
 
@@ -38,12 +38,16 @@ public class DropdownList extends AbstractSelectionList<by.dragonsurvivalteam.dr
 	}
 
 	@Override
-	public int addEntry(by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownEntry p_230513_1_){
+	public int addEntry(DropdownEntry p_230513_1_){
 		return super.addEntry(p_230513_1_);
+	}	public void centerScrollOn(DropdownEntry pEntry){
+		this.setScrollAmount(this.children().indexOf(pEntry) * this.itemHeight + this.itemHeight / 2 - (this.y1 - this.y0) / 2);
 	}
 
 	@Override
 	public void updateNarration(NarrationElementOutput pNarrationElementOutput){}
+
+
 
 	@Override
 	public int getScrollbarPosition(){

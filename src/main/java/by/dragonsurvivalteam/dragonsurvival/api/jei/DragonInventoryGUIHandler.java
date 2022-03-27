@@ -5,10 +5,11 @@ import by.dragonsurvivalteam.dragonsurvival.server.containers.DragonContainer;
 import mezz.jei.api.constants.VanillaRecipeCategoryUid;
 import mezz.jei.api.gui.handlers.IGuiContainerHandler;
 import mezz.jei.api.recipe.transfer.IRecipeTransferInfo;
-import net.minecraft.client.renderer.Rectangle2d;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.renderer.Rect2i;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.crafting.CraftingRecipe;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,31 +21,36 @@ public class DragonInventoryGUIHandler implements IRecipeTransferInfo, IGuiConta
 	}
 
 	@Override
+	public Class getRecipeClass(){
+		return CraftingRecipe.class;
+	}
+
+	@Override
 	public ResourceLocation getRecipeCategoryUid(){
 		return VanillaRecipeCategoryUid.CRAFTING;
 	}
 
 	@Override
-	public boolean canHandle(Container container){
+	public boolean canHandle(AbstractContainerMenu container, Object recipe){
 		return container instanceof DragonContainer;
 	}
 
 	@Override
-	public List<Slot> getRecipeSlots(Container container){
+	public List<Slot> getRecipeSlots(AbstractContainerMenu container, Object recipe){
 		return ((DragonContainer)container).craftingSlots;
 	}
 
 	@Override
-	public List<Slot> getInventorySlots(Container container){
+	public List<Slot> getInventorySlots(AbstractContainerMenu container, Object recipe){
 		return ((DragonContainer)container).inventorySlots;
 	}
 
 	@Override
-	public List<Rectangle2d> getGuiExtraAreas(DragonScreen screen){
-		List<Rectangle2d> list = new ArrayList<>();
+	public List<Rect2i> getGuiExtraAreas(DragonScreen screen){
+		List<Rect2i> list = new ArrayList<>();
 		if(screen.clawsMenu){
 			int size = 80;
-			list.add(new Rectangle2d(screen.getLeftPos() - size, screen.getGuiTop() - 70, size, screen.height + 70));
+			list.add(new Rect2i(screen.getLeftPos() - size, screen.getGuiTop() - 70, size, screen.height + 70));
 		}
 		return list;
 	}

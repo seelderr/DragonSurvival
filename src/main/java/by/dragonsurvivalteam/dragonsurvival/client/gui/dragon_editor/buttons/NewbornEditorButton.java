@@ -4,10 +4,10 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEdito
 import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.EnumSkinLayer;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TextRenderUtil;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonLevel;
-import com.mojang.blaze3d.matrix.PoseStack;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.util.math.Mth;
- 
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.util.Mth;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;

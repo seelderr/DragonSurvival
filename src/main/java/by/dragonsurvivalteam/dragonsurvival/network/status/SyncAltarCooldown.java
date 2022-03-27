@@ -48,7 +48,7 @@ public class SyncAltarCooldown implements IMessage<SyncAltarCooldown>{
 	public void handle(SyncAltarCooldown message, Supplier<NetworkEvent.Context> supplier){
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> runClient(message, supplier));
 
-		if(supplier.get().getDirection() == NetworkDirection.NetworkDirection.PLAY_TO_SERVER){
+		if(supplier.get().getDirection() == NetworkDirection.PLAY_TO_SERVER){
 			ServerPlayer entity = supplier.get().getSender();
 			if(entity != null){
 				DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {

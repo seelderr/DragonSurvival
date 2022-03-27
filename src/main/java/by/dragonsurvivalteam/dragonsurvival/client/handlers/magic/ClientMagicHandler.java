@@ -9,17 +9,17 @@ import by.dragonsurvivalteam.dragonsurvival.common.magic.common.ActiveDragonAbil
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.LocalPlayer;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.particles.ParticleOptions;
-import net.minecraft.tags.FluidTags;
-import net.minecraft.util.math.Mth;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.material.FogType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.EntityViewRenderEvent;
-import net.minecraftforge.client.event.FOVUpdateEvent;
-import net.minecraftforge.event.entity.living.LivingEntityEvent.LivingEntityUpdateEvent;
+import net.minecraftforge.client.event.EntityViewRenderEvent.RenderFogEvent;
+import net.minecraftforge.client.event.FOVModifierEvent;
+import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -27,8 +27,8 @@ import net.minecraftforge.fml.common.Mod;
 public class ClientMagicHandler{
 
 	@SubscribeEvent
-	public static void onFovEvent(FOVUpdateEvent event){
-		Player player = event.get();
+	public static void onFovEvent(FOVModifierEvent event){
+		Player player = event.getEntity();
 
 		DragonStateProvider.getCap(player).ifPresent(cap -> {
 			if(!cap.getEmotes().currentEmotes.isEmpty() && DragonUtils.isDragon(player)){
@@ -54,8 +54,8 @@ public class ClientMagicHandler{
 
 	@OnlyIn( Dist.CLIENT )
 	@SubscribeEvent
-	public static void livingTick(LivingEntityUpdateEvent event){
-		LivingEntity entity = event.getEntityLivingEntity();
+	public static void livingTick(LivingUpdateEvent event){
+		LivingEntity entity = event.getEntityLiving();
 
 		if(!entity.level.isClientSide){
 			return;
@@ -98,21 +98,23 @@ public class ClientMagicHandler{
 
 	@SubscribeEvent
 	@OnlyIn( Dist.CLIENT )
-	public static void removeLavaAndWaterFog(EntityViewRenderEvent.FogDensity event){
+	public static void removeLavaAndWaterFog(RenderFogEvent event){
 		LocalPlayer player = Minecraft.getInstance().player;
 		DragonStateProvider.getCap(player).ifPresent(cap -> {
 			if(!cap.isDragon()){
 				return;
 			}
 
-			if(cap.getType() == DragonType.CAVE && event.getInfo().getFluidInCamera().is(FluidTags.LAVA)){
+			if(cap.getType() == DragonType.CAVE && event.getCamera().getFluidInCamera() == FogType.LAVA){
 				if(player.hasEffect(DragonEffects.LAVA_VISION)){
-					event.setDensity(0.02F);
+					event.setNearPlaneDistance(event.getNearPlaneDistance() * 1.2F);
+					event.setFarPlaneDistance(event.getFarPlaneDistance() * 1.2F);
 					event.setCanceled(true);
 				}
-			}else if(cap.getType() == DragonType.SEA && event.getInfo().getFluidInCamera().is(FluidTags.WATER)){
+			}else if(cap.getType() == DragonType.SEA && event.getCamera().getFluidInCamera() == FogType.WATER){
 				if(player.hasEffect(DragonEffects.WATER_VISION)){
-					event.setDensity(event.getDensity() / 10);
+					event.setNearPlaneDistance(event.getNearPlaneDistance() * 10);
+					event.setFarPlaneDistance(event.getFarPlaneDistance() * 10);
 					event.setCanceled(true);
 				}
 			}

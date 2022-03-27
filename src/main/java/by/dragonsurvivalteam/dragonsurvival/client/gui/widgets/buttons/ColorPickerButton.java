@@ -1,11 +1,11 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons;
 
 import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
-import com.mojang.blaze3d.matrix.PoseStack;
-import net.minecraft.client.audio.SoundHandler;
-import net.minecraft.util.math.Mth;
-import net.minecraft.util.text.TextComponent;
-import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.sounds.SoundManager;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.util.Mth;
+import net.minecraftforge.client.gui.widget.ExtendedButton;
 
 import java.awt.Color;
 import java.util.function.Consumer;
@@ -66,5 +66,6 @@ public class ColorPickerButton extends ExtendedButton{
 	}
 
 	//Removes button sound
-	public void playDownSound(SoundHandler pHandler){}
+	@Override
+	public void playDownSound(SoundManager pHandler){}
 }

@@ -1,18 +1,18 @@
 package by.dragonsurvivalteam.dragonsurvival.config;
 
 
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.tags.ITag;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.StreamSupport;
 
 public class ConfigUtils{
 
@@ -29,11 +29,10 @@ public class ConfigUtils{
 			final ResourceLocation rlEntry = new ResourceLocation(sEntry[1], sEntry[2]);
 
 			if(sEntry[0].equalsIgnoreCase("tag")){
-				final ITag<Item> tag = ItemTags.get().getTag(rlEntry);
-
-				if(tag != null){
-					result.addAll(tag.getValues());
-				}
+				TagKey<Item> tagKey = TagKey.create(Registry.ITEM_REGISTRY, rlEntry);
+				StreamSupport.stream(Registry.ITEM.getTagOrEmpty(tagKey).spliterator(), false).forEach((item1) -> {
+					result.add(item1.value());
+				});
 			}else{
 				result.add(ForgeRegistries.ITEMS.getValue(rlEntry));
 			}
@@ -49,10 +48,10 @@ public class ConfigUtils{
 			final String[] sEntry = entry.split(":");
 			final ResourceLocation rlEntry = new ResourceLocation(sEntry[1], sEntry[2]);
 			if(sEntry[0].equalsIgnoreCase("tag")){
-				final ITag<Block> tag = BlockTags.getAllTags().getTag(rlEntry);
-				if(tag != null && tag.getValues().size() != 0){
-					result.addAll(tag.getValues());
-				}
+				TagKey<Block> tagKey = TagKey.create(Registry.BLOCK_REGISTRY, rlEntry);
+				StreamSupport.stream(Registry.BLOCK.getTagOrEmpty(tagKey).spliterator(), false).forEach((item1) -> {
+					result.add(item1.value());
+				});
 			}else{
 				final Block block = ForgeRegistries.BLOCKS.getValue(rlEntry);
 				if(block != Blocks.AIR){

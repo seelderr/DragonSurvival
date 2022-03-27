@@ -15,9 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Mod.EventBusSubscriber(modid = DragonSurvivalMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
-public class DragonConfigHandler
-{
+@Mod.EventBusSubscriber( modid = DragonSurvivalMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD )
+public class DragonConfigHandler{
 	public static List<Block> SEA_DRAGON_HYDRATION_BLOCKS;
 	public static List<Item> SEA_DRAGON_HYDRATION_USE_ALTERNATIVES;
 
@@ -28,8 +27,8 @@ public class DragonConfigHandler
 	public static Map<DragonType, List<Block>> DRAGON_MANA_BLOCKS;
 
 	@SubscribeEvent
-	public static void onConfigLoad(ModConfigEvent.Loading event) {
-		if (event.getConfig().getType() == Type.SERVER) {
+	public static void onConfigLoad(ModConfigEvent.Loading event){
+		if(event.getConfig().getType() == Type.SERVER){
 			rebuildSpeedupBlocksMap();
 			rebuildSeaDragonConfigs();
 			rebuildBreathBlocks();
@@ -38,7 +37,7 @@ public class DragonConfigHandler
 		}
 	}
 
-	private static void rebuildSpeedupBlocksMap() {
+	private static void rebuildSpeedupBlocksMap(){
 		HashMap<DragonType, List<Block>> speedupMap = new HashMap<>();
 		speedupMap.put(DragonType.CAVE, ConfigUtils.parseConfigBlockList(ConfigHandler.SERVER.caveSpeedupBlocks.get()));
 		speedupMap.put(DragonType.FOREST, ConfigUtils.parseConfigBlockList(ConfigHandler.SERVER.forestSpeedupBlocks.get()));
@@ -46,7 +45,7 @@ public class DragonConfigHandler
 		DRAGON_SPEEDUP_BLOCKS = speedupMap;
 	}
 
-	public static void rebuildBreathBlocks() {
+	public static void rebuildBreathBlocks(){
 		HashMap<DragonType, List<Block>> breathMap = new HashMap<>();
 		breathMap.put(DragonType.CAVE, ConfigUtils.parseConfigBlockList(ConfigHandler.SERVER.fireBreathBlockBreaks.get()));
 		breathMap.put(DragonType.FOREST, ConfigUtils.parseConfigBlockList(ConfigHandler.SERVER.forestBreathBlockBreaks.get()));
@@ -54,7 +53,7 @@ public class DragonConfigHandler
 		DRAGON_BREATH_BLOCKS = breathMap;
 	}
 
-	public static void rebuildManaBlocks() {
+	public static void rebuildManaBlocks(){
 		HashMap<DragonType, List<Block>> map = new HashMap<>();
 		map.put(DragonType.CAVE, ConfigUtils.parseConfigBlockList(ConfigHandler.SERVER.caveDragonManaBlocks.get()));
 		map.put(DragonType.FOREST, ConfigUtils.parseConfigBlockList(ConfigHandler.SERVER.forestDragonManaBlocks.get()));
@@ -62,12 +61,12 @@ public class DragonConfigHandler
 		DRAGON_MANA_BLOCKS = map;
 	}
 
-	private static void rebuildSeaDragonConfigs() {
+	private static void rebuildSeaDragonConfigs(){
 		SEA_DRAGON_HYDRATION_BLOCKS = ConfigUtils.parseConfigBlockList(ConfigHandler.SERVER.seaHydrationBlocks.get());
 		SEA_DRAGON_HYDRATION_USE_ALTERNATIVES = ConfigUtils.parseConfigItemList(ConfigHandler.SERVER.seaAdditionalWaterUseables.get());
 	}
 
-	private static void rebuildForestDragonConfigs() {
+	private static void rebuildForestDragonConfigs(){
 		FOREST_DRAGON_BREATH_GROW_BLACKLIST = ConfigUtils.parseConfigBlockList(ConfigHandler.SERVER.forestBreathGrowBlacklist.get());
 	}
 }

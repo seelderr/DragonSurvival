@@ -8,27 +8,27 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.
 import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.objects.SkinPreset.SkinAgeGroup;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonLevel;
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.matrix.PoseStack;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.gui.FocusableGui;
-import net.minecraft.client.gui.IGuiEventListener;
-import net.minecraft.client.gui.IRenderable;
-import net.minecraft.client.gui.widget.button.CheckboxButton;
-import net.minecraft.util.text.TextComponent;
- 
-import net.minecraftforge.fml.client.gui.GuiUtils;
-import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.components.Checkbox;
+import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.components.events.AbstractContainerEventHandler;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraftforge.client.gui.GuiUtils;
+import net.minecraftforge.client.gui.widget.ExtendedButton;
 
-import java.util.Arrays;
 import java.util.List;
 
-public class CopyEditorSettingsComponent extends FocusableGui implements IRenderable{
+public class CopyEditorSettingsComponent extends AbstractContainerEventHandler implements Widget{
 	private final ExtendedButton confirm;
 	private final ExtendedButton cancel;
-	private final CheckboxButton newborn;
-	private final CheckboxButton young;
-	private final CheckboxButton adult;
+	private final Checkbox newborn;
+	private final Checkbox young;
+	private final Checkbox adult;
 	private final CopySettingsButton btn;
 	private final DragonEditorScreen screen;
 	private final int x;
@@ -52,12 +52,12 @@ public class CopyEditorSettingsComponent extends FocusableGui implements IRender
 				mStack.translate(0, 0, 100);
 				setMessage(TextComponent.EMPTY);
 				super.renderButton(mStack, mouseX, mouseY, partial);
-				Minecraft.getInstance().getTextureManager().bindForSetup(DragonAltarGUI.CONFIRM_BUTTON);
+				RenderSystem.setShaderTexture(0, DragonAltarGUI.CONFIRM_BUTTON);
 				blit(mStack, x + 1, y, 0, 0, 15, 15, 15, 15);
 				mStack.popPose();
 
 				if(isHovered){
-					Minecraft.getInstance().screen.renderTooltip(mStack, Arrays.asList(new TranslatableComponent("ds.gui.dragon_editor.tooltip.done")), mouseX, mouseY);
+					Minecraft.getInstance().screen.renderTooltip(mStack, new TranslatableComponent("ds.gui.dragon_editor.tooltip.done"), mouseX, mouseY);
 				}
 			}
 
@@ -97,12 +97,12 @@ public class CopyEditorSettingsComponent extends FocusableGui implements IRender
 				mStack.translate(0, 0, 100);
 				setMessage(TextComponent.EMPTY);
 				super.renderButton(mStack, mouseX, mouseY, partial);
-				Minecraft.getInstance().getTextureManager().bindForSetup(DragonAltarGUI.CANCEL_BUTTON);
+				RenderSystem.setShaderTexture(0, DragonAltarGUI.CANCEL_BUTTON);
 				blit(mStack, x, y, 0, 0, 15, 15, 15, 15);
 				mStack.popPose();
 
 				if(isHovered){
-					Minecraft.getInstance().screen.renderTooltip(mStack, Arrays.asList(new TranslatableComponent("ds.gui.dragon_editor.tooltip.cancel")), mouseX, mouseY);
+					Minecraft.getInstance().screen.renderTooltip(mStack, new TranslatableComponent("ds.gui.dragon_editor.tooltip.cancel"), mouseX, mouseY);
 				}
 			}
 
@@ -157,19 +157,18 @@ public class CopyEditorSettingsComponent extends FocusableGui implements IRender
 	}
 
 	@Override
-	public List<? extends IGuiEventListener> children(){
+	public List<? extends GuiEventListener> children(){
 		return ImmutableList.of(confirm, cancel, newborn, young, adult);
 	}
 
 	@Override
 	public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
-		Minecraft.getInstance().textureManager.bind(DropdownList.BACKGROUND_TEXTURE);
-		GuiUtils.drawContinuousTexturedBox(pMatrixStack, x, y - 3, 0, 0, xSize, ySize + 6, 32, 32, 10, 10);
+		GuiUtils.drawContinuousTexturedBox(pMatrixStack, DropdownList.BACKGROUND_TEXTURE, x, y - 3, 0, 0, xSize, ySize + 6, 32, 32, 10, 10);
 		confirm.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 		cancel.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 		newborn.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 		young.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 		adult.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
-		AbstractGui.drawCenteredString(pMatrixStack, Minecraft.getInstance().font, new TranslatableComponent("ds.gui.dragon_editor.copy_to"), x + (xSize / 2), y + 1, 14737632);
+		Gui.drawCenteredString(pMatrixStack, Minecraft.getInstance().font, new TranslatableComponent("ds.gui.dragon_editor.copy_to"), x + (xSize / 2), y + 1, 14737632);
 	}
 }

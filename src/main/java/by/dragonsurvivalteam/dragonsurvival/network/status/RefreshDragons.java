@@ -2,7 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.network.status;
 
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DSEntities;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.Dragon;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -50,7 +50,7 @@ public class RefreshDragons implements IMessage<RefreshDragons>{
 				}
 				Player thatPlayer = (Player)myPlayer.level.getEntity(message.playerId);
 				if(thatPlayer != null){
-					Dragon dragon = DSEntities.DRAGON.create(myPlayer.level);
+					DragonEntity dragon = DSEntities.DRAGON.create(myPlayer.level);
 					dragon.player = thatPlayer.getId();
 					ClientDragonRender.playerDragonHashMap.computeIfAbsent(thatPlayer.getId(), integer -> new AtomicReference<>(dragon)).getAndSet(dragon);
 				}

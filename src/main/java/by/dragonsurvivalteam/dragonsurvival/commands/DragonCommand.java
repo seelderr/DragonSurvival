@@ -17,8 +17,9 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.mojang.brigadier.tree.RootCommandNode;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.commands.arguments.selector.EntitySelector;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.item.Item;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.PacketDistributor;
 
@@ -36,13 +37,13 @@ public class DragonCommand{
 			return runCommand(type, 1, false, context.getSource().getPlayerOrException());
 		}).build();
 
-		ArgumentCommandNode<CommandSourceStack, String> dragonType = argument("dragon_type", StringArgumentType.string()).suggests((context, builder) -> ISuggestionProvider.suggest(new String[]{"cave", "sea", "forest", "human"}, builder)).executes(context -> {
+		ArgumentCommandNode<CommandSourceStack, String> dragonType = argument("dragon_type", StringArgumentType.string()).suggests((context, builder) -> builder.suggest("cave").suggest("sea").suggest("forest").suggest("human").buildFuture()).executes(context -> {
 			String type = context.getArgument("dragon_type", String.class);
 			ServerPlayer serverPlayer = context.getSource().getPlayerOrException();
 			return runCommand(type, 1, false, serverPlayer);
 		}).build();
 
-		ArgumentCommandNode<CommandSourceStack, Integer> dragonStage = argument("dragon_stage", IntegerArgumentType.integer(1, 3)).suggests((context, builder) -> ISuggestionProvider.suggest(new String[]{"1", "2", "3"}, builder)).executes(context -> {
+		ArgumentCommandNode<CommandSourceStack, Integer> dragonStage = argument("dragon_stage", IntegerArgumentType.integer(1, 3)).suggests((context, builder) -> builder.suggest(1).suggest(2).suggest(3).buildFuture()).executes(context -> {
 			String type = context.getArgument("dragon_type", String.class);
 			int stage = context.getArgument("dragon_stage", Integer.TYPE);
 			ServerPlayer serverPlayer = context.getSource().getPlayerOrException();
@@ -90,10 +91,10 @@ public class DragonCommand{
 			dragonStateHandler.setPassengerId(0);
 
 			dragonStateHandler.growing = true;
-			NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> serverPlayerEntity), new SyncSpinStatus(serverPlayerEntity.getId(), dragonStateHandler.getMovementData().spinAttack, dragonStateHandler.getMovementData().spinCooldown, dragonStateHandler.getMovementData().spinLearned));
-			NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> serverPlayerEntity), new CompleteDataSync(serverPlayerEntity));
-			NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> serverPlayerEntity), new RequestClientData(dragonStateHandler.getType(), dragonStateHandler.getLevel()));
-			serverPlayerEntity.refreshDimensions();
+			NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> serverPlayer), new SyncSpinStatus(serverPlayer.getId(), dragonStateHandler.getMovementData().spinAttack, dragonStateHandler.getMovementData().spinCooldown, dragonStateHandler.getMovementData().spinLearned));
+			NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> serverPlayer), new CompleteDataSync(serverPlayer));
+			NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> serverPlayer), new RequestClientData(dragonStateHandler.getType(), dragonStateHandler.getLevel()));
+			serverPlayer.refreshDimensions();
 		});
 		return 1;
 	}
@@ -103,7 +104,7 @@ public class DragonCommand{
 			ItemStack stack = dragonStateHandler.getClawInventory().getClawsInventory().getItem(i);
 
 			if(!serverPlayer.addItem(stack)){
-				if(serverPlayer.level.addFreshEntity(new Item(serverPlayer.level, serverPlayer.position().x, serverPlayer.position().y, serverPlayer.position().z, stack))){
+				if(serverPlayer.level.addFreshEntity(new ItemEntity(serverPlayer.level, serverPlayer.position().x, serverPlayer.position().y, serverPlayer.position().z, stack))){
 					dragonStateHandler.getClawInventory().getClawsInventory().removeItem(i, stack.getCount());
 				}
 			}else{

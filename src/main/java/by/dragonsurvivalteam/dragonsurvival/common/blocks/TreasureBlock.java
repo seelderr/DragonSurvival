@@ -2,12 +2,12 @@ package by.dragonsurvivalteam.dragonsurvival.common.blocks;
 
 import by.dragonsurvivalteam.dragonsurvival.client.particles.TreasureParticleData;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncTreasureRestStatus;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -28,7 +28,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
@@ -98,7 +98,7 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 	public InteractionResult use(BlockState p_225533_1_, Level world, BlockPos p_225533_3_, Player player, InteractionHand hand, BlockHitResult p_225533_6_){
 		if(DragonUtils.isDragon(player) && player.getItemInHand(hand).isEmpty()){
 			if(player.getFeetBlockState().getBlock() == p_225533_1_.getBlock()){
-				DragonStateHandler handler = DragonUtils.getHandler(player);
+				DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
 
 				if(handler != null){
 					if(!handler.treasureResting){
@@ -112,7 +112,7 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 					if(!world.isClientSide){
 						player.resetStat(Stats.CUSTOM.get(Stats.TIME_SINCE_REST));
 						ServerPlayer serverplayerentity = (ServerPlayer)player;
-						if(serverplayerentity.getRespawnPosition() == null || serverplayerentity.getRespawnDimension() != world.dimension() || !(serverplayerentity.level.getBlockState(serverplayerentity.getRespawnPosition()).getBlock() instanceof TreasureBlock) || serverplayerentity.getRespawnPosition() != null && !serverplayerentity.getRespawnPosition().equals(p_225533_3_) && serverplayerentity.getRespawnPosition().distSqr(p_225533_3_) > 40){
+						if(serverplayerentity.getRespawnPosition() == null || serverplayerentity.getRespawnDimension() != world.dimension() || serverplayerentity.getRespawnPosition() != null && !serverplayerentity.getRespawnPosition().equals(p_225533_3_) && serverplayerentity.getRespawnPosition().distSqr(p_225533_3_) > 40){
 							serverplayerentity.setRespawnPosition(world.dimension(), p_225533_3_, 0.0F, false, true);
 							return InteractionResult.SUCCESS;
 						}
@@ -189,25 +189,34 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 		return true;
 	}
 
-	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_206840_1_){
+	protected void createBlockStateDefinition(Builder<Block, BlockState> p_206840_1_){
 		p_206840_1_.add(LAYERS);
 		p_206840_1_.add(WATERLOGGED);
 	}
 
 	@Override
-	public void appendHoverText(ItemStack p_190948_1_,
-		@Nullable
-			BlockGetter p_190948_2_, List<Component> p_190948_3_, TooltipFlag p_190948_4_){
-		super.appendHoverText(p_190948_1_, p_190948_2_, p_190948_3_, p_190948_4_);
-		p_190948_3_.add(new TranslatableComponent("ds.description.treasures"));
+	public void appendHoverText(ItemStack pStack, @org.jetbrains.annotations.Nullable BlockGetter pLevel, List<net.minecraft.network.chat.Component> pTooltip, TooltipFlag pFlag){
+		super.appendHoverText(pStack, pLevel, pTooltip, pFlag);
+		pTooltip.add(new TranslatableComponent("ds.description.treasures"));
 	}
 
 	@Override
-	public BlockState updateShape(BlockState state, Direction dir, BlockState state2, LevelAccessor level, BlockPos pos, BlockPos pos2){
-		if(state.getValue(WATERLOGGED)){
-			level.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
+	public void onBrokenAfterFall(Level world, BlockPos pos, FallingBlockEntity entity){
+		BlockState state = world.getBlockState(pos);
+		if(state.getBlock() instanceof TreasureBlock){
+			if(state.getBlock() == entity.getBlockState().getBlock()){
+				int i = state.getValue(LAYERS);
+				world.setBlockAndUpdate(pos, state.setValue(LAYERS, Integer.valueOf(Math.min(8, i + entity.getBlockState().getValue(LAYERS)))));
+			}
 		}
-		return super.updateShape(state, dir, state2, level, pos, pos2);
+	}
+
+	@Override
+	public BlockState updateShape(BlockState pState, Direction pFacing, BlockState pFacingState, LevelAccessor pLevel, BlockPos pCurrentPos, BlockPos pFacingPos){
+		if(pState.getValue(WATERLOGGED)){
+			pLevel.scheduleTick(pCurrentPos, Fluids.WATER, Fluids.WATER.getTickDelay(pLevel));
+		}
+		return super.updateShape(pState, pFacing, pFacingState, pLevel, pCurrentPos, pFacingPos);
 	}
 
 	public void tick(BlockState p_225534_1_, ServerLevel p_225534_2_, BlockPos p_225534_3_, Random p_225534_4_){
@@ -253,6 +262,7 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 		}
 	}
 
+	@Override
 	@OnlyIn( Dist.CLIENT )
 	public void animateTick(BlockState block, Level world, BlockPos pos, Random random){
 		double d1 = random.nextDouble();
@@ -262,18 +272,6 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 		if(world.isEmptyBlock(pos.above())){
 			if(random.nextInt(100) < 35){
 				world.addParticle(new TreasureParticleData(effectColor.getRed() / 255F, effectColor.getGreen() / 255F, effectColor.getBlue() / 255F, 1F), (double)pos.getX() + d1, (double)pos.getY() + d2, (double)pos.getZ() + d3, 0.0D, 0.0D, 0.0D);
-			}
-		}
-	}
-
-	@Override
-	public void onLand(Level world, BlockPos pos, BlockState p_153222_, BlockState p_153223_, FallingBlockEntity entity){
-		super.onLand(world, pos, p_153222_, p_153223_, entity);
-		BlockState state = world.getBlockState(pos);
-		if(state.getBlock() instanceof TreasureBlock){
-			if(state.getBlock() == entity.getBlockState().getBlock()){
-				int i = state.getValue(LAYERS);
-				world.setBlockAndUpdate(pos, state.setValue(LAYERS, Integer.valueOf(Math.min(8, i + entity.getBlockState().getValue(LAYERS)))));
 			}
 		}
 	}

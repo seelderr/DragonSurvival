@@ -1,10 +1,11 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.goals;
 
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.Mob;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.util.math.AABB;
+
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.phys.AABB;
 
 import java.util.Arrays;
 

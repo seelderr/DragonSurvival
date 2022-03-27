@@ -1,9 +1,10 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.goals;
 
-import net.minecraft.entity.Mob;
-import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.entity.passive.horse.Horse;
-import net.minecraft.pathfinding.Path;
+
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.animal.horse.Horse;
+import net.minecraft.world.level.pathfinder.Path;
 
 @SuppressWarnings( "unused" )
 public class RideHorse<E extends Mob> extends Goal{

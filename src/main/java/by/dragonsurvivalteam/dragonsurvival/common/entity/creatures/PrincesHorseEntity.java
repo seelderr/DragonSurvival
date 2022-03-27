@@ -14,21 +14,27 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.PanicGoal;
-import net.minecraft.world.entity.item.Item;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.npc.VillagerData;
 import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.entity.npc.VillagerType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.trading.MerchantOffers;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
@@ -45,17 +51,17 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-public class PrincesHorse extends Villager implements IAnimatable, CommonTraits{
+public class PrincesHorseEntity extends Villager implements IAnimatable, CommonTraits{
 	private static final List<DyeColor> colors = Arrays.asList(DyeColor.RED, DyeColor.YELLOW, DyeColor.PURPLE, DyeColor.BLUE, DyeColor.BLACK, DyeColor.WHITE);
-	public static EntityDataAccessor<Integer> color = SynchedEntityData.defineId(PrincesHorse.class, EntityDataSerializers.INT);
+	public static EntityDataAccessor<Integer> color = SynchedEntityData.defineId(PrincesHorseEntity.class, EntityDataSerializers.INT);
 	AnimationFactory animationFactory = new AnimationFactory(this);
 	AnimationTimer animationTimer = new AnimationTimer();
 
-	public PrincesHorse(EntityType<? extends Villager> entityType, Level world){
+	public PrincesHorseEntity(EntityType<? extends Villager> entityType, Level world){
 		super(entityType, world);
 	}
 
-	public PrincesHorse(EntityType<? extends Villager> entityType, Level world, VillagerType villagerType){
+	public PrincesHorseEntity(EntityType<? extends Villager> entityType, Level world, VillagerType villagerType){
 		super(entityType, world, villagerType);
 	}
 
@@ -126,10 +132,10 @@ public class PrincesHorse extends Villager implements IAnimatable, CommonTraits{
 
 	@Override
 	public void die(DamageSource damageSource){
-		if(level instanceof ServerLevel && !(this instanceof PrinceHorse)){
+		if(level instanceof ServerLevel && !(this instanceof PrinceHorseEntity)){
 			Princess princess = DSEntities.PRINCESS.create(level);
 			princess.setPos(getX(), getY(), getZ());
-			princess.finalizeSpawn((IServerLevel)level, level.getCurrentDifficultyAt(blockPosition()), MobSpawnType.NATURAL, null, null);
+			princess.finalizeSpawn((ServerLevelAccessor)level, level.getCurrentDifficultyAt(blockPosition()), MobSpawnType.NATURAL, null, null);
 			princess.setColor(getColor());
 			princess.setUUID(UUID.randomUUID());
 			level.addFreshEntity(princess);
@@ -184,13 +190,12 @@ public class PrincesHorse extends Villager implements IAnimatable, CommonTraits{
 	}
 
 	protected void registerGoals(){
-		this.goalSelector.addGoal(0, new SwimGoal(this));
-		this.goalSelector.addGoal(5, new WaterAvoidingRandomWalkingGoal(this, 1){
+		this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1){
 			public boolean canUse(){
-				return (!PrincesHorse.this.isTrading() && super.canUse());
+				return (!PrincesHorseEntity.this.isTrading() && super.canUse());
 			}
 		});
-		this.goalSelector.addGoal(6, new LookAtGoal(this, LivingEntity.class, 8.0F));
+		this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, LivingEntity.class, 8.0F));
 		goalSelector.addGoal(6, new AvoidEntityGoal<>(this, Player.class, 16, 1, 1, living -> {
 			return DragonUtils.isDragon(living) && living.hasEffect(DragonEffects.EVIL_DRAGON);
 		}));

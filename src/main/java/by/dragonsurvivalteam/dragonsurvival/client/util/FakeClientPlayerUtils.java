@@ -2,7 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.util;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DSEntities;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.Dragon;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import net.minecraft.world.entity.Entity.RemovalReason;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
@@ -20,20 +20,20 @@ import java.util.concurrent.TimeUnit;
 
 @OnlyIn( Dist.CLIENT )
 @EventBusSubscriber( Dist.CLIENT )
-public class FakeLocalPlayerUtils{
-	private static final ConcurrentHashMap<Integer, FakeLocalPlayer> fakePlayers = new ConcurrentHashMap<>();
-	private static final ConcurrentHashMap<Integer, Dragon> fakeDragons = new ConcurrentHashMap<>();
+public class FakeClientPlayerUtils{
+	private static final ConcurrentHashMap<Integer, FakeClientPlayer> fakePlayers = new ConcurrentHashMap<>();
+	private static final ConcurrentHashMap<Integer, DragonEntity> fakeDragons = new ConcurrentHashMap<>();
 
-	public static Dragon getFakeDragon(int num, DragonStateHandler handler){
-		FakeLocalPlayer clientPlayer = getFakePlayer(num, handler);
+	public static DragonEntity getFakeDragon(int num, DragonStateHandler handler){
+		FakeClientPlayer clientPlayer = getFakePlayer(num, handler);
 
-		fakeDragons.computeIfAbsent(num, (n) -> new Dragon(DSEntities.DRAGON, clientPlayer.level){
+		fakeDragons.computeIfAbsent(num, (n) -> new DragonEntity(DSEntities.DRAGON, clientPlayer.level){
 			@Override
 			public void registerControllers(AnimationData animationData){
 				animationData.shouldPlayWhilePaused = true;
-				animationData.addAnimationController(new AnimationController<Dragon>(this, "fake_player_controller", 2, (event) -> {
+				animationData.addAnimationController(new AnimationController<DragonEntity>(this, "fake_player_controller", 2, (event) -> {
 
-					if(getPlayer() instanceof FakeLocalPlayer){
+					if(getPlayer() instanceof FakeClientPlayer){
 						AnimationBuilder builder = new AnimationBuilder();
 
 						if(clientPlayer.animationSupplier != null){
@@ -57,8 +57,8 @@ public class FakeLocalPlayerUtils{
 		return fakeDragons.get(num);
 	}
 
-	public static FakeLocalPlayer getFakePlayer(int num, DragonStateHandler handler){
-		fakePlayers.computeIfAbsent(num, FakeLocalPlayer::new);
+	public static FakeClientPlayer getFakePlayer(int num, DragonStateHandler handler){
+		fakePlayers.computeIfAbsent(num, FakeClientPlayer::new);
 		fakePlayers.get(num).handler = handler;
 		fakePlayers.get(num).lastAccessed = System.currentTimeMillis();
 		return fakePlayers.get(num);

@@ -3,7 +3,6 @@ package by.dragonsurvivalteam.dragonsurvival.client.particles;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.particle.TextureSheetParticle;
-import net.minecraft.world.entity.Entity.RemovalReason;
 
 public class BeaconParticle extends TextureSheetParticle{
 	private double fallSpeed;
@@ -23,7 +22,7 @@ public class BeaconParticle extends TextureSheetParticle{
 		this.yo = this.y;
 		this.zo = this.z;
 		if(this.age++ >= this.lifetime){
-			this.remove(RemovalReason.DISCARDED);
+			this.remove();
 		}else{
 			//            this.setSpriteFromAge(this.sprites);
 			this.yd += this.fallSpeed;

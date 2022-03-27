@@ -2,7 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.Dragon;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -20,17 +20,17 @@ import software.bernie.geckolib3.renderers.geo.GeoLayerRenderer;
 
 import java.awt.Color;
 
-public class DragonArmorRenderLayer extends GeoLayerRenderer<Dragon>{
+public class DragonArmorRenderLayer extends GeoLayerRenderer<DragonEntity>{
 
-	private final GeoEntityRenderer<Dragon> renderer;
+	private final GeoEntityRenderer<DragonEntity> renderer;
 
-	public DragonArmorRenderLayer(GeoEntityRenderer<Dragon> entityRendererIn){
+	public DragonArmorRenderLayer(GeoEntityRenderer<DragonEntity> entityRendererIn){
 		super(entityRendererIn);
 		this.renderer = entityRendererIn;
 	}
 
 	@Override
-	public void render(PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn, Dragon entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch){
+	public void render(PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn, DragonEntity entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch){
 		if(!ConfigHandler.CLIENT.armorRenderLayer.get()){
 			return;
 		}
@@ -47,10 +47,10 @@ public class DragonArmorRenderLayer extends GeoLayerRenderer<Dragon>{
 			neck.setHidden(false);
 		}
 
-		ResourceLocation helmetTexture = new ResourceLocation(DragonSurvivalMod.MODID, constructArmorTexture(player, EquipmentSlotType.HEAD));
-		ResourceLocation chestPlateTexture = new ResourceLocation(DragonSurvivalMod.MODID, constructArmorTexture(player, EquipmentSlotType.CHEST));
-		ResourceLocation legsTexture = new ResourceLocation(DragonSurvivalMod.MODID, constructArmorTexture(player, EquipmentSlotType.LEGS));
-		ResourceLocation bootsTexture = new ResourceLocation(DragonSurvivalMod.MODID, constructArmorTexture(player, EquipmentSlotType.FEET));
+		ResourceLocation helmetTexture = new ResourceLocation(DragonSurvivalMod.MODID, constructArmorTexture(player, EquipmentSlot.HEAD));
+		ResourceLocation chestPlateTexture = new ResourceLocation(DragonSurvivalMod.MODID, constructArmorTexture(player, EquipmentSlot.CHEST));
+		ResourceLocation legsTexture = new ResourceLocation(DragonSurvivalMod.MODID, constructArmorTexture(player, EquipmentSlot.LEGS));
+		ResourceLocation bootsTexture = new ResourceLocation(DragonSurvivalMod.MODID, constructArmorTexture(player, EquipmentSlot.FEET));
 
 		renderArmorPiece(renderer.helmet, matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, helmetTexture);
 		renderArmorPiece(renderer.chestplate, matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, chestPlateTexture);
@@ -58,15 +58,15 @@ public class DragonArmorRenderLayer extends GeoLayerRenderer<Dragon>{
 		renderArmorPiece(renderer.boots, matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, bootsTexture);
 	}
 
-	private void renderArmorPiece(ItemStack stack, PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn, Dragon entitylivingbaseIn, float partialTicks, ResourceLocation helmetTexture){
+	private void renderArmorPiece(ItemStack stack, PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn, DragonEntity entitylivingbaseIn, float partialTicks, ResourceLocation helmetTexture){
 		if(entitylivingbaseIn == null){
 			return;
 		}
 
 		Color armorColor = new Color(1f, 1f, 1f);
 
-		if(stack.getItem() instanceof IDyeableArmorItem){
-			int colorCode = ((IDyeableArmorItem)stack.getItem()).getColor(stack);
+		if(stack.getItem() instanceof DyeableArmorItem){
+			int colorCode = ((DyeableArmorItem)stack.getItem()).getColor(stack);
 			armorColor = new Color(colorCode);
 		}
 

@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.TextComponent;
@@ -30,7 +31,7 @@ public class HelpButton extends ExtendedButton{
 	@Override
 	public void renderButton(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
 		Minecraft minecraft = Minecraft.getInstance();
-		minecraft.getTextureManager().bindForSetup(texture);
+		RenderSystem.setShaderTexture(0, texture);
 
 		float size = variation == 0 ? 18f : 22f;
 		float xSize = (float)(width + (variation == 0 ? 0 : 2)) / size;

@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.common.capability;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.client.util.FakeLocalPlayer;
+import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayer;
 import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.common.EffectInstance2;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
@@ -44,7 +44,7 @@ public class Capabilities{
 		event.addCapability(new ResourceLocation("dragonsurvival", "generic_capability_data"), genericCapabilityProvider);
 		event.addListener(genericCapabilityProvider::invalidate);
 
-		if(event.getObject() instanceof Player && !(event.getObject() instanceof FakeLocalPlayer)){
+		if(event.getObject() instanceof Player && !(event.getObject() instanceof FakeClientPlayer)){
 			DragonStateProvider provider = new DragonStateProvider();
 			event.addCapability(new ResourceLocation("dragonsurvival", "playerstatehandler"), provider);
 			event.addListener(provider::invalidate);

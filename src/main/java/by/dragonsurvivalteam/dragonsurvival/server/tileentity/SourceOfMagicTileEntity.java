@@ -42,8 +42,6 @@ public class SourceOfMagicTileEntity extends BaseBlockTileEntity implements Cont
 		consumables.put(DSItems.weakDragonHeart, Functions.secondsToTicks(ConfigHandler.SERVER.weakDragonHeartTime.get()));
 		consumables.put(DSItems.elderDragonHeart, Functions.secondsToTicks(ConfigHandler.SERVER.elderDragonHeartTime.get()));
 	}
-
-
 	public SourceOfMagicTileEntity(BlockPos pWorldPosition, BlockState pBlockState){
 		super(DSTileEntities.sourceOfMagicTileEntity, pWorldPosition, pBlockState);
 	}

@@ -2,7 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.hitbox.DragonHitBox;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
@@ -23,7 +23,7 @@ public class DragonHitboxHandler{
 			if(DragonUtils.isDragon(player)){
 				if(dragonHitboxes.containsKey(player.getId())){
 					int id = dragonHitboxes.get(player.getId());
-					Entity ent = player.level.getEntity(;
+					Entity ent = player.level.getEntity(id);
 
 					if(ent == null || !(ent instanceof DragonHitBox) || !ent.isAlive() || ent.isRemoved()){
 						dragonHitboxes.remove(player.getId());

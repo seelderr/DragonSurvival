@@ -4,24 +4,24 @@ import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.common.items.DSItems;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.attributes.AttributeInstance;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.projectile.ProjectileItem;
-import net.minecraft.item.Item;
-import net.minecraft.network.Packet;
-import net.minecraft.potion.MobEffectInstance;
-import net.minecraft.util.math.EntityHitResult;
-import net.minecraft.util.math.HitResult;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraftforge.network.NetworkHooks;
 
 import java.util.UUID;
 
-public class Bolas extends ProjectileItem{
+public class Bolas extends ThrowableItemProjectile{
 	public static final UUID DISABLE_MOVEMENT = UUID.fromString("eab67409-4834-43d8-bdf6-736dc96375f2");
 	public static final UUID DISABLE_JUMP = UUID.fromString("d7c976cd-edba-46aa-9002-294d429d7741");
 
@@ -42,16 +42,26 @@ public class Bolas extends ProjectileItem{
 		return DSItems.huntingNet;
 	}
 
+	@Override
+	protected void defineSynchedData(){
+
+	}
+
 	protected void onHit(HitResult p_70227_1_){
 		super.onHit(p_70227_1_);
 		if(!this.level.isClientSide){
-			remove();
+			remove(RemovalReason.DISCARDED);
 		}
+	}
+
+	@Override
+	public Packet<?> getAddEntityPacket(){
+		return NetworkHooks.getEntitySpawningPacket(this);
 	}
 
 	protected void onHit(EntityHitResult entityHitResult){
 		super.onHit(entityHitResult);
-		Entity entity = entityHitResult.get();
+		Entity entity = entityHitResult.getEntity();
 		if(!entity.level.isClientSide){
 			if(entity instanceof LivingEntity){
 				LivingEntity living = (LivingEntity)entity;
@@ -76,10 +86,5 @@ public class Bolas extends ProjectileItem{
 				}
 			}
 		}
-	}
-
-	@Override
-	public Packet<?> getAddEntityPacket(){
-		return NetworkHooks.getEntitySpawningPacket(this);
 	}
 }

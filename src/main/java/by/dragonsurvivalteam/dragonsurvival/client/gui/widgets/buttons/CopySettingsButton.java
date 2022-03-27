@@ -3,17 +3,16 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.components.CopyEditorSettingsComponent;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
-import com.mojang.blaze3d.matrix.PoseStack;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.util.ResourceLocation;
- 
-import net.minecraft.util.text.TextComponent;
- 
-import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
-
-import java.util.Arrays;
+import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.client.gui.widget.ExtendedButton;
 
 public class CopySettingsButton extends ExtendedButton{
 
@@ -22,7 +21,7 @@ public class CopySettingsButton extends ExtendedButton{
 	private CopyEditorSettingsComponent component;
 	private Widget renderButton;
 
-	public CopySettingsButton(DragonEditorScreen screen, int xPos, int yPos, int width, int height, Component displayString, IPressable handler){
+	public CopySettingsButton(DragonEditorScreen screen, int xPos, int yPos, int width, int height, Component displayString, OnPress handler){
 		super(xPos, yPos, width, height, displayString, handler);
 		this.screen = screen;
 	}
@@ -34,7 +33,7 @@ public class CopySettingsButton extends ExtendedButton{
 		super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 
 		if(visible){
-			Minecraft.getInstance().getTextureManager().bindForSetup(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/copy_icon.png"));
+			RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/copy_icon.png"));
 			blit(pMatrixStack, x, y, 0, 0, 16, 16, 16, 16);
 		}
 
@@ -42,7 +41,7 @@ public class CopySettingsButton extends ExtendedButton{
 			toggled = false;
 			Screen screen = Minecraft.getInstance().screen;
 			screen.children.removeIf((s) -> s == component);
-			screen.buttons.removeIf((s) -> s == renderButton);
+			screen.renderables.removeIf((s) -> s == renderButton);
 		}
 
 		if(this.isHoveredOrFocused() && (component != null && !component.isMouseOver(pMouseX, pMouseY) || !toggled)){
@@ -52,7 +51,7 @@ public class CopySettingsButton extends ExtendedButton{
 
 	@Override
 	public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-		Minecraft.getInstance().screen.renderTooltip(p_230443_1_, Arrays.asList(new TranslatableComponent("ds.gui.dragon_editor.copy")), p_230443_2_, p_230443_3_);
+		Minecraft.getInstance().screen.renderTooltip(p_230443_1_, new TranslatableComponent("ds.gui.dragon_editor.copy"), p_230443_2_, p_230443_3_);
 	}
 
 	@Override
@@ -80,10 +79,10 @@ public class CopySettingsButton extends ExtendedButton{
 			component = new CopyEditorSettingsComponent(screen, this, x + width - 80, y + (Math.min(offset, 0)), 80, 70);
 			screen.children.add(0, component);
 			screen.children.add(component);
-			screen.buttons.add(renderButton);
+			screen.renderables.add(renderButton);
 		}else{
 			screen.children.removeIf((s) -> s == component);
-			screen.buttons.removeIf((s) -> s == renderButton);
+			screen.renderables.removeIf((s) -> s == renderButton);
 		}
 
 		toggled = !toggled;

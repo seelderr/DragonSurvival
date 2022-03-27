@@ -3,7 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.models.projectiles;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.StormBreathEntity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 
 public class StormBreathEffectModel extends AnimatedGeoModel<StormBreathEntity>{

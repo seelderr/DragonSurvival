@@ -9,12 +9,12 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin( GameRenderer.class )
-public class MixinGameRenderer
-{
-	@Inject( at = @At("HEAD"), method = "getNightVisionScale", cancellable = true)
-	private static void getNightVisionScale(LivingEntity entity, float scale, CallbackInfoReturnable<Float> ci) {
-		if (!(entity instanceof Player))
+public class MixinGameRenderer{
+	@Inject( at = @At( "HEAD" ), method = "getNightVisionScale", cancellable = true )
+	private static void getNightVisionScale(LivingEntity entity, float scale, CallbackInfoReturnable<Float> ci){
+		if(!(entity instanceof Player)){
 			return;
+		}
 
 		ci.setReturnValue(1f);
 	}

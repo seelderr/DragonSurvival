@@ -7,7 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.objects.SkinPr
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.SkinCap;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.Dragon;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
@@ -24,19 +24,19 @@ import software.bernie.shadowed.eliotlash.molang.MolangParser;
 import java.util.Locale;
 import java.util.Objects;
 
-public class DragonModel extends AnimatedGeoModel<Dragon>{
+public class DragonModel extends AnimatedGeoModel<DragonEntity>{
 
 	private final double lookSpeed = 0.05;
 	private final double lookDistance = 10;
 	private ResourceLocation currentTexture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/cave_newborn.png");
 
 	@Override
-	public ResourceLocation getModelLocation(Dragon dragon){
+	public ResourceLocation getModelLocation(DragonEntity dragon){
 		return new ResourceLocation(DragonSurvivalMod.MODID, "geo/dragon_model.geo.json");
 	}
 
 	@Override
-	public ResourceLocation getTextureLocation(Dragon dragon){
+	public ResourceLocation getTextureLocation(DragonEntity dragon){
 		DragonStateHandler handler = DragonStateProvider.getCap(dragon.getPlayer()).orElse(null);
 
 		if(handler.getSkin().blankSkin){
@@ -65,18 +65,18 @@ public class DragonModel extends AnimatedGeoModel<Dragon>{
 	}
 
 	@Override
-	public ResourceLocation getAnimationFileLocation(Dragon animatable){
+	public ResourceLocation getAnimationFileLocation(DragonEntity animatable){
 		return new ResourceLocation(DragonSurvivalMod.MODID, "animations/dragon.animations.json");
 	}
 
 	@Override
 	public void setMolangQueries(IAnimatable animatable, double currentTick){
 		super.setMolangQueries(animatable, currentTick);
-		if(!(animatable instanceof Dragon)){
+		if(!(animatable instanceof DragonEntity)){
 			return;
 		}
 
-		Dragon dragon = (Dragon)animatable;
+		DragonEntity dragon = (DragonEntity)animatable;
 		MolangParser parser = GeckoLibCache.getInstance().parser;
 		Player player = dragon.getPlayer();
 
@@ -137,7 +137,7 @@ public class DragonModel extends AnimatedGeoModel<Dragon>{
 		double query_tail_motion_up = Mth.lerp(0.1, dragon.tail_motion_up, tailUpAvg);
 		double query_tail_motion_side = Mth.lerp(0.1, dragon.tail_motion_side, tailSideAvg);
 
-		if(((Dragon)animatable).tailLocked || !ConfigHandler.CLIENT.enableTailPhysics.get()){
+		if(((DragonEntity)animatable).tailLocked || !ConfigHandler.CLIENT.enableTailPhysics.get()){
 			dragon.tailMotionUp = 0;
 			dragon.tailMotionSide = 0;
 

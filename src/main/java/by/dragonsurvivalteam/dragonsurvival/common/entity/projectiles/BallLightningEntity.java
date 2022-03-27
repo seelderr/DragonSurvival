@@ -42,6 +42,10 @@ public class BallLightningEntity extends DragonBallEntity{
 		return ParticleTypes.WHITE_ASH;
 	}
 
+	protected boolean shouldBurn(){
+		return false;
+	}
+
 	public void attackMobs(){
 		int range = ((BallLightningAbility)DragonAbilities.BALL_LIGHTNING).getRange();
 		List<Entity> entities = this.level.getEntities(null, new AABB(position().x - range, position().y - range, position().z - range, position().x + range, position().y + range, position().z + range));
@@ -107,9 +111,5 @@ public class BallLightningEntity extends DragonBallEntity{
 
 
 		level.playLocalSound(getX(), getY(), getZ(), SoundEvents.LIGHTNING_BOLT_IMPACT, SoundSource.HOSTILE, 3.0F, 0.5f, false);
-	}
-
-	protected boolean shouldBurn(){
-		return false;
 	}
 }

@@ -1,10 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.config;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.EntityTypeTags;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -13,6 +10,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.function.Predicate;
+
+import static net.minecraft.resources.ResourceLocation.isValidResourceLocation;
 
 @Mod.EventBusSubscriber( modid = DragonSurvivalMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD )
 public class ConfigHandler{
@@ -69,11 +68,6 @@ public class ConfigHandler{
 		return false;
 	};
 
-
-	public static boolean isValidResourceLocation(String pResourceName) {
-		String[] astring = ResourceLocation.decompose(pResourceName, ':');
-		return ResourceLocation.isValidNamespace(org.apache.commons.lang3.StringUtils.isEmpty(astring[0]) ? "minecraft" : astring[0]) && ResourceLocation.isValidPath(astring[1]);
-	}
 	public static final Predicate<Object> itemPredicate = (obj) -> {
 		try{
 			String text = String.valueOf(obj);
@@ -110,9 +104,6 @@ public class ConfigHandler{
 			String[] itemSplit = text.split(":");
 			if(itemSplit.length >= 3 && itemSplit[0].equalsIgnoreCase("tag")){
 				return isValidResourceLocation(String.join(":", itemSplit[1], itemSplit[2]));
-			}else if(itemSplit.length == 2){
-				ResourceLocation location = ResourceLocation.tryParse(text);
-				return location != null && (BlockTags.getAllTags().getTag(location) != null || ItemTags.getAllTags().getTag(location) != null || EntityTypeTags.getAllTags().getTag(location) != null);
 			}
 		}catch(Exception ignored){
 		}

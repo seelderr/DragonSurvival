@@ -8,33 +8,38 @@ import by.dragonsurvivalteam.dragonsurvival.misc.PrincessTrades;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.serialization.Dynamic;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MobSpawnType;
-import net.minecraft.entity.SpawnGroupData;
-import net.minecraft.entity.ai.brain.Brain;
-import net.minecraft.entity.ai.goal.AvoidEntityGoal;
-import net.minecraft.entity.ai.goal.LookAtGoal;
-import net.minecraft.entity.ai.goal.PanicGoal;
-import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
-import net.minecraft.entity.effect.LightningBolt;
-import net.minecraft.entity.item.Item;
-import net.minecraft.entity.merchant.villager.Villager;
-import net.minecraft.entity.merchant.villager.VillagerData;
-import net.minecraft.entity.merchant.villager.VillagerTrades;
-import net.minecraft.entity.villager.VillagerType;
-import net.minecraft.item.*;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.datasync.EntityDataAccessor;
-import net.minecraft.network.datasync.EntityDataSerializers;
-import net.minecraft.network.datasync.SynchedEntityData;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
- 
- 
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.ai.Brain;
+import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.PanicGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.npc.Villager;
+import net.minecraft.world.entity.npc.VillagerData;
+import net.minecraft.world.entity.npc.VillagerTrades;
+import net.minecraft.world.entity.npc.VillagerTrades.ItemListing;
+import net.minecraft.world.entity.npc.VillagerType;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.trading.MerchantOffers;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -146,7 +151,7 @@ public class Princess extends Villager{
 				break;
 		}
 		if(!level.isClientSide){
-			level.addFreshEntity(new Item(level, getX(), getY(), getZ(), new ItemStack(flower)));
+			level.addFreshEntity(new ItemEntity(level, getX(), getY(), getZ(), new ItemStack(flower)));
 		}
 	}
 
@@ -172,12 +177,9 @@ public class Princess extends Villager{
 	public void thunderHit(ServerLevel p_241841_1_, LightningBolt p_241841_2_){
 	}
 
-	protected void pickUpItem(Item p_175445_1_){
-	}
-
 	protected void updateTrades(){
 		VillagerData villagerdata = getVillagerData();
-		Int2ObjectMap<VillagerTrades.ItemListing[]> int2objectmap = PrincessTrades.colorToTrades.get(getColor());
+		Int2ObjectMap<ItemListing[]> int2objectmap = PrincessTrades.colorToTrades.get(getColor());
 		if(int2objectmap != null && !int2objectmap.isEmpty()){
 			VillagerTrades.ItemListing[] trades = int2objectmap.get(villagerdata.getLevel());
 			if(trades != null){
@@ -193,13 +195,16 @@ public class Princess extends Villager{
 	public void startSleeping(BlockPos p_213342_1_){
 	}
 
+	protected void pickUpItem(Item p_175445_1_){
+	}
+
 	protected void registerGoals(){
-		this.goalSelector.addGoal(5, new WaterAvoidingRandomWalkingGoal(this, 0.5D){
+		this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.5D){
 			public boolean canUse(){
 				return (!Princess.this.isTrading() && super.canUse());
 			}
 		});
-		this.goalSelector.addGoal(6, new LookAtGoal(this, LivingEntity.class, 8.0F));
+		this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, LivingEntity.class, 8.0F));
 		goalSelector.addGoal(6, new AvoidEntityGoal<>(this, Player.class, 16, 1, 1, living -> {
 			return DragonUtils.isDragon(living) && living.hasEffect(DragonEffects.EVIL_DRAGON);
 		}));

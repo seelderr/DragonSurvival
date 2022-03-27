@@ -1,17 +1,14 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists;
 
-import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.fields.TextField;
-import com.mojang.blaze3d.matrix.PoseStack;
+import com.google.common.collect.ImmutableMap;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.client.AbstractOption;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.IGuiEventListener;
-import net.minecraft.client.gui.widget.OptionSlider;
-import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.client.gui.widget.button.OptionButton;
-import net.minecraft.client.gui.widget.list.AbstractOptionList;
-import net.minecraft.util.math.Mth;
-import net.minecraft.util.text.TextComponent;
+import net.minecraft.client.Option;
+import net.minecraft.client.gui.components.*;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.util.Mth;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 import net.minecraftforge.common.ForgeConfigSpec.ValueSpec;
 import org.apache.commons.lang3.StringUtils;
@@ -23,9 +20,9 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class OptionsList extends AbstractOptionList<by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.OptionListEntry>{
-	public static ConcurrentHashMap<AbstractOption, Pair<ValueSpec, ConfigValue>> config = new ConcurrentHashMap<>();
-	public static ConcurrentHashMap<AbstractOption, String> configMap = new ConcurrentHashMap<>();
+public class OptionsList extends ContainerObjectSelectionList<OptionListEntry>{
+	public static ConcurrentHashMap<Option, Pair<ValueSpec, ConfigValue>> config = new ConcurrentHashMap<>();
+	public static ConcurrentHashMap<Option, String> configMap = new ConcurrentHashMap<>();
 	public static CopyOnWriteArrayList<Integer> activeCats = new CopyOnWriteArrayList<>();
 	public int listWidth;
 
@@ -94,15 +91,20 @@ public class OptionsList extends AbstractOptionList<by.dragonsurvivalteam.dragon
 		return this.y0 + 4 - (int)this.getScrollAmount() + height - 4;
 	}
 
-	public void add(AbstractOption[] p_214335_1_, CategoryEntry entry){
+	@Override
+	public boolean removeEntry(by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.OptionListEntry p_230956_1_){
+		return super.removeEntry(p_230956_1_);
+	}
+
+	public void add(Option[] p_214335_1_, CategoryEntry entry){
 		for(int i = 0; i < p_214335_1_.length; i++){
 			add(p_214335_1_[i], entry);
 		}
 	}
 
-	public void add(AbstractOption option, CategoryEntry entry){
-		Widget widget = option.createButton(this.minecraft.options, getScrollbarPosition() - 165, 0, 140);
-		this.addEntry(new by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.OptionEntry(option, option.getCaption(), widget, entry));
+	public void add(Option option, CategoryEntry entry){
+		AbstractWidget widget = option.createButton(this.minecraft.options, getScrollbarPosition() - 165, 0, 140);
+		this.addEntry(new OptionEntry(ImmutableMap.of(option, widget), option, option.getCaption(), widget, entry));
 	}
 
 	public int getScrollbarPosition(){
@@ -177,11 +179,6 @@ public class OptionsList extends AbstractOptionList<by.dragonsurvivalteam.dragon
 		return this.getRowTop(p_230948_1_) + e.getHeight();
 	}
 
-	@Override
-	public boolean removeEntry(by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.OptionListEntry p_230956_1_){
-		return super.removeEntry(p_230956_1_);
-	}
-
 	@Nullable
 	public CategoryEntry findCategory(String text, String lastKey){
 		for(by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.OptionListEntry optionsrowlist$row : this.children()){
@@ -201,12 +198,12 @@ public class OptionsList extends AbstractOptionList<by.dragonsurvivalteam.dragon
 
 	@Nullable
 	public Widget findWidget(String text){
-		for(by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.OptionListEntry optionsrowlist$row : this.children()){
-			for(IGuiEventListener widget : optionsrowlist$row.children()){
+		for(OptionListEntry optionsrowlist$row : this.children()){
+			for(GuiEventListener widget : optionsrowlist$row.children()){
 				if(widget instanceof Widget){
-					if(widget instanceof OptionButton && ((OptionButton)widget).getMessage().getString().equals(text)){
+					if(widget instanceof CycleButton && ((CycleButton)widget).getMessage().getString().equals(text)){
 						return (Widget)widget;
-					}else if(widget instanceof OptionSlider && ((OptionSlider)widget).getMessage().getString().equals(text)){
+					}else if(widget instanceof SliderButton && ((SliderButton)widget).getMessage().getString().equals(text)){
 						return (Widget)widget;
 					}
 				}
@@ -217,13 +214,13 @@ public class OptionsList extends AbstractOptionList<by.dragonsurvivalteam.dragon
 	}
 
 	@Nullable
-	public by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.OptionListEntry findEntry(String text){
-		for(by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.OptionListEntry optionsrowlist$row : this.children()){
-			for(IGuiEventListener widget : optionsrowlist$row.children()){
+	public OptionListEntry findEntry(String text){
+		for(OptionListEntry optionsrowlist$row : this.children()){
+			for(GuiEventListener widget : optionsrowlist$row.children()){
 				if(widget instanceof Widget){
-					if(widget instanceof OptionButton && ((OptionButton)widget).getMessage().getString().equals(text)){
+					if(widget instanceof CycleButton && ((CycleButton)widget).getMessage().getString().equals(text)){
 						return optionsrowlist$row;
-					}else if(widget instanceof OptionSlider && ((OptionSlider)widget).getMessage().getString().equals(text)){
+					}else if(widget instanceof SliderButton && ((SliderButton)widget).getMessage().getString().equals(text)){
 						return optionsrowlist$row;
 					}
 				}
@@ -233,13 +230,13 @@ public class OptionsList extends AbstractOptionList<by.dragonsurvivalteam.dragon
 		return null;
 	}
 
-	public by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.OptionEntry findClosest(String text){
-		by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.OptionEntry closest = null;
+	public OptionEntry findClosest(String text){
+		OptionEntry closest = null;
 		int dif = -1;
 
-		for(by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.OptionListEntry row : this.children()){
-			if(row instanceof by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.OptionEntry){
-				by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.OptionEntry ent = (by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.OptionEntry)row;
+		for(OptionListEntry row : this.children()){
+			if(row instanceof OptionEntry){
+				OptionEntry ent = (OptionEntry)row;
 				String difText = StringUtils.difference(ent.key.getString().toLowerCase(Locale.ROOT).replace(" ", ""), text.toLowerCase(Locale.ROOT).replace(" ", ""));
 
 				if(difText.length() <= 15){
@@ -247,6 +244,9 @@ public class OptionsList extends AbstractOptionList<by.dragonsurvivalteam.dragon
 						closest = ent;
 						dif = difText.length();
 					}
+				}else if(dif == -1 && ent.key.getString().toLowerCase(Locale.ROOT).replace(" ", "").contains(text.toLowerCase(Locale.ROOT).replace(" ", ""))){
+					closest = ent;
+					dif = difText.length();
 				}
 			}
 		}
@@ -255,17 +255,12 @@ public class OptionsList extends AbstractOptionList<by.dragonsurvivalteam.dragon
 	}
 
 	@Nullable
-	public Widget findOption(AbstractOption p_243271_1_){
-		for(by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.OptionListEntry optionsrowlist$row : this.children()){
-			for(IGuiEventListener widget : optionsrowlist$row.children()){
-				if(widget instanceof Widget){
-					if(widget instanceof OptionButton && ((OptionButton)widget).getOption() == p_243271_1_){
-						return (Widget)widget;
-					}else if(widget instanceof OptionSlider && ((OptionSlider)widget).option == p_243271_1_){
-						return (Widget)widget;
-					}else if(widget instanceof TextField && ((TextField)widget).option == p_243271_1_){
-						return (Widget)widget;
-					}
+	public AbstractWidget findOption(Option pOption){
+		for(OptionListEntry optionslist$entry : this.children()){
+			if(optionslist$entry instanceof OptionEntry){
+				AbstractWidget abstractwidget = ((OptionEntry)optionslist$entry).options.get(pOption);
+				if(abstractwidget != null){
+					return abstractwidget;
 				}
 			}
 		}
@@ -273,13 +268,11 @@ public class OptionsList extends AbstractOptionList<by.dragonsurvivalteam.dragon
 		return null;
 	}
 
-	public Optional<Widget> getMouseOver(double p_238518_1_, double p_238518_3_){
-		for(by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.OptionListEntry optionsrowlist$row : this.children()){
-			for(IGuiEventListener widget : optionsrowlist$row.children()){
-				if(widget instanceof Widget){
-					if(widget.isMouseOver(p_238518_1_, p_238518_3_)){
-						return Optional.of((Widget)widget);
-					}
+	public Optional<AbstractWidget> getMouseOver(double p_238518_1_, double p_238518_3_){
+		for(OptionListEntry optionsrowlist$row : this.children()){
+			for(AbstractWidget widget : optionsrowlist$row.children){
+				if(widget.isMouseOver(p_238518_1_, p_238518_3_)){
+					return Optional.of(widget);
 				}
 			}
 		}

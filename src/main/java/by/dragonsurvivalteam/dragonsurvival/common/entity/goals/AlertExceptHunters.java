@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.goals;
 
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.DragonHunter;
-import net.minecraft.entity.Mob;
+import net.minecraft.world.entity.Mob;
 
 public class AlertExceptHunters<T extends Mob> extends AlertGoal<Mob>{
 	public AlertExceptHunters(T owner, Class<? extends Mob>... toAlert){

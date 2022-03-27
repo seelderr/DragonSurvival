@@ -2,19 +2,20 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.HelpButton;
+import by.dragonsurvivalteam.dragonsurvival.common.blocks.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.SourceOfMagicContainer;
-import by.dragonsurvivalteam.dragonsurvival.server.tileentity.SourceOfMagicBlockEntity;
-import com.mojang.blaze3d.matrix.PoseStack;
+import by.dragonsurvivalteam.dragonsurvival.server.tileentity.SourceOfMagicTileEntity;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.util.ResourceLocation;
- 
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.Block;
 import org.lwjgl.opengl.GL11;
 
-public class SourceOfMagicScreen extends ContainerScreen<SourceOfMagicContainer>{
+public class SourceOfMagicScreen extends AbstractContainerScreen<SourceOfMagicContainer>{
 	static final ResourceLocation BACKGROUND = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/source_of_magic/source_of_magic_ui.png");
 	static final ResourceLocation CAVE_NEST0 = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/source_of_magic/cave_source_of_magic_0.png");
 	static final ResourceLocation CAVE_NEST1 = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/source_of_magic/cave_source_of_magic_1.png");
@@ -22,13 +23,13 @@ public class SourceOfMagicScreen extends ContainerScreen<SourceOfMagicContainer>
 	static final ResourceLocation FOREST_NEST1 = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/source_of_magic/forest_source_of_magic_1.png");
 	static final ResourceLocation SEA_NEST0 = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/source_of_magic/sea_source_of_magic_0.png");
 	static final ResourceLocation SEA_NEST1 = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/source_of_magic/sea_source_of_magic_1.png");
-	private final SourceOfMagicBlockEntity nest;
+	private final SourceOfMagicTileEntity nest;
 
 	private final Player player;
 
-	public SourceOfMagicScreen(SourceOfMagicContainer screenContainer, PlayerInventory inv, Component titleIn){
+	public SourceOfMagicScreen(SourceOfMagicContainer screenContainer, Inventory inv, Component titleIn){
 		super(screenContainer, inv, titleIn);
-		nest = screenContainer.nest;
+		nest = screenContainer.nestEntity;
 		player = inv.player;
 	}
 
@@ -49,27 +50,23 @@ public class SourceOfMagicScreen extends ContainerScreen<SourceOfMagicContainer>
 	@Override
 	protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY){ // WIP
 		renderBackground(matrixStack);
-		TextureManager textureManager = minecraft.getTextureManager();
-		textureManager.bind(BACKGROUND);
+		RenderSystem.setShaderTexture(0, BACKGROUND);
 		blit(matrixStack, leftPos, topPos, 0, 0, imageWidth, imageHeight);
 
 		boolean hasItem = !nest.getItem(0).isEmpty();
+		Block block = nest.getBlockState().getBlock();
 
-		switch(nest.type){
-			case CAVE:
-				textureManager.bind(hasItem ? CAVE_NEST1 : CAVE_NEST0);
-				break;
-			case FOREST:
-				textureManager.bind(hasItem ? FOREST_NEST1 : FOREST_NEST0);
-				break;
-			case SEA:
-				textureManager.bind(hasItem ? SEA_NEST1 : SEA_NEST0);
-				break;
+		if(DSBlocks.caveSourceOfMagic.equals(block)){
+			RenderSystem.setShaderTexture(0, hasItem ? CAVE_NEST1 : CAVE_NEST0);
+		}else if(DSBlocks.forestSourceOfMagic.equals(block)){
+			RenderSystem.setShaderTexture(0, hasItem ? FOREST_NEST1 : FOREST_NEST0);
+		}else if(DSBlocks.seaSourceOfMagic.equals(block)){
+			RenderSystem.setShaderTexture(0, hasItem ? SEA_NEST1 : SEA_NEST0);
 		}
 
 		RenderSystem.enableBlend();
 		RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1f);
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1f);
 		blit(matrixStack, leftPos + 8, topPos + 8, 0, 0, 160, 49, 160, 49);
 	}
 }

@@ -9,14 +9,13 @@ import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.container.OpenDragonInventory;
 import by.dragonsurvivalteam.dragonsurvival.network.container.OpenInventory;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
-import net.minecraftforge.client.gui.GuiUtils;
-
-import java.util.Arrays;
+import net.minecraft.network.chat.TranslatableComponent;
 
 
 public class TabButton extends Button{
@@ -100,13 +99,13 @@ public class TabButton extends Button{
 	}
 
 	@Override
-	public void renderButton(MatrixStack stack, int mouseX, int mouseY, float p_230431_4_){
-		Minecraft.getInstance().getTextureManager().bind(ClientMagicHUDHandler.widgetTextures);
+	public void renderButton(PoseStack stack, int mouseX, int mouseY, float p_230431_4_){
+		RenderSystem.setShaderTexture(0, ClientMagicHUDHandler.widgetTextures);
 
 		if(isCurrent()){
 			blit(stack, x, y, index == 0 ? 0 : 28, 0, 28, 32);
 		}else{
-			if(isHovered()){
+			if(isHovered){
 				blit(stack, x, y, 84, 0, 28, 32);
 			}else{
 				blit(stack, x, y, 56, 0, 28, 32);
@@ -114,14 +113,14 @@ public class TabButton extends Button{
 		}
 
 
-		if(isHovered() || isCurrent()){
+		if(isHovered || isCurrent()){
 			blit(stack, x + 2, y + 2 + (isCurrent() ? 2 : 0), (index * 24), 67, 24, 24);
 		}else{
 			blit(stack, x + 2, y + 2 + (isCurrent() ? 2 : 0), (index * 24), 41, 24, 24);
 		}
 
-		if(isHovered()){
-			GuiUtils.drawHoveringText(stack, Arrays.asList(new TranslatableComponent("ds.gui.tab_button." + index)), mouseX, mouseY, Minecraft.getInstance().screen.width, Minecraft.getInstance().screen.height, 200, Minecraft.getInstance().font);
+		if(isHovered){
+			Minecraft.getInstance().screen.renderTooltip(stack, new TranslatableComponent("ds.gui.tab_button." + index), mouseX, mouseY);
 		}
 	}
 }

@@ -10,19 +10,19 @@ import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.objects.LayerS
 import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.objects.SkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.objects.SkinPreset.SkinAgeGroup;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.Dragon;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
-import com.mojang.blaze3d.matrix.PoseStack;
+import com.mojang.blaze3d.platform.NativeImage;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.potion.MobEffects;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.Mth;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import net.minecraft.world.effect.MobEffects;
 import software.bernie.geckolib3.renderers.geo.GeoLayerRenderer;
 import software.bernie.geckolib3.renderers.geo.IGeoRenderer;
 
@@ -32,17 +32,17 @@ import java.io.InputStream;
 import java.util.Locale;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class DragonSkinLayerRenderer extends GeoLayerRenderer<Dragon>{
-	private final IGeoRenderer<Dragon> renderer;
+public class DragonSkinLayerRenderer extends GeoLayerRenderer<DragonEntity>{
+	private final IGeoRenderer<DragonEntity> renderer;
 	public ConcurrentHashMap<ResourceLocation, DynamicTexture> dynamicTextures = new ConcurrentHashMap<>();
 
-	public DragonSkinLayerRenderer(IGeoRenderer<Dragon> entityRendererIn){
+	public DragonSkinLayerRenderer(IGeoRenderer<DragonEntity> entityRendererIn){
 		super(entityRendererIn);
 		this.renderer = entityRendererIn;
 	}
 
 	@Override
-	public void render(PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn, Dragon entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch){
+	public void render(PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn, DragonEntity entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch){
 		if(entitylivingbaseIn.hasEffect(MobEffects.INVISIBILITY)){
 			return;
 		}

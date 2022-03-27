@@ -8,12 +8,11 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-@OnlyIn( Dist.CLIENT)
-public class StormBreathSound extends AbstractTickableSoundInstance
-{
-	private StormBreathAbility ability;
-	public StormBreathSound(StormBreathAbility ability)
-	{
+@OnlyIn( Dist.CLIENT )
+public class StormBreathSound extends AbstractTickableSoundInstance{
+	private final StormBreathAbility ability;
+
+	public StormBreathSound(StormBreathAbility ability){
 		super(SoundRegistry.stormBreathLoop, SoundSource.PLAYERS);
 
 		this.looping = true;

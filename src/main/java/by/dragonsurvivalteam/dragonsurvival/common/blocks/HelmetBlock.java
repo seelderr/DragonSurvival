@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.common.blocks;
 
-import by.dragonsurvivalteam.dragonsurvival.server.tileentity.DSTileEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -15,8 +14,6 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-
-import javax.annotation.Nullable;
 
 public class HelmetBlock extends Block{
 	public static final IntegerProperty ROTATION = BlockStateProperties.ROTATION_16;
@@ -52,16 +49,5 @@ public class HelmetBlock extends Block{
 
 	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> stateBuilder){
 		stateBuilder.add(ROTATION);
-	}
-
-	@Override
-	public boolean hasBlock(BlockState state){
-		return true;
-	}
-
-	@Nullable
-	@Override
-	public Block createBlockEntity(BlockState state, BlockGetter world){
-		return DSTileEntities.helmetTile.create();
 	}
 }

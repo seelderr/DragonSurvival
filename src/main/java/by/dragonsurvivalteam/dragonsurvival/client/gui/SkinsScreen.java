@@ -7,30 +7,33 @@ import by.dragonsurvivalteam.dragonsurvival.client.handlers.DragonSkins;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.magic.ClientMagicHUDHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon.DragonRenderer;
-import by.dragonsurvivalteam.dragonsurvival.client.util.FakeLocalPlayerUtils;
+import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.Dragon;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.entity.player.SyncDragonSkinSettings;
 import com.ibm.icu.impl.Pair;
-import com.mojang.blaze3d.matrix.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.screen.ConfirmOpenLinkScreen;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.screens.ConfirmLinkScreen;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.util.IReorderingProcessor;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Util;
-import net.minecraft.util.math.Mth;
-import net.minecraft.util.text.*;
+import net.minecraft.locale.Language;
+import net.minecraft.network.chat.*;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.util.Mth;
 import software.bernie.geckolib3.core.processor.IBone;
 
 import java.net.URI;
@@ -79,10 +82,10 @@ public class SkinsScreen extends Screen{
 			return;
 		}
 
-		RenderSystem.pushMatrix();
-		RenderSystem.translatef(0F, 0F, -500);
+		stack.pushPose();
+		stack.translate(0F, 0F, -500);
 		this.renderBackground(stack);
-		RenderSystem.popMatrix();
+		stack.popPose();
 
 		int startX = this.guiLeft;
 		int startY = this.guiTop;
@@ -94,8 +97,8 @@ public class SkinsScreen extends Screen{
 			neckandHead.setHidden(false);
 		}
 
-		Dragon dragon = FakeLocalPlayerUtils.getFakeDragon(0, this.handler);
-		EntityRenderer<? super Dragon> dragonRenderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(dragon);
+		DragonEntity dragon = FakeClientPlayerUtils.getFakeDragon(0, this.handler);
+		EntityRenderer<? super DragonEntity> dragonRenderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(dragon);
 
 		if(noSkin && Objects.equals(playerName, minecraft.player.getGameProfile().getName())){
 			ClientDragonRender.dragonModel.setCurrentTexture(null);
@@ -121,20 +124,20 @@ public class SkinsScreen extends Screen{
 				this.handler.getSkin().skinPreset.skinAges.get(level).defaultSkin = true;
 			}
 
-			FakeLocalPlayerUtils.getFakePlayer(0, this.handler).animationSupplier = () -> "fly";
-			RenderSystem.pushMatrix();
-			RenderSystem.translatef(0, 0, 100);
+			FakeClientPlayerUtils.getFakePlayer(0, this.handler).animationSupplier = () -> "fly";
+			stack.pushPose();
+			stack.translate(0, 0, 100);
 			ClientDragonRender.renderEntityInInventory(dragon, startX + 15, startY + 70, scale, xRot, yRot);
-			RenderSystem.popMatrix();
+			stack.popPose();
 		}
 
 		((DragonRenderer)dragonRenderer).glowTexture = null;
 
 		stack.popPose();
 
-		RenderSystem.translatef(0F, 0F, 400);
+		stack.translate(0F, 0F, 400);
 
-		this.minecraft.getTextureManager().bindForSetup(BACKGROUND_TEXTURE);
+		RenderSystem.setShaderTexture(0, BACKGROUND_TEXTURE);
 		blit(stack, startX + 128, startY, 0, 0, 164, 256);
 
 		drawNonShadowString(stack, minecraft.font, new TranslatableComponent("ds.gui.skins").withStyle(ChatFormatting.DARK_GRAY), startX + 128 + ((imageWidth) / 2), startY + 7, -1);
@@ -154,36 +157,45 @@ public class SkinsScreen extends Screen{
 
 		super.render(stack, mouseX, mouseY, partialTicks);
 
-		for(Widget btn : buttons){
-			if(btn.isHoveredOrFocused()){
-				btn.renderToolTip(stack, mouseX, mouseY);
+		for(Widget btn : renderables){
+			if(btn instanceof AbstractWidget && ((AbstractWidget)btn).isHoveredOrFocused()){
+				((AbstractWidget)btn).renderToolTip(stack, mouseX, mouseY);
 			}
 		}
 
-		RenderSystem.translatef(0F, 0F, -400f);
+		stack.translate(0F, 0F, -400f);
 	}
 
-	public static void drawNonShadowString(PoseStack p_238472_0_, FontRenderer p_238472_1_, Component p_238472_2_, int p_238472_3_, int p_238472_4_, int p_238472_5_){
-		p_238472_1_.draw(p_238472_0_, LanguageMap.getInstance().getVisualOrder(p_238472_2_), p_238472_3_ - p_238472_1_.width(p_238472_2_) / 2, p_238472_4_, p_238472_5_);
+	public static void drawNonShadowString(PoseStack p_238472_0_, Font p_238472_1_, Component p_238472_2_, int p_238472_3_, int p_238472_4_, int p_238472_5_){
+		p_238472_1_.draw(p_238472_0_, Language.getInstance().getVisualOrder(p_238472_2_), p_238472_3_ - p_238472_1_.width(p_238472_2_) / 2, p_238472_4_, p_238472_5_);
 	}
 
-	public static void drawNonShadowLineBreak(PoseStack p_238472_0_, FontRenderer p_238472_1_, Component p_238472_2_, int p_238472_3_, int p_238472_4_, int p_238472_5_){
-		IReorderingProcessor ireorderingprocessor = p_238472_2_.getVisualOrderText();
+	public static void drawNonShadowLineBreak(PoseStack p_238472_0_, Font p_238472_1_, Component p_238472_2_, int p_238472_3_, int p_238472_4_, int p_238472_5_){
+		FormattedCharSequence ireorderingprocessor = p_238472_2_.getVisualOrderText();
 
-		List<ITextProperties> wrappedLine = p_238472_1_.getSplitter().splitLines(p_238472_2_, 150, Style.EMPTY);
+		List<FormattedText> wrappedLine = p_238472_1_.getSplitter().splitLines(p_238472_2_, 150, Style.EMPTY);
 		int i = 0;
-		for(ITextProperties properties : wrappedLine){
-			p_238472_1_.draw(p_238472_0_, LanguageMap.getInstance().getVisualOrder(properties), p_238472_3_ - p_238472_1_.width(ireorderingprocessor) / 2, p_238472_4_ + i * 9, p_238472_5_);
+		for(FormattedText properties : wrappedLine){
+			p_238472_1_.draw(p_238472_0_, Language.getInstance().getVisualOrder(properties), p_238472_3_ - p_238472_1_.width(ireorderingprocessor) / 2, p_238472_4_ + i * 9, p_238472_5_);
 			i++;
 		}
 	}
 
 	@Override
-	public void init(Minecraft p_231158_1_, int width, int height){
-		super.init(p_231158_1_, width, height);
+	public void init(){
+		super.init();
+
+		this.guiLeft = (this.width - 256) / 2;
+		this.guiTop = (this.height - 128) / 2;
 
 		int startX = this.guiLeft;
 		int startY = this.guiTop;
+
+		if(playerName == null){
+			playerName = minecraft.player.getGameProfile().getName();
+		}
+
+		setTextures();
 
 		addRenderableWidget(new TabButton(startX + 128 + 5, startY - 26, 0, this));
 		addRenderableWidget(new TabButton(startX + 128 + 33, startY - 26, 1, this));
@@ -205,7 +217,7 @@ public class SkinsScreen extends Screen{
 				super.renderButton(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
 
 				DragonStateHandler handler = DragonStateProvider.getCap(getMinecraft().player).orElse(null);
-				minecraft.getTextureManager().bindForSetup(handler == null || !handler.getSkin().renderNewborn ? UNCHECKED : CHECKED);
+				RenderSystem.setShaderTexture(0, handler == null || !handler.getSkin().renderNewborn ? UNCHECKED : CHECKED);
 				blit(p_230431_1_, x + 3, y + 3, 0, 0, 13, 13, 13, 13);
 			}
 		});
@@ -225,7 +237,7 @@ public class SkinsScreen extends Screen{
 				super.renderButton(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
 
 				DragonStateHandler handler = DragonStateProvider.getCap(getMinecraft().player).orElse(null);
-				minecraft.getTextureManager().bindForSetup(handler == null || !handler.getSkin().renderYoung ? UNCHECKED : CHECKED);
+				RenderSystem.setShaderTexture(0, handler == null || !handler.getSkin().renderYoung ? UNCHECKED : CHECKED);
 				blit(p_230431_1_, x + 3, y + 3, 0, 0, 13, 13, 13, 13);
 			}
 		});
@@ -245,7 +257,7 @@ public class SkinsScreen extends Screen{
 				super.renderButton(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
 
 				DragonStateHandler handler = DragonStateProvider.getCap(getMinecraft().player).orElse(null);
-				minecraft.getTextureManager().bindForSetup(handler == null || !handler.getSkin().renderAdult ? UNCHECKED : CHECKED);
+				RenderSystem.setShaderTexture(0, handler == null || !handler.getSkin().renderAdult ? UNCHECKED : CHECKED);
 				blit(p_230431_1_, x + 3, y + 3, 0, 0, 13, 13, 13, 13);
 			}
 		});
@@ -259,7 +271,7 @@ public class SkinsScreen extends Screen{
 			public void renderButton(PoseStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_){
 				super.renderButton(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
 
-				minecraft.getTextureManager().bindForSetup(ConfigHandler.CLIENT.renderOtherPlayerSkins.get() ? CHECKED : UNCHECKED);
+				RenderSystem.setShaderTexture(0, ConfigHandler.CLIENT.renderOtherPlayerSkins.get() ? CHECKED : UNCHECKED);
 				blit(p_230431_1_, x + 3, y + 3, 0, 0, 13, 13, 13, 13);
 			}
 		});
@@ -268,20 +280,20 @@ public class SkinsScreen extends Screen{
 			try{
 				URI uri = new URI(DISCORD_URL);
 				this.clickedLink = uri;
-				this.minecraft.setScreen(new ConfirmOpenLinkScreen(this::confirmLink, DISCORD_URL, false));
+				this.minecraft.setScreen(new ConfirmLinkScreen(this::confirmLink, DISCORD_URL, false));
 			}catch(URISyntaxException urisyntaxexception){
 				urisyntaxexception.printStackTrace();
 			}
 		}){
 			@Override
 			public void renderButton(PoseStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_){
-				minecraft.getTextureManager().bindForSetup(DISCORD);
+				RenderSystem.setShaderTexture(0, DISCORD);
 				blit(p_230431_1_, x, y, 0, 0, 16, 16, 16, 16);
 			}
 
 			@Override
 			public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-				Minecraft.getInstance().screen.renderTooltip(p_230443_1_, Arrays.asList(new TranslatableComponent("ds.gui.skins.tooltip.discord")), p_230443_2_, p_230443_3_);
+				Minecraft.getInstance().screen.renderTooltip(p_230443_1_, new TranslatableComponent("ds.gui.skins.tooltip.discord"), p_230443_2_, p_230443_3_);
 			}
 		});
 
@@ -289,20 +301,20 @@ public class SkinsScreen extends Screen{
 			try{
 				URI uri = new URI(WIKI_URL);
 				this.clickedLink = uri;
-				this.minecraft.setScreen(new ConfirmOpenLinkScreen(this::confirmLink, WIKI_URL, false));
+				this.minecraft.setScreen(new ConfirmLinkScreen(this::confirmLink, WIKI_URL, false));
 			}catch(URISyntaxException urisyntaxexception){
 				urisyntaxexception.printStackTrace();
 			}
 		}){
 			@Override
 			public void renderButton(PoseStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_){
-				minecraft.getTextureManager().bindForSetup(WIKI);
+				RenderSystem.setShaderTexture(0, WIKI);
 				blit(p_230431_1_, x, y, 0, 0, 16, 16, 16, 16);
 			}
 
 			@Override
 			public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-				Minecraft.getInstance().screen.renderTooltip(p_230443_1_, Arrays.asList(new TranslatableComponent("ds.gui.skins.tooltip.wiki")), p_230443_2_, p_230443_3_);
+				Minecraft.getInstance().screen.renderTooltip(p_230443_1_, new TranslatableComponent("ds.gui.skins.tooltip.wiki"), p_230443_2_, p_230443_3_);
 			}
 		});
 
@@ -314,7 +326,7 @@ public class SkinsScreen extends Screen{
 		}){
 			@Override
 			public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-				Minecraft.getInstance().screen.renderTooltip(p_230443_1_, Arrays.asList(new TranslatableComponent("ds.gui.skins.tooltip.yours")), p_230443_2_, p_230443_3_);
+				Minecraft.getInstance().screen.renderTooltip(p_230443_1_, new TranslatableComponent("ds.gui.skins.tooltip.yours"), p_230443_2_, p_230443_3_);
 			}
 		});
 
@@ -354,7 +366,7 @@ public class SkinsScreen extends Screen{
 		}){
 			@Override
 			public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-				Minecraft.getInstance().screen.renderTooltip(p_230443_1_, Arrays.asList(new TranslatableComponent("ds.gui.skins.tooltip.random")), p_230443_2_, p_230443_3_);
+				Minecraft.getInstance().screen.renderTooltip(p_230443_1_, new TranslatableComponent("ds.gui.skins.tooltip.random"), p_230443_2_, p_230443_3_);
 			}
 		});
 
@@ -367,7 +379,7 @@ public class SkinsScreen extends Screen{
 		}){
 			@Override
 			public void renderButton(PoseStack stack, int mouseX, int mouseY, float p_230431_4_){
-				Minecraft.getInstance().getTextureManager().bindForSetup(ClientMagicHUDHandler.widgetTextures);
+				RenderSystem.setShaderTexture(0, ClientMagicHUDHandler.widgetTextures);
 
 				if(isHoveredOrFocused()){
 					blit(stack, x, y, 66 / 2, 222 / 2, 11, 17, 128, 128);
@@ -386,7 +398,7 @@ public class SkinsScreen extends Screen{
 		}){
 			@Override
 			public void renderButton(PoseStack stack, int mouseX, int mouseY, float p_230431_4_){
-				Minecraft.getInstance().getTextureManager().bindForSetup(ClientMagicHUDHandler.widgetTextures);
+				RenderSystem.setShaderTexture(0, ClientMagicHUDHandler.widgetTextures);
 
 				if(isHoveredOrFocused()){
 					blit(stack, x, y, 22 / 2, 222 / 2, 11, 17, 128, 128);
@@ -438,20 +450,6 @@ public class SkinsScreen extends Screen{
 
 	private void openLink(URI p_231156_1_){
 		Util.getPlatform().openUri(p_231156_1_);
-	}
-
-	@Override
-	protected void init(){
-		super.init();
-
-		this.guiLeft = (this.width - 256) / 2;
-		this.guiTop = (this.height - 128) / 2;
-
-		if(playerName == null){
-			playerName = minecraft.player.getGameProfile().getName();
-		}
-
-		setTextures();
 	}
 
 	@Override

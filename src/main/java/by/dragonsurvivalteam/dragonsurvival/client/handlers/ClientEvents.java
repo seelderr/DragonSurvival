@@ -12,6 +12,9 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonSta
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.Bolas;
 import by.dragonsurvivalteam.dragonsurvival.common.items.DSItems;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.DragonAbilities;
+import by.dragonsurvivalteam.dragonsurvival.common.magic.abilities.Passives.ContrastShowerAbility;
+import by.dragonsurvivalteam.dragonsurvival.common.magic.abilities.Passives.LightInDarknessAbility;
+import by.dragonsurvivalteam.dragonsurvival.common.magic.abilities.Passives.WaterAbility;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
@@ -24,37 +27,37 @@ import by.dragonsurvivalteam.dragonsurvival.network.container.OpenDragonInventor
 import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncPlayerSkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.network.entity.player.SyncDragonSkinSettings;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-import com.mojang.blaze3d.matrix.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.LocalPlayer;
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.inventory.CreativeScreen;
-import net.minecraft.client.gui.screen.inventory.InventoryScreen;
-import net.minecraft.client.gui.widget.button.ImageButton;
-import net.minecraft.client.renderer.FluidBlockRenderer;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.components.ImageButton;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.RenderTypeLookup;
+import net.minecraft.client.renderer.block.LiquidBlockRenderer;
+import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
-import net.minecraft.client.renderer.entity.model.EntityModel;
-import net.minecraft.client.renderer.model.ItemCameraTransforms;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.item.*;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.Mth;
- 
- 
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.*;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.RenderBlockOverlayEvent;
+import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.client.event.RenderLivingEntityEvent;
 import net.minecraftforge.client.gui.ForgeIngameGui;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -62,6 +65,7 @@ import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.network.PacketDistributor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -80,7 +84,7 @@ public class ClientEvents{
 	public static double mouseY = -1;
 	private static ItemStack BOLAS;
 	private static boolean wasCaveDragon = false;
-	private static FluidBlockRenderer prevFluidRenderer;
+	private static LiquidBlockRenderer prevFluidRenderer;
 
 	@SubscribeEvent
 	public static void decreaseJumpDuration(TickEvent.PlayerTickEvent playerTickEvent){
@@ -126,7 +130,7 @@ public class ClientEvents{
 	}
 
 	@SubscribeEvent
-	public static void onOpenScreen(GuiOpenEvent openEvent){
+	public static void onOpenScreen(ScreenOpenEvent openEvent){
 		LocalPlayer player = Minecraft.getInstance().player;
 
 		if(!ConfigHandler.CLIENT.dragonInventory.get()){
@@ -139,15 +143,15 @@ public class ClientEvents{
 			return;
 		}
 
-		if(openEvent.getGui() instanceof InventoryScreen){
+		if(openEvent.getScreen() instanceof InventoryScreen){
 			openEvent.setCanceled(true);
 			NetworkHandler.CHANNEL.sendToServer(new OpenDragonInventory());
 		}
 	}
 
 	@SubscribeEvent
-	public static void addCraftingButton(GuiScreenEvent.InitGuiEvent.Post initGuiEvent){
-		Screen sc = initGuiEvent.getGui();
+	public static void addCraftingButton(ScreenEvent.InitScreenEvent.Post initGuiEvent){
+		Screen sc = initGuiEvent.getScreen();
 
 		if(!DragonUtils.isDragon(Minecraft.getInstance().player)){
 			return;
@@ -157,7 +161,7 @@ public class ClientEvents{
 			InventoryScreen screen = (InventoryScreen)sc;
 
 			if(ConfigHandler.CLIENT.dragonTabs.get()){
-				initGuiEvent.addWidget(new TabButton(screen.getGuiLeft(), screen.getGuiTop() - 28, 0, screen){
+				initGuiEvent.addListener(new TabButton(screen.getGuiLeft(), screen.getGuiTop() - 28, 0, screen){
 					@Override
 					public void renderButton(PoseStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_){
 						super.renderButton(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
@@ -165,7 +169,7 @@ public class ClientEvents{
 					}
 				});
 
-				initGuiEvent.addWidget(new TabButton(screen.getGuiLeft() + 28, screen.getGuiTop() - 26, 1, screen){
+				initGuiEvent.addListener(new TabButton(screen.getGuiLeft() + 28, screen.getGuiTop() - 26, 1, screen){
 					@Override
 					public void renderButton(PoseStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_){
 						super.renderButton(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
@@ -173,7 +177,7 @@ public class ClientEvents{
 					}
 				});
 
-				initGuiEvent.addWidget(new TabButton(screen.getGuiLeft() + 57, screen.getGuiTop() - 26, 2, screen){
+				initGuiEvent.addListener(new TabButton(screen.getGuiLeft() + 57, screen.getGuiTop() - 26, 2, screen){
 					@Override
 					public void renderButton(PoseStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_){
 						super.renderButton(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
@@ -181,7 +185,7 @@ public class ClientEvents{
 					}
 				});
 
-				initGuiEvent.addWidget(new TabButton(screen.getGuiLeft() + 86, screen.getGuiTop() - 26, 3, screen){
+				initGuiEvent.addListener(new TabButton(screen.getGuiLeft() + 86, screen.getGuiTop() - 26, 3, screen){
 					@Override
 					public void renderButton(PoseStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_){
 						super.renderButton(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
@@ -191,7 +195,7 @@ public class ClientEvents{
 			}
 
 			if(ConfigHandler.CLIENT.inventoryToggle.get()){
-				initGuiEvent.addWidget(new ImageButton(screen.getGuiLeft() + 128, screen.height / 2 - 22, 20, 18, 20, 0, 19, DragonScreen.INVENTORY_TOGGLE_BUTTON, p_onPress_1_ -> {
+				initGuiEvent.addListener(new ImageButton(screen.getGuiLeft() + 128, screen.height / 2 - 22, 20, 18, 20, 0, 19, DragonScreen.INVENTORY_TOGGLE_BUTTON, p_onPress_1_ -> {
 					NetworkHandler.CHANNEL.sendToServer(new OpenDragonInventory());
 				}){
 					@Override
@@ -208,16 +212,16 @@ public class ClientEvents{
 			}
 		}
 
-		if(sc instanceof CreativeScreen){
-			CreativeScreen screen = (CreativeScreen)sc;
+		if(sc instanceof CreativeModeInventoryScreen){
+			CreativeModeInventoryScreen screen = (CreativeModeInventoryScreen)sc;
 
 			if(ConfigHandler.CLIENT.inventoryToggle.get()){
-				initGuiEvent.addWidget(new ImageButton(screen.getGuiLeft() + 128 + 20, screen.height / 2 - 50, 20, 18, 20, 0, 19, DragonScreen.INVENTORY_TOGGLE_BUTTON, p_onPress_1_ -> {
+				initGuiEvent.addListener(new ImageButton(screen.getGuiLeft() + 128 + 20, screen.height / 2 - 50, 20, 18, 20, 0, 19, DragonScreen.INVENTORY_TOGGLE_BUTTON, p_onPress_1_ -> {
 					NetworkHandler.CHANNEL.sendToServer(new OpenDragonInventory());
 				}){
 					@Override
 					public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
-						this.active = this.visible = screen.getSelectedTab() == ItemGroup.TAB_INVENTORY.getId();
+						this.active = this.visible = screen.getSelectedTab() == CreativeModeTab.TAB_INVENTORY.getId();
 						super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
 					}
 
@@ -246,15 +250,15 @@ public class ClientEvents{
 	}
 
 	@SubscribeEvent
-	public static void renderTrap(RenderLivingEntityEvent.Pre<LivingEntity, EntityModel<LivingEntity>> postEvent){
-		LivingEntity entity = postEvent.get();
+	public static void renderTrap(RenderLivingEvent.Pre<LivingEntity, EntityModel<LivingEntity>> postEvent){
+		LivingEntity entity = postEvent.getEntity();
 		if(!(entity instanceof Player) && entity.getAttributes().hasAttribute(Attributes.MOVEMENT_SPEED)){
 			AttributeModifier bolasTrap = new AttributeModifier(Bolas.DISABLE_MOVEMENT, "Bolas trap", -entity.getAttribute(Attributes.MOVEMENT_SPEED).getValue(), AttributeModifier.Operation.ADDITION);
 			if(entity.getAttribute(Attributes.MOVEMENT_SPEED).hasModifier(bolasTrap)){
-				int light = postEvent.getLight();
+				int light = postEvent.getPackedLight();
 				int overlayCoords = LivingEntityRenderer.getOverlayCoords(entity, 0);
-				MultiBufferSource buffers = postEvent.getBuffers();
-				PoseStack matrixStack = postEvent.getMatrixStack();
+				MultiBufferSource buffers = postEvent.getMultiBufferSource();
+				PoseStack matrixStack = postEvent.getPoseStack();
 				renderBolas(light, overlayCoords, buffers, matrixStack);
 			}
 		}
@@ -267,7 +271,7 @@ public class ClientEvents{
 		if(BOLAS == null){
 			BOLAS = new ItemStack(DSItems.huntingNet);
 		}
-		Minecraft.getInstance().getItemRenderer().renderStatic(BOLAS, ItemCameraTransforms.TransformType.NONE, light, overlayCoords, matrixStack, buffers);
+		Minecraft.getInstance().getItemRenderer().renderStatic(BOLAS, TransformType.NONE, light, overlayCoords, matrixStack, buffers, 0);
 		matrixStack.popPose();
 	}
 
@@ -278,18 +282,18 @@ public class ClientEvents{
 
 	public static String getMaterial(String texture, ItemStack clawItem){
 		TieredItem item = (TieredItem)clawItem.getItem();
-		IItemTier tier = item.getTier();
-		if(tier == ItemTier.NETHERITE){
+		Tier tier = item.getTier();
+		if(tier == Tiers.NETHERITE){
 			texture += "netherite_";
-		}else if(tier == ItemTier.DIAMOND){
+		}else if(tier == Tiers.DIAMOND){
 			texture += "diamond_";
-		}else if(tier == ItemTier.IRON){
+		}else if(tier == Tiers.IRON){
 			texture += "iron_";
-		}else if(tier == ItemTier.GOLD){
+		}else if(tier == Tiers.GOLD){
 			texture += "gold_";
-		}else if(tier == ItemTier.STONE){
+		}else if(tier == Tiers.STONE){
 			texture += "stone_";
-		}else if(tier == ItemTier.WOOD){
+		}else if(tier == Tiers.WOOD){
 			texture += "wooden_";
 		}else{
 			texture += "moded_";
@@ -299,7 +303,7 @@ public class ClientEvents{
 
 	@SubscribeEvent
 	@OnlyIn( Dist.CLIENT )
-	public static void onRenderWorldLastEvent(RenderWorldLastEvent event){
+	public static void onRenderWorldLastEvent(RenderLevelLastEvent event){
 		Minecraft minecraft = Minecraft.getInstance();
 		LocalPlayer player = minecraft.player;
 		DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
@@ -307,8 +311,8 @@ public class ClientEvents{
 				if(!wasCaveDragon){
 					if(player.hasEffect(DragonEffects.LAVA_VISION)){
 						RenderType lavaType = RenderType.translucent();
-						RenderTypeLookup.setRenderLayer(Fluids.LAVA, lavaType);
-						RenderTypeLookup.setRenderLayer(Fluids.FLOWING_LAVA, lavaType);
+						ItemBlockRenderTypes.setRenderLayer(Fluids.LAVA, lavaType);
+						ItemBlockRenderTypes.setRenderLayer(Fluids.FLOWING_LAVA, lavaType);
 						prevFluidRenderer = minecraft.getBlockRenderer().liquidBlockRenderer;
 						minecraft.getBlockRenderer().liquidBlockRenderer = new CaveLavaFluidRenderer();
 						minecraft.levelRenderer.allChanged();
@@ -317,8 +321,8 @@ public class ClientEvents{
 					if(!player.hasEffect(DragonEffects.LAVA_VISION)){
 						if(prevFluidRenderer != null){
 							RenderType lavaType = RenderType.solid();
-							RenderTypeLookup.setRenderLayer(Fluids.LAVA, lavaType);
-							RenderTypeLookup.setRenderLayer(Fluids.FLOWING_LAVA, lavaType);
+							ItemBlockRenderTypes.setRenderLayer(Fluids.LAVA, lavaType);
+							ItemBlockRenderTypes.setRenderLayer(Fluids.FLOWING_LAVA, lavaType);
 							minecraft.getBlockRenderer().liquidBlockRenderer = prevFluidRenderer;
 						}
 						minecraft.levelRenderer.allChanged();
@@ -328,8 +332,8 @@ public class ClientEvents{
 				if(wasCaveDragon){
 					if(prevFluidRenderer != null){
 						RenderType lavaType = RenderType.solid();
-						RenderTypeLookup.setRenderLayer(Fluids.LAVA, lavaType);
-						RenderTypeLookup.setRenderLayer(Fluids.FLOWING_LAVA, lavaType);
+						ItemBlockRenderTypes.setRenderLayer(Fluids.LAVA, lavaType);
+						ItemBlockRenderTypes.setRenderLayer(Fluids.FLOWING_LAVA, lavaType);
 						minecraft.getBlockRenderer().liquidBlockRenderer = prevFluidRenderer;
 					}
 					minecraft.levelRenderer.allChanged();
@@ -339,127 +343,141 @@ public class ClientEvents{
 		});
 	}
 
-	@SubscribeEvent
-	@OnlyIn( Dist.CLIENT )
-	public static void onRenderOverlayPreTick(RenderGameOverlayEvent.Pre event){
+	public static void onRenderOverlayPreTick(ForgeIngameGui gui, PoseStack mStack, float partialTicks, int width, int height){
 		Minecraft mc = Minecraft.getInstance();
 		LocalPlayer player = mc.player;
+
+		if(mc.options.hideGui || !gui.shouldDrawSurvivalElements()){
+			return;
+		}
+
+		if(!DragonUtils.isDragon(player)){
+			ForgeIngameGui.AIR_LEVEL_ELEMENT.render(gui, mStack, partialTicks, width, height);
+			return;
+		}
+
 		DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
-			if(event.getType() == RenderGameOverlayEvent.ElementType.AIR){
-				if(playerStateHandler.getType() == DragonType.SEA && ConfigHandler.SERVER.bonuses.get() && ConfigHandler.SERVER.seaSwimmingBonuses.get()){
-					event.setCanceled(true);
-				}
-				if(playerStateHandler.getDebuffData().timeWithoutWater > 0 && playerStateHandler.getType() == DragonType.SEA && ConfigHandler.SERVER.penalties.get() && ConfigHandler.SERVER.seaTicksWithoutWater.get() != 0){
-					RenderSystem.enableBlend();
-					mc.getTextureManager().bindForSetup(DRAGON_HUD);
+			int rightHeight = 0;
 
-					final int right_height = ForgeIngameGui.right_height;
-					ForgeIngameGui.right_height += 10;
+			//            if (playerStateHandler.getType() == DragonType.SEA && ConfigHandler.SERVER.bonuses.get() && ConfigHandler.SERVER.seaSwimmingBonuses.get()) event.setCanceled(true);
+			if(playerStateHandler.getDebuffData().timeWithoutWater > 0 && playerStateHandler.getType() == DragonType.SEA && ConfigHandler.SERVER.penalties.get() && ConfigHandler.SERVER.seaTicksWithoutWater.get() != 0){
+				RenderSystem.enableBlend();
+				RenderSystem.setShaderTexture(0, DRAGON_HUD);
 
-					int maxTimeWithoutWater = ConfigHandler.SERVER.seaTicksWithoutWater.get();
-					DragonAbility waterAbility = playerStateHandler.getMagic().getAbility(DragonAbilities.WATER);
-
-					if(waterAbility != null){
-						maxTimeWithoutWater += Functions.secondsToTicks(((WaterAbility)waterAbility).getDuration());
-					}
-
-					double timeWithoutWater = maxTimeWithoutWater - playerStateHandler.getDebuffData().timeWithoutWater;
-					boolean flag = false;
-					if(timeWithoutWater < 0){
-						flag = true;
-						timeWithoutWater = Math.abs(timeWithoutWater);
-					}
-
-					final int left = Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 + 91;
-					final int top = Minecraft.getInstance().getWindow().getGuiScaledHeight() - right_height;
-					final int full = flag ? Mth.floor(timeWithoutWater * 10.0D / maxTimeWithoutWater) : Mth.ceil((timeWithoutWater - 2) * 10.0D / maxTimeWithoutWater);
-					final int partial = Mth.ceil(timeWithoutWater * 10.0D / maxTimeWithoutWater) - full;
-
-					for(int i = 0; i < full + partial; ++i){
-						Minecraft.getInstance().gui.blit(event.getMatrixStack(), left - i * 8 - 9, top, (flag ? 18 : i < full ? 0 : 9), 36, 9, 9);
-					}
-
-
-					mc.getTextureManager().bindForSetup(AbstractGui.GUI_ICONS_LOCATION);
-					RenderSystem.disableBlend();
-				}
-				if(playerStateHandler.getLavaAirSupply() < ConfigHandler.SERVER.caveLavaSwimmingTicks.get() && playerStateHandler.getType() == DragonType.CAVE && ConfigHandler.SERVER.bonuses.get() && ConfigHandler.SERVER.caveLavaSwimmingTicks.get() != 0 && ConfigHandler.SERVER.caveLavaSwimming.get()){
-					RenderSystem.enableBlend();
-					mc.getTextureManager().bindForSetup(DRAGON_HUD);
-
-					final int right_height = ForgeIngameGui.right_height;
-					ForgeIngameGui.right_height += 10;
-
-					final int left = Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 + 91;
-					final int top = Minecraft.getInstance().getWindow().getGuiScaledHeight() - right_height;
-					final int full = Mth.ceil((double)(playerStateHandler.getLavaAirSupply() - 2) * 10.0D / ConfigHandler.SERVER.caveLavaSwimmingTicks.get());
-					final int partial = Mth.ceil((double)playerStateHandler.getLavaAirSupply() * 10.0D / ConfigHandler.SERVER.caveLavaSwimmingTicks.get()) - full;
-
-					for(int i = 0; i < full + partial; ++i){
-						Minecraft.getInstance().gui.blit(event.getMatrixStack(), left - i * 8 - 9, top, (i < full ? 0 : 9), 27, 9, 9);
-					}
-
-					mc.getTextureManager().bindForSetup(AbstractGui.GUI_ICONS_LOCATION);
-					RenderSystem.disableBlend();
-				}
-				if(playerStateHandler.getDebuffData().timeInDarkness > 0 && playerStateHandler.getType() == DragonType.FOREST && ConfigHandler.SERVER.penalties.get() && ConfigHandler.SERVER.forestStressTicks.get() != 0 && !player.hasEffect(DragonEffects.STRESS)){
-					RenderSystem.enableBlend();
-					mc.getTextureManager().bindForSetup(DRAGON_HUD);
-
-					final int right_height = ForgeIngameGui.right_height;
-					ForgeIngameGui.right_height += 10;
-
-					int maxTimeInDarkness = ConfigHandler.SERVER.forestStressTicks.get();
-					DragonAbility lightInDarkness = playerStateHandler.getMagic().getAbility(DragonAbilities.LIGHT_IN_DARKNESS);
-
-					if(lightInDarkness != null){
-						maxTimeInDarkness += Functions.secondsToTicks(((LightInDarknessAbility)lightInDarkness).getDuration());
-					}
-
-					final int timeInDarkness = maxTimeInDarkness - Math.min(playerStateHandler.getDebuffData().timeInDarkness, maxTimeInDarkness);
-
-					final int left = Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 + 91;
-					final int top = Minecraft.getInstance().getWindow().getGuiScaledHeight() - right_height;
-					final int full = Mth.ceil((double)(timeInDarkness - 2) * 10.0D / maxTimeInDarkness);
-					final int partial = Mth.ceil((double)timeInDarkness * 10.0D / maxTimeInDarkness) - full;
-
-					for(int i = 0; i < full + partial; ++i){
-						Minecraft.getInstance().gui.blit(event.getMatrixStack(), left - i * 8 - 9, top, (i < full ? 0 : 9), 45, 9, 9);
-					}
-
-					mc.getTextureManager().bindForSetup(AbstractGui.GUI_ICONS_LOCATION);
-					RenderSystem.disableBlend();
+				if(Minecraft.getInstance().gui instanceof ForgeIngameGui){
+					rightHeight = ((ForgeIngameGui)Minecraft.getInstance().gui).right_height;
+					((ForgeIngameGui)Minecraft.getInstance().gui).right_height += 10;
 				}
 
-				if(playerStateHandler.getDebuffData().timeInRain > 0 && playerStateHandler.getType() == DragonType.CAVE && ConfigHandler.SERVER.penalties.get() && ConfigHandler.SERVER.caveRainDamage.get() != 0.0){
-					RenderSystem.enableBlend();
-					mc.getTextureManager().bindForSetup(DRAGON_HUD);
+				int maxTimeWithoutWater = ConfigHandler.SERVER.seaTicksWithoutWater.get();
+				DragonAbility waterAbility = playerStateHandler.getMagic().getAbility(DragonAbilities.WATER);
 
-					final int right_height = ForgeIngameGui.right_height;
-					ForgeIngameGui.right_height += 10;
-
-					DragonAbility contrastShower = playerStateHandler.getMagic().getAbility(DragonAbilities.CONTRAST_SHOWER);
-					int maxRainTime = 0;
-
-					if(contrastShower != null){
-						maxRainTime += Functions.secondsToTicks(((ContrastShowerAbility)contrastShower).getDuration());
-					}
-
-
-					final int timeInRain = maxRainTime - Math.min(playerStateHandler.getDebuffData().timeInRain, maxRainTime);
-
-					final int left = Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 + 91;
-					final int top = Minecraft.getInstance().getWindow().getGuiScaledHeight() - right_height;
-					final int full = Mth.ceil((double)(timeInRain - 2) * 10.0D / maxRainTime);
-					final int partial = Mth.ceil((double)timeInRain * 10.0D / maxRainTime) - full;
-
-					for(int i = 0; i < full + partial; ++i){
-						Minecraft.getInstance().gui.blit(event.getMatrixStack(), left - i * 8 - 9, top, (i < full ? 0 : 9), 54, 9, 9);
-					}
-
-					mc.getTextureManager().bindForSetup(AbstractGui.GUI_ICONS_LOCATION);
-					RenderSystem.disableBlend();
+				if(waterAbility != null){
+					maxTimeWithoutWater += Functions.secondsToTicks(((WaterAbility)waterAbility).getDuration());
 				}
+
+				double timeWithoutWater = maxTimeWithoutWater - playerStateHandler.getDebuffData().timeWithoutWater;
+				boolean flag = false;
+				if(timeWithoutWater < 0){
+					flag = true;
+					timeWithoutWater = Math.abs(timeWithoutWater);
+				}
+
+				final int left = Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 + 91;
+				final int top = Minecraft.getInstance().getWindow().getGuiScaledHeight() - rightHeight;
+				final int full = flag ? Mth.floor(timeWithoutWater * 10.0D / maxTimeWithoutWater) : Mth.ceil((timeWithoutWater - 2) * 10.0D / maxTimeWithoutWater);
+				final int partial = Mth.ceil(timeWithoutWater * 10.0D / maxTimeWithoutWater) - full;
+
+				for(int i = 0; i < full + partial; ++i){
+					Minecraft.getInstance().gui.blit(mStack, left - i * 8 - 9, top, (flag ? 18 : i < full ? 0 : 9), 36, 9, 9);
+				}
+
+
+				RenderSystem.setShaderTexture(0, Gui.GUI_ICONS_LOCATION);
+				RenderSystem.disableBlend();
+			}
+			if(playerStateHandler.getLavaAirSupply() < ConfigHandler.SERVER.caveLavaSwimmingTicks.get() && playerStateHandler.getType() == DragonType.CAVE && ConfigHandler.SERVER.bonuses.get() && ConfigHandler.SERVER.caveLavaSwimmingTicks.get() != 0 && ConfigHandler.SERVER.caveLavaSwimming.get()){
+				RenderSystem.enableBlend();
+				RenderSystem.setShaderTexture(0, DRAGON_HUD);
+
+				if(Minecraft.getInstance().gui instanceof ForgeIngameGui){
+					rightHeight = ((ForgeIngameGui)Minecraft.getInstance().gui).right_height;
+					((ForgeIngameGui)Minecraft.getInstance().gui).right_height += 10;
+				}
+
+				final int left = Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 + 91;
+				final int top = Minecraft.getInstance().getWindow().getGuiScaledHeight() - rightHeight;
+				final int full = Mth.ceil((double)(playerStateHandler.getLavaAirSupply() - 2) * 10.0D / ConfigHandler.SERVER.caveLavaSwimmingTicks.get());
+				final int partial = Mth.ceil((double)playerStateHandler.getLavaAirSupply() * 10.0D / ConfigHandler.SERVER.caveLavaSwimmingTicks.get()) - full;
+
+				for(int i = 0; i < full + partial; ++i){
+					Minecraft.getInstance().gui.blit(mStack, left - i * 8 - 9, top, (i < full ? 0 : 9), 27, 9, 9);
+				}
+
+				RenderSystem.setShaderTexture(0, Gui.GUI_ICONS_LOCATION);
+				RenderSystem.disableBlend();
+			}
+			if(playerStateHandler.getDebuffData().timeInDarkness > 0 && playerStateHandler.getType() == DragonType.FOREST && ConfigHandler.SERVER.penalties.get() && ConfigHandler.SERVER.forestStressTicks.get() != 0 && !player.hasEffect(DragonEffects.STRESS)){
+				RenderSystem.enableBlend();
+				RenderSystem.setShaderTexture(0, DRAGON_HUD);
+
+				if(Minecraft.getInstance().gui instanceof ForgeIngameGui){
+					rightHeight = ((ForgeIngameGui)Minecraft.getInstance().gui).right_height;
+					((ForgeIngameGui)Minecraft.getInstance().gui).right_height += 10;
+				}
+
+				int maxTimeInDarkness = ConfigHandler.SERVER.forestStressTicks.get();
+				DragonAbility lightInDarkness = playerStateHandler.getMagic().getAbility(DragonAbilities.LIGHT_IN_DARKNESS);
+
+				if(lightInDarkness != null){
+					maxTimeInDarkness += Functions.secondsToTicks(((LightInDarknessAbility)lightInDarkness).getDuration());
+				}
+
+				final int timeInDarkness = maxTimeInDarkness - Math.min(playerStateHandler.getDebuffData().timeInDarkness, maxTimeInDarkness);
+
+				final int left = Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 + 91;
+				final int top = Minecraft.getInstance().getWindow().getGuiScaledHeight() - rightHeight;
+				final int full = Mth.ceil((double)(timeInDarkness - 2) * 10.0D / maxTimeInDarkness);
+				final int partial = Mth.ceil((double)timeInDarkness * 10.0D / maxTimeInDarkness) - full;
+
+				for(int i = 0; i < full + partial; ++i){
+					Minecraft.getInstance().gui.blit(mStack, left - i * 8 - 9, top, (i < full ? 0 : 9), 45, 9, 9);
+				}
+
+				RenderSystem.setShaderTexture(0, Gui.GUI_ICONS_LOCATION);
+				RenderSystem.disableBlend();
+			}
+
+			if(playerStateHandler.getDebuffData().timeInRain > 0 && playerStateHandler.getType() == DragonType.CAVE && ConfigHandler.SERVER.penalties.get() && ConfigHandler.SERVER.caveRainDamage.get() != 0.0){
+				RenderSystem.enableBlend();
+				RenderSystem.setShaderTexture(0, DRAGON_HUD);
+
+				if(Minecraft.getInstance().gui instanceof ForgeIngameGui){
+					rightHeight = ((ForgeIngameGui)Minecraft.getInstance().gui).right_height;
+					((ForgeIngameGui)Minecraft.getInstance().gui).right_height += 10;
+				}
+
+				DragonAbility contrastShower = playerStateHandler.getMagic().getAbility(DragonAbilities.CONTRAST_SHOWER);
+				int maxRainTime = 0;
+
+				if(contrastShower != null){
+					maxRainTime += Functions.secondsToTicks(((ContrastShowerAbility)contrastShower).getDuration());
+				}
+
+
+				final int timeInRain = maxRainTime - Math.min(playerStateHandler.getDebuffData().timeInRain, maxRainTime);
+
+				final int left = Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 + 91;
+				final int top = Minecraft.getInstance().getWindow().getGuiScaledHeight() - rightHeight;
+				final int full = Mth.ceil((double)(timeInRain - 2) * 10.0D / maxRainTime);
+				final int partial = Mth.ceil((double)timeInRain * 10.0D / maxRainTime) - full;
+
+				for(int i = 0; i < full + partial; ++i){
+					Minecraft.getInstance().gui.blit(mStack, left - i * 8 - 9, top, (i < full ? 0 : 9), 54, 9, 9);
+				}
+
+				RenderSystem.setShaderTexture(0, Gui.GUI_ICONS_LOCATION);
+				RenderSystem.disableBlend();
 			}
 		});
 	}

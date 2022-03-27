@@ -20,7 +20,7 @@ public class BolasEntityRenderer extends EntityRenderer<Bolas>{
 	}
 
 	public void render(Bolas p_225623_1_, float p_225623_2_, float p_225623_3_, PoseStack stack, MultiBufferSource p_225623_5_, int p_225623_6_){
-		if(p_225623_1_.tickCount >= 2 || !(this.entityRenderDispatcher.camera.get().distanceToSqr(p_225623_1_) < 12.25D)){
+		if(p_225623_1_.tickCount >= 2 || !(this.entityRenderDispatcher.camera.getEntity().distanceToSqr(p_225623_1_) < 12.25D)){
 			stack.pushPose();
 			stack.translate(0F, -0.2F, 0F);
 			stack.scale(2.0F, 2.0F, 2.0F);

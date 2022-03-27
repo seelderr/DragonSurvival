@@ -20,12 +20,11 @@ import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.blocks.BlockStateParser;
 import net.minecraft.commands.arguments.item.ItemParser;
+import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.EntityTypeTags;
-import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -42,6 +41,7 @@ import org.codehaus.plexus.util.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 public class ResourceTextField extends EditBox implements TooltipAccessor{
 	private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/textbox.png");
@@ -49,7 +49,7 @@ public class ResourceTextField extends EditBox implements TooltipAccessor{
 	private final List<by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.ResourceEntry> suggestions = new ArrayList<>();
 	boolean isItem;
 	boolean isBlock;
-	boolean is;
+	boolean isEntity;
 	boolean isEffect;
 	boolean isBiome;
 	boolean isTag;
@@ -67,18 +67,18 @@ public class ResourceTextField extends EditBox implements TooltipAccessor{
 
 		isItem = ConfigHandler.isItemPredicate(spec::test);
 		isBlock = ConfigHandler.isBlockPredicate(spec::test);
-		is = ConfigHandler.isEntityPredicate(spec::test);
+		isEntity = ConfigHandler.isEntityPredicate(spec::test);
 		isEffect = ConfigHandler.isEffectPredicate(spec::test);
 		isBiome = ConfigHandler.isBiomePredicate(spec::test);
 		isTag = ConfigHandler.isTagPredicate(spec::test);
 		update();
 	}
 
-	public ResourceTextField(int pX, int pY, int pWidth, int pHeight, Component pMessage, boolean isItem, boolean isBlock, boolean is, boolean isEffect, boolean isBiome, boolean isTag){
+	public ResourceTextField(int pX, int pY, int pWidth, int pHeight, Component pMessage, boolean isItem, boolean isBlock, boolean isEntity, boolean isEffect, boolean isBiome, boolean isTag){
 		super(Minecraft.getInstance().font, pX, pY, pWidth, pHeight, pMessage);
 		this.isItem = isItem;
 		this.isBlock = isBlock;
-		this.is = is;
+		this.isEntity = isEntity;
 		this.isEffect = isEffect;
 		this.isBiome = isBiome;
 		this.isTag = isTag;
@@ -107,7 +107,7 @@ public class ResourceTextField extends EditBox implements TooltipAccessor{
 		}
 
 		String value = getValue().isEmpty() && option != null ? option.getter.apply(Minecraft.getInstance().options) : getValue();
-		String type = (isItem ? "item" : isBlock ? "block" : is ? "entity" : isEffect ? "effect" : isBiome ? "biome" : "") + ":";
+		String type = (isItem ? "item" : isBlock ? "block" : isEntity ? "entity" : isEffect ? "effect" : isBiome ? "biome" : "") + ":";
 		String tagType = "tag:";
 
 		String resource = value.toLowerCase(Locale.ROOT).startsWith(type) ? value.substring(type.length()) : value;
@@ -155,7 +155,7 @@ public class ResourceTextField extends EditBox implements TooltipAccessor{
 		if(isBlock){
 			SharedSuggestionProvider.suggestResource(ForgeRegistries.BLOCKS.getKeys(), builder);
 		}
-		if(is){
+		if(isEntity){
 			SharedSuggestionProvider.suggestResource(ForgeRegistries.ENTITIES.getKeys(), builder);
 		}
 		if(isEffect){
@@ -167,13 +167,13 @@ public class ResourceTextField extends EditBox implements TooltipAccessor{
 
 		if(isTag){
 			if(isBlock){
-				SharedSuggestionProvider.suggestResource(BlockTags.getAllTags().getAvailableTags(), builder);
+				SharedSuggestionProvider.suggestResource(ForgeRegistries.BLOCKS.getKeys(), builder);
 			}
 			if(isItem){
-				SharedSuggestionProvider.suggestResource(ItemTags.getAllTags().getAvailableTags(), builder);
+				SharedSuggestionProvider.suggestResource(ForgeRegistries.ITEMS.getKeys(), builder);
 			}
-			if(is){
-				SharedSuggestionProvider.suggestResource(EntityTypeTags.getAllTags().getAvailableTags(), builder);
+			if(isEntity){
+				SharedSuggestionProvider.suggestResource(ForgeRegistries.ENTITIES.getKeys(), builder);
 			}
 		}
 
@@ -199,21 +199,21 @@ public class ResourceTextField extends EditBox implements TooltipAccessor{
 			if(isTag){
 				if(isItem){
 					try{
-						results.add(new by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.ResourceEntry("tag:" + value, Objects.requireNonNull(ItemTags.getAllTags().getTag(location)).getValues().stream().map(ItemStack::new).collect(Collectors.toList())));
+						results.add(new ResourceEntry("tag:" + value, Objects.requireNonNull(StreamSupport.stream((Registry.ITEM.getTagOrEmpty(TagKey.create(Registry.ITEM_REGISTRY, location))).spliterator(), false).map((s) -> new ItemStack(s.value())).collect(Collectors.toList()))));
 					}catch(Exception ignored){
 					}
 				}
 
 				if(isBlock){
 					try{
-						results.add(new by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.ResourceEntry("tag:" + value, Objects.requireNonNull(BlockTags.getAllTags().getTag(location)).getValues().stream().map(ItemStack::new).collect(Collectors.toList())));
+						results.add(new ResourceEntry("tag:" + value, Objects.requireNonNull(StreamSupport.stream((Registry.BLOCK.getTagOrEmpty(TagKey.create(Registry.BLOCK_REGISTRY, location))).spliterator(), false).map((s) -> new ItemStack(s.value())).collect(Collectors.toList()))));
 					}catch(Exception ignored){
 					}
 				}
 
-				if(is){
+				if(isEntity){
 					try{
-						results.add(new by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.ResourceEntry("tag:" + value, Objects.requireNonNull(EntityTypeTags.getAllTags().getTag(location)).getValues().stream().map((s) -> new ItemStack(ForgeSpawnEggItem.fromEntityType(s))).collect(Collectors.toList())));
+						results.add(new ResourceEntry("tag:" + value, Objects.requireNonNull(StreamSupport.stream((Registry.ENTITY_TYPE.getTagOrEmpty(TagKey.create(Registry.ENTITY_TYPE_REGISTRY, location))).spliterator(), false).map((s) -> new ItemStack(ForgeSpawnEggItem.fromEntityType(s.value()))).collect(Collectors.toList()))));
 					}catch(Exception ignored){
 					}
 				}
@@ -247,7 +247,7 @@ public class ResourceTextField extends EditBox implements TooltipAccessor{
 				}
 			}
 
-			if(is){
+			if(isEntity){
 				try{
 					EntityType<?> entityType = ForgeRegistries.ENTITIES.getValue(location);
 					if(entityType != null){

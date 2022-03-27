@@ -1,20 +1,20 @@
 package by.dragonsurvivalteam.dragonsurvival.client.models.projectiles;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.BallLightning;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.BallLightningEntity;
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 
-public class LightningBallModel extends AnimatedGeoModel<BallLightning>{
+public class LightningBallModel extends AnimatedGeoModel<BallLightningEntity>{
 	private ResourceLocation currentTexture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/entity/lightning_texture.png");
 
 	@Override
-	public ResourceLocation getModelLocation(BallLightning dragon){
+	public ResourceLocation getModelLocation(BallLightningEntity dragon){
 		return new ResourceLocation(DragonSurvivalMod.MODID, "geo/dragon_lightning_ball.geo.json");
 	}
 
 	@Override
-	public ResourceLocation getTextureLocation(BallLightning dragon){
+	public ResourceLocation getTextureLocation(BallLightningEntity dragon){
 		return currentTexture;
 	}
 
@@ -23,7 +23,7 @@ public class LightningBallModel extends AnimatedGeoModel<BallLightning>{
 	}
 
 	@Override
-	public ResourceLocation getAnimationFileLocation(BallLightning animatable){
+	public ResourceLocation getAnimationFileLocation(BallLightningEntity animatable){
 		return new ResourceLocation(DragonSurvivalMod.MODID, "animations/lightning_ball.animation.json");
 	}
 }

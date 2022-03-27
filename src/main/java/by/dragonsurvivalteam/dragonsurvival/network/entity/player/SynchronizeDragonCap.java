@@ -4,7 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.commands.DragonCommand;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DSEntities;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.Dragon;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
@@ -120,7 +120,7 @@ public class SynchronizeDragonCap implements IMessage<SynchronizeDragonCap>{
 					});
 					//refresh instances
 					if(thatPlayer != myPlayer){
-						Dragon dragon = DSEntities.DRAGON.create(world);
+						DragonEntity dragon = DSEntities.DRAGON.create(world);
 						dragon.player = thatPlayer.getId();
 						ClientDragonRender.playerDragonHashMap.computeIfAbsent(thatPlayer.getId(), integer -> new AtomicReference<>(dragon)).getAndSet(dragon);
 					}

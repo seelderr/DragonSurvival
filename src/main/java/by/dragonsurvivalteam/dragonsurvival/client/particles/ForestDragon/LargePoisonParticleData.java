@@ -39,6 +39,11 @@ public class LargePoisonParticleData implements ParticleOptions{
 	public LargePoisonParticleData(float duration, boolean spins){
 		this.duration = duration;
 		this.swirls = spins;
+	}
+
+	@OnlyIn( Dist.CLIENT )
+	public float getDuration(){
+		return this.duration;
 	}	@Override
 	public void writeToNetwork(FriendlyByteBuf buffer){
 		buffer.writeFloat(this.duration);
@@ -46,25 +51,20 @@ public class LargePoisonParticleData implements ParticleOptions{
 	}
 
 	@OnlyIn( Dist.CLIENT )
-	public float getDuration(){
-		return this.duration;
-	}	@SuppressWarnings( "deprecation" )
+	public boolean getSwirls(){
+		return this.swirls;
+	}
+
+	@SuppressWarnings( "deprecation" )
 	@Override
 	public String writeToString(){
 		return String.format(Locale.ROOT, "%s %.2f %b", Registry.PARTICLE_TYPE.getKey(this.getType()), this.duration, this.swirls);
 	}
 
-	@OnlyIn( Dist.CLIENT )
-	public boolean getSwirls(){
-		return this.swirls;
-	}	@Override
+
+
+	@Override
 	public ParticleType<LargePoisonParticleData> getType(){
 		return DSParticles.LARGE_POISON.get();
 	}
-
-
-
-
-
-
 }

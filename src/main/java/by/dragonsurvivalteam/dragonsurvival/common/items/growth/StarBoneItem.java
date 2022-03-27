@@ -25,46 +25,36 @@ import net.minecraftforge.network.PacketDistributor;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class StarBoneItem extends Item
-{
-	public StarBoneItem(Properties p_i48487_1_)
-	{
+public class StarBoneItem extends Item{
+	public StarBoneItem(Properties p_i48487_1_){
 		super(p_i48487_1_);
 	}
 
 	@Override
-	public void appendHoverText(ItemStack p_77624_1_, @Nullable
-		Level p_77624_2_, List<Component> p_77624_3_, TooltipFlag p_77624_4_)
-	{
-		super.appendHoverText(p_77624_1_, p_77624_2_, p_77624_3_, p_77624_4_);
-		p_77624_3_.add(new TranslatableComponent("ds.description.starBone"));
-	}
-
-	@Override
-	public InteractionResultHolder<ItemStack> use(Level  worldIn, Player playerIn, InteractionHand handIn) {
+	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn){
 		LazyOptional<DragonStateHandler> playerStateProvider = playerIn.getCapability(Capabilities.DRAGON_CAPABILITY);
-		if (playerStateProvider.isPresent()) {
+		if(playerStateProvider.isPresent()){
 			DragonStateHandler dragonStateHandler = playerStateProvider.orElse(null);
-			if (dragonStateHandler.isDragon()) {
+			if(dragonStateHandler.isDragon()){
 				double size = dragonStateHandler.getSize();
-				if (size > 14) {
+				if(size > 14){
 					size -= 2;
 					size = Math.max(size, DragonLevel.BABY.size);
 					dragonStateHandler.setSize(size, playerIn);
 
 
-					if(!playerIn.isCreative()) {
+					if(!playerIn.isCreative()){
 						playerIn.getItemInHand(handIn).shrink(1);
 					}
 
-					if (!worldIn.isClientSide){
+					if(!worldIn.isClientSide){
 						NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerIn), new SyncSize(playerIn.getId(), size));
-						if (dragonStateHandler.getPassengerId() != 0){
+						if(dragonStateHandler.getPassengerId() != 0){
 							Entity mount = worldIn.getEntity(dragonStateHandler.getPassengerId());
-							if (mount != null){
+							if(mount != null){
 								mount.stopRiding();
 								((ServerPlayer)playerIn).connection.send(new ClientboundSetPassengersPacket(playerIn));
-								NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) playerIn), new SynchronizeDragonCap(playerIn.getId(), dragonStateHandler.isHiding(), dragonStateHandler.getType(), dragonStateHandler.getSize(), dragonStateHandler.hasWings(), dragonStateHandler.getLavaAirSupply(), 0));
+								NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)playerIn), new SynchronizeDragonCap(playerIn.getId(), dragonStateHandler.isHiding(), dragonStateHandler.getType(), dragonStateHandler.getSize(), dragonStateHandler.hasWings(), dragonStateHandler.getLavaAirSupply(), 0));
 							}
 						}
 					}
@@ -76,5 +66,13 @@ public class StarBoneItem extends Item
 		}
 
 		return super.use(worldIn, playerIn, handIn);
+	}
+
+	@Override
+	public void appendHoverText(ItemStack p_77624_1_,
+		@Nullable
+			Level p_77624_2_, List<Component> p_77624_3_, TooltipFlag p_77624_4_){
+		super.appendHoverText(p_77624_1_, p_77624_2_, p_77624_3_, p_77624_4_);
+		p_77624_3_.add(new TranslatableComponent("ds.description.starBone"));
 	}
 }

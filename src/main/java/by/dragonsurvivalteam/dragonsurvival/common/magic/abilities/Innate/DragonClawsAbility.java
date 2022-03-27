@@ -28,6 +28,41 @@ public class DragonClawsAbility extends InnateDragonAbility{
 		return new DragonClawsAbility(type, id, icon, minLevel, maxLevel);
 	}
 
+	@OnlyIn( Dist.CLIENT )
+	@Override
+	public ArrayList<Component> getInfo(){
+		int harvestLevel = getHarvestTexture() - 1;
+		Tier tier = null;
+
+		for(Tier t : Tiers.values()){
+			if(t.getLevel() <= harvestLevel){
+				if(tier == null || t.getLevel() > tier.getLevel()){
+					tier = t;
+				}
+			}
+		}
+
+		ArrayList<Component> components = super.getInfo();
+		components.add(new TranslatableComponent("ds.skill.tool_type." + getId()));
+
+		if(tier != null){
+			components.add(new TranslatableComponent("ds.skill.harvest_level", I18n.get("ds.skill.harvest_level." + ((Tiers)tier).name().toLowerCase())));
+		}
+		DragonStateHandler handler = DragonStateProvider.getCap(Minecraft.getInstance().player).orElse(null);
+
+		if(handler != null){
+			ItemStack swordStack = handler.getClawInventory().getClawsInventory().getItem(0);
+			double ageBonus = handler.isDragon() ? (handler.getLevel() == DragonLevel.ADULT ? ConfigHandler.SERVER.adultBonusDamage.get() : handler.getLevel() == DragonLevel.YOUNG ? ConfigHandler.SERVER.youngBonusDamage.get() : ConfigHandler.SERVER.babyBonusDamage.get()) : 0;
+			double swordBonus = swordStack.isEmpty() ? 0 : swordStack.getItem() instanceof SwordItem ? ((((SwordItem)swordStack.getItem()).getDamage())) : 0;
+			double bonus = Math.max(ageBonus, swordBonus - 1);
+
+			if(bonus > 0.0){
+				components.add(new TranslatableComponent("ds.skill.claws.damage", "+" + bonus));
+			}
+		}
+
+		return components;
+	}
 
 	@Override
 	public int getLevel(){
@@ -37,7 +72,9 @@ public class DragonClawsAbility extends InnateDragonAbility{
 	@OnlyIn( Dist.CLIENT )
 	public int getHarvestTexture(){
 		DragonStateHandler handler = DragonStateProvider.getCap(Minecraft.getInstance().player).orElse(null);
-		if(handler == null) return 0;
+		if(handler == null){
+			return 0;
+		}
 
 		Tier tier = Tiers.STONE;
 		ItemStack stack = null;
@@ -65,56 +102,19 @@ public class DragonClawsAbility extends InnateDragonAbility{
 			tier = tieredItem.getTier();
 		}
 
-		if (Tiers.WOOD.equals(tier)) {
+		if(Tiers.WOOD.equals(tier)){
 			return 1;
-		} else if (Tiers.STONE.equals(tier)) {
+		}else if(Tiers.STONE.equals(tier)){
 			return 2;
-		} else if (Tiers.IRON.equals(tier)) {
+		}else if(Tiers.IRON.equals(tier)){
 			return 3;
-		} else if (Tiers.GOLD.equals(tier)) {
+		}else if(Tiers.GOLD.equals(tier)){
 			return 4;
-		} else if (Tiers.DIAMOND.equals(tier)) {
+		}else if(Tiers.DIAMOND.equals(tier)){
 			return 5;
-		} else if (Tiers.NETHERITE.equals(tier)) {
+		}else if(Tiers.NETHERITE.equals(tier)){
 			return 6;
 		}
 		return 0;
-	}
-
-	@OnlyIn( Dist.CLIENT)
-	@Override
-	public ArrayList<Component> getInfo()
-	{
-		int harvestLevel = getHarvestTexture() - 1;
-		Tier tier = null;
-
-		for(Tier t : Tiers.values()){
-			if(t.getLevel() <= harvestLevel){
-				if(tier == null || t.getLevel() > tier.getLevel()){
-					tier = t;
-				}
-			}
-		}
-
-		ArrayList<Component> components = super.getInfo();
-		components.add(new TranslatableComponent("ds.skill.tool_type." + getId()));
-
-		if(tier != null) {
-			components.add(new TranslatableComponent("ds.skill.harvest_level", I18n.get("ds.skill.harvest_level." + ((Tiers)tier).name().toLowerCase())));
-		}
-		DragonStateHandler handler = DragonStateProvider.getCap(Minecraft.getInstance().player).orElse(null);
-
-		if(handler != null) {
-			ItemStack swordStack = handler.getClawInventory().getClawsInventory().getItem(0);
-			double ageBonus = handler.isDragon() ? (handler.getLevel() == DragonLevel.ADULT ? ConfigHandler.SERVER.adultBonusDamage.get() : handler.getLevel() == DragonLevel.YOUNG ? ConfigHandler.SERVER.youngBonusDamage.get() : ConfigHandler.SERVER.babyBonusDamage.get()) : 0;
-			double swordBonus = swordStack.isEmpty() ? 0 : swordStack.getItem() instanceof SwordItem ? ((((SwordItem)swordStack.getItem()).getDamage())) : 0;
-			double bonus = Math.max(ageBonus, swordBonus - 1);
-
-			if(bonus > 0.0) {
-				components.add(new TranslatableComponent("ds.skill.claws.damage", "+" + bonus));
-			}
-		}
-
-		return components;
 	}
 }

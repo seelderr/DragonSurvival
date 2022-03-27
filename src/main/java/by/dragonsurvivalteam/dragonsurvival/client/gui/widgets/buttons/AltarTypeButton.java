@@ -2,7 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.DragonAltarGUI;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.DragonCustomizationScreen;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.utils.TooltipProvider;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientEvents;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
@@ -124,7 +124,7 @@ public class AltarTypeButton extends Button implements TooltipProvider{
 			});
 			player.closeContainer();
 		}else{
-			Minecraft.getInstance().setScreen(new DragonCustomizationScreen(gui, type));
+			Minecraft.getInstance().setScreen(new DragonEditorScreen(gui, type));
 		}
 	}
 }

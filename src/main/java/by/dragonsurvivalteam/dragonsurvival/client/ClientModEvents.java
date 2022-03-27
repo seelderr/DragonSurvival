@@ -3,8 +3,11 @@ package by.dragonsurvivalteam.dragonsurvival.client;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.DragonScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.SourceOfMagicScreen;
+import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientEvents;
+import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientGrowthHudHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.DragonSkins;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
+import by.dragonsurvivalteam.dragonsurvival.client.handlers.magic.ClientMagicHUDHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.models.creatures.KnightModel;
 import by.dragonsurvivalteam.dragonsurvival.client.models.creatures.PrinceModel;
 import by.dragonsurvivalteam.dragonsurvival.client.models.creatures.PrincessHorseModel;
@@ -17,38 +20,34 @@ import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaSweepParticle;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.client.render.blocks.DragonBeaconRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.blocks.HelmetEntityRenderer;
-import by.dragonsurvivalteam.dragonsurvival.client.render.blocks.PredatorStarTESR;
 import by.dragonsurvivalteam.dragonsurvival.client.render.entity.creatures.*;
 import by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon.DragonHitboxRender;
 import by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon.DragonRenderer;
-import by.dragonsurvivalteam.dragonsurvival.client.render.entity.projectiles.BallLightningRenderer;
-import by.dragonsurvivalteam.dragonsurvival.client.render.entity.projectiles.DragonSpikeRenderer;
-import by.dragonsurvivalteam.dragonsurvival.client.render.entity.projectiles.FireBallRenderer;
-import by.dragonsurvivalteam.dragonsurvival.client.render.entity.projectiles.StormBreathRender;
-import by.dragonsurvivalteam.dragonsurvival.client.shader.ShaderHelper;
+import by.dragonsurvivalteam.dragonsurvival.client.render.entity.projectiles.*;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DSEntities;
+import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.DSContainers;
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.DSTileEntities;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.ScreenManager;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
-import net.minecraft.client.particle.ParticleManager;
+import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.client.particle.ParticleProvider;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.RenderTypeLookup;
-import net.minecraft.client.renderer.entity.SpriteRenderer;
-import net.minecraft.client.renderer.texture.AtlasTexture;
-import net.minecraft.particles.SimpleParticleType;
-import net.minecraft.resources.IReloadableResourceManager;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
+import net.minecraft.client.renderer.entity.EntityRenderers;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.client.gui.ForgeIngameGui;
+import net.minecraftforge.client.gui.OverlayRegistry;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
@@ -60,7 +59,7 @@ public class ClientModEvents{
 
 	@SubscribeEvent
 	public static void onTextureStitchEvent(TextureStitchEvent.Pre event){
-		if(event.getMap().location() == AtlasTexture.LOCATION_BLOCKS){
+		if(event.getAtlas().location() == TextureAtlas.LOCATION_BLOCKS){
 			event.addSprite(new ResourceLocation(DragonSurvivalMod.MODID, "te/star/cage"));
 			event.addSprite(new ResourceLocation(DragonSurvivalMod.MODID, "te/star/wind"));
 			event.addSprite(new ResourceLocation(DragonSurvivalMod.MODID, "te/star/open_eye"));
@@ -77,65 +76,78 @@ public class ClientModEvents{
 
 	@SubscribeEvent
 	public static void setupClient(final FMLClientSetupEvent event){
-		Minecraft minecraft = event.getMinecraftSupplier().get();
+		Minecraft minecraft = Minecraft.getInstance();
 
 		DragonSkins.init();
 
 		KeyInputHandler.setupKeybinds();
 
-		RenderTypeLookup.setRenderLayer(DSBlocks.dragon_altar_stone, RenderType.cutout());
-		RenderTypeLookup.setRenderLayer(DSBlocks.dragon_altar_sandstone, RenderType.cutout());
-		RenderTypeLookup.setRenderLayer(DSBlocks.dragon_altar_red_sandstone, RenderType.cutout());
-		RenderTypeLookup.setRenderLayer(DSBlocks.dragon_altar_purpur_block, RenderType.cutout());
-		RenderTypeLookup.setRenderLayer(DSBlocks.dragon_altar_oak_log, RenderType.cutout());
-		RenderTypeLookup.setRenderLayer(DSBlocks.dragon_altar_nether_bricks, RenderType.cutout());
-		RenderTypeLookup.setRenderLayer(DSBlocks.dragon_altar_mossy_cobblestone, RenderType.cutout());
-		RenderTypeLookup.setRenderLayer(DSBlocks.dragon_altar_blackstone, RenderType.cutout());
-		RenderTypeLookup.setRenderLayer(DSBlocks.dragon_altar_birch_log, RenderType.cutout());
-		RenderTypeLookup.setRenderLayer(DSBlocks.birchDoor, RenderType.cutout());
-		RenderTypeLookup.setRenderLayer(DSBlocks.acaciaDoor, RenderType.cutout());
-		RenderTypeLookup.setRenderLayer(DSBlocks.peaceDragonBeacon, RenderType.cutout());
-		RenderTypeLookup.setRenderLayer(DSBlocks.fireDragonBeacon, RenderType.cutout());
-		RenderTypeLookup.setRenderLayer(DSBlocks.magicDragonBeacon, RenderType.cutout());
+		OverlayRegistry.enableOverlay(ForgeIngameGui.FOOD_LEVEL_ELEMENT, false);
+		OverlayRegistry.enableOverlay(ForgeIngameGui.EXPERIENCE_BAR_ELEMENT, false);
+		OverlayRegistry.enableOverlay(ForgeIngameGui.AIR_LEVEL_ELEMENT, false);
+
+		OverlayRegistry.registerOverlayAbove(ForgeIngameGui.FOOD_LEVEL_ELEMENT, "DRAGON_FOOD_BAR", DragonFoodHandler::onRenderFoodBar);
+		OverlayRegistry.registerOverlayAbove(ForgeIngameGui.EXPERIENCE_BAR_ELEMENT, "MAGIC_EXP_BAR", ClientMagicHUDHandler::cancelExpBar);
+		OverlayRegistry.registerOverlayAbove(ForgeIngameGui.AIR_LEVEL_ELEMENT, "DRAGON_TRAIT_BAR", ClientEvents::onRenderOverlayPreTick);
+
+		OverlayRegistry.registerOverlayTop("MAGIC_ABILITY_ELEMENT", ClientMagicHUDHandler::renderAbilityHud);
+		OverlayRegistry.registerOverlayTop("GROWTH_UI", ClientGrowthHudHandler::renderGrowth);
+
+		ItemBlockRenderTypes.setRenderLayer(DSBlocks.dragon_altar_stone, RenderType.cutout());
+		ItemBlockRenderTypes.setRenderLayer(DSBlocks.dragon_altar_sandstone, RenderType.cutout());
+		ItemBlockRenderTypes.setRenderLayer(DSBlocks.dragon_altar_red_sandstone, RenderType.cutout());
+		ItemBlockRenderTypes.setRenderLayer(DSBlocks.dragon_altar_purpur_block, RenderType.cutout());
+		ItemBlockRenderTypes.setRenderLayer(DSBlocks.dragon_altar_oak_log, RenderType.cutout());
+		ItemBlockRenderTypes.setRenderLayer(DSBlocks.dragon_altar_nether_bricks, RenderType.cutout());
+		ItemBlockRenderTypes.setRenderLayer(DSBlocks.dragon_altar_mossy_cobblestone, RenderType.cutout());
+		ItemBlockRenderTypes.setRenderLayer(DSBlocks.dragon_altar_blackstone, RenderType.cutout());
+		ItemBlockRenderTypes.setRenderLayer(DSBlocks.dragon_altar_birch_log, RenderType.cutout());
+		ItemBlockRenderTypes.setRenderLayer(DSBlocks.birchDoor, RenderType.cutout());
+		ItemBlockRenderTypes.setRenderLayer(DSBlocks.acaciaDoor, RenderType.cutout());
+		ItemBlockRenderTypes.setRenderLayer(DSBlocks.peaceDragonBeacon, RenderType.cutout());
+		ItemBlockRenderTypes.setRenderLayer(DSBlocks.fireDragonBeacon, RenderType.cutout());
+		ItemBlockRenderTypes.setRenderLayer(DSBlocks.magicDragonBeacon, RenderType.cutout());
 
 		// enable transparency for certain small doors
-		RenderTypeLookup.setRenderLayer(DSBlocks.birchSmallDoor, RenderType.cutout());
-		RenderTypeLookup.setRenderLayer(DSBlocks.acaciaSmallDoor, RenderType.cutout());
+		ItemBlockRenderTypes.setRenderLayer(DSBlocks.birchSmallDoor, RenderType.cutout());
+		ItemBlockRenderTypes.setRenderLayer(DSBlocks.acaciaSmallDoor, RenderType.cutout());
 
-		RenderingRegistry.registerEntityRenderingHandler(DSEntities.DRAGON_SPIKE, DragonSpikeRenderer::new);
+		EntityRenderers.register(DSEntities.DRAGON_SPIKE, DragonSpikeRenderer::new);
 
-		RenderingRegistry.registerEntityRenderingHandler(DSEntities.MAGICAL_BEAST, MagicalPredatorRenderer::new);
-		RenderingRegistry.registerEntityRenderingHandler(DSEntities.BOLAS_ENTITY, manager -> new SpriteRenderer<>(manager, minecraft.getItemRenderer()));
-		RenderingRegistry.registerEntityRenderingHandler(DSEntities.DRAGON_HITBOX, DragonHitboxRender::new);
+		//EntityRenderers.register(DSEntities.MAGICAL_BEAST, MagicalPredatorRenderer::new);
 
-		RenderingRegistry.registerEntityRenderingHandler(DSEntities.PRINCESS, manager -> new PrincessRenderer(manager, (IReloadableResourceManager)minecraft.getResourceManager()));
-		RenderingRegistry.registerEntityRenderingHandler(DSEntities.HUNTER_HOUND, HunterHoundRenderer::new);
-		RenderingRegistry.registerEntityRenderingHandler(DSEntities.SHOOTER_HUNTER, ShooterHunterRenderer::new);
-		RenderingRegistry.registerEntityRenderingHandler(DSEntities.SQUIRE_HUNTER, SquireHunterRenderer::new);
+		EntityRenderers.register(DSEntities.BOLAS_ENTITY, BolasEntityRenderer::new);
+		EntityRenderers.register(DSEntities.DRAGON_HITBOX, DragonHitboxRender::new);
 
-		ClientRegistry.bindBlockEntityRenderer(DSTileEntities.PREDATOR_STAR_TILE_ENTITY_TYPE, PredatorStarTESR::new);
-		ClientRegistry.bindBlockEntityRenderer(DSTileEntities.helmetTile, HelmetEntityRenderer::new);
-		ClientRegistry.bindBlockEntityRenderer(DSTileEntities.dragonBeacon, DragonBeaconRenderer::new);
-		ShaderHelper.initShaders();
+		EntityRenderers.register(DSEntities.PRINCESS, PrincessRenderer::new);
+		EntityRenderers.register(DSEntities.HUNTER_HOUND, HunterHoundRenderer::new);
+		EntityRenderers.register(DSEntities.SHOOTER_HUNTER, ShooterHunterRenderer::new);
+		EntityRenderers.register(DSEntities.SQUIRE_HUNTER, SquireHunterRenderer::new);
 
-		ScreenManager.register(DSContainers.nestContainer, SourceOfMagicScreen::new);
-		ScreenManager.register(DSContainers.dragonContainer, DragonScreen::new);
+		// BlockEntityRenderers.register(DSTileEntities.PREDATOR_STAR_TILE_ENTITY_TYPE, PredatorStarTESR::new);
+		BlockEntityRenderers.register(DSTileEntities.helmetTile, HelmetEntityRenderer::new);
+		BlockEntityRenderers.register(DSTileEntities.dragonBeacon, DragonBeaconRenderer::new);
+
+		//ShaderHelper.initShaders();
+
+		MenuScreens.register(DSContainers.nestContainer, SourceOfMagicScreen::new);
+		MenuScreens.register(DSContainers.dragonContainer, DragonScreen::new);
 
 		//Gecko renderers
-		RenderingRegistry.registerEntityRenderingHandler(DSEntities.BALL_LIGHTNING, manager -> new BallLightningRenderer(manager, new LightningBallModel()));
-		RenderingRegistry.registerEntityRenderingHandler(DSEntities.FIREBALL, manager -> new FireBallRenderer(manager, new FireballModel()));
-		RenderingRegistry.registerEntityRenderingHandler(DSEntities.STORM_BREATH_EFFECT, manager -> new StormBreathRender(manager, new StormBreathEffectModel()));
+		EntityRenderers.register(DSEntities.BALL_LIGHTNING, manager -> new BallLightningRenderer(manager, new LightningBallModel()));
+		EntityRenderers.register(DSEntities.FIREBALL, manager -> new FireBallRenderer(manager, new FireballModel()));
+		EntityRenderers.register(DSEntities.STORM_BREATH_EFFECT, manager -> new StormBreathRender(manager, new StormBreathEffectModel()));
 
-		RenderingRegistry.registerEntityRenderingHandler(DSEntities.DRAGON, manager -> new DragonRenderer(manager, ClientDragonRender.dragonModel));
-		RenderingRegistry.registerEntityRenderingHandler(DSEntities.DRAGON_ARMOR, manager -> new DragonRenderer(manager, ClientDragonRender.dragonArmorModel));
-		RenderingRegistry.registerEntityRenderingHandler(DSEntities.KNIGHT, manager -> new KnightRenderer(manager, new KnightModel()));
-		RenderingRegistry.registerEntityRenderingHandler(DSEntities.PRINCESS_ON_HORSE, manager -> new PrincessHorseRenderer(manager, new PrincessHorseModel()));
-		RenderingRegistry.registerEntityRenderingHandler(DSEntities.PRINCE_ON_HORSE, manager -> new PrinceHorseRenderer(manager, new PrinceModel()));
+		EntityRenderers.register(DSEntities.DRAGON, manager -> new DragonRenderer(manager, ClientDragonRender.dragonModel));
+		EntityRenderers.register(DSEntities.DRAGON_ARMOR, manager -> new DragonRenderer(manager, ClientDragonRender.dragonArmorModel));
+		EntityRenderers.register(DSEntities.KNIGHT, manager -> new KnightRenderer(manager, new KnightModel()));
+		EntityRenderers.register(DSEntities.PRINCESS_ON_HORSE, manager -> new PrincessHorseRenderer(manager, new PrincessHorseModel()));
+		EntityRenderers.register(DSEntities.PRINCE_ON_HORSE, manager -> new PrinceHorseRenderer(manager, new PrinceModel()));
 	}
 
 	@SubscribeEvent
 	public static void registerParticleFactories(ParticleFactoryRegisterEvent factoryRegisterEvent){
-		ParticleManager particleManager = Minecraft.getInstance().particleEngine;
+		ParticleEngine particleManager = Minecraft.getInstance().particleEngine;
 		particleManager.register(DSParticles.fireBeaconParticle, p_create_1_ -> new ParticleProvider<SimpleParticleType>(){
 			@Nullable
 			@Override

@@ -11,16 +11,18 @@ import by.dragonsurvivalteam.dragonsurvival.common.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.common.InnateDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.common.PassiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
-import com.mojang.blaze3d.matrix.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.Mth;
-import net.minecraft.util.text.ChatFormatting;
- 
-import net.minecraft.util.text.TextComponent;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -42,8 +44,8 @@ public class AbilityScreen extends Screen{
 		this.sourceScreen = sourceScreen;
 	}
 
-	public List<Widget> widgetList(){
-		return buttons;
+	public List<GuiEventListener> widgetList(){
+		return children;
 	}
 
 	@Override
@@ -58,20 +60,20 @@ public class AbilityScreen extends Screen{
 		int startX = this.guiLeft;
 		int startY = this.guiTop;
 
-		this.minecraft.getTextureManager().bindForSetup(BACKGROUND_TEXTURE);
+		RenderSystem.setShaderTexture(0, BACKGROUND_TEXTURE);
 		blit(stack, startX, startY, 0, 0, 256, 256);
 
 		if(type != null){
 			int barYPos = type == DragonType.SEA ? 198 : type == DragonType.FOREST ? 186 : 192;
 
-			minecraft.getTextureManager().bindForSetup(ClientMagicHUDHandler.widgetTextures);
+			RenderSystem.setShaderTexture(0, ClientMagicHUDHandler.widgetTextures);
 
 			float progress = Mth.clamp((minecraft.player.experienceLevel / 50F), 0, 1);
 			float progress1 = Math.min(1F, (Math.min(0.5F, progress) * 2F));
 			float progress2 = Math.min(1F, (Math.min(0.5F, progress - 0.5F) * 2F));
 
-			RenderSystem.pushMatrix();
-			RenderSystem.translatef(0.5F, 0.75F, 0F);
+			stack.pushPose();
+			stack.translate(0.5F, 0.75F, 0F);
 			blit(stack, startX + (23 / 2), startY + 28, 0, 180 / 2, 105, 3, 128, 128);
 			blit(stack, startX + (254 / 2), startY + 28, 0, 180 / 2, 105, 3, 128, 128);
 
@@ -83,8 +85,8 @@ public class AbilityScreen extends Screen{
 
 			int expChange = -1;
 
-			for(Widget btn : buttons){
-				if(!btn.isHoveredOrFocused()){
+			for(GuiEventListener btn : children){
+				if(!(btn instanceof AbstractWidget) || !((AbstractWidget)btn).isHoveredOrFocused()){
 					continue;
 				}
 
@@ -106,28 +108,29 @@ public class AbilityScreen extends Screen{
 				}
 			}
 
-			RenderSystem.popMatrix();
+			stack.popPose();
 
-			RenderSystem.pushMatrix();
+			stack.pushPose();
 			Component textComponent = new TextComponent(Integer.toString(minecraft.player.experienceLevel)).withStyle(ChatFormatting.DARK_GRAY);
 			int xPos = startX + 117 + 1;
 			float finalXPos = (float)(xPos - minecraft.font.width(textComponent) / 2);
 			minecraft.font.draw(stack, textComponent, finalXPos, startY + 26, 0);
-			RenderSystem.popMatrix();
+			stack.popPose();
 		}
 
 		super.render(stack, mouseX, mouseY, partialTicks);
 
-		for(Widget btn : buttons){
-			if(btn.isHoveredOrFocused()){
-				btn.renderToolTip(stack, mouseX, mouseY);
+		for(Widget btn : renderables){
+			if((btn instanceof AbstractWidget) && ((AbstractWidget)btn).isHoveredOrFocused()){
+				((AbstractWidget)btn).renderToolTip(stack, mouseX, mouseY);
 			}
 		}
 	}
 
 	@Override
-	public void init(Minecraft p_231158_1_, int width, int height){
-		super.init(p_231158_1_, width, height);
+	public void init(){
+		this.guiLeft = (this.width - this.xSize) / 2;
+		this.guiTop = (this.height - this.ySize / 2) / 2;
 
 		int startX = this.guiLeft;
 		int startY = this.guiTop;
@@ -177,13 +180,6 @@ public class AbilityScreen extends Screen{
 		addRenderableWidget(new HelpButton(startX + (218 / 2) + 3, startY + (263 / 2) + 4, 9, 9, "ds.skill.help", 0));
 	}
 
-	@Override
-	protected void init(){
-		super.init();
-
-		this.guiLeft = (this.width - this.xSize) / 2;
-		this.guiTop = (this.height - this.ySize / 2) / 2;
-	}
 
 	@Override
 	public void tick(){

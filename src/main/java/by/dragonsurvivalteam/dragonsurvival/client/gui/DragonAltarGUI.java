@@ -5,20 +5,22 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEdito
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.AltarTypeButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.HelpButton;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
-import by.dragonsurvivalteam.dragonsurvival.client.util.FakeLocalPlayerUtils;
+import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TextRenderUtil;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.Dragon;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.*;
+import com.mojang.blaze3d.vertex.VertexFormat.Mode;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -84,11 +86,11 @@ public class DragonAltarGUI extends Screen{
 					handler2.setSize(button.type == DragonType.NONE ? DragonLevel.BABY.size : DragonLevel.ADULT.size);
 					handler2.getSkin().skinPreset.skinAges.get(button.type == DragonType.NONE ? DragonLevel.BABY : DragonLevel.ADULT).defaultSkin = true;
 
-					FakeLocalPlayerUtils.getFakePlayer(0, handler1).animationSupplier = () -> animations[animation1];
-					FakeLocalPlayerUtils.getFakePlayer(1, handler2).animationSupplier = () -> animations[animation2];
+					FakeClientPlayerUtils.getFakePlayer(0, handler1).animationSupplier = () -> animations[animation1];
+					FakeClientPlayerUtils.getFakePlayer(1, handler2).animationSupplier = () -> animations[animation2];
 
-					renderDragon(width / 2 + 170, button.y + (button.getHeight() / 2) + 20, 5, matrixStack, 20, FakeLocalPlayerUtils.getFakePlayer(0, handler1), FakeLocalPlayerUtils.getFakeDragon(0, handler1));
-					renderDragon(width / 2 - 205, button.y + (button.getHeight() / 2) + 1, -4, matrixStack, 40, FakeLocalPlayerUtils.getFakePlayer(1, handler2), FakeLocalPlayerUtils.getFakeDragon(1, handler2));
+					renderDragon(width / 2 + 170, button.y + (button.getHeight() / 2) + 20, 5, matrixStack, 20, FakeClientPlayerUtils.getFakePlayer(0, handler1), FakeClientPlayerUtils.getFakeDragon(0, handler1));
+					renderDragon(width / 2 - 205, button.y + (button.getHeight() / 2) + 1, -4, matrixStack, 40, FakeClientPlayerUtils.getFakePlayer(1, handler2), FakeClientPlayerUtils.getFakeDragon(1, handler2));
 				}
 			}
 		}
@@ -101,18 +103,22 @@ public class DragonAltarGUI extends Screen{
 	@Override
 	public void renderBackground(PoseStack pMatrixStack){
 		super.renderBackground(pMatrixStack);
-		renderBorders(backgroundTexture, 0, width, 32, height - 32, width, height);
+		renderBorders(pMatrixStack, backgroundTexture, 0, width, 32, height - 32, width, height);
 	}
 
-	public static void renderBorders(ResourceLocation texture, int x0, int x1, int y0, int y1, int width, int height){
-		Tessellator tessellator = Tessellator.getInstance();
+	public static void renderBorders(PoseStack stack, ResourceLocation texture, int x0, int x1, int y0, int y1, int width, int height){
+		Tesselator tessellator = Tesselator.getInstance();
 		BufferBuilder bufferbuilder = tessellator.getBuilder();
-		Minecraft.getInstance().getTextureManager().bindForSetup(texture);
+		RenderSystem.setShaderTexture(0, texture);
 
-		RenderSystem.pushMatrix();
+		stack.pushPose();
 		double zLevel = 0;
 
-		bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
+		RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
+		RenderSystem.setShaderTexture(0, GuiComponent.BACKGROUND_LOCATION);
+		RenderSystem.enableDepthTest();
+		RenderSystem.depthFunc(519);
+		bufferbuilder.begin(Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
 		bufferbuilder.vertex(x0, y0, zLevel).uv(0.0F, (float)y0 / 32.0F).color(64, 64, 64, 255).endVertex();
 		bufferbuilder.vertex(x0 + width, y0, zLevel).uv((float)width / 32.0F, (float)y0 / 32.0F).color(64, 64, 64, 255).endVertex();
 		bufferbuilder.vertex(x0 + width, 0.0D, zLevel).uv((float)width / 32.0F, 0.0F).color(64, 64, 64, 255).endVertex();
@@ -123,13 +129,14 @@ public class DragonAltarGUI extends Screen{
 		bufferbuilder.vertex(x0, y1, zLevel).uv(0.0F, (float)y1 / 32.0F).color(64, 64, 64, 255).endVertex();
 		tessellator.end();
 
-
+		RenderSystem.depthFunc(515);
+		RenderSystem.disableDepthTest();
 		RenderSystem.enableBlend();
 		RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ZERO, GlStateManager.DestFactor.ONE);
-		RenderSystem.disableAlphaTest();
-		RenderSystem.shadeModel(7425);
 		RenderSystem.disableTexture();
-		bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
+		RenderSystem.setShader(GameRenderer::getPositionColorShader);
+
+		bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 		bufferbuilder.vertex(x0, y0 + 4, zLevel).uv(0.0F, 1.0F).color(0, 0, 0, 0).endVertex();
 		bufferbuilder.vertex(x1, y0 + 4, zLevel).uv(1.0F, 1.0F).color(0, 0, 0, 0).endVertex();
 		bufferbuilder.vertex(x1, y0, zLevel).uv(1.0F, 0.0F).color(0, 0, 0, 255).endVertex();
@@ -139,10 +146,10 @@ public class DragonAltarGUI extends Screen{
 		bufferbuilder.vertex(x1, y1 - 4, zLevel).uv(1.0F, 0.0F).color(0, 0, 0, 0).endVertex();
 		bufferbuilder.vertex(x0, y1 - 4, zLevel).uv(0.0F, 0.0F).color(0, 0, 0, 0).endVertex();
 		tessellator.end();
-		RenderSystem.popMatrix();
+		stack.popPose();
 	}
 
-	private void renderDragon(int x, int y, int xrot, PoseStack matrixStack, float size, Player player, Dragon dragon){
+	private void renderDragon(int x, int y, int xrot, PoseStack matrixStack, float size, Player player, DragonEntity dragon){
 		matrixStack.pushPose();
 		float scale = size * 1.5f;
 		matrixStack.scale(scale, scale, scale);

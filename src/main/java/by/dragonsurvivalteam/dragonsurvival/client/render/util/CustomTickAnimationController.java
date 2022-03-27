@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render.util;
 
-import by.dragonsurvivalteam.dragonsurvival.common.entity.Dragon;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
@@ -13,7 +13,7 @@ public class CustomTickAnimationController extends AnimationController{
 	public double speed = 1;
 	public double lastTick = 0;
 
-	public CustomTickAnimationController(IAnimatable animatable, String name, int transitionLength, IAnimationPredicate<Dragon> predicate){
+	public CustomTickAnimationController(IAnimatable animatable, String name, int transitionLength, IAnimationPredicate<DragonEntity> predicate){
 		super(animatable, name, transitionLength, predicate);
 		markNeedsReload();
 	}

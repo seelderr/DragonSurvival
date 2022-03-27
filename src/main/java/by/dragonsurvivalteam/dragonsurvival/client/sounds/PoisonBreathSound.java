@@ -8,12 +8,11 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-@OnlyIn( Dist.CLIENT)
-public class PoisonBreathSound extends AbstractTickableSoundInstance
-{
-	private ForestBreathAbility ability;
-	public PoisonBreathSound(ForestBreathAbility ability)
-	{
+@OnlyIn( Dist.CLIENT )
+public class PoisonBreathSound extends AbstractTickableSoundInstance{
+	private final ForestBreathAbility ability;
+
+	public PoisonBreathSound(ForestBreathAbility ability){
 		super(SoundRegistry.forestBreathLoop, SoundSource.PLAYERS);
 
 		this.looping = true;

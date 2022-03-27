@@ -12,10 +12,11 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -38,7 +39,6 @@ import net.minecraftforge.fml.config.ModConfig.Type;
 import net.minecraftforge.fml.event.config.ModConfigEvent.Loading;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.tags.ITag;
 
 import javax.annotation.Nullable;
 import java.util.Comparator;
@@ -47,6 +47,7 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 @Mod.EventBusSubscriber( modid = DragonSurvivalMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD )
 public class DragonFoodHandler{
@@ -118,19 +119,19 @@ public class DragonFoodHandler{
 			final String[] sEntry = entry.split(":");
 			final ResourceLocation rlEntry = new ResourceLocation(sEntry[1], sEntry[2]);
 
-			if(sEntry[0].equalsIgnoreCase("tag")){
-				final ITag<Item> tag = ItemTags.getAllTags().getTag(rlEntry);
-				if(tag != null && tag.getValues().size() != 0){
-					for(Item item : tag.getValues()){
-						FoodProperties FoodProperties = calculateDragonFoodProperties(item, type, sEntry.length == 5 ? Integer.parseInt(sEntry[3]) : item.getFoodProperties() != null ? item.getFoodProperties().getNutrition() : 1, sEntry.length == 5 ? Integer.parseInt(sEntry[4]) : item.getFoodProperties() != null ? (int)(item.getFoodProperties().getNutrition() * (item.getFoodProperties().getSaturationModifier() * 2.0F)) : 0, true);
 
+			if(sEntry[0].equalsIgnoreCase("tag")){
+				TagKey<Item> tagKey = TagKey.create(Registry.ITEM_REGISTRY, rlEntry);
+				StreamSupport.stream(Registry.ITEM.getTagOrEmpty(tagKey).spliterator(), false).forEach((item1) -> {
+					Item item = item1.value();
+
+					if(item != null){
+						FoodProperties FoodProperties = calculateDragonFoodProperties(item, type, sEntry.length == 5 ? Integer.parseInt(sEntry[3]) : item.getFoodProperties() != null ? item.getFoodProperties().getNutrition() : 1, sEntry.length == 5 ? Integer.parseInt(sEntry[4]) : item.getFoodProperties() != null ? (int)(item.getFoodProperties().getNutrition() * (item.getFoodProperties().getSaturationModifier() * 2.0F)) : 0, true);
 						if(FoodProperties != null){
 							foodMap.put(item, FoodProperties);
 						}
 					}
-				}else{
-					DragonSurvivalMod.LOGGER.warn("Null or empty tag '{}:{}' in {} dragon FoodProperties config.", sEntry[1], sEntry[2], type.toString().toLowerCase());
-				}
+				});
 			}else{
 				final Item item = ForgeRegistries.ITEMS.getValue(rlEntry);
 

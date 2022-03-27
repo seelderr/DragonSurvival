@@ -25,9 +25,10 @@ import java.util.List;
 
 @Mixin( Block.class )
 public class MixinBlock{
-	@Inject( at = @At("HEAD"), method = "dropResources(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/entity/BlockEntity;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/item/ItemStack;)V", cancellable = true)
-	private static void dropResources(BlockState p_220054_0_, Level p_220054_1_, BlockPos p_220054_2_, @Nullable
-		BlockEntity p_220054_3_, Entity entity, ItemStack p_220054_5_, CallbackInfo ci) {
+	@Inject( at = @At( "HEAD" ), method = "dropResources(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/entity/BlockEntity;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/item/ItemStack;)V", cancellable = true )
+	private static void dropResources(BlockState p_220054_0_, Level p_220054_1_, BlockPos p_220054_2_,
+		@Nullable
+			BlockEntity p_220054_3_, Entity entity, ItemStack p_220054_5_, CallbackInfo ci){
 		if(!DragonUtils.isDragon(entity)){
 			return;
 		}
@@ -56,11 +57,15 @@ public class MixinBlock{
 			p_220054_0_.spawnAfterBreak((ServerLevel)p_220054_1_, p_220054_2_, p_220054_5_);
 		}
 
-							ci.cancel();
-						}
+		ci.cancel();
+	}
 
 	@Shadow
-	private static List<ItemStack> getDrops(BlockState p_220077_0_, ServerLevel p_220077_1_, BlockPos p_220077_2_, @Nullable BlockEntity p_220077_3_, @Nullable Entity p_220077_4_, ItemStack p_220077_5_) {
+	private static List<ItemStack> getDrops(BlockState p_220077_0_, ServerLevel p_220077_1_, BlockPos p_220077_2_,
+		@Nullable
+			BlockEntity p_220077_3_,
+		@Nullable
+			Entity p_220077_4_, ItemStack p_220077_5_){
 		throw new IllegalStateException("Mixin failed to shadow getDrops()");
 	}
 }

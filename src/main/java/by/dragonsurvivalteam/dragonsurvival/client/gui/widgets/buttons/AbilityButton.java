@@ -8,15 +8,19 @@ import by.dragonsurvivalteam.dragonsurvival.common.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.common.InnateDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.common.PassiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
-import com.mojang.blaze3d.matrix.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.util.IReorderingProcessor;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.*;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FormattedCharSequence;
 
 import java.awt.Color;
 import java.util.List;
@@ -54,16 +58,16 @@ public class AbilityButton extends Button{
 			type = cap.getType();
 		});
 
-		Minecraft.getInstance().getTextureManager().bindForSetup(ability instanceof PassiveDragonAbility ? BLANK_2_TEXTURE : BLANK_1_TEXTURE);
+		RenderSystem.setShaderTexture(0, ability instanceof PassiveDragonAbility ? BLANK_2_TEXTURE : BLANK_1_TEXTURE);
 		blit(stack, x - 1, y - 1, 0, 0, 20, 20, 20, 20);
 
 
-		Minecraft.getInstance().getTextureManager().bindForSetup(ability.getIcon());
+		RenderSystem.setShaderTexture(0, ability.getIcon());
 		blit(stack, x, y, 0, 0, 18, 18, 18, 18);
 
 		if(ability.isDisabled()){
 			RenderSystem.enableBlend();
-			Minecraft.getInstance().textureManager.bind(INVALID_ICON);
+			RenderSystem.setShaderTexture(0, INVALID_ICON);
 			blit(stack, x, y, 0, 0, 18, 18, 18, 18);
 			RenderSystem.disableBlend();
 		}
@@ -78,43 +82,43 @@ public class AbilityButton extends Button{
 		int origYPos = this.y;
 		int width = 150;
 
-		int lx = 29 + Minecraft.getInstance().font.width(ability.getTitle().getContents());
-		Component desc = ability.getDescription();
+		int lx = 29 + Minecraft.getInstance().font.width(ability.getTitle().getString());
+		FormattedText desc = ability.getDescription();
 
 		if(ability.getInfo().size() > 0){
-			desc.append("\n\n");
+			desc = FormattedText.composite(desc, new TextComponent("\n\n"));
 		}
 
-		List<IReorderingProcessor> description = Minecraft.getInstance().font.split(desc, width - 7);
+		List<FormattedCharSequence> description = Minecraft.getInstance().font.split(desc, width - 7);
 
-		for(IReorderingProcessor ireorderingprocessor : description){
+		for(FormattedCharSequence ireorderingprocessor : description){
 			lx = Math.max(lx, Minecraft.getInstance().font.width(ireorderingprocessor));
 		}
 
 		origYPos -= (description.size() * 7);
 
-		Minecraft.getInstance().getTextureManager().bindForSetup(WIDGETS_LOCATION);
-		RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+		RenderSystem.setShaderTexture(0, WIDGETS_LOCATION);
+		RenderSystem.clearColor(1.0F, 1.0F, 1.0F, 1.0F);
 		RenderSystem.enableBlend();
 
 		if(!description.isEmpty()){
-			Minecraft.getInstance().getTextureManager().bindForSetup(WIDGETS_LOCATION);
+			RenderSystem.setShaderTexture(0, WIDGETS_LOCATION);
 
 			int extraWidth = (int)(width / 1.25);
 
 			if(ability.getInfo().size() > 0){
-				Component textContents = new TextComponent("");
+				FormattedText textContents = new TextComponent("");
 
 				for(Component component : ability.getInfo()){
-					textContents.append("\n");
-					textContents.append(component);
+					textContents = FormattedText.composite(textContents, new TextComponent("\n"));
+					textContents = FormattedText.composite(textContents, component);
 				}
 
-				List<IReorderingProcessor> text = Minecraft.getInstance().font.split(textContents, extraWidth - 5);
+				List<FormattedCharSequence> text = Minecraft.getInstance().font.split(textContents, extraWidth - 5);
 
 				int longest = 0;
 
-				for(IReorderingProcessor textR : text){
+				for(FormattedCharSequence textR : text){
 					longest = Math.max(longest, Minecraft.getInstance().font.width(textR) + 20);
 				}
 
@@ -126,45 +130,45 @@ public class AbilityButton extends Button{
 					this.render9Sprite(stack, this.x - 10, origYPos + 3, 10 + 5, Math.min((27 + (text.size() * 9)), (35 + 24 + (description.size() * 9)) - 10), 10, 50, 26, 0, 52);
 				}
 
-				Minecraft.getInstance().getTextureManager().bindForSetup(TOOLTIP_BARS);
+				RenderSystem.setShaderTexture(0, TOOLTIP_BARS);
 				int yPos = ability instanceof ActiveDragonAbility ? 20 : ability instanceof InnateDragonAbility ? 40 : 0;
 
 				if(Screen.hasShiftDown()){
-					this.blit(stack, this.x - extraWidth + 3, origYPos + 9, 0, yPos, 200, 20);
-					AbstractGui.drawString(stack, Minecraft.getInstance().font, new TranslatableComponent("ds.skill.info"), this.x - extraWidth + 10, (origYPos + 15), -1);
+					blit(stack, this.x - extraWidth + 3, origYPos + 9, 0, yPos, 200, 20);
+					Gui.drawString(stack, Minecraft.getInstance().font, new TranslatableComponent("ds.skill.info"), this.x - extraWidth + 10, (origYPos + 15), -1);
 
 					for(int k1 = 0; k1 < text.size(); ++k1){
 						Minecraft.getInstance().font.draw(stack, text.get(k1), this.x - extraWidth + 5, (origYPos + 5) + 18 + (k1 * 9), -5592406);
 					}
 				}else{
-					this.blit(stack, this.x - 10 + 3, origYPos + 9, 0, yPos, 200, 20);
+					blit(stack, this.x - 10 + 3, origYPos + 9, 0, yPos, 200, 20);
 				}
 			}
 
-			Minecraft.getInstance().getTextureManager().bindForSetup(WIDGETS_LOCATION);
+			RenderSystem.setShaderTexture(0, WIDGETS_LOCATION);
 			this.render9Sprite(stack, this.x - 2, origYPos - 4, width + 5, 35 + 24 + (description.size() * 9), 10, 200, 26, 0, 52);
 		}
 
-		Minecraft.getInstance().getTextureManager().bindForSetup(TOOLTIP_BARS);
+		RenderSystem.setShaderTexture(0, TOOLTIP_BARS);
 		int yPos = ability instanceof ActiveDragonAbility ? 20 : ability instanceof InnateDragonAbility ? 40 : 0;
-		this.blit(stack, this.x, origYPos + 3, 0, yPos, 200, 20);
+		blit(stack, this.x, origYPos + 3, 0, yPos, 200, 20);
 
-		Minecraft.getInstance().getTextureManager().bindForSetup(WIDGETS_LOCATION);
-		this.blit(stack, this.x, origYPos, 0, 128 + 26, 26, 26);
+		RenderSystem.setShaderTexture(0, WIDGETS_LOCATION);
+		blit(stack, this.x, origYPos, 0, 128 + 26, 26, 26);
 
 		String skillType = ability instanceof ActiveDragonAbility ? "active" : ability instanceof InnateDragonAbility ? "innate" : ability instanceof PassiveDragonAbility ? "passive" : null;
 
 		if(skillType != null){
 			Color c = ability instanceof ActiveDragonAbility ? new Color(200, 143, 31) : ability instanceof InnateDragonAbility ? new Color(150, 56, 175) : new Color(127, 145, 46);
-			AbstractGui.drawCenteredString(stack, Minecraft.getInstance().font, new TranslatableComponent("ds.skill.type." + skillType), this.x + (width / 2), origYPos + 30, c.getRGB());
+			Gui.drawCenteredString(stack, Minecraft.getInstance().font, new TranslatableComponent("ds.skill.type." + skillType), this.x + (width / 2), origYPos + 30, c.getRGB());
 		}
 
 
 		if(ability.getMaxLevel() > 1){
-			AbstractGui.drawCenteredString(stack, Minecraft.getInstance().font, new TextComponent(ability.getLevel() + "/" + ability.getMaxLevel()), (this.x + width - 18), (origYPos + 9), -1);
-			AbstractGui.drawCenteredString(stack, Minecraft.getInstance().font, ability.getTitle(), this.x + (width / 2), origYPos + 9, -1);
+			Gui.drawCenteredString(stack, Minecraft.getInstance().font, new TextComponent(ability.getLevel() + "/" + ability.getMaxLevel()), (this.x + width - 18), (origYPos + 9), -1);
+			Gui.drawCenteredString(stack, Minecraft.getInstance().font, ability.getTitle(), this.x + (width / 2), origYPos + 9, -1);
 		}else{
-			AbstractGui.drawCenteredString(stack, Minecraft.getInstance().font, ability.getTitle(), this.x + (width / 2) + 10, origYPos + 9, -1);
+			Gui.drawCenteredString(stack, Minecraft.getInstance().font, ability.getTitle(), this.x + (width / 2) + 10, origYPos + 9, -1);
 		}
 
 		for(int k1 = 0; k1 < description.size(); ++k1){
@@ -172,19 +176,20 @@ public class AbilityButton extends Button{
 		}
 
 		if(ability.getInfo().size() > 0){
-			AbstractGui.drawCenteredString(stack, Minecraft.getInstance().font, new TranslatableComponent("ds.skill.info.hold_shift").withStyle(ChatFormatting.DARK_GRAY), this.x + (width / 2), (origYPos + 47 + (description.size() - 1) * 9), 0);
+			Gui.drawCenteredString(stack, Minecraft.getInstance().font, new TranslatableComponent("ds.skill.info.hold_shift").withStyle(ChatFormatting.DARK_GRAY), this.x + (width / 2), (origYPos + 47 + (description.size() - 1) * 9), 0);
 		}
 
-		Minecraft.getInstance().textureManager.bind(ability.getIcon());
+		RenderSystem.setShaderTexture(0, ability.getIcon());
 		blit(stack, this.x + 5, origYPos + 5, 0, 0, 16, 16, 16, 16);
 
 		if(ability.isDisabled()){
 			RenderSystem.enableBlend();
-			Minecraft.getInstance().textureManager.bind(INVALID_ICON);
+			RenderSystem.setShaderTexture(0, INVALID_ICON);
 			blit(stack, this.x + 5, origYPos + 5, 0, 0, 16, 16, 16, 16);
 			RenderSystem.disableBlend();
 		}
 	}
+
 
 	protected void render9Sprite(PoseStack p_238691_1_, int p_238691_2_, int p_238691_3_, int p_238691_4_, int p_238691_5_, int p_238691_6_, int p_238691_7_, int p_238691_8_, int p_238691_9_, int p_238691_10_){
 		this.blit(p_238691_1_, p_238691_2_, p_238691_3_, p_238691_9_, p_238691_10_, p_238691_6_, p_238691_6_);

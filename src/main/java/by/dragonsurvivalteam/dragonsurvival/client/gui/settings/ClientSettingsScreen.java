@@ -1,9 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.settings;
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.fields.TextField;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.settings.DSBooleanOption;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.settings.DSDropDownOption;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.settings.DSIteratableOption;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.settings.DSNumberFieldOption;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.CategoryEntry;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.OptionEntry;
@@ -17,73 +15,43 @@ import by.dragonsurvivalteam.dragonsurvival.network.config.SyncNumberConfig;
 import com.electronwill.nightconfig.core.AbstractConfig;
 import com.electronwill.nightconfig.core.EnumGetMethod;
 import com.electronwill.nightconfig.core.UnmodifiableConfig.Entry;
-import com.mojang.blaze3d.matrix.PoseStack;
+import com.google.common.collect.ImmutableList;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.client.AbstractOption;
-import net.minecraft.client.GameSettings;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.DialogTexts;
-import net.minecraft.client.gui.IBidiTooltip;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.SettingsScreen;
-import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.client.settings.SliderPercentageOption;
-import net.minecraft.util.IReorderingProcessor;
- 
- 
-import net.minecraft.util.text.TextComponent;
- 
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.*;
+import net.minecraft.client.gui.components.*;
+import net.minecraft.client.gui.screens.OptionsScreen;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.network.chat.*;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.*;
 
 import javax.annotation.Nullable;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class ClientSettingsScreen extends SettingsScreen{
+public class ClientSettingsScreen extends OptionsScreen{
 	private static final Float sliderPerc = 0.1F;
-	private final ArrayList<AbstractOption> OPTIONS = new ArrayList<>();
-	private final TreeMap<String, ArrayList<AbstractOption>> optionMap = new TreeMap<>();
+	private final ArrayList<Option> OPTIONS = new ArrayList<>();
+	private final TreeMap<String, ArrayList<Option>> optionMap = new TreeMap<>();
 	private final ArrayList<String> options = new ArrayList<>();
 	public OptionsList list;
 	private double scroll;
 	private AbstractConfig config;
 
-	public ClientSettingsScreen(Screen p_i225930_1_, GameSettings p_i225930_2_, Component p_i225930_3_){
-		super(p_i225930_1_, p_i225930_2_, p_i225930_3_);
+	public ClientSettingsScreen(Screen p_i225930_1_, Options p_i225930_2_){
+		super(p_i225930_1_, p_i225930_2_);
 		OptionsList.activeCats.clear();
 	}
 
-	public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
-		this.renderBackground(p_230430_1_);
-		this.list.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
-		drawCenteredString(p_230430_1_, this.font, this.title, this.width / 2, 5, 16777215);
-		super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
-
-		List<IReorderingProcessor> list = tooltipAt(this.list, p_230430_2_, p_230430_3_);
-		if(list != null){
-			this.renderTooltip(p_230430_1_, list, p_230430_2_, p_230430_3_);
-		}
-	}
-
-	@Nullable
-	public static List<IReorderingProcessor> tooltipAt(OptionsList p_243293_0_, int p_243293_1_, int p_243293_2_){
-		Optional<Widget> optional = p_243293_0_.getMouseOver(p_243293_1_, p_243293_2_);
-		OptionListEntry optional2 = p_243293_0_.getEntryAtPos(p_243293_1_, p_243293_2_);
-
-		if(!optional.isPresent() || !(optional.get() instanceof IBidiTooltip)){
-			if(optional2 instanceof OptionEntry){
-				optional = Optional.of(((OptionEntry)optional2).widget);
-			}
-		}
-
-		if(optional.isPresent() && optional.get() instanceof IBidiTooltip && optional.get().visible && !optional.get().isHoveredOrFocused()){
-			Optional<List<IReorderingProcessor>> optional1 = ((IBidiTooltip)optional.get()).getTooltip();
-			return optional1.orElse(null);
-		}else{
-			return null;
-		}
+	public ClientSettingsScreen(Screen p_i225930_1_, Options p_i225930_2_, Component p_i225930_3_){
+		super(p_i225930_1_, p_i225930_2_);
+		OptionsList.activeCats.clear();
 	}
 
 	protected void init(){
@@ -104,10 +72,10 @@ public class ClientSettingsScreen extends SettingsScreen{
 
 		addConfigs();
 
-		this.list.add(OPTIONS.toArray(new AbstractOption[0]), null);
+		this.list.add(OPTIONS.toArray(new Option[0]), null);
 
 		int catNum = 0;
-		for(Map.Entry<String, ArrayList<AbstractOption>> ent : optionMap.entrySet()){
+		for(Map.Entry<String, ArrayList<Option>> ent : optionMap.entrySet()){
 			CategoryEntry entry = null;
 			if(!ent.getKey().isEmpty()){
 				String key = ent.getKey();
@@ -122,11 +90,11 @@ public class ClientSettingsScreen extends SettingsScreen{
 					lastKey = s;
 				}
 			}
-			this.list.add(ent.getValue().toArray(new AbstractOption[0]), entry);
+			this.list.add(ent.getValue().toArray(new Option[0]), entry);
 		}
 
 		this.children.add(this.list);
-		this.addRenderableWidget(new Button(32, this.height - 27, 120 + 32, 20, DialogTexts.GUI_DONE, (p_213106_1_) -> {
+		this.addRenderableWidget(new Button(32, this.height - 27, 120 + 32, 20, CommonComponents.GUI_DONE, (p_213106_1_) -> {
 			getSpec().save();
 			this.minecraft.setScreen(this.lastScreen);
 		}));
@@ -159,6 +127,10 @@ public class ClientSettingsScreen extends SettingsScreen{
 		});
 
 		this.list.setScrollAmount(scroll);
+	}
+
+	public ForgeConfigSpec getSpec(){
+		return ConfigHandler.clientSpec;
 	}
 
 	private void addConfigs(){
@@ -199,21 +171,22 @@ public class ClientSettingsScreen extends SettingsScreen{
 		String fullpath = getConfigName() + "." + key;
 		ValueSpec spec = getSpec().getSpec().get(fullpath);
 
-		String translatedName = new TranslatableComponent(spec.getTranslationKey() != null ? spec.getTranslationKey() : "").getString();
-		String translateTooltip = new TranslatableComponent((spec.getTranslationKey() != null ? spec.getTranslationKey() : "") + ".tooltip").getString();
+		String translatedName = new TranslatableComponent("ds." + fullpath).getString();
+		String translateTooltip = new TranslatableComponent("ds." + fullpath + ".tooltip", spec.getRange() != null ? spec.getRange() : "").getString();
 
-		String name = translatedName != null && spec.getTranslationKey() != null && !Objects.equals(spec.getTranslationKey(), translatedName) ? translatedName : pName;
+		String name = !translatedName.equalsIgnoreCase("ds." + fullpath) ? translatedName : pName;
+		String tooltip0 = !translateTooltip.equalsIgnoreCase("ds." + fullpath + ".tooltip") ? translateTooltip : (spec.getComment() != null ? spec.getComment() : "");
 
-		Component tooltip = new TextComponent(translateTooltip != null && spec.getTranslationKey() != null && !Objects.equals(spec.getTranslationKey() + ".tooltip", translateTooltip) ? translateTooltip : (spec.getComment() != null ? spec.getComment() : ""));
 
 		if(spec.needsWorldRestart()){
-			tooltip.append("\n§4This setting requires a server restart!§r");
+			tooltip0 += "\n" + I18n.get("ds.config.server_restart");
 		}
+		TextComponent tooltip = new TextComponent(tooltip0);
 
-		List<IReorderingProcessor> tooltip1 = Minecraft.getInstance().font.split(tooltip, 200);
 		if(value instanceof BooleanValue){
 			BooleanValue booleanValue = (BooleanValue)value;
-			DSBooleanOption option = new DSBooleanOption(name, tooltip, (settings) -> booleanValue.get(), (settings, settingValue) -> {
+
+			CycleOption<Boolean> option = new CycleOption<>(name, (val) -> booleanValue.get(), (settings, optionO, settingValue) -> {
 				try{
 					booleanValue.set(settingValue);
 					booleanValue.save();
@@ -223,8 +196,15 @@ public class ClientSettingsScreen extends SettingsScreen{
 				if(!Objects.equals(getConfigName(), "client")){
 					NetworkHandler.CHANNEL.sendToServer(new SyncBooleanConfig(key, settingValue, getConfigName()));
 				}
-			});
-
+			}, () -> CycleButton.booleanBuilder(((BaseComponent)CommonComponents.OPTION_ON).withStyle(ChatFormatting.GREEN), ((BaseComponent)CommonComponents.OPTION_OFF).withStyle(ChatFormatting.RED)).displayOnlyValue()){
+				@Override
+				public CycleButton<Boolean> createButton(Options pOptions, int pX, int pY, int pWidth){
+					CycleButton<Boolean> btn = (CycleButton<Boolean>)super.createButton(pOptions, pX, pY, pWidth);
+					CycleButton.TooltipSupplier tooltipsupplier = (va) -> Minecraft.getInstance().font.split(tooltip, 200);
+					btn.tooltipSupplier = tooltipsupplier;
+					return btn;
+				}
+			};
 			OptionsList.configMap.put(option, key);
 			OptionsList.config.put(option, Pair.of(spec, booleanValue));
 			addOption(category, name, option);
@@ -233,9 +213,9 @@ public class ClientSettingsScreen extends SettingsScreen{
 			Integer min = (Integer)spec.correct(Integer.MIN_VALUE);
 			Integer max = (Integer)spec.correct(Integer.MAX_VALUE);
 			int dif = max - min;
-			AbstractOption option = null;
+			Option option = null;
 			if(dif <= 10){
-				option = new SliderPercentageOption(name, min, max, sliderPerc, (settings) -> Double.valueOf(value1.get()), (settings, settingValue) -> {
+				option = new ProgressOption(name, min, max, sliderPerc, (settings) -> Double.valueOf(value1.get()), (settings, settingValue) -> {
 					try{
 						value1.set(settingValue.intValue());
 						value1.save();
@@ -247,7 +227,14 @@ public class ClientSettingsScreen extends SettingsScreen{
 					}
 				}, (settings, slider) -> {
 					return new TextComponent(slider.get(settings) + "");
-				});
+				}){
+					@Override
+					public SliderButton createButton(Options pOptions, int pX, int pY, int pWidth){
+						SliderButton btn = (SliderButton)super.createButton(pOptions, pX, pY, pWidth);
+						btn.tooltip = Minecraft.getInstance().font.split(tooltip, 200);
+						return btn;
+					}
+				};
 			}else{
 				option = new DSNumberFieldOption(name, min, max, (settings) -> value1.get(), (settings, settingValue) -> {
 					try{
@@ -259,22 +246,21 @@ public class ClientSettingsScreen extends SettingsScreen{
 					if(!Objects.equals(getConfigName(), "client")){
 						NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(key, settingValue.intValue(), getConfigName()));
 					}
-				});
+				}, (m) -> Minecraft.getInstance().font.split(tooltip, 200));
 			}
 
-			option.setTooltip(tooltip1);
 
 			OptionsList.configMap.put(option, key);
 			OptionsList.config.put(option, Pair.of(spec, value1));
 			addOption(category, name, option);
 		}else if(value instanceof DoubleValue){
 			DoubleValue value1 = (DoubleValue)value;
-			double min = (double)spec.correct(-Double.MAX_VALUE);
-			double max = (double)spec.correct(Double.MAX_VALUE);
-			double dif = max - min;
-			AbstractOption option = null;
+			BigDecimal min = new BigDecimal((double)spec.correct(Double.MIN_VALUE)).setScale(5, RoundingMode.FLOOR);
+			BigDecimal max = new BigDecimal((double)spec.correct(Double.MAX_VALUE)).setScale(5, RoundingMode.FLOOR);
+			double dif = max.subtract(min).doubleValue();
+			Option option = null;
 			if(dif <= 10){
-				option = new SliderPercentageOption(name, min, max, sliderPerc, (settings) -> value1.get(), (settings, settingValue) -> {
+				option = new ProgressOption(name, min.doubleValue(), max.doubleValue(), sliderPerc, (settings) -> value1.get(), (settings, settingValue) -> {
 					try{
 						value1.set(Math.round(settingValue * 100.0) / 100.0);
 						value1.save();
@@ -286,7 +272,14 @@ public class ClientSettingsScreen extends SettingsScreen{
 					}
 				}, (settings, slider) -> {
 					return new TextComponent(Math.round(slider.get(settings) * 100.0) / 100.0 + "");
-				});
+				}){
+					@Override
+					public SliderButton createButton(Options pOptions, int pX, int pY, int pWidth){
+						SliderButton btn = (SliderButton)super.createButton(pOptions, pX, pY, pWidth);
+						btn.tooltip = Minecraft.getInstance().font.split(tooltip, 200);
+						return btn;
+					}
+				};
 			}else{
 				option = new DSNumberFieldOption(name, min, max, (settings) -> value1.get(), (settings, settingValue) -> {
 					try{
@@ -298,11 +291,8 @@ public class ClientSettingsScreen extends SettingsScreen{
 					if(!Objects.equals(getConfigName(), "client")){
 						NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(key, settingValue.doubleValue(), getConfigName()));
 					}
-				});
+				}, (m) -> Minecraft.getInstance().font.split(tooltip, 200));
 			}
-
-			option.setTooltip(tooltip1);
-
 			OptionsList.configMap.put(option, key);
 			OptionsList.config.put(option, Pair.of(spec, value1));
 			addOption(category, name, option);
@@ -311,9 +301,9 @@ public class ClientSettingsScreen extends SettingsScreen{
 			Long min = (Long)spec.correct(Long.MIN_VALUE);
 			Long max = (Long)spec.correct(Long.MAX_VALUE);
 			long dif = max - min;
-			AbstractOption option = null;
+			Option option = null;
 			if(dif <= 10){
-				option = new SliderPercentageOption(name, min, max, sliderPerc, (settings) -> Double.valueOf(value1.get()), (settings, settingValue) -> {
+				option = new ProgressOption(name, min, max, sliderPerc, (settings) -> Double.valueOf(value1.get()), (settings, settingValue) -> {
 					try{
 						value1.set(settingValue.longValue());
 						value1.save();
@@ -325,7 +315,14 @@ public class ClientSettingsScreen extends SettingsScreen{
 					}
 				}, (settings, slider) -> {
 					return new TextComponent(slider.get(settings) + "");
-				});
+				}, (m) -> Minecraft.getInstance().font.split(tooltip, 200)){
+					@Override
+					public SliderButton createButton(Options pOptions, int pX, int pY, int pWidth){
+						SliderButton btn = (SliderButton)super.createButton(pOptions, pX, pY, pWidth);
+						btn.tooltip = Minecraft.getInstance().font.split(tooltip, 200);
+						return btn;
+					}
+				};
 			}else{
 				option = new DSNumberFieldOption(name, min, max, (settings) -> value1.get(), (settings, settingValue) -> {
 					try{
@@ -337,10 +334,8 @@ public class ClientSettingsScreen extends SettingsScreen{
 					if(!Objects.equals(getConfigName(), "client")){
 						NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(key, settingValue.longValue(), getConfigName()));
 					}
-				});
+				}, (m) -> Minecraft.getInstance().font.split(tooltip, 200));
 			}
-
-			option.setTooltip(tooltip1);
 
 			OptionsList.configMap.put(option, key);
 			OptionsList.config.put(option, Pair.of(spec, value1));
@@ -350,7 +345,7 @@ public class ClientSettingsScreen extends SettingsScreen{
 			Class<? extends Enum> cs = (Class<? extends Enum>)value1.get().getClass();
 			Enum vale = EnumGetMethod.ORDINAL_OR_NAME.get(((Enum)value1.get()).ordinal(), cs);
 
-			AbstractOption option = new DSDropDownOption(name, vale, (val) -> {
+			Option option = new DSDropDownOption(name, vale, (val) -> {
 				try{
 					value1.set(val);
 					value1.save();
@@ -360,9 +355,7 @@ public class ClientSettingsScreen extends SettingsScreen{
 				if(!Objects.equals(getConfigName(), "client")){
 					NetworkHandler.CHANNEL.sendToServer(new SyncEnumConfig(key, val, getConfigName()));
 				}
-			});
-
-			option.setTooltip(tooltip1);
+			}, (m) -> Minecraft.getInstance().font.split(tooltip, 200));
 
 			OptionsList.configMap.put(option, key);
 			OptionsList.config.put(option, Pair.of(spec, value1));
@@ -380,14 +373,18 @@ public class ClientSettingsScreen extends SettingsScreen{
 				}else{
 					joiner.add("[]");
 				}
-
-				DSIteratableOption option = new DSIteratableOption(name, (settings, val) -> {
-					this.minecraft.setScreen(new ListConfigSettingsScreen(this, minecraft.options, new TextComponent(finalPath1), spec, value1, getSpec(), getConfigName() + "." + key));
-				}, (settings, set) -> {
-					return new TextComponent(Minecraft.getInstance().font.substrByWidth(new TextComponent(joiner.toString()), 120).getString());
-				});
-
-				option.setTooltip(tooltip1);
+				String text = Minecraft.getInstance().font.substrByWidth(new TextComponent(joiner.toString()), 120).getString();
+				CycleOption<String> option = new CycleOption(name, (val) -> text, (val1, val2, val3) -> this.minecraft.setScreen(new ListConfigSettingsScreen(this, minecraft.options, new TextComponent(finalPath1), spec, value1, getSpec(), getConfigName() + "." + key)), () -> {
+					return CycleButton.builder((t) -> new TextComponent(text)).displayOnlyValue().withValues(text).withInitialValue(text);
+				}){
+					@Override
+					public CycleButton<Boolean> createButton(Options pOptions, int pX, int pY, int pWidth){
+						CycleButton<Boolean> btn = (CycleButton<Boolean>)super.createButton(pOptions, pX, pY, pWidth);
+						CycleButton.TooltipSupplier tooltipsupplier = (va) -> Minecraft.getInstance().font.split(tooltip, 200);
+						btn.tooltipSupplier = tooltipsupplier;
+						return btn;
+					}
+				};
 
 				OptionsList.configMap.put(option, key);
 				OptionsList.config.put(option, Pair.of(spec, value1));
@@ -400,7 +397,7 @@ public class ClientSettingsScreen extends SettingsScreen{
 		return "client";
 	}
 
-	private void addOption(String category, String path, AbstractOption option){
+	private void addOption(String category, String path, Option option){
 		if(category != null){
 			if(!optionMap.containsKey(category)){
 				optionMap.put(category, new ArrayList<>());
@@ -413,7 +410,33 @@ public class ClientSettingsScreen extends SettingsScreen{
 		options.add(path);
 	}
 
-	public ForgeConfigSpec getSpec(){
-		return ConfigHandler.clientSpec;
+	public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
+		this.renderBackground(p_230430_1_);
+		this.list.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
+		drawCenteredString(p_230430_1_, this.font, this.title, this.width / 2, 5, 16777215);
+		super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
+
+		List<FormattedCharSequence> list = tooltipAt(this.list, p_230430_2_, p_230430_3_);
+		if(list != null){
+			this.renderTooltip(p_230430_1_, list, p_230430_2_, p_230430_3_);
+		}
+	}
+
+	@Nullable
+	public static List<FormattedCharSequence> tooltipAt(OptionsList p_243293_0_, int p_243293_1_, int p_243293_2_){
+		Optional<AbstractWidget> optional = p_243293_0_.getMouseOver(p_243293_1_, p_243293_2_);
+		OptionListEntry optional2 = p_243293_0_.getEntryAtPos(p_243293_1_, p_243293_2_);
+
+		if(!optional.isPresent() || !(optional.get() instanceof TooltipAccessor)){
+			if(optional2 instanceof OptionEntry){
+				optional = Optional.of(((OptionEntry)optional2).widget);
+			}
+		}
+
+		if(optional.isPresent() && optional.get() instanceof TooltipAccessor && optional.get().visible && !optional.get().isHoveredOrFocused()){
+			return ((TooltipAccessor)optional.get()).getTooltip();
+		}else{
+			return ImmutableList.of();
+		}
 	}
 }

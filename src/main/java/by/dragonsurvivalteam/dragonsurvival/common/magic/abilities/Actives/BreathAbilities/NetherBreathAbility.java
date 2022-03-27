@@ -57,9 +57,6 @@ public class NetherBreathAbility extends BreathAbility{
 	@Override
 	public NetherBreathAbility createInstance(){
 		return new NetherBreathAbility(type, id, icon, minLevel, maxLevel, manaCost, castTime, abilityCooldown, requiredLevels);
-	}	@Override
-	public int getManaCost(){
-		return player != null && player.hasEffect(DragonEffects.SOURCE_OF_MAGIC) ? 0 : (firstUse ? ConfigHandler.SERVER.fireBreathInitialMana.get() : ConfigHandler.SERVER.fireBreathOvertimeMana.get());
 	}
 
 	@OnlyIn( Dist.CLIENT )
@@ -67,12 +64,17 @@ public class NetherBreathAbility extends BreathAbility{
 		ArrayList<Component> list = super.getLevelUpInfo();
 		list.add(new TranslatableComponent("ds.skill.damage", "+" + ConfigHandler.SERVER.fireBreathDamage.get()));
 		return list;
+	}	@Override
+	public int getManaCost(){
+		return player != null && player.hasEffect(DragonEffects.SOURCE_OF_MAGIC) ? 0 : (firstUse ? ConfigHandler.SERVER.fireBreathInitialMana.get() : ConfigHandler.SERVER.fireBreathOvertimeMana.get());
 	}
 
 	@Override
 	public boolean isDisabled(){
 		return super.isDisabled() || !ConfigHandler.SERVER.fireBreath.get();
 	}
+
+
 
 	@Override
 	public void onBlock(BlockPos pos, BlockState blockState, Direction direction){
@@ -129,15 +131,14 @@ public class NetherBreathAbility extends BreathAbility{
 				}
 			}
 		}
-	}	public void tickCost(){
+	}
+
+	public void tickCost(){
 		if(firstUse || player.tickCount % ConfigHandler.SERVER.fireBreathManaTicks.get() == 0){
 			consumeMana(player);
 			firstUse = false;
 		}
 	}
-
-
-
 
 
 	@Override

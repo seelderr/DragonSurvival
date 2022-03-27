@@ -10,12 +10,10 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
 
-@Mixin( ShadersRender.class)
-public class MixinShaderRender
-{
-	@Overwrite(remap = false)
-	public static void updateCamera(Camera activeRenderInfo, Minecraft mc, float partialTicks)
-	{
+@Mixin( ShadersRender.class )
+public class MixinShaderRender{
+	@Overwrite( remap = false )
+	public static void updateCamera(Camera activeRenderInfo, Minecraft mc, float partialTicks){
 		activeRenderInfo.setup(mc.level, mc.getCameraEntity() == null ? mc.player : mc.getCameraEntity(), !mc.options.getCameraType().isFirstPerson(), mc.options.getCameraType().isMirrored(), partialTicks);
 		EntityViewRenderEvent.CameraSetup cameraSetup = ForgeHooksClient.onCameraSetup(mc.gameRenderer, activeRenderInfo, partialTicks);
 		activeRenderInfo.setAnglesInternal(cameraSetup.getYaw(), cameraSetup.getPitch());

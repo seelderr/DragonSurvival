@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles;
 
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
@@ -34,7 +35,6 @@ public class StormBreathEntity extends Entity implements IAnimatable{
 
 	@Override
 	public Packet<?> getAddEntityPacket(){
-
 		return NetworkHooks.getEntitySpawningPacket(this);
 	}
 

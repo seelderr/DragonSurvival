@@ -17,8 +17,7 @@ public class ChargedCoalItem extends Item{
 	}
 
 	@Override
-	public int getBurnTime(ItemStack itemStack, RecipeType<?> recipeType)
-	{
+	public int getBurnTime(ItemStack itemStack, RecipeType<?> recipeType){
 		return 4000;
 	}
 

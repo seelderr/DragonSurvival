@@ -14,24 +14,25 @@ import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncFlightSpeed;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncFlyingStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
+import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.MainWindow;
+import com.mojang.math.Vector3f;
+import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.LocalPlayer;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.renderer.Camera;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.player.Input;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.ai.attributes.AttributeInstance;
-import net.minecraft.particles.ParticleOptions;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.particles.RedstoneParticleData;
-import net.minecraft.util.MovementInput;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.Mth;
- 
+import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityViewRenderEvent.CameraSetup;
@@ -70,7 +71,7 @@ public class ClientFlightHandler{
 	@SubscribeEvent
 	public static void flightCamera(CameraSetup setup){
 		LocalPlayer currentPlayer = Minecraft.getInstance().player;
-		Camera info = setup.getInfo();
+		Camera info = setup.getCamera();
 
 		if(currentPlayer != null){
 			DragonStateHandler dragonStateHandler = DragonStateProvider.getCap(currentPlayer).orElse(null);
@@ -78,7 +79,7 @@ public class ClientFlightHandler{
 
 			if(dragonStateHandler != null){
 				if(ServerFlightHandler.isGliding(currentPlayer)){
-					if(setup.getInfo().isDetached()){
+					if(setup.getCamera().isDetached()){
 
 						if(ConfigHandler.CLIENT.flightCameraMovement.get()){
 							Vec3 lookVec = currentPlayer.getLookAngle();
@@ -133,12 +134,12 @@ public class ClientFlightHandler{
 			}
 
 			if(cap.getMovementData().spinLearned && cap.getMovementData().spinCooldown > 0){
-				if(event.getType() == ElementType.HOTBAR){
-					RenderSystem.pushMatrix();
+				if(event.getType() == ElementType.ALL){
+					event.getMatrixStack().pushPose();
 
 					TextureManager textureManager = Minecraft.getInstance().getTextureManager();
-					MainWindow window = Minecraft.getInstance().getWindow();
-					Minecraft.getInstance().getTextureManager().bindForSetup(SPIN_COOLDOWN);
+					Window window = Minecraft.getInstance().getWindow();
+					RenderSystem.setShaderTexture(0, SPIN_COOLDOWN);
 
 					int cooldown = ConfigHandler.SERVER.flightSpinCooldown.get() * 20;
 					float f = ((float)cooldown - (float)cap.getMovementData().spinCooldown) / (float)cooldown;
@@ -153,7 +154,7 @@ public class ClientFlightHandler{
 					Screen.blit(event.getMatrixStack(), k, j, 0, 0, 66, 21, 256, 256);
 					Screen.blit(event.getMatrixStack(), k + 4, j + 1, 4, 21, l, 21, 256, 256);
 
-					RenderSystem.popMatrix();
+					event.getMatrixStack().popPose();
 				}
 			}
 		});
@@ -192,7 +193,7 @@ public class ClientFlightHandler{
 					}else if(EnchantmentHelper.getEnchantmentLevel(Enchantments.SWEEPING_EDGE, player) > 0){
 						spawnSpinParticle(player, ParticleTypes.SWEEP_ATTACK);
 					}else if(EnchantmentHelper.getEnchantmentLevel(Enchantments.SHARPNESS, player) > 0){
-						spawnSpinParticle(player, new RedstoneParticleData(1f, 1f, 1f, 1f));
+						spawnSpinParticle(player, new DustParticleOptions(new Vector3f(1f, 1f, 1f), 1f));
 					}else if(EnchantmentHelper.getEnchantmentLevel(Enchantments.SMITE, player) > 0){
 						spawnSpinParticle(player, ParticleTypes.ENCHANT);
 					}else if(EnchantmentHelper.getEnchantmentLevel(Enchantments.BANE_OF_ARTHROPODS, player) > 0){
@@ -226,7 +227,7 @@ public class ClientFlightHandler{
 			DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
 				if(dragonStateHandler.isDragon()){
 					if(ServerFlightHandler.canSwimSpin(player) && ServerFlightHandler.isSpin(player)){
-						MovementInput movement = player.input;
+						Input movement = player.input;
 
 						Vec3 motion = player.getDeltaMovement();
 						Vec3 lookVec = player.getLookAngle();
@@ -258,8 +259,7 @@ public class ClientFlightHandler{
 					}
 
 					if(dragonStateHandler.isWingsSpread()){
-						MovementInput movement = player.input;
-
+						Input movement = player.input;
 						boolean hasFood = player.getFoodData().getFoodLevel() > ConfigHandler.SERVER.flightHungerThreshold.get() || player.isCreative() || ConfigHandler.SERVER.allowFlyingWithoutHunger.get();
 
 						if(!hasFood){
@@ -273,11 +273,10 @@ public class ClientFlightHandler{
 							}
 
 							Vec3 motion = player.getDeltaMovement();
-
 							Vec3 lookVec = player.getLookAngle();
 							float f6 = player.xRot * ((float)Math.PI / 180F);
 							double d9 = Math.sqrt(lookVec.x * lookVec.x + lookVec.z * lookVec.z);
-							double d11 = Math.sqrt(Livingmotion.horizontalDistanceSqr());
+							double d11 = Math.sqrt(motion.horizontalDistanceSqr());
 							double d12 = lookVec.length();
 							float f3 = Mth.cos(f6);
 							f3 = (float)((double)f3 * (double)f3 * Math.min(1.0D, d12 / 0.4D));

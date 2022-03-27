@@ -27,10 +27,10 @@ public class DragonSizeHandler{
 
 	@SubscribeEvent
 	public static void getDragonSize(EntityEvent.Size event){
-		if(!(event.get() instanceof Player)){
+		if(!(event.getEntity() instanceof Player)){
 			return;
 		}
-		Player player = (Player)event.get();
+		Player player = (Player)event.getEntity();
 
 		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
 			if(!dragonStateHandler.isDragon()){
@@ -91,7 +91,7 @@ public class DragonSizeHandler{
 		Pose overridePose = getOverridePose(player);
 		if(player.getForcedPose() != overridePose){
 			player.setForcedPose(overridePose);
-			if(player.level.isClientSide() && Minecraft.getInstance().camera != player){
+			if(player.level.isClientSide() && Minecraft.getInstance().getCameraEntity() != player){
 				player.refreshDimensions();
 			}
 		}

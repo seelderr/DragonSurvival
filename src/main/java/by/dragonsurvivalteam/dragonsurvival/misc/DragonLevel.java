@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.misc;
 
-import net.minecraft.client.resources.I18n;
+
+import net.minecraft.client.resources.language.I18n;
 
 public enum DragonLevel{
 	BABY(14, 1.1f, "newborn"),

@@ -4,27 +4,27 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonSta
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.emotes.SyncEmote;
+import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.settings.PointOfView;
-import net.minecraft.entity.ai.attributes.AttributeInstance;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.SoundSource;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
-import net.minecraftforge.event.entity.living.LivingEntityHurtEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import java.util.UUID;
 
-import static net.minecraft.client.settings.PointOfView.THIRD_PERSON_BACK;
+import static net.minecraft.client.CameraType.THIRD_PERSON_BACK;
 
 
 @OnlyIn( Dist.CLIENT )
@@ -46,11 +46,8 @@ public class EmoteHandler{
 				for(Emote emote : cap.getEmotes().currentEmotes){
 					int index = cap.getEmotes().currentEmotes.indexOf(emote);
 
-					if(cap.getEmotes().emoteTicks.size() <= index){
-						cap.getEmotes().currentEmotes.remove(index);
-						//cap.getEmotes().emoteTicks.remove(index);
-						NetworkHandler.CHANNEL.sendToServer(new SyncEmote(player.getId(), cap.getEmotes()));
-						return; //How did you get to this!?
+					while(cap.getEmotes().emoteTicks.size() <= index){
+						cap.getEmotes().emoteTicks.add(0, 0);
 					}
 
 					if(cap.getEmotes().emoteTicks.size() > index){
@@ -73,13 +70,13 @@ public class EmoteHandler{
 
 						if(emote.thirdPerson){
 							Minecraft.getInstance().levelRenderer.needsUpdate();
-							PointOfView pointofview = Minecraft.getInstance().options.getCameraType();
+							CameraType pointofview = Minecraft.getInstance().options.getCameraType();
 
 							if(pointofview.isFirstPerson()){
 								Minecraft.getInstance().options.setCameraType(THIRD_PERSON_BACK);
 
 								if(pointofview.isFirstPerson() != Minecraft.getInstance().options.getCameraType().isFirstPerson()){
-									Minecraft.getInstance().gameRenderer.checkEntityPostEffect(Minecraft.getInstance().options.getCameraType().isFirstPerson() ? Minecraft.getInstance().getCamera() : null);
+									Minecraft.getInstance().gameRenderer.checkEntityPostEffect(Minecraft.getInstance().options.getCameraType().isFirstPerson() ? Minecraft.getInstance().getCameraEntity() : null);
 								}
 							}
 						}
@@ -118,7 +115,7 @@ public class EmoteHandler{
 	}
 
 	@SubscribeEvent
-	public static void playerAttacked(LivingEntityHurtEvent event){
+	public static void playerAttacked(LivingHurtEvent event){
 		EmoteMenuHandler.clearEmotes();
 	}
 

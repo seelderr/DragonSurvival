@@ -3,18 +3,17 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.buttons;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.components.BackgroundColorSelectorComponent;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
-import com.mojang.blaze3d.matrix.PoseStack;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.util.ResourceLocation;
- 
-import net.minecraft.util.text.TextComponent;
- 
-import net.minecraftforge.fml.client.gui.GuiUtils;
-import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
-
-import java.util.Arrays;
+import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.client.gui.GuiUtils;
+import net.minecraftforge.client.gui.widget.ExtendedButton;
 
 public class BackgroundColorButton extends ExtendedButton{
 
@@ -26,7 +25,7 @@ public class BackgroundColorButton extends ExtendedButton{
 	private Widget renderButton;
 
 
-	public BackgroundColorButton(int xPos, int yPos, int width, int height, Component displayString, IPressable handler, DragonEditorScreen dragonEditorScreen){
+	public BackgroundColorButton(int xPos, int yPos, int width, int height, Component displayString, OnPress handler, DragonEditorScreen dragonEditorScreen){
 		super(xPos, yPos, width, height, displayString, handler);
 		this.xSize = width;
 		this.ySize = height;
@@ -55,10 +54,10 @@ public class BackgroundColorButton extends ExtendedButton{
 			colorComponent = new BackgroundColorSelectorComponent(this.screen, x - 50, y + height + 3, 120, 61);
 			screen.children.add(0, colorComponent);
 			screen.children.add(colorComponent);
-			screen.buttons.add(renderButton);
+			screen.renderables.add(renderButton);
 		}else{
 			screen.children.removeIf((s) -> s == colorComponent);
-			screen.buttons.removeIf((s) -> s == renderButton);
+			screen.renderables.removeIf((s) -> s == renderButton);
 		}
 
 		toggled = !toggled;
@@ -72,13 +71,12 @@ public class BackgroundColorButton extends ExtendedButton{
 			toggled = false;
 			Screen screen = Minecraft.getInstance().screen;
 			screen.children.removeIf((s) -> s == colorComponent);
-			screen.buttons.removeIf((s) -> s == renderButton);
+			screen.renderables.removeIf((s) -> s == renderButton);
 		}
 
 		if(visible){
-			Minecraft.getInstance().textureManager.bind(BACKGROUND_TEXTURE);
-			GuiUtils.drawContinuousTexturedBox(mStack, x, y, 0, 0, width, height, 32, 32, 10, 0);
-			Minecraft.getInstance().getTextureManager().bindForSetup(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/background_color_button.png"));
+			GuiUtils.drawContinuousTexturedBox(mStack,BACKGROUND_TEXTURE,  x, y, 0, 0, width, height, 32, 32, 10, 0);
+			RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/background_color_button.png"));
 			blit(mStack, x + 3, y + 3, 0, 0, width - 6, height - 6, width - 6, height - 6);
 
 			if(this.isHoveredOrFocused()){
@@ -89,6 +87,6 @@ public class BackgroundColorButton extends ExtendedButton{
 
 	@Override
 	public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-		Minecraft.getInstance().screen.renderTooltip(p_230443_1_, Arrays.asList(new TranslatableComponent("ds.gui.dragon_editor.background_color")), p_230443_2_, p_230443_3_);
+		Minecraft.getInstance().screen.renderTooltip(p_230443_1_, new TranslatableComponent("ds.gui.dragon_editor.background_color"), p_230443_2_, p_230443_3_);
 	}
 }

@@ -21,17 +21,22 @@ import software.bernie.geckolib3.core.processor.IBone;
 
 
 @Mixin( LevelRenderer.class )
-public class MixinWorldRenderer
-{
+public class MixinWorldRenderer{
 	@Shadow
 	@Final
 	private RenderBuffers renderBuffers;
 
-	@Inject(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/LevelRenderer;checkPoseStack(Lcom/mojang/blaze3d/vertex/PoseStack;)V", ordinal = 0))	public void render(PoseStack matrices, float tickDelta, long limitTime, boolean renderBlockOutline, Camera camera,
-		GameRenderer gameRenderer, LightTexture lightmapTextureManager, Matrix4f matrix4f, CallbackInfo info) {
-		if(camera.isDetached()) return;
-		if(!ConfigHandler.CLIENT.renderInFirstPerson.get()) return;
-		if(!DragonUtils.isDragon(camera.getEntity())) return;
+	@Inject( method = "renderLevel", at = @At( value = "INVOKE", target = "Lnet/minecraft/client/renderer/LevelRenderer;checkPoseStack(Lcom/mojang/blaze3d/vertex/PoseStack;)V", ordinal = 0 ) )
+	public void render(PoseStack matrices, float tickDelta, long limitTime, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, LightTexture lightmapTextureManager, Matrix4f matrix4f, CallbackInfo info){
+		if(camera.isDetached()){
+			return;
+		}
+		if(!ConfigHandler.CLIENT.renderInFirstPerson.get()){
+			return;
+		}
+		if(!DragonUtils.isDragon(camera.getEntity())){
+			return;
+		}
 
 		Vec3 vec3d = camera.getPosition();
 		double d = vec3d.x();
@@ -41,8 +46,12 @@ public class MixinWorldRenderer
 		final IBone neckandHead = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("Neck");
 		final IBone armorNeck = ClientDragonRender.dragonArmorModel.getAnimationProcessor().getBone("Neck");
 
-		if (neckandHead != null) neckandHead.setHidden(true);
-		if (armorNeck != null) armorNeck.setHidden(true);
+		if(neckandHead != null){
+			neckandHead.setHidden(true);
+		}
+		if(armorNeck != null){
+			armorNeck.setHidden(true);
+		}
 
 		EntityRenderDispatcher entityrenderermanager = Minecraft.getInstance().getEntityRenderDispatcher();
 		boolean shouldRender = entityrenderermanager.shouldRenderHitBoxes();
@@ -51,13 +60,16 @@ public class MixinWorldRenderer
 		entityrenderermanager.setRenderHitBoxes(false);
 		this.renderEntity(camera.getEntity(), d, e, f, tickDelta, matrices, immediate);
 		entityrenderermanager.setRenderHitBoxes(shouldRender);
-		if (neckandHead != null) neckandHead.setHidden(false);
-		if (armorNeck != null) armorNeck.setHidden(false);
+		if(neckandHead != null){
+			neckandHead.setHidden(false);
+		}
+		if(armorNeck != null){
+			armorNeck.setHidden(false);
+		}
 	}
 
 	@Shadow
-	private void renderEntity(Entity entity, double cameraX, double cameraY, double cameraZ, float tickDelta,
-		PoseStack matrices, MultiBufferSource vertexConsumers) {
+	private void renderEntity(Entity entity, double cameraX, double cameraY, double cameraZ, float tickDelta, PoseStack matrices, MultiBufferSource vertexConsumers){
 
 	}
 }

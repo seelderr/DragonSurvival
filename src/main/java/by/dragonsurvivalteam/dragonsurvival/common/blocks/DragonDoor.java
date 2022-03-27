@@ -106,23 +106,9 @@ public class DragonDoor extends Block implements SimpleWaterloggedBlock{
 			}
 		}
 	}
-	public ActionResultType use(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit){
-		LazyOptional<DragonStateHandler> dragonStateHandlerLazyOptional = player.getCapability(DragonStateProvider.DRAGON_CAPABILITY);
-		if(dragonStateHandlerLazyOptional.isPresent()){
-			DragonStateHandler dragonStateHandler = dragonStateHandlerLazyOptional.orElseGet(() -> null);
-			if(state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.NONE || (dragonStateHandler.isDragon() && (state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.CAVE && dragonStateHandler.getType() == DragonType.CAVE) || (state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.FOREST && dragonStateHandler.getType() == DragonType.FOREST) || (state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.SEA && dragonStateHandler.getType() == DragonType.SEA))){
-				state = state.cycle(OPEN).setValue(WATERLOGGED, worldIn.getFluidState(pos).getType() == Fluids.WATER && state.getBlock() == DSBlocks.seaDoor);
-				worldIn.setBlock(pos, state, 10);
-				worldIn.levelEvent(player, state.getValue(OPEN) ? this.getOpenSound() : this.getCloseSound(), pos, 0);
-				if(state.getValue(PART) == Part.TOP){
-					worldIn.setBlock(pos.below(2), state.setValue(PART, Part.BOTTOM).setValue(WATERLOGGED, worldIn.getFluidState(pos.below(2)).getType() == Fluids.WATER && state.getBlock() == DSBlocks.seaDoor), 10);
-					worldIn.setBlock(pos.below(), state.setValue(PART, Part.MIDDLE).setValue(WATERLOGGED, worldIn.getFluidState(pos.below()).getType() == Fluids.WATER && state.getBlock() == DSBlocks.seaDoor), 10);
-				}
-				return ActionResultType.SUCCESS;
-			}
-		}
-		return ActionResultType.PASS;
 
+	private void playSound(Level worldIn, BlockPos pos, boolean isOpening){
+		worldIn.levelEvent(null, isOpening ? this.getOpenSound() : this.getCloseSound(), pos, 0);
 	}
 
 	private int getCloseSound(){
@@ -208,44 +194,7 @@ public class DragonDoor extends Block implements SimpleWaterloggedBlock{
 		}
 	}
 
-	public void playerDestroy(World worldIn, PlayerEntity player, BlockPos pos, BlockState state,
-		@Nullable
-			TileEntity te, ItemStack stack){
-		super.playerDestroy(worldIn, player, pos, Blocks.AIR.defaultBlockState(), te, stack);
-	}
-
-	public void setPlacedBy(World worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack){
-		worldIn.setBlock(pos.above(), state.setValue(PART, Part.MIDDLE).setValue(WATERLOGGED, worldIn.getFluidState(pos.above()).getType() == Fluids.WATER && state.getBlock() == DSBlocks.seaDoor), 3);
-		worldIn.setBlock(pos.above(2), state.setValue(PART, Part.TOP).setValue(WATERLOGGED, worldIn.getFluidState(pos.above(2)).getType() == Fluids.WATER && state.getBlock() == DSBlocks.seaDoor), 3);
-	}
-
-	public void playerWillDestroy(World worldIn, BlockPos pos, BlockState state, PlayerEntity player){
-		if(!worldIn.isClientSide){
-			Part part = state.getValue(PART);
-			if(part != Part.MIDDLE && !player.isCreative()){
-				BlockPos middlePos = part == Part.BOTTOM ? pos.above() : pos.below();
-				BlockState middleState = worldIn.getBlockState(middlePos);
-				if(middleState.getBlock() == state.getBlock()){
-					worldIn.setBlock(middlePos, Blocks.AIR.defaultBlockState(), 35);
-					worldIn.levelEvent(player, 2001, middlePos, Block.getId(middleState));
-				}
-			}else if(part != Part.BOTTOM && player.isCreative()){
-				BlockPos bottomPos = part == Part.MIDDLE ? pos.below() : pos.below(2);
-				BlockState bottomState = worldIn.getBlockState(bottomPos);
-				if(bottomState.getBlock() == state.getBlock()){
-					worldIn.setBlock(bottomPos, Blocks.AIR.defaultBlockState(), 35);
-					worldIn.levelEvent(player, 2001, bottomPos, Block.getId(bottomState));
-				}
-			}
-		}
-		super.playerWillDestroy(worldIn, pos, state, player);
-	}
-
-	protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder){
-		builder.add(PART, FACING, OPEN, HINGE, POWERED, OPEN_REQ,WATERLOGGED);
-	}
-
-	private DoorHingeSide getHinge(BlockItemUseContext blockItemUseContext){
+	private DoorHingeSide getHinge(BlockPlaceContext blockItemUseContext){
 
 		//TODO Logic handling aligning doors
 		BlockGetter iblockreader = blockItemUseContext.getLevel();

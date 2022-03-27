@@ -121,7 +121,9 @@ public class ForestBreathAbility extends BreathAbility{
 				}
 			}
 		}
-	}	@Override
+	}
+
+	@Override
 
 	public void onActivation(Player player){
 
@@ -259,6 +261,4 @@ public class ForestBreathAbility extends BreathAbility{
 			Minecraft.getInstance().getSoundManager().play(loopingSound);
 		}
 	}
-
-
 }

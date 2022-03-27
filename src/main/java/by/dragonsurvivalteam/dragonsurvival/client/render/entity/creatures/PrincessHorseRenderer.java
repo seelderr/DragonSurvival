@@ -1,12 +1,12 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render.entity.creatures;
 
-import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.PrincesHorse;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.PrincesHorseEntity;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
 
-public class PrincessHorseRenderer extends GeoEntityRenderer<PrincesHorse>{
-	public PrincessHorseRenderer(EntityRendererManager renderManager, AnimatedGeoModel<PrincesHorse> modelProvider){
+public class PrincessHorseRenderer extends GeoEntityRenderer<PrincesHorseEntity>{
+	public PrincessHorseRenderer(EntityRendererProvider.Context renderManager, AnimatedGeoModel<PrincesHorseEntity> modelProvider){
 		super(renderManager, modelProvider);
 	}
 }

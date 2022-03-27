@@ -3,7 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.util;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -26,7 +26,7 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 @OnlyIn( Dist.CLIENT )
-public class FakeLocalPlayer extends LocalPlayer{
+public class FakeClientPlayer extends AbstractClientPlayer{
 	private static final ResourceLocation STEVE_SKIN_LOCATION = new ResourceLocation("textures/entity/steve.png");
 	private static final ResourceLocation ALEX_SKIN_LOCATION = new ResourceLocation("textures/entity/alex.png");
 	public DragonStateHandler handler = new DragonStateHandler();
@@ -34,7 +34,7 @@ public class FakeLocalPlayer extends LocalPlayer{
 	public Long lastAccessed;
 	public int number;
 
-	public FakeLocalPlayer(int number){
+	public FakeClientPlayer(int number){
 		super(Minecraft.getInstance().level, new GameProfile(UUID.randomUUID(), "FAKE_PLAYER_" + number));
 		this.number = number;
 	}
@@ -51,12 +51,6 @@ public class FakeLocalPlayer extends LocalPlayer{
 	public void tick(){return;}
 
 	@Override
-	public void displayClientMessage(Component chatComponent, boolean actionBar){}
-
-	@Override
-	public void sendMessage(Component component, UUID senderUUID){}
-
-	@Override
 	public void die(DamageSource source){return;}
 
 	@Override
@@ -70,6 +64,9 @@ public class FakeLocalPlayer extends LocalPlayer{
 
 	@Override
 	public boolean canHarmPlayer(Player player){return false;}
+
+	@Override
+	public void displayClientMessage(Component chatComponent, boolean actionBar){}
 
 	@Override
 	public void awardStat(Stat par1StatBase, int par2){}
@@ -95,6 +92,9 @@ public class FakeLocalPlayer extends LocalPlayer{
 
 	@Override
 	public boolean save(CompoundTag pCompound){return false;}
+
+	@Override
+	public void sendMessage(Component component, UUID senderUUID){}
 
 	@Override
 	@Nullable

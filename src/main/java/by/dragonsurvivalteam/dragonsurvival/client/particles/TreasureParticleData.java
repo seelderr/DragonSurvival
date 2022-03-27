@@ -63,6 +63,11 @@ public class TreasureParticleData implements ParticleOptions{
 	@OnlyIn( Dist.CLIENT )
 	public float getG(){
 		return this.g;
+	}
+
+	@OnlyIn( Dist.CLIENT )
+	public float getB(){
+		return this.b;
 	}	public void writeToNetwork(FriendlyByteBuf p_197553_1_){
 		p_197553_1_.writeFloat(this.r);
 		p_197553_1_.writeFloat(this.g);
@@ -71,22 +76,17 @@ public class TreasureParticleData implements ParticleOptions{
 	}
 
 	@OnlyIn( Dist.CLIENT )
-	public float getB(){
-		return this.b;
-	}
-
-	@OnlyIn( Dist.CLIENT )
 	public float getScale(){
 		return this.scale;
-	}	public String writeToString(){
+	}
+
+
+
+	public String writeToString(){
 		return String.format(Locale.ROOT, "%s %.2f %.2f %.2f %.2f", Registry.PARTICLE_TYPE.getKey(this.getType()), this.r, this.g, this.b, this.scale);
 	}
 
 	public ParticleType<TreasureParticleData> getType(){
 		return DSParticles.TREASURE.get();
 	}
-
-
-
-
 }

@@ -19,6 +19,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier.Builder;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
@@ -137,9 +138,8 @@ public class MagicalPredator extends Monster{
 	@Override
 	protected void registerGoals(){
 		super.registerGoals();
-		this.goalSelector.addGoal(1, new SwimGoal(this));
 		this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0D, true));
-		this.goalSelector.addGoal(3, new LookAtGoal(this, Player.class, 8.0F));
+		this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0F));
 		this.goalSelector.addGoal(4, new DevourXP(this.level, this));
 		this.targetSelector.addGoal(1, new FindPlayerGoal(this));
 		this.targetSelector.addGoal(2, new IsNearestDragonTargetGoal(this, true));

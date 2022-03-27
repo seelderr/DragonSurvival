@@ -1,27 +1,28 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.components;
 
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.matrix.PoseStack;
-import net.minecraft.client.gui.FocusableGui;
-import net.minecraft.client.gui.IGuiEventListener;
-import net.minecraft.client.gui.IRenderable;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.util.math.Mth;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.components.events.AbstractContainerEventHandler;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.util.Mth;
 import software.bernie.geckolib3.core.processor.IBone;
 
 import java.util.List;
 import java.util.function.Supplier;
 
-public class DragonUIRenderComponent extends FocusableGui implements IRenderable{
+public class DragonUIRenderComponent extends AbstractContainerEventHandler implements Widget{
 	private final Screen screen;
-	private final Supplier<Dragon> getter;
+	private final Supplier<DragonEntity> getter;
 	public float yRot = -3, xRot = -5;
 	public float xOffset = 0, yOffset = 0;
 	public float zoom = 0;
 	public int x, y, width, height;
 
-	public DragonUIRenderComponent(Screen screen, int x, int y, int xSize, int ySize, Supplier<Dragon> dragonGetter){
+	public DragonUIRenderComponent(Screen screen, int x, int y, int xSize, int ySize, Supplier<DragonEntity> dragonGetter){
 		this.screen = screen;
 		this.x = x;
 		this.y = y;
@@ -55,7 +56,7 @@ public class DragonUIRenderComponent extends FocusableGui implements IRenderable
 	}
 
 	@Override
-	public List<? extends IGuiEventListener> children(){
+	public List<? extends GuiEventListener> children(){
 		return ImmutableList.of();
 	}
 

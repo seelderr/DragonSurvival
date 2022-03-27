@@ -6,7 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.Option;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 
 import java.util.Arrays;
@@ -37,7 +37,7 @@ public class DSDropDownOption extends Option{
 		return btn;
 	}
 
-	public TextComponent getMessage(Options p_238334_1_){
+	public Component getMessage(Options p_238334_1_){
 		return btn.getMessage();
 	}
 }

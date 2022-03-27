@@ -6,24 +6,24 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.DropDownB
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon.DragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.EnumSkinLayer;
-import by.dragonsurvivalteam.dragonsurvival.client.util.FakeLocalPlayer;
-import by.dragonsurvivalteam.dragonsurvival.client.util.FakeLocalPlayerUtils;
+import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayer;
+import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TextRenderUtil;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.Dragon;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonLevel;
-import com.mojang.blaze3d.matrix.PoseStack;
+import com.mojang.blaze3d.pipeline.MainTarget;
+import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.client.renderer.texture.NativeImage;
-import net.minecraft.client.shader.Framebuffer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TextComponent;
- 
-import net.minecraftforge.fml.client.gui.GuiUtils;
-import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.client.gui.GuiUtils;
+import net.minecraftforge.client.gui.widget.ExtendedButton;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.resource.GeckoLibCache;
 
@@ -33,8 +33,8 @@ import java.util.function.Consumer;
 
 public class EditorPartButton extends ExtendedButton{
 	public static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/textbox.png");
+	public final TranslatableComponent message;
 	private final DragonEditorScreen screen;
-	private final TranslatableComponent message;
 	private final DragonStateHandler handler = new DragonStateHandler();
 	private final EnumSkinLayer layer;
 	public String value;
@@ -99,15 +99,17 @@ public class EditorPartButton extends ExtendedButton{
 			xRot = 6;
 		}
 
-		RenderSystem.pushMatrix();
-		Framebuffer framebuffer = new Framebuffer(width, height, true, false);
+		PoseStack stack = new PoseStack();
+		stack.pushPose();
+		MainTarget framebuffer = new MainTarget(width, height);
+		framebuffer.createBuffers(width, height, true);
 		framebuffer.bindWrite(true);
 		framebuffer.blitToScreen(width, height);
 
-		FakeLocalPlayer player = FakeLocalPlayerUtils.getFakePlayer(2, handler);
-		Dragon dragon = FakeLocalPlayerUtils.getFakeDragon(2, handler);
+		FakeClientPlayer player = FakeClientPlayerUtils.getFakePlayer(2, handler);
+		DragonEntity dragon = FakeClientPlayerUtils.getFakeDragon(2, handler);
 
-		EntityRenderer<? super Dragon> dragonRenderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(dragon);
+		EntityRenderer<? super DragonEntity> dragonRenderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(dragon);
 		int id = ((DragonRenderer)dragonRenderer).getUniqueID(dragon);
 
 		ClientDragonRender.dragonModel.setCurrentTexture(null);
@@ -133,18 +135,17 @@ public class EditorPartButton extends ExtendedButton{
 
 		framebuffer.unbindWrite();
 		framebuffer.destroyBuffers();
-		RenderSystem.popMatrix();
+		stack.popPose();
 
 		Minecraft.getInstance().getMainRenderTarget().bindWrite(true);
 	}
 
 	@Override
 	public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){
-		Minecraft.getInstance().textureManager.bind(BACKGROUND_TEXTURE);
-		GuiUtils.drawContinuousTexturedBox(mStack, x, y, !active ? 32 : 0, isHoveredOrFocused() && active ? 32 : 0, width, height, 32, 32, 10, 0);
+		GuiUtils.drawContinuousTexturedBox(mStack, BACKGROUND_TEXTURE, x, y, !active ? 32 : 0, isHoveredOrFocused() && active ? 32 : 0, width, height, 32, 32, 10, 0);
 
 		if(texture != null){
-			Minecraft.getInstance().textureManager.bind(texture);
+			RenderSystem.setShaderTexture(0, texture);
 			blit(mStack, x + 3, y + 3, 0, 0, width - 6, height - 6, width - 6, height - 6);
 		}
 

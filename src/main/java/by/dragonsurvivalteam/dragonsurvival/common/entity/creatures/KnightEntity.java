@@ -11,10 +11,11 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.player.Player;
@@ -34,11 +35,11 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 import javax.annotation.Nullable;
 
-public class Knight extends Mob implements IAnimatable, DragonHunter, CommonTraits{
+public class KnightEntity extends PathfinderMob implements IAnimatable, DragonHunter, CommonTraits{
 	AnimationFactory animationFactory = new AnimationFactory(this);
 	AnimationTimer animationTimer = new AnimationTimer();
 
-	public Knight(EntityType<? extends Mob> p_i48576_1_, Level world){
+	public KnightEntity(EntityType<? extends PathfinderMob> p_i48576_1_, Level world){
 		super(p_i48576_1_, world);
 	}
 
@@ -124,8 +125,7 @@ public class Knight extends Mob implements IAnimatable, DragonHunter, CommonTrai
 	@Override
 	protected void registerGoals(){
 		super.registerGoals();
-		goalSelector.addGoal(0, new SwimGoal(this));
-		goalSelector.addGoal(5, new WaterAvoidingRandomWalkingGoal(this, 1));
+		goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1));
 		goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.5, true));
 		targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Player.class, 1, true, false, living -> {
 			return living.hasEffect(MobEffects.BAD_OMEN) || living.hasEffect(DragonEffects.EVIL_DRAGON);

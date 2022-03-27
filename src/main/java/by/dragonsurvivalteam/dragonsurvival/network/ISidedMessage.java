@@ -25,7 +25,7 @@ public abstract class ISidedMessage<T extends ISidedMessage> implements IMessage
 	public void handle(T message, Supplier<NetworkEvent.Context> supplier){
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> runClientThread(message, supplier));
 
-		if(supplier.get().getDirection() == NetworkDirection.NetworkDirection.PLAY_TO_SERVER){
+		if(supplier.get().getDirection() == NetworkDirection.PLAY_TO_SERVER){
 			ServerPlayer entity = supplier.get().getSender();
 			if(entity != null){
 				runServer(message, supplier, entity);

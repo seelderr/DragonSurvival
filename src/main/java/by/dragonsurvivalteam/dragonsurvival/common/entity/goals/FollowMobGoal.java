@@ -1,20 +1,21 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.goals;
 
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.Mob;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.util.math.AABB;
+
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.phys.AABB;
 
 import java.util.List;
 
 public class FollowMobGoal<T extends Class<? extends LivingEntity>> extends Goal{
-	T classs;
+	Class classs;
 	Mob follower;
 	LivingEntity target;
 	int distance;
 
-	public FollowMobGoal(T classs, Mob follower, int distance){
+	public FollowMobGoal(Class classs, Mob follower, int distance){
 		this.classs = classs;
 		this.follower = follower;
 		this.distance = distance;

@@ -32,6 +32,7 @@ public class DragonContainer extends AbstractContainerMenu{
 	public final ResultContainer craftResult = new ResultContainer();
 	public final boolean isLocalWorld;
 	public final Player player;
+	private final int craftingSlot;
 	public List<Slot> craftingSlots = new ArrayList<>();
 	public List<Slot> inventorySlots = new ArrayList<>();
 	public Inventory playerInventory;
@@ -59,7 +60,6 @@ public class DragonContainer extends AbstractContainerMenu{
 			return 1;
 		}
 	};
-	private final int craftingSlot;
 
 	public DragonContainer(int id, Inventory playerInventory, boolean localWorld){
 		super(DSContainers.dragonContainer, id);

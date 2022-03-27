@@ -20,24 +20,21 @@ import net.minecraftforge.network.PacketDistributor;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class SpinGrantItem extends Item
-{
-	public SpinGrantItem(Properties p_i48487_1_)
-	{
+public class SpinGrantItem extends Item{
+	public SpinGrantItem(Properties p_i48487_1_){
 		super(p_i48487_1_);
 	}
 
 	@Override
-	public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand p_77659_3_)
-	{
+	public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand p_77659_3_){
 		DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
 
-		if (handler != null && handler.isDragon()) {
-			if(!world.isClientSide) {
+		if(handler != null && handler.isDragon()){
+			if(!world.isClientSide){
 				handler.getMovementData().spinLearned = !handler.getMovementData().spinLearned;
 				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncSpinStatus(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
 
-				if (!player.isCreative()) {
+				if(!player.isCreative()){
 					player.getItemInHand(p_77659_3_).shrink(1);
 				}
 			}
@@ -50,9 +47,9 @@ public class SpinGrantItem extends Item
 	}
 
 	@Override
-	public void appendHoverText(ItemStack p_77624_1_, @Nullable
-		Level p_77624_2_, List<Component> p_77624_3_, TooltipFlag p_77624_4_)
-	{
+	public void appendHoverText(ItemStack p_77624_1_,
+		@Nullable
+			Level p_77624_2_, List<Component> p_77624_3_, TooltipFlag p_77624_4_){
 		super.appendHoverText(p_77624_1_, p_77624_2_, p_77624_3_, p_77624_4_);
 		p_77624_3_.add(new TranslatableComponent("ds.description.spin_grant"));
 	}

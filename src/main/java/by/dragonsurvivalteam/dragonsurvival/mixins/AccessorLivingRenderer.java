@@ -10,10 +10,10 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 import java.util.List;
 
 
-@Mixin( LivingEntityRenderer.class)
-public interface AccessorLivingRenderer {
-	@Accessor("layers")
+@Mixin( LivingEntityRenderer.class )
+public interface AccessorLivingRenderer{
+	@Accessor( "layers" )
 	List<RenderLayer> getRenderLayers();
-	@Invoker("shouldShowName")
+	@Invoker( "shouldShowName" )
 	boolean callShouldShowName(LivingEntity p_177070_1_);
 }

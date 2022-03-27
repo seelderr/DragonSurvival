@@ -2,19 +2,28 @@ package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 
 import by.dragonsurvivalteam.dragonsurvival.misc.PrinceTrades;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.MobSpawnType;
-import net.minecraft.entity.SpawnGroupData;
-import net.minecraft.entity.ai.goal.*;
-import net.minecraft.entity.merchant.villager.Villager;
-import net.minecraft.entity.merchant.villager.VillagerData;
-import net.minecraft.entity.merchant.villager.VillagerTrades;
-import net.minecraft.entity.villager.VillagerType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.item.MerchantOffers;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.ai.goal.PanicGoal;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.npc.Villager;
+import net.minecraft.world.entity.npc.VillagerData;
+import net.minecraft.world.entity.npc.VillagerTrades;
+import net.minecraft.world.entity.npc.VillagerTrades.ItemListing;
+import net.minecraft.world.entity.npc.VillagerType;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.trading.MerchantOffers;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.Animation;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
@@ -23,12 +32,12 @@ import software.bernie.geckolib3.core.manager.AnimationData;
 
 import javax.annotation.Nullable;
 
-public class PrinceHorse extends PrincesHorse{
-	public PrinceHorse(EntityType<? extends Villager> entityType, Level world){
+public class PrinceHorseEntity extends PrincesHorseEntity{
+	public PrinceHorseEntity(EntityType<? extends Villager> entityType, Level world){
 		super(entityType, world);
 	}
 
-	public PrinceHorse(EntityType<? extends Villager> entityType, Level world, VillagerType villagerType){
+	public PrinceHorseEntity(EntityType<? extends Villager> entityType, Level world, VillagerType villagerType){
 		super(entityType, world, villagerType);
 	}
 
@@ -44,7 +53,7 @@ public class PrinceHorse extends PrincesHorse{
 
 	protected void updateTrades(){
 		VillagerData villagerdata = getVillagerData();
-		Int2ObjectMap<VillagerTrades.ItemListing[]> int2objectmap = PrinceTrades.colorToTrades.get(getColor());
+		Int2ObjectMap<ItemListing[]> int2objectmap = PrinceTrades.colorToTrades.get(getColor());
 		if(int2objectmap != null && !int2objectmap.isEmpty()){
 			VillagerTrades.ItemListing[] trades = int2objectmap.get(villagerdata.getLevel());
 			if(trades != null){
@@ -58,10 +67,14 @@ public class PrinceHorse extends PrincesHorse{
 		super.registerGoals();
 		this.targetSelector.addGoal(5, new HurtByTargetGoal(this));
 		this.goalSelector.addGoal(5, new MeleeAttackGoal(this, 1.0D, true));
-		goalSelector.availableGoals.removeIf(prioritizedGoal -> {
+		goalSelector.getAvailableGoals().removeIf(prioritizedGoal -> {
 			Goal goal = prioritizedGoal.getGoal();
 			return goal instanceof PanicGoal || goal instanceof AvoidEntityGoal;
 		});
+	}
+
+	protected int getExperienceReward(Player p_70693_1_){
+		return 1 + this.level.random.nextInt(2);
 	}
 
 	@Override
@@ -135,10 +148,6 @@ public class PrinceHorse extends PrincesHorse{
 			animationController.setAnimation(animationBuilder);
 			return PlayState.CONTINUE;
 		}));
-	}
-
-	protected int getExperienceReward(Player p_70693_1_){
-		return 1 + this.level.random.nextInt(2);
 	}
 
 	@Override

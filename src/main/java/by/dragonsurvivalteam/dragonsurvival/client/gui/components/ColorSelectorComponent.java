@@ -8,25 +8,24 @@ import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.DragonEditorHa
 import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.EnumSkinLayer;
 import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.objects.DragonEditorObject.Texture;
 import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.objects.LayerSettings;
-import by.dragonsurvivalteam.dragonsurvival.client.util.FakeLocalPlayerUtils;
+import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.matrix.PoseStack;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FocusableGui;
-import net.minecraft.client.gui.IGuiEventListener;
-import net.minecraft.client.gui.IRenderable;
-import net.minecraft.client.gui.widget.button.CheckboxButton;
- 
-import net.minecraftforge.fml.client.gui.GuiUtils;
-import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.components.Checkbox;
+import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.components.events.AbstractContainerEventHandler;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraftforge.client.gui.GuiUtils;
+import net.minecraftforge.client.gui.widget.ExtendedButton;
 
 import java.awt.Color;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class ColorSelectorComponent extends FocusableGui implements IRenderable{
+public class ColorSelectorComponent extends AbstractContainerEventHandler implements Widget{
 	private final ExtendedButton colorPicker;
-	private final CheckboxButton glowing;
+	private final Checkbox glowing;
 	private final DragonEditorScreen screen;
 	private final int x;
 	private final int y;
@@ -45,7 +44,7 @@ public class ColorSelectorComponent extends FocusableGui implements IRenderable{
 		settings = () -> screen.preset.skinAges.get(screen.level).layerSettings.get(layer);
 
 		LayerSettings set = settings.get();
-		Texture text = DragonEditorHandler.getSkin(FakeLocalPlayerUtils.getFakePlayer(0, screen.handler), layer, set.selectedSkin, screen.handler.getType());
+		Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, screen.handler), layer, set.selectedSkin, screen.handler.getType());
 
 		glowing = new ExtendedCheckbox(x + 3, y, xSize - 5, 10, 10, new TranslatableComponent("ds.gui.dragon_editor.glowing"), set.glowing, (s) -> {
 			settings.get().glowing = s.selected();
@@ -77,14 +76,13 @@ public class ColorSelectorComponent extends FocusableGui implements IRenderable{
 	}
 
 	@Override
-	public List<? extends IGuiEventListener> children(){
+	public List<? extends GuiEventListener> children(){
 		return ImmutableList.of(colorPicker, glowing);
 	}
 
 	@Override
 	public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
-		Minecraft.getInstance().textureManager.bind(DropdownList.BACKGROUND_TEXTURE);
-		GuiUtils.drawContinuousTexturedBox(pMatrixStack, x, y - 3, 0, 0, xSize, ySize + 6, 32, 32, 10, 10);
+		GuiUtils.drawContinuousTexturedBox(pMatrixStack, DropdownList.BACKGROUND_TEXTURE, x, y - 3, 0, 0, xSize, ySize + 6, 32, 32, 10, 10);
 		colorPicker.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 		glowing.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 	}

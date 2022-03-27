@@ -9,8 +9,8 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 import java.util.Map;
 
 
-@Mixin( EntityRenderDispatcher.class)
-public interface AccessorEntityRendererManager {
-	@Accessor("playerRenderers")
+@Mixin( EntityRenderDispatcher.class )
+public interface AccessorEntityRendererManager{
+	@Accessor( "playerRenderers" )
 	Map<String, EntityRenderer<? extends Player>> getPlayerRenderers();
 }

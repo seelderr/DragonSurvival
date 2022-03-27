@@ -3,15 +3,16 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.buttons.EditorPartButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.DropDownButton;
-import com.mojang.blaze3d.matrix.PoseStack;
-import net.minecraft.client.gui.IGuiEventListener;
-import net.minecraft.util.ResourceLocation;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.narration.NarratableEntry;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class DragonEditorDropdownEntry extends by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownEntry{
+public class DragonEditorDropdownEntry extends DropdownEntry{
 	public static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/textbox.png");
 	public final List<EditorPartButton> children = new ArrayList<>();
 	public int num;
@@ -31,7 +32,12 @@ public class DragonEditorDropdownEntry extends by.dragonsurvivalteam.dragonsurvi
 		});
 	}
 
-	public List<? extends IGuiEventListener> children(){
+	public List<? extends GuiEventListener> children(){
 		return this.children;
+	}
+
+	@Override
+	public List<? extends NarratableEntry> narratables(){
+		return children;
 	}
 }

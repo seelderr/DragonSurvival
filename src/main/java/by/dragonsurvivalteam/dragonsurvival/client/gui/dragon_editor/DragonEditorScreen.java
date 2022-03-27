@@ -8,13 +8,14 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.components.DragonUIRender
 import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.buttons.*;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.*;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientEvents;
+import by.dragonsurvivalteam.dragonsurvival.client.handlers.magic.ClientMagicHUDHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.DragonEditorHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.DragonEditorRegistry;
 import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.EnumSkinLayer;
 import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.objects.DragonEditorObject.Texture;
 import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.objects.SkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.objects.SkinPreset.SkinAgeGroup;
-import by.dragonsurvivalteam.dragonsurvival.client.util.FakeLocalPlayerUtils;
+import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TextRenderUtil;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
@@ -33,10 +34,14 @@ import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.google.common.collect.EvictingQueue;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.TextComponent;
@@ -47,13 +52,13 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.DyeColor;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
 import net.minecraftforge.client.gui.widget.Slider;
-import net.minecraftforge.client.model.renderable.IRenderable;
 import org.apache.commons.lang3.text.WordUtils;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 public class DragonEditorScreen extends Screen{
@@ -161,7 +166,7 @@ public class DragonEditorScreen extends Screen{
 			dragonRender.width = width;
 		}
 
-		FakeLocalPlayerUtils.getFakePlayer(0, handler).animationSupplier = () -> animations[curAnimation];
+		FakeClientPlayerUtils.getFakePlayer(0, handler).animationSupplier = () -> animations[curAnimation];
 
 		stack.pushPose();
 		stack.translate(0, 0, -600);
@@ -169,7 +174,7 @@ public class DragonEditorScreen extends Screen{
 		stack.popPose();
 
 		children().stream().filter((s) -> s instanceof DragonUIRenderComponent).collect(Collectors.toList()).forEach((s) -> ((DragonUIRenderComponent)s).render(stack, pMouseX, pMouseY, pPartialTicks));
-		DragonAltarGUI.renderBorders(backgroundTexture, 0, width, 32, height - 32, width, height);
+		DragonAltarGUI.renderBorders(stack, backgroundTexture, 0, width, 32, height - 32, width, height);
 
 		TextRenderUtil.drawCenteredScaledText(stack, width / 2, 10, 2f, title.getString(), DyeColor.WHITE.getTextColor());
 
@@ -186,20 +191,22 @@ public class DragonEditorScreen extends Screen{
 			SkinsScreen.drawNonShadowLineBreak(stack, font, new TextComponent(WordUtils.capitalize(animations[curAnimation].replace("_", " "))), width / 2, height / 2 + 72, DyeColor.GRAY.getTextColor());
 		}
 
-		super.render(stack, pMouseX, pMouseY, pPartialTicks);
+		for(Widget widget : new CopyOnWriteArrayList<>(this.renderables)) {
+			widget.render(stack, pMouseX, pMouseY, pPartialTicks);
+		}
 
 		for(int x = 0; x < this.children.size(); ++x){
-			IGuiEventListener ch = children.get(x);
+			GuiEventListener ch = children.get(x);
 			if(!(ch instanceof DragonUIRenderComponent)){
-				((IRenderable)ch).render(stack, pMouseX, pMouseY, pPartialTicks);
+				((Widget)ch).render(stack, pMouseX, pMouseY, pPartialTicks);
 			}
 		}
 
 		for(int x = 0; x < this.children.size(); ++x){
-			IGuiEventListener ch = children.get(x);
-			if(ch instanceof Widget){
-				if(((Widget)ch).isHoveredOrFocused()){
-					((Widget)ch).renderToolTip(stack, pMouseX, pMouseY);
+			GuiEventListener ch = children.get(x);
+			if(ch instanceof AbstractWidget){
+				if(((AbstractWidget)ch).isHoveredOrFocused()){
+					((AbstractWidget)ch).renderToolTip(stack, pMouseX, pMouseY);
 				}
 			}
 		}
@@ -230,7 +237,7 @@ public class DragonEditorScreen extends Screen{
 
 	@Override
 	public void renderBackground(PoseStack pMatrixStack){
-		AbstractGui.fill(pMatrixStack, 0, 0, this.width, this.height, backgroundColor);
+		Gui.fill(pMatrixStack, 0, 0, this.width, this.height, backgroundColor);
 	}
 
 	@Override
@@ -378,7 +385,7 @@ public class DragonEditorScreen extends Screen{
 
 			@Override
 			public void renderButton(PoseStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_){
-				Minecraft.getInstance().getTextureManager().bindForSetup(ClientMagicHUDHandler.widgetTextures);
+				RenderSystem.setShaderTexture(0, ClientMagicHUDHandler.widgetTextures);
 
 				if(isHoveredOrFocused()){
 					blit(stack, x, y, 66 / 2, 222 / 2, 11, 17, 128, 128);
@@ -403,7 +410,7 @@ public class DragonEditorScreen extends Screen{
 
 			@Override
 			public void renderButton(PoseStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_){
-				Minecraft.getInstance().getTextureManager().bindForSetup(ClientMagicHUDHandler.widgetTextures);
+				RenderSystem.setShaderTexture(0, ClientMagicHUDHandler.widgetTextures);
 
 				if(isHoveredOrFocused()){
 					blit(stack, x, y, 22 / 2, 222 / 2, 11, 17, 128, 128);
@@ -452,7 +459,7 @@ public class DragonEditorScreen extends Screen{
 
 			@Override
 			public void renderToolTip(PoseStack pPoseStack, int pMouseX, int pMouseY){
-				Minecraft.getInstance().screen.renderTooltip(pPoseStack, Arrays.asList(new TranslatableComponent("ds.gui.dragon_editor.size_info")), pMouseX, pMouseY);
+				Minecraft.getInstance().screen.renderTooltip(pPoseStack, new TranslatableComponent("ds.gui.dragon_editor.size_info"), pMouseX, pMouseY);
 			}
 		});
 
@@ -476,7 +483,7 @@ public class DragonEditorScreen extends Screen{
 
 			@Override
 			public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-				Minecraft.getInstance().screen.renderTooltip(p_230443_1_, Arrays.asList(new TranslatableComponent("ds.gui.dragon_editor.default_skin.tooltip")), p_230443_2_, p_230443_3_);
+				Minecraft.getInstance().screen.renderTooltip(p_230443_1_, new TranslatableComponent("ds.gui.dragon_editor.default_skin.tooltip"), p_230443_2_, p_230443_3_);
 			}
 		});
 
@@ -488,14 +495,14 @@ public class DragonEditorScreen extends Screen{
 			public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){
 				super.renderButton(mStack, mouseX, mouseY, partial);
 				if(isHovered){
-					Minecraft.getInstance().screen.renderTooltip(mStack, Arrays.asList(new TranslatableComponent("ds.gui.dragon_editor.tooltip.done")), mouseX, mouseY);
+					Minecraft.getInstance().screen.renderTooltip(mStack, new TranslatableComponent("ds.gui.dragon_editor.tooltip.done"), mouseX, mouseY);
 				}
 
 				if(toggled && (!visible || !confirmation)){
 					toggled = false;
 					Screen screen = Minecraft.getInstance().screen;
 					screen.children.removeIf((s) -> s == conf);
-					screen.buttons.removeIf((s) -> s == renderButton);
+					screen.renderables.removeIf((s) -> s == renderButton);
 				}
 			}
 
@@ -529,12 +536,12 @@ public class DragonEditorScreen extends Screen{
 						};
 						children.add(0, conf);
 						children.add(conf);
-						buttons.add(renderButton);
+						renderables.add(renderButton);
 					}
 					toggled = !toggled;
 				}else{
 					children.removeIf((s) -> s == conf);
-					buttons.removeIf((s) -> s == renderButton);
+					renderables.removeIf((s) -> s == renderButton);
 				}
 			}
 		});
@@ -545,7 +552,7 @@ public class DragonEditorScreen extends Screen{
 				super.renderButton(mStack, mouseX, mouseY, partial);
 
 				if(isHovered){
-					Minecraft.getInstance().screen.renderTooltip(mStack, Arrays.asList(new TranslatableComponent("ds.gui.dragon_editor.tooltip.back")), mouseX, mouseY);
+					Minecraft.getInstance().screen.renderTooltip(mStack, new TranslatableComponent("ds.gui.dragon_editor.tooltip.back"), mouseX, mouseY);
 				}
 			}
 
@@ -563,12 +570,12 @@ public class DragonEditorScreen extends Screen{
 		}){
 			@Override
 			public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-				Minecraft.getInstance().screen.renderTooltip(p_230443_1_, Arrays.asList(new TranslatableComponent("ds.gui.dragon_editor.reset")), p_230443_2_, p_230443_3_);
+				Minecraft.getInstance().screen.renderTooltip(p_230443_1_, new TranslatableComponent("ds.gui.dragon_editor.reset"), p_230443_2_, p_230443_3_);
 			}
 
 			@Override
 			public void renderButton(PoseStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_){
-				Minecraft.getInstance().getTextureManager().bindForSetup(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/reset_button.png"));
+				RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/reset_button.png"));
 				blit(stack, x, y, 0, 0, width, height, width, height);
 			}
 		});
@@ -576,15 +583,15 @@ public class DragonEditorScreen extends Screen{
 		addRenderableWidget(new ExtendedButton(guiLeft + 256 + 30 + 16, 9, 19, 19, TextComponent.EMPTY, (btn) -> {
 			doAction();
 
-			ArrayList<String> extraKeys = DragonEditorHandler.getKeys(FakeLocalPlayerUtils.getFakePlayer(0, handler), EnumSkinLayer.EXTRA);
+			ArrayList<String> extraKeys = DragonEditorHandler.getKeys(FakeClientPlayerUtils.getFakePlayer(0, handler), EnumSkinLayer.EXTRA);
 
 			extraKeys.removeIf((s) -> {
-				Texture text = DragonEditorHandler.getSkin(FakeLocalPlayerUtils.getFakePlayer(0, handler), EnumSkinLayer.EXTRA, s, type);
+				Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, handler), EnumSkinLayer.EXTRA, s, type);
 				return !text.random;
 			});
 
 			for(EnumSkinLayer layer : EnumSkinLayer.values()){
-				ArrayList<String> keys = DragonEditorHandler.getKeys(FakeLocalPlayerUtils.getFakePlayer(0, handler), layer);
+				ArrayList<String> keys = DragonEditorHandler.getKeys(FakeClientPlayerUtils.getFakePlayer(0, handler), layer);
 
 				if(Objects.equals(layer.name, "Extra")){
 					keys = extraKeys;
@@ -601,7 +608,7 @@ public class DragonEditorScreen extends Screen{
 					}
 
 					preset.skinAges.get(level).layerSettings.get(layer).selectedSkin = key;
-					Texture text = DragonEditorHandler.getSkin(FakeLocalPlayerUtils.getFakePlayer(0, handler), layer, key, type);
+					Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, handler), layer, key, type);
 
 					if(text != null && text.randomHue){
 						preset.skinAges.get(level).layerSettings.get(layer).hue = 0.25f + (minecraft.player.level.random.nextFloat() * 0.5f);
@@ -622,12 +629,12 @@ public class DragonEditorScreen extends Screen{
 		}){
 			@Override
 			public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-				Minecraft.getInstance().screen.renderTooltip(p_230443_1_, Arrays.asList(new TranslatableComponent("ds.gui.dragon_editor.random")), p_230443_2_, p_230443_3_);
+				Minecraft.getInstance().screen.renderTooltip(p_230443_1_, new TranslatableComponent("ds.gui.dragon_editor.random"), p_230443_2_, p_230443_3_);
 			}
 
 			@Override
 			public void renderButton(PoseStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_){
-				Minecraft.getInstance().getTextureManager().bindForSetup(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/random_icon.png"));
+				RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/random_icon.png"));
 				blit(stack, x, y, 0, 0, width, height, width, height);
 			}
 		});
@@ -637,7 +644,7 @@ public class DragonEditorScreen extends Screen{
 		}){
 			@Override
 			public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-				Minecraft.getInstance().screen.renderTooltip(p_230443_1_, Arrays.asList(new TranslatableComponent("ds.gui.dragon_editor.undo")), p_230443_2_, p_230443_3_);
+				Minecraft.getInstance().screen.renderTooltip(p_230443_1_, new TranslatableComponent("ds.gui.dragon_editor.undo"), p_230443_2_, p_230443_3_);
 			}
 
 			@Override
@@ -652,7 +659,7 @@ public class DragonEditorScreen extends Screen{
 		}){
 			@Override
 			public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-				Minecraft.getInstance().screen.renderTooltip(p_230443_1_, Arrays.asList(new TranslatableComponent("ds.gui.dragon_editor.redo")), p_230443_2_, p_230443_3_);
+				Minecraft.getInstance().screen.renderTooltip(p_230443_1_, new TranslatableComponent("ds.gui.dragon_editor.redo"), p_230443_2_, p_230443_3_);
 			}
 
 			@Override
@@ -669,14 +676,14 @@ public class DragonEditorScreen extends Screen{
 				super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 
 				if(visible){
-					Minecraft.getInstance().getTextureManager().bindForSetup(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/save_icon.png"));
+					RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/save_icon.png"));
 					blit(pMatrixStack, x, y, 0, 0, 16, 16, 16, 16);
 				}
 			}
 
 			@Override
 			public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-				Minecraft.getInstance().screen.renderTooltip(p_230443_1_, Arrays.asList(new TranslatableComponent("ds.gui.dragon_editor.save_slot")), p_230443_2_, p_230443_3_);
+				Minecraft.getInstance().screen.renderTooltip(p_230443_1_, new TranslatableComponent("ds.gui.dragon_editor.save_slot"), p_230443_2_, p_230443_3_);
 			}
 
 			@Override
@@ -694,12 +701,12 @@ public class DragonEditorScreen extends Screen{
 		}){
 			@Override
 			public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-				Minecraft.getInstance().screen.renderTooltip(p_230443_1_, Arrays.asList(new TranslatableComponent("ds.gui.dragon_editor.reset")), p_230443_2_, p_230443_3_);
+				Minecraft.getInstance().screen.renderTooltip(p_230443_1_, new TranslatableComponent("ds.gui.dragon_editor.reset"), p_230443_2_, p_230443_3_);
 			}
 
 			@Override
 			public void renderButton(PoseStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_){
-				Minecraft.getInstance().getTextureManager().bindForSetup(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/reset_position_button.png"));
+				RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/reset_position_button.png"));
 				blit(stack, x, y, 0, 0, width, height, width, height);
 			}
 
@@ -747,7 +754,7 @@ public class DragonEditorScreen extends Screen{
 			yOffset = dragonRender.yOffset;
 		}
 
-		dragonRender = new DragonUIRenderComponent(this, width / 2 - 70, guiTop, 140, 125, () -> FakeLocalPlayerUtils.getFakeDragon(0, handler));
+		dragonRender = new DragonUIRenderComponent(this, width / 2 - 70, guiTop, 140, 125, () -> FakeClientPlayerUtils.getFakeDragon(0, handler));
 		dragonRender.xRot = xRot;
 		dragonRender.yRot = yRot;
 		dragonRender.zoom = zoom;

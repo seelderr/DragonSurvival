@@ -68,18 +68,6 @@ public class AoeBuffAbility extends ActiveDragonAbility{
 		return components;
 	}
 
-	public boolean canMoveWhileCasting(){return false;}
-
-	@Override
-	public AbilityAnimation getLoopingAnimation(){
-		return new AbilityAnimation("cast_mass_buff", true, true);
-	}
-
-	@Override
-	public AbilityAnimation getStoppingAnimation(){
-		return new AbilityAnimation("mass_buff", 0.56 * 20, true, true);
-	}
-
 	public int getDuration(){
 
 		if(effect.getEffect() == MobEffects.DIG_SPEED){
@@ -128,6 +116,18 @@ public class AoeBuffAbility extends ActiveDragonAbility{
 			}
 		}
 		player.level.playLocalSound(player.position().x, player.position().y + 0.5, player.position().z, SoundEvents.UI_TOAST_OUT, SoundSource.PLAYERS, 5F, 0.1F, false);
+	}
+
+	public boolean canMoveWhileCasting(){return false;}
+
+	@Override
+	public AbilityAnimation getLoopingAnimation(){
+		return new AbilityAnimation("cast_mass_buff", true, true);
+	}
+
+	@Override
+	public AbilityAnimation getStoppingAnimation(){
+		return new AbilityAnimation("mass_buff", 0.56 * 20, true, true);
 	}
 
 	public MobEffectInstance getEffect(){

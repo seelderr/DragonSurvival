@@ -8,17 +8,17 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.TextBoxEntr
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.config.SyncListConfig;
-import com.mojang.blaze3d.matrix.PoseStack;
-import net.minecraft.client.AbstractOption;
-import net.minecraft.client.GameSettings;
-import net.minecraft.client.gui.DialogTexts;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.SettingsScreen;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.client.gui.widget.button.Button;
- 
-import net.minecraft.util.text.TextComponent;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Option;
+import net.minecraft.client.Options;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.OptionsScreen;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 import net.minecraftforge.common.ForgeConfigSpec.ValueSpec;
@@ -26,7 +26,7 @@ import net.minecraftforge.common.ForgeConfigSpec.ValueSpec;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListConfigSettingsScreen extends SettingsScreen{
+public class ListConfigSettingsScreen extends OptionsScreen{
 	private final ConfigValue value;
 	private final ForgeConfigSpec spec;
 	private final String configKey;
@@ -38,19 +38,12 @@ public class ListConfigSettingsScreen extends SettingsScreen{
 
 	private boolean isItems = false;
 
-	public ListConfigSettingsScreen(Screen p_i225930_1_, GameSettings p_i225930_2_, Component p_i225930_3_, ValueSpec valueSpec, ConfigValue value, ForgeConfigSpec spec, String configKey){
-		super(p_i225930_1_, p_i225930_2_, p_i225930_3_);
+	public ListConfigSettingsScreen(Screen p_i225930_1_, Options p_i225930_2_, Component p_i225930_3_, ValueSpec valueSpec, ConfigValue value, ForgeConfigSpec spec, String configKey){
+		super(p_i225930_1_, p_i225930_2_);
 		this.value = value;
 		this.spec = spec;
 		this.configKey = configKey;
 		this.valueSpec = valueSpec;
-	}
-
-	public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
-		this.renderBackground(p_230430_1_);
-		this.list.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
-		drawCenteredString(p_230430_1_, this.font, this.title, this.width / 2, 5, 16777215);
-		super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
 	}
 
 	protected void init(){
@@ -83,7 +76,7 @@ public class ListConfigSettingsScreen extends SettingsScreen{
 			for(OptionListEntry oldVal : oldVals){
 				if(oldVal instanceof TextBoxEntry){
 					TextBoxEntry textBoxEntry = (TextBoxEntry)oldVal;
-					createOption(((TextFieldWidget)textBoxEntry.widget).getValue());
+					createOption(((EditBox)textBoxEntry.widget).getValue());
 				}
 			}
 
@@ -96,13 +89,13 @@ public class ListConfigSettingsScreen extends SettingsScreen{
 			list.setScrollAmount(list.getMaxScroll());
 		}));
 
-		this.addRenderableWidget(new Button(this.width / 2 - 120, this.height - 27, 100, 20, DialogTexts.GUI_DONE, (p_213106_1_) -> {
+		this.addRenderableWidget(new Button(this.width / 2 - 120, this.height - 27, 100, 20, CommonComponents.GUI_DONE, (p_213106_1_) -> {
 			ArrayList<String> output = new ArrayList<>();
 
 			this.list.children().forEach((ent) -> {
 				ent.children().forEach(child -> {
-					if(child instanceof TextFieldWidget){
-						String value = ((TextFieldWidget)child).getValue();
+					if(child instanceof EditBox){
+						String value = ((EditBox)child).getValue();
 
 						if(!value.isEmpty()){
 							output.add(value);
@@ -123,16 +116,22 @@ public class ListConfigSettingsScreen extends SettingsScreen{
 		this.list.setScrollAmount(scroll);
 	}
 
+	public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
+		this.renderBackground(p_230430_1_);
+		this.list.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
+		drawCenteredString(p_230430_1_, this.font, this.title, this.width / 2, 5, 16777215);
+		super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
+	}
+
 	private void createOption(String t){
-		AbstractOption option;
+		Option option;
 
 		if(isItems){
 			option = new ResourceTextFieldOption(valueSpec, t, (settings) -> t);
 		}else{
 			option = new DSTextBoxOption(valueSpec, t, (settings) -> t);
 		}
-		Widget widget1 = option.createButton(this.minecraft.options, 32, 0, this.list.getScrollbarPosition() - 32 - 60);
-
-		this.list.addEntry(new TextBoxEntry(this.list, widget1, null));
+		AbstractWidget widget1 = option.createButton(this.minecraft.options, 32, 0, this.list.getScrollbarPosition() - 32 - 60);
+		this.list.addEntry(new TextBoxEntry(option, this.list, widget1, null));
 	}
 }

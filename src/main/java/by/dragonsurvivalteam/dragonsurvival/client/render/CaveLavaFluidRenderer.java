@@ -1,25 +1,25 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.FluidBlockRenderer;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.block.LiquidBlockRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.FluidState;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Mth;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.world.BlockGetter;
-import net.minecraft.world.IBlockDisplayReader;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class CaveLavaFluidRenderer extends FluidBlockRenderer{
+public class CaveLavaFluidRenderer extends LiquidBlockRenderer{
 
-	public boolean tesselate(IBlockDisplayReader p_228796_1_, BlockPos p_228796_2_, VertexConsumer p_228796_3_, FluidState p_228796_4_){
+	public boolean tesselate(BlockAndTintGetter p_228796_1_, BlockPos p_228796_2_, VertexConsumer p_228796_3_, BlockState state, FluidState p_228796_4_){
 		try{
 			if(p_228796_4_.is(FluidTags.LAVA)){
 				TextureAtlasSprite[] atextureatlassprite = net.minecraftforge.client.ForgeHooksClient.getFluidSprites(p_228796_1_, p_228796_2_, p_228796_4_);
@@ -218,7 +218,7 @@ public class CaveLavaFluidRenderer extends FluidBlockRenderer{
 					return flag7;
 				}
 			}else{
-				return super.tesselate(p_228796_1_, p_228796_2_, p_228796_3_, p_228796_4_);
+				return super.tesselate(p_228796_1_, p_228796_2_, p_228796_3_, state, p_228796_4_);
 			}
 		}catch(Exception ex){
 			return false;
@@ -237,7 +237,7 @@ public class CaveLavaFluidRenderer extends FluidBlockRenderer{
 		return isFaceOccludedByState(p_239283_0_, p_239283_2_, p_239283_3_, blockpos, blockstate);
 	}
 
-	public static boolean shouldRenderFace(IBlockDisplayReader p_239281_0_, BlockPos p_239281_1_, FluidState p_239281_2_, BlockState p_239281_3_, Direction p_239281_4_){
+	public static boolean shouldRenderFace(BlockAndTintGetter p_239281_0_, BlockPos p_239281_1_, FluidState p_239281_2_, BlockState p_239281_3_, Direction p_239281_4_){
 		return !isFaceOccludedBySelf(p_239281_0_, p_239281_1_, p_239281_3_, p_239281_4_) && !isNeighborSameFluid(p_239281_0_, p_239281_1_, p_239281_4_, p_239281_2_);
 	}
 
@@ -259,9 +259,9 @@ public class CaveLavaFluidRenderer extends FluidBlockRenderer{
 		vertexBuilderIn.vertex(x, y, z).color(red, green, blue, alpha).uv(u, v).uv2(packedLight).normal(0.0F, 1.0F, 0.0F).endVertex();
 	}
 
-	private int getLightColor(IBlockDisplayReader p_228795_1_, BlockPos p_228795_2_){
-		int i = WorldRenderer.getLightColor(p_228795_1_, p_228795_2_);
-		int j = WorldRenderer.getLightColor(p_228795_1_, p_228795_2_.above());
+	private int getLightColor(BlockAndTintGetter p_228795_1_, BlockPos p_228795_2_){
+		int i = LevelRenderer.getLightColor(p_228795_1_, p_228795_2_);
+		int j = LevelRenderer.getLightColor(p_228795_1_, p_228795_2_.above());
 		int k = i & 255;
 		int l = j & 255;
 		int i1 = i >> 16 & 255;

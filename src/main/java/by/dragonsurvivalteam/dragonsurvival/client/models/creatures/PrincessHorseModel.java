@@ -1,19 +1,19 @@
 package by.dragonsurvivalteam.dragonsurvival.client.models.creatures;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.PrincesHorse;
-import net.minecraft.item.DyeColor;
-import net.minecraft.util.ResourceLocation;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.PrincesHorseEntity;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.DyeColor;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 
-public class PrincessHorseModel extends AnimatedGeoModel<PrincesHorse>{
+public class PrincessHorseModel extends AnimatedGeoModel<PrincesHorseEntity>{
 	@Override
-	public ResourceLocation getModelLocation(PrincesHorse object){
+	public ResourceLocation getModelLocation(PrincesHorseEntity object){
 		return new ResourceLocation(DragonSurvivalMod.MODID, "geo/horseback_rider.geo.json");
 	}
 
 	@Override
-	public ResourceLocation getTextureLocation(PrincesHorse object){
+	public ResourceLocation getTextureLocation(PrincesHorseEntity object){
 		DyeColor dyeColor = DyeColor.byId(object.getColor());
 		switch(dyeColor){
 			case RED:
@@ -33,7 +33,7 @@ public class PrincessHorseModel extends AnimatedGeoModel<PrincesHorse>{
 	}
 
 	@Override
-	public ResourceLocation getAnimationFileLocation(PrincesHorse animatable){
+	public ResourceLocation getAnimationFileLocation(PrincesHorseEntity animatable){
 		return new ResourceLocation(DragonSurvivalMod.MODID, "animations/horseback_rider.animations.json");
 	}
 }

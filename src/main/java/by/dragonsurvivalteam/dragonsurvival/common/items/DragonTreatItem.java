@@ -18,35 +18,31 @@ import net.minecraft.world.level.Level;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class DragonTreatItem extends Item
-{
+public class DragonTreatItem extends Item{
 	public DragonType type;
 
-	public DragonTreatItem(DragonType type, Properties p_i48487_1_)
-	{
-		super(p_i48487_1_.food(new FoodProperties.Builder().nutrition(1).alwaysEat().saturationMod(0.4F).meat()
-			                       .effect(() -> new MobEffectInstance(MobEffects.HUNGER, 20 * 15, 0), 1.0F)
-			                       .build()));
+	public DragonTreatItem(DragonType type, Properties p_i48487_1_){
+		super(p_i48487_1_.food(new FoodProperties.Builder().nutrition(1).alwaysEat().saturationMod(0.4F).meat().effect(() -> new MobEffectInstance(MobEffects.HUNGER, 20 * 15, 0), 1.0F).build()));
 		this.type = type;
 	}
 
-	@Override
-	public void appendHoverText(ItemStack p_77624_1_, @Nullable
-		Level p_77624_2_, List<Component> p_77624_3_, TooltipFlag p_77624_4_)
-	{
-		super.appendHoverText(p_77624_1_, p_77624_2_, p_77624_3_, p_77624_4_);
-		p_77624_3_.add(new TranslatableComponent("ds.description." + type.name().toLowerCase() + "DragonTreat"));
-	}
-
-	public ItemStack finishUsingItem(ItemStack p_77654_1_, Level  p_77654_2_, LivingEntity entity) {
+	public ItemStack finishUsingItem(ItemStack p_77654_1_, Level p_77654_2_, LivingEntity entity){
 		if(entity instanceof Player){
 			Player player = (Player)entity;
 
-			if(DragonStateProvider.getCap(player).map((cap) -> cap.getType()).get() == type) {
+			if(DragonStateProvider.getCap(player).map((cap) -> cap.getType()).get() == type){
 				ManaHandler.replenishMana(player, ManaHandler.getMaxMana(player));
 			}
 		}
 
 		return this.isEdible() ? entity.eat(p_77654_2_, p_77654_1_) : p_77654_1_;
+	}
+
+	@Override
+	public void appendHoverText(ItemStack p_77624_1_,
+		@Nullable
+			Level p_77624_2_, List<Component> p_77624_3_, TooltipFlag p_77624_4_){
+		super.appendHoverText(p_77624_1_, p_77624_2_, p_77624_3_, p_77624_4_);
+		p_77624_3_.add(new TranslatableComponent("ds.description." + type.name().toLowerCase() + "DragonTreat"));
 	}
 }

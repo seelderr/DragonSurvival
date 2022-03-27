@@ -1,17 +1,17 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.AlertExceptHunters;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.Mob;
-import net.minecraft.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 
-public class Squire extends Hunter{
-	public Squire(EntityType<? extends Mob> entityType, Level world){
+public class SquireEntity extends Hunter{
+	public SquireEntity(EntityType<? extends PathfinderMob> entityType, Level world){
 		super(entityType, world);
 	}
 
@@ -19,7 +19,7 @@ public class Squire extends Hunter{
 	protected void registerGoals(){
 		super.registerGoals();
 		goalSelector.addGoal(1, new MeleeAttackGoal(this, 1, true));
-		goalSelector.addGoal(8, new AlertExceptHunters<>(this, HunterHound.class, Knight.class, Shooter.class));
+		goalSelector.addGoal(8, new AlertExceptHunters<>(this, HunterHoundEntity.class, KnightEntity.class, Shooter.class));
 	}
 
 	protected void populateDefaultEquipmentSlots(DifficultyInstance difficultyInstance){

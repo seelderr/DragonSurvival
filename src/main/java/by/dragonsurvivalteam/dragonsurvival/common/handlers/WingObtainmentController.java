@@ -9,20 +9,20 @@ import by.dragonsurvivalteam.dragonsurvival.network.status.RefreshDragons;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.CompleteDataSync;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.mojang.bridge.game.Language;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.LocalPlayer;
-import net.minecraft.client.resources.Language;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.text.TextComponent;
- 
-import net.minecraft.world.Level;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.event.ServerChatEvent;
-import net.minecraftforge.event.entity.living.LivingEntityDamageEvent;
+import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -150,11 +150,11 @@ public class WingObtainmentController{
 	}
 
 	@SubscribeEvent
-	public static void teleportAway(LivingEntityDamageEvent damageEvent){
+	public static void teleportAway(LivingDamageEvent damageEvent){
 		if(!ConfigHandler.COMMON.endVoidTeleport.get()){
 			return;
 		}
-		LivingEntity living = damageEvent.getEntityLivingEntity();
+		LivingEntity living = damageEvent.getEntityLiving();
 		if(living instanceof Player){
 			DamageSource damageSource = damageEvent.getSource();
 			if(living.level.dimension() == Level.END && damageSource == DamageSource.OUT_OF_WORLD && living.position().y < -60){

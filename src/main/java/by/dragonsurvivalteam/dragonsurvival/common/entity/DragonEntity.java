@@ -34,7 +34,7 @@ import software.bernie.geckolib3.resource.GeckoLibCache;
 
 import java.util.ArrayList;
 
-public class Dragon extends LivingEntity implements IAnimatable, CommonTraits{
+public class DragonEntity extends LivingEntity implements IAnimatable, CommonTraits{
 	public final ArrayList<Double> bodyYawAverage = new ArrayList<>();
 	public final ArrayList<Double> headYawAverage = new ArrayList<>();
 	public final ArrayList<Double> headPitchAverage = new ArrayList<>();
@@ -72,7 +72,7 @@ public class Dragon extends LivingEntity implements IAnimatable, CommonTraits{
 	CustomTickAnimationController biteAnimationController;
 	CustomTickAnimationController dragonAnimationController;
 
-	public Dragon(EntityType<? extends LivingEntity> type, Level worldIn){
+	public DragonEntity(EntityType<? extends LivingEntity> type, Level worldIn){
 		super(type, worldIn);
 	}
 
@@ -82,7 +82,7 @@ public class Dragon extends LivingEntity implements IAnimatable, CommonTraits{
 
 		for(int i = 0; i < EmoteCap.MAX_EMOTES; i++){
 			int finalI = i;
-			IAnimationPredicate<Dragon> predicate = (s) -> emotePredicate(finalI, s);
+			IAnimationPredicate<DragonEntity> predicate = (s) -> emotePredicate(finalI, s);
 			animationData.addAnimationController(new CustomTickAnimationController(this, "2_" + i, 0, predicate));
 		}
 

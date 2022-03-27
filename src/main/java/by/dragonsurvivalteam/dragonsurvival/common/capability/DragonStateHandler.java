@@ -114,11 +114,6 @@ public class DragonStateHandler implements NBTInterface{
 		return this.type != DragonType.NONE;
 	}
 
-
-	public ClawInventory getClawInventory(){
-		return clawInventory;
-	}
-
 	public int getPassengerId(){
 		return this.passengerId;
 	}
@@ -402,49 +397,59 @@ public class DragonStateHandler implements NBTInterface{
 		this.lavaAirSupply = lavaAirSupply;
 	}
 
-	public boolean canHarvestWithPaw(Player player, BlockState state) {
+	public boolean canHarvestWithPaw(Player player, BlockState state){
 		int harvestLevel = state.is(BlockTags.NEEDS_DIAMOND_TOOL) ? 3 : state.is(BlockTags.NEEDS_IRON_TOOL) ? 2 : state.is(BlockTags.NEEDS_STONE_TOOL) ? 1 : 0;
 		int baseHarvestLevel = 0;
 
-		for(int i = 1; i < 4; i++) {
+		for(int i = 1; i < 4; i++){
 			ItemStack stack = getClawInventory().getClawsInventory().getItem(i);
 			if(stack.isCorrectToolForDrops(state)){
 				return true;
 			}
 		}
 
-		switch(getLevel()) {
+		switch(getLevel()){
 			case BABY:
-				if (ConfigHandler.SERVER.bonusUnlockedAt.get() != DragonLevel.BABY){
-					if (harvestLevel <= ConfigHandler.SERVER.baseHarvestLevel.get() + baseHarvestLevel)
+				if(ConfigHandler.SERVER.bonusUnlockedAt.get() != DragonLevel.BABY){
+					if(harvestLevel <= ConfigHandler.SERVER.baseHarvestLevel.get() + baseHarvestLevel){
 						return true;
+					}
 					break;
 				}
 			case YOUNG:
-				if (ConfigHandler.SERVER.bonusUnlockedAt.get() == DragonLevel.ADULT && getLevel() != DragonLevel.BABY){
-					if (harvestLevel <= ConfigHandler.SERVER.baseHarvestLevel.get() + baseHarvestLevel)
+				if(ConfigHandler.SERVER.bonusUnlockedAt.get() == DragonLevel.ADULT && getLevel() != DragonLevel.BABY){
+					if(harvestLevel <= ConfigHandler.SERVER.baseHarvestLevel.get() + baseHarvestLevel){
 						return true;
+					}
 					break;
 				}
 			case ADULT:
-				if (harvestLevel <= ConfigHandler.SERVER.bonusHarvestLevel.get() + baseHarvestLevel) {
-					switch (getType()) {
+				if(harvestLevel <= ConfigHandler.SERVER.bonusHarvestLevel.get() + baseHarvestLevel){
+					switch(getType()){
 						case SEA:
-							if (state.is(BlockTags.MINEABLE_WITH_SHOVEL))
+							if(state.is(BlockTags.MINEABLE_WITH_SHOVEL)){
 								return true;
+							}
 							break;
 						case CAVE:
-							if (state.is(BlockTags.MINEABLE_WITH_PICKAXE))
+							if(state.is(BlockTags.MINEABLE_WITH_PICKAXE)){
 								return true;
+							}
 							break;
 						case FOREST:
-							if (state.is(BlockTags.MINEABLE_WITH_AXE))
+							if(state.is(BlockTags.MINEABLE_WITH_AXE)){
 								return true;
+							}
 					}
 				}
-				if (harvestLevel <= ConfigHandler.SERVER.baseHarvestLevel.get() + baseHarvestLevel)
+				if(harvestLevel <= ConfigHandler.SERVER.baseHarvestLevel.get() + baseHarvestLevel){
 					return true;
+				}
 		}
 		return false;
+	}
+
+	public ClawInventory getClawInventory(){
+		return clawInventory;
 	}
 }

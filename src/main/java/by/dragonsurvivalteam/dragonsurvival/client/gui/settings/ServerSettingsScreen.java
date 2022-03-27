@@ -1,14 +1,14 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.settings;
 
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
-import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
- 
+import net.minecraft.client.Options;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 public class ServerSettingsScreen extends ClientSettingsScreen{
-	public ServerSettingsScreen(Screen p_i225930_1_, GameSettings p_i225930_2_, Component p_i225930_3_){
+	public ServerSettingsScreen(Screen p_i225930_1_, Options p_i225930_2_, Component p_i225930_3_){
 		super(p_i225930_1_, p_i225930_2_, p_i225930_3_);
 	}
 
@@ -22,12 +22,12 @@ public class ServerSettingsScreen extends ClientSettingsScreen{
 	}
 
 	@Override
-	public String getConfigName(){
-		return "server";
+	public ForgeConfigSpec getSpec(){
+		return ConfigHandler.serverSpec;
 	}
 
 	@Override
-	public ForgeConfigSpec getSpec(){
-		return ConfigHandler.serverSpec;
+	public String getConfigName(){
+		return "server";
 	}
 }

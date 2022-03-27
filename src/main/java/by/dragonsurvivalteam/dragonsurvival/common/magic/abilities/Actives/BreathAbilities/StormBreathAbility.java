@@ -18,7 +18,6 @@ import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
-
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.client.resources.sounds.TickableSoundInstance;
@@ -57,9 +56,6 @@ public class StormBreathAbility extends BreathAbility{
 
 	public StormBreathAbility(DragonType type, String id, String icon, int minLevel, int maxLevel, int manaCost, int castTime, int cooldown, Integer[] requiredLevels){
 		super(type, id, icon, minLevel, maxLevel, manaCost, castTime, cooldown, requiredLevels);
-	}	@Override
-	public int getManaCost(){
-		return player != null && player.hasEffect(DragonEffects.SOURCE_OF_MAGIC) ? 0 : (firstUse ? ConfigHandler.SERVER.stormBreathInitialMana.get() : ConfigHandler.SERVER.stormBreathOvertimeMana.get());
 	}
 
 	public static void onDamageChecks(LivingEntity entity){
@@ -70,6 +66,9 @@ public class StormBreathAbility extends BreathAbility{
 				creeper.getEntityData().set(Creeper.DATA_IS_POWERED, true);
 			}
 		}
+	}	@Override
+	public int getManaCost(){
+		return player != null && player.hasEffect(DragonEffects.SOURCE_OF_MAGIC) ? 0 : (firstUse ? ConfigHandler.SERVER.stormBreathInitialMana.get() : ConfigHandler.SERVER.stormBreathOvertimeMana.get());
 	}
 
 	public static void spark(LivingEntity source, LivingEntity target){
@@ -158,11 +157,6 @@ public class StormBreathAbility extends BreathAbility{
 				}
 			}
 		}
-	}	public void tickCost(){
-		if(firstUse || castingTicks % ConfigHandler.SERVER.stormBreathManaTicks.get() == 0){
-			consumeMana(player);
-			firstUse = false;
-		}
 	}
 
 	public static float getDamage(int level){
@@ -192,6 +186,11 @@ public class StormBreathAbility extends BreathAbility{
 			return false;
 		}
 		return DragonStateProvider.getCap(target).map(cap -> cap.getType()).orElse(null) != DragonType.SEA;
+	}	public void tickCost(){
+		if(firstUse || castingTicks % ConfigHandler.SERVER.stormBreathManaTicks.get() == 0){
+			consumeMana(player);
+			firstUse = false;
+		}
 	}
 
 	@Override
@@ -238,7 +237,13 @@ public class StormBreathAbility extends BreathAbility{
 	@Override
 	public boolean isDisabled(){
 		return super.isDisabled() || !ConfigHandler.SERVER.stormBreath.get();
-	}	@OnlyIn( Dist.CLIENT )
+	}
+
+
+
+
+
+	@OnlyIn( Dist.CLIENT )
 	public void sound(){
 		if(castingTicks == 2){
 			if(startingSound == null){
@@ -272,7 +277,6 @@ public class StormBreathAbility extends BreathAbility{
 	}
 
 
-
 	@OnlyIn( Dist.CLIENT )
 	public void stopSound(){
 		castingTicks = 0;
@@ -287,9 +291,6 @@ public class StormBreathAbility extends BreathAbility{
 
 		Minecraft.getInstance().getSoundManager().stop(new ResourceLocation(DragonSurvivalMod.MODID, "storm_breath_loop"), SoundSource.PLAYERS);
 	}
-
-
-
 
 
 	@Override

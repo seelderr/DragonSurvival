@@ -2,20 +2,22 @@ package by.dragonsurvivalteam.dragonsurvival.client.render.entity.creatures;
 
 import by.dragonsurvivalteam.dragonsurvival.client.models.HunterModel;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.Shooter;
-import com.mojang.blaze3d.matrix.PoseStack;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.model.geom.ModelLayers;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.client.renderer.entity.layers.HeadLayer;
-import net.minecraft.client.renderer.entity.layers.HeldItemLayer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.renderer.entity.layers.CustomHeadLayer;
+import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
+import net.minecraft.resources.ResourceLocation;
+
 
 public class ShooterHunterRenderer extends MobRenderer<Shooter, HunterModel<Shooter>>{
 	private static final ResourceLocation TEXTURE = new ResourceLocation("dragonsurvival", "textures/dragon_hunter.png");
 
-	public ShooterHunterRenderer(EntityRendererManager rendererManager){
-		super(rendererManager, new HunterModel<>(0.0F, 0.0F, 64, 64), 0.5F);
-		addLayer(new HeadLayer<>(this));
-		addLayer(new HeldItemLayer<>(this));
+	public ShooterHunterRenderer(EntityRendererProvider.Context rendererManager){
+		super(rendererManager, new HunterModel(rendererManager.bakeLayer(ModelLayers.EVOKER)), 0.5F);
+		this.addLayer(new CustomHeadLayer<>(this, rendererManager.getModelSet()));
+		this.addLayer(new ItemInHandLayer<>(this));
 	}
 
 	public ResourceLocation getTextureLocation(Shooter p_110775_1_){

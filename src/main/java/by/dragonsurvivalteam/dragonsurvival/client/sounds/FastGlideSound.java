@@ -1,11 +1,12 @@
 package by.dragonsurvivalteam.dragonsurvival.client.sounds;
 
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
-import net.minecraft.client.audio.ElytraSound;
-import net.minecraft.client.entity.player.LocalPlayer;
-import net.minecraft.util.math.Mth;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.resources.sounds.ElytraOnPlayerSoundInstance;
+import net.minecraft.util.Mth;
 
-public class FastGlideSound extends ElytraSound{
+
+public class FastGlideSound extends ElytraOnPlayerSoundInstance{
 	private final LocalPlayer player;
 	private int time;
 
@@ -19,7 +20,7 @@ public class FastGlideSound extends ElytraSound{
 
 	public void tick(){
 		++this.time;
-		if(!this.player.removed && (this.time <= 20 || ServerFlightHandler.isGliding(player))){
+		if(!this.player.isRemoved() && (this.time <= 20 || ServerFlightHandler.isGliding(player))){
 			this.x = (float)this.player.getX();
 			this.y = (float)this.player.getY();
 			this.z = (float)this.player.getZ();

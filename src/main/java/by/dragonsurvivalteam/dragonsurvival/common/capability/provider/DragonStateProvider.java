@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.capability.provider;
 
-import by.dragonsurvivalteam.dragonsurvival.client.util.FakeLocalPlayer;
+import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayer;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.Capabilities;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.hitbox.DragonHitBox;
@@ -22,9 +22,9 @@ public class DragonStateProvider implements ICapabilitySerializable<CompoundTag>
 
 	@OnlyIn( Dist.CLIENT )
 	private static Pair<Boolean, LazyOptional<DragonStateHandler>> getFakePlayer(Entity entity){
-		if(entity instanceof FakeLocalPlayer){
-			if(((FakeLocalPlayer)entity).handler != null){
-				return Pair.of(true, LazyOptional.of(() -> ((FakeLocalPlayer)entity).handler));
+		if(entity instanceof FakeClientPlayer){
+			if(((FakeClientPlayer)entity).handler != null){
+				return Pair.of(true, LazyOptional.of(() -> ((FakeClientPlayer)entity).handler));
 			}
 		}
 
@@ -32,23 +32,23 @@ public class DragonStateProvider implements ICapabilitySerializable<CompoundTag>
 	}
 
 	public static LazyOptional<DragonStateHandler> getCap(Entity entity){
-		if(entity.level.isClientSide){
-			Pair<Boolean, LazyOptional<DragonStateHandler>> fakeState = getFakePlayer(entity);
-
-			if(fakeState.first){
-				return fakeState.second;
-			}
-		}
-
-		if(entity instanceof DragonHitBox){
-			return ((DragonHitBox)entity).player == null ? LazyOptional.empty() : getCap(((DragonHitBox)entity).player);
-		}else if(entity instanceof DragonHitboxPart){
-			return ((DragonHitboxPart)entity).parentMob.player == null ? LazyOptional.empty() : getCap(((DragonHitboxPart)entity).parentMob.player);
-		}
-
 		if(entity == null){
 			return LazyOptional.empty();
 		}else{
+			if(entity.level.isClientSide){
+				Pair<Boolean, LazyOptional<DragonStateHandler>> fakeState = getFakePlayer(entity);
+
+				if(fakeState.first){
+					return fakeState.second;
+				}
+			}
+
+			if(entity instanceof DragonHitBox){
+				return ((DragonHitBox)entity).player == null ? LazyOptional.empty() : getCap(((DragonHitBox)entity).player);
+			}else if(entity instanceof DragonHitboxPart){
+				return ((DragonHitboxPart)entity).parentMob.player == null ? LazyOptional.empty() : getCap(((DragonHitboxPart)entity).parentMob.player);
+			}
+
 			LazyOptional<DragonStateHandler> cap = entity.getCapability(Capabilities.DRAGON_CAPABILITY);
 			return cap;
 		}

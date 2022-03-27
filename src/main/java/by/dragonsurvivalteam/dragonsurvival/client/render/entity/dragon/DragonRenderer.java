@@ -2,12 +2,13 @@ package by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon;
 
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.Dragon;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.abilities.Actives.BreathAbilities.BreathAbility;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -19,6 +20,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import software.bernie.geckolib3.core.processor.IBone;
+import software.bernie.geckolib3.core.util.Color;
 import software.bernie.geckolib3.geo.render.built.GeoBone;
 import software.bernie.geckolib3.geo.render.built.GeoCube;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
@@ -26,17 +28,16 @@ import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
 import software.bernie.geckolib3.util.RenderUtils;
 
 import javax.annotation.Nullable;
-import java.awt.Color;
 
-public class DragonRenderer extends GeoEntityRenderer<Dragon>{
+public class DragonRenderer extends GeoEntityRenderer<DragonEntity>{
 	public ResourceLocation glowTexture = null;
 	public boolean renderLayers = true;
 	public boolean isLayer = false;
-	public Color renderColor = new Color(255, 255, 255);
+	public Color renderColor = Color.ofRGB(255, 255, 255);
 	private float partialTicks;
-	private Dragon currentEntity;
+	private DragonEntity currentEntity;
 
-	public DragonRenderer(EntityRendererProvider.Context renderManager, AnimatedGeoModel<Dragon> modelProvider){
+	public DragonRenderer(EntityRendererProvider.Context renderManager, AnimatedGeoModel<DragonEntity> modelProvider){
 		super(renderManager, modelProvider);
 		this.addLayer(new DragonGlowLayerRenderer(this));
 		this.addLayer(new DragonSkinLayerRenderer(this));
@@ -45,7 +46,7 @@ public class DragonRenderer extends GeoEntityRenderer<Dragon>{
 	}
 
 	@Override
-	public void render(Dragon entity, float entityYaw, float partialTicks, PoseStack stack, MultiBufferSource bufferIn, int packedLightIn){
+	public void render(DragonEntity entity, float entityYaw, float partialTicks, PoseStack stack, MultiBufferSource bufferIn, int packedLightIn){
 		Player player = entity.getPlayer();
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 
@@ -70,7 +71,7 @@ public class DragonRenderer extends GeoEntityRenderer<Dragon>{
 	}
 
 	@Override
-	public void renderRecursively(GeoBone bone, PoseStack stack, MultiBufferSource bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha){
+	public void renderRecursively(GeoBone bone, PoseStack stack, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha){
 		Player player = currentEntity != null ? currentEntity.getPlayer() : null;
 
 		if(!isLayer && player != null){
@@ -87,7 +88,7 @@ public class DragonRenderer extends GeoEntityRenderer<Dragon>{
 					if(ch != null){
 						stack.scale(ch.size.x(), ch.size.y(), ch.size.z());
 					}
-					Minecraft.getInstance().getItemRenderer().renderStatic(currentEntity.getPlayer().inventory.getSelected(), ConfigHandler.CLIENT.thirdPersonItemRender.get() ? TransformType.THIRD_PERSON_RIGHT_HAND : TransformType.GROUND, packedLightIn, packedOverlayIn, stack, rtb);
+					Minecraft.getInstance().getItemRenderer().renderStatic(currentEntity.getPlayer().getInventory().getSelected(), ConfigHandler.CLIENT.thirdPersonItemRender.get() ? TransformType.THIRD_PERSON_RIGHT_HAND : TransformType.GROUND, packedLightIn, packedOverlayIn, stack, rtb, 0);
 					stack.popPose();
 					bufferIn = rtb.getBuffer(RenderType.entityCutout(whTexture));
 				}
@@ -105,7 +106,7 @@ public class DragonRenderer extends GeoEntityRenderer<Dragon>{
 					if(ch != null){
 						stack.scale(ch.size.x(), ch.size.y(), ch.size.z());
 					}
-					Minecraft.getInstance().getItemRenderer().renderStatic(currentEntity.getPlayer().inventory.offhand.get(0), ConfigHandler.CLIENT.thirdPersonItemRender.get() ? TransformType.THIRD_PERSON_RIGHT_HAND : TransformType.GROUND, packedLightIn, packedOverlayIn, stack, rtb);
+					Minecraft.getInstance().getItemRenderer().renderStatic(currentEntity.getPlayer().getInventory().offhand.get(0), ConfigHandler.CLIENT.thirdPersonItemRender.get() ? TransformType.THIRD_PERSON_RIGHT_HAND : TransformType.GROUND, packedLightIn, packedOverlayIn, stack, rtb, 0);
 					stack.popPose();
 					bufferIn = rtb.getBuffer(RenderType.entityCutout(whTexture));
 				}
@@ -173,18 +174,18 @@ public class DragonRenderer extends GeoEntityRenderer<Dragon>{
 	}
 
 	@Override
-	public void renderLate(Dragon animatable, PoseStack stackIn, float ticks, IRenderTypeBuffer renderTypeBuffer, MultiBufferSource bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float partialTicks){
+	public void renderLate(DragonEntity animatable, PoseStack stackIn, float ticks, MultiBufferSource renderTypeBuffer, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float partialTicks){
 		super.renderLate(animatable, stackIn, ticks, renderTypeBuffer, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, partialTicks);
 		currentEntity = animatable;
 		this.partialTicks = partialTicks;
 	}
 
 	@Override
-	public Color getRenderColor(Dragon animatable, float partialTicks, PoseStack stack,
+	public Color getRenderColor(DragonEntity animatable, float partialTicks, PoseStack stack,
 		@Nullable
-			IRenderTypeBuffer renderTypeBuffer,
+			MultiBufferSource renderTypeBuffer,
 		@Nullable
-			MultiBufferSource vertexBuilder, int packedLightIn){
+			VertexConsumer vertexBuilder, int packedLightIn){
 		return renderColor;
 	}
 }

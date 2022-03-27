@@ -16,26 +16,28 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin( EnchantmentHelper.class )
-public class MixinEnchantmentHelper
-{
-	@Inject( at = @At("HEAD"), method = "hasAquaAffinity", cancellable = true)
-	private static void hasAquaAffinity(LivingEntity entity, CallbackInfoReturnable<Boolean> ci) {
-		if (!(entity instanceof Player))
+public class MixinEnchantmentHelper{
+	@Inject( at = @At( "HEAD" ), method = "hasAquaAffinity", cancellable = true )
+	private static void hasAquaAffinity(LivingEntity entity, CallbackInfoReturnable<Boolean> ci){
+		if(!(entity instanceof Player)){
 			return;
+		}
 
-		Player player = (Player) entity;
+		Player player = (Player)entity;
 
 		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
-			if (dragonStateHandler.getType() == DragonType.SEA) {
+			if(dragonStateHandler.getType() == DragonType.SEA){
 				ci.setReturnValue(true);
 			}
 		});
 	}
 
-	@Inject( at = @At("HEAD"), method = "getEnchantmentLevel(Lnet/minecraft/world/item/enchantment/Enchantment;Lnet/minecraft/world/entity/LivingEntity;)I", cancellable = true)
-	private static void getEnchantmentLevel(Enchantment enchantment, LivingEntity entity, CallbackInfoReturnable<Integer> ci) {
+	@Inject( at = @At( "HEAD" ), method = "getEnchantmentLevel(Lnet/minecraft/world/item/enchantment/Enchantment;Lnet/minecraft/world/entity/LivingEntity;)I", cancellable = true )
+	private static void getEnchantmentLevel(Enchantment enchantment, LivingEntity entity, CallbackInfoReturnable<Integer> ci){
 		if(!entity.getMainHandItem().isEmpty()){
-			if(entity.getMainHandItem().getItem() instanceof TieredItem) return;
+			if(entity.getMainHandItem().getItem() instanceof TieredItem){
+				return;
+			}
 		}
 
 		if(DragonUtils.isDragon(entity)){

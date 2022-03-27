@@ -24,20 +24,18 @@ import java.util.function.Supplier;
 
 
 @Mixin( ClientLevel.class )
-public abstract class MixinClientWorld extends Level
-{
+public abstract class MixinClientWorld extends Level{
 	@Shadow
 	@Final
 	private LevelRenderer levelRenderer;
 
-	protected MixinClientWorld(WritableLevelData pLevelData, ResourceKey<Level> pDimension, Holder<DimensionType> pDimensionType, Supplier<ProfilerFiller> pProfiler, boolean pIsClientSide, boolean pIsDebug, long pBiomeZoomSeed)
-	{
+	protected MixinClientWorld(WritableLevelData pLevelData, ResourceKey<Level> pDimension, Holder<DimensionType> pDimensionType, Supplier<ProfilerFiller> pProfiler, boolean pIsClientSide, boolean pIsDebug, long pBiomeZoomSeed){
 		super(pLevelData, pDimension, pDimensionType, pProfiler, pIsClientSide, pIsDebug, pBiomeZoomSeed);
 	}
 
 
-	@Inject( at = @At("HEAD"), method = "destroyBlockProgress", cancellable = true)
-	public void destroyBlockProgress(int playerId, BlockPos pos, int progress, CallbackInfo ci) {
+	@Inject( at = @At( "HEAD" ), method = "destroyBlockProgress", cancellable = true )
+	public void destroyBlockProgress(int playerId, BlockPos pos, int progress, CallbackInfo ci){
 		BlockState state = getBlockState(pos);
 
 		if(state.getBlock() instanceof SourceOfMagicBlock){

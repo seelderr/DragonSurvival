@@ -4,10 +4,10 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEdito
 import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.DragonEditorRegistry;
 import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.EnumSkinLayer;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TextRenderUtil;
-import com.mojang.blaze3d.matrix.PoseStack;
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.item.DyeColor;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.world.item.DyeColor;
 
 import java.awt.Color;
 import java.util.Arrays;
@@ -37,8 +37,8 @@ public class DragonEditorSlotButton extends Button{
 	@Override
 	public void renderButton(PoseStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_){
 		if(screen.currentSelected == (num - 1)){
-			AbstractGui.fill(stack, x, y, x + this.width, y + this.height, new Color(1, 1, 1, isHovered ? 0.95F : 0.75F).getRGB());
-			AbstractGui.fill(stack, x + 1, y + 1, x + this.width - 1, y + this.height - 1, new Color(0.05F, 0.05F, 0.05F, isHovered ? 0.95F : 0.75F).getRGB());
+			Gui.fill(stack, x, y, x + this.width, y + this.height, new Color(1, 1, 1, isHovered ? 0.95F : 0.75F).getRGB());
+			Gui.fill(stack, x + 1, y + 1, x + this.width - 1, y + this.height - 1, new Color(0.05F, 0.05F, 0.05F, isHovered ? 0.95F : 0.75F).getRGB());
 		}
 		TextRenderUtil.drawScaledText(stack, x + 2.5f, y + 1f, 1.5F, Integer.toString(num), DyeColor.WHITE.getTextColor());
 	}

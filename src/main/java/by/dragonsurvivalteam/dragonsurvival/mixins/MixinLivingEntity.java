@@ -34,28 +34,26 @@ import java.util.ArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-@Mixin( LivingEntity.class)
-public abstract class MixinLivingEntity extends Entity
-{
+
+@Mixin( LivingEntity.class )
+public abstract class MixinLivingEntity extends Entity{
 	@Shadow
 	private ItemStack useItem;
 	@Shadow
 	private int useItemRemaining;
 
-	public MixinLivingEntity(EntityType<?> p_i48580_1_, Level p_i48580_2_) {
+	public MixinLivingEntity(EntityType<?> p_i48580_1_, Level p_i48580_2_){
 		super(p_i48580_1_, p_i48580_2_);
 	}
 
-	@Redirect( method = "collectEquipmentChanges",
-		at = @At(value="INVOKE", target="Lnet/minecraft/world/entity/LivingEntity;getItemBySlot(Lnet/minecraft/world/entity/EquipmentSlot;)Lnet/minecraft/world/item/ItemStack;" ))
-	private ItemStack getDragonSword(LivingEntity entity, EquipmentSlot slotType)
-	{
+	@Redirect( method = "collectEquipmentChanges", at = @At( value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getItemBySlot(Lnet/minecraft/world/entity/EquipmentSlot;)Lnet/minecraft/world/item/ItemStack;" ) )
+	private ItemStack getDragonSword(LivingEntity entity, EquipmentSlot slotType){
 		ItemStack mainStack = entity.getMainHandItem();
 
-		if (slotType == EquipmentSlot.MAINHAND) {
+		if(slotType == EquipmentSlot.MAINHAND){
 			DragonStateHandler cap = DragonStateProvider.getCap(entity).orElse(null);
 
-			if(!(mainStack.getItem() instanceof TieredItem) && cap != null) {
+			if(!(mainStack.getItem() instanceof TieredItem) && cap != null){
 				ItemStack sword = cap.getClawInventory().getClawsInventory().getItem(0);
 
 				if(sword != null && !sword.isEmpty()){
@@ -64,9 +62,9 @@ public abstract class MixinLivingEntity extends Entity
 			}
 
 			return entity.getMainHandItem();
-		} else if (slotType == EquipmentSlot.OFFHAND) {
+		}else if(slotType == EquipmentSlot.OFFHAND){
 			return entity.getOffhandItem();
-		} else {
+		}else{
 			if(slotType.getType() == EquipmentSlot.Type.ARMOR && entity.getArmorSlots() != null && entity.getArmorSlots().iterator().hasNext() && entity.getArmorSlots().spliterator() != null){
 				Stream<ItemStack> stream = StreamSupport.stream(entity.getArmorSlots().spliterator(), false);
 				ArrayList<ItemStack> list = new ArrayList<>(stream.collect(Collectors.toList()));
@@ -77,20 +75,21 @@ public abstract class MixinLivingEntity extends Entity
 		}
 	}
 
-	@Inject(at = @At("HEAD"), method = "Lnet/minecraft/world/entity/LivingEntity;rideableUnderWater()Z", cancellable = true)
+	@Inject( at = @At( "HEAD" ), method = "Lnet/minecraft/world/entity/LivingEntity;rideableUnderWater()Z", cancellable = true )
 	public void dragonRideableUnderWater(CallbackInfoReturnable<Boolean> ci){
-		if (DragonUtils.isDragon(this))
+		if(DragonUtils.isDragon(this)){
 			ci.setReturnValue(true);
+		}
 	}
 
-	@Inject(at = @At("HEAD"), method = "eat", cancellable = true)
-	public void dragonEat(Level  level, ItemStack itemStack, CallbackInfoReturnable<ItemStack> ci) {
+	@Inject( at = @At( "HEAD" ), method = "eat", cancellable = true )
+	public void dragonEat(Level level, ItemStack itemStack, CallbackInfoReturnable<ItemStack> ci){
 		DragonStateProvider.getCap(this).ifPresent(dragonStateHandler -> {
-			if (dragonStateHandler.isDragon()) {
-				if (DragonFoodHandler.isDragonEdible(itemStack.getItem(), dragonStateHandler.getType())) {
-					level.playSound((Player)null, this.getX(), this.getY(), this.getZ(), this.getEatingSound(itemStack), SoundSource.NEUTRAL, 1.0F, 1.0F + (level.random.nextFloat() - level.random.nextFloat()) * 0.4F);
+			if(dragonStateHandler.isDragon()){
+				if(DragonFoodHandler.isDragonEdible(itemStack.getItem(), dragonStateHandler.getType())){
+					level.playSound(null, this.getX(), this.getY(), this.getZ(), this.getEatingSound(itemStack), SoundSource.NEUTRAL, 1.0F, 1.0F + (level.random.nextFloat() - level.random.nextFloat()) * 0.4F);
 					this.addEatEffect(itemStack, level, (LivingEntity)(Object)this);
-					if (!((Object)this instanceof Player) || !((Player)(Object)this).getAbilities().instabuild) {
+					if(!((Object)this instanceof Player) || !((Player)(Object)this).getAbilities().instabuild){
 						itemStack.shrink(1);
 					}
 				}
@@ -99,36 +98,50 @@ public abstract class MixinLivingEntity extends Entity
 		});
 	}
 
-	@Inject(at = @At("HEAD"), method = "addEatEffect", cancellable = true)
-	public void addDragonEatEffect(ItemStack itemStack, Level  level, LivingEntity livingEntity, CallbackInfo ci) {
-		DragonStateProvider.getCap(this).ifPresent(dragonStateHandler -> {
-			if (dragonStateHandler.isDragon()) {
-				Item item = itemStack.getItem();
-				if (DragonFoodHandler.isDragonEdible(item, dragonStateHandler.getType())) {
+	@Shadow
+	public void addEatEffect(ItemStack itemStack, Level level, LivingEntity object){
+		throw new IllegalStateException("Mixin failed to shadow addEatEffect()");
+	}
 
-					for(Pair<MobEffectInstance, Float> pair : DragonFoodHandler.getDragonFoodProperties(item, dragonStateHandler.getType()) .getEffects()) {
-						if (!level.isClientSide && pair.getFirst() != null) {
-							if (!level.isClientSide && pair.getFirst() != null && pair.getFirst().getEffect() != MobEffects.HUNGER && level.random.nextFloat() < pair.getSecond())
+	@Shadow
+	public SoundEvent getEatingSound(ItemStack itemStack){
+		throw new IllegalStateException("Mixin failed to shadow getEatingSound()");
+	}
+
+	@Inject( at = @At( "HEAD" ), method = "addEatEffect", cancellable = true )
+	public void addDragonEatEffect(ItemStack itemStack, Level level, LivingEntity livingEntity, CallbackInfo ci){
+		DragonStateProvider.getCap(this).ifPresent(dragonStateHandler -> {
+			if(dragonStateHandler.isDragon()){
+				Item item = itemStack.getItem();
+				if(DragonFoodHandler.isDragonEdible(item, dragonStateHandler.getType())){
+
+					for(Pair<MobEffectInstance, Float> pair : DragonFoodHandler.getDragonFoodProperties(item, dragonStateHandler.getType()).getEffects()){
+						if(!level.isClientSide && pair.getFirst() != null){
+							if(!level.isClientSide && pair.getFirst() != null && pair.getFirst().getEffect() != MobEffects.HUNGER && level.random.nextFloat() < pair.getSecond()){
 								livingEntity.addEffect(new MobEffectInstance(pair.getFirst()));
-							if (pair.getFirst().getEffect() == MobEffects.HUNGER) {
-								if (livingEntity.hasEffect(MobEffects.HUNGER)) {
-									switch (livingEntity.getEffect(MobEffects.HUNGER).getAmplifier()) {
+							}
+							if(pair.getFirst().getEffect() == MobEffects.HUNGER){
+								if(livingEntity.hasEffect(MobEffects.HUNGER)){
+									switch(livingEntity.getEffect(MobEffects.HUNGER).getAmplifier()){
 										case 0:
 											livingEntity.addEffect(new MobEffectInstance(MobEffects.HUNGER, pair.getFirst().getDuration(), pair.getFirst().getAmplifier() + 1));
-											if (level.random.nextFloat() < 0.25F)
+											if(level.random.nextFloat() < 0.25F){
 												livingEntity.addEffect(new MobEffectInstance(MobEffects.POISON, pair.getFirst().getDuration(), 0));
+											}
 											break;
 										case 1:
 											livingEntity.addEffect(new MobEffectInstance(MobEffects.HUNGER, pair.getFirst().getDuration(), pair.getFirst().getAmplifier() + 2));
-											if (level.random.nextFloat() < 0.5F)
+											if(level.random.nextFloat() < 0.5F){
 												livingEntity.addEffect(new MobEffectInstance(MobEffects.POISON, pair.getFirst().getDuration(), 0));
+											}
 											break;
 										default:
 											livingEntity.addEffect(new MobEffectInstance(MobEffects.HUNGER, pair.getFirst().getDuration(), pair.getFirst().getAmplifier() + 2));
 											livingEntity.addEffect(new MobEffectInstance(MobEffects.POISON, pair.getFirst().getDuration(), 0));
 									}
-								} else if (level.random.nextFloat() < pair.getSecond())
+								}else if(level.random.nextFloat() < pair.getSecond()){
 									livingEntity.addEffect(new MobEffectInstance(pair.getFirst()));
+								}
 							}
 						}
 					}
@@ -138,10 +151,10 @@ public abstract class MixinLivingEntity extends Entity
 		});
 	}
 
-	@Inject(at = @At("HEAD"), method = "shouldTriggerItemUseEffects", cancellable = true)
-	public void shouldDragonTriggerItemUseEffects(CallbackInfoReturnable<Boolean> ci) {
+	@Inject( at = @At( "HEAD" ), method = "shouldTriggerItemUseEffects", cancellable = true )
+	public void shouldDragonTriggerItemUseEffects(CallbackInfoReturnable<Boolean> ci){
 		DragonStateProvider.getCap(this).ifPresent(dragonStateHandler -> {
-			if (dragonStateHandler.isDragon()) {
+			if(dragonStateHandler.isDragon()){
 				int i = this.getUseItemRemainingTicks();
 				FoodProperties food = this.useItem.getItem().getFoodProperties();
 				boolean flag = food != null && food.isFastFood();
@@ -151,20 +164,24 @@ public abstract class MixinLivingEntity extends Entity
 		});
 	}
 
-	@Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getUseDuration()I", shift = Shift.AFTER), method = "onSyncedDataUpdated")
-	public void onDragonSyncedDataUpdated(EntityDataAccessor<?> data, CallbackInfo ci) {
+	@Shadow
+	public int getUseItemRemainingTicks(){
+		throw new IllegalStateException("Mixin failed to shadow getUseItemRemainingTicks()");
+	}
+
+	@Inject( at = @At( value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getUseDuration()I", shift = Shift.AFTER ), method = "onSyncedDataUpdated" )
+	public void onDragonSyncedDataUpdated(EntityDataAccessor<?> data, CallbackInfo ci){
 		DragonStateProvider.getCap(this).ifPresent(dragonStateHandler -> {
-			if (dragonStateHandler.isDragon())
+			if(dragonStateHandler.isDragon()){
 				this.useItemRemaining = DragonFoodHandler.getUseDuration(this.useItem, dragonStateHandler.getType());
+			}
 		});
 	}
 
-
-	@Inject(at = @At(value = "HEAD"), method = "triggerItemUseEffects", cancellable = true)
-	public void triggerDragonItemUseEffects(ItemStack stack, int count, CallbackInfo ci) {
+	@Inject( at = @At( value = "HEAD" ), method = "triggerItemUseEffects", cancellable = true )
+	public void triggerDragonItemUseEffects(ItemStack stack, int count, CallbackInfo ci){
 		DragonStateProvider.getCap(this).ifPresent(dragonStateHandler -> {
-			if (dragonStateHandler.isDragon() && !stack.isEmpty() && this.isUsingItem() &&
-			    stack.getUseAnimation() == UseAnim.NONE && DragonFoodHandler.isDragonEdible(stack.getItem(), dragonStateHandler.getType())) {
+			if(dragonStateHandler.isDragon() && !stack.isEmpty() && this.isUsingItem() && stack.getUseAnimation() == UseAnim.NONE && DragonFoodHandler.isDragonEdible(stack.getItem(), dragonStateHandler.getType())){
 				this.spawnItemParticles(stack, count);
 				this.playSound(this.getEatingSound(stack), 0.5F + 0.5F * (float)this.random.nextInt(2), (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
 				ci.cancel();
@@ -172,32 +189,13 @@ public abstract class MixinLivingEntity extends Entity
 		});
 	}
 
-
-
-
 	@Shadow
-	public void spawnItemParticles(ItemStack stack, int count) {
+	public void spawnItemParticles(ItemStack stack, int count){
 		throw new IllegalStateException("Mixin failed to shadow spawnItemParticles()");
 	}
 
 	@Shadow
-	public boolean isUsingItem() {
+	public boolean isUsingItem(){
 		throw new IllegalStateException("Mixin failed to shadow isUsingItem()");
 	}
-
-	@Shadow
-	public int getUseItemRemainingTicks() {
-		throw new IllegalStateException("Mixin failed to shadow getUseItemRemainingTicks()");
-	}
-
-	@Shadow
-	public void addEatEffect(ItemStack itemStack, Level  level, LivingEntity object) {
-		throw new IllegalStateException("Mixin failed to shadow addEatEffect()");
-	}
-
-	@Shadow
-	public SoundEvent getEatingSound(ItemStack itemStack) {
-		throw new IllegalStateException("Mixin failed to shadow getEatingSound()");
-	}
-
 }
