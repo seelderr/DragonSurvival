@@ -8,6 +8,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.handlers.magic.ClientMagicHUD
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon.DragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
+import by.dragonsurvivalteam.dragonsurvival.client.util.TooltipRendering;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
@@ -293,7 +294,7 @@ public class SkinsScreen extends Screen{
 
 			@Override
 			public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-				Minecraft.getInstance().screen.renderTooltip(p_230443_1_, new TranslatableComponent("ds.gui.skins.tooltip.discord"), p_230443_2_, p_230443_3_);
+				TooltipRendering.drawHoveringText(p_230443_1_, new TranslatableComponent("ds.gui.skins.tooltip.discord"), p_230443_2_, p_230443_3_);
 			}
 		});
 
@@ -314,7 +315,7 @@ public class SkinsScreen extends Screen{
 
 			@Override
 			public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-				Minecraft.getInstance().screen.renderTooltip(p_230443_1_, new TranslatableComponent("ds.gui.skins.tooltip.wiki"), p_230443_2_, p_230443_3_);
+				TooltipRendering.drawHoveringText(p_230443_1_, new TranslatableComponent("ds.gui.skins.tooltip.wiki"), p_230443_2_, p_230443_3_);
 			}
 		});
 
@@ -326,7 +327,7 @@ public class SkinsScreen extends Screen{
 		}){
 			@Override
 			public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-				Minecraft.getInstance().screen.renderTooltip(p_230443_1_, new TranslatableComponent("ds.gui.skins.tooltip.yours"), p_230443_2_, p_230443_3_);
+				TooltipRendering.drawHoveringText(p_230443_1_, new TranslatableComponent("ds.gui.skins.tooltip.yours"), p_230443_2_, p_230443_3_);
 			}
 		});
 
@@ -366,7 +367,7 @@ public class SkinsScreen extends Screen{
 		}){
 			@Override
 			public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-				Minecraft.getInstance().screen.renderTooltip(p_230443_1_, new TranslatableComponent("ds.gui.skins.tooltip.random"), p_230443_2_, p_230443_3_);
+				TooltipRendering.drawHoveringText(p_230443_1_, new TranslatableComponent("ds.gui.skins.tooltip.random"), p_230443_2_, p_230443_3_);
 			}
 		});
 

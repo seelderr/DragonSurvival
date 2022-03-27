@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.client.util.TooltipRendering;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -59,7 +60,7 @@ public class HelpButton extends ExtendedButton{
 
 	@Override
 	public void renderToolTip(PoseStack pPoseStack, int pMouseX, int pMouseY){
-		Minecraft.getInstance().screen.renderTooltip(pPoseStack, new TranslatableComponent(text), pMouseX, pMouseY);
+		TooltipRendering.drawHoveringText(pPoseStack, new TranslatableComponent(text), pMouseX, pMouseY);
 	}
 
 	@Override

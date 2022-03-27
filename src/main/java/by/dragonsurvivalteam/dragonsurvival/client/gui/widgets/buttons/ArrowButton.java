@@ -7,8 +7,8 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.resources.ResourceLocation;
 
 public class ArrowButton extends Button{
-	public boolean next;
 	public static final ResourceLocation texture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/arrows.png");
+	public boolean next;
 
 	public ArrowButton(int x, int y, int xSize, int ySize, boolean next, Button.OnPress pressable){
 		super(x, y, xSize, ySize, null, pressable);

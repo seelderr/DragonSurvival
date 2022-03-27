@@ -23,6 +23,9 @@ import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 @Mod.EventBusSubscriber( Dist.CLIENT )
 public class ClientMagicHandler{
 
@@ -31,7 +34,7 @@ public class ClientMagicHandler{
 		Player player = event.getEntity();
 
 		DragonStateProvider.getCap(player).ifPresent(cap -> {
-			if(!cap.getEmotes().currentEmotes.isEmpty() && DragonUtils.isDragon(player)){
+			if(Arrays.stream(cap.getEmotes().currentEmotes).anyMatch(Objects::nonNull) && DragonUtils.isDragon(player)){
 				event.setNewfov(1f);
 				return;
 			}

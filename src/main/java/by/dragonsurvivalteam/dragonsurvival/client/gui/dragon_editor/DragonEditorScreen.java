@@ -17,6 +17,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.objects.SkinPr
 import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.objects.SkinPreset.SkinAgeGroup;
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TextRenderUtil;
+import by.dragonsurvivalteam.dragonsurvival.client.util.TooltipRendering;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.SkinCap;
@@ -191,7 +192,7 @@ public class DragonEditorScreen extends Screen{
 			SkinsScreen.drawNonShadowLineBreak(stack, font, new TextComponent(WordUtils.capitalize(animations[curAnimation].replace("_", " "))), width / 2, height / 2 + 72, DyeColor.GRAY.getTextColor());
 		}
 
-		for(Widget widget : new CopyOnWriteArrayList<>(this.renderables)) {
+		for(Widget widget : new CopyOnWriteArrayList<>(this.renderables)){
 			widget.render(stack, pMouseX, pMouseY, pPartialTicks);
 		}
 
@@ -459,7 +460,7 @@ public class DragonEditorScreen extends Screen{
 
 			@Override
 			public void renderToolTip(PoseStack pPoseStack, int pMouseX, int pMouseY){
-				Minecraft.getInstance().screen.renderTooltip(pPoseStack, new TranslatableComponent("ds.gui.dragon_editor.size_info"), pMouseX, pMouseY);
+				TooltipRendering.drawHoveringText(pPoseStack, new TranslatableComponent("ds.gui.dragon_editor.size_info"), pMouseX, pMouseY);
 			}
 		});
 
@@ -483,7 +484,7 @@ public class DragonEditorScreen extends Screen{
 
 			@Override
 			public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-				Minecraft.getInstance().screen.renderTooltip(p_230443_1_, new TranslatableComponent("ds.gui.dragon_editor.default_skin.tooltip"), p_230443_2_, p_230443_3_);
+				TooltipRendering.drawHoveringText(p_230443_1_, new TranslatableComponent("ds.gui.dragon_editor.default_skin.tooltip"), p_230443_2_, p_230443_3_);
 			}
 		});
 
@@ -495,7 +496,7 @@ public class DragonEditorScreen extends Screen{
 			public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){
 				super.renderButton(mStack, mouseX, mouseY, partial);
 				if(isHovered){
-					Minecraft.getInstance().screen.renderTooltip(mStack, new TranslatableComponent("ds.gui.dragon_editor.tooltip.done"), mouseX, mouseY);
+					TooltipRendering.drawHoveringText(mStack, new TranslatableComponent("ds.gui.dragon_editor.tooltip.done"), mouseX, mouseY);
 				}
 
 				if(toggled && (!visible || !confirmation)){
@@ -552,7 +553,7 @@ public class DragonEditorScreen extends Screen{
 				super.renderButton(mStack, mouseX, mouseY, partial);
 
 				if(isHovered){
-					Minecraft.getInstance().screen.renderTooltip(mStack, new TranslatableComponent("ds.gui.dragon_editor.tooltip.back"), mouseX, mouseY);
+					TooltipRendering.drawHoveringText(mStack, new TranslatableComponent("ds.gui.dragon_editor.tooltip.back"), mouseX, mouseY);
 				}
 			}
 
@@ -570,7 +571,7 @@ public class DragonEditorScreen extends Screen{
 		}){
 			@Override
 			public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-				Minecraft.getInstance().screen.renderTooltip(p_230443_1_, new TranslatableComponent("ds.gui.dragon_editor.reset"), p_230443_2_, p_230443_3_);
+				TooltipRendering.drawHoveringText(p_230443_1_, new TranslatableComponent("ds.gui.dragon_editor.reset"), p_230443_2_, p_230443_3_);
 			}
 
 			@Override
@@ -629,7 +630,7 @@ public class DragonEditorScreen extends Screen{
 		}){
 			@Override
 			public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-				Minecraft.getInstance().screen.renderTooltip(p_230443_1_, new TranslatableComponent("ds.gui.dragon_editor.random"), p_230443_2_, p_230443_3_);
+				TooltipRendering.drawHoveringText(p_230443_1_, new TranslatableComponent("ds.gui.dragon_editor.random"), p_230443_2_, p_230443_3_);
 			}
 
 			@Override
@@ -644,7 +645,7 @@ public class DragonEditorScreen extends Screen{
 		}){
 			@Override
 			public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-				Minecraft.getInstance().screen.renderTooltip(p_230443_1_, new TranslatableComponent("ds.gui.dragon_editor.undo"), p_230443_2_, p_230443_3_);
+				TooltipRendering.drawHoveringText(p_230443_1_, new TranslatableComponent("ds.gui.dragon_editor.undo"), p_230443_2_, p_230443_3_);
 			}
 
 			@Override
@@ -659,7 +660,7 @@ public class DragonEditorScreen extends Screen{
 		}){
 			@Override
 			public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-				Minecraft.getInstance().screen.renderTooltip(p_230443_1_, new TranslatableComponent("ds.gui.dragon_editor.redo"), p_230443_2_, p_230443_3_);
+				TooltipRendering.drawHoveringText(p_230443_1_, new TranslatableComponent("ds.gui.dragon_editor.redo"), p_230443_2_, p_230443_3_);
 			}
 
 			@Override
@@ -683,7 +684,7 @@ public class DragonEditorScreen extends Screen{
 
 			@Override
 			public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-				Minecraft.getInstance().screen.renderTooltip(p_230443_1_, new TranslatableComponent("ds.gui.dragon_editor.save_slot"), p_230443_2_, p_230443_3_);
+				TooltipRendering.drawHoveringText(p_230443_1_, new TranslatableComponent("ds.gui.dragon_editor.save_slot"), p_230443_2_, p_230443_3_);
 			}
 
 			@Override
@@ -701,7 +702,7 @@ public class DragonEditorScreen extends Screen{
 		}){
 			@Override
 			public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-				Minecraft.getInstance().screen.renderTooltip(p_230443_1_, new TranslatableComponent("ds.gui.dragon_editor.reset"), p_230443_2_, p_230443_3_);
+				TooltipRendering.drawHoveringText(p_230443_1_, new TranslatableComponent("ds.gui.dragon_editor.reset"), p_230443_2_, p_230443_3_);
 			}
 
 			@Override

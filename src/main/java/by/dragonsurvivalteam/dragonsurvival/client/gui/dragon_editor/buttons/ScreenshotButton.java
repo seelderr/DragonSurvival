@@ -4,6 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
+import by.dragonsurvivalteam.dragonsurvival.client.util.TooltipRendering;
 import com.mojang.blaze3d.pipeline.MainTarget;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -39,10 +40,12 @@ public class ScreenshotButton extends ExtendedButton{
 		PoseStack stack = new PoseStack();
 		stack.pushPose();
 		MainTarget framebuffer = new MainTarget(width, height);
-		framebuffer.bindWrite(false);
-		framebuffer.blitToScreen(width, height);
+
+		framebuffer.bindWrite(true);
 
 		ClientDragonRender.renderEntityInInventory(FakeClientPlayerUtils.getFakeDragon(0, dragonEditorScreen.handler), width / 2, height / 2, dragonEditorScreen.dragonRender.zoom * 4, dragonEditorScreen.dragonRender.xRot, dragonEditorScreen.dragonRender.yRot, 0, 0);
+
+		framebuffer.blitToScreen(width, height);
 
 		NativeImage nativeimage = new NativeImage(width, height, false);
 		RenderSystem.bindTexture(framebuffer.getColorTextureId());
@@ -97,6 +100,6 @@ public class ScreenshotButton extends ExtendedButton{
 
 	@Override
 	public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-		Minecraft.getInstance().screen.renderTooltip(p_230443_1_, new TranslatableComponent("ds.gui.dragon_editor.screenshot"), p_230443_2_, p_230443_3_);
+		TooltipRendering.drawHoveringText(p_230443_1_, new TranslatableComponent("ds.gui.dragon_editor.screenshot"), p_230443_2_, p_230443_3_);
 	}
 }

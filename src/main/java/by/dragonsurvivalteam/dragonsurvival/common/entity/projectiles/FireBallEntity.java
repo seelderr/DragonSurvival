@@ -35,6 +35,10 @@ public class FireBallEntity extends DragonBallEntity{
 		return ParticleTypes.LARGE_SMOKE;
 	}
 
+	protected boolean shouldBurn(){
+		return false;
+	}
+
 	protected void onHit(HitResult p_70227_1_){
 		if(!this.level.isClientSide && !this.isDead){
 			boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level, this.getOwner());
@@ -48,10 +52,6 @@ public class FireBallEntity extends DragonBallEntity{
 				aoeDamage();
 			}
 		}
-	}
-
-	protected boolean shouldBurn(){
-		return false;
 	}
 
 	private void aoeDamage(){

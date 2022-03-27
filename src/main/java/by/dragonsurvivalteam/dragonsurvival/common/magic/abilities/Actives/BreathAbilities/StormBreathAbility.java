@@ -66,9 +66,6 @@ public class StormBreathAbility extends BreathAbility{
 				creeper.getEntityData().set(Creeper.DATA_IS_POWERED, true);
 			}
 		}
-	}	@Override
-	public int getManaCost(){
-		return player != null && player.hasEffect(DragonEffects.SOURCE_OF_MAGIC) ? 0 : (firstUse ? ConfigHandler.SERVER.stormBreathInitialMana.get() : ConfigHandler.SERVER.stormBreathOvertimeMana.get());
 	}
 
 	public static void spark(LivingEntity source, LivingEntity target){
@@ -94,6 +91,9 @@ public class StormBreathAbility extends BreathAbility{
 				source.level.addParticle(new DustParticleOptions(new Vector3f(0f, 1F, 1F), 1f), x, y, z, 0, 0, 0);
 			}
 		}
+	}	@Override
+	public int getManaCost(){
+		return player != null && player.hasEffect(DragonEffects.SOURCE_OF_MAGIC) ? 0 : (firstUse ? ConfigHandler.SERVER.stormBreathInitialMana.get() : ConfigHandler.SERVER.stormBreathOvertimeMana.get());
 	}
 
 	public static void chargedEffectSparkle(Player player, LivingEntity source, int chainRange, int maxChainTargets, int damage){
@@ -186,11 +186,6 @@ public class StormBreathAbility extends BreathAbility{
 			return false;
 		}
 		return DragonStateProvider.getCap(target).map(cap -> cap.getType()).orElse(null) != DragonType.SEA;
-	}	public void tickCost(){
-		if(firstUse || castingTicks % ConfigHandler.SERVER.stormBreathManaTicks.get() == 0){
-			consumeMana(player);
-			firstUse = false;
-		}
 	}
 
 	@Override
@@ -201,6 +196,11 @@ public class StormBreathAbility extends BreathAbility{
 	@Override
 	public Entity getEffectEntity(){
 		return EFFECT_ENTITY;
+	}	public void tickCost(){
+		if(firstUse || castingTicks % ConfigHandler.SERVER.stormBreathManaTicks.get() == 0){
+			consumeMana(player);
+			firstUse = false;
+		}
 	}
 
 	public void hurtTarget(LivingEntity entity){
@@ -238,6 +238,7 @@ public class StormBreathAbility extends BreathAbility{
 	public boolean isDisabled(){
 		return super.isDisabled() || !ConfigHandler.SERVER.stormBreath.get();
 	}
+
 
 
 

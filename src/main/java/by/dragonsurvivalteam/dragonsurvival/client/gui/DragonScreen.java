@@ -19,17 +19,20 @@ import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawRender;
 import by.dragonsurvivalteam.dragonsurvival.network.container.OpenInventory;
 import by.dragonsurvivalteam.dragonsurvival.network.entity.player.SortInventoryPacket;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.DragonContainer;
+import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
+import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.*;
+import com.mojang.blaze3d.vertex.VertexFormat.Mode;
+import com.mojang.math.Matrix4f;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageButton;
-import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -69,6 +72,9 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 		DragonStateProvider.getCap(player).ifPresent((cap) -> {
 			clawsMenu = cap.getClawInventory().isClawsMenuOpen();
 		});
+
+		this.imageWidth = 203;
+		this.imageHeight = 166;
 	}
 
 	public int getLeftPos(){
@@ -77,8 +83,6 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 
 	@Override
 	protected void init(){
-		this.imageWidth = 203;
-		this.imageHeight = 166;
 		super.init();
 
 		if(ClientEvents.mouseX != -1 && ClientEvents.mouseY != -1){
@@ -374,121 +378,127 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 	}
 
 	public static void drawTexturedCircle(PoseStack stack, double x, double y, double radius, double u, double v, double texRadius, int sides, double percent, double startAngle){
+		Matrix4f matrix4f = stack.last().pose();
+
 		double rad;
 		double sin;
 		double cos;
 
-		GL11.glBegin(GL11.GL_TRIANGLE_FAN);
+		double z = 100;
 
-		GL11.glTexCoord2d(u, v);
-		GL11.glVertex2d(x, y);
+		RenderSystem.enableBlend();
+		RenderSystem.setShader(GameRenderer::getPositionTexShader);
+		final BufferBuilder buffer = Tesselator.getInstance().getBuilder();
+
+		GL11.glEnable(GL11.GL_LINE_SMOOTH);
+		GL11.glHint(GL11.GL_LINE_SMOOTH_HINT, GL11.GL_NICEST);
+
+		buffer.begin(Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION_TEX);
+		buffer.vertex(matrix4f, (float)x, (float)y, (float)z).uv((float)u, (float)v).endVertex();
 
 		for(int i = 0; i <= percent * sides; i++){
 			rad = PI_TWO * ((double)i / (double)sides + startAngle);
 			sin = Math.sin(rad);
 			cos = Math.cos(rad);
 
-			GL11.glTexCoord2d(u + sin * texRadius, v + cos * texRadius);
-			GL11.glVertex2d(x + sin * radius, y + cos * radius);
+			float xPos = (float)(x + sin * radius);
+			float yPos = (float)(y + cos * radius);
+			buffer.vertex(matrix4f, xPos, yPos, (float)z).uv((float)(u + sin * texRadius), (float)(v + cos * texRadius)).endVertex();
 		}
 
 		if(percent == 1.0){
 			rad = PI_TWO * (percent + startAngle);
 			sin = Math.sin(rad);
 			cos = Math.cos(rad);
-
-			GL11.glTexCoord2d(u + sin * texRadius, v + cos * texRadius);
-			GL11.glVertex2d(x + sin * radius, y + cos * radius);
+			buffer.vertex(matrix4f, (float)(x + sin * radius), (float)(y + cos * radius), (float)z).uv((float)(u + sin * texRadius), (float)(v + cos * texRadius)).endVertex();
 		}
-
-		GL11.glEnd();
+		RenderSystem.disableBlend();
+		GL11.glDisable(GL11.GL_LINE_SMOOTH);
+		buffer.end();
+		BufferUploader.end(buffer);
 	}
 
 	public static void drawSmoothCircle(PoseStack stack, double x, double y, double radius, int sides, double percent, double startAngle){
-		boolean blend = GL11.glGetBoolean(GL11.GL_BLEND);
-		boolean lineSmooth = GL11.glGetBoolean(GL11.GL_LINE_SMOOTH);
-
+		Matrix4f matrix4f = stack.last().pose();
 		double rad;
 		double sin;
 		double cos;
 
-		stack.pushPose();
+		double z = 100;
+
+		float[] colors = RenderSystem.getShaderColor();
+
 		RenderSystem.enableBlend();
-		RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		RenderSystem.setShader(GameRenderer::getPositionColorShader);
+		final BufferBuilder buffer = Tesselator.getInstance().getBuilder();
+
 		GL11.glEnable(GL11.GL_LINE_SMOOTH);
 		GL11.glHint(GL11.GL_LINE_SMOOTH_HINT, GL11.GL_NICEST);
-		GL11.glBegin(GL11.GL_LINE_STRIP);
+
+		buffer.begin(Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION_COLOR);
+		buffer.vertex(matrix4f, (float)x, (float)y, (float)z).color(colors[0], colors[1], colors[2], 1f).endVertex();
 
 		for(int i = 0; i <= percent * sides; i++){
 			rad = PI_TWO * ((double)i / (double)sides + startAngle);
 			sin = Math.sin(rad);
-			cos = -Math.cos(rad);
+			cos = Math.cos(rad);
 
-			GL11.glVertex2d(x + sin * radius, y + cos * radius);
+			float xPos = (float)(x + sin * radius);
+			float yPos = (float)(y + cos * radius);
+			buffer.vertex(matrix4f, xPos, yPos, (float)z).color(colors[0], colors[1], colors[2], 1f).endVertex();
 		}
 
 		rad = PI_TWO * (percent + startAngle);
 		sin = Math.sin(rad);
-		cos = -Math.cos(rad);
+		cos = Math.cos(rad);
+		buffer.vertex(matrix4f, (float)(x + sin * radius), (float)(y + cos * radius), (float)z).color(colors[0], colors[1], colors[2], 1f).endVertex();
 
-		GL11.glVertex2d(x + sin * radius, y + cos * radius);
-
-		GL11.glEnd();
-		if(!lineSmooth){
-			GL11.glDisable(GL11.GL_LINE_SMOOTH);
-		}
-		if(!blend){
-			RenderSystem.disableBlend();
-		}
-		stack.popPose();
+		RenderSystem.disableBlend();
+		GL11.glDisable(GL11.GL_LINE_SMOOTH);
+		buffer.end();
+		BufferUploader.end(buffer);
 	}
 
 	public static void drawTexturedRing(PoseStack stack, double x, double y, double innerRadius, double outerRadius, double u, double v, double texInnerRadius, double texOuterRadius, int sides, double percent, double startAngle){
+		Matrix4f matrix4f = stack.last().pose();
+
 		double rad;
 		double sin;
 		double cos;
 
-		boolean blend = GL11.glGetBoolean(GL11.GL_BLEND);
-		boolean lineSmooth = GL11.glGetBoolean(GL11.GL_LINE_SMOOTH);
+		double z = 100;
 
-		stack.pushPose();
 		RenderSystem.enableBlend();
-		RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		RenderSystem.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
+		RenderSystem.setShader(GameRenderer::getPositionTexShader);
+
 		GL11.glEnable(GL11.GL_LINE_SMOOTH);
 		GL11.glHint(GL11.GL_LINE_SMOOTH_HINT, GL11.GL_NICEST);
-		GL11.glBegin(GL11.GL_QUAD_STRIP);
+
+		final BufferBuilder buffer = Tesselator.getInstance().getBuilder();
+		buffer.begin(Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION_TEX);
 
 		for(int i = 0; i <= percent * sides; i++){
 			rad = PI_TWO * ((double)i / (double)sides + startAngle);
 			sin = Math.sin(rad);
 			cos = -Math.cos(rad);
 
-			GL11.glTexCoord2d(u + sin * texOuterRadius, v + cos * texOuterRadius);
-			GL11.glVertex2d(x + sin * outerRadius, y + cos * outerRadius);
+			buffer.vertex(x + sin * outerRadius, y + cos * outerRadius, z).uv((float)(u + sin * texOuterRadius), (float)(v + cos * texOuterRadius)).endVertex();
 
-			GL11.glTexCoord2d(u + sin * texInnerRadius, v + cos * texInnerRadius);
-			GL11.glVertex2d(x + sin * innerRadius, y + cos * innerRadius);
+			buffer.vertex(x + sin * innerRadius, y + cos * innerRadius, z).uv((float)(u + sin * texInnerRadius), (float)(v + cos * texInnerRadius)).endVertex();
 		}
 
 		rad = PI_TWO * (percent + startAngle);
 		sin = Math.sin(rad);
 		cos = -Math.cos(rad);
 
-		GL11.glTexCoord2d(u + sin * texOuterRadius, v + cos * texOuterRadius);
-		GL11.glVertex2d(x + sin * outerRadius, y + cos * outerRadius);
+		buffer.vertex(x + sin * outerRadius, y + cos * outerRadius, z).uv((float)(u + sin * texOuterRadius), (float)(v + cos * texOuterRadius)).endVertex();
 
-		GL11.glTexCoord2d(u + sin * texInnerRadius, v + cos * texInnerRadius);
-		GL11.glVertex2d(x + sin * innerRadius, y + cos * innerRadius);
+		buffer.vertex(x + sin * innerRadius, y + cos * innerRadius, z).uv((float)(u + sin * texInnerRadius), (float)(v + cos * texInnerRadius)).endVertex();
 
-		GL11.glEnd();
-
-		if(!lineSmooth){
-			GL11.glDisable(GL11.GL_LINE_SMOOTH);
-		}
-		if(!blend){
-			RenderSystem.disableBlend();
-		}
-		stack.popPose();
+		Tesselator.getInstance().end();
+		GL11.glDisable(GL11.GL_LINE_SMOOTH);
+		RenderSystem.disableBlend();
 	}
 
 	public boolean mouseReleased(double p_mouseReleased_1_, double p_mouseReleased_3_, int p_mouseReleased_5_){
@@ -514,13 +524,5 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 	public void render(PoseStack p_230450_1_, int p_render_1_, int p_render_2_, float p_render_3_){
 		this.renderBackground(p_230450_1_);
 		super.render(p_230450_1_, p_render_1_, p_render_2_, p_render_3_);
-
-		this.renderTooltip(p_230450_1_, p_render_1_, p_render_2_);
-
-		for(Widget w : renderables){
-			if(w instanceof AbstractWidget && ((AbstractWidget)w).isHoveredOrFocused()){
-				((AbstractWidget)w).renderToolTip(p_230450_1_, p_render_1_, p_render_2_);
-			}
-		}
 	}
 }

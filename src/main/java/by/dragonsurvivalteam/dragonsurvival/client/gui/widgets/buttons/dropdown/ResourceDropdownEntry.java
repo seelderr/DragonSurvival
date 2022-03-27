@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown;
 
+import by.dragonsurvivalteam.dragonsurvival.client.util.TooltipRendering;
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -16,7 +17,6 @@ import net.minecraftforge.client.gui.widget.ExtendedButton;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Consumer;
 
 public class ResourceDropdownEntry extends by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownEntry{
@@ -106,7 +106,7 @@ public class ResourceDropdownEntry extends by.dragonsurvivalteam.dragonsurvival.
 
 								if(isHovered){
 									List<Component> lines = entry.getDisplayItem().getTooltipLines(Minecraft.getInstance().player, Default.NORMAL);
-									Minecraft.getInstance().screen.renderTooltip(mStack, lines, Optional.empty(), mouseX, mouseY, Minecraft.getInstance().font);
+									TooltipRendering.drawHoveringText(mStack, lines, mouseX, mouseY);
 								}
 							}
 

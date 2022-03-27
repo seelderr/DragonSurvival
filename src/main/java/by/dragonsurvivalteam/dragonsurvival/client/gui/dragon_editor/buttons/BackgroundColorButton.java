@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.buttons;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.components.BackgroundColorSelectorComponent;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
+import by.dragonsurvivalteam.dragonsurvival.client.util.TooltipRendering;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -75,7 +76,7 @@ public class BackgroundColorButton extends ExtendedButton{
 		}
 
 		if(visible){
-			GuiUtils.drawContinuousTexturedBox(mStack,BACKGROUND_TEXTURE,  x, y, 0, 0, width, height, 32, 32, 10, 0);
+			GuiUtils.drawContinuousTexturedBox(mStack, BACKGROUND_TEXTURE, x, y, 0, 0, width, height, 32, 32, 10, 0);
 			RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/background_color_button.png"));
 			blit(mStack, x + 3, y + 3, 0, 0, width - 6, height - 6, width - 6, height - 6);
 
@@ -87,6 +88,6 @@ public class BackgroundColorButton extends ExtendedButton{
 
 	@Override
 	public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-		Minecraft.getInstance().screen.renderTooltip(p_230443_1_, new TranslatableComponent("ds.gui.dragon_editor.background_color"), p_230443_2_, p_230443_3_);
+		TooltipRendering.drawHoveringText(p_230443_1_, new TranslatableComponent("ds.gui.dragon_editor.background_color"), p_230443_2_, p_230443_3_);
 	}
 }

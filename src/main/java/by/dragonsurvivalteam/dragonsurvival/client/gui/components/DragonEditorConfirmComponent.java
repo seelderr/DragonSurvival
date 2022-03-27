@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.components;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TextRenderUtil;
+import by.dragonsurvivalteam.dragonsurvival.client.util.TooltipRendering;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -45,7 +46,7 @@ public class DragonEditorConfirmComponent extends AbstractContainerEventHandler 
 				drawCenteredString(mStack, Minecraft.getInstance().font, getMessage(), this.x + this.width / 2, this.y + (this.height - 8) / 2, getFGColor());
 
 				if(isHovered){
-					Minecraft.getInstance().screen.renderTooltip(mStack, new TranslatableComponent("ds.gui.dragon_editor.tooltip.done"), mouseX, mouseY);
+					TooltipRendering.drawHoveringText(mStack, new TranslatableComponent("ds.gui.dragon_editor.tooltip.done"), mouseX, mouseY);
 				}
 			}
 
@@ -61,7 +62,7 @@ public class DragonEditorConfirmComponent extends AbstractContainerEventHandler 
 				drawCenteredString(mStack, Minecraft.getInstance().font, getMessage(), this.x + this.width / 2, this.y + (this.height - 8) / 2, getFGColor());
 
 				if(isHovered){
-					Minecraft.getInstance().screen.renderTooltip(mStack, new TranslatableComponent("ds.gui.dragon_editor.tooltip.cancel"), mouseX, mouseY);
+					TooltipRendering.drawHoveringText(mStack, new TranslatableComponent("ds.gui.dragon_editor.tooltip.cancel"), mouseX, mouseY);
 				}
 			}
 

@@ -58,10 +58,6 @@ public class EyesBuffAbility extends ActiveDragonAbility{
 		player.level.playLocalSound(player.position().x, player.position().y + 0.5, player.position().z, SoundEvents.UI_TOAST_IN, SoundSource.PLAYERS, 5F, 0.1F, false);
 	}
 
-	public int getDuration(){
-		return (effect == DragonEffects.LAVA_VISION ? ConfigHandler.SERVER.lavaVisionDuration.get() : ConfigHandler.SERVER.seaEyesDuration.get()) * getLevel();
-	}
-
 	public boolean canMoveWhileCasting(){return false;}
 
 	@Override
@@ -72,6 +68,10 @@ public class EyesBuffAbility extends ActiveDragonAbility{
 	@Override
 	public AbilityAnimation getStoppingAnimation(){
 		return new AbilityAnimation("self_buff", 0.52 * 20, true, false);
+	}
+
+	public int getDuration(){
+		return (effect == DragonEffects.LAVA_VISION ? ConfigHandler.SERVER.lavaVisionDuration.get() : ConfigHandler.SERVER.seaEyesDuration.get()) * getLevel();
 	}
 
 	@Override

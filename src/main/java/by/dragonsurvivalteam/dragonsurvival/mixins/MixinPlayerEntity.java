@@ -47,6 +47,8 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.Arrays;
+import java.util.Objects;
 import java.util.UUID;
 
 
@@ -83,7 +85,7 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 				}
 			}
 
-			if(cap.getEmotes().currentEmotes.isEmpty()){
+			if(Arrays.stream(cap.getEmotes().currentEmotes).noneMatch(Objects::nonNull)){
 				if(!ConfigHandler.SERVER.canMoveInEmote.get()){
 					ci.setReturnValue(true);
 				}

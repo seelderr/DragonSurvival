@@ -68,6 +68,11 @@ public class TreasureParticleData implements ParticleOptions{
 	@OnlyIn( Dist.CLIENT )
 	public float getB(){
 		return this.b;
+	}
+
+	@OnlyIn( Dist.CLIENT )
+	public float getScale(){
+		return this.scale;
 	}	public void writeToNetwork(FriendlyByteBuf p_197553_1_){
 		p_197553_1_.writeFloat(this.r);
 		p_197553_1_.writeFloat(this.g);
@@ -75,10 +80,6 @@ public class TreasureParticleData implements ParticleOptions{
 		p_197553_1_.writeFloat(this.scale);
 	}
 
-	@OnlyIn( Dist.CLIENT )
-	public float getScale(){
-		return this.scale;
-	}
 
 
 

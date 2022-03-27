@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.DragonScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.SkinsScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientEvents;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.magic.ClientMagicHUDHandler;
+import by.dragonsurvivalteam.dragonsurvival.client.util.TooltipRendering;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.container.OpenDragonInventory;
@@ -120,7 +121,7 @@ public class TabButton extends Button{
 		}
 
 		if(isHovered){
-			Minecraft.getInstance().screen.renderTooltip(stack, new TranslatableComponent("ds.gui.tab_button." + index), mouseX, mouseY);
+			TooltipRendering.drawHoveringText(stack, new TranslatableComponent("ds.gui.tab_button." + index), mouseX, mouseY);
 		}
 	}
 }

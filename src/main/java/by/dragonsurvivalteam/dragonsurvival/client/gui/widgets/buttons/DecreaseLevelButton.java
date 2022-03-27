@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons;
 
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.AbilityScreen;
+import by.dragonsurvivalteam.dragonsurvival.client.util.TooltipRendering;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.common.DragonAbility;
@@ -62,7 +63,7 @@ public class DecreaseLevelButton extends ArrowButton{
 
 
 				if(currentAbility != null && currentAbility.getLevel() > currentAbility.getMinLevel()){
-					Minecraft.getInstance().screen.renderTooltip(stack, new TranslatableComponent("ds.skill.level.down", (int)Math.max(1, currentAbility.getLevelCost() * 0.8F)), mouseX, mouseY);
+					TooltipRendering.drawHoveringText(stack, new TranslatableComponent("ds.skill.level.down", (int)Math.max(1, currentAbility.getLevelCost() * 0.8F)), mouseX, mouseY);
 				}
 			}
 		});

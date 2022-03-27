@@ -44,23 +44,24 @@ public class LargePoisonParticleData implements ParticleOptions{
 	@OnlyIn( Dist.CLIENT )
 	public float getDuration(){
 		return this.duration;
+	}
+
+	@OnlyIn( Dist.CLIENT )
+	public boolean getSwirls(){
+		return this.swirls;
 	}	@Override
 	public void writeToNetwork(FriendlyByteBuf buffer){
 		buffer.writeFloat(this.duration);
 		buffer.writeBoolean(this.swirls);
 	}
 
-	@OnlyIn( Dist.CLIENT )
-	public boolean getSwirls(){
-		return this.swirls;
-	}
+
 
 	@SuppressWarnings( "deprecation" )
 	@Override
 	public String writeToString(){
 		return String.format(Locale.ROOT, "%s %.2f %b", Registry.PARTICLE_TYPE.getKey(this.getType()), this.duration, this.swirls);
 	}
-
 
 
 	@Override

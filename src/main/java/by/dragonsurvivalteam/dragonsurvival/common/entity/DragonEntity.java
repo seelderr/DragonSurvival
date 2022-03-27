@@ -33,6 +33,7 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 import software.bernie.geckolib3.resource.GeckoLibCache;
 
 import java.util.ArrayList;
+import java.util.stream.Stream;
 
 public class DragonEntity extends LivingEntity implements IAnimatable, CommonTraits{
 	public final ArrayList<Double> bodyYawAverage = new ArrayList<>();
@@ -184,8 +185,8 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 		final Player player = getPlayer();
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 
-		if(handler.getEmotes().currentEmotes.size() > num){
-			Emote emote = handler.getEmotes().currentEmotes.get(num);
+		if(handler.getEmotes().currentEmotes[num] != null){
+			Emote emote = handler.getEmotes().currentEmotes[num];
 
 			neckLocked = emote.locksHead;
 			tailLocked = emote.locksTail;
@@ -221,7 +222,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 
 		dragonAnimationController.speed = 1;
 
-		if(player == null || (playerStateHandler.getEmotes().currentEmotes.stream().anyMatch((s) -> !s.blend))){
+		if(player == null || (Stream.of(playerStateHandler.getEmotes().currentEmotes).anyMatch((s) -> s != null && !s.blend))){
 			animationEvent.getController().setAnimation(null);
 			animationEvent.getController().clearAnimationCache();
 			return PlayState.STOP;

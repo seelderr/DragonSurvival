@@ -64,15 +64,16 @@ public class NetherBreathAbility extends BreathAbility{
 		ArrayList<Component> list = super.getLevelUpInfo();
 		list.add(new TranslatableComponent("ds.skill.damage", "+" + ConfigHandler.SERVER.fireBreathDamage.get()));
 		return list;
-	}	@Override
-	public int getManaCost(){
-		return player != null && player.hasEffect(DragonEffects.SOURCE_OF_MAGIC) ? 0 : (firstUse ? ConfigHandler.SERVER.fireBreathInitialMana.get() : ConfigHandler.SERVER.fireBreathOvertimeMana.get());
 	}
 
 	@Override
 	public boolean isDisabled(){
 		return super.isDisabled() || !ConfigHandler.SERVER.fireBreath.get();
+	}	@Override
+	public int getManaCost(){
+		return player != null && player.hasEffect(DragonEffects.SOURCE_OF_MAGIC) ? 0 : (firstUse ? ConfigHandler.SERVER.fireBreathInitialMana.get() : ConfigHandler.SERVER.fireBreathOvertimeMana.get());
 	}
+
 
 
 

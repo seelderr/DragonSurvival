@@ -42,7 +42,6 @@ public class SourceOfMagicScreen extends AbstractContainerScreen<SourceOfMagicCo
 	public void render(PoseStack matrixStack, int p_render_1_, int p_render_2_, float p_render_3_){
 		this.renderBackground(matrixStack);
 		super.render(matrixStack, p_render_1_, p_render_2_, p_render_3_);
-		this.renderTooltip(matrixStack, p_render_1_, p_render_2_);
 	}
 
 	protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY){}

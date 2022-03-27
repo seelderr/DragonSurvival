@@ -132,7 +132,6 @@ public class EventHandler{
 	public static void onJoin(EntityJoinWorldEvent joinWorldEvent){
 		Entity entity = joinWorldEvent.getEntity();
 		if(entity instanceof Animal && !(entity instanceof Wolf || entity instanceof Hoglin)){
-
 			((Animal)entity).goalSelector.addGoal(5, new AvoidEntityGoal((Animal)entity, Player.class, living -> DragonUtils.isDragon((Player)living) && !((Player)living).hasEffect(DragonEffects.ANIMAL_PEACE), 20.0F, 1.3F, 1.5F, (s) -> true));
 		}
 		if(entity instanceof Horse){

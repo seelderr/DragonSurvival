@@ -40,12 +40,13 @@ public class DropdownList extends AbstractSelectionList<by.dragonsurvivalteam.dr
 	@Override
 	public int addEntry(DropdownEntry p_230513_1_){
 		return super.addEntry(p_230513_1_);
-	}	public void centerScrollOn(DropdownEntry pEntry){
-		this.setScrollAmount(this.children().indexOf(pEntry) * this.itemHeight + this.itemHeight / 2 - (this.y1 - this.y0) / 2);
 	}
 
 	@Override
-	public void updateNarration(NarrationElementOutput pNarrationElementOutput){}
+	public void updateNarration(NarrationElementOutput pNarrationElementOutput){}	public void centerScrollOn(DropdownEntry pEntry){
+		this.setScrollAmount(this.children().indexOf(pEntry) * this.itemHeight + this.itemHeight / 2 - (this.y1 - this.y0) / 2);
+	}
+
 
 
 

@@ -117,7 +117,7 @@ public class ClientGrowthHudHandler{
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1.0f);
 
 			RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/growth_" + handler.getType().name().toLowerCase() + "_" + (handler.getLevel().ordinal() + 1) + ".png"));
-			Screen.blit(mStack,  circleX + 6, circleY + 6, 0, 0, 20, 20, 20, 20);
+			Screen.blit(mStack, circleX + 6, circleY + 6, 0, 0, 20, 20, 20, 20);
 		}
 	}
 }

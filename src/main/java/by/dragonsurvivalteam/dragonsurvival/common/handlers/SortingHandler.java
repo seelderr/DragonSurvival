@@ -70,7 +70,7 @@ public final class SortingHandler{
 		public boolean fitsInType(ItemStack stack){
 			return predicate.test(stack);
 		}
-	}	private static final Comparator<ItemStack> FALLBACK_COMPARATOR = jointComparator(Comparator.comparingInt((ItemStack s) -> Item.getId(s.getItem())), SortingHandler::damageCompare, (ItemStack s1, ItemStack s2) -> s2.getCount() - s1.getCount(), (ItemStack s1, ItemStack s2) -> s2.hashCode() - s1.hashCode());
+	}
 
 	public static void sortInventory(Player player){
 		AbstractContainerMenu c = player.containerMenu;
@@ -83,7 +83,7 @@ public final class SortingHandler{
 				break;
 			}
 		}
-	}	private static final Comparator<ItemStack> FOOD_COMPARATOR = jointComparator(SortingHandler::foodHealCompare, SortingHandler::foodSaturationCompare);
+	}	private static final Comparator<ItemStack> FALLBACK_COMPARATOR = jointComparator(Comparator.comparingInt((ItemStack s) -> Item.getId(s.getItem())), SortingHandler::damageCompare, (ItemStack s1, ItemStack s2) -> s2.getCount() - s1.getCount(), (ItemStack s1, ItemStack s2) -> s2.hashCode() - s1.hashCode());
 
 	public static void sortInventory(IItemHandler handler, int iStart, int iEnd){
 		List<ItemStack> stacks = new ArrayList<>();
@@ -103,7 +103,7 @@ public final class SortingHandler{
 		if(setInventory(handler, stacks, iStart, iEnd) == InteractionResult.FAIL){
 			setInventory(handler, restore, iStart, iEnd);
 		}
-	}	private static final Comparator<ItemStack> TOOL_COMPARATOR = jointComparator(SortingHandler::toolPowerCompare, SortingHandler::enchantmentCompare, SortingHandler::damageCompare);
+	}
 
 	private static InteractionResult setInventory(IItemHandler inventory, List<ItemStack> stacks, int iStart, int iEnd){
 		for(int i = iStart; i < iEnd; i++){
@@ -128,7 +128,7 @@ public final class SortingHandler{
 		}
 
 		return InteractionResult.SUCCESS;
-	}	private static final Comparator<ItemStack> SWORD_COMPARATOR = jointComparator(SortingHandler::swordPowerCompare, SortingHandler::enchantmentCompare, SortingHandler::damageCompare);
+	}	private static final Comparator<ItemStack> FOOD_COMPARATOR = jointComparator(SortingHandler::foodHealCompare, SortingHandler::foodSaturationCompare);
 
 	public static void mergeStacks(List<ItemStack> list){
 		for(int i = 0; i < list.size(); i++){
@@ -137,7 +137,7 @@ public final class SortingHandler{
 		}
 
 		list.removeIf((ItemStack stack) -> stack.isEmpty() || stack.getCount() == 0);
-	}	private static final Comparator<ItemStack> ARMOR_COMPARATOR = jointComparator(SortingHandler::armorSlotAndToughnessCompare, SortingHandler::enchantmentCompare, SortingHandler::damageCompare);
+	}
 
 	private static ItemStack mergeStackWithOthers(List<ItemStack> list, int index){
 		ItemStack stack = list.get(index);
@@ -168,7 +168,7 @@ public final class SortingHandler{
 		}
 
 		return stack;
-	}	private static final Comparator<ItemStack> BOW_COMPARATOR = jointComparator(SortingHandler::enchantmentCompare, SortingHandler::damageCompare);
+	}	private static final Comparator<ItemStack> TOOL_COMPARATOR = jointComparator(SortingHandler::toolPowerCompare, SortingHandler::enchantmentCompare, SortingHandler::damageCompare);
 
 	public static void sortStackList(List<ItemStack> list){
 		list.sort(SortingHandler::stackCompare);
@@ -193,7 +193,7 @@ public final class SortingHandler{
 		}
 
 		return type1.ordinal() - type2.ordinal();
-	}
+	}	private static final Comparator<ItemStack> SWORD_COMPARATOR = jointComparator(SortingHandler::swordPowerCompare, SortingHandler::enchantmentCompare, SortingHandler::damageCompare);
 
 	private static ItemType getType(ItemStack stack){
 		for(ItemType type : ItemType.values()){
@@ -207,7 +207,7 @@ public final class SortingHandler{
 
 	private static Predicate<ItemStack> inverseClassPredicate(Class<? extends Item> clazz){
 		return classPredicate(clazz).negate();
-	}
+	}	private static final Comparator<ItemStack> ARMOR_COMPARATOR = jointComparator(SortingHandler::armorSlotAndToughnessCompare, SortingHandler::enchantmentCompare, SortingHandler::damageCompare);
 
 	private static Predicate<ItemStack> classPredicate(Class<? extends Item> clazz){
 		return (ItemStack s) -> !s.isEmpty() && clazz.isInstance(s.getItem());
@@ -215,7 +215,7 @@ public final class SortingHandler{
 
 	private static Predicate<ItemStack> itemPredicate(List<Item> list){
 		return (ItemStack s) -> !s.isEmpty() && list.contains(s.getItem());
-	}
+	}	private static final Comparator<ItemStack> BOW_COMPARATOR = jointComparator(SortingHandler::enchantmentCompare, SortingHandler::damageCompare);
 
 	public static Comparator<ItemStack> jointComparator(Comparator<ItemStack> finalComparator, Comparator<ItemStack>[] otherComparators){
 		if(otherComparators == null){

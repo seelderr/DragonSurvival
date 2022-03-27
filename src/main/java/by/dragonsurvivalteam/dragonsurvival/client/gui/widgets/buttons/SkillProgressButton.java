@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons;
 
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.AbilityScreen;
+import by.dragonsurvivalteam.dragonsurvival.client.util.TooltipRendering;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.common.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
@@ -18,7 +19,6 @@ import net.minecraft.resources.ResourceLocation;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Optional;
 
 
 public class SkillProgressButton extends Button{
@@ -87,7 +87,7 @@ public class SkillProgressButton extends Button{
 					description.add(new TranslatableComponent("ds.skill.required_level", requiredLevel).withStyle(ChatFormatting.WHITE));
 				}
 
-				Minecraft.getInstance().screen.renderTooltip(stack, description, Optional.empty(), mouseX, mouseY);
+				TooltipRendering.drawHoveringText(stack, description, mouseX, mouseY);
 			}
 		});
 	}

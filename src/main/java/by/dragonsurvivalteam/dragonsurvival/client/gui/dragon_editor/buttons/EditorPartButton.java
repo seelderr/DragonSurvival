@@ -102,9 +102,7 @@ public class EditorPartButton extends ExtendedButton{
 		PoseStack stack = new PoseStack();
 		stack.pushPose();
 		MainTarget framebuffer = new MainTarget(width, height);
-		framebuffer.createBuffers(width, height, true);
 		framebuffer.bindWrite(true);
-		framebuffer.blitToScreen(width, height);
 
 		FakeClientPlayer player = FakeClientPlayerUtils.getFakePlayer(2, handler);
 		DragonEntity dragon = FakeClientPlayerUtils.getFakeDragon(2, handler);
@@ -117,6 +115,8 @@ public class EditorPartButton extends ExtendedButton{
 		player.animationSupplier = () -> "sit";
 		player.tickCount += 20;
 		ClientDragonRender.renderEntityInInventory(dragon, width / 2, height / 2, 80 + (zoom * 2), xRot, yRot, xOffset, yOffset);
+
+		framebuffer.blitToScreen(width, height);
 
 		NativeImage nativeimage = new NativeImage(width, height, false);
 		RenderSystem.bindTexture(framebuffer.getColorTextureId());
