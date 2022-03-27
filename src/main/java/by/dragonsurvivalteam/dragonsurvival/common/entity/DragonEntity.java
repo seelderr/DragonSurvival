@@ -195,10 +195,9 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 
 			if(emote.animation != null && !emote.animation.isEmpty()){
 				animationEvent.getController().setAnimation(new AnimationBuilder().addAnimation(emote.animation, emote.loops));
+				lastEmote = emote;
+				return PlayState.CONTINUE;
 			}
-
-			lastEmote = emote;
-			return PlayState.CONTINUE;
 		}
 
 		return PlayState.STOP;
@@ -222,7 +221,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 
 		dragonAnimationController.speed = 1;
 
-		if(player == null || (Stream.of(playerStateHandler.getEmotes().currentEmotes).anyMatch((s) -> s != null && !s.blend))){
+		if(player == null || (Stream.of(playerStateHandler.getEmotes().currentEmotes).anyMatch((s) -> s != null && (!s.blend && (s.animation != null && !s.animation.isBlank()))))){
 			animationEvent.getController().setAnimation(null);
 			animationEvent.getController().clearAnimationCache();
 			return PlayState.STOP;

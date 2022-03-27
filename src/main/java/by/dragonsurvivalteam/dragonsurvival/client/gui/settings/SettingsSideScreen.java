@@ -17,6 +17,7 @@ public class SettingsSideScreen extends OptionsScreen{
 
 	public SettingsSideScreen(Screen p_i225930_1_, Options p_i225930_2_, Component p_i225930_3_){
 		super(p_i225930_1_, p_i225930_2_);
+		this.title = p_i225930_3_;
 	}
 
 	protected void init(){
@@ -46,83 +47,6 @@ public class SettingsSideScreen extends OptionsScreen{
 			}
 		});
 
-		/*
-		this.addButton(new Button(this.width / 2 - 100 + 205, 38, 20, 20, null, (p_213106_1_) -> {
-
-		}){
-			@Override
-			public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_)
-			{
-				this.active = Minecraft.getInstance().player.hasPermissions(2);
-				this.isHovered = p_230430_2_ >= this.x && p_230430_3_ >= this.y && p_230430_2_ < this.x + this.width && p_230430_3_ < this.y + this.height;
-
-				Minecraft minecraft = Minecraft.getInstance();
-				RenderSystem.setShaderTexture(0, WIDGETS_LOCATION);
-				RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, this.alpha);
-				int i = this.getYImage(this.isHovered());
-				RenderSystem.enableBlend();
-				RenderSystem.defaultBlendFunc();
-				RenderSystem.enableDepthTest();
-				this.blit(p_230430_1_, this.x, this.y, 0, 46 + i * 20, this.width / 2, this.height);
-				this.blit(p_230430_1_, this.x + this.width / 2, this.y, 200 - this.width / 2, 46 + i * 20, this.width / 2, this.height);
-				this.renderBg(p_230430_1_, minecraft, p_230430_2_, p_230430_3_);
-
-				RenderSystem.setShaderTexture(0, ResetSettingsButton.texture);
-				blit(p_230430_1_, x + 2, y + 2, 0, 0, 16, 16, 16, 16);
-			}
-		});
-
-		this.addButton(new Button(this.width / 2 - 100 + 205, 38 + 27, 20, 20, null, (p_213106_1_) -> {
-
-		}){
-			@Override
-			public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_)
-			{
-				this.active = Minecraft.getInstance().player.hasPermissions(2);
-				this.isHovered = p_230430_2_ >= this.x && p_230430_3_ >= this.y && p_230430_2_ < this.x + this.width && p_230430_3_ < this.y + this.height;
-
-				Minecraft minecraft = Minecraft.getInstance();
-				RenderSystem.setShaderTexture(0, WIDGETS_LOCATION);
-				RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, this.alpha);
-				int i = this.getYImage(this.isHovered());
-				RenderSystem.enableBlend();
-				RenderSystem.defaultBlendFunc();
-				RenderSystem.enableDepthTest();
-				this.blit(p_230430_1_, this.x, this.y, 0, 46 + i * 20, this.width / 2, this.height);
-				this.blit(p_230430_1_, this.x + this.width / 2, this.y, 200 - this.width / 2, 46 + i * 20, this.width / 2, this.height);
-				this.renderBg(p_230430_1_, minecraft, p_230430_2_, p_230430_3_);
-
-				RenderSystem.setShaderTexture(0, ResetSettingsButton.texture);
-				blit(p_230430_1_, x + 2, y + 2, 0, 0, 16, 16, 16, 16);
-			}
-		});
-
-		this.addButton(new Button(this.width / 2 - 100 + 205, 38 + 27 * 2, 20, 20, null, (p_213106_1_) -> {
-
-		}){
-			@Override
-			public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_)
-			{
-				this.active = Minecraft.getInstance().player.hasPermissions(2);
-				this.isHovered = p_230430_2_ >= this.x && p_230430_3_ >= this.y && p_230430_2_ < this.x + this.width && p_230430_3_ < this.y + this.height;
-
-				Minecraft minecraft = Minecraft.getInstance();
-				RenderSystem.setShaderTexture(0, WIDGETS_LOCATION);
-				RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, this.alpha);
-				int i = this.getYImage(this.isHovered());
-				RenderSystem.enableBlend();
-				RenderSystem.defaultBlendFunc();
-				RenderSystem.enableDepthTest();
-				this.blit(p_230430_1_, this.x, this.y, 0, 46 + i * 20, this.width / 2, this.height);
-				this.blit(p_230430_1_, this.x + this.width / 2, this.y, 200 - this.width / 2, 46 + i * 20, this.width / 2, this.height);
-				this.renderBg(p_230430_1_, minecraft, p_230430_2_, p_230430_3_);
-
-				RenderSystem.setShaderTexture(0, ResetSettingsButton.texture);
-				blit(p_230430_1_, x + 2, y + 2, 0, 0, 16, 16, 16, 16);
-			}
-		});
-		 */
-
 		this.children.add(this.list);
 
 		this.addRenderableWidget(new Button(this.width / 2 - 100, this.height - 27, 200, 20, CommonComponents.GUI_BACK, (p_213106_1_) -> {
@@ -131,9 +55,7 @@ public class SettingsSideScreen extends OptionsScreen{
 	}
 
 	public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
-		this.renderBackground(p_230430_1_);
-		this.list.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
-		drawCenteredString(p_230430_1_, this.font, this.title, this.width / 2, 5, 16777215);
 		super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
+		this.list.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
 	}
 }

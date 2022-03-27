@@ -521,8 +521,11 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 		return super.keyPressed(p_231046_1_, p_231046_2_, p_231046_3_);
 	}
 
-	public void render(PoseStack p_230450_1_, int p_render_1_, int p_render_2_, float p_render_3_){
-		this.renderBackground(p_230450_1_);
-		super.render(p_230450_1_, p_render_1_, p_render_2_, p_render_3_);
+	@Override
+	public void render(PoseStack pPoseStack, int pMouseX, int pMouseY, float pPartialTick){
+		this.renderBackground(pPoseStack);
+
+		super.render(pPoseStack, pMouseX, pMouseY, pPartialTick);
+
 	}
 }

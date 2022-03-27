@@ -52,6 +52,7 @@ public class ClientSettingsScreen extends OptionsScreen{
 	public ClientSettingsScreen(Screen p_i225930_1_, Options p_i225930_2_, Component p_i225930_3_){
 		super(p_i225930_1_, p_i225930_2_);
 		OptionsList.activeCats.clear();
+		this.title = p_i225930_3_;
 	}
 
 	protected void init(){
@@ -411,10 +412,9 @@ public class ClientSettingsScreen extends OptionsScreen{
 	}
 
 	public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
-		this.renderBackground(p_230430_1_);
-		this.list.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
-		drawCenteredString(p_230430_1_, this.font, this.title, this.width / 2, 5, 16777215);
 		super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
+		this.list.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
+		//drawCenteredString(p_230430_1_, this.font, this.title, this.width / 2, 5, 16777215);
 
 		List<FormattedCharSequence> list = tooltipAt(this.list, p_230430_2_, p_230430_3_);
 		if(list != null){

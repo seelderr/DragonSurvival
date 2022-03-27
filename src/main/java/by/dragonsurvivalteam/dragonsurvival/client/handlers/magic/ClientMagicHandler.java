@@ -110,14 +110,14 @@ public class ClientMagicHandler{
 
 			if(cap.getType() == DragonType.CAVE && event.getCamera().getFluidInCamera() == FogType.LAVA){
 				if(player.hasEffect(DragonEffects.LAVA_VISION)){
-					event.setNearPlaneDistance(event.getNearPlaneDistance() * 1.2F);
-					event.setFarPlaneDistance(event.getFarPlaneDistance() * 1.2F);
+					event.setNearPlaneDistance(-32.0F);
+					event.setFarPlaneDistance(128.0F);
 					event.setCanceled(true);
 				}
 			}else if(cap.getType() == DragonType.SEA && event.getCamera().getFluidInCamera() == FogType.WATER){
 				if(player.hasEffect(DragonEffects.WATER_VISION)){
-					event.setNearPlaneDistance(event.getNearPlaneDistance() * 10);
-					event.setFarPlaneDistance(event.getFarPlaneDistance() * 10);
+					event.setNearPlaneDistance(-32.0F);
+					event.setFarPlaneDistance(128.0F);
 					event.setCanceled(true);
 				}
 			}

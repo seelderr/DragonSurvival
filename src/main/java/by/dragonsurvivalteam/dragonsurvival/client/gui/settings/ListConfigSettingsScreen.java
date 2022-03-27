@@ -44,6 +44,7 @@ public class ListConfigSettingsScreen extends OptionsScreen{
 		this.spec = spec;
 		this.configKey = configKey;
 		this.valueSpec = valueSpec;
+		this.title = p_i225930_3_;
 	}
 
 	protected void init(){
@@ -117,10 +118,8 @@ public class ListConfigSettingsScreen extends OptionsScreen{
 	}
 
 	public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
-		this.renderBackground(p_230430_1_);
-		this.list.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
-		drawCenteredString(p_230430_1_, this.font, this.title, this.width / 2, 5, 16777215);
 		super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
+		this.list.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
 	}
 
 	private void createOption(String t){

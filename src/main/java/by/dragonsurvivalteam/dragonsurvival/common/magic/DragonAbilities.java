@@ -116,10 +116,6 @@ public class DragonAbilities{
 
 		//Cave dragon
 		NETHER_BREATH = register(DragonType.CAVE, new NetherBreathAbility(DragonType.CAVE, "nether_breath", "cave/nether_breath", 1, 4, 2, 10, ConfigHandler.SERVER.fireBreathCooldown.get(), new Integer[]{0, 10, 30, 50}));
-
-		FIREBALL = register(DragonType.CAVE, new FireBallAbility(DragonType.CAVE, "fireball", "cave/fireball", 0, 4, ConfigHandler.SERVER.fireballManaCost.get(), Functions.secondsToTicks(4), ConfigHandler.SERVER.fireballCooldown.get(), new Integer[]{0, 20, 40, 45}));
-		TOUGH_SKIN = register(DragonType.CAVE, new ToughSkinAbility(DragonType.CAVE, new MobEffectInstance(DragonEffects.STRONG_LEATHER, ConfigHandler.SERVER.toughSkinDuration.get()), 5, DSParticles.peaceBeaconParticle, "strong_leather", "cave/strong_leather", 0, 3, ConfigHandler.SERVER.toughSkinManaCost.get(), Functions.secondsToTicks(5), ConfigHandler.SERVER.toughSkinCooldown.get(), new Integer[]{0, 15, 35}));
-
 		FIREBALL = register(DragonType.CAVE, new FireBallAbility(DragonType.CAVE, "fireball", "cave/fireball", 0, 4, ConfigHandler.SERVER.fireballManaCost.get(), Functions.secondsToTicks(4), ConfigHandler.SERVER.fireballCooldown.get(), new Integer[]{0, 20, 40, 45}));
 		TOUGH_SKIN = register(DragonType.CAVE, new ToughSkinAbility(DragonType.CAVE, new MobEffectInstance(DragonEffects.STRONG_LEATHER, ConfigHandler.SERVER.toughSkinDuration.get()), 5, DSParticles.peaceBeaconParticle, "strong_leather", "cave/strong_leather", 0, 3, ConfigHandler.SERVER.toughSkinManaCost.get(), Functions.secondsToTicks(5), ConfigHandler.SERVER.toughSkinCooldown.get(), new Integer[]{0, 15, 35}));
 		LAVA_VISION = register(DragonType.CAVE, new EyesBuffAbility(DragonType.CAVE, DragonEffects.LAVA_VISION, "lava_vision", "cave/lava_vision", 0, 2, ConfigHandler.SERVER.lavaVisionManaCost.get(), Functions.secondsToTicks(2), ConfigHandler.SERVER.lavaVisionCooldown.get(), new Integer[]{0, 25}));

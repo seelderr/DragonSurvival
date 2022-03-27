@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Mod.EventBusSubscriber
-public class DragonTreasureResting{
+public class DragonTreasureHandler{
 	private static int sleepTimer = 0;
 
 	@SubscribeEvent
@@ -112,13 +112,10 @@ public class DragonTreasureResting{
 		List<ServerPlayer> playerList = world.players();
 		playerList.removeIf((pl) -> {
 			if(DragonUtils.isDragon(pl)){
-				DragonStateHandler handler = DragonStateProvider.getCap(pl).orElse(null);
+				DragonStateHandler handler = DragonUtils.getHandler(pl);
 
 				if(ForgeEventFactory.fireSleepingTimeCheck(pl, Optional.empty())){
-
-					if(handler != null){
-						return handler.treasureResting;
-					}
+					return handler.treasureResting;
 				}else{
 					handler.treasureSleepTimer = 0;
 				}
