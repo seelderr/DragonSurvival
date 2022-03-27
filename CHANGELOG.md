@@ -1,3 +1,10 @@
+### [0.13.43](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.42...0.13.43) (2022-03-27)
+
+
+### Bug Fixes
+
+* Fixes a server crash with config entries, and should resolve hitbox making collision sounds ([7c40fc1](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/7c40fc1f1130b6f9cb483b77daf7a0e2c753c66b))
+
 ### [0.13.42](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.41...0.13.42) (2022-03-27)
 
 
