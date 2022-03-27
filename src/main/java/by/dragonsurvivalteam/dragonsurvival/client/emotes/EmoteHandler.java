@@ -46,12 +46,14 @@ public class EmoteHandler{
 				for(Emote emote : cap.getEmotes().currentEmotes){
 					int index = cap.getEmotes().currentEmotes.indexOf(emote);
 
-					if(cap.getEmotes().emoteTicks.size() <= index){
-						cap.getEmotes().currentEmotes.remove(index);
-						//cap.getEmotes().emoteTicks.remove(index);
-						NetworkHandler.CHANNEL.sendToServer(new SyncEmote(player.getId(), cap.getEmotes()));
-						return; //How did you get to this!?
+					while(cap.getEmotes().emoteTicks.size() <= index){
+						cap.getEmotes().emoteTicks.add(0, 0);
 					}
+
+					if(cap.getEmotes().emoteTicks.size() > index){
+						cap.getEmotes().emoteTicks.set(index, cap.getEmotes().emoteTicks.get(index) + 1);
+					}
+
 
 					if(cap.getEmotes().emoteTicks.size() > index){
 						cap.getEmotes().emoteTicks.set(index, cap.getEmotes().emoteTicks.get(index) + 1);
