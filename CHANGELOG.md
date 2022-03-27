@@ -1,3 +1,11 @@
+### [0.13.41](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.40...0.13.41) (2022-03-26)
+
+
+### Bug Fixes
+
+* Fixes [#126](https://github.com/DragonSurvivalTeam/DragonSurvival/issues/126) ([68760fe](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/68760fee7cf56f2c4a66df6393cdb30327b9c6c7))
+* Minor waterlog change ([ab36f92](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/ab36f92bc31d110ab400802096ee288e064e8c34))
+
 ### [0.13.40](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.39...0.13.40) (2022-03-26)
 
 
