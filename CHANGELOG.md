@@ -1,3 +1,15 @@
+### [0.13.45](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.44...0.13.45) (2022-03-28)
+
+
+### Features
+
+* Lets try out new build script ([c9c3a5b](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/c9c3a5b42964f96f115e8871be7d2049d5534ffc))
+
+
+### Bug Fixes
+
+* One space of... ([51adef3](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/51adef36f1210ce845a2a93bd8e2248bcf7089b1))
+
 ### [0.13.44](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.43...0.13.44) (2022-03-28)
 
 
