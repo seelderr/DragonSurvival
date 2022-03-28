@@ -1,3 +1,10 @@
+### [0.13.44](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.43...0.13.44) (2022-03-28)
+
+
+### Bug Fixes
+
+* Fixes dimension change resetting state ([0e86c33](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/0e86c333c91ed4f9cc29d506a97ec80efdf9e5d9))
+
 ### [0.13.43](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.42...0.13.43) (2022-03-27)
 
 
