@@ -67,5 +67,5 @@ jobs:
         uses: sinshutu/upload-to-discord@master
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-          with:
-            args: build/libs/*.jar
+        with:
+          args: build/libs/*.jar
