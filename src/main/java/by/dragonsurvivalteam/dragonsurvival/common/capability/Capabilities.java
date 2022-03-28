@@ -128,9 +128,6 @@ public class Capabilities{
 	public static void onClone(PlayerEvent.Clone e){
 		PlayerEntity player = e.getPlayer();
 		PlayerEntity original = e.getOriginal();
-		if(!e.isWasDeath()){
-			return;
-		}
 
 		DragonStateProvider.getCap(player).ifPresent(capNew -> DragonStateProvider.getCap(original).ifPresent(capOld -> {
 			CompoundNBT nbt = capOld.writeNBT();

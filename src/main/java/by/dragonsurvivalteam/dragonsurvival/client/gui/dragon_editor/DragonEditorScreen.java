@@ -203,8 +203,9 @@ public class DragonEditorScreen extends Screen{
 		for(int x = 0; x < this.children.size(); ++x){
 			IGuiEventListener ch = children.get(x);
 			if(ch instanceof Widget){
-				if(((Widget)ch).isHovered()){
-					((Widget)ch).renderToolTip(stack, pMouseX, pMouseY);
+				Widget wc = ((Widget)ch);
+				if(wc.isHovered()){
+					wc.renderToolTip(stack, pMouseX, pMouseY);
 				}
 			}
 		}
