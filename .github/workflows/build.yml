@@ -52,3 +52,20 @@ jobs:
           file: build/libs/*.jar
           tag: ${{ steps.semantic.outputs.new_release_version }}
           file_glob: true
+
+      - name: Send Discord alert
+        if: steps.semantic.outputs.new_release_published == 'true'
+        uses: Sniddl/discord-commits@v1.3
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          message: "New experimental version released!"
+          embed: '{"title": "Version ${{ steps.semantic.outputs.new_release_version }}","description": "Changes:```\n${{ steps.semantic.outputs.new_release_notes }}\n```","footer": {"text": "⚠ This is an automatically generated file with untested content. Be extremely careful not to use this in your main world without creating backups⚠"}}'
+          last-commit-only: true
+
+      - name: Discord early access publish
+        if: steps.semantic.outputs.new_release_published == 'true'
+        uses: sinshutu/upload-to-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          with:
+            args: build/libs/*.jar
