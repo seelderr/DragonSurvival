@@ -41,19 +41,20 @@ jobs:
         if: steps.semantic.outputs.new_release_published == 'true'
         run: ./gradlew build
 
-      - shell: bash
+      - name: Generate changelog value
+        shell: bash
         id: release_description
         run: |
           description="${{ steps.semantic.outputs.new_release_notes }}"
-          description="${description//'%'/'%25'}"
-          description="${description//$'\n'/'%0A'}"
-          description="${description//$'\r'/'%0D'}"
+          description="${description//'%'/'\n'}"
+          description="${description//$'\n'/'\n'}"
+          description="${description//$'\r'/'\n'}"
           echo $description
           echo "::set-output name=description::$description"
 
       - name: Send Discord alert
         if: steps.semantic.outputs.new_release_published == 'true'
-        uses: Sniddl/discord-commits@v1.3
+        uses: Sniddl/discord-commits@master
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
           message: "New experimental version released!"
@@ -63,7 +64,7 @@ jobs:
             "description": "Changes:```\n${{ steps.release_description.outputs.description }}\n```",
             "footer":
               {
-                "text": "⚠ This is an automatically generated file with untested content. Be extremely careful not to use this in your main world without creating backups⚠"
+                "text": "⚠️ This is an automatically generated file with untested content. Be extremely careful not to use this in your main world without creating backups! ⚠️"
               }
             }
           last-commit-only: true
