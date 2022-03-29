@@ -41,18 +41,6 @@ jobs:
         if: steps.semantic.outputs.new_release_published == 'true'
         run: ./gradlew build
 
-      - name: Upload Release Asset
-        if: steps.semantic.outputs.new_release_published == 'true'
-        id: upload-release-asset
-        uses: svenstaro/upload-release-action@v2
-        with:
-          body: "Version ${{steps.semantic.outputs.new_release_version}}"
-          repo_name: DragonSurvivalTeam/DragonSurvivalReleases
-          repo_token: ${{ secrets.RELEASE_KEY }}
-          file: build/libs/*.jar
-          tag: ${{ steps.semantic.outputs.new_release_version }}
-          file_glob: true
-
       - name: Send Discord alert
         if: steps.semantic.outputs.new_release_published == 'true'
         uses: Sniddl/discord-commits@v1.3
@@ -60,7 +48,6 @@ jobs:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
           message: "New experimental version released!"
           embed: '{"title": "Version ${{ steps.semantic.outputs.new_release_version }}","description": "Changes:```\n${{ steps.semantic.outputs.new_release_notes }}\n```","footer": {"text": "⚠ This is an automatically generated file with untested content. Be extremely careful not to use this in your main world without creating backups⚠"}}'
-          last-commit-only: true
 
       - name: Discord early access publish
         if: steps.semantic.outputs.new_release_published == 'true'
