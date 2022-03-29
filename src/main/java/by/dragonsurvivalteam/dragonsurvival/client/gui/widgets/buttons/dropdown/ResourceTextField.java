@@ -3,7 +3,6 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.settings.ResourceTextFieldOption;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
-import by.dragonsurvivalteam.dragonsurvival.util.BiomeDictionaryHelper;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.brigadier.StringReader;
@@ -24,7 +23,6 @@ import net.minecraft.commands.arguments.item.ItemParser;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.FormattedCharSequence;
@@ -34,10 +32,8 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
-import net.minecraft.world.level.biome.Biome;
 import net.minecraftforge.client.gui.GuiUtils;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
-import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.ForgeConfigSpec.ValueSpec;
 import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -209,7 +205,7 @@ public class ResourceTextField extends EditBox implements TooltipAccessor{
 
 				if(isBlock){
 					try{
-						results.add(new ResourceEntry("tag:" + value, Objects.requireNonNull(ForgeRegistries.BLOCKS.tags().getTag(TagKey.create(Registry.BLOCK_REGISTRY, location))).stream().map((s) -> new ItemStack(s)).collect(Collectors.toList()))));
+						results.add(new ResourceEntry("tag:" + value, Objects.requireNonNull(ForgeRegistries.BLOCKS.tags().getTag(TagKey.create(Registry.BLOCK_REGISTRY, location))).stream().map((s) -> new ItemStack(s)).collect(Collectors.toList())));
 					}catch(Exception ignored){
 					}
 				}
