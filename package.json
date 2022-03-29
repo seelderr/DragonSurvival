@@ -25,6 +25,9 @@
     "branches": [
       {
         "name": "v1.16.x"
+      },
+      {
+        "name": "v1.18.x"
       }
     ],
     "plugins": [
@@ -55,7 +58,9 @@
       [
         "@semantic-release/release-notes-generator",
         {
-          "preset": "conventionalcommits"
+          "preset": "conventionalcommits",
+          "linkCompare": false,
+          "linkReferences": false
         }
       ],
       "@semantic-release/changelog",
