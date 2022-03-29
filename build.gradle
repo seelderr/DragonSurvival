@@ -26,7 +26,7 @@ group = property("mod_group")
 archivesBaseName = property("mod_name") + "_" + property("version_name")
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(property("java_version") as String)
-println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
+println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 
 compileJava.options.encoding = 'UTF-8'
 
