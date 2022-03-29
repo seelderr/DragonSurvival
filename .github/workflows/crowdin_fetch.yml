@@ -39,4 +39,4 @@ jobs:
         uses: EndBug/add-and-commit@v9
         with:
           add: "src/main/resources/assets/dragonsurvival/lang/*"
-          message: "Updating Crowdin translations."
+          message: "docs(lang): Updating Crowdin translations"

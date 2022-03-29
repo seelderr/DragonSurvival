@@ -1,4 +1,5 @@
 {
+  "itemGroup.dragon.survival.blocks": "龙之生存",
   "entity.dragonsurvival.magical_predator_entity": "魔法猎食者",
   "entity.dragonsurvival.hunter_hound": "猎犬",
   "entity.dragonsurvival.shooter": "射手",
@@ -158,7 +159,7 @@
   "ds.gui.dragon_editor.copy_to": "复制到……",
   "ds.gui.dragon_editor.save_slot": "你可以在这里选择任何存档位，结果将被自动保存。",
   "ds.gui.dragon_editor.screenshot": "截图",
-  "ds.gui.dragon_editor.confirm.all": "在你当前的设置下，更改龙种后所有的操作都会丢失。\n还要继续吗？",
+  "ds.gui.dragon_editor.confirm.all": "在你当前的设置下，更改龙种后所有的操作都会丢失。\n\n还要继续吗？",
   "ds.gui.dragon_editor.confirm.ability": "\n在你当前的设置下，更改龙种后所有的生长进度都会丢失。\n\n还要继续吗？",
   "ds.gui.dragon_editor.confirm.growth": "\n在你当前的设置下，更改龙种后所有的能力进度都会丢失。\n\n还要继续吗？",
   "ds.gui.dragon_editor.part.base": "初始样式",
@@ -423,7 +424,7 @@
   "ds.skin_part.cave.eyes_11": "小方块",
   "ds.skin_part.cave.eyes_12": "白眼",
   "ds.skin_part.cave.eyes_13": "狭眼",
-  "ds.skin_part.cave.base_1": "石头",
+  "ds.skin_part.cave.base_1": "石体",
   "ds.skin_part.cave.base_2": "烈焰粘土",
   "ds.skin_part.cave.base_3": "焦岩",
   "ds.skin_part.cave.base_4": "石化土",
