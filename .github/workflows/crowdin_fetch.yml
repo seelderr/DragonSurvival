@@ -20,18 +20,10 @@ jobs:
       - name: Fetch the newest translations
         uses: crowdin/github-action@master
         with:
+          upload_sources: true
           upload_translations: true
           download_translations: true
           token: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
           project_id: ${{ secrets.CROWDIN_PROJECT_ID }}
-          base_url: "https://dragonsurvivalteam.crowdin.com/api/v2"
           upload_language: "us"
-          skip_untranslated_strings: true
-          skip_untranslated_files: true
-          create_pull_request: true
-          export_only_approved: true
-          push_translations: true
-          source: "/src/main/resources/assets/dragonsurvival/lang/en_us.json"
-          translation: "/src/main/resources/assets/dragonsurvival/lang/%locale_with_underscore%.json"
-          localization_branch_name: "Translations"
-          pull_request_base_branch_name: "v1.16.x"
+          config: 'crowdin.yml'

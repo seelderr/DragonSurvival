@@ -1,0 +1,13 @@
+project_id: CROWDIN_PROJECT_ID
+api_token_env: CROWDIN_PERSONAL_TOKEN
+base_path:
+base_url: "https://dragonsurvivalteam.crowdin.com"
+
+preserve_hierarchy: true
+
+files:
+  - source: "/src/main/resources/assets/dragonsurvival/lang/en_us.json"
+    dest: '%file_name%.json'
+    translation: "/src/main/resources/assets/dragonsurvival/lang/%locale_with_underscore%.json"
+    update_option: update_as_unapproved
+    type: json
