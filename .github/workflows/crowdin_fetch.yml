@@ -26,4 +26,4 @@ jobs:
           token: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
           project_id: ${{ secrets.CROWDIN_PROJECT_ID }}
           upload_language: "us"
-          config: '.github/crowdin.yml'
+          config: '../crowdin.yml'
