@@ -22,9 +22,9 @@ jobs:
         with:
           node-version: '16.x'
           registry-url: 'https://npm.pkg.github.com'
-        - run: npm i @crowdin/cli
-        - run: crowdin upload
-        - run: crowdin download
+      - run: npm i @crowdin/cli
+      - run: crowdin upload
+      - run: crowdin download
 
       - name: Upload langs
         uses: EndBug/add-and-commit@v9
