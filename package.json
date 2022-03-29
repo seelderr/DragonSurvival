@@ -27,7 +27,8 @@
         "name": "v1.16.x"
       },
       {
-        "name": "v1.18.x"
+        "name": "v1.18.x",
+        "prerelease": true
       }
     ],
     "plugins": [

@@ -3,7 +3,7 @@ name: CI Semantic Releaser
 on:
   workflow_dispatch:
   push:
-    branches: [ v1.16.x ]
+    branches: [ v1.16.x, v1.18.x ]
 
 jobs:
   build:
@@ -69,7 +69,7 @@ jobs:
           embed: |
             {
             "title": "Version ${{ steps.semantic.outputs.new_release_version }} for ${{ steps.mc_version.outputs.value }}",
-            "description": "Changes:\n${{ steps.release_description.outputs.description }}",
+            "description": "Changes:\n```${{ steps.release_description.outputs.description }}\n```",
             "footer":
               {
                 "text": "⚠️ This is an automatically generated file with untested content. Be extremely careful not to use this in your main world without creating backups! ⚠️"
