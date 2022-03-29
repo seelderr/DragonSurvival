@@ -1,3 +1,10 @@
+### 0.13.52 (2022-03-29)
+
+
+### Bug Fixes
+
+* Actual last update for today. e9d5599
+
 ### [0.13.51](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.50...0.13.51) (2022-03-29)
 
 
