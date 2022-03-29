@@ -1,3 +1,17 @@
+### [0.13.51](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.50...0.13.51) (2022-03-29)
+
+
+### Features
+
+* Early access build system should now be working ([a9070c8](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/a9070c86d21bc8c09173808939eafd02633a5a12))
+
+
+### Bug Fixes
+
+* Some minor changes and fixes ([aef1672](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/aef1672afa2e054a83d3aa94736dd62d5431e65b))
+* Test ([7e6eb55](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/7e6eb55baa91d54d1fe186f4e53f272382eabb76))
+* Tooltip rendering fixes, and emote fixes ([96a7e1b](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/96a7e1b78cd1957ee8859eb2c41fcabacd05d06e))
+
 ### [0.13.50](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.49...0.13.50) (2022-03-29)
 
 
