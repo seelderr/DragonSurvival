@@ -1,3 +1,10 @@
+### [0.13.51](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.50...0.13.51) (2022-03-29)
+
+
+### Features
+
+* Early access build system should now be working ([a9070c8](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/a9070c86d21bc8c09173808939eafd02633a5a12))
+
 ### [0.13.50](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.49...0.13.50) (2022-03-29)
 
 
