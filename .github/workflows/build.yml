@@ -52,6 +52,14 @@ jobs:
           echo $description
           echo "::set-output name=description::$description"
 
+      - name: Get minecraft version
+        if: steps.semantic.outputs.new_release_published == 'true'
+        id: mc_version
+        uses: christian-draeger/read-properties@1.0.1
+        with:
+          path: './gradle.properties'
+          property: 'mc_version'
+
       - name: Send Discord alert
         if: steps.semantic.outputs.new_release_published == 'true'
         uses: Sniddl/discord-commits@master
@@ -60,8 +68,8 @@ jobs:
           message: "New experimental version released!"
           embed: |
             {
-            "title": "Version ${{ steps.semantic.outputs.new_release_version }}",
-            "description": "Changes:```\n${{ steps.release_description.outputs.description }}\n```",
+            "title": "Version ${{ steps.semantic.outputs.new_release_version }} for ${{ steps.mc_version.outputs.value }}",
+            "description": "Changes:\n${{ steps.release_description.outputs.description }}",
             "footer":
               {
                 "text": "⚠️ This is an automatically generated file with untested content. Be extremely careful not to use this in your main world without creating backups! ⚠️"
