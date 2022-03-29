@@ -42,10 +42,9 @@ jobs:
         run: ./gradlew build
 
       - shell: bash
-        if: steps.semantic.outputs.new_release_published == 'true'
-        id: changelog
+        id: release_description
         run: |
-          description="${{ steps.semantic.outputs.new_release_version }}"
+          description="${{ steps.semantic.outputs.new_release_notes }}"
           description="${description//'%'/'%25'}"
           description="${description//$'\n'/'%0A'}"
           description="${description//$'\r'/'%0D'}"
@@ -61,12 +60,13 @@ jobs:
           embed: |
             {
             "title": "Version ${{ steps.semantic.outputs.new_release_version }}",
-            "description": "Changes:```\n${{ steps.changelog.outputs.description }}\n```",
+            "description": "Changes:```\n${{ steps.release_description.outputs.description }}\n```",
             "footer":
               {
                 "text": "⚠ This is an automatically generated file with untested content. Be extremely careful not to use this in your main world without creating backups⚠"
               }
             }
+          last-commit-only: true
 
       - name: Discord early access publish
         if: steps.semantic.outputs.new_release_published == 'true'
