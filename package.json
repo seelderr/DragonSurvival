@@ -25,8 +25,7 @@
       },
       {
         "name": "v1.18.x",
-        "range": "1.x.x",
-        "prerelease": true
+        "range": "1.x.x"
       }
     ],
     "plugins": [
