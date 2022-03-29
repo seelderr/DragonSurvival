@@ -20,6 +20,7 @@ jobs:
       - name: Fetch the newest translations
         uses: crowdin/github-action@master
         with:
+          config: "./crowdin.yml"
           upload_sources: true
           upload_translations: true
           download_translations: true
@@ -28,4 +29,3 @@ jobs:
           token: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
           project_id: ${{ secrets.CROWDIN_PROJECT_ID }}
           upload_language: "us"
-          config: 'crowdin.yml'
