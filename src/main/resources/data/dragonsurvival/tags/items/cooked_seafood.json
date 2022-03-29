@@ -230,6 +230,38 @@
     {
       "id": "upgrade_aquatic:cooked_lionfish",
       "required": false
+    },
+    {
+      "id": "prehistoricfauna:cooked_ceratodus",
+      "required": false
+    },
+    {
+      "id": "prehistoricfauna:cooked_cyclurus",
+      "required": false
+    },
+    {
+      "id": "prehistoricfauna:cooked_potamoceratodus",
+      "required": false
+    },
+    {
+      "id": "prehistoricfauna:cooked_gar",
+      "required": false
+    },
+    {
+      "id": "prehistoric_delight:muledaphus_cooked",
+      "required": false
+    },
+    {
+      "id": "prehistoric_delight:cyclurus_ukha",
+      "required": false
+    },
+    {
+      "id": "prehistoric_delight:ancient_sea_chowder",
+      "required": false
+    },
+    {
+      "id": "prehistoric_delight:prehistoric_fillet_cooked",
+      "required": false
     }
   ]
 }

@@ -6,7 +6,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "dragonsurvival:iron2_small_dragon_door"
+          "name": "dragonsurvival:stone_small_dragon_door"
         }
       ],
       "conditions": [

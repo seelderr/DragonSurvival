@@ -6,7 +6,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "dragonsurvival:diorite_small_dragon_door"
+          "name": "dragonsurvival:sleeper_small_dragon_door"
         }
       ],
       "conditions": [
