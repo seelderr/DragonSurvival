@@ -19,16 +19,6 @@
     "preset": "conventionalcommits",
     "tagFormat": "${version}",
     "presetConfig": "conventional-changelog-conventionalcommits",
-    "branches": [
-      {
-        "name": "v1.16.x",
-        "prerelease": "1.16"
-      },
-      {
-        "name": "v1.18.x",
-        "prerelease": "1.18"
-      }
-    ],
     "plugins": [
       [
         "@semantic-release/commit-analyzer",
