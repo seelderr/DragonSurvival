@@ -6,24 +6,28 @@ on:
     # runs every day at 12:00 noon UTC
     - cron: '0 12 * * *'
 
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
+  CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+
 jobs:
-  i18n-download-docs-translations:
+  build:
     name: Language
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Fetch the newest translations
-        uses: crowdin/github-action@master
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v2
         with:
-          config: "crowdin.yml"
-          upload_sources: true
-          download_translations: true
-          push_translations: true
-          create_pull_request: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
-          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+          node-version: '16.x'
+          registry-url: 'https://npm.pkg.github.com'
+        - run: npm i @crowdin/cli
+        - run: crowdin upload
+        - run: crowdin download
+
+      - name: Upload langs
+        uses: EndBug/add-and-commit@v9
+        with:
+          add: "src/main/resources/assets/dragonsurvival/lang/*"
+          message: "Updating Crowdin translations."
