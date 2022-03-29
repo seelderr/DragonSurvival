@@ -51,11 +51,19 @@ public class DragonEditorRegistry{
 			});
 		}
 
-		folder = new File(Minecraft.getInstance().gameDirectory + "/config/dragon-survival/");
+		folder = new File(Minecraft.getInstance().gameDirectory + "/dragon-survival/");
 		savedFile = new File(folder + "/" + SAVED_FILE_NAME);
 
 		if(!folder.exists()){
 			folder.mkdirs();
+		}
+
+		File oldFile = new File(Minecraft.getInstance().gameDirectory + "/config/dragon-survival/" + SAVED_FILE_NAME);
+
+		if(oldFile.exists()){
+			oldFile.renameTo(savedFile);
+			oldFile.getParentFile().delete();
+			savedFile = new File(folder + "/" + SAVED_FILE_NAME);
 		}
 
 		if(!savedFile.exists()){
