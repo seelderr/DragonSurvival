@@ -28,10 +28,10 @@ jobs:
       - run: npm i @crowdin/cli
 
       - name: Upload translations
-       - run: crowdin upload
+      - run: crowdin upload
 
       - name: Download translations
-       - run: crowdin download
+      - run: crowdin download
 
       - name: Upload langs
         uses: EndBug/add-and-commit@v9
