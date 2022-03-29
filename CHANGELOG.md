@@ -1,3 +1,79 @@
+### [0.13.50](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.49...0.13.50) (2022-03-29)
+
+
+### Bug Fixes
+
+* Another fix coming up ([cfec7b8](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/cfec7b8d1fb4184bc8c4b6c4b4738453b7679b46))
+
+### [0.13.49](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.48...0.13.49) (2022-03-29)
+
+
+### Bug Fixes
+
+* Last fix for the build script ([19e2c16](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/19e2c1669912c97998b665ec2d063ce6fbeaf606))
+
+### [0.13.48](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.47...0.13.48) (2022-03-29)
+
+
+### Bug Fixes
+
+* One more ([15837da](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/15837da1e813e8301accf06ac1123f22e9c1e9d3))
+
+### [0.13.47](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.46...0.13.47) (2022-03-29)
+
+
+### Bug Fixes
+
+* Another try ([974c376](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/974c376e670de09e8be8e553a361d8a0c5dcfbc0))
+
+### [0.13.46](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.45...0.13.46) (2022-03-29)
+
+
+### Bug Fixes
+
+* Lets try again ([240deef](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/240deef98ac6da80aaac8b70e90dceee66ba099b))
+
+### [0.13.45](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.44...0.13.45) (2022-03-28)
+
+
+### Features
+
+* Lets try out new build script ([c9c3a5b](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/c9c3a5b42964f96f115e8871be7d2049d5534ffc))
+
+
+### Bug Fixes
+
+* One space of... ([51adef3](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/51adef36f1210ce845a2a93bd8e2248bcf7089b1))
+
+### [0.13.44](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.43...0.13.44) (2022-03-28)
+
+
+### Bug Fixes
+
+* Fixes dimension change resetting state ([0e86c33](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/0e86c333c91ed4f9cc29d506a97ec80efdf9e5d9))
+
+### [0.13.43](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.42...0.13.43) (2022-03-27)
+
+
+### Bug Fixes
+
+* Fixes a server crash with config entries, and should resolve hitbox making collision sounds ([7c40fc1](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/7c40fc1f1130b6f9cb483b77daf7a0e2c753c66b))
+
+### [0.13.42](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.41...0.13.42) (2022-03-27)
+
+
+### Bug Fixes
+
+* Should fix emotes being canceled on server ([2fa997b](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/2fa997b325a5a8dbcac9a17d2c8cc23b11b4ceed))
+
+### [0.13.41](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.40...0.13.41) (2022-03-26)
+
+
+### Bug Fixes
+
+* Fixes [#126](https://github.com/DragonSurvivalTeam/DragonSurvival/issues/126) ([68760fe](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/68760fee7cf56f2c4a66df6393cdb30327b9c6c7))
+* Minor waterlog change ([ab36f92](https://github.com/DragonSurvivalTeam/DragonSurvival/commit/ab36f92bc31d110ab400802096ee288e064e8c34))
+
 ### [0.13.40](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.39...0.13.40) (2022-03-26)
 
 

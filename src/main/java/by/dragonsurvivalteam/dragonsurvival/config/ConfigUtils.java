@@ -25,7 +25,16 @@ public class ConfigUtils{
 		List<Item> result = new ArrayList<>();
 
 		for(String entry : values){
-			final String[] sEntry = entry.split(":");
+			String[] sEntry = entry.split(":");
+
+			if(sEntry.length == 0){
+				continue;
+			}
+
+			if(sEntry.length == 1){
+				sEntry = new String[]{"minecraft", sEntry[0]};
+			}
+
 			final ResourceLocation rlEntry = new ResourceLocation(sEntry[1], sEntry[2]);
 
 			if(sEntry[0].equalsIgnoreCase("tag")){
@@ -45,7 +54,15 @@ public class ConfigUtils{
 		List<Block> result = new ArrayList<>();
 
 		for(String entry : values){
-			final String[] sEntry = entry.split(":");
+			String[] sEntry = entry.split(":");
+			if(sEntry.length == 0){
+				continue;
+			}
+
+			if(sEntry.length == 1){
+				sEntry = new String[]{"minecraft", sEntry[0]};
+			}
+
 			final ResourceLocation rlEntry = new ResourceLocation(sEntry[1], sEntry[2]);
 			if(sEntry[0].equalsIgnoreCase("tag")){
 				TagKey<Block> tagKey = TagKey.create(Registry.BLOCK_REGISTRY, rlEntry);

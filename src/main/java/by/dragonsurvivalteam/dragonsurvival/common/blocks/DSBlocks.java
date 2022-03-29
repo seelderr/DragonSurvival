@@ -50,14 +50,14 @@ public class DSBlocks{
 	public static TreasureBlock treasureDebris, treasureDiamond, treasureEmerald, treasureCopper, treasureGold, treasureIron;
 
 	public static DragonPressurePlates dragonPressurePlate, humanPressurePlate, seaPressurePlate, forestPressurePlate, cavePressurePlate;
-	private static SmallDragonDoor basaltSmallDoor;
-	private static SmallDragonDoor forestSmallDoor;
-	private static SmallDragonDoor dioriteSmallDoor;
-	private static SmallDragonDoor caveSmallDoor;
-	private static SmallDragonDoor seaSmallDoor;
-	private static SmallDragonDoor ironSmallDoor;
-	private static SmallDragonDoor quartzSmallDoor;
-	private static SmallDragonDoor iron2SmallDoor;
+	public static SmallDragonDoor basaltSmallDoor;
+	public static SmallDragonDoor forestSmallDoor;
+	public static SmallDragonDoor dioriteSmallDoor;
+	public static SmallDragonDoor caveSmallDoor;
+	public static SmallDragonDoor seaSmallDoor;
+	public static SmallDragonDoor ironSmallDoor;
+	public static SmallDragonDoor quartzSmallDoor;
+	public static SmallDragonDoor iron2SmallDoor;
 
 	@SubscribeEvent
 	public static void registerBlocks(final RegistryEvent.Register<Block> event){
