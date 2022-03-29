@@ -3,7 +3,7 @@ name: CI Semantic Releaser
 on:
   workflow_dispatch:
   push:
-    branches: [ v1.16.x ]
+    branches: [ v1.16.x, v1.18.x ]
 
 jobs:
   build:
