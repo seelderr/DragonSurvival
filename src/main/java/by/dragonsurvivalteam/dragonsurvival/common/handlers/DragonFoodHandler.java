@@ -47,7 +47,6 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 @Mod.EventBusSubscriber( modid = DragonSurvivalMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD )
 public class DragonFoodHandler{
@@ -122,14 +121,10 @@ public class DragonFoodHandler{
 
 			if(sEntry[0].equalsIgnoreCase("tag")){
 				TagKey<Item> tagKey = TagKey.create(Registry.ITEM_REGISTRY, rlEntry);
-				StreamSupport.stream(Registry.ITEM.getTagOrEmpty(tagKey).spliterator(), false).forEach((item1) -> {
-					Item item = item1.value();
-
-					if(item != null){
-						FoodProperties FoodProperties = calculateDragonFoodProperties(item, type, sEntry.length == 5 ? Integer.parseInt(sEntry[3]) : item.getFoodProperties() != null ? item.getFoodProperties().getNutrition() : 1, sEntry.length == 5 ? Integer.parseInt(sEntry[4]) : item.getFoodProperties() != null ? (int)(item.getFoodProperties().getNutrition() * (item.getFoodProperties().getSaturationModifier() * 2.0F)) : 0, true);
-						if(FoodProperties != null){
-							foodMap.put(item, FoodProperties);
-						}
+				ForgeRegistries.ITEMS.tags().getTag(tagKey).forEach((item) -> {
+					FoodProperties FoodProperties = calculateDragonFoodProperties(item, type, sEntry.length == 5 ? Integer.parseInt(sEntry[3]) : item.getFoodProperties() != null ? item.getFoodProperties().getNutrition() : 1, sEntry.length == 5 ? Integer.parseInt(sEntry[4]) : item.getFoodProperties() != null ? (int)(item.getFoodProperties().getNutrition() * (item.getFoodProperties().getSaturationModifier() * 2.0F)) : 0, true);
+					if(FoodProperties != null){
+						foodMap.put(item, FoodProperties);
 					}
 				});
 			}else{
@@ -184,7 +179,6 @@ public class DragonFoodHandler{
 				}
 				for(Pair<MobEffectInstance, Float> effect : humanFood.getEffects()){
 					if(effect.getFirst().getEffect() != MobEffects.HUNGER && effect.getFirst().getEffect() != MobEffects.POISON){
-
 						builder.effect(() -> effect.getFirst(), effect.getSecond());
 					}
 				}

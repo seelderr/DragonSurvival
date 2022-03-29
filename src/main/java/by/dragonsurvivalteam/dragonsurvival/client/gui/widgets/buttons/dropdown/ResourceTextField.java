@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.settings.ResourceTextFieldOption;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.util.BiomeDictionaryHelper;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.brigadier.StringReader;
@@ -23,6 +24,7 @@ import net.minecraft.commands.arguments.item.ItemParser;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.FormattedCharSequence;
@@ -32,8 +34,10 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraftforge.client.gui.GuiUtils;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
+import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.ForgeConfigSpec.ValueSpec;
 import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -41,7 +45,6 @@ import org.codehaus.plexus.util.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 public class ResourceTextField extends EditBox implements TooltipAccessor{
 	private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/textbox.png");
@@ -199,38 +202,40 @@ public class ResourceTextField extends EditBox implements TooltipAccessor{
 			if(isTag){
 				if(isItem){
 					try{
-						results.add(new ResourceEntry("tag:" + value, Objects.requireNonNull(StreamSupport.stream((Registry.ITEM.getTagOrEmpty(TagKey.create(Registry.ITEM_REGISTRY, location))).spliterator(), false).map((s) -> new ItemStack(s.value())).collect(Collectors.toList()))));
+						results.add(new ResourceEntry("tag:" + value, Objects.requireNonNull((ForgeRegistries.ITEMS.tags().getTag(TagKey.create(Registry.ITEM_REGISTRY, location))).stream().map(ItemStack::new).collect(Collectors.toList()))));
 					}catch(Exception ignored){
 					}
 				}
 
 				if(isBlock){
 					try{
-						results.add(new ResourceEntry("tag:" + value, Objects.requireNonNull(StreamSupport.stream((Registry.BLOCK.getTagOrEmpty(TagKey.create(Registry.BLOCK_REGISTRY, location))).spliterator(), false).map((s) -> new ItemStack(s.value())).collect(Collectors.toList()))));
+						results.add(new ResourceEntry("tag:" + value, Objects.requireNonNull(ForgeRegistries.BLOCKS.tags().getTag(TagKey.create(Registry.BLOCK_REGISTRY, location))).stream().map((s) -> new ItemStack(s)).collect(Collectors.toList()))));
 					}catch(Exception ignored){
 					}
 				}
 
 				if(isEntity){
 					try{
-						results.add(new ResourceEntry("tag:" + value, Objects.requireNonNull(StreamSupport.stream((Registry.ENTITY_TYPE.getTagOrEmpty(TagKey.create(Registry.ENTITY_TYPE_REGISTRY, location))).spliterator(), false).map((s) -> new ItemStack(ForgeSpawnEggItem.fromEntityType(s.value()))).collect(Collectors.toList()))));
+						results.add(new ResourceEntry("tag:" + value, Objects.requireNonNull(ForgeRegistries.ENTITIES.tags().getTag(TagKey.create(Registry.ENTITY_TYPE_REGISTRY, location))).stream().map((s) -> new ItemStack(ForgeSpawnEggItem.fromEntityType(s))).collect(Collectors.toList())));
 					}catch(Exception ignored){
 					}
 				}
 
-				//TODO
-				//				if (isBiome) {
-				//					try {
-				//						Set<ResourceKey<Biome>> biomes = BiomeDictionary.getBiomes(BiomeDictionaryHelper.getType(value));
-				//						results.addAll(biomes.stream().map((bi) -> {
-				//							try {
-				//								Biome biome = ForgeRegistries.BIOMES.getValue(bi.location());
-				//								return new ResourceEntry("tag:" + value, Collections.singletonList(new ItemStack(biome.getGenerationSettings().get().getTopMaterial().getBlock())));
-				//							} catch (Exception ignored) {}
-				//							return null;
-				//						}).collect(Collectors.toList()));
-				//					} catch (Exception ignored) {}
-				//				}
+
+//				if (isBiome) {
+//					try {
+//						Set<ResourceKey<Biome>> biomes = BiomeDictionary.getBiomes(BiomeDictionaryHelper.getType(value));
+//						results.addAll(biomes.stream().map((bi) -> {
+//							try{
+//								Biome biome = ForgeRegistries.BIOMES.getValue(bi.location());
+//								biome.getGenerationSettings().sur
+//								return new ResourceEntry("tag:" + value, Collections.singletonList(new ItemStack(biome.getGenerationSettings().get().getTopMaterial().getBlock())));
+//							}catch(Exception ignored){
+//							}
+//							return null;
+//						}).toList());
+//					} catch (Exception ignored) {}
+//				}
 			}
 
 			if(isItem){

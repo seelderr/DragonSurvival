@@ -12,7 +12,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.StreamSupport;
 
 public class ConfigUtils{
 
@@ -39,9 +38,7 @@ public class ConfigUtils{
 
 			if(sEntry[0].equalsIgnoreCase("tag")){
 				TagKey<Item> tagKey = TagKey.create(Registry.ITEM_REGISTRY, rlEntry);
-				StreamSupport.stream(Registry.ITEM.getTagOrEmpty(tagKey).spliterator(), false).forEach((item1) -> {
-					result.add(item1.value());
-				});
+				result.addAll(ForgeRegistries.ITEMS.tags().getTag(tagKey).stream().toList());
 			}else{
 				result.add(ForgeRegistries.ITEMS.getValue(rlEntry));
 			}
@@ -66,9 +63,7 @@ public class ConfigUtils{
 			final ResourceLocation rlEntry = new ResourceLocation(sEntry[1], sEntry[2]);
 			if(sEntry[0].equalsIgnoreCase("tag")){
 				TagKey<Block> tagKey = TagKey.create(Registry.BLOCK_REGISTRY, rlEntry);
-				StreamSupport.stream(Registry.BLOCK.getTagOrEmpty(tagKey).spliterator(), false).forEach((item1) -> {
-					result.add(item1.value());
-				});
+				result.addAll(ForgeRegistries.BLOCKS.tags().getTag(tagKey).stream().toList());
 			}else{
 				final Block block = ForgeRegistries.BLOCKS.getValue(rlEntry);
 				if(block != Blocks.AIR){
