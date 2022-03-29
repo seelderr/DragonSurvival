@@ -21,7 +21,12 @@
     "presetConfig": "conventional-changelog-conventionalcommits",
     "branches": [
       {
-        "name": "v1.16.x"
+        "name": "master"
+      },
+      {
+        "name": "v1.16.x",
+        "range": "0.x.x",
+        "prerelease": true
       },
       {
         "name": "v1.18.x",
