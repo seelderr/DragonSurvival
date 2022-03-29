@@ -1,3 +1,13 @@
+### 0.13.52 (2022-03-29)
+
+
+### Bug Fixes
+
+* Actual last update for today. e9d5599
+* Some minor changes and fixes aef1672
+* Test 7e6eb55
+* Tooltip rendering fixes, and emote fixes 96a7e1b
+
 ### [0.13.51](https://github.com/DragonSurvivalTeam/DragonSurvival/compare/0.13.50...0.13.51) (2022-03-29)
 
 
