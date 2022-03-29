@@ -1,6 +1,6 @@
 {
   "name": "dragon-survival",
-  "version": "0.13.50",
+  "version": "0.13.51",
   "private": true,
   "devDependencies": {
     "@semantic-release/changelog": "6.0.1",
@@ -23,6 +23,9 @@
     "tagFormat": "${version}",
     "presetConfig": "conventional-changelog-conventionalcommits",
     "branches": [
+      {
+        "name": "v1.16.x"
+      },
       {
         "name": "v1.18.x"
       }
@@ -55,7 +58,9 @@
       [
         "@semantic-release/release-notes-generator",
         {
-          "preset": "conventionalcommits"
+          "preset": "conventionalcommits",
+          "linkCompare": false,
+          "linkReferences": false
         }
       ],
       "@semantic-release/changelog",
