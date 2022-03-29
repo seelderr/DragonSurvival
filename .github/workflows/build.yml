@@ -1,11 +1,11 @@
-name: CI Semantic Releaser
+name: Automatic release
 
 on:
   workflow_dispatch:
   push:
     branches:
-      - "v1.16.x"
-      - "v1.18.x"
+      - 'v1.16.x'
+      - 'v1.18.x'
 
 jobs:
   build:
