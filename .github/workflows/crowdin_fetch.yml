@@ -27,7 +27,7 @@ jobs:
           registry-url: 'https://npm.pkg.github.com'
 
       - name: Install crowdin
-        run: npm i @crowdin/cli
+        run: npm i -g @crowdin/cli
 
       - name: Upload translations
         run: crowdin upload
