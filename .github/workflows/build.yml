@@ -19,15 +19,22 @@ jobs:
         id: semantic
         with:
           extra_plugins: "semantic-release @semantic-release/exec conventional-changelog-conventionalcommits"
-          branches: "v1.16.x"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get java version
+        if: steps.semantic.outputs.new_release_published == 'true'
+        id: java_version
+        uses: christian-draeger/read-properties@1.0.1
+        with:
+          path: './gradle.properties'
+          property: 'java_version'
 
       - name: Set up JDK
         if: steps.semantic.outputs.new_release_published == 'true'
         uses: actions/setup-java@v1
         with:
-          java-version: 8
+          java-version: ${{ steps.java_version.outputs.value }}
 
       - name: Grant execute permission for gradlew
         if: steps.semantic.outputs.new_release_published == 'true'
