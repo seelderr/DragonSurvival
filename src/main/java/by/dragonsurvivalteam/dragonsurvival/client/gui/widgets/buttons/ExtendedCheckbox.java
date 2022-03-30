@@ -24,6 +24,7 @@ public class ExtendedCheckbox extends Checkbox{
 		super(pX, pY, pWidth, pHeight, pMessage, pSelected);
 		this.pressable = pressable;
 		this.renderWidth = renderWidth;
+		setBlitOffset(500);
 	}
 
 	@Override
@@ -59,7 +60,10 @@ public class ExtendedCheckbox extends Checkbox{
 
 			Component message = active ? getMessage() : ((TranslatableComponent)this.getMessage()).withStyle(ChatFormatting.DARK_GRAY);
 
+			pMatrixStack.pushPose();
+			pMatrixStack.translate(0, 0, getBlitOffset());
 			drawString(pMatrixStack, fontrenderer, message, this.x + renderWidth + 2, this.y + (height - 8) / 2, 14737632);
+			pMatrixStack.popPose();
 		}else{
 			float widthMod = ((renderWidth) / 36f);
 			float heightMod = ((height) / 36f);
@@ -72,7 +76,10 @@ public class ExtendedCheckbox extends Checkbox{
 
 			Component message = active ? getMessage() : ((TranslatableComponent)this.getMessage()).withStyle(ChatFormatting.DARK_GRAY);
 
+			pMatrixStack.pushPose();
+			pMatrixStack.translate(0, 0, getBlitOffset());
 			drawString(pMatrixStack, fontrenderer, message, this.x + renderWidth + 2, this.y + (height - 8) / 2, 14737632);
+			pMatrixStack.popPose();
 		}
 		pMatrixStack.popPose();
 	}

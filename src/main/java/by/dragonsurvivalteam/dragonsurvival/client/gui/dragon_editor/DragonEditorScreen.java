@@ -129,7 +129,7 @@ public class DragonEditorScreen extends Screen{
 			reverseQueue(REDO_QUEUES.get(currentSelected));
 
 			this.preset.readNBT(UNDO_QUEUES.get(currentSelected).poll());
-			handler.getSkin().updateLayers.addAll(Arrays.stream(EnumSkinLayer.values()).distinct().collect(Collectors.toList()));
+			handler.getSkin().updateLayers.addAll(Arrays.stream(EnumSkinLayer.values()).distinct().toList());
 			update();
 		}
 	}
@@ -144,7 +144,7 @@ public class DragonEditorScreen extends Screen{
 			reverseQueue(UNDO_QUEUES.get(currentSelected));
 
 			this.preset.readNBT(REDO_QUEUES.get(currentSelected).poll());
-			handler.getSkin().updateLayers.addAll(Arrays.stream(EnumSkinLayer.values()).distinct().collect(Collectors.toList()));
+			handler.getSkin().updateLayers.addAll(Arrays.stream(EnumSkinLayer.values()).distinct().toList());
 			update();
 		}
 	}
@@ -174,23 +174,8 @@ public class DragonEditorScreen extends Screen{
 		this.renderBackground(stack);
 		stack.popPose();
 
-		children().stream().filter((s) -> s instanceof DragonUIRenderComponent).collect(Collectors.toList()).forEach((s) -> ((DragonUIRenderComponent)s).render(stack, pMouseX, pMouseY, pPartialTicks));
+		children().stream().filter(DragonUIRenderComponent.class::isInstance).toList().forEach((s) -> ((DragonUIRenderComponent)s).render(stack, pMouseX, pMouseY, pPartialTicks));
 		DragonAltarGUI.renderBorders(stack, backgroundTexture, 0, width, 32, height - 32, width, height);
-
-		TextRenderUtil.drawCenteredScaledText(stack, width / 2, 10, 2f, title.getString(), DyeColor.WHITE.getTextColor());
-
-		if(showUi){
-			int i = 0;
-			for(EnumSkinLayer layers : EnumSkinLayer.values()){
-				String name = layers.name;
-				SkinsScreen.drawNonShadowLineBreak(stack, font, new TranslatableComponent("ds.gui.dragon_editor.part." + name.toLowerCase()), (i < 5 ? width / 2 - 100 - 100 : width / 2 + 83) + 45, guiTop + 10 + ((i >= 5 ? (i - 5) * 30 : i * 30)) - 12, DyeColor.WHITE.getTextColor());
-				i++;
-			}
-		}
-
-		if(showUi){
-			SkinsScreen.drawNonShadowLineBreak(stack, font, new TextComponent(WordUtils.capitalize(animations[curAnimation].replace("_", " "))), width / 2, height / 2 + 72, DyeColor.GRAY.getTextColor());
-		}
 
 		for(Widget widget : new CopyOnWriteArrayList<>(this.renderables)){
 			widget.render(stack, pMouseX, pMouseY, pPartialTicks);
@@ -205,12 +190,30 @@ public class DragonEditorScreen extends Screen{
 
 		for(int x = 0; x < this.children.size(); ++x){
 			GuiEventListener ch = children.get(x);
-			if(ch instanceof AbstractWidget){
+			if(ch instanceof AbstractWidget && !(ch instanceof DragonUIRenderComponent)){
 				if(((AbstractWidget)ch).isHoveredOrFocused()){
 					((AbstractWidget)ch).renderToolTip(stack, pMouseX, pMouseY);
 				}
 			}
 		}
+
+		stack.pushPose();
+		stack.translate(0, 0, 500);
+		TextRenderUtil.drawCenteredScaledText(stack, width / 2, 10, 2f, title.getString(), DyeColor.WHITE.getTextColor());
+
+		if(showUi){
+			int i = 0;
+			for(EnumSkinLayer layers : EnumSkinLayer.values()){
+				String name = layers.name;
+				SkinsScreen.drawNonShadowLineBreak(stack, font, new TranslatableComponent("ds.gui.dragon_editor.part." + name.toLowerCase()), (i < 5 ? width / 2 - 100 - 100 : width / 2 + 83) + 45, guiTop + 10 + ((i >= 5 ? (i - 5) * 30 : i * 30)) - 12, DyeColor.WHITE.getTextColor());
+				i++;
+			}
+		}
+
+		if(showUi){
+			SkinsScreen.drawNonShadowLineBreak(stack, font, new TextComponent(WordUtils.capitalize(animations[curAnimation].replace("_", " "))), width / 2, height / 2 + 72, DyeColor.GRAY.getTextColor());
+		}
+		stack.popPose();
 	}
 
 	public void save(){
@@ -275,7 +278,7 @@ public class DragonEditorScreen extends Screen{
 			this.handler.setHasWings(true);
 			this.handler.setType(type);
 			hasInit = true;
-			handler.getSkin().updateLayers.addAll(Arrays.stream(EnumSkinLayer.values()).distinct().collect(Collectors.toList()));
+			handler.getSkin().updateLayers.addAll(Arrays.stream(EnumSkinLayer.values()).distinct().toList());
 			update();
 		}
 
@@ -566,7 +569,7 @@ public class DragonEditorScreen extends Screen{
 		addRenderableWidget(new ExtendedButton(guiLeft + 256 + 16, 9, 19, 19, TextComponent.EMPTY, (btn) -> {
 			doAction();
 			preset.skinAges.put(level, new SkinAgeGroup(level, type));
-			handler.getSkin().updateLayers.addAll(Arrays.stream(EnumSkinLayer.values()).distinct().collect(Collectors.toList()));
+			handler.getSkin().updateLayers.addAll(Arrays.stream(EnumSkinLayer.values()).distinct().toList());
 			update();
 		}){
 			@Override

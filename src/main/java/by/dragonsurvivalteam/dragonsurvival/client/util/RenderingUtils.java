@@ -79,23 +79,22 @@ public class RenderingUtils{
 	public static void renderPureColorSquare(PoseStack mStack, int x, int y, int width, int height){
 		Matrix4f mat = mStack.last().pose();
 		int zLevel = 100;
-		RenderSystem.enableDepthTest();
+		BufferBuilder bufferbuilder = Tesselator.getInstance().getBuilder();
 		RenderSystem.enableBlend();
 		RenderSystem.disableTexture();
 		RenderSystem.defaultBlendFunc();
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
-		Tesselator tessellator = Tesselator.getInstance();
-		BufferBuilder buffer = tessellator.getBuilder();
-		buffer.begin(Mode.LINE_STRIP, DefaultVertexFormat.POSITION_COLOR);
+		bufferbuilder.begin(Mode.TRIANGLE_STRIP, DefaultVertexFormat.POSITION_COLOR);
 
 		for(int i = 0; i <= width; i++){
 			float val = ((((float)i / width) * 360f) / 360f);
 			Color top = new Color(Color.HSBtoRGB(val, 1f, 1f));
-			buffer.vertex(mat, x + i, y, zLevel).color(top.getRed() / 255f, top.getGreen() / 255f, top.getBlue() / 255f, top.getAlpha() / 255f).endVertex();
-			buffer.vertex(mat, x + i, y + height, zLevel).color(top.getRed() / 255f, top.getGreen() / 255f, top.getBlue() / 255f, top.getAlpha() / 255f).endVertex();
+			bufferbuilder.vertex(mat, x + i, y, zLevel).color(top.getRed() / 255f, top.getGreen() / 255f, top.getBlue() / 255f, top.getAlpha() / 255f).endVertex();
+			bufferbuilder.vertex(mat, x + i, y + height, zLevel).color(top.getRed() / 255f, top.getGreen() / 255f, top.getBlue() / 255f, top.getAlpha() / 255f).endVertex();
 		}
-		buffer.end();
-		BufferUploader.end(buffer);
+
+		bufferbuilder.end();
+		BufferUploader.end(bufferbuilder);
 		RenderSystem.enableTexture();
 		RenderSystem.disableBlend();
 	}
@@ -108,7 +107,7 @@ public class RenderingUtils{
 		RenderSystem.defaultBlendFunc();
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
 		BufferBuilder bufferbuilder = Tesselator.getInstance().getBuilder();
-		bufferbuilder.begin(Mode.LINE_STRIP, DefaultVertexFormat.POSITION_COLOR);
+		bufferbuilder.begin(Mode.TRIANGLE_STRIP, DefaultVertexFormat.POSITION_COLOR);
 
 		for(int i = 0; i < width; i++){
 			float val = ((((float)i / width) * 360f) / 360f);

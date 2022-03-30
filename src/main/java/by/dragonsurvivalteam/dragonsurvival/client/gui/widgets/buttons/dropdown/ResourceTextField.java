@@ -177,7 +177,7 @@ public class ResourceTextField extends EditBox implements TooltipAccessor{
 		}
 
 		Suggestions sgs = builder.build();
-		List<String> suggestions = sgs.getList().stream().map(Suggestion::getText).collect(Collectors.toList());
+		List<String> suggestions = sgs.getList().stream().map(Suggestion::getText).toList();
 		suggestions.removeIf((s) -> s == null || s.isEmpty());
 		suggestions.forEach((s) -> this.suggestions.addAll(parseCombinedList(Collections.singletonList(s), isTag)));
 	}
@@ -198,21 +198,21 @@ public class ResourceTextField extends EditBox implements TooltipAccessor{
 			if(isTag){
 				if(isItem){
 					try{
-						results.add(new ResourceEntry("tag:" + value, Objects.requireNonNull((ForgeRegistries.ITEMS.tags().getTag(TagKey.create(Registry.ITEM_REGISTRY, location))).stream().map(ItemStack::new).collect(Collectors.toList()))));
+						results.add(new ResourceEntry("tag:" + value, Objects.requireNonNull((ForgeRegistries.ITEMS.tags().getTag(TagKey.create(Registry.ITEM_REGISTRY, location))).stream().map(ItemStack::new).toList())));
 					}catch(Exception ignored){
 					}
 				}
 
 				if(isBlock){
 					try{
-						results.add(new ResourceEntry("tag:" + value, Objects.requireNonNull(ForgeRegistries.BLOCKS.tags().getTag(TagKey.create(Registry.BLOCK_REGISTRY, location))).stream().map((s) -> new ItemStack(s)).collect(Collectors.toList())));
+						results.add(new ResourceEntry("tag:" + value, Objects.requireNonNull(ForgeRegistries.BLOCKS.tags().getTag(TagKey.create(Registry.BLOCK_REGISTRY, location))).stream().map((s) -> new ItemStack(s)).toList()));
 					}catch(Exception ignored){
 					}
 				}
 
 				if(isEntity){
 					try{
-						results.add(new ResourceEntry("tag:" + value, Objects.requireNonNull(ForgeRegistries.ENTITIES.tags().getTag(TagKey.create(Registry.ENTITY_TYPE_REGISTRY, location))).stream().map((s) -> new ItemStack(ForgeSpawnEggItem.fromEntityType(s))).collect(Collectors.toList())));
+						results.add(new ResourceEntry("tag:" + value, Objects.requireNonNull(ForgeRegistries.ENTITIES.tags().getTag(TagKey.create(Registry.ENTITY_TYPE_REGISTRY, location))).stream().map((s) -> new ItemStack(ForgeSpawnEggItem.fromEntityType(s))).toList()));
 					}catch(Exception ignored){
 					}
 				}
@@ -290,8 +290,8 @@ public class ResourceTextField extends EditBox implements TooltipAccessor{
 					boolean nameBlItem = c.getItem() instanceof ItemNameBlockItem;
 
 					return !isItem ? !nameBlItem : isBlock || (nameBlItem || !blItem);
-				}).collect(Collectors.toList());
-				s.displayItems = s.displayItems.stream().filter((c) -> !c.isEmpty()).collect(Collectors.toList());
+				}).toList();
+				s.displayItems = s.displayItems.stream().filter((c) -> !c.isEmpty()).toList();
 			}
 		});
 		return results;

@@ -31,7 +31,7 @@ public class DragonEditorSlotButton extends Button{
 
 		screen.currentSelected = num - 1;
 		screen.update();
-		screen.handler.getSkin().updateLayers.addAll(Arrays.stream(EnumSkinLayer.values()).distinct().collect(Collectors.toList()));
+		screen.handler.getSkin().updateLayers.addAll(Arrays.stream(EnumSkinLayer.values()).distinct().toList());
 	}
 
 	@Override

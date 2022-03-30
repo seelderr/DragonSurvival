@@ -58,7 +58,7 @@ public class SyncPlayerSkinPreset implements IMessage<SyncPlayerSkinPreset>{
 			if(entity != null){
 				DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
 					dragonStateHandler.getSkin().skinPreset = message.preset;
-					dragonStateHandler.getSkin().updateLayers.addAll(Arrays.stream(EnumSkinLayer.values()).distinct().collect(Collectors.toList()));
+					dragonStateHandler.getSkin().updateLayers.addAll(Arrays.stream(EnumSkinLayer.values()).distinct().toList());
 				});
 
 				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new SyncPlayerSkinPreset(entity.getId(), message.preset));
@@ -77,7 +77,7 @@ public class SyncPlayerSkinPreset implements IMessage<SyncPlayerSkinPreset>{
 				if(entity instanceof Player){
 					DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
 						dragonStateHandler.getSkin().skinPreset = message.preset;
-						dragonStateHandler.getSkin().updateLayers.addAll(Arrays.stream(EnumSkinLayer.values()).distinct().collect(Collectors.toList()));
+						dragonStateHandler.getSkin().updateLayers.addAll(Arrays.stream(EnumSkinLayer.values()).distinct().toList());
 					});
 				}
 			}

@@ -371,8 +371,8 @@ public class EmoteMenuHandler{
 			}
 		}
 
-		List<Emote> ls1 = Stream.of(cap.getEmotes().currentEmotes).limit(EmoteCap.MAX_EMOTES).collect(Collectors.toList());
-		List<Integer> ls2 = Stream.of( cap.getEmotes().emoteTicks).limit(EmoteCap.MAX_EMOTES).collect(Collectors.toList());
+		List<Emote> ls1 = Stream.of(cap.getEmotes().currentEmotes).limit(EmoteCap.MAX_EMOTES).toList();
+		List<Integer> ls2 = Stream.of( cap.getEmotes().emoteTicks).limit(EmoteCap.MAX_EMOTES).toList();
 
 		cap.getEmotes().currentEmotes = ls1.toArray(new Emote[0]);
 		cap.getEmotes().emoteTicks = ls2.toArray(new Integer[0]);

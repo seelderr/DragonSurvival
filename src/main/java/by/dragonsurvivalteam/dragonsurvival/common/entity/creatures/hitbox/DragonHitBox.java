@@ -171,14 +171,6 @@ public class DragonHitBox extends Mob{
 			setXRot((float)handler.getMovementData().headPitch);
 			setYRot((float)handler.getMovementData().bodyYaw);
 
-			//			double bodyYawChange = Functions.angleDifference((float)handler.getMovementData().bodyYawLastTick, (float)handler.getMovementData().bodyYaw);
-			//
-			//			AttributeInstance gravity = player.getAttribute(net.minecraftforge.common.ForgeMod.ENTITY_GRAVITY.get());
-			//			double g = gravity.getValue();
-			//
-			//			double tailMotionUp = ServerFlightHandler.isFlying(player) ? 0 : (player.getDeltaMovement().y + g);
-			//			double tailMotionSide = Mth.lerp(0.1, Mth.clamp(bodyYawChange, -50, 50), 0);
-			//
 			body.setPos(player.getX() - offset.x(), player.getY(), player.getZ() - offset.z());
 			head.setPos(dx, dy - (DragonSizeHandler.calculateDragonWidth(handler.getSize(), ConfigHandler.SERVER.hitboxGrowsPastHuman.get()) / 2), dz);
 			tail1.setPos(getX() - offset.x(), getY() + (player.getEyeHeight() / 2) - (height / 9), getZ() - offset.z());
@@ -203,6 +195,7 @@ public class DragonHitBox extends Mob{
 
 	@Override
 	public boolean hurt(DamageSource source, float damage){
+		if(source.getEntity() == player || source.getDirectEntity() == player) return false;
 		return player != null && !this.isInvulnerableTo(source) && player.hurt(source, damage);
 	}
 
@@ -228,7 +221,12 @@ public class DragonHitBox extends Mob{
 
 	@Override
 	public boolean isInvulnerableTo(DamageSource pSource){
-		return super.isInvulnerableTo(pSource) || pSource == DamageSource.IN_WALL;
+		return super.isInvulnerableTo(pSource) || pSource == DamageSource.IN_WALL || pSource == DamageSource.LIGHTNING_BOLT || player != null && player.isInvulnerableTo(pSource);
+	}
+
+	@Override
+	public int getAirSupply(){
+		return getMaxAirSupply();
 	}
 
 	@Override

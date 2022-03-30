@@ -91,7 +91,7 @@ public class DragonGrowthHandler{
 
 			if(!canContinue){
 				if(!allowedItems.isEmpty() && world.isClientSide()){
-					List<String> displayData = allowedItems.stream().map(i -> new ItemStack(i).getDisplayName().getString()).collect(Collectors.toList());
+					List<String> displayData = allowedItems.stream().map(i -> new ItemStack(i).getDisplayName().getString()).toList();
 					StringBuilder result = new StringBuilder();
 
 					for(int i = 0; i < displayData.size(); i++){

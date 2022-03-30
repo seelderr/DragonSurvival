@@ -67,7 +67,7 @@ public abstract class MixinLivingEntity extends Entity{
 		}else{
 			if(slotType.getType() == EquipmentSlot.Type.ARMOR && entity.getArmorSlots() != null && entity.getArmorSlots().iterator().hasNext() && entity.getArmorSlots().spliterator() != null){
 				Stream<ItemStack> stream = StreamSupport.stream(entity.getArmorSlots().spliterator(), false);
-				ArrayList<ItemStack> list = new ArrayList<>(stream.collect(Collectors.toList()));
+				ArrayList<ItemStack> list = new ArrayList<>(stream.toList());
 				return list.size() > slotType.getIndex() ? list.get(slotType.getIndex()) : ItemStack.EMPTY;
 			}else{
 				return ItemStack.EMPTY;

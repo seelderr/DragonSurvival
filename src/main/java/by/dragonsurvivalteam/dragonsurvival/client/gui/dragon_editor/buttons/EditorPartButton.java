@@ -99,9 +99,13 @@ public class EditorPartButton extends ExtendedButton{
 			xRot = 6;
 		}
 
-		PoseStack stack = new PoseStack();
+		PoseStack stack = RenderSystem.getModelViewStack();
 		stack.pushPose();
+		RenderSystem.applyModelViewMatrix();
+
 		MainTarget framebuffer = new MainTarget(width, height);
+		framebuffer.setClearColor(0.0F, 0.0F, 0.0F, 0.0F);
+		framebuffer.clear(false);
 		framebuffer.bindWrite(true);
 
 		FakeClientPlayer player = FakeClientPlayerUtils.getFakePlayer(2, handler);
@@ -134,9 +138,7 @@ public class EditorPartButton extends ExtendedButton{
 		Minecraft.getInstance().getTextureManager().register(texture, dynamicTexture);
 
 		framebuffer.unbindWrite();
-		framebuffer.destroyBuffers();
 		stack.popPose();
-
 		Minecraft.getInstance().getMainRenderTarget().bindWrite(true);
 	}
 

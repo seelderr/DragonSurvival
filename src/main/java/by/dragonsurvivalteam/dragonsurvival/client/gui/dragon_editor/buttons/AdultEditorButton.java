@@ -19,7 +19,7 @@ public class AdultEditorButton extends Button{
 		super(dragonEditorScreen.width / 2 + 60, dragonEditorScreen.guiTop - 30, 120, 20, new TranslatableComponent("ds.level.adult"), (btn) -> {
 			dragonEditorScreen.level = DragonLevel.ADULT;
 			dragonEditorScreen.dragonRender.zoom = dragonEditorScreen.level.size;
-			dragonEditorScreen.handler.getSkin().updateLayers.addAll(Arrays.stream(EnumSkinLayer.values()).distinct().collect(Collectors.toList()));
+			dragonEditorScreen.handler.getSkin().updateLayers.addAll(Arrays.stream(EnumSkinLayer.values()).distinct().toList());
 			dragonEditorScreen.update();
 		});
 		this.dragonEditorScreen = dragonEditorScreen;
@@ -34,6 +34,9 @@ public class AdultEditorButton extends Button{
 	@Override
 	public void renderButton(PoseStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_){
 		int j = isHovered || dragonEditorScreen.level == DragonLevel.ADULT ? 16777215 : 10526880;
+		stack.pushPose();
+		stack.translate(0, 0, 500);
 		TextRenderUtil.drawCenteredScaledText(stack, x + (width / 2), y + 4, 1.5f, this.getMessage().getString(), j | Mth.ceil(this.alpha * 255.0F) << 24);
+		stack.popPose();
 	}
 }

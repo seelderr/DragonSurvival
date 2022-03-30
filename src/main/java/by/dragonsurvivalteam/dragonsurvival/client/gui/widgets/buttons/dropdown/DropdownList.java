@@ -59,6 +59,14 @@ public class DropdownList extends AbstractSelectionList<by.dragonsurvivalteam.dr
 	@Override
 	protected void renderBackground(PoseStack stack){
 		GuiUtils.drawContinuousTexturedBox(stack, BACKGROUND_TEXTURE, x0, y0 - 3, 0, 0, width, height + 6, 32, 32, 10, 10);
+
+		if(children().size() > 0){
+			RenderSystem.enableScissor((int)(x0 * Minecraft.getInstance().getWindow().getGuiScale()), (int)(Minecraft.getInstance().getWindow().getScreenHeight() - ((y1 - 3) * Minecraft.getInstance().getWindow().getGuiScale())), (int)(width * Minecraft.getInstance().getWindow().getGuiScale()), (int)((height - 6) * Minecraft.getInstance().getWindow().getGuiScale()));
+		}
+	}
+
+	protected int getMaxPosition(){
+		return this.getItemCount() * this.itemHeight + this.headerHeight + (this.itemHeight / 4);
 	}
 
 	@Override

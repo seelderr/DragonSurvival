@@ -197,7 +197,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 					allowedList.addAll(adultList);
 				}
 
-				List<String> displayData = allowedList.stream().map(i -> new ItemStack(i).getDisplayName().getString()).collect(Collectors.toList());
+				List<String> displayData = allowedList.stream().map(i -> new ItemStack(i).getDisplayName().getString()).toList();
 				StringJoiner result = new StringJoiner(", ");
 				displayData.forEach(result::add);
 

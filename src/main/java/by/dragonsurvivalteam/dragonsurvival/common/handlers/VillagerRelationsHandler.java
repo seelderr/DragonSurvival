@@ -82,7 +82,7 @@ public class VillagerRelationsHandler{
 							int level = villager.getVillagerData().getLevel();
 
 							if(world.random.nextInt(100) < 30){
-								Optional<MerchantOffer> offer = merchantOffers.stream().filter(merchantOffer -> merchantOffer.getResult().getItem() != Items.EMERALD).collect(Collectors.toList()).stream().findAny();
+								Optional<MerchantOffer> offer = merchantOffers.stream().filter(merchantOffer -> merchantOffer.getResult().getItem() != Items.EMERALD).toList().stream().findAny();
 
 								offer.ifPresent(merchantOffer -> world.addFreshEntity(new ItemEntity(world, villager.getX(), villager.getY(), villager.getZ(), merchantOffer.getResult())));
 							}
@@ -96,7 +96,7 @@ public class VillagerRelationsHandler{
 							if(!world.isClientSide){
 								playerEntity.giveExperiencePoints(2 * ConfigHandler.COMMON.xpGain.get());
 								if(world.random.nextInt(100) < 30){
-									ItemStack itemStack = wanderingTrader.getOffers().stream().filter((merchantOffer -> merchantOffer.getResult().getItem() != Items.EMERALD)).collect(Collectors.toList()).get(wanderingTrader.getRandom().nextInt(wanderingTrader.getOffers().size())).getResult();
+									ItemStack itemStack = wanderingTrader.getOffers().stream().filter((merchantOffer -> merchantOffer.getResult().getItem() != Items.EMERALD)).toList().get(wanderingTrader.getRandom().nextInt(wanderingTrader.getOffers().size())).getResult();
 									world.addFreshEntity(new ItemEntity(world, wanderingTrader.getX(), wanderingTrader.getY(), wanderingTrader.getZ(), itemStack));
 								}
 								//                                applyEvilMarker(playerEntity);
