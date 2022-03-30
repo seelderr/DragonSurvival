@@ -11,14 +11,20 @@ env:
   CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
   CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 
+
 jobs:
   build:
     name: Language
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        branch: [v1.16.x, v1.18.x]
 
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          ref: ${{ matrix.branch }}
 
       - name: Setup node
         uses: actions/setup-node@v2
@@ -50,3 +56,5 @@ jobs:
         with:
           add: "src/main/resources/assets/dragonsurvival/lang/*"
           message: "docs(lang): Updating Crowdin translations"
+          new_branch: ${{ matrix.branch }}
+          committer_name: Crowdin bot
