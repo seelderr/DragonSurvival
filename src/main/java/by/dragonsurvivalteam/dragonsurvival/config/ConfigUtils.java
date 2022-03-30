@@ -34,7 +34,7 @@ public class ConfigUtils{
 				sEntry = new String[]{"minecraft", sEntry[0]};
 			}
 
-			final ResourceLocation rlEntry = new ResourceLocation(sEntry[1], sEntry[2]);
+			final ResourceLocation rlEntry = new ResourceLocation(sEntry[0], sEntry[1]);
 
 			if(sEntry[0].equalsIgnoreCase("tag")){
 				final ITag<Item> tag = ItemTags.getAllTags().getTag(rlEntry);
@@ -63,7 +63,8 @@ public class ConfigUtils{
 				sEntry = new String[]{"minecraft", sEntry[0]};
 			}
 
-			final ResourceLocation rlEntry = new ResourceLocation(sEntry[1], sEntry[2]);
+			final ResourceLocation rlEntry = new ResourceLocation(sEntry[0], sEntry[1]);
+
 			if(sEntry[0].equalsIgnoreCase("tag")){
 				final ITag<Block> tag = BlockTags.getAllTags().getTag(rlEntry);
 				if(tag != null && tag.getValues().size() != 0){
