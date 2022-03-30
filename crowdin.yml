@@ -5,9 +5,6 @@ base_url: "https://dragonsurvivalteam.crowdin.com"
 
 commit_message: "docs(lang): New translations %original_file_name% from Crowdin"
 append_commit_message: false
-upload_translations: true
-upload_source: true
-download_translations: true
 
 files:
   - source: "en_us.json"

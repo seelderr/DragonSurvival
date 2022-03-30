@@ -26,7 +26,8 @@ public class ConfigUtils{
 
 		for(String entry : values){
 			try{
-				final ResourceLocation rlEntry = new ResourceLocation(entry);
+				String[] en = entry.replace("tag:", "").replace("item:", "").split(":");
+				final ResourceLocation rlEntry = en.length > 1 ? new ResourceLocation(en[0], en[1]) : new ResourceLocation(entry.replace("tag:", "").replace("item:", ""));
 
 				if(entry.startsWith("tag")){
 					final ITag<Item> tag = ItemTags.getAllTags().getTag(rlEntry);
@@ -50,7 +51,8 @@ public class ConfigUtils{
 
 		for(String entry : values){
 			try{
-				final ResourceLocation rlEntry = new ResourceLocation(entry);
+				String[] en = entry.replace("tag:", "").replace("block:", "").split(":");
+				final ResourceLocation rlEntry = en.length > 1 ? new ResourceLocation(en[0], en[1]) : new ResourceLocation(entry.replace("tag:", "").replace("item:", ""));
 
 				if(entry.startsWith("tag")){
 					final ITag<Block> tag = BlockTags.getAllTags().getTag(rlEntry);
