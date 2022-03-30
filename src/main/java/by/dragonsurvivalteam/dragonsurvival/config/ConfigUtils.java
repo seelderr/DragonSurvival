@@ -23,27 +23,22 @@ public class ConfigUtils{
 	public static List<Item> parseConfigItemList(List<? extends String> values){
 		List<Item> result = new ArrayList<>();
 
+
 		for(String entry : values){
-			String[] sEntry = entry.split(":");
+			try{
+				final ResourceLocation rlEntry = new ResourceLocation(entry);
 
-			if(sEntry.length == 0){
-				continue;
-			}
+				if(entry.startsWith("tag")){
+					final ITag<Item> tag = ItemTags.getAllTags().getTag(rlEntry);
 
-			if(sEntry.length == 1){
-				sEntry = new String[]{"minecraft", sEntry[0]};
-			}
-
-			final ResourceLocation rlEntry = new ResourceLocation(sEntry[0], sEntry[1]);
-
-			if(sEntry[0].equalsIgnoreCase("tag")){
-				final ITag<Item> tag = ItemTags.getAllTags().getTag(rlEntry);
-
-				if(tag != null){
-					result.addAll(tag.getValues());
+					if(tag != null){
+						result.addAll(tag.getValues());
+					}
+				}else{
+					result.add(ForgeRegistries.ITEMS.getValue(rlEntry));
 				}
-			}else{
-				result.add(ForgeRegistries.ITEMS.getValue(rlEntry));
+			}catch(Exception e){
+				e.printStackTrace();
 			}
 		}
 
@@ -54,27 +49,22 @@ public class ConfigUtils{
 		List<Block> result = new ArrayList<>();
 
 		for(String entry : values){
-			String[] sEntry = entry.split(":");
-			if(sEntry.length == 0){
-				continue;
-			}
+			try{
+				final ResourceLocation rlEntry = new ResourceLocation(entry);
 
-			if(sEntry.length == 1){
-				sEntry = new String[]{"minecraft", sEntry[0]};
-			}
-
-			final ResourceLocation rlEntry = new ResourceLocation(sEntry[0], sEntry[1]);
-
-			if(sEntry[0].equalsIgnoreCase("tag")){
-				final ITag<Block> tag = BlockTags.getAllTags().getTag(rlEntry);
-				if(tag != null && tag.getValues().size() != 0){
-					result.addAll(tag.getValues());
+				if(entry.startsWith("tag")){
+					final ITag<Block> tag = BlockTags.getAllTags().getTag(rlEntry);
+					if(tag != null && tag.getValues().size() != 0){
+						result.addAll(tag.getValues());
+					}
+				}else{
+					final Block block = ForgeRegistries.BLOCKS.getValue(rlEntry);
+					if(block != Blocks.AIR){
+						result.add(block);
+					}
 				}
-			}else{
-				final Block block = ForgeRegistries.BLOCKS.getValue(rlEntry);
-				if(block != Blocks.AIR){
-					result.add(block);
-				}
+			}catch(Exception e){
+				e.printStackTrace();
 			}
 		}
 
