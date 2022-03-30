@@ -231,5 +231,47 @@
       "id": "untamedwilds:food_bear_cooked",
       "required": false
     }
+
+  ,
+    {
+      "id": "prehistoricfauna:cooked_large_thyreophoran_meat",
+      "required": false
+    },
+    {
+      "id": "prehistoricfauna:cooked_large_marginocephalian_meat",
+      "required": false
+    },
+    {
+      "id": "prehistoricfauna:cooked_small_ornithischian_meat",
+      "required": false
+    },
+    {
+      "id": "prehistoricfauna:cooked_large_sauropod_meat",
+      "required": false
+    },
+    {
+      "id": "prehistoricfauna:cooked_small_sauropod_meat",
+      "required": false
+    },
+    {
+      "id": "prehistoricfauna:cooked_small_theropod_meat",
+      "required": false
+    },
+    {
+      "id": "prehistoricfauna:cooked_large_theropod_meat",
+      "required": false
+    },
+    {
+      "id": "prehistoricfauna:cooked_large_archosauromorph_meat",
+      "required": false
+    },
+    {
+      "id": "prehistoricfauna:cooked_small_reptile_meat",
+      "required": false
+    },
+    {
+      "id": "prehistoricfauna:cooked_large_synapsid_meat",
+      "required": false
+    }
   ]
 }

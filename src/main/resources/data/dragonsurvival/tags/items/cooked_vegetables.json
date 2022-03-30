@@ -326,7 +326,19 @@
       "required": false
     },
     {
-      "id": "forbidden_arcanus:edelwood_beetroot_soup_bucket",
+      "id": "prehistoric_delight:tuber_soup",
+      "required": false
+    },
+    {
+      "id": "prehistoric_delight:tuber_baked",
+      "required": false
+    },
+    {
+      "id": "prehistoric_delight:root_stock",
+      "required": false
+    },
+    {
+      "id": "prehistoric_delight:foliage_salad",
       "required": false
     }
   ]

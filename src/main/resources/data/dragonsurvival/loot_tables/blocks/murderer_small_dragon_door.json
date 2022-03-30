@@ -6,7 +6,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "dragonsurvival:quartz_small_dragon_door"
+          "name": "dragonsurvival:murderer_small_dragon_door"
         }
       ],
       "conditions": [
