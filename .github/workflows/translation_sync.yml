@@ -27,7 +27,6 @@ jobs:
           registry-url: 'https://npm.pkg.github.com'
 
       - name: Get minecraft version
-        if: steps.semantic.outputs.new_release_published == 'true'
         id: mc_version
         uses: christian-draeger/read-properties@1.0.1
         with:
