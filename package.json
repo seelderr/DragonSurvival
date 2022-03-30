@@ -34,19 +34,8 @@
           "preset": "conventionalcommits",
           "releaseRules": [
             {
-              "type": "patch",
-              "release": "patch"
-            },
-            {
-              "type": "minor",
-              "release": "minor"
-            },
-            {
-              "type": "major",
-              "release": "major"
-            },
-            {
-              "type": "feat",
+              "type": "docs",
+              "scope": "lang",
               "release": "patch"
             }
           ]

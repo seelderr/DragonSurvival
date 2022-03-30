@@ -12,26 +12,31 @@ env:
   CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 
 jobs:
-  i18n-download-docs-translations:
+  build:
     name: Language
     runs-on: ubuntu-latest
 
     steps:
-      - name: Fetch the newest translations
-        uses: crowdin/github-action@master
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup node
+        uses: actions/setup-node@v2
         with:
-          upload_translations: true
-          download_translations: true
-          token: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
-          project_id: ${{ secrets.CROWDIN_PROJECT_ID }}
-          base_url: "https://dragonsurvivalteam.crowdin.com/api/v2"
-          upload_language: "us"
-          skip_untranslated_strings: true
-          skip_untranslated_files: true
-          create_pull_request: true
-          export_only_approved: true
-          push_translations: true
-          source: "/src/main/resources/assets/dragonsurvival/lang/en_us.json"
-          translation: "/src/main/resources/assets/dragonsurvival/lang/%locale_with_underscore%.json"
-          localization_branch_name: "Translations"
-          pull_request_base_branch_name: "v1.16.x"
+          node-version: '16.x'
+          registry-url: 'https://npm.pkg.github.com'
+
+      - name: Install crowdin
+        run: npm i -g @crowdin/cli
+
+      - name: Upload translations
+        run: crowdin upload
+
+      - name: Download translations
+        run: crowdin download
+
+      - name: Upload langs
+        uses: EndBug/add-and-commit@v9
+        with:
+          add: "src/main/resources/assets/dragonsurvival/lang/*"
+          message: "docs(lang): Updating Crowdin translations"

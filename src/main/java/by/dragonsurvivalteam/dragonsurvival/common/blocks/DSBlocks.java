@@ -50,14 +50,13 @@ public class DSBlocks{
 	public static TreasureBlock treasureDebris, treasureDiamond, treasureEmerald, treasureCopper, treasureGold, treasureIron;
 
 	public static DragonPressurePlates dragonPressurePlate, humanPressurePlate, seaPressurePlate, forestPressurePlate, cavePressurePlate;
-	public static SmallDragonDoor basaltSmallDoor;
+	public static SmallDragonDoor stoneSmallDoor;
 	public static SmallDragonDoor forestSmallDoor;
-	public static SmallDragonDoor dioriteSmallDoor;
+	public static SmallDragonDoor sleeperSmallDoor;
 	public static SmallDragonDoor caveSmallDoor;
 	public static SmallDragonDoor seaSmallDoor;
 	public static SmallDragonDoor ironSmallDoor;
-	public static SmallDragonDoor quartzSmallDoor;
-	public static SmallDragonDoor iron2SmallDoor;
+	public static SmallDragonDoor murdererSmallDoor;
 
 	@SubscribeEvent
 	public static void registerBlocks(final RegistryEvent.Register<Block> event){
@@ -111,16 +110,15 @@ public class DSBlocks{
 		warpedSmallDoor = registerBlock(new SmallDragonDoor(Block.Properties.of(Material.WOOD, Blocks.WARPED_PLANKS.defaultMaterialColor()).strength(3.0F).sound(SoundType.WOOD).noOcclusion(), DragonDoorOpenRequirement.NONE), "warped_small_dragon_door", forgeRegistry);
 		crimsonSmallDoor = registerBlock(new SmallDragonDoor(Block.Properties.of(Material.WOOD, Blocks.CRIMSON_PLANKS.defaultMaterialColor()).strength(3.0F).sound(SoundType.WOOD).noOcclusion(), DragonDoorOpenRequirement.NONE), "crimson_small_dragon_door", forgeRegistry);
 
-		basaltSmallDoor = registerBlock(new SmallDragonDoor(Block.Properties.of(Material.WOOD, Blocks.BASALT.defaultMaterialColor()).strength(3.0F).sound(SoundType.STONE).noOcclusion(), DragonDoorOpenRequirement.NONE), "basalt_small_dragon_door", forgeRegistry);
-		dioriteSmallDoor = registerBlock(new SmallDragonDoor(Block.Properties.of(Material.WOOD, Blocks.CRIMSON_PLANKS.defaultMaterialColor()).strength(3.0F).sound(SoundType.STONE).noOcclusion(), DragonDoorOpenRequirement.NONE), "diorite_small_dragon_door", forgeRegistry);
+		stoneSmallDoor = registerBlock(new SmallDragonDoor(Block.Properties.of(Material.WOOD, Blocks.STONE.defaultMaterialColor()).strength(3.0F).sound(SoundType.STONE).noOcclusion(), DragonDoorOpenRequirement.NONE), "stone_small_dragon_door", forgeRegistry);
+		sleeperSmallDoor = registerBlock(new SmallDragonDoor(Block.Properties.of(Material.WOOD, Blocks.CRIMSON_PLANKS.defaultMaterialColor()).strength(3.0F).sound(SoundType.STONE).noOcclusion(), DragonDoorOpenRequirement.NONE), "sleeper_small_dragon_door", forgeRegistry);
 
 		caveSmallDoor = registerBlock(new SmallDragonDoor(Block.Properties.of(Material.STONE, Blocks.BLACKSTONE.defaultMaterialColor()).requiresCorrectToolForDrops().strength(7.0F).sound(SoundType.GILDED_BLACKSTONE).noOcclusion(), DragonDoorOpenRequirement.CAVE), "cave_small_dragon_door", forgeRegistry);
 		forestSmallDoor = registerBlock(new SmallDragonDoor(Block.Properties.of(Material.WOOD, Blocks.DARK_PRISMARINE.defaultMaterialColor()).requiresCorrectToolForDrops().strength(7.0F).sound(SoundType.WOOD).noOcclusion(), DragonDoorOpenRequirement.FOREST), "forest_small_dragon_door", forgeRegistry);
 		seaSmallDoor = registerBlock(new SmallDragonDoor(Block.Properties.of(Material.STONE, MaterialColor.COLOR_BROWN).requiresCorrectToolForDrops().strength(7.0F).sound(SoundType.STONE).noOcclusion(), DragonDoorOpenRequirement.SEA), "sea_small_dragon_door", forgeRegistry);
 
 		ironSmallDoor = registerBlock(new SmallDragonDoor(Block.Properties.of(Material.METAL, MaterialColor.METAL).requiresCorrectToolForDrops().strength(5.0F).sound(SoundType.METAL).noOcclusion(), DragonDoorOpenRequirement.POWER), "iron_small_dragon_door", forgeRegistry);
-		iron2SmallDoor = registerBlock(new SmallDragonDoor(Block.Properties.of(Material.METAL, MaterialColor.METAL).requiresCorrectToolForDrops().strength(5.0F).sound(SoundType.METAL).noOcclusion(), DragonDoorOpenRequirement.POWER), "iron2_small_dragon_door", forgeRegistry);
-		quartzSmallDoor = registerBlock(new SmallDragonDoor(Block.Properties.of(Material.STONE, Blocks.CRIMSON_PLANKS.defaultMaterialColor()).strength(3.0F).sound(SoundType.STONE).noOcclusion(), DragonDoorOpenRequirement.NONE), "quartz_small_dragon_door", forgeRegistry);
+		murdererSmallDoor = registerBlock(new SmallDragonDoor(Block.Properties.of(Material.METAL, MaterialColor.METAL).requiresCorrectToolForDrops().strength(5.0F).sound(SoundType.METAL).noOcclusion(), DragonDoorOpenRequirement.POWER), "murderer_small_dragon_door", forgeRegistry);
 
 		// TODO set properties for these doors
 		murdererDoor = registerBlock(new DragonDoor(Block.Properties.copy(oakDoor), DragonDoorOpenRequirement.NONE), "murderer_dragon_door", forgeRegistry);
@@ -191,14 +189,13 @@ public class DSBlocks{
 		registerItem(warpedSmallDoor, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
 		registerItem(crimsonSmallDoor, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
 
-		registerItem(basaltSmallDoor, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
+		registerItem(stoneSmallDoor, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
 		registerItem(forestSmallDoor, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
-		registerItem(dioriteSmallDoor, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
+		registerItem(sleeperSmallDoor, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
 		registerItem(caveSmallDoor, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
 		registerItem(seaSmallDoor, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
 		registerItem(ironSmallDoor, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
-		registerItem(iron2SmallDoor, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
-		registerItem(quartzSmallDoor, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
+		registerItem(murdererSmallDoor, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
 
 		forgeRegistry.register(new BlockItem(PREDATOR_STAR_BLOCK, new Item.Properties().tab(DragonSurvivalMod.items)).setRegistryName("predator_star"));
 

@@ -154,15 +154,14 @@ async function main() {
         {doorMaterial: "dark_oak", generateRecipe: true},
         {doorMaterial: "birch", generateRecipe: true},
         {doorMaterial: "spruce", generateRecipe: true},
-        {doorMaterial: "basalt",  generateRecipe: false},
-        {doorMaterial: "diorite", generateRecipe: false},
+        {doorMaterial: "stone",  generateRecipe: true},
+        {doorMaterial: "sleeper", generateRecipe: true},
         {doorMaterial: "warped", generateRecipe: true},
         {doorMaterial: "cave", generateRecipe: true},
         {doorMaterial: "forest", generateRecipe: true},
         {doorMaterial: "sea", generateRecipe: true},
         {doorMaterial: "iron", generateRecipe: true},
-        {doorMaterial: "iron2", generateRecipe: false},
-        {doorMaterial: "quartz", generateRecipe: false},
+        {doorMaterial: "murderer", generateRecipe: true},
         {doorMaterial: "crimson", generateRecipe: true },
     ];
 
