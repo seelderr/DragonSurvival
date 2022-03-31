@@ -4,14 +4,23 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import com.google.common.collect.Lists;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.*;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.potion.Effect;
+import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.HandSide;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
@@ -26,7 +35,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
 
-public class DragonHitBox extends MobEntity{
+public class DragonHitBox extends LivingEntity{
 	public static final DataParameter<Integer> PLAYER_ID = EntityDataManager.defineId(DragonHitBox.class, DataSerializers.INT);
 
 	private final DragonHitboxPart[] subEntities;
@@ -41,7 +50,7 @@ public class DragonHitBox extends MobEntity{
 	private double lastSize;
 	private Pose lastPose;
 
-	public DragonHitBox(EntityType<? extends MobEntity> p_i48577_1_, World p_i48580_2_){
+	public DragonHitBox(EntityType<? extends LivingEntity> p_i48577_1_, World p_i48580_2_){
 		super(p_i48577_1_, p_i48580_2_);
 
 		this.head = new DragonHitboxPart(this, "head", 0.5F, 0.5F);
@@ -211,6 +220,11 @@ public class DragonHitBox extends MobEntity{
 		return level.isClientSide && !isOwner();
 	}
 
+	@Override
+	public HandSide getMainArm(){
+		return player != null ? player.getMainArm() : HandSide.LEFT;
+	}
+
 	@OnlyIn( Dist.CLIENT )
 	public boolean isOwner(){
 		return player == Minecraft.getInstance().player;
@@ -246,6 +260,19 @@ public class DragonHitBox extends MobEntity{
 		return true;
 	}
 
+	@Override
+	public Iterable<ItemStack> getArmorSlots(){
+		return player != null ? player.getArmorSlots() : Lists.newArrayList();
+	}
+
+	@Override
+	public ItemStack getItemBySlot(EquipmentSlotType pSlot){
+		return player != null ? player.getItemBySlot(pSlot) : ItemStack.EMPTY;
+	}
+
+	@Override
+	public void setItemSlot(EquipmentSlotType pSlot, ItemStack pStack){}
+
 	@Nullable
 	@Override
 	public PartEntity<?>[] getParts(){
@@ -264,5 +291,116 @@ public class DragonHitBox extends MobEntity{
 
 	public boolean is(Entity entity){
 		return this == entity || entity.getId() == getPlayerId() || player != null && entity.getId() == player.getId();
+	}
+
+	@Override
+	protected void playHurtSound(DamageSource pSource){}
+
+	@Override
+	protected SoundEvent getHurtSound(DamageSource pDamageSource){
+		return null;
+	}
+
+	@Override
+	protected SoundEvent getDeathSound(){
+		return null;
+	}
+
+	@Override
+	protected SoundEvent getFallDamageSound(int pHeight){
+		return null;
+	}
+
+	@Override
+	protected void playBlockFallSound(){}
+
+	@Override
+	protected float getSoundVolume(){
+		return 0;
+	}
+
+	@Override
+	protected SoundEvent getDrinkingSound(ItemStack pStack){
+		return null;
+	}
+
+	@Override
+	public SoundEvent getEatingSound(ItemStack pItemStack){
+		return null;
+	}
+
+	@Override
+	protected void playStepSound(BlockPos pPos, BlockState pBlock){}
+
+	@Override
+	public void playSound(SoundEvent pSound, float pVolume, float pPitch){}
+
+	@Override
+	public boolean canCollideWith(Entity pEntity){
+		return false;
+	}
+
+	@Override
+	public boolean canBeCollidedWith(){
+		return false;
+	}
+
+	@Override
+	public boolean isColliding(BlockPos pPos, BlockState pState){
+		return false;
+	}
+
+	@Override
+	protected void playSwimSound(float pVolume){}
+
+	@Override
+	public boolean removeAllEffects(){
+		return super.removeAllEffects();
+	}
+
+	@Override
+	public EffectInstance removeEffectNoUpdate(Effect pPotioneffectin){
+		return player != null ? player.removeEffectNoUpdate(pPotioneffectin) : super.removeEffectNoUpdate(pPotioneffectin);
+	}
+
+	@Override
+	public boolean removeEffect(Effect pEffect){
+		return player != null ? player.removeEffect(pEffect) : super.removeEffect(pEffect);
+	}
+
+	@Override
+	public EffectInstance getEffect(Effect pPotion){
+		return player != null ? player.getEffect(pPotion) : super.getEffect(pPotion);
+	}
+
+	@Override
+	public boolean addEffect(EffectInstance p_147208_){
+		return player != null ? player.addEffect(p_147208_) : super.addEffect(p_147208_);
+	}
+
+	@Override
+	public void setSecondsOnFire(int pSeconds){
+		if(player != null){
+			player.setSecondsOnFire(pSeconds);
+		}
+	}
+
+	@Override
+	public void setRemainingFireTicks(int pTicks){
+		if(player != null){
+			player.setRemainingFireTicks(pTicks);
+		}
+	}
+
+	@Override
+	public int getRemainingFireTicks(){
+		return player != null ? player.getRemainingFireTicks() : super.getRemainingFireTicks();
+	}
+
+	@Override
+	public void clearFire(){
+		if(player != null){
+			player.clearFire();
+		}
 	}
 }
