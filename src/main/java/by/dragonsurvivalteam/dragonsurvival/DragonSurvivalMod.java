@@ -5,7 +5,6 @@ import by.dragonsurvivalteam.dragonsurvival.client.sounds.SoundRegistry;
 import by.dragonsurvivalteam.dragonsurvival.commands.DragonAltarCommand;
 import by.dragonsurvivalteam.dragonsurvival.commands.DragonCommand;
 import by.dragonsurvivalteam.dragonsurvival.commands.DragonEditorCommand;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.WingObtainmentController;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ClawToolHandler.Event_busHandler;
@@ -13,16 +12,8 @@ import by.dragonsurvivalteam.dragonsurvival.common.items.DragonSurvivalCreativeT
 import by.dragonsurvivalteam.dragonsurvival.common.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
-import by.dragonsurvivalteam.dragonsurvival.util.BiomeDictionaryHelper;
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.MobSpawnSettings;
-import net.minecraft.world.level.biome.MobSpawnSettings.SpawnerData;
-import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
@@ -34,14 +25,9 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import software.bernie.geckolib3.GeckoLib;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
 
 @Mod( DragonSurvivalMod.MODID )
 public class DragonSurvivalMod{
@@ -78,20 +64,20 @@ public class DragonSurvivalMod{
 
 	@SubscribeEvent
 	public void biomeLoadingEvent(BiomeLoadingEvent event){
-		if(ConfigHandler.COMMON.predatorSpawnWeight.get() > 0){
-			List<BiomeDictionary.Type> includeList = Arrays.asList(BiomeDictionaryHelper.toBiomeTypeArray(ConfigHandler.COMMON.predatorBiomesInclude.get()));
-			List<BiomeDictionary.Type> excludeList = Arrays.asList(BiomeDictionaryHelper.toBiomeTypeArray(ConfigHandler.COMMON.predatorBiomesExclude.get()));
-			List<MobSpawnSettings.SpawnerData> spawns = event.getSpawns().getSpawner(MobCategory.MONSTER);
-			ResourceLocation biomeName = event.getName();
-			if(biomeName == null){
-				return;
-			}
-			ResourceKey<Biome> biome = ResourceKey.create(ForgeRegistries.Keys.BIOMES, biomeName);
-			Set<BiomeDictionary.Type> biomeTypes = BiomeDictionary.getTypes(biome);
-			if(spawns.stream().anyMatch(x -> x.type.getCategory() == MobCategory.MONSTER) && biomeTypes.stream().anyMatch(x -> includeList.contains(x) && biomeTypes.stream().noneMatch(excludeList::contains))){
-				spawns.add(new SpawnerData(DSEntities.MAGICAL_BEAST, ConfigHandler.COMMON.predatorSpawnWeight.get(), ConfigHandler.COMMON.minPredatorSpawn.get(), ConfigHandler.COMMON.maxPredatorSpawn.get()));
-			}
-		}
+//		if(ConfigHandler.COMMON.predatorSpawnWeight.get() > 0){
+//			List<BiomeDictionary.Type> includeList = Arrays.asList(BiomeDictionaryHelper.toBiomeTypeArray(ConfigHandler.COMMON.predatorBiomesInclude.get()));
+//			List<BiomeDictionary.Type> excludeList = Arrays.asList(BiomeDictionaryHelper.toBiomeTypeArray(ConfigHandler.COMMON.predatorBiomesExclude.get()));
+//			List<MobSpawnSettings.SpawnerData> spawns = event.getSpawns().getSpawner(MobCategory.MONSTER);
+//			ResourceLocation biomeName = event.getName();
+//			if(biomeName == null){
+//				return;
+//			}
+//			ResourceKey<Biome> biome = ResourceKey.create(ForgeRegistries.Keys.BIOMES, biomeName);
+//			Set<BiomeDictionary.Type> biomeTypes = BiomeDictionary.getTypes(biome);
+//			if(spawns.stream().anyMatch(x -> x.type.getCategory() == MobCategory.MONSTER) && biomeTypes.stream().anyMatch(x -> includeList.contains(x) && biomeTypes.stream().noneMatch(excludeList::contains))){
+//				spawns.add(new SpawnerData(DSEntities.MAGICAL_BEAST, ConfigHandler.COMMON.predatorSpawnWeight.get(), ConfigHandler.COMMON.minPredatorSpawn.get(), ConfigHandler.COMMON.maxPredatorSpawn.get()));
+//			}
+//		}
 	}
 
 	@SubscribeEvent
