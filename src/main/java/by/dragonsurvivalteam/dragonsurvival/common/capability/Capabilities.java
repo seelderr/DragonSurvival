@@ -28,6 +28,9 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.network.PacketDistributor;
 
 import javax.annotation.Nullable;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @EventBusSubscriber
 public class Capabilities{
@@ -84,13 +87,19 @@ public class Capabilities{
 		}
 	}
 
+	private static final ScheduledExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadScheduledExecutor();
+
+
+	//TODO Find a better solution to fix the error of data being synced too early on LAN
 	@SubscribeEvent
 	public static void onLoggedIn(PlayerEvent.PlayerLoggedInEvent loggedInEvent){
-		PlayerEntity player = loggedInEvent.getPlayer();
-		if(!player.level.isClientSide){
-			DragonStateProvider.getCap(player).ifPresent(cap -> NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)player), new RequestClientData(cap.getType(), cap.getLevel())));
-			syncCapability(player);
-		}
+		EXECUTOR_SERVICE.schedule(() -> {
+			PlayerEntity player = loggedInEvent.getPlayer();
+			if(!player.level.isClientSide){
+				DragonStateProvider.getCap(player).ifPresent(cap -> NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)player), new RequestClientData(cap.getType(), cap.getLevel())));
+				syncCapability(player);
+			}
+		}, 1, TimeUnit.SECONDS);
 	}
 
 	public static void syncCapability(PlayerEntity player){

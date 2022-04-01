@@ -4,6 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.hitbox.DragonHitBox;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.hitbox.DragonHitboxPart;
+import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.entity.player.SynchronizeDragonCap;
@@ -52,7 +53,7 @@ public class CapabilityController{
 	 */
 	@SubscribeEvent
 	public static void onEntityInteract(PlayerInteractEvent.EntityInteractSpecific event){
-		Entity ent = event.getEntity();
+		Entity ent = event.getTarget();
 
 		if(ent instanceof DragonHitBox){
 			ent = ((DragonHitBox)ent).player;
@@ -63,24 +64,24 @@ public class CapabilityController{
 		if(!(ent instanceof PlayerEntity) || event.getHand() != Hand.MAIN_HAND){
 			return;
 		}
+
 		PlayerEntity target = (PlayerEntity)ent;
 		PlayerEntity self = event.getPlayer();
-		DragonStateProvider.getCap(target).ifPresent(targetCap -> {
-			if(targetCap.isDragon() && target.getPose() == Pose.CROUCHING && targetCap.getSize() >= 40 && !target.isVehicle()){
-				DragonStateProvider.getCap(self).ifPresent(selfCap -> {
-					if(!selfCap.isDragon() || selfCap.getLevel() == DragonLevel.BABY){
-						if(event.getTarget() instanceof ServerPlayerEntity){
-							self.startRiding(target);
-							((ServerPlayerEntity)event.getTarget()).connection.send(new SSetPassengersPacket(target));
-							targetCap.setPassengerId(self.getId());
-							NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> target), new SynchronizeDragonCap(target.getId(), targetCap.isHiding(), targetCap.getType(), targetCap.getSize(), targetCap.hasWings(), targetCap.getLavaAirSupply(), self.getId()));
-						}
-						event.setCancellationResult(ActionResultType.SUCCESS);
-						event.setCanceled(true);
-					}
-				});
+		DragonStateHandler targetCap = DragonUtils.getHandler(target);
+		DragonStateHandler selfCap = DragonUtils.getHandler(self);
+
+		if(targetCap.isDragon() && target.getPose() == Pose.CROUCHING && targetCap.getSize() >= DragonLevel.ADULT.size && !target.isVehicle()){
+			if(!selfCap.isDragon() || selfCap.getLevel() == DragonLevel.BABY){
+				if(event.getTarget() instanceof ServerPlayerEntity){
+					self.startRiding(target);
+					((ServerPlayerEntity)event.getTarget()).connection.send(new SSetPassengersPacket(target));
+					targetCap.setPassengerId(self.getId());
+					NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> target), new SynchronizeDragonCap(target.getId(), targetCap.isHiding(), targetCap.getType(), targetCap.getSize(), targetCap.hasWings(), targetCap.getLavaAirSupply(), self.getId()));
+				}
+				event.setCancellationResult(ActionResultType.SUCCESS);
+				event.setCanceled(true);
 			}
-		});
+		}
 	}
 
 	@SubscribeEvent
