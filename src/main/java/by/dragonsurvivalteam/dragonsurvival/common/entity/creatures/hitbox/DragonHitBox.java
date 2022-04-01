@@ -5,17 +5,26 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonSta
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import com.google.common.collect.Lists;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -27,7 +36,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
 
-public class DragonHitBox extends Mob{
+public class DragonHitBox extends LivingEntity{
 	public static final EntityDataAccessor<Integer> PLAYER_ID = SynchedEntityData.defineId(DragonHitBox.class, EntityDataSerializers.INT);
 
 	private final DragonHitboxPart[] subEntities;
@@ -43,7 +52,7 @@ public class DragonHitBox extends Mob{
 	private double lastSize;
 	private Pose lastPose;
 
-	public DragonHitBox(EntityType<? extends Mob> p_i48577_1_, Level p_i48580_2_){
+	public DragonHitBox(EntityType<? extends LivingEntity> p_i48577_1_, Level p_i48580_2_){
 		super(p_i48577_1_, p_i48580_2_);
 
 		this.head = new DragonHitboxPart(this, "head", 0.5F, 0.5F);
@@ -200,8 +209,26 @@ public class DragonHitBox extends Mob{
 	}
 
 	@Override
+	public Iterable<ItemStack> getArmorSlots(){
+		return player != null ? player.getArmorSlots() : Lists.newArrayList();
+	}
+
+	@Override
+	public ItemStack getItemBySlot(EquipmentSlot pSlot){
+		return player != null ? player.getItemBySlot(pSlot) : ItemStack.EMPTY;
+	}
+
+	@Override
+	public void setItemSlot(EquipmentSlot pSlot, ItemStack pStack){}
+
+	@Override
 	public boolean isPickable(){
 		return level.isClientSide && !isOwner();
+	}
+
+	@Override
+	public HumanoidArm getMainArm(){
+		return player != null ? player.getMainArm() : HumanoidArm.LEFT;
 	}
 
 	@OnlyIn( Dist.CLIENT )
@@ -229,6 +256,100 @@ public class DragonHitBox extends Mob{
 		return getMaxAirSupply();
 	}
 
+
+	@Override
+	public InteractionResult interact(Player pPlayer, InteractionHand pHand){
+		return player != null ? player.interact(pPlayer, pHand) : InteractionResult.PASS;
+	}
+
+	@Override
+	protected void playHurtSound(DamageSource pSource){}
+
+	@Override
+	protected SoundEvent getHurtSound(DamageSource pDamageSource){
+		return null;
+	}
+
+	@Override
+	protected SoundEvent getDeathSound(){
+		return null;
+	}
+
+	@Override
+	public Fallsounds getFallSounds(){
+		return null;
+	}
+
+	@Override
+	protected void playBlockFallSound(){}
+
+	@Override
+	protected float getSoundVolume(){
+		return 0;
+	}
+
+	@Override
+	protected SoundEvent getDrinkingSound(ItemStack pStack){
+		return null;
+	}
+
+	@Override
+	public SoundEvent getEatingSound(ItemStack pItemStack){
+		return null;
+	}
+
+	@Override
+	protected void playStepSound(BlockPos pPos, BlockState pBlock){}
+
+	@Override
+	public void playSound(SoundEvent pSound, float pVolume, float pPitch){}
+
+	@Override
+	protected void playEntityOnFireExtinguishedSound(){}
+
+	@Override
+	public boolean canCollideWith(Entity pEntity){
+		return false;
+	}
+
+	@Override
+	public boolean canBeCollidedWith(){
+		return false;
+	}
+
+	@Override
+	public boolean isColliding(BlockPos pPos, BlockState pState){
+		return false;
+	}
+
+	@Override
+	protected void playSwimSound(float pVolume){}
+
+	@Override
+	public boolean removeAllEffects(){
+		return super.removeAllEffects();
+	}
+
+	@Override
+	public MobEffectInstance removeEffectNoUpdate(@org.jetbrains.annotations.Nullable MobEffect pPotioneffectin){
+		return player != null ? player.removeEffectNoUpdate(pPotioneffectin) : super.removeEffectNoUpdate(pPotioneffectin);
+	}
+
+	@Override
+	public boolean removeEffect(MobEffect pEffect){
+		return player != null ? player.removeEffect(pEffect) : super.removeEffect(pEffect);
+	}
+
+	@Override
+	public MobEffectInstance getEffect(MobEffect pPotion){
+		return player != null ? player.getEffect(pPotion) : super.getEffect(pPotion);
+	}
+
+	@Override
+	public boolean addEffect(MobEffectInstance p_147208_, @org.jetbrains.annotations.Nullable Entity p_147209_){
+		return player != null ? player.addEffect(p_147208_, p_147209_) : super.addEffect(p_147208_, p_147209_);
+	}
+
 	@Override
 	public Vec3 getDeltaMovement(){
 		return player != null ? player.getDeltaMovement() : super.getDeltaMovement();
@@ -252,7 +373,33 @@ public class DragonHitBox extends Mob{
 
 	@Override
 	public boolean isOnFire(){
-		return false;
+		return player != null ? player.isOnFire() : super.isOnFire();
+	}
+
+	@Override
+	public void setSecondsOnFire(int pSeconds){
+		if(player != null){
+			player.setSecondsOnFire(pSeconds);
+		}
+	}
+
+	@Override
+	public void setRemainingFireTicks(int pTicks){
+		if(player != null){
+			player.setRemainingFireTicks(pTicks);
+		}
+	}
+
+	@Override
+	public int getRemainingFireTicks(){
+		return player != null ? player.getRemainingFireTicks() : super.getRemainingFireTicks();
+	}
+
+	@Override
+	public void clearFire(){
+		if(player != null){
+			player.clearFire();
+		}
 	}
 
 	public boolean is(Entity entity){

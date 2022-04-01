@@ -6,6 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.HelpButto
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.TabButton;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientEvents;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
+import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonGrowthHandler;
@@ -19,20 +20,14 @@ import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawRender;
 import by.dragonsurvivalteam.dragonsurvival.network.container.OpenInventory;
 import by.dragonsurvivalteam.dragonsurvival.network.entity.player.SortInventoryPacket;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.DragonContainer;
-import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
-import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
-import com.mojang.blaze3d.vertex.VertexFormat.Mode;
-import com.mojang.math.Matrix4f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
-import net.minecraft.client.gui.screens.inventory.MenuAccess;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -48,14 +43,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.StringJoiner;
-import java.util.stream.Collectors;
 
-public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer> implements MenuAccess<DragonContainer>{
+public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer>{
 	public static final ResourceLocation INVENTORY_TOGGLE_BUTTON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/inventory_button.png");
 	public static final ResourceLocation SORTING_BUTTON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/sorting_button.png");
 	public static final ResourceLocation SETTINGS_BUTTON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/settings_button.png");
 	static final ResourceLocation BACKGROUND = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_inventory.png");
-	static final double PI_TWO = (Math.PI * 2.0);
 	private static final ResourceLocation CLAWS_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_claws.png");
 	private static final ResourceLocation DRAGON_CLAW_BUTTON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_claws_button.png");
 	private static final ResourceLocation DRAGON_CLAW_CHECKMARK = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_claws_tetris.png");
@@ -76,11 +69,6 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 		this.imageWidth = 203;
 		this.imageHeight = 166;
 	}
-
-	public int getLeftPos(){
-		return leftPos;
-	}
-
 	@Override
 	protected void init(){
 		super.init();
@@ -295,7 +283,10 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 		stack.pushPose();
 
 		RenderSystem.enableBlend();
+		stack.pushPose();
+		stack.translate(0,0, -200);
 		this.blit(stack, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+		stack.popPose();
 		RenderSystem.disableBlend();
 
 		RenderSystem.enableScissor((int)((leftPos + 26) * Minecraft.getInstance().getWindow().getGuiScale()), (int)((height * Minecraft.getInstance().getWindow().getGuiScale()) - (topPos + 79) * Minecraft.getInstance().getWindow().getGuiScale()), (int)(76 * Minecraft.getInstance().getWindow().getGuiScale()), (int)(70 * Minecraft.getInstance().getWindow().getGuiScale()));
@@ -307,6 +298,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 		InventoryScreen.renderEntityInInventory(i + 65, j + 60, (int)sizef, (float)(i + 51 - mouseX), (float)(j + 75 - 50 - mouseY), this.minecraft.player);
 
 		RenderSystem.disableScissor();
+		RenderSystem.clearColor(1f, 1f, 1f, 1f);
 		stack.popPose();
 
 
@@ -343,29 +335,29 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 			RenderSystem.disableTexture();
 			Color c = new Color(99, 99, 99);
 			RenderSystem.setShaderColor(c.getRed() / 255.0f, c.getBlue() / 255.0f, c.getGreen() / 255.0f, 1.0f);
-			drawTexturedRing(stack, circleX + radius, circleY + radius, radius - thickness, radius, 0, 0, 0, 128, sides, 1, 0);
+			RenderingUtils.drawTexturedRing(stack, circleX + radius, circleY + radius, radius - thickness, radius, 0, 0, 0, 128, sides, 1, 0);
 			RenderSystem.enableTexture();
 
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1.0f);
 			RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_" + handler.getType().name().toLowerCase() + ".png"));
-			drawTexturedCircle(stack, circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, sides, progress, -0.5);
+			RenderingUtils.drawTexturedCircle(stack, circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, sides, progress, -0.5);
 
 			RenderSystem.disableTexture();
-			RenderSystem.lineWidth(4.0F);
+			GL11.glLineWidth(4f);
 			if(handler.growing){
 				RenderSystem.setShaderColor(0F, 0F, 0F, 1F);
 			}else{
 				RenderSystem.setShaderColor(76 / 255F, 0F, 0F, 1F);
 			}
-			drawSmoothCircle(stack, circleX + radius, circleY + radius, radius, sides, 1, 0);
+			RenderingUtils.drawSmoothCircle(stack, circleX + radius, circleY + radius, radius, sides, 1, 0);
 
 			RenderSystem.setShaderColor(c.getRed() / 255.0f, c.getBlue() / 255.0f, c.getGreen() / 255.0f, 1.0f);
-			drawSmoothCircle(stack, circleX + radius, circleY + radius, radius - thickness, sides, 1, 0);
-			RenderSystem.lineWidth(1.0F);
+			RenderingUtils.drawSmoothCircle(stack, circleX + radius, circleY + radius, radius - thickness, sides, 1, 0);
+			GL11.glLineWidth(1.0F);
 
 			c = c.brighter();
 			RenderSystem.setShaderColor(c.getRed() / 255.0f, c.getBlue() / 255.0f, c.getGreen() / 255.0f, 1.0f);
-			drawTexturedRing(stack, circleX + radius, circleY + radius, 0, radius - thickness, 0, 0, 0, 0, sides, 1, 0);
+			RenderingUtils.drawSmoothCircle(stack, circleX + radius, circleY + radius, radius, sides, 1, 0);
 
 			RenderSystem.enableTexture();
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1.0f);
@@ -375,130 +367,6 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 
 			stack.popPose();
 		}
-	}
-
-	public static void drawTexturedCircle(PoseStack stack, double x, double y, double radius, double u, double v, double texRadius, int sides, double percent, double startAngle){
-		Matrix4f matrix4f = stack.last().pose();
-
-		double rad;
-		double sin;
-		double cos;
-
-		double z = 100;
-
-		RenderSystem.enableBlend();
-		RenderSystem.setShader(GameRenderer::getPositionTexShader);
-		final BufferBuilder buffer = Tesselator.getInstance().getBuilder();
-
-		GL11.glEnable(GL11.GL_LINE_SMOOTH);
-		GL11.glHint(GL11.GL_LINE_SMOOTH_HINT, GL11.GL_NICEST);
-
-		buffer.begin(Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION_TEX);
-		buffer.vertex(matrix4f, (float)x, (float)y, (float)z).uv((float)u, (float)v).endVertex();
-
-		for(int i = 0; i <= percent * sides; i++){
-			rad = PI_TWO * ((double)i / (double)sides + startAngle);
-			sin = Math.sin(rad);
-			cos = Math.cos(rad);
-
-			float xPos = (float)(x + sin * radius);
-			float yPos = (float)(y + cos * radius);
-			buffer.vertex(matrix4f, xPos, yPos, (float)z).uv((float)(u + sin * texRadius), (float)(v + cos * texRadius)).endVertex();
-		}
-
-		if(percent == 1.0){
-			rad = PI_TWO * (percent + startAngle);
-			sin = Math.sin(rad);
-			cos = Math.cos(rad);
-			buffer.vertex(matrix4f, (float)(x + sin * radius), (float)(y + cos * radius), (float)z).uv((float)(u + sin * texRadius), (float)(v + cos * texRadius)).endVertex();
-		}
-		RenderSystem.disableBlend();
-		GL11.glDisable(GL11.GL_LINE_SMOOTH);
-		buffer.end();
-		BufferUploader.end(buffer);
-	}
-
-	public static void drawSmoothCircle(PoseStack stack, double x, double y, double radius, int sides, double percent, double startAngle){
-		Matrix4f matrix4f = stack.last().pose();
-		double rad;
-		double sin;
-		double cos;
-
-		double z = 100;
-
-		float[] colors = RenderSystem.getShaderColor();
-
-		RenderSystem.enableBlend();
-		RenderSystem.setShader(GameRenderer::getPositionColorShader);
-		final BufferBuilder buffer = Tesselator.getInstance().getBuilder();
-
-		GL11.glEnable(GL11.GL_LINE_SMOOTH);
-		GL11.glHint(GL11.GL_LINE_SMOOTH_HINT, GL11.GL_NICEST);
-
-		buffer.begin(Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION_COLOR);
-		buffer.vertex(matrix4f, (float)x, (float)y, (float)z).color(colors[0], colors[1], colors[2], 1f).endVertex();
-
-		for(int i = 0; i <= percent * sides; i++){
-			rad = PI_TWO * ((double)i / (double)sides + startAngle);
-			sin = Math.sin(rad);
-			cos = Math.cos(rad);
-
-			float xPos = (float)(x + sin * radius);
-			float yPos = (float)(y + cos * radius);
-			buffer.vertex(matrix4f, xPos, yPos, (float)z).color(colors[0], colors[1], colors[2], 1f).endVertex();
-		}
-
-		rad = PI_TWO * (percent + startAngle);
-		sin = Math.sin(rad);
-		cos = Math.cos(rad);
-		buffer.vertex(matrix4f, (float)(x + sin * radius), (float)(y + cos * radius), (float)z).color(colors[0], colors[1], colors[2], 1f).endVertex();
-
-		RenderSystem.disableBlend();
-		GL11.glDisable(GL11.GL_LINE_SMOOTH);
-		buffer.end();
-		BufferUploader.end(buffer);
-	}
-
-	public static void drawTexturedRing(PoseStack stack, double x, double y, double innerRadius, double outerRadius, double u, double v, double texInnerRadius, double texOuterRadius, int sides, double percent, double startAngle){
-		Matrix4f matrix4f = stack.last().pose();
-
-		double rad;
-		double sin;
-		double cos;
-
-		double z = 100;
-
-		RenderSystem.enableBlend();
-		RenderSystem.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
-		RenderSystem.setShader(GameRenderer::getPositionTexShader);
-
-		GL11.glEnable(GL11.GL_LINE_SMOOTH);
-		GL11.glHint(GL11.GL_LINE_SMOOTH_HINT, GL11.GL_NICEST);
-
-		final BufferBuilder buffer = Tesselator.getInstance().getBuilder();
-		buffer.begin(Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION_TEX);
-
-		for(int i = 0; i <= percent * sides; i++){
-			rad = PI_TWO * ((double)i / (double)sides + startAngle);
-			sin = Math.sin(rad);
-			cos = -Math.cos(rad);
-
-			buffer.vertex(x + sin * outerRadius, y + cos * outerRadius, z).uv((float)(u + sin * texOuterRadius), (float)(v + cos * texOuterRadius)).endVertex();
-
-			buffer.vertex(x + sin * innerRadius, y + cos * innerRadius, z).uv((float)(u + sin * texInnerRadius), (float)(v + cos * texInnerRadius)).endVertex();
-		}
-
-		rad = PI_TWO * (percent + startAngle);
-		sin = Math.sin(rad);
-		cos = -Math.cos(rad);
-
-		buffer.vertex(x + sin * outerRadius, y + cos * outerRadius, z).uv((float)(u + sin * texOuterRadius), (float)(v + cos * texOuterRadius)).endVertex();
-
-		buffer.vertex(x + sin * innerRadius, y + cos * innerRadius, z).uv((float)(u + sin * texInnerRadius), (float)(v + cos * texInnerRadius)).endVertex();
-
-		Tesselator.getInstance().end();
-		GL11.glDisable(GL11.GL_LINE_SMOOTH);
-		RenderSystem.disableBlend();
 	}
 
 	public boolean mouseReleased(double p_mouseReleased_1_, double p_mouseReleased_3_, int p_mouseReleased_5_){
@@ -521,11 +389,10 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 		return super.keyPressed(p_231046_1_, p_231046_2_, p_231046_3_);
 	}
 
-	@Override
-	public void render(PoseStack pPoseStack, int pMouseX, int pMouseY, float pPartialTick){
+	public void render(PoseStack pPoseStack, int pMouseX, int pMouseY, float pPartialTick) {
 		this.renderBackground(pPoseStack);
-
+		this.renderBg(pPoseStack, pPartialTick, pMouseX, pMouseY);
 		super.render(pPoseStack, pMouseX, pMouseY, pPartialTick);
-
+		this.renderTooltip(pPoseStack, pMouseX, pMouseY);
 	}
 }

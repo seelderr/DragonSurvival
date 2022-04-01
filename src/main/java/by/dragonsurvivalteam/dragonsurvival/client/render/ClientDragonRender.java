@@ -461,9 +461,9 @@ public class ClientDragonRender{
 
 		PoseStack matrixstack = new PoseStack();
 		matrixstack.pushPose();
-		matrixstack.translate((float)x, (float)y, 1050.0F);
+		matrixstack.translate((float)x, (float)y, 0);
 		matrixstack.scale(1.0F, 1.0F, -1.0F);
-		matrixstack.translate(0.0D, 0.0D, 1000.0D);
+		matrixstack.translate(0.0D, 0.0D, 0);
 		matrixstack.scale(scale, scale, scale);
 		Quaternion quaternion = Vector3f.ZP.rotationDegrees(180.0F);
 		Quaternion quaternion1 = Vector3f.XP.rotationDegrees(yRot * 10.0F);

@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.AbilityScreen;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.utils.TooltipRender;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.HelpButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.SkillProgressButton;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.DSBlocks;
@@ -14,6 +15,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
@@ -130,9 +132,22 @@ public class ToolTipHandler{
 	@SubscribeEvent
 	public static void postScreenRender(DrawScreenEvent.Post event){
 		if(Minecraft.getInstance().screen != null && Minecraft.getInstance().screen.children != null){
-			for(GuiEventListener btn : Minecraft.getInstance().screen.children){
-				if(btn instanceof HelpButton && ((HelpButton)btn).isHoveredOrFocused()){
-					((HelpButton)btn).renderToolTip(event.getPoseStack(), event.getMouseX(), event.getMouseY());
+			if(Minecraft.getInstance().screen instanceof TooltipRender){
+				for(GuiEventListener btn : Minecraft.getInstance().screen.children){
+					if(btn instanceof AbstractWidget){
+						if(((AbstractWidget)btn).isHoveredOrFocused()){
+							((AbstractWidget)btn).renderToolTip(event.getPoseStack(), event.getMouseX(), event.getMouseY());
+						}
+					}
+				}
+
+			}else{
+				for(GuiEventListener btn : Minecraft.getInstance().screen.children){
+					if(btn instanceof AbstractWidget){
+						if(btn instanceof TooltipRender && ((AbstractWidget)btn).isHoveredOrFocused()){
+							((AbstractWidget)btn).renderToolTip(event.getPoseStack(), event.getMouseX(), event.getMouseY());
+						}
+					}
 				}
 			}
 		}

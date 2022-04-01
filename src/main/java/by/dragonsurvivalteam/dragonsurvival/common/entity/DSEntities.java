@@ -1,19 +1,15 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
-import by.dragonsurvivalteam.dragonsurvival.common.blocks.DragonBeacon;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.*;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.hitbox.DragonHitBox;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.monsters.MagicalPredator;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.*;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.VillagerRelationsHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
-import by.dragonsurvivalteam.dragonsurvival.server.tileentity.DragonBeaconTileEntity;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
@@ -27,11 +23,9 @@ import net.minecraft.world.entity.monster.Pillager;
 import net.minecraft.world.entity.monster.Vindicator;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.npc.VillagerProfession;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.phys.AABB;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -67,10 +61,10 @@ public class DSEntities{
 
 	@SubscribeEvent
 	public static void attributeCreationEvent(EntityAttributeCreationEvent event){
-		event.put(MAGICAL_BEAST, MagicalPredator.createMonsterAttributes().build());
+//		event.put(MAGICAL_BEAST, MagicalPredator.createMonsterAttributes().build());
 		event.put(DRAGON, DragonEntity.createLivingAttributes().build());
 		event.put(DRAGON_ARMOR, DragonEntity.createLivingAttributes().build());
-		event.put(DRAGON_HITBOX, DragonHitBox.createMobAttributes().build());
+		event.put(DRAGON_HITBOX, DragonHitBox.createLivingAttributes().build());
 		event.put(HUNTER_HOUND, Wolf.createAttributes().add(Attributes.MOVEMENT_SPEED, ConfigHandler.COMMON.houndSpeed.get()).add(Attributes.ATTACK_DAMAGE, ConfigHandler.COMMON.houndDamage.get()).add(Attributes.MAX_HEALTH, ConfigHandler.COMMON.houndHealth.get()).build());
 		event.put(SHOOTER_HUNTER, Pillager.createAttributes().add(Attributes.MOVEMENT_SPEED, ConfigHandler.COMMON.hunterSpeed.get()).add(Attributes.MAX_HEALTH, ConfigHandler.COMMON.houndHealth.get()).add(Attributes.ARMOR, ConfigHandler.COMMON.hunterArmor.get()).add(Attributes.ATTACK_DAMAGE, ConfigHandler.COMMON.hunterDamage.get()).build());
 		event.put(SQUIRE_HUNTER, Vindicator.createAttributes().add(Attributes.MOVEMENT_SPEED, ConfigHandler.COMMON.squireSpeed.get()).add(Attributes.ATTACK_DAMAGE, ConfigHandler.COMMON.squireDamage.get()).add(Attributes.ARMOR, ConfigHandler.COMMON.squireArmor.get()).add(Attributes.MAX_HEALTH, ConfigHandler.COMMON.squireHealth.get()).build());
@@ -85,7 +79,7 @@ public class DSEntities{
 		IForgeRegistry<EntityType<?>> registry = event.getRegistry();
 		DRAGON = register(registry, "dummy_dragon", new EntityType<>(DragonEntity::new, MobCategory.MISC, true, false, false, false, ImmutableSet.of(), EntityDimensions.fixed(0.9f, 1.9f), 0, 0));
 		DRAGON_ARMOR = register(registry, "dragon_armor", new EntityType<>(DragonEntity::new, MobCategory.MISC, true, false, false, false, ImmutableSet.of(), EntityDimensions.fixed(0.9f, 1.9f), 0, 0));
-		DRAGON_HITBOX = register(registry, "dragon_hitbox", EntityType.Builder.of(DragonHitBox::new, MobCategory.MONSTER).sized(0.5f, 0.5f).updateInterval(1).clientTrackingRange(1).build("dragon_hitbox"));
+		DRAGON_HITBOX = register(registry, "dragon_hitbox", new EntityType<>(DragonHitBox::new, MobCategory.MISC, true, false, false, false, ImmutableSet.of(), EntityDimensions.fixed(0.5f, 0.5f), 1, 1));
 
 		BOLAS_ENTITY = register(registry, "bolas", cast(EntityType.Builder.of((p_create_1_, p_create_2_) -> new Bolas(p_create_2_), MobCategory.MISC).sized(0.25F, 0.25F).clientTrackingRange(4).updateInterval(10).build("bolas")));
 
@@ -148,7 +142,7 @@ public class DSEntities{
 	@SubscribeEvent( priority = EventPriority.LOWEST )
 	public static void registerSpawnEggs(RegistryEvent.Register<Item> event){
 		IForgeRegistry<Item> registry = event.getRegistry();
-		MAGICAL_BEAST = register(null, "magical_predator_entity", EntityType.Builder.of(MagicalPredator::new, MobCategory.MONSTER).sized(1.1f, 1.5625f).clientTrackingRange(64).updateInterval(1).build("magical_predator_entity"));
+//		MAGICAL_BEAST = register(null, "magical_predator_entity", EntityType.Builder.of(MagicalPredator::new, MobCategory.MONSTER).sized(1.1f, 1.5625f).clientTrackingRange(64).updateInterval(1).build("magical_predator_entity"));
 
 		HUNTER_HOUND = register(null, "hunter_hound", EntityType.Builder.of(HunterHoundEntity::new, MobCategory.MONSTER).sized(0.6F, 0.85F).clientTrackingRange(64).updateInterval(1).build("hunter_hound"));
 		SHOOTER_HUNTER = register(null, "shooter", EntityType.Builder.of(Shooter::new, MobCategory.MONSTER).sized(0.6F, 1.95F).clientTrackingRange(64).updateInterval(1).build("shooter"));
@@ -158,14 +152,14 @@ public class DSEntities{
 		PRINCE_ON_HORSE = register(null, "prince", EntityType.Builder.<PrinceHorseEntity>of(PrinceHorseEntity::new, MobCategory.MONSTER).sized(0.8f, 2.5f).clientTrackingRange(64).updateInterval(1).build("prince"));
 		PRINCESS_ON_HORSE = register(null, "princess", EntityType.Builder.<PrincesHorseEntity>of(PrincesHorseEntity::new, MobCategory.MONSTER).sized(0.8f, 2.5f).clientTrackingRange(64).updateInterval(1).build("princess"));
 
-		registerSpawnEgg(registry, MAGICAL_BEAST, 0x000000, 0xFFFFFF, (pEntityType, serverWorld, mobSpawnType, pPos, random) -> serverWorld.getEntitiesOfClass(Player.class, new AABB(pPos).inflate(50), player -> player.hasEffect(DragonEffects.PREDATOR_ANTI_SPAWN)).isEmpty() && !BlockPos.findClosestMatch(pPos, 10, 64, blockPos -> {
-			//this is expensive, might need to remove
-			if(serverWorld.getBlockEntity(blockPos) instanceof DragonBeaconTileEntity){
-				DragonBeaconTileEntity dbe = (DragonBeaconTileEntity)serverWorld.getBlockEntity(blockPos);
-				return dbe.type == DragonBeaconTileEntity.Type.MAGIC && serverWorld.getBlockState(blockPos).getValue(DragonBeacon.LIT);
-			}
-			return false;
-		}).isPresent());
+//		registerSpawnEgg(registry, MAGICAL_BEAST, 0x000000, 0xFFFFFF, (pEntityType, serverWorld, mobSpawnType, pPos, random) -> serverWorld.getEntitiesOfClass(Player.class, new AABB(pPos).inflate(50), player -> player.hasEffect(DragonEffects.PREDATOR_ANTI_SPAWN)).isEmpty() && !BlockPos.findClosestMatch(pPos, 10, 64, blockPos -> {
+//			//this is expensive, might need to remove
+//			if(serverWorld.getBlockEntity(blockPos) instanceof DragonBeaconTileEntity){
+//				DragonBeaconTileEntity dbe = (DragonBeaconTileEntity)serverWorld.getBlockEntity(blockPos);
+//				return dbe.type == DragonBeaconTileEntity.Type.MAGIC && serverWorld.getBlockState(blockPos).getValue(DragonBeacon.LIT);
+//			}
+//			return false;
+//		}).isPresent());
 
 		registerSpawnEgg(registry, HUNTER_HOUND, 10510648, 8934192, null);
 		registerSpawnEgg(registry, SHOOTER_HUNTER, 12486764, 2690565, null);

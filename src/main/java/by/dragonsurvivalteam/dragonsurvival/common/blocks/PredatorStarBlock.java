@@ -2,7 +2,6 @@ package by.dragonsurvivalteam.dragonsurvival.common.blocks;
 
 import by.dragonsurvivalteam.dragonsurvival.common.DamageSources;
 import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.monsters.MagicalPredator;
 import by.dragonsurvivalteam.dragonsurvival.common.items.DSItems;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
@@ -145,9 +144,9 @@ public class PredatorStarBlock extends Block implements SimpleWaterloggedBlock, 
 			target.hurt(DamageSources.STAR_DRAIN, Float.MAX_VALUE);
 			worldIn.destroyBlock(pos, false);
 			if(new Random().nextDouble() < ConfigHandler.COMMON.predatorStarSpawnChance.get() && worldIn.getEntitiesOfClass(Player.class, new AABB(target.blockPosition()).inflate(50), playerEntity -> playerEntity.hasEffect(DragonEffects.PREDATOR_ANTI_SPAWN)).isEmpty()){
-				MagicalPredator beast = DSEntities.MAGICAL_BEAST.create(worldIn);
-				worldIn.addFreshEntity(beast);
-				beast.teleportTo(pos.getX(), pos.getY(), pos.getZ());
+//				MagicalPredator beast = DSEntities.MAGICAL_BEAST.create(worldIn);
+//				worldIn.addFreshEntity(beast);
+//				beast.teleportTo(pos.getX(), pos.getY(), pos.getZ());
 			}
 		}else if(entity instanceof ItemEntity){
 			ItemEntity itemEntity = (ItemEntity)entity;

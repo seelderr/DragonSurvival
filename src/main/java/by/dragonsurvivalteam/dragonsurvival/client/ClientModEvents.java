@@ -84,7 +84,6 @@ public class ClientModEvents{
 
 		OverlayRegistry.enableOverlay(ForgeIngameGui.FOOD_LEVEL_ELEMENT, false);
 		OverlayRegistry.enableOverlay(ForgeIngameGui.EXPERIENCE_BAR_ELEMENT, false);
-		OverlayRegistry.enableOverlay(ForgeIngameGui.AIR_LEVEL_ELEMENT, false);
 
 		OverlayRegistry.registerOverlayAbove(ForgeIngameGui.FOOD_LEVEL_ELEMENT, "DRAGON_FOOD_BAR", DragonFoodHandler::onRenderFoodBar);
 		OverlayRegistry.registerOverlayAbove(ForgeIngameGui.EXPERIENCE_BAR_ELEMENT, "MAGIC_EXP_BAR", ClientMagicHUDHandler::cancelExpBar);

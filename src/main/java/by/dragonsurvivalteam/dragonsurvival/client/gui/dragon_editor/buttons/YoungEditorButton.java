@@ -10,7 +10,6 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.Mth;
 
 import java.util.Arrays;
-import java.util.stream.Collectors;
 
 public class YoungEditorButton extends Button{
 	private final DragonEditorScreen dragonEditorScreen;
@@ -35,7 +34,7 @@ public class YoungEditorButton extends Button{
 	public void renderButton(PoseStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_){
 		int j = isHovered || dragonEditorScreen.level == DragonLevel.YOUNG ? 16777215 : 10526880;
 		stack.pushPose();
-		stack.translate(0, 0, 500);
+		stack.translate(0, 0, 300);
 		TextRenderUtil.drawCenteredScaledText(stack, x + (width / 2), y + 4, 1.5f, this.getMessage().getString(), j | Mth.ceil(this.alpha * 255.0F) << 24);
 		stack.popPose();
 	}

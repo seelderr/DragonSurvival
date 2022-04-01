@@ -4,8 +4,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.Capabilities;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.DSEntities;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.monsters.MagicalPredator;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ClawToolHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.items.DSItems;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
@@ -62,9 +60,9 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.List;
-import java.util.stream.StreamSupport;
 
 import static by.dragonsurvivalteam.dragonsurvival.misc.DragonLevel.ADULT;
 
@@ -147,9 +145,9 @@ public class EventHandler{
 		Level world = living.level;
 		if(living instanceof Animal && living.level.getRandom().nextDouble() < ConfigHandler.COMMON.predatorAnimalSpawnChance.get()){
 			if(world.getEntitiesOfClass(Player.class, new AABB(living.blockPosition()).inflate(50), player -> player.hasEffect(DragonEffects.PREDATOR_ANTI_SPAWN)).isEmpty()){
-				MagicalPredator beast = DSEntities.MAGICAL_BEAST.create(living.level);
-				living.level.addFreshEntity(beast);
-				beast.teleportToWithTicket(living.getX(), living.getY(), living.getZ());
+//				MagicalPredator beast = DSEntities.MAGICAL_BEAST.create(living.level);
+//				living.level.addFreshEntity(beast);
+//				beast.teleportToWithTicket(living.getX(), living.getY(), living.getZ());
 			}
 		}
 	}
@@ -191,9 +189,9 @@ public class EventHandler{
 				ResourceLocation ores = new ResourceLocation(tagStringSplit[0], tagStringSplit[1]);
 				// Checks to make sure the ore does not drop itself or another ore from the tag (no going infinite with ores)
 				TagKey<Item> tagKey = TagKey.create(Registry.ITEM_REGISTRY, ores);
-				boolean hasItself = StreamSupport.stream(Registry.ITEM.getTagOrEmpty(tagKey).spliterator(), false).anyMatch((s) -> s.value() == block.asItem());
+				boolean isOre = ForgeRegistries.ITEMS.tags().getTag(tagKey).stream().anyMatch((s) -> s == block.asItem());
 
-				if(hasItself){
+				if(!isOre){
 					return;
 				}
 

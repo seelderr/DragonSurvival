@@ -50,6 +50,7 @@ public class EditorPartButton extends ExtendedButton{
 		this.screen = screen;
 		this.layer = layer;
 		message = new TranslatableComponent("ds.skin_part." + screen.type.name().toLowerCase(Locale.ROOT) + "." + value.toLowerCase(Locale.ROOT));
+		setBlitOffset(500);
 		generateImage();
 	}
 
@@ -144,7 +145,10 @@ public class EditorPartButton extends ExtendedButton{
 
 	@Override
 	public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){
-		GuiUtils.drawContinuousTexturedBox(mStack, BACKGROUND_TEXTURE, x, y, !active ? 32 : 0, isHoveredOrFocused() && active ? 32 : 0, width, height, 32, 32, 10, 0);
+		GuiUtils.drawContinuousTexturedBox(mStack, BACKGROUND_TEXTURE, x, y, !active ? 32 : 0, isHoveredOrFocused() && active ? 32 : 0, width, height, 32, 32, 10, getBlitOffset());
+
+		mStack.pushPose();
+		mStack.translate(0, 0, getBlitOffset());
 
 		if(texture != null){
 			RenderSystem.setShaderTexture(0, texture);
@@ -152,6 +156,7 @@ public class EditorPartButton extends ExtendedButton{
 		}
 
 		TextRenderUtil.drawScaledTextSplit(mStack, this.x + 4, this.y + (this.height - 10), 0.4f, message, getFGColor(), width - 9, 200);
+		mStack.popPose();
 	}
 
 	@Override

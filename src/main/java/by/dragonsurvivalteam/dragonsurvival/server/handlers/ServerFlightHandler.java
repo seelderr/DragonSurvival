@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.hitbox.DragonHitBox;
+import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonHitboxHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
@@ -184,15 +185,13 @@ public class ServerFlightHandler{
 					entities.removeIf((e) -> e.distanceTo(player) > range);
 					entities.remove(player);
 					entities.removeIf((e) -> e instanceof Player && !player.canHarmPlayer((Player)e));
-					entities.removeIf((e) -> e instanceof DragonHitBox && player == (((DragonHitBox)e).player));
+					entities.removeIf(DragonHitBox.class::isInstance);
 
 					for(Entity ent : entities){
-						if(player.hasPassenger(ent)){
+						if(player.hasPassenger(ent) || ent.getId() == DragonHitboxHandler.dragonHitboxes.getOrDefault(player.getId(), -1)){
 							continue;
 						}
-						if(ent instanceof LivingEntity){
-							LivingEntity entity = (LivingEntity)ent;
-
+						if(ent instanceof LivingEntity entity){
 							//Dont hit the same mob multiple times
 							if(entity.getLastHurtByMob() == player && entity.getLastHurtByMobTimestamp() <= entity.tickCount + 5 * 20){
 								continue;

@@ -29,7 +29,6 @@ public class TooltipRendering{
 		Optional<TooltipComponent> tooltipImage = itemStack.getTooltipImage();
 		List<ClientTooltipComponent> list = net.minecraftforge.client.ForgeHooksClient.gatherTooltipComponents(itemStack, textLines, tooltipImage, x, Math.min(x + 200, screen.width), screen.height, null, font);
 		screen.renderTooltipInternal(poseStack, list, x, y);
-		//screen.renderTooltip(poseStack, textLines, tooltipImage, x, y, font, itemStack);
 	}
 
 	public static void drawHoveringText(PoseStack poseStack, List<Component> textLines, int x, int y){

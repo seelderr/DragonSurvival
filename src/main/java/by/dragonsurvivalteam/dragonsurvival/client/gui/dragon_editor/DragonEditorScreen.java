@@ -6,6 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.SkinsScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.components.DragonEditorConfirmComponent;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.components.DragonUIRenderComponent;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.buttons.*;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.utils.TooltipRender;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.*;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientEvents;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.magic.ClientMagicHUDHandler;
@@ -39,7 +40,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -60,9 +60,8 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Collectors;
 
-public class DragonEditorScreen extends Screen{
+public class DragonEditorScreen extends Screen implements TooltipRender{
 	public static final int HISTORY_SIZE = ConfigHandler.CLIENT.editorHistory.get();
 	private static final ResourceLocation backgroundTexture = new ResourceLocation("textures/block/dirt.png");
 	public final ConcurrentHashMap<Integer, EvictingQueue<CompoundTag>> UNDO_QUEUES = new ConcurrentHashMap<>();
@@ -172,33 +171,14 @@ public class DragonEditorScreen extends Screen{
 		stack.pushPose();
 		stack.translate(0, 0, -600);
 		this.renderBackground(stack);
+		children().stream().filter(DragonUIRenderComponent.class::isInstance).toList().forEach((s) -> ((DragonUIRenderComponent)s).render(stack, pMouseX, pMouseY, pPartialTicks));
 		stack.popPose();
 
-		children().stream().filter(DragonUIRenderComponent.class::isInstance).toList().forEach((s) -> ((DragonUIRenderComponent)s).render(stack, pMouseX, pMouseY, pPartialTicks));
 		DragonAltarGUI.renderBorders(stack, backgroundTexture, 0, width, 32, height - 32, width, height);
 
-		for(Widget widget : new CopyOnWriteArrayList<>(this.renderables)){
-			widget.render(stack, pMouseX, pMouseY, pPartialTicks);
-		}
-
-		for(int x = 0; x < this.children.size(); ++x){
-			GuiEventListener ch = children.get(x);
-			if(!(ch instanceof DragonUIRenderComponent)){
-				((Widget)ch).render(stack, pMouseX, pMouseY, pPartialTicks);
-			}
-		}
-
-		for(int x = 0; x < this.children.size(); ++x){
-			GuiEventListener ch = children.get(x);
-			if(ch instanceof AbstractWidget && !(ch instanceof DragonUIRenderComponent)){
-				if(((AbstractWidget)ch).isHoveredOrFocused()){
-					((AbstractWidget)ch).renderToolTip(stack, pMouseX, pMouseY);
-				}
-			}
-		}
-
 		stack.pushPose();
-		stack.translate(0, 0, 500);
+		stack.translate(0, 0, 300);
+
 		TextRenderUtil.drawCenteredScaledText(stack, width / 2, 10, 2f, title.getString(), DyeColor.WHITE.getTextColor());
 
 		if(showUi){
@@ -213,6 +193,18 @@ public class DragonEditorScreen extends Screen{
 		if(showUi){
 			SkinsScreen.drawNonShadowLineBreak(stack, font, new TextComponent(WordUtils.capitalize(animations[curAnimation].replace("_", " "))), width / 2, height / 2 + 72, DyeColor.GRAY.getTextColor());
 		}
+
+		for(Widget widget : new CopyOnWriteArrayList<>(this.renderables)){
+			widget.render(stack, pMouseX, pMouseY, pPartialTicks);
+		}
+
+		for(int x = 0; x < this.children.size(); ++x){
+			GuiEventListener ch = children.get(x);
+			if(!(ch instanceof DragonUIRenderComponent)){
+				((Widget)ch).render(stack, pMouseX, pMouseY, pPartialTicks);
+			}
+		}
+
 		stack.popPose();
 	}
 
@@ -479,10 +471,6 @@ public class DragonEditorScreen extends Screen{
 			public void renderButton(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
 				selected = preset.skinAges.get(level).defaultSkin;
 				super.renderButton(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
-
-				if(isHoveredOrFocused()){
-					renderToolTip(pMatrixStack, pMouseX, pMouseY);
-				}
 			}
 
 			@Override
