@@ -61,7 +61,7 @@ public class MixinBlock{
 	}
 
 	@Shadow
-	private static List<ItemStack> getDrops(BlockState p_220077_0_, ServerWorld p_220077_1_, BlockPos p_220077_2_,
+	public static List<ItemStack> getDrops(BlockState p_220077_0_, ServerWorld p_220077_1_, BlockPos p_220077_2_,
 		@Nullable
 			TileEntity p_220077_3_,
 		@Nullable
