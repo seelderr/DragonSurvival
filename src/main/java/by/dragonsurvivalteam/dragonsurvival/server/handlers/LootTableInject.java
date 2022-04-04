@@ -37,10 +37,10 @@ public class LootTableInject{
 	                                                   "stronghold_library",
 	                                                   "underwater_ruin_big",
 	                                                   "underwater_ruin_small",
-	                                                   "woodland_mansion.json"};
+	                                                   "woodland_mansion"};
 
 	@SubscribeEvent
-	public void lootLoad(LootTableLoadEvent evt){
+	public static void lootLoad(LootTableLoadEvent evt){
 		String prefix = "minecraft:chests/";
 		String name = evt.getName().toString();
 
