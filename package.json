@@ -35,7 +35,6 @@
           "releaseRules": [
             {
               "type": "docs",
-              "scope": "lang",
               "release": "patch"
             }
           ]

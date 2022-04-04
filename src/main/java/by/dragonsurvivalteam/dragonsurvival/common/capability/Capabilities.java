@@ -55,6 +55,10 @@ public class Capabilities{
 		}
 	}
 
+	private static final ScheduledExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadScheduledExecutor();
+
+
+	//TODO Find a better solution to fix the error of data being synced too early on LAN
 	@SubscribeEvent
 	public static void register(RegisterCapabilitiesEvent ev){
 		ev.register(DragonStateHandler.class);
@@ -64,11 +68,13 @@ public class Capabilities{
 
 	@SubscribeEvent
 	public static void onLoggedIn(PlayerEvent.PlayerLoggedInEvent loggedInEvent){
-		Player player = loggedInEvent.getPlayer();
-		if(!player.level.isClientSide){
-			DragonStateProvider.getCap(player).ifPresent(cap -> NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)player), new RequestClientData(cap.getType(), cap.getLevel())));
-			syncCapability(player);
-		}
+		EXECUTOR_SERVICE.schedule(() -> {
+			PlayerEntity player = loggedInEvent.getPlayer();
+			if(!player.level.isClientSide){
+				DragonStateProvider.getCap(player).ifPresent(cap -> NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)player), new RequestClientData(cap.getType(), cap.getLevel())));
+				syncCapability(player);
+			}
+		}, 1, TimeUnit.SECONDS);
 	}
 
 	public static void syncCapability(Player player){
