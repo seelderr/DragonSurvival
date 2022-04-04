@@ -1,0 +1,24 @@
+{
+  "pools": [
+    {
+      "name": "main",
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "weight": 50,
+          "name": "dragonsurvival:elder_dragon_dust"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 25,
+          "name": "dragonsurvival:elder_dragon_bone"
+        },
+        {
+          "type": "empty",
+          "weight": 75
+        }
+      ]
+    }
+  ]
+}
