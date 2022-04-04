@@ -150,7 +150,8 @@ public class DragonHitBox extends LivingEntity{
 		double dz = result2.getY();
 
 		if(lastSize != size || lastPose != overridePose){
-			this.size = EntitySize.scalable((float)width * 1.6f, (float)height);
+
+			this.size = EntitySize.scalable((float)width * 1.6f, handler.getPassengerId() != 0 ? (float)(height / 2f) : (float)height);
 			refreshDimensions();
 
 			head.size = EntitySize.scalable((float)width, (float)width);
@@ -178,15 +179,6 @@ public class DragonHitBox extends LivingEntity{
 			setPos(player.getX() - offset.x(), player.getY(), player.getZ() - offset.z());
 			xRot = (float)handler.getMovementData().headPitch;
 			yRot = (float)handler.getMovementData().bodyYaw;
-
-			//			double bodyYawChange = Functions.angleDifference((float)handler.getMovementData().bodyYawLastTick, (float)handler.getMovementData().bodyYaw);
-			//
-			//			ModifiableAttributeInstance gravity = player.getAttribute(net.minecraftforge.common.ForgeMod.ENTITY_GRAVITY.get());
-			//			double g = gravity.getValue();
-			//
-			//			double tailMotionUp = ServerFlightHandler.isFlying(player) ? 0 : (player.getDeltaMovement().y + g);
-			//			double tailMotionSide = MathHelper.lerp(0.1, MathHelper.clamp(bodyYawChange, -50, 50), 0);
-			//
 
 			head.setPos(dx, dy - (DragonSizeHandler.calculateDragonWidth(handler.getSize(), ConfigHandler.SERVER.hitboxGrowsPastHuman.get()) / 2), dz);
 			tail1.setPos(getX() - offset.x(), getY() + (player.getEyeHeight() / 2) - (height / 9), getZ() - offset.z());
