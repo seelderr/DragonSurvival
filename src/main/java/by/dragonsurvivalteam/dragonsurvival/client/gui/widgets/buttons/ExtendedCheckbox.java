@@ -24,7 +24,7 @@ public class ExtendedCheckbox extends Checkbox{
 		super(pX, pY, pWidth, pHeight, pMessage, pSelected);
 		this.pressable = pressable;
 		this.renderWidth = renderWidth;
-		setBlitOffset(300);
+		setBlitOffset(500);
 	}
 
 	@Override

@@ -22,7 +22,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.entity.player.SortInventoryP
 import by.dragonsurvivalteam.dragonsurvival.server.containers.DragonContainer;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageButton;
@@ -36,7 +36,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -101,12 +100,12 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 			@Override
 			public void renderButton(PoseStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_){
 				stack.pushPose();
-				GL11.glDisable(GL11.GL_DEPTH_TEST);
+				RenderSystem.disableDepthTest();
 
 				RenderSystem.setShaderTexture(0, DRAGON_CLAW_BUTTON);
 				blit(stack, x, y, 0, 0, 11, 11, 11, 11);
 
-				GL11.glEnable(GL11.GL_DEPTH_TEST);
+				RenderSystem.enableDepthTest();
 				stack.popPose();
 			}
 
@@ -283,10 +282,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 		stack.pushPose();
 
 		RenderSystem.enableBlend();
-		stack.pushPose();
-		stack.translate(0,0, -200);
 		this.blit(stack, leftPos, topPos, 0, 0, imageWidth, imageHeight);
-		stack.popPose();
 		RenderSystem.disableBlend();
 
 		RenderSystem.enableScissor((int)((leftPos + 26) * Minecraft.getInstance().getWindow().getGuiScale()), (int)((height * Minecraft.getInstance().getWindow().getGuiScale()) - (topPos + 79) * Minecraft.getInstance().getWindow().getGuiScale()), (int)(76 * Minecraft.getInstance().getWindow().getGuiScale()), (int)(70 * Minecraft.getInstance().getWindow().getGuiScale()));
@@ -343,7 +339,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 			RenderingUtils.drawTexturedCircle(stack, circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, sides, progress, -0.5);
 
 			RenderSystem.disableTexture();
-			GL11.glLineWidth(4f);
+			RenderSystem.lineWidth(4f);
 			if(handler.growing){
 				RenderSystem.setShaderColor(0F, 0F, 0F, 1F);
 			}else{
@@ -353,7 +349,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 
 			RenderSystem.setShaderColor(c.getRed() / 255.0f, c.getBlue() / 255.0f, c.getGreen() / 255.0f, 1.0f);
 			RenderingUtils.drawSmoothCircle(stack, circleX + radius, circleY + radius, radius - thickness, sides, 1, 0);
-			GL11.glLineWidth(1.0F);
+			RenderSystem.lineWidth(1.0F);
 
 			c = c.brighter();
 			RenderSystem.setShaderColor(c.getRed() / 255.0f, c.getBlue() / 255.0f, c.getGreen() / 255.0f, 1.0f);

@@ -16,8 +16,6 @@ import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
-import net.minecraftforge.event.world.BiomeLoadingEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -51,7 +49,6 @@ public class DragonSurvivalMod{
 		MinecraftForge.EVENT_BUS.register(new DragonFoodHandler());
 		MinecraftForge.EVENT_BUS.register(new Event_busHandler());
 
-		MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGH, this::biomeLoadingEvent);
 		MinecraftForge.EVENT_BUS.addListener(this::serverRegisterCommandsEvent);
 	}
 
@@ -60,24 +57,6 @@ public class DragonSurvivalMod{
 		DragonAbilities.initAbilities();
 		NetworkHandler.setup();
 		LOGGER.info("Successfully registered packets!");
-	}
-
-	@SubscribeEvent
-	public void biomeLoadingEvent(BiomeLoadingEvent event){
-//		if(ConfigHandler.COMMON.predatorSpawnWeight.get() > 0){
-//			List<BiomeDictionary.Type> includeList = Arrays.asList(BiomeDictionaryHelper.toBiomeTypeArray(ConfigHandler.COMMON.predatorBiomesInclude.get()));
-//			List<BiomeDictionary.Type> excludeList = Arrays.asList(BiomeDictionaryHelper.toBiomeTypeArray(ConfigHandler.COMMON.predatorBiomesExclude.get()));
-//			List<MobSpawnSettings.SpawnerData> spawns = event.getSpawns().getSpawner(MobCategory.MONSTER);
-//			ResourceLocation biomeName = event.getName();
-//			if(biomeName == null){
-//				return;
-//			}
-//			ResourceKey<Biome> biome = ResourceKey.create(ForgeRegistries.Keys.BIOMES, biomeName);
-//			Set<BiomeDictionary.Type> biomeTypes = BiomeDictionary.getTypes(biome);
-//			if(spawns.stream().anyMatch(x -> x.type.getCategory() == MobCategory.MONSTER) && biomeTypes.stream().anyMatch(x -> includeList.contains(x) && biomeTypes.stream().noneMatch(excludeList::contains))){
-//				spawns.add(new SpawnerData(DSEntities.MAGICAL_BEAST, ConfigHandler.COMMON.predatorSpawnWeight.get(), ConfigHandler.COMMON.minPredatorSpawn.get(), ConfigHandler.COMMON.maxPredatorSpawn.get()));
-//			}
-//		}
 	}
 
 	@SubscribeEvent

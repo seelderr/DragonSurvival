@@ -8,14 +8,15 @@ import net.minecraft.world.level.storage.loot.entries.LootTableReference;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
-import java.util.Arrays;
 import java.util.List;
 
-@EventBusSubscriber
+@EventBusSubscriber( bus = Mod.EventBusSubscriber.Bus.FORGE )
 public class LootTableInject{
-	private static final String[] files = new String[]{"bastion_bridge",
+	private static final String injectFile = "dust_and_bones";
+	private static final List<String> files = List.of("bastion_bridge",
 	                                                   "bastion_hoglin_stable",
 	                                                   "bastion_other",
 	                                                   "bastion_treasure",
@@ -37,20 +38,16 @@ public class LootTableInject{
 	                                                   "stronghold_library",
 	                                                   "underwater_ruin_big",
 	                                                   "underwater_ruin_small",
-	                                                   "woodland_mansion.json"};
+	                                                   "woodland_mansion");
 
 	@SubscribeEvent
-	public void lootLoad(LootTableLoadEvent evt){
+	public static void lootLoad(LootTableLoadEvent evt){
 		String prefix = "minecraft:chests/";
 		String name = evt.getName().toString();
 
-		List<String> ls = Arrays.asList(files);
-
 		if(name.startsWith(prefix)){
 			String file = name.substring(name.indexOf(prefix) + prefix.length());
-			if(ls.contains(file)){
-				evt.getTable().addPool(getInjectPool("dust_and_bones"));
-			}
+			if(files.contains(file)) evt.getTable().addPool(getInjectPool(injectFile));
 		}
 	}
 
