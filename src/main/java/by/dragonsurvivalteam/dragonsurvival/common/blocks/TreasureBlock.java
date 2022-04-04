@@ -14,7 +14,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.FallingBlockEntity;
@@ -64,12 +63,6 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 		this.effectColor = c;
 	}
 
-	@Override
-	public boolean isBed(BlockState state, BlockGetter world, BlockPos pos,
-		@Nullable
-			Entity player){
-		return true;
-	}
 
 	public Optional<Vec3> getBedSpawnPosition(EntityType<?> entityType, BlockState state, LevelReader world, BlockPos pos, float orientation,
 		@Nullable

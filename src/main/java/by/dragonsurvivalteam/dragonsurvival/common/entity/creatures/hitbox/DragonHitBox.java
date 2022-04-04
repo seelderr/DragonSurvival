@@ -41,7 +41,6 @@ public class DragonHitBox extends LivingEntity{
 
 	private final DragonHitboxPart[] subEntities;
 	private final DragonHitboxPart head;
-	private final DragonHitboxPart body;
 	private final DragonHitboxPart tail1;
 	private final DragonHitboxPart tail2;
 	private final DragonHitboxPart tail3;
@@ -56,14 +55,13 @@ public class DragonHitBox extends LivingEntity{
 		super(p_i48577_1_, p_i48580_2_);
 
 		this.head = new DragonHitboxPart(this, "head", 0.5F, 0.5F);
-		this.body = new DragonHitboxPart(this, "body", 0.5F, 0.5F);
 		this.tail1 = new DragonHitboxPart(this, "tail1", 1.0F, 1.0F);
 		this.tail2 = new DragonHitboxPart(this, "tail2", 1.0F, 1.0F);
 		this.tail3 = new DragonHitboxPart(this, "tail3", 1.0F, 1.0F);
 		this.tail4 = new DragonHitboxPart(this, "tail4", 1.0F, 1.0F);
 		this.tail5 = new DragonHitboxPart(this, "tail5", 1.0F, 1.0F);
 
-		this.subEntities = new DragonHitboxPart[]{this.head, this.body, this.tail1, this.tail2, this.tail3, this.tail4, this.tail5};
+		this.subEntities = new DragonHitboxPart[]{this.head, this.tail1, this.tail2, this.tail3, this.tail4, this.tail5};
 
 		this.size = EntityDimensions.scalable(1f, 1f);
 		this.refreshDimensions();
@@ -148,11 +146,8 @@ public class DragonHitBox extends LivingEntity{
 		double dz = result2.getY();
 
 		if(lastSize != size || lastPose != overridePose){
-			this.size = EntityDimensions.scalable((float)width * 1.6f, (float)height);
+			this.size = EntityDimensions.scalable((float)width * 1.6f, handler.getPassengerId() != 0 ? (float)(height / 2f) : (float)height); //Half hitbox size if there is a rider
 			refreshDimensions();
-
-			body.size = EntityDimensions.scalable((float)width * 1.6f, (float)height);
-			body.refreshDimensions();
 
 			head.size = EntityDimensions.scalable((float)width, (float)width);
 			head.refreshDimensions();
@@ -177,10 +172,9 @@ public class DragonHitBox extends LivingEntity{
 			player.refreshDimensions();
 		}else{
 			setPos(player.getX() - offset.x(), player.getY(), player.getZ() - offset.z());
-			setXRot((float)handler.getMovementData().headPitch);
-			setYRot((float)handler.getMovementData().bodyYaw);
+			xRot = (float)handler.getMovementData().headPitch;
+			yRot = (float)handler.getMovementData().bodyYaw;
 
-			body.setPos(player.getX() - offset.x(), player.getY(), player.getZ() - offset.z());
 			head.setPos(dx, dy - (DragonSizeHandler.calculateDragonWidth(handler.getSize(), ConfigHandler.SERVER.hitboxGrowsPastHuman.get()) / 2), dz);
 			tail1.setPos(getX() - offset.x(), getY() + (player.getEyeHeight() / 2) - (height / 9), getZ() - offset.z());
 			tail2.setPos(getX() - offset.x() * 1.5, getY() + (player.getEyeHeight() / 2) - (height / 9), getZ() - offset.z() * 1.5);

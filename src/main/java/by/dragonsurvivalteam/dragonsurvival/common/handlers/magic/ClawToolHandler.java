@@ -119,30 +119,25 @@ public class ClawToolHandler{
 			return mainStack;
 		}
 
-		if(cap != null){
-			Level world = player.level;
-			BlockHitResult raytraceresult = Item.getPlayerPOVHitResult(world, player, ClipContext.Fluid.NONE);
+		Level world = player.level;
+		BlockHitResult raytraceresult = Item.getPlayerPOVHitResult(world, player, ClipContext.Fluid.NONE);
 
-			if(raytraceresult.getType() != HitResult.Type.MISS){
-				BlockState state = world.getBlockState(raytraceresult.getBlockPos());
+		if(raytraceresult.getType() != HitResult.Type.MISS){
+			BlockState state = world.getBlockState(raytraceresult.getBlockPos());
 
-				if(state != null){
-					for(int i = 1; i < 4; i++){
-						ItemStack breakingItem = cap.getClawInventory().getClawsInventory().getItem(i);
+			for(int i = 1; i < 4; i++){
+				ItemStack breakingItem = cap.getClawInventory().getClawsInventory().getItem(i);
 
-						if(!breakingItem.isEmpty() && breakingItem.isCorrectToolForDrops(state)){
-							float tempSpeed = breakingItem.getDestroySpeed(state);
+				if(!breakingItem.isEmpty() && breakingItem.isCorrectToolForDrops(state)){
+					float tempSpeed = breakingItem.getDestroySpeed(state);
 
-							if(breakingItem.getItem() instanceof DiggerItem){
-								DiggerItem item = (DiggerItem)breakingItem.getItem();
-								tempSpeed = item.getDestroySpeed(breakingItem, state);
-							}
+					if(breakingItem.getItem() instanceof DiggerItem item){
+						tempSpeed = item.getDestroySpeed(breakingItem, state);
+					}
 
-							if(tempSpeed > newSpeed){
-								newSpeed = tempSpeed;
-								harvestTool = breakingItem;
-							}
-						}
+					if(tempSpeed > newSpeed){
+						newSpeed = tempSpeed;
+						harvestTool = breakingItem;
 					}
 				}
 			}
