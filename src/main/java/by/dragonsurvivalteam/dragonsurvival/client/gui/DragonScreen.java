@@ -4,6 +4,8 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.settings.SettingsSideScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.HelpButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.TabButton;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.DSButton;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.DSImageButton;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientEvents;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
@@ -24,12 +26,9 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -89,30 +88,22 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 		addRenderableWidget(new TabButton(leftPos + 57, topPos - 26, 2, this));
 		addRenderableWidget(new TabButton(leftPos + 86, topPos - 26, 3, this));
 
-		addRenderableWidget(new Button(leftPos + 27, topPos + 10, 11, 11, new TextComponent(""), p_onPress_1_ -> {
+		addRenderableWidget(new DSButton(leftPos + 27, topPos + 10, 11, 11 , p_onPress_1_ -> {
 			clawsMenu = !clawsMenu;
 			clearWidgets();
 			init();
 
 			NetworkHandler.CHANNEL.sendToServer(new DragonClawsMenuToggle(clawsMenu));
 			DragonStateProvider.getCap(player).ifPresent((cap) -> cap.getClawInventory().setClawsMenuOpen(clawsMenu));
-		}){
+		}, new TranslatableComponent("ds.gui.claws")){
 			@Override
 			public void renderButton(PoseStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_){
 				stack.pushPose();
 				RenderSystem.disableDepthTest();
-
 				RenderSystem.setShaderTexture(0, DRAGON_CLAW_BUTTON);
 				blit(stack, x, y, 0, 0, 11, 11, 11, 11);
-
 				RenderSystem.enableDepthTest();
 				stack.popPose();
-			}
-
-			@Override
-			public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-				ArrayList<Component> description = new ArrayList<>(Arrays.asList(new TranslatableComponent("ds.gui.claws")));
-				Minecraft.getInstance().screen.renderComponentTooltip(p_230443_1_, description, p_230443_2_, p_230443_3_);
 			}
 		});
 
@@ -208,14 +199,14 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 		});
 
 
-		addRenderableWidget(new Button(leftPos - 80 + 34, topPos + 140, 9, 9, null, p_onPress_1_ -> {
+		addRenderableWidget(new DSButton(leftPos - 80 + 34, topPos + 140, 9, 9, null, p_onPress_1_ -> {
 			if(handler != null){
 				boolean claws = !handler.getClawInventory().renderClaws;
 
 				handler.getClawInventory().renderClaws = claws;
 				NetworkHandler.CHANNEL.sendToServer(new SyncDragonClawRender(player.getId(), claws));
 			}
-		}){
+		}, new TranslatableComponent("ds.gui.claws.rendering")){
 			@Override
 			public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
 				this.active = clawsMenu;
@@ -226,83 +217,44 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 					blit(p_230430_1_, x, y, 0, 0, 9, 9, 9, 9);
 				}
 				this.isHovered = p_230430_2_ >= this.x && p_230430_3_ >= this.y && p_230430_2_ < this.x + this.width && p_230430_3_ < this.y + this.height;
-
-				if(isHovered){
-					ArrayList<Component> description = new ArrayList<>(Arrays.asList(new TranslatableComponent("ds.gui.claws.rendering")));
-					Minecraft.getInstance().screen.renderComponentTooltip(p_230430_1_, description, p_230430_2_, p_230430_3_);
-				}
 			}
 		});
 
+		//DSButton
 		if(ConfigHandler.CLIENT.inventoryToggle.get()){
-			addRenderableWidget(new ImageButton(this.leftPos + (imageWidth - 28), (this.height / 2 - 30) + 50, 20, 18, 0, 0, 19, INVENTORY_TOGGLE_BUTTON, p_onPress_1_ -> {
+			addRenderableWidget(new DSImageButton(this.leftPos + (imageWidth - 28), (this.height / 2 - 30) + 50, 20, 18, 0, 0, 19, INVENTORY_TOGGLE_BUTTON, p_onPress_1_ -> {
 				Minecraft.getInstance().setScreen(new InventoryScreen(this.player));
 				NetworkHandler.CHANNEL.sendToServer(new OpenInventory());
-			}){
-				@Override
-				public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-					ArrayList<Component> description = new ArrayList<>(Arrays.asList(new TranslatableComponent("ds.gui.toggle_inventory.vanilla")));
-					Minecraft.getInstance().screen.renderComponentTooltip(p_230443_1_, description, p_230443_2_, p_230443_3_);
-				}
-			});
+			}, new TranslatableComponent("ds.gui.toggle_inventory.vanilla")));
 		}
 
-		addRenderableWidget(new ImageButton(this.leftPos + (imageWidth - 28), (this.height / 2), 20, 18, 0, 0, 18, SORTING_BUTTON, p_onPress_1_ -> {
+		addRenderableWidget(new DSImageButton(this.leftPos + (imageWidth - 28), (this.height / 2), 20, 18, 0, 0, 18, SORTING_BUTTON, p_onPress_1_ -> {
 			NetworkHandler.CHANNEL.sendToServer(new SortInventoryPacket());
-		}){
-			@Override
-			public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-				ArrayList<Component> description = new ArrayList<>(Arrays.asList(new TranslatableComponent("ds.gui.sort")));
-				Minecraft.getInstance().screen.renderComponentTooltip(p_230443_1_, description, p_230443_2_, p_230443_3_);
-			}
-		});
+		}, new TranslatableComponent("ds.gui.sort")));
 
-		addRenderableWidget(new ImageButton(this.leftPos + (imageWidth - 27), (this.height / 2) + 40, 18, 18, 0, 0, 18, SETTINGS_BUTTON, p_onPress_1_ -> {
+		addRenderableWidget(new DSImageButton(this.leftPos + (imageWidth - 27), (this.height / 2) + 40, 18, 18, 0, 0, 18, SETTINGS_BUTTON, p_onPress_1_ -> {
 			Minecraft.getInstance().setScreen(new SettingsSideScreen(this, Minecraft.getInstance().options, new TranslatableComponent("ds.gui.tab_button.4")));
-		}){
-			@Override
-			public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-				ArrayList<Component> description = new ArrayList<>(Arrays.asList(new TranslatableComponent("ds.gui.tab_button.4")));
-				Minecraft.getInstance().screen.renderComponentTooltip(p_230443_1_, description, p_230443_2_, p_230443_3_);
-			}
-		});
+		}, new TranslatableComponent("ds.gui.tab_button.4")));
 	}
 
 	@Override
-	protected void renderLabels(PoseStack stack, int p_230451_2_, int p_230451_3_){
-	}
+	protected void renderLabels(PoseStack stack, int p_230451_2_, int p_230451_3_){}
 
 	@Override
 	protected void renderBg(PoseStack stack, float partialTicks, int mouseX, int mouseY){
-		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+		this.renderBackground(stack);
+
+
 		RenderSystem.setShaderTexture(0, BACKGROUND);
-		int i = leftPos;
-		int j = topPos;
-
-		stack.pushPose();
-
 		RenderSystem.enableBlend();
 		this.blit(stack, leftPos, topPos, 0, 0, imageWidth, imageHeight);
 		RenderSystem.disableBlend();
-
-		RenderSystem.enableScissor((int)((leftPos + 26) * Minecraft.getInstance().getWindow().getGuiScale()), (int)((height * Minecraft.getInstance().getWindow().getGuiScale()) - (topPos + 79) * Minecraft.getInstance().getWindow().getGuiScale()), (int)(76 * Minecraft.getInstance().getWindow().getGuiScale()), (int)(70 * Minecraft.getInstance().getWindow().getGuiScale()));
 		DragonStateHandler handler = DragonUtils.getHandler(player);
-		int sizeOffset = (int)(handler.getSize() - handler.getLevel().size) / 2;
-
-		float sizef = Math.min(30 - sizeOffset, 30);
-		stack.translate(0f, sizef / 10f, 0f);
-		InventoryScreen.renderEntityInInventory(i + 65, j + 60, (int)sizef, (float)(i + 51 - mouseX), (float)(j + 75 - 50 - mouseY), this.minecraft.player);
-
-		RenderSystem.disableScissor();
-		RenderSystem.clearColor(1f, 1f, 1f, 1f);
-		stack.popPose();
-
 
 		if(clawsMenu){
 			RenderSystem.setShaderTexture(0, CLAWS_TEXTURE);
 			this.blit(stack, leftPos - 80, topPos, 0, 0, 77, 170);
 		}
-
 
 		if(clawsMenu){
 			double curSize = handler.getSize();
@@ -365,6 +317,8 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 		}
 	}
 
+
+
 	public boolean mouseReleased(double p_mouseReleased_1_, double p_mouseReleased_3_, int p_mouseReleased_5_){
 		if(this.buttonClicked){
 			this.buttonClicked = false;
@@ -386,9 +340,20 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 	}
 
 	public void render(PoseStack pPoseStack, int pMouseX, int pMouseY, float pPartialTick) {
-		this.renderBackground(pPoseStack);
-		this.renderBg(pPoseStack, pPartialTick, pMouseX, pMouseY);
 		super.render(pPoseStack, pMouseX, pMouseY, pPartialTick);
 		this.renderTooltip(pPoseStack, pMouseX, pMouseY);
+
+		DragonStateHandler handler = DragonUtils.getHandler(player);
+
+		pPoseStack.pushPose();
+
+		RenderSystem.enableScissor((int)((leftPos + 26) * Minecraft.getInstance().getWindow().getGuiScale()), (int)((height * Minecraft.getInstance().getWindow().getGuiScale()) - (topPos + 79) * Minecraft.getInstance().getWindow().getGuiScale()), (int)(76 * Minecraft.getInstance().getWindow().getGuiScale()), (int)(70 * Minecraft.getInstance().getWindow().getGuiScale()));
+		int sizeOffset = (int)(handler.getSize() - handler.getLevel().size) / 2;
+		float sizef = Math.min(30 - sizeOffset, 30);
+		pPoseStack.translate(0f, sizef / 10f, 0);
+		InventoryScreen.renderEntityInInventory(leftPos + 65, topPos + 65, (int)sizef, (float)(leftPos + 51 - pMouseX), (float)(topPos + 75 - 50 - pMouseY), minecraft.player);
+		RenderSystem.disableScissor();
+
+		pPoseStack.popPose();
 	}
 }

@@ -33,7 +33,6 @@ import org.lwjgl.glfw.GLFW;
 
 import java.awt.Color;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Mod.EventBusSubscriber( Dist.CLIENT )
@@ -287,7 +286,7 @@ public class EmoteMenuHandler{
 							Emote emote = emotes.size() > finalI ? emotes.get(finalI) : null;
 
 							if(emote != null){
-								handler.getEmotes().emoteKeybinds.remove(emote.id);
+								handler.getEmotes().emoteKeybinds.put(emote.id, -1);
 								NetworkHandler.CHANNEL.sendToServer(new SyncEmote(Minecraft.getInstance().player.getId(), handler.getEmotes()));
 								return true;
 							}
@@ -302,7 +301,7 @@ public class EmoteMenuHandler{
 
 					if(emote != null){
 						currentlyKeybinding = null;
-						handler.getEmotes().emoteKeybinds.remove(emote.id);
+						handler.getEmotes().emoteKeybinds.put(emote.id, -1);
 						NetworkHandler.CHANNEL.sendToServer(new SyncEmote(Minecraft.getInstance().player.getId(), handler.getEmotes()));
 					}
 				}){

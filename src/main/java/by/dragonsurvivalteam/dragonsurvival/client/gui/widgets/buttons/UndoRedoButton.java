@@ -1,11 +1,12 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ArrowButton;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.resources.ResourceLocation;
 
-public class UndoRedoButton extends by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.ArrowButton{
+public class UndoRedoButton extends ArrowButton{
 	public static final ResourceLocation undo = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/arrow_undo.png");
 	public static final ResourceLocation redo = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/arrow_redo.png");
 

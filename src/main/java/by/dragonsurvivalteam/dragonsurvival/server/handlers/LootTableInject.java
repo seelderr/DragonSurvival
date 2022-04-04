@@ -8,12 +8,11 @@ import net.minecraft.world.level.storage.loot.entries.LootTableReference;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
 import java.util.List;
 
-@EventBusSubscriber( bus = Mod.EventBusSubscriber.Bus.FORGE )
+@EventBusSubscriber
 public class LootTableInject{
 	private static final String injectFile = "dust_and_bones";
 	private static final List<String> files = List.of("bastion_bridge",

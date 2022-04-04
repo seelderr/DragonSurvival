@@ -8,6 +8,9 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.components.DragonUIRender
 import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.buttons.*;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.utils.TooltipRender;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.*;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ArrowButton;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.DropDownButton;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ExtendedCheckbox;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientEvents;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.magic.ClientMagicHUDHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.DragonEditorHandler;

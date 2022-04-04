@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.settings;
 
-import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.DropDownButton;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.DropDownButton;
 import com.electronwill.nightconfig.core.EnumGetMethod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Option;
@@ -13,7 +13,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class DSDropDownOption extends Option{
 	private final Consumer<Enum> setter;

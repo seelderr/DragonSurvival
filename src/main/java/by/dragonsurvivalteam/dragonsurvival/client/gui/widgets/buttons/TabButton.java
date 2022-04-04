@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.AbilityScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.DragonScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.SkinsScreen;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.utils.TooltipRender;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientEvents;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.magic.ClientMagicHUDHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TooltipRendering;
@@ -19,7 +20,7 @@ import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.TranslatableComponent;
 
 
-public class TabButton extends Button{
+public class TabButton extends Button implements TooltipRender{
 	private final int index;
 	private final Screen parent;
 
@@ -119,9 +120,11 @@ public class TabButton extends Button{
 		}else{
 			blit(stack, x + 2, y + 2 + (isCurrent() ? 2 : 0), (index * 24), 41, 24, 24);
 		}
+	}
 
-		if(isHovered){
-			TooltipRendering.drawHoveringText(stack, new TranslatableComponent("ds.gui.tab_button." + index), mouseX, mouseY);
-		}
+	@Override
+	public void renderToolTip(PoseStack pPoseStack, int pMouseX, int pMouseY){
+		super.renderToolTip(pPoseStack, pMouseX, pMouseY);
+		TooltipRendering.drawHoveringText(pPoseStack, new TranslatableComponent("ds.gui.tab_button." + index), pMouseX, pMouseY);
 	}
 }

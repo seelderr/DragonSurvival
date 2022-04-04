@@ -3,7 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.components;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.DragonAltarGUI;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.CopySettingsButton;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.ExtendedCheckbox;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ExtendedCheckbox;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownList;
 import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.objects.SkinPreset.SkinAgeGroup;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TooltipRendering;

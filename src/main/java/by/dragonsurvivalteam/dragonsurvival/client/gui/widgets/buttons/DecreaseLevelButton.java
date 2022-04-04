@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons;
 
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.AbilityScreen;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ArrowButton;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TooltipRendering;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.DragonAbilities;

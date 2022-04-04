@@ -1,4 +1,4 @@
-package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons;
+package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic;
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownEntry;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownList;

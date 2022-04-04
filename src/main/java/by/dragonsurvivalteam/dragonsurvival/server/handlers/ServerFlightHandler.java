@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.hitbox.DragonHitBox;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.hitbox.DragonHitboxPart;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonHitboxHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
@@ -101,24 +102,22 @@ public class ServerFlightHandler{
 		}
 
 		DragonStateHandler dragonStateHandler = DragonUtils.getHandler(player);
-		if(dragonStateHandler != null){
-			if(dragonStateHandler.hasFlown && player.isOnGround()){
-				if(dragonStateHandler.isWingsSpread() && player.isCreative()){
-					dragonStateHandler.hasFlown = false;
-					dragonStateHandler.setWingsSpread(false);
-					NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncFlyingStatus(player.getId(), false));
-				}
-			}else{
-				if(!dragonStateHandler.hasFlown && isFlying(player)){
-					dragonStateHandler.hasFlown = true;
-				}
+		if(dragonStateHandler.hasFlown && player.isOnGround()){
+			if(dragonStateHandler.isWingsSpread() && player.isCreative()){
+				dragonStateHandler.hasFlown = false;
+				dragonStateHandler.setWingsSpread(false);
+				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncFlyingStatus(player.getId(), false));
+			}
+		}else{
+			if(!dragonStateHandler.hasFlown && isFlying(player)){
+				dragonStateHandler.hasFlown = true;
 			}
 		}
 	}
 
 	public static boolean isFlying(LivingEntity player){
 		DragonStateHandler dragonStateHandler = DragonUtils.getHandler(player);
-		return dragonStateHandler != null && dragonStateHandler.hasWings() && dragonStateHandler.isWingsSpread() && !player.isOnGround() && !player.isInWater() && !player.isInLava();
+		return dragonStateHandler.hasWings() && dragonStateHandler.isWingsSpread() && !player.isOnGround() && !player.isInWater() && !player.isInLava();
 	}
 
 	@SubscribeEvent
@@ -132,17 +131,9 @@ public class ServerFlightHandler{
 				if(player.tickCount % 10 == 0){
 					if(handler.isWingsSpread()){
 						switch(handler.getType()){
-							case SEA:
-								player.addEffect(new MobEffectInstance(DragonEffects.sea_wings, 500));
-								break;
-
-							case CAVE:
-								player.addEffect(new MobEffectInstance(DragonEffects.cave_wings, 500));
-								break;
-
-							case FOREST:
-								player.addEffect(new MobEffectInstance(DragonEffects.forest_wings, 500));
-								break;
+							case SEA -> player.addEffect(new MobEffectInstance(DragonEffects.sea_wings, 500));
+							case CAVE -> player.addEffect(new MobEffectInstance(DragonEffects.cave_wings, 500));
+							case FOREST -> player.addEffect(new MobEffectInstance(DragonEffects.forest_wings, 500));
 						}
 					}
 				}
@@ -185,8 +176,8 @@ public class ServerFlightHandler{
 					entities.removeIf((e) -> e.distanceTo(player) > range);
 					entities.remove(player);
 					entities.removeIf((e) -> e instanceof Player && !player.canHarmPlayer((Player)e));
-					entities.removeIf(DragonHitBox.class::isInstance);
-
+					entities.removeIf((e) -> e instanceof DragonHitBox && player == (((DragonHitBox)e).player));
+					entities.removeIf((e) -> e instanceof DragonHitboxPart && player == (((DragonHitboxPart)e).getParent().player));
 					for(Entity ent : entities){
 						if(player.hasPassenger(ent) || ent.getId() == DragonHitboxHandler.dragonHitboxes.getOrDefault(player.getId(), -1)){
 							continue;

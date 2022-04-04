@@ -1,4 +1,4 @@
-package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons;
+package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import com.mojang.blaze3d.systems.RenderSystem;
