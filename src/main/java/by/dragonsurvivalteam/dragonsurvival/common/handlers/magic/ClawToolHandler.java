@@ -130,7 +130,7 @@ public class ClawToolHandler{
 					for(int i = 1; i < 4; i++){
 						ItemStack breakingItem = cap.getClawInventory().getClawsInventory().getItem(i);
 
-						if(!breakingItem.isEmpty() && breakingItem.getToolTypes().stream().anyMatch(state::isToolEffective)){
+						if(!breakingItem.isEmpty() && (breakingItem.getToolTypes().stream().anyMatch(state::isToolEffective) || breakingItem.isCorrectToolForDrops(state))){
 							float tempSpeed = breakingItem.getDestroySpeed(state);
 
 							if(breakingItem.getItem() instanceof ToolItem){
