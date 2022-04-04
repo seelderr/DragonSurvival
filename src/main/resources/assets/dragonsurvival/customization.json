@@ -218,68 +218,55 @@
       "EYES": [
         {
           "key": "eyes_1",
-          "texture": "dragonsurvival:textures/dragon/custom/cave_eyes_1.png",
-          "defaultColor": "#ffffff"
+          "texture": "dragonsurvival:textures/dragon/custom/cave_eyes_1.png"
         },
         {
           "key": "eyes_2",
-          "texture": "dragonsurvival:textures/dragon/custom/cave_eyes_2.png",
-          "defaultColor": "#ffffff"
+          "texture": "dragonsurvival:textures/dragon/custom/cave_eyes_2.png"
         },
         {
           "key": "eyes_3",
-          "texture": "dragonsurvival:textures/dragon/custom/cave_eyes_3.png",
-          "defaultColor": "#ffffff"
+          "texture": "dragonsurvival:textures/dragon/custom/cave_eyes_3.png"
         },
         {
           "key": "eyes_4",
-          "texture": "dragonsurvival:textures/dragon/custom/cave_eyes_4.png",
-          "defaultColor": "#ffffff"
+          "texture": "dragonsurvival:textures/dragon/custom/cave_eyes_4.png"
         },
         {
           "key": "eyes_5",
-          "texture": "dragonsurvival:textures/dragon/custom/cave_eyes_5.png",
-          "defaultColor": "#ffffff"
+          "texture": "dragonsurvival:textures/dragon/custom/cave_eyes_5.png"
         },
         {
           "key": "eyes_6",
-          "texture": "dragonsurvival:textures/dragon/custom/cave_eyes_6.png",
-          "defaultColor": "#ffffff"
+          "texture": "dragonsurvival:textures/dragon/custom/cave_eyes_6.png"
         },
         {
           "key": "eyes_7",
-          "texture": "dragonsurvival:textures/dragon/custom/cave_eyes_7.png",
-          "defaultColor": "#ffffff"
+          "texture": "dragonsurvival:textures/dragon/custom/cave_eyes_7.png"
         },
         {
           "key": "eyes_8",
-          "texture": "dragonsurvival:textures/dragon/custom/cave_eyes_8.png",
-          "defaultColor": "#ffffff"
+          "texture": "dragonsurvival:textures/dragon/custom/cave_eyes_8.png"
         },
         {
           "key": "eyes_9",
-          "texture": "dragonsurvival:textures/dragon/custom/cave_eyes_9.png",
-          "defaultColor": "#ffffff"
+          "texture": "dragonsurvival:textures/dragon/custom/cave_eyes_9.png"
         },
         {
           "key": "eyes_10",
-          "texture": "dragonsurvival:textures/dragon/custom/cave_eyes_10.png",
-          "defaultColor": "#ffffff"
+          "texture": "dragonsurvival:textures/dragon/custom/cave_eyes_10.png"
         },
         {
           "key": "eyes_11",
-          "texture": "dragonsurvival:textures/dragon/custom/cave_eyes_11.png",
-          "defaultColor": "#ffffff"
+          "texture": "dragonsurvival:textures/dragon/custom/cave_eyes_11.png"
         },
         {
           "key": "eyes_12",
-          "texture": "dragonsurvival:textures/dragon/custom/cave_eyes_12.png",
-          "defaultColor": "#ffffff"
+          "texture": "dragonsurvival:textures/dragon/custom/cave_eyes_12.png"
         },
         {
           "key": "eyes_13",
-          "texture": "dragonsurvival:textures/dragon/custom/cave_eyes_13.png",
-          "defaultColor": "#ffffff"
+          "texture": "dragonsurvival:textures/dragon/custom/cave_eyes_13.png"
         }
       ],
       "HORNS": [
@@ -503,68 +490,55 @@
       "EYES": [
         {
           "key": "eyes_1",
-          "texture": "dragonsurvival:textures/dragon/custom/sea_eyes_1.png",
-          "defaultColor": "#ffffff"
+          "texture": "dragonsurvival:textures/dragon/custom/sea_eyes_1.png"
         },
         {
           "key": "eyes_2",
-          "texture": "dragonsurvival:textures/dragon/custom/sea_eyes_2.png",
-          "defaultColor": "#ffffff"
+          "texture": "dragonsurvival:textures/dragon/custom/sea_eyes_2.png"
         },
         {
           "key": "eyes_3",
-          "texture": "dragonsurvival:textures/dragon/custom/sea_eyes_3.png",
-          "defaultColor": "#ffffff"
+          "texture": "dragonsurvival:textures/dragon/custom/sea_eyes_3.png"
         },
         {
           "key": "eyes_4",
-          "texture": "dragonsurvival:textures/dragon/custom/sea_eyes_4.png",
-          "defaultColor": "#ffffff"
+          "texture": "dragonsurvival:textures/dragon/custom/sea_eyes_4.png"
         },
         {
           "key": "eyes_5",
-          "texture": "dragonsurvival:textures/dragon/custom/sea_eyes_5.png",
-          "defaultColor": "#ffffff"
+          "texture": "dragonsurvival:textures/dragon/custom/sea_eyes_5.png"
         },
         {
           "key": "eyes_6",
-          "texture": "dragonsurvival:textures/dragon/custom/sea_eyes_6.png",
-          "defaultColor": "#ffffff"
+          "texture": "dragonsurvival:textures/dragon/custom/sea_eyes_6.png"
         },
         {
           "key": "eyes_7",
-          "texture": "dragonsurvival:textures/dragon/custom/sea_eyes_7.png",
-          "defaultColor": "#ffffff"
+          "texture": "dragonsurvival:textures/dragon/custom/sea_eyes_7.png"
         },
         {
           "key": "eyes_8",
-          "texture": "dragonsurvival:textures/dragon/custom/sea_eyes_8.png",
-          "defaultColor": "#ffffff"
+          "texture": "dragonsurvival:textures/dragon/custom/sea_eyes_8.png"
         },
         {
           "key": "eyes_9",
-          "texture": "dragonsurvival:textures/dragon/custom/sea_eyes_9.png",
-          "defaultColor": "#ffffff"
+          "texture": "dragonsurvival:textures/dragon/custom/sea_eyes_9.png"
         },
         {
           "key": "eyes_10",
-          "texture": "dragonsurvival:textures/dragon/custom/sea_eyes_10.png",
-          "defaultColor": "#ffffff"
+          "texture": "dragonsurvival:textures/dragon/custom/sea_eyes_10.png"
         },
         {
           "key": "eyes_11",
-          "texture": "dragonsurvival:textures/dragon/custom/sea_eyes_11.png",
-          "defaultColor": "#ffffff"
+          "texture": "dragonsurvival:textures/dragon/custom/sea_eyes_11.png"
         },
         {
           "key": "eyes_12",
-          "texture": "dragonsurvival:textures/dragon/custom/sea_eyes_12.png",
-          "defaultColor": "#ffffff"
+          "texture": "dragonsurvival:textures/dragon/custom/sea_eyes_12.png"
         },
         {
           "key": "eyes_13",
-          "texture": "dragonsurvival:textures/dragon/custom/sea_eyes_13.png",
-          "defaultColor": "#ffffff"
+          "texture": "dragonsurvival:textures/dragon/custom/sea_eyes_13.png"
         }
       ],
       "HORNS": [
@@ -850,68 +824,55 @@
       "EYES": [
         {
           "key": "eyes_1",
-          "texture": "dragonsurvival:textures/dragon/custom/forest_eyes_1.png",
-          "defaultColor": "#ffffff"
+          "texture": "dragonsurvival:textures/dragon/custom/forest_eyes_1.png"
         },
         {
           "key": "eyes_2",
-          "texture": "dragonsurvival:textures/dragon/custom/forest_eyes_2.png",
-          "defaultColor": "#ffffff"
+          "texture": "dragonsurvival:textures/dragon/custom/forest_eyes_2.png"
         },
         {
           "key": "eyes_3",
-          "texture": "dragonsurvival:textures/dragon/custom/forest_eyes_3.png",
-          "defaultColor": "#ffffff"
+          "texture": "dragonsurvival:textures/dragon/custom/forest_eyes_3.png"
         },
         {
           "key": "eyes_4",
-          "texture": "dragonsurvival:textures/dragon/custom/forest_eyes_4.png",
-          "defaultColor": "#ffffff"
+          "texture": "dragonsurvival:textures/dragon/custom/forest_eyes_4.png"
         },
         {
           "key": "eyes_5",
-          "texture": "dragonsurvival:textures/dragon/custom/forest_eyes_5.png",
-          "defaultColor": "#ffffff"
+          "texture": "dragonsurvival:textures/dragon/custom/forest_eyes_5.png"
         },
         {
           "key": "eyes_6",
-          "texture": "dragonsurvival:textures/dragon/custom/forest_eyes_6.png",
-          "defaultColor": "#ffffff"
+          "texture": "dragonsurvival:textures/dragon/custom/forest_eyes_6.png"
         },
         {
           "key": "eyes_7",
-          "texture": "dragonsurvival:textures/dragon/custom/forest_eyes_7.png",
-          "defaultColor": "#ffffff"
+          "texture": "dragonsurvival:textures/dragon/custom/forest_eyes_7.png"
         },
         {
           "key": "eyes_8",
-          "texture": "dragonsurvival:textures/dragon/custom/forest_eyes_8.png",
-          "defaultColor": "#ffffff"
+          "texture": "dragonsurvival:textures/dragon/custom/forest_eyes_8.png"
         },
         {
           "key": "eyes_9",
-          "texture": "dragonsurvival:textures/dragon/custom/forest_eyes_9.png",
-          "defaultColor": "#ffffff"
+          "texture": "dragonsurvival:textures/dragon/custom/forest_eyes_9.png"
         },
         {
           "key": "eyes_10",
-          "texture": "dragonsurvival:textures/dragon/custom/forest_eyes_10.png",
-          "defaultColor": "#ffffff"
+          "texture": "dragonsurvival:textures/dragon/custom/forest_eyes_10.png"
         },
         {
           "key": "eyes_11",
-          "texture": "dragonsurvival:textures/dragon/custom/forest_eyes_11.png",
-          "defaultColor": "#ffffff"
+          "texture": "dragonsurvival:textures/dragon/custom/forest_eyes_11.png"
         },
         {
           "key": "eyes_12",
-          "texture": "dragonsurvival:textures/dragon/custom/forest_eyes_12.png",
-          "defaultColor": "#ffffff"
+          "texture": "dragonsurvival:textures/dragon/custom/forest_eyes_12.png"
         },
         {
           "key": "eyes_13",
-          "texture": "dragonsurvival:textures/dragon/custom/forest_eyes_13.png",
-          "defaultColor": "#ffffff"
+          "texture": "dragonsurvival:textures/dragon/custom/forest_eyes_13.png"
         }
       ]
     }
