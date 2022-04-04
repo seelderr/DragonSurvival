@@ -29,6 +29,10 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.network.PacketDistributor;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 @Mod.EventBusSubscriber( modid = DragonSurvivalMod.MODID, bus = Bus.FORGE )
 public class Capabilities{
 	public static Capability<VillageRelationShips> VILLAGE_RELATIONSHIP = CapabilityManager.get(new CapabilityToken<>(){
@@ -69,9 +73,9 @@ public class Capabilities{
 	@SubscribeEvent
 	public static void onLoggedIn(PlayerEvent.PlayerLoggedInEvent loggedInEvent){
 		EXECUTOR_SERVICE.schedule(() -> {
-			PlayerEntity player = loggedInEvent.getPlayer();
+			Player player = loggedInEvent.getPlayer();
 			if(!player.level.isClientSide){
-				DragonStateProvider.getCap(player).ifPresent(cap -> NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)player), new RequestClientData(cap.getType(), cap.getLevel())));
+				DragonStateProvider.getCap(player).ifPresent(cap -> NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)player), new RequestClientData(cap.getType(), cap.getLevel())));
 				syncCapability(player);
 			}
 		}, 1, TimeUnit.SECONDS);
