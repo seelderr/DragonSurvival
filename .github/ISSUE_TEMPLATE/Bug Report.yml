@@ -1,6 +1,6 @@
-name: Bug Report
+name: 1.16.5 Bug Report
 description: File a bug report
-title: "[Bug]: "
+title: "[1.16.5 Forge Bug]: "
 labels: ["bug", "triage"]
 assignees:
   - octocat
@@ -8,7 +8,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking the time to fill out this bug report!
+        Thanks for taking the time to fill out this bug report! Make sure that you have removed the old configs and read the DS installation rules here - dragons-survival.fandom.com/wiki/Start_and_Setting
         
   - type: input
     id: contact
@@ -27,18 +27,6 @@ body:
       placeholder: Example - DragonSurvival_TreasureUpdate-1.16.5-0.9.2
     validations:
       required: true
-      
-  - type: dropdown
-    id: version-mc
-    attributes:
-      label: ■ Minecraft version
-      description: 1.16.5 or...?
-      options:
-        - 1.16.5 (Default)
-        - 1.15
-        - 1.18
-    validations:
-      required: true  
       
   - type: dropdown
     id: server
@@ -80,7 +68,7 @@ body:
     id: bug
     attributes:
       label: ■ Describe the bug
-      description:  A clear and concise description of what the bug is. If applicable, add screenshots to help explain your problem.
+      description:  
       placeholder: I have been lying on the treasure for five minutes now, but nothing happens.
     validations:
       required: true
@@ -98,7 +86,7 @@ body:
     id: expected
     attributes:
       label: ■ Expected behavior
-      description:  A clear and concise description of what you expected to happen.
+      description:  A clear and concise description of what you expected to happen. 
       placeholder: I use treasures and expect them to give healing.
     validations:
       required: true
@@ -107,7 +95,7 @@ body:
     id: crash-report
     attributes:
       label: ■ Crash Report
-      description: If your game or server crashes, the game creates a file in crash-reports folder. Send us the contents of this file or the file itself.
+      description: If your game or server crashes, the game creates a file in crash-reports folder. Just grab that file from the folder and drag it into this box.
     validations:
       required: false
       
