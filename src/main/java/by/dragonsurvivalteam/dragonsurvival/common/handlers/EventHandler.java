@@ -197,7 +197,7 @@ public class EventHandler{
 
 				List<ItemStack> drops = block.getDrops(blockState, new LootContext.Builder((ServerLevel)world).withParameter(LootContextParams.ORIGIN, new Vec3(blockPos.getX(), blockPos.getY(), blockPos.getZ())).withParameter(LootContextParams.TOOL, mainHandItem));
 				DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
-					final boolean suitableOre = (mainHandItem.isCorrectToolForDrops(blockState) || (dragonStateHandler.isDragon() && dragonStateHandler.canHarvestWithPaw(player, blockState)));
+					final boolean suitableOre = (mainHandItem.isCorrectToolForDrops(blockState) || (dragonStateHandler.isDragon() && dragonStateHandler.canHarvestWithPaw(player, blockState))) && drops.stream().noneMatch(s -> s.getItem() == block.asItem());
 					if(suitableOre && !player.isCreative()){
 						boolean isCave = dragonStateHandler.getType() == DragonType.CAVE;
 
