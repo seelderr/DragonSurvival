@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
 public class ResourceTextField extends EditBox implements TooltipAccessor{
 	private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/textbox.png");
 	private static final int maxItems = 6;
-	private final List<by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.ResourceEntry> suggestions = new ArrayList<>();
+	private final List<ResourceEntry> suggestions = new ArrayList<>();
 	boolean isItem;
 	boolean isBlock;
 	boolean isEntity;
@@ -54,8 +54,8 @@ public class ResourceTextField extends EditBox implements TooltipAccessor{
 	boolean isTag;
 	private ResourceTextFieldOption option;
 	private ValueSpec spec;
-	private by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.ResourceEntry stack;
-	private by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownList list;
+	private ResourceEntry stack;
+	private DropdownList list;
 	private AbstractWidget renderButton;
 
 	public ResourceTextField(ValueSpec spec, ResourceTextFieldOption option, int pX, int pY, int pWidth, int pHeight, Component pMessage){
@@ -89,21 +89,18 @@ public class ResourceTextField extends EditBox implements TooltipAccessor{
 	public void render(PoseStack pPoseStack, int pMouseX, int pMouseY, float pPartialTicks){
 		super.render(pPoseStack, pMouseX, pMouseY, pPartialTicks);
 
-		if((isFocused() || list != null) && (!visible || (!isMouseOver(pMouseX, pMouseY) && !list.isMouseOver(pMouseX, pMouseY)))){
+		if((isFocused() || list != null) && (!visible || !isMouseOver(pMouseX, pMouseY) && !list.isMouseOver(pMouseX, pMouseY)))
 			setFocus(false);
-		}
 
-		if(isFocused() && list != null){
+		if(isFocused() && list != null)
 			list.reposition(x, y + height, width, Math.min(suggestions.size() + 1, maxItems) * height);
-		}
 	}
 
 	public void update(){
 		stack = null;
 		suggestions.clear();
-		if(list != null){
+		if(list != null)
 			list.children().clear();
-		}
 
 		String value = getValue().isEmpty() && option != null ? option.getter.apply(Minecraft.getInstance().options) : getValue();
 		String type = (isItem ? "item" : isBlock ? "block" : isEntity ? "entity" : isEffect ? "effect" : isBiome ? "biome" : "") + ":";
@@ -113,109 +110,92 @@ public class ResourceTextField extends EditBox implements TooltipAccessor{
 		resource = resource.toLowerCase(Locale.ROOT).startsWith(tagType) ? resource.substring(tagType.length()) : resource;
 		String start = value.substring(0, value.length() - resource.length());
 
-		while(StringUtils.countMatches(resource, ":") > 1){
+		while(StringUtils.countMatches(resource, ":") > 1)
 			resource = resource.substring(0, resource.lastIndexOf(":"));
-		}
 
 		stack = parseCombinedList(Collections.singletonList(resource), isTag).stream().findFirst().orElse(null);
-		if(!isFocused()){
+		if(!isFocused())
 			return;
-		}
 
 		run(resource);
 
-		if(suggestions.size() == 0 && !resource.isEmpty()){
+		if(suggestions.size() == 0 && !resource.isEmpty())
 			run("");
-		}
 
 		suggestions.sort((c1, c2) -> c2.mod.compareTo(c1.mod));
 		suggestions.sort(Comparator.comparing(c -> c.id));
-		suggestions.removeIf((s) -> !start.isEmpty() && !s.id.startsWith(start));
-		suggestions.removeIf(by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.ResourceEntry::isEmpty);
+		suggestions.removeIf(s -> !start.isEmpty() && !s.id.startsWith(start));
+		suggestions.removeIf(ResourceEntry::isEmpty);
 
 		for(int i = 0; i < suggestions.size(); i++){
-			by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.ResourceEntry entry = suggestions.get(i);
-			if(list != null){
-				list.addEntry(new by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.ResourceDropdownEntry(this, i, entry, (val) -> {
+			ResourceEntry entry = suggestions.get(i);
+			if(list != null)
+				list.addEntry(new ResourceDropdownEntry(this, i, entry, val -> {
 					setValue(val.id);
 					setFocus(false);
 					update();
 				}));
-			}
 		}
 	}
 
 	private void run(String resource){
 		SuggestionsBuilder builder = new SuggestionsBuilder(resource, 0);
 
-		if(isItem){
+		if(isItem)
 			SharedSuggestionProvider.suggestResource(ForgeRegistries.ITEMS.getKeys(), builder);
-		}
-		if(isBlock){
+		if(isBlock)
 			SharedSuggestionProvider.suggestResource(ForgeRegistries.BLOCKS.getKeys(), builder);
-		}
-		if(isEntity){
+		if(isEntity)
 			SharedSuggestionProvider.suggestResource(ForgeRegistries.ENTITIES.getKeys(), builder);
-		}
-		if(isEffect){
+		if(isEffect)
 			SharedSuggestionProvider.suggestResource(ForgeRegistries.MOB_EFFECTS.getKeys(), builder);
-		}
-		if(isBiome){
+		if(isBiome)
 			SharedSuggestionProvider.suggestResource(ForgeRegistries.BIOMES.getKeys(), builder);
-		}
 
 		if(isTag){
-			if(isBlock){
+			if(isBlock)
 				SharedSuggestionProvider.suggestResource(ForgeRegistries.BLOCKS.getKeys(), builder);
-			}
-			if(isItem){
+			if(isItem)
 				SharedSuggestionProvider.suggestResource(ForgeRegistries.ITEMS.getKeys(), builder);
-			}
-			if(isEntity){
+			if(isEntity)
 				SharedSuggestionProvider.suggestResource(ForgeRegistries.ENTITIES.getKeys(), builder);
-			}
 		}
 
 		Suggestions sgs = builder.build();
 		List<String> suggestions = sgs.getList().stream().map(Suggestion::getText).toList();
-		suggestions.removeIf((s) -> s == null || s.isEmpty());
-		suggestions.forEach((s) -> this.suggestions.addAll(parseCombinedList(Collections.singletonList(s), isTag)));
+		suggestions.removeIf(s -> s == null || s.isEmpty());
+		suggestions.forEach(s -> this.suggestions.addAll(parseCombinedList(Collections.singletonList(s), isTag)));
 	}
 
-	public List<by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.ResourceEntry> parseCombinedList(List<String> values, boolean isTag){
-		List<by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.ResourceEntry> results = new ArrayList<>();
+	public List<ResourceEntry> parseCombinedList(List<String> values, boolean isTag){
+		List<ResourceEntry> results = new ArrayList<>();
 
 		for(String value : values){
-			if(value.isEmpty() || StringUtils.countMatches(value, ":") == 0){
+			if(value.isEmpty() || StringUtils.countMatches(value, ":") == 0)
 				continue;
-			}
 
 			ResourceLocation location = ResourceLocation.tryParse(value);
-			if(location == null){
+			if(location == null)
 				continue;
-			}
 
 			if(isTag){
-				if(isItem){
+				if(isItem)
 					try{
-						results.add(new ResourceEntry("tag:" + value, Objects.requireNonNull((ForgeRegistries.ITEMS.tags().getTag(TagKey.create(Registry.ITEM_REGISTRY, location))).stream().map(ItemStack::new).toList())));
+						results.add(new ResourceEntry("tag:" + value, Objects.requireNonNull(ForgeRegistries.ITEMS.tags().getTag(TagKey.create(Registry.ITEM_REGISTRY, location)).stream().map(ItemStack::new).toList())));
 					}catch(Exception ignored){
 					}
-				}
 
-				if(isBlock){
+				if(isBlock)
 					try{
-						results.add(new ResourceEntry("tag:" + value, Objects.requireNonNull(ForgeRegistries.BLOCKS.tags().getTag(TagKey.create(Registry.BLOCK_REGISTRY, location))).stream().map((s) -> new ItemStack(s)).toList()));
+						results.add(new ResourceEntry("tag:" + value, Objects.requireNonNull(ForgeRegistries.BLOCKS.tags().getTag(TagKey.create(Registry.BLOCK_REGISTRY, location))).stream().map(s -> new ItemStack(s)).toList()));
 					}catch(Exception ignored){
 					}
-				}
 
-				if(isEntity){
+				if(isEntity)
 					try{
-						results.add(new ResourceEntry("tag:" + value, Objects.requireNonNull(ForgeRegistries.ENTITIES.tags().getTag(TagKey.create(Registry.ENTITY_TYPE_REGISTRY, location))).stream().map((s) -> new ItemStack(ForgeSpawnEggItem.fromEntityType(s))).toList()));
+						results.add(new ResourceEntry("tag:" + value, Objects.requireNonNull(ForgeRegistries.ENTITIES.tags().getTag(TagKey.create(Registry.ENTITY_TYPE_REGISTRY, location))).stream().map(s -> new ItemStack(ForgeSpawnEggItem.fromEntityType(s))).toList()));
 					}catch(Exception ignored){
 					}
-				}
 
 
 //				if (isBiome) {
@@ -234,47 +214,43 @@ public class ResourceTextField extends EditBox implements TooltipAccessor{
 //				}
 			}
 
-			if(isItem){
+			if(isItem)
 				try{
-					results.add(new by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.ResourceEntry("item:" + value, Collections.singletonList(new ItemStack(new ItemParser(new StringReader(value), false).parse().getItem()))));
+					results.add(new ResourceEntry("item:" + value, Collections.singletonList(new ItemStack(new ItemParser(new StringReader(value), false).parse().getItem()))));
 				}catch(Exception ignored){
 				}
-			}
 
-			if(isBlock){
+			if(isBlock)
 				try{
-					results.add(new by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.ResourceEntry("block:" + value, Collections.singletonList(new ItemStack(Objects.requireNonNull(new BlockStateParser(new StringReader(value), false).parse(false).getState()).getBlock()))));
+					results.add(new ResourceEntry("block:" + value, Collections.singletonList(new ItemStack(Objects.requireNonNull(new BlockStateParser(new StringReader(value), false).parse(false).getState()).getBlock()))));
 				}catch(Exception ignored){
 				}
-			}
 
-			if(isEntity){
+			if(isEntity)
 				try{
 					EntityType<?> entityType = ForgeRegistries.ENTITIES.getValue(location);
 					if(entityType != null){
 						SpawnEggItem item = ForgeSpawnEggItem.fromEntityType(entityType);
 
 						if(item != null){
-							results.add(new by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.ResourceEntry("entity:" + value, Collections.singletonList(new ItemStack(item))));
+							results.add(new ResourceEntry("entity:" + value, Collections.singletonList(new ItemStack(item))));
 						}else{
-							results.add(new by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.ResourceEntry("entity:" + value, Collections.singletonList(new ItemStack(new ItemParser(new StringReader(value), false).parse().getItem()))));
+							results.add(new ResourceEntry("entity:" + value, Collections.singletonList(new ItemStack(new ItemParser(new StringReader(value), false).parse().getItem()))));
 						}
 					}
 				}catch(Exception ignored){
 				}
-			}
 
-			if(isEffect){
+			if(isEffect)
 				try{
 					MobEffect effect = ForgeRegistries.MOB_EFFECTS.getValue(location);
 					MobEffectInstance instance = new MobEffectInstance(effect, 20);
 					ItemStack stack = new ItemStack(Items.POTION);
 					PotionUtils.setPotion(stack, Potions.WATER);
 					PotionUtils.setCustomEffects(stack, Collections.singletonList(instance));
-					results.add(new by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.ResourceEntry("effect:" + value, Collections.singletonList(stack)));
+					results.add(new ResourceEntry("effect:" + value, Collections.singletonList(stack)));
 				}catch(Exception ignored){
 				}
-			}
 			//TODO
 			//			if (isBiome) {
 			//				try {
@@ -283,15 +259,15 @@ public class ResourceTextField extends EditBox implements TooltipAccessor{
 			//				} catch (Exception ignored) {}
 			//			}
 		}
-		results.forEach((s) -> {
+		results.forEach(s -> {
 			if(s.displayItems != null && !s.displayItems.isEmpty()){
-				s.displayItems = s.displayItems.stream().filter((c) -> {
+				s.displayItems = s.displayItems.stream().filter(c -> {
 					boolean blItem = c.getItem() instanceof BlockItem;
 					boolean nameBlItem = c.getItem() instanceof ItemNameBlockItem;
 
-					return !isItem ? !nameBlItem : isBlock || (nameBlItem || !blItem);
+					return !isItem ? !nameBlItem : isBlock || nameBlItem || !blItem;
 				}).toList();
-				s.displayItems = s.displayItems.stream().filter((c) -> !c.isEmpty()).toList();
+				s.displayItems = s.displayItems.stream().filter(c -> !c.isEmpty()).toList();
 			}
 		});
 		return results;
@@ -317,7 +293,7 @@ public class ResourceTextField extends EditBox implements TooltipAccessor{
 		Screen screen = Minecraft.getInstance().screen;
 
 		if(focus){
-			list = new by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownList(x, y + height, width, Math.min(suggestions.size(), maxItems) * height, 23);
+			list = new DropdownList(x, y + height, width, Math.min(suggestions.size(), maxItems) * height, 23);
 			update();
 
 			boolean hasBorder = false;
@@ -328,14 +304,13 @@ public class ResourceTextField extends EditBox implements TooltipAccessor{
 				screen.renderables.add(0, list);
 				screen.renderables.add(list);
 
-				for(GuiEventListener child : screen.children){
+				for(GuiEventListener child : screen.children)
 					if(child instanceof AbstractSelectionList){
 						if(((AbstractSelectionList)child).renderTopAndBottom){
 							hasBorder = true;
 							break;
 						}
 					}
-				}
 			}else{
 				screen.children.add(list);
 				screen.renderables.add(list);
@@ -348,27 +323,24 @@ public class ResourceTextField extends EditBox implements TooltipAccessor{
 					this.active = this.visible = false;
 					list.visible = ResourceTextField.this.visible;
 
-					if(finalHasBorder){
-						RenderSystem.enableScissor(0, (int)(32 * Minecraft.getInstance().getWindow().getGuiScale()), Minecraft.getInstance().getWindow().getScreenWidth(), Minecraft.getInstance().getWindow().getScreenHeight() - (int)((32) * Minecraft.getInstance().getWindow().getGuiScale()) * 2);
-					}
+					if(finalHasBorder)
+						RenderSystem.enableScissor(0, (int)(32 * Minecraft.getInstance().getWindow().getGuiScale()), Minecraft.getInstance().getWindow().getScreenWidth(), Minecraft.getInstance().getWindow().getScreenHeight() - (int)(32 * Minecraft.getInstance().getWindow().getGuiScale()) * 2);
 
-					if(list.visible){
+					if(list.visible)
 						list.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
-					}
 
-					if(finalHasBorder){
+					if(finalHasBorder)
 						RenderSystem.disableScissor();
-					}
 				}
 			};
 			screen.children.add(renderButton);
 			screen.renderables.add(renderButton);
 		}else{
-			screen.children.removeIf((s) -> s == list);
-			screen.children.removeIf((s) -> s == renderButton);
+			screen.children.removeIf(s -> s == list);
+			screen.children.removeIf(s -> s == renderButton);
 
-			screen.renderables.removeIf((s) -> s == list);
-			screen.renderables.removeIf((s) -> s == renderButton);
+			screen.renderables.removeIf(s -> s == list);
+			screen.renderables.removeIf(s -> s == renderButton);
 			list = null;
 		}
 	}
@@ -384,18 +356,16 @@ public class ResourceTextField extends EditBox implements TooltipAccessor{
 			itemRenderer.renderGuiItemDecorations(Minecraft.getInstance().font, stack.getDisplayItem(), x + 3, y + 3);
 		}
 
-		if(!isFocused()){
+		if(!isFocused())
 			suggestions.clear();
-		}
 
 		this.x += 25;
 		this.y += 6;
 
-		if(spec != null && !spec.test(Arrays.asList(getValue()))){
+		if(spec != null && !spec.test(Arrays.asList(getValue())))
 			setTextColor(DyeColor.RED.getTextColor());
-		}else{
+		else
 			setTextColor(14737632);
-		}
 
 		super.renderButton(pPoseStack, pMouseX, pMouseY, pPartialTicks);
 		setTextColor(14737632);

@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.npc.VillagerTrades;
+import net.minecraft.world.entity.npc.VillagerTrades.ItemListing;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.trading.MerchantOffer;
@@ -12,7 +13,7 @@ import net.minecraft.world.item.trading.MerchantOffer;
 import javax.annotation.Nullable;
 import java.util.Random;
 
-public class ItemForItemTrade implements VillagerTrades.ItemListing{
+public class ItemForItemTrade implements ItemListing{
 	private final Item item;
 	private final int cost;
 	private final int maxUses;
@@ -29,10 +30,11 @@ public class ItemForItemTrade implements VillagerTrades.ItemListing{
 		this.count = count;
 	}
 
-	public static Int2ObjectMap<VillagerTrades.ItemListing[]> toIntMap(ImmutableMap<Integer, VillagerTrades.ItemListing[]> p_221238_0_){
+	public static Int2ObjectMap<ItemListing[]> toIntMap(ImmutableMap<Integer, ItemListing[]> p_221238_0_){
 		return new Int2ObjectOpenHashMap<>(p_221238_0_);
 	}
 
+	@Override
 	@Nullable
 	public MerchantOffer getOffer(Entity entity, Random random){
 		ItemStack buyIng = new ItemStack(this.item, this.cost);

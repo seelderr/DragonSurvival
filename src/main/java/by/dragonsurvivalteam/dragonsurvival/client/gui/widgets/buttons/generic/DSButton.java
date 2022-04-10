@@ -22,7 +22,7 @@ public class DSButton extends ExtendedButton implements TooltipRender{
 	}
 
 	public DSButton(int pX, int pY, int pWidth, int pHeight){
-		super(pX, pY, pWidth, pHeight, TextComponent.EMPTY, (t) -> {});
+		super(pX, pY, pWidth, pHeight, TextComponent.EMPTY, t -> {});
 	}
 
 	public DSButton(int pX, int pY, int pWidth, int pHeight, OnPress pOnPress, Component... tooltip){
@@ -36,14 +36,13 @@ public class DSButton extends ExtendedButton implements TooltipRender{
 	}
 
 	public DSButton(int pX, int pY, int pWidth, int pHeight, Component... tooltip){
-		super(pX, pY, pWidth, pHeight, TextComponent.EMPTY, (t) -> {});
+		super(pX, pY, pWidth, pHeight, TextComponent.EMPTY, t -> {});
 		this.tooltips = tooltip;
 	}
 
 	@Override
 	public void renderToolTip(PoseStack pPoseStack, int pMouseX, int pMouseY){
-		if(tooltips != null && tooltips.length > 0){
+		if(tooltips != null && tooltips.length > 0)
 			TooltipRendering.drawHoveringText(pPoseStack, Arrays.asList(tooltips), pMouseX, pMouseY);
-		}
 	}
 }

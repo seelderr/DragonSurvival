@@ -44,22 +44,21 @@ public class DropDownButton extends ExtendedButton implements TooltipAccessor{
 	}
 
 	public void updateMessage(){
-		if(current != null){
+		if(current != null)
 			message = new TextComponent(current.substring(0, 1).toUpperCase(Locale.ROOT) + current.substring(1).toLowerCase(Locale.ROOT));
-		}
 	}
 
 	@Override
 	public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
 		super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
 
-		if(toggled && (!visible || (!isMouseOver(p_230430_2_, p_230430_3_) && !list.isMouseOver(p_230430_2_, p_230430_3_)))){
+		if(toggled && (!visible || !isMouseOver(p_230430_2_, p_230430_3_) && !list.isMouseOver(p_230430_2_, p_230430_3_))){
 			toggled = false;
 			Screen screen = Minecraft.getInstance().screen;
-			screen.children.removeIf((s) -> s == list);
-			screen.children.removeIf((s) -> s == renderButton);
-			screen.renderables.removeIf((s) -> s == list);
-			screen.renderables.removeIf((s) -> s == renderButton);
+			screen.children.removeIf(s -> s == list);
+			screen.children.removeIf(s -> s == renderButton);
+			screen.renderables.removeIf(s -> s == list);
+			screen.renderables.removeIf(s -> s == renderButton);
 			//screen.buttons.removeIf((s) -> s == renderButton);
 		}
 
@@ -67,10 +66,11 @@ public class DropDownButton extends ExtendedButton implements TooltipAccessor{
 		if(toggled && list != null){
 			Screen screen = Minecraft.getInstance().screen;
 			int offset = screen.height - (y + height + 80);
-			list.reposition(x, y + height + (Math.min(offset, 0)), width, (int)(Math.max(1, Math.min(values.length, maxItems)) * (height * 1.5f)));
+			list.reposition(x, y + height + Math.min(offset, 0), width, (int)(Math.max(1, Math.min(values.length, maxItems)) * (height * 1.5f)));
 		}
 	}
 
+	@Override
 	public void renderButton(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
 		Minecraft mc = Minecraft.getInstance();
 		int k = this.getYImage(this.isHovered);
@@ -96,12 +96,12 @@ public class DropDownButton extends ExtendedButton implements TooltipAccessor{
 		return message;
 	}
 
+	@Override
 	public void onClick(double pMouseX, double pMouseY){
-		List<GuiEventListener> list = Minecraft.getInstance().screen.children.stream().filter((s) -> s.isMouseOver(pMouseX, pMouseY)).toList();
+		List<GuiEventListener> list = Minecraft.getInstance().screen.children.stream().filter(s -> s.isMouseOver(pMouseX, pMouseY)).toList();
 
-		if(list.size() == 1 && list.get(0) == this){
+		if(list.size() == 1 && list.get(0) == this)
 			this.onPress();
-		}
 	}
 	@Override
 	public void onPress(){
@@ -109,7 +109,7 @@ public class DropDownButton extends ExtendedButton implements TooltipAccessor{
 
 		if(!toggled){
 			int offset = screen.height - (y + height + 80);
-			list = new DropdownList(x, y + height + (Math.min(offset, 0)), width, (int)(Math.max(1, Math.min(values.length, maxItems)) * (height * 1.5f)), 16);
+			list = new DropdownList(x, y + height + Math.min(offset, 0), width, (int)(Math.max(1, Math.min(values.length, maxItems)) * (height * 1.5f)), 16);
 			DropdownEntry center = null;
 
 			for(int i = 0; i < values.length; i++){
@@ -117,14 +117,12 @@ public class DropDownButton extends ExtendedButton implements TooltipAccessor{
 				DropdownEntry ent = createEntry(i, val);
 				list.addEntry(ent);
 
-				if(Objects.equals(val, current)){
+				if(Objects.equals(val, current))
 					center = ent;
-				}
 			}
 
-			if(center != null){
+			if(center != null)
 				list.centerScrollOn(center);
-			}
 
 			boolean hasBorder = false;
 			if(screen.children.size() > 0){
@@ -133,14 +131,13 @@ public class DropDownButton extends ExtendedButton implements TooltipAccessor{
 				screen.children.add(0, list);
 				screen.children.add(list);
 
-				for(GuiEventListener child : screen.children){
+				for(GuiEventListener child : screen.children)
 					if(child instanceof ContainerObjectSelectionList){
 						if(((ContainerObjectSelectionList)child).renderTopAndBottom){
 							hasBorder = true;
 							break;
 						}
 					}
-				}
 			}else{
 				screen.children.add(list);
 				screen.renderables.add(list);
@@ -153,26 +150,23 @@ public class DropDownButton extends ExtendedButton implements TooltipAccessor{
 					this.active = this.visible = false;
 					list.visible = DropDownButton.this.visible;
 
-					if(finalHasBorder){
-						RenderSystem.enableScissor(0, (int)(32 * Minecraft.getInstance().getWindow().getGuiScale()), Minecraft.getInstance().getWindow().getScreenWidth(), Minecraft.getInstance().getWindow().getScreenHeight() - (int)((32) * Minecraft.getInstance().getWindow().getGuiScale()) * 2);
-					}
+					if(finalHasBorder)
+						RenderSystem.enableScissor(0, (int)(32 * Minecraft.getInstance().getWindow().getGuiScale()), Minecraft.getInstance().getWindow().getScreenWidth(), Minecraft.getInstance().getWindow().getScreenHeight() - (int)(32 * Minecraft.getInstance().getWindow().getGuiScale()) * 2);
 
-					if(list.visible){
+					if(list.visible)
 						list.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
-					}
 
-					if(finalHasBorder){
+					if(finalHasBorder)
 						RenderSystem.disableScissor();
-					}
 				}
 			};
 			screen.children.add(renderButton);
 			screen.renderables.add(renderButton);
 		}else{
-			screen.children.removeIf((s) -> s == list);
-			screen.children.removeIf((s) -> s == renderButton);
-			screen.renderables.removeIf((s) -> s == list);
-			screen.renderables.removeIf((s) -> s == renderButton);
+			screen.children.removeIf(s -> s == list);
+			screen.children.removeIf(s -> s == renderButton);
+			screen.renderables.removeIf(s -> s == list);
+			screen.renderables.removeIf(s -> s == renderButton);
 		}
 
 		toggled = !toggled;

@@ -19,14 +19,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class ResourceDropdownEntry extends by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownEntry{
+public class ResourceDropdownEntry extends DropdownEntry{
 	private final int num;
-	private final by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.ResourceEntry entry;
-	private final Consumer<by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.ResourceEntry> setter;
-	private final by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.ResourceTextField source;
+	private final ResourceEntry entry;
+	private final Consumer<ResourceEntry> setter;
+	private final ResourceTextField source;
 	private ExtendedButton button;
 
-	public ResourceDropdownEntry(by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.ResourceTextField source, int num, by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.ResourceEntry entry, Consumer<by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.ResourceEntry> setter){
+	public ResourceDropdownEntry(ResourceTextField source, int num, ResourceEntry entry, Consumer<ResourceEntry> setter){
 		this.num = num;
 		this.entry = entry;
 		this.setter = setter;
@@ -41,7 +41,7 @@ public class ResourceDropdownEntry extends by.dragonsurvivalteam.dragonsurvival.
 	@Override
 	public void render(PoseStack pPoseStack, int pIndex, int pTop, int pLeft, int pWidth, int pHeight, int pMouseX, int pMouseY, boolean pIsMouseOver, float pPartialTicks){
 		if(button == null){
-			if(list != null){
+			if(list != null)
 				button = new ExtendedButton(list.getLeft() + 3, 0, list.getWidth() - 12, pHeight, null, null){
 					private int tick = 0;
 
@@ -114,7 +114,6 @@ public class ResourceDropdownEntry extends by.dragonsurvivalteam.dragonsurvival.
 						}
 					}
 				};
-			}
 		}else{
 			button.y = pTop;
 			button.visible = source.visible;

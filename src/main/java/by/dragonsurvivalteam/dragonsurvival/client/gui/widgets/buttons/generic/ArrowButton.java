@@ -4,13 +4,14 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Button.OnPress;
 import net.minecraft.resources.ResourceLocation;
 
 public class ArrowButton extends Button{
 	public static final ResourceLocation texture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/arrows.png");
 	public boolean next;
 
-	public ArrowButton(int x, int y, int xSize, int ySize, boolean next, Button.OnPress pressable){
+	public ArrowButton(int x, int y, int xSize, int ySize, boolean next, OnPress pressable){
 		super(x, y, xSize, ySize, null, pressable);
 		this.next = next;
 	}
@@ -27,18 +28,16 @@ public class ArrowButton extends Button{
 		stack.translate(x - x * xSize, y - y * ySize, 0);
 		stack.scale(xSize, ySize, 0);
 
-		if(next){
+		if(next)
 			if(isHovered){
 				blit(stack, x, y, 34, 34, 34, 34);
 			}else{
 				blit(stack, x, y, 0, 34, 34, 34);
 			}
+		else if(isHovered){
+			blit(stack, x, y, 34, 0, 34, 34);
 		}else{
-			if(isHovered){
-				blit(stack, x, y, 34, 0, 34, 34);
-			}else{
-				blit(stack, x, y, 0, 0, 34, 34);
-			}
+			blit(stack, x, y, 0, 0, 34, 34);
 		}
 		stack.popPose();
 	}

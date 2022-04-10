@@ -48,16 +48,18 @@ public class ColorSelectorButton extends ExtendedButton{
 		super.render(stack, p_230430_2_, p_230430_3_, p_230430_4_);
 		this.active = !screen.preset.skinAges.get(screen.level).defaultSkin;
 
-		if(visible){
-			RenderingUtils.drawGradientRect(stack.last().pose(), 100, x + 2, y + 2, x + xSize - 2, y + ySize - 2, new int[]{Color.red.getRGB(), Color.GREEN.getRGB(), Color.BLUE.getRGB(), Color.yellow.getRGB()});
-		}
+		if(visible)
+			RenderingUtils.drawGradientRect(stack.last().pose(), 100, x + 2, y + 2, x + xSize - 2, y + ySize - 2, new int[]{Color.red.getRGB(),
+			                                                                                                                Color.GREEN.getRGB(),
+			                                                                                                                Color.BLUE.getRGB(),
+			                                                                                                                Color.yellow.getRGB()});
 
-		if(toggled && (!visible || (!isMouseOver(p_230430_2_, p_230430_3_) && (hueComponent == null || !hueComponent.isMouseOver(p_230430_2_, p_230430_3_))) && (colorComponent == null || !colorComponent.isMouseOver(p_230430_2_, p_230430_3_)))){
+		if(toggled && (!visible || !isMouseOver(p_230430_2_, p_230430_3_) && (hueComponent == null || !hueComponent.isMouseOver(p_230430_2_, p_230430_3_)) && (colorComponent == null || !colorComponent.isMouseOver(p_230430_2_, p_230430_3_)))){
 			toggled = false;
 			Screen screen = Minecraft.getInstance().screen;
-			screen.children.removeIf((s) -> s == colorComponent);
-			screen.children.removeIf((s) -> s == hueComponent);
-			screen.renderables.removeIf((s) -> s == renderButton);
+			screen.children.removeIf(s -> s == colorComponent);
+			screen.children.removeIf(s -> s == hueComponent);
+			screen.renderables.removeIf(s -> s == renderButton);
 		}
 
 		Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, screen.handler), layer, screen.preset.skinAges.get(screen.level).layerSettings.get(layer).selectedSkin, screen.handler.getType());
@@ -90,16 +92,14 @@ public class ColorSelectorButton extends ExtendedButton{
 
 					if(hueComponent != null && text.defaultColor == null){
 						hueComponent.visible = ColorSelectorButton.this.visible && text.defaultColor == null;
-						if(hueComponent.visible){
+						if(hueComponent.visible)
 							hueComponent.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
-						}
 					}
 
 					if(colorComponent != null && text.defaultColor != null){
 						colorComponent.visible = ColorSelectorButton.this.visible && text.defaultColor != null;
-						if(colorComponent.visible){
+						if(colorComponent.visible)
 							colorComponent.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
-						}
 					}
 				}
 			};
@@ -108,20 +108,20 @@ public class ColorSelectorButton extends ExtendedButton{
 
 			if(text.defaultColor == null){
 				int offset = screen.height - (y + 80);
-				hueComponent = new HueSelectorComponent(this.screen, x + xSize - 120, y + (Math.min(offset, 0)), 120, 76, layer);
+				hueComponent = new HueSelectorComponent(this.screen, x + xSize - 120, y + Math.min(offset, 0), 120, 76, layer);
 				screen.children.add(0, hueComponent);
 				screen.children.add(hueComponent);
 			}else{
 				int offset = screen.height - (y + 80);
-				colorComponent = new ColorSelectorComponent(this.screen, x + xSize - 120, y + (Math.min(offset, 0)), 120, 71, layer);
+				colorComponent = new ColorSelectorComponent(this.screen, x + xSize - 120, y + Math.min(offset, 0), 120, 71, layer);
 				screen.children.add(0, colorComponent);
 				screen.children.add(colorComponent);
 			}
 			screen.renderables.add(renderButton);
 		}else{
-			screen.children.removeIf((s) -> s == colorComponent);
-			screen.children.removeIf((s) -> s == hueComponent);
-			screen.renderables.removeIf((s) -> s == renderButton);
+			screen.children.removeIf(s -> s == colorComponent);
+			screen.children.removeIf(s -> s == hueComponent);
+			screen.renderables.removeIf(s -> s == renderButton);
 		}
 
 		toggled = !toggled;

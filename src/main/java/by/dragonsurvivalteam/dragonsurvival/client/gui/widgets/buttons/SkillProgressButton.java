@@ -27,7 +27,7 @@ public class SkillProgressButton extends Button{
 	private ActiveDragonAbility ability;
 
 	public SkillProgressButton(int x, int y, int slot, AbilityScreen screen){
-		super(x, y, 16, 16, null, (button) -> {});
+		super(x, y, 16, 16, null, button -> {});
 		this.slot = slot;
 		this.screen = screen;
 	}
@@ -46,9 +46,8 @@ public class SkillProgressButton extends Button{
 			}
 		}
 
-		if(texture == AbilityButton.BLANK_TEXTURE){
+		if(texture == AbilityButton.BLANK_TEXTURE)
 			this.ability = null;
-		}
 
 
 		RenderSystem.setShaderTexture(0, AbilityButton.BLANK_2_TEXTURE);
@@ -58,14 +57,13 @@ public class SkillProgressButton extends Button{
 
 		blit(stack, x, y, 0, 0, 16, 16, 16, 16);
 
-		if(ability != null){
+		if(ability != null)
 			DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {
 
 				if(ability.getLevel() > cap.getMagic().getAbilityLevel(ability) + 1){
 					Gui.fill(stack, x, y, x + 16, y + 16, new Color(0.25F, 0.25F, 0.25F, 0.75F).getRGB());
 				}
 			});
-		}
 	}
 
 	@Override
@@ -76,16 +74,14 @@ public class SkillProgressButton extends Button{
 				ChatFormatting format = cap.getType() == DragonType.CAVE ? ChatFormatting.DARK_RED : cap.getType() == DragonType.SEA ? ChatFormatting.AQUA : cap.getType() == DragonType.FOREST ? ChatFormatting.GREEN : ChatFormatting.WHITE;
 				ArrayList<Component> description = new ArrayList<>(Arrays.asList(((TranslatableComponent)ability.getTitle()).withStyle(format).append(" (" + ability.getLevel() + " / " + ability.getMaxLevel() + ")")));
 
-				if(ability.getLevelUpInfo().size() > 0){
+				if(ability.getLevelUpInfo().size() > 0)
 					description.addAll(ability.getLevelUpInfo());
-				}
 
 				int requiredLevel = ability.getCurrentRequiredLevel();
 
 
-				if(requiredLevel != -1){
+				if(requiredLevel != -1)
 					description.add(new TranslatableComponent("ds.skill.required_level", requiredLevel).withStyle(ChatFormatting.WHITE));
-				}
 
 				TooltipRendering.drawHoveringText(stack, description, mouseX, mouseY);
 			}

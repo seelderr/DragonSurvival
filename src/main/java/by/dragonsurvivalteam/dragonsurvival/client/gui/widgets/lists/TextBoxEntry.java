@@ -25,17 +25,17 @@ public class TextBoxEntry extends OptionListEntry{
 		this.widget = widget;
 		this.category = categoryEntry;
 
-		removeButton = new ExtendedButton(optionsList.getScrollbarPosition() - 32 - 25, 1, 50, 20, new TextComponent("Remove"), (btn) -> {
-			for(by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.OptionListEntry child : optionsList.children()){
+		removeButton = new ExtendedButton(optionsList.getScrollbarPosition() - 32 - 25, 1, 50, 20, new TextComponent("Remove"), btn -> {
+			for(OptionListEntry child : optionsList.children())
 				if(child.children().contains(widget)){
 					optionsList.removeEntry(child);
 					optionsList.scroll(-child.getHeight());
 					return;
 				}
-			}
 		});
 	}
 
+	@Override
 	public void render(PoseStack pPoseStack, int pIndex, int pTop, int pLeft, int pWidth, int pHeight, int pMouseX, int pMouseY, boolean pIsMouseOver, float pPartialTicks){
 		widget.y = pTop;
 		widget.visible = getHeight() != 0 && visible;
@@ -50,18 +50,18 @@ public class TextBoxEntry extends OptionListEntry{
 	public int getHeight(){
 		if(category != null){
 			CategoryEntry entry = category.parent;
-			while(entry != null){
+			while(entry != null)
 				if(!entry.enabled){
 					return 0;
 				}else{
 					entry = entry.parent;
 				}
-			}
 		}
 
 		return category == null || category.enabled ? 20 : 0;
 	}
 
+	@Override
 	public List<? extends GuiEventListener> children(){
 		return ImmutableList.of(this.widget, this.removeButton);
 	}

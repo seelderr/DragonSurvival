@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 @OnlyIn( Dist.CLIENT )
-public class OptionEntry extends by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.OptionListEntry{
+public class OptionEntry extends OptionListEntry{
 	public final AbstractWidget widget;
 	final Map<Option, AbstractWidget> options;
 	private final int width;
@@ -42,17 +42,17 @@ public class OptionEntry extends by.dragonsurvivalteam.dragonsurvival.client.gui
 		resetButton = new ResetSettingsButton(widget.x + 3 + widget.getWidth() + (categoryEntry != null && categoryEntry.parent != null ? 0 : 1), 0, option);
 	}
 
+	@Override
 	public void render(PoseStack pPoseStack, int pIndex, int pTop, int pLeft, int pWidth, int pHeight, int pMouseX, int pMouseY, boolean pIsMouseOver, float pPartialTicks){
-		int indent = (category != null ? category.indent : 0);
+		int indent = category != null ? category.indent : 0;
 
 		if(getHeight() != 0){
 			int color = new Color(0.1F, 0.1F, 0.1F, 0.85F).getRGB();
 
-			if(isMouseOver(pMouseX, pMouseY)){
+			if(isMouseOver(pMouseX, pMouseY))
 				color = new Color(0.2F, 0.2F, 0.2F, 0.85F).getRGB();
-			}
 
-			Gui.fill(pPoseStack, 32 + indent, pTop, ((OptionsList)list).getScrollbarPosition(), (pTop + getHeight()), color);
+			Gui.fill(pPoseStack, 32 + indent, pTop, ((OptionsList)list).getScrollbarPosition(), pTop + getHeight(), color);
 
 			Font font = Minecraft.getInstance().font;
 			font.draw(pPoseStack, Language.getInstance().getVisualOrder(FormattedText.composite(font.substrByWidth(key, ((OptionsList)list).getScrollbarPosition() - 32 - indent - 180))), 40 + indent, (float)(pTop + 6), 16777215);
@@ -70,18 +70,18 @@ public class OptionEntry extends by.dragonsurvivalteam.dragonsurvival.client.gui
 	public int getHeight(){
 		if(category != null){
 			CategoryEntry entry = category.parent;
-			while(entry != null){
+			while(entry != null)
 				if(!entry.enabled){
 					return 0;
 				}else{
 					entry = entry.parent;
 				}
-			}
 		}
 
 		return category == null || category.enabled ? 20 : 0;
 	}
 
+	@Override
 	public List<? extends GuiEventListener> children(){
 		return ImmutableList.of(this.widget, this.resetButton);
 	}

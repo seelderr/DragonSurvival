@@ -112,7 +112,7 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
 	@Redirect( method = "canEnterPose(Lnet/minecraft/world/entity/Pose;)Z", at = @At( value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;getBoundingBoxForPose(Lnet/minecraft/world/entity/Pose;)Lnet/minecraft/world/phys/AABB;" ) )
 	public AABB dragonPoseBB(Entity entity, Pose pose){
 		if(DragonUtils.isDragon(entity) && ConfigHandler.SERVER.sizeChangesHitbox.get()){
-			double size = DragonStateProvider.getCap(entity).orElseGet(null).getSize();
+			double size = DragonUtils.getHandler(entity).getSize();
 			double height = DragonSizeHandler.calculateModifiedHeight(DragonSizeHandler.calculateDragonHeight(size, ConfigHandler.SERVER.hitboxGrowsPastHuman.get()), pose, ConfigHandler.SERVER.sizeChangesHitbox.get());
 			double width = DragonSizeHandler.calculateDragonWidth(size, ConfigHandler.SERVER.hitboxGrowsPastHuman.get()) / 2.0D;
 			Vec3 vector3d = new Vec3(getX() - width, getY(), getZ() - width);

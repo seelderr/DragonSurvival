@@ -41,24 +41,22 @@ public class MixinEnchantmentHelper{
 		}
 
 		if(DragonUtils.isDragon(entity)){
-			DragonStateHandler handler = DragonStateProvider.getCap(entity).orElse(null);
+			DragonStateHandler handler = DragonUtils.getHandler(entity);
 
-			if(handler != null){
-				int highestLevel = 0;
-				for(int i = 0; i < 4; i++){
-					ItemStack stack = handler.getClawInventory().getClawsInventory().getItem(i);
+			int highestLevel = 0;
+			for(int i = 0; i < 4; i++){
+				ItemStack stack = handler.getClawInventory().getClawsInventory().getItem(i);
 
-					if(!stack.isEmpty()){
-						int lev = EnchantmentHelper.getItemEnchantmentLevel(enchantment, stack);
+				if(!stack.isEmpty()){
+					int lev = EnchantmentHelper.getItemEnchantmentLevel(enchantment, stack);
 
-						if(lev > highestLevel){
-							highestLevel = lev;
-						}
+					if(lev > highestLevel){
+						highestLevel = lev;
 					}
 				}
-
-				ci.setReturnValue(highestLevel);
 			}
+
+			ci.setReturnValue(highestLevel);
 		}
 	}
 }

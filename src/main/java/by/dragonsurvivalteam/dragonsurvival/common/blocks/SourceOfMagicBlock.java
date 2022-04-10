@@ -233,20 +233,14 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
 		}else{
 			if(DragonUtils.isDragon(player) && player.getMainHandItem().isEmpty()){
 				if(player.getFeetBlockState().getBlock() == state.getBlock()){
-					DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+					DragonStateHandler handler = DragonUtils.getHandler(player);
 
-					if(handler != null){
-						if(!handler.getMagic().onMagicSource){
-							BlockEntity source = getBlockEntity(worldIn, pos1);
+					if(!handler.getMagic().onMagicSource){
+						SourceOfMagicTileEntity source = getBlockEntity(worldIn, pos1);
 
-							if(source instanceof SourceOfMagicTileEntity){
-								SourceOfMagicTileEntity magicTile = (SourceOfMagicTileEntity)source;
-
-								if(!magicTile.isEmpty()){
-									if(worldIn.isClientSide){
-										NetworkHandler.CHANNEL.sendToServer(new SyncMagicSourceStatus(player.getId(), true, 0));
-									}
-								}
+						if(source != null && !source.isEmpty()){
+							if(worldIn.isClientSide){
+								NetworkHandler.CHANNEL.sendToServer(new SyncMagicSourceStatus(player.getId(), true, 0));
 							}
 						}
 					}

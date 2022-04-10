@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.misc;
 
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.npc.VillagerTrades;
+import net.minecraft.world.entity.npc.VillagerTrades.ItemListing;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.trading.MerchantOffer;
@@ -10,7 +11,7 @@ import net.minecraft.world.item.trading.MerchantOffer;
 import javax.annotation.Nullable;
 import java.util.Random;
 
-public class ItemFor2ItemsTrade implements VillagerTrades.ItemListing{
+public class ItemFor2ItemsTrade implements ItemListing{
 	Item itemIn1, itemIn2;
 	int cost1, cost2;
 	Item itemOut;

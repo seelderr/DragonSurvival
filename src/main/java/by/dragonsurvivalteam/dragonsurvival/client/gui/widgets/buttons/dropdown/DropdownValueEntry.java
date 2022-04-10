@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.function.Consumer;
 
-public class DropdownValueEntry extends by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownEntry{
+public class DropdownValueEntry extends DropdownEntry{
 	private final int num;
 	private final String value;
 	private final Consumer<String> setter;
@@ -36,7 +36,7 @@ public class DropdownValueEntry extends by.dragonsurvivalteam.dragonsurvival.cli
 	@Override
 	public void render(PoseStack pPoseStack, int pIndex, int pTop, int pLeft, int pWidth, int pHeight, int pMouseX, int pMouseY, boolean pIsMouseOver, float pPartialTicks){
 		if(button == null){
-			if(list != null){
+			if(list != null)
 				button = new ExtendedButton(list.getLeft() + 3, 0, list.getWidth() - 12, pHeight + 1, null, null){
 					@Override
 					public TextComponent getMessage(){
@@ -55,7 +55,6 @@ public class DropdownValueEntry extends by.dragonsurvivalteam.dragonsurvival.cli
 						return 10;
 					}
 				};
-			}
 		}else{
 			button.y = pTop;
 			button.visible = source.visible;

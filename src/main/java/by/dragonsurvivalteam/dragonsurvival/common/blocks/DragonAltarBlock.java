@@ -64,20 +64,18 @@ public class DragonAltarBlock extends Block{
 	@Override
 	public InteractionResult use(BlockState blockState, Level worldIn, BlockPos blockPos, Player player, InteractionHand handIn, BlockHitResult p_225533_6_){
 		DragonStateHandler handler = DragonUtils.getHandler(player);
-		if(handler != null){
-			int cooldown = handler.altarCooldown;
-			if(cooldown > 0){
-				if(worldIn.isClientSide){
-					//Show the current cooldown in minutes and seconds in cases where the cooldown is set high in the config
-					int mins = Functions.ticksToMinutes(cooldown);
-					int secs = Functions.ticksToSeconds(cooldown - Functions.minutesToTicks(mins));
-					player.sendMessage(new TranslatableComponent("ds.cooldown.active", (mins > 0 ? mins + "m" : "") + secs + (mins > 0 ? "s" : "")), player.getUUID());
-				}
-				return InteractionResult.CONSUME;
-			}else{
-				if(worldIn.isClientSide){
-					openGUi();
-				}
+		int cooldown = handler.altarCooldown;
+		if(cooldown > 0){
+			if(worldIn.isClientSide){
+				//Show the current cooldown in minutes and seconds in cases where the cooldown is set high in the config
+				int mins = Functions.ticksToMinutes(cooldown);
+				int secs = Functions.ticksToSeconds(cooldown - Functions.minutesToTicks(mins));
+				player.sendMessage(new TranslatableComponent("ds.cooldown.active", (mins > 0 ? mins + "m" : "") + secs + (mins > 0 ? "s" : "")), player.getUUID());
+			}
+			return InteractionResult.CONSUME;
+		}else{
+			if(worldIn.isClientSide){
+				openGUi();
 			}
 		}
 		return InteractionResult.SUCCESS;

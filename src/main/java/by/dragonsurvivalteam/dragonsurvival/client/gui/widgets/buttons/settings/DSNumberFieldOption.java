@@ -37,18 +37,17 @@ public class DSNumberFieldOption extends Option{
 				boolean val = super.charTyped(pCodePoint, pModifiers);
 				if(val){
 					Number num = NumberUtils.createNumber(getValue());
-					if(num.doubleValue() > max.doubleValue()){
+					if(num.doubleValue() > max.doubleValue())
 						setValue(max.toString());
-					}else if(num.doubleValue() < min.doubleValue()){
+					else if(num.doubleValue() < min.doubleValue())
 						setValue(min.toString());
-					}
 					setter.accept(gameSettings, num);
 				}
 				return val;
 			}
 		};
 		widget.tooltip = tooltipSupplier.apply(Minecraft.getInstance());
-		widget.setFilter((s) -> NumberUtils.isCreatable(s) || s.isEmpty());
+		widget.setFilter(s -> NumberUtils.isCreatable(s) || s.isEmpty());
 		widget.setMaxLength(10);
 		widget.setValue(getter.apply(Minecraft.getInstance().options).toString());
 		return widget;

@@ -2,7 +2,6 @@ package by.dragonsurvivalteam.dragonsurvival.common.blocks;
 
 import by.dragonsurvivalteam.dragonsurvival.client.particles.TreasureParticleData;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncTreasureRestStatus;
@@ -14,6 +13,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.FallingBlockEntity;
@@ -64,16 +64,6 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 	}
 
 
-	public Optional<Vec3> getBedSpawnPosition(EntityType<?> entityType, BlockState state, LevelReader world, BlockPos pos, float orientation,
-		@Nullable
-			LivingEntity sleeper){
-		if(world instanceof Level){
-			return RespawnAnchorBlock.findStandUpPosition(entityType, world, pos);
-		}
-
-		return Optional.empty();
-	}
-
 	public boolean isPathfindable(BlockState p_196266_1_, BlockGetter p_196266_2_, BlockPos p_196266_3_, PathComputationType p_196266_4_){
 		switch(p_196266_4_){
 			case LAND:
@@ -91,24 +81,22 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 	public InteractionResult use(BlockState p_225533_1_, Level world, BlockPos p_225533_3_, Player player, InteractionHand hand, BlockHitResult p_225533_6_){
 		if(DragonUtils.isDragon(player) && player.getItemInHand(hand).isEmpty()){
 			if(player.getFeetBlockState().getBlock() == p_225533_1_.getBlock()){
-				DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+				DragonStateHandler handler = DragonUtils.getHandler(player);
 
-				if(handler != null){
-					if(!handler.treasureResting){
-						if(world.isClientSide){
-							NetworkHandler.CHANNEL.sendToServer(new SyncTreasureRestStatus(player.getId(), true));
-						}
-
-						return InteractionResult.SUCCESS;
+				if(!handler.treasureResting){
+					if(world.isClientSide){
+						NetworkHandler.CHANNEL.sendToServer(new SyncTreasureRestStatus(player.getId(), true));
 					}
 
-					if(!world.isClientSide){
-						player.resetStat(Stats.CUSTOM.get(Stats.TIME_SINCE_REST));
-						ServerPlayer serverplayerentity = (ServerPlayer)player;
-						if(serverplayerentity.getRespawnPosition() == null || serverplayerentity.getRespawnDimension() != world.dimension() || serverplayerentity.getRespawnPosition() != null && !serverplayerentity.getRespawnPosition().equals(p_225533_3_) && serverplayerentity.getRespawnPosition().distSqr(p_225533_3_) > 40){
-							serverplayerentity.setRespawnPosition(world.dimension(), p_225533_3_, 0.0F, false, true);
-							return InteractionResult.SUCCESS;
-						}
+					return InteractionResult.SUCCESS;
+				}
+
+				if(!world.isClientSide){
+					player.resetStat(Stats.CUSTOM.get(Stats.TIME_SINCE_REST));
+					ServerPlayer serverplayerentity = (ServerPlayer)player;
+					if(serverplayerentity.getRespawnPosition() == null || serverplayerentity.getRespawnDimension() != world.dimension() || serverplayerentity.getRespawnPosition() != null && !serverplayerentity.getRespawnPosition().equals(p_225533_3_) && serverplayerentity.getRespawnPosition().distSqr(p_225533_3_) > 40){
+						serverplayerentity.setRespawnPosition(world.dimension(), p_225533_3_, 0.0F, false, true);
+						return InteractionResult.SUCCESS;
 					}
 				}
 			}
@@ -118,6 +106,20 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 	}
 
 	public boolean useShapeForLightOcclusion(BlockState p_220074_1_){
+		return true;
+	}
+
+	@Override
+	public Optional<Vec3> getRespawnPosition(BlockState state, EntityType<?> type, LevelReader levelReader, BlockPos pos, float orientation, LivingEntity entity){
+		if(levelReader instanceof Level){
+			return RespawnAnchorBlock.findStandUpPosition(type, levelReader, pos);
+		}
+
+		return Optional.empty();
+	}
+
+	@Override
+	public boolean isBed(BlockState state, BlockGetter level, BlockPos pos, @org.jetbrains.annotations.Nullable Entity player){
 		return true;
 	}
 

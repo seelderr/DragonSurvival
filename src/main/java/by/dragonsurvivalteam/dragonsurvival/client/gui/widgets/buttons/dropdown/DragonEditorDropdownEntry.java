@@ -23,15 +23,17 @@ public class DragonEditorDropdownEntry extends DropdownEntry{
 		this.source = source;
 	}
 
+	@Override
 	public void render(PoseStack pMatrixStack, int pIndex, int pTop, int pLeft, int pWidth, int pHeight, int pMouseX, int pMouseY, boolean pIsMouseOver, float pPartialTicks){
-		this.children.forEach((p_238519_5_) -> {
+		this.children.forEach(p_238519_5_ -> {
 			p_238519_5_.y = pTop;
 			p_238519_5_.visible = source.visible;
-			p_238519_5_.active = (!Objects.equals(source.current, p_238519_5_.value));
+			p_238519_5_.active = !Objects.equals(source.current, p_238519_5_.value);
 			p_238519_5_.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 		});
 	}
 
+	@Override
 	public List<? extends GuiEventListener> children(){
 		return this.children;
 	}

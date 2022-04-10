@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.capability;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.hitbox.DragonHitBox;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.hitbox.DragonHitboxPart;
+import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.entity.player.SynchronizeDragonCap;
@@ -111,7 +112,7 @@ public class CapabilityController{
 				player.connection.send(new ClientboundSetPassengersPacket(player));
 			}
 			if(passenger instanceof ServerPlayer){
-				DragonStateHandler passengerCap = DragonStateProvider.getCap(passenger).orElseGet(null);
+				DragonStateHandler passengerCap = DragonUtils.getHandler(passenger);
 				if(passengerCap.isDragon() && passengerCap.getLevel() != DragonLevel.BABY){
 					flag = true;
 					passenger.stopRiding();

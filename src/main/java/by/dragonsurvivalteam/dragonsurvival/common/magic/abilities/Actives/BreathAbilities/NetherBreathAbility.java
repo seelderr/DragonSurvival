@@ -96,20 +96,18 @@ public class NetherBreathAbility extends BreathAbility{
 			}
 			DragonStateHandler handler = DragonUtils.getHandler(player);
 
-			if(handler != null){
-				if(player.level.random.nextInt(100) < (handler.getMagic().getAbilityLevel(DragonAbilities.BURN) * 15)){
-					BlockState blockAbove = player.level.getBlockState(pos.above());
+			if(player.level.random.nextInt(100) < (handler.getMagic().getAbilityLevel(DragonAbilities.BURN) * 15)){
+				BlockState blockAbove = player.level.getBlockState(pos.above());
 
-					if(blockAbove.getBlock() == Blocks.AIR){
-						AreaEffectCloud entity = new AreaEffectCloud(EntityType.AREA_EFFECT_CLOUD, player.level);
-						entity.setWaitTime(0);
-						entity.setPos(pos.above().getX(), pos.above().getY(), pos.above().getZ());
-						entity.setPotion(new Potion(new MobEffectInstance(DragonEffects.BURN, Functions.secondsToTicks(10) * 4))); //Effect duration is divided by 4 normaly
-						entity.setDuration(Functions.secondsToTicks(2));
-						entity.setRadius(1);
-						entity.setParticle(new SmallFireParticleData(37, false));
-						player.level.addFreshEntity(entity);
-					}
+				if(blockAbove.getBlock() == Blocks.AIR){
+					AreaEffectCloud entity = new AreaEffectCloud(EntityType.AREA_EFFECT_CLOUD, player.level);
+					entity.setWaitTime(0);
+					entity.setPos(pos.above().getX(), pos.above().getY(), pos.above().getZ());
+					entity.setPotion(new Potion(new MobEffectInstance(DragonEffects.BURN, Functions.secondsToTicks(10) * 4))); //Effect duration is divided by 4 normaly
+					entity.setDuration(Functions.secondsToTicks(2));
+					entity.setRadius(1);
+					entity.setParticle(new SmallFireParticleData(37, false));
+					player.level.addFreshEntity(entity);
 				}
 			}
 		}
@@ -249,15 +247,11 @@ public class NetherBreathAbility extends BreathAbility{
 		if(!entityHit.level.isClientSide){
 			DragonStateHandler handler = DragonUtils.getHandler(player);
 
-			if(handler != null){
-				if(entityHit.level.random.nextInt(100) < (handler.getMagic().getAbilityLevel(DragonAbilities.BURN) * 15)){
-					GenericCapability cap = GenericCapabilityProvider.getGenericCapability(entityHit).orElse(null);
-					if(cap != null){
-						cap.lastAfflicted = player != null ? player.getId() : -1;
-					}
+			if(entityHit.level.random.nextInt(100) < (handler.getMagic().getAbilityLevel(DragonAbilities.BURN) * 15)){
+				GenericCapability cap = GenericCapabilityProvider.getGenericCapability(entityHit).orElse(null);
+				cap.lastAfflicted = player != null ? player.getId() : -1;
 
-					entityHit.addEffect(new MobEffectInstance(DragonEffects.BURN, Functions.secondsToTicks(10), 0, false, true));
-				}
+				entityHit.addEffect(new MobEffectInstance(DragonEffects.BURN, Functions.secondsToTicks(10), 0, false, true));
 			}
 		}
 	}

@@ -254,7 +254,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 		conf = new DragonEditorConfirmComponent(this, width / 2 - (130 / 2), height / 2 - (141 / 2), 130, 154);
 		initDragonRender();
 
-		DragonStateHandler localHandler = DragonStateProvider.getCap(getMinecraft().player).orElse(null);
+		DragonStateHandler localHandler = DragonUtils.getHandler(getMinecraft().player);
 
 		if(!hasInit){
 			level = localHandler.getLevel();

@@ -2,7 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.items;
 
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.entity.player.SynchronizeDragonCap;
 import net.minecraft.network.chat.Component;
@@ -27,9 +27,9 @@ public class WingGrantItem extends Item{
 
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand p_77659_3_){
-		DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+		DragonStateHandler handler = DragonUtils.getHandler(player);
 
-		if(handler != null && handler.isDragon()){
+		if(handler.isDragon()){
 			if(!world.isClientSide){
 				handler.setHasWings(!handler.hasWings());
 				NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new SynchronizeDragonCap(player.getId(), handler.isHiding(), handler.getType(), handler.getSize(), handler.hasWings(), handler.getLavaAirSupply(), handler.getPassengerId()));

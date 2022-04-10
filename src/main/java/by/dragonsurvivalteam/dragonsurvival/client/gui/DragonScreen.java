@@ -200,19 +200,17 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 
 
 		addRenderableWidget(new DSButton(leftPos - 80 + 34, topPos + 140, 9, 9, null, p_onPress_1_ -> {
-			if(handler != null){
-				boolean claws = !handler.getClawInventory().renderClaws;
+			boolean claws = !handler.getClawInventory().renderClaws;
 
-				handler.getClawInventory().renderClaws = claws;
-				NetworkHandler.CHANNEL.sendToServer(new SyncDragonClawRender(player.getId(), claws));
-			}
+			handler.getClawInventory().renderClaws = claws;
+			NetworkHandler.CHANNEL.sendToServer(new SyncDragonClawRender(player.getId(), claws));
 		}, new TranslatableComponent("ds.gui.claws.rendering")){
 			@Override
 			public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
 				this.active = clawsMenu;
 				DragonStateHandler handler = DragonUtils.getHandler(player);
 
-				if(handler != null && handler.getClawInventory().renderClaws && clawsMenu){
+				if(handler.getClawInventory().renderClaws && clawsMenu){
 					RenderSystem.setShaderTexture(0, DRAGON_CLAW_CHECKMARK);
 					blit(p_230430_1_, x, y, 0, 0, 9, 9, 9, 9);
 				}

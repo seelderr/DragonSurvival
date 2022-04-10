@@ -290,7 +290,7 @@ public class ClientDragonRender{
 		}
 
 		DragonStateHandler handler = DragonUtils.getHandler(player);
-		if(handler == null || !handler.isDragon()){
+		if(!handler.isDragon()){
 			return;
 		}
 

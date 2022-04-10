@@ -74,46 +74,44 @@ public class ClientFlightHandler{
 		Camera info = setup.getCamera();
 
 		if(currentPlayer != null){
-			DragonStateHandler dragonStateHandler = DragonStateProvider.getCap(currentPlayer).orElse(null);
+			DragonStateHandler dragonStateHandler = DragonUtils.getHandler(currentPlayer);
 			MixinGameRendererZoom gameRenderer = (MixinGameRendererZoom)Minecraft.getInstance().gameRenderer;
 
-			if(dragonStateHandler != null){
-				if(ServerFlightHandler.isGliding(currentPlayer)){
-					if(setup.getCamera().isDetached()){
+			if(ServerFlightHandler.isGliding(currentPlayer)){
+				if(setup.getCamera().isDetached()){
 
-						if(ConfigHandler.CLIENT.flightCameraMovement.get()){
+					if(ConfigHandler.CLIENT.flightCameraMovement.get()){
+						Vec3 lookVec = currentPlayer.getLookAngle();
+						double increase = Mth.clamp(lookVec.y * 10, 0, lookVec.y * 5);
+						double gradualIncrease = Mth.lerp(0.25, lastIncrease, increase);
+						info.move(0, gradualIncrease, 0);
+						lastIncrease = gradualIncrease;
+					}
+				}
+
+				if(Minecraft.getInstance().player != null){
+					if(ConfigHandler.CLIENT.flightZoomEffect.get()){
+						if(!Minecraft.getInstance().options.getCameraType().isFirstPerson()){
 							Vec3 lookVec = currentPlayer.getLookAngle();
-							double increase = Mth.clamp(lookVec.y * 10, 0, lookVec.y * 5);
-							double gradualIncrease = Mth.lerp(0.25, lastIncrease, increase);
-							info.move(0, gradualIncrease, 0);
-							lastIncrease = gradualIncrease;
+							float f = Math.min(Math.max(0.5F, 1F - (float)(((lookVec.y * 5) / 2.5) * 0.5)), 3F);
+							float newZoom = Mth.lerp(0.25f, lastZoom, f);
+							gameRenderer.setZoom(newZoom);
+							lastZoom = newZoom;
 						}
 					}
+				}
+			}else{
+				if(lastIncrease > 0){
+					if(ConfigHandler.CLIENT.flightCameraMovement.get()){
+						lastIncrease = Mth.lerp(0.25, lastIncrease, 0);
+						info.move(0, lastIncrease, 0);
+					}
+				}
 
-					if(Minecraft.getInstance().player != null){
-						if(ConfigHandler.CLIENT.flightZoomEffect.get()){
-							if(!Minecraft.getInstance().options.getCameraType().isFirstPerson()){
-								Vec3 lookVec = currentPlayer.getLookAngle();
-								float f = Math.min(Math.max(0.5F, 1F - (float)(((lookVec.y * 5) / 2.5) * 0.5)), 3F);
-								float newZoom = Mth.lerp(0.25f, lastZoom, f);
-								gameRenderer.setZoom(newZoom);
-								lastZoom = newZoom;
-							}
-						}
-					}
-				}else{
-					if(lastIncrease > 0){
-						if(ConfigHandler.CLIENT.flightCameraMovement.get()){
-							lastIncrease = Mth.lerp(0.25, lastIncrease, 0);
-							info.move(0, lastIncrease, 0);
-						}
-					}
-
-					if(lastZoom != 1){
-						if(ConfigHandler.CLIENT.flightZoomEffect.get()){
-							lastZoom = Mth.lerp(0.25f, lastZoom, 1f);
-							gameRenderer.setZoom(lastZoom);
-						}
+				if(lastZoom != 1){
+					if(ConfigHandler.CLIENT.flightZoomEffect.get()){
+						lastZoom = Mth.lerp(0.25f, lastZoom, 1f);
+						gameRenderer.setZoom(lastZoom);
 					}
 				}
 			}
@@ -453,7 +451,7 @@ public class ClientFlightHandler{
 		}
 
 		DragonStateHandler handler = DragonUtils.getHandler(player);
-		if(handler == null || !handler.isDragon()){
+		if(!handler.isDragon()){
 			return;
 		}
 

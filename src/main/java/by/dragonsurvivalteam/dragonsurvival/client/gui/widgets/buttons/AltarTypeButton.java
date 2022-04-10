@@ -50,9 +50,8 @@ public class AltarTypeButton extends Button implements TooltipProvider{
 
 	@Override
 	public List<Component> getTooltip(){
-		if(atTheTopOrBottom){
-			return altarDragonInfoLocalized((type == DragonType.NONE ? "human" : type.name().toLowerCase() + "_dragon"), type == DragonType.NONE ? Collections.emptyList() : DragonFoodHandler.getSafeEdibleFoods(type));
-		}
+		if(atTheTopOrBottom)
+			return altarDragonInfoLocalized(type == DragonType.NONE ? "human" : type.name().toLowerCase() + "_dragon", type == DragonType.NONE ? Collections.emptyList() : DragonFoodHandler.getSafeEdibleFoods(type));
 		return List.of();
 	}
 
@@ -63,20 +62,17 @@ public class AltarTypeButton extends Button implements TooltipProvider{
 		if(Screen.hasShiftDown()){
 			if(!Objects.equals(dragonType, "human")){
 				String food = "";
-				for(Item item : foodList){
-					food += (item.getName(new ItemStack(item)).getString() + "; ");
-				}
+				for(Item item : foodList)
+					food += item.getName(new ItemStack(item)).getString() + "; ";
 				foodInfo = Component.nullToEmpty(food);
 			}
-		}else{
+		}else
 			foodInfo = new TranslatableComponent("ds.hold_shift.for_food");
-		}
 
 		TranslatableComponent textComponent = new TranslatableComponent("ds.altar_dragon_info." + dragonType, foodInfo.getString());
 		String text = textComponent.getString();
-		for(String s : text.split("\n")){
+		for(String s : text.split("\n"))
 			info.add(new TextComponent(s));
-		}
 		return info;
 	}
 
@@ -87,19 +83,18 @@ public class AltarTypeButton extends Button implements TooltipProvider{
 
 	@Override
 	public void renderButton(PoseStack mStack, int mouseX, int mouseY, float p_230431_4_){
-		atTheTopOrBottom = (mouseY > y + 6 && mouseY < y + 26) || (mouseY > y + 133 && mouseY < y + 153);
+		atTheTopOrBottom = mouseY > y + 6 && mouseY < y + 26 || mouseY > y + 133 && mouseY < y + 153;
 		RenderSystem.setShaderTexture(0, BACKGROUND_TEXTURE);
 
 		fill(mStack, x - 1, y - 1, x + width + 1, y + height + 1, new Color(0.5f, 0.5f, 0.5f).getRGB());
-		blit(mStack, x, y, (type.ordinal() * 49), isHovered ? 0 : 147, 49, 147, 512, 512);
+		blit(mStack, x, y, type.ordinal() * 49, isHovered ? 0 : 147, 49, 147, 512, 512);
 	}
 
 	private void initiateDragonForm(DragonType type){
 		LocalPlayer player = Minecraft.getInstance().player;
 
-		if(player == null){
+		if(player == null)
 			return;
-		}
 
 		if(type == DragonType.NONE){
 			Minecraft.getInstance().player.sendMessage(new TranslatableComponent("ds.choice_human"), Minecraft.getInstance().player.getUUID());
@@ -123,8 +118,7 @@ public class AltarTypeButton extends Button implements TooltipProvider{
 				ClientEvents.sendClientData(new RequestClientData(cap.getType(), cap.getLevel()));
 			});
 			player.closeContainer();
-		}else{
+		}else
 			Minecraft.getInstance().setScreen(new DragonEditorScreen(gui, type));
-		}
 	}
 }

@@ -112,20 +112,11 @@ public class DragonSkins{
 	public static boolean renderStage(Player player, DragonLevel level){
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 
-		if(handler != null){
-			switch(level){
-				case BABY:
-					return handler.getSkin().renderNewborn;
-
-				case YOUNG:
-					return handler.getSkin().renderYoung;
-
-				case ADULT:
-					return handler.getSkin().renderAdult;
-			}
-		}
-
-		return false;
+		return switch(level){
+			case BABY -> handler.getSkin().renderNewborn;
+			case YOUNG -> handler.getSkin().renderYoung;
+			case ADULT -> handler.getSkin().renderAdult;
+		};
 	}
 
 	public static ResourceLocation fetchSkinFile(Player playerEntity, DragonLevel dragonStage, String... extra){

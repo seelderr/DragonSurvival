@@ -49,75 +49,73 @@ public class SourceOfMagicHandler{
 		Player player = event.player;
 
 		if(DragonUtils.isDragon(player)){
-			DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+			DragonStateHandler handler = DragonUtils.getHandler(player);
 
-			if(handler != null){
-				if(handler.getMagic().onMagicSource){
-					if(!(player.getFeetBlockState().getBlock() instanceof SourceOfMagicBlock) || handler.getMovementData().bite || player.isCrouching() && handler.getMagic().magicSourceTimer > 40){
-						handler.getMagic().onMagicSource = false;
-						handler.getMagic().magicSourceTimer = 0;
-						NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncMagicSourceStatus(player.getId(), false, 0));
-						return;
-					}
+			if(handler.getMagic().onMagicSource){
+				if(!(player.getFeetBlockState().getBlock() instanceof SourceOfMagicBlock) || handler.getMovementData().bite || player.isCrouching() && handler.getMagic().magicSourceTimer > 40){
+					handler.getMagic().onMagicSource = false;
+					handler.getMagic().magicSourceTimer = 0;
+					NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncMagicSourceStatus(player.getId(), false, 0));
+					return;
+				}
 
-					BlockPos pos1 = player.blockPosition();
-					BlockEntity blockEntity = player.level.getBlockEntity(pos1);
+				BlockPos pos1 = player.blockPosition();
+				BlockEntity blockEntity = player.level.getBlockEntity(pos1);
 
-					if(blockEntity instanceof SourceOfMagicPlaceholder){
-						pos1 = ((SourceOfMagicPlaceholder)blockEntity).rootPos;
-					}
+				if(blockEntity instanceof SourceOfMagicPlaceholder){
+					pos1 = ((SourceOfMagicPlaceholder)blockEntity).rootPos;
+				}
 
-					BlockEntity sourceOfMagic = player.level.getBlockEntity(pos1);
+				BlockEntity sourceOfMagic = player.level.getBlockEntity(pos1);
 
-					if(sourceOfMagic instanceof SourceOfMagicTileEntity){
-						SourceOfMagicTileEntity tile = (SourceOfMagicTileEntity)sourceOfMagic;
+				if(sourceOfMagic instanceof SourceOfMagicTileEntity){
+					SourceOfMagicTileEntity tile = (SourceOfMagicTileEntity)sourceOfMagic;
 
-						if(!tile.isEmpty()){
-							BlockState pState = sourceOfMagic.getBlockState();
-							boolean harm = false;
-							DragonType type = DragonUtils.getDragonType(player);
+					if(!tile.isEmpty()){
+						BlockState pState = sourceOfMagic.getBlockState();
+						boolean harm = false;
+						DragonType type = DragonUtils.getDragonType(player);
 
-							if(type != DragonType.CAVE && pState.getBlock() == DSBlocks.caveSourceOfMagic){
-								harm = true;
-							}
-							if(type != DragonType.SEA && pState.getBlock() == DSBlocks.seaSourceOfMagic){
-								harm = true;
-							}
-							if(type != DragonType.FOREST && pState.getBlock() == DSBlocks.forestSourceOfMagic){
-								harm = true;
-							}
+						if(type != DragonType.CAVE && pState.getBlock() == DSBlocks.caveSourceOfMagic){
+							harm = true;
+						}
+						if(type != DragonType.SEA && pState.getBlock() == DSBlocks.seaSourceOfMagic){
+							harm = true;
+						}
+						if(type != DragonType.FOREST && pState.getBlock() == DSBlocks.forestSourceOfMagic){
+							harm = true;
+						}
 
-							if(!harm || player.isCreative() || ConfigHandler.SERVER.canUseAllSourcesOfMagic.get()){
-								if(ConfigHandler.SERVER.sourceOfMagicInfiniteMagic.get()){
-									if(handler.getMagic().magicSourceTimer >= Functions.secondsToTicks(10)){
-										handler.getMagic().magicSourceTimer = 0;
-										MobEffect effect = DragonEffects.SOURCE_OF_MAGIC;
-										MobEffectInstance effectInstance = player.getEffect(effect);
-										int duration = SourceOfMagicTileEntity.consumables.get(tile.getItem(0).getItem());
+						if(!harm || player.isCreative() || ConfigHandler.SERVER.canUseAllSourcesOfMagic.get()){
+							if(ConfigHandler.SERVER.sourceOfMagicInfiniteMagic.get()){
+								if(handler.getMagic().magicSourceTimer >= Functions.secondsToTicks(10)){
+									handler.getMagic().magicSourceTimer = 0;
+									MobEffect effect = DragonEffects.SOURCE_OF_MAGIC;
+									MobEffectInstance effectInstance = player.getEffect(effect);
+									int duration = SourceOfMagicTileEntity.consumables.get(tile.getItem(0).getItem());
 
-										if(effectInstance == null){
-											player.addEffect(new MobEffectInstance(effect, duration));
-										}else{
-											player.addEffect(new MobEffectInstance(effect, effectInstance.getDuration() + duration));
-										}
-
-										tile.removeItem(0, 1);
+									if(effectInstance == null){
+										player.addEffect(new MobEffectInstance(effect, duration));
 									}else{
-										handler.getMagic().magicSourceTimer++;
+										player.addEffect(new MobEffectInstance(effect, effectInstance.getDuration() + duration));
 									}
-								}
-							}else{
-								if(ConfigHandler.SERVER.damageWrongSourceOfMagic.get()){
-									if(player.tickCount % Functions.secondsToTicks(5) == 0){
-										player.hurt(DamageSource.MAGIC, 1F);
-									}
+
+									tile.removeItem(0, 1);
+								}else{
+									handler.getMagic().magicSourceTimer++;
 								}
 							}
 						}else{
-							handler.getMagic().magicSourceTimer = 0;
-							handler.getMagic().onMagicSource = false;
-							NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncMagicSourceStatus(player.getId(), false, 0));
+							if(ConfigHandler.SERVER.damageWrongSourceOfMagic.get()){
+								if(player.tickCount % Functions.secondsToTicks(5) == 0){
+									player.hurt(DamageSource.MAGIC, 1F);
+								}
+							}
 						}
+					}else{
+						handler.getMagic().magicSourceTimer = 0;
+						handler.getMagic().onMagicSource = false;
+						NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncMagicSourceStatus(player.getId(), false, 0));
 					}
 				}
 			}
@@ -132,54 +130,52 @@ public class SourceOfMagicHandler{
 		Player player = event.player;
 
 		if(DragonUtils.isDragon(player)){
-			DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+			DragonStateHandler handler = DragonUtils.getHandler(player);
 
-			if(handler != null){
-				if(handler.getMagic().onMagicSource){
-					BlockPos pos1 = player.blockPosition();
-					BlockEntity blockEntity = player.level.getBlockEntity(pos1);
+			if(handler.getMagic().onMagicSource){
+				BlockPos pos1 = player.blockPosition();
+				BlockEntity blockEntity = player.level.getBlockEntity(pos1);
 
-					if(blockEntity instanceof SourceOfMagicPlaceholder){
-						pos1 = ((SourceOfMagicPlaceholder)blockEntity).rootPos;
-					}
+				if(blockEntity instanceof SourceOfMagicPlaceholder){
+					pos1 = ((SourceOfMagicPlaceholder)blockEntity).rootPos;
+				}
 
-					BlockEntity sourceOfMagic = player.level.getBlockEntity(pos1);
+				BlockEntity sourceOfMagic = player.level.getBlockEntity(pos1);
 
-					if(sourceOfMagic instanceof SourceOfMagicTileEntity){
-						SourceOfMagicTileEntity tile = (SourceOfMagicTileEntity)sourceOfMagic;
+				if(sourceOfMagic instanceof SourceOfMagicTileEntity){
+					SourceOfMagicTileEntity tile = (SourceOfMagicTileEntity)sourceOfMagic;
 
-						if(!tile.isEmpty()){
-							BlockState pState = sourceOfMagic.getBlockState();
-							boolean harm = false;
-							DragonType type = DragonUtils.getDragonType(player);
+					if(!tile.isEmpty()){
+						BlockState pState = sourceOfMagic.getBlockState();
+						boolean harm = false;
+						DragonType type = DragonUtils.getDragonType(player);
 
-							if(type != DragonType.CAVE && pState.getBlock() == DSBlocks.caveSourceOfMagic){
-								harm = true;
-							}
-							if(type != DragonType.SEA && pState.getBlock() == DSBlocks.seaSourceOfMagic){
-								harm = true;
-							}
-							if(type != DragonType.FOREST && pState.getBlock() == DSBlocks.forestSourceOfMagic){
-								harm = true;
-							}
+						if(type != DragonType.CAVE && pState.getBlock() == DSBlocks.caveSourceOfMagic){
+							harm = true;
+						}
+						if(type != DragonType.SEA && pState.getBlock() == DSBlocks.seaSourceOfMagic){
+							harm = true;
+						}
+						if(type != DragonType.FOREST && pState.getBlock() == DSBlocks.forestSourceOfMagic){
+							harm = true;
+						}
 
 
-							if(!harm || player.isCreative() || ConfigHandler.SERVER.canUseAllSourcesOfMagic.get()){
-								if(ConfigHandler.SERVER.sourceOfMagicInfiniteMagic.get()){
-									if(player.level.isClientSide){
-										Minecraft minecraft = Minecraft.getInstance();
-										Random random = player.level.random;
-										double x = -1 + random.nextDouble() * 2;
-										double z = -1 + random.nextDouble() * 2;
+						if(!harm || player.isCreative() || ConfigHandler.SERVER.canUseAllSourcesOfMagic.get()){
+							if(ConfigHandler.SERVER.sourceOfMagicInfiniteMagic.get()){
+								if(player.level.isClientSide){
+									Minecraft minecraft = Minecraft.getInstance();
+									Random random = player.level.random;
+									double x = -1 + random.nextDouble() * 2;
+									double z = -1 + random.nextDouble() * 2;
 
-										if(pState.getBlock() == DSBlocks.seaSourceOfMagic || pState.getBlock() == DSBlocks.forestSourceOfMagic){
-											if(!minecraft.isPaused()){
-												player.level.addParticle(DSParticles.magicBeaconParticle, player.getX() + x, player.getY() + 0.5, player.getZ() + z, 0, 0, 0);
-											}
-										}else if(pState.getBlock() == DSBlocks.caveSourceOfMagic){
-											if(!minecraft.isPaused()){
-												player.level.addParticle(DSParticles.fireBeaconParticle, player.getX() + x, player.getY() + 0.5, player.getZ() + z, 0, 0, 0);
-											}
+									if(pState.getBlock() == DSBlocks.seaSourceOfMagic || pState.getBlock() == DSBlocks.forestSourceOfMagic){
+										if(!minecraft.isPaused()){
+											player.level.addParticle(DSParticles.magicBeaconParticle, player.getX() + x, player.getY() + 0.5, player.getZ() + z, 0, 0, 0);
+										}
+									}else if(pState.getBlock() == DSBlocks.caveSourceOfMagic){
+										if(!minecraft.isPaused()){
+											player.level.addParticle(DSParticles.fireBeaconParticle, player.getX() + x, player.getY() + 0.5, player.getZ() + z, 0, 0, 0);
 										}
 									}
 								}
@@ -200,15 +196,13 @@ public class SourceOfMagicHandler{
 		Player player = Minecraft.getInstance().player;
 
 		if(DragonUtils.isDragon(player)){
-			DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+			DragonStateHandler handler = DragonUtils.getHandler(player);
 
-			if(handler != null){
-				if(handler.getMagic().onMagicSource){
-					Vec3 velocity = player.getDeltaMovement();
-					float groundSpeed = Mth.sqrt((float)((velocity.x * velocity.x) + (velocity.z * velocity.z)));
-					if(Math.abs(groundSpeed) > 0.05){
-						NetworkHandler.CHANNEL.sendToServer(new SyncMagicSourceStatus(player.getId(), false, 0));
-					}
+			if(handler.getMagic().onMagicSource){
+				Vec3 velocity = player.getDeltaMovement();
+				float groundSpeed = Mth.sqrt((float)((velocity.x * velocity.x) + (velocity.z * velocity.z)));
+				if(Math.abs(groundSpeed) > 0.05){
+					NetworkHandler.CHANNEL.sendToServer(new SyncMagicSourceStatus(player.getId(), false, 0));
 				}
 			}
 		}

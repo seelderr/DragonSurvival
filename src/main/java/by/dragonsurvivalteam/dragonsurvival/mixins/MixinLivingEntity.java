@@ -51,7 +51,7 @@ public abstract class MixinLivingEntity extends Entity{
 		ItemStack mainStack = entity.getMainHandItem();
 
 		if(slotType == EquipmentSlot.MAINHAND){
-			DragonStateHandler cap = DragonStateProvider.getCap(entity).orElse(null);
+			DragonStateHandler cap = DragonUtils.getHandler(entity);
 
 			if(!(mainStack.getItem() instanceof TieredItem) && cap != null){
 				ItemStack sword = cap.getClawInventory().getClawsInventory().getItem(0);

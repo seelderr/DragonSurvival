@@ -23,7 +23,7 @@ public class DecreaseLevelButton extends ArrowButton{
 
 	public DecreaseLevelButton(int x, int y, int slot, AbilityScreen screen){
 
-		super(x, y, 15, 17, false, (button) -> {});
+		super(x, y, 15, 17, false, button -> {});
 		this.slot = slot;
 		this.screen = screen;
 
@@ -41,11 +41,10 @@ public class DecreaseLevelButton extends ArrowButton{
 		ability = DragonAbilities.PASSIVE_ABILITIES.get(type).get(slot);
 
 		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {
-			if(ability != null){
+			if(ability != null)
 				if(cap.getMagic().getAbility(ability) != null && cap.getMagic().getAbilityLevel(ability) > ability.getMinLevel()){
 					NetworkHandler.CHANNEL.sendToServer(new ChangeSkillLevel(cap.getMagic().getAbilityLevel(ability) - 1, ability.getId(), -1));
 				}
-			}
 		});
 	}
 
@@ -58,14 +57,12 @@ public class DecreaseLevelButton extends ArrowButton{
 			if(ability != null){
 				PassiveDragonAbility currentAbility = (PassiveDragonAbility)cap.getMagic().getAbility(ability);
 
-				if(ability != null && currentAbility == null){
+				if(ability != null && currentAbility == null)
 					currentAbility = (PassiveDragonAbility)ability;
-				}
 
 
-				if(currentAbility != null && currentAbility.getLevel() > currentAbility.getMinLevel()){
+				if(currentAbility != null && currentAbility.getLevel() > currentAbility.getMinLevel())
 					TooltipRendering.drawHoveringText(stack, new TranslatableComponent("ds.skill.level.down", (int)Math.max(1, currentAbility.getLevelCost() * 0.8F)), mouseX, mouseY);
-				}
 			}
 		});
 	}

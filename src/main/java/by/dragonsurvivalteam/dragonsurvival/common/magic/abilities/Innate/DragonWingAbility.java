@@ -31,7 +31,7 @@ public class DragonWingAbility extends InnateDragonAbility{
 
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 
-		return new TranslatableComponent("ds.skill.description." + getId(), key).append("\n").append(new TranslatableComponent("ds.skill.description." + getId() + (handler != null && handler.getMovementData().spinLearned ? ".has_spin" : ".no_spin")));
+		return new TranslatableComponent("ds.skill.description." + getId(), key).append("\n").append(new TranslatableComponent("ds.skill.description." + getId() + (handler.getMovementData().spinLearned ? ".has_spin" : ".no_spin")));
 	}
 
 	@Override

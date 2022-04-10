@@ -26,7 +26,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.DistExecutor.SafeRunnable;
 
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -46,9 +45,9 @@ public class DragonStateHandler implements NBTInterface{
 	public int altarCooldown;
 	public boolean hasUsedAltar;
 
-	public boolean treasureResting = false;
-	public int treasureRestTimer = 0;
-	public int treasureSleepTimer = 0;
+	public boolean treasureResting;
+	public int treasureRestTimer;
+	public int treasureSleepTimer;
 
 	//Saving status of other types incase the config option for saving all is on
 	public double caveSize;
@@ -61,7 +60,7 @@ public class DragonStateHandler implements NBTInterface{
 	private DragonType type = DragonType.NONE;
 	private boolean hasWings;
 	private boolean spreadWings;
-	private double size = 0;
+	private double size;
 	private int lavaAirSupply;
 	private int passengerId;
 
@@ -111,11 +110,11 @@ public class DragonStateHandler implements NBTInterface{
 	}
 
 	public boolean isDragon(){
-		return this.type != DragonType.NONE;
+		return type != DragonType.NONE;
 	}
 
 	public int getPassengerId(){
-		return this.passengerId;
+		return passengerId;
 	}
 
 	public void setPassengerId(int passengerId){
@@ -130,6 +129,7 @@ public class DragonStateHandler implements NBTInterface{
 		return skin;
 	}
 
+	@Override
 	public CompoundTag writeNBT(){
 		CompoundTag tag = new CompoundTag();
 		tag.putString("type", getType().toString());
@@ -175,19 +175,18 @@ public class DragonStateHandler implements NBTInterface{
 			tag.putBoolean("seaWings", seaWings);
 			tag.putBoolean("forestWings", forestWings);
 
-			for(int i = 0; i < caps.length; i++){
+			for(int i = 0; i < caps.length; i++)
 				tag.put("cap_" + i, caps[i].get().writeNBT());
-			}
 		}
 		return tag;
 	}
 
+	@Override
 	public void readNBT(CompoundTag tag){
-		if(tag.getString("type").equals("")){
+		if(tag.getString("type").equals(""))
 			setType(DragonType.NONE);
-		}else{
+		else
 			setType(DragonType.valueOf(tag.getString("type")));
-		}
 
 		if(isDragon()){
 			setMovementData(tag.getDouble("bodyYaw"), tag.getDouble("headYaw"), tag.getDouble("headPitch"), tag.getBoolean("bite"));
@@ -223,15 +222,13 @@ public class DragonStateHandler implements NBTInterface{
 			seaWings = tag.getBoolean("seaWings");
 			forestWings = tag.getBoolean("forestWings");
 
-			for(int i = 0; i < caps.length; i++){
+			for(int i = 0; i < caps.length; i++)
 				if(tag.contains("cap_" + i)){
 					caps[i].get().readNBT((CompoundTag)tag.get("cap_" + i));
 				}
-			}
 
-			if(getSize() == 0){
+			if(getSize() == 0)
 				setSize(DragonLevel.BABY.size);
-			}
 
 			setLavaAirSupply(tag.getInt("lavaAirSupply"));
 		}
@@ -287,9 +284,8 @@ public class DragonStateHandler implements NBTInterface{
 			DragonLevel oldLevel = getLevel();
 			this.size = size;
 
-			if(oldLevel != getLevel()){
+			if(oldLevel != getLevel())
 				onGrow();
-			}
 
 			switch(type){
 				case SEA:
@@ -308,18 +304,17 @@ public class DragonStateHandler implements NBTInterface{
 	}
 
 	public void onGrow(){
-		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)this::requestSkinUpdate);
+		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (DistExecutor.SafeRunnable)this::requestSkinUpdate);
 	}
 
 	@OnlyIn( Dist.CLIENT )
 	public void requestSkinUpdate(){
-		if(this == DragonUtils.getHandler(Minecraft.getInstance().player)){
+		if(this == DragonUtils.getHandler(Minecraft.getInstance().player))
 			ClientEvents.sendClientData(new RequestClientData(getType(), getLevel()));
-		}
 	}
 
 	public DragonType getType(){
-		return this.type;
+		return type;
 	}
 
 	public void setType(DragonType type){
@@ -331,7 +326,7 @@ public class DragonStateHandler implements NBTInterface{
 
 		this.type = type;
 
-		if(ConfigHandler.SERVER.saveGrowthStage.get()){
+		if(ConfigHandler.SERVER.saveGrowthStage.get())
 			switch(type){
 				case SEA:
 					size = seaSize;
@@ -348,7 +343,6 @@ public class DragonStateHandler implements NBTInterface{
 					hasWings = forestWings;
 					break;
 			}
-		}
 	}
 
 	public MagicCap getMagic(){
@@ -356,17 +350,16 @@ public class DragonStateHandler implements NBTInterface{
 	}
 
 	public DragonLevel getLevel(){
-		if(size < 20F){
+		if(size < 20F)
 			return DragonLevel.BABY;
-		}else if(size < 30F){
+		else if(size < 30F)
 			return DragonLevel.YOUNG;
-		}else{
+		else
 			return DragonLevel.ADULT;
-		}
 	}
 
 	public DragonMovementData getMovementData(){
-		return this.movementData;
+		return movementData;
 	}
 
 	public boolean hasWings(){
@@ -386,11 +379,11 @@ public class DragonStateHandler implements NBTInterface{
 	}
 
 	public DragonDebuffData getDebuffData(){
-		return this.debuffData;
+		return debuffData;
 	}
 
 	public int getLavaAirSupply(){
-		return this.lavaAirSupply;
+		return lavaAirSupply;
 	}
 
 	public void setLavaAirSupply(int lavaAirSupply){
@@ -403,28 +396,25 @@ public class DragonStateHandler implements NBTInterface{
 
 		for(int i = 1; i < 4; i++){
 			ItemStack stack = getClawInventory().getClawsInventory().getItem(i);
-			if(stack.isCorrectToolForDrops(state)){
+			if(stack.isCorrectToolForDrops(state))
 				return true;
-			}
 		}
 
 		switch(getLevel()){
 			case BABY:
 				if(ConfigHandler.SERVER.bonusUnlockedAt.get() != DragonLevel.BABY){
-					if(harvestLevel <= ConfigHandler.SERVER.baseHarvestLevel.get() + baseHarvestLevel){
+					if(harvestLevel <= ConfigHandler.SERVER.baseHarvestLevel.get() + baseHarvestLevel)
 						return true;
-					}
 					break;
 				}
 			case YOUNG:
 				if(ConfigHandler.SERVER.bonusUnlockedAt.get() == DragonLevel.ADULT && getLevel() != DragonLevel.BABY){
-					if(harvestLevel <= ConfigHandler.SERVER.baseHarvestLevel.get() + baseHarvestLevel){
+					if(harvestLevel <= ConfigHandler.SERVER.baseHarvestLevel.get() + baseHarvestLevel)
 						return true;
-					}
 					break;
 				}
 			case ADULT:
-				if(harvestLevel <= ConfigHandler.SERVER.bonusHarvestLevel.get() + baseHarvestLevel){
+				if(harvestLevel <= ConfigHandler.SERVER.bonusHarvestLevel.get() + baseHarvestLevel)
 					switch(getType()){
 						case SEA:
 							if(state.is(BlockTags.MINEABLE_WITH_SHOVEL)){
@@ -441,10 +431,8 @@ public class DragonStateHandler implements NBTInterface{
 								return true;
 							}
 					}
-				}
-				if(harvestLevel <= ConfigHandler.SERVER.baseHarvestLevel.get() + baseHarvestLevel){
+				if(harvestLevel <= ConfigHandler.SERVER.baseHarvestLevel.get() + baseHarvestLevel)
 					return true;
-				}
 		}
 		return false;
 	}

@@ -88,6 +88,8 @@ public class DragonSizeHandler{
 	}
 
 	public static Pose overridePose(Player player){
+		if(player == null) return Pose.STANDING;
+
 		Pose overridePose = getOverridePose(player);
 		if(player.getForcedPose() != overridePose){
 			player.setForcedPose(overridePose);

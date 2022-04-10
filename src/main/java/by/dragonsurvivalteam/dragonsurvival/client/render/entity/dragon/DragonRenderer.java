@@ -113,25 +113,22 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity>{
 			}else if(bone.getName().equals("BreathSource")){
 				DragonStateHandler handler = DragonUtils.getHandler(player);
 
-				if(handler != null){
-					if(handler.getMagic().getCurrentlyCasting() instanceof BreathAbility){
-						BreathAbility ability = (BreathAbility)handler.getMagic().getCurrentlyCasting();
-						int slot = DragonAbilities.getAbilitySlot(ability);
-						if(ability.getCurrentCastTimer() >= ability.getCastingTime() || handler.getMagic().getAbilityFromSlot(slot).getCurrentCastTimer() >= ability.getCastingTime()){
-							if(ability.getEffectEntity() != null){
-								stack.pushPose();
-								RenderUtils.translate(bone, stack);
-								RenderUtils.moveToPivot(bone, stack);
-								RenderUtils.rotate(bone, stack);
-								RenderUtils.scale(bone, stack);
-								stack.mulPose(Vector3f.YN.rotationDegrees(-90));
-								//stack.mulPose(Vector3f.ZN.rotationDegrees(player.xRot));//For head pitch
-								EntityRenderer<? super Entity> effectRender = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(ability.getEffectEntity());
-								effectRender.render(ability.getEffectEntity(), player.getViewYRot(partialTicks), partialTicks, stack, rtb, 200);
-								bufferIn = rtb.getBuffer(RenderType.entityCutout(whTexture));
+				if(handler.getMagic().getCurrentlyCasting() instanceof BreathAbility ability){
+					int slot = DragonAbilities.getAbilitySlot(ability);
+					if(ability.getCurrentCastTimer() >= ability.getCastingTime() || handler.getMagic().getAbilityFromSlot(slot).getCurrentCastTimer() >= ability.getCastingTime()){
+						if(ability.getEffectEntity() != null){
+							stack.pushPose();
+							RenderUtils.translate(bone, stack);
+							RenderUtils.moveToPivot(bone, stack);
+							RenderUtils.rotate(bone, stack);
+							RenderUtils.scale(bone, stack);
+							stack.mulPose(Vector3f.YN.rotationDegrees(-90));
+							//stack.mulPose(Vector3f.ZN.rotationDegrees(player.xRot));//For head pitch
+							EntityRenderer<? super Entity> effectRender = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(ability.getEffectEntity());
+							effectRender.render(ability.getEffectEntity(), player.getViewYRot(partialTicks), partialTicks, stack, rtb, 200);
+							bufferIn = rtb.getBuffer(RenderType.entityCutout(whTexture));
 
-								stack.popPose();
-							}
+							stack.popPose();
 						}
 					}
 				}

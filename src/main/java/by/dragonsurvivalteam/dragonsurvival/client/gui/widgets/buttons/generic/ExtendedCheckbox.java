@@ -49,8 +49,8 @@ public class ExtendedCheckbox extends Checkbox{
 		RenderSystem.setShaderTexture(0, TEXTURE);
 
 		if(height > 10){
-			float widthMod = ((renderWidth - 4) / 36f);
-			float heightMod = ((height - 4) / 36f);
+			float widthMod = (renderWidth - 4) / 36f;
+			float heightMod = (height - 4) / 36f;
 
 			float u = this.isHoveredOrFocused() || this.isFocused() ? renderWidth - 4 : 0.0F;
 			float v = this.selected() ? height - 4 : 0.0F;
@@ -65,8 +65,8 @@ public class ExtendedCheckbox extends Checkbox{
 			drawString(pMatrixStack, fontrenderer, message, this.x + renderWidth + 2, this.y + (height - 8) / 2, 14737632);
 			pMatrixStack.popPose();
 		}else{
-			float widthMod = ((renderWidth) / 36f);
-			float heightMod = ((height) / 36f);
+			float widthMod = renderWidth / 36f;
+			float heightMod = height / 36f;
 
 			float u = this.isHoveredOrFocused() || this.isFocused() ? renderWidth : 0.0F;
 			float v = this.selected() ? height : 0.0F;

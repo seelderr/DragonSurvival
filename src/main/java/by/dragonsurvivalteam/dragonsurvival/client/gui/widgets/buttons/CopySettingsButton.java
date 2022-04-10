@@ -38,16 +38,15 @@ public class CopySettingsButton extends ExtendedButton{
 			blit(pMatrixStack, x, y, 0, 0, 16, 16, 16, 16);
 		}
 
-		if(toggled && (!visible || (!isMouseOver(pMouseX, pMouseY) && (component == null || !component.isMouseOver(pMouseX, pMouseY))))){
+		if(toggled && (!visible || !isMouseOver(pMouseX, pMouseY) && (component == null || !component.isMouseOver(pMouseX, pMouseY)))){
 			toggled = false;
 			Screen screen = Minecraft.getInstance().screen;
-			screen.children.removeIf((s) -> s == component);
-			screen.renderables.removeIf((s) -> s == renderButton);
+			screen.children.removeIf(s -> s == component);
+			screen.renderables.removeIf(s -> s == renderButton);
 		}
 
-		if(this.isHoveredOrFocused() && (component != null && !component.isMouseOver(pMouseX, pMouseY) || !toggled)){
+		if(this.isHoveredOrFocused() && (component != null && !component.isMouseOver(pMouseX, pMouseY) || !toggled))
 			this.renderToolTip(pMatrixStack, pMouseX, pMouseY);
-		}
 	}
 
 	@Override
@@ -69,21 +68,20 @@ public class CopySettingsButton extends ExtendedButton{
 					if(component != null){
 						component.visible = CopySettingsButton.this.visible;
 
-						if(component.visible){
+						if(component.visible)
 							component.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
-						}
 					}
 				}
 			};
 
 			int offset = screen.height - (y + 80);
-			component = new CopyEditorSettingsComponent(screen, this, x + width - 80, y + (Math.min(offset, 0)), 80, 70);
+			component = new CopyEditorSettingsComponent(screen, this, x + width - 80, y + Math.min(offset, 0), 80, 70);
 			screen.children.add(0, component);
 			screen.children.add(component);
 			screen.renderables.add(renderButton);
 		}else{
-			screen.children.removeIf((s) -> s == component);
-			screen.renderables.removeIf((s) -> s == renderButton);
+			screen.children.removeIf(s -> s == component);
+			screen.renderables.removeIf(s -> s == renderButton);
 		}
 
 		toggled = !toggled;

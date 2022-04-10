@@ -3,7 +3,6 @@ package by.dragonsurvivalteam.dragonsurvival.client.handlers;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonGrowthHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
@@ -22,14 +21,13 @@ import java.awt.Color;
 public class ClientGrowthHudHandler{
 	public static void renderGrowth(ForgeIngameGui gui, PoseStack mStack, float partialTicks, int width, int height){
 		Player playerEntity = Minecraft.getInstance().player;
-		if(playerEntity == null || !DragonUtils.isDragon(playerEntity) || playerEntity.isSpectator()){
+		if(playerEntity == null || !DragonUtils.isDragon(playerEntity) || playerEntity.isSpectator())
 			return;
-		}
 
-		DragonStateHandler handler = DragonStateProvider.getCap(playerEntity).orElse(null);
+		DragonStateHandler handler = DragonUtils.getHandler(playerEntity);
 		ItemStack stack = playerEntity.getMainHandItem();
 
-		if(handler == null || stack.isEmpty()){
+		if(stack.isEmpty()){
 			return;
 		}
 

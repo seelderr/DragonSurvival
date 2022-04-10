@@ -183,7 +183,7 @@ public class ServerFlightHandler{
 							continue;
 						}
 						if(ent instanceof LivingEntity entity){
-							//Dont hit the same mob multiple times
+							//Don't hit the same mob multiple times
 							if(entity.getLastHurtByMob() == player && entity.getLastHurtByMobTimestamp() <= entity.tickCount + 5 * 20){
 								continue;
 							}
@@ -207,12 +207,10 @@ public class ServerFlightHandler{
 	}
 
 	public static boolean isSpin(Player entity){
-		DragonStateHandler handler = DragonStateProvider.getCap(entity).orElse(null);
+		DragonStateHandler handler = DragonUtils.getHandler(entity);
 
-		if(handler != null){
-			if(isFlying(entity) || canSwimSpin(entity)){
-				return handler.getMovementData().spinAttack > 0;
-			}
+		if(isFlying(entity) || canSwimSpin(entity)){
+			return handler.getMovementData().spinAttack > 0;
 		}
 
 		return false;
@@ -220,8 +218,8 @@ public class ServerFlightHandler{
 
 	public static boolean canSwimSpin(LivingEntity player){
 		DragonStateHandler dragonStateHandler = DragonUtils.getHandler(player);
-		boolean validSwim = ((dragonStateHandler.getType() == SEA || dragonStateHandler.getType() == FOREST) && player.isInWater()) || (player.isInLava() && dragonStateHandler.getType() == CAVE);
-		return dragonStateHandler != null && validSwim && dragonStateHandler.hasWings() && !player.isOnGround();
+		boolean validSwim = (dragonStateHandler.getType() == SEA || dragonStateHandler.getType() == FOREST) && player.isInWater() || player.isInLava() && dragonStateHandler.getType() == CAVE;
+		return validSwim && dragonStateHandler.hasWings() && !player.isOnGround();
 	}
 
 	@SubscribeEvent

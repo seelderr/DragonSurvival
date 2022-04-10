@@ -76,14 +76,12 @@ public class ClawToolHandler{
 			if(!player.level.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) && !ConfigHandler.SERVER.keepClawItems.get()){
 				DragonStateHandler handler = DragonUtils.getHandler(player);
 
-				if(handler != null){
-					for(int i = 0; i < handler.getClawInventory().getClawsInventory().getContainerSize(); i++){
-						ItemStack stack = handler.getClawInventory().getClawsInventory().getItem(i);
+				for(int i = 0; i < handler.getClawInventory().getClawsInventory().getContainerSize(); i++){
+					ItemStack stack = handler.getClawInventory().getClawsInventory().getItem(i);
 
-						if(!stack.isEmpty()){
-							event.getDrops().add(new ItemEntity(player.level, player.getX(), player.getY(), player.getZ(), stack));
-							handler.getClawInventory().getClawsInventory().setItem(i, ItemStack.EMPTY);
-						}
+					if(!stack.isEmpty()){
+						event.getDrops().add(new ItemEntity(player.level, player.getX(), player.getY(), player.getZ(), stack));
+						handler.getClawInventory().getClawsInventory().setItem(i, ItemStack.EMPTY);
 					}
 				}
 			}
@@ -113,7 +111,7 @@ public class ClawToolHandler{
 		ItemStack harvestTool = mainStack;
 		float newSpeed = 0F;
 
-		DragonStateHandler cap = DragonStateProvider.getCap(player).orElse(null);
+		DragonStateHandler cap = DragonUtils.getHandler(player);
 
 		if((mainStack.getItem() instanceof DiggerItem || mainStack.getItem() instanceof SwordItem || mainStack.getItem() instanceof ShearsItem || (mainStack.getItem() instanceof TieredItem))){
 			return mainStack;
@@ -147,7 +145,7 @@ public class ClawToolHandler{
 	}
 
 	public static ItemStack getWeapon(LivingEntity entity, ItemStack mainStack){
-		DragonStateHandler cap = DragonStateProvider.getCap(entity).orElse(null);
+		DragonStateHandler cap = DragonUtils.getHandler(entity);
 
 		if(!(mainStack.getItem() instanceof TieredItem) && cap != null){
 			ItemStack sword = cap.getClawInventory().getClawsInventory().getItem(0);
@@ -174,7 +172,7 @@ public class ClawToolHandler{
 			Player playerEntity = breakSpeedEvent.getPlayer();
 
 			ItemStack mainStack = playerEntity.getMainHandItem();
-			DragonStateHandler dragonStateHandler = DragonStateProvider.getCap(playerEntity).orElse(null);
+			DragonStateHandler dragonStateHandler = DragonUtils.getHandler(playerEntity);
 			if(mainStack.getItem() instanceof TieredItem || dragonStateHandler == null || !dragonStateHandler.isDragon()){
 				return;
 			}

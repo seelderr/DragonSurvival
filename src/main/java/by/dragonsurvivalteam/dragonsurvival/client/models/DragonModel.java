@@ -37,7 +37,7 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity>{
 
 	@Override
 	public ResourceLocation getTextureLocation(DragonEntity dragon){
-		DragonStateHandler handler = DragonStateProvider.getCap(dragon.getPlayer()).orElse(null);
+		DragonStateHandler handler = DragonUtils.getHandler(dragon.getPlayer());
 
 		if(handler.getSkin().blankSkin){
 			return new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/blank_skin_" + handler.getType().name().toLowerCase(Locale.ROOT) + ".png");

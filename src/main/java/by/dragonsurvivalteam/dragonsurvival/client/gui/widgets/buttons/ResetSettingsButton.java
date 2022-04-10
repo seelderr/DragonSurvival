@@ -33,8 +33,8 @@ public class ResetSettingsButton extends Button{
 	private final Option option;
 
 	public ResetSettingsButton(int x, int y, Option option){
-		super(x, y, 20, 20, null, (btn) -> {
-			if(btn.active){
+		super(x, y, 20, 20, null, btn -> {
+			if(btn.active)
 				if(OptionsList.config.containsKey(option)){
 					Pair<ValueSpec, ConfigValue> pair = OptionsList.config.get(option);
 
@@ -104,7 +104,6 @@ public class ResetSettingsButton extends Button{
 						}
 					}
 				}
-			}
 		});
 
 		this.option = option;

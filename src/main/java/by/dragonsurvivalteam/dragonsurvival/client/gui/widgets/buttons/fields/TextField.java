@@ -58,6 +58,7 @@ public class TextField extends EditBox implements TooltipAccessor{
 		this.y -= 6;
 	}
 
+	@Override
 	public List<FormattedCharSequence> getTooltip(){
 		return this.tooltip;
 	}

@@ -1,7 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import net.minecraft.core.BlockPos;
@@ -32,7 +31,7 @@ public class MixinBlock{
 		if(!DragonUtils.isDragon(entity)){
 			return;
 		}
-		DragonStateHandler handler = DragonStateProvider.getCap(entity).orElse(null);
+		DragonStateHandler handler = DragonUtils.getHandler(entity);
 		if(handler == null || handler.getType() != DragonType.CAVE){
 			return;
 		}
@@ -61,7 +60,7 @@ public class MixinBlock{
 	}
 
 	@Shadow
-	private static List<ItemStack> getDrops(BlockState p_220077_0_, ServerLevel p_220077_1_, BlockPos p_220077_2_,
+	public static List<ItemStack> getDrops(BlockState p_220077_0_, ServerLevel p_220077_1_, BlockPos p_220077_2_,
 		@Nullable
 			BlockEntity p_220077_3_,
 		@Nullable

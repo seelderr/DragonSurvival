@@ -72,7 +72,7 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 
 	@Inject( method = "isImmobile", at = @At( "HEAD" ), cancellable = true )
 	private void castMovement(CallbackInfoReturnable<Boolean> ci){
-		DragonStateHandler cap = DragonStateProvider.getCap(this).orElse(null);
+		DragonStateHandler cap = DragonUtils.getHandler(this);
 
 		if(!isDeadOrDying() && !isSleeping()){
 			if(!((Player)(LivingEntity)this).isCreative()){
@@ -110,7 +110,7 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 	@Redirect( method = "attack", at = @At( value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;getMainHandItem()Lnet/minecraft/world/item/ItemStack;" ) )
 	private ItemStack getDragonSword(Player entity){
 		ItemStack mainStack = entity.getMainHandItem();
-		DragonStateHandler cap = DragonStateProvider.getCap(entity).orElse(null);
+		DragonStateHandler cap = DragonUtils.getHandler(entity);
 
 		if(!(mainStack.getItem() instanceof TieredItem) && cap != null){
 			ItemStack sword = cap.getClawInventory().getClawsInventory().getItem(0);
@@ -145,7 +145,7 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 			double d0 = this.getX();
 			double d1 = this.getY();
 			double d2 = this.getZ();
-			if((DragonStateProvider.getCap(this).isPresent() && ConfigHandler.SERVER.bonuses.get() && ConfigHandler.SERVER.caveLavaSwimming.get() && DragonStateProvider.getCap(this).orElseGet(null).getType() == DragonType.CAVE && DragonSizeHandler.getOverridePose(this) == Pose.SWIMMING) || this.isSwimming() && !this.isPassenger()){
+			if((DragonStateProvider.getCap(this).isPresent() && ConfigHandler.SERVER.bonuses.get() && ConfigHandler.SERVER.caveLavaSwimming.get() && DragonUtils.getHandler(this).getType() == DragonType.CAVE && DragonSizeHandler.getOverridePose(this) == Pose.SWIMMING) || this.isSwimming() && !this.isPassenger()){
 				double d3 = this.getLookAngle().y;
 				double d4 = d3 < -0.2D ? 0.085D : 0.06D;
 				if(d3 <= 0.0D || this.jumping || !this.level.getBlockState(new BlockPos(this.getX(), this.getY() + 1.0D - 0.1D, this.getZ())).getFluidState().isEmpty()){
@@ -228,7 +228,7 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 				if(this.horizontalCollision && this.isFree(vector3d2.x, vector3d2.y + (double)0.6F - this.getY() + d8, vector3d2.z)){
 					this.setDeltaMovement(vector3d2.x, 0.3F, vector3d2.z);
 				}
-			}else if(this.isInLava() && this.isAffectedByFluids() && !this.canStandOnFluid(fluidstate) && (ConfigHandler.SERVER.bonuses.get() && ConfigHandler.SERVER.caveLavaSwimming.get() && DragonStateProvider.getCap(this).isPresent() && DragonStateProvider.getCap(this).orElseGet(null).getType() == DragonType.CAVE)){
+			}else if(this.isInLava() && this.isAffectedByFluids() && !this.canStandOnFluid(fluidstate) && (ConfigHandler.SERVER.bonuses.get() && ConfigHandler.SERVER.caveLavaSwimming.get() && DragonStateProvider.getCap(this).isPresent() && DragonUtils.getHandler(this).getType() == DragonType.CAVE)){
 				double d8 = this.getY();
 				float f5 = this.isSprinting() ? 0.9F : this.getWaterSlowDown();
 				float f6 = 0.02F;

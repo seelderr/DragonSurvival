@@ -24,7 +24,7 @@ public class HelpButton extends ExtendedButton implements TooltipRender{
 	}
 
 	public HelpButton(DragonType type, int x, int y, int sizeX, int sizeY, String text, int variation){
-		super(x, y, sizeX, sizeY, TextComponent.EMPTY, (s) -> {});
+		super(x, y, sizeX, sizeY, TextComponent.EMPTY, s -> {});
 		this.text = text;
 		this.variation = variation;
 		this.type = type;
@@ -40,9 +40,8 @@ public class HelpButton extends ExtendedButton implements TooltipRender{
 		float ySize = (float)(height + (variation == 0 ? 0 : 2)) / size;
 
 		int i = 0;
-		if(this.isHoveredOrFocused()){
-			i += (int)(((type.ordinal() + 1) * size));
-		}
+		if(this.isHoveredOrFocused())
+			i += (int)((type.ordinal() + 1) * size);
 
 		pMatrixStack.pushPose();
 		pMatrixStack.translate(0, 0, 200);
@@ -50,11 +49,10 @@ public class HelpButton extends ExtendedButton implements TooltipRender{
 		pMatrixStack.translate(x - x * xSize, y - y * ySize, 0);
 		pMatrixStack.scale(xSize, ySize, 0);
 
-		if(variation == 0){
+		if(variation == 0)
 			blit(pMatrixStack, this.x, this.y, 0, (float)i, 18, 18, 256, 256);
-		}else{
+		else
 			blit(pMatrixStack, this.x - 1, this.y - 1, 18, (float)i, 22, 22, 256, 256);
-		}
 
 		pMatrixStack.popPose();
 	}

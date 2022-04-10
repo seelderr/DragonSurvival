@@ -280,7 +280,7 @@ public class RenderingUtils{
 			sin = (float)Math.sin(rad);
 			cos = (float)-Math.cos(rad);
 
-			buffer.vertex(matrix4f, (float)(x + sin * outerRadius), (float)(y + cos * outerRadius), (float)z).uv((float)(u + sin * texOuterRadius), (float)(v + cos * texOuterRadius)).endVertex();
+			buffer.vertex(matrix4f, (float)(x + sin * outerRadius), (float)(y + cos * outerRadius), z).uv((float)(u + sin * texOuterRadius), (float)(v + cos * texOuterRadius)).endVertex();
 			buffer.vertex(matrix4f, (float)(x + sin * innerRadius), (float)(y + cos * innerRadius), z).uv((float)(u + sin * texInnerRadius), (float)(v + cos * texInnerRadius)).endVertex();
 		}
 

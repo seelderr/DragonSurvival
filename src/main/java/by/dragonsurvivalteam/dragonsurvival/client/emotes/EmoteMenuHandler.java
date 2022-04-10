@@ -82,8 +82,8 @@ public class EmoteMenuHandler{
 				public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks){
 					this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
 					DragonStateHandler handler = DragonUtils.getHandler(Minecraft.getInstance().player);
-					this.active = this.visible = (handler != null && handler.getEmotes().emoteMenuOpen);
-					if(handler == null || !handler.getEmotes().emoteMenuOpen){
+					this.active = this.visible = (handler.getEmotes().emoteMenuOpen);
+					if(!handler.getEmotes().emoteMenuOpen){
 						return;
 					}
 					int color = new Color(0.15F, 0.15F, 0.15F, 0.75F).getRGB();
@@ -109,8 +109,8 @@ public class EmoteMenuHandler{
 				public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks){
 					this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
 					DragonStateHandler handler = DragonUtils.getHandler(Minecraft.getInstance().player);
-					this.active = this.visible = (handler != null && handler.getEmotes().emoteMenuOpen);
-					if(handler == null || !handler.getEmotes().emoteMenuOpen){
+					this.active = this.visible = (handler.getEmotes().emoteMenuOpen);
+					if(!handler.getEmotes().emoteMenuOpen){
 						return;
 					}
 
@@ -143,8 +143,8 @@ public class EmoteMenuHandler{
 				public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks){
 					this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
 					DragonStateHandler handler = DragonUtils.getHandler(Minecraft.getInstance().player);
-					this.active = this.visible = (handler != null && handler.getEmotes().emoteMenuOpen);
-					if(handler == null || !handler.getEmotes().emoteMenuOpen){
+					this.active = this.visible = (handler.getEmotes().emoteMenuOpen);
+					if(!handler.getEmotes().emoteMenuOpen){
 						return;
 					}
 

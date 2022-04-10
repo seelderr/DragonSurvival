@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
+import com.mojang.blaze3d.vertex.VertexFormat.Mode;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractSelectionList;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -11,7 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraftforge.client.gui.GuiUtils;
 
-public class DropdownList extends AbstractSelectionList<by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownEntry>{
+public class DropdownList extends AbstractSelectionList<DropdownEntry>{
 	public static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/textbox.png");
 	public int listWidth;
 	public boolean visible;
@@ -43,7 +44,8 @@ public class DropdownList extends AbstractSelectionList<by.dragonsurvivalteam.dr
 	}
 
 	@Override
-	public void updateNarration(NarrationElementOutput pNarrationElementOutput){}	public void centerScrollOn(DropdownEntry pEntry){
+	public void updateNarration(NarrationElementOutput pNarrationElementOutput){}	@Override
+	public void centerScrollOn(DropdownEntry pEntry){
 		this.setScrollAmount(this.children().indexOf(pEntry) * this.itemHeight + this.itemHeight / 2 - (this.y1 - this.y0) / 2);
 	}
 
@@ -60,13 +62,13 @@ public class DropdownList extends AbstractSelectionList<by.dragonsurvivalteam.dr
 	protected void renderBackground(PoseStack stack){
 		GuiUtils.drawContinuousTexturedBox(stack, BACKGROUND_TEXTURE, x0, y0 - 3, 0, 0, width, height + 6, 32, 32, 10, 10);
 
-		if(children().size() > 0){
-			RenderSystem.enableScissor((int)(x0 * Minecraft.getInstance().getWindow().getGuiScale()), (int)(Minecraft.getInstance().getWindow().getScreenHeight() - ((y1 - 3) * Minecraft.getInstance().getWindow().getGuiScale())), (int)(width * Minecraft.getInstance().getWindow().getGuiScale()), (int)((height - 6) * Minecraft.getInstance().getWindow().getGuiScale()));
-		}
+		if(children().size() > 0)
+			RenderSystem.enableScissor((int)(x0 * Minecraft.getInstance().getWindow().getGuiScale()), (int)(Minecraft.getInstance().getWindow().getScreenHeight() - (y1 - 3) * Minecraft.getInstance().getWindow().getGuiScale()), (int)(width * Minecraft.getInstance().getWindow().getGuiScale()), (int)((height - 6) * Minecraft.getInstance().getWindow().getGuiScale()));
 	}
 
+	@Override
 	protected int getMaxPosition(){
-		return this.getItemCount() * this.itemHeight + this.headerHeight + (this.itemHeight / 4);
+		return this.getItemCount() * this.itemHeight + this.headerHeight + this.itemHeight / 4;
 	}
 
 	@Override
@@ -80,9 +82,8 @@ public class DropdownList extends AbstractSelectionList<by.dragonsurvivalteam.dr
 		int k = this.y0 + 4 - (int)this.getScrollAmount();
 		this.renderList(pPoseStack, j1, k, pMouseX, pMouseY, pPartialTicks);
 
-		if(children().size() > 0){
+		if(children().size() > 0)
 			RenderSystem.disableScissor();
-		}
 
 		int k1 = this.getMaxScroll();
 		if(k1 > 0){
@@ -91,12 +92,11 @@ public class DropdownList extends AbstractSelectionList<by.dragonsurvivalteam.dr
 			int l1 = (int)((float)((this.y1 - this.y0) * (this.y1 - this.y0)) / (float)this.getMaxPosition());
 			l1 = Mth.clamp(l1, itemHeight, this.y1 - this.y0 - 8);
 			int i2 = (int)this.getScrollAmount() * (this.y1 - this.y0 - l1) / k1 + this.y0;
-			if(i2 < this.y0){
+			if(i2 < this.y0)
 				i2 = this.y0;
-			}
 			double z = getBlitOffset() + 10;
 
-			bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+			bufferbuilder.begin(Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 			bufferbuilder.vertex(i, this.y1, z).color(0, 0, 0, 255).endVertex();
 			bufferbuilder.vertex(j, this.y1, z).color(0, 0, 0, 255).endVertex();
 			bufferbuilder.vertex(j, this.y0, z).color(0, 0, 0, 255).endVertex();

@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
@@ -23,7 +24,7 @@ public abstract class MixinInventoryScreen extends EffectRenderingInventoryScree
 	@Redirect( method = "Lnet/minecraft/client/gui/screens/inventory/InventoryScreen;renderEntityInInventory(IIIFFLnet/minecraft/world/entity/LivingEntity;)V", at = @At( value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;runAsFancy(Ljava/lang/Runnable;)V" ) )
 	private static void dragonScreenEntityRender(Runnable p_runAsFancy_0_){
 		LocalPlayer player = Minecraft.getInstance().player;
-		if(DragonStateProvider.getCap(player).isPresent() && DragonStateProvider.getCap(player).orElseGet(null).isDragon()){
+		if(DragonStateProvider.getCap(player).isPresent() && DragonUtils.getHandler(player).isDragon()){
 			DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
 				double bodyYaw = dragonStateHandler.getMovementData().bodyYaw;
 				double headYaw = dragonStateHandler.getMovementData().headYaw;

@@ -49,50 +49,48 @@ public class DragonTreasureHandler{
 		Player player = event.player;
 
 		if(DragonUtils.isDragon(player)){
-			DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+			DragonStateHandler handler = DragonUtils.getHandler(player);
 
-			if(handler != null){
-				if(handler.treasureResting){
-					if(player.isCrouching() || !(player.getFeetBlockState().getBlock() instanceof TreasureBlock) || handler.getMovementData().bite){
-						handler.treasureResting = false;
-						NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncTreasureRestStatus(player.getId(), false));
-						return;
-					}
+			if(handler.treasureResting){
+				if(player.isCrouching() || !(player.getFeetBlockState().getBlock() instanceof TreasureBlock) || handler.getMovementData().bite){
+					handler.treasureResting = false;
+					NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncTreasureRestStatus(player.getId(), false));
+					return;
+				}
 
-					handler.treasureSleepTimer++;
+				handler.treasureSleepTimer++;
 
-					if(ConfigHandler.SERVER.treasureHealthRegen.get()){
-						int horizontalRange = 16;
-						int verticalRange = 9;
-						int treasureNearby = 0;
+				if(ConfigHandler.SERVER.treasureHealthRegen.get()){
+					int horizontalRange = 16;
+					int verticalRange = 9;
+					int treasureNearby = 0;
 
-						for(int x = -(horizontalRange / 2); x < (horizontalRange / 2); x++){
-							for(int y = -(verticalRange / 2); y < (verticalRange / 2); y++){
-								for(int z = -(horizontalRange / 2); z < (horizontalRange / 2); z++){
-									BlockPos pos = player.blockPosition().offset(x, y, z);
-									BlockState state = player.level.getBlockState(pos);
+					for(int x = -(horizontalRange / 2); x < (horizontalRange / 2); x++){
+						for(int y = -(verticalRange / 2); y < (verticalRange / 2); y++){
+							for(int z = -(horizontalRange / 2); z < (horizontalRange / 2); z++){
+								BlockPos pos = player.blockPosition().offset(x, y, z);
+								BlockState state = player.level.getBlockState(pos);
 
-									if(state.getBlock() instanceof TreasureBlock){
-										int layers = state.getValue(TreasureBlock.LAYERS);
-										treasureNearby += layers;
-									}
+								if(state.getBlock() instanceof TreasureBlock){
+									int layers = state.getValue(TreasureBlock.LAYERS);
+									treasureNearby += layers;
 								}
 							}
 						}
-						treasureNearby = Mth.clamp(treasureNearby, 0, ConfigHandler.SERVER.maxTreasures.get());
+					}
+					treasureNearby = Mth.clamp(treasureNearby, 0, ConfigHandler.SERVER.maxTreasures.get());
 
-						int totalTime = ConfigHandler.SERVER.treasureRegenTicks.get();
-						int restTimer = totalTime - (ConfigHandler.SERVER.treasureRegenTicksReduce.get() * treasureNearby);
+					int totalTime = ConfigHandler.SERVER.treasureRegenTicks.get();
+					int restTimer = totalTime - (ConfigHandler.SERVER.treasureRegenTicksReduce.get() * treasureNearby);
 
-						if(handler.treasureRestTimer >= restTimer){
-							handler.treasureRestTimer = 0;
+					if(handler.treasureRestTimer >= restTimer){
+						handler.treasureRestTimer = 0;
 
-							if(player.getHealth() < player.getMaxHealth()){
-								player.heal(1);
-							}
-						}else{
-							handler.treasureRestTimer++;
+						if(player.getHealth() < player.getMaxHealth()){
+							player.heal(1);
 						}
+					}else{
+						handler.treasureRestTimer++;
 					}
 				}
 			}
@@ -109,7 +107,7 @@ public class DragonTreasureHandler{
 		}
 
 		ServerLevel world = (ServerLevel)event.world;
-		List<ServerPlayer> playerList = world.players();
+		List<ServerPlayer> playerList = world.getPlayers(t -> true);
 		playerList.removeIf((pl) -> {
 			if(DragonUtils.isDragon(pl)){
 				DragonStateHandler handler = DragonUtils.getHandler(pl);
@@ -135,16 +133,14 @@ public class DragonTreasureHandler{
 		Player player = Minecraft.getInstance().player;
 
 		if(DragonUtils.isDragon(player)){
-			DragonStateHandler handler = DragonStateProvider.getCap(player).orElse(null);
+			DragonStateHandler handler = DragonUtils.getHandler(player);
 
-			if(handler != null){
-				if(handler.treasureResting){
-					Vec3 velocity = player.getDeltaMovement();
-					float groundSpeed = Mth.sqrt((float)((velocity.x * velocity.x) + (velocity.z * velocity.z)));
-					if(Math.abs(groundSpeed) > 0.05){
-						handler.treasureResting = false;
-						NetworkHandler.CHANNEL.sendToServer(new SyncTreasureRestStatus(player.getId(), false));
-					}
+			if(handler.treasureResting){
+				Vec3 velocity = player.getDeltaMovement();
+				float groundSpeed = Mth.sqrt((float)((velocity.x * velocity.x) + (velocity.z * velocity.z)));
+				if(Math.abs(groundSpeed) > 0.05){
+					handler.treasureResting = false;
+					NetworkHandler.CHANNEL.sendToServer(new SyncTreasureRestStatus(player.getId(), false));
 				}
 			}
 		}

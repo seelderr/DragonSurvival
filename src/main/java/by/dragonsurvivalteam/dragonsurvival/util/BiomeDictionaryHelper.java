@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.util;
 
 import net.minecraftforge.common.BiomeDictionary;
+import net.minecraftforge.common.BiomeDictionary.Type;
 
 import java.util.List;
 import java.util.Map;
@@ -10,14 +11,14 @@ import java.util.stream.Collectors;
 public class BiomeDictionaryHelper{
 
 	/**
-	 * Converts a List <? extends String> to a {@link BiomeDictionary.Type} array
+	 * Converts a List <? extends String> to a {@link Type} array
 	 *
 	 * @param strings string array containing valid #BiomeDictionary.Types
 	 *
-	 * @return {@link BiomeDictionary.Type} based on the string input
+	 * @return {@link Type} based on the string input
 	 */
-	public static BiomeDictionary.Type[] toBiomeTypeArray(List<? extends String> strings){
-		BiomeDictionary.Type[] types = new BiomeDictionary.Type[strings.size()];
+	public static Type[] toBiomeTypeArray(List<? extends String> strings){
+		Type[] types = new Type[strings.size()];
 		for(int i = 0; i < strings.size(); i++){
 			String string = strings.get(i);
 			types[i] = getType(string);
@@ -27,14 +28,14 @@ public class BiomeDictionaryHelper{
 
 	/**
 	 * Retrieves a #BiomeDictionary.Type
-	 * Based on {@link BiomeDictionary.Type#getType(String, BiomeDictionary.Type...)}, but doesn't create a new {@link BiomeDictionary.Type} if the input is not already a {@link BiomeDictionary.Type}
+	 * Based on {@link Type#getType(String, Type...)}, but doesn't create a new {@link Type} if the input is not already a {@link Type}
 	 *
 	 * @param name The name of this #BiomeDictionary.Type
 	 *
 	 * @return An instance of this #BiomeDictionary.Type
 	 */
-	public static BiomeDictionary.Type getType(String name){
-		Map<String, BiomeDictionary.Type> byName = BiomeDictionary.Type.getAll().stream().collect(Collectors.toMap(BiomeDictionary.Type::getName, Function.identity()));
+	public static Type getType(String name){
+		Map<String, Type> byName = Type.getAll().stream().collect(Collectors.toMap(Type::getName, Function.identity()));
 		name = name.toUpperCase();
 		return byName.get(name);
 	}

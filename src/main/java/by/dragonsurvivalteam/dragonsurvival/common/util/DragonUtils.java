@@ -37,7 +37,7 @@ public class DragonUtils{
 		if(entity instanceof Player){
 			Player player = (Player)entity;
 			DragonStateHandler handler = DragonUtils.getHandler(player);
-			if(handler != null && handler.isDragon()){
+			if(handler.isDragon()){
 				float f1 = -(float)handler.getMovementData().bodyYaw * ((float)Math.PI / 180F);
 
 				float f4 = Mth.sin(f1);
