@@ -1,14 +1,14 @@
-name: Compatibility Report
-description: Crashes the game in the modpack? Write about it here.
-title: "[Compatibility]: "
-labels: ["compatibility", "triage"]
+name: 1.18.2 Forge Bug Report
+description: File a bug report
+title: "[1.18.2 Forge Bug]: "
+labels: ["bug", "triage"]
 assignees:
   - octocat
 body:
   - type: markdown
     attributes:
       value: |
-        Please only crash reports, not suggestions like "Don't let the dragons of mod X attack the dragons of Dragon Survival".
+        Thanks for taking the time to fill out this bug report! Make sure that you have removed the old configs and read the DS installation rules here - dragons-survival.fandom.com/wiki/Start_and_Setting
         
   - type: input
     id: contact
@@ -24,21 +24,9 @@ body:
     attributes:
       label: ■ Dragon Survival version
       description: Copy the full name of the file.
-      placeholder: Example - DragonSurvival_TreasureUpdate-1.16.5-0.9.2
+      placeholder: Example - DragonSurvival_DragonEditor-1.18.2-0.11.0.jar
     validations:
       required: true
-      
-  - type: dropdown
-    id: version-mc
-    attributes:
-      label: ■ Minecraft version
-      description: 1.16.5 or...?
-      options:
-        - 1.16.5 (Default)
-        - 1.15
-        - 1.18
-    validations:
-      required: true  
       
   - type: dropdown
     id: server
@@ -63,13 +51,25 @@ body:
         - Usually yes, but this time no.
     validations:
       required: true
+      
+  - type: dropdown
+    id: compatibility
+    attributes:
+      label: ■ Do you play pure MC + DS and Geckolib or do you have some kind of modpack?
+      description: Try the clean version first. Many problems arise because of a conflict with some third-party mod.
+      options:
+        - I only play with DS and Geckolib (Default)
+        - I have other mods
+        - I want to report a compatibility problem
+    validations:
+      required: true
 
   - type: textarea
-    id: incompatibility
+    id: bug
     attributes:
-      label: ■ Description of incompatibility
-      description:  A clear and concise description of what the incompatibility is. If applicable, add screenshots to help explain your problem. Please only crash reports, not suggestions.
-      placeholder: I remove Dragon Survival or mod X and the game starts working, but together this causes the game crashes.
+      label: ■ Describe the bug
+      description:  
+      placeholder: I have been lying on the treasure for five minutes now, but nothing happens.
     validations:
       required: true
       
@@ -78,16 +78,24 @@ body:
     attributes:
       label: ■ To Reproduce
       description: Is this error repeatable? If so, please describe how we can get the same result as yours.
-      placeholder: 1. Install Dragon Survival and mod X 2. Try to open the game or interact with the item from X mod 3. Crash
+      placeholder: 1. Put the treasure on the ground 2. Right-click on them 3. Just wait and nothing happens
     validations:
       required: true
       
+  - type: textarea
+    id: expected
+    attributes:
+      label: ■ Expected behavior
+      description:  A clear and concise description of what you expected to happen. 
+      placeholder: I use treasures and expect them to give healing.
+    validations:
+      required: true
        
   - type: textarea
     id: crash-report
     attributes:
       label: ■ Crash Report
-      description: If your game crashes, Minecraft creates a file in crash-reports folder. Send us the contents of this file or the file itself. Just drag the file here and it will upload.
+      description: If your game or server crashes, the game creates a file in crash-reports folder. Just grab that file from the folder and drag it into this box.
     validations:
       required: false
       
