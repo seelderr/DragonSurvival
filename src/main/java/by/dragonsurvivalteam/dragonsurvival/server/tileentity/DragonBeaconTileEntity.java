@@ -93,7 +93,6 @@ public class DragonBeaconTileEntity extends BaseBlockTileEntity{
 				pLevel.playSound(null, pPos, SoundRegistry.deactivateBeacon, SoundSource.BLOCKS, 1, 1);
 			}
 		}
-		pBlockEntity.tick++;
 	}
 
 	@Override

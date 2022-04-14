@@ -21,9 +21,10 @@ import java.util.Random;
 
 public class DragonBeaconRenderer implements BlockEntityRenderer<DragonBeaconTileEntity>{
 	public DragonBeaconRenderer(BlockEntityRendererProvider.Context pContext){}
-
+	
 	@Override
 	public void render(DragonBeaconTileEntity dragonBeaconEntity, float v, PoseStack PoseStack, MultiBufferSource iRenderTypeBuffer, int light, int overlay){
+		dragonBeaconEntity.tick++;
 		PoseStack.pushPose();
 		DragonBeaconTileEntity.Type type = dragonBeaconEntity.type;
 		Item item = DSBlocks.dragonBeacon.asItem();
@@ -34,7 +35,7 @@ public class DragonBeaconRenderer implements BlockEntityRenderer<DragonBeaconTil
 			double x = 0.25 + random.nextInt(5) / 10d;
 			double z = 0.25 + random.nextInt(5) / 10d;
 			switch(type){
-				case PEACE:
+				case PEACE -> {
 					item = DSItems.passivePeaceBeacon;
 					try{
 						if(!minecraft.isPaused() && dragonBeaconEntity.tick % 5 == 0){
@@ -43,8 +44,8 @@ public class DragonBeaconRenderer implements BlockEntityRenderer<DragonBeaconTil
 					}catch(CommandSyntaxException e){
 						e.printStackTrace();
 					}
-					break;
-				case MAGIC:
+				}
+				case MAGIC -> {
 					item = DSItems.passiveMagicBeacon;
 					try{
 						if(!minecraft.isPaused() && dragonBeaconEntity.tick % 5 == 0){
@@ -53,8 +54,8 @@ public class DragonBeaconRenderer implements BlockEntityRenderer<DragonBeaconTil
 					}catch(CommandSyntaxException e){
 						e.printStackTrace();
 					}
-					break;
-				case FIRE:
+				}
+				case FIRE -> {
 					item = DSItems.passiveFireBeacon;
 					try{
 						if(!minecraft.isPaused() && dragonBeaconEntity.tick % 5 == 0){
@@ -63,21 +64,16 @@ public class DragonBeaconRenderer implements BlockEntityRenderer<DragonBeaconTil
 					}catch(CommandSyntaxException e){
 						e.printStackTrace();
 					}
-					break;
-			}
-		}else{
-			switch(type){
-				case PEACE:
-					item = DSBlocks.peaceDragonBeacon.asItem();
-					break;
-				case MAGIC:
-					item = DSBlocks.magicDragonBeacon.asItem();
-					break;
-				case FIRE:
-					item = DSBlocks.fireDragonBeacon.asItem();
-					break;
+				}
 			}
 		}
+
+		item = switch(type){
+			case PEACE -> DSBlocks.peaceDragonBeacon.asItem();
+			case MAGIC -> DSBlocks.magicDragonBeacon.asItem();
+			case FIRE -> DSBlocks.fireDragonBeacon.asItem();
+			default -> item;
+		};
 		PoseStack.translate(0.5, 0.25, 0.5);
 		PoseStack.mulPose(Vector3f.YP.rotationDegrees(dragonBeaconEntity.tick));
 		PoseStack.scale(2, 2, 2);

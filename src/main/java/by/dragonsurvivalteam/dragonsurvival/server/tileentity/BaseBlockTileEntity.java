@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.server.tileentity;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -23,9 +24,19 @@ public class BaseBlockTileEntity extends BlockEntity{
 	}
 
 	@Override
+	public CompoundTag getUpdateTag(){
+		CompoundTag supertag = super.getUpdateTag();
+		saveAdditional(supertag);
+		return supertag;
+	}
+
+	@Override
 	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt){
 		super.onDataPacket(net, pkt);
-		load(pkt.getTag());
+		CompoundTag tag = pkt.getTag();
+		if(tag != null){
+			load(tag);
+		}
 	}
 
 	public int getX(){
