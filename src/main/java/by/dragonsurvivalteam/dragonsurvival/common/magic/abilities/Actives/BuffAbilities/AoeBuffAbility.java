@@ -88,7 +88,7 @@ public class AoeBuffAbility extends ActiveDragonAbility{
 					double d1 = livingentity.getZ() - player.getZ();
 					double d2 = d0 * d0 + d1 * d1;
 					if(d2 <= (double)(getRange() * getRange())){
-						livingentity.addEffect(new EffectInstance(new EffectInstance(effect.getEffect(), Functions.secondsToTicks(getDuration()), effect.getAmplifier())));
+						livingentity.addEffect(getEffect());
 					}
 				}
 			}
