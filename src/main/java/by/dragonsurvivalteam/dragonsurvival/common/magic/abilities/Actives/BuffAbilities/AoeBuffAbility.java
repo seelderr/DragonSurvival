@@ -110,7 +110,7 @@ public class AoeBuffAbility extends ActiveDragonAbility{
 					double d2 = d0 * d0 + d1 * d1;
 
 					if(d2 <= (double)(getRange() * getRange())){
-						livingentity.addEffect(new MobEffectInstance(new MobEffectInstance(effect.getEffect(), Functions.secondsToTicks(getDuration()), effect.getAmplifier())));
+						livingentity.addEffect(getEffect());
 					}
 				}
 			}
