@@ -53,6 +53,10 @@ public class EmoteHandler{
 						continue;
 					}
 
+					if(cap.getEmotes().emoteTicks.length < index || cap.getEmotes().emoteTicks[index] == null){
+						cap.getEmotes().emoteTicks[index] = 0;
+					}
+
 					cap.getEmotes().emoteTicks[index] += 1;
 
 					//Cancel emote if its duration is expired, this should happen even if it isnt local
