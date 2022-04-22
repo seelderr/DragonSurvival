@@ -18,6 +18,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Entity.RemovalReason;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
@@ -48,7 +50,11 @@ public class Capabilities{
 		event.addCapability(new ResourceLocation("dragonsurvival", "generic_capability_data"), genericCapabilityProvider);
 		event.addListener(genericCapabilityProvider::invalidate);
 
-		if(event.getObject() instanceof Player && !(event.getObject() instanceof FakeClientPlayer)){
+		if(event.getObject() instanceof Player player){
+			if(event.getObject().level.isClientSide){
+				if(isFakePlayer(player)) return;
+			}
+
 			DragonStateProvider provider = new DragonStateProvider();
 			event.addCapability(new ResourceLocation("dragonsurvival", "playerstatehandler"), provider);
 			event.addListener(provider::invalidate);
@@ -57,6 +63,11 @@ public class Capabilities{
 			event.addCapability(new ResourceLocation("dragonsurvival", "village_relations"), villageRelationshipsProvider);
 			event.addListener(villageRelationshipsProvider::invalidate);
 		}
+	}
+
+	@OnlyIn( Dist .CLIENT)
+	private static boolean isFakePlayer(Player player){
+		return player instanceof FakeClientPlayer;
 	}
 
 	private static final ScheduledExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadScheduledExecutor();
