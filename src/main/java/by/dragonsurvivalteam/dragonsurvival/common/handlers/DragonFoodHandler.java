@@ -178,6 +178,7 @@ public class DragonFoodHandler{
 					builder.fast();
 				}
 				for(Pair<MobEffectInstance, Float> effect : humanFood.getEffects()){
+					if(effect == null || effect.getFirst() == null) continue;
 					if(effect.getFirst().getEffect() != MobEffects.HUNGER && effect.getFirst().getEffect() != MobEffects.POISON){
 						builder.effect(() -> effect.getFirst(), effect.getSecond());
 					}
@@ -197,6 +198,7 @@ public class DragonFoodHandler{
 				builder.fast();
 			}
 			for(Pair<MobEffectInstance, Float> effect : humanFood.getEffects()){
+				if(effect == null || effect.getFirst() == null) continue;
 				if(effect.getFirst().getEffect() != MobEffects.HUNGER){
 					builder.effect(() -> effect.getFirst(), effect.getSecond());
 				}
@@ -225,6 +227,7 @@ public class DragonFoodHandler{
 			final FoodProperties FoodProperties = DRAGON_FOODS.get(dragonType).get(item);
 			if(FoodProperties != null){
 				for(Pair<MobEffectInstance, Float> effect : FoodProperties.getEffects()){
+					if(effect == null || effect.getFirst() == null) continue;
 					MobEffect e = effect.getFirst().getEffect();
 					if(!e.isBeneficial() && e != MobEffects.CONFUSION){ // Because we decided to leave confusion on pufferfish
 						safe = false;

@@ -441,14 +441,13 @@ public class ClientDragonRender{
 	}
 
 	public static void renderEntityInInventory(LivingEntity entity, int x, int y, float scale, float xRot, float yRot, float xOffset, float yOffset){
-		if(entity == null){
+		if(entity == null)
 			return;
-		}
 
 		if(entity instanceof DragonEntity){
 			if(ClientDragonRender.dragonArmor == null){
 				ClientDragonRender.dragonArmor = DSEntities.DRAGON_ARMOR.create(Minecraft.getInstance().player.level);
-				assert ClientDragonRender.dragonArmor != null;
+				assert dragonArmor != null;
 				ClientDragonRender.dragonArmor.player = Minecraft.getInstance().player.getId();
 			}
 

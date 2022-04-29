@@ -1,4 +1,4 @@
-package net.optifine.shaders;
+package srg.net.optifine.shaders;
 
 public class Shaders{
 	public static float configRenderResMul = 1.0F;
