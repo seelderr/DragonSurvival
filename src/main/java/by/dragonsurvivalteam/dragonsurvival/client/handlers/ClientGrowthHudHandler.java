@@ -67,8 +67,11 @@ public class ClientGrowthHudHandler{
 			RenderSystem.setShaderColor(0f, 0f, 0f, 1f);
 			Color c = new Color(99, 99, 99);
 
-			RenderSystem.setShaderColor(c.getRed() / 255.0f, c.getGreen() / 255.0f, c.getBlue() / 255.0f, 1.0f);
-			RenderingUtils.drawTexturedRing(mStack, circleX + radius, circleY + radius, radius - thickness, radius, 0, 0, 0, 128, 6, 1, 0);
+			RenderSystem.disableTexture();
+
+			RenderSystem.setShaderColor(c.brighter().getRed() / 255.0f, c.brighter().getBlue() / 255.0f, c.brighter().getGreen() / 255.0f, 1.0f);
+			RenderingUtils.drawSmoothCircle(mStack, circleX + radius, circleY + radius, radius, 6, 1, 0);
+
 			RenderSystem.enableTexture();
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1.0f);
 
@@ -93,24 +96,9 @@ public class ClientGrowthHudHandler{
 				RenderingUtils.drawTexturedCircle(mStack, circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, 6, nextProgess, -0.5);
 			}
 
-
 			RenderSystem.disableTexture();
-			RenderSystem.lineWidth(4.0f);
-			if(handler.growing){
-				RenderSystem.setShaderColor(0F, 0F, 0F, 1F);
-			}else{
-				RenderSystem.setShaderColor(76 / 255F, 0F, 0F, 1F);
-			}
-			RenderingUtils.drawSmoothCircle(mStack, circleX + radius, circleY + radius, radius, 6, 1, 0);
-
-			RenderSystem.setShaderColor(c.getRed() / 255.0f, c.getGreen() / 255.0f, c.getBlue() / 255.0f, 1.0f);
+			RenderSystem.setShaderColor(c.getRed() / 255.0f, c.getBlue() / 255.0f, c.getGreen() / 255.0f, 1.0f);
 			RenderingUtils.drawSmoothCircle(mStack, circleX + radius, circleY + radius, radius - thickness, 6, 1, 0);
-			RenderSystem.lineWidth(1.0F);
-
-			c = c.brighter();
-			RenderSystem.setShaderColor(c.getRed() / 255.0f, c.getGreen() / 255.0f, c.getBlue() / 255.0f, 1.0f);
-			RenderingUtils.drawTexturedRing(mStack, circleX + radius, circleY + radius, 0, radius - thickness, 0, 0, 0, 0, 6, 1, 0);
-
 			RenderSystem.enableTexture();
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1.0f);
 

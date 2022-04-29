@@ -86,7 +86,7 @@ public class DragonArmorRenderLayer extends GeoLayerRenderer<DragonEntity>{
 		if(item instanceof ArmorItem){
 			ArmorItem armorItem = (ArmorItem)item;
 			ArmorMaterial armorMaterial = armorItem.getMaterial();
-			if(armorMaterial.getClass() == ArmorMaterial.class){
+			if(armorMaterial instanceof ArmorMaterials){
 				if(armorMaterial == ArmorMaterials.NETHERITE){
 					texture += "netherite_";
 				}else if(armorMaterial == ArmorMaterials.DIAMOND){
@@ -107,36 +107,20 @@ public class DragonArmorRenderLayer extends GeoLayerRenderer<DragonEntity>{
 
 				texture += "dragon_";
 				switch(equipmentSlot){
-					case HEAD:
-						texture += "helmet";
-						break;
-					case CHEST:
-						texture += "chestplate";
-						break;
-					case LEGS:
-						texture += "leggings";
-						break;
-					case FEET:
-						texture += "boots";
-						break;
+					case HEAD -> texture += "helmet";
+					case CHEST -> texture += "chestplate";
+					case LEGS -> texture += "leggings";
+					case FEET -> texture += "boots";
 				}
 				texture += ".png";
 				return texture;
 			}else{
 				int defense = armorItem.getDefense();
 				switch(equipmentSlot){
-					case FEET:
-						texture += Mth.clamp(defense, 1, 4) + "_dragon_boots";
-						break;
-					case CHEST:
-						texture += Mth.clamp(defense / 2, 1, 4) + "_dragon_chestplate";
-						break;
-					case HEAD:
-						texture += Mth.clamp(defense, 1, 4) + "_dragon_helmet";
-						break;
-					case LEGS:
-						texture += Mth.clamp((int)(defense / 1.5), 1, 4) + "_dragon_leggings";
-						break;
+					case FEET -> texture += Mth.clamp(defense, 1, 4) + "_dragon_boots";
+					case CHEST -> texture += Mth.clamp(defense / 2, 1, 4) + "_dragon_chestplate";
+					case HEAD -> texture += Mth.clamp(defense, 1, 4) + "_dragon_helmet";
+					case LEGS -> texture += Mth.clamp((int)(defense / 1.5), 1, 4) + "_dragon_leggings";
 				}
 				return texture + ".png";
 			}

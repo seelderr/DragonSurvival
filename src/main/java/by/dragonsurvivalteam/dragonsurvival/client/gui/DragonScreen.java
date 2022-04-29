@@ -116,28 +116,28 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 
 			@Override
 			public void renderToolTip(PoseStack stack, int mouseX, int mouseY){
-				String age = (int)handler.getSize() - DragonLevel.BABY.size + "/";
+				String age = (int)handler.getSize() - handler.getLevel().size + "/";
 				double seconds = 0;
 
 				if(handler.getLevel() == DragonLevel.BABY){
-					age += DragonLevel.YOUNG.size - DragonLevel.BABY.size;
+					age += DragonLevel.YOUNG.size - handler.getLevel().size;
 					double missing = DragonLevel.YOUNG.size - handler.getSize();
 					double increment = ((DragonLevel.YOUNG.size - DragonLevel.BABY.size) / ((DragonGrowthHandler.newbornToYoung * 20.0))) * ConfigHandler.SERVER.newbornGrowthModifier.get();
 					seconds = (missing / increment) / 20;
 				}else if(handler.getLevel() == DragonLevel.YOUNG){
-					age += DragonLevel.ADULT.size - DragonLevel.BABY.size;
+					age += DragonLevel.ADULT.size - handler.getLevel().size;
 
 					double missing = DragonLevel.ADULT.size - handler.getSize();
 					double increment = ((DragonLevel.ADULT.size - DragonLevel.YOUNG.size) / ((DragonGrowthHandler.youngToAdult * 20.0))) * ConfigHandler.SERVER.youngGrowthModifier.get();
 					seconds = (missing / increment) / 20;
 				}else if(handler.getLevel() == DragonLevel.ADULT && handler.getSize() < 40){
-					age += 40 - DragonLevel.BABY.size;
+					age += 40 - handler.getLevel().size;
 
 					double missing = 40 - handler.getSize();
 					double increment = ((40 - DragonLevel.ADULT.size) / ((DragonGrowthHandler.adultToMax * 20.0))) * ConfigHandler.SERVER.adultGrowthModifier.get();
 					seconds = (missing / increment) / 20;
 				}else if(handler.getLevel() == DragonLevel.ADULT && handler.getSize() >= 40){
-					age += (int)(ConfigHandler.SERVER.maxGrowthSize.get() - DragonLevel.BABY.size);
+					age += (int)(ConfigHandler.SERVER.maxGrowthSize.get() - handler.getLevel().size);
 
 					double missing = ConfigHandler.SERVER.maxGrowthSize.get() - handler.getSize();
 					double increment = ((ConfigHandler.SERVER.maxGrowthSize.get() - 40) / ((DragonGrowthHandler.beyond * 20.0))) * ConfigHandler.SERVER.maxGrowthModifier.get();
@@ -280,34 +280,21 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 
 			RenderSystem.disableTexture();
 			Color c = new Color(99, 99, 99);
-			RenderSystem.setShaderColor(c.getRed() / 255.0f, c.getBlue() / 255.0f, c.getGreen() / 255.0f, 1.0f);
-			RenderingUtils.drawTexturedRing(stack, circleX + radius, circleY + radius, radius - thickness, radius, 0, 0, 0, 128, sides, 1, 0);
-			RenderSystem.enableTexture();
 
+			RenderSystem.setShaderColor(c.brighter().getRed() / 255.0f, c.brighter().getBlue() / 255.0f, c.brighter().getGreen() / 255.0f, 1.0f);
+			RenderingUtils.drawSmoothCircle(stack, circleX + radius, circleY + radius, radius, sides, 1, 0);
+
+			RenderSystem.enableTexture();
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1.0f);
 			RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_" + handler.getType().name().toLowerCase() + ".png"));
 			RenderingUtils.drawTexturedCircle(stack, circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, sides, progress, -0.5);
 
 			RenderSystem.disableTexture();
-			RenderSystem.lineWidth(4f);
-			if(handler.growing){
-				RenderSystem.setShaderColor(0F, 0F, 0F, 1F);
-			}else{
-				RenderSystem.setShaderColor(76 / 255F, 0F, 0F, 1F);
-			}
-			RenderingUtils.drawSmoothCircle(stack, circleX + radius, circleY + radius, radius, sides, 1, 0);
-
 			RenderSystem.setShaderColor(c.getRed() / 255.0f, c.getBlue() / 255.0f, c.getGreen() / 255.0f, 1.0f);
 			RenderingUtils.drawSmoothCircle(stack, circleX + radius, circleY + radius, radius - thickness, sides, 1, 0);
-			RenderSystem.lineWidth(1.0F);
-
-			c = c.brighter();
-			RenderSystem.setShaderColor(c.getRed() / 255.0f, c.getBlue() / 255.0f, c.getGreen() / 255.0f, 1.0f);
-			RenderingUtils.drawSmoothCircle(stack, circleX + radius, circleY + radius, radius, sides, 1, 0);
-
 			RenderSystem.enableTexture();
-			RenderSystem.setShaderColor(1F, 1F, 1F, 1.0f);
 
+			RenderSystem.setShaderColor(1F, 1F, 1F, 1.0f);
 			RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/growth_" + handler.getType().name().toLowerCase() + "_" + (handler.getLevel().ordinal() + 1) + ".png"));
 			blit(stack, circleX + 6, circleY + 6, 0, 0, 20, 20, 20, 20);
 

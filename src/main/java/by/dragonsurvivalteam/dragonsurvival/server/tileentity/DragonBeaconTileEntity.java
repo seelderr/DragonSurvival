@@ -20,10 +20,14 @@ import net.minecraft.world.phys.AABB;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.List;
+import java.util.Random;
 
 public class DragonBeaconTileEntity extends BaseBlockTileEntity{
 	public Type type = Type.NONE;
 	public int tick;
+
+	public final float bobOffs;
+
 
 	public enum Type{
 		PEACE,
@@ -34,6 +38,7 @@ public class DragonBeaconTileEntity extends BaseBlockTileEntity{
 
 	public DragonBeaconTileEntity(BlockPos pWorldPosition, BlockState pBlockState){
 		super(DSTileEntities.dragonBeacon, pWorldPosition, pBlockState);
+		this.bobOffs = new Random().nextFloat() * (float)Math.PI * 2.0F;
 	}
 
 	public static void serverTick(Level pLevel, BlockPos pPos, BlockState pState, DragonBeaconTileEntity pBlockEntity){

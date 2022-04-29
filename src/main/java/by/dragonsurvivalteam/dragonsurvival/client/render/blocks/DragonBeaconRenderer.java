@@ -14,14 +14,16 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.Random;
 
 public class DragonBeaconRenderer implements BlockEntityRenderer<DragonBeaconTileEntity>{
+
 	public DragonBeaconRenderer(BlockEntityRendererProvider.Context pContext){}
-	
+
 	@Override
 	public void render(DragonBeaconTileEntity dragonBeaconEntity, float v, PoseStack PoseStack, MultiBufferSource iRenderTypeBuffer, int light, int overlay){
 		dragonBeaconEntity.tick++;
@@ -74,7 +76,8 @@ public class DragonBeaconRenderer implements BlockEntityRenderer<DragonBeaconTil
 			case FIRE -> DSBlocks.fireDragonBeacon.asItem();
 			default -> item;
 		};
-		PoseStack.translate(0.5, 0.25, 0.5);
+		float f1 = Mth.sin(((float)dragonBeaconEntity.tick + v) / 20.0F + dragonBeaconEntity.bobOffs) * 0.1F + 0.1F;
+		PoseStack.translate(0.5, 0.25 + (f1), 0.5);
 		PoseStack.mulPose(Vector3f.YP.rotationDegrees(dragonBeaconEntity.tick));
 		PoseStack.scale(2, 2, 2);
 		Minecraft.getInstance().getItemRenderer().renderStatic(new ItemStack(item), TransformType.GROUND, light, overlay, PoseStack, iRenderTypeBuffer, 0);
