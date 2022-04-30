@@ -5,6 +5,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.entity.PartEntity;
 
@@ -34,6 +35,21 @@ public class DragonHitboxPart extends PartEntity<DragonHitBox>{
 
 	public EntityDimensions getDimensions(Pose p_213305_1_){
 		return this.size;
+	}
+
+	@Override
+	public boolean isInvisibleTo(Player pPlayer){
+		return parentMob.isInvisibleTo(pPlayer);
+	}
+
+	@Override
+	public boolean shouldShowName(){
+		return parentMob.shouldShowName();
+	}
+
+	@Override
+	public boolean isCustomNameVisible(){
+		return parentMob.isCustomNameVisible();
 	}
 
 	@Override

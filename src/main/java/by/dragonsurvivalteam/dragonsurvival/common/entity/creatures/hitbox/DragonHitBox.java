@@ -196,6 +196,21 @@ public class DragonHitBox extends LivingEntity{
 		}
 	}
 
+	@Override
+	public boolean isInvisibleTo(Player pPlayer){
+		return pPlayer.getId() == getPlayerId();
+	}
+
+	@Override
+	public boolean shouldShowName(){
+		return false;
+	}
+
+	@Override
+	public boolean isCustomNameVisible(){
+		return false;
+	}
+
 	public int getPlayerId(){
 		return this.entityData.get(PLAYER_ID);
 	}
