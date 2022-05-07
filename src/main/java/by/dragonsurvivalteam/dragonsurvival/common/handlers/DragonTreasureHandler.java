@@ -11,8 +11,6 @@ import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -22,11 +20,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
-import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
-import net.minecraftforge.event.TickEvent.WorldTickEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
@@ -34,8 +30,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
 
 import java.awt.Color;
-import java.util.List;
-import java.util.Optional;
 
 @Mod.EventBusSubscriber
 public class DragonTreasureHandler{
@@ -95,33 +89,6 @@ public class DragonTreasureHandler{
 				}
 			}
 		}
-	}
-
-	@SubscribeEvent
-	public static void serverTick(WorldTickEvent event){
-		if(event.phase == Phase.START){
-			return;
-		}
-		if(event.side == LogicalSide.CLIENT){
-			return;
-		}
-
-		ServerLevel world = (ServerLevel)event.world;
-		List<ServerPlayer> playerList = world.getPlayers(t -> true);
-		playerList.removeIf((pl) -> {
-			if(DragonUtils.isDragon(pl)){
-				DragonStateHandler handler = DragonUtils.getHandler(pl);
-
-				if(ForgeEventFactory.fireSleepingTimeCheck(pl, Optional.empty())){
-					return handler.treasureResting;
-				}else{
-					handler.treasureSleepTimer = 0;
-				}
-			}
-			return false;
-		});
-
-		world.sleepStatus.update(playerList);
 	}
 
 	@OnlyIn( Dist.CLIENT )

@@ -45,6 +45,16 @@ public class FakeClientPlayer extends AbstractClientPlayer{
 	}
 
 	@Override
+	public boolean shouldRender(double pX, double pY, double pZ){
+		return true;
+	}
+
+	@Override
+	public boolean shouldRenderAtSqrDistance(double pDistance){
+		return true;
+	}
+
+	@Override
 	public Packet<?> getAddEntityPacket(){return null;}
 
 	@Override

@@ -11,7 +11,8 @@
 	"MixinLivingEntity",
 	"MixinPlayerEntity",
 	"MixinPlayerInteractionManager",
-	"MixinPlayerInventory"
+	"MixinPlayerInventory",
+	"MixinSleepStatus"
   ],
   "client": [
 	"AccessorEntityRenderer",

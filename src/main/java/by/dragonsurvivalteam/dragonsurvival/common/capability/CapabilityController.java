@@ -9,6 +9,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.entity.player.SynchronizeDragonCap;
 import by.dragonsurvivalteam.dragonsurvival.network.status.DiggingStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.status.RefreshDragons;
+import net.minecraft.client.player.RemotePlayer;
 import net.minecraft.network.protocol.game.ClientboundSetPassengersPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerPlayerGameMode;
@@ -19,7 +20,7 @@ import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent.EntityInteractSpecific;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.network.PacketDistributor;
@@ -52,25 +53,25 @@ public class CapabilityController{
 	 * Mounting a dragon
 	 */
 	@SubscribeEvent
-	public static void onEntityInteract(PlayerInteractEvent.EntityInteractSpecific event){
-		Entity ent = event.getEntity();
+	public static void onEntityInteract(EntityInteractSpecific event){
+		Entity ent = event.getTarget();
 
-		if(ent instanceof DragonHitBox){
+		if(ent instanceof DragonHitBox)
 			ent = ((DragonHitBox)ent).player;
-		}else if(ent instanceof DragonHitboxPart){
-			ent = (((DragonHitboxPart)ent).parentMob).player;
-		}
 
-		if(!(ent instanceof Player) || event.getHand() != InteractionHand.MAIN_HAND){
+		else if(ent instanceof DragonHitboxPart)
+			ent = ((DragonHitboxPart)ent).parentMob.player;
+
+		if(!(ent instanceof Player target) || event.getHand() != InteractionHand.MAIN_HAND)
 			return;
-		}
-		Player target = (Player)ent;
+
 		Player self = event.getPlayer();
+
 		DragonStateProvider.getCap(target).ifPresent(targetCap -> {
 			if(targetCap.isDragon() && target.getPose() == Pose.CROUCHING && targetCap.getSize() >= 40 && !target.isVehicle()){
 				DragonStateProvider.getCap(self).ifPresent(selfCap -> {
 					if(!selfCap.isDragon() || selfCap.getLevel() == DragonLevel.BABY){
-						if(event.getTarget() instanceof ServerPlayer){
+						if(target instanceof RemotePlayer){
 							self.startRiding(target);
 							((ServerPlayer)event.getTarget()).connection.send(new ClientboundSetPassengersPacket(target));
 							targetCap.setPassengerId(self.getId());

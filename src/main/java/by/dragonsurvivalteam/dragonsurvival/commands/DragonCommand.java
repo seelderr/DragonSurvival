@@ -1,13 +1,16 @@
 package by.dragonsurvivalteam.dragonsurvival.commands;
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.Capabilities;
+import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientEvents;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.misc.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.RequestClientData;
+import by.dragonsurvivalteam.dragonsurvival.network.entity.player.SynchronizeDragonCap;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
-import by.dragonsurvivalteam.dragonsurvival.network.syncing.CompleteDataSync;
+import by.dragonsurvivalteam.dragonsurvival.network.status.SyncAltarCooldown;
+import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
@@ -15,13 +18,15 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.tree.ArgumentCommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.mojang.brigadier.tree.RootCommandNode;
+import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.selector.EntitySelector;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.network.PacketDistributor;
 
 import java.util.List;
 
@@ -75,27 +80,30 @@ public class DragonCommand{
 		giveWings.addChild(target);
 	}
 
-	private static int runCommand(String type, int stage, boolean wings, ServerPlayer serverPlayer){
-		serverPlayer.getCapability(Capabilities.DRAGON_CAPABILITY).ifPresent(dragonStateHandler -> {
-			DragonType dragonType1 = type.equalsIgnoreCase("human") ? DragonType.NONE : DragonType.valueOf(type.toUpperCase());
+	private static int runCommand(String type, int stage, boolean wings, ServerPlayer player){
+		DragonStateHandler cap = DragonUtils.getHandler(player);
+		DragonType dragonType1 = type.equalsIgnoreCase("human") ? DragonType.NONE : DragonType.valueOf(type.toUpperCase());
 
-			if(dragonType1 == DragonType.NONE && dragonStateHandler.getType() != DragonType.NONE){
-				reInsertClawTools(serverPlayer, dragonStateHandler);
-			}
+		if(dragonType1 == DragonType.NONE && cap.getType() != DragonType.NONE){
+			reInsertClawTools(player, cap);
+		}
 
-			dragonStateHandler.setType(dragonType1);
-			DragonLevel dragonLevel = DragonLevel.values()[stage - 1];
-			dragonStateHandler.setHasWings(wings);
-			dragonStateHandler.getMovementData().spinLearned = wings;
-			dragonStateHandler.setSize(dragonLevel.size, serverPlayer);
-			dragonStateHandler.setPassengerId(0);
+		player.level.playSound(player, player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 1, 0.7f);
 
-			dragonStateHandler.growing = true;
-			NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> serverPlayer), new SyncSpinStatus(serverPlayer.getId(), dragonStateHandler.getMovementData().spinAttack, dragonStateHandler.getMovementData().spinCooldown, dragonStateHandler.getMovementData().spinLearned));
-			NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> serverPlayer), new CompleteDataSync(serverPlayer));
-			NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> serverPlayer), new RequestClientData(dragonStateHandler.getType(), dragonStateHandler.getLevel()));
-			serverPlayer.refreshDimensions();
-		});
+		cap.setType(dragonType1);
+
+		if(dragonType1 == DragonType.NONE){
+			cap.setSize(20F);
+			cap.setHasWings(false);
+		}
+
+		cap.setIsHiding(false);
+		cap.getMovementData().spinLearned = false;
+
+		NetworkHandler.CHANNEL.sendToServer(new SyncAltarCooldown(Minecraft.getInstance().player.getId(), Functions.secondsToTicks(ConfigHandler.SERVER.altarUsageCooldown.get())));
+		NetworkHandler.CHANNEL.sendToServer(new SynchronizeDragonCap(player.getId(), cap.isHiding(), cap.getType(), cap.getSize(), cap.hasWings(), ConfigHandler.SERVER.caveLavaSwimmingTicks.get(), 0));
+		NetworkHandler.CHANNEL.sendToServer(new SyncSpinStatus(Minecraft.getInstance().player.getId(), cap.getMovementData().spinAttack, cap.getMovementData().spinCooldown, cap.getMovementData().spinLearned));
+		ClientEvents.sendClientData(new RequestClientData(cap.getType(), cap.getLevel()));
 		return 1;
 	}
 

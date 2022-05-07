@@ -30,6 +30,7 @@ import com.mojang.math.Vector3f;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
@@ -92,11 +93,11 @@ public class ClientDragonRender{
 	 */
 	@SubscribeEvent
 	public static void thirdPersonPreRender(RenderPlayerEvent.Pre renderPlayerEvent){
-		if(!(renderPlayerEvent.getPlayer() instanceof LocalPlayer)){
+		if(!(renderPlayerEvent.getPlayer() instanceof AbstractClientPlayer)){
 			return;
 		}
 
-		LocalPlayer player = (LocalPlayer)renderPlayerEvent.getPlayer();
+		AbstractClientPlayer player = (AbstractClientPlayer)renderPlayerEvent.getPlayer();
 		Minecraft mc = Minecraft.getInstance();
 
 		if(!playerDragonHashMap.containsKey(player.getId())){
@@ -118,7 +119,7 @@ public class ClientDragonRender{
 		}
 
 		DragonStateHandler cap = DragonUtils.getHandler(player);
-		if(cap != null && cap.isDragon()){
+		if(cap.isDragon()){
 			renderPlayerEvent.setCanceled(true);
 			final float partialRenderTick = renderPlayerEvent.getPartialTick();
 			final float yaw = player.getViewYRot(partialRenderTick);

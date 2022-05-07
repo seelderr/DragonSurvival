@@ -3,8 +3,9 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.DragonAltarGUI;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.utils.TooltipProvider;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.utils.TooltipRender;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientEvents;
+import by.dragonsurvivalteam.dragonsurvival.client.util.TooltipRendering;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
@@ -36,7 +37,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class AltarTypeButton extends Button implements TooltipProvider{
+public class AltarTypeButton extends Button implements TooltipRender{
 	private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_altar_icons.png");
 	private final DragonAltarGUI gui;
 	public DragonType type;
@@ -49,10 +50,9 @@ public class AltarTypeButton extends Button implements TooltipProvider{
 	}
 
 	@Override
-	public List<Component> getTooltip(){
+	public void renderToolTip(PoseStack pPoseStack, int pMouseX, int pMouseY){
 		if(atTheTopOrBottom)
-			return altarDragonInfoLocalized(type == DragonType.NONE ? "human" : type.name().toLowerCase() + "_dragon", type == DragonType.NONE ? Collections.emptyList() : DragonFoodHandler.getSafeEdibleFoods(type));
-		return List.of();
+		TooltipRendering.drawHoveringText(pPoseStack, altarDragonInfoLocalized(type == DragonType.NONE ? "human" : type.name().toLowerCase() + "_dragon", type == DragonType.NONE ? Collections.emptyList() : DragonFoodHandler.getSafeEdibleFoods(type)), pMouseX, pMouseY);
 	}
 
 	private ArrayList<Component> altarDragonInfoLocalized(String dragonType, List<Item> foodList){

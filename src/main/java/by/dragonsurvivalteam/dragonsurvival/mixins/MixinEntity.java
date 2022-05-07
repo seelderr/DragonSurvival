@@ -42,12 +42,12 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
 	}
 
 	@Shadow
-	private boolean hasPassenger(Entity p_184196_1_){
+	public boolean hasPassenger(Entity p_184196_1_){
 		throw new IllegalStateException("Mixin failed to shadow hasPassenger()");
 	}
 
 	@Shadow
-	private double getPassengersRidingOffset(){
+	public double getPassengersRidingOffset(){
 		throw new IllegalStateException("Mixin failed to shadow getPassengersRidingOffset()");
 	}
 
@@ -124,7 +124,7 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
 	}
 
 	@Shadow
-	public AABB getBoundingBoxForPose(Pose pose){
+	protected AABB getBoundingBoxForPose(Pose pose){
 		throw new IllegalStateException("Mixin failed to shadow getBoundingBoxForPose()");
 	}
 }
