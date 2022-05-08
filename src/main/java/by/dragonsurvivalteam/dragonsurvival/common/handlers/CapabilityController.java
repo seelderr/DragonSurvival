@@ -65,6 +65,8 @@ public class CapabilityController{
 			return;
 		}
 
+		if(event.getSide().isClient()) return;
+
 		PlayerEntity target = (PlayerEntity)ent;
 		PlayerEntity self = event.getPlayer();
 		DragonStateHandler targetCap = DragonUtils.getHandler(target);
