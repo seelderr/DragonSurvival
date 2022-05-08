@@ -28,7 +28,7 @@ public class DragonHitboxPart extends PartEntity<DragonHitBox>{
 
 	@Override
 	public boolean isInvulnerableTo(DamageSource pSource){
-		return super.isInvulnerableTo(pSource) || pSource == DamageSource.IN_WALL;
+		return super.isInvulnerableTo(pSource) || parentMob.isInvulnerableTo(pSource);
 	}
 
 	public EntitySize getDimensions(Pose p_213305_1_){

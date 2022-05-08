@@ -234,7 +234,7 @@ public class DragonHitBox extends LivingEntity{
 
 	@Override
 	public boolean isInvulnerableTo(DamageSource pSource){
-		return super.isInvulnerableTo(pSource) || pSource == DamageSource.IN_WALL || pSource == DamageSource.LIGHTNING_BOLT || player != null && player.isInvulnerableTo(pSource);
+		return super.isInvulnerableTo(pSource) || pSource == DamageSource.CRAMMING || pSource == DamageSource.IN_WALL || pSource == DamageSource.LIGHTNING_BOLT || player != null && player.isInvulnerableTo(pSource);
 	}
 
 	@Override
