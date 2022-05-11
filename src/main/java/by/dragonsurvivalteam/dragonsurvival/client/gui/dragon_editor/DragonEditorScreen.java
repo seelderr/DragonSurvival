@@ -714,7 +714,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 		addRenderableWidget(new ExtendedCheckbox(guiLeft - 15, 11, 40, 16, 16, new TranslatableComponent("ds.gui.dragon_editor.show_ui"), showUi, (p) -> showUi = p.selected()));
 		addRenderableWidget(new BackgroundColorButton(guiLeft - 45, 10, 18, 18, TextComponent.EMPTY, (s) -> {}, this));
 		addRenderableWidget(new HelpButton(type, guiLeft - 75, 11, 15, 15, "ds.help.customization", 1));
-		addRenderableWidget(new ScreenshotButton(guiLeft + 240, 10, 18, 18, TextComponent.EMPTY, (s) -> {}, this));
+		//addRenderableWidget(new ScreenshotButton(guiLeft + 240, 10, 18, 18, TextComponent.EMPTY, (s) -> {}, this));
 	}
 
 	public void update(){
