@@ -31,16 +31,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.ArrayList;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 @Mixin( LivingEntity.class )
 public abstract class MixinLivingEntity extends Entity{
 	@Shadow
-	private ItemStack useItem;
+	protected ItemStack useItem;
 	@Shadow
-	private int useItemRemaining;
+	protected int useItemRemaining;
 
 	public MixinLivingEntity(EntityType<?> p_i48580_1_, Level p_i48580_2_){
 		super(p_i48580_1_, p_i48580_2_);
@@ -99,7 +98,7 @@ public abstract class MixinLivingEntity extends Entity{
 	}
 
 	@Shadow
-	public void addEatEffect(ItemStack itemStack, Level level, LivingEntity object){
+	private void addEatEffect(ItemStack itemStack, Level level, LivingEntity object){
 		throw new IllegalStateException("Mixin failed to shadow addEatEffect()");
 	}
 
@@ -190,7 +189,7 @@ public abstract class MixinLivingEntity extends Entity{
 	}
 
 	@Shadow
-	public void spawnItemParticles(ItemStack stack, int count){
+	private void spawnItemParticles(ItemStack stack, int count){
 		throw new IllegalStateException("Mixin failed to shadow spawnItemParticles()");
 	}
 

@@ -127,9 +127,6 @@ public class Capabilities{
 	public static void onClone(PlayerEvent.Clone e){
 		Player player = e.getPlayer();
 		Player original = e.getOriginal();
-		if(!e.isWasDeath()){
-			return;
-		}
 		original.revive();
 
 		DragonStateProvider.getCap(player).ifPresent(capNew -> DragonStateProvider.getCap(original).ifPresent(capOld -> {

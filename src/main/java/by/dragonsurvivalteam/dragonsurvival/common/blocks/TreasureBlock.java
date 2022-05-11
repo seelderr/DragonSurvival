@@ -85,6 +85,7 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 
 				if(!handler.treasureResting){
 					if(world.isClientSide){
+						handler.treasureResting = true;
 						NetworkHandler.CHANNEL.sendToServer(new SyncTreasureRestStatus(player.getId(), true));
 					}
 
@@ -211,11 +212,12 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 		if(pState.getValue(WATERLOGGED)){
 			pLevel.scheduleTick(pCurrentPos, Fluids.WATER, Fluids.WATER.getTickDelay(pLevel));
 		}
+		pLevel.scheduleTick(pCurrentPos, this, this.getDelayAfterPlace());
 		return super.updateShape(pState, pFacing, pFacingState, pLevel, pCurrentPos, pFacingPos);
 	}
 
 	public void tick(BlockState p_225534_1_, ServerLevel p_225534_2_, BlockPos p_225534_3_, Random p_225534_4_){
-		boolean belowEmpty = p_225534_2_.isEmptyBlock(p_225534_3_.below()) || (isFree(p_225534_2_.getBlockState(p_225534_3_.below()))) && p_225534_3_.getY() >= 0;
+		boolean belowEmpty = isFree(p_225534_2_.getBlockState(p_225534_3_.below())) && p_225534_3_.getY() >= p_225534_2_.getMinBuildHeight();
 		boolean lowerLayer = p_225534_2_.getBlockState(p_225534_3_.below()).getBlock() == p_225534_1_.getBlock() && p_225534_2_.getBlockState(p_225534_3_.below()).getValue(LAYERS) < 8;
 		if(belowEmpty || lowerLayer){
 			FallingBlockEntity fallingblockentity = new FallingBlockEntity(p_225534_2_, (double)p_225534_3_.getX() + 0.5D, p_225534_3_.getY(), (double)p_225534_3_.getZ() + 0.5D, p_225534_2_.getBlockState(p_225534_3_)){
@@ -252,8 +254,9 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 					super.tick();
 				}
 			};
-			this.falling(fallingblockentity);
+			p_225534_2_.setBlock(p_225534_3_, p_225534_1_.getFluidState().createLegacyBlock(), 3);
 			p_225534_2_.addFreshEntity(fallingblockentity);
+			this.falling(fallingblockentity);
 		}
 	}
 

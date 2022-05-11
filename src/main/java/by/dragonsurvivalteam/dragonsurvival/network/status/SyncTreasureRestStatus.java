@@ -35,7 +35,6 @@ public class SyncTreasureRestStatus implements IMessage<SyncTreasureRestStatus>{
 	@Override
 
 	public void encode(SyncTreasureRestStatus message, FriendlyByteBuf buffer){
-
 		buffer.writeInt(message.playerId);
 		buffer.writeBoolean(message.state);
 	}
@@ -43,7 +42,6 @@ public class SyncTreasureRestStatus implements IMessage<SyncTreasureRestStatus>{
 	@Override
 
 	public SyncTreasureRestStatus decode(FriendlyByteBuf buffer){
-
 		int playerId = buffer.readInt();
 		boolean state = buffer.readBoolean();
 		return new SyncTreasureRestStatus(playerId, state);
