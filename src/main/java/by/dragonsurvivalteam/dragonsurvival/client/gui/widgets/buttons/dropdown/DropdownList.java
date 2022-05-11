@@ -2,7 +2,10 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat.Mode;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractSelectionList;
@@ -60,10 +63,11 @@ public class DropdownList extends AbstractSelectionList<DropdownEntry>{
 
 	@Override
 	protected void renderBackground(PoseStack stack){
-		GuiUtils.drawContinuousTexturedBox(stack, BACKGROUND_TEXTURE, x0, y0 - 3, 0, 0, width, height + 6, 32, 32, 10, 10);
+		GuiUtils.drawContinuousTexturedBox(stack, BACKGROUND_TEXTURE, x0, y0 - 3, 0, 0, width, height + 6, 32, 32, 10, 0);
 
-		if(children().size() > 0)
+		if(children().size() > 0){
 			RenderSystem.enableScissor((int)(x0 * Minecraft.getInstance().getWindow().getGuiScale()), (int)(Minecraft.getInstance().getWindow().getScreenHeight() - (y1 - 3) * Minecraft.getInstance().getWindow().getGuiScale()), (int)(width * Minecraft.getInstance().getWindow().getGuiScale()), (int)((height - 6) * Minecraft.getInstance().getWindow().getGuiScale()));
+		}
 	}
 
 	@Override
@@ -82,8 +86,9 @@ public class DropdownList extends AbstractSelectionList<DropdownEntry>{
 		int k = this.y0 + 4 - (int)this.getScrollAmount();
 		this.renderList(pPoseStack, j1, k, pMouseX, pMouseY, pPartialTicks);
 
-		if(children().size() > 0)
+		if(children().size() > 0){
 			RenderSystem.disableScissor();
+		}
 
 		int k1 = this.getMaxScroll();
 		if(k1 > 0){

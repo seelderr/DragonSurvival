@@ -2,18 +2,20 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.buttons;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.utils.TooltipRender;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TooltipRendering;
-import com.mojang.blaze3d.pipeline.MainTarget;
+import com.mojang.blaze3d.pipeline.TextureTarget;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
 
 import java.io.File;
@@ -22,7 +24,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class ScreenshotButton extends ExtendedButton{
+public class ScreenshotButton extends ExtendedButton implements TooltipRender{
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss");
 	private final DragonEditorScreen dragonEditorScreen;
 
@@ -34,20 +36,18 @@ public class ScreenshotButton extends ExtendedButton{
 	@Override
 	public void onPress(){
 		super.onPress();
+		if(true) return;
+		
 		int width = 1024;
 		int height = 1024;
 
-		PoseStack stack = new PoseStack();
-		stack.pushPose();
-		MainTarget framebuffer = new MainTarget(width, height);
-
+		NativeImage nativeimage = new NativeImage(width, height, false);
+		TextureTarget framebuffer = new TextureTarget(width, height, true, false);
 		framebuffer.bindWrite(true);
 
-		ClientDragonRender.renderEntityInInventory(FakeClientPlayerUtils.getFakeDragon(0, dragonEditorScreen.handler), width / 2, height / 2, dragonEditorScreen.dragonRender.zoom * 4, dragonEditorScreen.dragonRender.xRot, dragonEditorScreen.dragonRender.yRot, 0, 0);
+		LivingEntity entity = FakeClientPlayerUtils.getFakeDragon(0, dragonEditorScreen.handler);
+		ClientDragonRender.renderEntityInInventory(entity, width / 2, height / 2, dragonEditorScreen.dragonRender.zoom * 4, dragonEditorScreen.dragonRender.xRot, dragonEditorScreen.dragonRender.yRot, 0, 0);
 
-		framebuffer.blitToScreen(width, height);
-
-		NativeImage nativeimage = new NativeImage(width, height, false);
 		RenderSystem.bindTexture(framebuffer.getColorTextureId());
 		nativeimage.downloadTexture(0, false);
 		nativeimage.flipY();
@@ -55,10 +55,8 @@ public class ScreenshotButton extends ExtendedButton{
 		File file1 = new File(Minecraft.getInstance().gameDirectory, "screenshots/dragon-survival");
 		file1.mkdirs();
 		File target = getFile(file1);
-
 		Util.ioPool().execute(() -> {
 			try{
-				nativeimage.resizeSubRectTo(0, 0, width, height, nativeimage);
 				nativeimage.writeToFile(target);
 			}catch(IOException e){
 				e.printStackTrace();
@@ -67,10 +65,8 @@ public class ScreenshotButton extends ExtendedButton{
 			}
 		});
 
-		framebuffer.unbindWrite();
 		framebuffer.destroyBuffers();
-		stack.popPose();
-
+		Minecraft.getInstance().levelRenderer.graphicsChanged();
 		Minecraft.getInstance().getMainRenderTarget().bindWrite(true);
 	}
 
@@ -92,14 +88,11 @@ public class ScreenshotButton extends ExtendedButton{
 	public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){
 		RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/screenshot_icon.png"));
 		blit(mStack, x, y, 0, 0, width, height, width, height);
-
-		if(this.isHoveredOrFocused()){
-			this.renderToolTip(mStack, mouseX, mouseY);
-		}
 	}
 
 	@Override
 	public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-		TooltipRendering.drawHoveringText(p_230443_1_, new TranslatableComponent("ds.gui.dragon_editor.screenshot"), p_230443_2_, p_230443_3_);
+		TooltipRendering.drawHoveringText(p_230443_1_, new TextComponent("Currently, out of order."), p_230443_2_, p_230443_3_);
+		//TooltipRendering.drawHoveringText(p_230443_1_, new TranslatableComponent("ds.gui.dragon_editor.screenshot"), p_230443_2_, p_230443_3_);
 	}
 }

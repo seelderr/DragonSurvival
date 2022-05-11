@@ -27,6 +27,10 @@ public class RenderingUtils{
 		RenderSystem.disableScissor();
 	}
 
+	public static void disableClip(){
+		RenderSystem.disableScissor();
+	}
+
 
 	public static void drawRect(PoseStack mStack, int x, int y, int width, int height, int color){
 		Minecraft.getInstance().screen.hLine(mStack, x, x + width, y, color);
