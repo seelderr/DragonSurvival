@@ -23,7 +23,6 @@ import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.entity.player.PacketSyncCapabilityMovement;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Quaternion;
@@ -459,13 +458,12 @@ public class ClientDragonRender{
 				ClientDragonRender.playerDragonHashMap.put(Minecraft.getInstance().player.getId(), new AtomicReference<>(dummyDragon));
 			}
 		}
-		PoseStack matrixstack = RenderSystem.getModelViewStack();
+
+		PoseStack matrixstack = new PoseStack();
 		matrixstack.pushPose();
-		matrixstack.setIdentity();
-		matrixstack.translate(0.0D, 0.0D, -2000.0D);
-		RenderSystem.applyModelViewMatrix();
 		matrixstack.translate((float)x, (float)y, 0);
 		matrixstack.scale(1.0F, 1.0F, -1.0F);
+		matrixstack.translate(0.0D, 0.0D, 0);
 		matrixstack.scale(scale, scale, scale);
 		Quaternion quaternion = Vector3f.ZP.rotationDegrees(180.0F);
 		Quaternion quaternion1 = Vector3f.XP.rotationDegrees(yRot * 10.0F);
@@ -482,20 +480,20 @@ public class ClientDragonRender{
 		entity.xRot = -yRot * 10.0F;
 		entity.yHeadRot = entity.yRot;
 		entity.yHeadRotO = entity.yRot;
-		Lighting.setupForFlatItems();
 		EntityRenderDispatcher entityrenderermanager = Minecraft.getInstance().getEntityRenderDispatcher();
 		boolean renderHitbox = entityrenderermanager.shouldRenderHitBoxes();
 		quaternion1.conj();
 		entityrenderermanager.overrideCameraOrientation(quaternion1);
-		entityrenderermanager.setRenderHitBoxes(false);
-		entityrenderermanager.setRenderShadow(false);
 		MultiBufferSource.BufferSource irendertypebuffer$impl = Minecraft.getInstance().renderBuffers().bufferSource();
 		RenderSystem.runAsFancy(() -> {
-			entityrenderermanager.render(entity, 0.0D, 0.0D, 0.0D, 0.0F, 1F, matrixstack, irendertypebuffer$impl, 244);
-		});
+			entityrenderermanager.setRenderHitBoxes(false);
+			entityrenderermanager.setRenderShadow(false);
 
-		entityrenderermanager.setRenderShadow(true);
-		entityrenderermanager.setRenderHitBoxes(renderHitbox);
+			entityrenderermanager.render(entity, 0.0D, 0.0D, 0.0D, 0.0F, 1F, matrixstack, irendertypebuffer$impl, 244);
+
+			entityrenderermanager.setRenderShadow(true);
+			entityrenderermanager.setRenderHitBoxes(renderHitbox);
+		});
 
 		irendertypebuffer$impl.endBatch();
 
@@ -505,7 +503,5 @@ public class ClientDragonRender{
 		entity.yHeadRotO = f5;
 		entity.yHeadRot = f6;
 		matrixstack.popPose();
-		RenderSystem.applyModelViewMatrix();
-		Lighting.setupFor3DItems();
 	}
 }
