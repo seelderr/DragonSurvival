@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.DragonAltarGUI;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.DragonScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.TabButton;
 import by.dragonsurvivalteam.dragonsurvival.client.render.CaveLavaFluidRenderer;
@@ -22,7 +23,6 @@ import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.RequestClientData;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawRender;
-import by.dragonsurvivalteam.dragonsurvival.network.container.OpenDragonAltar;
 import by.dragonsurvivalteam.dragonsurvival.network.container.OpenDragonInventory;
 import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncPlayerSkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.network.entity.player.SyncDragonSkinSettings;
@@ -47,7 +47,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.*;
 import net.minecraft.util.ResourceLocation;
@@ -60,12 +59,9 @@ import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType;
 import net.minecraftforge.client.gui.ForgeIngameGui;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.network.PacketDistributor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -111,21 +107,17 @@ public class ClientEvents{
 					NetworkHandler.CHANNEL.sendToServer(new SyncPlayerSkinPreset(player.getId(), preset));
 				}
 			});
-		}
-	}
 
-	@SubscribeEvent( priority = EventPriority.LOWEST )
-	public static void syncClientData(PlayerEvent.PlayerLoggedInEvent loggedInEvent){
-		PlayerEntity player = loggedInEvent.getPlayer();
-		if(!player.level.isClientSide){
-			DragonStateProvider.getCap(player).ifPresent(cap -> {
-				cap.hasUsedAltar = cap.hasUsedAltar || cap.isDragon();
+			if(player == Minecraft.getInstance().player){
+				DragonStateProvider.getCap(player).ifPresent(cap -> {
+					cap.hasUsedAltar = cap.hasUsedAltar || cap.isDragon();
 
-				if(!cap.hasUsedAltar && ConfigHandler.COMMON.startWithDragonChoice.get()){
-					NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)player), new OpenDragonAltar());
-					cap.hasUsedAltar = true;
-				}
-			});
+					if(!cap.hasUsedAltar && ConfigHandler.SERVER.startWithDragonChoice.get()){
+						Minecraft.getInstance().setScreen(new DragonAltarGUI());
+						cap.hasUsedAltar = true;
+					}
+				});
+			}
 		}
 	}
 

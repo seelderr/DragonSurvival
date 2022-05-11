@@ -15,6 +15,9 @@ public class ServerConfig{
 	public final ForgeConfigSpec.BooleanValue mineStarBlock;
 	public final ForgeConfigSpec.BooleanValue sizeChangesHitbox;
 	public final ForgeConfigSpec.BooleanValue hitboxGrowsPastHuman;
+	public final ForgeConfigSpec.BooleanValue useModifiedHitboxes;
+
+	public final ForgeConfigSpec.BooleanValue startWithDragonChoice;
 
 	public final ForgeConfigSpec.BooleanValue enderDragonGrantsSpin;
 	public final ForgeConfigSpec.BooleanValue startWithWings;
@@ -282,6 +285,10 @@ public class ServerConfig{
 		maxSizeVari = builder.comment("The maximum size variation in percentage").defineInRange("maxSizeVari", 10.0, 0.0, 1000.0);
 
 		minSizeVari = builder.comment("The minimum size variation in percentage").defineInRange("minSizeVari", -10.0, -1000.0, 0);
+		useModifiedHitboxes = builder.comment("Should the mod use the new modified hitboxes for dragon plauers?").define("useModifiedHitboxes", true);
+
+		startWithDragonChoice = builder.comment("Should the dragon altar interface be opened when the player first joins the world?").define("startWithDragonChoice", false);
+
 
 		// Growth
 		builder.pop().push("growth");

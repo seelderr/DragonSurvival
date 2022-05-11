@@ -47,6 +47,9 @@ public class EmoteMenuHandler{
 	private static final ResourceLocation BUTTON_DOWN = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/emote/button_down.png");
 	private static final ResourceLocation BUTTON_LEFT = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/emote/button_left.png");
 	private static final ResourceLocation BUTTON_RIGHT = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/emote/button_right.png");
+	public static final ResourceLocation resetTexture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/reset_icon.png");
+
+
 	private static int emotePage = 0;
 	private static boolean keybinding = false;
 	private static String currentlyKeybinding = null;
@@ -165,6 +168,8 @@ public class EmoteMenuHandler{
 				}
 			});
 
+
+
 			initGuiEvent.addWidget(new Button(startX, startY, width, height, new StringTextComponent(">"), (btn) -> {
 				DragonStateHandler handler = DragonUtils.getHandler(Minecraft.getInstance().player);
 				handler.getEmotes().emoteMenuOpen = !handler.getEmotes().emoteMenuOpen;
@@ -202,6 +207,37 @@ public class EmoteMenuHandler{
 
 			for(int i = 0; i < PER_PAGE; i++){
 				int finalI = i;
+
+				initGuiEvent.addWidget(new ExtendedButton(startX - 70 - height, startY - 20 - (height * ((PER_PAGE - 1) - finalI)), height, height, StringTextComponent.EMPTY, (btn) -> {
+					Emote emote = emotes.size() > finalI ? emotes.get(finalI) : null;
+					DragonStateHandler handler = DragonUtils.getHandler(Minecraft.getInstance().player);
+
+					if(emote != null){
+						currentlyKeybinding = null;
+						handler.getEmotes().emoteKeybinds.put(emote.id, -1);
+						NetworkHandler.CHANNEL.sendToServer(new SyncEmote(Minecraft.getInstance().player.getId(), handler.getEmotes()));
+					}
+				}){
+					@Override
+					public void render(MatrixStack stack, int mouseX, int mouseY, float partialTick){
+						Emote emote = emotes.size() > finalI ? emotes.get(finalI) : null;
+
+						DragonStateHandler handler = DragonUtils.getHandler(Minecraft.getInstance().player);
+						this.active = this.visible = handler.getEmotes().emoteMenuOpen && keybinding && emote != null && handler.getEmotes().emoteKeybinds.getOrDefault(emote.id, -1) != -1;
+						this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
+
+						if(!handler.getEmotes().emoteMenuOpen || !keybinding || emote == null || handler.getEmotes().emoteKeybinds.getOrDefault(emote.id, -1) == -1){
+							return;
+						}
+
+						int color = isHovered && emotes.size() > finalI ? new Color(0.1F, 0.1F, 0.1F, 0.8F).getRGB() : new Color(0.1F, 0.1F, 0.1F, 0.5F).getRGB();
+						AbstractGui.fill(stack, x, y, x + this.width, y + this.height, color);
+
+						Minecraft.getInstance().getTextureManager().bind(resetTexture);
+						blit(stack, x, y, 0, 0, width, height, width, height);
+					}
+				});
+
 				initGuiEvent.addWidget(new Button(startX, startY - 20 - (height * ((PER_PAGE - 1) - finalI)), width, height, null, (btn) -> {
 					DragonStateHandler handler = DragonUtils.getHandler(Minecraft.getInstance().player);
 					Emote emote = emotes.size() > finalI ? emotes.get(finalI) : null;

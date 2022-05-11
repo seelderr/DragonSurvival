@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.hitbox.DragonHitBox;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
@@ -17,6 +18,8 @@ public class DragonHitboxHandler{
 
 	@SubscribeEvent
 	public static void playerTick(PlayerTickEvent playerTickEvent){
+		if(!ConfigHandler.SERVER.useModifiedHitboxes.get()) return;
+
 		PlayerEntity player = playerTickEvent.player;
 
 		if(!player.level.isClientSide){

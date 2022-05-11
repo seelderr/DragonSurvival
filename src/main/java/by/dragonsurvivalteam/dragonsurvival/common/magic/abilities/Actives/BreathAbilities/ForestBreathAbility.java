@@ -12,10 +12,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.IGrowable;
-import net.minecraft.block.PotatoBlock;
+import net.minecraft.block.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.SimpleSound;
@@ -239,9 +236,12 @@ public class ForestBreathAbility extends BreathAbility{
 							if(player.level instanceof ServerWorld){
 								if(igrowable.isBonemealSuccess(player.level, player.level.random, pos, blockState)){
 									for(int i = 0; i < 3; i++){
-										if(igrowable != null){
-											igrowable.performBonemeal((ServerWorld)player.level, player.level.random, pos, blockState);
+										if(igrowable instanceof DoublePlantBlock){
+											if(!blockState.hasProperty(DoublePlantBlock.HALF)){
+												continue;
+											}
 										}
+										igrowable.performBonemeal((ServerWorld)player.level, player.level.random, pos, blockState);
 									}
 								}
 							}

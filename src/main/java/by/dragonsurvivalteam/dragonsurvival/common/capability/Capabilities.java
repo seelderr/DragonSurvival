@@ -89,7 +89,6 @@ public class Capabilities{
 
 	private static final ScheduledExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadScheduledExecutor();
 
-
 	//TODO Find a better solution to fix the error of data being synced too early on LAN
 	@SubscribeEvent
 	public static void onLoggedIn(PlayerEvent.PlayerLoggedInEvent loggedInEvent){
@@ -108,18 +107,24 @@ public class Capabilities{
 
 	@SubscribeEvent
 	public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent playerRespawnEvent){
-		PlayerEntity player = playerRespawnEvent.getPlayer();
-		if(!player.level.isClientSide){
-			syncCapability(player);
-		}
+		EXECUTOR_SERVICE.schedule(() -> {
+			PlayerEntity player = playerRespawnEvent.getPlayer();
+			if(!player.level.isClientSide){
+				DragonStateProvider.getCap(player).ifPresent(cap -> NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)player), new RequestClientData(cap.getType(), cap.getLevel())));
+				syncCapability(player);
+			}
+		}, 1, TimeUnit.SECONDS);
 	}
 
 	@SubscribeEvent
 	public static void onDimensionChange(PlayerEvent.PlayerChangedDimensionEvent event){
-		PlayerEntity player = event.getPlayer();
-		if(!player.level.isClientSide()){
-			syncCapability(player);
-		}
+		EXECUTOR_SERVICE.schedule(() -> {
+			PlayerEntity player = event.getPlayer();
+			if(!player.level.isClientSide){
+				DragonStateProvider.getCap(player).ifPresent(cap -> NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)player), new RequestClientData(cap.getType(), cap.getLevel())));
+				syncCapability(player);
+			}
+		}, 1, TimeUnit.SECONDS);
 	}
 
 	@SubscribeEvent
@@ -138,6 +143,8 @@ public class Capabilities{
 		PlayerEntity player = e.getPlayer();
 		PlayerEntity original = e.getOriginal();
 
+		original.revive();
+
 		DragonStateProvider.getCap(player).ifPresent(capNew -> DragonStateProvider.getCap(original).ifPresent(capOld -> {
 			CompoundNBT nbt = capOld.writeNBT();
 			capNew.readNBT(nbt);
@@ -152,7 +159,7 @@ public class Capabilities{
 				}
 			});
 		});
-
+		original.remove();
 		DragonModifiers.updateModifiers(original, player);
 		player.refreshDimensions();
 	}

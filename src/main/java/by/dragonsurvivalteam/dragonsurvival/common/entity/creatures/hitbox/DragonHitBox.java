@@ -17,13 +17,13 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.HandSide;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -189,6 +189,32 @@ public class DragonHitBox extends LivingEntity{
 		}
 	}
 
+	@Override
+	public boolean isInvisibleTo(PlayerEntity pPlayer){
+		return pPlayer.getId() == getPlayerId();
+	}
+
+	@Override
+	public boolean shouldShowName(){
+		return false;
+	}
+
+	@Override
+	public boolean isCustomNameVisible(){
+		return false;
+	}
+
+	@Override
+	public boolean hasCustomName(){
+		return true;
+	}
+
+	@Nullable
+	@Override
+	public ITextComponent getCustomName(){
+		return StringTextComponent.EMPTY;
+	}
+
 	public int getPlayerId(){
 		return this.entityData.get(PLAYER_ID);
 	}
@@ -283,6 +309,11 @@ public class DragonHitBox extends LivingEntity{
 
 	public boolean is(Entity entity){
 		return this == entity || entity.getId() == getPlayerId() || player != null && entity.getId() == player.getId();
+	}
+
+	@Override
+	public ActionResultType interact(PlayerEntity pPlayer, Hand pHand){
+		return player != null ? player.interact(pPlayer, pHand) : ActionResultType.PASS;
 	}
 
 	@Override

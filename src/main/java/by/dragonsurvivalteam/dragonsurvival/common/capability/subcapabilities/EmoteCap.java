@@ -67,10 +67,7 @@ public class EmoteCap extends SubCap{
 
 		for(Emote emote : EmoteRegistry.EMOTES){
 			int num = tag.getInt("emote_keybind_" + emote.id);
-
-			if(num != -1){
-				emoteKeybinds.put(emote.id, num);
-			}
+			emoteKeybinds.put(emote.id, num);
 		}
 	}
 }
