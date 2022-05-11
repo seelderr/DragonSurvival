@@ -6,6 +6,8 @@ import org.spongepowered.asm.mixin.Mixin;
 @Mixin( ProjectileUtil.class )
 public abstract class MixinProjectileHelper{
 
+	//TODO Redo this part to work with new hitboxes
+
 	// This hack exists because a normal inject at head was causing JAVA crashes. ¯\_(ツ)_/¯
 //	@Redirect( method = "getEntityHitResult(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/Vec3;Lnet/minecraft/world/phys/Vec3;Lnet/minecraft/world/phys/AABB;Ljava/util/function/Predicate;F)Lnet/minecraft/world/phys/EntityHitResult;", at = @At( value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;getBoundingBox()Lnet/minecraft/world/phys/AABB;" ) )
 //	private static AABB dragonEntityHitboxHack(Entity entity){

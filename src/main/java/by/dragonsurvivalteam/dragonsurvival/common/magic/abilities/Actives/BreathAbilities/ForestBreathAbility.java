@@ -36,6 +36,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BonemealableBlock;
+import net.minecraft.world.level.block.DoublePlantBlock;
 import net.minecraft.world.level.block.PotatoBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
@@ -110,9 +111,12 @@ public class ForestBreathAbility extends BreathAbility{
 							if(player.level instanceof ServerLevel){
 								if(igrowable.isBonemealSuccess(player.level, player.level.random, pos, blockState)){
 									for(int i = 0; i < 3; i++){
-										if(igrowable != null){
-											igrowable.performBonemeal((ServerLevel)player.level, player.level.random, pos, blockState);
+										if(igrowable instanceof DoublePlantBlock plant){
+											if(!blockState.hasProperty(DoublePlantBlock.HALF)){
+												continue;
+											}
 										}
+										igrowable.performBonemeal((ServerLevel)player.level, player.level.random, pos, blockState);
 									}
 								}
 							}

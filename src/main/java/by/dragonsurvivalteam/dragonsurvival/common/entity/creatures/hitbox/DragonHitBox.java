@@ -8,6 +8,8 @@ import com.google.common.collect.Lists;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -197,6 +199,17 @@ public class DragonHitBox extends LivingEntity{
 	}
 
 	@Override
+	public boolean hasCustomName(){
+		return true;
+	}
+
+	@org.jetbrains.annotations.Nullable
+	@Override
+	public Component getCustomName(){
+		return TextComponent.EMPTY;
+	}
+
+	@Override
 	public boolean isInvisibleTo(Player pPlayer){
 		return pPlayer.getId() == getPlayerId();
 	}
@@ -276,7 +289,6 @@ public class DragonHitBox extends LivingEntity{
 	public int getAirSupply(){
 		return getMaxAirSupply();
 	}
-
 
 	@Override
 	public InteractionResult interact(Player pPlayer, InteractionHand pHand){

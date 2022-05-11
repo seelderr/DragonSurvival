@@ -313,7 +313,7 @@ public class EmoteMenuHandler{
 						this.active = this.visible = handler.getEmotes().emoteMenuOpen && keybinding && emote != null && handler.getEmotes().emoteKeybinds.getOrDefault(emote.id, -1) != -1;
 						this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
 
-						if(!handler.getEmotes().emoteMenuOpen || !keybinding || emote == null || !handler.getEmotes().emoteKeybinds.containsKey(emote.id)){
+						if(!handler.getEmotes().emoteMenuOpen || !keybinding || emote == null || handler.getEmotes().emoteKeybinds.getOrDefault(emote.id, -1) == -1){
 							return;
 						}
 

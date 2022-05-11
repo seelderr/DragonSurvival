@@ -18,6 +18,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -57,6 +58,8 @@ public class DragonSurvivalMod{
 		DragonAbilities.initAbilities();
 		NetworkHandler.setup();
 		LOGGER.info("Successfully registered packets!");
+
+		InterModComms.sendTo("carryon", "blacklistEntity",() -> "dragonsurvival:dragon_hitbox");
 	}
 
 	@SubscribeEvent

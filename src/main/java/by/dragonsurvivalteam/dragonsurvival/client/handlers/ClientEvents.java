@@ -59,9 +59,7 @@ import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType;
 import net.minecraftforge.client.gui.ForgeIngameGui;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -109,21 +107,17 @@ public class ClientEvents{
 					NetworkHandler.CHANNEL.sendToServer(new SyncPlayerSkinPreset(player.getId(), preset));
 				}
 			});
-		}
-	}
 
-	@SubscribeEvent( priority = EventPriority.LOWEST )
-	public static void syncClientData(PlayerEvent.PlayerLoggedInEvent loggedInEvent){
-		Player player = loggedInEvent.getPlayer();
-		if(!player.level.isClientSide){
-			DragonStateProvider.getCap(player).ifPresent(cap -> {
-				cap.hasUsedAltar = cap.hasUsedAltar || cap.isDragon();
+			if(player == Minecraft.getInstance().player){
+				DragonStateProvider.getCap(player).ifPresent(cap -> {
+					cap.hasUsedAltar = cap.hasUsedAltar || cap.isDragon();
 
-				if(!cap.hasUsedAltar && ConfigHandler.COMMON.startWithDragonChoice.get()){
-					Minecraft.getInstance().setScreen(new DragonAltarGUI());
-					cap.hasUsedAltar = true;
-				}
-			});
+					if(!cap.hasUsedAltar && ConfigHandler.SERVER.startWithDragonChoice.get()){
+						Minecraft.getInstance().setScreen(new DragonAltarGUI());
+						cap.hasUsedAltar = true;
+					}
+				});
+			}
 		}
 	}
 
