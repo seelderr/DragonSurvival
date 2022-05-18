@@ -9,7 +9,6 @@ import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.entity.player.SynchronizeDragonCap;
 import by.dragonsurvivalteam.dragonsurvival.network.status.DiggingStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.status.RefreshDragons;
-import net.minecraft.client.player.RemotePlayer;
 import net.minecraft.network.protocol.game.ClientboundSetPassengersPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerPlayerGameMode;
@@ -62,7 +61,7 @@ public class CapabilityController{
 		else if(ent instanceof DragonHitboxPart)
 			ent = ((DragonHitboxPart)ent).parentMob.player;
 
-		if(!(ent instanceof Player target) || event.getHand() != InteractionHand.MAIN_HAND)
+		if(!(ent instanceof ServerPlayer target) || event.getHand() != InteractionHand.MAIN_HAND)
 			return;
 
 		Player self = event.getPlayer();
@@ -71,12 +70,10 @@ public class CapabilityController{
 			if(targetCap.isDragon() && target.getPose() == Pose.CROUCHING && targetCap.getSize() >= 40 && !target.isVehicle()){
 				DragonStateProvider.getCap(self).ifPresent(selfCap -> {
 					if(!selfCap.isDragon() || selfCap.getLevel() == DragonLevel.BABY){
-						if(target instanceof RemotePlayer){
-							self.startRiding(target);
-							((ServerPlayer)event.getTarget()).connection.send(new ClientboundSetPassengersPacket(target));
-							targetCap.setPassengerId(self.getId());
-							NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> target), new SynchronizeDragonCap(target.getId(), targetCap.isHiding(), targetCap.getType(), targetCap.getSize(), targetCap.hasWings(), targetCap.getLavaAirSupply(), self.getId()));
-						}
+						self.startRiding(target);
+						target.connection.send(new ClientboundSetPassengersPacket(target));
+						targetCap.setPassengerId(self.getId());
+						NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> target), new SynchronizeDragonCap(target.getId(), targetCap.isHiding(), targetCap.getType(), targetCap.getSize(), targetCap.hasWings(), targetCap.getLavaAirSupply(), self.getId()));
 						event.setCancellationResult(InteractionResult.SUCCESS);
 						event.setCanceled(true);
 					}
