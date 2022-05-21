@@ -101,6 +101,6 @@ public class CategoryEntry extends OptionListEntry{
 
 	@Override
 	public List<? extends NarratableEntry> narratables(){
-		return null;
+		return Collections.emptyList();
 	}
 }

@@ -17,6 +17,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.awt.Color;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -88,6 +89,6 @@ public class OptionEntry extends OptionListEntry{
 
 	@Override
 	public List<? extends NarratableEntry> narratables(){
-		return null;
+		return Collections.emptyList();
 	}
 }

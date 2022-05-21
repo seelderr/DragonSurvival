@@ -40,7 +40,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class ResourceTextField extends EditBox implements TooltipAccessor{
 	private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/textbox.png");
@@ -162,7 +161,8 @@ public class ResourceTextField extends EditBox implements TooltipAccessor{
 		}
 
 		Suggestions sgs = builder.build();
-		List<String> suggestions = sgs.getList().stream().map(Suggestion::getText).toList();
+		List<String> suggestions = new ArrayList<>(sgs.getList().stream().map(Suggestion::getText).toList());
+
 		suggestions.removeIf(s -> s == null || s.isEmpty());
 		suggestions.forEach(s -> this.suggestions.addAll(parseCombinedList(Collections.singletonList(s), isTag)));
 	}

@@ -6,6 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEdito
 import by.dragonsurvivalteam.dragonsurvival.client.gui.utils.TooltipRender;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientEvents;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TooltipRendering;
+import by.dragonsurvivalteam.dragonsurvival.commands.DragonCommand;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
@@ -101,7 +102,6 @@ public class AltarTypeButton extends Button implements TooltipRender{
 
 			DragonStateProvider.getCap(player).ifPresent(cap -> {
 				player.level.playSound(player, player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 1, 0.7f);
-
 				cap.setType(type);
 
 				if(type == DragonType.NONE){

@@ -16,6 +16,7 @@ import net.minecraftforge.client.gui.widget.ExtendedButton;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -123,6 +124,6 @@ public class ResourceDropdownEntry extends DropdownEntry{
 
 	@Override
 	public List<? extends NarratableEntry> narratables(){
-		return null;
+		return Collections.emptyList();
 	}
 }

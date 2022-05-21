@@ -6,6 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -57,11 +58,18 @@ public class SyncTreasureRestStatus implements IMessage<SyncTreasureRestStatus>{
 
 			if(entity != null){
 				DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
+					boolean update = false;
+
 					if(message.state != dragonStateHandler.treasureResting){
 						dragonStateHandler.treasureRestTimer = 0;
 						dragonStateHandler.treasureSleepTimer = 0;
+						update = true;
 					}
 					dragonStateHandler.treasureResting = message.state;
+
+					if(update){
+						((ServerLevel)entity.level).updateSleepingPlayerList();
+					}
 				});
 
 				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new SyncTreasureRestStatus(entity.getId(), message.state));

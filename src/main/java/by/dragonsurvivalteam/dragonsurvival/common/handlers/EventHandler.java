@@ -8,6 +8,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ClawToolHandle
 import by.dragonsurvivalteam.dragonsurvival.common.items.DSItems;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ConfigUtils;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.status.PlayerJumpSync;
@@ -108,17 +109,31 @@ public class EventHandler{
 			return;
 		}
 
-		if(health >= 14 && health < 20){
-			if(entity.level.random.nextInt(100) <= (ConfigHandler.SERVER.dragonHeartShardChance.get() * 100) + (event.getLootingLevel() * ((ConfigHandler.SERVER.dragonHeartShardChance.get() * 100) / 4))){
-				event.getDrops().add(new ItemEntity(entity.level, entity.position().x, entity.position().y, entity.position().z, new ItemStack(DSItems.dragonHeartShard)));
+		boolean canDropDragonHeart = ConfigUtils.containsEntity(ConfigHandler.SERVER.dragonHeartEntityList.get(), entity) == ConfigHandler.SERVER.dragonHeartWhiteList.get();
+		boolean canDropWeakDragonHeart = ConfigUtils.containsEntity(ConfigHandler.SERVER.weakDragonHeartEntityList.get(), entity) == ConfigHandler.SERVER.weakDragonHeartWhiteList.get();
+		boolean canDropElderDragonHeart = ConfigUtils.containsEntity(ConfigHandler.SERVER.elderDragonHeartEntityList.get(), entity) == ConfigHandler.SERVER.elderDragonHeartWhiteList.get();
+
+		if(canDropDragonHeart){
+			if(ConfigHandler.SERVER.dragonHeartUseList.get() || health >= 14 && health < 20){
+				if(entity.level.random.nextInt(100) <= (ConfigHandler.SERVER.dragonHeartShardChance.get() * 100) + (event.getLootingLevel() * ((ConfigHandler.SERVER.dragonHeartShardChance.get() * 100) / 4))){
+					event.getDrops().add(new ItemEntity(entity.level, entity.position().x, entity.position().y, entity.position().z, new ItemStack(DSItems.dragonHeartShard)));
+				}
 			}
-		}else if(health >= 20 && health < 50){
-			if(entity.level.random.nextInt(100) <= (ConfigHandler.SERVER.weakDragonHeartChance.get() * 100) + (event.getLootingLevel() * ((ConfigHandler.SERVER.weakDragonHeartChance.get() * 100) / 4))){
-				event.getDrops().add(new ItemEntity(entity.level, entity.position().x, entity.position().y, entity.position().z, new ItemStack(DSItems.weakDragonHeart)));
+		}
+
+		if(canDropWeakDragonHeart){
+			if(ConfigHandler.SERVER.weakDragonHeartUseList.get() || health >= 20 && health < 50){
+				if(entity.level.random.nextInt(100) <= (ConfigHandler.SERVER.weakDragonHeartChance.get() * 100) + (event.getLootingLevel() * ((ConfigHandler.SERVER.weakDragonHeartChance.get() * 100) / 4))){
+					event.getDrops().add(new ItemEntity(entity.level, entity.position().x, entity.position().y, entity.position().z, new ItemStack(DSItems.weakDragonHeart)));
+				}
 			}
-		}else if(health >= 50){
-			if(entity.level.random.nextInt(100) <= (ConfigHandler.SERVER.elderDragonHeartChance.get() * 100) + (event.getLootingLevel() * ((ConfigHandler.SERVER.elderDragonHeartChance.get() * 100) / 4))){
-				event.getDrops().add(new ItemEntity(entity.level, entity.position().x, entity.position().y, entity.position().z, new ItemStack(DSItems.elderDragonHeart)));
+		}
+
+		if(canDropElderDragonHeart){
+			if(ConfigHandler.SERVER.elderDragonHeartUseList.get() || health >= 50){
+				if(entity.level.random.nextInt(100) <= (ConfigHandler.SERVER.elderDragonHeartChance.get() * 100) + (event.getLootingLevel() * ((ConfigHandler.SERVER.elderDragonHeartChance.get() * 100) / 4))){
+					event.getDrops().add(new ItemEntity(entity.level, entity.position().x, entity.position().y, entity.position().z, new ItemStack(DSItems.elderDragonHeart)));
+				}
 			}
 		}
 	}

@@ -1,9 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.components;
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ExtendedCheckbox;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.ResetSettingsButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownList;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ExtendedCheckbox;
 import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.EnumSkinLayer;
 import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.objects.LayerSettings;
 import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
@@ -19,7 +19,7 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.client.gui.GuiUtils;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
-import net.minecraftforge.client.gui.widget.Slider;
+import net.minecraftforge.client.gui.widget.ForgeSlider;
 
 import java.awt.Color;
 import java.util.List;
@@ -37,9 +37,9 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 	private final int ySize;
 	private final Supplier<LayerSettings> settings;
 	public boolean visible;
-	private Slider hueSlider;
-	private Slider saturationSlider;
-	private Slider brightnessSlider;
+	private ForgeSlider hueSlider;
+	private ForgeSlider saturationSlider;
+	private ForgeSlider brightnessSlider;
 
 	public HueSelectorComponent(DragonEditorScreen screen, int x, int y, int xSize, int ySize, EnumSkinLayer layer){
 		this.screen = screen;
@@ -58,7 +58,6 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 
 		hueReset = new ExtendedButton(x + 3 + xSize - 26, y + 12, 20, 20, TextComponent.EMPTY, (s) -> {
 			hueSlider.setValue(0.0);
-			hueSlider.updateSlider();
 		}){
 			@Override
 			public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){
@@ -75,19 +74,23 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 			hsb[1] = 0.5f;
 		}
 
-		hueSlider = new Slider(x + 3, y + 12, xSize - 26, 20, TextComponent.EMPTY, TextComponent.EMPTY, -180, 180, set.modifiedColor ? Math.round(hsb[0] * 360 - 180) : 0, true, true, (val) -> {}, (val) -> {
-			float value = (hueSlider.getValueInt() + 180) / 360f;
-			float value1 = (saturationSlider.getValueInt() + 180) / 360f;
-			float value2 = (brightnessSlider.getValueInt() + 180) / 360f;
+		hueSlider = new ForgeSlider(x + 3, y + 12, xSize - 26, 20, TextComponent.EMPTY, TextComponent.EMPTY, -180, 180, set.modifiedColor ? Math.round(hsb[0] * 360 - 180) : 0, true){
+			@Override
+			protected void applyValue(){
+				super.applyValue();
+				float value = (hueSlider.getValueInt() + 180) / 360f;
+				float value1 = (saturationSlider.getValueInt() + 180) / 360f;
+				float value2 = (brightnessSlider.getValueInt() + 180) / 360f;
 
-			settings.get().hue = value;
-			settings.get().saturation = value1;
-			settings.get().brightness = value2;
-			settings.get().modifiedColor = true;
+				settings.get().hue = value;
+				settings.get().saturation = value1;
+				settings.get().brightness = value2;
+				settings.get().modifiedColor = true;
 
-			screen.handler.getSkin().updateLayers.add(layer);
-			screen.update();
-		}){
+				screen.handler.getSkin().updateLayers.add(layer);
+				screen.update();
+			}
+
 			@Override
 			public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){
 				if(this.visible){
@@ -105,19 +108,23 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 			}
 		};
 
-		saturationSlider = new Slider(x + 3, y + 22 + 12, xSize - 26, 20, TextComponent.EMPTY, TextComponent.EMPTY, -180, 180, set.modifiedColor ? Math.round(hsb[1] * 360 - 180) : 0, true, true, (val) -> {}, (val) -> {
-			float value = (hueSlider.getValueInt() + 180) / 360f;
-			float value1 = (saturationSlider.getValueInt() + 180) / 360f;
-			float value2 = (brightnessSlider.getValueInt() + 180) / 360f;
+		saturationSlider = new ForgeSlider(x + 3, y + 22 + 12, xSize - 26, 20, TextComponent.EMPTY, TextComponent.EMPTY, -180, 180, set.modifiedColor ? Math.round(hsb[1] * 360 - 180) : 0, true){
+			@Override
+			protected void applyValue(){
+				super.applyValue();
+				float value = (hueSlider.getValueInt() + 180) / 360f;
+				float value1 = (saturationSlider.getValueInt() + 180) / 360f;
+				float value2 = (brightnessSlider.getValueInt() + 180) / 360f;
 
-			settings.get().hue = value;
-			settings.get().saturation = value1;
-			settings.get().brightness = value2;
-			settings.get().modifiedColor = true;
+				settings.get().hue = value;
+				settings.get().saturation = value1;
+				settings.get().brightness = value2;
+				settings.get().modifiedColor = true;
 
-			screen.handler.getSkin().updateLayers.add(layer);
-			screen.update();
-		}){
+				screen.handler.getSkin().updateLayers.add(layer);
+				screen.update();
+			}
+
 			@Override
 			public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){
 				if(this.visible){
@@ -142,7 +149,6 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 
 		saturationReset = new ExtendedButton(x + 3 + xSize - 26, y + 22 + 12, 20, 20, TextComponent.EMPTY, (s) -> {
 			saturationSlider.setValue(0.0);
-			saturationSlider.updateSlider();
 		}){
 			@Override
 			public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){
@@ -156,7 +162,6 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 
 		brightnessReset = new ExtendedButton(x + 3 + xSize - 26, y + 44 + 12, 20, 20, TextComponent.EMPTY, (s) -> {
 			brightnessSlider.setValue(0.0);
-			brightnessSlider.updateSlider();
 		}){
 			@Override
 			public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){
@@ -168,19 +173,23 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 			}
 		};
 
-		brightnessSlider = new Slider(x + 3, y + 44 + 12, xSize - 26, 20, TextComponent.EMPTY, TextComponent.EMPTY, -180, 180, set.modifiedColor ? Math.round(hsb[2] * 360 - 180) : 0, true, true, (val) -> {}, (val) -> {
-			float value = (hueSlider.getValueInt() + 180) / 360f;
-			float value1 = (saturationSlider.getValueInt() + 180) / 360f;
-			float value2 = (brightnessSlider.getValueInt() + 180) / 360f;
+		brightnessSlider = new ForgeSlider(x + 3, y + 44 + 12, xSize - 26, 20, TextComponent.EMPTY, TextComponent.EMPTY, -180, 180, set.modifiedColor ? Math.round(hsb[2] * 360 - 180) : 0, true){
+			@Override
+			protected void applyValue(){
+				super.applyValue();
+				float value = (hueSlider.getValueInt() + 180) / 360f;
+				float value1 = (saturationSlider.getValueInt() + 180) / 360f;
+				float value2 = (brightnessSlider.getValueInt() + 180) / 360f;
 
-			settings.get().hue = value;
-			settings.get().saturation = value1;
-			settings.get().brightness = value2;
-			settings.get().modifiedColor = true;
+				settings.get().hue = value;
+				settings.get().saturation = value1;
+				settings.get().brightness = value2;
+				settings.get().modifiedColor = true;
 
-			screen.handler.getSkin().updateLayers.add(layer);
-			screen.update();
-		}){
+				screen.handler.getSkin().updateLayers.add(layer);
+				screen.update();
+			}
+
 			@Override
 			public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){
 				if(this.visible){

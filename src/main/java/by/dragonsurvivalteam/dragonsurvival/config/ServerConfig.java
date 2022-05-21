@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.google.common.collect.Lists;
 import net.minecraftforge.common.ForgeConfigSpec;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -136,6 +137,15 @@ public class ServerConfig{
 	public final ForgeConfigSpec.DoubleValue dragonHeartShardChance;
 	public final ForgeConfigSpec.DoubleValue weakDragonHeartChance;
 	public final ForgeConfigSpec.DoubleValue elderDragonHeartChance;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> dragonHeartEntityList;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> weakDragonHeartEntityList;
+	public final ForgeConfigSpec.ConfigValue<List<? extends String>> elderDragonHeartEntityList;
+	public final ForgeConfigSpec.BooleanValue dragonHeartWhiteList;
+	public final ForgeConfigSpec.BooleanValue weakDragonHeartWhiteList;
+	public final ForgeConfigSpec.BooleanValue elderDragonHeartWhiteList;
+	public final ForgeConfigSpec.BooleanValue dragonHeartUseList;
+	public final ForgeConfigSpec.BooleanValue weakDragonHeartUseList;
+	public final ForgeConfigSpec.BooleanValue elderDragonHeartUseList;
 
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> seaDragonHurtfulItems;
 	public final ForgeConfigSpec.ConfigValue<List<? extends String>> caveDragonHurtfulItems;
@@ -314,10 +324,20 @@ public class ServerConfig{
 
 		builder.pop().push("drops");
 		dragonHeartShardChance = builder.translation("ds.config.server.drops.dragonHeartShardChance").comment("The chance for dragon heart shards to drop from any mobs with max health between 14-20").defineInRange("dragonHeartShardChance", 0.01, 0.0, 1.0);
-
 		weakDragonHeartChance = builder.translation("ds.config.server.drops.weakDragonHeartChance").comment("The chance for weak dragon heart to drop from any mobs with max health between 20-50").defineInRange("weakDragonHeartChance", 0.01, 0.0, 1.0);
-
 		elderDragonHeartChance = builder.translation("ds.config.server.drops.elderDragonHeartChance").comment("The chance for dragon heart to drop from any mobs with max health above 50").defineInRange("elderDragonHeartChance", 0.1, 0.0, 1.0);
+
+		dragonHeartEntityList = builder.comment("Decide which entities can drop dragon hearts").defineList("dragonHeartEntityList", new ArrayList<>(), ConfigHandler.entityPredicate);
+		weakDragonHeartEntityList = builder.comment("Decide which entities can drop weak dragon hearts").defineList("weakDragonHeartEntityList", new ArrayList<>(), ConfigHandler.entityPredicate);
+		elderDragonHeartEntityList = builder.comment("Decide which entities can drop elder dragon hearts").defineList("elderDragonHeartEntityList", new ArrayList<>(), ConfigHandler.entityPredicate);
+
+		dragonHeartWhiteList = builder.comment("Should the dragonHeartEntityList be treated as an allowlist rather than a block list?").define("dragonHeartWhiteList", false);
+		weakDragonHeartWhiteList = builder.comment("Should the weakDragonHeartEntityList be treated as an allowlist rather than a block list?").define("weakDragonHeartWhiteList", false);
+		elderDragonHeartWhiteList = builder.comment("Should the elderDragonHeartEntityList be treated as an allowlist rather than a block list?").define("elderDragonHeartWhiteList", false);
+
+		dragonHeartUseList = builder.comment("Should the dragonHeartEntityList be used instead of the health requirement?").define("dragonHeartUseList", false);
+		weakDragonHeartUseList = builder.comment("Should the weakDragonHeartUseList be used instead of the health requirement?").define("weakDragonHeartUseList", false);
+		elderDragonHeartUseList = builder.comment("Should the elderDragonHeartUseList be used instead of the health requirement?").define("elderDragonHeartUseList", false);
 
 		// Treasure
 		builder.pop().push("treasure");

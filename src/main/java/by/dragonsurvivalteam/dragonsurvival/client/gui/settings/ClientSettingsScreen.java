@@ -22,7 +22,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.*;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.components.CycleButton.TooltipSupplier;
-import net.minecraft.client.gui.screens.OptionsScreen;
+import net.minecraft.client.gui.screens.OptionsSubScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.*;
@@ -36,7 +36,7 @@ import java.math.RoundingMode;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class ClientSettingsScreen extends OptionsScreen{
+public class ClientSettingsScreen extends OptionsSubScreen{
 	private static final Float sliderPerc = 0.1F;
 	private final ArrayList<Option> OPTIONS = new ArrayList<>();
 	private final TreeMap<String, ArrayList<Option>> optionMap = new TreeMap<>();
@@ -46,12 +46,12 @@ public class ClientSettingsScreen extends OptionsScreen{
 	private AbstractConfig config;
 
 	public ClientSettingsScreen(Screen p_i225930_1_, Options p_i225930_2_){
-		super(p_i225930_1_, p_i225930_2_);
+		super(p_i225930_1_, p_i225930_2_, TextComponent.EMPTY);
 		OptionsList.activeCats.clear();
 	}
 
 	public ClientSettingsScreen(Screen p_i225930_1_, Options p_i225930_2_, Component p_i225930_3_){
-		super(p_i225930_1_, p_i225930_2_);
+		super(p_i225930_1_, p_i225930_2_, p_i225930_3_);
 		OptionsList.activeCats.clear();
 		this.title = p_i225930_3_;
 	}
@@ -407,15 +407,20 @@ public class ClientSettingsScreen extends OptionsScreen{
 		options.add(path);
 	}
 
+
 	@Override
 	public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
-		super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
+		this.renderBackground(p_230430_1_);
 		this.list.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
 		//drawCenteredString(p_230430_1_, this.font, this.title, this.width / 2, 5, 16777215);
+
+		super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
+
 
 		List<FormattedCharSequence> list = tooltipAt(this.list, p_230430_2_, p_230430_3_);
 		if(list != null)
 			this.renderTooltip(p_230430_1_, list, p_230430_2_, p_230430_3_);
+
 	}
 
 	@Nullable

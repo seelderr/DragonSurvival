@@ -12,6 +12,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
 
+import java.util.Collections;
 import java.util.List;
 
 @OnlyIn( Dist.CLIENT )
@@ -68,6 +69,6 @@ public class TextBoxEntry extends OptionListEntry{
 
 	@Override
 	public List<? extends NarratableEntry> narratables(){
-		return null;
+		return Collections.emptyList();
 	}
 }

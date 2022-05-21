@@ -93,8 +93,6 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 				}
 
 				if(!world.isClientSide){
-					((ServerLevel)world).updateSleepingPlayerList();
-
 					player.resetStat(Stats.CUSTOM.get(Stats.TIME_SINCE_REST));
 					ServerPlayer serverplayerentity = (ServerPlayer)player;
 					if(serverplayerentity.getRespawnPosition() == null || serverplayerentity.getRespawnDimension() != world.dimension() || serverplayerentity.getRespawnPosition() != null && !serverplayerentity.getRespawnPosition().equals(p_225533_3_) && serverplayerentity.getRespawnPosition().distSqr(p_225533_3_) > 40){

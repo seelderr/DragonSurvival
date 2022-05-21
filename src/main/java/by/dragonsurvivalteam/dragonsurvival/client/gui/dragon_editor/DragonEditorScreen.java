@@ -55,7 +55,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.DyeColor;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
-import net.minecraftforge.client.gui.widget.Slider;
+import net.minecraftforge.client.gui.widget.ForgeSlider;
 import org.apache.commons.lang3.text.WordUtils;
 
 import java.io.FileWriter;
@@ -423,28 +423,30 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			addRenderableWidget(new DragonEditorSlotButton(width / 2 + 195 + 15, guiTop + ((num - 1) * 12) + 5 + 20, num, this));
 		}
 
-		addRenderableWidget(new Slider(width / 2 - 100 - 100, height - 25, 100, 20, new TranslatableComponent("ds.gui.dragon_editor.size"), new TextComponent("%"), ConfigHandler.SERVER.minSizeVari.get(), ConfigHandler.SERVER.maxSizeVari.get(), Math.round((preset.sizeMul - 1.0) * 100), false, true, (p) -> {}, (p) -> {
-
-			double val = 1.0 + (p.getValueInt() / 100.0);
-			if(preset.sizeMul != val){
-				preset.sizeMul = val;
-				dragonRender.zoom = (float)(level.size * preset.sizeMul);
+		addRenderableWidget(new ForgeSlider(width / 2 - 100 - 100, height - 25, 100, 20, new TranslatableComponent("ds.gui.dragon_editor.size"), new TextComponent("%"), ConfigHandler.SERVER.minSizeVari.get(), ConfigHandler.SERVER.maxSizeVari.get(), Math.round((preset.sizeMul - 1.0) * 100), true){
+			@Override
+			protected void applyValue(){
+				super.applyValue();
+				double val = 1.0 + (getValueInt() / 100.0);
+				if(preset.sizeMul != val){
+					preset.sizeMul = val;
+					dragonRender.zoom = (float)(level.size * preset.sizeMul);
+				}
 			}
-		}){
+
 			@Override
 			public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
 				super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 				double val = Math.round((preset.sizeMul - 1.0) * 100);
 
 				if(val > 0){
-					dispString = new TranslatableComponent("ds.gui.dragon_editor.size").append("+");
+					setMessage(new TranslatableComponent("ds.gui.dragon_editor.size").append("+"));
 				}else{
-					dispString = new TranslatableComponent("ds.gui.dragon_editor.size");
+					setMessage(new TranslatableComponent("ds.gui.dragon_editor.size"));
 				}
 
 				if(getValue() != val){
 					setValue(val);
-					updateSlider();
 				}
 
 				if(!isMouseOver(pMouseX, pMouseY) && isDragging()){

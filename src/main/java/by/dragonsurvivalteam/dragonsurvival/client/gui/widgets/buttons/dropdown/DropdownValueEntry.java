@@ -8,6 +8,7 @@ import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.Consumer;
@@ -64,6 +65,6 @@ public class DropdownValueEntry extends DropdownEntry{
 
 	@Override
 	public List<? extends NarratableEntry> narratables(){
-		return null;
+		return Collections.emptyList();
 	}
 }

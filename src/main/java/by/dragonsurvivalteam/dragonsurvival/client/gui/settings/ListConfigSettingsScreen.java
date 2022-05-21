@@ -14,7 +14,7 @@ import net.minecraft.client.Options;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.client.gui.screens.OptionsScreen;
+import net.minecraft.client.gui.screens.OptionsSubScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -26,7 +26,7 @@ import net.minecraftforge.common.ForgeConfigSpec.ValueSpec;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListConfigSettingsScreen extends OptionsScreen{
+public class ListConfigSettingsScreen extends OptionsSubScreen{
 	private final ConfigValue value;
 	private final ForgeConfigSpec spec;
 	private final String configKey;
@@ -39,7 +39,7 @@ public class ListConfigSettingsScreen extends OptionsScreen{
 	private boolean isItems = false;
 
 	public ListConfigSettingsScreen(Screen p_i225930_1_, Options p_i225930_2_, Component p_i225930_3_, ValueSpec valueSpec, ConfigValue value, ForgeConfigSpec spec, String configKey){
-		super(p_i225930_1_, p_i225930_2_);
+		super(p_i225930_1_, p_i225930_2_, p_i225930_3_);
 		this.value = value;
 		this.spec = spec;
 		this.configKey = configKey;
@@ -84,8 +84,9 @@ public class ListConfigSettingsScreen extends OptionsScreen{
 			oldVals = null;
 		}
 
-		this.children.add(this.list);
-		this.addRenderableWidget(new Button(this.width / 2 + 20, this.height - 27, 100, 20, new TextComponent("Add new"), (p_213106_1_) -> {
+		addWidget(this.list);
+
+		addRenderableWidget(new Button(width / 2 + 20, height - 27, 100, 20, new TextComponent("Add new"), (p_213106_1_) -> {
 			createOption("");
 			list.setScrollAmount(list.getMaxScroll());
 		}));
@@ -118,8 +119,9 @@ public class ListConfigSettingsScreen extends OptionsScreen{
 	}
 
 	public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
-		super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
+		this.renderBackground(p_230430_1_);
 		this.list.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
+		super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
 	}
 
 	private void createOption(String t){

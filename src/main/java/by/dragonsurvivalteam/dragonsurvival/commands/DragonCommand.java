@@ -106,12 +106,12 @@ public class DragonCommand{
 		for(int i = 0; i < 4; i++){
 			ItemStack stack = dragonStateHandler.getClawInventory().getClawsInventory().getItem(i);
 
-			if(!serverPlayer.addItem(stack)){
+			if(serverPlayer.addItem(stack)){
+				dragonStateHandler.getClawInventory().getClawsInventory().removeItem(i, stack.getCount());
+			}else{
 				if(serverPlayer.level.addFreshEntity(new ItemEntity(serverPlayer.level, serverPlayer.position().x, serverPlayer.position().y, serverPlayer.position().z, stack))){
 					dragonStateHandler.getClawInventory().getClawsInventory().removeItem(i, stack.getCount());
 				}
-			}else{
-				dragonStateHandler.getClawInventory().getClawsInventory().removeItem(i, stack.getCount());
 			}
 		}
 	}
