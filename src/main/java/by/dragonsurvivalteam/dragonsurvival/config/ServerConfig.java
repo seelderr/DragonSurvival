@@ -3,7 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.config;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.google.common.collect.Lists;
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,269 +12,281 @@ import java.util.List;
 
 public class ServerConfig{
 
-	public final ForgeConfigSpec.DoubleValue maxFlightSpeed;
-	public final ForgeConfigSpec.BooleanValue mineStarBlock;
-	public final ForgeConfigSpec.BooleanValue sizeChangesHitbox;
-	public final ForgeConfigSpec.BooleanValue hitboxGrowsPastHuman;
-	public final ForgeConfigSpec.BooleanValue useModifiedHitboxes;
+	public final DoubleValue maxFlightSpeed;
+	public final BooleanValue mineStarBlock;
+	public final BooleanValue sizeChangesHitbox;
+	public final BooleanValue hitboxGrowsPastHuman;
+	public final BooleanValue useModifiedHitboxes;
 
-	public final ForgeConfigSpec.BooleanValue startWithDragonChoice;
+	public final BooleanValue startWithDragonChoice;
 
-	public final ForgeConfigSpec.BooleanValue enderDragonGrantsSpin;
-	public final ForgeConfigSpec.BooleanValue startWithWings;
-	public final ForgeConfigSpec.BooleanValue enableFlightFallDamage;
-	public final ForgeConfigSpec.IntValue flightHungerThreshold;
-	public final ForgeConfigSpec.IntValue foldWingsThreshold;
-	public final ForgeConfigSpec.BooleanValue allowFlyingWithoutHunger;
-	public final ForgeConfigSpec.BooleanValue flyingUsesHunger;
-	public final ForgeConfigSpec.BooleanValue creativeFlight;
-	public final ForgeConfigSpec.BooleanValue foldWingsOnLand;
-	public final ForgeConfigSpec.BooleanValue lethalFlight;
-	public final ForgeConfigSpec.IntValue flightSpinCooldown;
+	public final BooleanValue enderDragonGrantsSpin;
+	public final BooleanValue startWithWings;
+	public final BooleanValue enableFlightFallDamage;
+	public final IntValue flightHungerThreshold;
+	public final IntValue foldWingsThreshold;
+	public final BooleanValue allowFlyingWithoutHunger;
+	public final BooleanValue flyingUsesHunger;
+	public final BooleanValue creativeFlight;
+	public final BooleanValue foldWingsOnLand;
+	public final BooleanValue lethalFlight;
+	public final IntValue flightSpinCooldown;
 
-	public final ForgeConfigSpec.DoubleValue maxSizeVari;
-	public final ForgeConfigSpec.DoubleValue minSizeVari;
+	public final DoubleValue maxSizeVari;
+	public final DoubleValue minSizeVari;
 
-	public final ForgeConfigSpec.BooleanValue canMoveInEmote;
-	public final ForgeConfigSpec.BooleanValue canMoveWhileCasting;
+	public final BooleanValue canMoveInEmote;
+	public final BooleanValue canMoveWhileCasting;
 
-	public final ForgeConfigSpec.BooleanValue treasureHealthRegen;
-	public final ForgeConfigSpec.IntValue treasureRegenTicks;
-	public final ForgeConfigSpec.IntValue treasureRegenTicksReduce;
-	public final ForgeConfigSpec.IntValue maxTreasures;
+	public final BooleanValue treasureHealthRegen;
+	public final IntValue treasureRegenTicks;
+	public final IntValue treasureRegenTicksReduce;
+	public final IntValue maxTreasures;
 
-	public final ForgeConfigSpec.BooleanValue sourceOfMagicInfiniteMagic;
-	public final ForgeConfigSpec.BooleanValue damageWrongSourceOfMagic;
-	public final ForgeConfigSpec.BooleanValue canUseAllSourcesOfMagic;
-	public final ForgeConfigSpec.IntValue elderDragonDustTime;
-	public final ForgeConfigSpec.IntValue elderDragonBoneTime;
-	public final ForgeConfigSpec.IntValue weakHeartShardTime;
-	public final ForgeConfigSpec.IntValue weakDragonHeartTime;
-	public final ForgeConfigSpec.IntValue elderDragonHeartTime;
+	public final BooleanValue sourceOfMagicInfiniteMagic;
+	public final BooleanValue damageWrongSourceOfMagic;
+	public final BooleanValue canUseAllSourcesOfMagic;
+	public final IntValue elderDragonDustTime;
+	public final IntValue elderDragonBoneTime;
+	public final IntValue weakHeartShardTime;
+	public final IntValue weakDragonHeartTime;
+	public final IntValue elderDragonHeartTime;
 
-	public final ForgeConfigSpec.IntValue altarUsageCooldown;
-	public final ForgeConfigSpec.BooleanValue altarCraftable;
+	public final IntValue altarUsageCooldown;
+	public final BooleanValue altarCraftable;
 
-	public final ForgeConfigSpec.DoubleValue newbornJump;
-	public final ForgeConfigSpec.DoubleValue youngJump;
-	public final ForgeConfigSpec.DoubleValue adultJump;
+	public final DoubleValue newbornJump;
+	public final DoubleValue youngJump;
+	public final DoubleValue adultJump;
 
-	public final ForgeConfigSpec.BooleanValue keepClawItems;
-	public final ForgeConfigSpec.BooleanValue syncClawRender;
+	public final BooleanValue keepClawItems;
+	public final BooleanValue syncClawRender;
 
-	public final ForgeConfigSpec.BooleanValue ridingBlacklist;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> allowedVehicles;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> blacklistedItems;
-	public final ForgeConfigSpec.ConfigValue<List<? extends Integer>> blacklistedSlots;
+	public final BooleanValue ridingBlacklist;
+	public final ConfigValue<List<? extends String>> allowedVehicles;
+	public final ConfigValue<List<? extends String>> blacklistedItems;
+	public final ConfigValue<List<? extends Integer>> blacklistedSlots;
 
-	public final ForgeConfigSpec.BooleanValue alternateGrowing;
-	public final ForgeConfigSpec.DoubleValue maxGrowthSize;
-	public final ForgeConfigSpec.DoubleValue newbornGrowthModifier;
-	public final ForgeConfigSpec.DoubleValue youngGrowthModifier;
-	public final ForgeConfigSpec.DoubleValue adultGrowthModifier;
-	public final ForgeConfigSpec.DoubleValue maxGrowthModifier;
+	public final BooleanValue alternateGrowing;
+	public final DoubleValue maxGrowthSize;
+	public final DoubleValue newbornGrowthModifier;
+	public final DoubleValue youngGrowthModifier;
+	public final DoubleValue adultGrowthModifier;
+	public final DoubleValue maxGrowthModifier;
 
-	public final ForgeConfigSpec.DoubleValue reachBonus;
-	public final ForgeConfigSpec.BooleanValue saveGrowthStage;
-	public final ForgeConfigSpec.BooleanValue fireBreathSpreadsFire;
+	public final DoubleValue reachBonus;
+	public final BooleanValue saveGrowthStage;
+	public final BooleanValue fireBreathSpreadsFire;
 
-	public final ForgeConfigSpec.BooleanValue customDragonFoods;
-	public final ForgeConfigSpec.BooleanValue healthAdjustments;
-	public final ForgeConfigSpec.IntValue minHealth;
-	public final ForgeConfigSpec.IntValue maxHealth;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> growNewborn;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> growYoung;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> growAdult;
+	public final BooleanValue customDragonFoods;
+	public final BooleanValue healthAdjustments;
+	public final IntValue minHealth;
+	public final IntValue maxHealth;
+	public final ConfigValue<List<? extends String>> growNewborn;
+	public final ConfigValue<List<? extends String>> growYoung;
+	public final ConfigValue<List<? extends String>> growAdult;
 
-	public final ForgeConfigSpec.BooleanValue bonuses;
-	public final ForgeConfigSpec.BooleanValue attackDamage;
-	public final ForgeConfigSpec.DoubleValue babyBonusDamage;
-	public final ForgeConfigSpec.DoubleValue youngBonusDamage;
-	public final ForgeConfigSpec.DoubleValue adultBonusDamage;
-	public final ForgeConfigSpec.BooleanValue clawsAreTools;
-	public final ForgeConfigSpec.IntValue baseHarvestLevel;
-	public final ForgeConfigSpec.IntValue bonusHarvestLevel;
-	public final ForgeConfigSpec.ConfigValue<DragonLevel> bonusUnlockedAt;
-	public final ForgeConfigSpec.IntValue speedupEffectLevel; // 0 = Disabled
+	public final BooleanValue bonuses;
+	public final BooleanValue attackDamage;
+	public final DoubleValue babyBonusDamage;
+	public final DoubleValue youngBonusDamage;
+	public final DoubleValue adultBonusDamage;
+	public final BooleanValue clawsAreTools;
+	public final IntValue baseHarvestLevel;
+	public final IntValue bonusHarvestLevel;
+	public final ConfigValue<DragonLevel> bonusUnlockedAt;
+	public final IntValue speedupEffectLevel; // 0 = Disabled
 
-	public final ForgeConfigSpec.BooleanValue caveFireImmunity;
-	public final ForgeConfigSpec.BooleanValue caveLavaSwimming;
-	public final ForgeConfigSpec.IntValue caveLavaSwimmingTicks; // 0 = Disabled
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> caveSpeedupBlocks;
+	public final BooleanValue caveFireImmunity;
+	public final BooleanValue caveLavaSwimming;
+	public final IntValue caveLavaSwimmingTicks; // 0 = Disabled
+	public final ConfigValue<List<? extends String>> caveSpeedupBlocks;
 
-	public final ForgeConfigSpec.DoubleValue forestFallReduction; // 0.0 = Disabled
-	public final ForgeConfigSpec.BooleanValue forestBushImmunity;
-	public final ForgeConfigSpec.BooleanValue forestCactiImmunity;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> forestSpeedupBlocks;
-	public final ForgeConfigSpec.BooleanValue seaSwimmingBonuses;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> seaSpeedupBlocks;
+	public final DoubleValue forestFallReduction; // 0.0 = Disabled
+	public final BooleanValue forestBushImmunity;
+	public final BooleanValue forestCactiImmunity;
+	public final ConfigValue<List<? extends String>> forestSpeedupBlocks;
+	public final BooleanValue seaSwimmingBonuses;
+	public final ConfigValue<List<? extends String>> seaSpeedupBlocks;
 
-	public final ForgeConfigSpec.BooleanValue penalties;
+	public final BooleanValue penalties;
 
-	public final ForgeConfigSpec.DoubleValue caveWaterDamage; // 0.0 = Disabled
-	public final ForgeConfigSpec.DoubleValue caveRainDamage; // 0.0 = Disabled
-	public final ForgeConfigSpec.DoubleValue caveSplashDamage; // 0.0 = Disabled
-	public final ForgeConfigSpec.IntValue chargedSoupBuffDuration; // 0 = Disabled
+	public final DoubleValue caveWaterDamage; // 0.0 = Disabled
+	public final DoubleValue caveRainDamage; // 0.0 = Disabled
+	public final DoubleValue caveSplashDamage; // 0.0 = Disabled
+	public final IntValue chargedSoupBuffDuration; // 0 = Disabled
 
-	public final ForgeConfigSpec.IntValue forestStressTicks; // 0 = Disabled
-	public final ForgeConfigSpec.IntValue forestStressEffectDuration;
-	public final ForgeConfigSpec.DoubleValue stressExhaustion;
+	public final IntValue forestStressTicks; // 0 = Disabled
+	public final IntValue forestStressEffectDuration;
+	public final DoubleValue stressExhaustion;
 
-	public final ForgeConfigSpec.IntValue seaTicksWithoutWater; // 0 = Disabled
-	public final ForgeConfigSpec.BooleanValue seaTicksBasedOnTemperature;
-	public final ForgeConfigSpec.DoubleValue seaDehydrationDamage;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> seaHydrationBlocks;
-	public final ForgeConfigSpec.BooleanValue seaAllowWaterBottles;
-	public final ForgeConfigSpec.IntValue seaTicksWithoutWaterRestored; // 0 = Disabled
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> seaAdditionalWaterUseables;
+	public final IntValue seaTicksWithoutWater; // 0 = Disabled
+	public final BooleanValue seaTicksBasedOnTemperature;
+	public final DoubleValue seaDehydrationDamage;
+	public final ConfigValue<List<? extends String>> seaHydrationBlocks;
+	public final BooleanValue seaAllowWaterBottles;
+	public final IntValue seaTicksWithoutWaterRestored; // 0 = Disabled
+	public final ConfigValue<List<? extends String>> seaAdditionalWaterUseables;
 
-	public final ForgeConfigSpec.DoubleValue humanOreDustChance;
-	public final ForgeConfigSpec.DoubleValue dragonOreDustChance;
-	public final ForgeConfigSpec.DoubleValue humanOreBoneChance;
-	public final ForgeConfigSpec.DoubleValue dragonOreBoneChance;
-	public final ForgeConfigSpec.ConfigValue<String> oresTag;
+	public final DoubleValue humanOreDustChance;
+	public final DoubleValue dragonOreDustChance;
+	public final DoubleValue humanOreBoneChance;
+	public final DoubleValue dragonOreBoneChance;
+	public final ConfigValue<String> oresTag;
 
-	public final ForgeConfigSpec.DoubleValue dragonHeartShardChance;
-	public final ForgeConfigSpec.DoubleValue weakDragonHeartChance;
-	public final ForgeConfigSpec.DoubleValue elderDragonHeartChance;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> dragonHeartEntityList;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> weakDragonHeartEntityList;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> elderDragonHeartEntityList;
-	public final ForgeConfigSpec.BooleanValue dragonHeartWhiteList;
-	public final ForgeConfigSpec.BooleanValue weakDragonHeartWhiteList;
-	public final ForgeConfigSpec.BooleanValue elderDragonHeartWhiteList;
-	public final ForgeConfigSpec.BooleanValue dragonHeartUseList;
-	public final ForgeConfigSpec.BooleanValue weakDragonHeartUseList;
-	public final ForgeConfigSpec.BooleanValue elderDragonHeartUseList;
+	public final DoubleValue dragonHeartShardChance;
+	public final DoubleValue weakDragonHeartChance;
+	public final DoubleValue elderDragonHeartChance;
+	public final ConfigValue<List<? extends String>> dragonHeartEntityList;
+	public final ConfigValue<List<? extends String>> weakDragonHeartEntityList;
+	public final ConfigValue<List<? extends String>> elderDragonHeartEntityList;
+	public final BooleanValue dragonHeartWhiteList;
+	public final BooleanValue weakDragonHeartWhiteList;
+	public final BooleanValue elderDragonHeartWhiteList;
+	public final BooleanValue dragonHeartUseList;
+	public final BooleanValue weakDragonHeartUseList;
+	public final BooleanValue elderDragonHeartUseList;
 
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> seaDragonHurtfulItems;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> caveDragonHurtfulItems;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> forestDragonHurtfulItems;
+	public final ConfigValue<List<? extends String>> seaDragonHurtfulItems;
+	public final ConfigValue<List<? extends String>> caveDragonHurtfulItems;
+	public final ConfigValue<List<? extends String>> forestDragonHurtfulItems;
 
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> caveDragonFoods;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> forestDragonFoods;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> seaDragonFoods;
+	public final ConfigValue<List<? extends String>> caveDragonFoods;
+	public final ConfigValue<List<? extends String>> forestDragonFoods;
+	public final ConfigValue<List<? extends String>> seaDragonFoods;
 
-	public final ForgeConfigSpec.BooleanValue noEXPRequirements;
-	public final ForgeConfigSpec.BooleanValue consumeEXPAsMana;
-	public final ForgeConfigSpec.IntValue initialPassiveCost;
-	public final ForgeConfigSpec.DoubleValue passiveScalingCost;
+	public final BooleanValue noEXPRequirements;
+	public final BooleanValue consumeEXPAsMana;
+	public final IntValue initialPassiveCost;
+	public final DoubleValue passiveScalingCost;
 
-	public final ForgeConfigSpec.IntValue favorableManaTicks;
-	public final ForgeConfigSpec.IntValue normalManaTicks;
+	public final IntValue favorableManaTicks;
+	public final IntValue normalManaTicks;
 
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> seaDragonManaBlocks;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> forestDragonManaBlocks;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> caveDragonManaBlocks;
+	public final ConfigValue<List<? extends String>> seaDragonManaBlocks;
+	public final ConfigValue<List<? extends String>> forestDragonManaBlocks;
+	public final ConfigValue<List<? extends String>> caveDragonManaBlocks;
 
-	public final ForgeConfigSpec.BooleanValue dragonAbilities;
-	public final ForgeConfigSpec.BooleanValue caveDragonAbilities;
-	public final ForgeConfigSpec.BooleanValue forestDragonAbilities;
-	public final ForgeConfigSpec.BooleanValue seaDragonAbilities;
+	public final BooleanValue dragonAbilities;
+	public final BooleanValue caveDragonAbilities;
+	public final BooleanValue forestDragonAbilities;
+	public final BooleanValue seaDragonAbilities;
 
-	public final ForgeConfigSpec.BooleanValue fireBreath;
-	public final ForgeConfigSpec.IntValue fireBreathCooldown;
-	public final ForgeConfigSpec.DoubleValue fireBreathDamage;
-	public final ForgeConfigSpec.IntValue fireBreathInitialMana;
-	public final ForgeConfigSpec.IntValue fireBreathOvertimeMana;
-	public final ForgeConfigSpec.IntValue fireBreathManaTicks;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> fireBreathBlockBreaks;
+	public final BooleanValue fireBreath;
+	public final IntValue fireBreathCooldown;
+	public final IntValue fireBreathCasttime;
+	public final DoubleValue fireBreathDamage;
+	public final IntValue fireBreathInitialMana;
+	public final IntValue fireBreathOvertimeMana;
+	public final IntValue fireBreathManaTicks;
+	public final ConfigValue<List<? extends String>> fireBreathBlockBreaks;
 
-	public final ForgeConfigSpec.BooleanValue stormBreath;
-	public final ForgeConfigSpec.IntValue stormBreathCooldown;
-	public final ForgeConfigSpec.DoubleValue stormBreathDamage;
-	public final ForgeConfigSpec.IntValue stormBreathInitialMana;
-	public final ForgeConfigSpec.IntValue stormBreathOvertimeMana;
-	public final ForgeConfigSpec.IntValue stormBreathManaTicks;
-	public final ForgeConfigSpec.IntValue stormBreathChainCount;
-	public final ForgeConfigSpec.IntValue chargedEffectChainCount;
-	public final ForgeConfigSpec.IntValue chargedEffectMaxChain;
-	public final ForgeConfigSpec.IntValue chargedChainRange;
-	public final ForgeConfigSpec.IntValue chargedEffectDamage;
+	public final BooleanValue stormBreath;
+	public final IntValue stormBreathCooldown;
+	public final IntValue stormBreathCasttime;
+	public final DoubleValue stormBreathDamage;
+	public final IntValue stormBreathInitialMana;
+	public final IntValue stormBreathOvertimeMana;
+	public final IntValue stormBreathManaTicks;
+	public final IntValue stormBreathChainCount;
+	public final IntValue chargedEffectChainCount;
+	public final IntValue chargedEffectMaxChain;
+	public final IntValue chargedChainRange;
+	public final IntValue chargedEffectDamage;
 
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> stormBreathBlockBreaks;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> chargedBlacklist;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> chargedSpreadBlacklist;
+	public final ConfigValue<List<? extends String>> stormBreathBlockBreaks;
+	public final ConfigValue<List<? extends String>> chargedBlacklist;
+	public final ConfigValue<List<? extends String>> chargedSpreadBlacklist;
 
 
-	public final ForgeConfigSpec.BooleanValue forestBreath;
-	public final ForgeConfigSpec.IntValue forestBreathCooldown;
-	public final ForgeConfigSpec.DoubleValue forestBreathDamage;
-	public final ForgeConfigSpec.IntValue forestBreathInitialMana;
-	public final ForgeConfigSpec.IntValue forestBreathOvertimeMana;
-	public final ForgeConfigSpec.IntValue forestBreathManaTicks;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> forestBreathGrowBlacklist;
-	public final ForgeConfigSpec.ConfigValue<List<? extends String>> forestBreathBlockBreaks;
+	public final BooleanValue forestBreath;
+	public final IntValue forestBreathCooldown;
+	public final IntValue forestBreathCasttime;
+	public final DoubleValue forestBreathDamage;
+	public final IntValue forestBreathInitialMana;
+	public final IntValue forestBreathOvertimeMana;
+	public final IntValue forestBreathManaTicks;
+	public final ConfigValue<List<? extends String>> forestBreathGrowBlacklist;
+	public final ConfigValue<List<? extends String>> forestBreathBlockBreaks;
 
-	public final ForgeConfigSpec.BooleanValue spike;
-	public final ForgeConfigSpec.IntValue spikeCooldown;
-	public final ForgeConfigSpec.DoubleValue spikeDamage;
-	public final ForgeConfigSpec.IntValue spikeManaCost;
+	public final BooleanValue spike;
+	public final IntValue spikeCooldown;
+	public final IntValue spikeCasttime;
+	public final DoubleValue spikeDamage;
+	public final IntValue spikeManaCost;
 
-	public final ForgeConfigSpec.BooleanValue inspiration;
-	public final ForgeConfigSpec.IntValue inspirationCooldown;
-	public final ForgeConfigSpec.IntValue inspirationDuration;
-	public final ForgeConfigSpec.IntValue inspirationManaCost;
+	public final BooleanValue inspiration;
+	public final IntValue inspirationCooldown;
+	public final IntValue inspirationCasttime;
+	public final IntValue inspirationDuration;
+	public final IntValue inspirationManaCost;
 
-	public final ForgeConfigSpec.BooleanValue hunter;
-	public final ForgeConfigSpec.IntValue hunterCooldown;
-	public final ForgeConfigSpec.IntValue hunterDuration;
-	public final ForgeConfigSpec.DoubleValue hunterDamageBonus;
-	public final ForgeConfigSpec.IntValue hunterManaCost;
+	public final BooleanValue hunter;
+	public final IntValue hunterCooldown;
+	public final IntValue hunterCasttime;
+	public final IntValue hunterDuration;
+	public final DoubleValue hunterDamageBonus;
+	public final IntValue hunterManaCost;
 
-	public final ForgeConfigSpec.BooleanValue forestMagic;
-	public final ForgeConfigSpec.BooleanValue forestAthletics;
-	public final ForgeConfigSpec.BooleanValue lightInDarkness;
-	public final ForgeConfigSpec.BooleanValue cliffHanger;
+	public final BooleanValue forestMagic;
+	public final BooleanValue forestAthletics;
+	public final BooleanValue lightInDarkness;
+	public final BooleanValue cliffHanger;
 
-	public final ForgeConfigSpec.BooleanValue ballLightning;
-	public final ForgeConfigSpec.IntValue ballLightningCooldown;
-	public final ForgeConfigSpec.DoubleValue ballLightningDamage;
-	public final ForgeConfigSpec.IntValue ballLightningManaCost;
+	public final BooleanValue ballLightning;
+	public final IntValue ballLightningCooldown;
+	public final IntValue ballLightningCasttime;
+	public final DoubleValue ballLightningDamage;
+	public final IntValue ballLightningManaCost;
 
-	public final ForgeConfigSpec.BooleanValue revealingTheSoul;
-	public final ForgeConfigSpec.IntValue revealingTheSoulCooldown;
-	public final ForgeConfigSpec.IntValue revealingTheSoulDuration;
-	public final ForgeConfigSpec.IntValue revealingTheSoulManaCost;
-	public final ForgeConfigSpec.IntValue revealingTheSoulMaxEXP;
-	public final ForgeConfigSpec.DoubleValue revealingTheSoulMultiplier;
+	public final BooleanValue revealingTheSoul;
+	public final IntValue revealingTheSoulCooldown;
+	public final IntValue revealingTheSoulCasttime;
+	public final IntValue revealingTheSoulDuration;
+	public final IntValue revealingTheSoulManaCost;
+	public final IntValue revealingTheSoulMaxEXP;
+	public final DoubleValue revealingTheSoulMultiplier;
 
-	public final ForgeConfigSpec.BooleanValue seaEyes;
-	public final ForgeConfigSpec.IntValue seaEyesCooldown;
-	public final ForgeConfigSpec.IntValue seaEyesDuration;
-	public final ForgeConfigSpec.IntValue seaEyesManaCost;
+	public final BooleanValue seaEyes;
+	public final IntValue seaEyesCooldown;
+	public final IntValue seaEyesCasttime;
+	public final IntValue seaEyesDuration;
+	public final IntValue seaEyesManaCost;
 
-	public final ForgeConfigSpec.BooleanValue seaMagic;
-	public final ForgeConfigSpec.BooleanValue seaAthletics;
-	public final ForgeConfigSpec.BooleanValue water;
+	public final BooleanValue seaMagic;
+	public final BooleanValue seaAthletics;
+	public final BooleanValue water;
 
-	public final ForgeConfigSpec.BooleanValue spectralImpact;
-	public final ForgeConfigSpec.IntValue spectralImpactProcChance;
+	public final BooleanValue spectralImpact;
+	public final IntValue spectralImpactProcChance;
 
-	public final ForgeConfigSpec.BooleanValue fireball;
-	public final ForgeConfigSpec.IntValue fireballCooldown;
-	public final ForgeConfigSpec.DoubleValue fireballDamage;
-	public final ForgeConfigSpec.IntValue fireballManaCost;
+	public final BooleanValue fireball;
+	public final IntValue fireballCooldown;
+	public final IntValue fireballCasttime;
+	public final DoubleValue fireballDamage;
+	public final IntValue fireballManaCost;
 
-	public final ForgeConfigSpec.BooleanValue toughSkin;
-	public final ForgeConfigSpec.IntValue toughSkinCooldown;
-	public final ForgeConfigSpec.IntValue toughSkinDuration;
-	public final ForgeConfigSpec.IntValue toughSkinManaCost;
-	public final ForgeConfigSpec.DoubleValue toughSkinArmorValue;
+	public final BooleanValue toughSkin;
+	public final IntValue toughSkinCooldown;
+	public final IntValue toughSkinCasttime;
+	public final IntValue toughSkinDuration;
+	public final IntValue toughSkinManaCost;
+	public final DoubleValue toughSkinArmorValue;
 
-	public final ForgeConfigSpec.BooleanValue lavaVision;
-	public final ForgeConfigSpec.IntValue lavaVisionCooldown;
-	public final ForgeConfigSpec.IntValue lavaVisionDuration;
-	public final ForgeConfigSpec.IntValue lavaVisionManaCost;
+	public final BooleanValue lavaVision;
+	public final IntValue lavaVisionCooldown;
+	public final IntValue lavaVisionCasttime;
+	public final IntValue lavaVisionDuration;
+	public final IntValue lavaVisionManaCost;
 
-	public final ForgeConfigSpec.BooleanValue caveMagic;
-	public final ForgeConfigSpec.BooleanValue caveAthletics;
-	public final ForgeConfigSpec.BooleanValue contrastShower;
-	public final ForgeConfigSpec.BooleanValue burn;
+	public final BooleanValue caveMagic;
+	public final BooleanValue caveAthletics;
+	public final BooleanValue contrastShower;
+	public final BooleanValue burn;
 
-	public final ForgeConfigSpec.BooleanValue saveAllAbilities;
+	public final BooleanValue saveAllAbilities;
 
-	ServerConfig(ForgeConfigSpec.Builder builder){
+	ServerConfig(Builder builder){
 		builder.push("server");
 		// General
 		builder.push("general");
@@ -520,7 +532,7 @@ public class ServerConfig{
 
 		caveDragonFoods = builder.worldRestart().translation("ds.config.server.food.caveDragonFoods").comment("Dragon food formatting: item/tag:modid:id:food:saturation").defineList("caveDragon", Arrays.asList("tag:minecraft:coals:1:1", "item:minecraft:charcoal:1:2", "item:minecraft:golden_apple", "item:minecraft:enchanted_golden_apple", "item:dragonsurvival:charged_coal:6:1", "item:dragonsurvival:charred_meat:10:12", "item:dragonsurvival:cave_dragon_treat:14:12", "item:dragonsurvival:charred_seafood:8:10", "item:dragonsurvival:charred_vegetable:8:9", "item:dragonsurvival:charred_mushroom:8:5", "item:dragonsurvival:charged_soup:20:15", "item:desolation:cinder_fruit:6:7", "item:desolation:powered_cinder_fruit:8:12", "item:desolation:activatedcharcoal:2:2", "item:desolation:infused_powder:10:10", "item:desolation:primed_ash:7:8", "item:pickletweaks:diamond_apple", "item:pickletweaks:emerald_apple", "item:undergarden:ditchbulb:5,6", "item:xreliquary:molten_core:1:1", "item:silents_mechanisms:coal_generator_fuels:1:1", "item:mekanism:dust_charcoal:1:1", "item:mekanism:dust_coal:1:1", "item:rats:nether_cheese", "item:potionsmaster:charcoal_powder:1:1", "item:potionsmaster:coal_powder:1:1", "item:potionsmaster:activated_charcoal:2:2", "item:thermal:coal_coke:1:1", "item:infernalexp:glowcoal:2:3", "item:resourcefulbees:coal_honeycomb:5:5", "item:resourcefulbees:netherite_honeycomb:5:5", "item:lazierae2:coal_dust:1:1", "item:wyrmroost:jewelled_apple", "item:silents_mechanisms:coal_dust:1:1", "item:potionsmaster:calcinatedcoal_powder:1:1", "item:thermal:basalz_rod:2:4", "item:thermal:basalz_powder:1:2", "item:druidcraft:fiery_glass:2:2"), ConfigHandler.itemsAndTagsPredicate.and(this::isValidFoodConfig));
 
-		forestDragonFoods = builder.worldRestart().translation("ds.config.server.food.forestDragonFoods").comment("Dragon food formatting: item/tag:modid:id:food:saturation").defineList("forestDragon", Arrays.asList("tag:forge:raw_meats:5:7", "item:minecraft:sweet_berries:1:1", "item:minecraft:rotten_flesh:2:3", "item:minecraft:spider_eye:7:8", "item:minecraft:rabbit:7:13", "item:minecraft:poisonous_potato:7:10", "item:minecraft:chorus_fruit:9:12", "item:minecraft:golden_apple", "item:minecraft:enchanted_golden_apple", "item:minecraft:honey_bottle", "item:dragonsurvival:forest_dragon_treat:10:12", "item:aoa3:fiery_chops:6:7", "item:aoa3:raw_chimera_chop:6:7", "item:aoa3:raw_furlion_chop:6:7", "item:aoa3:raw_halycon_beef:7:8", "item:aoa3:raw_charger_shank:6:7", "item:aoa3:trilliad_leaves:8:11", "item:aoa3:heart_fruit:9:10", "item:pamhc2foodextended:rawtofabbititem", "item:pamhc2foodextended:rawtofickenitem", "item:pamhc2foodextended:rawtofuttonitem", "item:alexsmobs:kangaroo_meat:5:6", "item:alexsmobs:moose_ribs:6:8", "item:simplefarming:raw_horse_meat:5:6", "item:simplefarming:raw_bacon:3:3", "item:simplefarming:raw_chicken_wings:2:3", "item:simplefarming:raw_sausage:3:4", "item:xenoclustwo:raw_tortice:7:8", "item:unnamedanimalmod:musk_ox_shank:7:8", "item:unnamedanimalmod:frog_legs:5:6", "item:unnamedanimalmod:mangrove_fruit:4:7", "item:betteranimalsplus:venisonraw:5:6", "item:betteranimalsplus:pheasantraw:7:5", "item:betteranimalsplus:turkey_leg_raw:4:5", "item:infernalexp:raw_hogchop:6:7", "item:infernalexp:cured_jerky:10:7", "item:druidcraft:elderberries:3:4", "item:rats:raw_rat:4:5", "item:aquaculture:frog:4:5", "item:aquaculture:frog_legs_raw:4:4", "item:aquaculture:box_turtle:4:5", "item:aquaculture:arrau_turtle:4:5", "item:aquaculture:starshell_turtle:4:5", "item:nethers_exoticism:kiwano:3:4", "item:undergarden:raw_gloomper_leg:4:5", "item:undergarden:raw_dweller_meat:6:7", "item:farmersdelight:chicken_cuts:3:3", "item:farmersdelight:bacon:3:3", "item:farmersdelight:ham:9:10", "item:farmersdelight:minced_beef:5:3", "item:farmersdelight:mutton_chops:5:3", "item:abnormals_delight:duck_fillet:2:3", "item:abnormals_delight:venison_shanks:7:3", "item:pickletweaks:diamond_apple", "item:pickletweaks:emerald_apple", "item:autumnity:foul_berries:2:4", "item:autumnity:turkey:7:8", "item:autumnity:turkey_piece:2:4", "item:autumnity:foul_soup:12:8", "item:endergetic:bolloom_fruit:3:4", "item:quark:frog_leg:4:5", "item:nethers_delight:hoglin_loin:8:6", "item:nethers_delight:raw_stuffed_hoglin:18:10", "item:xreliquary:zombie_heart:4:7", "item:xreliquary:bat_wing:2:2", "item:eidolon:zombie_heart:7:7", "item:forbidden_arcanus:bat_wing:5:2", "item:twilightforest:raw_venison:5:5", "item:twilightforest:raw_meef:9:5", "item:twilightforest:hydra_chop", "item:cyclic:chorus_flight", "item:cyclic:chorus_spectral", "item:cyclic:apple_ender", "item:cyclic:apple_honey", "item:cyclic:apple_chorus", "item:cyclic:apple_bone", "item:cyclic:apple_prismarine", "item:cyclic:apple_lapis", "item:cyclic:apple_iron", "item:cyclic:apple_diamond", "item:cyclic:apple_emerald", "item:cyclic:apple_chocolate", "item:cyclic:toxic_carrot:15:15", "item:artifacts:everlasting_beef", "item:resourcefulbees:rainbow_honey_bottle", "item:resourcefulbees:diamond_honeycomb:5:5", "item:byg:soul_shroom:9:5", "item:byg:death_cap:9:8", "item:byg:holly_berries:2:2", "item:minecolonies:chorus_bread", "item:wyrmroost:jewelled_apple", "item:wyrmroost:raw_lowtier_meat:3:2", "item:wyrmroost:raw_common_meat:5:3", "item:wyrmroost:raw_apex_meat:8:6", "item:wyrmroost:raw_behemoth_meat:11:12", "item:wyrmroost:desert_wyrm:4:3", "item:eanimod:rawchicken_darkbig:9:5", "item:eanimod:rawchicken_dark:5:4", "item:eanimod:rawchicken_darksmall:3:2", "item:eanimod:rawchicken_pale:5:3", "item:eanimod:rawchicken_palesmall:4:3", "item:eanimod:rawrabbit_small:4:4", "item:environmental:duck:4:3", "item:environmental:venison:7:7", "item:cnb:lizard_item_0:4:4", "item:cnb:lizard_item_1:4:4", "item:cnb:lizard_item_2:4:4", "item:cnb:lizard_item_3:4:4", "item:snowpig:frozen_porkchop:7:3", "item:snowpig:frozen_ham:5:7", "item:untamedwilds:snake_grass_snake:4:4", "item:untamedwilds:snake_green_mamba:4:4", "item:untamedwilds:snake_rattlesnake:4:4", "item:untamedwilds:snake_emerald:4:4", "item:untamedwilds:snake_carpet_python:4:4", "item:untamedwilds:snake_corn:4:4", "item:untamedwilds:snake_gray_kingsnake:4:4", "item:untamedwilds:snake_coral:4:4", "item:untamedwilds:snake_ball_python:4:4", "item:untamedwilds:snake_black_mamba:4:4", "item:untamedwilds:snake_western_rattlesnake:4:4", "item:untamedwilds:snake_taipan:4:4", "item:untamedwilds:snake_adder:4:4", "item:untamedwilds:snake_rice_paddy:4:4", "item:untamedwilds:snake_coral_blue:4:4", "item:untamedwilds:snake_cave_racer:4:4", "item:untamedwilds:snake_swamp_moccasin:4:4", "item:untamedwilds:softshell_turtle_pig_nose:4:4", "item:untamedwilds:softshell_turtle_flapshell:4:4", "item:untamedwilds:softshell_turtle_chinese:4:4", "item:untamedwilds:tortoise_asian_box:4:4", "item:untamedwilds:tortoise_gopher:4:4", "item:untamedwilds:tortoise_leopard:4:4", "item:untamedwilds:softshell_turtle_peacock:4:4", "item:untamedwilds:softshell_turtle_nile:4:4", "item:untamedwilds:softshell_turtle_spiny:4:4", "item:untamedwilds:tortoise_sulcata:4:4", "item:untamedwilds:tortoise_star:4:4", "item:untamedwilds:tortoise_marginated:4:4", "item:leescreatures:raw_boarlin:6:6", "item:mysticalworld:venison:5:5", "item:toadterror:toad_chops:8:7", "item:prehistoricfauna:raw_large_thyreophoran_meat:7:6", "item:prehistoricfauna:raw_large_marginocephalian_meat:8:6", "item:prehistoricfauna:raw_small_ornithischian_meat:4:3", "item:prehistoricfauna:raw_large_sauropod_meat:11:9", "item:prehistoricfauna:raw_small_sauropod_meat:4:4", "item:prehistoricfauna:raw_large_theropod_meat:7:7",  "item:prehistoricfauna:raw_small_theropod_meat:4:4", "item:prehistoricfauna:raw_small_archosauromorph_meat:3:3", "item:prehistoricfauna:raw_large_archosauromorph_meat:6:5", "item:prehistoricfauna:raw_small_reptile_meat:4:3", "item:prehistoricfauna:raw_large_synapsid_meat:5:6"), ConfigHandler.itemsAndTagsPredicate.and(this::isValidFoodConfig));
+		forestDragonFoods = builder.worldRestart().translation("ds.config.server.food.forestDragonFoods").comment("Dragon food formatting: item/tag:modid:id:food:saturation").defineList("forestDragon", Arrays.asList("tag:forge:raw_meats:5:7", "item:minecraft:sweet_berries:1:1", "item:minecraft:rotten_flesh:2:3", "item:minecraft:spider_eye:7:8", "item:minecraft:rabbit:7:13", "item:minecraft:poisonous_potato:7:10", "item:minecraft:chorus_fruit:9:12", "item:minecraft:golden_apple", "item:minecraft:enchanted_golden_apple", "item:minecraft:honey_bottle", "item:dragonsurvival:forest_dragon_treat:10:12", "item:aoa3:fiery_chops:6:7", "item:aoa3:raw_chimera_chop:6:7", "item:aoa3:raw_furlion_chop:6:7", "item:aoa3:raw_halycon_beef:7:8", "item:aoa3:raw_charger_shank:6:7", "item:aoa3:trilliad_leaves:8:11", "item:aoa3:heart_fruit:9:10", "item:pamhc2foodextended:rawtofabbititem", "item:pamhc2foodextended:rawtofickenitem", "item:pamhc2foodextended:rawtofuttonitem", "item:alexsmobs:kangaroo_meat:5:6", "item:alexsmobs:moose_ribs:6:8", "item:simplefarming:raw_horse_meat:5:6", "item:simplefarming:raw_bacon:3:3", "item:simplefarming:raw_chicken_wings:2:3", "item:simplefarming:raw_sausage:3:4", "item:xenoclustwo:raw_tortice:7:8", "item:unnamedanimalmod:musk_ox_shank:7:8", "item:unnamedanimalmod:frog_legs:5:6", "item:unnamedanimalmod:mangrove_fruit:4:7", "item:betteranimalsplus:venisonraw:5:6", "item:betteranimalsplus:pheasantraw:7:5", "item:betteranimalsplus:turkey_leg_raw:4:5", "item:infernalexp:raw_hogchop:6:7", "item:infernalexp:cured_jerky:10:7", "item:druidcraft:elderberries:3:4", "item:rats:raw_rat:4:5", "item:aquaculture:frog:4:5", "item:aquaculture:frog_legs_raw:4:4", "item:aquaculture:box_turtle:4:5", "item:aquaculture:arrau_turtle:4:5", "item:aquaculture:starshell_turtle:4:5", "item:nethers_exoticism:kiwano:3:4", "item:undergarden:raw_gloomper_leg:4:5", "item:undergarden:raw_dweller_meat:6:7", "item:farmersdelight:chicken_cuts:3:3", "item:farmersdelight:bacon:3:3", "item:farmersdelight:ham:9:10", "item:farmersdelight:minced_beef:5:3", "item:farmersdelight:mutton_chops:5:3", "item:abnormals_delight:duck_fillet:2:3", "item:abnormals_delight:venison_shanks:7:3", "item:pickletweaks:diamond_apple", "item:pickletweaks:emerald_apple", "item:autumnity:foul_berries:2:4", "item:autumnity:turkey:7:8", "item:autumnity:turkey_piece:2:4", "item:autumnity:foul_soup:12:8", "item:endergetic:bolloom_fruit:3:4", "item:quark:frog_leg:4:5", "item:nethers_delight:hoglin_loin:8:6", "item:nethers_delight:raw_stuffed_hoglin:18:10", "item:xreliquary:zombie_heart:4:7", "item:xreliquary:bat_wing:2:2", "item:eidolon:zombie_heart:7:7", "item:forbidden_arcanus:bat_wing:5:2", "item:twilightforest:raw_venison:5:5", "item:twilightforest:raw_meef:9:5", "item:twilightforest:hydra_chop", "item:cyclic:chorus_flight", "item:cyclic:chorus_spectral", "item:cyclic:apple_ender", "item:cyclic:apple_honey", "item:cyclic:apple_chorus", "item:cyclic:apple_bone", "item:cyclic:apple_prismarine", "item:cyclic:apple_lapis", "item:cyclic:apple_iron", "item:cyclic:apple_diamond", "item:cyclic:apple_emerald", "item:cyclic:apple_chocolate", "item:cyclic:toxic_carrot:15:15", "item:artifacts:everlasting_beef", "item:resourcefulbees:rainbow_honey_bottle", "item:resourcefulbees:diamond_honeycomb:5:5", "item:byg:soul_shroom:9:5", "item:byg:death_cap:9:8", "item:byg:holly_berries:2:2", "item:minecolonies:chorus_bread", "item:wyrmroost:jewelled_apple", "item:wyrmroost:raw_lowtier_meat:3:2", "item:wyrmroost:raw_common_meat:5:3", "item:wyrmroost:raw_apex_meat:8:6", "item:wyrmroost:raw_behemoth_meat:11:12", "item:wyrmroost:desert_wyrm:4:3", "item:eanimod:rawchicken_darkbig:9:5", "item:eanimod:rawchicken_dark:5:4", "item:eanimod:rawchicken_darksmall:3:2", "item:eanimod:rawchicken_pale:5:3", "item:eanimod:rawchicken_palesmall:4:3", "item:eanimod:rawrabbit_small:4:4", "item:environmental:duck:4:3", "item:environmental:venison:7:7", "item:cnb:lizard_item_0:4:4", "item:cnb:lizard_item_1:4:4", "item:cnb:lizard_item_2:4:4", "item:cnb:lizard_item_3:4:4", "item:snowpig:frozen_porkchop:7:3", "item:snowpig:frozen_ham:5:7", "item:untamedwilds:snake_grass_snake:4:4", "item:untamedwilds:snake_green_mamba:4:4", "item:untamedwilds:snake_rattlesnake:4:4", "item:untamedwilds:snake_emerald:4:4", "item:untamedwilds:snake_carpet_python:4:4", "item:untamedwilds:snake_corn:4:4", "item:untamedwilds:snake_gray_kingsnake:4:4", "item:untamedwilds:snake_coral:4:4", "item:untamedwilds:snake_ball_python:4:4", "item:untamedwilds:snake_black_mamba:4:4", "item:untamedwilds:snake_western_rattlesnake:4:4", "item:untamedwilds:snake_taipan:4:4", "item:untamedwilds:snake_adder:4:4", "item:untamedwilds:snake_rice_paddy:4:4", "item:untamedwilds:snake_coral_blue:4:4", "item:untamedwilds:snake_cave_racer:4:4", "item:untamedwilds:snake_swamp_moccasin:4:4", "item:untamedwilds:softshell_turtle_pig_nose:4:4", "item:untamedwilds:softshell_turtle_flapshell:4:4", "item:untamedwilds:softshell_turtle_chinese:4:4", "item:untamedwilds:tortoise_asian_box:4:4", "item:untamedwilds:tortoise_gopher:4:4", "item:untamedwilds:tortoise_leopard:4:4", "item:untamedwilds:softshell_turtle_peacock:4:4", "item:untamedwilds:softshell_turtle_nile:4:4", "item:untamedwilds:softshell_turtle_spiny:4:4", "item:untamedwilds:tortoise_sulcata:4:4", "item:untamedwilds:tortoise_star:4:4", "item:untamedwilds:tortoise_marginated:4:4", "item:leescreatures:raw_boarlin:6:6", "item:mysticalworld:venison:5:5", "item:toadterror:toad_chops:8:7", "item:prehistoricfauna:raw_large_thyreophoran_meat:7:6", "item:prehistoricfauna:raw_large_marginocephalian_meat:8:6", "item:prehistoricfauna:raw_small_ornithischian_meat:4:3", "item:prehistoricfauna:raw_large_sauropod_meat:11:9", "item:prehistoricfauna:raw_small_sauropod_meat:4:4", "item:prehistoricfauna:raw_large_theropod_meat:7:7", "item:prehistoricfauna:raw_small_theropod_meat:4:4", "item:prehistoricfauna:raw_small_archosauromorph_meat:3:3", "item:prehistoricfauna:raw_large_archosauromorph_meat:6:5", "item:prehistoricfauna:raw_small_reptile_meat:4:3", "item:prehistoricfauna:raw_large_synapsid_meat:5:6"), ConfigHandler.itemsAndTagsPredicate.and(this::isValidFoodConfig));
 
 		seaDragonFoods = builder.worldRestart().translation("ds.config.server.food.seaDragonFoods").comment("Dragon food formatting: item/tag:modid:id:food:saturation").defineList("seaDragon", Arrays.asList("tag:forge:raw_fishes:6:7", "item:minecraft:dried_kelp:1:1", "item:minecraft:kelp:2:3", "item:minecraft:pufferfish:10:15", "item:minecraft:golden_apple", "item:minecraft:enchanted_golden_apple", "item:minecraft:honey_bottle", "item:dragonsurvival:sea_dragon_treat:10:12", "item:aoa3:raw_candlefish:9:9", "item:aoa3:raw_crimson_skipper:8:8", "item:aoa3:raw_fingerfish:4:4", "item:aoa3:raw_pearl_stripefish:5:4", "item:aoa3:raw_limefish:5:5", "item:aoa3:raw_sailback:6:5", "item:aoa3:raw_golden_gullfish:10:2", "item:aoa3:raw_turquoise_stripefish:7:6", "item:aoa3:raw_violet_skipper:7:7", "item:aoa3:raw_rocketfish:4:10", "item:aoa3:raw_crimson_stripefish:8:7", "item:aoa3:raw_sapphire_strider:9:8", "item:aoa3:raw_dark_hatchetfish:9:9", "item:aoa3:raw_ironback:10:9", "item:aoa3:raw_rainbowfish:11:11", "item:aoa3:raw_razorfish:12:14", "item:quark:golden_frog_leg", "item:alexsmobs:lobster_tail:4:5", "item:alexsmobs:blobfish:8:9", "item:oddwatermobs:raw_ghost_shark:8:8", "item:oddwatermobs:raw_isopod:4:2", "item:oddwatermobs:raw_mudskipper:6:7", "item:oddwatermobs:raw_coelacanth:9:10", "item:oddwatermobs:raw_anglerfish:6:6", "item:oddwatermobs:deep_sea_fish:4:2", "item:oddwatermobs:crab_leg:5:6", "item:simplefarming:raw_calamari:5:6", "item:unnamedanimalmod:elephantnose_fish:5:6", "item:unnamedanimalmod:flashlight_fish:5:6", "item:unnamedanimalmod:rocket_killifish:5:6", "item:unnamedanimalmod:leafy_seadragon:5:6", "item:unnamedanimalmod:elephantnose_fish:5:6", "item:betteranimalsplus:eel_meat_raw:5:6", "item:betteranimalsplus:calamari_raw:4:5", "item:betteranimalsplus:crab_meat_raw:4:4", "item:aquaculture:fish_fillet_raw:2:2", "item:aquaculture:goldfish:8:4", "item:aquaculture:box_turtle:4:5", "item:aquaculture:arrau_turtle:4:5", "item:aquaculture:starshell_turtle:4:5", "item:aquaculture:algae:3:2", "item:betterendforge:end_fish_raw:6:7", "item:betterendforge:hydralux_petal:3:3", "item:betterendforge:charnia_green:2:2", "item:shroomed:raw_shroomfin:5:6", "item:undergarden:raw_gwibling:5:6", "item:pickletweaks:diamond_apple", "item:pickletweaks:emerald_apple", "item:bettas:betta_fish:4:5", "item:quark:crab_leg:4:4", "item:pamhc2foodextended:rawtofishitem", "item:fins:banded_redback_shrimp:6:1", "item:fins:night_light_squid:6:2", "item:fins:night_light_squid_tentacle:6:2", "item:fins:emerald_spindly_gem_crab:7:2", "item:fins:amber_spindly_gem_crab:7:2", "item:fins:rubby_spindly_gem_crab:7:2", "item:fins:sapphire_spindly_gem_crab:7:2", "item:fins:pearl_spindly_gem_crab:7:2", "item:fins:papa_wee:6:2", "item:fins:bugmeat:4:2", "item:fins:raw_golden_river_ray_wing:6:2", "item:fins:red_bull_crab_claw:4:4", "item:fins:white_bull_crab_claw:4:4", "item:fins:wherble_fin:1:1", "item:forbidden_arcanus:tentacle:5:2", "item:pneumaticcraft:raw_salmon_tempura:6:10", "item:rats:ratfish:4:2", "item:cyclic:chorus_flight", "item:cyclic:chorus_spectral", "item:cyclic:apple_ender", "item:cyclic:apple_honey", "item:cyclic:apple_chorus", "item:cyclic:apple_bone", "item:cyclic:apple_prismarine", "item:cyclic:apple_lapis", "item:cyclic:apple_iron", "item:cyclic:apple_diamond", "item:cyclic:apple_emerald", "item:cyclic:apple_chocolate", "item:upgrade_aquatic:purple_pickerelweed:2:2", "item:upgrade_aquatic:blue_pickerelweed:2:2", "item:upgrade_aquatic:polar_kelp:2:2", "item:upgrade_aquatic:tongue_kelp:2:2", "item:upgrade_aquatic:thorny_kelp:2:2", "item:upgrade_aquatic:ochre_kelp:2:2", "item:upgrade_aquatic:lionfish:8:9", "item:resourcefulbees:gold_honeycomb:5:5", "item:resourcefulbees:rainbow_honey_bottle", "item:wyrmroost:jewelled_apple", "item:aquaculture:sushi:6:5", "item:freshwarriors:fresh_soup:15:10", "item:freshwarriors:beluga_caviar:10:3", "item:freshwarriors:piranha:4:1", "item:freshwarriors:tilapia:4:1", "item:freshwarriors:stuffed_piranha:4:1", "item:freshwarriors:tigerfish:5:5", "item:freshwarriors:toe_biter_leg:3:3", "item:untamedwilds:egg_arowana_black:4:4", "item:untamedwilds:egg_trevally_jack:4:4", "item:untamedwilds:egg_trevally_golden:4:4", "item:untamedwilds:egg_giant_salamander_chinese:6:4", "item:untamedwilds:egg_giant_salamander_hellbender:6:4", "item:untamedwilds:egg_giant_salamander_japanese:6:4", "item:untamedwilds:giant_clam_gigas:4:4", "item:untamedwilds:giant_clam_derasa:4:4", "item:untamedwilds:giant_clam_maxima:4:4", "item:untamedwilds:giant_clam_squamosa:4:4", "item:untamedwilds:egg_trevally_giant:6:4", "item:untamedwilds:egg_trevally_bluespotted:6:4", "item:untamedwilds:egg_trevally_bigeye:6:4", "item:untamedwilds:egg_sunfish_southern:6:4", "item:untamedwilds:egg_sunfish_sunfish:6:4", "item:untamedwilds:egg_giant_clam_squamosa:6:4", "item:untamedwilds:egg_giant_clam_gigas:6:4", "item:untamedwilds:egg_giant_clam_derasa:6:4", "item:untamedwilds:egg_giant_clam_maxima:6:4", "item:untamedwilds:egg_football_fish_atlantic:6:4", "item:untamedwilds:egg_arowana_silver:6:4", "item:untamedwilds:egg_arowana_jardini:6:4", "item:untamedwilds:egg_arowana_green:6:4", "item:mysticalworld:raw_squid:6:5", "item:aquafina:fresh_soup:15:10", "item:aquafina:beluga_caviar:10:3", "item:aquafina:raw_piranha:4:1", "item:aquafina:raw_tilapia:4:1", "item:aquafina:stuffed_piranha:4:1", "item:aquafina:tigerfish:5:5", "item:aquafina:toe_biter_leg:3:3", "item:aquafina:raw_angelfish:4:1", "item:aquafina:raw_football_fish:4:1", "item:aquafina:raw_foxface_fish:4:1", "item:aquafina:raw_royal_gramma:4:1", "item:aquafina:raw_starfish:4:1", "item:aquafina:spider_crab_leg:4:1", "item:aquafina:raw_stingray_slice:4:1", "item:prehistoricfauna:raw_ceratodus:5:5", "item:prehistoricfauna:raw_cyclurus:4:4", "item:prehistoricfauna:raw_potamoceratodus:5:5", "item:prehistoricfauna:raw_myledaphus:4:4", "item:prehistoricfauna:raw_gar:4:4", "item:prehistoricfauna:raw_oyster:4:3", "item:prehistoric_delight:prehistoric_fillet:3:3"), ConfigHandler.itemsAndTagsPredicate.and(this::isValidFoodConfig));
 		//Magic
@@ -566,262 +578,243 @@ public class ServerConfig{
 		builder.push("forest_dragon");
 		builder.push("actives");
 
-		{
-			builder.push("forest_breath");
+		builder.push("forest_breath");
 
-			forestBreath = builder.comment("Whether the forest breath ability should be enabled").define("forestBreath", true);
+		forestBreath = builder.comment("Whether the forest breath ability should be enabled").define("forestBreath", true);
 
-			forestBreathDamage = builder.comment("The amount of damage the forest breath ability deals. This value is multiplied by the skill level.").defineInRange("forestBreathDamage", 2.0, 0, 100.0);
+		forestBreathDamage = builder.comment("The amount of damage the forest breath ability deals. This value is multiplied by the skill level.").defineInRange("forestBreathDamage", 2.0, 0, 100.0);
 
-			forestBreathCooldown = builder.comment("The cooldown in ticks of the forest breath ability").defineInRange("forestBreathCooldown", Functions.secondsToTicks(5), 1, 10000);
+		forestBreathCooldown = builder.comment("The cooldown in ticks of the forest breath ability").defineInRange("forestBreathCooldown", Functions.secondsToTicks(5), 1, 10000);
+		forestBreathCasttime = builder.comment("The casttime in ticks of the forest breath ability").worldRestart().defineInRange("forestBreathCasttime", Functions.secondsToTicks(10), 1, 10000);
 
-			forestBreathInitialMana = builder.comment("The mana cost for starting the forest breath ability").defineInRange("forestBreathInitialMana", 2, 0, 100);
+		forestBreathInitialMana = builder.comment("The mana cost for starting the forest breath ability").defineInRange("forestBreathInitialMana", 2, 0, 100);
 
-			forestBreathOvertimeMana = builder.comment("The mana cost of sustaining the forest breath ability").defineInRange("forestBreathOvertimeMana", 1, 0, 100);
+		forestBreathOvertimeMana = builder.comment("The mana cost of sustaining the forest breath ability").defineInRange("forestBreathOvertimeMana", 1, 0, 100);
 
-			forestBreathManaTicks = builder.comment("How often in ticks, mana is consumed while using forest breath").defineInRange("forestBreathManaTicks", Functions.secondsToTicks(2), 0, 100);
+		forestBreathManaTicks = builder.comment("How often in ticks, mana is consumed while using forest breath").defineInRange("forestBreathManaTicks", Functions.secondsToTicks(2), 0, 100);
 
-			forestBreathBlockBreaks = builder.comment("Blocks that have a chance to be broken by forest breath. Formatting: block/tag:modid:id").worldRestart().defineList("forestBreathBlockBreaks", Arrays.asList("tag:minecraft:banners"), ConfigHandler.blocksAndTagsPredicate);
+		forestBreathBlockBreaks = builder.comment("Blocks that have a chance to be broken by forest breath. Formatting: block/tag:modid:id").worldRestart().defineList("forestBreathBlockBreaks", Arrays.asList("tag:minecraft:banners"), ConfigHandler.blocksAndTagsPredicate);
 
-			forestBreathGrowBlacklist = builder.comment("Blocks that will not be grown by the forest breath. Formatting: block/tag:modid:id").worldRestart().defineList("forestBreathGrowBlacklist", Arrays.asList(), ConfigHandler.blocksAndTagsPredicate);
-		}
-		{
-			builder.pop().push("spike");
+		forestBreathGrowBlacklist = builder.comment("Blocks that will not be grown by the forest breath. Formatting: block/tag:modid:id").worldRestart().defineList("forestBreathGrowBlacklist", Arrays.asList(), ConfigHandler.blocksAndTagsPredicate);
+		builder.pop().push("spike");
 
-			spike = builder.comment("Whether the spike ability should be enabled").define("spike", true);
+		spike = builder.comment("Whether the spike ability should be enabled").define("spike", true);
 
-			spikeCooldown = builder.comment("The cooldown in ticks of the spike ability").defineInRange("spikeCooldown", Functions.secondsToTicks(3), 1, 10000);
+		spikeCooldown = builder.comment("The cooldown in ticks of the spike ability").defineInRange("spikeCooldown", Functions.secondsToTicks(3), 1, 10000);
+		spikeCasttime = builder.comment("The cast time in ticks of the spike ability").worldRestart().defineInRange("spikeCasttime", 1, 1, 10000);
 
-			spikeDamage = builder.comment("The amount of damage the spike ability deals. This value is multiplied by the skill level.").defineInRange("spikeDamage", 2.0, 0, 100.0);
+		spikeDamage = builder.comment("The amount of damage the spike ability deals. This value is multiplied by the skill level.").defineInRange("spikeDamage", 2.0, 0, 100.0);
 
-			spikeManaCost = builder.comment("The mana cost for using the spike ability").defineInRange("spikeManaCost", 2, 0, 100);
-		}
+		spikeManaCost = builder.comment("The mana cost for using the spike ability").defineInRange("spikeManaCost", 2, 0, 100);
 
-		{
-			builder.pop().push("inspiration");
+		builder.pop().push("inspiration");
 
-			inspiration = builder.comment("Whether the inspiration ability should be enabled").define("inspiration", true);
+		inspiration = builder.comment("Whether the inspiration ability should be enabled").define("inspiration", true);
 
-			inspirationCooldown = builder.comment("The cooldown in ticks of the inspiration ability").defineInRange("inspirationCooldown", Functions.secondsToTicks(90), 1, 10000);
+		inspirationCooldown = builder.comment("The cooldown in ticks of the inspiration ability").defineInRange("inspirationCooldown", Functions.secondsToTicks(90), 1, 10000);
+		inspirationCasttime = builder.comment("The cast time in ticks of the inspiration ability").worldRestart().defineInRange("inspirationCasttime", Functions.secondsToTicks(5), 1, 10000);
 
-			inspirationDuration = builder.comment("The duration in seconds of the inspiration effect given when the ability is used").defineInRange("inspirationDuration", 60, 0, 10000);
+		inspirationDuration = builder.comment("The duration in seconds of the inspiration effect given when the ability is used").defineInRange("inspirationDuration", 60, 0, 10000);
 
-			inspirationManaCost = builder.comment("The mana cost for using the inspiration ability").defineInRange("inspirationManaCost", 3, 0, 100);
-		}
+		inspirationManaCost = builder.comment("The mana cost for using the inspiration ability").defineInRange("inspirationManaCost", 3, 0, 100);
 
-		{
-			builder.pop().push("hunter");
+		builder.pop().push("hunter");
 
-			hunter = builder.comment("Whether the hunter ability should be enabled").define("hunter", true);
+		hunter = builder.comment("Whether the hunter ability should be enabled").define("hunter", true);
 
-			hunterDuration = builder.comment("The duration in seconds of the inspiration effect given when the ability is used").defineInRange("hunterDuration", 60, 0, 10000);
+		hunterDuration = builder.comment("The duration in seconds of the inspiration effect given when the ability is used").defineInRange("hunterDuration", 60, 0, 10000);
 
-			hunterCooldown = builder.comment("The cooldown in ticks of the hunter ability").defineInRange("hunterCooldown", Functions.secondsToTicks(30), 1, 10000);
+		hunterCooldown = builder.comment("The cooldown in ticks of the hunter ability").defineInRange("hunterCooldown", Functions.secondsToTicks(30), 1, 10000);
+		hunterCasttime = builder.comment("The cast time in ticks of the hunter ability").worldRestart().defineInRange("hunterCasttime", Functions.secondsToTicks(3), 1, 10000);
 
-			hunterDamageBonus = builder.comment("The damage bonus the hunter effect gives when invisible. This value is multiplied by the skill level.").defineInRange("hunterDamageBonus", 1.5, 0, 100.0);
+		hunterDamageBonus = builder.comment("The damage bonus the hunter effect gives when invisible. This value is multiplied by the skill level.").defineInRange("hunterDamageBonus", 1.5, 0, 100.0);
 
-			hunterManaCost = builder.comment("The mana cost for using the inspiration ability").defineInRange("hunterManaCost", 3, 0, 100);
-		}
+		hunterManaCost = builder.comment("The mana cost for using the inspiration ability").defineInRange("hunterManaCost", 3, 0, 100);
 
 		builder.pop().pop().push("passives");
 
-		{
-			forestMagic = builder.comment("Whether the forest magic ability should be enabled").define("forestMagic", true);
+		forestMagic = builder.comment("Whether the forest magic ability should be enabled").define("forestMagic", true);
 
-			forestAthletics = builder.comment("Whether the forest athletics ability should be enabled").define("forestAthletics", true);
+		forestAthletics = builder.comment("Whether the forest athletics ability should be enabled").define("forestAthletics", true);
 
-			lightInDarkness = builder.comment("Whether the light in darkness ability should be enabled").define("lightInDarkness", true);
+		lightInDarkness = builder.comment("Whether the light in darkness ability should be enabled").define("lightInDarkness", true);
 
-			cliffHanger = builder.comment("Whether the cliffhanger ability should be enabled").define("cliffHanger", true);
-		}
+		cliffHanger = builder.comment("Whether the cliffhanger ability should be enabled").define("cliffHanger", true);
 
 
 		builder.pop().pop().push("sea_dragon");
 		builder.push("actives");
-		{
-			builder.push("storm_breath");
+		builder.push("storm_breath");
 
-			stormBreath = builder.comment("Whether the storm breath ability should be enabled").define("stormBreath", true);
+		stormBreath = builder.comment("Whether the storm breath ability should be enabled").define("stormBreath", true);
 
-			stormBreathDamage = builder.comment("The amount of damage the storm breath ability deals. This value is multiplied by the skill level.").defineInRange("stormBreathDamage", 1.0, 0, 100.0);
+		stormBreathDamage = builder.comment("The amount of damage the storm breath ability deals. This value is multiplied by the skill level.").defineInRange("stormBreathDamage", 1.0, 0, 100.0);
 
-			stormBreathInitialMana = builder.comment("The mana cost for starting the storm breath ability").defineInRange("stormBreathInitialMana", 2, 0, 100);
+		stormBreathInitialMana = builder.comment("The mana cost for starting the storm breath ability").defineInRange("stormBreathInitialMana", 2, 0, 100);
 
-			stormBreathCooldown = builder.comment("The cooldown in ticks of the storm breath ability").defineInRange("stormBreathCooldown", Functions.secondsToTicks(5), 1, 10000);
+		stormBreathCooldown = builder.comment("The cooldown in ticks of the storm breath ability").defineInRange("stormBreathCooldown", Functions.secondsToTicks(10), 1, 10000);
+		stormBreathCasttime = builder.comment("The cast time in ticks of the storm breath ability").worldRestart().defineInRange("stormBreathCasttime", 10, 1, 10000);
 
-			stormBreathOvertimeMana = builder.comment("The mana cost of sustaining the storm breath ability").defineInRange("stormBreathOvertimeMana", 1, 0, 100);
+		stormBreathOvertimeMana = builder.comment("The mana cost of sustaining the storm breath ability").defineInRange("stormBreathOvertimeMana", 1, 0, 100);
 
-			stormBreathManaTicks = builder.comment("How often in ticks, mana is consumed while using storm breath").defineInRange("stormBreathManaTicks", Functions.secondsToTicks(2), 0, 100);
+		stormBreathManaTicks = builder.comment("How often in ticks, mana is consumed while using storm breath").defineInRange("stormBreathManaTicks", Functions.secondsToTicks(2), 0, 100);
 
-			stormBreathBlockBreaks = builder.comment("Blocks that have a chance to be broken by storm breath. Formatting: block/tag:modid:id").worldRestart().defineList("stormBreathBlockBreaks", Arrays.asList("tag:minecraft:impermeable", "block:minecraft:snow", "tag:minecraft:crops", "tag:minecraft:flowers", "tag:minecraft:banners", "tag:minecraft:lush_plants_replaceable", "tag:minecraft:azalea_log_replaceable", "tag:minecraft:replaceable_plants", "tag:minecraft:leaves"), ConfigHandler.blocksAndTagsPredicate);
+		stormBreathBlockBreaks = builder.comment("Blocks that have a chance to be broken by storm breath. Formatting: block/tag:modid:id").worldRestart().defineList("stormBreathBlockBreaks", Arrays.asList("tag:minecraft:impermeable", "block:minecraft:snow", "tag:minecraft:crops", "tag:minecraft:flowers", "tag:minecraft:banners", "tag:minecraft:lush_plants_replaceable", "tag:minecraft:azalea_log_replaceable", "tag:minecraft:replaceable_plants", "tag:minecraft:leaves"), ConfigHandler.blocksAndTagsPredicate);
 
-			chargedBlacklist = builder.comment("List of entities that do not work with the charged effect. Format: modid:id").defineList("chargedBlacklist", Arrays.asList("upgrade_aquatic:thrasher", "upgrade_aquatic:great_thrasher"), ConfigHandler.entitiesAndTagsPredicate);
+		chargedBlacklist = builder.comment("List of entities that do not work with the charged effect. Format: modid:id").defineList("chargedBlacklist", Arrays.asList("upgrade_aquatic:thrasher", "upgrade_aquatic:great_thrasher"), ConfigHandler.entitiesAndTagsPredicate);
 
-			stormBreathChainCount = builder.comment("How many mobs stormbreath is able to chain to at once").defineInRange("stormBreathChainCount", 2, 0, 100);
+		stormBreathChainCount = builder.comment("How many mobs stormbreath is able to chain to at once").defineInRange("stormBreathChainCount", 2, 0, 100);
 
-			chargedEffectChainCount = builder.comment("How many mobs the charged effect is able to chain to at once").defineInRange("chargedEffectChainCount", 2, 0, 100);
+		chargedEffectChainCount = builder.comment("How many mobs the charged effect is able to chain to at once").defineInRange("chargedEffectChainCount", 2, 0, 100);
 
-			chargedEffectMaxChain = builder.comment("How many times the charged effect is able to chain. -1 means it can chain infinitely").defineInRange("chargedEffectMaxChain", -1, -1, 100);
+		chargedEffectMaxChain = builder.comment("How many times the charged effect is able to chain. -1 means it can chain infinitely").defineInRange("chargedEffectMaxChain", -1, -1, 100);
 
-			chargedChainRange = builder.comment("The max distance in blocks the storm breath and charged effect is able to chain to mobs").defineInRange("chargedChainRange", 10, 0, 100);
+		chargedChainRange = builder.comment("The max distance in blocks the storm breath and charged effect is able to chain to mobs").defineInRange("chargedChainRange", 10, 0, 100);
 
-			chargedEffectDamage = builder.comment("The amount of damage the charged effect deals each second").defineInRange("chargedEffectDamage", 1, 0, 100);
+		chargedEffectDamage = builder.comment("The amount of damage the charged effect deals each second").defineInRange("chargedEffectDamage", 1, 0, 100);
 
-			chargedSpreadBlacklist = builder.comment("List of entities that will not spread the charged effect. Format: modid:id").defineList("chargedBlacklist", Arrays.asList("minecraft:armor_stand"), ConfigHandler.entitiesAndTagsPredicate);
-		}
+		chargedSpreadBlacklist = builder.comment("List of entities that will not spread the charged effect. Format: modid:id").defineList("chargedBlacklist", Arrays.asList("minecraft:armor_stand"), ConfigHandler.entitiesAndTagsPredicate);
 
-		{
-			builder.pop().push("ball_lightning");
+		builder.pop().push("ball_lightning");
 
-			ballLightning = builder.comment("Whether the lightning ball ability should be enabled").define("ballLightning", true);
+		ballLightning = builder.comment("Whether the lightning ball ability should be enabled").define("ballLightning", true);
 
-			ballLightningCooldown = builder.comment("The cooldown in ticks of the ball lightning ability").defineInRange("ballLightningCooldown", Functions.secondsToTicks(60), 1, 10000);
+		ballLightningCooldown = builder.comment("The cooldown in ticks of the ball lightning ability").defineInRange("ballLightningCooldown", Functions.secondsToTicks(60), 1, 10000);
+		ballLightningCasttime = builder.comment("The cast time in ticks of the ball lightning ability").worldRestart().defineInRange("ballLightningCasttime", Functions.secondsToTicks(2), 1, 10000);
 
-			ballLightningDamage = builder.comment("The amount of damage the lightning ball ability deals. This value is multiplied by the skill level.").defineInRange("ballLightningDamage", 4.0, 0, 100.0);
+		ballLightningDamage = builder.comment("The amount of damage the lightning ball ability deals. This value is multiplied by the skill level.").defineInRange("ballLightningDamage", 4.0, 0, 100.0);
 
-			ballLightningManaCost = builder.comment("The mana cost for using the lightning ball ability").defineInRange("ballLightningManaCost", 3, 0, 100);
-		}
+		ballLightningManaCost = builder.comment("The mana cost for using the lightning ball ability").defineInRange("ballLightningManaCost", 3, 0, 100);
 
-		{
-			builder.pop().push("revealing_the_soul");
+		builder.pop().push("revealing_the_soul");
 
-			revealingTheSoul = builder.comment("Whether the revealing The Soul ability should be enabled").define("revealingTheSoul", true);
+		revealingTheSoul = builder.comment("Whether the revealing The Soul ability should be enabled").define("revealingTheSoul", true);
 
-			revealingTheSoulDuration = builder.comment("The duration in seconds of the revealing The Soul effect given when the ability is used").defineInRange("revealingTheSoulDuration", 60, 0, 10000);
+		revealingTheSoulDuration = builder.comment("The duration in seconds of the revealing The Soul effect given when the ability is used").defineInRange("revealingTheSoulDuration", 60, 0, 10000);
 
-			revealingTheSoulCooldown = builder.comment("The cooldown in ticks of the revealing the soul ability").defineInRange("revealingTheSoulCooldown", Functions.secondsToTicks(30), 1, 10000);
+		revealingTheSoulCooldown = builder.comment("The cooldown in ticks of the revealing the soul ability").defineInRange("revealingTheSoulCooldown", Functions.secondsToTicks(30), 1, 10000);
+		revealingTheSoulCasttime = builder.comment("The cast time in ticks of the revealing the soul ability").worldRestart().defineInRange("revealingTheSoulCasttime", Functions.secondsToTicks(5), 1, 10000);
 
-			revealingTheSoulManaCost = builder.comment("The mana cost for using the revealing The Soul ability").defineInRange("revealingTheSoulManaCost", 3, 0, 100);
+		revealingTheSoulManaCost = builder.comment("The mana cost for using the revealing The Soul ability").defineInRange("revealingTheSoulManaCost", 3, 0, 100);
 
-			revealingTheSoulMaxEXP = builder.comment("The max amount of increased exp that can be gained from a single mob with reavling the soul").defineInRange("revealingTheSoulMaxEXP", 20, 0, 10000);
+		revealingTheSoulMaxEXP = builder.comment("The max amount of increased exp that can be gained from a single mob with reavling the soul").defineInRange("revealingTheSoulMaxEXP", 20, 0, 10000);
 
-			revealingTheSoulMultiplier = builder.comment("The multiplier that is applied to exp with revealing the soul, the extra exp is in addition to the normal drops. so 1.0 = 100% increase").defineInRange("revealingTheSoulMultiplier", 1.0, 0, 10000);
-		}
+		revealingTheSoulMultiplier = builder.comment("The multiplier that is applied to exp with revealing the soul, the extra exp is in addition to the normal drops. so 1.0 = 100% increase").defineInRange("revealingTheSoulMultiplier", 1.0, 0, 10000);
 
-		{
-			builder.pop().push("sea_vision");
+		builder.pop().push("sea_vision");
 
-			seaEyes = builder.comment("Whether the sea vision ability should be enabled").define("seaVision", true);
+		seaEyes = builder.comment("Whether the sea vision ability should be enabled").define("seaVision", true);
 
-			seaEyesDuration = builder.comment("The duration in seconds of the sea vision effect given when the ability is used").defineInRange("seaVisionDuration", 90, 0, 10000);
+		seaEyesDuration = builder.comment("The duration in seconds of the sea vision effect given when the ability is used").defineInRange("seaVisionDuration", 90, 0, 10000);
 
-			seaEyesCooldown = builder.comment("The cooldown in ticks of the sea vision ability").defineInRange("seaVisionCooldown", Functions.secondsToTicks(60), 1, 10000);
+		seaEyesCooldown = builder.comment("The cooldown in ticks of the sea vision ability").defineInRange("seaVisionCooldown", Functions.secondsToTicks(60), 1, 10000);
+		seaEyesCasttime = builder.comment("The cast time in ticks of the sea vision ability").worldRestart().defineInRange("seaEyesCasttime", Functions.secondsToTicks(2), 1, 10000);
 
-			seaEyesManaCost = builder.comment("The mana cost for using the sea vision ability").defineInRange("seaVisionManaCost", 2, 0, 100);
-		}
+		seaEyesManaCost = builder.comment("The mana cost for using the sea vision ability").defineInRange("seaVisionManaCost", 2, 0, 100);
 
 		builder.pop().pop().push("passives");
 
-		{
-			seaMagic = builder.comment("Whether the sea magic ability should be enabled").define("seaMagic", true);
+		seaMagic = builder.comment("Whether the sea magic ability should be enabled").define("seaMagic", true);
 
-			seaAthletics = builder.comment("Whether the sea athletics ability should be enabled").define("seaAthletics", true);
+		seaAthletics = builder.comment("Whether the sea athletics ability should be enabled").define("seaAthletics", true);
 
-			water = builder.comment("Whether the water ability should be enabled").define("water", true);
+		water = builder.comment("Whether the water ability should be enabled").define("water", true);
 
-			spectralImpact = builder.comment("Whether the spectralImpact ability should be enabled").define("spectralImpact", true);
+		spectralImpact = builder.comment("Whether the spectralImpact ability should be enabled").define("spectralImpact", true);
 
-			spectralImpactProcChance = builder.comment("The percentage chance that spectral impact will proc. This is multiplied by the level of the skill.").defineInRange("spectralImpactProcChance", 15, 0, 100);
-		}
+		spectralImpactProcChance = builder.comment("The percentage chance that spectral impact will proc. This is multiplied by the level of the skill.").defineInRange("spectralImpactProcChance", 15, 0, 100);
 
 		builder.pop().pop().push("cave_dragon");
 		builder.push("actives");
 
-		{
-			builder.push("fire_breath");
+		builder.push("fire_breath");
 
-			fireBreath = builder.comment("Whether the firebreath ability should be enabled").define("fireBreath", true);
+		fireBreath = builder.comment("Whether the firebreath ability should be enabled").define("fireBreath", true);
 
-			fireBreathDamage = builder.comment("The amount of damage the firebreath ability deals. This value is multiplied by the skill level.").defineInRange("fireBreathDamage", 3.0, 0, 100.0);
+		fireBreathDamage = builder.comment("The amount of damage the firebreath ability deals. This value is multiplied by the skill level.").defineInRange("fireBreathDamage", 3.0, 0, 100.0);
 
-			fireBreathInitialMana = builder.comment("The mana cost for starting the firebreath ability").defineInRange("fireBreathInitialMana", 2, 0, 100);
+		fireBreathInitialMana = builder.comment("The mana cost for starting the firebreath ability").defineInRange("fireBreathInitialMana", 2, 0, 100);
 
-			fireBreathCooldown = builder.comment("The cooldown in ticks of the fire breath ability").defineInRange("fireBreathCooldown", Functions.secondsToTicks(5), 1, 10000);
+		fireBreathCooldown = builder.comment("The cooldown in ticks of the fire breath ability").defineInRange("fireBreathCooldown", Functions.secondsToTicks(5), 1, 10000);
+		fireBreathCasttime = builder.comment("The cast time in ticks of the fire breath ability").worldRestart().defineInRange("fireBreathCasttime", 10, 1, 10000);
 
-			fireBreathOvertimeMana = builder.comment("The mana cost of sustaining the firebreath ability").defineInRange("fireBreathOvertimeMana", 1, 0, 100);
+		fireBreathOvertimeMana = builder.comment("The mana cost of sustaining the firebreath ability").defineInRange("fireBreathOvertimeMana", 1, 0, 100);
 
-			fireBreathManaTicks = builder.comment("How often in ticks, mana is consumed while using fire breath").defineInRange("fireBreathManaTicks", Functions.secondsToTicks(2), 0, 100);
+		fireBreathManaTicks = builder.comment("How often in ticks, mana is consumed while using fire breath").defineInRange("fireBreathManaTicks", Functions.secondsToTicks(2), 0, 100);
 
-			fireBreathSpreadsFire = builder.comment("Whether the fire breath actually spreads fire when used").define("fireBreathSpreadsFire", true);
+		fireBreathSpreadsFire = builder.comment("Whether the fire breath actually spreads fire when used").define("fireBreathSpreadsFire", true);
 
-			fireBreathBlockBreaks = builder.comment("Blocks that have a chance to be broken by fire breath. Formatting: block/tag:modid:id").worldRestart().defineList("fireBreathBlockBreaks", Arrays.asList("tag:minecraft:ice", "block:minecraft:snow", "tag:minecraft:crops", "tag:minecraft:leaves", "tag:minecraft:flowers", "tag:minecraft:banners", "tag:minecraft:lush_plants_replaceable", "tag:minecraft:azalea_log_replaceable", "tag:minecraft:replaceable_plants", "tag:minecraft:wooden_fences", "tag:minecraft:logs_that_burn", "tag:minecraft:mycelium", "tag:minecraft:wooden_stairs", "tag:minecraft:wooden_doors", "tag:minecraft:wool", "tag:minecraft:saplings", "tag:minecraft:impermeable", "block:minecraft:cobweb", "block:minecraft:large_fern", "block:minecraft:sugar_cane", "block:minecraft:snow_block"), ConfigHandler.blocksAndTagsPredicate);
-		}
+		fireBreathBlockBreaks = builder.comment("Blocks that have a chance to be broken by fire breath. Formatting: block/tag:modid:id").worldRestart().defineList("fireBreathBlockBreaks", Arrays.asList("tag:minecraft:ice", "block:minecraft:snow", "tag:minecraft:crops", "tag:minecraft:leaves", "tag:minecraft:flowers", "tag:minecraft:banners", "tag:minecraft:lush_plants_replaceable", "tag:minecraft:azalea_log_replaceable", "tag:minecraft:replaceable_plants", "tag:minecraft:wooden_fences", "tag:minecraft:logs_that_burn", "tag:minecraft:mycelium", "tag:minecraft:wooden_stairs", "tag:minecraft:wooden_doors", "tag:minecraft:wool", "tag:minecraft:saplings", "tag:minecraft:impermeable", "block:minecraft:cobweb", "block:minecraft:large_fern", "block:minecraft:sugar_cane", "block:minecraft:snow_block"), ConfigHandler.blocksAndTagsPredicate);
 
-		{
-			builder.pop().push("fireball");
+		builder.pop().push("fireball");
 
 
-			fireball = builder.comment("Whether the fireball ability should be enabled").define("fireball", true);
+		fireball = builder.comment("Whether the fireball ability should be enabled").define("fireball", true);
 
-			fireballCooldown = builder.comment("The cooldown in ticks of the fireball ability").defineInRange("fireballCooldown", Functions.secondsToTicks(40), 1, 10000);
+		fireballCooldown = builder.comment("The cooldown in ticks of the fireball ability").defineInRange("fireballCooldown", Functions.secondsToTicks(40), 1, 10000);
+		fireballCasttime = builder.comment("The cast time in ticks of the fireball ability").worldRestart().defineInRange("fireballCasttime", Functions.secondsToTicks(4), 1, 10000);
 
-			fireballDamage = builder.comment("The amount of damage the fireball ability deals. This value is multiplied by the skill level.").defineInRange("fireballDamage", 5.0, 0, 100.0);
+		fireballDamage = builder.comment("The amount of damage the fireball ability deals. This value is multiplied by the skill level.").defineInRange("fireballDamage", 5.0, 0, 100.0);
 
-			fireballManaCost = builder.comment("The mana cost for using the fireball ball ability").defineInRange("fireballManaCost", 3, 0, 100);
-		}
+		fireballManaCost = builder.comment("The mana cost for using the fireball ball ability").defineInRange("fireballManaCost", 3, 0, 100);
 
-		{
-			builder.pop().push("tough_skin");
-
-
-			toughSkin = builder.comment("Whether the tough skin ability should be enabled").define("toughSkin", true);
-
-			toughSkinDuration = builder.comment("The duration in seconds of the tough skin effect given when the ability is used").defineInRange("toughSkinDuration", 180, 0, 10000);
-
-			toughSkinCooldown = builder.comment("The cooldown in ticks of the tough skin ability").defineInRange("toughSkinCooldown", Functions.secondsToTicks(30), 1, 10000);
-
-			toughSkinManaCost = builder.comment("The mana cost for using the tough skin ability").defineInRange("toughSkinManaCost", 3, 0, 100);
-
-			toughSkinArmorValue = builder.comment("The amount of extra armor given per level of tough skin effect").defineInRange("toughSkinArmorValue", 3.0, 0, 10000);
-		}
-
-		{
-			builder.pop().push("lava_vision");
+		builder.pop().push("tough_skin");
 
 
-			lavaVision = builder.comment("Whether the lava vision ability should be enabled").define("lavaVision", true);
+		toughSkin = builder.comment("Whether the tough skin ability should be enabled").define("toughSkin", true);
 
-			lavaVisionDuration = builder.comment("The duration in seconds of the lava vision effect given when the ability is used").defineInRange("lavaVisionDuration", 60, 0, 10000);
+		toughSkinDuration = builder.comment("The duration in seconds of the tough skin effect given when the ability is used").defineInRange("toughSkinDuration", 180, 0, 10000);
 
-			lavaVisionCooldown = builder.comment("The cooldown in ticks of the lava vision ability").defineInRange("lavaVisionCooldown", Functions.secondsToTicks(60), 1, 10000);
+		toughSkinCooldown = builder.comment("The cooldown in ticks of the tough skin ability").defineInRange("toughSkinCooldown", Functions.secondsToTicks(30), 1, 10000);
+		toughSkinCasttime = builder.comment("The cast time in ticks of the tough skin ability").worldRestart().defineInRange("toughSkinCasttime", Functions.secondsToTicks(5), 1, 10000);
 
-			lavaVisionManaCost = builder.comment("The mana cost for using the lava vision ability").defineInRange("lavaVisionManaCost", 2, 0, 100);
-		}
+		toughSkinManaCost = builder.comment("The mana cost for using the tough skin ability").defineInRange("toughSkinManaCost", 3, 0, 100);
+
+		toughSkinArmorValue = builder.comment("The amount of extra armor given per level of tough skin effect").defineInRange("toughSkinArmorValue", 3.0, 0, 10000);
+
+		builder.pop().push("lava_vision");
+
+
+		lavaVision = builder.comment("Whether the lava vision ability should be enabled").define("lavaVision", true);
+
+		lavaVisionDuration = builder.comment("The duration in seconds of the lava vision effect given when the ability is used").defineInRange("lavaVisionDuration", 60, 0, 10000);
+
+		lavaVisionCooldown = builder.comment("The cooldown in ticks of the lava vision ability").defineInRange("lavaVisionCooldown", Functions.secondsToTicks(60), 1, 10000);
+		lavaVisionCasttime = builder.comment("The cast time in ticks of the lava vision ability").defineInRange("lavaVisionCasttime", Functions.secondsToTicks(2), 1, 10000);
+
+		lavaVisionManaCost = builder.comment("The mana cost for using the lava vision ability").defineInRange("lavaVisionManaCost", 2, 0, 100);
 
 		builder.pop().pop().push("passives");
-		{
-			caveMagic = builder.comment("Whether the cave magic ability should be enabled").define("caveMagic", true);
+		caveMagic = builder.comment("Whether the cave magic ability should be enabled").define("caveMagic", true);
 
-			caveAthletics = builder.comment("Whether the cave athletics ability should be enabled").define("caveAthletics", true);
+		caveAthletics = builder.comment("Whether the cave athletics ability should be enabled").define("caveAthletics", true);
 
-			contrastShower = builder.comment("Whether the contrast shower ability should be enabled").define("contrastShower", true);
+		contrastShower = builder.comment("Whether the contrast shower ability should be enabled").define("contrastShower", true);
 
-			burn = builder.comment("Whether the burn ability should be enabled").define("burn", true);
-		}
+		burn = builder.comment("Whether the burn ability should be enabled").define("burn", true);
 
 		builder.pop().pop().pop();
 	}
 
 	private boolean isValidHurtfulItem(Object food){
-		final String[] foodSplit = String.valueOf(food).split(":");
+		String[] foodSplit = String.valueOf(food).split(":");
 
-		if(foodSplit.length == 4){
+		if(foodSplit.length == 4)
 			try{
-				final float damage = Float.parseFloat(foodSplit[3]);
+				float damage = Float.parseFloat(foodSplit[3]);
 			}catch(NumberFormatException ignored){
 				return false;
 			}
-		}
 
 		return true;
 	}
 
 	private boolean isValidFoodConfig(Object food){
-		final String[] foodSplit = String.valueOf(food).split(":");
+		String[] foodSplit = String.valueOf(food).split(":");
 		try{
 			if(foodSplit.length == 5){
-				final int value = Integer.parseInt(foodSplit[3]);
-				final int saturation = Integer.parseInt(foodSplit[4]);
+				int value = Integer.parseInt(foodSplit[3]);
+				int saturation = Integer.parseInt(foodSplit[4]);
 				return value <= 20 && value >= 1 && saturation >= 1 && saturation <= 20;
 			}
 		}catch(NumberFormatException ignored){
