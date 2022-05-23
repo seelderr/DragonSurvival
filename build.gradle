@@ -100,8 +100,6 @@ dependencies {
     compileOnly fg.deobf("mezz.jei:jei-${property('mc_version')}:${property('jei_version')}:api")
     runtimeOnly fg.deobf("mezz.jei:jei-${property('mc_version')}:${property('jei_version')}")
 
-    shade fileTree(include:['*.jar'], dir:"libs")
-
     library 'io.github.classgraph:classgraph:4.8.115'
     shade 'io.github.classgraph:classgraph:4.8.115'
 
