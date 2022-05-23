@@ -4,7 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.common.AbilityAnimation;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.common.ActiveDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.network.chat.Component;
@@ -71,7 +71,7 @@ public class EyesBuffAbility extends ActiveDragonAbility{
 	}
 
 	public int getDuration(){
-		return (effect == DragonEffects.LAVA_VISION ? ConfigHandler.SERVER.lavaVisionDuration.get() : ConfigHandler.SERVER.seaEyesDuration.get()) * getLevel();
+		return (effect == DragonEffects.LAVA_VISION ? ServerConfig.lavaVisionDuration : ServerConfig.seaEyesDuration) * getLevel();
 	}
 
 	@Override
@@ -82,16 +82,16 @@ public class EyesBuffAbility extends ActiveDragonAbility{
 	@OnlyIn( Dist.CLIENT )
 	public ArrayList<Component> getLevelUpInfo(){
 		ArrayList<Component> list = super.getLevelUpInfo();
-		list.add(new TranslatableComponent("ds.skill.duration.seconds", "+" + (effect == DragonEffects.LAVA_VISION ? ConfigHandler.SERVER.lavaVisionDuration.get() : ConfigHandler.SERVER.seaEyesDuration.get())));
+		list.add(new TranslatableComponent("ds.skill.duration.seconds", "+" + (effect == DragonEffects.LAVA_VISION ? ServerConfig.lavaVisionDuration : ServerConfig.seaEyesDuration)));
 		return list;
 	}
 
 	@Override
 	public boolean isDisabled(){
-		if(effect == DragonEffects.LAVA_VISION && !ConfigHandler.SERVER.lavaVision.get()){
+		if(effect == DragonEffects.LAVA_VISION && !ServerConfig.lavaVision){
 			return true;
 		}
-		if(effect == DragonEffects.WATER_VISION && !ConfigHandler.SERVER.seaEyes.get()){
+		if(effect == DragonEffects.WATER_VISION && !ServerConfig.seaEyes){
 			return true;
 		}
 		return super.isDisabled();

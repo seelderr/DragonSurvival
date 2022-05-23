@@ -4,7 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.common.AbilityAnimation;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.common.ActiveDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.network.chat.Component;
@@ -68,11 +68,11 @@ public class HunterAbility extends ActiveDragonAbility{
 	}
 
 	public int getDuration(){
-		return ConfigHandler.SERVER.hunterDuration.get() * getLevel();
+		return ServerConfig.hunterDuration * getLevel();
 	}
 
 	public double getDamage(){
-		return ConfigHandler.SERVER.hunterDamageBonus.get() * getLevel();
+		return ServerConfig.hunterDamageBonus * getLevel();
 	}
 
 	@Override
@@ -84,13 +84,13 @@ public class HunterAbility extends ActiveDragonAbility{
 	@OnlyIn( Dist.CLIENT )
 	public ArrayList<Component> getLevelUpInfo(){
 		ArrayList<Component> list = super.getLevelUpInfo();
-		list.add(new TranslatableComponent("ds.skill.duration.seconds", "+" + ConfigHandler.SERVER.hunterDuration.get()));
-		list.add(new TranslatableComponent("ds.skill.damage", "+" + ConfigHandler.SERVER.hunterDamageBonus.get() + "X"));
+		list.add(new TranslatableComponent("ds.skill.duration.seconds", "+" + ServerConfig.hunterDuration));
+		list.add(new TranslatableComponent("ds.skill.damage", "+" + ServerConfig.hunterDamageBonus + "X"));
 		return list;
 	}
 
 	@Override
 	public boolean isDisabled(){
-		return super.isDisabled() || !ConfigHandler.SERVER.hunter.get();
+		return super.isDisabled() || !ServerConfig.hunter;
 	}
 }

@@ -5,7 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.render.util.CommonTraits;
 import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.misc.PrincessTrades;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.serialization.Dynamic;
@@ -111,7 +111,7 @@ public class PrincesHorseEntity extends Villager implements IAnimatable, CommonT
 
 	@Override
 	public boolean removeWhenFarAway(double distance){
-		return !this.hasCustomName() && tickCount >= Functions.minutesToTicks(ConfigHandler.COMMON.princessDespawnDelay.get()) && !hasCustomName();
+		return !this.hasCustomName() && tickCount >= Functions.minutesToTicks(ServerConfig.princessDespawnDelay) && !hasCustomName();
 	}
 
 	@Nullable

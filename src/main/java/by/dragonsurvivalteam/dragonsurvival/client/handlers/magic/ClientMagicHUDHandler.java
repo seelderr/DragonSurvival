@@ -5,7 +5,10 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonSta
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ManaHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.common.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -24,6 +27,30 @@ public class ClientMagicHUDHandler{
 	public static final ResourceLocation widgetTextures = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/widgets.png");
 	public static final ResourceLocation castBars = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/cast_bars.png");
 
+	@ConfigRange( min = -1000, max = 1000 )
+	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "casterBarXPos", comment = "Offset the x position of the cast bar in relation to its normal position" )
+	public static Integer castbarXOffset = 0;
+
+	@ConfigRange( min = -1000, max = 1000 )
+	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "casterBarYPos", comment = "Offset the y position of the cast bar in relation to its normal position" )
+	public static Integer castbarYOffset = 0;
+
+	@ConfigRange( min = -1000, max = 1000 )
+	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "skillbarXOffset", comment = "Offset the x position of the magic skill bar in relation to its normal position" )
+	public static Integer skillbarXOffset = 0;
+
+	@ConfigRange( min = -1000, max = 1000 )
+	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "skillbarYOffset", comment = "Offset the y position of the magic skill bar in relation to its normal position" )
+	public static Integer skillbarYOffset = 0;
+
+	@ConfigRange( min = -1000, max = 1000 )
+	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "manabarXOffset", comment = "Offset the x position of the mana bar in relation to its normal position" )
+	public static Integer manabarXOffset = 0;
+
+	@ConfigRange( min = -1000, max = 1000 )
+	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "manabarYOffset", comment = "Offset the y position of the mana bar in relation to its normal position" )
+	public static Integer manabarYOffset = 0;
+
 	public static void cancelExpBar(ForgeIngameGui gui, PoseStack mStack, float partialTicks, int width, int height){
 		Player playerEntity = Minecraft.getInstance().player;
 		if(Minecraft.getInstance().options.hideGui || !gui.shouldDrawSurvivalElements() || !Minecraft.getInstance().gameMode.hasExperience()){
@@ -31,7 +58,7 @@ public class ClientMagicHUDHandler{
 		}
 		int x = width / 2 - 91;
 
-		if(!ConfigHandler.SERVER.consumeEXPAsMana.get() || !DragonUtils.isDragon(playerEntity)){
+		if(!ServerConfig.consumeEXPAsMana || !DragonUtils.isDragon(playerEntity)){
 			ForgeIngameGui.EXPERIENCE_BAR_ELEMENT.render(gui, mStack, partialTicks, width, height);
 			return;
 		}
@@ -103,8 +130,8 @@ public class ClientMagicHUDHandler{
 			int posX = rightSide ? width - (sizeX * count) - 20 : (sizeX * count) + 20;
 			int posY = height - (sizeY);
 
-			posX += ConfigHandler.CLIENT.skillbarXOffset.get();
-			posY += ConfigHandler.CLIENT.skillbarYOffset.get();
+			posX += skillbarXOffset;
+			posY += skillbarYOffset;
 
 			if(cap.getMagic().renderAbilityHotbar()){
 				RenderSystem.setShaderTexture(0, new ResourceLocation("textures/gui/widgets.png"));
@@ -149,8 +176,8 @@ public class ClientMagicHUDHandler{
 				int manaX = rightSide ? width - (sizeX * count) - 20 : (sizeX * count) + 20;
 				int manaY = height - (sizeY);
 
-				manaX += ConfigHandler.CLIENT.manabarXOffset.get();
-				manaY += ConfigHandler.CLIENT.manabarYOffset.get();
+				manaX += manabarXOffset;
+				manaY += manabarYOffset;
 
 				for(int i = 0; i < 1 + Math.ceil(maxMana / 10.0); i++){
 					for(int x = 0; x < 10; x++){
@@ -178,8 +205,8 @@ public class ClientMagicHUDHandler{
 
 				float perc = Math.min((float)ability.getCurrentCastTimer() / (float)ability.getCastingTime(), 1);
 
-				int startX = (width / 2) - 49 + ConfigHandler.CLIENT.castbarXOffset.get();
-				int startY = height - 96 + ConfigHandler.CLIENT.castbarYOffset.get();
+				int startX = (width / 2) - 49 + castbarXOffset;
+				int startY = height - 96 + castbarYOffset;
 
 				mStack.translate(startX, startY, 0);
 

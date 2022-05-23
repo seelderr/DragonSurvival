@@ -3,10 +3,9 @@ package by.dragonsurvivalteam.dragonsurvival.network.config;
 
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
-import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.common.ForgeConfigSpec.EnumValue;
+import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -14,22 +13,17 @@ import java.util.function.Supplier;
 public class SyncEnumConfig implements IMessage<SyncEnumConfig>{
 	public String key;
 	public Enum value;
-	public String type;
 
 	public SyncEnumConfig(){}
 
-	public SyncEnumConfig(String key, Enum value, String type){
-
+	public SyncEnumConfig(String key, Enum value){
 		this.key = key;
 		this.value = value;
-		this.type = type;
 	}
 
 	@Override
 
 	public void encode(SyncEnumConfig message, FriendlyByteBuf buffer){
-
-		buffer.writeUtf(message.type);
 		buffer.writeUtf(message.value.getDeclaringClass().getName());
 		buffer.writeEnum(message.value);
 		buffer.writeUtf(message.key);
@@ -38,8 +32,6 @@ public class SyncEnumConfig implements IMessage<SyncEnumConfig>{
 	@Override
 
 	public SyncEnumConfig decode(FriendlyByteBuf buffer){
-
-		String type = buffer.readUtf();
 		String classType = buffer.readUtf();
 		Enum enm = null;
 
@@ -47,14 +39,11 @@ public class SyncEnumConfig implements IMessage<SyncEnumConfig>{
 			Class<? extends Enum> cls = (Class<? extends Enum>)Class.forName(classType);
 			Enum value = buffer.readEnum(cls);
 
-			if(value != null){
-				enm = value;
-			}
-		}catch(ClassNotFoundException e){
-		}
+			enm = value;
+		}catch(ClassNotFoundException ignored){}
 
 		String key = buffer.readUtf();
-		return new SyncEnumConfig(key, enm, type);
+		return new SyncEnumConfig(key, enm);
 	}
 
 	@Override
@@ -64,18 +53,9 @@ public class SyncEnumConfig implements IMessage<SyncEnumConfig>{
 		if(entity == null || !entity.hasPermissions(2)){
 			return;
 		}
-		UnmodifiableConfig spec = message.type.equalsIgnoreCase("server") ? ConfigHandler.serverSpec.getValues() : ConfigHandler.commonSpec.getValues();
-		Object ob = spec.get(message.type + "." + message.key);
 
-		if(ob instanceof EnumValue){
-
-			EnumValue value1 = (EnumValue)ob;
-
-			try{
-				value1.set(message.value);
-				value1.save();
-			}catch(Exception ignored){
-			}
+		if(ConfigHandler.serverSpec.getValues().get("server." + message.key) instanceof ForgeConfigSpec.EnumValue value){
+			ConfigHandler.updateConfigValue(value, message.value);
 		}
 	}
 }

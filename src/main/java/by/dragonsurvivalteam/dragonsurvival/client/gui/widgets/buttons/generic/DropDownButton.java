@@ -100,7 +100,7 @@ public class DropDownButton extends ExtendedButton implements TooltipAccessor{
 	public void onClick(double pMouseX, double pMouseY){
 		List<GuiEventListener> list = Minecraft.getInstance().screen.children.stream().filter(s -> s.isMouseOver(pMouseX, pMouseY)).toList();
 
-		if(list.size() == 1 && list.get(0) == this)
+		if(list.size() == 1)
 			this.onPress();
 	}
 	@Override

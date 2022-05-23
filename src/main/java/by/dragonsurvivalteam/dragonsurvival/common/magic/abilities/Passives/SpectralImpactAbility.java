@@ -2,7 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.magic.abilities.Passives;
 
 
 import by.dragonsurvivalteam.dragonsurvival.common.magic.common.PassiveDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -28,18 +28,18 @@ public class SpectralImpactAbility extends PassiveDragonAbility{
 	}
 
 	public int getChance(){
-		return ConfigHandler.SERVER.spectralImpactProcChance.get() * getLevel();
+		return ServerConfig.spectralImpactProcChance * getLevel();
 	}
 
 	@OnlyIn( Dist.CLIENT )
 	public ArrayList<Component> getLevelUpInfo(){
 		ArrayList<Component> list = super.getLevelUpInfo();
-		list.add(new TranslatableComponent("ds.skill.chance", "+" + ConfigHandler.SERVER.spectralImpactProcChance.get()));
+		list.add(new TranslatableComponent("ds.skill.chance", "+" + ServerConfig.spectralImpactProcChance));
 		return list;
 	}
 
 	@Override
 	public boolean isDisabled(){
-		return super.isDisabled() || !ConfigHandler.SERVER.spectralImpact.get();
+		return super.isDisabled() || !ServerConfig.spectralImpact;
 	}
 }

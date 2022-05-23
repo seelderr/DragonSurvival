@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.network.claw;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import net.minecraft.client.Minecraft;
@@ -64,7 +65,7 @@ public class SyncDragonClawRender implements IMessage<SyncDragonClawRender>{
 				});
 
 
-				if(ConfigHandler.SERVER.syncClawRender.get()){
+				if(ServerConfig.syncClawRender){
 					NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new SyncDragonClawRender(entity.getId(), message.state));
 				}
 			}
@@ -86,7 +87,7 @@ public class SyncDragonClawRender implements IMessage<SyncDragonClawRender>{
 						dragonStateHandler.getClawInventory().renderClaws = message.state;
 
 						if(thisPlayer == entity){
-							ConfigHandler.CLIENT.renderDragonClaws.set(message.state);
+							ConfigHandler.updateConfigValue("renderDragonClaws", message.state);
 						}
 					});
 				}

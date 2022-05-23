@@ -2,7 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.magic.abilities.Passives;
 
 
 import by.dragonsurvivalteam.dragonsurvival.common.magic.common.PassiveDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.network.chat.Component;
@@ -25,7 +25,7 @@ public class LightInDarknessAbility extends PassiveDragonAbility{
 	@Override
 
 	public Component getDescription(){
-		return new TranslatableComponent("ds.skill.description." + getId(), getDuration() + Functions.ticksToSeconds(ConfigHandler.SERVER.forestStressTicks.get()));
+		return new TranslatableComponent("ds.skill.description." + getId(), getDuration() + Functions.ticksToSeconds(ServerConfig.forestStressTicks));
 	}
 
 	public int getDuration(){
@@ -41,6 +41,6 @@ public class LightInDarknessAbility extends PassiveDragonAbility{
 
 	@Override
 	public boolean isDisabled(){
-		return super.isDisabled() || !ConfigHandler.SERVER.lightInDarkness.get();
+		return super.isDisabled() || !ServerConfig.lightInDarkness;
 	}
 }

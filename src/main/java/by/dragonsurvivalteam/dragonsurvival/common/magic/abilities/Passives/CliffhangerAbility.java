@@ -2,7 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.magic.abilities.Passives;
 
 
 import by.dragonsurvivalteam.dragonsurvival.common.magic.common.PassiveDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -24,7 +24,7 @@ public class CliffhangerAbility extends PassiveDragonAbility{
 	@Override
 
 	public Component getDescription(){
-		return new TranslatableComponent("ds.skill.description." + getId(), 3 + getHeight() + ConfigHandler.SERVER.forestFallReduction.get());
+		return new TranslatableComponent("ds.skill.description." + getId(), 3 + getHeight() + ServerConfig.forestFallReduction);
 	}
 
 	public int getHeight(){
@@ -40,6 +40,6 @@ public class CliffhangerAbility extends PassiveDragonAbility{
 
 	@Override
 	public boolean isDisabled(){
-		return super.isDisabled() || !ConfigHandler.SERVER.cliffHanger.get();
+		return super.isDisabled() || !ServerConfig.cliffHanger;
 	}
 }

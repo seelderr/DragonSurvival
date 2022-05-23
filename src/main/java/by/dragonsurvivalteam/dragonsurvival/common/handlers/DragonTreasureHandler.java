@@ -4,7 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.blocks.TreasureBlock;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncTreasureRestStatus;
 import com.mojang.blaze3d.platform.Window;
@@ -54,7 +54,7 @@ public class DragonTreasureHandler{
 
 				handler.treasureSleepTimer++;
 
-				if(ConfigHandler.SERVER.treasureHealthRegen.get()){
+				if(ServerConfig.treasureHealthRegen){
 					int horizontalRange = 16;
 					int verticalRange = 9;
 					int treasureNearby = 0;
@@ -72,10 +72,10 @@ public class DragonTreasureHandler{
 							}
 						}
 					}
-					treasureNearby = Mth.clamp(treasureNearby, 0, ConfigHandler.SERVER.maxTreasures.get());
+					treasureNearby = Mth.clamp(treasureNearby, 0, ServerConfig.maxTreasures);
 
-					int totalTime = ConfigHandler.SERVER.treasureRegenTicks.get();
-					int restTimer = totalTime - (ConfigHandler.SERVER.treasureRegenTicksReduce.get() * treasureNearby);
+					int totalTime = ServerConfig.treasureRegenTicks;
+					int restTimer = totalTime - (ServerConfig.treasureRegenTicksReduce * treasureNearby);
 
 					if(handler.treasureRestTimer >= restTimer){
 						handler.treasureRestTimer = 0;

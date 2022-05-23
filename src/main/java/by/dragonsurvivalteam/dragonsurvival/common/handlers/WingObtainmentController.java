@@ -2,7 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.status.RefreshDragons;
@@ -88,7 +88,7 @@ public class WingObtainmentController{
 		Player player = changedDimensionEvent.getPlayer();
 		if(changedDimensionEvent.getTo() == Level.END){
 			DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
-				if(dragonStateHandler.isDragon() && !dragonStateHandler.getMovementData().spinLearned && ConfigHandler.SERVER.enderDragonGrantsSpin.get()){
+				if(dragonStateHandler.isDragon() && !dragonStateHandler.getMovementData().spinLearned && ServerConfig.enderDragonGrantsSpin){
 					Thread thread = new Thread(() -> {
 						try{
 							Thread.sleep(3000);
@@ -125,7 +125,7 @@ public class WingObtainmentController{
 		ServerPlayer player = chatEvent.getPlayer();
 		String lowercase = message.toLowerCase();
 		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
-			if(dragonStateHandler.isDragon() && !dragonStateHandler.getMovementData().spinLearned && ConfigHandler.SERVER.enderDragonGrantsSpin.get()){
+			if(dragonStateHandler.isDragon() && !dragonStateHandler.getMovementData().spinLearned && ServerConfig.enderDragonGrantsSpin){
 				if(player.getLevel().dimension() == Level.END){
 					if(!player.getLevel().getDragons().isEmpty()){
 						if(!lowercase.isEmpty()){
@@ -151,7 +151,7 @@ public class WingObtainmentController{
 
 	@SubscribeEvent
 	public static void teleportAway(LivingDamageEvent damageEvent){
-		if(!ConfigHandler.COMMON.endVoidTeleport.get()){
+		if(!ServerConfig.endVoidTeleport){
 			return;
 		}
 		LivingEntity living = damageEvent.getEntityLiving();

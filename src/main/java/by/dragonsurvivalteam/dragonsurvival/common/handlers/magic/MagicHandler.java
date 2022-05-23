@@ -12,7 +12,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.magic.abilities.Passives.Burn
 import by.dragonsurvivalteam.dragonsurvival.common.magic.abilities.Passives.SpectralImpactAbility;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.common.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.common.DragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
@@ -201,7 +201,7 @@ public class MagicHandler{
 				GenericCapability cap = GenericCapabilityProvider.getGenericCapability(entity).orElse(null);
 				Player player = cap != null && cap.lastAfflicted != -1 && entity.level.getEntity(cap.lastAfflicted) instanceof Player ? ((Player)entity.level.getEntity(cap.lastAfflicted)) : null;
 				if(type != DragonType.SEA){
-					StormBreathAbility.chargedEffectSparkle(player, entity, ConfigHandler.SERVER.chargedChainRange.get(), ConfigHandler.SERVER.chargedEffectChainCount.get(), ConfigHandler.SERVER.chargedEffectDamage.get());
+					StormBreathAbility.chargedEffectSparkle(player, entity, ServerConfig.chargedChainRange, ServerConfig.chargedEffectChainCount, ServerConfig.chargedEffectDamage);
 				}
 			}
 		}else{
@@ -288,7 +288,7 @@ public class MagicHandler{
 				if(player.hasEffect(DragonEffects.HUNTER)){
 					MobEffectInstance hunter = player.getEffect(DragonEffects.HUNTER);
 					player.removeEffect(DragonEffects.HUNTER);
-					event.setDamageModifier((float)((hunter.getAmplifier() + 1) * ConfigHandler.SERVER.hunterDamageBonus.get()));
+					event.setDamageModifier((float)((hunter.getAmplifier() + 1) * ServerConfig.hunterDamageBonus));
 					event.setResult(Result.ALLOW);
 				}
 			});
@@ -355,7 +355,7 @@ public class MagicHandler{
 				}
 
 				if(player.hasEffect(DragonEffects.REVEALING_THE_SOUL)){
-					int extra = (int)Math.min(ConfigHandler.SERVER.revealingTheSoulMaxEXP.get(), event.getDroppedExperience() * ConfigHandler.SERVER.revealingTheSoulMultiplier.get());
+					int extra = (int)Math.min(ServerConfig.revealingTheSoulMaxEXP, event.getDroppedExperience() * ServerConfig.revealingTheSoulMultiplier);
 					event.setDroppedExperience(event.getDroppedExperience() + extra);
 				}
 			});

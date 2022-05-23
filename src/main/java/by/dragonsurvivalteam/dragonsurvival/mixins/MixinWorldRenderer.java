@@ -2,7 +2,6 @@ package by.dragonsurvivalteam.dragonsurvival.mixins;
 
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Matrix4f;
 import net.minecraft.client.Camera;
@@ -31,7 +30,7 @@ public class MixinWorldRenderer{
 		if(camera.isDetached()){
 			return;
 		}
-		if(!ConfigHandler.CLIENT.renderInFirstPerson.get()){
+		if(!ClientDragonRender.renderInFirstPerson){
 			return;
 		}
 		if(!DragonUtils.isDragon(camera.getEntity())){

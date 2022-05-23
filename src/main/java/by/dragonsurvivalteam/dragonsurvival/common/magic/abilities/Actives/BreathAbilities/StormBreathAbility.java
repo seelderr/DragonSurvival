@@ -12,8 +12,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.GenericCa
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.hitbox.DragonHitBox;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.StormBreathEntity;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigUtils;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.math.Vector3f;
@@ -93,7 +92,7 @@ public class StormBreathAbility extends BreathAbility{
 		}
 	}	@Override
 	public int getManaCost(){
-		return player != null && player.hasEffect(DragonEffects.SOURCE_OF_MAGIC) ? 0 : (firstUse ? ConfigHandler.SERVER.stormBreathInitialMana.get() : ConfigHandler.SERVER.stormBreathOvertimeMana.get());
+		return player != null && player.hasEffect(DragonEffects.SOURCE_OF_MAGIC) ? 0 : (firstUse ? ServerConfig.stormBreathInitialMana : ServerConfig.stormBreathOvertimeMana);
 	}
 
 	public static void chargedEffectSparkle(Player player, LivingEntity source, int chainRange, int maxChainTargets, int damage){
@@ -109,15 +108,17 @@ public class StormBreathAbility extends BreathAbility{
 
 		for(LivingEntity target : secondaryTargets){
 			boolean damaged = false;
-			if(target != null && target.getType() != null && target.getType().getRegistryType() != null){
-				if(ConfigUtils.containsEntity(ConfigHandler.SERVER.chargedBlacklist.get(), target)){
-					if(player != null){
-						target.hurt(DamageSource.playerAttack(player), damage);
-					}else{
-						target.hurt(DamageSource.GENERIC, damage);
-					}
+			if(target != null){
+				if(target.getType().getRegistryType() != null){
+					if(ServerConfig.chargedBlacklist.contains(target.getType())){
+						if(player != null){
+							target.hurt(DamageSource.playerAttack(player), damage);
+						}else{
+							target.hurt(DamageSource.GENERIC, damage);
+						}
 
-					damaged = true;
+						damaged = true;
+					}
 				}
 			}
 			if(!damaged){
@@ -128,7 +129,7 @@ public class StormBreathAbility extends BreathAbility{
 				}
 			}
 			onDamageChecks(target);
-			if(!ConfigUtils.containsEntity(ConfigHandler.SERVER.chargedSpreadBlacklist.get(), source)){
+			if(!ServerConfig.chargedSpreadBlacklist.contains(source.getType())){
 				if(target != source){
 					GenericCapability capSource = GenericCapabilityProvider.getGenericCapability(source).orElse(null);
 					GenericCapability cap = GenericCapabilityProvider.getGenericCapability(target).orElse(null);
@@ -139,7 +140,7 @@ public class StormBreathAbility extends BreathAbility{
 
 					if(!target.level.isClientSide){
 						if(target.level.random.nextInt(100) < 40){
-							if(cap != null && (cap.chainCount < ConfigHandler.SERVER.chargedEffectMaxChain.get() || ConfigHandler.SERVER.chargedEffectMaxChain.get() == -1)){
+							if(cap != null && (cap.chainCount < ServerConfig.chargedEffectMaxChain || ServerConfig.chargedEffectMaxChain == -1)){
 								cap.lastAfflicted = player != null ? player.getId() : -1;
 								target.addEffect(new MobEffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(10), 0, false, true));
 							}
@@ -160,7 +161,7 @@ public class StormBreathAbility extends BreathAbility{
 	}
 
 	public static float getDamage(int level){
-		return (float)(ConfigHandler.SERVER.stormBreathDamage.get() * level);
+		return (float)(ServerConfig.stormBreathDamage * level);
 	}
 
 	public static boolean isValidTarget(LivingEntity attacker, LivingEntity target){
@@ -197,7 +198,7 @@ public class StormBreathAbility extends BreathAbility{
 	public Entity getEffectEntity(){
 		return EFFECT_ENTITY;
 	}	public void tickCost(){
-		if(firstUse || castingTicks % ConfigHandler.SERVER.stormBreathManaTicks.get() == 0){
+		if(firstUse || castingTicks % ServerConfig.stormBreathManaTicks == 0){
 			consumeMana(player);
 			firstUse = false;
 		}
@@ -230,13 +231,13 @@ public class StormBreathAbility extends BreathAbility{
 	@OnlyIn( Dist.CLIENT )
 	public ArrayList<Component> getLevelUpInfo(){
 		ArrayList<Component> list = super.getLevelUpInfo();
-		list.add(new TranslatableComponent("ds.skill.damage", "+" + ConfigHandler.SERVER.stormBreathDamage.get()));
+		list.add(new TranslatableComponent("ds.skill.damage", "+" + ServerConfig.stormBreathDamage));
 		return list;
 	}
 
 	@Override
 	public boolean isDisabled(){
-		return super.isDisabled() || !ConfigHandler.SERVER.stormBreath.get();
+		return super.isDisabled() || !ServerConfig.stormBreath;
 	}
 
 
@@ -358,7 +359,7 @@ public class StormBreathAbility extends BreathAbility{
 
 	public void onEntityHit(LivingEntity entityHit){
 		hurtTarget(entityHit);
-		StormBreathAbility.chargedEffectSparkle(player, entityHit, ConfigHandler.SERVER.chargedChainRange.get(), ConfigHandler.SERVER.stormBreathChainCount.get(), ConfigHandler.SERVER.chargedEffectDamage.get());
+		StormBreathAbility.chargedEffectSparkle(player, entityHit, ServerConfig.chargedChainRange, ServerConfig.stormBreathChainCount, ServerConfig.chargedEffectDamage);
 	}
 
 

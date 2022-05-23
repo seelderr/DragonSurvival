@@ -1,10 +1,13 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.settings.ClientSettingsScreen;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.settings.ConfigScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.fields.TextField;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.settings.DSDropDownOption;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.OptionsList;
+import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.config.SyncBooleanConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.config.SyncEnumConfig;
@@ -12,7 +15,6 @@ import by.dragonsurvivalteam.dragonsurvival.network.config.SyncListConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.config.SyncNumberConfig;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Option;
 import net.minecraft.client.ProgressOption;
@@ -22,10 +24,9 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
-import net.minecraftforge.common.ForgeConfigSpec.ValueSpec;
 
+import java.lang.reflect.Field;
 import java.util.List;
-import java.util.Objects;
 
 public class ResetSettingsButton extends Button{
 	public static final ResourceLocation texture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/reset_icon.png");
@@ -35,24 +36,28 @@ public class ResetSettingsButton extends Button{
 	public ResetSettingsButton(int x, int y, Option option){
 		super(x, y, 20, 20, null, btn -> {
 			if(btn.active)
-				if(OptionsList.config.containsKey(option)){
-					Pair<ValueSpec, ConfigValue> pair = OptionsList.config.get(option);
+				if(OptionsList.configMap.containsKey(option)){
+					String key = OptionsList.configMap.get(option);
 
-					if(Minecraft.getInstance().screen instanceof ClientSettingsScreen){
-						ClientSettingsScreen screen = (ClientSettingsScreen)Minecraft.getInstance().screen;
+					ConfigOption opt = ConfigHandler.configObjects.get(key);
+					Field fe = ConfigHandler.configFields.get(key);
+					ConfigValue<?> value = ConfigHandler.configValues.get(key);
 
-						pair.getSecond().set(pair.getFirst().getDefault());
+					if(Minecraft.getInstance().screen instanceof ConfigScreen){
+						ConfigScreen screen = (ConfigScreen)Minecraft.getInstance().screen;
+
+						ConfigHandler.updateConfigValue(value, ConfigHandler.defaultConfigValues.get(key));
 
 						String configKey = OptionsList.configMap.get(option);
 						AbstractWidget widget = screen.list.findOption(option);
 
-						Object ob = pair.getSecond().get();
+						Object ob = ConfigHandler.defaultConfigValues.get(key);
 						if(ob instanceof Boolean){
 							if(widget != null){
 								((CycleButton)widget).setValue(ob);
 							}
-							if(!Objects.equals(screen.getConfigName(), "client")){
-								NetworkHandler.CHANNEL.sendToServer(new SyncBooleanConfig(configKey, (Boolean)ob, screen.getConfigName()));
+							if(opt.side() == ConfigSide.SERVER){
+								NetworkHandler.CHANNEL.sendToServer(new SyncBooleanConfig(configKey, (Boolean)ob));
 							}
 						}else if(ob instanceof Integer){
 							if(widget != null){
@@ -63,8 +68,8 @@ public class ResetSettingsButton extends Button{
 									((TextField)widget).setValue(ob.toString());
 								}
 							}
-							if(!Objects.equals(screen.getConfigName(), "client")){
-								NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(configKey, (Integer)ob, screen.getConfigName()));
+							if(opt.side() == ConfigSide.SERVER){
+								NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(configKey, (Integer)ob));
 							}
 						}else if(ob instanceof Double){
 							if(widget != null){
@@ -75,8 +80,8 @@ public class ResetSettingsButton extends Button{
 									((TextField)widget).setValue(ob.toString());
 								}
 							}
-							if(!Objects.equals(screen.getConfigName(), "client")){
-								NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(configKey, (Double)ob, screen.getConfigName()));
+							if(opt.side() == ConfigSide.SERVER){
+								NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(configKey, (Double)ob));
 							}
 						}else if(ob instanceof Long){
 							if(widget != null){
@@ -87,19 +92,19 @@ public class ResetSettingsButton extends Button{
 									((TextField)widget).setValue(ob.toString());
 								}
 							}
-							if(!Objects.equals(screen.getConfigName(), "client")){
-								NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(configKey, (Long)ob, screen.getConfigName()));
+							if(opt.side() == ConfigSide.SERVER){
+								NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(configKey, (Long)ob));
 							}
 						}else if(ob instanceof Enum){
 							((DSDropDownOption)option).btn.current = ((Enum<?>)ob).name();
 							((DSDropDownOption)option).btn.updateMessage();
 
-							if(!Objects.equals(screen.getConfigName(), "client")){
-								NetworkHandler.CHANNEL.sendToServer(new SyncEnumConfig(configKey, (Enum)ob, screen.getConfigName()));
+							if(opt.side() == ConfigSide.SERVER){
+								NetworkHandler.CHANNEL.sendToServer(new SyncEnumConfig(configKey, (Enum)ob));
 							}
 						}else if(ob instanceof List){
-							if(!Objects.equals(screen.getConfigName(), "client")){
-								NetworkHandler.CHANNEL.sendToServer(new SyncListConfig(configKey, (List<String>)ob, screen.getConfigName()));
+							if(opt.side() == ConfigSide.SERVER){
+								NetworkHandler.CHANNEL.sendToServer(new SyncListConfig(configKey, (List<String>)ob));
 							}
 						}
 					}
@@ -115,9 +120,13 @@ public class ResetSettingsButton extends Button{
 			this.active = false;
 			this.isHovered = p_230430_2_ >= this.x && p_230430_3_ >= this.y && p_230430_2_ < this.x + this.width && p_230430_3_ < this.y + this.height;
 
-			if(OptionsList.config.containsKey(option)){
-				Pair<ValueSpec, ConfigValue> pair = OptionsList.config.get(option);
-				this.active = !pair.getSecond().get().equals(pair.getFirst().getDefault());
+			if(OptionsList.configMap.containsKey(option)){
+				String key = OptionsList.configMap.get(option);
+
+				ConfigOption opt = ConfigHandler.configObjects.get(key);
+				Field fe = ConfigHandler.configFields.get(key);
+				ConfigValue<?> value = ConfigHandler.configValues.get(key);
+				this.active = !value.get().equals(ConfigHandler.defaultConfigValues.get(key));
 			}
 
 			Minecraft minecraft = Minecraft.getInstance();

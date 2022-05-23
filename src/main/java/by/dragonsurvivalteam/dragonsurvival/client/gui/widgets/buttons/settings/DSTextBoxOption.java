@@ -11,9 +11,9 @@ import java.util.function.Function;
 
 public class DSTextBoxOption extends Option{
 	private final Function<Options, String> getter;
-	private final ValueSpec spec;
+	private final String spec;
 
-	public DSTextBoxOption(ValueSpec spec, String p_i51158_1_, Function<Options, String> getter){
+	public DSTextBoxOption(String spec, String p_i51158_1_, Function<Options, String> getter){
 		super(p_i51158_1_);
 		this.getter = getter;
 		this.spec = spec;

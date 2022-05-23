@@ -4,19 +4,17 @@ import by.dragonsurvivalteam.dragonsurvival.client.sounds.SoundRegistry;
 import by.dragonsurvivalteam.dragonsurvival.common.EffectInstance2;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.DSTileEntities;
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.DragonBeaconTileEntity;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -36,7 +34,6 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 
@@ -97,28 +94,25 @@ public class DragonBeacon extends Block implements SimpleWaterloggedBlock, Entit
 				if(dragonStateHandler.isDragon() && ((playerEntity.totalExperience >= 60 || playerEntity.experienceLevel >= 6) || playerEntity.isCreative())){
 					if(this == DSBlocks.peaceDragonBeacon){
 						if(!world.isClientSide){
-							ConfigHandler.COMMON.peaceBeaconEffects.get().forEach(s -> {
-								MobEffect effect = ForgeRegistries.MOB_EFFECTS.getValue(new ResourceLocation(s));
+							ServerConfig.peaceBeaconEffects.forEach(effect -> {
 								if(effect != null){
-									playerEntity.addEffect(new EffectInstance2(effect, Functions.minutesToTicks(ConfigHandler.COMMON.secondsOfBeaconEffect.get())));
+									playerEntity.addEffect(new EffectInstance2(effect, Functions.minutesToTicks(ServerConfig.secondsOfBeaconEffect)));
 								}
 							});
 						}
 					}else if(this == DSBlocks.magicDragonBeacon){
 						if(!world.isClientSide){
-							ConfigHandler.COMMON.magicBeaconEffects.get().forEach(s -> {
-								MobEffect effect = ForgeRegistries.MOB_EFFECTS.getValue(new ResourceLocation(s));
+							ServerConfig.magicBeaconEffects.forEach(effect -> {
 								if(effect != null){
-									playerEntity.addEffect(new EffectInstance2(effect, Functions.minutesToTicks(ConfigHandler.COMMON.secondsOfBeaconEffect.get())));
+									playerEntity.addEffect(new EffectInstance2(effect, Functions.minutesToTicks(ServerConfig.secondsOfBeaconEffect)));
 								}
 							});
 						}
 					}else if(this == DSBlocks.fireDragonBeacon){
 						if(!world.isClientSide){
-							ConfigHandler.COMMON.fireBeaconEffects.get().forEach(s -> {
-								MobEffect effect = ForgeRegistries.MOB_EFFECTS.getValue(new ResourceLocation(s));
+							ServerConfig.fireBeaconEffects.forEach(effect -> {
 								if(effect != null){
-									playerEntity.addEffect(new EffectInstance2(effect, Functions.minutesToTicks(ConfigHandler.COMMON.secondsOfBeaconEffect.get())));
+									playerEntity.addEffect(new EffectInstance2(effect, Functions.minutesToTicks(ServerConfig.secondsOfBeaconEffect)));
 								}
 							});
 						}

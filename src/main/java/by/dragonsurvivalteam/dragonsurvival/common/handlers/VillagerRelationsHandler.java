@@ -8,7 +8,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.entity.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.*;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.FollowMobGoal;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -52,13 +52,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.Collectors;
 
 @Mod.EventBusSubscriber
 public class VillagerRelationsHandler{
 	public static List<? extends EntityType<? extends PathfinderMob>> dragonHunters;
 	//change to minutes
-	private static int timeLeft = Functions.minutesToTicks(ConfigHandler.COMMON.princessSpawnDelay.get()) + Functions.minutesToTicks(ThreadLocalRandom.current().nextInt(30));
+	private static int timeLeft = Functions.minutesToTicks(ServerConfig.princessSpawnDelay) + Functions.minutesToTicks(ThreadLocalRandom.current().nextInt(30));
 
 	@SubscribeEvent
 	public static void onDeath(LivingDeathEvent deathEvent){
@@ -88,13 +87,13 @@ public class VillagerRelationsHandler{
 							}
 
 							if(!world.isClientSide){
-								playerEntity.giveExperiencePoints(level * ConfigHandler.COMMON.xpGain.get());
+								playerEntity.giveExperiencePoints(level * ServerConfig.xpGain);
 								//                                applyEvilMarker(playerEntity);
 							}
 						}else if(villagerEntity instanceof WanderingTrader){
 							WanderingTrader wanderingTrader = (WanderingTrader)villagerEntity;
 							if(!world.isClientSide){
-								playerEntity.giveExperiencePoints(2 * ConfigHandler.COMMON.xpGain.get());
+								playerEntity.giveExperiencePoints(2 * ServerConfig.xpGain);
 								if(world.random.nextInt(100) < 30){
 									ItemStack itemStack = wanderingTrader.getOffers().stream().filter((merchantOffer -> merchantOffer.getResult().getItem() != Items.EMERALD)).toList().get(wanderingTrader.getRandom().nextInt(wanderingTrader.getOffers().size())).getResult();
 									world.addFreshEntity(new ItemEntity(world, wanderingTrader.getX(), wanderingTrader.getY(), wanderingTrader.getZ(), itemStack));
@@ -112,7 +111,7 @@ public class VillagerRelationsHandler{
 				}
 			}
 			String typeName = livingEntity.getType().getRegistryName().toString();
-			if(DragonUtils.isDragon(playerEntity) && ConfigHandler.COMMON.evilDragonStatusGivers.get().contains(typeName)){
+			if(DragonUtils.isDragon(playerEntity) && ServerConfig.evilDragonStatusGivers.contains(typeName)){
 				applyEvilMarker(playerEntity);
 			}
 		}
@@ -236,7 +235,7 @@ public class VillagerRelationsHandler{
 					VillageRelationshipsProvider.getVillageRelationships(player).ifPresent(villageRelationShips -> {
 						if(villageRelationShips.hunterSpawnDelay == 0){
 							BlockPos spawnPosition = Functions.findRandomSpawnPosition(player, 1, 4, 14.0F);
-							if(spawnPosition != null && spawnPosition.getY() >= ConfigHandler.COMMON.riderSpawnLowerBound.get() && spawnPosition.getY() <= ConfigHandler.COMMON.riderSpawnUpperBound.get()){
+							if(spawnPosition != null && spawnPosition.getY() >= ServerConfig.riderSpawnLowerBound && spawnPosition.getY() <= ServerConfig.riderSpawnUpperBound){
 								Optional<ResourceKey<Biome>> biomeRegistryKey = serverWorld.getBiome(spawnPosition).unwrapKey();
 								if(biomeRegistryKey.isPresent()){
 									ResourceKey<Biome> biome = biomeRegistryKey.get();
@@ -249,9 +248,9 @@ public class VillagerRelationsHandler{
 									Functions.spawn(Objects.requireNonNull((dragonHunters.get(serverWorld.random.nextInt(dragonHunters.size()))).create(serverWorld)), spawnPosition, serverWorld);
 								}
 								if(serverWorld.isCloseToVillage(player.blockPosition(), 3)){
-									villageRelationShips.hunterSpawnDelay = Functions.minutesToTicks(ConfigHandler.COMMON.hunterSpawnDelay.get() / 3) + Functions.minutesToTicks(serverWorld.random.nextInt(ConfigHandler.COMMON.hunterSpawnDelay.get() / 6));
+									villageRelationShips.hunterSpawnDelay = Functions.minutesToTicks(ServerConfig.hunterSpawnDelay / 3) + Functions.minutesToTicks(serverWorld.random.nextInt(ServerConfig.hunterSpawnDelay / 6));
 								}else{
-									villageRelationShips.hunterSpawnDelay = Functions.minutesToTicks(ConfigHandler.COMMON.hunterSpawnDelay.get()) + Functions.minutesToTicks(serverWorld.random.nextInt(ConfigHandler.COMMON.hunterSpawnDelay.get() / 3));
+									villageRelationShips.hunterSpawnDelay = Functions.minutesToTicks(ServerConfig.hunterSpawnDelay) + Functions.minutesToTicks(serverWorld.random.nextInt(ServerConfig.hunterSpawnDelay / 3));
 								}
 							}
 						}else{
@@ -304,7 +303,7 @@ public class VillagerRelationsHandler{
 
 	@SubscribeEvent
 	public static void spawnPrinceOrPrincess(TickEvent.WorldTickEvent serverTickEvent){
-		if(ConfigHandler.COMMON.spawnPrinceAndPrincess.get()){
+		if(ServerConfig.spawnPrinceAndPrincess){
 			Level world = serverTickEvent.world;
 			if(world instanceof ServerLevel){
 				ServerLevel serverWorld = (ServerLevel)world;
@@ -313,7 +312,7 @@ public class VillagerRelationsHandler{
 						ServerPlayer player = serverWorld.getRandomPlayer();
 						if(player != null && player.isAlive() && !player.isCreative() && !player.isSpectator()){
 							BlockPos blockPos = Functions.findRandomSpawnPosition(player, 1, 2, 20.0F);
-							if(blockPos != null && blockPos.getY() >= ConfigHandler.COMMON.riderSpawnLowerBound.get() && blockPos.getY() <= ConfigHandler.COMMON.riderSpawnUpperBound.get()){
+							if(blockPos != null && blockPos.getY() >= ServerConfig.riderSpawnLowerBound && blockPos.getY() <= ServerConfig.riderSpawnUpperBound){
 								Optional<ResourceKey<Biome>> biomeRegistryKey = serverWorld.getBiome(blockPos).unwrapKey();
 								if(biomeRegistryKey.isPresent()){
 									ResourceKey<Biome> biome = biomeRegistryKey.get();
@@ -345,7 +344,7 @@ public class VillagerRelationsHandler{
 									serverWorld.addFreshEntity(knightHunter);
 								}
 
-								timeLeft = Functions.minutesToTicks(ConfigHandler.COMMON.princessSpawnDelay.get()) + Functions.minutesToTicks(world.random.nextInt(ConfigHandler.COMMON.princessSpawnDelay.get() / 2));
+								timeLeft = Functions.minutesToTicks(ServerConfig.princessSpawnDelay) + Functions.minutesToTicks(world.random.nextInt(ServerConfig.princessSpawnDelay / 2));
 							}
 						}
 					}else{

@@ -2,7 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.magic.abilities.Innate;
 
 
 import by.dragonsurvivalteam.dragonsurvival.common.magic.common.InnateDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -21,16 +21,16 @@ public class HotBloodAbility extends InnateDragonAbility{
 
 	@Override
 	public Component getDescription(){
-		return new TranslatableComponent("ds.skill.description." + getId(), ConfigHandler.SERVER.caveWaterDamage.get(), 0.5);
+		return new TranslatableComponent("ds.skill.description." + getId(), ServerConfig.caveWaterDamage, 0.5);
 	}
 
 	@Override
 	public int getLevel(){
-		return ConfigHandler.SERVER.penalties.get() && ConfigHandler.SERVER.caveWaterDamage.get() != 0.0 ? 1 : 0;
+		return ServerConfig.penalties && ServerConfig.caveWaterDamage != 0.0 ? 1 : 0;
 	}
 
 	@OnlyIn( Dist.CLIENT )
 	public boolean isDisabled(){
-		return super.isDisabled() || !ConfigHandler.SERVER.penalties.get() || ConfigHandler.SERVER.caveWaterDamage.get() == 0.0;
+		return super.isDisabled() || !ServerConfig.penalties || ServerConfig.caveWaterDamage == 0.0;
 	}
 }

@@ -6,7 +6,10 @@ import by.dragonsurvivalteam.dragonsurvival.client.sounds.FastGlideSound;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.mixins.MixinGameRendererZoom;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.RequestSpinResync;
@@ -60,6 +63,35 @@ public class ClientFlightHandler{
 	public static int lastSync;
 	public static boolean wasGliding = false;
 	public static boolean wasFlying = false;
+
+	@ConfigOption( side = ConfigSide.CLIENT, category = "flight", key = "notifyWingStatus", comment = "Notifies of wing status in chat message" )
+	public static Boolean notifyWingStatus = false;
+
+	@ConfigOption( side = ConfigSide.CLIENT, category = "flight", key = "jumpToFly", comment = "Should flight be activated when jumping in the air" )
+	public static Boolean jumpToFly = false;
+
+	@ConfigOption( side = ConfigSide.CLIENT, category = "flight", key = "lookAtSkyForFlight", comment = "Is it required to look up to start flying while jumping, requires that jumpToFly is on" )
+	public static Boolean lookAtSkyForFlight = false;
+
+	@ConfigOption( side = ConfigSide.CLIENT, category = "flight", key = "flightZoomEffect", comment = "Should the zoom effect while gliding as a dragon be enabled" )
+	public static Boolean flightZoomEffect = true;
+
+	@ConfigOption( side = ConfigSide.CLIENT, category = "flight", key = "flightCameraMovement", comment = "Should the camera movement while gliding as a dragon be enabled" )
+	public static Boolean flightCameraMovement = true;
+
+	@ConfigOption( side = ConfigSide.CLIENT, category = "flight", key = "ownSpinParticles", comment = "Should particles from your own spin attack be displayed for you?" )
+	public static Boolean ownSpinParticles = true;
+
+	@ConfigOption( side = ConfigSide.CLIENT, category = "flight", key = "othersSpinParticles", comment = "Should other players particles from spin attack be shown for you?" )
+	public static Boolean othersSpinParticles = true;
+
+	@ConfigRange( min = -1000, max = 1000 )
+	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui", "spin"}, key = "spinCooldownXOffset", comment = "Offset the x position of the spin cooldown indicator in relation to its normal position" )
+	public static Integer spinCooldownXOffset = 0;
+
+	@ConfigRange( min = -1000, max = 1000 )
+	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui", "spin"}, key = "spinCooldownYOffset", comment = "Offset the y position of the spin cooldown indicator in relation to its normal position" )
+	public static Integer spinCooldownYOffset = 0;
 	/**
 	 * Acceleration
 	 */
@@ -80,7 +112,7 @@ public class ClientFlightHandler{
 			if(ServerFlightHandler.isGliding(currentPlayer)){
 				if(setup.getCamera().isDetached()){
 
-					if(ConfigHandler.CLIENT.flightCameraMovement.get()){
+					if(flightCameraMovement){
 						Vec3 lookVec = currentPlayer.getLookAngle();
 						double increase = Mth.clamp(lookVec.y * 10, 0, lookVec.y * 5);
 						double gradualIncrease = Mth.lerp(0.25, lastIncrease, increase);
@@ -90,7 +122,7 @@ public class ClientFlightHandler{
 				}
 
 				if(Minecraft.getInstance().player != null){
-					if(ConfigHandler.CLIENT.flightZoomEffect.get()){
+					if(flightZoomEffect){
 						if(!Minecraft.getInstance().options.getCameraType().isFirstPerson()){
 							Vec3 lookVec = currentPlayer.getLookAngle();
 							float f = Math.min(Math.max(0.5F, 1F - (float)(((lookVec.y * 5) / 2.5) * 0.5)), 3F);
@@ -102,14 +134,14 @@ public class ClientFlightHandler{
 				}
 			}else{
 				if(lastIncrease > 0){
-					if(ConfigHandler.CLIENT.flightCameraMovement.get()){
+					if(flightCameraMovement){
 						lastIncrease = Mth.lerp(0.25, lastIncrease, 0);
 						info.move(0, lastIncrease, 0);
 					}
 				}
 
 				if(lastZoom != 1){
-					if(ConfigHandler.CLIENT.flightZoomEffect.get()){
+					if(flightZoomEffect){
 						lastZoom = Mth.lerp(0.25f, lastZoom, 1f);
 						gameRenderer.setZoom(lastZoom);
 					}
@@ -139,14 +171,14 @@ public class ClientFlightHandler{
 					Window window = Minecraft.getInstance().getWindow();
 					RenderSystem.setShaderTexture(0, SPIN_COOLDOWN);
 
-					int cooldown = ConfigHandler.SERVER.flightSpinCooldown.get() * 20;
+					int cooldown = ServerConfig.flightSpinCooldown * 20;
 					float f = ((float)cooldown - (float)cap.getMovementData().spinCooldown) / (float)cooldown;
 
 					int k = (window.getGuiScaledWidth() / 2) - (66 / 2);
 					int j = window.getGuiScaledHeight() - 96;
 
-					k += ConfigHandler.CLIENT.spinCooldownXOffset.get();
-					j += ConfigHandler.CLIENT.spinCooldownYOffset.get();
+					k += spinCooldownXOffset;
+					j += spinCooldownYOffset;
 
 					int l = (int)(f * 62);
 					Screen.blit(event.getMatrixStack(), k, j, 0, 0, 66, 21, 256, 256);
@@ -167,10 +199,10 @@ public class ClientFlightHandler{
 		DragonStateProvider.getCap(player).ifPresent(handler -> {
 			if(handler.isDragon()){
 				if(handler.getMovementData().spinAttack > 0){
-					if(!ConfigHandler.CLIENT.ownSpinParticles.get() && player == Minecraft.getInstance().player){
+					if(!ownSpinParticles && player == Minecraft.getInstance().player){
 						return;
 					}
-					if(!ConfigHandler.CLIENT.othersSpinParticles.get() && player != Minecraft.getInstance().player){
+					if(!othersSpinParticles && player != Minecraft.getInstance().player){
 						return;
 					}
 
@@ -233,7 +265,7 @@ public class ClientFlightHandler{
 						double yaw = Math.toRadians(player.yHeadRot + 90);
 						double lookY = lookVec.y;
 
-						double speedLimit = ConfigHandler.SERVER.maxFlightSpeed.get();
+						double speedLimit = ServerConfig.maxFlightSpeed;
 						ax = Mth.clamp(ax, -0.2 * speedLimit, 0.2 * speedLimit);
 						az = Mth.clamp(az, -0.2 * speedLimit, 0.2 * speedLimit);
 
@@ -258,7 +290,7 @@ public class ClientFlightHandler{
 
 					if(dragonStateHandler.isWingsSpread()){
 						Input movement = player.input;
-						boolean hasFood = player.getFoodData().getFoodLevel() > ConfigHandler.SERVER.flightHungerThreshold.get() || player.isCreative() || ConfigHandler.SERVER.allowFlyingWithoutHunger.get();
+						boolean hasFood = player.getFoodData().getFoodLevel() > ServerConfig.flightHungerThreshold || player.isCreative() || ServerConfig.allowFlyingWithoutHunger;
 
 						if(!hasFood){
 							ay = Math.abs(ay * 4);
@@ -314,7 +346,7 @@ public class ClientFlightHandler{
 									az *= 0.99;
 									ay = lookVec.y / 8;
 								}
-								double speedLimit = ConfigHandler.SERVER.maxFlightSpeed.get();
+								double speedLimit = ServerConfig.maxFlightSpeed;
 								ax = Mth.clamp(ax, -0.2 * speedLimit, 0.2 * speedLimit);
 								az = Mth.clamp(az, -0.2 * speedLimit, 0.2 * speedLimit);
 
@@ -464,7 +496,7 @@ public class ClientFlightHandler{
 		if(!ServerFlightHandler.isSpin(player) && handler.getMovementData().spinCooldown <= 0 && handler.getMovementData().spinLearned){
 			if(ServerFlightHandler.isFlying(player) || ServerFlightHandler.canSwimSpin(player)){
 				handler.getMovementData().spinAttack = ServerFlightHandler.spinDuration;
-				handler.getMovementData().spinCooldown = ConfigHandler.SERVER.flightSpinCooldown.get() * 20;
+				handler.getMovementData().spinCooldown = ServerConfig.flightSpinCooldown * 20;
 				NetworkHandler.CHANNEL.sendToServer(new SyncSpinStatus(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
 			}
 		}
@@ -489,12 +521,12 @@ public class ClientFlightHandler{
 			spinKeybind(player, handler);
 		}
 
-		if(ConfigHandler.CLIENT.jumpToFly.get() && !player.isCreative() && !player.isSpectator()){
+		if(jumpToFly && !player.isCreative() && !player.isSpectator()){
 			if(Minecraft.getInstance().options.keyJump.isDown()){
 				if(keyInputEvent.getAction() == GLFW.GLFW_PRESS){
-					if(handler.hasWings() && !currentState && (lookVec.y > 0.8 || !ConfigHandler.CLIENT.lookAtSkyForFlight.get())){
+					if(handler.hasWings() && !currentState && (lookVec.y > 0.8 || !lookAtSkyForFlight)){
 						if(!player.isOnGround() && !player.isInLava() && !player.isInWater()){
-							if(player.getFoodData().getFoodLevel() > ConfigHandler.SERVER.flightHungerThreshold.get() || player.isCreative() || ConfigHandler.SERVER.allowFlyingWithoutHunger.get()){
+							if(player.getFoodData().getFoodLevel() > ServerConfig.flightHungerThreshold || player.isCreative() || ServerConfig.allowFlyingWithoutHunger){
 								NetworkHandler.CHANNEL.sendToServer(new SyncFlyingStatus(player.getId(), true));
 							}else{
 								if(lastHungerMessage == 0 || lastHungerMessage + TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS) < System.currentTimeMillis()){
@@ -511,9 +543,9 @@ public class ClientFlightHandler{
 		if(KeyInputHandler.TOGGLE_WINGS.consumeClick()){
 			if(handler.hasWings()){
 				//Allows toggling the wings if food level is above 0, player is creative, wings are already enabled (allows disabling even when hungry) or if config options is turned on
-				if((player.getFoodData().getFoodLevel() > ConfigHandler.SERVER.flightHungerThreshold.get() || player.isCreative()) || currentState || ConfigHandler.SERVER.allowFlyingWithoutHunger.get()){
+				if((player.getFoodData().getFoodLevel() > ServerConfig.flightHungerThreshold || player.isCreative()) || currentState || ServerConfig.allowFlyingWithoutHunger){
 					NetworkHandler.CHANNEL.sendToServer(new SyncFlyingStatus(player.getId(), !currentState));
-					if(ConfigHandler.CLIENT.notifyWingStatus.get()){
+					if(notifyWingStatus){
 						if(!currentState){
 							player.sendMessage(new TranslatableComponent("ds.wings.enabled"), player.getUUID());
 						}else{

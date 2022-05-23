@@ -6,6 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.OptionListE
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.OptionsList;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.TextBoxEntry;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.config.SyncListConfig;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -19,18 +20,18 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
-import net.minecraftforge.common.ForgeConfigSpec.ValueSpec;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListConfigSettingsScreen extends OptionsSubScreen{
+public class ConfigListMenu extends OptionsSubScreen{
 	private final ConfigValue value;
-	private final ForgeConfigSpec spec;
+	private final ConfigSide side;
 	private final String configKey;
-	private final ValueSpec valueSpec;
+	private final String valueSpec;
 
 	private OptionsList list;
 
@@ -38,10 +39,10 @@ public class ListConfigSettingsScreen extends OptionsSubScreen{
 
 	private boolean isItems = false;
 
-	public ListConfigSettingsScreen(Screen p_i225930_1_, Options p_i225930_2_, Component p_i225930_3_, ValueSpec valueSpec, ConfigValue value, ForgeConfigSpec spec, String configKey){
+	public ConfigListMenu(Screen p_i225930_1_, Options p_i225930_2_, Component p_i225930_3_, String valueSpec, ConfigValue value, ConfigSide side, String configKey){
 		super(p_i225930_1_, p_i225930_2_, p_i225930_3_);
 		this.value = value;
-		this.spec = spec;
+		this.side = side;
 		this.configKey = configKey;
 		this.valueSpec = valueSpec;
 		this.title = p_i225930_3_;
@@ -62,7 +63,9 @@ public class ListConfigSettingsScreen extends OptionsSubScreen{
 		};
 
 		if(!isItems){
-			if(ConfigHandler.isResourcePredicate((obj) -> valueSpec.test(obj))){
+			Field fe = ConfigHandler.configFields.get(valueSpec);
+
+			if(ConfigHandler.isType(fe, ItemLike.class)){
 				isItems = true;
 			}
 		}
@@ -108,8 +111,8 @@ public class ListConfigSettingsScreen extends OptionsSubScreen{
 
 			value.set(output);
 
-			if(spec != ConfigHandler.clientSpec){
-				NetworkHandler.CHANNEL.sendToServer(new SyncListConfig(configKey, output, spec == ConfigHandler.serverSpec ? "server" : "common"));
+			if(side == ConfigSide.SERVER){
+				NetworkHandler.CHANNEL.sendToServer(new SyncListConfig(configKey, output));
 			}
 
 			this.minecraft.setScreen(this.lastScreen);

@@ -4,7 +4,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -71,10 +71,8 @@ public class DragonFoodHandler{
 	}
 
 	@SubscribeEvent
-
 	public static void onConfigLoad(Loading event){
 		if(event.getConfig().getType() == Type.SERVER){
-
 			rebuildFoodMap();
 		}
 	}
@@ -82,7 +80,6 @@ public class DragonFoodHandler{
 
 	private static void rebuildFoodMap(){
 		ConcurrentHashMap<DragonType, ConcurrentHashMap<Item, FoodProperties>> dragonMap = new ConcurrentHashMap<DragonType, ConcurrentHashMap<Item, FoodProperties>>();
-
 		dragonMap.put(DragonType.CAVE, buildDragonFoodMap(DragonType.CAVE));
 		dragonMap.put(DragonType.FOREST, buildDragonFoodMap(DragonType.FOREST));
 		dragonMap.put(DragonType.SEA, buildDragonFoodMap(DragonType.SEA));
@@ -94,20 +91,20 @@ public class DragonFoodHandler{
 		ConcurrentHashMap<Item, FoodProperties> foodMap = new ConcurrentHashMap<Item, FoodProperties>();
 
 
-		if(!ConfigHandler.SERVER.customDragonFoods.get()){
+		if(!ServerConfig.customDragonFoods){
 			return foodMap;
 		}
 
 		String[] configFood;
 		switch(type){
 			case CAVE:
-				configFood = ConfigHandler.SERVER.caveDragonFoods.get().toArray(new String[0]);
+				configFood = ServerConfig.caveDragonFoods.toArray(new String[0]);
 				break;
 			case FOREST:
-				configFood = ConfigHandler.SERVER.forestDragonFoods.get().toArray(new String[0]);
+				configFood = ServerConfig.forestDragonFoods.toArray(new String[0]);
 				break;
 			case SEA:
-				configFood = ConfigHandler.SERVER.seaDragonFoods.get().toArray(new String[0]);
+				configFood = ServerConfig.seaDragonFoods.toArray(new String[0]);
 				break;
 			default:
 				configFood = new String[0];
@@ -159,7 +156,7 @@ public class DragonFoodHandler{
 	@Nullable
 
 	private static FoodProperties calculateDragonFoodProperties(Item item, DragonType type, int nutrition, int saturation, boolean dragonFood){
-		if(!ConfigHandler.SERVER.customDragonFoods.get() || type == DragonType.NONE){
+		if(!ServerConfig.customDragonFoods || type == DragonType.NONE){
 			return item.getFoodProperties();
 		}
 		FoodProperties.Builder builder = new FoodProperties.Builder();
@@ -259,7 +256,7 @@ public class DragonFoodHandler{
 	@Nullable
 
 	public static FoodProperties getDragonFoodProperties(Item item, DragonType type){
-		if(DRAGON_FOODS == null || !ConfigHandler.SERVER.customDragonFoods.get() || type == DragonType.NONE){
+		if(DRAGON_FOODS == null || !ServerConfig.customDragonFoods || type == DragonType.NONE){
 
 			return item.getFoodProperties();
 		}
@@ -270,7 +267,7 @@ public class DragonFoodHandler{
 	}
 
 	public static boolean isDragonEdible(Item item, DragonType type){
-		if(ConfigHandler.SERVER.customDragonFoods.get() && type != DragonType.NONE){
+		if(ServerConfig.customDragonFoods && type != DragonType.NONE){
 			return DRAGON_FOODS != null && DRAGON_FOODS.containsKey(type) && item != null && DRAGON_FOODS.get(type).containsKey(item);
 		}
 		return item.getFoodProperties() != null;
@@ -283,7 +280,7 @@ public class DragonFoodHandler{
 		if(Minecraft.getInstance().options.hideGui || !gui.shouldDrawSurvivalElements()){
 			return;
 		}
-		if(!ConfigHandler.SERVER.customDragonFoods.get() || !DragonUtils.isDragon(player)){
+		if(!ServerConfig.customDragonFoods || !DragonUtils.isDragon(player)){
 			ForgeIngameGui.FOOD_LEVEL_ELEMENT.render(gui, mStack, partialTicks, width, height);
 			return;
 		}

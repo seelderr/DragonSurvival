@@ -254,7 +254,7 @@ public class SkinsScreen extends Screen{
 		});
 
 		addRenderableWidget(new Button(startX + 128, startY + 128, imageWidth, 20, new TranslatableComponent("ds.gui.skins.other_skins"), (button) -> {
-			ConfigHandler.CLIENT.renderOtherPlayerSkins.set(!ConfigHandler.CLIENT.renderOtherPlayerSkins.get());
+			ConfigHandler.updateConfigValue("renderOtherPlayerSkins", !ClientDragonRender.renderOtherPlayerSkins);
 			//			executor.execute(() -> setTextures());
 			setTextures();
 		}){
@@ -262,7 +262,7 @@ public class SkinsScreen extends Screen{
 			public void renderButton(PoseStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_){
 				super.renderButton(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
 
-				RenderSystem.setShaderTexture(0, ConfigHandler.CLIENT.renderOtherPlayerSkins.get() ? CHECKED : UNCHECKED);
+				RenderSystem.setShaderTexture(0, ClientDragonRender.renderOtherPlayerSkins ? CHECKED : UNCHECKED);
 				blit(p_230431_1_, x + 3, y + 3, 0, 0, 13, 13, 13, 13);
 			}
 		});

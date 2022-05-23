@@ -96,9 +96,9 @@ public class SyncDragonSkinSettings implements IMessage<SyncDragonSkinSettings>{
 
 
 						if(thisPlayer == entity){
-							ConfigHandler.CLIENT.renderNewbornSkin.set(message.newborn);
-							ConfigHandler.CLIENT.renderYoungSkin.set(message.young);
-							ConfigHandler.CLIENT.renderAdultSkin.set(message.adult);
+							ConfigHandler.updateConfigValue("renderNewbornSkin", message.newborn);
+							ConfigHandler.updateConfigValue("renderYoungSkin", message.young);
+							ConfigHandler.updateConfigValue("renderAdultSkin", message.adult);
 						}
 					});
 				}

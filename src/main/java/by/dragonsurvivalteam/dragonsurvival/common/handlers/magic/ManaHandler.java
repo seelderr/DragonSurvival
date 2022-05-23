@@ -6,7 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonSta
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncMagicStats;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
@@ -45,7 +45,7 @@ public class ManaHandler{
 
 			boolean goodConditions = ManaHandler.isPlayerInGoodConditions(player);
 
-			int timeToRecover = goodConditions ? ConfigHandler.SERVER.favorableManaTicks.get() : ConfigHandler.SERVER.normalManaTicks.get();
+			int timeToRecover = goodConditions ? ServerConfig.favorableManaTicks : ServerConfig.normalManaTicks;
 
 			if(player.hasEffect(DragonEffects.SOURCE_OF_MAGIC)){
 				timeToRecover = 1;
@@ -166,7 +166,7 @@ public class ManaHandler{
 		return DragonStateProvider.getCap(entity).map(cap -> {
 			int mana = 1;
 
-			mana += ConfigHandler.SERVER.noEXPRequirements.get() ? 9 : Math.max(0, (Math.min(50, entity.experienceLevel) - 5) / 5);
+			mana += ServerConfig.noEXPRequirements ? 9 : Math.max(0, (Math.min(50, entity.experienceLevel) - 5) / 5);
 
 			switch(cap.getType()){
 				case SEA:
@@ -208,7 +208,7 @@ public class ManaHandler{
 			return;
 		}
 
-		if(ConfigHandler.SERVER.consumeEXPAsMana.get()){
+		if(ServerConfig.consumeEXPAsMana){
 			if(entity.level.isClientSide){
 				if(getCurrentMana(entity) < mana && (getCurrentMana(entity) + (entity.totalExperience / 10) >= mana || entity.experienceLevel > 0)){
 					entity.playSound(SoundEvents.EXPERIENCE_ORB_PICKUP, 0.01F, 0.01F);
@@ -221,7 +221,7 @@ public class ManaHandler{
 		}
 
 		DragonStateProvider.getCap(entity).ifPresent(cap -> {
-			if(ConfigHandler.SERVER.consumeEXPAsMana.get()){
+			if(ServerConfig.consumeEXPAsMana){
 				if(getCurrentMana(entity) < mana && (getCurrentMana(entity) + (entity.totalExperience / 10) >= mana || entity.experienceLevel > 0)){
 					int missingMana = mana - getCurrentMana(entity);
 					int missingExp = (missingMana * 10);

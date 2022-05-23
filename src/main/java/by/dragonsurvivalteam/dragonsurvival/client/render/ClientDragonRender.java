@@ -14,7 +14,9 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonSta
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ClientConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorEntityRenderer;
 import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorEntityRendererManager;
@@ -72,15 +74,61 @@ public class ClientDragonRender{
 	 * Instances used for rendering third-person dragon models
 	 */
 	public static ConcurrentHashMap<Integer, AtomicReference<DragonEntity>> playerDragonHashMap = new ConcurrentHashMap<>(20);
+
+	@ConfigOption( side = ConfigSide.CLIENT, category = "firstperson", key = "renderFirstPerson", comment = "Render dragon model in first person. If your own tail scares you, write false" )
+	public static Boolean renderInFirstPerson = true;
+
+	@ConfigOption( side = ConfigSide.CLIENT, category = "firstperson", key = "renderFirstPersonFlight", comment = "Render dragon model in first person while gliding. We don't advise you to turn it on." )
+	public static Boolean renderFirstPersonFlight = false;
+
+	@ConfigOption( side = ConfigSide.CLIENT, category = "firstperson", key = "firstPersonRotation", comment = "Use rotation of your tail in first person, otherwise the tail is always opposite of your camera. If the tail is constantly climbing in your face, put false." )
+	public static Boolean firstPersonRotation = false;
+
+	@ConfigOption( side = ConfigSide.CLIENT, category = "flight", key = "renderOtherPlayerRotation", comment = "Should the rotation effect during gliding of other players be shown?" )
+	public static Boolean renderOtherPlayerRotation = true;
+
+	@ConfigOption( side = ConfigSide.CLIENT, category = "inventory", key = "alternateHeldItem", comment = "Should held items be rendered as if you are in third-person even in first person as a dragon?" )
+	public static Boolean alternateHeldItem = false;
+
+	@ConfigOption( side = ConfigSide.CLIENT, category = "inventory", key = "thirdPersonItemRender", comment = "Should the third person item render for dragons use the default rotations? Use this if modded items are rendering weird when held." )
+	public static Boolean thirdPersonItemRender = false;
+
+	@ConfigOption( side = ConfigSide.CLIENT, category = "rendering", key = "renderItemsInMouth", comment = "Should items be rendered near the mouth of dragons rather then hovering by their side?" )
+	public static Boolean renderItemsInMouth = false;
+
+	@ConfigOption( side = ConfigSide.CLIENT, category = "rendering", key = "renderDragonClaws", comment = "Should the tools on the claws and teeth be rendered for your dragon?" )
+	public static Boolean renderDragonClaws = true;
+
+	@ConfigOption( side = ConfigSide.CLIENT, category = "rendering", key = "renderNewbornSkin", comment = "Do you want your dragon skin to be rendered as a newborn dragon?" )
+	public static Boolean renderNewbornSkin = true;
+
+	@ConfigOption( side = ConfigSide.CLIENT, category = "rendering", key = "renderYoungSkin", comment = "Do you want your dragon skin to be rendered as a young dragon?" )
+	public static Boolean renderYoungSkin = true;
+
+	@ConfigOption( side = ConfigSide.CLIENT, category = "rendering", key = "renderAdultSkin", comment = "Do you want your dragon skin to be rendered as a adult dragon?" )
+	public static Boolean renderAdultSkin = true;
+
+	@ConfigOption( side = ConfigSide.CLIENT, category = "rendering", key = "renderOtherPlayerSkins", comment = "Should other player skins be rendered?" )
+	public static Boolean renderOtherPlayerSkins = true;
+
+	@ConfigOption( side = ConfigSide.CLIENT, category = "rendering", key = "armorRenderLayer", comment = "Should the armor be rendered as a layer on the dragon? Some shaders requires this to be off. Can cause some weird effects with armor when turned off." )
+	public static Boolean armorRenderLayer = true;
+
+	@ConfigOption( side = ConfigSide.CLIENT, category = "nametag", key = "dragonNameTags", comment = "Show name tags for dragons." )
+	public static Boolean dragonNameTags = false;
+
+	@ConfigOption( side = ConfigSide.CLIENT, category = "rendering", key = "rotateBodyWithCamera", comment = "Should the body rotate with the camera when turning around." )
+	public static Boolean rotateBodyWithCamera = true;
+
 	private static boolean wasFreeLook = false;
 
 	@SubscribeEvent
 	public static void renderFirstPerson(RenderHandEvent renderHandEvent){
-		if(ConfigHandler.CLIENT.renderInFirstPerson.get()){
+		if(renderInFirstPerson){
 			LocalPlayer player = Minecraft.getInstance().player;
 			DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
 				if(playerStateHandler.isDragon()){
-					if(ConfigHandler.CLIENT.alternateHeldItem.get()){
+					if(alternateHeldItem){
 						renderHandEvent.setCanceled(true);
 					}
 				}
@@ -141,7 +189,7 @@ public class ClientDragonRender{
 				EntityRenderer playerRenderer = ((AccessorEntityRendererManager)mc.getEntityRenderDispatcher()).getPlayerRenderers().get(playerModelType);
 				int eventLight = renderPlayerEvent.getPackedLight();
 				final MultiBufferSource renderTypeBuffer = renderPlayerEvent.getMultiBufferSource();
-				if(ConfigHandler.CLIENT.dragonNameTags.get()){
+				if(dragonNameTags){
 					net.minecraftforge.client.event.RenderNameplateEvent renderNameplateEvent = new net.minecraftforge.client.event.RenderNameplateEvent(player, player.getDisplayName(), playerRenderer, matrixStack, renderTypeBuffer, eventLight, partialRenderTick);
 					net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(renderNameplateEvent);
 					if(renderNameplateEvent.getResult() != net.minecraftforge.eventbus.api.Event.Result.DENY && (renderNameplateEvent.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || ((AccessorLivingRenderer)playerRenderer).callShouldShowName(player))){
@@ -166,7 +214,7 @@ public class ClientDragonRender{
 				}
 				if(!player.isInvisible()){
 					if(ServerFlightHandler.isGliding(player)){
-						if(ConfigHandler.CLIENT.renderOtherPlayerRotation.get() || mc.player == player){
+						if(renderOtherPlayerRotation || mc.player == player){
 							float upRot = Mth.clamp((float)(player.getDeltaMovement().y * 20), -80, 80);
 
 							dummyDragon.prevXRot = Mth.lerp(0.1F, dummyDragon.prevXRot, upRot);
@@ -205,10 +253,10 @@ public class ClientDragonRender{
 							matrixStack.mulPose(Vector3f.ZP.rotation(dummyDragon.prevZRot));
 						}
 					}
-					if(player != mc.player || !Minecraft.getInstance().options.getCameraType().isFirstPerson() || !ServerFlightHandler.isGliding(player) || ConfigHandler.CLIENT.renderFirstPersonFlight.get()){
+					if(player != mc.player || !Minecraft.getInstance().options.getCameraType().isFirstPerson() || !ServerFlightHandler.isGliding(player) || renderFirstPersonFlight){
 						dragonRenderer.render(dummyDragon, yaw, partialRenderTick, matrixStack, renderTypeBuffer, eventLight);
 
-						if(!ConfigHandler.CLIENT.armorRenderLayer.get()){
+						if(!armorRenderLayer){
 							ItemStack helmet = player.getItemBySlot(EquipmentSlot.HEAD);
 							ItemStack chestPlate = player.getItemBySlot(EquipmentSlot.CHEST);
 							ItemStack legs = player.getItemBySlot(EquipmentSlot.LEGS);
@@ -250,7 +298,7 @@ public class ClientDragonRender{
 					}
 				}
 			}catch(Throwable throwable){
-				if(!(throwable instanceof NullPointerException) || ConfigHandler.CLIENT.clientDebugMessages.get()){
+				if(!(throwable instanceof NullPointerException) || ClientConfig.clientDebugMessages){
 					throwable.printStackTrace();
 				}
 				matrixStack.popPose();
@@ -315,7 +363,7 @@ public class ClientDragonRender{
 						double bodyYaw = playerStateHandler.getMovementData().bodyYaw;
 						float headRot = Functions.angleDifference((float)bodyYaw, Mth.wrapDegrees(player.yRot != 0.0 ? player.yRot : player.yHeadRot));
 
-						if(ConfigHandler.CLIENT.rotateBodyWithCamera.get() && (!KeyInputHandler.FREE_LOOK.isDown() && !wasFreeLook)){
+						if(rotateBodyWithCamera && (!KeyInputHandler.FREE_LOOK.isDown() && !wasFreeLook)){
 							if(headRot > 150){
 								bodyYaw += 150 - headRot;
 							}else if(headRot < -150){
@@ -343,7 +391,7 @@ public class ClientDragonRender{
 							wasFreeLook = false;
 						}
 
-						if(!ConfigHandler.CLIENT.firstPersonRotation.get() && !KeyInputHandler.FREE_LOOK.isDown()){
+						if(!firstPersonRotation && !KeyInputHandler.FREE_LOOK.isDown()){
 							if((!wasFreeLook || moveVector.length() > 0) && Minecraft.getInstance().options.getCameraType().isFirstPerson()){
 								bodyYaw = player.yRot;
 								wasFreeLook = false;

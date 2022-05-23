@@ -1,9 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.common.blocks;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncMagicSourceStatus;
@@ -333,7 +332,7 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
 					}
 				}
 
-				if(ConfigHandler.SERVER.damageWrongSourceOfMagic.get()){
+				if(ServerConfig.damageWrongSourceOfMagic){
 					entity.hurt(pState.getBlock() == DSBlocks.caveSourceOfMagic ? DamageSource.HOT_FLOOR : pState.getBlock() == DSBlocks.seaSourceOfMagic ? DamageSource.DROWN : DamageSource.CACTUS, 1F);
 				}
 			}

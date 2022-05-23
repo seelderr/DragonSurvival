@@ -9,7 +9,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.Ma
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.SkinCap;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonModifiers;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.network.RequestClientData;
@@ -326,7 +326,7 @@ public class DragonStateHandler implements NBTInterface{
 
 		this.type = type;
 
-		if(ConfigHandler.SERVER.saveGrowthStage.get())
+		if(ServerConfig.saveGrowthStage)
 			switch(type){
 				case SEA:
 					size = seaSize;
@@ -402,19 +402,19 @@ public class DragonStateHandler implements NBTInterface{
 
 		switch(getLevel()){
 			case BABY:
-				if(ConfigHandler.SERVER.bonusUnlockedAt.get() != DragonLevel.BABY){
-					if(harvestLevel <= ConfigHandler.SERVER.baseHarvestLevel.get() + baseHarvestLevel)
+				if(ServerConfig.bonusUnlockedAt != DragonLevel.BABY){
+					if(harvestLevel <= ServerConfig.baseHarvestLevel + baseHarvestLevel)
 						return true;
 					break;
 				}
 			case YOUNG:
-				if(ConfigHandler.SERVER.bonusUnlockedAt.get() == DragonLevel.ADULT && getLevel() != DragonLevel.BABY){
-					if(harvestLevel <= ConfigHandler.SERVER.baseHarvestLevel.get() + baseHarvestLevel)
+				if(ServerConfig.bonusUnlockedAt == DragonLevel.ADULT && getLevel() != DragonLevel.BABY){
+					if(harvestLevel <= ServerConfig.baseHarvestLevel + baseHarvestLevel)
 						return true;
 					break;
 				}
 			case ADULT:
-				if(harvestLevel <= ConfigHandler.SERVER.bonusHarvestLevel.get() + baseHarvestLevel)
+				if(harvestLevel <= ServerConfig.bonusHarvestLevel + baseHarvestLevel)
 					switch(getType()){
 						case SEA:
 							if(state.is(BlockTags.MINEABLE_WITH_SHOVEL)){
@@ -431,7 +431,7 @@ public class DragonStateHandler implements NBTInterface{
 								return true;
 							}
 					}
-				if(harvestLevel <= ConfigHandler.SERVER.baseHarvestLevel.get() + baseHarvestLevel)
+				if(harvestLevel <= ServerConfig.baseHarvestLevel + baseHarvestLevel)
 					return true;
 		}
 		return false;

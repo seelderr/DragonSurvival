@@ -2,7 +2,6 @@ package by.dragonsurvivalteam.dragonsurvival.common.entity.monsters;
 
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.entity.PacketSyncXPDevour;
 import net.minecraft.core.BlockPos;
@@ -16,7 +15,6 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.AttributeSupplier.Builder;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
@@ -72,9 +70,9 @@ public class MagicalPredator extends Monster{
 		return distance.get();
 	}
 
-	public static Builder createMonsterAttributes(){
-		return Mob.createMobAttributes().add(Attributes.MOVEMENT_SPEED, 0.375D).add(Attributes.ARMOR, 2.0F).add(Attributes.ATTACK_DAMAGE, 2.0F * ConfigHandler.COMMON.predatorDamageFactor.get()).add(Attributes.ATTACK_KNOCKBACK, 1.0F).add(Attributes.MAX_HEALTH, 29.5F * ConfigHandler.COMMON.predatorHealthFactor.get());
-	}
+//	public static Builder createMonsterAttributes(){
+//		return Mob.createMobAttributes().add(Attributes.MOVEMENT_SPEED, 0.375D).add(Attributes.ARMOR, 2.0F).add(Attributes.ATTACK_DAMAGE, 2.0F * ServerConfig.predatorDamageFactor).add(Attributes.ATTACK_KNOCKBACK, 1.0F).add(Attributes.MAX_HEALTH, 29.5F * ServerConfig.predatorHealthFactor);
+//	}
 
 	@Override
 	protected void tickDeath(){

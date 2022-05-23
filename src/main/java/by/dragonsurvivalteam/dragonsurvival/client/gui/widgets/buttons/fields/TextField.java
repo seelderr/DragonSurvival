@@ -10,7 +10,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraftforge.client.gui.GuiUtils;
-import net.minecraftforge.common.ForgeConfigSpec.ValueSpec;
 
 import java.util.List;
 
@@ -18,14 +17,14 @@ import java.util.List;
 public class TextField extends EditBox implements TooltipAccessor{
 	private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/textbox.png");
 	private final Option option;
-	private final ValueSpec spec;
+	private final String spec;
 	public List<FormattedCharSequence> tooltip;
 
 	public TextField(int pX, int pY, int pWidth, int pHeight, Component pMessage){
 		this(null, null, pX, pY, pWidth, pHeight, pMessage);
 	}
 
-	public TextField(ValueSpec spec, Option option, int pX, int pY, int pWidth, int pHeight, Component pMessage){
+	public TextField(String spec, Option option, int pX, int pY, int pWidth, int pHeight, Component pMessage){
 		super(Minecraft.getInstance().font, pX, pY, pWidth, pHeight, pMessage);
 		setBordered(false);
 		this.option = option;

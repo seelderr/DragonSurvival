@@ -6,11 +6,12 @@ import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.hitbox.Drago
 import by.dragonsurvivalteam.dragonsurvival.common.entity.monsters.MagicalPredator;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.*;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.VillagerRelationsHandler;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -18,7 +19,6 @@ import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.village.poi.PoiType;
 import net.minecraft.world.entity.animal.Wolf;
-import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.Pillager;
 import net.minecraft.world.entity.monster.Vindicator;
 import net.minecraft.world.entity.npc.Villager;
@@ -65,13 +65,13 @@ public class DSEntities{
 		event.put(DRAGON, DragonEntity.createLivingAttributes().build());
 		event.put(DRAGON_ARMOR, DragonEntity.createLivingAttributes().build());
 		event.put(DRAGON_HITBOX, DragonHitBox.createLivingAttributes().build());
-		event.put(HUNTER_HOUND, Wolf.createAttributes().add(Attributes.MOVEMENT_SPEED, ConfigHandler.COMMON.houndSpeed.get()).add(Attributes.ATTACK_DAMAGE, ConfigHandler.COMMON.houndDamage.get()).add(Attributes.MAX_HEALTH, ConfigHandler.COMMON.houndHealth.get()).build());
-		event.put(SHOOTER_HUNTER, Pillager.createAttributes().add(Attributes.MOVEMENT_SPEED, ConfigHandler.COMMON.hunterSpeed.get()).add(Attributes.MAX_HEALTH, ConfigHandler.COMMON.houndHealth.get()).add(Attributes.ARMOR, ConfigHandler.COMMON.hunterArmor.get()).add(Attributes.ATTACK_DAMAGE, ConfigHandler.COMMON.hunterDamage.get()).build());
-		event.put(SQUIRE_HUNTER, Vindicator.createAttributes().add(Attributes.MOVEMENT_SPEED, ConfigHandler.COMMON.squireSpeed.get()).add(Attributes.ATTACK_DAMAGE, ConfigHandler.COMMON.squireDamage.get()).add(Attributes.ARMOR, ConfigHandler.COMMON.squireArmor.get()).add(Attributes.MAX_HEALTH, ConfigHandler.COMMON.squireHealth.get()).build());
+		event.put(HUNTER_HOUND, Wolf.createAttributes().add(Attributes.MOVEMENT_SPEED, ServerConfig.houndSpeed).add(Attributes.ATTACK_DAMAGE, ServerConfig.houndDamage).add(Attributes.MAX_HEALTH, ServerConfig.houndHealth).build());
+		event.put(SHOOTER_HUNTER, Pillager.createAttributes().add(Attributes.MOVEMENT_SPEED, ServerConfig.hunterSpeed).add(Attributes.MAX_HEALTH, ServerConfig.houndHealth).add(Attributes.ARMOR, ServerConfig.hunterArmor).add(Attributes.ATTACK_DAMAGE, ServerConfig.hunterDamage).build());
+		event.put(SQUIRE_HUNTER, Vindicator.createAttributes().add(Attributes.MOVEMENT_SPEED, ServerConfig.squireSpeed).add(Attributes.ATTACK_DAMAGE, ServerConfig.squireDamage).add(Attributes.ARMOR, ServerConfig.squireArmor).add(Attributes.MAX_HEALTH, ServerConfig.squireHealth).build());
 		event.put(PRINCESS, Villager.createAttributes().build());
 		event.put(PRINCESS_ON_HORSE, Villager.createAttributes().build());
-		event.put(KNIGHT, KnightEntity.createMobAttributes().add(Attributes.MOVEMENT_SPEED, ConfigHandler.COMMON.knightSpeed.get()).add(Attributes.ATTACK_DAMAGE, ConfigHandler.COMMON.knightDamage.get()).add(Attributes.ARMOR, ConfigHandler.COMMON.knightArmor.get()).add(Attributes.MAX_HEALTH, ConfigHandler.COMMON.knightHealth.get()).build());
-		event.put(PRINCE_ON_HORSE, Villager.createAttributes().add(Attributes.ATTACK_DAMAGE, ConfigHandler.COMMON.princeDamage.get()).add(Attributes.MAX_HEALTH, ConfigHandler.COMMON.princeHealth.get()).add(Attributes.ARMOR, ConfigHandler.COMMON.princeArmor.get()).add(Attributes.MOVEMENT_SPEED, ConfigHandler.COMMON.princeSpeed.get()).build());
+		event.put(KNIGHT, KnightEntity.createMobAttributes().add(Attributes.MOVEMENT_SPEED, ServerConfig.knightSpeed).add(Attributes.ATTACK_DAMAGE, ServerConfig.knightDamage).add(Attributes.ARMOR, ServerConfig.knightArmor).add(Attributes.MAX_HEALTH, ServerConfig.knightHealth).build());
+		event.put(PRINCE_ON_HORSE, Villager.createAttributes().add(Attributes.ATTACK_DAMAGE, ServerConfig.princeDamage).add(Attributes.MAX_HEALTH, ServerConfig.princeHealth).add(Attributes.ARMOR, ServerConfig.princeArmor).add(Attributes.MOVEMENT_SPEED, ServerConfig.princeSpeed).build());
 	}
 
 	@SubscribeEvent
@@ -96,21 +96,31 @@ public class DSEntities{
 
 		VillagerRelationsHandler.dragonHunters = new ArrayList<>(4);
 
-		if(ConfigHandler.COMMON.spawnHound.get()){
+		if(ServerConfig.spawnHound){
 			VillagerRelationsHandler.dragonHunters.add(cast(HUNTER_HOUND));
 		}
 
-		if(ConfigHandler.COMMON.spawnSquire.get()){
+		if(ServerConfig.spawnSquire){
 			VillagerRelationsHandler.dragonHunters.add(cast(SQUIRE_HUNTER));
 		}
 
-		if(ConfigHandler.COMMON.spawnHunter.get()){
+		if(ServerConfig.spawnHunter){
 			VillagerRelationsHandler.dragonHunters.add(cast(SHOOTER_HUNTER));
 		}
 
-		if(ConfigHandler.COMMON.spawnKnight.get()){
+		if(ServerConfig.spawnKnight){
 			VillagerRelationsHandler.dragonHunters.add(cast(KNIGHT));
 		}
+
+
+		SpawnPlacements.SpawnPredicate predicate = (pEntityType, serverWorld, mobSpawnType, pPos, random) -> serverWorld.getBlockState(pPos.below()).is(BlockTags.ANIMALS_SPAWNABLE_ON) && serverWorld.canSeeSky(pPos);
+
+		SpawnPlacements.register(SHOOTER_HUNTER, SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, predicate);
+		SpawnPlacements.register(SQUIRE_HUNTER, SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, predicate);
+		SpawnPlacements.register(PRINCESS, SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, predicate);
+		SpawnPlacements.register(KNIGHT, SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, predicate);
+		SpawnPlacements.register(PRINCE_ON_HORSE, SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, predicate);
+		SpawnPlacements.register(PRINCESS_ON_HORSE, SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, predicate);
 	}
 
 	private static EntityType register(IForgeRegistry<EntityType<?>> registry, String id, EntityType type){
@@ -142,7 +152,6 @@ public class DSEntities{
 	@SubscribeEvent( priority = EventPriority.LOWEST )
 	public static void registerSpawnEggs(RegistryEvent.Register<Item> event){
 		IForgeRegistry<Item> registry = event.getRegistry();
-//		MAGICAL_BEAST = register(null, "magical_predator_entity", EntityType.Builder.of(MagicalPredator::new, MobCategory.MONSTER).sized(1.1f, 1.5625f).clientTrackingRange(64).updateInterval(1).build("magical_predator_entity"));
 
 		HUNTER_HOUND = register(null, "hunter_hound", EntityType.Builder.of(HunterHoundEntity::new, MobCategory.MONSTER).sized(0.6F, 0.85F).clientTrackingRange(64).updateInterval(1).build("hunter_hound"));
 		SHOOTER_HUNTER = register(null, "shooter", EntityType.Builder.of(Shooter::new, MobCategory.MONSTER).sized(0.6F, 1.95F).clientTrackingRange(64).updateInterval(1).build("shooter"));
@@ -152,33 +161,18 @@ public class DSEntities{
 		PRINCE_ON_HORSE = register(null, "prince", EntityType.Builder.<PrinceHorseEntity>of(PrinceHorseEntity::new, MobCategory.MONSTER).sized(0.8f, 2.5f).clientTrackingRange(64).updateInterval(1).build("prince"));
 		PRINCESS_ON_HORSE = register(null, "princess", EntityType.Builder.<PrincesHorseEntity>of(PrincesHorseEntity::new, MobCategory.MONSTER).sized(0.8f, 2.5f).clientTrackingRange(64).updateInterval(1).build("princess"));
 
-//		registerSpawnEgg(registry, MAGICAL_BEAST, 0x000000, 0xFFFFFF, (pEntityType, serverWorld, mobSpawnType, pPos, random) -> serverWorld.getEntitiesOfClass(Player.class, new AABB(pPos).inflate(50), player -> player.hasEffect(DragonEffects.PREDATOR_ANTI_SPAWN)).isEmpty() && !BlockPos.findClosestMatch(pPos, 10, 64, blockPos -> {
-//			//this is expensive, might need to remove
-//			if(serverWorld.getBlockEntity(blockPos) instanceof DragonBeaconTileEntity){
-//				DragonBeaconTileEntity dbe = (DragonBeaconTileEntity)serverWorld.getBlockEntity(blockPos);
-//				return dbe.type == DragonBeaconTileEntity.Type.MAGIC && serverWorld.getBlockState(blockPos).getValue(DragonBeacon.LIT);
-//			}
-//			return false;
-//		}).isPresent());
-
-		registerSpawnEgg(registry, HUNTER_HOUND, 10510648, 8934192, null);
-		registerSpawnEgg(registry, SHOOTER_HUNTER, 12486764, 2690565, null);
-		registerSpawnEgg(registry, SQUIRE_HUNTER, 12486764, 5318420, null);
-		registerSpawnEgg(registry, PRINCESS, 16766495, 174864, null);
-		registerSpawnEgg(registry, KNIGHT, 0, 0x510707, null);
-		registerSpawnEgg(registry, PRINCE_ON_HORSE, 0xffdd1f, 0x2ab10, null);
-		registerSpawnEgg(registry, PRINCESS_ON_HORSE, 0xffd61f, 0x2ab10, null);
+		registerSpawnEgg(registry, HUNTER_HOUND, 10510648, 8934192);
+		registerSpawnEgg(registry, SHOOTER_HUNTER, 12486764, 2690565);
+		registerSpawnEgg(registry, SQUIRE_HUNTER, 12486764, 5318420);
+		registerSpawnEgg(registry, PRINCESS, 16766495, 174864);
+		registerSpawnEgg(registry, KNIGHT, 0, 0x510707);
+		registerSpawnEgg(registry, PRINCE_ON_HORSE, 0xffdd1f, 0x2ab10);
+		registerSpawnEgg(registry, PRINCESS_ON_HORSE, 0xffd61f, 0x2ab10);
 	}
 
-	private static void registerSpawnEgg(IForgeRegistry<Item> registry, EntityType entity, int eggPrimary, int eggSecondary, SpawnPlacements.SpawnPredicate spawnPlacementPredicate){
+	private static void registerSpawnEgg(IForgeRegistry<Item> registry, EntityType entity, int eggPrimary, int eggSecondary){
 		Item spawnEgg = new SpawnEggItem(entity, eggPrimary, eggSecondary, (new Item.Properties()).tab(DragonSurvivalMod.items));
 		spawnEgg.setRegistryName(new ResourceLocation(DragonSurvivalMod.MODID, entity.getRegistryName().getPath() + "_spawn_egg"));
-		if(spawnPlacementPredicate == null){
-			SpawnPlacements.register(entity, SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, (p_test_1_, p_test_2_, p_test_3_, p_test_4_, p_test_5_) -> Monster.checkAnyLightMonsterSpawnRules(cast(p_test_1_), p_test_2_, p_test_3_, p_test_4_, p_test_5_));
-		}else{
-			SpawnPlacements.register(entity, SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, spawnPlacementPredicate);
-		}
-
 		registry.register(spawnEgg);
 	}
 }

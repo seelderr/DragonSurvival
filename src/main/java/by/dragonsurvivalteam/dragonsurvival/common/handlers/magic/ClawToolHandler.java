@@ -4,7 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import net.minecraft.tags.BlockTags;
@@ -73,7 +73,7 @@ public class ClawToolHandler{
 		if(ent instanceof Player){
 			Player player = (Player)ent;
 
-			if(!player.level.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) && !ConfigHandler.SERVER.keepClawItems.get()){
+			if(!player.level.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) && !ServerConfig.keepClawItems){
 				DragonStateHandler handler = DragonUtils.getHandler(player);
 
 				for(int i = 0; i < handler.getClawInventory().getClawsInventory().getContainerSize(); i++){
@@ -90,7 +90,7 @@ public class ClawToolHandler{
 
 	@SubscribeEvent
 	public static void dropBlocksMinedByPaw(PlayerEvent.HarvestCheck harvestCheck){
-		if(!ConfigHandler.SERVER.bonuses.get() || !ConfigHandler.SERVER.clawsAreTools.get()){
+		if(!ServerConfig.bonuses || !ServerConfig.clawsAreTools){
 			return;
 		}
 		Player playerEntity = harvestCheck.getPlayer();
@@ -166,7 +166,7 @@ public class ClawToolHandler{
 	public static class Event_busHandler{
 		@SubscribeEvent
 		public void modifyBreakSpeed(PlayerEvent.BreakSpeed breakSpeedEvent){
-			if(!ConfigHandler.SERVER.bonuses.get() || !ConfigHandler.SERVER.clawsAreTools.get()){
+			if(!ServerConfig.bonuses || !ServerConfig.clawsAreTools){
 				return;
 			}
 			Player playerEntity = breakSpeedEvent.getPlayer();
@@ -183,7 +183,7 @@ public class ClawToolHandler{
 			if(!(mainStack.getItem() instanceof DiggerItem || mainStack.getItem() instanceof SwordItem || mainStack.getItem() instanceof ShearsItem || (mainStack.getItem() instanceof TieredItem))){
 				float bonus = dragonStateHandler.getLevel() == DragonLevel.ADULT
 					? (blockState.is(BlockTags.MINEABLE_WITH_AXE) && dragonStateHandler.getType() == DragonType.FOREST ? 4 : blockState.is(BlockTags.MINEABLE_WITH_PICKAXE) && dragonStateHandler.getType() == DragonType.CAVE ? 4 : blockState.is(BlockTags.MINEABLE_WITH_SHOVEL) && dragonStateHandler.getType() == DragonType.SEA ? 4 : 2F)
-					: dragonStateHandler.getLevel() == DragonLevel.BABY ? ConfigHandler.SERVER.bonusUnlockedAt.get() == DragonLevel.BABY ? 2F : 1F : dragonStateHandler.getLevel() == DragonLevel.YOUNG ? ConfigHandler.SERVER.bonusUnlockedAt.get() != DragonLevel.ADULT ? 2F : 1F : 2F;
+					: dragonStateHandler.getLevel() == DragonLevel.BABY ? ServerConfig.bonusUnlockedAt == DragonLevel.BABY ? 2F : 1F : dragonStateHandler.getLevel() == DragonLevel.YOUNG ? ServerConfig.bonusUnlockedAt != DragonLevel.ADULT ? 2F : 1F : 2F;
 
 				breakSpeedEvent.setNewSpeed((originalSpeed * bonus));
 			}

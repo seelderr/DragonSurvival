@@ -4,8 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.items.DSItems;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigUtils;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.entity.player.SyncSize;
@@ -24,7 +23,6 @@ import net.minecraftforge.network.PacketDistributor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import static by.dragonsurvivalteam.dragonsurvival.misc.DragonLevel.*;
 
@@ -50,15 +48,15 @@ public class DragonGrowthHandler{
 
 			double size = handler.getSize();
 
-			if(size >= ConfigHandler.SERVER.maxGrowthSize.get()){
+			if(size >= ServerConfig.maxGrowthSize){
 				return;
 			}
 
 			boolean canContinue = false;
 
-			List<Item> newbornList = ConfigUtils.parseConfigItemList(ConfigHandler.SERVER.growNewborn.get());
-			List<Item> youngList = ConfigUtils.parseConfigItemList(ConfigHandler.SERVER.growYoung.get());
-			List<Item> adultList = ConfigUtils.parseConfigItemList(ConfigHandler.SERVER.growAdult.get());
+			List<Item> newbornList = ServerConfig.growNewborn;
+			List<Item> youngList = ServerConfig.growYoung;
+			List<Item> adultList = ServerConfig.growAdult;
 
 			List<Item> allowedItems = new ArrayList<>();
 
@@ -124,9 +122,9 @@ public class DragonGrowthHandler{
 	}
 
 	public static int getIncrement(Item item, DragonLevel level){
-		List<Item> newbornList = ConfigUtils.parseConfigItemList(ConfigHandler.SERVER.growNewborn.get());
-		List<Item> youngList = ConfigUtils.parseConfigItemList(ConfigHandler.SERVER.growYoung.get());
-		List<Item> adultList = ConfigUtils.parseConfigItemList(ConfigHandler.SERVER.growAdult.get());
+		List<Item> newbornList = ServerConfig.growNewborn;
+		List<Item> youngList = ServerConfig.growYoung;
+		List<Item> adultList = ServerConfig.growAdult;
 
 		int increment = 0;
 
@@ -163,7 +161,7 @@ public class DragonGrowthHandler{
 
 	@SubscribeEvent
 	public static void onPlayerUpdate(TickEvent.PlayerTickEvent event){
-		if(!ConfigHandler.SERVER.alternateGrowing.get()){
+		if(!ServerConfig.alternateGrowing){
 			return;
 		}
 
@@ -195,17 +193,17 @@ public class DragonGrowthHandler{
 				double timeIncrement = 60 * 20;
 
 				if(handler.getSize() < YOUNG.size){
-					d = (((YOUNG.size - BABY.size) / ((newbornToYoung * 20.0))) * timeIncrement) * ConfigHandler.SERVER.newbornGrowthModifier.get();
+					d = (((YOUNG.size - BABY.size) / ((newbornToYoung * 20.0))) * timeIncrement) * ServerConfig.newbornGrowthModifier;
 				}else if(handler.getSize() < ADULT.size){
-					d = (((ADULT.size - YOUNG.size) / ((youngToAdult * 20.0))) * timeIncrement) * ConfigHandler.SERVER.youngGrowthModifier.get();
+					d = (((ADULT.size - YOUNG.size) / ((youngToAdult * 20.0))) * timeIncrement) * ServerConfig.youngGrowthModifier;
 				}else if(handler.getSize() < 40){
-					d = (((40 - ADULT.size) / ((adultToMax * 20.0))) * timeIncrement) * ConfigHandler.SERVER.adultGrowthModifier.get();
+					d = (((40 - ADULT.size) / ((adultToMax * 20.0))) * timeIncrement) * ServerConfig.adultGrowthModifier;
 				}else{
-					d = (((60 - 40) / ((beyond * 20.0))) * timeIncrement) * ConfigHandler.SERVER.maxGrowthModifier.get();
+					d = (((60 - 40) / ((beyond * 20.0))) * timeIncrement) * ServerConfig.maxGrowthModifier;
 				}
 
 				double size = handler.getSize() + d;
-				size = Math.min(size, ConfigHandler.SERVER.maxGrowthSize.get());
+				size = Math.min(size, ServerConfig.maxGrowthSize);
 
 				if(handler.getSize() != size){
 					handler.setSize(size, player);

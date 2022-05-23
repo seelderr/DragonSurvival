@@ -3,7 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.server.tileentity;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.SourceOfMagicBlock;
 import by.dragonsurvivalteam.dragonsurvival.common.items.DSItems;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.SourceOfMagicContainer;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import io.netty.buffer.Unpooled;
@@ -36,11 +36,11 @@ public class SourceOfMagicTileEntity extends BaseBlockTileEntity implements Cont
 	public NonNullList<ItemStack> stacks = NonNullList.withSize(1, ItemStack.EMPTY);
 	private int ticks;
 	static{
-		consumables.put(DSItems.elderDragonDust, Functions.secondsToTicks(ConfigHandler.SERVER.elderDragonDustTime.get()));
-		consumables.put(DSItems.elderDragonBone, Functions.secondsToTicks(ConfigHandler.SERVER.elderDragonBoneTime.get()));
-		consumables.put(DSItems.dragonHeartShard, Functions.secondsToTicks(ConfigHandler.SERVER.weakHeartShardTime.get()));
-		consumables.put(DSItems.weakDragonHeart, Functions.secondsToTicks(ConfigHandler.SERVER.weakDragonHeartTime.get()));
-		consumables.put(DSItems.elderDragonHeart, Functions.secondsToTicks(ConfigHandler.SERVER.elderDragonHeartTime.get()));
+		consumables.put(DSItems.elderDragonDust, Functions.secondsToTicks(ServerConfig.elderDragonDustTime));
+		consumables.put(DSItems.elderDragonBone, Functions.secondsToTicks(ServerConfig.elderDragonBoneTime));
+		consumables.put(DSItems.dragonHeartShard, Functions.secondsToTicks(ServerConfig.weakHeartShardTime));
+		consumables.put(DSItems.weakDragonHeart, Functions.secondsToTicks(ServerConfig.weakDragonHeartTime));
+		consumables.put(DSItems.elderDragonHeart, Functions.secondsToTicks(ServerConfig.elderDragonHeartTime));
 	}
 	public SourceOfMagicTileEntity(BlockPos pWorldPosition, BlockState pBlockState){
 		super(DSTileEntities.sourceOfMagicTileEntity, pWorldPosition, pBlockState);

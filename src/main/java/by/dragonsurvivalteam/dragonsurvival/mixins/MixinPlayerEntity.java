@@ -6,7 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ClawToolHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
@@ -78,7 +78,7 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 			if(!((Player)(LivingEntity)this).isCreative()){
 				if(cap.getMagic().getCurrentlyCasting() != null){
 					if(!cap.getMagic().getCurrentlyCasting().canMoveWhileCasting()){
-						if(!ConfigHandler.SERVER.canMoveWhileCasting.get()){
+						if(!ServerConfig.canMoveWhileCasting){
 							ci.setReturnValue(true);
 						}
 					}
@@ -86,7 +86,7 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 			}
 
 			if(Arrays.stream(cap.getEmotes().currentEmotes).noneMatch(Objects::nonNull)){
-				if(!ConfigHandler.SERVER.canMoveInEmote.get()){
+				if(!ServerConfig.canMoveInEmote){
 					ci.setReturnValue(true);
 				}
 			}
@@ -145,7 +145,7 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 			double d0 = this.getX();
 			double d1 = this.getY();
 			double d2 = this.getZ();
-			if((DragonStateProvider.getCap(this).isPresent() && ConfigHandler.SERVER.bonuses.get() && ConfigHandler.SERVER.caveLavaSwimming.get() && DragonUtils.getHandler(this).getType() == DragonType.CAVE && DragonSizeHandler.getOverridePose(this) == Pose.SWIMMING) || this.isSwimming() && !this.isPassenger()){
+			if((DragonStateProvider.getCap(this).isPresent() && ServerConfig.bonuses && ServerConfig.caveLavaSwimming && DragonUtils.getHandler(this).getType() == DragonType.CAVE && DragonSizeHandler.getOverridePose(this) == Pose.SWIMMING) || this.isSwimming() && !this.isPassenger()){
 				double d3 = this.getLookAngle().y;
 				double d4 = d3 < -0.2D ? 0.085D : 0.06D;
 				if(d3 <= 0.0D || this.jumping || !this.level.getBlockState(new BlockPos(this.getX(), this.getY() + 1.0D - 0.1D, this.getZ())).getFluidState().isEmpty()){
@@ -228,7 +228,7 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 				if(this.horizontalCollision && this.isFree(vector3d2.x, vector3d2.y + (double)0.6F - this.getY() + d8, vector3d2.z)){
 					this.setDeltaMovement(vector3d2.x, 0.3F, vector3d2.z);
 				}
-			}else if(this.isInLava() && this.isAffectedByFluids() && !this.canStandOnFluid(fluidstate) && (ConfigHandler.SERVER.bonuses.get() && ConfigHandler.SERVER.caveLavaSwimming.get() && DragonStateProvider.getCap(this).isPresent() && DragonUtils.getHandler(this).getType() == DragonType.CAVE)){
+			}else if(this.isInLava() && this.isAffectedByFluids() && !this.canStandOnFluid(fluidstate) && (ServerConfig.bonuses && ServerConfig.caveLavaSwimming && DragonStateProvider.getCap(this).isPresent() && DragonUtils.getHandler(this).getType() == DragonType.CAVE)){
 				double d8 = this.getY();
 				float f5 = this.isSprinting() ? 0.9F : this.getWaterSlowDown();
 				float f6 = 0.02F;

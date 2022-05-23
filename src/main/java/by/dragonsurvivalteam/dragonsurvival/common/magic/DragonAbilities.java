@@ -18,7 +18,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.magic.common.ActiveDragonAbil
 import by.dragonsurvivalteam.dragonsurvival.common.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.common.InnateDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.common.PassiveDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -88,10 +88,10 @@ public class DragonAbilities{
 		ABILITY_LOOKUP.clear();
 
 		//Forest dragon
-		FOREST_BREATH = register(DragonType.FOREST, new ForestBreathAbility(DragonType.FOREST, "poisonous_breath", "forest/poisonous_breath", 1, 4, 2, ConfigHandler.SERVER.forestBreathCasttime.get(), ConfigHandler.SERVER.forestBreathCooldown.get(), new Integer[]{0, 10, 30, 50}));
-		SPIKE = register(DragonType.FOREST, new SpikeAbility(DragonType.FOREST, "spike", "forest/spike", 0, 4, ConfigHandler.SERVER.spikeManaCost.get(), ConfigHandler.SERVER.spikeCasttime.get(), ConfigHandler.SERVER.spikeCooldown.get(), new Integer[]{0, 20, 30, 40}));
-		INSPIRATION = register(DragonType.FOREST, new AoeBuffAbility(DragonType.FOREST, new MobEffectInstance(MobEffects.DIG_SPEED, ConfigHandler.SERVER.inspirationDuration.get(), 2), 5, DSParticles.fireBeaconParticle, "inspiration", "forest/inspiration", 0, 3, ConfigHandler.SERVER.inspirationManaCost.get(), ConfigHandler.SERVER.inspirationCasttime.get(), ConfigHandler.SERVER.inspirationCooldown.get(), new Integer[]{0, 15, 35}));
-		HUNTER = register(DragonType.FOREST, new HunterAbility(DragonType.FOREST, "hunter", "forest/hunter", 0, 2, ConfigHandler.SERVER.hunterManaCost.get(), ConfigHandler.SERVER.hunterCasttime.get(), ConfigHandler.SERVER.hunterCooldown.get(), new Integer[]{0, 25}));
+		FOREST_BREATH = register(DragonType.FOREST, new ForestBreathAbility(DragonType.FOREST, "poisonous_breath", "forest/poisonous_breath", 1, 4, 2, ServerConfig.forestBreathCasttime, ServerConfig.forestBreathCooldown, new Integer[]{0, 10, 30, 50}));
+		SPIKE = register(DragonType.FOREST, new SpikeAbility(DragonType.FOREST, "spike", "forest/spike", 0, 4, ServerConfig.spikeManaCost, ServerConfig.spikeCasttime, ServerConfig.spikeCooldown, new Integer[]{0, 20, 30, 40}));
+		INSPIRATION = register(DragonType.FOREST, new AoeBuffAbility(DragonType.FOREST, new MobEffectInstance(MobEffects.DIG_SPEED, ServerConfig.inspirationDuration, 2), 5, DSParticles.fireBeaconParticle, "inspiration", "forest/inspiration", 0, 3, ServerConfig.inspirationManaCost, ServerConfig.inspirationCasttime, ServerConfig.inspirationCooldown, new Integer[]{0, 15, 35}));
+		HUNTER = register(DragonType.FOREST, new HunterAbility(DragonType.FOREST, "hunter", "forest/hunter", 0, 2, ServerConfig.hunterManaCost, ServerConfig.hunterCasttime, ServerConfig.hunterCooldown, new Integer[]{0, 25}));
 
 		FOREST_MAGIC = register(DragonType.FOREST, new MagicAbility(DragonType.FOREST, "forest_magic", "forest/forest_magic", 0, 10));
 		FOREST_ATHLETICS = register(DragonType.FOREST, new AthleticsAbility(DragonType.FOREST, "forest_athletics", "forest/forest_athletics", 0, 5));
@@ -104,10 +104,10 @@ public class DragonAbilities{
 		FEAR_OF_DARK = register(DragonType.FOREST, new FearOfDarkAbility(DragonType.FOREST, "fear_of_dark", "forest/fear_of_dark", 1, 1));
 
 		//Sea dragon
-		STORM_BREATH = register(DragonType.SEA, new StormBreathAbility(DragonType.SEA, "storm_breath", "sea/storm_breath", 1, 4, 2, ConfigHandler.SERVER.stormBreathCasttime.get(), ConfigHandler.SERVER.stormBreathCooldown.get(), new Integer[]{0, 10, 30, 50}));
-		BALL_LIGHTNING = register(DragonType.SEA, new BallLightningAbility(DragonType.SEA, 4, "ball_lightning", "sea/ball_lightning", 0, 4, ConfigHandler.SERVER.ballLightningManaCost.get(), ConfigHandler.SERVER.ballLightningCasttime.get(), ConfigHandler.SERVER.ballLightningCooldown.get(), new Integer[]{0, 20, 45, 50}));
-		REVEALING_THE_SOUL = register(DragonType.SEA, new AoeBuffAbility(DragonType.SEA, new MobEffectInstance(DragonEffects.REVEALING_THE_SOUL, ConfigHandler.SERVER.revealingTheSoulDuration.get()), 5, DSParticles.magicBeaconParticle, "revealing_the_soul", "sea/revealing_the_soul", 0, 3, ConfigHandler.SERVER.revealingTheSoulManaCost.get(), ConfigHandler.SERVER.revealingTheSoulCasttime.get(), ConfigHandler.SERVER.revealingTheSoulCooldown.get(), new Integer[]{0, 25, 40}));
-		SEA_EYES = register(DragonType.SEA, new EyesBuffAbility(DragonType.SEA, DragonEffects.WATER_VISION, "sea_eyes", "sea/sea_eyes", 0, 2, ConfigHandler.SERVER.seaEyesManaCost.get(), ConfigHandler.SERVER.hunterCasttime.get(), ConfigHandler.SERVER.seaEyesCooldown.get(), new Integer[]{0, 15}));
+		STORM_BREATH = register(DragonType.SEA, new StormBreathAbility(DragonType.SEA, "storm_breath", "sea/storm_breath", 1, 4, 2, ServerConfig.stormBreathCasttime, ServerConfig.stormBreathCooldown, new Integer[]{0, 10, 30, 50}));
+		BALL_LIGHTNING = register(DragonType.SEA, new BallLightningAbility(DragonType.SEA, 4, "ball_lightning", "sea/ball_lightning", 0, 4, ServerConfig.ballLightningManaCost, ServerConfig.ballLightningCasttime, ServerConfig.ballLightningCooldown, new Integer[]{0, 20, 45, 50}));
+		REVEALING_THE_SOUL = register(DragonType.SEA, new AoeBuffAbility(DragonType.SEA, new MobEffectInstance(DragonEffects.REVEALING_THE_SOUL, ServerConfig.revealingTheSoulDuration), 5, DSParticles.magicBeaconParticle, "revealing_the_soul", "sea/revealing_the_soul", 0, 3, ServerConfig.revealingTheSoulManaCost, ServerConfig.revealingTheSoulCasttime, ServerConfig.revealingTheSoulCooldown, new Integer[]{0, 25, 40}));
+		SEA_EYES = register(DragonType.SEA, new EyesBuffAbility(DragonType.SEA, DragonEffects.WATER_VISION, "sea_eyes", "sea/sea_eyes", 0, 2, ServerConfig.seaEyesManaCost, ServerConfig.hunterCasttime, ServerConfig.seaEyesCooldown, new Integer[]{0, 15}));
 
 		SEA_MAGIC = register(DragonType.SEA, new MagicAbility(DragonType.SEA, "sea_magic", "sea/sea_magic", 0, 10));
 		SEA_ATHLETICS = register(DragonType.SEA, new AthleticsAbility(DragonType.SEA, "sea_athletics", "sea/sea_athletics", 0, 5));
@@ -120,10 +120,10 @@ public class DragonAbilities{
 		AMPHIBIAN = register(DragonType.SEA, new AmphibianAbility(DragonType.SEA, "amphibian", "sea/amphibian", 1, 1));
 
 		//Cave dragon
-		NETHER_BREATH = register(DragonType.CAVE, new NetherBreathAbility(DragonType.CAVE, "nether_breath", "cave/nether_breath", 1, 4, 2, ConfigHandler.SERVER.fireBreathCasttime.get(), ConfigHandler.SERVER.fireBreathCooldown.get(), new Integer[]{0, 10, 30, 50}));
-		FIREBALL = register(DragonType.CAVE, new FireBallAbility(DragonType.CAVE, "fireball", "cave/fireball", 0, 4, ConfigHandler.SERVER.fireballManaCost.get(), ConfigHandler.SERVER.fireballCasttime.get(), ConfigHandler.SERVER.fireballCooldown.get(), new Integer[]{0, 20, 40, 45}));
-		TOUGH_SKIN = register(DragonType.CAVE, new ToughSkinAbility(DragonType.CAVE, new MobEffectInstance(DragonEffects.STRONG_LEATHER, ConfigHandler.SERVER.toughSkinDuration.get()), 5, DSParticles.peaceBeaconParticle, "strong_leather", "cave/strong_leather", 0, 3, ConfigHandler.SERVER.toughSkinManaCost.get(), ConfigHandler.SERVER.toughSkinCasttime.get(), ConfigHandler.SERVER.toughSkinCooldown.get(), new Integer[]{0, 15, 35}));
-		LAVA_VISION = register(DragonType.CAVE, new EyesBuffAbility(DragonType.CAVE, DragonEffects.LAVA_VISION, "lava_vision", "cave/lava_vision", 0, 2, ConfigHandler.SERVER.lavaVisionManaCost.get(), ConfigHandler.SERVER.lavaVisionCasttime.get(), ConfigHandler.SERVER.lavaVisionCooldown.get(), new Integer[]{0, 25}));
+		NETHER_BREATH = register(DragonType.CAVE, new NetherBreathAbility(DragonType.CAVE, "nether_breath", "cave/nether_breath", 1, 4, 2, ServerConfig.fireBreathCasttime, ServerConfig.fireBreathCooldown, new Integer[]{0, 10, 30, 50}));
+		FIREBALL = register(DragonType.CAVE, new FireBallAbility(DragonType.CAVE, "fireball", "cave/fireball", 0, 4, ServerConfig.fireballManaCost, ServerConfig.fireballCasttime, ServerConfig.fireballCooldown, new Integer[]{0, 20, 40, 45}));
+		TOUGH_SKIN = register(DragonType.CAVE, new ToughSkinAbility(DragonType.CAVE, new MobEffectInstance(DragonEffects.STRONG_LEATHER, ServerConfig.toughSkinDuration), 5, DSParticles.peaceBeaconParticle, "strong_leather", "cave/strong_leather", 0, 3, ServerConfig.toughSkinManaCost, ServerConfig.toughSkinCasttime, ServerConfig.toughSkinCooldown, new Integer[]{0, 15, 35}));
+		LAVA_VISION = register(DragonType.CAVE, new EyesBuffAbility(DragonType.CAVE, DragonEffects.LAVA_VISION, "lava_vision", "cave/lava_vision", 0, 2, ServerConfig.lavaVisionManaCost, ServerConfig.lavaVisionCasttime, ServerConfig.lavaVisionCooldown, new Integer[]{0, 25}));
 
 		CAVE_MAGIC = register(DragonType.CAVE, new MagicAbility(DragonType.CAVE, "cave_magic", "cave/cave_magic", 0, 10));
 		CAVE_ATHLETICS = register(DragonType.CAVE, new AthleticsAbility(DragonType.CAVE, "cave_athletics", "cave/cave_athletics", 0, 5));

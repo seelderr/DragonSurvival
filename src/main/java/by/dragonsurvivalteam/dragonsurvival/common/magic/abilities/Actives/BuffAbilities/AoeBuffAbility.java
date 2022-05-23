@@ -4,7 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.common.AbilityAnimation;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.common.ActiveDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.core.particles.ParticleOptions;
@@ -52,8 +52,8 @@ public class AoeBuffAbility extends ActiveDragonAbility{
 
 
 		if(effect.getEffect() == DragonEffects.REVEALING_THE_SOUL){
-			components.add(new TranslatableComponent("ds.skill.bonus_exp.multiplier", ConfigHandler.SERVER.revealingTheSoulMultiplier.get() + "x"));
-			components.add(new TranslatableComponent("ds.skill.bonus_exp.max_gain", Integer.toString(ConfigHandler.SERVER.revealingTheSoulMaxEXP.get())));
+			components.add(new TranslatableComponent("ds.skill.bonus_exp.multiplier", ServerConfig.revealingTheSoulMultiplier + "x"));
+			components.add(new TranslatableComponent("ds.skill.bonus_exp.max_gain", Integer.toString(ServerConfig.revealingTheSoulMaxEXP)));
 		}
 
 		if(!KeyInputHandler.ABILITY3.isUnbound()){
@@ -71,11 +71,11 @@ public class AoeBuffAbility extends ActiveDragonAbility{
 	public int getDuration(){
 
 		if(effect.getEffect() == MobEffects.DIG_SPEED){
-			return getLevel() * ConfigHandler.SERVER.inspirationDuration.get();
+			return getLevel() * ServerConfig.inspirationDuration;
 		}else if(effect.getEffect() == DragonEffects.REVEALING_THE_SOUL){
-			return getLevel() * ConfigHandler.SERVER.revealingTheSoulDuration.get();
+			return getLevel() * ServerConfig.revealingTheSoulDuration;
 		}else if(effect.getEffect() == DragonEffects.STRONG_LEATHER){
-			return getLevel() * ConfigHandler.SERVER.toughSkinDuration.get();
+			return getLevel() * ServerConfig.toughSkinDuration;
 		}
 		return getLevel() * (effect.getDuration() > 0 ? effect.getDuration() : 30);
 	}
@@ -149,13 +149,13 @@ public class AoeBuffAbility extends ActiveDragonAbility{
 	@Override
 
 	public boolean isDisabled(){
-		if(effect.getEffect() == DragonEffects.REVEALING_THE_SOUL && !ConfigHandler.SERVER.revealingTheSoul.get()){
+		if(effect.getEffect() == DragonEffects.REVEALING_THE_SOUL && !ServerConfig.revealingTheSoul){
 			return true;
 		}
-		if(effect.getEffect() == DragonEffects.STRONG_LEATHER && !ConfigHandler.SERVER.toughSkin.get()){
+		if(effect.getEffect() == DragonEffects.STRONG_LEATHER && !ServerConfig.toughSkin){
 			return true;
 		}
-		if(effect.getEffect() == MobEffects.DIG_SPEED && !ConfigHandler.SERVER.inspiration.get()){
+		if(effect.getEffect() == MobEffects.DIG_SPEED && !ServerConfig.inspiration){
 			return true;
 		}
 		return super.isDisabled();

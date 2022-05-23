@@ -3,7 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 import by.dragonsurvivalteam.dragonsurvival.common.DamageSources;
 import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.entity.player.SyncCapabilityDebuff;
@@ -33,7 +33,7 @@ import java.util.List;
 public class DragonPenaltyHandler{
 	@SubscribeEvent
 	public static void hitByPotion(ProjectileImpactEvent potionEvent){
-		if(!ConfigHandler.SERVER.penalties.get() || ConfigHandler.SERVER.caveSplashDamage.get() == 0.0){
+		if(!ServerConfig.penalties || ServerConfig.caveSplashDamage == 0.0){
 			return;
 		}
 
@@ -59,7 +59,7 @@ public class DragonPenaltyHandler{
 						if(dragonStateHandler.getType() != DragonType.CAVE){
 							return;
 						}
-						player.hurt(DamageSources.WATER_BURN, ConfigHandler.SERVER.caveSplashDamage.get().floatValue());
+						player.hurt(DamageSources.WATER_BURN, ServerConfig.caveSplashDamage.floatValue());
 					}
 				});
 			}
@@ -68,7 +68,7 @@ public class DragonPenaltyHandler{
 
 	@SubscribeEvent
 	public static void consumeHurtfulItem(LivingEntityUseItemEvent.Finish destroyItemEvent){
-		if(!ConfigHandler.SERVER.penalties.get()){
+		if(!ServerConfig.penalties){
 			return;
 		}
 
@@ -81,7 +81,7 @@ public class DragonPenaltyHandler{
 
 		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon()){
-				List<String> hurtfulItems = new ArrayList<>(dragonStateHandler.getType() == DragonType.FOREST ? ConfigHandler.SERVER.forestDragonHurtfulItems.get() : dragonStateHandler.getType() == DragonType.CAVE ? ConfigHandler.SERVER.caveDragonHurtfulItems.get() : dragonStateHandler.getType() == DragonType.SEA ? ConfigHandler.SERVER.seaDragonHurtfulItems.get() : new ArrayList<>());
+				List<String> hurtfulItems = new ArrayList<>(dragonStateHandler.getType() == DragonType.FOREST ? ServerConfig.forestDragonHurtfulItems : dragonStateHandler.getType() == DragonType.CAVE ? ServerConfig.caveDragonHurtfulItems : dragonStateHandler.getType() == DragonType.SEA ? ServerConfig.seaDragonHurtfulItems : new ArrayList<>());
 
 				if(hurtfulItems.size() > 0){
 					ResourceLocation itemId = ForgeRegistries.ITEMS.getKey(itemStack.getItem());
@@ -108,21 +108,21 @@ public class DragonPenaltyHandler{
 
 	@SubscribeEvent
 	public static void onWaterConsumed(LivingEntityUseItemEvent.Finish destroyItemEvent){
-		if(!ConfigHandler.SERVER.penalties.get() || ConfigHandler.SERVER.seaTicksWithoutWater.get() == 0){
+		if(!ServerConfig.penalties || ServerConfig.seaTicksWithoutWater == 0){
 			return;
 		}
 		ItemStack itemStack = destroyItemEvent.getItem();
 		DragonStateProvider.getCap(destroyItemEvent.getEntityLiving()).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon()){
 				Player player = (Player)destroyItemEvent.getEntityLiving();
-				if(ConfigHandler.SERVER.seaAllowWaterBottles.get() && itemStack.getItem() instanceof PotionItem){
+				if(ServerConfig.seaAllowWaterBottles && itemStack.getItem() instanceof PotionItem){
 					if(PotionUtils.getPotion(itemStack) == Potions.WATER && dragonStateHandler.getType() == DragonType.SEA && !player.level.isClientSide){
-						dragonStateHandler.getDebuffData().timeWithoutWater = Math.max(dragonStateHandler.getDebuffData().timeWithoutWater - ConfigHandler.SERVER.seaTicksWithoutWaterRestored.get(), 0);
+						dragonStateHandler.getDebuffData().timeWithoutWater = Math.max(dragonStateHandler.getDebuffData().timeWithoutWater - ServerConfig.seaTicksWithoutWaterRestored, 0);
 						NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncCapabilityDebuff(player.getId(), dragonStateHandler.getDebuffData().timeWithoutWater, dragonStateHandler.getDebuffData().timeInDarkness, dragonStateHandler.getDebuffData().timeInRain));
 					}
 				}
 				if(DragonConfigHandler.SEA_DRAGON_HYDRATION_USE_ALTERNATIVES.contains(itemStack.getItem()) && !player.level.isClientSide){
-					dragonStateHandler.getDebuffData().timeWithoutWater = Math.max(dragonStateHandler.getDebuffData().timeWithoutWater - ConfigHandler.SERVER.seaTicksWithoutWaterRestored.get(), 0);
+					dragonStateHandler.getDebuffData().timeWithoutWater = Math.max(dragonStateHandler.getDebuffData().timeWithoutWater - ServerConfig.seaTicksWithoutWaterRestored, 0);
 					NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncCapabilityDebuff(player.getId(), dragonStateHandler.getDebuffData().timeWithoutWater, dragonStateHandler.getDebuffData().timeInDarkness, dragonStateHandler.getDebuffData().timeInRain));
 				}
 			}

@@ -5,7 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.common.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.common.PassiveDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import net.minecraft.nbt.CompoundTag;
 
@@ -56,7 +56,7 @@ public class MagicCap extends SubCap{
 	public void initAbilities(DragonType type){
 		if(DragonAbilities.ACTIVE_ABILITIES.containsKey(type)){
 			if(handler.getType() != null && handler.getType() != DragonType.NONE){
-				if(!ConfigHandler.SERVER.saveAllAbilities.get()){
+				if(!ServerConfig.saveAllAbilities){
 					abilities.clear();
 				}
 			}

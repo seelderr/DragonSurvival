@@ -4,7 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.common.EffectInstance2;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.AlertExceptHunters;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.FollowMobGoal;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -66,7 +66,7 @@ public class HunterHoundEntity extends Wolf implements DragonHunter{
 	}
 
 	public boolean doHurtTarget(Entity entity){
-		if(ConfigHandler.COMMON.houndDoesSlowdown.get() && entity instanceof LivingEntity){
+		if(ServerConfig.houndDoesSlowdown && entity instanceof LivingEntity){
 			if(((LivingEntity)entity).hasEffect(MobEffects.MOVEMENT_SLOWDOWN)){
 				((LivingEntity)entity).addEffect(new EffectInstance2(MobEffects.MOVEMENT_SLOWDOWN, 200, 1));
 			}else{
@@ -87,7 +87,7 @@ public class HunterHoundEntity extends Wolf implements DragonHunter{
 
 	@Override
 	public boolean removeWhenFarAway(double distance){
-		return !this.hasCustomName() && tickCount >= Functions.minutesToTicks(ConfigHandler.COMMON.hunterDespawnDelay.get());
+		return !this.hasCustomName() && tickCount >= Functions.minutesToTicks(ServerConfig.hunterDespawnDelay);
 	}
 
 	protected int getExperienceReward(Player p_70693_1_){

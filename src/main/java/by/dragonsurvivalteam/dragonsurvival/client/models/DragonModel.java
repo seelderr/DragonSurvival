@@ -5,11 +5,10 @@ import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.DragonEditorHa
 import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.EnumSkinLayer;
 import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.objects.SkinPreset.SkinAgeGroup;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.SkinCap;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ClientConfig;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.resources.ResourceLocation;
@@ -137,7 +136,7 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity>{
 		double query_tail_motion_up = Mth.lerp(0.1, dragon.tail_motion_up, tailUpAvg);
 		double query_tail_motion_side = Mth.lerp(0.1, dragon.tail_motion_side, tailSideAvg);
 
-		if(((DragonEntity)animatable).tailLocked || !ConfigHandler.CLIENT.enableTailPhysics.get()){
+		if(((DragonEntity)animatable).tailLocked || !ClientConfig.enableTailPhysics){
 			dragon.tailMotionUp = 0;
 			dragon.tailMotionSide = 0;
 

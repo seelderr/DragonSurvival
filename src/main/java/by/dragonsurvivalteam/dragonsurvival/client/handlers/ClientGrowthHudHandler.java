@@ -5,7 +5,10 @@ import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonGrowthHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonLevel;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -19,6 +22,14 @@ import net.minecraftforge.client.gui.ForgeIngameGui;
 import java.awt.Color;
 
 public class ClientGrowthHudHandler{
+	@ConfigRange( min = -1000, max = 1000 )
+	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui", "growth"}, key = "growthXOffset", comment = "Offset the x position of the item growth icon in relation to its normal position" )
+	public static Integer growthXOffset = 0;
+
+	@ConfigRange( min = -1000, max = 1000 )
+	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui", "growth"}, key = "growthYOffset", comment = "Offset the y position of the item growth icon in relation to its normal position" )
+	public static Integer growthYOffset = 0;
+
 	public static void renderGrowth(ForgeIngameGui gui, PoseStack mStack, float partialTicks, int width, int height){
 		Player playerEntity = Minecraft.getInstance().player;
 		if(playerEntity == null || !DragonUtils.isDragon(playerEntity) || playerEntity.isSpectator())
@@ -33,7 +44,7 @@ public class ClientGrowthHudHandler{
 
 		int increment = DragonGrowthHandler.getIncrement(stack.getItem(), handler.getLevel());
 
-		if(increment != 0 && (handler.getSize() < ConfigHandler.SERVER.maxGrowthSize.get() && increment > 0 || increment < 0 && handler.getSize() >= (DragonLevel.BABY.size + 1))){
+		if(increment != 0 && (handler.getSize() < ServerConfig.maxGrowthSize && increment > 0 || increment < 0 && handler.getSize() >= (DragonLevel.BABY.size + 1))){
 			float curSize = (float)handler.getSize();
 			float nextSize = (float)(handler.getSize() + increment);
 			float progress = 0;
@@ -49,8 +60,8 @@ public class ClientGrowthHudHandler{
 				progress = (curSize - DragonLevel.ADULT.size) / (40 - DragonLevel.ADULT.size);
 				nextProgess = (nextSize - DragonLevel.ADULT.size) / (40 - DragonLevel.ADULT.size);
 			}else if(handler.getLevel() == DragonLevel.ADULT && handler.getSize() >= 40){
-				progress = (float)((curSize - 40) / (ConfigHandler.SERVER.maxGrowthSize.get() - 40));
-				nextProgess = (float)((nextSize - 40) / (ConfigHandler.SERVER.maxGrowthSize.get() - 40));
+				progress = (float)((curSize - 40) / (ServerConfig.maxGrowthSize - 40));
+				nextProgess = (float)((nextSize - 40) / (ServerConfig.maxGrowthSize - 40));
 			}
 
 			progress = Math.min(1.0f, progress);
@@ -61,8 +72,8 @@ public class ClientGrowthHudHandler{
 			int circleX = (width / 2) - (radius);
 			int circleY = height - 90;
 
-			circleX += ConfigHandler.CLIENT.growthXOffset.get();
-			circleY += ConfigHandler.CLIENT.growthYOffset.get();
+			circleX += growthXOffset;
+			circleY += growthYOffset;
 
 			RenderSystem.setShaderColor(0f, 0f, 0f, 1f);
 			Color c = new Color(99, 99, 99);

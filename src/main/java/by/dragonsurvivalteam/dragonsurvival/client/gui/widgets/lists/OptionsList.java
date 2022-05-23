@@ -2,15 +2,12 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists;
 
 import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Option;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.util.Mth;
-import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
-import net.minecraftforge.common.ForgeConfigSpec.ValueSpec;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
@@ -21,7 +18,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class OptionsList extends ContainerObjectSelectionList<OptionListEntry>{
-	public static ConcurrentHashMap<Option, Pair<ValueSpec, ConfigValue>> config = new ConcurrentHashMap<>();
 	public static ConcurrentHashMap<Option, String> configMap = new ConcurrentHashMap<>();
 	public static CopyOnWriteArrayList<Integer> activeCats = new CopyOnWriteArrayList<>();
 	public int listWidth;

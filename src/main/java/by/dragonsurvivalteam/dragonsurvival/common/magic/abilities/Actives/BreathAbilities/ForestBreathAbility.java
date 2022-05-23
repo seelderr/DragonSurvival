@@ -9,7 +9,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.GenericCapability;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.GenericCapabilityProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigHandler;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.client.Minecraft;
@@ -66,13 +66,13 @@ public class ForestBreathAbility extends BreathAbility{
 	@OnlyIn( Dist.CLIENT )
 	public ArrayList<Component> getLevelUpInfo(){
 		ArrayList<Component> list = super.getLevelUpInfo();
-		list.add(new TranslatableComponent("ds.skill.damage", "+" + ConfigHandler.SERVER.forestBreathDamage.get()));
+		list.add(new TranslatableComponent("ds.skill.damage", "+" + ServerConfig.forestBreathDamage));
 		return list;
 	}
 
 	@Override
 	public boolean isDisabled(){
-		return super.isDisabled() || !ConfigHandler.SERVER.forestBreath.get();
+		return super.isDisabled() || !ServerConfig.forestBreath;
 	}
 
 	@Override
@@ -178,7 +178,7 @@ public class ForestBreathAbility extends BreathAbility{
 	}
 
 	public void tickCost(){
-		if(firstUse || castingTicks % ConfigHandler.SERVER.forestBreathManaTicks.get() == 0){
+		if(firstUse || castingTicks % ServerConfig.forestBreathManaTicks == 0){
 			consumeMana(player);
 			firstUse = false;
 		}
@@ -186,7 +186,7 @@ public class ForestBreathAbility extends BreathAbility{
 
 	@Override
 	public int getManaCost(){
-		return player != null && player.hasEffect(DragonEffects.SOURCE_OF_MAGIC) ? 0 : (firstUse ? ConfigHandler.SERVER.forestBreathInitialMana.get() : ConfigHandler.SERVER.forestBreathOvertimeMana.get());
+		return player != null && player.hasEffect(DragonEffects.SOURCE_OF_MAGIC) ? 0 : (firstUse ? ServerConfig.forestBreathInitialMana : ServerConfig.forestBreathOvertimeMana);
 	}
 
 	@Override
@@ -248,7 +248,7 @@ public class ForestBreathAbility extends BreathAbility{
 	}
 
 	public static float getDamage(int level){
-		return (float)(ConfigHandler.SERVER.forestBreathDamage.get() * level);
+		return (float)(ServerConfig.forestBreathDamage * level);
 	}
 
 	@OnlyIn( Dist.CLIENT )

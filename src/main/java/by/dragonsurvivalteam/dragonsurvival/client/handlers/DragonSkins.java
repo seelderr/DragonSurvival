@@ -1,9 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.client.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import com.google.gson.Gson;
@@ -92,7 +92,7 @@ public class DragonSkins{
 
 		boolean renderStage = renderStage(player, dragonStage);
 
-		if((ConfigHandler.CLIENT.renderOtherPlayerSkins.get() || player == Minecraft.getInstance().player) && renderStage){
+		if((ClientDragonRender.renderOtherPlayerSkins || player == Minecraft.getInstance().player) && renderStage){
 			if(playerSkinCache.containsKey(playerKey) && playerSkinCache.get(playerKey) != null){
 				return playerSkinCache.get(playerKey);
 			}
@@ -153,7 +153,7 @@ public class DragonSkins{
 		boolean renderStage = renderStage(player, dragonStage);
 
 
-		if((ConfigHandler.CLIENT.renderOtherPlayerSkins.get() || player == Minecraft.getInstance().player) && playerSkinCache.containsKey(playerKey) && renderStage){
+		if((ClientDragonRender.renderOtherPlayerSkins || player == Minecraft.getInstance().player) && playerSkinCache.containsKey(playerKey) && renderStage){
 			if(playerGlowCache.containsKey(playerKey)){
 				return playerGlowCache.get(playerKey);
 			}else{

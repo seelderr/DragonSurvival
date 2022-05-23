@@ -20,22 +20,18 @@ import java.util.function.Supplier;
 public class SyncListConfig implements IMessage<SyncListConfig>{
 	public String key;
 	public List<String> value;
-	public String type;
 
 	public SyncListConfig(){}
 
-	public SyncListConfig(String key, List<String> value, String type){
+	public SyncListConfig(String key, List<String> value){
 
 		this.key = key;
 		this.value = value;
-		this.type = type;
 	}
 
 	@Override
 
 	public void encode(SyncListConfig message, FriendlyByteBuf buffer){
-
-		buffer.writeUtf(message.type);
 		buffer.writeInt(message.value.size());
 		message.value.forEach((val) -> buffer.writeUtf(val));
 		buffer.writeUtf(message.key);
@@ -44,8 +40,6 @@ public class SyncListConfig implements IMessage<SyncListConfig>{
 	@Override
 
 	public SyncListConfig decode(FriendlyByteBuf buffer){
-
-		String type = buffer.readUtf();
 		int size = buffer.readInt();
 		ArrayList<String> list = new ArrayList<>();
 
@@ -54,7 +48,7 @@ public class SyncListConfig implements IMessage<SyncListConfig>{
 		}
 
 		String key = buffer.readUtf();
-		return new SyncListConfig(key, list, type);
+		return new SyncListConfig(key, list);
 	}
 
 	@Override
@@ -65,21 +59,14 @@ public class SyncListConfig implements IMessage<SyncListConfig>{
 			if(entity == null || !entity.hasPermissions(2)){
 				return;
 			}
-			NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new SyncListConfig(message.key, message.value, message.type));
+			NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new SyncListConfig(message.key, message.value));
 		}
 
-		UnmodifiableConfig spec = message.type.equalsIgnoreCase("server") ? ConfigHandler.serverSpec.getValues() : ConfigHandler.commonSpec.getValues();
-		Object ob = spec.get(message.type + "." + message.key);
+		UnmodifiableConfig spec = ConfigHandler.serverSpec.getValues();
+		Object ob = spec.get("server." + message.key);
 
-		if(ob instanceof ConfigValue){
-
-			ConfigValue value = (ConfigValue)ob;
-
-			try{
-				value.set(message.value);
-				value.save();
-			}catch(Exception ignored){
-			}
+		if(ob instanceof ConfigValue value){
+			ConfigHandler.updateConfigValue(value, message.value);
 		}
 	}
 }

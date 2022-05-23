@@ -5,7 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ManaHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncAbilityCasting;
@@ -171,7 +171,7 @@ public class ActiveDragonAbility extends DragonAbility{
 			int level = 0;
 
 			for(int req : requiredLevels){
-				if(getPlayer().experienceLevel >= req || ConfigHandler.SERVER.noEXPRequirements.get()){
+				if(getPlayer().experienceLevel >= req || ServerConfig.noEXPRequirements){
 					level++;
 				}
 			}
@@ -242,7 +242,7 @@ public class ActiveDragonAbility extends DragonAbility{
 	}
 
 	public boolean canConsumeMana(Player player){
-		return ManaHandler.getCurrentMana(player) >= this.getManaCost() || ConfigHandler.SERVER.consumeEXPAsMana.get() && ((player.totalExperience / 10) >= getManaCost() || player.experienceLevel > 0);
+		return ManaHandler.getCurrentMana(player) >= this.getManaCost() || ServerConfig.consumeEXPAsMana && ((player.totalExperience / 10) >= getManaCost() || player.experienceLevel > 0);
 	}
 
 	public int getCooldown(){

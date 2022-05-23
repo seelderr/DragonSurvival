@@ -5,15 +5,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.Option;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraftforge.common.ForgeConfigSpec.ValueSpec;
 
 import java.util.function.Function;
 
 public class ResourceTextFieldOption extends Option{
 	public final Function<Options, String> getter;
-	private final ValueSpec spec;
+	private final String spec;
 
-	public ResourceTextFieldOption(ValueSpec spec, String p_i51158_1_, Function<Options, String> getter){
+	public ResourceTextFieldOption(String spec, String p_i51158_1_, Function<Options, String> getter){
 		super(p_i51158_1_);
 		this.getter = getter;
 		this.spec = spec;

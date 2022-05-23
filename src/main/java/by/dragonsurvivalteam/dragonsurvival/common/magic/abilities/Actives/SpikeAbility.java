@@ -7,7 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.entity.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.DragonSpikeEntity;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.common.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -31,20 +31,20 @@ public class SpikeAbility extends ActiveDragonAbility{
 	}
 
 	public float getDamage(){
-		return (float)(ConfigHandler.SERVER.spikeDamage.get() * getLevel());
+		return (float)(ServerConfig.spikeDamage * getLevel());
 	}
 
 	@OnlyIn( Dist.CLIENT )
 	public ArrayList<Component> getLevelUpInfo(){
 		ArrayList<Component> list = super.getLevelUpInfo();
-		list.add(new TranslatableComponent("ds.skill.damage", "+" + ConfigHandler.SERVER.spikeDamage.get()));
+		list.add(new TranslatableComponent("ds.skill.damage", "+" + ServerConfig.spikeDamage));
 		return list;
 	}
 
 	@Override
 
 	public boolean isDisabled(){
-		return super.isDisabled() || !ConfigHandler.SERVER.spike.get();
+		return super.isDisabled() || !ServerConfig.spike;
 	}
 
 	@Override

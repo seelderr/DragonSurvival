@@ -3,7 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.hitbox;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import com.google.common.collect.Lists;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
@@ -116,8 +116,8 @@ public class DragonHitBox extends LivingEntity{
 		Vector3f offset = DragonUtils.getCameraOffset(player);
 
 		double size = handler.getSize();
-		double height = DragonSizeHandler.calculateDragonHeight(size, ConfigHandler.SERVER.hitboxGrowsPastHuman.get());
-		double width = DragonSizeHandler.calculateDragonWidth(size, ConfigHandler.SERVER.hitboxGrowsPastHuman.get());
+		double height = DragonSizeHandler.calculateDragonHeight(size, ServerConfig.hitboxGrowsPastHuman);
+		double width = DragonSizeHandler.calculateDragonWidth(size, ServerConfig.hitboxGrowsPastHuman);
 
 		Pose overridePose = DragonSizeHandler.overridePose(player);
 		height = DragonSizeHandler.calculateModifiedHeight(height, overridePose, true);
@@ -189,7 +189,7 @@ public class DragonHitBox extends LivingEntity{
 			body.xRot = xRot;
 			body.yRot = yRot;
 
-			head.setPos(dx, dy - (DragonSizeHandler.calculateDragonWidth(handler.getSize(), ConfigHandler.SERVER.hitboxGrowsPastHuman.get()) / 2), dz);
+			head.setPos(dx, dy - (DragonSizeHandler.calculateDragonWidth(handler.getSize(), ServerConfig.hitboxGrowsPastHuman) / 2), dz);
 			tail1.setPos(getX() - offset.x(), getY() + (player.getEyeHeight() / 2) - (height / 9), getZ() - offset.z());
 			tail2.setPos(getX() - offset.x() * 1.5, getY() + (player.getEyeHeight() / 2) - (height / 9), getZ() - offset.z() * 1.5);
 			tail3.setPos(getX() - offset.x() * 2, getY() + (player.getEyeHeight() / 2) - (height / 9), getZ() - offset.z() * 2);

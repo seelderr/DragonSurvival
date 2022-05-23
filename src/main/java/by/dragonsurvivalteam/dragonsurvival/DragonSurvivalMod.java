@@ -38,10 +38,13 @@ public class DragonSurvivalMod{
 
 	public DragonSurvivalMod(){
 		GeckoLib.initialize();
+
+		ConfigHandler.initConfig();
+
 		IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 		modEventBus.addListener(this::setup);
+
 		ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ConfigHandler.clientSpec);
-		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ConfigHandler.commonSpec);
 		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ConfigHandler.serverSpec);
 
 		DSParticles.REGISTRY.register(modEventBus);

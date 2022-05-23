@@ -3,7 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.misc.PrincessTrades;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.serialization.Dynamic;
@@ -106,7 +106,7 @@ public class Princess extends Villager{
 
 	@Override
 	public boolean removeWhenFarAway(double p_213397_1_){
-		return !this.hasCustomName() && tickCount >= Functions.minutesToTicks(ConfigHandler.COMMON.princessDespawnDelay.get());
+		return !this.hasCustomName() && tickCount >= Functions.minutesToTicks(ServerConfig.princessDespawnDelay);
 	}
 
 	@Nullable

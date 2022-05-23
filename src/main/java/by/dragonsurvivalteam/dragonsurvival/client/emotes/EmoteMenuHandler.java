@@ -6,7 +6,9 @@ import by.dragonsurvivalteam.dragonsurvival.client.util.TextRenderUtil;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.EmoteCap;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.emotes.SyncEmote;
 import com.mojang.blaze3d.platform.InputConstants.Key;
@@ -49,6 +51,14 @@ public class EmoteMenuHandler{
 	private static final ResourceLocation BUTTON_RIGHT = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/emote/button_right.png");
 	public static final ResourceLocation resetTexture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/reset_icon.png");
 
+	@ConfigRange( min = -1000, max = 1000 )
+	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui", "emotes"}, key = "emoteXOffset", comment = "Offset the x position of the emote button in relation to its normal position" )
+	public static Integer emoteXOffset = 0;
+
+	@ConfigRange( min = -1000, max = 1000 )
+	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui", "emotes"}, key = "emoteYOffset", comment = "Offset the y position of the emote button in relation to its normal position" )
+	public static Integer emoteYOffset = 0;
+
 	private static int emotePage = 0;
 	private static boolean keybinding = false;
 	private static String currentlyKeybinding = null;
@@ -73,8 +83,8 @@ public class EmoteMenuHandler{
 			int startX = screen.width - width;
 			int startY = screen.height - 55;
 
-			startX += ConfigHandler.CLIENT.emoteXOffset.get();
-			startY += ConfigHandler.CLIENT.emoteYOffset.get();
+			startX += emoteXOffset;
+			startY += emoteYOffset;
 
 			initGuiEvent.addListener(new Button(startX, startY - ((PER_PAGE + 2) * height) - 5, width, height, new TextComponent(">"), (btn) -> {
 			}){

@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.settings.SettingsSideScreen;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.settings.ConfigSideSelectionScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.HelpButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.TabButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.DSButton;
@@ -13,8 +13,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonGrowthHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigUtils;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.DragonClawsMenuToggle;
@@ -122,25 +121,25 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 				if(handler.getLevel() == DragonLevel.BABY){
 					age += DragonLevel.YOUNG.size - handler.getLevel().size;
 					double missing = DragonLevel.YOUNG.size - handler.getSize();
-					double increment = ((DragonLevel.YOUNG.size - DragonLevel.BABY.size) / ((DragonGrowthHandler.newbornToYoung * 20.0))) * ConfigHandler.SERVER.newbornGrowthModifier.get();
+					double increment = ((DragonLevel.YOUNG.size - DragonLevel.BABY.size) / ((DragonGrowthHandler.newbornToYoung * 20.0))) * ServerConfig.newbornGrowthModifier;
 					seconds = (missing / increment) / 20;
 				}else if(handler.getLevel() == DragonLevel.YOUNG){
 					age += DragonLevel.ADULT.size - handler.getLevel().size;
 
 					double missing = DragonLevel.ADULT.size - handler.getSize();
-					double increment = ((DragonLevel.ADULT.size - DragonLevel.YOUNG.size) / ((DragonGrowthHandler.youngToAdult * 20.0))) * ConfigHandler.SERVER.youngGrowthModifier.get();
+					double increment = ((DragonLevel.ADULT.size - DragonLevel.YOUNG.size) / ((DragonGrowthHandler.youngToAdult * 20.0))) * ServerConfig.youngGrowthModifier;
 					seconds = (missing / increment) / 20;
 				}else if(handler.getLevel() == DragonLevel.ADULT && handler.getSize() < 40){
 					age += 40 - handler.getLevel().size;
 
 					double missing = 40 - handler.getSize();
-					double increment = ((40 - DragonLevel.ADULT.size) / ((DragonGrowthHandler.adultToMax * 20.0))) * ConfigHandler.SERVER.adultGrowthModifier.get();
+					double increment = ((40 - DragonLevel.ADULT.size) / ((DragonGrowthHandler.adultToMax * 20.0))) * ServerConfig.adultGrowthModifier;
 					seconds = (missing / increment) / 20;
 				}else if(handler.getLevel() == DragonLevel.ADULT && handler.getSize() >= 40){
-					age += (int)(ConfigHandler.SERVER.maxGrowthSize.get() - handler.getLevel().size);
+					age += (int)(ServerConfig.maxGrowthSize - handler.getLevel().size);
 
-					double missing = ConfigHandler.SERVER.maxGrowthSize.get() - handler.getSize();
-					double increment = ((ConfigHandler.SERVER.maxGrowthSize.get() - 40) / ((DragonGrowthHandler.beyond * 20.0))) * ConfigHandler.SERVER.maxGrowthModifier.get();
+					double missing = ServerConfig.maxGrowthSize - handler.getSize();
+					double increment = ((ServerConfig.maxGrowthSize - 40) / ((DragonGrowthHandler.beyond * 20.0))) * ServerConfig.maxGrowthModifier;
 					seconds = (missing / increment) / 20;
 				}
 
@@ -163,9 +162,9 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 
 				ArrayList<Item> allowedList = new ArrayList<>();
 
-				List<Item> newbornList = ConfigUtils.parseConfigItemList(ConfigHandler.SERVER.growNewborn.get());
-				List<Item> youngList = ConfigUtils.parseConfigItemList(ConfigHandler.SERVER.growYoung.get());
-				List<Item> adultList = ConfigUtils.parseConfigItemList(ConfigHandler.SERVER.growAdult.get());
+				List<Item> newbornList = ServerConfig.growNewborn;
+				List<Item> youngList = ServerConfig.growYoung;
+				List<Item> adultList = ServerConfig.growAdult;
 
 				if(handler.getSize() < DragonLevel.YOUNG.size){
 					allowedList.addAll(newbornList);
@@ -219,7 +218,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 		});
 
 		//DSButton
-		if(ConfigHandler.CLIENT.inventoryToggle.get()){
+		if(ClientEvents.inventoryToggle){
 			addRenderableWidget(new DSImageButton(this.leftPos + (imageWidth - 28), (this.height / 2 - 30) + 50, 20, 18, 0, 0, 19, INVENTORY_TOGGLE_BUTTON, p_onPress_1_ -> {
 				Minecraft.getInstance().setScreen(new InventoryScreen(this.player));
 				NetworkHandler.CHANNEL.sendToServer(new OpenInventory());
@@ -231,7 +230,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 		}, new TranslatableComponent("ds.gui.sort")));
 
 		addRenderableWidget(new DSImageButton(this.leftPos + (imageWidth - 27), (this.height / 2) + 40, 18, 18, 0, 0, 18, SETTINGS_BUTTON, p_onPress_1_ -> {
-			Minecraft.getInstance().setScreen(new SettingsSideScreen(this, Minecraft.getInstance().options, new TranslatableComponent("ds.gui.tab_button.4")));
+			Minecraft.getInstance().setScreen(new ConfigSideSelectionScreen(this, Minecraft.getInstance().options, new TranslatableComponent("ds.gui.tab_button.4")));
 		}, new TranslatableComponent("ds.gui.tab_button.4")));
 	}
 
@@ -265,7 +264,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 			}else if(handler.getLevel() == DragonLevel.ADULT && handler.getSize() < 40){
 				progress = (float)((curSize - DragonLevel.ADULT.size) / (40 - DragonLevel.ADULT.size));
 			}else if(handler.getLevel() == DragonLevel.ADULT && handler.getSize() >= 40){
-				progress = (float)((curSize - 40) / (ConfigHandler.SERVER.maxGrowthSize.get() - 40));
+				progress = (float)((curSize - 40) / (ServerConfig.maxGrowthSize - 40));
 			}
 
 			int size = 34;

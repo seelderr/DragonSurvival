@@ -2,7 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.magic.abilities.Actives.Buff
 
 
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.core.particles.ParticleOptions;
@@ -64,18 +64,18 @@ public class ToughSkinAbility extends AoeBuffAbility{
 	}
 
 	public static double getDefence(int level){
-		return level * ConfigHandler.SERVER.toughSkinArmorValue.get();
+		return level * ServerConfig.toughSkinArmorValue;
 	}
 
 	@OnlyIn( Dist.CLIENT )
 	public ArrayList<Component> getLevelUpInfo(){
 		ArrayList<Component> list = super.getLevelUpInfo();
-		list.add(new TranslatableComponent("ds.skill.defence", "+" + ConfigHandler.SERVER.toughSkinArmorValue.get()));
+		list.add(new TranslatableComponent("ds.skill.defence", "+" + ServerConfig.toughSkinArmorValue));
 		return list;
 	}
 
 	@Override
 	public boolean isDisabled(){
-		return super.isDisabled() || !ConfigHandler.SERVER.toughSkin.get();
+		return super.isDisabled() || !ServerConfig.toughSkin;
 	}
 }

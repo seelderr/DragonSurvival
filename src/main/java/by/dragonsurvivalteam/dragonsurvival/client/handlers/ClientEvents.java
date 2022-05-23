@@ -18,7 +18,9 @@ import by.dragonsurvivalteam.dragonsurvival.common.magic.abilities.Passives.Ligh
 import by.dragonsurvivalteam.dragonsurvival.common.magic.abilities.Passives.WaterAbility;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.RequestClientData;
@@ -78,6 +80,12 @@ public class ClientEvents{
 	public static ConcurrentHashMap<Integer, Integer> dragonsJumpingTicks = new ConcurrentHashMap<>(20);
 	public static double mouseX = -1;
 	public static double mouseY = -1;
+	@ConfigOption( side = ConfigSide.CLIENT, category = "inventory", key = "dragonInventory", comment = "Should the default inventory be replaced as a dragon?" )
+	public static Boolean dragonInventory = true;
+	@ConfigOption( side = ConfigSide.CLIENT, category = "inventory", key = "dragonTabs", comment = "Should dragon tabs be added to the default player inventory?" )
+	public static Boolean dragonTabs = true;
+	@ConfigOption( side = ConfigSide.CLIENT, category = "inventory", key = "inventoryToggle", comment = "Should the buttons for toggeling between dragon and normaly inventory be added?" )
+	public static Boolean inventoryToggle = true;
 	private static ItemStack BOLAS;
 	private static boolean wasCaveDragon = false;
 	private static LiquidBlockRenderer prevFluidRenderer;
@@ -95,8 +103,8 @@ public class ClientEvents{
 		Player player = Minecraft.getInstance().player;
 
 		if(player != null && player.level != null){
-			NetworkHandler.CHANNEL.sendToServer(new SyncDragonClawRender(player.getId(), ConfigHandler.CLIENT.renderDragonClaws.get()));
-			NetworkHandler.CHANNEL.sendToServer(new SyncDragonSkinSettings(player.getId(), ConfigHandler.CLIENT.renderNewbornSkin.get(), ConfigHandler.CLIENT.renderYoungSkin.get(), ConfigHandler.CLIENT.renderAdultSkin.get()));
+			NetworkHandler.CHANNEL.sendToServer(new SyncDragonClawRender(player.getId(), ClientDragonRender.renderDragonClaws));
+			NetworkHandler.CHANNEL.sendToServer(new SyncDragonSkinSettings(player.getId(), ClientDragonRender.renderNewbornSkin, ClientDragonRender.renderYoungSkin, ClientDragonRender.renderAdultSkin));
 
 			DragonStateProvider.getCap(player).ifPresent(cap -> {
 				cap.getMagic().getAbilities();
@@ -112,7 +120,7 @@ public class ClientEvents{
 				DragonStateProvider.getCap(player).ifPresent(cap -> {
 					cap.hasUsedAltar = cap.hasUsedAltar || cap.isDragon();
 
-					if(!cap.hasUsedAltar && ConfigHandler.SERVER.startWithDragonChoice.get()){
+					if(!cap.hasUsedAltar && ServerConfig.startWithDragonChoice){
 						Minecraft.getInstance().setScreen(new DragonAltarGUI());
 						cap.hasUsedAltar = true;
 					}
@@ -125,7 +133,7 @@ public class ClientEvents{
 	public static void onOpenScreen(ScreenOpenEvent openEvent){
 		LocalPlayer player = Minecraft.getInstance().player;
 
-		if(!ConfigHandler.CLIENT.dragonInventory.get()){
+		if(!dragonInventory){
 			return;
 		}
 		if(Minecraft.getInstance().screen != null){
@@ -152,7 +160,7 @@ public class ClientEvents{
 		if(sc instanceof InventoryScreen){
 			InventoryScreen screen = (InventoryScreen)sc;
 
-			if(ConfigHandler.CLIENT.dragonTabs.get()){
+			if(dragonTabs){
 				initGuiEvent.addListener(new TabButton(screen.getGuiLeft(), screen.getGuiTop() - 28, 0, screen){
 					@Override
 					public void renderButton(PoseStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_){
@@ -186,7 +194,7 @@ public class ClientEvents{
 				});
 			}
 
-			if(ConfigHandler.CLIENT.inventoryToggle.get()){
+			if(inventoryToggle){
 				initGuiEvent.addListener(new ImageButton(screen.getGuiLeft() + 128, screen.height / 2 - 22, 20, 18, 20, 0, 19, DragonScreen.INVENTORY_TOGGLE_BUTTON, p_onPress_1_ -> {
 					NetworkHandler.CHANNEL.sendToServer(new OpenDragonInventory());
 				}){
@@ -207,7 +215,7 @@ public class ClientEvents{
 		if(sc instanceof CreativeModeInventoryScreen){
 			CreativeModeInventoryScreen screen = (CreativeModeInventoryScreen)sc;
 
-			if(ConfigHandler.CLIENT.inventoryToggle.get()){
+			if(inventoryToggle){
 				initGuiEvent.addListener(new ImageButton(screen.getGuiLeft() + 128 + 20, screen.height / 2 - 50, 20, 18, 20, 0, 19, DragonScreen.INVENTORY_TOGGLE_BUTTON, p_onPress_1_ -> {
 					NetworkHandler.CHANNEL.sendToServer(new OpenDragonInventory());
 				}){
@@ -299,7 +307,7 @@ public class ClientEvents{
 		Minecraft minecraft = Minecraft.getInstance();
 		LocalPlayer player = minecraft.player;
 		DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
-			if(playerStateHandler.getType() == DragonType.CAVE && ConfigHandler.SERVER.bonuses.get() && ConfigHandler.SERVER.caveLavaSwimming.get()){
+			if(playerStateHandler.getType() == DragonType.CAVE && ServerConfig.bonuses && ServerConfig.caveLavaSwimming){
 				if(!wasCaveDragon){
 					if(player.hasEffect(DragonEffects.LAVA_VISION)){
 						RenderType lavaType = RenderType.translucent();
@@ -351,8 +359,8 @@ public class ClientEvents{
 		DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
 			int rightHeight = 0;
 
-			//            if (playerStateHandler.getType() == DragonType.SEA && ConfigHandler.SERVER.bonuses.get() && ConfigHandler.SERVER.seaSwimmingBonuses.get()) event.setCanceled(true);
-			if(playerStateHandler.getDebuffData().timeWithoutWater > 0 && playerStateHandler.getType() == DragonType.SEA && ConfigHandler.SERVER.penalties.get() && ConfigHandler.SERVER.seaTicksWithoutWater.get() != 0){
+			//            if (playerStateHandler.getType() == DragonType.SEA && ServerConfig.bonuses && ServerConfig.seaSwimmingBonuses) event.setCanceled(true);
+			if(playerStateHandler.getDebuffData().timeWithoutWater > 0 && playerStateHandler.getType() == DragonType.SEA && ServerConfig.penalties && ServerConfig.seaTicksWithoutWater != 0){
 				RenderSystem.enableBlend();
 				RenderSystem.setShaderTexture(0, DRAGON_HUD);
 
@@ -361,7 +369,7 @@ public class ClientEvents{
 					((ForgeIngameGui)Minecraft.getInstance().gui).right_height += 10;
 				}
 
-				int maxTimeWithoutWater = ConfigHandler.SERVER.seaTicksWithoutWater.get();
+				int maxTimeWithoutWater = ServerConfig.seaTicksWithoutWater;
 				DragonAbility waterAbility = playerStateHandler.getMagic().getAbility(DragonAbilities.WATER);
 
 				if(waterAbility != null){
@@ -388,7 +396,7 @@ public class ClientEvents{
 				RenderSystem.setShaderTexture(0, Gui.GUI_ICONS_LOCATION);
 				RenderSystem.disableBlend();
 			}
-			if(playerStateHandler.getLavaAirSupply() < ConfigHandler.SERVER.caveLavaSwimmingTicks.get() && playerStateHandler.getType() == DragonType.CAVE && ConfigHandler.SERVER.bonuses.get() && ConfigHandler.SERVER.caveLavaSwimmingTicks.get() != 0 && ConfigHandler.SERVER.caveLavaSwimming.get()){
+			if(playerStateHandler.getLavaAirSupply() < ServerConfig.caveLavaSwimmingTicks && playerStateHandler.getType() == DragonType.CAVE && ServerConfig.bonuses && ServerConfig.caveLavaSwimmingTicks != 0 && ServerConfig.caveLavaSwimming){
 				RenderSystem.enableBlend();
 				RenderSystem.setShaderTexture(0, DRAGON_HUD);
 
@@ -399,8 +407,8 @@ public class ClientEvents{
 
 				final int left = Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 + 91;
 				final int top = Minecraft.getInstance().getWindow().getGuiScaledHeight() - rightHeight;
-				final int full = Mth.ceil((double)(playerStateHandler.getLavaAirSupply() - 2) * 10.0D / ConfigHandler.SERVER.caveLavaSwimmingTicks.get());
-				final int partial = Mth.ceil((double)playerStateHandler.getLavaAirSupply() * 10.0D / ConfigHandler.SERVER.caveLavaSwimmingTicks.get()) - full;
+				final int full = Mth.ceil((double)(playerStateHandler.getLavaAirSupply() - 2) * 10.0D / ServerConfig.caveLavaSwimmingTicks);
+				final int partial = Mth.ceil((double)playerStateHandler.getLavaAirSupply() * 10.0D / ServerConfig.caveLavaSwimmingTicks) - full;
 
 				for(int i = 0; i < full + partial; ++i){
 					Minecraft.getInstance().gui.blit(mStack, left - i * 8 - 9, top, (i < full ? 0 : 9), 27, 9, 9);
@@ -409,7 +417,7 @@ public class ClientEvents{
 				RenderSystem.setShaderTexture(0, Gui.GUI_ICONS_LOCATION);
 				RenderSystem.disableBlend();
 			}
-			if(playerStateHandler.getDebuffData().timeInDarkness > 0 && playerStateHandler.getType() == DragonType.FOREST && ConfigHandler.SERVER.penalties.get() && ConfigHandler.SERVER.forestStressTicks.get() != 0 && !player.hasEffect(DragonEffects.STRESS)){
+			if(playerStateHandler.getDebuffData().timeInDarkness > 0 && playerStateHandler.getType() == DragonType.FOREST && ServerConfig.penalties && ServerConfig.forestStressTicks != 0 && !player.hasEffect(DragonEffects.STRESS)){
 				RenderSystem.enableBlend();
 				RenderSystem.setShaderTexture(0, DRAGON_HUD);
 
@@ -418,7 +426,7 @@ public class ClientEvents{
 					((ForgeIngameGui)Minecraft.getInstance().gui).right_height += 10;
 				}
 
-				int maxTimeInDarkness = ConfigHandler.SERVER.forestStressTicks.get();
+				int maxTimeInDarkness = ServerConfig.forestStressTicks;
 				DragonAbility lightInDarkness = playerStateHandler.getMagic().getAbility(DragonAbilities.LIGHT_IN_DARKNESS);
 
 				if(lightInDarkness != null){
@@ -440,7 +448,7 @@ public class ClientEvents{
 				RenderSystem.disableBlend();
 			}
 
-			if(playerStateHandler.getDebuffData().timeInRain > 0 && playerStateHandler.getType() == DragonType.CAVE && ConfigHandler.SERVER.penalties.get() && ConfigHandler.SERVER.caveRainDamage.get() != 0.0){
+			if(playerStateHandler.getDebuffData().timeInRain > 0 && playerStateHandler.getType() == DragonType.CAVE && ServerConfig.penalties && ServerConfig.caveRainDamage != 0.0){
 				RenderSystem.enableBlend();
 				RenderSystem.setShaderTexture(0, DRAGON_HUD);
 

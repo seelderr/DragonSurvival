@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client.emotes;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.emotes.SyncEmote;
 import net.minecraft.client.CameraType;
@@ -94,7 +94,7 @@ public class EmoteHandler{
 							}
 						}
 
-						if(ConfigHandler.SERVER.canMoveInEmote.get()){
+						if(ServerConfig.canMoveInEmote){
 							if(emote.animation != null && !emote.animation.isEmpty()){
 								AttributeInstance attributeInstance = player.getAttribute(Attributes.MOVEMENT_SPEED);
 								AttributeModifier noMove = new AttributeModifier(EMOTE_NO_MOVE, "EMOTE", -attributeInstance.getValue(), AttributeModifier.Operation.ADDITION);
@@ -107,7 +107,7 @@ public class EmoteHandler{
 					}
 				}
 
-				if(Arrays.stream(cap.getEmotes().currentEmotes).noneMatch(Objects::nonNull) && ConfigHandler.SERVER.canMoveInEmote.get()){
+				if(Arrays.stream(cap.getEmotes().currentEmotes).noneMatch(Objects::nonNull) && ServerConfig.canMoveInEmote){
 					AttributeInstance attributeInstance = player.getAttribute(Attributes.MOVEMENT_SPEED);
 					AttributeModifier noMove = new AttributeModifier(EMOTE_NO_MOVE, "EMOTE", -attributeInstance.getValue(), AttributeModifier.Operation.ADDITION);
 

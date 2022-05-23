@@ -32,13 +32,15 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.client.gui.GuiUtils;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
-import net.minecraftforge.common.ForgeConfigSpec.ValueSpec;
 import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.codehaus.plexus.util.StringUtils;
 
+import java.lang.reflect.Field;
 import java.util.*;
 
 public class ResourceTextField extends EditBox implements TooltipAccessor{
@@ -52,23 +54,25 @@ public class ResourceTextField extends EditBox implements TooltipAccessor{
 	boolean isBiome;
 	boolean isTag;
 	private ResourceTextFieldOption option;
-	private ValueSpec spec;
+	private String optionKey;
 	private ResourceEntry stack;
 	private DropdownList list;
 	private AbstractWidget renderButton;
 
-	public ResourceTextField(ValueSpec spec, ResourceTextFieldOption option, int pX, int pY, int pWidth, int pHeight, Component pMessage){
+	public ResourceTextField(String optionKey, ResourceTextFieldOption option, int pX, int pY, int pWidth, int pHeight, Component pMessage){
 		super(Minecraft.getInstance().font, pX, pY, pWidth, pHeight, pMessage);
 		setBordered(false);
 		this.option = option;
-		this.spec = spec;
+		this.optionKey = optionKey;
 
-		isItem = ConfigHandler.isItemPredicate(spec::test);
-		isBlock = ConfigHandler.isBlockPredicate(spec::test);
-		isEntity = ConfigHandler.isEntityPredicate(spec::test);
-		isEffect = ConfigHandler.isEffectPredicate(spec::test);
-		isBiome = ConfigHandler.isBiomePredicate(spec::test);
-		isTag = ConfigHandler.isTagPredicate(spec::test);
+		Field fe = ConfigHandler.configFields.get(optionKey);
+
+		isItem = ConfigHandler.isType(fe, Item.class);
+		isBlock = ConfigHandler.isType(fe, Block.class);
+		isEntity = ConfigHandler.isType(fe, EntityType.class);
+		isEffect = ConfigHandler.isType(fe, MobEffect.class);
+		isBiome = ConfigHandler.isType(fe, Biome.class);
+		isTag = true;
 		update();
 	}
 
@@ -102,11 +106,8 @@ public class ResourceTextField extends EditBox implements TooltipAccessor{
 			list.children().clear();
 
 		String value = getValue().isEmpty() && option != null ? option.getter.apply(Minecraft.getInstance().options) : getValue();
-		String type = (isItem ? "item" : isBlock ? "block" : isEntity ? "entity" : isEffect ? "effect" : isBiome ? "biome" : "") + ":";
-		String tagType = "tag:";
 
-		String resource = value.toLowerCase(Locale.ROOT).startsWith(type) ? value.substring(type.length()) : value;
-		resource = resource.toLowerCase(Locale.ROOT).startsWith(tagType) ? resource.substring(tagType.length()) : resource;
+		String resource = value;
 		String start = value.substring(0, value.length() - resource.length());
 
 		while(StringUtils.countMatches(resource, ":") > 1)
@@ -142,23 +143,18 @@ public class ResourceTextField extends EditBox implements TooltipAccessor{
 
 		if(isItem)
 			SharedSuggestionProvider.suggestResource(ForgeRegistries.ITEMS.getKeys(), builder);
+
 		if(isBlock)
 			SharedSuggestionProvider.suggestResource(ForgeRegistries.BLOCKS.getKeys(), builder);
+
 		if(isEntity)
 			SharedSuggestionProvider.suggestResource(ForgeRegistries.ENTITIES.getKeys(), builder);
+
 		if(isEffect)
 			SharedSuggestionProvider.suggestResource(ForgeRegistries.MOB_EFFECTS.getKeys(), builder);
+
 		if(isBiome)
 			SharedSuggestionProvider.suggestResource(ForgeRegistries.BIOMES.getKeys(), builder);
-
-		if(isTag){
-			if(isBlock)
-				SharedSuggestionProvider.suggestResource(ForgeRegistries.BLOCKS.getKeys(), builder);
-			if(isItem)
-				SharedSuggestionProvider.suggestResource(ForgeRegistries.ITEMS.getKeys(), builder);
-			if(isEntity)
-				SharedSuggestionProvider.suggestResource(ForgeRegistries.ENTITIES.getKeys(), builder);
-		}
 
 		Suggestions sgs = builder.build();
 		List<String> suggestions = new ArrayList<>(sgs.getList().stream().map(Suggestion::getText).toList());
@@ -181,48 +177,29 @@ public class ResourceTextField extends EditBox implements TooltipAccessor{
 			if(isTag){
 				if(isItem)
 					try{
-						results.add(new ResourceEntry("tag:" + value, Objects.requireNonNull(ForgeRegistries.ITEMS.tags().getTag(TagKey.create(Registry.ITEM_REGISTRY, location)).stream().map(ItemStack::new).toList())));
-					}catch(Exception ignored){
-					}
+						results.add(new ResourceEntry(value, Objects.requireNonNull(ForgeRegistries.ITEMS.tags().getTag(TagKey.create(Registry.ITEM_REGISTRY, location)).stream().map(ItemStack::new).toList()), true));
+					}catch(Exception ignored){}
 
 				if(isBlock)
 					try{
-						results.add(new ResourceEntry("tag:" + value, Objects.requireNonNull(ForgeRegistries.BLOCKS.tags().getTag(TagKey.create(Registry.BLOCK_REGISTRY, location))).stream().map(s -> new ItemStack(s)).toList()));
-					}catch(Exception ignored){
-					}
+						results.add(new ResourceEntry(value, Objects.requireNonNull(ForgeRegistries.BLOCKS.tags().getTag(TagKey.create(Registry.BLOCK_REGISTRY, location))).stream().map(s -> new ItemStack(s)).toList(), true));
+					}catch(Exception ignored){}
 
 				if(isEntity)
 					try{
-						results.add(new ResourceEntry("tag:" + value, Objects.requireNonNull(ForgeRegistries.ENTITIES.tags().getTag(TagKey.create(Registry.ENTITY_TYPE_REGISTRY, location))).stream().map(s -> new ItemStack(ForgeSpawnEggItem.fromEntityType(s))).toList()));
-					}catch(Exception ignored){
-					}
-
-
-//				if (isBiome) {
-//					try {
-//						Set<ResourceKey<Biome>> biomes = BiomeDictionary.getBiomes(BiomeDictionaryHelper.getType(value));
-//						results.addAll(biomes.stream().map((bi) -> {
-//							try{
-//								Biome biome = ForgeRegistries.BIOMES.getValue(bi.location());
-//								biome.getGenerationSettings().sur
-//								return new ResourceEntry("tag:" + value, Collections.singletonList(new ItemStack(biome.getGenerationSettings().get().getTopMaterial().getBlock())));
-//							}catch(Exception ignored){
-//							}
-//							return null;
-//						}).toList());
-//					} catch (Exception ignored) {}
-//				}
+						results.add(new ResourceEntry(value, Objects.requireNonNull(ForgeRegistries.ENTITIES.tags().getTag(TagKey.create(Registry.ENTITY_TYPE_REGISTRY, location))).stream().map(s -> new ItemStack(ForgeSpawnEggItem.fromEntityType(s))).toList(), true));
+					}catch(Exception ignored){}
 			}
 
 			if(isItem)
 				try{
-					results.add(new ResourceEntry("item:" + value, Collections.singletonList(new ItemStack(new ItemParser(new StringReader(value), false).parse().getItem()))));
+					results.add(new ResourceEntry(value, Collections.singletonList(new ItemStack(new ItemParser(new StringReader(value), false).parse().getItem()))));
 				}catch(Exception ignored){
 				}
 
 			if(isBlock)
 				try{
-					results.add(new ResourceEntry("block:" + value, Collections.singletonList(new ItemStack(Objects.requireNonNull(new BlockStateParser(new StringReader(value), false).parse(false).getState()).getBlock()))));
+					results.add(new ResourceEntry(value, Collections.singletonList(new ItemStack(Objects.requireNonNull(new BlockStateParser(new StringReader(value), false).parse(false).getState()).getBlock()))));
 				}catch(Exception ignored){
 				}
 
@@ -233,9 +210,9 @@ public class ResourceTextField extends EditBox implements TooltipAccessor{
 						SpawnEggItem item = ForgeSpawnEggItem.fromEntityType(entityType);
 
 						if(item != null){
-							results.add(new ResourceEntry("entity:" + value, Collections.singletonList(new ItemStack(item))));
+							results.add(new ResourceEntry(value, Collections.singletonList(new ItemStack(item))));
 						}else{
-							results.add(new ResourceEntry("entity:" + value, Collections.singletonList(new ItemStack(new ItemParser(new StringReader(value), false).parse().getItem()))));
+							results.add(new ResourceEntry(value, Collections.singletonList(new ItemStack(new ItemParser(new StringReader(value), false).parse().getItem()))));
 						}
 					}
 				}catch(Exception ignored){
@@ -248,16 +225,9 @@ public class ResourceTextField extends EditBox implements TooltipAccessor{
 					ItemStack stack = new ItemStack(Items.POTION);
 					PotionUtils.setPotion(stack, Potions.WATER);
 					PotionUtils.setCustomEffects(stack, Collections.singletonList(instance));
-					results.add(new ResourceEntry("effect:" + value, Collections.singletonList(stack)));
+					results.add(new ResourceEntry(value, Collections.singletonList(stack)));
 				}catch(Exception ignored){
 				}
-			//TODO
-			//			if (isBiome) {
-			//				try {
-			//					Biome biome = ForgeRegistries.BIOMES.getValue(location);
-			//					results.add(new ResourceEntry("biome:"+value, Collections.singletonList(new ItemStack(biome.getGenerationSettings().getSurfaceBuilderConfig().getTopMaterial().getBlock()))));
-			//				} catch (Exception ignored) {}
-			//			}
 		}
 		results.forEach(s -> {
 			if(s.displayItems != null && !s.displayItems.isEmpty()){
@@ -321,16 +291,19 @@ public class ResourceTextField extends EditBox implements TooltipAccessor{
 				@Override
 				public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
 					this.active = this.visible = false;
-					list.visible = ResourceTextField.this.visible;
 
-					if(finalHasBorder)
-						RenderSystem.enableScissor(0, (int)(32 * Minecraft.getInstance().getWindow().getGuiScale()), Minecraft.getInstance().getWindow().getScreenWidth(), Minecraft.getInstance().getWindow().getScreenHeight() - (int)(32 * Minecraft.getInstance().getWindow().getGuiScale()) * 2);
+					if(list != null){
+						list.visible = ResourceTextField.this.visible;
 
-					if(list.visible)
-						list.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
+						if(finalHasBorder)
+							RenderSystem.enableScissor(0, (int)(32 * Minecraft.getInstance().getWindow().getGuiScale()), Minecraft.getInstance().getWindow().getScreenWidth(), Minecraft.getInstance().getWindow().getScreenHeight() - (int)(32 * Minecraft.getInstance().getWindow().getGuiScale()) * 2);
 
-					if(finalHasBorder)
-						RenderSystem.disableScissor();
+						if(list.visible)
+							list.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
+
+						if(finalHasBorder)
+							RenderSystem.disableScissor();
+					}
 				}
 			};
 			screen.children.add(renderButton);
@@ -361,11 +334,6 @@ public class ResourceTextField extends EditBox implements TooltipAccessor{
 
 		this.x += 25;
 		this.y += 6;
-
-		if(spec != null && !spec.test(Arrays.asList(getValue())))
-			setTextColor(DyeColor.RED.getTextColor());
-		else
-			setTextColor(14737632);
 
 		super.renderButton(pPoseStack, pMouseX, pMouseY, pPartialTicks);
 		setTextColor(14737632);

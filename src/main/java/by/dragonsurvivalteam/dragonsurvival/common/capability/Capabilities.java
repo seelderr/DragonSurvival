@@ -8,7 +8,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonSta
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.GenericCapabilityProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.VillageRelationshipsProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonModifiers;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.RequestClientData;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.CompleteDataSync;
@@ -138,7 +138,7 @@ public class Capabilities{
 		VillageRelationshipsProvider.getVillageRelationships(player).ifPresent(villageRelationShips -> {
 			VillageRelationshipsProvider.getVillageRelationships(original).ifPresent(old -> {
 				villageRelationShips.readNBT(old.writeNBT());
-				if(ConfigHandler.COMMON.preserveEvilDragonEffectAfterDeath.get() && villageRelationShips.evilStatusDuration > 0){
+				if(ServerConfig.preserveEvilDragonEffectAfterDeath && villageRelationShips.evilStatusDuration > 0){
 					player.addEffect(new EffectInstance2(DragonEffects.EVIL_DRAGON, villageRelationShips.evilStatusDuration));
 				}
 			});

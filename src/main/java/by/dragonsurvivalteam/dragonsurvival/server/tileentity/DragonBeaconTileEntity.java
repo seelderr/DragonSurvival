@@ -5,19 +5,16 @@ import by.dragonsurvivalteam.dragonsurvival.common.EffectInstance2;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.DragonBeacon;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.List;
 import java.util.Random;
@@ -63,29 +60,23 @@ public class DragonBeaconTileEntity extends BaseBlockTileEntity{
 				List<Player> dragons = pLevel.getEntitiesOfClass(Player.class, new AABB(pPos).inflate(50).expandTowards(0, pLevel.getMaxBuildHeight(), 0), DragonUtils::isDragon);
 				switch(pBlockEntity.type){
 					case PEACE -> dragons.forEach(playerEntity -> {
-						ConfigHandler.COMMON.peaceBeaconEffects.get().forEach(s -> {
-							String ts = s.replace("effect:", "");
-							MobEffect effect = ForgeRegistries.MOB_EFFECTS.getValue(new ResourceLocation(ts));
+						ServerConfig.peaceBeaconEffects.forEach(effect -> {
 							if(effect != null){
-								playerEntity.addEffect(new EffectInstance2(effect, Functions.secondsToTicks(ConfigHandler.COMMON.minutesOfDragonEffect.get()) + 5));
+								playerEntity.addEffect(new EffectInstance2(effect, Functions.secondsToTicks(ServerConfig.minutesOfDragonEffect) + 5));
 							}
 						});
 					});
 					case MAGIC -> dragons.forEach(playerEntity -> {
-						ConfigHandler.COMMON.magicBeaconEffects.get().forEach(s -> {
-							String ts = s.replace("effect:", "");
-							MobEffect effect = ForgeRegistries.MOB_EFFECTS.getValue(new ResourceLocation(ts));
+						ServerConfig.magicBeaconEffects.forEach(effect -> {
 							if(effect != null){
-								playerEntity.addEffect(new EffectInstance2(effect, Functions.secondsToTicks(ConfigHandler.COMMON.minutesOfDragonEffect.get()) + 5));
+								playerEntity.addEffect(new EffectInstance2(effect, Functions.secondsToTicks(ServerConfig.minutesOfDragonEffect) + 5));
 							}
 						});
 					});
 					case FIRE -> dragons.forEach(playerEntity -> {
-						ConfigHandler.COMMON.fireBeaconEffects.get().forEach(s -> {
-							String ts = s.replace("effect:", "");
-							MobEffect effect = ForgeRegistries.MOB_EFFECTS.getValue(new ResourceLocation(ts));
+						ServerConfig.fireBeaconEffects.forEach(effect -> {
 							if(effect != null){
-								playerEntity.addEffect(new EffectInstance2(effect, Functions.secondsToTicks(ConfigHandler.COMMON.minutesOfDragonEffect.get()) + 5));
+								playerEntity.addEffect(new EffectInstance2(effect, Functions.secondsToTicks(ServerConfig.minutesOfDragonEffect) + 5));
 							}
 						});
 					});

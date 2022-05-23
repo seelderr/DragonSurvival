@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.common.magic.common;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -112,16 +112,16 @@ public abstract class DragonAbility{
 	}
 
 	public boolean isDisabled(){
-		if(!ConfigHandler.SERVER.dragonAbilities.get()){
+		if(!ServerConfig.dragonAbilities){
 			return true;
 		}
-		if(type == DragonType.CAVE && !ConfigHandler.SERVER.caveDragonAbilities.get()){
+		if(type == DragonType.CAVE && !ServerConfig.caveDragonAbilities){
 			return true;
 		}
-		if(type == DragonType.SEA && !ConfigHandler.SERVER.seaDragonAbilities.get()){
+		if(type == DragonType.SEA && !ServerConfig.seaDragonAbilities){
 			return true;
 		}
-		return type == DragonType.FOREST && !ConfigHandler.SERVER.forestDragonAbilities.get();
+		return type == DragonType.FOREST && !ServerConfig.forestDragonAbilities;
 	}
 
 	public int getMaxLevel(){

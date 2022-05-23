@@ -4,7 +4,6 @@ package by.dragonsurvivalteam.dragonsurvival.network.config;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
-import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
@@ -18,22 +17,17 @@ import java.util.function.Supplier;
 public class SyncBooleanConfig implements IMessage<SyncBooleanConfig>{
 	public String key;
 	public boolean value;
-	public String type;
 
 	public SyncBooleanConfig(){}
 
-	public SyncBooleanConfig(String key, boolean value, String type){
-
+	public SyncBooleanConfig(String key, boolean value){
 		this.key = key;
 		this.value = value;
-		this.type = type;
 	}
 
 	@Override
 
 	public void encode(SyncBooleanConfig message, FriendlyByteBuf buffer){
-
-		buffer.writeUtf(message.type);
 		buffer.writeBoolean(message.value);
 		buffer.writeUtf(message.key);
 	}
@@ -41,11 +35,9 @@ public class SyncBooleanConfig implements IMessage<SyncBooleanConfig>{
 	@Override
 
 	public SyncBooleanConfig decode(FriendlyByteBuf buffer){
-
-		String type = buffer.readUtf();
 		boolean value = buffer.readBoolean();
 		String key = buffer.readUtf();
-		return new SyncBooleanConfig(key, value, type);
+		return new SyncBooleanConfig(key, value);
 	}
 
 	@Override
@@ -56,21 +48,11 @@ public class SyncBooleanConfig implements IMessage<SyncBooleanConfig>{
 			if(entity == null || !entity.hasPermissions(2)){
 				return;
 			}
-			NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new SyncBooleanConfig(message.key, message.value, message.type));
+			NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new SyncBooleanConfig(message.key, message.value));
 		}
 
-		UnmodifiableConfig spec = message.type.equalsIgnoreCase("server") ? ConfigHandler.serverSpec.getValues() : ConfigHandler.commonSpec.getValues();
-		Object ob = spec.get(message.type + "." + message.key);
-
-		if(ob instanceof BooleanValue){
-
-			BooleanValue booleanValue = (BooleanValue)ob;
-
-			try{
-				booleanValue.set(message.value);
-				booleanValue.save();
-			}catch(Exception ignored){
-			}
+		if(ConfigHandler.serverSpec.getValues().get("server." + message.key) instanceof BooleanValue value){
+			ConfigHandler.updateConfigValue(value, message.value);
 		}
 	}
 }

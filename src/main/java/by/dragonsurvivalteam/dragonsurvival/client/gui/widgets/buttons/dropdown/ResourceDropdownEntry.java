@@ -97,12 +97,19 @@ public class ResourceDropdownEntry extends DropdownEntry{
 							Gui.fill(mStack, x, y, x + width, y + height, color);
 
 							String text = entry.id;
-							Minecraft.getInstance().font.drawShadow(mStack, new TextComponent(Minecraft.getInstance().font.substrByWidth(new TextComponent(text), width - 20).getString()), x + 25, y + 5, DyeColor.WHITE.getTextColor());
+							Minecraft.getInstance().font.drawShadow(mStack, new TextComponent( Minecraft.getInstance().font.substrByWidth(new TextComponent(text), width - 20).getString()), x + 25, y + 5, DyeColor.WHITE.getTextColor());
 
 							if(!entry.isEmpty()){
 								ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
 								itemRenderer.blitOffset = 100;
 								itemRenderer.renderAndDecorateItem(entry.getDisplayItem(), x + 3, y + 1);
+
+								if(entry.tag){
+									mStack.translate(0, 0, 200);
+									Minecraft.getInstance().font.drawShadow(mStack, new TextComponent("#"), x + 14, y + 10, DyeColor.WHITE.getTextColor());
+									mStack.translate(0, 0, -200);
+								}
+
 								itemRenderer.blitOffset = 0;
 
 								if(isHovered){

@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.util;
 
-import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
 
 import java.util.List;

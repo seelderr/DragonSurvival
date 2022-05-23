@@ -3,7 +3,6 @@ package by.dragonsurvivalteam.dragonsurvival.network.config;
 
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
-import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
@@ -16,22 +15,16 @@ import java.util.function.Supplier;
 public class SyncNumberConfig implements IMessage<SyncNumberConfig>{
 	public String key;
 	public Double value;
-	public String type;
 
 	public SyncNumberConfig(){}
 
-	public SyncNumberConfig(String key, double value, String type){
-
+	public SyncNumberConfig(String key, double value){
 		this.key = key;
 		this.value = value;
-		this.type = type;
 	}
 
 	@Override
-
 	public void encode(SyncNumberConfig message, FriendlyByteBuf buffer){
-
-		buffer.writeUtf(message.type);
 		buffer.writeDouble(message.value);
 		buffer.writeUtf(message.key);
 	}
@@ -39,11 +32,9 @@ public class SyncNumberConfig implements IMessage<SyncNumberConfig>{
 	@Override
 
 	public SyncNumberConfig decode(FriendlyByteBuf buffer){
-
-		String type = buffer.readUtf();
 		Double value = buffer.readDouble();
 		String key = buffer.readUtf();
-		return new SyncNumberConfig(key, value, type);
+		return new SyncNumberConfig(key, value);
 	}
 
 	@Override
@@ -54,35 +45,16 @@ public class SyncNumberConfig implements IMessage<SyncNumberConfig>{
 			return;
 		}
 
-		UnmodifiableConfig spec = message.type.equalsIgnoreCase("server") ? ConfigHandler.serverSpec.getValues() : ConfigHandler.commonSpec.getValues();
-		Object ob = spec.get(message.type + "." + message.key);
+		Object ob = ConfigHandler.serverSpec.getValues().get("server." + message.key);
 
-		if(ob instanceof IntValue){
+		if(ob instanceof IntValue value){
+			ConfigHandler.updateConfigValue(value, message.value.intValue());
 
-			IntValue value1 = (IntValue)ob;
-			try{
-				value1.set(message.value.intValue());
-				value1.save();
-			}catch(Exception ignored){
-			}
-		}else if(ob instanceof DoubleValue){
+		}else if(ob instanceof DoubleValue value){
+			ConfigHandler.updateConfigValue(value, message.value.longValue());
 
-			DoubleValue value1 = (DoubleValue)ob;
-
-			try{
-				value1.set(message.value);
-				value1.save();
-			}catch(Exception ignored){
-			}
-		}else if(ob instanceof LongValue){
-
-			LongValue value1 = (LongValue)ob;
-
-			try{
-				value1.set(message.value.longValue());
-				value1.save();
-			}catch(Exception ignored){
-			}
+		}else if(ob instanceof LongValue value){
+			ConfigHandler.updateConfigValue(value, message.value.longValue());
 		}
 	}
 }

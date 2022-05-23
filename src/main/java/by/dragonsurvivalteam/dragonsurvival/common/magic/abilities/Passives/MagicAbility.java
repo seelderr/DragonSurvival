@@ -4,7 +4,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.magic.abilities.Passives;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ManaHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.common.PassiveDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
@@ -54,13 +54,13 @@ public class MagicAbility extends PassiveDragonAbility{
 	@Override
 
 	public boolean isDisabled(){
-		if(type == DragonType.FOREST && !ConfigHandler.SERVER.forestMagic.get()){
+		if(type == DragonType.FOREST && !ServerConfig.forestMagic){
 			return true;
 		}
-		if(type == DragonType.SEA && !ConfigHandler.SERVER.seaMagic.get()){
+		if(type == DragonType.SEA && !ServerConfig.seaMagic){
 			return true;
 		}
-		if(type == DragonType.CAVE && !ConfigHandler.SERVER.caveMagic.get()){
+		if(type == DragonType.CAVE && !ServerConfig.caveMagic){
 			return true;
 		}
 

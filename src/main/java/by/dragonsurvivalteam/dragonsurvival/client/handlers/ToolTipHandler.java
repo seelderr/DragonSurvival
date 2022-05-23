@@ -8,7 +8,8 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.SkillProg
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -38,6 +39,20 @@ import java.util.List;
 public class ToolTipHandler{
 	private static final ResourceLocation tooltip_1 = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/magic_tips_0.png");
 	private static final ResourceLocation tooltip_2 = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/magic_tips_1.png");
+
+	@ConfigOption( side = ConfigSide.CLIENT, category = "tooltips", key = "tooltipChanges", comment = "Should the mod be allowed ot change the color and appearance of tooltips?" )
+	public static Boolean tooltipChanges = true;
+
+	@ConfigOption( side = ConfigSide.CLIENT, category = "tooltips", key = "dragonFoodTooltips", comment = "Should dragon foods have their tooltip color changed to show which type of dragon can consume it?" )
+	public static Boolean dragonFoodTooltips = true;
+
+	@ConfigOption( side = ConfigSide.CLIENT, category = "tooltips", key = "helpTooltips", comment = "Should the effect of the help tooltips be enabled?" )
+	public static Boolean helpTooltips = true;
+
+	@ConfigOption( side = ConfigSide.CLIENT, category = "tooltips", key = "alwaysShowHelpTooltip", comment = "Always show the help tooltip border" )
+	public static Boolean alwaysShowHelpTooltip = false;
+
+
 	private static boolean blink = false;
 	private static int tick = 0;
 
@@ -215,13 +230,13 @@ public class ToolTipHandler{
 	}
 
 	private static boolean isHelpText(){
-		if(!ConfigHandler.CLIENT.tooltipChanges.get() || !ConfigHandler.CLIENT.helpTooltips.get()){
+		if(!tooltipChanges || !helpTooltips){
 			return false;
 		}
 		if(Minecraft.getInstance().level == null){
 			return false;
 		}
-		if(ConfigHandler.CLIENT.alwaysShowHelpTooltip.get()){
+		if(alwaysShowHelpTooltip){
 			return true;
 		}
 		if(Minecraft.getInstance().screen == null){
@@ -239,7 +254,7 @@ public class ToolTipHandler{
 
 	@SubscribeEvent
 	public static void onTooltipColorEvent(RenderTooltipEvent.Color event){
-		if(!ConfigHandler.CLIENT.tooltipChanges.get()){
+		if(!tooltipChanges){
 			return;
 		}
 		boolean render = isHelpText();
@@ -247,9 +262,9 @@ public class ToolTipHandler{
 
 		ItemStack stack = event.getItemStack();
 
-		boolean isSeaFood = ConfigHandler.CLIENT.dragonFoodTooltips.get() && !stack.isEmpty() && DragonFoodHandler.getSafeEdibleFoods(DragonType.SEA).contains(stack.getItem());
-		boolean isForestFood = ConfigHandler.CLIENT.dragonFoodTooltips.get() && !stack.isEmpty() && DragonFoodHandler.getSafeEdibleFoods(DragonType.FOREST).contains(stack.getItem());
-		boolean isCaveFood = ConfigHandler.CLIENT.dragonFoodTooltips.get() && !stack.isEmpty() && DragonFoodHandler.getSafeEdibleFoods(DragonType.CAVE).contains(stack.getItem());
+		boolean isSeaFood = dragonFoodTooltips && !stack.isEmpty() && DragonFoodHandler.getSafeEdibleFoods(DragonType.SEA).contains(stack.getItem());
+		boolean isForestFood = dragonFoodTooltips && !stack.isEmpty() && DragonFoodHandler.getSafeEdibleFoods(DragonType.FOREST).contains(stack.getItem());
+		boolean isCaveFood = dragonFoodTooltips && !stack.isEmpty() && DragonFoodHandler.getSafeEdibleFoods(DragonType.CAVE).contains(stack.getItem());
 		int foodCount = (isSeaFood ? 1 : 0) + (isForestFood ? 1 : 0) + (isCaveFood ? 1 : 0);
 
 		boolean isFood = foodCount == 1;

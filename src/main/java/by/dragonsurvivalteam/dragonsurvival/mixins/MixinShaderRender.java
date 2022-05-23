@@ -5,9 +5,9 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
-import srg.net.optifine.shaders.ShadersRender;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
+import srg.net.optifine.shaders.ShadersRender;
 
 
 @Mixin( ShadersRender.class )

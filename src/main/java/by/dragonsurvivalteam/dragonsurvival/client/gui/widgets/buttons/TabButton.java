@@ -7,7 +7,6 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.utils.TooltipRender;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientEvents;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.magic.ClientMagicHUDHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TooltipRendering;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.container.OpenDragonInventory;
 import by.dragonsurvivalteam.dragonsurvival.network.container.OpenInventory;
@@ -63,7 +62,7 @@ public class TabButton extends Button implements TooltipRender{
 							}
 						}
 					}
-					if(ConfigHandler.CLIENT.dragonInventory.get()){
+					if(ClientEvents.dragonInventory){
 						ClientEvents.mouseX = Minecraft.getInstance().mouseHandler.xpos();
 						ClientEvents.mouseY = Minecraft.getInstance().mouseHandler.ypos();
 						NetworkHandler.CHANNEL.sendToServer(new OpenDragonInventory());

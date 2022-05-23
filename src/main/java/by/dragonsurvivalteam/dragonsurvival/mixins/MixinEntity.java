@@ -3,8 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.mixins;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigUtils;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import com.mojang.math.Vector3f;
 import net.minecraft.world.entity.Entity;
@@ -103,18 +102,18 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
 	@Inject( at = @At( value = "RETURN" ), method = "canRide", cancellable = true )
 	public void canRide(Entity entity, CallbackInfoReturnable<Boolean> ci){
 		if(ci.getReturnValue() && DragonUtils.isDragon((Entity)(Object)this) && !DragonUtils.isDragon(entity)){
-			if(ConfigHandler.SERVER.ridingBlacklist.get()){
-				ci.setReturnValue(ConfigUtils.containsEntity(ConfigHandler.SERVER.allowedVehicles.get(), entity));
+			if(ServerConfig.ridingBlacklist){
+				ci.setReturnValue(ServerConfig.allowedVehicles.contains(entity.getType()));
 			}
 		}
 	}
 
 	@Redirect( method = "canEnterPose(Lnet/minecraft/world/entity/Pose;)Z", at = @At( value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;getBoundingBoxForPose(Lnet/minecraft/world/entity/Pose;)Lnet/minecraft/world/phys/AABB;" ) )
 	public AABB dragonPoseBB(Entity entity, Pose pose){
-		if(DragonUtils.isDragon(entity) && ConfigHandler.SERVER.sizeChangesHitbox.get()){
+		if(DragonUtils.isDragon(entity) && ServerConfig.sizeChangesHitbox){
 			double size = DragonUtils.getHandler(entity).getSize();
-			double height = DragonSizeHandler.calculateModifiedHeight(DragonSizeHandler.calculateDragonHeight(size, ConfigHandler.SERVER.hitboxGrowsPastHuman.get()), pose, ConfigHandler.SERVER.sizeChangesHitbox.get());
-			double width = DragonSizeHandler.calculateDragonWidth(size, ConfigHandler.SERVER.hitboxGrowsPastHuman.get()) / 2.0D;
+			double height = DragonSizeHandler.calculateModifiedHeight(DragonSizeHandler.calculateDragonHeight(size, ServerConfig.hitboxGrowsPastHuman), pose, ServerConfig.sizeChangesHitbox);
+			double width = DragonSizeHandler.calculateDragonWidth(size, ServerConfig.hitboxGrowsPastHuman) / 2.0D;
 			Vec3 vector3d = new Vec3(getX() - width, getY(), getZ() - width);
 			Vec3 vector3d1 = new Vec3(getX() + width, getY() + height, getZ() + width);
 			return new AABB(vector3d, vector3d1);

@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.capability;
 
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.nbt.CompoundTag;
 
@@ -10,7 +10,7 @@ public class VillageRelationShips implements NBTInterface{
 	public int crimeLevel;
 	public int evilStatusDuration;
 	//change to minutes
-	public int hunterSpawnDelay = Functions.minutesToTicks(ConfigHandler.COMMON.hunterSpawnDelay.get() / 6);
+	public int hunterSpawnDelay = Functions.minutesToTicks(ServerConfig.hunterSpawnDelay / 6);
 
 	@Nullable
 	public CompoundTag writeNBT(){

@@ -1,10 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.common.blocks;
 
 import by.dragonsurvivalteam.dragonsurvival.common.DamageSources;
-import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.monsters.MagicalPredator;
 import by.dragonsurvivalteam.dragonsurvival.common.items.DSItems;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.DSTileEntities;
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.PredatorStarTileEntity;
 import net.minecraft.core.BlockPos;
@@ -36,13 +35,11 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.material.PushReaction;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Random;
 
 public class PredatorStarBlock extends Block implements SimpleWaterloggedBlock, EntityBlock{
 
@@ -125,7 +122,7 @@ public class PredatorStarBlock extends Block implements SimpleWaterloggedBlock, 
 	@Override
 	public void attack(BlockState state, Level worldIn, BlockPos pos, Player player){
 		//TODO Fix tool type
-		if(!ConfigHandler.SERVER.mineStarBlock.get() || !(player.getMainHandItem().getItem() instanceof HoeItem && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, player.getMainHandItem()) > 0)){
+		if(!ServerConfig.mineStarBlock || !(player.getMainHandItem().getItem() instanceof HoeItem && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, player.getMainHandItem()) > 0)){
 			this.blockBehaviour(player, worldIn, pos);
 		}
 	}
@@ -143,11 +140,11 @@ public class PredatorStarBlock extends Block implements SimpleWaterloggedBlock, 
 			LivingEntity target = (LivingEntity)entity;
 			target.hurt(DamageSources.STAR_DRAIN, Float.MAX_VALUE);
 			worldIn.destroyBlock(pos, false);
-			if(new Random().nextDouble() < ConfigHandler.COMMON.predatorStarSpawnChance.get() && worldIn.getEntitiesOfClass(Player.class, new AABB(target.blockPosition()).inflate(50), playerEntity -> playerEntity.hasEffect(DragonEffects.PREDATOR_ANTI_SPAWN)).isEmpty()){
-//				MagicalPredator beast = DSEntities.MAGICAL_BEAST.create(worldIn);
-//				worldIn.addFreshEntity(beast);
-//				beast.teleportTo(pos.getX(), pos.getY(), pos.getZ());
-			}
+//			if(new Random().nextDouble() < ServerConfig.predatorStarSpawnChance && worldIn.getEntitiesOfClass(Player.class, new AABB(target.blockPosition()).inflate(50), playerEntity -> playerEntity.hasEffect(DragonEffects.PREDATOR_ANTI_SPAWN)).isEmpty()){
+////				MagicalPredator beast = DSEntities.MAGICAL_BEAST.create(worldIn);
+////				worldIn.addFreshEntity(beast);
+////				beast.teleportTo(pos.getX(), pos.getY(), pos.getZ());
+//			}
 		}else if(entity instanceof ItemEntity){
 			ItemEntity itemEntity = (ItemEntity)entity;
 

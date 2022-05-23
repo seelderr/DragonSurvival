@@ -7,7 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.blocks.SourceOfMagicBlock;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncMagicSourceStatus;
@@ -86,8 +86,8 @@ public class SourceOfMagicHandler{
 							harm = true;
 						}
 
-						if(!harm || player.isCreative() || ConfigHandler.SERVER.canUseAllSourcesOfMagic.get()){
-							if(ConfigHandler.SERVER.sourceOfMagicInfiniteMagic.get()){
+						if(!harm || player.isCreative() || ServerConfig.canUseAllSourcesOfMagic){
+							if(ServerConfig.sourceOfMagicInfiniteMagic){
 								if(handler.getMagic().magicSourceTimer >= Functions.secondsToTicks(10)){
 									handler.getMagic().magicSourceTimer = 0;
 									MobEffect effect = DragonEffects.SOURCE_OF_MAGIC;
@@ -106,7 +106,7 @@ public class SourceOfMagicHandler{
 								}
 							}
 						}else{
-							if(ConfigHandler.SERVER.damageWrongSourceOfMagic.get()){
+							if(ServerConfig.damageWrongSourceOfMagic){
 								if(player.tickCount % Functions.secondsToTicks(5) == 0){
 									player.hurt(DamageSource.MAGIC, 1F);
 								}
@@ -161,8 +161,8 @@ public class SourceOfMagicHandler{
 						}
 
 
-						if(!harm || player.isCreative() || ConfigHandler.SERVER.canUseAllSourcesOfMagic.get()){
-							if(ConfigHandler.SERVER.sourceOfMagicInfiniteMagic.get()){
+						if(!harm || player.isCreative() || ServerConfig.canUseAllSourcesOfMagic){
+							if(ServerConfig.sourceOfMagicInfiniteMagic){
 								if(player.level.isClientSide){
 									Minecraft minecraft = Minecraft.getInstance();
 									Random random = player.level.random;

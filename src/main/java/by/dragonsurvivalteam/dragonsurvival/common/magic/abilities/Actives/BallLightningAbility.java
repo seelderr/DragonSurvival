@@ -6,7 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonSta
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.BallLightningEntity;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.common.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -59,7 +59,7 @@ public class BallLightningAbility extends ActiveDragonAbility{
 	}
 
 	public static float getDamage(int level){
-		return (float)(ConfigHandler.SERVER.ballLightningDamage.get() * level);
+		return (float)(ServerConfig.ballLightningDamage * level);
 	}
 
 	@Override
@@ -109,13 +109,13 @@ public class BallLightningAbility extends ActiveDragonAbility{
 	@OnlyIn( Dist.CLIENT )
 	public ArrayList<Component> getLevelUpInfo(){
 		ArrayList<Component> list = super.getLevelUpInfo();
-		list.add(new TranslatableComponent("ds.skill.damage", "+" + ConfigHandler.SERVER.ballLightningDamage.get()));
+		list.add(new TranslatableComponent("ds.skill.damage", "+" + ServerConfig.ballLightningDamage));
 		return list;
 	}
 
 
 	@Override
 	public boolean isDisabled(){
-		return super.isDisabled() || !ConfigHandler.SERVER.ballLightning.get();
+		return super.isDisabled() || !ServerConfig.ballLightning;
 	}
 }

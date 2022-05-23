@@ -1,826 +1,1024 @@
 package by.dragonsurvivalteam.dragonsurvival.config;
 
+import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.common.blocks.DSBlocks;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.DSEntities;
+import by.dragonsurvivalteam.dragonsurvival.common.items.DSItems;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigType;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.google.common.collect.Lists;
-import net.minecraftforge.common.ForgeConfigSpec.*;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraftforge.common.ForgeConfigSpec.Builder;
+import net.minecraftforge.common.Tags;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+
 public class ServerConfig{
-
-	public final DoubleValue maxFlightSpeed;
-	public final BooleanValue mineStarBlock;
-	public final BooleanValue sizeChangesHitbox;
-	public final BooleanValue hitboxGrowsPastHuman;
-	public final BooleanValue useModifiedHitboxes;
-
-	public final BooleanValue startWithDragonChoice;
-
-	public final BooleanValue enderDragonGrantsSpin;
-	public final BooleanValue startWithWings;
-	public final BooleanValue enableFlightFallDamage;
-	public final IntValue flightHungerThreshold;
-	public final IntValue foldWingsThreshold;
-	public final BooleanValue allowFlyingWithoutHunger;
-	public final BooleanValue flyingUsesHunger;
-	public final BooleanValue creativeFlight;
-	public final BooleanValue foldWingsOnLand;
-	public final BooleanValue lethalFlight;
-	public final IntValue flightSpinCooldown;
-
-	public final DoubleValue maxSizeVari;
-	public final DoubleValue minSizeVari;
-
-	public final BooleanValue canMoveInEmote;
-	public final BooleanValue canMoveWhileCasting;
-
-	public final BooleanValue treasureHealthRegen;
-	public final IntValue treasureRegenTicks;
-	public final IntValue treasureRegenTicksReduce;
-	public final IntValue maxTreasures;
-
-	public final BooleanValue sourceOfMagicInfiniteMagic;
-	public final BooleanValue damageWrongSourceOfMagic;
-	public final BooleanValue canUseAllSourcesOfMagic;
-	public final IntValue elderDragonDustTime;
-	public final IntValue elderDragonBoneTime;
-	public final IntValue weakHeartShardTime;
-	public final IntValue weakDragonHeartTime;
-	public final IntValue elderDragonHeartTime;
-
-	public final IntValue altarUsageCooldown;
-	public final BooleanValue altarCraftable;
-
-	public final DoubleValue newbornJump;
-	public final DoubleValue youngJump;
-	public final DoubleValue adultJump;
-
-	public final BooleanValue keepClawItems;
-	public final BooleanValue syncClawRender;
-
-	public final BooleanValue ridingBlacklist;
-	public final ConfigValue<List<? extends String>> allowedVehicles;
-	public final ConfigValue<List<? extends String>> blacklistedItems;
-	public final ConfigValue<List<? extends Integer>> blacklistedSlots;
-
-	public final BooleanValue alternateGrowing;
-	public final DoubleValue maxGrowthSize;
-	public final DoubleValue newbornGrowthModifier;
-	public final DoubleValue youngGrowthModifier;
-	public final DoubleValue adultGrowthModifier;
-	public final DoubleValue maxGrowthModifier;
-
-	public final DoubleValue reachBonus;
-	public final BooleanValue saveGrowthStage;
-	public final BooleanValue fireBreathSpreadsFire;
-
-	public final BooleanValue customDragonFoods;
-	public final BooleanValue healthAdjustments;
-	public final IntValue minHealth;
-	public final IntValue maxHealth;
-	public final ConfigValue<List<? extends String>> growNewborn;
-	public final ConfigValue<List<? extends String>> growYoung;
-	public final ConfigValue<List<? extends String>> growAdult;
-
-	public final BooleanValue bonuses;
-	public final BooleanValue attackDamage;
-	public final DoubleValue babyBonusDamage;
-	public final DoubleValue youngBonusDamage;
-	public final DoubleValue adultBonusDamage;
-	public final BooleanValue clawsAreTools;
-	public final IntValue baseHarvestLevel;
-	public final IntValue bonusHarvestLevel;
-	public final ConfigValue<DragonLevel> bonusUnlockedAt;
-	public final IntValue speedupEffectLevel; // 0 = Disabled
-
-	public final BooleanValue caveFireImmunity;
-	public final BooleanValue caveLavaSwimming;
-	public final IntValue caveLavaSwimmingTicks; // 0 = Disabled
-	public final ConfigValue<List<? extends String>> caveSpeedupBlocks;
-
-	public final DoubleValue forestFallReduction; // 0.0 = Disabled
-	public final BooleanValue forestBushImmunity;
-	public final BooleanValue forestCactiImmunity;
-	public final ConfigValue<List<? extends String>> forestSpeedupBlocks;
-	public final BooleanValue seaSwimmingBonuses;
-	public final ConfigValue<List<? extends String>> seaSpeedupBlocks;
-
-	public final BooleanValue penalties;
-
-	public final DoubleValue caveWaterDamage; // 0.0 = Disabled
-	public final DoubleValue caveRainDamage; // 0.0 = Disabled
-	public final DoubleValue caveSplashDamage; // 0.0 = Disabled
-	public final IntValue chargedSoupBuffDuration; // 0 = Disabled
-
-	public final IntValue forestStressTicks; // 0 = Disabled
-	public final IntValue forestStressEffectDuration;
-	public final DoubleValue stressExhaustion;
-
-	public final IntValue seaTicksWithoutWater; // 0 = Disabled
-	public final BooleanValue seaTicksBasedOnTemperature;
-	public final DoubleValue seaDehydrationDamage;
-	public final ConfigValue<List<? extends String>> seaHydrationBlocks;
-	public final BooleanValue seaAllowWaterBottles;
-	public final IntValue seaTicksWithoutWaterRestored; // 0 = Disabled
-	public final ConfigValue<List<? extends String>> seaAdditionalWaterUseables;
-
-	public final DoubleValue humanOreDustChance;
-	public final DoubleValue dragonOreDustChance;
-	public final DoubleValue humanOreBoneChance;
-	public final DoubleValue dragonOreBoneChance;
-	public final ConfigValue<String> oresTag;
-
-	public final DoubleValue dragonHeartShardChance;
-	public final DoubleValue weakDragonHeartChance;
-	public final DoubleValue elderDragonHeartChance;
-	public final ConfigValue<List<? extends String>> dragonHeartEntityList;
-	public final ConfigValue<List<? extends String>> weakDragonHeartEntityList;
-	public final ConfigValue<List<? extends String>> elderDragonHeartEntityList;
-	public final BooleanValue dragonHeartWhiteList;
-	public final BooleanValue weakDragonHeartWhiteList;
-	public final BooleanValue elderDragonHeartWhiteList;
-	public final BooleanValue dragonHeartUseList;
-	public final BooleanValue weakDragonHeartUseList;
-	public final BooleanValue elderDragonHeartUseList;
-
-	public final ConfigValue<List<? extends String>> seaDragonHurtfulItems;
-	public final ConfigValue<List<? extends String>> caveDragonHurtfulItems;
-	public final ConfigValue<List<? extends String>> forestDragonHurtfulItems;
-
-	public final ConfigValue<List<? extends String>> caveDragonFoods;
-	public final ConfigValue<List<? extends String>> forestDragonFoods;
-	public final ConfigValue<List<? extends String>> seaDragonFoods;
-
-	public final BooleanValue noEXPRequirements;
-	public final BooleanValue consumeEXPAsMana;
-	public final IntValue initialPassiveCost;
-	public final DoubleValue passiveScalingCost;
-
-	public final IntValue favorableManaTicks;
-	public final IntValue normalManaTicks;
-
-	public final ConfigValue<List<? extends String>> seaDragonManaBlocks;
-	public final ConfigValue<List<? extends String>> forestDragonManaBlocks;
-	public final ConfigValue<List<? extends String>> caveDragonManaBlocks;
-
-	public final BooleanValue dragonAbilities;
-	public final BooleanValue caveDragonAbilities;
-	public final BooleanValue forestDragonAbilities;
-	public final BooleanValue seaDragonAbilities;
-
-	public final BooleanValue fireBreath;
-	public final IntValue fireBreathCooldown;
-	public final IntValue fireBreathCasttime;
-	public final DoubleValue fireBreathDamage;
-	public final IntValue fireBreathInitialMana;
-	public final IntValue fireBreathOvertimeMana;
-	public final IntValue fireBreathManaTicks;
-	public final ConfigValue<List<? extends String>> fireBreathBlockBreaks;
-
-	public final BooleanValue stormBreath;
-	public final IntValue stormBreathCooldown;
-	public final IntValue stormBreathCasttime;
-	public final DoubleValue stormBreathDamage;
-	public final IntValue stormBreathInitialMana;
-	public final IntValue stormBreathOvertimeMana;
-	public final IntValue stormBreathManaTicks;
-	public final IntValue stormBreathChainCount;
-	public final IntValue chargedEffectChainCount;
-	public final IntValue chargedEffectMaxChain;
-	public final IntValue chargedChainRange;
-	public final IntValue chargedEffectDamage;
-
-	public final ConfigValue<List<? extends String>> stormBreathBlockBreaks;
-	public final ConfigValue<List<? extends String>> chargedBlacklist;
-	public final ConfigValue<List<? extends String>> chargedSpreadBlacklist;
-
-
-	public final BooleanValue forestBreath;
-	public final IntValue forestBreathCooldown;
-	public final IntValue forestBreathCasttime;
-	public final DoubleValue forestBreathDamage;
-	public final IntValue forestBreathInitialMana;
-	public final IntValue forestBreathOvertimeMana;
-	public final IntValue forestBreathManaTicks;
-	public final ConfigValue<List<? extends String>> forestBreathGrowBlacklist;
-	public final ConfigValue<List<? extends String>> forestBreathBlockBreaks;
-
-	public final BooleanValue spike;
-	public final IntValue spikeCooldown;
-	public final IntValue spikeCasttime;
-	public final DoubleValue spikeDamage;
-	public final IntValue spikeManaCost;
-
-	public final BooleanValue inspiration;
-	public final IntValue inspirationCooldown;
-	public final IntValue inspirationCasttime;
-	public final IntValue inspirationDuration;
-	public final IntValue inspirationManaCost;
-
-	public final BooleanValue hunter;
-	public final IntValue hunterCooldown;
-	public final IntValue hunterCasttime;
-	public final IntValue hunterDuration;
-	public final DoubleValue hunterDamageBonus;
-	public final IntValue hunterManaCost;
-
-	public final BooleanValue forestMagic;
-	public final BooleanValue forestAthletics;
-	public final BooleanValue lightInDarkness;
-	public final BooleanValue cliffHanger;
-
-	public final BooleanValue ballLightning;
-	public final IntValue ballLightningCooldown;
-	public final IntValue ballLightningCasttime;
-	public final DoubleValue ballLightningDamage;
-	public final IntValue ballLightningManaCost;
-
-	public final BooleanValue revealingTheSoul;
-	public final IntValue revealingTheSoulCooldown;
-	public final IntValue revealingTheSoulCasttime;
-	public final IntValue revealingTheSoulDuration;
-	public final IntValue revealingTheSoulManaCost;
-	public final IntValue revealingTheSoulMaxEXP;
-	public final DoubleValue revealingTheSoulMultiplier;
-
-	public final BooleanValue seaEyes;
-	public final IntValue seaEyesCooldown;
-	public final IntValue seaEyesCasttime;
-	public final IntValue seaEyesDuration;
-	public final IntValue seaEyesManaCost;
-
-	public final BooleanValue seaMagic;
-	public final BooleanValue seaAthletics;
-	public final BooleanValue water;
-
-	public final BooleanValue spectralImpact;
-	public final IntValue spectralImpactProcChance;
-
-	public final BooleanValue fireball;
-	public final IntValue fireballCooldown;
-	public final IntValue fireballCasttime;
-	public final DoubleValue fireballDamage;
-	public final IntValue fireballManaCost;
-
-	public final BooleanValue toughSkin;
-	public final IntValue toughSkinCooldown;
-	public final IntValue toughSkinCasttime;
-	public final IntValue toughSkinDuration;
-	public final IntValue toughSkinManaCost;
-	public final DoubleValue toughSkinArmorValue;
-
-	public final BooleanValue lavaVision;
-	public final IntValue lavaVisionCooldown;
-	public final IntValue lavaVisionCasttime;
-	public final IntValue lavaVisionDuration;
-	public final IntValue lavaVisionManaCost;
-
-	public final BooleanValue caveMagic;
-	public final BooleanValue caveAthletics;
-	public final BooleanValue contrastShower;
-	public final BooleanValue burn;
-
-	public final BooleanValue saveAllAbilities;
-
 	ServerConfig(Builder builder){
-		builder.push("server");
-		// General
-		builder.push("general");
-		mineStarBlock = builder.translation("ds.config.server.general.mineStarBlock").comment("Whether silk touch hoes can be used to harvest Predator Stars.").define("harvestableStarBlock", false);
-
-		altarUsageCooldown = builder.translation("ds.config.server.general.altarUsageCooldown").comment("How long of a cooldown in seconds the altar has after each use.").defineInRange("altarUsageCooldown", 0, 0, 1000);
-
-		altarCraftable = builder.comment("Whether dragon altars are craftable or not. When disabled you can only use the command or creative mode to become a dragon.").define("altarCraftable", true);
-
-		keepClawItems = builder.translation("ds.config.server.general.keepClawItems").comment("Whether to keep items in the claw slots on death otherwise they will drop on death.").define("keepClawItems", false);
-
-		syncClawRender = builder.translation("ds.config.server.general.syncClawRender").comment("If players are allowed to hide their claws and teeth from other players. If it is important to you to see your opponent's weapon during pvp, set false.").define("syncClawRender", true);
-
-		canMoveInEmote = builder.translation("ds.config.server.general.canMoveInEmote").comment("If players are allowed to move while performing emotes").define("canMoveInEmote", true);
-
-		canMoveWhileCasting = builder.translation("ds.config.server.general.canMoveWhileCasting").comment("If you should be able to move while casting certain skills or if player movement can be prevented.").define("canMoveWhileCasting", false);
-
-		maxSizeVari = builder.comment("The maximum size variation in percentage").defineInRange("maxSizeVari", 10.0, 0.0, 1000.0);
-
-		minSizeVari = builder.comment("The minimum size variation in percentage").defineInRange("minSizeVari", -10.0, -1000.0, 0);
-
-		useModifiedHitboxes = builder.comment("Should the mod use the new modified hitboxes for dragon plauers?").define("useModifiedHitboxes", true);
-
-		startWithDragonChoice = builder.comment("Should the dragon altar interface be opened when the player first joins the world?").define("startWithDragonChoice", false);
-
-		// Growth
-		builder.pop().push("growth");
-		sizeChangesHitbox = builder.translation("ds.config.server.growth.sizeChangesHitbox").comment("Whether the dragon size determines its hitbox size. The bigger the dragon, the bigger the hitbox. If false standard player's hitbox be used.").define("sizeChangesHitbox", true);
-		hitboxGrowsPastHuman = builder.translation("ds.config.server.growth.hitboxGrowsPastHuman").comment("Whether the dragon hitbox grows past a human hitbox.").define("largerDragonHitbox", true);
-		growNewborn = builder.translation("ds.config.server.growth.growNewborn").comment("List of items to grow newborn dragon. Format: item/tag:modid:id").defineList("growNewborn", Arrays.asList("item:dragonsurvival:heart_element", "item:dragonsurvival:weak_dragon_heart", "item:dragonsurvival:elder_dragon_heart"), ConfigHandler.itemsAndTagsPredicate);
-		growYoung = builder.translation("ds.config.server.growth.growYoung").comment("List of items to grow young dragon. Format: item/tag:modid:id").defineList("growYoung", Arrays.asList("item:dragonsurvival:weak_dragon_heart", "item:dragonsurvival:elder_dragon_heart"), ConfigHandler.itemsAndTagsPredicate);
-		growAdult = builder.translation("ds.config.server.growth.growAdult").comment("List of items to grow adult dragon. Format: item/tag:modid:id").defineList("growAdult", Collections.singletonList("item:dragonsurvival:elder_dragon_heart"), ConfigHandler.itemsAndTagsPredicate);
-		alternateGrowing = builder.translation("ds.config.server.growth.alternateGrowing").comment("Defines if dragon should grow without requirement of catalyst items. Your dragon will just grow over time.").define("alternateGrowing", true);
-		maxGrowthSize = builder.translation("ds.config.server.growth.maxGrowthSize").comment("Defines the max size your dragon can grow to. Values that are too high can break your game. It is not advisable to set a number higher than 60.").defineInRange("maxGrowthSize", 60.0, 14.0, 1000000.0);
-		reachBonus = builder.translation("ds.config.server.growth.reachBonus").comment("The bonus that is given to dragons at ever 60 size. Human players have 1.0x reach and a size 60 dragon will have 1.5x distance with default value. Only applies to block mining.").defineInRange("reachBonus", 0.5, 0, 1000000.0);
-		saveGrowthStage = builder.translation("ds.config.server.growth.saveGrowthStage").comment("Should the growth stage of a dragon be saved even when you change. Does not affect the saving progress of magic (use saveAllAbilities). The author does not approve of weredragons, but if you insist...").define("saveGrowthStage", false);
-		minHealth = builder.translation("ds.config.server.growth.minHealth").comment("Dragon starting health. Minumum health dragons will start off with.").defineInRange("minHealth", 14, 1, 100);
-		maxHealth = builder.translation("ds.config.server.growth.maxHealth").comment("Maximum health dragons can grow to.").defineInRange("maxHealth", 40, 1, 100);
-
-		newbornGrowthModifier = builder.translation("ds.config.server.growth.newbornGrowthModifier").comment("A multiplier to change the growth rate from newborn to young. At 1.0 it takes about 3 hours to turn a newborn dragon into a young dragon.").defineInRange("newbornGrowthModifier", 0.3, 0.0, 1000);
-
-		youngGrowthModifier = builder.translation("ds.config.server.growth.youngGrowthModifier").comment("A multiplier to change the growth rate from young to adult. At 1.0 it takes about 1 day to turn a young dragon into a adult dragon.").defineInRange("youngGrowthModifier", 0.5, 0.0, 1000);
-
-		adultGrowthModifier = builder.translation("ds.config.server.growth.adultGrowthModifier").comment("A multiplier to change the growth rate from adult to a full sized adult. At 1.0 it takes about 3 days to become a dragon of maximum adult size.").defineInRange("adultGrowthModifier", 0.9, 0.0, 1000);
-
-		maxGrowthModifier = builder.translation("ds.config.server.growth.maxGrowthModifier").comment("A multiplier to change the growth rate from full sized adult to max size. The change in growth after the maximum adult size is measured in months and years.").defineInRange("maxGrowthModifier", 1.0, 0.0, 1000);
-
-		builder.pop().push("drops");
-		dragonHeartShardChance = builder.translation("ds.config.server.drops.dragonHeartShardChance").comment("The chance for dragon heart shards to drop from any mobs with max health between 14-20").defineInRange("dragonHeartShardChance", 0.01, 0.0, 1.0);
-		weakDragonHeartChance = builder.translation("ds.config.server.drops.weakDragonHeartChance").comment("The chance for weak dragon heart to drop from any mobs with max health between 20-50").defineInRange("weakDragonHeartChance", 0.01, 0.0, 1.0);
-		elderDragonHeartChance = builder.translation("ds.config.server.drops.elderDragonHeartChance").comment("The chance for dragon heart to drop from any mobs with max health above 50").defineInRange("elderDragonHeartChance", 0.1, 0.0, 1.0);
-
-		dragonHeartEntityList = builder.comment("Decide which entities can drop dragon hearts").defineList("dragonHeartEntityList", new ArrayList<>(), ConfigHandler.entityPredicate);
-		weakDragonHeartEntityList = builder.comment("Decide which entities can drop weak dragon hearts").defineList("weakDragonHeartEntityList", new ArrayList<>(), ConfigHandler.entityPredicate);
-		elderDragonHeartEntityList = builder.comment("Decide which entities can drop elder dragon hearts").defineList("elderDragonHeartEntityList", new ArrayList<>(), ConfigHandler.entityPredicate);
-
-		dragonHeartWhiteList = builder.comment("Should the dragonHeartEntityList be treated as an allowlist rather than a block list?").define("dragonHeartWhiteList", false);
-		weakDragonHeartWhiteList = builder.comment("Should the weakDragonHeartEntityList be treated as an allowlist rather than a block list?").define("weakDragonHeartWhiteList", false);
-		elderDragonHeartWhiteList = builder.comment("Should the elderDragonHeartEntityList be treated as an allowlist rather than a block list?").define("elderDragonHeartWhiteList", false);
-
-		dragonHeartUseList = builder.comment("Should the dragonHeartEntityList be used instead of the health requirement?").define("dragonHeartUseList", false);
-		weakDragonHeartUseList = builder.comment("Should the weakDragonHeartUseList be used instead of the health requirement?").define("weakDragonHeartUseList", false);
-		elderDragonHeartUseList = builder.comment("Should the elderDragonHeartUseList be used instead of the health requirement?").define("elderDragonHeartUseList", false);
-
-		// Treasure
-		builder.pop().push("treasure");
-		treasureHealthRegen = builder.translation("ds.config.server.treasure.treasureHealthRegen").comment("Whether sleeping on treasure will recover health or not. ").define("treasureHealthRegen", true);
-
-		treasureRegenTicks = builder.translation("ds.config.server.treasure.treasureRegenTicks").comment("The time in ticks it takes to recover 1hp while sleeping on one treasure. A large number of treasures in one place reduces time.").defineInRange("treasureRegenTicks", 24100, 1, 10000000);
-
-		treasureRegenTicksReduce = builder.translation("ds.config.server.treasure.treasureRegenTicksReduce").comment("The amount of ticks each additional treasure reduces the regen time by").defineInRange("treasureRegenTicksReduce", 100, 1, 10000000);
-
-		maxTreasures = builder.translation("ds.config.server.treasure.maxTreasures").comment("The max amount of additional treasure that can be used to reduce the regen time").defineInRange("maxTreasures", 240, 1, 10000000);
-
-		// Source of Magic
-		builder.pop().push("source_of_magic");
-
-		sourceOfMagicInfiniteMagic = builder.translation("ds.config.server.source_of_magic.sourceOfMagicInfiniteMagic").comment("Whether using the source of magic block will grant the infinite magic buff.").define("sourceOfMagicInfiniteMagic", true);
-
-		damageWrongSourceOfMagic = builder.translation("ds.config.server.source_of_magic.damageWrongSourceOfMagic").comment("Whether using the the source of magic intended for another dragon type will hurt you.").define("damageWrongSourceOfMagic", true);
-
-		canUseAllSourcesOfMagic = builder.translation("ds.config.server.source_of_magic.canUseAllSourcesOfMagic").comment("Whether you are able to use all types of source of magic no matter your dragon type.").define("canUseAllSourcesOfMagic", false);
-
-		elderDragonDustTime = builder.translation("ds.config.server.source_of_magic.elderDragonDustTime").comment("How long duration of the infinite magic effect using elder dragon dust gives in seconds. Note that you also spend 10 seconds while waiting.").defineInRange("elderDragonDustTime", 20, 1, 10000);
-
-		elderDragonBoneTime = builder.translation("ds.config.server.source_of_magic.elderDragonBoneTime").comment("How long duration of the infinite magic effect using elder dragon bone gives in seconds. Note that you also spend 10 seconds while waiting.").defineInRange("elderDragonBoneTime", 60, 1, 10000);
-
-		weakHeartShardTime = builder.translation("ds.config.server.source_of_magic.weakHeartShardTime").comment("How long duration of the infinite magic effect using weak heart shard gives in seconds. Note that you also spend 10 seconds while waiting.").defineInRange("weakHeartShardTime", 110, 1, 10000);
-
-		weakDragonHeartTime = builder.translation("ds.config.server.source_of_magic.weakDragonHeartTime").comment("How long duration of the infinite magic effect using weak dragon heart gives in seconds. Note that you also spend 10 seconds while waiting.").defineInRange("weakDragonHeartTime", 310, 1, 10000);
-
-		elderDragonHeartTime = builder.translation("ds.config.server.source_of_magic.elderDragonHeartTime").comment("How long duration of the infinite magic effect using elder dragon heart gives in seconds. Note that you also spend 10 seconds while waiting.").defineInRange("elderDragonHeartTime", 1010, 1, 10000);
-
-		// Wings
-		builder.pop().push("wings");
-		maxFlightSpeed = builder.translation("ds.config.server.wings.maxFlightSpeed").comment("Maximum acceleration fly speed up and down. Take into account the chunk load speed. A speed of 0.3 is optimal.").defineInRange("maxFlightSpeed", 0.3, 0.1, 1);
-
-		startWithWings = builder.translation("ds.config.server.wings.startWithWings").comment("Whether dragons born with wings.").define("startWithWings", true);
-
-		enderDragonGrantsSpin = builder.translation("ds.config.server.wings.enderDragonGrantsSpin").comment("Whether you should be able to obtain the spin ability from the ender dragon.").define("enderDragonGrantsSpin", true);
-
-		allowFlyingWithoutHunger = builder.translation("ds.config.server.wings.allowFlyingWithoutHunger").comment("Whether dragons can fly when totally hungry. You can't open your wings if you're hungry.").define("allowFlyingWhenTotallyHungry", false);
-
-		flightHungerThreshold = builder.translation("ds.config.server.wings.flightHungerThreshold").comment("If the player's hunger is below this parameter, he can't open his wings.").defineInRange("flightHungerThreshold", 6, 0, 20);
-
-		foldWingsThreshold = builder.translation("ds.config.server.wings.foldWingsThreshold").comment("If the player's hunger is less then or equal to this parameter, the wings will be folded even during flight.").defineInRange("flightHungerThreshold", 0, 0, 20);
-
-		flyingUsesHunger = builder.translation("ds.config.server.wings.flyingUsesHunger").comment("Whether you use up hunger while flying.").define("flyingUsesHunger", true);
-
-		enableFlightFallDamage = builder.translation("ds.config.server.wings.enableFlightFallDamage").comment("Whether fall damage in flight is included. If true dragon will take damage from the fall.").define("enableFlightFallDamage", true);
-
-		lethalFlight = builder.translation("ds.config.server.wings.lethalFlight").comment("Whether fall damage from flight is lethal, otherwise it will leave you at half a heart").define("lethalFallDamage", false);
-
-		foldWingsOnLand = builder.translation("ds.config.server.wings.foldWingsOnLand").comment("Whether your wings will fold automatically when landing. Has protection against accidental triggering, so the wings do not always close. If False you must close the wings manually.").define("foldWingsOnLand", false);
-
-		creativeFlight = builder.translation("ds.config.server.wings.creativeFlight").comment("Whether to use flight similar to creative rather then gliding.").define("alternateFlight", false);
-
-		flightSpinCooldown = builder.translation("ds.config.server.wings.flightSpinCooldown").comment("The cooldown in seconds in between uses of the spin attack in flight").defineInRange("flightSpinCooldown", 5, 0, 100000);
-
-		// Innate dragon bonuses
-		builder.pop().push("bonuses");
-		healthAdjustments = builder.translation("ds.config.server.bonuses.healthAdjustments").comment("Apply a health modifier for dragons. The older the dragon, the more health it has.").define("healthMod", true);
-
-		bonuses = builder.translation("ds.config.server.bonuses.bonuses").comment("Set to false to toggle off all dragon bonuses and play as human.").define("bonuses", true);
-
-		attackDamage = builder.translation("ds.config.server.bonuses.attackDamage").comment("Apply an attack damage modifier for dragons.").define("attackMod", true);
-
-		babyBonusDamage = builder.translation("ds.config.server.bonuses.babyBonusDamage").comment("Attack modifier for baby dragons.").defineInRange("babyAttackMod", 1.0, 0.0, 100.0);
-
-		youngBonusDamage = builder.translation("ds.config.server.bonuses.youngBonusDamage").comment("Attack modifier for young dragons.").defineInRange("youngAttackMod", 2.0, 0.0, 100.0);
-
-		adultBonusDamage = builder.translation("ds.config.server.bonuses.adultBonusDamage").comment("Attack modifier for adult dragons.").defineInRange("adultAttackMod", 3.0, 0.0, 100.0);
-
-		newbornJump = builder.translation("ds.config.server.bonuses.newbornJump").comment("Jumping height for a newborn dragon. Default is 1 block.").defineInRange("newbornJump", 0.025, 0.0, 0.9);
-
-		youngJump = builder.translation("ds.config.server.bonuses.youngJump").comment("Jumping height for a young dragon. Default is 1.5 block.").defineInRange("youngJump", 0.1, 0.0, 0.9);
-
-		adultJump = builder.translation("ds.config.server.bonuses.adultJump").comment("Jumping height for a adult dragon. Default is 2 block.").defineInRange("adultJump", 0.15, 0.0, 0.9);
-
-		clawsAreTools = builder.translation("ds.config.server.bonuses.clawsAreTools").comment("Whether dragon claws function as tools.").define("clawsAreTools", true);
-
-		baseHarvestLevel = builder.translation("ds.config.server.bonuses.baseHarvestLevel").comment("The harvest level to apply when dragons breaks a block, regardless of dragon/tool type.").defineInRange("baseHarvestLevel", 0, -1, 100);
-
-		bonusHarvestLevel = builder.translation("ds.config.server.bonuses.bonusHarvestLevel").comment("The harvest level to apply to a dragons specific tool type once unlocked.").defineInRange("bonusHarvestLevel", 1, -1, 100);
-
-		bonusUnlockedAt = builder.translation("ds.config.server.bonuses.bonusUnlockedAt").comment("The stage that dragons unlock the bonus harvest level.").defineEnum("bonusUnlockedAt", DragonLevel.YOUNG, DragonLevel.values());
-
-		speedupEffectLevel = builder.translation("ds.config.server.bonuses.speedupEffectLevel").comment("The speed effect level for dragon block-specific speedups. Set to 0 to disable.").defineInRange("speedupEffectLevel", 2, 0, 100);
-		// Cave Dragon Bonuses
-		builder.push("cave");
-		caveFireImmunity = builder.translation("ds.config.server.bonuses.cave.caveFireImmunity").comment("Whether cave dragons are immune to fire damage types.").define("fireImmunity", true);
-
-		caveLavaSwimming = builder.translation("ds.config.server.bonuses.cave.caveLavaSwimming").comment("Set to false to disable cave dragon fast lava swimming.").define("lavaSwimming", true);
-
-		caveLavaSwimmingTicks = builder.translation("ds.config.server.bonuses.cave.caveLavaSwimmingTicks").comment("The maximum number of ticks a cave dragon can swim in lava. Set to 0 to allow unlimited air while under lava.").defineInRange("lavaSwimTicks", 3600, 0, 100000);
-
-		caveSpeedupBlocks = builder.translation("ds.config.server.bonuses.cave.caveSpeedupBlocks").comment("Blocks cave dragons gain speed when standing above. Formatting: block/tag:modid:id").worldRestart().defineList("caveSpeedupBlocks", Arrays.asList("tag:minecraft:base_stone_nether", "tag:minecraft:base_stone_overworld", "tag:minecraft:stone_bricks", "tag:minecraft:beacon_base_blocks", "tag:forge:cobblestone", "tag:forge:sandstone", "tag:forge:stone", "tag:forge:ores", "block:quark:deepslate", "block:quark:deepslate_bricks", "block:quark:cobbled_deepslate"), ConfigHandler.blocksAndTagsPredicate);
-
-		// Forest Dragon Bonuses
-		builder.pop().push("forest");
-		forestFallReduction = builder.translation("ds.config.server.bonuses.forest.forestFallReduction").comment("How many blocks of fall damage is mitigated for forest dragons. Set to 0.0 to disable.").defineInRange("fallReduction", 5.0, 0.0, 100.0);
-
-		forestBushImmunity = builder.translation("ds.config.server.bonuses.forest.forestBushImmunity").comment("Whether forest dragons are immune to Sweet Berry Bush damage.").define("bushImmunity", true);
-
-		forestCactiImmunity = builder.translation("ds.config.server.bonuses.forest.forestCactiImmunity").comment("Whether forest dragons are immune to Cactus damage.").define("cactiImmunity", true);
-
-		forestSpeedupBlocks = builder.translation("ds.config.server.bonuses.forest.forestSpeedupBlocks").comment("Blocks forest dragons gain speed when standing above. Formatting: block/tag:modid:id").worldRestart().defineList("forestSpeedupBlocks", Arrays.asList("tag:minecraft:logs", "tag:minecraft:leaves", "tag:minecraft:planks", "tag:forge:dirt"), ConfigHandler.blocksAndTagsPredicate);
-
-		// Sea Dragon Bonuses
-		builder.pop().push("sea");
-		seaSwimmingBonuses = builder.translation("ds.config.server.bonuses.sea.seaSwimmingBonuses").comment("Whether sea dragons gain bonus swim speed and unlimited air.").define("waterBonuses", true);
-
-		seaSpeedupBlocks = builder.translation("ds.config.server.bonuses.sea.seaSpeedupBlocks").comment("Blocks sea dragons gain speed when standing above. Formatting: block/tag:modid:id").worldRestart().defineList("seaSpeedupBlocks", Arrays.asList("tag:minecraft:ice", "tag:minecraft:impermeable", "tag:minecraft:sand", "tag:minecraft:coral_blocks", "tag:forge:sand", "block:minecraft:dirt_path", "block:minecraft:sandstone", "block:minecraft:cut_sandstone", "block:minecraft:chiseled_sandstone", "block:minecraft:smooth_sandstone", "block:minecraft:red_sandstone", "block:minecraft:cut_red_sandstone", "block:minecraft:chiseled_red_sandstone", "block:minecraft:smooth_red_sandstone", "block:minecraft:water"), ConfigHandler.blocksAndTagsPredicate);
-
-		//Dragon Penalties
-		builder.pop().pop().push("penalties");
-		penalties = builder.translation("ds.config.server.penalties.penalties").comment("Set to false to toggle off all dragon penalties.").define("penalties", true);
-
-		allowedVehicles = builder.translation("ds.config.server.penalties.allowedVehicles").comment("List of rideable entities. Format: modid:id").defineList("allowedVehicles", Lists.newArrayList("minecraft:boat"), ConfigHandler.entitiesAndTagsPredicate);
-
-		ridingBlacklist = builder.translation("ds.config.server.penalties.ridingBlacklist").comment("Should dragons be limited by which entities they can ride").define("limitedRiding", true);
-
-		blacklistedItems = builder.translation("ds.config.server.penalties.blacklistedItems").comment("List of items that disallowed to be used by dragons. Format: item/tag:modid:id").defineList("blacklistedItems", Arrays.asList("item:minecraft:bow", "item:spartanshields:shield_basic_nickel", "item:spartanshields:shield_basic_invar", "item:spartanshields:shield_basic_constantan", "item:spartanshields:shield_basic_platinum", "item:spartanshields:shield_mekanism_refined_glowstone", "item:spartanshields:shield_tower_wood", "item:spartanshields:shield_tower_stone", "item:spartanshields:shield_tower_iron", "item:spartanshields:shield_tower_gold", "item:spartanshields:shield_tower_diamond", "item:spartanshields:shield_tower_netherite", "item:spartanshields:shield_tower_obsidian", "item:spartanshields:shield_tower_copper", "item:spartanshields:shield_tower_tin", "item:spartanshields:shield_tower_bronze", "item:spartanshields:shield_tower_steel", "item:spartanshields:shield_tower_silver", "item:spartanshields:shield_tower_lead", "item:spartanshields:shield_tower_nickel", "item:spartanshields:shield_tower_constantan", "item:spartanshields:shield_tower_invar", "item:spartanshields:shield_tower_platinum", "item:spartanshields:shield_tower_electrum", "item:spartanshields:shield_mekanism_powered_ultimate", "item:quark:flamerang", "item:quark:pickarang", "item:spartanshields:shield_botania_manasteel", "item:spartanshields:shield_botania_elementium", "item:spartanshields:shield_mekanism_osmium", "item:spartanshields:shield_mekanism_lapis_lazuli", "item:spartanshields:shield_basic_electrum", "item:spartanshields:shield_mekanism_refined_obsidian", "item:spartanshields:shield_mekanism_powered_basic", "item:spartanshields:shield_mekanism_powered_advanced", "item:spartanshields:shield_mekanism_powered_elite", "item:spartanweaponry:boomerang_steel", "item:spartanweaponry:boomerang_invar", "item:spartanweaponry:boomerang_platinum", "item:spartanweaponry:boomerang_electrum", "item:spartanshields:shield_basic_bronze", "item:spartanshields:shield_basic_tin", "item:spartanshields:shield_basic_copper", "item:spartanshields:shield_basic_obsidian", "item:spartanshields:shield_basic_netherite", "item:spartanshields:shield_basic_diamond", "item:spartanshields:shield_basic_gold", "item:spartanshields:shield_basic_iron", "item:spartanshields:shield_basic_stone", "item:spartanshields:shield_basic_wood", "item:spartanweaponry:boomerang_lead", "item:spartanweaponry:boomerang_nickel", "item:spartanshields:shield_basic_steel", "item:spartanshields:shield_basic_silver", "item:spartanshields:shield_basic_lead", "item:spartanweaponry:boomerang_bronze", "item:spartanweaponry:boomerang_tin", "item:spartanweaponry:boomerang_copper", "item:spartanweaponry:boomerang_netherite", "item:spartanweaponry:boomerang_gold", "item:spartanweaponry:boomerang_iron", "item:spartanweaponry:boomerang_stone", "item:spartanweaponry:heavy_crossbow_bronze", "mowziesmobs:wrought_axe", "item:spartanshields:shield_botania_terrasteel", "item:spartanweaponry:heavy_crossbow_leather", "item:spartanweaponry:heavy_crossbow_iron", "item:spartanweaponry:heavy_crossbow_gold", "item:spartanweaponry:heavy_crossbow_diamond", "item:spartanweaponry:heavy_crossbow_netherite", "item:spartanweaponry:heavy_crossbow_copper", "item:spartanweaponry:heavy_crossbow_tin", "item:spartanweaponry:boomerang_wood", "item:nethers_exoticism:rambutan_shield", "item:minecraft:shield", "item:minecraft:trident", "item:spartanweaponry:heavy_crossbow_lead", "item:spartanweaponry:heavy_crossbow_nickel", "item:spartanweaponry:heavy_crossbow_electrum", "item:spartanweaponry:heavy_crossbow_platinum", "item:spartanweaponry:heavy_crossbow_invar", "item:spartanweaponry:heavy_crossbow_silver", "item:spartanweaponry:heavy_crossbow_steel", "item:spartanweaponry:boomerang_diamond", "item:spartanweaponry:heavy_crossbow_wood", "item:minecraft:crossbow", "item:aquaculture:neptunium_bow", "item:spartanweaponry:longbow_electrum", "item:spartanweaponry:longbow_invar", "item:infernalexp:glowsilk_bow", "item:spartanweaponry:longbow_wood", "item:spartanweaponry:longbow_leather", "item:spartanweaponry:longbow_silver", "item:spartanweaponry:longbow_steel", "item:spartanweaponry:longbow_bronze", "item:spartanweaponry:longbow_tin", "item:spartanweaponry:longbow_copper", "item:spartanweaponry:longbow_netherite", "item:spartanweaponry:longbow_diamond", "item:spartanweaponry:longbow_gold", "item:spartanweaponry:longbow_iron", "item:spartanweaponry:boomerang_diamond", "item:spartanweaponry:boomerang_iron", "item:spartanweaponry:boomerang_wood", "item:spartanweaponry:boomerang_gold", "item:spartanweaponry:boomerang_netherite", "item:spartanweaponry:boomerang_copper", "item:spartanweaponry:boomerang_tin", "item:spartanweaponry:boomerang_bronze", "item:spartanweaponry:boomerang_stone", "item:spartanweaponry:boomerang_platinum", "item:spartanweaponry:boomerang_electrum", "item:spartanweaponry:boomerang_steel", "item:spartanweaponry:boomerang_lead", "item:spartanweaponry:boomerang_invar", "item:spartanweaponry:boomerang_nickel"), ConfigHandler.itemsAndTagsPredicate);
-
-		blacklistedSlots = builder.translation("ds.config.server.penalties.blacklistedSlots").comment("List of slots to handle blacklistedItems option").defineList("blacklistedSlots", Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 45), value -> value instanceof Integer);
-
-		// Cave Dragon Penalties
-		builder.push("cave");
-		caveWaterDamage = builder.translation("ds.config.server.penalties.cave.caveWaterDamage").comment("The amount of damage taken per water damage tick (once every 10 ticks). Set to 0.0 to disable water damage.").defineInRange("waterDamage", 1.0, 0.0, 100.0);
-
-		caveRainDamage = builder.translation("ds.config.server.penalties.cave.caveRainDamage").comment("The amount of damage taken per rain damage tick (once every 40 ticks). Set to 0.0 to disable rain damage.").defineInRange("rainDamage", 1.0, 0.0, 100.0);
-
-		caveSplashDamage = builder.translation("ds.config.server.penalties.cave.caveSplashDamage").comment("The amount of damage taken when hit with a snowball or a water bottle. Set to 0.0 to disable splash damage.").defineInRange("splashDamage", 2.0, 0.0, 100.0);
-
-		// Forest Dragon Penalties
-		builder.pop().push("forest");
-		forestStressTicks = builder.translation("ds.config.server.penalties.forest.forestStressTicks").comment("The number of ticks in darkness before the forest dragon gets Stress effect. Set to 0 to disable to stress effect.").defineInRange("ticksBeforeStressed", 70, 0, 10000);
-
-		forestStressEffectDuration = builder.translation("ds.config.server.penalties.forest.forestStressEffectDuration").comment("The number of seconds the stress effect lasts for.").defineInRange("stressEffectDuration", 50, 2, 100000);
-
-		stressExhaustion = builder.translation("ds.config.server.penalties.forest.stressExhaustion").comment("The amount of exhaustion applied per 10 ticks during the stress effect.").defineInRange("stressExhaustion", 1.0, 0.1, 4.0);
-
-		// Sea Dragon Penalties
-		builder.pop().push("sea");
-		seaTicksWithoutWater = builder.translation("ds.config.server.penalties.sea.seaTicksWithoutWater").comment("The number of ticks out of water before the sea dragon will start taking dehydration damage. Set to 0 to disable. Note: This value can stack up to double while dehydrated.").defineInRange("ticksWithoutWater", 1200, 0, 100000);
-
-		seaTicksBasedOnTemperature = builder.translation("ds.config.server.penalties.sea.seaTicksBasedOnTemperature").comment("Whether the sea dragon should lose more water in warmer biomes and less during the night.").define("waterConsumptionDependsOnTemperature", true);
-
-		seaDehydrationDamage = builder.translation("ds.config.server.penalties.sea.seaDehydrationDamage").comment("The amount of damage taken per tick while dehydrated (once every 40 ticks unless fully dehydrated, then once every 20 ticks).").defineInRange("dehydrationDamage", 1.0, 0.5, 100.0);
-
-		seaHydrationBlocks = builder.translation("ds.config.server.penalties.sea.seaHydrationBlocks").comment("When sea dragons stand on these blocks, hydration is restored. Format: block/tag:modid:id").worldRestart().defineList("seaHydrationBlocks", Arrays.asList("tag:minecraft:ice", "block:minecraft:snow", "block:minecraft:snow_block", "block:dragonsurvival:sea_source_of_magic"), ConfigHandler.blocksAndTagsPredicate);
-
-		seaAllowWaterBottles = builder.translation("ds.config.server.penalties.sea.seaAllowWaterBottles").comment("Set to false to disable sea dragons using vanilla water bottles to avoid dehydration.").define("allowWaterBottles", true);
-
-		seaTicksWithoutWaterRestored = builder.translation("ds.config.server.penalties.sea.seaTicksWithoutWaterRestored").comment("How many ticks do water restoration items restore when used. Set to 0 to disable.").defineInRange("waterItemRestorationTicks", 5000, 0, 100000);
-
-		seaAdditionalWaterUseables = builder.translation("ds.config.server.penalties.sea.seaAdditionalWaterUseables").comment("Additional modded USEABLE items that restore water when used (called from LivingEntityUseItemEvent.Finish). Format: item/tag:modid:id").worldRestart().defineList("seaHydrationItems", Collections.singletonList("item:minecraft:enchanted_golden_apple"), ConfigHandler.itemsAndTagsPredicate);
-		// Ore Loot
-		builder.pop().pop().push("ore");
-		humanOreDustChance = builder.translation("ds.config.server.ore.humanOreDustChance").comment("The odds of dust dropping when a human harvests an ore.").defineInRange("humanOreDustChance", 0.1, 0.0, 1.0);
-
-		dragonOreDustChance = builder.translation("ds.config.server.ore.dragonOreDustChance").comment("The odds of dust dropping when a dragon harvests an ore.").defineInRange("dragonOreDustChance", 0.2, 0.0, 1.0);
-
-		humanOreBoneChance = builder.translation("ds.config.server.ore.humanOreBoneChance").comment("The odds of a bone dropping when a human harvests an ore.").defineInRange("humanOreBoneChance", 0.0, 0.0, 1.0);
-
-		dragonOreBoneChance = builder.translation("ds.config.server.ore.dragonOreBoneChance").comment("The odds of a bone dropping when a dragon harvests an ore.").defineInRange("dragonOreBoneChance", 0.01, 0.0, 1.0);
-
-		oresTag = builder.translation("ds.config.server.ore.oresTag").comment("The tag that contains all ores that can drop dust/bones when harvested. Will not drop if the ore drops another of the items in this tag. Format: modid:id").define("oresTag", "forge:ores");
-		// Food general
-		builder.pop().push("food");
-		customDragonFoods = builder.translation("ds.config.server.food.customDragonFoods").comment("Force dragons to eat a unique diet for their type.").define("dragonFoods", true);
-
-		caveDragonHurtfulItems = builder.translation("ds.config.server.food.caveDragonHurtfulItems").comment("Items which will cause damage to cave dragons when consumed. Formatting: item/tag:modid:itemid:damage").defineList("hurtfulToCaveDragon", Arrays.asList("item:minecraft:potion:2", "item:minecraft:water_bottle:2", "item:minecraft:milk_bucket:2"), ConfigHandler.itemsAndTagsPredicate.and(this::isValidHurtfulItem));
-
-		seaDragonHurtfulItems = builder.translation("ds.config.server.food.seaDragonHurtfulItems").comment("Items which will cause damage to sea dragons when consumed. Formatting: item/tag:modid:itemid:damage").defineList("hurtfulToSeaDragon", Arrays.asList(), ConfigHandler.itemsAndTagsPredicate.and(this::isValidHurtfulItem));
-
-		forestDragonHurtfulItems = builder.translation("ds.config.server.food.forestDragonHurtfulItems").comment("Items which will cause damage to forest dragons when consumed. Formatting: item/tag:modid:itemid:damage").defineList("hurtfulToForestDragon", Arrays.asList(), ConfigHandler.itemsAndTagsPredicate.and(this::isValidHurtfulItem));
-
-		chargedSoupBuffDuration = builder.translation("ds.config.server.food.chargedSoupBuffDuration").comment("How long in seconds should the cave fire effect from charged soup last. (Default to 5min) Set to 0 to disable.").defineInRange("chargedSoupBuffDuration", 300, 0, 10000);
-
-		// Dragon Food List
-		builder.comment("Dragon food formatting: item/tag:modid:id:food:saturation. Food/saturation values are optional as the human values will be used if missing.");
-
-		caveDragonFoods = builder.worldRestart().translation("ds.config.server.food.caveDragonFoods").comment("Dragon food formatting: item/tag:modid:id:food:saturation").defineList("caveDragon", Arrays.asList("tag:minecraft:coals:1:1", "item:minecraft:charcoal:1:2", "item:minecraft:golden_apple", "item:minecraft:enchanted_golden_apple", "item:dragonsurvival:charged_coal:6:1", "item:dragonsurvival:charred_meat:10:12", "item:dragonsurvival:cave_dragon_treat:14:12", "item:dragonsurvival:charred_seafood:8:10", "item:dragonsurvival:charred_vegetable:8:9", "item:dragonsurvival:charred_mushroom:8:5", "item:dragonsurvival:charged_soup:20:15", "item:desolation:cinder_fruit:6:7", "item:desolation:powered_cinder_fruit:8:12", "item:desolation:activatedcharcoal:2:2", "item:desolation:infused_powder:10:10", "item:desolation:primed_ash:7:8", "item:pickletweaks:diamond_apple", "item:pickletweaks:emerald_apple", "item:undergarden:ditchbulb:5,6", "item:xreliquary:molten_core:1:1", "item:silents_mechanisms:coal_generator_fuels:1:1", "item:mekanism:dust_charcoal:1:1", "item:mekanism:dust_coal:1:1", "item:rats:nether_cheese", "item:potionsmaster:charcoal_powder:1:1", "item:potionsmaster:coal_powder:1:1", "item:potionsmaster:activated_charcoal:2:2", "item:thermal:coal_coke:1:1", "item:infernalexp:glowcoal:2:3", "item:resourcefulbees:coal_honeycomb:5:5", "item:resourcefulbees:netherite_honeycomb:5:5", "item:lazierae2:coal_dust:1:1", "item:wyrmroost:jewelled_apple", "item:silents_mechanisms:coal_dust:1:1", "item:potionsmaster:calcinatedcoal_powder:1:1", "item:thermal:basalz_rod:2:4", "item:thermal:basalz_powder:1:2", "item:druidcraft:fiery_glass:2:2"), ConfigHandler.itemsAndTagsPredicate.and(this::isValidFoodConfig));
-
-		forestDragonFoods = builder.worldRestart().translation("ds.config.server.food.forestDragonFoods").comment("Dragon food formatting: item/tag:modid:id:food:saturation").defineList("forestDragon", Arrays.asList("tag:forge:raw_meats:5:7", "item:minecraft:sweet_berries:1:1", "item:minecraft:rotten_flesh:2:3", "item:minecraft:spider_eye:7:8", "item:minecraft:rabbit:7:13", "item:minecraft:poisonous_potato:7:10", "item:minecraft:chorus_fruit:9:12", "item:minecraft:golden_apple", "item:minecraft:enchanted_golden_apple", "item:minecraft:honey_bottle", "item:dragonsurvival:forest_dragon_treat:10:12", "item:aoa3:fiery_chops:6:7", "item:aoa3:raw_chimera_chop:6:7", "item:aoa3:raw_furlion_chop:6:7", "item:aoa3:raw_halycon_beef:7:8", "item:aoa3:raw_charger_shank:6:7", "item:aoa3:trilliad_leaves:8:11", "item:aoa3:heart_fruit:9:10", "item:pamhc2foodextended:rawtofabbititem", "item:pamhc2foodextended:rawtofickenitem", "item:pamhc2foodextended:rawtofuttonitem", "item:alexsmobs:kangaroo_meat:5:6", "item:alexsmobs:moose_ribs:6:8", "item:simplefarming:raw_horse_meat:5:6", "item:simplefarming:raw_bacon:3:3", "item:simplefarming:raw_chicken_wings:2:3", "item:simplefarming:raw_sausage:3:4", "item:xenoclustwo:raw_tortice:7:8", "item:unnamedanimalmod:musk_ox_shank:7:8", "item:unnamedanimalmod:frog_legs:5:6", "item:unnamedanimalmod:mangrove_fruit:4:7", "item:betteranimalsplus:venisonraw:5:6", "item:betteranimalsplus:pheasantraw:7:5", "item:betteranimalsplus:turkey_leg_raw:4:5", "item:infernalexp:raw_hogchop:6:7", "item:infernalexp:cured_jerky:10:7", "item:druidcraft:elderberries:3:4", "item:rats:raw_rat:4:5", "item:aquaculture:frog:4:5", "item:aquaculture:frog_legs_raw:4:4", "item:aquaculture:box_turtle:4:5", "item:aquaculture:arrau_turtle:4:5", "item:aquaculture:starshell_turtle:4:5", "item:nethers_exoticism:kiwano:3:4", "item:undergarden:raw_gloomper_leg:4:5", "item:undergarden:raw_dweller_meat:6:7", "item:farmersdelight:chicken_cuts:3:3", "item:farmersdelight:bacon:3:3", "item:farmersdelight:ham:9:10", "item:farmersdelight:minced_beef:5:3", "item:farmersdelight:mutton_chops:5:3", "item:abnormals_delight:duck_fillet:2:3", "item:abnormals_delight:venison_shanks:7:3", "item:pickletweaks:diamond_apple", "item:pickletweaks:emerald_apple", "item:autumnity:foul_berries:2:4", "item:autumnity:turkey:7:8", "item:autumnity:turkey_piece:2:4", "item:autumnity:foul_soup:12:8", "item:endergetic:bolloom_fruit:3:4", "item:quark:frog_leg:4:5", "item:nethers_delight:hoglin_loin:8:6", "item:nethers_delight:raw_stuffed_hoglin:18:10", "item:xreliquary:zombie_heart:4:7", "item:xreliquary:bat_wing:2:2", "item:eidolon:zombie_heart:7:7", "item:forbidden_arcanus:bat_wing:5:2", "item:twilightforest:raw_venison:5:5", "item:twilightforest:raw_meef:9:5", "item:twilightforest:hydra_chop", "item:cyclic:chorus_flight", "item:cyclic:chorus_spectral", "item:cyclic:apple_ender", "item:cyclic:apple_honey", "item:cyclic:apple_chorus", "item:cyclic:apple_bone", "item:cyclic:apple_prismarine", "item:cyclic:apple_lapis", "item:cyclic:apple_iron", "item:cyclic:apple_diamond", "item:cyclic:apple_emerald", "item:cyclic:apple_chocolate", "item:cyclic:toxic_carrot:15:15", "item:artifacts:everlasting_beef", "item:resourcefulbees:rainbow_honey_bottle", "item:resourcefulbees:diamond_honeycomb:5:5", "item:byg:soul_shroom:9:5", "item:byg:death_cap:9:8", "item:byg:holly_berries:2:2", "item:minecolonies:chorus_bread", "item:wyrmroost:jewelled_apple", "item:wyrmroost:raw_lowtier_meat:3:2", "item:wyrmroost:raw_common_meat:5:3", "item:wyrmroost:raw_apex_meat:8:6", "item:wyrmroost:raw_behemoth_meat:11:12", "item:wyrmroost:desert_wyrm:4:3", "item:eanimod:rawchicken_darkbig:9:5", "item:eanimod:rawchicken_dark:5:4", "item:eanimod:rawchicken_darksmall:3:2", "item:eanimod:rawchicken_pale:5:3", "item:eanimod:rawchicken_palesmall:4:3", "item:eanimod:rawrabbit_small:4:4", "item:environmental:duck:4:3", "item:environmental:venison:7:7", "item:cnb:lizard_item_0:4:4", "item:cnb:lizard_item_1:4:4", "item:cnb:lizard_item_2:4:4", "item:cnb:lizard_item_3:4:4", "item:snowpig:frozen_porkchop:7:3", "item:snowpig:frozen_ham:5:7", "item:untamedwilds:snake_grass_snake:4:4", "item:untamedwilds:snake_green_mamba:4:4", "item:untamedwilds:snake_rattlesnake:4:4", "item:untamedwilds:snake_emerald:4:4", "item:untamedwilds:snake_carpet_python:4:4", "item:untamedwilds:snake_corn:4:4", "item:untamedwilds:snake_gray_kingsnake:4:4", "item:untamedwilds:snake_coral:4:4", "item:untamedwilds:snake_ball_python:4:4", "item:untamedwilds:snake_black_mamba:4:4", "item:untamedwilds:snake_western_rattlesnake:4:4", "item:untamedwilds:snake_taipan:4:4", "item:untamedwilds:snake_adder:4:4", "item:untamedwilds:snake_rice_paddy:4:4", "item:untamedwilds:snake_coral_blue:4:4", "item:untamedwilds:snake_cave_racer:4:4", "item:untamedwilds:snake_swamp_moccasin:4:4", "item:untamedwilds:softshell_turtle_pig_nose:4:4", "item:untamedwilds:softshell_turtle_flapshell:4:4", "item:untamedwilds:softshell_turtle_chinese:4:4", "item:untamedwilds:tortoise_asian_box:4:4", "item:untamedwilds:tortoise_gopher:4:4", "item:untamedwilds:tortoise_leopard:4:4", "item:untamedwilds:softshell_turtle_peacock:4:4", "item:untamedwilds:softshell_turtle_nile:4:4", "item:untamedwilds:softshell_turtle_spiny:4:4", "item:untamedwilds:tortoise_sulcata:4:4", "item:untamedwilds:tortoise_star:4:4", "item:untamedwilds:tortoise_marginated:4:4", "item:leescreatures:raw_boarlin:6:6", "item:mysticalworld:venison:5:5", "item:toadterror:toad_chops:8:7", "item:prehistoricfauna:raw_large_thyreophoran_meat:7:6", "item:prehistoricfauna:raw_large_marginocephalian_meat:8:6", "item:prehistoricfauna:raw_small_ornithischian_meat:4:3", "item:prehistoricfauna:raw_large_sauropod_meat:11:9", "item:prehistoricfauna:raw_small_sauropod_meat:4:4", "item:prehistoricfauna:raw_large_theropod_meat:7:7", "item:prehistoricfauna:raw_small_theropod_meat:4:4", "item:prehistoricfauna:raw_small_archosauromorph_meat:3:3", "item:prehistoricfauna:raw_large_archosauromorph_meat:6:5", "item:prehistoricfauna:raw_small_reptile_meat:4:3", "item:prehistoricfauna:raw_large_synapsid_meat:5:6"), ConfigHandler.itemsAndTagsPredicate.and(this::isValidFoodConfig));
-
-		seaDragonFoods = builder.worldRestart().translation("ds.config.server.food.seaDragonFoods").comment("Dragon food formatting: item/tag:modid:id:food:saturation").defineList("seaDragon", Arrays.asList("tag:forge:raw_fishes:6:7", "item:minecraft:dried_kelp:1:1", "item:minecraft:kelp:2:3", "item:minecraft:pufferfish:10:15", "item:minecraft:golden_apple", "item:minecraft:enchanted_golden_apple", "item:minecraft:honey_bottle", "item:dragonsurvival:sea_dragon_treat:10:12", "item:aoa3:raw_candlefish:9:9", "item:aoa3:raw_crimson_skipper:8:8", "item:aoa3:raw_fingerfish:4:4", "item:aoa3:raw_pearl_stripefish:5:4", "item:aoa3:raw_limefish:5:5", "item:aoa3:raw_sailback:6:5", "item:aoa3:raw_golden_gullfish:10:2", "item:aoa3:raw_turquoise_stripefish:7:6", "item:aoa3:raw_violet_skipper:7:7", "item:aoa3:raw_rocketfish:4:10", "item:aoa3:raw_crimson_stripefish:8:7", "item:aoa3:raw_sapphire_strider:9:8", "item:aoa3:raw_dark_hatchetfish:9:9", "item:aoa3:raw_ironback:10:9", "item:aoa3:raw_rainbowfish:11:11", "item:aoa3:raw_razorfish:12:14", "item:quark:golden_frog_leg", "item:alexsmobs:lobster_tail:4:5", "item:alexsmobs:blobfish:8:9", "item:oddwatermobs:raw_ghost_shark:8:8", "item:oddwatermobs:raw_isopod:4:2", "item:oddwatermobs:raw_mudskipper:6:7", "item:oddwatermobs:raw_coelacanth:9:10", "item:oddwatermobs:raw_anglerfish:6:6", "item:oddwatermobs:deep_sea_fish:4:2", "item:oddwatermobs:crab_leg:5:6", "item:simplefarming:raw_calamari:5:6", "item:unnamedanimalmod:elephantnose_fish:5:6", "item:unnamedanimalmod:flashlight_fish:5:6", "item:unnamedanimalmod:rocket_killifish:5:6", "item:unnamedanimalmod:leafy_seadragon:5:6", "item:unnamedanimalmod:elephantnose_fish:5:6", "item:betteranimalsplus:eel_meat_raw:5:6", "item:betteranimalsplus:calamari_raw:4:5", "item:betteranimalsplus:crab_meat_raw:4:4", "item:aquaculture:fish_fillet_raw:2:2", "item:aquaculture:goldfish:8:4", "item:aquaculture:box_turtle:4:5", "item:aquaculture:arrau_turtle:4:5", "item:aquaculture:starshell_turtle:4:5", "item:aquaculture:algae:3:2", "item:betterendforge:end_fish_raw:6:7", "item:betterendforge:hydralux_petal:3:3", "item:betterendforge:charnia_green:2:2", "item:shroomed:raw_shroomfin:5:6", "item:undergarden:raw_gwibling:5:6", "item:pickletweaks:diamond_apple", "item:pickletweaks:emerald_apple", "item:bettas:betta_fish:4:5", "item:quark:crab_leg:4:4", "item:pamhc2foodextended:rawtofishitem", "item:fins:banded_redback_shrimp:6:1", "item:fins:night_light_squid:6:2", "item:fins:night_light_squid_tentacle:6:2", "item:fins:emerald_spindly_gem_crab:7:2", "item:fins:amber_spindly_gem_crab:7:2", "item:fins:rubby_spindly_gem_crab:7:2", "item:fins:sapphire_spindly_gem_crab:7:2", "item:fins:pearl_spindly_gem_crab:7:2", "item:fins:papa_wee:6:2", "item:fins:bugmeat:4:2", "item:fins:raw_golden_river_ray_wing:6:2", "item:fins:red_bull_crab_claw:4:4", "item:fins:white_bull_crab_claw:4:4", "item:fins:wherble_fin:1:1", "item:forbidden_arcanus:tentacle:5:2", "item:pneumaticcraft:raw_salmon_tempura:6:10", "item:rats:ratfish:4:2", "item:cyclic:chorus_flight", "item:cyclic:chorus_spectral", "item:cyclic:apple_ender", "item:cyclic:apple_honey", "item:cyclic:apple_chorus", "item:cyclic:apple_bone", "item:cyclic:apple_prismarine", "item:cyclic:apple_lapis", "item:cyclic:apple_iron", "item:cyclic:apple_diamond", "item:cyclic:apple_emerald", "item:cyclic:apple_chocolate", "item:upgrade_aquatic:purple_pickerelweed:2:2", "item:upgrade_aquatic:blue_pickerelweed:2:2", "item:upgrade_aquatic:polar_kelp:2:2", "item:upgrade_aquatic:tongue_kelp:2:2", "item:upgrade_aquatic:thorny_kelp:2:2", "item:upgrade_aquatic:ochre_kelp:2:2", "item:upgrade_aquatic:lionfish:8:9", "item:resourcefulbees:gold_honeycomb:5:5", "item:resourcefulbees:rainbow_honey_bottle", "item:wyrmroost:jewelled_apple", "item:aquaculture:sushi:6:5", "item:freshwarriors:fresh_soup:15:10", "item:freshwarriors:beluga_caviar:10:3", "item:freshwarriors:piranha:4:1", "item:freshwarriors:tilapia:4:1", "item:freshwarriors:stuffed_piranha:4:1", "item:freshwarriors:tigerfish:5:5", "item:freshwarriors:toe_biter_leg:3:3", "item:untamedwilds:egg_arowana_black:4:4", "item:untamedwilds:egg_trevally_jack:4:4", "item:untamedwilds:egg_trevally_golden:4:4", "item:untamedwilds:egg_giant_salamander_chinese:6:4", "item:untamedwilds:egg_giant_salamander_hellbender:6:4", "item:untamedwilds:egg_giant_salamander_japanese:6:4", "item:untamedwilds:giant_clam_gigas:4:4", "item:untamedwilds:giant_clam_derasa:4:4", "item:untamedwilds:giant_clam_maxima:4:4", "item:untamedwilds:giant_clam_squamosa:4:4", "item:untamedwilds:egg_trevally_giant:6:4", "item:untamedwilds:egg_trevally_bluespotted:6:4", "item:untamedwilds:egg_trevally_bigeye:6:4", "item:untamedwilds:egg_sunfish_southern:6:4", "item:untamedwilds:egg_sunfish_sunfish:6:4", "item:untamedwilds:egg_giant_clam_squamosa:6:4", "item:untamedwilds:egg_giant_clam_gigas:6:4", "item:untamedwilds:egg_giant_clam_derasa:6:4", "item:untamedwilds:egg_giant_clam_maxima:6:4", "item:untamedwilds:egg_football_fish_atlantic:6:4", "item:untamedwilds:egg_arowana_silver:6:4", "item:untamedwilds:egg_arowana_jardini:6:4", "item:untamedwilds:egg_arowana_green:6:4", "item:mysticalworld:raw_squid:6:5", "item:aquafina:fresh_soup:15:10", "item:aquafina:beluga_caviar:10:3", "item:aquafina:raw_piranha:4:1", "item:aquafina:raw_tilapia:4:1", "item:aquafina:stuffed_piranha:4:1", "item:aquafina:tigerfish:5:5", "item:aquafina:toe_biter_leg:3:3", "item:aquafina:raw_angelfish:4:1", "item:aquafina:raw_football_fish:4:1", "item:aquafina:raw_foxface_fish:4:1", "item:aquafina:raw_royal_gramma:4:1", "item:aquafina:raw_starfish:4:1", "item:aquafina:spider_crab_leg:4:1", "item:aquafina:raw_stingray_slice:4:1", "item:prehistoricfauna:raw_ceratodus:5:5", "item:prehistoricfauna:raw_cyclurus:4:4", "item:prehistoricfauna:raw_potamoceratodus:5:5", "item:prehistoricfauna:raw_myledaphus:4:4", "item:prehistoricfauna:raw_gar:4:4", "item:prehistoricfauna:raw_oyster:4:3", "item:prehistoric_delight:prehistoric_fillet:3:3"), ConfigHandler.itemsAndTagsPredicate.and(this::isValidFoodConfig));
-		//Magic
-		builder.pop().push("magic");
-		builder.comment("Config values for the magic system");
-
-		builder.push("Mana");
-
-		seaDragonManaBlocks = builder.translation("ds.config.server.magic.mana.seaDragonManaBlocks").worldRestart().comment("Blocks that will restore mana quicker when a sea dragon is standing on it. Formatting: block/tag:modid:blockid").defineList("seaDragonManaBlocks", Arrays.asList("block:dragonsurvival:sea_source_of_magic", "tag:minecraft:ice", "block:minecraft:snow", "block:minecraft:snow_block", "block:minecraft:water", "block:minecraft:wet_sponge", "block:minecraft:cauldron"), ConfigHandler.blocksAndTagsPredicate);
-
-		forestDragonManaBlocks = builder.translation("ds.config.server.magic.mana.forestDragonManaBlocks").worldRestart().comment("Blocks that will restore mana quicker when a forest dragon is standing on it. Formatting: block/tag:modid:blockid").defineList("forestDragonManaBlocks", Arrays.asList("block:dragonsurvival:forest_source_of_magic", "tag:minecraft:small_flowers", "tag:minecraft:flowers", "tag:minecraft:tall_flowers"), ConfigHandler.blocksAndTagsPredicate);
-
-		caveDragonManaBlocks = builder.translation("ds.config.server.magic.mana.caveDragonManaBlocks").worldRestart().comment("Blocks that will restore mana quicker when a cave dragon is standing on it. Formatting: block/tag:modid:blockid").defineList("caveDragonManaBlocks", Arrays.asList("block:dragonsurvival:cave_source_of_magic", "tag:minecraft:campfires", "block:minecraft:lava", "block:minecraft:smoker", "block:minecraft:furnace", "block:minecraft:magma_block", "block:minecraft:blast_furnace"), ConfigHandler.blocksAndTagsPredicate);
-
-		builder.pop();
-
-		dragonAbilities = builder.translation("ds.config.server.magic.dragonAbilities").comment("Whether dragon abilities should be enabled").define("dragonAbilities", true);
-
-		caveDragonAbilities = builder.translation("ds.config.server.magic.caveDragonAbilities").comment("Whether cave dragon abilities should be enabled").define("caveDragonAbilities", true);
-
-		forestDragonAbilities = builder.translation("ds.config.server.magic.forestDragonAbilities").comment("Whether forest dragon abilities should be enabled").define("forestDragonAbilities", true);
-
-		seaDragonAbilities = builder.translation("ds.config.server.magic.seaDragonAbilities").comment("Whether sea dragon abilities should be enabled").define("seaDragonAbilities", true);
-
-
-		noEXPRequirements = builder.translation("ds.config.server.magic.noEXPRequirements").comment("Disable the exp requirements for leveling up active skills").define("noEXPRequirements", false);
-
-		consumeEXPAsMana = builder.translation("ds.config.server.magic.consumeEXPAsMana").comment("Whether to use exp instead of mana if mana is empty").define("consumeEXPAsMana", true);
-
-		initialPassiveCost = builder.translation("ds.config.server.magic.initialPassiveCost").comment("The initial exp cost for leveling passive skills.").defineInRange("initialPassiveCost", 2, 0, 100);
-
-		passiveScalingCost = builder.translation("ds.config.server.magic.passiveScalingCost").comment("The multiplier that is used to increase the passive skill costs per level").defineInRange("passiveScalingCost", 4.0, 0, 100);
-
-
-		favorableManaTicks = builder.translation("ds.config.server.magic.favorableManaTicks").comment("How fast in seconds should mana be recovered in favorable conditions").defineInRange("favorableManaRegen", 5, 1, 1000);
-
-		normalManaTicks = builder.translation("ds.config.server.magic.normalManaTicks").comment("How fast in seconds should mana be recovered in normal conditions").defineInRange("normalManaRegen", 15, 1, 1000);
-
-		builder.push("abilities");
-
-		saveAllAbilities = builder.translation("ds.config.server.magic.abilities.saveAllAbilities").comment("Whether to save passives skills when changing dragon type").define("saveAllAbilities", false);
-
-		builder.push("forest_dragon");
-		builder.push("actives");
-
-		builder.push("forest_breath");
-
-		forestBreath = builder.comment("Whether the forest breath ability should be enabled").define("forestBreath", true);
-
-		forestBreathDamage = builder.comment("The amount of damage the forest breath ability deals. This value is multiplied by the skill level.").defineInRange("forestBreathDamage", 2.0, 0, 100.0);
-
-		forestBreathCooldown = builder.comment("The cooldown in ticks of the forest breath ability").defineInRange("forestBreathCooldown", Functions.secondsToTicks(5), 1, 10000);
-		forestBreathCasttime = builder.comment("The casttime in ticks of the forest breath ability").worldRestart().defineInRange("forestBreathCasttime", Functions.secondsToTicks(10), 1, 10000);
-
-		forestBreathInitialMana = builder.comment("The mana cost for starting the forest breath ability").defineInRange("forestBreathInitialMana", 2, 0, 100);
-
-		forestBreathOvertimeMana = builder.comment("The mana cost of sustaining the forest breath ability").defineInRange("forestBreathOvertimeMana", 1, 0, 100);
-
-		forestBreathManaTicks = builder.comment("How often in ticks, mana is consumed while using forest breath").defineInRange("forestBreathManaTicks", Functions.secondsToTicks(2), 0, 100);
-
-		forestBreathBlockBreaks = builder.comment("Blocks that have a chance to be broken by forest breath. Formatting: block/tag:modid:id").worldRestart().defineList("forestBreathBlockBreaks", Arrays.asList("tag:minecraft:banners"), ConfigHandler.blocksAndTagsPredicate);
-
-		forestBreathGrowBlacklist = builder.comment("Blocks that will not be grown by the forest breath. Formatting: block/tag:modid:id").worldRestart().defineList("forestBreathGrowBlacklist", Arrays.asList(), ConfigHandler.blocksAndTagsPredicate);
-		builder.pop().push("spike");
-
-		spike = builder.comment("Whether the spike ability should be enabled").define("spike", true);
-
-		spikeCooldown = builder.comment("The cooldown in ticks of the spike ability").defineInRange("spikeCooldown", Functions.secondsToTicks(3), 1, 10000);
-		spikeCasttime = builder.comment("The cast time in ticks of the spike ability").worldRestart().defineInRange("spikeCasttime", 1, 1, 10000);
-
-		spikeDamage = builder.comment("The amount of damage the spike ability deals. This value is multiplied by the skill level.").defineInRange("spikeDamage", 2.0, 0, 100.0);
-
-		spikeManaCost = builder.comment("The mana cost for using the spike ability").defineInRange("spikeManaCost", 2, 0, 100);
-
-		builder.pop().push("inspiration");
-
-		inspiration = builder.comment("Whether the inspiration ability should be enabled").define("inspiration", true);
-
-		inspirationCooldown = builder.comment("The cooldown in ticks of the inspiration ability").defineInRange("inspirationCooldown", Functions.secondsToTicks(90), 1, 10000);
-		inspirationCasttime = builder.comment("The cast time in ticks of the inspiration ability").worldRestart().defineInRange("inspirationCasttime", Functions.secondsToTicks(5), 1, 10000);
-
-		inspirationDuration = builder.comment("The duration in seconds of the inspiration effect given when the ability is used").defineInRange("inspirationDuration", 60, 0, 10000);
-
-		inspirationManaCost = builder.comment("The mana cost for using the inspiration ability").defineInRange("inspirationManaCost", 3, 0, 100);
-
-		builder.pop().push("hunter");
-
-		hunter = builder.comment("Whether the hunter ability should be enabled").define("hunter", true);
-
-		hunterDuration = builder.comment("The duration in seconds of the inspiration effect given when the ability is used").defineInRange("hunterDuration", 60, 0, 10000);
-
-		hunterCooldown = builder.comment("The cooldown in ticks of the hunter ability").defineInRange("hunterCooldown", Functions.secondsToTicks(30), 1, 10000);
-		hunterCasttime = builder.comment("The cast time in ticks of the hunter ability").worldRestart().defineInRange("hunterCasttime", Functions.secondsToTicks(3), 1, 10000);
-
-		hunterDamageBonus = builder.comment("The damage bonus the hunter effect gives when invisible. This value is multiplied by the skill level.").defineInRange("hunterDamageBonus", 1.5, 0, 100.0);
-
-		hunterManaCost = builder.comment("The mana cost for using the inspiration ability").defineInRange("hunterManaCost", 3, 0, 100);
-
-		builder.pop().pop().push("passives");
-
-		forestMagic = builder.comment("Whether the forest magic ability should be enabled").define("forestMagic", true);
-
-		forestAthletics = builder.comment("Whether the forest athletics ability should be enabled").define("forestAthletics", true);
-
-		lightInDarkness = builder.comment("Whether the light in darkness ability should be enabled").define("lightInDarkness", true);
-
-		cliffHanger = builder.comment("Whether the cliffhanger ability should be enabled").define("cliffHanger", true);
-
-
-		builder.pop().pop().push("sea_dragon");
-		builder.push("actives");
-		builder.push("storm_breath");
-
-		stormBreath = builder.comment("Whether the storm breath ability should be enabled").define("stormBreath", true);
-
-		stormBreathDamage = builder.comment("The amount of damage the storm breath ability deals. This value is multiplied by the skill level.").defineInRange("stormBreathDamage", 1.0, 0, 100.0);
-
-		stormBreathInitialMana = builder.comment("The mana cost for starting the storm breath ability").defineInRange("stormBreathInitialMana", 2, 0, 100);
-
-		stormBreathCooldown = builder.comment("The cooldown in ticks of the storm breath ability").defineInRange("stormBreathCooldown", Functions.secondsToTicks(10), 1, 10000);
-		stormBreathCasttime = builder.comment("The cast time in ticks of the storm breath ability").worldRestart().defineInRange("stormBreathCasttime", 10, 1, 10000);
-
-		stormBreathOvertimeMana = builder.comment("The mana cost of sustaining the storm breath ability").defineInRange("stormBreathOvertimeMana", 1, 0, 100);
-
-		stormBreathManaTicks = builder.comment("How often in ticks, mana is consumed while using storm breath").defineInRange("stormBreathManaTicks", Functions.secondsToTicks(2), 0, 100);
-
-		stormBreathBlockBreaks = builder.comment("Blocks that have a chance to be broken by storm breath. Formatting: block/tag:modid:id").worldRestart().defineList("stormBreathBlockBreaks", Arrays.asList("tag:minecraft:impermeable", "block:minecraft:snow", "tag:minecraft:crops", "tag:minecraft:flowers", "tag:minecraft:banners", "tag:minecraft:lush_plants_replaceable", "tag:minecraft:azalea_log_replaceable", "tag:minecraft:replaceable_plants", "tag:minecraft:leaves"), ConfigHandler.blocksAndTagsPredicate);
-
-		chargedBlacklist = builder.comment("List of entities that do not work with the charged effect. Format: modid:id").defineList("chargedBlacklist", Arrays.asList("upgrade_aquatic:thrasher", "upgrade_aquatic:great_thrasher"), ConfigHandler.entitiesAndTagsPredicate);
-
-		stormBreathChainCount = builder.comment("How many mobs stormbreath is able to chain to at once").defineInRange("stormBreathChainCount", 2, 0, 100);
-
-		chargedEffectChainCount = builder.comment("How many mobs the charged effect is able to chain to at once").defineInRange("chargedEffectChainCount", 2, 0, 100);
-
-		chargedEffectMaxChain = builder.comment("How many times the charged effect is able to chain. -1 means it can chain infinitely").defineInRange("chargedEffectMaxChain", -1, -1, 100);
-
-		chargedChainRange = builder.comment("The max distance in blocks the storm breath and charged effect is able to chain to mobs").defineInRange("chargedChainRange", 10, 0, 100);
-
-		chargedEffectDamage = builder.comment("The amount of damage the charged effect deals each second").defineInRange("chargedEffectDamage", 1, 0, 100);
-
-		chargedSpreadBlacklist = builder.comment("List of entities that will not spread the charged effect. Format: modid:id").defineList("chargedBlacklist", Arrays.asList("minecraft:armor_stand"), ConfigHandler.entitiesAndTagsPredicate);
-
-		builder.pop().push("ball_lightning");
-
-		ballLightning = builder.comment("Whether the lightning ball ability should be enabled").define("ballLightning", true);
-
-		ballLightningCooldown = builder.comment("The cooldown in ticks of the ball lightning ability").defineInRange("ballLightningCooldown", Functions.secondsToTicks(60), 1, 10000);
-		ballLightningCasttime = builder.comment("The cast time in ticks of the ball lightning ability").worldRestart().defineInRange("ballLightningCasttime", Functions.secondsToTicks(2), 1, 10000);
-
-		ballLightningDamage = builder.comment("The amount of damage the lightning ball ability deals. This value is multiplied by the skill level.").defineInRange("ballLightningDamage", 4.0, 0, 100.0);
-
-		ballLightningManaCost = builder.comment("The mana cost for using the lightning ball ability").defineInRange("ballLightningManaCost", 3, 0, 100);
-
-		builder.pop().push("revealing_the_soul");
-
-		revealingTheSoul = builder.comment("Whether the revealing The Soul ability should be enabled").define("revealingTheSoul", true);
-
-		revealingTheSoulDuration = builder.comment("The duration in seconds of the revealing The Soul effect given when the ability is used").defineInRange("revealingTheSoulDuration", 60, 0, 10000);
-
-		revealingTheSoulCooldown = builder.comment("The cooldown in ticks of the revealing the soul ability").defineInRange("revealingTheSoulCooldown", Functions.secondsToTicks(30), 1, 10000);
-		revealingTheSoulCasttime = builder.comment("The cast time in ticks of the revealing the soul ability").worldRestart().defineInRange("revealingTheSoulCasttime", Functions.secondsToTicks(5), 1, 10000);
-
-		revealingTheSoulManaCost = builder.comment("The mana cost for using the revealing The Soul ability").defineInRange("revealingTheSoulManaCost", 3, 0, 100);
-
-		revealingTheSoulMaxEXP = builder.comment("The max amount of increased exp that can be gained from a single mob with reavling the soul").defineInRange("revealingTheSoulMaxEXP", 20, 0, 10000);
-
-		revealingTheSoulMultiplier = builder.comment("The multiplier that is applied to exp with revealing the soul, the extra exp is in addition to the normal drops. so 1.0 = 100% increase").defineInRange("revealingTheSoulMultiplier", 1.0, 0, 10000);
-
-		builder.pop().push("sea_vision");
-
-		seaEyes = builder.comment("Whether the sea vision ability should be enabled").define("seaVision", true);
-
-		seaEyesDuration = builder.comment("The duration in seconds of the sea vision effect given when the ability is used").defineInRange("seaVisionDuration", 90, 0, 10000);
-
-		seaEyesCooldown = builder.comment("The cooldown in ticks of the sea vision ability").defineInRange("seaVisionCooldown", Functions.secondsToTicks(60), 1, 10000);
-		seaEyesCasttime = builder.comment("The cast time in ticks of the sea vision ability").worldRestart().defineInRange("seaEyesCasttime", Functions.secondsToTicks(2), 1, 10000);
-
-		seaEyesManaCost = builder.comment("The mana cost for using the sea vision ability").defineInRange("seaVisionManaCost", 2, 0, 100);
-
-		builder.pop().pop().push("passives");
-
-		seaMagic = builder.comment("Whether the sea magic ability should be enabled").define("seaMagic", true);
-
-		seaAthletics = builder.comment("Whether the sea athletics ability should be enabled").define("seaAthletics", true);
-
-		water = builder.comment("Whether the water ability should be enabled").define("water", true);
-
-		spectralImpact = builder.comment("Whether the spectralImpact ability should be enabled").define("spectralImpact", true);
-
-		spectralImpactProcChance = builder.comment("The percentage chance that spectral impact will proc. This is multiplied by the level of the skill.").defineInRange("spectralImpactProcChance", 15, 0, 100);
-
-		builder.pop().pop().push("cave_dragon");
-		builder.push("actives");
-
-		builder.push("fire_breath");
-
-		fireBreath = builder.comment("Whether the firebreath ability should be enabled").define("fireBreath", true);
-
-		fireBreathDamage = builder.comment("The amount of damage the firebreath ability deals. This value is multiplied by the skill level.").defineInRange("fireBreathDamage", 3.0, 0, 100.0);
-
-		fireBreathInitialMana = builder.comment("The mana cost for starting the firebreath ability").defineInRange("fireBreathInitialMana", 2, 0, 100);
-
-		fireBreathCooldown = builder.comment("The cooldown in ticks of the fire breath ability").defineInRange("fireBreathCooldown", Functions.secondsToTicks(5), 1, 10000);
-		fireBreathCasttime = builder.comment("The cast time in ticks of the fire breath ability").worldRestart().defineInRange("fireBreathCasttime", 10, 1, 10000);
-
-		fireBreathOvertimeMana = builder.comment("The mana cost of sustaining the firebreath ability").defineInRange("fireBreathOvertimeMana", 1, 0, 100);
-
-		fireBreathManaTicks = builder.comment("How often in ticks, mana is consumed while using fire breath").defineInRange("fireBreathManaTicks", Functions.secondsToTicks(2), 0, 100);
-
-		fireBreathSpreadsFire = builder.comment("Whether the fire breath actually spreads fire when used").define("fireBreathSpreadsFire", true);
-
-		fireBreathBlockBreaks = builder.comment("Blocks that have a chance to be broken by fire breath. Formatting: block/tag:modid:id").worldRestart().defineList("fireBreathBlockBreaks", Arrays.asList("tag:minecraft:ice", "block:minecraft:snow", "tag:minecraft:crops", "tag:minecraft:leaves", "tag:minecraft:flowers", "tag:minecraft:banners", "tag:minecraft:lush_plants_replaceable", "tag:minecraft:azalea_log_replaceable", "tag:minecraft:replaceable_plants", "tag:minecraft:wooden_fences", "tag:minecraft:logs_that_burn", "tag:minecraft:mycelium", "tag:minecraft:wooden_stairs", "tag:minecraft:wooden_doors", "tag:minecraft:wool", "tag:minecraft:saplings", "tag:minecraft:impermeable", "block:minecraft:cobweb", "block:minecraft:large_fern", "block:minecraft:sugar_cane", "block:minecraft:snow_block"), ConfigHandler.blocksAndTagsPredicate);
-
-		builder.pop().push("fireball");
-
-
-		fireball = builder.comment("Whether the fireball ability should be enabled").define("fireball", true);
-
-		fireballCooldown = builder.comment("The cooldown in ticks of the fireball ability").defineInRange("fireballCooldown", Functions.secondsToTicks(40), 1, 10000);
-		fireballCasttime = builder.comment("The cast time in ticks of the fireball ability").worldRestart().defineInRange("fireballCasttime", Functions.secondsToTicks(4), 1, 10000);
-
-		fireballDamage = builder.comment("The amount of damage the fireball ability deals. This value is multiplied by the skill level.").defineInRange("fireballDamage", 5.0, 0, 100.0);
-
-		fireballManaCost = builder.comment("The mana cost for using the fireball ball ability").defineInRange("fireballManaCost", 3, 0, 100);
-
-		builder.pop().push("tough_skin");
-
-
-		toughSkin = builder.comment("Whether the tough skin ability should be enabled").define("toughSkin", true);
-
-		toughSkinDuration = builder.comment("The duration in seconds of the tough skin effect given when the ability is used").defineInRange("toughSkinDuration", 180, 0, 10000);
-
-		toughSkinCooldown = builder.comment("The cooldown in ticks of the tough skin ability").defineInRange("toughSkinCooldown", Functions.secondsToTicks(30), 1, 10000);
-		toughSkinCasttime = builder.comment("The cast time in ticks of the tough skin ability").worldRestart().defineInRange("toughSkinCasttime", Functions.secondsToTicks(5), 1, 10000);
-
-		toughSkinManaCost = builder.comment("The mana cost for using the tough skin ability").defineInRange("toughSkinManaCost", 3, 0, 100);
-
-		toughSkinArmorValue = builder.comment("The amount of extra armor given per level of tough skin effect").defineInRange("toughSkinArmorValue", 3.0, 0, 10000);
-
-		builder.pop().push("lava_vision");
-
-
-		lavaVision = builder.comment("Whether the lava vision ability should be enabled").define("lavaVision", true);
-
-		lavaVisionDuration = builder.comment("The duration in seconds of the lava vision effect given when the ability is used").defineInRange("lavaVisionDuration", 60, 0, 10000);
-
-		lavaVisionCooldown = builder.comment("The cooldown in ticks of the lava vision ability").defineInRange("lavaVisionCooldown", Functions.secondsToTicks(60), 1, 10000);
-		lavaVisionCasttime = builder.comment("The cast time in ticks of the lava vision ability").defineInRange("lavaVisionCasttime", Functions.secondsToTicks(2), 1, 10000);
-
-		lavaVisionManaCost = builder.comment("The mana cost for using the lava vision ability").defineInRange("lavaVisionManaCost", 2, 0, 100);
-
-		builder.pop().pop().push("passives");
-		caveMagic = builder.comment("Whether the cave magic ability should be enabled").define("caveMagic", true);
-
-		caveAthletics = builder.comment("Whether the cave athletics ability should be enabled").define("caveAthletics", true);
-
-		contrastShower = builder.comment("Whether the contrast shower ability should be enabled").define("contrastShower", true);
-
-		burn = builder.comment("Whether the burn ability should be enabled").define("burn", true);
-
-		builder.pop().pop().pop();
+		ConfigHandler.addConfigs(builder, ConfigSide.SERVER);
 	}
 
-	private boolean isValidHurtfulItem(Object food){
-		String[] foodSplit = String.valueOf(food).split(":");
+	@ConfigOption( side = ConfigSide.SERVER, category = "general", key = "harvestableStarBlock", comment = "Whether silk touch hoes can be used to harvest Predator Stars." )
+	public static Boolean mineStarBlock = false;
 
-		if(foodSplit.length == 4)
-			try{
-				float damage = Float.parseFloat(foodSplit[3]);
-			}catch(NumberFormatException ignored){
-				return false;
-			}
+	@ConfigRange( min = 0, max = 1000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "general", key = "altarUsageCooldown", comment = "How long of a cooldown in seconds the altar has after each use." )
+	public static Integer altarUsageCooldown = 0;
 
-		return true;
-	}
+	@ConfigOption( side = ConfigSide.SERVER, category = "general", key = "altarCraftable", comment = "Whether dragon altars are craftable or not. When disabled you can only use the command or creative mode to become a dragon." )
+	public static Boolean altarCraftable = true;
 
-	private boolean isValidFoodConfig(Object food){
-		String[] foodSplit = String.valueOf(food).split(":");
-		try{
-			if(foodSplit.length == 5){
-				int value = Integer.parseInt(foodSplit[3]);
-				int saturation = Integer.parseInt(foodSplit[4]);
-				return value <= 20 && value >= 1 && saturation >= 1 && saturation <= 20;
-			}
-		}catch(NumberFormatException ignored){
-			return false;
-		}
+	@ConfigOption( side = ConfigSide.SERVER, category = "general", key = "keepClawItems", comment = "Whether to keep items in the claw slots on death otherwise they will drop on death." )
+	public static Boolean keepClawItems = false;
 
-		return true;
-	}
+	@ConfigOption( side = ConfigSide.SERVER, category = "general", key = "syncClawRender", comment = "If players are allowed to hide their claws and teeth from other players. If it is important to you to see your opponent's weapon during pvp, set false." )
+	public static Boolean syncClawRender = true;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "general", key = "canMoveInEmote", comment = "If players are allowed to move while performing emotes" )
+	public static Boolean canMoveInEmote = true;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "general", key = "canMoveWhileCasting", comment = "If you should be able to move while casting certain skills or if player movement can be prevented." )
+	public static Boolean canMoveWhileCasting = false;
+
+	@ConfigRange( min = 0.0, max = 1000.0 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "general", key = "maxSizeVari", comment = "The maximum size variation in percentage" )
+	public static Double maxSizeVari = 10.0;
+
+	@ConfigRange( min = -1000.0, max = 0 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "general", key = "minSizeVari", comment = "The minimum size variation in percentage" )
+	public static Double minSizeVari = -10.0;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "general", key = "useModifiedHitboxes", comment = "Should the mod use the new modified hitboxes for dragon plauers?" )
+	public static Boolean useModifiedHitboxes = true;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "general", key = "startWithDragonChoice", comment = "Should the dragon altar interface be opened when the player first joins the world?" )
+	public static Boolean startWithDragonChoice = false;
+
+	// Growth
+	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "sizeChangesHitbox", comment = "Whether the dragon size determines its hitbox size. The bigger the dragon, the bigger the hitbox. If false standard player's hitbox be used." )
+	public static Boolean sizeChangesHitbox = true;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "largerDragonHitbox", comment = "Whether the dragon hitbox grows past a human hitbox." )
+	public static Boolean hitboxGrowsPastHuman = true;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "growNewborn", comment = "List of items to grow newborn dragon. Format: item/modid:id" )
+	public static List<Item> growNewborn = ConfigHandler.configList(Item.class, DSItems.dragonHeartShard, DSItems.weakDragonHeart, DSItems.elderDragonHeart);
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "growYoung", comment = "List of items to grow young dragon. Format: item/modid:id" )
+	public static List<Item> growYoung = ConfigHandler.configList(Item.class,DSItems.weakDragonHeart, DSItems.elderDragonHeart);
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "growAdult", comment = "List of items to grow adult dragon. Format: item/modid:id" )
+	public static List<Item> growAdult = ConfigHandler.configList(Item.class,DSItems.elderDragonHeart);
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "alternateGrowing", comment = "Defines if dragon should grow without requirement of catalyst items. Your dragon will just grow over time." )
+	public static Boolean alternateGrowing = true;
+
+	@ConfigRange( min = 14.0, max = 1000000.0 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "maxGrowthSize", comment = "Defines the max size your dragon can grow to. Values that are too high can break your game. It is not advisable to set a number higher than 60." )
+	public static Double maxGrowthSize = 60.0;
+
+	@ConfigRange( min = 0, max = 1000000.0 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "reachBonus", comment = "The bonus that is given to dragons at ever 60 size. Human players have 1.0x reach and a size 60 dragon will have 1.5x distance with default value. Only applies to block mining." )
+	public static Double reachBonus = 0.5;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "saveGrowthStage", comment = "Should the growth stage of a dragon be saved even when you change. Does not affect the saving progress of magic (use saveAllAbilities). The author does not approve of weredragons, but if you insist..." )
+	public static Boolean saveGrowthStage = false;
+
+	@ConfigRange( min = 1, max = 100 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "minHealth", comment = "Dragon starting health. Minumum health dragons will start off with." )
+	public static Integer minHealth = 14;
+
+	@ConfigRange( min = 1, max = 100 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "maxHealth", comment = "Maximum health dragons can grow to." )
+	public static Integer maxHealth = 40;
+
+	@ConfigRange( min = 0.0, max = 1000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "newbornGrowthModifier", comment = "A multiplier to change the growth rate from newborn to young. At 1.0 it takes about 3 hours to turn a newborn dragon into a young dragon." )
+	public static Double newbornGrowthModifier = 0.3;
+
+	@ConfigRange( min = 0.0, max = 1000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "youngGrowthModifier", comment = "A multiplier to change the growth rate from young to adult. At 1.0 it takes about 1 day to turn a young dragon into a adult dragon." )
+	public static Double youngGrowthModifier = 0.5;
+
+	@ConfigRange( min = 0.0, max = 1000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "adultGrowthModifier", comment = "A multiplier to change the growth rate from adult to a full sized adult. At 1.0 it takes about 3 days to become a dragon of maximum adult size." )
+	public static Double adultGrowthModifier = 0.9;
+
+	@ConfigRange( min = 0.0, max = 1000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "maxGrowthModifier", comment = "A multiplier to change the growth rate from full sized adult to max size. The change in growth after the maximum adult size is measured in months and years." )
+	public static Double maxGrowthModifier = 1.0;
+
+	@ConfigRange( min = 0.0, max = 1.0 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "drops", key = "dragonHeartShardChance", comment = "The chance for dragon heart shards to drop from any mobs with max health between 14-20" )
+	public static Double dragonHeartShardChance = 0.01;
+
+	@ConfigRange( min = 0.0, max = 1.0 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "drops", key = "weakDragonHeartChance", comment = "The chance for weak dragon heart to drop from any mobs with max health between 20-50" )
+	public static Double weakDragonHeartChance = 0.01;
+
+	@ConfigRange( min = 0.0, max = 1.0 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "drops", key = "elderDragonHeartChance", comment = "The chance for dragon heart to drop from any mobs with max health above 50" )
+	public static Double elderDragonHeartChance = 0.1;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "drops", key = "dragonHeartEntityList", comment = "Decide which entities can drop dragon hearts" )
+	public static List<EntityType> dragonHeartEntityList = ConfigHandler.configList(EntityType.class);
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "drops", key = "weakDragonHeartEntityList", comment = "Decide which entities can drop weak dragon hearts" )
+	public static List<EntityType> weakDragonHeartEntityList = ConfigHandler.configList(EntityType.class);
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "drops", key = "elderDragonHeartEntityList", comment = "Decide which entities can drop elder dragon hearts" )
+	public static List<EntityType> elderDragonHeartEntityList = ConfigHandler.configList(EntityType.class);
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "drops", key = "dragonHeartWhiteList", comment = "Should the dragonHeartEntityList be treated as an allowlist rather than a block list?" )
+	public static Boolean dragonHeartWhiteList = false;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "drops", key = "weakDragonHeartWhiteList", comment = "Should the weakDragonHeartEntityList be treated as an allowlist rather than a block list?" )
+	public static Boolean weakDragonHeartWhiteList = false;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "drops", key = "elderDragonHeartWhiteList", comment = "Should the elderDragonHeartEntityList be treated as an allowlist rather than a block list?" )
+	public static Boolean elderDragonHeartWhiteList = false;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "drops", key = "dragonHeartUseList", comment = "Should the dragonHeartEntityList be used instead of the health requirement?" )
+	public static Boolean dragonHeartUseList = false;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "drops", key = "weakDragonHeartUseList", comment = "Should the weakDragonHeartUseList be used instead of the health requirement?" )
+	public static Boolean weakDragonHeartUseList = false;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "drops", key = "elderDragonHeartUseList", comment = "Should the elderDragonHeartUseList be used instead of the health requirement?" )
+	public static Boolean elderDragonHeartUseList = false;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "treasure", key = "treasureHealthRegen", comment = "Whether sleeping on treasure will recover health or not. " )
+	public static Boolean treasureHealthRegen = true;
+
+	@ConfigRange( min = 1, max = 10000000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "treasure", key = "treasureRegenTicks", comment = "The time in ticks it takes to recover 1hp while sleeping on one treasure. A large number of treasures in one place reduces time." )
+	public static Integer treasureRegenTicks = 24100;
+
+	@ConfigRange( min = 1, max = 10000000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "treasure", key = "treasureRegenTicksReduce", comment = "The amount of ticks each additional treasure reduces the regen time by" )
+	public static Integer treasureRegenTicksReduce = 100;
+
+	@ConfigRange( min = 1, max = 10000000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "treasure", key = "maxTreasures", comment = "The max amount of additional treasure that can be used to reduce the regen time" )
+	public static Integer maxTreasures = 240;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "source_of_magic", key = "sourceOfMagicInfiniteMagic", comment = "Whether using the source of magic block will grant the infinite magic buff." )
+	public static Boolean sourceOfMagicInfiniteMagic = true;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "source_of_magic", key = "damageWrongSourceOfMagic", comment = "Whether using the the source of magic intended for another dragon type will hurt you." )
+	public static Boolean damageWrongSourceOfMagic = true;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "source_of_magic", key = "canUseAllSourcesOfMagic", comment = "Whether you are able to use all types of source of magic no matter your dragon type." )
+	public static Boolean canUseAllSourcesOfMagic = false;
+
+	@ConfigRange( min = 1, max = 10000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "source_of_magic", key = "elderDragonDustTime", comment = "How long duration of the infinite magic effect using elder dragon dust gives in seconds. Note that you also spend 10 seconds while waiting." )
+	public static Integer elderDragonDustTime = 20;
+
+	@ConfigRange( min = 1, max = 10000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "source_of_magic", key = "elderDragonBoneTime", comment = "How long duration of the infinite magic effect using elder dragon bone gives in seconds. Note that you also spend 10 seconds while waiting." )
+	public static Integer elderDragonBoneTime = 60;
+
+	@ConfigRange( min = 1, max = 10000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "source_of_magic", key = "weakHeartShardTime", comment = "How long duration of the infinite magic effect using weak heart shard gives in seconds. Note that you also spend 10 seconds while waiting." )
+	public static Integer weakHeartShardTime = 110;
+
+	@ConfigRange( min = 1, max = 10000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "source_of_magic", key = "weakDragonHeartTime", comment = "How long duration of the infinite magic effect using weak dragon heart gives in seconds. Note that you also spend 10 seconds while waiting." )
+	public static Integer weakDragonHeartTime = 310;
+
+	@ConfigRange( min = 1, max = 10000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "source_of_magic", key = "elderDragonHeartTime", comment = "How long duration of the infinite magic effect using elder dragon heart gives in seconds. Note that you also spend 10 seconds while waiting." )
+	public static Integer elderDragonHeartTime = 1010;
+
+	@ConfigRange( min = 0.1, max = 1 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "wings", key = "maxFlightSpeed", comment = "Maximum acceleration fly speed up and down. Take into account the chunk load speed. A speed of 0.3 is optimal." )
+	public static Double maxFlightSpeed = 0.3;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "wings", key = "startWithWings", comment = "Whether dragons born with wings." )
+	public static Boolean startWithWings = true;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "wings", key = "enderDragonGrantsSpin", comment = "Whether you should be able to obtain the spin ability from the ender dragon." )
+	public static Boolean enderDragonGrantsSpin = true;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "wings", key = "allowFlyingWhenTotallyHungry", comment = "Whether dragons can fly when totally hungry. You can't open your wings if you're hungry." )
+	public static Boolean allowFlyingWithoutHunger = false;
+
+	@ConfigRange( min = 0, max = 20 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "wings", key = "flightHungerThreshold", comment = "If the player's hunger is below this parameter, he can't open his wings." )
+	public static Integer flightHungerThreshold = 6;
+
+	@ConfigRange( min = 0, max = 20 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "wings", key = "flightHungerThreshold", comment = "If the player's hunger is less then or equal to this parameter, the wings will be folded even during flight." )
+	public static Integer foldWingsThreshold = 0;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "wings", key = "flyingUsesHunger", comment = "Whether you use up hunger while flying." )
+	public static Boolean flyingUsesHunger = true;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "wings", key = "enableFlightFallDamage", comment = "Whether fall damage in flight is included. If true dragon will take damage from the fall." )
+	public static Boolean enableFlightFallDamage = true;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "wings", key = "lethalFallDamage", comment = "Whether fall damage from flight is lethal, otherwise it will leave you at half a heart" )
+	public static Boolean lethalFlight = false;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "wings", key = "foldWingsOnLand", comment = "Whether your wings will fold automatically when landing. Has protection against accidental triggering, so the wings do not always close. If False you must close the wings manually." )
+	public static Boolean foldWingsOnLand = false;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "wings", key = "alternateFlight", comment = "Whether to use flight similar to creative rather then gliding." )
+	public static Boolean creativeFlight = false;
+
+	@ConfigRange( min = 0, max = 100000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "wings", key = "flightSpinCooldown", comment = "The cooldown in seconds in between uses of the spin attack in flight" )
+	public static Integer flightSpinCooldown = 5;
+
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "bonuses", key = "healthMod", comment = "Apply a health modifier for dragons. The older the dragon, the more health it has." )
+	public static Boolean healthAdjustments = true;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "bonuses", key = "bonuses", comment = "Set to false to toggle off all dragon bonuses and play as human." )
+	public static Boolean bonuses = true;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "bonuses", key = "attackMod", comment = "Apply an attack damage modifier for dragons." )
+	public static Boolean attackDamage = true;
+
+	@ConfigRange( min = 0.0, max = 100.0 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "bonuses", key = "babyAttackMod", comment = "Attack modifier for baby dragons." )
+	public static Double babyBonusDamage = 1.0;
+
+	@ConfigRange( min = 0.0, max = 100.0 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "bonuses", key = "youngAttackMod", comment = "Attack modifier for young dragons." )
+	public static Double youngBonusDamage = 2.0;
+
+	@ConfigRange( min = 0.0, max = 100.0 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "bonuses", key = "adultAttackMod", comment = "Attack modifier for adult dragons." )
+	public static Double adultBonusDamage = 3.0;
+
+	@ConfigRange( min = 0.0, max = 0.9 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "bonuses", key = "newbornJump", comment = "Jumping height for a newborn dragon. Default is 1 block." )
+	public static Double newbornJump = 0.025;
+
+	@ConfigRange( min = 0.0, max = 0.9 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "bonuses", key = "youngJump", comment = "Jumping height for a young dragon. Default is 1.5 block." )
+	public static Double youngJump = 0.1;
+
+	@ConfigRange( min = 0.0, max = 0.9 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "bonuses", key = "adultJump", comment = "Jumping height for a adult dragon. Default is 2 block." )
+	public static Double adultJump = 0.15;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "bonuses", key = "clawsAreTools", comment = "Whether dragon claws function as tools." )
+	public static Boolean clawsAreTools = true;
+
+	@ConfigRange( min = -1, max = 100 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "bonuses", key = "baseHarvestLevel", comment = "The harvest level to apply when dragons breaks a block, regardless of dragon/tool type." )
+	public static Integer baseHarvestLevel = 0;
+
+	@ConfigRange( min = -1, max = 100 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "bonuses", key = "bonusHarvestLevel", comment = "The harvest level to apply to a dragons specific tool type once unlocked." )
+	public static Integer bonusHarvestLevel = 1;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "bonuses", key = "bonusUnlockedAt", comment = "The stage that dragons unlock the bonus harvest level." )
+	public static DragonLevel bonusUnlockedAt = DragonLevel.YOUNG;
+
+	@ConfigRange( min = 0, max = 100 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "bonuses", key = "speedupEffectLevel", comment = "The speed effect level for dragon block-specific speedups. Set to 0 to disable." )
+	public static Integer speedupEffectLevel = 2;
+
+
+	@ConfigOption( side = ConfigSide.SERVER, category = {"bonuses", "cave"}, key = "fireImmunity", comment = "Whether cave dragons are immune to fire damage types." )
+	public static Boolean caveFireImmunity = true;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = {"bonuses", "cave"}, key = "lavaSwimming", comment = "Set to false to disable cave dragon fast lava swimming." )
+	public static Boolean caveLavaSwimming = true;
+
+	@ConfigRange( min = 0, max = 100000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"bonuses", "cave"}, key = "lavaSwimTicks", comment = "The maximum number of ticks a cave dragon can swim in lava. Set to 0 to allow unlimited air while under lava." )
+	public static Integer caveLavaSwimmingTicks = 3600;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = {"bonuses", "cave"}, key = "caveSpeedupBlocks", comment = "Blocks cave dragons gain speed when standing above. Formatting: block/modid:id" )
+	public static List<Block> caveSpeedupBlocks = ConfigHandler.configList(Block.class, "minecraft:base_stone_nether", "minecraft:base_stone_overworld", "minecraft:stone_bricks", "minecraft:beacon_base_blocks", "forge:cobblestone", "forge:sandstone", "forge:stone", "forge:ores", "quark:deepslate", "quark:deepslate_bricks", "quark:cobbled_deepslate");
+
+
+	@ConfigRange( min = 0.0, max = 100.0 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"bonuses", "forest"}, key = "fallReduction", comment = "How many blocks of fall damage is mitigated for forest dragons. Set to 0.0 to disable." )
+	public static Double forestFallReduction = 5.0;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = {"bonuses", "forest"}, key = "bushImmunity", comment = "Whether forest dragons are immune to Sweet Berry Bush damage." )
+	public static Boolean forestBushImmunity = true;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = {"bonuses", "forest"}, key = "cactiImmunity", comment = "Whether forest dragons are immune to Cactus damage." )
+	public static Boolean forestCactiImmunity = true;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = {"bonuses", "forest"}, key = "forestSpeedupBlocks", comment = "Blocks forest dragons gain speed when standing above. Formatting: block/modid:id" )
+	public static List<Block> forestSpeedupBlocks = ConfigHandler.configList(Block.class,"minecraft:logs", "minecraft:leaves", "minecraft:planks", "forge:dirt");
+
+
+	@ConfigOption( side = ConfigSide.SERVER, category = {"bonuses", "sea"}, key = "waterBonuses", comment = "Whether sea dragons gain bonus swim speed and unlimited air." )
+	public static Boolean seaSwimmingBonuses = true;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = {"bonuses", "sea"}, key = "seaSpeedupBlocks", comment = "Blocks sea dragons gain speed when standing above. Formatting: block/modid:id" )
+	public static List<Block> seaSpeedupBlocks = ConfigHandler.configList(Block.class,"minecraft:ice", "minecraft:impermeable", "minecraft:sand", "minecraft:coral_blocks", "forge:sand", "minecraft:dirt_path", "minecraft:sandstone", "minecraft:cut_sandstone", "minecraft:chiseled_sandstone", "minecraft:smooth_sandstone", "minecraft:red_sandstone", "minecraft:cut_red_sandstone", "minecraft:chiseled_red_sandstone", "minecraft:smooth_red_sandstone", "minecraft:water");
+
+	//Dragon Penalties
+	@ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "penalties", comment = "Set to false to toggle off all dragon penalties." )
+	public static Boolean penalties = true;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "allowedVehicles", comment = "List of rideable entities. Format: modid:id" )
+	public static List<EntityType> allowedVehicles = ConfigHandler.configList(EntityType.class,EntityType.BOAT);
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "limitedRiding", comment = "Should dragons be limited by which entities they can ride" )
+	public static Boolean ridingBlacklist = true;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "blacklistedItems", comment = "List of items that disallowed to be used by dragons. Format: item/modid:id" )
+	public static List<Item> blacklistedItems = ConfigHandler.configList(Item.class,"item:minecraft:bow", "item:spartanshields:shield_basic_nickel", "item:spartanshields:shield_basic_invar", "item:spartanshields:shield_basic_constantan", "item:spartanshields:shield_basic_platinum", "item:spartanshields:shield_mekanism_refined_glowstone", "item:spartanshields:shield_tower_wood", "item:spartanshields:shield_tower_stone", "item:spartanshields:shield_tower_iron", "item:spartanshields:shield_tower_gold", "item:spartanshields:shield_tower_diamond", "item:spartanshields:shield_tower_netherite", "item:spartanshields:shield_tower_obsidian", "item:spartanshields:shield_tower_copper", "item:spartanshields:shield_tower_tin", "item:spartanshields:shield_tower_bronze", "item:spartanshields:shield_tower_steel", "item:spartanshields:shield_tower_silver", "item:spartanshields:shield_tower_lead", "item:spartanshields:shield_tower_nickel", "item:spartanshields:shield_tower_constantan", "item:spartanshields:shield_tower_invar", "item:spartanshields:shield_tower_platinum", "item:spartanshields:shield_tower_electrum", "item:spartanshields:shield_mekanism_powered_ultimate", "item:quark:flamerang", "item:quark:pickarang", "item:spartanshields:shield_botania_manasteel", "item:spartanshields:shield_botania_elementium", "item:spartanshields:shield_mekanism_osmium", "item:spartanshields:shield_mekanism_lapis_lazuli", "item:spartanshields:shield_basic_electrum", "item:spartanshields:shield_mekanism_refined_obsidian", "item:spartanshields:shield_mekanism_powered_basic", "item:spartanshields:shield_mekanism_powered_advanced", "item:spartanshields:shield_mekanism_powered_elite", "item:spartanweaponry:boomerang_steel", "item:spartanweaponry:boomerang_invar", "item:spartanweaponry:boomerang_platinum", "item:spartanweaponry:boomerang_electrum", "item:spartanshields:shield_basic_bronze", "item:spartanshields:shield_basic_tin", "item:spartanshields:shield_basic_copper", "item:spartanshields:shield_basic_obsidian", "item:spartanshields:shield_basic_netherite", "item:spartanshields:shield_basic_diamond", "item:spartanshields:shield_basic_gold", "item:spartanshields:shield_basic_iron", "item:spartanshields:shield_basic_stone", "item:spartanshields:shield_basic_wood", "item:spartanweaponry:boomerang_lead", "item:spartanweaponry:boomerang_nickel", "item:spartanshields:shield_basic_steel", "item:spartanshields:shield_basic_silver", "item:spartanshields:shield_basic_lead", "item:spartanweaponry:boomerang_bronze", "item:spartanweaponry:boomerang_tin", "item:spartanweaponry:boomerang_copper", "item:spartanweaponry:boomerang_netherite", "item:spartanweaponry:boomerang_gold", "item:spartanweaponry:boomerang_iron", "item:spartanweaponry:boomerang_stone", "item:spartanweaponry:heavy_crossbow_bronze", "mowziesmobs:wrought_axe", "item:spartanshields:shield_botania_terrasteel", "item:spartanweaponry:heavy_crossbow_leather", "item:spartanweaponry:heavy_crossbow_iron", "item:spartanweaponry:heavy_crossbow_gold", "item:spartanweaponry:heavy_crossbow_diamond", "item:spartanweaponry:heavy_crossbow_netherite", "item:spartanweaponry:heavy_crossbow_copper", "item:spartanweaponry:heavy_crossbow_tin", "item:spartanweaponry:boomerang_wood", "item:nethers_exoticism:rambutan_shield", "item:minecraft:shield", "item:minecraft:trident", "item:spartanweaponry:heavy_crossbow_lead", "item:spartanweaponry:heavy_crossbow_nickel", "item:spartanweaponry:heavy_crossbow_electrum", "item:spartanweaponry:heavy_crossbow_platinum", "item:spartanweaponry:heavy_crossbow_invar", "item:spartanweaponry:heavy_crossbow_silver", "item:spartanweaponry:heavy_crossbow_steel", "item:spartanweaponry:boomerang_diamond", "item:spartanweaponry:heavy_crossbow_wood", "item:minecraft:crossbow", "item:aquaculture:neptunium_bow", "item:spartanweaponry:longbow_electrum", "item:spartanweaponry:longbow_invar", "item:infernalexp:glowsilk_bow", "item:spartanweaponry:longbow_wood", "item:spartanweaponry:longbow_leather", "item:spartanweaponry:longbow_silver", "item:spartanweaponry:longbow_steel", "item:spartanweaponry:longbow_bronze", "item:spartanweaponry:longbow_tin", "item:spartanweaponry:longbow_copper", "item:spartanweaponry:longbow_netherite", "item:spartanweaponry:longbow_diamond", "item:spartanweaponry:longbow_gold", "item:spartanweaponry:longbow_iron", "item:spartanweaponry:boomerang_diamond", "item:spartanweaponry:boomerang_iron", "item:spartanweaponry:boomerang_wood", "item:spartanweaponry:boomerang_gold", "item:spartanweaponry:boomerang_netherite", "item:spartanweaponry:boomerang_copper", "item:spartanweaponry:boomerang_tin", "item:spartanweaponry:boomerang_bronze", "item:spartanweaponry:boomerang_stone", "item:spartanweaponry:boomerang_platinum", "item:spartanweaponry:boomerang_electrum", "item:spartanweaponry:boomerang_steel", "item:spartanweaponry:boomerang_lead", "item:spartanweaponry:boomerang_invar", "item:spartanweaponry:boomerang_nickel");
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "blacklistedSlots", comment = "List of slots to handle blacklistedItems option" )
+	public static List<Integer> blacklistedSlots = Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 45);
+
+	// Cave Dragon Penalties
+	@ConfigRange( min = 0.0, max = 100.0 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"penalties", "cave"}, key = "waterDamage", comment = "The amount of damage taken per water damage tick (once every 10 ticks). Set to 0.0 to disable water damage." )
+	public static Double caveWaterDamage = 1.0;
+
+	@ConfigRange( min = 0.0, max = 100.0 )
+	@ConfigOption( side = ConfigSide.SERVER, category =  {"penalties", "cave"}, key = "rainDamage", comment = "The amount of damage taken per rain damage tick (once every 40 ticks). Set to 0.0 to disable rain damage." )
+	public static Double caveRainDamage = 1.0;
+
+	@ConfigRange( min = 0.0, max = 100.0 )
+	@ConfigOption( side = ConfigSide.SERVER, category  = {"penalties", "cave"}, key = "splashDamage", comment = "The amount of damage taken when hit with a snowball or a water bottle. Set to 0.0 to disable splash damage." )
+	public static Double caveSplashDamage = 2.0;
+
+	// Forest Dragon Penalties
+	@ConfigRange( min = 0, max = 10000 )
+	@ConfigOption( side = ConfigSide.SERVER, category  = {"penalties", "forest"}, key = "ticksBeforeStressed", comment = "The number of ticks in darkness before the forest dragon gets Stress effect. Set to 0 to disable to stress effect." )
+	public static Integer forestStressTicks = 70;
+
+	@ConfigRange( min = 2, max = 100000 )
+	@ConfigOption( side = ConfigSide.SERVER, category  = {"penalties", "forest"}, key = "stressEffectDuration", comment = "The number of seconds the stress effect lasts for." )
+	public static Integer forestStressEffectDuration = 50;
+
+	@ConfigRange( min = 0.1, max = 4.0 )
+	@ConfigOption( side = ConfigSide.SERVER, category  = {"penalties", "forest"}, key = "stressExhaustion", comment = "The amount of exhaustion applied per 10 ticks during the stress effect." )
+	public static Double stressExhaustion = 1.0;
+
+	// Sea Dragon Penalties
+
+	@ConfigRange( min = 0, max = 100000 )
+	@ConfigOption( side = ConfigSide.SERVER, category  = {"penalties", "sea"}, key = "ticksWithoutWater", comment = "The number of ticks out of water before the sea dragon will start taking dehydration damage. Set to 0 to disable. Note: This value can stack up to double while dehydrated." )
+	public static Integer seaTicksWithoutWater = 1200;
+
+	@ConfigOption( side = ConfigSide.SERVER, category  = {"penalties", "sea"}, key = "waterConsumptionDependsOnTemperature", comment = "Whether the sea dragon should lose more water in warmer biomes and less during the night." )
+	public static Boolean seaTicksBasedOnTemperature = true;
+
+	@ConfigRange( min = 0.5, max = 100.0 )
+	@ConfigOption( side = ConfigSide.SERVER, category  = {"penalties", "sea"}, key = "dehydrationDamage", comment = "The amount of damage taken per tick while dehydrated (once every 40 ticks unless fully dehydrated, then once every 20 ticks)." )
+	public static Double seaDehydrationDamage = 1.0;
+
+	@ConfigOption( side = ConfigSide.SERVER, category  = {"penalties", "sea"}, key = "seaHydrationBlocks", comment = "When sea dragons stand on these blocks, hydration is restored. Format: block/modid:id" )
+	public static List<Block> seaHydrationBlocks = ConfigHandler.configList(Block.class,"minecraft:ice", "minecraft:snow", "minecraft:snow_block", "dragonsurvival:sea_source_of_magic");
+
+	@ConfigOption( side = ConfigSide.SERVER, category  = {"penalties", "sea"}, key = "allowWaterBottles", comment = "Set to false to disable sea dragons using vanilla water bottles to avoid dehydration." )
+	public static Boolean seaAllowWaterBottles = true;
+
+	@ConfigRange( min = 0, max = 100000 )
+	@ConfigOption( side = ConfigSide.SERVER, category  = {"penalties", "sea"}, key = "waterItemRestorationTicks", comment = "How many ticks do water restoration items restore when used. Set to 0 to disable." )
+	public static Integer seaTicksWithoutWaterRestored = 5000;
+
+	@ConfigOption( side = ConfigSide.SERVER, category  = {"penalties", "sea"}, key = "seaHydrationItems", comment = "Additional modded USEABLE items that restore water when used (called from LivingEntityUseItemEvent.Finish). Format: item/modid:id" )
+	public static List<Item> seaAdditionalWaterUseables = ConfigHandler.configList(Item.class,Items.ENCHANTED_GOLDEN_APPLE);
+
+	// Ore Loot
+	@ConfigRange( min = 0.0, max = 1.0 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "ore", key = "humanOreDustChance", comment = "The odds of dust dropping when a human harvests an ore." )
+	public static Double humanOreDustChance = 0.1;
+
+	@ConfigRange( min = 0.0, max = 1.0 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "ore", key = "dragonOreDustChance", comment = "The odds of dust dropping when a dragon harvests an ore." )
+	public static Double dragonOreDustChance = 0.2;
+
+	@ConfigRange( min = 0.0, max = 1.0 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "ore", key = "humanOreBoneChance", comment = "The odds of a bone dropping when a human harvests an ore." )
+	public static Double humanOreBoneChance = 0.0;
+
+	@ConfigRange( min = 0.0, max = 1.0 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "ore", key = "dragonOreBoneChance", comment = "The odds of a bone dropping when a dragon harvests an ore." )
+	public static Double dragonOreBoneChance = 0.01;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "ore", key = "oresTag", comment = "The tag that contains all ores that can drop dust/bones when harvested. Will not drop if the ore drops another of the items in this tag. Format: modid:id" )
+	public static String oresTag = "forge:ores";
+
+	// Food general
+	@ConfigOption( side = ConfigSide.SERVER, category = "food", key = "dragonFoods", comment = "Force dragons to eat a unique diet for their type." )
+	public static Boolean customDragonFoods = true;
+
+	@ConfigType(Item.class)
+	@ConfigOption( side = ConfigSide.SERVER, category = "food", key = "hurtfulToCaveDragon", comment = "Items which will cause damage to cave dragons when consumed. Formatting: item/modid:itemid:damage" )
+	public static List<String> caveDragonHurtfulItems = Arrays.asList("item:minecraft:potion:2", "item:minecraft:water_bottle:2", "item:minecraft:milk_bucket:2");
+
+	@ConfigType(Item.class)
+	@ConfigOption( side = ConfigSide.SERVER, category = "food", key = "hurtfulToSeaDragon", comment = "Items which will cause damage to sea dragons when consumed. Formatting: item/modid:itemid:damage" )
+	public static List<String> seaDragonHurtfulItems = Collections.emptyList();
+
+	@ConfigType(Item.class)
+	@ConfigOption( side = ConfigSide.SERVER, category = "food", key = "hurtfulToForestDragon", comment = "Items which will cause damage to forest dragons when consumed. Formatting: item/modid:itemid:damage" )
+	public static List<String> forestDragonHurtfulItems = Collections.emptyList();
+
+	@ConfigRange( min = 0, max = 10000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "food", key = "chargedSoupBuffDuration", comment = "How long in seconds should the cave fire effect from charged soup last. (Default to 5min) Set to 0 to disable." )
+	public static Integer chargedSoupBuffDuration = 300;
+
+	// Dragon Food List
+	@ConfigType(Item.class)
+	@ConfigOption( side = ConfigSide.SERVER, category = "food", key = "caveDragon", comment = {"Dragon food formatting: item/modid:id:food:saturation", "Dragon food formatting: item/modid:id:food:saturation. Food/saturation values are optional as the human values will be used if missing."} )
+	public static List<String> caveDragonFoods = Arrays.asList("minecraft:coals:1:1", "item:minecraft:charcoal:1:2", "item:minecraft:golden_apple", "item:minecraft:enchanted_golden_apple", "item:dragonsurvival:charged_coal:6:1", "item:dragonsurvival:charred_meat:10:12", "item:dragonsurvival:cave_dragon_treat:14:12", "item:dragonsurvival:charred_seafood:8:10", "item:dragonsurvival:charred_vegetable:8:9", "item:dragonsurvival:charred_mushroom:8:5", "item:dragonsurvival:charged_soup:20:15", "item:desolation:cinder_fruit:6:7", "item:desolation:powered_cinder_fruit:8:12", "item:desolation:activatedcharcoal:2:2", "item:desolation:infused_powder:10:10", "item:desolation:primed_ash:7:8", "item:pickletweaks:diamond_apple", "item:pickletweaks:emerald_apple", "item:undergarden:ditchbulb:5,6", "item:xreliquary:molten_core:1:1", "item:silents_mechanisms:coal_generator_fuels:1:1", "item:mekanism:dust_charcoal:1:1", "item:mekanism:dust_coal:1:1", "item:rats:nether_cheese", "item:potionsmaster:charcoal_powder:1:1", "item:potionsmaster:coal_powder:1:1", "item:potionsmaster:activated_charcoal:2:2", "item:thermal:coal_coke:1:1", "item:infernalexp:glowcoal:2:3", "item:resourcefulbees:coal_honeycomb:5:5", "item:resourcefulbees:netherite_honeycomb:5:5", "item:lazierae2:coal_dust:1:1", "item:wyrmroost:jewelled_apple", "item:silents_mechanisms:coal_dust:1:1", "item:potionsmaster:calcinatedcoal_powder:1:1", "item:thermal:basalz_rod:2:4", "item:thermal:basalz_powder:1:2", "item:druidcraft:fiery_glass:2:2");
+
+	@ConfigType(Item.class)
+	@ConfigOption( side = ConfigSide.SERVER, category = "food", key = "forestDragon", comment = {"Dragon food formatting: item/modid:id:food:saturation", "Dragon food formatting: item/modid:id:food:saturation. Food/saturation values are optional as the human values will be used if missing."} )
+	public static List<String> forestDragonFoods = Arrays.asList("forge:raw_meats:5:7", "item:minecraft:sweet_berries:1:1", "item:minecraft:rotten_flesh:2:3", "item:minecraft:spider_eye:7:8", "item:minecraft:rabbit:7:13", "item:minecraft:poisonous_potato:7:10", "item:minecraft:chorus_fruit:9:12", "item:minecraft:golden_apple", "item:minecraft:enchanted_golden_apple", "item:minecraft:honey_bottle", "item:dragonsurvival:forest_dragon_treat:10:12", "item:aoa3:fiery_chops:6:7", "item:aoa3:raw_chimera_chop:6:7", "item:aoa3:raw_furlion_chop:6:7", "item:aoa3:raw_halycon_beef:7:8", "item:aoa3:raw_charger_shank:6:7", "item:aoa3:trilliad_leaves:8:11", "item:aoa3:heart_fruit:9:10", "item:pamhc2foodextended:rawtofabbititem", "item:pamhc2foodextended:rawtofickenitem", "item:pamhc2foodextended:rawtofuttonitem", "item:alexsmobs:kangaroo_meat:5:6", "item:alexsmobs:moose_ribs:6:8", "item:simplefarming:raw_horse_meat:5:6", "item:simplefarming:raw_bacon:3:3", "item:simplefarming:raw_chicken_wings:2:3", "item:simplefarming:raw_sausage:3:4", "item:xenoclustwo:raw_tortice:7:8", "item:unnamedanimalmod:musk_ox_shank:7:8", "item:unnamedanimalmod:frog_legs:5:6", "item:unnamedanimalmod:mangrove_fruit:4:7", "item:betteranimalsplus:venisonraw:5:6", "item:betteranimalsplus:pheasantraw:7:5", "item:betteranimalsplus:turkey_leg_raw:4:5", "item:infernalexp:raw_hogchop:6:7", "item:infernalexp:cured_jerky:10:7", "item:druidcraft:elderberries:3:4", "item:rats:raw_rat:4:5", "item:aquaculture:frog:4:5", "item:aquaculture:frog_legs_raw:4:4", "item:aquaculture:box_turtle:4:5", "item:aquaculture:arrau_turtle:4:5", "item:aquaculture:starshell_turtle:4:5", "item:nethers_exoticism:kiwano:3:4", "item:undergarden:raw_gloomper_leg:4:5", "item:undergarden:raw_dweller_meat:6:7", "item:farmersdelight:chicken_cuts:3:3", "item:farmersdelight:bacon:3:3", "item:farmersdelight:ham:9:10", "item:farmersdelight:minced_beef:5:3", "item:farmersdelight:mutton_chops:5:3", "item:abnormals_delight:duck_fillet:2:3", "item:abnormals_delight:venison_shanks:7:3", "item:pickletweaks:diamond_apple", "item:pickletweaks:emerald_apple", "item:autumnity:foul_berries:2:4", "item:autumnity:turkey:7:8", "item:autumnity:turkey_piece:2:4", "item:autumnity:foul_soup:12:8", "item:endergetic:bolloom_fruit:3:4", "item:quark:frog_leg:4:5", "item:nethers_delight:hoglin_loin:8:6", "item:nethers_delight:raw_stuffed_hoglin:18:10", "item:xreliquary:zombie_heart:4:7", "item:xreliquary:bat_wing:2:2", "item:eidolon:zombie_heart:7:7", "item:forbidden_arcanus:bat_wing:5:2", "item:twilightforest:raw_venison:5:5", "item:twilightforest:raw_meef:9:5", "item:twilightforest:hydra_chop", "item:cyclic:chorus_flight", "item:cyclic:chorus_spectral", "item:cyclic:apple_ender", "item:cyclic:apple_honey", "item:cyclic:apple_chorus", "item:cyclic:apple_bone", "item:cyclic:apple_prismarine", "item:cyclic:apple_lapis", "item:cyclic:apple_iron", "item:cyclic:apple_diamond", "item:cyclic:apple_emerald", "item:cyclic:apple_chocolate", "item:cyclic:toxic_carrot:15:15", "item:artifacts:everlasting_beef", "item:resourcefulbees:rainbow_honey_bottle", "item:resourcefulbees:diamond_honeycomb:5:5", "item:byg:soul_shroom:9:5", "item:byg:death_cap:9:8", "item:byg:holly_berries:2:2", "item:minecolonies:chorus_bread", "item:wyrmroost:jewelled_apple", "item:wyrmroost:raw_lowtier_meat:3:2", "item:wyrmroost:raw_common_meat:5:3", "item:wyrmroost:raw_apex_meat:8:6", "item:wyrmroost:raw_behemoth_meat:11:12", "item:wyrmroost:desert_wyrm:4:3", "item:eanimod:rawchicken_darkbig:9:5", "item:eanimod:rawchicken_dark:5:4", "item:eanimod:rawchicken_darksmall:3:2", "item:eanimod:rawchicken_pale:5:3", "item:eanimod:rawchicken_palesmall:4:3", "item:eanimod:rawrabbit_small:4:4", "item:environmental:duck:4:3", "item:environmental:venison:7:7", "item:cnb:lizard_item_0:4:4", "item:cnb:lizard_item_1:4:4", "item:cnb:lizard_item_2:4:4", "item:cnb:lizard_item_3:4:4", "item:snowpig:frozen_porkchop:7:3", "item:snowpig:frozen_ham:5:7", "item:untamedwilds:snake_grass_snake:4:4", "item:untamedwilds:snake_green_mamba:4:4", "item:untamedwilds:snake_rattlesnake:4:4", "item:untamedwilds:snake_emerald:4:4", "item:untamedwilds:snake_carpet_python:4:4", "item:untamedwilds:snake_corn:4:4", "item:untamedwilds:snake_gray_kingsnake:4:4", "item:untamedwilds:snake_coral:4:4", "item:untamedwilds:snake_ball_python:4:4", "item:untamedwilds:snake_black_mamba:4:4", "item:untamedwilds:snake_western_rattlesnake:4:4", "item:untamedwilds:snake_taipan:4:4", "item:untamedwilds:snake_adder:4:4", "item:untamedwilds:snake_rice_paddy:4:4", "item:untamedwilds:snake_coral_blue:4:4", "item:untamedwilds:snake_cave_racer:4:4", "item:untamedwilds:snake_swamp_moccasin:4:4", "item:untamedwilds:softshell_turtle_pig_nose:4:4", "item:untamedwilds:softshell_turtle_flapshell:4:4", "item:untamedwilds:softshell_turtle_chinese:4:4", "item:untamedwilds:tortoise_asian_box:4:4", "item:untamedwilds:tortoise_gopher:4:4", "item:untamedwilds:tortoise_leopard:4:4", "item:untamedwilds:softshell_turtle_peacock:4:4", "item:untamedwilds:softshell_turtle_nile:4:4", "item:untamedwilds:softshell_turtle_spiny:4:4", "item:untamedwilds:tortoise_sulcata:4:4", "item:untamedwilds:tortoise_star:4:4", "item:untamedwilds:tortoise_marginated:4:4", "item:leescreatures:raw_boarlin:6:6", "item:mysticalworld:venison:5:5", "item:toadterror:toad_chops:8:7", "item:prehistoricfauna:raw_large_thyreophoran_meat:7:6", "item:prehistoricfauna:raw_large_marginocephalian_meat:8:6", "item:prehistoricfauna:raw_small_ornithischian_meat:4:3", "item:prehistoricfauna:raw_large_sauropod_meat:11:9", "item:prehistoricfauna:raw_small_sauropod_meat:4:4", "item:prehistoricfauna:raw_large_theropod_meat:7:7", "item:prehistoricfauna:raw_small_theropod_meat:4:4", "item:prehistoricfauna:raw_small_archosauromorph_meat:3:3", "item:prehistoricfauna:raw_large_archosauromorph_meat:6:5", "item:prehistoricfauna:raw_small_reptile_meat:4:3", "item:prehistoricfauna:raw_large_synapsid_meat:5:6");
+
+	@ConfigType(Item.class)
+	@ConfigOption( side = ConfigSide.SERVER, category = "food", key = "seaDragon", comment = {"Dragon food formatting: item/modid:id:food:saturation", "Dragon food formatting: item/modid:id:food:saturation. Food/saturation values are optional as the human values will be used if missing."} )
+	public static List<String> seaDragonFoods = Arrays.asList("forge:raw_fishes:6:7", "item:minecraft:dried_kelp:1:1", "item:minecraft:kelp:2:3", "item:minecraft:pufferfish:10:15", "item:minecraft:golden_apple", "item:minecraft:enchanted_golden_apple", "item:minecraft:honey_bottle", "item:dragonsurvival:sea_dragon_treat:10:12", "item:aoa3:raw_candlefish:9:9", "item:aoa3:raw_crimson_skipper:8:8", "item:aoa3:raw_fingerfish:4:4", "item:aoa3:raw_pearl_stripefish:5:4", "item:aoa3:raw_limefish:5:5", "item:aoa3:raw_sailback:6:5", "item:aoa3:raw_golden_gullfish:10:2", "item:aoa3:raw_turquoise_stripefish:7:6", "item:aoa3:raw_violet_skipper:7:7", "item:aoa3:raw_rocketfish:4:10", "item:aoa3:raw_crimson_stripefish:8:7", "item:aoa3:raw_sapphire_strider:9:8", "item:aoa3:raw_dark_hatchetfish:9:9", "item:aoa3:raw_ironback:10:9", "item:aoa3:raw_rainbowfish:11:11", "item:aoa3:raw_razorfish:12:14", "item:quark:golden_frog_leg", "item:alexsmobs:lobster_tail:4:5", "item:alexsmobs:blobfish:8:9", "item:oddwatermobs:raw_ghost_shark:8:8", "item:oddwatermobs:raw_isopod:4:2", "item:oddwatermobs:raw_mudskipper:6:7", "item:oddwatermobs:raw_coelacanth:9:10", "item:oddwatermobs:raw_anglerfish:6:6", "item:oddwatermobs:deep_sea_fish:4:2", "item:oddwatermobs:crab_leg:5:6", "item:simplefarming:raw_calamari:5:6", "item:unnamedanimalmod:elephantnose_fish:5:6", "item:unnamedanimalmod:flashlight_fish:5:6", "item:unnamedanimalmod:rocket_killifish:5:6", "item:unnamedanimalmod:leafy_seadragon:5:6", "item:unnamedanimalmod:elephantnose_fish:5:6", "item:betteranimalsplus:eel_meat_raw:5:6", "item:betteranimalsplus:calamari_raw:4:5", "item:betteranimalsplus:crab_meat_raw:4:4", "item:aquaculture:fish_fillet_raw:2:2", "item:aquaculture:goldfish:8:4", "item:aquaculture:box_turtle:4:5", "item:aquaculture:arrau_turtle:4:5", "item:aquaculture:starshell_turtle:4:5", "item:aquaculture:algae:3:2", "item:betterendforge:end_fish_raw:6:7", "item:betterendforge:hydralux_petal:3:3", "item:betterendforge:charnia_green:2:2", "item:shroomed:raw_shroomfin:5:6", "item:undergarden:raw_gwibling:5:6", "item:pickletweaks:diamond_apple", "item:pickletweaks:emerald_apple", "item:bettas:betta_fish:4:5", "item:quark:crab_leg:4:4", "item:pamhc2foodextended:rawtofishitem", "item:fins:banded_redback_shrimp:6:1", "item:fins:night_light_squid:6:2", "item:fins:night_light_squid_tentacle:6:2", "item:fins:emerald_spindly_gem_crab:7:2", "item:fins:amber_spindly_gem_crab:7:2", "item:fins:rubby_spindly_gem_crab:7:2", "item:fins:sapphire_spindly_gem_crab:7:2", "item:fins:pearl_spindly_gem_crab:7:2", "item:fins:papa_wee:6:2", "item:fins:bugmeat:4:2", "item:fins:raw_golden_river_ray_wing:6:2", "item:fins:red_bull_crab_claw:4:4", "item:fins:white_bull_crab_claw:4:4", "item:fins:wherble_fin:1:1", "item:forbidden_arcanus:tentacle:5:2", "item:pneumaticcraft:raw_salmon_tempura:6:10", "item:rats:ratfish:4:2", "item:cyclic:chorus_flight", "item:cyclic:chorus_spectral", "item:cyclic:apple_ender", "item:cyclic:apple_honey", "item:cyclic:apple_chorus", "item:cyclic:apple_bone", "item:cyclic:apple_prismarine", "item:cyclic:apple_lapis", "item:cyclic:apple_iron", "item:cyclic:apple_diamond", "item:cyclic:apple_emerald", "item:cyclic:apple_chocolate", "item:upgrade_aquatic:purple_pickerelweed:2:2", "item:upgrade_aquatic:blue_pickerelweed:2:2", "item:upgrade_aquatic:polar_kelp:2:2", "item:upgrade_aquatic:tongue_kelp:2:2", "item:upgrade_aquatic:thorny_kelp:2:2", "item:upgrade_aquatic:ochre_kelp:2:2", "item:upgrade_aquatic:lionfish:8:9", "item:resourcefulbees:gold_honeycomb:5:5", "item:resourcefulbees:rainbow_honey_bottle", "item:wyrmroost:jewelled_apple", "item:aquaculture:sushi:6:5", "item:freshwarriors:fresh_soup:15:10", "item:freshwarriors:beluga_caviar:10:3", "item:freshwarriors:piranha:4:1", "item:freshwarriors:tilapia:4:1", "item:freshwarriors:stuffed_piranha:4:1", "item:freshwarriors:tigerfish:5:5", "item:freshwarriors:toe_biter_leg:3:3", "item:untamedwilds:egg_arowana_black:4:4", "item:untamedwilds:egg_trevally_jack:4:4", "item:untamedwilds:egg_trevally_golden:4:4", "item:untamedwilds:egg_giant_salamander_chinese:6:4", "item:untamedwilds:egg_giant_salamander_hellbender:6:4", "item:untamedwilds:egg_giant_salamander_japanese:6:4", "item:untamedwilds:giant_clam_gigas:4:4", "item:untamedwilds:giant_clam_derasa:4:4", "item:untamedwilds:giant_clam_maxima:4:4", "item:untamedwilds:giant_clam_squamosa:4:4", "item:untamedwilds:egg_trevally_giant:6:4", "item:untamedwilds:egg_trevally_bluespotted:6:4", "item:untamedwilds:egg_trevally_bigeye:6:4", "item:untamedwilds:egg_sunfish_southern:6:4", "item:untamedwilds:egg_sunfish_sunfish:6:4", "item:untamedwilds:egg_giant_clam_squamosa:6:4", "item:untamedwilds:egg_giant_clam_gigas:6:4", "item:untamedwilds:egg_giant_clam_derasa:6:4", "item:untamedwilds:egg_giant_clam_maxima:6:4", "item:untamedwilds:egg_football_fish_atlantic:6:4", "item:untamedwilds:egg_arowana_silver:6:4", "item:untamedwilds:egg_arowana_jardini:6:4", "item:untamedwilds:egg_arowana_green:6:4", "item:mysticalworld:raw_squid:6:5", "item:aquafina:fresh_soup:15:10", "item:aquafina:beluga_caviar:10:3", "item:aquafina:raw_piranha:4:1", "item:aquafina:raw_tilapia:4:1", "item:aquafina:stuffed_piranha:4:1", "item:aquafina:tigerfish:5:5", "item:aquafina:toe_biter_leg:3:3", "item:aquafina:raw_angelfish:4:1", "item:aquafina:raw_football_fish:4:1", "item:aquafina:raw_foxface_fish:4:1", "item:aquafina:raw_royal_gramma:4:1", "item:aquafina:raw_starfish:4:1", "item:aquafina:spider_crab_leg:4:1", "item:aquafina:raw_stingray_slice:4:1", "item:prehistoricfauna:raw_ceratodus:5:5", "item:prehistoricfauna:raw_cyclurus:4:4", "item:prehistoricfauna:raw_potamoceratodus:5:5", "item:prehistoricfauna:raw_myledaphus:4:4", "item:prehistoricfauna:raw_gar:4:4", "item:prehistoricfauna:raw_oyster:4:3", "item:prehistoric_delight:prehistoric_fillet:3:3");
+
+
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "mana"}, key = "seaDragonManaBlocks", comment = "Blocks that will restore mana quicker when a sea dragon is standing on it. Formatting: block/modid:blockid" )
+	public static List<Block> seaDragonManaBlocks = ConfigHandler.configList(Block.class,DSBlocks.seaSourceOfMagic, "minecraft:ice", Blocks.SNOW, Blocks.SNOW_BLOCK, Blocks.WATER, Blocks.WET_SPONGE, "minecraft:cauldron");
+
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "mana"}, key = "forestDragonManaBlocks", comment = "Blocks that will restore mana quicker when a forest dragon is standing on it. Formatting: block/modid:blockid" )
+	public static List<Block> forestDragonManaBlocks = ConfigHandler.configList(Block.class,DSBlocks.forestSourceOfMagic, "minecraft:small_flowers", "minecraft:flowers", "minecraft:tall_flowers");
+
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "mana"}, key = "caveDragonManaBlocks", comment = "Blocks that will restore mana quicker when a cave dragon is standing on it. Formatting: block/modid:blockid" )
+	public static List<Block> caveDragonManaBlocks = ConfigHandler.configList(Block.class,DSBlocks.caveSourceOfMagic, "minecraft:campfires", "minecraft:lava", "minecraft:smoker", "minecraft:furnace", "minecraft:magma_block", "minecraft:blast_furnace");
+
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "magic", key = "dragonAbilities", comment = "Whether dragon abilities should be enabled" )
+	public static Boolean dragonAbilities = true;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "magic", key = "caveDragonAbilities", comment = "Whether cave dragon abilities should be enabled" )
+	public static Boolean caveDragonAbilities = true;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "magic", key = "forestDragonAbilities", comment = "Whether forest dragon abilities should be enabled" )
+	public static Boolean forestDragonAbilities = true;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "magic", key = "seaDragonAbilities", comment = "Whether sea dragon abilities should be enabled" )
+	public static Boolean seaDragonAbilities = true;
+
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "magic", key = "noEXPRequirements", comment = "Disable the exp requirements for leveling up active skills" )
+	public static Boolean noEXPRequirements = false;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "magic", key = "consumeEXPAsMana", comment = "Whether to use exp instead of mana if mana is empty" )
+	public static Boolean consumeEXPAsMana = true;
+
+	@ConfigRange( min = 0, max = 100 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "magic", key = "initialPassiveCost", comment = "The initial exp cost for leveling passive skills." )
+	public static Integer initialPassiveCost = 2;
+
+	@ConfigRange( min = 0, max = 100 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "magic", key = "passiveScalingCost", comment = "The multiplier that is used to increase the passive skill costs per level" )
+	public static Double passiveScalingCost = 4.0;
+
+
+	@ConfigRange( min = 1, max = 1000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "magic", key = "favorableManaRegen", comment = "How fast in seconds should mana be recovered in favorable conditions" )
+	public static Integer favorableManaTicks = 5;
+
+	@ConfigRange( min = 1, max = 1000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "magic", key = "normalManaRegen", comment = "How fast in seconds should mana be recovered in normal conditions" )
+	public static Integer normalManaTicks = 15;
+
+
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities"}, key = "saveAllAbilities", comment = "Whether to save passives skills when changing dragon type" )
+	public static Boolean saveAllAbilities = false;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreath", comment = "Whether the forest breath ability should be enabled" )
+	public static Boolean forestBreath = true;
+
+	@ConfigRange( min = 0, max = 100.0 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathDamage", comment = "The amount of damage the forest breath ability deals. This value is multiplied by the skill level." )
+	public static Double forestBreathDamage = 2.0;
+
+	@ConfigRange( min = 1, max = 10000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathCooldown", comment = "The cooldown in ticks of the forest breath ability" )
+	public static Integer forestBreathCooldown = Functions.secondsToTicks(5);
+
+	@ConfigRange( min = 1, max = 10000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathCasttime", comment = "The casttime in ticks of the forest breath ability" )
+	public static Integer forestBreathCasttime = Functions.secondsToTicks(10);
+
+	@ConfigRange( min = 0, max = 100 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathInitialMana", comment = "The mana cost for starting the forest breath ability" )
+	public static Integer forestBreathInitialMana = 2;
+
+	@ConfigRange( min = 0, max = 100 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathOvertimeMana", comment = "The mana cost of sustaining the forest breath ability" )
+	public static Integer forestBreathOvertimeMana = 1;
+
+	@ConfigRange( min = 0, max = 100 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathManaTicks", comment = "How often in ticks, mana is consumed while using forest breath" )
+	public static Integer forestBreathManaTicks = Functions.secondsToTicks(2);
+
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathBlockBreaks", comment = "Blocks that have a chance to be broken by forest breath. Formatting: block/modid:id" )
+	public static List<Block> forestBreathBlockBreaks = ConfigHandler.configList(Block.class,"minecraft:banners");
+
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathGrowBlacklist", comment = "Blocks that will not be grown by the forest breath. Formatting: block/modid:id" )
+	public static List<Block> forestBreathGrowBlacklist = ConfigHandler.configList(Block.class);
+
+
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "spike"}, key = "spike", comment = "Whether the spike ability should be enabled" )
+	public static Boolean spike = true;
+
+	@ConfigRange( min = 1, max = 10000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "spike"}, key = "spikeCooldown", comment = "The cooldown in ticks of the spike ability" )
+	public static Integer spikeCooldown = Functions.secondsToTicks(3);
+
+	@ConfigRange( min = 1, max = 10000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "spike"}, key = "spikeCasttime", comment = "The cast time in ticks of the spike ability" )
+	public static Integer spikeCasttime = 1;
+
+	@ConfigRange( min = 0, max = 100.0 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "spike"}, key = "spikeDamage", comment = "The amount of damage the spike ability deals. This value is multiplied by the skill level." )
+	public static Double spikeDamage = 2.0;
+
+	@ConfigRange( min = 0, max = 100 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "spike"}, key = "spikeManaCost", comment = "The mana cost for using the spike ability" )
+	public static Integer spikeManaCost = 2;
+
+
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "inspiration"}, key = "inspiration", comment = "Whether the inspiration ability should be enabled" )
+	public static Boolean inspiration = true;
+
+	@ConfigRange( min = 1, max = 10000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "inspiration"}, key = "inspirationCooldown", comment = "The cooldown in ticks of the inspiration ability" )
+	public static Integer inspirationCooldown = Functions.secondsToTicks(90);
+
+	@ConfigRange( min = 1, max = 10000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "inspiration"}, key = "inspirationCasttime", comment = "The cast time in ticks of the inspiration ability" )
+	public static Integer inspirationCasttime = Functions.secondsToTicks(5);
+
+	@ConfigRange( min = 0, max = 10000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "inspiration"}, key = "inspirationDuration", comment = "The duration in seconds of the inspiration effect given when the ability is used" )
+	public static Integer inspirationDuration = 60;
+
+	@ConfigRange( min = 0, max = 100 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "inspiration"}, key = "inspirationManaCost", comment = "The mana cost for using the inspiration ability" )
+	public static Integer inspirationManaCost = 3;
+
+
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "hunter"}, key = "hunter", comment = "Whether the hunter ability should be enabled" )
+	public static Boolean hunter = true;
+
+	@ConfigRange( min = 0, max = 10000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "hunter"}, key = "hunterDuration", comment = "The duration in seconds of the inspiration effect given when the ability is used" )
+	public static Integer hunterDuration = 60;
+
+	@ConfigRange( min = 1, max = 10000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "hunter"}, key = "hunterCooldown", comment = "The cooldown in ticks of the hunter ability" )
+	public static Integer hunterCooldown = Functions.secondsToTicks(30);
+
+	@ConfigRange( min = 1, max = 10000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "hunter"}, key = "hunterCasttime", comment = "The cast time in ticks of the hunter ability" )
+	public static Integer hunterCasttime = Functions.secondsToTicks(3);
+
+	@ConfigRange( min = 0, max = 100.0 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "hunter"}, key = "hunterDamageBonus", comment = "The damage bonus the hunter effect gives when invisible. This value is multiplied by the skill level." )
+	public static Double hunterDamageBonus = 1.5;
+
+	@ConfigRange( min = 0, max = 100 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "hunter"}, key = "hunterManaCost", comment = "The mana cost for using the inspiration ability" )
+	public static Integer hunterManaCost = 3;
+
+
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "passives"}, key = "forestMagic", comment = "Whether the forest magic ability should be enabled" )
+	public static Boolean forestMagic = true;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "passives"}, key = "forestAthletics", comment = "Whether the forest athletics ability should be enabled" )
+	public static Boolean forestAthletics = true;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "passives"}, key = "lightInDarkness", comment = "Whether the light in darkness ability should be enabled" )
+	public static Boolean lightInDarkness = true;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "passives"}, key = "cliffHanger", comment = "Whether the cliffhanger ability should be enabled" )
+	public static Boolean cliffHanger = true;
+
+
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "storm_breath"}, key = "stormBreath", comment = "Whether the storm breath ability should be enabled" )
+	public static Boolean stormBreath = true;
+
+	@ConfigRange( min = 0, max = 100.0 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "storm_breath"}, key = "stormBreathDamage", comment = "The amount of damage the storm breath ability deals. This value is multiplied by the skill level." )
+	public static Double stormBreathDamage = 1.0;
+
+	@ConfigRange( min = 0, max = 100 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "storm_breath"}, key = "stormBreathInitialMana", comment = "The mana cost for starting the storm breath ability" )
+	public static Integer stormBreathInitialMana = 2;
+
+	@ConfigRange( min = 1, max = 10000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "storm_breath"}, key = "stormBreathCooldown", comment = "The cooldown in ticks of the storm breath ability" )
+	public static Integer stormBreathCooldown = Functions.secondsToTicks(10);
+
+	@ConfigRange( min = 1, max = 10000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "storm_breath"}, key = "stormBreathCasttime", comment = "The cast time in ticks of the storm breath ability" )
+	public static Integer stormBreathCasttime = 10;
+
+	@ConfigRange( min = 0, max = 100 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "storm_breath"}, key = "stormBreathOvertimeMana", comment = "The mana cost of sustaining the storm breath ability" )
+	public static Integer stormBreathOvertimeMana = 1;
+
+	@ConfigRange( min = 0, max = 100 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "storm_breath"}, key = "stormBreathManaTicks", comment = "How often in ticks, mana is consumed while using storm breath" )
+	public static Integer stormBreathManaTicks = Functions.secondsToTicks(2);
+
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "storm_breath"}, key = "stormBreathBlockBreaks", comment = "Blocks that have a chance to be broken by storm breath. Formatting: block/modid:id" )
+	public static List<Block> stormBreathBlockBreaks = ConfigHandler.configList(Block.class,"minecraft:impermeable", "minecraft:snow", "minecraft:crops", "minecraft:flowers", "minecraft:banners", "minecraft:lush_plants_replaceable", "minecraft:azalea_log_replaceable", "minecraft:replaceable_plants", "minecraft:leaves");
+
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "storm_breath"}, key = "chargedBlacklist", comment = "List of entities that do not work with the charged effect. Format: modid:id" )
+	public static List<EntityType> chargedBlacklist = ConfigHandler.configList(EntityType.class,"upgrade_aquatic:thrasher", "upgrade_aquatic:great_thrasher");
+
+	@ConfigRange( min = 0, max = 100 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "storm_breath"}, key = "stormBreathChainCount", comment = "How many mobs stormbreath is able to chain to at once" )
+	public static Integer stormBreathChainCount = 2;
+
+	@ConfigRange( min = 0, max = 100 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "storm_breath"}, key = "chargedEffectChainCount", comment = "How many mobs the charged effect is able to chain to at once" )
+	public static Integer chargedEffectChainCount = 2;
+
+	@ConfigRange( min = -1, max = 100 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "storm_breath"}, key = "chargedEffectMaxChain", comment = "How many times the charged effect is able to chain. -1 means it can chain infinitely" )
+	public static Integer chargedEffectMaxChain = -1;
+
+	@ConfigRange( min = 0, max = 100 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "storm_breath"}, key = "chargedChainRange", comment = "The max distance in blocks the storm breath and charged effect is able to chain to mobs" )
+	public static Integer chargedChainRange = 10;
+
+	@ConfigRange( min = 0, max = 100 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "storm_breath"}, key = "chargedEffectDamage", comment = "The amount of damage the charged effect deals each second" )
+	public static Integer chargedEffectDamage = 1;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "storm_breath"}, key = "chargedSpreadBlacklist", comment = "List of entities that will not spread the charged effect. Format: modid:id" )
+	public static List<EntityType> chargedSpreadBlacklist = ConfigHandler.configList(EntityType.class,EntityType.ARMOR_STAND);
+
+
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "ball_lightning"}, key = "ballLightning", comment = "Whether the lightning ball ability should be enabled" )
+	public static Boolean ballLightning = true;
+
+	@ConfigRange( min = 1, max = 10000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "ball_lightning"}, key = "ballLightningCooldown", comment = "The cooldown in ticks of the ball lightning ability" )
+	public static Integer ballLightningCooldown = Functions.secondsToTicks(60);
+
+	@ConfigRange( min = 1, max = 10000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "ball_lightning"}, key = "ballLightningCasttime", comment = "The cast time in ticks of the ball lightning ability" )
+	public static Integer ballLightningCasttime = Functions.secondsToTicks(2);
+
+	@ConfigRange( min = 0, max = 100.0 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "ball_lightning"}, key = "ballLightningDamage", comment = "The amount of damage the lightning ball ability deals. This value is multiplied by the skill level." )
+	public static Double ballLightningDamage = 4.0;
+
+	@ConfigRange( min = 0, max = 100 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "ball_lightning"}, key = "ballLightningManaCost", comment = "The mana cost for using the lightning ball ability" )
+	public static Integer ballLightningManaCost = 3;
+
+
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "revealing_the_soul"}, key = "revealingTheSoul", comment = "Whether the revealing The Soul ability should be enabled" )
+	public static Boolean revealingTheSoul = true;
+
+	@ConfigRange( min = 0, max = 10000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "revealing_the_soul"}, key = "revealingTheSoulDuration", comment = "The duration in seconds of the revealing The Soul effect given when the ability is used" )
+	public static Integer revealingTheSoulDuration = 60;
+
+	@ConfigRange( min = 1, max = 10000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "revealing_the_soul"}, key = "revealingTheSoulCooldown", comment = "The cooldown in ticks of the revealing the soul ability" )
+	public static Integer revealingTheSoulCooldown = Functions.secondsToTicks(30);
+
+	@ConfigRange( min = 1, max = 10000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "revealing_the_soul"}, key = "revealingTheSoulCasttime", comment = "The cast time in ticks of the revealing the soul ability" )
+	public static Integer revealingTheSoulCasttime = Functions.secondsToTicks(5);
+
+	@ConfigRange( min = 0, max = 100 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "revealing_the_soul"}, key = "revealingTheSoulManaCost", comment = "The mana cost for using the revealing The Soul ability" )
+	public static Integer revealingTheSoulManaCost = 3;
+
+	@ConfigRange( min = 0, max = 10000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "revealing_the_soul"}, key = "revealingTheSoulMaxEXP", comment = "The max amount of increased exp that can be gained from a single mob with reavling the soul" )
+	public static Integer revealingTheSoulMaxEXP = 20;
+
+	@ConfigRange( min = 0, max = 10000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "revealing_the_soul"}, key = "revealingTheSoulMultiplier", comment = "The multiplier that is applied to exp with revealing the soul, the extra exp is in addition to the normal drops. so 1.0 = 100% increase" )
+	public static Double revealingTheSoulMultiplier = 1.0;
+
+
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "sea_vision"}, key = "seaVision", comment = "Whether the sea vision ability should be enabled" )
+	public static Boolean seaEyes = true;
+
+	@ConfigRange( min = 0, max = 10000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "sea_vision"}, key = "seaVisionDuration", comment = "The duration in seconds of the sea vision effect given when the ability is used" )
+	public static Integer seaEyesDuration = 90;
+
+	@ConfigRange( min = 1, max = 10000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "sea_vision"}, key = "seaVisionCooldown", comment = "The cooldown in ticks of the sea vision ability" )
+	public static Integer seaEyesCooldown = Functions.secondsToTicks(60);
+
+	@ConfigRange( min = 1, max = 10000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "sea_vision"}, key = "seaEyesCasttime", comment = "The cast time in ticks of the sea vision ability" )
+	public static Integer seaEyesCasttime = Functions.secondsToTicks(2);
+
+	@ConfigRange( min = 0, max = 100 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "sea_vision"}, key = "seaVisionManaCost", comment = "The mana cost for using the sea vision ability" )
+	public static Integer seaEyesManaCost = 2;
+
+
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "passives"}, key = "seaMagic", comment = "Whether the sea magic ability should be enabled" )
+	public static Boolean seaMagic = true;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "passives"}, key = "seaAthletics", comment = "Whether the sea athletics ability should be enabled" )
+	public static Boolean seaAthletics = true;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "passives"}, key = "water", comment = "Whether the water ability should be enabled" )
+	public static Boolean water = true;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "passives"}, key = "spectralImpact", comment = "Whether the spectralImpact ability should be enabled" )
+	public static Boolean spectralImpact = true;
+
+	@ConfigRange( min = 0, max = 100 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "passives"}, key = "spectralImpactProcChance", comment = "The percentage chance that spectral impact will proc. This is multiplied by the level of the skill." )
+	public static Integer spectralImpactProcChance = 15;
+
+
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreath", comment = "Whether the firebreath ability should be enabled" )
+	public static Boolean fireBreath = true;
+
+	@ConfigRange( min = 0, max = 100.0 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreathDamage", comment = "The amount of damage the firebreath ability deals. This value is multiplied by the skill level." )
+	public static Double fireBreathDamage = 3.0;
+
+	@ConfigRange( min = 0, max = 100 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreathInitialMana", comment = "The mana cost for starting the firebreath ability" )
+	public static Integer fireBreathInitialMana = 2;
+
+	@ConfigRange( min = 1, max = 10000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreathCooldown", comment = "The cooldown in ticks of the fire breath ability" )
+	public static Integer fireBreathCooldown = Functions.secondsToTicks(5);
+
+	@ConfigRange( min = 1, max = 10000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreathCasttime", comment = "The cast time in ticks of the fire breath ability" )
+	public static Integer fireBreathCasttime = 10;
+
+	@ConfigRange( min = 0, max = 100 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreathOvertimeMana", comment = "The mana cost of sustaining the firebreath ability" )
+	public static Integer fireBreathOvertimeMana = 1;
+
+	@ConfigRange( min = 0, max = 100 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreathManaTicks", comment = "How often in ticks, mana is consumed while using fire breath" )
+	public static Integer fireBreathManaTicks = Functions.secondsToTicks(2);
+
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreathSpreadsFire", comment = "Whether the fire breath actually spreads fire when used" )
+	public static Boolean fireBreathSpreadsFire = true;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreathBlockBreaks", comment = "Blocks that have a chance to be broken by fire breath. Formatting: block/modid:id" )
+	public static List<Block> fireBreathBlockBreaks = ConfigHandler.configList(Block.class,"minecraft:ice", "minecraft:snow", "minecraft:crops", "minecraft:leaves", "minecraft:flowers", "minecraft:banners", "minecraft:lush_plants_replaceable", "minecraft:azalea_log_replaceable", "minecraft:replaceable_plants", "minecraft:wooden_fences", "minecraft:logs_that_burn", "minecraft:mycelium", "minecraft:wooden_stairs", "minecraft:wooden_doors", "minecraft:wool", "minecraft:saplings", "minecraft:impermeable", "minecraft:cobweb", "minecraft:large_fern", "minecraft:sugar_cane", "minecraft:snow_block");
+
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fireball"}, key = "fireball", comment = "Whether the fireball ability should be enabled" )
+	public static Boolean fireball = true;
+
+	@ConfigRange( min = 1, max = 10000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fireball"}, key = "fireballCooldown", comment = "The cooldown in ticks of the fireball ability" )
+	public static Integer fireballCooldown = Functions.secondsToTicks(40);
+
+	@ConfigRange( min = 1, max = 10000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fireball"}, key = "fireballCasttime", comment = "The cast time in ticks of the fireball ability" )
+	public static Integer fireballCasttime = Functions.secondsToTicks(4);
+
+	@ConfigRange( min = 0, max = 100.0 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fireball"}, key = "fireballDamage", comment = "The amount of damage the fireball ability deals. This value is multiplied by the skill level." )
+	public static Double fireballDamage = 5.0;
+
+	@ConfigRange( min = 0, max = 100 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fireball"}, key = "fireballManaCost", comment = "The mana cost for using the fireball ball ability" )
+	public static Integer fireballManaCost = 3;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "tough_skin"}, key = "toughSkin", comment = "Whether the tough skin ability should be enabled" )
+	public static Boolean toughSkin = true;
+
+	@ConfigRange( min = 0, max = 10000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "tough_skin"}, key = "toughSkinDuration", comment = "The duration in seconds of the tough skin effect given when the ability is used" )
+	public static Integer toughSkinDuration = 180;
+
+	@ConfigRange( min = 1, max = 10000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "tough_skin"}, key = "toughSkinCooldown", comment = "The cooldown in ticks of the tough skin ability" )
+	public static Integer toughSkinCooldown = Functions.secondsToTicks(30);
+
+	@ConfigRange( min = 1, max = 10000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "tough_skin"}, key = "toughSkinCasttime", comment = "The cast time in ticks of the tough skin ability" )
+	public static Integer toughSkinCasttime = Functions.secondsToTicks(5);
+
+	@ConfigRange( min = 0, max = 100 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "tough_skin"}, key = "toughSkinManaCost", comment = "The mana cost for using the tough skin ability" )
+	public static Integer toughSkinManaCost = 3;
+
+	@ConfigRange( min = 0, max = 10000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "tough_skin"}, key = "toughSkinArmorValue", comment = "The amount of extra armor given per level of tough skin effect" )
+	public static Double toughSkinArmorValue = 3.0;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "lava_vision"}, key = "lavaVision", comment = "Whether the lava vision ability should be enabled" )
+	public static Boolean lavaVision = true;
+
+	@ConfigRange( min = 0, max = 10000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "lava_vision"}, key = "lavaVisionDuration", comment = "The duration in seconds of the lava vision effect given when the ability is used" )
+	public static Integer lavaVisionDuration = 60;
+
+	@ConfigRange( min = 1, max = 10000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "lava_vision"}, key = "lavaVisionCooldown", comment = "The cooldown in ticks of the lava vision ability" )
+	public static Integer lavaVisionCooldown = Functions.secondsToTicks(60);
+
+	@ConfigRange( min = 1, max = 10000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "lava_vision"}, key = "lavaVisionCasttime", comment = "The cast time in ticks of the lava vision ability" )
+	public static Integer lavaVisionCasttime = Functions.secondsToTicks(2);
+
+	@ConfigRange( min = 0, max = 100 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "lava_vision"}, key = "lavaVisionManaCost", comment = "The mana cost for using the lava vision ability" )
+	public static Integer lavaVisionManaCost = 2;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "passives"}, key = "caveMagic", comment = "Whether the cave magic ability should be enabled" )
+	public static Boolean caveMagic = true;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "passives"}, key = "caveAthletics", comment = "Whether the cave athletics ability should be enabled" )
+	public static Boolean caveAthletics = true;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "passives"}, key = "contrastShower", comment = "Whether the contrast shower ability should be enabled" )
+	public static Boolean contrastShower = true;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "passives"}, key = "burn", comment = "Whether the burn ability should be enabled" )
+	public static Boolean burn = true;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "general", key = "endVoidTeleport", comment = "Should the player be teleported to the overworld when they fall in the end?" )
+	public static Boolean endVoidTeleport = true;
+	@ConfigOption( side = ConfigSide.SERVER, category = "general", key = "elytraForDragon", comment = "Whether dragons are allowed to use Elytra" )
+	public static Boolean dragonsAllowedToUseElytra = false;
+
+	@ConfigRange( min = 1, max = 120 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "princessDespawnDelay", comment = "Princess or prince may despawn after this many minutes" )
+	public static Integer princessDespawnDelay = 15;
+
+	@ConfigRange( min = 1, max = 120 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "hunterDespawnDelay", comment = "Any dragon hunter may despawn after this many minutes" )
+	public static Integer hunterDespawnDelay = 15;
+
+	@ConfigRange( min = 10, max = 240 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "princessSpawnDelay", comment = "Minimum delay between prince or princess spawning, in minutes" )
+	public static Integer princessSpawnDelay = 120;
+
+	@ConfigRange( min = 12, max = 240 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "hunterGroupSpawnDelay", comment = "Minimum delay between Dragon hunter group spawning, in minutes" )
+	public static Integer hunterSpawnDelay = 20;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "allowKnightSpawning", comment = "Dragon knight spawning enabled?" )
+	public static Boolean spawnKnight = true;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "allowSquireSpawning", comment = "Dragon Squire spawning enabled?" )
+	public static Boolean spawnSquire = true;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "allowHunterSpawning", comment = "Dragon Hunter spawning enabled?" )
+	public static Boolean spawnHunter = true;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "allowHoundSpawning", comment = "Dragon Knight hound spawning enabled?" )
+	public static Boolean spawnHound = true;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "allowPrinceAndPrincessSpawning", comment = "Princess and prince spawning enabled?" )
+	public static Boolean spawnPrinceAndPrincess = true;
+
+	@ConfigRange( min = 10, max = 1000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "villagerKillxp", comment = "How many experience points are gained for killing a villager" )
+	public static Integer xpGain = 10;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "evilDragonStatusGivers", comment = "Entities which give 'Evil dragon' status on death" )
+	public static List<EntityType> evilDragonStatusGivers = ConfigHandler.configList(EntityType.class,EntityType.VILLAGER, DSEntities.HUNTER_HOUND, DSEntities.KNIGHT, DSEntities.SHOOTER_HUNTER, DSEntities.SQUIRE_HUNTER, DSEntities.PRINCE_ON_HORSE, DSEntities.PRINCESS, DSEntities.PRINCESS_ON_HORSE);
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "preserveEvilDragonAfterDeath", comment = "Preserve effect 'Evil dragon' after death?" )
+	public static Boolean preserveEvilDragonEffectAfterDeath = false;
+
+	@ConfigRange( min = 6, max = 128 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "princessAndHuntersLowerSpawnBound", comment = "Lowest Y value allowed for princess and hunter spawning" )
+	public static Integer riderSpawnLowerBound = 32;
+
+	@ConfigRange( min = 64, max = 250 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "princessAndHuntersUpperSpawnBound", comment = "Highest Y value allowed for princess and hunter spawning" )
+	public static Integer riderSpawnUpperBound = 80;
+
+	@ConfigRange( min = 10d, max = 80d )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "knight"}, key = "knightHealth", comment = "Dragon Knight health" )
+	public static Double knightHealth = 40d;
+
+	@ConfigRange( min = 1d, max = 32d )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "knight"}, key = "knightDamage", comment = "Dragon Knight base damage" )
+	public static Double knightDamage = 12d;
+
+	@ConfigRange( min = 0d, max = 30d )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "knight"}, key = "knightArmor", comment = "Dragon Knight armor" )
+	public static Double knightArmor = 10d;
+
+	@ConfigRange( min = 0.1d, max = 0.6d )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "knight"}, key = "knightSpeed", comment = "Dragon Knight speed" )
+	public static Double knightSpeed = 0.35d;
+
+	@ConfigRange( min = 0.0d, max = 1d )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "knight"}, key = "knightShieldChance", comment = "Chance of having shield" )
+	public static Double knightShieldChance = 0.1d;
+
+	@ConfigRange( min = 8d, max = 40d )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "hound"}, key = "houndHealth", comment = "Knight Hound health" )
+	public static Double houndHealth = 10d;
+
+	@ConfigRange( min = 1d, max = 10d )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "hound"}, key = "houndDamage", comment = "Knight Hound damage" )
+	public static Double houndDamage = 2d;
+
+	@ConfigRange( min = 0.1d, max = 0.6d )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "hound"}, key = "houndSpeed", comment = "Knight Hound speed" )
+	public static Double houndSpeed = 0.45d;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "hound"}, key = "houndDoesSlowdown", comment = "Does Knight Hound apply speed slowdown?" )
+	public static Boolean houndDoesSlowdown = true;
+
+	@ConfigRange( min = 10d, max = 60d )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "hunter"}, key = "hunterHealth", comment = "Dragon Hunter health" )
+	public static Double hunterHealth = 24d;
+
+	@ConfigRange( min = 2d, max = 20d )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "hunter"}, key = "hunterDamage", comment = "Dragon Hunter damage" )
+	public static Double hunterDamage = 5d;
+
+	@ConfigRange( min = 0.1d, max = 0.6d )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "hunter"}, key = "hunterSpeed", comment = "Dragon Hunter speed" )
+	public static Double hunterSpeed = 0.35d;
+
+	@ConfigRange( min = 0d, max = 20d )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "hunter"}, key = "hunterArmor", comment = "Dragon Hunter armor" )
+	public static Double hunterArmor = 0d;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "hunter"}, key = "hunterThrowsBolas", comment = "Is Dragon hunter able to throw a bolas?" )
+	public static Boolean hunterHasBolas = true;
+
+	@ConfigRange( min = 10d, max = 60d )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "squire"}, key = "squireHealth", comment = "Dragon Squire health" )
+	public static Double squireHealth = 24d;
+
+	@ConfigRange( min = 2d, max = 20d )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "squire"}, key = "squireDamage", comment = "Dragon Squire damage" )
+	public static Double squireDamage = 6d;
+
+	@ConfigRange( min = 0.1d, max = 0.6d )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "squire"}, key = "squireSpeed", comment = "Dragon Squire speed" )
+	public static Double squireSpeed = 0.35d;
+
+	@ConfigRange( min = 0d, max = 20d )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "squire"}, key = "squireArmor", comment = "Dragon Squire armor" )
+	public static Double squireArmor = 2d;
+
+
+	@ConfigRange( min = 10d, max = 60d )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "prince"}, key = "princeHealth", comment = "Prince health" )
+	public static Double princeHealth = 20d;
+
+	@ConfigRange( min = 1d, max = 20d )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "prince"}, key = "princeDamage", comment = "Prince base damage" )
+	public static Double princeDamage = 1d;
+
+	@ConfigRange( min = 0.2d, max = 0.6d )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "prince"}, key = "princeSpeed", comment = "Prince speed" )
+	public static Double princeSpeed = 0.3d;
+
+	@ConfigRange( min = 0d, max = 20d )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "prince"}, key = "princeArmor", comment = "Prince armor" )
+	public static Double princeArmor = 6d;
+
+	@ConfigRange( min = 1, max = 60 * 60 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_beacons", key = "constantEffect", comment = "Duration of effect given by beacon constantly in seconds" )
+	public static Integer secondsOfBeaconEffect = 20;
+
+	@ConfigRange( min = 1, max = 60 * 2 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_beacons", key = "temporaryEffect", comment = "Duration of effect given in exchange for experience in minutes" )
+	public static Integer minutesOfDragonEffect = 10;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_beacons", key = "peaceBeaconEffects", comment = "Effects of Peace beacon" )
+	public static List<MobEffect> peaceBeaconEffects = ConfigHandler.configList(MobEffect.class,DragonEffects.PEACE, DragonEffects.ANIMAL_PEACE);
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_beacons", key = "magicBeaconEffects", comment = "Effects of Magic beacon" )
+	public static List<MobEffect> magicBeaconEffects = ConfigHandler.configList(MobEffect.class,DragonEffects.MAGIC, DragonEffects.PREDATOR_ANTI_SPAWN);
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_beacons", key = "fireBeaconEffects", comment = "Effects of Fire beacon" )
+	public static List<MobEffect> fireBeaconEffects = ConfigHandler.configList(MobEffect.class,DragonEffects.FIRE, DragonEffects.STRONG_LEATHER);
 }

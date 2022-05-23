@@ -2,7 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.magic.abilities.Passives;
 
 
 import by.dragonsurvivalteam.dragonsurvival.common.magic.common.PassiveDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -40,13 +40,13 @@ public class AthleticsAbility extends PassiveDragonAbility{
 
 	@Override
 	public boolean isDisabled(){
-		if(type == DragonType.FOREST && !ConfigHandler.SERVER.forestAthletics.get()){
+		if(type == DragonType.FOREST && !ServerConfig.forestAthletics){
 			return true;
 		}
-		if(type == DragonType.SEA && !ConfigHandler.SERVER.seaAthletics.get()){
+		if(type == DragonType.SEA && !ServerConfig.seaAthletics){
 			return true;
 		}
-		if(type == DragonType.CAVE && !ConfigHandler.SERVER.caveAthletics.get()){
+		if(type == DragonType.CAVE && !ServerConfig.caveAthletics){
 			return true;
 		}
 

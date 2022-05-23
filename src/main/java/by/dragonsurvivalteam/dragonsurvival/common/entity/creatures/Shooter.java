@@ -4,7 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.AlertExceptHunte
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.CrossbowAttackGoal;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.Bolas;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -47,7 +47,7 @@ public class Shooter extends Hunter implements CrossbowAttackMob{
 
 	public void tick(){
 		super.tick();
-		if(ConfigHandler.COMMON.hunterHasBolas.get()){
+		if(ServerConfig.hunterHasBolas){
 			LivingEntity target = getTarget();
 			if(target instanceof Player && DragonUtils.isDragon(target)){
 				if(this.bolasCooldown == 0){

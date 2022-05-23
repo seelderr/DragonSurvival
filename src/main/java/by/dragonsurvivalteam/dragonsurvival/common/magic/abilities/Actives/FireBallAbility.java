@@ -6,7 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonSta
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.FireBallEntity;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.common.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -53,7 +53,7 @@ public class FireBallAbility extends ActiveDragonAbility{
 	}
 
 	public static float getDamage(int level){
-		return ConfigHandler.SERVER.fireballDamage.get().floatValue() * level;
+		return ServerConfig.fireballDamage.floatValue() * level;
 	}
 
 	@Override
@@ -101,7 +101,7 @@ public class FireBallAbility extends ActiveDragonAbility{
 	@OnlyIn( Dist.CLIENT )
 	public ArrayList<Component> getLevelUpInfo(){
 		ArrayList<Component> list = super.getLevelUpInfo();
-		list.add(new TranslatableComponent("ds.skill.damage", "+" + ConfigHandler.SERVER.fireballDamage.get().floatValue()));
+		list.add(new TranslatableComponent("ds.skill.damage", "+" + ServerConfig.fireballDamage.floatValue()));
 		list.add(new TranslatableComponent("ds.skill.aoe", "+1"));
 		return list;
 	}
@@ -109,6 +109,6 @@ public class FireBallAbility extends ActiveDragonAbility{
 
 	@Override
 	public boolean isDisabled(){
-		return super.isDisabled() || !ConfigHandler.SERVER.fireball.get();
+		return super.isDisabled() || !ServerConfig.fireball;
 	}
 }

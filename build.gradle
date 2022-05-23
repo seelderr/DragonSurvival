@@ -1,3 +1,5 @@
+
+import net.minecraftforge.gradle.common.util.RunConfig
 buildscript {
     repositories {
         maven {
@@ -17,6 +19,11 @@ buildscript {
     }
 }
 
+plugins {
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+}
+
+
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: 'org.spongepowered.mixin'
@@ -26,10 +33,8 @@ group = property("mod_group")
 archivesBaseName = property("mod_name") + "_" + property("version_name")
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(property("java_version") as String)
-println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 
 compileJava.options.encoding = 'UTF-8'
-
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
@@ -45,6 +50,10 @@ sourceSets {
 }
 
 configurations {
+    shade
+    implementation.extendsFrom shade
+    library
+    implementation.extendsFrom library
     apiImplementation.extendsFrom(implementation)
     apiRuntimeOnly.extendsFrom(runtimeOnly)
 }
@@ -54,48 +63,14 @@ minecraft {
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
     runs {
-        client {
-            workingDirectory project.file('run')
-            property 'forge.logging.markers', ''
-            property 'forge.logging.console.level', 'info'
-			arg "-mixin.config=" + mod_id + ".mixins.json"
+        client {}
+        server {}
+    }
+}
 
-            mods {
-                dragonsurvival {
-                    source sourceSets.main
-                    source sourceSets.api
-                }
-            }
-        }
-
-        server {
-            workingDirectory project.file('server')
-            property 'forge.logging.markers', ''
-            property 'forge.logging.console.level', 'info'
-			arg "-mixin.config=" + mod_id + ".mixins.json"
-
-            mods {
-                dragonsurvival {
-                    source sourceSets.main
-                    source sourceSets.api
-                }
-            }
-        }
-
-        data {
-            workingDirectory project.file('run')
-
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-            args '--mod', mod_id, '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
-
-            mods {
-                dragonsurvival {
-                    source sourceSets.main
-                    source sourceSets.api
-                }
-            }
-        }
+minecraft.runs.all {
+    lazyToken('minecraft_classpath') {
+        configurations.library.copyRecursive().resolve().collect { it.absolutePath }.join(File.pathSeparator)
     }
 }
 
@@ -112,8 +87,11 @@ repositories {
         name = "Progwml6 maven"
         url = "https://dvs1.progwml6.com/files/maven/"
     }
+    maven {
+        name 'reflections'
+        url 'https://mvnrepository.com/artifact/org.reflections/reflections'
+    }
 }
-
 dependencies {
     minecraft "net.minecraftforge:forge:$mc_version-$forge_version"
 
@@ -122,21 +100,62 @@ dependencies {
     compileOnly fg.deobf("mezz.jei:jei-${property('mc_version')}:${property('jei_version')}:api")
     runtimeOnly fg.deobf("mezz.jei:jei-${property('mc_version')}:${property('jei_version')}")
 
-    compileOnly files("lib/appleskin-api.jar")
+    shade fileTree(include:['*.jar'], dir:"libs")
+
+    library 'io.github.classgraph:classgraph:4.8.115'
+    shade 'io.github.classgraph:classgraph:4.8.115'
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
 
-jar.manifest.attributes([
-        "Specification-Title": mod_id,
-        "Specification-Vendor": "Dragon Survival Team",
-        "Specification-Version": "1", // We are version 1 of ourselves
-        "Implementation-Title": project.name,
-        "Implementation-Version": "${version}",
-        "Implementation-Vendor" :"Dragon Survival Team",
-        "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-        "MixinConfigs": mod_id + ".mixins.json"
-])
+jar {
+    archiveClassifier = 'slim'
+    manifest {
+        attributes([
+                "Specification-Title": mod_id,
+                "Specification-Vendor": "Dragon Survival Team",
+                "Specification-Version": "1", // We are version 1 of ourselves
+                "Implementation-Title": project.name,
+                "Implementation-Version": "${version}",
+                "Implementation-Vendor" :"Dragon Survival Team",
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                "MixinConfigs": mod_id + ".mixins.json"
+        ])
+    }
+}
+
+shadowJar {
+    archiveClassifier = ''
+    configurations = [project.configurations.shade]
+    finalizedBy 'reobfShadowJar'
+}
+
+assemble.dependsOn shadowJar
+
+reobf {
+    shadowJar {}
+}
+
+
+def jvmProperties = [
+        "forge.logging.markers": "",
+        "forge.logging.console.level": "debug",
+]
+
+minecraft.runs.each {
+    RunConfig config ->
+        config.arg "-mixin.config=" + mod_id + ".mixins.json"
+        config.workingDirectory project.file('run')
+        jvmProperties.each {
+            Map.Entry<String, String> prop -> config.property(prop.key, prop.value)
+        }
+        config.mods {
+            dragonsurvival {
+                source sourceSets.main
+                source sourceSets.api
+            }
+        }
+}
 
 jar.finalizedBy('reobfJar')
 

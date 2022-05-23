@@ -11,7 +11,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.GenericCapability;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.GenericCapabilityProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.client.Minecraft;
@@ -62,16 +62,16 @@ public class NetherBreathAbility extends BreathAbility{
 	@OnlyIn( Dist.CLIENT )
 	public ArrayList<Component> getLevelUpInfo(){
 		ArrayList<Component> list = super.getLevelUpInfo();
-		list.add(new TranslatableComponent("ds.skill.damage", "+" + ConfigHandler.SERVER.fireBreathDamage.get()));
+		list.add(new TranslatableComponent("ds.skill.damage", "+" + ServerConfig.fireBreathDamage));
 		return list;
 	}
 
 	@Override
 	public boolean isDisabled(){
-		return super.isDisabled() || !ConfigHandler.SERVER.fireBreath.get();
+		return super.isDisabled() || !ServerConfig.fireBreath;
 	}	@Override
 	public int getManaCost(){
-		return player != null && player.hasEffect(DragonEffects.SOURCE_OF_MAGIC) ? 0 : (firstUse ? ConfigHandler.SERVER.fireBreathInitialMana.get() : ConfigHandler.SERVER.fireBreathOvertimeMana.get());
+		return player != null && player.hasEffect(DragonEffects.SOURCE_OF_MAGIC) ? 0 : (firstUse ? ServerConfig.fireBreathInitialMana : ServerConfig.fireBreathOvertimeMana);
 	}
 
 
@@ -80,7 +80,7 @@ public class NetherBreathAbility extends BreathAbility{
 	@Override
 	public void onBlock(BlockPos pos, BlockState blockState, Direction direction){
 		if(!player.level.isClientSide){
-			if(ConfigHandler.SERVER.fireBreathSpreadsFire.get()){
+			if(ServerConfig.fireBreathSpreadsFire){
 				BlockPos blockPos = pos.relative(direction);
 
 				if(FireBlock.canBePlacedAt(player.level, blockPos, direction)){
@@ -133,7 +133,7 @@ public class NetherBreathAbility extends BreathAbility{
 	}
 
 	public void tickCost(){
-		if(firstUse || player.tickCount % ConfigHandler.SERVER.fireBreathManaTicks.get() == 0){
+		if(firstUse || player.tickCount % ServerConfig.fireBreathManaTicks == 0){
 			consumeMana(player);
 			firstUse = false;
 		}
@@ -263,7 +263,7 @@ public class NetherBreathAbility extends BreathAbility{
 
 
 	public static float getDamage(int level){
-		return (float)(ConfigHandler.SERVER.fireBreathDamage.get() * level);
+		return (float)(ServerConfig.fireBreathDamage * level);
 	}
 
 	public float getDamage(){

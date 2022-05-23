@@ -2,7 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles;
 
 
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DSEntities;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -98,7 +98,7 @@ public class DragonSpikeEntity extends AbstractArrow{
 
 	@Override
 	public double getBaseDamage(){
-		return getArrow_level() * ConfigHandler.SERVER.spikeDamage.get();
+		return getArrow_level() * ServerConfig.spikeDamage;
 	}
 
 	public int getArrow_level(){

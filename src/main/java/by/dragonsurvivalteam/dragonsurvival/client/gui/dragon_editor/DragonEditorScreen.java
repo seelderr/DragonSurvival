@@ -26,7 +26,10 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.SkinCap;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
@@ -65,7 +68,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DragonEditorScreen extends Screen implements TooltipRender{
-	public static final int HISTORY_SIZE = ConfigHandler.CLIENT.editorHistory.get();
+	@ConfigRange( min = 1, max = 1000 )
+	@ConfigOption( side = ConfigSide.CLIENT, category = "misc", key = "editorHistory", comment = "The amount of undos and redos that are saved in the dragon editor." )
+	public static Integer editorHistory = 10;
+
+	public int HISTORY_SIZE = editorHistory;
 	private static final ResourceLocation backgroundTexture = new ResourceLocation("textures/block/dirt.png");
 	public final ConcurrentHashMap<Integer, EvictingQueue<CompoundTag>> UNDO_QUEUES = new ConcurrentHashMap<>();
 	public final ConcurrentHashMap<Integer, EvictingQueue<CompoundTag>> REDO_QUEUES = new ConcurrentHashMap<>();
@@ -423,7 +430,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			addRenderableWidget(new DragonEditorSlotButton(width / 2 + 195 + 15, guiTop + ((num - 1) * 12) + 5 + 20, num, this));
 		}
 
-		addRenderableWidget(new ForgeSlider(width / 2 - 100 - 100, height - 25, 100, 20, new TranslatableComponent("ds.gui.dragon_editor.size"), new TextComponent("%"), ConfigHandler.SERVER.minSizeVari.get(), ConfigHandler.SERVER.maxSizeVari.get(), Math.round((preset.sizeMul - 1.0) * 100), true){
+		addRenderableWidget(new ForgeSlider(width / 2 - 100 - 100, height - 25, 100, 20, new TranslatableComponent("ds.gui.dragon_editor.size"), new TextComponent("%"), ServerConfig.minSizeVari, ServerConfig.maxSizeVari, Math.round((preset.sizeMul - 1.0) * 100), true){
 			@Override
 			protected void applyValue(){
 				super.applyValue();
@@ -509,7 +516,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 					minecraft.player.level.playSound(minecraft.player, minecraft.player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 1, 0.7f);
 
 					if(cap.getType() != type && cap.getType() != DragonType.NONE){
-						if(!ConfigHandler.SERVER.saveAllAbilities.get() || !ConfigHandler.SERVER.saveGrowthStage.get()){
+						if(!ServerConfig.saveAllAbilities || !ServerConfig.saveGrowthStage){
 							confirmation = true;
 							return;
 						}
@@ -769,16 +776,16 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 				Minecraft.getInstance().player.sendMessage(new TranslatableComponent("ds." + type.name().toLowerCase() + "_dragon_choice"), Minecraft.getInstance().player.getUUID());
 				cap.setType(type);
 
-				if(!ConfigHandler.SERVER.saveGrowthStage.get() || cap.getSize() == 0){
+				if(!ServerConfig.saveGrowthStage || cap.getSize() == 0){
 					cap.setSize(DragonLevel.BABY.size);
 				}
 
-				cap.setHasWings(ConfigHandler.SERVER.saveGrowthStage.get() ? cap.hasWings() || ConfigHandler.SERVER.startWithWings.get() : ConfigHandler.SERVER.startWithWings.get());
+				cap.setHasWings(ServerConfig.saveGrowthStage ? cap.hasWings() || ServerConfig.startWithWings : ServerConfig.startWithWings);
 				cap.setIsHiding(false);
-				cap.getMovementData().spinLearned = ConfigHandler.SERVER.saveGrowthStage.get() && cap.getMovementData().spinLearned;
+				cap.getMovementData().spinLearned = ServerConfig.saveGrowthStage && cap.getMovementData().spinLearned;
 
 				NetworkHandler.CHANNEL.sendToServer(new CompleteDataSync(Minecraft.getInstance().player.getId(), cap.writeNBT()));
-				NetworkHandler.CHANNEL.sendToServer(new SyncAltarCooldown(Minecraft.getInstance().player.getId(), Functions.secondsToTicks(ConfigHandler.SERVER.altarUsageCooldown.get())));
+				NetworkHandler.CHANNEL.sendToServer(new SyncAltarCooldown(Minecraft.getInstance().player.getId(), Functions.secondsToTicks(ServerConfig.altarUsageCooldown)));
 				NetworkHandler.CHANNEL.sendToServer(new SyncSpinStatus(Minecraft.getInstance().player.getId(), cap.getMovementData().spinAttack, cap.getMovementData().spinCooldown, cap.getMovementData().spinLearned));
 				ClientEvents.sendClientData(new RequestClientData(cap.getType(), cap.getLevel()));
 			}

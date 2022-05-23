@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.common.util;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -22,27 +22,27 @@ public class DragonModifiers{
 	public static final UUID SWIM_SPEED_MODIFIER_UUID = UUID.fromString("2a9341f3-d19e-446c-924b-7cf2e5259e10");
 
 	public static AttributeModifier buildHealthMod(double size){
-		double healthMod = ((float)ConfigHandler.SERVER.minHealth.get() + (((size - 14) / 26F) * ((float)ConfigHandler.SERVER.maxHealth.get() - (float)ConfigHandler.SERVER.minHealth.get()))) - 20;
-		healthMod = Math.min(healthMod, ConfigHandler.SERVER.maxHealth.get() - 20);
+		double healthMod = ((float)ServerConfig.minHealth + (((size - 14) / 26F) * ((float)ServerConfig.maxHealth - (float)ServerConfig.minHealth))) - 20;
+		healthMod = Math.min(healthMod, ServerConfig.maxHealth - 20);
 
 
 		return new AttributeModifier(HEALTH_MODIFIER_UUID, "Dragon Health Adjustment", healthMod, AttributeModifier.Operation.ADDITION);
 	}
 
 	public static AttributeModifier buildReachMod(double size){
-		double reachMod = (((size - DragonLevel.BABY.size) / (60.0 - DragonLevel.BABY.size)) * (ConfigHandler.SERVER.reachBonus.get()));
+		double reachMod = (((size - DragonLevel.BABY.size) / (60.0 - DragonLevel.BABY.size)) * (ServerConfig.reachBonus));
 
 		return new AttributeModifier(REACH_MODIFIER_UUID, "Dragon Reach Adjustment", reachMod, Operation.MULTIPLY_BASE);
 	}
 
 	public static AttributeModifier buildDamageMod(DragonStateHandler handler, boolean isDragon){
-		double ageBonus = isDragon ? (handler.getLevel() == DragonLevel.ADULT ? ConfigHandler.SERVER.adultBonusDamage.get() : handler.getLevel() == DragonLevel.YOUNG ? ConfigHandler.SERVER.youngBonusDamage.get() : ConfigHandler.SERVER.babyBonusDamage.get()) : 0;
+		double ageBonus = isDragon ? (handler.getLevel() == DragonLevel.ADULT ? ServerConfig.adultBonusDamage : handler.getLevel() == DragonLevel.YOUNG ? ServerConfig.youngBonusDamage : ServerConfig.babyBonusDamage) : 0;
 
 		return new AttributeModifier(DAMAGE_MODIFIER_UUID, "Dragon Damage Adjustment", ageBonus, Operation.ADDITION);
 	}
 
 	public static AttributeModifier buildSwimSpeedMod(DragonType dragonType){
-		return new AttributeModifier(SWIM_SPEED_MODIFIER_UUID, "Dragon Swim Speed Adjustment", dragonType == DragonType.SEA && ConfigHandler.SERVER.seaSwimmingBonuses.get() ? 1 : 0, Operation.ADDITION);
+		return new AttributeModifier(SWIM_SPEED_MODIFIER_UUID, "Dragon Swim Speed Adjustment", dragonType == DragonType.SEA && ServerConfig.seaSwimmingBonuses ? 1 : 0, Operation.ADDITION);
 	}
 
 	public static void updateModifiers(Player oldPlayer, Player newPlayer){
@@ -89,7 +89,7 @@ public class DragonModifiers{
 	}
 
 	public static void updateReachModifier(Player player, AttributeModifier mod){
-		if(!ConfigHandler.SERVER.bonuses.get()){
+		if(!ServerConfig.bonuses){
 			return;
 		}
 		AttributeInstance max = Objects.requireNonNull(player.getAttribute(ForgeMod.REACH_DISTANCE.get()));
@@ -98,7 +98,7 @@ public class DragonModifiers{
 	}
 
 	public static void updateHealthModifier(Player player, AttributeModifier mod){
-		if(!ConfigHandler.SERVER.healthAdjustments.get()){
+		if(!ServerConfig.healthAdjustments){
 			return;
 		}
 		float oldMax = player.getMaxHealth();
@@ -110,7 +110,7 @@ public class DragonModifiers{
 	}
 
 	public static void updateDamageModifier(Player player, AttributeModifier mod){
-		if(!ConfigHandler.SERVER.bonuses.get() || !ConfigHandler.SERVER.attackDamage.get()){
+		if(!ServerConfig.bonuses || !ServerConfig.attackDamage){
 			return;
 		}
 		AttributeInstance max = Objects.requireNonNull(player.getAttribute(Attributes.ATTACK_DAMAGE));
@@ -119,7 +119,7 @@ public class DragonModifiers{
 	}
 
 	public static void updateSwimSpeedModifier(Player player, AttributeModifier mod){
-		if(!ConfigHandler.SERVER.bonuses.get() || !ConfigHandler.SERVER.seaSwimmingBonuses.get()){
+		if(!ServerConfig.bonuses || !ServerConfig.seaSwimmingBonuses){
 			return;
 		}
 		AttributeInstance max = Objects.requireNonNull(player.getAttribute(ForgeMod.SWIM_SPEED.get()));

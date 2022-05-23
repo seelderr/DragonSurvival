@@ -16,6 +16,17 @@ public class ResourceEntry{
 	private int index;
 	private int tick;
 
+	public boolean tag;
+
+	public ResourceEntry(String id, List<ItemStack> displayItems, boolean tag){
+		this.id = id;
+		this.displayItems = displayItems;
+		this.tag = tag;
+
+		String[] split = id.split(":");
+		mod = split[0];
+	}
+
 	public ResourceEntry(String id, List<ItemStack> displayItems){
 		this.id = id;
 		this.displayItems = displayItems;

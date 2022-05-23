@@ -21,7 +21,6 @@ import net.minecraftforge.network.PacketDistributor;
 
 import java.util.Arrays;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 
 public class SyncPlayerSkinPreset implements IMessage<SyncPlayerSkinPreset>{

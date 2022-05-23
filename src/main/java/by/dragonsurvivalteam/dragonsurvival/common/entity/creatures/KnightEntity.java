@@ -3,7 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 import by.dragonsurvivalteam.dragonsurvival.client.render.util.AnimationTimer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.util.CommonTraits;
 import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -145,7 +145,7 @@ public class KnightEntity extends PathfinderMob implements IAnimatable, DragonHu
 
 	@Override
 	public boolean removeWhenFarAway(double distance){
-		return !this.hasCustomName() && tickCount >= Functions.minutesToTicks(ConfigHandler.COMMON.hunterDespawnDelay.get());
+		return !this.hasCustomName() && tickCount >= Functions.minutesToTicks(ServerConfig.hunterDespawnDelay);
 	}
 
 	@Override
@@ -170,7 +170,7 @@ public class KnightEntity extends PathfinderMob implements IAnimatable, DragonHu
 	@Override
 	protected void populateDefaultEquipmentSlots(DifficultyInstance difficultyInstance){
 		setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.IRON_SWORD));
-		if(random.nextDouble() < ConfigHandler.COMMON.knightShieldChance.get()){
+		if(random.nextDouble() < ServerConfig.knightShieldChance){
 			ItemStack itemStack = new ItemStack(Items.SHIELD);
 			ListTag listNBT = Functions.createRandomPattern(new BannerPattern.Builder(), 16);
 			CompoundTag compoundNBT = new CompoundTag();
