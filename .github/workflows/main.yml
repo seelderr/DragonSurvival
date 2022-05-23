@@ -94,4 +94,4 @@ jobs:
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         with:
-          args: build/libs/*.jar
+          args: build/libs/*${{ steps.semantic.outputs.new_release_version }}.jar
