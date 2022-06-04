@@ -10,7 +10,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
-import by.dragonsurvivalteam.dragonsurvival.mixins.MixinGameRendererZoom;
+import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorGameRenderer;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.RequestSpinResync;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncFlightSpeed;
@@ -107,7 +107,7 @@ public class ClientFlightHandler{
 
 		if(currentPlayer != null){
 			DragonStateHandler dragonStateHandler = DragonUtils.getHandler(currentPlayer);
-			MixinGameRendererZoom gameRenderer = (MixinGameRendererZoom)Minecraft.getInstance().gameRenderer;
+			AccessorGameRenderer gameRenderer = (AccessorGameRenderer)Minecraft.getInstance().gameRenderer;
 
 			if(ServerFlightHandler.isGliding(currentPlayer)){
 				if(setup.getCamera().isDetached()){

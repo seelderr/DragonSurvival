@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin( MultiPlayerGameMode.class )
-public class MixinPlayerController{
+public class MixinMultiPlayerGameMode{
 	@Shadow
 	private GameType localPlayerMode;
 	@Final

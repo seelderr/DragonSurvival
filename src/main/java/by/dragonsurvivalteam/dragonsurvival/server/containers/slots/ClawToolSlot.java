@@ -9,10 +9,11 @@ import by.dragonsurvivalteam.dragonsurvival.server.containers.DragonContainer;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.network.PacketDistributor;
 
 import javax.annotation.Nullable;
@@ -34,17 +35,14 @@ public class ClawToolSlot extends Slot{
 
 	@Override
 	public boolean mayPlace(ItemStack stack){
-		switch(this.num){
-			case 0:
-				return stack.getEquipmentSlot() == EquipmentSlot.MAINHAND || stack.getItem() instanceof SwordItem || stack.getItem() instanceof AxeItem;
-			case 1:
-				return stack.getItem() instanceof PickaxeItem;
-			case 2:
-				return stack.getItem() instanceof AxeItem;
-			case 3:
-				return stack.getItem() instanceof ShovelItem;
-		}
-		return false;
+		Item item = stack.getItem();
+		return switch(this.num){
+			case 0 -> item.canPerformAction(stack, ToolActions.SWORD_SWEEP) || item.canPerformAction(stack, ToolActions.AXE_DIG);
+			case 1 -> item.canPerformAction(stack, ToolActions.PICKAXE_DIG);
+			case 2 -> item.canPerformAction(stack, ToolActions.AXE_DIG);
+			case 3 -> item.canPerformAction(stack, ToolActions.SHOVEL_DIG);
+			default -> false;
+		};
 	}
 
 	@Override

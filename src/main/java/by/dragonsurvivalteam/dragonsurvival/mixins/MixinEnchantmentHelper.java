@@ -21,14 +21,12 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin( EnchantmentHelper.class )
-public abstract class MixinEnchantmentHelper{
+public class MixinEnchantmentHelper{
 	@Inject( at = @At( "HEAD" ), method = "hasAquaAffinity", cancellable = true )
 	private static void hasAquaAffinity(LivingEntity entity, CallbackInfoReturnable<Boolean> ci){
-		if(!(entity instanceof Player)){
+		if(!(entity instanceof Player player)){
 			return;
 		}
-
-		Player player = (Player)entity;
 
 		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.getType() == DragonType.SEA){

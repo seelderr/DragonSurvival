@@ -19,17 +19,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin( Item.class )
 public class MixinItem{
-	@Inject( at = @At( "HEAD" ), method = "inventoryTick", cancellable = true )
+	@Inject( at = @At( "HEAD" ), method = "inventoryTick" )
 	public void onItemUpdate(ItemStack stack, Level world, Entity entity, int slot, boolean isSelected, CallbackInfo ci){
-		if(!(entity instanceof Player) || entity.tickCount % 10 != 0){
+		if(!(entity instanceof Player player) || entity.tickCount % 10 != 0){
 			return;
 		}
 
-		Player player = (Player)entity;
-
-		if(player.isCreative() || player.isSpectator()){
+		if(player.isCreative() || player.isSpectator())
 			return;
-		}
 
 		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon() && ServerConfig.blacklistedSlots.contains(slot) && ServerConfig.blacklistedItems.contains(stack.getItem())){

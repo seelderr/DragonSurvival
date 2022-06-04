@@ -69,6 +69,5 @@ public class MixinWorldRenderer{
 
 	@Shadow
 	private void renderEntity(Entity entity, double cameraX, double cameraY, double cameraZ, float tickDelta, PoseStack matrices, MultiBufferSource vertexConsumers){
-
 	}
 }

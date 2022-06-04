@@ -10,8 +10,8 @@
 	"MixinItem",
 	"MixinLivingEntity",
 	"MixinPlayerEntity",
-	"MixinPlayerInteractionManager",
-	"MixinPlayerInventory",
+	"MixinServerPlayerGameMode",
+	"MixinInventory",
 	"MixinSleepStatus"
   ],
   "client": [
@@ -19,12 +19,12 @@
 	"AccessorEntityRendererManager",
 	"AccessorLivingRenderer",
 	"MixinClientWorld",
-	"MixinEntityRenderManager",
-	"MixinFirstPersonRenderer",
+	"MixinEntityRenderDispatcher",
+	"MixinItemInHandRenderer",
 	"MixinGameRenderer",
-	"MixinGameRendererZoom",
+	"AccessorGameRenderer",
 	"MixinInventoryScreen",
-	"MixinPlayerController",
+	"MixinMultiPlayerGameMode",
 	"MixinShaderRender",
 	"MixinWorldRenderer"
   ],

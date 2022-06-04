@@ -21,7 +21,7 @@ public abstract class MixinInventoryScreen extends EffectRenderingInventoryScree
 		super(p_98701_, p_98702_, p_98703_);
 	}
 
-	@Redirect( method = "Lnet/minecraft/client/gui/screens/inventory/InventoryScreen;renderEntityInInventory(IIIFFLnet/minecraft/world/entity/LivingEntity;)V", at = @At( value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;runAsFancy(Ljava/lang/Runnable;)V" ) )
+	@Redirect( method = "renderEntityInInventory(IIIFFLnet/minecraft/world/entity/LivingEntity;)V", at = @At( value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;runAsFancy(Ljava/lang/Runnable;)V" ) )
 	private static void dragonScreenEntityRender(Runnable p_runAsFancy_0_){
 		LocalPlayer player = Minecraft.getInstance().player;
 		if(DragonStateProvider.getCap(player).isPresent() && DragonUtils.getHandler(player).isDragon()){

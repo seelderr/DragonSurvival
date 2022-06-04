@@ -22,11 +22,11 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin( ItemInHandRenderer.class )
-public abstract class MixinFirstPersonRenderer{
+public class MixinItemInHandRenderer{
 
 	@Shadow
 	@Final
-	public Minecraft minecraft;
+	private Minecraft minecraft;
 
 	@Inject( at = @At( value = "HEAD" ), method = "applyEatTransform", cancellable = true, expect = 1 )
 	public void applyDragonEatTransform(PoseStack p_228398_1_, float p_228398_2_, HumanoidArm p_228398_3_, ItemStack p_228398_4_, CallbackInfo ci){
@@ -61,7 +61,7 @@ public abstract class MixinFirstPersonRenderer{
 	}
 
 	@Shadow
-	public void applyEatTransform(PoseStack p_228405_8_, float p_228405_2_, HumanoidArm handSide, ItemStack p_228405_6_){
+	private void applyEatTransform(PoseStack p_228405_8_, float p_228405_2_, HumanoidArm handSide, ItemStack p_228405_6_){
 		throw new IllegalStateException("Mixin failed to shadow applyEatTransform()");
 	}
 
@@ -80,7 +80,7 @@ public abstract class MixinFirstPersonRenderer{
 	}
 
 	@Shadow
-	public void renderMapHand(PoseStack p_228403_1_, MultiBufferSource p_228403_2_, int p_228403_3_, HumanoidArm p_228403_4_){
+	private void renderMapHand(PoseStack p_228403_1_, MultiBufferSource p_228403_2_, int p_228403_3_, HumanoidArm p_228403_4_){
 		throw new IllegalStateException("Mixin failed to shadow renderMapHand()");
 	}
 }

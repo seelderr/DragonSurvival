@@ -70,9 +70,7 @@ public class ClawToolHandler{
 	public static void playerDieEvent(LivingDropsEvent event){
 		Entity ent = event.getEntity();
 
-		if(ent instanceof Player){
-			Player player = (Player)ent;
-
+		if(ent instanceof Player player){
 			if(!player.level.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) && !ServerConfig.keepClawItems){
 				DragonStateHandler handler = DragonUtils.getHandler(player);
 

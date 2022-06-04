@@ -25,7 +25,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 
 @Mixin( EntityRenderDispatcher.class )
-public class MixinEntityRenderManager{
+public class MixinEntityRenderDispatcher{
 	@Shadow
 	@Final
 	private static RenderType SHADOW_RENDER_TYPE;

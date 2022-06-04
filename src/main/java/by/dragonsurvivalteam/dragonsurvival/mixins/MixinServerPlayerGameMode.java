@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin( ServerPlayerGameMode.class )
-public class MixinPlayerInteractionManager{
+public class MixinServerPlayerGameMode{
 	@Redirect( method = "destroyBlock(Lnet/minecraft/core/BlockPos;)Z", at = @At( value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;getMainHandItem()Lnet/minecraft/world/item/ItemStack;" ) )
 	public ItemStack getTools(ServerPlayer instance){
 		return ClawToolHandler.getDragonTools(instance);

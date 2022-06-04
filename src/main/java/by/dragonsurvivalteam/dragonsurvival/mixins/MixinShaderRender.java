@@ -12,6 +12,9 @@ import srg.net.optifine.shaders.ShadersRender;
 
 @Mixin( ShadersRender.class )
 public class MixinShaderRender{
+	/**
+	 * @author Horeak
+	 */
 	@Overwrite( remap = false )
 	public static void updateActiveRenderInfo(Camera activeRenderInfo, Minecraft mc, float partialTicks){
 		activeRenderInfo.setup(mc.level, mc.getCameraEntity() == null ? mc.player : mc.getCameraEntity(), !mc.options.getCameraType().isFirstPerson(), mc.options.getCameraType().isMirrored(), partialTicks);

@@ -5,7 +5,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin( GameRenderer.class )
-public interface MixinGameRendererZoom{
+public interface AccessorGameRenderer{
 	@Accessor( "zoom" )
 	float getZoom();
 
