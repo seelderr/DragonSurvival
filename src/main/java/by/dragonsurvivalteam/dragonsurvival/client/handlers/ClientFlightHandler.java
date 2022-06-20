@@ -292,8 +292,9 @@ public class ClientFlightHandler{
 						Input movement = player.input;
 						boolean hasFood = player.getFoodData().getFoodLevel() > ServerConfig.flightHungerThreshold || player.isCreative() || ServerConfig.allowFlyingWithoutHunger;
 
+
 						if(!hasFood){
-							ay = Math.abs(ay * 4);
+							ay = Mth.clamp(Math.abs(ay * 4), -0.2 * ServerConfig.maxFlightSpeed, 0.2 * ServerConfig.maxFlightSpeed);
 						}
 
 						//start
