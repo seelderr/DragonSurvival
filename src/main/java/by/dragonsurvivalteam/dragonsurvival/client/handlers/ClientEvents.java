@@ -301,7 +301,8 @@ public class ClientEvents{
 		return texture;
 	}
 
-	@SubscribeEvent
+	//TODO Disabled until a solution to dynamically change RenderLayers is found
+	//@SubscribeEvent
 	@OnlyIn( Dist.CLIENT )
 	public static void onRenderWorldLastEvent(RenderLevelLastEvent event){
 		Minecraft minecraft = Minecraft.getInstance();
