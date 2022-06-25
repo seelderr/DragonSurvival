@@ -89,7 +89,7 @@ public class SynchronizeDragonCap implements IMessage<SynchronizeDragonCap>{
 				dragonStateHandler.setLavaAirSupply(message.lavaAirSupply);
 				dragonStateHandler.setPassengerId(message.passengerId);
 				serverPlayer.setForcedPose(null);
-				serverPlayer.refreshDimensions();
+				//serverPlayer.refreshDimensions();
 			});
 		}else{
 			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> runClient(message, supplier));
@@ -125,7 +125,7 @@ public class SynchronizeDragonCap implements IMessage<SynchronizeDragonCap>{
 						ClientDragonRender.playerDragonHashMap.computeIfAbsent(thatPlayer.getId(), integer -> new AtomicReference<>(dragon)).getAndSet(dragon);
 					}
 					thatPlayer.setForcedPose(null);
-					thatPlayer.refreshDimensions();
+					//thatPlayer.refreshDimensions();
 				}
 			}
 			context.setPacketHandled(true);

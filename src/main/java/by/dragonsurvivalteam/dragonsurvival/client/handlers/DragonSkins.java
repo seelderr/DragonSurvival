@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -56,8 +57,7 @@ public class DragonSkins{
 		String searchText = StringUtils.join(text, "_");
 
 		try{
-			URL url = new URL(SKINS + searchText + ".png");
-			InputStream inputStream = url.openConnection().getInputStream();
+			InputStream inputStream = getStream(new URL(SKINS + searchText + ".png"));
 			NativeImage customTexture = NativeImage.read(inputStream);
 			resourceLocation = new ResourceLocation(DragonSurvivalMod.MODID, searchText.toLowerCase(Locale.ROOT));
 			Minecraft.getInstance().getTextureManager().register(resourceLocation, new DynamicTexture(customTexture));
@@ -128,8 +128,7 @@ public class DragonSkins{
 		String searchText = StringUtils.join(text, "_");
 
 		try{
-			URL url = new URL(SKINS + searchText + ".png");
-			InputStream inputStream = url.openConnection().getInputStream();
+			InputStream inputStream = getStream(new URL(SKINS + searchText + ".png"));
 			NativeImage customTexture = NativeImage.read(inputStream);
 			resourceLocation = new ResourceLocation(DragonSurvivalMod.MODID, searchText.toLowerCase(Locale.ROOT));
 			Minecraft.getInstance().getTextureManager().register(resourceLocation, new DynamicTexture(customTexture));
@@ -204,6 +203,12 @@ public class DragonSkins{
 		}catch(IOException e){
 			e.printStackTrace();
 		}
+	}
+
+	private static InputStream getStream(URL url) throws IOException{
+		URLConnection huc =  url.openConnection();
+		huc.setConnectTimeout(15 * 1000);
+		return huc.getInputStream();
 	}
 
 	private static class SkinObject{

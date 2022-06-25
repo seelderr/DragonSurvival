@@ -14,6 +14,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import software.bernie.geckolib3.core.processor.IBone;
+import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
 import software.bernie.geckolib3.renderers.geo.GeoLayerRenderer;
 
@@ -25,42 +26,46 @@ public class DragonArmorRenderLayer extends GeoLayerRenderer<DragonEntity>{
 
 	public DragonArmorRenderLayer(GeoEntityRenderer<DragonEntity> entityRendererIn){
 		super(entityRendererIn);
-		this.renderer = entityRendererIn;
+		renderer = entityRendererIn;
 	}
 
 	@Override
 	public void render(PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn, DragonEntity entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch){
-		if(!ClientDragonRender.armorRenderLayer){
+		if(!ClientDragonRender.armorRenderLayer)
 			return;
-		}
 
 		Player player = entitylivingbaseIn.getPlayer();
 
-		if(player.isSpectator()){
+		if(player.isSpectator())
 			return;
-		}
 
-		final IBone neck = ClientDragonRender.dragonArmorModel.getAnimationProcessor().getBone("Neck");
+		IBone neck = ClientDragonRender.dragonArmorModel.getAnimationProcessor().getBone("Neck");
 
-		if(neck != null){
+		if(neck != null)
 			neck.setHidden(false);
-		}
 
 		ResourceLocation helmetTexture = new ResourceLocation(DragonSurvivalMod.MODID, constructArmorTexture(player, EquipmentSlot.HEAD));
 		ResourceLocation chestPlateTexture = new ResourceLocation(DragonSurvivalMod.MODID, constructArmorTexture(player, EquipmentSlot.CHEST));
 		ResourceLocation legsTexture = new ResourceLocation(DragonSurvivalMod.MODID, constructArmorTexture(player, EquipmentSlot.LEGS));
 		ResourceLocation bootsTexture = new ResourceLocation(DragonSurvivalMod.MODID, constructArmorTexture(player, EquipmentSlot.FEET));
 
-		renderArmorPiece(renderer.helmet, matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, helmetTexture);
-		renderArmorPiece(renderer.chestplate, matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, chestPlateTexture);
-		renderArmorPiece(renderer.leggings, matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, legsTexture);
-		renderArmorPiece(renderer.boots, matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, bootsTexture);
+		((DragonRenderer)renderer).isRenderLayers = true;
+
+		GeoModel model = ClientDragonRender.dragonModel.getModel(ClientDragonRender.dragonModel.getModelLocation(null));
+
+		renderArmorPiece(model, renderer.helmet, matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, helmetTexture);
+		renderArmorPiece(model, renderer.chestplate, matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, chestPlateTexture);
+		renderArmorPiece(model, renderer.leggings, matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, legsTexture);
+		renderArmorPiece(model, renderer.boots, matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, bootsTexture);
+
+		((DragonRenderer)renderer).isRenderLayers = false;
 	}
 
-	private void renderArmorPiece(ItemStack stack, PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn, DragonEntity entitylivingbaseIn, float partialTicks, ResourceLocation helmetTexture){
-		if(entitylivingbaseIn == null){
+	private void renderArmorPiece(GeoModel model, ItemStack stack, PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn, DragonEntity entitylivingbaseIn, float partialTicks, ResourceLocation helmetTexture){
+		if(entitylivingbaseIn == null)
 			return;
-		}
+
+		if(stack == null || stack.isEmpty()) return;
 
 		Color armorColor = new Color(1f, 1f, 1f);
 
@@ -73,36 +78,41 @@ public class DragonArmorRenderLayer extends GeoLayerRenderer<DragonEntity>{
 		ClientDragonRender.dragonArmor.copyPosition(entitylivingbaseIn);
 		RenderType type = renderer.getRenderType(entitylivingbaseIn, partialTicks, matrixStackIn, bufferIn, null, packedLightIn, helmetTexture);
 		VertexConsumer vertexConsumer = bufferIn.getBuffer(type);
-
-		((DragonRenderer)renderer).isLayer = true;
-		renderer.render(ClientDragonRender.dragonModel.getModel(ClientDragonRender.dragonModel.getModelLocation(null)), entitylivingbaseIn, partialTicks, type, matrixStackIn, bufferIn, vertexConsumer, packedLightIn, OverlayTexture.NO_OVERLAY, armorColor.getRed() / 255F, armorColor.getGreen() / 255F, armorColor.getBlue() / 255F, 1F);
-		((DragonRenderer)renderer).isLayer = false;
+		renderer.render(model, entitylivingbaseIn,
+		                partialTicks,
+		                type,
+		                matrixStackIn,
+		                bufferIn,
+		                vertexConsumer,
+		                packedLightIn,
+		                OverlayTexture.NO_OVERLAY,
+		                armorColor.getRed() / 255F,
+		                armorColor.getGreen() / 255F,
+		                armorColor.getBlue() / 255F, 1F);
 	}
 
 	public static String constructArmorTexture(Player playerEntity, EquipmentSlot equipmentSlot){
 		String texture = "textures/armor/";
 		Item item = playerEntity.getItemBySlot(equipmentSlot).getItem();
-		if(item instanceof ArmorItem){
-			ArmorItem armorItem = (ArmorItem)item;
+		if(item instanceof ArmorItem armorItem){
 			ArmorMaterial armorMaterial = armorItem.getMaterial();
 			if(armorMaterial instanceof ArmorMaterials){
-				if(armorMaterial == ArmorMaterials.NETHERITE){
+				if(armorMaterial == ArmorMaterials.NETHERITE)
 					texture += "netherite_";
-				}else if(armorMaterial == ArmorMaterials.DIAMOND){
+				else if(armorMaterial == ArmorMaterials.DIAMOND)
 					texture += "diamond_";
-				}else if(armorMaterial == ArmorMaterials.IRON){
+				else if(armorMaterial == ArmorMaterials.IRON)
 					texture += "iron_";
-				}else if(armorMaterial == ArmorMaterials.LEATHER){
+				else if(armorMaterial == ArmorMaterials.LEATHER)
 					texture += "leather_";
-				}else if(armorMaterial == ArmorMaterials.GOLD){
+				else if(armorMaterial == ArmorMaterials.GOLD)
 					texture += "gold_";
-				}else if(armorMaterial == ArmorMaterials.CHAIN){
+				else if(armorMaterial == ArmorMaterials.CHAIN)
 					texture += "chainmail_";
-				}else if(armorMaterial == ArmorMaterials.TURTLE){
+				else if(armorMaterial == ArmorMaterials.TURTLE)
 					texture += "turtle_";
-				}else{
+				else
 					return texture + "empty_armor.png";
-				}
 
 				texture += "dragon_";
 				switch(equipmentSlot){

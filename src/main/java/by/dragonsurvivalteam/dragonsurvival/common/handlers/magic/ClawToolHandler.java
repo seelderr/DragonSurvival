@@ -36,6 +36,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ClawToolHandler{
 	public static ConcurrentHashMap<Integer, ItemStack> destroyedItems = new ConcurrentHashMap<>();
 
+
 	@SubscribeEvent
 	public static void experiencePickup(PickupXp event){
 		Player player = event.getPlayer();

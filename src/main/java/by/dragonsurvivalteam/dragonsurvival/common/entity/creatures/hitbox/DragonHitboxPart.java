@@ -67,4 +67,9 @@ public class DragonHitboxPart extends PartEntity<DragonHitBox>{
 
 	@Override
 	protected void addAdditionalSaveData(CompoundTag p_213281_1_){}
+
+	@Override
+	public boolean isPushable(){
+		return false;
+	}
 }

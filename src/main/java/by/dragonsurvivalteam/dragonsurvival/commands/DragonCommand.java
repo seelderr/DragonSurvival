@@ -25,6 +25,7 @@ import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.selector.EntitySelector;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
@@ -102,17 +103,17 @@ public class DragonCommand{
 		return 1;
 	}
 
-	public static void reInsertClawTools(ServerPlayer serverPlayer, DragonStateHandler dragonStateHandler){
+	public static void reInsertClawTools(Player player, DragonStateHandler dragonStateHandler){
 		for(int i = 0; i < 4; i++){
 			ItemStack stack = dragonStateHandler.getClawInventory().getClawsInventory().getItem(i);
 
-			if(serverPlayer.addItem(stack)){
-				dragonStateHandler.getClawInventory().getClawsInventory().removeItem(i, stack.getCount());
-			}else{
-				if(serverPlayer.level.addFreshEntity(new ItemEntity(serverPlayer.level, serverPlayer.position().x, serverPlayer.position().y, serverPlayer.position().z, stack))){
-					dragonStateHandler.getClawInventory().getClawsInventory().removeItem(i, stack.getCount());
+			if(player instanceof ServerPlayer serverPlayer){
+				if(!serverPlayer.addItem(stack)){
+					serverPlayer.level.addFreshEntity(new ItemEntity(serverPlayer.level, serverPlayer.position().x, serverPlayer.position().y, serverPlayer.position().z, stack));
 				}
 			}
 		}
+
+		dragonStateHandler.getClawInventory().getClawsInventory().clearContent();
 	}
 }

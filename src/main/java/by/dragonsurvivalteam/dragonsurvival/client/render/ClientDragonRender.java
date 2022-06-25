@@ -313,6 +313,8 @@ public class ClientDragonRender{
 	private static void renderArmorPiece(ItemStack stack, PoseStack matrixStackIn, MultiBufferSource bufferIn, float yaw, int packedLightIn, DragonEntity entitylivingbaseIn, float partialTicks, ResourceLocation helmetTexture){
 		software.bernie.geckolib3.core.util.Color armorColor = software.bernie.geckolib3.core.util.Color.ofRGB(1f, 1f, 1f);
 
+		if(stack == null || stack.isEmpty()) return;
+
 		if(stack.getItem() instanceof DyeableArmorItem){
 			int colorCode = ((DyeableArmorItem)stack.getItem()).getColor(stack);
 			armorColor = software.bernie.geckolib3.core.util.Color.ofTransparent(colorCode);
@@ -323,11 +325,11 @@ public class ClientDragonRender{
 			ClientDragonRender.dragonArmor.copyPosition(entitylivingbaseIn);
 			ClientDragonRender.dragonArmorModel.setArmorTexture(helmetTexture);
 			software.bernie.geckolib3.core.util.Color preColor = ((DragonRenderer)dragonArmorRenderer).renderColor;
-			((DragonRenderer)dragonArmorRenderer).renderLayers = false;
+			((DragonRenderer)dragonArmorRenderer).shouldRenderLayers = false;
 			((DragonRenderer)dragonArmorRenderer).renderColor = armorColor;
 			dragonArmorRenderer.render(entitylivingbaseIn, yaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
 			((DragonRenderer)dragonArmorRenderer).renderColor = preColor;
-			((DragonRenderer)dragonArmorRenderer).renderLayers = true;
+			((DragonRenderer)dragonArmorRenderer).shouldRenderLayers = true;
 		}
 	}
 

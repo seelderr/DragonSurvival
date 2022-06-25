@@ -25,7 +25,7 @@ public class DragonGlowLayerRenderer extends GeoLayerRenderer<DragonEntity>{
 
 	@Override
 	public void render(PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn, DragonEntity entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch){
-		if(!((DragonRenderer)renderer).renderLayers){
+		if(!((DragonRenderer)renderer).shouldRenderLayers){
 			return;
 		}
 		if(entitylivingbaseIn == ClientDragonRender.dragonArmor){
@@ -46,9 +46,9 @@ public class DragonGlowLayerRenderer extends GeoLayerRenderer<DragonEntity>{
 		if(glowTexture != null){
 			RenderType type = RenderType.eyes(glowTexture);
 			VertexConsumer vertexConsumer = bufferIn.getBuffer(type);
-			((DragonRenderer)renderer).isLayer = true;
+			((DragonRenderer)renderer).isRenderLayers = true;
 			renderer.render(getEntityModel().getModel(getEntityModel().getModelLocation(entitylivingbaseIn)), entitylivingbaseIn, partialTicks, type, matrixStackIn, bufferIn, vertexConsumer, 0, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
-			((DragonRenderer)renderer).isLayer = false;
+			((DragonRenderer)renderer).isRenderLayers = false;
 		}
 	}
 }

@@ -31,7 +31,7 @@ public class ClawsAndTeethRenderLayer extends GeoLayerRenderer<DragonEntity>{
 
 	@Override
 	public void render(PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn, DragonEntity entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch){
-		if(!((DragonRenderer)renderer).renderLayers){
+		if(!((DragonRenderer)renderer).shouldRenderLayers){
 			return;
 		}
 
@@ -50,18 +50,18 @@ public class ClawsAndTeethRenderLayer extends GeoLayerRenderer<DragonEntity>{
 
 		if(clawTexture != null){
 			ResourceLocation texture = new ResourceLocation(DragonSurvivalMod.MODID, clawTexture);
-			((DragonRenderer)renderer).isLayer = true;
+			((DragonRenderer)renderer).isRenderLayers = true;
 			renderToolLayer(matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, texture, renderer, getEntityModel());
-			((DragonRenderer)renderer).isLayer = false;
+			((DragonRenderer)renderer).isRenderLayers = false;
 		}
 
 		String teethTexture = constructTeethTexture(entitylivingbaseIn.getPlayer());
 
 		if(teethTexture != null){
 			ResourceLocation texture = new ResourceLocation(DragonSurvivalMod.MODID, teethTexture);
-			((DragonRenderer)renderer).isLayer = true;
+			((DragonRenderer)renderer).isRenderLayers = true;
 			renderToolLayer(matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, texture, renderer, getEntityModel());
-			((DragonRenderer)renderer).isLayer = false;
+			((DragonRenderer)renderer).isRenderLayers = false;
 		}
 	}
 

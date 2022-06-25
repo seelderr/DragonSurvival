@@ -438,4 +438,9 @@ public class DragonHitBox extends LivingEntity{
 	public boolean is(Entity entity){
 		return this == entity || entity.getId() == getPlayerId() || player != null && entity.getId() == player.getId();
 	}
+
+	@Override
+	public boolean isPushable(){
+		return false;
+	}
 }

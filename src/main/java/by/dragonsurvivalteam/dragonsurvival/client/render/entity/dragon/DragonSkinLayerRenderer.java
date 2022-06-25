@@ -97,7 +97,7 @@ public class DragonSkinLayerRenderer extends GeoLayerRenderer<DragonEntity>{
 							renderColor = curColor;
 						}
 					}
-					((DragonRenderer)renderer).isLayer = true;
+					((DragonRenderer)renderer).isRenderLayers = true;
 
 					if(settings.glowing){
 						RenderType type = RenderType.eyes(dynamicTexture);
@@ -108,7 +108,7 @@ public class DragonSkinLayerRenderer extends GeoLayerRenderer<DragonEntity>{
 						VertexConsumer vertexConsumer = bufferIn.getBuffer(type);
 						renderer.render(ClientDragonRender.dragonModel.getModel(ClientDragonRender.dragonModel.getModelLocation(null)), entitylivingbaseIn, partialTicks, type, matrixStackIn, bufferIn, vertexConsumer, packedLightIn, OverlayTexture.NO_OVERLAY, renderColor.getRed() / 255f, renderColor.getGreen() / 255f, renderColor.getBlue() / 255f, renderColor.getAlpha() / 255f);
 					}
-					((DragonRenderer)renderer).isLayer = false;
+					((DragonRenderer)renderer).isRenderLayers = false;
 				}
 			}
 		}

@@ -22,6 +22,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.objects.SkinPr
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TextRenderUtil;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TooltipRendering;
+import by.dragonsurvivalteam.dragonsurvival.commands.DragonCommand;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.SkinCap;
@@ -696,7 +697,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 
 		addRenderableWidget(new CopySettingsButton(this, width / 2 + 193 + 15, guiTop - 16, 16, 16, TextComponent.EMPTY, (p) -> {}));
 
-		addRenderableWidget(new ExtendedButton(dragonRender.x + dragonRender.width - 17, dragonRender.y + dragonRender.height + 3, 15, 15, new TranslatableComponent(""), (btn) -> {
+		addRenderableWidget(new ExtendedButton(dragonRender.x + dragonRender.width - 17, dragonRender.y + dragonRender.height + 3, 15, 15, TextComponent.EMPTY, (btn) -> {
 			dragonRender.yRot = -3;
 			dragonRender.xRot = -5;
 			dragonRender.xOffset = 0;
@@ -788,6 +789,10 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 				NetworkHandler.CHANNEL.sendToServer(new SyncAltarCooldown(Minecraft.getInstance().player.getId(), Functions.secondsToTicks(ServerConfig.altarUsageCooldown)));
 				NetworkHandler.CHANNEL.sendToServer(new SyncSpinStatus(Minecraft.getInstance().player.getId(), cap.getMovementData().spinAttack, cap.getMovementData().spinCooldown, cap.getMovementData().spinLearned));
 				ClientEvents.sendClientData(new RequestClientData(cap.getType(), cap.getLevel()));
+
+				if(type == DragonType.NONE && cap.getType() != DragonType.NONE){
+					DragonCommand.reInsertClawTools(Minecraft.getInstance().player, cap);
+				}
 			}
 		});
 

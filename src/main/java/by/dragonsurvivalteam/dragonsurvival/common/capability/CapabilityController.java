@@ -55,31 +55,34 @@ public class CapabilityController{
 	public static void onEntityInteract(EntityInteractSpecific event){
 		Entity ent = event.getTarget();
 
-		if(ent instanceof DragonHitBox)
-			ent = ((DragonHitBox)ent).player;
+		if(ent instanceof DragonHitBox tt)
+			ent = tt.player;
 
-		else if(ent instanceof DragonHitboxPart)
-			ent = ((DragonHitboxPart)ent).parentMob.player;
+		else if(ent instanceof DragonHitboxPart tt)
+			ent = tt.parentMob.player;
 
-		if(!(ent instanceof ServerPlayer target) || event.getHand() != InteractionHand.MAIN_HAND)
+		if(event.getHand() != InteractionHand.MAIN_HAND)
 			return;
 
-		Player self = event.getPlayer();
 
-		DragonStateProvider.getCap(target).ifPresent(targetCap -> {
-			if(targetCap.isDragon() && target.getPose() == Pose.CROUCHING && targetCap.getSize() >= 40 && !target.isVehicle()){
-				DragonStateProvider.getCap(self).ifPresent(selfCap -> {
-					if(!selfCap.isDragon() || selfCap.getLevel() == DragonLevel.BABY){
-						self.startRiding(target);
-						target.connection.send(new ClientboundSetPassengersPacket(target));
-						targetCap.setPassengerId(self.getId());
-						NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> target), new SynchronizeDragonCap(target.getId(), targetCap.isHiding(), targetCap.getType(), targetCap.getSize(), targetCap.hasWings(), targetCap.getLavaAirSupply(), self.getId()));
-						event.setCancellationResult(InteractionResult.SUCCESS);
-						event.setCanceled(true);
-					}
-				});
-			}
-		});
+		if(ent instanceof ServerPlayer target){
+			Player self = event.getPlayer();
+
+			DragonStateProvider.getCap(target).ifPresent(targetCap -> {
+				if(targetCap.isDragon() && target.getPose() == Pose.CROUCHING && targetCap.getSize() >= 40 && !target.isVehicle()){
+					DragonStateProvider.getCap(self).ifPresent(selfCap -> {
+						if(!selfCap.isDragon() || selfCap.getLevel() == DragonLevel.BABY){
+							self.startRiding(target);
+							target.connection.send(new ClientboundSetPassengersPacket(target));
+							targetCap.setPassengerId(self.getId());
+							NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> target), new SynchronizeDragonCap(target.getId(), targetCap.isHiding(), targetCap.getType(), targetCap.getSize(), targetCap.hasWings(), targetCap.getLavaAirSupply(), self.getId()));
+							event.setCancellationResult(InteractionResult.SUCCESS);
+							event.setCanceled(true);
+						}
+					});
+				}
+			});
+		}
 	}
 
 	@SubscribeEvent

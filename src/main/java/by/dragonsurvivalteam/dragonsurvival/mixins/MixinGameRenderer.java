@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins;
 
+import by.dragonsurvivalteam.dragonsurvival.config.ClientConfig;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -15,6 +16,8 @@ public class MixinGameRenderer{
 		if(!(entity instanceof Player))
 			return;
 
-		ci.setReturnValue(1f);
+		if(ClientConfig.stableNightVision){
+			ci.setReturnValue(1f);
+		}
 	}
 }
