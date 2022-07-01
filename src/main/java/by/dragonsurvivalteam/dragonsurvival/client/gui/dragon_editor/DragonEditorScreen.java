@@ -440,22 +440,19 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 					preset.sizeMul = val;
 					dragonRender.zoom = (float)(level.size * preset.sizeMul);
 				}
+
+				double val1 = Math.round((preset.sizeMul - 1.0) * 100);
+
+				if(val1 > 0){
+					setMessage(new TranslatableComponent("ds.gui.dragon_editor.size").append("+").append(val1 + "%"));
+				}else{
+					setMessage(new TranslatableComponent("ds.gui.dragon_editor.size").append(val1 + "%"));
+				}
 			}
 
 			@Override
 			public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
 				super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
-				double val = Math.round((preset.sizeMul - 1.0) * 100);
-
-				if(val > 0){
-					setMessage(new TranslatableComponent("ds.gui.dragon_editor.size").append("+"));
-				}else{
-					setMessage(new TranslatableComponent("ds.gui.dragon_editor.size"));
-				}
-
-				if(getValue() != val){
-					setValue(val);
-				}
 
 				if(!isMouseOver(pMouseX, pMouseY) && isDragging()){
 					mouseReleased(pMouseX, pMouseY, 0);
@@ -744,12 +741,12 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 
 		lastSelected = currentSelected;
 
-		children.removeIf((s) -> s instanceof DragonUIRenderComponent);
-
 		initDragonRender();
 	}
 
 	private void initDragonRender(){
+		children.removeIf(DragonUIRenderComponent.class::isInstance);
+
 		float yRot = -3, xRot = -5, zoom = 0, xOffset = 0, yOffset = 0;
 		if(dragonRender != null){
 			yRot = dragonRender.yRot;
@@ -809,6 +806,6 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			}
 		}
 
-		return super.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY);
+		return false;
 	}
 }

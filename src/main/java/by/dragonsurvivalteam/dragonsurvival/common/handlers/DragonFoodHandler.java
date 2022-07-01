@@ -95,25 +95,16 @@ public class DragonFoodHandler{
 			return foodMap;
 		}
 
-		String[] configFood;
-		switch(type){
-			case CAVE:
-				configFood = ServerConfig.caveDragonFoods.toArray(new String[0]);
-				break;
-			case FOREST:
-				configFood = ServerConfig.forestDragonFoods.toArray(new String[0]);
-				break;
-			case SEA:
-				configFood = ServerConfig.seaDragonFoods.toArray(new String[0]);
-				break;
-			default:
-				configFood = new String[0];
-				break;
-		}
+		String[] configFood = switch(type){
+			case CAVE -> ServerConfig.caveDragonFoods.toArray(new String[0]);
+			case FOREST -> ServerConfig.forestDragonFoods.toArray(new String[0]);
+			case SEA -> ServerConfig.seaDragonFoods.toArray(new String[0]);
+			default -> new String[0];
+		};
 		configFood = Stream.of(configFood).sorted(Comparator.reverseOrder()).toArray(String[]::new);
 		for(String entry : configFood){
-			final String[] sEntry = entry.split(":");
-			final ResourceLocation rlEntry = new ResourceLocation(sEntry[1], sEntry[2]);
+			String[] sEntry = entry.split(":");
+			ResourceLocation rlEntry = new ResourceLocation(sEntry[1], sEntry[2]);
 
 
 			if(sEntry[0].equalsIgnoreCase("tag")){
@@ -135,7 +126,7 @@ public class DragonFoodHandler{
 						foodMap.put(item, FoodProperties);
 					}
 				}else{
-					DragonSurvivalMod.LOGGER.warn("Unknown item '{}:{}' in {} dragon FoodProperties config.", sEntry[1], sEntry[2], type.toString().toLowerCase());
+				//	DragonSurvivalMod.LOGGER.warn("Unknown item '{}:{}' in {} dragon FoodProperties config.", sEntry[1], sEntry[2], type.toString().toLowerCase());
 				}
 			}
 		}

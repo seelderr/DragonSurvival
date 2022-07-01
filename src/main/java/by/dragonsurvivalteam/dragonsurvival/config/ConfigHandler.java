@@ -6,10 +6,6 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import com.electronwill.nightconfig.core.EnumGetMethod;
 import com.google.gson.reflect.TypeToken;
-import io.github.classgraph.ClassGraph;
-import io.github.classgraph.ClassInfo;
-import io.github.classgraph.FieldInfo;
-import io.github.classgraph.ScanResult;
 import net.minecraft.Util;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
@@ -30,11 +26,13 @@ import net.minecraftforge.common.ForgeConfigSpec.EnumValue;
 import net.minecraftforge.common.ForgeConfigSpec.IntValue;
 import net.minecraftforge.common.ForgeConfigSpec.LongValue;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.config.ModConfig.Type;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
+import net.minecraftforge.forgespi.language.ModFileScanData;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -42,7 +40,10 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.registries.tags.ITagManager;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.Nullable;
+import org.objectweb.asm.Type;
 
+import java.lang.annotation.Annotation;
+import java.lang.annotation.ElementType;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
@@ -63,34 +64,34 @@ public class ConfigHandler{
 	public static HashMap<ConfigSide, List<String>> configs = new HashMap<>();
 	public static HashMap<String, ForgeConfigSpec.ConfigValue> configValues = new HashMap<>();
 
-	public static void initConfig(){
-		List<Field> set = new ArrayList<>();
+	private static List<Field> getFields(Class<? extends Annotation> annotationClass) {
+		List<Field> instances = new ArrayList<>();
 
-		try{
-			ClassGraph graph = new ClassGraph();
-			graph.enableAllInfo();
-			graph.acceptPackages("by.dragonsurvivalteam.dragonsurvival");
-			graph.disableModuleScanning();
+		Type annotationType = Type.getType(annotationClass);
+		ModList.get().getAllScanData().forEach(s -> {
+			List<ModFileScanData.AnnotationData> ebsTargets = s.getAnnotations().stream().filter(s1 -> s1.targetType() == ElementType.FIELD).filter(annotationData -> annotationType.equals(annotationData.annotationType())).toList();
 
-			try(ScanResult result = graph.scan()){
-				for(ClassInfo classInfo : result.getClassesWithFieldAnnotation(ConfigOption.class)){
-					for(FieldInfo fieldInfo : classInfo.getDeclaredFieldInfo()){
-						if(fieldInfo.hasAnnotation(ConfigOption.class) && fieldInfo.isStatic()){
-							set.add(fieldInfo.loadClassAndGetField());
-						}
-					}
+			ebsTargets.forEach(ad ->  {
+				try{
+					Class<?> c = Class.forName(ad.clazz().getClassName());
+					Field fe = c.getDeclaredField(ad.memberName());
+					instances.add(fe);
+				}catch(ClassNotFoundException | NoSuchFieldException e){
+					e.printStackTrace();
 				}
-			}catch(Exception e1){
-				e1.printStackTrace();
-			}
-		}catch(Exception e){
-			e.printStackTrace();
-		}
+			});
+		});
+		return instances;
+	}
+
+	public static void initConfig(){
+		List<Field> set = getFields(ConfigOption.class);
 
 		set.forEach(s -> {
-			if(!Modifier.isStatic(s.getModifiers())){
+			if(!Modifier.isStatic(s.getModifiers()))
 				return;
-			}
+
+			System.out.println(s);
 
 			ConfigOption option = s.getAnnotation(ConfigOption.class);
 
@@ -110,10 +111,13 @@ public class ConfigHandler{
 		CLIENT = client.getLeft();
 		clientSpec = client.getRight();
 
-
 		Pair<ServerConfig, ForgeConfigSpec> server = new ForgeConfigSpec.Builder().configure(ServerConfig::new);
 		SERVER = server.getLeft();
 		serverSpec = server.getRight();
+
+		ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, clientSpec);
+		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, serverSpec);
+
 	}
 
 	public static void addConfigs(ForgeConfigSpec.Builder builder, ConfigSide side){
@@ -274,7 +278,7 @@ public class ConfigHandler{
 	}
 
 	public static void onModConfig(ModConfig.Type type){
-		for(String s : configs.getOrDefault(type == Type.SERVER ? ConfigSide.SERVER : ConfigSide.CLIENT, Collections.emptyList())){
+		for(String s : configs.getOrDefault(type == ModConfig.Type.SERVER ? ConfigSide.SERVER : ConfigSide.CLIENT, Collections.emptyList())){
 			try{
 				if(configValues.containsKey(s) && configFields.containsKey(s)){
 					Field fe = ConfigHandler.configFields.get(s);

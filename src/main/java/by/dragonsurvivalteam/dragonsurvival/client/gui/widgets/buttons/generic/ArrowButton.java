@@ -6,7 +6,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.resources.ResourceLocation;
 
-public class ArrowButton extends Button{
+public class ArrowButton extends Button {
 	public static final ResourceLocation texture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/arrows.png");
 	public boolean next;
 

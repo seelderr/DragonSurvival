@@ -103,7 +103,7 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity>{
 							PoseStack newMatrixStack = new PoseStack();
 							newMatrixStack.last().normal().mul(bone.getWorldSpaceNormal());
 							newMatrixStack.last().pose().multiply(bone.getWorldSpaceXform());
-							newMatrixStack.scale(bone.getScaleX(), bone.getScaleY(), bone.getScaleZ());
+						//	newMatrixStack.scale(bone.getScaleX(), bone.getScaleY(), bone.getScaleZ());
 
 							Minecraft.getInstance().getItemRenderer().renderStatic(entity.getPlayer().getInventory().offhand.get(0), TransformType.THIRD_PERSON_LEFT_HAND, packedLightIn, 0, newMatrixStack, bufferIn, 0);
 						});
@@ -114,7 +114,7 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity>{
 							PoseStack newMatrixStack = new PoseStack();
 							newMatrixStack.last().normal().mul(bone.getWorldSpaceNormal());
 							newMatrixStack.last().pose().multiply(bone.getWorldSpaceXform());
-							newMatrixStack.scale(bone.getScaleX(), bone.getScaleY(), bone.getScaleZ());
+							//newMatrixStack.scale(bone.getScaleX(), bone.getScaleY(), bone.getScaleZ());
 
 							Minecraft.getInstance().getItemRenderer().renderStatic(entity.getPlayer().getInventory().getSelected(), TransformType.THIRD_PERSON_RIGHT_HAND, packedLightIn, 0, newMatrixStack, bufferIn, 0);
 						});
