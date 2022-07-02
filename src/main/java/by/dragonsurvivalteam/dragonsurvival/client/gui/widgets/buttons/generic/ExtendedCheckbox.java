@@ -24,7 +24,6 @@ public class ExtendedCheckbox extends Checkbox{
 		super(pX, pY, pWidth, pHeight, pMessage, pSelected);
 		this.pressable = pressable;
 		this.renderWidth = renderWidth;
-		setBlitOffset(500);
 	}
 
 	@Override
@@ -36,7 +35,6 @@ public class ExtendedCheckbox extends Checkbox{
 	@Override
 	public void renderButton(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
 		pMatrixStack.pushPose();
-		pMatrixStack.translate(0, 0, 100);
 		Minecraft minecraft = Minecraft.getInstance();
 		Font fontrenderer = minecraft.font;
 
@@ -61,7 +59,6 @@ public class ExtendedCheckbox extends Checkbox{
 			Component message = active ? getMessage() : ((TranslatableComponent)this.getMessage()).withStyle(ChatFormatting.DARK_GRAY);
 
 			pMatrixStack.pushPose();
-			pMatrixStack.translate(0, 0, getBlitOffset());
 			drawString(pMatrixStack, fontrenderer, message, this.x + renderWidth + 2, this.y + (height - 8) / 2, 14737632);
 			pMatrixStack.popPose();
 		}else{
@@ -77,7 +74,6 @@ public class ExtendedCheckbox extends Checkbox{
 			Component message = active ? getMessage() : ((TranslatableComponent)this.getMessage()).withStyle(ChatFormatting.DARK_GRAY);
 
 			pMatrixStack.pushPose();
-			pMatrixStack.translate(0, 0, getBlitOffset());
 			drawString(pMatrixStack, fontrenderer, message, this.x + renderWidth + 2, this.y + (height - 8) / 2, 14737632);
 			pMatrixStack.popPose();
 		}

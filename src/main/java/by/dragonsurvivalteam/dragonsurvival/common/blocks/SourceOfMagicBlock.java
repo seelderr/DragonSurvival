@@ -102,6 +102,7 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
 		Level world = context.getLevel();
 		Player playerEntity = context.getPlayer();
 		Direction direction = playerEntity.getDirection();
+
 		if(Functions.isAirOrFluid(blockPos.relative(direction), world, context) && Functions.isAirOrFluid(blockPos.relative(direction.getCounterClockWise()), world, context) && Functions.isAirOrFluid(blockPos.relative(direction).relative(direction.getCounterClockWise()), world, context)){
 			superState = super.getStateForPlacement(context).setValue(FACING, direction.getOpposite());
 		}
@@ -110,10 +111,10 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
 			if(Functions.isAirOrFluid(blockPos.relative(direction.getOpposite()), world, context) && Functions.isAirOrFluid(blockPos.relative(direction).relative(direction.getClockWise()), world, context) && Functions.isAirOrFluid(blockPos.relative(direction.getClockWise()), world, context) && Functions.isAirOrFluid(blockPos.relative(direction.getOpposite()).relative(direction.getCounterClockWise()), world, context) && Functions.isAirOrFluid(blockPos.relative(direction.getOpposite()).relative(direction.getClockWise()), world, context) && Functions.isAirOrFluid(blockPos.relative(direction).above(), world, context) && Functions.isAirOrFluid(blockPos.relative(direction).above().relative(direction.getClockWise()), world, context) && Functions.isAirOrFluid(blockPos.relative(direction).above().relative(direction.getCounterClockWise()), world, context)){
 				return superState;
 			}
-		}
 
-		if(world.isClientSide){
-			playerEntity.sendMessage(new TranslatableComponent("ds.space.occupied"), playerEntity.getUUID());
+			if(world.isClientSide){
+				playerEntity.sendMessage(new TranslatableComponent("ds.space.occupied"), playerEntity.getUUID());
+			}
 		}
 
 		return null;

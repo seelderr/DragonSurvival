@@ -31,7 +31,6 @@ import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -39,10 +38,8 @@ import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.ParrotOnShoulderLayer;
-import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.DyeableArmorItem;
@@ -276,23 +273,20 @@ public class ClientDragonRender{
 				}
 
 				if(!player.isSpectator()){
-					for(RenderLayer<Entity, EntityModel<Entity>> layer : ((AccessorLivingRenderer)playerRenderer).getRenderLayers()){
-						if(layer instanceof ParrotOnShoulderLayer){
-							matrixStack.scale(1.0F / scale, 1.0F / scale, 1.0F / scale);
-							matrixStack.mulPose(Vector3f.XN.rotationDegrees(180.0F));
-							double height = 1.3 * scale;
-							double forward = 0.3 * scale;
-							float parrotHeadYaw = Mth.clamp(-1.0F * (((float)cap.getMovementData().bodyYaw) - (float)cap.getMovementData().headYaw), -75.0F, 75.0F);
-							matrixStack.translate(0, -height, -forward);
-							layer.render(matrixStack, renderTypeBuffer, eventLight, player, 0.0F, 0.0F, partialRenderTick, (float)player.tickCount + partialRenderTick, parrotHeadYaw, (float)cap.getMovementData().headPitch);
-							matrixStack.translate(0, height, forward);
-							matrixStack.mulPose(Vector3f.XN.rotationDegrees(-180.0F));
-							matrixStack.scale(scale, scale, scale);
-							break;
-						}
-					}
+					((AccessorLivingRenderer)playerRenderer).getRenderLayers().stream().filter(ParrotOnShoulderLayer.class::isInstance).findAny().ifPresent(renderLayer -> {
+						matrixStack.scale(1.0F / scale, 1.0F / scale, 1.0F / scale);
+						matrixStack.mulPose(Vector3f.XN.rotationDegrees(180.0F));
+						double height = 1.3 * scale;
+						double forward = 0.3 * scale;
+						float parrotHeadYaw = Mth.clamp(-1.0F * (((float)cap.getMovementData().bodyYaw) - (float)cap.getMovementData().headYaw), -75.0F, 75.0F);
+						matrixStack.translate(0, -height, -forward);
+						renderLayer.render(matrixStack, renderTypeBuffer, eventLight, player, 0.0F, 0.0F, partialRenderTick, (float)player.tickCount + partialRenderTick, parrotHeadYaw, (float)cap.getMovementData().headPitch);
+						matrixStack.translate(0, height, forward);
+						matrixStack.mulPose(Vector3f.XN.rotationDegrees(-180.0F));
+						matrixStack.scale(scale, scale, scale);
+					});
 
-					final int combinedOverlayIn = LivingEntityRenderer.getOverlayCoords(player, 0);
+					int combinedOverlayIn = LivingEntityRenderer.getOverlayCoords(player, 0);
 					if(player.hasEffect(DragonEffects.TRAPPED)){
 						ClientEvents.renderBolas(eventLight, combinedOverlayIn, renderTypeBuffer, matrixStack);
 					}
@@ -317,7 +311,7 @@ public class ClientDragonRender{
 
 		if(stack.getItem() instanceof DyeableArmorItem){
 			int colorCode = ((DyeableArmorItem)stack.getItem()).getColor(stack);
-			armorColor = software.bernie.geckolib3.core.util.Color.ofTransparent(colorCode);
+			armorColor = software.bernie.geckolib3.core.util.Color.ofOpaque(colorCode);
 		}
 
 		if(!stack.isEmpty()){

@@ -2,35 +2,74 @@ package by.dragonsurvivalteam.dragonsurvival.client.render.entity.creatures;
 
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.PrinceHorseEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import software.bernie.geckolib3.geo.render.built.GeoModel;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib3.core.processor.IBone;
+import software.bernie.geckolib3.geo.render.built.GeoBone;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
-import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
+import software.bernie.geckolib3.renderers.geo.ExtendedGeoEntityRenderer;
 
-public class PrinceHorseRenderer extends GeoEntityRenderer<PrinceHorseEntity>{
+public class PrinceHorseRenderer extends ExtendedGeoEntityRenderer<PrinceHorseEntity>{
 	public PrinceHorseRenderer(EntityRendererProvider.Context renderManager, AnimatedGeoModel<PrinceHorseEntity> modelProvider){
 		super(renderManager, modelProvider);
 	}
 
+	@Override
+	protected boolean isArmorBone(GeoBone bone){
+		return false;
+	}
+
+	@Nullable
+	@Override
+	protected ResourceLocation getTextureForBone(String boneName, PrinceHorseEntity currentEntity){
+		return null;
+	}
+
+	protected ItemStack getHeldItemForBone(String boneName, PrinceHorseEntity currentEntity){
+		if(boneName.equalsIgnoreCase("left_item")){
+			return mainHand;
+		}
+
+		return null;
+	}
 
 	@Override
-	public void render(PrinceHorseEntity entity, float entityYaw, float partialTicks, PoseStack stack, MultiBufferSource bufferIn, int packedLightIn){
-		super.render(entity, entityYaw, partialTicks, stack, bufferIn, packedLightIn);
-		GeoModel model = getGeoModelProvider().getModel(getGeoModelProvider().getModelLocation(entity));
-
-		if(!mainHand.isEmpty()){
-			model.getBone("left_item").ifPresent(bone -> {
-				PoseStack newMatrixStack = new PoseStack();
-				newMatrixStack.last().normal().mul(bone.getWorldSpaceNormal());
-				newMatrixStack.last().pose().multiply(bone.getWorldSpaceXform());
-				newMatrixStack.mulPose(Vector3f.ZP.rotationDegrees(180));
-				newMatrixStack.translate(0.0, -0.3, -0.5);
-				Minecraft.getInstance().getItemRenderer().renderStatic(mainHand, TransformType.THIRD_PERSON_LEFT_HAND, packedLightIn, 0, newMatrixStack, bufferIn, 0);
-			});
+	protected TransformType getCameraTransformForItemAtBone(ItemStack boneItem, String boneName){
+		if(boneName.equalsIgnoreCase("left_item")){
+			return TransformType.THIRD_PERSON_LEFT_HAND;
+		}else if(boneName.equalsIgnoreCase("right_item")){
+			return TransformType.THIRD_PERSON_RIGHT_HAND;
 		}
+		return null;
+	}
+
+	@Nullable
+	@Override
+	protected BlockState getHeldBlockForBone(String boneName, PrinceHorseEntity currentEntity){
+		return null;
+	}
+
+	@Override
+	protected void preRenderItem(PoseStack matrixStack, ItemStack item, String boneName, PrinceHorseEntity currentEntity, IBone bone){
+
+	}
+
+	@Override
+	protected void preRenderBlock(PoseStack matrixStack, BlockState block, String boneName, PrinceHorseEntity currentEntity){
+
+	}
+
+	@Override
+	protected void postRenderItem(PoseStack matrixStack, ItemStack item, String boneName, PrinceHorseEntity currentEntity, IBone bone){
+
+	}
+
+	@Override
+	protected void postRenderBlock(PoseStack matrixStack, BlockState block, String boneName, PrinceHorseEntity currentEntity){
+
 	}
 }

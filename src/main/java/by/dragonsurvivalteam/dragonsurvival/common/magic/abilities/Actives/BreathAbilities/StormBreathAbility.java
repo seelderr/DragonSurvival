@@ -58,8 +58,7 @@ public class StormBreathAbility extends BreathAbility{
 	}
 
 	public static void onDamageChecks(LivingEntity entity){
-		if(entity instanceof Creeper){
-			Creeper creeper = (Creeper)entity;
+		if(entity instanceof Creeper creeper){
 
 			if(!creeper.isPowered()){
 				creeper.getEntityData().set(Creeper.DATA_IS_POWERED, true);

@@ -40,7 +40,6 @@ public class DropDownButton extends ExtendedButton implements TooltipAccessor{
 		this.setter = setter;
 		this.current = current;
 		updateMessage();
-		setBlitOffset(500);
 	}
 
 	public void updateMessage(){
