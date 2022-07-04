@@ -2,7 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.common;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.Bolas;
-import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.active.ToughSkinAbility;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
@@ -80,7 +80,7 @@ public class DragonEffects{
 		forgeRegistry.register(REVEALING_THE_SOUL);
 
 		STRONG_LEATHER = new Effect2(MobEffectCategory.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "strong_leather");
-		STRONG_LEATHER.addAttributeModifier(Attributes.ARMOR, "1640719a-4c40-11ec-81d3-0242ac130003", ServerConfig.toughSkinArmorValue, Operation.ADDITION);
+		STRONG_LEATHER.addAttributeModifier(Attributes.ARMOR, "1640719a-4c40-11ec-81d3-0242ac130003", ToughSkinAbility.toughSkinArmorValue, Operation.ADDITION);
 		forgeRegistry.register(STRONG_LEATHER);
 
 		BURN = new Effect2(MobEffectCategory.HARMFUL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "burn");

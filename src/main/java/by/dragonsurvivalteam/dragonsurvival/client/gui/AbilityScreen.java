@@ -5,11 +5,9 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.*;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.magic.ClientMagicHUDHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.magic.DragonAbilities;
-import by.dragonsurvivalteam.dragonsurvival.common.magic.common.ActiveDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.common.magic.common.DragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.common.magic.common.InnateDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.common.magic.common.PassiveDragonAbility;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.MagicCap;
+import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
+import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -55,7 +53,6 @@ public class AbilityScreen extends Screen{
 		}
 
 		this.renderBackground(stack);
-
 
 		int startX = this.guiLeft;
 		int startY = this.guiTop;
@@ -121,7 +118,7 @@ public class AbilityScreen extends Screen{
 		super.render(stack, mouseX, mouseY, partialTicks);
 
 		for(Widget btn : renderables){
-			if((btn instanceof AbstractWidget) && ((AbstractWidget)btn).isHoveredOrFocused()){
+			if(btn instanceof AbstractWidget && ((AbstractWidget)btn).isHoveredOrFocused()){
 				((AbstractWidget)btn).renderToolTip(stack, mouseX, mouseY);
 			}
 		}
@@ -149,35 +146,22 @@ public class AbilityScreen extends Screen{
 		}
 
 		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {
-
-			int num = 0;
-			for(ActiveDragonAbility ability : DragonAbilities.ACTIVE_ABILITIES.get(cap.getType())){
-				if(ability != null){
-					addRenderableWidget(new AbilityButton((int)(guiLeft + (90 / 2.0)), (guiTop + 40 + (num * 23)), ability, this));
-					num++;
-				}
+			for(int num = 0; num < MagicCap.activeAbilitySlots; num++){
+				addRenderableWidget(new AbilityButton((int)(guiLeft + (90 / 2.0)), (guiTop + 40 + (num * 23)), 0, num, this));
 			}
 
-			num = 0;
-			for(PassiveDragonAbility ability : DragonAbilities.PASSIVE_ABILITIES.get(cap.getType())){
-				if(ability != null){
-					addRenderableWidget(new AbilityButton(guiLeft + (int)(217 / 2F), (guiTop + 40 + (num * 23)), ability, this));
-					addRenderableWidget(new IncreaseLevelButton(guiLeft + (int)(219 / 2F) + 25, (guiTop + 40 + (num * 23)), num, this));
-					addRenderableWidget(new DecreaseLevelButton(guiLeft + (int)(219 / 2F) - 25, (guiTop + 40 + (num * 23)), num, this));
-					num++;
-				}
+			for(int num = 0; num < MagicCap.passiveAbilitySlots; num++){
+				addRenderableWidget(new AbilityButton(guiLeft + (int)(217 / 2F), guiTop + 40 + num * 23, 1, num, this));
+				addRenderableWidget(new IncreaseLevelButton(guiLeft + (int)(219 / 2F) + 25, guiTop + 40 + num * 23, num));
+				addRenderableWidget(new DecreaseLevelButton(guiLeft + (int)(219 / 2F) - 25, guiTop + 40 + num * 23, num));
 			}
 
-			num = 0;
-			for(InnateDragonAbility ability : DragonAbilities.INNATE_ABILITIES.get(cap.getType())){
-				if(ability != null){
-					addRenderableWidget(new AbilityButton(guiLeft + (int)(346 / 2F), (guiTop + 40 + (num * 23)), ability, this));
-					num++;
-				}
+			for(int num = 0; num < MagicCap.innateAbilitySlots; num++){
+				addRenderableWidget(new AbilityButton(guiLeft + (int)(346 / 2F), guiTop + 40 + num * 23, 2, num, this));
 			}
 		});
 
-		addRenderableWidget(new HelpButton(startX + (218 / 2) + 3, startY + (263 / 2) + 4, 9, 9, "ds.skill.help", 0));
+		addRenderableWidget(new HelpButton(startX + 218 / 2 + 3, startY + 263 / 2 + 4, 9, 9, "ds.skill.help", 0));
 	}
 
 
@@ -187,20 +171,22 @@ public class AbilityScreen extends Screen{
 			type = cap.getType();
 			unlockAbleSkills.clear();
 
-			for(ActiveDragonAbility ab : DragonAbilities.ACTIVE_ABILITIES.get(cap.getType())){
-				DragonAbility ability = cap.getMagic().getAbility(ab);
-				ActiveDragonAbility db = ability != null ? ((ActiveDragonAbility)ability) : ab;
+			for(ActiveDragonAbility ab : cap.getMagic().getActiveAbilities()){
+				ActiveDragonAbility ability = DragonAbilities.getAbility(minecraft.player, ab.getClass());
+				ActiveDragonAbility db = ability != null ? ability : ab;
 
-				if(db != null){
-					for(int i = db.getLevel(); i < db.getMaxLevel(); i++){
-						ActiveDragonAbility newActivty = db.createInstance();
+				for(int i = db.getLevel(); i < db.getMaxLevel(); i++){
+					try{
+						ActiveDragonAbility newActivty = db.getClass().newInstance();
 						newActivty.setLevel(i + 1);
 						unlockAbleSkills.add(newActivty);
+					}catch(InstantiationException | IllegalAccessException e){
+						throw new RuntimeException(e);
 					}
 				}
 			}
 
-			unlockAbleSkills.sort(Comparator.comparingInt(c -> c.getCurrentRequiredLevel()));
+			unlockAbleSkills.sort(Comparator.comparingInt(ActiveDragonAbility::getCurrentRequiredLevel));
 		});
 	}
 

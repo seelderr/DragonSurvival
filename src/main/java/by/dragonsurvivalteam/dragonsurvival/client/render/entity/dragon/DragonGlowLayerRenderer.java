@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon;
 
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.DragonSkins;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
@@ -7,6 +8,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -14,6 +16,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import software.bernie.geckolib3.renderers.geo.GeoLayerRenderer;
 import software.bernie.geckolib3.renderers.geo.IGeoRenderer;
+
+import java.util.Locale;
 
 public class DragonGlowLayerRenderer extends GeoLayerRenderer<DragonEntity>{
 	private final IGeoRenderer<DragonEntity> renderer;
@@ -40,6 +44,13 @@ public class DragonGlowLayerRenderer extends GeoLayerRenderer<DragonEntity>{
 		if(glowTexture == null || glowTexture.getPath().contains("/" + handler.getType().name().toLowerCase() + "_")){
 			if(((DragonRenderer)renderer).glowTexture != null){
 				glowTexture = ((DragonRenderer)renderer).glowTexture;
+			}
+		}
+
+		if(glowTexture == null && handler.getSkin().skinPreset.skinAges.get(handler.getLevel()).defaultSkin){
+			ResourceLocation location = new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/" + handler.getType().name().toLowerCase(Locale.ROOT) + "_" + handler.getLevel().name.toLowerCase(Locale.ROOT) + "_glow.png");
+			if(Minecraft.getInstance().getResourceManager().hasResource(location)){
+				glowTexture = location;
 			}
 		}
 

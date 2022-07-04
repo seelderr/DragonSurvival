@@ -3,9 +3,8 @@ package by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
-import by.dragonsurvivalteam.dragonsurvival.common.magic.DragonAbilities;
-import by.dragonsurvivalteam.dragonsurvival.common.magic.abilities.Actives.BreathAbilities.BreathAbility;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.magic.common.active.BreathAbility;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Vector3f;
@@ -80,8 +79,7 @@ public class DragonRenderer extends ExtendedGeoEntityRenderer<DragonEntity>{
 					newMatrixStack.last().pose().multiply(bone.getWorldSpaceXform());
 
 					if(handler.getMagic().getCurrentlyCasting() instanceof BreathAbility ability){
-						int slot = DragonAbilities.getAbilitySlot(ability);
-						if(ability.getCurrentCastTimer() >= ability.getCastingTime() || handler.getMagic().getAbilityFromSlot(slot).getCurrentCastTimer() >= ability.getCastingTime()){
+						if(ability.getChargeTime() >= ability.getSkillChargeTime()){
 							if(ability.getEffectEntity() != null){
 								newMatrixStack.mulPose(Vector3f.YN.rotationDegrees(-90));
 								//stack.mulPose(Vector3f.ZN.rotationDegrees(player.xRot));//For head pitch

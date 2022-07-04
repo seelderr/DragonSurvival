@@ -2,10 +2,9 @@ package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.magic.DragonAbilities;
-import by.dragonsurvivalteam.dragonsurvival.common.magic.abilities.Passives.CliffhangerAbility;
-import by.dragonsurvivalteam.dragonsurvival.common.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
+import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.passive.CliffhangerAbility;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.IndirectEntityDamageSource;
@@ -81,11 +80,8 @@ public class DragonBonusHandler{
 						distance -= ServerConfig.forestFallReduction.floatValue();
 					}
 
-					DragonAbility ability = dragonStateHandler.getMagic().getAbility(DragonAbilities.CLIFFHANGER);
-
-					if(ability != null){
-						distance -= ((CliffhangerAbility)ability).getHeight();
-					}
+					CliffhangerAbility ability = DragonAbilities.getAbility(living, CliffhangerAbility.class);
+					distance -= ability.getHeight();
 				}
 				distance -= dragonStateHandler.getLevel().jumpHeight;
 				livingFallEvent.setDistance(distance);

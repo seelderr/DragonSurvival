@@ -1,0 +1,154 @@
+package by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.active;
+
+
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.DSEntities;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.DragonSpikeEntity;
+import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
+import by.dragonsurvivalteam.dragonsurvival.magic.common.active.InstantCastAbility;
+import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
+import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
+import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+
+import java.util.ArrayList;
+import java.util.Locale;
+
+@RegisterDragonAbility
+public class SpikeAbility extends InstantCastAbility{
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "spike"}, key = "spike", comment = "Whether the spike ability should be enabled" )
+	public static Boolean spike = true;
+
+	@ConfigRange( min = 1, max = 10000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "spike"}, key = "spikeCooldown", comment = "The cooldown in ticks of the spike ability" )
+	public static Integer spikeCooldown = Functions.secondsToTicks(3);
+
+	@ConfigRange( min = 0, max = 100.0 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "spike"}, key = "spikeDamage", comment = "The amount of damage the spike ability deals. This value is multiplied by the skill level." )
+	public static Double spikeDamage = 2.0;
+
+	@ConfigRange( min = 0, max = 100 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "spike"}, key = "spikeManaCost", comment = "The mana cost for using the spike ability" )
+	public static Integer spikeManaCost = 2;
+
+	@Override
+	public Component getDescription(){
+		return new TranslatableComponent("ds.skill.description." + getName(), getDamage());
+	}
+
+	@Override
+	public int getSortOrder(){
+		return 2;
+	}
+
+	@Override
+	public String getName(){
+		return "spike";
+	}
+
+	@Override
+	public DragonType getDragonType(){
+		return DragonType.FOREST;
+	}
+
+	@Override
+	public ResourceLocation[] getSkillTextures(){
+		return new ResourceLocation[]{new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/forest/spike_0.png"),
+		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/forest/spike_1.png"),
+		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/forest/spike_2.png"),
+		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/forest/spike_3.png"),
+		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/forest/spike_4.png")};
+	}
+
+
+	public float getDamage(){
+		return (float)(spikeDamage * getLevel());
+	}
+
+	@OnlyIn( Dist.CLIENT )
+	public ArrayList<Component> getLevelUpInfo(){
+		ArrayList<Component> list = super.getLevelUpInfo();
+		list.add(new TranslatableComponent("ds.skill.damage", "+" + spikeDamage));
+		return list;
+	}
+
+	@Override
+	public int getMaxLevel(){
+		return 4;
+	}
+
+	@Override
+	public int getMinLevel(){
+		return 0;
+	}
+
+	@Override
+	public boolean isDisabled(){
+		return super.isDisabled() || !spike;
+	}
+
+	@Override
+	public int getManaCost(){
+		return spikeManaCost;
+	}
+
+	@Override
+	public Integer[] getRequiredLevels(){
+		return new Integer[]{0, 20, 30, 40};
+	}
+
+	@Override
+	public int getSkillCooldown(){
+		return spikeCooldown;
+	}
+
+	@Override
+	public ArrayList<Component> getInfo(){
+		ArrayList<Component> components = super.getInfo();
+		components.add(new TranslatableComponent("ds.skill.damage", getDamage()));
+
+		if(!KeyInputHandler.ABILITY2.isUnbound()){
+
+			String key = KeyInputHandler.ABILITY2.getKey().getDisplayName().getContents().toUpperCase(Locale.ROOT);
+
+			if(key.isEmpty()){
+				key = KeyInputHandler.ABILITY2.getKey().getDisplayName().getString();
+			}
+			components.add(new TranslatableComponent("ds.skill.keybind", key));
+		}
+
+		return components;
+	}
+
+	@Override
+	public void onCast(Player player){
+		Vec3 vector3d = player.getViewVector(1.0F);
+		double speed = 1d;
+		double d2 = vector3d.x * speed;
+		double d3 = vector3d.y * speed;
+		double d4 = vector3d.z * speed;
+
+		DragonStateHandler handler = DragonUtils.getHandler(player);
+		handler.getMovementData().bite = true;
+
+		DragonSpikeEntity entity = new DragonSpikeEntity(DSEntities.DRAGON_SPIKE, player.level, player);
+		entity.setPos(entity.getX() + d2, entity.getY() + d3, entity.getZ() + d4);
+		entity.setArrow_level(getLevel());
+		entity.setBaseDamage(getDamage());
+		entity.pickup = AbstractArrow.Pickup.DISALLOWED;
+		entity.shootFromRotation(player, player.xRot, player.yRot, 0.0F, 4F, 1.0F);
+		player.level.addFreshEntity(entity);
+	}
+}

@@ -77,7 +77,7 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 		if(!isDeadOrDying() && !isSleeping()){
 			if(!((Player)(LivingEntity)this).isCreative()){
 				if(cap.getMagic().getCurrentlyCasting() != null){
-					if(!cap.getMagic().getCurrentlyCasting().canMoveWhileCasting()){
+					if(!cap.getMagic().getCurrentlyCasting().requiresStationaryCasting()){
 						if(!ServerConfig.canMoveWhileCasting){
 							ci.setReturnValue(true);
 						}

@@ -3,6 +3,9 @@ package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.active.NetherBreathAbility;
+import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.active.ForestBreathAbility;
+import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.StormBreathAbility;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -47,9 +50,9 @@ public class DragonConfigHandler{
 
 	public static void rebuildBreathBlocks(){
 		HashMap<DragonType, List<Block>> breathMap = new HashMap<>();
-		breathMap.put(DragonType.CAVE, ConfigHandler.configList(Block.class, ServerConfig.fireBreathBlockBreaks));
-		breathMap.put(DragonType.FOREST, ConfigHandler.configList(Block.class, ServerConfig.forestBreathBlockBreaks));
-		breathMap.put(DragonType.SEA, ConfigHandler.configList(Block.class, ServerConfig.stormBreathBlockBreaks));
+		breathMap.put(DragonType.CAVE, ConfigHandler.configList(Block.class, NetherBreathAbility.fireBreathBlockBreaks));
+		breathMap.put(DragonType.FOREST, ConfigHandler.configList(Block.class, ForestBreathAbility.forestBreathBlockBreaks));
+		breathMap.put(DragonType.SEA, ConfigHandler.configList(Block.class, StormBreathAbility.stormBreathBlockBreaks));
 		DRAGON_BREATH_BLOCKS = breathMap;
 	}
 
@@ -67,6 +70,6 @@ public class DragonConfigHandler{
 	}
 
 	private static void rebuildForestDragonConfigs(){
-		FOREST_DRAGON_BREATH_GROW_BLACKLIST = ConfigHandler.configList(Block.class, ServerConfig.forestBreathGrowBlacklist);
+		FOREST_DRAGON_BREATH_GROW_BLACKLIST = ConfigHandler.configList(Block.class, ForestBreathAbility.forestBreathGrowBlacklist);
 	}
 }

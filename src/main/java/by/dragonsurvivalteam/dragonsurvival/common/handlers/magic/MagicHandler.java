@@ -5,19 +5,17 @@ import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.GenericCapability;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.GenericCapabilityProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.magic.DragonAbilities;
-import by.dragonsurvivalteam.dragonsurvival.common.magic.abilities.Actives.BreathAbilities.BreathAbility.BreathDamage;
-import by.dragonsurvivalteam.dragonsurvival.common.magic.abilities.Actives.BreathAbilities.StormBreathAbility;
-import by.dragonsurvivalteam.dragonsurvival.common.magic.abilities.Passives.BurnAbility;
-import by.dragonsurvivalteam.dragonsurvival.common.magic.abilities.Passives.SpectralImpactAbility;
-import by.dragonsurvivalteam.dragonsurvival.common.magic.common.ActiveDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.common.magic.common.DragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
+import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.passive.BurnAbility;
+import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.active.HunterAbility;
+import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.RevealingTheSoulAbility;
+import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.StormBreathAbility;
+import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.passive.SpectralImpactAbility;
+import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
+import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
+import by.dragonsurvivalteam.dragonsurvival.magic.common.active.BreathAbility.BreathDamage;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
-import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
-import by.dragonsurvivalteam.dragonsurvival.network.magic.ActivateClientAbility;
-import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncAbilityCastTime;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.FluidTags;
@@ -46,7 +44,6 @@ import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.network.PacketDistributor;
 
 import java.util.UUID;
 
@@ -65,14 +62,6 @@ public class MagicHandler{
 		AttributeInstance moveSpeed = player.getAttribute(Attributes.MOVEMENT_SPEED);
 
 		DragonStateProvider.getCap(player).ifPresent(cap -> {
-			if(player.isSpectator()){
-				if(cap.getMagic().getCurrentlyCasting() != null){
-					cap.getMagic().getCurrentlyCasting().stopCasting();
-					cap.getMagic().setCurrentlyCasting(null);
-				}
-				return;
-			}
-
 			if(!cap.isDragon() || cap.getLevel() != DragonLevel.ADULT){
 				if(moveSpeed.getModifier(DRAGON_PASSIVE_MOVEMENT_SPEED) != null){
 					moveSpeed.removeModifier(DRAGON_PASSIVE_MOVEMENT_SPEED);
@@ -87,33 +76,9 @@ public class MagicHandler{
 				}
 			}
 
-			if(cap.getMagic().getCurrentlyCasting() != null){
-				ActiveDragonAbility ability = cap.getMagic().getCurrentlyCasting();
-				ability.player = player;
 
-				if(!player.level.isClientSide){
-					if(ability.getCastingTime() <= 0 || ability.getCurrentCastTimer() >= ability.getCastingTime()){
-						player.causeFoodExhaustion(0.1F * ability.getManaCost());
-						ability.onActivation(player);
-
-						NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new ActivateClientAbility(player.getId()));
-					}else{
-						player.causeFoodExhaustion(0.1F);
-						ability.tickCasting();
-
-						if(!player.level.isClientSide){
-							NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncAbilityCastTime(player.getId(), ability.getCurrentCastTimer()));
-						}
-					}
-				}
-			}
-
-			for(int i = 0; i < 4; i++){
-				ActiveDragonAbility ability = cap.getMagic().getAbilityFromSlot(i);
-
-				if(ability != null){
-					ability.decreaseCooldownTimer();
-				}
+			for(ActiveDragonAbility ability : cap.getMagic().getActiveAbilities()){
+				ability.tickCooldown();
 			}
 		});
 	}
@@ -131,7 +96,7 @@ public class MagicHandler{
 				return;
 			}
 
-			for(DragonAbility ability : cap.getMagic().getAbilities()){
+			for(DragonAbility ability : cap.getMagic().abilities.values()){
 				ability.player = player;
 			}
 
@@ -201,7 +166,7 @@ public class MagicHandler{
 				GenericCapability cap = GenericCapabilityProvider.getGenericCapability(entity).orElse(null);
 				Player player = cap != null && cap.lastAfflicted != -1 && entity.level.getEntity(cap.lastAfflicted) instanceof Player ? ((Player)entity.level.getEntity(cap.lastAfflicted)) : null;
 				if(type != DragonType.SEA){
-					StormBreathAbility.chargedEffectSparkle(player, entity, ServerConfig.chargedChainRange, ServerConfig.chargedEffectChainCount, ServerConfig.chargedEffectDamage);
+					StormBreathAbility.chargedEffectSparkle(player, entity, StormBreathAbility.chargedChainRange, StormBreathAbility.chargedEffectChainCount, StormBreathAbility.chargedEffectDamage);
 				}
 			}
 		}else{
@@ -288,7 +253,7 @@ public class MagicHandler{
 				if(player.hasEffect(DragonEffects.HUNTER)){
 					MobEffectInstance hunter = player.getEffect(DragonEffects.HUNTER);
 					player.removeEffect(DragonEffects.HUNTER);
-					event.setDamageModifier((float)((hunter.getAmplifier() + 1) * ServerConfig.hunterDamageBonus));
+					event.setDamageModifier((float)((hunter.getAmplifier() + 1) * HunterAbility.hunterDamageBonus));
 					event.setResult(Result.ALLOW);
 				}
 			});
@@ -309,7 +274,7 @@ public class MagicHandler{
 							}
 
 							if(cap.getType() == DragonType.SEA){
-								SpectralImpactAbility spectralImpact = (SpectralImpactAbility)cap.getMagic().getAbilityOrDefault(DragonAbilities.SPECTRAL_IMPACT);
+								SpectralImpactAbility spectralImpact = DragonAbilities.getAbility(player, SpectralImpactAbility.class);
 								boolean hit = player.level.random.nextInt(100) <= spectralImpact.getChance();
 
 								if(hit){
@@ -322,7 +287,7 @@ public class MagicHandler{
 									}
 								}
 							}else if(cap.getType() == DragonType.CAVE){
-								BurnAbility burnAbility = (BurnAbility)cap.getMagic().getAbilityOrDefault(DragonAbilities.BURN);
+								BurnAbility burnAbility = DragonAbilities.getAbility(player, BurnAbility.class);
 								boolean hit = player.level.random.nextInt(100) < burnAbility.getChance();
 
 								if(hit){
@@ -355,7 +320,7 @@ public class MagicHandler{
 				}
 
 				if(player.hasEffect(DragonEffects.REVEALING_THE_SOUL)){
-					int extra = (int)Math.min(ServerConfig.revealingTheSoulMaxEXP, event.getDroppedExperience() * ServerConfig.revealingTheSoulMultiplier);
+					int extra = (int)Math.min(RevealingTheSoulAbility.revealingTheSoulMaxEXP, event.getDroppedExperience() * RevealingTheSoulAbility.revealingTheSoulMultiplier);
 					event.setDroppedExperience(event.getDroppedExperience() + extra);
 				}
 			});

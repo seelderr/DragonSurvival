@@ -9,14 +9,13 @@ import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.WingObtainmentController;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ClawToolHandler.Event_busHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.items.DragonSurvivalCreativeTab;
-import by.dragonsurvivalteam.dragonsurvival.common.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
-import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
@@ -38,6 +37,7 @@ public class DragonSurvivalMod{
 		GeckoLib.initialize();
 
 		ConfigHandler.initConfig();
+		DragonAbilities.initAbilities();
 
 		IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 		modEventBus.addListener(this::setup);
@@ -58,11 +58,6 @@ public class DragonSurvivalMod{
 		LOGGER.info("Successfully registered packets!");
 
 		InterModComms.sendTo("carryon", "blacklistEntity",() -> "dragonsurvival:dragon_hitbox");
-	}
-
-	@SubscribeEvent
-	public void onWorld(WorldEvent.Load event){
-		DragonAbilities.initAbilities();
 	}
 
 	@SubscribeEvent

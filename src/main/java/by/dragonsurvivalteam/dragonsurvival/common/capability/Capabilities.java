@@ -143,7 +143,7 @@ public class Capabilities{
 				}
 			});
 		});
-		original.remove(RemovalReason.KILLED);
+		original.remove(RemovalReason.DISCARDED);
 		DragonModifiers.updateModifiers(original, player);
 		player.refreshDimensions();
 	}

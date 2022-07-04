@@ -85,6 +85,8 @@ public class ConfigHandler{
 	}
 
 	public static void initConfig(){
+		initTypes();
+
 		List<Field> set = getFields(ConfigOption.class);
 
 		set.forEach(s -> {
@@ -115,7 +117,6 @@ public class ConfigHandler{
 
 		ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, clientSpec);
 		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, serverSpec);
-
 	}
 
 	public static void addConfigs(ForgeConfigSpec.Builder builder, ConfigSide side){
@@ -184,7 +185,7 @@ public class ConfigHandler{
 	}
 
 	private static final HashMap<Class<?>, Tuple<Supplier<IForgeRegistry<? extends IForgeRegistryEntry<?>>>, Supplier<ResourceKey<? extends Registry<?>>>>> REGISTRY_HASH_MAP = new HashMap<>();
-	static{
+	public static void initTypes(){
 		REGISTRY_HASH_MAP.put(Item.class, new Tuple<>(() -> ForgeRegistries.ITEMS, () -> Registry.ITEM_REGISTRY));
 		REGISTRY_HASH_MAP.put(Block.class,  new Tuple<>(() -> ForgeRegistries.BLOCKS, () -> Registry.BLOCK_REGISTRY));
 		REGISTRY_HASH_MAP.put(EntityType.class,  new Tuple<>(() -> ForgeRegistries.ENTITIES, () -> Registry.ENTITY_TYPE_REGISTRY));

@@ -5,14 +5,16 @@ import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.objects.DragonDebuffData;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.magic.DragonAbilities;
-import by.dragonsurvivalteam.dragonsurvival.common.magic.abilities.Passives.AthleticsAbility;
-import by.dragonsurvivalteam.dragonsurvival.common.magic.abilities.Passives.ContrastShowerAbility;
-import by.dragonsurvivalteam.dragonsurvival.common.magic.abilities.Passives.LightInDarknessAbility;
-import by.dragonsurvivalteam.dragonsurvival.common.magic.abilities.Passives.WaterAbility;
-import by.dragonsurvivalteam.dragonsurvival.common.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
+import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.passive.CaveAthleticsAbility;
+import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.passive.ContrastShowerAbility;
+import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.passive.ForestAthleticsAbility;
+import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.passive.LightInDarknessAbility;
+import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.passive.SeaAthleticsAbility;
+import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.passive.WaterAbility;
+import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.AthleticsAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.entity.player.SyncCapabilityDebuff;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
@@ -79,38 +81,38 @@ public class DragonTraitHandler{
 				boolean isInSeaBlock = DragonConfigHandler.SEA_DRAGON_HYDRATION_BLOCKS != null && (DragonConfigHandler.SEA_DRAGON_HYDRATION_BLOCKS.contains(block) || DragonConfigHandler.SEA_DRAGON_HYDRATION_BLOCKS.contains(feetBlock.getBlock()) || isInCauldron);
 
 				if(!world.isClientSide && ServerConfig.bonuses && ServerConfig.speedupEffectLevel > 0 && DragonConfigHandler.DRAGON_SPEEDUP_BLOCKS != null && DragonConfigHandler.DRAGON_SPEEDUP_BLOCKS.get(dragonStateHandler.getType()).contains(block)){
-					int duration = dragonStateHandler.getType() == SEA && dragonStateHandler.getMagic().getAbility(DragonAbilities.SEA_ATHLETICS) != null
-						? ((AthleticsAbility)dragonStateHandler.getMagic().getAbility(DragonAbilities.SEA_ATHLETICS)).getDuration()
-						: dragonStateHandler.getType() == FOREST && dragonStateHandler.getMagic().getAbility(DragonAbilities.FOREST_ATHLETICS) != null ? ((AthleticsAbility)dragonStateHandler.getMagic().getAbility(DragonAbilities.FOREST_ATHLETICS)).getDuration() : dragonStateHandler.getType() == CAVE && dragonStateHandler.getMagic().getAbility(DragonAbilities.CAVE_ATHLETICS) != null ? ((AthleticsAbility)dragonStateHandler.getMagic().getAbility(DragonAbilities.CAVE_ATHLETICS)).getDuration() : 0;
+					SeaAthleticsAbility SEA_ATHLETICS = DragonAbilities.getAbility(player, SeaAthleticsAbility.class);
+					ForestAthleticsAbility FOREST_ATHLETICS = DragonAbilities.getAbility(player, ForestAthleticsAbility.class);
+					CaveAthleticsAbility CAVE_ATHLETICS = DragonAbilities.getAbility(player, CaveAthleticsAbility.class);
 
-					int level = dragonStateHandler.getType() == SEA ? dragonStateHandler.getMagic().getAbilityLevel(DragonAbilities.SEA_ATHLETICS) : dragonStateHandler.getType() == FOREST ? dragonStateHandler.getMagic().getAbilityLevel(DragonAbilities.FOREST_ATHLETICS) : dragonStateHandler.getType() == CAVE ? dragonStateHandler.getMagic().getAbilityLevel(DragonAbilities.CAVE_ATHLETICS) : 0;
+					int duration = dragonStateHandler.getType() == SEA && SEA_ATHLETICS != null
+						? SEA_ATHLETICS.getDuration()
+						: dragonStateHandler.getType() == FOREST && FOREST_ATHLETICS != null ? ((AthleticsAbility)FOREST_ATHLETICS).getDuration() : dragonStateHandler.getType() == CAVE && CAVE_ATHLETICS != null ? ((AthleticsAbility)CAVE_ATHLETICS).getDuration() : 0;
 
-					int maxLevel = dragonStateHandler.getType() == SEA && dragonStateHandler.getMagic().getAbility(DragonAbilities.SEA_ATHLETICS) != null
-						? dragonStateHandler.getMagic().getAbility(DragonAbilities.SEA_ATHLETICS).getMaxLevel()
-						: dragonStateHandler.getType() == FOREST && dragonStateHandler.getMagic().getAbility(DragonAbilities.FOREST_ATHLETICS) != null ? dragonStateHandler.getMagic().getAbility(DragonAbilities.FOREST_ATHLETICS).getMaxLevel() : dragonStateHandler.getType() == CAVE && dragonStateHandler.getMagic().getAbility(DragonAbilities.CAVE_ATHLETICS) != null ? dragonStateHandler.getMagic().getAbility(DragonAbilities.CAVE_ATHLETICS).getMaxLevel() : 0;
+					int level = dragonStateHandler.getType() == SEA ? SEA_ATHLETICS.getLevel() : dragonStateHandler.getType() == FOREST ? FOREST_ATHLETICS.getLevel() : dragonStateHandler.getType() == CAVE ? CAVE_ATHLETICS.getLevel() : 0;
+
+					int maxLevel = dragonStateHandler.getType() == SEA && SEA_ATHLETICS != null
+						? SEA_ATHLETICS.getMaxLevel()
+						: dragonStateHandler.getType() == FOREST && FOREST_ATHLETICS != null ? FOREST_ATHLETICS.getMaxLevel() : dragonStateHandler.getType() == CAVE && CAVE_ATHLETICS != null ? CAVE_ATHLETICS.getMaxLevel() : 0;
 					if(duration > 0){
-						player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, Functions.secondsToTicks(duration), (ServerConfig.speedupEffectLevel - 1) + (level == maxLevel ? 1 : 0), false, false));
+						player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, Functions.secondsToTicks(duration), ServerConfig.speedupEffectLevel - 1 + (level == maxLevel ? 1 : 0), false, false));
 					}
 				}
 
 
 				switch(dragonStateHandler.getType()){
-					case CAVE:
-						DragonAbility contrastShower = dragonStateHandler.getMagic().getAbility(DragonAbilities.CONTRAST_SHOWER);
+					case CAVE -> {
+						ContrastShowerAbility contrastShower = DragonAbilities.getAbility(player, ContrastShowerAbility.class);
 						int maxRainTime = 0;
-
 						if(contrastShower != null){
-							maxRainTime += Functions.secondsToTicks(((ContrastShowerAbility)contrastShower).getDuration());
+							maxRainTime += Functions.secondsToTicks(contrastShower.getDuration());
 						}
-
 						double oldRainTime = dragonStateHandler.getDebuffData().timeInRain;
-
 						if(ServerConfig.penalties && !player.hasEffect(DragonEffects.FIRE) && !player.isCreative() && !player.isSpectator() && ((player.isInWaterOrBubble() && ServerConfig.caveWaterDamage != 0.0) || (player.isInWaterOrRain() && !player.isInWater() && ServerConfig.caveRainDamage != 0.0) || isInSeaBlock && ServerConfig.caveRainDamage != 0.0)){
 
 							if(player.isInWaterOrBubble() && player.tickCount % 10 == 0 && ServerConfig.caveWaterDamage != 0.0){
 								player.hurt(DamageSources.WATER_BURN, ServerConfig.caveWaterDamage.floatValue());
-							}else if(((player.isInWaterOrRain() && !player.isInWaterOrBubble()) || isInSeaBlock) && ServerConfig.caveRainDamage != 0.0){
-
+							}else if((player.isInWaterOrRain() && !player.isInWaterOrBubble() || isInSeaBlock) && ServerConfig.caveRainDamage != 0.0){
 
 								if(dragonStateHandler.getDebuffData().timeInRain >= maxRainTime){
 									if(player.tickCount % 40 == 0){
@@ -142,17 +144,14 @@ public class DragonTraitHandler{
 								}
 							}
 						}
-
 						if(dragonStateHandler.getDebuffData().timeInRain != oldRainTime){
 							if(!player.level.isClientSide){
 								NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncCapabilityDebuff(player.getId(), dragonStateHandler.getDebuffData().timeWithoutWater, dragonStateHandler.getDebuffData().timeInDarkness, dragonStateHandler.getDebuffData().timeInRain));
 							}
 						}
-
 						if(player.isOnFire() && ServerConfig.bonuses && ServerConfig.caveFireImmunity){
 							player.clearFire();
 						}
-
 						if(player.isEyeInFluid(FluidTags.LAVA) && ServerConfig.bonuses && ServerConfig.caveLavaSwimming && ServerConfig.caveLavaSwimmingTicks != 0){
 							if(!player.canBreatheUnderwater() && !player.getAbilities().invulnerable){
 								dragonStateHandler.setLavaAirSupply(dragonStateHandler.getLavaAirSupply() - 1);
@@ -169,15 +168,13 @@ public class DragonTraitHandler{
 						}else if(dragonStateHandler.getLavaAirSupply() < ServerConfig.caveLavaSwimmingTicks && !player.isEyeInFluid(FluidTags.WATER)){
 							dragonStateHandler.setLavaAirSupply(Math.min(dragonStateHandler.getLavaAirSupply() + (int)Math.ceil(ServerConfig.caveLavaSwimmingTicks * 0.0133333F), ServerConfig.caveLavaSwimmingTicks));
 						}
-						break;
-					case FOREST:
+					}
+					case FOREST -> {
 						int maxStressTicks = ServerConfig.forestStressTicks;
-						DragonAbility lightInDarkness = dragonStateHandler.getMagic().getAbility(DragonAbilities.LIGHT_IN_DARKNESS);
-
+						LightInDarknessAbility lightInDarkness = DragonAbilities.getAbility(player, LightInDarknessAbility.class);
 						if(lightInDarkness != null){
-							maxStressTicks += Functions.secondsToTicks(((LightInDarknessAbility)lightInDarkness).getDuration());
+							maxStressTicks += Functions.secondsToTicks(lightInDarkness.getDuration());
 						}
-
 						if(ServerConfig.penalties && !player.hasEffect(DragonEffects.MAGIC) && ServerConfig.forestStressTicks > 0 && !player.isCreative() && !player.isSpectator()){
 							double oldDarknessTime = dragonStateHandler.getDebuffData().timeInDarkness;
 
@@ -202,20 +199,18 @@ public class DragonTraitHandler{
 								}
 							}
 						}
-
-						break;
-					case SEA:
+					}
+					case SEA -> {
 						int maxTicksOutofWater = ServerConfig.seaTicksWithoutWater;
-						DragonAbility waterAbility = dragonStateHandler.getMagic().getAbility(DragonAbilities.WATER);
+						WaterAbility waterAbility = DragonAbilities.getAbility(player, WaterAbility.class);
 
 						if(waterAbility != null){
-							maxTicksOutofWater += Functions.secondsToTicks(((WaterAbility)waterAbility).getDuration());
+							maxTicksOutofWater += Functions.secondsToTicks(waterAbility.getDuration());
 						}
 
 						if((player.hasEffect(DragonEffects.PEACE) || player.isEyeInFluid(FluidTags.WATER)) && player.getAirSupply() < player.getMaxAirSupply()){
 							player.setAirSupply(player.getMaxAirSupply());
 						}
-
 						if(ServerConfig.penalties && !player.hasEffect(DragonEffects.PEACE) && maxTicksOutofWater > 0 && !player.isCreative() && !player.isSpectator()){
 							DragonDebuffData debuffData = dragonStateHandler.getDebuffData();
 							double oldWaterTime = debuffData.timeWithoutWater;
@@ -258,14 +253,14 @@ public class DragonTraitHandler{
 								}
 							}
 						}
-						break;
+					}
 				}
 
 				int maxTicksOutofWater = ServerConfig.seaTicksWithoutWater;
-				DragonAbility waterAbility = dragonStateHandler.getMagic().getAbility(DragonAbilities.WATER);
+				WaterAbility waterAbility = DragonAbilities.getAbility(player, WaterAbility.class);
 
 				if(waterAbility != null){
-					maxTicksOutofWater += Functions.secondsToTicks(((WaterAbility)waterAbility).getDuration());
+					maxTicksOutofWater += Functions.secondsToTicks(waterAbility.getDuration());
 				}
 
 				// Dragon Particles

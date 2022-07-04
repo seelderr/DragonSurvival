@@ -4,9 +4,12 @@ import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.TreasureBlock;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.magic.DragonAbilities;
+import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.passive.CaveMagicAbility;
+import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.passive.ForestMagicAbility;
+import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.passive.SeaMagicAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncMagicStats;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
@@ -169,17 +172,9 @@ public class ManaHandler{
 			mana += ServerConfig.noEXPRequirements ? 9 : Math.max(0, (Math.min(50, entity.experienceLevel) - 5) / 5);
 
 			switch(cap.getType()){
-				case SEA:
-					mana += cap.getMagic().getAbilityLevel(DragonAbilities.SEA_MAGIC);
-					break;
-
-				case CAVE:
-					mana += cap.getMagic().getAbilityLevel(DragonAbilities.CAVE_MAGIC);
-					break;
-
-				case FOREST:
-					mana += cap.getMagic().getAbilityLevel(DragonAbilities.FOREST_MAGIC);
-					break;
+				case SEA -> mana += DragonAbilities.getAbility(entity, SeaMagicAbility.class).getLevel();
+				case CAVE -> mana += DragonAbilities.getAbility(entity, CaveMagicAbility.class).getLevel();
+				case FOREST -> mana += DragonAbilities.getAbility(entity, ForestMagicAbility.class).getLevel();
 			}
 
 			return mana;
@@ -193,24 +188,17 @@ public class ManaHandler{
 
 		DragonStateProvider.getCap(entity).ifPresent(cap -> {
 			cap.getMagic().setCurrentMana(Math.min(getMaxMana(entity), cap.getMagic().getCurrentMana() + mana));
-			NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)entity), new SyncMagicStats(entity.getId(), cap.getMagic().getSelectedAbilitySlot(), cap.getMagic().getCurrentMana(), cap.getMagic().renderAbilityHotbar()));
+			NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)entity), new SyncMagicStats(entity.getId(), cap.getMagic().getSelectedAbilitySlot(), cap.getMagic().getCurrentMana(), cap.getMagic().isRenderAbilities()));
 		});
 	}
 
 	public static void consumeMana(Player entity, int mana){
-		if(entity == null){
+		if(entity == null || entity.isCreative() || entity.hasEffect(DragonEffects.SOURCE_OF_MAGIC))
 			return;
-		}
-		if(entity.isCreative()){
-			return;
-		}
-		if(entity.hasEffect(DragonEffects.SOURCE_OF_MAGIC)){
-			return;
-		}
 
 		if(ServerConfig.consumeEXPAsMana){
 			if(entity.level.isClientSide){
-				if(getCurrentMana(entity) < mana && (getCurrentMana(entity) + (entity.totalExperience / 10) >= mana || entity.experienceLevel > 0)){
+				if(getCurrentMana(entity) < mana && (getCurrentMana(entity) + entity.totalExperience / 10 >= mana || entity.experienceLevel > 0)){
 					entity.playSound(SoundEvents.EXPERIENCE_ORB_PICKUP, 0.01F, 0.01F);
 				}
 			}
@@ -234,7 +222,7 @@ public class ManaHandler{
 				cap.getMagic().setCurrentMana(Math.max(0, cap.getMagic().getCurrentMana() - mana));
 			}
 
-			NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)entity), new SyncMagicStats(entity.getId(), cap.getMagic().getSelectedAbilitySlot(), cap.getMagic().getCurrentMana(), cap.getMagic().renderAbilityHotbar()));
+			NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)entity), new SyncMagicStats(entity.getId(), cap.getMagic().getSelectedAbilitySlot(), cap.getMagic().getCurrentMana(), cap.getMagic().isRenderAbilities()));
 		});
 	}
 

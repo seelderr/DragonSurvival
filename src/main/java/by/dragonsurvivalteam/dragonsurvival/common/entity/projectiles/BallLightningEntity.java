@@ -4,8 +4,8 @@ package by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaDragon.LargeLightningParticleData;
 import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DSEntities;
-import by.dragonsurvivalteam.dragonsurvival.common.magic.DragonAbilities;
-import by.dragonsurvivalteam.dragonsurvival.common.magic.abilities.Actives.BallLightningAbility;
+import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
+import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.BallLightningAbility;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -18,6 +18,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Fireball;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
@@ -47,7 +48,7 @@ public class BallLightningEntity extends DragonBallEntity{
 	}
 
 	public void attackMobs(){
-		int range = ((BallLightningAbility)DragonAbilities.BALL_LIGHTNING).getRange();
+		int range = DragonAbilities.getAbility((Player)getOwner(), BallLightningAbility.class).getRange();
 		List<Entity> entities = this.level.getEntities(null, new AABB(position().x - range, position().y - range, position().z - range, position().x + range, position().y + range, position().z + range));
 		entities.removeIf((e) -> e == getOwner() || e instanceof BallLightningEntity);
 		entities.removeIf((e) -> e.distanceTo(this) > range);

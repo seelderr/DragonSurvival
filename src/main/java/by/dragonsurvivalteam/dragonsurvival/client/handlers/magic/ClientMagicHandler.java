@@ -5,8 +5,9 @@ import by.dragonsurvivalteam.dragonsurvival.client.particles.ForestDragon.SmallP
 import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaDragon.LargeLightningParticleData;
 import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.magic.common.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
+import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChargeCastAbility;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -41,16 +42,18 @@ public class ClientMagicHandler{
 
 			ActiveDragonAbility ability = cap.getMagic().getCurrentlyCasting();
 
-			if(ability != null && ability.getCurrentCastTimer() > 0){
-				double perc = Math.min(((float)ability.getCurrentCastTimer() / (float)ability.getCastingTime()), 1) / 4;
-				double c4 = (2 * Math.PI) / 3;
+			if(ability instanceof ChargeCastAbility chargeCastAbility){
+				if(chargeCastAbility.getCastTime() > 0){
+					double perc = Math.min(chargeCastAbility.getCastTime() / (float)chargeCastAbility.getSkillCastingTime(), 1) / 4;
+					double c4 = 2 * Math.PI / 3;
 
-				if(perc != 0 && perc != 1){
-					perc = Math.pow(2, -10 * perc) * Math.sin((perc * 10 - 0.75) * c4) + 1;
+					if(perc != 0 && perc != 1){
+						perc = Math.pow(2, -10 * perc) * Math.sin((perc * 10 - 0.75) * c4) + 1;
+					}
+
+					float newFov = (float)Mth.clamp(perc, 0.75F, 1.2F);
+					event.setNewfov(newFov);
 				}
-
-				float newFov = (float)Mth.clamp(perc, 0.75F, 1.2F);
-				event.setNewfov(newFov);
 			}
 		});
 	}

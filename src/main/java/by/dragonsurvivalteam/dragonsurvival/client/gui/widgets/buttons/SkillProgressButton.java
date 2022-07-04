@@ -4,7 +4,9 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.AbilityScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TooltipRendering;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.magic.common.ActiveDragonAbility;
+import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
+import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
+import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -59,8 +61,9 @@ public class SkillProgressButton extends Button{
 
 		if(ability != null)
 			DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {
+				DragonAbility ability1 = DragonAbilities.getAbility(Minecraft.getInstance().player, ability.getClass());
 
-				if(ability.getLevel() > cap.getMagic().getAbilityLevel(ability) + 1){
+				if(ability.getLevel() > ability1.getLevel() + 1){
 					Gui.fill(stack, x, y, x + 16, y + 16, new Color(0.25F, 0.25F, 0.25F, 0.75F).getRGB());
 				}
 			});

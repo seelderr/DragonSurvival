@@ -328,20 +328,18 @@ public class DragonStateHandler implements NBTInterface{
 
 		if(ServerConfig.saveGrowthStage)
 			switch(type){
-				case SEA:
+				case SEA -> {
 					size = seaSize;
 					hasWings = seaWings;
-					break;
-
-				case CAVE:
+				}
+				case CAVE -> {
 					size = caveSize;
 					hasWings = caveWings;
-					break;
-
-				case FOREST:
+				}
+				case FOREST -> {
 					size = forestSize;
 					hasWings = forestWings;
-					break;
+				}
 			}
 	}
 

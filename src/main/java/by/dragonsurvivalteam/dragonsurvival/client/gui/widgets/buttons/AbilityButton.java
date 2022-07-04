@@ -3,10 +3,10 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.AbilityScreen;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.magic.common.ActiveDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.common.magic.common.DragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.common.magic.common.InnateDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.common.magic.common.PassiveDragonAbility;
+import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
+import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
+import by.dragonsurvivalteam.dragonsurvival.magic.common.innate.InnateDragonAbility;
+import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -33,22 +33,26 @@ public class AbilityButton extends Button{
 	public static final ResourceLocation TOOLTIP_BARS = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/tooltip_bars.png");
 	public static final ResourceLocation INVALID_ICON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/disabled.png");
 	private final AbilityScreen screen;
-	private DragonAbility ability;
 	private DragonType type;
+	private int slot;
+	private int skillType;
 
-	public AbilityButton(int x, int y, DragonAbility ability, AbilityScreen screen){
+	private DragonAbility ability;
+
+	public AbilityButton(int x, int y, int skillType, int slot, AbilityScreen screen){
 		super(x, y, 16, 16, null, button -> {});
-		this.ability = ability;
+		this.slot = slot;
+		this.skillType = skillType;
 		this.screen = screen;
-
-		if(ability.player == null)
-			ability.player = Minecraft.getInstance().player;
 	}
 
 	@Override
 	public void renderButton(PoseStack stack, int mouseX, int mouseY, float p_230431_4_){
 		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {
-			DragonAbility ab = cap.getMagic().getAbility(ability);
+			DragonAbility ab =
+				skillType == 0 ? cap.getMagic().getAbilityFromSlot(slot) :
+					skillType == 1 ? cap.getMagic().getPassiveAbilityFromSlot(slot) :
+						skillType == 2 ? cap.getMagic().getInnateAbilityFromSlot(slot) : null;
 
 			if(ab != null)
 				ability = ab;
@@ -60,20 +64,24 @@ public class AbilityButton extends Button{
 		blit(stack, x - 1, y - 1, 0, 0, 20, 20, 20, 20);
 
 
-		RenderSystem.setShaderTexture(0, ability.getIcon());
-		blit(stack, x, y, 0, 0, 18, 18, 18, 18);
-
-		if(ability.isDisabled()){
-			RenderSystem.enableBlend();
-			RenderSystem.setShaderTexture(0, INVALID_ICON);
+		if(ability != null){
+			RenderSystem.setShaderTexture(0, ability.getIcon());
 			blit(stack, x, y, 0, 0, 18, 18, 18, 18);
-			RenderSystem.disableBlend();
+
+			if(ability.isDisabled()){
+				RenderSystem.enableBlend();
+				RenderSystem.setShaderTexture(0, INVALID_ICON);
+				blit(stack, x, y, 0, 0, 18, 18, 18, 18);
+				RenderSystem.disableBlend();
+			}
 		}
 	}
 
 	@Override
 	public void renderToolTip(PoseStack stack, int mouseX, int mouseY){
-		drawHover(stack, ability);
+		if(ability != null){
+			drawHover(stack, ability);
+		}
 	}
 
 	public void drawHover(PoseStack stack, DragonAbility ability){

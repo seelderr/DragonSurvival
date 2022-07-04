@@ -1,9 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.network.magic;
 
+import by.dragonsurvivalteam.dragonsurvival.client.handlers.magic.ClientCastingHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.magic.DragonAbilities;
-import by.dragonsurvivalteam.dragonsurvival.common.magic.common.ActiveDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.common.magic.common.DragonAbility;
+import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import net.minecraft.client.Minecraft;
@@ -26,70 +25,58 @@ import java.util.function.Supplier;
 public class SyncAbilityCasting implements IMessage<SyncAbilityCasting>{
 
 	public int playerId;
-	public DragonAbility currentAbility;
+	public boolean isCasting;
 
 	public SyncAbilityCasting(){
 
 	}
 
-	public SyncAbilityCasting(int playerId, DragonAbility currentAbility){
+	public SyncAbilityCasting(int playerId, boolean isCasting){
 		this.playerId = playerId;
-		this.currentAbility = currentAbility;
+		this.isCasting = isCasting;
 	}
 
 	@Override
 
 	public void encode(SyncAbilityCasting message, FriendlyByteBuf buffer){
-
 		buffer.writeInt(message.playerId);
-		buffer.writeBoolean(message.currentAbility != null);
-
-		if(message.currentAbility != null){
-			buffer.writeUtf(message.currentAbility.getId());
-			buffer.writeNbt(message.currentAbility.saveNBT());
-		}
+		buffer.writeBoolean(message.isCasting);
 	}
 
 	@Override
 
 	public SyncAbilityCasting decode(FriendlyByteBuf buffer){
-
 		int playerId = buffer.readInt();
-		DragonAbility ability = null;
-		boolean hasAbility = buffer.readBoolean();
-
-		if(hasAbility){
-			String id = buffer.readUtf();
-			ability = DragonAbilities.ABILITY_LOOKUP.get(id).createInstance();
-			ability.loadNBT(buffer.readNbt());
-		}
-
-		return new SyncAbilityCasting(playerId, ability);
+		return new SyncAbilityCasting(playerId, buffer.readBoolean());
 	}
 
 	@Override
 	public void handle(SyncAbilityCasting message, Supplier<NetworkEvent.Context> supplier){
-		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> runClient(message, supplier));
-
+		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> run(message, supplier));
 
 		if(supplier.get().getDirection() == NetworkDirection.PLAY_TO_SERVER){
 			ServerPlayer player = supplier.get().getSender();
 
-
 			DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
-				if(message.currentAbility != dragonStateHandler.getMagic().getCurrentlyCasting() && dragonStateHandler.getMagic().getCurrentlyCasting() != null){
-					dragonStateHandler.getMagic().getCurrentlyCasting().stopCasting();
-				}
+				ActiveDragonAbility ability = dragonStateHandler.getMagic().getAbilityFromSlot(dragonStateHandler.getMagic().getSelectedAbilitySlot());
+				dragonStateHandler.getMagic().isCasting = message.isCasting;
 
-				dragonStateHandler.getMagic().setCurrentlyCasting((ActiveDragonAbility)message.currentAbility);
+				if(message.isCasting){
+					ability.onKeyPressed(player, () -> {
+						dragonStateHandler.getMagic().isCasting = false;
+						NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncAbilityCasting(player.getId(), false));
+					});
+				}else{
+					ability.onKeyReleased(player);
+				}
 			});
 
-			NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncAbilityCasting(message.playerId, message.currentAbility));
+			NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncAbilityCasting(player.getId(), message.isCasting));
 		}
 	}
 
 	@OnlyIn( Dist.CLIENT )
-	public void runClient(SyncAbilityCasting message, Supplier<NetworkEvent.Context> supplier){
+	public void run(SyncAbilityCasting message, Supplier<NetworkEvent.Context> supplier){
 		NetworkEvent.Context context = supplier.get();
 		context.enqueueWork(() -> {
 
@@ -97,13 +84,24 @@ public class SyncAbilityCasting implements IMessage<SyncAbilityCasting>{
 			if(thisPlayer != null){
 				Level world = thisPlayer.level;
 				Entity entity = world.getEntity(message.playerId);
-				if(entity instanceof Player){
+				if(entity instanceof Player player){
 
-					DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
-						if(message.currentAbility == null && dragonStateHandler.getMagic().getCurrentlyCasting() != null){
-							dragonStateHandler.getMagic().getCurrentlyCasting().stopCasting();
+					DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
+						ActiveDragonAbility ability = dragonStateHandler.getMagic().getAbilityFromSlot(dragonStateHandler.getMagic().getSelectedAbilitySlot());
+						dragonStateHandler.getMagic().isCasting = message.isCasting;
+
+						if(message.isCasting){
+							ability.onKeyPressed(player, () -> {
+								if(player.getId() == thisPlayer.getId()){
+									ClientCastingHandler.status = 2;
+								}
+							});
+						}else{
+							ability.onKeyReleased(player);
+							if(player.getId() == thisPlayer.getId()){
+								ClientCastingHandler.status = 0;
+							}
 						}
-						dragonStateHandler.getMagic().setCurrentlyCasting((ActiveDragonAbility)message.currentAbility);
 					});
 				}
 			}

@@ -12,15 +12,14 @@ import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.Bolas;
 import by.dragonsurvivalteam.dragonsurvival.common.items.DSItems;
-import by.dragonsurvivalteam.dragonsurvival.common.magic.DragonAbilities;
-import by.dragonsurvivalteam.dragonsurvival.common.magic.abilities.Passives.ContrastShowerAbility;
-import by.dragonsurvivalteam.dragonsurvival.common.magic.abilities.Passives.LightInDarknessAbility;
-import by.dragonsurvivalteam.dragonsurvival.common.magic.abilities.Passives.WaterAbility;
-import by.dragonsurvivalteam.dragonsurvival.common.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
+import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
+import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.passive.ContrastShowerAbility;
+import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.passive.LightInDarknessAbility;
+import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.passive.WaterAbility;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.RequestClientData;
@@ -102,13 +101,11 @@ public class ClientEvents{
 	public static void sendClientData(RequestClientData message){
 		Player player = Minecraft.getInstance().player;
 
-		if(player != null && player.level != null){
+		if(player != null){
 			NetworkHandler.CHANNEL.sendToServer(new SyncDragonClawRender(player.getId(), ClientDragonRender.renderDragonClaws));
 			NetworkHandler.CHANNEL.sendToServer(new SyncDragonSkinSettings(player.getId(), ClientDragonRender.renderNewbornSkin, ClientDragonRender.renderYoungSkin, ClientDragonRender.renderAdultSkin));
 
 			DragonStateProvider.getCap(player).ifPresent(cap -> {
-				cap.getMagic().getAbilities();
-
 				if(DragonEditorRegistry.savedCustomizations != null){
 					int currentSelected = DragonEditorRegistry.savedCustomizations.current.getOrDefault(message.type, new HashMap<>()).getOrDefault(message.level, 0);
 					SkinPreset preset = DragonEditorRegistry.savedCustomizations.skinPresets.getOrDefault(message.type, new HashMap<>()).getOrDefault(currentSelected, new SkinPreset());
@@ -371,10 +368,11 @@ public class ClientEvents{
 				}
 
 				int maxTimeWithoutWater = ServerConfig.seaTicksWithoutWater;
-				DragonAbility waterAbility = playerStateHandler.getMagic().getAbility(DragonAbilities.WATER);
+
+				WaterAbility waterAbility = DragonAbilities.getAbility(player, WaterAbility.class);
 
 				if(waterAbility != null){
-					maxTimeWithoutWater += Functions.secondsToTicks(((WaterAbility)waterAbility).getDuration());
+					maxTimeWithoutWater += Functions.secondsToTicks(waterAbility.getDuration());
 				}
 
 				double timeWithoutWater = maxTimeWithoutWater - playerStateHandler.getDebuffData().timeWithoutWater;
@@ -428,7 +426,7 @@ public class ClientEvents{
 				}
 
 				int maxTimeInDarkness = ServerConfig.forestStressTicks;
-				DragonAbility lightInDarkness = playerStateHandler.getMagic().getAbility(DragonAbilities.LIGHT_IN_DARKNESS);
+				LightInDarknessAbility lightInDarkness = DragonAbilities.getAbility(player, LightInDarknessAbility.class);
 
 				if(lightInDarkness != null){
 					maxTimeInDarkness += Functions.secondsToTicks(((LightInDarknessAbility)lightInDarkness).getDuration());
@@ -458,7 +456,7 @@ public class ClientEvents{
 					((ForgeIngameGui)Minecraft.getInstance().gui).right_height += 10;
 				}
 
-				DragonAbility contrastShower = playerStateHandler.getMagic().getAbility(DragonAbilities.CONTRAST_SHOWER);
+				ContrastShowerAbility contrastShower = DragonAbilities.getAbility(player, ContrastShowerAbility.class);
 				int maxRainTime = 0;
 
 				if(contrastShower != null){

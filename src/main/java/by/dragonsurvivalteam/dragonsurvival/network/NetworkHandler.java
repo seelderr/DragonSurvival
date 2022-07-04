@@ -79,13 +79,11 @@ public class NetworkHandler{
 
 		//Ability packets
 		register(OpenDragonInventory.class, new OpenDragonInventory());
-		register(ChangeSkillLevel.class, new ChangeSkillLevel());
 		register(SyncMagicStats.class, new SyncMagicStats());
-		register(SyncMagicAbilities.class, new SyncMagicAbilities());
+		register(SyncMagicCap.class, new SyncMagicCap());
 		register(SyncDragonAbilitySlot.class, new SyncDragonAbilitySlot());
 		register(SyncAbilityCasting.class, new SyncAbilityCasting());
-		register(SyncAbilityCastTime.class, new SyncAbilityCastTime());
-		register(ActivateClientAbility.class, new ActivateClientAbility());
+		register(ChangeSkillLevel.class, new ChangeSkillLevel());
 
 		//Potion sync
 		register(SyncPotionRemovedEffect.class, new SyncPotionRemovedEffect());

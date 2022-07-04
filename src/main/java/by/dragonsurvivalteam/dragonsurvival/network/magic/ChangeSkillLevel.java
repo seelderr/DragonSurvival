@@ -1,15 +1,13 @@
 package by.dragonsurvivalteam.dragonsurvival.network.magic;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.magic.DragonAbilities;
-import by.dragonsurvivalteam.dragonsurvival.common.magic.common.DragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.common.magic.common.PassiveDragonAbility;
+import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
+import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
+import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
-import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent;
-import net.minecraftforge.network.PacketDistributor;
 
 import java.util.function.Supplier;
 
@@ -52,31 +50,19 @@ public class ChangeSkillLevel implements IMessage<ChangeSkillLevel>{
 		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
 			DragonAbility staticAbility = DragonAbilities.ABILITY_LOOKUP.get(message.skill);
 
-			if(staticAbility != null){
-				DragonAbility playerAbility = dragonStateHandler.getMagic().getAbility(staticAbility);
+			if(staticAbility instanceof PassiveDragonAbility ability){
+				try{
+					PassiveDragonAbility newActivty = ability.getClass().newInstance();
+					PassiveDragonAbility playerAbility = DragonAbilities.getAbility(player, ability.getClass());
+					newActivty.setLevel(playerAbility.getLevel() + message.levelChange);
+					int levelCost = message.levelChange > 0 ? -newActivty.getLevelCost() : Math.max((int)(((PassiveDragonAbility)playerAbility).getLevelCost() * 0.8F), 1);
 
-				if(playerAbility == null){
-					playerAbility = staticAbility.createInstance();
-					dragonStateHandler.getMagic().getAbilities().add(playerAbility);
+					if(levelCost != 0 && !player.isCreative()){
+						player.giveExperienceLevels(levelCost);
+					}
+				}catch(InstantiationException | IllegalAccessException e){
+					throw new RuntimeException(e);
 				}
-
-				if(playerAbility.player == null){
-					playerAbility.player = player;
-				}
-
-				PassiveDragonAbility newActivty = (PassiveDragonAbility)playerAbility.createInstance();
-				newActivty.setLevel(playerAbility.getLevel() + message.levelChange);
-				int levelCost = message.levelChange > 0 ? -newActivty.getLevelCost() : Math.max((int)(((PassiveDragonAbility)playerAbility).getLevelCost() * 0.8F), 1);
-
-				dragonStateHandler.getMagic().getAbilities().removeIf((c) -> c.getId() == newActivty.getId());
-				dragonStateHandler.getMagic().addAbility(newActivty);
-
-				if(levelCost != 0 && !player.isCreative()){
-					player.giveExperienceLevels(levelCost);
-				}
-
-				playerAbility.setLevel(message.level);
-				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncMagicAbilities(player.getId(), dragonStateHandler.getMagic().getAbilities()));
 			}
 		});
 	}

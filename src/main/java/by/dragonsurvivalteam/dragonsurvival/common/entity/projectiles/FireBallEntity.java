@@ -2,7 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles;
 
 
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DSEntities;
-import by.dragonsurvivalteam.dragonsurvival.common.magic.abilities.Actives.FireBallAbility;
+import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.active.FireBallAbility;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.damagesource.DamageSource;

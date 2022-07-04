@@ -22,7 +22,6 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -166,12 +165,6 @@ public class DragonSkins{
 		}
 
 		return texture;
-	}
-
-	private static ResourceLocation constructTexture(DragonType dragonType, DragonLevel stage, String... extra){
-		String[] text = ArrayUtils.addAll(new String[]{dragonType.name().toLowerCase(Locale.ROOT), stage.name}, extra);
-		Collection<ResourceLocation> rs = Minecraft.getInstance().getResourceManager().listResources("textures/dragon/", (s) -> true);
-		return rs.stream().filter((s) -> s.getNamespace().equals(DragonSurvivalMod.MODID) && s.getPath().equals("textures/dragon/" + StringUtils.join(text, "_") + ".png")).findFirst().orElse(null);
 	}
 
 	public static void init(){
