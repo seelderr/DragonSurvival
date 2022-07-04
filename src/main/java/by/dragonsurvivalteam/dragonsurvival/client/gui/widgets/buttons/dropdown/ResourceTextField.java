@@ -3,6 +3,8 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.settings.ResourceTextFieldOption;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigType;
+import com.google.common.primitives.Primitives;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.brigadier.StringReader;
@@ -67,11 +69,18 @@ public class ResourceTextField extends EditBox implements TooltipAccessor{
 
 		Field fe = ConfigHandler.configFields.get(optionKey);
 
-		isItem = ConfigHandler.isType(fe, Item.class);
-		isBlock = ConfigHandler.isType(fe, Block.class);
-		isEntity = ConfigHandler.isType(fe, EntityType.class);
-		isEffect = ConfigHandler.isType(fe, MobEffect.class);
-		isBiome = ConfigHandler.isType(fe, Biome.class);
+		Class<?> checkType = Primitives.unwrap(fe.getType());
+
+		if(fe.isAnnotationPresent(ConfigType.class)){
+			ConfigType type = fe.getAnnotation(ConfigType.class);
+			checkType = Primitives.unwrap(type.value());
+		}
+
+		isItem = Item.class.isAssignableFrom(checkType);
+		isBlock = Block.class.isAssignableFrom(checkType);
+		isEntity = EntityType.class.isAssignableFrom(checkType);
+		isEffect = MobEffect.class.isAssignableFrom(checkType);
+		isBiome = Biome.class.isAssignableFrom(checkType);
 		isTag = true;
 		update();
 	}

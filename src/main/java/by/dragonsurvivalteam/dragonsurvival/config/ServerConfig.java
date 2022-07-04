@@ -1,9 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.config;
 
-import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
-import by.dragonsurvivalteam.dragonsurvival.common.blocks.DSBlocks;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.DSEntities;
-import by.dragonsurvivalteam.dragonsurvival.common.items.DSItems;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
@@ -13,9 +9,7 @@ import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.ForgeConfigSpec.Builder;
 
 import java.util.Arrays;
@@ -71,14 +65,17 @@ public class ServerConfig{
 	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "largerDragonHitbox", comment = "Whether the dragon hitbox grows past a human hitbox." )
 	public static Boolean hitboxGrowsPastHuman = true;
 
+	@ConfigType(Item.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "growNewborn", comment = "List of items to grow newborn dragon. Format: item/modid:id" )
-	public static List<Item> growNewborn = ConfigHandler.configList(Item.class, DSItems.dragonHeartShard, DSItems.weakDragonHeart, DSItems.elderDragonHeart);
+	public static List<String> growNewborn = List.of("dragonsurvival:heart_element", "dragonsurvival:weak_dragon_heart", "dragonsurvival:elder_dragon_heart");
 
+	@ConfigType(Item.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "growYoung", comment = "List of items to grow young dragon. Format: item/modid:id" )
-	public static List<Item> growYoung = ConfigHandler.configList(Item.class,DSItems.weakDragonHeart, DSItems.elderDragonHeart);
+	public static List<String> growYoung = List.of("dragonsurvival:weak_dragon_heart", "dragonsurvival:elder_dragon_heart");
 
+	@ConfigType(Item.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "growAdult", comment = "List of items to grow adult dragon. Format: item/modid:id" )
-	public static List<Item> growAdult = ConfigHandler.configList(Item.class,DSItems.elderDragonHeart);
+	public static List<String> growAdult = List.of("dragonsurvival:elder_dragon_heart");
 
 	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "alternateGrowing", comment = "Defines if dragon should grow without requirement of catalyst items. Your dragon will just grow over time." )
 	public static Boolean alternateGrowing = true;
@@ -130,14 +127,17 @@ public class ServerConfig{
 	@ConfigOption( side = ConfigSide.SERVER, category = "drops", key = "elderDragonHeartChance", comment = "The chance for dragon heart to drop from any mobs with max health above 50" )
 	public static Double elderDragonHeartChance = 0.1;
 
+	@ConfigType(EntityType.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = "drops", key = "dragonHeartEntityList", comment = "Decide which entities can drop dragon hearts" )
-	public static List<EntityType> dragonHeartEntityList = ConfigHandler.configList(EntityType.class);
+	public static List<String> dragonHeartEntityList = List.of();
 
+	@ConfigType(EntityType.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = "drops", key = "weakDragonHeartEntityList", comment = "Decide which entities can drop weak dragon hearts" )
-	public static List<EntityType> weakDragonHeartEntityList = ConfigHandler.configList(EntityType.class);
+	public static List<String> weakDragonHeartEntityList = List.of();
 
+	@ConfigType(EntityType.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = "drops", key = "elderDragonHeartEntityList", comment = "Decide which entities can drop elder dragon hearts" )
-	public static List<EntityType> elderDragonHeartEntityList = ConfigHandler.configList(EntityType.class);
+	public static List<String> elderDragonHeartEntityList = List.of();
 
 	@ConfigOption( side = ConfigSide.SERVER, category = "drops", key = "dragonHeartWhiteList", comment = "Should the dragonHeartEntityList be treated as an allowlist rather than a block list?" )
 	public static Boolean dragonHeartWhiteList = false;
@@ -304,8 +304,9 @@ public class ServerConfig{
 	@ConfigOption( side = ConfigSide.SERVER, category = {"bonuses", "cave"}, key = "lavaSwimTicks", comment = "The maximum number of ticks a cave dragon can swim in lava. Set to 0 to allow unlimited air while under lava." )
 	public static Integer caveLavaSwimmingTicks = 3600;
 
+	@ConfigType(Block.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = {"bonuses", "cave"}, key = "caveSpeedupBlocks", comment = "Blocks cave dragons gain speed when standing above. Formatting: block/modid:id" )
-	public static List<Block> caveSpeedupBlocks = ConfigHandler.configList(Block.class, "minecraft:base_stone_nether", "minecraft:base_stone_overworld", "minecraft:stone_bricks", "minecraft:beacon_base_blocks", "forge:cobblestone", "forge:sandstone", "forge:stone", "forge:ores", "quark:deepslate", "quark:deepslate_bricks", "quark:cobbled_deepslate");
+	public static List<String> caveSpeedupBlocks = List.of("minecraft:base_stone_nether", "minecraft:base_stone_overworld", "minecraft:stone_bricks", "minecraft:beacon_base_blocks", "forge:cobblestone", "forge:sandstone", "forge:stone", "forge:ores", "quark:deepslate", "quark:deepslate_bricks", "quark:cobbled_deepslate");
 
 
 	@ConfigRange( min = 0.0, max = 100.0 )
@@ -318,28 +319,32 @@ public class ServerConfig{
 	@ConfigOption( side = ConfigSide.SERVER, category = {"bonuses", "forest"}, key = "cactiImmunity", comment = "Whether forest dragons are immune to Cactus damage." )
 	public static Boolean forestCactiImmunity = true;
 
+	@ConfigType(Block.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = {"bonuses", "forest"}, key = "forestSpeedupBlocks", comment = "Blocks forest dragons gain speed when standing above. Formatting: block/modid:id" )
-	public static List<Block> forestSpeedupBlocks = ConfigHandler.configList(Block.class,"minecraft:logs", "minecraft:leaves", "minecraft:planks", "forge:dirt");
+	public static List<String> forestSpeedupBlocks = List.of("minecraft:logs", "minecraft:leaves", "minecraft:planks", "forge:dirt");
 
 
 	@ConfigOption( side = ConfigSide.SERVER, category = {"bonuses", "sea"}, key = "waterBonuses", comment = "Whether sea dragons gain bonus swim speed and unlimited air." )
 	public static Boolean seaSwimmingBonuses = true;
 
+	@ConfigType(Block.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = {"bonuses", "sea"}, key = "seaSpeedupBlocks", comment = "Blocks sea dragons gain speed when standing above. Formatting: block/modid:id" )
-	public static List<Block> seaSpeedupBlocks = ConfigHandler.configList(Block.class,"minecraft:ice", "minecraft:impermeable", "minecraft:sand", "minecraft:coral_blocks", "forge:sand", "minecraft:dirt_path", "minecraft:sandstone", "minecraft:cut_sandstone", "minecraft:chiseled_sandstone", "minecraft:smooth_sandstone", "minecraft:red_sandstone", "minecraft:cut_red_sandstone", "minecraft:chiseled_red_sandstone", "minecraft:smooth_red_sandstone", "minecraft:water");
+	public static List<String> seaSpeedupBlocks = List.of("minecraft:ice", "minecraft:impermeable", "minecraft:sand", "minecraft:coral_blocks", "forge:sand", "minecraft:dirt_path", "minecraft:sandstone", "minecraft:cut_sandstone", "minecraft:chiseled_sandstone", "minecraft:smooth_sandstone", "minecraft:red_sandstone", "minecraft:cut_red_sandstone", "minecraft:chiseled_red_sandstone", "minecraft:smooth_red_sandstone", "minecraft:water");
 
 	//Dragon Penalties
 	@ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "penalties", comment = "Set to false to toggle off all dragon penalties." )
 	public static Boolean penalties = true;
 
+	@ConfigType(EntityType.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "allowedVehicles", comment = "List of rideable entities. Format: modid:id" )
-	public static List<EntityType> allowedVehicles = ConfigHandler.configList(EntityType.class,EntityType.BOAT);
+	public static List<String> allowedVehicles = List.of("minecraft:boat");
 
 	@ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "limitedRiding", comment = "Should dragons be limited by which entities they can ride" )
 	public static Boolean ridingBlacklist = true;
 
+	@ConfigType(Item.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "blacklistedItems", comment = "List of items that disallowed to be used by dragons. Format: item/modid:id" )
-	public static List<Item> blacklistedItems = ConfigHandler.configList(Item.class,"item:minecraft:bow", "item:spartanshields:shield_basic_nickel", "item:spartanshields:shield_basic_invar", "item:spartanshields:shield_basic_constantan", "item:spartanshields:shield_basic_platinum", "item:spartanshields:shield_mekanism_refined_glowstone", "item:spartanshields:shield_tower_wood", "item:spartanshields:shield_tower_stone", "item:spartanshields:shield_tower_iron", "item:spartanshields:shield_tower_gold", "item:spartanshields:shield_tower_diamond", "item:spartanshields:shield_tower_netherite", "item:spartanshields:shield_tower_obsidian", "item:spartanshields:shield_tower_copper", "item:spartanshields:shield_tower_tin", "item:spartanshields:shield_tower_bronze", "item:spartanshields:shield_tower_steel", "item:spartanshields:shield_tower_silver", "item:spartanshields:shield_tower_lead", "item:spartanshields:shield_tower_nickel", "item:spartanshields:shield_tower_constantan", "item:spartanshields:shield_tower_invar", "item:spartanshields:shield_tower_platinum", "item:spartanshields:shield_tower_electrum", "item:spartanshields:shield_mekanism_powered_ultimate", "item:quark:flamerang", "item:quark:pickarang", "item:spartanshields:shield_botania_manasteel", "item:spartanshields:shield_botania_elementium", "item:spartanshields:shield_mekanism_osmium", "item:spartanshields:shield_mekanism_lapis_lazuli", "item:spartanshields:shield_basic_electrum", "item:spartanshields:shield_mekanism_refined_obsidian", "item:spartanshields:shield_mekanism_powered_basic", "item:spartanshields:shield_mekanism_powered_advanced", "item:spartanshields:shield_mekanism_powered_elite", "item:spartanweaponry:boomerang_steel", "item:spartanweaponry:boomerang_invar", "item:spartanweaponry:boomerang_platinum", "item:spartanweaponry:boomerang_electrum", "item:spartanshields:shield_basic_bronze", "item:spartanshields:shield_basic_tin", "item:spartanshields:shield_basic_copper", "item:spartanshields:shield_basic_obsidian", "item:spartanshields:shield_basic_netherite", "item:spartanshields:shield_basic_diamond", "item:spartanshields:shield_basic_gold", "item:spartanshields:shield_basic_iron", "item:spartanshields:shield_basic_stone", "item:spartanshields:shield_basic_wood", "item:spartanweaponry:boomerang_lead", "item:spartanweaponry:boomerang_nickel", "item:spartanshields:shield_basic_steel", "item:spartanshields:shield_basic_silver", "item:spartanshields:shield_basic_lead", "item:spartanweaponry:boomerang_bronze", "item:spartanweaponry:boomerang_tin", "item:spartanweaponry:boomerang_copper", "item:spartanweaponry:boomerang_netherite", "item:spartanweaponry:boomerang_gold", "item:spartanweaponry:boomerang_iron", "item:spartanweaponry:boomerang_stone", "item:spartanweaponry:heavy_crossbow_bronze", "mowziesmobs:wrought_axe", "item:spartanshields:shield_botania_terrasteel", "item:spartanweaponry:heavy_crossbow_leather", "item:spartanweaponry:heavy_crossbow_iron", "item:spartanweaponry:heavy_crossbow_gold", "item:spartanweaponry:heavy_crossbow_diamond", "item:spartanweaponry:heavy_crossbow_netherite", "item:spartanweaponry:heavy_crossbow_copper", "item:spartanweaponry:heavy_crossbow_tin", "item:spartanweaponry:boomerang_wood", "item:nethers_exoticism:rambutan_shield", "item:minecraft:shield", "item:minecraft:trident", "item:spartanweaponry:heavy_crossbow_lead", "item:spartanweaponry:heavy_crossbow_nickel", "item:spartanweaponry:heavy_crossbow_electrum", "item:spartanweaponry:heavy_crossbow_platinum", "item:spartanweaponry:heavy_crossbow_invar", "item:spartanweaponry:heavy_crossbow_silver", "item:spartanweaponry:heavy_crossbow_steel", "item:spartanweaponry:boomerang_diamond", "item:spartanweaponry:heavy_crossbow_wood", "item:minecraft:crossbow", "item:aquaculture:neptunium_bow", "item:spartanweaponry:longbow_electrum", "item:spartanweaponry:longbow_invar", "item:infernalexp:glowsilk_bow", "item:spartanweaponry:longbow_wood", "item:spartanweaponry:longbow_leather", "item:spartanweaponry:longbow_silver", "item:spartanweaponry:longbow_steel", "item:spartanweaponry:longbow_bronze", "item:spartanweaponry:longbow_tin", "item:spartanweaponry:longbow_copper", "item:spartanweaponry:longbow_netherite", "item:spartanweaponry:longbow_diamond", "item:spartanweaponry:longbow_gold", "item:spartanweaponry:longbow_iron", "item:spartanweaponry:boomerang_diamond", "item:spartanweaponry:boomerang_iron", "item:spartanweaponry:boomerang_wood", "item:spartanweaponry:boomerang_gold", "item:spartanweaponry:boomerang_netherite", "item:spartanweaponry:boomerang_copper", "item:spartanweaponry:boomerang_tin", "item:spartanweaponry:boomerang_bronze", "item:spartanweaponry:boomerang_stone", "item:spartanweaponry:boomerang_platinum", "item:spartanweaponry:boomerang_electrum", "item:spartanweaponry:boomerang_steel", "item:spartanweaponry:boomerang_lead", "item:spartanweaponry:boomerang_invar", "item:spartanweaponry:boomerang_nickel");
+	public static List<String> blacklistedItems = List.of("item:minecraft:bow", "item:spartanshields:shield_basic_nickel", "item:spartanshields:shield_basic_invar", "item:spartanshields:shield_basic_constantan", "item:spartanshields:shield_basic_platinum", "item:spartanshields:shield_mekanism_refined_glowstone", "item:spartanshields:shield_tower_wood", "item:spartanshields:shield_tower_stone", "item:spartanshields:shield_tower_iron", "item:spartanshields:shield_tower_gold", "item:spartanshields:shield_tower_diamond", "item:spartanshields:shield_tower_netherite", "item:spartanshields:shield_tower_obsidian", "item:spartanshields:shield_tower_copper", "item:spartanshields:shield_tower_tin", "item:spartanshields:shield_tower_bronze", "item:spartanshields:shield_tower_steel", "item:spartanshields:shield_tower_silver", "item:spartanshields:shield_tower_lead", "item:spartanshields:shield_tower_nickel", "item:spartanshields:shield_tower_constantan", "item:spartanshields:shield_tower_invar", "item:spartanshields:shield_tower_platinum", "item:spartanshields:shield_tower_electrum", "item:spartanshields:shield_mekanism_powered_ultimate", "item:quark:flamerang", "item:quark:pickarang", "item:spartanshields:shield_botania_manasteel", "item:spartanshields:shield_botania_elementium", "item:spartanshields:shield_mekanism_osmium", "item:spartanshields:shield_mekanism_lapis_lazuli", "item:spartanshields:shield_basic_electrum", "item:spartanshields:shield_mekanism_refined_obsidian", "item:spartanshields:shield_mekanism_powered_basic", "item:spartanshields:shield_mekanism_powered_advanced", "item:spartanshields:shield_mekanism_powered_elite", "item:spartanweaponry:boomerang_steel", "item:spartanweaponry:boomerang_invar", "item:spartanweaponry:boomerang_platinum", "item:spartanweaponry:boomerang_electrum", "item:spartanshields:shield_basic_bronze", "item:spartanshields:shield_basic_tin", "item:spartanshields:shield_basic_copper", "item:spartanshields:shield_basic_obsidian", "item:spartanshields:shield_basic_netherite", "item:spartanshields:shield_basic_diamond", "item:spartanshields:shield_basic_gold", "item:spartanshields:shield_basic_iron", "item:spartanshields:shield_basic_stone", "item:spartanshields:shield_basic_wood", "item:spartanweaponry:boomerang_lead", "item:spartanweaponry:boomerang_nickel", "item:spartanshields:shield_basic_steel", "item:spartanshields:shield_basic_silver", "item:spartanshields:shield_basic_lead", "item:spartanweaponry:boomerang_bronze", "item:spartanweaponry:boomerang_tin", "item:spartanweaponry:boomerang_copper", "item:spartanweaponry:boomerang_netherite", "item:spartanweaponry:boomerang_gold", "item:spartanweaponry:boomerang_iron", "item:spartanweaponry:boomerang_stone", "item:spartanweaponry:heavy_crossbow_bronze", "mowziesmobs:wrought_axe", "item:spartanshields:shield_botania_terrasteel", "item:spartanweaponry:heavy_crossbow_leather", "item:spartanweaponry:heavy_crossbow_iron", "item:spartanweaponry:heavy_crossbow_gold", "item:spartanweaponry:heavy_crossbow_diamond", "item:spartanweaponry:heavy_crossbow_netherite", "item:spartanweaponry:heavy_crossbow_copper", "item:spartanweaponry:heavy_crossbow_tin", "item:spartanweaponry:boomerang_wood", "item:nethers_exoticism:rambutan_shield", "item:minecraft:shield", "item:minecraft:trident", "item:spartanweaponry:heavy_crossbow_lead", "item:spartanweaponry:heavy_crossbow_nickel", "item:spartanweaponry:heavy_crossbow_electrum", "item:spartanweaponry:heavy_crossbow_platinum", "item:spartanweaponry:heavy_crossbow_invar", "item:spartanweaponry:heavy_crossbow_silver", "item:spartanweaponry:heavy_crossbow_steel", "item:spartanweaponry:boomerang_diamond", "item:spartanweaponry:heavy_crossbow_wood", "item:minecraft:crossbow", "item:aquaculture:neptunium_bow", "item:spartanweaponry:longbow_electrum", "item:spartanweaponry:longbow_invar", "item:infernalexp:glowsilk_bow", "item:spartanweaponry:longbow_wood", "item:spartanweaponry:longbow_leather", "item:spartanweaponry:longbow_silver", "item:spartanweaponry:longbow_steel", "item:spartanweaponry:longbow_bronze", "item:spartanweaponry:longbow_tin", "item:spartanweaponry:longbow_copper", "item:spartanweaponry:longbow_netherite", "item:spartanweaponry:longbow_diamond", "item:spartanweaponry:longbow_gold", "item:spartanweaponry:longbow_iron", "item:spartanweaponry:boomerang_diamond", "item:spartanweaponry:boomerang_iron", "item:spartanweaponry:boomerang_wood", "item:spartanweaponry:boomerang_gold", "item:spartanweaponry:boomerang_netherite", "item:spartanweaponry:boomerang_copper", "item:spartanweaponry:boomerang_tin", "item:spartanweaponry:boomerang_bronze", "item:spartanweaponry:boomerang_stone", "item:spartanweaponry:boomerang_platinum", "item:spartanweaponry:boomerang_electrum", "item:spartanweaponry:boomerang_steel", "item:spartanweaponry:boomerang_lead", "item:spartanweaponry:boomerang_invar", "item:spartanweaponry:boomerang_nickel");
 
 	@ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "blacklistedSlots", comment = "List of slots to handle blacklistedItems option" )
 	public static List<Integer> blacklistedSlots = Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 45);
@@ -383,8 +388,9 @@ public class ServerConfig{
 	@ConfigOption( side = ConfigSide.SERVER, category  = {"penalties", "sea"}, key = "dehydrationDamage", comment = "The amount of damage taken per tick while dehydrated (once every 40 ticks unless fully dehydrated, then once every 20 ticks)." )
 	public static Double seaDehydrationDamage = 1.0;
 
+	@ConfigType(Block.class)
 	@ConfigOption( side = ConfigSide.SERVER, category  = {"penalties", "sea"}, key = "seaHydrationBlocks", comment = "When sea dragons stand on these blocks, hydration is restored. Format: block/modid:id" )
-	public static List<Block> seaHydrationBlocks = ConfigHandler.configList(Block.class,"minecraft:ice", "minecraft:snow", "minecraft:snow_block", "dragonsurvival:sea_source_of_magic");
+	public static List<String> seaHydrationBlocks = List.of("minecraft:ice", "minecraft:snow", "minecraft:snow_block", "dragonsurvival:sea_source_of_magic");
 
 	@ConfigOption( side = ConfigSide.SERVER, category  = {"penalties", "sea"}, key = "allowWaterBottles", comment = "Set to false to disable sea dragons using vanilla water bottles to avoid dehydration." )
 	public static Boolean seaAllowWaterBottles = true;
@@ -393,8 +399,9 @@ public class ServerConfig{
 	@ConfigOption( side = ConfigSide.SERVER, category  = {"penalties", "sea"}, key = "waterItemRestorationTicks", comment = "How many ticks do water restoration items restore when used. Set to 0 to disable." )
 	public static Integer seaTicksWithoutWaterRestored = 5000;
 
+	@ConfigType(Item.class)
 	@ConfigOption( side = ConfigSide.SERVER, category  = {"penalties", "sea"}, key = "seaHydrationItems", comment = "Additional modded USEABLE items that restore water when used (called from LivingEntityUseItemEvent.Finish). Format: item/modid:id" )
-	public static List<Item> seaAdditionalWaterUseables = ConfigHandler.configList(Item.class,Items.ENCHANTED_GOLDEN_APPLE);
+	public static List<String> seaAdditionalWaterUseables = List.of("minecraft:enchanted_golden_apple");
 
 	// Ore Loot
 	@ConfigRange( min = 0.0, max = 1.0 )
@@ -450,14 +457,17 @@ public class ServerConfig{
 	public static List<String> seaDragonFoods = Arrays.asList("forge:raw_fishes:6:7", "item:minecraft:dried_kelp:1:1", "item:minecraft:kelp:2:3", "item:minecraft:pufferfish:10:15", "item:minecraft:golden_apple", "item:minecraft:enchanted_golden_apple", "item:minecraft:honey_bottle", "item:dragonsurvival:sea_dragon_treat:10:12", "item:aoa3:raw_candlefish:9:9", "item:aoa3:raw_crimson_skipper:8:8", "item:aoa3:raw_fingerfish:4:4", "item:aoa3:raw_pearl_stripefish:5:4", "item:aoa3:raw_limefish:5:5", "item:aoa3:raw_sailback:6:5", "item:aoa3:raw_golden_gullfish:10:2", "item:aoa3:raw_turquoise_stripefish:7:6", "item:aoa3:raw_violet_skipper:7:7", "item:aoa3:raw_rocketfish:4:10", "item:aoa3:raw_crimson_stripefish:8:7", "item:aoa3:raw_sapphire_strider:9:8", "item:aoa3:raw_dark_hatchetfish:9:9", "item:aoa3:raw_ironback:10:9", "item:aoa3:raw_rainbowfish:11:11", "item:aoa3:raw_razorfish:12:14", "item:quark:golden_frog_leg", "item:alexsmobs:lobster_tail:4:5", "item:alexsmobs:blobfish:8:9", "item:oddwatermobs:raw_ghost_shark:8:8", "item:oddwatermobs:raw_isopod:4:2", "item:oddwatermobs:raw_mudskipper:6:7", "item:oddwatermobs:raw_coelacanth:9:10", "item:oddwatermobs:raw_anglerfish:6:6", "item:oddwatermobs:deep_sea_fish:4:2", "item:oddwatermobs:crab_leg:5:6", "item:simplefarming:raw_calamari:5:6", "item:unnamedanimalmod:elephantnose_fish:5:6", "item:unnamedanimalmod:flashlight_fish:5:6", "item:unnamedanimalmod:rocket_killifish:5:6", "item:unnamedanimalmod:leafy_seadragon:5:6", "item:unnamedanimalmod:elephantnose_fish:5:6", "item:betteranimalsplus:eel_meat_raw:5:6", "item:betteranimalsplus:calamari_raw:4:5", "item:betteranimalsplus:crab_meat_raw:4:4", "item:aquaculture:fish_fillet_raw:2:2", "item:aquaculture:goldfish:8:4", "item:aquaculture:box_turtle:4:5", "item:aquaculture:arrau_turtle:4:5", "item:aquaculture:starshell_turtle:4:5", "item:aquaculture:algae:3:2", "item:betterendforge:end_fish_raw:6:7", "item:betterendforge:hydralux_petal:3:3", "item:betterendforge:charnia_green:2:2", "item:shroomed:raw_shroomfin:5:6", "item:undergarden:raw_gwibling:5:6", "item:pickletweaks:diamond_apple", "item:pickletweaks:emerald_apple", "item:bettas:betta_fish:4:5", "item:quark:crab_leg:4:4", "item:pamhc2foodextended:rawtofishitem", "item:fins:banded_redback_shrimp:6:1", "item:fins:night_light_squid:6:2", "item:fins:night_light_squid_tentacle:6:2", "item:fins:emerald_spindly_gem_crab:7:2", "item:fins:amber_spindly_gem_crab:7:2", "item:fins:rubby_spindly_gem_crab:7:2", "item:fins:sapphire_spindly_gem_crab:7:2", "item:fins:pearl_spindly_gem_crab:7:2", "item:fins:papa_wee:6:2", "item:fins:bugmeat:4:2", "item:fins:raw_golden_river_ray_wing:6:2", "item:fins:red_bull_crab_claw:4:4", "item:fins:white_bull_crab_claw:4:4", "item:fins:wherble_fin:1:1", "item:forbidden_arcanus:tentacle:5:2", "item:pneumaticcraft:raw_salmon_tempura:6:10", "item:rats:ratfish:4:2", "item:cyclic:chorus_flight", "item:cyclic:chorus_spectral", "item:cyclic:apple_ender", "item:cyclic:apple_honey", "item:cyclic:apple_chorus", "item:cyclic:apple_bone", "item:cyclic:apple_prismarine", "item:cyclic:apple_lapis", "item:cyclic:apple_iron", "item:cyclic:apple_diamond", "item:cyclic:apple_emerald", "item:cyclic:apple_chocolate", "item:upgrade_aquatic:purple_pickerelweed:2:2", "item:upgrade_aquatic:blue_pickerelweed:2:2", "item:upgrade_aquatic:polar_kelp:2:2", "item:upgrade_aquatic:tongue_kelp:2:2", "item:upgrade_aquatic:thorny_kelp:2:2", "item:upgrade_aquatic:ochre_kelp:2:2", "item:upgrade_aquatic:lionfish:8:9", "item:resourcefulbees:gold_honeycomb:5:5", "item:resourcefulbees:rainbow_honey_bottle", "item:wyrmroost:jewelled_apple", "item:aquaculture:sushi:6:5", "item:freshwarriors:fresh_soup:15:10", "item:freshwarriors:beluga_caviar:10:3", "item:freshwarriors:piranha:4:1", "item:freshwarriors:tilapia:4:1", "item:freshwarriors:stuffed_piranha:4:1", "item:freshwarriors:tigerfish:5:5", "item:freshwarriors:toe_biter_leg:3:3", "item:untamedwilds:egg_arowana_black:4:4", "item:untamedwilds:egg_trevally_jack:4:4", "item:untamedwilds:egg_trevally_golden:4:4", "item:untamedwilds:egg_giant_salamander_chinese:6:4", "item:untamedwilds:egg_giant_salamander_hellbender:6:4", "item:untamedwilds:egg_giant_salamander_japanese:6:4", "item:untamedwilds:giant_clam_gigas:4:4", "item:untamedwilds:giant_clam_derasa:4:4", "item:untamedwilds:giant_clam_maxima:4:4", "item:untamedwilds:giant_clam_squamosa:4:4", "item:untamedwilds:egg_trevally_giant:6:4", "item:untamedwilds:egg_trevally_bluespotted:6:4", "item:untamedwilds:egg_trevally_bigeye:6:4", "item:untamedwilds:egg_sunfish_southern:6:4", "item:untamedwilds:egg_sunfish_sunfish:6:4", "item:untamedwilds:egg_giant_clam_squamosa:6:4", "item:untamedwilds:egg_giant_clam_gigas:6:4", "item:untamedwilds:egg_giant_clam_derasa:6:4", "item:untamedwilds:egg_giant_clam_maxima:6:4", "item:untamedwilds:egg_football_fish_atlantic:6:4", "item:untamedwilds:egg_arowana_silver:6:4", "item:untamedwilds:egg_arowana_jardini:6:4", "item:untamedwilds:egg_arowana_green:6:4", "item:mysticalworld:raw_squid:6:5", "item:aquafina:fresh_soup:15:10", "item:aquafina:beluga_caviar:10:3", "item:aquafina:raw_piranha:4:1", "item:aquafina:raw_tilapia:4:1", "item:aquafina:stuffed_piranha:4:1", "item:aquafina:tigerfish:5:5", "item:aquafina:toe_biter_leg:3:3", "item:aquafina:raw_angelfish:4:1", "item:aquafina:raw_football_fish:4:1", "item:aquafina:raw_foxface_fish:4:1", "item:aquafina:raw_royal_gramma:4:1", "item:aquafina:raw_starfish:4:1", "item:aquafina:spider_crab_leg:4:1", "item:aquafina:raw_stingray_slice:4:1", "item:prehistoricfauna:raw_ceratodus:5:5", "item:prehistoricfauna:raw_cyclurus:4:4", "item:prehistoricfauna:raw_potamoceratodus:5:5", "item:prehistoricfauna:raw_myledaphus:4:4", "item:prehistoricfauna:raw_gar:4:4", "item:prehistoricfauna:raw_oyster:4:3", "item:prehistoric_delight:prehistoric_fillet:3:3");
 
 
+	@ConfigType(Block.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "mana"}, key = "seaDragonManaBlocks", comment = "Blocks that will restore mana quicker when a sea dragon is standing on it. Formatting: block/modid:blockid" )
-	public static List<Block> seaDragonManaBlocks = ConfigHandler.configList(Block.class,DSBlocks.seaSourceOfMagic, "minecraft:ice", Blocks.SNOW, Blocks.SNOW_BLOCK, Blocks.WATER, Blocks.WET_SPONGE, "minecraft:cauldron");
+	public static List<String> seaDragonManaBlocks = List.of("dragonsurvival:sea_source_of_magic", "minecraft:ice", "minecraft:snow", "minecraft:snow_block", "minecraft:water", "minecraft:wet_sponge", "minecraft:cauldron");
 
+	@ConfigType(Block.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "mana"}, key = "forestDragonManaBlocks", comment = "Blocks that will restore mana quicker when a forest dragon is standing on it. Formatting: block/modid:blockid" )
-	public static List<Block> forestDragonManaBlocks = ConfigHandler.configList(Block.class,DSBlocks.forestSourceOfMagic, "minecraft:small_flowers", "minecraft:flowers", "minecraft:tall_flowers");
+	public static List<String> forestDragonManaBlocks = List.of("dragonsurvival:forest_source_of_magic", "minecraft:small_flowers", "minecraft:flowers", "minecraft:tall_flowers");
 
+	@ConfigType(Block.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "mana"}, key = "caveDragonManaBlocks", comment = "Blocks that will restore mana quicker when a cave dragon is standing on it. Formatting: block/modid:blockid" )
-	public static List<Block> caveDragonManaBlocks = ConfigHandler.configList(Block.class,DSBlocks.caveSourceOfMagic, "minecraft:campfires", "minecraft:lava", "minecraft:smoker", "minecraft:furnace", "minecraft:magma_block", "minecraft:blast_furnace");
+	public static List<String> caveDragonManaBlocks = List.of("dragonsurvival:cave_source_of_magic", "minecraft:campfires", "minecraft:lava", "minecraft:smoker", "minecraft:furnace", "minecraft:magma_block", "minecraft:blast_furnace");
 
 
 	@ConfigOption( side = ConfigSide.SERVER, category = "magic", key = "dragonAbilities", comment = "Whether dragon abilities should be enabled" )
@@ -527,11 +537,13 @@ public class ServerConfig{
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathManaTicks", comment = "How often in ticks, mana is consumed while using forest breath" )
 	public static Integer forestBreathManaTicks = Functions.secondsToTicks(2);
 
+	@ConfigType(Block.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathBlockBreaks", comment = "Blocks that have a chance to be broken by forest breath. Formatting: block/modid:id" )
-	public static List<Block> forestBreathBlockBreaks = ConfigHandler.configList(Block.class,"minecraft:banners");
+	public static List<String> forestBreathBlockBreaks = List.of("minecraft:banners");
 
+	@ConfigType(Block.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathGrowBlacklist", comment = "Blocks that will not be grown by the forest breath. Formatting: block/modid:id" )
-	public static List<Block> forestBreathGrowBlacklist = ConfigHandler.configList(Block.class);
+	public static List<String> forestBreathGrowBlacklist = List.of();
 
 
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "spike"}, key = "spike", comment = "Whether the spike ability should be enabled" )
@@ -638,11 +650,13 @@ public class ServerConfig{
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "storm_breath"}, key = "stormBreathManaTicks", comment = "How often in ticks, mana is consumed while using storm breath" )
 	public static Integer stormBreathManaTicks = Functions.secondsToTicks(2);
 
+	@ConfigType(Block.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "storm_breath"}, key = "stormBreathBlockBreaks", comment = "Blocks that have a chance to be broken by storm breath. Formatting: block/modid:id" )
-	public static List<Block> stormBreathBlockBreaks = ConfigHandler.configList(Block.class,"minecraft:impermeable", "minecraft:snow", "minecraft:crops", "minecraft:flowers", "minecraft:banners", "minecraft:lush_plants_replaceable", "minecraft:azalea_log_replaceable", "minecraft:replaceable_plants", "minecraft:leaves");
+	public static List<String> stormBreathBlockBreaks = List.of("minecraft:impermeable", "minecraft:snow", "minecraft:crops", "minecraft:flowers", "minecraft:banners", "minecraft:lush_plants_replaceable", "minecraft:azalea_log_replaceable", "minecraft:replaceable_plants", "minecraft:leaves");
 
+	@ConfigType(EntityType.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "storm_breath"}, key = "chargedBlacklist", comment = "List of entities that do not work with the charged effect. Format: modid:id" )
-	public static List<EntityType> chargedBlacklist = ConfigHandler.configList(EntityType.class,"upgrade_aquatic:thrasher", "upgrade_aquatic:great_thrasher");
+	public static List<String> chargedBlacklist = List.of("upgrade_aquatic:thrasher", "upgrade_aquatic:great_thrasher");
 
 	@ConfigRange( min = 0, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "storm_breath"}, key = "stormBreathChainCount", comment = "How many mobs stormbreath is able to chain to at once" )
@@ -664,8 +678,9 @@ public class ServerConfig{
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "storm_breath"}, key = "chargedEffectDamage", comment = "The amount of damage the charged effect deals each second" )
 	public static Integer chargedEffectDamage = 1;
 
+	@ConfigType(EntityType.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "storm_breath"}, key = "chargedSpreadBlacklist", comment = "List of entities that will not spread the charged effect. Format: modid:id" )
-	public static List<EntityType> chargedSpreadBlacklist = ConfigHandler.configList(EntityType.class,EntityType.ARMOR_STAND);
+	public static List<String> chargedSpreadBlacklist = List.of("minecraft:armor_stand");
 
 
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "ball_lightning"}, key = "ballLightning", comment = "Whether the lightning ball ability should be enabled" )
@@ -783,8 +798,9 @@ public class ServerConfig{
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreathSpreadsFire", comment = "Whether the fire breath actually spreads fire when used" )
 	public static Boolean fireBreathSpreadsFire = true;
 
+	@ConfigType(Block.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreathBlockBreaks", comment = "Blocks that have a chance to be broken by fire breath. Formatting: block/modid:id" )
-	public static List<Block> fireBreathBlockBreaks = ConfigHandler.configList(Block.class,"minecraft:ice", "minecraft:snow", "minecraft:crops", "minecraft:leaves", "minecraft:flowers", "minecraft:banners", "minecraft:lush_plants_replaceable", "minecraft:azalea_log_replaceable", "minecraft:replaceable_plants", "minecraft:wooden_fences", "minecraft:logs_that_burn", "minecraft:mycelium", "minecraft:wooden_stairs", "minecraft:wooden_doors", "minecraft:wool", "minecraft:saplings", "minecraft:impermeable", "minecraft:cobweb", "minecraft:large_fern", "minecraft:sugar_cane", "minecraft:snow_block");
+	public static List<String> fireBreathBlockBreaks = List.of("minecraft:ice", "minecraft:snow", "minecraft:crops", "minecraft:leaves", "minecraft:flowers", "minecraft:banners", "minecraft:lush_plants_replaceable", "minecraft:azalea_log_replaceable", "minecraft:replaceable_plants", "minecraft:wooden_fences", "minecraft:logs_that_burn", "minecraft:mycelium", "minecraft:wooden_stairs", "minecraft:wooden_doors", "minecraft:wool", "minecraft:saplings", "minecraft:impermeable", "minecraft:cobweb", "minecraft:large_fern", "minecraft:sugar_cane", "minecraft:snow_block");
 
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fireball"}, key = "fireball", comment = "Whether the fireball ability should be enabled" )
 	public static Boolean fireball = true;
@@ -899,8 +915,9 @@ public class ServerConfig{
 	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "villagerKillxp", comment = "How many experience points are gained for killing a villager" )
 	public static Integer xpGain = 10;
 
+	@ConfigType(EntityType.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "evilDragonStatusGivers", comment = "Entities which give 'Evil dragon' status on death" )
-	public static List<EntityType> evilDragonStatusGivers = ConfigHandler.configList(EntityType.class,EntityType.VILLAGER, DSEntities.HUNTER_HOUND, DSEntities.KNIGHT, DSEntities.SHOOTER_HUNTER, DSEntities.SQUIRE_HUNTER, DSEntities.PRINCE_ON_HORSE, DSEntities.PRINCESS, DSEntities.PRINCESS_ON_HORSE);
+	public static List<String> evilDragonStatusGivers = List.of("minecraft:villager", "dragonsurvival:hunter_hound", "dragonsurvival:knight", "dragonsurvival:shooter", "dragonsurvival:squire", "dragonsurvival:prince", "dragonsurvival:princess", "dragonsurvival:princess_entity");
 
 	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "preserveEvilDragonAfterDeath", comment = "Preserve effect 'Evil dragon' after death?" )
 	public static Boolean preserveEvilDragonEffectAfterDeath = false;
@@ -1008,12 +1025,15 @@ public class ServerConfig{
 	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_beacons", key = "temporaryEffect", comment = "Duration of effect given in exchange for experience in minutes" )
 	public static Integer minutesOfDragonEffect = 10;
 
+	@ConfigType(MobEffect.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_beacons", key = "peaceBeaconEffects", comment = "Effects of Peace beacon" )
-	public static List<MobEffect> peaceBeaconEffects = ConfigHandler.configList(MobEffect.class,DragonEffects.PEACE, DragonEffects.ANIMAL_PEACE);
+	public static List<String> peaceBeaconEffects = List.of("dragonsurvival:peace", "dragonsurvival:animal_peace");
 
+	@ConfigType(MobEffect.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_beacons", key = "magicBeaconEffects", comment = "Effects of Magic beacon" )
-	public static List<MobEffect> magicBeaconEffects = ConfigHandler.configList(MobEffect.class,DragonEffects.MAGIC, DragonEffects.PREDATOR_ANTI_SPAWN);
+	public static List<String> magicBeaconEffects = List.of("dragonsurvival:magic", "dragonsurvival:predator_anti_spawn");
 
+	@ConfigType(MobEffect.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_beacons", key = "fireBeaconEffects", comment = "Effects of Fire beacon" )
-	public static List<MobEffect> fireBeaconEffects = ConfigHandler.configList(MobEffect.class,DragonEffects.FIRE, DragonEffects.STRONG_LEATHER);
+	public static List<String> fireBeaconEffects = List.of("dragonsurvival:fire", "dragonsurvival:strong_leather");
 }

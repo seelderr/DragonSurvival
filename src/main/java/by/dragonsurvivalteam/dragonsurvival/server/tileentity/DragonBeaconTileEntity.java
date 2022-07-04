@@ -5,11 +5,13 @@ import by.dragonsurvivalteam.dragonsurvival.common.EffectInstance2;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.DragonBeacon;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -60,21 +62,21 @@ public class DragonBeaconTileEntity extends BaseBlockTileEntity{
 				List<Player> dragons = pLevel.getEntitiesOfClass(Player.class, new AABB(pPos).inflate(50).expandTowards(0, pLevel.getMaxBuildHeight(), 0), DragonUtils::isDragon);
 				switch(pBlockEntity.type){
 					case PEACE -> dragons.forEach(playerEntity -> {
-						ServerConfig.peaceBeaconEffects.forEach(effect -> {
+						ConfigHandler.configList(MobEffect.class, ServerConfig.peaceBeaconEffects).forEach(effect -> {
 							if(effect != null){
 								playerEntity.addEffect(new EffectInstance2(effect, Functions.secondsToTicks(ServerConfig.minutesOfDragonEffect) + 5));
 							}
 						});
 					});
 					case MAGIC -> dragons.forEach(playerEntity -> {
-						ServerConfig.magicBeaconEffects.forEach(effect -> {
+						ConfigHandler.configList(MobEffect.class, ServerConfig.magicBeaconEffects).forEach(effect -> {
 							if(effect != null){
 								playerEntity.addEffect(new EffectInstance2(effect, Functions.secondsToTicks(ServerConfig.minutesOfDragonEffect) + 5));
 							}
 						});
 					});
 					case FIRE -> dragons.forEach(playerEntity -> {
-						ServerConfig.fireBeaconEffects.forEach(effect -> {
+						ConfigHandler.configList(MobEffect.class, ServerConfig.fireBeaconEffects).forEach(effect -> {
 							if(effect != null){
 								playerEntity.addEffect(new EffectInstance2(effect, Functions.secondsToTicks(ServerConfig.minutesOfDragonEffect) + 5));
 							}
@@ -83,9 +85,8 @@ public class DragonBeaconTileEntity extends BaseBlockTileEntity{
 				}
 			}
 		}else{
-			BlockState thisState = pState;
-			if(thisState.getValue(DragonBeacon.LIT)){
-				pLevel.setBlockAndUpdate(pPos, thisState.cycle(DragonBeacon.LIT));
+			if(pState.getValue(DragonBeacon.LIT)){
+				pLevel.setBlockAndUpdate(pPos, pState.cycle(DragonBeacon.LIT));
 				pLevel.playSound(null, pPos, SoundRegistry.deactivateBeacon, SoundSource.BLOCKS, 1, 1);
 			}
 		}

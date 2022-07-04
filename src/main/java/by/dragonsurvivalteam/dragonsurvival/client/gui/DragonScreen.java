@@ -13,6 +13,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonGrowthHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
@@ -162,9 +163,9 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 
 				ArrayList<Item> allowedList = new ArrayList<>();
 
-				List<Item> newbornList = ServerConfig.growNewborn;
-				List<Item> youngList = ServerConfig.growYoung;
-				List<Item> adultList = ServerConfig.growAdult;
+				List<Item> newbornList = ConfigHandler.configList(Item.class, ServerConfig.growNewborn);
+				List<Item> youngList = ConfigHandler.configList(Item.class, ServerConfig.growYoung);
+				List<Item> adultList = ConfigHandler.configList(Item.class, ServerConfig.growAdult);
 
 				if(handler.getSize() < DragonLevel.YOUNG.size){
 					allowedList.addAll(newbornList);

@@ -91,8 +91,6 @@ public class ConfigHandler{
 			if(!Modifier.isStatic(s.getModifiers()))
 				return;
 
-			System.out.println(s);
-
 			ConfigOption option = s.getAnnotation(ConfigOption.class);
 
 			try{
@@ -356,21 +354,15 @@ public class ConfigHandler{
 		return loadObject(fe, obj);
 	}
 
-	public static <T extends IForgeRegistryEntry<T>> List<T> configList(Class<T> type, Object... in){
+	public static <T extends IForgeRegistryEntry<T>> List<T> configList(Class<T> type, List<?> in){
 		ArrayList<T> list = new ArrayList<>();
 
 		Tuple<Supplier<IForgeRegistry<?>>, Supplier<ResourceKey<? extends Registry<?>>>> ent = REGISTRY_HASH_MAP.getOrDefault(type, null);
 
-		if(ent == null) return list;
-
 		for(Object o : in){
 			if(o == null) continue;
 
-			if(o.getClass().isAssignableFrom(type)){
-				list.add((T)o);
-			}else if(o instanceof TagKey tag){
-				list.addAll(ent.getA().get().tags().getTag(tag).stream().toList());
-			}else if(o instanceof String tex){
+			if(o instanceof String tex){
 				ResourceLocation location = ResourceLocation.tryParse(tex);
 				if(ent.getA().get().containsKey(location)){
 					Optional<? extends Holder<?>> optional = ent.getA().get().getHolder(location);

@@ -4,6 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.items.DSItems;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
@@ -54,9 +55,9 @@ public class DragonGrowthHandler{
 
 			boolean canContinue = false;
 
-			List<Item> newbornList = ServerConfig.growNewborn;
-			List<Item> youngList = ServerConfig.growYoung;
-			List<Item> adultList = ServerConfig.growAdult;
+			List<Item> newbornList = ConfigHandler.configList(Item.class, ServerConfig.growNewborn);
+			List<Item> youngList = ConfigHandler.configList(Item.class, ServerConfig.growYoung);
+			List<Item> adultList = ConfigHandler.configList(Item.class, ServerConfig.growAdult);
 
 			List<Item> allowedItems = new ArrayList<>();
 
@@ -122,9 +123,9 @@ public class DragonGrowthHandler{
 	}
 
 	public static int getIncrement(Item item, DragonLevel level){
-		List<Item> newbornList = ServerConfig.growNewborn;
-		List<Item> youngList = ServerConfig.growYoung;
-		List<Item> adultList = ServerConfig.growAdult;
+		List<Item> newbornList = ConfigHandler.configList(Item.class, ServerConfig.growNewborn);
+		List<Item> youngList = ConfigHandler.configList(Item.class, ServerConfig.growYoung);
+		List<Item> adultList = ConfigHandler.configList(Item.class, ServerConfig.growAdult);
 
 		int increment = 0;
 

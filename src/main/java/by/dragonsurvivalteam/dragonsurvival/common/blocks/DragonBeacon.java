@@ -4,6 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.sounds.SoundRegistry;
 import by.dragonsurvivalteam.dragonsurvival.common.EffectInstance2;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.DSTileEntities;
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.DragonBeaconTileEntity;
@@ -15,6 +16,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -94,7 +96,7 @@ public class DragonBeacon extends Block implements SimpleWaterloggedBlock, Entit
 				if(dragonStateHandler.isDragon() && ((playerEntity.totalExperience >= 60 || playerEntity.experienceLevel >= 6) || playerEntity.isCreative())){
 					if(this == DSBlocks.peaceDragonBeacon){
 						if(!world.isClientSide){
-							ServerConfig.peaceBeaconEffects.forEach(effect -> {
+							ConfigHandler.configList(MobEffect.class, ServerConfig.peaceBeaconEffects).forEach(effect -> {
 								if(effect != null){
 									playerEntity.addEffect(new EffectInstance2(effect, Functions.minutesToTicks(ServerConfig.secondsOfBeaconEffect)));
 								}
@@ -102,7 +104,7 @@ public class DragonBeacon extends Block implements SimpleWaterloggedBlock, Entit
 						}
 					}else if(this == DSBlocks.magicDragonBeacon){
 						if(!world.isClientSide){
-							ServerConfig.magicBeaconEffects.forEach(effect -> {
+							ConfigHandler.configList(MobEffect.class, ServerConfig.magicBeaconEffects).forEach(effect -> {
 								if(effect != null){
 									playerEntity.addEffect(new EffectInstance2(effect, Functions.minutesToTicks(ServerConfig.secondsOfBeaconEffect)));
 								}
@@ -110,7 +112,7 @@ public class DragonBeacon extends Block implements SimpleWaterloggedBlock, Entit
 						}
 					}else if(this == DSBlocks.fireDragonBeacon){
 						if(!world.isClientSide){
-							ServerConfig.fireBeaconEffects.forEach(effect -> {
+							ConfigHandler.configList(MobEffect.class, ServerConfig.fireBeaconEffects).forEach(effect -> {
 								if(effect != null){
 									playerEntity.addEffect(new EffectInstance2(effect, Functions.minutesToTicks(ServerConfig.secondsOfBeaconEffect)));
 								}

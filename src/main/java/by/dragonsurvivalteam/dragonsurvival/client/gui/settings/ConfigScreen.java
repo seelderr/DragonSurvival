@@ -17,6 +17,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.config.SyncEnumConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.config.SyncNumberConfig;
 import com.electronwill.nightconfig.core.EnumGetMethod;
 import com.google.common.collect.ImmutableList;
+import com.google.common.primitives.Primitives;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.*;
@@ -163,7 +164,9 @@ public abstract class ConfigScreen extends OptionsSubScreen{
 
 			TextComponent tooltip = new TextComponent(tooltip0);
 
-			if(fe.getType().equals(boolean.class) || fe.getType().equals(Boolean.class)){
+			Class<?> checkType = Primitives.unwrap(fe.getType());
+
+			if(checkType.equals(boolean.class)){
 				CycleOption<Boolean> option = new CycleOption<>(name, (val) -> ((ConfigValue<Boolean>)value).get(), (settings, optionO, settingValue) -> {
 					ConfigHandler.updateConfigValue(value, settingValue);
 
@@ -181,7 +184,7 @@ public abstract class ConfigScreen extends OptionsSubScreen{
 				};
 				OptionsList.configMap.put(option, key);
 				addOption(category, name, option);
-			}else if(fe.getType().equals(int.class) || fe.getType().equals(Integer.class)){
+			}else if(checkType.equals(int.class)){
 				Integer min = Integer.MIN_VALUE;
 				Integer max = Integer.MAX_VALUE;
 
@@ -223,7 +226,7 @@ public abstract class ConfigScreen extends OptionsSubScreen{
 
 				OptionsList.configMap.put(option, key);
 				addOption(category, name, option);
-			}else if(fe.getType().equals(double.class) || fe.getType().equals(Double.class)){
+			}else if(checkType.equals(double.class)){
 				BigDecimal min = new BigDecimal(Double.MIN_VALUE).setScale(5, RoundingMode.FLOOR);
 				BigDecimal max = new BigDecimal(Double.MAX_VALUE).setScale(5, RoundingMode.FLOOR);
 
@@ -264,7 +267,7 @@ public abstract class ConfigScreen extends OptionsSubScreen{
 				}
 				OptionsList.configMap.put(option, key);
 				addOption(category, name, option);
-			}else if(fe.getType().equals(long.class) || fe.getType().equals(Long.class)){
+			}else if(checkType.equals(long.class)){
 				Long min = Long.MIN_VALUE;
 				Long max = Long.MAX_VALUE;
 
@@ -304,7 +307,7 @@ public abstract class ConfigScreen extends OptionsSubScreen{
 
 				OptionsList.configMap.put(option, key);
 				addOption(category, name, option);
-			}else if(fe.getType().isEnum()){
+			}else if(checkType.isEnum()){
 				Class<? extends Enum> cs = (Class<? extends Enum>)value.get().getClass();
 				Enum vale = EnumGetMethod.ORDINAL_OR_NAME.get(((Enum)value.get()).ordinal(), cs);
 
@@ -317,7 +320,7 @@ public abstract class ConfigScreen extends OptionsSubScreen{
 
 				OptionsList.configMap.put(option, key);
 				addOption(category, name, option);
-			}else if(fe.getType().isAssignableFrom(List.class)){
+			}else if(checkType.isAssignableFrom(List.class)){
 				if(value.get() instanceof List && (((List<?>)value.get()).isEmpty() || ((List<?>)value.get()).get(0) instanceof String)){
 					StringJoiner joiner = new StringJoiner(",");
 

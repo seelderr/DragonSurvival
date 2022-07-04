@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import net.minecraft.world.item.Item;
@@ -38,34 +39,34 @@ public class DragonConfigHandler{
 
 	private static void rebuildSpeedupBlocksMap(){
 		HashMap<DragonType, List<Block>> speedupMap = new HashMap<>();
-		speedupMap.put(DragonType.CAVE, ServerConfig.caveSpeedupBlocks);
-		speedupMap.put(DragonType.FOREST, ServerConfig.forestSpeedupBlocks);
-		speedupMap.put(DragonType.SEA, ServerConfig.seaSpeedupBlocks);
+		speedupMap.put(DragonType.CAVE, ConfigHandler.configList(Block.class, ServerConfig.caveSpeedupBlocks));
+		speedupMap.put(DragonType.FOREST, ConfigHandler.configList(Block.class, ServerConfig.forestSpeedupBlocks));
+		speedupMap.put(DragonType.SEA, ConfigHandler.configList(Block.class, ServerConfig.seaSpeedupBlocks));
 		DRAGON_SPEEDUP_BLOCKS = speedupMap;
 	}
 
 	public static void rebuildBreathBlocks(){
 		HashMap<DragonType, List<Block>> breathMap = new HashMap<>();
-		breathMap.put(DragonType.CAVE, ServerConfig.fireBreathBlockBreaks);
-		breathMap.put(DragonType.FOREST, ServerConfig.forestBreathBlockBreaks);
-		breathMap.put(DragonType.SEA, ServerConfig.stormBreathBlockBreaks);
+		breathMap.put(DragonType.CAVE, ConfigHandler.configList(Block.class, ServerConfig.fireBreathBlockBreaks));
+		breathMap.put(DragonType.FOREST, ConfigHandler.configList(Block.class, ServerConfig.forestBreathBlockBreaks));
+		breathMap.put(DragonType.SEA, ConfigHandler.configList(Block.class, ServerConfig.stormBreathBlockBreaks));
 		DRAGON_BREATH_BLOCKS = breathMap;
 	}
 
 	public static void rebuildManaBlocks(){
 		HashMap<DragonType, List<Block>> map = new HashMap<>();
-		map.put(DragonType.CAVE, ServerConfig.caveDragonManaBlocks);
-		map.put(DragonType.FOREST, ServerConfig.forestDragonManaBlocks);
-		map.put(DragonType.SEA, ServerConfig.seaDragonManaBlocks);
+		map.put(DragonType.CAVE, ConfigHandler.configList(Block.class, ServerConfig.caveDragonManaBlocks));
+		map.put(DragonType.FOREST, ConfigHandler.configList(Block.class, ServerConfig.forestDragonManaBlocks));
+		map.put(DragonType.SEA, ConfigHandler.configList(Block.class, ServerConfig.seaDragonManaBlocks));
 		DRAGON_MANA_BLOCKS = map;
 	}
 
 	private static void rebuildSeaDragonConfigs(){
-		SEA_DRAGON_HYDRATION_BLOCKS = ServerConfig.seaHydrationBlocks;
-		SEA_DRAGON_HYDRATION_USE_ALTERNATIVES = ServerConfig.seaAdditionalWaterUseables;
+		SEA_DRAGON_HYDRATION_BLOCKS = ConfigHandler.configList(Block.class, ServerConfig.seaHydrationBlocks);
+		SEA_DRAGON_HYDRATION_USE_ALTERNATIVES = ConfigHandler.configList(Item.class, ServerConfig.seaAdditionalWaterUseables);
 	}
 
 	private static void rebuildForestDragonConfigs(){
-		FOREST_DRAGON_BREATH_GROW_BLACKLIST = ServerConfig.forestBreathGrowBlacklist;
+		FOREST_DRAGON_BREATH_GROW_BLACKLIST = ConfigHandler.configList(Block.class, ServerConfig.forestBreathGrowBlacklist);
 	}
 }

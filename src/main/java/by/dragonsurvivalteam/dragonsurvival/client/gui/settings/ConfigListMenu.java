@@ -7,8 +7,10 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.OptionsList
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.TextBoxEntry;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigType;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.config.SyncListConfig;
+import com.google.common.primitives.Primitives;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Option;
 import net.minecraft.client.Options;
@@ -64,8 +66,14 @@ public class ConfigListMenu extends OptionsSubScreen{
 
 		if(!isItems){
 			Field fe = ConfigHandler.configFields.get(valueSpec);
+			Class<?> checkType = Primitives.unwrap(fe.getType());
 
-			if(ConfigHandler.isType(fe, ItemLike.class)){
+			if(fe.isAnnotationPresent(ConfigType.class)){
+				ConfigType type = fe.getAnnotation(ConfigType.class);
+				checkType = Primitives.unwrap(type.value());
+			}
+
+			if(ItemLike.class.isAssignableFrom(checkType)){
 				isItems = true;
 			}
 		}
@@ -78,8 +86,7 @@ public class ConfigListMenu extends OptionsSubScreen{
 			}
 		}else{
 			for(OptionListEntry oldVal : oldVals){
-				if(oldVal instanceof TextBoxEntry){
-					TextBoxEntry textBoxEntry = (TextBoxEntry)oldVal;
+				if(oldVal instanceof TextBoxEntry textBoxEntry){
 					createOption(((EditBox)textBoxEntry.widget).getValue());
 				}
 			}
