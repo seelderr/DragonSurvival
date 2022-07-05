@@ -83,7 +83,7 @@ public class NetworkHandler{
 		register(SyncMagicCap.class, new SyncMagicCap());
 		register(SyncDragonAbilitySlot.class, new SyncDragonAbilitySlot());
 		register(SyncAbilityCasting.class, new SyncAbilityCasting());
-		register(ChangeSkillLevel.class, new ChangeSkillLevel());
+		register(SyncSkillLevelChangeCost.class, new SyncSkillLevelChangeCost());
 
 		//Potion sync
 		register(SyncPotionRemovedEffect.class, new SyncPotionRemovedEffect());

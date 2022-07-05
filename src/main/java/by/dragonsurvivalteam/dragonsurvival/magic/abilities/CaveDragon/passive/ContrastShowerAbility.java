@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.passive;
 
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
@@ -14,6 +15,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.ArrayList;
 
+@RegisterDragonAbility
 public class ContrastShowerAbility extends PassiveDragonAbility{
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "passives"}, key = "contrastShower", comment = "Whether the contrast shower ability should be enabled" )
 	public static Boolean contrastShower = true;

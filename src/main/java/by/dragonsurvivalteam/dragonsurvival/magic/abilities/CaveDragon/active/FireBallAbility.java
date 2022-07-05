@@ -30,15 +30,19 @@ public class FireBallAbility extends ChargeCastAbility{
 
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fireball"}, key = "fireball", comment = "Whether the fireball ability should be enabled" )
 	public static Boolean fireball = true;
+
 	@ConfigRange( min = 1, max = 10000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fireball"}, key = "fireballCooldown", comment = "The cooldown in ticks of the fireball ability" )
 	public static Integer fireballCooldown = Functions.secondsToTicks(40);
+
 	@ConfigRange( min = 1, max = 10000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fireball"}, key = "fireballCasttime", comment = "The cast time in ticks of the fireball ability" )
 	public static Integer fireballCasttime = Functions.secondsToTicks(4);
+
 	@ConfigRange( min = 0, max = 100.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fireball"}, key = "fireballDamage", comment = "The amount of damage the fireball ability deals. This value is multiplied by the skill level." )
 	public static Double fireballDamage = 5.0;
+
 	@ConfigRange( min = 0, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fireball"}, key = "fireballManaCost", comment = "The mana cost for using the fireball ball ability" )
 	public static Integer fireballManaCost = 3;
@@ -158,7 +162,7 @@ public class FireBallAbility extends ChargeCastAbility{
 		float f4 = Mth.sin(f1);
 		float f5 = Mth.cos(f1);
 
-		Double size = DragonStateProvider.getCap(player).map(cap -> cap.getSize()).get();
+		Double size = DragonStateProvider.getCap(player).map(DragonStateHandler::getSize).get();
 
 		double x = player.getX() + f4;
 		double y = player.getY() + size / 20F - 0.2;

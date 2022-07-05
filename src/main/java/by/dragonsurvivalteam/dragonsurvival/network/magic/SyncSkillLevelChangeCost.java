@@ -11,36 +11,37 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class ChangeSkillLevel implements IMessage<ChangeSkillLevel>{
+//Syncs the logic for consuming or giving exp to server side to prevent desyncs
+public class SyncSkillLevelChangeCost implements IMessage<SyncSkillLevelChangeCost>{
 	private int level;
 	private int levelChange;
 	private String skill;
 
-	public ChangeSkillLevel(int level, String skill, int levelChange){
+	public SyncSkillLevelChangeCost(int level, String skill, int levelChange){
 		this.level = level;
 		this.skill = skill;
 		this.levelChange = levelChange;
 	}
 
-	public ChangeSkillLevel(){}
+	public SyncSkillLevelChangeCost(){}
 
 	@Override
-	public void encode(ChangeSkillLevel message, FriendlyByteBuf buffer){
+	public void encode(SyncSkillLevelChangeCost message, FriendlyByteBuf buffer){
 		buffer.writeInt(message.level);
 		buffer.writeUtf(message.skill);
 		buffer.writeInt(message.levelChange);
 	}
 
 	@Override
-	public ChangeSkillLevel decode(FriendlyByteBuf buffer){
+	public SyncSkillLevelChangeCost decode(FriendlyByteBuf buffer){
 		int level = buffer.readInt();
 		String skill = buffer.readUtf();
 		int levelChange = buffer.readInt();
-		return new ChangeSkillLevel(level, skill, levelChange);
+		return new SyncSkillLevelChangeCost(level, skill, levelChange);
 	}
 
 	@Override
-	public void handle(ChangeSkillLevel message, Supplier<NetworkEvent.Context> supplier){
+	public void handle(SyncSkillLevelChangeCost message, Supplier<NetworkEvent.Context> supplier){
 		ServerPlayer player = supplier.get().getSender();
 
 		if(player == null){

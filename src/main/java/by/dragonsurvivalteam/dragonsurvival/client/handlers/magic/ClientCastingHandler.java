@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.handlers.magic;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.config.ClientConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncAbilityCasting;
@@ -29,7 +30,7 @@ public class ClientCastingHandler{
 		DragonStateHandler dragonStateHandler = DragonUtils.getHandler(player);
 
 
-		boolean isKeyDown = KeyInputHandler.USE_ABILITY.isDown() || KeyInputHandler.alternateCastMode && (
+		boolean isKeyDown = KeyInputHandler.USE_ABILITY.isDown() || ClientConfig.alternateCastMode && (
 								KeyInputHandler.ABILITY1.isDown() && dragonStateHandler.getMagic().getSelectedAbilitySlot() == 0
 								|| KeyInputHandler.ABILITY2.isDown() && dragonStateHandler.getMagic().getSelectedAbilitySlot() == 1
 								|| KeyInputHandler.ABILITY3.isDown() && dragonStateHandler.getMagic().getSelectedAbilitySlot() == 2

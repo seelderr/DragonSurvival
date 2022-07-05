@@ -138,11 +138,10 @@ public class ClientDragonRender{
 	 */
 	@SubscribeEvent
 	public static void thirdPersonPreRender(RenderPlayerEvent.Pre renderPlayerEvent){
-		if(!(renderPlayerEvent.getPlayer() instanceof AbstractClientPlayer)){
+		if(!(renderPlayerEvent.getPlayer() instanceof AbstractClientPlayer player)){
 			return;
 		}
 
-		AbstractClientPlayer player = (AbstractClientPlayer)renderPlayerEvent.getPlayer();
 		Minecraft mc = Minecraft.getInstance();
 
 		if(!playerDragonHashMap.containsKey(player.getId())){
@@ -166,8 +165,8 @@ public class ClientDragonRender{
 		DragonStateHandler cap = DragonUtils.getHandler(player);
 		if(cap.isDragon()){
 			renderPlayerEvent.setCanceled(true);
-			final float partialRenderTick = renderPlayerEvent.getPartialTick();
-			final float yaw = player.getViewYRot(partialRenderTick);
+			float partialRenderTick = renderPlayerEvent.getPartialTick();
+			float yaw = player.getViewYRot(partialRenderTick);
 
 			DragonLevel dragonStage = cap.getLevel();
 			ResourceLocation texture = DragonSkins.getPlayerSkin(player, cap.getType(), dragonStage);

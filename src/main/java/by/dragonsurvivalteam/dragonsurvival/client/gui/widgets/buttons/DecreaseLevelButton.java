@@ -8,7 +8,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
-import by.dragonsurvivalteam.dragonsurvival.network.magic.ChangeSkillLevel;
+import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncSkillLevelChangeCost;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -38,7 +38,7 @@ public class DecreaseLevelButton extends ArrowButton{
 			if(ability != null){
 				if(ability.level-1 >= ability.getMinLevel()){
 					DragonAbilities.setAbilityLevel(Minecraft.getInstance().player, ability.getClass(),ability.getLevel() - 1);
-					NetworkHandler.CHANNEL.sendToServer(new ChangeSkillLevel(ability.getLevel() - 1, ability.getName(), -1));
+					NetworkHandler.CHANNEL.sendToServer(new SyncSkillLevelChangeCost(ability.getLevel() - 1, ability.getName(), -1));
 				}
 			}
 		});

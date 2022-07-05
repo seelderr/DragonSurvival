@@ -77,8 +77,7 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 	}
 
 	@Override
-	public void onCharging(Player player, int currentChargeTime){
-	}
+	public void onCharging(Player player, int currentChargeTime){}
 
 	@Override
 	public void onChanneling(Player player, int castDuration){

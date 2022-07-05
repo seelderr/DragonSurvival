@@ -20,7 +20,6 @@ buildscript {
 }
 
 plugins {
-    id 'com.github.johnrengelman.shadow' version '7.1.2'
     id "io.freefair.lombok" version "6.5.0.2"
 }
 
@@ -51,10 +50,6 @@ sourceSets {
 }
 
 configurations {
-    shade
-    implementation.extendsFrom shade
-    library
-    implementation.extendsFrom library
     apiImplementation.extendsFrom(implementation)
     apiRuntimeOnly.extendsFrom(runtimeOnly)
 }
@@ -66,12 +61,6 @@ minecraft {
     runs {
         client {}
         server {}
-    }
-}
-
-minecraft.runs.all {
-    lazyToken('minecraft_classpath') {
-        configurations.library.copyRecursive().resolve().collect { it.absolutePath }.join(File.pathSeparator)
     }
 }
 
@@ -87,10 +76,6 @@ repositories {
     maven {
         name = "Progwml6 maven"
         url = "https://dvs1.progwml6.com/files/maven/"
-    }
-    maven {
-        name 'reflections'
-        url 'https://mvnrepository.com/artifact/org.reflections/reflections'
     }
 }
 dependencies {
@@ -119,19 +104,6 @@ jar {
         ])
     }
 }
-
-shadowJar {
-    archiveClassifier = ''
-    configurations = [project.configurations.shade]
-    finalizedBy 'reobfShadowJar'
-}
-
-assemble.dependsOn shadowJar
-
-reobf {
-    shadowJar {}
-}
-
 
 def jvmProperties = [
         "forge.logging.markers": "",

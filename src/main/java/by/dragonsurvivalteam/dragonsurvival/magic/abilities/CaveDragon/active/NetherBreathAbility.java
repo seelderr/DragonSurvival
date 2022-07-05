@@ -319,7 +319,7 @@ public class NetherBreathAbility extends BreathAbility{
 
 	@Override
 	public int getSkillChargeTime(){
-		return fireBreathInitialMana;
+		return fireBreathCasttime;
 	}
 
 	@Override
