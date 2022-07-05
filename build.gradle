@@ -90,7 +90,6 @@ dependencies {
 }
 
 jar {
-    archiveClassifier = 'slim'
     manifest {
         attributes([
                 "Specification-Title": mod_id,
