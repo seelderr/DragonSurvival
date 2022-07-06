@@ -20,6 +20,7 @@ import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
 import net.minecraftforge.common.ForgeConfigSpec.EnumValue;
@@ -32,6 +33,8 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
+import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.minecraftforge.fml.loading.moddiscovery.ModAnnotation.EnumHolder;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistryEntry;
@@ -42,7 +45,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Type;
 
-import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -64,20 +66,25 @@ public class ConfigHandler{
 	public static HashMap<ConfigSide, List<String>> configs = new HashMap<>();
 	public static HashMap<String, ForgeConfigSpec.ConfigValue> configValues = new HashMap<>();
 
-	private static List<Field> getFields(Class<? extends Annotation> annotationClass) {
+	private static List<Field> getFields() {
 		List<Field> instances = new ArrayList<>();
 
-		Type annotationType = Type.getType(annotationClass);
+		Type annotationType = Type.getType(ConfigOption.class);
 		ModList.get().getAllScanData().forEach(s -> {
 			List<ModFileScanData.AnnotationData> ebsTargets = s.getAnnotations().stream().filter(s1 -> s1.targetType() == ElementType.FIELD).filter(annotationData -> annotationType.equals(annotationData.annotationType())).toList();
 
 			ebsTargets.forEach(ad ->  {
-				try{
-					Class<?> c = Class.forName(ad.clazz().getClassName());
-					Field fe = c.getDeclaredField(ad.memberName());
-					instances.add(fe);
-				}catch(ClassNotFoundException | NoSuchFieldException e){
-					e.printStackTrace();
+				EnumHolder sidesValue = (EnumHolder)ad.annotationData().get("side");
+				Dist side = Objects.equals(sidesValue.getValue(), "CLIENT") ? Dist.CLIENT : Dist.DEDICATED_SERVER;
+
+				if(side == FMLEnvironment.dist){
+					try{
+						Class<?> c = Class.forName(ad.clazz().getClassName());
+						Field fe = c.getDeclaredField(ad.memberName());
+						instances.add(fe);
+					}catch(Exception e){
+						e.printStackTrace();
+					}
 				}
 			});
 		});
@@ -86,8 +93,7 @@ public class ConfigHandler{
 
 	public static void initConfig(){
 		initTypes();
-
-		List<Field> set = getFields(ConfigOption.class);
+		List<Field> set = getFields();
 
 		set.forEach(s -> {
 			if(!Modifier.isStatic(s.getModifiers()))
