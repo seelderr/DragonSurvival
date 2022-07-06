@@ -77,7 +77,7 @@ public class ConfigHandler{
 				EnumHolder sidesValue = (EnumHolder)ad.annotationData().get("side");
 				Dist side = Objects.equals(sidesValue.getValue(), "CLIENT") ? Dist.CLIENT : Dist.DEDICATED_SERVER;
 
-				if(side == FMLEnvironment.dist){
+				if(side == FMLEnvironment.dist || side == Dist.DEDICATED_SERVER){
 					try{
 						Class<?> c = Class.forName(ad.clazz().getClassName());
 						Field fe = c.getDeclaredField(ad.memberName());
