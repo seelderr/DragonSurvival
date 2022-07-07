@@ -1,11 +1,11 @@
 package by.dragonsurvivalteam.dragonsurvival.network.magic;
 
-import by.dragonsurvivalteam.dragonsurvival.client.handlers.magic.ClientCastingHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import net.minecraft.client.Minecraft;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -26,14 +26,16 @@ public class SyncAbilityCasting implements IMessage<SyncAbilityCasting>{
 
 	public int playerId;
 	public boolean isCasting;
+	public CompoundTag tag;
 
 	public SyncAbilityCasting(){
 
 	}
 
-	public SyncAbilityCasting(int playerId, boolean isCasting){
+	public SyncAbilityCasting(int playerId, boolean isCasting, CompoundTag nbt){
 		this.playerId = playerId;
 		this.isCasting = isCasting;
+		this.tag = nbt;
 	}
 
 	@Override
@@ -41,13 +43,14 @@ public class SyncAbilityCasting implements IMessage<SyncAbilityCasting>{
 	public void encode(SyncAbilityCasting message, FriendlyByteBuf buffer){
 		buffer.writeInt(message.playerId);
 		buffer.writeBoolean(message.isCasting);
+		buffer.writeNbt(message.tag);
 	}
 
 	@Override
 
 	public SyncAbilityCasting decode(FriendlyByteBuf buffer){
 		int playerId = buffer.readInt();
-		return new SyncAbilityCasting(playerId, buffer.readBoolean());
+		return new SyncAbilityCasting(playerId, buffer.readBoolean(), buffer.readNbt());
 	}
 
 	@Override
@@ -59,19 +62,17 @@ public class SyncAbilityCasting implements IMessage<SyncAbilityCasting>{
 
 			DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
 				ActiveDragonAbility ability = dragonStateHandler.getMagic().getAbilityFromSlot(dragonStateHandler.getMagic().getSelectedAbilitySlot());
-				dragonStateHandler.getMagic().isCasting = message.isCasting;
+				ability.loadNBT(message.tag);
 
+				dragonStateHandler.getMagic().isCasting = message.isCasting;
 				if(message.isCasting){
-					ability.onKeyPressed(player, () -> {
-						dragonStateHandler.getMagic().isCasting = false;
-						NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncAbilityCasting(player.getId(), false));
-					});
+					ability.onKeyPressed(player, () -> {});
 				}else{
 					ability.onKeyReleased(player);
 				}
 			});
 
-			NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncAbilityCasting(player.getId(), message.isCasting));
+			NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY.with(() -> player), new SyncAbilityCasting(player.getId(), message.isCasting, message.tag));
 		}
 	}
 
@@ -79,7 +80,6 @@ public class SyncAbilityCasting implements IMessage<SyncAbilityCasting>{
 	public void run(SyncAbilityCasting message, Supplier<NetworkEvent.Context> supplier){
 		NetworkEvent.Context context = supplier.get();
 		context.enqueueWork(() -> {
-
 			Player thisPlayer = Minecraft.getInstance().player;
 			if(thisPlayer != null){
 				Level world = thisPlayer.level;
@@ -88,19 +88,12 @@ public class SyncAbilityCasting implements IMessage<SyncAbilityCasting>{
 
 					DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
 						ActiveDragonAbility ability = dragonStateHandler.getMagic().getAbilityFromSlot(dragonStateHandler.getMagic().getSelectedAbilitySlot());
+						ability.loadNBT(message.tag);
 						dragonStateHandler.getMagic().isCasting = message.isCasting;
-
 						if(message.isCasting){
-							ability.onKeyPressed(player, () -> {
-								if(player.getId() == thisPlayer.getId()){
-									ClientCastingHandler.status = 2;
-								}
-							});
+							ability.onKeyPressed(player, () -> {});
 						}else{
 							ability.onKeyReleased(player);
-							if(player.getId() == thisPlayer.getId()){
-								ClientCastingHandler.status = 0;
-							}
 						}
 					});
 				}

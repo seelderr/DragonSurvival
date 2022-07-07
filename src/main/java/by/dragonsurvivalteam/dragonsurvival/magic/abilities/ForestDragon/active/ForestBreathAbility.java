@@ -198,7 +198,7 @@ public class ForestBreathAbility extends BreathAbility{
 			return;
 		}
 
-		if(player.level.isClientSide){
+		if(player.level.isClientSide && castDuration <= 1){
 			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> sound());
 		}
 
@@ -289,21 +289,17 @@ public class ForestBreathAbility extends BreathAbility{
 		return (float)(forestBreathDamage * level);
 	}
 
-	private boolean startedSound = false;
 
 	@OnlyIn( Dist.CLIENT )
 	public void sound(){
-		if(!startedSound){
-			if(startingSound == null){
-				startingSound = SimpleSoundInstance.forAmbientAddition(SoundRegistry.forestBreathStart);
-			}
-			Minecraft.getInstance().getSoundManager().play(startingSound);
-			loopingSound = new PoisonBreathSound(this);
-
-			Minecraft.getInstance().getSoundManager().stop(new ResourceLocation(DragonSurvivalMod.MODID, "forest_breath_loop"), SoundSource.PLAYERS);
-			Minecraft.getInstance().getSoundManager().play(loopingSound);
-			startedSound = true;
+		if(startingSound == null){
+			startingSound = SimpleSoundInstance.forAmbientAddition(SoundRegistry.forestBreathStart);
 		}
+		Minecraft.getInstance().getSoundManager().play(startingSound);
+		loopingSound = new PoisonBreathSound(this);
+
+		Minecraft.getInstance().getSoundManager().stop(new ResourceLocation(DragonSurvivalMod.MODID, "forest_breath_loop"), SoundSource.PLAYERS);
+		Minecraft.getInstance().getSoundManager().play(loopingSound);
 	}
 
 	@Override

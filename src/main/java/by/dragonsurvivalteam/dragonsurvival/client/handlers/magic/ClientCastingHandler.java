@@ -48,9 +48,17 @@ public class ClientCastingHandler{
 
 		if(ability != null && ability.getLevel() > 0 && !ability.isDisabled()){
 			if(status == 1 && ability.canCastSkill(player)){
-				NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCasting(player.getId(), true));
+				NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCasting(player.getId(), true, ability.saveNBT()));
+
+				ability.onKeyPressed(player, () -> {
+					status = 2;
+				});
+
 			}else if(status == 2 || status == 1 && !ability.canCastSkill(player)){
-				NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCasting(player.getId(), false));
+				NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCasting(player.getId(), false, ability.saveNBT()));
+
+				ability.onKeyReleased(player);
+				status = 0;
 			}
 		}
 	}

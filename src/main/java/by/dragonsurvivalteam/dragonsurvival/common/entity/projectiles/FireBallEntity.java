@@ -24,14 +24,12 @@ public class FireBallEntity extends DragonBallEntity{
 	}
 
 	public FireBallEntity(EntityType<? extends Fireball> p_i50166_1_, Level p_i50166_2_){
-
 		super(p_i50166_1_, p_i50166_2_);
 	}
 
 	@Override
 
 	protected ParticleOptions getTrailParticle(){
-
 		return ParticleTypes.LARGE_SMOKE;
 	}
 
@@ -67,7 +65,6 @@ public class FireBallEntity extends DragonBallEntity{
 				ent.hurt(DamageSource.explosion((Explosion)null), FireBallAbility.getDamage(getSkillLevel()));
 
 				if(getOwner() instanceof LivingEntity){
-
 					this.doEnchantDamageEffects((LivingEntity)getOwner(), ent);
 				}
 			}

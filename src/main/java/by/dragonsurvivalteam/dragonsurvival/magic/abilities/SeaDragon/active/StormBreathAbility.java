@@ -359,21 +359,17 @@ public class StormBreathAbility extends BreathAbility{
 	}
 
 
-	private boolean startedSound = false;
 
 	@OnlyIn( Dist.CLIENT )
 	public void sound(){
-		if(!startedSound){
-			if(startingSound == null)
-				startingSound = SimpleSoundInstance.forAmbientAddition(SoundRegistry.stormBreathStart);
+		if(startingSound == null)
+			startingSound = SimpleSoundInstance.forAmbientAddition(SoundRegistry.stormBreathStart);
 
-			Minecraft.getInstance().getSoundManager().play(startingSound);
-			loopingSound = new StormBreathSound(this);
+		Minecraft.getInstance().getSoundManager().play(startingSound);
+		loopingSound = new StormBreathSound(this);
 
-			Minecraft.getInstance().getSoundManager().stop(new ResourceLocation(DragonSurvivalMod.MODID, "storm_breath_loop"), SoundSource.PLAYERS);
-			Minecraft.getInstance().getSoundManager().play(loopingSound);
-			startedSound = true;
-		}
+		Minecraft.getInstance().getSoundManager().stop(new ResourceLocation(DragonSurvivalMod.MODID, "storm_breath_loop"), SoundSource.PLAYERS);
+		Minecraft.getInstance().getSoundManager().play(loopingSound);
 	}
 
 	@Override
@@ -416,8 +412,9 @@ public class StormBreathAbility extends BreathAbility{
 			EFFECT_ENTITY = DSEntities.STORM_BREATH_EFFECT.create(player.level);
 
 
-		if(player.level.isClientSide)
+		if(player.level.isClientSide && castDuration <= 1){
 			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> sound());
+		}
 
 		if(player.level.isClientSide){
 			for(int i = 0; i < 6; i++){

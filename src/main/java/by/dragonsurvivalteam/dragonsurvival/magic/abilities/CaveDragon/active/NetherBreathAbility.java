@@ -219,7 +219,7 @@ public class NetherBreathAbility extends BreathAbility{
 			return;
 		}
 
-		if(player.level.isClientSide){
+		if(player.level.isClientSide && castDuration <= 1){
 			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> sound());
 		}
 
@@ -246,22 +246,16 @@ public class NetherBreathAbility extends BreathAbility{
 		}
 	}
 
-	private boolean startedSound = false;
-
-
 	@OnlyIn( Dist.CLIENT )
 	public void sound(){
-		if(!startedSound){
-			if(startingSound == null){
-				startingSound = SimpleSoundInstance.forAmbientAddition(SoundRegistry.fireBreathStart);
-			}
-			Minecraft.getInstance().getSoundManager().play(startingSound);
-			loopingSound = new FireBreathSound(this);
-
-			Minecraft.getInstance().getSoundManager().stop(new ResourceLocation(DragonSurvivalMod.MODID, "fire_breath_loop"), SoundSource.PLAYERS);
-			Minecraft.getInstance().getSoundManager().play(loopingSound);
-			startedSound = true;
+		if(startingSound == null){
+			startingSound = SimpleSoundInstance.forAmbientAddition(SoundRegistry.fireBreathStart);
 		}
+		Minecraft.getInstance().getSoundManager().play(startingSound);
+		loopingSound = new FireBreathSound(this);
+
+		Minecraft.getInstance().getSoundManager().stop(new ResourceLocation(DragonSurvivalMod.MODID, "fire_breath_loop"), SoundSource.PLAYERS);
+		Minecraft.getInstance().getSoundManager().play(loopingSound);
 	}
 
 	@OnlyIn( Dist.CLIENT )

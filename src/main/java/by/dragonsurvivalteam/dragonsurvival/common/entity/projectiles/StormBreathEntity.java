@@ -19,7 +19,6 @@ public class StormBreathEntity extends Entity implements IAnimatable{
 	AnimationFactory animationFactory = new AnimationFactory(this);
 
 	public StormBreathEntity(EntityType<?> p_i48580_1_, Level p_i48580_2_){
-
 		super(p_i48580_1_, p_i48580_2_);
 	}
 
