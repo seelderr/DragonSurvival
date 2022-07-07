@@ -119,7 +119,7 @@ public class ResourceTextField extends EditBox implements TooltipAccessor{
 		String resource = value;
 		String start = value.substring(0, value.length() - resource.length());
 
-		while(StringUtils.countMatches(resource, ":") > 1)
+		while(org.apache.commons.lang3.StringUtils.countMatches(resource, ":") > 1)
 			resource = resource.substring(0, resource.lastIndexOf(":"));
 
 		stack = parseCombinedList(Collections.singletonList(resource), isTag).stream().findFirst().orElse(null);
