@@ -4,6 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.sounds.SoundEvent;
@@ -45,6 +46,39 @@ public abstract class MixinLivingEntity extends Entity{
 		super(p_i48580_1_, p_i48580_2_);
 	}
 
+
+	/**
+	 * Makes lava act like water for cave dragons
+	 */
+	@Redirect(method = "travel", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;isInWater()Z"))
+	public boolean isInWater(LivingEntity instance){
+		if(instance instanceof Player player){
+			if(DragonUtils.isDragon(player)){
+				if(DragonUtils.getDragonType(player) == DragonType.CAVE){
+					return player.isInLava();
+				}
+			}
+		}
+
+		return instance.isInWater();
+	}
+
+	/**
+	 * Makes water act like lava for cave dragons
+	 */
+	@Redirect(method = "travel", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;isInLava()Z"))
+	public boolean isInLava(LivingEntity instance){
+		if(instance instanceof Player player){
+			if(DragonUtils.isDragon(player)){
+				if(DragonUtils.getDragonType(player) == DragonType.CAVE){
+					return player.isInWater();
+				}
+			}
+		}
+
+		return instance.isInWater();
+	}
+
 	@Redirect( method = "collectEquipmentChanges", at = @At( value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getItemBySlot(Lnet/minecraft/world/entity/EquipmentSlot;)Lnet/minecraft/world/item/ItemStack;" ) )
 	private ItemStack getDragonSword(LivingEntity entity, EquipmentSlot slotType){
 		ItemStack mainStack = entity.getMainHandItem();
@@ -55,7 +89,7 @@ public abstract class MixinLivingEntity extends Entity{
 			if(!(mainStack.getItem() instanceof TieredItem) && cap != null){
 				ItemStack sword = cap.getClawInventory().getClawsInventory().getItem(0);
 
-				if(sword != null && !sword.isEmpty()){
+				if(!sword.isEmpty()){
 					return sword;
 				}
 			}
