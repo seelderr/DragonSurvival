@@ -77,6 +77,10 @@ public class MagicHandler{
 			}
 
 
+			if(cap.getMagic().abilities.size() <= 0 || cap.getMagic().innateDragonAbilities.size() <= 0){
+				cap.getMagic().initAbilities(cap.getType());
+			}
+
 			for(ActiveDragonAbility ability : cap.getMagic().getActiveAbilities()){
 				ability.tickCooldown();
 			}

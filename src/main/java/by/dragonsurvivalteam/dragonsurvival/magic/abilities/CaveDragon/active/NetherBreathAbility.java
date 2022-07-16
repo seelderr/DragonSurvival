@@ -76,7 +76,7 @@ public class NetherBreathAbility extends BreathAbility{
 	public static Integer fireBreathCooldown = Functions.secondsToTicks(5);
 	@ConfigRange( min = 1, max = 10000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreathCasttime", comment = "The cast time in ticks of the fire breath ability" )
-	public static Integer fireBreathCasttime = 10;
+	public static Integer fireBreathCasttime = 20;
 	@OnlyIn( Dist.CLIENT )
 	private SoundInstance startingSound;
 
@@ -326,5 +326,10 @@ public class NetherBreathAbility extends BreathAbility{
 		if(player.level.isClientSide){
 			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)this::stopSound);
 		}
+	}
+
+	@Override
+	public boolean requiresStationaryCasting(){
+		return false;
 	}
 }

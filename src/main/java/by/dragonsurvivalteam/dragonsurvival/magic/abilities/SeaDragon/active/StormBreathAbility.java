@@ -88,7 +88,7 @@ public class StormBreathAbility extends BreathAbility{
 	                                                     "sea_dragon",
 	                                                     "actives",
 	                                                     "storm_breath"}, key = "stormBreathCasttime", comment = "The cast time in ticks of the storm breath ability" )
-	public static Integer stormBreathCasttime = 10;
+	public static Integer stormBreathCasttime = 20;
 	@ConfigRange( min = 0, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic",
 	                                                     "abilities",
@@ -475,5 +475,10 @@ public class StormBreathAbility extends BreathAbility{
 	@Override
 	public void castComplete(Player player){
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)this::stopSound);
+	}
+
+	@Override
+	public boolean requiresStationaryCasting(){
+		return false;
 	}
 }

@@ -48,13 +48,14 @@ public class IncreaseLevelButton extends ArrowButton{
 					try{
 						PassiveDragonAbility newActivty = ability.getClass().newInstance();
 						newActivty.setLevel(ability.getLevel() + 1);
-						DragonAbilities.setAbilityLevel(Minecraft.getInstance().player, ability.getClass(), ability.getLevel() + 1);
 
 						if(Minecraft.getInstance().player.experienceLevel >= newActivty.getLevelCost() || Minecraft.getInstance().player.isCreative()){
 							NetworkHandler.CHANNEL.sendToServer(new SyncSkillLevelChangeCost(ability.getLevel() + 1, ability.getName(), 1));
+							DragonAbilities.setAbilityLevel(Minecraft.getInstance().player, ability.getClass(), ability.getLevel() + 1);
+							newActivty.setLevel(ability.getLevel() + 2);
+							lastStore = newActivty;
 						}
-						newActivty.setLevel(ability.getLevel() + 2);
-						lastStore = newActivty;
+
 					}catch(InstantiationException | IllegalAccessException e){
 						throw new RuntimeException(e);
 					}

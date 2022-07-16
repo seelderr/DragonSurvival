@@ -32,39 +32,41 @@ public class DragonAbilities{
 		List<DragonAbility> abs = getInstances(RegisterDragonAbility.class, DragonAbility.class);
 
 		for(DragonAbility ability : abs){
-				if(ability.getDragonType() == null){
-					for(DragonType type : DragonType.values()){
-						ABILITIES.computeIfAbsent(type, s -> new ArrayList<>());
-						ABILITIES.get(type).add(ability);
+			ABILITY_LOOKUP.put(ability.getName(), ability);
 
-						if(ability instanceof InnateDragonAbility ab){
-							INNATE_ABILITIES.computeIfAbsent(type, s -> new ArrayList<>());
-							INNATE_ABILITIES.get(type).add(ab);
-
-						}else if(ability instanceof PassiveDragonAbility ab){
-							PASSIVE_ABILITIES.computeIfAbsent(type, s -> new ArrayList<>());
-							PASSIVE_ABILITIES.get(type).add(ab);
-
-						}else if(ability instanceof ActiveDragonAbility ab){
-							ACTIVE_ABILITIES.computeIfAbsent(type, s -> new ArrayList<>());
-							ACTIVE_ABILITIES.get(type).add(ab);
-						}
-					}
-				}else{
-					ABILITIES.computeIfAbsent(ability.getDragonType(), s -> new ArrayList<>());
-					ABILITIES.get(ability.getDragonType()).add(ability);
+			if(ability.getDragonType() == null){
+				for(DragonType type : DragonType.values()){
+					ABILITIES.computeIfAbsent(type, s -> new ArrayList<>());
+					ABILITIES.get(type).add(ability);
 
 					if(ability instanceof InnateDragonAbility ab){
-						INNATE_ABILITIES.computeIfAbsent(ability.getDragonType(), s -> new ArrayList<>());
-						INNATE_ABILITIES.get(ability.getDragonType()).add(ab);
+						INNATE_ABILITIES.computeIfAbsent(type, s -> new ArrayList<>());
+						INNATE_ABILITIES.get(type).add(ab);
+
 					}else if(ability instanceof PassiveDragonAbility ab){
-						PASSIVE_ABILITIES.computeIfAbsent(ability.getDragonType(), s -> new ArrayList<>());
-						PASSIVE_ABILITIES.get(ability.getDragonType()).add(ab);
+						PASSIVE_ABILITIES.computeIfAbsent(type, s -> new ArrayList<>());
+						PASSIVE_ABILITIES.get(type).add(ab);
+
 					}else if(ability instanceof ActiveDragonAbility ab){
-						ACTIVE_ABILITIES.computeIfAbsent(ability.getDragonType(), s -> new ArrayList<>());
-						ACTIVE_ABILITIES.get(ability.getDragonType()).add(ab);
+						ACTIVE_ABILITIES.computeIfAbsent(type, s -> new ArrayList<>());
+						ACTIVE_ABILITIES.get(type).add(ab);
 					}
 				}
+			}else{
+				ABILITIES.computeIfAbsent(ability.getDragonType(), s -> new ArrayList<>());
+				ABILITIES.get(ability.getDragonType()).add(ability);
+
+				if(ability instanceof InnateDragonAbility ab){
+					INNATE_ABILITIES.computeIfAbsent(ability.getDragonType(), s -> new ArrayList<>());
+					INNATE_ABILITIES.get(ability.getDragonType()).add(ab);
+				}else if(ability instanceof PassiveDragonAbility ab){
+					PASSIVE_ABILITIES.computeIfAbsent(ability.getDragonType(), s -> new ArrayList<>());
+					PASSIVE_ABILITIES.get(ability.getDragonType()).add(ab);
+				}else if(ability instanceof ActiveDragonAbility ab){
+					ACTIVE_ABILITIES.computeIfAbsent(ability.getDragonType(), s -> new ArrayList<>());
+					ACTIVE_ABILITIES.get(ability.getDragonType()).add(ab);
+				}
+			}
 		}
 		ABILITIES.forEach((key, value) -> value.sort(Comparator.comparingInt(DragonAbility::getSortOrder)));
 		INNATE_ABILITIES.forEach((key, value) -> value.sort(Comparator.comparingInt(DragonAbility::getSortOrder)));

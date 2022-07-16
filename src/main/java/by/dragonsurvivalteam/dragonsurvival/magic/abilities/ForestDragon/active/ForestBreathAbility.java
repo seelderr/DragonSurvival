@@ -61,7 +61,7 @@ public class ForestBreathAbility extends BreathAbility{
 	public static Integer forestBreathCooldown = Functions.secondsToTicks(5);
 	@ConfigRange( min = 1, max = 10000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathCasttime", comment = "The casttime in ticks of the forest breath ability" )
-	public static Integer forestBreathCasttime = Functions.secondsToTicks(10);
+	public static Integer forestBreathCasttime = 20;
 	@ConfigRange( min = 0, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathInitialMana", comment = "The mana cost for starting the forest breath ability" )
 	public static Integer forestBreathInitialMana = 2;
@@ -317,5 +317,10 @@ public class ForestBreathAbility extends BreathAbility{
 		if(player.level.isClientSide){
 			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)this::stopSound);
 		}
+	}
+
+	@Override
+	public boolean requiresStationaryCasting(){
+		return false;
 	}
 }

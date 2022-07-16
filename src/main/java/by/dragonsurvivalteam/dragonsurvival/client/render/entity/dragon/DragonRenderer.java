@@ -41,6 +41,14 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity>{
 	}
 
 
+	private int pOverlay;
+
+	@Override
+	public void renderEarly(DragonEntity animatable, PoseStack stackIn, float ticks, MultiBufferSource renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float partialTicks){
+		super.renderEarly(animatable, stackIn, ticks, renderTypeBuffer, vertexBuilder, packedLightIn, packedOverlayIn, red, green, blue, partialTicks);
+		pOverlay = packedOverlayIn;
+	}
+
 	@Override
 	public void render(DragonEntity entity, float entityYaw, float partialTicks, PoseStack stack, MultiBufferSource bufferIn, int packedLightIn){
 		Player player = entity.getPlayer();
@@ -74,7 +82,7 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity>{
 							newMatrixStack.last().pose().multiply(bone.getWorldSpaceXform());
 							newMatrixStack.scale(bone.getScaleX(), bone.getScaleY(), bone.getScaleZ());
 
-							Minecraft.getInstance().getItemRenderer().renderStatic(entity.getPlayer().getInventory().offhand.get(0), TransformType.THIRD_PERSON_LEFT_HAND, packedLightIn, 0, newMatrixStack, bufferIn, 0);
+							Minecraft.getInstance().getItemRenderer().renderStatic(entity.getPlayer().getInventory().offhand.get(0), TransformType.THIRD_PERSON_LEFT_HAND, packedLightIn, pOverlay, newMatrixStack, bufferIn, 0);
 						});
 					}
 
@@ -85,7 +93,7 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity>{
 							newMatrixStack.last().pose().multiply(bone.getWorldSpaceXform());
 							newMatrixStack.scale(bone.getScaleX(), bone.getScaleY(), bone.getScaleZ());
 
-							Minecraft.getInstance().getItemRenderer().renderStatic(entity.getPlayer().getInventory().getSelected(), TransformType.THIRD_PERSON_RIGHT_HAND, packedLightIn, 0, newMatrixStack, bufferIn, 0);
+							Minecraft.getInstance().getItemRenderer().renderStatic(entity.getPlayer().getInventory().getSelected(), TransformType.FIRST_PERSON_RIGHT_HAND, packedLightIn, pOverlay, newMatrixStack, bufferIn, 0);
 						});
 					}
 
