@@ -112,7 +112,7 @@ public class DragonSkins{
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 
 		return switch(level){
-			case BABY -> handler.getSkin().renderNewborn;
+			case NEWBORN -> handler.getSkin().renderNewborn;
 			case YOUNG -> handler.getSkin().renderYoung;
 			case ADULT -> handler.getSkin().renderAdult;
 		};
@@ -180,7 +180,7 @@ public class DragonSkins{
 				if(skinName.contains("_")){
 					String name = skinName.substring(0, skinName.lastIndexOf("_"));
 					String level = skinName.substring(skinName.lastIndexOf("_") + 1, skinName.indexOf("."));
-					DragonLevel size = level.equalsIgnoreCase("adult") ? DragonLevel.ADULT : level.equalsIgnoreCase("young") ? DragonLevel.YOUNG : level.equalsIgnoreCase("newborn") ? DragonLevel.BABY : null;
+					DragonLevel size = level.equalsIgnoreCase("adult") ? DragonLevel.ADULT : level.equalsIgnoreCase("young") ? DragonLevel.YOUNG : level.equalsIgnoreCase("newborn") ? DragonLevel.NEWBORN : null;
 
 					if(size != null){
 						if(!SKIN_USERS.containsKey(size)){

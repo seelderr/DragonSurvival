@@ -228,7 +228,7 @@ public class DragonStateHandler implements NBTInterface{
 				}
 
 			if(getSize() == 0)
-				setSize(DragonLevel.BABY.size);
+				setSize(DragonLevel.NEWBORN.size);
 
 			setLavaAirSupply(tag.getInt("lavaAirSupply"));
 		}
@@ -349,7 +349,7 @@ public class DragonStateHandler implements NBTInterface{
 
 	public DragonLevel getLevel(){
 		if(size < 20F)
-			return DragonLevel.BABY;
+			return DragonLevel.NEWBORN;
 		else if(size < 30F)
 			return DragonLevel.YOUNG;
 		else
@@ -399,14 +399,14 @@ public class DragonStateHandler implements NBTInterface{
 		}
 
 		switch(getLevel()){
-			case BABY:
-				if(ServerConfig.bonusUnlockedAt != DragonLevel.BABY){
+			case NEWBORN:
+				if(ServerConfig.bonusUnlockedAt != DragonLevel.NEWBORN){
 					if(harvestLevel <= ServerConfig.baseHarvestLevel + baseHarvestLevel)
 						return true;
 					break;
 				}
 			case YOUNG:
-				if(ServerConfig.bonusUnlockedAt == DragonLevel.ADULT && getLevel() != DragonLevel.BABY){
+				if(ServerConfig.bonusUnlockedAt == DragonLevel.ADULT && getLevel() != DragonLevel.NEWBORN){
 					if(harvestLevel <= ServerConfig.baseHarvestLevel + baseHarvestLevel)
 						return true;
 					break;

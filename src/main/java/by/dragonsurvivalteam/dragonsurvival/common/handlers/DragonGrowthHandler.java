@@ -62,7 +62,7 @@ public class DragonGrowthHandler{
 			List<Item> allowedItems = new ArrayList<>();
 
 			switch(handler.getLevel()){
-				case BABY:
+				case NEWBORN:
 					if(newbornList.contains(item)){
 						canContinue = true;
 					}else if(youngList.contains(item) || adultList.contains(item)){
@@ -134,7 +134,7 @@ public class DragonGrowthHandler{
 		}
 
 		switch(level){
-			case BABY:
+			case NEWBORN:
 				if(adultList.contains(item)){
 					increment = 3;
 				}else if(youngList.contains(item)){
@@ -194,7 +194,7 @@ public class DragonGrowthHandler{
 				double timeIncrement = 60 * 20;
 
 				if(handler.getSize() < YOUNG.size){
-					d = (((YOUNG.size - BABY.size) / ((newbornToYoung * 20.0))) * timeIncrement) * ServerConfig.newbornGrowthModifier;
+					d = (((YOUNG.size - NEWBORN.size) / ((newbornToYoung * 20.0))) * timeIncrement) * ServerConfig.newbornGrowthModifier;
 				}else if(handler.getSize() < ADULT.size){
 					d = (((ADULT.size - YOUNG.size) / ((youngToAdult * 20.0))) * timeIncrement) * ServerConfig.youngGrowthModifier;
 				}else if(handler.getSize() < 40){

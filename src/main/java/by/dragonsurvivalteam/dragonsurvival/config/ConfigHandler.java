@@ -371,15 +371,13 @@ public class ConfigHandler{
 
 			if(o instanceof String tex){
 				ResourceLocation location = ResourceLocation.tryParse(tex);
-				if(ent.getA().get().containsKey(location)){
-					Optional<? extends Holder<?>> optional = ent.getA().get().getHolder(location);
-					optional.ifPresent(s -> list.add((T)s.value()));
-				}else{
-					TagKey<T> tagKey = TagKey.create((ResourceKey<? extends Registry<T>>)ent.getB().get(), location);
-					if(tagKey.isFor(ent.getA().get().getRegistryKey())){
-						ITagManager<T> manager = (ITagManager<T>)ent.getA().get().tags();
-						list.addAll((List<T>)manager.getTag(tagKey).stream().toList());
-					}
+				Optional<? extends Holder<?>> optional = ent.getA().get().getHolder(location);
+				optional.ifPresent(s -> list.add((T)s.value()));
+
+				TagKey<T> tagKey = TagKey.create((ResourceKey<? extends Registry<T>>)ent.getB().get(), location);
+				if(tagKey.isFor(ent.getA().get().getRegistryKey())){
+					ITagManager<T> manager = (ITagManager<T>)ent.getA().get().tags();
+					list.addAll((List<T>)manager.getTag(tagKey).stream().toList());
 				}
 			}
 		}

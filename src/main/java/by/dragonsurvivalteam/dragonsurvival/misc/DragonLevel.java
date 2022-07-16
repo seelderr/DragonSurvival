@@ -4,7 +4,7 @@ package by.dragonsurvivalteam.dragonsurvival.misc;
 import net.minecraft.client.resources.language.I18n;
 
 public enum DragonLevel{
-	BABY(14, 1.1f, "newborn"),
+	NEWBORN(14, 1.1f, "newborn"),
 	YOUNG(20, 1.6f, "young"),
 	ADULT(30, 2.1f, "adult");
 

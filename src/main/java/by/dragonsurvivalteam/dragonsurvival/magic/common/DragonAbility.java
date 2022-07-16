@@ -47,7 +47,7 @@ public abstract class DragonAbility {
 	public abstract ResourceLocation[] getSkillTextures();
 
 	public ResourceLocation getIcon(){
-		return getSkillTextures()[Mth.clamp(getLevel(), 0, getSkillTextures().length)];
+		return getSkillTextures()[Mth.clamp(getLevel(), 0, getSkillTextures().length-1)];
 	}
 
 	public int getSortOrder(){

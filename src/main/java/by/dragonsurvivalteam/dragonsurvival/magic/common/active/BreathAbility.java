@@ -84,10 +84,10 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 		DragonStateHandler playerStateHandler = DragonUtils.getHandler(player);
 
 		DragonLevel growthLevel = DragonStateProvider.getCap(player).map(cap -> cap.getLevel()).get();
-		RANGE = (int)Math.round(4 + (playerStateHandler.getSize() - DragonLevel.BABY.size) / (DragonLevel.ADULT.size - DragonLevel.BABY.size) * 4);
+		RANGE = (int)Math.round(4 + (playerStateHandler.getSize() - DragonLevel.NEWBORN.size) / (DragonLevel.ADULT.size - DragonLevel.NEWBORN.size) * 4);
 		yaw = (float)Math.toRadians(-player.getYRot());
 		pitch = (float)Math.toRadians(-player.getXRot());
-		speed = growthLevel == DragonLevel.BABY ? 0.1F : growthLevel == DragonLevel.YOUNG ? 0.2F : 0.3F; //Changes distance
+		speed = growthLevel == DragonLevel.NEWBORN ? 0.1F : growthLevel == DragonLevel.YOUNG ? 0.2F : 0.3F; //Changes distance
 		spread = 0.1f;
 		xComp = (float)(Math.sin(yaw) * Math.cos(pitch));
 		yComp = (float)Math.sin(pitch);
@@ -272,7 +272,7 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 		ArrayList<Component> components = new ArrayList<Component>();
 
 		DragonLevel growthLevel = DragonUtils.getDragonLevel(player);
-		int RANGE = growthLevel == DragonLevel.BABY ? 4 : growthLevel == DragonLevel.YOUNG ? 7 : 10;
+		int RANGE = growthLevel == DragonLevel.NEWBORN ? 4 : growthLevel == DragonLevel.YOUNG ? 7 : 10;
 
 		components.add(new TranslatableComponent("ds.skill.mana_cost", getChargingManaCost()));
 		components.add(new TranslatableComponent("ds.skill.channel_cost", getManaCost(), 2));

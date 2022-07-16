@@ -119,10 +119,10 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 				String age = (int)handler.getSize() - handler.getLevel().size + "/";
 				double seconds = 0;
 
-				if(handler.getLevel() == DragonLevel.BABY){
+				if(handler.getLevel() == DragonLevel.NEWBORN){
 					age += DragonLevel.YOUNG.size - handler.getLevel().size;
 					double missing = DragonLevel.YOUNG.size - handler.getSize();
-					double increment = ((DragonLevel.YOUNG.size - DragonLevel.BABY.size) / ((DragonGrowthHandler.newbornToYoung * 20.0))) * ServerConfig.newbornGrowthModifier;
+					double increment = ((DragonLevel.YOUNG.size - DragonLevel.NEWBORN.size) / ((DragonGrowthHandler.newbornToYoung * 20.0))) * ServerConfig.newbornGrowthModifier;
 					seconds = (missing / increment) / 20;
 				}else if(handler.getLevel() == DragonLevel.YOUNG){
 					age += DragonLevel.ADULT.size - handler.getLevel().size;
@@ -258,8 +258,8 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 			double curSize = handler.getSize();
 			float progress = 0;
 
-			if(handler.getLevel() == DragonLevel.BABY){
-				progress = (float)((curSize - DragonLevel.BABY.size) / (DragonLevel.YOUNG.size - DragonLevel.BABY.size));
+			if(handler.getLevel() == DragonLevel.NEWBORN){
+				progress = (float)((curSize - DragonLevel.NEWBORN.size) / (DragonLevel.YOUNG.size - DragonLevel.NEWBORN.size));
 			}else if(handler.getLevel() == DragonLevel.YOUNG){
 				progress = (float)((curSize - DragonLevel.YOUNG.size) / (DragonLevel.ADULT.size - DragonLevel.YOUNG.size));
 			}else if(handler.getLevel() == DragonLevel.ADULT && handler.getSize() < 40){

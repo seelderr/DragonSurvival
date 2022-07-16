@@ -30,7 +30,7 @@ public class DragonModifiers{
 	}
 
 	public static AttributeModifier buildReachMod(double size){
-		double reachMod = (((size - DragonLevel.BABY.size) / (60.0 - DragonLevel.BABY.size)) * (ServerConfig.reachBonus));
+		double reachMod = (((size - DragonLevel.NEWBORN.size) / (60.0 - DragonLevel.NEWBORN.size)) * (ServerConfig.reachBonus));
 
 		return new AttributeModifier(REACH_MODIFIER_UUID, "Dragon Reach Adjustment", reachMod, Operation.MULTIPLY_BASE);
 	}

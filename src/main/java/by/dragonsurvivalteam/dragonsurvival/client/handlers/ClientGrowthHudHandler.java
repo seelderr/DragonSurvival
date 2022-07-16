@@ -44,15 +44,15 @@ public class ClientGrowthHudHandler{
 
 		int increment = DragonGrowthHandler.getIncrement(stack.getItem(), handler.getLevel());
 
-		if(increment != 0 && (handler.getSize() < ServerConfig.maxGrowthSize && increment > 0 || increment < 0 && handler.getSize() >= (DragonLevel.BABY.size + 1))){
+		if(increment != 0 && (handler.getSize() < ServerConfig.maxGrowthSize && increment > 0 || increment < 0 && handler.getSize() >= (DragonLevel.NEWBORN.size + 1))){
 			float curSize = (float)handler.getSize();
 			float nextSize = (float)(handler.getSize() + increment);
 			float progress = 0;
 			float nextProgess = 0;
 
-			if(handler.getLevel() == DragonLevel.BABY){
-				progress = (curSize - DragonLevel.BABY.size) / (DragonLevel.YOUNG.size - DragonLevel.BABY.size);
-				nextProgess = (nextSize - DragonLevel.BABY.size) / (DragonLevel.YOUNG.size - DragonLevel.BABY.size);
+			if(handler.getLevel() == DragonLevel.NEWBORN){
+				progress = (curSize - DragonLevel.NEWBORN.size) / (DragonLevel.YOUNG.size - DragonLevel.NEWBORN.size);
+				nextProgess = (nextSize - DragonLevel.NEWBORN.size) / (DragonLevel.YOUNG.size - DragonLevel.NEWBORN.size);
 			}else if(handler.getLevel() == DragonLevel.YOUNG){
 				progress = (curSize - DragonLevel.YOUNG.size) / (DragonLevel.ADULT.size - DragonLevel.YOUNG.size);
 				nextProgess = (nextSize - DragonLevel.YOUNG.size) / (DragonLevel.ADULT.size - DragonLevel.YOUNG.size);

@@ -39,7 +39,7 @@ public class StarBoneItem extends Item{
 				double size = dragonStateHandler.getSize();
 				if(size > 14){
 					size -= 2;
-					size = Math.max(size, DragonLevel.BABY.size);
+					size = Math.max(size, DragonLevel.NEWBORN.size);
 					dragonStateHandler.setSize(size, playerIn);
 
 

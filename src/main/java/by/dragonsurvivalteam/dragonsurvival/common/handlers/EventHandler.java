@@ -318,7 +318,7 @@ public class EventHandler{
 		DragonStateProvider.getCap(living).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon()){
 				switch(dragonStateHandler.getLevel()){
-					case BABY:
+					case NEWBORN:
 						living.push(0, ServerConfig.newbornJump, 0); //1+ block
 						break;
 					case YOUNG:

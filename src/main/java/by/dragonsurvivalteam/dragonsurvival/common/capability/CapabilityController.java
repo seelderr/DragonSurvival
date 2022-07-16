@@ -71,7 +71,7 @@ public class CapabilityController{
 			DragonStateProvider.getCap(target).ifPresent(targetCap -> {
 				if(targetCap.isDragon() && target.getPose() == Pose.CROUCHING && targetCap.getSize() >= 40 && !target.isVehicle()){
 					DragonStateProvider.getCap(self).ifPresent(selfCap -> {
-						if(!selfCap.isDragon() || selfCap.getLevel() == DragonLevel.BABY){
+						if(!selfCap.isDragon() || selfCap.getLevel() == DragonLevel.NEWBORN){
 							self.startRiding(target);
 							target.connection.send(new ClientboundSetPassengersPacket(target));
 							targetCap.setPassengerId(self.getId());
@@ -114,7 +114,7 @@ public class CapabilityController{
 			}
 			if(passenger instanceof ServerPlayer){
 				DragonStateHandler passengerCap = DragonUtils.getHandler(passenger);
-				if(passengerCap.isDragon() && passengerCap.getLevel() != DragonLevel.BABY){
+				if(passengerCap.isDragon() && passengerCap.getLevel() != DragonLevel.NEWBORN){
 					flag = true;
 					passenger.stopRiding();
 					player.connection.send(new ClientboundSetPassengersPacket(player));

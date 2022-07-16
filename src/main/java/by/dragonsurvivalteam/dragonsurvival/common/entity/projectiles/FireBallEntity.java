@@ -28,7 +28,6 @@ public class FireBallEntity extends DragonBallEntity{
 	}
 
 	@Override
-
 	protected ParticleOptions getTrailParticle(){
 		return ParticleTypes.LARGE_SMOKE;
 	}

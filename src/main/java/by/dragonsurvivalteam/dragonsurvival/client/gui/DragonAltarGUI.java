@@ -78,13 +78,13 @@ public class DragonAltarGUI extends Screen{
 				if(button.isHoveredOrFocused()){
 					handler1.setType(button.type);
 					handler1.setHasWings(true);
-					handler1.setSize(DragonLevel.BABY.size);
-					handler1.getSkin().skinPreset.skinAges.get(DragonLevel.BABY).defaultSkin = true;
+					handler1.setSize(DragonLevel.NEWBORN.size);
+					handler1.getSkin().skinPreset.skinAges.get(DragonLevel.NEWBORN).defaultSkin = true;
 
 					handler2.setType(button.type);
 					handler2.setHasWings(true);
-					handler2.setSize(button.type == DragonType.NONE ? DragonLevel.BABY.size : DragonLevel.ADULT.size);
-					handler2.getSkin().skinPreset.skinAges.get(button.type == DragonType.NONE ? DragonLevel.BABY : DragonLevel.ADULT).defaultSkin = true;
+					handler2.setSize(button.type == DragonType.NONE ? DragonLevel.NEWBORN.size : DragonLevel.ADULT.size);
+					handler2.getSkin().skinPreset.skinAges.get(button.type == DragonType.NONE ? DragonLevel.NEWBORN : DragonLevel.ADULT).defaultSkin = true;
 
 					FakeClientPlayerUtils.getFakePlayer(0, handler1).animationSupplier = () -> animations[animation1];
 					FakeClientPlayerUtils.getFakePlayer(1, handler2).animationSupplier = () -> animations[animation2];

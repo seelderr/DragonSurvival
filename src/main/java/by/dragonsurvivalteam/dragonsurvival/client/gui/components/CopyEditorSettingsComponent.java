@@ -69,9 +69,9 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 				screen.doAction();
 
 				if(newborn.active && newborn.selected()){
-					SkinAgeGroup ageGroup = new SkinAgeGroup(DragonLevel.BABY);
+					SkinAgeGroup ageGroup = new SkinAgeGroup(DragonLevel.NEWBORN);
 					ageGroup.readNBT(preset.writeNBT());
-					screen.preset.skinAges.put(DragonLevel.BABY, ageGroup);
+					screen.preset.skinAges.put(DragonLevel.NEWBORN, ageGroup);
 				}
 
 				if(young.active && young.selected()){
@@ -118,7 +118,7 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 			@Override
 			public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
 				super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
-				if(screen.level == DragonLevel.BABY){
+				if(screen.level == DragonLevel.NEWBORN){
 					selected = true;
 					active = false;
 				}else{

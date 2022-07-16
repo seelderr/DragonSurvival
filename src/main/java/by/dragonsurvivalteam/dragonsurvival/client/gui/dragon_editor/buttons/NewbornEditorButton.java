@@ -16,7 +16,7 @@ public class NewbornEditorButton extends Button{
 
 	public NewbornEditorButton(DragonEditorScreen dragonEditorScreen){
 		super(dragonEditorScreen.width / 2 - 180, dragonEditorScreen.guiTop - 30, 120, 20, new TranslatableComponent("ds.level.newborn"), (btn) -> {
-			dragonEditorScreen.level = DragonLevel.BABY;
+			dragonEditorScreen.level = DragonLevel.NEWBORN;
 			dragonEditorScreen.dragonRender.zoom = dragonEditorScreen.level.size;
 			dragonEditorScreen.handler.getSkin().updateLayers.addAll(Arrays.stream(EnumSkinLayer.values()).distinct().toList());
 			dragonEditorScreen.update();
@@ -32,7 +32,7 @@ public class NewbornEditorButton extends Button{
 
 	@Override
 	public void renderButton(PoseStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_){
-		int j = isHovered || dragonEditorScreen.level == DragonLevel.BABY ? 16777215 : 10526880;
+		int j = isHovered || dragonEditorScreen.level == DragonLevel.NEWBORN ? 16777215 : 10526880;
 		TextRenderUtil.drawCenteredScaledText(stack, x + (width / 2), y + 4, 1.5f, this.getMessage().getString(), j | Mth.ceil(this.alpha * 255.0F) << 24);
 	}
 }

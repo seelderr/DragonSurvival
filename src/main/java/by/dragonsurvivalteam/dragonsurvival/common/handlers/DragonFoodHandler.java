@@ -103,20 +103,29 @@ public class DragonFoodHandler{
 		};
 		configFood = Stream.of(configFood).sorted(Comparator.reverseOrder()).toArray(String[]::new);
 		for(String entry : configFood){
+			if(entry.startsWith("item:")){
+				entry = entry.substring("item:".length());
+			}
+
+			if(entry.startsWith("tag:")){
+				entry = entry.substring("tag:".length());
+			}
+
 			String[] sEntry = entry.split(":");
-			ResourceLocation rlEntry = new ResourceLocation(sEntry[1], sEntry[2]);
+			ResourceLocation rlEntry = new ResourceLocation(sEntry[0], sEntry[1]);
 
-
-			if(sEntry[0].equalsIgnoreCase("tag")){
-				TagKey<Item> tagKey = TagKey.create(Registry.ITEM_REGISTRY, rlEntry);
+			TagKey<Item> tagKey = TagKey.create(Registry.ITEM_REGISTRY, rlEntry);
+			if(ForgeRegistries.ITEMS.tags().isKnownTagName(tagKey)){
 				ForgeRegistries.ITEMS.tags().getTag(tagKey).forEach((item) -> {
 					FoodProperties FoodProperties = calculateDragonFoodProperties(item, type, sEntry.length == 5 ? Integer.parseInt(sEntry[3]) : item.getFoodProperties() != null ? item.getFoodProperties().getNutrition() : 1, sEntry.length == 5 ? Integer.parseInt(sEntry[4]) : item.getFoodProperties() != null ? (int)(item.getFoodProperties().getNutrition() * (item.getFoodProperties().getSaturationModifier() * 2.0F)) : 0, true);
 					if(FoodProperties != null){
 						foodMap.put(item, FoodProperties);
 					}
 				});
-			}else{
-				final Item item = ForgeRegistries.ITEMS.getValue(rlEntry);
+			}
+
+			if(ForgeRegistries.ITEMS.containsKey(rlEntry)){
+				Item item = ForgeRegistries.ITEMS.getValue(rlEntry);
 
 				if(item != null && item != Items.AIR){
 					FoodProperties FoodProperties = calculateDragonFoodProperties(item, type, sEntry.length == 5 ? Integer.parseInt(sEntry[3]) : item.getFoodProperties() != null ? item.getFoodProperties().getNutrition() : 1, sEntry.length == 5 ? Integer.parseInt(sEntry[4]) : item.getFoodProperties() != null ? (int)(item.getFoodProperties().getNutrition() * (item.getFoodProperties().getSaturationModifier() * 2.0F)) : 0, true);
@@ -126,7 +135,7 @@ public class DragonFoodHandler{
 						foodMap.put(item, FoodProperties);
 					}
 				}else{
-				//	DragonSurvivalMod.LOGGER.warn("Unknown item '{}:{}' in {} dragon FoodProperties config.", sEntry[1], sEntry[2], type.toString().toLowerCase());
+					//	DragonSurvivalMod.LOGGER.warn("Unknown item '{}:{}' in {} dragon FoodProperties config.", sEntry[1], sEntry[2], type.toString().toLowerCase());
 				}
 			}
 		}
