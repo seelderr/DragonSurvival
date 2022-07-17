@@ -271,7 +271,14 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 				type = localHandler.getType();
 			}
 
+			DragonEditorRegistry.savedCustomizations.current.putIfAbsent(type, new HashMap<>());
+			DragonEditorRegistry.savedCustomizations.current.get(type).putIfAbsent(level, 0);
+
 			currentSelected = DragonEditorRegistry.savedCustomizations.current.get(type).get(level);
+
+			DragonEditorRegistry.savedCustomizations.skinPresets.putIfAbsent(type, new HashMap<>());
+			DragonEditorRegistry.savedCustomizations.skinPresets.get(type).putIfAbsent(currentSelected, new SkinPreset());
+
 			preset = new SkinPreset();
 			preset.readNBT(DragonEditorRegistry.savedCustomizations.skinPresets.get(type).get(currentSelected).writeNBT());
 			handler.getSkin().skinPreset = preset;

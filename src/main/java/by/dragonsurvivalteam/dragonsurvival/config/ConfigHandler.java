@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import com.electronwill.nightconfig.core.EnumGetMethod;
+import com.google.common.primitives.Primitives;
 import com.google.gson.reflect.TypeToken;
 import net.minecraft.Util;
 import net.minecraft.core.Holder;
@@ -129,6 +130,7 @@ public class ConfigHandler{
 		for(String key : configs.getOrDefault(side, Collections.emptyList())){
 			ConfigOption option = configObjects.get(key);
 			Field fe = configFields.get(key);
+			Object defaultOb = defaultConfigValues.get(option.key());
 
 			for(String string : option.category()){
 				builder.push(string);
@@ -143,28 +145,29 @@ public class ConfigHandler{
 			}
 
 			try{
-				Object ob = convertToString(fe.get(null));
+				Object tt = Primitives.wrap(defaultOb.getClass()).cast(defaultOb);
+
 				if(fe.isAnnotationPresent(ConfigRange.class)){
 					ConfigRange range = fe.getAnnotation(ConfigRange.class);
-					if(fe.getType().equals(int.class) || fe.getType().equals(Integer.class)){
-						IntValue value = builder.defineInRange(option.key(), ((Number)ob).intValue(), (int)range.min(), (int)range.max());
+					if(tt instanceof Integer intVal){
+						IntValue value = builder.defineInRange(option.key(), intVal, (int)range.min(), (int)range.max());
 						configValues.put(key, value);
-					}else if(fe.getType().equals(float.class) || fe.getType().equals(Float.class)){
-						DoubleValue value = builder.defineInRange(option.key(), ((Number)ob).floatValue(), range.min(), range.max());
+					}else if(tt instanceof Float floatVal){
+						DoubleValue value = builder.defineInRange(option.key(), floatVal, range.min(), range.max());
 						configValues.put(key, value);
-					}else if(fe.getType().equals(long.class) || fe.getType().equals(Long.class)){
-						LongValue value = builder.defineInRange(option.key(), ((Number)ob).longValue(), (long)range.min(), (long)range.max());
+					}else if(tt instanceof Long longVal){
+						LongValue value = builder.defineInRange(option.key(), longVal, (long)range.min(), (long)range.max());
 						configValues.put(key, value);
-					}else if(fe.getType().equals(double.class) || fe.getType().equals(Double.class)){
-						DoubleValue value = builder.defineInRange(option.key(), ((Number)ob).doubleValue(), range.min(), range.max());
+					}else if(tt instanceof Double doubleVal){
+						DoubleValue value = builder.defineInRange(option.key(), doubleVal, range.min(), range.max());
 						configValues.put(key, value);
 					}
 
 				}else if(fe.getType().isEnum()){
-					EnumValue value = builder.defineEnum(option.key(), (Enum)fe.get(null), ((Enum<?>)fe.get(null)).getClass().getEnumConstants());
+					EnumValue value = builder.defineEnum(option.key(), (Enum)defaultOb, ((Enum<?>)defaultOb).getClass().getEnumConstants());
 					configValues.put(key, value);
 				}else{
-					ForgeConfigSpec.ConfigValue<Object> value = builder.define(option.key(), ob);
+					ForgeConfigSpec.ConfigValue<Object> value = builder.define(option.key(), defaultOb);
 					configValues.put(key, value);
 				}
 			}catch(Exception e){

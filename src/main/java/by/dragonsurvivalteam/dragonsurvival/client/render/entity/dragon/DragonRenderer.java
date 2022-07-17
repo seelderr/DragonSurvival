@@ -4,6 +4,8 @@ import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.BreathAbility;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -49,6 +51,11 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity>{
 		pOverlay = packedOverlayIn;
 	}
 
+	@ConfigOption( side = ConfigSide.CLIENT, key = "renderHeldItem", comment = "Should items be rendered in third person for dragon players?", category = "rendering" )
+	public static boolean renderHeldItem = true;
+
+
+
 	@Override
 	public void render(DragonEntity entity, float entityYaw, float partialTicks, PoseStack stack, MultiBufferSource bufferIn, int packedLightIn){
 		Player player = entity.getPlayer();
@@ -74,6 +81,7 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity>{
 			GeoModel model = getGeoModelProvider().getModel(getGeoModelProvider().getModelLocation(entity));
 
 			if(model != null){
+				if(renderHeldItem){
 				if(player != Minecraft.getInstance().player || ClientDragonRender.alternateHeldItem || !Minecraft.getInstance().options.getCameraType().isFirstPerson()){
 					if(!entity.getPlayer().getInventory().offhand.get(0).isEmpty()){
 						model.getBone(ClientDragonRender.renderItemsInMouth ? "LeftItem_jaw" : "LeftItem").ifPresent(bone -> {
@@ -96,6 +104,7 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity>{
 							Minecraft.getInstance().getItemRenderer().renderStatic(entity.getPlayer().getInventory().getSelected(), TransformType.FIRST_PERSON_RIGHT_HAND, packedLightIn, pOverlay, newMatrixStack, bufferIn, 0);
 						});
 					}
+				}
 
 					model.getBone("BreathSource").ifPresent(bone -> {
 						PoseStack newMatrixStack = new PoseStack();

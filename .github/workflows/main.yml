@@ -85,7 +85,6 @@ jobs:
                 "text": "⚠️ This is an automatically generated file with untested content. Be extremely careful not to use this in your main world without creating backups! ⚠️"
               }
             }
-          last-commit-only: true
 
       - name: Discord early access publish
         if: steps.semantic.outputs.new_release_published == 'true'
