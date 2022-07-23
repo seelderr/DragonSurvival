@@ -208,29 +208,31 @@ public class ClientMagicHUDHandler{
 				skillCastTime = ability1.getSkillChargeTime();
 			}
 
-			if(currentCastTime > 0 && skillCastTime != -1){
-				mStack.pushPose();
-				mStack.scale(0.5F, 0.5F, 0);
+			if(cap.getMagic().isCasting){
+				if(currentCastTime > 0 && skillCastTime != -1){
+					mStack.pushPose();
+					mStack.scale(0.5F, 0.5F, 0);
 
-				int yPos1 = cap.getType() == DragonType.CAVE ? 0 : cap.getType() == DragonType.FOREST ? 47 : 94;
-				int yPos2 = cap.getType() == DragonType.CAVE ? 142 : cap.getType() == DragonType.FOREST ? 147 : 152;
+					int yPos1 = cap.getType() == DragonType.CAVE ? 0 : cap.getType() == DragonType.FOREST ? 47 : 94;
+					int yPos2 = cap.getType() == DragonType.CAVE ? 142 : cap.getType() == DragonType.FOREST ? 147 : 152;
 
-				float perc = Math.min((float)currentCastTime / (float)skillCastTime, 1);
+					float perc = Math.min((float)currentCastTime / (float)skillCastTime, 1);
 
-				int startX = width / 2 - 49 + castbarXOffset;
-				int startY = height - 96 + castbarYOffset;
+					int startX = width / 2 - 49 + castbarXOffset;
+					int startY = height - 96 + castbarYOffset;
 
-				mStack.translate(startX, startY, 0);
+					mStack.translate(startX, startY, 0);
 
 
-				RenderSystem.setShaderTexture(0, castBars);
-				Screen.blit(mStack, startX, startY, 0, yPos1, 196, 47, 256, 256);
-				Screen.blit(mStack, startX + 2, startY + 41, 0, yPos2, (int)(191 * perc), 4, 256, 256);
+					RenderSystem.setShaderTexture(0, castBars);
+					Screen.blit(mStack, startX, startY, 0, yPos1, 196, 47, 256, 256);
+					Screen.blit(mStack, startX + 2, startY + 41, 0, yPos2, (int)(191 * perc), 4, 256, 256);
 
-				RenderSystem.setShaderTexture(0, ability.getIcon());
-				Screen.blit(mStack, startX + 78, startY + 3, 0, 0, 36, 36, 36, 36);
+					RenderSystem.setShaderTexture(0, ability.getIcon());
+					Screen.blit(mStack, startX + 78, startY + 3, 0, 0, 36, 36, 36, 36);
 
-				mStack.popPose();
+					mStack.popPose();
+				}
 			}
 
 			if(errorTicks > 0){

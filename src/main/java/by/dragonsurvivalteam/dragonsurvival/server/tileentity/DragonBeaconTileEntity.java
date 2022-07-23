@@ -23,7 +23,7 @@ import java.util.Random;
 
 public class DragonBeaconTileEntity extends BaseBlockTileEntity{
 	public Type type = Type.NONE;
-	public int tick;
+	public float tick;
 
 	public final float bobOffs;
 

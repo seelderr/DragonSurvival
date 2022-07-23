@@ -219,8 +219,6 @@ public class MagicCap extends SubCap{
 		tag.putInt("magicSourceTimer", magicSourceTimer);
 
 		tag.putInt("mana", getCurrentMana());
-		tag.putBoolean("isCasting", isCasting);
-
 		tag.put("abilityData", saveAbilities());
 		return tag;
 	}
@@ -234,8 +232,6 @@ public class MagicCap extends SubCap{
 
 		setSelectedAbilitySlot(tag.getInt("selectedAbilitySlot"));
 		setCurrentMana(tag.getInt("mana"));
-
-		isCasting = tag.getBoolean("isCasting");
 
 		if(tag.contains("abilityData"))
 			loadAbilities(tag.getCompound("abilityData"));

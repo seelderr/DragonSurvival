@@ -361,15 +361,15 @@ public class StormBreathAbility extends BreathAbility{
 
 
 	@OnlyIn( Dist.CLIENT )
-	public void sound(){
+	public   void sound(){
 		if(startingSound == null)
 			startingSound = SimpleSoundInstance.forAmbientAddition(SoundRegistry.stormBreathStart);
 
-		Minecraft.getInstance().getSoundManager().play(startingSound);
+		Minecraft.getInstance().getSoundManager().playDelayed(startingSound, 0);
 		loopingSound = new StormBreathSound(this);
 
 		Minecraft.getInstance().getSoundManager().stop(new ResourceLocation(DragonSurvivalMod.MODID, "storm_breath_loop"), SoundSource.PLAYERS);
-		Minecraft.getInstance().getSoundManager().play(loopingSound);
+		Minecraft.getInstance().getSoundManager().queueTickingSound(loopingSound);
 	}
 
 	@Override
@@ -392,12 +392,12 @@ public class StormBreathAbility extends BreathAbility{
 
 
 	@OnlyIn( Dist.CLIENT )
-	public void stopSound(){
+	public   void stopSound(){
 		if(SoundRegistry.stormBreathEnd != null){
 			if(endSound == null)
 				endSound = SimpleSoundInstance.forAmbientAddition(SoundRegistry.stormBreathEnd);
 
-			Minecraft.getInstance().getSoundManager().play(endSound);
+			Minecraft.getInstance().getSoundManager().playDelayed(endSound, 0);
 		}
 
 		Minecraft.getInstance().getSoundManager().stop(new ResourceLocation(DragonSurvivalMod.MODID, "storm_breath_loop"), SoundSource.PLAYERS);

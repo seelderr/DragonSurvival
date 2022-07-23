@@ -1,7 +1,7 @@
 {
   "defaults": {
     "CAVE": {
-      "BABY": {
+      "NEWBORN": {
         "BASE": "base_1",
         "BOTTOM": "bottom_1",
         "HORNS": "horns_19",
@@ -23,7 +23,7 @@
       }
     },
     "SEA": {
-      "BABY": {
+      "NEWBORN": {
         "BASE": "base_1",
         "BOTTOM": "bottom_1",
         "HORNS": "horns_21",
@@ -45,7 +45,7 @@
       }
     },
     "FOREST": {
-      "BABY": {
+      "NEWBORN": {
         "BASE": "base_0",
         "BOTTOM": "bottom_2",
         "HORNS": "horns_20",

@@ -133,6 +133,11 @@ public class SpikeAbility extends InstantCastAbility{
 	}
 
 	@Override
+	public boolean requiresStationaryCasting(){
+		return false;
+	}
+
+	@Override
 	public void onCast(Player player){
 		Vec3 vector3d = player.getViewVector(1.0F);
 		double speed = 1d;
