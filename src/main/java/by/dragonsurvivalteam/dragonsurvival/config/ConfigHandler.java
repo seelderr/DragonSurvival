@@ -23,10 +23,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
-import net.minecraftforge.common.ForgeConfigSpec.EnumValue;
-import net.minecraftforge.common.ForgeConfigSpec.IntValue;
-import net.minecraftforge.common.ForgeConfigSpec.LongValue;
+import net.minecraftforge.common.ForgeConfigSpec.*;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -165,6 +162,9 @@ public class ConfigHandler{
 
 				}else if(fe.getType().isEnum()){
 					EnumValue value = builder.defineEnum(option.key(), (Enum)defaultOb, ((Enum<?>)defaultOb).getClass().getEnumConstants());
+					configValues.put(key, value);
+				}else if(tt instanceof List<?> ls){
+					ConfigValue<List<?>> value = builder.defineList(option.key(), ls, s -> ResourceLocation.isValidResourceLocation(String.valueOf(s)));
 					configValues.put(key, value);
 				}else{
 					ForgeConfigSpec.ConfigValue<Object> value = builder.define(option.key(), defaultOb);
