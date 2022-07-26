@@ -131,7 +131,7 @@ public class StormBreathAbility extends BreathAbility{
 	                                                     "sea_dragon",
 	                                                     "actives",
 	                                                     "storm_breath"}, key = "chargedEffectMaxChain", comment = "How many times the charged effect is able to chain. -1 means it can chain infinitely" )
-	public static Integer chargedEffectMaxChain = -1;
+	public static Integer chargedEffectMaxChain = 10;
 	@ConfigRange( min = 0, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic",
 	                                                     "abilities",
@@ -160,7 +160,7 @@ public class StormBreathAbility extends BreathAbility{
 	                                                     "sea_dragon",
 	                                                     "actives",
 	                                                     "storm_breath"}, key = "chargedBlacklist", comment = "List of entities that will not receive the charged effect at all Format: modid:id" )
-	public static List<String> chargedBlacklist =  List.of("upgrade_aquatic:thrasher", "upgrade_aquatic:great_thrasher");
+	public static List<String> chargedBlacklist =  List.of("minecraft:armor_stand", "minecraft:cat", "minecraft:cart", "minecraft:guardian", "minecraft:elder_guardian", "minecraft:enderman");
 
 	@OnlyIn( Dist.CLIENT )
 	private SoundInstance startingSound;
