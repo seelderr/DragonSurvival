@@ -29,7 +29,7 @@ public class MixinItem{
 			return;
 
 		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
-			if(dragonStateHandler.isDragon() && ServerConfig.blacklistedSlots.contains(slot) && ServerConfig.blacklistedItems.contains(stack.getItem())){
+			if(dragonStateHandler.isDragon() && ServerConfig.blacklistedSlots.contains(slot) && ServerConfig.blacklistedItems.contains(stack.getItem().getRegistryName())){
 				if(slot >= 0 && slot < 9 && !isSelected && !ItemStack.matches(player.getOffhandItem(), stack)){
 					return;
 				}
