@@ -227,15 +227,15 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			NetworkHandler.CHANNEL.sendToServer(new SyncPlayerSkinPreset(minecraft.player.getId(), newPreset));
 		}
 
-		DragonEditorRegistry.savedCustomizations.skinPresets.computeIfAbsent(this.type, (t) -> new HashMap<>());
-		DragonEditorRegistry.savedCustomizations.skinPresets.get(this.type).put(currentSelected, newPreset);
+		DragonEditorRegistry.getSavedCustomizations().skinPresets.computeIfAbsent(this.type, (t) -> new HashMap<>());
+		DragonEditorRegistry.getSavedCustomizations().skinPresets.get(this.type).put(currentSelected, newPreset);
 
-		DragonEditorRegistry.savedCustomizations.current.get(this.type).put(level, currentSelected);
+		DragonEditorRegistry.getSavedCustomizations().current.get(this.type).put(level, currentSelected);
 
 		try{
 			Gson gson = new GsonBuilder().setPrettyPrinting().create();
 			FileWriter writer = new FileWriter(DragonEditorRegistry.savedFile);
-			gson.toJson(DragonEditorRegistry.savedCustomizations, writer);
+			gson.toJson(DragonEditorRegistry.getSavedCustomizations(), writer);
 			writer.close();
 		}catch(IOException e){
 			e.printStackTrace();
@@ -271,16 +271,21 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 				type = localHandler.getType();
 			}
 
-			DragonEditorRegistry.savedCustomizations.current.putIfAbsent(type, new HashMap<>());
-			DragonEditorRegistry.savedCustomizations.current.get(type).putIfAbsent(level, 0);
+			DragonEditorRegistry.getSavedCustomizations().current.computeIfAbsent(type, s->new HashMap<>());
+			DragonEditorRegistry.getSavedCustomizations().current.get(type).computeIfAbsent(level, s->0);
 
-			currentSelected = DragonEditorRegistry.savedCustomizations.current.get(type).get(level);
+			currentSelected = DragonEditorRegistry.getSavedCustomizations().current.get(type).get(level);
 
-			DragonEditorRegistry.savedCustomizations.skinPresets.putIfAbsent(type, new HashMap<>());
-			DragonEditorRegistry.savedCustomizations.skinPresets.get(type).putIfAbsent(currentSelected, new SkinPreset());
+			DragonEditorRegistry.getSavedCustomizations().skinPresets.computeIfAbsent(type, s->new HashMap<>());
+			DragonEditorRegistry.getSavedCustomizations().skinPresets.get(type).computeIfAbsent(currentSelected, (s)-> {
+				SkinPreset preset1 = new SkinPreset();
+				preset1.initDefaults(type);
+				return preset1;
+			});
 
+			SkinPreset curPreset = DragonEditorRegistry.getSavedCustomizations().skinPresets.get(type).get(currentSelected);
 			preset = new SkinPreset();
-			preset.readNBT(DragonEditorRegistry.savedCustomizations.skinPresets.get(type).get(currentSelected).writeNBT());
+			preset.readNBT(curPreset.writeNBT());
 			handler.getSkin().skinPreset = preset;
 
 			dragonRender.zoom = (float)(level.size * preset.sizeMul);
@@ -740,7 +745,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 
 		if(currentSelected != lastSelected){
 			preset = new SkinPreset();
-			preset.readNBT(DragonEditorRegistry.savedCustomizations.skinPresets.get(type).get(currentSelected).writeNBT());
+			preset.readNBT(DragonEditorRegistry.getSavedCustomizations().skinPresets.get(type).get(currentSelected).writeNBT());
 
 			handler.getSkin().skinPreset = preset;
 		}

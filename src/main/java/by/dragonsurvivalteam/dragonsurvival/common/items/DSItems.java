@@ -33,6 +33,7 @@ public class DSItems{
 
 	public static Item wingGrantItem, spinGrantItem;
 	public static Item lightningTextureItem;
+	public static Item inactivePeaceDragonBeacon, inactiveMagicDragonBeacon, inactiveFireDragonBeacon;
 
 	@SubscribeEvent
 	public static void register(final RegistryEvent.Register<Item> event){
@@ -63,10 +64,16 @@ public class DSItems{
 
 
 		huntingNet = registerItem(registry, new Item(new Item.Properties()), "dragon_hunting_mesh");
+		lightningTextureItem = registerItem(registry, new Item(new Item.Properties()), "lightning");
+
 		passiveMagicBeacon = registerItem(registry, new Item(new Item.Properties()), "beacon_magic_1");
 		passivePeaceBeacon = registerItem(registry, new Item(new Item.Properties()), "beacon_peace_1");
 		passiveFireBeacon = registerItem(registry, new Item(new Item.Properties()), "beacon_fire_1");
-		lightningTextureItem = registerItem(registry, new Item(new Item.Properties()), "lightning");
+
+		inactiveMagicDragonBeacon = registerItem(registry, new Item(new Item.Properties()), "beacon_magic_0");
+		inactivePeaceDragonBeacon = registerItem(registry, new Item(new Item.Properties()), "beacon_peace_0");
+		inactiveFireDragonBeacon = registerItem(registry, new Item(new Item.Properties()), "beacon_fire_0");
+
 
 		wingGrantItem = registerItem(registry, new WingGrantItem(new Item.Properties().tab(DragonSurvivalMod.items)), "wing_grant");
 		spinGrantItem = registerItem(registry, new SpinGrantItem(new Item.Properties().tab(DragonSurvivalMod.items)), "spin_grant");

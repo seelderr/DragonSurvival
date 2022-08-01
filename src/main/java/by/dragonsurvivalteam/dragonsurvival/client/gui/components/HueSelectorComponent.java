@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.components;
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.DSSlider;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.ResetSettingsButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownList;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ExtendedCheckbox;
@@ -19,7 +20,6 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.client.gui.GuiUtils;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
-import net.minecraftforge.client.gui.widget.ForgeSlider;
 
 import java.awt.Color;
 import java.util.List;
@@ -37,9 +37,9 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 	private final int ySize;
 	private final Supplier<LayerSettings> settings;
 	public boolean visible;
-	private ForgeSlider hueSlider;
-	private ForgeSlider saturationSlider;
-	private ForgeSlider brightnessSlider;
+	private DSSlider hueSlider;
+	private DSSlider saturationSlider;
+	private DSSlider brightnessSlider;
 
 	public HueSelectorComponent(DragonEditorScreen screen, int x, int y, int xSize, int ySize, EnumSkinLayer layer){
 		this.screen = screen;
@@ -58,6 +58,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 
 		hueReset = new ExtendedButton(x + 3 + xSize - 26, y + 12, 20, 20, TextComponent.EMPTY, (s) -> {
 			hueSlider.setValue(0.0);
+
 		}){
 			@Override
 			public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){
@@ -74,10 +75,11 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 			hsb[1] = 0.5f;
 		}
 
-		hueSlider = new ForgeSlider(x + 3, y + 12, xSize - 26, 20, TextComponent.EMPTY, TextComponent.EMPTY, -180, 180, set.modifiedColor ? Math.round(hsb[0] * 360 - 180) : 0, true){
+		hueSlider = new DSSlider(x + 3, y + 12, xSize - 26, 20, TextComponent.EMPTY, TextComponent.EMPTY, -180, 180, set.modifiedColor ? Math.round(hsb[0] * 360 - 180) : 0, true){
 			@Override
 			protected void applyValue(){
 				super.applyValue();
+
 				float value = (hueSlider.getValueInt() + 180) / 360f;
 				float value1 = (saturationSlider.getValueInt() + 180) / 360f;
 				float value2 = (brightnessSlider.getValueInt() + 180) / 360f;
@@ -99,16 +101,12 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 					RenderingUtils.renderPureColorSquare(mStack, x, y, width, height);
 					mStack.popPose();
 
-					if(!isMouseOver(mouseX, mouseY) && isDragging()){
-						mouseReleased(mouseX, mouseY, 0);
-					}
-
 					this.renderBg(mStack, Minecraft.getInstance(), mouseX, mouseY);
 				}
 			}
 		};
 
-		saturationSlider = new ForgeSlider(x + 3, y + 22 + 12, xSize - 26, 20, TextComponent.EMPTY, TextComponent.EMPTY, -180, 180, set.modifiedColor ? Math.round(hsb[1] * 360 - 180) : 0, true){
+		saturationSlider = new DSSlider(x + 3, y + 22 + 12, xSize - 26, 20, TextComponent.EMPTY, TextComponent.EMPTY, -180, 180, set.modifiedColor ? Math.round(hsb[1] * 360 - 180) : 0, true){
 			@Override
 			protected void applyValue(){
 				super.applyValue();
@@ -139,10 +137,6 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 					mStack.translate(0, 0, 200);
 					this.renderBg(mStack, Minecraft.getInstance(), mouseX, mouseY);
 					mStack.popPose();
-
-					if(!isMouseOver(mouseX, mouseY) && isDragging()){
-						mouseReleased(mouseX, mouseY, 0);
-					}
 				}
 			}
 		};
@@ -173,7 +167,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 			}
 		};
 
-		brightnessSlider = new ForgeSlider(x + 3, y + 44 + 12, xSize - 26, 20, TextComponent.EMPTY, TextComponent.EMPTY, -180, 180, set.modifiedColor ? Math.round(hsb[2] * 360 - 180) : 0, true){
+		brightnessSlider = new DSSlider(x + 3, y + 44 + 12, xSize - 26, 20, TextComponent.EMPTY, TextComponent.EMPTY, -180, 180, set.modifiedColor ? Math.round(hsb[2] * 360 - 180) : 0, true){
 			@Override
 			protected void applyValue(){
 				super.applyValue();
@@ -204,10 +198,6 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 					mStack.translate(0, 0, 200);
 					this.renderBg(mStack, Minecraft.getInstance(), mouseX, mouseY);
 					mStack.popPose();
-
-					if(!isMouseOver(mouseX, mouseY) && isDragging()){
-						mouseReleased(mouseX, mouseY, 0);
-					}
 				}
 			}
 		};

@@ -17,7 +17,7 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber( Dist.CLIENT )
 public class ClientCastingHandler{
 	public static byte status = 0;
-
+	public static boolean hasCast = false;
 	@SubscribeEvent
 	public static void abilityKeyBindingChecks(TickEvent.ClientTickEvent clientTickEvent){
 		if(Minecraft.getInstance().player == null || Minecraft.getInstance().level == null || clientTickEvent.phase != TickEvent.Phase.END)
@@ -39,8 +39,13 @@ public class ClientCastingHandler{
 		if(status == 0 && isKeyDown)
 			status = 1;
 
-		if(status == 1 && !isKeyDown)
+		if(status == 1 && !isKeyDown){
 			status = 2;
+		}
+
+		if(!isKeyDown){
+			hasCast = false;
+		}
 
 
 		int slot = dragonStateHandler.getMagic().getSelectedAbilitySlot();
@@ -51,6 +56,7 @@ public class ClientCastingHandler{
 				NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCasting(player.getId(), true, ability.saveNBT()));
 
 				ability.onKeyPressed(player, () -> {
+					hasCast = true;
 					status = 2;
 				});
 

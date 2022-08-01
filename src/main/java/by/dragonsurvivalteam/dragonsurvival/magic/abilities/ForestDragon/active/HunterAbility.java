@@ -52,13 +52,11 @@ public class HunterAbility extends ChargeCastAbility{
 
 	@Override
 	public int getSkillCastingTime(){
-		return castTime;
+		return hunterCasttime;
 	}
 
 	@Override
-	public void onCasting(Player player, int currentCastTime){
-
-	}
+	public void onCasting(Player player, int currentCastTime){}
 
 	@Override
 	public void castingComplete(Player player){

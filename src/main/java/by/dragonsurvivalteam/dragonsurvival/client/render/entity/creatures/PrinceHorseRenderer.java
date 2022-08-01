@@ -55,7 +55,10 @@ public class PrinceHorseRenderer extends ExtendedGeoEntityRenderer<PrinceHorseEn
 
 	@Override
 	protected void preRenderItem(PoseStack matrixStack, ItemStack item, String boneName, PrinceHorseEntity currentEntity, IBone bone){
-
+//		matrixStack.last().normal().mul(bone.getWorldSpaceNormal());
+//		matrixStack.last().pose().multiply(bone.getWorldSpaceXform());
+//		matrixStack.mulPose(Vector3f.ZP.rotationDegrees(180));
+		matrixStack.translate(0.0, -0.3, -0.5);
 	}
 
 	@Override

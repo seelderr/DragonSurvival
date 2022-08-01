@@ -25,8 +25,8 @@ public class DragonEditorSlotButton extends Button{
 
 	@Override
 	public void onPress(){
-		DragonEditorRegistry.savedCustomizations.skinPresets.computeIfAbsent(screen.type, t -> new HashMap<>());
-		DragonEditorRegistry.savedCustomizations.skinPresets.get(screen.type).put(screen.currentSelected, screen.preset);
+		DragonEditorRegistry.getSavedCustomizations().skinPresets.computeIfAbsent(screen.type, t -> new HashMap<>());
+		DragonEditorRegistry.getSavedCustomizations().skinPresets.get(screen.type).put(screen.currentSelected, screen.preset);
 
 		screen.currentSelected = num - 1;
 		screen.update();

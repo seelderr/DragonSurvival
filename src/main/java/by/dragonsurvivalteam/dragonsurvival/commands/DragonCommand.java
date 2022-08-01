@@ -71,7 +71,7 @@ public class DragonCommand{
 			boolean wings = context.getArgument("wings", Boolean.TYPE);
 			EntitySelector selector = context.getArgument("target", EntitySelector.class);
 			List<ServerPlayer> serverPlayers = selector.findPlayers(context.getSource());
-			serverPlayers.forEach((player) -> runCommand(type, stage, wings, player));
+			serverPlayers.forEach(player -> runCommand(type, stage, wings, player));
 			return 1;
 		}).build();
 

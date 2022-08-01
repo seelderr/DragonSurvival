@@ -119,6 +119,7 @@ public class ClientMagicHUDHandler{
 	private static MutableComponent errorMessage;
 
 	public static void castingError(MutableComponent component){
+		if(ClientCastingHandler.hasCast) return;
 		errorTicks = Functions.secondsToTicks(5);
 		errorMessage = component;
 	}

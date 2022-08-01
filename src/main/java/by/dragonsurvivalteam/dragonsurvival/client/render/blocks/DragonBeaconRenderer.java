@@ -5,8 +5,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.blocks.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.common.items.DSItems;
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.DragonBeaconTileEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.brigadier.StringReader;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -29,53 +27,41 @@ public class DragonBeaconRenderer implements BlockEntityRenderer<DragonBeaconTil
 		dragonBeaconEntity.tick += 0.5;
 		PoseStack.pushPose();
 		DragonBeaconTileEntity.Type type = dragonBeaconEntity.type;
+
 		Item item = DSBlocks.dragonBeacon.asItem();
+
 		ClientLevel clientWorld = (ClientLevel)dragonBeaconEntity.getLevel();
-		if(dragonBeaconEntity.getLevel().getBlockState(dragonBeaconEntity.getBlockPos().below()).is(DSBlocks.dragonMemoryBlock)){
-			Minecraft minecraft = Minecraft.getInstance();
-			Random random = clientWorld.random;
-			double x = 0.25 + random.nextInt(5) / 10d;
-			double z = 0.25 + random.nextInt(5) / 10d;
-			switch(type){
-				case PEACE -> {
-					item = DSItems.passivePeaceBeacon;
-					try{
-						if(!minecraft.isPaused() && dragonBeaconEntity.tick % 5 == 0){
-							clientWorld.addParticle(DSParticles.peaceBeaconParticle.getDeserializer().fromCommand(DSParticles.peaceBeaconParticle, new StringReader("")), dragonBeaconEntity.getX() + x, dragonBeaconEntity.getY() + 0.5, dragonBeaconEntity.getZ() + z, 0, 0, 0);
-						}
-					}catch(CommandSyntaxException e){
-						e.printStackTrace();
-					}
+		Minecraft minecraft = Minecraft.getInstance();
+		Random random = clientWorld.random;
+		double x = 0.25 + random.nextInt(5) / 10d;
+		double z = 0.25 + random.nextInt(5) / 10d;
+
+		boolean hasMemoryBlock = dragonBeaconEntity.getLevel().getBlockState(dragonBeaconEntity.getBlockPos().below()).is(DSBlocks.dragonMemoryBlock);
+
+		switch(type){
+			case PEACE -> {
+				item = hasMemoryBlock ? DSItems.passivePeaceBeacon : DSItems.inactivePeaceDragonBeacon;
+
+				if(!minecraft.isPaused() && dragonBeaconEntity.tick % 5 == 0 && hasMemoryBlock){
+					clientWorld.addParticle(DSParticles.peaceBeaconParticle, dragonBeaconEntity.getX() + x, dragonBeaconEntity.getY() + 0.5, dragonBeaconEntity.getZ() + z, 0, 0, 0);
 				}
-				case MAGIC -> {
-					item = DSItems.passiveMagicBeacon;
-					try{
-						if(!minecraft.isPaused() && dragonBeaconEntity.tick % 5 == 0){
-							clientWorld.addParticle(DSParticles.magicBeaconParticle.getDeserializer().fromCommand(DSParticles.magicBeaconParticle, new StringReader("")), dragonBeaconEntity.getX() + x, dragonBeaconEntity.getY() + 0.5, dragonBeaconEntity.getZ() + z, 0, 0, 0);
-						}
-					}catch(CommandSyntaxException e){
-						e.printStackTrace();
-					}
+			}
+			case MAGIC -> {
+				item = hasMemoryBlock ? DSItems.passiveMagicBeacon : DSItems.inactiveMagicDragonBeacon;
+
+				if(!minecraft.isPaused() && dragonBeaconEntity.tick % 5 == 0 && hasMemoryBlock){
+					clientWorld.addParticle(DSParticles.magicBeaconParticle, dragonBeaconEntity.getX() + x, dragonBeaconEntity.getY() + 0.5, dragonBeaconEntity.getZ() + z, 0, 0, 0);
 				}
-				case FIRE -> {
-					item = DSItems.passiveFireBeacon;
-					try{
-						if(!minecraft.isPaused() && dragonBeaconEntity.tick % 5 == 0){
-							clientWorld.addParticle(DSParticles.fireBeaconParticle.getDeserializer().fromCommand(DSParticles.fireBeaconParticle, new StringReader("")), dragonBeaconEntity.getX() + x, dragonBeaconEntity.getY() + 0.5, dragonBeaconEntity.getZ() + z, 0, 0, 0);
-						}
-					}catch(CommandSyntaxException e){
-						e.printStackTrace();
-					}
+			}
+			case FIRE -> {
+				item = hasMemoryBlock ? DSItems.passiveFireBeacon : DSItems.inactiveFireDragonBeacon;
+
+				if(!minecraft.isPaused() && dragonBeaconEntity.tick % 5 == 0 && hasMemoryBlock){
+					clientWorld.addParticle(DSParticles.fireBeaconParticle, dragonBeaconEntity.getX() + x, dragonBeaconEntity.getY() + 0.5, dragonBeaconEntity.getZ() + z, 0, 0, 0);
 				}
 			}
 		}
 
-		item = switch(type){
-			case PEACE -> DSBlocks.peaceDragonBeacon.asItem();
-			case MAGIC -> DSBlocks.magicDragonBeacon.asItem();
-			case FIRE -> DSBlocks.fireDragonBeacon.asItem();
-			default -> item;
-		};
 		float f1 = Mth.sin(((float)dragonBeaconEntity.tick + v) / 20.0F + dragonBeaconEntity.bobOffs) * 0.1F + 0.1F;
 		PoseStack.translate(0.5, 0.25 + (f1 / 2f), 0.5);
 		PoseStack.mulPose(Vector3f.YP.rotationDegrees(dragonBeaconEntity.tick));

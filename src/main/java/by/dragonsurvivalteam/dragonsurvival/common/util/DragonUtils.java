@@ -20,7 +20,8 @@ public class DragonUtils{
 	}
 
 	public static DragonStateHandler getHandler(Entity entity){
-		return entity != null ? DragonStateProvider.getCap(entity).orElse(new DragonStateHandler()) : new DragonStateHandler();
+		return entity != null ?
+			DragonStateProvider.getCap(entity).orElse(new DragonStateHandler()) : new DragonStateHandler();
 	}
 
 	public static DragonLevel getDragonLevel(Entity entity){

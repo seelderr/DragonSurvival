@@ -106,9 +106,9 @@ public class ClientEvents{
 			NetworkHandler.CHANNEL.sendToServer(new SyncDragonSkinSettings(player.getId(), ClientDragonRender.renderNewbornSkin, ClientDragonRender.renderYoungSkin, ClientDragonRender.renderAdultSkin));
 
 			DragonStateProvider.getCap(player).ifPresent(cap -> {
-				if(DragonEditorRegistry.savedCustomizations != null){
-					int currentSelected = DragonEditorRegistry.savedCustomizations.current.getOrDefault(message.type, new HashMap<>()).getOrDefault(message.level, 0);
-					SkinPreset preset = DragonEditorRegistry.savedCustomizations.skinPresets.getOrDefault(message.type, new HashMap<>()).getOrDefault(currentSelected, new SkinPreset());
+				if(DragonEditorRegistry.getSavedCustomizations() != null){
+					int currentSelected = DragonEditorRegistry.getSavedCustomizations().current.getOrDefault(message.type, new HashMap<>()).getOrDefault(message.level, 0);
+					SkinPreset preset = DragonEditorRegistry.getSavedCustomizations().skinPresets.getOrDefault(message.type, new HashMap<>()).getOrDefault(currentSelected, new SkinPreset());
 					NetworkHandler.CHANNEL.sendToServer(new SyncPlayerSkinPreset(player.getId(), preset));
 				}
 			});
@@ -117,7 +117,7 @@ public class ClientEvents{
 				DragonStateProvider.getCap(player).ifPresent(cap -> {
 					cap.hasUsedAltar = cap.hasUsedAltar || cap.isDragon();
 
-					if(!cap.hasUsedAltar && ServerConfig.startWithDragonChoice){
+					if(!cap.isDragon() && !cap.hasUsedAltar && ServerConfig.startWithDragonChoice){
 						Minecraft.getInstance().setScreen(new DragonAltarGUI());
 						cap.hasUsedAltar = true;
 					}
