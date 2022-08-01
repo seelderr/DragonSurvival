@@ -129,6 +129,8 @@ public class DragonStateHandler implements NBTInterface{
 		return skin;
 	}
 
+	public int lastSync = 0;//Last timestamp the server synced this player
+
 	@Override
 	public CompoundTag writeNBT(){
 		CompoundTag tag = new CompoundTag();

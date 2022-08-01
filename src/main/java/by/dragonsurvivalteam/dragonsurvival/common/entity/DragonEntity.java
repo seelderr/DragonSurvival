@@ -21,6 +21,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import software.bernie.geckolib3.core.AnimationState;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.Animation;
@@ -310,9 +311,12 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 				builder.addAnimation("swim", true);
 			}
 		}else if(!player.isOnGround() && motio.y() < 0){
-			if(player.fallDistance <= 4 && !player.onClimbable()){
-				builder.addAnimation("land", true);
-			}
+			builder.addAnimation("fall_loop", true);
+			System.out.println(animationController.getCurrentAnimation().animationName);
+		}else if(player.isOnGround() &&
+		         animationController.getCurrentAnimation() != null && (animationController.getCurrentAnimation().animationName.equals("fall_loop")
+		         || animationController.getCurrentAnimation().animationName.equals("land") && animationController.getAnimationState() == AnimationState.Running)){
+			builder.addAnimation("land", false);
 		}else if(ClientEvents.dragonsJumpingTicks.getOrDefault(this.player, 0) > 0){
 			builder.addAnimation("jump", false);
 		}else if(player.isShiftKeyDown() || !DragonSizeHandler.canPoseFit(player, Pose.STANDING) && DragonSizeHandler.canPoseFit(player, Pose.CROUCHING)){
