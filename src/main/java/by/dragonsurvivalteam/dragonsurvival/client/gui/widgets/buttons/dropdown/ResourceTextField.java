@@ -40,7 +40,7 @@ import net.minecraftforge.client.gui.GuiUtils;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
 import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.codehaus.plexus.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Field;
 import java.util.*;
