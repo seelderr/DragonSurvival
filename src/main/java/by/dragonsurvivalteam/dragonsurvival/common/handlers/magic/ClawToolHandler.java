@@ -30,13 +30,9 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
 import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
 
 @EventBusSubscriber
 public class ClawToolHandler{
-	public static ConcurrentHashMap<Integer, ItemStack> destroyedItems = new ConcurrentHashMap<>();
-
-
 	@SubscribeEvent
 	public static void experiencePickup(PickupXp event){
 		Player player = event.getPlayer();
@@ -146,7 +142,7 @@ public class ClawToolHandler{
 	public static ItemStack getWeapon(LivingEntity entity, ItemStack mainStack){
 		DragonStateHandler cap = DragonUtils.getHandler(entity);
 
-		if(!(mainStack.getItem() instanceof TieredItem) && cap != null){
+		if(!(mainStack.getItem() instanceof TieredItem)){
 			ItemStack sword = cap.getClawInventory().getClawsInventory().getItem(0);
 
 			if(!sword.isEmpty()){
@@ -158,7 +154,15 @@ public class ClawToolHandler{
 
 	@SubscribeEvent
 	public static void onToolBreak(PlayerDestroyItemEvent event){
-		destroyedItems.put(event.getEntityLiving().getId(), event.getOriginal());
+		if(event.getHand() == null) return;
+		Player player = event.getPlayer();
+
+		if(DragonUtils.isDragon(player)){
+			ItemStack clawTool = getDragonTools(player);
+			if(ItemStack.matches(clawTool, event.getOriginal())){
+				player.broadcastBreakEvent(event.getHand());
+			}
+		}
 	}
 
 	@Mod.EventBusSubscriber( modid = DragonSurvivalMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD )
@@ -172,7 +176,7 @@ public class ClawToolHandler{
 
 			ItemStack mainStack = playerEntity.getMainHandItem();
 			DragonStateHandler dragonStateHandler = DragonUtils.getHandler(playerEntity);
-			if(mainStack.getItem() instanceof TieredItem || dragonStateHandler == null || !dragonStateHandler.isDragon()){
+			if(mainStack.getItem() instanceof TieredItem || !dragonStateHandler.isDragon()){
 				return;
 			}
 
@@ -181,10 +185,10 @@ public class ClawToolHandler{
 
 			if(!(mainStack.getItem() instanceof DiggerItem || mainStack.getItem() instanceof SwordItem || mainStack.getItem() instanceof ShearsItem || (mainStack.getItem() instanceof TieredItem))){
 				float bonus = dragonStateHandler.getLevel() == DragonLevel.ADULT
-					? (blockState.is(BlockTags.MINEABLE_WITH_AXE) && dragonStateHandler.getType() == DragonType.FOREST ? 4 : blockState.is(BlockTags.MINEABLE_WITH_PICKAXE) && dragonStateHandler.getType() == DragonType.CAVE ? 4 : blockState.is(BlockTags.MINEABLE_WITH_SHOVEL) && dragonStateHandler.getType() == DragonType.SEA ? 4 : 2F)
+					? blockState.is(BlockTags.MINEABLE_WITH_AXE) && dragonStateHandler.getType() == DragonType.FOREST ? 4 : blockState.is(BlockTags.MINEABLE_WITH_PICKAXE) && dragonStateHandler.getType() == DragonType.CAVE ? 4 : blockState.is(BlockTags.MINEABLE_WITH_SHOVEL) && dragonStateHandler.getType() == DragonType.SEA ? 4 : 2F
 					: dragonStateHandler.getLevel() == DragonLevel.NEWBORN ? ServerConfig.bonusUnlockedAt == DragonLevel.NEWBORN ? 2F : 1F : dragonStateHandler.getLevel() == DragonLevel.YOUNG ? ServerConfig.bonusUnlockedAt != DragonLevel.ADULT ? 2F : 1F : 2F;
 
-				breakSpeedEvent.setNewSpeed((originalSpeed * bonus));
+				breakSpeedEvent.setNewSpeed(originalSpeed * bonus);
 			}
 		}
 	}

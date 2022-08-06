@@ -10,7 +10,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stat;
 import net.minecraft.stats.Stats;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -74,20 +73,6 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 				}
 			}
 		}
-	}
-
-	@Redirect( method = "attack", at = @At( value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;setItemInHand(Lnet/minecraft/world/InteractionHand;Lnet/minecraft/world/item/ItemStack;)V" ) )
-	public void setItemInHand(Player instance, InteractionHand interactionHand, ItemStack itemStack){
-		ItemStack handStack = instance.getItemInHand(interactionHand);
-
-		if(ClawToolHandler.destroyedItems.containsKey(instance.getId())){
-			if(!ItemStack.matches(handStack, ClawToolHandler.destroyedItems.get(instance.getId()))){
-				ClawToolHandler.destroyedItems.remove(instance.getId());
-				return;
-			}
-		}
-
-		instance.setItemInHand(interactionHand, itemStack);
 	}
 
 	@Redirect( method = "attack", at = @At( value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;getMainHandItem()Lnet/minecraft/world/item/ItemStack;" ) )

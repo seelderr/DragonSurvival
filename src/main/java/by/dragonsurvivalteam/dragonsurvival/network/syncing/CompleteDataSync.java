@@ -24,7 +24,7 @@ public class CompleteDataSync extends ISidedMessage<CompleteDataSync>{
 
 	public CompleteDataSync(Player player){
 		super(player.getId());
-		DragonStateProvider.getCap(player).ifPresent((cap) -> nbt = cap.writeNBT());
+		DragonStateProvider.getCap(player).ifPresent(cap -> nbt = cap.writeNBT());
 	}
 
 	public CompleteDataSync(int playerId, CompoundTag nbt){

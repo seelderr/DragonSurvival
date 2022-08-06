@@ -290,10 +290,10 @@ public class StormBreathAbility extends BreathAbility{
 		return DragonStateProvider.getCap(target).map(DragonStateHandler::getType).orElse(null) != DragonType.SEA;
 	}
 
-	@Override
-	public Entity getEffectEntity(){
-		return EFFECT_ENTITY;
-	}
+//	@Override
+//	public Entity getEffectEntity(){
+//		return EFFECT_ENTITY;
+//	}
 
 	public void hurtTarget(LivingEntity entity){
 		entity.hurt(new BreathDamage(player), getDamage());

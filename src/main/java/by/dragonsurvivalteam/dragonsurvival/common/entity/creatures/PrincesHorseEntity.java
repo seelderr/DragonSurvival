@@ -28,6 +28,7 @@ import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.PanicGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.npc.VillagerData;
 import net.minecraft.world.entity.npc.VillagerTrades;
@@ -250,5 +251,26 @@ public class PrincesHorseEntity extends Villager implements IAnimatable, CommonT
 	@Override
 	public AnimationFactory getFactory(){
 		return animationFactory;
+	}
+
+	private static final TargetingConditions KNIGHT_RANGE = TargetingConditions.forNonCombat().range(32);
+	@Override
+	public void checkDespawn(){
+		super.checkDespawn();
+
+		if(isRemoved() || hasCustomName()) return;
+
+		Entity entity1 = this.level.getNearestEntity(KnightEntity.class, KNIGHT_RANGE, this, getX(), getY(), getZ(), this.getBoundingBox().inflate(32));
+
+		if(entity1 == null){
+			Entity entity = this.level.getNearestPlayer(this, -1.0D);
+			if (entity != null) {
+				double d0 = entity.distanceToSqr(this);
+				int i = this.getType().getCategory().getDespawnDistance();
+				if (d0 > (double)(i * 4)) {
+					this.discard();
+				}
+			}
+		}
 	}
 }

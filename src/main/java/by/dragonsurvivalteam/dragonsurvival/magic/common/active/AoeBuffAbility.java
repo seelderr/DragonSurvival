@@ -1,7 +1,11 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.common.active;
 
+import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.AbilityAnimation;
+import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -9,7 +13,9 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 
 public abstract class AoeBuffAbility extends ChargeCastAbility{
@@ -48,28 +54,23 @@ public abstract class AoeBuffAbility extends ChargeCastAbility{
 		player.level.playLocalSound(player.position().x, player.position().y + 0.5, player.position().z, SoundEvents.UI_TOAST_OUT, SoundSource.PLAYERS, 5F, 0.1F, false);
 	}
 
-//	@Override
-//	public ArrayList<Component> getInfo(){
-//		ArrayList<Component> components = super.getInfo();
-//		components.add(new TranslatableComponent("ds.skill.duration.seconds", getDuration()));
-//		components.add(new TranslatableComponent("ds.skill.aoe", getRange() + "x" + getRange()));
-//
-//
-//		//		if(effect.getEffect() == DragonEffects.REVEALING_THE_SOUL){
-//		//			components.add(new TranslatableComponent("ds.skill.bonus_exp.multiplier", ServerConfig.revealingTheSoulMultiplier + "x"));
-//		//			components.add(new TranslatableComponent("ds.skill.bonus_exp.max_gain", Integer.toString(ServerConfig.revealingTheSoulMaxEXP)));
-//		//		}
-//
-//		if(!KeyInputHandler.ABILITY3.isUnbound()){
-//			String key = KeyInputHandler.ABILITY3.getKey().getDisplayName().getContents().toUpperCase(Locale.ROOT);
-//
-//			if(key.isEmpty())
-//				key = KeyInputHandler.ABILITY3.getKey().getDisplayName().getString();
-//			components.add(new TranslatableComponent("ds.skill.keybind", key));
-//		}
-//
-//		return components;
-//	}
+	@Override
+	public ArrayList<Component> getInfo(){
+		ArrayList<Component> components = super.getInfo();
+		components.add(new TranslatableComponent("ds.skill.duration.seconds", Functions.ticksToSeconds(getEffect().getDuration())));
+		components.add(new TranslatableComponent("ds.skill.aoe", getRange() + "x" + getRange()));
+
+		if(!KeyInputHandler.ABILITY3.isUnbound()){
+			String key = KeyInputHandler.ABILITY3.getKey().getDisplayName().getContents().toUpperCase(Locale.ROOT);
+
+			if(key.isEmpty())
+				key = KeyInputHandler.ABILITY3.getKey().getDisplayName().getString();
+			components.add(new TranslatableComponent("ds.skill.keybind", key));
+		}
+
+		return components;
+	}
+
 	public abstract int getRange();
 	public abstract ParticleOptions getParticleEffect();
 	public abstract MobEffectInstance getEffect();

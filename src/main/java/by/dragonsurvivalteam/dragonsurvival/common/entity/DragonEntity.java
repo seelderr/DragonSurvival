@@ -310,9 +310,8 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 				dragonAnimationController.speed = 1 + (double)Mth.sqrt((float)(player.getDeltaMovement().x * player.getDeltaMovement().x + player.getDeltaMovement().z * player.getDeltaMovement().z)) / 10;
 				builder.addAnimation("swim", true);
 			}
-		}else if(!player.isOnGround() && motio.y() < 0){
+		}else if(!player.isOnGround() && motio.y() < 0 && player.fallDistance >= 2){
 			builder.addAnimation("fall_loop", true);
-			System.out.println(animationController.getCurrentAnimation().animationName);
 		}else if(player.isOnGround() &&
 		         animationController.getCurrentAnimation() != null && (animationController.getCurrentAnimation().animationName.equals("fall_loop")
 		         || animationController.getCurrentAnimation().animationName.equals("land") && animationController.getAnimationState() == AnimationState.Running)){
@@ -338,9 +337,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 			builder.addAnimation("dig", true);
 		}
 
-		if(animationEvent.getController().getCurrentAnimation() == null || builder.getRawAnimationList().size() <= 0){
-			builder.addAnimation("idle", true);
-		}
+		builder.addAnimation("idle", true);
 
 		animationController.setAnimation(builder);
 		return PlayState.CONTINUE;

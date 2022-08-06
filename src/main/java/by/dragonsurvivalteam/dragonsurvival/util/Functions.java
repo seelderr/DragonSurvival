@@ -3,7 +3,6 @@ package by.dragonsurvivalteam.dragonsurvival.util;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DSEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
@@ -11,19 +10,15 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.SpawnPlacements.Type;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.NaturalSpawner;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.BannerPattern;
-import net.minecraft.world.level.block.entity.BannerPattern.Builder;
 import net.minecraft.world.level.levelgen.Heightmap.Types;
 import net.minecraft.world.phys.BlockHitResult;
 import software.bernie.geckolib3.geo.render.built.GeoBone;
 
 import javax.annotation.Nullable;
-import java.util.Random;
 
 public class Functions{
 
@@ -82,16 +77,7 @@ public class Functions{
 		return !world.getFluidState(blockPos).isEmpty() || world.isEmptyBlock(blockPos) || world.getBlockState(blockPos).canBeReplaced(context);
 	}
 
-	public static ListTag createRandomPattern(Builder builder, int times){
-		if(times > 16)
-			times = 16;
-		if(times < 1)
-			times = 1;
-		Random random = new Random();
-		for(int i = 0; i < times; i++)
-			builder = builder.addPattern(BannerPattern.values()[random.nextInt(BannerPattern.values().length)], DyeColor.values()[random.nextInt(DyeColor.values().length)]);
-		return builder.toListTag();
-	}
+
 
 	public static void copyBoneRotation(GeoBone from, GeoBone to){
 		to.setRotationX(from.getRotationX());

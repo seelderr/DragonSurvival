@@ -16,7 +16,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.Entity.RemovalReason;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -127,7 +126,7 @@ public class Capabilities{
 	public static void onClone(PlayerEvent.Clone e){
 		Player player = e.getPlayer();
 		Player original = e.getOriginal();
-		original.revive();
+	//	original.revive();
 
 		DragonStateProvider.getCap(player).ifPresent(capNew -> DragonStateProvider.getCap(original).ifPresent(capOld -> {
 			CompoundTag nbt = capOld.writeNBT();
@@ -143,7 +142,7 @@ public class Capabilities{
 				}
 			});
 		});
-		original.remove(RemovalReason.DISCARDED);
+		//original.remove(RemovalReason.DISCARDED);
 		DragonModifiers.updateModifiers(original, player);
 		player.refreshDimensions();
 	}

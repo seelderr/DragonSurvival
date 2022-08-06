@@ -2,6 +2,9 @@ package by.dragonsurvivalteam.dragonsurvival.client.render.entity.creatures;
 
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.PrinceHorseEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
@@ -16,6 +19,18 @@ import software.bernie.geckolib3.renderers.geo.ExtendedGeoEntityRenderer;
 public class PrinceHorseRenderer extends ExtendedGeoEntityRenderer<PrinceHorseEntity>{
 	public PrinceHorseRenderer(EntityRendererProvider.Context renderManager, AnimatedGeoModel<PrinceHorseEntity> modelProvider){
 		super(renderManager, modelProvider);
+	}
+
+	@Override
+	public void renderEarly(PrinceHorseEntity animatable, PoseStack stackIn, float ticks, MultiBufferSource renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float partialTicks){
+		Minecraft.getInstance().getProfiler().push("prince_on_horse");
+		super.renderEarly(animatable, stackIn, ticks, renderTypeBuffer, vertexBuilder, packedLightIn, packedOverlayIn, red, green, blue, partialTicks);
+	}
+
+	@Override
+	public void renderLate(PrinceHorseEntity animatable, PoseStack stackIn, float ticks, MultiBufferSource renderTypeBuffer, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float partialTicks){
+		super.renderLate(animatable, stackIn, ticks, renderTypeBuffer, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, partialTicks);
+		Minecraft.getInstance().getProfiler().pop();
 	}
 
 	@Override

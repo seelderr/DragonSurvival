@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render.entity.creatures;
 
-import net.minecraft.client.model.VillagerModel;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.VillagerRenderer;
 import net.minecraft.client.renderer.entity.layers.VillagerProfessionLayer;
@@ -13,9 +12,8 @@ public class PrinceRenderer extends VillagerRenderer{
 
 	public PrinceRenderer(EntityRendererProvider.Context entityRendererManager){
 		super(entityRendererManager);
-		this.layers.removeIf(villagerEntityVillagerModelLayerRenderer -> villagerEntityVillagerModelLayerRenderer instanceof VillagerProfessionLayer<Villager, VillagerModel<Villager>>);
+		this.layers.removeIf(VillagerProfessionLayer.class::isInstance);
 	}
-
 
 	public ResourceLocation getTextureLocation(Villager villager){
 		return TEXTURE;

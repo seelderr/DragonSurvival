@@ -27,6 +27,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawRender;
 import by.dragonsurvivalteam.dragonsurvival.network.container.OpenDragonInventory;
 import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncPlayerSkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.network.entity.player.SyncDragonSkinSettings;
+import by.dragonsurvivalteam.dragonsurvival.network.syncing.DragonChoiceSync;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -60,6 +61,8 @@ import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType;
 import net.minecraftforge.client.gui.ForgeIngameGui;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.TickEvent.Phase;
+import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -69,6 +72,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
+@OnlyIn(Dist.CLIENT)
 @Mod.EventBusSubscriber( Dist.CLIENT )
 public class ClientEvents{
 
@@ -100,7 +104,6 @@ public class ClientEvents{
 	@OnlyIn( Dist.CLIENT )
 	public static void sendClientData(RequestClientData message){
 		Player player = Minecraft.getInstance().player;
-
 		if(player != null){
 			NetworkHandler.CHANNEL.sendToServer(new SyncDragonClawRender(player.getId(), ClientDragonRender.renderDragonClaws));
 			NetworkHandler.CHANNEL.sendToServer(new SyncDragonSkinSettings(player.getId(), ClientDragonRender.renderNewbornSkin, ClientDragonRender.renderYoungSkin, ClientDragonRender.renderAdultSkin));
@@ -112,17 +115,25 @@ public class ClientEvents{
 					NetworkHandler.CHANNEL.sendToServer(new SyncPlayerSkinPreset(player.getId(), preset));
 				}
 			});
+		}
+	}
+	@OnlyIn(Dist.CLIENT)
+	@SubscribeEvent
+	public static void playerTick(PlayerTickEvent event){
+		if(event.phase == Phase.START) return;
+		Player player = event.player;
 
-			if(player == Minecraft.getInstance().player){
-				DragonStateProvider.getCap(player).ifPresent(cap -> {
-					cap.hasUsedAltar = cap.hasUsedAltar || cap.isDragon();
-
-					if(!cap.isDragon() && !cap.hasUsedAltar && ServerConfig.startWithDragonChoice){
+		if(player == Minecraft.getInstance().player){
+			DragonStateProvider.getCap(player).ifPresent(cap -> {
+				if(!cap.hasUsedAltar && ServerConfig.startWithDragonChoice){
+					if(!cap.isDragon()){
 						Minecraft.getInstance().setScreen(new DragonAltarGUI());
-						cap.hasUsedAltar = true;
 					}
-				});
-			}
+
+					cap.hasUsedAltar = true;
+					NetworkHandler.CHANNEL.sendToServer(new DragonChoiceSync(player.getId(), true));
+				}
+			});
 		}
 	}
 

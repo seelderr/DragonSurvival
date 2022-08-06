@@ -19,12 +19,15 @@ import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.entity.BannerPattern;
+import net.minecraft.world.level.block.entity.BannerPattern.Builder;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.Animation;
@@ -172,12 +175,21 @@ public class KnightEntity extends PathfinderMob implements IAnimatable, DragonHu
 		setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.IRON_SWORD));
 		if(random.nextDouble() < ServerConfig.knightShieldChance){
 			ItemStack itemStack = new ItemStack(Items.SHIELD);
-			ListTag listNBT = Functions.createRandomPattern(new BannerPattern.Builder(), 16);
 			CompoundTag compoundNBT = new CompoundTag();
-			compoundNBT.putInt("Base", DyeColor.values()[this.random.nextInt((DyeColor.values()).length)].getId());
+			ListTag listNBT = createRandomPattern(new Builder(), 16);
 			compoundNBT.put("Patterns", listNBT);
-			itemStack.addTagElement("BlockEntityTag", compoundNBT);
+			BlockItem.setBlockEntityData(itemStack, BlockEntityType.BANNER, compoundNBT);
 			setItemInHand(InteractionHand.OFF_HAND, itemStack);
 		}
+	}
+
+	public ListTag createRandomPattern(Builder builder, int times){
+		builder.addPattern(BannerPattern.BASE, DyeColor.values()[level.random.nextInt(DyeColor.values().length)]);
+
+		for(int i = 0; i < Math.max(2, level.random.nextInt(times)); i++){
+			builder.addPattern(BannerPattern.values()[level.random.nextInt(BannerPattern.values().length)], DyeColor.values()[level.random.nextInt(DyeColor.values().length)]).toListTag();
+		}
+
+		return builder.toListTag();
 	}
 }

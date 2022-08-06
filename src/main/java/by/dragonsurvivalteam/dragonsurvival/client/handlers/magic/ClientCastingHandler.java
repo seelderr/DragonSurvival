@@ -55,11 +55,6 @@ public class ClientCastingHandler{
 			if(status == 1 && ability.canCastSkill(player)){
 				NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCasting(player.getId(), true, ability.saveNBT()));
 
-				ability.onKeyPressed(player, () -> {
-					hasCast = true;
-					status = 2;
-				});
-
 			}else if(status == 2 || status == 1 && !ability.canCastSkill(player)){
 				NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCasting(player.getId(), false, ability.saveNBT()));
 

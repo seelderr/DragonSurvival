@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.network.magic;
 
+import by.dragonsurvivalteam.dragonsurvival.client.handlers.magic.ClientCastingHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
@@ -85,13 +86,17 @@ public class SyncAbilityCasting implements IMessage<SyncAbilityCasting>{
 				Level world = thisPlayer.level;
 				Entity entity = world.getEntity(message.playerId);
 				if(entity instanceof Player player){
-
 					DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
 						ActiveDragonAbility ability = dragonStateHandler.getMagic().getAbilityFromSlot(dragonStateHandler.getMagic().getSelectedAbilitySlot());
 						ability.loadNBT(message.tag);
 						dragonStateHandler.getMagic().isCasting = message.isCasting;
 						if(message.isCasting){
-							ability.onKeyPressed(player, () -> {});
+							ability.onKeyPressed(player, () -> {
+								if(player.getId() == thisPlayer.getId()) {
+									ClientCastingHandler.hasCast = true;
+									ClientCastingHandler.status = 2;
+								}
+							});
 						}else{
 							ability.onKeyReleased(player);
 						}

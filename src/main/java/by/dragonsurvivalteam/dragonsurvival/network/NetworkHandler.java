@@ -24,6 +24,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.*;
 import by.dragonsurvivalteam.dragonsurvival.network.status.*;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.CompleteDataSync;
+import by.dragonsurvivalteam.dragonsurvival.network.syncing.DragonChoiceSync;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
@@ -51,6 +52,7 @@ public class NetworkHandler{
 
 		register(by.dragonsurvivalteam.dragonsurvival.network.RequestClientData.class, new by.dragonsurvivalteam.dragonsurvival.network.RequestClientData());
 		register(CompleteDataSync.class, new CompleteDataSync());
+		register(DragonChoiceSync.class, new DragonChoiceSync());
 
 		//Status
 		register(SyncGrowthState.class, new SyncGrowthState());

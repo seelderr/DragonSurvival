@@ -3,16 +3,20 @@ package by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.DSParticles;
 import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.active.AoeBuffAbility;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
+import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
+import by.dragonsurvivalteam.dragonsurvival.magic.common.active.AoeBuffAbility;
 import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffectInstance;
+
+import java.util.ArrayList;
 
 @RegisterDragonAbility
 public class RevealingTheSoulAbility extends AoeBuffAbility{
@@ -97,11 +101,19 @@ public class RevealingTheSoulAbility extends AoeBuffAbility{
 
 	@Override
 	public MobEffectInstance getEffect(){
-		return new MobEffectInstance(DragonEffects.REVEALING_THE_SOUL, RevealingTheSoulAbility.revealingTheSoulDuration);
+		return new MobEffectInstance(DragonEffects.REVEALING_THE_SOUL, Functions.secondsToTicks(revealingTheSoulDuration));
 	}
 
 	@Override
 	public int getSkillCastingTime(){
 		return revealingTheSoulCasttime;
+	}
+
+	@Override
+	public ArrayList<Component> getInfo(){
+		ArrayList<Component> components = super.getInfo();
+		components.add(new TranslatableComponent("ds.skill.bonus_exp.multiplier", revealingTheSoulMultiplier + "x"));
+		components.add(new TranslatableComponent("ds.skill.bonus_exp.max_gain", Integer.toString(revealingTheSoulMaxEXP)));
+		return components;
 	}
 }
