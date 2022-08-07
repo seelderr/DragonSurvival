@@ -3,7 +3,6 @@ package by.dragonsurvivalteam.dragonsurvival.common.capability;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayer;
 import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
-import by.dragonsurvivalteam.dragonsurvival.common.EffectInstance2;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.GenericCapabilityProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.VillageRelationshipsProvider;
@@ -15,6 +14,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.syncing.CompleteDataSync;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
@@ -126,7 +126,7 @@ public class Capabilities{
 	public static void onClone(PlayerEvent.Clone e){
 		Player player = e.getPlayer();
 		Player original = e.getOriginal();
-	//	original.revive();
+		original.reviveCaps();
 
 		DragonStateProvider.getCap(player).ifPresent(capNew -> DragonStateProvider.getCap(original).ifPresent(capOld -> {
 			CompoundTag nbt = capOld.writeNBT();
@@ -138,11 +138,11 @@ public class Capabilities{
 			VillageRelationshipsProvider.getVillageRelationships(original).ifPresent(old -> {
 				villageRelationShips.readNBT(old.writeNBT());
 				if(ServerConfig.preserveEvilDragonEffectAfterDeath && villageRelationShips.evilStatusDuration > 0){
-					player.addEffect(new EffectInstance2(DragonEffects.EVIL_DRAGON, villageRelationShips.evilStatusDuration));
+					player.addEffect(new MobEffectInstance(DragonEffects.EVIL_DRAGON, villageRelationShips.evilStatusDuration));
 				}
 			});
 		});
-		//original.remove(RemovalReason.DISCARDED);
+		original.invalidateCaps();
 		DragonModifiers.updateModifiers(original, player);
 		player.refreshDimensions();
 	}

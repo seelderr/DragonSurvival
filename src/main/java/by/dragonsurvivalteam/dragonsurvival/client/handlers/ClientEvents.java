@@ -123,7 +123,7 @@ public class ClientEvents{
 		if(event.phase == Phase.START) return;
 		Player player = event.player;
 
-		if(player == Minecraft.getInstance().player){
+		if(player == Minecraft.getInstance().player && player.tickCount > 40){ //Add a delay for the menu to load so the world can load around the player
 			DragonStateProvider.getCap(player).ifPresent(cap -> {
 				if(!cap.hasUsedAltar && ServerConfig.startWithDragonChoice){
 					if(!cap.isDragon()){

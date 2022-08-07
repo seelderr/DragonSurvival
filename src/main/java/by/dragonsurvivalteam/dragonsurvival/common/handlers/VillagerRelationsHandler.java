@@ -1,7 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
-import by.dragonsurvivalteam.dragonsurvival.common.EffectInstance2;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.VillageRelationshipsProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DSEntities;
@@ -122,29 +121,29 @@ public class VillagerRelationsHandler{
 			if(dragonStateHandler.isDragon()){
 				MobEffectInstance effectInstance = playerEntity.getEffect(DragonEffects.EVIL_DRAGON);
 				if(effectInstance == null){
-					playerEntity.addEffect(new EffectInstance2(DragonEffects.EVIL_DRAGON, Functions.minutesToTicks(1)));
+					playerEntity.addEffect(new MobEffectInstance(DragonEffects.EVIL_DRAGON, Functions.minutesToTicks(1)));
 				}else{
 					int duration = effectInstance.getDuration();
 					if(duration <= Functions.minutesToTicks(1)){
-						playerEntity.addEffect(new EffectInstance2(DragonEffects.EVIL_DRAGON, Functions.minutesToTicks(5), 1));
+						playerEntity.addEffect(new MobEffectInstance(DragonEffects.EVIL_DRAGON, Functions.minutesToTicks(5), 1));
 					}else if(duration <= Functions.minutesToTicks(5)){
-						playerEntity.addEffect(new EffectInstance2(DragonEffects.EVIL_DRAGON, Functions.minutesToTicks(10), 2));
+						playerEntity.addEffect(new MobEffectInstance(DragonEffects.EVIL_DRAGON, Functions.minutesToTicks(10), 2));
 					}else if(duration <= Functions.minutesToTicks(10)){
-						playerEntity.addEffect(new EffectInstance2(DragonEffects.EVIL_DRAGON, Functions.minutesToTicks(15), 3));
+						playerEntity.addEffect(new MobEffectInstance(DragonEffects.EVIL_DRAGON, Functions.minutesToTicks(15), 3));
 					}else if(duration <= Functions.minutesToTicks(15)){
-						playerEntity.addEffect(new EffectInstance2(DragonEffects.EVIL_DRAGON, Functions.minutesToTicks(20), 4));
+						playerEntity.addEffect(new MobEffectInstance(DragonEffects.EVIL_DRAGON, Functions.minutesToTicks(20), 4));
 					}else if(duration <= Functions.minutesToTicks(20)){
-						playerEntity.addEffect(new EffectInstance2(DragonEffects.EVIL_DRAGON, Functions.minutesToTicks(25), 5));
+						playerEntity.addEffect(new MobEffectInstance(DragonEffects.EVIL_DRAGON, Functions.minutesToTicks(25), 5));
 					}else if(duration <= Functions.minutesToTicks(25)){
-						playerEntity.addEffect(new EffectInstance2(DragonEffects.EVIL_DRAGON, Functions.minutesToTicks(30), 6));
+						playerEntity.addEffect(new MobEffectInstance(DragonEffects.EVIL_DRAGON, Functions.minutesToTicks(30), 6));
 					}else if(duration <= Functions.minutesToTicks(30)){
-						playerEntity.addEffect(new EffectInstance2(DragonEffects.EVIL_DRAGON, Functions.minutesToTicks(60), 7));
+						playerEntity.addEffect(new MobEffectInstance(DragonEffects.EVIL_DRAGON, Functions.minutesToTicks(60), 7));
 					}else if(duration <= Functions.minutesToTicks(60)){
-						playerEntity.addEffect(new EffectInstance2(DragonEffects.EVIL_DRAGON, Functions.minutesToTicks(120), 8));
+						playerEntity.addEffect(new MobEffectInstance(DragonEffects.EVIL_DRAGON, Functions.minutesToTicks(120), 8));
 					}else if(duration <= Functions.minutesToTicks(120)){
-						playerEntity.addEffect(new EffectInstance2(DragonEffects.EVIL_DRAGON, Functions.minutesToTicks(240), 9));
+						playerEntity.addEffect(new MobEffectInstance(DragonEffects.EVIL_DRAGON, Functions.minutesToTicks(240), 9));
 					}else if(duration <= Functions.minutesToTicks(240)){
-						playerEntity.addEffect(new EffectInstance2(DragonEffects.EVIL_DRAGON, Functions.minutesToTicks(400), 10));
+						playerEntity.addEffect(new MobEffectInstance(DragonEffects.EVIL_DRAGON, Functions.minutesToTicks(400), 10));
 					}
 				}
 			}
@@ -217,9 +216,9 @@ public class VillagerRelationsHandler{
 				if(attacker.hasEffect(DragonEffects.EVIL_DRAGON)){
 					int duration = attacker.getEffect(DragonEffects.EVIL_DRAGON).getDuration();
 					int amplifier = attacker.getEffect(DragonEffects.EVIL_DRAGON).getAmplifier();
-					attacker.addEffect(new EffectInstance2(DragonEffects.EVIL_DRAGON, duration + Functions.secondsToTicks(5), amplifier));
+					attacker.addEffect(new MobEffectInstance(DragonEffects.EVIL_DRAGON, duration + Functions.secondsToTicks(5), amplifier));
 				}else{
-					attacker.addEffect(new EffectInstance2(DragonEffects.EVIL_DRAGON, Functions.secondsToTicks(5)));
+					attacker.addEffect(new MobEffectInstance(DragonEffects.EVIL_DRAGON, Functions.secondsToTicks(5)));
 				}
 			}
 		}

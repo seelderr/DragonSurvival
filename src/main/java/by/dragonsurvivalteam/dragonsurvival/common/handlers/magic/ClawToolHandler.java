@@ -108,7 +108,7 @@ public class ClawToolHandler{
 
 		DragonStateHandler cap = DragonUtils.getHandler(player);
 
-		if((mainStack.getItem() instanceof DiggerItem || mainStack.getItem() instanceof SwordItem || mainStack.getItem() instanceof ShearsItem || (mainStack.getItem() instanceof TieredItem))){
+		if(mainStack.getItem() instanceof DiggerItem || mainStack.getItem() instanceof SwordItem || mainStack.getItem() instanceof ShearsItem || mainStack.getItem() instanceof TieredItem){
 			return mainStack;
 		}
 

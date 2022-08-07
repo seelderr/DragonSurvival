@@ -1,7 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.blocks;
 
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.SoundRegistry;
-import by.dragonsurvivalteam.dragonsurvival.common.EffectInstance2;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
@@ -17,6 +16,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -98,7 +98,7 @@ public class DragonBeacon extends Block implements SimpleWaterloggedBlock, Entit
 						if(!world.isClientSide){
 							ConfigHandler.configList(MobEffect.class, ServerConfig.peaceBeaconEffects).forEach(effect -> {
 								if(effect != null){
-									playerEntity.addEffect(new EffectInstance2(effect, Functions.minutesToTicks(ServerConfig.secondsOfBeaconEffect)));
+									playerEntity.addEffect(new MobEffectInstance(effect, Functions.minutesToTicks(ServerConfig.secondsOfBeaconEffect)));
 								}
 							});
 						}
@@ -106,7 +106,7 @@ public class DragonBeacon extends Block implements SimpleWaterloggedBlock, Entit
 						if(!world.isClientSide){
 							ConfigHandler.configList(MobEffect.class, ServerConfig.magicBeaconEffects).forEach(effect -> {
 								if(effect != null){
-									playerEntity.addEffect(new EffectInstance2(effect, Functions.minutesToTicks(ServerConfig.secondsOfBeaconEffect)));
+									playerEntity.addEffect(new MobEffectInstance(effect, Functions.minutesToTicks(ServerConfig.secondsOfBeaconEffect)));
 								}
 							});
 						}
@@ -114,7 +114,7 @@ public class DragonBeacon extends Block implements SimpleWaterloggedBlock, Entit
 						if(!world.isClientSide){
 							ConfigHandler.configList(MobEffect.class, ServerConfig.fireBeaconEffects).forEach(effect -> {
 								if(effect != null){
-									playerEntity.addEffect(new EffectInstance2(effect, Functions.minutesToTicks(ServerConfig.secondsOfBeaconEffect)));
+									playerEntity.addEffect(new MobEffectInstance(effect, Functions.minutesToTicks(ServerConfig.secondsOfBeaconEffect)));
 								}
 							});
 						}

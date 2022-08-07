@@ -1,7 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.server.tileentity;
 
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.SoundRegistry;
-import by.dragonsurvivalteam.dragonsurvival.common.EffectInstance2;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.DragonBeacon;
 import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
@@ -12,6 +11,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -64,21 +64,21 @@ public class DragonBeaconTileEntity extends BaseBlockTileEntity{
 					case PEACE -> dragons.forEach(playerEntity -> {
 						ConfigHandler.configList(MobEffect.class, ServerConfig.peaceBeaconEffects).forEach(effect -> {
 							if(effect != null){
-								playerEntity.addEffect(new EffectInstance2(effect, Functions.secondsToTicks(ServerConfig.minutesOfDragonEffect) + 5));
+								playerEntity.addEffect(new MobEffectInstance(effect, Functions.secondsToTicks(ServerConfig.minutesOfDragonEffect) + 5));
 							}
 						});
 					});
 					case MAGIC -> dragons.forEach(playerEntity -> {
 						ConfigHandler.configList(MobEffect.class, ServerConfig.magicBeaconEffects).forEach(effect -> {
 							if(effect != null){
-								playerEntity.addEffect(new EffectInstance2(effect, Functions.secondsToTicks(ServerConfig.minutesOfDragonEffect) + 5));
+								playerEntity.addEffect(new MobEffectInstance(effect, Functions.secondsToTicks(ServerConfig.minutesOfDragonEffect) + 5));
 							}
 						});
 					});
 					case FIRE -> dragons.forEach(playerEntity -> {
 						ConfigHandler.configList(MobEffect.class, ServerConfig.fireBeaconEffects).forEach(effect -> {
 							if(effect != null){
-								playerEntity.addEffect(new EffectInstance2(effect, Functions.secondsToTicks(ServerConfig.minutesOfDragonEffect) + 5));
+								playerEntity.addEffect(new MobEffectInstance(effect, Functions.secondsToTicks(ServerConfig.minutesOfDragonEffect) + 5));
 							}
 						});
 					});

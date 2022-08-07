@@ -97,11 +97,16 @@ public class ServerFlightHandler{
 		if(tickEvent.phase == Phase.START || !DragonUtils.isDragon(player) || player.level.isClientSide){
 			return;
 		}
-		if(!ServerConfig.foldWingsOnLand || (player.getFoodData().getFoodLevel() <= ServerConfig.flightHungerThreshold && !player.isCreative() && !ServerConfig.allowFlyingWithoutHunger)){
+		if(!ServerConfig.foldWingsOnLand || player.getFoodData().getFoodLevel() <= ServerConfig.flightHungerThreshold && !player.isCreative() && !ServerConfig.allowFlyingWithoutHunger){
 			return;
 		}
 
 		DragonStateHandler dragonStateHandler = DragonUtils.getHandler(player);
+
+		if(dragonStateHandler.isWingsSpread()){
+			player.fallDistance = Math.max(0, player.fallDistance * 0.5f);
+		}
+
 		if(dragonStateHandler.hasFlown && player.isOnGround()){
 			if(dragonStateHandler.isWingsSpread() && player.isCreative()){
 				dragonStateHandler.hasFlown = false;
