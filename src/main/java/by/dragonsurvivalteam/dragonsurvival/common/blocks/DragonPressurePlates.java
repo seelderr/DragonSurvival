@@ -37,7 +37,7 @@ public class DragonPressurePlates extends PressurePlateBlock implements SimpleWa
 		FOREST
 	}
 
-	protected DragonPressurePlates(Properties p_i48445_1_, PressurePlateType type){
+	public DragonPressurePlates(Properties p_i48445_1_, PressurePlateType type){
 		super(Sensitivity.EVERYTHING, p_i48445_1_);
 		this.registerDefaultState(this.stateDefinition.any().setValue(POWERED, false).setValue(WATERLOGGED, false));
 
