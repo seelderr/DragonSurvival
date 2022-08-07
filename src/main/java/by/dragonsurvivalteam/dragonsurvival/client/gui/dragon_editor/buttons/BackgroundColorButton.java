@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.buttons;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.components.BackgroundColorSelectorComponent;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.components.BackgroundColorSelectorComponent;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TooltipRendering;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -76,7 +76,7 @@ public class BackgroundColorButton extends ExtendedButton{
 		}
 
 		if(visible){
-			GuiUtils.drawContinuousTexturedBox(mStack, BACKGROUND_TEXTURE, x, y, 0, 0, width, height, 32, 32, 10, 0);
+			GuiUtils.drawContinuousTexturedBox(mStack, BACKGROUND_TEXTURE, x, y, 0, 0, width, height, 32, 32, 10, 10, 10, 10, (float)0);
 			RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/background_color_button.png"));
 			blit(mStack, x + 3, y + 3, 0, 0, width - 6, height - 6, width - 6, height - 6);
 

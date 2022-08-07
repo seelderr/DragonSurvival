@@ -9,10 +9,10 @@ import by.dragonsurvivalteam.dragonsurvival.client.util.TooltipRendering;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.RequestClientData;
-import by.dragonsurvivalteam.dragonsurvival.network.entity.player.SynchronizeDragonCap;
+import by.dragonsurvivalteam.dragonsurvival.network.player.SynchronizeDragonCap;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncAltarCooldown;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
@@ -51,8 +51,7 @@ public class AltarTypeButton extends Button implements TooltipRender{
 
 	@Override
 	public void renderToolTip(PoseStack pPoseStack, int pMouseX, int pMouseY){
-		if(atTheTopOrBottom)
-		TooltipRendering.drawHoveringText(pPoseStack, altarDragonInfoLocalized(type == DragonType.NONE ? "human" : type.name().toLowerCase() + "_dragon", type == DragonType.NONE ? Collections.emptyList() : DragonFoodHandler.getSafeEdibleFoods(type)), pMouseX, pMouseY);
+		if(atTheTopOrBottom) TooltipRendering.drawHoveringText(pPoseStack, altarDragonInfoLocalized(type == DragonType.NONE ? "human" : type.name().toLowerCase() + "_dragon", type == DragonType.NONE ? Collections.emptyList() : DragonFoodHandler.getSafeEdibleFoods(type)), pMouseX, pMouseY);
 	}
 
 	private ArrayList<Component> altarDragonInfoLocalized(String dragonType, List<Item> foodList){
@@ -102,12 +101,8 @@ public class AltarTypeButton extends Button implements TooltipRender{
 			DragonStateProvider.getCap(player).ifPresent(cap -> {
 				player.level.playSound(player, player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 1, 0.7f);
 				cap.setType(type);
-
-				if(type == DragonType.NONE){
-					cap.setSize(20F);
-					cap.setHasWings(false);
-				}
-
+				cap.setSize(20F);
+				cap.setHasWings(false);
 				cap.setIsHiding(false);
 				cap.getMovementData().spinLearned = false;
 

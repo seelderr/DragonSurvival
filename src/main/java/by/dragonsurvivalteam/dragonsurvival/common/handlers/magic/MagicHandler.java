@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers.magic;
 
 import by.dragonsurvivalteam.dragonsurvival.client.particles.DSParticles;
-import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.GenericCapability;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.GenericCapabilityProvider;
@@ -14,8 +14,8 @@ import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.passive.Sp
 import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.BreathAbility.BreathDamage;
-import by.dragonsurvivalteam.dragonsurvival.misc.DragonLevel;
-import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.FluidTags;

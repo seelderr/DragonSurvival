@@ -3,10 +3,10 @@ package by.dragonsurvivalteam.dragonsurvival.common.items.growth;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.Capabilities;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.misc.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
-import by.dragonsurvivalteam.dragonsurvival.network.entity.player.SyncSize;
-import by.dragonsurvivalteam.dragonsurvival.network.entity.player.SynchronizeDragonCap;
+import by.dragonsurvivalteam.dragonsurvival.network.player.SyncSize;
+import by.dragonsurvivalteam.dragonsurvival.network.player.SynchronizeDragonCap;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.network.protocol.game.ClientboundSetPassengersPacket;

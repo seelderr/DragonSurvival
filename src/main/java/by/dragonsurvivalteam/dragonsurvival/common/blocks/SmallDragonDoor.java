@@ -2,7 +2,8 @@ package by.dragonsurvivalteam.dragonsurvival.common.blocks;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.Capabilities;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.stats.Stats;
@@ -40,7 +41,7 @@ public class SmallDragonDoor extends Block implements SimpleWaterloggedBlock{
 	public static final BooleanProperty OPEN = BlockStateProperties.OPEN;
 	public static final EnumProperty<DoorHingeSide> HINGE = BlockStateProperties.DOOR_HINGE;
 	public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
-	public static final EnumProperty<DragonDoorOpenRequirement> OPEN_REQ = EnumProperty.create("open_req", DragonDoorOpenRequirement.class);
+	public static final EnumProperty<DragonDoor.DragonDoorOpenRequirement> OPEN_REQ = EnumProperty.create("open_req", DragonDoor.DragonDoorOpenRequirement.class);
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
 	protected static final VoxelShape SOUTH_AABB = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 16.0D, 3.0D);
@@ -48,7 +49,7 @@ public class SmallDragonDoor extends Block implements SimpleWaterloggedBlock{
 	protected static final VoxelShape WEST_AABB = Block.box(13.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D);
 	protected static final VoxelShape EAST_AABB = Block.box(0.0D, 0.0D, 0.0D, 3.0D, 16.0D, 16.0D);
 
-	public SmallDragonDoor(Properties properties, DragonDoorOpenRequirement openRequirement){
+	public SmallDragonDoor(Properties properties, DragonDoor.DragonDoorOpenRequirement openRequirement){
 		super(properties);
 		registerDefaultState(getStateDefinition().any().setValue(FACING, Direction.NORTH).setValue(OPEN, false).setValue(HINGE, DoorHingeSide.LEFT).setValue(POWERED, false).setValue(OPEN_REQ, openRequirement).setValue(WATERLOGGED, false));
 	}
@@ -130,8 +131,8 @@ public class SmallDragonDoor extends Block implements SimpleWaterloggedBlock{
 	}
 
 	public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving){
-		boolean validPower = state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.NONE || state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.POWER;
-		boolean validType = (state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.SEA && blockIn == DSBlocks.seaPressurePlate) || (state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.FOREST && blockIn == DSBlocks.forestPressurePlate) || (state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.CAVE && blockIn == DSBlocks.cavePressurePlate);
+		boolean validPower = state.getValue(OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.NONE || state.getValue(OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.POWER;
+		boolean validType = (state.getValue(OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.SEA && blockIn == DSBlocks.seaPressurePlate) || (state.getValue(OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.FOREST && blockIn == DSBlocks.forestPressurePlate) || (state.getValue(OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.CAVE && blockIn == DSBlocks.cavePressurePlate);
 		if(validPower || validType){
 			boolean flag = worldIn.hasNeighborSignal(pos) || worldIn.hasNeighborSignal(pos.relative(Direction.UP));
 			if(blockIn != this && flag != state.getValue(POWERED)){
@@ -160,7 +161,7 @@ public class SmallDragonDoor extends Block implements SimpleWaterloggedBlock{
 		LazyOptional<DragonStateHandler> dragonStateHandlerLazyOptional = player.getCapability(Capabilities.DRAGON_CAPABILITY);
 		if(dragonStateHandlerLazyOptional.isPresent()){
 			DragonStateHandler dragonStateHandler = dragonStateHandlerLazyOptional.orElseGet(() -> null);
-			if(state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.NONE || (dragonStateHandler.isDragon() && (state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.CAVE && dragonStateHandler.getType() == DragonType.CAVE) || (state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.FOREST && dragonStateHandler.getType() == DragonType.FOREST) || (state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.SEA && dragonStateHandler.getType() == DragonType.SEA))){
+			if(state.getValue(OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.NONE || (dragonStateHandler.isDragon() && (state.getValue(OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.CAVE && dragonStateHandler.getType() == DragonType.CAVE) || (state.getValue(OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.FOREST && dragonStateHandler.getType() == DragonType.FOREST) || (state.getValue(OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.SEA && dragonStateHandler.getType() == DragonType.SEA))){
 				state = state.cycle(OPEN);
 				worldIn.setBlock(pos, state, 10);
 				worldIn.levelEvent(player, state.getValue(OPEN) ? this.getOpenSound() : this.getCloseSound(), pos, 0);
@@ -171,7 +172,7 @@ public class SmallDragonDoor extends Block implements SimpleWaterloggedBlock{
 	}
 
 	public PushReaction getPistonPushReaction(BlockState state){
-		return state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.NONE ? PushReaction.DESTROY : PushReaction.IGNORE;
+		return state.getValue(OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.NONE ? PushReaction.DESTROY : PushReaction.IGNORE;
 	}
 
 	@Override

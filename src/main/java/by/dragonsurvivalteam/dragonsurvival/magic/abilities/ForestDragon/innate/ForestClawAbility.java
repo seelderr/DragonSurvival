@@ -3,7 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.innate
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.innate.DragonClawsAbility;
-import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import net.minecraft.resources.ResourceLocation;
 
 @RegisterDragonAbility

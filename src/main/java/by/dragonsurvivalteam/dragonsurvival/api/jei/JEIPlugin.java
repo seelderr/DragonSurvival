@@ -15,7 +15,6 @@ public class JEIPlugin implements IModPlugin{
 	public ResourceLocation getPluginUid(){
 		return new ResourceLocation(DragonSurvivalMod.MODID, "fix");
 	}
-
 	@Override
 	public void registerRecipeTransferHandlers(IRecipeTransferRegistration registration){
 		registration.addRecipeTransferHandler(new DragonInventoryGUIHandler());

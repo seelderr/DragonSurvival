@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.common.blocks;
 
-import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;

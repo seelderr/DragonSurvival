@@ -7,7 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonSta
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
@@ -36,8 +36,7 @@ public class SkillProgressButton extends Button{
 
 	@Override
 	public void renderButton(PoseStack stack, int mouseX, int mouseY, float p_230431_4_){
-
-		ResourceLocation texture = AbilityButton.BLANK_TEXTURE;
+		ResourceLocation texture = ability != null ? ability.getIcon() : AbilityButton.BLANK_TEXTURE;
 
 		if(screen.unlockAbleSkills.size() > slot){
 			ActiveDragonAbility ability1 = screen.unlockAbleSkills.get(slot);

@@ -1,8 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.HelpButton;
-import by.dragonsurvivalteam.dragonsurvival.common.blocks.DSBlocks;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.SourceOfMagicContainer;
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.SourceOfMagicTileEntity;
 import com.mojang.blaze3d.systems.RenderSystem;

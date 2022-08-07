@@ -2,11 +2,11 @@ package by.dragonsurvivalteam.dragonsurvival.common.capability;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayer;
-import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.GenericCapabilityProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.VillageRelationshipsProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.util.DragonModifiers;
+import by.dragonsurvivalteam.dragonsurvival.registry.DragonModifiers;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.RequestClientData;
@@ -36,12 +36,9 @@ import java.util.concurrent.TimeUnit;
 
 @Mod.EventBusSubscriber( modid = DragonSurvivalMod.MODID, bus = Bus.FORGE )
 public class Capabilities{
-	public static Capability<VillageRelationShips> VILLAGE_RELATIONSHIP = CapabilityManager.get(new CapabilityToken<>(){
-	});
-	public static Capability<GenericCapability> GENERIC_CAPABILITY = CapabilityManager.get(new CapabilityToken<>(){
-	});
-	public static Capability<DragonStateHandler> DRAGON_CAPABILITY = CapabilityManager.get(new CapabilityToken<>(){
-	});
+	public static Capability<VillageRelationShips> VILLAGE_RELATIONSHIP = CapabilityManager.get(new CapabilityToken<>(){});
+	public static Capability<GenericCapability> GENERIC_CAPABILITY = CapabilityManager.get(new CapabilityToken<>(){});
+	public static Capability<DragonStateHandler> DRAGON_CAPABILITY = CapabilityManager.get(new CapabilityToken<>(){});
 
 	@SubscribeEvent
 	public static void attachCapabilities(AttachCapabilitiesEvent<Entity> event){
@@ -69,10 +66,9 @@ public class Capabilities{
 		return player instanceof FakeClientPlayer;
 	}
 
+	//TODO Find a better solution to fix the error of data being synced too early on LAN
 	private static final ScheduledExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadScheduledExecutor();
 
-
-	//TODO Find a better solution to fix the error of data being synced too early on LAN
 	@SubscribeEvent
 	public static void register(RegisterCapabilitiesEvent ev){
 		ev.register(DragonStateHandler.class);

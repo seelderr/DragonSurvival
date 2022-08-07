@@ -1,9 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.monsters;
 
-import by.dragonsurvivalteam.dragonsurvival.common.blocks.DSBlocks;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
-import by.dragonsurvivalteam.dragonsurvival.network.entity.PacketSyncXPDevour;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -30,10 +28,8 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.network.PacketDistributor;
 
 import javax.annotation.Nullable;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class MagicalPredator extends Monster{
@@ -288,7 +284,7 @@ public class MagicalPredator extends Monster{
 
 		@Override
 		public void tick(){
-			this.world.getEntities(EntityType.EXPERIENCE_ORB, this.entity.getBoundingBox().inflate(4), Objects::nonNull).forEach(xpOrb -> NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new PacketSyncXPDevour(this.entity.getId(), xpOrb.getId())));
+			//this.world.getEntities(EntityType.EXPERIENCE_ORB, this.entity.getBoundingBox().inflate(4), Objects::nonNull).forEach(xpOrb -> NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new PacketSyncXPDevour(this.entity.getId(), xpOrb.getId())));
 			super.tick();
 		}
 	}

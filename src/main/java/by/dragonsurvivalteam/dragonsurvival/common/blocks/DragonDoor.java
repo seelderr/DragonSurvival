@@ -1,8 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.common.blocks;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
@@ -265,5 +266,19 @@ public class DragonDoor extends Block implements SimpleWaterloggedBlock{
 
 	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder){
 		builder.add(PART, FACING, OPEN, HINGE, POWERED, OPEN_REQ, WATERLOGGED);
+	}
+
+	public enum DragonDoorOpenRequirement implements StringRepresentable{
+		NONE,
+		POWER,
+		CAVE,
+		FOREST,
+		SEA,
+		LOCKED;
+
+		@Override
+		public String getSerializedName(){
+			return name().toLowerCase(Locale.ENGLISH);
+		}
 	}
 }

@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.server.tileentity;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.common.blocks.DSBlocks;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;

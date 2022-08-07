@@ -2,7 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.server.containers.slots;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawsMenu;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.DragonContainer;
@@ -72,7 +72,6 @@ public class ClawToolSlot extends Slot{
 	private void syncSlots(){
 		if(!dragonContainer.player.level.isClientSide){
 			DragonStateHandler handler = DragonUtils.getHandler(dragonContainer.player);
-
 			NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> dragonContainer.player), new SyncDragonClawsMenu(dragonContainer.player.getId(), handler.getClawInventory().isClawsMenuOpen(), handler.getClawInventory().getClawsInventory()));
 		}
 	}

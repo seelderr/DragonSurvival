@@ -2,7 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.hitbox;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import com.google.common.collect.Lists;
 import com.mojang.math.Vector3f;

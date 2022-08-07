@@ -3,7 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.buttons;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.DropDownButton;
-import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.EnumSkinLayer;
+import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.EnumSkinLayer;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TextRenderUtil;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -45,7 +45,9 @@ public class EditorPartButton extends ExtendedButton{
 
 	@Override
 	public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){
-		GuiUtils.drawContinuousTexturedBox(mStack, BACKGROUND_TEXTURE, x, y, !active ? 32 : 0, isHoveredOrFocused() && active ? 32 : 0, width, height, 32, 32, 10, getBlitOffset());
+		int u = !active ? 32 : 0;
+		int v = isHoveredOrFocused() && active ? 32 : 0;
+		GuiUtils.drawContinuousTexturedBox(mStack, BACKGROUND_TEXTURE, x, y, u, v, width, height, 32, 32, 10, 10, 10, 10, (float)getBlitOffset());
 
 		if(texture != null){
 			RenderSystem.setShaderTexture(0, texture);

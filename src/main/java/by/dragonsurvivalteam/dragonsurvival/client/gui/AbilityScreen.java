@@ -2,13 +2,15 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui;
 
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.AbilityButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.*;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.magic.ClientMagicHUDHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.MagicCap;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
@@ -122,6 +124,15 @@ public class AbilityScreen extends Screen{
 				((AbstractWidget)btn).renderToolTip(stack, mouseX, mouseY);
 			}
 		}
+
+		renderables.forEach(s-> {
+			if(s instanceof AbilityButton btn){
+				if(btn.skillType == 0 && btn.dragging && btn.ability != null){
+					RenderSystem.setShaderTexture(0, btn.ability.getIcon());
+					blit(stack, mouseX, mouseY, 0, 0, 18, 18, 18, 18);
+				}
+			}
+		});
 	}
 
 	@Override
@@ -141,8 +152,8 @@ public class AbilityScreen extends Screen{
 		addRenderableWidget(new SkillProgressButton(guiLeft + (int)(219 / 2F), startY + 8, 4, this));
 
 		for(int i = 0; i <= 4; i++){
-			addRenderableWidget(new SkillProgressButton(guiLeft + (int)(219 / 2F) - (i * (23 + ((4 - i) / 4))), startY + 8, 4 - i, this));
-			addRenderableWidget(new SkillProgressButton(guiLeft + (int)(219 / 2F) + (i * (23 + ((4 - i) / 4))), startY + 8, 4 + i, this));
+			addRenderableWidget(new SkillProgressButton(guiLeft + (int)(219 / 2F) - i * (23 + (4 - i) / 4), startY + 8, 4 - i, this));
+			addRenderableWidget(new SkillProgressButton(guiLeft + (int)(219 / 2F) + i * (23 + (4 - i) / 4), startY + 8, 4 + i, this));
 		}
 
 		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {

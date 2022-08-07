@@ -2,8 +2,8 @@ package by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles;
 
 
 import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaDragon.LargeLightningParticleData;
-import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.DSEntities;
+import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.BallLightningAbility;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;

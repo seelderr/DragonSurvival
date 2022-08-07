@@ -1,9 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.buttons;
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
-import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.EnumSkinLayer;
+import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.EnumSkinLayer;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TextRenderUtil;
-import by.dragonsurvivalteam.dragonsurvival.misc.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.TranslatableComponent;

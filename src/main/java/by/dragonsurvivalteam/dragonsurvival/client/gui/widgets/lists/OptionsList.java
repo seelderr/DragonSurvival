@@ -230,16 +230,11 @@ public class OptionsList extends ContainerObjectSelectionList<OptionListEntry>{
 		int dif = -1;
 
 		for(OptionListEntry row : this.children())
-			if(row instanceof OptionEntry){
-				OptionEntry ent = (OptionEntry)row;
+			if(row instanceof OptionEntry ent){
 				String difText = StringUtils.difference(ent.key.getString().toLowerCase(Locale.ROOT).replace(" ", ""), text.toLowerCase(Locale.ROOT).replace(" ", ""));
+				if(difText.length() >= ent.key.getString().length()) continue;
 
-				if(difText.length() <= 15){
-					if(dif == -1 || difText.length() < dif){
-						closest = ent;
-						dif = difText.length();
-					}
-				}else if(dif == -1 && ent.key.getString().toLowerCase(Locale.ROOT).replace(" ", "").contains(text.toLowerCase(Locale.ROOT).replace(" ", ""))){
+				if(dif == -1 || difText.length() < dif){
 					closest = ent;
 					dif = difText.length();
 				}

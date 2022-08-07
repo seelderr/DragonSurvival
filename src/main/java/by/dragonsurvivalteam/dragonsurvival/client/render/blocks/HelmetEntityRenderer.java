@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render.blocks;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.common.blocks.DSBlocks;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.HelmetTileEntity;
 import com.google.common.collect.Maps;
 import com.mojang.blaze3d.vertex.PoseStack;

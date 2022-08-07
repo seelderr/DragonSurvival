@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.network.container;
 
-import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.DragonContainer;
 import net.minecraft.network.FriendlyByteBuf;

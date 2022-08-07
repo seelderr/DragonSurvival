@@ -3,7 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.AlertExceptHunters;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.CrossbowAttackGoal;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.Bolas;
-import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.nbt.CompoundTag;

@@ -1,15 +1,15 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
-import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
-import by.dragonsurvivalteam.dragonsurvival.common.blocks.DSBlocks;
+import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.Capabilities;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ClawToolHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.items.DSItems;
-import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.status.PlayerJumpSync;
 import net.minecraft.core.BlockPos;
@@ -64,7 +64,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.List;
 
-import static by.dragonsurvivalteam.dragonsurvival.misc.DragonLevel.ADULT;
+import static by.dragonsurvivalteam.dragonsurvival.util.DragonLevel.ADULT;
 
 @SuppressWarnings( "unused" )
 @Mod.EventBusSubscriber

@@ -5,7 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.particles.ForestDragon.LargeP
 import by.dragonsurvivalteam.dragonsurvival.client.particles.ForestDragon.SmallPoisonParticleData;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.PoisonBreathSound;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.SoundRegistry;
-import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.GenericCapability;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.GenericCapabilityProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigHandler;
@@ -15,7 +15,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigType;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.BreathAbility;
-import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;

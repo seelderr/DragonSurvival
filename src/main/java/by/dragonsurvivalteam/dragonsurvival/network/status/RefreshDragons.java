@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.network.status;
 
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.DSEntities;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import net.minecraft.client.Minecraft;

@@ -1,11 +1,11 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons;
 
-import by.dragonsurvivalteam.dragonsurvival.client.gui.components.ColorSelectorComponent;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.components.HueSelectorComponent;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.components.ColorSelectorComponent;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.components.HueSelectorComponent;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
-import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.DragonEditorHandler;
-import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.EnumSkinLayer;
-import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.objects.DragonEditorObject.Texture;
+import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEditorHandler;
+import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.EnumSkinLayer;
+import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonEditorObject.Texture;
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
 import com.mojang.blaze3d.vertex.PoseStack;

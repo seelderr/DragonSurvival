@@ -3,9 +3,9 @@ package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
@@ -57,7 +57,6 @@ public class DragonFoodHandler{
 	public static CopyOnWriteArrayList<Item> CAVE_D_FOOD;
 	public static CopyOnWriteArrayList<Item> FOREST_D_FOOD;
 	public static CopyOnWriteArrayList<Item> SEA_D_FOOD;
-	public static boolean isDrawingOverlay;
 	public static int rightHeight = 0;
 	private static ConcurrentHashMap<DragonType, Map<Item, FoodProperties>> DRAGON_FOODS;
 	private Minecraft mc;
@@ -67,7 +66,6 @@ public class DragonFoodHandler{
 		if(FMLLoader.getDist() == Dist.CLIENT){
 			mc = Minecraft.getInstance();
 		}
-		isDrawingOverlay = false;
 	}
 
 	@SubscribeEvent
@@ -327,7 +325,6 @@ public class DragonFoodHandler{
 				RenderSystem.setShaderTexture(0, Gui.GUI_ICONS_LOCATION);
 				RenderSystem.disableBlend();
 			}else{
-				isDrawingOverlay = false;
 			}
 		});
 	}

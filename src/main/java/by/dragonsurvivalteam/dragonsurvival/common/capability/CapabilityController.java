@@ -3,10 +3,10 @@ package by.dragonsurvivalteam.dragonsurvival.common.capability;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.hitbox.DragonHitBox;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.hitbox.DragonHitboxPart;
-import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.misc.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
-import by.dragonsurvivalteam.dragonsurvival.network.entity.player.SynchronizeDragonCap;
+import by.dragonsurvivalteam.dragonsurvival.network.player.SynchronizeDragonCap;
 import by.dragonsurvivalteam.dragonsurvival.network.status.DiggingStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.status.RefreshDragons;
 import net.minecraft.network.protocol.game.ClientboundSetPassengersPacket;
@@ -152,8 +152,8 @@ public class CapabilityController{
 	public static void changedDimension(PlayerEvent.PlayerChangedDimensionEvent changedDimensionEvent){
 		Player player = changedDimensionEvent.getPlayer();
 		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
-			NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new SynchronizeDragonCap(player.getId(), dragonStateHandler.isHiding(), dragonStateHandler.getType(), dragonStateHandler.getSize(), dragonStateHandler.hasWings(), dragonStateHandler.getLavaAirSupply(), 0));
-			NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new RefreshDragons(player.getId()));
+			NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(()->player), new SynchronizeDragonCap(player.getId(), dragonStateHandler.isHiding(), dragonStateHandler.getType(), dragonStateHandler.getSize(), dragonStateHandler.hasWings(), dragonStateHandler.getLavaAirSupply(), 0));
+			NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(()->player), new RefreshDragons(player.getId()));
 		});
 	}
 }

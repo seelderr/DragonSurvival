@@ -2,11 +2,11 @@ package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 
 import by.dragonsurvivalteam.dragonsurvival.client.render.util.AnimationTimer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.util.CommonTraits;
-import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.DSEntities;
-import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.misc.PrincessTrades;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSTrades;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.serialization.Dynamic;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -171,7 +171,7 @@ public class PrincesHorseEntity extends Villager implements IAnimatable, CommonT
 
 	protected void updateTrades(){
 		VillagerData villagerdata = getVillagerData();
-		Int2ObjectMap<VillagerTrades.ItemListing[]> int2objectmap = PrincessTrades.colorToTrades.get(getColor());
+		Int2ObjectMap<VillagerTrades.ItemListing[]> int2objectmap = DSTrades.princessColorCodes.get(getColor());
 		if(int2objectmap != null && !int2objectmap.isEmpty()){
 			VillagerTrades.ItemListing[] trades = int2objectmap.get(villagerdata.getLevel());
 			if(trades != null){

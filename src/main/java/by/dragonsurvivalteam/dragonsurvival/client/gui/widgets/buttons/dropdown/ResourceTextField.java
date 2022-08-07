@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.settings.ResourceTextFieldOption;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.settings.widgets.ResourceTextFieldOption;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigType;
 import com.google.common.primitives.Primitives;
@@ -329,7 +329,8 @@ public class ResourceTextField extends EditBox implements TooltipAccessor{
 
 	@Override
 	public void renderButton(PoseStack pPoseStack, int pMouseX, int pMouseY, float pPartialTicks){
-		GuiUtils.drawContinuousTexturedBox(pPoseStack, BACKGROUND_TEXTURE, x, y + 1, 0, isHovered ? 32 : 0, width, height, 32, 32, 10, 0);
+		int v = isHovered ? 32 : 0;
+		GuiUtils.drawContinuousTexturedBox(pPoseStack, BACKGROUND_TEXTURE, x, y + 1, 0, v, width, height, 32, 32, 10, 10, 10, 10, (float)0);
 
 		if(stack != null && !stack.isEmpty()){
 			stack.tick();

@@ -1,10 +1,10 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 
-import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.DSEntities;
-import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.misc.PrincessTrades;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSTrades;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.serialization.Dynamic;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -201,7 +201,7 @@ public class Princess extends Villager{
 
 	protected void updateTrades(){
 		VillagerData villagerdata = getVillagerData();
-		Int2ObjectMap<ItemListing[]> int2objectmap = PrincessTrades.colorToTrades.get(getColor());
+		Int2ObjectMap<ItemListing[]> int2objectmap = DSTrades.princessColorCodes.get(getColor());
 		if(int2objectmap != null && !int2objectmap.isEmpty()){
 			VillagerTrades.ItemListing[] trades = int2objectmap.get(villagerdata.getLevel());
 			if(trades != null){
@@ -223,7 +223,7 @@ public class Princess extends Villager{
 	protected void registerGoals(){
 		this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.5D){
 			public boolean canUse(){
-				return (!Princess.this.isTrading() && super.canUse());
+				return (!isTrading() && super.canUse());
 			}
 		});
 		this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, LivingEntity.class, 8.0F));

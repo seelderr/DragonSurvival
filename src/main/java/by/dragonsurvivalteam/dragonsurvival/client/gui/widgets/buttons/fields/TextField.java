@@ -33,7 +33,8 @@ public class TextField extends EditBox implements TooltipAccessor{
 
 	@Override
 	public void renderButton(PoseStack pPoseStack, int pMouseX, int pMouseY, float pPartialTicks){
-		GuiUtils.drawContinuousTexturedBox(pPoseStack, BACKGROUND_TEXTURE, x, y + 1, 0, isHovered ? 32 : 0, width, height, 32, 32, 10, 0);
+		int v = isHovered ? 32 : 0;
+		GuiUtils.drawContinuousTexturedBox(pPoseStack, BACKGROUND_TEXTURE, x, y + 1, 0, v, width, height, 32, 32, 10, 10, 10, 10, (float)0);
 
 		this.x += 5;
 		this.y += 6;

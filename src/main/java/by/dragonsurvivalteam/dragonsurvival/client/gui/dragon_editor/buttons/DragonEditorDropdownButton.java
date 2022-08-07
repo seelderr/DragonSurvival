@@ -5,8 +5,8 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownEntry;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownList;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.DropDownButton;
-import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.DragonEditorHandler;
-import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.EnumSkinLayer;
+import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEditorHandler;
+import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.EnumSkinLayer;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.SkinCap;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;

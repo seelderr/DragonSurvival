@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.network.dragon_editor;
 
-import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.EnumSkinLayer;
-import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.objects.SkinPreset;
+import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.EnumSkinLayer;
+import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;

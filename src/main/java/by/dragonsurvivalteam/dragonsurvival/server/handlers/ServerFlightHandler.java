@@ -1,13 +1,13 @@
 package by.dragonsurvivalteam.dragonsurvival.server.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientFlightHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.hitbox.DragonHitBox;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.hitbox.DragonHitboxPart;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonHitboxHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncFlyingStatus;
@@ -33,7 +33,7 @@ import net.minecraftforge.network.PacketDistributor;
 
 import java.util.List;
 
-import static by.dragonsurvivalteam.dragonsurvival.misc.DragonType.*;
+import static by.dragonsurvivalteam.dragonsurvival.util.DragonType.*;
 
 /**
  * Used in pair with {@link ClientFlightHandler}

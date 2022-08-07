@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.server.containers;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSContainers;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.slots.ClawToolSlot;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
@@ -39,20 +40,15 @@ public class DragonContainer extends AbstractContainerMenu{
 	public int menuStatus = 0;
 	protected final ContainerData dataStatus = new ContainerData(){
 		public int get(int p_221476_1_){
-			switch(p_221476_1_){
-				case 0:
-					return DragonContainer.this.menuStatus;
-
-				default:
-					return 0;
+			if(p_221476_1_ == 0){
+				return DragonContainer.this.menuStatus;
 			}
+			return 0;
 		}
 
 		public void set(int p_221477_1_, int p_221477_2_){
-			switch(p_221477_1_){
-				case 0:
-					DragonContainer.this.menuStatus = p_221477_2_;
-					break;
+			if(p_221477_1_ == 0){
+				DragonContainer.this.menuStatus = p_221477_2_;
 			}
 		}
 
@@ -70,7 +66,7 @@ public class DragonContainer extends AbstractContainerMenu{
 		this.addDataSlots(dataStatus);
 
 		for(int k = 0; k < 4; ++k){
-			final EquipmentSlot equipmentslottype = VALID_EQUIPMENT_SLOTS[k];
+			EquipmentSlot equipmentslottype = VALID_EQUIPMENT_SLOTS[k];
 			this.addSlot(new Slot(playerInventory, 39 - k, 8, 8 + k * 18){
 				@Override
 				public boolean mayPlace(ItemStack stack){

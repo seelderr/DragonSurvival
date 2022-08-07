@@ -7,11 +7,11 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.Cl
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.EmoteCap;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.MagicCap;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.SkinCap;
-import by.dragonsurvivalteam.dragonsurvival.common.util.DragonModifiers;
-import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.registry.DragonModifiers;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.misc.DragonLevel;
-import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.network.RequestClientData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;

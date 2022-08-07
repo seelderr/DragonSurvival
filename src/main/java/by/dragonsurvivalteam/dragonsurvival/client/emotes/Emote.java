@@ -19,7 +19,6 @@ public class Emote{
 	public String animation;
 	public Sound sound = null;
 
-
 	public static class Sound{
 		public String key;
 		public int interval;

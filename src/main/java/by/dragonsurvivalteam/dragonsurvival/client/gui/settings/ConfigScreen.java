@@ -1,8 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.settings;
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.fields.TextField;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.settings.DSDropDownOption;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.settings.DSNumberFieldOption;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.settings.widgets.DSDropDownOption;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.settings.widgets.DSNumberFieldOption;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.CategoryEntry;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.OptionEntry;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.OptionListEntry;

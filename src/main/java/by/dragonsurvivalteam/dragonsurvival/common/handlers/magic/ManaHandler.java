@@ -1,11 +1,11 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers.magic;
 
-import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.TreasureBlock;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
-import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.passive.CaveMagicAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.passive.ForestMagicAbility;
@@ -28,8 +28,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.network.PacketDistributor;
 
-import static by.dragonsurvivalteam.dragonsurvival.misc.DragonType.CAVE;
-import static by.dragonsurvivalteam.dragonsurvival.misc.DragonType.SEA;
+import static by.dragonsurvivalteam.dragonsurvival.util.DragonType.CAVE;
+import static by.dragonsurvivalteam.dragonsurvival.util.DragonType.SEA;
 
 @EventBusSubscriber
 public class ManaHandler{

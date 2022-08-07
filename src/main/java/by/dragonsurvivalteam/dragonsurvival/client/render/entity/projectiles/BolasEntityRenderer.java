@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render.entity.projectiles;
 
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.Bolas;
-import by.dragonsurvivalteam.dragonsurvival.common.items.DSItems;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;

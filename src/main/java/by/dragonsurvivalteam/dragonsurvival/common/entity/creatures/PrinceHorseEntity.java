@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 
-import by.dragonsurvivalteam.dragonsurvival.misc.PrinceTrades;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSTrades;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.DifficultyInstance;
@@ -53,7 +53,7 @@ public class PrinceHorseEntity extends PrincesHorseEntity{
 
 	protected void updateTrades(){
 		VillagerData villagerdata = getVillagerData();
-		Int2ObjectMap<ItemListing[]> int2objectmap = PrinceTrades.colorToTrades.get(getColor());
+		Int2ObjectMap<ItemListing[]> int2objectmap = DSTrades.princeTrades.get(getColor());
 		if(int2objectmap != null && !int2objectmap.isEmpty()){
 			VillagerTrades.ItemListing[] trades = int2objectmap.get(villagerdata.getLevel());
 			if(trades != null){

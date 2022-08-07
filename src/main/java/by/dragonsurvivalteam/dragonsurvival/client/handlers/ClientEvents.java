@@ -6,13 +6,10 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.DragonScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.TabButton;
 import by.dragonsurvivalteam.dragonsurvival.client.render.CaveLavaFluidRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
-import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.DragonEditorRegistry;
-import by.dragonsurvivalteam.dragonsurvival.client.skinPartSystem.objects.SkinPreset;
-import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEditorRegistry;
+import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.Bolas;
-import by.dragonsurvivalteam.dragonsurvival.common.items.DSItems;
-import by.dragonsurvivalteam.dragonsurvival.common.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
@@ -20,14 +17,17 @@ import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.passive.ContrastShowerAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.passive.LightInDarknessAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.passive.WaterAbility;
-import by.dragonsurvivalteam.dragonsurvival.misc.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.RequestClientData;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawRender;
 import by.dragonsurvivalteam.dragonsurvival.network.container.OpenDragonInventory;
+import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncDragonSkinSettings;
 import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncPlayerSkinPreset;
-import by.dragonsurvivalteam.dragonsurvival.network.entity.player.SyncDragonSkinSettings;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.DragonChoiceSync;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
+import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -59,6 +59,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType;
+import net.minecraftforge.client.event.RenderLevelStageEvent.Stage;
 import net.minecraftforge.client.gui.ForgeIngameGui;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
@@ -309,10 +310,11 @@ public class ClientEvents{
 		return texture;
 	}
 
-	//TODO Disabled until a solution to dynamically change RenderLayers is found
-	//@SubscribeEvent
+	@SubscribeEvent
 	@OnlyIn( Dist.CLIENT )
-	public static void onRenderWorldLastEvent(RenderLevelLastEvent event){
+	public static void onRenderWorldLastEvent(RenderLevelStageEvent event){
+		if(event.getStage() != Stage.AFTER_PARTICLES) return;
+
 		Minecraft minecraft = Minecraft.getInstance();
 		LocalPlayer player = minecraft.player;
 		DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
@@ -415,10 +417,10 @@ public class ClientEvents{
 					((ForgeIngameGui)Minecraft.getInstance().gui).right_height += 10;
 				}
 
-				final int left = Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 + 91;
-				final int top = Minecraft.getInstance().getWindow().getGuiScaledHeight() - rightHeight;
-				final int full = Mth.ceil((double)(playerStateHandler.getLavaAirSupply() - 2) * 10.0D / ServerConfig.caveLavaSwimmingTicks);
-				final int partial = Mth.ceil((double)playerStateHandler.getLavaAirSupply() * 10.0D / ServerConfig.caveLavaSwimmingTicks) - full;
+				int left = Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 + 91;
+				int top = Minecraft.getInstance().getWindow().getGuiScaledHeight() - rightHeight;
+				int full = Mth.ceil((double)(playerStateHandler.getLavaAirSupply() - 2) * 10.0D / ServerConfig.caveLavaSwimmingTicks);
+				int partial = Mth.ceil((double)playerStateHandler.getLavaAirSupply() * 10.0D / ServerConfig.caveLavaSwimmingTicks) - full;
 
 				for(int i = 0; i < full + partial; ++i){
 					Minecraft.getInstance().gui.blit(mStack, left - i * 8 - 9, top, (i < full ? 0 : 9), 27, 9, 9);

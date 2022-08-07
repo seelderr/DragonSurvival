@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.common.items;
 
-import by.dragonsurvivalteam.dragonsurvival.common.blocks.DSBlocks;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import com.google.common.collect.Ordering;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.CreativeModeTab;

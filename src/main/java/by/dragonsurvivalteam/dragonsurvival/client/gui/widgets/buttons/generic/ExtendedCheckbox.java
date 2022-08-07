@@ -39,8 +39,8 @@ public class ExtendedCheckbox extends Checkbox{
 		Font fontrenderer = minecraft.font;
 
 		if(height > 10){
-			GuiUtils.drawContinuousTexturedBox(pMatrixStack, BACKGROUND_TEXTURE, x, y, 0, 0, width, height, 32, 32, 10, 0);
-			GuiUtils.drawContinuousTexturedBox(pMatrixStack, BACKGROUND_TEXTURE, x, y, 0, 0, renderWidth, height, 32, 32, 10, 0);
+			GuiUtils.drawContinuousTexturedBox(pMatrixStack, BACKGROUND_TEXTURE, x, y, 0, 0, width, height, 32, 32, 10, 10, 10, 10, (float)0);
+			GuiUtils.drawContinuousTexturedBox(pMatrixStack, BACKGROUND_TEXTURE, x, y, 0, 0, renderWidth, height, 32, 32, 10, 10, 10, 10, (float)0);
 		}
 
 

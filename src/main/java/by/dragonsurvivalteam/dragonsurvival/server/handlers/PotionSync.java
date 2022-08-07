@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.server.handlers;
 
-import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncPotionAddedEffect;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncPotionRemovedEffect;

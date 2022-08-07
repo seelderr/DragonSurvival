@@ -1,8 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles;
 
-import by.dragonsurvivalteam.dragonsurvival.common.DragonEffects;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.DSEntities;
-import by.dragonsurvivalteam.dragonsurvival.common.items.DSItems;
+import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.world.effect.MobEffectInstance;

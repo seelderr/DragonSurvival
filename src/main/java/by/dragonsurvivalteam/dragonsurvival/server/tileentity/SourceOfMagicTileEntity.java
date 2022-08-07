@@ -1,8 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.server.tileentity;
 
-import by.dragonsurvivalteam.dragonsurvival.common.blocks.DSBlocks;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.SourceOfMagicBlock;
-import by.dragonsurvivalteam.dragonsurvival.common.items.DSItems;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.SourceOfMagicContainer;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;

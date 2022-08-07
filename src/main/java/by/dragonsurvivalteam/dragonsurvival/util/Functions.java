@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.util;
 
-import by.dragonsurvivalteam.dragonsurvival.common.entity.DSEntities;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -16,12 +16,10 @@ import net.minecraft.world.level.NaturalSpawner;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.Heightmap.Types;
 import net.minecraft.world.phys.BlockHitResult;
-import software.bernie.geckolib3.geo.render.built.GeoBone;
 
 import javax.annotation.Nullable;
 
 public class Functions{
-
 	public static int minutesToTicks(int minutes){
 		return secondsToTicks(minutes) * 60;
 	}
@@ -77,20 +75,4 @@ public class Functions{
 		return !world.getFluidState(blockPos).isEmpty() || world.isEmptyBlock(blockPos) || world.getBlockState(blockPos).canBeReplaced(context);
 	}
 
-
-
-	public static void copyBoneRotation(GeoBone from, GeoBone to){
-		to.setRotationX(from.getRotationX());
-		to.setRotationY(from.getRotationY());
-		to.setRotationZ(from.getRotationZ());
-		if(!to.childBones.isEmpty())
-			for(GeoBone childBone : to.childBones){
-				for(GeoBone bone : from.childBones){
-					if(childBone.getName().equals(bone.getName())){
-						copyBoneRotation(bone, childBone);
-						break;
-					}
-				}
-			}
-	}
 }
