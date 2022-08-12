@@ -2,11 +2,10 @@ package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 
 import by.dragonsurvivalteam.dragonsurvival.client.render.util.AnimationTimer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.util.CommonTraits;
-import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffects;
@@ -19,15 +18,10 @@ import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.world.level.block.entity.BannerPattern;
-import net.minecraft.world.level.block.entity.BannerPattern.Builder;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.Animation;
@@ -161,11 +155,7 @@ public class KnightEntity extends PathfinderMob implements IAnimatable, DragonHu
 
 	@Nullable
 	@Override
-	public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverWorld, DifficultyInstance difficultyInstance, MobSpawnType spawnReason,
-		@Nullable
-			SpawnGroupData entityData,
-		@Nullable
-			CompoundTag nbt){
+	public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverWorld, DifficultyInstance difficultyInstance, MobSpawnType spawnReason, @Nullable SpawnGroupData entityData, @Nullable CompoundTag nbt){
 		populateDefaultEquipmentSlots(difficultyInstance);
 		return super.finalizeSpawn(serverWorld, difficultyInstance, spawnReason, entityData, nbt);
 	}
@@ -174,22 +164,7 @@ public class KnightEntity extends PathfinderMob implements IAnimatable, DragonHu
 	protected void populateDefaultEquipmentSlots(DifficultyInstance difficultyInstance){
 		setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.IRON_SWORD));
 		if(random.nextDouble() < ServerConfig.knightShieldChance){
-			ItemStack itemStack = new ItemStack(Items.SHIELD);
-			CompoundTag compoundNBT = new CompoundTag();
-			ListTag listNBT = createRandomPattern(new Builder(), 16);
-			compoundNBT.put("Patterns", listNBT);
-			BlockItem.setBlockEntityData(itemStack, BlockEntityType.BANNER, compoundNBT);
-			setItemInHand(InteractionHand.OFF_HAND, itemStack);
+			setItemInHand(InteractionHand.OFF_HAND, new ItemStack(Items.SHIELD));
 		}
-	}
-
-	public ListTag createRandomPattern(Builder builder, int times){
-		builder.addPattern(BannerPattern.BASE, DyeColor.values()[level.random.nextInt(DyeColor.values().length)]);
-
-		for(int i = 0; i < Math.max(2, level.random.nextInt(times)); i++){
-			builder.addPattern(BannerPattern.values()[level.random.nextInt(BannerPattern.values().length)], DyeColor.values()[level.random.nextInt(DyeColor.values().length)]).toListTag();
-		}
-
-		return builder.toListTag();
 	}
 }

@@ -1,21 +1,18 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
-import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.VillageRelationshipsProvider;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.*;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.FollowMobGoal;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
+import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
@@ -28,14 +25,12 @@ import net.minecraft.world.entity.npc.AbstractVillager;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.npc.WanderingTrader;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.item.trading.MerchantOffers;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.block.entity.BannerPattern;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -304,8 +299,7 @@ public class VillagerRelationsHandler{
 	public static void spawnPrinceOrPrincess(TickEvent.WorldTickEvent serverTickEvent){
 		if(ServerConfig.spawnPrinceAndPrincess){
 			Level world = serverTickEvent.world;
-			if(world instanceof ServerLevel){
-				ServerLevel serverWorld = (ServerLevel)world;
+			if(world instanceof ServerLevel serverWorld){
 				if(!serverWorld.players().isEmpty() && serverWorld.dimension() == Level.OVERWORLD){
 					if(timeLeft == 0){
 						ServerPlayer player = serverWorld.getRandomPlayer();
@@ -323,10 +317,7 @@ public class VillagerRelationsHandler{
 								PrincesHorseEntity princessEntity = entityType.create(world);
 								princessEntity.setPos(blockPos.getX(), blockPos.getY(), blockPos.getZ());
 								princessEntity.finalizeSpawn(serverWorld, serverWorld.getCurrentDifficultyAt(player.blockPosition()), MobSpawnType.NATURAL, null, null);
-
 								serverWorld.addFreshEntity(princessEntity);
-
-								ListTag pattern = (new BannerPattern.Builder()).addPattern(BannerPattern.values()[world.random.nextInt((BannerPattern.values()).length)], DyeColor.values()[world.random.nextInt((DyeColor.values()).length)]).toListTag();
 
 								int knights = world.random.nextInt(3) + 3;
 								for(int i = 0; i < knights; i++){
@@ -334,13 +325,6 @@ public class VillagerRelationsHandler{
 									knightHunter.setPos(blockPos.getX(), blockPos.getY(), blockPos.getZ());
 									knightHunter.goalSelector.addGoal(5, new FollowMobGoal(PrincesHorseEntity.class, knightHunter, 8));
 									knightHunter.finalizeSpawn(serverWorld, serverWorld.getCurrentDifficultyAt(player.blockPosition()), MobSpawnType.NATURAL, null, null);
-									ItemStack itemStack = new ItemStack(Items.SHIELD);
-									CompoundTag compoundNBT = new CompoundTag();
-									compoundNBT.putInt("Base", princessEntity.getColor());
-									compoundNBT.put("Patterns", pattern);
-									itemStack.addTagElement("BlockEntityTag", compoundNBT);
-									knightHunter.setItemInHand(InteractionHand.OFF_HAND, itemStack);
-									serverWorld.addFreshEntity(knightHunter);
 								}
 
 								timeLeft = Functions.minutesToTicks(ServerConfig.princessSpawnDelay) + Functions.minutesToTicks(world.random.nextInt(ServerConfig.princessSpawnDelay / 2));

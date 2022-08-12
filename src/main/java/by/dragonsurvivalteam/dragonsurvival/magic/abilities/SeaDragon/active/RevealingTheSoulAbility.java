@@ -24,7 +24,7 @@ public class RevealingTheSoulAbility extends AoeBuffAbility{
 	public static Boolean revealingTheSoul = true;
 	@ConfigRange( min = 0, max = 10000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "revealing_the_soul"}, key = "revealingTheSoulDuration", comment = "The duration in seconds of the revealing The Soul effect given when the ability is used" )
-	public static Integer revealingTheSoulDuration = 60;
+	public static Integer revealingTheSoulDuration = Functions.secondsToTicks(60);
 	@ConfigRange( min = 1, max = 10000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "revealing_the_soul"}, key = "revealingTheSoulCooldown", comment = "The cooldown in ticks of the revealing the soul ability" )
 	public static Integer revealingTheSoulCooldown = Functions.secondsToTicks(30);

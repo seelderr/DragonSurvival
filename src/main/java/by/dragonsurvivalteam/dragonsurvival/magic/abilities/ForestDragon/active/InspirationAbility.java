@@ -26,7 +26,7 @@ public class InspirationAbility extends AoeBuffAbility{
 	public static Integer inspirationCasttime = Functions.secondsToTicks(5);
 	@ConfigRange( min = 0, max = 10000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "inspiration"}, key = "inspirationDuration", comment = "The duration in seconds of the inspiration effect given when the ability is used" )
-	public static Integer inspirationDuration = 60;
+	public static Integer inspirationDuration = Functions.secondsToTicks(60);
 	@ConfigRange( min = 0, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "inspiration"}, key = "inspirationManaCost", comment = "The mana cost for using the inspiration ability" )
 	public static Integer inspirationManaCost = 3;

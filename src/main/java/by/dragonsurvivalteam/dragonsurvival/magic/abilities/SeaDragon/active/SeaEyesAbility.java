@@ -31,7 +31,7 @@ public class SeaEyesAbility extends ChargeCastAbility{
 
 	@ConfigRange( min = 0, max = 10000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "sea_vision"}, key = "seaVisionDuration", comment = "The duration in seconds of the sea vision effect given when the ability is used" )
-	public static Integer seaEyesDuration = 90;
+	public static Integer seaEyesDuration = Functions.secondsToTicks(90);
 
 	@ConfigRange( min = 1, max = 10000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "sea_vision"}, key = "seaVisionCooldown", comment = "The cooldown in ticks of the sea vision ability" )

@@ -73,7 +73,7 @@ public class SyncAbilityCasting implements IMessage<SyncAbilityCasting>{
 				}
 			});
 
-			NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY.with(() -> player), new SyncAbilityCasting(player.getId(), message.isCasting, message.tag));
+			NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncAbilityCasting(player.getId(), message.isCasting, message.tag));
 		}
 	}
 

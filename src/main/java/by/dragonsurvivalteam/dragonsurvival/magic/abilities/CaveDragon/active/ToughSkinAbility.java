@@ -30,7 +30,7 @@ public class ToughSkinAbility extends AoeBuffAbility{
 	public static Boolean toughSkin = true;
 	@ConfigRange( min = 0, max = 10000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "tough_skin"}, key = "toughSkinDuration", comment = "The duration in seconds of the tough skin effect given when the ability is used" )
-	public static Integer toughSkinDuration = 180;
+	public static Integer toughSkinDuration = Functions.secondsToTicks(180);
 	@ConfigRange( min = 1, max = 10000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "tough_skin"}, key = "toughSkinCooldown", comment = "The cooldown in ticks of the tough skin ability" )
 	public static Integer toughSkinCooldown = Functions.secondsToTicks(30);
