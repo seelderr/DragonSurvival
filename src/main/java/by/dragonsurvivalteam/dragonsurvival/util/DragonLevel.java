@@ -1,9 +1,11 @@
 package by.dragonsurvivalteam.dragonsurvival.util;
 
 
+import com.google.gson.annotations.SerializedName;
 import net.minecraft.client.resources.language.I18n;
 
 public enum DragonLevel{
+	@SerializedName(value = "NEWBORN", alternate = "BABY")
 	NEWBORN(14, 1.1f, "newborn"),
 	YOUNG(20, 1.6f, "young"),
 	ADULT(30, 2.1f, "adult");
