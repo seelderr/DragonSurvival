@@ -70,7 +70,7 @@ public class NetherBreathAbility extends BreathAbility{
 	public static Boolean fireBreathSpreadsFire = true;
 	@ConfigType(Block.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreathBlockBreaks", comment = "Blocks that have a chance to be broken by fire breath. Formatting: block/modid:id" )
-	public static List<String> fireBreathBlockBreaks = List.of("minecraft:ice", "minecraft:snow", "minecraft:crops", "minecraft:leaves", "minecraft:flowers", "minecraft:banners", "minecraft:lush_plants_replaceable", "minecraft:azalea_log_replaceable", "minecraft:replaceable_plants", "minecraft:wooden_fences", "minecraft:logs_that_burn", "minecraft:mycelium", "minecraft:wooden_stairs", "minecraft:wooden_doors", "minecraft:wool", "minecraft:saplings", "minecraft:impermeable", "minecraft:cobweb", "minecraft:large_fern", "minecraft:sugar_cane", "minecraft:snow_block");
+	public static List<String> fireBreathBlockBreaks = List.of("minecraft:impermeable", "minecraft:crops", "minecraft:flowers", "minecraft:replaceable_plants", "minecraft:cobweb");
 	@ConfigRange( min = 1, max = 10000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreathCooldown", comment = "The cooldown in ticks of the fire breath ability" )
 	public static Integer fireBreathCooldown = Functions.secondsToTicks(5);
