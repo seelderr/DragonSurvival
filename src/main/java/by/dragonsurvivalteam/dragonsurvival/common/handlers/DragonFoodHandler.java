@@ -151,19 +151,25 @@ public class DragonFoodHandler{
 		return new ConcurrentHashMap<>(foodMap);
 	}
 
+	//TODO Rebuild food map per player for more accurate results
 	@Nullable
-
 	private static FoodProperties calculateDragonFoodProperties(Item item, DragonType type, int nutrition, int saturation, boolean dragonFood){
+		FoodProperties.Builder builder = new FoodProperties.Builder();
+
+		if(item == null || item.getFoodProperties() == null){
+			return builder.build();
+		}
+
 		if(!ServerConfig.customDragonFoods || type == DragonType.NONE){
 			return item.getFoodProperties();
 		}
-		FoodProperties.Builder builder = new FoodProperties.Builder();
-		if(dragonFood){
-			builder.nutrition(nutrition).saturationMod(((float)saturation / (float)nutrition) / 2.0F);
-			if(item.getFoodProperties() != null){
-				FoodProperties humanFood = item.getFoodProperties();
-				if(humanFood.isMeat()){
 
+		FoodProperties humanFood = item.getFoodProperties();
+
+		if(dragonFood){
+			builder.nutrition(nutrition).saturationMod((float)saturation / (float)nutrition / 2.0F);
+			if(item.getFoodProperties() != null){
+				if(humanFood.isMeat()){
 					builder.meat();
 				}
 				if(humanFood.canAlwaysEat()){
@@ -180,7 +186,6 @@ public class DragonFoodHandler{
 				}
 			}
 		}else{
-			FoodProperties humanFood = item.getFoodProperties();
 			builder.nutrition(humanFood.getNutrition()).saturationMod(humanFood.getSaturationModifier());
 			if(humanFood.isMeat()){
 
@@ -200,6 +205,7 @@ public class DragonFoodHandler{
 			}
 			builder.effect(() -> new MobEffectInstance(MobEffects.HUNGER, 20 * 60, 0), 1.0F);
 		}
+
 		return builder.build();
 	}
 
