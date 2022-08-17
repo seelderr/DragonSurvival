@@ -59,22 +59,18 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 
 	public TreasureBlock(Color c, Properties p_i48328_1_){
 		super(p_i48328_1_);
-		this.registerDefaultState(this.stateDefinition.any().setValue(LAYERS, Integer.valueOf(1)).setValue(WATERLOGGED, false));
+		this.registerDefaultState(this.stateDefinition.any().setValue(LAYERS, 1).setValue(WATERLOGGED, false));
 		this.effectColor = c;
 	}
 
 
 	public boolean isPathfindable(BlockState p_196266_1_, BlockGetter p_196266_2_, BlockPos p_196266_3_, PathComputationType p_196266_4_){
-		switch(p_196266_4_){
-			case LAND:
-				return p_196266_1_.getValue(LAYERS) < 5;
-			case WATER:
-				return false;
-			case AIR:
-				return false;
-			default:
-				return false;
-		}
+		return switch(p_196266_4_){
+			case LAND -> p_196266_1_.getValue(LAYERS) < 5;
+			case WATER -> false;
+			case AIR -> false;
+			default -> false;
+		};
 	}
 
 	@Override

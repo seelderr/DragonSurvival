@@ -45,39 +45,6 @@ public abstract class MixinLivingEntity extends Entity{
 		super(p_i48580_1_, p_i48580_2_);
 	}
 
-
-//	/**
-//	 * Makes lava act like water for cave dragons
-//	 */
-//	@Redirect(method = "travel", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;isInWater()Z"))
-//	public boolean isInWater(LivingEntity instance){
-//		if(instance instanceof Player player){
-//			if(DragonUtils.isDragon(player)){
-//				if(DragonUtils.getDragonType(player) == DragonType.CAVE){
-//					return player.isInLava();
-//				}
-//			}
-//		}
-//
-//		return instance.isInWater();
-//	}
-
-//	/**
-//	 * Makes water act like lava for cave dragons
-//	 */
-//	@Redirect(method = "travel", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;isInLava()Z"))
-//	public boolean isInLava(LivingEntity instance){
-//		if(instance instanceof Player player){
-//			if(DragonUtils.isDragon(player)){
-//				if(DragonUtils.getDragonType(player) == DragonType.CAVE){
-//					return player.isInWater();
-//				}
-//			}
-//		}
-//
-//		return instance.isInWater();
-//	}
-
 	@Redirect( method = "collectEquipmentChanges", at = @At( value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getItemBySlot(Lnet/minecraft/world/entity/EquipmentSlot;)Lnet/minecraft/world/item/ItemStack;" ) )
 	private ItemStack getDragonSword(LivingEntity entity, EquipmentSlot slotType){
 		ItemStack mainStack = entity.getMainHandItem();
@@ -107,7 +74,7 @@ public abstract class MixinLivingEntity extends Entity{
 		}
 	}
 
-	@Inject( at = @At( "HEAD" ), method = "Lnet/minecraft/world/entity/LivingEntity;rideableUnderWater()Z", cancellable = true )
+	@Inject( at = @At( "HEAD" ), method = "rideableUnderWater()Z", cancellable = true )
 	public void dragonRideableUnderWater(CallbackInfoReturnable<Boolean> ci){
 		if(DragonUtils.isDragon(this)){
 			ci.setReturnValue(true);
@@ -149,27 +116,15 @@ public abstract class MixinLivingEntity extends Entity{
 
 					for(Pair<MobEffectInstance, Float> pair : DragonFoodHandler.getDragonFoodProperties(item, dragonStateHandler.getType()).getEffects()){
 						if(!level.isClientSide && pair.getFirst() != null){
-							if(!level.isClientSide && pair.getFirst() != null && pair.getFirst().getEffect() != MobEffects.HUNGER && level.random.nextFloat() < pair.getSecond()){
+							if(pair.getFirst() != null && pair.getFirst().getEffect() != MobEffects.HUNGER && level.random.nextFloat() < pair.getSecond()){
 								livingEntity.addEffect(new MobEffectInstance(pair.getFirst()));
 							}
 							if(pair.getFirst().getEffect() == MobEffects.HUNGER){
 								if(livingEntity.hasEffect(MobEffects.HUNGER)){
-									switch(livingEntity.getEffect(MobEffects.HUNGER).getAmplifier()){
-										case 0:
-											livingEntity.addEffect(new MobEffectInstance(MobEffects.HUNGER, pair.getFirst().getDuration(), pair.getFirst().getAmplifier() + 1));
-											if(level.random.nextFloat() < 0.25F){
-												livingEntity.addEffect(new MobEffectInstance(MobEffects.POISON, pair.getFirst().getDuration(), 0));
-											}
-											break;
-										case 1:
-											livingEntity.addEffect(new MobEffectInstance(MobEffects.HUNGER, pair.getFirst().getDuration(), pair.getFirst().getAmplifier() + 2));
-											if(level.random.nextFloat() < 0.5F){
-												livingEntity.addEffect(new MobEffectInstance(MobEffects.POISON, pair.getFirst().getDuration(), 0));
-											}
-											break;
-										default:
-											livingEntity.addEffect(new MobEffectInstance(MobEffects.HUNGER, pair.getFirst().getDuration(), pair.getFirst().getAmplifier() + 2));
-											livingEntity.addEffect(new MobEffectInstance(MobEffects.POISON, pair.getFirst().getDuration(), 0));
+									int amp = livingEntity.getEffect(MobEffects.HUNGER).getAmplifier();
+									livingEntity.addEffect(new MobEffectInstance(MobEffects.HUNGER, pair.getFirst().getDuration(), pair.getFirst().getAmplifier() + 1 + amp));
+									if(level.random.nextFloat() < 0.25F * amp){
+										livingEntity.addEffect(new MobEffectInstance(MobEffects.POISON, pair.getFirst().getDuration(), 0));
 									}
 								}else if(level.random.nextFloat() < pair.getSecond()){
 									livingEntity.addEffect(new MobEffectInstance(pair.getFirst()));

@@ -78,16 +78,9 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
 	public void getDragonPassengersRidingOffset(CallbackInfoReturnable<Double> ci){
 		if(DragonUtils.isDragon((Entity)(Object)this)){
 			switch(((Entity)(Object)this).getPose()){
-				case FALL_FLYING:
-				case SWIMMING:
-				case SPIN_ATTACK:
-					ci.setReturnValue((double)this.dimensions.height * 0.6D);
-					break;
-				case CROUCHING:
-					ci.setReturnValue((double)this.dimensions.height * 0.45D);
-					break;
-				default:
-					ci.setReturnValue((double)this.dimensions.height * 0.5D);
+				case FALL_FLYING, SWIMMING, SPIN_ATTACK -> ci.setReturnValue((double)this.dimensions.height * 0.6D);
+				case CROUCHING -> ci.setReturnValue((double)this.dimensions.height * 0.45D);
+				default -> ci.setReturnValue((double)this.dimensions.height * 0.5D);
 			}
 		}
 	}
@@ -117,9 +110,8 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
 			Vec3 vector3d = new Vec3(getX() - width, getY(), getZ() - width);
 			Vec3 vector3d1 = new Vec3(getX() + width, getY() + height, getZ() + width);
 			return new AABB(vector3d, vector3d1);
-		}else{
+		}else
 			return getBoundingBoxForPose(pose);
-		}
 	}
 
 	@Shadow

@@ -22,10 +22,12 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.IForgeRegistry;
 
 import javax.annotation.Nullable;
+import java.util.HashMap;
 import java.util.List;
 
 @Mod.EventBusSubscriber( modid = DragonSurvivalMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD )
 public class DSItems{
+	public static HashMap<String, Item> DS_ITEMS = new HashMap<>();
 
 	public static Item dragonHeartShard, weakDragonHeart, elderDragonHeart;
 	public static Item starBone, elderDragonBone, elderDragonDust;
@@ -95,12 +97,14 @@ public class DSItems{
 		};
 		item.setRegistryName(DragonSurvivalMod.MODID, name);
 		registry.register(item);
+		DS_ITEMS.put(name, item);
 		return item;
 	}
 
 	public static Item registerItem(IForgeRegistry<Item> registry, Item item, String name){
 		item.setRegistryName(DragonSurvivalMod.MODID, name);
 		registry.register(item);
+		DS_ITEMS.put(name, item);
 		return item;
 	}
 }
