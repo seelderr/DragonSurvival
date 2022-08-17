@@ -1,5 +1,5 @@
-
 import net.minecraftforge.gradle.common.util.RunConfig
+
 buildscript {
     repositories {
         maven {
@@ -61,7 +61,29 @@ minecraft {
     runs {
         client {}
         server {}
+        data {
+            property 'fml.earlyprogresswindow', 'false'
+            forceExit false
+            args '--mod', 'dragonsurvival', '--all', '--existing', '"' + file('src/main/resources/') + '"', '--output', '"' + file('src/generated/resources/') + '"'
+        }
     }
+}
+
+sourceSets.main.resources {
+    srcDir 'src/generated/resources'
+}
+
+processResources {
+    from sourceSets.main.resources
+    inputs.property "version", project.version
+
+    filesMatching("mods.toml") {
+        expand "version": project.version
+    }
+
+    // Exclude datagenerator .cache directory
+    exclude '.cache'
+    duplicatesStrategy( DuplicatesStrategy.EXCLUDE)
 }
 
 mixin {

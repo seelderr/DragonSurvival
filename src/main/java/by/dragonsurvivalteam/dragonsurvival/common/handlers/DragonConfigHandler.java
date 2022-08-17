@@ -11,7 +11,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig.Type;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 
 import java.util.HashMap;
@@ -20,10 +20,10 @@ import java.util.Map;
 
 @Mod.EventBusSubscriber( modid = DragonSurvivalMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD )
 public class DragonConfigHandler{
-	public static List<Block> SEA_DRAGON_HYDRATION_BLOCKS;
-	public static List<Item> SEA_DRAGON_HYDRATION_USE_ALTERNATIVES;
+	public static List<Block> SEA_DRAGON_HYDRATION_BLOCKS = List.of();
+	public static List<Item> SEA_DRAGON_HYDRATION_USE_ALTERNATIVES = List.of();
 
-	public static List<Block> FOREST_DRAGON_BREATH_GROW_BLACKLIST;
+	public static List<Block> FOREST_DRAGON_BREATH_GROW_BLACKLIST = List.of();
 
 	public static Map<DragonType, List<Block>> DRAGON_SPEEDUP_BLOCKS;
 	public static Map<DragonType, List<Block>> DRAGON_BREATH_BLOCKS;
@@ -31,7 +31,7 @@ public class DragonConfigHandler{
 
 	@SubscribeEvent
 	public static void onConfigLoad(ModConfigEvent.Loading event){
-		if(event.getConfig().getType() == Type.SERVER){
+		if(event.getConfig().getType() == ModConfig.Type.SERVER){
 			rebuildSpeedupBlocksMap();
 			rebuildSeaDragonConfigs();
 			rebuildBreathBlocks();
