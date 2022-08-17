@@ -77,7 +77,7 @@ public class MagicHandler{
 			}
 
 
-			if(cap.getMagic().abilities.size() <= 0 || cap.getMagic().innateDragonAbilities.size() <= 0){
+			if(cap.getMagic().abilities.isEmpty() || cap.getMagic().innateDragonAbilities.isEmpty() || cap.getMagic().activeDragonAbilities.isEmpty()){
 				cap.getMagic().initAbilities(cap.getType());
 			}
 
