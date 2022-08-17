@@ -51,7 +51,7 @@ public class ServerConfig{
 	@ConfigOption( side = ConfigSide.SERVER, category = "general", key = "minSizeVari", comment = "The minimum size variation in percentage" )
 	public static Double minSizeVari = -10.0;
 
-	@ConfigOption( side = ConfigSide.SERVER, category = "general", key = "useModifiedHitboxes", comment = "Should the mod use the new modified hitboxes for dragon plauers?" )
+	@ConfigOption( side = ConfigSide.SERVER, category = "general", key = "useModifiedHitboxes", comment = "Should the mod use the new modified hitboxes for dragon players? Can have bugs, but more comfortable for pvp." )
 	public static Boolean useModifiedHitboxes = false;
 
 	@ConfigOption( side = ConfigSide.SERVER, category = "general", key = "startWithDragonChoice", comment = "Should the dragon altar interface be opened when the player first joins the world?" )
@@ -91,7 +91,7 @@ public class ServerConfig{
 	public static Boolean saveGrowthStage = false;
 
 	@ConfigRange( min = 1, max = 100 )
-	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "minHealth", comment = "Dragon starting health. Minumum health dragons will start off with." )
+	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "minHealth", comment = "Dragon starting health. Minimum health dragons will start off with." )
 	public static Integer minHealth = 14;
 
 	@ConfigRange( min = 1, max = 100 )
@@ -389,7 +389,7 @@ public class ServerConfig{
 
 	@ConfigType(Block.class)
 	@ConfigOption( side = ConfigSide.SERVER, category  = {"penalties", "sea"}, key = "seaHydrationBlocks", comment = "When sea dragons stand on these blocks, hydration is restored. Format: block/modid:id" )
-	public static List<String> seaHydrationBlocks = List.of("minecraft:ice", "minecraft:snow", "minecraft:snow_block", "dragonsurvival:sea_source_of_magic", "immersive_weathering:icicle");
+	public static List<String> seaHydrationBlocks = List.of("minecraft:ice", "minecraft:snow", "minecraft:powder_snow","minecraft:snow_block", "dragonsurvival:sea_source_of_magic", "immersive_weathering:icicle");
 
 	@ConfigOption( side = ConfigSide.SERVER, category  = {"penalties", "sea"}, key = "allowWaterBottles", comment = "Set to false to disable sea dragons using vanilla water bottles to avoid dehydration." )
 	public static Boolean seaAllowWaterBottles = true;
