@@ -69,9 +69,9 @@ minecraft {
     }
 }
 
-sourceSets.main.resources {
-    srcDir 'src/generated/resources'
-}
+//sourceSets.main.resources {
+//    srcDir 'src/generated/resources'
+//}
 
 processResources {
     from sourceSets.main.resources
@@ -144,14 +144,4 @@ minecraft.runs.each {
                 source sourceSets.api
             }
         }
-}
-
-jar.finalizedBy('reobfJar')
-
-if (System.getProperty("idea.sync.active") == "true") {
-    afterEvaluate {
-        tasks.withType(JavaCompile).all {
-            it.options.annotationProcessorPath = files()
-        }
-    }
 }

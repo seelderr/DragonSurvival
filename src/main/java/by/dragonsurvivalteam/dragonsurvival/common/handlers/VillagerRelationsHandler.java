@@ -305,7 +305,7 @@ public class VillagerRelationsHandler{
 						ServerPlayer player = serverWorld.getRandomPlayer();
 						if(player != null && player.isAlive() && !player.isCreative() && !player.isSpectator()){
 							BlockPos blockPos = Functions.findRandomSpawnPosition(player, 1, 2, 20.0F);
-							if(blockPos != null && blockPos.getY() >= ServerConfig.riderSpawnLowerBound && blockPos.getY() <= ServerConfig.riderSpawnUpperBound){
+							if(blockPos != null && blockPos.getY() >= ServerConfig.riderSpawnLowerBound && blockPos.getY() <= ServerConfig.riderSpawnUpperBound && serverWorld.isVillage(blockPos)){
 								Optional<ResourceKey<Biome>> biomeRegistryKey = serverWorld.getBiome(blockPos).unwrapKey();
 								if(biomeRegistryKey.isPresent()){
 									ResourceKey<Biome> biome = biomeRegistryKey.get();

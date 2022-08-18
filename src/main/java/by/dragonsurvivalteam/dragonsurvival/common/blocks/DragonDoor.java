@@ -51,7 +51,7 @@ public class DragonDoor extends Block implements SimpleWaterloggedBlock{
 	protected static final VoxelShape WEST_AABB = Block.box(13.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D);
 	protected static final VoxelShape EAST_AABB = Block.box(0.0D, 0.0D, 0.0D, 3.0D, 16.0D, 16.0D);
 
-	enum Part implements StringRepresentable{
+	public enum Part implements StringRepresentable{
 		BOTTOM,
 		MIDDLE,
 		TOP;

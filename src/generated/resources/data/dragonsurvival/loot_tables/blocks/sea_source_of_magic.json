@@ -7,6 +7,15 @@
       "entries": [
         {
           "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecraft:block_state_property",
+              "block": "dragonsurvival:sea_source_of_magic",
+              "properties": {
+                "primary": "true"
+              }
+            }
+          ],
           "name": "dragonsurvival:sea_source_of_magic"
         }
       ],
