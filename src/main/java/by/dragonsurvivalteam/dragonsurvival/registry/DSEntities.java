@@ -144,11 +144,11 @@ public class DSEntities{
 	public static void registerVillageTypes(RegistryEvent.Register<VillagerProfession> event){
 		PRINCESS_PROFESSION = new VillagerProfession("princess", PoiType.UNEMPLOYED, ImmutableSet.of(), ImmutableSet.of(), null);
 		PRINCESS_PROFESSION.setRegistryName(new ResourceLocation(DragonSurvivalMod.MODID, "princess"));
-		event.getRegistry().register(PRINCESS_PROFESSION);
+		//event.getRegistry().register(PRINCESS_PROFESSION);
 
 		PRINCE_PROFESSION = new VillagerProfession("prince", PoiType.UNEMPLOYED, ImmutableSet.of(), ImmutableSet.of(), null);
 		PRINCE_PROFESSION.setRegistryName(new ResourceLocation(DragonSurvivalMod.MODID, "prince"));
-		event.getRegistry().register(PRINCE_PROFESSION);
+		//event.getRegistry().register(PRINCE_PROFESSION);
 	}
 
 	@SubscribeEvent( priority = EventPriority.LOWEST )
