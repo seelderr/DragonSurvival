@@ -27,31 +27,26 @@ public class DragonSizeHandler{
 
 	@SubscribeEvent
 	public static void getDragonSize(EntityEvent.Size event){
-		if(!(event.getEntity() instanceof Player)){
+		if(!(event.getEntity() instanceof Player player) || !DragonUtils.isDragon(player)){
 			return;
 		}
-		Player player = (Player)event.getEntity();
+		DragonStateHandler dragonStateHandler = DragonUtils.getHandler(player);
 
-		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
-			if(!dragonStateHandler.isDragon()){
-				return;
-			}
-			double size = dragonStateHandler.getSize();
-			// Calculate base values
-			double height = calculateDragonHeight(size, ServerConfig.hitboxGrowsPastHuman);
-			double width = calculateDragonWidth(size, ServerConfig.hitboxGrowsPastHuman);
-			double eyeHeight = calculateDragonEyeHeight(size, ServerConfig.hitboxGrowsPastHuman);
-			// Handle Pose stuff
-			if(ServerConfig.sizeChangesHitbox){
-				Pose overridePose = overridePose(player);
-				height = calculateModifiedHeight(height, overridePose, true);
-				eyeHeight = calculateModifiedEyeHeight(eyeHeight, overridePose);
-				// Apply changes
-				event.setNewEyeHeight((float)eyeHeight);
-				// Rounding solves floating point issues that caused the dragon to get stuck inside a block at times.
-				event.setNewSize(new EntityDimensions((float)(Math.round(width * 100.0D) / 100.0D), (float)(Math.round(height * 100.0D) / 100.0D), false));
-			}
-		});
+		double size = dragonStateHandler.getSize();
+		// Calculate base values
+		double height = calculateDragonHeight(size, ServerConfig.hitboxGrowsPastHuman);
+		double width = calculateDragonWidth(size, ServerConfig.hitboxGrowsPastHuman);
+		double eyeHeight = calculateDragonEyeHeight(size, ServerConfig.hitboxGrowsPastHuman);
+		// Handle Pose stuff
+		if(ServerConfig.sizeChangesHitbox){
+			Pose overridePose = overridePose(player);
+			height = calculateModifiedHeight(height, overridePose, true);
+			eyeHeight = calculateModifiedEyeHeight(eyeHeight, overridePose);
+			// Apply changes
+			event.setNewEyeHeight((float)eyeHeight);
+			// Rounding solves floating point issues that caused the dragon to get stuck inside a block at times.
+			event.setNewSize(new EntityDimensions((float)(Math.round(width * 100.0D) / 100.0D), (float)(Math.round(height * 100.0D) / 100.0D), false));
+		}
 	}
 
 	public static double calculateDragonHeight(double size, boolean growsPastHuman){

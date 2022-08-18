@@ -53,10 +53,11 @@ public class SyncSize implements IMessage<SyncSize>{
 		context.enqueueWork(() -> {
 			Minecraft minecraft = Minecraft.getInstance();
 			Entity entity = minecraft.level.getEntity(message.playerId);
-			if(entity instanceof Player){
-				DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
-					dragonStateHandler.setSize(message.size, (Player)entity);
+			if(entity instanceof Player pl){
+				DragonStateProvider.getCap(pl).ifPresent(dragonStateHandler -> {
+					dragonStateHandler.setSize(message.size, pl);
 				});
+				pl.refreshDimensions();
 			}
 			supplier.get().setPacketHandled(true);
 		});
