@@ -128,7 +128,7 @@ jar {
 
 def jvmProperties = [
         "forge.logging.markers": "",
-        "forge.logging.console.level": "debug",
+        "forge.logging.console.level": "INFO",
 ]
 
 minecraft.runs.each {

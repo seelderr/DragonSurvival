@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.server.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
@@ -18,7 +19,8 @@ import net.minecraftforge.network.PacketDistributor;
 @EventBusSubscriber
 public class ServerPlayerStatusSync {
 
-	@ConfigOption( side = ConfigSide.SERVER, key = "serverSyncTime", comment = "How often should player data be synced to other players? -1 disables it")
+	@ConfigRange(min = -1, max = 60 * 60 * 20)
+	@ConfigOption( side = ConfigSide.SERVER, category = "general", key = "serverSyncTime", comment = "How often should player data be synced to other players? -1 disables it")
 	public static long serverSyncTime = Functions.secondsToTicks(30);
 
 	@SubscribeEvent

@@ -4,6 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.IgnoreConfigCheck;
 import com.electronwill.nightconfig.core.EnumGetMethod;
 import com.google.common.primitives.Primitives;
 import com.google.gson.reflect.TypeToken;
@@ -142,32 +143,31 @@ public class ConfigHandler{
 			}
 
 			try{
-				Object tt = Primitives.wrap(defaultOb.getClass()).cast(defaultOb);
+				Object tt = Primitives.isWrapperType(defaultOb.getClass()) ? Primitives.wrap(defaultOb.getClass()).cast(defaultOb) : defaultOb;
 
-				if(fe.isAnnotationPresent(ConfigRange.class)){
-					ConfigRange range = fe.getAnnotation(ConfigRange.class);
-					if(tt instanceof Integer intVal){
-						IntValue value = builder.defineInRange(option.key(), intVal, (int)range.min(), (int)range.max());
-						configValues.put(key, value);
-					}else if(tt instanceof Float floatVal){
-						DoubleValue value = builder.defineInRange(option.key(), floatVal, range.min(), range.max());
-						configValues.put(key, value);
-					}else if(tt instanceof Long longVal){
-						LongValue value = builder.defineInRange(option.key(), longVal, (long)range.min(), (long)range.max());
-						configValues.put(key, value);
-					}else if(tt instanceof Double doubleVal){
-						DoubleValue value = builder.defineInRange(option.key(), doubleVal, range.min(), range.max());
-						configValues.put(key, value);
-					}
+				ConfigRange range = fe.isAnnotationPresent(ConfigRange.class) ? fe.getAnnotation(ConfigRange.class) : null;
+				boolean rang = range != null;
 
+				if(tt instanceof Integer intVal){
+					IntValue value = builder.defineInRange(option.key(), intVal, rang ? (int)range.min() : Integer.MIN_VALUE, rang ? (int)range.max() : Integer.MAX_VALUE);
+					configValues.put(key, value);
+				}else if(tt instanceof Float floatVal){
+					DoubleValue value = builder.defineInRange(option.key(), floatVal, rang ? range.min() : Float.MIN_VALUE, rang ? range.max() : Float.MAX_VALUE);
+					configValues.put(key, value);
+				}else if(tt instanceof Long longVal){
+					LongValue value = builder.defineInRange(option.key(), longVal, rang ? (long)range.min() : Long.MIN_VALUE, rang ? (long)range.max() : Long.MAX_VALUE);
+					configValues.put(key, value);
+				}else if(tt instanceof Double doubleVal){
+					DoubleValue value = builder.defineInRange(option.key(), doubleVal, rang ? range.min() : Double.MIN_VALUE, rang ? range.max() : Double.MAX_VALUE);
+					configValues.put(key, value);
 				}else if(fe.getType().isEnum()){
 					EnumValue value = builder.defineEnum(option.key(), (Enum)defaultOb, ((Enum<?>)defaultOb).getClass().getEnumConstants());
 					configValues.put(key, value);
 				}else if(tt instanceof List<?> ls){
-					ConfigValue<List<?>> value = builder.defineList(option.key(), ls, s -> ResourceLocation.isValidResourceLocation(String.valueOf(s)));
+					ConfigValue<List<?>> value = builder.defineList(option.key(), ls, s -> fe.isAnnotationPresent(IgnoreConfigCheck.class) || ResourceLocation.isValidResourceLocation(String.valueOf(s)));
 					configValues.put(key, value);
 				}else{
-					ForgeConfigSpec.ConfigValue<Object> value = builder.define(option.key(), defaultOb);
+					ForgeConfigSpec.ConfigValue<Object> value = builder.define(option.key(), defaultOb, s -> fe.isAnnotationPresent(IgnoreConfigCheck.class) || ResourceLocation.isValidResourceLocation(String.valueOf(s)));
 					configValues.put(key, value);
 				}
 			}catch(Exception e){
