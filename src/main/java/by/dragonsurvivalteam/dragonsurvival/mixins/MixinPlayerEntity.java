@@ -4,12 +4,13 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ClawToolHandler;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stat;
 import net.minecraft.stats.Stats;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -50,6 +51,15 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 
 	protected MixinPlayerEntity(EntityType<? extends LivingEntity> p_20966_, Level p_20967_){
 		super(p_20966_, p_20967_);
+	}
+
+	@Inject( method = "isInvulnerableTo", at = @At( "HEAD" ), cancellable = true )
+	public void isInvulnerableTo(DamageSource pSource, CallbackInfoReturnable<Boolean> cir){
+		if(pSource == DamageSource.IN_WALL && DragonUtils.isDragon(this)){
+			if(ServerConfig.disableSuffocation){
+				cir.setReturnValue(true);
+			}
+		}
 	}
 
 	@Inject( method = "isImmobile", at = @At( "HEAD" ), cancellable = true )

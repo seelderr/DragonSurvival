@@ -20,8 +20,10 @@ import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Fireball;
+import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
@@ -37,7 +39,6 @@ public class BallLightningEntity extends DragonBallEntity{
 	}
 
 	@Override
-
 	protected ParticleOptions getTrailParticle(){
 
 		return ParticleTypes.WHITE_ASH;
@@ -45,6 +46,19 @@ public class BallLightningEntity extends DragonBallEntity{
 
 	protected boolean shouldBurn(){
 		return false;
+	}
+
+	protected void onHit(HitResult p_70227_1_){
+		if(!this.level.isClientSide && !this.isDead){
+			boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level, this.getOwner());
+			float explosivePower = getSkillLevel() / 1.25f;
+			this.level.explode(null, this.getX(), this.getY(), this.getZ(), explosivePower, flag, flag ? Explosion.BlockInteraction.DESTROY : Explosion.BlockInteraction.NONE);
+
+			isDead = true;
+			setDeltaMovement(0, 0, 0);
+
+			attackMobs();
+		}
 	}
 
 	public void attackMobs(){
@@ -84,7 +98,6 @@ public class BallLightningEntity extends DragonBallEntity{
 		}
 
 		if(!level.isClientSide){
-
 			if(level.isThundering()){
 				if(level.random.nextInt(100) < 30){
 					if(level.canSeeSky(blockPosition())){

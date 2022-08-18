@@ -45,9 +45,7 @@ public class FireBallEntity extends DragonBallEntity{
 			isDead = true;
 			setDeltaMovement(0, 0, 0);
 
-			if(!flag){
-				aoeDamage();
-			}
+			aoeDamage();
 		}
 	}
 

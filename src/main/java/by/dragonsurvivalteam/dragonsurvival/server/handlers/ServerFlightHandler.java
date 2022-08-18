@@ -1,6 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.server.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientFlightHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
@@ -227,6 +230,10 @@ public class ServerFlightHandler{
 		return validSwim && dragonStateHandler.hasWings() && !player.isOnGround();
 	}
 
+	@ConfigRange(min = 1, max = 60 * 60 * 20)
+	@ConfigOption(side = ConfigSide.SERVER, key = "flightHungerTicks", category = "wings", comment = "How many ticks it takes for one hunger point to be drained while flying, this is based on hover flight.")
+	public static int flightHungerTicks = 20;
+
 	@SubscribeEvent
 	public static void playerFoodExhaustion(TickEvent.PlayerTickEvent playerTickEvent){
 		if(playerTickEvent.phase == Phase.START){
@@ -255,14 +262,14 @@ public class ServerFlightHandler{
 									return;
 								}
 							}
-
 							Vec3 delta = player.getDeltaMovement();
-							double l = delta.length();
-							if(delta.x == 0 && delta.z == 0){
-								l = 15;
-							}
-							float exhaustion = ServerConfig.creativeFlight ? (player.getAbilities().flying ? player.flyingSpeed : 0F) : (float)(0.005F * l);
-							player.causeFoodExhaustion(exhaustion);
+							float moveSpeed = (float)delta.horizontalDistance();
+							float l = 4f / flightHungerTicks;
+							float moveSpeedReq = 1.0F;
+							float minFoodReq = l / 10f;
+							float drain = Math.max(minFoodReq, (float)(Math.min(1.0, Math.max(0, Math.max(moveSpeedReq - moveSpeed, 0) / moveSpeedReq)) * l));
+
+							player.causeFoodExhaustion(drain);
 						}
 					}
 				}

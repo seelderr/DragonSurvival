@@ -237,11 +237,13 @@ public class ServerConfig{
 	@ConfigOption( side = ConfigSide.SERVER, category = "wings", key = "flightSpinCooldown", comment = "The cooldown in seconds in between uses of the spin attack in flight" )
 	public static Integer flightSpinCooldown = 5;
 
+	@ConfigOption(side = ConfigSide.SERVER, category = "general", key = "disableDragonSuffocation", comment = "Should suffocation damage be disabled for dragon players?")
+	public static Boolean disableSuffocation = true;
 
 	@ConfigOption( side = ConfigSide.SERVER, category = "bonuses", key = "healthMod", comment = "Apply a health modifier for dragons. The older the dragon, the more health it has." )
 	public static Boolean healthAdjustments = true;
 
-	@ConfigOption( side = ConfigSide.SERVER, category = "bonuses", key = "bonuses", comment = "Set to false to toggle off all dragon bonuses and play as human." )
+	@ConfigOption( side = ConfigSide.SERVER, category = "bonuses", key = "bonuses", comment = "Set too false to toggle off all dragon bonuses and play as human." )
 	public static Boolean bonuses = true;
 
 	@ConfigOption( side = ConfigSide.SERVER, category = "bonuses", key = "attackMod", comment = "Apply an attack damage modifier for dragons." )

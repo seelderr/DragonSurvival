@@ -12,6 +12,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ConfigUtils{
 
@@ -24,24 +25,10 @@ public class ConfigUtils{
 		List<Item> result = new ArrayList<>();
 
 		for(String entry : values){
-			String[] sEntry = entry.split(":");
-
-			if(sEntry.length == 0){
-				continue;
-			}
-
-			if(sEntry.length == 1){
-				sEntry = new String[]{"minecraft", sEntry[0]};
-			}
-
-			final ResourceLocation rlEntry = new ResourceLocation(sEntry[1], sEntry[2]);
-
-			if(sEntry[0].equalsIgnoreCase("tag")){
-				TagKey<Item> tagKey = TagKey.create(Registry.ITEM_REGISTRY, rlEntry);
-				result.addAll(ForgeRegistries.ITEMS.tags().getTag(tagKey).stream().toList());
-			}else{
-				result.add(ForgeRegistries.ITEMS.getValue(rlEntry));
-			}
+			ResourceLocation rlEntry = new ResourceLocation(entry.replace("item:", "").replace("tag:", ""));
+			TagKey<Item> tagKey = TagKey.create(Registry.ITEM_REGISTRY, rlEntry);
+			result.addAll(Objects.requireNonNull(ForgeRegistries.ITEMS.tags()).getTag(tagKey).stream().toList());
+			result.add(ForgeRegistries.ITEMS.getValue(rlEntry));
 		}
 
 		return result;

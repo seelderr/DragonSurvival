@@ -1,13 +1,12 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
-import by.dragonsurvivalteam.dragonsurvival.registry.DamageSources;
-import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncCapabilityDebuff;
-import net.minecraft.resources.ResourceLocation;
+import by.dragonsurvivalteam.dragonsurvival.registry.DamageSources;
+import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
@@ -24,7 +23,6 @@ import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,8 +35,7 @@ public class DragonPenaltyHandler{
 			return;
 		}
 
-		if(potionEvent.getProjectile() instanceof ThrownPotion){
-			ThrownPotion potion = (ThrownPotion)potionEvent.getProjectile();
+		if(potionEvent.getProjectile() instanceof ThrownPotion potion){
 			if(potion.getItem().getItem() != Items.SPLASH_POTION){
 				return;
 			}
@@ -68,38 +65,21 @@ public class DragonPenaltyHandler{
 
 	@SubscribeEvent
 	public static void consumeHurtfulItem(LivingEntityUseItemEvent.Finish destroyItemEvent){
-		if(!ServerConfig.penalties){
+		if(!ServerConfig.penalties || !(destroyItemEvent.getEntityLiving() instanceof Player player)){
 			return;
 		}
 
-		if(!(destroyItemEvent.getEntityLiving() instanceof Player)){
-			return;
-		}
-
-		Player player = (Player)destroyItemEvent.getEntityLiving();
 		ItemStack itemStack = destroyItemEvent.getItem();
 
 		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon()){
 				List<String> hurtfulItems = new ArrayList<>(dragonStateHandler.getType() == DragonType.FOREST ? ServerConfig.forestDragonHurtfulItems : dragonStateHandler.getType() == DragonType.CAVE ? ServerConfig.caveDragonHurtfulItems : dragonStateHandler.getType() == DragonType.SEA ? ServerConfig.seaDragonHurtfulItems : new ArrayList<>());
 
-				if(hurtfulItems.size() > 0){
-					ResourceLocation itemId = ForgeRegistries.ITEMS.getKey(itemStack.getItem());
-
-					if(itemId != null){
-						for(String item : hurtfulItems){
-							boolean match = item.startsWith("item:" + itemId + ":");
-
-							if(!match){
-								match = itemStack.getTags().anyMatch((s) -> s.location().getPath().equals(item));
-							}
-
-							if(match){
-								String damage = item.substring(item.lastIndexOf(":") + 1);
-								player.hurt(DamageSource.GENERIC, Float.parseFloat(damage));
-								break;
-							}
-						}
+				for(String item : hurtfulItems){
+					if(item.replace("item:", "").replace("tag:", "").startsWith(itemStack.getItem().getRegistryName() + ":")){
+						String damage = item.substring(item.lastIndexOf(":") + 1);
+						player.hurt(DamageSource.GENERIC, Float.parseFloat(damage));
+						break;
 					}
 				}
 			}
