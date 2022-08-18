@@ -151,44 +151,21 @@ public class DragonFoodHandler{
 		return new ConcurrentHashMap<>(foodMap);
 	}
 
-	//TODO Rebuild food map per player for more accurate results
 	@Nullable
 	private static FoodProperties calculateDragonFoodProperties(Item item, DragonType type, int nutrition, int saturation, boolean dragonFood){
-		FoodProperties.Builder builder = new FoodProperties.Builder();
-
-		if(item == null || item.getFoodProperties() == null){
-			return builder.build();
+		if(item == null){
+			return new FoodProperties.Builder().nutrition(nutrition).saturationMod((float)saturation / (float)nutrition / 2.0F).build();
 		}
 
 		if(!ServerConfig.customDragonFoods || type == DragonType.NONE){
 			return item.getFoodProperties();
 		}
 
+		FoodProperties.Builder builder = new FoodProperties.Builder();
 		FoodProperties humanFood = item.getFoodProperties();
 
-		if(dragonFood){
-			builder.nutrition(nutrition).saturationMod((float)saturation / (float)nutrition / 2.0F);
-			if(item.getFoodProperties() != null){
-				if(humanFood.isMeat()){
-					builder.meat();
-				}
-				if(humanFood.canAlwaysEat()){
-					builder.alwaysEat();
-				}
-				if(humanFood.isFastFood()){
-					builder.fast();
-				}
-				for(Pair<MobEffectInstance, Float> effect : humanFood.getEffects()){
-					if(effect == null || effect.getFirst() == null) continue;
-					if(effect.getFirst().getEffect() != MobEffects.HUNGER && effect.getFirst().getEffect() != MobEffects.POISON){
-						builder.effect(() -> effect.getFirst(), effect.getSecond());
-					}
-				}
-			}
-		}else{
-			builder.nutrition(humanFood.getNutrition()).saturationMod(humanFood.getSaturationModifier());
+		if(humanFood != null){
 			if(humanFood.isMeat()){
-
 				builder.meat();
 			}
 			if(humanFood.canAlwaysEat()){
@@ -197,14 +174,20 @@ public class DragonFoodHandler{
 			if(humanFood.isFastFood()){
 				builder.fast();
 			}
+
 			for(Pair<MobEffectInstance, Float> effect : humanFood.getEffects()){
 				if(effect == null || effect.getFirst() == null) continue;
-				if(effect.getFirst().getEffect() != MobEffects.HUNGER){
-					builder.effect(() -> effect.getFirst(), effect.getSecond());
+				if(effect.getFirst().getEffect() != MobEffects.HUNGER && effect.getFirst().getEffect() != MobEffects.POISON && dragonFood){
+					builder.effect(effect::getFirst, effect.getSecond());
 				}
 			}
+		}
+
+		if(!dragonFood){
 			builder.effect(() -> new MobEffectInstance(MobEffects.HUNGER, 20 * 60, 0), 1.0F);
 		}
+
+		builder.nutrition(nutrition).saturationMod((float)saturation / (float)nutrition / 2.0F);
 
 		return builder.build();
 	}
