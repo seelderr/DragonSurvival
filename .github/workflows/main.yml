@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v2
@@ -47,6 +47,10 @@ jobs:
         if: steps.semantic.outputs.new_release_published == 'true'
         run: ./gradlew init
 
+      - name: Datagen before build
+        if: steps.semantic.outputs.new_release_published == 'true'
+        run: ./gradlew runData
+
       - name: Build with Gradle
         if: steps.semantic.outputs.new_release_published == 'true'
         run: ./gradlew build
@@ -75,6 +79,7 @@ jobs:
         uses: Sniddl/discord-commits@master
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          last-commit-only: true
           message: "New experimental version released!"
           embed: |
             {
