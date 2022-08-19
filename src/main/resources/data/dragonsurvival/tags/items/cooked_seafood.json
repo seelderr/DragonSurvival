@@ -16,6 +16,10 @@
       "required": false
     },
     {
+      "id": "naturalist:tropical_stew",
+      "required": false
+    },	
+    {
       "id": "silents_mechanisms:cod_jerky",
       "required": false
     },

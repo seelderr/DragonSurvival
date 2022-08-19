@@ -15,6 +15,14 @@
       "id": "environmental:cooked_venison",
       "required": false
     },
+	{
+      "id": "naturalist:cooked_venison",
+      "required": false
+    },
+	{
+      "id": "chinchillas:cooked_chinchilla_meat",
+      "required": false
+    },	
     {
       "id": "abnormals_delight:cooked_duct_fillet",
       "required": false
@@ -61,6 +69,10 @@
     },
     {
       "id": "unnamedanimalmod:cooked_musk_ox_shank",
+      "required": false
+    },
+	{
+      "id": "untamedwilds:food_turtle_soup",
       "required": false
     },
     {
