@@ -43,8 +43,8 @@ body:
   - type: dropdown
     id: configs
     attributes:
-      label: ■ Do you delete old configs before writing a bug report?
-      description: Removing old configs after major updates is essential for clean operation of many modifications.
+      label: ■ Do you delete old configurations and check the Wiki before writing a bug report?
+      description: Removing old configs after major updates is essential for clean operation of many modifications. Also on the wiki there are instructions on how to solve most of the bugs and problems with our mod.
       options:
         - Nope (Default)
         - I always delete configs
@@ -56,7 +56,7 @@ body:
     id: compatibility
     attributes:
       label: ■ Do you play pure MC + DS and Geckolib or do you have some kind of modpack?
-      description: Try the clean version first. Many problems arise because of a conflict with some third-party mod.
+      description: Try the clean version first. Many problems arise because of a conflict with some third-party mod. Check the wiki, there is a list of mods that Dragon Survival is not compatible with.
       options:
         - I only play with DS and Geckolib (Default)
         - I have other mods
