@@ -101,7 +101,7 @@ public class RevealingTheSoulAbility extends AoeBuffAbility{
 
 	@Override
 	public MobEffectInstance getEffect(){
-		return new MobEffectInstance(DragonEffects.REVEALING_THE_SOUL, Functions.secondsToTicks(revealingTheSoulDuration));
+		return new MobEffectInstance(DragonEffects.REVEALING_THE_SOUL, revealingTheSoulDuration);
 	}
 
 	@Override

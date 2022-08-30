@@ -64,21 +64,21 @@ public class DragonBeaconTileEntity extends BaseBlockTileEntity{
 					case PEACE -> dragons.forEach(playerEntity -> {
 						ConfigHandler.configList(MobEffect.class, ServerConfig.peaceBeaconEffects).forEach(effect -> {
 							if(effect != null){
-								playerEntity.addEffect(new MobEffectInstance(effect, Functions.secondsToTicks(ServerConfig.minutesOfDragonEffect) + 5));
+								playerEntity.addEffect(new MobEffectInstance(effect, Functions.minutesToTicks(ServerConfig.minutesOfDragonEffect) + 5));
 							}
 						});
 					});
 					case MAGIC -> dragons.forEach(playerEntity -> {
 						ConfigHandler.configList(MobEffect.class, ServerConfig.magicBeaconEffects).forEach(effect -> {
 							if(effect != null){
-								playerEntity.addEffect(new MobEffectInstance(effect, Functions.secondsToTicks(ServerConfig.minutesOfDragonEffect) + 5));
+								playerEntity.addEffect(new MobEffectInstance(effect, Functions.minutesToTicks(ServerConfig.minutesOfDragonEffect) + 5));
 							}
 						});
 					});
 					case FIRE -> dragons.forEach(playerEntity -> {
 						ConfigHandler.configList(MobEffect.class, ServerConfig.fireBeaconEffects).forEach(effect -> {
 							if(effect != null){
-								playerEntity.addEffect(new MobEffectInstance(effect, Functions.secondsToTicks(ServerConfig.minutesOfDragonEffect) + 5));
+								playerEntity.addEffect(new MobEffectInstance(effect, Functions.minutesToTicks(ServerConfig.minutesOfDragonEffect) + 5));
 							}
 						});
 					});
