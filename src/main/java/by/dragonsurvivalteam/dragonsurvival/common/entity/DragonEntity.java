@@ -34,6 +34,7 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 import software.bernie.geckolib3.resource.GeckoLibCache;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Stream;
 
 public class DragonEntity extends LivingEntity implements IAnimatable, CommonTraits{
@@ -45,7 +46,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 	/**
 	 * This reference must be updated whenever player is remade, for example, when changing dimensions
 	 */
-	public volatile int player;
+	public volatile Integer player;
 	public boolean neckLocked = false;
 	public boolean tailLocked = false;
 	public float prevZRot;
@@ -404,21 +405,23 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 
 	@Override
 	public Iterable<ItemStack> getArmorSlots(){
-		return getPlayer().getArmorSlots();
+		return player != null ? getPlayer().getArmorSlots() : List.of();
 	}
 
 	@Override
 	public ItemStack getItemBySlot(EquipmentSlot slotIn){
-		return getPlayer().getItemBySlot(slotIn);
+		return player != null ? getPlayer().getItemBySlot(slotIn) : ItemStack.EMPTY;
 	}
 
 	@Override
 	public void setItemSlot(EquipmentSlot slotIn, ItemStack stack){
-		getPlayer().setItemSlot(slotIn, stack);
+		if(player != null){
+			getPlayer().setItemSlot(slotIn, stack);
+		}
 	}
 
 	@Override
 	public HumanoidArm getMainArm(){
-		return getPlayer().getMainArm();
+		return player != null ? getPlayer().getMainArm() : HumanoidArm.LEFT;
 	}
 }

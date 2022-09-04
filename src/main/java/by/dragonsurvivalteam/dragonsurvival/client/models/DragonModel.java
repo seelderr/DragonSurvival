@@ -37,23 +37,25 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity>{
 
 	@Override
 	public ResourceLocation getTextureLocation(DragonEntity dragon){
-		DragonStateHandler handler = DragonUtils.getHandler(dragon.getPlayer());
+		if(dragon.player != null){
+			DragonStateHandler handler = DragonUtils.getHandler(dragon.getPlayer());
 
-		if(handler.getSkin().blankSkin){
-			return new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/blank_skin_" + handler.getType().name().toLowerCase(Locale.ROOT) + ".png");
-		}
+			if(handler.getSkin().blankSkin){
+				return new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/blank_skin_" + handler.getType().name().toLowerCase(Locale.ROOT) + ".png");
+			}
 
-		if(currentTexture == null){
-			SkinAgeGroup ageGroup = handler.getSkin().skinPreset.skinAges.get(handler.getLevel());
+			if(currentTexture == null){
+				SkinAgeGroup ageGroup = handler.getSkin().skinPreset.skinAges.get(handler.getLevel());
 
-			if(ageGroup.defaultSkin){
-				return new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/" + handler.getType().name().toLowerCase(Locale.ROOT) + "_" + handler.getLevel().name.toLowerCase(Locale.ROOT) + ".png");
-			}else{
-				String skin = ageGroup.layerSettings.get(EnumSkinLayer.BASE).selectedSkin;
-				ResourceLocation location = DragonEditorHandler.getSkinTexture(dragon.getPlayer(), EnumSkinLayer.BASE, Objects.equals(skin, SkinCap.defaultSkinValue) ? "Skin" : skin, DragonUtils.getDragonType(dragon.getPlayer()));
+				if(ageGroup.defaultSkin){
+					return new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/" + handler.getType().name().toLowerCase(Locale.ROOT) + "_" + handler.getLevel().name.toLowerCase(Locale.ROOT) + ".png");
+				}else{
+					String skin = ageGroup.layerSettings.get(EnumSkinLayer.BASE).selectedSkin;
+					ResourceLocation location = DragonEditorHandler.getSkinTexture(dragon.getPlayer(), EnumSkinLayer.BASE, Objects.equals(skin, SkinCap.defaultSkinValue) ? "Skin" : skin, DragonUtils.getDragonType(dragon.getPlayer()));
 
-				if(location != null){
-					return location;
+					if(location != null){
+						return location;
+					}
 				}
 			}
 		}
@@ -72,11 +74,10 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity>{
 	@Override
 	public void setMolangQueries(IAnimatable animatable, double currentTick){
 		super.setMolangQueries(animatable, currentTick);
-		if(!(animatable instanceof DragonEntity)){
+		if(!(animatable instanceof DragonEntity dragon) || dragon.player == null){
 			return;
 		}
 
-		DragonEntity dragon = (DragonEntity)animatable;
 		MolangParser parser = GeckoLibCache.getInstance().parser;
 		Player player = dragon.getPlayer();
 
