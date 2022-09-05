@@ -62,18 +62,18 @@ public class MagicCap extends SubCap{
 				}catch(InstantiationException | IllegalAccessException e){
 					e.printStackTrace();
 				}
+			}
 
-				if(dragonAbility instanceof ActiveDragonAbility && activeDragonAbilities.size() < activeAbilitySlots){
-					activeDragonAbilities.put(activeDragonAbilities.size(), dragonAbility.getName());
-				}
+			if(dragonAbility instanceof ActiveDragonAbility && activeDragonAbilities.size() < activeAbilitySlots){
+				activeDragonAbilities.put(activeDragonAbilities.size(), dragonAbility.getName());
+			}
 
-				if(dragonAbility instanceof PassiveDragonAbility && passiveDragonAbilities.size() < passiveAbilitySlots){
-					passiveDragonAbilities.put(passiveDragonAbilities.size(), dragonAbility.getName());
-				}
+			if(dragonAbility instanceof PassiveDragonAbility && passiveDragonAbilities.size() < passiveAbilitySlots){
+				passiveDragonAbilities.put(passiveDragonAbilities.size(), dragonAbility.getName());
+			}
 
-				if(dragonAbility instanceof InnateDragonAbility){
-					innateDragonAbilities.put(innateDragonAbilities.size(), dragonAbility.getName());
-				}
+			if(dragonAbility instanceof InnateDragonAbility){
+				innateDragonAbilities.put(innateDragonAbilities.size(), dragonAbility.getName());
 			}
 		}
 	}

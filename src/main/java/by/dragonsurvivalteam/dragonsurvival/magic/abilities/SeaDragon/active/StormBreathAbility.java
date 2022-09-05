@@ -238,7 +238,7 @@ public class StormBreathAbility extends BreathAbility{
 
 			onDamageChecks(target);
 
-			if(!chargedSpreadBlacklist.contains(source.getType()))
+			if(!chargedSpreadBlacklist.contains(source.getType().getRegistryName().toString()))
 				if(target != source){
 					GenericCapability capSource = GenericCapabilityProvider.getGenericCapability(source).orElse(null);
 					GenericCapability cap = GenericCapabilityProvider.getGenericCapability(target).orElse(null);
@@ -273,7 +273,7 @@ public class StormBreathAbility extends BreathAbility{
 	public static boolean isValidTarget(LivingEntity attacker, LivingEntity target){
 		if(target == null || attacker == null)
 			return false;
-		if(chargedBlacklist.contains(target.getType()))
+		if(chargedBlacklist.contains(target.getType().getRegistryName().toString()))
 			return false;
 		if(target == attacker)
 			return false;

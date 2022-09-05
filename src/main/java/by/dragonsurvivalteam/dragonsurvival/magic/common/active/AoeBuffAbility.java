@@ -74,20 +74,7 @@ public abstract class AoeBuffAbility extends ChargeCastAbility{
 	public abstract int getRange();
 	public abstract ParticleOptions getParticleEffect();
 	public abstract MobEffectInstance getEffect();
-
-
-	//	{
-	//
-	//		if(effect.getEffect() == MobEffects.DIG_SPEED){
-	//			return getLevel() * ServerConfig.inspirationDuration;
-	//		}else if(effect.getEffect() == DragonEffects.REVEALING_THE_SOUL){
-	//			return getLevel() * ServerConfig.revealingTheSoulDuration;
-	//		}else if(effect.getEffect() == DragonEffects.STRONG_LEATHER){
-	//			return getLevel() * ServerConfig.toughSkinDuration;
-	//		}
-	//		return getLevel() * (effect.getDuration() > 0 ? effect.getDuration() : 30);
-	//	}
-
+	
 	@Override
 	public AbilityAnimation getLoopingAnimation(){
 		return new AbilityAnimation("cast_mass_buff", true, true);

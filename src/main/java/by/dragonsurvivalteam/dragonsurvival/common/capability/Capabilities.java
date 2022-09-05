@@ -95,26 +95,22 @@ public class Capabilities{
 	@SubscribeEvent
 	public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent playerRespawnEvent){
 		Player player = playerRespawnEvent.getPlayer();
-		if(!player.level.isClientSide){
-			syncCapability(player);
-		}
+		syncCapability(player);
 	}
 
 	@SubscribeEvent
 	public static void onDimensionChange(PlayerEvent.PlayerChangedDimensionEvent event){
 		Player player = event.getPlayer();
-		if(!player.level.isClientSide()){
-			syncCapability(player);
-		}
+		syncCapability(player);
 	}
 
 	@SubscribeEvent
 	public static void onTrackingStart(PlayerEvent.StartTracking startTracking){
 		Player trackingPlayer = startTracking.getPlayer();
-		if(trackingPlayer instanceof ServerPlayer){
+		if(trackingPlayer instanceof ServerPlayer target){
 			Entity tracked = startTracking.getTarget();
 			if(tracked instanceof ServerPlayer){
-				DragonStateProvider.getCap(tracked).ifPresent(dragonStateHandler -> NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)trackingPlayer), new CompleteDataSync(tracked.getId(), dragonStateHandler.writeNBT())));
+				DragonStateProvider.getCap(tracked).ifPresent(dragonStateHandler -> NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> target), new CompleteDataSync(tracked.getId(), dragonStateHandler.writeNBT())));
 			}
 		}
 	}

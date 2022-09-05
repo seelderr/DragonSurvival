@@ -57,11 +57,9 @@ public class VillagerRelationsHandler{
 	public static void onDeath(LivingDeathEvent deathEvent){
 		LivingEntity livingEntity = deathEvent.getEntityLiving();
 		Entity killer = deathEvent.getSource().getEntity();
-		if(killer instanceof Player){
-			Player playerEntity = (Player)killer;
+		if(killer instanceof Player playerEntity){
 			if(livingEntity instanceof AbstractVillager){
 				Level world = killer.level;
-				livingEntity.getType().getRegistryName();
 				if(!(livingEntity instanceof PrincesHorseEntity)){
 
 					if(DragonUtils.isDragon(killer)){
@@ -69,9 +67,7 @@ public class VillagerRelationsHandler{
 
 						MerchantOffers merchantOffers = villagerEntity.getOffers();
 
-						if(villagerEntity instanceof Villager){
-							Villager villager = (Villager)villagerEntity;
-
+						if(villagerEntity instanceof Villager villager){
 							int level = villager.getVillagerData().getLevel();
 
 							if(world.random.nextInt(100) < 30){

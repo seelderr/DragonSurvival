@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.mixins;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
@@ -25,22 +26,20 @@ public class MixinItem{
 			return;
 		}
 
-		if(player.isCreative() || player.isSpectator())
+		if(player.isCreative() || player.isSpectator() || !DragonUtils.isDragon(player))
 			return;
 
-		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
-			if(dragonStateHandler.isDragon() && ServerConfig.blacklistedSlots.contains(slot) && ServerConfig.blacklistedItems.contains(stack.getItem().getRegistryName())){
-				if(slot >= 0 && slot < 9 && !isSelected && !ItemStack.matches(player.getOffhandItem(), stack)){
-					return;
-				}
-				if(stack.isEmpty() || !stack.onDroppedByPlayer(player)){
-					return;
-				}
-
-				player.drop(stack, false);
-				player.getInventory().removeItem(stack);
+		if(ServerConfig.blacklistedSlots.contains(slot) && ServerConfig.blacklistedItems.contains(stack.getItem().getRegistryName().toString())){
+			if(slot >= 0 && slot < 9 && !isSelected && !ItemStack.matches(player.getOffhandItem(), stack)){
+				return;
 			}
-		});
+			if(stack.isEmpty() || !stack.onDroppedByPlayer(player)){
+				return;
+			}
+
+			player.drop(stack, false);
+			player.getInventory().removeItem(stack);
+		}
 	}
 
 	@Inject( at = @At( "HEAD" ), method = "use", cancellable = true )

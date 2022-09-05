@@ -76,7 +76,7 @@ public class DragonPenaltyHandler{
 				List<String> hurtfulItems = new ArrayList<>(dragonStateHandler.getType() == DragonType.FOREST ? ServerConfig.forestDragonHurtfulItems : dragonStateHandler.getType() == DragonType.CAVE ? ServerConfig.caveDragonHurtfulItems : dragonStateHandler.getType() == DragonType.SEA ? ServerConfig.seaDragonHurtfulItems : new ArrayList<>());
 
 				for(String item : hurtfulItems){
-					if(item.replace("item:", "").replace("tag:", "").startsWith(itemStack.getItem().getRegistryName() + ":")){
+					if(item.replace("item:", "").replace("tag:", "").startsWith(itemStack.getItem().getRegistryName().toString() + ":")){
 						String damage = item.substring(item.lastIndexOf(":") + 1);
 						player.hurt(DamageSource.GENERIC, Float.parseFloat(damage));
 						break;
