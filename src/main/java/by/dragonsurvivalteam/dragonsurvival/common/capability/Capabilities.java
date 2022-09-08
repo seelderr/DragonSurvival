@@ -28,9 +28,6 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.network.PacketDistributor;
 
 import javax.annotation.Nullable;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 @EventBusSubscriber
 public class Capabilities{
@@ -87,18 +84,11 @@ public class Capabilities{
 		}
 	}
 
-	private static final ScheduledExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadScheduledExecutor();
-
-	//TODO Find a better solution to fix the error of data being synced too early on LAN
 	@SubscribeEvent
 	public static void onLoggedIn(PlayerEvent.PlayerLoggedInEvent loggedInEvent){
-		EXECUTOR_SERVICE.schedule(() -> {
-			PlayerEntity player = loggedInEvent.getPlayer();
-			if(!player.level.isClientSide){
-				DragonStateProvider.getCap(player).ifPresent(cap -> NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)player), new RequestClientData(cap.getType(), cap.getLevel())));
-				syncCapability(player);
-			}
-		}, 1, TimeUnit.SECONDS);
+		PlayerEntity player = loggedInEvent.getPlayer();
+		DragonStateProvider.getCap(player).ifPresent(cap -> NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)player), new RequestClientData(cap.getType(), cap.getLevel())));
+		syncCapability(player);
 	}
 
 	public static void syncCapability(PlayerEntity player){
@@ -107,24 +97,16 @@ public class Capabilities{
 
 	@SubscribeEvent
 	public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent playerRespawnEvent){
-		EXECUTOR_SERVICE.schedule(() -> {
-			PlayerEntity player = playerRespawnEvent.getPlayer();
-			if(!player.level.isClientSide){
-				DragonStateProvider.getCap(player).ifPresent(cap -> NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)player), new RequestClientData(cap.getType(), cap.getLevel())));
-				syncCapability(player);
-			}
-		}, 1, TimeUnit.SECONDS);
+		PlayerEntity player = playerRespawnEvent.getPlayer();
+		DragonStateProvider.getCap(player).ifPresent(cap -> NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)player), new RequestClientData(cap.getType(), cap.getLevel())));
+		syncCapability(player);
 	}
 
 	@SubscribeEvent
 	public static void onDimensionChange(PlayerEvent.PlayerChangedDimensionEvent event){
-		EXECUTOR_SERVICE.schedule(() -> {
-			PlayerEntity player = event.getPlayer();
-			if(!player.level.isClientSide){
-				DragonStateProvider.getCap(player).ifPresent(cap -> NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)player), new RequestClientData(cap.getType(), cap.getLevel())));
-				syncCapability(player);
-			}
-		}, 1, TimeUnit.SECONDS);
+		PlayerEntity player = event.getPlayer();
+		DragonStateProvider.getCap(player).ifPresent(cap -> NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)player), new RequestClientData(cap.getType(), cap.getLevel())));
+		syncCapability(player);
 	}
 
 	@SubscribeEvent
@@ -143,12 +125,12 @@ public class Capabilities{
 		PlayerEntity player = e.getPlayer();
 		PlayerEntity original = e.getOriginal();
 
-		original.revive();
+		//original.revive();
 
 		DragonStateProvider.getCap(player).ifPresent(capNew -> DragonStateProvider.getCap(original).ifPresent(capOld -> {
 			CompoundNBT nbt = capOld.writeNBT();
 			capNew.readNBT(nbt);
-			NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new CompleteDataSync(player.getId(), nbt));
+			//NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new CompleteDataSync(player.getId(), nbt));
 		}));
 
 		VillageRelationshipsProvider.getVillageRelationships(player).ifPresent(villageRelationShips -> {
@@ -159,7 +141,7 @@ public class Capabilities{
 				}
 			});
 		});
-		original.remove();
+		//original.remove();
 		DragonModifiers.updateModifiers(original, player);
 		player.refreshDimensions();
 	}
