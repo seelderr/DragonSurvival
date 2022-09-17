@@ -30,7 +30,7 @@ public class HunterAbility extends ChargeCastAbility{
 	public static Boolean hunter = true;
 	@ConfigRange( min = 0, max = 10000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "hunter"}, key = "hunterDuration", comment = "The duration in seconds of the inspiration effect given when the ability is used" )
-	public static Integer hunterDuration = 60;
+	public static Integer hunterDuration = Functions.secondsToTicks(60);
 	@ConfigRange( min = 1, max = 10000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "hunter"}, key = "hunterCooldown", comment = "The cooldown in ticks of the hunter ability" )
 	public static Integer hunterCooldown = Functions.secondsToTicks(30);

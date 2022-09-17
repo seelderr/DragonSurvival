@@ -74,7 +74,7 @@ public abstract class AoeBuffAbility extends ChargeCastAbility{
 	public abstract int getRange();
 	public abstract ParticleOptions getParticleEffect();
 	public abstract MobEffectInstance getEffect();
-	
+
 	@Override
 	public AbilityAnimation getLoopingAnimation(){
 		return new AbilityAnimation("cast_mass_buff", true, true);

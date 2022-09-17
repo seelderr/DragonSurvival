@@ -286,7 +286,9 @@ public class ConfigHandler{
 	}
 
 	public static void onModConfig(ModConfig.Type type){
-		for(String s : configs.getOrDefault(type == ModConfig.Type.SERVER ? ConfigSide.SERVER : ConfigSide.CLIENT, Collections.emptyList())){
+		ConfigSide side = type == ModConfig.Type.SERVER ? ConfigSide.SERVER : ConfigSide.CLIENT;
+		List<String> configList = configs.get(side);
+		for(String s : configList){
 			try{
 				if(configValues.containsKey(s) && configFields.containsKey(s)){
 					Field fe = ConfigHandler.configFields.get(s);

@@ -232,7 +232,7 @@ public class ServerFlightHandler{
 
 	@ConfigRange(min = 1, max = 60 * 60 * 20)
 	@ConfigOption(side = ConfigSide.SERVER, key = "flightHungerTicks", category = "wings", comment = "How many ticks it takes for one hunger point to be drained while flying, this is based on hover flight.")
-	public static int flightHungerTicks = 20;
+	public static int flightHungerTicks = 50;
 
 	@SubscribeEvent
 	public static void playerFoodExhaustion(TickEvent.PlayerTickEvent playerTickEvent){

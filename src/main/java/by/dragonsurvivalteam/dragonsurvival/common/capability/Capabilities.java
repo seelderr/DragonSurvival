@@ -2,15 +2,15 @@ package by.dragonsurvivalteam.dragonsurvival.common.capability;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayer;
-import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.GenericCapabilityProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.VillageRelationshipsProvider;
-import by.dragonsurvivalteam.dragonsurvival.registry.DragonModifiers;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.RequestClientData;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.CompleteDataSync;
+import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.DragonModifiers;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -29,10 +29,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.network.PacketDistributor;
-
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 @Mod.EventBusSubscriber( modid = DragonSurvivalMod.MODID, bus = Bus.FORGE )
 public class Capabilities{
@@ -66,9 +62,6 @@ public class Capabilities{
 		return player instanceof FakeClientPlayer;
 	}
 
-	//TODO Find a better solution to fix the error of data being synced too early on LAN
-	private static final ScheduledExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadScheduledExecutor();
-
 	@SubscribeEvent
 	public static void register(RegisterCapabilitiesEvent ev){
 		ev.register(DragonStateHandler.class);
@@ -78,13 +71,9 @@ public class Capabilities{
 
 	@SubscribeEvent
 	public static void onLoggedIn(PlayerEvent.PlayerLoggedInEvent loggedInEvent){
-		EXECUTOR_SERVICE.schedule(() -> {
-			Player player = loggedInEvent.getPlayer();
-			if(!player.level.isClientSide){
-				DragonStateProvider.getCap(player).ifPresent(cap -> NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)player), new RequestClientData(cap.getType(), cap.getLevel())));
-				syncCapability(player);
-			}
-		}, 1, TimeUnit.SECONDS);
+		Player player = loggedInEvent.getPlayer();
+		DragonStateProvider.getCap(player).ifPresent(cap -> NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)player), new RequestClientData(cap.getType(), cap.getLevel())));
+		syncCapability(player);
 	}
 
 	public static void syncCapability(Player player){

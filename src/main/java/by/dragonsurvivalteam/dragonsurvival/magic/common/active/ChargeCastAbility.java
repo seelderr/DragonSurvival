@@ -18,7 +18,7 @@ public abstract class ChargeCastAbility extends ActiveDragonAbility {
 
 	@Override
 	public void onKeyPressed(Player player, Runnable onFinish){
-		if(castTime == getSkillCastingTime()){
+		if(castTime >= getSkillCastingTime()){
 			castTime = 0;
 			castingComplete(player);
 			startCooldown();

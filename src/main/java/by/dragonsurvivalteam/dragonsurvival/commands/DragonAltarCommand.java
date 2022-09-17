@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.commands;
 
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.container.OpenDragonAltar;
 import com.mojang.brigadier.CommandDispatcher;
@@ -24,9 +23,7 @@ public class DragonAltarCommand{
 	}
 
 	private static int runCommand(ServerPlayer serverPlayer){
-		if(DragonUtils.isDragon(serverPlayer)){
-			NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> serverPlayer), new OpenDragonAltar());
-		}
+		NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> serverPlayer), new OpenDragonAltar());
 		return 1;
 	}
 }
