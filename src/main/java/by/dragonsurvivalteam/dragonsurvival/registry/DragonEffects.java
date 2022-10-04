@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.registry;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.Bolas;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.active.ToughSkinAbility;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.world.effect.MobEffect;
@@ -124,17 +125,18 @@ public class DragonEffects{
 
 		@Override
 		public void applyEffectTick(LivingEntity living, int p_76394_2_){
-			if(living instanceof Player){
-				Player player = (Player)living;
+			if(living instanceof Player player){
 				FoodData food = player.getFoodData();
+
 				if(food.getSaturationLevel() > 0){
 					int oldFood = food.getFoodLevel();
-					food.eat(1, -0.5F * food.getSaturationLevel());
+					food.eat(1, (float)((-0.5F * food.getSaturationLevel()) * ServerConfig.stressExhaustion));
 					if(oldFood != 20){
-						food.setFoodLevel(food.getFoodLevel() - 1);
+						food.setFoodLevel((int)(food.getFoodLevel() - 1 * ServerConfig.stressExhaustion));
 					}
 				}
-				player.causeFoodExhaustion(1.0f);
+
+				player.causeFoodExhaustion((float)(1.0f * ServerConfig.stressExhaustion));
 			}
 		}
 
