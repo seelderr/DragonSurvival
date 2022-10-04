@@ -1,15 +1,12 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.buttons;
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
-import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.EnumSkinLayer;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TextRenderUtil;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.Mth;
-
-import java.util.Arrays;
 
 public class YoungEditorButton extends Button{
 	private final DragonEditorScreen dragonEditorScreen;
@@ -18,7 +15,7 @@ public class YoungEditorButton extends Button{
 		super(dragonEditorScreen.width / 2 - 60, dragonEditorScreen.guiTop - 30, 120, 20, new TranslatableComponent("ds.level.young"), (btn) -> {
 			dragonEditorScreen.level = DragonLevel.YOUNG;
 			dragonEditorScreen.dragonRender.zoom = dragonEditorScreen.level.size;
-			dragonEditorScreen.handler.getSkin().updateLayers.addAll(Arrays.stream(EnumSkinLayer.values()).distinct().toList());
+			dragonEditorScreen.handler.getSkin().compileSkin();
 			dragonEditorScreen.update();
 		});
 		this.dragonEditorScreen = dragonEditorScreen;

@@ -1,12 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities;
 
-import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.EnumSkinLayer;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import net.minecraft.nbt.CompoundTag;
-
-import java.util.HashSet;
 
 public class SkinCap extends SubCap{
 	public static final String defaultSkinValue = "None";
@@ -14,8 +11,15 @@ public class SkinCap extends SubCap{
 	public boolean renderYoung;
 	public boolean renderAdult;
 	public SkinPreset skinPreset = new SkinPreset();
-	public HashSet<EnumSkinLayer> updateLayers = new HashSet<>();
 	public boolean blankSkin = false;
+
+	public boolean recompileSkin = false;
+	public boolean isCompiled = false;
+
+	public void compileSkin() {
+		recompileSkin = true;
+		isCompiled = false;
+	}
 
 	public SkinCap(DragonStateHandler handler){
 		super(handler);

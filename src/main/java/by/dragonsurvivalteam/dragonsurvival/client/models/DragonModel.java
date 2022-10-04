@@ -2,14 +2,12 @@ package by.dragonsurvivalteam.dragonsurvival.client.models;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEditorHandler;
-import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.EnumSkinLayer;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset.SkinAgeGroup;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.SkinCap;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ClientConfig;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -21,13 +19,13 @@ import software.bernie.geckolib3.resource.GeckoLibCache;
 import software.bernie.shadowed.eliotlash.molang.MolangParser;
 
 import java.util.Locale;
-import java.util.Objects;
 
 public class DragonModel extends AnimatedGeoModel<DragonEntity>{
 
 	private final double lookSpeed = 0.05;
 	private final double lookDistance = 10;
-	private ResourceLocation currentTexture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/cave_newborn.png");
+	private final ResourceLocation defaultTexture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/cave_newborn.png");
+	private ResourceLocation currentTexture = defaultTexture;
 
 
 	@Override
@@ -37,29 +35,27 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity>{
 
 	@Override
 	public ResourceLocation getTextureLocation(DragonEntity dragon){
-		if(dragon.player != null){
+		if(dragon.player != null || dragon.getPlayer() != null){
 			DragonStateHandler handler = DragonUtils.getHandler(dragon.getPlayer());
+			SkinAgeGroup ageGroup = handler.getSkin().skinPreset.skinAges.get(handler.getLevel());
+
+			if(handler.getSkin().recompileSkin){
+				DragonEditorHandler.generateSkinTextures(dragon);
+			}
 
 			if(handler.getSkin().blankSkin){
 				return new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/blank_skin_" + handler.getType().name().toLowerCase(Locale.ROOT) + ".png");
 			}
 
-			if(currentTexture == null){
-				SkinAgeGroup ageGroup = handler.getSkin().skinPreset.skinAges.get(handler.getLevel());
+			if(ageGroup.defaultSkin){
+				return new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/" + handler.getType().name().toLowerCase(Locale.ROOT) + "_" + handler.getLevel().name.toLowerCase(Locale.ROOT) + ".png");
+			}
 
-				if(ageGroup.defaultSkin){
-					return new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/" + handler.getType().name().toLowerCase(Locale.ROOT) + "_" + handler.getLevel().name.toLowerCase(Locale.ROOT) + ".png");
-				}else{
-					String skin = ageGroup.layerSettings.get(EnumSkinLayer.BASE).selectedSkin;
-					ResourceLocation location = DragonEditorHandler.getSkinTexture(dragon.getPlayer(), EnumSkinLayer.BASE, Objects.equals(skin, SkinCap.defaultSkinValue) ? "Skin" : skin, DragonUtils.getDragonType(dragon.getPlayer()));
-
-					if(location != null){
-						return location;
-					}
-				}
+			if(handler.getSkin().isCompiled && currentTexture == null){
+				new ResourceLocation(DragonSurvivalMod.MODID, "dynamic_normal_" + dragon.getUUID());
 			}
 		}
-		return currentTexture;
+		return currentTexture == null ? defaultTexture : currentTexture;
 	}
 
 	public void setCurrentTexture(ResourceLocation currentTexture){

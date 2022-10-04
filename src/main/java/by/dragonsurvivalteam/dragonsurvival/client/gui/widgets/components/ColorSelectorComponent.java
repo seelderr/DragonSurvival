@@ -48,7 +48,7 @@ public class ColorSelectorComponent extends AbstractContainerEventHandler implem
 
 		glowing = new ExtendedCheckbox(x + 3, y, xSize - 5, 10, 10, new TranslatableComponent("ds.gui.dragon_editor.glowing"), set.glowing, (s) -> {
 			settings.get().glowing = s.selected();
-			screen.handler.getSkin().updateLayers.add(layer);
+			screen.handler.getSkin().compileSkin();
 		});
 
 		Color defaultC = Color.decode(text.defaultColor);
@@ -65,7 +65,7 @@ public class ColorSelectorComponent extends AbstractContainerEventHandler implem
 			settings.get().brightness = hsb[2];
 			settings.get().modifiedColor = true;
 
-			screen.handler.getSkin().updateLayers.add(layer);
+			screen.handler.getSkin().compileSkin();
 			screen.update();
 		});
 	}

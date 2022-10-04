@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.network.dragon_editor;
 
-import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.EnumSkinLayer;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
@@ -19,7 +18,6 @@ import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.PacketDistributor;
 
-import java.util.Arrays;
 import java.util.function.Supplier;
 
 
@@ -57,7 +55,7 @@ public class SyncPlayerSkinPreset implements IMessage<SyncPlayerSkinPreset>{
 			if(entity != null){
 				DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
 					dragonStateHandler.getSkin().skinPreset = message.preset;
-					dragonStateHandler.getSkin().updateLayers.addAll(Arrays.stream(EnumSkinLayer.values()).distinct().toList());
+					dragonStateHandler.getSkin().compileSkin();
 				});
 
 				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new SyncPlayerSkinPreset(entity.getId(), message.preset));
@@ -76,7 +74,7 @@ public class SyncPlayerSkinPreset implements IMessage<SyncPlayerSkinPreset>{
 				if(entity instanceof Player){
 					DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
 						dragonStateHandler.getSkin().skinPreset = message.preset;
-						dragonStateHandler.getSkin().updateLayers.addAll(Arrays.stream(EnumSkinLayer.values()).distinct().toList());
+						dragonStateHandler.getSkin().compileSkin();
 					});
 				}
 			}

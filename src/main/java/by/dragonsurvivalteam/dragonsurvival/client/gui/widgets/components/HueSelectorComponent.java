@@ -53,7 +53,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 
 		glowing = new ExtendedCheckbox(x + 3, y, xSize - 5, 10, 10, new TranslatableComponent("ds.gui.dragon_editor.glowing"), set.glowing, (s) -> {
 			settings.get().glowing = s.selected();
-			screen.handler.getSkin().updateLayers.add(layer);
+			screen.handler.getSkin().compileSkin();
 		});
 
 		hueReset = new ExtendedButton(x + 3 + xSize - 26, y + 12, 20, 20, TextComponent.EMPTY, (s) -> {
@@ -89,7 +89,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 				settings.get().brightness = value2;
 				settings.get().modifiedColor = true;
 
-				screen.handler.getSkin().updateLayers.add(layer);
+				screen.handler.getSkin().compileSkin();
 				screen.update();
 			}
 
@@ -119,7 +119,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 				settings.get().brightness = value2;
 				settings.get().modifiedColor = true;
 
-				screen.handler.getSkin().updateLayers.add(layer);
+				screen.handler.getSkin().compileSkin();
 				screen.update();
 			}
 
@@ -180,7 +180,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 				settings.get().brightness = value2;
 				settings.get().modifiedColor = true;
 
-				screen.handler.getSkin().updateLayers.add(layer);
+				screen.handler.getSkin().compileSkin();
 				screen.update();
 			}
 

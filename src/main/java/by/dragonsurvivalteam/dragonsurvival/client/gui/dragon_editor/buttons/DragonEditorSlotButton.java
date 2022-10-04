@@ -2,7 +2,6 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.buttons;
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEditorRegistry;
-import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.EnumSkinLayer;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TextRenderUtil;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.Gui;
@@ -10,7 +9,6 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.world.item.DyeColor;
 
 import java.awt.Color;
-import java.util.Arrays;
 import java.util.HashMap;
 
 public class DragonEditorSlotButton extends Button{
@@ -30,7 +28,7 @@ public class DragonEditorSlotButton extends Button{
 
 		screen.currentSelected = num - 1;
 		screen.update();
-		screen.handler.getSkin().updateLayers.addAll(Arrays.stream(EnumSkinLayer.values()).distinct().toList());
+		screen.handler.getSkin().compileSkin();
 	}
 
 	@Override

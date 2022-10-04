@@ -140,7 +140,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			reverseQueue(REDO_QUEUES.get(currentSelected));
 
 			this.preset.readNBT(UNDO_QUEUES.get(currentSelected).poll());
-			handler.getSkin().updateLayers.addAll(Arrays.stream(EnumSkinLayer.values()).distinct().toList());
+			handler.getSkin().compileSkin();
 			update();
 		}
 	}
@@ -155,7 +155,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			reverseQueue(UNDO_QUEUES.get(currentSelected));
 
 			this.preset.readNBT(REDO_QUEUES.get(currentSelected).poll());
-			handler.getSkin().updateLayers.addAll(Arrays.stream(EnumSkinLayer.values()).distinct().toList());
+			handler.getSkin().compileSkin();
 			update();
 		}
 	}
@@ -294,7 +294,6 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			this.handler.setHasWings(true);
 			this.handler.setType(type);
 			hasInit = true;
-			handler.getSkin().updateLayers.addAll(Arrays.stream(EnumSkinLayer.values()).distinct().toList());
 			update();
 		}
 
@@ -384,7 +383,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			addRenderableWidget(new ColorSelectorButton(this, layers, btn.x + 15 + btn.getWidth() + 2, btn.y, btn.getHeight(), btn.getHeight(), (s) -> {
 				doAction();
 				preset.skinAges.get(level).layerSettings.get(layers).hue = s.floatValue();
-				handler.getSkin().updateLayers.add(layers);
+				handler.getSkin().compileSkin();
 				update();
 			}));
 			i++;
@@ -576,7 +575,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 		addRenderableWidget(new ExtendedButton(guiLeft + 256 + 16, 9, 19, 19, TextComponent.EMPTY, (btn) -> {
 			doAction();
 			preset.skinAges.put(level, new SkinAgeGroup(level, type));
-			handler.getSkin().updateLayers.addAll(Arrays.stream(EnumSkinLayer.values()).distinct().toList());
+			handler.getSkin().compileSkin();
 			update();
 		}){
 			@Override
@@ -634,7 +633,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 						preset.skinAges.get(level).layerSettings.get(layer).modifiedColor = true;
 					}
 				}
-				handler.getSkin().updateLayers.add(layer);
+				handler.getSkin().compileSkin();
 			}
 
 			update();

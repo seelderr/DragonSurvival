@@ -234,6 +234,8 @@ public class DragonStateHandler implements NBTInterface{
 
 			setLavaAirSupply(tag.getInt("lavaAirSupply"));
 		}
+
+		getSkin().compileSkin();
 	}
 
 	public void setHasWings(boolean hasWings){
@@ -241,17 +243,9 @@ public class DragonStateHandler implements NBTInterface{
 			this.hasWings = hasWings;
 
 			switch(type){
-				case SEA:
-					seaWings = hasWings;
-					break;
-
-				case CAVE:
-					caveWings = hasWings;
-					break;
-
-				case FOREST:
-					forestWings = hasWings;
-					break;
+				case SEA -> seaWings = hasWings;
+				case CAVE -> caveWings = hasWings;
+				case FOREST -> forestWings = hasWings;
 			}
 		}
 	}
@@ -290,17 +284,9 @@ public class DragonStateHandler implements NBTInterface{
 				onGrow();
 
 			switch(type){
-				case SEA:
-					seaSize = size;
-					break;
-
-				case CAVE:
-					caveSize = size;
-					break;
-
-				case FOREST:
-					forestSize = size;
-					break;
+				case SEA -> seaSize = size;
+				case CAVE -> caveSize = size;
+				case FOREST -> forestSize = size;
 			}
 		}
 	}
