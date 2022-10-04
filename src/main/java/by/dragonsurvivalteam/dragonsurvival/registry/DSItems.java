@@ -37,6 +37,8 @@ public class DSItems{
 	public static Item passiveFireBeacon, passiveMagicBeacon, passivePeaceBeacon;
 	public static Item starHeart;
 
+	public static Item predatorStar;
+
 	public static Item wingGrantItem, spinGrantItem;
 	public static Item lightningTextureItem;
 	public static Item inactivePeaceDragonBeacon, inactiveMagicDragonBeacon, inactiveFireDragonBeacon;
@@ -44,6 +46,8 @@ public class DSItems{
 	@SubscribeEvent
 	public static void register(final RegistryEvent.Register<Item> event){
 		IForgeRegistry<Item> registry = event.getRegistry();
+
+		predatorStar = registerItem(registry, "predator_star", "ds.description.predatorStar");
 
 		starBone = registerItem(registry, new StarBoneItem(new Item.Properties().tab(DragonSurvivalMod.items)), "star_bone");
 		starHeart = registerItem(registry, new StarHeartItem(new Item.Properties().tab(DragonSurvivalMod.items)), "star_heart");

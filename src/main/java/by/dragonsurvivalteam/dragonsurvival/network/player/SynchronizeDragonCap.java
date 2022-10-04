@@ -82,6 +82,28 @@ public class SynchronizeDragonCap implements IMessage<SynchronizeDragonCap>{
 					DragonCommand.reInsertClawTools(serverPlayer, dragonStateHandler);
 				}
 
+				serverPlayer.removeTag("dragon");
+				serverPlayer.removeTag("sea_dragon");
+				serverPlayer.removeTag("forest_dragon");
+				serverPlayer.removeTag("cave_dragon");
+
+				switch(message.dragonType){
+					case SEA -> {
+						serverPlayer.addTag("dragon");
+						serverPlayer.addTag("sea_dragon");
+					}
+
+					case FOREST -> {
+						serverPlayer.addTag("dragon");
+						serverPlayer.addTag("forest_dragon");
+					}
+
+					case CAVE -> {
+						serverPlayer.addTag("dragon");
+						serverPlayer.addTag("cave_dragon");
+					}
+				}
+
 				dragonStateHandler.setIsHiding(message.hiding);
 				dragonStateHandler.setType(message.dragonType);
 				dragonStateHandler.setSize(message.size, serverPlayer);
@@ -110,6 +132,28 @@ public class SynchronizeDragonCap implements IMessage<SynchronizeDragonCap>{
 				Player thatPlayer = (Player)world.getEntity(message.playerId);
 
 				if(thatPlayer != null){
+					thatPlayer.removeTag("dragon");
+					thatPlayer.removeTag("sea_dragon");
+					thatPlayer.removeTag("forest_dragon");
+					thatPlayer.removeTag("cave_dragon");
+
+					switch(message.dragonType){
+						case SEA -> {
+							thatPlayer.addTag("dragon");
+							thatPlayer.addTag("sea_dragon");
+						}
+
+						case FOREST -> {
+							thatPlayer.addTag("dragon");
+							thatPlayer.addTag("forest_dragon");
+						}
+
+						case CAVE -> {
+							thatPlayer.addTag("dragon");
+							thatPlayer.addTag("cave_dragon");
+						}
+					}
+
 					DragonStateProvider.getCap(thatPlayer).ifPresent(dragonStateHandler -> {
 						dragonStateHandler.setType(message.dragonType);
 						dragonStateHandler.setIsHiding(message.hiding);
