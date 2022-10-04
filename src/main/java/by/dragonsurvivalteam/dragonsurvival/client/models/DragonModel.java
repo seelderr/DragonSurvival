@@ -27,8 +27,8 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity>{
 
 	private final double lookSpeed = 0.05;
 	private final double lookDistance = 10;
-	private ResourceLocation currentTexture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/cave_newborn.png");
-
+	private final ResourceLocation defaultTexture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/cave_newborn.png");
+	private ResourceLocation currentTexture = defaultTexture;
 
 	@Override
 	public ResourceLocation getModelLocation(DragonEntity dragon){
@@ -37,7 +37,7 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity>{
 
 	@Override
 	public ResourceLocation getTextureLocation(DragonEntity dragon){
-		if(dragon.player != null){
+		if(dragon.player != null || dragon.getPlayer() != null){
 			DragonStateHandler handler = DragonUtils.getHandler(dragon.getPlayer());
 
 			if(handler.getSkin().blankSkin){
@@ -49,17 +49,18 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity>{
 
 				if(ageGroup.defaultSkin){
 					return new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/" + handler.getType().name().toLowerCase(Locale.ROOT) + "_" + handler.getLevel().name.toLowerCase(Locale.ROOT) + ".png");
-				}else{
-					String skin = ageGroup.layerSettings.get(EnumSkinLayer.BASE).selectedSkin;
-					ResourceLocation location = DragonEditorHandler.getSkinTexture(dragon.getPlayer(), EnumSkinLayer.BASE, Objects.equals(skin, SkinCap.defaultSkinValue) ? "Skin" : skin, DragonUtils.getDragonType(dragon.getPlayer()));
+				}
 
-					if(location != null){
-						return location;
-					}
+				String skin = ageGroup.layerSettings.get(EnumSkinLayer.BASE).selectedSkin;
+				ResourceLocation location = DragonEditorHandler.getSkinTexture(dragon.getPlayer(), EnumSkinLayer.BASE, Objects.equals(skin, SkinCap.defaultSkinValue) ? "Skin" : skin, DragonUtils.getDragonType(dragon.getPlayer()));
+
+				if(location != null){
+					return location;
 				}
 			}
 		}
-		return currentTexture;
+
+		return currentTexture == null ? defaultTexture : currentTexture;
 	}
 
 	public void setCurrentTexture(ResourceLocation currentTexture){

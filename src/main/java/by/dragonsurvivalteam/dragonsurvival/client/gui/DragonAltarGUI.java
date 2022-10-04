@@ -72,9 +72,7 @@ public class DragonAltarGUI extends Screen{
 		}
 
 		for(Widget btn : renderables){
-			if(btn instanceof AltarTypeButton){
-				AltarTypeButton button = (AltarTypeButton)btn;
-
+			if(btn instanceof AltarTypeButton button){
 				if(button.isHoveredOrFocused()){
 					handler1.setType(button.type);
 					handler1.setHasWings(true);

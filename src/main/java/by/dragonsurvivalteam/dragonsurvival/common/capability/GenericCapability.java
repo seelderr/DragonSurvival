@@ -10,6 +10,9 @@ public class GenericCapability implements NBTInterface{
 	public int lastAfflicted = -1;
 	public int chainCount = 0;
 
+	public int altarCooldown;
+	public boolean hasUsedAltar;
+
 	@Override
 	public CompoundTag writeNBT(){
 		CompoundTag compoundNBT = new CompoundTag();
@@ -17,6 +20,9 @@ public class GenericCapability implements NBTInterface{
 		if(lastPos != null){
 			compoundNBT.put("lastPos", newDoubleList(lastPos.x, lastPos.y, lastPos.z));
 		}
+
+		compoundNBT.putInt("altarCooldown", altarCooldown);
+		compoundNBT.putBoolean("usedAltar", hasUsedAltar);
 
 		compoundNBT.putInt("lastAfflicted", lastAfflicted);
 		return compoundNBT;
@@ -40,5 +46,8 @@ public class GenericCapability implements NBTInterface{
 		}
 
 		lastAfflicted = base.getInt("lastAfflicted");
+
+		altarCooldown = base.getInt("altarCooldown");
+		hasUsedAltar = base.getBoolean("usedAltar");
 	}
 }

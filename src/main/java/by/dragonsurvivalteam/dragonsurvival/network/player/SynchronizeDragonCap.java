@@ -76,16 +76,17 @@ public class SynchronizeDragonCap implements IMessage<SynchronizeDragonCap>{
 		if(supplier.get().getDirection().getReceptionSide() == LogicalSide.SERVER){
 			NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), message);
 			ServerPlayer serverPlayer = supplier.get().getSender();
+
+			serverPlayer.removeTag("dragon");
+			serverPlayer.removeTag("sea_dragon");
+			serverPlayer.removeTag("forest_dragon");
+			serverPlayer.removeTag("cave_dragon");
+
 			DragonStateProvider.getCap(serverPlayer).ifPresent(dragonStateHandler -> {
 
 				if(message.dragonType == DragonType.NONE && dragonStateHandler.getType() != DragonType.NONE){
 					DragonCommand.reInsertClawTools(serverPlayer, dragonStateHandler);
 				}
-
-				serverPlayer.removeTag("dragon");
-				serverPlayer.removeTag("sea_dragon");
-				serverPlayer.removeTag("forest_dragon");
-				serverPlayer.removeTag("cave_dragon");
 
 				switch(message.dragonType){
 					case SEA -> {
@@ -111,7 +112,7 @@ public class SynchronizeDragonCap implements IMessage<SynchronizeDragonCap>{
 				dragonStateHandler.setLavaAirSupply(message.lavaAirSupply);
 				dragonStateHandler.setPassengerId(message.passengerId);
 				serverPlayer.setForcedPose(null);
-				//serverPlayer.refreshDimensions();
+				serverPlayer.refreshDimensions();
 			});
 		}else{
 			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> runClient(message, supplier));
@@ -132,28 +133,6 @@ public class SynchronizeDragonCap implements IMessage<SynchronizeDragonCap>{
 				Player thatPlayer = (Player)world.getEntity(message.playerId);
 
 				if(thatPlayer != null){
-					thatPlayer.removeTag("dragon");
-					thatPlayer.removeTag("sea_dragon");
-					thatPlayer.removeTag("forest_dragon");
-					thatPlayer.removeTag("cave_dragon");
-
-					switch(message.dragonType){
-						case SEA -> {
-							thatPlayer.addTag("dragon");
-							thatPlayer.addTag("sea_dragon");
-						}
-
-						case FOREST -> {
-							thatPlayer.addTag("dragon");
-							thatPlayer.addTag("forest_dragon");
-						}
-
-						case CAVE -> {
-							thatPlayer.addTag("dragon");
-							thatPlayer.addTag("cave_dragon");
-						}
-					}
-
 					DragonStateProvider.getCap(thatPlayer).ifPresent(dragonStateHandler -> {
 						dragonStateHandler.setType(message.dragonType);
 						dragonStateHandler.setIsHiding(message.hiding);

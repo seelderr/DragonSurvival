@@ -42,8 +42,7 @@ public class DragonStateHandler implements NBTInterface{
 	public boolean hasFlown;
 	public boolean growing = true;
 
-	public int altarCooldown;
-	public boolean hasUsedAltar;
+
 
 	public boolean treasureResting;
 	public int treasureRestTimer;
@@ -142,9 +141,6 @@ public class DragonStateHandler implements NBTInterface{
 			tag.putDouble("headYaw", movementData.headYaw);
 			tag.putDouble("headPitch", movementData.headPitch);
 
-			tag.putInt("altarCooldown", altarCooldown);
-			tag.putBoolean("usedAltar", hasUsedAltar);
-
 			tag.putInt("spinCooldown", movementData.spinCooldown);
 			tag.putInt("spinAttack", movementData.spinAttack);
 			tag.putBoolean("spinLearned", movementData.spinLearned);
@@ -195,9 +191,6 @@ public class DragonStateHandler implements NBTInterface{
 			getMovementData().headYawLastTick = getMovementData().headYaw;
 			getMovementData().bodyYawLastTick = getMovementData().bodyYaw;
 			getMovementData().headPitchLastTick = getMovementData().headPitch;
-
-			altarCooldown = tag.getInt("altarCooldown");
-			hasUsedAltar = tag.getBoolean("usedAltar");
 
 			setHasWings(tag.getBoolean("hasWings"));
 			setWingsSpread(tag.getBoolean("isFlying"));

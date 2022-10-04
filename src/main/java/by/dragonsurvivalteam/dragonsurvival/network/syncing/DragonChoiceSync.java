@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.network.syncing;
 
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.GenericCapability;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.GenericCapabilityProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.ISidedMessage;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -48,11 +49,11 @@ public class DragonChoiceSync extends ISidedMessage<DragonChoiceSync>{
 
 	@Override
 	public void runServer(DragonChoiceSync message, Supplier<Context> supplier, ServerPlayer sender){
-		DragonUtils.getHandler(sender).hasUsedAltar = message.choiceGiven;
+		GenericCapabilityProvider.getGenericCapability(sender).orElse(new GenericCapability()).hasUsedAltar = message.choiceGiven;
 	}
 
 	@Override
 	public void runClient(DragonChoiceSync message, Supplier<Context> supplier, Player targetPlayer){
-		DragonUtils.getHandler(targetPlayer).hasUsedAltar = message.choiceGiven;
+		GenericCapabilityProvider.getGenericCapability(targetPlayer).orElse(new GenericCapability()).hasUsedAltar = message.choiceGiven;
 	}
 }

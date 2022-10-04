@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.registry;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.Bolas;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.active.ToughSkinAbility;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
@@ -171,6 +172,15 @@ public class DragonEffects{
 
 		protected EvilDragon(MobEffectCategory p_i50391_1_){
 			super(p_i50391_1_, 0x0);
+		}
+
+		@Override
+		public void applyEffectTick(LivingEntity pLivingEntity, int pAmplifier){
+			super.applyEffectTick(pLivingEntity, pAmplifier);
+
+			if(!DragonUtils.isDragon(pLivingEntity)){
+				pLivingEntity.removeEffect(DragonEffects.EVIL_DRAGON);
+			}
 		}
 
 		@Override
