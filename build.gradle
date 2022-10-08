@@ -90,7 +90,9 @@ minecraft {
 sourceSets.main.resources {
     srcDir 'src/generated/resources'
 }
-
+jar
+ {
+duplicatesStrategy = 'include'}
 processResources {
     from sourceSets.main.resources
     inputs.property "version", project.version
@@ -101,7 +103,7 @@ processResources {
 
     // Exclude datagenerator .cache directory
     exclude '.cache'
-    duplicatesStrategy( DuplicatesStrategy.EXCLUDE)
+    duplicatesStrategy = 'include'
 }
 
 mixin {
