@@ -58,7 +58,6 @@ minecraft {
 
     runs {
         client {
-            arg "-mixin.config=" + mod_id + ".mixins.json"
             workingDirectory file('run/client')
             mods {
                 dragonsurvival {
@@ -68,7 +67,6 @@ minecraft {
             }
         }
         server {
-            arg "-mixin.config=" + mod_id + ".mixins.json"
             workingDirectory file('run/server')
             mods {
                 dragonsurvival {
@@ -78,7 +76,7 @@ minecraft {
             }
         }
         data {
-            args '--mod', 'dragonsurvival', '--all', '--existing', '"' + file('src/main/resources/') + '"', '--output', '"' + file('src/generated/resources/') + '"', "-mixin.config=" + mod_id + ".mixins.json"
+            args '--mod', 'dragonsurvival', '--all', '--existing', '"' + file('src/main/resources/') + '"', '--output', '"' + file('src/generated/resources/') + '"'
             mods {
                 dragonsurvival {
                     source sourceSets.main
@@ -107,7 +105,11 @@ processResources {
 }
 
 mixin {
-    add sourceSets.main, mod_id + ".refmap.json"
+    add sourceSets.main, "dragonsurvival.refmap.json"
+    config 'dragonsurvival.mixins.json'
+
+    debug.verbose = true
+    debug.export = true
 }
 
 repositories {
