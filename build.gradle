@@ -21,7 +21,6 @@ plugins {
     id "io.freefair.lombok" version "6.5.0.2"
 }
 
-
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: 'org.spongepowered.mixin'
@@ -31,11 +30,6 @@ group = property("mod_group")
 archivesBaseName = property("mod_name") + "_" + property("version_name")
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(property("java_version") as String)
-
-compileJava.options.encoding = 'UTF-8'
-tasks.withType(JavaCompile) {
-    options.encoding = 'UTF-8'
-}
 
 sourceSets {
     api
@@ -59,6 +53,8 @@ minecraft {
     runs {
         client {
             workingDirectory file('run/client')
+            property 'forge.enabledGameTestNamespaces', 'dragonsurvival'
+
             mods {
                 dragonsurvival {
                     source sourceSets.main
@@ -68,6 +64,8 @@ minecraft {
         }
         server {
             workingDirectory file('run/server')
+            property 'forge.enabledGameTestNamespaces', 'dragonsurvival'
+
             mods {
                 dragonsurvival {
                     source sourceSets.main
@@ -75,6 +73,21 @@ minecraft {
                 }
             }
         }
+
+        gameTestServer {
+            workingDirectory file('run/server')
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+            property 'forge.enabledGameTestNamespaces', 'dragonsurvival'
+
+            mods {
+                dragonsurvival {
+                    source sourceSets.main
+                    source sourceSets.api
+                }
+            }
+        }
+
         data {
             args '--mod', 'dragonsurvival', '--all', '--existing', '"' + file('src/main/resources/') + '"', '--output', '"' + file('src/generated/resources/') + '"'
             mods {
@@ -90,9 +103,7 @@ minecraft {
 sourceSets.main.resources {
     srcDir 'src/generated/resources'
 }
-jar
- {
-duplicatesStrategy = 'include'}
+
 processResources {
     from sourceSets.main.resources
     inputs.property "version", project.version
@@ -148,4 +159,8 @@ jar {
                 "MixinConfigs": mod_id + ".mixins.json"
         ])
     }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }
