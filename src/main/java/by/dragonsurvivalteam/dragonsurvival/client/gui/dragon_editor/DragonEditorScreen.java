@@ -288,6 +288,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			preset = new SkinPreset();
 			preset.readNBT(curPreset.writeNBT());
 			handler.getSkin().skinPreset = preset;
+			handler.getSkin().compileSkin();
 
 			dragonRender.zoom = (float)(level.size * preset.sizeMul);
 
@@ -465,10 +466,6 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			@Override
 			public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
 				super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
-
-				if(isHoveredOrFocused()){
-					renderToolTip(pMatrixStack, pMouseX, pMouseY);
-				}
 			}
 
 			@Override
@@ -504,16 +501,17 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			@Override
 			public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){
 				super.renderButton(mStack, mouseX, mouseY, partial);
-				if(isHovered){
-					TooltipRendering.drawHoveringText(mStack, new TranslatableComponent("ds.gui.dragon_editor.tooltip.done"), mouseX, mouseY);
-				}
-
 				if(toggled && (!visible || !confirmation)){
 					toggled = false;
 					Screen screen = Minecraft.getInstance().screen;
 					screen.children.removeIf((s) -> s == conf);
 					screen.renderables.removeIf((s) -> s == renderButton);
 				}
+			}
+
+			@Override
+			public void renderToolTip(PoseStack pPoseStack, int pMouseX, int pMouseY){
+				TooltipRendering.drawHoveringText(pPoseStack, new TranslatableComponent("ds.gui.dragon_editor.tooltip.done"), pMouseX, pMouseY);
 			}
 
 			@Override
@@ -560,10 +558,11 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			@Override
 			public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){
 				super.renderButton(mStack, mouseX, mouseY, partial);
+			}
 
-				if(isHovered){
-					TooltipRendering.drawHoveringText(mStack, new TranslatableComponent("ds.gui.dragon_editor.tooltip.back"), mouseX, mouseY);
-				}
+			@Override
+			public void renderToolTip(PoseStack pPoseStack, int pMouseX, int pMouseY){
+				TooltipRendering.drawHoveringText(pPoseStack, new TranslatableComponent("ds.gui.dragon_editor.tooltip.back"), pMouseX, pMouseY);
 			}
 
 			@Override

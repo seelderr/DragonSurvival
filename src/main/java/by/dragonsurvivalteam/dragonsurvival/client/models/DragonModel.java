@@ -21,7 +21,6 @@ import software.bernie.shadowed.eliotlash.molang.MolangParser;
 import java.util.Locale;
 
 public class DragonModel extends AnimatedGeoModel<DragonEntity>{
-
 	private final double lookSpeed = 0.05;
 	private final double lookDistance = 10;
 	private final ResourceLocation defaultTexture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/cave_newborn.png");
@@ -51,7 +50,7 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity>{
 			}
 
 			if(handler.getSkin().isCompiled && currentTexture == null){
-				new ResourceLocation(DragonSurvivalMod.MODID, "dynamic_normal_" + dragon.getUUID());
+				return new ResourceLocation(DragonSurvivalMod.MODID, "dynamic_normal_" + dragon.getUUID());
 			}
 		}
 		return currentTexture == null ? defaultTexture : currentTexture;
