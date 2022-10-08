@@ -31,10 +31,10 @@ public class BallLightningAbility extends ChargeCastAbility{
 	public static Boolean ballLightning = true;
 	@ConfigRange( min = 1, max = 10000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "ball_lightning"}, key = "ballLightningCooldown", comment = "The cooldown in ticks of the ball lightning ability" )
-	public static Integer ballLightningCooldown = Functions.secondsToTicks(60);
+	public static Integer ballLightningCooldown = 400;
 	@ConfigRange( min = 1, max = 10000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "ball_lightning"}, key = "ballLightningCasttime", comment = "The cast time in ticks of the ball lightning ability" )
-	public static Integer ballLightningCasttime = Functions.secondsToTicks(2);
+	public static Integer ballLightningCasttime = 40;
 	@ConfigRange( min = 0, max = 100.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "ball_lightning"}, key = "ballLightningDamage", comment = "The amount of damage the lightning ball ability deals. This value is multiplied by the skill level." )
 	public static Double ballLightningDamage = 4.0;

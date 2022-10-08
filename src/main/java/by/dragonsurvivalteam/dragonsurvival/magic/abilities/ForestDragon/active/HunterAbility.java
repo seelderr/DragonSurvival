@@ -30,13 +30,13 @@ public class HunterAbility extends ChargeCastAbility{
 	public static Boolean hunter = true;
 	@ConfigRange( min = 0, max = 10000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "hunter"}, key = "hunterDuration", comment = "The duration in seconds of the inspiration effect given when the ability is used" )
-	public static Integer hunterDuration = Functions.secondsToTicks(60);
+	public static Integer hunterDuration = 600;
 	@ConfigRange( min = 1, max = 10000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "hunter"}, key = "hunterCooldown", comment = "The cooldown in ticks of the hunter ability" )
-	public static Integer hunterCooldown = Functions.secondsToTicks(30);
+	public static Integer hunterCooldown = 600;
 	@ConfigRange( min = 1, max = 10000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "hunter"}, key = "hunterCasttime", comment = "The cast time in ticks of the hunter ability" )
-	public static Integer hunterCasttime = Functions.secondsToTicks(3);
+	public static Integer hunterCasttime = 60;
 	@ConfigRange( min = 0, max = 100.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "hunter"}, key = "hunterDamageBonus", comment = "The damage bonus the hunter effect gives when invisible. This value is multiplied by the skill level." )
 	public static Double hunterDamageBonus = 1.5;

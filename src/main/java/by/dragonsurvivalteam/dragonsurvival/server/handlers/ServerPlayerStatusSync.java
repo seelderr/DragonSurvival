@@ -21,7 +21,7 @@ public class ServerPlayerStatusSync {
 
 	@ConfigRange(min = -1, max = 60 * 60 * 20)
 	@ConfigOption( side = ConfigSide.SERVER, category = "general", key = "serverSyncTime", comment = "How often should player data be synced to other players? -1 disables it")
-	public static long serverSyncTime = Functions.secondsToTicks(30);
+	public static long serverSyncTime = 600;
 
 	@SubscribeEvent
 	public static void onServerTick(PlayerTickEvent event){

@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers.magic;
 
 import by.dragonsurvivalteam.dragonsurvival.client.particles.DSParticles;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.GenericCapability;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
@@ -149,12 +150,12 @@ public class MagicHandler{
 
 
 		if(entity.hasEffect(DragonEffects.DRAIN)){
-			DragonType type = DragonStateProvider.getCap(entity).map(cap -> cap.getType()).orElse(null);
+			DragonType type = DragonStateProvider.getCap(entity).map(DragonStateHandler::getType).orElse(null);
 
 			if(type != DragonType.FOREST){
 				if(entity.tickCount % 20 == 0){
 					GenericCapability cap = GenericCapabilityProvider.getGenericCapability(entity).orElse(null);
-					Player player = cap != null && cap.lastAfflicted != -1 && entity.level.getEntity(cap.lastAfflicted) instanceof Player ? ((Player)entity.level.getEntity(cap.lastAfflicted)) : null;
+					Player player = cap.lastAfflicted != -1 && entity.level.getEntity(cap.lastAfflicted) instanceof Player ? (Player)entity.level.getEntity(cap.lastAfflicted) : null;
 					if(player != null){
 						entity.hurt(new EntityDamageSource("magic", player).bypassArmor().setMagic(), 1.0F);
 					}else{

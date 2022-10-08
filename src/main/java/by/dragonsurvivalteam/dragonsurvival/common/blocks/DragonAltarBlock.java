@@ -3,6 +3,8 @@ package by.dragonsurvivalteam.dragonsurvival.common.blocks;
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.DragonAltarGUI;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.GenericCapability;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.GenericCapabilityProvider;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.client.Minecraft;
@@ -64,7 +66,9 @@ public class DragonAltarBlock extends Block{
 	@Override
 	public InteractionResult use(BlockState blockState, Level worldIn, BlockPos blockPos, Player player, InteractionHand handIn, BlockHitResult p_225533_6_){
 		DragonStateHandler handler = DragonUtils.getHandler(player);
-		int cooldown = handler.altarCooldown;
+		GenericCapability cap = GenericCapabilityProvider.getGenericCapability(player).orElse(new GenericCapability());
+
+		int cooldown = cap.altarCooldown;
 		if(cooldown > 0){
 			if(worldIn.isClientSide){
 				//Show the current cooldown in minutes and seconds in cases where the cooldown is set high in the config

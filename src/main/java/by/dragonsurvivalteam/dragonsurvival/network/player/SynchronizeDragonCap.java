@@ -76,10 +76,33 @@ public class SynchronizeDragonCap implements IMessage<SynchronizeDragonCap>{
 		if(supplier.get().getDirection().getReceptionSide() == LogicalSide.SERVER){
 			NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), message);
 			ServerPlayer serverPlayer = supplier.get().getSender();
+
+			serverPlayer.removeTag("dragon");
+			serverPlayer.removeTag("sea_dragon");
+			serverPlayer.removeTag("forest_dragon");
+			serverPlayer.removeTag("cave_dragon");
+
 			DragonStateProvider.getCap(serverPlayer).ifPresent(dragonStateHandler -> {
 
 				if(message.dragonType == DragonType.NONE && dragonStateHandler.getType() != DragonType.NONE){
 					DragonCommand.reInsertClawTools(serverPlayer, dragonStateHandler);
+				}
+
+				switch(message.dragonType){
+					case SEA -> {
+						serverPlayer.addTag("dragon");
+						serverPlayer.addTag("sea_dragon");
+					}
+
+					case FOREST -> {
+						serverPlayer.addTag("dragon");
+						serverPlayer.addTag("forest_dragon");
+					}
+
+					case CAVE -> {
+						serverPlayer.addTag("dragon");
+						serverPlayer.addTag("cave_dragon");
+					}
 				}
 
 				dragonStateHandler.setIsHiding(message.hiding);
@@ -89,7 +112,7 @@ public class SynchronizeDragonCap implements IMessage<SynchronizeDragonCap>{
 				dragonStateHandler.setLavaAirSupply(message.lavaAirSupply);
 				dragonStateHandler.setPassengerId(message.passengerId);
 				serverPlayer.setForcedPose(null);
-				//serverPlayer.refreshDimensions();
+				serverPlayer.refreshDimensions();
 			});
 		}else{
 			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> runClient(message, supplier));

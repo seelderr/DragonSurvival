@@ -112,15 +112,17 @@ public class ConfigHandler{
 			configs.get(option.side()).add(option.key());
 		});
 
-		Pair<ClientConfig, ForgeConfigSpec> client = new ForgeConfigSpec.Builder().configure(ClientConfig::new);
-		CLIENT = client.getLeft();
-		clientSpec = client.getRight();
+		if(FMLEnvironment.dist.isClient()){
+			Pair<ClientConfig, ForgeConfigSpec> client = new ForgeConfigSpec.Builder().configure(ClientConfig::new);
+			CLIENT = client.getLeft();
+			clientSpec = client.getRight();
+			ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, clientSpec);
+		}
 
 		Pair<ServerConfig, ForgeConfigSpec> server = new ForgeConfigSpec.Builder().configure(ServerConfig::new);
 		SERVER = server.getLeft();
 		serverSpec = server.getRight();
 
-		ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, clientSpec);
 		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, serverSpec);
 	}
 
@@ -130,13 +132,14 @@ public class ConfigHandler{
 			Field fe = configFields.get(key);
 			Object defaultOb = defaultConfigValues.get(option.key());
 
-			for(String string : option.category()){
+			String[] categories = option.category() != null && option.category().length > 0 ? option.category() : new String[]{"general"};
+			String[] comment =  option.comment() != null ? option.comment() : new String[0];
+
+			for(String string : categories){
 				builder.push(string);
 			}
 
-			if(option.comment() != null && option.comment().length > 0){
-				builder.comment(option.comment());
-			}
+			builder.comment(comment);
 
 			if(!option.localization().isBlank()){
 				builder.translation(option.localization());
@@ -160,6 +163,9 @@ public class ConfigHandler{
 				}else if(tt instanceof Double doubleVal){
 					DoubleValue value = builder.defineInRange(option.key(), doubleVal, rang ? range.min() : Double.MIN_VALUE, rang ? range.max() : Double.MAX_VALUE);
 					configValues.put(key, value);
+				}else if(tt instanceof Boolean boolValue){
+					BooleanValue value = builder.define(option.key(), (boolean)boolValue);
+					configValues.put(key, value);
 				}else if(fe.getType().isEnum()){
 					EnumValue value = builder.defineEnum(option.key(), (Enum)defaultOb, ((Enum<?>)defaultOb).getClass().getEnumConstants());
 					configValues.put(key, value);
@@ -167,15 +173,16 @@ public class ConfigHandler{
 					ConfigValue<List<?>> value = builder.defineList(option.key(), ls, s -> fe.isAnnotationPresent(IgnoreConfigCheck.class) || ResourceLocation.isValidResourceLocation(String.valueOf(s)));
 					configValues.put(key, value);
 				}else{
-					ForgeConfigSpec.ConfigValue<Object> value = builder.define(option.key(), defaultOb, s -> fe.isAnnotationPresent(IgnoreConfigCheck.class) || ResourceLocation.isValidResourceLocation(String.valueOf(s)));
+					ConfigValue value = builder.define(option.key(), defaultOb);
 					configValues.put(key, value);
+					System.out.println("Possible config issue for option: " + option.key());
 				}
 			}catch(Exception e){
 				e.printStackTrace();
 			}
 
 
-			for(int i = 0; i < option.category().length; i++){
+			for(int i = 0; i < categories.length; i++){
 				builder.pop();
 			}
 		}

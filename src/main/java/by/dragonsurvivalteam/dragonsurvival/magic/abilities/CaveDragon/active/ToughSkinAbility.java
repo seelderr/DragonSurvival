@@ -30,13 +30,13 @@ public class ToughSkinAbility extends AoeBuffAbility{
 	public static Boolean toughSkin = true;
 	@ConfigRange( min = 0, max = 10000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "tough_skin"}, key = "toughSkinDuration", comment = "The duration in seconds of the tough skin effect given when the ability is used" )
-	public static Integer toughSkinDuration = Functions.secondsToTicks(180);
+	public static Integer toughSkinDuration = 3600;
 	@ConfigRange( min = 1, max = 10000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "tough_skin"}, key = "toughSkinCooldown", comment = "The cooldown in ticks of the tough skin ability" )
-	public static Integer toughSkinCooldown = Functions.secondsToTicks(30);
+	public static Integer toughSkinCooldown = 600;
 	@ConfigRange( min = 1, max = 10000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "tough_skin"}, key = "toughSkinCasttime", comment = "The cast time in ticks of the tough skin ability" )
-	public static Integer toughSkinCasttime = Functions.secondsToTicks(5);
+	public static Integer toughSkinCasttime = 60;
 	@ConfigRange( min = 0, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "tough_skin"}, key = "toughSkinManaCost", comment = "The mana cost for using the tough skin ability" )
 	public static Integer toughSkinManaCost = 3;

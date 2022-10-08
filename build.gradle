@@ -21,7 +21,6 @@ plugins {
     id "io.freefair.lombok" version "6.5.0.2"
 }
 
-
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: 'org.spongepowered.mixin'
@@ -31,11 +30,6 @@ group = property("mod_group")
 archivesBaseName = property("mod_name") + "_" + property("version_name")
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(property("java_version") as String)
-
-compileJava.options.encoding = 'UTF-8'
-tasks.withType(JavaCompile) {
-    options.encoding = 'UTF-8'
-}
 
 sourceSets {
     api
@@ -58,8 +52,9 @@ minecraft {
 
     runs {
         client {
-            arg "-mixin.config=" + mod_id + ".mixins.json"
             workingDirectory file('run/client')
+            property 'forge.enabledGameTestNamespaces', 'dragonsurvival'
+
             mods {
                 dragonsurvival {
                     source sourceSets.main
@@ -68,8 +63,9 @@ minecraft {
             }
         }
         server {
-            arg "-mixin.config=" + mod_id + ".mixins.json"
             workingDirectory file('run/server')
+            property 'forge.enabledGameTestNamespaces', 'dragonsurvival'
+
             mods {
                 dragonsurvival {
                     source sourceSets.main
@@ -77,8 +73,23 @@ minecraft {
                 }
             }
         }
+
+        gameTestServer {
+            workingDirectory file('run/server')
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+            property 'forge.enabledGameTestNamespaces', 'dragonsurvival'
+
+            mods {
+                dragonsurvival {
+                    source sourceSets.main
+                    source sourceSets.api
+                }
+            }
+        }
+
         data {
-            args '--mod', 'dragonsurvival', '--all', '--existing', '"' + file('src/main/resources/') + '"', '--output', '"' + file('src/generated/resources/') + '"', "-mixin.config=" + mod_id + ".mixins.json"
+            args '--mod', 'dragonsurvival', '--all', '--existing', '"' + file('src/main/resources/') + '"', '--output', '"' + file('src/generated/resources/') + '"'
             mods {
                 dragonsurvival {
                     source sourceSets.main
@@ -89,9 +100,9 @@ minecraft {
     }
 }
 
-//sourceSets.main.resources {
-//    srcDir 'src/generated/resources'
-//}
+sourceSets.main.resources {
+    srcDir 'src/generated/resources'
+}
 
 processResources {
     from sourceSets.main.resources
@@ -103,11 +114,15 @@ processResources {
 
     // Exclude datagenerator .cache directory
     exclude '.cache'
-    duplicatesStrategy( DuplicatesStrategy.EXCLUDE)
+    duplicatesStrategy = 'include'
 }
 
 mixin {
-    add sourceSets.main, mod_id + ".refmap.json"
+    add sourceSets.main, "dragonsurvival.refmap.json"
+    config 'dragonsurvival.mixins.json'
+
+    debug.verbose = true
+    debug.export = true
 }
 
 repositories {
@@ -144,4 +159,8 @@ jar {
                 "MixinConfigs": mod_id + ".mixins.json"
         ])
     }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }

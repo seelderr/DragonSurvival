@@ -27,7 +27,6 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity>{
 	private final ResourceLocation defaultTexture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/cave_newborn.png");
 	private ResourceLocation currentTexture = defaultTexture;
 
-
 	@Override
 	public ResourceLocation getModelLocation(DragonEntity dragon){
 		return new ResourceLocation(DragonSurvivalMod.MODID, "geo/dragon_model.geo.json");

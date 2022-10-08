@@ -65,7 +65,7 @@ public class NetherBreathAbility extends BreathAbility{
 	public static Integer fireBreathOvertimeMana = 1;
 	@ConfigRange( min = 0, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreathManaTicks", comment = "How often in ticks, mana is consumed while using fire breath" )
-	public static Integer fireBreathManaTicks = Functions.secondsToTicks(2);
+	public static Integer fireBreathManaTicks = 40;
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreathSpreadsFire", comment = "Whether the fire breath actually spreads fire when used" )
 	public static Boolean fireBreathSpreadsFire = true;
 	@ConfigType(Block.class)
@@ -73,7 +73,7 @@ public class NetherBreathAbility extends BreathAbility{
 	public static List<String> fireBreathBlockBreaks = List.of("minecraft:impermeable", "minecraft:crops", "minecraft:flowers", "minecraft:replaceable_plants", "minecraft:cobweb");
 	@ConfigRange( min = 1, max = 10000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreathCooldown", comment = "The cooldown in ticks of the fire breath ability" )
-	public static Integer fireBreathCooldown = Functions.secondsToTicks(5);
+	public static Integer fireBreathCooldown = 100;
 	@ConfigRange( min = 1, max = 10000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreathCasttime", comment = "The cast time in ticks of the fire breath ability" )
 	public static Integer fireBreathCasttime = 20;

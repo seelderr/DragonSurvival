@@ -33,7 +33,7 @@ public class SpikeAbility extends InstantCastAbility{
 
 	@ConfigRange( min = 1, max = 10000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "spike"}, key = "spikeCooldown", comment = "The cooldown in ticks of the spike ability" )
-	public static Integer spikeCooldown = Functions.secondsToTicks(3);
+	public static Integer spikeCooldown = 60;
 
 	@ConfigRange( min = 0, max = 100.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "spike"}, key = "spikeDamage", comment = "The amount of damage the spike ability deals. This value is multiplied by the skill level." )
