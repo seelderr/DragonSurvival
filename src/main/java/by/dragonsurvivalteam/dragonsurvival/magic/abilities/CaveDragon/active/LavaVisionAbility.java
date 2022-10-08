@@ -30,13 +30,13 @@ public class LavaVisionAbility extends ChargeCastAbility {
 	public static Boolean lavaVision = true;
 	@ConfigRange( min = 0, max = 10000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "lava_vision"}, key = "lavaVisionDuration", comment = "The duration in seconds of the lava vision effect given when the ability is used" )
-	public static Integer lavaVisionDuration = Functions.secondsToTicks(60);
+	public static Integer lavaVisionDuration = 1400;
 	@ConfigRange( min = 1, max = 10000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "lava_vision"}, key = "lavaVisionCooldown", comment = "The cooldown in ticks of the lava vision ability" )
-	public static Integer lavaVisionCooldown = Functions.secondsToTicks(60);
+	public static Integer lavaVisionCooldown = 600;
 	@ConfigRange( min = 1, max = 10000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "lava_vision"}, key = "lavaVisionCasttime", comment = "The cast time in ticks of the lava vision ability" )
-	public static Integer lavaVisionCasttime = Functions.secondsToTicks(2);
+	public static Integer lavaVisionCasttime = 40;
 	@ConfigRange( min = 0, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "lava_vision"}, key = "lavaVisionManaCost", comment = "The mana cost for using the lava vision ability" )
 	public static Integer lavaVisionManaCost = 2;

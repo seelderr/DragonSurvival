@@ -81,14 +81,14 @@ public class StormBreathAbility extends BreathAbility{
 	                                                     "sea_dragon",
 	                                                     "actives",
 	                                                     "storm_breath"}, key = "stormBreathCooldown", comment = "The cooldown in ticks of the storm breath ability" )
-	public static Integer stormBreathCooldown = Functions.secondsToTicks(10);
+	public static Integer stormBreathCooldown = 200;
 	@ConfigRange( min = 1, max = 10000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic",
 	                                                     "abilities",
 	                                                     "sea_dragon",
 	                                                     "actives",
 	                                                     "storm_breath"}, key = "stormBreathCasttime", comment = "The cast time in ticks of the storm breath ability" )
-	public static Integer stormBreathCasttime = 20;
+	public static Integer stormBreathCasttime = 10;
 	@ConfigRange( min = 0, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic",
 	                                                     "abilities",
@@ -102,7 +102,7 @@ public class StormBreathAbility extends BreathAbility{
 	                                                     "sea_dragon",
 	                                                     "actives",
 	                                                     "storm_breath"}, key = "stormBreathManaTicks", comment = "How often in ticks, mana is consumed while using storm breath" )
-	public static Integer stormBreathManaTicks = Functions.secondsToTicks(2);
+	public static Integer stormBreathManaTicks = 40;
 	@ConfigType(Block.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic",
 	                                                     "abilities",
