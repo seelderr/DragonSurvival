@@ -91,6 +91,7 @@ public class Capabilities{
 	public static void onDimensionChange(PlayerEvent.PlayerChangedDimensionEvent event){
 		Player player = event.getPlayer();
 		syncCapability(player);
+		DragonStateProvider.getCap(player).ifPresent(cap -> cap.getSkin().compileSkin());
 	}
 
 	@SubscribeEvent
@@ -113,6 +114,7 @@ public class Capabilities{
 		DragonStateProvider.getCap(player).ifPresent(capNew -> DragonStateProvider.getCap(original).ifPresent(capOld -> {
 			CompoundTag nbt = capOld.writeNBT();
 			capNew.readNBT(nbt);
+			capNew.getSkin().compileSkin();
 			NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new CompleteDataSync(player.getId(), nbt));
 		}));
 
