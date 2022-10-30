@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon;
 
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
@@ -19,6 +20,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.fml.ModList;
 import software.bernie.geckolib3.core.processor.IBone;
 import software.bernie.geckolib3.core.util.Color;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
@@ -40,6 +42,10 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity>{
 		this.addLayer(new DragonGlowLayerRenderer(this));
 		this.addLayer(new ClawsAndTeethRenderLayer(this));
 		this.addLayer(new DragonArmorRenderLayer(this));
+		if (ModList.get().isLoaded("curios")) {
+			DragonSurvivalMod.LOGGER.info("Adding curios render layer");
+			this.addLayer(new DragonCuriosRenderLayer(this));
+		}
 	}
 
 

@@ -147,7 +147,7 @@ public class DragonArmorRenderLayer extends GeoLayerRenderer<DragonEntity>{
 		return texture + "empty_armor.png";
 	}
 	
-	private static String itemToResLoc(Item item) {
+	public static String itemToResLoc(Item item) {
 		if (item == Items.AIR) return null;
 		
 		ResourceLocation registryName = item.getRegistryName();
