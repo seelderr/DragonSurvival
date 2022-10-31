@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -123,17 +124,44 @@ public class DragonArmorRenderLayer extends GeoLayerRenderer<DragonEntity>{
 				}
 				texture += ".png";
 				return texture;
-			}else{
-				int defense = armorItem.getDefense();
-				switch(equipmentSlot){
-					case FEET -> texture += Mth.clamp(defense, 1, 4) + "_dragon_boots";
-					case CHEST -> texture += Mth.clamp(defense / 2, 1, 4) + "_dragon_chestplate";
-					case HEAD -> texture += Mth.clamp(defense, 1, 4) + "_dragon_helmet";
-					case LEGS -> texture += Mth.clamp((int)(defense / 1.5), 1, 4) + "_dragon_leggings";
-				}
-				return texture + ".png";
 			}
 		}
+		String texture2 = itemToResLoc(item);
+		if (texture2 != null) {
+			texture2 = texture + texture2;
+			if (Minecraft.getInstance().getResourceManager().hasResource(new ResourceLocation(DragonSurvivalMod.MODID, texture2))) {
+				return texture2;
+			}
+		}
+		if (item instanceof ArmorItem armorItem) {
+			int defense = armorItem.getDefense();
+			switch(equipmentSlot){
+				case FEET -> texture += Mth.clamp(defense, 1, 4) + "_dragon_boots";
+				case CHEST -> texture += Mth.clamp(defense / 2, 1, 4) + "_dragon_chestplate";
+				case HEAD -> texture += Mth.clamp(defense, 1, 4) + "_dragon_helmet";
+				case LEGS -> texture += Mth.clamp((int)(defense / 1.5), 1, 4) + "_dragon_leggings";
+			}
+			texture += ".png";
+			return texture;
+		}
 		return texture + "empty_armor.png";
+	}
+	
+	public static String itemToResLoc(Item item) {
+		if (item == Items.AIR) return null;
+		
+		ResourceLocation registryName = item.getRegistryName();
+		if (registryName != null) {
+			String[] reg = registryName.toString().split(":");
+			String loc = reg[0] + "/" + reg[1] + ".png";
+			// filters certain characters (non [a-z0-9/._-]) to prevent crashes
+			// this probably should never be relevant, but you can never be too safe
+			loc = loc.chars()
+					.filter(ch -> ResourceLocation.validPathChar((char) ch))
+					.collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+					.toString();
+			return loc;
+		}
+		return null;
 	}
 }
