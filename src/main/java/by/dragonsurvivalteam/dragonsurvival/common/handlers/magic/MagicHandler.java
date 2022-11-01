@@ -90,7 +90,6 @@ public class MagicHandler{
 				if(ability != null){
 					ability.tickCooldown();
 				}
-				cap.getMagic().getAbilityFromSlot(i).tickCooldown();
 			}
 		});
 	}
