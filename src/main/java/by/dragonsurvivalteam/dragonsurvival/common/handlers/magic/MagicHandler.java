@@ -2,6 +2,8 @@ package by.dragonsurvivalteam.dragonsurvival.common.handlers.magic;
 
 import by.dragonsurvivalteam.dragonsurvival.client.particles.DSParticles;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.MagicCap;
+import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.SeaEyesAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.GenericCapability;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
@@ -82,8 +84,13 @@ public class MagicHandler{
 				cap.getMagic().initAbilities(cap.getType());
 			}
 
-			for(ActiveDragonAbility ability : cap.getMagic().getActiveAbilities()){
-				ability.tickCooldown();
+			for(int i = 0; i < MagicCap.activeAbilitySlots; i++){
+				ActiveDragonAbility ability = cap.getMagic().getAbilityFromSlot(i);
+
+				if(ability != null){
+					ability.tickCooldown();
+				}
+				cap.getMagic().getAbilityFromSlot(i).tickCooldown();
 			}
 		});
 	}
@@ -105,7 +112,7 @@ public class MagicHandler{
 				ability.player = player;
 			}
 
-			if(player.hasEffect(DragonEffects.WATER_VISION) && player.isEyeInFluid(FluidTags.WATER)){
+			if(player.hasEffect(DragonEffects.WATER_VISION) && (player.isEyeInFluid(FluidTags.WATER) || SeaEyesAbility.seaEyesOutOfWater)){
 				player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 10, 0, false, false));
 			}
 

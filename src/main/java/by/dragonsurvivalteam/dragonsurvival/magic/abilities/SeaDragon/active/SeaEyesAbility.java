@@ -2,15 +2,14 @@ package by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
-import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.AbilityAnimation;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChargeCastAbility;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
+import by.dragonsurvivalteam.dragonsurvival.magic.common.AbilityAnimation;
+import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
+import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChargeCastAbility;
+import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
-import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -45,6 +44,8 @@ public class SeaEyesAbility extends ChargeCastAbility{
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "sea_vision"}, key = "seaVisionManaCost", comment = "The mana cost for using the sea vision ability" )
 	public static Integer seaEyesManaCost = 2;
 
+	@ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "sea_vision"}, key = "seaVisionoutOfWater", comment = "Should the night vision effect of sea vision stay when outside of water?")
+	public static boolean seaEyesOutOfWater = false;
 
 	@Override
 	public int getSkillCastingTime(){
