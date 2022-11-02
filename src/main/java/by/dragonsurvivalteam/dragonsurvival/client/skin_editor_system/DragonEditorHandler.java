@@ -149,7 +149,7 @@ public class DragonEditorHandler{
 			}
 		}
 
-		String key = dragon.getStringUUID();
+		String key = dragon.getPlayer().getStringUUID();
 		ResourceLocation dynamicNormalKey = new ResourceLocation(DragonSurvivalMod.MODID, "dynamic_normal_" + key);
 		ResourceLocation dynamicGlowKey = new ResourceLocation(DragonSurvivalMod.MODID, "dynamic_glow_" + key);
 

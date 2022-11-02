@@ -66,7 +66,7 @@ public class DragonGlowLayerRenderer extends GeoLayerRenderer<DragonEntity>{
 			renderer.render(getEntityModel().getModel(getEntityModel().getModelLocation(entitylivingbaseIn)), entitylivingbaseIn, partialTicks, type, matrixStackIn, bufferIn, vertexConsumer, 0, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
 			((DragonRenderer)renderer).isRenderLayers = false;
 		}else{
-			ResourceLocation dynamicGlowKey = new ResourceLocation(DragonSurvivalMod.MODID, "dynamic_glow_" + entitylivingbaseIn.getUUID());
+			ResourceLocation dynamicGlowKey = new ResourceLocation(DragonSurvivalMod.MODID, "dynamic_glow_" + entitylivingbaseIn.getPlayer().getStringUUID());
 			((DragonRenderer)renderer).isRenderLayers = true;
 
 			if(ageGroup.layerSettings.values().stream().anyMatch(s -> s.glowing)){

@@ -50,7 +50,7 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity>{
 			}
 
 			if(handler.getSkin().isCompiled && currentTexture == null){
-				return new ResourceLocation(DragonSurvivalMod.MODID, "dynamic_normal_" + dragon.getUUID());
+				return new ResourceLocation(DragonSurvivalMod.MODID, "dynamic_normal_" + dragon.getPlayer().getStringUUID());
 			}
 		}
 		return currentTexture == null ? defaultTexture : currentTexture;
