@@ -95,6 +95,13 @@ public class DragonArmorRenderLayer extends GeoLayerRenderer<DragonEntity>{
 	public static String constructArmorTexture(Player playerEntity, EquipmentSlot equipmentSlot){
 		String texture = "textures/armor/";
 		Item item = playerEntity.getItemBySlot(equipmentSlot).getItem();
+		String texture2 = itemToResLoc(item);
+		if (texture2 != null) {
+			texture2 = texture + texture2;
+			if (Minecraft.getInstance().getResourceManager().hasResource(new ResourceLocation(DragonSurvivalMod.MODID, texture2))) {
+				return texture2;
+			}
+		}
 		if(item instanceof ArmorItem armorItem){
 			ArmorMaterial armorMaterial = armorItem.getMaterial();
 			if(armorMaterial instanceof ArmorMaterials){
@@ -125,15 +132,6 @@ public class DragonArmorRenderLayer extends GeoLayerRenderer<DragonEntity>{
 				texture += ".png";
 				return texture;
 			}
-		}
-		String texture2 = itemToResLoc(item);
-		if (texture2 != null) {
-			texture2 = texture + texture2;
-			if (Minecraft.getInstance().getResourceManager().hasResource(new ResourceLocation(DragonSurvivalMod.MODID, texture2))) {
-				return texture2;
-			}
-		}
-		if (item instanceof ArmorItem armorItem) {
 			int defense = armorItem.getDefense();
 			switch(equipmentSlot){
 				case FEET -> texture += Mth.clamp(defense, 1, 4) + "_dragon_boots";
