@@ -1,12 +1,15 @@
 package by.dragonsurvivalteam.dragonsurvival.common.blocks;
 
+import by.dragonsurvivalteam.dragonsurvival.server.tileentity.DSTileEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -14,8 +17,9 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.Nullable;
 
-public class HelmetBlock extends Block{
+public class HelmetBlock extends Block implements EntityBlock{
 	public static final IntegerProperty ROTATION = BlockStateProperties.ROTATION_16;
 	protected static final VoxelShape SHAPE = Block.box(4.0D, 0.0D, 4.0D, 12.0D, 8.0D, 12.0D);
 
@@ -43,11 +47,16 @@ public class HelmetBlock extends Block{
 	}
 
 	public BlockState getStateForPlacement(BlockPlaceContext useContext){
-
 		return this.defaultBlockState().setValue(ROTATION, Mth.floor((double)(useContext.getRotation() * 16.0F / 360.0F) + 0.5D) & 15);
 	}
 
 	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> stateBuilder){
 		stateBuilder.add(ROTATION);
+	}
+
+	@Nullable
+	@Override
+	public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState){
+		return DSTileEntities.helmetTile.create(pPos, pState);
 	}
 }

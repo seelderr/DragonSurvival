@@ -173,12 +173,6 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
 				if(tileentity instanceof Container){
 					Containers.dropContents(worldIn, pos, (Container)tileentity);
 					worldIn.updateNeighbourForOutputSignal(pos, this);
-
-					if(!worldIn.isClientSide){
-						if(newState != Blocks.BUBBLE_COLUMN.defaultBlockState()){
-							Containers.dropItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(state.getBlock()));
-						}
-					}
 				}
 
 				super.onRemove(state, worldIn, pos, newState, isMoving);

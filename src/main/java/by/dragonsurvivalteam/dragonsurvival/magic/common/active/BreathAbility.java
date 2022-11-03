@@ -65,6 +65,10 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 		return source.level.getEntitiesOfClass(entityClass, source.getBoundingBox().inflate(r, r, r), e -> e != source && source.distanceTo(e) <= r + e.getBbWidth() / 2f && e.getY() <= source.getY() + r);
 	}
 
+	public boolean requiresStationaryCasting(){
+		return false;
+	}
+
 	public Entity getEffectEntity(){
 		return null;
 	}
