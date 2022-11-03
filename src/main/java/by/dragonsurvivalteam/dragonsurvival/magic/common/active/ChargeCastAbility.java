@@ -23,10 +23,7 @@ public abstract class ChargeCastAbility extends ActiveDragonAbility {
 			castingComplete(player);
 			startCooldown();
 
-			if(player.tickCount % 20 == 0){
-				ManaHandler.consumeMana(player, getManaCost());
-			}
-
+			ManaHandler.consumeMana(player, getManaCost());
 			onFinish.run();
 		}else{
 			castTime++;
