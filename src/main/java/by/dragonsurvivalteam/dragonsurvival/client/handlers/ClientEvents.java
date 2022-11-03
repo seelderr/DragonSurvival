@@ -1,7 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.DragonAltarGUI;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.DragonScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.TabButton;
 import by.dragonsurvivalteam.dragonsurvival.client.render.CaveLavaFluidRenderer;
@@ -24,7 +23,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawRender;
 import by.dragonsurvivalteam.dragonsurvival.network.container.OpenDragonInventory;
 import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncDragonSkinSettings;
 import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncPlayerSkinPreset;
-import by.dragonsurvivalteam.dragonsurvival.network.syncing.DragonChoiceSync;
+import by.dragonsurvivalteam.dragonsurvival.network.syncing.DragonChoiceCheck;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
@@ -119,6 +118,7 @@ public class ClientEvents{
 			});
 		}
 	}
+
 	@OnlyIn(Dist.CLIENT)
 	@SubscribeEvent
 	public static void playerTick(PlayerTickEvent event){
@@ -129,11 +129,8 @@ public class ClientEvents{
 			GenericCapabilityProvider.getGenericCapability(player).ifPresent(cap -> {
 				if(!cap.hasUsedAltar && ServerConfig.startWithDragonChoice){
 					if(!DragonUtils.isDragon(player)){
-						Minecraft.getInstance().setScreen(new DragonAltarGUI());
+						NetworkHandler.CHANNEL.sendToServer(new DragonChoiceCheck(player.getId()));
 					}
-
-					cap.hasUsedAltar = true;
-					NetworkHandler.CHANNEL.sendToServer(new DragonChoiceSync(player.getId(), true));
 				}
 			});
 		}
