@@ -12,6 +12,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
+import software.bernie.geckolib3.core.builder.ILoopType.EDefaultLoopTypes;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.manager.AnimationData;
 
@@ -37,7 +38,7 @@ public class FakeClientPlayerUtils{
 						AnimationBuilder builder = new AnimationBuilder();
 
 						if(clientPlayer.animationSupplier != null){
-							builder.addAnimation(clientPlayer.animationSupplier.get(), true);
+							builder.addAnimation(clientPlayer.animationSupplier.get(), EDefaultLoopTypes.LOOP);
 						}
 
 						event.getController().setAnimation(builder);

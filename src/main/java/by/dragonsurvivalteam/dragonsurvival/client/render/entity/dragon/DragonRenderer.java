@@ -69,6 +69,10 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity>{
 
 	@Override
 	public void render(DragonEntity entity, float entityYaw, float partialTicks, PoseStack stack, MultiBufferSource bufferIn, int packedLightIn){
+		super.render(entity, entityYaw, partialTicks, stack, bufferIn, packedLightIn);
+
+if(true) return;
+
 		if(entity.getPlayer().hasEffect(MobEffects.INVISIBILITY)){
 			return;
 		}

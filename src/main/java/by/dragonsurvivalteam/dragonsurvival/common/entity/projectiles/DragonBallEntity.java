@@ -19,14 +19,16 @@ import net.minecraftforge.network.NetworkHooks;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
+import software.bernie.geckolib3.core.builder.ILoopType.EDefaultLoopTypes;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
+import software.bernie.geckolib3.util.GeckoLibUtil;
 
 
 public class DragonBallEntity extends Fireball implements IAnimatable{
 	public static final EntityDataAccessor<Integer> SKILL_LEVEL = SynchedEntityData.defineId(DragonBallEntity.class, EntityDataSerializers.INT);
-	AnimationFactory animationFactory = new AnimationFactory(this);
+	AnimationFactory animationFactory = GeckoLibUtil.createFactory(this);
 	protected boolean isDead;
 	protected int deadTicks;
 
@@ -130,9 +132,9 @@ public class DragonBallEntity extends Fireball implements IAnimatable{
 			AnimationBuilder animationBuilder = new AnimationBuilder();
 
 			if(isDead){
-				animationBuilder.addAnimation("explosion", true);
+				animationBuilder.addAnimation("explosion", EDefaultLoopTypes.LOOP);
 			}else{
-				animationBuilder.addAnimation("idle", true);
+				animationBuilder.addAnimation("idle", EDefaultLoopTypes.LOOP);
 			}
 
 			event.getController().setAnimation(animationBuilder);

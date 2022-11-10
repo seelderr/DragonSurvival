@@ -4,10 +4,10 @@ import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.shadowed.eliotlash.molang.MolangParser;
+import software.bernie.geckolib3.core.molang.MolangParser;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CustomTickAnimationController extends AnimationController{
 	public double speed = 1;
@@ -19,7 +19,7 @@ public class CustomTickAnimationController extends AnimationController{
 	}
 
 	@Override
-	public void process(double tick, AnimationEvent event, List modelRendererList, HashMap boneSnapshotCollection, MolangParser parser, boolean crashWhenCantFindBone){
+	public void process(double tick, AnimationEvent event, List modelRendererList, Map boneSnapshotCollection, MolangParser parser, boolean crashWhenCantFindBone){
 		double tickDif = tick - lastTick;
 		lastTick = tick;
 		super.process(tick + (tickDif * (speed - 1.0)), event, modelRendererList, boneSnapshotCollection, parser, crashWhenCantFindBone);

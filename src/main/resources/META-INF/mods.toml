@@ -12,18 +12,18 @@ logoFile = "dragonsurvival.png"
     credits = "Arcaryx, NoCube, AIS, Jack Raiden, Maleus"
     authors = "Black Aures, Horeak, Alexiy"
     description = '''
-    This mod lets you play as a dragon. There are 3 dragon kinds, which have different traits.
-    To start, you must create a Dragon Altar where you can choose the dragon type you want to become.
-    '''
+        This mod lets you play as a dragon. There are 3 dragon kinds, which have different traits.
+        To start, you must create a Dragon Altar where you can choose the dragon type you want to become.
+        '''
 
 [[dependencies.dragonsurvival]]
     modId = "geckolib3"
     mandatory = true
-    versionRange = "[1.18-3.0.27,)"
+    versionRange = "[1.18-3.0.47,)"
     ordering = "NONE"
     side = "CLIENT"
 
 [[dependencies.dragonsurvival]]
     modId = "forge"
     mandatory = true
-    versionRange = "[40.0.0,)"
+    versionRange = "[40.1.67,)"
