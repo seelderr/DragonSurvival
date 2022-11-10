@@ -10,13 +10,15 @@ import net.minecraftforge.network.NetworkHooks;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
+import software.bernie.geckolib3.core.builder.ILoopType.EDefaultLoopTypes;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
+import software.bernie.geckolib3.util.GeckoLibUtil;
 
 
 public class StormBreathEntity extends Entity implements IAnimatable{
-	AnimationFactory animationFactory = new AnimationFactory(this);
+	AnimationFactory animationFactory = GeckoLibUtil.createFactory(this);
 
 	public StormBreathEntity(EntityType<?> p_i48580_1_, Level p_i48580_2_){
 		super(p_i48580_1_, p_i48580_2_);
@@ -40,7 +42,7 @@ public class StormBreathEntity extends Entity implements IAnimatable{
 	@Override
 	public void registerControllers(AnimationData data){
 		data.addAnimationController(new AnimationController<>(this, "everything", 0, event -> {
-			event.getController().setAnimation(new AnimationBuilder().addAnimation("idle", true));
+			event.getController().setAnimation(new AnimationBuilder().addAnimation("idle", EDefaultLoopTypes.LOOP));
 			return PlayState.CONTINUE;
 		}));
 	}

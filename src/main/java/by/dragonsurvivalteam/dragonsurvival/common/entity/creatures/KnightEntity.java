@@ -29,11 +29,12 @@ import software.bernie.geckolib3.core.builder.AnimationBuilder;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
+import software.bernie.geckolib3.util.GeckoLibUtil;
 
 import javax.annotation.Nullable;
 
 public class KnightEntity extends PathfinderMob implements IAnimatable, DragonHunter, CommonTraits{
-	AnimationFactory animationFactory = new AnimationFactory(this);
+	AnimationFactory animationFactory = GeckoLibUtil.createFactory(this);
 	AnimationTimer animationTimer = new AnimationTimer();
 
 	public KnightEntity(EntityType<? extends PathfinderMob> p_i48576_1_, Level world){
