@@ -136,9 +136,14 @@ public class DragonEditorHandler{
 									continue;
 								}
 
-								if((c1.getRed() != 0 || c1.getBlue() != 0 || c1.getGreen() != 0) && c1.getAlpha() != 0){
+
+								if(c1.getAlpha() != 0){
 									Supplier<NativeImage> g2 = settings.glowing ? () -> glow : () -> normal;
 									g2.get().setPixelRGBA(x, y, c1.getRGB());
+
+									if(settings.glowing && layer == EnumSkinLayer.BASE){
+										normal.setPixelRGBA(x, y, c1.getRGB());
+									}
 								}
 							}
 						}
