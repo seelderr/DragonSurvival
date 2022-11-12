@@ -19,7 +19,7 @@ logoFile = "dragonsurvival.png"
 [[dependencies.dragonsurvival]]
     modId = "geckolib3"
     mandatory = true
-    versionRange = "[1.18-3.0.47,)"
+    versionRange = "[3.0.47,)"
     ordering = "NONE"
     side = "CLIENT"
 
