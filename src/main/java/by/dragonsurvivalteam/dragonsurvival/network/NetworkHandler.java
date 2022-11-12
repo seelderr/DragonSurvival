@@ -20,7 +20,6 @@ import by.dragonsurvivalteam.dragonsurvival.network.magic.*;
 import by.dragonsurvivalteam.dragonsurvival.network.player.*;
 import by.dragonsurvivalteam.dragonsurvival.network.status.*;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.CompleteDataSync;
-import by.dragonsurvivalteam.dragonsurvival.network.syncing.DragonChoiceCheck;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.DragonChoiceSync;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.NetworkRegistry;
@@ -48,7 +47,6 @@ public class NetworkHandler{
 		register(RequestClientData.class, new RequestClientData());
 		register(CompleteDataSync.class, new CompleteDataSync());
 		register(DragonChoiceSync.class, new DragonChoiceSync());
-		register(DragonChoiceCheck.class, new DragonChoiceCheck());
 
 		//Status
 		register(SyncGrowthState.class, new SyncGrowthState());
