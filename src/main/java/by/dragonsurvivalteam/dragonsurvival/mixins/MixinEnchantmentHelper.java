@@ -2,9 +2,8 @@ package by.dragonsurvivalteam.dragonsurvival.mixins;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
-import net.minecraft.core.Registry;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
@@ -15,6 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TieredItem;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -52,16 +52,16 @@ public class MixinEnchantmentHelper{
 				ItemStack stack = handler.getClawInventory().getClawsInventory().getItem(i);
 
 				if(!stack.isEmpty() && stack.isEnchanted()){
-					ResourceLocation resourcelocation = Registry.ENCHANTMENT.getKey(enchantment);
+					ResourceLocation resourcelocation = ForgeRegistries.ENCHANTMENTS.getKey(enchantment);
 					ListTag listtag = stack.getEnchantmentTags();
 
 					for(int x = 0; x < listtag.size(); ++x) {
 						CompoundTag compoundtag = listtag.getCompound(x);
 
-						if(!compoundtag.isEmpty() && compoundtag.hasUUID("id")){
+						if(!compoundtag.isEmpty() && compoundtag.contains("id")){
 							ResourceLocation resourcelocation1 = ResourceLocation.tryParse(compoundtag.getString("id"));
 
-							if(!compoundtag.isEmpty() && compoundtag.hasUUID("lvl")){
+							if(!compoundtag.isEmpty() && compoundtag.contains("lvl")){
 								if(resourcelocation1 != null && resourcelocation1.equals(resourcelocation)){
 									lev = Mth.clamp(compoundtag.getInt("lvl"), 0, 255);
 								}
@@ -74,7 +74,6 @@ public class MixinEnchantmentHelper{
 					}
 				}
 			}
-
 			ci.setReturnValue(highestLevel);
 		}
 	}
