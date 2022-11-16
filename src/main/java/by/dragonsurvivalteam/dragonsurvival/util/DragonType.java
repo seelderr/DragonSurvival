@@ -82,6 +82,6 @@ public class DragonType{
 		return new HashCodeBuilder(17, 37).append(name).toHashCode();
 	}
 	public String toString(){
-		return "DragonType{" + "name='" + name + '\'' + '}';
+		return name();
 	}
 }

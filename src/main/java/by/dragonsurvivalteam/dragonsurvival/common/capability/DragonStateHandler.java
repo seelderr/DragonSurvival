@@ -131,7 +131,7 @@ public class DragonStateHandler implements NBTInterface{
 	@Override
 	public CompoundTag writeNBT(){
 		CompoundTag tag = new CompoundTag();
-		tag.putString("type", getType().toString());
+		tag.putString("type", getType().name());
 
 		if(isDragon()){
 			DragonMovementData movementData = getMovementData();
@@ -178,11 +178,7 @@ public class DragonStateHandler implements NBTInterface{
 
 	@Override
 	public void readNBT(CompoundTag tag){
-		if(tag.getString("type").equals(""))
-			setType(DragonType.NONE);
-		else
-			setType(DragonType.valueOf(tag.getString("type")));
-
+		setType(DragonType.valueOf(tag.getString("type")));
 		if(isDragon()){
 			setMovementData(tag.getDouble("bodyYaw"), tag.getDouble("headYaw"), tag.getDouble("headPitch"), tag.getBoolean("bite"));
 			getMovementData().headYawLastTick = getMovementData().headYaw;
