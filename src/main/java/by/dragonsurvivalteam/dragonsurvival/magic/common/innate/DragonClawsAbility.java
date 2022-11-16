@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.common.innate;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
@@ -73,10 +74,14 @@ public abstract class DragonClawsAbility extends InnateDragonAbility {
 
 		if(handler == null || handler.getType() == null) return 0;
 
-		switch(handler.getType()){
-			case SEA -> stack = handler.getClawInventory().getClawsInventory().getItem(3);
-			case FOREST -> stack = handler.getClawInventory().getClawsInventory().getItem(2);
-			case CAVE -> stack = handler.getClawInventory().getClawsInventory().getItem(1);
+		if(DragonType.SEA.equals(handler.getType())){
+			stack = handler.getClawInventory().getClawsInventory().getItem(3);
+
+		}else if(DragonType.FOREST.equals(handler.getType())){
+			stack = handler.getClawInventory().getClawsInventory().getItem(2);
+
+		}else if(DragonType.CAVE.equals(handler.getType())){
+			stack = handler.getClawInventory().getClawsInventory().getItem(1);
 		}
 
 		if(stack != null && !stack.isEmpty() && stack.getItem() instanceof TieredItem st)

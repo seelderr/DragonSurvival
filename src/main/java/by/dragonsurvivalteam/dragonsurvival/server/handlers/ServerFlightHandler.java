@@ -138,10 +138,14 @@ public class ServerFlightHandler{
 			if(handler.isDragon()){
 				if(player.tickCount % 10 == 0){
 					if(handler.isWingsSpread()){
-						switch(handler.getType()){
-							case SEA -> player.addEffect(new MobEffectInstance(DragonEffects.sea_wings, 500));
-							case CAVE -> player.addEffect(new MobEffectInstance(DragonEffects.cave_wings, 500));
-							case FOREST -> player.addEffect(new MobEffectInstance(DragonEffects.forest_wings, 500));
+						if(SEA.equals(handler.getType())){
+							player.addEffect(new MobEffectInstance(DragonEffects.sea_wings, 500));
+
+						}else if(CAVE.equals(handler.getType())){
+							player.addEffect(new MobEffectInstance(DragonEffects.cave_wings, 500));
+
+						}else if(FOREST.equals(handler.getType())){
+							player.addEffect(new MobEffectInstance(DragonEffects.forest_wings, 500));
 						}
 					}
 				}

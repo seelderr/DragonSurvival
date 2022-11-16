@@ -1,17 +1,18 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers.magic;
 
-import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.TreasureBlock;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigHandler;
-import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.passive.CaveMagicAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.passive.ForestMagicAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.passive.SeaMagicAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncMagicStats;
+import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -88,77 +89,68 @@ public class ManaHandler{
 				}
 			}
 
-			switch(cap.getType()){
-				case SEA:
-					if(player.isInWaterRainOrBubble() || player.hasEffect(DragonEffects.CHARGED) || player.hasEffect(DragonEffects.PEACE)){
-						return true;
-					}
-					if(DragonConfigHandler.DRAGON_MANA_BLOCKS != null && DragonConfigHandler.DRAGON_MANA_BLOCKS.containsKey(SEA)){
-						if(DragonConfigHandler.DRAGON_MANA_BLOCKS.get(SEA).contains(blockBelow.getBlock())){
-							if(blockBelow.getBlock() instanceof LayeredCauldronBlock){
-								if(blockBelow.hasProperty(LayeredCauldronBlock.LEVEL)){
-									int level = blockBelow.getValue(LayeredCauldronBlock.LEVEL);
+			if(SEA.equals(cap.getType())){
+				if(player.isInWaterRainOrBubble() || player.hasEffect(DragonEffects.CHARGED) || player.hasEffect(DragonEffects.PEACE)){
+					return true;
+				}
+				if(DragonConfigHandler.DRAGON_MANA_BLOCKS != null && DragonConfigHandler.DRAGON_MANA_BLOCKS.containsKey(SEA)){
+					if(DragonConfigHandler.DRAGON_MANA_BLOCKS.get(SEA).contains(blockBelow.getBlock())){
+						if(blockBelow.getBlock() instanceof LayeredCauldronBlock){
+							if(blockBelow.hasProperty(LayeredCauldronBlock.LEVEL)){
+								int level = blockBelow.getValue(LayeredCauldronBlock.LEVEL);
 
-									if(level > 0){
-										return true;
-									}
-								}
-							}
-
-							if(feetBlock.getBlock() instanceof LayeredCauldronBlock){
-								if(feetBlock.hasProperty(LayeredCauldronBlock.LEVEL)){
-									int level = feetBlock.getValue(LayeredCauldronBlock.LEVEL);
-
-									if(level > 0){
-										return true;
-									}
+								if(level > 0){
+									return true;
 								}
 							}
 						}
-					}
 
-					break;
+						if(feetBlock.getBlock() instanceof LayeredCauldronBlock){
+							if(feetBlock.hasProperty(LayeredCauldronBlock.LEVEL)){
+								int level = feetBlock.getValue(LayeredCauldronBlock.LEVEL);
 
-				case FOREST:
-					if(player.level.canSeeSky(player.blockPosition())){
-						int light = player.level.getBrightness(LightLayer.SKY, player.blockPosition()) - player.level.getSkyDarken();
-						float f = player.level.getSunAngle(1.0F);
-
-						float f1 = f < (float)Math.PI ? 0.0F : ((float)Math.PI * 2F);
-						f = f + (f1 - f) * 0.2F;
-						light = Math.round((float)light * Mth.cos(f));
-						light = Mth.clamp(light, 0, 15);
-
-						if(light >= 14){
-							return true;
-						}
-					}
-
-					if(player.hasEffect(DragonEffects.DRAIN) || player.hasEffect(DragonEffects.MAGIC)){
-						return true;
-					}
-
-					break;
-
-				case CAVE:
-					if(player.isInLava() || player.isOnFire() || player.hasEffect(DragonEffects.BURN) || player.hasEffect(DragonEffects.FIRE)){
-						return true;
-					}
-
-					//If cave dragon is ontop of a burning furnace
-					if(DragonConfigHandler.DRAGON_MANA_BLOCKS != null && DragonConfigHandler.DRAGON_MANA_BLOCKS.containsKey(CAVE)){
-						if(DragonConfigHandler.DRAGON_MANA_BLOCKS.get(CAVE).contains(blockBelow.getBlock())){
-							if(blockBelow.getBlock() instanceof AbstractFurnaceBlock){
-								if(blockBelow.hasProperty(AbstractFurnaceBlock.LIT)){
-									if(blockBelow.getValue(AbstractFurnaceBlock.LIT)){
-										return true;
-									}
+								if(level > 0){
+									return true;
 								}
 							}
 						}
 					}
+				}
+			}else if(DragonType.FOREST.equals(cap.getType())){
+				if(player.level.canSeeSky(player.blockPosition())){
+					int light = player.level.getBrightness(LightLayer.SKY, player.blockPosition()) - player.level.getSkyDarken();
+					float f = player.level.getSunAngle(1.0F);
 
-					break;
+					float f1 = f < (float)Math.PI ? 0.0F : ((float)Math.PI * 2F);
+					f = f + (f1 - f) * 0.2F;
+					light = Math.round((float)light * Mth.cos(f));
+					light = Mth.clamp(light, 0, 15);
+
+					if(light >= 14){
+						return true;
+					}
+				}
+
+				if(player.hasEffect(DragonEffects.DRAIN) || player.hasEffect(DragonEffects.MAGIC)){
+					return true;
+				}
+			}else if(CAVE.equals(cap.getType())){
+				if(player.isInLava() || player.isOnFire() || player.hasEffect(DragonEffects.BURN) || player.hasEffect(DragonEffects.FIRE)){
+					return true;
+				}
+
+				//If cave dragon is ontop of a burning furnace
+				if(DragonConfigHandler.DRAGON_MANA_BLOCKS != null && DragonConfigHandler.DRAGON_MANA_BLOCKS.containsKey(CAVE)){
+					if(DragonConfigHandler.DRAGON_MANA_BLOCKS.get(CAVE).contains(blockBelow.getBlock())){
+						if(blockBelow.getBlock() instanceof AbstractFurnaceBlock){
+							if(blockBelow.hasProperty(AbstractFurnaceBlock.LIT)){
+								if(blockBelow.getValue(AbstractFurnaceBlock.LIT)){
+									return true;
+								}
+							}
+						}
+					}
+				}
 			}
 
 			return false;
@@ -171,10 +163,14 @@ public class ManaHandler{
 
 			mana += ServerConfig.noEXPRequirements ? 9 : Math.max(0, (Math.min(50, entity.experienceLevel) - 5) / 5);
 
-			switch(cap.getType()){
-				case SEA -> mana += DragonAbilities.getAbility(entity, SeaMagicAbility.class).getLevel();
-				case CAVE -> mana += DragonAbilities.getAbility(entity, CaveMagicAbility.class).getLevel();
-				case FOREST -> mana += DragonAbilities.getAbility(entity, ForestMagicAbility.class).getLevel();
+			if(SEA.equals(cap.getType())){
+				mana += DragonAbilities.getAbility(entity, SeaMagicAbility.class).getLevel();
+
+			}else if(CAVE.equals(cap.getType())){
+				mana += DragonAbilities.getAbility(entity, CaveMagicAbility.class).getLevel();
+
+			}else if(DragonType.FOREST.equals(cap.getType())){
+				mana += DragonAbilities.getAbility(entity, ForestMagicAbility.class).getLevel();
 			}
 
 			return mana;

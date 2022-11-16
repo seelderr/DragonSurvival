@@ -88,21 +88,9 @@ public class SynchronizeDragonCap implements IMessage<SynchronizeDragonCap>{
 					DragonCommand.reInsertClawTools(serverPlayer, dragonStateHandler);
 				}
 
-				switch(message.dragonType){
-					case SEA -> {
-						serverPlayer.addTag("dragon");
-						serverPlayer.addTag("sea_dragon");
-					}
-
-					case FOREST -> {
-						serverPlayer.addTag("dragon");
-						serverPlayer.addTag("forest_dragon");
-					}
-
-					case CAVE -> {
-						serverPlayer.addTag("dragon");
-						serverPlayer.addTag("cave_dragon");
-					}
+				if(message.dragonType != DragonType.NONE){
+					serverPlayer.addTag("dragon");
+					serverPlayer.addTag(message.dragonType.name + "_dragon");
 				}
 
 				dragonStateHandler.setIsHiding(message.hiding);

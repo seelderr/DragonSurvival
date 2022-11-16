@@ -3,11 +3,9 @@ package by.dragonsurvivalteam.dragonsurvival.common.handlers.magic;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
-import net.minecraft.tags.BlockTags;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -185,7 +183,7 @@ public class ClawToolHandler{
 
 			if(!(mainStack.getItem() instanceof DiggerItem || mainStack.getItem() instanceof SwordItem || mainStack.getItem() instanceof ShearsItem || (mainStack.getItem() instanceof TieredItem))){
 				float bonus = dragonStateHandler.getLevel() == DragonLevel.ADULT
-					? blockState.is(BlockTags.MINEABLE_WITH_AXE) && dragonStateHandler.getType() == DragonType.FOREST ? 4 : blockState.is(BlockTags.MINEABLE_WITH_PICKAXE) && dragonStateHandler.getType() == DragonType.CAVE ? 4 : blockState.is(BlockTags.MINEABLE_WITH_SHOVEL) && dragonStateHandler.getType() == DragonType.SEA ? 4 : 2F
+					? dragonStateHandler.getType().mineable != null && blockState.is(dragonStateHandler.getType().mineable) ? 4f : 2F
 					: dragonStateHandler.getLevel() == DragonLevel.NEWBORN ? ServerConfig.bonusUnlockedAt == DragonLevel.NEWBORN ? 2F : 1F : dragonStateHandler.getLevel() == DragonLevel.YOUNG ? ServerConfig.bonusUnlockedAt != DragonLevel.ADULT ? 2F : 1F : 2F;
 
 				breakSpeedEvent.setNewSpeed(originalSpeed * bonus);
