@@ -93,8 +93,12 @@ public class DragonFoodHandler{
 			return foodMap;
 		}
 
-		String[] configFood = type.foods != null ? type.foods.toArray(new String[0]) : new String[0];
-
+		String[] configFood = switch(type){
+			case CAVE -> ServerConfig.caveDragonFoods.toArray(new String[0]);
+			case FOREST -> ServerConfig.forestDragonFoods.toArray(new String[0]);
+			case SEA -> ServerConfig.seaDragonFoods.toArray(new String[0]);
+			default -> new String[0];
+		};
 		configFood = Stream.of(configFood).sorted(Comparator.reverseOrder()).toArray(String[]::new);
 		for(String entry : configFood){
 			if(entry.startsWith("item:")){
@@ -172,9 +176,7 @@ public class DragonFoodHandler{
 			}
 
 			for(Pair<MobEffectInstance, Float> effect : humanFood.getEffects()){
-				if(effect == null || effect.getFirst() == null){
-					continue;
-				}
+				if(effect == null || effect.getFirst() == null) continue;
 				if(effect.getFirst().getEffect() != MobEffects.HUNGER && effect.getFirst().getEffect() != MobEffects.POISON && dragonFood){
 					builder.effect(effect::getFirst, effect.getSecond());
 				}
@@ -209,9 +211,7 @@ public class DragonFoodHandler{
 			final FoodProperties FoodProperties = DRAGON_FOODS.get(dragonType).get(item);
 			if(FoodProperties != null){
 				for(Pair<MobEffectInstance, Float> effect : FoodProperties.getEffects()){
-					if(effect == null || effect.getFirst() == null){
-						continue;
-					}
+					if(effect == null || effect.getFirst() == null) continue;
 					MobEffect e = effect.getFirst().getEffect();
 					if(!e.isBeneficial() && e != MobEffects.CONFUSION){ // Because we decided to leave confusion on pufferfish
 						safe = false;

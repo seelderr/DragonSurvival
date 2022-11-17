@@ -7,12 +7,12 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.Cl
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.EmoteCap;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.MagicCap;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.SkinCap;
-import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.network.RequestClientData;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonModifiers;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.network.RequestClientData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.tags.BlockTags;
@@ -27,7 +27,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.fml.DistExecutor;
 
-import java.util.HashMap;
 import java.util.Objects;
 import java.util.function.Supplier;
 
@@ -50,9 +49,12 @@ public class DragonStateHandler implements NBTInterface{
 	public int treasureSleepTimer;
 
 	//Saving status of other types incase the config option for saving all is on
-	public HashMap<String, Double> typeSize = new HashMap<>();
-	public HashMap<String, Boolean> typeWings = new HashMap<>();
-
+	public double caveSize;
+	public double seaSize;
+	public double forestSize;
+	public boolean caveWings;
+	public boolean seaWings;
+	public boolean forestWings;
 	private boolean isHiding;
 	private DragonType type = DragonType.NONE;
 	private boolean hasWings;
@@ -163,12 +165,13 @@ public class DragonStateHandler implements NBTInterface{
 			tag.putBoolean("resting", treasureResting);
 			tag.putInt("restingTimer", treasureRestTimer);
 
-			for(DragonType value : DragonType.values()){
-				if(value == DragonType.NONE) continue;
-				tag.putDouble(value.name + "Size", typeSize.getOrDefault(value.name(), 0d));
-				tag.putBoolean(value.name + "Wings", typeWings.getOrDefault(value.name(), false));
-			}
+			tag.putDouble("caveSize", caveSize);
+			tag.putDouble("seaSize", seaSize);
+			tag.putDouble("forestSize", forestSize);
 
+			tag.putBoolean("caveWings", caveWings);
+			tag.putBoolean("seaWings", seaWings);
+			tag.putBoolean("forestWings", forestWings);
 
 			for(int i = 0; i < caps.length; i++)
 				tag.put("cap_" + i, caps[i].get().writeNBT());
@@ -202,11 +205,13 @@ public class DragonStateHandler implements NBTInterface{
 			treasureResting = tag.getBoolean("resting");
 			treasureRestTimer = tag.getInt("restingTimer");
 
-			for(DragonType value : DragonType.values()){
-				if(value == DragonType.NONE) continue;
-				typeSize.put(value.name(), tag.getDouble(value.name() + "Size"));
-				typeWings.put(value.name(), tag.getBoolean(value.name() + "Wings"));
-			}
+			caveSize = tag.getDouble("caveSize");
+			seaSize = tag.getDouble("seaSize");
+			forestSize = tag.getDouble("forestSize");
+
+			caveWings = tag.getBoolean("caveWings");
+			seaWings = tag.getBoolean("seaWings");
+			forestWings = tag.getBoolean("forestWings");
 
 			for(int i = 0; i < caps.length; i++)
 				if(tag.contains("cap_" + i)){
@@ -226,7 +231,11 @@ public class DragonStateHandler implements NBTInterface{
 		if(hasWings != this.hasWings){
 			this.hasWings = hasWings;
 
-			typeWings.put(type.name(), hasWings);
+			switch(type){
+				case SEA -> seaWings = hasWings;
+				case CAVE -> caveWings = hasWings;
+				case FOREST -> forestWings = hasWings;
+			}
 		}
 	}
 
@@ -263,7 +272,11 @@ public class DragonStateHandler implements NBTInterface{
 			if(oldLevel != getLevel())
 				onGrow();
 
-			typeSize.put(type.name(), size);
+			switch(type){
+				case SEA -> seaSize = size;
+				case CAVE -> caveSize = size;
+				case FOREST -> forestSize = size;
+			}
 		}
 	}
 
@@ -290,10 +303,21 @@ public class DragonStateHandler implements NBTInterface{
 
 		this.type = type;
 
-		if(ServerConfig.saveGrowthStage){
-			size = typeSize.get(type.name());
-			hasWings = typeWings.get(type.name());
-		}
+		if(ServerConfig.saveGrowthStage)
+			switch(type){
+				case SEA -> {
+					size = seaSize;
+					hasWings = seaWings;
+				}
+				case CAVE -> {
+					size = caveSize;
+					hasWings = caveWings;
+				}
+				case FOREST -> {
+					size = forestSize;
+					hasWings = forestWings;
+				}
+			}
 	}
 
 	public MagicCap getMagic(){
@@ -366,10 +390,21 @@ public class DragonStateHandler implements NBTInterface{
 				}
 			case ADULT:
 				if(harvestLevel <= ServerConfig.bonusHarvestLevel + baseHarvestLevel)
-					if(getType().mineable != null){
-						if(state.is(getType().mineable)){
-							return true;
-						}
+					switch(getType()){
+						case SEA:
+							if(state.is(BlockTags.MINEABLE_WITH_SHOVEL)){
+								return true;
+							}
+							break;
+						case CAVE:
+							if(state.is(BlockTags.MINEABLE_WITH_PICKAXE)){
+								return true;
+							}
+							break;
+						case FOREST:
+							if(state.is(BlockTags.MINEABLE_WITH_AXE)){
+								return true;
+							}
 					}
 				if(harvestLevel <= ServerConfig.baseHarvestLevel + baseHarvestLevel)
 					return true;

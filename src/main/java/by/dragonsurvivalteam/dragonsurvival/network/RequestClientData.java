@@ -35,13 +35,13 @@ public class RequestClientData implements IMessage<RequestClientData>{
 
 	@Override
 	public void encode(RequestClientData message, FriendlyByteBuf buffer){
-		buffer.writeUtf(message.type.name());
+		buffer.writeEnum(message.type);
 		buffer.writeEnum(message.level);
 	}
 
 	@Override
 	public RequestClientData decode(FriendlyByteBuf buffer){
-		return new RequestClientData(DragonType.valueOf(buffer.readUtf()), buffer.readEnum(DragonLevel.class));
+		return new RequestClientData(buffer.readEnum(DragonType.class), buffer.readEnum(DragonLevel.class));
 	}
 
 	@Override
