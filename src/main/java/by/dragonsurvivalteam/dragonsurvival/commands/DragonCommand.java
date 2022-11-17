@@ -16,6 +16,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.mojang.brigadier.tree.ArgumentCommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.mojang.brigadier.tree.RootCommandNode;
@@ -42,7 +43,14 @@ public class DragonCommand{
 			return runCommand(type, 1, false, context.getSource().getPlayerOrException());
 		}).build();
 
-		ArgumentCommandNode<CommandSourceStack, String> dragonType = argument("dragon_type", StringArgumentType.string()).suggests((context, builder) -> builder.suggest("cave").suggest("sea").suggest("forest").suggest("human").buildFuture()).executes(context -> {
+		ArgumentCommandNode<CommandSourceStack, String> dragonType = argument("dragon_type", StringArgumentType.string()).suggests((context, builder) -> {
+			SuggestionsBuilder builder1 = null;
+			for(DragonType value : DragonType.values()){
+				builder1 = builder1 == null ? builder.suggest(value.name()) : builder1.suggest(value.name());
+			}
+
+			return builder1.buildFuture();
+		}).executes(context -> {
 			String type = context.getArgument("dragon_type", String.class);
 			ServerPlayer serverPlayer = context.getSource().getPlayerOrException();
 			return runCommand(type, 1, false, serverPlayer);

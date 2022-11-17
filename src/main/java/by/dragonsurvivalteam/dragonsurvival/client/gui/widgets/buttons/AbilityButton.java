@@ -1,22 +1,22 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.AbilityScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.utils.TooltipRender;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.MagicCap;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.magic.MagicDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncMagicCap;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -30,14 +30,14 @@ public class AbilityButton extends Button implements TooltipRender{
 	public static final ResourceLocation BLANK_2_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/blank2.png");
 	public static final ResourceLocation BLANK_3_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/blank3.png");
 
-	private final AbilityScreen screen;
+	private final Screen screen;
 	private DragonType type;
 	private int slot;
 	public int skillType;
 
 	public DragonAbility ability;
 
-	public AbilityButton(int x, int y, int skillType, int slot, AbilityScreen screen){
+	public AbilityButton(int x, int y, int skillType, int slot, Screen screen){
 		super(x, y, 16, 16, null, button -> {});
 		this.slot = slot;
 		this.skillType = skillType;
