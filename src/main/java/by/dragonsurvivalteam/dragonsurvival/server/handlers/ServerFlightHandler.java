@@ -149,12 +149,15 @@ public class ServerFlightHandler{
 
 			if(!handler.isDragon() || !handler.isWingsSpread()){
 				if(player.hasEffect(DragonEffects.sea_wings)){
+					player.resetFallDistance();
 					player.removeEffect(DragonEffects.sea_wings);
 				}
 				if(player.hasEffect(DragonEffects.cave_wings)){
+					player.resetFallDistance();
 					player.removeEffect(DragonEffects.cave_wings);
 				}
 				if(player.hasEffect(DragonEffects.forest_wings)){
+					player.resetFallDistance();
 					player.removeEffect(DragonEffects.forest_wings);
 				}
 			}

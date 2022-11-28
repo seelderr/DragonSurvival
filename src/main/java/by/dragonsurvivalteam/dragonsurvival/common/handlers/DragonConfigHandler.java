@@ -9,6 +9,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.Sto
 import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.material.Material;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -29,6 +30,8 @@ public class DragonConfigHandler{
 	public static Map<DragonType, List<Block>> DRAGON_BREATH_BLOCKS;
 	public static Map<DragonType, List<Block>> DRAGON_MANA_BLOCKS;
 
+	public static HashMap<DragonType, List<Material>> DRAGON_SPEED_MATERIALS = new HashMap<>();
+
 	@SubscribeEvent
 	public static void onConfigLoad(ModConfigEvent.Loading event){
 		if(event.getConfig().getType() == ModConfig.Type.SERVER){
@@ -46,6 +49,14 @@ public class DragonConfigHandler{
 		speedupMap.put(DragonType.FOREST, ConfigHandler.configList(Block.class, ServerConfig.forestSpeedupBlocks));
 		speedupMap.put(DragonType.SEA, ConfigHandler.configList(Block.class, ServerConfig.seaSpeedupBlocks));
 		DRAGON_SPEEDUP_BLOCKS = speedupMap;
+
+		HashMap<DragonType, List<Material>> speedMaterials = new HashMap<>();
+
+		//Which materials should speed up dragons when using the athletics ability
+		speedMaterials.put(DragonType.CAVE, List.of(Material.STONE, Material.METAL, Material.LAVA, Material.FIRE));
+		speedMaterials.put(DragonType.FOREST, List.of(Material.GRASS, Material.LEAVES, Material.WOOD, Material.PLANT, Material.CACTUS));
+		speedMaterials.put(DragonType.SEA, List.of(Material.SAND, Material.DIRT, Material.WATER, Material.WATER_PLANT, Material.SPONGE, Material.TOP_SNOW, Material.SNOW, Material.POWDER_SNOW));
+		DRAGON_SPEED_MATERIALS = speedMaterials;
 	}
 
 	public static void rebuildBreathBlocks(){

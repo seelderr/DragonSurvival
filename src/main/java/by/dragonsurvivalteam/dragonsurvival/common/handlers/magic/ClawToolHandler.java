@@ -60,6 +60,7 @@ public class ClawToolHandler{
 			}
 
 			event.getOrb().value = Math.max(0, event.getOrb().value);
+			player.detectEquipmentUpdates();
 		});
 	}
 
@@ -161,6 +162,7 @@ public class ClawToolHandler{
 			ItemStack clawTool = getDragonTools(player);
 			if(ItemStack.matches(clawTool, event.getOriginal())){
 				player.broadcastBreakEvent(event.getHand());
+				player.detectEquipmentUpdates();
 			}
 		}
 	}

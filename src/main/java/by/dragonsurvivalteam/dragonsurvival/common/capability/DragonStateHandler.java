@@ -27,6 +27,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.fml.DistExecutor;
 
+import java.util.Locale;
 import java.util.Objects;
 import java.util.function.Supplier;
 
@@ -181,7 +182,7 @@ public class DragonStateHandler implements NBTInterface{
 
 	@Override
 	public void readNBT(CompoundTag tag){
-		setType(DragonType.valueOf(tag.getString("type")));
+		setType(DragonType.valueOf(tag.getString("type").toUpperCase(Locale.ROOT)));
 		if(isDragon()){
 			setMovementData(tag.getDouble("bodyYaw"), tag.getDouble("headYaw"), tag.getDouble("headPitch"), tag.getBoolean("bite"));
 			getMovementData().headYawLastTick = getMovementData().headYaw;

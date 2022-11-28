@@ -30,7 +30,7 @@ public abstract class ChannelingCastAbility extends ActiveDragonAbility {
 		}else{
 			onCharging(player, chargeTime);
 
-			if(player.tickCount % 20 == 0){
+			if(chargeTime <= 1){
 				ManaHandler.consumeMana(player, getChargingManaCost());
 			}
 		}

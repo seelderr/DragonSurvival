@@ -32,6 +32,7 @@ public class MixinMultiPlayerGameMode{
 			if(this.localPlayerMode != GameType.SPECTATOR){
 				pPlayer.attack(((DragonHitboxPart)pTarget).parentMob);
 				pPlayer.resetAttackStrengthTicker();
+				pPlayer.detectEquipmentUpdates();
 			}
 		}
 	}

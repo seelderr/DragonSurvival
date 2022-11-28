@@ -319,7 +319,7 @@ public class ServerConfig{
 
 	@ConfigType(Block.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = {"bonuses", "forest"}, key = "forestSpeedupBlocks", comment = "Blocks forest dragons gain speed when standing above. Formatting: block/modid:id" )
-	public static List<String> forestSpeedupBlocks = List.of("minecraft:logs", "minecraft:leaves", "minecraft:planks", "forge:dirt", "minecraft:grass", "minecraft:dirt");
+	public static List<String> forestSpeedupBlocks = List.of("minecraft:logs", "minecraft:leaves", "minecraft:planks", "forge:dirt", "minecraft:grass", "minecraft:dirt", "minecraft:wooden_slab");
 
 
 	@ConfigOption( side = ConfigSide.SERVER, category = {"bonuses", "sea"}, key = "waterBonuses", comment = "Whether sea dragons gain bonus swim speed and unlimited air." )
