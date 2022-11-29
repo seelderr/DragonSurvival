@@ -32,6 +32,13 @@ public class DragonConfigHandler{
 
 	public static HashMap<DragonType, List<Material>> DRAGON_SPEED_MATERIALS = new HashMap<>();
 
+	static {
+		//Which materials should speed up dragons when using the athletics ability
+		DRAGON_SPEED_MATERIALS.put(DragonType.CAVE, List.of(Material.STONE, Material.METAL, Material.LAVA, Material.FIRE));
+		DRAGON_SPEED_MATERIALS.put(DragonType.FOREST, List.of(Material.GRASS, Material.LEAVES, Material.WOOD, Material.PLANT, Material.CACTUS));
+		DRAGON_SPEED_MATERIALS.put(DragonType.SEA, List.of(Material.SAND, Material.DIRT, Material.WATER, Material.WATER_PLANT, Material.SPONGE, Material.TOP_SNOW, Material.SNOW, Material.POWDER_SNOW));
+	}
+
 	@SubscribeEvent
 	public static void onConfigLoad(ModConfigEvent.Loading event){
 		if(event.getConfig().getType() == ModConfig.Type.SERVER){
@@ -49,14 +56,6 @@ public class DragonConfigHandler{
 		speedupMap.put(DragonType.FOREST, ConfigHandler.configList(Block.class, ServerConfig.forestSpeedupBlocks));
 		speedupMap.put(DragonType.SEA, ConfigHandler.configList(Block.class, ServerConfig.seaSpeedupBlocks));
 		DRAGON_SPEEDUP_BLOCKS = speedupMap;
-
-		HashMap<DragonType, List<Material>> speedMaterials = new HashMap<>();
-
-		//Which materials should speed up dragons when using the athletics ability
-		speedMaterials.put(DragonType.CAVE, List.of(Material.STONE, Material.METAL, Material.LAVA, Material.FIRE));
-		speedMaterials.put(DragonType.FOREST, List.of(Material.GRASS, Material.LEAVES, Material.WOOD, Material.PLANT, Material.CACTUS));
-		speedMaterials.put(DragonType.SEA, List.of(Material.SAND, Material.DIRT, Material.WATER, Material.WATER_PLANT, Material.SPONGE, Material.TOP_SNOW, Material.SNOW, Material.POWDER_SNOW));
-		DRAGON_SPEED_MATERIALS = speedMaterials;
 	}
 
 	public static void rebuildBreathBlocks(){

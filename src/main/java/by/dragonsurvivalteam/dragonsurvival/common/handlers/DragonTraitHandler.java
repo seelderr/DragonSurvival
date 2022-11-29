@@ -80,8 +80,8 @@ public class DragonTraitHandler{
 
 				boolean isInSeaBlock = DragonConfigHandler.SEA_DRAGON_HYDRATION_BLOCKS != null && (DragonConfigHandler.SEA_DRAGON_HYDRATION_BLOCKS.contains(block) || DragonConfigHandler.SEA_DRAGON_HYDRATION_BLOCKS.contains(feetBlock.getBlock()) || isInCauldron);
 
-				boolean isSpeedBlock = DragonConfigHandler.DRAGON_SPEEDUP_BLOCKS != null && DragonConfigHandler.DRAGON_SPEEDUP_BLOCKS.get(dragonStateHandler.getType()).contains(block);
-				boolean isSpeedMaterial = DragonConfigHandler.DRAGON_SPEED_MATERIALS != null && DragonConfigHandler.DRAGON_SPEED_MATERIALS.get(dragonStateHandler.getType()).contains(blockUnder.getMaterial());
+				boolean isSpeedBlock = DragonConfigHandler.DRAGON_SPEEDUP_BLOCKS != null && DragonConfigHandler.DRAGON_SPEEDUP_BLOCKS.containsKey(dragonStateHandler.getType()) && DragonConfigHandler.DRAGON_SPEEDUP_BLOCKS.get(dragonStateHandler.getType()).contains(block);
+				boolean isSpeedMaterial = DragonConfigHandler.DRAGON_SPEED_MATERIALS != null && DragonConfigHandler.DRAGON_SPEED_MATERIALS.containsKey(dragonStateHandler.getType()) && DragonConfigHandler.DRAGON_SPEED_MATERIALS.get(dragonStateHandler.getType()).contains(blockUnder.getMaterial());
 
 				if(!world.isClientSide && ServerConfig.bonuses && ServerConfig.speedupEffectLevel > 0 && (isSpeedBlock || isSpeedMaterial)){
 					SeaAthleticsAbility SEA_ATHLETICS = DragonAbilities.getAbility(player, SeaAthleticsAbility.class);
