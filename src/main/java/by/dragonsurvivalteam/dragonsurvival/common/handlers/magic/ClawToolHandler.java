@@ -162,7 +162,6 @@ public class ClawToolHandler{
 			ItemStack clawTool = getDragonTools(player);
 			if(ItemStack.matches(clawTool, event.getOriginal())){
 				player.broadcastBreakEvent(event.getHand());
-				player.detectEquipmentUpdates();
 			}
 		}
 	}
