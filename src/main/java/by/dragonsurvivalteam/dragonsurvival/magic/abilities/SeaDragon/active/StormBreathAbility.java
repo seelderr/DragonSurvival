@@ -5,12 +5,10 @@ import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaDragon.LargeLigh
 import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaDragon.SmallLightningParticleData;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.SoundRegistry;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.StormBreathSound;
-import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.GenericCapability;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.GenericCapabilityProvider;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.hitbox.DragonHitBox;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.StormBreathEntity;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
@@ -19,6 +17,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigType;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.BreathAbility;
+import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.math.Vector3f;
@@ -37,7 +36,10 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LightningBolt;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
@@ -103,7 +105,7 @@ public class StormBreathAbility extends BreathAbility{
 	                                                     "actives",
 	                                                     "storm_breath"}, key = "stormBreathManaTicks", comment = "How often in ticks, mana is consumed while using storm breath" )
 	public static Integer stormBreathManaTicks = 40;
-	@ConfigType(Block.class)
+	@ConfigType( Block.class )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic",
 	                                                     "abilities",
 	                                                     "sea_dragon",
@@ -146,21 +148,21 @@ public class StormBreathAbility extends BreathAbility{
 	                                                     "actives",
 	                                                     "storm_breath"}, key = "chargedEffectDamage", comment = "The amount of damage the charged effect deals each second" )
 	public static Integer chargedEffectDamage = 1;
-	@ConfigType(EntityType.class)
+	@ConfigType( EntityType.class )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic",
 	                                                     "abilities",
 	                                                     "sea_dragon",
 	                                                     "actives",
 	                                                     "storm_breath"}, key = "chargedSpreadBlacklist", comment = "List of entities that will not spread the charged effect. Format: modid:id" )
-	public static List<String> chargedSpreadBlacklist =  List.of("minecraft:armor_stand", "minecraft:cat", "minecraft:cart", "minecraft:guardian", "minecraft:elder_guardian", "minecraft:enderman");
+	public static List<String> chargedSpreadBlacklist = List.of("minecraft:armor_stand", "minecraft:cat", "minecraft:cart", "minecraft:guardian", "minecraft:elder_guardian", "minecraft:enderman");
 
-	@ConfigType(EntityType.class)
+	@ConfigType( EntityType.class )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic",
 	                                                     "abilities",
 	                                                     "sea_dragon",
 	                                                     "actives",
 	                                                     "storm_breath"}, key = "chargedBlacklist", comment = "List of entities that will not receive the charged effect at all Format: modid:id" )
-	public static List<String> chargedBlacklist =  List.of("minecraft:armor_stand", "minecraft:cat", "minecraft:cart", "minecraft:guardian", "minecraft:elder_guardian", "minecraft:enderman");
+	public static List<String> chargedBlacklist = List.of("minecraft:armor_stand", "minecraft:cat", "minecraft:cart", "minecraft:guardian", "minecraft:elder_guardian", "minecraft:enderman");
 
 	@OnlyIn( Dist.CLIENT )
 	private SoundInstance startingSound;
@@ -174,8 +176,9 @@ public class StormBreathAbility extends BreathAbility{
 	public static void onDamageChecks(LivingEntity entity){
 		if(entity instanceof Creeper creeper){
 
-			if(!creeper.isPowered())
+			if(!creeper.isPowered()){
 				creeper.getEntityData().set(Creeper.DATA_IS_POWERED, true);
+			}
 		}
 	}
 
@@ -191,8 +194,9 @@ public class StormBreathAbility extends BreathAbility{
 			double yDif = (end.y - start.y) / parts;
 			double zDif = (end.z - start.z) / parts;
 
-			if(end.x - start.x >= 64 || end.y - start.y >= 64 || end.z - start.z >= 64)
+			if(end.x - start.x >= 64 || end.y - start.y >= 64 || end.z - start.z >= 64){
 				return;
+			}
 
 			for(int i = 0; i < parts; i++){
 				double x = start.x + xDif * i;
@@ -210,7 +214,10 @@ public class StormBreathAbility extends BreathAbility{
 
 	@Override
 	public Integer[] getRequiredLevels(){
-		return new Integer[]{0, 10, 30, 50};
+		return new Integer[]{0,
+		                     10,
+		                     30,
+		                     50};
 	}
 
 	@Override
@@ -238,7 +245,7 @@ public class StormBreathAbility extends BreathAbility{
 
 			onDamageChecks(target);
 
-			if(!chargedSpreadBlacklist.contains(source.getType().getRegistryName().toString()))
+			if(!chargedSpreadBlacklist.contains(source.getType().getRegistryName().toString())){
 				if(target != source){
 					GenericCapability capSource = GenericCapabilityProvider.getGenericCapability(source);
 					GenericCapability cap = GenericCapabilityProvider.getGenericCapability(target);
@@ -264,6 +271,7 @@ public class StormBreathAbility extends BreathAbility{
 					}
 					spark(source, target);
 				}
+			}
 		}
 	}
 
@@ -272,48 +280,63 @@ public class StormBreathAbility extends BreathAbility{
 	}
 
 	public static boolean isValidTarget(LivingEntity attacker, LivingEntity target){
-		if(target == null || attacker == null)
+		if(target == null || attacker == null){
 			return false;
-		if(chargedBlacklist.contains(target.getType().getRegistryName().toString()))
+		}
+		if(chargedBlacklist.contains(target.getType().getRegistryName().toString())){
 			return false;
-		if(target == attacker)
+		}
+		if(chargedSpreadBlacklist.contains(attacker.getType().getRegistryName().toString())){
 			return false;
-		if(target instanceof FakePlayer)
+		}
+		if(target == attacker){
 			return false;
-		if(target instanceof DragonHitBox)
+		}
+		if(target instanceof FakePlayer){
 			return false;
-		if(target instanceof TamableAnimal && ((TamableAnimal)target).getOwner() == attacker)
+		}
+		if(target instanceof DragonHitBox){
 			return false;
-		if(attacker instanceof TamableAnimal && !isValidTarget(((TamableAnimal)attacker).getOwner(), target))
+		}
+		if(target instanceof TamableAnimal && ((TamableAnimal)target).getOwner() == attacker){
 			return false;
-		if(target.getLastHurtByMob() == attacker && target.getLastHurtByMobTimestamp() + Functions.secondsToTicks(1) < target.tickCount)
+		}
+		if(attacker instanceof TamableAnimal && !isValidTarget(((TamableAnimal)attacker).getOwner(), target)){
 			return false;
+		}
+		if(target.getLastHurtByMob() == attacker && target.getLastHurtByMobTimestamp() + Functions.secondsToTicks(1) < target.tickCount){
+			return false;
+		}
 		return DragonStateProvider.getCap(target).map(DragonStateHandler::getType).orElse(null) != DragonType.SEA;
 	}
 
-//	@Override
-//	public Entity getEffectEntity(){
-//		return EFFECT_ENTITY;
-//	}
+	//	@Override
+	//	public Entity getEffectEntity(){
+	//		return EFFECT_ENTITY;
+	//	}
 
 	public void hurtTarget(LivingEntity entity){
 		entity.hurt(new BreathDamage(player), getDamage());
 		onDamage(entity);
 
-		if(player.level.random.nextInt(100) < 50)
+		if(player.level.random.nextInt(100) < 50){
 			if(!player.level.isClientSide){
 				player.addEffect(new MobEffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(30)));
 			}
+		}
 
-		if(!entity.level.isClientSide)
-			if(entity.level.random.nextInt(100) < 40){
-				GenericCapability cap = GenericCapabilityProvider.getGenericCapability(entity);
+		if(!entity.level.isClientSide){
+			if(!chargedBlacklist.contains(entity.getType().getRegistryName().toString())){
+				if(entity.level.random.nextInt(100) < 40){
+					GenericCapability cap = GenericCapabilityProvider.getGenericCapability(entity);
 
-				cap.lastAfflicted = player.getId();
-				cap.chainCount = 1;
+					cap.lastAfflicted = player.getId();
+					cap.chainCount = 1;
 
-				entity.addEffect(new MobEffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(10), 0, false, true));
+					entity.addEffect(new MobEffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(10), 0, false, true));
+				}
 			}
+		}
 	}
 
 	@Override
@@ -360,11 +383,11 @@ public class StormBreathAbility extends BreathAbility{
 	}
 
 
-
 	@OnlyIn( Dist.CLIENT )
-	public   void sound(){
-		if(startingSound == null)
+	public void sound(){
+		if(startingSound == null){
 			startingSound = SimpleSoundInstance.forAmbientAddition(SoundRegistry.stormBreathStart);
+		}
 
 		Minecraft.getInstance().getSoundManager().playDelayed(startingSound, 0);
 		loopingSound = new StormBreathSound(this);
@@ -375,7 +398,7 @@ public class StormBreathAbility extends BreathAbility{
 
 	@Override
 	public void onBlock(BlockPos pos, BlockState blockState, Direction direction){
-		if(!player.level.isClientSide)
+		if(!player.level.isClientSide){
 			if(player.tickCount % 40 == 0){
 				if(player.level.isThundering()){
 					if(player.level.random.nextInt(100) < 30){
@@ -389,14 +412,16 @@ public class StormBreathAbility extends BreathAbility{
 					}
 				}
 			}
+		}
 	}
 
 
 	@OnlyIn( Dist.CLIENT )
-	public   void stopSound(){
+	public void stopSound(){
 		if(SoundRegistry.stormBreathEnd != null){
-			if(endSound == null)
+			if(endSound == null){
 				endSound = SimpleSoundInstance.forAmbientAddition(SoundRegistry.stormBreathEnd);
+			}
 
 			Minecraft.getInstance().getSoundManager().playDelayed(endSound, 0);
 		}
@@ -408,10 +433,6 @@ public class StormBreathAbility extends BreathAbility{
 	@Override
 	public void onChanneling(Player player, int castDuration){
 		super.onChanneling(player, castDuration);
-
-		if(EFFECT_ENTITY == null)
-			EFFECT_ENTITY = DSEntities.STORM_BREATH_EFFECT.create(player.level);
-
 
 		if(player.level.isClientSide && castDuration <= 1){
 			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> sound());
@@ -435,14 +456,16 @@ public class StormBreathAbility extends BreathAbility{
 
 		hitEntities();
 
-		if(player.tickCount % 10 == 0)
+		if(player.tickCount % 10 == 0){
 			hitBlocks();
+		}
 	}
 
 	@Override
 	public boolean canHitEntity(LivingEntity entity){
-		if(entity instanceof DragonHitBox)
+		if(entity instanceof DragonHitBox){
 			return false;
+		}
 		return !(entity instanceof Player) || player.canHarmPlayer((Player)entity);
 	}
 

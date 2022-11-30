@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.common.active;
 
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ManaHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import lombok.Getter;
 import net.minecraft.nbt.CompoundTag;
@@ -34,6 +35,14 @@ public abstract class ChannelingCastAbility extends ActiveDragonAbility {
 				ManaHandler.consumeMana(player, getChargingManaCost());
 			}
 		}
+	}
+
+	public boolean canConsumeMana(Player player){
+		int manaCost = chargeTime <= getSkillChargeTime() / 2 ? getManaCost() + getChargingManaCost() : getManaCost();
+
+		return ManaHandler.getCurrentMana(player) >= manaCost
+		       || ServerConfig.consumeEXPAsMana && (player.totalExperience / 10 >= manaCost
+		                                            || player.experienceLevel > 0);
 	}
 
 	@Override
