@@ -175,7 +175,7 @@ public class MagicHandler{
 			if(entity.tickCount % 20 == 0){
 				DragonType type = DragonStateProvider.getCap(entity).map(cap -> cap.getType()).orElse(null);
 				GenericCapability cap = GenericCapabilityProvider.getGenericCapability(entity);
-				Player player = cap != null && cap.lastAfflicted != -1 && entity.level.getEntity(cap.lastAfflicted) instanceof Player ? ((Player)entity.level.getEntity(cap.lastAfflicted)) : null;
+				Player player = cap.lastAfflicted != -1 && entity.level.getEntity(cap.lastAfflicted) instanceof Player ? (Player)entity.level.getEntity(cap.lastAfflicted) : null;
 				if(type != DragonType.SEA){
 					StormBreathAbility.chargedEffectSparkle(player, entity, StormBreathAbility.chargedChainRange, StormBreathAbility.chargedEffectChainCount, StormBreathAbility.chargedEffectDamage);
 				}
@@ -183,12 +183,14 @@ public class MagicHandler{
 		}else{
 			GenericCapability cap = GenericCapabilityProvider.getGenericCapability(entity);
 
-			if(cap != null && cap.lastAfflicted != -1){
+			if(cap.lastAfflicted != -1){
 				cap.lastAfflicted = -1;
 			}
 		}
-		GenericCapability cap = GenericCapabilityProvider.getGenericCapability(entity);
+
 		if(entity.tickCount % 20 == 0){
+			GenericCapability cap = GenericCapabilityProvider.getGenericCapability(entity);
+
 			if(entity.hasEffect(DragonEffects.BURN)){
 				if(!entity.fireImmune()){
 					if(cap.lastPos != null){

@@ -46,7 +46,7 @@ public class DragonCommand{
 		ArgumentCommandNode<CommandSourceStack, String> dragonType = argument("dragon_type", StringArgumentType.string()).suggests((context, builder) -> {
 			SuggestionsBuilder builder1 = null;
 			for(DragonType value : DragonType.values()){
-				builder1 = builder1 == null ? builder.suggest(value.name()) : builder1.suggest(value.name());
+				builder1 = builder1 == null ? builder.suggest(value.name().toLowerCase()) : builder1.suggest(value.name().toLowerCase());
 			}
 
 			return builder1.buildFuture();

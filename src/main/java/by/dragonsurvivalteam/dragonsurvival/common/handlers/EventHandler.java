@@ -84,8 +84,8 @@ public class EventHandler{
 
 		if(event.player instanceof ServerPlayer player){
 			if(player.tickCount > 5 * 20){
-				GenericCapability cap = GenericCapabilityProvider.getGenericCapability(player);
-				if(!cap.hasUsedAltar && !DragonUtils.isDragon(player)){
+				GenericCapability cap = GenericCapabilityProvider.getCap(player).orElse(null);
+				if(cap != null && !cap.hasUsedAltar && !DragonUtils.isDragon(player)){
 					NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new OpenDragonAltar());
 					cap.hasUsedAltar = true;
 				}

@@ -111,6 +111,11 @@ public class Capabilities{
 		Player original = e.getOriginal();
 		original.reviveCaps();
 
+		GenericCapability newCap = GenericCapabilityProvider.getGenericCapability(player);
+		GenericCapability oldCap = GenericCapabilityProvider.getGenericCapability(original);
+
+		newCap.readNBT(oldCap.writeNBT());
+
 		DragonStateProvider.getCap(player).ifPresent(capNew -> DragonStateProvider.getCap(original).ifPresent(capOld -> {
 			CompoundTag nbt = capOld.writeNBT();
 			capNew.readNBT(nbt);
