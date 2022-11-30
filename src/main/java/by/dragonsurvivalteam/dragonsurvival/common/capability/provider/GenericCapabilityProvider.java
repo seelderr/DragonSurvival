@@ -13,8 +13,13 @@ public class GenericCapabilityProvider implements ICapabilitySerializable<Compou
 	private final GenericCapability handlerObject = new GenericCapability();
 	private final LazyOptional<GenericCapability> instance = LazyOptional.of(() -> handlerObject);
 
-	public static LazyOptional<GenericCapability> getGenericCapability(Entity entity){
+	private static LazyOptional<GenericCapability> getCap(Entity entity){
 		return entity.getCapability(Capabilities.GENERIC_CAPABILITY, null);
+	}
+
+	public static GenericCapability getGenericCapability(Entity entity){
+		return entity != null ?
+			getCap(entity).orElse(new GenericCapability()) : new GenericCapability();
 	}
 
 	public void invalidate(){

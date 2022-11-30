@@ -240,8 +240,9 @@ public class StormBreathAbility extends BreathAbility{
 
 			if(!chargedSpreadBlacklist.contains(source.getType().getRegistryName().toString()))
 				if(target != source){
-					GenericCapability capSource = GenericCapabilityProvider.getGenericCapability(source).orElse(null);
-					GenericCapability cap = GenericCapabilityProvider.getGenericCapability(target).orElse(null);
+					GenericCapability capSource = GenericCapabilityProvider.getGenericCapability(source);
+					GenericCapability cap = GenericCapabilityProvider.getGenericCapability(target);
+
 
 					cap.chainCount = capSource.chainCount + 1;
 
@@ -306,7 +307,7 @@ public class StormBreathAbility extends BreathAbility{
 
 		if(!entity.level.isClientSide)
 			if(entity.level.random.nextInt(100) < 40){
-				GenericCapability cap = GenericCapabilityProvider.getGenericCapability(entity).orElse(null);
+				GenericCapability cap = GenericCapabilityProvider.getGenericCapability(entity);
 
 				cap.lastAfflicted = player.getId();
 				cap.chainCount = 1;

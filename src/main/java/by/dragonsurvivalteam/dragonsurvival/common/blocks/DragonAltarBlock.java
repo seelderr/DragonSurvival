@@ -66,7 +66,7 @@ public class DragonAltarBlock extends Block{
 	@Override
 	public InteractionResult use(BlockState blockState, Level worldIn, BlockPos blockPos, Player player, InteractionHand handIn, BlockHitResult p_225533_6_){
 		DragonStateHandler handler = DragonUtils.getHandler(player);
-		GenericCapability cap = GenericCapabilityProvider.getGenericCapability(player).orElse(new GenericCapability());
+		GenericCapability cap = GenericCapabilityProvider.getGenericCapability(player);
 
 		int cooldown = cap.altarCooldown;
 		if(cooldown > 0){

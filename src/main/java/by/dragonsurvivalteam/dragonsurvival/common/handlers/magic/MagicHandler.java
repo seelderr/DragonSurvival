@@ -160,7 +160,7 @@ public class MagicHandler{
 
 			if(type != DragonType.FOREST){
 				if(entity.tickCount % 20 == 0){
-					GenericCapability cap = GenericCapabilityProvider.getGenericCapability(entity).orElse(null);
+					GenericCapability cap = GenericCapabilityProvider.getGenericCapability(entity);
 					Player player = cap.lastAfflicted != -1 && entity.level.getEntity(cap.lastAfflicted) instanceof Player ? (Player)entity.level.getEntity(cap.lastAfflicted) : null;
 					if(player != null){
 						entity.hurt(new EntityDamageSource("magic", player).bypassArmor().setMagic(), 1.0F);
@@ -174,47 +174,45 @@ public class MagicHandler{
 		if(entity.hasEffect(DragonEffects.CHARGED)){
 			if(entity.tickCount % 20 == 0){
 				DragonType type = DragonStateProvider.getCap(entity).map(cap -> cap.getType()).orElse(null);
-				GenericCapability cap = GenericCapabilityProvider.getGenericCapability(entity).orElse(null);
+				GenericCapability cap = GenericCapabilityProvider.getGenericCapability(entity);
 				Player player = cap != null && cap.lastAfflicted != -1 && entity.level.getEntity(cap.lastAfflicted) instanceof Player ? ((Player)entity.level.getEntity(cap.lastAfflicted)) : null;
 				if(type != DragonType.SEA){
 					StormBreathAbility.chargedEffectSparkle(player, entity, StormBreathAbility.chargedChainRange, StormBreathAbility.chargedEffectChainCount, StormBreathAbility.chargedEffectDamage);
 				}
 			}
 		}else{
-			GenericCapability cap = GenericCapabilityProvider.getGenericCapability(entity).orElse(null);
+			GenericCapability cap = GenericCapabilityProvider.getGenericCapability(entity);
 
 			if(cap != null && cap.lastAfflicted != -1){
 				cap.lastAfflicted = -1;
 			}
 		}
+		GenericCapability cap = GenericCapabilityProvider.getGenericCapability(entity);
+		if(entity.tickCount % 20 == 0){
+			if(entity.hasEffect(DragonEffects.BURN)){
+				if(!entity.fireImmune()){
+					if(cap.lastPos != null){
+						double distance = entity.distanceToSqr(cap.lastPos);
+						float damage = Mth.clamp((float)distance, 0, 10);
 
-		GenericCapabilityProvider.getGenericCapability(entity).ifPresent(cap -> {
-			if(entity.tickCount % 20 == 0){
-				if(entity.hasEffect(DragonEffects.BURN)){
-					if(!entity.fireImmune()){
-						if(cap.lastPos != null){
-							double distance = entity.distanceToSqr(cap.lastPos);
-							float damage = Mth.clamp((float)distance, 0, 10);
-
-							if(damage > 0){
-								//Short enough fire duration to not cause fire damage but still drop cooked items
-								if(!entity.isOnFire()){
-									entity.setRemainingFireTicks(1);
-								}
-								Player player = cap != null && cap.lastAfflicted != -1 && entity.level.getEntity(cap.lastAfflicted) instanceof Player ? ((Player)entity.level.getEntity(cap.lastAfflicted)) : null;
-								if(player != null){
-									entity.hurt(new EntityDamageSource("onFire", player).bypassArmor().setIsFire(), damage);
-								}else{
-									entity.hurt(DamageSource.ON_FIRE, damage);
-								}
+						if(damage > 0){
+							//Short enough fire duration to not cause fire damage but still drop cooked items
+							if(!entity.isOnFire()){
+								entity.setRemainingFireTicks(1);
+							}
+							Player player = cap != null && cap.lastAfflicted != -1 && entity.level.getEntity(cap.lastAfflicted) instanceof Player ? ((Player)entity.level.getEntity(cap.lastAfflicted)) : null;
+							if(player != null){
+								entity.hurt(new EntityDamageSource("onFire", player).bypassArmor().setIsFire(), damage);
+							}else{
+								entity.hurt(DamageSource.ON_FIRE, damage);
 							}
 						}
 					}
 				}
-
-				cap.lastPos = entity.position();
 			}
-		});
+
+			cap.lastPos = entity.position();
+		}
 	}
 
 	@SubscribeEvent
@@ -302,7 +300,7 @@ public class MagicHandler{
 								boolean hit = player.level.random.nextInt(100) < burnAbility.getChance();
 
 								if(hit){
-									GenericCapability cap1 = GenericCapabilityProvider.getGenericCapability(event.getEntity()).orElse(null);
+									GenericCapability cap1 = GenericCapabilityProvider.getGenericCapability(event.getEntity());
 
 									if(cap1 != null){
 										cap1.lastAfflicted = player.getId();

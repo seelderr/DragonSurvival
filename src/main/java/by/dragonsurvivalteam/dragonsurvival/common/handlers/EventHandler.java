@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.Capabilities;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.GenericCapability;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.GenericCapabilityProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ClawToolHandler;
@@ -83,12 +84,11 @@ public class EventHandler{
 
 		if(event.player instanceof ServerPlayer player){
 			if(player.tickCount > 5 * 20){
-				GenericCapabilityProvider.getGenericCapability(player).ifPresent(cap -> {
-					if(!cap.hasUsedAltar && !DragonUtils.isDragon(player)){
-						NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new OpenDragonAltar());
-						cap.hasUsedAltar = true;
-					}
-				});
+				GenericCapability cap = GenericCapabilityProvider.getGenericCapability(player);
+				if(!cap.hasUsedAltar && !DragonUtils.isDragon(player)){
+					NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new OpenDragonAltar());
+					cap.hasUsedAltar = true;
+				}
 			}
 		}
 	}

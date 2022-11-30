@@ -290,7 +290,7 @@ public class NetherBreathAbility extends BreathAbility{
 			BurnAbility burnAbility = DragonAbilities.getAbility(player, BurnAbility.class);
 
 			if(entityHit.level.random.nextInt(100) < (burnAbility.level * 15)){
-				GenericCapability cap = GenericCapabilityProvider.getGenericCapability(entityHit).orElse(null);
+				GenericCapability cap = GenericCapabilityProvider.getGenericCapability(entityHit);
 				cap.lastAfflicted = player != null ? player.getId() : -1;
 
 				entityHit.addEffect(new MobEffectInstance(DragonEffects.BURN, Functions.secondsToTicks(10), 0, false, true));
