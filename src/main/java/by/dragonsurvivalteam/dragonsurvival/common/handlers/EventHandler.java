@@ -89,6 +89,10 @@ public class EventHandler{
 					NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new OpenDragonAltar());
 					cap.hasUsedAltar = true;
 				}
+
+				if(cap != null && cap.altarCooldown > 0){
+					cap.altarCooldown--;
+				}
 			}
 		}
 	}
