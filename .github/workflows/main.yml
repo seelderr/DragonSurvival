@@ -43,6 +43,14 @@ jobs:
         if: steps.semantic.outputs.new_release_published == 'true'
         run: chmod +x gradlew
 
+      - name: Setup forge mdk
+        if: steps.semantic.outputs.new_release_published == 'true'
+        run: ./gradlew init
+
+      - name: Build with Gradle
+        if: steps.semantic.outputs.new_release_published == 'true'
+        run: ./gradlew build
+
       - name: Publish local maven
         if: steps.semantic.outputs.new_release_published == 'true'
         run: ./gradlew publish

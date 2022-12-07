@@ -24,8 +24,6 @@
 	"MixinGameRenderer",
 	"AccessorGameRenderer",
 	"MixinInventoryScreen",
-	"MixinMultiPlayerGameMode",
-	"MixinShaderRender",
 	"MixinWorldRenderer"
   ],
   "minVersion": "0.8"

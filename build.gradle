@@ -32,21 +32,6 @@ archivesBaseName = property("mod_name") + "_" + property("version_name")
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(property("java_version") as String)
 
-sourceSets {
-    api
-    main {
-        java {
-            compileClasspath += sourceSets.api.output
-            runtimeClasspath += sourceSets.api.output
-        }
-    }
-}
-
-configurations {
-    apiImplementation.extendsFrom(implementation)
-    apiRuntimeOnly.extendsFrom(runtimeOnly)
-}
-
 minecraft {
     mappings (channel: property("mapping_channel"), version: (property("mappings_version") + "-" + property("mc_version")))
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
@@ -59,7 +44,6 @@ minecraft {
             mods {
                 dragonsurvival {
                     source sourceSets.main
-                    source sourceSets.api
                 }
             }
 
@@ -74,7 +58,6 @@ minecraft {
             mods {
                 dragonsurvival {
                     source sourceSets.main
-                    source sourceSets.api
                 }
             }
 
@@ -92,7 +75,6 @@ minecraft {
             mods {
                 dragonsurvival {
                     source sourceSets.main
-                    source sourceSets.api
                 }
             }
         }
@@ -102,7 +84,6 @@ minecraft {
             mods {
                 dragonsurvival {
                     source sourceSets.main
-                    source sourceSets.api
                 }
             }
         }
