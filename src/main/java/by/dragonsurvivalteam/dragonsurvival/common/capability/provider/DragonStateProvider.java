@@ -1,6 +1,10 @@
-package by.dragonsurvivalteam.dragonsurvival.common.capability;
+package by.dragonsurvivalteam.dragonsurvival.common.capability.provider;
 
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayer;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.Capabilities;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.hitbox.DragonHitBox;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.hitbox.DragonHitboxPart;
 import com.ibm.icu.impl.Pair;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -39,7 +43,14 @@ public class DragonStateProvider implements ICapabilitySerializable<CompoundTag>
 				}
 			}
 
-			return entity.getCapability(Capabilities.DRAGON_CAPABILITY);
+			if(entity instanceof DragonHitBox){
+				return ((DragonHitBox)entity).player == null ? LazyOptional.empty() : getCap(((DragonHitBox)entity).player);
+			}else if(entity instanceof DragonHitboxPart){
+				return ((DragonHitboxPart)entity).parentMob.player == null ? LazyOptional.empty() : getCap(((DragonHitboxPart)entity).parentMob.player);
+			}
+
+			LazyOptional<DragonStateHandler> cap = entity.getCapability(Capabilities.DRAGON_CAPABILITY);
+			return cap;
 		}
 	}
 
