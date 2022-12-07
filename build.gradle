@@ -19,6 +19,7 @@ buildscript {
 
 plugins {
     id "io.freefair.lombok" version "6.5.0.2"
+    id 'maven-publish'
 }
 
 apply plugin: 'net.minecraftforge.gradle'
@@ -61,7 +62,7 @@ minecraft {
                     source sourceSets.api
                 }
             }
-            
+
             // curios stuff
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
@@ -76,7 +77,7 @@ minecraft {
                     source sourceSets.api
                 }
             }
-            
+
             // curios stuff
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
@@ -174,6 +175,22 @@ jar {
         ])
     }
 }
+
+jar.finalizedBy('reobfJar')
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact jar
+        }
+    }
+    repositories {
+        maven {
+            url "file://${project.projectDir}/mcmodsrepo"
+        }
+    }
+}
+
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
