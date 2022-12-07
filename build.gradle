@@ -19,12 +19,12 @@ buildscript {
 
 plugins {
     id "io.freefair.lombok" version "6.5.0.2"
-    id 'maven-publish'
 }
 
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: 'org.spongepowered.mixin'
+apply plugin: 'maven-publish'
 
 version =  property("mc_version")+"-"+property("mod_version")
 group = property("mod_group")
