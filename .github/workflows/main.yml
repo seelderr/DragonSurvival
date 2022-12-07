@@ -55,6 +55,10 @@ jobs:
         if: steps.semantic.outputs.new_release_published == 'true'
         run: ./gradlew build
 
+      - name: Publish local maven
+        if: steps.semantic.outputs.new_release_published == 'true'
+        run: ./gradlew publish
+
       - name: Generate changelog value
         shell: bash
         id: release_description
