@@ -2,11 +2,11 @@ package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.Capabilities;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.LivingEntity;
@@ -101,7 +101,7 @@ public class DragonSizeHandler{
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 
 		if(player != null){
-			boolean swimming = (player.isInWaterOrBubble() || (player.isInLava() && ServerConfig.bonuses && ServerConfig.caveLavaSwimming && handler.getType() == DragonType.CAVE)) && player.isSprinting() && !player.isPassenger();
+			boolean swimming = (player.isInWaterOrBubble() || (player.isInLava() && ServerConfig.bonuses && ServerConfig.caveLavaSwimming && handler.getType().equals(DragonTypes.CAVE))) && player.isSprinting() && !player.isPassenger();
 			boolean flying = ServerFlightHandler.isFlying(player);
 			boolean spinning = player.isAutoSpinAttack();
 			boolean crouching = player.isShiftKeyDown();

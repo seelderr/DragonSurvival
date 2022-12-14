@@ -1,8 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles;
 
 
-import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.active.SpikeAbility;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
+import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -63,9 +64,8 @@ public class DragonSpikeEntity extends AbstractArrow{
 		}
 		float damage = (float)getBaseDamage();
 
-		if(entity.hurt(damagesource, damage)){
-			if(entity instanceof LivingEntity){
-				LivingEntity livingentity = (LivingEntity)entity;
+		if(Functions.attackTargets(getOwner(), ent -> ent.hurt(damagesource, damage), entity)){
+			if(entity instanceof LivingEntity livingentity){
 				if(!this.level.isClientSide){
 					livingentity.setArrowCount(livingentity.getArrowCount() + 1);
 				}

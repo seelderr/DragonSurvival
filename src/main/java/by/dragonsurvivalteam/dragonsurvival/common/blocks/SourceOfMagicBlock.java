@@ -1,15 +1,16 @@
 package by.dragonsurvivalteam.dragonsurvival.common.blocks;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncMagicSourceStatus;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.DSTileEntities;
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.SourceOfMagicPlaceholder;
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.SourceOfMagicTileEntity;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -230,7 +231,7 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
 				if(player.getFeetBlockState().getBlock() == state.getBlock()){
 					DragonStateHandler handler = DragonUtils.getHandler(player);
 
-					if(!handler.getMagic().onMagicSource){
+					if(!handler.getMagicData().onMagicSource){
 						SourceOfMagicTileEntity source = getBlockEntity(worldIn, pos1);
 
 						if(source != null && !source.isEmpty()){
@@ -297,15 +298,15 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
 
 		if(source != null){
 			boolean harm = false;
-			DragonType type = DragonUtils.getDragonType(entity);
+			AbstractDragonType type = DragonUtils.getDragonType(entity);
 
-			if(type != DragonType.CAVE && pState.getBlock() == DSBlocks.caveSourceOfMagic){
+			if(type != DragonTypes.CAVE && pState.getBlock() == DSBlocks.caveSourceOfMagic){
 				harm = true;
 			}
-			if(type != DragonType.SEA && pState.getBlock() == DSBlocks.seaSourceOfMagic){
+			if(type != DragonTypes.SEA && pState.getBlock() == DSBlocks.seaSourceOfMagic){
 				harm = true;
 			}
-			if(type != DragonType.FOREST && pState.getBlock() == DSBlocks.forestSourceOfMagic){
+			if(type != DragonTypes.FOREST && pState.getBlock() == DSBlocks.forestSourceOfMagic){
 				harm = true;
 			}
 

@@ -3,11 +3,11 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons;
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.AbilityScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TooltipRendering;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
@@ -73,7 +73,7 @@ public class SkillProgressButton extends Button{
 	public void renderToolTip(PoseStack stack, int mouseX, int mouseY){
 		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {
 			if(ability != null){
-				ChatFormatting format = cap.getType() == DragonType.CAVE ? ChatFormatting.DARK_RED : cap.getType() == DragonType.SEA ? ChatFormatting.AQUA : cap.getType() == DragonType.FOREST ? ChatFormatting.GREEN : ChatFormatting.WHITE;
+				ChatFormatting format = cap.getType().equals(DragonTypes.CAVE) ? ChatFormatting.DARK_RED : cap.getType().equals(DragonTypes.SEA) ? ChatFormatting.AQUA : cap.getType().equals(DragonTypes.FOREST) ? ChatFormatting.GREEN : ChatFormatting.WHITE;
 				ArrayList<Component> description = new ArrayList<>(Arrays.asList(((TranslatableComponent)ability.getTitle()).withStyle(format).append(" (" + ability.getLevel() + " / " + ability.getMaxLevel() + ")")));
 
 				if(ability.getLevelUpInfo().size() > 0)

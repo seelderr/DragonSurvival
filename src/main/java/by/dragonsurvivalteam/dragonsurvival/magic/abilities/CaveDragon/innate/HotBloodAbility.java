@@ -2,10 +2,11 @@ package by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.innate;
 
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.innate.InnateDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -34,8 +35,8 @@ public class HotBloodAbility extends InnateDragonAbility{
 	}
 
 	@Override
-	public DragonType getDragonType(){
-		return DragonType.CAVE;
+	public AbstractDragonType getDragonType(){
+		return DragonTypes.CAVE;
 	}
 
 	@Override

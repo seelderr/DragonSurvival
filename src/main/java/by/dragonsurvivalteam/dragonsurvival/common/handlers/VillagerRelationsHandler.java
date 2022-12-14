@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.VillageRelationshipsProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.VillageRelationShips;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.*;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.FollowMobGoal;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
@@ -167,18 +167,12 @@ public class VillagerRelationsHandler{
 	public static void specialTasks(EntityJoinWorldEvent joinWorldEvent){
 		Level world = joinWorldEvent.getWorld();
 		Entity entity = joinWorldEvent.getEntity();
-		if(entity instanceof IronGolem){
-			IronGolem golemEntity = (IronGolem)entity;
-			golemEntity.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(golemEntity, Player.class, 0, true, false, livingEntity ->
-
-				(DragonUtils.isDragon(livingEntity) && livingEntity.hasEffect(DragonEffects.EVIL_DRAGON))));
+		if(entity instanceof IronGolem golemEntity){
+			golemEntity.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(golemEntity, Player.class, 0, true, false, livingEntity -> DragonUtils.isDragon(livingEntity) && livingEntity.hasEffect(DragonEffects.EVIL_DRAGON)));
 		}
 
-		if(entity instanceof AbstractVillager && !(entity instanceof PrinceHorseEntity)){
-			AbstractVillager abstractVillager = (AbstractVillager)entity;
-			abstractVillager.goalSelector.addGoal(10, new AvoidEntityGoal<>(abstractVillager, Player.class, livingEntity -> (DragonUtils.isDragon(livingEntity) && livingEntity.hasEffect(DragonEffects.EVIL_DRAGON)), 16.0F, 1.0D, 1.0D, (pMob) -> {
-				return true;
-			}));
+		if(entity instanceof AbstractVillager abstractVillager && !(entity instanceof PrinceHorseEntity)){
+			abstractVillager.goalSelector.addGoal(10, new AvoidEntityGoal<>(abstractVillager, Player.class, livingEntity -> (DragonUtils.isDragon(livingEntity) && livingEntity.hasEffect(DragonEffects.EVIL_DRAGON)), 16.0F, 1.0D, 1.0D, (pMob) -> true));
 		}
 	}
 
@@ -222,7 +216,7 @@ public class VillagerRelationsHandler{
 			if(DragonUtils.isDragon(player) && player.hasEffect(DragonEffects.EVIL_DRAGON) && !player.level.isClientSide && !player.isCreative() && !player.isSpectator() && player.isAlive()){
 				ServerLevel serverWorld = (ServerLevel)player.level;
 				if(serverWorld.dimension() == Level.OVERWORLD){
-					VillageRelationshipsProvider.getVillageRelationships(player).ifPresent(villageRelationShips -> {
+					VillageRelationShips villageRelationShips = DragonUtils.getHandler(player).getVillageRelationShips();
 						if(villageRelationShips.hunterSpawnDelay == 0){
 							BlockPos spawnPosition = Functions.findRandomSpawnPosition(player, 1, 4, 14.0F);
 							if(spawnPosition != null && spawnPosition.getY() >= ServerConfig.riderSpawnLowerBound && spawnPosition.getY() <= ServerConfig.riderSpawnUpperBound){
@@ -246,7 +240,6 @@ public class VillagerRelationsHandler{
 						}else{
 							villageRelationShips.hunterSpawnDelay--;
 						}
-					});
 				}
 			}
 		}
@@ -343,7 +336,7 @@ public class VillagerRelationsHandler{
 			Player playerEntity = playerTickEvent.player;
 			if(!playerEntity.level.isClientSide){
 				if(playerEntity.hasEffect(DragonEffects.EVIL_DRAGON)){
-					VillageRelationshipsProvider.getVillageRelationships(playerEntity).ifPresent(villageRelationShips -> villageRelationShips.evilStatusDuration = playerEntity.getEffect(DragonEffects.EVIL_DRAGON).getDuration());
+					DragonUtils.getHandler(playerEntity).getVillageRelationShips().evilStatusDuration = playerEntity.getEffect(DragonEffects.EVIL_DRAGON).getDuration();
 				}
 			}
 		}

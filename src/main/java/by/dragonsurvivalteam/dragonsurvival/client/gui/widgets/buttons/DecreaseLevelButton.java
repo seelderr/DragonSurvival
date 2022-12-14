@@ -3,10 +3,10 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons;
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ArrowButton;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TooltipRendering;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncSkillLevelChangeCost;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -16,7 +16,7 @@ import net.minecraft.network.chat.TranslatableComponent;
 public class DecreaseLevelButton extends ArrowButton{
 	private final int slot;
 	private PassiveDragonAbility ability;
-	private DragonType type;
+	private AbstractDragonType type;
 
 	public DecreaseLevelButton(int x, int y, int slot){
 
@@ -33,7 +33,7 @@ public class DecreaseLevelButton extends ArrowButton{
 		super.onPress();
 
 		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {
-			ability = cap.getMagic().getPassiveAbilityFromSlot(slot);
+			ability = cap.getMagicData().getPassiveAbilityFromSlot(slot);
 
 			if(ability != null){
 				if(ability.level-1 >= ability.getMinLevel()){
@@ -47,7 +47,7 @@ public class DecreaseLevelButton extends ArrowButton{
 	@Override
 	public void renderToolTip(PoseStack stack, int mouseX, int mouseY){
 		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {
-			ability = cap.getMagic().getPassiveAbilityFromSlot(slot);
+			ability = cap.getMagicData().getPassiveAbilityFromSlot(slot);
 
 			if(ability != null){
 				if(ability.getLevel() > ability.getMinLevel())

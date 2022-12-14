@@ -2,12 +2,13 @@ package by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.passiv
 
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAbility;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
+import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
+import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAbility;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -37,8 +38,8 @@ public class CliffhangerAbility extends PassiveDragonAbility{
 	}
 
 	@Override
-	public DragonType getDragonType(){
-		return DragonType.FOREST;
+	public AbstractDragonType getDragonType(){
+		return DragonTypes.FOREST;
 	}
 
 	@Override

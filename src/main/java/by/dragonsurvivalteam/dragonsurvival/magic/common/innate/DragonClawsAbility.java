@@ -1,9 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.common.innate;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
@@ -14,6 +14,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 
 import java.util.ArrayList;
+
+import static by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes.*;
 
 public abstract class DragonClawsAbility extends InnateDragonAbility {
 
@@ -48,7 +50,7 @@ public abstract class DragonClawsAbility extends InnateDragonAbility {
 
 		DragonStateHandler handler = DragonUtils.getHandler(Minecraft.getInstance().player);
 
-		ItemStack swordStack = handler.getClawInventory().getClawsInventory().getItem(0);
+		ItemStack swordStack = handler.getClawToolData().getClawsInventory().getItem(0);
 		double ageBonus = handler.isDragon() ? handler.getLevel() == DragonLevel.ADULT ? ServerConfig.adultBonusDamage : handler.getLevel() == DragonLevel.YOUNG ? ServerConfig.youngBonusDamage : ServerConfig.babyBonusDamage : 0;
 		double swordBonus = swordStack.isEmpty() ? 0 : swordStack.getItem() instanceof SwordItem ? ((SwordItem)swordStack.getItem()).getDamage() : 0;
 		double bonus = Math.max(ageBonus, swordBonus - 1);
@@ -71,12 +73,14 @@ public abstract class DragonClawsAbility extends InnateDragonAbility {
 		Tier tier = Tiers.STONE;
 		ItemStack stack = null;
 
-		if(handler == null || handler.getType() == null) return 0;
+		if(handler.getType() == null) return 0;
 
-		switch(handler.getType()){
-			case SEA -> stack = handler.getClawInventory().getClawsInventory().getItem(3);
-			case FOREST -> stack = handler.getClawInventory().getClawsInventory().getItem(2);
-			case CAVE -> stack = handler.getClawInventory().getClawsInventory().getItem(1);
+		if(SEA.equals(handler.getType())){
+			stack = handler.getClawToolData().getClawsInventory().getItem(3);
+		}else if(FOREST.equals(handler.getType())){
+			stack = handler.getClawToolData().getClawsInventory().getItem(2);
+		}else if(CAVE.equals(handler.getType())){
+			stack = handler.getClawToolData().getClawsInventory().getItem(1);
 		}
 
 		if(stack != null && !stack.isEmpty() && stack.getItem() instanceof TieredItem st)

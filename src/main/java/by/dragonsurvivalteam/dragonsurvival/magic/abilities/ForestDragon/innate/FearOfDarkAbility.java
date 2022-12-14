@@ -2,10 +2,11 @@ package by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.innate
 
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.innate.InnateDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -18,8 +19,8 @@ public class FearOfDarkAbility extends InnateDragonAbility{
 	}
 
 	@Override
-	public DragonType getDragonType(){
-		return DragonType.FOREST;
+	public AbstractDragonType getDragonType(){
+		return DragonTypes.FOREST;
 	}
 
 	@Override

@@ -1,7 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.common;
 
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -41,7 +42,7 @@ public abstract class DragonAbility {
 	}
 
 	public abstract String getName();
-	public abstract DragonType getDragonType();
+	public abstract AbstractDragonType getDragonType();
 
 	@OnlyIn(Dist.CLIENT)
 	public abstract ResourceLocation[] getSkillTextures();
@@ -77,13 +78,13 @@ public abstract class DragonAbility {
 		if(!ServerConfig.dragonAbilities){
 			return true;
 		}
-		if(getDragonType() == DragonType.CAVE && !ServerConfig.caveDragonAbilities){
+		if(getDragonType().equals(DragonTypes.CAVE) && !ServerConfig.caveDragonAbilities){
 			return true;
 		}
-		if(getDragonType() == DragonType.SEA && !ServerConfig.seaDragonAbilities){
+		if(getDragonType() .equals(DragonTypes.SEA) && !ServerConfig.seaDragonAbilities){
 			return true;
 		}
-		return getDragonType() == DragonType.FOREST && !ServerConfig.forestDragonAbilities;
+		return getDragonType().equals(DragonTypes.FOREST) && !ServerConfig.forestDragonAbilities;
 	}
 
 	public int getLevel(){

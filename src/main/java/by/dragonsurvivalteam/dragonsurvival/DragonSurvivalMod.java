@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.sounds.SoundRegistry;
 import by.dragonsurvivalteam.dragonsurvival.commands.DragonAltarCommand;
 import by.dragonsurvivalteam.dragonsurvival.commands.DragonCommand;
 import by.dragonsurvivalteam.dragonsurvival.commands.DragonEditorCommand;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.WingObtainmentController;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ClawToolHandler.Event_busHandler;
@@ -35,6 +36,7 @@ public class DragonSurvivalMod{
 
 	public DragonSurvivalMod(){
 		GeckoLib.initialize();
+		DragonTypes.registerTypes();
 
 		ConfigHandler.initConfig();
 		DragonAbilities.initAbilities();

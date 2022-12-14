@@ -39,21 +39,24 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity>{
 	public ResourceLocation getTextureLocation(DragonEntity dragon){
 		if(dragon.player != null || dragon.getPlayer() != null){
 			DragonStateHandler handler = DragonUtils.getHandler(dragon.getPlayer());
-			SkinAgeGroup ageGroup = handler.getSkin().skinPreset.skinAges.get(handler.getLevel());
+			SkinAgeGroup ageGroup = handler.getSkinData().skinPreset.skinAges.get(handler.getLevel());
 
-			if(handler.getSkin().recompileSkin){
+			if(handler.getSkinData().recompileSkin){
 				DragonEditorHandler.generateSkinTextures(dragon);
 			}
 
-			if(handler.getSkin().blankSkin){
-				return new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/blank_skin_" + handler.getType().name().toLowerCase(Locale.ROOT) + ".png");
+			if(handler.getSkinData().blankSkin){
+				return new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/blank_skin_" + handler.getType().getTypeName().toLowerCase(Locale.ROOT) + ".png");
 			}
 
 			if(ageGroup.defaultSkin){
-				return new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/" + handler.getType().name().toLowerCase(Locale.ROOT) + "_" + handler.getLevel().name.toLowerCase(Locale.ROOT) + ".png");
+				if(currentTexture != null){
+					return currentTexture;
+				}
+				return new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/" + handler.getType().getTypeName().toLowerCase(Locale.ROOT) + "_" + handler.getLevel().name.toLowerCase(Locale.ROOT) + ".png");
 			}
 
-			if(handler.getSkin().isCompiled && currentTexture == null){
+			if(handler.getSkinData().isCompiled && currentTexture == null){
 				return new ResourceLocation(DragonSurvivalMod.MODID, "dynamic_normal_" + dragon.getPlayer().getStringUUID());
 			}
 		}

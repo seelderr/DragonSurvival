@@ -15,7 +15,7 @@ public class AdultEditorButton extends Button{
 		super(dragonEditorScreen.width / 2 + 60, dragonEditorScreen.guiTop - 30, 120, 20, new TranslatableComponent("ds.level.adult"), (btn) -> {
 			dragonEditorScreen.level = DragonLevel.ADULT;
 			dragonEditorScreen.dragonRender.zoom = dragonEditorScreen.level.size;
-			dragonEditorScreen.handler.getSkin().compileSkin();
+			dragonEditorScreen.handler.getSkinData().compileSkin();
 			dragonEditorScreen.update();
 		});
 		this.dragonEditorScreen = dragonEditorScreen;

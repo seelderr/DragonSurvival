@@ -5,12 +5,12 @@ import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TextRenderUtil;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.EmoteCap;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.emotes.SyncEmote;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.mojang.blaze3d.platform.InputConstants.Key;
 import com.mojang.blaze3d.platform.InputConstants.Type;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -92,8 +92,8 @@ public class EmoteMenuHandler{
 				public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks){
 					this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
 					DragonStateHandler handler = DragonUtils.getHandler(Minecraft.getInstance().player);
-					this.active = this.visible = (handler.getEmotes().emoteMenuOpen);
-					if(!handler.getEmotes().emoteMenuOpen){
+					this.active = this.visible = (handler.getEmoteData().emoteMenuOpen);
+					if(!handler.getEmoteData().emoteMenuOpen){
 						return;
 					}
 					int color = new Color(0.15F, 0.15F, 0.15F, 0.75F).getRGB();
@@ -119,8 +119,8 @@ public class EmoteMenuHandler{
 				public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks){
 					this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
 					DragonStateHandler handler = DragonUtils.getHandler(Minecraft.getInstance().player);
-					this.active = this.visible = (handler.getEmotes().emoteMenuOpen);
-					if(!handler.getEmotes().emoteMenuOpen){
+					this.active = this.visible = (handler.getEmoteData().emoteMenuOpen);
+					if(!handler.getEmoteData().emoteMenuOpen){
 						return;
 					}
 
@@ -153,8 +153,8 @@ public class EmoteMenuHandler{
 				public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks){
 					this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
 					DragonStateHandler handler = DragonUtils.getHandler(Minecraft.getInstance().player);
-					this.active = this.visible = (handler.getEmotes().emoteMenuOpen);
-					if(!handler.getEmotes().emoteMenuOpen){
+					this.active = this.visible = (handler.getEmoteData().emoteMenuOpen);
+					if(!handler.getEmoteData().emoteMenuOpen){
 						return;
 					}
 
@@ -177,8 +177,8 @@ public class EmoteMenuHandler{
 
 			initGuiEvent.addListener(new Button(startX, startY, width, height, new TextComponent(">"), (btn) -> {
 				DragonStateHandler handler = DragonUtils.getHandler(Minecraft.getInstance().player);
-				handler.getEmotes().emoteMenuOpen = !handler.getEmotes().emoteMenuOpen;
-				NetworkHandler.CHANNEL.sendToServer(new SyncEmote(Minecraft.getInstance().player.getId(), handler.getEmotes()));
+				handler.getEmoteData().emoteMenuOpen = !handler.getEmoteData().emoteMenuOpen;
+				NetworkHandler.CHANNEL.sendToServer(new SyncEmote(Minecraft.getInstance().player.getId(), handler.getEmoteData()));
 				currentlyKeybinding = null;
 			}){
 				@Override
@@ -197,7 +197,7 @@ public class EmoteMenuHandler{
 					stack.translate(x * 3, y * 3, 0);
 					stack.translate(15, (height / 2), 0);
 
-					if(handler.getEmotes().emoteMenuOpen){
+					if(handler.getEmoteData().emoteMenuOpen){
 						RenderSystem.setShaderTexture(0, BUTTON_UP);
 						blit(stack, x, y, 0, 0, 32, 32, 32, 32);
 					}else{
@@ -215,11 +215,11 @@ public class EmoteMenuHandler{
 					DragonStateHandler handler = DragonUtils.getHandler(Minecraft.getInstance().player);
 					Emote emote = emotes.size() > finalI ? emotes.get(finalI) : null;
 
-					if(emote == null || Stream.of(handler.getEmotes().currentEmotes).anyMatch((s) -> s != null && Objects.equals(s.animation, emote.animation))){
+					if(emote == null || Stream.of(handler.getEmoteData().currentEmotes).anyMatch((s) -> s != null && Objects.equals(s.animation, emote.animation))){
 						return;
 					}
 
-					if(emote.blend && Stream.of(handler.getEmotes().currentEmotes).anyMatch((s) -> s != null && s.blend) || !emote.blend && Stream.of(handler.getEmotes().currentEmotes).anyMatch((s) -> s != null && !s.blend)){
+					if(emote.blend && Stream.of(handler.getEmoteData().currentEmotes).anyMatch((s) -> s != null && s.blend) || !emote.blend && Stream.of(handler.getEmoteData().currentEmotes).anyMatch((s) -> s != null && !s.blend)){
 						clearEmotes();
 					}
 
@@ -228,9 +228,9 @@ public class EmoteMenuHandler{
 					@Override
 					public void render(PoseStack stack, int mouseX, int mouseY, float partialTick){
 						DragonStateHandler handler = DragonUtils.getHandler(Minecraft.getInstance().player);
-						this.active = this.visible = handler.getEmotes().emoteMenuOpen;
+						this.active = this.visible = handler.getEmoteData().emoteMenuOpen;
 						this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
-						if(!handler.getEmotes().emoteMenuOpen){
+						if(!handler.getEmoteData().emoteMenuOpen){
 							return;
 						}
 						int color = isHovered && emotes.size() > finalI ? new Color(0.1F, 0.1F, 0.1F, 0.8F).getRGB() : new Color(0.1F, 0.1F, 0.1F, 0.5F).getRGB();
@@ -262,10 +262,10 @@ public class EmoteMenuHandler{
 					@Override
 					public void render(PoseStack stack, int mouseX, int mouseY, float partialTick){
 						DragonStateHandler handler = DragonUtils.getHandler(Minecraft.getInstance().player);
-						this.active = this.visible = handler.getEmotes().emoteMenuOpen && keybinding;
+						this.active = this.visible = handler.getEmoteData().emoteMenuOpen && keybinding;
 						this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
 
-						if(!handler.getEmotes().emoteMenuOpen || !keybinding){
+						if(!handler.getEmoteData().emoteMenuOpen || !keybinding){
 							return;
 						}
 
@@ -279,8 +279,8 @@ public class EmoteMenuHandler{
 							if(Objects.equals(currentlyKeybinding, emote.id)){
 								RenderingUtils.drawRect(stack, x, y, width - 1, height, new Color(0.1F, 0.1F, 0.1F, 0.8F).getRGB());
 								TextRenderUtil.drawCenteredScaledText(stack, x + (width / 2), y + 1, 1f, "...", -1);
-							}else if(handler.getEmotes().emoteKeybinds.containsKey(emote.id)){
-								int id = handler.getEmotes().emoteKeybinds.get(emote.id);
+							}else if(handler.getEmoteData().emoteKeybinds.containsKey(emote.id)){
+								int id = handler.getEmoteData().emoteKeybinds.get(emote.id);
 								if(id != 0){
 									Key input = Type.KEYSYM.getOrCreate(id);
 									TextRenderUtil.drawCenteredScaledText(stack, x + (width / 2), y + 1, 1f, input.getDisplayName().getString(), -1);
@@ -296,8 +296,8 @@ public class EmoteMenuHandler{
 							Emote emote = emotes.size() > finalI ? emotes.get(finalI) : null;
 
 							if(emote != null){
-								handler.getEmotes().emoteKeybinds.put(emote.id, -1);
-								NetworkHandler.CHANNEL.sendToServer(new SyncEmote(Minecraft.getInstance().player.getId(), handler.getEmotes()));
+								handler.getEmoteData().emoteKeybinds.put(emote.id, -1);
+								NetworkHandler.CHANNEL.sendToServer(new SyncEmote(Minecraft.getInstance().player.getId(), handler.getEmoteData()));
 								return true;
 							}
 						}
@@ -311,8 +311,8 @@ public class EmoteMenuHandler{
 
 					if(emote != null){
 						currentlyKeybinding = null;
-						handler.getEmotes().emoteKeybinds.put(emote.id, -1);
-						NetworkHandler.CHANNEL.sendToServer(new SyncEmote(Minecraft.getInstance().player.getId(), handler.getEmotes()));
+						handler.getEmoteData().emoteKeybinds.put(emote.id, -1);
+						NetworkHandler.CHANNEL.sendToServer(new SyncEmote(Minecraft.getInstance().player.getId(), handler.getEmoteData()));
 					}
 				}){
 					@Override
@@ -320,10 +320,10 @@ public class EmoteMenuHandler{
 						Emote emote = emotes.size() > finalI ? emotes.get(finalI) : null;
 
 						DragonStateHandler handler = DragonUtils.getHandler(Minecraft.getInstance().player);
-						this.active = this.visible = handler.getEmotes().emoteMenuOpen && keybinding && emote != null && handler.getEmotes().emoteKeybinds.getOrDefault(emote.id, -1) != -1;
+						this.active = this.visible = handler.getEmoteData().emoteMenuOpen && keybinding && emote != null && handler.getEmoteData().emoteKeybinds.getOrDefault(emote.id, -1) != -1;
 						this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
 
-						if(!handler.getEmotes().emoteMenuOpen || !keybinding || emote == null || handler.getEmotes().emoteKeybinds.getOrDefault(emote.id, -1) == -1){
+						if(!handler.getEmoteData().emoteMenuOpen || !keybinding || emote == null || handler.getEmoteData().emoteKeybinds.getOrDefault(emote.id, -1) == -1){
 							return;
 						}
 
@@ -343,10 +343,10 @@ public class EmoteMenuHandler{
 				@Override
 				public void render(PoseStack stack, int mouseX, int mouseY, float partialTick){
 					DragonStateHandler handler = DragonUtils.getHandler(Minecraft.getInstance().player);
-					this.active = this.visible = handler.getEmotes().emoteMenuOpen;
+					this.active = this.visible = handler.getEmoteData().emoteMenuOpen;
 					this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
 
-					if(!handler.getEmotes().emoteMenuOpen){
+					if(!handler.getEmoteData().emoteMenuOpen){
 						return;
 					}
 
@@ -366,27 +366,27 @@ public class EmoteMenuHandler{
 		}
 
 		DragonStateHandler handler = DragonUtils.getHandler(Minecraft.getInstance().player);
-		handler.getEmotes().currentEmotes = new Emote[EmoteCap.MAX_EMOTES];
-		handler.getEmotes().emoteTicks = new Integer[EmoteCap.MAX_EMOTES];
-		NetworkHandler.CHANNEL.sendToServer(new SyncEmote(Minecraft.getInstance().player.getId(), handler.getEmotes()));
+		handler.getEmoteData().currentEmotes = new Emote[EmoteCap.MAX_EMOTES];
+		handler.getEmoteData().emoteTicks = new Integer[EmoteCap.MAX_EMOTES];
+		NetworkHandler.CHANNEL.sendToServer(new SyncEmote(Minecraft.getInstance().player.getId(), handler.getEmoteData()));
 	}
 
 	public static void addEmote(Emote emote){
 		DragonStateHandler cap = DragonUtils.getHandler(Minecraft.getInstance().player);
 		for(int i = 0; i < EmoteCap.MAX_EMOTES; i++){
-			if(cap.getEmotes().currentEmotes[i] == null){
-				cap.getEmotes().currentEmotes[i] = emote;
+			if(cap.getEmoteData().currentEmotes[i] == null){
+				cap.getEmoteData().currentEmotes[i] = emote;
 				break;
 			}
 		}
 
-		List<Emote> ls1 = Stream.of(cap.getEmotes().currentEmotes).limit(EmoteCap.MAX_EMOTES).toList();
-		List<Integer> ls2 = Stream.of( cap.getEmotes().emoteTicks).limit(EmoteCap.MAX_EMOTES).toList();
+		List<Emote> ls1 = Stream.of(cap.getEmoteData().currentEmotes).limit(EmoteCap.MAX_EMOTES).toList();
+		List<Integer> ls2 = Stream.of( cap.getEmoteData().emoteTicks).limit(EmoteCap.MAX_EMOTES).toList();
 
-		cap.getEmotes().currentEmotes = ls1.toArray(new Emote[0]);
-		cap.getEmotes().emoteTicks = ls2.toArray(new Integer[0]);
+		cap.getEmoteData().currentEmotes = ls1.toArray(new Emote[0]);
+		cap.getEmoteData().emoteTicks = ls2.toArray(new Integer[0]);
 
-		NetworkHandler.CHANNEL.sendToServer(new SyncEmote(Minecraft.getInstance().player.getId(), cap.getEmotes()));
+		NetworkHandler.CHANNEL.sendToServer(new SyncEmote(Minecraft.getInstance().player.getId(), cap.getEmoteData()));
 	}
 
 	public static List<Emote> getEmotes(){
@@ -402,7 +402,7 @@ public class EmoteMenuHandler{
 				if(em.requirements.type != null){
 					boolean hasType = false;
 					for(String t : em.requirements.type){
-						if(t.equalsIgnoreCase(handler.getType().name())){
+						if(t.equalsIgnoreCase(handler.getType().getTypeName())){
 							hasType = true;
 							break;
 						}
@@ -486,25 +486,25 @@ public class EmoteMenuHandler{
 				DragonStateHandler handler = DragonUtils.getHandler(Minecraft.getInstance().player);
 				if(currentlyKeybinding != null){
 					if(pKeyCode == 256){
-						handler.getEmotes().emoteKeybinds.remove(currentlyKeybinding);
+						handler.getEmoteData().emoteKeybinds.remove(currentlyKeybinding);
 					}else{
-						handler.getEmotes().emoteKeybinds.put(currentlyKeybinding, keyInputEvent.getKey());
+						handler.getEmoteData().emoteKeybinds.put(currentlyKeybinding, keyInputEvent.getKey());
 					}
-					NetworkHandler.CHANNEL.sendToServer(new SyncEmote(Minecraft.getInstance().player.getId(), handler.getEmotes()));
+					NetworkHandler.CHANNEL.sendToServer(new SyncEmote(Minecraft.getInstance().player.getId(), handler.getEmoteData()));
 					currentlyKeybinding = null;
 				}
 			}else{
 				DragonStateHandler handler = DragonUtils.getHandler(Minecraft.getInstance().player);
-				if(handler.getEmotes().emoteKeybinds.contains(pKeyCode)){
-					Map.Entry<String, Integer> entry = handler.getEmotes().emoteKeybinds.entrySet().stream().filter((s) -> s.getValue() == pKeyCode).findFirst().orElse(null);
+				if(handler.getEmoteData().emoteKeybinds.contains(pKeyCode)){
+					Map.Entry<String, Integer> entry = handler.getEmoteData().emoteKeybinds.entrySet().stream().filter((s) -> s.getValue() == pKeyCode).findFirst().orElse(null);
 					if(entry != null){
 						Emote emote = EmoteRegistry.EMOTES.stream().filter((s) -> Objects.equals(s.id, entry.getKey())).findFirst().orElse(null);
 
-						if(emote == null || Stream.of(handler.getEmotes().currentEmotes).anyMatch((s) -> s != null && Objects.equals(s.animation, emote.animation))){
+						if(emote == null || Stream.of(handler.getEmoteData().currentEmotes).anyMatch((s) -> s != null && Objects.equals(s.animation, emote.animation))){
 							return;
 						}
 
-						if(emote.blend && Stream.of(handler.getEmotes().currentEmotes).anyMatch((s) -> s != null && s.blend) || !emote.blend && Stream.of(handler.getEmotes().currentEmotes).anyMatch((s) -> s != null && !s.blend)){
+						if(emote.blend && Stream.of(handler.getEmoteData().currentEmotes).anyMatch((s) -> s != null && s.blend) || !emote.blend && Stream.of(handler.getEmoteData().currentEmotes).anyMatch((s) -> s != null && !s.blend)){
 							clearEmotes();
 						}
 

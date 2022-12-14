@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.network.emotes;
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.EmoteCap;
 import by.dragonsurvivalteam.dragonsurvival.network.ISidedMessage;
 import net.minecraft.nbt.CompoundTag;
@@ -57,7 +57,7 @@ public class SyncEmote extends ISidedMessage<SyncEmote>{
 	@Override
 	public void runServer(SyncEmote message, Supplier<NetworkEvent.Context> supplier, ServerPlayer sender){
 		DragonStateProvider.getCap(sender).ifPresent(dragonStateHandler -> {
-			dragonStateHandler.getEmotes().readNBT(message.nbt);
+			dragonStateHandler.getEmoteData().readNBT(message.nbt);
 		});
 	}
 
@@ -65,7 +65,7 @@ public class SyncEmote extends ISidedMessage<SyncEmote>{
 	@Override
 	public void runClient(SyncEmote message, Supplier<NetworkEvent.Context> supplier, Player targetPlayer){
 		DragonStateProvider.getCap(targetPlayer).ifPresent(dragonStateHandler -> {
-			dragonStateHandler.getEmotes().readNBT(message.nbt);
+			dragonStateHandler.getEmoteData().readNBT(message.nbt);
 		});
 	}
 }

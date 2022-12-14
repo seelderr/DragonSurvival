@@ -13,7 +13,6 @@ import by.dragonsurvivalteam.dragonsurvival.client.models.creatures.PrinceModel;
 import by.dragonsurvivalteam.dragonsurvival.client.models.creatures.PrincessHorseModel;
 import by.dragonsurvivalteam.dragonsurvival.client.models.projectiles.FireballModel;
 import by.dragonsurvivalteam.dragonsurvival.client.models.projectiles.LightningBallModel;
-import by.dragonsurvivalteam.dragonsurvival.client.models.projectiles.StormBreathEffectModel;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.BeaconParticle;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.DSParticles;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaSweepParticle;
@@ -21,9 +20,11 @@ import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.client.render.blocks.DragonBeaconRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.blocks.HelmetEntityRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.entity.creatures.*;
-import by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon.DragonHitboxRender;
 import by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon.DragonRenderer;
-import by.dragonsurvivalteam.dragonsurvival.client.render.entity.projectiles.*;
+import by.dragonsurvivalteam.dragonsurvival.client.render.entity.projectiles.BallLightningRenderer;
+import by.dragonsurvivalteam.dragonsurvival.client.render.entity.projectiles.BolasEntityRenderer;
+import by.dragonsurvivalteam.dragonsurvival.client.render.entity.projectiles.DragonSpikeRenderer;
+import by.dragonsurvivalteam.dragonsurvival.client.render.entity.projectiles.FireBallRenderer;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSContainers;
@@ -116,7 +117,6 @@ public class ClientModEvents{
 		//EntityRenderers.register(DSEntities.MAGICAL_BEAST, MagicalPredatorRenderer::new);
 
 		EntityRenderers.register(DSEntities.BOLAS_ENTITY, BolasEntityRenderer::new);
-		EntityRenderers.register(DSEntities.DRAGON_HITBOX, DragonHitboxRender::new);
 
 		EntityRenderers.register(DSEntities.PRINCESS, PrincessRenderer::new);
 		EntityRenderers.register(DSEntities.HUNTER_HOUND, HunterHoundRenderer::new);
@@ -135,7 +135,6 @@ public class ClientModEvents{
 		//Gecko renderers
 		EntityRenderers.register(DSEntities.BALL_LIGHTNING, manager -> new BallLightningRenderer(manager, new LightningBallModel()));
 		EntityRenderers.register(DSEntities.FIREBALL, manager -> new FireBallRenderer(manager, new FireballModel()));
-		EntityRenderers.register(DSEntities.STORM_BREATH_EFFECT, manager -> new StormBreathRender(manager, new StormBreathEffectModel()));
 
 		EntityRenderers.register(DSEntities.DRAGON, manager -> new DragonRenderer(manager, ClientDragonRender.dragonModel));
 		EntityRenderers.register(DSEntities.DRAGON_ARMOR, manager -> new DragonRenderer(manager, ClientDragonRender.dragonArmorModel));

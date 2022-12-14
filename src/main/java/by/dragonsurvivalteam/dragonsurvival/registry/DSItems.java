@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.registry;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.items.ChargedCoalItem;
 import by.dragonsurvivalteam.dragonsurvival.common.items.DragonTreatItem;
 import by.dragonsurvivalteam.dragonsurvival.common.items.SpinGrantItem;
@@ -9,7 +10,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.items.food.ChargedSoupItem;
 import by.dragonsurvivalteam.dragonsurvival.common.items.food.CharredFoodItem;
 import by.dragonsurvivalteam.dragonsurvival.common.items.growth.StarBoneItem;
 import by.dragonsurvivalteam.dragonsurvival.common.items.growth.StarHeartItem;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.Item;
@@ -68,9 +68,9 @@ public class DSItems{
 
 		chargedSoup = registerItem(registry, new ChargedSoupItem(new Item.Properties().tab(DragonSurvivalMod.items)), "charged_soup");
 
-		seaDragonTreat = registerItem(registry, new DragonTreatItem(DragonType.SEA, new Item.Properties().tab(DragonSurvivalMod.items)), "sea_dragon_treat");
-		caveDragonTreat = registerItem(registry, new DragonTreatItem(DragonType.CAVE, new Item.Properties().tab(DragonSurvivalMod.items)), "cave_dragon_treat");
-		forestDragonTreat = registerItem(registry, new DragonTreatItem(DragonType.FOREST, new Item.Properties().tab(DragonSurvivalMod.items)), "forest_dragon_treat");
+		seaDragonTreat = registerItem(registry, new DragonTreatItem(DragonTypes.SEA, new Item.Properties().tab(DragonSurvivalMod.items)), "sea_dragon_treat");
+		caveDragonTreat = registerItem(registry, new DragonTreatItem(DragonTypes.CAVE, new Item.Properties().tab(DragonSurvivalMod.items)), "cave_dragon_treat");
+		forestDragonTreat = registerItem(registry, new DragonTreatItem(DragonTypes.FOREST, new Item.Properties().tab(DragonSurvivalMod.items)), "forest_dragon_treat");
 
 
 		huntingNet = registerItem(registry, new Item(new Item.Properties()), "dragon_hunting_mesh");

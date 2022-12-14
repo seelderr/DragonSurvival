@@ -10,9 +10,9 @@ public enum DragonLevel{
 	YOUNG(20, 1.6f, "young"),
 	ADULT(30, 2.1f, "adult");
 
-	public int size;
-	public float jumpHeight;
-	public String name;
+	public final int size;
+	public final float jumpHeight;
+	public final String name;
 
 	DragonLevel(int size, float jumpHeight, String name_){
 		this.size = size;

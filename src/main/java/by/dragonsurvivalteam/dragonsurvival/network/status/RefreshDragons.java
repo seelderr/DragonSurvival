@@ -1,9 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.network.status;
 
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.FriendlyByteBuf;

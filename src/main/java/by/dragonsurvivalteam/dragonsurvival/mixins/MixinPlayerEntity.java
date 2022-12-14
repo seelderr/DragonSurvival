@@ -1,13 +1,13 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ClawToolHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
@@ -81,8 +81,8 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 
 		if(!isDeadOrDying() && !isSleeping()){
 			if(!((Player)(LivingEntity)this).isCreative()){
-				if(cap.getMagic().getCurrentlyCasting() != null){
-					if(cap.getMagic().getCurrentlyCasting().requiresStationaryCasting()){
+				if(cap.getMagicData().getCurrentlyCasting() != null){
+					if(cap.getMagicData().getCurrentlyCasting().requiresStationaryCasting()){
 						if(!ServerConfig.canMoveWhileCasting){
 							ci.setReturnValue(true);
 						}
@@ -90,7 +90,7 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 				}
 			}
 
-			if(Arrays.stream(cap.getEmotes().currentEmotes).noneMatch(Objects::nonNull)){
+			if(Arrays.stream(cap.getEmoteData().currentEmotes).noneMatch(Objects::nonNull)){
 				if(!ServerConfig.canMoveInEmote){
 					ci.setReturnValue(true);
 				}
@@ -104,7 +104,7 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 		DragonStateHandler cap = DragonUtils.getHandler(entity);
 
 		if(!(mainStack.getItem() instanceof TieredItem) && cap != null){
-			ItemStack sword = cap.getClawInventory().getClawsInventory().getItem(0);
+			ItemStack sword = cap.getClawToolData().getClawsInventory().getItem(0);
 
 			if(!sword.isEmpty()){
 				return sword;
@@ -169,7 +169,7 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 			double d01 = this.getX();
 			double d11 = this.getY();
 			double d21 = this.getZ();
-			if(DragonStateProvider.getCap(this).isPresent() && ConfigHandler.SERVER.bonuses && ConfigHandler.SERVER.caveLavaSwimming && DragonUtils.getDragonType(this) == DragonType.CAVE && DragonSizeHandler.getOverridePose(this) == Pose.SWIMMING || this.isSwimming() && !this.isPassenger()){
+			if(DragonStateProvider.getCap(this).isPresent() && ConfigHandler.SERVER.bonuses && ConfigHandler.SERVER.caveLavaSwimming && DragonUtils.getDragonType(this).equals(DragonTypes.CAVE) && DragonSizeHandler.getOverridePose(this) == Pose.SWIMMING || this.isSwimming() && !this.isPassenger()){
 				double d3 = this.getLookAngle().y;
 				double d4 = d3 < -0.2D ? 0.185D : 0.06D;
 				if(d3 <= 0.0D || this.jumping || !this.level.getBlockState(new BlockPos(this.getX(), this.getY() + 1.0D - 0.1D, this.getZ())).getFluidState().isEmpty()){
@@ -193,7 +193,7 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 
 					FluidState fluidstate = this.level.getFluidState(this.blockPosition());
 					if(this.isInLava() && this.isAffectedByFluids() && !this.canStandOnFluid(fluidstate)
-					   && ServerConfig.bonuses && ServerConfig.caveLavaSwimming && DragonUtils.getDragonType(this) == DragonType.CAVE){
+					   && ServerConfig.bonuses && ServerConfig.caveLavaSwimming && DragonUtils.getDragonType(this).equals(DragonTypes.CAVE)){
 						double d8 = this.getY();
 						float f5 = this.isSprinting() ? 0.9F : this.getWaterSlowDown();
 						float f6 = 0.05F;

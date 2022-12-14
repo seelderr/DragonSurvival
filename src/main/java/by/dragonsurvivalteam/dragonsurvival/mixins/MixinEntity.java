@@ -1,10 +1,10 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins;
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.mojang.math.Vector3f;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
@@ -68,7 +68,7 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
 	@Inject( at = @At( value = "HEAD" ), method = "Lnet/minecraft/world/entity/Entity;displayFireAnimation()Z", cancellable = true )
 	private void hideCaveDragonFireAnimation(CallbackInfoReturnable<Boolean> ci){
 		DragonStateProvider.getCap((Entity)(Object)this).ifPresent(dragonStateHandler -> {
-			if(dragonStateHandler.getType() == DragonType.CAVE){
+			if(dragonStateHandler.isDragon() && dragonStateHandler.getType().equals(DragonTypes.CAVE)){
 				ci.setReturnValue(false);
 			}
 		});
@@ -96,7 +96,7 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
 	public void canRide(Entity entity, CallbackInfoReturnable<Boolean> ci){
 		if(ci.getReturnValue() && DragonUtils.isDragon((Entity)(Object)this) && !DragonUtils.isDragon(entity)){
 			if(ServerConfig.ridingBlacklist){
-				ci.setReturnValue(ServerConfig.allowedVehicles.contains(entity.getType()));
+				ci.setReturnValue(ServerConfig.allowedVehicles.contains(entity.getType().toString()));
 			}
 		}
 	}

@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.network.magic;
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.MagicCap;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
@@ -58,8 +58,8 @@ public class SyncMagicCap implements IMessage<SyncMagicCap>{
 			ServerPlayer player = supplier.get().getSender();
 
 			DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
-				dragonStateHandler.getMagic().readNBT(message.nbt);
-				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncMagicCap(player.getId(), dragonStateHandler.getMagic()));
+				dragonStateHandler.getMagicData().readNBT(message.nbt);
+				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncMagicCap(player.getId(), dragonStateHandler.getMagicData()));
 			});
 		}
 	}
@@ -74,7 +74,7 @@ public class SyncMagicCap implements IMessage<SyncMagicCap>{
 				Entity entity = world.getEntity(message.playerId);
 				if(entity instanceof Player){
 					DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
-						dragonStateHandler.getMagic().readNBT(message.nbt);
+						dragonStateHandler.getMagicData().readNBT(message.nbt);
 					});
 				}
 			}

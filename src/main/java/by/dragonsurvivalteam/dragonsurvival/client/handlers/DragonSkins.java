@@ -3,9 +3,9 @@ package by.dragonsurvivalteam.dragonsurvival.client.handlers;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.google.gson.Gson;
 import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.Minecraft;
@@ -15,7 +15,10 @@ import net.minecraft.world.entity.player.Player;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -82,7 +85,7 @@ public class DragonSkins{
 	}
 
 
-	public static ResourceLocation getPlayerSkin(Player player, DragonType type, DragonLevel dragonStage){
+	public static ResourceLocation getPlayerSkin(Player player, AbstractDragonType type, DragonLevel dragonStage){
 		ResourceLocation texture = null;
 		String playerKey = player.getGameProfile().getName() + "_" + dragonStage.name;
 
@@ -109,9 +112,9 @@ public class DragonSkins{
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 
 		return switch(level){
-			case NEWBORN -> handler.getSkin().renderNewborn;
-			case YOUNG -> handler.getSkin().renderYoung;
-			case ADULT -> handler.getSkin().renderAdult;
+			case NEWBORN -> handler.getSkinData().renderNewborn;
+			case YOUNG -> handler.getSkinData().renderYoung;
+			case ADULT -> handler.getSkinData().renderAdult;
 		};
 	}
 
@@ -142,7 +145,7 @@ public class DragonSkins{
 		return resourceLocation;
 	}
 
-	public static ResourceLocation getGlowTexture(Player player, DragonType type, DragonLevel dragonStage){
+	public static ResourceLocation getGlowTexture(Player player, AbstractDragonType type, DragonLevel dragonStage){
 		ResourceLocation texture = null;
 		String playerKey = player.getGameProfile().getName() + "_" + dragonStage.name;
 		boolean renderStage = renderStage(player, dragonStage);

@@ -2,10 +2,10 @@ package by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles;
 
 
 import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaDragon.LargeLightningParticleData;
-import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.BallLightningAbility;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
+import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -69,12 +69,10 @@ public class BallLightningEntity extends DragonBallEntity{
 		entities.removeIf((e) -> !(e instanceof LivingEntity));
 
 		for(Entity ent : entities){
-
 			if(!this.level.isClientSide){
-				ent.hurt(DamageSource.LIGHTNING_BOLT, BallLightningAbility.getDamage(getSkillLevel()));
+				Functions.attackTargets(getOwner(), ent1 -> ent1.hurt(DamageSource.LIGHTNING_BOLT, BallLightningAbility.getDamage(getSkillLevel())), ent);
 
-				if(ent instanceof LivingEntity){
-					LivingEntity livingEntity = (LivingEntity)ent;
+				if(ent instanceof LivingEntity livingEntity){
 					if(livingEntity.level.random.nextInt(100) < 40){
 						if(!livingEntity.level.isClientSide){
 							livingEntity.addEffect(new MobEffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(10), 0, false, true));

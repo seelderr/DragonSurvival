@@ -1,6 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.commands;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.RequestClientData;
@@ -9,7 +11,6 @@ import by.dragonsurvivalteam.dragonsurvival.network.player.SyncSize;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SynchronizeDragonCap;
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncAltarCooldown;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.brigadier.CommandDispatcher;
@@ -24,6 +25,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.selector.EntitySelector;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -45,9 +47,12 @@ public class DragonCommand{
 
 		ArgumentCommandNode<CommandSourceStack, String> dragonType = argument("dragon_type", StringArgumentType.string()).suggests((context, builder) -> {
 			SuggestionsBuilder builder1 = null;
-			for(DragonType value : DragonType.values()){
-				builder1 = builder1 == null ? builder.suggest(value.name().toLowerCase()) : builder1.suggest(value.name().toLowerCase());
+			for(String value : DragonTypes.getTypes()){
+				String val = value.toLowerCase();
+				builder1 = builder1 == null ? builder.suggest(val) : builder1.suggest(val);
 			}
+			builder1 = builder1 == null ? builder.suggest("human") : builder1.suggest("human");
+
 
 			return builder1.buildFuture();
 		}).executes(context -> {
@@ -56,7 +61,7 @@ public class DragonCommand{
 			return runCommand(type, 1, false, serverPlayer);
 		}).build();
 
-		ArgumentCommandNode<CommandSourceStack, Integer> dragonStage = argument("dragon_stage", IntegerArgumentType.integer(1, 3)).suggests((context, builder) -> builder.suggest(1).suggest(2).suggest(3).buildFuture()).executes(context -> {
+		ArgumentCommandNode<CommandSourceStack, Integer> dragonStage = argument("dragon_stage", IntegerArgumentType.integer(1, 4)).suggests((context, builder) -> builder.suggest(1).suggest(2).suggest(3).suggest(4).buildFuture()).executes(context -> {
 			String type = context.getArgument("dragon_type", String.class);
 			int stage = context.getArgument("dragon_stage", Integer.TYPE);
 			ServerPlayer serverPlayer = context.getSource().getPlayerOrException();
@@ -90,24 +95,25 @@ public class DragonCommand{
 
 	private static int runCommand(String type, int stage, boolean wings, ServerPlayer player){
 		DragonStateHandler cap = DragonUtils.getHandler(player);
-		DragonType dragonType1 = type.equalsIgnoreCase("human") ? DragonType.NONE : DragonType.valueOf(type.toUpperCase());
+		AbstractDragonType dragonType1 = type.equalsIgnoreCase("human") ? null : DragonTypes.getStatic(type);
 
-		if(dragonType1 == DragonType.NONE && cap.getType() != DragonType.NONE){
+		if(dragonType1 == null && cap.getType() != null){
 			reInsertClawTools(player, cap);
 		}
 
 		cap.setType(dragonType1);
-		DragonLevel dragonLevel = DragonLevel.values()[stage - 1];
 		cap.setHasWings(wings);
 		cap.getMovementData().spinLearned = wings;
-		cap.setSize(dragonLevel.size, player);
+		DragonLevel dragonLevel = DragonLevel.values()[Mth.clamp(stage - 1, 0, DragonLevel.values().length-1)];
+		float size = stage == 4 ? 40f : dragonLevel.size;
+		cap.setSize(size, player);
 		cap.setPassengerId(0);
 		cap.growing = true;
 
 		NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player),new SyncAltarCooldown(player.getId(), Functions.secondsToTicks(ServerConfig.altarUsageCooldown)));
-		NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player),new SynchronizeDragonCap(player.getId(), cap.isHiding(), cap.getType(), cap.getSize(), cap.hasWings(), ServerConfig.caveLavaSwimmingTicks, 0));
+		NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player),new SynchronizeDragonCap(player.getId(), cap.isHiding(), cap.getType(), cap.getSize(), cap.hasWings(), 0));
 		NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player),new SyncSpinStatus(player.getId(), cap.getMovementData().spinAttack, cap.getMovementData().spinCooldown, cap.getMovementData().spinLearned));
-		NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncSize(player.getId(), dragonLevel.size));
+		NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncSize(player.getId(), size));
 		NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)player), new RequestClientData(cap.getType(), cap.getLevel()));
 		player.refreshDimensions();
 		return 1;
@@ -115,7 +121,7 @@ public class DragonCommand{
 
 	public static void reInsertClawTools(Player player, DragonStateHandler dragonStateHandler){
 		for(int i = 0; i < 4; i++){
-			ItemStack stack = dragonStateHandler.getClawInventory().getClawsInventory().getItem(i);
+			ItemStack stack = dragonStateHandler.getClawToolData().getClawsInventory().getItem(i);
 
 			if(player instanceof ServerPlayer serverPlayer){
 				if(!serverPlayer.addItem(stack)){
@@ -124,6 +130,6 @@ public class DragonCommand{
 			}
 		}
 
-		dragonStateHandler.getClawInventory().getClawsInventory().clearContent();
+		dragonStateHandler.getClawToolData().getClawsInventory().clearContent();
 	}
 }

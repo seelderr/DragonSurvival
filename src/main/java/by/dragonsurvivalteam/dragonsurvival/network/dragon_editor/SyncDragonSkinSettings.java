@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.network.dragon_editor;
 
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
@@ -68,9 +68,9 @@ public class SyncDragonSkinSettings implements IMessage<SyncDragonSkinSettings>{
 
 			if(entity != null){
 				DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
-					dragonStateHandler.getSkin().renderNewborn = message.newborn;
-					dragonStateHandler.getSkin().renderYoung = message.young;
-					dragonStateHandler.getSkin().renderAdult = message.adult;
+					dragonStateHandler.getSkinData().renderNewborn = message.newborn;
+					dragonStateHandler.getSkinData().renderYoung = message.young;
+					dragonStateHandler.getSkinData().renderAdult = message.adult;
 				});
 
 				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new SyncDragonSkinSettings(entity.getId(), message.newborn, message.young, message.adult));
@@ -90,9 +90,9 @@ public class SyncDragonSkinSettings implements IMessage<SyncDragonSkinSettings>{
 				if(entity instanceof Player){
 
 					DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
-						dragonStateHandler.getSkin().renderNewborn = message.newborn;
-						dragonStateHandler.getSkin().renderYoung = message.young;
-						dragonStateHandler.getSkin().renderAdult = message.adult;
+						dragonStateHandler.getSkinData().renderNewborn = message.newborn;
+						dragonStateHandler.getSkinData().renderYoung = message.young;
+						dragonStateHandler.getSkinData().renderAdult = message.adult;
 
 
 						if(thisPlayer == entity){

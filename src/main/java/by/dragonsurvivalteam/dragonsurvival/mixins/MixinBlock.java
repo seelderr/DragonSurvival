@@ -1,8 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
@@ -30,7 +30,7 @@ public class MixinBlock{
 			return;
 		}
 		DragonStateHandler handler = DragonUtils.getHandler(entity);
-		if(handler.getType() != DragonType.CAVE){
+		if(handler.getType() != DragonTypes.CAVE){
 			return;
 		}
 

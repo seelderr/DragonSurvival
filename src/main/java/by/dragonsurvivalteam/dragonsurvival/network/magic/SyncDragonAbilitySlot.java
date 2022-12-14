@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.network.magic;
 
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
@@ -47,9 +47,9 @@ public class SyncDragonAbilitySlot implements IMessage<SyncDragonAbilitySlot>{
 	@Override
 	public void handle(SyncDragonAbilitySlot message, Supplier<NetworkEvent.Context> supplier){
 		DragonStateProvider.getCap(supplier.get().getSender()).ifPresent(cap -> {
-			cap.getMagic().getAbilityFromSlot(cap.getMagic().getSelectedAbilitySlot()).onKeyReleased(supplier.get().getSender());
-			cap.getMagic().setSelectedAbilitySlot(message.selectedSlot);
-			cap.getMagic().setRenderAbilities(message.displayHotbar);
+			cap.getMagicData().getAbilityFromSlot(cap.getMagicData().getSelectedAbilitySlot()).onKeyReleased(supplier.get().getSender());
+			cap.getMagicData().setSelectedAbilitySlot(message.selectedSlot);
+			cap.getMagicData().setRenderAbilities(message.displayHotbar);
 		});
 	}
 }

@@ -1,8 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.api;
 
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
@@ -23,7 +23,7 @@ public class DragonFood{
 		return item.getFoodProperties();
 	}
 
-	public static DragonType getDragonType(Entity entity){
+	public static AbstractDragonType getDragonType(Entity entity){
 		return DragonUtils.getDragonType(entity);
 	}
 }

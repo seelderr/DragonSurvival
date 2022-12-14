@@ -3,14 +3,15 @@ package by.dragonsurvivalteam.dragonsurvival.client.handlers;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.AbilityScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.utils.TooltipRender;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.SkillProgressButton;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -62,13 +63,13 @@ public class ToolTipHandler{
 		if(tooltipEvent.getPlayer() != null){
 			Item item = tooltipEvent.getItemStack().getItem();
 			List<Component> toolTip = tooltipEvent.getToolTip();
-			if(DragonFoodHandler.getSafeEdibleFoods(DragonType.CAVE).contains(item)){
+			if(DragonFoodHandler.getSafeEdibleFoods(DragonTypes.CAVE).contains(item)){
 				toolTip.add(new TranslatableComponent("ds.cave.dragon.food"));
 			}
-			if(DragonFoodHandler.getSafeEdibleFoods(DragonType.FOREST).contains(item)){
+			if(DragonFoodHandler.getSafeEdibleFoods(DragonTypes.FOREST).contains(item)){
 				toolTip.add(new TranslatableComponent("ds.forest.dragon.food"));
 			}
-			if(DragonFoodHandler.getSafeEdibleFoods(DragonType.SEA).contains(item)){
+			if(DragonFoodHandler.getSafeEdibleFoods(DragonTypes.SEA).contains(item)){
 				toolTip.add(new TranslatableComponent("ds.sea.dragon.food"));
 			}
 		}
@@ -262,9 +263,9 @@ public class ToolTipHandler{
 
 		ItemStack stack = event.getItemStack();
 
-		boolean isSeaFood = dragonFoodTooltips && !stack.isEmpty() && DragonFoodHandler.getSafeEdibleFoods(DragonType.SEA).contains(stack.getItem());
-		boolean isForestFood = dragonFoodTooltips && !stack.isEmpty() && DragonFoodHandler.getSafeEdibleFoods(DragonType.FOREST).contains(stack.getItem());
-		boolean isCaveFood = dragonFoodTooltips && !stack.isEmpty() && DragonFoodHandler.getSafeEdibleFoods(DragonType.CAVE).contains(stack.getItem());
+		boolean isSeaFood = dragonFoodTooltips && !stack.isEmpty() && DragonFoodHandler.getSafeEdibleFoods(DragonTypes.SEA).contains(stack.getItem());
+		boolean isForestFood = dragonFoodTooltips && !stack.isEmpty() && DragonFoodHandler.getSafeEdibleFoods(DragonTypes.FOREST).contains(stack.getItem());
+		boolean isCaveFood = dragonFoodTooltips && !stack.isEmpty() && DragonFoodHandler.getSafeEdibleFoods(DragonTypes.CAVE).contains(stack.getItem());
 		int foodCount = (isSeaFood ? 1 : 0) + (isForestFood ? 1 : 0) + (isCaveFood ? 1 : 0);
 
 		boolean isFood = foodCount == 1;
@@ -287,19 +288,21 @@ public class ToolTipHandler{
 			event.setBorderStart(top);
 			event.setBorderEnd(bottom);
 		}else if(screen || isFood){
-			DragonType type = DragonStateProvider.getCap(Minecraft.getInstance().player).map((cap) -> cap.getType()).get();
+			AbstractDragonType type = DragonUtils.getDragonType(Minecraft.getInstance().player);
 			Color topColor = null;
 			Color bottomColor = null;
 
-			if(type == DragonType.SEA && button || isSeaFood){
-				topColor = new Color(93, 201, 255);
-				bottomColor = new Color(49, 109, 144);
-			}else if(type == DragonType.FOREST && button || isForestFood){
-				topColor = new Color(0, 255, 148);
-				bottomColor = new Color(4, 130, 82);
-			}else if(type == DragonType.CAVE && button || isCaveFood){
-				topColor = new Color(255, 118, 133);
-				bottomColor = new Color(139, 66, 74);
+			if(type != null){
+				if(type.equals(DragonTypes.SEA) && button || isSeaFood){
+					topColor = new Color(93, 201, 255);
+					bottomColor = new Color(49, 109, 144);
+				}else if(type.equals(DragonTypes.FOREST) && button || isForestFood){
+					topColor = new Color(0, 255, 148);
+					bottomColor = new Color(4, 130, 82);
+				}else if(type.equals(DragonTypes.CAVE) && button || isCaveFood){
+					topColor = new Color(255, 118, 133);
+					bottomColor = new Color(139, 66, 74);
+				}
 			}
 
 			if(topColor != null){

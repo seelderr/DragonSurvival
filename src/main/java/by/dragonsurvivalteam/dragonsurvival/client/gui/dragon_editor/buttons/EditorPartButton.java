@@ -35,10 +35,10 @@ public class EditorPartButton extends ExtendedButton{
 		this.source = source;
 		this.screen = screen;
 		this.layer = layer;
-		message = new TranslatableComponent("ds.skin_part." + screen.type.name().toLowerCase(Locale.ROOT) + "." + value.toLowerCase(Locale.ROOT));
+		message = new TranslatableComponent("ds.skin_part." + screen.type.getTypeName().toLowerCase(Locale.ROOT) + "." + value.toLowerCase(Locale.ROOT));
 
 		if(!value.equals("None")){
-			texture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/editor_icons/" + screen.type.name().toLowerCase(Locale.ROOT) + "/" + layer.name.toLowerCase(Locale.ROOT) + "/" + value.toLowerCase(Locale.ROOT) + ".png");
+			texture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/editor_icons/" + screen.type.getTypeName().toLowerCase(Locale.ROOT) + "/" + layer.name.toLowerCase(Locale.ROOT) + "/" + value.toLowerCase(Locale.ROOT) + ".png");
 		}
 	}
 

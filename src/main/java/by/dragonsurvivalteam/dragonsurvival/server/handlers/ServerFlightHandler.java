@@ -1,20 +1,17 @@
 package by.dragonsurvivalteam.dragonsurvival.server.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientFlightHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
-import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.hitbox.DragonHitBox;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.hitbox.DragonHitboxPart;
-import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonHitboxHandler;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncFlyingStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
+import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.Mth;
@@ -36,8 +33,6 @@ import net.minecraftforge.network.PacketDistributor;
 
 import java.util.List;
 
-import static by.dragonsurvivalteam.dragonsurvival.util.DragonType.*;
-
 /**
  * Used in pair with {@link ClientFlightHandler}
  */
@@ -46,6 +41,49 @@ import static by.dragonsurvivalteam.dragonsurvival.util.DragonType.*;
 public class ServerFlightHandler{
 
 	public static final int spinDuration = (int)Math.round(0.76 * 20);
+
+	@ConfigRange( min = 0.1, max = 1 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "wings", key = "maxFlightSpeed", comment = "Maximum acceleration fly speed up and down. Take into account the chunk load speed. A speed of 0.3 is optimal." )
+	public static Double maxFlightSpeed = 0.3;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "wings", key = "startWithWings", comment = "Whether dragons born with wings." )
+	public static Boolean startWithWings = true;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "wings", key = "enderDragonGrantsSpin", comment = "Whether you should be able to obtain the spin ability from the ender dragon." )
+	public static Boolean enderDragonGrantsSpin = true;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "wings", key = "allowFlyingWhenTotallyHungry", comment = "Whether dragons can fly when totally hungry. You can't open your wings if you're hungry." )
+	public static Boolean allowFlyingWithoutHunger = false;
+
+	@ConfigRange( min = 0, max = 20 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "wings", key = "flightHungerThreshold", comment = "If the player's hunger is below this parameter, he can't open his wings." )
+	public static Integer flightHungerThreshold = 6;
+
+	@ConfigRange( min = 0, max = 20 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "wings", key = "flightHungerThreshold", comment = "If the player's hunger is less then or equal to this parameter, the wings will be folded even during flight." )
+	public static Integer foldWingsThreshold = 0;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "wings", key = "flyingUsesHunger", comment = "Whether you use up hunger while flying." )
+	public static Boolean flyingUsesHunger = true;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "wings", key = "enableFlightFallDamage", comment = "Whether fall damage in flight is included. If true dragon will take damage from the fall." )
+	public static Boolean enableFlightFallDamage = true;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "wings", key = "lethalFallDamage", comment = "Whether fall damage from flight is lethal, otherwise it will leave you at half a heart" )
+	public static Boolean lethalFlight = false;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "wings", key = "foldWingsOnLand", comment = "Whether your wings will fold automatically when landing. Has protection against accidental triggering, so the wings do not always close. If False you must close the wings manually." )
+	public static Boolean foldWingsOnLand = false;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "wings", key = "alternateFlight", comment = "Whether to use flight similar to creative rather then gliding." )
+	public static Boolean creativeFlight = false;
+
+	@ConfigRange( min = 0, max = 100000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "wings", key = "flightSpinCooldown", comment = "The cooldown in seconds in between uses of the spin attack in flight" )
+	public static Integer flightSpinCooldown = 5;
+
+	@ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "stableHover", comment = "Should hovering be completely stable similar to creative flight?")
+	public static boolean stableHover = false;
 
 	/**
 	 * Sets the fall damage based on flight speed and dragon's size
@@ -57,7 +95,7 @@ public class ServerFlightHandler{
 
 		DragonStateProvider.getCap(livingEntity).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon() && dragonStateHandler.hasWings()){
-				if(!ServerConfig.enableFlightFallDamage){
+				if(!enableFlightFallDamage){
 					event.setCanceled(true);
 				}
 
@@ -76,14 +114,14 @@ public class ServerFlightHandler{
 				float f = effectinstance == null ? 0.0F : (float)(effectinstance.getAmplifier() + 1);
 
 				double damage = livingEntity.getDeltaMovement().lengthSqr() * (dragonStateHandler.getSize() / 20);
-				damage = Mth.clamp(damage, 0, livingEntity.getHealth() - (ServerConfig.lethalFlight ? 0 : 1));
+				damage = Mth.clamp(damage, 0, livingEntity.getHealth() - (lethalFlight ? 0 : 1));
 
 				if(!livingEntity.level.isClientSide && dragonStateHandler.isWingsSpread()){
 					event.setDistance((float)Math.floor(((damage + 3.0F + f) / event.getDamageMultiplier())));
 				}
 
 				if(!livingEntity.level.isClientSide){
-					if(ServerConfig.foldWingsOnLand){
+					if(foldWingsOnLand){
 						if(dragonStateHandler.isWingsSpread()){
 							dragonStateHandler.setWingsSpread(false);
 							NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> livingEntity), new SyncFlyingStatus(livingEntity.getId(), false));
@@ -100,7 +138,7 @@ public class ServerFlightHandler{
 		if(tickEvent.phase == Phase.START || !DragonUtils.isDragon(player) || player.level.isClientSide){
 			return;
 		}
-		if(!ServerConfig.foldWingsOnLand || player.getFoodData().getFoodLevel() <= ServerConfig.flightHungerThreshold && !player.isCreative() && !ServerConfig.allowFlyingWithoutHunger){
+		if(!foldWingsOnLand || player.getFoodData().getFoodLevel() <= flightHungerThreshold && !player.isCreative() && !allowFlyingWithoutHunger){
 			return;
 		}
 
@@ -138,10 +176,14 @@ public class ServerFlightHandler{
 			if(handler.isDragon()){
 				if(player.tickCount % 10 == 0){
 					if(handler.isWingsSpread()){
-						switch(handler.getType()){
-							case SEA -> player.addEffect(new MobEffectInstance(DragonEffects.sea_wings, 500));
-							case CAVE -> player.addEffect(new MobEffectInstance(DragonEffects.cave_wings, 500));
-							case FOREST -> player.addEffect(new MobEffectInstance(DragonEffects.forest_wings, 500));
+						if(DragonTypes.SEA.equals(handler.getType())){
+							player.addEffect(new MobEffectInstance(DragonEffects.sea_wings, 500));
+
+						}else if(DragonTypes.CAVE.equals(handler.getType())){
+							player.addEffect(new MobEffectInstance(DragonEffects.cave_wings, 500));
+
+						}else if(DragonTypes.FOREST.equals(handler.getType())){
+							player.addEffect(new MobEffectInstance(DragonEffects.forest_wings, 500));
 						}
 					}
 				}
@@ -187,10 +229,8 @@ public class ServerFlightHandler{
 					entities.removeIf((e) -> e.distanceTo(player) > range);
 					entities.remove(player);
 					entities.removeIf((e) -> e instanceof Player && !player.canHarmPlayer((Player)e));
-					entities.removeIf((e) -> e instanceof DragonHitBox && player == (((DragonHitBox)e).player));
-					entities.removeIf((e) -> e instanceof DragonHitboxPart && player == (((DragonHitboxPart)e).getParent().player));
 					for(Entity ent : entities){
-						if(player.hasPassenger(ent) || ent.getId() == DragonHitboxHandler.dragonHitboxes.getOrDefault(player.getId(), -1)){
+						if(player.hasPassenger(ent) ){
 							continue;
 						}
 						if(ent instanceof LivingEntity entity){
@@ -229,7 +269,7 @@ public class ServerFlightHandler{
 
 	public static boolean canSwimSpin(LivingEntity player){
 		DragonStateHandler dragonStateHandler = DragonUtils.getHandler(player);
-		boolean validSwim = (dragonStateHandler.getType() == SEA || dragonStateHandler.getType() == FOREST) && player.isInWater() || player.isInLava() && dragonStateHandler.getType() == CAVE;
+		boolean validSwim = (dragonStateHandler.getType() .equals(DragonTypes.SEA) || dragonStateHandler.getType().equals(DragonTypes.FOREST)) && player.isInWater() || player.isInLava() && dragonStateHandler.getType().equals(DragonTypes.CAVE);
 		return validSwim && dragonStateHandler.hasWings() && !player.isOnGround();
 	}
 
@@ -247,7 +287,7 @@ public class ServerFlightHandler{
 		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon()){
 				boolean wingsSpread = dragonStateHandler.isWingsSpread();
-				if(ServerConfig.creativeFlight && !player.level.isClientSide){
+				if(creativeFlight && !player.level.isClientSide){
 					if(player.getAbilities().flying != wingsSpread && (!player.isCreative() && !player.isSpectator())){
 						player.getAbilities().flying = wingsSpread;
 						player.onUpdateAbilities();
@@ -255,10 +295,10 @@ public class ServerFlightHandler{
 				}
 
 				if(wingsSpread){
-					if(ServerConfig.flyingUsesHunger){
+					if(flyingUsesHunger){
 						if(isFlying(player)){
 							if(!player.level.isClientSide){
-								if(player.getFoodData().getFoodLevel() <= ServerConfig.foldWingsThreshold && !ServerConfig.allowFlyingWithoutHunger && !player.isCreative()){
+								if(player.getFoodData().getFoodLevel() <= foldWingsThreshold && !allowFlyingWithoutHunger && !player.isCreative()){
 									player.sendMessage(new TranslatableComponent("ds.wings.nohunger"), player.getUUID());
 									dragonStateHandler.setWingsSpread(false);
 									NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncFlyingStatus(player.getId(), false));
@@ -282,7 +322,7 @@ public class ServerFlightHandler{
 
 	public static boolean isGliding(Player player){
 		DragonStateHandler dragonStateHandler = DragonUtils.getHandler(player);
-		boolean hasFood = player.getFoodData().getFoodLevel() > ServerConfig.flightHungerThreshold || player.isCreative() || ServerConfig.allowFlyingWithoutHunger;
+		boolean hasFood = player.getFoodData().getFoodLevel() > flightHungerThreshold || player.isCreative() || allowFlyingWithoutHunger;
 		return hasFood && player.isSprinting() && isFlying(player);
 	}
 

@@ -4,8 +4,8 @@ import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEdit
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.EnumSkinLayer;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.NBTInterface;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import net.minecraft.nbt.CompoundTag;
 
 import java.util.HashMap;
@@ -24,7 +24,7 @@ public class SkinPreset implements NBTInterface{
 		initDefaults(handler.getType());
 	}
 
-	public void initDefaults(DragonType type){
+	public void initDefaults(AbstractDragonType type){
 		for(DragonLevel level : DragonLevel.values()){
 			skinAges.put(level, new SkinAgeGroup(level, type));
 		}
@@ -61,7 +61,7 @@ public class SkinPreset implements NBTInterface{
 		public boolean wings = true;
 		public boolean defaultSkin = false;
 
-		public SkinAgeGroup(DragonLevel level, DragonType type){
+		public SkinAgeGroup(DragonLevel level, AbstractDragonType type){
 			this(level);
 			for(EnumSkinLayer layer : EnumSkinLayer.values()){
 				layerSettings.put(layer, new LayerSettings(DragonEditorRegistry.getDefaultPart(type, level, layer)));

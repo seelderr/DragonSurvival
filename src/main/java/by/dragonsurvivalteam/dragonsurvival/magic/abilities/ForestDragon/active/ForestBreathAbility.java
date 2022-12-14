@@ -5,9 +5,8 @@ import by.dragonsurvivalteam.dragonsurvival.client.particles.ForestDragon.LargeP
 import by.dragonsurvivalteam.dragonsurvival.client.particles.ForestDragon.SmallPoisonParticleData;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.PoisonBreathSound;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.SoundRegistry;
-import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.GenericCapability;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.GenericCapabilityProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
@@ -15,7 +14,8 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigType;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.BreathAbility;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
+import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -90,8 +90,8 @@ public class ForestBreathAbility extends BreathAbility{
 	}
 
 	@Override
-	public DragonType getDragonType(){
-		return DragonType.FOREST;
+	public AbstractDragonType getDragonType(){
+		return DragonTypes.FOREST;
 	}
 
 	@Override
@@ -269,9 +269,7 @@ public class ForestBreathAbility extends BreathAbility{
 
 		if(!entityHit.level.isClientSide){
 			if(entityHit.level.random.nextInt(100) < 30){
-
-				GenericCapability cap = GenericCapabilityProvider.getGenericCapability(entityHit);
-				cap.lastAfflicted = player != null ? player.getId() : -1;
+				DragonUtils.getHandler(entityHit).lastAfflicted = player != null ? player.getId() : -1;
 				entityHit.addEffect(new MobEffectInstance(DragonEffects.DRAIN, Functions.secondsToTicks(10), 0, false, true));
 			}
 		}

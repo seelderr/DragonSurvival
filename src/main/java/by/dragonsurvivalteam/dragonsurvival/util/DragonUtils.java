@@ -1,7 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.util;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import com.mojang.math.Vector3f;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -13,7 +14,7 @@ public class DragonUtils{
 		return DragonStateProvider.getCap(entity).filter(DragonStateHandler::isDragon).isPresent();
 	}
 
-	public static DragonType getDragonType(Entity entity){
+	public static AbstractDragonType getDragonType(Entity entity){
 		return getHandler(entity).getType();
 	}
 

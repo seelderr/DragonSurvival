@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.network.status;
 
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import net.minecraft.client.Minecraft;
@@ -63,8 +63,8 @@ public class SyncMagicSourceStatus implements IMessage<SyncMagicSourceStatus>{
 
 			if(entity != null){
 				DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
-					dragonStateHandler.getMagic().onMagicSource = message.state;
-					dragonStateHandler.getMagic().magicSourceTimer = message.timer;
+					dragonStateHandler.getMagicData().onMagicSource = message.state;
+					dragonStateHandler.getMagicData().magicSourceTimer = message.timer;
 				});
 
 				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new SyncMagicSourceStatus(entity.getId(), message.state, message.timer));
@@ -84,8 +84,8 @@ public class SyncMagicSourceStatus implements IMessage<SyncMagicSourceStatus>{
 				if(entity instanceof Player){
 
 					DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
-						dragonStateHandler.getMagic().onMagicSource = message.state;
-						dragonStateHandler.getMagic().magicSourceTimer = message.timer;
+						dragonStateHandler.getMagicData().onMagicSource = message.state;
+						dragonStateHandler.getMagicData().magicSourceTimer = message.timer;
 					});
 				}
 			}

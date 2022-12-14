@@ -2,9 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.capability;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayer;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.GenericCapabilityProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.VillageRelationshipsProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.VillageRelationShips;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.RequestClientData;
@@ -33,28 +31,21 @@ import net.minecraftforge.network.PacketDistributor;
 @Mod.EventBusSubscriber( modid = DragonSurvivalMod.MODID, bus = Bus.FORGE )
 public class Capabilities{
 	public static Capability<VillageRelationShips> VILLAGE_RELATIONSHIP = CapabilityManager.get(new CapabilityToken<>(){});
-	public static Capability<GenericCapability> GENERIC_CAPABILITY = CapabilityManager.get(new CapabilityToken<>(){});
+	public static Capability<DragonStateHandler> GENERIC_CAPABILITY = CapabilityManager.get(new CapabilityToken<>(){});
 	public static Capability<DragonStateHandler> DRAGON_CAPABILITY = CapabilityManager.get(new CapabilityToken<>(){});
 
 	@SubscribeEvent
 	public static void attachCapabilities(AttachCapabilitiesEvent<Entity> event){
-		GenericCapabilityProvider genericCapabilityProvider = new GenericCapabilityProvider();
-		event.addCapability(new ResourceLocation("dragonsurvival", "generic_capability_data"), genericCapabilityProvider);
-		event.addListener(genericCapabilityProvider::invalidate);
-
 		if(event.getObject() instanceof Player player){
 			if(event.getObject().level.isClientSide){
-				if(isFakePlayer(player)) return;
+				if(isFakePlayer(player))
+					return;
 			}
-
-			DragonStateProvider provider = new DragonStateProvider();
-			event.addCapability(new ResourceLocation("dragonsurvival", "playerstatehandler"), provider);
-			event.addListener(provider::invalidate);
-
-			VillageRelationshipsProvider villageRelationshipsProvider = new VillageRelationshipsProvider();
-			event.addCapability(new ResourceLocation("dragonsurvival", "village_relations"), villageRelationshipsProvider);
-			event.addListener(villageRelationshipsProvider::invalidate);
 		}
+
+		DragonStateProvider provider = new DragonStateProvider();
+		event.addCapability(new ResourceLocation("dragonsurvival", "playerstatehandler"), provider);
+		event.addListener(provider::invalidate);
 	}
 
 	@OnlyIn( Dist .CLIENT)
@@ -65,8 +56,6 @@ public class Capabilities{
 	@SubscribeEvent
 	public static void register(RegisterCapabilitiesEvent ev){
 		ev.register(DragonStateHandler.class);
-		ev.register(VillageRelationShips.class);
-		ev.register(GenericCapability.class);
 	}
 
 	@SubscribeEvent
@@ -91,7 +80,7 @@ public class Capabilities{
 	public static void onDimensionChange(PlayerEvent.PlayerChangedDimensionEvent event){
 		Player player = event.getPlayer();
 		syncCapability(player);
-		DragonStateProvider.getCap(player).ifPresent(cap -> cap.getSkin().compileSkin());
+		DragonStateProvider.getCap(player).ifPresent(cap -> cap.getSkinData().compileSkin());
 	}
 
 	@SubscribeEvent
@@ -111,26 +100,19 @@ public class Capabilities{
 		Player original = e.getOriginal();
 		original.reviveCaps();
 
-		GenericCapability newCap = GenericCapabilityProvider.getGenericCapability(player);
-		GenericCapability oldCap = GenericCapabilityProvider.getGenericCapability(original);
-
-		newCap.readNBT(oldCap.writeNBT());
 
 		DragonStateProvider.getCap(player).ifPresent(capNew -> DragonStateProvider.getCap(original).ifPresent(capOld -> {
 			CompoundTag nbt = capOld.writeNBT();
 			capNew.readNBT(nbt);
-			capNew.getSkin().compileSkin();
+			capNew.getSkinData().compileSkin();
+
+			if(ServerConfig.preserveEvilDragonEffectAfterDeath && capOld.getVillageRelationShips().evilStatusDuration > 0){
+				player.addEffect(new MobEffectInstance(DragonEffects.EVIL_DRAGON, capOld.getVillageRelationShips().evilStatusDuration));
+			}
+
 			NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new CompleteDataSync(player.getId(), nbt));
 		}));
 
-		VillageRelationshipsProvider.getVillageRelationships(player).ifPresent(villageRelationShips -> {
-			VillageRelationshipsProvider.getVillageRelationships(original).ifPresent(old -> {
-				villageRelationShips.readNBT(old.writeNBT());
-				if(ServerConfig.preserveEvilDragonEffectAfterDeath && villageRelationShips.evilStatusDuration > 0){
-					player.addEffect(new MobEffectInstance(DragonEffects.EVIL_DRAGON, villageRelationShips.evilStatusDuration));
-				}
-			});
-		});
 		original.invalidateCaps();
 		DragonModifiers.updateModifiers(original, player);
 		player.refreshDimensions();

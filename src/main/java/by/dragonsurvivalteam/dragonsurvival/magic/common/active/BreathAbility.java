@@ -2,14 +2,14 @@ package by.dragonsurvivalteam.dragonsurvival.magic.common.active;
 
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigHandler;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.StormBreathAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.AbilityAnimation;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.ISecondAnimation;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.math.Vector3f;
 import net.minecraft.core.BlockPos;
@@ -68,11 +68,6 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 	public boolean requiresStationaryCasting(){
 		return false;
 	}
-
-	public Entity getEffectEntity(){
-		return null;
-	}
-
 	@Override
 	public boolean canCastSkill(Player player){
 		if(ServerFlightHandler.isGliding(player))
@@ -202,7 +197,7 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 	public abstract boolean canHitEntity(LivingEntity entity);
 
 	public void onEntityHit(LivingEntity entityHit){
-		if(entityHit.hurt(new BreathDamage(player), getDamage())){
+		if(Functions.attackTargets(getPlayer(), entity -> entity.hurt(new BreathDamage(player), getDamage()), entityHit)){
 			entityHit.setDeltaMovement(entityHit.getDeltaMovement().multiply(0.25, 1, 0.25));
 			onDamage(entityHit);
 		}

@@ -7,23 +7,23 @@
 	"MixinBlock",
 	"MixinEnchantmentHelper",
 	"MixinEntity",
+	"MixinInventory",
 	"MixinItem",
 	"MixinLivingEntity",
 	"MixinPlayerEntity",
 	"MixinServerPlayerGameMode",
-	"MixinInventory",
 	"MixinSleepStatus"
   ],
   "client": [
 	"AccessorEntityRenderer",
 	"AccessorEntityRendererManager",
+	"AccessorGameRenderer",
 	"AccessorLivingRenderer",
 	"MixinClientWorld",
 	"MixinEntityRenderDispatcher",
-	"MixinItemInHandRenderer",
 	"MixinGameRenderer",
-	"AccessorGameRenderer",
 	"MixinInventoryScreen",
+	"MixinItemInHandRenderer",
 	"MixinWorldRenderer"
   ],
   "minVersion": "0.8"

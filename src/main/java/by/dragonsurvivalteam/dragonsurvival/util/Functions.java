@@ -3,12 +3,17 @@ package by.dragonsurvivalteam.dragonsurvival.util;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
+import net.minecraft.nbt.DoubleTag;
+import net.minecraft.nbt.FloatTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.SpawnPlacements.Type;
+import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
@@ -16,8 +21,10 @@ import net.minecraft.world.level.NaturalSpawner;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.Heightmap.Types;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraftforge.common.util.FakePlayer;
 
 import javax.annotation.Nullable;
+import java.util.function.Function;
 
 public class Functions{
 	public static int minutesToTicks(int minutes){
@@ -75,4 +82,73 @@ public class Functions{
 		return !world.getFluidState(blockPos).isEmpty() || world.isEmptyBlock(blockPos) || world.getBlockState(blockPos).canBeReplaced(context);
 	}
 
+
+	public static boolean attackTargets(Entity attacker, Function<Entity, Boolean> action, Entity... entities){
+		boolean valid = false;
+		for(Entity entity : entities){
+			if(isValidTarget(attacker, entity)){
+				if(action.apply(entity)){
+					valid = true;
+				}
+			}
+		}
+
+		return valid;
+	}
+
+	public static boolean isValidTarget(Entity attacker, Entity target){
+		if(target == null || attacker == null){
+			return false;
+		}
+		if(target == attacker){
+			return false;
+		}
+
+		if(target instanceof FakePlayer){
+			return false;
+		}
+
+		if(attacker instanceof Player attackerPlayer && target instanceof Player targetPlayer){
+			if(!attackerPlayer.canHarmPlayer(targetPlayer)){
+				return false;
+			}
+		}
+
+		if(attacker.getTeam() != null){
+			if(target.getTeam() != null && attacker.getTeam().getPlayers().contains(target.getScoreboardName())){
+				if(!target.getTeam().isAllowFriendlyFire()){
+					return false;
+				}
+			}
+		}
+
+		if(target instanceof TamableAnimal && ((TamableAnimal)target).getOwner() == attacker){
+			return false;
+		}
+
+		return !(attacker instanceof TamableAnimal) || isValidTarget(((TamableAnimal)attacker).getOwner(), target);
+	}
+
+	public static ListTag newDoubleList(double... pNumbers) {
+		ListTag listtag = new ListTag();
+
+		for(double d0 : pNumbers) {
+			listtag.add(DoubleTag.valueOf(d0));
+		}
+
+		return listtag;
+	}
+
+	/**
+	 * Returns a new NBTTagList filled with the specified floats
+	 */
+	public static ListTag newFloatList(float... pNumbers) {
+		ListTag listtag = new ListTag();
+
+		for(float f : pNumbers) {
+			listtag.add(FloatTag.valueOf(f));
+		}
+
+		return listtag;
+	}
 }

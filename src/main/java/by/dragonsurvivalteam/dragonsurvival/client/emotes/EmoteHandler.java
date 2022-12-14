@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.emotes;
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.emotes.SyncEmote;
@@ -45,25 +45,25 @@ public class EmoteHandler{
 
 		if(player != null){
 			DragonStateProvider.getCap(player).ifPresent(cap -> {
-				for(int index = 0; index < cap.getEmotes().currentEmotes.length; index++){
-					Emote emote = cap.getEmotes().currentEmotes[index];
+				for(int index = 0; index < cap.getEmoteData().currentEmotes.length; index++){
+					Emote emote = cap.getEmoteData().currentEmotes[index];
 
 					if(emote == null){
-						cap.getEmotes().emoteTicks[index] = 0;
+						cap.getEmoteData().emoteTicks[index] = 0;
 						continue;
 					}
 
-					if(cap.getEmotes().emoteTicks.length < index || cap.getEmotes().emoteTicks[index] == null){
-						cap.getEmotes().emoteTicks[index] = 0;
+					if(cap.getEmoteData().emoteTicks.length < index || cap.getEmoteData().emoteTicks[index] == null){
+						cap.getEmoteData().emoteTicks[index] = 0;
 					}
 
-					cap.getEmotes().emoteTicks[index] += 1;
+					cap.getEmoteData().emoteTicks[index] += 1;
 
 					//Cancel emote if its duration is expired, this should happen even if it isnt local
-					if(emote.duration != -1 && cap.getEmotes().emoteTicks[index] > emote.duration){
-						cap.getEmotes().currentEmotes[index] = null;
-						cap.getEmotes().emoteTicks[index] = 0;
-						NetworkHandler.CHANNEL.sendToServer(new SyncEmote(player.getId(), cap.getEmotes()));
+					if(emote.duration != -1 && cap.getEmoteData().emoteTicks[index] > emote.duration){
+						cap.getEmoteData().currentEmotes[index] = null;
+						cap.getEmoteData().emoteTicks[index] = 0;
+						NetworkHandler.CHANNEL.sendToServer(new SyncEmote(player.getId(), cap.getEmoteData()));
 						break;
 					}
 
@@ -87,9 +87,9 @@ public class EmoteHandler{
 						}
 					}
 
-					if(Arrays.stream(cap.getEmotes().currentEmotes).anyMatch(Objects::nonNull)){
+					if(Arrays.stream(cap.getEmoteData().currentEmotes).anyMatch(Objects::nonNull)){
 						if(emote.sound != null && emote.sound.interval > 0){
-							if(cap.getEmotes().emoteTicks[index] % emote.sound.interval == 0){
+							if(cap.getEmoteData().emoteTicks[index] % emote.sound.interval == 0){
 								player.level.playLocalSound(player.position().x, player.position().y, player.position().z, new SoundEvent(new ResourceLocation(emote.sound.key)), SoundSource.PLAYERS, emote.sound.volume, emote.sound.pitch, false);
 							}
 						}
@@ -107,7 +107,7 @@ public class EmoteHandler{
 					}
 				}
 
-				if(Arrays.stream(cap.getEmotes().currentEmotes).noneMatch(Objects::nonNull) && ServerConfig.canMoveInEmote){
+				if(Arrays.stream(cap.getEmoteData().currentEmotes).noneMatch(Objects::nonNull) && ServerConfig.canMoveInEmote){
 					AttributeInstance attributeInstance = player.getAttribute(Attributes.MOVEMENT_SPEED);
 					AttributeModifier noMove = new AttributeModifier(EMOTE_NO_MOVE, "EMOTE", -attributeInstance.getValue(), AttributeModifier.Operation.ADDITION);
 
@@ -131,14 +131,14 @@ public class EmoteHandler{
 		}
 
 		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent((cap) -> {
-			if(Arrays.stream(cap.getEmotes().currentEmotes).anyMatch(Objects::nonNull)){
-				for(int index = 0; index < cap.getEmotes().currentEmotes.length; index++){
-					Emote emote = cap.getEmotes().currentEmotes[index];
+			if(Arrays.stream(cap.getEmoteData().currentEmotes).anyMatch(Objects::nonNull)){
+				for(int index = 0; index < cap.getEmoteData().currentEmotes.length; index++){
+					Emote emote = cap.getEmoteData().currentEmotes[index];
 					if(emote != null && !emote.loops){
-						if(cap.getEmotes().emoteTicks[index] >= emote.duration){
-							cap.getEmotes().currentEmotes[index] = null;
-							cap.getEmotes().emoteTicks[index] = 0;
-							NetworkHandler.CHANNEL.sendToServer(new SyncEmote(Minecraft.getInstance().player.getId(), cap.getEmotes()));
+						if(cap.getEmoteData().emoteTicks[index] >= emote.duration){
+							cap.getEmoteData().currentEmotes[index] = null;
+							cap.getEmoteData().emoteTicks[index] = 0;
+							NetworkHandler.CHANNEL.sendToServer(new SyncEmote(Minecraft.getInstance().player.getId(), cap.getEmoteData()));
 						}
 					}
 				}

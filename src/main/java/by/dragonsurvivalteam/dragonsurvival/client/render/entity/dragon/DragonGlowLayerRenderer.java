@@ -41,19 +41,19 @@ public class DragonGlowLayerRenderer extends GeoLayerRenderer<DragonEntity>{
 		Player player = entitylivingbaseIn.getPlayer();
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 
-		SkinPreset preset = handler.getSkin().skinPreset;
+		SkinPreset preset = handler.getSkinData().skinPreset;
 		SkinAgeGroup ageGroup = preset.skinAges.get(handler.getLevel());
 
 		ResourceLocation glowTexture = DragonSkins.getGlowTexture(player, handler.getType(), handler.getLevel());
 
-		if(glowTexture == null || glowTexture.getPath().contains("/" + handler.getType().name().toLowerCase() + "_")){
+		if(glowTexture == null || glowTexture.getPath().contains("/" + handler.getType().getTypeName().toLowerCase() + "_")){
 			if(((DragonRenderer)renderer).glowTexture != null){
 				glowTexture = ((DragonRenderer)renderer).glowTexture;
 			}
 		}
 
-		if(glowTexture == null && handler.getSkin().skinPreset.skinAges.get(handler.getLevel()).defaultSkin){
-			ResourceLocation location = new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/" + handler.getType().name().toLowerCase(Locale.ROOT) + "_" + handler.getLevel().name.toLowerCase(Locale.ROOT) + "_glow.png");
+		if(glowTexture == null && handler.getSkinData().skinPreset.skinAges.get(handler.getLevel()).defaultSkin){
+			ResourceLocation location = new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/" + handler.getType().getTypeName().toLowerCase(Locale.ROOT) + "_" + handler.getLevel().name.toLowerCase(Locale.ROOT) + "_glow.png");
 			if(Minecraft.getInstance().getResourceManager().hasResource(location)){
 				glowTexture = location;
 			}

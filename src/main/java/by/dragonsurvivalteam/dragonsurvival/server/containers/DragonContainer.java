@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.server.containers;
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSContainers;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.slots.ClawToolSlot;
 import com.mojang.datafixers.util.Pair;
@@ -27,8 +27,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class DragonContainer extends AbstractContainerMenu{
-	private static final EquipmentSlot[] VALID_EQUIPMENT_SLOTS = new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
-	private static final ResourceLocation[] ARMOR_SLOT_TEXTURES = new ResourceLocation[]{InventoryMenu.EMPTY_ARMOR_SLOT_BOOTS, InventoryMenu.EMPTY_ARMOR_SLOT_LEGGINGS, InventoryMenu.EMPTY_ARMOR_SLOT_CHESTPLATE, InventoryMenu.EMPTY_ARMOR_SLOT_HELMET};
+	private static final EquipmentSlot[] VALID_EQUIPMENT_SLOTS = {EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
+	private static final ResourceLocation[] ARMOR_SLOT_TEXTURES = {InventoryMenu.EMPTY_ARMOR_SLOT_BOOTS, InventoryMenu.EMPTY_ARMOR_SLOT_LEGGINGS, InventoryMenu.EMPTY_ARMOR_SLOT_CHESTPLATE, InventoryMenu.EMPTY_ARMOR_SLOT_HELMET};
 	public final CraftingContainer craftMatrix = new CraftingContainer(this, 3, 3);
 	public final ResultContainer craftResult = new ResultContainer();
 	public final boolean isLocalWorld;
@@ -106,7 +106,7 @@ public class DragonContainer extends AbstractContainerMenu{
 
 		DragonStateProvider.getCap(player).ifPresent((cap) -> {
 			for(int i = 0; i < 4; ++i){
-				ClawToolSlot s = new ClawToolSlot(this, cap.getClawInventory().getClawsInventory(), i, -50, 35 + (i * 18), i);
+				ClawToolSlot s = new ClawToolSlot(this, cap.getClawToolData().getClawsInventory(), i, -50, 35 + (i * 18), i);
 				this.addSlot(s);
 				inventorySlots.add(s);
 			}
@@ -131,7 +131,7 @@ public class DragonContainer extends AbstractContainerMenu{
 
 	public void update(){
 		DragonStateProvider.getCap(player).ifPresent((cap) -> {
-			menuStatus = cap.getClawInventory().isClawsMenuOpen() ? 1 : 0;
+			menuStatus = cap.getClawToolData().isClawsMenuOpen() ? 1 : 0;
 		});
 
 		broadcastChanges();

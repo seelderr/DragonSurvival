@@ -1,13 +1,13 @@
 package by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.innate.InnateDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.nbt.CompoundTag;
@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 public class MagicCap extends SubCap{
 	public static final Integer activeAbilitySlots = 4;
@@ -44,7 +45,7 @@ public class MagicCap extends SubCap{
 		initAbilities(handler.getType());
 	}
 
-	public void initAbilities(DragonType type){
+	public void initAbilities(AbstractDragonType type){
 		activeDragonAbilities.clear();
 		passiveDragonAbilities.clear();
 		innateDragonAbilities.clear();
@@ -53,27 +54,29 @@ public class MagicCap extends SubCap{
 		if(!ServerConfig.saveAllAbilities)
 			abilities.clear();
 
-		for(DragonAbility dragonAbility : DragonAbilities.ABILITIES.getOrDefault(type, new ArrayList<>())){
-			if(!abilities.containsKey(dragonAbility.getName())){
-				try{
-					DragonAbility ability = dragonAbility.getClass().newInstance();
+		if(type != null){
+			for(DragonAbility dragonAbility : DragonAbilities.ABILITIES.getOrDefault(type.getTypeName(), new ArrayList<>())){
+				if(!abilities.containsKey(dragonAbility.getName())){
+					try{
+						DragonAbility ability = dragonAbility.getClass().newInstance();
 
-					abilities.put(ability.getName(), ability);
-				}catch(InstantiationException | IllegalAccessException e){
-					e.printStackTrace();
+						abilities.put(ability.getName(), ability);
+					}catch(InstantiationException | IllegalAccessException e){
+						e.printStackTrace();
+					}
 				}
-			}
 
-			if(dragonAbility instanceof ActiveDragonAbility && activeDragonAbilities.size() < activeAbilitySlots){
-				activeDragonAbilities.put(activeDragonAbilities.size(), dragonAbility.getName());
-			}
+				if(dragonAbility instanceof ActiveDragonAbility && activeDragonAbilities.size() < activeAbilitySlots){
+					activeDragonAbilities.put(activeDragonAbilities.size(), dragonAbility.getName());
+				}
 
-			if(dragonAbility instanceof PassiveDragonAbility && passiveDragonAbilities.size() < passiveAbilitySlots){
-				passiveDragonAbilities.put(passiveDragonAbilities.size(), dragonAbility.getName());
-			}
+				if(dragonAbility instanceof PassiveDragonAbility && passiveDragonAbilities.size() < passiveAbilitySlots){
+					passiveDragonAbilities.put(passiveDragonAbilities.size(), dragonAbility.getName());
+				}
 
-			if(dragonAbility instanceof InnateDragonAbility){
-				innateDragonAbilities.put(innateDragonAbilities.size(), dragonAbility.getName());
+				if(dragonAbility instanceof InnateDragonAbility){
+					innateDragonAbilities.put(innateDragonAbilities.size(), dragonAbility.getName());
+				}
 			}
 		}
 	}
@@ -177,8 +180,8 @@ public class MagicCap extends SubCap{
 	}
 
 	public void loadAbilities(CompoundTag tag){
-		for(Entry<DragonType, ArrayList<DragonAbility>> entry : DragonAbilities.ABILITIES.entrySet()){
-			if(!ServerConfig.saveAllAbilities && entry.getKey() != handler.getType()) continue;
+		for(Entry<String, ArrayList<DragonAbility>> entry : DragonAbilities.ABILITIES.entrySet()){
+			if(!ServerConfig.saveAllAbilities && !Objects.equals(entry.getKey(), handler.getType().getTypeName())) continue;
 
 			for(DragonAbility ability : entry.getValue()){
 				if(tag.contains(ability.getName())){

@@ -4,9 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.FastGlideSound;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
@@ -17,6 +15,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncFlightSpeed;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncFlyingStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.math.Vector3f;
@@ -171,7 +170,7 @@ public class ClientFlightHandler{
 					Window window = Minecraft.getInstance().getWindow();
 					RenderSystem.setShaderTexture(0, SPIN_COOLDOWN);
 
-					int cooldown = ServerConfig.flightSpinCooldown * 20;
+					int cooldown = ServerFlightHandler.flightSpinCooldown * 20;
 					float f = ((float)cooldown - (float)cap.getMovementData().spinCooldown) / (float)cooldown;
 
 					int k = (window.getGuiScaledWidth() / 2) - (66 / 2);
@@ -265,7 +264,7 @@ public class ClientFlightHandler{
 						double yaw = Math.toRadians(player.yHeadRot + 90);
 						double lookY = lookVec.y;
 
-						double speedLimit = ServerConfig.maxFlightSpeed;
+						double speedLimit = ServerFlightHandler.maxFlightSpeed;
 						ax = Mth.clamp(ax, -0.2 * speedLimit, 0.2 * speedLimit);
 						az = Mth.clamp(az, -0.2 * speedLimit, 0.2 * speedLimit);
 
@@ -290,11 +289,11 @@ public class ClientFlightHandler{
 
 					if(dragonStateHandler.isWingsSpread()){
 						Input movement = player.input;
-						boolean hasFood = player.getFoodData().getFoodLevel() > ServerConfig.flightHungerThreshold || player.isCreative() || ServerConfig.allowFlyingWithoutHunger;
+						boolean hasFood = player.getFoodData().getFoodLevel() > ServerFlightHandler.flightHungerThreshold || player.isCreative() || ServerFlightHandler.allowFlyingWithoutHunger;
 
 
 						if(!hasFood){
-							ay = Mth.clamp(Math.abs(ay * 4), -0.2 * ServerConfig.maxFlightSpeed, 0.2 * ServerConfig.maxFlightSpeed);
+							ay = Mth.clamp(Math.abs(ay * 4), -0.2 * ServerFlightHandler.maxFlightSpeed, 0.2 * ServerFlightHandler.maxFlightSpeed);
 						}
 
 						//start
@@ -347,7 +346,7 @@ public class ClientFlightHandler{
 									az *= 0.99;
 									ay = lookVec.y / 8;
 								}
-								double speedLimit = ServerConfig.maxFlightSpeed;
+								double speedLimit = ServerFlightHandler.maxFlightSpeed;
 								ax = Mth.clamp(ax, -0.2 * speedLimit, 0.2 * speedLimit);
 								az = Mth.clamp(az, -0.2 * speedLimit, 0.2 * speedLimit);
 
@@ -393,6 +392,10 @@ public class ClientFlightHandler{
 									ay = lookVec.y / 8;
 								}
 
+								if(ServerFlightHandler.stableHover && !movement.jumping && !movement.shiftKeyDown && !ServerFlightHandler.isSpin(player) && !ServerFlightHandler.isGliding(player)){
+									ay = Math.max(ay, g * 1.1);
+								}
+
 								if(moving && !movement.jumping && !movement.shiftKeyDown){
 									maxForward = 0.8;
 									moveVector.multiply(1.4, 0, 1.4);
@@ -405,7 +408,12 @@ public class ClientFlightHandler{
 									ay *= 0.9F;
 									az *= 0.9F;
 
-									motion = new Vec3(motion.x, -(g * 2) + motion.y, motion.z);
+									if(!ServerFlightHandler.stableHover){
+										motion = new Vec3(motion.x, -(g * 2) + motion.y, motion.z);
+									}else{
+										motion = new Vec3(motion.x, -g + motion.y, motion.z);
+
+									}
 
 									if(motion.length() != player.getDeltaMovement().length()){
 										NetworkHandler.CHANNEL.sendToServer(new SyncFlightSpeed(player.getId(), motion));
@@ -497,7 +505,7 @@ public class ClientFlightHandler{
 		if(!ServerFlightHandler.isSpin(player) && handler.getMovementData().spinCooldown <= 0 && handler.getMovementData().spinLearned){
 			if(ServerFlightHandler.isFlying(player) || ServerFlightHandler.canSwimSpin(player)){
 				handler.getMovementData().spinAttack = ServerFlightHandler.spinDuration;
-				handler.getMovementData().spinCooldown = ServerConfig.flightSpinCooldown * 20;
+				handler.getMovementData().spinCooldown = ServerFlightHandler.flightSpinCooldown * 20;
 				NetworkHandler.CHANNEL.sendToServer(new SyncSpinStatus(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
 			}
 		}
@@ -527,7 +535,7 @@ public class ClientFlightHandler{
 				if(keyInputEvent.getAction() == GLFW.GLFW_PRESS){
 					if(handler.hasWings() && !currentState && (lookVec.y > 0.8 || !lookAtSkyForFlight)){
 						if(!player.isOnGround() && !player.isInLava() && !player.isInWater()){
-							if(player.getFoodData().getFoodLevel() > ServerConfig.flightHungerThreshold || player.isCreative() || ServerConfig.allowFlyingWithoutHunger){
+							if(player.getFoodData().getFoodLevel() > ServerFlightHandler.flightHungerThreshold || player.isCreative() || ServerFlightHandler.allowFlyingWithoutHunger){
 								NetworkHandler.CHANNEL.sendToServer(new SyncFlyingStatus(player.getId(), true));
 							}else{
 								if(lastHungerMessage == 0 || lastHungerMessage + TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS) < System.currentTimeMillis()){
@@ -544,7 +552,7 @@ public class ClientFlightHandler{
 		if(KeyInputHandler.TOGGLE_WINGS.consumeClick()){
 			if(handler.hasWings()){
 				//Allows toggling the wings if food level is above 0, player is creative, wings are already enabled (allows disabling even when hungry) or if config options is turned on
-				if((player.getFoodData().getFoodLevel() > ServerConfig.flightHungerThreshold || player.isCreative()) || currentState || ServerConfig.allowFlyingWithoutHunger){
+				if((player.getFoodData().getFoodLevel() > ServerFlightHandler.flightHungerThreshold || player.isCreative()) || currentState || ServerFlightHandler.allowFlyingWithoutHunger){
 					NetworkHandler.CHANNEL.sendToServer(new SyncFlyingStatus(player.getId(), !currentState));
 					if(notifyWingStatus){
 						if(!currentState){

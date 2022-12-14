@@ -28,7 +28,7 @@ public class DragonEditorDropdownButton extends DropDownButton{
 	public DragonEditorDropdownButton(DragonEditorScreen dragonEditorScreen, int x, int y, int xSize, int ySize, String current, String[] values, EnumSkinLayer layers){
 		super(x, y, xSize, ySize, current, values, (s) -> {
 			dragonEditorScreen.preset.skinAges.get(dragonEditorScreen.level).layerSettings.get(layers).selectedSkin = s;
-			dragonEditorScreen.handler.getSkin().compileSkin();
+			dragonEditorScreen.handler.getSkinData().compileSkin();
 			dragonEditorScreen.update();
 		});
 		this.dragonEditorScreen = dragonEditorScreen;

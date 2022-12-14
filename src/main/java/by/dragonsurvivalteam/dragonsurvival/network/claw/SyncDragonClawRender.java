@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.network.claw;
 
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
@@ -61,7 +61,7 @@ public class SyncDragonClawRender implements IMessage<SyncDragonClawRender>{
 
 			if(entity != null){
 				DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
-					dragonStateHandler.getClawInventory().renderClaws = message.state;
+					dragonStateHandler.getClawToolData().renderClaws = message.state;
 				});
 
 
@@ -84,7 +84,7 @@ public class SyncDragonClawRender implements IMessage<SyncDragonClawRender>{
 				if(entity instanceof Player){
 
 					DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
-						dragonStateHandler.getClawInventory().renderClaws = message.state;
+						dragonStateHandler.getClawToolData().renderClaws = message.state;
 
 						if(thisPlayer == entity){
 							ConfigHandler.updateConfigValue("renderDragonClaws", message.state);

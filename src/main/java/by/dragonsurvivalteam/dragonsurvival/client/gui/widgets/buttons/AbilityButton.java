@@ -2,14 +2,14 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.utils.TooltipRender;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.MagicCap;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.magic.MagicDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncMagicCap;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -31,7 +31,7 @@ public class AbilityButton extends Button implements TooltipRender{
 	public static final ResourceLocation BLANK_3_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/blank3.png");
 
 	private final Screen screen;
-	private DragonType type;
+	private AbstractDragonType type;
 	private int slot;
 	public int skillType;
 
@@ -71,7 +71,7 @@ public class AbilityButton extends Button implements TooltipRender{
 			screen.renderables.forEach(s-> {
 				if(s instanceof AbilityButton btn){
 					if(btn != this && btn.skillType == 0 && btn.dragging){
-						MagicCap cap = DragonUtils.getHandler(Minecraft.getInstance().player).getMagic();
+						MagicCap cap = DragonUtils.getHandler(Minecraft.getInstance().player).getMagicData();
 						btn.onRelease(pMouseX, pMouseY);
 						DragonAbility ab1 = cap.getAbilityFromSlot(btn.slot);
 						DragonAbility ab2 = cap.getAbilityFromSlot(slot);
@@ -97,9 +97,9 @@ public class AbilityButton extends Button implements TooltipRender{
 	public void renderButton(PoseStack stack, int mouseX, int mouseY, float p_230431_4_){
 		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {
 			DragonAbility ab =
-				skillType == 0 ? cap.getMagic().getAbilityFromSlot(slot) :
-					skillType == 1 ? cap.getMagic().getPassiveAbilityFromSlot(slot) :
-						skillType == 2 ? cap.getMagic().getInnateAbilityFromSlot(slot) : null;
+				skillType == 0 ? cap.getMagicData().getAbilityFromSlot(slot) :
+					skillType == 1 ? cap.getMagicData().getPassiveAbilityFromSlot(slot) :
+						skillType == 2 ? cap.getMagicData().getInnateAbilityFromSlot(slot) : null;
 
 			if(ab != null)
 				ability = ab;

@@ -2,11 +2,11 @@ package by.dragonsurvivalteam.dragonsurvival.common.handlers.magic;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -41,7 +41,7 @@ public class ClawToolHandler{
 			ArrayList<ItemStack> stacks = new ArrayList<>();
 
 			for(int i = 0; i < 4; i++){
-				ItemStack clawStack = cap.getClawInventory().getClawsInventory().getItem(i);
+				ItemStack clawStack = cap.getClawToolData().getClawsInventory().getItem(i);
 				int mending = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MENDING, clawStack);
 
 				if(mending > 0 && clawStack.isDamaged()){
@@ -72,12 +72,12 @@ public class ClawToolHandler{
 			if(!player.level.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) && !ServerConfig.keepClawItems){
 				DragonStateHandler handler = DragonUtils.getHandler(player);
 
-				for(int i = 0; i < handler.getClawInventory().getClawsInventory().getContainerSize(); i++){
-					ItemStack stack = handler.getClawInventory().getClawsInventory().getItem(i);
+				for(int i = 0; i < handler.getClawToolData().getClawsInventory().getContainerSize(); i++){
+					ItemStack stack = handler.getClawToolData().getClawsInventory().getItem(i);
 
 					if(!stack.isEmpty()){
 						event.getDrops().add(new ItemEntity(player.level, player.getX(), player.getY(), player.getZ(), stack));
-						handler.getClawInventory().getClawsInventory().setItem(i, ItemStack.EMPTY);
+						handler.getClawToolData().getClawsInventory().setItem(i, ItemStack.EMPTY);
 					}
 				}
 			}
@@ -120,7 +120,7 @@ public class ClawToolHandler{
 			BlockState state = world.getBlockState(raytraceresult.getBlockPos());
 
 			for(int i = 1; i < 4; i++){
-				ItemStack breakingItem = cap.getClawInventory().getClawsInventory().getItem(i);
+				ItemStack breakingItem = cap.getClawToolData().getClawsInventory().getItem(i);
 
 				if(!breakingItem.isEmpty() && breakingItem.isCorrectToolForDrops(state)){
 					float tempSpeed = breakingItem.getDestroySpeed(state);
@@ -144,7 +144,7 @@ public class ClawToolHandler{
 		DragonStateHandler cap = DragonUtils.getHandler(entity);
 
 		if(!(mainStack.getItem() instanceof TieredItem)){
-			ItemStack sword = cap.getClawInventory().getClawsInventory().getItem(0);
+			ItemStack sword = cap.getClawToolData().getClawsInventory().getItem(0);
 
 			if(!sword.isEmpty()){
 				return sword;
@@ -186,7 +186,7 @@ public class ClawToolHandler{
 
 			if(!(mainStack.getItem() instanceof DiggerItem || mainStack.getItem() instanceof SwordItem || mainStack.getItem() instanceof ShearsItem || (mainStack.getItem() instanceof TieredItem))){
 				float bonus = dragonStateHandler.getLevel() == DragonLevel.ADULT
-					? blockState.is(BlockTags.MINEABLE_WITH_AXE) && dragonStateHandler.getType() == DragonType.FOREST ? 4 : blockState.is(BlockTags.MINEABLE_WITH_PICKAXE) && dragonStateHandler.getType() == DragonType.CAVE ? 4 : blockState.is(BlockTags.MINEABLE_WITH_SHOVEL) && dragonStateHandler.getType() == DragonType.SEA ? 4 : 2F
+					? blockState.is(BlockTags.MINEABLE_WITH_AXE) && dragonStateHandler.getType().equals(DragonTypes.FOREST) ? 4 : blockState.is(BlockTags.MINEABLE_WITH_PICKAXE) && dragonStateHandler.getType().equals(DragonTypes.CAVE) ? 4 : blockState.is(BlockTags.MINEABLE_WITH_SHOVEL) && dragonStateHandler.getType() .equals(DragonTypes.SEA) ? 4 : 2F
 					: dragonStateHandler.getLevel() == DragonLevel.NEWBORN ? ServerConfig.bonusUnlockedAt == DragonLevel.NEWBORN ? 2F : 1F : dragonStateHandler.getLevel() == DragonLevel.YOUNG ? ServerConfig.bonusUnlockedAt != DragonLevel.ADULT ? 2F : 1F : 2F;
 
 				breakSpeedEvent.setNewSpeed(originalSpeed * bonus);

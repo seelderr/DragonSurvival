@@ -1,9 +1,10 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.innate;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.innate.DragonClawsAbility;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import net.minecraft.resources.ResourceLocation;
 
 @RegisterDragonAbility
@@ -14,8 +15,8 @@ public class ForestClawAbility extends DragonClawsAbility{
 	}
 
 	@Override
-	public DragonType getDragonType(){
-		return DragonType.FOREST;
+	public AbstractDragonType getDragonType(){
+		return DragonTypes.FOREST;
 	}
 
 	@Override

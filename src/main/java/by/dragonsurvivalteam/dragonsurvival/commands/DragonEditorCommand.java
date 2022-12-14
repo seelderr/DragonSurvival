@@ -1,8 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.commands;
 
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.container.OpenDragonEditorPacket;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.mojang.brigadier.tree.RootCommandNode;

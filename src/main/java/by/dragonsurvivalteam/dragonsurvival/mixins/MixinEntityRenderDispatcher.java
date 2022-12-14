@@ -1,12 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins;
 
-import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.hitbox.DragonHitBox;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Vector3f;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
@@ -15,7 +12,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.LevelReader;
-import net.minecraftforge.entity.PartEntity;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -72,25 +68,5 @@ public class MixinEntityRenderDispatcher{
 	}
 
 	@Shadow
-	private static void renderBlockShadow(PoseStack.Pose p_229092_0_, VertexConsumer p_229092_1_, LevelReader p_229092_2_, BlockPos p_229092_3_, double p_229092_4_, double p_229092_6_, double p_229092_8_, float p_229092_10_, float p_229092_11_){
-	}
-
-	@Inject( at = @At( "HEAD" ), method = "renderHitbox", cancellable = true )
-	private static void renderHitbox(PoseStack pPoseStack, VertexConsumer pBuffer, Entity pEntity, float pPartialTicks, CallbackInfo callbackInfo){
-		if(pEntity instanceof DragonHitBox){
-			callbackInfo.cancel();
-
-			DragonHitBox hitBox = (DragonHitBox)pEntity;
-			if(hitBox.player == Minecraft.getInstance().player && Minecraft.getInstance().options.getCameraType().isFirstPerson()){
-				return;
-			}
-
-			for(PartEntity<?> enderdragonpartentity : hitBox.getParts()){
-				pPoseStack.pushPose();
-				pPoseStack.translate(enderdragonpartentity.getX() - pEntity.getX(), enderdragonpartentity.getY() - pEntity.getY(), enderdragonpartentity.getZ() - pEntity.getZ());
-				LevelRenderer.renderLineBox(pPoseStack, pBuffer, enderdragonpartentity.getBoundingBox().move(-enderdragonpartentity.getX(), -enderdragonpartentity.getY(), -enderdragonpartentity.getZ()), 0.25F, 1.0F, 0.0F, 1.0F);
-				pPoseStack.popPose();
-			}
-		}
-	}
+	private static void renderBlockShadow(PoseStack.Pose p_229092_0_, VertexConsumer p_229092_1_, LevelReader p_229092_2_, BlockPos p_229092_3_, double p_229092_4_, double p_229092_6_, double p_229092_8_, float p_229092_10_, float p_229092_11_){}
 }

@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 
 import by.dragonsurvivalteam.dragonsurvival.client.render.util.AnimationTimer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.util.CommonTraits;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.FollowMobGoal;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
@@ -125,6 +126,10 @@ public class KnightEntity extends PathfinderMob implements IAnimatable, DragonHu
 		super.registerGoals();
 		goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1));
 		goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.5, true));
+		goalSelector.addGoal(8, new FollowMobGoal<>(Princess.class, this, 15));
+		goalSelector.addGoal(8, new FollowMobGoal<>(PrincesHorseEntity.class, this, 15));
+		goalSelector.addGoal(8, new FollowMobGoal<>(PrinceHorseEntity.class, this, 15));
+
 		targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Player.class, 1, true, false, living -> {
 			return living.hasEffect(MobEffects.BAD_OMEN) || living.hasEffect(DragonEffects.EVIL_DRAGON);
 		}));

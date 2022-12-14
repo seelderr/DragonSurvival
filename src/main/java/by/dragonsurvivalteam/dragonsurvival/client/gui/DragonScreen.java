@@ -2,26 +2,26 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.settings.ConfigSideSelectionScreen;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.TabButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.DSButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.DSImageButton;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientEvents;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonGrowthHandler;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.DragonClawsMenuToggle;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawRender;
 import by.dragonsurvivalteam.dragonsurvival.network.container.OpenInventory;
 import by.dragonsurvivalteam.dragonsurvival.network.container.SortInventoryPacket;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.DragonContainer;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -61,7 +61,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 		player = inv.player;
 
 		DragonStateProvider.getCap(player).ifPresent((cap) -> {
-			clawsMenu = cap.getClawInventory().isClawsMenuOpen();
+			clawsMenu = cap.getClawToolData().isClawsMenuOpen();
 		});
 
 		this.imageWidth = 203;
@@ -94,7 +94,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 			init();
 
 			NetworkHandler.CHANNEL.sendToServer(new DragonClawsMenuToggle(clawsMenu));
-			DragonStateProvider.getCap(player).ifPresent((cap) -> cap.getClawInventory().setClawsMenuOpen(clawsMenu));
+			DragonStateProvider.getCap(player).ifPresent((cap) -> cap.getClawToolData().setClawsMenuOpen(clawsMenu));
 		}, new TranslatableComponent("ds.gui.claws")){
 			@Override
 			public void renderButton(PoseStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_){
@@ -200,9 +200,9 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 
 
 		addRenderableWidget(new DSButton(leftPos - 80 + 34, topPos + 140, 9, 9, null, p_onPress_1_ -> {
-			boolean claws = !handler.getClawInventory().renderClaws;
+			boolean claws = !handler.getClawToolData().renderClaws;
 
-			handler.getClawInventory().renderClaws = claws;
+			handler.getClawToolData().renderClaws = claws;
 			NetworkHandler.CHANNEL.sendToServer(new SyncDragonClawRender(player.getId(), claws));
 		}, new TranslatableComponent("ds.gui.claws.rendering")){
 			@Override
@@ -210,7 +210,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 				this.active = clawsMenu;
 				DragonStateHandler handler = DragonUtils.getHandler(player);
 
-				if(handler.getClawInventory().renderClaws && clawsMenu){
+				if(handler.getClawToolData().renderClaws && clawsMenu){
 					RenderSystem.setShaderTexture(0, DRAGON_CLAW_CHECKMARK);
 					blit(p_230430_1_, x, y, 0, 0, 9, 9, 9, 9);
 				}
@@ -286,7 +286,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 
 			RenderSystem.enableTexture();
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1.0f);
-			RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_" + handler.getType().name().toLowerCase() + ".png"));
+			RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_" + handler.getType().getTypeName().toLowerCase() + ".png"));
 			RenderingUtils.drawTexturedCircle(stack, circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, sides, progress, -0.5);
 
 			RenderSystem.disableTexture();
@@ -295,7 +295,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 			RenderSystem.enableTexture();
 
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1.0f);
-			RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/growth_" + handler.getType().name().toLowerCase() + "_" + (handler.getLevel().ordinal() + 1) + ".png"));
+			RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/growth_" + handler.getType().getTypeName().toLowerCase() + "_" + (handler.getLevel().ordinal() + 1) + ".png"));
 			blit(stack, circleX + 6, circleY + 6, 0, 0, 20, 20, 20, 20);
 
 			stack.popPose();

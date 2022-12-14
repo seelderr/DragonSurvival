@@ -6,14 +6,15 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEdito
 import by.dragonsurvivalteam.dragonsurvival.client.gui.utils.TooltipRender;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientEvents;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TooltipRendering;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.RequestClientData;
-import by.dragonsurvivalteam.dragonsurvival.network.player.SynchronizeDragonCap;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
+import by.dragonsurvivalteam.dragonsurvival.network.player.SynchronizeDragonCap;
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncAltarCooldown;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -40,10 +41,10 @@ import java.util.Objects;
 public class AltarTypeButton extends Button implements TooltipRender{
 	private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_altar_icons.png");
 	private final DragonAltarGUI gui;
-	public DragonType type;
+	public AbstractDragonType type;
 	private boolean atTheTopOrBottom;
 
-	public AltarTypeButton(DragonAltarGUI gui, DragonType type, int x, int y){
+	public AltarTypeButton(DragonAltarGUI gui, AbstractDragonType type, int x, int y){
 		super(x, y, 49, 147, null, null);
 		this.gui = gui;
 		this.type = type;
@@ -51,7 +52,7 @@ public class AltarTypeButton extends Button implements TooltipRender{
 
 	@Override
 	public void renderToolTip(PoseStack pPoseStack, int pMouseX, int pMouseY){
-		if(atTheTopOrBottom) TooltipRendering.drawHoveringText(pPoseStack, altarDragonInfoLocalized(type == DragonType.NONE ? "human" : type.name().toLowerCase() + "_dragon", type == DragonType.NONE ? Collections.emptyList() : DragonFoodHandler.getSafeEdibleFoods(type)), pMouseX, pMouseY);
+		if(atTheTopOrBottom) TooltipRendering.drawHoveringText(pPoseStack, altarDragonInfoLocalized(type == null ? "human" : type.getTypeName().toLowerCase() + "_dragon", type == null ? Collections.emptyList() : DragonFoodHandler.getSafeEdibleFoods(type)), pMouseX, pMouseY);
 	}
 
 	private ArrayList<Component> altarDragonInfoLocalized(String dragonType, List<Item> foodList){
@@ -86,28 +87,28 @@ public class AltarTypeButton extends Button implements TooltipRender{
 		RenderSystem.setShaderTexture(0, BACKGROUND_TEXTURE);
 
 		fill(mStack, x - 1, y - 1, x + width + 1, y + height + 1, new Color(0.5f, 0.5f, 0.5f).getRGB());
-		blit(mStack, x, y, type.ordinal() * 49, isHovered ? 0 : 147, 49, 147, 512, 512);
+		blit(mStack, x, y, type == null ? 3 : (type.equals(DragonTypes.CAVE) ? 0 : type.equals(DragonTypes.FOREST) ? 1 : type.equals(DragonTypes.SEA) ? 2 : 3) * 49, isHovered ? 0 : 147, 49, 147, 512, 512);
 	}
 
-	private void initiateDragonForm(DragonType type){
+	private void initiateDragonForm(AbstractDragonType type){
 		LocalPlayer player = Minecraft.getInstance().player;
 
 		if(player == null)
 			return;
 
-		if(type == DragonType.NONE){
+		if(type == null){
 			Minecraft.getInstance().player.sendMessage(new TranslatableComponent("ds.choice_human"), Minecraft.getInstance().player.getUUID());
 
 			DragonStateProvider.getCap(player).ifPresent(cap -> {
 				player.level.playSound(player, player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 1, 0.7f);
-				cap.setType(type);
+				cap.setType(null);
 				cap.setSize(20F);
 				cap.setHasWings(false);
 				cap.setIsHiding(false);
 				cap.getMovementData().spinLearned = false;
 
 				NetworkHandler.CHANNEL.sendToServer(new SyncAltarCooldown(Minecraft.getInstance().player.getId(), Functions.secondsToTicks(ServerConfig.altarUsageCooldown)));
-				NetworkHandler.CHANNEL.sendToServer(new SynchronizeDragonCap(player.getId(), cap.isHiding(), cap.getType(), cap.getSize(), cap.hasWings(), ServerConfig.caveLavaSwimmingTicks, 0));
+				NetworkHandler.CHANNEL.sendToServer(new SynchronizeDragonCap(player.getId(), cap.isHiding(), cap.getType(), cap.getSize(), cap.hasWings(), 0));
 				NetworkHandler.CHANNEL.sendToServer(new SyncSpinStatus(Minecraft.getInstance().player.getId(), cap.getMovementData().spinAttack, cap.getMovementData().spinCooldown, cap.getMovementData().spinLearned));
 				ClientEvents.sendClientData(new RequestClientData(cap.getType(), cap.getLevel()));
 			});

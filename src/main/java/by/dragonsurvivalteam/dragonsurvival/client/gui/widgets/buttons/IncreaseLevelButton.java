@@ -2,10 +2,11 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons;
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ArrowButton;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TooltipRendering;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncSkillLevelChangeCost;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -23,7 +24,7 @@ public class IncreaseLevelButton extends ArrowButton{
 	private final int slot;
 	public int skillCost = 0;
 	private PassiveDragonAbility ability;
-	private DragonType type;
+	private AbstractDragonType type;
 
 	public IncreaseLevelButton(int x, int y, int slot){
 
@@ -41,7 +42,7 @@ public class IncreaseLevelButton extends ArrowButton{
 		super.onPress();
 
 		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {
-			ability = cap.getMagic().getPassiveAbilityFromSlot(slot);
+			ability = cap.getMagicData().getPassiveAbilityFromSlot(slot);
 
 			if(ability != null){
 				if(ability.getLevel() + 1 <= ability.getMaxLevel()){
@@ -69,9 +70,9 @@ public class IncreaseLevelButton extends ArrowButton{
 	@Override
 	public void renderToolTip(PoseStack stack, int mouseX, int mouseY){
 		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {
-			ability = cap.getMagic().getPassiveAbilityFromSlot(slot);
+			ability = cap.getMagicData().getPassiveAbilityFromSlot(slot);
 
-			ChatFormatting format = cap.getType() == DragonType.CAVE ? ChatFormatting.DARK_RED : cap.getType() == DragonType.SEA ? ChatFormatting.AQUA : cap.getType() == DragonType.FOREST ? ChatFormatting.GREEN : ChatFormatting.WHITE;
+			ChatFormatting format = cap.getType().equals(DragonTypes.CAVE) ? ChatFormatting.DARK_RED : cap.getType().equals(DragonTypes.SEA) ? ChatFormatting.AQUA : cap.getType().equals(DragonTypes.FOREST) ? ChatFormatting.GREEN : ChatFormatting.WHITE;
 			ArrayList<Component> description = new ArrayList<>(Arrays.asList(new TranslatableComponent("ds.skill.level.up", skillCost).withStyle(format)));
 
 			if(ability != null){

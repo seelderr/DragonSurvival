@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.network.magic;
 
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
@@ -71,9 +71,9 @@ public class SyncMagicStats implements IMessage<SyncMagicStats>{
 				if(entity instanceof Player){
 
 					DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
-						dragonStateHandler.getMagic().setCurrentMana(message.currentMana);
-						dragonStateHandler.getMagic().setSelectedAbilitySlot(message.selectedSlot);
-						dragonStateHandler.getMagic().setRenderAbilities(message.renderHotbar);
+						dragonStateHandler.getMagicData().setCurrentMana(message.currentMana);
+						dragonStateHandler.getMagicData().setSelectedAbilitySlot(message.selectedSlot);
+						dragonStateHandler.getMagicData().setRenderAbilities(message.renderHotbar);
 					});
 				}
 			}

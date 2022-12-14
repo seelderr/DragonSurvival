@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.network.claw;
 
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.ClawInventory;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import net.minecraft.client.Minecraft;
@@ -73,8 +73,8 @@ public class SyncDragonClawsMenu implements IMessage<SyncDragonClawsMenu>{
 				if(entity instanceof Player){
 
 					DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
-						dragonStateHandler.getClawInventory().setClawsMenuOpen(message.state);
-						dragonStateHandler.getClawInventory().setClawsInventory(message.inv);
+						dragonStateHandler.getClawToolData().setClawsMenuOpen(message.state);
+						dragonStateHandler.getClawToolData().setClawsInventory(message.inv);
 					});
 				}
 			}

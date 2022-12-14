@@ -8,10 +8,10 @@ import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TextRenderUtil;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
@@ -77,12 +77,12 @@ public class DragonAltarGUI extends Screen{
 					handler1.setType(button.type);
 					handler1.setHasWings(true);
 					handler1.setSize(DragonLevel.NEWBORN.size);
-					handler1.getSkin().skinPreset.skinAges.get(DragonLevel.NEWBORN).defaultSkin = true;
+					handler1.getSkinData().skinPreset.skinAges.get(DragonLevel.NEWBORN).defaultSkin = true;
 
 					handler2.setType(button.type);
 					handler2.setHasWings(true);
-					handler2.setSize(button.type == DragonType.NONE ? DragonLevel.NEWBORN.size : DragonLevel.ADULT.size);
-					handler2.getSkin().skinPreset.skinAges.get(button.type == DragonType.NONE ? DragonLevel.NEWBORN : DragonLevel.ADULT).defaultSkin = true;
+					handler2.setSize(button.type == null ? DragonLevel.NEWBORN.size : DragonLevel.ADULT.size);
+					handler2.getSkinData().skinPreset.skinAges.get(button.type == null ? DragonLevel.NEWBORN : DragonLevel.ADULT).defaultSkin = true;
 
 					FakeClientPlayerUtils.getFakePlayer(0, handler1).animationSupplier = () -> animations[animation1];
 					FakeClientPlayerUtils.getFakePlayer(1, handler2).animationSupplier = () -> animations[animation2];
@@ -171,10 +171,10 @@ public class DragonAltarGUI extends Screen{
 
 		this.addRenderableWidget(new HelpButton(width / 2 - 9, 32 + 0, 16, 16, "ds.help.altar", 1));
 
-		addRenderableWidget(new AltarTypeButton(this, DragonType.CAVE, width / 2 - 104, this.guiTop + 30));
-		addRenderableWidget(new AltarTypeButton(this, DragonType.FOREST, width / 2 - 51, this.guiTop + 30));
-		addRenderableWidget(new AltarTypeButton(this, DragonType.SEA, width / 2 + 2, this.guiTop + 30));
-		addRenderableWidget(new AltarTypeButton(this, DragonType.NONE, width / 2 + 55, guiTop + 30));
+		addRenderableWidget(new AltarTypeButton(this, DragonTypes.CAVE, width / 2 - 104, this.guiTop + 30));
+		addRenderableWidget(new AltarTypeButton(this, DragonTypes.FOREST, width / 2 - 51, this.guiTop + 30));
+		addRenderableWidget(new AltarTypeButton(this, DragonTypes.SEA, width / 2 + 2, this.guiTop + 30));
+		addRenderableWidget(new AltarTypeButton(this, null, width / 2 + 55, guiTop + 30));
 
 		addRenderableWidget(new ExtendedButton(width / 2 - 75, height - 25, 150, 20, new TranslatableComponent("ds.gui.dragon_editor"), (btn) -> {
 			Minecraft.getInstance().setScreen(new DragonEditorScreen(Minecraft.getInstance().screen));

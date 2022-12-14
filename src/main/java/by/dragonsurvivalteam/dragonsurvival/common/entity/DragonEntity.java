@@ -124,7 +124,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 		AnimationBuilder builder = new AnimationBuilder();
 
-		ActiveDragonAbility curCast = handler.getMagic().getCurrentlyCasting();
+		ActiveDragonAbility curCast = handler.getMagicData().getCurrentlyCasting();
 
 		if(curCast instanceof ISecondAnimation || lastCast instanceof ISecondAnimation)
 			renderAbility(builder, curCast);
@@ -187,8 +187,8 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 		final Player player = getPlayer();
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 
-		if(handler.getEmotes().currentEmotes[num] != null){
-			Emote emote = handler.getEmotes().currentEmotes[num];
+		if(handler.getEmoteData().currentEmotes[num] != null){
+			Emote emote = handler.getEmoteData().currentEmotes[num];
 
 			neckLocked = emote.locksHead;
 			tailLocked = emote.locksTail;
@@ -223,7 +223,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 
 		dragonAnimationController.speed = 1;
 
-		if(player == null || Stream.of(playerStateHandler.getEmotes().currentEmotes).anyMatch((s) -> s != null && !s.blend && s.animation != null && !s.animation.isBlank())){
+		if(player == null || Stream.of(playerStateHandler.getEmoteData().currentEmotes).anyMatch((s) -> s != null && !s.blend && s.animation != null && !s.animation.isBlank())){
 			animationEvent.getController().setAnimation(null);
 			animationEvent.getController().clearAnimationCache();
 			return PlayState.STOP;
@@ -233,7 +233,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 		tailLocked = false;
 
 
-		ActiveDragonAbility curCast = playerStateHandler.getMagic().getCurrentlyCasting();
+		ActiveDragonAbility curCast = playerStateHandler.getMagicData().getCurrentlyCasting();
 
 		if(!(curCast instanceof ISecondAnimation) && !(lastCast instanceof ISecondAnimation)){
 			renderAbility(builder, curCast);
@@ -242,7 +242,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 		Vec3 motio = new Vec3(player.getX() - player.xo, player.getY() - player.yo, player.getZ() - player.zo);
 		boolean isMovingHorizontal = Math.sqrt(Math.pow(motio.x, 2) + Math.pow(motio.z, 2)) > 0.005;
 
-		if(playerStateHandler.getMagic().onMagicSource){
+		if(playerStateHandler.getMagicData().onMagicSource){
 			neckLocked = true;
 			tailLocked = true;
 			builder.addAnimation("sit_on_magic_source", EDefaultLoopTypes.LOOP);

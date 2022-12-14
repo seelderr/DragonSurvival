@@ -1,9 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.network.status;
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.GenericCapability;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.GenericCapabilityProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -52,7 +52,7 @@ public class SyncAltarCooldown implements IMessage<SyncAltarCooldown>{
 		if(supplier.get().getDirection() == NetworkDirection.PLAY_TO_SERVER){
 			ServerPlayer entity = supplier.get().getSender();
 			if(entity != null){
-				GenericCapability dragonStateHandler = GenericCapabilityProvider.getGenericCapability(entity);
+				DragonStateHandler dragonStateHandler = DragonUtils.getHandler(entity);
 				dragonStateHandler.altarCooldown = message.cooldown;
 				dragonStateHandler.hasUsedAltar = true;
 
@@ -70,7 +70,7 @@ public class SyncAltarCooldown implements IMessage<SyncAltarCooldown>{
 				Level world = thisPlayer.level;
 				Entity entity = world.getEntity(message.playerId);
 				if(entity instanceof Player){
-					GenericCapability dragonStateHandler = GenericCapabilityProvider.getGenericCapability(entity);
+					DragonStateHandler dragonStateHandler = DragonUtils.getHandler(entity);
 					dragonStateHandler.altarCooldown = message.cooldown;
 				}
 			}

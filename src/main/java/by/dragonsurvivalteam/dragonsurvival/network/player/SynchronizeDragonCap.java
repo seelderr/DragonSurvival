@@ -2,12 +2,13 @@ package by.dragonsurvivalteam.dragonsurvival.network.player;
 
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.commands.DragonCommand;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.FriendlyByteBuf;
@@ -29,7 +30,7 @@ public class SynchronizeDragonCap implements IMessage<SynchronizeDragonCap>{
 
 	public int playerId;
 	public boolean hiding;
-	public DragonType dragonType;
+	public AbstractDragonType dragonType;
 	public double size;
 	public boolean hasWings;
 	public int lavaAirSupply;
@@ -38,37 +39,35 @@ public class SynchronizeDragonCap implements IMessage<SynchronizeDragonCap>{
 	public SynchronizeDragonCap(){
 	}
 
-	public SynchronizeDragonCap(int playerId, boolean hiding, DragonType dragonType, double size, boolean hasWings, int lavaAirSupply, int passengerId){
+	public SynchronizeDragonCap(int playerId, boolean hiding, AbstractDragonType dragonType, double size, boolean hasWings, int passengerId){
 		this.playerId = playerId;
 		this.hiding = hiding;
 		this.dragonType = dragonType;
 		this.size = size;
 		this.hasWings = hasWings;
-		this.lavaAirSupply = lavaAirSupply;
 		this.passengerId = passengerId;
 	}
 
 	@Override
 	public void encode(SynchronizeDragonCap message, FriendlyByteBuf buffer){
 		buffer.writeInt(message.playerId);
-		buffer.writeByte(message.dragonType.ordinal());
+		buffer.writeUtf(message.dragonType != null ? message.dragonType.getTypeName() : "none");
 		buffer.writeBoolean(message.hiding);
 		buffer.writeDouble(message.size);
 		buffer.writeBoolean(message.hasWings);
-		buffer.writeInt(message.lavaAirSupply);
 		buffer.writeInt(message.passengerId);
 	}
 
 	@Override
 	public SynchronizeDragonCap decode(FriendlyByteBuf buffer){
 		int id = buffer.readInt();
-		DragonType type = DragonType.values()[buffer.readByte()];
+		String typeS = buffer.readUtf();
+		AbstractDragonType type = typeS.equals("none") ? null :  DragonTypes.getStatic(typeS);
 		boolean hiding = buffer.readBoolean();
 		double size = buffer.readDouble();
 		boolean hasWings = buffer.readBoolean();
-		int lavaAirSupply = buffer.readInt();
 		int passengerId = buffer.readInt();
-		return new SynchronizeDragonCap(id, hiding, type, size, hasWings, lavaAirSupply, passengerId);
+		return new SynchronizeDragonCap(id, hiding, type, size, hasWings, passengerId);
 	}
 
 	@Override
@@ -77,39 +76,16 @@ public class SynchronizeDragonCap implements IMessage<SynchronizeDragonCap>{
 			NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), message);
 			ServerPlayer serverPlayer = supplier.get().getSender();
 
-			serverPlayer.removeTag("dragon");
-			serverPlayer.removeTag("sea_dragon");
-			serverPlayer.removeTag("forest_dragon");
-			serverPlayer.removeTag("cave_dragon");
-
 			DragonStateProvider.getCap(serverPlayer).ifPresent(dragonStateHandler -> {
 
-				if(message.dragonType == DragonType.NONE && dragonStateHandler.getType() != DragonType.NONE){
+				if(message.dragonType == null && dragonStateHandler.getType() != null){
 					DragonCommand.reInsertClawTools(serverPlayer, dragonStateHandler);
-				}
-
-				switch(message.dragonType){
-					case SEA -> {
-						serverPlayer.addTag("dragon");
-						serverPlayer.addTag("sea_dragon");
-					}
-
-					case FOREST -> {
-						serverPlayer.addTag("dragon");
-						serverPlayer.addTag("forest_dragon");
-					}
-
-					case CAVE -> {
-						serverPlayer.addTag("dragon");
-						serverPlayer.addTag("cave_dragon");
-					}
 				}
 
 				dragonStateHandler.setIsHiding(message.hiding);
 				dragonStateHandler.setType(message.dragonType);
 				dragonStateHandler.setSize(message.size, serverPlayer);
 				dragonStateHandler.setHasWings(message.hasWings);
-				dragonStateHandler.setLavaAirSupply(message.lavaAirSupply);
 				dragonStateHandler.setPassengerId(message.passengerId);
 				serverPlayer.setForcedPose(null);
 				serverPlayer.refreshDimensions();
@@ -138,7 +114,6 @@ public class SynchronizeDragonCap implements IMessage<SynchronizeDragonCap>{
 						dragonStateHandler.setIsHiding(message.hiding);
 						dragonStateHandler.setHasWings(message.hasWings);
 						dragonStateHandler.setSize(message.size);
-						dragonStateHandler.setLavaAirSupply(message.lavaAirSupply);
 						dragonStateHandler.setPassengerId(message.passengerId);
 					});
 					//refresh instances

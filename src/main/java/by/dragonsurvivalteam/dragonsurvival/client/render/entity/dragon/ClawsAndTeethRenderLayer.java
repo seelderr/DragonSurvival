@@ -3,9 +3,9 @@ package by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientEvents;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -41,7 +41,7 @@ public class ClawsAndTeethRenderLayer extends GeoLayerRenderer<DragonEntity>{
 
 		DragonStateHandler handler = DragonUtils.getHandler(entitylivingbaseIn.getPlayer());
 
-		if(!handler.getClawInventory().renderClaws){
+		if(!handler.getClawToolData().renderClaws){
 			return;
 		}
 
@@ -70,7 +70,7 @@ public class ClawsAndTeethRenderLayer extends GeoLayerRenderer<DragonEntity>{
 
 		String texture = "textures/armor/";
 		DragonStateHandler handler = DragonUtils.getHandler(playerEntity);
-		ItemStack clawItem = handler.getClawInventory().getClawsInventory().getItem(handler.getType() == DragonType.CAVE ? 1 : handler.getType() == DragonType.FOREST ? 2 : 3);
+		ItemStack clawItem = handler.getClawToolData().getClawsInventory().getItem(handler.getType().equals(DragonTypes.CAVE) ? 1 : handler.getType().equals(DragonTypes.FOREST) ? 2 : 3);
 		if(!clawItem.isEmpty() && clawItem.getItem() instanceof TieredItem){
 			texture = ClientEvents.getMaterial(texture, clawItem);
 		}else{
@@ -84,7 +84,7 @@ public class ClawsAndTeethRenderLayer extends GeoLayerRenderer<DragonEntity>{
 	public String constructTeethTexture(Player playerEntity){
 
 		String texture = "textures/armor/";
-		ItemStack swordItem = DragonUtils.getHandler(playerEntity).getClawInventory().getClawsInventory().getItem(0);
+		ItemStack swordItem = DragonUtils.getHandler(playerEntity).getClawToolData().getClawsInventory().getItem(0);
 
 		if(!swordItem.isEmpty() && swordItem.getItem() instanceof TieredItem){
 			texture = ClientEvents.getMaterial(texture, swordItem);

@@ -1,8 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.TabButton;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.DragonSkins;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.magic.ClientMagicHUDHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
@@ -11,11 +11,11 @@ import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TooltipRendering;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncDragonSkinSettings;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.ibm.icu.impl.Pair;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -116,12 +116,12 @@ public class SkinsScreen extends Screen{
 			this.handler.setSize(level.size);
 			this.handler.setType(DragonUtils.getDragonType(minecraft.player));
 
-			this.handler.getSkin().skinPreset.initDefaults(this.handler);
+			this.handler.getSkinData().skinPreset.initDefaults(this.handler);
 
 			if(noSkin && Objects.equals(playerName, minecraft.player.getGameProfile().getName())){
-				this.handler.getSkin().skinPreset.readNBT(DragonUtils.getHandler(minecraft.player).getSkin().skinPreset.writeNBT());
+				this.handler.getSkinData().skinPreset.readNBT(DragonUtils.getHandler(minecraft.player).getSkinData().skinPreset.writeNBT());
 			}else{
-				this.handler.getSkin().skinPreset.skinAges.get(level).defaultSkin = true;
+				this.handler.getSkinData().skinPreset.skinAges.get(level).defaultSkin = true;
 			}
 
 			FakeClientPlayerUtils.getFakePlayer(0, this.handler).animationSupplier = () -> "fly";
@@ -205,8 +205,8 @@ public class SkinsScreen extends Screen{
 		addRenderableWidget(new Button(startX + 128, startY + 45, imageWidth, 20, new TranslatableComponent("ds.level.newborn"), (button) -> {
 			DragonStateHandler handler = DragonUtils.getHandler(getMinecraft().player);
 
-			handler.getSkin().renderNewborn = !handler.getSkin().renderNewborn;
-			NetworkHandler.CHANNEL.sendToServer(new SyncDragonSkinSettings(getMinecraft().player.getId(), handler.getSkin().renderNewborn, handler.getSkin().renderYoung, handler.getSkin().renderAdult));
+			handler.getSkinData().renderNewborn = !handler.getSkinData().renderNewborn;
+			NetworkHandler.CHANNEL.sendToServer(new SyncDragonSkinSettings(getMinecraft().player.getId(), handler.getSkinData().renderNewborn, handler.getSkinData().renderYoung, handler.getSkinData().renderAdult));
 			setTextures();
 		}){
 			@Override
@@ -214,7 +214,7 @@ public class SkinsScreen extends Screen{
 				super.renderButton(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
 
 				DragonStateHandler handler = DragonUtils.getHandler(getMinecraft().player);
-				RenderSystem.setShaderTexture(0, !handler.getSkin().renderNewborn ? UNCHECKED : CHECKED);
+				RenderSystem.setShaderTexture(0, !handler.getSkinData().renderNewborn ? UNCHECKED : CHECKED);
 				blit(p_230431_1_, x + 3, y + 3, 0, 0, 13, 13, 13, 13);
 			}
 		});
@@ -222,8 +222,8 @@ public class SkinsScreen extends Screen{
 		addRenderableWidget(new Button(startX + 128, startY + 45 + 23, imageWidth, 20, new TranslatableComponent("ds.level.young"), (button) -> {
 			DragonStateHandler handler = DragonUtils.getHandler(getMinecraft().player);
 
-			handler.getSkin().renderYoung = !handler.getSkin().renderYoung;
-			NetworkHandler.CHANNEL.sendToServer(new SyncDragonSkinSettings(getMinecraft().player.getId(), handler.getSkin().renderNewborn, handler.getSkin().renderYoung, handler.getSkin().renderAdult));
+			handler.getSkinData().renderYoung = !handler.getSkinData().renderYoung;
+			NetworkHandler.CHANNEL.sendToServer(new SyncDragonSkinSettings(getMinecraft().player.getId(), handler.getSkinData().renderNewborn, handler.getSkinData().renderYoung, handler.getSkinData().renderAdult));
 			setTextures();
 		}){
 			@Override
@@ -231,7 +231,7 @@ public class SkinsScreen extends Screen{
 				super.renderButton(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
 
 				DragonStateHandler handler = DragonUtils.getHandler(getMinecraft().player);
-				RenderSystem.setShaderTexture(0, !handler.getSkin().renderYoung ? UNCHECKED : CHECKED);
+				RenderSystem.setShaderTexture(0, !handler.getSkinData().renderYoung ? UNCHECKED : CHECKED);
 				blit(p_230431_1_, x + 3, y + 3, 0, 0, 13, 13, 13, 13);
 			}
 		});
@@ -239,8 +239,8 @@ public class SkinsScreen extends Screen{
 		addRenderableWidget(new Button(startX + 128, startY + 45 + 46, imageWidth, 20, new TranslatableComponent("ds.level.adult"), (button) -> {
 			DragonStateHandler handler = DragonUtils.getHandler(getMinecraft().player);
 
-			handler.getSkin().renderAdult = !handler.getSkin().renderAdult;
-			NetworkHandler.CHANNEL.sendToServer(new SyncDragonSkinSettings(getMinecraft().player.getId(), handler.getSkin().renderNewborn, handler.getSkin().renderYoung, handler.getSkin().renderAdult));
+			handler.getSkinData().renderAdult = !handler.getSkinData().renderAdult;
+			NetworkHandler.CHANNEL.sendToServer(new SyncDragonSkinSettings(getMinecraft().player.getId(), handler.getSkinData().renderNewborn, handler.getSkinData().renderYoung, handler.getSkinData().renderAdult));
 			setTextures();
 		}){
 			@Override
@@ -248,7 +248,7 @@ public class SkinsScreen extends Screen{
 				super.renderButton(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
 
 				DragonStateHandler handler = DragonUtils.getHandler(getMinecraft().player);
-				RenderSystem.setShaderTexture(0, !handler.getSkin().renderAdult ? UNCHECKED : CHECKED);
+				RenderSystem.setShaderTexture(0, !handler.getSkinData().renderAdult ? UNCHECKED : CHECKED);
 				blit(p_230431_1_, x + 3, y + 3, 0, 0, 13, 13, 13, 13);
 			}
 		});

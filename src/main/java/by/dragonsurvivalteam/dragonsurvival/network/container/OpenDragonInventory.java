@@ -1,8 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.network.container;
 
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.DragonContainer;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerPlayer;

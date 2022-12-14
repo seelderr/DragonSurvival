@@ -1,9 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.components;
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.DSSlider;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.settings.ResetSettingsButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownList;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.DSSlider;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ExtendedCheckbox;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.EnumSkinLayer;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.LayerSettings;
@@ -53,7 +53,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 
 		glowing = new ExtendedCheckbox(x + 3, y, xSize - 5, 10, 10, new TranslatableComponent("ds.gui.dragon_editor.glowing"), set.glowing, (s) -> {
 			settings.get().glowing = s.selected();
-			screen.handler.getSkin().compileSkin();
+			screen.handler.getSkinData().compileSkin();
 		});
 
 		hueReset = new ExtendedButton(x + 3 + xSize - 26, y + 12, 20, 20, TextComponent.EMPTY, (s) -> {
@@ -89,7 +89,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 				settings.get().brightness = value2;
 				settings.get().modifiedColor = true;
 
-				screen.handler.getSkin().compileSkin();
+				screen.handler.getSkinData().compileSkin();
 				screen.update();
 			}
 
@@ -119,7 +119,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 				settings.get().brightness = value2;
 				settings.get().modifiedColor = true;
 
-				screen.handler.getSkin().compileSkin();
+				screen.handler.getSkinData().compileSkin();
 				screen.update();
 			}
 
@@ -180,7 +180,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 				settings.get().brightness = value2;
 				settings.get().modifiedColor = true;
 
-				screen.handler.getSkin().compileSkin();
+				screen.handler.getSkinData().compileSkin();
 				screen.update();
 			}
 

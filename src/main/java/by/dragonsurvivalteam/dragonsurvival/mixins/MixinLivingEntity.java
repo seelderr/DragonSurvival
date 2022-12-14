@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.mojang.datafixers.util.Pair;
@@ -53,7 +53,7 @@ public abstract class MixinLivingEntity extends Entity{
 			DragonStateHandler cap = DragonUtils.getHandler(entity);
 
 			if(!(mainStack.getItem() instanceof TieredItem) && cap != null){
-				ItemStack sword = cap.getClawInventory().getClawsInventory().getItem(0);
+				ItemStack sword = cap.getClawToolData().getClawsInventory().getItem(0);
 
 				if(!sword.isEmpty()){
 					return sword;

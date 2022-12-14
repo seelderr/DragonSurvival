@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.network.dragon_editor;
 
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import net.minecraft.client.Minecraft;
@@ -54,8 +54,8 @@ public class SyncPlayerSkinPreset implements IMessage<SyncPlayerSkinPreset>{
 			ServerPlayer entity = supplier.get().getSender();
 			if(entity != null){
 				DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
-					dragonStateHandler.getSkin().skinPreset = message.preset;
-					dragonStateHandler.getSkin().compileSkin();
+					dragonStateHandler.getSkinData().skinPreset = message.preset;
+					dragonStateHandler.getSkinData().compileSkin();
 				});
 
 				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new SyncPlayerSkinPreset(entity.getId(), message.preset));
@@ -73,8 +73,8 @@ public class SyncPlayerSkinPreset implements IMessage<SyncPlayerSkinPreset>{
 				Entity entity = world.getEntity(message.playerId);
 				if(entity instanceof Player){
 					DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
-						dragonStateHandler.getSkin().skinPreset = message.preset;
-						dragonStateHandler.getSkin().compileSkin();
+						dragonStateHandler.getSkinData().skinPreset = message.preset;
+						dragonStateHandler.getSkinData().compileSkin();
 					});
 				}
 			}

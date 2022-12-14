@@ -2,11 +2,11 @@ package by.dragonsurvivalteam.dragonsurvival.client.handlers.magic;
 
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ClientConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncAbilityCasting;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
@@ -31,10 +31,10 @@ public class ClientCastingHandler{
 
 
 		boolean isKeyDown = KeyInputHandler.USE_ABILITY.isDown() || ClientConfig.alternateCastMode && (
-								KeyInputHandler.ABILITY1.isDown() && dragonStateHandler.getMagic().getSelectedAbilitySlot() == 0
-								|| KeyInputHandler.ABILITY2.isDown() && dragonStateHandler.getMagic().getSelectedAbilitySlot() == 1
-								|| KeyInputHandler.ABILITY3.isDown() && dragonStateHandler.getMagic().getSelectedAbilitySlot() == 2
-								|| KeyInputHandler.ABILITY4.isDown() && dragonStateHandler.getMagic().getSelectedAbilitySlot() == 3);
+								KeyInputHandler.ABILITY1.isDown() && dragonStateHandler.getMagicData().getSelectedAbilitySlot() == 0
+								|| KeyInputHandler.ABILITY2.isDown() && dragonStateHandler.getMagicData().getSelectedAbilitySlot() == 1
+								|| KeyInputHandler.ABILITY3.isDown() && dragonStateHandler.getMagicData().getSelectedAbilitySlot() == 2
+								|| KeyInputHandler.ABILITY4.isDown() && dragonStateHandler.getMagicData().getSelectedAbilitySlot() == 3);
 
 		if(status == 0 && isKeyDown)
 			status = 1;
@@ -48,8 +48,8 @@ public class ClientCastingHandler{
 		}
 
 
-		int slot = dragonStateHandler.getMagic().getSelectedAbilitySlot();
-		ActiveDragonAbility ability = dragonStateHandler.getMagic().getAbilityFromSlot(slot);
+		int slot = dragonStateHandler.getMagicData().getSelectedAbilitySlot();
+		ActiveDragonAbility ability = dragonStateHandler.getMagicData().getAbilityFromSlot(slot);
 
 		if(ability != null && ability.getLevel() > 0 && !ability.isDisabled()){
 			if(status == 1 && ability.canCastSkill(player)){

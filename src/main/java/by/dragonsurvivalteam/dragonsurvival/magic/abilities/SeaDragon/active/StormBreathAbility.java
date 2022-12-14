@@ -6,11 +6,9 @@ import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaDragon.SmallLigh
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.SoundRegistry;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.StormBreathSound;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.GenericCapability;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.GenericCapabilityProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.hitbox.DragonHitBox;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.StormBreathEntity;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
@@ -18,7 +16,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigType;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.BreathAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
@@ -39,7 +37,6 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
@@ -47,7 +44,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.DistExecutor.SafeRunnable;
 
@@ -56,7 +52,6 @@ import java.util.List;
 
 @RegisterDragonAbility
 public class StormBreathAbility extends BreathAbility{
-	public static StormBreathEntity EFFECT_ENTITY;
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic",
 	                                                     "abilities",
 	                                                     "sea_dragon",
@@ -238,7 +233,7 @@ public class StormBreathAbility extends BreathAbility{
 
 		for(LivingEntity target : secondaryTargets){
 			if(player != null){
-				target.hurt(DamageSource.indirectMobAttack(source, player), damage);
+				Functions.attackTargets(player, eTarget -> eTarget.hurt(DamageSource.indirectMobAttack(source, player), damage), target);
 			}else{
 				target.hurt(DamageSource.mobAttack(source), damage);
 			}
@@ -247,9 +242,8 @@ public class StormBreathAbility extends BreathAbility{
 
 			if(!chargedSpreadBlacklist.contains(source.getType().getRegistryName().toString())){
 				if(target != source){
-					GenericCapability capSource = GenericCapabilityProvider.getGenericCapability(source);
-					GenericCapability cap = GenericCapabilityProvider.getGenericCapability(target);
-
+					DragonStateHandler capSource = DragonUtils.getHandler(source);
+					DragonStateHandler cap = DragonUtils.getHandler(target);
 
 					cap.chainCount = capSource.chainCount + 1;
 
@@ -289,34 +283,16 @@ public class StormBreathAbility extends BreathAbility{
 		if(chargedSpreadBlacklist.contains(attacker.getType().getRegistryName().toString())){
 			return false;
 		}
-		if(target == attacker){
-			return false;
-		}
-		if(target instanceof FakePlayer){
-			return false;
-		}
-		if(target instanceof DragonHitBox){
-			return false;
-		}
-		if(target instanceof TamableAnimal && ((TamableAnimal)target).getOwner() == attacker){
-			return false;
-		}
-		if(attacker instanceof TamableAnimal && !isValidTarget(((TamableAnimal)attacker).getOwner(), target)){
-			return false;
-		}
+
 		if(target.getLastHurtByMob() == attacker && target.getLastHurtByMobTimestamp() + Functions.secondsToTicks(1) < target.tickCount){
 			return false;
 		}
-		return DragonStateProvider.getCap(target).map(DragonStateHandler::getType).orElse(null) != DragonType.SEA;
+
+		return Functions.isValidTarget(attacker, target) && DragonStateProvider.getCap(target).map(DragonStateHandler::getType).orElse(null) != DragonTypes.SEA;
 	}
 
-	//	@Override
-	//	public Entity getEffectEntity(){
-	//		return EFFECT_ENTITY;
-	//	}
-
 	public void hurtTarget(LivingEntity entity){
-		entity.hurt(new BreathDamage(player), getDamage());
+		Functions.attackTargets(getPlayer(), e -> e.hurt(new BreathDamage(player), getDamage()), entity);
 		onDamage(entity);
 
 		if(player.level.random.nextInt(100) < 50){
@@ -328,7 +304,7 @@ public class StormBreathAbility extends BreathAbility{
 		if(!entity.level.isClientSide){
 			if(!chargedBlacklist.contains(entity.getType().getRegistryName().toString())){
 				if(entity.level.random.nextInt(100) < 40){
-					GenericCapability cap = GenericCapabilityProvider.getGenericCapability(entity);
+					DragonStateHandler cap = DragonUtils.getHandler(entity);
 
 					cap.lastAfflicted = player.getId();
 					cap.chainCount = 1;
@@ -345,8 +321,8 @@ public class StormBreathAbility extends BreathAbility{
 	}
 
 	@Override
-	public DragonType getDragonType(){
-		return DragonType.SEA;
+	public AbstractDragonType getDragonType(){
+		return DragonTypes.SEA;
 	}
 
 	@Override
@@ -463,9 +439,6 @@ public class StormBreathAbility extends BreathAbility{
 
 	@Override
 	public boolean canHitEntity(LivingEntity entity){
-		if(entity instanceof DragonHitBox){
-			return false;
-		}
 		return !(entity instanceof Player) || player.canHarmPlayer((Player)entity);
 	}
 

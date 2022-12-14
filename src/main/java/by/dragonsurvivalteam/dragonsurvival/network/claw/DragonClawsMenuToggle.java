@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.network.claw;
 
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.DragonContainer;
 import net.minecraft.network.FriendlyByteBuf;
@@ -41,7 +41,7 @@ public class DragonClawsMenuToggle implements IMessage<DragonClawsMenuToggle>{
 
 
 		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
-			dragonStateHandler.getClawInventory().setClawsMenuOpen(message.state);
+			dragonStateHandler.getClawToolData().setClawsMenuOpen(message.state);
 		});
 
 		if(player.containerMenu instanceof DragonContainer){

@@ -3,9 +3,11 @@ package by.dragonsurvivalteam.dragonsurvival.registry;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.*;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.hitbox.DragonHitBox;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.monsters.MagicalPredator;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.*;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.BallLightningEntity;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.Bolas;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.DragonSpikeEntity;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.FireBallEntity;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.VillagerRelationsHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import com.google.common.base.Preconditions;
@@ -52,12 +54,10 @@ public class DSEntities{
 	public static EntityType<PrincesHorseEntity> PRINCESS_ON_HORSE;
 	public static EntityType<PrinceHorseEntity> PRINCE_ON_HORSE;
 	public static EntityType<Bolas> BOLAS_ENTITY;
-	public static EntityType<DragonHitBox> DRAGON_HITBOX;
 	//Magic abilities
 	public static EntityType<DragonSpikeEntity> DRAGON_SPIKE;
 	public static EntityType<BallLightningEntity> BALL_LIGHTNING;
 	public static EntityType<FireBallEntity> FIREBALL;
-	public static EntityType<StormBreathEntity> STORM_BREATH_EFFECT;
 	public static VillagerProfession PRINCESS_PROFESSION, PRINCE_PROFESSION;
 
 	@SubscribeEvent
@@ -65,7 +65,6 @@ public class DSEntities{
 //		event.put(MAGICAL_BEAST, MagicalPredator.createMonsterAttributes().build());
 		event.put(DRAGON, DragonEntity.createLivingAttributes().build());
 		event.put(DRAGON_ARMOR, DragonEntity.createLivingAttributes().build());
-		event.put(DRAGON_HITBOX, DragonHitBox.createLivingAttributes().build());
 		event.put(HUNTER_HOUND, Wolf.createAttributes().add(Attributes.MOVEMENT_SPEED, ServerConfig.houndSpeed).add(Attributes.ATTACK_DAMAGE, ServerConfig.houndDamage).add(Attributes.MAX_HEALTH, ServerConfig.houndHealth).build());
 		event.put(SHOOTER_HUNTER, Pillager.createAttributes().add(Attributes.MOVEMENT_SPEED, ServerConfig.hunterSpeed).add(Attributes.MAX_HEALTH, ServerConfig.hunterHealth).add(Attributes.ARMOR, ServerConfig.hunterArmor).add(Attributes.ATTACK_DAMAGE, ServerConfig.hunterDamage).build());
 		event.put(SQUIRE_HUNTER, Vindicator.createAttributes().add(Attributes.MOVEMENT_SPEED, ServerConfig.squireSpeed).add(Attributes.ATTACK_DAMAGE, ServerConfig.squireDamage).add(Attributes.ARMOR, ServerConfig.squireArmor).add(Attributes.MAX_HEALTH, ServerConfig.squireHealth).build());
@@ -80,15 +79,12 @@ public class DSEntities{
 		IForgeRegistry<EntityType<?>> registry = event.getRegistry();
 		DRAGON = register(registry, "dummy_dragon", new EntityType<>(DragonEntity::new, MobCategory.MISC, true, false, false, false, ImmutableSet.of(), EntityDimensions.fixed(0.9f, 1.9f), 0, 0));
 		DRAGON_ARMOR = register(registry, "dragon_armor", new EntityType<>(DragonEntity::new, MobCategory.MISC, true, false, false, false, ImmutableSet.of(), EntityDimensions.fixed(0.9f, 1.9f), 0, 0));
-		DRAGON_HITBOX = register(registry, "dragon_hitbox", new EntityType<>(DragonHitBox::new, MobCategory.MISC, true, false, false, false, ImmutableSet.of(), EntityDimensions.fixed(0.5f, 0.5f), 1, 1));
 
 		BOLAS_ENTITY = register(registry, "bolas", cast(EntityType.Builder.of((p_create_1_, p_create_2_) -> new Bolas(p_create_2_), MobCategory.MISC).sized(0.25F, 0.25F).clientTrackingRange(4).updateInterval(10).build("bolas")));
 
 		DRAGON_SPIKE = register(registry, "dragon_spike", EntityType.Builder.<DragonSpikeEntity>of(DragonSpikeEntity::new, MobCategory.MISC).sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(1).build("dragon_spike"));
 		BALL_LIGHTNING = register(registry, "ball_lightning", EntityType.Builder.<BallLightningEntity>of(BallLightningEntity::new, MobCategory.MISC).sized(1F, 1F).clientTrackingRange(4).updateInterval(1).build("ball_lightning"));
 		FIREBALL = register(registry, "fireball", EntityType.Builder.<FireBallEntity>of(FireBallEntity::new, MobCategory.MISC).sized(1F, 1F).clientTrackingRange(4).updateInterval(1).build("fireball"));
-		STORM_BREATH_EFFECT = register(registry, "storm_breath_effect", EntityType.Builder.of(StormBreathEntity::new, MobCategory.MISC).sized(1F, 1F).clientTrackingRange(4).updateInterval(1).build("storm_breath_effect"));
-
 
 		for(EntityType entity : entities){
 			Preconditions.checkNotNull(entity.getRegistryName(), "registryName");

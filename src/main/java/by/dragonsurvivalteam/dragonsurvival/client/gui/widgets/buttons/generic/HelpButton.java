@@ -3,8 +3,9 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.utils.TooltipRender;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TooltipRendering;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -17,13 +18,13 @@ public class HelpButton extends ExtendedButton implements TooltipRender{
 	public static final ResourceLocation texture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/help_button.png");
 	public String text;
 	public int variation;
-	public DragonType type;
+	public AbstractDragonType type;
 
 	public HelpButton(int x, int y, int sizeX, int sizeY, String text, int variation){
 		this(DragonUtils.getDragonType(Minecraft.getInstance().player), x, y, sizeX, sizeY, text, variation);
 	}
 
-	public HelpButton(DragonType type, int x, int y, int sizeX, int sizeY, String text, int variation){
+	public HelpButton(AbstractDragonType type, int x, int y, int sizeX, int sizeY, String text, int variation){
 		super(x, y, sizeX, sizeY, TextComponent.EMPTY, s -> {});
 		this.text = text;
 		this.variation = variation;
@@ -41,7 +42,7 @@ public class HelpButton extends ExtendedButton implements TooltipRender{
 
 		int i = 0;
 		if(this.isHoveredOrFocused())
-			i += (int)((type.ordinal() + 1) * size);
+			i += (int)(type == null ? 4 : (type.equals(DragonTypes.CAVE) ? 1 : type.equals(DragonTypes.FOREST) ? 2 : type.equals(DragonTypes.SEA) ? 3 : 4) * size);
 
 		pMatrixStack.pushPose();
 		pMatrixStack.translate(0, 0, 200);

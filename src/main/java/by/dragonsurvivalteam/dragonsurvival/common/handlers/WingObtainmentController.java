@@ -1,12 +1,12 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.status.RefreshDragons;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.CompleteDataSync;
+import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.mojang.bridge.game.Language;
@@ -37,6 +37,9 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Mod.EventBusSubscriber
 public class WingObtainmentController{
@@ -49,6 +52,7 @@ public class WingObtainmentController{
 		if(FMLLoader.getDist() != Dist.CLIENT){
 			return;
 		}
+
 		try{
 			List<String> langs = new ArrayList<>();
 			InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("assets/dragonsurvival/lang");
@@ -83,21 +87,16 @@ public class WingObtainmentController{
 	}
 
 
+	private static ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
+
 	@SubscribeEvent
 	public static void inTheEnd(PlayerEvent.PlayerChangedDimensionEvent changedDimensionEvent){
 		Player player = changedDimensionEvent.getPlayer();
+
 		if(changedDimensionEvent.getTo() == Level.END){
 			DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
-				if(dragonStateHandler.isDragon() && !dragonStateHandler.getMovementData().spinLearned && ServerConfig.enderDragonGrantsSpin){
-					Thread thread = new Thread(() -> {
-						try{
-							Thread.sleep(3000);
-							player.sendMessage(new TextComponent("ds.endmessage"), enderDragonUUID);
-						}catch(InterruptedException e){
-							e.printStackTrace();
-						}
-					});
-					thread.start();
+				if(dragonStateHandler.isDragon() && !dragonStateHandler.getMovementData().spinLearned && ServerFlightHandler.enderDragonGrantsSpin){
+					executorService.schedule(() -> player.sendMessage(new TextComponent("ds.endmessage"), enderDragonUUID), 3, TimeUnit.SECONDS);
 				}
 			});
 		}
@@ -105,7 +104,6 @@ public class WingObtainmentController{
 
 	@SubscribeEvent
 	public static void clientMessageRecieved(ClientChatReceivedEvent event){
-		DragonSurvivalMod.LOGGER.info(event.getMessage().getString());
 		if(event.getSenderUUID().equals(enderDragonUUID)){
 			if(event.getMessage().getString().equals("ds.endmessage")){
 				Language language = Minecraft.getInstance().getLanguageManager().getSelected();
@@ -125,19 +123,12 @@ public class WingObtainmentController{
 		ServerPlayer player = chatEvent.getPlayer();
 		String lowercase = message.toLowerCase();
 		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
-			if(dragonStateHandler.isDragon() && !dragonStateHandler.getMovementData().spinLearned && ServerConfig.enderDragonGrantsSpin){
+			if(dragonStateHandler.isDragon() && !dragonStateHandler.getMovementData().spinLearned && ServerFlightHandler.enderDragonGrantsSpin){
 				if(player.getLevel().dimension() == Level.END){
 					if(!player.getLevel().getDragons().isEmpty()){
 						if(!lowercase.isEmpty()){
-							Thread thread = new Thread(() -> {
-								try{
-									Thread.sleep(2000);
-									player.sendMessage(new TextComponent("ds.dragon.grants.wings"), enderDragonUUID);
-								}catch(InterruptedException e){
-									e.printStackTrace();
-								}
-							});
-							thread.start();
+							executorService.schedule(() -> player.sendMessage(new TextComponent("ds.dragon.grants.wings"), enderDragonUUID), 2, TimeUnit.SECONDS);
+
 							dragonStateHandler.setHasWings(true);
 							dragonStateHandler.getMovementData().spinLearned = true;
 							NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncSpinStatus(player.getId(), dragonStateHandler.getMovementData().spinAttack, dragonStateHandler.getMovementData().spinCooldown, dragonStateHandler.getMovementData().spinLearned));

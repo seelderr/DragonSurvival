@@ -1,15 +1,15 @@
 package by.dragonsurvivalteam.dragonsurvival.magic;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.innate.InnateDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncMagicCap;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -19,23 +19,25 @@ import net.minecraftforge.network.PacketDistributor;
 import org.objectweb.asm.Type;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
 import java.util.*;
 
 public class DragonAbilities{
-	public static HashMap<DragonType, ArrayList<DragonAbility>> ABILITIES = new HashMap<>();
-	public static HashMap<DragonType, ArrayList<ActiveDragonAbility>> ACTIVE_ABILITIES = new HashMap<>();
-	public static HashMap<DragonType, ArrayList<PassiveDragonAbility>> PASSIVE_ABILITIES = new HashMap<>();
-	public static HashMap<DragonType, ArrayList<InnateDragonAbility>> INNATE_ABILITIES = new HashMap<>();
+	public static HashMap<String, ArrayList<DragonAbility>> ABILITIES = new HashMap<>();
+	public static HashMap<String, ArrayList<ActiveDragonAbility>> ACTIVE_ABILITIES = new HashMap<>();
+	public static HashMap<String, ArrayList<PassiveDragonAbility>> PASSIVE_ABILITIES = new HashMap<>();
+	public static HashMap<String, ArrayList<InnateDragonAbility>> INNATE_ABILITIES = new HashMap<>();
 	public static HashMap<String, DragonAbility> ABILITY_LOOKUP = new HashMap<>();
 
 	public static void initAbilities(){
 		List<DragonAbility> abs = getInstances(RegisterDragonAbility.class, DragonAbility.class);
 
 		for(DragonAbility ability : abs){
+			if(ability == null) continue;
 			ABILITY_LOOKUP.put(ability.getName(), ability);
 
 			if(ability.getDragonType() == null){
-				for(DragonType type : DragonType.values()){
+				for(String type : DragonTypes.getTypes()){
 					ABILITIES.computeIfAbsent(type, s -> new ArrayList<>());
 					ABILITIES.get(type).add(ability);
 
@@ -53,18 +55,18 @@ public class DragonAbilities{
 					}
 				}
 			}else{
-				ABILITIES.computeIfAbsent(ability.getDragonType(), s -> new ArrayList<>());
-				ABILITIES.get(ability.getDragonType()).add(ability);
+				ABILITIES.computeIfAbsent(ability.getDragonType().getTypeName(), s -> new ArrayList<>());
+				ABILITIES.get(ability.getDragonType().getTypeName()).add(ability);
 
 				if(ability instanceof InnateDragonAbility ab){
-					INNATE_ABILITIES.computeIfAbsent(ability.getDragonType(), s -> new ArrayList<>());
-					INNATE_ABILITIES.get(ability.getDragonType()).add(ab);
+					INNATE_ABILITIES.computeIfAbsent(ability.getDragonType().getTypeName(), s -> new ArrayList<>());
+					INNATE_ABILITIES.get(ability.getDragonType().getTypeName()).add(ab);
 				}else if(ability instanceof PassiveDragonAbility ab){
-					PASSIVE_ABILITIES.computeIfAbsent(ability.getDragonType(), s -> new ArrayList<>());
-					PASSIVE_ABILITIES.get(ability.getDragonType()).add(ab);
+					PASSIVE_ABILITIES.computeIfAbsent(ability.getDragonType().getTypeName(), s -> new ArrayList<>());
+					PASSIVE_ABILITIES.get(ability.getDragonType().getTypeName()).add(ab);
 				}else if(ability instanceof ActiveDragonAbility ab){
-					ACTIVE_ABILITIES.computeIfAbsent(ability.getDragonType(), s -> new ArrayList<>());
-					ACTIVE_ABILITIES.get(ability.getDragonType()).add(ab);
+					ACTIVE_ABILITIES.computeIfAbsent(ability.getDragonType().getTypeName(), s -> new ArrayList<>());
+					ACTIVE_ABILITIES.get(ability.getDragonType().getTypeName()).add(ab);
 				}
 			}
 		}
@@ -113,12 +115,12 @@ public class DragonAbilities{
 				ability.player = p;
 			}
 
-			handler.getMagic().abilities.put(ability.getName(), ability);
+			handler.getMagicData().abilities.put(ability.getName(), ability);
 
 			if(player.level.isClientSide){
-				NetworkHandler.CHANNEL.sendToServer(new SyncMagicCap(player.getId(), handler.getMagic()));
+				NetworkHandler.CHANNEL.sendToServer(new SyncMagicCap(player.getId(), handler.getMagicData()));
 			}else{
-				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncMagicCap(player.getId(), handler.getMagic()));
+				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncMagicCap(player.getId(), handler.getMagicData()));
 			}
 		}catch(InstantiationException | IllegalAccessException e){
 			throw new RuntimeException(e);
@@ -131,26 +133,27 @@ public class DragonAbilities{
 		}
 
 		DragonStateHandler handler = DragonUtils.getHandler(player);
-		handler.getMagic().abilities.values().stream().filter(s-> s.getClass() == c).forEach(s -> {
+		handler.getMagicData().abilities.values().stream().filter(s-> s.getClass() == c).forEach(s -> {
 			s.level = Mth.clamp(level, s.getMinLevel(), s.getMaxLevel());
 		});
 
 		if(player.level.isClientSide){
-			NetworkHandler.CHANNEL.sendToServer(new SyncMagicCap(player.getId(), handler.getMagic()));
+			NetworkHandler.CHANNEL.sendToServer(new SyncMagicCap(player.getId(), handler.getMagicData()));
 		}else{
-			NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY.with(() -> player), new SyncMagicCap(player.getId(), handler.getMagic()));
+			NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY.with(() -> player), new SyncMagicCap(player.getId(), handler.getMagicData()));
 		}
 	}
 
 	public static boolean hasAbility(LivingEntity player, Class<? extends DragonAbility> c) {
 		DragonStateHandler handler = DragonUtils.getHandler(player);
-		return handler.getMagic().abilities.values().stream().anyMatch(s-> s.getClass() == c);
+		return handler.getMagicData().abilities.values().stream().anyMatch(s-> s.getClass() == c||s.getClass().isAssignableFrom(c) || c.isAssignableFrom(s.getClass()));
 	}
 
 	public static <T extends DragonAbility> T getAbility(LivingEntity player, Class<T> c){
 		DragonStateHandler handler = DragonUtils.getHandler(player);
-		Optional<T> optionalT = (Optional<T>)handler.getMagic().abilities.values().stream().filter(s-> s.getClass() == c).findAny();
+		Optional<T> optionalT = (Optional<T>)handler.getMagicData().abilities.values().stream().filter(s-> s.getClass() == c || s.getClass().isAssignableFrom(c) || c.isAssignableFrom(s.getClass())).findAny();
 		return optionalT.orElseGet(() -> {
+			if(Modifier.isAbstract(c.getModifiers())) return null;
 			try{
 				return c.newInstance();
 			}catch(InstantiationException | IllegalAccessException e){

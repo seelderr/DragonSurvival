@@ -2,8 +2,9 @@ package by.dragonsurvivalteam.dragonsurvival.network;
 
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientEvents;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
@@ -17,7 +18,7 @@ import java.util.function.Supplier;
 
 public class RequestClientData implements IMessage<RequestClientData>{
 	public DragonStateHandler handler;
-	public DragonType type;
+	public AbstractDragonType type;
 	public DragonLevel level;
 
 	public RequestClientData(DragonStateHandler handler){
@@ -26,7 +27,7 @@ public class RequestClientData implements IMessage<RequestClientData>{
 		this.level = handler.getLevel();
 	}
 
-	public RequestClientData(DragonType type, DragonLevel level){
+	public RequestClientData(AbstractDragonType type, DragonLevel level){
 		this.type = type;
 		this.level = level;
 	}
@@ -35,13 +36,14 @@ public class RequestClientData implements IMessage<RequestClientData>{
 
 	@Override
 	public void encode(RequestClientData message, FriendlyByteBuf buffer){
-		buffer.writeEnum(message.type);
+		buffer.writeUtf(message.type != null ? message.type.getTypeName() : "none");
 		buffer.writeEnum(message.level);
 	}
 
 	@Override
 	public RequestClientData decode(FriendlyByteBuf buffer){
-		return new RequestClientData(buffer.readEnum(DragonType.class), buffer.readEnum(DragonLevel.class));
+		String type = buffer.readUtf();
+		return new RequestClientData(type.equals("none") ? null : DragonTypes.getStatic(type), buffer.readEnum(DragonLevel.class));
 	}
 
 	@Override

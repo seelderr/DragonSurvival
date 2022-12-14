@@ -3,15 +3,16 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.DragonAltarGUI;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.SkinsScreen;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.components.DragonEditorConfirmComponent;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.components.DragonUIRenderComponent;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.buttons.*;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.utils.TooltipRender;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.*;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.ColorSelectorButton;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.UndoRedoButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ArrowButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.DropDownButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ExtendedCheckbox;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.components.DragonEditorConfirmComponent;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.components.DragonUIRenderComponent;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientEvents;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.magic.ClientMagicHUDHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEditorHandler;
@@ -25,21 +26,22 @@ import by.dragonsurvivalteam.dragonsurvival.client.util.TextRenderUtil;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TooltipRendering;
 import by.dragonsurvivalteam.dragonsurvival.commands.DragonCommand;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.SkinCap;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.RequestClientData;
 import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncPlayerSkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncAltarCooldown;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.CompleteDataSync;
+import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.google.common.collect.EvictingQueue;
 import com.google.gson.Gson;
@@ -83,7 +85,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 	public int guiLeft;
 	public int guiTop;
 	public DragonLevel level = DragonLevel.ADULT;
-	public DragonType type;
+	public AbstractDragonType type;
 	public SkinPreset preset;
 	public boolean confirmation = false;
 	public boolean showUi = true;
@@ -98,10 +100,10 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 	private DragonEditorConfirmComponent conf;
 
 	public DragonEditorScreen(Screen source){
-		this(source, DragonType.NONE);
+		this(source, null);
 	}
 
-	public DragonEditorScreen(Screen source, DragonType type){
+	public DragonEditorScreen(Screen source, AbstractDragonType type){
 		super(new TranslatableComponent("ds.gui.dragon_editor"));
 		this.source = source;
 		this.type = type;
@@ -140,7 +142,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			reverseQueue(REDO_QUEUES.get(currentSelected));
 
 			this.preset.readNBT(UNDO_QUEUES.get(currentSelected).poll());
-			handler.getSkin().compileSkin();
+			handler.getSkinData().compileSkin();
 			update();
 		}
 	}
@@ -155,7 +157,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			reverseQueue(UNDO_QUEUES.get(currentSelected));
 
 			this.preset.readNBT(REDO_QUEUES.get(currentSelected).poll());
-			handler.getSkin().compileSkin();
+			handler.getSkinData().compileSkin();
 			update();
 		}
 	}
@@ -224,14 +226,16 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 		SkinPreset newPreset = new SkinPreset();
 		newPreset.readNBT(preset.writeNBT());
 
+		String typeS = type != null ? type.getTypeName().toUpperCase() : null;
+
 		if(DragonUtils.getDragonType(minecraft.player) == this.type){
 			NetworkHandler.CHANNEL.sendToServer(new SyncPlayerSkinPreset(minecraft.player.getId(), newPreset));
 		}
 
-		DragonEditorRegistry.getSavedCustomizations().skinPresets.computeIfAbsent(this.type, (t) -> new HashMap<>());
-		DragonEditorRegistry.getSavedCustomizations().skinPresets.get(this.type).put(currentSelected, newPreset);
+		DragonEditorRegistry.getSavedCustomizations().skinPresets.computeIfAbsent(typeS, (t) -> new HashMap<>());
+		DragonEditorRegistry.getSavedCustomizations().skinPresets.get(typeS).put(currentSelected, newPreset);
 
-		DragonEditorRegistry.getSavedCustomizations().current.get(this.type).put(level, currentSelected);
+		DragonEditorRegistry.getSavedCustomizations().current.get(typeS).put(level, currentSelected);
 
 		try{
 			Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -268,27 +272,30 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 		if(!hasInit){
 			level = localHandler.getLevel();
 
-			if(type == DragonType.NONE){
+			if(type == null){
 				type = localHandler.getType();
 			}
 
-			DragonEditorRegistry.getSavedCustomizations().current.computeIfAbsent(type, s->new HashMap<>());
-			DragonEditorRegistry.getSavedCustomizations().current.get(type).computeIfAbsent(level, s->0);
+			String typeS = type != null ? type.getTypeName().toUpperCase() : null;
 
-			currentSelected = DragonEditorRegistry.getSavedCustomizations().current.get(type).get(level);
 
-			DragonEditorRegistry.getSavedCustomizations().skinPresets.computeIfAbsent(type, s->new HashMap<>());
-			DragonEditorRegistry.getSavedCustomizations().skinPresets.get(type).computeIfAbsent(currentSelected, (s)-> {
+			DragonEditorRegistry.getSavedCustomizations().current.computeIfAbsent(typeS, s->new HashMap<>());
+			DragonEditorRegistry.getSavedCustomizations().current.get(typeS).computeIfAbsent(level, s->0);
+
+			currentSelected = DragonEditorRegistry.getSavedCustomizations().current.get(typeS).get(level);
+
+			DragonEditorRegistry.getSavedCustomizations().skinPresets.computeIfAbsent(typeS, s->new HashMap<>());
+			DragonEditorRegistry.getSavedCustomizations().skinPresets.get(typeS).computeIfAbsent(currentSelected, (s)-> {
 				SkinPreset preset1 = new SkinPreset();
 				preset1.initDefaults(type);
 				return preset1;
 			});
 
-			SkinPreset curPreset = DragonEditorRegistry.getSavedCustomizations().skinPresets.get(type).get(currentSelected);
+			SkinPreset curPreset = DragonEditorRegistry.getSavedCustomizations().skinPresets.get(typeS).get(currentSelected);
 			preset = new SkinPreset();
 			preset.readNBT(curPreset.writeNBT());
-			handler.getSkin().skinPreset = preset;
-			handler.getSkin().compileSkin();
+			handler.getSkinData().skinPreset = preset;
+			handler.getSkinData().compileSkin();
 
 			dragonRender.zoom = (float)(level.size * preset.sizeMul);
 
@@ -324,7 +331,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			DropDownButton btn = new DragonEditorDropdownButton(this, i < 5 ? DragonEditorScreen.this.width / 2 - 100 - 100 : DragonEditorScreen.this.width / 2 + 83, DragonEditorScreen.this.guiTop + 10 + ((i >= 5 ? (i - 5) * 30 : i * 30)), 90, 15, curValue, values, layers){
 				public void updateMessage(){
 					if(current != null){
-						message = new TranslatableComponent("ds.skin_part." + type.name().toLowerCase(Locale.ROOT) + "." + current.toLowerCase(Locale.ROOT));
+						message = new TranslatableComponent("ds.skin_part." + type.getTypeName().toLowerCase(Locale.ROOT) + "." + current.toLowerCase(Locale.ROOT));
 					}
 				}
 			};
@@ -384,7 +391,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			addRenderableWidget(new ColorSelectorButton(this, layers, btn.x + 15 + btn.getWidth() + 2, btn.y, btn.getHeight(), btn.getHeight(), (s) -> {
 				doAction();
 				preset.skinAges.get(level).layerSettings.get(layers).hue = s.floatValue();
-				handler.getSkin().compileSkin();
+				handler.getSkinData().compileSkin();
 				update();
 			}));
 			i++;
@@ -519,7 +526,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 				DragonStateProvider.getCap(minecraft.player).ifPresent(cap -> {
 					minecraft.player.level.playSound(minecraft.player, minecraft.player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 1, 0.7f);
 
-					if(cap.getType() != type && cap.getType() != DragonType.NONE){
+					if(cap.getType() != type && cap.getType() != null){
 						if(!ServerConfig.saveAllAbilities || !ServerConfig.saveGrowthStage){
 							confirmation = true;
 							return;
@@ -574,7 +581,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 		addRenderableWidget(new ExtendedButton(guiLeft + 256 + 16, 9, 19, 19, TextComponent.EMPTY, (btn) -> {
 			doAction();
 			preset.skinAges.put(level, new SkinAgeGroup(level, type));
-			handler.getSkin().compileSkin();
+			handler.getSkinData().compileSkin();
 			update();
 		}){
 			@Override
@@ -632,7 +639,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 						preset.skinAges.get(level).layerSettings.get(layer).modifiedColor = true;
 					}
 				}
-				handler.getSkin().compileSkin();
+				handler.getSkinData().compileSkin();
 			}
 
 			update();
@@ -735,18 +742,20 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 	}
 
 	public void update(){
-		if(type != DragonType.NONE){
+		if(type != null){
 			handler.setType(type);
 		}
-		handler.getSkin().skinPreset = preset;
+		handler.getSkinData().skinPreset = preset;
 		handler.setSize(level.size);
 		handler.setHasWings(true);
 
 		if(currentSelected != lastSelected){
 			preset = new SkinPreset();
-			preset.readNBT(DragonEditorRegistry.getSavedCustomizations().skinPresets.get(type).get(currentSelected).writeNBT());
 
-			handler.getSkin().skinPreset = preset;
+			if(DragonEditorRegistry.getSavedCustomizations().skinPresets.containsKey(type.getTypeName().toUpperCase())){
+				preset.readNBT(DragonEditorRegistry.getSavedCustomizations().skinPresets.get(type.getTypeName().toUpperCase()).get(currentSelected).writeNBT());
+			}
+			handler.getSkinData().skinPreset = preset;
 		}
 
 		lastSelected = currentSelected;
@@ -781,14 +790,14 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			minecraft.player.level.playSound(minecraft.player, minecraft.player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 1, 0.7f);
 
 			if(cap.getType() != type){
-				Minecraft.getInstance().player.sendMessage(new TranslatableComponent("ds." + type.name().toLowerCase() + "_dragon_choice"), Minecraft.getInstance().player.getUUID());
+				Minecraft.getInstance().player.sendMessage(new TranslatableComponent("ds." + type.getTypeName().toLowerCase() + "_dragon_choice"), Minecraft.getInstance().player.getUUID());
 				cap.setType(type);
 
 				if(!ServerConfig.saveGrowthStage || cap.getSize() == 0){
 					cap.setSize(DragonLevel.NEWBORN.size);
 				}
 
-				cap.setHasWings(ServerConfig.saveGrowthStage ? cap.hasWings() || ServerConfig.startWithWings : ServerConfig.startWithWings);
+				cap.setHasWings(ServerConfig.saveGrowthStage ? cap.hasWings() || ServerFlightHandler.startWithWings : ServerFlightHandler.startWithWings);
 				cap.setIsHiding(false);
 				cap.getMovementData().spinLearned = ServerConfig.saveGrowthStage && cap.getMovementData().spinLearned;
 
@@ -797,7 +806,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 				NetworkHandler.CHANNEL.sendToServer(new SyncSpinStatus(Minecraft.getInstance().player.getId(), cap.getMovementData().spinAttack, cap.getMovementData().spinCooldown, cap.getMovementData().spinLearned));
 				ClientEvents.sendClientData(new RequestClientData(cap.getType(), cap.getLevel()));
 
-				if(type == DragonType.NONE && cap.getType() != DragonType.NONE){
+				if(type == null && cap.getType() != null){
 					DragonCommand.reInsertClawTools(Minecraft.getInstance().player, cap);
 				}
 			}

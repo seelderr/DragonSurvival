@@ -4,13 +4,14 @@ package by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.active;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.DSParticles;
-import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.active.AoeBuffAbility;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
+import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
+import by.dragonsurvivalteam.dragonsurvival.magic.common.active.AoeBuffAbility;
+import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -117,8 +118,8 @@ public class ToughSkinAbility extends AoeBuffAbility{
 	}
 
 	@Override
-	public DragonType getDragonType(){
-		return DragonType.CAVE;
+	public AbstractDragonType getDragonType(){
+		return DragonTypes.CAVE;
 	}
 
 	@Override

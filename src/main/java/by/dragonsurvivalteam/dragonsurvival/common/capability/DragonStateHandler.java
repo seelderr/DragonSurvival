@@ -1,67 +1,75 @@
 package by.dragonsurvivalteam.dragonsurvival.common.capability;
 
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientEvents;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.objects.DragonDebuffData;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.objects.DragonMovementData;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.ClawInventory;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.EmoteCap;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.MagicCap;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.SkinCap;
-import by.dragonsurvivalteam.dragonsurvival.registry.DragonModifiers;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.*;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.network.RequestClientData;
+import by.dragonsurvivalteam.dragonsurvival.registry.DragonModifiers;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.fml.DistExecutor;
 
-import java.util.Locale;
 import java.util.Objects;
 import java.util.function.Supplier;
 
 
 public class DragonStateHandler implements NBTInterface{
+
+	//TODO Remove / cleanup the following 2
 	private final DragonMovementData movementData = new DragonMovementData(0, 0, 0, false);
-	private final DragonDebuffData debuffData = new DragonDebuffData(0, 0, 0);
-	private final ClawInventory clawInventory = new ClawInventory(this);
-	private final EmoteCap emotes = new EmoteCap(this);
-	private final MagicCap magic = new MagicCap(this);
-	private final SkinCap skin = new SkinCap(this);
-	public final Supplier<NBTInterface>[] caps = new Supplier[]{this::getSkin, this::getMagic, this::getEmotes, this::getClawInventory};
+
+	private final ClawInventory clawToolData = new ClawInventory(this);
+	private final EmoteCap emoteData = new EmoteCap(this);
+	private final MagicCap magicData = new MagicCap(this);
+	private final SkinCap skinData = new SkinCap(this);
+	private final VillageRelationShips villageRelationShips = new VillageRelationShips(this);
+
+
+	public final Supplier<SubCap>[] caps = new Supplier[]{this::getSkinData, this::getMagicData, this::getEmoteData, this::getClawToolData, this::getVillageRelationShips};
 	public boolean hasFlown;
 	public boolean growing = true;
-
-
 
 	public boolean treasureResting;
 	public int treasureRestTimer;
 	public int treasureSleepTimer;
 
-	//Saving status of other types incase the config option for saving all is on
-	public double caveSize;
-	public double seaSize;
-	public double forestSize;
-	public boolean caveWings;
-	public boolean seaWings;
-	public boolean forestWings;
+	public int altarCooldown;
+	public boolean hasUsedAltar;
+
+	public Vec3 lastPos;
 	private boolean isHiding;
-	private DragonType type = DragonType.NONE;
+
+	//Last entity this entity recieved a debuff from
+	public int lastAfflicted = -1;
+
+	//Amount of times the last chain attack has chained
+	public int chainCount = 0;
+
+	private AbstractDragonType dragonType;
+
 	private boolean hasWings;
 	private boolean spreadWings;
 	private double size;
-	private int lavaAirSupply;
 	private int passengerId;
 
 	/**
@@ -110,7 +118,7 @@ public class DragonStateHandler implements NBTInterface{
 	}
 
 	public boolean isDragon(){
-		return type != DragonType.NONE;
+		return dragonType != null;
 	}
 
 	public int getPassengerId(){
@@ -121,12 +129,12 @@ public class DragonStateHandler implements NBTInterface{
 		this.passengerId = passengerId;
 	}
 
-	public EmoteCap getEmotes(){
-		return emotes;
+	public EmoteCap getEmoteData(){
+		return emoteData;
 	}
 
-	public SkinCap getSkin(){
-		return skin;
+	public SkinCap getSkinData(){
+		return skinData;
 	}
 
 	public int lastSync = 0;//Last timestamp the server synced this player
@@ -134,26 +142,26 @@ public class DragonStateHandler implements NBTInterface{
 	@Override
 	public CompoundTag writeNBT(){
 		CompoundTag tag = new CompoundTag();
-		tag.putString("type", getType().name());
+		//tag.putString("type", getType().name());
+		tag.putString("type", dragonType != null ? dragonType.getTypeName() : "none");
 
 		if(isDragon()){
+			tag.put("typeData", dragonType.writeNBT());
+
+			//Rendering
 			DragonMovementData movementData = getMovementData();
 			tag.putDouble("bodyYaw", movementData.bodyYaw);
 			tag.putDouble("headYaw", movementData.headYaw);
 			tag.putDouble("headPitch", movementData.headPitch);
 
+			tag.putBoolean("bite", movementData.bite);
+			tag.putBoolean("dig", movementData.dig);
+			tag.putBoolean("isHiding", isHiding());
+
+			//Spin attack
 			tag.putInt("spinCooldown", movementData.spinCooldown);
 			tag.putInt("spinAttack", movementData.spinAttack);
 			tag.putBoolean("spinLearned", movementData.spinLearned);
-
-			tag.putBoolean("bite", movementData.bite);
-			tag.putBoolean("dig", movementData.dig);
-
-			DragonDebuffData debuffData = getDebuffData();
-			tag.putDouble("timeWithoutWater", debuffData.timeWithoutWater);
-			tag.putInt("timeInDarkness", debuffData.timeInDarkness);
-			tag.putInt("timeInRain", debuffData.timeInRain);
-			tag.putBoolean("isHiding", isHiding());
 
 			tag.putDouble("size", getSize());
 			tag.putBoolean("growing", growing);
@@ -161,44 +169,50 @@ public class DragonStateHandler implements NBTInterface{
 			tag.putBoolean("hasWings", hasWings());
 			tag.putBoolean("isFlying", isWingsSpread());
 
-			tag.putInt("lavaAirSupply", getLavaAirSupply());
-
 			tag.putBoolean("resting", treasureResting);
 			tag.putInt("restingTimer", treasureRestTimer);
-
-			tag.putDouble("caveSize", caveSize);
-			tag.putDouble("seaSize", seaSize);
-			tag.putDouble("forestSize", forestSize);
-
-			tag.putBoolean("caveWings", caveWings);
-			tag.putBoolean("seaWings", seaWings);
-			tag.putBoolean("forestWings", forestWings);
 
 			for(int i = 0; i < caps.length; i++)
 				tag.put("cap_" + i, caps[i].get().writeNBT());
 		}
+
+		tag.putInt("altarCooldown", altarCooldown);
+		tag.putBoolean("usedAltar", hasUsedAltar);
+
+		if(lastPos != null){
+			tag.put("lastPos", Functions.newDoubleList(lastPos.x, lastPos.y, lastPos.z));
+		}
+
+		tag.putInt("lastAfflicted", lastAfflicted);
+
 		return tag;
 	}
 
 	@Override
 	public void readNBT(CompoundTag tag){
-		setType(DragonType.valueOf(tag.getString("type").toUpperCase(Locale.ROOT)));
+		//setType(DragonType.valueOf(tag.getString("type").toUpperCase(Locale.ROOT)));
+		dragonType = DragonTypes.newDragonTypeInstance(tag.getString("type"));
+
+		if(dragonType != null){
+			if(tag.contains("typeData")){
+				dragonType.readNBT(tag.getCompound("typeData"));
+			}
+		}
+
 		if(isDragon()){
 			setMovementData(tag.getDouble("bodyYaw"), tag.getDouble("headYaw"), tag.getDouble("headPitch"), tag.getBoolean("bite"));
 			getMovementData().headYawLastTick = getMovementData().headYaw;
 			getMovementData().bodyYawLastTick = getMovementData().bodyYaw;
 			getMovementData().headPitchLastTick = getMovementData().headPitch;
+			setIsHiding(tag.getBoolean("isHiding"));
+			getMovementData().dig = tag.getBoolean("dig");
 
 			setHasWings(tag.getBoolean("hasWings"));
 			setWingsSpread(tag.getBoolean("isFlying"));
 
-			getMovementData().dig = tag.getBoolean("dig");
 			getMovementData().spinCooldown = tag.getInt("spinCooldown");
 			getMovementData().spinAttack = tag.getInt("spinAttack");
 			getMovementData().spinLearned = tag.getBoolean("spinLearned");
-
-			setDebuffData(tag.getInt("timeWithoutWater"), tag.getInt("timeInDarkness"), tag.getInt("timeInRain"));
-			setIsHiding(tag.getBoolean("isHiding"));
 
 			setSize(tag.getDouble("size"));
 			growing = !tag.contains("growing") || tag.getBoolean("growing");
@@ -206,37 +220,32 @@ public class DragonStateHandler implements NBTInterface{
 			treasureResting = tag.getBoolean("resting");
 			treasureRestTimer = tag.getInt("restingTimer");
 
-			caveSize = tag.getDouble("caveSize");
-			seaSize = tag.getDouble("seaSize");
-			forestSize = tag.getDouble("forestSize");
-
-			caveWings = tag.getBoolean("caveWings");
-			seaWings = tag.getBoolean("seaWings");
-			forestWings = tag.getBoolean("forestWings");
-
 			for(int i = 0; i < caps.length; i++)
 				if(tag.contains("cap_" + i)){
 					caps[i].get().readNBT((CompoundTag)tag.get("cap_" + i));
 				}
 
-			if(getSize() == 0)
+			if(getSize() == 0){
 				setSize(DragonLevel.NEWBORN.size);
-
-			setLavaAirSupply(tag.getInt("lavaAirSupply"));
+			}
 		}
 
-		getSkin().compileSkin();
+		altarCooldown = tag.getInt("altarCooldown");
+		hasUsedAltar = tag.getBoolean("usedAltar");
+
+		if(tag.contains("lastPos")){
+			ListTag listnbt = tag.getList("lastPos", 6);
+			lastPos = new Vec3(listnbt.getDouble(0), listnbt.getDouble(1), listnbt.getDouble(2));
+		}
+
+		lastAfflicted = tag.getInt("lastAfflicted");
+
+		getSkinData().compileSkin();
 	}
 
 	public void setHasWings(boolean hasWings){
 		if(hasWings != this.hasWings){
 			this.hasWings = hasWings;
-
-			switch(type){
-				case SEA -> seaWings = hasWings;
-				case CAVE -> caveWings = hasWings;
-				case FOREST -> forestWings = hasWings;
-			}
 		}
 	}
 
@@ -255,12 +264,6 @@ public class DragonStateHandler implements NBTInterface{
 		movementData.bite = bite;
 	}
 
-	public void setDebuffData(double timeWithoutWater, int timeInDarkness, int timeInRain){
-		debuffData.timeWithoutWater = timeWithoutWater;
-		debuffData.timeInDarkness = timeInDarkness;
-		debuffData.timeInRain = timeInRain;
-	}
-
 	public double getSize(){
 		return size;
 	}
@@ -272,12 +275,6 @@ public class DragonStateHandler implements NBTInterface{
 
 			if(oldLevel != getLevel())
 				onGrow();
-
-			switch(type){
-				case SEA -> seaSize = size;
-				case CAVE -> caveSize = size;
-				case FOREST -> forestSize = size;
-			}
 		}
 	}
 
@@ -291,38 +288,43 @@ public class DragonStateHandler implements NBTInterface{
 			ClientEvents.sendClientData(new RequestClientData(getType(), getLevel()));
 	}
 
-	public DragonType getType(){
-		return type;
+	public AbstractDragonType getType(){
+		return dragonType;
 	}
 
-	public void setType(DragonType type){
-		if(this.type != type && this.type != DragonType.NONE){
+	public void setType(AbstractDragonType type){
+		if(this.dragonType != type && this.dragonType != null){
 			growing = true;
 
-			getMagic().initAbilities(type);
+			getMagicData().initAbilities(type);
 		}
 
-		this.type = type;
+		if(type != null){
+			this.dragonType = DragonTypes.newDragonTypeInstance(type.getTypeName());
+		}else{
+			this.dragonType = null;
+		}
 
-		if(ServerConfig.saveGrowthStage)
-			switch(type){
-				case SEA -> {
-					size = seaSize;
-					hasWings = seaWings;
-				}
-				case CAVE -> {
-					size = caveSize;
-					hasWings = caveWings;
-				}
-				case FOREST -> {
-					size = forestSize;
-					hasWings = forestWings;
-				}
-			}
+		//TODO Reimplement
+//		if(ServerConfig.saveGrowthStage)
+//			switch(type){
+//				case SEA -> {
+//					size = seaSize;
+//					hasWings = seaWings;
+//				}
+//				case CAVE -> {
+//					size = caveSize;
+//					hasWings = caveWings;
+//				}
+//				case FOREST -> {
+//					size = forestSize;
+//					hasWings = forestWings;
+//				}
+//			}
 	}
 
-	public MagicCap getMagic(){
-		return magic;
+	public MagicCap getMagicData(){
+		return magicData;
 	}
 
 	public DragonLevel getLevel(){
@@ -354,24 +356,12 @@ public class DragonStateHandler implements NBTInterface{
 		return isHiding;
 	}
 
-	public DragonDebuffData getDebuffData(){
-		return debuffData;
-	}
-
-	public int getLavaAirSupply(){
-		return lavaAirSupply;
-	}
-
-	public void setLavaAirSupply(int lavaAirSupply){
-		this.lavaAirSupply = lavaAirSupply;
-	}
-
 	public boolean canHarvestWithPaw(Player player, BlockState state){
 		int harvestLevel = state.is(BlockTags.NEEDS_DIAMOND_TOOL) ? 3 : state.is(BlockTags.NEEDS_IRON_TOOL) ? 2 : state.is(BlockTags.NEEDS_STONE_TOOL) ? 1 : 0;
 		int baseHarvestLevel = 0;
 
 		for(int i = 1; i < 4; i++){
-			ItemStack stack = getClawInventory().getClawsInventory().getItem(i);
+			ItemStack stack = getClawToolData().getClawsInventory().getItem(i);
 			if(stack.isCorrectToolForDrops(state))
 				return true;
 		}
@@ -390,30 +380,24 @@ public class DragonStateHandler implements NBTInterface{
 					break;
 				}
 			case ADULT:
-				if(harvestLevel <= ServerConfig.bonusHarvestLevel + baseHarvestLevel)
-					switch(getType()){
-						case SEA:
-							if(state.is(BlockTags.MINEABLE_WITH_SHOVEL)){
-								return true;
-							}
-							break;
-						case CAVE:
-							if(state.is(BlockTags.MINEABLE_WITH_PICKAXE)){
-								return true;
-							}
-							break;
-						case FOREST:
-							if(state.is(BlockTags.MINEABLE_WITH_AXE)){
-								return true;
-							}
+				if(harvestLevel <= ServerConfig.bonusHarvestLevel + baseHarvestLevel){
+					for(TagKey<Block> blockTagKey : getType().mineableBlocks(player)){
+						if(state.is(blockTagKey)){
+							return true;
+						}
 					}
+				}
 				if(harvestLevel <= ServerConfig.baseHarvestLevel + baseHarvestLevel)
 					return true;
 		}
 		return false;
 	}
 
-	public ClawInventory getClawInventory(){
-		return clawInventory;
+	public ClawInventory getClawToolData(){
+		return clawToolData;
+	}
+
+	public VillageRelationShips getVillageRelationShips(){
+		return villageRelationShips;
 	}
 }

@@ -3,12 +3,12 @@ package by.dragonsurvivalteam.dragonsurvival.client.handlers.magic;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.CaveDragon.SmallFireParticleData;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.ForestDragon.SmallPoisonParticleData;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaDragon.LargeLightningParticleData;
-import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChargeCastAbility;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
+import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.particles.ParticleOptions;
@@ -35,12 +35,12 @@ public class ClientMagicHandler{
 		Player player = event.getEntity();
 
 		DragonStateProvider.getCap(player).ifPresent(cap -> {
-			if(Arrays.stream(cap.getEmotes().currentEmotes).anyMatch(Objects::nonNull) && DragonUtils.isDragon(player)){
+			if(Arrays.stream(cap.getEmoteData().currentEmotes).anyMatch(Objects::nonNull) && DragonUtils.isDragon(player)){
 				event.setNewfov(1f);
 				return;
 			}
 
-			ActiveDragonAbility ability = cap.getMagic().getCurrentlyCasting();
+			ActiveDragonAbility ability = cap.getMagicData().getCurrentlyCasting();
 
 			if(ability instanceof ChargeCastAbility chargeCastAbility){
 				if(chargeCastAbility.getCastTime() > 0){
@@ -111,13 +111,13 @@ public class ClientMagicHandler{
 				return;
 			}
 
-			if(cap.getType() == DragonType.CAVE && event.getCamera().getFluidInCamera() == FogType.LAVA){
+			if(cap.getType().equals(DragonTypes.CAVE) && event.getCamera().getFluidInCamera() == FogType.LAVA){
 				if(player.hasEffect(DragonEffects.LAVA_VISION)){
 					event.setNearPlaneDistance(-32.0F);
 					event.setFarPlaneDistance(128.0F);
 					event.setCanceled(true);
 				}
-			}else if(cap.getType() == DragonType.SEA && event.getCamera().getFluidInCamera() == FogType.WATER){
+			}else if(cap.getType() .equals(DragonTypes.SEA) && event.getCamera().getFluidInCamera() == FogType.WATER){
 				if(player.hasEffect(DragonEffects.WATER_VISION)){
 					event.setNearPlaneDistance(-32.0F);
 					event.setFarPlaneDistance(128.0F);

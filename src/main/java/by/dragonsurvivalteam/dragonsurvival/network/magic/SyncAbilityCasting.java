@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.network.magic;
 
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.magic.ClientCastingHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
@@ -62,10 +62,10 @@ public class SyncAbilityCasting implements IMessage<SyncAbilityCasting>{
 			ServerPlayer player = supplier.get().getSender();
 
 			DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
-				ActiveDragonAbility ability = dragonStateHandler.getMagic().getAbilityFromSlot(dragonStateHandler.getMagic().getSelectedAbilitySlot());
+				ActiveDragonAbility ability = dragonStateHandler.getMagicData().getAbilityFromSlot(dragonStateHandler.getMagicData().getSelectedAbilitySlot());
 				ability.loadNBT(message.tag);
 
-				dragonStateHandler.getMagic().isCasting = message.isCasting;
+				dragonStateHandler.getMagicData().isCasting = message.isCasting;
 				if(message.isCasting){
 					ability.onKeyPressed(player, () -> {});
 				}else{
@@ -87,9 +87,9 @@ public class SyncAbilityCasting implements IMessage<SyncAbilityCasting>{
 				Entity entity = world.getEntity(message.playerId);
 				if(entity instanceof Player player){
 					DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
-						ActiveDragonAbility ability = dragonStateHandler.getMagic().getAbilityFromSlot(dragonStateHandler.getMagic().getSelectedAbilitySlot());
+						ActiveDragonAbility ability = dragonStateHandler.getMagicData().getAbilityFromSlot(dragonStateHandler.getMagicData().getSelectedAbilitySlot());
 						ability.loadNBT(message.tag);
-						dragonStateHandler.getMagic().isCasting = message.isCasting;
+						dragonStateHandler.getMagicData().isCasting = message.isCasting;
 						if(message.isCasting){
 							ability.onKeyPressed(player, () -> {
 								if(player.getId() == thisPlayer.getId()) {

@@ -5,11 +5,9 @@ import by.dragonsurvivalteam.dragonsurvival.client.particles.CaveDragon.LargeFir
 import by.dragonsurvivalteam.dragonsurvival.client.particles.CaveDragon.SmallFireParticleData;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.FireBreathSound;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.SoundRegistry;
-import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.GenericCapability;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.GenericCapabilityProvider;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
@@ -18,7 +16,8 @@ import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.passive.BurnAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.BreathAbility;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
+import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -93,8 +92,8 @@ public class NetherBreathAbility extends BreathAbility{
 	}
 
 	@Override
-	public DragonType getDragonType(){
-		return DragonType.CAVE;
+	public AbstractDragonType getDragonType(){
+		return DragonTypes.CAVE;
 	}
 
 	@Override
@@ -290,9 +289,7 @@ public class NetherBreathAbility extends BreathAbility{
 			BurnAbility burnAbility = DragonAbilities.getAbility(player, BurnAbility.class);
 
 			if(entityHit.level.random.nextInt(100) < (burnAbility.level * 15)){
-				GenericCapability cap = GenericCapabilityProvider.getGenericCapability(entityHit);
-				cap.lastAfflicted = player != null ? player.getId() : -1;
-
+				DragonUtils.getHandler(entityHit).lastAfflicted = player != null ? player.getId() : -1;
 				entityHit.addEffect(new MobEffectInstance(DragonEffects.BURN, Functions.secondsToTicks(10), 0, false, true));
 			}
 		}

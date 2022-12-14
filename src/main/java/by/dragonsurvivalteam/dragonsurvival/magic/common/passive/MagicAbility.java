@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.common.passive;
 
 
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ManaHandler;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -15,6 +16,22 @@ public abstract class MagicAbility extends PassiveDragonAbility {
 		String levels = level > 0 ? "+" + level : "0";
 
 		return new TranslatableComponent("ds.skill.description." + getName(), ManaHandler.getMaxMana(player), points, levels);
+	}
+
+	@Override
+	public int getMaxLevel(){
+		return 10;
+	}
+
+	@Override
+	public int getMinLevel(){
+		return 0;
+	}
+
+	public int getMana(){
+		return DragonStateProvider.getCap(getPlayer()).map(cap -> {
+			return getLevel();
+		}).orElse(0);
 	}
 
 	public ResourceLocation getIcon(){

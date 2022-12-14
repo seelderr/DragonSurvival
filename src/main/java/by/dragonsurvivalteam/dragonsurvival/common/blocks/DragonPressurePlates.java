@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.common.blocks;
 
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
@@ -71,13 +71,13 @@ public class DragonPressurePlates extends PressurePlateBlock implements SimpleWa
 							return !DragonUtils.isDragon(entity) ? 15 : 0;
 
 						case SEA:
-							return DragonUtils.isDragon(entity) && DragonUtils.getDragonType(entity) == DragonType.SEA ? 15 : 0;
+							return DragonUtils.isDragon(entity) && DragonUtils.getDragonType(entity) .equals(DragonTypes.SEA) ? 15 : 0;
 
 						case FOREST:
-							return DragonUtils.isDragon(entity) && DragonUtils.getDragonType(entity) == DragonType.FOREST ? 15 : 0;
+							return DragonUtils.isDragon(entity) && DragonUtils.getDragonType(entity).equals(DragonTypes.FOREST) ? 15 : 0;
 
 						case CAVE:
-							return DragonUtils.isDragon(entity) && DragonUtils.getDragonType(entity) == DragonType.CAVE ? 15 : 0;
+							return DragonUtils.isDragon(entity) && DragonUtils.getDragonType(entity).equals(DragonTypes.CAVE) ? 15 : 0;
 					}
 				}
 			}

@@ -2,15 +2,15 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui;
 
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.AbilityButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.*;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.magic.ClientMagicHUDHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.MagicCap;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
@@ -37,7 +37,7 @@ public class AbilityScreen extends Screen{
 	public ArrayList<ActiveDragonAbility> unlockAbleSkills = new ArrayList<>();
 	private int guiLeft;
 	private int guiTop;
-	private DragonType type;
+	private AbstractDragonType type;
 
 	public AbilityScreen(Screen sourceScreen){
 		super(new TextComponent("AbilityScreen"));
@@ -63,7 +63,7 @@ public class AbilityScreen extends Screen{
 		blit(stack, startX, startY, 0, 0, 256, 256);
 
 		if(type != null){
-			int barYPos = type == DragonType.SEA ? 198 : type == DragonType.FOREST ? 186 : 192;
+			int barYPos = type.equals(DragonTypes.SEA) ? 198 : type.equals(DragonTypes.FOREST) ? 186 : 192;
 
 			RenderSystem.setShaderTexture(0, ClientMagicHUDHandler.widgetTextures);
 
@@ -182,7 +182,7 @@ public class AbilityScreen extends Screen{
 			type = cap.getType();
 			unlockAbleSkills.clear();
 
-			for(ActiveDragonAbility ab : cap.getMagic().getActiveAbilities()){
+			for(ActiveDragonAbility ab : cap.getMagicData().getActiveAbilities()){
 				ActiveDragonAbility ability = DragonAbilities.getAbility(minecraft.player, ab.getClass());
 				ActiveDragonAbility db = ability != null ? ability : ab;
 

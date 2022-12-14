@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.network.syncing;
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.ISidedMessage;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -56,9 +56,9 @@ public class CompleteDataSync extends ISidedMessage<CompleteDataSync>{
 	@Override
 	public void runServer(CompleteDataSync message, Supplier<NetworkEvent.Context> supplier, ServerPlayer sender){
 		DragonStateProvider.getCap(sender).ifPresent((cap) -> {
-			SimpleContainer container = cap.getClawInventory().getClawsInventory();
+			SimpleContainer container = cap.getClawToolData().getClawsInventory();
 			cap.readNBT(message.nbt);
-			cap.getClawInventory().setClawsInventory(container);
+			cap.getClawToolData().setClawsInventory(container);
 		});
 
 		sender.refreshDimensions();

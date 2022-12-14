@@ -7,8 +7,8 @@ import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.Sk
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset.SkinAgeGroup;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.SkinCap;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -29,17 +29,17 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 public class DragonEditorHandler{
-	public static ResourceLocation getSkinTexture(Player player, EnumSkinLayer layer, String key, DragonType type){
+	public static ResourceLocation getSkinTexture(Player player, EnumSkinLayer layer, String key, AbstractDragonType type){
 		if(Objects.equals(layer.name, "Extra") && layer != EnumSkinLayer.EXTRA){
 			return getSkinTexture(player, EnumSkinLayer.EXTRA, key, type);
 		}
 
 		if(layer == EnumSkinLayer.BASE && (key.equalsIgnoreCase("Skin") || key.equalsIgnoreCase(SkinCap.defaultSkinValue))){
 			DragonStateHandler handler = DragonUtils.getHandler(player);
-			return getSkinTexture(player, layer, type.name().toLowerCase() + "_base_" + handler.getLevel().ordinal(), type);
+			return getSkinTexture(player, layer, type.getTypeName().toLowerCase() + "_base_" + handler.getLevel().ordinal(), type);
 		}
 
-		Texture[] texts = DragonEditorRegistry.CUSTOMIZATIONS.getOrDefault(type, new HashMap<>()).getOrDefault(layer, new Texture[0]);
+		Texture[] texts = DragonEditorRegistry.CUSTOMIZATIONS.getOrDefault(type.getTypeName().toUpperCase(), new HashMap<>()).getOrDefault(layer, new Texture[0]);
 
 		for(Texture texture : texts){
 			if(Objects.equals(texture.key, key)){
@@ -50,16 +50,16 @@ public class DragonEditorHandler{
 		return null;
 	}
 
-	public static Texture getSkin(Player player, EnumSkinLayer layer, String key, DragonType type){
+	public static Texture getSkin(Player player, EnumSkinLayer layer, String key, AbstractDragonType type){
 		if(Objects.equals(layer.name, "Extra") && layer != EnumSkinLayer.EXTRA){
 			return getSkin(player, EnumSkinLayer.EXTRA, key, type);
 		}
 
 		if(layer == EnumSkinLayer.BASE && (key.equalsIgnoreCase("Skin") || key.equalsIgnoreCase(SkinCap.defaultSkinValue))){
-			return getSkin(player, layer, type.name().toLowerCase() + "_base_" + DragonUtils.getDragonLevel(player).ordinal(), type);
+			return getSkin(player, layer, type.getTypeName().toLowerCase() + "_base_" + DragonUtils.getDragonLevel(player).ordinal(), type);
 		}
 
-		Texture[] texts = DragonEditorRegistry.CUSTOMIZATIONS.getOrDefault(type, new HashMap<>()).getOrDefault(layer, new Texture[0]);
+		Texture[] texts = DragonEditorRegistry.CUSTOMIZATIONS.getOrDefault(type.getTypeName().toUpperCase(), new HashMap<>()).getOrDefault(layer, new Texture[0]);
 
 		for(Texture texture : texts){
 			if(Objects.equals(texture.key, key)){
@@ -70,14 +70,14 @@ public class DragonEditorHandler{
 		return null;
 	}
 
-	public static ArrayList<String> getKeys(DragonType type, EnumSkinLayer layers){
+	public static ArrayList<String> getKeys(AbstractDragonType type, EnumSkinLayer layers){
 		if(Objects.equals(layers.name, "Extra") && layers != EnumSkinLayer.EXTRA){
 			return getKeys(type, EnumSkinLayer.EXTRA);
 		}
 
 		ArrayList<String> list = new ArrayList<>();
 
-		Texture[] texts = DragonEditorRegistry.CUSTOMIZATIONS.getOrDefault(type, new HashMap<>()).getOrDefault(layers, new Texture[0]);
+		Texture[] texts = DragonEditorRegistry.CUSTOMIZATIONS.getOrDefault(type.getTypeName().toUpperCase(), new HashMap<>()).getOrDefault(layers, new Texture[0]);
 		for(Texture texture : texts){
 			list.add(texture.key);
 		}
@@ -93,7 +93,7 @@ public class DragonEditorHandler{
 		Player player = dragon.getPlayer();
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 
-		SkinPreset preset = handler.getSkin().skinPreset;
+		SkinPreset preset = handler.getSkinData().skinPreset;
 		SkinAgeGroup ageGroup = preset.skinAges.get(handler.getLevel());
 
 		if(!RenderSystem.isOnRenderThreadOrInit()){
@@ -161,8 +161,8 @@ public class DragonEditorHandler{
 		registerCompiledTexture(normal, dynamicNormalKey);
 		registerCompiledTexture(glow, dynamicGlowKey);
 
-		handler.getSkin().recompileSkin = false;
-		handler.getSkin().isCompiled = true;
+		handler.getSkinData().recompileSkin = false;
+		handler.getSkinData().isCompiled = true;
 	}
 
 	@Nullable

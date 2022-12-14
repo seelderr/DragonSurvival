@@ -2,9 +2,8 @@ package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.Capabilities;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.GenericCapability;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.GenericCapabilityProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ClawToolHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
@@ -13,7 +12,6 @@ import by.dragonsurvivalteam.dragonsurvival.network.status.PlayerJumpSync;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
@@ -84,13 +82,14 @@ public class EventHandler{
 
 		if(event.player instanceof ServerPlayer player){
 			if(player.tickCount > 5 * 20){
-				GenericCapability cap = GenericCapabilityProvider.getCap(player).orElse(null);
-				if(cap != null && !cap.hasUsedAltar && !DragonUtils.isDragon(player)){
+				DragonStateHandler cap = DragonUtils.getHandler(player);
+
+				if(!cap.hasUsedAltar && !DragonUtils.isDragon(player)){
 					NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new OpenDragonAltar());
 					cap.hasUsedAltar = true;
 				}
 
-				if(cap != null && cap.altarCooldown > 0){
+				if(cap.altarCooldown > 0){
 					cap.altarCooldown--;
 				}
 			}
@@ -135,9 +134,9 @@ public class EventHandler{
 			return;
 		}
 
-		boolean canDropDragonHeart = ServerConfig.dragonHeartEntityList.contains(entity.getType()) == ServerConfig.dragonHeartWhiteList;
-		boolean canDropWeakDragonHeart = ServerConfig.weakDragonHeartEntityList.contains(entity.getType()) == ServerConfig.weakDragonHeartWhiteList;
-		boolean canDropElderDragonHeart = ServerConfig.elderDragonHeartEntityList.contains(entity.getType()) == ServerConfig.elderDragonHeartWhiteList;
+		boolean canDropDragonHeart = ServerConfig.dragonHeartEntityList.contains(entity.getType().toString()) == ServerConfig.dragonHeartWhiteList;
+		boolean canDropWeakDragonHeart = ServerConfig.weakDragonHeartEntityList.contains(entity.getType().toString()) == ServerConfig.weakDragonHeartWhiteList;
+		boolean canDropElderDragonHeart = ServerConfig.elderDragonHeartEntityList.contains(entity.getType().toString()) == ServerConfig.elderDragonHeartWhiteList;
 
 		if(canDropDragonHeart){
 			if(ServerConfig.dragonHeartUseList || health >= 14 && health < 20){
@@ -234,7 +233,7 @@ public class EventHandler{
 
 
 				if(suitableOre && !player.isCreative()){
-					boolean isCave = dragonStateHandler.getType() == DragonType.CAVE;
+					boolean isCave = dragonStateHandler.getType().equals(DragonTypes.CAVE);
 
 					if(dragonStateHandler.isDragon()){
 						if(player.getRandom().nextDouble() < ServerConfig.dragonOreDustChance){

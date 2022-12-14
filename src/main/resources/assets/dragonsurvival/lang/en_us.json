@@ -119,6 +119,8 @@
   "death.attack.starDrain.player": "%1$s had their life and energy drained by magic while trying to escape %2$s.",
   "death.attack.waterBurn": "%1$s tried to swim in water.",
   "death.attack.waterBurn.player": "%1$s tried to swim in water to escape %2$s.",
+  "death.attack.rainBurn": "%1$s spent too long in the rain.",
+  "death.attack.rainBurn.player": "%1$s spent too much time in the rain trying to escape %2$s.",
   "death.attack.dehydration": "%1$s dried out.",
   "death.attack.dehydration.player": "%1$s dried out to escape %2$s.",
   "ds.cave_dragon_choice": "In the depths of your soul the lava began to roar. You have become a §cCave dragon.§r",
@@ -608,5 +610,6 @@
   "ds.skin_part.forest.extra_15": "Lower Edge",
   "ds.skin_part.forest.extra_16": "Moss",
   "ds.skin_part.forest.extra_17": "Hunter",
-  "ds.skin_part.forest.extra_18": "Sting"
+  "ds.skin_part.forest.extra_18": "Sting",
+  "ds.keybind.category": "Dragon Survival"
 }

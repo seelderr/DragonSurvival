@@ -3,7 +3,6 @@ package by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
-
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
@@ -14,23 +13,19 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.IItemHandlerModifiable;
 import software.bernie.geckolib3.core.processor.IBone;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
 import software.bernie.geckolib3.renderers.geo.GeoLayerRenderer;
 import top.theillusivec4.curios.api.CuriosApi;
-import top.theillusivec4.curios.api.type.ISlotType;
 import top.theillusivec4.curios.api.type.inventory.IDynamicStackHandler;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Optional;
 
 public class DragonCuriosRenderLayer extends GeoLayerRenderer<DragonEntity> {
-    
+
     private final GeoEntityRenderer<DragonEntity> renderer;
-    
+
     public DragonCuriosRenderLayer(GeoEntityRenderer<DragonEntity> entityRendererIn) {
         super(entityRendererIn);
         this.renderer = entityRendererIn;
@@ -39,16 +34,16 @@ public class DragonCuriosRenderLayer extends GeoLayerRenderer<DragonEntity> {
     @Override
     public void render(PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn, DragonEntity entityLivingBaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
         Player player = entityLivingBaseIn.getPlayer();
-        
+
         if (player.isSpectator()) return;
 
         IBone neck = ClientDragonRender.dragonArmorModel.getAnimationProcessor().getBone("Neck");
 
         if(neck != null)
             neck.setHidden(false);
-        
+
         ArrayList<ResourceLocation> curioTextures = getCurioTextures(player);
-        
+
         if (!curioTextures.isEmpty()) {
             ((DragonRenderer) renderer).isRenderLayers = true;
             GeoModel model = ClientDragonRender.dragonModel.getModel(ClientDragonRender.dragonModel.getModelLocation(null));

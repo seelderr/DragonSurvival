@@ -2,8 +2,8 @@ package by.dragonsurvivalteam.dragonsurvival.common.blocks;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.Capabilities;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.stats.Stats;
@@ -161,7 +161,7 @@ public class SmallDragonDoor extends Block implements SimpleWaterloggedBlock{
 		LazyOptional<DragonStateHandler> dragonStateHandlerLazyOptional = player.getCapability(Capabilities.DRAGON_CAPABILITY);
 		if(dragonStateHandlerLazyOptional.isPresent()){
 			DragonStateHandler dragonStateHandler = dragonStateHandlerLazyOptional.orElseGet(() -> null);
-			if(state.getValue(OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.NONE || (dragonStateHandler.isDragon() && (state.getValue(OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.CAVE && dragonStateHandler.getType() == DragonType.CAVE) || (state.getValue(OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.FOREST && dragonStateHandler.getType() == DragonType.FOREST) || (state.getValue(OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.SEA && dragonStateHandler.getType() == DragonType.SEA))){
+			if(state.getValue(OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.NONE || (dragonStateHandler.isDragon() && (state.getValue(OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.CAVE && dragonStateHandler.getType().equals(DragonTypes.CAVE)) || (state.getValue(OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.FOREST && dragonStateHandler.getType().equals(DragonTypes.FOREST)) || (state.getValue(OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.SEA && dragonStateHandler.getType() .equals(DragonTypes.SEA)))){
 				state = state.cycle(OPEN);
 				worldIn.setBlock(pos, state, 10);
 				worldIn.levelEvent(player, state.getValue(OPEN) ? this.getOpenSound() : this.getCloseSound(), pos, 0);

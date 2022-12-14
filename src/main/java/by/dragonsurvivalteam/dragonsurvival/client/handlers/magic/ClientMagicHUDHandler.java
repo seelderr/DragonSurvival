@@ -1,10 +1,10 @@
 package by.dragonsurvivalteam.dragonsurvival.client.handlers.magic;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.provider.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.MagicCap;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ManaHandler;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
@@ -12,7 +12,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChannelingCastAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChargeCastAbility;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -74,7 +74,7 @@ public class ClientMagicHUDHandler{
 		}
 
 		DragonStateProvider.getCap(playerEntity).ifPresent(cap -> {
-			ActiveDragonAbility ability = cap.getMagic().getAbilityFromSlot(cap.getMagic().getSelectedAbilitySlot());
+			ActiveDragonAbility ability = cap.getMagicData().getAbilityFromSlot(cap.getMagicData().getSelectedAbilitySlot());
 			if(ability == null)
 				return;
 
@@ -145,13 +145,13 @@ public class ClientMagicHUDHandler{
 			posX += skillbarXOffset;
 			posY += skillbarYOffset;
 
-			if(cap.getMagic().isRenderAbilities()){
+			if(cap.getMagicData().isRenderAbilities()){
 				RenderSystem.setShaderTexture(0, new ResourceLocation("textures/gui/widgets.png"));
 				Screen.blit(mStack, posX, posY - 2, 0, 0, 0, 41, 22, 256, 256);
 				Screen.blit(mStack, posX + 41, posY - 2, 0, 141, 0, 41, 22, 256, 256);
 
 				for(int x = 0; x < MagicCap.activeAbilitySlots; x++){
-					ActiveDragonAbility ability = cap.getMagic().getAbilityFromSlot(x);
+					ActiveDragonAbility ability = cap.getMagicData().getAbilityFromSlot(x);
 
 					if(ability != null && ability.getIcon() != null){
 						RenderSystem.setShaderTexture(0, ability.getIcon());
@@ -170,7 +170,7 @@ public class ClientMagicHUDHandler{
 				}
 
 				RenderSystem.setShaderTexture(0, new ResourceLocation("textures/gui/widgets.png"));
-				Screen.blit(mStack, posX + sizeX * cap.getMagic().getSelectedAbilitySlot() - 1, posY - 3, 2, 0, 22, 24, 24, 256, 256);
+				Screen.blit(mStack, posX + sizeX * cap.getMagicData().getSelectedAbilitySlot() - 1, posY - 3, 2, 0, 22, 24, 24, 256, 256);
 
 				RenderSystem.setShaderTexture(0, widgetTextures);
 
@@ -188,8 +188,8 @@ public class ClientMagicHUDHandler{
 						int manaSlot = i * 10 + x;
 						if(manaSlot < maxMana){
 							boolean goodCondi = ManaHandler.isPlayerInGoodConditions(playerEntity);
-							int condiXPos = cap.getType() == DragonType.SEA ? 0 : cap.getType() == DragonType.FOREST ? 18 : 36;
-							int xPos = curMana <= manaSlot ? goodCondi ? condiXPos + 72 : 54 : cap.getType() == DragonType.SEA ? 0 : cap.getType() == DragonType.FOREST ? 18 : 36;
+							int condiXPos = cap.getType().equals(DragonTypes.SEA) ? 0 : cap.getType().equals(DragonTypes.FOREST) ? 18 : 36;
+							int xPos = curMana <= manaSlot ? goodCondi ? condiXPos + 72 : 54 : cap.getType().equals(DragonTypes.SEA) ? 0 : cap.getType().equals(DragonTypes.FOREST) ? 18 : 36;
 							float rescale = 2.15F;
 							Screen.blit(mStack, manaX + x * (int)(18 / rescale), manaY - 12 - i * ((int)(18 / rescale) + 1), xPos / rescale, 204 / rescale, (int)(18 / rescale), (int)(18 / rescale), (int)(256 / rescale), (int)(256 / rescale));
 						}
@@ -197,7 +197,7 @@ public class ClientMagicHUDHandler{
 			}
 
 
-			ActiveDragonAbility ability = cap.getMagic().getAbilityFromSlot(cap.getMagic().getSelectedAbilitySlot());
+			ActiveDragonAbility ability = cap.getMagicData().getAbilityFromSlot(cap.getMagicData().getSelectedAbilitySlot());
 
 			int currentCastTime = -1, skillCastTime = -1;
 
@@ -209,13 +209,13 @@ public class ClientMagicHUDHandler{
 				skillCastTime = ability1.getSkillChargeTime();
 			}
 
-			if(cap.getMagic().isCasting){
+			if(cap.getMagicData().isCasting){
 				if(currentCastTime > 0 && skillCastTime != -1){
 					mStack.pushPose();
 					mStack.scale(0.5F, 0.5F, 0);
 
-					int yPos1 = cap.getType() == DragonType.CAVE ? 0 : cap.getType() == DragonType.FOREST ? 47 : 94;
-					int yPos2 = cap.getType() == DragonType.CAVE ? 142 : cap.getType() == DragonType.FOREST ? 147 : 152;
+					int yPos1 = cap.getType().equals(DragonTypes.CAVE) ? 0 : cap.getType().equals(DragonTypes.FOREST) ? 47 : 94;
+					int yPos2 = cap.getType().equals(DragonTypes.CAVE) ? 142 : cap.getType().equals(DragonTypes.FOREST) ? 147 : 152;
 
 					float perc = Math.min((float)currentCastTime / (float)skillCastTime, 1);
 

@@ -1,8 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.components;
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ColorPickerButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownList;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ColorPickerButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ExtendedCheckbox;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEditorHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.EnumSkinLayer;
@@ -48,7 +48,7 @@ public class ColorSelectorComponent extends AbstractContainerEventHandler implem
 
 		glowing = new ExtendedCheckbox(x + 3, y, xSize - 5, 10, 10, new TranslatableComponent("ds.gui.dragon_editor.glowing"), set.glowing, (s) -> {
 			settings.get().glowing = s.selected();
-			screen.handler.getSkin().compileSkin();
+			screen.handler.getSkinData().compileSkin();
 		});
 
 		Color defaultC = Color.decode(text.defaultColor);
@@ -65,7 +65,7 @@ public class ColorSelectorComponent extends AbstractContainerEventHandler implem
 			settings.get().brightness = hsb[2];
 			settings.get().modifiedColor = true;
 
-			screen.handler.getSkin().compileSkin();
+			screen.handler.getSkinData().compileSkin();
 			screen.update();
 		});
 	}

@@ -1,12 +1,10 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.active.BreathAbility;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -80,7 +78,7 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity>{
 		Player player = entity.getPlayer();
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 
-		boolean hasWings = handler.hasWings() && handler.getSkin().skinPreset.skinAges.get(handler.getLevel()).wings;
+		boolean hasWings = handler.hasWings() && handler.getSkinData().skinPreset.skinAges.get(handler.getLevel()).wings;
 
 		IBone leftWing = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("WingLeft");
 		IBone rightWing = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("WingRight");
@@ -120,7 +118,7 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity>{
 							RenderUtils.prepMatrixForBone(stack, bone);
 							RenderUtils.translateAndRotateMatrixForBone(stack, bone);
 
-							Minecraft.getInstance().getItemRenderer().renderStatic(player.getInventory().offhand.get(0), TransformType.FIRST_PERSON_LEFT_HAND, packedLight, pOverlay, stack, getCurrentRTB(), 0);
+							Minecraft.getInstance().getItemRenderer().renderStatic(player.getInventory().offhand.get(0), TransformType.THIRD_PERSON_LEFT_HAND, packedLight, pOverlay, stack, getCurrentRTB(), 0);
 							buffer = bufferSource.getBuffer(RenderType.entityTranslucent(currentTexture));
 							stack.popPose();
 						}
@@ -130,7 +128,7 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity>{
 							RenderUtils.prepMatrixForBone(stack, bone);
 							RenderUtils.translateAndRotateMatrixForBone(stack, bone);
 
-							Minecraft.getInstance().getItemRenderer().renderStatic(player.getInventory().getSelected(), TransformType.FIRST_PERSON_RIGHT_HAND, packedLight, pOverlay, stack, getCurrentRTB(), 0);
+							Minecraft.getInstance().getItemRenderer().renderStatic(player.getInventory().getSelected(), TransformType.THIRD_PERSON_RIGHT_HAND, packedLight, pOverlay, stack, getCurrentRTB(), 0);
 							buffer = bufferSource.getBuffer(RenderType.entityTranslucent(currentTexture));
 							stack.popPose();
 						}

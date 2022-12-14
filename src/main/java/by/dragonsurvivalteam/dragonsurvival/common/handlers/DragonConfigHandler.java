@@ -1,12 +1,13 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.active.NetherBreathAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.active.ForestBreathAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.StormBreathAbility;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Material;
@@ -26,17 +27,17 @@ public class DragonConfigHandler{
 
 	public static List<Block> FOREST_DRAGON_BREATH_GROW_BLACKLIST = List.of();
 
-	public static Map<DragonType, List<Block>> DRAGON_SPEEDUP_BLOCKS;
-	public static Map<DragonType, List<Block>> DRAGON_BREATH_BLOCKS;
-	public static Map<DragonType, List<Block>> DRAGON_MANA_BLOCKS;
+	public static Map<AbstractDragonType, List<Block>> DRAGON_SPEEDUP_BLOCKS;
+	public static Map<AbstractDragonType, List<Block>> DRAGON_BREATH_BLOCKS;
+	public static Map<AbstractDragonType, List<Block>> DRAGON_MANA_BLOCKS;
 
-	public static HashMap<DragonType, List<Material>> DRAGON_SPEED_MATERIALS = new HashMap<>();
+	public static HashMap<AbstractDragonType, List<Material>> DRAGON_SPEED_MATERIALS = new HashMap<>();
 
 	static {
 		//Which materials should speed up dragons when using the athletics ability
-		DRAGON_SPEED_MATERIALS.put(DragonType.CAVE, List.of(Material.STONE, Material.METAL, Material.LAVA, Material.FIRE));
-		DRAGON_SPEED_MATERIALS.put(DragonType.FOREST, List.of(Material.GRASS, Material.LEAVES, Material.WOOD, Material.PLANT, Material.CACTUS));
-		DRAGON_SPEED_MATERIALS.put(DragonType.SEA, List.of(Material.SAND, Material.DIRT, Material.WATER, Material.WATER_PLANT, Material.SPONGE, Material.TOP_SNOW, Material.SNOW, Material.POWDER_SNOW));
+		DRAGON_SPEED_MATERIALS.put(DragonTypes.CAVE, List.of(Material.STONE, Material.METAL, Material.LAVA, Material.FIRE));
+		DRAGON_SPEED_MATERIALS.put(DragonTypes.FOREST, List.of(Material.GRASS, Material.LEAVES, Material.WOOD, Material.PLANT, Material.CACTUS));
+		DRAGON_SPEED_MATERIALS.put(DragonTypes.SEA, List.of(Material.SAND, Material.DIRT, Material.WATER, Material.WATER_PLANT, Material.SPONGE, Material.TOP_SNOW, Material.SNOW, Material.POWDER_SNOW));
 	}
 
 	@SubscribeEvent
@@ -51,26 +52,26 @@ public class DragonConfigHandler{
 	}
 
 	private static void rebuildSpeedupBlocksMap(){
-		HashMap<DragonType, List<Block>> speedupMap = new HashMap<>();
-		speedupMap.put(DragonType.CAVE, ConfigHandler.configList(Block.class, ServerConfig.caveSpeedupBlocks));
-		speedupMap.put(DragonType.FOREST, ConfigHandler.configList(Block.class, ServerConfig.forestSpeedupBlocks));
-		speedupMap.put(DragonType.SEA, ConfigHandler.configList(Block.class, ServerConfig.seaSpeedupBlocks));
+		HashMap<AbstractDragonType, List<Block>> speedupMap = new HashMap<>();
+		speedupMap.put(DragonTypes.CAVE, ConfigHandler.configList(Block.class, ServerConfig.caveSpeedupBlocks));
+		speedupMap.put(DragonTypes.FOREST, ConfigHandler.configList(Block.class, ServerConfig.forestSpeedupBlocks));
+		speedupMap.put(DragonTypes.SEA, ConfigHandler.configList(Block.class, ServerConfig.seaSpeedupBlocks));
 		DRAGON_SPEEDUP_BLOCKS = speedupMap;
 	}
 
 	public static void rebuildBreathBlocks(){
-		HashMap<DragonType, List<Block>> breathMap = new HashMap<>();
-		breathMap.put(DragonType.CAVE, ConfigHandler.configList(Block.class, NetherBreathAbility.fireBreathBlockBreaks));
-		breathMap.put(DragonType.FOREST, ConfigHandler.configList(Block.class, ForestBreathAbility.forestBreathBlockBreaks));
-		breathMap.put(DragonType.SEA, ConfigHandler.configList(Block.class, StormBreathAbility.stormBreathBlockBreaks));
+		HashMap<AbstractDragonType, List<Block>> breathMap = new HashMap<>();
+		breathMap.put(DragonTypes.CAVE, ConfigHandler.configList(Block.class, NetherBreathAbility.fireBreathBlockBreaks));
+		breathMap.put(DragonTypes.FOREST, ConfigHandler.configList(Block.class, ForestBreathAbility.forestBreathBlockBreaks));
+		breathMap.put(DragonTypes.SEA, ConfigHandler.configList(Block.class, StormBreathAbility.stormBreathBlockBreaks));
 		DRAGON_BREATH_BLOCKS = breathMap;
 	}
 
 	public static void rebuildManaBlocks(){
-		HashMap<DragonType, List<Block>> map = new HashMap<>();
-		map.put(DragonType.CAVE, ConfigHandler.configList(Block.class, ServerConfig.caveDragonManaBlocks));
-		map.put(DragonType.FOREST, ConfigHandler.configList(Block.class, ServerConfig.forestDragonManaBlocks));
-		map.put(DragonType.SEA, ConfigHandler.configList(Block.class, ServerConfig.seaDragonManaBlocks));
+		HashMap<AbstractDragonType, List<Block>> map = new HashMap<>();
+		map.put(DragonTypes.CAVE, ConfigHandler.configList(Block.class, ServerConfig.caveDragonManaBlocks));
+		map.put(DragonTypes.FOREST, ConfigHandler.configList(Block.class, ServerConfig.forestDragonManaBlocks));
+		map.put(DragonTypes.SEA, ConfigHandler.configList(Block.class, ServerConfig.seaDragonManaBlocks));
 		DRAGON_MANA_BLOCKS = map;
 	}
 

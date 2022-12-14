@@ -2,7 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities;
 
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import net.minecraft.nbt.CompoundTag;
 
 public class SkinCap extends SubCap{
@@ -23,8 +23,8 @@ public class SkinCap extends SubCap{
 
 	public SkinCap(DragonStateHandler handler){
 		super(handler);
-		for(DragonType value : DragonType.values()){
-			skinPreset.initDefaults(value);
+		for(String value : DragonTypes.getTypes()){
+			skinPreset.initDefaults(DragonTypes.getStatic(value));
 		}
 	}
 

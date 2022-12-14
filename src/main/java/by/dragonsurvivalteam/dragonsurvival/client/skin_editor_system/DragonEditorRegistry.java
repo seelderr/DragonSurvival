@@ -6,8 +6,9 @@ import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.Dr
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SavedSkinPresets;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.SkinCap;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.minecraft.client.Minecraft;
@@ -29,15 +30,15 @@ import java.util.HashMap;
 public class DragonEditorRegistry{
 	public static final String SAVED_FILE_NAME = "saved_customizations.json";
 	public static final ResourceLocation CUSTOMIZATION = new ResourceLocation(DragonSurvivalMod.MODID, "customization.json");
-	public static final HashMap<DragonType, HashMap<EnumSkinLayer, Texture[]>> CUSTOMIZATIONS = new HashMap<>();
+	public static final HashMap<String, HashMap<EnumSkinLayer, Texture[]>> CUSTOMIZATIONS = new HashMap<>();
 	private static boolean init = false;
 	private static SavedSkinPresets savedCustomizations = null;
-	public static HashMap<DragonType, HashMap<DragonLevel, HashMap<EnumSkinLayer, String>>> defaultSkinValues = new HashMap<>();
+	public static HashMap<String, HashMap<DragonLevel, HashMap<EnumSkinLayer, String>>> defaultSkinValues = new HashMap<>();
 	public static File folder;
 	public static File savedFile;
 
-	public static String getDefaultPart(DragonType type, DragonLevel level, EnumSkinLayer layer){
-		return defaultSkinValues.getOrDefault(type, new HashMap<>()).getOrDefault(level, new HashMap<>()).getOrDefault(layer, SkinCap.defaultSkinValue);
+	public static String getDefaultPart(AbstractDragonType type, DragonLevel level, EnumSkinLayer layer){
+		return defaultSkinValues.getOrDefault(type.getTypeName().toUpperCase(), new HashMap<>()).getOrDefault(level, new HashMap<>()).getOrDefault(layer, SkinCap.defaultSkinValue);
 	}
 
 	public static SavedSkinPresets getSavedCustomizations(){
@@ -84,18 +85,14 @@ public class DragonEditorRegistry{
 				Gson gson = new GsonBuilder().setPrettyPrinting().create();
 				savedCustomizations = new SavedSkinPresets();
 
-				for(DragonType type : DragonType.values()){
-					if(type == DragonType.NONE){
-						continue;
-					}
-
+				for(String type : DragonTypes.getTypes()){
 					savedCustomizations.skinPresets.computeIfAbsent(type, b -> new HashMap<>());
 					savedCustomizations.current.computeIfAbsent(type, b -> new HashMap<>());
 
 					for(int i = 0; i < 9; i++){
 						savedCustomizations.skinPresets.get(type).computeIfAbsent(i, b -> {
 							SkinPreset preset = new SkinPreset();
-							preset.initDefaults(type);
+							preset.initDefaults(DragonTypes.getStatic(type));
 							return preset;
 						});
 					}
@@ -133,13 +130,13 @@ public class DragonEditorRegistry{
 			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 			DragonEditorObject je = gson.fromJson(reader, DragonEditorObject.class);
 
-			CUSTOMIZATIONS.computeIfAbsent(DragonType.SEA, type -> new HashMap<>());
-			CUSTOMIZATIONS.computeIfAbsent(DragonType.CAVE, type -> new HashMap<>());
-			CUSTOMIZATIONS.computeIfAbsent(DragonType.FOREST, type -> new HashMap<>());
+			CUSTOMIZATIONS.computeIfAbsent(DragonTypes.SEA.getTypeName().toUpperCase(), type -> new HashMap<>());
+			CUSTOMIZATIONS.computeIfAbsent(DragonTypes.CAVE.getTypeName().toUpperCase(), type -> new HashMap<>());
+			CUSTOMIZATIONS.computeIfAbsent(DragonTypes.FOREST.getTypeName().toUpperCase(), type -> new HashMap<>());
 
-			dragonType(DragonType.SEA, je.sea_dragon);
-			dragonType(DragonType.CAVE, je.cave_dragon);
-			dragonType(DragonType.FOREST, je.forest_dragon);
+			dragonType(DragonTypes.SEA, je.sea_dragon);
+			dragonType(DragonTypes.CAVE, je.cave_dragon);
+			dragonType(DragonTypes.FOREST, je.forest_dragon);
 
 			defaultSkinValues = je.defaults;
 		}catch(IOException e){
@@ -147,7 +144,7 @@ public class DragonEditorRegistry{
 		}
 	}
 
-	private static void dragonType(DragonType type, DragonEditorObject.Dragon je){
+	private static void dragonType(AbstractDragonType type, DragonEditorObject.Dragon je){
 		if(je != null){
 			if(je.layers != null){
 				je.layers.forEach((layer, keys) -> {
@@ -157,7 +154,7 @@ public class DragonEditorRegistry{
 							key.key = key.key.substring(0, key.key.lastIndexOf("."));
 						}
 					}
-					CUSTOMIZATIONS.get(type).put(layer, keys);
+					CUSTOMIZATIONS.get(type.getTypeName().toUpperCase()).put(layer, keys);
 				});
 			}
 		}

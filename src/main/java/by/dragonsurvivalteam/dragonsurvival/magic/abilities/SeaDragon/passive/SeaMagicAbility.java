@@ -1,11 +1,12 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.passive;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.MagicAbility;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonType;
+import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
+import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.MagicAbility;
 import net.minecraft.resources.ResourceLocation;
 
 @RegisterDragonAbility
@@ -24,8 +25,8 @@ public class SeaMagicAbility extends MagicAbility{
 	}
 
 	@Override
-	public DragonType getDragonType(){
-		return DragonType.SEA;
+	public AbstractDragonType getDragonType(){
+		return DragonTypes.SEA;
 	}
 
 	@Override
@@ -57,16 +58,5 @@ public class SeaMagicAbility extends MagicAbility{
 		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/sea/sea_magic_19.png"),
 		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/sea/sea_magic_20.png")
 		};
-	}
-
-
-	@Override
-	public int getMaxLevel(){
-		return 10;
-	}
-
-	@Override
-	public int getMinLevel(){
-		return 0;
 	}
 }
