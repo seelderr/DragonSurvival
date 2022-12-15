@@ -300,13 +300,13 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
 			boolean harm = false;
 			AbstractDragonType type = DragonUtils.getDragonType(entity);
 
-			if(type != DragonTypes.CAVE && pState.getBlock() == DSBlocks.caveSourceOfMagic){
+			if(type == null || !type.equals(DragonTypes.CAVE) && pState.getBlock() == DSBlocks.caveSourceOfMagic){
 				harm = true;
 			}
-			if(type != DragonTypes.SEA && pState.getBlock() == DSBlocks.seaSourceOfMagic){
+			if(type == null || !type.equals(DragonTypes.SEA) && pState.getBlock() == DSBlocks.seaSourceOfMagic){
 				harm = true;
 			}
-			if(type != DragonTypes.FOREST && pState.getBlock() == DSBlocks.forestSourceOfMagic){
+			if(type == null || !type.equals(DragonTypes.FOREST) && pState.getBlock() == DSBlocks.forestSourceOfMagic){
 				harm = true;
 			}
 

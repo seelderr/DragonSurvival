@@ -30,7 +30,7 @@ public class MixinBlock{
 			return;
 		}
 		DragonStateHandler handler = DragonUtils.getHandler(entity);
-		if(handler.getType() != DragonTypes.CAVE){
+		if(handler.getType() == null || !handler.getType().equals(DragonTypes.CAVE)){
 			return;
 		}
 

@@ -54,7 +54,7 @@ public class DragonPenaltyHandler{
 
 				DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
 					if(dragonStateHandler.isDragon()){
-						if(dragonStateHandler.getType() != DragonTypes.CAVE){
+						if(dragonStateHandler.getType() == null || !dragonStateHandler.getType().equals(DragonTypes.CAVE)){
 							return;
 						}
 						player.hurt(DamageSources.WATER_BURN, ServerConfig.caveSplashDamage.floatValue());

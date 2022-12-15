@@ -6,7 +6,6 @@ import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaDragon.SmallLigh
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.SoundRegistry;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.StormBreathSound;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
@@ -288,7 +287,7 @@ public class StormBreathAbility extends BreathAbility{
 			return false;
 		}
 
-		return Functions.isValidTarget(attacker, target) && DragonStateProvider.getCap(target).map(DragonStateHandler::getType).orElse(null) != DragonTypes.SEA;
+		return Functions.isValidTarget(attacker, target) && (DragonUtils.getDragonType(target) == null ||  !DragonUtils.getDragonType(target).equals(DragonTypes.SEA));
 	}
 
 	public void hurtTarget(LivingEntity entity){
