@@ -171,10 +171,11 @@ public class DragonStateHandler implements NBTInterface{
 
 			tag.putBoolean("resting", treasureResting);
 			tag.putInt("restingTimer", treasureRestTimer);
-		}
 
-		for(int i = 0; i < caps.length; i++)
-			tag.put("cap_" + i, caps[i].get().writeNBT());
+			for(int i = 0; i < caps.length; i++){
+				tag.put("cap_" + i, caps[i].get().writeNBT());
+			}
+		}
 
 		tag.putInt("altarCooldown", altarCooldown);
 		tag.putBoolean("usedAltar", hasUsedAltar);
@@ -220,15 +221,16 @@ public class DragonStateHandler implements NBTInterface{
 			treasureResting = tag.getBoolean("resting");
 			treasureRestTimer = tag.getInt("restingTimer");
 
+			for(int i = 0; i < caps.length; i++){
+				if(tag.contains("cap_" + i)){
+					caps[i].get().readNBT((CompoundTag)tag.get("cap_" + i));
+				}
+			}
+
 			if(getSize() == 0){
 				setSize(DragonLevel.NEWBORN.size);
 			}
 		}
-
-		for(int i = 0; i < caps.length; i++)
-			if(tag.contains("cap_" + i)){
-				caps[i].get().readNBT((CompoundTag)tag.get("cap_" + i));
-			}
 
 		altarCooldown = tag.getInt("altarCooldown");
 		hasUsedAltar = tag.getBoolean("usedAltar");

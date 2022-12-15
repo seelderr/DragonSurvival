@@ -308,7 +308,7 @@ public class ClientEvents{
 		}
 
 		DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
-			if(playerStateHandler.getType().equals(DragonTypes.CAVE) && ServerConfig.bonuses && ServerConfig.caveLavaSwimming){
+			if(playerStateHandler.isDragon() && playerStateHandler.getType().equals(DragonTypes.CAVE) && ServerConfig.bonuses && ServerConfig.caveLavaSwimming){
 				if(!wasCaveDragon){
 					if(player.hasEffect(DragonEffects.LAVA_VISION)){
 						RenderType lavaType = RenderType.translucent();
@@ -340,7 +340,7 @@ public class ClientEvents{
 					minecraft.levelRenderer.allChanged();
 				}
 			}
-			wasCaveDragon = playerStateHandler.getType().equals(DragonTypes.CAVE) && player.hasEffect(DragonEffects.LAVA_VISION);
+			wasCaveDragon = playerStateHandler.isDragon() && playerStateHandler.getType().equals(DragonTypes.CAVE) && player.hasEffect(DragonEffects.LAVA_VISION);
 		});
 	}
 
