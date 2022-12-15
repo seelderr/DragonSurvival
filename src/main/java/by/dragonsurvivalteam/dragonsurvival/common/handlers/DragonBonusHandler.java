@@ -56,13 +56,14 @@ public class DragonBonusHandler{
 
 	@SubscribeEvent
 	public static void removeLavaFootsteps(PlaySoundAtEntityEvent event){
-		if(!(event.getEntity() instanceof Player)){
+		if(!(event.getEntity() instanceof Player player)){
 			return;
 		}
-		Player player = (Player)event.getEntity();
 		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
-			if(dragonStateHandler.getType().equals(DragonTypes.CAVE) && ServerConfig.bonuses && ServerConfig.caveLavaSwimming && DragonSizeHandler.getOverridePose(player) == Pose.SWIMMING && event.getSound().getRegistryName().getPath().contains(".step")){
-				event.setCanceled(true);
+			if(dragonStateHandler.isDragon()){
+				if(dragonStateHandler.getType().equals(DragonTypes.CAVE) && ServerConfig.bonuses && ServerConfig.caveLavaSwimming && DragonSizeHandler.getOverridePose(player) == Pose.SWIMMING && event.getSound().getRegistryName().getPath().contains(".step")){
+					event.setCanceled(true);
+				}
 			}
 		});
 	}
