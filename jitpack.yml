@@ -5,5 +5,5 @@ install:
    - chmod +x gradlew
    - ./gradlew clean
    - ./gradlew init
-   - ./gradlew build publish
+   - ./gradlew build
    - ./gradlew publish

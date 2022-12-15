@@ -78,13 +78,13 @@ public abstract class DragonAbility {
 		if(!ServerConfig.dragonAbilities){
 			return true;
 		}
-		if(getDragonType().equals(DragonTypes.CAVE) && !ServerConfig.caveDragonAbilities){
+		if(getDragonType() != null && getDragonType().equals(DragonTypes.CAVE) && !ServerConfig.caveDragonAbilities){
 			return true;
 		}
-		if(getDragonType() .equals(DragonTypes.SEA) && !ServerConfig.seaDragonAbilities){
+		if(getDragonType() != null && getDragonType() .equals(DragonTypes.SEA) && !ServerConfig.seaDragonAbilities){
 			return true;
 		}
-		return getDragonType().equals(DragonTypes.FOREST) && !ServerConfig.forestDragonAbilities;
+		return getDragonType() != null && getDragonType().equals(DragonTypes.FOREST) && !ServerConfig.forestDragonAbilities;
 	}
 
 	public int getLevel(){
