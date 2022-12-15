@@ -1,7 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.common.passive;
 
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ManaHandler;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -29,9 +28,7 @@ public abstract class MagicAbility extends PassiveDragonAbility {
 	}
 
 	public int getMana(){
-		return DragonStateProvider.getCap(getPlayer()).map(cap -> {
-			return getLevel();
-		}).orElse(0);
+		return getLevel();
 	}
 
 	public ResourceLocation getIcon(){

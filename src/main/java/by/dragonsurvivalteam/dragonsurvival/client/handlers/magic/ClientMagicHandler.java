@@ -70,6 +70,7 @@ public class ClientMagicHandler{
 		if(entity == Minecraft.getInstance().player || DragonUtils.isDragon(entity)){
 			return;
 		}
+
 		if(entity.hasEffect(DragonEffects.BURN)){
 			ParticleOptions data = new SmallFireParticleData(37F, false);
 			for(int i = 0; i < 4; i++){
