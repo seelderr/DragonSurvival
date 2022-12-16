@@ -51,7 +51,6 @@ public class SyncCapabilityDebuff implements IMessage<SyncCapabilityDebuff>{
 	@Override
 
 	public SyncCapabilityDebuff decode(FriendlyByteBuf buffer){
-
 		return new SyncCapabilityDebuff(buffer.readInt(), buffer.readDouble(), buffer.readInt(), buffer.readInt(), buffer.readInt());
 	}
 

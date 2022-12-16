@@ -99,6 +99,7 @@ public class SeaDragonType extends AbstractDragonType {
 					if(player.tickCount % 40 == 0){
 						player.hurt(DamageSources.DEHYDRATION, hydrationDamage);
 					}
+
 				}else if(timeWithoutWater >= maxTicksOutofWater * 2){
 					if(player.tickCount % 20 == 0){
 						player.hurt(DamageSources.DEHYDRATION, hydrationDamage);

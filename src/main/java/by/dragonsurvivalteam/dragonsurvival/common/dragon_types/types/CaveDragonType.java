@@ -105,28 +105,30 @@ public class CaveDragonType extends AbstractDragonType{
 				}
 			}
 		}
+
 		if(player.isOnFire() && ServerConfig.bonuses && ServerConfig.caveFireImmunity){
 			player.clearFire();
 		}
-		if(player.isEyeInFluid(FluidTags.LAVA) && ServerConfig.bonuses && ServerConfig.caveLavaSwimming && ServerConfig.caveLavaSwimmingTicks != 0){
-			if(!player.canBreatheUnderwater() && !player.getAbilities().invulnerable){
-				lavaAirSupply--;
-				if(lavaAirSupply == -20){
-					lavaAirSupply = 0;
-					if(!player.level.isClientSide){
-						player.hurt(DamageSource.DROWN, 2F); //LAVA_YES
+
+		if(!player.level.isClientSide){
+			if(player.isEyeInFluid(FluidTags.LAVA) && ServerConfig.bonuses && ServerConfig.caveLavaSwimming && ServerConfig.caveLavaSwimmingTicks != 0){
+				if(!player.canBreatheUnderwater() && !player.getAbilities().invulnerable){
+					lavaAirSupply--;
+					if(lavaAirSupply == -20){
+						lavaAirSupply = 0;
+						if(!player.level.isClientSide){
+							player.hurt(DamageSource.DROWN, 2F); //LAVA_YES
+						}
 					}
 				}
+				if(!player.level.isClientSide && player.isPassenger() && player.getVehicle() != null && !player.getVehicle().canBeRiddenInWater(player)){
+					player.stopRiding();
+				}
+			}else if(lavaAirSupply < ServerConfig.caveLavaSwimmingTicks && !player.isEyeInFluid(FluidTags.WATER)){
+				lavaAirSupply = Math.min(lavaAirSupply + (int)Math.ceil(ServerConfig.caveLavaSwimmingTicks * 0.0133333F), ServerConfig.caveLavaSwimmingTicks);
 			}
-			if(!player.level.isClientSide && player.isPassenger() && player.getVehicle() != null && !player.getVehicle().canBeRiddenInWater(player)){
-				player.stopRiding();
-			}
-		}else if(lavaAirSupply < ServerConfig.caveLavaSwimmingTicks && !player.isEyeInFluid(FluidTags.WATER)){
-			lavaAirSupply = Math.min(lavaAirSupply + (int)Math.ceil(ServerConfig.caveLavaSwimmingTicks * 0.0133333F), ServerConfig.caveLavaSwimmingTicks);
-		}
 
-		if(timeInRain != oldRainTime || lavaAirSupply != oldLavaTicks){
-			if(!player.level.isClientSide){
+			if(timeInRain != oldRainTime || lavaAirSupply != oldLavaTicks){
 				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncCapabilityDebuff(player.getId(), 0, 0, timeInRain, lavaAirSupply));
 			}
 		}
