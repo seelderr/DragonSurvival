@@ -85,7 +85,8 @@ public class DragonEditorRegistry{
 				Gson gson = new GsonBuilder().setPrettyPrinting().create();
 				savedCustomizations = new SavedSkinPresets();
 
-				for(String type : DragonTypes.getTypes()){
+				for(String t : DragonTypes.getTypes()){
+					String type = t.toUpperCase();
 					savedCustomizations.skinPresets.computeIfAbsent(type, b -> new HashMap<>());
 					savedCustomizations.current.computeIfAbsent(type, b -> new HashMap<>());
 

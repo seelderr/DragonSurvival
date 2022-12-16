@@ -115,10 +115,6 @@ public class SeaDragonType extends AbstractDragonType {
 			}
 		}
 
-		if(waterAbility != null){
-			maxTicksOutofWater += Functions.secondsToTicks(waterAbility.getDuration());
-		}
-
 		if(world.isClientSide && !player.isCreative() && !player.isSpectator()){
 			if(!player.hasEffect(DragonEffects.PEACE) && timeWithoutWater >= maxTicksOutofWater){
 				world.addParticle(ParticleTypes.WHITE_ASH, player.getX() + world.random.nextDouble() * (world.random.nextBoolean() ? 1 : -1), player.getY() + 0.5F, player.getZ() + world.random.nextDouble() * (world.random.nextBoolean() ? 1 : -1), 0, 0, 0);
