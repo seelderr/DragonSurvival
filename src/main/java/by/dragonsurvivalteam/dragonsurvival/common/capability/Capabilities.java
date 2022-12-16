@@ -66,7 +66,7 @@ public class Capabilities{
 	}
 
 	public static void syncCapability(Player player){
-		player.reviveCaps();
+		//player.reviveCaps();
 		NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new CompleteDataSync(player));
 	}
 

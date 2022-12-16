@@ -81,17 +81,19 @@ public class EventHandler{
 		if(event.side == LogicalSide.CLIENT) return;
 
 		if(event.player instanceof ServerPlayer player){
+			if(player.isDeadOrDying()) return;
+
 			if(player.tickCount > 5 * 20){
-				DragonStateHandler cap = DragonUtils.getHandler(player);
+				DragonStateProvider.getCap(player).ifPresent(cap -> {
+					if(!cap.hasUsedAltar && !DragonUtils.isDragon(player)){
+						NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new OpenDragonAltar());
+						cap.hasUsedAltar = true;
+					}
 
-				if(!cap.hasUsedAltar && !DragonUtils.isDragon(player)){
-					NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new OpenDragonAltar());
-					cap.hasUsedAltar = true;
-				}
-
-				if(cap.altarCooldown > 0){
-					cap.altarCooldown--;
-				}
+					if(cap.altarCooldown > 0){
+						cap.altarCooldown--;
+					}
+				});
 			}
 		}
 	}

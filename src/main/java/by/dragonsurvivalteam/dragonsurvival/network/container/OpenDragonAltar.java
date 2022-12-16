@@ -35,7 +35,9 @@ public class OpenDragonAltar implements IMessage<OpenDragonAltar>{
 	public void runClient(OpenDragonAltar message, Supplier<NetworkEvent.Context> supplier){
 		NetworkEvent.Context context = supplier.get();
 		context.enqueueWork(() -> {
-			Minecraft.getInstance().setScreen(new DragonAltarGUI());
+			if(Minecraft.getInstance().screen == null && !Minecraft.getInstance().player.isDeadOrDying()){
+				Minecraft.getInstance().setScreen(new DragonAltarGUI());
+			}
 			context.setPacketHandled(true);
 		});
 	}
