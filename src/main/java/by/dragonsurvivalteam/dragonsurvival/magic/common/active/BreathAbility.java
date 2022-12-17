@@ -21,16 +21,11 @@ import net.minecraft.world.damagesource.EntityDamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.level.ClipContext.Block;
-import net.minecraft.world.level.ClipContext.Fluid;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.HitResult.Type;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
@@ -40,7 +35,6 @@ import java.awt.geom.Point2D.Double;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.function.Predicate;
 
 public abstract class BreathAbility extends ChannelingCastAbility implements ISecondAnimation{
 
@@ -131,65 +125,18 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 	}
 
 	public void hitEntities(){
-		boolean found = false;
-		List<LivingEntity> entitiesHit = getEntityLivingBaseNearby(RANGE, RANGE, RANGE, RANGE);
-		for(LivingEntity entityHit : entitiesHit){
-			if(entityHit == player)
-				continue;
+		Vec3 targetVec = Functions.fromEntityCenter(player).add(player.getLookAngle().scale(RANGE)).add(0, 0.5, 0);
+		List<Entity>  entities = player.level.getEntities(player, Functions.boxForRange(targetVec, 3), e -> !e.isSpectator() && e.isAlive() && Functions.isValidTarget(getPlayer(), e));
 
-			float entityHitYaw = (float)((Math.atan2(entityHit.getZ() - player.getZ(), entityHit.getX() - player.getX()) * (180 / Math.PI) - 90) % 360);
-			float entityAttackingYaw = player.getYRot() % 360;
-			if(entityHitYaw < 0)
-				entityHitYaw += 360;
-			if(entityAttackingYaw < 0)
-				entityAttackingYaw += 360;
-			float entityRelativeYaw = entityHitYaw - entityAttackingYaw;
-
-			float xzDistance = (float)Math.sqrt((entityHit.getZ() - player.getZ()) * (entityHit.getZ() - player.getZ()) + (entityHit.getX() - player.getX()) * (entityHit.getX() - player.getX()));
-			double hitY = entityHit.getY() + entityHit.getBbHeight() / 2.0;
-			float entityHitPitch = (float)(Math.atan2(hitY - player.getY(), xzDistance) * (180 / Math.PI) % 360);
-			float entityAttackingPitch = -player.getXRot() % 360;
-			if(entityHitPitch < 0)
-				entityHitPitch += 360;
-			if(entityAttackingPitch < 0)
-				entityAttackingPitch += 360;
-			float entityRelativePitch = entityHitPitch - entityAttackingPitch;
-
-			float entityHitDistance = (float)Math.sqrt((entityHit.getZ() - player.getZ()) * (entityHit.getZ() - player.getZ()) + (entityHit.getX() - player.getX()) * (entityHit.getX() - player.getX()) + (hitY - player.getY()) * (hitY - player.getY()));
-
-			boolean inRange = entityHitDistance <= RANGE;
-			boolean yawCheck = entityRelativeYaw <= ARC / 2f && entityRelativeYaw >= -ARC / 2f || entityRelativeYaw >= 360 - ARC / 2f || entityRelativeYaw <= -360 + ARC / 2f;
-			boolean pitchCheck = entityRelativePitch <= ARC / 2f && entityRelativePitch >= -ARC / 2f || entityRelativePitch >= 360 - ARC / 2f || entityRelativePitch <= -360 + ARC / 2f;
-
-			if(inRange && yawCheck && pitchCheck){
-				// Raytrace to mob center to avoid damaging through walls
-				Vec3 from = player.getEyePosition(1.0F);
-				Vec3 to = entityHit.position().add(0, entityHit.getEyeHeight() / 2.0f, 0);
-				BlockHitResult result = player.level.clip(new ClipContext(from, to, Block.COLLIDER, Fluid.NONE, player));
-
-				if(result.getType() == Type.BLOCK)
-					continue;
-
-				if(!canHitEntity(entityHit))
+		for(Entity entity : entities){
+			if(entity instanceof LivingEntity livingEntity){
+				if(!canHitEntity(livingEntity))
 					return;
 
-				if(entityHit.getLastHurtByMob() == player && entityHit.getLastHurtByMobTimestamp() + Functions.secondsToTicks(1) < entityHit.tickCount)
+				if(livingEntity.getLastHurtByMob() == player && livingEntity.getLastHurtByMobTimestamp() + Functions.secondsToTicks(1) < livingEntity.tickCount)
 					continue;
 
-				onEntityHit(entityHit);
-				found = true;
-			}
-		}
-
-		if(!found){
-			Vec3 vector3d = player.getEyePosition(1.0F);
-			Predicate<Entity> predicate = entity -> entity instanceof LivingEntity && !entity.isSpectator() && entity.isPickable();
-			HitResult result = ProjectileUtil.getHitResult(player, predicate);
-
-			if(result.getType() == HitResult.Type.ENTITY){
-				LivingEntity entity = (LivingEntity)((EntityHitResult)result).getEntity();
-				if(vector3d.distanceToSqr(result.getLocation()) <= RANGE)
-					onEntityHit(entity);
+				onEntityHit(livingEntity);
 			}
 		}
 	}
@@ -237,7 +184,7 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 					if(newPos.distSqr(pos) <= RANGE){
 						BlockState state = player.level.getBlockState(newPos);
 						if(state.getBlock() != Blocks.AIR){
-							if(DragonConfigHandler.DRAGON_BREATH_BLOCKS != null && DragonConfigHandler.DRAGON_BREATH_BLOCKS.containsKey(getDragonType()) && DragonConfigHandler.DRAGON_BREATH_BLOCKS.get(getDragonType()).contains(state.getBlock())){
+							if(DragonConfigHandler.DRAGON_BREATH_BLOCKS != null && DragonConfigHandler.DRAGON_BREATH_BLOCKS.containsKey(getDragonType().getTypeName()) && DragonConfigHandler.DRAGON_BREATH_BLOCKS.get(getDragonType().getTypeName()).contains(state.getBlock())){
 								if(!player.level.isClientSide){
 									if(player.level.random.nextFloat() * 100 <= blockBreakChance()){
 										player.level.destroyBlock(newPos, false, player);

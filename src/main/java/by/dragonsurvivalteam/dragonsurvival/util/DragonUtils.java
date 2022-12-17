@@ -18,6 +18,11 @@ public class DragonUtils{
 		return getHandler(entity).getType();
 	}
 
+	public static boolean isType(Entity entity, AbstractDragonType dragonType){
+		AbstractDragonType type = getDragonType(entity);
+		return type == null && dragonType == null || type != null && dragonType != null && type.equals(dragonType);
+	}
+
 	public static DragonStateHandler getHandler(Entity entity){
 		return entity != null ?
 			DragonStateProvider.getCap(entity).orElse(new DragonStateHandler()) : new DragonStateHandler();

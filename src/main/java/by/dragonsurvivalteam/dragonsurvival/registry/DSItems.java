@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.registry;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.items.ChargedCoalItem;
 import by.dragonsurvivalteam.dragonsurvival.common.items.DragonTreatItem;
 import by.dragonsurvivalteam.dragonsurvival.common.items.SpinGrantItem;
@@ -10,15 +11,26 @@ import by.dragonsurvivalteam.dragonsurvival.common.items.food.ChargedSoupItem;
 import by.dragonsurvivalteam.dragonsurvival.common.items.food.DragonFoodItem;
 import by.dragonsurvivalteam.dragonsurvival.common.items.growth.StarBoneItem;
 import by.dragonsurvivalteam.dragonsurvival.common.items.growth.StarHeartItem;
+import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
+import by.dragonsurvivalteam.dragonsurvival.network.player.SyncCapabilityDebuff;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Item.Properties;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.registries.IForgeRegistry;
 
 import javax.annotation.Nullable;
@@ -47,10 +59,12 @@ public class DSItems{
 	public static void register(final RegistryEvent.Register<Item> event){
 		IForgeRegistry<Item> registry = event.getRegistry();
 
+		Properties defaultProperties = new Item.Properties().tab(DragonSurvivalMod.items);
+
 		predatorStar = registerItem(registry, "predator_star", "ds.description.predatorStar");
 
-		starBone = registerItem(registry, new StarBoneItem(new Item.Properties().tab(DragonSurvivalMod.items)), "star_bone");
-		starHeart = registerItem(registry, new StarHeartItem(new Item.Properties().tab(DragonSurvivalMod.items)), "star_heart");
+		starBone = registerItem(registry, new StarBoneItem(defaultProperties), "star_bone");
+		starHeart = registerItem(registry, new StarHeartItem(defaultProperties), "star_heart");
 
 		elderDragonDust = registerItem(registry, "elder_dragon_dust", "ds.description.elderDragonDust");
 		elderDragonBone = registerItem(registry, "elder_dragon_bone", "ds.description.elderDragonBone");
@@ -59,34 +73,54 @@ public class DSItems{
 		weakDragonHeart = registerItem(registry, "weak_dragon_heart", "ds.description.weakDragonHeart");
 		elderDragonHeart = registerItem(registry, "elder_dragon_heart", "ds.description.elderDragonHeart");
 
-		chargedCoal = registerItem(registry, new ChargedCoalItem(new Item.Properties().tab(DragonSurvivalMod.items)), "charged_coal");
 
-		chargedSoup = registerItem(registry, new ChargedSoupItem(new Item.Properties().tab(DragonSurvivalMod.items)), "charged_soup");
+		chargedCoal = registerItem(registry, new ChargedCoalItem(defaultProperties, DragonTypes.CAVE , LivingEntity::removeAllEffects), "charged_coal");
+		chargedSoup = registerItem(registry, new ChargedSoupItem(defaultProperties), "charged_soup");
+		charredMeat = registerItem(registry, new DragonFoodItem(defaultProperties), "charred_meat");
+		charredVegetable = registerItem(registry, new DragonFoodItem(defaultProperties), "charred_vegetable");
+		charredMushroom = registerItem(registry, new DragonFoodItem(defaultProperties), "charred_mushroom");
+		charredSeafood = registerItem(registry, new DragonFoodItem(defaultProperties), "charred_seafood");
+		hotDragonRod = registerItem(registry, new DragonFoodItem(defaultProperties, DragonTypes.CAVE, new MobEffectInstance(DragonEffects.FIRE, Functions.secondsToTicks(1))), "hot_dragon_rod");
+		explosiveCopper = registerItem(registry, new DragonFoodItem(defaultProperties, null, e -> {
+			e.hurt(DamageSource.explosion(e), 1f);
+			e.level.addParticle(ParticleTypes.EXPLOSION_EMITTER, e.getX(), e.getEyeY(), e.getZ(), 1.0D, 0.0D, 0.0D);
+		}), "explosive_copper");
+		quartzExplosiveCopper = registerItem(registry, new DragonFoodItem(defaultProperties, DragonTypes.CAVE, e -> {
+			e.removeEffect(MobEffects.POISON);
+			e.removeEffect(MobEffects.WITHER);
+		}, new MobEffectInstance(MobEffects.ABSORPTION, Functions.minutesToTicks(5)), new MobEffectInstance(MobEffects.REGENERATION, Functions.secondsToTicks(10), 1)), "quartz_explosive_copper");
+		doubleQuartz = registerItem(registry, new DragonFoodItem(defaultProperties, DragonTypes.CAVE, new MobEffectInstance(MobEffects.REGENERATION, Functions.secondsToTicks(5))), "double_quartz");
 
-		charredMeat = registerItem(registry, new DragonFoodItem(new Item.Properties().tab(DragonSurvivalMod.items)), "charred_meat");
-		charredVegetable = registerItem(registry, new DragonFoodItem(new Item.Properties().tab(DragonSurvivalMod.items)), "charred_vegetable");
-		charredMushroom = registerItem(registry, new DragonFoodItem(new Item.Properties().tab(DragonSurvivalMod.items)), "charred_mushroom");
-		charredSeafood = registerItem(registry, new DragonFoodItem(new Item.Properties().tab(DragonSurvivalMod.items)), "charred_seafood");
-		hotDragonRod = registerItem(registry, new DragonFoodItem(new Item.Properties().tab(DragonSurvivalMod.items)), "hot_dragon_rod");
-		explosiveCopper = registerItem(registry, new DragonFoodItem(new Item.Properties().tab(DragonSurvivalMod.items)), "explosive_copper");
-		quartzExplosiveCopper = registerItem(registry, new DragonFoodItem(new Item.Properties().tab(DragonSurvivalMod.items)), "quartz_explosive_copper");
-		doubleQuartz = registerItem(registry, new DragonFoodItem(new Item.Properties().tab(DragonSurvivalMod.items)), "double_quartz");
+		sweetSourRabbit = registerItem(registry, new DragonFoodItem(defaultProperties, DragonTypes.FOREST , LivingEntity::removeAllEffects), "sweet_sour_rabbit");
+		luminousOintment = registerItem(registry, new DragonFoodItem(defaultProperties, DragonTypes.FOREST, new MobEffectInstance(MobEffects.GLOWING, Functions.minutesToTicks(5)), new MobEffectInstance(DragonEffects.MAGIC, Functions.minutesToTicks(5))), "luminous_ointment");
+		diamondChorus = registerItem(registry, new DragonFoodItem(defaultProperties, DragonTypes.FOREST, e -> {
+			e.removeEffect(MobEffects.POISON);
+			e.removeEffect(MobEffects.WITHER);
+		}, new MobEffectInstance(MobEffects.ABSORPTION, Functions.minutesToTicks(5)), new MobEffectInstance(MobEffects.REGENERATION, Functions.secondsToTicks(10), 1)), "diamond_chorus");
+		smellyMeatPorridge = registerItem(registry, new DragonFoodItem(defaultProperties), "smelly_meat_porridge");
+		meatWildBerries = registerItem(registry, new DragonFoodItem(defaultProperties), "meat_wild_berries");
+		meatChorusMix = registerItem(registry, new DragonFoodItem(defaultProperties, DragonTypes.FOREST, new MobEffectInstance(MobEffects.REGENERATION, Functions.secondsToTicks(5))), "meat_chorus_mix");
 
-		sweetSourRabbit = registerItem(registry, new DragonFoodItem(new Item.Properties().tab(DragonSurvivalMod.items)), "sweet_sour_rabbit");
-		luminousOintment = registerItem(registry, new DragonFoodItem(new Item.Properties().tab(DragonSurvivalMod.items)), "luminous_ointment");
-		diamondChorus = registerItem(registry, new DragonFoodItem(new Item.Properties().tab(DragonSurvivalMod.items)), "diamond_chorus");
-		smellyMeatPorridge = registerItem(registry, new DragonFoodItem(new Item.Properties().tab(DragonSurvivalMod.items)), "smelly_meat_porridge");
-		meatWildBerries = registerItem(registry, new DragonFoodItem(new Item.Properties().tab(DragonSurvivalMod.items)), "meat_wild_berries");
-		meatChorusMix = registerItem(registry, new DragonFoodItem(new Item.Properties().tab(DragonSurvivalMod.items)), "meat_chorus_mix");
+		seasonedFish = registerItem(registry, new DragonFoodItem(defaultProperties), "seasoned_fish");
+		goldenCoralPufferfish = registerItem(registry, new DragonFoodItem(defaultProperties, DragonTypes.SEA, new MobEffectInstance(MobEffects.REGENERATION, Functions.secondsToTicks(5))), "golden_coral_pufferfish");
+		frozenRawFish = registerItem(registry, new DragonFoodItem(defaultProperties, DragonTypes.SEA , e -> {
+			e.removeAllEffects();
 
-		seasonedFish = registerItem(registry, new DragonFoodItem(new Item.Properties().tab(DragonSurvivalMod.items)), "seasoned_fish");
-		goldenCoralPufferfish = registerItem(registry, new DragonFoodItem(new Item.Properties().tab(DragonSurvivalMod.items)), "golden_coral_pufferfish");
-		frozenRawFish = registerItem(registry, new DragonFoodItem(new Item.Properties().tab(DragonSurvivalMod.items)), "frozen_raw_fish");
-		goldenTurtleEgg = registerItem(registry, new DragonFoodItem(new Item.Properties().tab(DragonSurvivalMod.items)), "golden_turtle_egg");
+			if(!e.level.isClientSide){
+				if(DragonUtils.getHandler(e).getType() instanceof SeaDragonType type){
+					type.timeWithoutWater = 0;
+					NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> e), new SyncCapabilityDebuff(e.getId(), 0, 0, 0, 0));
+				}
+			}
+		}), "frozen_raw_fish");
+		goldenTurtleEgg = registerItem(registry, new DragonFoodItem(defaultProperties, DragonTypes.SEA, e -> {
+			e.removeEffect(MobEffects.POISON);
+			e.removeEffect(MobEffects.WITHER);
+		}, new MobEffectInstance(MobEffects.ABSORPTION, Functions.minutesToTicks(5)), new MobEffectInstance(MobEffects.REGENERATION, Functions.secondsToTicks(10), 1)), "golden_turtle_egg");
 
-		seaDragonTreat = registerItem(registry, new DragonTreatItem(DragonTypes.SEA, new Item.Properties().tab(DragonSurvivalMod.items)), "sea_dragon_treat");
-		caveDragonTreat = registerItem(registry, new DragonTreatItem(DragonTypes.CAVE, new Item.Properties().tab(DragonSurvivalMod.items)), "cave_dragon_treat");
-		forestDragonTreat = registerItem(registry, new DragonTreatItem(DragonTypes.FOREST, new Item.Properties().tab(DragonSurvivalMod.items)), "forest_dragon_treat");
+		seaDragonTreat = registerItem(registry, new DragonTreatItem(DragonTypes.SEA, defaultProperties), "sea_dragon_treat");
+		caveDragonTreat = registerItem(registry, new DragonTreatItem(DragonTypes.CAVE, defaultProperties), "cave_dragon_treat");
+		forestDragonTreat = registerItem(registry, new DragonTreatItem(DragonTypes.FOREST, defaultProperties), "forest_dragon_treat");
 
 		huntingNet = registerItem(registry, new Item(new Item.Properties()), "dragon_hunting_mesh");
 		lightningTextureItem = registerItem(registry, new Item(new Item.Properties()), "lightning");
@@ -100,8 +134,8 @@ public class DSItems{
 		inactiveFireDragonBeacon = registerItem(registry, new Item(new Item.Properties()), "beacon_fire_0");
 
 
-		wingGrantItem = registerItem(registry, new WingGrantItem(new Item.Properties().tab(DragonSurvivalMod.items)), "wing_grant");
-		spinGrantItem = registerItem(registry, new SpinGrantItem(new Item.Properties().tab(DragonSurvivalMod.items)), "spin_grant");
+		wingGrantItem = registerItem(registry, new WingGrantItem(defaultProperties), "wing_grant");
+		spinGrantItem = registerItem(registry, new SpinGrantItem(defaultProperties), "spin_grant");
 	}
 
 	public static Item registerItem(IForgeRegistry<Item> registry, String name, String description){

@@ -20,7 +20,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.NaturalSpawner;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.Heightmap.Types;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.util.FakePlayer;
 
 import javax.annotation.Nullable;
@@ -150,5 +152,17 @@ public class Functions{
 		}
 
 		return listtag;
+	}
+
+	public static AABB boxForRange(Vec3 v, double range) {
+		return boxForRange(v, range, range, range);
+	}
+
+	public static AABB boxForRange(Vec3 v, double rangeX, double rangeY, double rangeZ) {
+		return new AABB(v.x - rangeX, v.y - rangeY, v.z - rangeZ, v.x + rangeX, v.y + rangeY, v.z + rangeZ);
+	}
+
+	public static Vec3 fromEntityCenter(Entity e) {
+		return new Vec3(e.getX(), e.getY() + e.getBbHeight() / 2, e.getZ());
 	}
 }

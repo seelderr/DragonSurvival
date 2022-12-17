@@ -131,8 +131,8 @@ public class SeaDragonType extends AbstractDragonType {
 		if(player.isInWaterRainOrBubble() || player.hasEffect(DragonEffects.CHARGED) || player.hasEffect(DragonEffects.PEACE)){
 			return true;
 		}
-		if(DragonConfigHandler.DRAGON_MANA_BLOCKS != null && DragonConfigHandler.DRAGON_MANA_BLOCKS.containsKey(DragonTypes.SEA)){
-			if(DragonConfigHandler.DRAGON_MANA_BLOCKS.get(DragonTypes.SEA).contains(blockBelow.getBlock())){
+		if(DragonConfigHandler.DRAGON_MANA_BLOCKS != null && DragonConfigHandler.DRAGON_MANA_BLOCKS.containsKey(DragonTypes.SEA.getTypeName())){
+			if(DragonConfigHandler.DRAGON_MANA_BLOCKS.get(DragonTypes.SEA.getTypeName()).contains(blockBelow.getBlock())){
 				if(blockBelow.getBlock() instanceof LayeredCauldronBlock){
 					if(blockBelow.hasProperty(LayeredCauldronBlock.LEVEL)){
 						int level = blockBelow.getValue(LayeredCauldronBlock.LEVEL);

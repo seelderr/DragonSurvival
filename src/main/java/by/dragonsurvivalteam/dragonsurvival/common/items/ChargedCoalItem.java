@@ -1,8 +1,11 @@
 package by.dragonsurvivalteam.dragonsurvival.common.items;
 
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
+import by.dragonsurvivalteam.dragonsurvival.common.items.food.DragonFoodItem;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -10,10 +13,27 @@ import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.function.Consumer;
 
-public class ChargedCoalItem extends Item{
+public class ChargedCoalItem extends DragonFoodItem{
 	public ChargedCoalItem(Properties p_i48487_1_){
 		super(p_i48487_1_);
+	}
+
+	public ChargedCoalItem(Properties p_i48487_1_, MobEffectInstance... effectInstances){
+		super(p_i48487_1_, effectInstances);
+	}
+
+	public ChargedCoalItem(Properties p_i48487_1_, AbstractDragonType dragonType, MobEffectInstance... effectInstances){
+		super(p_i48487_1_, dragonType, effectInstances);
+	}
+
+	public ChargedCoalItem(Properties p_i48487_1_, AbstractDragonType dragonType, Consumer<LivingEntity> onEat, MobEffectInstance... effectInstances){
+		super(p_i48487_1_, dragonType, onEat, effectInstances);
+	}
+
+	public ChargedCoalItem(Properties p_i48487_1_, AbstractDragonType dragonType, Consumer<LivingEntity> onEat){
+		super(p_i48487_1_, dragonType, onEat);
 	}
 
 	@Override

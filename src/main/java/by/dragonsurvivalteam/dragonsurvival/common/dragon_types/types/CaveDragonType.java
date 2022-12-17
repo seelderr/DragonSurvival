@@ -144,8 +144,8 @@ public class CaveDragonType extends AbstractDragonType{
 		}
 
 		//If cave dragon is ontop of a burning furnace
-		if(DragonConfigHandler.DRAGON_MANA_BLOCKS != null && DragonConfigHandler.DRAGON_MANA_BLOCKS.containsKey(DragonTypes.CAVE)){
-			if(DragonConfigHandler.DRAGON_MANA_BLOCKS.get(DragonTypes.CAVE).contains(blockBelow.getBlock())){
+		if(DragonConfigHandler.DRAGON_MANA_BLOCKS != null && DragonConfigHandler.DRAGON_MANA_BLOCKS.containsKey(DragonTypes.CAVE.getTypeName())){
+			if(DragonConfigHandler.DRAGON_MANA_BLOCKS.get(DragonTypes.CAVE.getTypeName()).contains(blockBelow.getBlock())){
 				if(blockBelow.getBlock() instanceof AbstractFurnaceBlock){
 					if(blockBelow.hasProperty(AbstractFurnaceBlock.LIT)){
 						if(blockBelow.getValue(AbstractFurnaceBlock.LIT)){
