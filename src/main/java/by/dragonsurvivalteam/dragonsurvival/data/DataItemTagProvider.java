@@ -28,6 +28,10 @@ public class DataItemTagProvider extends ItemTagsProvider{
 		this.tag(forge("raw_fishes")).add(Items.COD, Items.SALMON, Items.TROPICAL_FISH, Items.PUFFERFISH);
 		this.tag(forge("raw_meats")).add(Items.BEEF, Items.CHICKEN, Items.MUTTON, Items.PORKCHOP, Items.RABBIT);
 
+		this.tag(mod("dragon_survival_food")).add( DSItems.seaDragonTreat, DSItems.forestDragonTreat, DSItems.caveDragonTreat, DSItems.hotDragonRod, DSItems.explosiveCopper, DSItems.doubleQuartz, DSItems.quartzExplosiveCopper, DSItems.charredMeat, DSItems.charredVegetable, DSItems.charredMushroom, DSItems.charredSeafood, DSItems.chargedCoal, DSItems.chargedSoup, DSItems.meatWildBerries, DSItems.smellyMeatPorridge, DSItems.sweetSourRabbit, DSItems.meatChorusMix, DSItems.diamondChorus, DSItems.luminousOintment, DSItems.frozenRawFish, DSItems.seasonedFish, DSItems.goldenCoralPufferfish, DSItems.goldenTurtleEgg);
+		this.tag(mod("sea_dragon_survival_food")).add( DSItems.seaDragonTreat, DSItems.frozenRawFish, DSItems.seasonedFish, DSItems.goldenCoralPufferfish, DSItems.goldenTurtleEgg);
+		this.tag(mod("cave_dragon_survival_food")).add( DSItems.caveDragonTreat, DSItems.hotDragonRod, DSItems.explosiveCopper, DSItems.doubleQuartz, DSItems.quartzExplosiveCopper, DSItems.charredMeat, DSItems.charredVegetable, DSItems.charredMushroom, DSItems.charredSeafood, DSItems.chargedCoal, DSItems.chargedSoup);
+		this.tag(mod("forest_survival_food")).add( DSItems.forestDragonTreat, DSItems.meatWildBerries, DSItems.smellyMeatPorridge, DSItems.sweetSourRabbit, DSItems.meatChorusMix, DSItems.diamondChorus);
 		this.tag(mod("charred_food")).add(DSItems.chargedCoal, DSItems.chargedSoup, DSItems.charredMeat, DSItems.charredMushroom, DSItems.charredSeafood, DSItems.charredVegetable);
 		this.tag(mod("copper")).addTag(forge("ingots/copper")).addOptional(new ResourceLocation("cavesandcliffs:raw_copper"));
 
