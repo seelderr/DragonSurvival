@@ -1,8 +1,10 @@
 package by.dragonsurvivalteam.dragonsurvival.common.items;
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ManaHandler;
+import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -27,11 +29,11 @@ public class DragonTreatItem extends Item{
 	}
 
 	public ItemStack finishUsingItem(ItemStack p_77654_1_, Level p_77654_2_, LivingEntity entity){
-		if(entity instanceof Player){
-			Player player = (Player)entity;
-
-			if(DragonStateProvider.getCap(player).map((cap) -> cap.getType()).get() == type){
+		if(entity instanceof Player player){
+			
+			if(DragonUtils.isType(player, type)){
 				ManaHandler.replenishMana(player, ManaHandler.getMaxMana(player));
+				player.addEffect(new MobEffectInstance(DragonEffects.SOURCE_OF_MAGIC, Functions.minutesToTicks(1)));
 			}
 		}
 

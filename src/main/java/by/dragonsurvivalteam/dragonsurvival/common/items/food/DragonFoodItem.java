@@ -2,6 +2,9 @@ package by.dragonsurvivalteam.dragonsurvival.common.items.food;
 
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -9,9 +12,12 @@ import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.food.FoodProperties.Builder;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nullable;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -60,10 +66,19 @@ public class DragonFoodItem extends Item{
 		if(effectInstances != null){
 			builder.alwaysEat();
 		}
-
+		
 		return builder.build();
 	}
-
+	
+	
+	@Override
+	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> list, TooltipFlag tooltipFlag){
+		super.appendHoverText(stack, world, list, tooltipFlag);
+		String langKey = "ds.description." + getRegistryName().getPath();
+		if(I18n.exists(langKey)){
+			list.add(new TranslatableComponent(langKey));
+		}
+	}
 
 	@Override
 	public ItemStack finishUsingItem(ItemStack pStack, Level pLevel, LivingEntity pLivingEntity){
