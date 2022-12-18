@@ -4,7 +4,7 @@
     "minecraft:pumpkin_pie",
     "minecraft:baked_potato",
     "minecraft:beetroot_soup",
-    "minecraft:dried_kelp",
+    "minecraft:dried_kelp_block",
     {
       "id": "simplefarming:veggie_burger",
       "required": false

@@ -83,7 +83,7 @@ public class DSItems{
 		hotDragonRod = registerItem(registry, new DragonFoodItem(defaultProperties, DragonTypes.CAVE, new MobEffectInstance(DragonEffects.FIRE, Functions.secondsToTicks(1))), "hot_dragon_rod");
 		explosiveCopper = registerItem(registry, new DragonFoodItem(defaultProperties, null, e -> {
 			e.hurt(DamageSource.explosion(e), 1f);
-			e.level.addParticle(ParticleTypes.EXPLOSION_EMITTER, e.getX(), e.getEyeY(), e.getZ(), 1.0D, 0.0D, 0.0D);
+			e.level.addParticle(ParticleTypes.EXPLOSION, e.getX(), e.getEyeY(), e.getZ(), 1.0D, 0.0D, 0.0D);
 		}), "explosive_copper");
 		quartzExplosiveCopper = registerItem(registry, new DragonFoodItem(defaultProperties, DragonTypes.CAVE, e -> {
 			e.removeEffect(MobEffects.POISON);
