@@ -301,6 +301,7 @@ public class DragonStateHandler implements NBTInterface{
 		}
 
 		if(type != null){
+			if(Objects.equals(dragonType, type)) return;
 			this.dragonType = DragonTypes.newDragonTypeInstance(type.getTypeName());
 		}else{
 			this.dragonType = null;

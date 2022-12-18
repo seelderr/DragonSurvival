@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.util;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
+import com.google.common.base.Objects;
 import com.mojang.math.Vector3f;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -19,8 +20,7 @@ public class DragonUtils{
 	}
 
 	public static boolean isType(Entity entity, AbstractDragonType dragonType){
-		AbstractDragonType type = getDragonType(entity);
-		return type == null && dragonType == null || type != null && dragonType != null && type.equals(dragonType);
+		return Objects.equal(getDragonType(entity), dragonType);
 	}
 
 	public static DragonStateHandler getHandler(Entity entity){
