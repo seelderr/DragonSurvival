@@ -9,7 +9,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.passive.WaterAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
-import by.dragonsurvivalteam.dragonsurvival.network.player.SyncCapabilityDebuff;
+import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonTypeData;
 import by.dragonsurvivalteam.dragonsurvival.registry.DamageSources;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
@@ -69,55 +69,58 @@ public class SeaDragonType extends AbstractDragonType {
 		if(waterAbility != null){
 			maxTicksOutofWater += Functions.secondsToTicks(waterAbility.getDuration());
 		}
-
-		if((player.hasEffect(DragonEffects.PEACE) || player.isEyeInFluid(FluidTags.WATER)) && player.getAirSupply() < player.getMaxAirSupply()){
-			player.setAirSupply(player.getMaxAirSupply());
-		}
-		if(ServerConfig.penalties && !player.hasEffect(DragonEffects.PEACE) && maxTicksOutofWater > 0 && !player.isCreative() && !player.isSpectator()){
-			double oldWaterTime = timeWithoutWater;
-
-			if(!player.level.isClientSide){
-				if(!player.isInWaterRainOrBubble() && !isInSeaBlock){
-					boolean hotBiome = biome.getPrecipitation() == Precipitation.NONE && biome.getBaseTemperature() > 1.0;
-					double timeIncrement = (world.isNight() ? 0.5F : 1.0) * (hotBiome ? biome.getBaseTemperature() : 1F);
-					timeWithoutWater += ServerConfig.seaTicksBasedOnTemperature ? timeIncrement : 1;
-				}
-
-				if(player.isInWaterRainOrBubble() || isInSeaBlock){
-					timeWithoutWater = (Math.max(timeWithoutWater - (int)Math.ceil(maxTicksOutofWater * 0.005F), 0));
-				}
-
-				timeWithoutWater = Math.min(timeWithoutWater, maxTicksOutofWater * 2);
-
-				if(oldWaterTime != timeWithoutWater){
-					NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncCapabilityDebuff(player.getId(), timeWithoutWater, 0, 0, 0));
-				}
-
-				float hydrationDamage = ServerConfig.seaDehydrationDamage.floatValue();
-
-				if(timeWithoutWater > maxTicksOutofWater && timeWithoutWater < maxTicksOutofWater * 2){
-					if(player.tickCount % 40 == 0){
-						player.hurt(DamageSources.DEHYDRATION, hydrationDamage);
-					}
-
-				}else if(timeWithoutWater >= maxTicksOutofWater * 2){
-					if(player.tickCount % 20 == 0){
-						player.hurt(DamageSources.DEHYDRATION, hydrationDamage);
-					}
-				}
+		
+		double oldWaterTime = timeWithoutWater;
+		
+		if(!world.isClientSide()) {
+			if ((player.hasEffect(DragonEffects.PEACE) || player.isEyeInFluid(FluidTags.WATER)) && player.getAirSupply() < player.getMaxAirSupply()) {
+				player.setAirSupply(player.getMaxAirSupply());
 			}
-		}else if(player.hasEffect(DragonEffects.PEACE)){
-			if(!player.level.isClientSide){
-				if(timeWithoutWater > 0){
+		}
+		
+		if(ServerConfig.penalties && maxTicksOutofWater > 0 && !player.isCreative() && !player.isSpectator()) {
+			if (!world.isClientSide) {
+				if (player.hasEffect(DragonEffects.PEACE)) {
 					timeWithoutWater = 0;
-					NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncCapabilityDebuff(player.getId(), timeWithoutWater, 0, 0, 0));
+				} else {
+					if (!player.isInWaterRainOrBubble() && !isInSeaBlock) {
+						boolean hotBiome = biome.getPrecipitation() == Precipitation.NONE && biome.getBaseTemperature() > 1.0;
+						double timeIncrement = (world.isNight() ? 0.5F : 1.0) * (hotBiome ? biome.getBaseTemperature() : 1F);
+						timeWithoutWater += ServerConfig.seaTicksBasedOnTemperature ? timeIncrement : 1;
+					}
+					
+					if (player.isInWaterRainOrBubble() || isInSeaBlock) {
+						timeWithoutWater = (Math.max(timeWithoutWater - (int)Math.ceil(maxTicksOutofWater * 0.005F), 0));
+					}
+					
+					timeWithoutWater = Math.min(timeWithoutWater, maxTicksOutofWater * 2);
+					
+					
+					if (!player.level.isClientSide) {
+						float hydrationDamage = ServerConfig.seaDehydrationDamage.floatValue();
+						
+						if (timeWithoutWater > maxTicksOutofWater && timeWithoutWater < maxTicksOutofWater * 2) {
+							if (player.tickCount % 40 == 0) {
+								player.hurt(DamageSources.DEHYDRATION, hydrationDamage);
+							}
+							
+						} else if (timeWithoutWater >= maxTicksOutofWater * 2) {
+							if (player.tickCount % 20 == 0) {
+								player.hurt(DamageSources.DEHYDRATION, hydrationDamage);
+							}
+						}
+					}
+				}
+				
+				if(oldWaterTime != timeWithoutWater){
+					NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncDragonTypeData(player.getId(), dragonStateHandler.getType()));
 				}
 			}
-		}
-
-		if(world.isClientSide && !player.isCreative() && !player.isSpectator()){
-			if(!player.hasEffect(DragonEffects.PEACE) && timeWithoutWater >= maxTicksOutofWater){
-				world.addParticle(ParticleTypes.WHITE_ASH, player.getX() + world.random.nextDouble() * (world.random.nextBoolean() ? 1 : -1), player.getY() + 0.5F, player.getZ() + world.random.nextDouble() * (world.random.nextBoolean() ? 1 : -1), 0, 0, 0);
+			
+			if(world.isClientSide && !player.isCreative() && !player.isSpectator()){
+				if(!player.hasEffect(DragonEffects.PEACE) && timeWithoutWater >= maxTicksOutofWater){
+					world.addParticle(ParticleTypes.WHITE_ASH, player.getX() + world.random.nextDouble() * (world.random.nextBoolean() ? 1 : -1), player.getY() + 0.5F, player.getZ() + world.random.nextDouble() * (world.random.nextBoolean() ? 1 : -1), 0, 0, 0);
+				}
 			}
 		}
 	}

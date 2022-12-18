@@ -14,28 +14,34 @@ import net.minecraft.world.level.Level;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class ChargedCoalItem extends DragonFoodItem{
 	public ChargedCoalItem(Properties p_i48487_1_){
 		super(p_i48487_1_);
 	}
-
-	public ChargedCoalItem(Properties p_i48487_1_, MobEffectInstance... effectInstances){
+	
+	public ChargedCoalItem(Properties p_i48487_1_, Supplier<MobEffectInstance>... effectInstances)
+	{
 		super(p_i48487_1_, effectInstances);
 	}
-
-	public ChargedCoalItem(Properties p_i48487_1_, AbstractDragonType dragonType, MobEffectInstance... effectInstances){
+	
+	public ChargedCoalItem(Properties p_i48487_1_, AbstractDragonType dragonType, Supplier<MobEffectInstance>... effectInstances)
+	{
 		super(p_i48487_1_, dragonType, effectInstances);
 	}
-
-	public ChargedCoalItem(Properties p_i48487_1_, AbstractDragonType dragonType, Consumer<LivingEntity> onEat, MobEffectInstance... effectInstances){
+	
+	public ChargedCoalItem(Properties p_i48487_1_, AbstractDragonType dragonType, Consumer<LivingEntity> onEat, Supplier<MobEffectInstance>... effectInstances)
+	{
 		super(p_i48487_1_, dragonType, onEat, effectInstances);
 	}
-
-	public ChargedCoalItem(Properties p_i48487_1_, AbstractDragonType dragonType, Consumer<LivingEntity> onEat){
+	
+	public ChargedCoalItem(Properties p_i48487_1_, AbstractDragonType dragonType, Consumer<LivingEntity> onEat)
+	{
 		super(p_i48487_1_, dragonType, onEat);
 	}
-
+	
+	
 	@Override
 	public int getBurnTime(ItemStack itemStack, RecipeType<?> recipeType){
 		return 4000;

@@ -13,10 +13,11 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 
 public class DragonFoodItem extends Item{
-	private MobEffectInstance[] effects;
+	private Supplier<MobEffectInstance>[] effects;
 	private AbstractDragonType dragonType;
 	private Consumer<LivingEntity> onEat;
 
@@ -24,19 +25,19 @@ public class DragonFoodItem extends Item{
 		super(p_i48487_1_.food(genFoodProperties(null, null)));
 	}
 
-	public DragonFoodItem(Properties p_i48487_1_, MobEffectInstance... effectInstances){
+	public DragonFoodItem(Properties p_i48487_1_, Supplier<MobEffectInstance>... effectInstances){
 		super(p_i48487_1_.food(genFoodProperties(null, effectInstances)));
 		effects = effectInstances;
 	}
 
 
-	public DragonFoodItem(Properties p_i48487_1_, AbstractDragonType dragonType, MobEffectInstance... effectInstances){
+	public DragonFoodItem(Properties p_i48487_1_, AbstractDragonType dragonType, Supplier<MobEffectInstance>... effectInstances){
 		super(p_i48487_1_.food(genFoodProperties(dragonType, effectInstances)));
 		this.dragonType = dragonType;
 		effects = effectInstances;
 	}
 
-	public DragonFoodItem(Properties p_i48487_1_, AbstractDragonType dragonType, Consumer<LivingEntity> onEat, MobEffectInstance... effectInstances){
+	public DragonFoodItem(Properties p_i48487_1_, AbstractDragonType dragonType, Consumer<LivingEntity> onEat, Supplier<MobEffectInstance>... effectInstances){
 		super(p_i48487_1_.food(genFoodProperties(dragonType, effectInstances)));
 		this.dragonType = dragonType;
 		effects = effectInstances;
@@ -50,7 +51,7 @@ public class DragonFoodItem extends Item{
 	}
 
 	@NotNull
-	private static FoodProperties genFoodProperties(AbstractDragonType dragonType, MobEffectInstance... effectInstances){
+	private static FoodProperties genFoodProperties(AbstractDragonType dragonType, Supplier<MobEffectInstance>... effectInstances){
 		Builder builder = new Builder();
 		builder.nutrition(1);
 		builder.saturationMod(0.4F);
@@ -73,10 +74,10 @@ public class DragonFoodItem extends Item{
 				onEat.accept(pLivingEntity);
 			}
 		}
-		if(effects != null){
+		if(effects != null && effects.length > 0){
 			if(DragonUtils.isDragon(pLivingEntity) && (dragonType == null || DragonUtils.isType(pLivingEntity, dragonType))){
-				for(MobEffectInstance effect : effects){
-					pLivingEntity.addEffect(effect);
+				for(Supplier<MobEffectInstance> effect : effects){
+					pLivingEntity.addEffect(effect.get());
 				}
 			}
 		}

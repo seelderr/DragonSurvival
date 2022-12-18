@@ -5,7 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonType;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
-import by.dragonsurvivalteam.dragonsurvival.network.player.SyncCapabilityDebuff;
+import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonTypeData;
 import by.dragonsurvivalteam.dragonsurvival.registry.DamageSources;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import net.minecraft.world.damagesource.DamageSource;
@@ -99,12 +99,12 @@ public class DragonPenaltyHandler{
 				if(ServerConfig.seaAllowWaterBottles && itemStack.getItem() instanceof PotionItem){
 					if(PotionUtils.getPotion(itemStack) == Potions.WATER && dragonStateHandler.getType() .equals(DragonTypes.SEA) && !player.level.isClientSide){
 						seaDragonType.timeWithoutWater = Math.max(seaDragonType.timeWithoutWater - ServerConfig.seaTicksWithoutWaterRestored, 0);
-						NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncCapabilityDebuff(player.getId(), seaDragonType.timeWithoutWater, 0, 0, 0));
+						NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncDragonTypeData(player.getId(), seaDragonType));
 					}
 				}
 				if(DragonConfigHandler.SEA_DRAGON_HYDRATION_USE_ALTERNATIVES.contains(itemStack.getItem()) && !player.level.isClientSide){
 					seaDragonType.timeWithoutWater = Math.max(seaDragonType.timeWithoutWater - ServerConfig.seaTicksWithoutWaterRestored, 0);
-					NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncCapabilityDebuff(player.getId(), seaDragonType.timeWithoutWater, 0, 0, 0));
+					NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncDragonTypeData(player.getId(), seaDragonType));
 				}
 			}
 		});

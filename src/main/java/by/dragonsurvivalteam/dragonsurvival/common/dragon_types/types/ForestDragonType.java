@@ -6,7 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.passive.LightInDarknessAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
-import by.dragonsurvivalteam.dragonsurvival.network.player.SyncCapabilityDebuff;
+import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonTypeData;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.datafixers.util.Pair;
@@ -54,37 +54,45 @@ public class ForestDragonType extends AbstractDragonType{
 
 		int maxStressTicks = ServerConfig.forestStressTicks;
 		LightInDarknessAbility lightInDarkness = DragonAbilities.getAbility(player, LightInDarknessAbility.class);
+	
 		if(lightInDarkness != null){
 			maxStressTicks += Functions.secondsToTicks(lightInDarkness.getDuration());
 		}
-		if(ServerConfig.penalties && !player.hasEffect(DragonEffects.MAGIC) && ServerConfig.forestStressTicks > 0 && !player.isCreative() && !player.isSpectator()){
-			double oldDarknessTime = timeInDarkness;
-
-			if(!player.level.isClientSide){
+		
+		double oldDarknessTime = timeInDarkness;
+		
+		if(ServerConfig.penalties && !player.hasEffect(DragonEffects.MAGIC)
+		   && ServerConfig.forestStressTicks > 0
+		   && !player.isCreative() &&
+		   !player.isSpectator()) {
+			if (!world.isClientSide) {
 				LevelLightEngine lightManager = world.getChunkSource().getLightEngine();
-				if((lightManager.getLayerListener(LightLayer.BLOCK).getLightValue(player.blockPosition()) < 3 && (lightManager.getLayerListener(LightLayer.SKY).getLightValue(player.blockPosition()) < 3 && lightManager.getLayerListener(LightLayer.SKY).getLightValue(player.blockPosition().above()) < 3))){
-					if(timeInDarkness < maxStressTicks){
+				if (lightManager.getLayerListener(LightLayer.BLOCK).getLightValue(player.blockPosition()) < 3 && lightManager.getLayerListener(LightLayer.SKY).getLightValue(player.blockPosition()) < 3 && lightManager.getLayerListener(LightLayer.SKY).getLightValue(
+						player.blockPosition().above()) < 3) {
+					if (timeInDarkness < maxStressTicks) {
 						timeInDarkness++;
 					}
-
-					if(timeInDarkness >= maxStressTicks && player.tickCount % 21 == 0){
-						player.addEffect(new MobEffectInstance(DragonEffects.STRESS, ServerConfig.forestStressEffectDuration * 20));
-					}
-				}else{
-					timeInDarkness = (Math.max(timeInDarkness - (int)Math.ceil(maxStressTicks * 0.02F), 0));
+					
+				} else {
+					timeInDarkness = Math.max(timeInDarkness - (int)Math.ceil(maxStressTicks * 0.02F), 0);
 				}
-
+				
 				timeInDarkness = Math.min(timeInDarkness, maxStressTicks);
-
-				if(timeInDarkness != oldDarknessTime){
-					NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncCapabilityDebuff(player.getId(), 0, timeInDarkness, 0, 0));
+				
+				if (timeInDarkness >= maxStressTicks && player.tickCount % 21 == 0) {
+					player.addEffect(new MobEffectInstance(DragonEffects.STRESS, ServerConfig.forestStressEffectDuration * 20));
+				}
+				
+				
+				if (timeInDarkness != oldDarknessTime) {
+						NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncDragonTypeData(player.getId(), dragonStateHandler.getType()));
 				}
 			}
-		}
-
-		if(world.isClientSide && !player.isCreative() && !player.isSpectator()){
-			if(!player.hasEffect(DragonEffects.MAGIC) && timeInDarkness == ServerConfig.forestStressTicks){
-				world.addParticle(ParticleTypes.SMOKE, player.getX() + world.random.nextDouble() * (world.random.nextBoolean() ? 1 : -1), player.getY() + 0.5F, player.getZ() + world.random.nextDouble() * (world.random.nextBoolean() ? 1 : -1), 0, 0, 0);
+			
+			if (world.isClientSide && !player.isCreative() && !player.isSpectator()) {
+				if (!player.hasEffect(DragonEffects.MAGIC) && timeInDarkness == ServerConfig.forestStressTicks) {
+					world.addParticle(ParticleTypes.SMOKE, player.getX() + world.random.nextDouble() * (world.random.nextBoolean() ? 1 : -1), player.getY() + 0.5F, player.getZ() + world.random.nextDouble() * (world.random.nextBoolean() ? 1 : -1), 0, 0, 0);
+				}
 			}
 		}
 	}

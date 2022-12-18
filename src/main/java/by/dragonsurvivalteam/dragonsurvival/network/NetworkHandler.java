@@ -37,7 +37,7 @@ public class NetworkHandler{
 		//Generic packets
 		register(SynchronizeDragonCap.class, new SynchronizeDragonCap());
 		register(PacketSyncCapabilityMovement.class, new PacketSyncCapabilityMovement());
-		register(SyncCapabilityDebuff.class, new SyncCapabilityDebuff());
+		register(SyncDragonTypeData.class, new SyncDragonTypeData());
 		register(PlayerJumpSync.class, new PlayerJumpSync());
 		register(RefreshDragons.class, new RefreshDragons());
 		register(SyncAltarCooldown.class, new SyncAltarCooldown());

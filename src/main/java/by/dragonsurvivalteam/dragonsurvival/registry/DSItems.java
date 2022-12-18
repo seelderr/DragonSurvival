@@ -11,13 +11,13 @@ import by.dragonsurvivalteam.dragonsurvival.common.items.food.ChargedSoupItem;
 import by.dragonsurvivalteam.dragonsurvival.common.items.food.DragonFoodItem;
 import by.dragonsurvivalteam.dragonsurvival.common.items.growth.StarBoneItem;
 import by.dragonsurvivalteam.dragonsurvival.common.items.growth.StarHeartItem;
-import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
-import by.dragonsurvivalteam.dragonsurvival.network.player.SyncCapabilityDebuff;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -30,7 +30,6 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.registries.IForgeRegistry;
 
 import javax.annotation.Nullable;
@@ -80,43 +79,43 @@ public class DSItems{
 		charredVegetable = registerItem(registry, new DragonFoodItem(defaultProperties), "charred_vegetable");
 		charredMushroom = registerItem(registry, new DragonFoodItem(defaultProperties), "charred_mushroom");
 		charredSeafood = registerItem(registry, new DragonFoodItem(defaultProperties), "charred_seafood");
-		hotDragonRod = registerItem(registry, new DragonFoodItem(defaultProperties, DragonTypes.CAVE, new MobEffectInstance(DragonEffects.FIRE, Functions.secondsToTicks(1))), "hot_dragon_rod");
+		hotDragonRod = registerItem(registry, new DragonFoodItem(defaultProperties, DragonTypes.CAVE, () -> new MobEffectInstance(DragonEffects.FIRE, Functions.minutesToTicks(1))), "hot_dragon_rod");
 		explosiveCopper = registerItem(registry, new DragonFoodItem(defaultProperties, null, e -> {
 			e.hurt(DamageSource.explosion(e), 1f);
 			e.level.addParticle(ParticleTypes.EXPLOSION, e.getX(), e.getEyeY(), e.getZ(), 1.0D, 0.0D, 0.0D);
+			e.level.playSound(null, e.eyeBlockPosition(), SoundEvents.FIREWORK_ROCKET_BLAST_FAR, SoundSource.PLAYERS, 1f, 1f);
 		}), "explosive_copper");
 		quartzExplosiveCopper = registerItem(registry, new DragonFoodItem(defaultProperties, DragonTypes.CAVE, e -> {
 			e.removeEffect(MobEffects.POISON);
 			e.removeEffect(MobEffects.WITHER);
-		}, new MobEffectInstance(MobEffects.ABSORPTION, Functions.minutesToTicks(5)), new MobEffectInstance(MobEffects.REGENERATION, Functions.secondsToTicks(10), 1)), "quartz_explosive_copper");
-		doubleQuartz = registerItem(registry, new DragonFoodItem(defaultProperties, DragonTypes.CAVE, new MobEffectInstance(MobEffects.REGENERATION, Functions.secondsToTicks(5))), "double_quartz");
+		}, () -> new MobEffectInstance(MobEffects.ABSORPTION, Functions.minutesToTicks(5)), () -> new MobEffectInstance(MobEffects.REGENERATION, Functions.secondsToTicks(10), 1)), "quartz_explosive_copper");
+		doubleQuartz = registerItem(registry, new DragonFoodItem(defaultProperties, DragonTypes.CAVE, () -> new MobEffectInstance(MobEffects.REGENERATION, Functions.secondsToTicks(5))), "double_quartz");
 
 		sweetSourRabbit = registerItem(registry, new DragonFoodItem(defaultProperties, DragonTypes.FOREST , LivingEntity::removeAllEffects), "sweet_sour_rabbit");
-		luminousOintment = registerItem(registry, new DragonFoodItem(defaultProperties, DragonTypes.FOREST, new MobEffectInstance(MobEffects.GLOWING, Functions.minutesToTicks(5)), new MobEffectInstance(DragonEffects.MAGIC, Functions.minutesToTicks(5))), "luminous_ointment");
+		luminousOintment = registerItem(registry, new DragonFoodItem(defaultProperties, DragonTypes.FOREST, () -> new MobEffectInstance(MobEffects.GLOWING, Functions.minutesToTicks(5)), () -> new MobEffectInstance(DragonEffects.MAGIC, Functions.minutesToTicks(5))), "luminous_ointment");
 		diamondChorus = registerItem(registry, new DragonFoodItem(defaultProperties, DragonTypes.FOREST, e -> {
 			e.removeEffect(MobEffects.POISON);
 			e.removeEffect(MobEffects.WITHER);
-		}, new MobEffectInstance(MobEffects.ABSORPTION, Functions.minutesToTicks(5)), new MobEffectInstance(MobEffects.REGENERATION, Functions.secondsToTicks(10), 1)), "diamond_chorus");
+		}, () -> new MobEffectInstance(MobEffects.ABSORPTION, Functions.minutesToTicks(5)), () -> new MobEffectInstance(MobEffects.REGENERATION, Functions.secondsToTicks(10), 1)), "diamond_chorus");
 		smellyMeatPorridge = registerItem(registry, new DragonFoodItem(defaultProperties), "smelly_meat_porridge");
 		meatWildBerries = registerItem(registry, new DragonFoodItem(defaultProperties), "meat_wild_berries");
-		meatChorusMix = registerItem(registry, new DragonFoodItem(defaultProperties, DragonTypes.FOREST, new MobEffectInstance(MobEffects.REGENERATION, Functions.secondsToTicks(5))), "meat_chorus_mix");
+		meatChorusMix = registerItem(registry, new DragonFoodItem(defaultProperties, DragonTypes.FOREST, () -> new MobEffectInstance(MobEffects.REGENERATION, Functions.secondsToTicks(5))), "meat_chorus_mix");
 
 		seasonedFish = registerItem(registry, new DragonFoodItem(defaultProperties), "seasoned_fish");
-		goldenCoralPufferfish = registerItem(registry, new DragonFoodItem(defaultProperties, DragonTypes.SEA, new MobEffectInstance(MobEffects.REGENERATION, Functions.secondsToTicks(5))), "golden_coral_pufferfish");
+		goldenCoralPufferfish = registerItem(registry, new DragonFoodItem(defaultProperties, DragonTypes.SEA, () -> new MobEffectInstance(MobEffects.REGENERATION, Functions.secondsToTicks(5))), "golden_coral_pufferfish");
 		frozenRawFish = registerItem(registry, new DragonFoodItem(defaultProperties, DragonTypes.SEA , e -> {
 			e.removeAllEffects();
 
 			if(!e.level.isClientSide){
 				if(DragonUtils.getHandler(e).getType() instanceof SeaDragonType type){
 					type.timeWithoutWater = 0;
-					NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> e), new SyncCapabilityDebuff(e.getId(), 0, 0, 0, 0));
 				}
 			}
 		}), "frozen_raw_fish");
 		goldenTurtleEgg = registerItem(registry, new DragonFoodItem(defaultProperties, DragonTypes.SEA, e -> {
 			e.removeEffect(MobEffects.POISON);
 			e.removeEffect(MobEffects.WITHER);
-		}, new MobEffectInstance(MobEffects.ABSORPTION, Functions.minutesToTicks(5)), new MobEffectInstance(MobEffects.REGENERATION, Functions.secondsToTicks(10), 1)), "golden_turtle_egg");
+		}, () -> new MobEffectInstance(MobEffects.ABSORPTION, Functions.minutesToTicks(5)), () -> new MobEffectInstance(MobEffects.REGENERATION, Functions.secondsToTicks(10), 1)), "golden_turtle_egg");
 
 		seaDragonTreat = registerItem(registry, new DragonTreatItem(DragonTypes.SEA, defaultProperties), "sea_dragon_treat");
 		caveDragonTreat = registerItem(registry, new DragonTreatItem(DragonTypes.CAVE, defaultProperties), "cave_dragon_treat");
