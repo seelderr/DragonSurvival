@@ -72,7 +72,6 @@ public class DSItems{
 		weakDragonHeart = registerItem(registry, "weak_dragon_heart", "ds.description.weakDragonHeart");
 		elderDragonHeart = registerItem(registry, "elder_dragon_heart", "ds.description.elderDragonHeart");
 
-
 		chargedCoal = registerItem(registry, new ChargedCoalItem(defaultProperties, DragonTypes.CAVE , LivingEntity::removeAllEffects), "charged_coal");
 		chargedSoup = registerItem(registry, new ChargedSoupItem(defaultProperties), "charged_soup");
 		charredMeat = registerItem(registry, new DragonFoodItem(defaultProperties), "charred_meat");
