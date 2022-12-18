@@ -82,7 +82,7 @@ public class DSItems{
 		explosiveCopper = registerItem(registry, new DragonFoodItem(defaultProperties, null, e -> {
 			e.hurt(DamageSource.explosion(e), 1f);
 			e.level.addParticle(ParticleTypes.EXPLOSION, e.getX(), e.getEyeY(), e.getZ(), 1.0D, 0.0D, 0.0D);
-			e.level.playSound(null, e.eyeBlockPosition(), SoundEvents.FIREWORK_ROCKET_BLAST_FAR, SoundSource.PLAYERS, 1f, 1f);
+			e.level.playSound(null, e.eyeBlockPosition(), SoundEvents.FIREWORK_ROCKET_TWINKLE_FAR, SoundSource.PLAYERS, 1f, 1f);
 		}), "explosive_copper");
 		quartzExplosiveCopper = registerItem(registry, new DragonFoodItem(defaultProperties, DragonTypes.CAVE, e -> {
 			e.removeEffect(MobEffects.POISON);

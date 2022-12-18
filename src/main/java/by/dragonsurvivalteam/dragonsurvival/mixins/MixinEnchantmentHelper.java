@@ -1,7 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ClawToolHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
@@ -29,12 +28,10 @@ public abstract class MixinEnchantmentHelper{
 		if(!(entity instanceof Player player)){
 			return;
 		}
-
-		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
-			if(dragonStateHandler.getType() .equals(DragonTypes.SEA)){
-				ci.setReturnValue(true);
-			}
-		});
+		
+		if(DragonUtils.isType(player, DragonTypes.SEA)){
+			ci.setReturnValue(true);
+		}
 	}
 
 	@Inject( at = @At( "HEAD" ), method = "getEnchantmentLevel(Lnet/minecraft/world/item/enchantment/Enchantment;Lnet/minecraft/world/entity/LivingEntity;)I", cancellable = true)
