@@ -32,6 +32,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Used in pair with {@link ClientFlightHandler}

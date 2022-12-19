@@ -30,6 +30,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 @EventBusSubscriber
 public class ClawToolHandler{

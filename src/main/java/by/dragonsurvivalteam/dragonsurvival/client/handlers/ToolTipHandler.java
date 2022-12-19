@@ -33,8 +33,9 @@ import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.List;
+import java.util.Objects;
 
 @Mod.EventBusSubscriber( Dist.CLIENT )
 public class ToolTipHandler{
