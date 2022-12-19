@@ -175,7 +175,7 @@ public class ClientDragonRender{
 			try{
 				matrixStack.pushPose();
 
-				Vector3f lookVector = DragonUtils.getCameraOffset(player);
+				Vector3f lookVector = Functions.getDragonCameraOffset(player);
 				matrixStack.translate(-lookVector.x(), lookVector.y(), -lookVector.z());
 
 				double size = cap.getSize() * cap.getSkinData().skinPreset.sizeMul;

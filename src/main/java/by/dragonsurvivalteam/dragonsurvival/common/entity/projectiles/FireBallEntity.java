@@ -3,7 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles;
 
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.active.FireBallAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
-import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+import by.dragonsurvivalteam.dragonsurvival.util.TargetingFunctions;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.damagesource.DamageSource;
@@ -59,7 +59,7 @@ public class FireBallEntity extends DragonBallEntity{
 
 		for(Entity ent : entities){
 			if(!this.level.isClientSide){
-				Functions.attackTargets(getOwner(), ent1 -> ent1.hurt(DamageSource.explosion((Explosion)null), FireBallAbility.getDamage(getSkillLevel())), ent);
+				TargetingFunctions.attackTargets(getOwner(), ent1 -> ent1.hurt(DamageSource.explosion((Explosion)null), FireBallAbility.getDamage(getSkillLevel())), ent);
 
 				if(getOwner() instanceof LivingEntity){
 					this.doEnchantDamageEffects((LivingEntity)getOwner(), ent);
@@ -79,7 +79,7 @@ public class FireBallEntity extends DragonBallEntity{
 			Entity entity = p_213868_1_.getEntity();
 			Entity entity1 = this.getOwner();
 
-			Functions.attackTargets(getOwner(), ent1 -> ent1.hurt(DamageSource.fireball(this, entity1), FireBallAbility.getDamage(getSkillLevel())), entity);
+			TargetingFunctions.attackTargets(getOwner(), ent1 -> ent1.hurt(DamageSource.fireball(this, entity1), FireBallAbility.getDamage(getSkillLevel())), entity);
 
 			if(entity1 instanceof LivingEntity){
 				this.doEnchantDamageEffects((LivingEntity)entity1, entity);

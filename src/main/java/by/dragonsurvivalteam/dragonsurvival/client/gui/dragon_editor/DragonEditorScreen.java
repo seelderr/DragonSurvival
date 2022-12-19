@@ -353,7 +353,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 					}
 				}
 
-				index = DragonUtils.wrap(index - 1, 0, btn.values.length - 1);
+				index = Functions.wrap(index - 1, 0, btn.values.length - 1);
 				doAction();
 				btn.current = btn.values[index];
 				btn.setter.accept(btn.current);
@@ -379,7 +379,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 					}
 				}
 
-				index = DragonUtils.wrap(index + 1, 0, btn.values.length - 1);
+				index = Functions.wrap(index + 1, 0, btn.values.length - 1);
 				doAction();
 				btn.current = btn.values[index];
 				btn.setter.accept(btn.current);

@@ -85,12 +85,12 @@ public class DragonFoodItem extends Item{
 		ItemStack stack = super.finishUsingItem(pStack, pLevel, pLivingEntity);
 
 		if(onEat != null){
-			if(DragonUtils.isDragon(pLivingEntity) && (dragonType == null || DragonUtils.isType(pLivingEntity, dragonType))){
+			if(DragonUtils.isDragon(pLivingEntity) && (dragonType == null || DragonUtils.isDragonType(pLivingEntity, dragonType))){
 				onEat.accept(pLivingEntity);
 			}
 		}
 		if(effects != null && effects.length > 0){
-			if(DragonUtils.isDragon(pLivingEntity) && (dragonType == null || DragonUtils.isType(pLivingEntity, dragonType))){
+			if(DragonUtils.isDragon(pLivingEntity) && (dragonType == null || DragonUtils.isDragonType(pLivingEntity, dragonType))){
 				for(Supplier<MobEffectInstance> effect : effects){
 					pLivingEntity.addEffect(effect.get());
 				}

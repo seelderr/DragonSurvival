@@ -11,6 +11,7 @@ import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+import by.dragonsurvivalteam.dragonsurvival.util.TargetingFunctions;
 import com.mojang.math.Vector3f;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -88,7 +89,7 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 
 		double headRot = playerStateHandler.getMovementData().headYaw;
 		double pitch = playerStateHandler.getMovementData().headPitch;
-		Vector3f bodyRot = DragonUtils.getCameraOffset(player);
+		Vector3f bodyRot = Functions.getDragonCameraOffset(player);
 
 		Point2D result = new Double();
 		Point2D result2 = new Double();
@@ -125,8 +126,8 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 	}
 
 	public void hitEntities(){
-		Vec3 targetVec = Functions.fromEntityCenter(player).add(player.getLookAngle().scale(RANGE)).add(0, 0.5, 0);
-		List<Entity>  entities = player.level.getEntities(player, Functions.boxForRange(targetVec, 3), e -> !e.isSpectator() && e.isAlive() && Functions.isValidTarget(getPlayer(), e));
+		Vec3 targetVec = TargetingFunctions.fromEntityCenter(player).add(player.getLookAngle().scale(RANGE)).add(0, 0.5, 0);
+		List<Entity>  entities = player.level.getEntities(player, TargetingFunctions.boxForRange(targetVec, 3), e -> !e.isSpectator() && e.isAlive() && TargetingFunctions.isValidTarget(getPlayer(), e));
 
 		for(Entity entity : entities){
 			if(entity instanceof LivingEntity livingEntity){
@@ -144,7 +145,7 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 	public abstract boolean canHitEntity(LivingEntity entity);
 
 	public void onEntityHit(LivingEntity entityHit){
-		if(Functions.attackTargets(getPlayer(), entity -> entity.hurt(new BreathDamage(player), getDamage()), entityHit)){
+		if(TargetingFunctions.attackTargets(getPlayer(), entity -> entity.hurt(new BreathDamage(player), getDamage()), entityHit)){
 			entityHit.setDeltaMovement(entityHit.getDeltaMovement().multiply(0.25, 1, 0.25));
 			onDamage(entityHit);
 		}

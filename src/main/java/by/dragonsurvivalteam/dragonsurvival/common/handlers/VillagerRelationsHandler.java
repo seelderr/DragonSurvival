@@ -9,6 +9,7 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+import by.dragonsurvivalteam.dragonsurvival.util.SpawningUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
@@ -218,7 +219,7 @@ public class VillagerRelationsHandler{
 				if(serverWorld.dimension() == Level.OVERWORLD){
 					VillageRelationShips villageRelationShips = DragonUtils.getHandler(player).getVillageRelationShips();
 						if(villageRelationShips.hunterSpawnDelay == 0){
-							BlockPos spawnPosition = Functions.findRandomSpawnPosition(player, 1, 4, 14.0F);
+							BlockPos spawnPosition = SpawningUtils.findRandomSpawnPosition(player, 1, 4, 14.0F);
 							if(spawnPosition != null && spawnPosition.getY() >= ServerConfig.riderSpawnLowerBound && spawnPosition.getY() <= ServerConfig.riderSpawnUpperBound){
 								Optional<ResourceKey<Biome>> biomeRegistryKey = serverWorld.getBiome(spawnPosition).unwrapKey();
 								if(biomeRegistryKey.isPresent()){
@@ -229,7 +230,7 @@ public class VillagerRelationsHandler{
 								}
 								int levelOfEvil = computeLevelOfEvil(player);
 								for(int i = 0; i < levelOfEvil; i++){
-									Functions.spawn(Objects.requireNonNull((dragonHunters.get(serverWorld.random.nextInt(dragonHunters.size()))).create(serverWorld)), spawnPosition, serverWorld);
+									SpawningUtils.spawn(Objects.requireNonNull((dragonHunters.get(serverWorld.random.nextInt(dragonHunters.size()))).create(serverWorld)), spawnPosition, serverWorld);
 								}
 								if(serverWorld.isCloseToVillage(player.blockPosition(), 3)){
 									villageRelationShips.hunterSpawnDelay = Functions.minutesToTicks(ServerConfig.hunterSpawnDelay / 3) + Functions.minutesToTicks(serverWorld.random.nextInt(ServerConfig.hunterSpawnDelay / 6));
@@ -293,7 +294,7 @@ public class VillagerRelationsHandler{
 					if(timeLeft == 0){
 						ServerPlayer player = serverWorld.getRandomPlayer();
 						if(player != null && player.isAlive() && !player.isCreative() && !player.isSpectator()){
-							BlockPos blockPos = Functions.findRandomSpawnPosition(player, 1, 2, 20.0F);
+							BlockPos blockPos = SpawningUtils.findRandomSpawnPosition(player, 1, 2, 20.0F);
 							if(blockPos != null && blockPos.getY() >= ServerConfig.riderSpawnLowerBound && blockPos.getY() <= ServerConfig.riderSpawnUpperBound && serverWorld.isVillage(blockPos)){
 								Optional<ResourceKey<Biome>> biomeRegistryKey = serverWorld.getBiome(blockPos).unwrapKey();
 								if(biomeRegistryKey.isPresent()){

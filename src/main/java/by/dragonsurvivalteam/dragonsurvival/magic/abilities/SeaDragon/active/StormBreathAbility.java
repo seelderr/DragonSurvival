@@ -17,6 +17,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.active.BreathAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+import by.dragonsurvivalteam.dragonsurvival.util.TargetingFunctions;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -232,7 +233,7 @@ public class StormBreathAbility extends BreathAbility{
 
 		for(LivingEntity target : secondaryTargets){
 			if(player != null){
-				Functions.attackTargets(player, eTarget -> eTarget.hurt(DamageSource.indirectMobAttack(source, player), damage), target);
+				TargetingFunctions.attackTargets(player, eTarget -> eTarget.hurt(DamageSource.indirectMobAttack(source, player), damage), target);
 			}else{
 				target.hurt(DamageSource.mobAttack(source), damage);
 			}
@@ -287,11 +288,11 @@ public class StormBreathAbility extends BreathAbility{
 			return false;
 		}
 
-		return Functions.isValidTarget(attacker, target) && (DragonUtils.getDragonType(target) == null ||  !DragonUtils.getDragonType(target).equals(DragonTypes.SEA));
+		return TargetingFunctions.isValidTarget(attacker, target) && (DragonUtils.getDragonType(target) == null || !DragonUtils.getDragonType(target).equals(DragonTypes.SEA));
 	}
 
 	public void hurtTarget(LivingEntity entity){
-		Functions.attackTargets(getPlayer(), e -> e.hurt(new BreathDamage(player), getDamage()), entity);
+		TargetingFunctions.attackTargets(getPlayer(), e -> e.hurt(new BreathDamage(player), getDamage()), entity);
 		onDamage(entity);
 
 		if(player.level.random.nextInt(100) < 50){

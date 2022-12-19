@@ -20,6 +20,7 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+import by.dragonsurvivalteam.dragonsurvival.util.TargetingFunctions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
@@ -156,14 +157,14 @@ public class MagicHandler{
 
 
 		if(entity.hasEffect(DragonEffects.DRAIN)){
-			AbstractDragonType type = DragonStateProvider.getCap(entity).map(DragonStateHandler::getType).orElse(null);
+			AbstractDragonType type = DragonUtils.getDragonType(entity);
 
-			if(type == null || !type.equals(DragonTypes.FOREST)){
+			if(!DragonUtils.isDragonType(entity, DragonTypes.FOREST)){
 				if(entity.tickCount % 20 == 0){
 					DragonStateHandler cap = DragonUtils.getHandler(entity);
 					Player player = cap.lastAfflicted != -1 && entity.level.getEntity(cap.lastAfflicted) instanceof Player ? (Player)entity.level.getEntity(cap.lastAfflicted) : null;
 					if(player != null){
-						Functions.attackTargets(player, ent -> ent.hurt(new EntityDamageSource("magic", player).bypassArmor().setMagic(), 1f), entity);
+						TargetingFunctions.attackTargets(player, ent -> ent.hurt(new EntityDamageSource("magic", player).bypassArmor().setMagic(), 1f), entity);
 					}else{
 						entity.hurt(DamageSource.MAGIC, 1.0F);
 					}
@@ -175,7 +176,7 @@ public class MagicHandler{
 			if(entity.tickCount % 20 == 0){
 				DragonStateHandler cap = DragonUtils.getHandler(entity);
 				Player player = cap.lastAfflicted != -1 && entity.level.getEntity(cap.lastAfflicted) instanceof Player ? (Player)entity.level.getEntity(cap.lastAfflicted) : null;
-				if(!DragonUtils.isType(entity, DragonTypes.SEA)){
+				if(!DragonUtils.isDragonType(entity, DragonTypes.SEA)){
 					StormBreathAbility.chargedEffectSparkle(player, entity, StormBreathAbility.chargedChainRange, StormBreathAbility.chargedEffectChainCount, StormBreathAbility.chargedEffectDamage);
 				}
 			}
@@ -203,7 +204,7 @@ public class MagicHandler{
 							}
 							Player player = cap.lastAfflicted != -1 && entity.level.getEntity(cap.lastAfflicted) instanceof Player ? (Player)entity.level.getEntity(cap.lastAfflicted) : null;
 							if(player != null){
-								Functions.attackTargets(player, ent -> ent.hurt(new EntityDamageSource("onFire", player).bypassArmor().setIsFire(), damage), entity);
+								TargetingFunctions.attackTargets(player, ent -> ent.hurt(new EntityDamageSource("onFire", player).bypassArmor().setIsFire(), damage), entity);
 							}else{
 								entity.hurt(DamageSource.ON_FIRE, damage);
 							}

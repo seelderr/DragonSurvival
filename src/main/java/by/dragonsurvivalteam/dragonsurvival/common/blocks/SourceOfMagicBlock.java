@@ -11,7 +11,7 @@ import by.dragonsurvivalteam.dragonsurvival.server.tileentity.DSTileEntities;
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.SourceOfMagicPlaceholder;
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.SourceOfMagicTileEntity;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+import by.dragonsurvivalteam.dragonsurvival.util.SpawningUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -105,12 +105,12 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
 		Player playerEntity = context.getPlayer();
 		Direction direction = playerEntity.getDirection();
 
-		if(Functions.isAirOrFluid(blockPos.relative(direction), world, context) && Functions.isAirOrFluid(blockPos.relative(direction.getCounterClockWise()), world, context) && Functions.isAirOrFluid(blockPos.relative(direction).relative(direction.getCounterClockWise()), world, context)){
+		if(SpawningUtils.isAirOrFluid(blockPos.relative(direction), world, context) && SpawningUtils.isAirOrFluid(blockPos.relative(direction.getCounterClockWise()), world, context) && SpawningUtils.isAirOrFluid(blockPos.relative(direction).relative(direction.getCounterClockWise()), world, context)){
 			superState = super.getStateForPlacement(context).setValue(FACING, direction.getOpposite());
 		}
 
 		if(superState != null){
-			if(Functions.isAirOrFluid(blockPos.relative(direction.getOpposite()), world, context) && Functions.isAirOrFluid(blockPos.relative(direction).relative(direction.getClockWise()), world, context) && Functions.isAirOrFluid(blockPos.relative(direction.getClockWise()), world, context) && Functions.isAirOrFluid(blockPos.relative(direction.getOpposite()).relative(direction.getCounterClockWise()), world, context) && Functions.isAirOrFluid(blockPos.relative(direction.getOpposite()).relative(direction.getClockWise()), world, context) && Functions.isAirOrFluid(blockPos.relative(direction).above(), world, context) && Functions.isAirOrFluid(blockPos.relative(direction).above().relative(direction.getClockWise()), world, context) && Functions.isAirOrFluid(blockPos.relative(direction).above().relative(direction.getCounterClockWise()), world, context)){
+			if(SpawningUtils.isAirOrFluid(blockPos.relative(direction.getOpposite()), world, context) && SpawningUtils.isAirOrFluid(blockPos.relative(direction).relative(direction.getClockWise()), world, context) && SpawningUtils.isAirOrFluid(blockPos.relative(direction.getClockWise()), world, context) && SpawningUtils.isAirOrFluid(blockPos.relative(direction.getOpposite()).relative(direction.getCounterClockWise()), world, context) && SpawningUtils.isAirOrFluid(blockPos.relative(direction.getOpposite()).relative(direction.getClockWise()), world, context) && SpawningUtils.isAirOrFluid(blockPos.relative(direction).above(), world, context) && SpawningUtils.isAirOrFluid(blockPos.relative(direction).above().relative(direction.getClockWise()), world, context) && SpawningUtils.isAirOrFluid(blockPos.relative(direction).above().relative(direction.getCounterClockWise()), world, context)){
 				return superState;
 			}
 

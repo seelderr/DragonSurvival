@@ -31,7 +31,7 @@ public class DragonTreatItem extends Item{
 	public ItemStack finishUsingItem(ItemStack p_77654_1_, Level p_77654_2_, LivingEntity entity){
 		if(entity instanceof Player player){
 			
-			if(DragonUtils.isType(player, type)){
+			if(DragonUtils.isDragonType(player, type)){
 				ManaHandler.replenishMana(player, ManaHandler.getMaxMana(player));
 				player.addEffect(new MobEffectInstance(DragonEffects.SOURCE_OF_MAGIC, Functions.minutesToTicks(1)));
 			}

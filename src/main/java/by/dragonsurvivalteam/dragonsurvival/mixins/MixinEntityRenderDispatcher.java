@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins;
 
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Vector3f;
@@ -43,7 +44,7 @@ public class MixinEntityRenderDispatcher{
 			}
 		}
 
-		Vector3f lookVector = DragonUtils.getCameraOffset(p_229096_2_);
+		Vector3f lookVector = Functions.getDragonCameraOffset(p_229096_2_);
 
 		p_229096_0_.pushPose();
 		p_229096_0_.translate(-lookVector.x(), -lookVector.y(), -lookVector.z());

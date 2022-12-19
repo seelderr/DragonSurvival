@@ -29,7 +29,7 @@ public abstract class MixinEnchantmentHelper{
 			return;
 		}
 		
-		if(DragonUtils.isType(player, DragonTypes.SEA)){
+		if(DragonUtils.isDragonType(player, DragonTypes.SEA)){
 			ci.setReturnValue(true);
 		}
 	}
