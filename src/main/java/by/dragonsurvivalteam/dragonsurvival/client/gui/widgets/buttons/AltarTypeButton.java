@@ -87,7 +87,7 @@ public class AltarTypeButton extends Button implements TooltipRender{
 		RenderSystem.setShaderTexture(0, BACKGROUND_TEXTURE);
 
 		fill(mStack, x - 1, y - 1, x + width + 1, y + height + 1, new Color(0.5f, 0.5f, 0.5f).getRGB());
-		blit(mStack, x, y, (type == null ? 3 : type.equals(DragonTypes.CAVE) ? 0 : type.equals(DragonTypes.FOREST) ? 1 : type.equals(DragonTypes.SEA) ? 2 : 3) * 49, isHovered ? 0 : 147, 49, 147, 512, 512);
+		blit(mStack, x, y, (type == null ? 3 : Objects.equals(type, DragonTypes.CAVE) ? 0 : Objects.equals(type, DragonTypes.FOREST) ? 1 : Objects.equals(type, DragonTypes.SEA) ? 2 : 3) * 49, isHovered ? 0 : 147, 49, 147, 512, 512);
 	}
 
 	private void initiateDragonForm(AbstractDragonType type){

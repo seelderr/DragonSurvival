@@ -26,7 +26,8 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.client.gui.ForgeIngameGui;
 
-import java.awt.Color;
+import java.awt.*;
+import java.util.Objects;
 
 public class ClientMagicHUDHandler{
 	public static final ResourceLocation widgetTextures = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/widgets.png");
@@ -188,8 +189,8 @@ public class ClientMagicHUDHandler{
 						int manaSlot = i * 10 + x;
 						if(manaSlot < maxMana){
 							boolean goodCondi = ManaHandler.isPlayerInGoodConditions(playerEntity);
-							int condiXPos = cap.getType().equals(DragonTypes.SEA) ? 0 : cap.getType().equals(DragonTypes.FOREST) ? 18 : 36;
-							int xPos = curMana <= manaSlot ? goodCondi ? condiXPos + 72 : 54 : cap.getType().equals(DragonTypes.SEA) ? 0 : cap.getType().equals(DragonTypes.FOREST) ? 18 : 36;
+							int condiXPos = Objects.equals(cap.getType(), DragonTypes.SEA) ? 0 : Objects.equals(cap.getType(), DragonTypes.FOREST) ? 18 : 36;
+							int xPos = curMana <= manaSlot ? goodCondi ? condiXPos + 72 : 54 : Objects.equals(cap.getType(), DragonTypes.SEA) ? 0 : Objects.equals(cap.getType(), DragonTypes.FOREST) ? 18 : 36;
 							float rescale = 2.15F;
 							Screen.blit(mStack, manaX + x * (int)(18 / rescale), manaY - 12 - i * ((int)(18 / rescale) + 1), xPos / rescale, 204 / rescale, (int)(18 / rescale), (int)(18 / rescale), (int)(256 / rescale), (int)(256 / rescale));
 						}
@@ -214,8 +215,8 @@ public class ClientMagicHUDHandler{
 					mStack.pushPose();
 					mStack.scale(0.5F, 0.5F, 0);
 
-					int yPos1 = cap.getType().equals(DragonTypes.CAVE) ? 0 : cap.getType().equals(DragonTypes.FOREST) ? 47 : 94;
-					int yPos2 = cap.getType().equals(DragonTypes.CAVE) ? 142 : cap.getType().equals(DragonTypes.FOREST) ? 147 : 152;
+					int yPos1 = Objects.equals(cap.getType(), DragonTypes.CAVE) ? 0 : Objects.equals(cap.getType(), DragonTypes.FOREST) ? 47 : 94;
+					int yPos2 = Objects.equals(cap.getType(), DragonTypes.CAVE) ? 142 : Objects.equals(cap.getType(), DragonTypes.FOREST) ? 147 : 152;
 
 					float perc = Math.min((float)currentCastTime / (float)skillCastTime, 1);
 

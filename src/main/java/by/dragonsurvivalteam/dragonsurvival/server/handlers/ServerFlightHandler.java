@@ -269,7 +269,7 @@ public class ServerFlightHandler{
 
 	public static boolean canSwimSpin(LivingEntity player){
 		DragonStateHandler dragonStateHandler = DragonUtils.getHandler(player);
-		boolean validSwim = (dragonStateHandler.getType() .equals(DragonTypes.SEA) || dragonStateHandler.getType().equals(DragonTypes.FOREST)) && player.isInWater() || player.isInLava() && dragonStateHandler.getType().equals(DragonTypes.CAVE);
+		boolean validSwim = (Objects.equals(dragonStateHandler.getType(), DragonTypes.SEA) || Objects.equals(dragonStateHandler.getType(), DragonTypes.FOREST)) && player.isInWater() || player.isInLava() && Objects.equals(dragonStateHandler.getType(), DragonTypes.CAVE);
 		return validSwim && dragonStateHandler.hasWings() && !player.isOnGround();
 	}
 

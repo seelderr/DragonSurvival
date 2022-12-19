@@ -20,6 +20,8 @@ import software.bernie.geckolib3.model.provider.GeoModelProvider;
 import software.bernie.geckolib3.renderers.geo.GeoLayerRenderer;
 import software.bernie.geckolib3.renderers.geo.IGeoRenderer;
 
+import java.util.Objects;
+
 public class ClawsAndTeethRenderLayer extends GeoLayerRenderer<DragonEntity>{
 
 	private final IGeoRenderer<DragonEntity> renderer;
@@ -70,7 +72,7 @@ public class ClawsAndTeethRenderLayer extends GeoLayerRenderer<DragonEntity>{
 
 		String texture = "textures/armor/";
 		DragonStateHandler handler = DragonUtils.getHandler(playerEntity);
-		ItemStack clawItem = handler.getClawToolData().getClawsInventory().getItem(handler.getType().equals(DragonTypes.CAVE) ? 1 : handler.getType().equals(DragonTypes.FOREST) ? 2 : 3);
+		ItemStack clawItem = handler.getClawToolData().getClawsInventory().getItem(Objects.equals(handler.getType(), DragonTypes.CAVE) ? 1 : Objects.equals(handler.getType(), DragonTypes.FOREST) ? 2 : 3);
 		if(!clawItem.isEmpty() && clawItem.getItem() instanceof TieredItem){
 			texture = ClientEvents.getMaterial(texture, clawItem);
 		}else{

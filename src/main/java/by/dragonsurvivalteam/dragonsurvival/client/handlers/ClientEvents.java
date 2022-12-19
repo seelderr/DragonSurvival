@@ -70,6 +70,7 @@ import net.minecraftforge.fml.common.Mod;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 @OnlyIn( Dist.CLIENT )
@@ -235,7 +236,7 @@ public class ClientEvents{
 	public static void removeFireOverlay(RenderBlockOverlayEvent event){
 		LocalPlayer player = Minecraft.getInstance().player;
 		DragonStateProvider.getCap(player).ifPresent(cap -> {
-			if(cap.isDragon() && cap.getType().equals(DragonTypes.CAVE) && event.getOverlayType() == OverlayType.FIRE){
+			if(cap.isDragon() && Objects.equals(cap.getType(), DragonTypes.CAVE) && event.getOverlayType() == OverlayType.FIRE){
 				event.setCanceled(true);
 			}
 		});
@@ -308,7 +309,7 @@ public class ClientEvents{
 		}
 
 		DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
-			if(playerStateHandler.isDragon() && playerStateHandler.getType().equals(DragonTypes.CAVE) && ServerConfig.bonuses && ServerConfig.caveLavaSwimming){
+			if(playerStateHandler.isDragon() && Objects.equals(playerStateHandler.getType(), DragonTypes.CAVE) && ServerConfig.bonuses && ServerConfig.caveLavaSwimming){
 				if(!wasCaveDragon){
 					if(player.hasEffect(DragonEffects.LAVA_VISION)){
 						RenderType lavaType = RenderType.translucent();
@@ -340,7 +341,7 @@ public class ClientEvents{
 					minecraft.levelRenderer.allChanged();
 				}
 			}
-			wasCaveDragon = playerStateHandler.isDragon() && playerStateHandler.getType().equals(DragonTypes.CAVE) && player.hasEffect(DragonEffects.LAVA_VISION);
+			wasCaveDragon = playerStateHandler.isDragon() && Objects.equals(playerStateHandler.getType(), DragonTypes.CAVE) && player.hasEffect(DragonEffects.LAVA_VISION);
 		});
 	}
 
@@ -361,7 +362,7 @@ public class ClientEvents{
 			int rightHeight = 0;
 
 			if(playerStateHandler.getType() instanceof SeaDragonType seaDragonType){
-				if(seaDragonType.timeWithoutWater > 0 && playerStateHandler.getType() .equals(DragonTypes.SEA) && ServerConfig.penalties && ServerConfig.seaTicksWithoutWater != 0){
+				if(seaDragonType.timeWithoutWater > 0 && Objects.equals(playerStateHandler.getType(), DragonTypes.SEA) && ServerConfig.penalties && ServerConfig.seaTicksWithoutWater != 0){
 					RenderSystem.enableBlend();
 					RenderSystem.setShaderTexture(0, DRAGON_HUD);
 
@@ -399,7 +400,7 @@ public class ClientEvents{
 					RenderSystem.disableBlend();
 				}
 			}else if(playerStateHandler.getType() instanceof CaveDragonType caveDragonType){
-				if(caveDragonType.timeInRain > 0 && playerStateHandler.getType().equals(DragonTypes.CAVE) && ServerConfig.penalties && ServerConfig.caveRainDamage != 0.0){
+				if(caveDragonType.timeInRain > 0 && Objects.equals(playerStateHandler.getType(), DragonTypes.CAVE) && ServerConfig.penalties && ServerConfig.caveRainDamage != 0.0){
 					RenderSystem.enableBlend();
 					RenderSystem.setShaderTexture(0, DRAGON_HUD);
 
@@ -431,7 +432,7 @@ public class ClientEvents{
 					RenderSystem.disableBlend();
 				}
 
-				if(caveDragonType.lavaAirSupply < ServerConfig.caveLavaSwimmingTicks && playerStateHandler.getType().equals(DragonTypes.CAVE) && ServerConfig.bonuses && ServerConfig.caveLavaSwimmingTicks != 0 && ServerConfig.caveLavaSwimming){
+				if(caveDragonType.lavaAirSupply < ServerConfig.caveLavaSwimmingTicks && Objects.equals(playerStateHandler.getType(), DragonTypes.CAVE) && ServerConfig.bonuses && ServerConfig.caveLavaSwimmingTicks != 0 && ServerConfig.caveLavaSwimming){
 					RenderSystem.enableBlend();
 					RenderSystem.setShaderTexture(0, DRAGON_HUD);
 
@@ -453,7 +454,7 @@ public class ClientEvents{
 					RenderSystem.disableBlend();
 				}
 			}else if(playerStateHandler.getType() instanceof ForestDragonType forestDragonType){
-				if(forestDragonType.timeInDarkness > 0 && playerStateHandler.getType().equals(DragonTypes.FOREST) && ServerConfig.penalties && ServerConfig.forestStressTicks != 0 && !player.hasEffect(DragonEffects.STRESS)){
+				if(forestDragonType.timeInDarkness > 0 && Objects.equals(playerStateHandler.getType(), DragonTypes.FOREST) && ServerConfig.penalties && ServerConfig.forestStressTicks != 0 && !player.hasEffect(DragonEffects.STRESS)){
 					RenderSystem.enableBlend();
 					RenderSystem.setShaderTexture(0, DRAGON_HUD);
 

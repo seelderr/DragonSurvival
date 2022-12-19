@@ -101,17 +101,17 @@ public class DragonSizeHandler{
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 
 		if(player != null){
-			boolean swimming = (player.isInWaterOrBubble() || (player.isInLava() && ServerConfig.bonuses && ServerConfig.caveLavaSwimming && handler.getType().equals(DragonTypes.CAVE))) && player.isSprinting() && !player.isPassenger();
+			boolean swimming = (player.isInWaterOrBubble() || player.isInLava() && ServerConfig.bonuses && ServerConfig.caveLavaSwimming && DragonUtils.isDragonType(handler, DragonTypes.CAVE)) && player.isSprinting() && !player.isPassenger();
 			boolean flying = ServerFlightHandler.isFlying(player);
 			boolean spinning = player.isAutoSpinAttack();
 			boolean crouching = player.isShiftKeyDown();
 			if(flying && !player.isSleeping()){
 				return Pose.FALL_FLYING;
-			}else if(swimming || ((player.isInWaterOrBubble() || player.isInLava()) && !canPoseFit(player, Pose.STANDING) && canPoseFit(player, Pose.SWIMMING))){
+			}else if(swimming || (player.isInWaterOrBubble() || player.isInLava()) && !canPoseFit(player, Pose.STANDING) && canPoseFit(player, Pose.SWIMMING)){
 				return Pose.SWIMMING;
 			}else if(spinning){
 				return Pose.SPIN_ATTACK;
-			}else if(crouching || (!canPoseFit(player, Pose.STANDING) && canPoseFit(player, Pose.CROUCHING))){
+			}else if(crouching || !canPoseFit(player, Pose.STANDING) && canPoseFit(player, Pose.CROUCHING)){
 				return Pose.CROUCHING;
 			}
 		}

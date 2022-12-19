@@ -186,7 +186,7 @@ public class ClawToolHandler{
 
 			if(!(mainStack.getItem() instanceof DiggerItem || mainStack.getItem() instanceof SwordItem || mainStack.getItem() instanceof ShearsItem || (mainStack.getItem() instanceof TieredItem))){
 				float bonus = dragonStateHandler.getLevel() == DragonLevel.ADULT
-					? blockState.is(BlockTags.MINEABLE_WITH_AXE) && dragonStateHandler.getType().equals(DragonTypes.FOREST) ? 4 : blockState.is(BlockTags.MINEABLE_WITH_PICKAXE) && dragonStateHandler.getType().equals(DragonTypes.CAVE) ? 4 : blockState.is(BlockTags.MINEABLE_WITH_SHOVEL) && dragonStateHandler.getType() .equals(DragonTypes.SEA) ? 4 : 2F
+					? blockState.is(BlockTags.MINEABLE_WITH_AXE) && Objects.equals(dragonStateHandler.getType(), DragonTypes.FOREST) ? 4 : blockState.is(BlockTags.MINEABLE_WITH_PICKAXE) && Objects.equals(dragonStateHandler.getType(), DragonTypes.CAVE) ? 4 : blockState.is(BlockTags.MINEABLE_WITH_SHOVEL) && Objects.equals(dragonStateHandler.getType(), DragonTypes.SEA) ? 4 : 2F
 					: dragonStateHandler.getLevel() == DragonLevel.NEWBORN ? ServerConfig.bonusUnlockedAt == DragonLevel.NEWBORN ? 2F : 1F : dragonStateHandler.getLevel() == DragonLevel.YOUNG ? ServerConfig.bonusUnlockedAt != DragonLevel.ADULT ? 2F : 1F : 2F;
 
 				breakSpeedEvent.setNewSpeed(originalSpeed * bonus);

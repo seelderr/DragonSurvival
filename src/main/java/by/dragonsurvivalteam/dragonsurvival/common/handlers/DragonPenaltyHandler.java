@@ -27,6 +27,7 @@ import net.minecraftforge.network.PacketDistributor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Mod.EventBusSubscriber
 public class DragonPenaltyHandler{
@@ -54,7 +55,7 @@ public class DragonPenaltyHandler{
 
 				DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
 					if(dragonStateHandler.isDragon()){
-						if(dragonStateHandler.getType() == null || !dragonStateHandler.getType().equals(DragonTypes.CAVE)){
+						if(dragonStateHandler.getType() == null || !Objects.equals(dragonStateHandler.getType(), DragonTypes.CAVE)){
 							return;
 						}
 						player.hurt(DamageSources.WATER_BURN, ServerConfig.caveSplashDamage.floatValue());
@@ -74,7 +75,8 @@ public class DragonPenaltyHandler{
 
 		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon()){
-				List<String> hurtfulItems = new ArrayList<>(dragonStateHandler.getType().equals(DragonTypes.FOREST) ? ServerConfig.forestDragonHurtfulItems : dragonStateHandler.getType().equals(DragonTypes.CAVE) ? ServerConfig.caveDragonHurtfulItems : dragonStateHandler.getType() .equals(DragonTypes.SEA) ? ServerConfig.seaDragonHurtfulItems : new ArrayList<>());
+				List<String> hurtfulItems = new ArrayList<>(
+						Objects.equals(dragonStateHandler.getType(), DragonTypes.FOREST) ? ServerConfig.forestDragonHurtfulItems : Objects.equals(dragonStateHandler.getType(), DragonTypes.CAVE) ? ServerConfig.caveDragonHurtfulItems : Objects.equals(dragonStateHandler.getType(), DragonTypes.SEA) ? ServerConfig.seaDragonHurtfulItems : new ArrayList<>());
 
 				for(String item : hurtfulItems){
 					if(item.replace("item:", "").replace("tag:", "").startsWith(itemStack.getItem().getRegistryName().toString() + ":")){
@@ -97,7 +99,7 @@ public class DragonPenaltyHandler{
 			if(dragonStateHandler.isDragon() && dragonStateHandler.getType() instanceof SeaDragonType seaDragonType){
 				Player player = (Player)destroyItemEvent.getEntityLiving();
 				if(ServerConfig.seaAllowWaterBottles && itemStack.getItem() instanceof PotionItem){
-					if(PotionUtils.getPotion(itemStack) == Potions.WATER && dragonStateHandler.getType() .equals(DragonTypes.SEA) && !player.level.isClientSide){
+					if(PotionUtils.getPotion(itemStack) == Potions.WATER && Objects.equals(dragonStateHandler.getType(), DragonTypes.SEA) && !player.level.isClientSide){
 						seaDragonType.timeWithoutWater = Math.max(seaDragonType.timeWithoutWater - ServerConfig.seaTicksWithoutWaterRestored, 0);
 						NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncDragonTypeData(player.getId(), seaDragonType));
 					}

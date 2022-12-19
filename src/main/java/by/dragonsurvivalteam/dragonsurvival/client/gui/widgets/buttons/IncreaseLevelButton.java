@@ -18,6 +18,7 @@ import net.minecraft.network.chat.TranslatableComponent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 
 
 public class IncreaseLevelButton extends ArrowButton{
@@ -72,7 +73,7 @@ public class IncreaseLevelButton extends ArrowButton{
 		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {
 			ability = cap.getMagicData().getPassiveAbilityFromSlot(slot);
 
-			ChatFormatting format = cap.getType().equals(DragonTypes.CAVE) ? ChatFormatting.DARK_RED : cap.getType().equals(DragonTypes.SEA) ? ChatFormatting.AQUA : cap.getType().equals(DragonTypes.FOREST) ? ChatFormatting.GREEN : ChatFormatting.WHITE;
+			ChatFormatting format = Objects.equals( cap.getType(), DragonTypes.CAVE) ? ChatFormatting.DARK_RED : Objects.equals( cap.getType(), DragonTypes.SEA) ? ChatFormatting.AQUA :  Objects.equals( cap.getType(), DragonTypes.FOREST) ? ChatFormatting.GREEN : ChatFormatting.WHITE;
 			ArrayList<Component> description = new ArrayList<>(Arrays.asList(new TranslatableComponent("ds.skill.level.up", skillCost).withStyle(format)));
 
 			if(ability != null){

@@ -293,13 +293,13 @@ public class ToolTipHandler{
 			Color bottomColor = null;
 
 			if(type != null){
-				if(type.equals(DragonTypes.SEA) && button || isSeaFood){
+				if(Objects.equals(type, DragonTypes.SEA) && button || isSeaFood){
 					topColor = new Color(93, 201, 255);
 					bottomColor = new Color(49, 109, 144);
-				}else if(type.equals(DragonTypes.FOREST) && button || isForestFood){
+				}else if(Objects.equals(type, DragonTypes.FOREST) && button || isForestFood){
 					topColor = new Color(0, 255, 148);
 					bottomColor = new Color(4, 130, 82);
-				}else if(type.equals(DragonTypes.CAVE) && button || isCaveFood){
+				}else if(Objects.equals(type, DragonTypes.CAVE) && button || isCaveFood){
 					topColor = new Color(255, 118, 133);
 					bottomColor = new Color(139, 66, 74);
 				}

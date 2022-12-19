@@ -34,6 +34,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nullable;
+import java.util.Objects;
 
 
 public class SmallDragonDoor extends Block implements SimpleWaterloggedBlock{
@@ -161,7 +162,8 @@ public class SmallDragonDoor extends Block implements SimpleWaterloggedBlock{
 		LazyOptional<DragonStateHandler> dragonStateHandlerLazyOptional = player.getCapability(Capabilities.DRAGON_CAPABILITY);
 		if(dragonStateHandlerLazyOptional.isPresent()){
 			DragonStateHandler dragonStateHandler = dragonStateHandlerLazyOptional.orElseGet(() -> null);
-			if(state.getValue(OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.NONE || (dragonStateHandler.isDragon() && (state.getValue(OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.CAVE && dragonStateHandler.getType().equals(DragonTypes.CAVE)) || (state.getValue(OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.FOREST && dragonStateHandler.getType().equals(DragonTypes.FOREST)) || (state.getValue(OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.SEA && dragonStateHandler.getType() .equals(DragonTypes.SEA)))){
+			if(state.getValue(OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.NONE || dragonStateHandler.isDragon() && state.getValue(OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.CAVE && Objects.equals(dragonStateHandler.getType(), DragonTypes.CAVE) || state.getValue(
+					OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.FOREST && Objects.equals(dragonStateHandler.getType(), DragonTypes.FOREST) || state.getValue(OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.SEA && Objects.equals(dragonStateHandler.getType(), DragonTypes.SEA)){
 				state = state.cycle(OPEN);
 				worldIn.setBlock(pos, state, 10);
 				worldIn.levelEvent(player, state.getValue(OPEN) ? this.getOpenSound() : this.getCloseSound(), pos, 0);

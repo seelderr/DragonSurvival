@@ -235,7 +235,7 @@ public class EventHandler{
 
 
 				if(suitableOre && !player.isCreative()){
-					boolean isCave = dragonStateHandler.getType().equals(DragonTypes.CAVE);
+					boolean isCave = DragonUtils.isDragonType(dragonStateHandler, DragonTypes.CAVE);
 
 					if(dragonStateHandler.isDragon()){
 						if(player.getRandom().nextDouble() < ServerConfig.dragonOreDustChance){

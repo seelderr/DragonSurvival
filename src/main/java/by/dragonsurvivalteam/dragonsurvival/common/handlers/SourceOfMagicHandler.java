@@ -37,6 +37,7 @@ import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
 
+import java.util.Objects;
 import java.util.Random;
 
 
@@ -77,13 +78,13 @@ public class SourceOfMagicHandler{
 						boolean harm = false;
 						AbstractDragonType type = DragonUtils.getDragonType(player);
 
-						if(type == null || !type.equals(DragonTypes.CAVE) && pState.getBlock() == DSBlocks.caveSourceOfMagic){
+						if(Objects.equals(type, DragonTypes.CAVE) && pState.getBlock() == DSBlocks.caveSourceOfMagic){
 							harm = true;
 						}
-						if(type == null || !type.equals(DragonTypes.SEA) && pState.getBlock() == DSBlocks.seaSourceOfMagic){
+						if(Objects.equals(type, DragonTypes.SEA) && pState.getBlock() == DSBlocks.seaSourceOfMagic){
 							harm = true;
 						}
-						if(type == null || !type.equals(DragonTypes.FOREST) && pState.getBlock() == DSBlocks.forestSourceOfMagic){
+						if(Objects.equals(type, DragonTypes.FOREST) && pState.getBlock() == DSBlocks.forestSourceOfMagic){
 							harm = true;
 						}
 
@@ -150,13 +151,13 @@ public class SourceOfMagicHandler{
 						boolean harm = false;
 						AbstractDragonType type = DragonUtils.getDragonType(player);
 
-						if(type == null || !type.equals(DragonTypes.CAVE) && pState.getBlock() == DSBlocks.caveSourceOfMagic){
+						if(Objects.equals(type, DragonTypes.CAVE) && pState.getBlock() == DSBlocks.caveSourceOfMagic){
 							harm = true;
 						}
-						if(type == null || !type.equals(DragonTypes.SEA) && pState.getBlock() == DSBlocks.seaSourceOfMagic){
+						if(Objects.equals(type, DragonTypes.SEA) && pState.getBlock() == DSBlocks.seaSourceOfMagic){
 							harm = true;
 						}
-						if(type == null || !type.equals(DragonTypes.FOREST) && pState.getBlock() == DSBlocks.forestSourceOfMagic){
+						if(Objects.equals(type, DragonTypes.FOREST) && pState.getBlock() == DSBlocks.forestSourceOfMagic){
 							harm = true;
 						}
 

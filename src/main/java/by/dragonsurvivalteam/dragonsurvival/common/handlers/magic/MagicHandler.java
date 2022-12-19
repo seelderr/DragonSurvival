@@ -49,6 +49,7 @@ import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
+import java.util.Objects;
 import java.util.UUID;
 
 @EventBusSubscriber
@@ -227,7 +228,7 @@ public class MagicHandler{
 					return;
 				}
 
-				if(cap.getType() .equals(DragonTypes.SEA)){
+				if(Objects.equals(cap.getType(), DragonTypes.SEA)){
 					event.setCanceled(true);
 				}
 			});
@@ -284,7 +285,7 @@ public class MagicHandler{
 								return;
 							}
 
-							if(cap.getType() .equals(DragonTypes.SEA)){
+							if(Objects.equals(cap.getType(), DragonTypes.SEA)){
 								SpectralImpactAbility spectralImpact = DragonAbilities.getAbility(player, SpectralImpactAbility.class);
 								boolean hit = player.level.random.nextInt(100) <= spectralImpact.getChance();
 
@@ -297,7 +298,7 @@ public class MagicHandler{
 										((ServerLevel)player.level).sendParticles(DSParticles.seaSweep, player.getX() + d0, player.getY(0.5D), player.getZ() + d1, 0, d0, 0.0D, d1, 0.0D);
 									}
 								}
-							}else if(cap.getType().equals(DragonTypes.CAVE)){
+							}else if(Objects.equals(cap.getType(), DragonTypes.CAVE)){
 								BurnAbility burnAbility = DragonAbilities.getAbility(player, BurnAbility.class);
 								boolean hit = player.level.random.nextInt(100) < burnAbility.getChance();
 

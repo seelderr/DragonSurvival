@@ -6,6 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.passive.CliffhangerAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.IndirectEntityDamageSource;
 import net.minecraft.world.entity.LivingEntity;
@@ -18,6 +19,8 @@ import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import java.util.Objects;
+
 @Mod.EventBusSubscriber
 public class DragonBonusHandler{
 	@SubscribeEvent
@@ -27,11 +30,11 @@ public class DragonBonusHandler{
 		DragonStateProvider.getCap(living).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon()){
 				if(ServerConfig.bonuses){
-					if(dragonStateHandler.getType().equals(DragonTypes.CAVE) && ServerConfig.caveFireImmunity){
+					if(DragonUtils.isDragonType(dragonStateHandler, DragonTypes.CAVE) && ServerConfig.caveFireImmunity){
 						if(damageSource.isFire() && ServerConfig.caveFireImmunity){
 							event.setCanceled(true);
 						}
-					}else if(dragonStateHandler.getType().equals(DragonTypes.FOREST)){
+					}else if(Objects.equals(dragonStateHandler.getType(), DragonTypes.FOREST)){
 						if(damageSource == DamageSource.SWEET_BERRY_BUSH && ServerConfig.forestBushImmunity){
 							event.setCanceled(true);
 						}else if(damageSource == DamageSource.CACTUS && ServerConfig.forestCactiImmunity){
@@ -42,7 +45,7 @@ public class DragonBonusHandler{
 
 
 				if(ServerConfig.caveSplashDamage != 0.0){
-					if(dragonStateHandler.getType().equals(DragonTypes.CAVE) && !living.hasEffect(DragonEffects.FIRE)){
+					if(Objects.equals(dragonStateHandler.getType(),DragonTypes.CAVE) && !living.hasEffect(DragonEffects.FIRE)){
 						if(damageSource instanceof IndirectEntityDamageSource){
 							if(damageSource.getDirectEntity() instanceof Snowball){
 								living.hurt(DamageSource.GENERIC, ServerConfig.caveSplashDamage.floatValue());
@@ -61,7 +64,7 @@ public class DragonBonusHandler{
 		}
 		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon()){
-				if(dragonStateHandler.getType().equals(DragonTypes.CAVE) && ServerConfig.bonuses && ServerConfig.caveLavaSwimming && DragonSizeHandler.getOverridePose(player) == Pose.SWIMMING && event.getSound().getRegistryName().getPath().contains(".step")){
+				if(Objects.equals(dragonStateHandler.getType(),DragonTypes.CAVE) && ServerConfig.bonuses && ServerConfig.caveLavaSwimming && DragonSizeHandler.getOverridePose(player) == Pose.SWIMMING && event.getSound().getRegistryName().getPath().contains(".step")){
 					event.setCanceled(true);
 				}
 			}
@@ -75,7 +78,7 @@ public class DragonBonusHandler{
 			if(dragonStateHandler.isDragon()){
 				float distance = livingFallEvent.getDistance();
 
-				if(dragonStateHandler.getType().equals(DragonTypes.FOREST)){
+				if(Objects.equals(dragonStateHandler.getType(),DragonTypes.FOREST)){
 
 					if(ServerConfig.bonuses){
 						distance -= ServerConfig.forestFallReduction.floatValue();

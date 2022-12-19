@@ -21,7 +21,7 @@ public class DragonUtils{
 	}
 
 	public static boolean isDragonType(Entity entity, AbstractDragonType dragonType){
-		return Objects.equal(getDragonType(entity), dragonType);
+		return isDragonType(getHandler(entity), dragonType);
 	}
 	
 	public static boolean isDragonType(DragonStateHandler stateHandler, AbstractDragonType dragonType){

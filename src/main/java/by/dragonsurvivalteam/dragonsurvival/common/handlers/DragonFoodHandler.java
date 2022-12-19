@@ -117,20 +117,18 @@ public class DragonFoodHandler{
 			return foodMap;
 		}
 		String[] configFood = new String[0];
-
-		if(type != null){
-			if(type.equals(DragonTypes.CAVE)){
-				configFood = caveDragonFoods.toArray(new String[0]);
-			}
-
-			if(type.equals(DragonTypes.FOREST)){
-				configFood = forestDragonFoods.toArray(new String[0]);
-			}
-			if(type.equals(DragonTypes.SEA)){
-				configFood = seaDragonFoods.toArray(new String[0]);
-			}
+		
+		if(Objects.equals(type, DragonTypes.CAVE)){
+			configFood = caveDragonFoods.toArray(new String[0]);
 		}
 
+		if(Objects.equals(type, DragonTypes.FOREST)){
+			configFood = forestDragonFoods.toArray(new String[0]);
+		}
+		if(Objects.equals(type, DragonTypes.SEA)){
+			configFood = seaDragonFoods.toArray(new String[0]);
+		}
+		
 
 		configFood = Stream.of(configFood).sorted(Comparator.reverseOrder()).toArray(String[]::new);
 		for(String entry : configFood){
@@ -228,11 +226,11 @@ public class DragonFoodHandler{
 
 	public static CopyOnWriteArrayList<Item> getSafeEdibleFoods(AbstractDragonType dragonType){
 		if(dragonType != null){
-			if(dragonType.equals(DragonTypes.FOREST) && FOREST_D_FOOD != null){
+			if(Objects.equals(dragonType, DragonTypes.FOREST) && FOREST_D_FOOD != null){
 				return FOREST_D_FOOD;
-			}else if(dragonType.equals(DragonTypes.SEA) && SEA_D_FOOD != null){
+			}else if(Objects.equals(dragonType, DragonTypes.SEA) && SEA_D_FOOD != null){
 				return SEA_D_FOOD;
-			}else if(dragonType.equals(DragonTypes.CAVE) && CAVE_D_FOOD != null){
+			}else if(Objects.equals(dragonType, DragonTypes.CAVE) && CAVE_D_FOOD != null){
 				return CAVE_D_FOOD;
 			}
 		}
@@ -261,11 +259,11 @@ public class DragonFoodHandler{
 				}
 			}
 		}
-		if(dragonType.equals(DragonTypes.FOREST) && FOREST_D_FOOD == null){
+		if(Objects.equals(dragonType, DragonTypes.FOREST) && FOREST_D_FOOD == null){
 			FOREST_D_FOOD = foods;
-		}else if(dragonType.equals(DragonTypes.CAVE) && CAVE_D_FOOD == null){
+		}else if(Objects.equals(dragonType, DragonTypes.CAVE) && CAVE_D_FOOD == null){
 			CAVE_D_FOOD = foods;
-		}else if(dragonType.equals(DragonTypes.SEA) && SEA_D_FOOD == null){
+		}else if(Objects.equals(dragonType, DragonTypes.SEA) && SEA_D_FOOD == null){
 			SEA_D_FOOD = foods;
 		}
 		return foods;
@@ -327,7 +325,7 @@ public class DragonFoodHandler{
 				rightHeight += 10;
 				final FoodData food = player.getFoodData();
 
-				final int type = dragonStateHandler.getType().equals(DragonTypes.FOREST) ? 0 : dragonStateHandler.getType().equals(DragonTypes.CAVE) ? 9 : 18;
+				final int type = Objects.equals(dragonStateHandler.getType(), DragonTypes.FOREST) ? 0 : Objects.equals(dragonStateHandler.getType(), DragonTypes.CAVE) ? 9 : 18;
 
 				final boolean hunger = player.hasEffect(MobEffects.HUNGER);
 

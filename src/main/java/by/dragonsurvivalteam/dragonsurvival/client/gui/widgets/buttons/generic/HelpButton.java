@@ -14,6 +14,8 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
 
+import java.util.Objects;
+
 public class HelpButton extends ExtendedButton implements TooltipRender{
 	public static final ResourceLocation texture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/help_button.png");
 	public String text;
@@ -42,7 +44,7 @@ public class HelpButton extends ExtendedButton implements TooltipRender{
 
 		int i = 0;
 		if(this.isHoveredOrFocused())
-			i += (int)(type == null ? 4 : (type.equals(DragonTypes.CAVE) ? 1 : type.equals(DragonTypes.FOREST) ? 2 : type.equals(DragonTypes.SEA) ? 3 : 4) * size);
+			i += (int)(type == null ? 4 : (Objects.equals(type, DragonTypes.CAVE) ? 1 :  Objects.equals(type, DragonTypes.FOREST) ? 2 :  Objects.equals(type, DragonTypes.SEA) ? 3 : 4) * size);
 
 		pMatrixStack.pushPose();
 		pMatrixStack.translate(0, 0, 200);

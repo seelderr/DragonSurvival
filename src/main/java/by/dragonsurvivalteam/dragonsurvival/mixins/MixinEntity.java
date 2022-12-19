@@ -69,7 +69,7 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
 	@Inject( at = @At( value = "HEAD" ), method = "Lnet/minecraft/world/entity/Entity;displayFireAnimation()Z", cancellable = true )
 	private void hideCaveDragonFireAnimation(CallbackInfoReturnable<Boolean> ci){
 		DragonStateProvider.getCap((Entity)(Object)this).ifPresent(dragonStateHandler -> {
-			if(dragonStateHandler.isDragon() && dragonStateHandler.getType().equals(DragonTypes.CAVE)){
+			if(dragonStateHandler.isDragon() && Objects.equals(dragonStateHandler.getType(), DragonTypes.CAVE)){
 				ci.setReturnValue(false);
 			}
 		});

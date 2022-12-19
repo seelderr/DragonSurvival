@@ -52,6 +52,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.NetworkHooks;
 
 import javax.annotation.Nullable;
+import java.util.Objects;
 import java.util.Random;
 
 public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements SimpleWaterloggedBlock, EntityBlock{
@@ -300,13 +301,13 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
 			boolean harm = false;
 			AbstractDragonType type = DragonUtils.getDragonType(entity);
 
-			if(type == null || !type.equals(DragonTypes.CAVE) && pState.getBlock() == DSBlocks.caveSourceOfMagic){
+			if(Objects.equals(type, DragonTypes.CAVE) && pState.getBlock() == DSBlocks.caveSourceOfMagic){
 				harm = true;
 			}
-			if(type == null || !type.equals(DragonTypes.SEA) && pState.getBlock() == DSBlocks.seaSourceOfMagic){
+			if(Objects.equals(type, DragonTypes.SEA) && pState.getBlock() == DSBlocks.seaSourceOfMagic){
 				harm = true;
 			}
-			if(type == null || !type.equals(DragonTypes.FOREST) && pState.getBlock() == DSBlocks.forestSourceOfMagic){
+			if(Objects.equals(type, DragonTypes.FOREST) && pState.getBlock() == DSBlocks.forestSourceOfMagic){
 				harm = true;
 			}
 

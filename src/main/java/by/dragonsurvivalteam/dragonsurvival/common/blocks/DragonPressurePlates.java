@@ -63,22 +63,13 @@ public class DragonPressurePlates extends PressurePlateBlock implements SimpleWa
 		if(!list.isEmpty()){
 			for(Entity entity : list){
 				if(!entity.isIgnoringBlockTriggers()){
-					switch(type){
-						case DRAGON:
-							return DragonUtils.isDragon(entity) ? 15 : 0;
-
-						case HUMAN:
-							return !DragonUtils.isDragon(entity) ? 15 : 0;
-
-						case SEA:
-							return DragonUtils.isDragon(entity) && DragonUtils.getDragonType(entity) .equals(DragonTypes.SEA) ? 15 : 0;
-
-						case FOREST:
-							return DragonUtils.isDragon(entity) && DragonUtils.getDragonType(entity).equals(DragonTypes.FOREST) ? 15 : 0;
-
-						case CAVE:
-							return DragonUtils.isDragon(entity) && DragonUtils.getDragonType(entity).equals(DragonTypes.CAVE) ? 15 : 0;
-					}
+					return switch (type) {
+						case DRAGON -> DragonUtils.isDragon(entity) ? 15 : 0;
+						case HUMAN -> !DragonUtils.isDragon(entity) ? 15 : 0;
+						case SEA -> DragonUtils.isDragonType(entity, DragonTypes.SEA) ? 15 : 0;
+						case FOREST -> DragonUtils.isDragonType(entity, DragonTypes.FOREST) ? 15 : 0;
+						case CAVE -> DragonUtils.isDragonType(entity, DragonTypes.CAVE) ? 15 : 0;
+					};
 				}
 			}
 		}

@@ -14,6 +14,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public abstract class DragonAbility {
 	protected static NumberFormat nf = NumberFormat.getInstance();
@@ -78,13 +79,13 @@ public abstract class DragonAbility {
 		if(!ServerConfig.dragonAbilities){
 			return true;
 		}
-		if(getDragonType() != null && getDragonType().equals(DragonTypes.CAVE) && !ServerConfig.caveDragonAbilities){
+		if(Objects.equals(getDragonType(), DragonTypes.CAVE) && !ServerConfig.caveDragonAbilities){
 			return true;
 		}
-		if(getDragonType() != null && getDragonType() .equals(DragonTypes.SEA) && !ServerConfig.seaDragonAbilities){
+		if(Objects.equals(getDragonType(), DragonTypes.SEA) && !ServerConfig.seaDragonAbilities){
 			return true;
 		}
-		return getDragonType() != null && getDragonType().equals(DragonTypes.FOREST) && !ServerConfig.forestDragonAbilities;
+		return Objects.equals(getDragonType(), DragonTypes.FOREST) && !ServerConfig.forestDragonAbilities;
 	}
 
 	public int getLevel(){

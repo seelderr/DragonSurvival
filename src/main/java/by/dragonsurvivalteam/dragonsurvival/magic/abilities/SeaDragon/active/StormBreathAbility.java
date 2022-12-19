@@ -288,7 +288,7 @@ public class StormBreathAbility extends BreathAbility{
 			return false;
 		}
 
-		return TargetingFunctions.isValidTarget(attacker, target) && (DragonUtils.getDragonType(target) == null || !DragonUtils.getDragonType(target).equals(DragonTypes.SEA));
+		return TargetingFunctions.isValidTarget(attacker, target) && !DragonUtils.isDragonType(target, DragonTypes.SEA);
 	}
 
 	public void hurtTarget(LivingEntity entity){

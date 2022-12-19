@@ -27,6 +27,7 @@ import net.minecraft.util.Mth;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 public class AbilityScreen extends Screen{
 	private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/magic_interface.png");
@@ -63,7 +64,7 @@ public class AbilityScreen extends Screen{
 		blit(stack, startX, startY, 0, 0, 256, 256);
 
 		if(type != null){
-			int barYPos = type.equals(DragonTypes.SEA) ? 198 : type.equals(DragonTypes.FOREST) ? 186 : 192;
+			int barYPos = Objects.equals(type, DragonTypes.SEA) ? 198 : Objects.equals(type, DragonTypes.FOREST) ? 186 : 192;
 
 			RenderSystem.setShaderTexture(0, ClientMagicHUDHandler.widgetTextures);
 
