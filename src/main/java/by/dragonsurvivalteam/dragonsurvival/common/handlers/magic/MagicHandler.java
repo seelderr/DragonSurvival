@@ -173,10 +173,9 @@ public class MagicHandler{
 
 		if(entity.hasEffect(DragonEffects.CHARGED)){
 			if(entity.tickCount % 20 == 0){
-				AbstractDragonType type = DragonStateProvider.getCap(entity).map(cap -> cap.getType()).orElse(null);
 				DragonStateHandler cap = DragonUtils.getHandler(entity);
 				Player player = cap.lastAfflicted != -1 && entity.level.getEntity(cap.lastAfflicted) instanceof Player ? (Player)entity.level.getEntity(cap.lastAfflicted) : null;
-				if(type == null || !type.equals(DragonTypes.SEA)){
+				if(!DragonUtils.isType(entity, DragonTypes.SEA)){
 					StormBreathAbility.chargedEffectSparkle(player, entity, StormBreathAbility.chargedChainRange, StormBreathAbility.chargedEffectChainCount, StormBreathAbility.chargedEffectDamage);
 				}
 			}
