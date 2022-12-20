@@ -8,6 +8,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.innate.InnateDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAbility;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.nbt.CompoundTag;
@@ -133,12 +134,12 @@ public class MagicCap extends SubCap{
 
 	public List<ActiveDragonAbility> getActiveAbilities(){
 		if(abilities.isEmpty()) initAbilities(handler.getType());
-		return abilities.values().stream().filter(ActiveDragonAbility.class::isInstance).filter(s->s.getDragonType() == null || s.getDragonType() == handler.getType()).map(ActiveDragonAbility.class::cast).toList();
+		return abilities.values().stream().filter(ActiveDragonAbility.class::isInstance).filter(s -> DragonUtils.isDragonType(handler,  s.getDragonType())).map(ActiveDragonAbility.class::cast).toList();
 	}
 
 	public List<PassiveDragonAbility> getPassiveAbilities(){
 		if(abilities.isEmpty()) initAbilities(handler.getType());
-		return abilities.values().stream().filter(PassiveDragonAbility.class::isInstance).filter(s->s.getDragonType() == null || s.getDragonType() == handler.getType()).map(PassiveDragonAbility.class::cast).toList();
+		return abilities.values().stream().filter(PassiveDragonAbility.class::isInstance).filter(s -> DragonUtils.isDragonType(handler,  s.getDragonType())).map(PassiveDragonAbility.class::cast).toList();
 	}
 
 	public ActiveDragonAbility getAbilityFromSlot(int slot){

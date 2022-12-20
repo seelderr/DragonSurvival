@@ -2,7 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAbility;
+import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.TickablePassiveAbility;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.world.entity.player.Player;
@@ -24,7 +24,7 @@ public class DragonTraitHandler{
 		Player player = playerTickEvent.player;
 		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon()){
-				for(PassiveDragonAbility passiveAbility : dragonStateHandler.getMagicData().getPassiveAbilities()){
+				for(DragonAbility passiveAbility : dragonStateHandler.getMagicData().abilities.values()){
 					if(passiveAbility instanceof TickablePassiveAbility tickablePassiveAbility){
 						if(tickablePassiveAbility.getLevel() > 0){
 							tickablePassiveAbility.onTick(player);

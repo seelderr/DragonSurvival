@@ -118,7 +118,7 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity>{
 							RenderUtils.prepMatrixForBone(stack, bone);
 							RenderUtils.translateAndRotateMatrixForBone(stack, bone);
 
-							Minecraft.getInstance().getItemRenderer().renderStatic(player.getInventory().offhand.get(0), TransformType.THIRD_PERSON_LEFT_HAND, packedLight, pOverlay, stack, getCurrentRTB(), 0);
+							Minecraft.getInstance().getItemRenderer().renderStatic(player.getInventory().offhand.get(0), ClientDragonRender.thirdPersonItemRender ? TransformType.FIRST_PERSON_LEFT_HAND : TransformType.GROUND, packedLight, pOverlay, stack, getCurrentRTB(), 0);
 							buffer = bufferSource.getBuffer(RenderType.entityTranslucent(currentTexture));
 							stack.popPose();
 						}
@@ -128,7 +128,7 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity>{
 							RenderUtils.prepMatrixForBone(stack, bone);
 							RenderUtils.translateAndRotateMatrixForBone(stack, bone);
 
-							Minecraft.getInstance().getItemRenderer().renderStatic(player.getInventory().getSelected(), TransformType.THIRD_PERSON_RIGHT_HAND, packedLight, pOverlay, stack, getCurrentRTB(), 0);
+							Minecraft.getInstance().getItemRenderer().renderStatic(player.getInventory().getSelected(), ClientDragonRender.thirdPersonItemRender ? TransformType.THIRD_PERSON_RIGHT_HAND : TransformType.GROUND, packedLight, pOverlay, stack, getCurrentRTB(), 0);
 							buffer = bufferSource.getBuffer(RenderType.entityTranslucent(currentTexture));
 							stack.popPose();
 						}

@@ -118,7 +118,7 @@ public class ServerFlightHandler{
 				damage = Mth.clamp(damage, 0, livingEntity.getHealth() - (lethalFlight ? 0 : 1));
 
 				if(!livingEntity.level.isClientSide && dragonStateHandler.isWingsSpread()){
-					event.setDistance((float)Math.floor(((damage + 3.0F + f) / event.getDamageMultiplier())));
+					event.setDistance((float)Math.floor((damage + 3.0F + f) / event.getDamageMultiplier()));
 				}
 
 				if(!livingEntity.level.isClientSide){
@@ -289,7 +289,7 @@ public class ServerFlightHandler{
 			if(dragonStateHandler.isDragon()){
 				boolean wingsSpread = dragonStateHandler.isWingsSpread();
 				if(creativeFlight && !player.level.isClientSide){
-					if(player.getAbilities().flying != wingsSpread && (!player.isCreative() && !player.isSpectator())){
+					if(player.getAbilities().flying != wingsSpread && !player.isCreative() && !player.isSpectator()){
 						player.getAbilities().flying = wingsSpread;
 						player.onUpdateAbilities();
 					}
@@ -333,7 +333,7 @@ public class ServerFlightHandler{
 			BlockPos blockHeight = player.level.getHeightmapPos(Types.MOTION_BLOCKING, player.blockPosition());
 			int height = blockHeight.getY();
 			double aboveGround = Math.max(0, player.position().y - height);
-			double timeToGround = (aboveGround / Math.abs(motion.y));
+			double timeToGround = aboveGround / Math.abs(motion.y);
 			if(player.fallDistance > 5 && motion.y < 0){
 				if(aboveGround < 20 && timeToGround <= goalTime){
 					return timeToGround;
