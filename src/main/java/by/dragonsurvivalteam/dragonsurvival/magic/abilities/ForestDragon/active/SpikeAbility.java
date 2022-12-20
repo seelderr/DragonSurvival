@@ -41,7 +41,7 @@ public class SpikeAbility extends InstantCastAbility{
 
 	@ConfigRange( min = 0, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "spike"}, key = "spikeManaCost", comment = "The mana cost for using the spike ability" )
-	public static Integer spikeManaCost = 2;
+	public static Integer spikeManaCost = 1;
 
 	@Override
 	public Component getDescription(){

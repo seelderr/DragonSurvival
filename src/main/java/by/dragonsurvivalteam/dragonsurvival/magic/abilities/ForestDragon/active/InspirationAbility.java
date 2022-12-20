@@ -29,7 +29,7 @@ public class InspirationAbility extends AoeBuffAbility{
 	public static Integer inspirationDuration = 1200;
 	@ConfigRange( min = 0, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "inspiration"}, key = "inspirationManaCost", comment = "The mana cost for using the inspiration ability" )
-	public static Integer inspirationManaCost = 3;
+	public static Integer inspirationManaCost = 1;
 
 	@Override
 	public String getName(){

@@ -40,7 +40,7 @@ public class BallLightningAbility extends ChargeCastAbility{
 	public static Double ballLightningDamage = 4.0;
 	@ConfigRange( min = 0, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "ball_lightning"}, key = "ballLightningManaCost", comment = "The mana cost for using the lightning ball ability" )
-	public static Integer ballLightningManaCost = 3;
+	public static Integer ballLightningManaCost = 1;
 
 	@Override
 	public int getManaCost(){

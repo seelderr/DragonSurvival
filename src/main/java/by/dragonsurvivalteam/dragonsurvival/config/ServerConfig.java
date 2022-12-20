@@ -48,9 +48,6 @@ public class ServerConfig{
 	@ConfigOption( side = ConfigSide.SERVER, category = "general", key = "minSizeVari", comment = "The minimum size variation in percentage" )
 	public static Double minSizeVari = -10.0;
 
-	@ConfigOption( side = ConfigSide.SERVER, category = "general", key = "useModifiedHitboxes", comment = "Should the mod use the new modified hitboxes for dragon players? Can have bugs, but more comfortable for pvp." )
-	public static Boolean useModifiedHitboxes = false;
-
 	@ConfigOption( side = ConfigSide.SERVER, category = "general", key = "startWithDragonChoice", comment = "Should the dragon altar interface be opened when the player first joins the world?" )
 	public static Boolean startWithDragonChoice = true;
 
@@ -113,7 +110,7 @@ public class ServerConfig{
 
 	@ConfigRange( min = 0.0, max = 1.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = "drops", key = "dragonHeartShardChance", comment = "The chance for dragon heart shards to drop from any mobs with max health between 14-20" )
-	public static Double dragonHeartShardChance = 0.01;
+	public static Double dragonHeartShardChance = 0.03;
 
 	@ConfigRange( min = 0.0, max = 1.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = "drops", key = "weakDragonHeartChance", comment = "The chance for weak dragon heart to drop from any mobs with max health between 20-50" )
@@ -121,7 +118,7 @@ public class ServerConfig{
 
 	@ConfigRange( min = 0.0, max = 1.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = "drops", key = "elderDragonHeartChance", comment = "The chance for dragon heart to drop from any mobs with max health above 50" )
-	public static Double elderDragonHeartChance = 0.1;
+	public static Double elderDragonHeartChance = 0.01;
 
 	@ConfigType(EntityType.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = "drops", key = "dragonHeartEntityList", comment = "Decide which entities can drop dragon hearts" )
@@ -323,11 +320,11 @@ public class ServerConfig{
 	// Forest Dragon Penalties
 	@ConfigRange( min = 0, max = 10000 )
 	@ConfigOption( side = ConfigSide.SERVER, category  = {"penalties", "forest"}, key = "ticksBeforeStressed", comment = "The number of ticks in darkness before the forest dragon gets Stress effect. Set to 0 to disable to stress effect." )
-	public static Integer forestStressTicks = 200;
+	public static Integer forestStressTicks = 100;
 
 	@ConfigRange( min = 2, max = 100000 )
 	@ConfigOption( side = ConfigSide.SERVER, category  = {"penalties", "forest"}, key = "stressEffectDuration", comment = "The number of seconds the stress effect lasts for." )
-	public static Integer forestStressEffectDuration = 40;
+	public static Integer forestStressEffectDuration = 10;
 
 	@ConfigRange( min = 0.1, max = 4.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category  = {"penalties", "forest"}, key = "stressExhaustion", comment = "The amount of exhaustion applied per 10 ticks during the stress effect." )
@@ -359,7 +356,7 @@ public class ServerConfig{
 
 	@ConfigType(Item.class)
 	@ConfigOption( side = ConfigSide.SERVER, category  = {"penalties", "sea"}, key = "seaHydrationItems", comment = "Additional modded USEABLE items that restore water when used (called from LivingEntityUseItemEvent.Finish). Format: item/modid:id" )
-	public static List<String> seaAdditionalWaterUseables = List.of("minecraft:enchanted_golden_apple", "immersive_weathering:icicle");
+	public static List<String> seaAdditionalWaterUseables = List.of("immersive_weathering:icicle");
 
 	// Ore Loot
 	@ConfigRange( min = 0.0, max = 1.0 )
@@ -435,20 +432,20 @@ public class ServerConfig{
 
 	@ConfigRange( min = 0, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = "magic", key = "initialPassiveCost", comment = "The initial exp cost for leveling passive skills." )
-	public static Integer initialPassiveCost = 2;
+	public static Integer initialPassiveCost = 4;
 
 	@ConfigRange( min = 0, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = "magic", key = "passiveScalingCost", comment = "The multiplier that is used to increase the passive skill costs per level" )
-	public static Double passiveScalingCost = 4.0;
+	public static Double passiveScalingCost = 6.0;
 
 
 	@ConfigRange( min = 1, max = 1000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = "magic", key = "favorableManaRegen", comment = "How fast in seconds should mana be recovered in favorable conditions" )
-	public static Integer favorableManaTicks = 5;
+	public static Integer favorableManaTicks = 1;
 
 	@ConfigRange( min = 1, max = 1000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = "magic", key = "normalManaRegen", comment = "How fast in seconds should mana be recovered in normal conditions" )
-	public static Integer normalManaTicks = 15;
+	public static Integer normalManaTicks = 10;
 
 
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities"}, key = "saveAllAbilities", comment = "Whether to save passives skills when changing dragon type" )

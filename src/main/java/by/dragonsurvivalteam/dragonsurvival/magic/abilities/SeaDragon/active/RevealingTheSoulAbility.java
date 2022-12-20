@@ -33,7 +33,7 @@ public class RevealingTheSoulAbility extends AoeBuffAbility{
 	public static Integer revealingTheSoulCasttime = 60;
 	@ConfigRange( min = 0, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "revealing_the_soul"}, key = "revealingTheSoulManaCost", comment = "The mana cost for using the revealing The Soul ability" )
-	public static Integer revealingTheSoulManaCost = 3;
+	public static Integer revealingTheSoulManaCost = 1;
 	@ConfigRange( min = 0, max = 10000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "revealing_the_soul"}, key = "revealingTheSoulMaxEXP", comment = "The max amount of increased exp that can be gained from a single mob with reavling the soul" )
 	public static Integer revealingTheSoulMaxEXP = 20;

@@ -36,7 +36,7 @@ public class DragonConfigHandler{
 		//Which materials should speed up dragons when using the athletics ability
 		DRAGON_SPEED_MATERIALS.put(DragonTypes.CAVE.getTypeName(), List.of(Material.STONE, Material.METAL, Material.LAVA, Material.FIRE));
 		DRAGON_SPEED_MATERIALS.put(DragonTypes.FOREST.getTypeName(), List.of(Material.GRASS, Material.LEAVES, Material.WOOD, Material.PLANT, Material.CACTUS));
-		DRAGON_SPEED_MATERIALS.put(DragonTypes.SEA.getTypeName(), List.of(Material.SAND, Material.DIRT, Material.WATER, Material.WATER_PLANT, Material.SPONGE, Material.TOP_SNOW, Material.SNOW, Material.POWDER_SNOW));
+		DRAGON_SPEED_MATERIALS.put(DragonTypes.SEA.getTypeName(), List.of(Material.SAND, Material.WATER, Material.WATER_PLANT, Material.SPONGE, Material.TOP_SNOW, Material.SNOW, Material.POWDER_SNOW));
 	}
 
 	@SubscribeEvent

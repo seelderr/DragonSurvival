@@ -2910,6 +2910,25 @@
 					]
 				},
 				{
+					"name": "MagicSource",
+					"parent": "Head",
+					"pivot": [-0.5, 28.52993, -19.17236],
+					"cubes": [
+						{
+							"origin": [-0.5, 28.52993, -20.17236],
+							"size": [1, 1, 1],
+							"uv": {
+								"north": {"uv": [0, 0], "uv_size": [1, 1]},
+								"east": {"uv": [0, 0], "uv_size": [1, 1]},
+								"south": {"uv": [0, 0], "uv_size": [1, 1]},
+								"west": {"uv": [0, 0], "uv_size": [1, 1]},
+								"up": {"uv": [1, 1], "uv_size": [-1, -1]},
+								"down": {"uv": [1, 1], "uv_size": [-1, -1]}
+							}
+						}
+					]
+				},
+				{
 					"name": "MolangHandlerFrontLegRight",
 					"parent": "Dragon",
 					"pivot": [-5.2, 18, -7]

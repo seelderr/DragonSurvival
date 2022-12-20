@@ -42,7 +42,7 @@ public class HunterAbility extends ChargeCastAbility{
 	public static Double hunterDamageBonus = 1.5;
 	@ConfigRange( min = 0, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "hunter"}, key = "hunterManaCost", comment = "The mana cost for using the inspiration ability" )
-	public static Integer hunterManaCost = 3;
+	public static Integer hunterManaCost = 1;
 
 
 	@Override

@@ -99,6 +99,7 @@ public class StormBreathAbility extends BreathAbility{
 	                                                     "sea_dragon",
 	                                                     "actives",
 	                                                     "storm_breath"}, key = "stormBreathManaTicks", comment = "How often in ticks, mana is consumed while using storm breath" )
+	///need delete unused configs
 	public static Integer stormBreathManaTicks = 40;
 	@ConfigType( Block.class )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic",
@@ -128,14 +129,14 @@ public class StormBreathAbility extends BreathAbility{
 	                                                     "sea_dragon",
 	                                                     "actives",
 	                                                     "storm_breath"}, key = "chargedEffectMaxChain", comment = "How many times the charged effect is able to chain. -1 means it can chain infinitely" )
-	public static Integer chargedEffectMaxChain = 10;
+	public static Integer chargedEffectMaxChain = 5;
 	@ConfigRange( min = 0, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic",
 	                                                     "abilities",
 	                                                     "sea_dragon",
 	                                                     "actives",
 	                                                     "storm_breath"}, key = "chargedChainRange", comment = "The max distance in blocks the storm breath and charged effect is able to chain to mobs" )
-	public static Integer chargedChainRange = 10;
+	public static Integer chargedChainRange = 4;
 	@ConfigRange( min = 0, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic",
 	                                                     "abilities",

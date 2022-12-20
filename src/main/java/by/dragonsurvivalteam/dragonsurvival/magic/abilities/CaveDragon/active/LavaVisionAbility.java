@@ -39,7 +39,7 @@ public class LavaVisionAbility extends ChargeCastAbility {
 	public static Integer lavaVisionCasttime = 40;
 	@ConfigRange( min = 0, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "lava_vision"}, key = "lavaVisionManaCost", comment = "The mana cost for using the lava vision ability" )
-	public static Integer lavaVisionManaCost = 2;
+	public static Integer lavaVisionManaCost = 1;
 
 	@Override
 	public int getSortOrder(){

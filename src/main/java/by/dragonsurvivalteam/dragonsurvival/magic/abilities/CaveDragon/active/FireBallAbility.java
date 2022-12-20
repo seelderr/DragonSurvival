@@ -45,7 +45,7 @@ public class FireBallAbility extends ChargeCastAbility{
 
 	@ConfigRange( min = 0, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fireball"}, key = "fireballManaCost", comment = "The mana cost for using the fireball ball ability" )
-	public static Integer fireballManaCost = 3;
+	public static Integer fireballManaCost = 1;
 
 	@Override
 	public int getManaCost(){
