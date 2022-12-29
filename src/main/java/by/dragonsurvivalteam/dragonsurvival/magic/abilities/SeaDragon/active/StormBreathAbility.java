@@ -128,7 +128,7 @@ public class StormBreathAbility extends BreathAbility{
 	                                                     "abilities",
 	                                                     "sea_dragon",
 	                                                     "actives",
-	                                                     "storm_breath"}, key = "chargedEffectMaxChain", comment = "How many times the charged effect is able to chain. -1 means it can chain infinitely" )
+	                                                     "storm_breath"}, key = "chargedEffectMaxChain", comment = "How many times the charged effect is able to chain." )
 	public static Integer chargedEffectMaxChain = 5;
 	@ConfigRange( min = 0, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic",
