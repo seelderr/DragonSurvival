@@ -37,12 +37,12 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity>{
 
 	public DragonRenderer(EntityRendererProvider.Context renderManager, AnimatedGeoModel<DragonEntity> modelProvider){
 		super(renderManager, modelProvider);
-		this.addLayer(new DragonGlowLayerRenderer(this));
-		this.addLayer(new ClawsAndTeethRenderLayer(this));
-		this.addLayer(new DragonArmorRenderLayer(this));
+		addLayer(new DragonGlowLayerRenderer(this));
+		addLayer(new ClawsAndTeethRenderLayer(this));
+		addLayer(new DragonArmorRenderLayer(this));
 
 		if(ModList.get().isLoaded("curios")){
-			this.addLayer(new DragonCuriosRenderLayer(this));
+			addLayer(new DragonCuriosRenderLayer(this));
 		}
 	}
 
@@ -62,8 +62,8 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity>{
 	public void renderLate(DragonEntity animatable, PoseStack stackIn, float partialTicks, MultiBufferSource renderTypeBuffer, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha){
 		super.renderLate(animatable, stackIn, partialTicks, renderTypeBuffer, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
 		Minecraft.getInstance().getProfiler().pop();
-		this.currentEntityBeingRendered = animatable;
-		this.currentPartialTicks = partialTicks;
+		currentEntityBeingRendered = animatable;
+		currentPartialTicks = partialTicks;
 	}
 
 	@ConfigOption( side = ConfigSide.CLIENT, key = "renderHeldItem", comment = "Should items be rendered in third person for dragon players?", category = "rendering" )
@@ -103,10 +103,10 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity>{
 			Player player = currentEntityBeingRendered.getPlayer();
 			DragonStateHandler handler = DragonUtils.getHandler(player);
 
-			ResourceLocation currentTexture = getTextureLocation(this.currentEntityBeingRendered);
+			ResourceLocation currentTexture = getTextureLocation(currentEntityBeingRendered);
 			MultiBufferSource bufferSource = getCurrentRTB();
 
-			RenderType renderType = getRenderType(this.currentEntityBeingRendered, this.currentPartialTicks, stack, bufferSource, buffer, packedLight, currentTexture);
+			RenderType renderType = getRenderType(currentEntityBeingRendered, currentPartialTicks, stack, bufferSource, buffer, packedLight, currentTexture);
 			buffer = bufferSource.getBuffer(renderType);
 
 			if (getCurrentModelRenderCycle() == EModelRenderCycle.INITIAL){

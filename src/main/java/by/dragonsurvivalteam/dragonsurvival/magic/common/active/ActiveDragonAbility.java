@@ -95,7 +95,7 @@ public abstract class ActiveDragonAbility extends DragonAbility{
 		}
 
 		if(getCurrentCooldown() != 0){
-			ClientMagicHUDHandler.castingError(new TranslatableComponent("ds.skill_cooldown_check_failure", nf.format(this.getCurrentCooldown() / 20F) + "s").withStyle(ChatFormatting.RED));
+			ClientMagicHUDHandler.castingError(new TranslatableComponent("ds.skill_cooldown_check_failure", nf.format(getCurrentCooldown() / 20F) + "s").withStyle(ChatFormatting.RED));
 			return false;
 		}
 

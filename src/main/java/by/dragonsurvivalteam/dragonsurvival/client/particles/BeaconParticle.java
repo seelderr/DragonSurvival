@@ -13,28 +13,29 @@ public class BeaconParticle extends TextureSheetParticle{
 
 	public BeaconParticle(ClientLevel p_i232448_1_, double x, double y, double z, double xd, double yd, double zd){
 		super(p_i232448_1_, x, y, z, xd, yd, zd);
-		this.gravity = 0.9f;
+		gravity = 0.9f;
 		fallSpeed = 0.02;
 	}
 
+	@Override
 	public void tick(){
-		this.xo = this.x;
-		this.yo = this.y;
-		this.zo = this.z;
-		if(this.age++ >= this.lifetime){
-			this.remove();
+		xo = x;
+		yo = y;
+		zo = z;
+		if(age++ >= lifetime){
+			remove();
 		}else{
 			//            this.setSpriteFromAge(this.sprites);
-			this.yd += this.fallSpeed;
-			this.move(0, this.yd, 0);
-			if(this.y == this.yo){
-				this.xd *= 1.1D;
-				this.zd *= 1.1D;
+			yd += fallSpeed;
+			move(0, yd, 0);
+			if(y == yo){
+				xd *= 1.1D;
+				zd *= 1.1D;
 			}
-			this.yd *= 0.7F;
-			if(this.onGround){
-				this.xd *= 0.96F;
-				this.zd *= 0.96F;
+			yd *= 0.7F;
+			if(onGround){
+				xd *= 0.96F;
+				zd *= 0.96F;
 			}
 		}
 	}

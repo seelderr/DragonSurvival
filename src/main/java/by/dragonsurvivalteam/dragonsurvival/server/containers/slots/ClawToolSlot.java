@@ -29,14 +29,14 @@ public class ClawToolSlot extends Slot{
 
 	public ClawToolSlot(DragonContainer container, Container inv, int index, int x, int y, int num){
 		super(inv, index, x, y);
-		this.dragonContainer = container;
+		dragonContainer = container;
 		this.num = num;
 	}
 
 	@Override
 	public boolean mayPlace(ItemStack stack){
 		Item item = stack.getItem();
-		return switch(this.num){
+		return switch(num){
 			case 0 -> item.canPerformAction(stack, ToolActions.SWORD_SWEEP) || item.canPerformAction(stack, ToolActions.AXE_DIG) || item instanceof SwordItem;
 			case 1 -> item.canPerformAction(stack, ToolActions.PICKAXE_DIG) || item instanceof PickaxeItem || item.isCorrectToolForDrops(Blocks.STONE.defaultBlockState());
 			case 2 -> item.canPerformAction(stack, ToolActions.AXE_DIG) || item instanceof AxeItem || item.isCorrectToolForDrops(Blocks.OAK_LOG.defaultBlockState());

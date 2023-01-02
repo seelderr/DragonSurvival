@@ -153,9 +153,7 @@ public class CaveDragonType extends AbstractDragonType{
 			if(DragonConfigHandler.DRAGON_MANA_BLOCKS.get(DragonTypes.CAVE.getTypeName()).contains(blockBelow.getBlock())){
 				if(blockBelow.getBlock() instanceof AbstractFurnaceBlock){
 					if(blockBelow.hasProperty(AbstractFurnaceBlock.LIT)){
-						if(blockBelow.getValue(AbstractFurnaceBlock.LIT)){
-							return true;
-						}
+						return blockBelow.getValue(AbstractFurnaceBlock.LIT);
 					}
 				}
 			}

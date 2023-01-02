@@ -27,9 +27,9 @@ public class LargeFireParticle extends TextureSheetParticle{
 		swirlTick = random.nextInt(120);
 		spread = random.nextFloat();
 		this.swirls = swirls;
-		this.hasPhysics = true;
+		hasPhysics = true;
 		setSpriteFromAge(sprite);
-		this.sprites = sprite;
+		sprites = sprite;
 	}
 
 	@Override
@@ -67,7 +67,7 @@ public class LargeFireParticle extends TextureSheetParticle{
 		}
 		age++;
 		swirlTick++;
-		this.setSpriteFromAge(this.sprites);
+		setSpriteFromAge(sprites);
 	}
 
 	@Override
@@ -100,7 +100,7 @@ public class LargeFireParticle extends TextureSheetParticle{
 
 		public FireFactory(SpriteSet sprite){
 
-			this.spriteSet = sprite;
+			spriteSet = sprite;
 		}
 
 		@Override

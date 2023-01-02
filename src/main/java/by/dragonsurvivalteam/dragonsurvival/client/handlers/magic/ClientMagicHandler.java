@@ -94,12 +94,12 @@ public class ClientMagicHandler{
 	}
 
 	public static void renderEffectParticle(LivingEntity entity, ParticleOptions data){
-		double d0 = (double)(entity.level.random.nextFloat()) * entity.getBbWidth();
-		double d1 = (double)(entity.level.random.nextFloat()) * entity.getBbHeight();
-		double d2 = (double)(entity.level.random.nextFloat()) * entity.getBbWidth();
-		double x = entity.getX() + d0 - (entity.getBbWidth() / 2);
+		double d0 = (double)entity.level.random.nextFloat() * entity.getBbWidth();
+		double d1 = (double)entity.level.random.nextFloat() * entity.getBbHeight();
+		double d2 = (double)entity.level.random.nextFloat() * entity.getBbWidth();
+		double x = entity.getX() + d0 - entity.getBbWidth() / 2;
 		double y = entity.getY() + d1;
-		double z = entity.getZ() + d2 - (entity.getBbWidth() / 2);
+		double z = entity.getZ() + d2 - entity.getBbWidth() / 2;
 		Minecraft.getInstance().player.level.addParticle(data, x, y, z, 0, 0, 0);
 	}
 

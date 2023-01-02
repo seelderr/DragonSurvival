@@ -28,11 +28,11 @@ public class FakeClientPlayerUtils{
 	public static DragonEntity getFakeDragon(int num, DragonStateHandler handler){
 		FakeClientPlayer clientPlayer = getFakePlayer(num, handler);
 
-		fakeDragons.computeIfAbsent(num, (n) -> new DragonEntity(DSEntities.DRAGON, clientPlayer.level){
+		fakeDragons.computeIfAbsent(num, n -> new DragonEntity(DSEntities.DRAGON, clientPlayer.level){
 			@Override
 			public void registerControllers(AnimationData animationData){
 				animationData.shouldPlayWhilePaused = true;
-				animationData.addAnimationController(new AnimationController<DragonEntity>(this, "fake_player_controller", 2, (event) -> {
+				animationData.addAnimationController(new AnimationController<DragonEntity>(this, "fake_player_controller", 2, event -> {
 
 					if(getPlayer() instanceof FakeClientPlayer){
 						AnimationBuilder builder = new AnimationBuilder();

@@ -352,16 +352,4 @@ public final class SortingHandler{
 	public static int damageCompare(ItemStack stack1, ItemStack stack2){
 		return stack1.getDamageValue() - stack2.getDamageValue();
 	}
-
-
-
-
-
-
-
-
-
-
-
-
 }

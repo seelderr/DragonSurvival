@@ -38,6 +38,7 @@ public class Bolas extends ThrowableItemProjectile{
 	}
 
 
+	@Override
 	protected Item getDefaultItem(){
 		return DSItems.huntingNet;
 	}
@@ -47,9 +48,10 @@ public class Bolas extends ThrowableItemProjectile{
 
 	}
 
+	@Override
 	protected void onHit(HitResult p_70227_1_){
 		super.onHit(p_70227_1_);
-		if(!this.level.isClientSide){
+		if(!level.isClientSide){
 			remove(RemovalReason.DISCARDED);
 		}
 	}
@@ -63,8 +65,7 @@ public class Bolas extends ThrowableItemProjectile{
 		super.onHit(entityHitResult);
 		Entity entity = entityHitResult.getEntity();
 		if(!entity.level.isClientSide){
-			if(entity instanceof LivingEntity){
-				LivingEntity living = (LivingEntity)entity;
+			if(entity instanceof LivingEntity living){
 				AttributeInstance attributeInstance = living.getAttribute(Attributes.MOVEMENT_SPEED);
 				AttributeModifier bolasTrap = new AttributeModifier(DISABLE_MOVEMENT, "Bolas trap", -attributeInstance.getValue(), AttributeModifier.Operation.ADDITION);
 				boolean addEffect = false;

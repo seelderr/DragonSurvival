@@ -42,6 +42,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeableArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
@@ -182,7 +183,7 @@ public class ClientDragonRender{
 				// This is some arbitrary scaling that was created back when the maximum size was hard capped at 40. Touching it will cause the render to desync from the hitbox.
 				float scale = (float)Math.max(size / 40.0D, 0.4D);
 				String playerModelType = player.getModelName();
-				EntityRenderer playerRenderer = ((AccessorEntityRendererManager)mc.getEntityRenderDispatcher()).getPlayerRenderers().get(playerModelType);
+				EntityRenderer<? extends Player> playerRenderer = ((AccessorEntityRendererManager)mc.getEntityRenderDispatcher()).getPlayerRenderers().get(playerModelType);
 				int eventLight = renderPlayerEvent.getPackedLight();
 				final MultiBufferSource renderTypeBuffer = renderPlayerEvent.getMultiBufferSource();
 				if(dragonNameTags){
@@ -204,9 +205,9 @@ public class ClientDragonRender{
 				if(player.isCrouching() && cap.isWingsSpread() && !player.isOnGround()){
 					matrixStack.translate(0, -0.15, 0);
 				}else if(player.isCrouching()){
-					matrixStack.translate(0, 0.325 - ((size / DragonLevel.ADULT.size) * 0.140), 0);
-				}else if(player.isSwimming() || player.isAutoSpinAttack() || (cap.isWingsSpread() && !player.isOnGround() && !player.isInWater() && !player.isInLava())){
-					matrixStack.translate(0, -0.15 - ((size / DragonLevel.ADULT.size) * 0.2), 0);
+					matrixStack.translate(0, 0.325 - size / DragonLevel.ADULT.size * 0.140, 0);
+				}else if(player.isSwimming() || player.isAutoSpinAttack() || cap.isWingsSpread() && !player.isOnGround() && !player.isInWater() && !player.isInLava()){
+					matrixStack.translate(0, -0.15 - size / DragonLevel.ADULT.size * 0.2, 0);
 				}
 				if(!player.isInvisible()){
 					if(ServerFlightHandler.isGliding(player)){
@@ -233,7 +234,7 @@ public class ClientDragonRender{
 							double d2 = (vector3d1.x * vector3d.x + vector3d1.z * vector3d.z) / Math.sqrt(d0 * d1);
 							double d3 = vector3d1.x * vector3d.z - vector3d1.z * vector3d.x;
 
-							float rot = Mth.clamp(((float)(Math.signum(d3) * Math.acos(d2))) * 2, -1, 1);
+							float rot = Mth.clamp((float)(Math.signum(d3) * Math.acos(d2)) * 2, -1, 1);
 
 							dummyDragon.prevZRot = Mth.lerp(0.1F, dummyDragon.prevZRot, rot);
 							dummyDragon.prevZRot = Mth.clamp(dummyDragon.prevZRot, -1, 1);
@@ -277,7 +278,7 @@ public class ClientDragonRender{
 						matrixStack.mulPose(Vector3f.XN.rotationDegrees(180.0F));
 						double height = 1.3 * scale;
 						double forward = 0.3 * scale;
-						float parrotHeadYaw = Mth.clamp(-1.0F * (((float)cap.getMovementData().bodyYaw) - (float)cap.getMovementData().headYaw), -75.0F, 75.0F);
+						float parrotHeadYaw = Mth.clamp(-1.0F * ((float)cap.getMovementData().bodyYaw - (float)cap.getMovementData().headYaw), -75.0F, 75.0F);
 						matrixStack.translate(0, -height, -forward);
 						renderLayer.render(matrixStack, renderTypeBuffer, eventLight, player, 0.0F, 0.0F, partialRenderTick, (float)player.tickCount + partialRenderTick, parrotHeadYaw, (float)cap.getMovementData().headPitch);
 						matrixStack.translate(0, height, forward);
@@ -358,7 +359,7 @@ public class ClientDragonRender{
 						double bodyYaw = playerStateHandler.getMovementData().bodyYaw;
 						float headRot = Functions.angleDifference((float)bodyYaw, Mth.wrapDegrees(player.yRot != 0.0 ? player.yRot : player.yHeadRot));
 
-						if(rotateBodyWithCamera && (!KeyInputHandler.FREE_LOOK.isDown() && !wasFreeLook)){
+						if(rotateBodyWithCamera && !KeyInputHandler.FREE_LOOK.isDown() && !wasFreeLook){
 							if(headRot > 150){
 								bodyYaw += 150 - headRot;
 							}else if(headRot < -150){

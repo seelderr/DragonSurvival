@@ -78,17 +78,17 @@ public class SkinsScreen extends Screen{
 
 	@Override
 	public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks){
-		if(this.minecraft == null){
+		if(minecraft == null){
 			return;
 		}
 
 		stack.pushPose();
 		stack.translate(0F, 0F, -500);
-		this.renderBackground(stack);
+		renderBackground(stack);
 		stack.popPose();
 
-		int startX = this.guiLeft;
-		int startY = this.guiTop;
+		int startX = guiLeft;
+		int startY = guiTop;
 
 		stack.pushPose();
 		final IBone neckandHead = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("Neck");
@@ -97,7 +97,7 @@ public class SkinsScreen extends Screen{
 			neckandHead.setHidden(false);
 		}
 
-		DragonEntity dragon = FakeClientPlayerUtils.getFakeDragon(0, this.handler);
+		DragonEntity dragon = FakeClientPlayerUtils.getFakeDragon(0, handler);
 		EntityRenderer<? super DragonEntity> dragonRenderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(dragon);
 
 		if(noSkin && Objects.equals(playerName, minecraft.player.getGameProfile().getName())){
@@ -112,19 +112,19 @@ public class SkinsScreen extends Screen{
 		stack.scale(scale, scale, scale);
 
 		if(!loading){
-			this.handler.setHasWings(true);
-			this.handler.setSize(level.size);
-			this.handler.setType(DragonUtils.getDragonType(minecraft.player));
+			handler.setHasWings(true);
+			handler.setSize(level.size);
+			handler.setType(DragonUtils.getDragonType(minecraft.player));
 
-			this.handler.getSkinData().skinPreset.initDefaults(this.handler);
+			handler.getSkinData().skinPreset.initDefaults(handler);
 
 			if(noSkin && Objects.equals(playerName, minecraft.player.getGameProfile().getName())){
-				this.handler.getSkinData().skinPreset.readNBT(DragonUtils.getHandler(minecraft.player).getSkinData().skinPreset.writeNBT());
+				handler.getSkinData().skinPreset.readNBT(DragonUtils.getHandler(minecraft.player).getSkinData().skinPreset.writeNBT());
 			}else{
-				this.handler.getSkinData().skinPreset.skinAges.get(level).defaultSkin = true;
+				handler.getSkinData().skinPreset.skinAges.get(level).defaultSkin = true;
 			}
 
-			FakeClientPlayerUtils.getFakePlayer(0, this.handler).animationSupplier = () -> "fly";
+			FakeClientPlayerUtils.getFakePlayer(0, handler).animationSupplier = () -> "fly";
 			stack.pushPose();
 			stack.translate(0, 0, 100);
 			ClientDragonRender.renderEntityInInventory(dragon, startX + 15, startY + 70, scale, xRot, yRot);
@@ -140,17 +140,17 @@ public class SkinsScreen extends Screen{
 		RenderSystem.setShaderTexture(0, BACKGROUND_TEXTURE);
 		blit(stack, startX + 128, startY, 0, 0, 164, 256);
 
-		drawNonShadowString(stack, minecraft.font, new TranslatableComponent("ds.gui.skins").withStyle(ChatFormatting.DARK_GRAY), startX + 128 + ((imageWidth) / 2), startY + 7, -1);
-		drawCenteredString(stack, minecraft.font, new TranslatableComponent("ds.gui.skins.toggle"), startX + 128 + ((imageWidth) / 2), startY + 30, -1);
+		drawNonShadowString(stack, minecraft.font, new TranslatableComponent("ds.gui.skins").withStyle(ChatFormatting.DARK_GRAY), startX + 128 + imageWidth / 2, startY + 7, -1);
+		drawCenteredString(stack, minecraft.font, new TranslatableComponent("ds.gui.skins.toggle"), startX + 128 + imageWidth / 2, startY + 30, -1);
 
 		drawNonShadowString(stack, minecraft.font, new TextComponent(playerName + " - " + level.getName()).withStyle(ChatFormatting.GRAY), startX + 15, startY - 15, -1);
 
 		if(!loading){
 			if(noSkin){
 				if(playerName == minecraft.player.getGameProfile().getName()){
-					drawNonShadowLineBreak(stack, minecraft.font, new TranslatableComponent("ds.gui.skins.noskin.yours").withStyle(ChatFormatting.DARK_GRAY), startX + 40, startY + this.imageHeight - 20, -1);
+					drawNonShadowLineBreak(stack, minecraft.font, new TranslatableComponent("ds.gui.skins.noskin.yours").withStyle(ChatFormatting.DARK_GRAY), startX + 40, startY + imageHeight - 20, -1);
 				}else{
-					drawNonShadowLineBreak(stack, minecraft.font, new TranslatableComponent("ds.gui.skins.noskin").withStyle(ChatFormatting.DARK_GRAY), startX + 65, startY + this.imageHeight - 20, -1);
+					drawNonShadowLineBreak(stack, minecraft.font, new TranslatableComponent("ds.gui.skins.noskin").withStyle(ChatFormatting.DARK_GRAY), startX + 65, startY + imageHeight - 20, -1);
 				}
 			}
 		}
@@ -185,11 +185,11 @@ public class SkinsScreen extends Screen{
 	public void init(){
 		super.init();
 
-		this.guiLeft = (this.width - 256) / 2;
-		this.guiTop = (this.height - 128) / 2;
+		guiLeft = (width - 256) / 2;
+		guiTop = (height - 128) / 2;
 
-		int startX = this.guiLeft;
-		int startY = this.guiTop;
+		int startX = guiLeft;
+		int startY = guiTop;
 
 		if(playerName == null){
 			playerName = minecraft.player.getGameProfile().getName();
@@ -202,7 +202,7 @@ public class SkinsScreen extends Screen{
 		addRenderableWidget(new TabButton(startX + 128 + 62, startY - 26, 2, this));
 		addRenderableWidget(new TabButton(startX + 128 + 91, startY - 28, 3, this));
 
-		addRenderableWidget(new Button(startX + 128, startY + 45, imageWidth, 20, new TranslatableComponent("ds.level.newborn"), (button) -> {
+		addRenderableWidget(new Button(startX + 128, startY + 45, imageWidth, 20, new TranslatableComponent("ds.level.newborn"), button -> {
 			DragonStateHandler handler = DragonUtils.getHandler(getMinecraft().player);
 
 			handler.getSkinData().renderNewborn = !handler.getSkinData().renderNewborn;
@@ -219,7 +219,7 @@ public class SkinsScreen extends Screen{
 			}
 		});
 
-		addRenderableWidget(new Button(startX + 128, startY + 45 + 23, imageWidth, 20, new TranslatableComponent("ds.level.young"), (button) -> {
+		addRenderableWidget(new Button(startX + 128, startY + 45 + 23, imageWidth, 20, new TranslatableComponent("ds.level.young"), button -> {
 			DragonStateHandler handler = DragonUtils.getHandler(getMinecraft().player);
 
 			handler.getSkinData().renderYoung = !handler.getSkinData().renderYoung;
@@ -236,7 +236,7 @@ public class SkinsScreen extends Screen{
 			}
 		});
 
-		addRenderableWidget(new Button(startX + 128, startY + 45 + 46, imageWidth, 20, new TranslatableComponent("ds.level.adult"), (button) -> {
+		addRenderableWidget(new Button(startX + 128, startY + 45 + 46, imageWidth, 20, new TranslatableComponent("ds.level.adult"), button -> {
 			DragonStateHandler handler = DragonUtils.getHandler(getMinecraft().player);
 
 			handler.getSkinData().renderAdult = !handler.getSkinData().renderAdult;
@@ -253,7 +253,7 @@ public class SkinsScreen extends Screen{
 			}
 		});
 
-		addRenderableWidget(new Button(startX + 128, startY + 128, imageWidth, 20, new TranslatableComponent("ds.gui.skins.other_skins"), (button) -> {
+		addRenderableWidget(new Button(startX + 128, startY + 128, imageWidth, 20, new TranslatableComponent("ds.gui.skins.other_skins"), button -> {
 			ConfigHandler.updateConfigValue("renderOtherPlayerSkins", !ClientDragonRender.renderOtherPlayerSkins);
 			//			executor.execute(() -> setTextures());
 			setTextures();
@@ -267,11 +267,11 @@ public class SkinsScreen extends Screen{
 			}
 		});
 
-		addRenderableWidget(new Button(startX + 128 + (imageWidth / 2) - 8, startY + 128 + 30, 16, 16, new TextComponent(""), (button) -> {
+		addRenderableWidget(new Button(startX + 128 + imageWidth / 2 - 8, startY + 128 + 30, 16, 16, new TextComponent(""), button -> {
 			try{
 				URI uri = new URI(DISCORD_URL);
-				this.clickedLink = uri;
-				this.minecraft.setScreen(new ConfirmLinkScreen(this::confirmLink, DISCORD_URL, false));
+				clickedLink = uri;
+				minecraft.setScreen(new ConfirmLinkScreen(this::confirmLink, DISCORD_URL, false));
 			}catch(URISyntaxException urisyntaxexception){
 				urisyntaxexception.printStackTrace();
 			}
@@ -288,11 +288,11 @@ public class SkinsScreen extends Screen{
 			}
 		});
 
-		addRenderableWidget(new Button(startX + 128 + (imageWidth / 2) - 8 + 25, startY + 128 + 30, 16, 16, new TextComponent(""), (button) -> {
+		addRenderableWidget(new Button(startX + 128 + imageWidth / 2 - 8 + 25, startY + 128 + 30, 16, 16, new TextComponent(""), button -> {
 			try{
 				URI uri = new URI(WIKI_URL);
-				this.clickedLink = uri;
-				this.minecraft.setScreen(new ConfirmLinkScreen(this::confirmLink, WIKI_URL, false));
+				clickedLink = uri;
+				minecraft.setScreen(new ConfirmLinkScreen(this::confirmLink, WIKI_URL, false));
 			}catch(URISyntaxException urisyntaxexception){
 				urisyntaxexception.printStackTrace();
 			}
@@ -309,9 +309,9 @@ public class SkinsScreen extends Screen{
 			}
 		});
 
-		addRenderableWidget(new HelpButton(startX + 128 + (imageWidth / 2) - 8 - 25, startY + 128 + 30, 16, 16, "ds.gui.skins.tooltip.help", 1));
+		addRenderableWidget(new HelpButton(startX + 128 + imageWidth / 2 - 8 - 25, startY + 128 + 30, 16, 16, "ds.gui.skins.tooltip.help", 1));
 
-		addRenderableWidget(new Button(startX - 60, startY + 128, 90, 20, new TranslatableComponent("ds.gui.skins.yours"), (button) -> {
+		addRenderableWidget(new Button(startX - 60, startY + 128, 90, 20, new TranslatableComponent("ds.gui.skins.yours"), button -> {
 			playerName = minecraft.player.getGameProfile().getName();
 			setTextures();
 		}){
@@ -321,7 +321,7 @@ public class SkinsScreen extends Screen{
 			}
 		});
 
-		addRenderableWidget(new Button(startX + 35, startY + 128, 60, 20, new TranslatableComponent("ds.gui.skins.random"), (button) -> {
+		addRenderableWidget(new Button(startX + 35, startY + 128, 60, 20, new TranslatableComponent("ds.gui.skins.random"), button -> {
 			ArrayList<Pair<DragonLevel, String>> skins = new ArrayList<>();
 			ArrayList<String> users = new ArrayList<>();
 			Random random = new Random();
@@ -336,7 +336,7 @@ public class SkinsScreen extends Screen{
 				}
 			}
 
-			skins.removeIf((c) -> seenSkins.contains(c.second));
+			skins.removeIf(c -> seenSkins.contains(c.second));
 			if(skins.size() > 0){
 				Pair<DragonLevel, String> skin = skins.get(random.nextInt(skins.size()));
 
@@ -361,7 +361,7 @@ public class SkinsScreen extends Screen{
 			}
 		});
 
-		addRenderableWidget(new Button(startX + 90, startY + 10, 11, 17, new TextComponent(""), (button) -> {
+		addRenderableWidget(new Button(startX + 90, startY + 10, 11, 17, new TextComponent(""), button -> {
 			int pos = Mth.clamp(level.ordinal() + 1, 0, DragonLevel.values().length - 1);
 			level = DragonLevel.values()[pos];
 
@@ -380,7 +380,7 @@ public class SkinsScreen extends Screen{
 			}
 		});
 
-		addRenderableWidget(new Button(startX - 70, startY + 10, 11, 17, new TextComponent(""), (button) -> {
+		addRenderableWidget(new Button(startX - 70, startY + 10, 11, 17, new TextComponent(""), button -> {
 			int pos = Mth.clamp(level.ordinal() - 1, 0, DragonLevel.values().length - 1);
 			level = DragonLevel.values()[pos];
 
@@ -407,7 +407,7 @@ public class SkinsScreen extends Screen{
 		ResourceLocation glowTexture = null;
 		boolean defaultSkin = false;
 
-		if((!DragonSkins.renderStage(minecraft.player, level) && playerName == minecraft.player.getGameProfile().getName()) || skinTexture == null){
+		if(!DragonSkins.renderStage(minecraft.player, level) && playerName == minecraft.player.getGameProfile().getName() || skinTexture == null){
 			skinTexture = null;
 			defaultSkin = true;
 		}
@@ -430,11 +430,11 @@ public class SkinsScreen extends Screen{
 
 	private void confirmLink(boolean p_231162_1_){
 		if(p_231162_1_){
-			this.openLink(this.clickedLink);
+			openLink(clickedLink);
 		}
 
-		this.clickedLink = null;
-		this.minecraft.setScreen(this);
+		clickedLink = null;
+		minecraft.setScreen(this);
 	}
 
 	private void openLink(URI p_231156_1_){

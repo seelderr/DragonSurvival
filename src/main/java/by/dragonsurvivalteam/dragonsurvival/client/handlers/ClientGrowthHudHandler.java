@@ -44,7 +44,7 @@ public class ClientGrowthHudHandler{
 
 		int increment = DragonGrowthHandler.getIncrement(stack.getItem(), handler.getLevel());
 
-		if(increment != 0 && (handler.getSize() < ServerConfig.maxGrowthSize && increment > 0 || increment < 0 && handler.getSize() >= (DragonLevel.NEWBORN.size + 1))){
+		if(increment != 0 && (handler.getSize() < ServerConfig.maxGrowthSize && increment > 0 || increment < 0 && handler.getSize() >= DragonLevel.NEWBORN.size + 1)){
 			float curSize = (float)handler.getSize();
 			float nextSize = (float)(handler.getSize() + increment);
 			float progress = 0;
@@ -69,7 +69,7 @@ public class ClientGrowthHudHandler{
 
 			int radius = 17;
 			int thickness = 5;
-			int circleX = (width / 2) - (radius);
+			int circleX = width / 2 - radius;
 			int circleY = height - 90;
 
 			circleX += growthXOffset;

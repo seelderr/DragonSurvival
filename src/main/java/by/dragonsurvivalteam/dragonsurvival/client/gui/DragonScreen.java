@@ -60,26 +60,26 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 		passEvents = true;
 		player = inv.player;
 
-		DragonStateProvider.getCap(player).ifPresent((cap) -> {
+		DragonStateProvider.getCap(player).ifPresent(cap -> {
 			clawsMenu = cap.getClawToolData().isClawsMenuOpen();
 		});
 
-		this.imageWidth = 203;
-		this.imageHeight = 166;
+		imageWidth = 203;
+		imageHeight = 166;
 	}
 	@Override
 	protected void init(){
 		super.init();
 
 		if(ClientEvents.mouseX != -1 && ClientEvents.mouseY != -1){
-			if(this.minecraft.getWindow() != null){
-				InputConstants.grabOrReleaseMouse(this.minecraft.getWindow().getWindow(), 212993, ClientEvents.mouseX, ClientEvents.mouseY);
+			if(minecraft.getWindow() != null){
+				InputConstants.grabOrReleaseMouse(minecraft.getWindow().getWindow(), 212993, ClientEvents.mouseX, ClientEvents.mouseY);
 				ClientEvents.mouseX = -1;
 				ClientEvents.mouseY = -1;
 			}
 		}
 
-		this.leftPos = (this.width - this.imageWidth) / 2;
+		leftPos = (width - imageWidth) / 2;
 
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 
@@ -94,7 +94,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 			init();
 
 			NetworkHandler.CHANNEL.sendToServer(new DragonClawsMenuToggle(clawsMenu));
-			DragonStateProvider.getCap(player).ifPresent((cap) -> cap.getClawToolData().setClawsMenuOpen(clawsMenu));
+			DragonStateProvider.getCap(player).ifPresent(cap -> cap.getClawToolData().setClawsMenuOpen(clawsMenu));
 		}, new TranslatableComponent("ds.gui.claws")){
 			@Override
 			public void renderButton(PoseStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_){
@@ -110,8 +110,8 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 		addRenderableWidget(new HelpButton(leftPos - 58, topPos - 40, 32, 32, null, 0){
 			@Override
 			public void renderButton(PoseStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_){
-				this.visible = clawsMenu;
-				this.active = clawsMenu;
+				visible = clawsMenu;
+				active = clawsMenu;
 			}
 
 			@Override
@@ -122,26 +122,26 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 				if(handler.getLevel() == DragonLevel.NEWBORN){
 					age += DragonLevel.YOUNG.size - handler.getLevel().size;
 					double missing = DragonLevel.YOUNG.size - handler.getSize();
-					double increment = ((DragonLevel.YOUNG.size - DragonLevel.NEWBORN.size) / ((DragonGrowthHandler.newbornToYoung * 20.0))) * ServerConfig.newbornGrowthModifier;
-					seconds = (missing / increment) / 20;
+					double increment = (DragonLevel.YOUNG.size - DragonLevel.NEWBORN.size) / (DragonGrowthHandler.newbornToYoung * 20.0) * ServerConfig.newbornGrowthModifier;
+					seconds = missing / increment / 20;
 				}else if(handler.getLevel() == DragonLevel.YOUNG){
 					age += DragonLevel.ADULT.size - handler.getLevel().size;
 
 					double missing = DragonLevel.ADULT.size - handler.getSize();
-					double increment = ((DragonLevel.ADULT.size - DragonLevel.YOUNG.size) / ((DragonGrowthHandler.youngToAdult * 20.0))) * ServerConfig.youngGrowthModifier;
-					seconds = (missing / increment) / 20;
+					double increment = (DragonLevel.ADULT.size - DragonLevel.YOUNG.size) / (DragonGrowthHandler.youngToAdult * 20.0) * ServerConfig.youngGrowthModifier;
+					seconds = missing / increment / 20;
 				}else if(handler.getLevel() == DragonLevel.ADULT && handler.getSize() < 40){
 					age += 40 - handler.getLevel().size;
 
 					double missing = 40 - handler.getSize();
-					double increment = ((40 - DragonLevel.ADULT.size) / ((DragonGrowthHandler.adultToMax * 20.0))) * ServerConfig.adultGrowthModifier;
-					seconds = (missing / increment) / 20;
+					double increment = (40 - DragonLevel.ADULT.size) / (DragonGrowthHandler.adultToMax * 20.0) * ServerConfig.adultGrowthModifier;
+					seconds = missing / increment / 20;
 				}else if(handler.getLevel() == DragonLevel.ADULT && handler.getSize() >= 40){
 					age += (int)(ServerConfig.maxGrowthSize - handler.getLevel().size);
 
 					double missing = ServerConfig.maxGrowthSize - handler.getSize();
-					double increment = ((ServerConfig.maxGrowthSize - 40) / ((DragonGrowthHandler.beyond * 20.0))) * ServerConfig.maxGrowthModifier;
-					seconds = (missing / increment) / 20;
+					double increment = (ServerConfig.maxGrowthSize - 40) / (DragonGrowthHandler.beyond * 20.0) * ServerConfig.maxGrowthModifier;
+					seconds = missing / increment / 20;
 				}
 
 				if(seconds != 0){
@@ -149,7 +149,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 					seconds -= minutes * 60;
 
 					int hours = minutes / 60;
-					minutes -= (hours * 60);
+					minutes -= hours * 60;
 
 					String hourString = hours > 0 ? hours >= 10 ? Integer.toString(hours) : "0" + hours : "00";
 					String minuteString = minutes > 0 ? minutes >= 10 ? Integer.toString(minutes) : "0" + minutes : "00";
@@ -185,15 +185,15 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 
 			@Override
 			public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
-				this.isHovered = p_230430_2_ >= this.x && p_230430_3_ >= this.y && p_230430_2_ < this.x + this.width && p_230430_3_ < this.y + this.height;
+				isHovered = p_230430_2_ >= x && p_230430_3_ >= y && p_230430_2_ < x + width && p_230430_3_ < y + height;
 			}
 		});
 
 		addRenderableWidget(new HelpButton(leftPos - 80 + 34, topPos + 112, 9, 9, "ds.skill.help.claws", 0){
 			@Override
 			public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
-				this.visible = clawsMenu;
-				this.active = clawsMenu;
+				visible = clawsMenu;
+				active = clawsMenu;
 				super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
 			}
 		});
@@ -207,30 +207,30 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 		}, new TranslatableComponent("ds.gui.claws.rendering")){
 			@Override
 			public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
-				this.active = clawsMenu;
+				active = clawsMenu;
 				DragonStateHandler handler = DragonUtils.getHandler(player);
 
 				if(handler.getClawToolData().renderClaws && clawsMenu){
 					RenderSystem.setShaderTexture(0, DRAGON_CLAW_CHECKMARK);
 					blit(p_230430_1_, x, y, 0, 0, 9, 9, 9, 9);
 				}
-				this.isHovered = p_230430_2_ >= this.x && p_230430_3_ >= this.y && p_230430_2_ < this.x + this.width && p_230430_3_ < this.y + this.height;
+				isHovered = p_230430_2_ >= x && p_230430_3_ >= y && p_230430_2_ < x + width && p_230430_3_ < y + height;
 			}
 		});
 
 		//DSButton
 		if(ClientEvents.inventoryToggle){
-			addRenderableWidget(new DSImageButton(this.leftPos + (imageWidth - 28), (this.height / 2 - 30) + 50, 20, 18, 0, 0, 19, INVENTORY_TOGGLE_BUTTON, p_onPress_1_ -> {
-				Minecraft.getInstance().setScreen(new InventoryScreen(this.player));
+			addRenderableWidget(new DSImageButton(leftPos + imageWidth - 28, height / 2 - 30 + 50, 20, 18, 0, 0, 19, INVENTORY_TOGGLE_BUTTON, p_onPress_1_ -> {
+				Minecraft.getInstance().setScreen(new InventoryScreen(player));
 				NetworkHandler.CHANNEL.sendToServer(new OpenInventory());
 			}, new TranslatableComponent("ds.gui.toggle_inventory.vanilla")));
 		}
 
-		addRenderableWidget(new DSImageButton(this.leftPos + (imageWidth - 28), (this.height / 2), 20, 18, 0, 0, 18, SORTING_BUTTON, p_onPress_1_ -> {
+		addRenderableWidget(new DSImageButton(leftPos + imageWidth - 28, height / 2, 20, 18, 0, 0, 18, SORTING_BUTTON, p_onPress_1_ -> {
 			NetworkHandler.CHANNEL.sendToServer(new SortInventoryPacket());
 		}, new TranslatableComponent("ds.gui.sort")));
 
-		addRenderableWidget(new DSImageButton(this.leftPos + (imageWidth - 27), (this.height / 2) + 40, 18, 18, 0, 0, 18, SETTINGS_BUTTON, p_onPress_1_ -> {
+		addRenderableWidget(new DSImageButton(leftPos + imageWidth - 27, height / 2 + 40, 18, 18, 0, 0, 18, SETTINGS_BUTTON, p_onPress_1_ -> {
 			Minecraft.getInstance().setScreen(new ConfigSideSelectionScreen(this, Minecraft.getInstance().options, new TranslatableComponent("ds.gui.tab_button.4")));
 		}, new TranslatableComponent("ds.gui.tab_button.4")));
 	}
@@ -240,18 +240,18 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 
 	@Override
 	protected void renderBg(PoseStack stack, float partialTicks, int mouseX, int mouseY){
-		this.renderBackground(stack);
+		renderBackground(stack);
 
 
 		RenderSystem.setShaderTexture(0, BACKGROUND);
 		RenderSystem.enableBlend();
-		this.blit(stack, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+		blit(stack, leftPos, topPos, 0, 0, imageWidth, imageHeight);
 		RenderSystem.disableBlend();
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 
 		if(clawsMenu){
 			RenderSystem.setShaderTexture(0, CLAWS_TEXTURE);
-			this.blit(stack, leftPos - 80, topPos, 0, 0, 77, 170);
+			blit(stack, leftPos - 80, topPos, 0, 0, 77, 170);
 		}
 
 		if(clawsMenu){
@@ -304,35 +304,38 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 
 
 
+	@Override
 	public boolean mouseReleased(double p_mouseReleased_1_, double p_mouseReleased_3_, int p_mouseReleased_5_){
-		if(this.buttonClicked){
-			this.buttonClicked = false;
+		if(buttonClicked){
+			buttonClicked = false;
 			return true;
 		}else{
 			return super.mouseReleased(p_mouseReleased_1_, p_mouseReleased_3_, p_mouseReleased_5_);
 		}
 	}
 
+	@Override
 	public boolean keyPressed(int p_231046_1_, int p_231046_2_, int p_231046_3_){
 		InputConstants.Key mouseKey = InputConstants.getKey(p_231046_1_, p_231046_2_);
 
 		if(KeyInputHandler.DRAGON_INVENTORY.isActiveAndMatches(mouseKey)){
-			this.onClose();
+			onClose();
 			return true;
 		}
 
 		return super.keyPressed(p_231046_1_, p_231046_2_, p_231046_3_);
 	}
 
+	@Override
 	public void render(PoseStack pPoseStack, int pMouseX, int pMouseY, float pPartialTick) {
 		super.render(pPoseStack, pMouseX, pMouseY, pPartialTick);
-		this.renderTooltip(pPoseStack, pMouseX, pMouseY);
+		renderTooltip(pPoseStack, pMouseX, pMouseY);
 
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 
 		pPoseStack.pushPose();
 
-		RenderSystem.enableScissor((int)((leftPos + 26) * Minecraft.getInstance().getWindow().getGuiScale()), (int)((height * Minecraft.getInstance().getWindow().getGuiScale()) - (topPos + 79) * Minecraft.getInstance().getWindow().getGuiScale()), (int)(76 * Minecraft.getInstance().getWindow().getGuiScale()), (int)(70 * Minecraft.getInstance().getWindow().getGuiScale()));
+		RenderSystem.enableScissor((int)((leftPos + 26) * Minecraft.getInstance().getWindow().getGuiScale()), (int)(height * Minecraft.getInstance().getWindow().getGuiScale() - (topPos + 79) * Minecraft.getInstance().getWindow().getGuiScale()), (int)(76 * Minecraft.getInstance().getWindow().getGuiScale()), (int)(70 * Minecraft.getInstance().getWindow().getGuiScale()));
 		int sizeOffset = (int)(handler.getSize() - handler.getLevel().size) / 2;
 		float sizef = Math.min(30 - sizeOffset, 30);
 		pPoseStack.translate(0f, sizef / 10f, 0);

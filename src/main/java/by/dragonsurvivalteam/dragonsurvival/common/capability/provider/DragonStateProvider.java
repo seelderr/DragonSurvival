@@ -56,11 +56,11 @@ public class DragonStateProvider implements ICapabilitySerializable<CompoundTag>
 
 	@Override
 	public CompoundTag serializeNBT(){
-		return this.instance.orElseThrow(() -> new IllegalArgumentException("LazyOptional must not be empty!")).writeNBT();
+		return instance.orElseThrow(() -> new IllegalArgumentException("LazyOptional must not be empty!")).writeNBT();
 	}
 
 	@Override
 	public void deserializeNBT(CompoundTag nbt){
-		this.instance.orElseThrow(() -> new IllegalArgumentException("LazyOptional must not be empty!")).readNBT(nbt);
+		instance.orElseThrow(() -> new IllegalArgumentException("LazyOptional must not be empty!")).readNBT(nbt);
 	}
 }

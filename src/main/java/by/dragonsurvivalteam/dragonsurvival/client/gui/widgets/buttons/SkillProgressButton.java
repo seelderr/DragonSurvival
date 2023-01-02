@@ -44,12 +44,12 @@ public class SkillProgressButton extends Button{
 
 			if(ability1 != null && ability1.getIcon() != null){
 				texture = ability1.getIcon();
-				this.ability = ability1;
+				ability = ability1;
 			}
 		}
 
 		if(texture == AbilityButton.BLANK_TEXTURE)
-			this.ability = null;
+			ability = null;
 
 
 		RenderSystem.setShaderTexture(0, AbilityButton.BLANK_2_TEXTURE);

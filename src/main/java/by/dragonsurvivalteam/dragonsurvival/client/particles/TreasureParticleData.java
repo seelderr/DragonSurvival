@@ -15,18 +15,19 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import java.util.Locale;
 
 public class TreasureParticleData implements ParticleOptions{
-	public static final Codec<TreasureParticleData> CODEC = RecordCodecBuilder.create((p_239803_0_) -> {
-		return p_239803_0_.group(Codec.FLOAT.fieldOf("r").forGetter((p_239807_0_) -> {
+	public static final Codec<TreasureParticleData> CODEC = RecordCodecBuilder.create(p_239803_0_ -> {
+		return p_239803_0_.group(Codec.FLOAT.fieldOf("r").forGetter(p_239807_0_ -> {
 			return p_239807_0_.r;
-		}), Codec.FLOAT.fieldOf("g").forGetter((p_239806_0_) -> {
+		}), Codec.FLOAT.fieldOf("g").forGetter(p_239806_0_ -> {
 			return p_239806_0_.g;
-		}), Codec.FLOAT.fieldOf("b").forGetter((p_239805_0_) -> {
+		}), Codec.FLOAT.fieldOf("b").forGetter(p_239805_0_ -> {
 			return p_239805_0_.b;
-		}), Codec.FLOAT.fieldOf("scale").forGetter((p_239804_0_) -> {
+		}), Codec.FLOAT.fieldOf("scale").forGetter(p_239804_0_ -> {
 			return p_239804_0_.scale;
 		})).apply(p_239803_0_, TreasureParticleData::new);
 	});
 	public static final ParticleOptions.Deserializer<TreasureParticleData> DESERIALIZER = new ParticleOptions.Deserializer<TreasureParticleData>(){
+		@Override
 		public TreasureParticleData fromCommand(ParticleType<TreasureParticleData> p_197544_1_, StringReader p_197544_2_) throws CommandSyntaxException{
 			p_197544_2_.expect(' ');
 			float f = (float)p_197544_2_.readDouble();
@@ -39,6 +40,7 @@ public class TreasureParticleData implements ParticleOptions{
 			return new TreasureParticleData(f, f1, f2, f3);
 		}
 
+		@Override
 		public TreasureParticleData fromNetwork(ParticleType<TreasureParticleData> p_197543_1_, FriendlyByteBuf p_197543_2_){
 			return new TreasureParticleData(p_197543_2_.readFloat(), p_197543_2_.readFloat(), p_197543_2_.readFloat(), p_197543_2_.readFloat());
 		}
@@ -49,44 +51,47 @@ public class TreasureParticleData implements ParticleOptions{
 	private final float scale;
 
 	public TreasureParticleData(float p_i47950_1_, float p_i47950_2_, float p_i47950_3_, float p_i47950_4_){
-		this.r = p_i47950_1_;
-		this.g = p_i47950_2_;
-		this.b = p_i47950_3_;
-		this.scale = Mth.clamp(p_i47950_4_, 0.01F, 4.0F);
+		r = p_i47950_1_;
+		g = p_i47950_2_;
+		b = p_i47950_3_;
+		scale = Mth.clamp(p_i47950_4_, 0.01F, 4.0F);
 	}
 
 	@OnlyIn( Dist.CLIENT )
 	public float getR(){
-		return this.r;
+		return r;
 	}
 
 	@OnlyIn( Dist.CLIENT )
 	public float getG(){
-		return this.g;
+		return g;
 	}
 
 	@OnlyIn( Dist.CLIENT )
 	public float getB(){
-		return this.b;
+		return b;
 	}
 
 	@OnlyIn( Dist.CLIENT )
 	public float getScale(){
-		return this.scale;
-	}	public void writeToNetwork(FriendlyByteBuf p_197553_1_){
-		p_197553_1_.writeFloat(this.r);
-		p_197553_1_.writeFloat(this.g);
-		p_197553_1_.writeFloat(this.b);
-		p_197553_1_.writeFloat(this.scale);
+		return scale;
+	}	@Override
+	public void writeToNetwork(FriendlyByteBuf p_197553_1_){
+		p_197553_1_.writeFloat(r);
+		p_197553_1_.writeFloat(g);
+		p_197553_1_.writeFloat(b);
+		p_197553_1_.writeFloat(scale);
 	}
 
 
 
 
+	@Override
 	public String writeToString(){
-		return String.format(Locale.ROOT, "%s %.2f %.2f %.2f %.2f", Registry.PARTICLE_TYPE.getKey(this.getType()), this.r, this.g, this.b, this.scale);
+		return String.format(Locale.ROOT, "%s %.2f %.2f %.2f %.2f", Registry.PARTICLE_TYPE.getKey(getType()), r, g, b, scale);
 	}
 
+	@Override
 	public ParticleType<TreasureParticleData> getType(){
 		return DSParticles.TREASURE.get();
 	}

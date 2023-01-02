@@ -33,7 +33,7 @@ public class SyncListConfig implements IMessage<SyncListConfig>{
 
 	public void encode(SyncListConfig message, FriendlyByteBuf buffer){
 		buffer.writeInt(message.value.size());
-		message.value.forEach((val) -> buffer.writeUtf(val));
+		message.value.forEach(buffer::writeUtf);
 		buffer.writeUtf(message.key);
 	}
 

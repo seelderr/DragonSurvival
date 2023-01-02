@@ -16,6 +16,7 @@ import java.util.Locale;
 
 public class SmallPoisonParticleData implements ParticleOptions{
 	public static final Deserializer<SmallPoisonParticleData> DESERIALIZER = new Deserializer<SmallPoisonParticleData>(){
+		@Override
 		public SmallPoisonParticleData fromCommand(ParticleType<SmallPoisonParticleData> particleTypeIn, StringReader reader) throws CommandSyntaxException{
 			reader.expect(' ');
 			float duration = (float)reader.readDouble();
@@ -24,6 +25,7 @@ public class SmallPoisonParticleData implements ParticleOptions{
 			return new SmallPoisonParticleData(duration, swirls);
 		}
 
+		@Override
 		public SmallPoisonParticleData fromNetwork(ParticleType<SmallPoisonParticleData> particleTypeIn, FriendlyByteBuf buffer){
 			return new SmallPoisonParticleData(buffer.readFloat(), buffer.readBoolean());
 		}
@@ -33,26 +35,26 @@ public class SmallPoisonParticleData implements ParticleOptions{
 	private final boolean swirls;
 
 	public static Codec<SmallPoisonParticleData> CODEC(ParticleType<SmallPoisonParticleData> particleType){
-		return RecordCodecBuilder.create((codecBuilder) -> codecBuilder.group(Codec.FLOAT.fieldOf("duration").forGetter(SmallPoisonParticleData::getDuration), Codec.BOOL.fieldOf("swirls").forGetter(SmallPoisonParticleData::getSwirls)).apply(codecBuilder, SmallPoisonParticleData::new));
+		return RecordCodecBuilder.create(codecBuilder -> codecBuilder.group(Codec.FLOAT.fieldOf("duration").forGetter(SmallPoisonParticleData::getDuration), Codec.BOOL.fieldOf("swirls").forGetter(SmallPoisonParticleData::getSwirls)).apply(codecBuilder, SmallPoisonParticleData::new));
 	}
 
 	public SmallPoisonParticleData(float duration, boolean spins){
 		this.duration = duration;
-		this.swirls = spins;
+		swirls = spins;
 	}
 
 	@OnlyIn( Dist.CLIENT )
 	public float getDuration(){
-		return this.duration;
+		return duration;
 	}
 
 	@OnlyIn( Dist.CLIENT )
 	public boolean getSwirls(){
-		return this.swirls;
+		return swirls;
 	}	@Override
 	public void writeToNetwork(FriendlyByteBuf buffer){
-		buffer.writeFloat(this.duration);
-		buffer.writeBoolean(this.swirls);
+		buffer.writeFloat(duration);
+		buffer.writeBoolean(swirls);
 	}
 
 
@@ -60,7 +62,7 @@ public class SmallPoisonParticleData implements ParticleOptions{
 	@SuppressWarnings( "deprecation" )
 	@Override
 	public String writeToString(){
-		return String.format(Locale.ROOT, "%s %.2f %b", Registry.PARTICLE_TYPE.getKey(this.getType()), this.duration, this.swirls);
+		return String.format(Locale.ROOT, "%s %.2f %b", Registry.PARTICLE_TYPE.getKey(getType()), duration, swirls);
 	}
 
 

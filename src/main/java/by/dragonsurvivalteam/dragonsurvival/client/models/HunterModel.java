@@ -27,15 +27,15 @@ public class HunterModel<T extends Hunter> extends HierarchicalModel<T> implemen
 	private final ModelPart leftArm;
 
 	public HunterModel(ModelPart pRoot){
-		this.root = pRoot;
-		this.head = pRoot.getChild("head");
-		this.hat = this.head.getChild("hat");
-		this.hat.visible = false;
-		this.arms = pRoot.getChild("arms");
-		this.leftLeg = pRoot.getChild("left_leg");
-		this.rightLeg = pRoot.getChild("right_leg");
-		this.leftArm = pRoot.getChild("left_arm");
-		this.rightArm = pRoot.getChild("right_arm");
+		root = pRoot;
+		head = pRoot.getChild("head");
+		hat = head.getChild("hat");
+		hat.visible = false;
+		arms = pRoot.getChild("arms");
+		leftLeg = pRoot.getChild("left_leg");
+		rightLeg = pRoot.getChild("right_leg");
+		leftArm = pRoot.getChild("left_arm");
+		rightArm = pRoot.getChild("right_arm");
 	}
 
 	public static LayerDefinition createBodyLayer(){
@@ -54,104 +54,108 @@ public class HunterModel<T extends Hunter> extends HierarchicalModel<T> implemen
 		return LayerDefinition.create(meshdefinition, 64, 64);
 	}
 
+	@Override
 	public ModelPart root(){
-		return this.root;
+		return root;
 	}
 
 	/**
 	 * Sets this entity's model rotation angles
 	 */
+	@Override
 	public void setupAnim(T pEntity, float pLimbSwing, float pLimbSwingAmount, float pAgeInTicks, float pNetHeadYaw, float pHeadPitch){
-		this.head.yRot = pNetHeadYaw * ((float)Math.PI / 180F);
-		this.head.xRot = pHeadPitch * ((float)Math.PI / 180F);
-		if(this.riding){
-			this.rightArm.xRot = (-(float)Math.PI / 5F);
-			this.rightArm.yRot = 0.0F;
-			this.rightArm.zRot = 0.0F;
-			this.leftArm.xRot = (-(float)Math.PI / 5F);
-			this.leftArm.yRot = 0.0F;
-			this.leftArm.zRot = 0.0F;
-			this.rightLeg.xRot = -1.4137167F;
-			this.rightLeg.yRot = ((float)Math.PI / 10F);
-			this.rightLeg.zRot = 0.07853982F;
-			this.leftLeg.xRot = -1.4137167F;
-			this.leftLeg.yRot = (-(float)Math.PI / 10F);
-			this.leftLeg.zRot = -0.07853982F;
+		head.yRot = pNetHeadYaw * ((float)Math.PI / 180F);
+		head.xRot = pHeadPitch * ((float)Math.PI / 180F);
+		if(riding){
+			rightArm.xRot = -(float)Math.PI / 5F;
+			rightArm.yRot = 0.0F;
+			rightArm.zRot = 0.0F;
+			leftArm.xRot = -(float)Math.PI / 5F;
+			leftArm.yRot = 0.0F;
+			leftArm.zRot = 0.0F;
+			rightLeg.xRot = -1.4137167F;
+			rightLeg.yRot = (float)Math.PI / 10F;
+			rightLeg.zRot = 0.07853982F;
+			leftLeg.xRot = -1.4137167F;
+			leftLeg.yRot = -(float)Math.PI / 10F;
+			leftLeg.zRot = -0.07853982F;
 		}else{
-			this.rightArm.xRot = Mth.cos(pLimbSwing * 0.6662F + (float)Math.PI) * 2.0F * pLimbSwingAmount * 0.5F;
-			this.rightArm.yRot = 0.0F;
-			this.rightArm.zRot = 0.0F;
-			this.leftArm.xRot = Mth.cos(pLimbSwing * 0.6662F) * 2.0F * pLimbSwingAmount * 0.5F;
-			this.leftArm.yRot = 0.0F;
-			this.leftArm.zRot = 0.0F;
-			this.rightLeg.xRot = Mth.cos(pLimbSwing * 0.6662F) * 1.4F * pLimbSwingAmount * 0.5F;
-			this.rightLeg.yRot = 0.0F;
-			this.rightLeg.zRot = 0.0F;
-			this.leftLeg.xRot = Mth.cos(pLimbSwing * 0.6662F + (float)Math.PI) * 1.4F * pLimbSwingAmount * 0.5F;
-			this.leftLeg.yRot = 0.0F;
-			this.leftLeg.zRot = 0.0F;
+			rightArm.xRot = Mth.cos(pLimbSwing * 0.6662F + (float)Math.PI) * 2.0F * pLimbSwingAmount * 0.5F;
+			rightArm.yRot = 0.0F;
+			rightArm.zRot = 0.0F;
+			leftArm.xRot = Mth.cos(pLimbSwing * 0.6662F) * 2.0F * pLimbSwingAmount * 0.5F;
+			leftArm.yRot = 0.0F;
+			leftArm.zRot = 0.0F;
+			rightLeg.xRot = Mth.cos(pLimbSwing * 0.6662F) * 1.4F * pLimbSwingAmount * 0.5F;
+			rightLeg.yRot = 0.0F;
+			rightLeg.zRot = 0.0F;
+			leftLeg.xRot = Mth.cos(pLimbSwing * 0.6662F + (float)Math.PI) * 1.4F * pLimbSwingAmount * 0.5F;
+			leftLeg.yRot = 0.0F;
+			leftLeg.zRot = 0.0F;
 		}
 
 		AbstractIllager.IllagerArmPose abstractillager$illagerarmpose = pEntity.getArmPose();
 		if(abstractillager$illagerarmpose == AbstractIllager.IllagerArmPose.ATTACKING){
 			if(pEntity.getMainHandItem().isEmpty()){
-				AnimationUtils.animateZombieArms(this.leftArm, this.rightArm, true, this.attackTime, pAgeInTicks);
+				AnimationUtils.animateZombieArms(leftArm, rightArm, true, attackTime, pAgeInTicks);
 			}else{
-				AnimationUtils.swingWeaponDown(this.rightArm, this.leftArm, pEntity, this.attackTime, pAgeInTicks);
+				AnimationUtils.swingWeaponDown(rightArm, leftArm, pEntity, attackTime, pAgeInTicks);
 			}
 		}else if(abstractillager$illagerarmpose == AbstractIllager.IllagerArmPose.SPELLCASTING){
-			this.rightArm.z = 0.0F;
-			this.rightArm.x = -5.0F;
-			this.leftArm.z = 0.0F;
-			this.leftArm.x = 5.0F;
-			this.rightArm.xRot = Mth.cos(pAgeInTicks * 0.6662F) * 0.25F;
-			this.leftArm.xRot = Mth.cos(pAgeInTicks * 0.6662F) * 0.25F;
-			this.rightArm.zRot = 2.3561945F;
-			this.leftArm.zRot = -2.3561945F;
-			this.rightArm.yRot = 0.0F;
-			this.leftArm.yRot = 0.0F;
+			rightArm.z = 0.0F;
+			rightArm.x = -5.0F;
+			leftArm.z = 0.0F;
+			leftArm.x = 5.0F;
+			rightArm.xRot = Mth.cos(pAgeInTicks * 0.6662F) * 0.25F;
+			leftArm.xRot = Mth.cos(pAgeInTicks * 0.6662F) * 0.25F;
+			rightArm.zRot = 2.3561945F;
+			leftArm.zRot = -2.3561945F;
+			rightArm.yRot = 0.0F;
+			leftArm.yRot = 0.0F;
 		}else if(abstractillager$illagerarmpose == AbstractIllager.IllagerArmPose.BOW_AND_ARROW){
-			this.rightArm.yRot = -0.1F + this.head.yRot;
-			this.rightArm.xRot = (-(float)Math.PI / 2F) + this.head.xRot;
-			this.leftArm.xRot = -0.9424779F + this.head.xRot;
-			this.leftArm.yRot = this.head.yRot - 0.4F;
-			this.leftArm.zRot = ((float)Math.PI / 2F);
+			rightArm.yRot = -0.1F + head.yRot;
+			rightArm.xRot = -(float)Math.PI / 2F + head.xRot;
+			leftArm.xRot = -0.9424779F + head.xRot;
+			leftArm.yRot = head.yRot - 0.4F;
+			leftArm.zRot = (float)Math.PI / 2F;
 		}else if(abstractillager$illagerarmpose == AbstractIllager.IllagerArmPose.CROSSBOW_HOLD){
-			AnimationUtils.animateCrossbowHold(this.rightArm, this.leftArm, this.head, true);
+			AnimationUtils.animateCrossbowHold(rightArm, leftArm, head, true);
 		}else if(abstractillager$illagerarmpose == AbstractIllager.IllagerArmPose.CROSSBOW_CHARGE){
-			AnimationUtils.animateCrossbowCharge(this.rightArm, this.leftArm, pEntity, true);
+			AnimationUtils.animateCrossbowCharge(rightArm, leftArm, pEntity, true);
 		}else if(abstractillager$illagerarmpose == AbstractIllager.IllagerArmPose.CELEBRATING){
-			this.rightArm.z = 0.0F;
-			this.rightArm.x = -5.0F;
-			this.rightArm.xRot = Mth.cos(pAgeInTicks * 0.6662F) * 0.05F;
-			this.rightArm.zRot = 2.670354F;
-			this.rightArm.yRot = 0.0F;
-			this.leftArm.z = 0.0F;
-			this.leftArm.x = 5.0F;
-			this.leftArm.xRot = Mth.cos(pAgeInTicks * 0.6662F) * 0.05F;
-			this.leftArm.zRot = -2.3561945F;
-			this.leftArm.yRot = 0.0F;
+			rightArm.z = 0.0F;
+			rightArm.x = -5.0F;
+			rightArm.xRot = Mth.cos(pAgeInTicks * 0.6662F) * 0.05F;
+			rightArm.zRot = 2.670354F;
+			rightArm.yRot = 0.0F;
+			leftArm.z = 0.0F;
+			leftArm.x = 5.0F;
+			leftArm.xRot = Mth.cos(pAgeInTicks * 0.6662F) * 0.05F;
+			leftArm.zRot = -2.3561945F;
+			leftArm.yRot = 0.0F;
 		}
 
 		boolean flag = abstractillager$illagerarmpose == AbstractIllager.IllagerArmPose.CROSSED;
-		this.arms.visible = flag;
-		this.leftArm.visible = !flag;
-		this.rightArm.visible = !flag;
+		arms.visible = flag;
+		leftArm.visible = !flag;
+		rightArm.visible = !flag;
 	}
 
 	public ModelPart getHat(){
-		return this.hat;
+		return hat;
 	}
 
+	@Override
 	public ModelPart getHead(){
-		return this.head;
+		return head;
 	}
 
+	@Override
 	public void translateToHand(HumanoidArm pSide, PoseStack pPoseStack){
-		this.getArm(pSide).translateAndRotate(pPoseStack);
+		getArm(pSide).translateAndRotate(pPoseStack);
 	}
 
 	private ModelPart getArm(HumanoidArm pArm){
-		return pArm == HumanoidArm.LEFT ? this.leftArm : this.rightArm;
+		return pArm == HumanoidArm.LEFT ? leftArm : rightArm;
 	}
 }

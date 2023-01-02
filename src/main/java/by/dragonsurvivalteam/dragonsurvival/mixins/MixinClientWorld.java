@@ -47,7 +47,7 @@ public abstract class MixinClientWorld extends Level{
 					pos1 = ((SourceOfMagicPlaceholder)blockEntity).rootPos;
 				}
 
-				this.levelRenderer.destroyBlockProgress(playerId, pos1, progress);
+				levelRenderer.destroyBlockProgress(playerId, pos1, progress);
 				ci.cancel();
 			}
 		}

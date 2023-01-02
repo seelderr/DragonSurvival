@@ -136,13 +136,13 @@ public class EventHandler{
 			return;
 		}
 
-		boolean canDropDragonHeart = ServerConfig.dragonHeartEntityList.contains(entity.getType().toString()) == ServerConfig.dragonHeartWhiteList;
-		boolean canDropWeakDragonHeart = ServerConfig.weakDragonHeartEntityList.contains(entity.getType().toString()) == ServerConfig.weakDragonHeartWhiteList;
-		boolean canDropElderDragonHeart = ServerConfig.elderDragonHeartEntityList.contains(entity.getType().toString()) == ServerConfig.elderDragonHeartWhiteList;
+		boolean canDropDragonHeart = ServerConfig.dragonHeartEntityList.contains(entity.getType().getRegistryName().toString()) == ServerConfig.dragonHeartWhiteList;
+		boolean canDropWeakDragonHeart = ServerConfig.weakDragonHeartEntityList.contains(entity.getType().getRegistryName().toString()) == ServerConfig.weakDragonHeartWhiteList;
+		boolean canDropElderDragonHeart = ServerConfig.elderDragonHeartEntityList.contains(entity.getType().getRegistryName().toString()) == ServerConfig.elderDragonHeartWhiteList;
 
 		if(canDropDragonHeart){
 			if(ServerConfig.dragonHeartUseList || health >= 14 && health < 20){
-				if(entity.level.random.nextInt(100) <= (ServerConfig.dragonHeartShardChance * 100) + (event.getLootingLevel() * ((ServerConfig.dragonHeartShardChance * 100) / 4))){
+				if(entity.level.random.nextInt(100) <= ServerConfig.dragonHeartShardChance * 100 + event.getLootingLevel() * (ServerConfig.dragonHeartShardChance * 100 / 4)){
 					event.getDrops().add(new ItemEntity(entity.level, entity.position().x, entity.position().y, entity.position().z, new ItemStack(DSItems.dragonHeartShard)));
 				}
 			}
@@ -150,7 +150,7 @@ public class EventHandler{
 
 		if(canDropWeakDragonHeart){
 			if(ServerConfig.weakDragonHeartUseList || health >= 20 && health < 50){
-				if(entity.level.random.nextInt(100) <= (ServerConfig.weakDragonHeartChance * 100) + (event.getLootingLevel() * ((ServerConfig.weakDragonHeartChance * 100) / 4))){
+				if(entity.level.random.nextInt(100) <= ServerConfig.weakDragonHeartChance * 100 + event.getLootingLevel() * (ServerConfig.weakDragonHeartChance * 100 / 4)){
 					event.getDrops().add(new ItemEntity(entity.level, entity.position().x, entity.position().y, entity.position().z, new ItemStack(DSItems.weakDragonHeart)));
 				}
 			}
@@ -158,7 +158,7 @@ public class EventHandler{
 
 		if(canDropElderDragonHeart){
 			if(ServerConfig.elderDragonHeartUseList || health >= 50){
-				if(entity.level.random.nextInt(100) <= (ServerConfig.elderDragonHeartChance * 100) + (event.getLootingLevel() * ((ServerConfig.elderDragonHeartChance * 100) / 4))){
+				if(entity.level.random.nextInt(100) <= ServerConfig.elderDragonHeartChance * 100 + event.getLootingLevel() * (ServerConfig.elderDragonHeartChance * 100 / 4)){
 					event.getDrops().add(new ItemEntity(entity.level, entity.position().x, entity.position().y, entity.position().z, new ItemStack(DSItems.elderDragonHeart)));
 				}
 			}
@@ -172,12 +172,11 @@ public class EventHandler{
 	public static void onJoin(EntityJoinWorldEvent joinWorldEvent){
 		Entity entity = joinWorldEvent.getEntity();
 		if(entity instanceof Animal && !(entity instanceof Wolf || entity instanceof Hoglin)){
-			((Animal)entity).goalSelector.addGoal(5, new AvoidEntityGoal((Animal)entity, Player.class, living -> DragonUtils.isDragon((Player)living) && !((Player)living).hasEffect(DragonEffects.ANIMAL_PEACE), 20.0F, 1.3F, 1.5F, (s) -> true));
+			((Animal)entity).goalSelector.addGoal(5, new AvoidEntityGoal((Animal)entity, Player.class, living -> DragonUtils.isDragon((Player)living) && !((Player)living).hasEffect(DragonEffects.ANIMAL_PEACE), 20.0F, 1.3F, 1.5F, s -> true));
 		}
-		if(entity instanceof Horse){
-			Horse horse = (Horse)entity;
+		if(entity instanceof Horse horse){
 			horse.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(horse, Player.class, 0, true, false, living -> living.getCapability(Capabilities.DRAGON_CAPABILITY).orElseGet(null).getLevel() != ADULT));
-			horse.targetSelector.addGoal(4, new AvoidEntityGoal<>(horse, Player.class, living -> living.getCapability(Capabilities.DRAGON_CAPABILITY).orElse(null).getLevel() == ADULT && !living.hasEffect(DragonEffects.ANIMAL_PEACE), 20, 1.3, 1.5, (s) -> true));
+			horse.targetSelector.addGoal(4, new AvoidEntityGoal<>(horse, Player.class, living -> living.getCapability(Capabilities.DRAGON_CAPABILITY).orElse(null).getLevel() == ADULT && !living.hasEffect(DragonEffects.ANIMAL_PEACE), 20, 1.3, 1.5, s -> true));
 		}
 	}
 

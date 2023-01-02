@@ -26,9 +26,9 @@ public class DragonUIRenderComponent extends AbstractContainerEventHandler imple
 		this.screen = screen;
 		this.x = x;
 		this.y = y;
-		this.width = xSize;
-		this.height = ySize;
-		this.getter = dragonGetter;
+		width = xSize;
+		height = ySize;
+		getter = dragonGetter;
 	}
 
 	@Override
@@ -47,10 +47,11 @@ public class DragonUIRenderComponent extends AbstractContainerEventHandler imple
 		float scale = zoom;
 		pMatrixStack.scale(scale, scale, 0);
 		ClientDragonRender.dragonModel.setCurrentTexture(null);
-		ClientDragonRender.renderEntityInInventory(getter.get(), (x + width / 2), y + height - 50, scale, xRot, yRot, xOffset / 10, yOffset / 10);
+		ClientDragonRender.renderEntityInInventory(getter.get(), x + width / 2, y + height - 50, scale, xRot, yRot, xOffset / 10, yOffset / 10);
 		pMatrixStack.popPose();
 	}
 
+	@Override
 	public boolean isMouseOver(double pMouseX, double pMouseY){
 		return pMouseX >= x && pMouseX <= x + width && pMouseY >= y && pMouseY <= y + height;
 	}
@@ -70,8 +71,8 @@ public class DragonUIRenderComponent extends AbstractContainerEventHandler imple
 				xOffset -= x2 / 5;
 				yOffset -= y2 / 5;
 
-				xOffset = Mth.clamp(xOffset, -(width / 8), (width / 8));
-				yOffset = Mth.clamp(yOffset, -(height / 8), (height / 8));
+				xOffset = Mth.clamp(xOffset, -(width / 8), width / 8);
+				yOffset = Mth.clamp(yOffset, -(height / 8), height / 8);
 			}
 
 			return true;

@@ -46,9 +46,10 @@ public class DragonAltarBlock extends Block{
 
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext context){
-		return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection());
+		return defaultBlockState().setValue(FACING, context.getHorizontalDirection());
 	}
 
+	@Override
 	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder){
 		builder.add(FACING);
 	}

@@ -16,6 +16,7 @@ import java.util.Locale;
 
 public class LargeFireParticleData implements ParticleOptions{
 	public static final Deserializer<LargeFireParticleData> DESERIALIZER = new Deserializer<LargeFireParticleData>(){
+		@Override
 		public LargeFireParticleData fromCommand(ParticleType<LargeFireParticleData> particleTypeIn, StringReader reader) throws CommandSyntaxException{
 			reader.expect(' ');
 			float duration = (float)reader.readDouble();
@@ -24,6 +25,7 @@ public class LargeFireParticleData implements ParticleOptions{
 			return new LargeFireParticleData(duration, swirls);
 		}
 
+		@Override
 		public LargeFireParticleData fromNetwork(ParticleType<LargeFireParticleData> particleTypeIn, FriendlyByteBuf buffer){
 			return new LargeFireParticleData(buffer.readFloat(), buffer.readBoolean());
 		}
@@ -33,26 +35,26 @@ public class LargeFireParticleData implements ParticleOptions{
 	private final boolean swirls;
 
 	public static Codec<LargeFireParticleData> CODEC(ParticleType<LargeFireParticleData> particleType){
-		return RecordCodecBuilder.create((codecBuilder) -> codecBuilder.group(Codec.FLOAT.fieldOf("duration").forGetter(LargeFireParticleData::getDuration), Codec.BOOL.fieldOf("swirls").forGetter(LargeFireParticleData::getSwirls)).apply(codecBuilder, LargeFireParticleData::new));
+		return RecordCodecBuilder.create(codecBuilder -> codecBuilder.group(Codec.FLOAT.fieldOf("duration").forGetter(LargeFireParticleData::getDuration), Codec.BOOL.fieldOf("swirls").forGetter(LargeFireParticleData::getSwirls)).apply(codecBuilder, LargeFireParticleData::new));
 	}
 
 	public LargeFireParticleData(float duration, boolean spins){
 		this.duration = duration;
-		this.swirls = spins;
+		swirls = spins;
 	}
 
 	@OnlyIn( Dist.CLIENT )
 	public float getDuration(){
-		return this.duration;
+		return duration;
 	}
 
 	@OnlyIn( Dist.CLIENT )
 	public boolean getSwirls(){
-		return this.swirls;
+		return swirls;
 	}	@Override
 	public void writeToNetwork(FriendlyByteBuf buffer){
-		buffer.writeFloat(this.duration);
-		buffer.writeBoolean(this.swirls);
+		buffer.writeFloat(duration);
+		buffer.writeBoolean(swirls);
 	}
 
 
@@ -60,7 +62,7 @@ public class LargeFireParticleData implements ParticleOptions{
 	@SuppressWarnings( "deprecation" )
 	@Override
 	public String writeToString(){
-		return String.format(Locale.ROOT, "%s %.2f %b", Registry.PARTICLE_TYPE.getKey(this.getType()), this.duration, this.swirls);
+		return String.format(Locale.ROOT, "%s %.2f %b", Registry.PARTICLE_TYPE.getKey(getType()), duration, swirls);
 	}
 
 

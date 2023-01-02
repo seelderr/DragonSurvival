@@ -48,7 +48,7 @@ public class MixinItem{
 			if(dragonStateHandler.isDragon()){
 				if(DragonFoodHandler.isDragonEdible((Item)(Object)this, dragonStateHandler.getType())){
 					ItemStack itemstack = player.getItemInHand(hand);
-					if(player.canEat(DragonFoodHandler.getDragonFoodProperties(((Item)(Object)this), dragonStateHandler.getType()).canAlwaysEat())){
+					if(player.canEat(DragonFoodHandler.getDragonFoodProperties((Item)(Object)this, dragonStateHandler.getType()).canAlwaysEat())){
 						player.startUsingItem(hand);
 						ci.setReturnValue(InteractionResultHolder.consume(itemstack));
 					}else{

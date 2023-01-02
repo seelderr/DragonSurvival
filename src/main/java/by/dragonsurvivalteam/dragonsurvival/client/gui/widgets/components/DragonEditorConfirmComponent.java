@@ -43,7 +43,7 @@ public class DragonEditorConfirmComponent extends AbstractContainerEventHandler 
 		btn1 = new ExtendedButton(x + 19, y + 133, 41, 21, CommonComponents.GUI_YES, null){
 			@Override
 			public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){
-				drawCenteredString(mStack, Minecraft.getInstance().font, getMessage(), this.x + this.width / 2, this.y + (this.height - 8) / 2, getFGColor());
+				drawCenteredString(mStack, Minecraft.getInstance().font, getMessage(), x + width / 2, y + (height - 8) / 2, getFGColor());
 
 				if(isHovered){
 					TooltipRendering.drawHoveringText(mStack, new TranslatableComponent("ds.gui.dragon_editor.tooltip.done"), mouseX, mouseY);
@@ -59,7 +59,7 @@ public class DragonEditorConfirmComponent extends AbstractContainerEventHandler 
 		btn2 = new ExtendedButton(x + 66, y + 133, 41, 21, CommonComponents.GUI_NO, null){
 			@Override
 			public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){
-				drawCenteredString(mStack, Minecraft.getInstance().font, getMessage(), this.x + this.width / 2, this.y + (this.height - 8) / 2, getFGColor());
+				drawCenteredString(mStack, Minecraft.getInstance().font, getMessage(), x + width / 2, y + (height - 8) / 2, getFGColor());
 
 				if(isHovered){
 					TooltipRendering.drawHoveringText(mStack, new TranslatableComponent("ds.gui.dragon_editor.tooltip.cancel"), mouseX, mouseY);
@@ -86,10 +86,10 @@ public class DragonEditorConfirmComponent extends AbstractContainerEventHandler 
 
 	@Override
 	public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
-		this.fillGradient(pMatrixStack, 0, 0, Minecraft.getInstance().getWindow().getWidth(), Minecraft.getInstance().getWindow().getHeight(), -1072689136, -804253680);
+		fillGradient(pMatrixStack, 0, 0, Minecraft.getInstance().getWindow().getWidth(), Minecraft.getInstance().getWindow().getHeight(), -1072689136, -804253680);
 
 		RenderSystem.setShaderTexture(0, BACKGROUND_TEXTURE);
-		String key = "ds.gui.dragon_editor.confirm." + (!ServerConfig.saveAllAbilities && !ServerConfig.saveGrowthStage ? "all" : (ServerConfig.saveAllAbilities && !ServerConfig.saveGrowthStage ? "ability" : !ServerConfig.saveAllAbilities && ServerConfig.saveGrowthStage ? "growth" : ""));
+		String key = "ds.gui.dragon_editor.confirm." + (!ServerConfig.saveAllAbilities && !ServerConfig.saveGrowthStage ? "all" : ServerConfig.saveAllAbilities && !ServerConfig.saveGrowthStage ? "ability" : !ServerConfig.saveAllAbilities && ServerConfig.saveGrowthStage ? "growth" : "");
 		String text = new TranslatableComponent(key).getString();
 		blit(pMatrixStack, x, y, 0, 0, xSize, ySize);
 		TextRenderUtil.drawCenteredScaledTextSplit(pMatrixStack, x + xSize / 2, y + 42, 1f, text, DyeColor.WHITE.getTextColor(), xSize - 10, 0);

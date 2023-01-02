@@ -51,12 +51,12 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 		settings = () -> screen.preset.skinAges.get(screen.level).layerSettings.get(layer);
 		LayerSettings set = settings.get();
 
-		glowing = new ExtendedCheckbox(x + 3, y, xSize - 5, 10, 10, new TranslatableComponent("ds.gui.dragon_editor.glowing"), set.glowing, (s) -> {
+		glowing = new ExtendedCheckbox(x + 3, y, xSize - 5, 10, 10, new TranslatableComponent("ds.gui.dragon_editor.glowing"), set.glowing, s -> {
 			settings.get().glowing = s.selected();
 			screen.handler.getSkinData().compileSkin();
 		});
 
-		hueReset = new ExtendedButton(x + 3 + xSize - 26, y + 12, 20, 20, TextComponent.EMPTY, (s) -> {
+		hueReset = new ExtendedButton(x + 3 + xSize - 26, y + 12, 20, 20, TextComponent.EMPTY, s -> {
 			hueSlider.setValue(0.0);
 
 		}){
@@ -95,13 +95,13 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 
 			@Override
 			public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){
-				if(this.visible){
-					this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
+				if(visible){
+					isHovered = mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + height;
 					mStack.pushPose();
 					RenderingUtils.renderPureColorSquare(mStack, x, y, width, height);
 					mStack.popPose();
 
-					this.renderBg(mStack, Minecraft.getInstance(), mouseX, mouseY);
+					renderBg(mStack, Minecraft.getInstance(), mouseX, mouseY);
 				}
 			}
 		};
@@ -125,8 +125,8 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 
 			@Override
 			public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){
-				if(this.visible){
-					this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
+				if(visible){
+					isHovered = mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + height;
 					float value1 = (hueSlider.getValueInt() + 180) / 360f;
 
 					mStack.pushPose();
@@ -135,13 +135,13 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 
 					RenderingUtils.drawGradientRect(mStack.last().pose(), 200, x, y, x + width, y + height, new int[]{col2, col1, col1, col2});
 					mStack.translate(0, 0, 200);
-					this.renderBg(mStack, Minecraft.getInstance(), mouseX, mouseY);
+					renderBg(mStack, Minecraft.getInstance(), mouseX, mouseY);
 					mStack.popPose();
 				}
 			}
 		};
 
-		saturationReset = new ExtendedButton(x + 3 + xSize - 26, y + 22 + 12, 20, 20, TextComponent.EMPTY, (s) -> {
+		saturationReset = new ExtendedButton(x + 3 + xSize - 26, y + 22 + 12, 20, 20, TextComponent.EMPTY, s -> {
 			saturationSlider.setValue(0.0);
 		}){
 			@Override
@@ -154,7 +154,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 			}
 		};
 
-		brightnessReset = new ExtendedButton(x + 3 + xSize - 26, y + 44 + 12, 20, 20, TextComponent.EMPTY, (s) -> {
+		brightnessReset = new ExtendedButton(x + 3 + xSize - 26, y + 44 + 12, 20, 20, TextComponent.EMPTY, s -> {
 			brightnessSlider.setValue(0.0);
 		}){
 			@Override
@@ -186,8 +186,8 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 
 			@Override
 			public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){
-				if(this.visible){
-					this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
+				if(visible){
+					isHovered = mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + height;
 					float value1 = (hueSlider.getValueInt() + 180) / 360f;
 
 					mStack.pushPose();
@@ -196,7 +196,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 
 					RenderingUtils.drawGradientRect(mStack.last().pose(), 200, x, y, x + width, y + height, new int[]{col2, col1, col1, col2});
 					mStack.translate(0, 0, 200);
-					this.renderBg(mStack, Minecraft.getInstance(), mouseX, mouseY);
+					renderBg(mStack, Minecraft.getInstance(), mouseX, mouseY);
 					mStack.popPose();
 				}
 			}
@@ -205,7 +205,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 
 	@Override
 	public boolean isMouseOver(double pMouseX, double pMouseY){
-		return visible && pMouseY >= (double)this.y - 3 && pMouseY <= (double)this.y + ySize + 3 && pMouseX >= (double)this.x && pMouseX <= (double)this.x + xSize;
+		return visible && pMouseY >= (double)y - 3 && pMouseY <= (double)y + ySize + 3 && pMouseX >= (double)x && pMouseX <= (double)x + xSize;
 	}
 
 	@Override

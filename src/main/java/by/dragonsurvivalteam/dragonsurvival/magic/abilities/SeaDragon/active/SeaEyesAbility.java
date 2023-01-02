@@ -140,6 +140,7 @@ public class SeaEyesAbility extends ChargeCastAbility{
 		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/sea/sea_eyes_2.png")};
 	}
 
+	@Override
 	@OnlyIn( Dist.CLIENT )
 	public ArrayList<Component> getLevelUpInfo(){
 		ArrayList<Component> list = super.getLevelUpInfo();

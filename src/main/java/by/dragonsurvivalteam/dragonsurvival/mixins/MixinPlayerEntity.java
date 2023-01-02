@@ -80,12 +80,10 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 		DragonStateHandler cap = DragonUtils.getHandler(this);
 
 		if(!isDeadOrDying() && !isSleeping()){
-			if(!((Player)(LivingEntity)this).isCreative()){
-				if(cap.getMagicData().getCurrentlyCasting() != null){
-					if(cap.getMagicData().getCurrentlyCasting().requiresStationaryCasting()){
-						if(!ServerConfig.canMoveWhileCasting){
-							ci.setReturnValue(true);
-						}
+			if(cap.getMagicData().getCurrentlyCasting() != null){
+				if(cap.getMagicData().getCurrentlyCasting().requiresStationaryCasting()){
+					if(!ServerConfig.canMoveWhileCasting){
+						ci.setReturnValue(true);
 					}
 				}
 			}
@@ -135,9 +133,9 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 	public void dragonEat(Level level, ItemStack itemStack, CallbackInfoReturnable<ItemStack> ci){
 		DragonStateProvider.getCap(this).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon()){
-				DragonFoodHandler.dragonEat(this.getFoodData(), itemStack.getItem(), itemStack, dragonStateHandler.getType());
-				this.awardStat(Stats.ITEM_USED.get(itemStack.getItem()));
-				level.playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.PLAYER_BURP, SoundSource.PLAYERS, 0.5F, level.random.nextFloat() * 0.1F + 0.9F);
+				DragonFoodHandler.dragonEat(getFoodData(), itemStack.getItem(), itemStack, dragonStateHandler.getType());
+				awardStat(Stats.ITEM_USED.get(itemStack.getItem()));
+				level.playSound(null, getX(), getY(), getZ(), SoundEvents.PLAYER_BURP, SoundSource.PLAYERS, 0.5F, level.random.nextFloat() * 0.1F + 0.9F);
 				ci.setReturnValue(super.eat(level, itemStack));
 			}
 		});
@@ -166,71 +164,71 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 	@Inject( method = "travel", at = @At( "HEAD" ), cancellable = true )
 	public void travel(Vec3 pTravelVector, CallbackInfo ci){
 		if(DragonUtils.isDragon(this)){
-			double d01 = this.getX();
-			double d11 = this.getY();
-			double d21 = this.getZ();
-			if(DragonStateProvider.getCap(this).isPresent() && ConfigHandler.SERVER.bonuses && ConfigHandler.SERVER.caveLavaSwimming && DragonUtils.isDragonType(this, DragonTypes.CAVE) && DragonSizeHandler.getOverridePose(this) == Pose.SWIMMING || this.isSwimming() && !this.isPassenger()){
-				double d3 = this.getLookAngle().y;
+			double d01 = getX();
+			double d11 = getY();
+			double d21 = getZ();
+			if(DragonStateProvider.getCap(this).isPresent() && ConfigHandler.SERVER.bonuses && ConfigHandler.SERVER.caveLavaSwimming && DragonUtils.isDragonType(this, DragonTypes.CAVE) && DragonSizeHandler.getOverridePose(this) == Pose.SWIMMING || isSwimming() && !isPassenger()){
+				double d3 = getLookAngle().y;
 				double d4 = d3 < -0.2D ? 0.185D : 0.06D;
-				if(d3 <= 0.0D || this.jumping || !this.level.getBlockState(new BlockPos(this.getX(), this.getY() + 1.0D - 0.1D, this.getZ())).getFluidState().isEmpty()){
-					Vec3 vector3d1 = this.getDeltaMovement();
-					this.setDeltaMovement(vector3d1.add(0.0D, (d3 - vector3d1.y) * d4, 0.0D));
+				if(d3 <= 0.0D || jumping || !level.getBlockState(new BlockPos(getX(), getY() + 1.0D - 0.1D, getZ())).getFluidState().isEmpty()){
+					Vec3 vector3d1 = getDeltaMovement();
+					setDeltaMovement(vector3d1.add(0.0D, (d3 - vector3d1.y) * d4, 0.0D));
 				}
 
-				if(this.isEffectiveAi() || this.isControlledByLocalInstance()){
+				if(isEffectiveAi() || isControlledByLocalInstance()){
 					double d0 = 0.08D;
-					AttributeInstance gravity = this.getAttribute(net.minecraftforge.common.ForgeMod.ENTITY_GRAVITY.get());
-					boolean flag = this.getDeltaMovement().y <= 0.0D;
-					if(flag && this.hasEffect(MobEffects.SLOW_FALLING)){
+					AttributeInstance gravity = getAttribute(net.minecraftforge.common.ForgeMod.ENTITY_GRAVITY.get());
+					boolean flag = getDeltaMovement().y <= 0.0D;
+					if(flag && hasEffect(MobEffects.SLOW_FALLING)){
 						if(!gravity.hasModifier(SLOW_FALLING)){
 							gravity.addTransientModifier(SLOW_FALLING);
 						}
-						this.fallDistance = 0.0F;
+						fallDistance = 0.0F;
 					}else if(gravity.hasModifier(SLOW_FALLING)){
 						gravity.removeModifier(SLOW_FALLING);
 					}
 					d0 = gravity.getValue();
 
-					FluidState fluidstate = this.level.getFluidState(this.blockPosition());
-					if(this.isInLava() && this.isAffectedByFluids() && !this.canStandOnFluid(fluidstate)
+					FluidState fluidstate = level.getFluidState(blockPosition());
+					if(isInLava() && isAffectedByFluids() && !canStandOnFluid(fluidstate)
 					   && ServerConfig.bonuses && ServerConfig.caveLavaSwimming && DragonUtils.isDragonType(this, DragonTypes.CAVE)){
-						double d8 = this.getY();
-						float f5 = this.isSprinting() ? 0.9F : this.getWaterSlowDown();
+						double d8 = getY();
+						float f5 = isSprinting() ? 0.9F : getWaterSlowDown();
 						float f6 = 0.05F;
 						float f7 = Math.min(3, (float)EnchantmentHelper.getDepthStrider(this));
 
-						if(!this.onGround){
+						if(!onGround){
 							f7 *= 0.5F;
 						}
 
 						if(f7 > 0.0F){
 							f5 += (0.54600006F - f5) * f7 / 2.5F;
-							f6 += (this.getSpeed() - f6) * f7 / 2.5F;
+							f6 += (getSpeed() - f6) * f7 / 2.5F;
 						}
 
-						if(this.hasEffect(MobEffects.DOLPHINS_GRACE)){
+						if(hasEffect(MobEffects.DOLPHINS_GRACE)){
 							f5 = 0.96F;
 						}
 
-						f6 *= (float)this.getAttribute(net.minecraftforge.common.ForgeMod.SWIM_SPEED.get()).getValue();
-						this.moveRelative(f6, pTravelVector);
-						this.move(MoverType.SELF, this.getDeltaMovement());
-						Vec3 vector3d6 = this.getDeltaMovement();
-						if(this.horizontalCollision && this.onClimbable()){
+						f6 *= (float)getAttribute(net.minecraftforge.common.ForgeMod.SWIM_SPEED.get()).getValue();
+						moveRelative(f6, pTravelVector);
+						move(MoverType.SELF, getDeltaMovement());
+						Vec3 vector3d6 = getDeltaMovement();
+						if(horizontalCollision && onClimbable()){
 							vector3d6 = new Vec3(vector3d6.x, 0.2D, vector3d6.z);
 						}
 
-						this.setDeltaMovement(vector3d6.multiply(f5, 0.8F, f5));
-						Vec3 vector3d2 = this.getFluidFallingAdjustedMovement(d0, flag, this.getDeltaMovement());
-						this.setDeltaMovement(vector3d2);
-						if(this.horizontalCollision && this.isFree(vector3d2.x, vector3d2.y + (double)0.6F - this.getY() + d8, vector3d2.z)){
-							this.setDeltaMovement(vector3d2.x, 0.3F, vector3d2.z);
+						setDeltaMovement(vector3d6.multiply(f5, 0.8F, f5));
+						Vec3 vector3d2 = getFluidFallingAdjustedMovement(d0, flag, getDeltaMovement());
+						setDeltaMovement(vector3d2);
+						if(horizontalCollision && isFree(vector3d2.x, vector3d2.y + (double)0.6F - getY() + d8, vector3d2.z)){
+							setDeltaMovement(vector3d2.x, 0.3F, vector3d2.z);
 						}
 					}
 				}
 
-				this.calculateEntityAnimation(this, this instanceof FlyingAnimal);
-				this.checkMovementStatistics(this.getX() - d01, this.getY() - d11, this.getZ() - d21);
+				calculateEntityAnimation(this, this instanceof FlyingAnimal);
+				checkMovementStatistics(getX() - d01, getY() - d11, getZ() - d21);
 			}
 		}
 	}

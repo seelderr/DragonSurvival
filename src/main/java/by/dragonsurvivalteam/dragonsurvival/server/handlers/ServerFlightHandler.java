@@ -227,9 +227,9 @@ public class ServerFlightHandler{
 				if(isSpin(player)){
 					int range = 5;
 					List<Entity> entities = player.level.getEntities(null, new AABB(player.position().x - range, player.position().y - range, player.position().z - range, player.position().x + range, player.position().y + range, player.position().z + range));
-					entities.removeIf((e) -> e.distanceTo(player) > range);
+					entities.removeIf(e -> e.distanceTo(player) > range);
 					entities.remove(player);
-					entities.removeIf((e) -> e instanceof Player && !player.canHarmPlayer((Player)e));
+					entities.removeIf(e -> e instanceof Player && !player.canHarmPlayer((Player)e));
 					for(Entity ent : entities){
 						if(player.hasPassenger(ent) ){
 							continue;

@@ -16,14 +16,16 @@ public class ShooterHunterRenderer extends MobRenderer<Shooter, HunterModel<Shoo
 
 	public ShooterHunterRenderer(EntityRendererProvider.Context rendererManager){
 		super(rendererManager, new HunterModel(rendererManager.bakeLayer(ModelLayers.EVOKER)), 0.5F);
-		this.addLayer(new CustomHeadLayer<>(this, rendererManager.getModelSet()));
-		this.addLayer(new ItemInHandLayer<>(this));
+		addLayer(new CustomHeadLayer<>(this, rendererManager.getModelSet()));
+		addLayer(new ItemInHandLayer<>(this));
 	}
 
+	@Override
 	public ResourceLocation getTextureLocation(Shooter p_110775_1_){
 		return TEXTURE;
 	}
 
+	@Override
 	protected void scale(Shooter shooter, PoseStack matrixStack, float p_225620_3_){
 		float f = 0.9375F;
 		matrixStack.scale(f, f, f);

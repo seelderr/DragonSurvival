@@ -156,17 +156,20 @@ public class DragonEffects{
 			super(effectType, color);
 		}
 
+		@Override
 		public List<ItemStack> getCurativeItems(){
 			return Collections.emptyList();
 		}
 
+		@Override
 		public void applyEffectTick(LivingEntity living, int strength){
 			living.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(Bolas.DISABLE_MOVEMENT);
 			living.getAttribute(ForgeMod.ENTITY_GRAVITY.get()).removeModifier(Bolas.DISABLE_JUMP);
 		}
 
+		@Override
 		public boolean isDurationEffectTick(int timeLeft, int p_76397_2_){
-			return (timeLeft == 1);
+			return timeLeft == 1;
 		}
 	}
 

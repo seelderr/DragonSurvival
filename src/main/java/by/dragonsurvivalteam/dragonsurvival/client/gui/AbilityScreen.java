@@ -51,14 +51,14 @@ public class AbilityScreen extends Screen{
 
 	@Override
 	public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks){
-		if(this.minecraft == null){
+		if(minecraft == null){
 			return;
 		}
 
-		this.renderBackground(stack);
+		renderBackground(stack);
 
-		int startX = this.guiLeft;
-		int startY = this.guiTop;
+		int startX = guiLeft;
+		int startY = guiTop;
 
 		RenderSystem.setShaderTexture(0, BACKGROUND_TEXTURE);
 		blit(stack, startX, startY, 0, 0, 256, 256);
@@ -68,19 +68,19 @@ public class AbilityScreen extends Screen{
 
 			RenderSystem.setShaderTexture(0, ClientMagicHUDHandler.widgetTextures);
 
-			float progress = Mth.clamp((minecraft.player.experienceLevel / 50F), 0, 1);
-			float progress1 = Math.min(1F, (Math.min(0.5F, progress) * 2F));
-			float progress2 = Math.min(1F, (Math.min(0.5F, progress - 0.5F) * 2F));
+			float progress = Mth.clamp(minecraft.player.experienceLevel / 50F, 0, 1);
+			float progress1 = Math.min(1F, Math.min(0.5F, progress) * 2F);
+			float progress2 = Math.min(1F, Math.min(0.5F, progress - 0.5F) * 2F);
 
 			stack.pushPose();
 			stack.translate(0.5F, 0.75F, 0F);
-			blit(stack, startX + (23 / 2), startY + 28, 0, 180 / 2, 105, 3, 128, 128);
-			blit(stack, startX + (254 / 2), startY + 28, 0, 180 / 2, 105, 3, 128, 128);
+			blit(stack, startX + 23 / 2, startY + 28, 0, 180 / 2, 105, 3, 128, 128);
+			blit(stack, startX + 254 / 2, startY + 28, 0, 180 / 2, 105, 3, 128, 128);
 
-			blit(stack, startX + (23 / 2), startY + 28, 0, barYPos / 2, (int)(105 * progress1), 3, 128, 128);
+			blit(stack, startX + 23 / 2, startY + 28, 0, barYPos / 2, (int)(105 * progress1), 3, 128, 128);
 
 			if(progress > 0.5){
-				blit(stack, startX + (254 / 2), startY + 28, 0, barYPos / 2, (int)(105 * progress2), 3, 128, 128);
+				blit(stack, startX + 254 / 2, startY + 28, 0, barYPos / 2, (int)(105 * progress2), 3, 128, 128);
 			}
 
 			int expChange = -1;
@@ -97,14 +97,14 @@ public class AbilityScreen extends Screen{
 			}
 
 			if(expChange != -1){
-				float Changeprogress = Mth.clamp((expChange / 50F), 0, 1); //Total exp required to hit level 50
-				float Changeprogress1 = Math.min(1F, (Math.min(0.5F, Changeprogress) * 2F));
-				float Changeprogress2 = Math.min(1F, (Math.min(0.5F, Changeprogress - 0.5F) * 2F));
+				float Changeprogress = Mth.clamp(expChange / 50F, 0, 1); //Total exp required to hit level 50
+				float Changeprogress1 = Math.min(1F, Math.min(0.5F, Changeprogress) * 2F);
+				float Changeprogress2 = Math.min(1F, Math.min(0.5F, Changeprogress - 0.5F) * 2F);
 
-				blit(stack, startX + (23 / 2), startY + 28, 0, 174 / 2, (int)(105 * Changeprogress1), 3, 128, 128);
+				blit(stack, startX + 23 / 2, startY + 28, 0, 174 / 2, (int)(105 * Changeprogress1), 3, 128, 128);
 
 				if(Changeprogress2 > 0.5){
-					blit(stack, startX + (254 / 2) - (int)(105 * progress1), startY + 28, 0, 174 / 2, (int)(105 * Changeprogress2), 3, 128, 128);
+					blit(stack, startX + 254 / 2 - (int)(105 * progress1), startY + 28, 0, 174 / 2, (int)(105 * Changeprogress2), 3, 128, 128);
 				}
 			}
 
@@ -138,11 +138,11 @@ public class AbilityScreen extends Screen{
 
 	@Override
 	public void init(){
-		this.guiLeft = (this.width - this.xSize) / 2;
-		this.guiTop = (this.height - this.ySize / 2) / 2;
+		guiLeft = (width - xSize) / 2;
+		guiTop = (height - ySize / 2) / 2;
 
-		int startX = this.guiLeft;
-		int startY = this.guiTop;
+		int startX = guiLeft;
+		int startY = guiTop;
 
 		//Inventory
 		addRenderableWidget(new TabButton(startX + 5, startY - 26, 0, this));
@@ -159,7 +159,7 @@ public class AbilityScreen extends Screen{
 
 		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {
 			for(int num = 0; num < MagicCap.activeAbilitySlots; num++){
-				addRenderableWidget(new AbilityButton((int)(guiLeft + (90 / 2.0)), (guiTop + 40 + (num * 23)), 0, num, this));
+				addRenderableWidget(new AbilityButton((int)(guiLeft + 90 / 2.0), guiTop + 40 + num * 23, 0, num, this));
 			}
 
 			for(int num = 0; num < MagicCap.passiveAbilitySlots; num++){

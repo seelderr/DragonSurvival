@@ -86,8 +86,8 @@ public abstract class MixinLivingEntity extends Entity{
 		DragonStateProvider.getCap(this).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon()){
 				if(DragonFoodHandler.isDragonEdible(itemStack.getItem(), dragonStateHandler.getType())){
-					level.playSound(null, this.getX(), this.getY(), this.getZ(), this.getEatingSound(itemStack), SoundSource.NEUTRAL, 1.0F, 1.0F + (level.random.nextFloat() - level.random.nextFloat()) * 0.4F);
-					this.addEatEffect(itemStack, level, (LivingEntity)(Object)this);
+					level.playSound(null, getX(), getY(), getZ(), getEatingSound(itemStack), SoundSource.NEUTRAL, 1.0F, 1.0F + (level.random.nextFloat() - level.random.nextFloat()) * 0.4F);
+					addEatEffect(itemStack, level, (LivingEntity)(Object)this);
 					if(!((Object)this instanceof Player) || !((Player)(Object)this).getAbilities().instabuild){
 						itemStack.shrink(1);
 					}
@@ -142,10 +142,10 @@ public abstract class MixinLivingEntity extends Entity{
 	public void shouldDragonTriggerItemUseEffects(CallbackInfoReturnable<Boolean> ci){
 		DragonStateProvider.getCap(this).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon()){
-				int i = this.getUseItemRemainingTicks();
-				FoodProperties food = this.useItem.getItem().getFoodProperties();
+				int i = getUseItemRemainingTicks();
+				FoodProperties food = useItem.getItem().getFoodProperties();
 				boolean flag = food != null && food.isFastFood();
-				flag = flag || i <= DragonFoodHandler.getUseDuration(this.useItem, dragonStateHandler.getType()) - 7;
+				flag = flag || i <= DragonFoodHandler.getUseDuration(useItem, dragonStateHandler.getType()) - 7;
 				ci.setReturnValue(flag && i % 4 == 0);
 			}
 		});
@@ -160,7 +160,7 @@ public abstract class MixinLivingEntity extends Entity{
 	public void onDragonSyncedDataUpdated(EntityDataAccessor<?> data, CallbackInfo ci){
 		DragonStateProvider.getCap(this).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon()){
-				this.useItemRemaining = DragonFoodHandler.getUseDuration(this.useItem, dragonStateHandler.getType());
+				useItemRemaining = DragonFoodHandler.getUseDuration(useItem, dragonStateHandler.getType());
 			}
 		});
 	}
@@ -168,9 +168,9 @@ public abstract class MixinLivingEntity extends Entity{
 	@Inject( at = @At( value = "HEAD" ), method = "triggerItemUseEffects", cancellable = true )
 	public void triggerDragonItemUseEffects(ItemStack stack, int count, CallbackInfo ci){
 		DragonStateProvider.getCap(this).ifPresent(dragonStateHandler -> {
-			if(dragonStateHandler.isDragon() && !stack.isEmpty() && this.isUsingItem() && stack.getUseAnimation() == UseAnim.NONE && DragonFoodHandler.isDragonEdible(stack.getItem(), dragonStateHandler.getType())){
-				this.spawnItemParticles(stack, count);
-				this.playSound(this.getEatingSound(stack), 0.5F + 0.5F * (float)this.random.nextInt(2), (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
+			if(dragonStateHandler.isDragon() && !stack.isEmpty() && isUsingItem() && stack.getUseAnimation() == UseAnim.NONE && DragonFoodHandler.isDragonEdible(stack.getItem(), dragonStateHandler.getType())){
+				spawnItemParticles(stack, count);
+				playSound(getEatingSound(stack), 0.5F + 0.5F * (float)random.nextInt(2), (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F);
 				ci.cancel();
 			}
 		});

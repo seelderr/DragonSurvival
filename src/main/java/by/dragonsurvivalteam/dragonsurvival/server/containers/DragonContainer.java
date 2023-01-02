@@ -39,19 +39,22 @@ public class DragonContainer extends AbstractContainerMenu{
 	public Inventory playerInventory;
 	public int menuStatus = 0;
 	protected final ContainerData dataStatus = new ContainerData(){
+		@Override
 		public int get(int p_221476_1_){
 			if(p_221476_1_ == 0){
-				return DragonContainer.this.menuStatus;
+				return menuStatus;
 			}
 			return 0;
 		}
 
+		@Override
 		public void set(int p_221477_1_, int p_221477_2_){
 			if(p_221477_1_ == 0){
-				DragonContainer.this.menuStatus = p_221477_2_;
+				menuStatus = p_221477_2_;
 			}
 		}
 
+		@Override
 		public int getCount(){
 			return 1;
 		}
@@ -59,15 +62,15 @@ public class DragonContainer extends AbstractContainerMenu{
 
 	public DragonContainer(int id, Inventory playerInventory, boolean localWorld){
 		super(DSContainers.dragonContainer, id);
-		this.isLocalWorld = localWorld;
-		this.player = playerInventory.player;
+		isLocalWorld = localWorld;
+		player = playerInventory.player;
 		this.playerInventory = playerInventory;
 
-		this.addDataSlots(dataStatus);
+		addDataSlots(dataStatus);
 
 		for(int k = 0; k < 4; ++k){
 			EquipmentSlot equipmentslottype = VALID_EQUIPMENT_SLOTS[k];
-			this.addSlot(new Slot(playerInventory, 39 - k, 8, 8 + k * 18){
+			addSlot(new Slot(playerInventory, 39 - k, 8, 8 + k * 18){
 				@Override
 				public boolean mayPlace(ItemStack stack){
 					return stack.canEquip(equipmentslottype, player);
@@ -81,7 +84,7 @@ public class DragonContainer extends AbstractContainerMenu{
 
 				@Override
 				public boolean mayPickup(Player playerIn){
-					ItemStack itemstack = this.getItem();
+					ItemStack itemstack = getItem();
 					return (itemstack.isEmpty() || playerIn.isCreative() || !EnchantmentHelper.hasBindingCurse(itemstack)) && super.mayPickup(playerIn);
 				}
 			});
@@ -93,35 +96,35 @@ public class DragonContainer extends AbstractContainerMenu{
 		for(int l = 0; l < 3; ++l){
 			for(int j1 = 0; j1 < 9; ++j1){
 				Slot s = new Slot(playerInventory, j1 + l * 9 + 9, 8 + j1 * 18, 84 + l * 18);
-				this.addSlot(s);
+				addSlot(s);
 				inventorySlots.add(s);
 			}
 		}
 		//hotbar
 		for(int i1 = 0; i1 < 9; ++i1){
 			Slot s = new Slot(playerInventory, i1, 8 + i1 * 18, 142);
-			this.addSlot(s);
+			addSlot(s);
 			inventorySlots.add(s);
 		}
 
-		DragonStateProvider.getCap(player).ifPresent((cap) -> {
+		DragonStateProvider.getCap(player).ifPresent(cap -> {
 			for(int i = 0; i < 4; ++i){
-				ClawToolSlot s = new ClawToolSlot(this, cap.getClawToolData().getClawsInventory(), i, -50, 35 + (i * 18), i);
-				this.addSlot(s);
+				ClawToolSlot s = new ClawToolSlot(this, cap.getClawToolData().getClawsInventory(), i, -50, 35 + i * 18, i);
+				addSlot(s);
 				inventorySlots.add(s);
 			}
 		});
 
 		//Offhand
-		this.addSlot(new Slot(playerInventory, 40, 26, 62));
+		addSlot(new Slot(playerInventory, 40, 26, 62));
 
-		this.addSlot(new ResultSlot(playerInventory.player, this.craftMatrix, this.craftResult, 0, 178, 33));
+		addSlot(new ResultSlot(playerInventory.player, craftMatrix, craftResult, 0, 178, 33));
 		craftingSlot = slots.size();
 
 		for(int i = 0; i < craftMatrix.getWidth(); ++i){
 			for(int j = 0; j < craftMatrix.getHeight(); ++j){
-				Slot s = new Slot(this.craftMatrix, j + i * 3, 111 + j * 18, 15 + i * 18);
-				this.addSlot(s);
+				Slot s = new Slot(craftMatrix, j + i * 3, 111 + j * 18, 15 + i * 18);
+				addSlot(s);
 				craftingSlots.add(s);
 			}
 		}
@@ -130,7 +133,7 @@ public class DragonContainer extends AbstractContainerMenu{
 	}
 
 	public void update(){
-		DragonStateProvider.getCap(player).ifPresent((cap) -> {
+		DragonStateProvider.getCap(player).ifPresent(cap -> {
 			menuStatus = cap.getClawToolData().isClawsMenuOpen() ? 1 : 0;
 		});
 
@@ -140,44 +143,44 @@ public class DragonContainer extends AbstractContainerMenu{
 	@Override
 	public ItemStack quickMoveStack(Player playerIn, int index){
 		ItemStack itemstack = ItemStack.EMPTY;
-		Slot slot = this.slots.get(index);
+		Slot slot = slots.get(index);
 		if(slot != null && slot.hasItem()){
 			ItemStack itemstack1 = slot.getItem();
 			itemstack = itemstack1.copy();
 			EquipmentSlot equipmentslottype = Mob.getEquipmentSlotForItem(itemstack);
 
 			if(index == craftingSlot){
-				if(!this.moveItemStackTo(itemstack1, 4, 46, true)){
+				if(!moveItemStackTo(itemstack1, 4, 46, true)){
 					return ItemStack.EMPTY;
 				}
 				slot.onQuickCraft(itemstack1, itemstack);
-			}else if(equipmentslottype.getType() == Type.ARMOR && !this.slots.get(3 - equipmentslottype.getIndex()).hasItem()){
+			}else if(equipmentslottype.getType() == Type.ARMOR && !slots.get(3 - equipmentslottype.getIndex()).hasItem()){
 				int i = 3 - equipmentslottype.getIndex();
-				if(!this.moveItemStackTo(itemstack1, i, i + 1, false)){
+				if(!moveItemStackTo(itemstack1, i, i + 1, false)){
 					return ItemStack.EMPTY;
 				}
 			}else if(index < 4){
-				if(!this.moveItemStackTo(itemstack1, 4, 40, false)){
+				if(!moveItemStackTo(itemstack1, 4, 40, false)){
 					return ItemStack.EMPTY;
 				}
 			}else if(index < 9){
-				if(!this.moveItemStackTo(itemstack1, 31, 40, false)){
+				if(!moveItemStackTo(itemstack1, 31, 40, false)){
 					return ItemStack.EMPTY;
 				}
-			}else if(equipmentslottype == EquipmentSlot.OFFHAND && !this.slots.get(44).hasItem()){
-				if(!this.moveItemStackTo(itemstack1, 44, 46, false)){
+			}else if(equipmentslottype == EquipmentSlot.OFFHAND && !slots.get(44).hasItem()){
+				if(!moveItemStackTo(itemstack1, 44, 46, false)){
 					return ItemStack.EMPTY;
 				}
 			}else if(index >= 4 && index < 31){
-				if(!this.moveItemStackTo(itemstack1, 31, 40, false)){
+				if(!moveItemStackTo(itemstack1, 31, 40, false)){
 					return ItemStack.EMPTY;
 				}
 			}else if(index >= 31 && index < 40){
-				if(!this.moveItemStackTo(itemstack1, 4, 31, false)){
+				if(!moveItemStackTo(itemstack1, 4, 31, false)){
 					return ItemStack.EMPTY;
 				}
 			}else{
-				if(!this.moveItemStackTo(itemstack1, 4, 31, false)){
+				if(!moveItemStackTo(itemstack1, 4, 31, false)){
 					return ItemStack.EMPTY;
 				}
 			}
@@ -205,7 +208,7 @@ public class DragonContainer extends AbstractContainerMenu{
 	public boolean canTakeItemForPickAll(
 		@Nonnull
 			ItemStack stack, Slot slotIn){
-		return slotIn.container != this.craftResult && super.canTakeItemForPickAll(stack, slotIn);
+		return slotIn.container != craftResult && super.canTakeItemForPickAll(stack, slotIn);
 	}
 
 	@Override
@@ -231,7 +234,7 @@ public class DragonContainer extends AbstractContainerMenu{
 			}
 
 			craftResult.setItem(45, itemstack);
-			this.setRemoteSlot(45, itemstack);
+			setRemoteSlot(45, itemstack);
 			serverplayerentity.connection.send(new ClientboundContainerSetSlotPacket(containerId, incrementStateId(), 45, itemstack));
 		}
 	}

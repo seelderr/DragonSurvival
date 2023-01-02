@@ -72,7 +72,7 @@ public class SkinPreset implements NBTInterface{
 			this.level = level;
 
 			for(EnumSkinLayer layer : EnumSkinLayer.values()){
-				layerSettings.computeIfAbsent(layer, (s) -> new LayerSettings());
+				layerSettings.computeIfAbsent(layer, s -> new LayerSettings());
 			}
 		}
 

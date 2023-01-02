@@ -130,7 +130,8 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 			renderAbility(builder, curCast);
 
 
-		if(!ClientDragonRender.renderItemsInMouth && animationExists("use_item") && (player.isUsingItem() || (handler.getMovementData().bite || handler.getMovementData().dig) && (!player.getMainHandItem().isEmpty() || !player.getOffhandItem().isEmpty()))){
+		if(!ClientDragonRender.renderItemsInMouth && animationExists("use_item")
+		   && (player.isUsingItem() || (handler.getMovementData().bite || handler.getMovementData().dig) && (!player.getMainHandItem().isEmpty() || !player.getOffhandItem().isEmpty()))){
 			builder.addAnimation("use_item", EDefaultLoopTypes.LOOP);
 			handler.getMovementData().bite = false;
 		}else if(!ClientDragonRender.renderItemsInMouth && animationExists("eat_item_right") && player.isUsingItem() && player.getMainHandItem().isEdible() || animationTimer.getDuration("eat_item_right") > 0){
@@ -147,14 +148,14 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 			}
 
 			builder.addAnimation("eat_item_left", EDefaultLoopTypes.LOOP);
-		}else if(!ClientDragonRender.renderItemsInMouth && animationExists("use_item_right") && (!player.getMainHandItem().isEmpty()) && (handler.getMovementData().bite && player.getMainArm() == HumanoidArm.RIGHT) || animationTimer.getDuration("use_item_right") > 0){
+		}else if(!ClientDragonRender.renderItemsInMouth && animationExists("use_item_right") && !player.getMainHandItem().isEmpty() && handler.getMovementData().bite && player.getMainArm() == HumanoidArm.RIGHT || animationTimer.getDuration("use_item_right") > 0){
 			if(animationTimer.getDuration("use_item_right") <= 0){
 				handler.getMovementData().bite = false;
 				animationTimer.putAnimation("use_item_right", 0.32 * 20, builder);
 			}
 
 			builder.addAnimation("use_item_right", EDefaultLoopTypes.LOOP);
-		}else if(!ClientDragonRender.renderItemsInMouth && animationExists("use_item_left") && (!player.getOffhandItem().isEmpty() && handler.getMovementData().bite && player.getMainArm() == HumanoidArm.LEFT) || animationTimer.getDuration("use_item_left") > 0){
+		}else if(!ClientDragonRender.renderItemsInMouth && animationExists("use_item_left") && !player.getOffhandItem().isEmpty() && handler.getMovementData().bite && player.getMainArm() == HumanoidArm.LEFT || animationTimer.getDuration("use_item_left") > 0){
 			if(animationTimer.getDuration("use_item_left") <= 0){
 				handler.getMovementData().bite = false;
 				animationTimer.putAnimation("use_item_left", 0.32 * 20, builder);
@@ -216,14 +217,14 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 
 	private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> animationEvent){
 		Player player = getPlayer();
-		AnimationController animationController = animationEvent.getController();
+		AnimationController<E> animationController = animationEvent.getController();
 		DragonStateHandler playerStateHandler = DragonUtils.getHandler(player);
 
 		AnimationBuilder builder = new AnimationBuilder();
 
 		dragonAnimationController.speed = 1;
 
-		if(player == null || Stream.of(playerStateHandler.getEmoteData().currentEmotes).anyMatch((s) -> s != null && !s.blend && s.animation != null && !s.animation.isBlank())){
+		if(player == null || Stream.of(playerStateHandler.getEmoteData().currentEmotes).anyMatch(s -> s != null && !s.blend && s.animation != null && !s.animation.isBlank())){
 			animationEvent.getController().setAnimation(null);
 			animationEvent.getController().clearAnimationCache();
 			return PlayState.STOP;

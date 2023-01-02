@@ -51,7 +51,7 @@ public class EmoteCap extends SubCap{
 			Emote emote = null;
 
 			if(emoteId != null){
-				emote = EmoteRegistry.EMOTES.stream().filter((s) -> Objects.equals(s.animation, emoteId)).findFirst().orElseGet(() -> {
+				emote = EmoteRegistry.EMOTES.stream().filter(s -> Objects.equals(s.animation, emoteId)).findFirst().orElseGet(() -> {
 					Emote em = new Emote();
 					em.animation = emoteId;
 					return em;

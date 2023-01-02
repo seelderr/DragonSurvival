@@ -55,9 +55,9 @@ public class MixinWorldRenderer{
 		EntityRenderDispatcher entityrenderermanager = Minecraft.getInstance().getEntityRenderDispatcher();
 		boolean shouldRender = entityrenderermanager.shouldRenderHitBoxes();
 
-		MultiBufferSource immediate = this.renderBuffers.bufferSource();
+		MultiBufferSource immediate = renderBuffers.bufferSource();
 		entityrenderermanager.setRenderHitBoxes(false);
-		this.renderEntity(camera.getEntity(), d, e, f, tickDelta, matrices, immediate);
+		renderEntity(camera.getEntity(), d, e, f, tickDelta, matrices, immediate);
 		entityrenderermanager.setRenderHitBoxes(shouldRender);
 		if(neckandHead != null){
 			neckandHead.setHidden(false);

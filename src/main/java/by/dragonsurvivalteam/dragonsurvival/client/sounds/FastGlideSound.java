@@ -12,39 +12,40 @@ public class FastGlideSound extends ElytraOnPlayerSoundInstance{
 
 	public FastGlideSound(LocalPlayer p_i47113_1_){
 		super(p_i47113_1_);
-		this.player = p_i47113_1_;
-		this.looping = true;
-		this.delay = 0;
-		this.volume = 0.1F;
+		player = p_i47113_1_;
+		looping = true;
+		delay = 0;
+		volume = 0.1F;
 	}
 
+	@Override
 	public void tick(){
-		++this.time;
-		if(!this.player.isRemoved() && (this.time <= 20 || ServerFlightHandler.isGliding(player))){
-			this.x = (float)this.player.getX();
-			this.y = (float)this.player.getY();
-			this.z = (float)this.player.getZ();
-			float f = (float)this.player.getDeltaMovement().lengthSqr();
+		++time;
+		if(!player.isRemoved() && (time <= 20 || ServerFlightHandler.isGliding(player))){
+			x = (float)player.getX();
+			y = (float)player.getY();
+			z = (float)player.getZ();
+			float f = (float)player.getDeltaMovement().lengthSqr();
 			if((double)f >= 1.0E-7D){
-				this.volume = Mth.clamp(f / 4.0F, 0.0F, 1.0F);
+				volume = Mth.clamp(f / 4.0F, 0.0F, 1.0F);
 			}else{
-				this.volume = 0.0F;
+				volume = 0.0F;
 			}
 
-			if(this.time < 20){
-				this.volume = 0.0F;
-			}else if(this.time < 40){
-				this.volume = (float)((double)this.volume * ((double)(this.time - 20) / 20.0D));
+			if(time < 20){
+				volume = 0.0F;
+			}else if(time < 40){
+				volume = (float)((double)volume * ((double)(time - 20) / 20.0D));
 			}
 
 			float f1 = 0.8F;
-			if(this.volume > 0.8F){
-				this.pitch = 1.0F + (this.volume - 0.8F);
+			if(volume > 0.8F){
+				pitch = 1.0F + (volume - 0.8F);
 			}else{
-				this.pitch = 1.0F;
+				pitch = 1.0F;
 			}
 		}else{
-			this.stop();
+			stop();
 		}
 	}
 }

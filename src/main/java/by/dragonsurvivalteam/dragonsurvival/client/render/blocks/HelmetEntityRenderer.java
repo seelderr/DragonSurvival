@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
 import java.util.Map;
 
 public class HelmetEntityRenderer implements BlockEntityRenderer<HelmetTileEntity>{
-	private static final Map<Block, ResourceLocation> TEXTURE_BY_TYPE = Util.make(Maps.newHashMap(), (resourceLocationHashMap) -> {
+	private static final Map<Block, ResourceLocation> TEXTURE_BY_TYPE = Util.make(Maps.newHashMap(), resourceLocationHashMap -> {
 		resourceLocationHashMap.put(DSBlocks.helmet1, new ResourceLocation(DragonSurvivalMod.MODID, "textures/block/broken_knight_helmet_0.png"));
 		resourceLocationHashMap.put(DSBlocks.helmet2, new ResourceLocation(DragonSurvivalMod.MODID, "textures/block/broken_knight_helmet_1.png"));
 		resourceLocationHashMap.put(DSBlocks.helmet3, new ResourceLocation(DragonSurvivalMod.MODID, "textures/block/broken_knight_helmet_2.png"));
@@ -34,6 +34,7 @@ public class HelmetEntityRenderer implements BlockEntityRenderer<HelmetTileEntit
 
 	public HelmetEntityRenderer(BlockEntityRendererProvider.Context pContext){}
 
+	@Override
 	public void render(HelmetTileEntity helmetEntity, float p_225616_2_, PoseStack PoseStack, MultiBufferSource renderTypeBuffer, int p_225616_5_, int p_225616_6_){
 		BlockState blockstate = helmetEntity.getBlockState();
 		float f1 = 22.5F * blockstate.getValue(SkullBlock.ROTATION);

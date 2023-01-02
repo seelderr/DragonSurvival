@@ -59,11 +59,12 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 
 	public TreasureBlock(Color c, Properties p_i48328_1_){
 		super(p_i48328_1_);
-		this.registerDefaultState(this.stateDefinition.any().setValue(LAYERS, 1).setValue(WATERLOGGED, false));
-		this.effectColor = c;
+		registerDefaultState(stateDefinition.any().setValue(LAYERS, 1).setValue(WATERLOGGED, false));
+		effectColor = c;
 	}
 
 
+	@Override
 	public boolean isPathfindable(BlockState p_196266_1_, BlockGetter p_196266_2_, BlockPos p_196266_3_, PathComputationType p_196266_4_){
 		return switch(p_196266_4_){
 			case LAND -> p_196266_1_.getValue(LAYERS) < 5;
@@ -102,6 +103,7 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 		return super.use(p_225533_1_, world, p_225533_3_, player, hand, p_225533_6_);
 	}
 
+	@Override
 	public boolean useShapeForLightOcclusion(BlockState p_220074_1_){
 		return true;
 	}
@@ -125,10 +127,11 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 		return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
 	}
 
+	@Override
 	public boolean canBeReplaced(BlockState p_196253_1_, BlockPlaceContext p_196253_2_){
 		int i = p_196253_1_.getValue(LAYERS);
 
-		if(p_196253_2_.getItemInHand().getItem() == this.asItem() && i < 8){
+		if(p_196253_2_.getItemInHand().getItem() == asItem() && i < 8){
 			if(p_196253_2_.replacingClickedOnBlock()){
 				return p_196253_2_.getClickedFace() == Direction.UP;
 			}
@@ -137,19 +140,23 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 		return false;
 	}
 
+	@Override
 	public VoxelShape getBlockSupportShape(BlockState p_230335_1_, BlockGetter p_230335_2_, BlockPos p_230335_3_){
 		return SHAPE_BY_LAYER[p_230335_1_.getValue(LAYERS)];
 	}
 
+	@Override
 	@OnlyIn( Dist.CLIENT )
 	public float getShadeBrightness(BlockState p_220080_1_, BlockGetter p_220080_2_, BlockPos p_220080_3_){
 		return 1.0F;
 	}
 
+	@Override
 	public VoxelShape getShape(BlockState p_220053_1_, BlockGetter p_220053_2_, BlockPos p_220053_3_, CollisionContext p_220053_4_){
 		return SHAPE_BY_LAYER[p_220053_1_.getValue(LAYERS)];
 	}
 
+	@Override
 	public VoxelShape getCollisionShape(BlockState p_220071_1_, BlockGetter p_220071_2_, BlockPos p_220071_3_, CollisionContext p_220071_4_){
 		if(p_220071_4_ instanceof EntityCollisionContext && ((EntityCollisionContext)p_220071_4_).getEntity() instanceof FallingBlockEntity){
 			return SHAPE_BY_LAYER[p_220071_1_.getValue(LAYERS)];
@@ -158,14 +165,17 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 		return SHAPE_BY_LAYER[Math.max(p_220071_1_.getValue(LAYERS) - 1, 0)];
 	}
 
+	@Override
 	public VoxelShape getVisualShape(BlockState p_230322_1_, BlockGetter p_230322_2_, BlockPos p_230322_3_, CollisionContext p_230322_4_){
 		return Shapes.empty();
 	}
 
+	@Override
 	public boolean propagatesSkylightDown(BlockState p_200123_1_, BlockGetter p_200123_2_, BlockPos p_200123_3_){
 		return true;
 	}
 
+	@Override
 	@Nullable
 	public BlockState getStateForPlacement(BlockPlaceContext p_196258_1_){
 		BlockState blockstate = p_196258_1_.getLevel().getBlockState(p_196258_1_.getClickedPos());
@@ -177,10 +187,12 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 		}
 	}
 
+	@Override
 	public boolean isPossibleToRespawnInThis(){
 		return true;
 	}
 
+	@Override
 	protected void createBlockStateDefinition(Builder<Block, BlockState> p_206840_1_){
 		p_206840_1_.add(LAYERS);
 		p_206840_1_.add(WATERLOGGED);
@@ -208,10 +220,11 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 		if(pState.getValue(WATERLOGGED)){
 			pLevel.scheduleTick(pCurrentPos, Fluids.WATER, Fluids.WATER.getTickDelay(pLevel));
 		}
-		pLevel.scheduleTick(pCurrentPos, this, this.getDelayAfterPlace());
+		pLevel.scheduleTick(pCurrentPos, this, getDelayAfterPlace());
 		return super.updateShape(pState, pFacing, pFacingState, pLevel, pCurrentPos, pFacingPos);
 	}
 
+	@Override
 	public void tick(BlockState p_225534_1_, ServerLevel p_225534_2_, BlockPos p_225534_3_, Random p_225534_4_){
 		boolean belowEmpty = isFree(p_225534_2_.getBlockState(p_225534_3_.below())) && p_225534_3_.getY() >= p_225534_2_.getMinBuildHeight();
 		boolean lowerLayer = p_225534_2_.getBlockState(p_225534_3_.below()).getBlock() == p_225534_1_.getBlock() && p_225534_2_.getBlockState(p_225534_3_.below()).getValue(LAYERS) < 8;
@@ -242,7 +255,7 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 								p_225534_2_.setBlock(p_225534_3_, Blocks.AIR.defaultBlockState(), 3);
 							}
 
-							this.remove(RemovalReason.DISCARDED);
+							remove(RemovalReason.DISCARDED);
 							return;
 						}
 					}
@@ -252,7 +265,7 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 			};
 			p_225534_2_.setBlock(p_225534_3_, p_225534_1_.getFluidState().createLegacyBlock(), 3);
 			p_225534_2_.addFreshEntity(fallingblockentity);
-			this.falling(fallingblockentity);
+			falling(fallingblockentity);
 		}
 	}
 
@@ -260,7 +273,7 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 	@OnlyIn( Dist.CLIENT )
 	public void animateTick(BlockState block, Level world, BlockPos pos, Random random){
 		double d1 = random.nextDouble();
-		double d2 = (block.getValue(LAYERS)) * (1.0 / 8) + .1;
+		double d2 = block.getValue(LAYERS) * (1.0 / 8) + .1;
 		double d3 = random.nextDouble();
 
 		if(world.isEmptyBlock(pos.above())){

@@ -47,18 +47,18 @@ public class DragonAltarGUI extends Screen{
 
 	@Override
 	public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks){
-		if(this.minecraft == null){
+		if(minecraft == null){
 			return;
 		}
 
 		matrixStack.pushPose();
 		matrixStack.translate(0, 0, -600);
-		this.renderBackground(matrixStack);
+		renderBackground(matrixStack);
 		matrixStack.popPose();
 
 		tick++;
 
-		if((tick % 200 * 20) == 0){
+		if(tick % 200 * 20 == 0){
 			animation1++;
 			animation2++;
 
@@ -87,8 +87,8 @@ public class DragonAltarGUI extends Screen{
 					FakeClientPlayerUtils.getFakePlayer(0, handler1).animationSupplier = () -> animations[animation1];
 					FakeClientPlayerUtils.getFakePlayer(1, handler2).animationSupplier = () -> animations[animation2];
 
-					renderDragon(width / 2 + 170, button.y + (button.getHeight() / 2) + 20, 5, matrixStack, 20, FakeClientPlayerUtils.getFakePlayer(0, handler1), FakeClientPlayerUtils.getFakeDragon(0, handler1));
-					renderDragon(width / 2 - 205, button.y + (button.getHeight() / 2) + 1, -4, matrixStack, 40, FakeClientPlayerUtils.getFakePlayer(1, handler2), FakeClientPlayerUtils.getFakeDragon(1, handler2));
+					renderDragon(width / 2 + 170, button.y + button.getHeight() / 2 + 20, 5, matrixStack, 20, FakeClientPlayerUtils.getFakePlayer(0, handler1), FakeClientPlayerUtils.getFakeDragon(0, handler1));
+					renderDragon(width / 2 - 205, button.y + button.getHeight() / 2 + 1, -4, matrixStack, 40, FakeClientPlayerUtils.getFakePlayer(1, handler2), FakeClientPlayerUtils.getFakeDragon(1, handler2));
 				}
 			}
 		}
@@ -166,22 +166,22 @@ public class DragonAltarGUI extends Screen{
 			hasInit = true;
 		}
 
-		this.guiLeft = (this.width - 304) / 2;
-		this.guiTop = (this.height - 190) / 2;
+		guiLeft = (width - 304) / 2;
+		guiTop = (height - 190) / 2;
 
-		this.addRenderableWidget(new HelpButton(width / 2 - 9, 32 + 0, 16, 16, "ds.help.altar", 1));
+		addRenderableWidget(new HelpButton(width / 2 - 9, 32 + 0, 16, 16, "ds.help.altar", 1));
 
-		addRenderableWidget(new AltarTypeButton(this, DragonTypes.CAVE, width / 2 - 104, this.guiTop + 30));
-		addRenderableWidget(new AltarTypeButton(this, DragonTypes.FOREST, width / 2 - 51, this.guiTop + 30));
-		addRenderableWidget(new AltarTypeButton(this, DragonTypes.SEA, width / 2 + 2, this.guiTop + 30));
+		addRenderableWidget(new AltarTypeButton(this, DragonTypes.CAVE, width / 2 - 104, guiTop + 30));
+		addRenderableWidget(new AltarTypeButton(this, DragonTypes.FOREST, width / 2 - 51, guiTop + 30));
+		addRenderableWidget(new AltarTypeButton(this, DragonTypes.SEA, width / 2 + 2, guiTop + 30));
 		addRenderableWidget(new AltarTypeButton(this, null, width / 2 + 55, guiTop + 30));
 
-		addRenderableWidget(new ExtendedButton(width / 2 - 75, height - 25, 150, 20, new TranslatableComponent("ds.gui.dragon_editor"), (btn) -> {
+		addRenderableWidget(new ExtendedButton(width / 2 - 75, height - 25, 150, 20, new TranslatableComponent("ds.gui.dragon_editor"), btn -> {
 			Minecraft.getInstance().setScreen(new DragonEditorScreen(Minecraft.getInstance().screen));
 		}){
 			@Override
 			public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
-				this.visible = DragonUtils.isDragon(minecraft.player);
+				visible = DragonUtils.isDragon(minecraft.player);
 				super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
 			}
 		});

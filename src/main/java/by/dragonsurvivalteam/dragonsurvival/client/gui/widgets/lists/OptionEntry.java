@@ -34,11 +34,11 @@ public class OptionEntry extends OptionListEntry{
 	public OptionEntry(Map<Option, AbstractWidget> pOptions, Option option, Component textComponent, AbstractWidget widget, CategoryEntry categoryEntry){
 		super(pOptions);
 		this.widget = widget;
-		this.category = categoryEntry;
-		this.key = textComponent;
+		category = categoryEntry;
+		key = textComponent;
 		this.option = option;
-		this.width = Minecraft.getInstance().font.width(key);
-		this.options = pOptions;
+		width = Minecraft.getInstance().font.width(key);
+		options = pOptions;
 
 		resetButton = new ResetSettingsButton(widget.x + 3 + widget.getWidth() + (categoryEntry != null && categoryEntry.parent != null ? 0 : 1), 0, option);
 	}
@@ -84,7 +84,7 @@ public class OptionEntry extends OptionListEntry{
 
 	@Override
 	public List<? extends GuiEventListener> children(){
-		return ImmutableList.of(this.widget, this.resetButton);
+		return ImmutableList.of(widget, resetButton);
 	}
 
 	@Override

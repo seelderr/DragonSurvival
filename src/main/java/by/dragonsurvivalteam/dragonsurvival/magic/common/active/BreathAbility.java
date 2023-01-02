@@ -2,7 +2,6 @@ package by.dragonsurvivalteam.dragonsurvival.magic.common.active;
 
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.StormBreathAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.AbilityAnimation;
@@ -60,6 +59,7 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 		return source.level.getEntitiesOfClass(entityClass, source.getBoundingBox().inflate(r, r, r), e -> e != source && source.distanceTo(e) <= r + e.getBbWidth() / 2f && e.getY() <= source.getY() + r);
 	}
 
+	@Override
 	public boolean requiresStationaryCasting(){
 		return false;
 	}
@@ -76,8 +76,8 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 	@Override
 	public void onChanneling(Player player, int castDuration){
 		DragonStateHandler playerStateHandler = DragonUtils.getHandler(player);
-
-		DragonLevel growthLevel = DragonStateProvider.getCap(player).map(cap -> cap.getLevel()).get();
+		DragonLevel growthLevel = DragonUtils.getDragonLevel(player);
+		
 		RANGE = (int)Math.round(4 + (playerStateHandler.getSize() - DragonLevel.NEWBORN.size) / (DragonLevel.ADULT.size - DragonLevel.NEWBORN.size) * 4);
 		yaw = (float)Math.toRadians(-player.getYRot());
 		pitch = (float)Math.toRadians(-player.getXRot());
@@ -193,10 +193,8 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 									}
 								}
 							}
-
-							if(newPos != null && state != null){
-								onBlock(newPos, state, result.getDirection());
-							}
+							
+							onBlock(newPos, state, result.getDirection());
 						}
 					}
 				}

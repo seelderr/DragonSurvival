@@ -20,14 +20,17 @@ public class FireBallRenderer extends GeoProjectilesRenderer<FireBallEntity>{
 		super(renderManager, modelProvider);
 	}
 
+	@Override
 	protected int getBlockLightLevel(FireBallEntity p_225624_1_, BlockPos p_225624_2_){
 		return 15;
 	}
 
+	@Override
 	public void render(FireBallEntity p_225623_1_, float p_225623_2_, float p_225623_3_, PoseStack stack, MultiBufferSource p_225623_5_, int p_225623_6_){
 		super.render(p_225623_1_, p_225623_2_, p_225623_3_, stack, p_225623_5_, p_225623_6_);
 	}
 
+	@Override
 	public ResourceLocation getTextureLocation(FireBallEntity p_110775_1_){
 		return TEXTURE_LOCATION;
 	}

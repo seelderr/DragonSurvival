@@ -25,7 +25,7 @@ public class DragonEditorDropdownEntry extends DropdownEntry{
 
 	@Override
 	public void render(PoseStack pMatrixStack, int pIndex, int pTop, int pLeft, int pWidth, int pHeight, int pMouseX, int pMouseY, boolean pIsMouseOver, float pPartialTicks){
-		this.children.forEach(p_238519_5_ -> {
+		children.forEach(p_238519_5_ -> {
 			p_238519_5_.y = pTop;
 			p_238519_5_.visible = source.visible;
 			p_238519_5_.active = !Objects.equals(source.current, p_238519_5_.value);
@@ -35,7 +35,7 @@ public class DragonEditorDropdownEntry extends DropdownEntry{
 
 	@Override
 	public List<? extends GuiEventListener> children(){
-		return this.children;
+		return children;
 	}
 
 	@Override

@@ -12,9 +12,10 @@ public class PrinceRenderer extends VillagerRenderer{
 
 	public PrinceRenderer(EntityRendererProvider.Context entityRendererManager){
 		super(entityRendererManager);
-		this.layers.removeIf(VillagerProfessionLayer.class::isInstance);
+		layers.removeIf(VillagerProfessionLayer.class::isInstance);
 	}
 
+	@Override
 	public ResourceLocation getTextureLocation(Villager villager){
 		return TEXTURE;
 	}

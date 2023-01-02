@@ -104,6 +104,7 @@ public class ForestBreathAbility extends BreathAbility{
 	}
 
 
+	@Override
 	@OnlyIn( Dist.CLIENT )
 	public ArrayList<Component> getLevelUpInfo(){
 		ArrayList<Component> list = super.getLevelUpInfo();
@@ -199,7 +200,7 @@ public class ForestBreathAbility extends BreathAbility{
 		}
 
 		if(player.level.isClientSide && castDuration <= 1){
-			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> sound());
+			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)this::sound);
 		}
 
 		if(player.level.isClientSide){
@@ -211,9 +212,9 @@ public class ForestBreathAbility extends BreathAbility{
 			}
 
 			for(int i = 0; i < 10; i++){
-				double xSpeed = speed * xComp + (spread * 0.7 * (player.level.random.nextFloat() * 2 - 1) * (Math.sqrt(1 - xComp * xComp)));
-				double ySpeed = speed * yComp + (spread * 0.7 * (player.level.random.nextFloat() * 2 - 1) * (Math.sqrt(1 - yComp * yComp)));
-				double zSpeed = speed * zComp + (spread * 0.7 * (player.level.random.nextFloat() * 2 - 1) * (Math.sqrt(1 - zComp * zComp)));
+				double xSpeed = speed * xComp + spread * 0.7 * (player.level.random.nextFloat() * 2 - 1) * Math.sqrt(1 - xComp * xComp);
+				double ySpeed = speed * yComp + spread * 0.7 * (player.level.random.nextFloat() * 2 - 1) * Math.sqrt(1 - yComp * yComp);
+				double zSpeed = speed * zComp + spread * 0.7 * (player.level.random.nextFloat() * 2 - 1) * Math.sqrt(1 - zComp * zComp);
 				player.level.addParticle(new SmallPoisonParticleData(37, false), dx, dy, dz, xSpeed, ySpeed, zSpeed);
 			}
 		}
@@ -259,7 +260,7 @@ public class ForestBreathAbility extends BreathAbility{
 
 	@Override
 	public boolean canHitEntity(LivingEntity entity){
-		return !(entity instanceof Player) || player.canHarmPlayer(((Player)entity));
+		return !(entity instanceof Player) || player.canHarmPlayer((Player)entity);
 	}
 
 	@Override
@@ -278,6 +279,7 @@ public class ForestBreathAbility extends BreathAbility{
 	@Override
 	public void onDamage(LivingEntity entity){}
 
+	@Override
 	public float getDamage(){
 		return getDamage(getLevel());
 	}

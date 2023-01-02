@@ -26,10 +26,10 @@ public class LargeLightningParticle extends TextureSheetParticle{
 		lifetime = (int)duration;
 		swirlTick = random.nextInt(120);
 		spread = random.nextFloat();
-		this.hasPhysics = false;
+		hasPhysics = false;
 		this.swirls = swirls;
 		setSpriteFromAge(sprite);
-		this.sprites = sprite;
+		sprites = sprite;
 	}
 
 	@Override
@@ -68,7 +68,7 @@ public class LargeLightningParticle extends TextureSheetParticle{
 		}
 		age++;
 		swirlTick++;
-		this.setSpriteFromAge(this.sprites);
+		setSpriteFromAge(sprites);
 	}
 
 	@Override
@@ -103,7 +103,7 @@ public class LargeLightningParticle extends TextureSheetParticle{
 
 		public SeaFactory(SpriteSet sprite){
 
-			this.spriteSet = sprite;
+			spriteSet = sprite;
 		}
 
 		@Override

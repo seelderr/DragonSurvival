@@ -49,6 +49,7 @@ public class DragonBeacon extends Block implements SimpleWaterloggedBlock, Entit
 		registerDefaultState(getStateDefinition().any().setValue(LIT, false).setValue(WATERLOGGED, false));
 	}
 
+	@Override
 	public BlockState updateShape(BlockState blockState, Direction direction, BlockState blockState1, LevelAccessor world, BlockPos blockPos, BlockPos blockPos1){
 		if(blockState.getValue(WATERLOGGED)){
 			world.scheduleTick(blockPos, Fluids.WATER, Fluids.WATER.getTickDelay(world));
@@ -94,7 +95,7 @@ public class DragonBeacon extends Block implements SimpleWaterloggedBlock, Entit
 			LazyOptional<DragonStateHandler> dragonState = DragonStateProvider.getCap(playerEntity);
 			if(dragonState.isPresent()){
 				DragonStateHandler dragonStateHandler = dragonState.orElse(null);
-				if(dragonStateHandler.isDragon() && ((playerEntity.totalExperience >= 60 || playerEntity.experienceLevel >= 6) || playerEntity.isCreative())){
+				if(dragonStateHandler.isDragon() && (playerEntity.totalExperience >= 60 || playerEntity.experienceLevel >= 6 || playerEntity.isCreative())){
 					if(this == DSBlocks.peaceDragonBeacon){
 						if(!world.isClientSide){
 							ConfigHandler.configList(MobEffect.class, ServerConfig.peaceBeaconEffects).forEach(effect -> {
@@ -131,6 +132,7 @@ public class DragonBeacon extends Block implements SimpleWaterloggedBlock, Entit
 		return InteractionResult.SUCCESS;
 	}
 
+	@Override
 	public boolean triggerEvent(BlockState pState, Level pLevel, BlockPos pPos, int pId, int pParam){
 		super.triggerEvent(pState, pLevel, pPos, pId, pParam);
 		BlockEntity blockentity = pLevel.getBlockEntity(pPos);
@@ -144,10 +146,12 @@ public class DragonBeacon extends Block implements SimpleWaterloggedBlock, Entit
 		return RenderShape.ENTITYBLOCK_ANIMATED;
 	}
 
+	@Override
 	public FluidState getFluidState(BlockState blockState){
 		return blockState.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(blockState);
 	}
 
+	@Override
 	@Nullable
 	public MenuProvider getMenuProvider(BlockState pState, Level pLevel, BlockPos pPos){
 		BlockEntity blockentity = pLevel.getBlockEntity(pPos);
@@ -156,7 +160,7 @@ public class DragonBeacon extends Block implements SimpleWaterloggedBlock, Entit
 
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext context){
-		return this.defaultBlockState().setValue(WATERLOGGED, context.getLevel().getFluidState(context.getClickedPos()).getType() == Fluids.WATER);
+		return defaultBlockState().setValue(WATERLOGGED, context.getLevel().getFluidState(context.getClickedPos()).getType() == Fluids.WATER);
 	}
 
 	@Override
@@ -171,6 +175,7 @@ public class DragonBeacon extends Block implements SimpleWaterloggedBlock, Entit
 		return DSTileEntities.dragonBeacon.create(pPos, pState);
 	}
 
+	@Override
 	@Nullable
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType){
 		return pLevel.isClientSide ? null : BaseEntityBlock.createTickerHelper(pBlockEntityType, DSTileEntities.dragonBeacon, DragonBeaconTileEntity::serverTick);

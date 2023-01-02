@@ -90,7 +90,7 @@ public class SeaDragonType extends AbstractDragonType {
 					}
 					
 					if (player.isInWaterRainOrBubble() || isInSeaBlock) {
-						timeWithoutWater = (Math.max(timeWithoutWater - (int)Math.ceil(maxTicksOutofWater * 0.005F), 0));
+						timeWithoutWater = Math.max(timeWithoutWater - (int)Math.ceil(maxTicksOutofWater * 0.005F), 0);
 					}
 					
 					timeWithoutWater = Math.min(timeWithoutWater, maxTicksOutofWater * 2);
@@ -149,10 +149,8 @@ public class SeaDragonType extends AbstractDragonType {
 				if(feetBlock.getBlock() instanceof LayeredCauldronBlock){
 					if(feetBlock.hasProperty(LayeredCauldronBlock.LEVEL)){
 						int level = feetBlock.getValue(LayeredCauldronBlock.LEVEL);
-
-						if(level > 0){
-							return true;
-						}
+						
+						return level > 0;
 					}
 				}
 			}

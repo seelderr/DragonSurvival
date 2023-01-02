@@ -173,7 +173,7 @@ public class ConfigHandler{
 					ConfigValue<List<?>> value = builder.defineList(option.key(), ls, s -> fe.isAnnotationPresent(IgnoreConfigCheck.class) || ResourceLocation.isValidResourceLocation(String.valueOf(s)));
 					configValues.put(key, value);
 				}else{
-					ConfigValue value = builder.define(option.key(), defaultOb);
+					ConfigValue<Object> value = builder.define(option.key(), defaultOb);
 					configValues.put(key, value);
 					System.out.println("Possible config issue for option: " + option.key());
 				}
@@ -194,7 +194,7 @@ public class ConfigHandler{
 		}
 
 		if(ob instanceof Enum<?>){
-			return ((Enum)ob).name();
+			return ((Enum<?>)ob).name();
 		}
 
 		return ob;
@@ -326,7 +326,7 @@ public class ConfigHandler{
 			conf.save();
 		});
 
-		ConfigHandler.configValues.entrySet().stream().filter((c) -> c.getValue() == conf).findFirst().ifPresent(key -> {
+		ConfigHandler.configValues.entrySet().stream().filter(c -> c.getValue() == conf).findFirst().ifPresent(key -> {
 			try{
 				Field fe = ConfigHandler.configFields.get(key.getKey());
 
@@ -348,7 +348,7 @@ public class ConfigHandler{
 		if(ob instanceof Collection<?>){
 			Collection<Object> obs = new ArrayList<>();
 
-			for(Object o : ((Collection<?>)ob)){
+			for(Object o : (Collection<?>)ob){
 				obs.add(convertObject(o));
 			}
 
@@ -361,9 +361,9 @@ public class ConfigHandler{
 
 	private static Object convertFromString(Field fe, Object obj) throws IllegalAccessException{
 		if(fe.getType().isAssignableFrom(Collection.class)){
-			ArrayList ls = new ArrayList<>();
+			ArrayList<Object> ls = new ArrayList<>();
 
-			for(Object o : ((Collection)obj)){
+			for(Object o : (Collection)obj){
 				ls.add(loadObject(fe, o));
 			}
 

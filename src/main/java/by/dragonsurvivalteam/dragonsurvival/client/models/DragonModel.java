@@ -85,7 +85,7 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity>{
 		}
 
 		if (!Minecraft.getInstance().isPaused() || manager.shouldPlayWhilePaused) {
-			manager.tick = (getCurrentTick() - manager.startTick);
+			manager.tick = getCurrentTick() - manager.startTick;
 			double gameTick = manager.tick;
 			double deltaTicks = gameTick - lastGameTickTime;
 			seekTime += deltaTicks;
@@ -103,7 +103,7 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity>{
 		predicate.animationTick = seekTime;
 		getAnimationProcessor().preAnimationSetup(predicate.getAnimatable(), seekTime);
 
-		if (!this.getAnimationProcessor().getModelRendererList().isEmpty()) {
+		if (!getAnimationProcessor().getModelRendererList().isEmpty()) {
 			getAnimationProcessor().tickAnimation(entity, uniqueID, seekTime, predicate, GeckoLibCache.getInstance().parser, shouldCrashOnMissing);
 		}
 	}

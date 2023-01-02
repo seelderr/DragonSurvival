@@ -169,7 +169,7 @@ public class DSEntities{
 	}
 
 	private static void registerSpawnEgg(IForgeRegistry<Item> registry, EntityType entity, int eggPrimary, int eggSecondary){
-		Item spawnEgg = new SpawnEggItem(entity, eggPrimary, eggSecondary, (new Item.Properties()).tab(DragonSurvivalMod.items));
+		Item spawnEgg = new SpawnEggItem(entity, eggPrimary, eggSecondary, new Item.Properties().tab(DragonSurvivalMod.items));
 		spawnEgg.setRegistryName(new ResourceLocation(DragonSurvivalMod.MODID, entity.getRegistryName().getPath() + "_spawn_egg"));
 		registry.register(spawnEgg);
 	}

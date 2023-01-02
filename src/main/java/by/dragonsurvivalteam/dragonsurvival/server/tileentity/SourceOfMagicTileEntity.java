@@ -82,13 +82,13 @@ public class SourceOfMagicTileEntity extends BaseBlockTileEntity implements Cont
 
 	@Override
 	public ItemStack removeItemNoUpdate(int i){
-		return ContainerHelper.takeItem(this.stacks, 0);
+		return ContainerHelper.takeItem(stacks, 0);
 	}
 
 	@Override
 	public void setItem(int i, ItemStack itemStack){
-		if(i >= 0 && i < this.stacks.size()){
-			this.stacks.set(i, itemStack);
+		if(i >= 0 && i < stacks.size()){
+			stacks.set(i, itemStack);
 		}
 	}
 
@@ -100,8 +100,8 @@ public class SourceOfMagicTileEntity extends BaseBlockTileEntity implements Cont
 	@Override
 	public void load(CompoundTag compound){
 		super.load(compound);
-		this.stacks = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
-		ContainerHelper.loadAllItems(compound, this.stacks);
+		stacks = NonNullList.withSize(getContainerSize(), ItemStack.EMPTY);
+		ContainerHelper.loadAllItems(compound, stacks);
 	}
 
 	@Override

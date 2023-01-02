@@ -27,7 +27,7 @@ public class SyncPotionAddedEffect implements IMessage<SyncPotionAddedEffect>{
 	public SyncPotionAddedEffect(){}
 
 	public SyncPotionAddedEffect(int playerId, int effectId, int duration, int amplifier){
-		this.entityId = playerId;
+		entityId = playerId;
 		this.effectId = effectId;
 		this.duration = duration;
 		this.amplifier = amplifier;

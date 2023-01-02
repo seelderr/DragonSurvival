@@ -45,15 +45,17 @@ public class BallLightningEntity extends DragonBallEntity{
 		return ParticleTypes.WHITE_ASH;
 	}
 
+	@Override
 	protected boolean shouldBurn(){
 		return false;
 	}
 
+	@Override
 	protected void onHit(HitResult p_70227_1_){
-		if(!this.level.isClientSide && !this.isDead){
-			boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level, this.getOwner());
+		if(!level.isClientSide && !isDead){
+			boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(level, getOwner());
 			float explosivePower = getSkillLevel() / 1.25f;
-			this.level.explode(null, this.getX(), this.getY(), this.getZ(), explosivePower, flag, flag ? Explosion.BlockInteraction.DESTROY : Explosion.BlockInteraction.NONE);
+			level.explode(null, getX(), getY(), getZ(), explosivePower, flag, flag ? Explosion.BlockInteraction.DESTROY : Explosion.BlockInteraction.NONE);
 
 			isDead = true;
 			setDeltaMovement(0, 0, 0);
@@ -62,15 +64,16 @@ public class BallLightningEntity extends DragonBallEntity{
 		}
 	}
 
+	@Override
 	public void attackMobs(){
 		int range = DragonAbilities.getAbility((Player)getOwner(), BallLightningAbility.class).getRange();
-		List<Entity> entities = this.level.getEntities(null, new AABB(position().x - range, position().y - range, position().z - range, position().x + range, position().y + range, position().z + range));
-		entities.removeIf((e) -> e == getOwner() || e instanceof BallLightningEntity);
-		entities.removeIf((e) -> e.distanceTo(this) > range);
-		entities.removeIf((e) -> !(e instanceof LivingEntity));
+		List<Entity> entities = level.getEntities(null, new AABB(position().x - range, position().y - range, position().z - range, position().x + range, position().y + range, position().z + range));
+		entities.removeIf(e -> e == getOwner() || e instanceof BallLightningEntity);
+		entities.removeIf(e -> e.distanceTo(this) > range);
+		entities.removeIf(e -> !(e instanceof LivingEntity));
 
 		for(Entity ent : entities){
-			if(!this.level.isClientSide){
+			if(!level.isClientSide){
 				TargetingFunctions.attackTargets(getOwner(), ent1 -> ent1.hurt(DamageSource.LIGHTNING_BOLT, BallLightningAbility.getDamage(getSkillLevel())), ent);
 
 				if(ent instanceof LivingEntity livingEntity){
@@ -82,11 +85,11 @@ public class BallLightningEntity extends DragonBallEntity{
 				}
 
 				if(getOwner() instanceof LivingEntity){
-					this.doEnchantDamageEffects((LivingEntity)getOwner(), ent);
+					doEnchantDamageEffects((LivingEntity)getOwner(), ent);
 				}
 			}
 
-			if(this.level.isClientSide){
+			if(level.isClientSide){
 				for(int i = 0; i < 10; i++){
 					double d1 = level.random.nextFloat();
 					double d2 = level.random.nextFloat();
@@ -109,16 +112,16 @@ public class BallLightningEntity extends DragonBallEntity{
 			}
 		}
 
-		if(this.level.isClientSide){
+		if(level.isClientSide){
 			float f = range;
 			float f5 = (float)Math.PI * f * f;
 
 			for(int k1 = 0; (float)k1 < f5; ++k1){
-				float f6 = this.random.nextFloat() * ((float)Math.PI * 2F);
-				float f7 = Mth.sqrt(this.random.nextFloat()) * f;
+				float f6 = random.nextFloat() * ((float)Math.PI * 2F);
+				float f7 = Mth.sqrt(random.nextFloat()) * f;
 				float f8 = Mth.cos(f6) * f7;
 				float f9 = Mth.sin(f6) * f7;
-				level.addParticle(new LargeLightningParticleData(37F, false), this.getX() + (double)f8, this.getY(), this.getZ() + (double)f9, 0, 0, 0);
+				level.addParticle(new LargeLightningParticleData(37F, false), getX() + (double)f8, getY(), getZ() + (double)f9, 0, 0, 0);
 			}
 		}
 

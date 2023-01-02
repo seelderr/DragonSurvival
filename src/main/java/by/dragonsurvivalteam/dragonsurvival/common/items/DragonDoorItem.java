@@ -12,6 +12,7 @@ public class DragonDoorItem extends BlockItem{
 		super(blockIn, builder);
 	}
 
+	@Override
 	protected boolean placeBlock(BlockPlaceContext context, BlockState state){
 		context.getLevel().setBlock(context.getClickedPos().above(), Blocks.AIR.defaultBlockState(), 27);
 		context.getLevel().setBlock(context.getClickedPos().above(2), Blocks.AIR.defaultBlockState(), 27);

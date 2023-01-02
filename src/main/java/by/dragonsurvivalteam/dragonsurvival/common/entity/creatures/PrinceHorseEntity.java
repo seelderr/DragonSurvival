@@ -41,6 +41,7 @@ public class PrinceHorseEntity extends PrincesHorseEntity{
 		super(entityType, world, villagerType);
 	}
 
+	@Override
 	@Nullable
 	public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverWorld, DifficultyInstance difficultyInstance, MobSpawnType reason,
 		@Nullable
@@ -51,6 +52,7 @@ public class PrinceHorseEntity extends PrincesHorseEntity{
 		return super.finalizeSpawn(serverWorld, difficultyInstance, reason, livingEntityData, compoundNBT);
 	}
 
+	@Override
 	protected void updateTrades(){
 		VillagerData villagerdata = getVillagerData();
 		Int2ObjectMap<ItemListing[]> int2objectmap = DSTrades.princeTrades.get(getColor());
@@ -63,25 +65,27 @@ public class PrinceHorseEntity extends PrincesHorseEntity{
 		}
 	}
 
+	@Override
 	protected void registerGoals(){
 		super.registerGoals();
-		this.targetSelector.addGoal(5, new HurtByTargetGoal(this));
-		this.goalSelector.addGoal(5, new MeleeAttackGoal(this, 1.0D, true));
+		targetSelector.addGoal(5, new HurtByTargetGoal(this));
+		goalSelector.addGoal(5, new MeleeAttackGoal(this, 1.0D, true));
 		goalSelector.getAvailableGoals().removeIf(prioritizedGoal -> {
 			Goal goal = prioritizedGoal.getGoal();
 			return goal instanceof PanicGoal || goal instanceof AvoidEntityGoal;
 		});
 	}
 
+	@Override
 	protected int getExperienceReward(Player p_70693_1_){
-		return 1 + this.level.random.nextInt(2);
+		return 1 + level.random.nextInt(2);
 	}
 
 	@Override
 	public void registerControllers(AnimationData data){
 		data.addAnimationController(new AnimationController<>(this, "everything", 0, event -> {
 			AnimationBuilder animationBuilder = new AnimationBuilder();
-			AnimationController animationController = event.getController();
+			AnimationController<PrinceHorseEntity> animationController = event.getController();
 			double movement = getMovementSpeed(this);
 			if(swingTime > 0){
 				Animation animation = animationController.getCurrentAnimation();

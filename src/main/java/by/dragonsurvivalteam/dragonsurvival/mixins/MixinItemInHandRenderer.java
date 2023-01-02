@@ -32,7 +32,7 @@ public class MixinItemInHandRenderer{
 	public void applyDragonEatTransform(PoseStack p_228398_1_, float p_228398_2_, HumanoidArm p_228398_3_, ItemStack p_228398_4_, CallbackInfo ci){
 		DragonStateProvider.getCap(minecraft.player).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon()){
-				float f = (float)this.minecraft.player.getUseItemRemainingTicks() - p_228398_2_ + 1.0F;
+				float f = (float)minecraft.player.getUseItemRemainingTicks() - p_228398_2_ + 1.0F;
 				float f1 = f / (float)DragonFoodHandler.getUseDuration(p_228398_4_, dragonStateHandler.getType());
 				if(f1 < 0.8F){
 					float f2 = Mth.abs(Mth.cos(f / 4.0F * (float)Math.PI) * 0.1F);
@@ -55,7 +55,7 @@ public class MixinItemInHandRenderer{
 	public void renderDragonArmWithItem(AbstractClientPlayer p_228405_1_, float p_228405_2_, float p_228405_3_, InteractionHand p_228405_4_, float p_228405_5_, ItemStack p_228405_6_, float p_228405_7_, PoseStack p_228405_8_, MultiBufferSource pBuffer, int pCombinedLight, CallbackInfo ci){
 		DragonStateProvider.getCap(minecraft.player).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon() && DragonFoodHandler.isDragonEdible(p_228405_6_.getItem(), dragonStateHandler.getType())){
-				this.applyEatTransform(p_228405_8_, p_228405_2_, p_228405_4_ == InteractionHand.MAIN_HAND ? p_228405_1_.getMainArm() : p_228405_1_.getMainArm().getOpposite(), p_228405_6_);
+				applyEatTransform(p_228405_8_, p_228405_2_, p_228405_4_ == InteractionHand.MAIN_HAND ? p_228405_1_.getMainArm() : p_228405_1_.getMainArm().getOpposite(), p_228405_6_);
 			}
 		});
 	}
@@ -75,7 +75,7 @@ public class MixinItemInHandRenderer{
 	@Redirect( at = @At( value = "INVOKE", target = "Lnet/minecraft/client/renderer/ItemInHandRenderer;renderMapHand(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/entity/HumanoidArm;)V" ), method = "renderTwoHandedMap" )
 	private void removeTwoHandsMapForDragon(ItemInHandRenderer firstPersonRenderer, PoseStack p_228403_1_, MultiBufferSource p_228403_2_, int p_228403_3_, HumanoidArm p_228403_4_){
 		if(!DragonUtils.isDragon(minecraft.player)){
-			this.renderMapHand(p_228403_1_, p_228403_2_, p_228403_3_, p_228403_4_);
+			renderMapHand(p_228403_1_, p_228403_2_, p_228403_3_, p_228403_4_);
 		}
 	}
 

@@ -37,6 +37,7 @@ public abstract class ChannelingCastAbility extends ActiveDragonAbility {
 		}
 	}
 
+	@Override
 	public boolean canConsumeMana(Player player){
 		int manaCost = chargeTime <= getSkillChargeTime() / 2 ? getManaCost() + getChargingManaCost() : getManaCost();
 

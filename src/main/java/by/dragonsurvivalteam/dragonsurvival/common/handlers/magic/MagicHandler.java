@@ -132,8 +132,7 @@ public class MagicHandler{
 
 	@SubscribeEvent
 	public static void livingVisibility(LivingVisibilityEvent event){
-		if(event.getEntityLiving() instanceof Player){
-			Player player = (Player)event.getEntityLiving();
+		if(event.getEntityLiving() instanceof Player player){
 			DragonStateProvider.getCap(player).ifPresent(cap -> {
 				if(!cap.isDragon()){
 					return;
@@ -220,9 +219,8 @@ public class MagicHandler{
 
 	@SubscribeEvent
 	public static void playerStruckByLightning(EntityStruckByLightningEvent event){
-		if(event.getEntity() instanceof Player){
-			Player player = (Player)event.getEntity();
-
+		if(event.getEntity() instanceof Player player){
+			
 			DragonStateProvider.getCap(player).ifPresent(cap -> {
 				if(!cap.isDragon()){
 					return;
@@ -237,8 +235,7 @@ public class MagicHandler{
 
 	@SubscribeEvent
 	public static void playerDamaged(LivingDamageEvent event){
-		if(event.getEntityLiving() instanceof Player){
-			Player player = (Player)event.getEntityLiving();
+		if(event.getEntityLiving() instanceof Player player){
 			LivingEntity target = event.getEntityLiving();
 			DragonStateProvider.getCap(player).ifPresent(cap -> {
 				if(!cap.isDragon()){
@@ -254,9 +251,8 @@ public class MagicHandler{
 
 	@SubscribeEvent
 	public static void playerHitEntity(CriticalHitEvent event){
-		if(event.getEntityLiving() instanceof Player){
-			Player player = (Player)event.getEntityLiving();
-
+		if(event.getEntityLiving() instanceof Player player){
+			
 			DragonStateProvider.getCap(player).ifPresent(cap -> {
 				if(!cap.isDragon()){
 					return;
@@ -277,8 +273,7 @@ public class MagicHandler{
 		if(event.getSource() instanceof EntityDamageSource && !(event.getSource() instanceof IndirectEntityDamageSource) && !(event.getSource() instanceof BreathDamage)){
 			if(event.getEntity() instanceof LivingEntity){
 				if(event.getSource() != null && event.getSource().getEntity() != null){
-					if(event.getSource().getEntity() instanceof Player){
-						Player player = (Player)event.getSource().getEntity();
+					if(event.getSource().getEntity() instanceof Player player){
 						LivingEntity target = (LivingEntity)event.getEntity();
 						DragonStateProvider.getCap(player).ifPresent(cap -> {
 							if(!cap.isDragon()){

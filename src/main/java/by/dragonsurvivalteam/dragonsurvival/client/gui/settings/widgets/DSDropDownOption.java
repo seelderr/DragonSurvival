@@ -24,12 +24,12 @@ public class DSDropDownOption extends Option{
 		super(pCaptionKey);
 		this.value = value;
 		this.setter = setter;
-		this.tooltipSupplier = pTooltipSupplier;
+		tooltipSupplier = pTooltipSupplier;
 	}
 
 	@Override
 	public AbstractWidget createButton(Options pOptions, int pX, int pY, int pWidth){
-		this.btn = new DropDownButton(pX, pY, pWidth, 20, value.name(), Arrays.stream(value.getDeclaringClass().getEnumConstants()).map(s -> ((Enum)s).name()).toList().toArray(new String[0]), s -> {
+		btn = new DropDownButton(pX, pY, pWidth, 20, value.name(), Arrays.stream(value.getDeclaringClass().getEnumConstants()).map(s -> ((Enum<?>)s).name()).toList().toArray(new String[0]), s -> {
 			setter.accept(EnumGetMethod.ORDINAL_OR_NAME_IGNORECASE.get(s, (Class<? extends Enum>)value.getDeclaringClass()));
 		});
 		btn.tooltip = tooltipSupplier.apply(Minecraft.getInstance());

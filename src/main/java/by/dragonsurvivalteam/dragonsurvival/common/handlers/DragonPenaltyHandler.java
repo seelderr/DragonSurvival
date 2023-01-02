@@ -46,7 +46,7 @@ public class DragonPenaltyHandler{
 			}
 
 			Vec3 pos = potionEvent.getRayTraceResult().getLocation();
-			List<Player> entities = potion.level.getEntities(EntityType.PLAYER, new AABB(pos.x - 5, pos.y - 1, pos.z - 5, pos.x + 5, pos.y + 1, pos.z + 5), (entity) -> entity.position().distanceTo(pos) <= 4);
+			List<Player> entities = potion.level.getEntities(EntityType.PLAYER, new AABB(pos.x - 5, pos.y - 1, pos.z - 5, pos.x + 5, pos.y + 1, pos.z + 5), entity -> entity.position().distanceTo(pos) <= 4);
 
 			for(Player player : entities){
 				if(player.hasEffect(DragonEffects.FIRE)){

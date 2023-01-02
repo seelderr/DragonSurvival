@@ -37,7 +37,7 @@ public class DragonBeaconTileEntity extends BaseBlockTileEntity{
 
 	public DragonBeaconTileEntity(BlockPos pWorldPosition, BlockState pBlockState){
 		super(DSTileEntities.dragonBeacon, pWorldPosition, pBlockState);
-		this.bobOffs = new Random().nextFloat() * (float)Math.PI * 2.0F;
+		bobOffs = new Random().nextFloat() * (float)Math.PI * 2.0F;
 	}
 
 	public static void serverTick(Level pLevel, BlockPos pPos, BlockState pState, DragonBeaconTileEntity pBlockEntity){
@@ -64,21 +64,21 @@ public class DragonBeaconTileEntity extends BaseBlockTileEntity{
 					case PEACE -> dragons.forEach(playerEntity -> {
 						ConfigHandler.configList(MobEffect.class, ServerConfig.peaceBeaconEffects).forEach(effect -> {
 							if(effect != null){
-								playerEntity.addEffect(new MobEffectInstance(effect, Functions.minutesToTicks(ServerConfig.minutesOfDragonEffect) + 5));
+								playerEntity.addEffect(new MobEffectInstance(effect, Functions.minutesToTicks(ServerConfig.minutesOfDragonEffect) + 5, 0, true, true));
 							}
 						});
 					});
 					case MAGIC -> dragons.forEach(playerEntity -> {
 						ConfigHandler.configList(MobEffect.class, ServerConfig.magicBeaconEffects).forEach(effect -> {
 							if(effect != null){
-								playerEntity.addEffect(new MobEffectInstance(effect, Functions.minutesToTicks(ServerConfig.minutesOfDragonEffect) + 5));
+								playerEntity.addEffect(new MobEffectInstance(effect, Functions.minutesToTicks(ServerConfig.minutesOfDragonEffect) + 5, 0, true, true));
 							}
 						});
 					});
 					case FIRE -> dragons.forEach(playerEntity -> {
 						ConfigHandler.configList(MobEffect.class, ServerConfig.fireBeaconEffects).forEach(effect -> {
 							if(effect != null){
-								playerEntity.addEffect(new MobEffectInstance(effect, Functions.minutesToTicks(ServerConfig.minutesOfDragonEffect) + 5));
+								playerEntity.addEffect(new MobEffectInstance(effect, Functions.minutesToTicks(ServerConfig.minutesOfDragonEffect) + 5, 0, true, true));
 							}
 						});
 					});

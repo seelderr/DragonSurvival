@@ -36,12 +36,12 @@ public class CategoryEntry extends OptionListEntry{
 	public CategoryEntry(OptionsList optionsList, TextComponent p_i232280_2_, CategoryEntry entry, int catNum){
 		super(ImmutableMap.of());
 		this.optionsList = optionsList;
-		this.name = p_i232280_2_;
-		this.width = Minecraft.getInstance().font.width(this.name);
-		this.parent = entry;
+		name = p_i232280_2_;
+		width = Minecraft.getInstance().font.width(name);
+		parent = entry;
 		this.catNum = catNum;
 		if(entry != null)
-			this.indent = entry.indent + 10;
+			indent = entry.indent + 10;
 
 		if(OptionsList.activeCats.contains(catNum))
 			enabled = true;
@@ -55,7 +55,7 @@ public class CategoryEntry extends OptionListEntry{
 		int color = new Color(0.05F, 0.05F, 0.05F, 0.85F).getRGB();
 		Gui.fill(p_230432_1_, 32 + indent, p_230432_3_ + p_230432_6_ - 16, ((OptionsList)list).getScrollbarPosition(), p_230432_3_ + p_230432_6_, color);
 
-		Minecraft.getInstance().font.draw(p_230432_1_, name, (float)(Minecraft.getInstance().screen.width / 2 - this.width / 2) + indent, (float)(p_230432_3_ + p_230432_6_ - 12), 16777215);
+		Minecraft.getInstance().font.draw(p_230432_1_, name, (float)(Minecraft.getInstance().screen.width / 2 - width / 2) + indent, (float)(p_230432_3_ + p_230432_6_ - 12), 16777215);
 
 		if(!enabled){
 			RenderSystem.setShaderTexture(0, BUTTON_UP);
@@ -74,7 +74,7 @@ public class CategoryEntry extends OptionListEntry{
 	@Override
 	public boolean mouseClicked(double p_231044_1_, double p_231044_3_, int p_231044_5_){
 		Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
-		this.enabled = !this.enabled;
+		enabled = !enabled;
 
 		if(enabled)
 			OptionsList.activeCats.add(catNum);
@@ -96,7 +96,7 @@ public class CategoryEntry extends OptionListEntry{
 
 	@Override
 	public boolean isMouseOver(double p_231047_1_, double p_231047_3_){
-		return Objects.equals(((OptionsList)this.list).getEntryAtPos(p_231047_1_, p_231047_3_), this);
+		return Objects.equals(((OptionsList)list).getEntryAtPos(p_231047_1_, p_231047_3_), this);
 	}
 
 	@Override

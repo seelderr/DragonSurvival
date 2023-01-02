@@ -57,6 +57,7 @@ public abstract class AthleticsAbility extends TickablePassiveAbility {
 		}
 	}
 
+	@Override
 	@OnlyIn( Dist.CLIENT )
 	public ArrayList<Component> getLevelUpInfo(){
 		ArrayList<Component> list = super.getLevelUpInfo();

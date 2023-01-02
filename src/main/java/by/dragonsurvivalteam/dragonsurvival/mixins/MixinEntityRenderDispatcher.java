@@ -37,8 +37,7 @@ public class MixinEntityRenderDispatcher{
 		}
 
 		float f = p_229096_6_;
-		if(p_229096_2_ instanceof Mob){
-			Mob mobentity = (Mob)p_229096_2_;
+		if(p_229096_2_ instanceof Mob mobentity){
 			if(mobentity.isBaby()){
 				f = p_229096_6_ * 0.5F;
 			}

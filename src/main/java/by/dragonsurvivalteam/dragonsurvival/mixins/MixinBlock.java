@@ -35,7 +35,7 @@ public class MixinBlock{
 		}
 
 		if(p_220054_1_ instanceof ServerLevel){
-			Block.getDrops(p_220054_0_, (ServerLevel)p_220054_1_, p_220054_2_, p_220054_3_, entity, p_220054_5_).forEach((p_220057_2_) -> {
+			Block.getDrops(p_220054_0_, (ServerLevel)p_220054_1_, p_220054_2_, p_220054_3_, entity, p_220054_5_).forEach(p_220057_2_ -> {
 				if(!p_220054_1_.isClientSide && !p_220057_2_.isEmpty() && p_220054_1_.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS) && !p_220054_1_.restoringBlockSnapshots){
 					float f = 0.5F;
 					double d0 = (double)(p_220054_1_.random.nextFloat() * 0.5F) + 0.25D;

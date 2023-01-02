@@ -23,8 +23,8 @@ public class RequestClientData implements IMessage<RequestClientData>{
 
 	public RequestClientData(DragonStateHandler handler){
 		this.handler = handler;
-		this.type = handler.getType();
-		this.level = handler.getLevel();
+		type = handler.getType();
+		level = handler.getLevel();
 	}
 
 	public RequestClientData(AbstractDragonType type, DragonLevel level){

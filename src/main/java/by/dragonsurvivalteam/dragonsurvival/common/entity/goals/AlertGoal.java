@@ -18,13 +18,15 @@ public class AlertGoal<T extends LivingEntity> extends Goal{
 		this.toAlert = toAlert;
 	}
 
+	@Override
 	public boolean canUse(){
-		return this.owner.getLastHurtByMob() != null && this.owner.getLastHurtByMob().isAlive();
+		return owner.getLastHurtByMob() != null && owner.getLastHurtByMob().isAlive();
 	}
 
+	@Override
 	public void tick(){
-		double range = this.owner.getAttributeValue(Attributes.FOLLOW_RANGE);
-		AABB axisAlignedBB = (new AABB(this.owner.blockPosition())).inflate(range);
-		Arrays.stream(this.toAlert).forEach(aClass -> this.owner.level.getEntitiesOfClass(aClass, axisAlignedBB).forEach(mob -> mob.setTarget(owner.getLastHurtByMob())));
+		double range = owner.getAttributeValue(Attributes.FOLLOW_RANGE);
+		AABB axisAlignedBB = new AABB(owner.blockPosition()).inflate(range);
+		Arrays.stream(toAlert).forEach(aClass -> owner.level.getEntitiesOfClass(aClass, axisAlignedBB).forEach(mob -> mob.setTarget(owner.getLastHurtByMob())));
 	}
 }

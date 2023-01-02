@@ -47,7 +47,7 @@ public class KnightEntity extends PathfinderMob implements IAnimatable, DragonHu
 		data.addAnimationController(new AnimationController<>(this, "everything", 3, event -> {
 			AnimationBuilder animationBuilder = new AnimationBuilder();
 
-			AnimationController animationController = event.getController();
+			AnimationController<KnightEntity> animationController = event.getController();
 			double movement = getMovementSpeed(this);
 			if(swingTime > 0){
 				Animation animation = animationController.getCurrentAnimation();
@@ -136,8 +136,9 @@ public class KnightEntity extends PathfinderMob implements IAnimatable, DragonHu
 		targetSelector.addGoal(6, new HurtByTargetGoal(this, Shooter.class).setAlertOthers());
 	}
 
+	@Override
 	protected int getExperienceReward(Player p_70693_1_){
-		return 5 + this.level.random.nextInt(5);
+		return 5 + level.random.nextInt(5);
 	}
 
 	@Override
@@ -148,7 +149,7 @@ public class KnightEntity extends PathfinderMob implements IAnimatable, DragonHu
 
 	@Override
 	public boolean removeWhenFarAway(double distance){
-		return !this.hasCustomName() && tickCount >= Functions.minutesToTicks(ServerConfig.hunterDespawnDelay);
+		return !hasCustomName() && tickCount >= Functions.minutesToTicks(ServerConfig.hunterDespawnDelay);
 	}
 
 	@Override

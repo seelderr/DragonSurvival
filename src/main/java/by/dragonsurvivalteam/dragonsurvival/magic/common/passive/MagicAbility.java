@@ -31,6 +31,7 @@ public abstract class MagicAbility extends PassiveDragonAbility {
 		return getLevel();
 	}
 
+	@Override
 	public ResourceLocation getIcon(){
 		return getPlayer() == null ? super.getIcon() : getSkillTextures()[Mth.clamp(getLevel() + Math.max(0, (Math.min(50, getPlayer().experienceLevel) - 5) / 5), 0, getSkillTextures().length - 1)];
 	}

@@ -17,6 +17,7 @@ public class VillageRelationShips extends SubCap{
 		super(handler);
 	}
 
+	@Override
 	@Nullable
 	public CompoundTag writeNBT(){
 		CompoundTag compoundNBT = new CompoundTag();
@@ -26,6 +27,7 @@ public class VillageRelationShips extends SubCap{
 		return compoundNBT;
 	}
 
+	@Override
 	public void readNBT(CompoundTag compoundNBT){
 		crimeLevel = compoundNBT.getInt("crimeLevel");
 		evilStatusDuration = compoundNBT.getInt("evilStatusDuration");

@@ -21,7 +21,7 @@ public class ServerConfigScreen extends ConfigScreen{
 		super.tick();
 
 		if(!Minecraft.getInstance().player.hasPermissions(2)){
-			this.minecraft.setScreen(this.lastScreen);
+			minecraft.setScreen(lastScreen);
 		}
 	}
 

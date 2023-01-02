@@ -36,7 +36,7 @@ public class ColorSelectorButton extends ExtendedButton{
 		this.setter = setter;
 		this.screen = screen;
 		this.layer = layer;
-		this.visible = false;
+		visible = false;
 	}
 
 	@Override
@@ -46,7 +46,7 @@ public class ColorSelectorButton extends ExtendedButton{
 			return;
 		}
 		super.render(stack, p_230430_2_, p_230430_3_, p_230430_4_);
-		this.active = !screen.preset.skinAges.get(screen.level).defaultSkin;
+		active = !screen.preset.skinAges.get(screen.level).defaultSkin;
 
 		if(visible)
 			RenderingUtils.drawGradientRect(stack.last().pose(), 100, x + 2, y + 2, x + xSize - 2, y + ySize - 2, new int[]{Color.red.getRGB(),
@@ -88,7 +88,7 @@ public class ColorSelectorButton extends ExtendedButton{
 			renderButton = new ExtendedButton(0, 0, 0, 0, TextComponent.EMPTY, null){
 				@Override
 				public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
-					this.active = this.visible = false;
+					active = visible = false;
 
 					if(hueComponent != null && text.defaultColor == null){
 						hueComponent.visible = ColorSelectorButton.this.visible && text.defaultColor == null;

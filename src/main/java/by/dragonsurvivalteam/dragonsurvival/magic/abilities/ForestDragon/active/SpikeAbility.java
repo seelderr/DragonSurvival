@@ -77,6 +77,7 @@ public class SpikeAbility extends InstantCastAbility{
 		return (float)(spikeDamage * getLevel());
 	}
 
+	@Override
 	@OnlyIn( Dist.CLIENT )
 	public ArrayList<Component> getLevelUpInfo(){
 		ArrayList<Component> list = super.getLevelUpInfo();

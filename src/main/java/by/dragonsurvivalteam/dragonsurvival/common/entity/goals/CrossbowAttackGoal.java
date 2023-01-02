@@ -32,103 +32,107 @@ public class CrossbowAttackGoal<T extends Mob&RangedAttackMob&CrossbowAttackMob>
 	}
 
 	public CrossbowAttackGoal(T p_i50322_1_, double p_i50322_2_, float p_i50322_4_){
-		this.mob = p_i50322_1_;
-		this.speedModifier = p_i50322_2_;
-		this.attackRadiusSqr = p_i50322_4_ * p_i50322_4_;
-		this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
+		mob = p_i50322_1_;
+		speedModifier = p_i50322_2_;
+		attackRadiusSqr = p_i50322_4_ * p_i50322_4_;
+		setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
 	}
 
+	@Override
 	public boolean canContinueToUse(){
-		return this.isValidTarget() && (this.canUse() || !this.mob.getNavigation().isDone()) && this.isHoldingCrossbow();
+		return isValidTarget() && (canUse() || !mob.getNavigation().isDone()) && isHoldingCrossbow();
 	}
 
+	@Override
 	public boolean canUse(){
-		return this.isValidTarget() && this.isHoldingCrossbow();
+		return isValidTarget() && isHoldingCrossbow();
 	}
 
 	private boolean isHoldingCrossbow(){
-		return this.mob.isHolding(item -> item.getItem() instanceof CrossbowItem);
+		return mob.isHolding(item -> item.getItem() instanceof CrossbowItem);
 	}
 
 	private boolean isValidTarget(){
-		return this.mob.getTarget() != null && this.mob.getTarget().isAlive();
+		return mob.getTarget() != null && mob.getTarget().isAlive();
 	}
 
+	@Override
 	public void stop(){
 		super.stop();
-		this.mob.setAggressive(false);
-		this.mob.setTarget(null);
-		this.seeTime = 0;
-		if(this.mob.isUsingItem()){
-			this.mob.stopUsingItem();
-			this.mob.setChargingCrossbow(false);
-			CrossbowItem.setCharged(this.mob.getUseItem(), false);
+		mob.setAggressive(false);
+		mob.setTarget(null);
+		seeTime = 0;
+		if(mob.isUsingItem()){
+			mob.stopUsingItem();
+			mob.setChargingCrossbow(false);
+			CrossbowItem.setCharged(mob.getUseItem(), false);
 		}
 	}
 
+	@Override
 	public void tick(){
-		LivingEntity livingentity = this.mob.getTarget();
+		LivingEntity livingentity = mob.getTarget();
 		if(livingentity != null){
-			boolean flag = this.mob.getSensing().hasLineOfSight(livingentity);
-			boolean flag1 = this.seeTime > 0;
+			boolean flag = mob.getSensing().hasLineOfSight(livingentity);
+			boolean flag1 = seeTime > 0;
 			if(flag != flag1){
-				this.seeTime = 0;
+				seeTime = 0;
 			}
 
 			if(flag){
-				++this.seeTime;
+				++seeTime;
 			}else{
-				--this.seeTime;
+				--seeTime;
 			}
 
-			double d0 = this.mob.distanceToSqr(livingentity);
-			boolean flag2 = (d0 > (double)this.attackRadiusSqr || this.seeTime < 5) && this.attackDelay == 0;
+			double d0 = mob.distanceToSqr(livingentity);
+			boolean flag2 = (d0 > (double)attackRadiusSqr || seeTime < 5) && attackDelay == 0;
 			if(flag2){
-				--this.updatePathDelay;
-				if(this.updatePathDelay <= 0){
-					this.mob.getNavigation().moveTo(livingentity, this.canRun() ? this.speedModifier : this.speedModifier * 0.5D);
-					this.updatePathDelay = PATHFINDING_DELAY_RANGE.sample(this.mob.getRandom());
+				--updatePathDelay;
+				if(updatePathDelay <= 0){
+					mob.getNavigation().moveTo(livingentity, canRun() ? speedModifier : speedModifier * 0.5D);
+					updatePathDelay = PATHFINDING_DELAY_RANGE.sample(mob.getRandom());
 				}
 			}else{
-				this.updatePathDelay = 0;
-				this.mob.getNavigation().stop();
+				updatePathDelay = 0;
+				mob.getNavigation().stop();
 			}
 
-			this.mob.getLookControl().setLookAt(livingentity, 30.0F, 30.0F);
-			if(this.crossbowState == CrossbowAttackGoal.CrossbowState.UNCHARGED){
+			mob.getLookControl().setLookAt(livingentity, 30.0F, 30.0F);
+			if(crossbowState == CrossbowAttackGoal.CrossbowState.UNCHARGED){
 				if(!flag2){
-					this.mob.startUsingItem(ProjectileUtil.getWeaponHoldingHand(this.mob, item -> item instanceof CrossbowItem));
-					this.crossbowState = CrossbowAttackGoal.CrossbowState.CHARGING;
-					this.mob.setChargingCrossbow(true);
+					mob.startUsingItem(ProjectileUtil.getWeaponHoldingHand(mob, item -> item instanceof CrossbowItem));
+					crossbowState = CrossbowAttackGoal.CrossbowState.CHARGING;
+					mob.setChargingCrossbow(true);
 				}
-			}else if(this.crossbowState == CrossbowAttackGoal.CrossbowState.CHARGING){
-				if(!this.mob.isUsingItem()){
-					this.crossbowState = CrossbowAttackGoal.CrossbowState.UNCHARGED;
+			}else if(crossbowState == CrossbowAttackGoal.CrossbowState.CHARGING){
+				if(!mob.isUsingItem()){
+					crossbowState = CrossbowAttackGoal.CrossbowState.UNCHARGED;
 				}
 
-				int i = this.mob.getTicksUsingItem();
-				ItemStack itemstack = this.mob.getUseItem();
+				int i = mob.getTicksUsingItem();
+				ItemStack itemstack = mob.getUseItem();
 				if(i >= CrossbowItem.getChargeDuration(itemstack)){
-					this.mob.releaseUsingItem();
-					this.crossbowState = CrossbowAttackGoal.CrossbowState.CHARGED;
-					this.attackDelay = 20 + this.mob.getRandom().nextInt(20);
-					this.mob.setChargingCrossbow(false);
+					mob.releaseUsingItem();
+					crossbowState = CrossbowAttackGoal.CrossbowState.CHARGED;
+					attackDelay = 20 + mob.getRandom().nextInt(20);
+					mob.setChargingCrossbow(false);
 				}
-			}else if(this.crossbowState == CrossbowAttackGoal.CrossbowState.CHARGED){
-				--this.attackDelay;
-				if(this.attackDelay == 0){
-					this.crossbowState = CrossbowAttackGoal.CrossbowState.READY_TO_ATTACK;
+			}else if(crossbowState == CrossbowAttackGoal.CrossbowState.CHARGED){
+				--attackDelay;
+				if(attackDelay == 0){
+					crossbowState = CrossbowAttackGoal.CrossbowState.READY_TO_ATTACK;
 				}
-			}else if(this.crossbowState == CrossbowAttackGoal.CrossbowState.READY_TO_ATTACK && flag){
-				this.mob.performRangedAttack(livingentity, 1.0F);
-				ItemStack itemstack1 = this.mob.getItemInHand(ProjectileUtil.getWeaponHoldingHand(this.mob, item -> item instanceof CrossbowItem));
+			}else if(crossbowState == CrossbowAttackGoal.CrossbowState.READY_TO_ATTACK && flag){
+				mob.performRangedAttack(livingentity, 1.0F);
+				ItemStack itemstack1 = mob.getItemInHand(ProjectileUtil.getWeaponHoldingHand(mob, item -> item instanceof CrossbowItem));
 				CrossbowItem.setCharged(itemstack1, false);
-				this.crossbowState = CrossbowAttackGoal.CrossbowState.UNCHARGED;
+				crossbowState = CrossbowAttackGoal.CrossbowState.UNCHARGED;
 			}
 		}
 	}
 
 	private boolean canRun(){
-		return this.crossbowState == CrossbowAttackGoal.CrossbowState.UNCHARGED;
+		return crossbowState == CrossbowAttackGoal.CrossbowState.UNCHARGED;
 	}
 }

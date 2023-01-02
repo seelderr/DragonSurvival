@@ -21,23 +21,26 @@ public class FollowMobGoal<T extends Class<? extends LivingEntity>> extends Goal
 		this.distance = distance;
 	}
 
+	@Override
 	public boolean canUse(){
-		if(this.target == null){
-			List<LivingEntity> list = this.follower.level.getEntitiesOfClass(this.classs, (new AABB(this.follower.blockPosition())).inflate(this.follower.getAttributeValue(Attributes.FOLLOW_RANGE)));
+		if(target == null){
+			List<LivingEntity> list = follower.level.getEntitiesOfClass(classs, new AABB(follower.blockPosition()).inflate(follower.getAttributeValue(Attributes.FOLLOW_RANGE)));
 			if(!list.isEmpty()){
-				this.target = list.get(this.follower.getRandom().nextInt(list.size()));
+				target = list.get(follower.getRandom().nextInt(list.size()));
 			}
 		}
-		return (this.target != null);
+		return target != null;
 	}
 
+	@Override
 	public void stop(){
-		this.target = null;
+		target = null;
 	}
 
+	@Override
 	public void tick(){
-		if(this.follower.distanceToSqr(this.target) > (this.distance * this.distance)){
-			this.follower.getNavigation().moveTo(this.target, 1.0D);
+		if(follower.distanceToSqr(target) > distance * distance){
+			follower.getNavigation().moveTo(target, 1.0D);
 		}
 	}
 }

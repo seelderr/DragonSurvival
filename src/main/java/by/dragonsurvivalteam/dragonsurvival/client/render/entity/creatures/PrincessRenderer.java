@@ -18,9 +18,10 @@ public class PrincessRenderer extends VillagerRenderer{
 
 	public PrincessRenderer(EntityRendererProvider.Context rendererManager){
 		super(rendererManager);
-		this.layers.removeIf(villagerEntityVillagerModelLayerRenderer -> villagerEntityVillagerModelLayerRenderer instanceof VillagerProfessionLayer);
+		layers.removeIf(villagerEntityVillagerModelLayerRenderer -> villagerEntityVillagerModelLayerRenderer instanceof VillagerProfessionLayer);
 	}
 
+	@Override
 	public ResourceLocation getTextureLocation(Villager villager){
 		Princess princess = (Princess)villager;
 		switch(DyeColor.byId(princess.getColor())){

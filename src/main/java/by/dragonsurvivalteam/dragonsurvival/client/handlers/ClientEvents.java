@@ -158,7 +158,7 @@ public class ClientEvents{
 					@Override
 					public void renderButton(PoseStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_){
 						super.renderButton(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
-						this.x = screen.getGuiLeft();
+						x = screen.getGuiLeft();
 					}
 				});
 
@@ -166,7 +166,7 @@ public class ClientEvents{
 					@Override
 					public void renderButton(PoseStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_){
 						super.renderButton(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
-						this.x = screen.getGuiLeft() + 28;
+						x = screen.getGuiLeft() + 28;
 					}
 				});
 
@@ -174,7 +174,7 @@ public class ClientEvents{
 					@Override
 					public void renderButton(PoseStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_){
 						super.renderButton(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
-						this.x = screen.getGuiLeft() + 57;
+						x = screen.getGuiLeft() + 57;
 					}
 				});
 
@@ -182,7 +182,7 @@ public class ClientEvents{
 					@Override
 					public void renderButton(PoseStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_){
 						super.renderButton(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
-						this.x = screen.getGuiLeft() + 86;
+						x = screen.getGuiLeft() + 86;
 					}
 				});
 			}
@@ -194,7 +194,7 @@ public class ClientEvents{
 					@Override
 					public void renderButton(PoseStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_){
 						super.renderButton(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
-						this.x = screen.getGuiLeft() + 128;
+						x = screen.getGuiLeft() + 128;
 
 						if(isHoveredOrFocused()){
 							ArrayList<Component> description = new ArrayList<>(Arrays.asList(new TranslatableComponent("ds.gui.toggle_inventory.dragon")));
@@ -205,16 +205,14 @@ public class ClientEvents{
 			}
 		}
 
-		if(sc instanceof CreativeModeInventoryScreen){
-			CreativeModeInventoryScreen screen = (CreativeModeInventoryScreen)sc;
-
+		if(sc instanceof CreativeModeInventoryScreen screen){
 			if(inventoryToggle){
 				initGuiEvent.addListener(new ImageButton(screen.getGuiLeft() + 128 + 20, screen.height / 2 - 50, 20, 18, 20, 0, 19, DragonScreen.INVENTORY_TOGGLE_BUTTON, p_onPress_1_ -> {
 					NetworkHandler.CHANNEL.sendToServer(new OpenDragonInventory());
 				}){
 					@Override
 					public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
-						this.active = this.visible = screen.getSelectedTab() == CreativeModeTab.TAB_INVENTORY.getId();
+						active = visible = screen.getSelectedTab() == CreativeModeTab.TAB_INVENTORY.getId();
 						super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
 					}
 
@@ -352,9 +350,11 @@ public class ClientEvents{
 		if(mc.options.hideGui || !gui.shouldDrawSurvivalElements() || player == null){
 			return;
 		}
-
+		
 		if(!DragonUtils.isDragon(player)){
-			ForgeIngameGui.AIR_LEVEL_ELEMENT.render(gui, mStack, partialTicks, width, height);
+			//TODO Forge seems to have made OverlayRegistry.registerOverlayAbove() only add not cancel original
+			//Until a proper fix is found sea dragon will have air indicator
+			//ForgeIngameGui.AIR_LEVEL_ELEMENT.render(gui, mStack, partialTicks, width, height);
 			return;
 		}
 
@@ -362,11 +362,11 @@ public class ClientEvents{
 			int rightHeight = 0;
 
 			if(playerStateHandler.getType() instanceof SeaDragonType seaDragonType){
-				if(seaDragonType.timeWithoutWater > 0 && Objects.equals(playerStateHandler.getType(), DragonTypes.SEA) && ServerConfig.penalties && ServerConfig.seaTicksWithoutWater != 0){
+				if(seaDragonType.timeWithoutWater > 0 && ServerConfig.penalties && ServerConfig.seaTicksWithoutWater != 0){
 					RenderSystem.enableBlend();
 					RenderSystem.setShaderTexture(0, DRAGON_HUD);
 
-					if(Minecraft.getInstance().gui instanceof ForgeIngameGui){
+					if(Minecraft.getInstance().gui instanceof ForgeIngameGui gui1){
 						rightHeight = ((ForgeIngameGui)Minecraft.getInstance().gui).right_height;
 						((ForgeIngameGui)Minecraft.getInstance().gui).right_height += 10;
 					}
@@ -392,7 +392,7 @@ public class ClientEvents{
 					final int partial = Mth.ceil(timeWithoutWater * 10.0D / maxTimeWithoutWater) - full;
 
 					for(int i = 0; i < full + partial; ++i){
-						Minecraft.getInstance().gui.blit(mStack, left - i * 8 - 9, top, (flag ? 18 : i < full ? 0 : 9), 36, 9, 9);
+						Minecraft.getInstance().gui.blit(mStack, left - i * 8 - 9, top, flag ? 18 : i < full ? 0 : 9, 36, 9, 9);
 					}
 
 
@@ -400,7 +400,7 @@ public class ClientEvents{
 					RenderSystem.disableBlend();
 				}
 			}else if(playerStateHandler.getType() instanceof CaveDragonType caveDragonType){
-				if(caveDragonType.timeInRain > 0 && Objects.equals(playerStateHandler.getType(), DragonTypes.CAVE) && ServerConfig.penalties && ServerConfig.caveRainDamage != 0.0){
+				if(caveDragonType.timeInRain > 0 && ServerConfig.penalties && ServerConfig.caveRainDamage != 0.0){
 					RenderSystem.enableBlend();
 					RenderSystem.setShaderTexture(0, DRAGON_HUD);
 
@@ -425,7 +425,7 @@ public class ClientEvents{
 					final int partial = Mth.ceil((double)timeInRain * 10.0D / maxRainTime) - full;
 
 					for(int i = 0; i < full + partial; ++i){
-						Minecraft.getInstance().gui.blit(mStack, left - i * 8 - 9, top, (i < full ? 0 : 9), 54, 9, 9);
+						Minecraft.getInstance().gui.blit(mStack, left - i * 8 - 9, top, i < full ? 0 : 9, 54, 9, 9);
 					}
 
 					RenderSystem.setShaderTexture(0, Gui.GUI_ICONS_LOCATION);
@@ -447,14 +447,14 @@ public class ClientEvents{
 					int partial = Mth.ceil((double)caveDragonType.lavaAirSupply * 10.0D / ServerConfig.caveLavaSwimmingTicks) - full;
 
 					for(int i = 0; i < full + partial; ++i){
-						Minecraft.getInstance().gui.blit(mStack, left - i * 8 - 9, top, (i < full ? 0 : 9), 27, 9, 9);
+						Minecraft.getInstance().gui.blit(mStack, left - i * 8 - 9, top, i < full ? 0 : 9, 27, 9, 9);
 					}
 
 					RenderSystem.setShaderTexture(0, Gui.GUI_ICONS_LOCATION);
 					RenderSystem.disableBlend();
 				}
 			}else if(playerStateHandler.getType() instanceof ForestDragonType forestDragonType){
-				if(forestDragonType.timeInDarkness > 0 && Objects.equals(playerStateHandler.getType(), DragonTypes.FOREST) && ServerConfig.penalties && ServerConfig.forestStressTicks != 0 && !player.hasEffect(DragonEffects.STRESS)){
+				if(forestDragonType.timeInDarkness > 0 && ServerConfig.penalties && ServerConfig.forestStressTicks != 0 && !player.hasEffect(DragonEffects.STRESS)){
 					RenderSystem.enableBlend();
 					RenderSystem.setShaderTexture(0, DRAGON_HUD);
 
@@ -478,7 +478,7 @@ public class ClientEvents{
 					final int partial = Mth.ceil((double)timeInDarkness * 10.0D / maxTimeInDarkness) - full;
 
 					for(int i = 0; i < full + partial; ++i){
-						Minecraft.getInstance().gui.blit(mStack, left - i * 8 - 9, top, (i < full ? 0 : 9), 45, 9, 9);
+						Minecraft.getInstance().gui.blit(mStack, left - i * 8 - 9, top, i < full ? 0 : 9, 45, 9, 9);
 					}
 
 					RenderSystem.setShaderTexture(0, Gui.GUI_ICONS_LOCATION);

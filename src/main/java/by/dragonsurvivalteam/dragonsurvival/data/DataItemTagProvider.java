@@ -25,18 +25,18 @@ public class DataItemTagProvider extends ItemTagsProvider{
 
 	@Override
 	protected void addTags(){
-		this.tag(forge("raw_fishes")).add(Items.COD, Items.SALMON, Items.TROPICAL_FISH, Items.PUFFERFISH);
-		this.tag(forge("raw_meats")).add(Items.BEEF, Items.CHICKEN, Items.MUTTON, Items.PORKCHOP, Items.RABBIT);
+		tag(forge("raw_fishes")).add(Items.COD, Items.SALMON, Items.TROPICAL_FISH, Items.PUFFERFISH);
+		tag(forge("raw_meats")).add(Items.BEEF, Items.CHICKEN, Items.MUTTON, Items.PORKCHOP, Items.RABBIT);
 
-		this.tag(mod("dragon_survival_food")).add( DSItems.seaDragonTreat, DSItems.forestDragonTreat, DSItems.caveDragonTreat, DSItems.hotDragonRod, DSItems.explosiveCopper, DSItems.doubleQuartz, DSItems.quartzExplosiveCopper, DSItems.charredMeat, DSItems.charredVegetable, DSItems.charredMushroom, DSItems.charredSeafood, DSItems.chargedCoal, DSItems.chargedSoup, DSItems.meatWildBerries, DSItems.smellyMeatPorridge, DSItems.sweetSourRabbit, DSItems.meatChorusMix, DSItems.diamondChorus, DSItems.luminousOintment, DSItems.frozenRawFish, DSItems.seasonedFish, DSItems.goldenCoralPufferfish, DSItems.goldenTurtleEgg);
-		this.tag(mod("sea_dragon_survival_food")).add( DSItems.seaDragonTreat, DSItems.frozenRawFish, DSItems.seasonedFish, DSItems.goldenCoralPufferfish, DSItems.goldenTurtleEgg);
-		this.tag(mod("cave_dragon_survival_food")).add( DSItems.caveDragonTreat, DSItems.hotDragonRod, DSItems.explosiveCopper, DSItems.doubleQuartz, DSItems.quartzExplosiveCopper, DSItems.charredMeat, DSItems.charredVegetable, DSItems.charredMushroom, DSItems.charredSeafood, DSItems.chargedCoal, DSItems.chargedSoup);
-		this.tag(mod("forest_survival_food")).add( DSItems.forestDragonTreat, DSItems.meatWildBerries, DSItems.smellyMeatPorridge, DSItems.sweetSourRabbit, DSItems.meatChorusMix, DSItems.diamondChorus);
-		this.tag(mod("charred_food")).add(DSItems.chargedCoal, DSItems.chargedSoup, DSItems.charredMeat, DSItems.charredMushroom, DSItems.charredSeafood, DSItems.charredVegetable);
-		this.tag(mod("copper")).addTag(forge("ingots/copper")).addOptional(new ResourceLocation("cavesandcliffs:raw_copper"));
+		tag(mod("dragon_survival_food")).add( DSItems.seaDragonTreat, DSItems.forestDragonTreat, DSItems.caveDragonTreat, DSItems.hotDragonRod, DSItems.explosiveCopper, DSItems.doubleQuartz, DSItems.quartzExplosiveCopper, DSItems.charredMeat, DSItems.charredVegetable, DSItems.charredMushroom, DSItems.charredSeafood, DSItems.chargedCoal, DSItems.chargedSoup, DSItems.meatWildBerries, DSItems.smellyMeatPorridge, DSItems.sweetSourRabbit, DSItems.meatChorusMix, DSItems.diamondChorus, DSItems.luminousOintment, DSItems.frozenRawFish, DSItems.seasonedFish, DSItems.goldenCoralPufferfish, DSItems.goldenTurtleEgg);
+		tag(mod("sea_dragon_survival_food")).add( DSItems.seaDragonTreat, DSItems.frozenRawFish, DSItems.seasonedFish, DSItems.goldenCoralPufferfish, DSItems.goldenTurtleEgg);
+		tag(mod("cave_dragon_survival_food")).add( DSItems.caveDragonTreat, DSItems.hotDragonRod, DSItems.explosiveCopper, DSItems.doubleQuartz, DSItems.quartzExplosiveCopper, DSItems.charredMeat, DSItems.charredVegetable, DSItems.charredMushroom, DSItems.charredSeafood, DSItems.chargedCoal, DSItems.chargedSoup);
+		tag(mod("forest_survival_food")).add( DSItems.forestDragonTreat, DSItems.meatWildBerries, DSItems.smellyMeatPorridge, DSItems.sweetSourRabbit, DSItems.meatChorusMix, DSItems.diamondChorus);
+		tag(mod("charred_food")).add(DSItems.chargedCoal, DSItems.chargedSoup, DSItems.charredMeat, DSItems.charredMushroom, DSItems.charredSeafood, DSItems.charredVegetable);
+		tag(mod("copper")).addTag(forge("ingots/copper")).addOptional(new ResourceLocation("cavesandcliffs:raw_copper"));
 
-		this.tag(mod("dragon_altars")).add(DSBlocks.DS_BLOCK_ITEMS.values().stream().filter(s -> s.getBlock() instanceof DragonAltarBlock).map(Item::asItem).toList().toArray(new Item[0]));
-		this.tag(mod("wooden_dragon_doors")).add(DSBlocks.DS_BLOCK_ITEMS.values().stream().filter(s -> s.getBlock() instanceof DragonDoor || s.getBlock() instanceof SmallDragonDoor).filter(s -> s.getBlock().defaultBlockState().getMaterial() == Material.WOOD).map(Item::asItem).toList().toArray(new Item[0]));
+		tag(mod("dragon_altars")).add(DSBlocks.DS_BLOCK_ITEMS.values().stream().filter(s -> s.getBlock() instanceof DragonAltarBlock).map(Item::asItem).toList().toArray(new Item[0]));
+		tag(mod("wooden_dragon_doors")).add(DSBlocks.DS_BLOCK_ITEMS.values().stream().filter(s -> s.getBlock() instanceof DragonDoor || s.getBlock() instanceof SmallDragonDoor).filter(s -> s.getBlock().defaultBlockState().getMaterial() == Material.WOOD).map(Item::asItem).toList().toArray(new Item[0]));
 	}
 
 

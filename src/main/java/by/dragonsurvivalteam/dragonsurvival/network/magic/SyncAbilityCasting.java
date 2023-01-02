@@ -36,7 +36,7 @@ public class SyncAbilityCasting implements IMessage<SyncAbilityCasting>{
 	public SyncAbilityCasting(int playerId, boolean isCasting, CompoundTag nbt){
 		this.playerId = playerId;
 		this.isCasting = isCasting;
-		this.tag = nbt;
+		tag = nbt;
 	}
 
 	@Override

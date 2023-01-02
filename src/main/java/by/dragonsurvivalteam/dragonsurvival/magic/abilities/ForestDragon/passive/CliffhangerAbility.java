@@ -56,6 +56,7 @@ public class CliffhangerAbility extends PassiveDragonAbility{
 		return getLevel();
 	}
 
+	@Override
 	@OnlyIn( Dist.CLIENT )
 	public ArrayList<Component> getLevelUpInfo(){
 		ArrayList<Component> list = super.getLevelUpInfo();

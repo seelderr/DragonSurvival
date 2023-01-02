@@ -59,9 +59,9 @@ public class DragonTreasureHandler{
 					int verticalRange = 9;
 					int treasureNearby = 0;
 
-					for(int x = -(horizontalRange / 2); x < (horizontalRange / 2); x++){
-						for(int y = -(verticalRange / 2); y < (verticalRange / 2); y++){
-							for(int z = -(horizontalRange / 2); z < (horizontalRange / 2); z++){
+					for(int x = -(horizontalRange / 2); x < horizontalRange / 2; x++){
+						for(int y = -(verticalRange / 2); y < verticalRange / 2; y++){
+							for(int z = -(horizontalRange / 2); z < horizontalRange / 2; z++){
 								BlockPos pos = player.blockPosition().offset(x, y, z);
 								BlockState state = player.level.getBlockState(pos);
 
@@ -75,7 +75,7 @@ public class DragonTreasureHandler{
 					treasureNearby = Mth.clamp(treasureNearby, 0, ServerConfig.maxTreasures);
 
 					int totalTime = ServerConfig.treasureRegenTicks;
-					int restTimer = totalTime - (ServerConfig.treasureRegenTicksReduce * treasureNearby);
+					int restTimer = totalTime - ServerConfig.treasureRegenTicksReduce * treasureNearby;
 
 					if(handler.treasureRestTimer >= restTimer){
 						handler.treasureRestTimer = 0;
@@ -104,7 +104,7 @@ public class DragonTreasureHandler{
 
 			if(handler.treasureResting){
 				Vec3 velocity = player.getDeltaMovement();
-				float groundSpeed = Mth.sqrt((float)((velocity.x * velocity.x) + (velocity.z * velocity.z)));
+				float groundSpeed = Mth.sqrt((float)(velocity.x * velocity.x + velocity.z * velocity.z));
 				if(Math.abs(groundSpeed) > 0.05){
 					handler.treasureResting = false;
 					NetworkHandler.CHANNEL.sendToServer(new SyncTreasureRestStatus(player.getId(), false));
@@ -128,7 +128,7 @@ public class DragonTreasureHandler{
 				Window window = Minecraft.getInstance().getWindow();
 				float f = playerEntity.level.getSunAngle(1.0F);
 
-				float f1 = f < (float)Math.PI ? 0.0F : ((float)Math.PI * 2F);
+				float f1 = f < (float)Math.PI ? 0.0F : (float)Math.PI * 2F;
 				f = f + (f1 - f) * 0.2F;
 				double val = Mth.cos(f);
 				if(cap.treasureResting && val < 0.25 && sleepTimer < 100){
@@ -148,9 +148,8 @@ public class DragonTreasureHandler{
 	public static void playerAttacked(LivingHurtEvent event){
 		LivingEntity entity = event.getEntityLiving();
 
-		if(entity instanceof Player){
-			Player player = (Player)entity;
-
+		if(entity instanceof Player player){
+			
 			if(!player.level.isClientSide){
 				DragonStateProvider.getCap(player).ifPresent(cap -> {
 					if(cap.treasureResting){

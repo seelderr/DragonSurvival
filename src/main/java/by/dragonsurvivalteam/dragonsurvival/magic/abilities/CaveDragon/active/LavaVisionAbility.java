@@ -112,6 +112,7 @@ public class LavaVisionAbility extends ChargeCastAbility {
 		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/lava_vision_2.png")};
 	}
 
+	@Override
 	@OnlyIn( Dist.CLIENT )
 	public ArrayList<Component> getLevelUpInfo(){
 		ArrayList<Component> list = super.getLevelUpInfo();

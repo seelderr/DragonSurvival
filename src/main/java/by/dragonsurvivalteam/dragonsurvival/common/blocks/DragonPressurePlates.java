@@ -39,11 +39,12 @@ public class DragonPressurePlates extends PressurePlateBlock implements SimpleWa
 
 	public DragonPressurePlates(Properties p_i48445_1_, PressurePlateType type){
 		super(Sensitivity.EVERYTHING, p_i48445_1_);
-		this.registerDefaultState(this.stateDefinition.any().setValue(POWERED, false).setValue(WATERLOGGED, false));
+		registerDefaultState(stateDefinition.any().setValue(POWERED, false).setValue(WATERLOGGED, false));
 
 		this.type = type;
 	}
 
+	@Override
 	public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext){
 		return PRESSED_AABB;
 	}
@@ -56,6 +57,7 @@ public class DragonPressurePlates extends PressurePlateBlock implements SimpleWa
 		return super.updateShape(state, dir, state2, level, pos, pos2);
 	}
 
+	@Override
 	protected int getSignalStrength(Level pLevel, BlockPos pPos){
 		net.minecraft.world.phys.AABB axisalignedbb = TOUCH_AABB.move(pPos);
 		List<? extends Entity> list = pLevel.getEntities(null, axisalignedbb);
@@ -83,6 +85,7 @@ public class DragonPressurePlates extends PressurePlateBlock implements SimpleWa
 		pBuilder.add(WATERLOGGED);
 	}
 
+	@Override
 	@Nullable
 	public BlockState getStateForPlacement(BlockPlaceContext pContext){
 		return super.getStateForPlacement(pContext).setValue(FACING, pContext.getHorizontalDirection()).setValue(WATERLOGGED, pContext.getLevel().getFluidState(pContext.getClickedPos()).getType() == Fluids.WATER);
@@ -93,10 +96,12 @@ public class DragonPressurePlates extends PressurePlateBlock implements SimpleWa
 		return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
 	}
 
+	@Override
 	public BlockState rotate(BlockState pState, Rotation pRotation){
 		return pState.setValue(FACING, pRotation.rotate(pState.getValue(FACING)));
 	}
 
+	@Override
 	public BlockState mirror(BlockState pState, Mirror pMirror){
 		return pState.rotate(pMirror.getRotation(pState.getValue(FACING)));
 	}

@@ -22,6 +22,7 @@ public class SquireEntity extends Hunter{
 		goalSelector.addGoal(8, new AlertExceptHunters<>(this, HunterHoundEntity.class, KnightEntity.class, Shooter.class));
 	}
 
+	@Override
 	protected void populateDefaultEquipmentSlots(DifficultyInstance difficultyInstance){
 		setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.IRON_SWORD));
 	}

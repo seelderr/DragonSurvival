@@ -24,7 +24,7 @@ public class TextBoxEntry extends OptionListEntry{
 	public TextBoxEntry(Option option, OptionsList optionsList, AbstractWidget widget, CategoryEntry categoryEntry){
 		super(ImmutableMap.of(option, widget));
 		this.widget = widget;
-		this.category = categoryEntry;
+		category = categoryEntry;
 
 		removeButton = new ExtendedButton(optionsList.getScrollbarPosition() - 32 - 25, 1, 50, 20, new TextComponent("Remove"), btn -> {
 			for(OptionListEntry child : optionsList.children())
@@ -64,7 +64,7 @@ public class TextBoxEntry extends OptionListEntry{
 
 	@Override
 	public List<? extends GuiEventListener> children(){
-		return ImmutableList.of(this.widget, this.removeButton);
+		return ImmutableList.of(widget, removeButton);
 	}
 
 	@Override

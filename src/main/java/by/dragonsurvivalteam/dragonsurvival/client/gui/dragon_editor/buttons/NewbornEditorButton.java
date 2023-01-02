@@ -12,7 +12,7 @@ public class NewbornEditorButton extends Button{
 	private final DragonEditorScreen dragonEditorScreen;
 
 	public NewbornEditorButton(DragonEditorScreen dragonEditorScreen){
-		super(dragonEditorScreen.width / 2 - 180, dragonEditorScreen.guiTop - 30, 120, 20, new TranslatableComponent("ds.level.newborn"), (btn) -> {
+		super(dragonEditorScreen.width / 2 - 180, dragonEditorScreen.guiTop - 30, 120, 20, new TranslatableComponent("ds.level.newborn"), btn -> {
 			dragonEditorScreen.level = DragonLevel.NEWBORN;
 			dragonEditorScreen.dragonRender.zoom = dragonEditorScreen.level.size;
 			dragonEditorScreen.handler.getSkinData().compileSkin();
@@ -23,13 +23,13 @@ public class NewbornEditorButton extends Button{
 
 	@Override
 	public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
-		this.active = this.visible = dragonEditorScreen.showUi;
+		active = visible = dragonEditorScreen.showUi;
 		super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 	}
 
 	@Override
 	public void renderButton(PoseStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_){
 		int j = isHovered || dragonEditorScreen.level == DragonLevel.NEWBORN ? 16777215 : 10526880;
-		TextRenderUtil.drawCenteredScaledText(stack, x + (width / 2), y + 4, 1.5f, this.getMessage().getString(), j | Mth.ceil(this.alpha * 255.0F) << 24);
+		TextRenderUtil.drawCenteredScaledText(stack, x + width / 2, y + 4, 1.5f, getMessage().getString(), j | Mth.ceil(alpha * 255.0F) << 24);
 	}
 }

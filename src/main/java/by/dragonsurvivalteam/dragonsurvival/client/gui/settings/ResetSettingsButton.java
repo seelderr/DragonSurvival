@@ -42,9 +42,8 @@ public class ResetSettingsButton extends Button{
 					Field fe = ConfigHandler.configFields.get(key);
 					ConfigValue<?> value = ConfigHandler.configValues.get(key);
 
-					if(Minecraft.getInstance().screen instanceof ConfigScreen){
-						ConfigScreen screen = (ConfigScreen)Minecraft.getInstance().screen;
-
+					if(Minecraft.getInstance().screen instanceof ConfigScreen screen){
+						
 						ConfigHandler.updateConfigValue(value, ConfigHandler.defaultConfigValues.get(key));
 
 						String configKey = OptionsList.configMap.get(option);
@@ -115,9 +114,9 @@ public class ResetSettingsButton extends Button{
 
 	@Override
 	public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
-		if(this.visible){
-			this.active = false;
-			this.isHovered = p_230430_2_ >= this.x && p_230430_3_ >= this.y && p_230430_2_ < this.x + this.width && p_230430_3_ < this.y + this.height;
+		if(visible){
+			active = false;
+			isHovered = p_230430_2_ >= x && p_230430_3_ >= y && p_230430_2_ < x + width && p_230430_3_ < y + height;
 
 			if(OptionsList.configMap.containsKey(option)){
 				String key = OptionsList.configMap.get(option);
@@ -125,19 +124,19 @@ public class ResetSettingsButton extends Button{
 				ConfigOption opt = ConfigHandler.configObjects.get(key);
 				Field fe = ConfigHandler.configFields.get(key);
 				ConfigValue<?> value = ConfigHandler.configValues.get(key);
-				this.active = !value.get().equals(ConfigHandler.defaultConfigValues.get(key));
+				active = !value.get().equals(ConfigHandler.defaultConfigValues.get(key));
 			}
 
 			Minecraft minecraft = Minecraft.getInstance();
 			RenderSystem.setShaderTexture(0, WIDGETS_LOCATION);
-			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, this.alpha);
-			int i = this.getYImage(this.isHoveredOrFocused());
+			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, alpha);
+			int i = getYImage(isHoveredOrFocused());
 			RenderSystem.enableBlend();
 			RenderSystem.defaultBlendFunc();
 			RenderSystem.enableDepthTest();
-			this.blit(p_230430_1_, this.x, this.y, 0, 46 + i * 20, this.width / 2, this.height);
-			this.blit(p_230430_1_, this.x + this.width / 2, this.y, 200 - this.width / 2, 46 + i * 20, this.width / 2, this.height);
-			this.renderBg(p_230430_1_, minecraft, p_230430_2_, p_230430_3_);
+			blit(p_230430_1_, x, y, 0, 46 + i * 20, width / 2, height);
+			blit(p_230430_1_, x + width / 2, y, 200 - width / 2, 46 + i * 20, width / 2, height);
+			renderBg(p_230430_1_, minecraft, p_230430_2_, p_230430_3_);
 
 			RenderSystem.setShaderTexture(0, texture);
 			blit(p_230430_1_, x + 2, y + 2, 0, 0, 16, 16, 16, 16);

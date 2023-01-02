@@ -20,7 +20,7 @@ public class DSTextBoxOption extends Option{
 
 	@Override
 	public AbstractWidget createButton(Options gameSettings, int i, int i1, int i2){
-		TextField widget = new TextField(spec, this, i, i1, i2, 20, this.getCaption());
+		TextField widget = new TextField(spec, this, i, i1, i2, 20, getCaption());
 		widget.setMaxLength(128);
 		widget.setValue(getter.apply(Minecraft.getInstance().options));
 		return widget;

@@ -29,6 +29,6 @@ public class PredatorStarTileEntity extends BlockEntity{
 	}
 
 	public float getActiveRotation(float partialTicks){
-		return (this.activeRotation + partialTicks) * -0.0375F;
+		return (activeRotation + partialTicks) * -0.0375F;
 	}
 }

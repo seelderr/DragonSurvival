@@ -147,9 +147,9 @@ public class AbilityButton extends Button implements TooltipRender{
 			}
 
 			List<FormattedCharSequence> description = Minecraft.getInstance().font.split(desc, 143);
-			int yPos = this.y - description.size() * 7;
+			int yPos = y - description.size() * 7;
 
-			MagicDragonRender.drawAbilityHover(stack, this.x + width * 2, yPos, ability);
+			MagicDragonRender.drawAbilityHover(stack, x + width * 2, yPos, ability);
 		}
 	}
 }

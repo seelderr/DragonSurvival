@@ -56,10 +56,9 @@ public class DragonRidingHandler{
 
 	@SubscribeEvent
 	public static void onServerPlayerTick(TickEvent.PlayerTickEvent event){ // TODO: Find a better way of doing this.
-		if(!(event.player instanceof ServerPlayer)){
+		if(!(event.player instanceof ServerPlayer player)){
 			return;
 		}
-		ServerPlayer player = (ServerPlayer)event.player;
 		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
 			int passengerId = dragonStateHandler.getPassengerId();
 			Entity passenger = player.level.getEntity(passengerId);

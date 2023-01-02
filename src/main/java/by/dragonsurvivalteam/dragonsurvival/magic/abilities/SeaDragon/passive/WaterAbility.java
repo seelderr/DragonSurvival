@@ -58,6 +58,7 @@ public class WaterAbility extends PassiveDragonAbility{
 		return 60 * getLevel();
 	}
 
+	@Override
 	@OnlyIn( Dist.CLIENT )
 	public ArrayList<Component> getLevelUpInfo(){
 		ArrayList<Component> list = super.getLevelUpInfo();

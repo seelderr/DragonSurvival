@@ -4,8 +4,6 @@ import by.dragonsurvivalteam.dragonsurvival.client.particles.DSParticles;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.SourceOfMagicBlock;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncMagicSourceStatus;
@@ -37,7 +35,6 @@ import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
 
-import java.util.Objects;
 import java.util.Random;
 
 
@@ -70,25 +67,11 @@ public class SourceOfMagicHandler{
 
 				BlockEntity sourceOfMagic = player.level.getBlockEntity(pos1);
 
-				if(sourceOfMagic instanceof SourceOfMagicTileEntity){
-					SourceOfMagicTileEntity tile = (SourceOfMagicTileEntity)sourceOfMagic;
-
+				if(sourceOfMagic instanceof SourceOfMagicTileEntity tile){
 					if(!tile.isEmpty()){
 						BlockState pState = sourceOfMagic.getBlockState();
-						boolean harm = false;
-						AbstractDragonType type = DragonUtils.getDragonType(player);
-
-						if(Objects.equals(type, DragonTypes.CAVE) && pState.getBlock() == DSBlocks.caveSourceOfMagic){
-							harm = true;
-						}
-						if(Objects.equals(type, DragonTypes.SEA) && pState.getBlock() == DSBlocks.seaSourceOfMagic){
-							harm = true;
-						}
-						if(Objects.equals(type, DragonTypes.FOREST) && pState.getBlock() == DSBlocks.forestSourceOfMagic){
-							harm = true;
-						}
-
-						if(!harm || player.isCreative() || ServerConfig.canUseAllSourcesOfMagic){
+						
+						if(!SourceOfMagicBlock.shouldHarmPlayer(pState, player) || player.isCreative() || ServerConfig.canUseAllSourcesOfMagic){
 							if(ServerConfig.sourceOfMagicInfiniteMagic){
 								if(handler.getMagicData().magicSourceTimer >= Functions.secondsToTicks(10)){
 									handler.getMagicData().magicSourceTimer = 0;
@@ -148,21 +131,8 @@ public class SourceOfMagicHandler{
 
 					if(!tile.isEmpty()){
 						BlockState pState = sourceOfMagic.getBlockState();
-						boolean harm = false;
-						AbstractDragonType type = DragonUtils.getDragonType(player);
-
-						if(Objects.equals(type, DragonTypes.CAVE) && pState.getBlock() == DSBlocks.caveSourceOfMagic){
-							harm = true;
-						}
-						if(Objects.equals(type, DragonTypes.SEA) && pState.getBlock() == DSBlocks.seaSourceOfMagic){
-							harm = true;
-						}
-						if(Objects.equals(type, DragonTypes.FOREST) && pState.getBlock() == DSBlocks.forestSourceOfMagic){
-							harm = true;
-						}
-
-
-						if(!harm || player.isCreative() || ServerConfig.canUseAllSourcesOfMagic){
+						
+						if(!SourceOfMagicBlock.shouldHarmPlayer(pState, player) || player.isCreative() || ServerConfig.canUseAllSourcesOfMagic){
 							if(ServerConfig.sourceOfMagicInfiniteMagic){
 								if(player.level.isClientSide){
 									Minecraft minecraft = Minecraft.getInstance();
@@ -201,7 +171,7 @@ public class SourceOfMagicHandler{
 
 			if(handler.getMagicData().onMagicSource){
 				Vec3 velocity = player.getDeltaMovement();
-				float groundSpeed = Mth.sqrt((float)((velocity.x * velocity.x) + (velocity.z * velocity.z)));
+				float groundSpeed = Mth.sqrt((float)(velocity.x * velocity.x + velocity.z * velocity.z));
 				if(Math.abs(groundSpeed) > 0.05){
 					NetworkHandler.CHANNEL.sendToServer(new SyncMagicSourceStatus(player.getId(), false, 0));
 				}
@@ -213,9 +183,7 @@ public class SourceOfMagicHandler{
 	public static void playerAttacked(LivingHurtEvent event){
 		LivingEntity entity = event.getEntityLiving();
 
-		if(entity instanceof Player){
-			Player player = (Player)entity;
-
+		if(entity instanceof Player player){
 			if(!player.level.isClientSide){
 				DragonStateProvider.getCap(player).ifPresent(cap -> {
 					if(cap.getMagicData().onMagicSource){

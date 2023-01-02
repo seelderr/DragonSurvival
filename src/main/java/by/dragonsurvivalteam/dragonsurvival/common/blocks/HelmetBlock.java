@@ -33,10 +33,12 @@ public class HelmetBlock extends Block implements EntityBlock{
 		return false;
 	}
 
+	@Override
 	public BlockState rotate(BlockState blockState, Rotation rotation){
 		return blockState.setValue(ROTATION, rotation.rotate(blockState.getValue(ROTATION), 16));
 	}
 
+	@Override
 	public BlockState mirror(BlockState blockState, Mirror mirror){
 		return blockState.setValue(ROTATION, mirror.mirror(blockState.getValue(ROTATION), 16));
 	}
@@ -46,10 +48,12 @@ public class HelmetBlock extends Block implements EntityBlock{
 		return SHAPE;
 	}
 
+	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext useContext){
-		return this.defaultBlockState().setValue(ROTATION, Mth.floor((double)(useContext.getRotation() * 16.0F / 360.0F) + 0.5D) & 15);
+		return defaultBlockState().setValue(ROTATION, Mth.floor((double)(useContext.getRotation() * 16.0F / 360.0F) + 0.5D) & 15);
 	}
 
+	@Override
 	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> stateBuilder){
 		stateBuilder.add(ROTATION);
 	}

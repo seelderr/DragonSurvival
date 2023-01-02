@@ -191,7 +191,7 @@ public class ResourceTextField extends EditBox implements TooltipAccessor{
 
 				if(isBlock)
 					try{
-						results.add(new ResourceEntry(value, Objects.requireNonNull(ForgeRegistries.BLOCKS.tags().getTag(TagKey.create(Registry.BLOCK_REGISTRY, location))).stream().map(s -> new ItemStack(s)).toList(), true));
+						results.add(new ResourceEntry(value, Objects.requireNonNull(ForgeRegistries.BLOCKS.tags().getTag(TagKey.create(Registry.BLOCK_REGISTRY, location))).stream().map(ItemStack::new).toList(), true));
 					}catch(Exception ignored){}
 
 				if(isEntity)
@@ -285,7 +285,7 @@ public class ResourceTextField extends EditBox implements TooltipAccessor{
 
 				for(GuiEventListener child : screen.children)
 					if(child instanceof AbstractSelectionList){
-						if(((AbstractSelectionList)child).renderTopAndBottom){
+						if(((AbstractSelectionList<?>)child).renderTopAndBottom){
 							hasBorder = true;
 							break;
 						}
@@ -299,7 +299,7 @@ public class ResourceTextField extends EditBox implements TooltipAccessor{
 			renderButton = new ExtendedButton(0, 0, 0, 0, TextComponent.EMPTY, null){
 				@Override
 				public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
-					this.active = this.visible = false;
+					active = visible = false;
 
 					if(list != null){
 						list.visible = ResourceTextField.this.visible;
@@ -342,8 +342,8 @@ public class ResourceTextField extends EditBox implements TooltipAccessor{
 		if(!isFocused())
 			suggestions.clear();
 
-		this.x += 25;
-		this.y += 6;
+		x += 25;
+		y += 6;
 
 		super.renderButton(pPoseStack, pMouseX, pMouseY, pPartialTicks);
 		setTextColor(14737632);
@@ -354,7 +354,7 @@ public class ResourceTextField extends EditBox implements TooltipAccessor{
 			int curser = getCursorPosition();
 			setCursorPosition(0);
 			setTextColor(7368816);
-			setValue(this.getMessage().getString());
+			setValue(getMessage().getString());
 			super.renderButton(pPoseStack, pMouseX, pMouseY, pPartialTicks);
 			setValue("");
 			setTextColor(14737632);
@@ -362,8 +362,8 @@ public class ResourceTextField extends EditBox implements TooltipAccessor{
 			setFocus(isFocus);
 		}
 
-		this.x -= 25;
-		this.y -= 6;
+		x -= 25;
+		y -= 6;
 	}
 
 	@Override

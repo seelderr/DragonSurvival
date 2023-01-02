@@ -16,6 +16,7 @@ import java.util.Locale;
 
 public class SmallFireParticleData implements ParticleOptions{
 	public static final Deserializer<SmallFireParticleData> DESERIALIZER = new Deserializer<SmallFireParticleData>(){
+		@Override
 		public SmallFireParticleData fromCommand(ParticleType<SmallFireParticleData> particleTypeIn, StringReader reader) throws CommandSyntaxException{
 			reader.expect(' ');
 			float duration = (float)reader.readDouble();
@@ -24,6 +25,7 @@ public class SmallFireParticleData implements ParticleOptions{
 			return new SmallFireParticleData(duration, swirls);
 		}
 
+		@Override
 		public SmallFireParticleData fromNetwork(ParticleType<SmallFireParticleData> particleTypeIn, FriendlyByteBuf buffer){
 			return new SmallFireParticleData(buffer.readFloat(), buffer.readBoolean());
 		}
@@ -33,34 +35,34 @@ public class SmallFireParticleData implements ParticleOptions{
 	private final boolean swirls;
 
 	public static Codec<SmallFireParticleData> CODEC(ParticleType<SmallFireParticleData> particleType){
-		return RecordCodecBuilder.create((codecBuilder) -> codecBuilder.group(Codec.FLOAT.fieldOf("duration").forGetter(SmallFireParticleData::getDuration), Codec.BOOL.fieldOf("swirls").forGetter(SmallFireParticleData::getSwirls)).apply(codecBuilder, SmallFireParticleData::new));
+		return RecordCodecBuilder.create(codecBuilder -> codecBuilder.group(Codec.FLOAT.fieldOf("duration").forGetter(SmallFireParticleData::getDuration), Codec.BOOL.fieldOf("swirls").forGetter(SmallFireParticleData::getSwirls)).apply(codecBuilder, SmallFireParticleData::new));
 	}
 
 	public SmallFireParticleData(float duration, boolean spins){
 		this.duration = duration;
-		this.swirls = spins;
+		swirls = spins;
 	}
 
 	@OnlyIn( Dist.CLIENT )
 	public float getDuration(){
-		return this.duration;
+		return duration;
 	}
 
 	@OnlyIn( Dist.CLIENT )
 	public boolean getSwirls(){
-		return this.swirls;
+		return swirls;
 	}
 
 	@Override
 	public void writeToNetwork(FriendlyByteBuf buffer){
-		buffer.writeFloat(this.duration);
-		buffer.writeBoolean(this.swirls);
+		buffer.writeFloat(duration);
+		buffer.writeBoolean(swirls);
 	}
 
 	@SuppressWarnings( "deprecation" )
 	@Override
 	public String writeToString(){
-		return String.format(Locale.ROOT, "%s %.2f %b", Registry.PARTICLE_TYPE.getKey(this.getType()), this.duration, this.swirls);
+		return String.format(Locale.ROOT, "%s %.2f %b", Registry.PARTICLE_TYPE.getKey(getType()), duration, swirls);
 	}
 
 	@Override

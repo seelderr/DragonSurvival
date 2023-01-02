@@ -45,45 +45,47 @@ public class Shooter extends Hunter implements CrossbowAttackMob{
 		goalSelector.addGoal(8, new AlertExceptHunters<>(this, HunterHoundEntity.class, KnightEntity.class, SquireEntity.class));
 	}
 
+	@Override
 	public void tick(){
 		super.tick();
 		if(ServerConfig.hunterHasBolas){
 			LivingEntity target = getTarget();
 			if(target instanceof Player && DragonUtils.isDragon(target)){
-				if(this.bolasCooldown == 0){
+				if(bolasCooldown == 0){
 					performBolasThrow(target);
-					this.bolasCooldown = Functions.secondsToTicks(15);
+					bolasCooldown = Functions.secondsToTicks(15);
 				}else{
-					this.bolasCooldown--;
+					bolasCooldown--;
 				}
 			}
 		}
 	}
 
 	public void performBolasThrow(LivingEntity target){
-		Bolas bolas = new Bolas(this, this.level);
+		Bolas bolas = new Bolas(this, level);
 		double d0 = target.getEyeY() - (double)1.1F;
-		double d1 = target.getX() - this.getX();
+		double d1 = target.getX() - getX();
 		double d2 = d0 - bolas.getY();
-		double d3 = target.getZ() - this.getZ();
+		double d3 = target.getZ() - getZ();
 		float f = Mth.sqrt((float)(d1 * d1 + d3 * d3)) * 0.2F;
 		bolas.shoot(d1, d2 + f, d3, 1.6F, 12.0F);
 		playSound(SoundEvents.WITCH_THROW, 1.0F, 0.4F / (random.nextFloat() * 0.4F + 0.8F));
-		this.level.addFreshEntity(bolas);
+		level.addFreshEntity(bolas);
 	}
 
+	@Override
 	public IllagerArmPose getArmPose(){
-		if(this.isChargingCrossbow()){
+		if(isChargingCrossbow()){
 			return AbstractIllager.IllagerArmPose.CROSSBOW_CHARGE;
-		}else if(this.isHolding(item -> item.getItem() instanceof CrossbowItem)){
+		}else if(isHolding(item -> item.getItem() instanceof CrossbowItem)){
 			return AbstractIllager.IllagerArmPose.CROSSBOW_HOLD;
 		}else{
-			return this.isAggressive() ? AbstractIllager.IllagerArmPose.ATTACKING : AbstractIllager.IllagerArmPose.NEUTRAL;
+			return isAggressive() ? AbstractIllager.IllagerArmPose.ATTACKING : AbstractIllager.IllagerArmPose.NEUTRAL;
 		}
 	}
 
 	public boolean isChargingCrossbow(){
-		return this.entityData.get(IS_CHARGING_CROSSBOW);
+		return entityData.get(IS_CHARGING_CROSSBOW);
 	}
 
 	@Override
@@ -117,24 +119,28 @@ public class Shooter extends Hunter implements CrossbowAttackMob{
 		performCrossbowAttack(this, 1.6F);
 	}
 
+	@Override
 	protected void defineSynchedData(){
 		super.defineSynchedData();
-		this.entityData.define(IS_CHARGING_CROSSBOW, false);
+		entityData.define(IS_CHARGING_CROSSBOW, false);
 	}
 
+	@Override
 	public void addAdditionalSaveData(CompoundTag compoundNBT){
 		super.addAdditionalSaveData(compoundNBT);
-		compoundNBT.putInt("Bolas cooldown", this.bolasCooldown);
+		compoundNBT.putInt("Bolas cooldown", bolasCooldown);
 	}
 
+	@Override
 	public void readAdditionalSaveData(CompoundTag compoundNBT){
 		super.readAdditionalSaveData(compoundNBT);
-		this.bolasCooldown = compoundNBT.getInt("Bolas cooldown");
+		bolasCooldown = compoundNBT.getInt("Bolas cooldown");
 	}
 
+	@Override
 	protected void populateDefaultEquipmentSlots(DifficultyInstance p_180481_1_){
 		ItemStack stack = new ItemStack(Items.CROSSBOW);
 		addArrow(stack);
-		this.setItemSlot(EquipmentSlot.MAINHAND, stack);
+		setItemSlot(EquipmentSlot.MAINHAND, stack);
 	}
 }

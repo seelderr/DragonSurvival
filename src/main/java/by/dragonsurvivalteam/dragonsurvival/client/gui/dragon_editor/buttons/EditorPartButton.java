@@ -29,7 +29,7 @@ public class EditorPartButton extends ExtendedButton{
 	private ResourceLocation texture;
 
 	public EditorPartButton(DragonEditorScreen screen, DropDownButton source, int xPos, int yPos, int width, int height, String value, Consumer<String> setter, EnumSkinLayer layer){
-		super(xPos, yPos, width, height, TextComponent.EMPTY, (s) -> {});
+		super(xPos, yPos, width, height, TextComponent.EMPTY, s -> {});
 		this.value = value;
 		this.setter = setter;
 		this.source = source;
@@ -54,7 +54,7 @@ public class EditorPartButton extends ExtendedButton{
 			blit(mStack, x + 3, y + 3, 0, 0, width - 6, height - 6, width - 6, height - 6);
 		}
 
-		TextRenderUtil.drawScaledTextSplit(mStack, this.x + 4, this.y + this.height - 10, 0.4f, message, getFGColor(), width - 9, 200);
+		TextRenderUtil.drawScaledTextSplit(mStack, x + 4, y + height - 10, 0.4f, message, getFGColor(), width - 9, 200);
 	}
 
 	@Override

@@ -18,6 +18,8 @@ public abstract class AbstractDragonType implements NBTInterface, Comparable<Abs
 	public abstract void onPlayerUpdate(Player player, DragonStateHandler handler);
 	public abstract boolean isInManaCondition(Player player, DragonStateHandler cap);
 	public abstract void onPlayerDeath();
+	
+	//Not implemented
 	public abstract List<Pair<ItemStack, FoodData>> validFoods(Player player, DragonStateHandler handler);
 	public abstract List<TagKey<Block>> mineableBlocks(Player player);
 	@Override

@@ -39,11 +39,13 @@ public class SourceOfMagicScreen extends AbstractContainerScreen<SourceOfMagicCo
 		addRenderableWidget(new HelpButton(leftPos + 12, topPos + 12, 12, 12, "ds.help.source_of_magic", 0));
 	}
 
+	@Override
 	public void render(PoseStack matrixStack, int p_render_1_, int p_render_2_, float p_render_3_){
-		this.renderBackground(matrixStack);
+		renderBackground(matrixStack);
 		super.render(matrixStack, p_render_1_, p_render_2_, p_render_3_);
 	}
 
+	@Override
 	protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY){}
 
 	@Override

@@ -54,6 +54,7 @@ public class BurnAbility extends PassiveDragonAbility{
 		return 15 * getLevel();
 	}
 
+	@Override
 	@OnlyIn( Dist.CLIENT )
 	public ArrayList<Component> getLevelUpInfo(){
 		ArrayList<Component> list = super.getLevelUpInfo();

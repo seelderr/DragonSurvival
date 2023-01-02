@@ -44,6 +44,7 @@ public class PrinceHorseRenderer extends ExtendedGeoEntityRenderer<PrinceHorseEn
 		return null;
 	}
 
+	@Override
 	protected ItemStack getHeldItemForBone(String boneName, PrinceHorseEntity currentEntity){
 		if(boneName.equalsIgnoreCase("left_item")){
 			return mainHand;

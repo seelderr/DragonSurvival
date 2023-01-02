@@ -119,7 +119,7 @@ public class HunterAbility extends ChargeCastAbility{
 
 	@Override
 	public Component getDescription(){
-		return new TranslatableComponent("ds.skill.description." + getName(), (1.5 * getLevel() + "x"), getDuration());
+		return new TranslatableComponent("ds.skill.description." + getName(), 1.5 * getLevel() + "x", getDuration());
 	}
 
 	@Override
@@ -141,6 +141,7 @@ public class HunterAbility extends ChargeCastAbility{
 	}
 
 
+	@Override
 	@OnlyIn( Dist.CLIENT )
 	public ArrayList<Component> getLevelUpInfo(){
 		ArrayList<Component> list = super.getLevelUpInfo();

@@ -46,7 +46,7 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 		this.ySize = ySize;
 		this.btn = btn;
 
-		confirm = new ExtendedButton(x + (xSize / 2) - 18, y + ySize - 15, 15, 15, TextComponent.EMPTY, null){
+		confirm = new ExtendedButton(x + xSize / 2 - 18, y + ySize - 15, 15, 15, TextComponent.EMPTY, null){
 			@Override
 			public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){
 				mStack.pushPose();
@@ -91,7 +91,7 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 			}
 		};
 
-		cancel = new ExtendedButton(x + (xSize / 2) + 3, y + ySize - 15, 15, 15, TextComponent.EMPTY, null){
+		cancel = new ExtendedButton(x + xSize / 2 + 3, y + ySize - 15, 15, 15, TextComponent.EMPTY, null){
 			@Override
 			public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){
 				mStack.pushPose();
@@ -114,7 +114,7 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 			}
 		};
 
-		newborn = new ExtendedCheckbox(x + 5, y + 12, xSize - 10, 10, 10, new TranslatableComponent("ds.level.newborn"), false, (s) -> {}){
+		newborn = new ExtendedCheckbox(x + 5, y + 12, xSize - 10, 10, 10, new TranslatableComponent("ds.level.newborn"), false, s -> {}){
 			@Override
 			public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
 				super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
@@ -126,7 +126,7 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 				}
 			}
 		};
-		young = new ExtendedCheckbox(x + 5, y + 27, xSize - 10, 10, 10, new TranslatableComponent("ds.level.young"), false, (s) -> {}){
+		young = new ExtendedCheckbox(x + 5, y + 27, xSize - 10, 10, 10, new TranslatableComponent("ds.level.young"), false, s -> {}){
 			@Override
 			public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
 				super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
@@ -138,7 +138,7 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 				}
 			}
 		};
-		adult = new ExtendedCheckbox(x + 5, y + 27 + 15, xSize - 10, 10, 10, new TranslatableComponent("ds.level.adult"), false, (s) -> {}){
+		adult = new ExtendedCheckbox(x + 5, y + 27 + 15, xSize - 10, 10, 10, new TranslatableComponent("ds.level.adult"), false, s -> {}){
 			@Override
 			public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
 				super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
@@ -154,7 +154,7 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 
 	@Override
 	public boolean isMouseOver(double pMouseX, double pMouseY){
-		return visible && pMouseY >= (double)this.y - 3 && pMouseY <= (double)this.y + ySize + 3 && pMouseX >= (double)this.x && pMouseX <= (double)this.x + xSize;
+		return visible && pMouseY >= (double)y - 3 && pMouseY <= (double)y + ySize + 3 && pMouseX >= (double)x && pMouseX <= (double)x + xSize;
 	}
 
 	@Override
@@ -170,6 +170,6 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 		newborn.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 		young.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 		adult.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
-		Gui.drawCenteredString(pMatrixStack, Minecraft.getInstance().font, new TranslatableComponent("ds.gui.dragon_editor.copy_to"), x + (xSize / 2), y + 1, 14737632);
+		Gui.drawCenteredString(pMatrixStack, Minecraft.getInstance().font, new TranslatableComponent("ds.gui.dragon_editor.copy_to"), x + xSize / 2, y + 1, 14737632);
 	}
 }

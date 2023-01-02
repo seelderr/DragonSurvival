@@ -33,15 +33,17 @@ public class FireBallEntity extends DragonBallEntity{
 		return ParticleTypes.LARGE_SMOKE;
 	}
 
+	@Override
 	protected boolean shouldBurn(){
 		return false;
 	}
 
+	@Override
 	protected void onHit(HitResult p_70227_1_){
-		if(!this.level.isClientSide && !this.isDead){
-			boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level, this.getOwner());
+		if(!level.isClientSide && !isDead){
+			boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(level, getOwner());
 			float explosivePower = getSkillLevel();
-			this.level.explode(null, this.getX(), this.getY(), this.getZ(), explosivePower, flag, flag ? Explosion.BlockInteraction.DESTROY : Explosion.BlockInteraction.NONE);
+			level.explode(null, getX(), getY(), getZ(), explosivePower, flag, flag ? Explosion.BlockInteraction.DESTROY : Explosion.BlockInteraction.NONE);
 
 			isDead = true;
 			setDeltaMovement(0, 0, 0);
@@ -52,17 +54,17 @@ public class FireBallEntity extends DragonBallEntity{
 
 	private void aoeDamage(){
 		int range = 2;
-		List<Entity> entities = this.level.getEntities(null, new AABB(position().x - range, position().y - range, position().z - range, position().x + range, position().y + range, position().z + range));
-		entities.removeIf((e) -> e == getOwner() || e instanceof FireBallEntity);
-		entities.removeIf((e) -> e.distanceTo(this) > range);
-		entities.removeIf((e) -> !(e instanceof LivingEntity));
+		List<Entity> entities = level.getEntities(null, new AABB(position().x - range, position().y - range, position().z - range, position().x + range, position().y + range, position().z + range));
+		entities.removeIf(e -> e == getOwner() || e instanceof FireBallEntity);
+		entities.removeIf(e -> e.distanceTo(this) > range);
+		entities.removeIf(e -> !(e instanceof LivingEntity));
 
 		for(Entity ent : entities){
-			if(!this.level.isClientSide){
+			if(!level.isClientSide){
 				TargetingFunctions.attackTargets(getOwner(), ent1 -> ent1.hurt(DamageSource.explosion((Explosion)null), FireBallAbility.getDamage(getSkillLevel())), ent);
 
 				if(getOwner() instanceof LivingEntity){
-					this.doEnchantDamageEffects((LivingEntity)getOwner(), ent);
+					doEnchantDamageEffects((LivingEntity)getOwner(), ent);
 				}
 			}
 		}
@@ -74,15 +76,16 @@ public class FireBallEntity extends DragonBallEntity{
 		return p_180431_1_.isExplosion() || super.isInvulnerableTo(p_180431_1_);
 	}
 
+	@Override
 	protected void onHitEntity(EntityHitResult p_213868_1_){
-		if(!this.level.isClientSide && !this.isDead){
+		if(!level.isClientSide && !isDead){
 			Entity entity = p_213868_1_.getEntity();
-			Entity entity1 = this.getOwner();
+			Entity entity1 = getOwner();
 
 			TargetingFunctions.attackTargets(getOwner(), ent1 -> ent1.hurt(DamageSource.fireball(this, entity1), FireBallAbility.getDamage(getSkillLevel())), entity);
 
 			if(entity1 instanceof LivingEntity){
-				this.doEnchantDamageEffects((LivingEntity)entity1, entity);
+				doEnchantDamageEffects((LivingEntity)entity1, entity);
 			}
 			isDead = true;
 			setDeltaMovement(0, 0, 0);

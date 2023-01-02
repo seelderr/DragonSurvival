@@ -22,23 +22,23 @@ public class DropdownList extends AbstractSelectionList<DropdownEntry>{
 
 	public DropdownList(int x, int y, int xSize, int ySize, int itemHeight){
 		super(Minecraft.getInstance(), 0, 0, 0, 0, itemHeight);
-		this.listWidth = xSize;
-		this.setRenderBackground(false);
-		this.setRenderTopAndBottom(false);
+		listWidth = xSize;
+		setRenderBackground(false);
+		setRenderTopAndBottom(false);
 		reposition(x, y, xSize, ySize);
 	}
 
 	public void reposition(int x, int y, int xSize, int ySize){
-		this.x0 = x;
-		this.y0 = y + 3;
+		x0 = x;
+		y0 = y + 3;
 
-		this.width = xSize;
-		this.height = ySize;
+		width = xSize;
+		height = ySize;
 
 		height = Math.min(height, Minecraft.getInstance().getWindow().getGuiScaledHeight() - (y + 6));
 
-		this.x1 = x + width;
-		this.y1 = y + 3 + height;
+		x1 = x + width;
+		y1 = y + 3 + height;
 	}
 
 	@Override
@@ -49,7 +49,7 @@ public class DropdownList extends AbstractSelectionList<DropdownEntry>{
 	@Override
 	public void updateNarration(NarrationElementOutput pNarrationElementOutput){}	@Override
 	public void centerScrollOn(DropdownEntry pEntry){
-		this.setScrollAmount(this.children().indexOf(pEntry) * this.itemHeight + this.itemHeight / 2 - (this.y1 - this.y0) / 2);
+		setScrollAmount(children().indexOf(pEntry) * itemHeight + itemHeight / 2 - (y1 - y0) / 2);
 	}
 
 
@@ -72,40 +72,40 @@ public class DropdownList extends AbstractSelectionList<DropdownEntry>{
 
 	@Override
 	protected int getMaxPosition(){
-		return this.getItemCount() * this.itemHeight + this.headerHeight + this.itemHeight / 4;
+		return getItemCount() * itemHeight + headerHeight + itemHeight / 4;
 	}
 
 	@Override
 	public void render(PoseStack pPoseStack, int pMouseX, int pMouseY, float pPartialTicks){
-		this.renderBackground(pPoseStack);
-		int i = this.getScrollbarPosition();
+		renderBackground(pPoseStack);
+		int i = getScrollbarPosition();
 		int j = i + 6;
 		Tesselator tesselator = Tesselator.getInstance();
 		BufferBuilder bufferbuilder = tesselator.getBuilder();
-		int j1 = this.getRowLeft();
-		int k = this.y0 + 4 - (int)this.getScrollAmount();
-		this.renderList(pPoseStack, j1, k, pMouseX, pMouseY, pPartialTicks);
+		int j1 = getRowLeft();
+		int k = y0 + 4 - (int)getScrollAmount();
+		renderList(pPoseStack, j1, k, pMouseX, pMouseY, pPartialTicks);
 
 		if(children().size() > 0){
 			RenderSystem.disableScissor();
 		}
 
-		int k1 = this.getMaxScroll();
+		int k1 = getMaxScroll();
 		if(k1 > 0){
 			RenderSystem.disableTexture();
 			RenderSystem.setShader(GameRenderer::getPositionColorShader);
-			int l1 = (int)((float)((this.y1 - this.y0) * (this.y1 - this.y0)) / (float)this.getMaxPosition());
-			l1 = Mth.clamp(l1, itemHeight, this.y1 - this.y0 - 8);
-			int i2 = (int)this.getScrollAmount() * (this.y1 - this.y0 - l1) / k1 + this.y0;
-			if(i2 < this.y0)
-				i2 = this.y0;
+			int l1 = (int)((float)((y1 - y0) * (y1 - y0)) / (float)getMaxPosition());
+			l1 = Mth.clamp(l1, itemHeight, y1 - y0 - 8);
+			int i2 = (int)getScrollAmount() * (y1 - y0 - l1) / k1 + y0;
+			if(i2 < y0)
+				i2 = y0;
 			double z = getBlitOffset() + 10;
 
 			bufferbuilder.begin(Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-			bufferbuilder.vertex(i, this.y1, z).color(0, 0, 0, 255).endVertex();
-			bufferbuilder.vertex(j, this.y1, z).color(0, 0, 0, 255).endVertex();
-			bufferbuilder.vertex(j, this.y0, z).color(0, 0, 0, 255).endVertex();
-			bufferbuilder.vertex(i, this.y0, z).color(0, 0, 0, 255).endVertex();
+			bufferbuilder.vertex(i, y1, z).color(0, 0, 0, 255).endVertex();
+			bufferbuilder.vertex(j, y1, z).color(0, 0, 0, 255).endVertex();
+			bufferbuilder.vertex(j, y0, z).color(0, 0, 0, 255).endVertex();
+			bufferbuilder.vertex(i, y0, z).color(0, 0, 0, 255).endVertex();
 			bufferbuilder.vertex(i, i2 + l1, z).color(128, 128, 128, 255).endVertex();
 			bufferbuilder.vertex(j, i2 + l1, 0.0D).color(128, 128, 128, 255).endVertex();
 			bufferbuilder.vertex(j, i2, z).color(128, 128, 128, 255).endVertex();
@@ -117,13 +117,13 @@ public class DropdownList extends AbstractSelectionList<DropdownEntry>{
 			tesselator.end();
 		}
 
-		this.renderDecorations(pPoseStack, pMouseX, pMouseY);
+		renderDecorations(pPoseStack, pMouseX, pMouseY);
 		RenderSystem.enableTexture();
 		RenderSystem.disableBlend();
 	}
 
 	@Override
 	public boolean isMouseOver(double pMouseX, double pMouseY){
-		return visible && pMouseY >= (double)this.y0 - 3 && pMouseY <= (double)this.y1 + 3 && pMouseX >= (double)this.x0 && pMouseX <= (double)this.x1;
+		return visible && pMouseY >= (double)y0 - 3 && pMouseY <= (double)y1 + 3 && pMouseX >= (double)x0 && pMouseX <= (double)x1;
 	}
 }

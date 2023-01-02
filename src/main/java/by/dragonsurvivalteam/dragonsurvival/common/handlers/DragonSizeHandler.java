@@ -125,7 +125,7 @@ public class DragonSizeHandler{
 		double size = player.getCapability(Capabilities.DRAGON_CAPABILITY).orElse(null).getSize();
 		double height = calculateModifiedHeight(calculateDragonHeight((float)size, ServerConfig.hitboxGrowsPastHuman), pose, ServerConfig.sizeChangesHitbox);
 		double width = calculateDragonWidth((float)size, ServerConfig.hitboxGrowsPastHuman);
-		return (player.level.getBlockCollisions(null, new AABB(player.position().subtract(width * 0.5D, 0.0D, width * 0.5D), player.position().add(width * 0.5D, height, width * 0.5D))).spliterator().estimateSize() == 0);
+		return player.level.getBlockCollisions(null, new AABB(player.position().subtract(width * 0.5D, 0.0D, width * 0.5D), player.position().add(width * 0.5D, height, width * 0.5D))).spliterator().estimateSize() == 0;
 	}
 
 	public static double calculateModifiedHeight(double height, Pose pose, boolean sizeChangesHitbox){

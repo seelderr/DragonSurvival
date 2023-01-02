@@ -50,31 +50,31 @@ public class ExtendedCheckbox extends Checkbox{
 			float widthMod = (renderWidth - 4) / 36f;
 			float heightMod = (height - 4) / 36f;
 
-			float u = this.isHoveredOrFocused() || this.isFocused() ? renderWidth - 4 : 0.0F;
-			float v = this.selected() ? height - 4 : 0.0F;
+			float u = isHoveredOrFocused() || isFocused() ? renderWidth - 4 : 0.0F;
+			float v = selected() ? height - 4 : 0.0F;
 
-			blit(pMatrixStack, this.x + 2, this.y + 2, u, v, renderWidth - 4, height - 4, (int)(72 * widthMod), (int)(72f * heightMod));
-			this.renderBg(pMatrixStack, minecraft, pMouseX, pMouseY);
+			blit(pMatrixStack, x + 2, y + 2, u, v, renderWidth - 4, height - 4, (int)(72 * widthMod), (int)(72f * heightMod));
+			renderBg(pMatrixStack, minecraft, pMouseX, pMouseY);
 
-			Component message = active ? getMessage() : ((TranslatableComponent)this.getMessage()).withStyle(ChatFormatting.DARK_GRAY);
+			Component message = active ? getMessage() : ((TranslatableComponent)getMessage()).withStyle(ChatFormatting.DARK_GRAY);
 
 			pMatrixStack.pushPose();
-			drawString(pMatrixStack, fontrenderer, message, this.x + renderWidth + 2, this.y + (height - 8) / 2, 14737632);
+			drawString(pMatrixStack, fontrenderer, message, x + renderWidth + 2, y + (height - 8) / 2, 14737632);
 			pMatrixStack.popPose();
 		}else{
 			float widthMod = renderWidth / 36f;
 			float heightMod = height / 36f;
 
-			float u = this.isHoveredOrFocused() || this.isFocused() ? renderWidth : 0.0F;
-			float v = this.selected() ? height : 0.0F;
+			float u = isHoveredOrFocused() || isFocused() ? renderWidth : 0.0F;
+			float v = selected() ? height : 0.0F;
 
-			blit(pMatrixStack, this.x, this.y, u, v, renderWidth, height, (int)(72 * widthMod), (int)(72f * heightMod));
-			this.renderBg(pMatrixStack, minecraft, pMouseX, pMouseY);
+			blit(pMatrixStack, x, y, u, v, renderWidth, height, (int)(72 * widthMod), (int)(72f * heightMod));
+			renderBg(pMatrixStack, minecraft, pMouseX, pMouseY);
 
-			Component message = active ? getMessage() : ((TranslatableComponent)this.getMessage()).withStyle(ChatFormatting.DARK_GRAY);
+			Component message = active ? getMessage() : ((TranslatableComponent)getMessage()).withStyle(ChatFormatting.DARK_GRAY);
 
 			pMatrixStack.pushPose();
-			drawString(pMatrixStack, fontrenderer, message, this.x + renderWidth + 2, this.y + (height - 8) / 2, 14737632);
+			drawString(pMatrixStack, fontrenderer, message, x + renderWidth + 2, y + (height - 8) / 2, 14737632);
 			pMatrixStack.popPose();
 		}
 		pMatrixStack.popPose();

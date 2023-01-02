@@ -55,7 +55,7 @@ public class CompleteDataSync extends ISidedMessage<CompleteDataSync>{
 
 	@Override
 	public void runServer(CompleteDataSync message, Supplier<NetworkEvent.Context> supplier, ServerPlayer sender){
-		DragonStateProvider.getCap(sender).ifPresent((cap) -> {
+		DragonStateProvider.getCap(sender).ifPresent(cap -> {
 			SimpleContainer container = cap.getClawToolData().getClawsInventory();
 			cap.readNBT(message.nbt);
 			cap.getClawToolData().setClawsInventory(container);
@@ -66,7 +66,7 @@ public class CompleteDataSync extends ISidedMessage<CompleteDataSync>{
 
 	@Override
 	public void runClient(CompleteDataSync message, Supplier<NetworkEvent.Context> supplier, Player targetPlayer){
-		DragonStateProvider.getCap(targetPlayer).ifPresent((cap) -> {
+		DragonStateProvider.getCap(targetPlayer).ifPresent(cap -> {
 			cap.readNBT(message.nbt);
 		});
 	}

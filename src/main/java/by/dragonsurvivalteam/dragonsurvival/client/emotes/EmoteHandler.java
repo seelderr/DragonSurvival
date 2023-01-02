@@ -130,7 +130,7 @@ public class EmoteHandler{
 			return;
 		}
 
-		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent((cap) -> {
+		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {
 			if(Arrays.stream(cap.getEmoteData().currentEmotes).anyMatch(Objects::nonNull)){
 				for(int index = 0; index < cap.getEmoteData().currentEmotes.length; index++){
 					Emote emote = cap.getEmoteData().currentEmotes[index];

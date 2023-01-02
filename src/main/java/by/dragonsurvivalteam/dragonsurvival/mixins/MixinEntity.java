@@ -35,9 +35,9 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
 	private void positionRider(Entity p_226266_1_, Entity.MoveFunction p_226266_2_, CallbackInfo callbackInfo){
 		if(DragonUtils.isDragon((Entity)(net.minecraftforge.common.capabilities.CapabilityProvider<Entity>)this)){
 			if(hasPassenger(p_226266_1_)){
-				double d0 = this.getY() + this.getPassengersRidingOffset() + p_226266_1_.getMyRidingOffset();
+				double d0 = getY() + getPassengersRidingOffset() + p_226266_1_.getMyRidingOffset();
 				Vector3f cameraOffset = Functions.getDragonCameraOffset((Entity)(net.minecraftforge.common.capabilities.CapabilityProvider<Entity>)this);
-				p_226266_2_.accept(p_226266_1_, this.getX() - cameraOffset.x(), d0, this.getZ() - cameraOffset.z());
+				p_226266_2_.accept(p_226266_1_, getX() - cameraOffset.x(), d0, getZ() - cameraOffset.z());
 				callbackInfo.cancel();
 			}
 		}
@@ -81,9 +81,9 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
 	public void getDragonPassengersRidingOffset(CallbackInfoReturnable<Double> ci){
 		if(DragonUtils.isDragon((Entity)(Object)this)){
 			switch(((Entity)(Object)this).getPose()){
-				case FALL_FLYING, SWIMMING, SPIN_ATTACK -> ci.setReturnValue((double)this.dimensions.height * 0.6D);
-				case CROUCHING -> ci.setReturnValue((double)this.dimensions.height * 0.45D);
-				default -> ci.setReturnValue((double)this.dimensions.height * 0.5D);
+				case FALL_FLYING, SWIMMING, SPIN_ATTACK -> ci.setReturnValue((double)dimensions.height * 0.6D);
+				case CROUCHING -> ci.setReturnValue((double)dimensions.height * 0.45D);
+				default -> ci.setReturnValue((double)dimensions.height * 0.5D);
 			}
 		}
 	}
@@ -99,7 +99,7 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
 	public void canRide(Entity entity, CallbackInfoReturnable<Boolean> ci){
 		if(ci.getReturnValue() && DragonUtils.isDragon((Entity)(Object)this) && !DragonUtils.isDragon(entity)){
 			if(ServerConfig.ridingBlacklist){
-				ci.setReturnValue(ServerConfig.allowedVehicles.contains(entity.getType().toString()));
+				ci.setReturnValue(ServerConfig.allowedVehicles.contains(entity.getType().getRegistryName().toString()));
 			}
 		}
 	}

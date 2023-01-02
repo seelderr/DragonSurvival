@@ -28,6 +28,7 @@ public class DragonTreatItem extends Item{
 		this.type = type;
 	}
 
+	@Override
 	public ItemStack finishUsingItem(ItemStack p_77654_1_, Level p_77654_2_, LivingEntity entity){
 		if(entity instanceof Player player){
 			
@@ -37,7 +38,7 @@ public class DragonTreatItem extends Item{
 			}
 		}
 
-		return this.isEdible() ? entity.eat(p_77654_2_, p_77654_1_) : p_77654_1_;
+		return isEdible() ? entity.eat(p_77654_2_, p_77654_1_) : p_77654_1_;
 	}
 
 	@Override

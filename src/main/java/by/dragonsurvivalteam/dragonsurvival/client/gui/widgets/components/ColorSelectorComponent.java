@@ -46,7 +46,7 @@ public class ColorSelectorComponent extends AbstractContainerEventHandler implem
 		LayerSettings set = settings.get();
 		Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, screen.handler), layer, set.selectedSkin, screen.handler.getType());
 
-		glowing = new ExtendedCheckbox(x + 3, y, xSize - 5, 10, 10, new TranslatableComponent("ds.gui.dragon_editor.glowing"), set.glowing, (s) -> {
+		glowing = new ExtendedCheckbox(x + 3, y, xSize - 5, 10, 10, new TranslatableComponent("ds.gui.dragon_editor.glowing"), set.glowing, s -> {
 			settings.get().glowing = s.selected();
 			screen.handler.getSkinData().compileSkin();
 		});
@@ -57,7 +57,7 @@ public class ColorSelectorComponent extends AbstractContainerEventHandler implem
 			defaultC = Color.getHSBColor(set.hue, set.saturation, set.brightness);
 		}
 
-		colorPicker = new ColorPickerButton(x + 3, y + 11, xSize - 5, ySize - 11, defaultC, (c) -> {
+		colorPicker = new ColorPickerButton(x + 3, y + 11, xSize - 5, ySize - 11, defaultC, c -> {
 			float[] hsb = Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), null);
 
 			settings.get().hue = hsb[0];
@@ -72,7 +72,7 @@ public class ColorSelectorComponent extends AbstractContainerEventHandler implem
 
 	@Override
 	public boolean isMouseOver(double pMouseX, double pMouseY){
-		return visible && pMouseY >= (double)this.y - 3 && pMouseY <= (double)this.y + ySize + 3 && pMouseX >= (double)this.x && pMouseX <= (double)this.x + xSize;
+		return visible && pMouseY >= (double)y - 3 && pMouseY <= (double)y + ySize + 3 && pMouseX >= (double)x && pMouseX <= (double)x + xSize;
 	}
 
 	@Override

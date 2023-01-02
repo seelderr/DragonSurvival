@@ -16,15 +16,17 @@ public class SquireHunterRenderer extends MobRenderer<SquireEntity, HunterModel<
 
 	public SquireHunterRenderer(EntityRendererProvider.Context rendererManager){
 		super(rendererManager, new HunterModel(rendererManager.bakeLayer(ModelLayers.EVOKER)), 0.5F);
-		this.addLayer(new CustomHeadLayer<>(this, rendererManager.getModelSet()));
-		this.addLayer(new ItemInHandLayer<>(this));
+		addLayer(new CustomHeadLayer<>(this, rendererManager.getModelSet()));
+		addLayer(new ItemInHandLayer<>(this));
 	}
 
 
+	@Override
 	public ResourceLocation getTextureLocation(SquireEntity squireHunter){
 		return TEXTURE;
 	}
 
+	@Override
 	protected void scale(SquireEntity squire, PoseStack matrixStack, float p_225620_3_){
 		float f = 0.9375F;
 		matrixStack.scale(f, f, f);

@@ -72,11 +72,11 @@ public class DropDownButton extends ExtendedButton implements TooltipAccessor{
 	@Override
 	public void renderButton(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
 		Minecraft mc = Minecraft.getInstance();
-		int k = this.getYImage(this.isHovered);
-		GuiUtils.drawContinuousTexturedBox(poseStack, WIDGETS_LOCATION, this.x, this.y, 0, 46 + k * 20, this.width, this.height, 200, 20, 2, 3, 2, 2, this.getBlitOffset());
-		this.renderBg(poseStack, mc, mouseX, mouseY);
+		int k = getYImage(isHovered);
+		GuiUtils.drawContinuousTexturedBox(poseStack, WIDGETS_LOCATION, x, y, 0, 46 + k * 20, width, height, 200, 20, 2, 3, 2, 2, getBlitOffset());
+		renderBg(poseStack, mc, mouseX, mouseY);
 
-		Component buttonText = this.getMessage();
+		Component buttonText = getMessage();
 		int strWidth = mc.font.width(buttonText);
 		int ellipsisWidth = mc.font.width("...");
 
@@ -85,7 +85,7 @@ public class DropDownButton extends ExtendedButton implements TooltipAccessor{
 
 		poseStack.pushPose();
 		poseStack.translate(0,0, getBlitOffset());
-		drawCenteredString(poseStack, mc.font, buttonText, this.x + this.width / 2, this.y + (this.height - 8) / 2, getFGColor());
+		drawCenteredString(poseStack, mc.font, buttonText, x + width / 2, y + (height - 8) / 2, getFGColor());
 		poseStack.popPose();
 	}
 
@@ -100,7 +100,7 @@ public class DropDownButton extends ExtendedButton implements TooltipAccessor{
 		List<GuiEventListener> list = Minecraft.getInstance().screen.children.stream().filter(s -> s.isMouseOver(pMouseX, pMouseY)).toList();
 
 		if(list.size() == 1)
-			this.onPress();
+			onPress();
 	}
 	@Override
 	public void onPress(){
@@ -132,7 +132,7 @@ public class DropDownButton extends ExtendedButton implements TooltipAccessor{
 
 				for(GuiEventListener child : screen.children)
 					if(child instanceof ContainerObjectSelectionList){
-						if(((ContainerObjectSelectionList)child).renderTopAndBottom){
+						if(((ContainerObjectSelectionList<?>)child).renderTopAndBottom){
 							hasBorder = true;
 							break;
 						}
@@ -146,7 +146,7 @@ public class DropDownButton extends ExtendedButton implements TooltipAccessor{
 			renderButton = new ExtendedButton(0, 0, 0, 0, TextComponent.EMPTY, null){
 				@Override
 				public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
-					this.active = this.visible = false;
+					active = visible = false;
 					list.visible = DropDownButton.this.visible;
 
 					if(finalHasBorder)

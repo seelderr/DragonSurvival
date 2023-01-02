@@ -17,13 +17,13 @@ public abstract class OptionListEntry extends Entry<OptionListEntry>{
 	public boolean visible = false;
 
 	public OptionListEntry(Map<Option, AbstractWidget> pOptions){
-		this.children = ImmutableList.copyOf(pOptions.values());
+		children = ImmutableList.copyOf(pOptions.values());
 	}
 
 	public abstract int getHeight();
 
 	@Override
 	public boolean isMouseOver(double p_231047_1_, double p_231047_3_){
-		return Objects.equals(((OptionsList)this.list).getEntryAtPos(p_231047_1_, p_231047_3_), this);
+		return Objects.equals(((OptionsList)list).getEntryAtPos(p_231047_1_, p_231047_3_), this);
 	}
 }

@@ -18,6 +18,7 @@ public class HunterHoundRenderer extends WolfRenderer{
 		super(rendererManager);
 	}
 
+	@Override
 	public ResourceLocation getTextureLocation(Wolf entity){
 		if(entity.getDisplayName().getString().equals("Hector") || entity.getDisplayName().getString().equals("Гектор")){
 			return HECTOR_SKIN;

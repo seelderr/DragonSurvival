@@ -24,7 +24,7 @@ public class AnimationTimer{
 		}
 
 		for(AnimationTimer timer : timers){
-			timer.animationTimes.keySet().forEach((key) -> {
+			timer.animationTimes.keySet().forEach(key -> {
 				timer.animationTimes.computeIfPresent(key, (s, d) -> d -= 1);
 
 				if(timer.animationTimes.get(key) <= 0){

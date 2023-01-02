@@ -69,6 +69,7 @@ public class DragonDoor extends Block implements SimpleWaterloggedBlock{
 		registerDefaultState(getStateDefinition().any().setValue(FACING, Direction.NORTH).setValue(OPEN, false).setValue(HINGE, DoorHingeSide.LEFT).setValue(POWERED, false).setValue(PART, Part.BOTTOM).setValue(OPEN_REQ, DragonDoorOpenRequirement).setValue(WATERLOGGED, false));
 	}
 
+	@Override
 	public boolean isPathfindable(BlockState state, BlockGetter worldIn, BlockPos pos, PathComputationType type){
 		switch(type){
 			case LAND:
@@ -79,6 +80,7 @@ public class DragonDoor extends Block implements SimpleWaterloggedBlock{
 		}
 	}
 
+	@Override
 	public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos){
 		Part part = stateIn.getValue(PART);
 		//TODO
@@ -94,14 +96,15 @@ public class DragonDoor extends Block implements SimpleWaterloggedBlock{
 		}
 	}
 
+	@Override
 	public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving){
 		boolean validPower = state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.NONE || state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.POWER;
-		boolean validType = (state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.SEA && blockIn == DSBlocks.seaPressurePlate) || (state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.FOREST && blockIn == DSBlocks.forestPressurePlate) || (state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.CAVE && blockIn == DSBlocks.cavePressurePlate);
+		boolean validType = state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.SEA && blockIn == DSBlocks.seaPressurePlate || state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.FOREST && blockIn == DSBlocks.forestPressurePlate || state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.CAVE && blockIn == DSBlocks.cavePressurePlate;
 		if(validPower || validType){
 			boolean flag = worldIn.hasNeighborSignal(pos) || worldIn.hasNeighborSignal(pos.relative(state.getValue(PART) == Part.BOTTOM ? Direction.UP : Direction.DOWN));
 			if(blockIn != this && flag != state.getValue(POWERED)){
 				if(flag != state.getValue(OPEN)){
-					this.playSound(worldIn, pos, flag);
+					playSound(worldIn, pos, flag);
 				}
 
 				worldIn.setBlock(pos, state.setValue(POWERED, flag).setValue(OPEN, flag), 2);
@@ -110,24 +113,25 @@ public class DragonDoor extends Block implements SimpleWaterloggedBlock{
 	}
 
 	private void playSound(Level worldIn, BlockPos pos, boolean isOpening){
-		worldIn.levelEvent(null, isOpening ? this.getOpenSound() : this.getCloseSound(), pos, 0);
+		worldIn.levelEvent(null, isOpening ? getOpenSound() : getCloseSound(), pos, 0);
 	}
 
 	private int getCloseSound(){
-		return this.material == Material.METAL ? 1011 : 1012;
+		return material == Material.METAL ? 1011 : 1012;
 	}
 
 	private int getOpenSound(){
-		return this.material == Material.METAL ? 1005 : 1006;
+		return material == Material.METAL ? 1005 : 1006;
 	}
 
+	@Override
 	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit){
 		DragonStateHandler dragonStateHandler = DragonUtils.getHandler(player);
 		if(state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.NONE || dragonStateHandler.isDragon() && state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.CAVE && Objects.equals(dragonStateHandler.getType(), DragonTypes.CAVE) || state.getValue(
 				OPEN_REQ) == DragonDoorOpenRequirement.FOREST && Objects.equals(dragonStateHandler.getType(), DragonTypes.FOREST) || state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.SEA && Objects.equals(dragonStateHandler.getType(), DragonTypes.SEA)){
 			state = state.cycle(OPEN).setValue(WATERLOGGED, worldIn.getFluidState(pos).getType() == Fluids.WATER);
 			worldIn.setBlock(pos, state, 10);
-			worldIn.levelEvent(player, state.getValue(OPEN) ? this.getOpenSound() : this.getCloseSound(), pos, 0);
+			worldIn.levelEvent(player, state.getValue(OPEN) ? getOpenSound() : getCloseSound(), pos, 0);
 			if(state.getValue(PART) == Part.TOP){
 				worldIn.setBlock(pos.below(2), state.setValue(PART, Part.BOTTOM).setValue(WATERLOGGED, worldIn.getFluidState(pos.below(2)).getType() == Fluids.WATER), 10);
 				worldIn.setBlock(pos.below(), state.setValue(PART, Part.MIDDLE).setValue(WATERLOGGED, worldIn.getFluidState(pos.below()).getType() == Fluids.WATER), 10);
@@ -137,6 +141,7 @@ public class DragonDoor extends Block implements SimpleWaterloggedBlock{
 		return InteractionResult.PASS;
 	}
 
+	@Override
 	public PushReaction getPistonPushReaction(BlockState state){
 		return state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.NONE ? PushReaction.DESTROY : PushReaction.IGNORE;
 	}
@@ -146,18 +151,22 @@ public class DragonDoor extends Block implements SimpleWaterloggedBlock{
 		return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
 	}
 
+	@Override
 	public BlockState rotate(BlockState state, Rotation rot){
 		return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
 	}
 
+	@Override
 	public BlockState mirror(BlockState state, Mirror mirrorIn){
 		return mirrorIn == Mirror.NONE ? state : state.rotate(mirrorIn.getRotation(state.getValue(FACING))).cycle(HINGE);
 	}
 
+	@Override
 	public long getSeed(BlockState state, BlockPos pos){
 		return Mth.getSeed(pos.getX(), pos.below(state.getValue(PART) == Part.BOTTOM ? 0 : 1).getY(), pos.getZ());
 	}
 
+	@Override
 	public boolean canSurvive(BlockState state, LevelReader worldIn, BlockPos pos){
 		BlockPos blockpos = pos.below();
 		BlockState blockstate = worldIn.getBlockState(blockpos);
@@ -168,6 +177,7 @@ public class DragonDoor extends Block implements SimpleWaterloggedBlock{
 		}
 	}
 
+	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context){
 		Direction direction = state.getValue(FACING);
 		boolean flag = !state.getValue(OPEN);
@@ -175,23 +185,24 @@ public class DragonDoor extends Block implements SimpleWaterloggedBlock{
 		switch(direction){
 			case EAST:
 			default:
-				return flag ? EAST_AABB : (flag1 ? NORTH_AABB : SOUTH_AABB);
+				return flag ? EAST_AABB : flag1 ? NORTH_AABB : SOUTH_AABB;
 			case SOUTH:
-				return flag ? SOUTH_AABB : (flag1 ? EAST_AABB : WEST_AABB);
+				return flag ? SOUTH_AABB : flag1 ? EAST_AABB : WEST_AABB;
 			case WEST:
-				return flag ? WEST_AABB : (flag1 ? SOUTH_AABB : NORTH_AABB);
+				return flag ? WEST_AABB : flag1 ? SOUTH_AABB : NORTH_AABB;
 			case NORTH:
-				return flag ? NORTH_AABB : (flag1 ? WEST_AABB : EAST_AABB);
+				return flag ? NORTH_AABB : flag1 ? WEST_AABB : EAST_AABB;
 		}
 	}
 
+	@Override
 	@Nullable
 	public BlockState getStateForPlacement(BlockPlaceContext context){
 		BlockPos blockpos = context.getClickedPos();
 		if(blockpos.getY() < 255 && context.getLevel().getBlockState(blockpos.above()).canBeReplaced(context) && context.getLevel().getBlockState(blockpos.above(2)).canBeReplaced(context)){
 			Level world = context.getLevel();
 			boolean flag = world.hasNeighborSignal(blockpos) || world.hasNeighborSignal(blockpos.above());
-			return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection()).setValue(HINGE, this.getHinge(context)).setValue(POWERED, flag).setValue(OPEN, flag).setValue(PART, Part.BOTTOM).setValue(WATERLOGGED, context.getLevel().getFluidState(context.getClickedPos()).getType() == Fluids.WATER && context.getLevel().getBlockState(blockpos).getBlock() == DSBlocks.seaDoor);
+			return defaultBlockState().setValue(FACING, context.getHorizontalDirection()).setValue(HINGE, getHinge(context)).setValue(POWERED, flag).setValue(OPEN, flag).setValue(PART, Part.BOTTOM).setValue(WATERLOGGED, context.getLevel().getFluidState(context.getClickedPos()).getType() == Fluids.WATER && context.getLevel().getBlockState(blockpos).getBlock() == DSBlocks.seaDoor);
 		}else{
 			return null;
 		}
@@ -233,17 +244,20 @@ public class DragonDoor extends Block implements SimpleWaterloggedBlock{
 		}
 	}
 
+	@Override
 	public void playerDestroy(Level worldIn, Player player, BlockPos pos, BlockState state,
 		@Nullable
 			BlockEntity te, ItemStack stack){
 		super.playerDestroy(worldIn, player, pos, Blocks.AIR.defaultBlockState(), te, stack);
 	}
 
+	@Override
 	public void setPlacedBy(Level worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack){
 		worldIn.setBlock(pos.above(), state.setValue(PART, Part.MIDDLE).setValue(WATERLOGGED, worldIn.getFluidState(pos.above()).getType() == Fluids.WATER), 3);
 		worldIn.setBlock(pos.above(2), state.setValue(PART, Part.TOP).setValue(WATERLOGGED, worldIn.getFluidState(pos.above(2)).getType() == Fluids.WATER), 3);
 	}
 
+	@Override
 	public void playerWillDestroy(Level worldIn, BlockPos pos, BlockState state, Player player){
 		if(!worldIn.isClientSide){
 			Part part = state.getValue(PART);
@@ -266,6 +280,7 @@ public class DragonDoor extends Block implements SimpleWaterloggedBlock{
 		super.playerWillDestroy(worldIn, pos, state, player);
 	}
 
+	@Override
 	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder){
 		builder.add(PART, FACING, OPEN, HINGE, POWERED, OPEN_REQ, WATERLOGGED);
 	}

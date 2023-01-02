@@ -17,7 +17,7 @@ public enum DragonLevel{
 	DragonLevel(int size, float jumpHeight, String name_){
 		this.size = size;
 		this.jumpHeight = jumpHeight;
-		this.name = name_;
+		name = name_;
 	}
 
 	public String getName(){

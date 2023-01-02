@@ -106,7 +106,7 @@ public class ForestDragonType extends AbstractDragonType{
 			int light = player.level.getBrightness(LightLayer.SKY, player.blockPosition()) - player.level.getSkyDarken();
 			float f = player.level.getSunAngle(1.0F);
 
-			float f1 = f < (float)Math.PI ? 0.0F : ((float)Math.PI * 2F);
+			float f1 = f < (float)Math.PI ? 0.0F : (float)Math.PI * 2F;
 			f = f + (f1 - f) * 0.2F;
 			light = Math.round((float)light * Mth.cos(f));
 			light = Mth.clamp(light, 0, 15);
@@ -115,12 +115,8 @@ public class ForestDragonType extends AbstractDragonType{
 				return true;
 			}
 		}
-
-		if(player.hasEffect(DragonEffects.DRAIN) || player.hasEffect(DragonEffects.MAGIC)){
-			return true;
-		}
-
-		return false;
+		
+		return player.hasEffect(DragonEffects.DRAIN) || player.hasEffect(DragonEffects.MAGIC);
 	}
 
 	@Override

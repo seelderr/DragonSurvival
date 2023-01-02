@@ -32,38 +32,43 @@ public class HunterHoundEntity extends Wolf implements DragonHunter{
 		super(type, world);
 	}
 
+	@Override
 	protected void registerGoals(){
 		super.registerGoals();
-		this.goalSelector.getAvailableGoals().removeIf(prioritizedGoal -> {
+		goalSelector.getAvailableGoals().removeIf(prioritizedGoal -> {
 			Goal goal = prioritizedGoal.getGoal();
-			return (goal instanceof SitWhenOrderedToGoal || goal instanceof FollowOwnerGoal || goal instanceof BreedGoal || goal instanceof BegGoal);
+			return goal instanceof SitWhenOrderedToGoal || goal instanceof FollowOwnerGoal || goal instanceof BreedGoal || goal instanceof BegGoal;
 		});
-		this.targetSelector.getAvailableGoals().removeIf(prioritizedGoal -> {
+		targetSelector.getAvailableGoals().removeIf(prioritizedGoal -> {
 			Goal goal = prioritizedGoal.getGoal();
-			return (goal instanceof NearestAttackableTargetGoal || goal instanceof OwnerHurtByTargetGoal || goal instanceof HurtByTargetGoal);
+			return goal instanceof NearestAttackableTargetGoal || goal instanceof OwnerHurtByTargetGoal || goal instanceof HurtByTargetGoal;
 		});
-		this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Player.class, 0, true, false, living -> (living.hasEffect(MobEffects.BAD_OMEN) || living.hasEffect(DragonEffects.EVIL_DRAGON))));
-		this.targetSelector.addGoal(6, new NearestAttackableTargetGoal<>(this, Monster.class, 0, true, false, living -> (living instanceof Mob && !(living instanceof DragonHunter))));
+		targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Player.class, 0, true, false, living -> living.hasEffect(MobEffects.BAD_OMEN) || living.hasEffect(DragonEffects.EVIL_DRAGON)));
+		targetSelector.addGoal(6, new NearestAttackableTargetGoal<>(this, Monster.class, 0, true, false, living -> living instanceof Mob && !(living instanceof DragonHunter)));
 		targetSelector.addGoal(4, new HurtByTargetGoal(this, Shooter.class).setAlertOthers());
-		this.goalSelector.addGoal(7, new FollowMobGoal<>(KnightEntity.class, this, 15));
-		this.goalSelector.addGoal(8, new AlertExceptHunters(this, KnightEntity.class, Shooter.class, SquireEntity.class));
+		goalSelector.addGoal(7, new FollowMobGoal<>(KnightEntity.class, this, 15));
+		goalSelector.addGoal(8, new AlertExceptHunters(this, KnightEntity.class, Shooter.class, SquireEntity.class));
 	}
 
+	@Override
 	protected void defineSynchedData(){
 		super.defineSynchedData();
-		this.entityData.define(variety, 0);
+		entityData.define(variety, 0);
 	}
 
+	@Override
 	public void addAdditionalSaveData(CompoundTag compoundNBT){
 		super.addAdditionalSaveData(compoundNBT);
-		compoundNBT.putInt("Variety", this.entityData.get(variety));
+		compoundNBT.putInt("Variety", entityData.get(variety));
 	}
 
+	@Override
 	public void readAdditionalSaveData(CompoundTag compoundNBT){
 		super.readAdditionalSaveData(compoundNBT);
-		this.entityData.set(variety, compoundNBT.getInt("Variety"));
+		entityData.set(variety, compoundNBT.getInt("Variety"));
 	}
 
+	@Override
 	public boolean doHurtTarget(Entity entity){
 		if(ServerConfig.houndDoesSlowdown && entity instanceof LivingEntity){
 			if(((LivingEntity)entity).hasEffect(MobEffects.MOVEMENT_SLOWDOWN)){
@@ -75,21 +80,23 @@ public class HunterHoundEntity extends Wolf implements DragonHunter{
 		return super.doHurtTarget(entity);
 	}
 
+	@Override
 	public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverWorld, DifficultyInstance difficultyInstance, MobSpawnType reason,
 		@Nullable
 			SpawnGroupData livingEntityData,
 		@Nullable
 			CompoundTag compoundNBT){
-		this.entityData.set(variety, this.random.nextInt(8));
+		entityData.set(variety, random.nextInt(8));
 		return super.finalizeSpawn(serverWorld, difficultyInstance, reason, livingEntityData, compoundNBT);
 	}
 
 	@Override
 	public boolean removeWhenFarAway(double distance){
-		return !this.hasCustomName() && tickCount >= Functions.minutesToTicks(ServerConfig.hunterDespawnDelay);
+		return !hasCustomName() && tickCount >= Functions.minutesToTicks(ServerConfig.hunterDespawnDelay);
 	}
 
+	@Override
 	protected int getExperienceReward(Player p_70693_1_){
-		return 1 + this.level.random.nextInt(2);
+		return 1 + level.random.nextInt(2);
 	}
 }

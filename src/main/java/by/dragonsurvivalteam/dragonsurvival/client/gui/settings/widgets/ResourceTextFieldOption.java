@@ -20,7 +20,7 @@ public class ResourceTextFieldOption extends Option{
 
 	@Override
 	public AbstractWidget createButton(Options gameSettings, int i, int i1, int i2){
-		ResourceTextField widget = new ResourceTextField(spec, this, i, i1, i2, 20, this.getCaption());
+		ResourceTextField widget = new ResourceTextField(spec, this, i, i1, i2, 20, getCaption());
 		widget.setMaxLength(128);
 		widget.setValue(getter.apply(Minecraft.getInstance().options));
 		return widget;

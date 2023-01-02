@@ -28,7 +28,7 @@ public class DragonCuriosRenderLayer extends GeoLayerRenderer<DragonEntity> {
 
     public DragonCuriosRenderLayer(GeoEntityRenderer<DragonEntity> entityRendererIn) {
         super(entityRendererIn);
-        this.renderer = entityRendererIn;
+        renderer = entityRendererIn;
     }
 
     @Override

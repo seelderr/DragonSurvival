@@ -116,9 +116,9 @@ public class ManaHandler{
 
 		DragonStateProvider.getCap(entity).ifPresent(cap -> {
 			if(ServerConfig.consumeEXPAsMana){
-				if(getCurrentMana(entity) < mana && (getCurrentMana(entity) + (entity.totalExperience / 10) >= mana || entity.experienceLevel > 0)){
+				if(getCurrentMana(entity) < mana && (getCurrentMana(entity) + entity.totalExperience / 10 >= mana || entity.experienceLevel > 0)){
 					int missingMana = mana - getCurrentMana(entity);
-					int missingExp = (missingMana * 10);
+					int missingExp = missingMana * 10;
 					entity.giveExperiencePoints(-missingExp);
 					cap.getMagicData().setCurrentMana(0);
 				}else{

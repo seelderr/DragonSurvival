@@ -16,7 +16,7 @@ public class DragonArmorModel extends AnimatedGeoModel<DragonEntity>{
 	@SuppressWarnings( "unchecked" )
 	public DragonArmorModel(DragonModel dragonModel){
 		List<IBone> armorBones = dragonModel.getAnimationProcessor().getModelRendererList();
-		List<IBone> dragonBones = this.getAnimationProcessor().getModelRendererList();
+		List<IBone> dragonBones = getAnimationProcessor().getModelRendererList();
 		for(IBone armorBone : armorBones){
 			GeoBone armorGeoBone = (GeoBone)armorBone;
 			for(IBone dragonBone : dragonBones){

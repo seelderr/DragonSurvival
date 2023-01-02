@@ -124,7 +124,7 @@ public class ClientFlightHandler{
 					if(flightZoomEffect){
 						if(!Minecraft.getInstance().options.getCameraType().isFirstPerson()){
 							Vec3 lookVec = currentPlayer.getLookAngle();
-							float f = Math.min(Math.max(0.5F, 1F - (float)(((lookVec.y * 5) / 2.5) * 0.5)), 3F);
+							float f = Math.min(Math.max(0.5F, 1F - (float)(lookVec.y * 5 / 2.5 * 0.5)), 3F);
 							float newZoom = Mth.lerp(0.25f, lastZoom, f);
 							gameRenderer.setZoom(newZoom);
 							lastZoom = newZoom;
@@ -173,7 +173,7 @@ public class ClientFlightHandler{
 					int cooldown = ServerFlightHandler.flightSpinCooldown * 20;
 					float f = ((float)cooldown - (float)cap.getMovementData().spinCooldown) / (float)cooldown;
 
-					int k = (window.getGuiScaledWidth() / 2) - (66 / 2);
+					int k = window.getGuiScaledWidth() / 2 - 66 / 2;
 					int j = window.getGuiScaledHeight() - 96;
 
 					k += spinCooldownXOffset;
@@ -268,8 +268,8 @@ public class ClientFlightHandler{
 						ax = Mth.clamp(ax, -0.2 * speedLimit, 0.2 * speedLimit);
 						az = Mth.clamp(az, -0.2 * speedLimit, 0.2 * speedLimit);
 
-						ax += (Math.cos(yaw) / 500) * 50;
-						az += (Math.sin(yaw) / 500) * 50;
+						ax += Math.cos(yaw) / 500 * 50;
+						az += Math.sin(yaw) / 500 * 50;
 						ay = lookVec.y / 8;
 
 						if(lookY < 0){
@@ -320,7 +320,7 @@ public class ClientFlightHandler{
 								}
 							}
 
-							if(ServerFlightHandler.isGliding(player) || (ax != 0 || az != 0)){
+							if(ServerFlightHandler.isGliding(player) || ax != 0 || az != 0){
 								motion = player.getDeltaMovement().add(0.0D, g * (-1.0D + (double)f3 * 0.75D), 0.0D);
 
 								if(motion.y < 0.0D && d9 > 0.0D){
@@ -351,8 +351,8 @@ public class ClientFlightHandler{
 								az = Mth.clamp(az, -0.2 * speedLimit, 0.2 * speedLimit);
 
 								if(ServerFlightHandler.isSpin(player)){
-									ax += (Math.cos(yaw) / 500) * 100;
-									az += (Math.sin(yaw) / 500) * 100;
+									ax += Math.cos(yaw) / 500 * 100;
+									az += Math.sin(yaw) / 500 * 100;
 									ay = lookVec.y / 8;
 								}
 
@@ -387,8 +387,8 @@ public class ClientFlightHandler{
 								double yaw = Math.toRadians(player.yHeadRot + 90);
 
 								if(ServerFlightHandler.isSpin(player)){
-									ax += (Math.cos(yaw) / 500) * 200;
-									az += (Math.sin(yaw) / 500) * 200;
+									ax += Math.cos(yaw) / 500 * 200;
+									az += Math.sin(yaw) / 500 * 200;
 									ay = lookVec.y / 8;
 								}
 
@@ -552,7 +552,7 @@ public class ClientFlightHandler{
 		if(KeyInputHandler.TOGGLE_WINGS.consumeClick()){
 			if(handler.hasWings()){
 				//Allows toggling the wings if food level is above 0, player is creative, wings are already enabled (allows disabling even when hungry) or if config options is turned on
-				if((player.getFoodData().getFoodLevel() > ServerFlightHandler.flightHungerThreshold || player.isCreative()) || currentState || ServerFlightHandler.allowFlyingWithoutHunger){
+				if(player.getFoodData().getFoodLevel() > ServerFlightHandler.flightHungerThreshold || player.isCreative() || currentState || ServerFlightHandler.allowFlyingWithoutHunger){
 					NetworkHandler.CHANNEL.sendToServer(new SyncFlyingStatus(player.getId(), !currentState));
 					if(notifyWingStatus){
 						if(!currentState){

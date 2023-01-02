@@ -36,8 +36,8 @@ public class TextField extends EditBox implements TooltipAccessor{
 		int v = isHovered ? 32 : 0;
 		GuiUtils.drawContinuousTexturedBox(pPoseStack, BACKGROUND_TEXTURE, x, y + 1, 0, v, width, height, 32, 32, 10, 10, 10, 10, (float)0);
 
-		this.x += 5;
-		this.y += 6;
+		x += 5;
+		y += 6;
 		super.renderButton(pPoseStack, pMouseX, pMouseY, pPartialTicks);
 
 		if(getValue().isEmpty()){
@@ -46,7 +46,7 @@ public class TextField extends EditBox implements TooltipAccessor{
 			int curser = getCursorPosition();
 			setCursorPosition(0);
 			setTextColor(7368816);
-			setValue(this.getMessage().getString());
+			setValue(getMessage().getString());
 			super.renderButton(pPoseStack, pMouseX, pMouseY, pPartialTicks);
 			setValue("");
 			setTextColor(14737632);
@@ -54,12 +54,12 @@ public class TextField extends EditBox implements TooltipAccessor{
 			setFocus(isFocus);
 		}
 
-		this.x -= 5;
-		this.y -= 6;
+		x -= 5;
+		y -= 6;
 	}
 
 	@Override
 	public List<FormattedCharSequence> getTooltip(){
-		return this.tooltip;
+		return tooltip;
 	}
 }

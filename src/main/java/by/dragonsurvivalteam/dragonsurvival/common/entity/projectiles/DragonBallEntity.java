@@ -41,17 +41,17 @@ public class DragonBallEntity extends Fireball implements IAnimatable{
 	}
 
 	public int getSkillLevel(){
-		return this.entityData.get(SKILL_LEVEL);
+		return entityData.get(SKILL_LEVEL);
 	}
 
 	public void setLevel(int level){
-		this.entityData.set(SKILL_LEVEL, level);
+		entityData.set(SKILL_LEVEL, level);
 	}
 
 	@Override
 	protected void defineSynchedData(){
 		super.defineSynchedData();
-		this.entityData.define(SKILL_LEVEL, 1);
+		entityData.define(SKILL_LEVEL, 1);
 	}
 
 	@Override
@@ -60,35 +60,35 @@ public class DragonBallEntity extends Fireball implements IAnimatable{
 			deadTicks++;
 
 			if(deadTicks >= 26){
-				this.remove(RemovalReason.DISCARDED);
+				remove(RemovalReason.DISCARDED);
 			}
 			return;
 		}
 
-		Entity entity = this.getOwner();
+		Entity entity = getOwner();
 
-		if(this.level.isClientSide || (entity == null || !entity.isRemoved()) && this.level.hasChunkAt(this.blockPosition())){
+		if(level.isClientSide || (entity == null || !entity.isRemoved()) && level.hasChunkAt(blockPosition())){
 			HitResult raytraceresult = ProjectileUtil.getHitResult(this, this::canHitEntity);
 
 			if(raytraceresult.getType() != HitResult.Type.MISS){
 
-				this.onHit(raytraceresult);
+				onHit(raytraceresult);
 			}
 
-			this.checkInsideBlocks();
-			Vec3 vector3d = this.getDeltaMovement();
-			double d0 = this.getX() + vector3d.x;
-			double d1 = this.getY() + vector3d.y;
-			double d2 = this.getZ() + vector3d.z;
+			checkInsideBlocks();
+			Vec3 vector3d = getDeltaMovement();
+			double d0 = getX() + vector3d.x;
+			double d1 = getY() + vector3d.y;
+			double d2 = getZ() + vector3d.z;
 			ProjectileUtil.rotateTowardsMovement(this, 0.2F);
-			float f = this.getInertia();
-			if(this.isInWater()){
+			float f = getInertia();
+			if(isInWater()){
 				f = 0.8F;
 			}
 			moveDist += (float)distanceToSqr(d0, d1, d2);
-			this.setDeltaMovement(vector3d.add(this.xPower, this.yPower, this.zPower).scale(f));
-			this.level.addParticle(this.getTrailParticle(), d0, d1, d2, 0.0D, 0.0D, 0.0D);
-			this.setPos(d0, d1, d2);
+			setDeltaMovement(vector3d.add(xPower, yPower, zPower).scale(f));
+			level.addParticle(getTrailParticle(), d0, d1, d2, 0.0D, 0.0D, 0.0D);
+			setPos(d0, d1, d2);
 		}else{
 			isDead = true;
 			//this.remove();
@@ -109,10 +109,12 @@ public class DragonBallEntity extends Fireball implements IAnimatable{
 		return NetworkHooks.getEntitySpawningPacket(this);
 	}
 
+	@Override
 	protected boolean canHitEntity(Entity p_230298_1_){
 		return true;
 	}
 
+	@Override
 	protected boolean shouldBurn(){
 		return false;
 	}

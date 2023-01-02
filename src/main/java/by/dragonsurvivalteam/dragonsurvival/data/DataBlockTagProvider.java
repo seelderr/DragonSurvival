@@ -21,19 +21,19 @@ public class DataBlockTagProvider extends BlockTagsProvider{
 
 	@Override
 	protected void addTags(){
-		this.tag(mod("wooden_dragon_doors")).add(DSBlocks.DS_BLOCKS.values().stream().filter(s -> s instanceof DragonDoor || s instanceof SmallDragonDoor).filter(s -> s.defaultBlockState().getMaterial() == Material.WOOD).toList().toArray(new Block[0]));
+		tag(mod("wooden_dragon_doors")).add(DSBlocks.DS_BLOCKS.values().stream().filter(s -> s instanceof DragonDoor || s instanceof SmallDragonDoor).filter(s -> s.defaultBlockState().getMaterial() == Material.WOOD).toList().toArray(new Block[0]));
 
-		this.tag(BlockTags.MINEABLE_WITH_AXE).add(DSBlocks.DS_BLOCKS.values().stream().filter(s -> s.defaultBlockState().getMaterial() == Material.WOOD).toList().toArray(new Block[0]));
-		this.tag(BlockTags.MINEABLE_WITH_PICKAXE).add(DSBlocks.DS_BLOCKS.values().stream()
+		tag(BlockTags.MINEABLE_WITH_AXE).add(DSBlocks.DS_BLOCKS.values().stream().filter(s -> s.defaultBlockState().getMaterial() == Material.WOOD).toList().toArray(new Block[0]));
+		tag(BlockTags.MINEABLE_WITH_PICKAXE).add(DSBlocks.DS_BLOCKS.values().stream()
 			                                              .filter(s -> s.defaultBlockState().getMaterial() == Material.STONE
 			                                                           || s.defaultBlockState().getMaterial() == Material.METAL
 			                                                           || s.defaultBlockState().getMaterial() == Material.HEAVY_METAL).toList().toArray(new Block[0]));
 
 
-		this.tag(BlockTags.NEEDS_STONE_TOOL).add(DSBlocks.DS_BLOCKS.values().stream()
+		tag(BlockTags.NEEDS_STONE_TOOL).add(DSBlocks.DS_BLOCKS.values().stream()
 			                                              .filter(s -> s.defaultBlockState().getMaterial() == Material.METAL).toList().toArray(new Block[0]));
 
-		this.tag(BlockTags.NEEDS_IRON_TOOL).add(DSBlocks.DS_BLOCKS.values().stream()
+		tag(BlockTags.NEEDS_IRON_TOOL).add(DSBlocks.DS_BLOCKS.values().stream()
 			                                        .filter(s -> s.defaultBlockState().getMaterial() == Material.HEAVY_METAL).toList().toArray(new Block[0]));
 	}
 

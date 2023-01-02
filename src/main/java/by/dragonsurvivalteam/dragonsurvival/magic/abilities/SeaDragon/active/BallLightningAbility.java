@@ -89,10 +89,10 @@ public class BallLightningAbility extends ChargeCastAbility{
 		float f4 = Mth.sin(f1);
 		float f5 = Mth.cos(f1);
 
-		Double size = DragonStateProvider.getCap(player).map((cap) -> cap.getSize()).get();
+		Double size = DragonStateProvider.getCap(player).map(DragonStateHandler::getSize).get();
 
 		double x = player.getX() + f4;
-		double y = player.getY() + (size / 20F) - 0.2;
+		double y = player.getY() + size / 20F - 0.2;
 		double z = player.getZ() + f5;
 
 		BallLightningEntity entity = new BallLightningEntity(player.level, player, d2, d3, d4);
@@ -157,6 +157,7 @@ public class BallLightningAbility extends ChargeCastAbility{
 		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/sea/ball_lightning_4.png"),};
 	}
 
+	@Override
 	@OnlyIn( Dist.CLIENT )
 	public ArrayList<Component> getLevelUpInfo(){
 		ArrayList<Component> list = super.getLevelUpInfo();

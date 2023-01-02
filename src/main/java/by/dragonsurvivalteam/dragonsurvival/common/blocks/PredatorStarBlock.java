@@ -58,6 +58,7 @@ public class PredatorStarBlock extends Block implements SimpleWaterloggedBlock, 
 		return DSTileEntities.PREDATOR_STAR_TILE_ENTITY_TYPE.create(pPos, pState);
 	}
 
+	@Override
 	@Nullable
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType){
 		return pLevel.isClientSide ? null : BaseEntityBlock.createTickerHelper(pBlockEntityType, DSTileEntities.PREDATOR_STAR_TILE_ENTITY_TYPE, PredatorStarTileEntity::serverTick);
@@ -65,7 +66,7 @@ public class PredatorStarBlock extends Block implements SimpleWaterloggedBlock, 
 
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext context){
-		return this.defaultBlockState().setValue(WATERLOGGED, context.getLevel().getFluidState(context.getClickedPos()).getType() == Fluids.WATER);
+		return defaultBlockState().setValue(WATERLOGGED, context.getLevel().getFluidState(context.getClickedPos()).getType() == Fluids.WATER);
 	}
 
 	@Override
@@ -87,6 +88,7 @@ public class PredatorStarBlock extends Block implements SimpleWaterloggedBlock, 
 		return super.updateShape(state, dir, state2, level, pos, pos2);
 	}
 
+	@Override
 	public boolean triggerEvent(BlockState pState, Level pLevel, BlockPos pPos, int pId, int pParam){
 		super.triggerEvent(pState, pLevel, pPos, pId, pParam);
 		BlockEntity blockentity = pLevel.getBlockEntity(pPos);
@@ -108,6 +110,7 @@ public class PredatorStarBlock extends Block implements SimpleWaterloggedBlock, 
 		return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
 	}
 
+	@Override
 	@Nullable
 	public MenuProvider getMenuProvider(BlockState pState, Level pLevel, BlockPos pPos){
 		BlockEntity blockentity = pLevel.getBlockEntity(pPos);
@@ -123,7 +126,7 @@ public class PredatorStarBlock extends Block implements SimpleWaterloggedBlock, 
 	public void attack(BlockState state, Level worldIn, BlockPos pos, Player player){
 		//TODO Fix tool type
 		if(!ServerConfig.mineStarBlock || !(player.getMainHandItem().getItem() instanceof HoeItem && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, player.getMainHandItem()) > 0)){
-			this.blockBehaviour(player, worldIn, pos);
+			blockBehaviour(player, worldIn, pos);
 		}
 	}
 
@@ -131,13 +134,12 @@ public class PredatorStarBlock extends Block implements SimpleWaterloggedBlock, 
 	public void entityInside(BlockState state, Level worldIn, BlockPos pos, Entity entityIn){
 		super.entityInside(state, worldIn, pos, entityIn);
 		if(!(entityIn instanceof MagicalPredator)){
-			this.blockBehaviour(entityIn, worldIn, pos);
+			blockBehaviour(entityIn, worldIn, pos);
 		}
 	}
 
 	public void blockBehaviour(Entity entity, Level worldIn, BlockPos pos){
-		if(entity instanceof LivingEntity){
-			LivingEntity target = (LivingEntity)entity;
+		if(entity instanceof LivingEntity target){
 			target.hurt(DamageSources.STAR_DRAIN, Float.MAX_VALUE);
 			worldIn.destroyBlock(pos, false);
 //			if(new Random().nextDouble() < ServerConfig.predatorStarSpawnChance && worldIn.getEntitiesOfClass(Player.class, new AABB(target.blockPosition()).inflate(50), playerEntity -> playerEntity.hasEffect(DragonEffects.PREDATOR_ANTI_SPAWN)).isEmpty()){
@@ -145,9 +147,8 @@ public class PredatorStarBlock extends Block implements SimpleWaterloggedBlock, 
 ////				worldIn.addFreshEntity(beast);
 ////				beast.teleportTo(pos.getX(), pos.getY(), pos.getZ());
 //			}
-		}else if(entity instanceof ItemEntity){
-			ItemEntity itemEntity = (ItemEntity)entity;
-
+		}else if(entity instanceof ItemEntity itemEntity){
+			
 			if(itemEntity.getItem().getItem() == DSItems.elderDragonBone){
 				itemEntity.setItem(new ItemStack(DSItems.starBone));
 			}else if(itemEntity.getItem().getItem() == DSItems.elderDragonHeart || itemEntity.getItem().getItem() == DSItems.weakDragonHeart || itemEntity.getItem().getItem() == DSItems.dragonHeartShard){

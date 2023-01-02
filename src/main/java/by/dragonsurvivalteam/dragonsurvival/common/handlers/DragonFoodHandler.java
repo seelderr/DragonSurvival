@@ -138,7 +138,7 @@ public class DragonFoodHandler{
 
 			TagKey<Item> tagKey = TagKey.create(Registry.ITEM_REGISTRY, rlEntry);
 			if(ForgeRegistries.ITEMS.tags().isKnownTagName(tagKey)){
-				ForgeRegistries.ITEMS.tags().getTag(tagKey).forEach((item) -> {
+				ForgeRegistries.ITEMS.tags().getTag(tagKey).forEach(item -> {
 					FoodProperties FoodProperties = calculateDragonFoodProperties(item, type, sEntry.length == 4 ? Integer.parseInt(sEntry[2]) : item.getFoodProperties() != null ? item.getFoodProperties().getNutrition() : 1, sEntry.length == 4 ? Integer.parseInt(sEntry[3]) : item.getFoodProperties() != null ? (int)(item.getFoodProperties().getNutrition() * (item.getFoodProperties().getSaturationModifier() * 2.0F)) : 0, true);
 					if(FoodProperties != null){
 						foodMap.put(item, FoodProperties);
@@ -327,15 +327,15 @@ public class DragonFoodHandler{
 					int y = top;
 
 					if(food.getSaturationLevel() <= 0.0F && player.tickCount % (food.getFoodLevel() * 3 + 1) == 0){
-						y = top + (rand.nextInt(3) - 1);
+						y = top + rand.nextInt(3) - 1;
 					}
 
-					gui.blit(mStack, left - i * 8 - 9, y, (hunger ? 117 : 0), type, 9, 9);
+					gui.blit(mStack, left - i * 8 - 9, y, hunger ? 117 : 0, type, 9, 9);
 
 					if(idx < food.getFoodLevel()){
-						gui.blit(mStack, left - i * 8 - 9, y, (hunger ? 72 : 36), type, 9, 9);
+						gui.blit(mStack, left - i * 8 - 9, y, hunger ? 72 : 36, type, 9, 9);
 					}else if(idx == food.getFoodLevel()){
-						gui.blit(mStack, left - i * 8 - 9, y, (hunger ? 81 : 45), type, 9, 9);
+						gui.blit(mStack, left - i * 8 - 9, y, hunger ? 81 : 45, type, 9, 9);
 					}
 				}
 

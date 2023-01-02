@@ -194,13 +194,13 @@ public class DragonGrowthHandler{
 				double timeIncrement = 60 * 20;
 
 				if(handler.getSize() < YOUNG.size){
-					d = (((YOUNG.size - NEWBORN.size) / ((newbornToYoung * 20.0))) * timeIncrement) * ServerConfig.newbornGrowthModifier;
+					d = (YOUNG.size - NEWBORN.size) / (newbornToYoung * 20.0) * timeIncrement * ServerConfig.newbornGrowthModifier;
 				}else if(handler.getSize() < ADULT.size){
-					d = (((ADULT.size - YOUNG.size) / ((youngToAdult * 20.0))) * timeIncrement) * ServerConfig.youngGrowthModifier;
+					d = (ADULT.size - YOUNG.size) / (youngToAdult * 20.0) * timeIncrement * ServerConfig.youngGrowthModifier;
 				}else if(handler.getSize() < 40){
-					d = (((40 - ADULT.size) / ((adultToMax * 20.0))) * timeIncrement) * ServerConfig.adultGrowthModifier;
+					d = (40 - ADULT.size) / (adultToMax * 20.0) * timeIncrement * ServerConfig.adultGrowthModifier;
 				}else{
-					d = (((60 - 40) / ((beyond * 20.0))) * timeIncrement) * ServerConfig.maxGrowthModifier;
+					d = (60 - 40) / (beyond * 20.0) * timeIncrement * ServerConfig.maxGrowthModifier;
 				}
 
 				double size = handler.getSize() + d;

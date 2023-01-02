@@ -16,6 +16,7 @@ import java.util.Locale;
 
 public class SmallLightningParticleData implements ParticleOptions{
 	public static final Deserializer<SmallLightningParticleData> DESERIALIZER = new Deserializer<SmallLightningParticleData>(){
+		@Override
 		public SmallLightningParticleData fromCommand(ParticleType<SmallLightningParticleData> particleTypeIn, StringReader reader) throws CommandSyntaxException{
 			reader.expect(' ');
 			float duration = (float)reader.readDouble();
@@ -24,6 +25,7 @@ public class SmallLightningParticleData implements ParticleOptions{
 			return new SmallLightningParticleData(duration, swirls);
 		}
 
+		@Override
 		public SmallLightningParticleData fromNetwork(ParticleType<SmallLightningParticleData> particleTypeIn, FriendlyByteBuf buffer){
 			return new SmallLightningParticleData(buffer.readFloat(), buffer.readBoolean());
 		}
@@ -33,26 +35,26 @@ public class SmallLightningParticleData implements ParticleOptions{
 	private final boolean swirls;
 
 	public static Codec<SmallLightningParticleData> CODEC(ParticleType<SmallLightningParticleData> particleType){
-		return RecordCodecBuilder.create((codecBuilder) -> codecBuilder.group(Codec.FLOAT.fieldOf("duration").forGetter(SmallLightningParticleData::getDuration), Codec.BOOL.fieldOf("swirls").forGetter(SmallLightningParticleData::getSwirls)).apply(codecBuilder, SmallLightningParticleData::new));
+		return RecordCodecBuilder.create(codecBuilder -> codecBuilder.group(Codec.FLOAT.fieldOf("duration").forGetter(SmallLightningParticleData::getDuration), Codec.BOOL.fieldOf("swirls").forGetter(SmallLightningParticleData::getSwirls)).apply(codecBuilder, SmallLightningParticleData::new));
 	}
 
 	public SmallLightningParticleData(float duration, boolean spins){
 		this.duration = duration;
-		this.swirls = spins;
+		swirls = spins;
 	}
 
 	@OnlyIn( Dist.CLIENT )
 	public float getDuration(){
-		return this.duration;
+		return duration;
 	}
 
 	@OnlyIn( Dist.CLIENT )
 	public boolean getSwirls(){
-		return this.swirls;
+		return swirls;
 	}	@Override
 	public void writeToNetwork(FriendlyByteBuf buffer){
-		buffer.writeFloat(this.duration);
-		buffer.writeBoolean(this.swirls);
+		buffer.writeFloat(duration);
+		buffer.writeBoolean(swirls);
 	}
 
 
@@ -60,7 +62,7 @@ public class SmallLightningParticleData implements ParticleOptions{
 	@SuppressWarnings( "deprecation" )
 	@Override
 	public String writeToString(){
-		return String.format(Locale.ROOT, "%s %.2f %b", Registry.PARTICLE_TYPE.getKey(this.getType()), this.duration, this.swirls);
+		return String.format(Locale.ROOT, "%s %.2f %b", Registry.PARTICLE_TYPE.getKey(getType()), duration, swirls);
 	}
 
 

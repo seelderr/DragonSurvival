@@ -13,7 +13,7 @@ public class FireBreathSound extends AbstractTickableSoundInstance{
 
 	public FireBreathSound(NetherBreathAbility ability){
 		super(SoundRegistry.fireBreathLoop, SoundSource.PLAYERS);
-		this.looping = true;
+		looping = true;
 
 		this.ability = ability;
 	}
@@ -21,18 +21,19 @@ public class FireBreathSound extends AbstractTickableSoundInstance{
 	@Override
 	public void tick(){
 		if(ability.getPlayer() != null){
-			DragonStateProvider.getCap(ability.getPlayer()).ifPresent((cap) -> {
+			DragonStateProvider.getCap(ability.getPlayer()).ifPresent(cap -> {
 				if(cap.getMagicData().getCurrentlyCasting() != ability){
-					this.stop();
+					stop();
 				}
 			});
 		}
 
 		if(ability.chargeTime == 0){
-			this.stop();
+			stop();
 		}
 	}
 
+	@Override
 	public boolean canStartSilent(){
 		return true;
 	}

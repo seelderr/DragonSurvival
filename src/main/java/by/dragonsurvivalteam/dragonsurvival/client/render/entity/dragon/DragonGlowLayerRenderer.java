@@ -26,7 +26,7 @@ public class DragonGlowLayerRenderer extends GeoLayerRenderer<DragonEntity>{
 
 	public DragonGlowLayerRenderer(IGeoRenderer<DragonEntity> entityRendererIn){
 		super(entityRendererIn);
-		this.renderer = entityRendererIn;
+		renderer = entityRendererIn;
 	}
 
 	@Override

@@ -35,7 +35,7 @@ import java.util.function.Supplier;
 
 public class DragonStateHandler implements NBTInterface{
 
-	//TODO Remove / cleanup the following 2
+	//TODO Remove / cleanup the following
 	private final DragonMovementData movementData = new DragonMovementData(0, 0, 0, false);
 
 	private final ClawInventory clawToolData = new ClawInventory(this);
@@ -295,16 +295,16 @@ public class DragonStateHandler implements NBTInterface{
 	}
 
 	public void setType(AbstractDragonType type){
-		if(this.dragonType == null && type != null || type != null && this.dragonType != null && !this.dragonType.equals(type)){
+		if(type != null && !Objects.equals(dragonType, type)){
 			growing = true;
 			getMagicData().initAbilities(type);
 		}
 
 		if(type != null){
 			if(Objects.equals(dragonType, type)) return;
-			this.dragonType = DragonTypes.newDragonTypeInstance(type.getTypeName());
+			dragonType = DragonTypes.newDragonTypeInstance(type.getTypeName());
 		}else{
-			this.dragonType = null;
+			dragonType = null;
 		}
 
 		//TODO Reimplement

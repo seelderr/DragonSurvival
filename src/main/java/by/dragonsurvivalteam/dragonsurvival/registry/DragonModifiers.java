@@ -24,7 +24,7 @@ public class DragonModifiers{
 	public static final UUID SWIM_SPEED_MODIFIER_UUID = UUID.fromString("2a9341f3-d19e-446c-924b-7cf2e5259e10");
 
 	public static AttributeModifier buildHealthMod(double size){
-		double healthMod = ((float)ServerConfig.minHealth + (((size - 14) / 26F) * ((float)ServerConfig.maxHealth - (float)ServerConfig.minHealth))) - 20;
+		double healthMod = (float)ServerConfig.minHealth + (size - 14) / 26F * ((float)ServerConfig.maxHealth - (float)ServerConfig.minHealth) - 20;
 		healthMod = Math.min(healthMod, ServerConfig.maxHealth - 20);
 
 
@@ -32,7 +32,7 @@ public class DragonModifiers{
 	}
 
 	public static AttributeModifier buildReachMod(double size){
-		double reachMod = (((size - DragonLevel.NEWBORN.size) / (60.0 - DragonLevel.NEWBORN.size)) * (ServerConfig.reachBonus));
+		double reachMod = (size - DragonLevel.NEWBORN.size) / (60.0 - DragonLevel.NEWBORN.size) * ServerConfig.reachBonus;
 
 		return new AttributeModifier(REACH_MODIFIER_UUID, "Dragon Reach Adjustment", reachMod, Operation.MULTIPLY_BASE);
 	}

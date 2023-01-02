@@ -19,6 +19,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class CaveLavaFluidRenderer extends LiquidBlockRenderer{
 
+	@Override
 	public boolean tesselate(BlockAndTintGetter p_228796_1_, BlockPos p_228796_2_, VertexConsumer p_228796_3_, BlockState state, FluidState p_228796_4_){
 		try{
 			if(p_228796_4_.is(FluidTags.LAVA)){
@@ -43,10 +44,10 @@ public class CaveLavaFluidRenderer extends LiquidBlockRenderer{
 					float f4 = p_228796_1_.getShade(Direction.UP, true);
 					float f5 = p_228796_1_.getShade(Direction.NORTH, true);
 					float f6 = p_228796_1_.getShade(Direction.WEST, true);
-					float f7 = this.getWaterHeight(p_228796_1_, p_228796_2_, p_228796_4_.getType());
-					float f8 = this.getWaterHeight(p_228796_1_, p_228796_2_.south(), p_228796_4_.getType());
-					float f9 = this.getWaterHeight(p_228796_1_, p_228796_2_.east().south(), p_228796_4_.getType());
-					float f10 = this.getWaterHeight(p_228796_1_, p_228796_2_.east(), p_228796_4_.getType());
+					float f7 = getWaterHeight(p_228796_1_, p_228796_2_, p_228796_4_.getType());
+					float f8 = getWaterHeight(p_228796_1_, p_228796_2_.south(), p_228796_4_.getType());
+					float f9 = getWaterHeight(p_228796_1_, p_228796_2_.east().south(), p_228796_4_.getType());
+					float f10 = getWaterHeight(p_228796_1_, p_228796_2_.east(), p_228796_4_.getType());
 					double d0 = p_228796_2_.getX() & 15;
 					double d1 = p_228796_2_.getY() & 15;
 					double d2 = p_228796_2_.getZ() & 15;
@@ -78,7 +79,7 @@ public class CaveLavaFluidRenderer extends LiquidBlockRenderer{
 							f20 = f17;
 						}else{
 							TextureAtlasSprite textureatlassprite = atextureatlassprite[1];
-							float f21 = (float)Mth.atan2(vector3d.z, vector3d.x) - ((float)Math.PI / 2F);
+							float f21 = (float)Mth.atan2(vector3d.z, vector3d.x) - (float)Math.PI / 2F;
 							float f22 = Mth.sin(f21) * 0.25F;
 							float f23 = Mth.cos(f21) * 0.25F;
 							f13 = textureatlassprite.getU(8.0F + (-f23 - f22) * 16.0F);
@@ -104,19 +105,19 @@ public class CaveLavaFluidRenderer extends LiquidBlockRenderer{
 						f18 = Mth.lerp(f47, f18, f44);
 						f19 = Mth.lerp(f47, f19, f44);
 						f20 = Mth.lerp(f47, f20, f44);
-						int j = this.getLightColor(p_228796_1_, p_228796_2_);
+						int j = getLightColor(p_228796_1_, p_228796_2_);
 						float f25 = f4 * f;
 						float f26 = f4 * f1;
 						float f27 = f4 * f2;
-						this.vertexVanilla(p_228796_3_, d0 + 0.0D, d1 + (double)f7, d2 + 0.0D, f25, f26, f27, alpha, f13, f17, j);
-						this.vertexVanilla(p_228796_3_, d0 + 0.0D, d1 + (double)f8, d2 + 1.0D, f25, f26, f27, alpha, f14, f18, j);
-						this.vertexVanilla(p_228796_3_, d0 + 1.0D, d1 + (double)f9, d2 + 1.0D, f25, f26, f27, alpha, f15, f19, j);
-						this.vertexVanilla(p_228796_3_, d0 + 1.0D, d1 + (double)f10, d2 + 0.0D, f25, f26, f27, alpha, f16, f20, j);
+						vertexVanilla(p_228796_3_, d0 + 0.0D, d1 + (double)f7, d2 + 0.0D, f25, f26, f27, alpha, f13, f17, j);
+						vertexVanilla(p_228796_3_, d0 + 0.0D, d1 + (double)f8, d2 + 1.0D, f25, f26, f27, alpha, f14, f18, j);
+						vertexVanilla(p_228796_3_, d0 + 1.0D, d1 + (double)f9, d2 + 1.0D, f25, f26, f27, alpha, f15, f19, j);
+						vertexVanilla(p_228796_3_, d0 + 1.0D, d1 + (double)f10, d2 + 0.0D, f25, f26, f27, alpha, f16, f20, j);
 						if(p_228796_4_.shouldRenderBackwardUpFace(p_228796_1_, p_228796_2_.above())){
-							this.vertexVanilla(p_228796_3_, d0 + 0.0D, d1 + (double)f7, d2 + 0.0D, f25, f26, f27, alpha, f13, f17, j);
-							this.vertexVanilla(p_228796_3_, d0 + 1.0D, d1 + (double)f10, d2 + 0.0D, f25, f26, f27, alpha, f16, f20, j);
-							this.vertexVanilla(p_228796_3_, d0 + 1.0D, d1 + (double)f9, d2 + 1.0D, f25, f26, f27, alpha, f15, f19, j);
-							this.vertexVanilla(p_228796_3_, d0 + 0.0D, d1 + (double)f8, d2 + 1.0D, f25, f26, f27, alpha, f14, f18, j);
+							vertexVanilla(p_228796_3_, d0 + 0.0D, d1 + (double)f7, d2 + 0.0D, f25, f26, f27, alpha, f13, f17, j);
+							vertexVanilla(p_228796_3_, d0 + 1.0D, d1 + (double)f10, d2 + 0.0D, f25, f26, f27, alpha, f16, f20, j);
+							vertexVanilla(p_228796_3_, d0 + 1.0D, d1 + (double)f9, d2 + 1.0D, f25, f26, f27, alpha, f15, f19, j);
+							vertexVanilla(p_228796_3_, d0 + 0.0D, d1 + (double)f8, d2 + 1.0D, f25, f26, f27, alpha, f14, f18, j);
 						}
 					}
 
@@ -125,14 +126,14 @@ public class CaveLavaFluidRenderer extends LiquidBlockRenderer{
 						float f35 = atextureatlassprite[0].getU1();
 						float f37 = atextureatlassprite[0].getV0();
 						float f39 = atextureatlassprite[0].getV1();
-						int i1 = this.getLightColor(p_228796_1_, p_228796_2_.below());
+						int i1 = getLightColor(p_228796_1_, p_228796_2_.below());
 						float f40 = f3 * f;
 						float f41 = f3 * f1;
 						float f42 = f3 * f2;
-						this.vertexVanilla(p_228796_3_, d0, d1 + (double)f12, d2 + 1.0D, f40, f41, f42, alpha, f34, f39, i1);
-						this.vertexVanilla(p_228796_3_, d0, d1 + (double)f12, d2, f40, f41, f42, alpha, f34, f37, i1);
-						this.vertexVanilla(p_228796_3_, d0 + 1.0D, d1 + (double)f12, d2, f40, f41, f42, alpha, f35, f37, i1);
-						this.vertexVanilla(p_228796_3_, d0 + 1.0D, d1 + (double)f12, d2 + 1.0D, f40, f41, f42, alpha, f35, f39, i1);
+						vertexVanilla(p_228796_3_, d0, d1 + (double)f12, d2 + 1.0D, f40, f41, f42, alpha, f34, f39, i1);
+						vertexVanilla(p_228796_3_, d0, d1 + (double)f12, d2, f40, f41, f42, alpha, f34, f37, i1);
+						vertexVanilla(p_228796_3_, d0 + 1.0D, d1 + (double)f12, d2, f40, f41, f42, alpha, f35, f37, i1);
+						vertexVanilla(p_228796_3_, d0 + 1.0D, d1 + (double)f12, d2 + 1.0D, f40, f41, f42, alpha, f35, f39, i1);
 						flag7 = true;
 					}
 
@@ -198,20 +199,20 @@ public class CaveLavaFluidRenderer extends LiquidBlockRenderer{
 							float f50 = textureatlassprite2.getV((1.0F - f36) * 16.0F * 0.5F);
 							float f28 = textureatlassprite2.getV((1.0F - f38) * 16.0F * 0.5F);
 							float f29 = textureatlassprite2.getV(8.0D);
-							int k = this.getLightColor(p_228796_1_, blockpos);
+							int k = getLightColor(p_228796_1_, blockpos);
 							float f30 = l < 2 ? f5 : f6;
 							float f31 = f4 * f30 * f;
 							float f32 = f4 * f30 * f1;
 							float f33 = f4 * f30 * f2;
-							this.vertexVanilla(p_228796_3_, d3, d1 + (double)f36, d4, f31, f32, f33, alpha, f48, f50, k);
-							this.vertexVanilla(p_228796_3_, d5, d1 + (double)f38, d6, f31, f32, f33, alpha, f49, f28, k);
-							this.vertexVanilla(p_228796_3_, d5, d1 + (double)f12, d6, f31, f32, f33, alpha, f49, f29, k);
-							this.vertexVanilla(p_228796_3_, d3, d1 + (double)f12, d4, f31, f32, f33, alpha, f48, f29, k);
+							vertexVanilla(p_228796_3_, d3, d1 + (double)f36, d4, f31, f32, f33, alpha, f48, f50, k);
+							vertexVanilla(p_228796_3_, d5, d1 + (double)f38, d6, f31, f32, f33, alpha, f49, f28, k);
+							vertexVanilla(p_228796_3_, d5, d1 + (double)f12, d6, f31, f32, f33, alpha, f49, f29, k);
+							vertexVanilla(p_228796_3_, d3, d1 + (double)f12, d4, f31, f32, f33, alpha, f48, f29, k);
 							if(textureatlassprite2 != atextureatlassprite[2]){
-								this.vertexVanilla(p_228796_3_, d3, d1 + (double)f12, d4, f31, f32, f33, alpha, f48, f29, k);
-								this.vertexVanilla(p_228796_3_, d5, d1 + (double)f12, d6, f31, f32, f33, alpha, f49, f29, k);
-								this.vertexVanilla(p_228796_3_, d5, d1 + (double)f38, d6, f31, f32, f33, alpha, f49, f28, k);
-								this.vertexVanilla(p_228796_3_, d3, d1 + (double)f36, d4, f31, f32, f33, alpha, f48, f50, k);
+								vertexVanilla(p_228796_3_, d3, d1 + (double)f12, d4, f31, f32, f33, alpha, f48, f29, k);
+								vertexVanilla(p_228796_3_, d5, d1 + (double)f12, d6, f31, f32, f33, alpha, f49, f29, k);
+								vertexVanilla(p_228796_3_, d5, d1 + (double)f38, d6, f31, f32, f33, alpha, f49, f28, k);
+								vertexVanilla(p_228796_3_, d3, d1 + (double)f36, d4, f31, f32, f33, alpha, f48, f50, k);
 							}
 						}
 					}
@@ -266,7 +267,7 @@ public class CaveLavaFluidRenderer extends LiquidBlockRenderer{
 		int l = j & 255;
 		int i1 = i >> 16 & 255;
 		int j1 = j >> 16 & 255;
-		return (Math.max(k, l)) | (Math.max(i1, j1)) << 16;
+		return Math.max(k, l) | Math.max(i1, j1) << 16;
 	}
 
 	private float getWaterHeight(BlockGetter p_217640_1_, BlockPos p_217640_2_, Fluid p_217640_3_){

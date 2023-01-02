@@ -58,11 +58,12 @@ public abstract class ConfigScreen extends OptionsSubScreen{
 	public ConfigScreen(Screen p_i225930_1_, Options p_i225930_2_, Component p_i225930_3_){
 		super(p_i225930_1_, p_i225930_2_, p_i225930_3_);
 		OptionsList.activeCats.clear();
-		this.title = p_i225930_3_;
+		title = p_i225930_3_;
 	}
 
 	public abstract ConfigSide screenSide();
 
+	@Override
 	protected void init(){
 		if(list != null){
 			scroll = list.getScrollAmount();
@@ -74,11 +75,11 @@ public abstract class ConfigScreen extends OptionsSubScreen{
 
 		OptionsList.configMap.clear();
 
-		this.list = new OptionsList(this.width, this.height, 32, this.height - 32);
+		list = new OptionsList(width, height, 32, height - 32);
 
 		addConfigs();
 
-		this.list.add(OPTIONS.toArray(new Option[0]), null);
+		list.add(OPTIONS.toArray(new Option[0]), null);
 
 		int catNum = 0;
 		for(Map.Entry<String, ArrayList<Option>> ent : optionMap.entrySet()){
@@ -87,30 +88,30 @@ public abstract class ConfigScreen extends OptionsSubScreen{
 				String key = ent.getKey();
 				String lastKey = key;
 				for(String s : key.split("\\.")){
-					if(this.list.findCategory(s, lastKey) == null || (Objects.requireNonNull(this.list.findCategory(s, lastKey)).parent != null && !Objects.requireNonNull(this.list.findCategory(s, lastKey)).parent.origName.equals(lastKey))){
-						entry = this.list.addCategory(s, entry, catNum);
+					if(list.findCategory(s, lastKey) == null || Objects.requireNonNull(list.findCategory(s, lastKey)).parent != null && !Objects.requireNonNull(list.findCategory(s, lastKey)).parent.origName.equals(lastKey)){
+						entry = list.addCategory(s, entry, catNum);
 						catNum++;
 					}else{
-						entry = this.list.findCategory(s, lastKey);
+						entry = list.findCategory(s, lastKey);
 					}
 					lastKey = s;
 				}
 			}
-			this.list.add(ent.getValue().toArray(new Option[0]), entry);
+			list.add(ent.getValue().toArray(new Option[0]), entry);
 		}
 
-		this.children.add(this.list);
+		children.add(list);
 
-		this.addRenderableWidget(new Button(32, this.height - 27, 120 + 32, 20, CommonComponents.GUI_DONE, (p_213106_1_) -> {
-			this.minecraft.setScreen(this.lastScreen);
+		addRenderableWidget(new Button(32, height - 27, 120 + 32, 20, CommonComponents.GUI_DONE, p_213106_1_ -> {
+			minecraft.setScreen(lastScreen);
 		}));
 
-		this.addRenderableWidget(new TextField(this.list.getScrollbarPosition() - 150 - 32, this.height - 27, 150 + 32, 20, new TextComponent("Search")){
+		addRenderableWidget(new TextField(list.getScrollbarPosition() - 150 - 32, height - 27, 150 + 32, 20, new TextComponent("Search")){
 			final ArrayList<CategoryEntry> cats = new ArrayList<>();
 
 			@Override
 			public boolean charTyped(char pCodePoint, int pModifiers){
-				cats.forEach((c) -> c.enabled = false);
+				cats.forEach(c -> c.enabled = false);
 				cats.clear();
 
 				if(!getValue().isEmpty()){
@@ -131,7 +132,7 @@ public abstract class ConfigScreen extends OptionsSubScreen{
 			}
 		});
 
-		this.list.setScrollAmount(scroll);
+		list.setScrollAmount(scroll);
 	}
 
 	private void addConfigs(){
@@ -214,7 +215,7 @@ public abstract class ConfigScreen extends OptionsSubScreen{
 				addOption(category, name, option);
 			}else if(checkType.isEnum()){
 				Class<? extends Enum> cs = (Class<? extends Enum>)value.get().getClass();
-				Enum vale = EnumGetMethod.ORDINAL_OR_NAME.get(((Enum)value.get()).ordinal(), cs);
+				Enum vale = EnumGetMethod.ORDINAL_OR_NAME.get(((Enum<?>)value.get()).ordinal(), cs);
 
 				Option option = new DSDropDownOption(name, vale, val -> {
 					ConfigHandler.updateConfigValue(value, val);
@@ -238,7 +239,7 @@ public abstract class ConfigScreen extends OptionsSubScreen{
 					String text = Minecraft.getInstance().font.substrByWidth(new TextComponent(joiner.toString()), 120).getString();
 					CycleOption<String> option = new CycleOption<String>(name,
 	                     val -> text,
-	                     (val1, val2, val3) -> this.minecraft.setScreen(new ConfigListMenu(this, minecraft.options, new TextComponent(name), key, value, screenSide(), key)),
+	                     (val1, val2, val3) -> minecraft.setScreen(new ConfigListMenu(this, minecraft.options, new TextComponent(name), key, value, screenSide(), key)),
 	                     () -> {
 							return new Builder<String>(t -> new TextComponent(text)).displayOnlyValue().withValues(text).withInitialValue(text);
 					}).setTooltip(mc-> s ->mc.font.split(tooltip, 200));
@@ -265,14 +266,15 @@ public abstract class ConfigScreen extends OptionsSubScreen{
 
 
 
+	@Override
 	public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
-		this.renderBackground(p_230430_1_);
-		this.list.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
+		renderBackground(p_230430_1_);
+		list.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
 		super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
 
 		List<FormattedCharSequence> list = tooltipAt(this.list, p_230430_2_, p_230430_3_);
 		if(list != null)
-			this.renderTooltip(p_230430_1_, list, p_230430_2_, p_230430_3_);
+			renderTooltip(p_230430_1_, list, p_230430_2_, p_230430_3_);
 	}
 
 

@@ -45,14 +45,15 @@ public class DragonSpikeEntity extends AbstractArrow{
 	@Override
 	protected void defineSynchedData(){
 		super.defineSynchedData();
-		this.entityData.define(ARROW_LEVEL, 1);
+		entityData.define(ARROW_LEVEL, 1);
 	}
 
 
+	@Override
 	protected void onHitEntity(EntityHitResult p_213868_1_){
 
 		Entity entity = p_213868_1_.getEntity();
-		Entity entity1 = this.getOwner();
+		Entity entity1 = getOwner();
 		DamageSource damagesource;
 		if(entity1 == null){
 			damagesource = DamageSource.arrow(this, this);
@@ -66,32 +67,32 @@ public class DragonSpikeEntity extends AbstractArrow{
 
 		if(TargetingFunctions.attackTargets(getOwner(), ent -> ent.hurt(damagesource, damage), entity)){
 			if(entity instanceof LivingEntity livingentity){
-				if(!this.level.isClientSide){
+				if(!level.isClientSide){
 					livingentity.setArrowCount(livingentity.getArrowCount() + 1);
 				}
 
-				if(!this.level.isClientSide && entity1 instanceof LivingEntity){
+				if(!level.isClientSide && entity1 instanceof LivingEntity){
 					EnchantmentHelper.doPostHurtEffects(livingentity, entity1);
 					EnchantmentHelper.doPostDamageEffects((LivingEntity)entity1, livingentity);
 				}
 
-				this.doPostHurtEffects(livingentity);
+				doPostHurtEffects(livingentity);
 
-				if(entity1 != null && livingentity != entity1 && livingentity instanceof Player && entity1 instanceof ServerPlayer && !this.isSilent()){
+				if(entity1 != null && livingentity != entity1 && livingentity instanceof Player && entity1 instanceof ServerPlayer && !isSilent()){
 					((ServerPlayer)entity1).connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.ARROW_HIT_PLAYER, 0.0F));
 				}
 			}
 
-			if(this.getPierceLevel() <= 0){
-				this.remove(RemovalReason.DISCARDED);
+			if(getPierceLevel() <= 0){
+				remove(RemovalReason.DISCARDED);
 			}
 		}else{
-			this.setDeltaMovement(this.getDeltaMovement().scale(-0.1D));
-			this.setYRot(getYRot() + 180.0F);
-			this.yRotO += 180.0F;
+			setDeltaMovement(getDeltaMovement().scale(-0.1D));
+			setYRot(getYRot() + 180.0F);
+			yRotO += 180.0F;
 
-			if(!this.level.isClientSide && this.getDeltaMovement().lengthSqr() < 1.0E-7D){
-				this.remove(RemovalReason.DISCARDED);
+			if(!level.isClientSide && getDeltaMovement().lengthSqr() < 1.0E-7D){
+				remove(RemovalReason.DISCARDED);
 			}
 		}
 	}
@@ -102,11 +103,11 @@ public class DragonSpikeEntity extends AbstractArrow{
 	}
 
 	public int getArrow_level(){
-		return this.entityData.get(ARROW_LEVEL);
+		return entityData.get(ARROW_LEVEL);
 	}
 
 	public void setArrow_level(int arrow_level){
-		this.entityData.set(ARROW_LEVEL, arrow_level);
+		entityData.set(ARROW_LEVEL, arrow_level);
 	}
 
 	@Override

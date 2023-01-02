@@ -47,9 +47,10 @@ public class ConfigListMenu extends OptionsSubScreen{
 		this.side = side;
 		this.configKey = configKey;
 		this.valueSpec = valueSpec;
-		this.title = p_i225930_3_;
+		title = p_i225930_3_;
 	}
 
+	@Override
 	protected void init(){
 		double scroll = 0;
 		if(list != null){
@@ -57,7 +58,7 @@ public class ConfigListMenu extends OptionsSubScreen{
 			scroll = list.getScrollAmount();
 		}
 
-		this.list = new OptionsList(this.width, this.height, 32, this.height - 32){
+		list = new OptionsList(width, height, 32, height - 32){
 			@Override
 			protected int getMaxPosition(){
 				return super.getMaxPosition() + 120;
@@ -94,17 +95,17 @@ public class ConfigListMenu extends OptionsSubScreen{
 			oldVals = null;
 		}
 
-		addWidget(this.list);
+		addWidget(list);
 
-		addRenderableWidget(new Button(width / 2 + 20, height - 27, 100, 20, new TextComponent("Add new"), (p_213106_1_) -> {
+		addRenderableWidget(new Button(width / 2 + 20, height - 27, 100, 20, new TextComponent("Add new"), p_213106_1_ -> {
 			createOption("");
 			list.setScrollAmount(list.getMaxScroll());
 		}));
 
-		this.addRenderableWidget(new Button(this.width / 2 - 120, this.height - 27, 100, 20, CommonComponents.GUI_DONE, (p_213106_1_) -> {
+		addRenderableWidget(new Button(width / 2 - 120, height - 27, 100, 20, CommonComponents.GUI_DONE, p_213106_1_ -> {
 			ArrayList<String> output = new ArrayList<>();
 
-			this.list.children().forEach((ent) -> {
+			list.children().forEach(ent -> {
 				ent.children().forEach(child -> {
 					if(child instanceof EditBox){
 						String value = ((EditBox)child).getValue();
@@ -122,15 +123,16 @@ public class ConfigListMenu extends OptionsSubScreen{
 				NetworkHandler.CHANNEL.sendToServer(new SyncListConfig(configKey, output));
 			}
 
-			this.minecraft.setScreen(this.lastScreen);
+			minecraft.setScreen(lastScreen);
 		}));
 
-		this.list.setScrollAmount(scroll);
+		list.setScrollAmount(scroll);
 	}
 
+	@Override
 	public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
-		this.renderBackground(p_230430_1_);
-		this.list.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
+		renderBackground(p_230430_1_);
+		list.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
 		super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
 	}
 
@@ -138,11 +140,11 @@ public class ConfigListMenu extends OptionsSubScreen{
 		Option option;
 
 		if(isItems){
-			option = new ResourceTextFieldOption(valueSpec, t, (settings) -> t);
+			option = new ResourceTextFieldOption(valueSpec, t, settings -> t);
 		}else{
-			option = new DSTextBoxOption(valueSpec, t, (settings) -> t);
+			option = new DSTextBoxOption(valueSpec, t, settings -> t);
 		}
-		AbstractWidget widget1 = option.createButton(this.minecraft.options, 32, 0, this.list.getScrollbarPosition() - 32 - 60);
-		this.list.addEntry(new TextBoxEntry(option, this.list, widget1, null));
+		AbstractWidget widget1 = option.createButton(minecraft.options, 32, 0, list.getScrollbarPosition() - 32 - 60);
+		list.addEntry(new TextBoxEntry(option, list, widget1, null));
 	}
 }

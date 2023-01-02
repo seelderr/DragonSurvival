@@ -105,6 +105,7 @@ public class NetherBreathAbility extends BreathAbility{
 		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/nether_breath_4.png")};
 	}
 
+	@Override
 	@OnlyIn( Dist.CLIENT )
 	public ArrayList<Component> getLevelUpInfo(){
 		ArrayList<Component> list = super.getLevelUpInfo();
@@ -162,7 +163,7 @@ public class NetherBreathAbility extends BreathAbility{
 			DragonStateHandler handler = DragonUtils.getHandler(player);
 
 			BurnAbility burnAbility = DragonAbilities.getAbility(player, BurnAbility.class);
-			if(player.level.random.nextInt(100) < (burnAbility.level * 15)){
+			if(player.level.random.nextInt(100) < burnAbility.level * 15){
 				BlockState blockAbove = player.level.getBlockState(pos.above());
 
 				if(blockAbove.getBlock() == Blocks.AIR){
@@ -219,7 +220,7 @@ public class NetherBreathAbility extends BreathAbility{
 		}
 
 		if(player.level.isClientSide && castDuration <= 1){
-			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> sound());
+			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)this::sound);
 		}
 
 		if(player.level.isClientSide){
@@ -231,9 +232,9 @@ public class NetherBreathAbility extends BreathAbility{
 			}
 
 			for(int i = 0; i < 10; i++){
-				double xSpeed = speed * xComp + (spread * 0.7 * (player.level.random.nextFloat() * 2 - 1) * (Math.sqrt(1 - xComp * xComp)));
-				double ySpeed = speed * yComp + (spread * 0.7 * (player.level.random.nextFloat() * 2 - 1) * (Math.sqrt(1 - yComp * yComp)));
-				double zSpeed = speed * zComp + (spread * 0.7 * (player.level.random.nextFloat() * 2 - 1) * (Math.sqrt(1 - zComp * zComp)));
+				double xSpeed = speed * xComp + spread * 0.7 * (player.level.random.nextFloat() * 2 - 1) * Math.sqrt(1 - xComp * xComp);
+				double ySpeed = speed * yComp + spread * 0.7 * (player.level.random.nextFloat() * 2 - 1) * Math.sqrt(1 - yComp * yComp);
+				double zSpeed = speed * zComp + spread * 0.7 * (player.level.random.nextFloat() * 2 - 1) * Math.sqrt(1 - zComp * zComp);
 				player.level.addParticle(new LargeFireParticleData(37, false), dx, dy, dz, xSpeed, ySpeed, zSpeed);
 			}
 		}
@@ -272,7 +273,7 @@ public class NetherBreathAbility extends BreathAbility{
 
 	@Override
 	public boolean canHitEntity(LivingEntity entity){
-		return (!(entity instanceof Player) || player.canHarmPlayer(((Player)entity))) && !entity.fireImmune();
+		return (!(entity instanceof Player) || player.canHarmPlayer((Player)entity)) && !entity.fireImmune();
 	}
 
 	@Override
@@ -288,7 +289,7 @@ public class NetherBreathAbility extends BreathAbility{
 			DragonStateHandler handler = DragonUtils.getHandler(player);
 			BurnAbility burnAbility = DragonAbilities.getAbility(player, BurnAbility.class);
 
-			if(entityHit.level.random.nextInt(100) < (burnAbility.level * 15)){
+			if(entityHit.level.random.nextInt(100) < burnAbility.level * 15){
 				DragonUtils.getHandler(entityHit).lastAfflicted = player != null ? player.getId() : -1;
 				entityHit.addEffect(new MobEffectInstance(DragonEffects.BURN, Functions.secondsToTicks(10), 0, false, true));
 			}
@@ -304,6 +305,7 @@ public class NetherBreathAbility extends BreathAbility{
 		return (float)(fireBreathDamage * level);
 	}
 
+	@Override
 	public float getDamage(){
 		return getDamage(getLevel());
 	}

@@ -66,6 +66,7 @@ public class DataLootTableProvider extends LootTableProvider{
 			this.existingFileHelper = existingFileHelper;
 		}
 
+		@Override
 		public void addTables(){
 			DSBlocks.DS_BLOCKS.forEach((key, value) -> {
 				Function<Block, Builder> builder = b -> {
@@ -97,7 +98,7 @@ public class DataLootTableProvider extends LootTableProvider{
 					return createSingleItemTable(value);
 				};
 
-				this.add(value, builder);
+				add(value, builder);
 			});
 		}
 

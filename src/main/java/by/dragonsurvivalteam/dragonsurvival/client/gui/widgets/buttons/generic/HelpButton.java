@@ -43,7 +43,7 @@ public class HelpButton extends ExtendedButton implements TooltipRender{
 		float ySize = (float)(height + (variation == 0 ? 0 : 2)) / size;
 
 		int i = 0;
-		if(this.isHoveredOrFocused())
+		if(isHoveredOrFocused())
 			i += (int)(type == null ? 4 : (Objects.equals(type, DragonTypes.CAVE) ? 1 :  Objects.equals(type, DragonTypes.FOREST) ? 2 :  Objects.equals(type, DragonTypes.SEA) ? 3 : 4) * size);
 
 		pMatrixStack.pushPose();
@@ -53,9 +53,9 @@ public class HelpButton extends ExtendedButton implements TooltipRender{
 		pMatrixStack.scale(xSize, ySize, 0);
 
 		if(variation == 0)
-			blit(pMatrixStack, this.x, this.y, 0, (float)i, 18, 18, 256, 256);
+			blit(pMatrixStack, x, y, 0, (float)i, 18, 18, 256, 256);
 		else
-			blit(pMatrixStack, this.x - 1, this.y - 1, 18, (float)i, 22, 22, 256, 256);
+			blit(pMatrixStack, x - 1, y - 1, 18, (float)i, 22, 22, 256, 256);
 
 		pMatrixStack.popPose();
 	}

@@ -28,7 +28,7 @@ public class ClawsAndTeethRenderLayer extends GeoLayerRenderer<DragonEntity>{
 
 	public ClawsAndTeethRenderLayer(IGeoRenderer<DragonEntity> entityRendererIn){
 		super(entityRendererIn);
-		this.renderer = entityRendererIn;
+		renderer = entityRendererIn;
 	}
 
 	@Override

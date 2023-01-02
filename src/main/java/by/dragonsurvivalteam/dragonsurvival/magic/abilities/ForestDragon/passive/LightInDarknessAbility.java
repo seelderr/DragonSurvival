@@ -58,6 +58,7 @@ public class LightInDarknessAbility extends PassiveDragonAbility{
 		return 10 * getLevel();
 	}
 
+	@Override
 	@OnlyIn( Dist.CLIENT )
 	public ArrayList<Component> getLevelUpInfo(){
 		ArrayList<Component> list = super.getLevelUpInfo();

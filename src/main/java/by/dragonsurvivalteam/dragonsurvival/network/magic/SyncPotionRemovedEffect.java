@@ -24,7 +24,7 @@ public class SyncPotionRemovedEffect implements IMessage<SyncPotionRemovedEffect
 	public SyncPotionRemovedEffect(){}
 
 	public SyncPotionRemovedEffect(int playerId, int effectId){
-		this.entityId = playerId;
+		entityId = playerId;
 		this.effectId = effectId;
 	}
 

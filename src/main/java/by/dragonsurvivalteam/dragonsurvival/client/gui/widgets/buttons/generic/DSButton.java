@@ -27,17 +27,17 @@ public class DSButton extends ExtendedButton implements TooltipRender{
 
 	public DSButton(int pX, int pY, int pWidth, int pHeight, OnPress pOnPress, Component... tooltip){
 		super(pX, pY, pWidth, pHeight, TextComponent.EMPTY, pOnPress);
-		this.tooltips = tooltip;
+		tooltips = tooltip;
 	}
 
 	public DSButton(int pX, int pY, int pWidth, int pHeight, Component pMessage, OnPress pOnPress, Component... tooltip){
 		super(pX, pY, pWidth, pHeight, pMessage, pOnPress);
-		this.tooltips = tooltip;
+		tooltips = tooltip;
 	}
 
 	public DSButton(int pX, int pY, int pWidth, int pHeight, Component... tooltip){
 		super(pX, pY, pWidth, pHeight, TextComponent.EMPTY, t -> {});
-		this.tooltips = tooltip;
+		tooltips = tooltip;
 	}
 
 	@Override

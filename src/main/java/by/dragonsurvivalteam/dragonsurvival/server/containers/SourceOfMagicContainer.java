@@ -39,29 +39,30 @@ public class SourceOfMagicContainer extends AbstractContainerMenu{
 		});
 	}
 
+	@Override
 	public ItemStack quickMoveStack(Player pPlayer, int pIndex){
 		ItemStack itemstack = ItemStack.EMPTY;
-		Slot slot = this.slots.get(pIndex);
+		Slot slot = slots.get(pIndex);
 		if(slot != null && slot.hasItem()){
 			ItemStack itemstack1 = slot.getItem();
 			itemstack = itemstack1.copy();
 			if(pIndex == 0){
-				if(!this.moveItemStackTo(itemstack1, 1, 37, true)){
+				if(!moveItemStackTo(itemstack1, 1, 37, true)){
 					return ItemStack.EMPTY;
 				}
 
 				slot.onQuickCraft(itemstack1, itemstack);
-			}else if(this.moveItemStackTo(itemstack1, 0, 1, false)){
+			}else if(moveItemStackTo(itemstack1, 0, 1, false)){
 				return ItemStack.EMPTY;
 			}else if(pIndex >= 1 && pIndex < 28){
-				if(!this.moveItemStackTo(itemstack1, 28, 37, false)){
+				if(!moveItemStackTo(itemstack1, 28, 37, false)){
 					return ItemStack.EMPTY;
 				}
 			}else if(pIndex >= 28 && pIndex < 37){
-				if(!this.moveItemStackTo(itemstack1, 1, 28, false)){
+				if(!moveItemStackTo(itemstack1, 1, 28, false)){
 					return ItemStack.EMPTY;
 				}
-			}else if(!this.moveItemStackTo(itemstack1, 1, 37, false)){
+			}else if(!moveItemStackTo(itemstack1, 1, 37, false)){
 				return ItemStack.EMPTY;
 			}
 

@@ -22,6 +22,7 @@ public abstract class ISidedMessage<T extends ISidedMessage> implements IMessage
 		this.playerId = playerId;
 	}
 
+	@Override
 	public void handle(T message, Supplier<NetworkEvent.Context> supplier){
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> runClientThread(message, supplier));
 

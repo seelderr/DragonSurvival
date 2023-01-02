@@ -412,7 +412,7 @@ public class StormBreathAbility extends BreathAbility{
 		super.onChanneling(player, castDuration);
 
 		if(player.level.isClientSide && castDuration <= 1){
-			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> sound());
+			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)this::sound);
 		}
 
 		if(player.level.isClientSide){

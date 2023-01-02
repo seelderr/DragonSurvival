@@ -194,7 +194,7 @@ public class ToolTipHandler{
 
 		Screen screen = Minecraft.getInstance().screen;
 
-		int width = event.getComponents().stream().map((s) -> s.getWidth(Minecraft.getInstance().font)).max(Integer::compareTo).orElse(0);
+		int width = event.getComponents().stream().map(s -> s.getWidth(Minecraft.getInstance().font)).max(Integer::compareTo).orElse(0);
 		int height = event.getComponents().stream().map(ClientTooltipComponent::getHeight).reduce(Integer::sum).orElse(0);
 
 		int x = event.getX() + 12;
@@ -224,8 +224,8 @@ public class ToolTipHandler{
 		Gui.blit(matrix, x - 8 - 6, y + height - 8 + 6, 1, 1 % texHeight + 16, 16, 16, texWidth, texHeight);
 		Gui.blit(matrix, x + width - 8 + 6, y + height - 8 + 6, texWidth - 16 - 1, 1 % texHeight + 16, 16, 16, texWidth, texHeight);
 
-		Gui.blit(matrix, x + (width / 2) - 47, y - 16, 16 + 2 * texWidth + 1, 1 % texHeight, 94, 16, texWidth, texHeight);
-		Gui.blit(matrix, x + (width / 2) - 47, y + height, 16 + 2 * texWidth + 1, 1 % texHeight + 16, 94, 16, texWidth, texHeight);
+		Gui.blit(matrix, x + width / 2 - 47, y - 16, 16 + 2 * texWidth + 1, 1 % texHeight, 94, 16, texWidth, texHeight);
+		Gui.blit(matrix, x + width / 2 - 47, y + height, 16 + 2 * texWidth + 1, 1 % texHeight + 16, 94, 16, texWidth, texHeight);
 
 		//RenderSystem.disableBlend();
 		matrix.popPose();

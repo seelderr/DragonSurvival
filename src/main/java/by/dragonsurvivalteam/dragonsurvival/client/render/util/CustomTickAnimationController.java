@@ -22,6 +22,6 @@ public class CustomTickAnimationController extends AnimationController{
 	public void process(double tick, AnimationEvent event, List modelRendererList, Map boneSnapshotCollection, MolangParser parser, boolean crashWhenCantFindBone){
 		double tickDif = tick - lastTick;
 		lastTick = tick;
-		super.process(tick + (tickDif * (speed - 1.0)), event, modelRendererList, boneSnapshotCollection, parser, crashWhenCantFindBone);
+		super.process(tick + tickDif * (speed - 1.0), event, modelRendererList, boneSnapshotCollection, parser, crashWhenCantFindBone);
 	}
 }

@@ -101,7 +101,7 @@ public class DSTrades {
 			this.baseCostA = baseCostA;
 			this.result = result;
 			this.maxUses = maxUses;
-			this.priceMultiplier = priceMultiplier;
+			priceMultiplier = priceMultiplier;
 			this.xp = xp;
 		}
 

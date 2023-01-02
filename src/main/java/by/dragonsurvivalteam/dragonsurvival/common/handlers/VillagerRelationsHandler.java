@@ -81,12 +81,11 @@ public class VillagerRelationsHandler{
 								playerEntity.giveExperiencePoints(level * ServerConfig.xpGain);
 								//                                applyEvilMarker(playerEntity);
 							}
-						}else if(villagerEntity instanceof WanderingTrader){
-							WanderingTrader wanderingTrader = (WanderingTrader)villagerEntity;
+						}else if(villagerEntity instanceof WanderingTrader wanderingTrader){
 							if(!world.isClientSide){
 								playerEntity.giveExperiencePoints(2 * ServerConfig.xpGain);
 								if(world.random.nextInt(100) < 30){
-									ItemStack itemStack = wanderingTrader.getOffers().stream().filter((merchantOffer -> merchantOffer.getResult().getItem() != Items.EMERALD)).toList().get(wanderingTrader.getRandom().nextInt(wanderingTrader.getOffers().size())).getResult();
+									ItemStack itemStack = wanderingTrader.getOffers().stream().filter(merchantOffer -> merchantOffer.getResult().getItem() != Items.EMERALD).toList().get(wanderingTrader.getRandom().nextInt(wanderingTrader.getOffers().size())).getResult();
 									world.addFreshEntity(new ItemEntity(world, wanderingTrader.getX(), wanderingTrader.getY(), wanderingTrader.getZ(), itemStack));
 								}
 								//                                applyEvilMarker(playerEntity);
@@ -173,7 +172,7 @@ public class VillagerRelationsHandler{
 		}
 
 		if(entity instanceof AbstractVillager abstractVillager && !(entity instanceof PrinceHorseEntity)){
-			abstractVillager.goalSelector.addGoal(10, new AvoidEntityGoal<>(abstractVillager, Player.class, livingEntity -> (DragonUtils.isDragon(livingEntity) && livingEntity.hasEffect(DragonEffects.EVIL_DRAGON)), 16.0F, 1.0D, 1.0D, (pMob) -> true));
+			abstractVillager.goalSelector.addGoal(10, new AvoidEntityGoal<>(abstractVillager, Player.class, livingEntity -> DragonUtils.isDragon(livingEntity) && livingEntity.hasEffect(DragonEffects.EVIL_DRAGON), 16.0F, 1.0D, 1.0D, pMob -> true));
 		}
 	}
 
@@ -191,7 +190,7 @@ public class VillagerRelationsHandler{
 	@SubscribeEvent
 	public static void hurtEntity(LivingDamageEvent attackEntityEvent){
 		Entity attacked = attackEntityEvent.getEntity();
-		Player attacker = attackEntityEvent.getSource().getEntity() instanceof Player ? ((Player)attackEntityEvent.getSource().getEntity()) : null;
+		Player attacker = attackEntityEvent.getSource().getEntity() instanceof Player ? (Player)attackEntityEvent.getSource().getEntity() : null;
 
 		if(attacker == null){
 			return;
@@ -230,7 +229,7 @@ public class VillagerRelationsHandler{
 								}
 								int levelOfEvil = computeLevelOfEvil(player);
 								for(int i = 0; i < levelOfEvil; i++){
-									SpawningUtils.spawn(Objects.requireNonNull((dragonHunters.get(serverWorld.random.nextInt(dragonHunters.size()))).create(serverWorld)), spawnPosition, serverWorld);
+									SpawningUtils.spawn(Objects.requireNonNull(dragonHunters.get(serverWorld.random.nextInt(dragonHunters.size())).create(serverWorld)), spawnPosition, serverWorld);
 								}
 								if(serverWorld.isCloseToVillage(player.blockPosition(), 3)){
 									villageRelationShips.hunterSpawnDelay = Functions.minutesToTicks(ServerConfig.hunterSpawnDelay / 3) + Functions.minutesToTicks(serverWorld.random.nextInt(ServerConfig.hunterSpawnDelay / 6));

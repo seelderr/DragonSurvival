@@ -58,6 +58,7 @@ public class SpectralImpactAbility extends PassiveDragonAbility{
 		return spectralImpactProcChance * getLevel();
 	}
 
+	@Override
 	@OnlyIn( Dist.CLIENT )
 	public ArrayList<Component> getLevelUpInfo(){
 		ArrayList<Component> list = super.getLevelUpInfo();

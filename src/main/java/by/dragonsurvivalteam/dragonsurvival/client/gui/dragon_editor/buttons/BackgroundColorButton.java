@@ -28,9 +28,9 @@ public class BackgroundColorButton extends ExtendedButton{
 
 	public BackgroundColorButton(int xPos, int yPos, int width, int height, Component displayString, OnPress handler, DragonEditorScreen dragonEditorScreen){
 		super(xPos, yPos, width, height, displayString, handler);
-		this.xSize = width;
-		this.ySize = height;
-		this.screen = dragonEditorScreen;
+		xSize = width;
+		ySize = height;
+		screen = dragonEditorScreen;
 	}
 
 	@Override
@@ -39,7 +39,7 @@ public class BackgroundColorButton extends ExtendedButton{
 			renderButton = new ExtendedButton(0, 0, 0, 0, TextComponent.EMPTY, null){
 				@Override
 				public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
-					this.active = this.visible = false;
+					active = visible = false;
 
 					if(colorComponent != null){
 						colorComponent.visible = BackgroundColorButton.this.visible;
@@ -57,8 +57,8 @@ public class BackgroundColorButton extends ExtendedButton{
 			screen.children.add(colorComponent);
 			screen.renderables.add(renderButton);
 		}else{
-			screen.children.removeIf((s) -> s == colorComponent);
-			screen.renderables.removeIf((s) -> s == renderButton);
+			screen.children.removeIf(s -> s == colorComponent);
+			screen.renderables.removeIf(s -> s == renderButton);
 		}
 
 		toggled = !toggled;
@@ -66,13 +66,13 @@ public class BackgroundColorButton extends ExtendedButton{
 
 	@Override
 	public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){
-		this.active = !screen.preset.skinAges.get(screen.level).defaultSkin;
+		active = !screen.preset.skinAges.get(screen.level).defaultSkin;
 
-		if(toggled && (!visible || (!isMouseOver(mouseX, mouseY) && (colorComponent == null || !colorComponent.isMouseOver(mouseX, mouseY))))){
+		if(toggled && (!visible || !isMouseOver(mouseX, mouseY) && (colorComponent == null || !colorComponent.isMouseOver(mouseX, mouseY)))){
 			toggled = false;
 			Screen screen = Minecraft.getInstance().screen;
-			screen.children.removeIf((s) -> s == colorComponent);
-			screen.renderables.removeIf((s) -> s == renderButton);
+			screen.children.removeIf(s -> s == colorComponent);
+			screen.renderables.removeIf(s -> s == renderButton);
 		}
 
 		if(visible){
@@ -80,8 +80,8 @@ public class BackgroundColorButton extends ExtendedButton{
 			RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/background_color_button.png"));
 			blit(mStack, x + 3, y + 3, 0, 0, width - 6, height - 6, width - 6, height - 6);
 
-			if(this.isHoveredOrFocused()){
-				this.renderToolTip(mStack, mouseX, mouseY);
+			if(isHoveredOrFocused()){
+				renderToolTip(mStack, mouseX, mouseY);
 			}
 		}
 	}

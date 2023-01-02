@@ -30,7 +30,7 @@ public class CopySettingsButton extends ExtendedButton{
 
 	@Override
 	public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
-		this.active = this.visible = screen.showUi;
+		active = visible = screen.showUi;
 		super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 
 		if(visible){
@@ -45,8 +45,8 @@ public class CopySettingsButton extends ExtendedButton{
 			screen.renderables.removeIf(s -> s == renderButton);
 		}
 
-		if(this.isHoveredOrFocused() && (component != null && !component.isMouseOver(pMouseX, pMouseY) || !toggled))
-			this.renderToolTip(pMatrixStack, pMouseX, pMouseY);
+		if(isHoveredOrFocused() && (component != null && !component.isMouseOver(pMouseX, pMouseY) || !toggled))
+			renderToolTip(pMatrixStack, pMouseX, pMouseY);
 	}
 
 	@Override
@@ -63,7 +63,7 @@ public class CopySettingsButton extends ExtendedButton{
 			renderButton = new ExtendedButton(0, 0, 0, 0, TextComponent.EMPTY, null){
 				@Override
 				public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
-					this.active = this.visible = false;
+					active = visible = false;
 
 					if(component != null){
 						component.visible = CopySettingsButton.this.visible;

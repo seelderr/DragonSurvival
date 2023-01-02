@@ -26,12 +26,12 @@ public class DSNumberFieldOption extends Option{
 		this.setter = setter;
 		this.min = min;
 		this.max = max;
-		this.tooltipSupplier = pTooltipSupplier;
+		tooltipSupplier = pTooltipSupplier;
 	}
 
 	@Override
 	public AbstractWidget createButton(Options gameSettings, int i, int i1, int i2){
-		TextField widget = new TextField(null, this, i, i1, i2, 18, this.getCaption()){
+		TextField widget = new TextField(null, this, i, i1, i2, 18, getCaption()){
 			@Override
 			public boolean charTyped(char pCodePoint, int pModifiers){
 				boolean val = super.charTyped(pCodePoint, pModifiers);

@@ -85,63 +85,63 @@ public class EmoteRegistry{
 
 					for(BoneAnimation bone : an.boneAnimations){
 						if(emt.mirror.xPos){
-							bone.positionKeyFrames.xKeyFrames.forEach((Frame) -> {
+							bone.positionKeyFrames.xKeyFrames.forEach(Frame -> {
 								Frame.setStartValue(new Constant(Frame.getStartValue().get() * -1));
 								Frame.setEndValue(new Constant(Frame.getEndValue().get() * -1));
 							});
 						}
 
 						if(emt.mirror.yPos){
-							bone.positionKeyFrames.yKeyFrames.forEach((Frame) -> {
+							bone.positionKeyFrames.yKeyFrames.forEach(Frame -> {
 								Frame.setStartValue(new Constant(Frame.getStartValue().get() * -1));
 								Frame.setEndValue(new Constant(Frame.getEndValue().get() * -1));
 							});
 						}
 
 						if(emt.mirror.zPos){
-							bone.positionKeyFrames.zKeyFrames.forEach((Frame) -> {
+							bone.positionKeyFrames.zKeyFrames.forEach(Frame -> {
 								Frame.setStartValue(new Constant(Frame.getStartValue().get() * -1));
 								Frame.setEndValue(new Constant(Frame.getEndValue().get() * -1));
 							});
 						}
 
 						if(emt.mirror.xRot){
-							bone.rotationKeyFrames.xKeyFrames.forEach((Frame) -> {
+							bone.rotationKeyFrames.xKeyFrames.forEach(Frame -> {
 								Frame.setStartValue(new Constant(Frame.getStartValue().get() * -1));
 								Frame.setEndValue(new Constant(Frame.getEndValue().get() * -1));
 							});
 						}
 
 						if(emt.mirror.yRot){
-							bone.rotationKeyFrames.yKeyFrames.forEach((Frame) -> {
+							bone.rotationKeyFrames.yKeyFrames.forEach(Frame -> {
 								Frame.setStartValue(new Constant(Frame.getStartValue().get() * -1));
 								Frame.setEndValue(new Constant(Frame.getEndValue().get() * -1));
 							});
 						}
 
 						if(emt.mirror.zRot){
-							bone.rotationKeyFrames.zKeyFrames.forEach((Frame) -> {
+							bone.rotationKeyFrames.zKeyFrames.forEach(Frame -> {
 								Frame.setStartValue(new Constant(Frame.getStartValue().get() * -1));
 								Frame.setEndValue(new Constant(Frame.getEndValue().get() * -1));
 							});
 						}
 
 						if(emt.mirror.xScale){
-							bone.scaleKeyFrames.xKeyFrames.forEach((Frame) -> {
+							bone.scaleKeyFrames.xKeyFrames.forEach(Frame -> {
 								Frame.setStartValue(new Constant(Frame.getStartValue().get() * -1));
 								Frame.setEndValue(new Constant(Frame.getEndValue().get() * -1));
 							});
 						}
 
 						if(emt.mirror.yScale){
-							bone.scaleKeyFrames.yKeyFrames.forEach((Frame) -> {
+							bone.scaleKeyFrames.yKeyFrames.forEach(Frame -> {
 								Frame.setStartValue(new Constant(Frame.getStartValue().get() * -1));
 								Frame.setEndValue(new Constant(Frame.getEndValue().get() * -1));
 							});
 						}
 
 						if(emt.mirror.zScale){
-							bone.scaleKeyFrames.zKeyFrames.forEach((Frame) -> {
+							bone.scaleKeyFrames.zKeyFrames.forEach(Frame -> {
 								Frame.setStartValue(new Constant(Frame.getStartValue().get() * -1));
 								Frame.setEndValue(new Constant(Frame.getEndValue().get() * -1));
 							});

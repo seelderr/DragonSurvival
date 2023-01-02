@@ -77,6 +77,7 @@ public class PrincesHorseEntity extends Villager implements IAnimatable, CommonT
 		return null;
 	}
 
+	@Override
 	public void playCelebrateSound(){
 	}
 
@@ -85,50 +86,58 @@ public class PrincesHorseEntity extends Villager implements IAnimatable, CommonT
 		return brainProvider().makeBrain(p_213364_1_);
 	}
 
+	@Override
 	public void refreshBrain(ServerLevel p_213770_1_){
 	}
 
+	@Override
 	protected void defineSynchedData(){
 		super.defineSynchedData();
-		this.entityData.define(color, 0);
+		entityData.define(color, 0);
 	}
 
+	@Override
 	public void addAdditionalSaveData(CompoundTag compoundNBT){
 		super.addAdditionalSaveData(compoundNBT);
 		compoundNBT.putInt("Color", getColor());
 	}
 
 	public int getColor(){
-		return this.entityData.get(color);
+		return entityData.get(color);
 	}
 
+	@Override
 	public void readAdditionalSaveData(CompoundTag compoundNBT){
 		super.readAdditionalSaveData(compoundNBT);
 		setColor(compoundNBT.getInt("Color"));
 	}
 
 	public void setColor(int i){
-		this.entityData.set(color, i);
+		entityData.set(color, i);
 	}
 
 	@Override
 	public boolean removeWhenFarAway(double distance){
-		return !this.hasCustomName() && tickCount >= Functions.minutesToTicks(ServerConfig.princessDespawnDelay) && !hasCustomName();
+		return !hasCustomName() && tickCount >= Functions.minutesToTicks(ServerConfig.princessDespawnDelay) && !hasCustomName();
 	}
 
+	@Override
 	@Nullable
 	protected SoundEvent getAmbientSound(){
 		return null;
 	}
 
+	@Override
 	protected SoundEvent getHurtSound(DamageSource p_184601_1_){
 		return SoundEvents.GENERIC_HURT;
 	}
 
+	@Override
 	protected SoundEvent getDeathSound(){
 		return SoundEvents.PLAYER_DEATH;
 	}
 
+	@Override
 	public void playWorkSound(){
 	}
 
@@ -148,28 +157,33 @@ public class PrincesHorseEntity extends Villager implements IAnimatable, CommonT
 		//        }
 	}
 
+	@Override
 	public boolean canBreed(){
 		return false;
 	}
 
+	@Override
 	protected Component getTypeName(){
-		return new TranslatableComponent(this.getType().getDescriptionId());
+		return new TranslatableComponent(getType().getDescriptionId());
 	}
 
+	@Override
 	@Nullable
 	public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverWorld, DifficultyInstance difficultyInstance, MobSpawnType reason,
 		@Nullable
 			SpawnGroupData livingEntityData,
 		@Nullable
 			CompoundTag compoundNBT){
-		setColor(colors.get(this.random.nextInt(6)).getId());
+		setColor(colors.get(random.nextInt(6)).getId());
 		setVillagerData(getVillagerData().setProfession(DSEntities.PRINCE_PROFESSION));
 		return super.finalizeSpawn(serverWorld, difficultyInstance, reason, livingEntityData, compoundNBT);
 	}
 
+	@Override
 	public void thunderHit(ServerLevel p_241841_1_, LightningBolt p_241841_2_){
 	}
 
+	@Override
 	protected void updateTrades(){
 		VillagerData villagerdata = getVillagerData();
 		Int2ObjectMap<VillagerTrades.ItemListing[]> int2objectmap = DSTrades.princessColorCodes.get(getColor());
@@ -182,30 +196,35 @@ public class PrincesHorseEntity extends Villager implements IAnimatable, CommonT
 		}
 	}
 
+	@Override
 	public void gossip(ServerLevel p_242368_1_, Villager p_242368_2_, long p_242368_3_){
 	}
 
+	@Override
 	public void startSleeping(BlockPos p_213342_1_){
 	}
 
 	protected void pickUpItem(Item p_175445_1_){
 	}
 
+	@Override
 	protected void registerGoals(){
-		this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1){
+		goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1){
+			@Override
 			public boolean canUse(){
-				return (!PrincesHorseEntity.this.isTrading() && super.canUse());
+				return !isTrading() && super.canUse();
 			}
 		});
-		this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, LivingEntity.class, 8.0F));
+		goalSelector.addGoal(6, new LookAtPlayerGoal(this, LivingEntity.class, 8.0F));
 		goalSelector.addGoal(6, new AvoidEntityGoal<>(this, Player.class, 16, 1, 1, living -> {
 			return DragonUtils.isDragon(living) && living.hasEffect(DragonEffects.EVIL_DRAGON);
 		}));
 		goalSelector.addGoal(7, new PanicGoal(this, 1.5));
 	}
 
+	@Override
 	protected int getExperienceReward(Player p_70693_1_){
-		return 1 + this.level.random.nextInt(2);
+		return 1 + level.random.nextInt(2);
 	}
 
 	@Override
@@ -261,15 +280,15 @@ public class PrincesHorseEntity extends Villager implements IAnimatable, CommonT
 
 		if(isRemoved() || hasCustomName()) return;
 
-		Entity entity1 = this.level.getNearestEntity(KnightEntity.class, KNIGHT_RANGE, this, getX(), getY(), getZ(), this.getBoundingBox().inflate(32));
+		Entity entity1 = level.getNearestEntity(KnightEntity.class, KNIGHT_RANGE, this, getX(), getY(), getZ(), getBoundingBox().inflate(32));
 
 		if(entity1 == null){
-			Entity entity = this.level.getNearestPlayer(this, -1.0D);
+			Entity entity = level.getNearestPlayer(this, -1.0D);
 			if (entity != null) {
 				double d0 = entity.distanceToSqr(this);
-				int i = this.getType().getCategory().getDespawnDistance();
+				int i = getType().getCategory().getDespawnDistance();
 				if (d0 > (double)(i * 4)) {
-					this.discard();
+					discard();
 				}
 			}
 		}

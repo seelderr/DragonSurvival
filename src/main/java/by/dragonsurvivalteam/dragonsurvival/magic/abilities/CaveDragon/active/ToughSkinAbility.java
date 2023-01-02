@@ -135,6 +135,7 @@ public class ToughSkinAbility extends AoeBuffAbility{
 		return level * toughSkinArmorValue;
 	}
 
+	@Override
 	@OnlyIn( Dist.CLIENT )
 	public ArrayList<Component> getLevelUpInfo(){
 		ArrayList<Component> list = super.getLevelUpInfo();

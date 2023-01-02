@@ -56,6 +56,7 @@ public class ContrastShowerAbility extends PassiveDragonAbility{
 		return 30 * getLevel();
 	}
 
+	@Override
 	@OnlyIn( Dist.CLIENT )
 	public ArrayList<Component> getLevelUpInfo(){
 		ArrayList<Component> list = super.getLevelUpInfo();

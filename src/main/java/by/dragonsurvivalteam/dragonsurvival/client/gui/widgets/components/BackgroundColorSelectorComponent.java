@@ -34,7 +34,7 @@ public class BackgroundColorSelectorComponent extends AbstractContainerEventHand
 
 		float f3 = (float)(screen.backgroundColor >> 24 & 255) / 255.0F;
 
-		colorPicker = new ColorPickerButton(x + 3, y, xSize - 5, ySize, defaultC, (c) -> {
+		colorPicker = new ColorPickerButton(x + 3, y, xSize - 5, ySize, defaultC, c -> {
 			Color c1 = new Color(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, f3);
 			screen.backgroundColor = c1.getRGB();
 		});
@@ -42,7 +42,7 @@ public class BackgroundColorSelectorComponent extends AbstractContainerEventHand
 
 	@Override
 	public boolean isMouseOver(double pMouseX, double pMouseY){
-		return visible && pMouseY >= (double)this.y - 3 && pMouseY <= (double)this.y + ySize + 3 && pMouseX >= (double)this.x && pMouseX <= (double)this.x + xSize;
+		return visible && pMouseY >= (double)y - 3 && pMouseY <= (double)y + ySize + 3 && pMouseX >= (double)x && pMouseX <= (double)x + xSize;
 	}
 
 	@Override

@@ -28,12 +28,12 @@ public class SyncDragonTypeData implements IMessage<SyncDragonTypeData>{
 
 	public SyncDragonTypeData(int playerId, CompoundTag tag){
 		this.playerId = playerId;
-		this.dragonTypeData = tag;
+		dragonTypeData = tag;
 	}
 	
 	public SyncDragonTypeData(int playerId, AbstractDragonType dragonType){
 		this.playerId = playerId;
-		this.dragonTypeData = dragonType.writeNBT();
+		dragonTypeData = dragonType.writeNBT();
 	}
 	
 	
