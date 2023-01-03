@@ -11,5 +11,16 @@ public class DataBlockModelProvider extends BlockModelProvider{
 
 	@Override
 	protected void registerModels(){
+		/*
+		cubeAll("example_block", modLoc("block/example_block"));
+		
+		cube("sided_example_block",
+		     modLoc("block/example_block_down"),
+		     modLoc("block/example_block_up"),
+		     modLoc("block/example_block_north"),
+		     modLoc("block/example_block_south"),
+		     modLoc("block/example_block_east"),
+		     modLoc("block/example_block_west"));
+		 */
 	}
 }

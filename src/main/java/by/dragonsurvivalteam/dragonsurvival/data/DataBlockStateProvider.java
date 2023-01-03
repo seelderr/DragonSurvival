@@ -33,7 +33,8 @@ public class DataBlockStateProvider extends BlockStateProvider{
 					.texture("east", modLoc("block/" + key + "_east"))
 					.texture("west", modLoc("block/" + key + "_west"))
 					.texture("north", modLoc("block/" + key + "_north"))
-					.texture("south", modLoc("block/" + key + "_south"));
+					.texture("south", modLoc("block/" + key + "_south"))
+					.texture("particle", modLoc("block/" + key + "_top"));
 
 				getVariantBuilder(value)
 					.forAllStates(state ->

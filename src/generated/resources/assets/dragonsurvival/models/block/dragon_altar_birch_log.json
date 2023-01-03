@@ -6,6 +6,7 @@
     "east": "dragonsurvival:block/dragon_altar_birch_log_east",
     "west": "dragonsurvival:block/dragon_altar_birch_log_west",
     "north": "dragonsurvival:block/dragon_altar_birch_log_north",
-    "south": "dragonsurvival:block/dragon_altar_birch_log_south"
+    "south": "dragonsurvival:block/dragon_altar_birch_log_south",
+    "particle": "dragonsurvival:block/dragon_altar_birch_log_top"
   }
 }

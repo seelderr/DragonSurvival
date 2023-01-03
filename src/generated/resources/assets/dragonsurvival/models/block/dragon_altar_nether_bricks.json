@@ -6,6 +6,7 @@
     "east": "dragonsurvival:block/dragon_altar_nether_bricks_east",
     "west": "dragonsurvival:block/dragon_altar_nether_bricks_west",
     "north": "dragonsurvival:block/dragon_altar_nether_bricks_north",
-    "south": "dragonsurvival:block/dragon_altar_nether_bricks_south"
+    "south": "dragonsurvival:block/dragon_altar_nether_bricks_south",
+    "particle": "dragonsurvival:block/dragon_altar_nether_bricks_top"
   }
 }

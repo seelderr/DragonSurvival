@@ -6,6 +6,7 @@
     "east": "dragonsurvival:block/dragon_altar_sandstone_east",
     "west": "dragonsurvival:block/dragon_altar_sandstone_west",
     "north": "dragonsurvival:block/dragon_altar_sandstone_north",
-    "south": "dragonsurvival:block/dragon_altar_sandstone_south"
+    "south": "dragonsurvival:block/dragon_altar_sandstone_south",
+    "particle": "dragonsurvival:block/dragon_altar_sandstone_top"
   }
 }

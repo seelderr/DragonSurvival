@@ -6,6 +6,7 @@
     "east": "dragonsurvival:block/dragon_altar_blackstone_east",
     "west": "dragonsurvival:block/dragon_altar_blackstone_west",
     "north": "dragonsurvival:block/dragon_altar_blackstone_north",
-    "south": "dragonsurvival:block/dragon_altar_blackstone_south"
+    "south": "dragonsurvival:block/dragon_altar_blackstone_south",
+    "particle": "dragonsurvival:block/dragon_altar_blackstone_top"
   }
 }

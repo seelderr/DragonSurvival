@@ -6,6 +6,7 @@
     "east": "dragonsurvival:block/dragon_altar_purpur_block_east",
     "west": "dragonsurvival:block/dragon_altar_purpur_block_west",
     "north": "dragonsurvival:block/dragon_altar_purpur_block_north",
-    "south": "dragonsurvival:block/dragon_altar_purpur_block_south"
+    "south": "dragonsurvival:block/dragon_altar_purpur_block_south",
+    "particle": "dragonsurvival:block/dragon_altar_purpur_block_top"
   }
 }
