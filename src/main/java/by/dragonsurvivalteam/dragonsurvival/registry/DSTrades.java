@@ -65,8 +65,6 @@ public class DSTrades {
 		objectObjectHashMap.put(DyeColor.BLACK.getId(), ItemTrade.toIntMap(ImmutableMap.of(1, new ItemListing[]{DSTrades.PRINCESS_BLACK}, 2, new ItemListing[]{DSTrades.PRINCESS_XP_BOTTLE1}, 3, new ItemListing[]{DSTrades.PRINCESS_ELDER_DRAGON_DUST})));
 	});
 
-
-
 	public static class ItemTrade implements VillagerTrades.ItemListing{
 
 		private ItemStack baseCostA = ItemStack.EMPTY;

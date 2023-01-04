@@ -242,9 +242,7 @@
     {
       "id": "untamedwilds:food_bear_cooked",
       "required": false
-    }
-
-  ,
+    },
     {
       "id": "prehistoricfauna:cooked_large_thyreophoran_meat",
       "required": false

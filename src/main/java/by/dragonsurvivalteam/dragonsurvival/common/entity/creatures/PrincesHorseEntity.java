@@ -141,21 +141,22 @@ public class PrincesHorseEntity extends Villager implements IAnimatable, CommonT
 	public void playWorkSound(){
 	}
 
-	@Override
-	public void die(DamageSource damageSource){
-		if(level instanceof ServerLevel && !(this instanceof PrinceHorseEntity)){
-			Princess princess = DSEntities.PRINCESS.create(level);
-			princess.setPos(getX(), getY(), getZ());
-			princess.finalizeSpawn((ServerLevelAccessor)level, level.getCurrentDifficultyAt(blockPosition()), MobSpawnType.NATURAL, null, null);
-			princess.setColor(getColor());
-			princess.setUUID(UUID.randomUUID());
-			level.addFreshEntity(princess);
-		}
-		super.die(damageSource);
+//	@Override
+//	public void die(DamageSource damageSource){
+//		if(level instanceof ServerLevel && !(this instanceof PrinceHorseEntity)){
+//			Princess princess = DSEntities.PRINCESS.create(level);
+//			princess.setPos(getX(), getY(), getZ());
+//			princess.finalizeSpawn((ServerLevelAccessor)level, level.getCurrentDifficultyAt(blockPosition()), MobSpawnType.NATURAL, null, null);
+//			princess.setColor(getColor());
+//			princess.setUUID(UUID.randomUUID());
+//			level.addFreshEntity(princess);
+//		}
+//		super.die(damageSource);
+
 		//        if (damageSource.getEntity() instanceof Player) {
 		//            VillagerRelationsHandler.applyEvilMarker((Player) damageSource.getEntity());
 		//        }
-	}
+//	}
 
 	@Override
 	public boolean canBreed(){
@@ -219,7 +220,7 @@ public class PrincesHorseEntity extends Villager implements IAnimatable, CommonT
 		goalSelector.addGoal(6, new AvoidEntityGoal<>(this, Player.class, 16, 1, 1, living -> {
 			return DragonUtils.isDragon(living) && living.hasEffect(DragonEffects.EVIL_DRAGON);
 		}));
-		goalSelector.addGoal(7, new PanicGoal(this, 1.5));
+		goalSelector.addGoal(7, new PanicGoal(this, 2.0));
 	}
 
 	@Override
@@ -233,9 +234,9 @@ public class PrincesHorseEntity extends Villager implements IAnimatable, CommonT
 			AnimationBuilder builder = new AnimationBuilder();
 			double speed = getMovementSpeed(this);
 			AnimationController controller = event.getController();
-			if(speed > 0.6){
+			if(speed > 0.4){
 				builder.addAnimation("run_princess");
-			}else if(speed > 0.1){
+			}else if(speed > 0.01){
 				builder.addAnimation("walk_princess");
 			}else{
 				Animation animation = controller.getCurrentAnimation();

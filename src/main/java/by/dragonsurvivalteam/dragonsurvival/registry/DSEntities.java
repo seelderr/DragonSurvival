@@ -68,9 +68,9 @@ public class DSEntities{
 		event.put(HUNTER_HOUND, Wolf.createAttributes().add(Attributes.MOVEMENT_SPEED, ServerConfig.houndSpeed).add(Attributes.ATTACK_DAMAGE, ServerConfig.houndDamage).add(Attributes.MAX_HEALTH, ServerConfig.houndHealth).build());
 		event.put(SHOOTER_HUNTER, Pillager.createAttributes().add(Attributes.MOVEMENT_SPEED, ServerConfig.hunterSpeed).add(Attributes.MAX_HEALTH, ServerConfig.hunterHealth).add(Attributes.ARMOR, ServerConfig.hunterArmor).add(Attributes.ATTACK_DAMAGE, ServerConfig.hunterDamage).build());
 		event.put(SQUIRE_HUNTER, Vindicator.createAttributes().add(Attributes.MOVEMENT_SPEED, ServerConfig.squireSpeed).add(Attributes.ATTACK_DAMAGE, ServerConfig.squireDamage).add(Attributes.ARMOR, ServerConfig.squireArmor).add(Attributes.MAX_HEALTH, ServerConfig.squireHealth).build());
-		event.put(PRINCESS, Villager.createAttributes().build());
-		event.put(PRINCESS_ON_HORSE, Villager.createAttributes().build());
 		event.put(KNIGHT, KnightEntity.createMobAttributes().add(Attributes.MOVEMENT_SPEED, ServerConfig.knightSpeed).add(Attributes.ATTACK_DAMAGE, ServerConfig.knightDamage).add(Attributes.ARMOR, ServerConfig.knightArmor).add(Attributes.MAX_HEALTH, ServerConfig.knightHealth).build());
+		event.put(PRINCESS, Villager.createAttributes().add(Attributes.MAX_HEALTH, ServerConfig.princessHealth).add(Attributes.ARMOR, ServerConfig.princessArmor).add(Attributes.MOVEMENT_SPEED, ServerConfig.princessSpeed).build());
+		event.put(PRINCESS_ON_HORSE, Villager.createAttributes().add(Attributes.MAX_HEALTH, ServerConfig.princessHealth).add(Attributes.ARMOR, ServerConfig.princessArmor).add(Attributes.MOVEMENT_SPEED, ServerConfig.princessSpeed).build());
 		event.put(PRINCE_ON_HORSE, Villager.createAttributes().add(Attributes.ATTACK_DAMAGE, ServerConfig.princeDamage).add(Attributes.MAX_HEALTH, ServerConfig.princeHealth).add(Attributes.ARMOR, ServerConfig.princeArmor).add(Attributes.MOVEMENT_SPEED, ServerConfig.princeSpeed).build());
 	}
 

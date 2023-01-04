@@ -81,9 +81,9 @@ public class KnightEntity extends PathfinderMob implements IAnimatable, DragonHu
 					}
 				}
 			}
-			if(movement > 0.4){
+			if(movement > 0.2){
 				animationBuilder.addAnimation("run");
-			}else if(movement > 0.1){
+			}else if(movement > 0.01){
 				animationBuilder.addAnimation("walk");
 			}else{
 				Animation animation = animationController.getCurrentAnimation();

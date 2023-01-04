@@ -10,7 +10,7 @@
       "item": "dragonsurvival:elder_dragon_dust"
     },
     "S": {
-      "item": "minecraft:pufferfish"
+      "tag": "forge:raw_fishes"
     }
   },
   "result": {
