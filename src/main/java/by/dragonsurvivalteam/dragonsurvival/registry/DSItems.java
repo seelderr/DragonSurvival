@@ -70,7 +70,7 @@ public class DSItems{
 		elderDragonBone = registerItem(registry, "elder_dragon_bone", "ds.description.elderDragonBone");
 
      	princeSummon = registerItem(registry, new RoyalSummonItem(() -> DSEntities.PRINCE_ON_HORSE, defaultProperties), "prince_summon");
-		princessSummon = registerItem(registry, new RoyalSummonItem(() -> DSEntities.PRINCESS, defaultProperties), "princess_summon");
+		princessSummon = registerItem(registry, new RoyalSummonItem(() -> DSEntities.PRINCESS_ON_HORSE, defaultProperties), "princess_summon");
 
 		dragonHeartShard = registerItem(registry, "heart_element", "ds.description.heartElement");
 		weakDragonHeart = registerItem(registry, "weak_dragon_heart", "ds.description.weakDragonHeart");
