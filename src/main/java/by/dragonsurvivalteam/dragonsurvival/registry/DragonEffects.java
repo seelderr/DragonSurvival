@@ -18,6 +18,11 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.tags.TagKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.Registry;
+import net.minecraft.world.entity.ai.attributes.AttributeMap;
 
 import java.util.Collections;
 import java.util.List;
@@ -33,6 +38,8 @@ public class DragonEffects{
 	public static MobEffect PREDATOR_ANTI_SPAWN;
 
 	public static MobEffect SOURCE_OF_MAGIC;
+
+	public static MobEffect ROYAL_DEPARTURE;
 
 	//Magic system effects
 	public static MobEffect WATER_VISION, LAVA_VISION;
@@ -66,6 +73,9 @@ public class DragonEffects{
 
 		SOURCE_OF_MAGIC = new Effect2(MobEffectCategory.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "source_of_magic");
 		forgeRegistry.register(SOURCE_OF_MAGIC);
+
+		ROYAL_DEPARTURE = new TradeEffect(MobEffectCategory.HARMFUL, -3407617, true).setRegistryName(DragonSurvivalMod.MODID, "royal_departure");
+		forgeRegistry.register(ROYAL_DEPARTURE);
 
 		//Magic system effects
 		WATER_VISION = new Effect2(MobEffectCategory.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "water_vision");
@@ -191,6 +201,42 @@ public class DragonEffects{
 		@Override
 		public List<ItemStack> getCurativeItems(){
 			return Collections.emptyList();
+		}
+	}
+	private static class TradeEffect extends MobEffect{
+		private final boolean uncurable;
+
+		protected TradeEffect(MobEffectCategory type, int color, boolean uncurable){
+			super(type, color);
+			this.uncurable = uncurable;
+		}
+		public static void execute(Entity entity) {
+
+			if (entity == null)
+				return;
+			if (entity.getType().is(TagKey.create(Registry.ENTITY_TYPE_REGISTRY, new ResourceLocation("dragonsurvival:royal_departure_affected")))) {
+				if (!entity.level.isClientSide())
+					entity.discard();
+			}
+		}
+		public void removeAttributeModifiers(LivingEntity entity, AttributeMap attributeMap, int amplifier) {
+			super.removeAttributeModifiers(entity, attributeMap, amplifier);
+			RoyalDepartureEffectExpiresProcedure.execute(entity);
+		}
+		public class RoyalDepartureEffectExpiresProcedure {
+			public static void execute(Entity entity) {
+				if (entity == null)
+					return;
+				if (entity.getType().is(TagKey.create(Registry.ENTITY_TYPE_REGISTRY, new ResourceLocation("dragonsurvival:royal_departure_affected")))) {
+					if (!entity.level.isClientSide())
+						entity.discard();
+				}
+			}
+		}
+
+		@Override
+		public boolean isDurationEffectTick(int duration, int amplifier) {
+			return true;
 		}
 	}
 }

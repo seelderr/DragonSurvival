@@ -116,10 +116,10 @@ public class PrincesHorseEntity extends Villager implements IAnimatable, CommonT
 		entityData.set(color, i);
 	}
 
-	@Override
-	public boolean removeWhenFarAway(double distance){
-		return !hasCustomName() && tickCount >= Functions.minutesToTicks(ServerConfig.princessDespawnDelay) && !hasCustomName();
-	}
+	//@Override
+	//public boolean removeWhenFarAway(double distance){
+	//	return !hasCustomName() && tickCount >= Functions.minutesToTicks(ServerConfig.princessDespawnDelay) && !hasCustomName();
+	//}
 
 	@Override
 	@Nullable
@@ -141,22 +141,22 @@ public class PrincesHorseEntity extends Villager implements IAnimatable, CommonT
 	public void playWorkSound(){
 	}
 
-//	@Override
-//	public void die(DamageSource damageSource){
-//		if(level instanceof ServerLevel && !(this instanceof PrinceHorseEntity)){
-//			Princess princess = DSEntities.PRINCESS.create(level);
-//			princess.setPos(getX(), getY(), getZ());
-//			princess.finalizeSpawn((ServerLevelAccessor)level, level.getCurrentDifficultyAt(blockPosition()), MobSpawnType.NATURAL, null, null);
-//			princess.setColor(getColor());
-//			princess.setUUID(UUID.randomUUID());
-//			level.addFreshEntity(princess);
-//		}
-//		super.die(damageSource);
+/*	@Override
+	public void die(DamageSource damageSource){
+		if(level instanceof ServerLevel && !(this instanceof PrinceHorseEntity)){
+			Princess princess = DSEntities.PRINCESS.create(level);
+			princess.setPos(getX(), getY(), getZ());
+			princess.finalizeSpawn((ServerLevelAccessor)level, level.getCurrentDifficultyAt(blockPosition()), MobSpawnType.NATURAL, null, null);
+			princess.setColor(getColor());
+			princess.setUUID(UUID.randomUUID());
+			level.addFreshEntity(princess);
+		}
+		super.die(damageSource);
 
-		//        if (damageSource.getEntity() instanceof Player) {
-		//            VillagerRelationsHandler.applyEvilMarker((Player) damageSource.getEntity());
-		//        }
-//	}
+        if (damageSource.getEntity() instanceof Player) {
+            VillagerRelationsHandler.applyEvilMarker((Player) damageSource.getEntity());
+        }
+}*/
 
 	@Override
 	public boolean canBreed(){
@@ -274,24 +274,24 @@ public class PrincesHorseEntity extends Villager implements IAnimatable, CommonT
 		return animationFactory;
 	}
 
-	private static final TargetingConditions KNIGHT_RANGE = TargetingConditions.forNonCombat().range(32);
-	@Override
-	public void checkDespawn(){
-		super.checkDespawn();
+/*private static final TargetingConditions KNIGHT_RANGE = TargetingConditions.forNonCombat().range(32);
+@Override
+public void checkDespawn(){
+	super.checkDespawn();
 
-		if(isRemoved() || hasCustomName()) return;
+	if(isRemoved() || hasCustomName()) return;
 
-		Entity entity1 = level.getNearestEntity(KnightEntity.class, KNIGHT_RANGE, this, getX(), getY(), getZ(), getBoundingBox().inflate(32));
+	Entity entity1 = level.getNearestEntity(KnightEntity.class, KNIGHT_RANGE, this, getX(), getY(), getZ(), getBoundingBox().inflate(32));
 
-		if(entity1 == null){
-			Entity entity = level.getNearestPlayer(this, -1.0D);
-			if (entity != null) {
-				double d0 = entity.distanceToSqr(this);
-				int i = getType().getCategory().getDespawnDistance();
-				if (d0 > (double)(i * 4)) {
-					discard();
+	if(entity1 == null){
+		Entity entity = level.getNearestPlayer(this, -1.0D);
+		if (entity != null) {
+			double d0 = entity.distanceToSqr(this);
+			int i = getType().getCategory().getDespawnDistance();
+			if (d0 > (double)(i * 4)) {
+				discard();
 				}
-			}
 		}
-	}
+		}
+	}*/
 }

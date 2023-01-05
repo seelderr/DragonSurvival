@@ -42,6 +42,10 @@ public class DSItems{
 
 	public static Item dragonHeartShard, weakDragonHeart, elderDragonHeart;
 	public static Item starBone, elderDragonBone, elderDragonDust;
+
+	public static Item princeSummon;
+	public static Item princessSummon;
+
 	public static Item charredMeat, charredVegetable, charredMushroom, charredSeafood, chargedCoal, chargedSoup, hotDragonRod, explosiveCopper, doubleQuartz, quartzExplosiveCopper, meatChorusMix, meatWildBerries, smellyMeatPorridge, diamondChorus, luminousOintment, sweetSourRabbit, seasonedFish, goldenCoralPufferfish, frozenRawFish, goldenTurtleEgg;
 	public static Item seaDragonTreat, caveDragonTreat, forestDragonTreat;
 	public static Item huntingNet;
@@ -67,6 +71,9 @@ public class DSItems{
 
 		elderDragonDust = registerItem(registry, "elder_dragon_dust", "ds.description.elderDragonDust");
 		elderDragonBone = registerItem(registry, "elder_dragon_bone", "ds.description.elderDragonBone");
+
+     	princeSummon = registerItem(registry, "prince_summon", "ds.description.prince_summon");
+		princessSummon = registerItem(registry, "princess_summon", "ds.description.princess_summon");
 
 		dragonHeartShard = registerItem(registry, "heart_element", "ds.description.heartElement");
 		weakDragonHeart = registerItem(registry, "weak_dragon_heart", "ds.description.weakDragonHeart");

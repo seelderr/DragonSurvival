@@ -110,7 +110,7 @@ public class Princess extends Villager{
 		entityData.set(color, i);
 	}
 
-	@Override
+	/*@Override
 	public boolean removeWhenFarAway(double p_213397_1_){
 		return !hasCustomName() && tickCount >= Functions.minutesToTicks(ServerConfig.princessDespawnDelay);
 	}
@@ -134,7 +134,7 @@ public class Princess extends Villager{
 				}
 			}
 		}
-	}
+	}*/
 
 	@Override
 	@Nullable
