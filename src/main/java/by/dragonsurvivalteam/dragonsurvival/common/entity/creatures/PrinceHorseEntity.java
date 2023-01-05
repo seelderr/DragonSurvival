@@ -50,18 +50,6 @@ public class PrinceHorseEntity extends PrincesHorseEntity{
 		return super.finalizeSpawn(serverWorld, difficultyInstance, reason, livingEntityData, compoundNBT);
 	}
 	
-	protected void customServerAiStep() {
-		Player player = getTradingPlayer();
-		if(player != null){
-			super.customServerAiStep();
-			if(getTradingPlayer() == null){
-				setTradingPlayer(player);
-			}
-		}else {
-			super.customServerAiStep();
-		}
-	}
-	
 	@Override
 	protected void updateTrades(){
 		VillagerData villagerdata = getVillagerData();

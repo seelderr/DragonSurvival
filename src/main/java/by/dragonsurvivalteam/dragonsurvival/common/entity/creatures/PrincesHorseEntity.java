@@ -62,7 +62,20 @@ public class PrincesHorseEntity extends Villager implements IAnimatable, CommonT
 	public PrincesHorseEntity(EntityType<? extends Villager> entityType, Level world, VillagerType villagerType){
 		super(entityType, world, villagerType);
 	}
-
+	
+	protected void customServerAiStep() {
+		Player player = getTradingPlayer();
+		if(player != null){
+			super.customServerAiStep();
+			if(getTradingPlayer() == null){
+				setTradingPlayer(player);
+			}
+		}else {
+			super.customServerAiStep();
+		}
+	}
+	
+	
 	@Override
 	public SoundEvent getNotifyTradeSound(){
 		return null;
