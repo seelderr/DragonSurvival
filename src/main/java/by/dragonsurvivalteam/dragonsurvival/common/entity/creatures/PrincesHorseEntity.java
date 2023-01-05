@@ -2,12 +2,10 @@ package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 
 import by.dragonsurvivalteam.dragonsurvival.client.render.util.AnimationTimer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.util.CommonTraits;
-import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSTrades;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.serialization.Dynamic;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.core.BlockPos;
@@ -28,7 +26,6 @@ import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.PanicGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
-import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.npc.VillagerData;
 import net.minecraft.world.entity.npc.VillagerTrades;
@@ -51,7 +48,6 @@ import software.bernie.geckolib3.util.GeckoLibUtil;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 public class PrincesHorseEntity extends Villager implements IAnimatable, CommonTraits{
 	private static final List<DyeColor> colors = Arrays.asList(DyeColor.RED, DyeColor.YELLOW, DyeColor.PURPLE, DyeColor.BLUE, DyeColor.BLACK, DyeColor.WHITE);
@@ -85,11 +81,7 @@ public class PrincesHorseEntity extends Villager implements IAnimatable, CommonT
 	protected Brain<?> makeBrain(Dynamic<?> p_213364_1_){
 		return brainProvider().makeBrain(p_213364_1_);
 	}
-
-	@Override
-	public void refreshBrain(ServerLevel p_213770_1_){
-	}
-
+	
 	@Override
 	protected void defineSynchedData(){
 		super.defineSynchedData();
@@ -116,11 +108,6 @@ public class PrincesHorseEntity extends Villager implements IAnimatable, CommonT
 		entityData.set(color, i);
 	}
 
-	//@Override
-	//public boolean removeWhenFarAway(double distance){
-	//	return !hasCustomName() && tickCount >= Functions.minutesToTicks(ServerConfig.princessDespawnDelay) && !hasCustomName();
-	//}
-
 	@Override
 	@Nullable
 	protected SoundEvent getAmbientSound(){
@@ -140,24 +127,7 @@ public class PrincesHorseEntity extends Villager implements IAnimatable, CommonT
 	@Override
 	public void playWorkSound(){
 	}
-
-/*	@Override
-	public void die(DamageSource damageSource){
-		if(level instanceof ServerLevel && !(this instanceof PrinceHorseEntity)){
-			Princess princess = DSEntities.PRINCESS.create(level);
-			princess.setPos(getX(), getY(), getZ());
-			princess.finalizeSpawn((ServerLevelAccessor)level, level.getCurrentDifficultyAt(blockPosition()), MobSpawnType.NATURAL, null, null);
-			princess.setColor(getColor());
-			princess.setUUID(UUID.randomUUID());
-			level.addFreshEntity(princess);
-		}
-		super.die(damageSource);
-
-        if (damageSource.getEntity() instanceof Player) {
-            VillagerRelationsHandler.applyEvilMarker((Player) damageSource.getEntity());
-        }
-}*/
-
+	
 	@Override
 	public boolean canBreed(){
 		return false;
@@ -170,19 +140,14 @@ public class PrincesHorseEntity extends Villager implements IAnimatable, CommonT
 
 	@Override
 	@Nullable
-	public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverWorld, DifficultyInstance difficultyInstance, MobSpawnType reason,
-		@Nullable
-			SpawnGroupData livingEntityData,
-		@Nullable
-			CompoundTag compoundNBT){
+	public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverWorld, DifficultyInstance difficultyInstance, MobSpawnType reason, @Nullable SpawnGroupData livingEntityData, @Nullable CompoundTag compoundNBT){
 		setColor(colors.get(random.nextInt(6)).getId());
 		setVillagerData(getVillagerData().setProfession(DSEntities.PRINCE_PROFESSION));
 		return super.finalizeSpawn(serverWorld, difficultyInstance, reason, livingEntityData, compoundNBT);
 	}
-
+	
 	@Override
-	public void thunderHit(ServerLevel p_241841_1_, LightningBolt p_241841_2_){
-	}
+	public void thunderHit(ServerLevel p_241841_1_, LightningBolt p_241841_2_){}
 
 	@Override
 	protected void updateTrades(){

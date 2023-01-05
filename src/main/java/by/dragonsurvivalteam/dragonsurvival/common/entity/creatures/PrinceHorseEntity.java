@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSTrades;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.nbt.CompoundTag;
@@ -43,15 +44,24 @@ public class PrinceHorseEntity extends PrincesHorseEntity{
 
 	@Override
 	@Nullable
-	public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverWorld, DifficultyInstance difficultyInstance, MobSpawnType reason,
-		@Nullable
-			SpawnGroupData livingEntityData,
-		@Nullable
-			CompoundTag compoundNBT){
+	public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverWorld, DifficultyInstance difficultyInstance, MobSpawnType reason, @Nullable SpawnGroupData livingEntityData, @Nullable CompoundTag compoundNBT){
 		setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.GOLDEN_SWORD));
+		setVillagerData(getVillagerData().setProfession(DSEntities.PRINCESS_PROFESSION));
 		return super.finalizeSpawn(serverWorld, difficultyInstance, reason, livingEntityData, compoundNBT);
 	}
-
+	
+	protected void customServerAiStep() {
+		Player player = getTradingPlayer();
+		if(player != null){
+			super.customServerAiStep();
+			if(getTradingPlayer() == null){
+				setTradingPlayer(player);
+			}
+		}else {
+			super.customServerAiStep();
+		}
+	}
+	
 	@Override
 	protected void updateTrades(){
 		VillagerData villagerdata = getVillagerData();

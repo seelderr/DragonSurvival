@@ -113,7 +113,6 @@ import java.util.Random;
 
 
 	public static class ItemTrade implements VillagerTrades.ItemListing{
-
 		private ItemStack baseCostA = ItemStack.EMPTY;
 		private ItemStack costB = ItemStack.EMPTY;
 		private final ItemStack result;

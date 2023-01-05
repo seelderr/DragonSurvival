@@ -1,11 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 
-import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSTrades;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.serialization.Dynamic;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.core.BlockPos;
@@ -26,7 +24,6 @@ import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.PanicGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
-import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.npc.VillagerData;
@@ -79,9 +76,18 @@ public class Princess extends Villager{
 	protected Brain<?> makeBrain(Dynamic<?> p_213364_1_){
 		return brainProvider().makeBrain(p_213364_1_);
 	}
-
-	@Override
-	public void refreshBrain(ServerLevel p_213770_1_){
+	
+	
+	protected void customServerAiStep() {
+		Player player = getTradingPlayer();
+		if(player != null){
+			super.customServerAiStep();
+			if(getTradingPlayer() == null){
+				setTradingPlayer(player);
+			}
+		}else {
+			super.customServerAiStep();
+		}
 	}
 
 	@Override
@@ -198,11 +204,7 @@ public class Princess extends Villager{
 
 	@Override
 	@Nullable
-	public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverWorld, DifficultyInstance difficultyInstance, MobSpawnType reason,
-		@Nullable
-			SpawnGroupData livingEntityData,
-		@Nullable
-			CompoundTag compoundNBT){
+	public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverWorld, DifficultyInstance difficultyInstance, MobSpawnType reason, @Nullable SpawnGroupData livingEntityData, @Nullable CompoundTag compoundNBT){
 		setColor(colors.get(random.nextInt(6)).getId());
 		setVillagerData(getVillagerData().setProfession(DSEntities.PRINCESS_PROFESSION));
 		return super.finalizeSpawn(serverWorld, difficultyInstance, reason, livingEntityData, compoundNBT);

@@ -5,9 +5,13 @@ import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.Bolas;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.active.ToughSkinAbility;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
@@ -18,11 +22,6 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.tags.TagKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.core.Registry;
-import net.minecraft.world.entity.ai.attributes.AttributeMap;
 
 import java.util.Collections;
 import java.util.List;
@@ -210,27 +209,12 @@ public class DragonEffects{
 			super(type, color);
 			this.uncurable = uncurable;
 		}
-		public static void execute(Entity entity) {
 
-			if (entity == null)
-				return;
+		public void removeAttributeModifiers(LivingEntity entity, AttributeMap attributeMap, int amplifier) {
+			super.removeAttributeModifiers(entity, attributeMap, amplifier);
 			if (entity.getType().is(TagKey.create(Registry.ENTITY_TYPE_REGISTRY, new ResourceLocation("dragonsurvival:royal_departure_affected")))) {
 				if (!entity.level.isClientSide())
 					entity.discard();
-			}
-		}
-		public void removeAttributeModifiers(LivingEntity entity, AttributeMap attributeMap, int amplifier) {
-			super.removeAttributeModifiers(entity, attributeMap, amplifier);
-			RoyalDepartureEffectExpiresProcedure.execute(entity);
-		}
-		public class RoyalDepartureEffectExpiresProcedure {
-			public static void execute(Entity entity) {
-				if (entity == null)
-					return;
-				if (entity.getType().is(TagKey.create(Registry.ENTITY_TYPE_REGISTRY, new ResourceLocation("dragonsurvival:royal_departure_affected")))) {
-					if (!entity.level.isClientSide())
-						entity.discard();
-				}
 			}
 		}
 

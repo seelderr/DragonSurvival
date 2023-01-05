@@ -3,10 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.registry;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonType;
-import by.dragonsurvivalteam.dragonsurvival.common.items.ChargedCoalItem;
-import by.dragonsurvivalteam.dragonsurvival.common.items.DragonTreatItem;
-import by.dragonsurvivalteam.dragonsurvival.common.items.SpinGrantItem;
-import by.dragonsurvivalteam.dragonsurvival.common.items.WingGrantItem;
+import by.dragonsurvivalteam.dragonsurvival.common.items.*;
 import by.dragonsurvivalteam.dragonsurvival.common.items.food.ChargedSoupItem;
 import by.dragonsurvivalteam.dragonsurvival.common.items.food.DragonFoodItem;
 import by.dragonsurvivalteam.dragonsurvival.common.items.growth.StarBoneItem;
@@ -72,8 +69,8 @@ public class DSItems{
 		elderDragonDust = registerItem(registry, "elder_dragon_dust", "ds.description.elderDragonDust");
 		elderDragonBone = registerItem(registry, "elder_dragon_bone", "ds.description.elderDragonBone");
 
-     	princeSummon = registerItem(registry, "prince_summon", "ds.description.prince_summon");
-		princessSummon = registerItem(registry, "princess_summon", "ds.description.princess_summon");
+     	princeSummon = registerItem(registry, new RoyalSummonItem(() -> DSEntities.PRINCE_ON_HORSE, defaultProperties), "prince_summon");
+		princessSummon = registerItem(registry, new RoyalSummonItem(() -> DSEntities.PRINCESS, defaultProperties), "princess_summon");
 
 		dragonHeartShard = registerItem(registry, "heart_element", "ds.description.heartElement");
 		weakDragonHeart = registerItem(registry, "weak_dragon_heart", "ds.description.weakDragonHeart");
@@ -146,9 +143,7 @@ public class DSItems{
 	public static Item registerItem(IForgeRegistry<Item> registry, String name, String description){
 		Item item = new Item(new Item.Properties().tab(DragonSurvivalMod.items)){
 			@Override
-			public void appendHoverText(ItemStack stack,
-				@Nullable
-					Level world, List<Component> list, TooltipFlag tooltipFlag){
+			public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> list, TooltipFlag tooltipFlag){
 				super.appendHoverText(stack, world, list, tooltipFlag);
 				list.add(new TranslatableComponent(description));
 			}
