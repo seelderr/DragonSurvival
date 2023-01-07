@@ -1,9 +1,11 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSTrades;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.serialization.Dynamic;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.core.BlockPos;
@@ -24,6 +26,7 @@ import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.PanicGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.npc.VillagerData;
@@ -43,9 +46,9 @@ import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
-/**
+/*
  * Horseless princess
- */
+*/
 public class Princess extends Villager{
 	private static final List<DyeColor> colors = Arrays.asList(DyeColor.RED, DyeColor.YELLOW, DyeColor.PURPLE, DyeColor.BLUE, DyeColor.BLACK, DyeColor.WHITE);
 	public static EntityDataAccessor<Integer> color = SynchedEntityData.defineId(Princess.class, EntityDataSerializers.INT);
@@ -116,9 +119,9 @@ public class Princess extends Villager{
 		entityData.set(color, i);
 	}
 
-	/*@Override
+	@Override
 	public boolean removeWhenFarAway(double p_213397_1_){
-		return !hasCustomName() && tickCount >= Functions.minutesToTicks(ServerConfig.princessDespawnDelay);
+		return !hasCustomName() && tickCount >= Functions.minutesToTicks(2400);
 	}
 
 	private static final TargetingConditions KNIGHT_RANGE = TargetingConditions.forNonCombat().range(32);
@@ -140,7 +143,7 @@ public class Princess extends Villager{
 				}
 			}
 		}
-	}*/
+	}
 
 	@Override
 	@Nullable
@@ -222,7 +225,7 @@ public class Princess extends Villager{
 			VillagerTrades.ItemListing[] trades = int2objectmap.get(villagerdata.getLevel());
 			if(trades != null){
 				MerchantOffers merchantoffers = getOffers();
-				addOffersFromItemListings(merchantoffers, trades, 2);
+				addOffersFromItemListings(merchantoffers, trades, 4);
 			}
 		}
 	}
@@ -248,7 +251,7 @@ public class Princess extends Villager{
 		});
 		goalSelector.addGoal(6, new LookAtPlayerGoal(this, LivingEntity.class, 8.0F));
 		goalSelector.addGoal(6, new AvoidEntityGoal<>(this, Player.class, 16, 1, 1, living -> {
-			return DragonUtils.isDragon(living) && living.hasEffect(DragonEffects.EVIL_DRAGON);
+			return DragonUtils.isDragon(living) && living.hasEffect(DragonEffects.ROYAL_CHASE);
 		}));
 		goalSelector.addGoal(7, new PanicGoal(this, 1));
 	}

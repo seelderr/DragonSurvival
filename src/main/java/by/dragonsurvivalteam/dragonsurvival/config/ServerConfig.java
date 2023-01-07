@@ -457,17 +457,17 @@ public class ServerConfig{
 	@ConfigOption( side = ConfigSide.SERVER, category = "general", key = "elytraForDragon", comment = "Whether dragons are allowed to use Elytra" )
 	public static Boolean dragonsAllowedToUseElytra = false;
 
-	@ConfigRange( min = 1, max = 2400 )
-	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "princessDespawnDelay", comment = "Princess or prince may despawn after this many minutes" )
-	public static Integer princessDespawnDelay = 2400;
-
 	@ConfigRange( min = 1, max = 120 )
 	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "hunterDespawnDelay", comment = "Any dragon hunter may despawn after this many minutes" )
 	public static Integer hunterDespawnDelay = 15;
 
 	@ConfigRange( min = 10, max = 240 )
-	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "princessSpawnDelay", comment = "Minimum delay between prince or princess spawning, in minutes" )
-	public static Integer princessSpawnDelay = 120;
+	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "princessSpawnDelay", comment = "Minimum delay between prince or princess spawning around village, in minutes" )
+	public static Integer royalSpawnDelay = 240;
+
+	@ConfigRange( min = 1, max = 1000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "royalDisappearInMinutes", comment = "In how many minutes the Prince and Princess will disappear after the call with the summon scroll. Default is 15 minutes" )
+	public static Integer royalDisappearInMinutes = 15;
 
 	@ConfigRange( min = 12, max = 240 )
 	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "hunterGroupSpawnDelay", comment = "Minimum delay between Dragon hunter group spawning, in minutes" )
@@ -493,11 +493,11 @@ public class ServerConfig{
 	public static Integer xpGain = 10;
 
 	@ConfigType(EntityType.class)
-	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "evilDragonStatusGivers", comment = "Entities which give 'Evil dragon' status on death" )
-	public static List<String> evilDragonStatusGivers = List.of("minecraft:villager", "dragonsurvival:hunter_hound", "dragonsurvival:knight", "dragonsurvival:shooter", "dragonsurvival:squire", "dragonsurvival:prince", "dragonsurvival:princess", "dragonsurvival:princess_entity");
+	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "royalChaseStatusGivers", comment = "Entities which give 'Evil dragon' status on death" )
+	public static List<String> royalChaseStatusGivers = List.of("minecraft:villager", "minecraft:iron_golem", "dragonsurvival:hunter_hound", "dragonsurvival:knight", "dragonsurvival:shooter", "dragonsurvival:squire", "dragonsurvival:prince", "dragonsurvival:princess", "dragonsurvival:princess_entity");
 
-	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "preserveEvilDragonAfterDeath", comment = "Preserve effect 'Evil dragon' after death?" )
-	public static Boolean preserveEvilDragonEffectAfterDeath = false;
+	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "preserveRoyalChaseAfterDeath", comment = "Preserve effect 'Evil dragon' after death?" )
+	public static Boolean preserveRoyalChaseEffectAfterDeath = false;
 
 	@ConfigRange( min = 6, max = 128 )
 	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "princessAndHuntersLowerSpawnBound", comment = "Lowest Y value allowed for princess and hunter spawning" )
@@ -557,10 +557,10 @@ public class ServerConfig{
 	@ConfigRange( min = 0d, max = 20d )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "hunter"}, key = "hunterArmor", comment = "Dragon Hunter armor" )
 	public static Double hunterArmor = 0d;
-
+/*
 	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "hunter"}, key = "hunterThrowsBolas", comment = "Is Dragon hunter able to throw a bolas?" )
-	public static Boolean hunterHasBolas = true;
-
+	public static Boolean hunterHasBolas = false;
+*/
 	@ConfigRange( min = 10d, max = 60d )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "squire"}, key = "squireHealth", comment = "Dragon Squire health" )
 	public static Double squireHealth = 24d;

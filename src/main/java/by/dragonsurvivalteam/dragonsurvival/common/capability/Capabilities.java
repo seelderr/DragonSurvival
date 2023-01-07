@@ -106,8 +106,8 @@ public class Capabilities{
 			capNew.readNBT(nbt);
 			capNew.getSkinData().compileSkin();
 
-			if(ServerConfig.preserveEvilDragonEffectAfterDeath && capOld.getVillageRelationShips().evilStatusDuration > 0){
-				player.addEffect(new MobEffectInstance(DragonEffects.EVIL_DRAGON, capOld.getVillageRelationShips().evilStatusDuration));
+			if(ServerConfig.preserveRoyalChaseEffectAfterDeath && capOld.getVillageRelationShips().evilStatusDuration > 0){
+				player.addEffect(new MobEffectInstance(DragonEffects.ROYAL_CHASE, capOld.getVillageRelationShips().evilStatusDuration));
 			}
 
 			NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new CompleteDataSync(player.getId(), nbt));

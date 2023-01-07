@@ -2,18 +2,18 @@ package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSTrades;
+import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.SpawnGroupData;
-import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
-import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.world.entity.ai.goal.PanicGoal;
+import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.npc.VillagerData;
 import net.minecraft.world.entity.npc.VillagerTrades;
@@ -58,7 +58,7 @@ public class PrinceHorseEntity extends PrincesHorseEntity{
 			VillagerTrades.ItemListing[] trades = int2objectmap.get(villagerdata.getLevel());
 			if(trades != null){
 				MerchantOffers merchantoffers = getOffers();
-				addOffersFromItemListings(merchantoffers, trades, 2);
+				addOffersFromItemListings(merchantoffers, trades, 4);
 			}
 		}
 	}
@@ -66,12 +66,16 @@ public class PrinceHorseEntity extends PrincesHorseEntity{
 	@Override
 	protected void registerGoals(){
 		super.registerGoals();
-		targetSelector.addGoal(5, new HurtByTargetGoal(this));
-		goalSelector.addGoal(5, new MeleeAttackGoal(this, 1.0D, true));
-		goalSelector.getAvailableGoals().removeIf(prioritizedGoal -> {
+		this.goalSelector.addGoal(1, new WaterAvoidingRandomStrollGoal(this, 1));
+		this.targetSelector.addGoal(2, new HurtByTargetGoal(this, Shooter.class).setAlertOthers());
+		this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, 1, true, false, living -> living.hasEffect(MobEffects.BAD_OMEN) || living.hasEffect(DragonEffects.ROYAL_CHASE)));
+		this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.0D, true));
+		this.goalSelector.getAvailableGoals().removeIf(prioritizedGoal -> {
 			Goal goal = prioritizedGoal.getGoal();
-			return goal instanceof PanicGoal || goal instanceof AvoidEntityGoal;
-		});
+			return goal instanceof PanicGoal || goal instanceof AvoidEntityGoal;});
+		this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 10.0F));
+		this.goalSelector.addGoal(6, new RandomStrollGoal(this, 0.5));
+		this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
 	}
 
 	@Override
@@ -117,7 +121,7 @@ public class PrinceHorseEntity extends PrincesHorseEntity{
 					}
 				}
 			}
-			if(movement > 0.2){
+			if(movement > 0.4){
 				animationBuilder.addAnimation("run");
 			}else if(movement > 0.01){
 				animationBuilder.addAnimation("walk");

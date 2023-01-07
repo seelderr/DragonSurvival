@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.items;
 
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.core.BlockPos;
@@ -62,7 +63,7 @@ public class RoyalSummonItem extends Item
 				if (hitresult.getType() == HitResult.Type.BLOCK) {
 					Mob ent = entityType.get().create(pLevel);
 					ent.setPos(hitresult.getLocation().x, hitresult.getLocation().y, hitresult.getLocation().z);
-					ent.addEffect(new MobEffectInstance(DragonEffects.ROYAL_DEPARTURE, Functions.minutesToTicks(5)));
+					ent.addEffect(new MobEffectInstance(DragonEffects.ROYAL_DEPARTURE, Functions.minutesToTicks(ServerConfig.royalDisappearInMinutes)));
 					if (!pLevel.isClientSide) {
 						ent.finalizeSpawn((ServerLevelAccessor)pLevel, pLevel.getCurrentDifficultyAt(ent.blockPosition()), MobSpawnType.SPAWN_EGG, (SpawnGroupData)null, (CompoundTag)null);
 						pLevel.addFreshEntity(ent);

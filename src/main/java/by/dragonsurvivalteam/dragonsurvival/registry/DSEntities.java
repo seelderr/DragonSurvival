@@ -3,7 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.registry;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.*;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.monsters.MagicalPredator;
+//import by.dragonsurvivalteam.dragonsurvival.common.entity.monsters.MagicalPredator;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.BallLightningEntity;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.Bolas;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.DragonSpikeEntity;
@@ -45,7 +45,6 @@ public class DSEntities{
 	private static final List<EntityType<?>> entities = Lists.newArrayList();
 	public static EntityType<DragonEntity> DRAGON;
 	public static EntityType<DragonEntity> DRAGON_ARMOR;
-	public static EntityType<MagicalPredator> MAGICAL_BEAST;
 	public static EntityType<HunterHoundEntity> HUNTER_HOUND;
 	public static EntityType<Shooter> SHOOTER_HUNTER;
 	public static EntityType<SquireEntity> SQUIRE_HUNTER;
@@ -62,7 +61,6 @@ public class DSEntities{
 
 	@SubscribeEvent
 	public static void attributeCreationEvent(EntityAttributeCreationEvent event){
-//		event.put(MAGICAL_BEAST, MagicalPredator.createMonsterAttributes().build());
 		event.put(DRAGON, DragonEntity.createLivingAttributes().build());
 		event.put(DRAGON_ARMOR, DragonEntity.createLivingAttributes().build());
 		event.put(HUNTER_HOUND, Wolf.createAttributes().add(Attributes.MOVEMENT_SPEED, ServerConfig.houndSpeed).add(Attributes.ATTACK_DAMAGE, ServerConfig.houndDamage).add(Attributes.MAX_HEALTH, ServerConfig.houndHealth).build());
@@ -115,7 +113,6 @@ public class DSEntities{
 
 		SpawnPlacements.register(SHOOTER_HUNTER, SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, predicate);
 		SpawnPlacements.register(SQUIRE_HUNTER, SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, predicate);
-		SpawnPlacements.register(PRINCESS, SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, princeSpawn);
 		SpawnPlacements.register(KNIGHT, SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, predicate);
 		SpawnPlacements.register(PRINCE_ON_HORSE, SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, princeSpawn);
 		SpawnPlacements.register(PRINCESS_ON_HORSE, SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, princeSpawn);
@@ -140,11 +137,8 @@ public class DSEntities{
 	public static void registerVillageTypes(RegistryEvent.Register<VillagerProfession> event){
 		PRINCESS_PROFESSION = new VillagerProfession("princess", PoiType.UNEMPLOYED, ImmutableSet.of(), ImmutableSet.of(), null);
 		PRINCESS_PROFESSION.setRegistryName(new ResourceLocation(DragonSurvivalMod.MODID, "princess"));
-		//event.getRegistry().register(PRINCESS_PROFESSION);
-
 		PRINCE_PROFESSION = new VillagerProfession("prince", PoiType.UNEMPLOYED, ImmutableSet.of(), ImmutableSet.of(), null);
 		PRINCE_PROFESSION.setRegistryName(new ResourceLocation(DragonSurvivalMod.MODID, "prince"));
-		//event.getRegistry().register(PRINCE_PROFESSION);
 	}
 
 	@SubscribeEvent( priority = EventPriority.LOWEST )
@@ -162,10 +156,9 @@ public class DSEntities{
 		registerSpawnEgg(registry, HUNTER_HOUND, 10510648, 8934192);
 		registerSpawnEgg(registry, SHOOTER_HUNTER, 12486764, 2690565);
 		registerSpawnEgg(registry, SQUIRE_HUNTER, 12486764, 5318420);
-		registerSpawnEgg(registry, PRINCESS, 16766495, 174864);
-		registerSpawnEgg(registry, KNIGHT, 0, 0x510707);
-		registerSpawnEgg(registry, PRINCE_ON_HORSE, 0xffdd1f, 0x2ab10);
-		registerSpawnEgg(registry, PRINCESS_ON_HORSE, 0xffd61f, 0x2ab10);
+		registerSpawnEgg(registry, KNIGHT,  -15526631, -8750470);
+		registerSpawnEgg(registry, PRINCE_ON_HORSE, -14210026, -9571315);
+		registerSpawnEgg(registry, PRINCESS_ON_HORSE, -14804205, -14047);
 	}
 
 	private static void registerSpawnEgg(IForgeRegistry<Item> registry, EntityType entity, int eggPrimary, int eggSecondary){

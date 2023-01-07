@@ -22,10 +22,9 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.Brain;
-import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
-import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.PanicGoal;
-import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.npc.VillagerData;
 import net.minecraft.world.entity.npc.VillagerTrades;
@@ -170,7 +169,7 @@ public class PrincesHorseEntity extends Villager implements IAnimatable, CommonT
 			VillagerTrades.ItemListing[] trades = int2objectmap.get(villagerdata.getLevel());
 			if(trades != null){
 				MerchantOffers merchantoffers = getOffers();
-				addOffersFromItemListings(merchantoffers, trades, 2);
+				addOffersFromItemListings(merchantoffers, trades, 4);
 			}
 		}
 	}
@@ -188,17 +187,14 @@ public class PrincesHorseEntity extends Villager implements IAnimatable, CommonT
 
 	@Override
 	protected void registerGoals(){
-		goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1){
-			@Override
-			public boolean canUse(){
-				return !isTrading() && super.canUse();
-			}
-		});
-		goalSelector.addGoal(6, new LookAtPlayerGoal(this, LivingEntity.class, 8.0F));
-		goalSelector.addGoal(6, new AvoidEntityGoal<>(this, Player.class, 16, 1, 1, living -> {
-			return DragonUtils.isDragon(living) && living.hasEffect(DragonEffects.EVIL_DRAGON);
-		}));
-		goalSelector.addGoal(7, new PanicGoal(this, 2.0));
+		super.registerGoals();
+		this.goalSelector.addGoal(1, new WaterAvoidingRandomStrollGoal(this, 1));
+		this.goalSelector.addGoal(2, new AvoidEntityGoal<>(this, Player.class, 16, 1, 1, living -> DragonUtils.isDragon(living) && living.hasEffect(DragonEffects.ROYAL_CHASE)));
+		this.goalSelector.addGoal(3, new PanicGoal(this, 2.0));
+		this.targetSelector.addGoal(4, new HurtByTargetGoal(this, Shooter.class).setAlertOthers());
+		this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 10.0F));
+		this.goalSelector.addGoal(9, new RandomStrollGoal(this, 0.5));
+		this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
 	}
 
 	@Override
@@ -208,7 +204,7 @@ public class PrincesHorseEntity extends Villager implements IAnimatable, CommonT
 
 	@Override
 	public void registerControllers(AnimationData data){
-		data.addAnimationController(new AnimationController(this, "everything", 4, event -> {
+		data.addAnimationController(new AnimationController(this, "everything", 10, event -> {
 			AnimationBuilder builder = new AnimationBuilder();
 			double speed = getMovementSpeed(this);
 			AnimationController controller = event.getController();
@@ -252,24 +248,24 @@ public class PrincesHorseEntity extends Villager implements IAnimatable, CommonT
 		return animationFactory;
 	}
 
-/*private static final TargetingConditions KNIGHT_RANGE = TargetingConditions.forNonCombat().range(32);
+private static final TargetingConditions KNIGHT_RANGE = TargetingConditions.forNonCombat().range(32);
 @Override
-public void checkDespawn(){
+public void checkDespawn() {
 	super.checkDespawn();
 
-	if(isRemoved() || hasCustomName()) return;
+	if (isRemoved() || hasCustomName()) return;
 
 	Entity entity1 = level.getNearestEntity(KnightEntity.class, KNIGHT_RANGE, this, getX(), getY(), getZ(), getBoundingBox().inflate(32));
 
-	if(entity1 == null){
+	if (entity1 == null) {
 		Entity entity = level.getNearestPlayer(this, -1.0D);
 		if (entity != null) {
 			double d0 = entity.distanceToSqr(this);
 			int i = getType().getCategory().getDespawnDistance();
-			if (d0 > (double)(i * 4)) {
+			if (d0 > (double) (i * 4)) {
 				discard();
-				}
+			}
 		}
-		}
-	}*/
+	}
+  }
 }

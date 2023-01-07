@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 
-import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.AlertExceptHunters;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.FollowMobGoal;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.HunterEntityCheckProcedure;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
@@ -16,7 +16,6 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
 import net.minecraft.world.entity.animal.Wolf;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
@@ -33,21 +32,47 @@ public class HunterHoundEntity extends Wolf implements DragonHunter{
 	}
 
 	@Override
-	protected void registerGoals(){
+	protected void registerGoals() {
 		super.registerGoals();
-		goalSelector.getAvailableGoals().removeIf(prioritizedGoal -> {
-			Goal goal = prioritizedGoal.getGoal();
-			return goal instanceof SitWhenOrderedToGoal || goal instanceof FollowOwnerGoal || goal instanceof BreedGoal || goal instanceof BegGoal;
+
+		this.goalSelector.addGoal(1, new WaterAvoidingRandomStrollGoal(this, 1));
+		this.targetSelector.addGoal(2, new HurtByTargetGoal(this, Shooter.class).setAlertOthers());
+		this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 2.0, false) {
+			@Override
+			protected double getAttackReachSqr(LivingEntity entity) {
+				return (double) (4.0 + entity.getBbWidth() * entity.getBbWidth());
+			}
 		});
-		targetSelector.getAvailableGoals().removeIf(prioritizedGoal -> {
-			Goal goal = prioritizedGoal.getGoal();
-			return goal instanceof NearestAttackableTargetGoal || goal instanceof OwnerHurtByTargetGoal || goal instanceof HurtByTargetGoal;
+		this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Player.class, 1, true, false, living -> living.hasEffect(MobEffects.BAD_OMEN) || living.hasEffect(DragonEffects.ROYAL_CHASE)));
+		this.targetSelector.addGoal(5, new NearestAttackableTargetGoal(this, Monster.class, false, false) {
+			@Override
+			public boolean canUse() {
+				double x = HunterHoundEntity.this.getX();
+				double y = HunterHoundEntity.this.getY();
+				double z = HunterHoundEntity.this.getZ();
+				Entity entity = HunterHoundEntity.this;
+				Level world = HunterHoundEntity.this.level;
+				return super.canUse() && HunterEntityCheckProcedure.execute(entity);
+			}
+
+			@Override
+			public boolean canContinueToUse() {
+				double x = HunterHoundEntity.this.getX();
+				double y = HunterHoundEntity.this.getY();
+				double z = HunterHoundEntity.this.getZ();
+				Entity entity = HunterHoundEntity.this;
+				Level world = HunterHoundEntity.this.level;
+				return super.canContinueToUse() && HunterEntityCheckProcedure.execute(entity);
+			}
 		});
-		targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Player.class, 0, true, false, living -> living.hasEffect(MobEffects.BAD_OMEN) || living.hasEffect(DragonEffects.EVIL_DRAGON)));
-		targetSelector.addGoal(6, new NearestAttackableTargetGoal<>(this, Monster.class, 0, true, false, living -> living instanceof Mob && !(living instanceof DragonHunter)));
-		targetSelector.addGoal(4, new HurtByTargetGoal(this, Shooter.class).setAlertOthers());
-		goalSelector.addGoal(7, new FollowMobGoal<>(KnightEntity.class, this, 15));
-		goalSelector.addGoal(8, new AlertExceptHunters(this, KnightEntity.class, Shooter.class, SquireEntity.class));
+		this.goalSelector.addGoal(6, new MeleeAttackGoal(this, 2.0, false) {
+			@Override
+			protected double getAttackReachSqr(LivingEntity entity) {
+				return (double) (4.0 + entity.getBbWidth() * entity.getBbWidth());
+			}
+		});
+		this.targetSelector.addGoal(7, new HurtByTargetGoal(this));
+		this.goalSelector.addGoal(8, new FollowMobGoal<>(KnightEntity.class, this, 30));
 	}
 
 	@Override

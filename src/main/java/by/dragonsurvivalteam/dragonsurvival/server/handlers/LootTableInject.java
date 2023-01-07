@@ -37,7 +37,25 @@ public class LootTableInject{
 	                                                   "stronghold_library",
 	                                                   "underwater_ruin_big",
 	                                                   "underwater_ruin_small",
-	                                                   "woodland_mansion");
+	                                                   "woodland_mansion",
+	                                                   "village_armorer",
+	                                                   "village_butcher",
+			                                           "village_cartographer",
+			                                           "village_desert_house",
+			                                           "village_fisher",
+			                                           "village_fletcher",
+			                                           "village_mason",
+			                                           "village_plains_house",
+			                                           "village_savanna_house",
+			                                           "village_shepherd",
+			                                           "village_snowy_house",
+			                                           "village_taiga_house",
+			                                           "village_tannery",
+			                                           "village_temple",
+			                                           "village_toolsmith",
+			                                           "village_weaponsmith");
+
+
 
 	@SubscribeEvent
 	public static void lootLoad(LootTableLoadEvent evt){

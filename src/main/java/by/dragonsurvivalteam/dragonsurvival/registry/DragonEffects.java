@@ -31,7 +31,7 @@ public class DragonEffects{
 
 	public static MobEffect STRESS;
 	public static MobEffect TRAPPED;
-	public static MobEffect EVIL_DRAGON;
+	public static MobEffect ROYAL_CHASE;
 	public static MobEffect PEACE, MAGIC, FIRE;
 	public static MobEffect ANIMAL_PEACE;
 	public static MobEffect PREDATOR_ANTI_SPAWN;
@@ -55,10 +55,10 @@ public class DragonEffects{
 		IForgeRegistry<MobEffect> forgeRegistry = effectRegister.getRegistry();
 		STRESS = new Stress(0xf4a2e8).setRegistryName(DragonSurvivalMod.MODID, "stress");
 		forgeRegistry.register(STRESS);
-		TRAPPED = new Trapped(MobEffectCategory.NEUTRAL, 0xdddddd).setRegistryName(DragonSurvivalMod.MODID, "trapped");
+		TRAPPED = new Trapped(MobEffectCategory.HARMFUL, 0xdddddd, true).setRegistryName(DragonSurvivalMod.MODID, "trapped");
 		forgeRegistry.register(TRAPPED);
-		EVIL_DRAGON = new EvilDragon(MobEffectCategory.NEUTRAL).setRegistryName(DragonSurvivalMod.MODID, "evil_dragon");
-		forgeRegistry.register(EVIL_DRAGON);
+		ROYAL_CHASE = new RoyalChase(MobEffectCategory.NEUTRAL).setRegistryName(DragonSurvivalMod.MODID, "royal_chase");
+		forgeRegistry.register(ROYAL_CHASE);
 		PEACE = new Effect2(MobEffectCategory.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "peace");
 		forgeRegistry.register(PEACE);
 		MAGIC = new Effect2(MobEffectCategory.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "magic");
@@ -161,7 +161,7 @@ public class DragonEffects{
 	}
 
 	private static class Trapped extends MobEffect{
-		protected Trapped(MobEffectCategory effectType, int color){
+		protected Trapped(MobEffectCategory effectType, int color, boolean uncurable){
 			super(effectType, color);
 		}
 
@@ -182,9 +182,9 @@ public class DragonEffects{
 		}
 	}
 
-	private static class EvilDragon extends MobEffect{
+	private static class RoyalChase extends MobEffect{
 
-		protected EvilDragon(MobEffectCategory p_i50391_1_){
+		protected RoyalChase(MobEffectCategory p_i50391_1_){
 			super(p_i50391_1_, 0x0);
 		}
 
@@ -193,7 +193,7 @@ public class DragonEffects{
 			super.applyEffectTick(pLivingEntity, pAmplifier);
 
 			if(!DragonUtils.isDragon(pLivingEntity)){
-				pLivingEntity.removeEffect(DragonEffects.EVIL_DRAGON);
+				pLivingEntity.removeEffect(DragonEffects.ROYAL_CHASE);
 			}
 		}
 

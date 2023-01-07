@@ -6,18 +6,19 @@ import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.FollowMobGoal;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.HunterEntityCheckProcedure;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.PathfinderMob;
-import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.monster.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -81,7 +82,7 @@ public class KnightEntity extends PathfinderMob implements IAnimatable, DragonHu
 					}
 				}
 			}
-			if(movement > 0.2){
+			if(movement > 0.5){
 				animationBuilder.addAnimation("run");
 			}else if(movement > 0.01){
 				animationBuilder.addAnimation("walk");
@@ -122,18 +123,44 @@ public class KnightEntity extends PathfinderMob implements IAnimatable, DragonHu
 	}
 
 	@Override
-	protected void registerGoals(){
+	protected void registerGoals() {
 		super.registerGoals();
-		goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1));
-		goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.5, true));
-		goalSelector.addGoal(8, new FollowMobGoal<>(Princess.class, this, 15));
-		goalSelector.addGoal(8, new FollowMobGoal<>(PrincesHorseEntity.class, this, 15));
-		goalSelector.addGoal(8, new FollowMobGoal<>(PrinceHorseEntity.class, this, 15));
 
-		targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Player.class, 1, true, false, living -> {
-			return living.hasEffect(MobEffects.BAD_OMEN) || living.hasEffect(DragonEffects.EVIL_DRAGON);
-		}));
-		targetSelector.addGoal(6, new HurtByTargetGoal(this, Shooter.class).setAlertOthers());
+		this.goalSelector.addGoal(1, new WaterAvoidingRandomStrollGoal(this, 1));
+		this.targetSelector.addGoal(2, new HurtByTargetGoal(this, Shooter.class).setAlertOthers());
+		this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Player.class, 1, true, false, living -> living.hasEffect(MobEffects.BAD_OMEN) || living.hasEffect(DragonEffects.ROYAL_CHASE)));
+		this.targetSelector.addGoal(5, new NearestAttackableTargetGoal(this, Monster.class, false, false) {
+			@Override
+			public boolean canUse() {
+				double x = KnightEntity.this.getX();
+				double y = KnightEntity.this.getY();
+				double z = KnightEntity.this.getZ();
+				Entity entity = KnightEntity.this;
+				Level world = KnightEntity.this.level;
+				return super.canUse() && HunterEntityCheckProcedure.execute(entity);
+			}
+
+			@Override
+			public boolean canContinueToUse() {
+				double x = KnightEntity.this.getX();
+				double y = KnightEntity.this.getY();
+				double z = KnightEntity.this.getZ();
+				Entity entity = KnightEntity.this;
+				Level world = KnightEntity.this.level;
+				return super.canContinueToUse() && HunterEntityCheckProcedure.execute(entity);
+			}
+		});
+		this.goalSelector.addGoal(6, new MeleeAttackGoal(this, 2.0, false) {
+			@Override
+			protected double getAttackReachSqr(LivingEntity entity) {
+				return (double) (4.0 + entity.getBbWidth() * entity.getBbWidth());
+			}
+		});
+		this.targetSelector.addGoal(7, new HurtByTargetGoal(this));
+		this.goalSelector.addGoal(8, new FollowMobGoal<>(PrinceHorseEntity.class, this, 15));
+		this.goalSelector.addGoal(9, new FollowMobGoal<>(PrincesHorseEntity.class, this, 15));
+		this.goalSelector.addGoal(10, new RandomStrollGoal(this, 0.1d));
+		this.goalSelector.addGoal(11, new RandomLookAroundGoal(this));
 	}
 
 	@Override

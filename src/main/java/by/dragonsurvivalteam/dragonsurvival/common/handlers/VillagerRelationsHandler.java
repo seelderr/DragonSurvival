@@ -21,7 +21,7 @@ import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.monster.Zombie;
+//import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.npc.AbstractVillager;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.npc.WanderingTrader;
@@ -37,7 +37,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
+//import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.living.PotionEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -52,7 +52,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class VillagerRelationsHandler{
 	public static List<? extends EntityType<? extends PathfinderMob>> dragonHunters;
 	//change to minutes
-	private static int timeLeft = Functions.minutesToTicks(ServerConfig.princessSpawnDelay) + Functions.minutesToTicks(ThreadLocalRandom.current().nextInt(30));
+	private static int timeLeft = Functions.minutesToTicks(ServerConfig.royalSpawnDelay) + Functions.minutesToTicks(ThreadLocalRandom.current().nextInt(30));
 
 	@SubscribeEvent
 	public static void onDeath(LivingDeathEvent deathEvent){
@@ -101,7 +101,7 @@ public class VillagerRelationsHandler{
 				}
 			}
 			String typeName = livingEntity.getType().getRegistryName().toString();
-			if(DragonUtils.isDragon(playerEntity) && ServerConfig.evilDragonStatusGivers.contains(typeName)){
+			if(DragonUtils.isDragon(playerEntity) && ServerConfig.royalChaseStatusGivers.contains(typeName)){
 				applyEvilMarker(playerEntity);
 			}
 		}
@@ -110,38 +110,48 @@ public class VillagerRelationsHandler{
 	public static void applyEvilMarker(Player playerEntity){
 		DragonStateProvider.getCap(playerEntity).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon()){
-				MobEffectInstance effectInstance = playerEntity.getEffect(DragonEffects.EVIL_DRAGON);
+				MobEffectInstance effectInstance = playerEntity.getEffect(DragonEffects.ROYAL_CHASE);
 				if(effectInstance == null){
-					playerEntity.addEffect(new MobEffectInstance(DragonEffects.EVIL_DRAGON, Functions.minutesToTicks(1)));
+					playerEntity.addEffect(new MobEffectInstance(DragonEffects.ROYAL_CHASE, Functions.minutesToTicks(1)));
 				}else{
 					int duration = effectInstance.getDuration();
 					if(duration <= Functions.minutesToTicks(1)){
-						playerEntity.addEffect(new MobEffectInstance(DragonEffects.EVIL_DRAGON, Functions.minutesToTicks(5), 1));
+						playerEntity.addEffect(new MobEffectInstance(DragonEffects.ROYAL_CHASE, Functions.minutesToTicks(5), 1));
 					}else if(duration <= Functions.minutesToTicks(5)){
-						playerEntity.addEffect(new MobEffectInstance(DragonEffects.EVIL_DRAGON, Functions.minutesToTicks(10), 2));
+						playerEntity.addEffect(new MobEffectInstance(DragonEffects.ROYAL_CHASE, Functions.minutesToTicks(10), 2));
 					}else if(duration <= Functions.minutesToTicks(10)){
-						playerEntity.addEffect(new MobEffectInstance(DragonEffects.EVIL_DRAGON, Functions.minutesToTicks(15), 3));
+						playerEntity.addEffect(new MobEffectInstance(DragonEffects.ROYAL_CHASE, Functions.minutesToTicks(15), 3));
 					}else if(duration <= Functions.minutesToTicks(15)){
-						playerEntity.addEffect(new MobEffectInstance(DragonEffects.EVIL_DRAGON, Functions.minutesToTicks(20), 4));
+						playerEntity.addEffect(new MobEffectInstance(DragonEffects.ROYAL_CHASE, Functions.minutesToTicks(20), 4));
 					}else if(duration <= Functions.minutesToTicks(20)){
-						playerEntity.addEffect(new MobEffectInstance(DragonEffects.EVIL_DRAGON, Functions.minutesToTicks(25), 5));
+						playerEntity.addEffect(new MobEffectInstance(DragonEffects.ROYAL_CHASE, Functions.minutesToTicks(25), 5));
 					}else if(duration <= Functions.minutesToTicks(25)){
-						playerEntity.addEffect(new MobEffectInstance(DragonEffects.EVIL_DRAGON, Functions.minutesToTicks(30), 6));
+						playerEntity.addEffect(new MobEffectInstance(DragonEffects.ROYAL_CHASE, Functions.minutesToTicks(30), 6));
 					}else if(duration <= Functions.minutesToTicks(30)){
-						playerEntity.addEffect(new MobEffectInstance(DragonEffects.EVIL_DRAGON, Functions.minutesToTicks(60), 7));
+						playerEntity.addEffect(new MobEffectInstance(DragonEffects.ROYAL_CHASE, Functions.minutesToTicks(60), 7));
 					}else if(duration <= Functions.minutesToTicks(60)){
-						playerEntity.addEffect(new MobEffectInstance(DragonEffects.EVIL_DRAGON, Functions.minutesToTicks(120), 8));
+						playerEntity.addEffect(new MobEffectInstance(DragonEffects.ROYAL_CHASE, Functions.minutesToTicks(120), 8));
 					}else if(duration <= Functions.minutesToTicks(120)){
-						playerEntity.addEffect(new MobEffectInstance(DragonEffects.EVIL_DRAGON, Functions.minutesToTicks(240), 9));
+						playerEntity.addEffect(new MobEffectInstance(DragonEffects.ROYAL_CHASE, Functions.minutesToTicks(240), 9));
 					}else if(duration <= Functions.minutesToTicks(240)){
-						playerEntity.addEffect(new MobEffectInstance(DragonEffects.EVIL_DRAGON, Functions.minutesToTicks(400), 10));
+						playerEntity.addEffect(new MobEffectInstance(DragonEffects.ROYAL_CHASE, Functions.minutesToTicks(400), 10));
+					}else if(duration <= Functions.minutesToTicks(340)){
+						playerEntity.addEffect(new MobEffectInstance(DragonEffects.ROYAL_CHASE, Functions.minutesToTicks(600), 11));
+					}else if(duration <= Functions.minutesToTicks(440)){
+						playerEntity.addEffect(new MobEffectInstance(DragonEffects.ROYAL_CHASE, Functions.minutesToTicks(800), 12));
+					}else if(duration <= Functions.minutesToTicks(540)){
+						playerEntity.addEffect(new MobEffectInstance(DragonEffects.ROYAL_CHASE, Functions.minutesToTicks(1000), 13));
+					}else if(duration <= Functions.minutesToTicks(640)){
+						playerEntity.addEffect(new MobEffectInstance(DragonEffects.ROYAL_CHASE, Functions.minutesToTicks(1200), 14));
+					}else if(duration <= Functions.minutesToTicks(740)){
+						playerEntity.addEffect(new MobEffectInstance(DragonEffects.ROYAL_CHASE, Functions.minutesToTicks(1500), 15));
 					}
 				}
 			}
 		});
 	}
 
-	@SubscribeEvent
+/*	@SubscribeEvent
 	public static void entityTargets(LivingSetAttackTargetEvent setAttackTargetEvent){
 		Entity entity = setAttackTargetEvent.getEntity();
 		LivingEntity target = setAttackTargetEvent.getTarget();
@@ -153,13 +163,13 @@ public class VillagerRelationsHandler{
 			((Zombie)entity).setTarget(null);
 		}
 	}
-
+*/
 	@SubscribeEvent
 	public static void voidEvilStatus(PotionEvent.PotionAddedEvent potionAddedEvent){
 		MobEffectInstance effectInstance = potionAddedEvent.getPotionEffect();
 		LivingEntity livingEntity = potionAddedEvent.getEntityLiving();
 		if(effectInstance.getEffect() == MobEffects.HERO_OF_THE_VILLAGE){
-			livingEntity.removeEffect(DragonEffects.EVIL_DRAGON);
+			livingEntity.removeEffect(DragonEffects.ROYAL_CHASE);
 		}
 	}
 
@@ -168,11 +178,11 @@ public class VillagerRelationsHandler{
 		Level world = joinWorldEvent.getWorld();
 		Entity entity = joinWorldEvent.getEntity();
 		if(entity instanceof IronGolem golemEntity){
-			golemEntity.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(golemEntity, Player.class, 0, true, false, livingEntity -> DragonUtils.isDragon(livingEntity) && livingEntity.hasEffect(DragonEffects.EVIL_DRAGON)));
+			golemEntity.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(golemEntity, Player.class, 0, true, false, livingEntity -> livingEntity.hasEffect(DragonEffects.ROYAL_CHASE)));
 		}
 
 		if(entity instanceof AbstractVillager abstractVillager && !(entity instanceof PrinceHorseEntity)){
-			abstractVillager.goalSelector.addGoal(10, new AvoidEntityGoal<>(abstractVillager, Player.class, livingEntity -> DragonUtils.isDragon(livingEntity) && livingEntity.hasEffect(DragonEffects.EVIL_DRAGON), 16.0F, 1.0D, 1.0D, pMob -> true));
+			abstractVillager.goalSelector.addGoal(10, new AvoidEntityGoal<>(abstractVillager, Player.class, livingEntity -> livingEntity.hasEffect(DragonEffects.ROYAL_CHASE), 16.0F, 1.0D, 1.0D, pMob -> true));
 		}
 	}
 
@@ -181,7 +191,7 @@ public class VillagerRelationsHandler{
 		Player playerEntity = event.getPlayer();
 		Entity livingEntity = event.getTarget();
 		if(livingEntity instanceof AbstractVillager){
-			if(DragonUtils.isDragon(playerEntity) && playerEntity.hasEffect(DragonEffects.EVIL_DRAGON)){
+			if(playerEntity.hasEffect(DragonEffects.ROYAL_CHASE)){
 				event.setCanceled(true);
 			}
 		}
@@ -197,13 +207,13 @@ public class VillagerRelationsHandler{
 		}
 
 		if(attacked instanceof AbstractVillager || attacked instanceof DragonHunter){
-			if(DragonUtils.isDragon(attacker)){
-				if(attacker.hasEffect(DragonEffects.EVIL_DRAGON)){
-					int duration = attacker.getEffect(DragonEffects.EVIL_DRAGON).getDuration();
-					int amplifier = attacker.getEffect(DragonEffects.EVIL_DRAGON).getAmplifier();
-					attacker.addEffect(new MobEffectInstance(DragonEffects.EVIL_DRAGON, duration + Functions.secondsToTicks(5), amplifier));
+			{
+				if(attacker.hasEffect(DragonEffects.ROYAL_CHASE)){
+					int duration = attacker.getEffect(DragonEffects.ROYAL_CHASE).getDuration();
+					int amplifier = attacker.getEffect(DragonEffects.ROYAL_CHASE).getAmplifier();
+					attacker.addEffect(new MobEffectInstance(DragonEffects.ROYAL_CHASE, duration + Functions.secondsToTicks(5), amplifier));
 				}else{
-					attacker.addEffect(new MobEffectInstance(DragonEffects.EVIL_DRAGON, Functions.secondsToTicks(5)));
+					attacker.addEffect(new MobEffectInstance(DragonEffects.ROYAL_CHASE, Functions.secondsToTicks(5)));
 				}
 			}
 		}
@@ -213,7 +223,7 @@ public class VillagerRelationsHandler{
 	public static void spawnHunters(TickEvent.PlayerTickEvent playerTickEvent){
 		if(!dragonHunters.isEmpty() && playerTickEvent.phase == TickEvent.Phase.END){
 			Player player = playerTickEvent.player;
-			if(DragonUtils.isDragon(player) && player.hasEffect(DragonEffects.EVIL_DRAGON) && !player.level.isClientSide && !player.isCreative() && !player.isSpectator() && player.isAlive()){
+			if(DragonUtils.isDragon(player) && player.hasEffect(DragonEffects.ROYAL_CHASE) && !player.level.isClientSide && !player.isCreative() && !player.isSpectator() && player.isAlive()){
 				ServerLevel serverWorld = (ServerLevel)player.level;
 				if(serverWorld.dimension() == Level.OVERWORLD){
 					VillageRelationShips villageRelationShips = DragonUtils.getHandler(player).getVillageRelationShips();
@@ -246,8 +256,8 @@ public class VillagerRelationsHandler{
 	}
 
 	public static int computeLevelOfEvil(Player playerEntity){
-		if(DragonUtils.isDragon(playerEntity) && playerEntity.hasEffect(DragonEffects.EVIL_DRAGON)){
-			MobEffectInstance effectInstance = playerEntity.getEffect(DragonEffects.EVIL_DRAGON);
+		if(DragonUtils.isDragon(playerEntity) && playerEntity.hasEffect(DragonEffects.ROYAL_CHASE)){
+			MobEffectInstance effectInstance = playerEntity.getEffect(DragonEffects.ROYAL_CHASE);
 			assert effectInstance != null;
 			int timeLeft = effectInstance.getDuration();
 			if(timeLeft >= Functions.minutesToTicks(240)){
@@ -316,7 +326,7 @@ public class VillagerRelationsHandler{
 									knightHunter.finalizeSpawn(serverWorld, serverWorld.getCurrentDifficultyAt(player.blockPosition()), MobSpawnType.NATURAL, null, null);
 								}
 
-								timeLeft = Functions.minutesToTicks(ServerConfig.princessSpawnDelay) + Functions.minutesToTicks(world.random.nextInt(ServerConfig.princessSpawnDelay / 2));
+								timeLeft = Functions.minutesToTicks(ServerConfig.royalSpawnDelay) + Functions.minutesToTicks(world.random.nextInt(ServerConfig.royalSpawnDelay / 2));
 							}
 						}
 					}else{
@@ -335,8 +345,8 @@ public class VillagerRelationsHandler{
 		if(playerTickEvent.phase == TickEvent.Phase.END){
 			Player playerEntity = playerTickEvent.player;
 			if(!playerEntity.level.isClientSide){
-				if(playerEntity.hasEffect(DragonEffects.EVIL_DRAGON)){
-					DragonUtils.getHandler(playerEntity).getVillageRelationShips().evilStatusDuration = playerEntity.getEffect(DragonEffects.EVIL_DRAGON).getDuration();
+				if(playerEntity.hasEffect(DragonEffects.ROYAL_CHASE)){
+					DragonUtils.getHandler(playerEntity).getVillageRelationShips().evilStatusDuration = playerEntity.getEffect(DragonEffects.ROYAL_CHASE).getDuration();
 				}
 			}
 		}

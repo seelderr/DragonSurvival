@@ -2,8 +2,11 @@ package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.AlertExceptHunters;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.CrossbowAttackGoal;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.FollowMobGoal;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.HunterEntityCheckProcedure;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.Bolas;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.nbt.CompoundTag;
@@ -15,13 +18,17 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.AbstractIllager;
 import net.minecraft.world.entity.monster.AbstractIllager.IllagerArmPose;
 import net.minecraft.world.entity.monster.CrossbowAttackMob;
+import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.CrossbowItem;
@@ -39,40 +46,68 @@ public class Shooter extends Hunter implements CrossbowAttackMob{
 	}
 
 	@Override
-	protected void registerGoals(){
+	protected void registerGoals() {
 		super.registerGoals();
-		goalSelector.addGoal(3, new CrossbowAttackGoal<>(this, 1.0D, 8.0F));
-		goalSelector.addGoal(8, new AlertExceptHunters<>(this, HunterHoundEntity.class, KnightEntity.class, SquireEntity.class));
-	}
 
-	@Override
-	public void tick(){
-		super.tick();
-		if(ServerConfig.hunterHasBolas){
-			LivingEntity target = getTarget();
-			if(target instanceof Player && DragonUtils.isDragon(target)){
-				if(bolasCooldown == 0){
-					performBolasThrow(target);
-					bolasCooldown = Functions.secondsToTicks(15);
-				}else{
-					bolasCooldown--;
-				}
+		this.goalSelector.addGoal(1, new WaterAvoidingRandomStrollGoal(this, 1));
+		this.targetSelector.addGoal(2, new HurtByTargetGoal(this, Shooter.class).setAlertOthers());
+		goalSelector.addGoal(3, new CrossbowAttackGoal<>(this, 1.0D, 5.0F));
+		this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Player.class, 1, true, false, living -> living.hasEffect(MobEffects.BAD_OMEN) || living.hasEffect(DragonEffects.ROYAL_CHASE)));
+		this.targetSelector.addGoal(5, new NearestAttackableTargetGoal(this, Monster.class, false, false) {
+			@Override
+			public boolean canUse() {
+				double x = Shooter.this.getX();
+				double y = Shooter.this.getY();
+				double z = Shooter.this.getZ();
+				Entity entity = Shooter.this;
+				Level world = Shooter.this.level;
+				return super.canUse() && HunterEntityCheckProcedure.execute(entity);
 			}
-		}
+
+			@Override
+			public boolean canContinueToUse() {
+				double x = Shooter.this.getX();
+				double y = Shooter.this.getY();
+				double z = Shooter.this.getZ();
+				Entity entity = Shooter.this;
+				Level world = Shooter.this.level;
+				return super.canContinueToUse() && HunterEntityCheckProcedure.execute(entity);
+			}
+		});
+		this.targetSelector.addGoal(6, new HurtByTargetGoal(this));
+		this.goalSelector.addGoal(7, new FollowMobGoal<>(KnightEntity.class, this, 15));
+		this.goalSelector.addGoal(9, new RandomStrollGoal(this, 0.5));
+		this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
 	}
 
-	public void performBolasThrow(LivingEntity target){
-		Bolas bolas = new Bolas(this, level);
-		double d0 = target.getEyeY() - (double)1.1F;
-		double d1 = target.getX() - getX();
-		double d2 = d0 - bolas.getY();
-		double d3 = target.getZ() - getZ();
-		float f = Mth.sqrt((float)(d1 * d1 + d3 * d3)) * 0.2F;
-		bolas.shoot(d1, d2 + f, d3, 1.6F, 12.0F);
-		playSound(SoundEvents.WITCH_THROW, 1.0F, 0.4F / (random.nextFloat() * 0.4F + 0.8F));
-		level.addFreshEntity(bolas);
-	}
+	/*		@Override
+        public void tick(){
+            super.tick();
+            if(ServerConfig.hunterHasBolas){
+                LivingEntity target = getTarget();
+                if(target instanceof Player && DragonUtils.isDragon(target)){
+                    if(bolasCooldown == 0){
+                        performBolasThrow(target);
+                        bolasCooldown = Functions.secondsToTicks(60);
+                    }else{
+                        bolasCooldown--;
+                    }
+                }
+            }
+        }
 
+    public void performBolasThrow(LivingEntity target){
+            Bolas bolas = new Bolas(this, level);
+            double d0 = target.getEyeY() - (double)1.1F;
+            double d1 = target.getX() - getX();
+            double d2 = d0 - bolas.getY();
+            double d3 = target.getZ() - getZ();
+            float f = Mth.sqrt((float)(d1 * d1 + d3 * d3)) * 0.2F;
+            bolas.shoot(d1, d2 + f, d3, 1.6F, 1.0F);
+            playSound(SoundEvents.WITCH_THROW, 1.0F, 0.4F);
+            level.addFreshEntity(bolas);
+        }
+    */
 	@Override
 	public IllagerArmPose getArmPose(){
 		if(isChargingCrossbow()){
@@ -107,7 +142,7 @@ public class Shooter extends Hunter implements CrossbowAttackMob{
 
 	private void addArrow(ItemStack stack){
 		CompoundTag compoundNBT = stack.getOrCreateTag();
-		ListTag listNBT = compoundNBT.getList("ChargedProjectiles", 10);
+		ListTag listNBT = compoundNBT.getList("ChargedProjectiles", 1);
 		CompoundTag nbt = new CompoundTag();
 		new ItemStack(Items.ARROW).save(nbt);
 		listNBT.add(nbt);
