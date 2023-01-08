@@ -294,6 +294,10 @@
 	{
       "id": "prehistoric_delight:prehistoric_fillet_cooked",
       "required": false
+    },
+	{
+      "id": "nocubes_better_smoker:cooked_tropical_fish",
+      "required": false
     }
   ]
 }

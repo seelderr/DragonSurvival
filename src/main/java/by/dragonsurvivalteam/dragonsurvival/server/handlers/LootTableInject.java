@@ -14,7 +14,7 @@ import java.util.List;
 
 @EventBusSubscriber
 public class LootTableInject{
-	private static final String injectFile = "dust_and_bones";
+	private static final String injectFile = "dragon_loots";
 	private static final List<String> files = List.of("bastion_bridge",
 	                                                   "bastion_hoglin_stable",
 	                                                   "bastion_other",
@@ -38,24 +38,22 @@ public class LootTableInject{
 	                                                   "underwater_ruin_big",
 	                                                   "underwater_ruin_small",
 	                                                   "woodland_mansion",
-	                                                   "village_armorer",
-	                                                   "village_butcher",
-			                                           "village_cartographer",
-			                                           "village_desert_house",
-			                                           "village_fisher",
-			                                           "village_fletcher",
-			                                           "village_mason",
-			                                           "village_plains_house",
-			                                           "village_savanna_house",
-			                                           "village_shepherd",
-			                                           "village_snowy_house",
-			                                           "village_taiga_house",
-			                                           "village_tannery",
-			                                           "village_temple",
-			                                           "village_toolsmith",
-			                                           "village_weaponsmith");
-
-
+	                                                   "village/village_armorer",
+	                                                   "village/village_butcher",
+			                                           "village/village_cartographer",
+			                                           "village/village_desert_house",
+			                                           "village/village_fisher",
+			                                           "village/village_fletcher",
+			                                           "village/village_mason",
+			                                           "village/village_plains_house",
+			                                           "village/village_savanna_house",
+			                                           "village/village_shepherd",
+			                                           "village/village_snowy_house",
+			                                           "village/village_taiga_house",
+			                                           "village/village_tannery",
+			                                           "village/village_temple",
+			                                           "village/village_toolsmith",
+			                                           "village/village_weaponsmith");
 
 	@SubscribeEvent
 	public static void lootLoad(LootTableLoadEvent evt){

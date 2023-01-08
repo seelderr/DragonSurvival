@@ -282,6 +282,18 @@
     {
       "id": "prehistoricfauna:cooked_large_synapsid_meat",
       "required": false
+    },
+    {
+      "id": "nocubes_better_frogs:cooked_frog_leg",
+      "required": false
+    },
+    {
+      "id": "nocubes_better_smoker:cooked_rotten_flesh",
+      "required": false
+    },
+    {
+      "id": "nocubes_better_smoker:cooked_rabbit_foot",
+      "required": false
     }
   ]
 }

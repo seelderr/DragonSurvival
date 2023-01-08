@@ -340,6 +340,18 @@
     {
       "id": "prehistoric_delight:foliage_salad",
       "required": false
+    },
+    {
+      "id": "nocubes_better_smoker:cooked_beetroot",
+      "required": false
+    },
+    {
+      "id": "nocubes_better_smoker:cooked_carrot",
+      "required": false
+    },
+    {
+      "id": "nocubes_better_smoker:cooked_poisonous_potato",
+      "required": false
     }
   ]
 }

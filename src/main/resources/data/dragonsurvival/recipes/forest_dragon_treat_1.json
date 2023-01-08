@@ -10,7 +10,7 @@
       "item": "dragonsurvival:elder_dragon_dust"
     },
     "S": {
-      "item": "minecraft:rabbit"
+      "tag": "forge:raw_meats"
     }
   },
   "result": {
