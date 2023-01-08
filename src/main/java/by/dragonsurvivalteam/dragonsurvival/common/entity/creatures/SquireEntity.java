@@ -1,9 +1,10 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 
-import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.AlertExceptHunters;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.FollowMobGoal;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.HunterEntityCheckProcedure;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffects;
@@ -33,7 +34,7 @@ public class SquireEntity extends Hunter{
 		super.registerGoals();
 
 		this.goalSelector.addGoal(1, new WaterAvoidingRandomStrollGoal(this, 1));
-		this.targetSelector.addGoal(2, new HurtByTargetGoal(this, Shooter.class).setAlertOthers());
+		this.targetSelector.addGoal(2, new HurtByTargetGoal(this, Hunter.class).setAlertOthers());
 		this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 2.0, false) {
 			@Override
 			protected double getAttackReachSqr(LivingEntity entity) {
@@ -77,5 +78,10 @@ public class SquireEntity extends Hunter{
 	@Override
 	protected void populateDefaultEquipmentSlots(DifficultyInstance difficultyInstance){
 		setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.IRON_SWORD));
+	}
+
+	@Override
+	public boolean removeWhenFarAway(double distance){
+		return !hasCustomName() && tickCount >= Functions.minutesToTicks(ServerConfig.hunterDespawnDelay);
 	}
 }

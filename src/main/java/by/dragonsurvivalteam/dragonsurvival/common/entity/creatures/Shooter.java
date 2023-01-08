@@ -1,21 +1,16 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 
-import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.AlertExceptHunters;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.CrossbowAttackGoal;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.FollowMobGoal;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.HunterEntityCheckProcedure;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.Bolas;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.Mth;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffects;
@@ -142,7 +137,7 @@ public class Shooter extends Hunter implements CrossbowAttackMob{
 
 	private void addArrow(ItemStack stack){
 		CompoundTag compoundNBT = stack.getOrCreateTag();
-		ListTag listNBT = compoundNBT.getList("ChargedProjectiles", 1);
+		ListTag listNBT = compoundNBT.getList("ChargedProjectiles", 10);
 		CompoundTag nbt = new CompoundTag();
 		new ItemStack(Items.ARROW).save(nbt);
 		listNBT.add(nbt);
@@ -177,5 +172,9 @@ public class Shooter extends Hunter implements CrossbowAttackMob{
 		ItemStack stack = new ItemStack(Items.CROSSBOW);
 		addArrow(stack);
 		setItemSlot(EquipmentSlot.MAINHAND, stack);
+	}
+	@Override
+	public boolean removeWhenFarAway(double distance){
+		return !hasCustomName() && tickCount >= Functions.minutesToTicks(ServerConfig.hunterDespawnDelay);
 	}
 }

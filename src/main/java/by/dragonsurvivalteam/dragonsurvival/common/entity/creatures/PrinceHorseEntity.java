@@ -1,8 +1,10 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSTrades;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.DifficultyInstance;
@@ -67,9 +69,9 @@ public class PrinceHorseEntity extends PrincesHorseEntity{
 	protected void registerGoals(){
 		super.registerGoals();
 		this.goalSelector.addGoal(1, new WaterAvoidingRandomStrollGoal(this, 1));
-		this.targetSelector.addGoal(2, new HurtByTargetGoal(this, Shooter.class).setAlertOthers());
+		this.targetSelector.addGoal(2, new HurtByTargetGoal(this, Hunter.class).setAlertOthers());
 		this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, 1, true, false, living -> living.hasEffect(MobEffects.BAD_OMEN) || living.hasEffect(DragonEffects.ROYAL_CHASE)));
-		this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.0D, true));
+		this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 2.0D, true));
 		this.goalSelector.getAvailableGoals().removeIf(prioritizedGoal -> {
 			Goal goal = prioritizedGoal.getGoal();
 			return goal instanceof PanicGoal || goal instanceof AvoidEntityGoal;});
@@ -123,7 +125,7 @@ public class PrinceHorseEntity extends PrincesHorseEntity{
 			}
 			if(movement > 0.4){
 				animationBuilder.addAnimation("run");
-			}else if(movement > 0.01){
+			}else if(movement > 0.05){
 				animationBuilder.addAnimation("walk");
 			}else{
 				Animation animation = animationController.getCurrentAnimation();
@@ -160,5 +162,9 @@ public class PrinceHorseEntity extends PrincesHorseEntity{
 	public void tick(){
 		updateSwingTime();
 		super.tick();
+	}
+	@Override
+	public boolean removeWhenFarAway(double distance){
+		return !hasCustomName() && tickCount >= Functions.minutesToTicks(ServerConfig.hunterDespawnDelay);
 	}
 }

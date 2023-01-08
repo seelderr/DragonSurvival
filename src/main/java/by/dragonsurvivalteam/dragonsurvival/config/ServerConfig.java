@@ -459,7 +459,7 @@ public class ServerConfig{
 
 	@ConfigRange( min = 1, max = 120 )
 	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "hunterDespawnDelay", comment = "Any dragon hunter may despawn after this many minutes" )
-	public static Integer hunterDespawnDelay = 15;
+	public static Integer hunterDespawnDelay = 20;
 
 	@ConfigRange( min = 10, max = 240 )
 	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "princessSpawnDelay", comment = "Minimum delay between prince or princess spawning around village, in minutes" )
@@ -583,7 +583,7 @@ public class ServerConfig{
 
 	@ConfigRange( min = 10d, max = 60d )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "prince"}, key = "princeHealth", comment = "Prince health" )
-	public static Double princeHealth = 20d;
+	public static Double princeHealth = 40d;
 
 	@ConfigRange( min = 0.2d, max = 0.6d )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "prince"}, key = "princeSpeed", comment = "Prince speed" )

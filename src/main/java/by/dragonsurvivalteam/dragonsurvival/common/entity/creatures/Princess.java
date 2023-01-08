@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 
-import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSTrades;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
@@ -121,7 +120,7 @@ public class Princess extends Villager{
 
 	@Override
 	public boolean removeWhenFarAway(double p_213397_1_){
-		return !hasCustomName() && tickCount >= Functions.minutesToTicks(2400);
+		return !hasCustomName() && tickCount >= Functions.minutesToTicks(1);
 	}
 
 	private static final TargetingConditions KNIGHT_RANGE = TargetingConditions.forNonCombat().range(32);

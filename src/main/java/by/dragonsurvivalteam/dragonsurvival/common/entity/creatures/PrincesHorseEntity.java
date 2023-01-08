@@ -2,10 +2,13 @@ package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 
 import by.dragonsurvivalteam.dragonsurvival.client.render.util.AnimationTimer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.util.CommonTraits;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.FollowMobGoal;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSTrades;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.serialization.Dynamic;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.core.BlockPos;
@@ -24,7 +27,6 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
-import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.npc.VillagerData;
 import net.minecraft.world.entity.npc.VillagerTrades;
@@ -188,11 +190,12 @@ public class PrincesHorseEntity extends Villager implements IAnimatable, CommonT
 	@Override
 	protected void registerGoals(){
 		super.registerGoals();
-		this.goalSelector.addGoal(1, new WaterAvoidingRandomStrollGoal(this, 1));
+		this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 1));
 		this.goalSelector.addGoal(2, new AvoidEntityGoal<>(this, Player.class, 16, 1, 1, living -> DragonUtils.isDragon(living) && living.hasEffect(DragonEffects.ROYAL_CHASE)));
-		this.goalSelector.addGoal(3, new PanicGoal(this, 2.0));
-		this.targetSelector.addGoal(4, new HurtByTargetGoal(this, Shooter.class).setAlertOthers());
-		this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 10.0F));
+		this.goalSelector.addGoal(1, new PanicGoal(this, 2.0));
+		this.targetSelector.addGoal(4, new HurtByTargetGoal(this, Hunter.class).setAlertOthers());
+		this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 10.0F));
+		this.goalSelector.addGoal(7, new FollowMobGoal<>(PrinceHorseEntity.class, this, 15));
 		this.goalSelector.addGoal(9, new RandomStrollGoal(this, 0.5));
 		this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
 	}
@@ -210,7 +213,7 @@ public class PrincesHorseEntity extends Villager implements IAnimatable, CommonT
 			AnimationController controller = event.getController();
 			if(speed > 0.4){
 				builder.addAnimation("run_princess");
-			}else if(speed > 0.01){
+			}else if(speed > 0.05){
 				builder.addAnimation("walk_princess");
 			}else{
 				Animation animation = controller.getCurrentAnimation();
@@ -248,6 +251,14 @@ public class PrincesHorseEntity extends Villager implements IAnimatable, CommonT
 		return animationFactory;
 	}
 
+	@Override
+	public boolean removeWhenFarAway(double distance){
+		return !hasCustomName() && tickCount >= Functions.minutesToTicks(ServerConfig.hunterDespawnDelay);
+	}
+
+/*
+* Despawn if no knight is around
+
 private static final TargetingConditions KNIGHT_RANGE = TargetingConditions.forNonCombat().range(32);
 @Override
 public void checkDespawn() {
@@ -268,4 +279,5 @@ public void checkDespawn() {
 		}
 	}
   }
+  */
 }

@@ -1,7 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 
-import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.*;
@@ -26,11 +24,6 @@ public abstract class Hunter extends PathfinderMob implements DragonHunter{
 	public void tick(){
 		updateSwingTime();
 		super.tick();
-	}
-
-	@Override
-	public boolean removeWhenFarAway(double distance){
-		return !hasCustomName() && tickCount >= Functions.minutesToTicks(ServerConfig.hunterDespawnDelay);
 	}
 
 	@Nullable

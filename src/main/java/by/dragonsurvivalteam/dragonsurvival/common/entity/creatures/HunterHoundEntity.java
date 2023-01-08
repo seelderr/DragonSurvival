@@ -36,7 +36,7 @@ public class HunterHoundEntity extends Wolf implements DragonHunter{
 		super.registerGoals();
 
 		this.goalSelector.addGoal(1, new WaterAvoidingRandomStrollGoal(this, 1));
-		this.targetSelector.addGoal(2, new HurtByTargetGoal(this, Shooter.class).setAlertOthers());
+		this.targetSelector.addGoal(2, new HurtByTargetGoal(this, Hunter.class).setAlertOthers());
 		this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 2.0, false) {
 			@Override
 			protected double getAttackReachSqr(LivingEntity entity) {

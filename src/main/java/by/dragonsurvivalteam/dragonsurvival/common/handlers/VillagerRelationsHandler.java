@@ -14,6 +14,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
@@ -21,7 +22,6 @@ import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.item.ItemEntity;
-//import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.npc.AbstractVillager;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.npc.WanderingTrader;
@@ -37,7 +37,6 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
-//import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.living.PotionEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -51,7 +50,7 @@ import java.util.concurrent.ThreadLocalRandom;
 @Mod.EventBusSubscriber
 public class VillagerRelationsHandler{
 	public static List<? extends EntityType<? extends PathfinderMob>> dragonHunters;
-	//change to minutes
+
 	private static int timeLeft = Functions.minutesToTicks(ServerConfig.royalSpawnDelay) + Functions.minutesToTicks(ThreadLocalRandom.current().nextInt(30));
 
 	@SubscribeEvent
@@ -135,35 +134,32 @@ public class VillagerRelationsHandler{
 						playerEntity.addEffect(new MobEffectInstance(DragonEffects.ROYAL_CHASE, Functions.minutesToTicks(240), 9));
 					}else if(duration <= Functions.minutesToTicks(240)){
 						playerEntity.addEffect(new MobEffectInstance(DragonEffects.ROYAL_CHASE, Functions.minutesToTicks(400), 10));
-					}else if(duration <= Functions.minutesToTicks(340)){
+					}else if(duration <= Functions.minutesToTicks(400)){
 						playerEntity.addEffect(new MobEffectInstance(DragonEffects.ROYAL_CHASE, Functions.minutesToTicks(600), 11));
-					}else if(duration <= Functions.minutesToTicks(440)){
+					}else if(duration <= Functions.minutesToTicks(600)){
 						playerEntity.addEffect(new MobEffectInstance(DragonEffects.ROYAL_CHASE, Functions.minutesToTicks(800), 12));
-					}else if(duration <= Functions.minutesToTicks(540)){
+					}else if(duration <= Functions.minutesToTicks(800)){
 						playerEntity.addEffect(new MobEffectInstance(DragonEffects.ROYAL_CHASE, Functions.minutesToTicks(1000), 13));
-					}else if(duration <= Functions.minutesToTicks(640)){
+					}else if(duration <= Functions.minutesToTicks(1000)){
 						playerEntity.addEffect(new MobEffectInstance(DragonEffects.ROYAL_CHASE, Functions.minutesToTicks(1200), 14));
-					}else if(duration <= Functions.minutesToTicks(740)){
+					}else if(duration <= Functions.minutesToTicks(1200)){
 						playerEntity.addEffect(new MobEffectInstance(DragonEffects.ROYAL_CHASE, Functions.minutesToTicks(1500), 15));
+					}else if(duration <= Functions.minutesToTicks(1500)){
+						playerEntity.addEffect(new MobEffectInstance(DragonEffects.ROYAL_CHASE, Functions.minutesToTicks(2000), 16));
+					}else if(duration <= Functions.minutesToTicks(2000)){
+						playerEntity.addEffect(new MobEffectInstance(DragonEffects.ROYAL_CHASE, Functions.minutesToTicks(3000), 17));
+					}else if(duration <= Functions.minutesToTicks(3000)){
+						playerEntity.addEffect(new MobEffectInstance(DragonEffects.ROYAL_CHASE, Functions.minutesToTicks(4000), 18));
+					}else if(duration <= Functions.minutesToTicks(4000)){
+						playerEntity.addEffect(new MobEffectInstance(DragonEffects.ROYAL_CHASE, Functions.minutesToTicks(5000), 19));
+					}else if(duration <= Functions.minutesToTicks(5000)){
+						playerEntity.addEffect(new MobEffectInstance(DragonEffects.ROYAL_CHASE, Functions.minutesToTicks(6000), 20));
 					}
 				}
 			}
 		});
 	}
 
-/*	@SubscribeEvent
-	public static void entityTargets(LivingSetAttackTargetEvent setAttackTargetEvent){
-		Entity entity = setAttackTargetEvent.getEntity();
-		LivingEntity target = setAttackTargetEvent.getTarget();
-		if(entity instanceof IronGolem){
-			if(target instanceof DragonHunter){
-				((IronGolem)entity).setTarget(null);
-			}
-		}else if(entity instanceof Zombie && (target instanceof Princess || target instanceof PrincesHorseEntity)){
-			((Zombie)entity).setTarget(null);
-		}
-	}
-*/
 	@SubscribeEvent
 	public static void voidEvilStatus(PotionEvent.PotionAddedEvent potionAddedEvent){
 		MobEffectInstance effectInstance = potionAddedEvent.getPotionEffect();
@@ -260,6 +256,36 @@ public class VillagerRelationsHandler{
 			MobEffectInstance effectInstance = playerEntity.getEffect(DragonEffects.ROYAL_CHASE);
 			assert effectInstance != null;
 			int timeLeft = effectInstance.getDuration();
+			if(timeLeft >= Functions.minutesToTicks(5000)){
+				return 20;
+			}
+			if(timeLeft >= Functions.minutesToTicks(4000)){
+				return 19;
+			}
+			if(timeLeft >= Functions.minutesToTicks(3000)){
+				return 18;
+			}
+			if(timeLeft >= Functions.minutesToTicks(2000)){
+				return 17;
+			}
+			if(timeLeft >= Functions.minutesToTicks(1500)){
+				return 16;
+			}
+			if(timeLeft >= Functions.minutesToTicks(1200)){
+				return 15;
+			}
+			if(timeLeft >= Functions.minutesToTicks(1000)){
+				return 14;
+			}
+			if(timeLeft >= Functions.minutesToTicks(800)){
+				return 13;
+			}
+			if(timeLeft >= Functions.minutesToTicks(600)){
+				return 12;
+			}
+			if(timeLeft >= Functions.minutesToTicks(400)){
+				return 11;
+			}
 			if(timeLeft >= Functions.minutesToTicks(240)){
 				return 10;
 			}

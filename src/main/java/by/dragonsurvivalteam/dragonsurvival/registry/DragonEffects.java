@@ -4,7 +4,6 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.Bolas;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.active.ToughSkinAbility;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -187,16 +186,6 @@ public class DragonEffects{
 		protected RoyalChase(MobEffectCategory p_i50391_1_){
 			super(p_i50391_1_, 0x0);
 		}
-
-		@Override
-		public void applyEffectTick(LivingEntity pLivingEntity, int pAmplifier){
-			super.applyEffectTick(pLivingEntity, pAmplifier);
-
-			if(!DragonUtils.isDragon(pLivingEntity)){
-				pLivingEntity.removeEffect(DragonEffects.ROYAL_CHASE);
-			}
-		}
-
 		@Override
 		public List<ItemStack> getCurativeItems(){
 			return Collections.emptyList();
