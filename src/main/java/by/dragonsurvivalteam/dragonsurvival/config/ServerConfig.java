@@ -345,7 +345,7 @@ public class ServerConfig{
 
 	@ConfigType(Block.class)
 	@ConfigOption( side = ConfigSide.SERVER, category  = {"penalties", "sea"}, key = "seaHydrationBlocks", comment = "When sea dragons stand on these blocks, hydration is restored. Format: block/modid:id" )
-	public static List<String> seaHydrationBlocks = List.of("minecraft:ice", "minecraft:snow", "minecraft:powder_snow","minecraft:snow_block", "dragonsurvival:sea_source_of_magic", "immersive_weathering:icicle");
+	public static List<String> seaHydrationBlocks = List.of("minecraft:ice", "minecraft:snow", "minecraft:powder_snow","minecraft:snow_block", "dragonsurvival:sea_source_of_magic", "immersive_weathering:thin_ice", "immersive_weathering:cryosol", "immersive_weathering:permafrost", "immersive_weathering:frosty_grass", "immersive_weathering:frosty_fern", "ecologics:thin_ice", "ecologics:ice_bricks", "ecologics:ice_brick_stairs", "ecologics:ice_brick_slab", "ecologics:ice_brick_wall", "ecologics:snow_bricks", "ecologics:snow_brick_stairs", "ecologics:snow_brick_slab", "ecologics:snow_brick_wall", "architects_palette:poliched_packed_ice", "architects_palette:poliched_packed_ice_slab", "architects_palette:poliched_packed_ice_vertical_slab", "architects_palette:poliched_packed_ice_stairs", "architects_palette:poliched_packed_ice_wall", "architects_palette:chiseled_packed_ice", "architects_palette:packed_ice_pillar", "architects_palette:coarse_snow", "fantasyfurniture:decorations/snowballs", "immersive_weathering:icicle");
 
 	@ConfigOption( side = ConfigSide.SERVER, category  = {"penalties", "sea"}, key = "allowWaterBottles", comment = "Set to false to disable sea dragons using vanilla water bottles to avoid dehydration." )
 	public static Boolean seaAllowWaterBottles = true;
@@ -458,7 +458,7 @@ public class ServerConfig{
 	public static Boolean dragonsAllowedToUseElytra = false;
 
 	@ConfigRange( min = 1, max = 120 )
-	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "hunterDespawnDelay", comment = "Any dragon hunter may despawn after this many minutes" )
+	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "hunterDespawnDelay", comment = "Any dragon hunter, princess and prince group may despawn after this many minutes" )
 	public static Integer hunterDespawnDelay = 20;
 
 	@ConfigRange( min = 10, max = 240 )
