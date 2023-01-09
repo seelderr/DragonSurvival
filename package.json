@@ -51,7 +51,7 @@
       [
         "@semantic-release/exec",
         {
-          "generateNotesCmd": "sed -ie s/^mod_version=.*/mod_version=${nextRelease.version}/ gradle.properties; sed -ie s/^version_name=.*/version_name=Experimental/ gradle.properties"
+          "generateNotesCmd": "sed -ie s/^mod_version=.*/mod_version=${nextRelease.version}/ gradle.properties"
         }
       ]
     ]

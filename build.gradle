@@ -28,7 +28,7 @@ apply plugin: 'maven-publish'
 
 version =  property("mc_version")+"-"+property("mod_version")
 group = property("mod_group")
-archivesBaseName = property("mod_name") + "_" + property("version_name")
+archivesBaseName = property("mod_name")
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(property("java_version") as String)
 
