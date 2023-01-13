@@ -211,7 +211,10 @@ public class DragonFoodHandler{
 			builder.effect(() -> new MobEffectInstance(MobEffects.HUNGER, 20 * 60, 0), 1.0F);
 		}
 
-		builder.nutrition(nutrition).saturationMod((float)saturation / (float)nutrition / 2.0F);
+		if (saturation == 0 || nutrition == 0)
+			builder.nutrition(nutrition).saturationMod(0.0F);
+		else
+			builder.nutrition(nutrition).saturationMod((float)saturation / (float)nutrition / 2.0F);
 
 		return builder.build();
 	}
