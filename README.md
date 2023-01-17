@@ -1,14 +1,15 @@
 # DRAGONS SURVIVAL
 
-1. ■ Patreon - https://www.patreon.com/blackaures
-2. ■ Сurseforge (download) - https://www.curseforge.com/minecraft/mc-mods/dragons-survival
-3. ■ Discord Server - http://discord.gg/8SsB8ar
-4. ■ Youtube - https://www.youtube.com/channel/UCasTlG0nSSQPPvk4mrmoWLw
-5. ■ TODO list Trello: https://trello.com/b/TkWoD0V3
+* ■ Patreon - https://www.patreon.com/blackaures
+* ■ Сurseforge (download) - https://www.curseforge.com/minecraft/mc-mods/dragons-survival
+* ■ Discord Server - http://discord.gg/8SsB8ar
+* ■ Youtube - https://www.youtube.com/channel/UCasTlG0nSSQPPvk4mrmoWLw
+*  ■ TODO list Trello: https://trello.com/b/TkWoD0V3
 
 # Wiki 
-1. ■ ENG: https://github.com/DragonSurvivalTeam/DragonSurvival/wiki
-2. ■ ZH:  https://dragons-survival.fandom.com/zh/wiki/龙之生存_Wiki
+
+* ■ ENG: https://github.com/DragonSurvivalTeam/DragonSurvival/wiki
+* ■ ZH:  https://dragons-survival.fandom.com/zh/wiki/龙之生存_Wiki
 
 ***
 
