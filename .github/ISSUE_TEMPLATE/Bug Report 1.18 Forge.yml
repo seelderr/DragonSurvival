@@ -8,7 +8,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking the time to fill out this bug report! Make sure that you have removed the old configs and read the DS installation rules here - dragons-survival.fandom.com/wiki/Start_and_Setting
+        Thanks for taking the time to fill out this bug report! Make sure that you have removed the old configs and read the DS installation rules
         
   - type: input
     id: contact

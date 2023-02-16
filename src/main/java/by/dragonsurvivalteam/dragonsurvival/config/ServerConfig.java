@@ -284,7 +284,7 @@ public class ServerConfig{
 
 	@ConfigType(Block.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = {"bonuses", "sea"}, key = "seaSpeedupBlocks", comment = "Blocks sea dragons gain speed when standing above. Formatting: block/modid:id" )
-	public static List<String> seaSpeedupBlocks = List.of("minecraft:ice", "minecraft:impermeable", "minecraft:sand", "minecraft:coral_blocks", "forge:sand", "minecraft:dirt_path", "minecraft:sandstone", "minecraft:cut_sandstone", "minecraft:chiseled_sandstone", "minecraft:smooth_sandstone", "minecraft:red_sandstone", "minecraft:cut_red_sandstone", "minecraft:chiseled_red_sandstone", "minecraft:smooth_red_sandstone", "minecraft:water");
+	public static List<String> seaSpeedupBlocks = List.of("minecraft:ice", "minecraft:impermeable", "minecraft:sand", "minecraft:coral_blocks", "forge:sand", "minecraft:dirt_path", "minecraft:sandstone", "minecraft:cut_sandstone", "minecraft:chiseled_sandstone", "minecraft:smooth_sandstone", "minecraft:red_sandstone", "minecraft:cut_red_sandstone", "minecraft:chiseled_red_sandstone", "minecraft:smooth_red_sandstone", "minecraft:water", "quark:permafrost", "immersive_weathering:permafrost", "architects_palette:polished_packed_ice");
 
 	//Dragon Penalties
 	@ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "penalties", comment = "Set to false to toggle off all dragon penalties." )
@@ -292,7 +292,7 @@ public class ServerConfig{
 
 	@ConfigType(EntityType.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "allowedVehicles", comment = "List of rideable entities. Format: modid:id" )
-	public static List<String> allowedVehicles = List.of("minecraft:boat", "littlelogistics:seater_barge", "minecraft:minecart", "create:seat", "create:contraption", "create:gantry_contraption", "create:stationary_contraption", "botania:player_mover", "quark:quark_boat");
+	public static List<String> allowedVehicles = List.of("minecraft:boat", "littlelogistics:seater_barge", "minecraft:minecart", "create:seat", "create:contraption", "create:gantry_contraption", "create:stationary_contraption", "hexerei:broom", "botania:player_mover", "quark:quark_boat");
 
 	@ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "limitedRiding", comment = "Should dragons be limited by which entities they can ride" )
 	public static Boolean ridingBlacklist = true;
@@ -494,7 +494,7 @@ public class ServerConfig{
 
 	@ConfigType(EntityType.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "royalChaseStatusGivers", comment = "Entities which give 'Evil dragon' status on death" )
-	public static List<String> royalChaseStatusGivers = List.of("minecraft:villager", "minecraft:iron_golem", "dragonsurvival:hunter_hound", "dragonsurvival:knight", "dragonsurvival:shooter", "dragonsurvival:squire", "dragonsurvival:prince", "dragonsurvival:princess", "dragonsurvival:princess_entity");
+	public static List<String> royalChaseStatusGivers = List.of("minecraft:villager", "minecraft:iron_golem", "dragonsurvival:hunter_hound", "dragonsurvival:knight", "dragonsurvival:shooter", "dragonsurvival:squire", "dragonsurvival:prince", "dragonsurvival:princess", "dragonsurvival:princess_entity", "guardvillagers:guard");
 
 	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "preserveRoyalChaseAfterDeath", comment = "Preserve effect 'Evil dragon' after death?" )
 	public static Boolean preserveRoyalChaseEffectAfterDeath = false;
