@@ -4,6 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ClientConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
+import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChannelingCastAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncAbilityCasting;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
@@ -18,6 +19,7 @@ import net.minecraftforge.fml.common.Mod;
 public class ClientCastingHandler{
 	public static byte status = 0;
 	public static boolean hasCast = false;
+	public static int oldChargeTime = -1;
 	@SubscribeEvent
 	public static void abilityKeyBindingChecks(TickEvent.ClientTickEvent clientTickEvent){
 		if(Minecraft.getInstance().player == null || Minecraft.getInstance().level == null || clientTickEvent.phase != TickEvent.Phase.END)
@@ -52,15 +54,21 @@ public class ClientCastingHandler{
 		ActiveDragonAbility ability = dragonStateHandler.getMagicData().getAbilityFromSlot(slot);
 
 		if(ability != null && ability.getLevel() > 0 && !ability.isDisabled()){
-			if(status == 1 && ability.canCastSkill(player)){
-				NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCasting(player.getId(), true, ability.saveNBT()));
+				if(status == 1 && ability.canCastSkill(player) ){
+					if (!(ability instanceof ChannelingCastAbility channelingCastAbility))
+						NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCasting(player.getId(), true, ability.saveNBT()));
+					else if (oldChargeTime != channelingCastAbility.getChargeTime()) {
+						oldChargeTime = channelingCastAbility.getChargeTime();
+						NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCasting(player.getId(), true, ability.saveNBT()));
+					}
+				}else if(status == 2 || status == 1 && !ability.canCastSkill(player)){
+					NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCasting(player.getId(), false, ability.saveNBT()));
 
-			}else if(status == 2 || status == 1 && !ability.canCastSkill(player)){
-				NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCasting(player.getId(), false, ability.saveNBT()));
-
-				ability.onKeyReleased(player);
-				status = 0;
-			}
+					ability.onKeyReleased(player);
+					status = 0;
+					oldChargeTime = -1;
+				}
+			//}
 		}
 	}
 }
