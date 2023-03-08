@@ -794,6 +794,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 
 	public void confirm(){
 		DragonStateProvider.getCap(minecraft.player).ifPresent(cap -> {
+
 			minecraft.player.level.playSound(minecraft.player, minecraft.player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 1, 0.7f);
 
 			if(cap.getType() != type){
@@ -808,6 +809,8 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 				cap.setIsHiding(false);
 				cap.getMovementData().spinLearned = ServerConfig.saveGrowthStage && cap.getMovementData().spinLearned;
 
+				save();
+
 				NetworkHandler.CHANNEL.sendToServer(new CompleteDataSync(Minecraft.getInstance().player.getId(), cap.writeNBT()));
 				NetworkHandler.CHANNEL.sendToServer(new SyncAltarCooldown(Minecraft.getInstance().player.getId(), Functions.secondsToTicks(ServerConfig.altarUsageCooldown)));
 				NetworkHandler.CHANNEL.sendToServer(new SyncSpinStatus(Minecraft.getInstance().player.getId(), cap.getMovementData().spinAttack, cap.getMovementData().spinCooldown, cap.getMovementData().spinLearned));
@@ -818,9 +821,6 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 				}
 			}
 		});
-
-		save();
-
 		Minecraft.getInstance().player.closeContainer();
 	}
 
