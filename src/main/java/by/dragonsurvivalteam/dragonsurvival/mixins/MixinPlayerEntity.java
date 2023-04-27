@@ -14,6 +14,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stat;
 import net.minecraft.stats.Stats;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
@@ -111,7 +112,19 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 
 		return mainStack;
 	}
+	@Redirect(method = "attack", at = @At(value="INVOKE", target = "Lnet/minecraft/world/entity/player/Player;setItemInHand(Lnet/minecraft/world/InteractionHand;Lnet/minecraft/world/item/ItemStack;)V"))
+	public void setItemInHand(Player entity, InteractionHand interactionHand, ItemStack itemStack)
+	{
+		DragonStateHandler cap = DragonUtils.getHandler(entity);
+		if (cap == null || interactionHand != InteractionHand.MAIN_HAND){
+			entity.setItemInHand(interactionHand, itemStack);
+			return;
+		}
+		ItemStack mainStack = entity.getMainHandItem();
+		if (mainStack.getItem() instanceof TieredItem)
+			entity.setItemInHand(interactionHand, itemStack);
 
+	}
 	@Redirect( method = "getDigSpeed(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;)F", at = @At( value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;getMainHandItem()Lnet/minecraft/world/item/ItemStack;" ), remap = false )
 	private ItemStack getDragonTools(Player entity){
 		return ClawToolHandler.getDragonTools(entity);

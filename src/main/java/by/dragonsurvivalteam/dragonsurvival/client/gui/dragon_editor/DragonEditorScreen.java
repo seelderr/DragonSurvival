@@ -793,6 +793,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 	}
 
 	public void confirm(){
+		save();
 		DragonStateProvider.getCap(minecraft.player).ifPresent(cap -> {
 
 			minecraft.player.level.playSound(minecraft.player, minecraft.player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 1, 0.7f);
@@ -808,8 +809,6 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 				cap.setHasWings(ServerConfig.saveGrowthStage ? cap.hasWings() || ServerFlightHandler.startWithWings : ServerFlightHandler.startWithWings);
 				cap.setIsHiding(false);
 				cap.getMovementData().spinLearned = ServerConfig.saveGrowthStage && cap.getMovementData().spinLearned;
-
-				save();
 
 				NetworkHandler.CHANNEL.sendToServer(new CompleteDataSync(Minecraft.getInstance().player.getId(), cap.writeNBT()));
 				NetworkHandler.CHANNEL.sendToServer(new SyncAltarCooldown(Minecraft.getInstance().player.getId(), Functions.secondsToTicks(ServerConfig.altarUsageCooldown)));
