@@ -9,8 +9,7 @@ import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
 
@@ -27,7 +26,7 @@ public class HelpButton extends ExtendedButton implements TooltipRender{
 	}
 
 	public HelpButton(AbstractDragonType type, int x, int y, int sizeX, int sizeY, String text, int variation){
-		super(x, y, sizeX, sizeY, TextComponent.EMPTY, s -> {});
+		super(x, y, sizeX, sizeY, Component.empty(), s -> {});
 		this.text = text;
 		this.variation = variation;
 		this.type = type;
@@ -62,7 +61,7 @@ public class HelpButton extends ExtendedButton implements TooltipRender{
 
 	@Override
 	public void renderToolTip(PoseStack pPoseStack, int pMouseX, int pMouseY){
-		TooltipRendering.drawHoveringText(pPoseStack, new TranslatableComponent(text), pMouseX, pMouseY);
+		TooltipRendering.drawHoveringText(pPoseStack, Component.translatable(text), pMouseX, pMouseY);
 	}
 
 	@Override

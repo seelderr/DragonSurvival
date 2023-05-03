@@ -179,7 +179,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 	}
 
 	public static boolean animationExists(String key){
-		Animation animation = GeckoLibCache.getInstance().getAnimations().get(ClientDragonRender.dragonModel.getAnimationFileLocation(ClientDragonRender.dragonArmor)).getAnimation(key);
+		Animation animation = GeckoLibCache.getInstance().getAnimations().get(ClientDragonRender.dragonModel.getAnimationResource(ClientDragonRender.dragonArmor)).getAnimation(key);
 
 		return animation != null;
 	}

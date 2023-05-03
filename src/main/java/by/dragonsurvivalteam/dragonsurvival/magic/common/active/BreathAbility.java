@@ -15,7 +15,6 @@ import com.mojang.math.Vector3f;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.EntityDamageSource;
 import net.minecraft.world.entity.Entity;
@@ -219,21 +218,21 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 		DragonLevel growthLevel = DragonUtils.getDragonLevel(player);
 		int RANGE = growthLevel == DragonLevel.NEWBORN ? 4 : growthLevel == DragonLevel.YOUNG ? 7 : 10;
 
-		components.add(new TranslatableComponent("ds.skill.mana_cost", getChargingManaCost()));
-		components.add(new TranslatableComponent("ds.skill.channel_cost", getManaCost(), 2));
+		components.add(Component.translatable("ds.skill.mana_cost", getChargingManaCost()));
+		components.add(Component.translatable("ds.skill.channel_cost", getManaCost(), 2));
 
-		components.add(new TranslatableComponent("ds.skill.cast_time", nf.format((double)getSkillChargeTime() / 20)));
-		components.add(new TranslatableComponent("ds.skill.cooldown", Functions.ticksToSeconds(getSkillCooldown())));
+		components.add(Component.translatable("ds.skill.cast_time", nf.format((double)getSkillChargeTime() / 20)));
+		components.add(Component.translatable("ds.skill.cooldown", Functions.ticksToSeconds(getSkillCooldown())));
 
-		components.add(new TranslatableComponent("ds.skill.damage", getDamage()));
-		components.add(new TranslatableComponent("ds.skill.range.blocks", RANGE));
+		components.add(Component.translatable("ds.skill.damage", getDamage()));
+		components.add(Component.translatable("ds.skill.range.blocks", RANGE));
 
 		if(!KeyInputHandler.ABILITY1.isUnbound()){
-			String key = KeyInputHandler.ABILITY1.getKey().getDisplayName().getContents().toUpperCase(Locale.ROOT);
+			String key = KeyInputHandler.ABILITY1.getKey().getDisplayName().getString().toUpperCase(Locale.ROOT);
 
 			if(key.isEmpty())
 				key = KeyInputHandler.ABILITY1.getKey().getDisplayName().getString();
-			components.add(new TranslatableComponent("ds.skill.keybind", key));
+			components.add(Component.translatable("ds.skill.keybind", key));
 		}
 
 		return components;

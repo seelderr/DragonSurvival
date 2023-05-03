@@ -24,7 +24,9 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.client.gui.ForgeIngameGui;
+import net.minecraftforge.client.ForgeRenderTypes;
+import net.minecraftforge.client.gui.overlay.ForgeGui;
+import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 
 import java.awt.*;
 import java.util.Objects;
@@ -63,14 +65,16 @@ public class ClientMagicHUDHandler{
 	                                                     "magic"}, key = "manabarYOffset", comment = "Offset the y position of the mana bar in relation to its normal position" )
 	public static Integer manabarYOffset = 0;
 
-	public static void cancelExpBar(ForgeIngameGui gui, PoseStack mStack, float partialTicks, int width, int height){
+	public static void cancelExpBar(ForgeGui gui, PoseStack mStack, float partialTicks, int width, int height){
 		Player playerEntity = Minecraft.getInstance().player;
 		if(Minecraft.getInstance().options.hideGui || !gui.shouldDrawSurvivalElements() || !Minecraft.getInstance().gameMode.hasExperience())
 			return;
 		int x = width / 2 - 91;
 
 		if(!ServerConfig.consumeEXPAsMana || !DragonUtils.isDragon(playerEntity)){
-			ForgeIngameGui.EXPERIENCE_BAR_ELEMENT.render(gui, mStack, partialTicks, width, height);
+			//Insecure modification
+			VanillaGuiOverlay.EXPERIENCE_BAR.type().overlay().render(gui, mStack, partialTicks, width, height);
+			//ForgeGui.EXPERIENCE_BAR_ELEMENT.render(gui, mStack, partialTicks, width, height);
 			return;
 		}
 
@@ -125,7 +129,7 @@ public class ClientMagicHUDHandler{
 		errorMessage = component;
 	}
 
-	public static void renderAbilityHud(ForgeIngameGui gui, PoseStack mStack, float partialTicks, int width, int height){
+	public static void renderAbilityHud(ForgeGui gui, PoseStack mStack, float partialTicks, int width, int height){
 		if(Minecraft.getInstance().options.hideGui)
 			return;
 

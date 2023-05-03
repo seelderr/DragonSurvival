@@ -9,7 +9,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.player.SyncSize;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -39,7 +39,7 @@ public class DragonGrowthHandler{
 		ItemStack stack = event.getItemStack();
 		Item item = stack.getItem();
 
-		Player player = event.getPlayer();
+		Player player = event.getEntity();
 		Level world = player.getCommandSenderWorld();
 
 		DragonStateProvider.getCap(player).ifPresent(handler -> {
@@ -99,7 +99,7 @@ public class DragonGrowthHandler{
 						result.append(entry).append(i + 1 < displayData.size() ? ", " : "");
 					}
 
-					player.displayClientMessage(new TranslatableComponent("ds.invalid_grow_item", result), false);
+					player.displayClientMessage(Component.translatable("ds.invalid_grow_item", result), false);
 				}
 
 				return;

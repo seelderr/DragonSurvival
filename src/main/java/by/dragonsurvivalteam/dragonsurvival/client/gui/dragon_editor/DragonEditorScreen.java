@@ -55,8 +55,7 @@ import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -107,7 +106,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 	}
 
 	public DragonEditorScreen(Screen source, AbstractDragonType type){
-		super(new TranslatableComponent("ds.gui.dragon_editor"));
+		super(Component.translatable("ds.gui.dragon_editor"));
 		this.source = source;
 		this.type = type;
 	}
@@ -202,13 +201,13 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			int i = 0;
 			for(EnumSkinLayer layers : EnumSkinLayer.values()){
 				String name = layers.name;
-				SkinsScreen.drawNonShadowLineBreak(stack, font, new TranslatableComponent("ds.gui.dragon_editor.part." + name.toLowerCase()), (i < 5 ? width / 2 - 100 - 100 : width / 2 + 83) + 45, guiTop + 10 + (i >= 5 ? (i - 5) * 30 : i * 30) - 12, DyeColor.WHITE.getTextColor());
+				SkinsScreen.drawNonShadowLineBreak(stack, font, Component.translatable("ds.gui.dragon_editor.part." + name.toLowerCase()), (i < 5 ? width / 2 - 100 - 100 : width / 2 + 83) + 45, guiTop + 10 + (i >= 5 ? (i - 5) * 30 : i * 30) - 12, DyeColor.WHITE.getTextColor());
 				i++;
 			}
 		}
 
 		if(showUi){
-			SkinsScreen.drawNonShadowLineBreak(stack, font, new TextComponent(WordUtils.capitalize(animations[curAnimation].replace("_", " "))), width / 2, height / 2 + 72, DyeColor.GRAY.getTextColor());
+			SkinsScreen.drawNonShadowLineBreak(stack, font, Component.empty().append(WordUtils.capitalize(animations[curAnimation].replace("_", " "))), width / 2, height / 2 + 72, DyeColor.GRAY.getTextColor());
 		}
 
 		for(Widget widget : new CopyOnWriteArrayList<>(renderables)){
@@ -338,7 +337,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 				@Override
 				public void updateMessage(){
 					if(current != null){
-						message = new TranslatableComponent("ds.skin_part." + type.getTypeName().toLowerCase(Locale.ROOT) + "." + current.toLowerCase(Locale.ROOT));
+						message = Component.translatable("ds.skin_part." + type.getTypeName().toLowerCase(Locale.ROOT) + "." + current.toLowerCase(Locale.ROOT));
 					}
 				}
 			};
@@ -404,7 +403,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			i++;
 		}
 
-		addRenderableWidget(new Button(width / 2 + 30, height / 2 + 75 - 7, 15, 15, TextComponent.EMPTY, btn -> {
+		addRenderableWidget(new Button(width / 2 + 30, height / 2 + 75 - 7, 15, 15, Component.empty(), btn -> {
 			curAnimation += 1;
 
 			if(curAnimation >= animations.length){
@@ -429,7 +428,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			}
 		});
 
-		addRenderableWidget(new Button(width / 2 - 30 - 15, height / 2 + 75 - 7, 15, 15, TextComponent.EMPTY, btn -> {
+		addRenderableWidget(new Button(width / 2 - 30 - 15, height / 2 + 75 - 7, 15, 15, Component.empty(), btn -> {
 			curAnimation -= 1;
 
 			if(curAnimation < 0){
@@ -458,7 +457,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			addRenderableWidget(new DragonEditorSlotButton(width / 2 + 195 + 15, guiTop + (num - 1) * 12 + 5 + 20, num, this));
 		}
 
-		addRenderableWidget(new ForgeSlider(width / 2 - 100 - 100, height - 25, 100, 20, new TranslatableComponent("ds.gui.dragon_editor.size"), new TextComponent("%"), ServerConfig.minSizeVari, ServerConfig.maxSizeVari, Math.round((preset.sizeMul - 1.0) * 100), true){
+		addRenderableWidget(new ForgeSlider(width / 2 - 100 - 100, height - 25, 100, 20, Component.translatable("ds.gui.dragon_editor.size"), Component.empty().append("%"), ServerConfig.minSizeVari, ServerConfig.maxSizeVari, Math.round((preset.sizeMul - 1.0) * 100), true){
 			@Override
 			protected void applyValue(){
 				super.applyValue();
@@ -471,9 +470,9 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 				double val1 = Math.round((preset.sizeMul - 1.0) * 100);
 
 				if(val1 > 0){
-					setMessage(new TranslatableComponent("ds.gui.dragon_editor.size").append("+").append(val1 + "%"));
+					setMessage(Component.translatable("ds.gui.dragon_editor.size").append("+").append(val1 + "%"));
 				}else{
-					setMessage(new TranslatableComponent("ds.gui.dragon_editor.size").append(val1 + "%"));
+					setMessage(Component.translatable("ds.gui.dragon_editor.size").append(val1 + "%"));
 				}
 			}
 
@@ -484,18 +483,18 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 
 			@Override
 			public void renderToolTip(PoseStack pPoseStack, int pMouseX, int pMouseY){
-				TooltipRendering.drawHoveringText(pPoseStack, new TranslatableComponent("ds.gui.dragon_editor.size_info"), pMouseX, pMouseY);
+				TooltipRendering.drawHoveringText(pPoseStack, Component.translatable("ds.gui.dragon_editor.size_info"), pMouseX, pMouseY);
 			}
 		});
 
-		addRenderableWidget(new ExtendedCheckbox(width / 2 + 100, height - 16, 120, 14, 14, new TranslatableComponent("ds.gui.dragon_editor.wings"), preset.skinAges.get(level).wings, p -> preset.skinAges.get(level).wings = p.selected()){
+		addRenderableWidget(new ExtendedCheckbox(width / 2 + 100, height - 16, 120, 14, 14, Component.translatable("ds.gui.dragon_editor.wings"), preset.skinAges.get(level).wings, p -> preset.skinAges.get(level).wings = p.selected()){
 			@Override
 			public void renderButton(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
 				selected = preset.skinAges.get(level).wings;
 				super.renderButton(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 			}
 		});
-		addRenderableWidget(new ExtendedCheckbox(width / 2 + 100, height - 31, 120, 14, 14, new TranslatableComponent("ds.gui.dragon_editor.default_skin"), preset.skinAges.get(level).defaultSkin, p -> preset.skinAges.get(level).defaultSkin = p.selected()){
+		addRenderableWidget(new ExtendedCheckbox(width / 2 + 100, height - 31, 120, 14, 14, Component.translatable("ds.gui.dragon_editor.default_skin"), preset.skinAges.get(level).defaultSkin, p -> preset.skinAges.get(level).defaultSkin = p.selected()){
 			@Override
 			public void renderButton(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
 				selected = preset.skinAges.get(level).defaultSkin;
@@ -504,11 +503,11 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 
 			@Override
 			public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-				TooltipRendering.drawHoveringText(p_230443_1_, new TranslatableComponent("ds.gui.dragon_editor.default_skin.tooltip"), p_230443_2_, p_230443_3_);
+				TooltipRendering.drawHoveringText(p_230443_1_, Component.translatable("ds.gui.dragon_editor.default_skin.tooltip"), p_230443_2_, p_230443_3_);
 			}
 		});
 
-		addRenderableWidget(new ExtendedButton(width / 2 - 75 - 10, height - 25, 75, 20, new TranslatableComponent("ds.gui.dragon_editor.save"), null){
+		addRenderableWidget(new ExtendedButton(width / 2 - 75 - 10, height - 25, 75, 20, Component.translatable("ds.gui.dragon_editor.save"), null){
 			Widget renderButton;
 			boolean toggled;
 
@@ -541,7 +540,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 
 				if(confirmation){
 					if(!toggled){
-						renderButton = new ExtendedButton(0, 0, 0, 0, TextComponent.EMPTY, null){
+						renderButton = new ExtendedButton(0, 0, 0, 0, Component.empty(), null){
 							@Override
 							public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
 								active = visible = false;
@@ -564,11 +563,11 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 
 			@Override
 			public void renderToolTip(PoseStack pPoseStack, int pMouseX, int pMouseY){
-				TooltipRendering.drawHoveringText(pPoseStack, new TranslatableComponent("ds.gui.dragon_editor.tooltip.done"), pMouseX, pMouseY);
+				TooltipRendering.drawHoveringText(pPoseStack, Component.translatable("ds.gui.dragon_editor.tooltip.done"), pMouseX, pMouseY);
 			}
 		});
 
-		addRenderableWidget(new ExtendedButton(width / 2 + 10, height - 25, 75, 20, new TranslatableComponent("ds.gui.dragon_editor.back"), null){
+		addRenderableWidget(new ExtendedButton(width / 2 + 10, height - 25, 75, 20, Component.translatable("ds.gui.dragon_editor.back"), null){
 			@Override
 			public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){
 				super.renderButton(mStack, mouseX, mouseY, partial);
@@ -581,11 +580,11 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 
 			@Override
 			public void renderToolTip(PoseStack pPoseStack, int pMouseX, int pMouseY){
-				TooltipRendering.drawHoveringText(pPoseStack, new TranslatableComponent("ds.gui.dragon_editor.tooltip.back"), pMouseX, pMouseY);
+				TooltipRendering.drawHoveringText(pPoseStack, Component.translatable("ds.gui.dragon_editor.tooltip.back"), pMouseX, pMouseY);
 			}
 		});
 
-		addRenderableWidget(new ExtendedButton(guiLeft + 256 + 16, 9, 19, 19, TextComponent.EMPTY, btn -> {
+		addRenderableWidget(new ExtendedButton(guiLeft + 256 + 16, 9, 19, 19, Component.empty(), btn -> {
 			doAction();
 			preset.skinAges.put(level, new SkinAgeGroup(level, type));
 			handler.getSkinData().compileSkin();
@@ -593,7 +592,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 		}){
 			@Override
 			public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-				TooltipRendering.drawHoveringText(p_230443_1_, new TranslatableComponent("ds.gui.dragon_editor.reset"), p_230443_2_, p_230443_3_);
+				TooltipRendering.drawHoveringText(p_230443_1_, Component.translatable("ds.gui.dragon_editor.reset"), p_230443_2_, p_230443_3_);
 			}
 
 			@Override
@@ -604,7 +603,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 		});
 
 
-		addRenderableWidget(new ExtendedButton(guiLeft + 256 + 30 + 16, 9, 19, 19, TextComponent.EMPTY, btn -> {
+		addRenderableWidget(new ExtendedButton(guiLeft + 256 + 30 + 16, 9, 19, 19, Component.empty(), btn -> {
 			doAction();
 
 			ArrayList<String> extraKeys = DragonEditorHandler.getKeys(FakeClientPlayerUtils.getFakePlayer(0, handler), EnumSkinLayer.EXTRA);
@@ -653,7 +652,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 		}){
 			@Override
 			public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-				TooltipRendering.drawHoveringText(p_230443_1_, new TranslatableComponent("ds.gui.dragon_editor.random"), p_230443_2_, p_230443_3_);
+				TooltipRendering.drawHoveringText(p_230443_1_, Component.translatable("ds.gui.dragon_editor.random"), p_230443_2_, p_230443_3_);
 			}
 
 			@Override
@@ -668,7 +667,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 		}){
 			@Override
 			public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-				TooltipRendering.drawHoveringText(p_230443_1_, new TranslatableComponent("ds.gui.dragon_editor.undo"), p_230443_2_, p_230443_3_);
+				TooltipRendering.drawHoveringText(p_230443_1_, Component.translatable("ds.gui.dragon_editor.undo"), p_230443_2_, p_230443_3_);
 			}
 
 			@Override
@@ -683,7 +682,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 		}){
 			@Override
 			public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-				TooltipRendering.drawHoveringText(p_230443_1_, new TranslatableComponent("ds.gui.dragon_editor.redo"), p_230443_2_, p_230443_3_);
+				TooltipRendering.drawHoveringText(p_230443_1_, Component.translatable("ds.gui.dragon_editor.redo"), p_230443_2_, p_230443_3_);
 			}
 
 			@Override
@@ -693,7 +692,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			}
 		});
 
-		addRenderableWidget(new ExtendedButton(width / 2 + 193 + 15, guiTop + 5, 16, 16, TextComponent.EMPTY, p -> {}){
+		addRenderableWidget(new ExtendedButton(width / 2 + 193 + 15, guiTop + 5, 16, 16, Component.empty(), p -> {}){
 			@Override
 			public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
 				active = visible = showUi;
@@ -707,16 +706,16 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 
 			@Override
 			public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-				TooltipRendering.drawHoveringText(p_230443_1_, new TranslatableComponent("ds.gui.dragon_editor.save_slot"), p_230443_2_, p_230443_3_);
+				TooltipRendering.drawHoveringText(p_230443_1_, Component.translatable("ds.gui.dragon_editor.save_slot"), p_230443_2_, p_230443_3_);
 			}
 
 			@Override
 			public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){}
 		});
 
-		addRenderableWidget(new CopySettingsButton(this, width / 2 + 193 + 15, guiTop - 16, 16, 16, TextComponent.EMPTY, p -> {}));
+		addRenderableWidget(new CopySettingsButton(this, width / 2 + 193 + 15, guiTop - 16, 16, 16, Component.empty(), p -> {}));
 
-		addRenderableWidget(new ExtendedButton(dragonRender.x + dragonRender.width - 17, dragonRender.y + dragonRender.height + 3, 15, 15, TextComponent.EMPTY, btn -> {
+		addRenderableWidget(new ExtendedButton(dragonRender.x + dragonRender.width - 17, dragonRender.y + dragonRender.height + 3, 15, 15, Component.empty(), btn -> {
 			dragonRender.yRot = -3;
 			dragonRender.xRot = -5;
 			dragonRender.xOffset = 0;
@@ -725,7 +724,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 		}){
 			@Override
 			public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-				TooltipRendering.drawHoveringText(p_230443_1_, new TranslatableComponent("ds.gui.dragon_editor.reset"), p_230443_2_, p_230443_3_);
+				TooltipRendering.drawHoveringText(p_230443_1_, Component.translatable("ds.gui.dragon_editor.reset"), p_230443_2_, p_230443_3_);
 			}
 
 			@Override
@@ -741,10 +740,10 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			}
 		});
 
-		addRenderableWidget(new ExtendedCheckbox(guiLeft - 15, 11, 40, 16, 16, new TranslatableComponent("ds.gui.dragon_editor.show_ui"), showUi, p -> showUi = p.selected()));
-		addRenderableWidget(new BackgroundColorButton(guiLeft - 45, 10, 18, 18, TextComponent.EMPTY, s -> {}, this));
+		addRenderableWidget(new ExtendedCheckbox(guiLeft - 15, 11, 40, 16, 16, Component.translatable("ds.gui.dragon_editor.show_ui"), showUi, p -> showUi = p.selected()));
+		addRenderableWidget(new BackgroundColorButton(guiLeft - 45, 10, 18, 18, Component.empty(), s -> {}, this));
 		addRenderableWidget(new HelpButton(type, guiLeft - 75, 11, 15, 15, "ds.help.customization", 1));
-		//addRenderableWidget(new ScreenshotButton(guiLeft + 240, 10, 18, 18, TextComponent.EMPTY, (s) -> {}, this));
+		//addRenderableWidget(new ScreenshotButton(guiLeft + 240, 10, 18, 18, Component.empty(), (s) -> {}, this));
 
 	}
 
@@ -793,13 +792,11 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 	}
 
 	public void confirm(){
-		save();
 		DragonStateProvider.getCap(minecraft.player).ifPresent(cap -> {
-
 			minecraft.player.level.playSound(minecraft.player, minecraft.player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 1, 0.7f);
 
 			if(cap.getType() != type){
-				Minecraft.getInstance().player.sendMessage(new TranslatableComponent("ds." + type.getTypeName().toLowerCase() + "_dragon_choice"), Minecraft.getInstance().player.getUUID());
+				Minecraft.getInstance().player.sendSystemMessage(Component.translatable("ds." + type.getTypeName().toLowerCase() + "_dragon_choice"));
 				cap.setType(type);
 
 				if(!ServerConfig.saveGrowthStage || cap.getSize() == 0){
@@ -820,6 +817,9 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 				}
 			}
 		});
+
+		save();
+
 		Minecraft.getInstance().player.closeContainer();
 	}
 

@@ -2,9 +2,10 @@ package by.dragonsurvivalteam.dragonsurvival.common.items.food;
 
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import net.minecraft.client.resources.language.I18n;
+import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -74,9 +75,9 @@ public class DragonFoodItem extends Item{
 	@Override
 	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> list, TooltipFlag tooltipFlag){
 		super.appendHoverText(stack, world, list, tooltipFlag);
-		String langKey = "ds.description." + getRegistryName().getPath();
+		String langKey = "ds.description." + ResourceHelper.getKey(this).getPath();
 		if(I18n.exists(langKey)){
-			list.add(new TranslatableComponent(langKey));
+			list.add(Component.translatable(langKey));
 		}
 	}
 

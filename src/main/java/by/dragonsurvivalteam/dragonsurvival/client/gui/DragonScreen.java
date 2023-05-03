@@ -28,8 +28,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -95,7 +95,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 
 			NetworkHandler.CHANNEL.sendToServer(new DragonClawsMenuToggle(clawsMenu));
 			DragonStateProvider.getCap(player).ifPresent(cap -> cap.getClawToolData().setClawsMenuOpen(clawsMenu));
-		}, new TranslatableComponent("ds.gui.claws")){
+		}, Component.translatable("ds.gui.claws")){
 			@Override
 			public void renderButton(PoseStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_){
 				stack.pushPose();
@@ -179,7 +179,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 				StringJoiner result = new StringJoiner(", ");
 				displayData.forEach(result::add);
 
-				ArrayList<Component> description = new ArrayList<>(Arrays.asList(new TranslatableComponent("ds.gui.growth_stage", handler.getLevel().getName()), new TranslatableComponent("ds.gui.growth_age", age), new TranslatableComponent("ds.gui.growth_help", result)));
+				ArrayList<Component> description = new ArrayList<>(Arrays.asList(Component.translatable("ds.gui.growth_stage", handler.getLevel().getName()), Component.translatable("ds.gui.growth_age", age), Component.translatable("ds.gui.growth_help", result)));
 				Minecraft.getInstance().screen.renderComponentTooltip(stack, description, mouseX, mouseY);
 			}
 
@@ -204,7 +204,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 
 			handler.getClawToolData().renderClaws = claws;
 			NetworkHandler.CHANNEL.sendToServer(new SyncDragonClawRender(player.getId(), claws));
-		}, new TranslatableComponent("ds.gui.claws.rendering")){
+		}, Component.translatable("ds.gui.claws.rendering")){
 			@Override
 			public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
 				active = clawsMenu;
@@ -223,16 +223,16 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 			addRenderableWidget(new DSImageButton(leftPos + imageWidth - 28, height / 2 - 30 + 50, 20, 18, 0, 0, 19, INVENTORY_TOGGLE_BUTTON, p_onPress_1_ -> {
 				Minecraft.getInstance().setScreen(new InventoryScreen(player));
 				NetworkHandler.CHANNEL.sendToServer(new OpenInventory());
-			}, new TranslatableComponent("ds.gui.toggle_inventory.vanilla")));
+			}, Component.translatable("ds.gui.toggle_inventory.vanilla")));
 		}
 
 		addRenderableWidget(new DSImageButton(leftPos + imageWidth - 28, height / 2, 20, 18, 0, 0, 18, SORTING_BUTTON, p_onPress_1_ -> {
 			NetworkHandler.CHANNEL.sendToServer(new SortInventoryPacket());
-		}, new TranslatableComponent("ds.gui.sort")));
+		}, Component.translatable("ds.gui.sort")));
 
 		addRenderableWidget(new DSImageButton(leftPos + imageWidth - 27, height / 2 + 40, 18, 18, 0, 0, 18, SETTINGS_BUTTON, p_onPress_1_ -> {
-			Minecraft.getInstance().setScreen(new ConfigSideSelectionScreen(this, Minecraft.getInstance().options, new TranslatableComponent("ds.gui.tab_button.4")));
-		}, new TranslatableComponent("ds.gui.tab_button.4")));
+			Minecraft.getInstance().setScreen(new ConfigSideSelectionScreen(this, Minecraft.getInstance().options, Component.translatable("ds.gui.tab_button.4")));
+		}, Component.translatable("ds.gui.tab_button.4")));
 	}
 
 	@Override
@@ -242,7 +242,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 	protected void renderBg(PoseStack stack, float partialTicks, int mouseX, int mouseY){
 		renderBackground(stack);
 
-
+		RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		RenderSystem.setShaderTexture(0, BACKGROUND);
 		RenderSystem.enableBlend();
 		blit(stack, leftPos, topPos, 0, 0, imageWidth, imageHeight);
@@ -285,6 +285,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 			RenderingUtils.drawSmoothCircle(stack, circleX + radius, circleY + radius, radius, sides, 1, 0);
 
 			RenderSystem.enableTexture();
+			RenderSystem.setShader(GameRenderer::getPositionTexShader);
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1.0f);
 			RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_" + handler.getType().getTypeName().toLowerCase() + ".png"));
 			RenderingUtils.drawTexturedCircle(stack, circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, sides, progress, -0.5);
@@ -294,6 +295,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 			RenderingUtils.drawSmoothCircle(stack, circleX + radius, circleY + radius, radius - thickness, sides, 1, 0);
 			RenderSystem.enableTexture();
 
+			RenderSystem.setShader(GameRenderer::getPositionTexShader);
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1.0f);
 			RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/growth_" + handler.getType().getTypeName().toLowerCase() + "_" + (handler.getLevel().ordinal() + 1) + ".png"));
 			blit(stack, circleX + 6, circleY + 6, 0, 0, 20, 20, 20, 20);

@@ -13,7 +13,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
 
 import java.awt.Color;
@@ -69,7 +68,7 @@ public class ColorSelectorButton extends ExtendedButton{
 
 	@Override
 	public Component getMessage(){
-		return TextComponent.EMPTY;
+		return Component.empty();
 	}
 
 	@Override
@@ -85,7 +84,7 @@ public class ColorSelectorButton extends ExtendedButton{
 		Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, screen.handler), layer, screen.preset.skinAges.get(screen.level).layerSettings.get(layer).selectedSkin, screen.handler.getType());
 
 		if(!toggled){
-			renderButton = new ExtendedButton(0, 0, 0, 0, TextComponent.EMPTY, null){
+			renderButton = new ExtendedButton(0, 0, 0, 0, Component.empty(), null){
 				@Override
 				public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
 					active = visible = false;

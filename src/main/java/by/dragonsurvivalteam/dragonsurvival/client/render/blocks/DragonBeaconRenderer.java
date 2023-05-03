@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
@@ -32,7 +33,7 @@ public class DragonBeaconRenderer implements BlockEntityRenderer<DragonBeaconTil
 
 		ClientLevel clientWorld = (ClientLevel)dragonBeaconEntity.getLevel();
 		Minecraft minecraft = Minecraft.getInstance();
-		Random random = clientWorld.random;
+		RandomSource random = clientWorld.random;
 		double x = 0.25 + random.nextInt(5) / 10d;
 		double z = 0.25 + random.nextInt(5) / 10d;
 

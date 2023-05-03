@@ -15,7 +15,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 
 import java.awt.*;
@@ -75,7 +74,8 @@ public class SkillProgressButton extends Button{
 		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {
 			if(ability != null){
 				ChatFormatting format =  Objects.equals(cap.getType(), DragonTypes.CAVE) ? ChatFormatting.DARK_RED :  Objects.equals(cap.getType(), DragonTypes.SEA) ? ChatFormatting.AQUA :  Objects.equals(cap.getType(), DragonTypes.FOREST) ? ChatFormatting.GREEN : ChatFormatting.WHITE;
-				ArrayList<Component> description = new ArrayList<>(Arrays.asList(((TranslatableComponent)ability.getTitle()).withStyle(format).append(" (" + ability.getLevel() + " / " + ability.getMaxLevel() + ")")));
+				Component component = ability.getTitle();
+				ArrayList<Component> description = new ArrayList<>(Arrays.asList(Component.empty().append(component).append(" (" + ability.getLevel() + " / " + ability.getMaxLevel() + ")").withStyle(format)));
 
 				if(ability.getLevelUpInfo().size() > 0)
 					description.addAll(ability.getLevelUpInfo());
@@ -84,7 +84,7 @@ public class SkillProgressButton extends Button{
 
 
 				if(requiredLevel != -1)
-					description.add(new TranslatableComponent("ds.skill.required_level", requiredLevel).withStyle(ChatFormatting.WHITE));
+					description.add(Component.translatable("ds.skill.required_level", requiredLevel).withStyle(ChatFormatting.WHITE));
 
 				TooltipRendering.drawHoveringText(stack, description, mouseX, mouseY);
 			}

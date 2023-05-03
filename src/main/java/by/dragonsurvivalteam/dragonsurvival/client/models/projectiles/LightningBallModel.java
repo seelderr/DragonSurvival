@@ -9,12 +9,12 @@ public class LightningBallModel extends AnimatedGeoModel<BallLightningEntity>{
 	private ResourceLocation currentTexture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/entity/lightning_texture.png");
 
 	@Override
-	public ResourceLocation getModelLocation(BallLightningEntity dragon){
+	public ResourceLocation getModelResource(BallLightningEntity dragon){
 		return new ResourceLocation(DragonSurvivalMod.MODID, "geo/dragon_lightning_ball.geo.json");
 	}
 
 	@Override
-	public ResourceLocation getTextureLocation(BallLightningEntity dragon){
+	public ResourceLocation getTextureResource(BallLightningEntity dragon){
 		return currentTexture;
 	}
 
@@ -23,7 +23,7 @@ public class LightningBallModel extends AnimatedGeoModel<BallLightningEntity>{
 	}
 
 	@Override
-	public ResourceLocation getAnimationFileLocation(BallLightningEntity animatable){
+	public ResourceLocation getAnimationResource(BallLightningEntity animatable){
 		return new ResourceLocation(DragonSurvivalMod.MODID, "animations/lightning_ball.animation.json");
 	}
 }

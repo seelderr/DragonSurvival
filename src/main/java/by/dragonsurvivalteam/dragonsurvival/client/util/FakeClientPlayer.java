@@ -7,7 +7,6 @@ import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -35,7 +34,7 @@ public class FakeClientPlayer extends AbstractClientPlayer{
 	public int number;
 
 	public FakeClientPlayer(int number){
-		super(Minecraft.getInstance().level, new GameProfile(UUID.randomUUID(), "FAKE_PLAYER_" + number));
+		super(Minecraft.getInstance().level, new GameProfile(UUID.randomUUID(), "FAKE_PLAYER_" + number), null);
 		this.number = number;
 	}
 
@@ -88,7 +87,7 @@ public class FakeClientPlayer extends AbstractClientPlayer{
 
 	@Override
 	public Component getDisplayName(){
-		return TextComponent.EMPTY;
+		return Component.empty();
 	}
 
 	@Nonnull
@@ -102,9 +101,6 @@ public class FakeClientPlayer extends AbstractClientPlayer{
 
 	@Override
 	public boolean save(CompoundTag pCompound){return false;}
-
-	@Override
-	public void sendMessage(Component component, UUID senderUUID){}
 
 	@Override
 	@Nullable

@@ -1,15 +1,15 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.fields;
 
+import by.dragonsurvivalteam.dragonsurvival.client.gui.settings.widgets.Option;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.Option;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.TooltipAccessor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
-import net.minecraftforge.client.gui.GuiUtils;
+import net.minecraftforge.client.gui.ScreenUtils;
 
 import java.util.List;
 
@@ -34,7 +34,7 @@ public class TextField extends EditBox implements TooltipAccessor{
 	@Override
 	public void renderButton(PoseStack pPoseStack, int pMouseX, int pMouseY, float pPartialTicks){
 		int v = isHovered ? 32 : 0;
-		GuiUtils.drawContinuousTexturedBox(pPoseStack, BACKGROUND_TEXTURE, x, y + 1, 0, v, width, height, 32, 32, 10, 10, 10, 10, (float)0);
+		ScreenUtils.blitWithBorder(pPoseStack, BACKGROUND_TEXTURE, x, y + 1, 0, v, width, height, 32, 32, 10, 10, 10, 10, (float)0);
 
 		x += 5;
 		y += 6;

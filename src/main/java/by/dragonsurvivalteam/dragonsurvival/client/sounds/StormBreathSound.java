@@ -13,7 +13,7 @@ public class StormBreathSound extends AbstractTickableSoundInstance{
 	private final StormBreathAbility ability;
 
 	public StormBreathSound(StormBreathAbility ability){
-		super(SoundRegistry.stormBreathLoop, SoundSource.PLAYERS);
+		super(SoundRegistry.stormBreathLoop, SoundSource.PLAYERS, ability.getPlayer().getRandom());
 
 		looping = true;
 

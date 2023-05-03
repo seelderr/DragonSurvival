@@ -37,6 +37,7 @@ public class SyncGrowthState implements IMessage<SyncGrowthState>{
 	@Override
 	public void handle(SyncGrowthState message, Supplier<NetworkEvent.Context> supplier){
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> run(message, supplier));
+		supplier.get().setPacketHandled(true);
 	}
 
 	@OnlyIn( Dist.CLIENT )

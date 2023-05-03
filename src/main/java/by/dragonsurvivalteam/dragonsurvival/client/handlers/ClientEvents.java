@@ -7,6 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.render.CaveLavaFluidRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEditorRegistry;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.CaveDragonType;
@@ -47,7 +48,6 @@ import net.minecraft.client.renderer.block.LiquidBlockRenderer;
 import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
@@ -55,15 +55,15 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.*;
-import net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType;
 import net.minecraftforge.client.event.RenderLevelStageEvent.Stage;
-import net.minecraftforge.client.gui.ForgeIngameGui;
+import net.minecraftforge.client.gui.overlay.ForgeGui;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -124,7 +124,7 @@ public class ClientEvents{
 	}
 
 	@SubscribeEvent
-	public static void onOpenScreen(ScreenOpenEvent openEvent){
+	public static void onOpenScreen(ScreenEvent.Opening openEvent){
 		LocalPlayer player = Minecraft.getInstance().player;
 
 		if(!dragonInventory){
@@ -144,7 +144,7 @@ public class ClientEvents{
 	}
 
 	@SubscribeEvent
-	public static void addCraftingButton(ScreenEvent.InitScreenEvent.Post initGuiEvent){
+	public static void addCraftingButton(ScreenEvent.Init.Post initGuiEvent){
 		Screen sc = initGuiEvent.getScreen();
 
 		if(!DragonUtils.isDragon(Minecraft.getInstance().player)){
@@ -197,7 +197,7 @@ public class ClientEvents{
 						x = screen.getGuiLeft() + 128;
 
 						if(isHoveredOrFocused()){
-							ArrayList<Component> description = new ArrayList<>(Arrays.asList(new TranslatableComponent("ds.gui.toggle_inventory.dragon")));
+							ArrayList<Component> description = new ArrayList<>(Arrays.asList(Component.translatable("ds.gui.toggle_inventory.dragon")));
 							Minecraft.getInstance().screen.renderComponentTooltip(p_230431_1_, description, p_230431_2_, p_230431_3_);
 						}
 					}
@@ -220,7 +220,7 @@ public class ClientEvents{
 					public void renderButton(PoseStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_){
 						super.renderButton(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
 						if(isHoveredOrFocused()){
-							ArrayList<Component> description = new ArrayList<>(Arrays.asList(new TranslatableComponent("ds.gui.toggle_inventory.dragon")));
+							ArrayList<Component> description = new ArrayList<>(Arrays.asList(Component.translatable("ds.gui.toggle_inventory.dragon")));
 							Minecraft.getInstance().screen.renderComponentTooltip(p_230431_1_, description, p_230431_2_, p_230431_3_);
 						}
 					}
@@ -231,10 +231,10 @@ public class ClientEvents{
 
 	@SubscribeEvent
 	@OnlyIn( Dist.CLIENT )
-	public static void removeFireOverlay(RenderBlockOverlayEvent event){
+	public static void removeFireOverlay(RenderBlockScreenEffectEvent event){
 		LocalPlayer player = Minecraft.getInstance().player;
 		DragonStateProvider.getCap(player).ifPresent(cap -> {
-			if(cap.isDragon() && Objects.equals(cap.getType(), DragonTypes.CAVE) && event.getOverlayType() == OverlayType.FIRE){
+			if(cap.isDragon() && Objects.equals(cap.getType(), DragonTypes.CAVE) && event.getOverlayType() == RenderBlockScreenEffectEvent.OverlayType.FIRE){
 				event.setCanceled(true);
 			}
 		});
@@ -267,7 +267,7 @@ public class ClientEvents{
 	}
 
 	@SubscribeEvent
-	public static void unloadWorld(WorldEvent.Unload worldEvent){
+	public static void unloadWorld(LevelEvent.Unload worldEvent){
 		ClientDragonRender.playerDragonHashMap.clear();
 	}
 
@@ -292,6 +292,21 @@ public class ClientEvents{
 		return texture;
 	}
 
+	public static RenderType onRenderFluidLayer(FluidState fluidState)
+	{
+		RenderType result = RenderType.solid();
+		Minecraft minecraft = Minecraft.getInstance();
+		LocalPlayer player = minecraft.player;
+
+		if (player == null){
+			return result;
+		}
+
+		if (fluidState.is(Fluids.LAVA) && fluidState.is(Fluids.FLOWING_LAVA) && player.hasEffect(DragonEffects.LAVA_VISION))
+			result = RenderType.translucent();
+		return result;
+	}
+
 	@SubscribeEvent
 	@OnlyIn( Dist.CLIENT )
 	public static void onRenderWorldLastEvent(RenderLevelStageEvent event){
@@ -310,9 +325,6 @@ public class ClientEvents{
 			if(playerStateHandler.isDragon() && Objects.equals(playerStateHandler.getType(), DragonTypes.CAVE) && ServerConfig.bonuses && ServerConfig.caveLavaSwimming){
 				if(!wasCaveDragon){
 					if(player.hasEffect(DragonEffects.LAVA_VISION)){
-						RenderType lavaType = RenderType.translucent();
-						ItemBlockRenderTypes.setRenderLayer(Fluids.LAVA, lavaType);
-						ItemBlockRenderTypes.setRenderLayer(Fluids.FLOWING_LAVA, lavaType);
 						prevFluidRenderer = minecraft.getBlockRenderer().liquidBlockRenderer;
 						minecraft.getBlockRenderer().liquidBlockRenderer = new CaveLavaFluidRenderer();
 						minecraft.levelRenderer.allChanged();
@@ -320,9 +332,6 @@ public class ClientEvents{
 				}else{
 					if(!player.hasEffect(DragonEffects.LAVA_VISION)){
 						if(prevFluidRenderer != null){
-							RenderType lavaType = RenderType.solid();
-							ItemBlockRenderTypes.setRenderLayer(Fluids.LAVA, lavaType);
-							ItemBlockRenderTypes.setRenderLayer(Fluids.FLOWING_LAVA, lavaType);
 							minecraft.getBlockRenderer().liquidBlockRenderer = prevFluidRenderer;
 						}
 						minecraft.levelRenderer.allChanged();
@@ -331,9 +340,6 @@ public class ClientEvents{
 			}else{
 				if(wasCaveDragon){
 					if(prevFluidRenderer != null){
-						RenderType lavaType = RenderType.solid();
-						ItemBlockRenderTypes.setRenderLayer(Fluids.LAVA, lavaType);
-						ItemBlockRenderTypes.setRenderLayer(Fluids.FLOWING_LAVA, lavaType);
 						minecraft.getBlockRenderer().liquidBlockRenderer = prevFluidRenderer;
 					}
 					minecraft.levelRenderer.allChanged();
@@ -343,7 +349,7 @@ public class ClientEvents{
 		});
 	}
 
-	public static void onRenderOverlayPreTick(ForgeIngameGui gui, PoseStack mStack, float partialTicks, int width, int height){
+	public static void onRenderOverlayPreTick(ForgeGui gui, PoseStack mStack, float partialTicks, int width, int height){
 		Minecraft mc = Minecraft.getInstance();
 		LocalPlayer player = mc.player;
 
@@ -354,7 +360,7 @@ public class ClientEvents{
 		if(!DragonUtils.isDragon(player)){
 			//TODO Forge seems to have made OverlayRegistry.registerOverlayAbove() only add not cancel original
 			//Until a proper fix is found sea dragon will have air indicator
-			//ForgeIngameGui.AIR_LEVEL_ELEMENT.render(gui, mStack, partialTicks, width, height);
+			//ForgeGui.AIR_LEVEL_ELEMENT.render(gui, mStack, partialTicks, width, height);
 			return;
 		}
 
@@ -366,9 +372,9 @@ public class ClientEvents{
 					RenderSystem.enableBlend();
 					RenderSystem.setShaderTexture(0, DRAGON_HUD);
 
-					if(Minecraft.getInstance().gui instanceof ForgeIngameGui gui1){
-						rightHeight = ((ForgeIngameGui)Minecraft.getInstance().gui).right_height;
-						((ForgeIngameGui)Minecraft.getInstance().gui).right_height += 10;
+					if(Minecraft.getInstance().gui instanceof ForgeGui gui1){
+						rightHeight = ((ForgeGui)Minecraft.getInstance().gui).rightHeight;
+						((ForgeGui)Minecraft.getInstance().gui).rightHeight += 10;
 					}
 
 					int maxTimeWithoutWater = ServerConfig.seaTicksWithoutWater;
@@ -404,9 +410,9 @@ public class ClientEvents{
 					RenderSystem.enableBlend();
 					RenderSystem.setShaderTexture(0, DRAGON_HUD);
 
-					if(Minecraft.getInstance().gui instanceof ForgeIngameGui){
-						rightHeight = ((ForgeIngameGui)Minecraft.getInstance().gui).right_height;
-						((ForgeIngameGui)Minecraft.getInstance().gui).right_height += 10;
+					if(Minecraft.getInstance().gui instanceof ForgeGui){
+						rightHeight = ((ForgeGui)Minecraft.getInstance().gui).rightHeight;
+						((ForgeGui)Minecraft.getInstance().gui).rightHeight += 10;
 					}
 
 					ContrastShowerAbility contrastShower = DragonAbilities.getAbility(player, ContrastShowerAbility.class);
@@ -436,9 +442,9 @@ public class ClientEvents{
 					RenderSystem.enableBlend();
 					RenderSystem.setShaderTexture(0, DRAGON_HUD);
 
-					if(Minecraft.getInstance().gui instanceof ForgeIngameGui){
-						rightHeight = ((ForgeIngameGui)Minecraft.getInstance().gui).right_height;
-						((ForgeIngameGui)Minecraft.getInstance().gui).right_height += 10;
+					if(Minecraft.getInstance().gui instanceof ForgeGui){
+						rightHeight = ((ForgeGui)Minecraft.getInstance().gui).rightHeight;
+						((ForgeGui)Minecraft.getInstance().gui).rightHeight += 10;
 					}
 
 					int left = Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 + 91;
@@ -458,9 +464,9 @@ public class ClientEvents{
 					RenderSystem.enableBlend();
 					RenderSystem.setShaderTexture(0, DRAGON_HUD);
 
-					if(Minecraft.getInstance().gui instanceof ForgeIngameGui){
-						rightHeight = ((ForgeIngameGui)Minecraft.getInstance().gui).right_height;
-						((ForgeIngameGui)Minecraft.getInstance().gui).right_height += 10;
+					if(Minecraft.getInstance().gui instanceof ForgeGui){
+						rightHeight = ((ForgeGui)Minecraft.getInstance().gui).rightHeight;
+						((ForgeGui)Minecraft.getInstance().gui).rightHeight += 10;
 					}
 
 					int maxTimeInDarkness = ServerConfig.forestStressTicks;

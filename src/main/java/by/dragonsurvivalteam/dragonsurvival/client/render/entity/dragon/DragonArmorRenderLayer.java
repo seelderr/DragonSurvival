@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
+import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
@@ -12,6 +13,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import software.bernie.geckolib3.core.processor.IBone;
@@ -52,12 +54,12 @@ public class DragonArmorRenderLayer extends GeoLayerRenderer<DragonEntity>{
 
 		((DragonRenderer)renderer).isRenderLayers = true;
 
-		GeoModel model = ClientDragonRender.dragonModel.getModel(ClientDragonRender.dragonModel.getModelLocation(null));
+		GeoModel model = ClientDragonRender.dragonModel.getModel(ClientDragonRender.dragonModel.getModelResource(null));
 
-		renderArmorPiece(model, renderer.helmet, matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, helmetTexture);
-		renderArmorPiece(model, renderer.chestplate, matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, chestPlateTexture);
-		renderArmorPiece(model, renderer.leggings, matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, legsTexture);
-		renderArmorPiece(model, renderer.boots, matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, bootsTexture);
+		renderArmorPiece(model, player.getItemBySlot(EquipmentSlot.HEAD), matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, helmetTexture);
+		renderArmorPiece(model, player.getItemBySlot(EquipmentSlot.CHEST), matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, chestPlateTexture);
+		renderArmorPiece(model, player.getItemBySlot(EquipmentSlot.LEGS), matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, legsTexture);
+		renderArmorPiece(model, player.getItemBySlot(EquipmentSlot.FEET), matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, bootsTexture);
 
 		((DragonRenderer)renderer).isRenderLayers = false;
 	}
@@ -98,7 +100,7 @@ public class DragonArmorRenderLayer extends GeoLayerRenderer<DragonEntity>{
 		String texture2 = itemToResLoc(item);
 		if (texture2 != null) {
 			texture2 = texture + texture2;
-			if (Minecraft.getInstance().getResourceManager().hasResource(new ResourceLocation(DragonSurvivalMod.MODID, texture2))) {
+			if (Minecraft.getInstance().getResourceManager().getResource(new ResourceLocation(DragonSurvivalMod.MODID, texture2)).isPresent()) {
 				return texture2;
 			}
 		}
@@ -147,17 +149,17 @@ public class DragonArmorRenderLayer extends GeoLayerRenderer<DragonEntity>{
 	
 	public static String itemToResLoc(Item item) {
 		if (item == Items.AIR) return null;
-		
-		ResourceLocation registryName = item.getRegistryName();
+
+		ResourceLocation registryName = ResourceHelper.getKey(item);
 		if (registryName != null) {
 			String[] reg = registryName.toString().split(":");
 			String loc = reg[0] + "/" + reg[1] + ".png";
 			// filters certain characters (non [a-z0-9/._-]) to prevent crashes
 			// this probably should never be relevant, but you can never be too safe
 			loc = loc.chars()
-					.filter(ch -> ResourceLocation.validPathChar((char) ch))
-					.collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-					.toString();
+				.filter(ch -> ResourceLocation.validPathChar((char) ch))
+				.collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+				.toString();
 			return loc;
 		}
 		return null;

@@ -10,7 +10,6 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAbility;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -24,7 +23,7 @@ public class CliffhangerAbility extends PassiveDragonAbility{
 
 	@Override
 	public Component getDescription(){
-		return new TranslatableComponent("ds.skill.description." + getName(), 3 + getHeight() + ServerConfig.forestFallReduction);
+		return Component.translatable("ds.skill.description." + getName(), 3 + getHeight() + ServerConfig.forestFallReduction);
 	}
 
 	@Override
@@ -60,7 +59,7 @@ public class CliffhangerAbility extends PassiveDragonAbility{
 	@OnlyIn( Dist.CLIENT )
 	public ArrayList<Component> getLevelUpInfo(){
 		ArrayList<Component> list = super.getLevelUpInfo();
-		list.add(new TranslatableComponent("ds.skill.range.blocks", "+1"));
+		list.add(Component.translatable("ds.skill.range.blocks", "+1"));
 		return list;
 	}
 

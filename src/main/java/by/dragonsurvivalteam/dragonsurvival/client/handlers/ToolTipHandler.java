@@ -22,13 +22,12 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderTooltipEvent;
-import net.minecraftforge.client.event.ScreenEvent.DrawScreenEvent;
+import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -61,17 +60,17 @@ public class ToolTipHandler{
 
 	@SubscribeEvent
 	public static void checkIfDragonFood(ItemTooltipEvent tooltipEvent){
-		if(tooltipEvent.getPlayer() != null){
+		if(tooltipEvent.getEntity() != null){
 			Item item = tooltipEvent.getItemStack().getItem();
 			List<Component> toolTip = tooltipEvent.getToolTip();
 			if(DragonFoodHandler.getSafeEdibleFoods(DragonTypes.CAVE).contains(item)){
-				toolTip.add(new TranslatableComponent("ds.cave.dragon.food"));
+				toolTip.add(Component.translatable("ds.cave.dragon.food"));
 			}
 			if(DragonFoodHandler.getSafeEdibleFoods(DragonTypes.FOREST).contains(item)){
-				toolTip.add(new TranslatableComponent("ds.forest.dragon.food"));
+				toolTip.add(Component.translatable("ds.forest.dragon.food"));
 			}
 			if(DragonFoodHandler.getSafeEdibleFoods(DragonTypes.SEA).contains(item)){
-				toolTip.add(new TranslatableComponent("ds.sea.dragon.food"));
+				toolTip.add(Component.translatable("ds.sea.dragon.food"));
 			}
 		}
 	}
@@ -79,75 +78,75 @@ public class ToolTipHandler{
 
 	@SubscribeEvent
 	public static void itemDescriptions(ItemTooltipEvent event){
-		if(event.getPlayer() != null){
+		if(event.getEntity() != null){
 			Item item = event.getItemStack().getItem();
 			List<Component> toolTip = event.getToolTip();
 
 			if(item == DSBlocks.fireDragonBeacon.asItem()){
-				toolTip.add(new TranslatableComponent("ds.description.passiveFireBeacon"));
+				toolTip.add(Component.translatable("ds.description.passiveFireBeacon"));
 			}
 			if(item == DSBlocks.magicDragonBeacon.asItem()){
-				toolTip.add(new TranslatableComponent("ds.description.passiveMagicBeacon"));
+				toolTip.add(Component.translatable("ds.description.passiveMagicBeacon"));
 			}
 			if(item == DSBlocks.peaceDragonBeacon.asItem()){
-				toolTip.add(new TranslatableComponent("ds.description.passivePeaceBeacon"));
+				toolTip.add(Component.translatable("ds.description.passivePeaceBeacon"));
 			}
 			if(item == DSBlocks.caveDoor.asItem()){
-				toolTip.add(new TranslatableComponent("ds.description.caveDoor"));
+				toolTip.add(Component.translatable("ds.description.caveDoor"));
 			}
 			if(item == DSBlocks.forestDoor.asItem()){
-				toolTip.add(new TranslatableComponent("ds.description.forestDoor"));
+				toolTip.add(Component.translatable("ds.description.forestDoor"));
 			}
 			if(item == DSBlocks.seaDoor.asItem()){
-				toolTip.add(new TranslatableComponent("ds.description.seaDoor"));
+				toolTip.add(Component.translatable("ds.description.seaDoor"));
 			}
 			if(item == DSBlocks.legacyDoor.asItem()){
-				toolTip.add(new TranslatableComponent("ds.description.legacyDoor"));
+				toolTip.add(Component.translatable("ds.description.legacyDoor"));
 			}
 			if(item == DSBlocks.helmet1.asItem()){
-				toolTip.add(new TranslatableComponent("ds.description.grayHelmet"));
+				toolTip.add(Component.translatable("ds.description.grayHelmet"));
 			}
 			if(item == DSBlocks.helmet2.asItem()){
-				toolTip.add(new TranslatableComponent("ds.description.goldHelmet"));
+				toolTip.add(Component.translatable("ds.description.goldHelmet"));
 			}
 			if(item == DSBlocks.helmet3.asItem()){
-				toolTip.add(new TranslatableComponent("ds.description.blackHelmet"));
+				toolTip.add(Component.translatable("ds.description.blackHelmet"));
 			}
 			if(item == DSBlocks.dragonBeacon.asItem()){
-				toolTip.add(new TranslatableComponent("ds.description.dragonBeacon"));
+				toolTip.add(Component.translatable("ds.description.dragonBeacon"));
 			}
 			if(item == DSBlocks.dragonMemoryBlock.asItem()){
-				toolTip.add(new TranslatableComponent("ds.description.dragonMemoryBlock"));
+				toolTip.add(Component.translatable("ds.description.dragonMemoryBlock"));
 			}
 			if(item == DSBlocks.seaSourceOfMagic.asItem()){
-				toolTip.add(new TranslatableComponent("ds.description.sea_source_of_magic"));
+				toolTip.add(Component.translatable("ds.description.sea_source_of_magic"));
 			}
 			if(item == DSBlocks.forestSourceOfMagic.asItem()){
-				toolTip.add(new TranslatableComponent("ds.description.forest_source_of_magic"));
+				toolTip.add(Component.translatable("ds.description.forest_source_of_magic"));
 			}
 			if(item == DSBlocks.caveSourceOfMagic.asItem()){
-				toolTip.add(new TranslatableComponent("ds.description.cave_source_of_magic"));
+				toolTip.add(Component.translatable("ds.description.cave_source_of_magic"));
 			}
 			if(item == DSBlocks.dragonPressurePlate.asItem()){
-				toolTip.add(new TranslatableComponent("ds.description.dragon_pressure_plate"));
+				toolTip.add(Component.translatable("ds.description.dragon_pressure_plate"));
 			}
 			if(item == DSBlocks.humanPressurePlate.asItem()){
-				toolTip.add(new TranslatableComponent("ds.description.human_pressure_plate"));
+				toolTip.add(Component.translatable("ds.description.human_pressure_plate"));
 			}
 			if(item == DSBlocks.seaPressurePlate.asItem()){
-				toolTip.add(new TranslatableComponent("ds.description.sea_dragon_pressure_plate"));
+				toolTip.add(Component.translatable("ds.description.sea_dragon_pressure_plate"));
 			}
 			if(item == DSBlocks.forestPressurePlate.asItem()){
-				toolTip.add(new TranslatableComponent("ds.description.forest_dragon_pressure_plate"));
+				toolTip.add(Component.translatable("ds.description.forest_dragon_pressure_plate"));
 			}
 			if(item == DSBlocks.cavePressurePlate.asItem()){
-				toolTip.add(new TranslatableComponent("ds.description.cave_dragon_pressure_plate"));
+				toolTip.add(Component.translatable("ds.description.cave_dragon_pressure_plate"));
 			}
 		}
 	}
 
 	@SubscribeEvent
-	public static void postScreenRender(DrawScreenEvent.Post event){
+	public static void postScreenRender(ScreenEvent.Render.Post event){
 		if(Minecraft.getInstance().screen != null && Minecraft.getInstance().screen.children != null){
 			if(Minecraft.getInstance().screen instanceof TooltipRender){
 				for(GuiEventListener btn : Minecraft.getInstance().screen.children){

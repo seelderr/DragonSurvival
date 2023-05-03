@@ -15,9 +15,10 @@ public class SquireHunterRenderer extends MobRenderer<SquireEntity, HunterModel<
 	private static final ResourceLocation TEXTURE = new ResourceLocation("dragonsurvival", "textures/dragon_squire.png");
 
 	public SquireHunterRenderer(EntityRendererProvider.Context rendererManager){
+		// Insecure modification
 		super(rendererManager, new HunterModel(rendererManager.bakeLayer(ModelLayers.EVOKER)), 0.5F);
-		addLayer(new CustomHeadLayer<>(this, rendererManager.getModelSet()));
-		addLayer(new ItemInHandLayer<>(this));
+		addLayer(new CustomHeadLayer<>(this, rendererManager.getModelSet(), rendererManager.getItemInHandRenderer()));
+		// addLayer(new ItemInHandLayer<>(this));
 	}
 
 

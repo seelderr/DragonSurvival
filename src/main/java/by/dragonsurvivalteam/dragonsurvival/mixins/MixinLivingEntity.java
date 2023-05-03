@@ -52,7 +52,7 @@ public abstract class MixinLivingEntity extends Entity{
 		if(slotType == EquipmentSlot.MAINHAND){
 			DragonStateHandler cap = DragonUtils.getHandler(entity);
 
-			if(!(mainStack.getItem() instanceof TieredItem) && cap != null){
+			if(!(mainStack.getItem() instanceof TieredItem)){
 				ItemStack sword = cap.getClawToolData().getClawsInventory().getItem(0);
 
 				if(!sword.isEmpty()){

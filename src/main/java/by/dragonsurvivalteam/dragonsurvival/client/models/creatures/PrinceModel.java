@@ -7,17 +7,17 @@ import software.bernie.geckolib3.model.AnimatedGeoModel;
 
 public class PrinceModel extends AnimatedGeoModel<PrinceHorseEntity>{
 	@Override
-	public ResourceLocation getModelLocation(PrinceHorseEntity object){
+	public ResourceLocation getModelResource(PrinceHorseEntity object){
 		return new ResourceLocation(DragonSurvivalMod.MODID, "geo/horseback_rider.geo.json");
 	}
 
 	@Override
-	public ResourceLocation getTextureLocation(PrinceHorseEntity object){
+	public ResourceLocation getTextureResource(PrinceHorseEntity object){
 		return new ResourceLocation(DragonSurvivalMod.MODID, "textures/riders/dragon_prince.png");
 	}
 
 	@Override
-	public ResourceLocation getAnimationFileLocation(PrinceHorseEntity animatable){
+	public ResourceLocation getAnimationResource(PrinceHorseEntity animatable){
 		return new ResourceLocation(DragonSurvivalMod.MODID, "animations/horseback_rider.animations.json");
 	}
 }

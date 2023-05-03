@@ -11,7 +11,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncSkillLevelChangeCost;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 
 public class DecreaseLevelButton extends ArrowButton{
 	private final int slot;
@@ -51,7 +51,7 @@ public class DecreaseLevelButton extends ArrowButton{
 
 			if(ability != null){
 				if(ability.getLevel() > ability.getMinLevel())
-					TooltipRendering.drawHoveringText(stack, new TranslatableComponent("ds.skill.level.down", (int)Math.max(1, ability.getLevelCost() * 0.8F)), mouseX, mouseY);
+					TooltipRendering.drawHoveringText(stack, Component.translatable("ds.skill.level.down", (int)Math.max(1, ability.getLevelCost() * 0.8F)), mouseX, mouseY);
 			}
 		});
 	}

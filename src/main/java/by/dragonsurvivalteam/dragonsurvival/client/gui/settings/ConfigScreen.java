@@ -1,7 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.settings;
 
-import by.dragonsurvivalteam.dragonsurvival.client.gui.settings.widgets.DSDropDownOption;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.settings.widgets.DSNumberFieldOption;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.settings.widgets.*;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.fields.TextField;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.CategoryEntry;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.OptionEntry;
@@ -32,6 +31,7 @@ import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.*;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
@@ -51,7 +51,7 @@ public abstract class ConfigScreen extends OptionsSubScreen{
 	private double scroll;
 
 	public ConfigScreen(Screen p_i225930_1_, Options p_i225930_2_){
-		super(p_i225930_1_, p_i225930_2_, TextComponent.EMPTY);
+		super(p_i225930_1_, p_i225930_2_, Component.empty());
 		OptionsList.activeCats.clear();
 	}
 
@@ -106,7 +106,7 @@ public abstract class ConfigScreen extends OptionsSubScreen{
 			minecraft.setScreen(lastScreen);
 		}));
 
-		addRenderableWidget(new TextField(list.getScrollbarPosition() - 150 - 32, height - 27, 150 + 32, 20, new TextComponent("Search")){
+		addRenderableWidget(new TextField(list.getScrollbarPosition() - 150 - 32, height - 27, 150 + 32, 20, Component.literal("Search")){
 			final ArrayList<CategoryEntry> cats = new ArrayList<>();
 
 			@Override
@@ -159,8 +159,8 @@ public abstract class ConfigScreen extends OptionsSubScreen{
 
 			String fullpath = String.join(".", List.of(category, key));
 
-			String translatedName = new TranslatableComponent("ds." + fullpath).getString();
-			String translateTooltip = new TranslatableComponent("ds." + fullpath + ".tooltip").getString();
+			String translatedName = Component.translatable("ds." + fullpath).getString();
+			String translateTooltip = Component.translatable("ds." + fullpath + ".tooltip").getString();
 
 			String name = !translatedName.equalsIgnoreCase("ds." + fullpath) ? translatedName : key;
 			String tooltip0 = !translateTooltip.equalsIgnoreCase("ds." + fullpath + ".tooltip") ? translateTooltip : opt.comment() != null ? String.join("\n", opt.comment()) : "";
@@ -173,7 +173,7 @@ public abstract class ConfigScreen extends OptionsSubScreen{
 			BigDecimal min = BigDecimal.valueOf(range != null ? range.min() : -1).setScale(5, RoundingMode.FLOOR);
 			BigDecimal max = BigDecimal.valueOf(range != null ? range.max() : Integer.MAX_VALUE).setScale(5, RoundingMode.FLOOR);
 
-			TextComponent tooltip = new TextComponent(tooltip0);
+			Component tooltip = Component.literal(tooltip0);
 			Class<?> checkType = Primitives.unwrap(fe.getType());
 
 			if(Number.class.isAssignableFrom(fe.getType())){
@@ -194,7 +194,16 @@ public abstract class ConfigScreen extends OptionsSubScreen{
 				};
 
 				if(max.subtract(min).intValue() <= 10){ //Use slider if the difference between min and max value is small enough, otherwise use text field
-					option = new ProgressOption(name, min.doubleValue(), max.doubleValue(), sliderPerc, val->getter.apply(val).doubleValue(), setter::accept, (settings, slider) -> new TextComponent(numberFunction.apply(checkType, slider.get(settings)) + ""), mc -> mc.font.split(tooltip, 200));
+					option = new ProgressOption(
+						name,
+						min.doubleValue(),
+						max.doubleValue(),
+						sliderPerc,
+						val->getter.apply(val).doubleValue(),
+						setter::accept,
+						(settings, slider) -> Component.literal(numberFunction.apply(checkType, slider.get(settings)) + ""),
+						mc -> mc.font.split(tooltip, 200)
+					);
 				}else{
 					option = new DSNumberFieldOption(name, min, max, getter, setter, m -> Minecraft.getInstance().font.split(tooltip, 200));
 				}
@@ -209,7 +218,7 @@ public abstract class ConfigScreen extends OptionsSubScreen{
 					if(screenSide() == ConfigSide.SERVER){
 						NetworkHandler.CHANNEL.sendToServer(new SyncBooleanConfig(key, settingValue));
 					}
-				}, () -> CycleButton.booleanBuilder(((BaseComponent)CommonComponents.OPTION_ON).withStyle(ChatFormatting.GREEN), ((BaseComponent)CommonComponents.OPTION_OFF).withStyle(ChatFormatting.RED)).displayOnlyValue())
+				}, () -> CycleButton.booleanBuilder(((MutableComponent)CommonComponents.OPTION_ON).withStyle(ChatFormatting.GREEN), ((MutableComponent)CommonComponents.OPTION_OFF).withStyle(ChatFormatting.RED)).displayOnlyValue())
 					.setTooltip(mc-> s ->mc.font.split(tooltip, 200));
 				OptionsList.configMap.put(option, key);
 				addOption(category, name, option);
@@ -236,12 +245,12 @@ public abstract class ConfigScreen extends OptionsSubScreen{
 						}
 					else
 						joiner.add("[]");
-					String text = Minecraft.getInstance().font.substrByWidth(new TextComponent(joiner.toString()), 120).getString();
+					String text = Minecraft.getInstance().font.substrByWidth(Component.literal(joiner.toString()), 120).getString();
 					CycleOption<String> option = new CycleOption<String>(name,
 	                     val -> text,
-	                     (val1, val2, val3) -> minecraft.setScreen(new ConfigListMenu(this, minecraft.options, new TextComponent(name), key, value, screenSide(), key)),
+	                     (val1, val2, val3) -> minecraft.setScreen(new ConfigListMenu(this, minecraft.options, Component.literal(name), key, value, screenSide(), key)),
 	                     () -> {
-							return new Builder<String>(t -> new TextComponent(text)).displayOnlyValue().withValues(text).withInitialValue(text);
+							return new Builder<String>(t -> Component.literal(text)).displayOnlyValue().withValues(text).withInitialValue(text);
 					}).setTooltip(mc-> s ->mc.font.split(tooltip, 200));
 
 					OptionsList.configMap.put(option, key);
@@ -267,7 +276,7 @@ public abstract class ConfigScreen extends OptionsSubScreen{
 
 
 	@Override
-	public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
+	public void render(@NotNull PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
 		renderBackground(p_230430_1_);
 		list.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
 		super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
@@ -283,7 +292,7 @@ public abstract class ConfigScreen extends OptionsSubScreen{
 		Optional<AbstractWidget> optional = p_243293_0_.getMouseOver(p_243293_1_, p_243293_2_);
 		OptionListEntry optional2 = p_243293_0_.getEntryAtPos(p_243293_1_, p_243293_2_);
 
-		if(!optional.isPresent() || !(optional.get() instanceof TooltipAccessor))
+		if(optional.isEmpty() || !(optional.get() instanceof TooltipAccessor))
 			if(optional2 instanceof OptionEntry){
 				optional = Optional.of(((OptionEntry)optional2).widget);
 			}

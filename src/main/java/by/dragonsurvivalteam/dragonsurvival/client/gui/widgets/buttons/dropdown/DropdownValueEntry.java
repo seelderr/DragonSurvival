@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
 
 import java.util.Collections;
@@ -18,7 +18,7 @@ public class DropdownValueEntry extends DropdownEntry{
 	private final String value;
 	private final Consumer<String> setter;
 	private final DropDownButton source;
-	private final TextComponent message;
+	private final Component message;
 	private ExtendedButton button;
 
 	public DropdownValueEntry(DropDownButton source, int num, String value, Consumer<String> setter){
@@ -26,7 +26,7 @@ public class DropdownValueEntry extends DropdownEntry{
 		this.value = value;
 		this.setter = setter;
 		this.source = source;
-		message = new TextComponent(value.substring(0, 1).toUpperCase(Locale.ROOT) + value.substring(1).toLowerCase(Locale.ROOT));
+		message = Component.empty().append(value.substring(0, 1).toUpperCase(Locale.ROOT) + value.substring(1).toLowerCase(Locale.ROOT));
 	}
 
 	@Override
@@ -40,7 +40,7 @@ public class DropdownValueEntry extends DropdownEntry{
 			if(list != null)
 				button = new ExtendedButton(list.getLeft() + 3, 0, list.getWidth() - 12, pHeight + 1, null, null){
 					@Override
-					public TextComponent getMessage(){
+					public Component getMessage(){
 						return message;
 					}
 

@@ -9,7 +9,6 @@ import net.minecraft.client.gui.screens.OptionsSubScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 
 
 public class ConfigSideSelectionScreen extends OptionsSubScreen{
@@ -24,13 +23,13 @@ public class ConfigSideSelectionScreen extends OptionsSubScreen{
 	protected void init(){
 		list = new OptionsList(width, height, 32, height - 32);
 
-		addRenderableWidget(new Button(width / 2 - 100, 38, 200, 20, new TranslatableComponent("ds.gui.settings.client"), p_213106_1_ -> {
-			Minecraft.getInstance().setScreen(new ClientConfigScreen(this, Minecraft.getInstance().options, new TranslatableComponent("ds.gui.settings.client")));
+		addRenderableWidget(new Button(width / 2 - 100, 38, 200, 20, Component.translatable("ds.gui.settings.client"), p_213106_1_ -> {
+			Minecraft.getInstance().setScreen(new ClientConfigScreen(this, Minecraft.getInstance().options, Component.translatable("ds.gui.settings.client")));
 		}));
 
 
-		addRenderableWidget(new Button(width / 2 - 100, 38 + 27, 200, 20, new TranslatableComponent("ds.gui.settings.server"), p_213106_1_ -> {
-			Minecraft.getInstance().setScreen(new ServerConfigScreen(this, Minecraft.getInstance().options, new TranslatableComponent("ds.gui.settings.server")));
+		addRenderableWidget(new Button(width / 2 - 100, 38 + 27, 200, 20, Component.translatable("ds.gui.settings.server"), p_213106_1_ -> {
+			Minecraft.getInstance().setScreen(new ServerConfigScreen(this, Minecraft.getInstance().options, Component.translatable("ds.gui.settings.server")));
 		}){
 			@Override
 			public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){

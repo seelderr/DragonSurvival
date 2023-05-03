@@ -5,6 +5,7 @@ import com.google.common.collect.Maps;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.Util;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.entity.npc.VillagerTrades.ItemListing;
@@ -161,7 +162,7 @@ import java.util.Random;
 
 		@Nullable
 		@Override
-		public MerchantOffer getOffer(Entity entity, Random random){
+		public MerchantOffer getOffer(Entity entity, RandomSource random){
 			return new MerchantOffer(baseCostA, costB, result, maxUses, xp, priceMultiplier);
 		}
 	}

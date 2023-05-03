@@ -20,8 +20,7 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
@@ -64,7 +63,7 @@ public class EmoteMenuHandler{
 	private static String currentlyKeybinding = null;
 
 	@SubscribeEvent
-	public static void addEmoteButton(ScreenEvent.InitScreenEvent.Post initGuiEvent){
+	public static void addEmoteButton(ScreenEvent.Init.Post initGuiEvent){
 		Screen sc = initGuiEvent.getScreen();
 		currentlyKeybinding = null;
 		if(sc instanceof ChatScreen screen && DragonUtils.isDragon(Minecraft.getInstance().player)){
@@ -85,7 +84,7 @@ public class EmoteMenuHandler{
 			startX += emoteXOffset;
 			startY += emoteYOffset;
 
-			initGuiEvent.addListener(new Button(startX, startY - (PER_PAGE + 2) * height - 5, width, height, new TextComponent(">"), btn -> {
+			initGuiEvent.addListener(new Button(startX, startY - (PER_PAGE + 2) * height - 5, width, height, Component.empty().append(">"), btn -> {
 			}){
 				@Override
 				public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks){
@@ -174,7 +173,7 @@ public class EmoteMenuHandler{
 				}
 			});
 
-			initGuiEvent.addListener(new Button(startX, startY, width, height, new TextComponent(">"), btn -> {
+			initGuiEvent.addListener(new Button(startX, startY, width, height, Component.empty().append(">"), btn -> {
 				DragonStateHandler handler = DragonUtils.getHandler(Minecraft.getInstance().player);
 				handler.getEmoteData().emoteMenuOpen = !handler.getEmoteData().emoteMenuOpen;
 				NetworkHandler.CHANNEL.sendToServer(new SyncEmote(Minecraft.getInstance().player.getId(), handler.getEmoteData()));
@@ -188,7 +187,7 @@ public class EmoteMenuHandler{
 					Gui.fill(stack, x, y, x + width, y + height, color);
 
 					int j = getFGColor();
-					drawCenteredString(stack, Minecraft.getInstance().font, new TranslatableComponent("ds.emote.toggle"), x + width / 2, y + (height - 8) / 2, j | Mth.ceil(alpha * 255.0F) << 24);
+					drawCenteredString(stack, Minecraft.getInstance().font, Component.translatable("ds.emote.toggle"), x + width / 2, y + (height - 8) / 2, j | Mth.ceil(alpha * 255.0F) << 24);
 
 
 					stack.pushPose();
@@ -239,7 +238,7 @@ public class EmoteMenuHandler{
 
 						if(emote != null){
 							stack.pushPose();
-							drawString(stack, Minecraft.getInstance().font, new TranslatableComponent(emote.name), x + 22, y + (height - 8) / 2, Color.lightGray.getRGB());
+							drawString(stack, Minecraft.getInstance().font, Component.translatable(emote.name), x + 22, y + (height - 8) / 2, Color.lightGray.getRGB());
 							stack.popPose();
 
 							RenderSystem.setShaderTexture(0, emote.loops ? PLAY_LOOPED : PLAY_ONCE);
@@ -251,7 +250,7 @@ public class EmoteMenuHandler{
 					}
 				});
 
-				initGuiEvent.addListener(new ExtendedButton(startX - 65, startY - 20 - height * (PER_PAGE - 1 - finalI), 60, height, TextComponent.EMPTY, btn -> {
+				initGuiEvent.addListener(new ExtendedButton(startX - 65, startY - 20 - height * (PER_PAGE - 1 - finalI), 60, height, Component.empty(), btn -> {
 					Emote emote = emotes.size() > finalI ? emotes.get(finalI) : null;
 
 					if(emote != null){
@@ -304,7 +303,7 @@ public class EmoteMenuHandler{
 					}
 				});
 
-				initGuiEvent.addListener(new ExtendedButton(startX - 70 - height, startY - 20 - height * (PER_PAGE - 1 - finalI), height, height, TextComponent.EMPTY, btn -> {
+				initGuiEvent.addListener(new ExtendedButton(startX - 70 - height, startY - 20 - height * (PER_PAGE - 1 - finalI), height, height, Component.empty(), btn -> {
 					Emote emote = emotes.size() > finalI ? emotes.get(finalI) : null;
 					DragonStateHandler handler = DragonUtils.getHandler(Minecraft.getInstance().player);
 
@@ -335,7 +334,7 @@ public class EmoteMenuHandler{
 				});
 			}
 
-			initGuiEvent.addListener(new ExtendedButton(startX + width / 2 - width / 4, startY - height, width / 2, height, TextComponent.EMPTY, btn -> {
+			initGuiEvent.addListener(new ExtendedButton(startX + width / 2 - width / 4, startY - height, width / 2, height, Component.empty(), btn -> {
 				keybinding = !keybinding;
 				currentlyKeybinding = null;
 			}){
@@ -353,7 +352,7 @@ public class EmoteMenuHandler{
 					Gui.fill(stack, x, y, x + width, y + height, color);
 
 					int j = getFGColor();
-					drawCenteredString(stack, Minecraft.getInstance().font, new TranslatableComponent("ds.emote.keybinds"), x + width / 2, y + (height - 8) / 2, j | Mth.ceil(alpha * 255.0F) << 24);
+					drawCenteredString(stack, Minecraft.getInstance().font, Component.translatable("ds.emote.keybinds"), x + width / 2, y + (height - 8) / 2, j | Mth.ceil(alpha * 255.0F) << 24);
 				}
 			});
 		}
@@ -476,7 +475,7 @@ public class EmoteMenuHandler{
 
 	@OnlyIn( Dist.CLIENT )
 	@SubscribeEvent
-	public static void onKey(InputEvent.KeyInputEvent keyInputEvent){
+	public static void onKey(InputEvent.Key keyInputEvent){
 		Screen sc = Minecraft.getInstance().screen;
 		int pKeyCode = keyInputEvent.getKey();
 

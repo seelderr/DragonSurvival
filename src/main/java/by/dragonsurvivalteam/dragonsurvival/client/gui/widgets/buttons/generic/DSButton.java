@@ -4,7 +4,6 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.utils.TooltipRender;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TooltipRendering;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
 
 import java.util.Arrays;
@@ -14,7 +13,7 @@ public class DSButton extends ExtendedButton implements TooltipRender{
 	public Component[] tooltips;
 
 	public DSButton(int pX, int pY, int pWidth, int pHeight, OnPress pOnPress){
-		super(pX, pY, pWidth, pHeight, TextComponent.EMPTY, pOnPress);
+		super(pX, pY, pWidth, pHeight, Component.empty(), pOnPress);
 	}
 
 	public DSButton(int pX, int pY, int pWidth, int pHeight, Component pMessage, OnPress pOnPress){
@@ -22,11 +21,11 @@ public class DSButton extends ExtendedButton implements TooltipRender{
 	}
 
 	public DSButton(int pX, int pY, int pWidth, int pHeight){
-		super(pX, pY, pWidth, pHeight, TextComponent.EMPTY, t -> {});
+		super(pX, pY, pWidth, pHeight, Component.empty(), t -> {});
 	}
 
 	public DSButton(int pX, int pY, int pWidth, int pHeight, OnPress pOnPress, Component... tooltip){
-		super(pX, pY, pWidth, pHeight, TextComponent.EMPTY, pOnPress);
+		super(pX, pY, pWidth, pHeight, Component.empty(), pOnPress);
 		tooltips = tooltip;
 	}
 
@@ -36,7 +35,7 @@ public class DSButton extends ExtendedButton implements TooltipRender{
 	}
 
 	public DSButton(int pX, int pY, int pWidth, int pHeight, Component... tooltip){
-		super(pX, pY, pWidth, pHeight, TextComponent.EMPTY, t -> {});
+		super(pX, pY, pWidth, pHeight, Component.empty(), t -> {});
 		tooltips = tooltip;
 	}
 

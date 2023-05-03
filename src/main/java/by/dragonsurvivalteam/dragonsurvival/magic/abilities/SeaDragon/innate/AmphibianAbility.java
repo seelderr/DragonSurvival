@@ -8,7 +8,6 @@ import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.innate.InnateDragonAbility;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -17,7 +16,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class AmphibianAbility extends InnateDragonAbility{
 	@Override
 	public Component getDescription(){
-		return new TranslatableComponent("ds.skill.description." + getName(), ServerConfig.seaDehydrationDamage, 2);
+		return Component.translatable("ds.skill.description." + getName(), ServerConfig.seaDehydrationDamage, 2);
 	}
 
 	@Override

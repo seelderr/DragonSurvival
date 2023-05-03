@@ -58,6 +58,7 @@ public class SyncPotionAddedEffect implements IMessage<SyncPotionAddedEffect>{
 	@Override
 	public void handle(SyncPotionAddedEffect message, Supplier<NetworkEvent.Context> supplier){
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> run(message, supplier));
+		supplier.get().setPacketHandled(true);
 	}
 
 	@OnlyIn( Dist.CLIENT )

@@ -16,6 +16,7 @@ import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -136,7 +137,7 @@ public class SourceOfMagicHandler{
 							if(ServerConfig.sourceOfMagicInfiniteMagic){
 								if(player.level.isClientSide){
 									Minecraft minecraft = Minecraft.getInstance();
-									Random random = player.level.random;
+									RandomSource random = player.level.random;
 									double x = -1 + random.nextDouble() * 2;
 									double z = -1 + random.nextDouble() * 2;
 
@@ -181,7 +182,7 @@ public class SourceOfMagicHandler{
 
 	@SubscribeEvent
 	public static void playerAttacked(LivingHurtEvent event){
-		LivingEntity entity = event.getEntityLiving();
+		LivingEntity entity = event.getEntity();
 
 		if(entity instanceof Player player){
 			if(!player.level.isClientSide){

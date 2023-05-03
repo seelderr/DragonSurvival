@@ -42,14 +42,16 @@ public class RenderingUtils{
 	public static void drawRect(PoseStack mStack, int zLevel, int xPos, int yPos, int width, int heigth, int color){
 		Color cc = new Color(color);
 		Matrix4f mat = mStack.last().pose();
-		BufferBuilder buffer = Tesselator.getInstance().getBuilder();
+		Tesselator tesselator = Tesselator.getInstance();
+		BufferBuilder buffer = tesselator.getBuilder();
+
 		buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 		buffer.vertex(mat, xPos + width, yPos, zLevel).color(cc.getRed(), cc.getGreen(), cc.getBlue(), cc.getAlpha()).endVertex();
 		buffer.vertex(mat, xPos, yPos, zLevel).color(cc.getRed(), cc.getGreen(), cc.getBlue(), cc.getAlpha()).endVertex();
 		buffer.vertex(mat, xPos, yPos + heigth, zLevel).color(cc.getRed(), cc.getGreen(), cc.getBlue(), cc.getAlpha()).endVertex();
 		buffer.vertex(mat, xPos + width, yPos + heigth, zLevel).color(cc.getRed(), cc.getGreen(), cc.getBlue(), cc.getAlpha()).endVertex();
-		buffer.end();
-		BufferUploader.end(buffer);
+		// Insecure modifications
+		tesselator.end();
 	}
 
 	public static void drawGradientRect(PoseStack mat, int zLevel, int left, int top, int right, int bottom, int[] color){
@@ -69,7 +71,8 @@ public class RenderingUtils{
 			blue[i] = (float)(color[i] & 255) / 255.0F;
 		}
 
-		BufferBuilder bufferbuilder = Tesselator.getInstance().getBuilder();
+		Tesselator tesselator = Tesselator.getInstance();
+		BufferBuilder bufferbuilder = tesselator.getBuilder();
 		RenderSystem.enableBlend();
 		RenderSystem.disableTexture();
 		RenderSystem.defaultBlendFunc();
@@ -79,8 +82,9 @@ public class RenderingUtils{
 		bufferbuilder.vertex(mat, left, top, zLevel).color(red[1], green[1], blue[1], alpha[1]).endVertex();
 		bufferbuilder.vertex(mat, left, bottom, zLevel).color(red[2], green[2], blue[2], alpha[2]).endVertex();
 		bufferbuilder.vertex(mat, right, bottom, zLevel).color(red[3], green[3], blue[3], alpha[3]).endVertex();
-		bufferbuilder.end();
-		BufferUploader.end(bufferbuilder);
+		// Insecure modifications
+		//BufferUploader.draw(bufferbuilder.end());
+		tesselator.end();
 		RenderSystem.enableTexture();
 		RenderSystem.disableBlend();
 	}
@@ -88,7 +92,9 @@ public class RenderingUtils{
 	public static void renderPureColorSquare(PoseStack mStack, int x, int y, int width, int height){
 		Matrix4f mat = mStack.last().pose();
 		int zLevel = 100;
-		BufferBuilder bufferbuilder = Tesselator.getInstance().getBuilder();
+		//BufferBuilder bufferbuilder = Tesselator.getInstance().getBuilder();
+		Tesselator tesselator = Tesselator.getInstance();
+		BufferBuilder bufferbuilder = tesselator.getBuilder();
 		RenderSystem.enableBlend();
 		RenderSystem.disableTexture();
 		RenderSystem.defaultBlendFunc();
@@ -102,8 +108,9 @@ public class RenderingUtils{
 			bufferbuilder.vertex(mat, x + i, y + height, zLevel).color(top.getRed() / 255f, top.getGreen() / 255f, top.getBlue() / 255f, top.getAlpha() / 255f).endVertex();
 		}
 
-		bufferbuilder.end();
-		BufferUploader.end(bufferbuilder);
+		// Insecure modifications
+		tesselator.end();
+		//BufferUploader.draw(bufferbuilder.end());
 		RenderSystem.enableTexture();
 		RenderSystem.disableBlend();
 	}
@@ -115,7 +122,8 @@ public class RenderingUtils{
 		RenderSystem.disableTexture();
 		RenderSystem.defaultBlendFunc();
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
-		BufferBuilder bufferbuilder = Tesselator.getInstance().getBuilder();
+		Tesselator tesselator = Tesselator.getInstance();
+		BufferBuilder bufferbuilder = tesselator.getBuilder();
 		bufferbuilder.begin(Mode.TRIANGLE_STRIP, DefaultVertexFormat.POSITION_COLOR);
 
 		for(int i = 0; i < width; i++){
@@ -136,8 +144,9 @@ public class RenderingUtils{
 			bufferbuilder.vertex(mat, x + i, y + height, zLevel).color(bot.getRed() / 255f, bot.getGreen() / 255f, bot.getBlue() / 255f, bot.getAlpha() / 255f).endVertex();
 		}
 
-		bufferbuilder.end();
-		BufferUploader.end(bufferbuilder);
+		// Insecure modifications
+		//BufferUploader.draw(bufferbuilder.end());
+		tesselator.end();
 		RenderSystem.enableTexture();
 		RenderSystem.disableBlend();
 	}
@@ -161,7 +170,8 @@ public class RenderingUtils{
 		float f = (float)(pColor >> 16 & 255) / 255.0F;
 		float f1 = (float)(pColor >> 8 & 255) / 255.0F;
 		float f2 = (float)(pColor & 255) / 255.0F;
-		BufferBuilder bufferbuilder = Tesselator.getInstance().getBuilder();
+		Tesselator tesselator = Tesselator.getInstance();
+		BufferBuilder bufferbuilder = tesselator.getBuilder();
 		RenderSystem.enableBlend();
 		RenderSystem.disableTexture();
 		RenderSystem.defaultBlendFunc();
@@ -171,8 +181,9 @@ public class RenderingUtils{
 		bufferbuilder.vertex(pMatrix, (float)pMaxX, (float)pMaxY, 0.0F).color(f, f1, f2, f3).endVertex();
 		bufferbuilder.vertex(pMatrix, (float)pMaxX, (float)pMinY, 0.0F).color(f, f1, f2, f3).endVertex();
 		bufferbuilder.vertex(pMatrix, (float)pMinX, (float)pMinY, 0.0F).color(f, f1, f2, f3).endVertex();
-		bufferbuilder.end();
-		BufferUploader.end(bufferbuilder);
+		// Insecure modifications
+		//BufferUploader.draw(bufferbuilder.end());
+		tesselator.end();
 		RenderSystem.enableTexture();
 		RenderSystem.disableBlend();
 	}
@@ -187,8 +198,8 @@ public class RenderingUtils{
 		double z = 100;
 
 		RenderSystem.enableBlend();
-		RenderSystem.setShader(GameRenderer::getPositionTexShader);
-		final BufferBuilder buffer = Tesselator.getInstance().getBuilder();
+		Tesselator tesselator = RenderSystem.renderThreadTesselator();
+		final BufferBuilder buffer = tesselator.getBuilder();
 
 		GL11.glEnable(GL11.GL_LINE_SMOOTH);
 		GL11.glHint(GL11.GL_LINE_SMOOTH_HINT, GL11.GL_NICEST);
@@ -213,10 +224,10 @@ public class RenderingUtils{
 			buffer.vertex(matrix4f, (float)(x + sin * radius), (float)(y + cos * radius), (float)z).uv((float)(u + sin * texRadius), (float)(v + cos * texRadius)).endVertex();
 		}
 
+		tesselator.end();
 		RenderSystem.disableBlend();
 		GL11.glDisable(GL11.GL_LINE_SMOOTH);
-		buffer.end();
-		BufferUploader.end(buffer);
+		// Insecure modifications
 	}
 
 	public static void drawSmoothCircle(PoseStack stack, double x, double y, double radius, int sides, double percent, double startAngle){
@@ -228,10 +239,10 @@ public class RenderingUtils{
 		double z = 100;
 
 		float[] colors = RenderSystem.getShaderColor();
-
 		RenderSystem.enableBlend();
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
-		final BufferBuilder buffer = Tesselator.getInstance().getBuilder();
+		Tesselator tesselator = Tesselator.getInstance();
+		final BufferBuilder buffer = tesselator.getBuilder();
 
 		GL11.glEnable(GL11.GL_LINE_SMOOTH);
 		GL11.glHint(GL11.GL_LINE_SMOOTH_HINT, GL11.GL_NICEST);
@@ -256,8 +267,9 @@ public class RenderingUtils{
 
 		RenderSystem.disableBlend();
 		GL11.glDisable(GL11.GL_LINE_SMOOTH);
-		buffer.end();
-		BufferUploader.end(buffer);
+		// Insecure modifications
+		//BufferUploader.draw(buffer.end());
+		tesselator.end();
 	}
 
 	public static void drawTexturedRing(PoseStack stack, double x, double y, double innerRadius, double outerRadius, double u, double v, double texInnerRadius, double texOuterRadius, int sides, double percent, double startAngle){
@@ -276,7 +288,8 @@ public class RenderingUtils{
 		GL11.glEnable(GL11.GL_LINE_SMOOTH);
 		GL11.glHint(GL11.GL_LINE_SMOOTH_HINT, GL11.GL_NICEST);
 
-		final BufferBuilder buffer = Tesselator.getInstance().getBuilder();
+		Tesselator tesselator = Tesselator.getInstance();
+		final BufferBuilder buffer =  tesselator.getBuilder();
 		buffer.begin(Mode.TRIANGLE_STRIP, DefaultVertexFormat.POSITION_TEX);
 
 		for(int i = 0; i <= percent * sides; i++){
@@ -295,7 +308,7 @@ public class RenderingUtils{
 		buffer.vertex(matrix4f, (float)(x + sin * outerRadius), (float)(y + cos * outerRadius), z).uv((float)(u + sin * texOuterRadius), (float)(v + cos * texOuterRadius)).endVertex();
 		buffer.vertex(matrix4f, (float)(x + sin * innerRadius), (float)(y + cos * innerRadius), z).uv((float)(u + sin * texInnerRadius), (float)(v + cos * texInnerRadius)).endVertex();
 
-		Tesselator.getInstance().end();
+		tesselator.end();
 		GL11.glDisable(GL11.GL_LINE_SMOOTH);
 		RenderSystem.disableBlend();
 	}

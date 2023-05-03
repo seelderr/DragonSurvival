@@ -18,8 +18,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
+import net.minecraftforge.client.event.RenderGuiOverlayEvent;
+import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
@@ -115,7 +115,7 @@ public class DragonTreasureHandler{
 
 	@OnlyIn( Dist.CLIENT )
 	@SubscribeEvent
-	public static void sleepScreenRender(RenderGameOverlayEvent.Post event){
+	public static void sleepScreenRender(RenderGuiOverlayEvent.Post event){
 		Player playerEntity = Minecraft.getInstance().player;
 
 		if(playerEntity == null || !DragonUtils.isDragon(playerEntity) || playerEntity.isSpectator()){
@@ -123,7 +123,7 @@ public class DragonTreasureHandler{
 		}
 
 		DragonStateProvider.getCap(playerEntity).ifPresent(cap -> {
-			if(event.getType() == ElementType.ALL){
+			if(event.getOverlay() == VanillaGuiOverlay.AIR_LEVEL.type()){
 
 				Window window = Minecraft.getInstance().getWindow();
 				float f = playerEntity.level.getSunAngle(1.0F);
@@ -138,7 +138,7 @@ public class DragonTreasureHandler{
 				}
 				if(sleepTimer > 0){
 					Color darkening = new Color(0.05f, 0.05f, 0.05f, Mth.lerp(Math.min(sleepTimer, 100) / 100f, 0, 0.5F));
-					Gui.fill(event.getMatrixStack(), 0, 0, window.getGuiScaledWidth(), window.getGuiScaledHeight(), darkening.getRGB());
+					Gui.fill(event.getPoseStack(), 0, 0, window.getGuiScaledWidth(), window.getGuiScaledHeight(), darkening.getRGB());
 				}
 			}
 		});
@@ -146,7 +146,7 @@ public class DragonTreasureHandler{
 
 	@SubscribeEvent
 	public static void playerAttacked(LivingHurtEvent event){
-		LivingEntity entity = event.getEntityLiving();
+		LivingEntity entity = event.getEntity();
 
 		if(entity instanceof Player player){
 			

@@ -4,15 +4,12 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraftforge.common.util.ForgeSoundType;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.RegisterEvent;
 import net.minecraftforge.registries.RegistryObject;
 
-@Mod.EventBusSubscriber( bus = Mod.EventBusSubscriber.Bus.MOD )
 public class SoundRegistry{
 	public static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, DragonSurvivalMod.MODID);
 
@@ -28,31 +25,29 @@ public class SoundRegistry{
 	public static RegistryObject<SoundEvent> treasureMetalHit = SOUNDS.register("treasure_metal_hit", () -> new SoundEvent(new ResourceLocation(DragonSurvivalMod.MODID, "treasure_metal_hit")));
 	public static ForgeSoundType treasureMetal = new ForgeSoundType(1f, 1f, treasureMetalBreak, treasureMetalHit, treasureMetalHit, treasureMetalHit, treasureMetalHit);
 
-	@SubscribeEvent
-	public static void registerSounds(RegistryEvent.Register<SoundEvent> registryEvent){
-		IForgeRegistry<SoundEvent> forgeRegistry = registryEvent.getRegistry();
-		activateBeacon = register("activate_beacon", forgeRegistry);
-		deactivateBeacon = register("deactivate_beacon", forgeRegistry);
-		upgradeBeacon = register("upgrade_beacon", forgeRegistry);
-		applyEffect = register("apply_effect", forgeRegistry);
+	public static void register()
+	{
+		activateBeacon = register("activate_beacon");
+		deactivateBeacon = register("deactivate_beacon");
+		upgradeBeacon = register("upgrade_beacon");
+		applyEffect = register("apply_effect");
 
-		fireBreathStart = register("fire_breath_start", forgeRegistry);
-		fireBreathLoop = register("fire_breath_loop", forgeRegistry);
-		fireBreathEnd = register("fire_breath_end", forgeRegistry);
+		fireBreathStart = register("fire_breath_start");
+		fireBreathLoop = register("fire_breath_loop");
+		fireBreathEnd = register("fire_breath_end");
 
-		forestBreathStart = register("forest_breath_start", forgeRegistry);
-		forestBreathLoop = register("forest_breath_loop", forgeRegistry);
-		forestBreathEnd = register("forest_breath_end", forgeRegistry);
+		forestBreathStart = register("forest_breath_start");
+		forestBreathLoop = register("forest_breath_loop");
+		forestBreathEnd = register("forest_breath_end");
 
-		stormBreathStart = register("storm_breath_start", forgeRegistry);
-		stormBreathLoop = register("storm_breath_loop", forgeRegistry);
-		stormBreathEnd = register("storm_breath_end", forgeRegistry);
+		stormBreathStart = register("storm_breath_start");
+		stormBreathLoop = register("storm_breath_loop");
+		stormBreathEnd = register("storm_breath_end");
 	}
 
-	private static SoundEvent register(String name, IForgeRegistry<SoundEvent> forgeRegistry){
+	private static SoundEvent register(String name){
 		SoundEvent soundEvent = new SoundEvent(new ResourceLocation(DragonSurvivalMod.MODID, name));
-		soundEvent.setRegistryName(DragonSurvivalMod.MODID, name);
-		forgeRegistry.register(soundEvent);
+		SOUNDS.register(name, ()->soundEvent);
 		return soundEvent;
 	}
 }

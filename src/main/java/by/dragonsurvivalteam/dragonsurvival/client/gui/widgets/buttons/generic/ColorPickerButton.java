@@ -3,7 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic;
 import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.sounds.SoundManager;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
 
@@ -17,7 +17,7 @@ public class ColorPickerButton extends ExtendedButton{
 	double selectorY;
 
 	public ColorPickerButton(int xPos, int yPos, int width, int height, Color defaultColor, Consumer<Color> colorConsumer){
-		super(xPos, yPos, width, height, TextComponent.EMPTY, null);
+		super(xPos, yPos, width, height, Component.empty(), null);
 		this.defaultColor = defaultColor;
 		this.colorConsumer = colorConsumer;
 

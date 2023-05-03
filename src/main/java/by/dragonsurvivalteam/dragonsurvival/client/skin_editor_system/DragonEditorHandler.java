@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 public class DragonEditorHandler{
@@ -123,8 +124,11 @@ public class DragonEditorHandler{
 
 					try{
 						ResourceLocation texture = getSkinTexture(player, layer, key, handler.getType());
-						Resource resource = Minecraft.getInstance().getResourceManager().getResource(texture);
-						InputStream textureStream = resource.getInputStream();
+						Optional<Resource> resource = Minecraft.getInstance().getResourceManager().getResource(texture);
+						if(resource.isEmpty())
+							throw new IOException(String.format("Resource %s not found!", texture.getPath()));
+
+						InputStream textureStream = resource.get().open();
 						NativeImage img = NativeImage.read(textureStream);
 						textureStream.close();
 

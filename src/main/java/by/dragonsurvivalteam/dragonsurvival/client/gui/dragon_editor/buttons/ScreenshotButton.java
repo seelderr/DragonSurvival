@@ -13,7 +13,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
@@ -92,7 +91,7 @@ public class ScreenshotButton extends ExtendedButton implements TooltipRender{
 
 	@Override
 	public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-		TooltipRendering.drawHoveringText(p_230443_1_, new TextComponent("Currently, out of order."), p_230443_2_, p_230443_3_);
-		//TooltipRendering.drawHoveringText(p_230443_1_, new TranslatableComponent("ds.gui.dragon_editor.screenshot"), p_230443_2_, p_230443_3_);
+		TooltipRendering.drawHoveringText(p_230443_1_, Component.empty().append("Currently, out of order."), p_230443_2_, p_230443_3_);
+		//TooltipRendering.drawHoveringText(p_230443_1_, Component.translatable("ds.gui.dragon_editor.screenshot"), p_230443_2_, p_230443_3_);
 	}
 }

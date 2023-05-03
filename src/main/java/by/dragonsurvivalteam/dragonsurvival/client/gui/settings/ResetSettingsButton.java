@@ -2,6 +2,8 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.settings;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.settings.widgets.DSDropDownOption;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.settings.widgets.Option;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.settings.widgets.ProgressOption;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.fields.TextField;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.OptionsList;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
@@ -15,8 +17,6 @@ import by.dragonsurvivalteam.dragonsurvival.network.config.SyncNumberConfig;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.Option;
-import net.minecraft.client.ProgressOption;
 import net.minecraft.client.gui.components.AbstractOptionSliderButton;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;

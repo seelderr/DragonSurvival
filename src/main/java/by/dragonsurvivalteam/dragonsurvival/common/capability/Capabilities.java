@@ -60,7 +60,7 @@ public class Capabilities{
 
 	@SubscribeEvent
 	public static void onLoggedIn(PlayerEvent.PlayerLoggedInEvent loggedInEvent){
-		Player player = loggedInEvent.getPlayer();
+		Player player = loggedInEvent.getEntity();
 		DragonStateProvider.getCap(player).ifPresent(cap -> NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)player), new RequestClientData(cap.getType(), cap.getLevel())));
 		syncCapability(player);
 	}
@@ -72,20 +72,20 @@ public class Capabilities{
 
 	@SubscribeEvent
 	public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent playerRespawnEvent){
-		Player player = playerRespawnEvent.getPlayer();
+		Player player = playerRespawnEvent.getEntity();
 		syncCapability(player);
 	}
 
 	@SubscribeEvent
 	public static void onDimensionChange(PlayerEvent.PlayerChangedDimensionEvent event){
-		Player player = event.getPlayer();
+		Player player = event.getEntity();
 		syncCapability(player);
 		DragonStateProvider.getCap(player).ifPresent(cap -> cap.getSkinData().compileSkin());
 	}
 
 	@SubscribeEvent
 	public static void onTrackingStart(PlayerEvent.StartTracking startTracking){
-		Player trackingPlayer = startTracking.getPlayer();
+		Player trackingPlayer = startTracking.getEntity();
 		if(trackingPlayer instanceof ServerPlayer target){
 			Entity tracked = startTracking.getTarget();
 			if(tracked instanceof ServerPlayer){
@@ -96,7 +96,7 @@ public class Capabilities{
 
 	@SubscribeEvent
 	public static void onClone(PlayerEvent.Clone e){
-		Player player = e.getPlayer();
+		Player player = e.getEntity();
 		Player original = e.getOriginal();
 		original.reviveCaps();
 

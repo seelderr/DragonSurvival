@@ -17,8 +17,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 
@@ -143,7 +143,7 @@ public class AbilityButton extends Button implements TooltipRender{
 			FormattedText desc = ability.getDescription();
 
 			if(ability.getInfo().size() > 0){
-				desc = FormattedText.composite(desc, new TextComponent("\n\n"));
+				desc = FormattedText.composite(desc, Component.empty().append("\n\n"));
 			}
 
 			List<FormattedCharSequence> description = Minecraft.getInstance().font.split(desc, 143);

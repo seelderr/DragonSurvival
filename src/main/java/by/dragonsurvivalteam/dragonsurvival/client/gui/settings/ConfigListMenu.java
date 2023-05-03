@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.settings;
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.settings.widgets.DSTextBoxOption;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.settings.widgets.Option;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.settings.widgets.ResourceTextFieldOption;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.OptionListEntry;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.OptionsList;
@@ -12,7 +13,6 @@ import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.config.SyncListConfig;
 import com.google.common.primitives.Primitives;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.Option;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
@@ -21,7 +21,6 @@ import net.minecraft.client.gui.screens.OptionsSubScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 
@@ -97,7 +96,7 @@ public class ConfigListMenu extends OptionsSubScreen{
 
 		addWidget(list);
 
-		addRenderableWidget(new Button(width / 2 + 20, height - 27, 100, 20, new TextComponent("Add new"), p_213106_1_ -> {
+		addRenderableWidget(new Button(width / 2 + 20, height - 27, 100, 20, Component.literal("Add new"), p_213106_1_ -> {
 			createOption("");
 			list.setScrollAmount(list.getMaxScroll());
 		}));

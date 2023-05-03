@@ -20,7 +20,6 @@ import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
@@ -41,7 +40,7 @@ public class AbilityScreen extends Screen{
 	private AbstractDragonType type;
 
 	public AbilityScreen(Screen sourceScreen){
-		super(new TextComponent("AbilityScreen"));
+		super(Component.empty().append("AbilityScreen"));
 		this.sourceScreen = sourceScreen;
 	}
 
@@ -111,7 +110,7 @@ public class AbilityScreen extends Screen{
 			stack.popPose();
 
 			stack.pushPose();
-			Component textComponent = new TextComponent(Integer.toString(minecraft.player.experienceLevel)).withStyle(ChatFormatting.DARK_GRAY);
+			Component textComponent = Component.empty().append(Integer.toString(minecraft.player.experienceLevel)).withStyle(ChatFormatting.DARK_GRAY);
 			int xPos = startX + 117 + 1;
 			float finalXPos = (float)(xPos - minecraft.font.width(textComponent) / 2);
 			minecraft.font.draw(stack, textComponent, finalXPos, startY + 26, 0);

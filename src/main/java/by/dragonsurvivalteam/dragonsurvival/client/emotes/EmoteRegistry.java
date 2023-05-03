@@ -6,11 +6,12 @@ import com.google.gson.Gson;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ReloadableResourceManager;
+import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -24,10 +25,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @Mod.EventBusSubscriber( bus = Mod.EventBusSubscriber.Bus.MOD )
 public class EmoteRegistry{
@@ -53,7 +51,10 @@ public class EmoteRegistry{
 	protected static void reload(ResourceManager manager, ResourceLocation location){
 		try{
 			Gson gson = new Gson();
-			InputStream in = manager.getResource(location).getInputStream();
+			Resource resource = manager.getResource(location).orElse(null);
+			if (resource == null)
+				throw new RuntimeException(String.format("Resource '%s' not found!", location.getPath()));
+			InputStream in = resource.open();
 
 			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 			EmoteRegistryClass je = gson.fromJson(reader, EmoteRegistryClass.class);
@@ -78,7 +79,7 @@ public class EmoteRegistry{
 	public static void initEmoteRotation(){
 		for(Emote emt : EMOTES){
 			if(emt.mirror != null && emt.animation != null){
-				AnimationFile animation = GeckoLibCache.getInstance().getAnimations().get(ClientDragonRender.dragonModel.getAnimationFileLocation(null));
+				AnimationFile animation = GeckoLibCache.getInstance().getAnimations().get(ClientDragonRender.dragonModel.getAnimationResource(null));
 
 				if(animation != null){
 					Animation an = animation.getAnimation(emt.animation);
@@ -156,7 +157,7 @@ public class EmoteRegistry{
 	public static class clientStart{
 		@OnlyIn( Dist.CLIENT )
 		@SubscribeEvent
-		public static void clientStart(EntityJoinWorldEvent event){
+		public static void clientStart(EntityJoinLevelEvent event){
 			if(!hasStarted){
 				initEmoteRotation();
 				hasStarted = true;

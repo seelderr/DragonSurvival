@@ -5,20 +5,19 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 
 import java.util.Locale;
 
 public abstract class DragonWingAbility extends InnateDragonAbility{
 	@Override
 	public Component getDescription(){
-		String key = KeyInputHandler.TOGGLE_WINGS.getKey().getDisplayName().getContents().toUpperCase(Locale.ROOT);
+		String key = KeyInputHandler.TOGGLE_WINGS.getKey().getDisplayName().getString().toUpperCase(Locale.ROOT);
 
 		if(key.isEmpty())
 			key = KeyInputHandler.TOGGLE_WINGS.getKey().getDisplayName().getString();
 
 		DragonStateHandler handler = DragonUtils.getHandler(player);
-		return new TranslatableComponent("ds.skill.description." + getName(), key).append("\n").append(new TranslatableComponent("ds.skill.description." + getName() + (handler.getMovementData().spinLearned ? ".has_spin" : ".no_spin")));
+		return Component.translatable("ds.skill.description." + getName(), key).append("\n").append(Component.translatable("ds.skill.description." + getName() + (handler.getMovementData().spinLearned ? ".has_spin" : ".no_spin")));
 	}
 
 	@Override

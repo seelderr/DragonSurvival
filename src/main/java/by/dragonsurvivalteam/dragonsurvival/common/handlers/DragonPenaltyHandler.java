@@ -8,6 +8,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonTypeData;
 import by.dragonsurvivalteam.dragonsurvival.registry.DamageSources;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
@@ -67,7 +68,7 @@ public class DragonPenaltyHandler{
 
 	@SubscribeEvent
 	public static void consumeHurtfulItem(LivingEntityUseItemEvent.Finish destroyItemEvent){
-		if(!ServerConfig.penalties || !(destroyItemEvent.getEntityLiving() instanceof Player player)){
+		if(!ServerConfig.penalties || !(destroyItemEvent.getEntity() instanceof Player player)){
 			return;
 		}
 
@@ -79,7 +80,7 @@ public class DragonPenaltyHandler{
 						Objects.equals(dragonStateHandler.getType(), DragonTypes.FOREST) ? ServerConfig.forestDragonHurtfulItems : Objects.equals(dragonStateHandler.getType(), DragonTypes.CAVE) ? ServerConfig.caveDragonHurtfulItems : Objects.equals(dragonStateHandler.getType(), DragonTypes.SEA) ? ServerConfig.seaDragonHurtfulItems : new ArrayList<>());
 
 				for(String item : hurtfulItems){
-					if(item.replace("item:", "").replace("tag:", "").startsWith(itemStack.getItem().getRegistryName().toString() + ":")){
+					if(item.replace("item:", "").replace("tag:", "").startsWith(ResourceHelper.getKey(itemStack.getItem()).toString() + ":")){
 						String damage = item.substring(item.lastIndexOf(":") + 1);
 						player.hurt(DamageSource.GENERIC, Float.parseFloat(damage));
 						break;
@@ -95,9 +96,9 @@ public class DragonPenaltyHandler{
 			return;
 		}
 		ItemStack itemStack = destroyItemEvent.getItem();
-		DragonStateProvider.getCap(destroyItemEvent.getEntityLiving()).ifPresent(dragonStateHandler -> {
+		DragonStateProvider.getCap(destroyItemEvent.getEntity()).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon() && dragonStateHandler.getType() instanceof SeaDragonType seaDragonType){
-				Player player = (Player)destroyItemEvent.getEntityLiving();
+				Player player = (Player)destroyItemEvent.getEntity();
 				if(ServerConfig.seaAllowWaterBottles && itemStack.getItem() instanceof PotionItem){
 					if(PotionUtils.getPotion(itemStack) == Potions.WATER && Objects.equals(dragonStateHandler.getType(), DragonTypes.SEA) && !player.level.isClientSide){
 						seaDragonType.timeWithoutWater = Math.max(seaDragonType.timeWithoutWater - ServerConfig.seaTicksWithoutWaterRestored, 0);

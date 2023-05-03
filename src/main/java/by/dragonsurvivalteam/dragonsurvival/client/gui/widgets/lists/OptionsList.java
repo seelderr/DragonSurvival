@@ -1,12 +1,13 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists;
 
+import by.dragonsurvivalteam.dragonsurvival.client.gui.settings.widgets.Option;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.settings.widgets.SliderButton;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.Option;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.components.events.GuiEventListener;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import org.apache.commons.lang3.StringUtils;
 
@@ -31,7 +32,7 @@ public class OptionsList extends ContainerObjectSelectionList<OptionListEntry>{
 
 	public CategoryEntry addCategory(String p_214333_1_, CategoryEntry ent, int catNum){
 		String name = p_214333_1_.substring(0, 1).toUpperCase(Locale.ROOT) + p_214333_1_.substring(1).replace("_", " ");
-		CategoryEntry entry = new CategoryEntry(this, new TextComponent(name), ent, catNum);
+		CategoryEntry entry = new CategoryEntry(this, Component.empty().append(name), ent, catNum);
 		entry.origName = p_214333_1_;
 		addEntry(entry);
 		return entry;
@@ -151,9 +152,8 @@ public class OptionsList extends ContainerObjectSelectionList<OptionListEntry>{
 	public int getRowWidth(){
 		return listWidth;
 	}
-
 	@Override
-	protected void renderList(PoseStack p_238478_1_, int p_238478_2_, int p_238478_3_, int p_238478_4_, int p_238478_5_, float p_238478_6_){
+	protected void renderList(PoseStack pPoseStack, int pMouseX, int pMouseY, float pPartialTick){
 		int i = getItemCount();
 
 		for(int j = 0; j < i; ++j){
@@ -166,8 +166,8 @@ public class OptionsList extends ContainerObjectSelectionList<OptionListEntry>{
 				int j1 = e.getHeight();
 				int k1 = getRowWidth();
 				int j2 = getRowLeft();
-				boolean mouseOver = isMouseOver(p_238478_4_, p_238478_5_) && Objects.equals(getEntryAtPos(p_238478_4_, p_238478_5_), e);
-				e.render(p_238478_1_, j, k, j2, k1, j1, p_238478_4_, p_238478_5_, mouseOver, p_238478_6_);
+				boolean mouseOver = isMouseOver(pMouseX, pMouseY) && Objects.equals(getEntryAtPos(pMouseX, pMouseY), e);
+				e.render(pPoseStack, j, k, j2, k1, j1, pMouseX, pMouseY, mouseOver, pPartialTick);
 			}
 		}
 	}

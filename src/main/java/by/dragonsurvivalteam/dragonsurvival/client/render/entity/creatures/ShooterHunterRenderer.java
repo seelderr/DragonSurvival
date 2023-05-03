@@ -15,9 +15,10 @@ public class ShooterHunterRenderer extends MobRenderer<Shooter, HunterModel<Shoo
 	private static final ResourceLocation TEXTURE = new ResourceLocation("dragonsurvival", "textures/dragon_hunter.png");
 
 	public ShooterHunterRenderer(EntityRendererProvider.Context rendererManager){
-		super(rendererManager, new HunterModel(rendererManager.bakeLayer(ModelLayers.EVOKER)), 0.5F);
-		addLayer(new CustomHeadLayer<>(this, rendererManager.getModelSet()));
-		addLayer(new ItemInHandLayer<>(this));
+		// Insecure modification
+		super(rendererManager, new HunterModel<>(rendererManager.bakeLayer(ModelLayers.EVOKER)), 0.5F);
+		addLayer(new CustomHeadLayer<>(this, rendererManager.getModelSet(), rendererManager.getItemInHandRenderer()));
+		// addLayer(new ItemInHandLayer<>(this));
 	}
 
 	@Override

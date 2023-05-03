@@ -11,12 +11,12 @@ public class FireballModel extends AnimatedGeoModel<FireBallEntity>{
 
 
 	@Override
-	public ResourceLocation getModelLocation(FireBallEntity dragonEntity){
+	public ResourceLocation getModelResource(FireBallEntity dragonEntity){
 		return new ResourceLocation(DragonSurvivalMod.MODID, "geo/dragon_fireball.geo.json");
 	}
 
 	@Override
-	public ResourceLocation getTextureLocation(FireBallEntity dragonEntity){
+	public ResourceLocation getTextureResource(FireBallEntity dragonEntity){
 		return currentTexture;
 	}
 
@@ -25,7 +25,7 @@ public class FireballModel extends AnimatedGeoModel<FireBallEntity>{
 	}
 
 	@Override
-	public ResourceLocation getAnimationFileLocation(FireBallEntity animatable){
+	public ResourceLocation getAnimationResource(FireBallEntity animatable){
 		return new ResourceLocation(DragonSurvivalMod.MODID, "animations/fireball.animation.json");
 	}
 }

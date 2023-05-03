@@ -14,10 +14,11 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.client.gui.ForgeIngameGui;
+import net.minecraftforge.client.gui.overlay.ForgeGui;
 
 import java.awt.Color;
 
@@ -30,7 +31,7 @@ public class ClientGrowthHudHandler{
 	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui", "growth"}, key = "growthYOffset", comment = "Offset the y position of the item growth icon in relation to its normal position" )
 	public static Integer growthYOffset = 0;
 
-	public static void renderGrowth(ForgeIngameGui gui, PoseStack mStack, float partialTicks, int width, int height){
+	public static void renderGrowth(ForgeGui gui, PoseStack mStack, float partialTicks, int width, int height){
 		Player playerEntity = Minecraft.getInstance().player;
 		if(playerEntity == null || !DragonUtils.isDragon(playerEntity) || playerEntity.isSpectator())
 			return;
@@ -84,6 +85,7 @@ public class ClientGrowthHudHandler{
 			RenderingUtils.drawSmoothCircle(mStack, circleX + radius, circleY + radius, radius, 6, 1, 0);
 
 			RenderSystem.enableTexture();
+			RenderSystem.setShader(GameRenderer::getPositionTexShader);
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1.0f);
 
 			if(nextProgess > progress){
@@ -111,6 +113,7 @@ public class ClientGrowthHudHandler{
 			RenderSystem.setShaderColor(c.getRed() / 255.0f, c.getBlue() / 255.0f, c.getGreen() / 255.0f, 1.0f);
 			RenderingUtils.drawSmoothCircle(mStack, circleX + radius, circleY + radius, radius - thickness, 6, 1, 0);
 			RenderSystem.enableTexture();
+			RenderSystem.setShader(GameRenderer::getPositionTexShader);
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1.0f);
 
 			RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/growth_" + handler.getType().getTypeName().toLowerCase() + "_" + (handler.getLevel().ordinal() + 1) + ".png"));

@@ -16,7 +16,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 
 
 public class TabButton extends Button implements TooltipRender{
@@ -107,6 +107,6 @@ public class TabButton extends Button implements TooltipRender{
 	@Override
 	public void renderToolTip(PoseStack pPoseStack, int pMouseX, int pMouseY){
 		super.renderToolTip(pPoseStack, pMouseX, pMouseY);
-		TooltipRendering.drawHoveringText(pPoseStack, new TranslatableComponent("ds.gui.tab_button." + index), pMouseX, pMouseY);
+		TooltipRendering.drawHoveringText(pPoseStack, Component.translatable("ds.gui.tab_button." + index), pMouseX, pMouseY);
 	}
 }

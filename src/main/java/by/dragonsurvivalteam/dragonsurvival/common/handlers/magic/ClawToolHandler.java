@@ -36,7 +36,7 @@ import java.util.Objects;
 public class ClawToolHandler{
 	@SubscribeEvent
 	public static void experiencePickup(PickupXp event){
-		Player player = event.getPlayer();
+		Player player = event.getEntity();
 
 		DragonStateProvider.getCap(player).ifPresent(cap -> {
 			ArrayList<ItemStack> stacks = new ArrayList<>();
@@ -90,7 +90,7 @@ public class ClawToolHandler{
 		if(!ServerConfig.bonuses || !ServerConfig.clawsAreTools){
 			return;
 		}
-		Player playerEntity = harvestCheck.getPlayer();
+		Player playerEntity = harvestCheck.getEntity();
 		DragonStateProvider.getCap(playerEntity).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon()){
 				ItemStack stack = playerEntity.getMainHandItem();
@@ -157,7 +157,7 @@ public class ClawToolHandler{
 	@SubscribeEvent
 	public static void onToolBreak(PlayerDestroyItemEvent event){
 		if(event.getHand() == null) return;
-		Player player = event.getPlayer();
+		Player player = event.getEntity();
 
 		if(DragonUtils.isDragon(player)){
 			ItemStack clawTool = getDragonTools(player);
@@ -174,7 +174,7 @@ public class ClawToolHandler{
 			if(!ServerConfig.bonuses || !ServerConfig.clawsAreTools){
 				return;
 			}
-			Player playerEntity = breakSpeedEvent.getPlayer();
+			Player playerEntity = breakSpeedEvent.getEntity();
 
 			ItemStack mainStack = playerEntity.getMainHandItem();
 			DragonStateHandler dragonStateHandler = DragonUtils.getHandler(playerEntity);

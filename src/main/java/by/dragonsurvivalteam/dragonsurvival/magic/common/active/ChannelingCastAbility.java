@@ -6,7 +6,6 @@ import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import lombok.Getter;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.ArrayList;
@@ -78,7 +77,7 @@ public abstract class ChannelingCastAbility extends ActiveDragonAbility {
 		ArrayList<Component> components = super.getInfo();
 
 		if(getSkillChargeTime() > 0)
-			components.add(new TranslatableComponent("ds.skill.cast_time", Functions.ticksToSeconds(getSkillChargeTime())));
+			components.add(Component.translatable("ds.skill.cast_time", Functions.ticksToSeconds(getSkillChargeTime())));
 
 		return components;
 	}

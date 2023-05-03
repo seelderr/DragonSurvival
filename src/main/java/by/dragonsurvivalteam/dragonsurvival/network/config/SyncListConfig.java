@@ -57,6 +57,7 @@ public class SyncListConfig implements IMessage<SyncListConfig>{
 		if(supplier.get().getDirection() == NetworkDirection.PLAY_TO_SERVER){
 			ServerPlayer entity = supplier.get().getSender();
 			if(entity == null || !entity.hasPermissions(2)){
+				supplier.get().setPacketHandled(true);
 				return;
 			}
 			NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new SyncListConfig(message.key, message.value));
@@ -68,5 +69,6 @@ public class SyncListConfig implements IMessage<SyncListConfig>{
 		if(ob instanceof ConfigValue value){
 			ConfigHandler.updateConfigValue(value, message.value);
 		}
+		supplier.get().setPacketHandled(true);
 	}
 }

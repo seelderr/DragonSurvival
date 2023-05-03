@@ -35,7 +35,7 @@ public class DragonRidingHandler{
 
 
 		if(ent instanceof ServerPlayer target){
-			Player self = event.getPlayer();
+			Player self = event.getEntity();
 
 			DragonStateProvider.getCap(target).ifPresent(targetCap -> {
 				if(targetCap.isDragon() && target.getPose() == Pose.CROUCHING && targetCap.getSize() >= 40 && !target.isVehicle()){
@@ -101,7 +101,7 @@ public class DragonRidingHandler{
 
 	@SubscribeEvent
 	public static void onPlayerDisconnect(PlayerEvent.PlayerLoggedOutEvent event){
-		ServerPlayer player = (ServerPlayer)event.getPlayer();
+		ServerPlayer player = (ServerPlayer)event.getEntity();
 		if(player.getVehicle() == null || !(player.getVehicle() instanceof ServerPlayer vehicle)){
 			return;
 		}
@@ -117,7 +117,7 @@ public class DragonRidingHandler{
 
 	@SubscribeEvent
 	public static void changedDimension(PlayerEvent.PlayerChangedDimensionEvent changedDimensionEvent){
-		Player player = changedDimensionEvent.getPlayer();
+		Player player = changedDimensionEvent.getEntity();
 		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
 			NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SynchronizeDragonCap(player.getId(), dragonStateHandler.isHiding(), dragonStateHandler.getType(), dragonStateHandler.getSize(), dragonStateHandler.hasWings(), 0));
 			NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new RefreshDragons(player.getId()));

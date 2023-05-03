@@ -12,9 +12,8 @@ import net.minecraft.client.gui.components.TooltipAccessor;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.util.FormattedCharSequence;
-import net.minecraftforge.client.gui.GuiUtils;
+import net.minecraftforge.client.gui.ScreenUtils;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
 
 import java.util.List;
@@ -44,7 +43,7 @@ public class DropDownButton extends ExtendedButton implements TooltipAccessor{
 
 	public void updateMessage(){
 		if(current != null)
-			message = new TextComponent(current.substring(0, 1).toUpperCase(Locale.ROOT) + current.substring(1).toLowerCase(Locale.ROOT));
+			message = Component.empty().append(current.substring(0, 1).toUpperCase(Locale.ROOT) + current.substring(1).toLowerCase(Locale.ROOT));
 	}
 
 	@Override
@@ -73,7 +72,7 @@ public class DropDownButton extends ExtendedButton implements TooltipAccessor{
 	public void renderButton(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
 		Minecraft mc = Minecraft.getInstance();
 		int k = getYImage(isHovered);
-		GuiUtils.drawContinuousTexturedBox(poseStack, WIDGETS_LOCATION, x, y, 0, 46 + k * 20, width, height, 200, 20, 2, 3, 2, 2, getBlitOffset());
+		ScreenUtils.blitWithBorder(poseStack, WIDGETS_LOCATION, x, y, 0, 46 + k * 20, width, height, 200, 20, 2, 3, 2, 2, getBlitOffset());
 		renderBg(poseStack, mc, mouseX, mouseY);
 
 		Component buttonText = getMessage();
@@ -81,7 +80,7 @@ public class DropDownButton extends ExtendedButton implements TooltipAccessor{
 		int ellipsisWidth = mc.font.width("...");
 
 		if (strWidth > width - 6 && strWidth > ellipsisWidth)
-			buttonText = new TextComponent(mc.font.substrByWidth(buttonText, width - 6 - ellipsisWidth).getString() + "...");
+			buttonText = Component.empty().append(mc.font.substrByWidth(buttonText, width - 6 - ellipsisWidth).getString() + "...");
 
 		poseStack.pushPose();
 		poseStack.translate(0,0, getBlitOffset());
@@ -143,7 +142,7 @@ public class DropDownButton extends ExtendedButton implements TooltipAccessor{
 			}
 
 			boolean finalHasBorder = hasBorder;
-			renderButton = new ExtendedButton(0, 0, 0, 0, TextComponent.EMPTY, null){
+			renderButton = new ExtendedButton(0, 0, 0, 0, Component.empty(), null){
 				@Override
 				public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
 					active = visible = false;

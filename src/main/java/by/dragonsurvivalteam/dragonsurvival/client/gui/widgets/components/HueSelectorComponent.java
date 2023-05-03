@@ -16,9 +16,8 @@ import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.components.events.AbstractContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraftforge.client.gui.GuiUtils;
+import net.minecraft.network.chat.Component;
+import net.minecraftforge.client.gui.ScreenUtils;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
 
 import java.awt.Color;
@@ -51,12 +50,12 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 		settings = () -> screen.preset.skinAges.get(screen.level).layerSettings.get(layer);
 		LayerSettings set = settings.get();
 
-		glowing = new ExtendedCheckbox(x + 3, y, xSize - 5, 10, 10, new TranslatableComponent("ds.gui.dragon_editor.glowing"), set.glowing, s -> {
+		glowing = new ExtendedCheckbox(x + 3, y, xSize - 5, 10, 10, Component.translatable("ds.gui.dragon_editor.glowing"), set.glowing, s -> {
 			settings.get().glowing = s.selected();
 			screen.handler.getSkinData().compileSkin();
 		});
 
-		hueReset = new ExtendedButton(x + 3 + xSize - 26, y + 12, 20, 20, TextComponent.EMPTY, s -> {
+		hueReset = new ExtendedButton(x + 3 + xSize - 26, y + 12, 20, 20, Component.empty(), s -> {
 			hueSlider.setValue(0.0);
 
 		}){
@@ -75,7 +74,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 			hsb[1] = 0.5f;
 		}
 
-		hueSlider = new DSSlider(x + 3, y + 12, xSize - 26, 20, TextComponent.EMPTY, TextComponent.EMPTY, -180, 180, set.modifiedColor ? Math.round(hsb[0] * 360 - 180) : 0, true){
+		hueSlider = new DSSlider(x + 3, y + 12, xSize - 26, 20, Component.empty(), Component.empty(), -180, 180, set.modifiedColor ? Math.round(hsb[0] * 360 - 180) : 0, true){
 			@Override
 			protected void applyValue(){
 				super.applyValue();
@@ -106,7 +105,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 			}
 		};
 
-		saturationSlider = new DSSlider(x + 3, y + 22 + 12, xSize - 26, 20, TextComponent.EMPTY, TextComponent.EMPTY, -180, 180, set.modifiedColor ? Math.round(hsb[1] * 360 - 180) : 0, true){
+		saturationSlider = new DSSlider(x + 3, y + 22 + 12, xSize - 26, 20, Component.empty(), Component.empty(), -180, 180, set.modifiedColor ? Math.round(hsb[1] * 360 - 180) : 0, true){
 			@Override
 			protected void applyValue(){
 				super.applyValue();
@@ -141,7 +140,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 			}
 		};
 
-		saturationReset = new ExtendedButton(x + 3 + xSize - 26, y + 22 + 12, 20, 20, TextComponent.EMPTY, s -> {
+		saturationReset = new ExtendedButton(x + 3 + xSize - 26, y + 22 + 12, 20, 20, Component.empty(), s -> {
 			saturationSlider.setValue(0.0);
 		}){
 			@Override
@@ -154,7 +153,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 			}
 		};
 
-		brightnessReset = new ExtendedButton(x + 3 + xSize - 26, y + 44 + 12, 20, 20, TextComponent.EMPTY, s -> {
+		brightnessReset = new ExtendedButton(x + 3 + xSize - 26, y + 44 + 12, 20, 20, Component.empty(), s -> {
 			brightnessSlider.setValue(0.0);
 		}){
 			@Override
@@ -167,7 +166,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 			}
 		};
 
-		brightnessSlider = new DSSlider(x + 3, y + 44 + 12, xSize - 26, 20, TextComponent.EMPTY, TextComponent.EMPTY, -180, 180, set.modifiedColor ? Math.round(hsb[2] * 360 - 180) : 0, true){
+		brightnessSlider = new DSSlider(x + 3, y + 44 + 12, xSize - 26, 20, Component.empty(), Component.empty(), -180, 180, set.modifiedColor ? Math.round(hsb[2] * 360 - 180) : 0, true){
 			@Override
 			protected void applyValue(){
 				super.applyValue();
@@ -215,7 +214,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 
 	@Override
 	public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
-		GuiUtils.drawContinuousTexturedBox(pMatrixStack, DropdownList.BACKGROUND_TEXTURE, x, y - 3, 0, 0, xSize, ySize + 6, 32, 32, 10, 10, 10, 10, (float)500);
+		ScreenUtils.blitWithBorder(pMatrixStack, DropdownList.BACKGROUND_TEXTURE, x, y - 3, 0, 0, xSize, ySize + 6, 32, 32, 10, 10, 10, 10, (float)500);
 
 		glowing.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 

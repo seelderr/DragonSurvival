@@ -5,7 +5,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.util.FormattedCharSequence;
 
 import java.util.List;
@@ -37,7 +36,7 @@ public class TextRenderUtil{
 	}
 
 	public static void drawScaledTextSplit(PoseStack matrix, float x, float y, float scale, String text, int color, int maxLength, int zLevel){
-		List<FormattedCharSequence> lines = Minecraft.getInstance().font.split(new TextComponent(text), (int)(maxLength / scale));
+		List<FormattedCharSequence> lines = Minecraft.getInstance().font.split(Component.empty().append(text), (int)(maxLength / scale));
 
 		matrix.pushPose();
 		matrix.translate(x - x * scale, y - y * scale, zLevel);
@@ -52,7 +51,7 @@ public class TextRenderUtil{
 	}
 
 	public static void drawCenteredScaledTextSplit(PoseStack matrix, int x, int y, float scale, String text, int color, int maxLength, int zLevel){
-		List<FormattedCharSequence> lines = Minecraft.getInstance().font.split(new TextComponent(text), (int)(maxLength / scale));
+		List<FormattedCharSequence> lines = Minecraft.getInstance().font.split(Component.empty().append(text), (int)(maxLength / scale));
 
 		matrix.pushPose();
 		matrix.translate(x - x * scale, y - y * scale, zLevel);

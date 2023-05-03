@@ -45,6 +45,7 @@ public class SyncSkillLevelChangeCost implements IMessage<SyncSkillLevelChangeCo
 		ServerPlayer player = supplier.get().getSender();
 
 		if(player == null){
+			supplier.get().setPacketHandled(true);
 			return;
 		}
 
@@ -66,5 +67,6 @@ public class SyncSkillLevelChangeCost implements IMessage<SyncSkillLevelChangeCo
 				}
 			}
 		});
+		supplier.get().setPacketHandled(true);
 	}
 }

@@ -41,7 +41,7 @@ import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
-import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingVisibilityEvent;
 import net.minecraftforge.event.entity.living.LivingExperienceDropEvent;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
@@ -132,7 +132,7 @@ public class MagicHandler{
 
 	@SubscribeEvent
 	public static void livingVisibility(LivingVisibilityEvent event){
-		if(event.getEntityLiving() instanceof Player player){
+		if(event.getEntity() instanceof Player player){
 			DragonStateProvider.getCap(player).ifPresent(cap -> {
 				if(!cap.isDragon()){
 					return;
@@ -146,8 +146,8 @@ public class MagicHandler{
 	}
 
 	@SubscribeEvent
-	public static void livingTick(LivingUpdateEvent event){
-		LivingEntity entity = event.getEntityLiving();
+	public static void livingTick(LivingEvent.LivingTickEvent event){
+		LivingEntity entity = event.getEntity();
 
 		if(entity.hasEffect(DragonEffects.BURN)){
 			if(entity.isEyeInFluid(FluidTags.WATER) || entity.isInWaterRainOrBubble()){
@@ -235,8 +235,8 @@ public class MagicHandler{
 
 	@SubscribeEvent
 	public static void playerDamaged(LivingDamageEvent event){
-		if(event.getEntityLiving() instanceof Player player){
-			LivingEntity target = event.getEntityLiving();
+		if(event.getEntity() instanceof Player player){
+			LivingEntity target = event.getEntity();
 			DragonStateProvider.getCap(player).ifPresent(cap -> {
 				if(!cap.isDragon()){
 					return;
@@ -251,21 +251,19 @@ public class MagicHandler{
 
 	@SubscribeEvent
 	public static void playerHitEntity(CriticalHitEvent event){
-		if(event.getEntityLiving() instanceof Player player){
-			
-			DragonStateProvider.getCap(player).ifPresent(cap -> {
-				if(!cap.isDragon()){
-					return;
-				}
+		Player player = event.getEntity();
+		DragonStateProvider.getCap(player).ifPresent(cap -> {
+			if(!cap.isDragon()){
+				return;
+			}
 
-				if(player.hasEffect(DragonEffects.HUNTER)){
-					MobEffectInstance hunter = player.getEffect(DragonEffects.HUNTER);
-					player.removeEffect(DragonEffects.HUNTER);
-					event.setDamageModifier((float)((hunter.getAmplifier() + 1) * HunterAbility.hunterDamageBonus));
-					event.setResult(Result.ALLOW);
-				}
-			});
-		}
+			if(player.hasEffect(DragonEffects.HUNTER)){
+				MobEffectInstance hunter = player.getEffect(DragonEffects.HUNTER);
+				player.removeEffect(DragonEffects.HUNTER);
+				event.setDamageModifier((float)((hunter.getAmplifier() + 1) * HunterAbility.hunterDamageBonus));
+				event.setResult(Result.ALLOW);
+			}
+		});
 	}
 
 	@SubscribeEvent

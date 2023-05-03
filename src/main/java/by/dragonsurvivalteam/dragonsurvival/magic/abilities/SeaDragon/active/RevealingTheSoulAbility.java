@@ -12,7 +12,6 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.active.AoeBuffAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffectInstance;
 
@@ -112,8 +111,8 @@ public class RevealingTheSoulAbility extends AoeBuffAbility{
 	@Override
 	public ArrayList<Component> getInfo(){
 		ArrayList<Component> components = super.getInfo();
-		components.add(new TranslatableComponent("ds.skill.bonus_exp.multiplier", revealingTheSoulMultiplier + "x"));
-		components.add(new TranslatableComponent("ds.skill.bonus_exp.max_gain", Integer.toString(revealingTheSoulMaxEXP)));
+		components.add(Component.translatable("ds.skill.bonus_exp.multiplier", revealingTheSoulMultiplier + "x"));
+		components.add(Component.translatable("ds.skill.bonus_exp.max_gain", Integer.toString(revealingTheSoulMaxEXP)));
 		return components;
 	}
 }

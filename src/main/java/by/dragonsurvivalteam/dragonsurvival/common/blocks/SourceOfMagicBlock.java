@@ -15,12 +15,13 @@ import by.dragonsurvivalteam.dragonsurvival.util.SpawningUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.*;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -78,7 +79,7 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
 
 	@Override
 	@OnlyIn( Dist.CLIENT )
-	public void animateTick(BlockState p_180655_1_, Level p_180655_2_, BlockPos p_180655_3_, Random p_180655_4_){
+	public void animateTick(BlockState p_180655_1_, Level p_180655_2_, BlockPos p_180655_3_, RandomSource p_180655_4_){
 		if(p_180655_1_.getBlock() == DSBlocks.caveSourceOfMagic){
 			if(p_180655_2_.getFluidState(p_180655_3_).is(FluidTags.WATER)){
 				double d0 = p_180655_3_.getX();
@@ -117,7 +118,7 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
 			}
 
 			if(world.isClientSide){
-				playerEntity.sendMessage(new TranslatableComponent("ds.space.occupied"), playerEntity.getUUID());
+				playerEntity.sendSystemMessage(Component.translatable("ds.space.occupied"));
 			}
 		}
 
@@ -227,7 +228,7 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
 			if(player instanceof ServerPlayer){
 				BlockPos finalPos = pos1;
 				BlockEntity blockEntity1 = getBlockEntity(worldIn, pos1);
-				NetworkHooks.openGui((ServerPlayer)player, (MenuProvider)blockEntity1, packetBuffer -> packetBuffer.writeBlockPos(finalPos));
+				NetworkHooks.openScreen((ServerPlayer)player, (MenuProvider)blockEntity1, packetBuffer -> packetBuffer.writeBlockPos(finalPos));
 			}
 		}else{
 			if(DragonUtils.isDragon(player) && player.getMainHandItem().isEmpty()){
@@ -284,7 +285,7 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
 	}
 
 	@Override
-	public void randomTick(BlockState p_225542_1_, ServerLevel world, BlockPos pos, Random p_225542_4_){
+	public void randomTick(BlockState p_225542_1_, ServerLevel world, BlockPos pos, RandomSource p_225542_4_){
 		BlockPos blockpos = pos.above();
 		if(world.getFluidState(pos).is(FluidTags.WATER)){
 			world.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.5F, 2.6F + (world.random.nextFloat() - world.random.nextFloat()) * 0.8F);

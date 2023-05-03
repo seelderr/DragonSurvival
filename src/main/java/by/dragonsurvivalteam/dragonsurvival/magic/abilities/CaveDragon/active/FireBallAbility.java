@@ -14,7 +14,6 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChargeCastAbility;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
@@ -73,14 +72,14 @@ public class FireBallAbility extends ChargeCastAbility{
 	@Override
 	public ArrayList<Component> getInfo(){
 		ArrayList<Component> components = super.getInfo();
-		components.add(new TranslatableComponent("ds.skill.damage", getDamage()));
+		components.add(Component.translatable("ds.skill.damage", getDamage()));
 
 		if(!KeyInputHandler.ABILITY2.isUnbound()){
-			String key = KeyInputHandler.ABILITY2.getKey().getDisplayName().getContents().toUpperCase(Locale.ROOT);
+			String key = KeyInputHandler.ABILITY2.getKey().getDisplayName().getString().toUpperCase(Locale.ROOT);
 
 			if(key.isEmpty())
 				key = KeyInputHandler.ABILITY2.getKey().getDisplayName().getString();
-			components.add(new TranslatableComponent("ds.skill.keybind", key));
+			components.add(Component.translatable("ds.skill.keybind", key));
 		}
 
 		return components;
@@ -117,8 +116,8 @@ public class FireBallAbility extends ChargeCastAbility{
 	@OnlyIn( Dist.CLIENT )
 	public ArrayList<Component> getLevelUpInfo(){
 		ArrayList<Component> list = super.getLevelUpInfo();
-		list.add(new TranslatableComponent("ds.skill.damage", "+" + fireballDamage.floatValue()));
-		list.add(new TranslatableComponent("ds.skill.aoe", "+1"));
+		list.add(Component.translatable("ds.skill.damage", "+" + fireballDamage.floatValue()));
+		list.add(Component.translatable("ds.skill.aoe", "+1"));
 		return list;
 	}
 

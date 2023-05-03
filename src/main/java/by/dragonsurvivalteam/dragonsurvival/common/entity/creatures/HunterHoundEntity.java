@@ -121,7 +121,7 @@ public class HunterHoundEntity extends Wolf implements DragonHunter{
 	}
 
 	@Override
-	protected int getExperienceReward(Player p_70693_1_){
+	public int getExperienceReward(){
 		return 1 + level.random.nextInt(2);
 	}
 }

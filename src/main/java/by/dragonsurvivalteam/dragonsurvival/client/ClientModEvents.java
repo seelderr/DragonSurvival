@@ -34,7 +34,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
-import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
@@ -44,15 +43,16 @@ import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
+import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
+import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
+import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.client.gui.ForgeIngameGui;
-import net.minecraftforge.client.gui.OverlayRegistry;
+import net.minecraftforge.client.gui.overlay.ForgeGui;
+import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 @Mod.EventBusSubscriber( bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT )
 @SuppressWarnings( "unused" )
@@ -74,24 +74,10 @@ public class ClientModEvents{
 
 		DragonSurvivalMod.LOGGER.info("Successfully added sprites!");
 	}
-
 	@SubscribeEvent
-	public static void setupClient(final FMLClientSetupEvent event){
-		Minecraft minecraft = Minecraft.getInstance();
-
+	public static void setup(FMLClientSetupEvent event)
+	{
 		DragonSkins.init();
-
-		KeyInputHandler.setupKeybinds();
-
-		OverlayRegistry.enableOverlay(ForgeIngameGui.FOOD_LEVEL_ELEMENT, false);
-		OverlayRegistry.enableOverlay(ForgeIngameGui.EXPERIENCE_BAR_ELEMENT, false);
-
-		OverlayRegistry.registerOverlayAbove(ForgeIngameGui.FOOD_LEVEL_ELEMENT, "DRAGON_FOOD_BAR", DragonFoodHandler::onRenderFoodBar);
-		OverlayRegistry.registerOverlayAbove(ForgeIngameGui.EXPERIENCE_BAR_ELEMENT, "MAGIC_EXP_BAR", ClientMagicHUDHandler::cancelExpBar);
-		OverlayRegistry.registerOverlayAbove(ForgeIngameGui.AIR_LEVEL_ELEMENT, "DRAGON_TRAIT_BAR", ClientEvents::onRenderOverlayPreTick);
-
-		OverlayRegistry.registerOverlayTop("MAGIC_ABILITY_ELEMENT", ClientMagicHUDHandler::renderAbilityHud);
-		OverlayRegistry.registerOverlayTop("GROWTH_UI", ClientGrowthHudHandler::renderGrowth);
 
 		ItemBlockRenderTypes.setRenderLayer(DSBlocks.dragon_altar_stone, RenderType.cutout());
 		ItemBlockRenderTypes.setRenderLayer(DSBlocks.dragon_altar_sandstone, RenderType.cutout());
@@ -144,40 +130,40 @@ public class ClientModEvents{
 	}
 
 	@SubscribeEvent
-	public static void registerParticleFactories(ParticleFactoryRegisterEvent factoryRegisterEvent){
-		ParticleEngine particleManager = Minecraft.getInstance().particleEngine;
-		particleManager.register(DSParticles.fireBeaconParticle, p_create_1_ -> new ParticleProvider<SimpleParticleType>(){
-			@Nullable
+	public static void onKeyRegister(RegisterKeyMappingsEvent event)
+	{
+		KeyInputHandler.registerKeys(event);
+	}
+	@SubscribeEvent
+	public static void registerParticleFactories(RegisterParticleProvidersEvent event){
+		event.register(DSParticles.fireBeaconParticle, p_create_1_ -> new ParticleProvider<SimpleParticleType>(){
 			@Override
-			public Particle createParticle(SimpleParticleType p_199234_1_, ClientLevel clientWorld, double v, double v1, double v2, double v3, double v4, double v5){
+			public @NotNull Particle createParticle(@NotNull SimpleParticleType p_199234_1_, @NotNull ClientLevel clientWorld, double v, double v1, double v2, double v3, double v4, double v5) {
 				BeaconParticle beaconParticle = new BeaconParticle(clientWorld, v, v1, v2, v3, v4, v5);
 				beaconParticle.pickSprite(p_create_1_);
 				return beaconParticle;
 			}
 		});
-		particleManager.register(DSParticles.magicBeaconParticle, p_create_1_ -> new ParticleProvider<SimpleParticleType>(){
-			@Nullable
+		event.register(DSParticles.magicBeaconParticle, p_create_1_ -> new ParticleProvider<SimpleParticleType>(){
 			@Override
-			public Particle createParticle(SimpleParticleType p_199234_1_, ClientLevel clientWorld, double v, double v1, double v2, double v3, double v4, double v5){
+			public @NotNull Particle createParticle(@NotNull SimpleParticleType p_199234_1_, @NotNull ClientLevel clientWorld, double v, double v1, double v2, double v3, double v4, double v5){
 				BeaconParticle beaconParticle = new BeaconParticle(clientWorld, v, v1, v2, v3, v4, v5);
 				beaconParticle.pickSprite(p_create_1_);
 				return beaconParticle;
 			}
 		});
-		particleManager.register(DSParticles.peaceBeaconParticle, p_create_1_ -> new ParticleProvider<SimpleParticleType>(){
-			@Nullable
+		event.register(DSParticles.peaceBeaconParticle, p_create_1_ -> new ParticleProvider<SimpleParticleType>(){
 			@Override
-			public Particle createParticle(SimpleParticleType p_199234_1_, ClientLevel clientWorld, double v, double v1, double v2, double v3, double v4, double v5){
+			public @NotNull Particle createParticle(@NotNull SimpleParticleType p_199234_1_, @NotNull ClientLevel clientWorld, double v, double v1, double v2, double v3, double v4, double v5){
 				BeaconParticle beaconParticle = new BeaconParticle(clientWorld, v, v1, v2, v3, v4, v5);
 				beaconParticle.pickSprite(p_create_1_);
 				return beaconParticle;
 			}
 		});
 
-		particleManager.register(DSParticles.seaSweep, p_create_1_ -> new ParticleProvider<SimpleParticleType>(){
-			@Nullable
+		event.register(DSParticles.seaSweep, p_create_1_ -> new ParticleProvider<SimpleParticleType>(){
 			@Override
-			public Particle createParticle(SimpleParticleType p_199234_1_, ClientLevel clientWorld, double v, double v1, double v2, double v3, double v4, double v5){
+			public @NotNull Particle createParticle(@NotNull SimpleParticleType p_199234_1_, @NotNull ClientLevel clientWorld, double v, double v1, double v2, double v3, double v4, double v5){
 				SeaSweepParticle beaconParticle = new SeaSweepParticle(clientWorld, v, v1, v2, v3, p_create_1_);
 				beaconParticle.pickSprite(p_create_1_);
 				return beaconParticle;
