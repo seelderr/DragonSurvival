@@ -46,7 +46,7 @@ public class DragonCuriosRenderLayer extends GeoLayerRenderer<DragonEntity> {
 
         if (!curioTextures.isEmpty()) {
             ((DragonRenderer) renderer).isRenderLayers = true;
-            GeoModel model = ClientDragonRender.dragonModel.getModel(ClientDragonRender.dragonModel.getModelLocation(null));
+            GeoModel model = ClientDragonRender.dragonModel.getModel(ClientDragonRender.dragonModel.getModelResource(null));
             for (ResourceLocation tex : curioTextures) {
                 renderCurioPiece(model, matrixStackIn, bufferIn, packedLightIn, entityLivingBaseIn, partialTicks, tex);
             }
@@ -89,8 +89,8 @@ public class DragonCuriosRenderLayer extends GeoLayerRenderer<DragonEntity> {
                             String resId = DragonArmorRenderLayer.itemToResLoc(stack.getItem());
                             if (resId != null) {
                                 resId = "textures/armor/" + resId;
-                                if (Minecraft.getInstance().getResourceManager().hasResource(
-                                        new ResourceLocation(DragonSurvivalMod.MODID, resId))) {
+                                if (Minecraft.getInstance().getResourceManager().getResource(
+                                        new ResourceLocation(DragonSurvivalMod.MODID, resId)).isPresent()) {
                                     resources.add(new ResourceLocation(DragonSurvivalMod.MODID, resId));
                                 }
                             }

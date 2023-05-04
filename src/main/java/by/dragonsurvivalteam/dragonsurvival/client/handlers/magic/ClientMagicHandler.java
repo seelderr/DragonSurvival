@@ -18,9 +18,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.material.FogType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.EntityViewRenderEvent.RenderFogEvent;
-import net.minecraftforge.client.event.FOVModifierEvent;
-import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
+import net.minecraftforge.client.event.ComputeFovModifierEvent;
+import net.minecraftforge.client.event.ViewportEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -31,12 +31,12 @@ import java.util.Objects;
 public class ClientMagicHandler{
 
 	@SubscribeEvent
-	public static void onFovEvent(FOVModifierEvent event){
-		Player player = event.getEntity();
+	public static void onFovEvent(ComputeFovModifierEvent event){
+		Player player = event.getPlayer();
 
 		DragonStateProvider.getCap(player).ifPresent(cap -> {
 			if(Arrays.stream(cap.getEmoteData().currentEmotes).anyMatch(Objects::nonNull) && DragonUtils.isDragon(player)){
-				event.setNewfov(1f);
+				event.setNewFovModifier(1f);
 				return;
 			}
 
@@ -52,7 +52,7 @@ public class ClientMagicHandler{
 					}
 
 					float newFov = (float)Mth.clamp(perc, 0.75F, 1.2F);
-					event.setNewfov(newFov);
+					event.setNewFovModifier(newFov);
 				}
 			}
 		});
@@ -60,8 +60,8 @@ public class ClientMagicHandler{
 
 	@OnlyIn( Dist.CLIENT )
 	@SubscribeEvent
-	public static void livingTick(LivingUpdateEvent event){
-		LivingEntity entity = event.getEntityLiving();
+	public static void livingTick(LivingEvent.LivingTickEvent event){
+		LivingEntity entity = event.getEntity();
 
 		if(!entity.level.isClientSide){
 			return;
@@ -105,7 +105,7 @@ public class ClientMagicHandler{
 
 	@SubscribeEvent
 	@OnlyIn( Dist.CLIENT )
-	public static void removeLavaAndWaterFog(RenderFogEvent event){
+	public static void removeLavaAndWaterFog(ViewportEvent.RenderFog event){
 		LocalPlayer player = Minecraft.getInstance().player;
 		DragonStateProvider.getCap(player).ifPresent(cap -> {
 			if(!cap.isDragon()){

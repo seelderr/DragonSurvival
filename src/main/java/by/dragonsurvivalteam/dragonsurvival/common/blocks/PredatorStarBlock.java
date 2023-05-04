@@ -9,7 +9,6 @@ import by.dragonsurvivalteam.dragonsurvival.server.tileentity.PredatorStarTileEn
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -77,7 +76,7 @@ public class PredatorStarBlock extends Block implements SimpleWaterloggedBlock, 
 	@Override
 	public void appendHoverText(ItemStack pStack, @org.jetbrains.annotations.Nullable BlockGetter pLevel, List<Component> pTooltip, TooltipFlag pFlag){
 		super.appendHoverText(pStack, pLevel, pTooltip, pFlag);
-		pTooltip.add(new TranslatableComponent("ds.description.predatorStar"));
+		pTooltip.add(Component.translatable("ds.description.predatorStar"));
 	}
 
 	@Override

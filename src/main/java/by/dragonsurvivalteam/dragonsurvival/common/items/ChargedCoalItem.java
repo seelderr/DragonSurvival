@@ -3,7 +3,6 @@ package by.dragonsurvivalteam.dragonsurvival.common.items;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.items.food.DragonFoodItem;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -53,6 +52,6 @@ public class ChargedCoalItem extends DragonFoodItem{
 			Level p_77624_2_, List<Component> p_77624_3_, TooltipFlag p_77624_4_){
 
 		super.appendHoverText(p_77624_1_, p_77624_2_, p_77624_3_, p_77624_4_);
-		p_77624_3_.add(new TranslatableComponent("ds.description.chargedCoal"));
+		p_77624_3_.add(Component.translatable("ds.description.chargedCoal"));
 	}
 }

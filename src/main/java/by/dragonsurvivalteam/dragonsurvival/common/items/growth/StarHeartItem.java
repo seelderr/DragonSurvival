@@ -6,7 +6,6 @@ import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncGrowthState;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -32,7 +31,7 @@ public class StarHeartItem extends Item{
 
 			if(handler.isDragon()){
 				handler.growing = !handler.growing;
-				player.sendMessage(new TranslatableComponent(handler.growing ? "ds.growth.now_growing" : "ds.growth.no_growth"), player.getUUID());
+				player.sendSystemMessage(Component.translatable(handler.growing ? "ds.growth.now_growing" : "ds.growth.no_growth"));
 
 				NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)player), new SyncGrowthState(handler.growing));
 				return InteractionResultHolder.success(player.getItemInHand(p_77659_3_));
@@ -47,6 +46,6 @@ public class StarHeartItem extends Item{
 		@Nullable
 			Level p_77624_2_, List<Component> p_77624_3_, TooltipFlag p_77624_4_){
 		super.appendHoverText(p_77624_1_, p_77624_2_, p_77624_3_, p_77624_4_);
-		p_77624_3_.add(new TranslatableComponent("ds.description.starHeart"));
+		p_77624_3_.add(Component.translatable("ds.description.starHeart"));
 	}
 }

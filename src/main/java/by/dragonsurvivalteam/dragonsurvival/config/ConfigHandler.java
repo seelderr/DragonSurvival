@@ -36,9 +36,7 @@ import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.loading.moddiscovery.ModAnnotation.EnumHolder;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.registries.tags.ITagManager;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.Nullable;
@@ -189,7 +187,7 @@ public class ConfigHandler{
 	}
 
 	private static Object convertObject(Object ob){
-		if(ob instanceof ForgeRegistryEntry<?> forge){
+		if(ob instanceof IForgeRegistry<?> forge){
 			return forge.getRegistryName().toString();
 		}
 
@@ -200,19 +198,19 @@ public class ConfigHandler{
 		return ob;
 	}
 
-	private static final HashMap<Class<?>, Tuple<Supplier<IForgeRegistry<? extends IForgeRegistryEntry<?>>>, Supplier<ResourceKey<? extends Registry<?>>>>> REGISTRY_HASH_MAP = new HashMap<>();
+	private static final HashMap<Class<?>, Tuple<Supplier<IForgeRegistry<?>>, Supplier<ResourceKey<? extends Registry<?>>>>> REGISTRY_HASH_MAP = new HashMap<>();
 	public static void initTypes(){
 		REGISTRY_HASH_MAP.put(Item.class, new Tuple<>(() -> ForgeRegistries.ITEMS, () -> Registry.ITEM_REGISTRY));
 		REGISTRY_HASH_MAP.put(Block.class,  new Tuple<>(() -> ForgeRegistries.BLOCKS, () -> Registry.BLOCK_REGISTRY));
-		REGISTRY_HASH_MAP.put(EntityType.class,  new Tuple<>(() -> ForgeRegistries.ENTITIES, () -> Registry.ENTITY_TYPE_REGISTRY));
-		REGISTRY_HASH_MAP.put(BlockEntityType.class, new Tuple<>(() -> ForgeRegistries.BLOCK_ENTITIES, () -> Registry.BLOCK_ENTITY_TYPE_REGISTRY));
+		REGISTRY_HASH_MAP.put(EntityType.class,  new Tuple<>(() -> ForgeRegistries.ENTITY_TYPES, () -> Registry.ENTITY_TYPE_REGISTRY));
+		REGISTRY_HASH_MAP.put(BlockEntityType.class, new Tuple<>(() -> ForgeRegistries.BLOCK_ENTITY_TYPES, () -> Registry.BLOCK_ENTITY_TYPE_REGISTRY));
 		REGISTRY_HASH_MAP.put(Biome.class,  new Tuple<>(() -> ForgeRegistries.BIOMES, () -> Registry.BIOME_REGISTRY));
 		REGISTRY_HASH_MAP.put(MobEffect.class,  new Tuple<>(() -> ForgeRegistries.MOB_EFFECTS, () -> Registry.MOB_EFFECT_REGISTRY));
 		REGISTRY_HASH_MAP.put(Potion.class,  new Tuple<>(() -> ForgeRegistries.POTIONS, () -> Registry.POTION_REGISTRY));
 	}
 
-	public static <T extends IForgeRegistryEntry<T>> List<T> parseObject(Class<T> type, ResourceLocation location){
-		Tuple<Supplier<IForgeRegistry<? extends IForgeRegistryEntry<?>>>, Supplier<ResourceKey<? extends Registry<?>>>> ent = REGISTRY_HASH_MAP.getOrDefault(type, null);
+	public static <T> List<T> parseObject(Class<T> type, ResourceLocation location){
+		Tuple<Supplier<IForgeRegistry<?>>, Supplier<ResourceKey<? extends Registry<?>>>> ent = REGISTRY_HASH_MAP.getOrDefault(type, null);
 		if(ent != null){
 			if(ForgeRegistries.ITEMS.containsKey(location)){
 				Optional<? extends Holder<?>> optional = ent.getA().get().getHolder(location);
@@ -224,7 +222,7 @@ public class ConfigHandler{
 
 				if(tagKey.isFor(ent.getA().get().getRegistryKey())){
 					ITagManager<T> manager = (ITagManager<T>)ent.getA().get().tags();
-					return (List<T>)manager.getTag(tagKey).stream().toList();
+					return manager.getTag(tagKey).stream().toList();
 				}
 			}
 		}
@@ -240,7 +238,7 @@ public class ConfigHandler{
 			}
 
 			ResourceLocation location = ResourceLocation.tryParse(key);
-			List<?> ls = parseObject((Class<? extends IForgeRegistryEntry>)fe.getType(), location);
+			List<?> ls = parseObject((Class<? extends IForgeRegistry>)fe.getType(), location);
 
 			if(ls != null){
 				if(fe.getGenericType() instanceof List<?>){
@@ -373,7 +371,7 @@ public class ConfigHandler{
 		return loadObject(fe, obj);
 	}
 
-	public static <T extends IForgeRegistryEntry<T>> List<T> configList(Class<T> type, List<?> in){
+	public static <T> List<T> configList(Class<T> type, List<?> in){
 		ArrayList<T> list = new ArrayList<>();
 
 		Tuple<Supplier<IForgeRegistry<?>>, Supplier<ResourceKey<? extends Registry<?>>>> ent = REGISTRY_HASH_MAP.getOrDefault(type, null);

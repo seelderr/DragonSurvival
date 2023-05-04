@@ -11,12 +11,12 @@ public class StormBreathEffectModel extends AnimatedGeoModel<StormBreathEntity>{
 
 
 	@Override
-	public ResourceLocation getModelLocation(StormBreathEntity dragonEntity){
+	public ResourceLocation getModelResource(StormBreathEntity dragonEntity){
 		return new ResourceLocation(DragonSurvivalMod.MODID, "geo/storms_breath.geo.json");
 	}
 
 	@Override
-	public ResourceLocation getTextureLocation(StormBreathEntity dragonEntity){
+	public ResourceLocation getTextureResource(StormBreathEntity dragonEntity){
 		return currentTexture;
 	}
 
@@ -25,7 +25,7 @@ public class StormBreathEffectModel extends AnimatedGeoModel<StormBreathEntity>{
 	}
 
 	@Override
-	public ResourceLocation getAnimationFileLocation(StormBreathEntity animatable){
+	public ResourceLocation getAnimationResource(StormBreathEntity animatable){
 		return new ResourceLocation(DragonSurvivalMod.MODID, "animations/storms_breath.animations.json");
 	}
 }

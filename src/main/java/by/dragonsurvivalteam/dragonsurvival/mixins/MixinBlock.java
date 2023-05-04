@@ -51,7 +51,7 @@ public class MixinBlock{
 					p_220054_1_.addFreshEntity(itementity);
 				}
 			});
-			p_220054_0_.spawnAfterBreak((ServerLevel)p_220054_1_, p_220054_2_, p_220054_5_);
+			p_220054_0_.spawnAfterBreak((ServerLevel)p_220054_1_, p_220054_2_, p_220054_5_, true);
 		}
 
 		ci.cancel();

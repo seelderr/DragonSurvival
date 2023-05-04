@@ -28,7 +28,7 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -37,10 +37,10 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.EntityViewRenderEvent.CameraSetup;
 import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
+import net.minecraftforge.client.event.RenderGuiOverlayEvent;
+import net.minecraftforge.client.event.ViewportEvent;
+import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
@@ -100,7 +100,7 @@ public class ClientFlightHandler{
 	private static long lastHungerMessage;
 
 	@SubscribeEvent
-	public static void flightCamera(CameraSetup setup){
+	public static void flightCamera(ViewportEvent.ComputeCameraAngles setup){
 		LocalPlayer currentPlayer = Minecraft.getInstance().player;
 		Camera info = setup.getCamera();
 
@@ -150,7 +150,7 @@ public class ClientFlightHandler{
 	}
 
 	@SubscribeEvent
-	public static void renderFlightCooldown(RenderGameOverlayEvent.Post event){
+	public static void renderFlightCooldown(RenderGuiOverlayEvent.Post event){
 		Player player = Minecraft.getInstance().player;
 
 		if(player == null || !DragonUtils.isDragon(player) || player.isSpectator()){
@@ -163,8 +163,9 @@ public class ClientFlightHandler{
 			}
 
 			if(cap.getMovementData().spinLearned && cap.getMovementData().spinCooldown > 0){
-				if(event.getType() == ElementType.ALL){
-					event.getMatrixStack().pushPose();
+				// Insecure modifications
+				if(event.getOverlay() == VanillaGuiOverlay.AIR_LEVEL.type()){
+					event.getPoseStack().pushPose();
 
 					TextureManager textureManager = Minecraft.getInstance().getTextureManager();
 					Window window = Minecraft.getInstance().getWindow();
@@ -180,10 +181,10 @@ public class ClientFlightHandler{
 					j += spinCooldownYOffset;
 
 					int l = (int)(f * 62);
-					Screen.blit(event.getMatrixStack(), k, j, 0, 0, 66, 21, 256, 256);
-					Screen.blit(event.getMatrixStack(), k + 4, j + 1, 4, 21, l, 21, 256, 256);
+					Screen.blit(event.getPoseStack(), k, j, 0, 0, 66, 21, 256, 256);
+					Screen.blit(event.getPoseStack(), k + 4, j + 1, 4, 21, l, 21, 256, 256);
 
-					event.getMatrixStack().popPose();
+					event.getPoseStack().popPose();
 				}
 			}
 		});
@@ -485,7 +486,7 @@ public class ClientFlightHandler{
 	}
 
 	@SubscribeEvent
-	public static void spin(InputEvent.RawMouseEvent keyInputEvent){
+	public static void spin(InputEvent.MouseButton keyInputEvent){
 		LocalPlayer player = Minecraft.getInstance().player;
 		if(player == null){
 			return;
@@ -512,7 +513,7 @@ public class ClientFlightHandler{
 	}
 
 	@SubscribeEvent
-	public static void toggleWings(InputEvent.KeyInputEvent keyInputEvent){
+	public static void toggleWings(InputEvent.Key keyInputEvent){
 		LocalPlayer player = Minecraft.getInstance().player;
 		if(player == null){
 			return;
@@ -540,7 +541,7 @@ public class ClientFlightHandler{
 							}else{
 								if(lastHungerMessage == 0 || lastHungerMessage + TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS) < System.currentTimeMillis()){
 									lastHungerMessage = System.currentTimeMillis();
-									player.sendMessage(new TranslatableComponent("ds.wings.nohunger"), player.getUUID());
+									player.sendSystemMessage(Component.translatable("ds.wings.nohunger"));
 								}
 							}
 						}
@@ -556,16 +557,16 @@ public class ClientFlightHandler{
 					NetworkHandler.CHANNEL.sendToServer(new SyncFlyingStatus(player.getId(), !currentState));
 					if(notifyWingStatus){
 						if(!currentState){
-							player.sendMessage(new TranslatableComponent("ds.wings.enabled"), player.getUUID());
+							player.sendSystemMessage(Component.translatable("ds.wings.enabled"));
 						}else{
-							player.sendMessage(new TranslatableComponent("ds.wings.disabled"), player.getUUID());
+							player.sendSystemMessage(Component.translatable("ds.wings.disabled"));
 						}
 					}
 				}else{
-					player.sendMessage(new TranslatableComponent("ds.wings.nohunger"), player.getUUID());
+					player.sendSystemMessage(Component.translatable("ds.wings.nohunger"));
 				}
 			}else{
-				player.sendMessage(new TranslatableComponent("ds.you.have.no.wings"), player.getUUID());
+				player.sendSystemMessage(Component.translatable("ds.you.have.no.wings"));
 			}
 		}
 	}

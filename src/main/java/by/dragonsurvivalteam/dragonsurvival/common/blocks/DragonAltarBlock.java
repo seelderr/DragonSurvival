@@ -9,7 +9,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -59,7 +58,7 @@ public class DragonAltarBlock extends Block{
 		@Nullable
 			BlockGetter p_190948_2_, List<Component> p_190948_3_, TooltipFlag p_190948_4_){
 		super.appendHoverText(p_190948_1_, p_190948_2_, p_190948_3_, p_190948_4_);
-		p_190948_3_.add(new TranslatableComponent("ds.description.dragonAltar"));
+		p_190948_3_.add(Component.translatable("ds.description.dragonAltar"));
 	}
 
 	@Override
@@ -71,7 +70,7 @@ public class DragonAltarBlock extends Block{
 				//Show the current cooldown in minutes and seconds in cases where the cooldown is set high in the config
 				int mins = Functions.ticksToMinutes(handler.altarCooldown);
 				int secs = Functions.ticksToSeconds(handler.altarCooldown - Functions.minutesToTicks(mins));
-				player.sendMessage(new TranslatableComponent("ds.cooldown.active", (mins > 0 ? mins + "m" : "") + secs + (mins > 0 ? "s" : "")), player.getUUID());
+				player.sendSystemMessage(Component.translatable("ds.cooldown.active", (mins > 0 ? mins + "m" : "") + secs + (mins > 0 ? "s" : "")));
 			}
 			return InteractionResult.CONSUME;
 		}else{

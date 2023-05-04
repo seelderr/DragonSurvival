@@ -141,7 +141,7 @@ public class MagicalPredator extends Monster{
 	}
 
 	@Override
-	protected int getExperienceReward(Player p_70693_1_){
+	public int getExperienceReward(){
 		return 1 + level.random.nextInt(2);
 	}
 

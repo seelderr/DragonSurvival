@@ -17,10 +17,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.RegisterEvent;
 
 import java.util.Collections;
 import java.util.List;
@@ -50,65 +49,50 @@ public class DragonEffects{
 
 	@SuppressWarnings( "unused" )
 	@SubscribeEvent
-	public static void registerEffects(RegistryEvent.Register<MobEffect> effectRegister){
-		IForgeRegistry<MobEffect> forgeRegistry = effectRegister.getRegistry();
-		STRESS = new Stress(0xf4a2e8).setRegistryName(DragonSurvivalMod.MODID, "stress");
-		forgeRegistry.register(STRESS);
-		TRAPPED = new Trapped(MobEffectCategory.HARMFUL, 0xdddddd, true).setRegistryName(DragonSurvivalMod.MODID, "trapped");
-		forgeRegistry.register(TRAPPED);
-		ROYAL_CHASE = new RoyalChase(MobEffectCategory.NEUTRAL).setRegistryName(DragonSurvivalMod.MODID, "royal_chase");
-		forgeRegistry.register(ROYAL_CHASE);
-		PEACE = new Effect2(MobEffectCategory.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "peace");
-		forgeRegistry.register(PEACE);
-		MAGIC = new Effect2(MobEffectCategory.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "magic");
-		forgeRegistry.register(MAGIC);
-		FIRE = new Effect2(MobEffectCategory.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "fire");
-		forgeRegistry.register(FIRE);
-		ANIMAL_PEACE = new Effect2(MobEffectCategory.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "animal_peace");
-		forgeRegistry.register(ANIMAL_PEACE);
-		PREDATOR_ANTI_SPAWN = new Effect2(MobEffectCategory.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "predator_anti_spawn");
-		forgeRegistry.register(PREDATOR_ANTI_SPAWN);
+	public static void registerEffects(RegisterEvent event){
+		if (!event.getRegistryKey().equals(Registry.MOB_EFFECT_REGISTRY))
+			return;
+		STRESS = registerMobEffect(event, "stress", new Stress(0xf4a2e8));
+		TRAPPED = registerMobEffect(event, "trapped", new Trapped(MobEffectCategory.HARMFUL, 0xdddddd, true));
+		ROYAL_CHASE = registerMobEffect(event, "royal_chase", new RoyalChase(MobEffectCategory.NEUTRAL));
 
-		SOURCE_OF_MAGIC = new Effect2(MobEffectCategory.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "source_of_magic");
-		forgeRegistry.register(SOURCE_OF_MAGIC);
+		PEACE = registerMobEffect(event, "peace", new Effect2(MobEffectCategory.BENEFICIAL, 0x0, false));
+		MAGIC = registerMobEffect(event, "magic", new Effect2(MobEffectCategory.BENEFICIAL, 0x0, false));
+		FIRE = registerMobEffect(event, "fire", new Effect2(MobEffectCategory.BENEFICIAL, 0x0, false));
+		ANIMAL_PEACE = registerMobEffect(event, "animal_peace", new Effect2(MobEffectCategory.BENEFICIAL, 0x0, false));
+		PREDATOR_ANTI_SPAWN = registerMobEffect(event, "predator_anti_spawn", new Effect2(MobEffectCategory.BENEFICIAL, 0x0, false));
+		SOURCE_OF_MAGIC = registerMobEffect(event, "source_of_magic",new Effect2(MobEffectCategory.BENEFICIAL, 0x0, false));
 
-		ROYAL_DEPARTURE = new TradeEffect(MobEffectCategory.HARMFUL, -3407617, true).setRegistryName(DragonSurvivalMod.MODID, "royal_departure");
-		forgeRegistry.register(ROYAL_DEPARTURE);
+		ROYAL_DEPARTURE = registerMobEffect(event, "royal_departure", new TradeEffect(MobEffectCategory.HARMFUL, -3407617, true));
 
 		//Magic system effects
-		WATER_VISION = new Effect2(MobEffectCategory.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "water_vision");
-		forgeRegistry.register(WATER_VISION);
+		WATER_VISION = registerMobEffect(event, "water_vision", new Effect2(MobEffectCategory.BENEFICIAL, 0x0, false));
 
-		LAVA_VISION = new Effect2(MobEffectCategory.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "lava_vision");
-		forgeRegistry.register(LAVA_VISION);
+		LAVA_VISION = registerMobEffect(event, "lava_vision",new Effect2(MobEffectCategory.BENEFICIAL, 0x0, false));
 
-		HUNTER = new Effect2(MobEffectCategory.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "hunter");
-		forgeRegistry.register(HUNTER);
+		HUNTER = registerMobEffect(event,"hunter", new Effect2(MobEffectCategory.BENEFICIAL, 0x0, false));
 
-		REVEALING_THE_SOUL = new Effect2(MobEffectCategory.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "revealing_the_soul");
-		forgeRegistry.register(REVEALING_THE_SOUL);
+		REVEALING_THE_SOUL = registerMobEffect(event, "revealing_the_soul", new Effect2(MobEffectCategory.BENEFICIAL, 0x0, false));
 
-		STRONG_LEATHER = new Effect2(MobEffectCategory.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "strong_leather");
-		STRONG_LEATHER.addAttributeModifier(Attributes.ARMOR, "1640719a-4c40-11ec-81d3-0242ac130003", ToughSkinAbility.toughSkinArmorValue, Operation.ADDITION);
-		forgeRegistry.register(STRONG_LEATHER);
+		STRONG_LEATHER = registerMobEffect(event, "strong_leather", new Effect2(MobEffectCategory.BENEFICIAL, 0x0, false)
+			.addAttributeModifier(Attributes.ARMOR, "1640719a-4c40-11ec-81d3-0242ac130003", ToughSkinAbility.toughSkinArmorValue, Operation.ADDITION));
 
-		BURN = new Effect2(MobEffectCategory.HARMFUL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "burn");
-		forgeRegistry.register(BURN);
+		BURN = registerMobEffect(event, "burn", new Effect2(MobEffectCategory.HARMFUL, 0x0, false));
 
-		CHARGED = new Effect2(MobEffectCategory.HARMFUL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "charged");
-		forgeRegistry.register(CHARGED);
+		CHARGED = registerMobEffect(event, "charged", new Effect2(MobEffectCategory.HARMFUL, 0x0, false));
 
-		DRAIN = new Effect2(MobEffectCategory.HARMFUL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "drain");
-		forgeRegistry.register(DRAIN);
+		DRAIN = registerMobEffect(event, "drain", new Effect2(MobEffectCategory.HARMFUL, 0x0, false));
 
-		forest_wings = new Effect2(MobEffectCategory.BENEFICIAL, 0x0, true).setRegistryName(DragonSurvivalMod.MODID, "wings_forest");
-		forgeRegistry.register(forest_wings);
+		forest_wings = registerMobEffect(event, "wings_forest", new Effect2(MobEffectCategory.BENEFICIAL, 0x0, true));
 
-		sea_wings = new Effect2(MobEffectCategory.BENEFICIAL, 0x0, true).setRegistryName(DragonSurvivalMod.MODID, "wings_sea");
-		forgeRegistry.register(sea_wings);
+		sea_wings =  registerMobEffect(event,"wings_sea",new Effect2(MobEffectCategory.BENEFICIAL, 0x0, true));
 
-		cave_wings = new Effect2(MobEffectCategory.BENEFICIAL, 0x0, true).setRegistryName(DragonSurvivalMod.MODID, "wings_cave");
-		forgeRegistry.register(cave_wings);
+		cave_wings = registerMobEffect(event,"wings_cave",new Effect2(MobEffectCategory.BENEFICIAL, 0x0, true));
+	}
+	protected static MobEffect registerMobEffect(RegisterEvent event, String identity, MobEffect mobEffect)
+	{
+		event.register(Registry.MOB_EFFECT_REGISTRY, new ResourceLocation(DragonSurvivalMod.MODID, identity), ()->mobEffect);
+		return mobEffect;
 	}
 
 	private static class Effect2 extends MobEffect{

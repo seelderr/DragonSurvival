@@ -8,6 +8,7 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.HunterEntityCheckProcedure;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffects;
@@ -164,7 +165,7 @@ public class KnightEntity extends PathfinderMob implements IAnimatable, DragonHu
 	}
 
 	@Override
-	protected int getExperienceReward(Player p_70693_1_){
+	public int getExperienceReward(){
 		return 5 + level.random.nextInt(5);
 	}
 
@@ -190,12 +191,12 @@ public class KnightEntity extends PathfinderMob implements IAnimatable, DragonHu
 	@Nullable
 	@Override
 	public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverWorld, DifficultyInstance difficultyInstance, MobSpawnType spawnReason, @Nullable SpawnGroupData entityData, @Nullable CompoundTag nbt){
-		populateDefaultEquipmentSlots(difficultyInstance);
+		populateDefaultEquipmentSlots(random, difficultyInstance);
 		return super.finalizeSpawn(serverWorld, difficultyInstance, spawnReason, entityData, nbt);
 	}
 
 	@Override
-	protected void populateDefaultEquipmentSlots(DifficultyInstance difficultyInstance){
+	protected void populateDefaultEquipmentSlots(RandomSource randomSource, DifficultyInstance difficultyInstance){
 		setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.IRON_SWORD));
 		if(random.nextDouble() < ServerConfig.knightShieldChance){
 			setItemInHand(InteractionHand.OFF_HAND, new ItemStack(Items.SHIELD));

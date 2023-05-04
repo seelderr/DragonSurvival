@@ -7,7 +7,6 @@ import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.*;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -43,10 +42,10 @@ public abstract class DragonClawsAbility extends InnateDragonAbility {
 			}
 
 		ArrayList<Component> components = super.getInfo();
-		components.add(new TranslatableComponent("ds.skill.tool_type." + getName()));
+		components.add(Component.translatable("ds.skill.tool_type." + getName()));
 
 		if(tier != null)
-			components.add(new TranslatableComponent("ds.skill.harvest_level", I18n.get("ds.skill.harvest_level." + ((Tiers)tier).name().toLowerCase())));
+			components.add(Component.translatable("ds.skill.harvest_level", I18n.get("ds.skill.harvest_level." + ((Tiers)tier).name().toLowerCase())));
 
 		DragonStateHandler handler = DragonUtils.getHandler(Minecraft.getInstance().player);
 
@@ -56,7 +55,7 @@ public abstract class DragonClawsAbility extends InnateDragonAbility {
 		double bonus = Math.max(ageBonus, swordBonus - 1);
 
 		if(bonus > 0.0)
-			components.add(new TranslatableComponent("ds.skill.claws.damage", "+" + bonus));
+			components.add(Component.translatable("ds.skill.claws.damage", "+" + bonus));
 
 		return components;
 	}

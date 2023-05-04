@@ -24,8 +24,6 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -57,7 +55,7 @@ public class AltarTypeButton extends Button implements TooltipRender{
 
 	private ArrayList<Component> altarDragonInfoLocalized(String dragonType, List<Item> foodList){
 		ArrayList<Component> info = new ArrayList<>();
-		Component foodInfo = TextComponent.EMPTY;
+		Component foodInfo = Component.empty();
 
 		if(Screen.hasShiftDown()){
 			if(!Objects.equals(dragonType, "human")){
@@ -67,12 +65,12 @@ public class AltarTypeButton extends Button implements TooltipRender{
 				foodInfo = Component.nullToEmpty(food);
 			}
 		}else
-			foodInfo = new TranslatableComponent("ds.hold_shift.for_food");
+			foodInfo = Component.translatable("ds.hold_shift.for_food");
 
-		TranslatableComponent textComponent = new TranslatableComponent("ds.altar_dragon_info." + dragonType, foodInfo.getString());
+		Component textComponent = Component.translatable("ds.altar_dragon_info." + dragonType, foodInfo.getString());
 		String text = textComponent.getString();
 		for(String s : text.split("\n"))
-			info.add(new TextComponent(s));
+			info.add(Component.empty().append(s));
 		return info;
 	}
 
@@ -97,7 +95,7 @@ public class AltarTypeButton extends Button implements TooltipRender{
 			return;
 
 		if(type == null){
-			Minecraft.getInstance().player.sendMessage(new TranslatableComponent("ds.choice_human"), Minecraft.getInstance().player.getUUID());
+			Minecraft.getInstance().player.sendSystemMessage(Component.translatable("ds.choice_human"));
 
 			DragonStateProvider.getCap(player).ifPresent(cap -> {
 				player.level.playSound(player, player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 1, 0.7f);

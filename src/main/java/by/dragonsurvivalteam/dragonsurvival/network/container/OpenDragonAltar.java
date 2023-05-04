@@ -29,6 +29,7 @@ public class OpenDragonAltar implements IMessage<OpenDragonAltar>{
 	@Override
 	public void handle(OpenDragonAltar message, Supplier<NetworkEvent.Context> supplier){
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> runClient(message, supplier));
+		supplier.get().setPacketHandled(true);
 	}
 
 	@OnlyIn( Dist.CLIENT )

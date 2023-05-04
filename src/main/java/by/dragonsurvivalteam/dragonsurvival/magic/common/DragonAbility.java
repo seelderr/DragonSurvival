@@ -5,7 +5,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
@@ -35,11 +34,11 @@ public abstract class DragonAbility {
 
 	@OnlyIn( Dist.CLIENT )
 	public Component getTitle(){
-		return new TranslatableComponent("ds.skill." + getName());
+		return Component.translatable("ds.skill." + getName());
 	}
 	@OnlyIn( Dist.CLIENT )
 	public Component getDescription(){
-		return new TranslatableComponent("ds.skill.description." + getName());
+		return Component.translatable("ds.skill.description." + getName());
 	}
 
 	public abstract String getName();

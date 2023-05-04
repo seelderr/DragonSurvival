@@ -1,13 +1,14 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists;
 
+import by.dragonsurvivalteam.dragonsurvival.client.gui.settings.widgets.Option;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.Option;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
-import net.minecraft.network.chat.TextComponent;
+
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
@@ -26,7 +27,7 @@ public class TextBoxEntry extends OptionListEntry{
 		this.widget = widget;
 		category = categoryEntry;
 
-		removeButton = new ExtendedButton(optionsList.getScrollbarPosition() - 32 - 25, 1, 50, 20, new TextComponent("Remove"), btn -> {
+		removeButton = new ExtendedButton(optionsList.getScrollbarPosition() - 32 - 25, 1, 50, 20, Component.empty().append("Remove"), btn -> {
 			for(OptionListEntry child : optionsList.children())
 				if(child.children().contains(widget)){
 					optionsList.removeEntry(child);

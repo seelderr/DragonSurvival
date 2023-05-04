@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.HunterEntityChec
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffects;
@@ -76,7 +77,7 @@ public class SquireEntity extends Hunter{
 	}
 
 	@Override
-	protected void populateDefaultEquipmentSlots(DifficultyInstance difficultyInstance){
+	protected void populateDefaultEquipmentSlots(RandomSource randomSource, DifficultyInstance difficultyInstance){
 		setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.IRON_SWORD));
 	}
 

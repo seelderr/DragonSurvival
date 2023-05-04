@@ -3,7 +3,6 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.settings.widgets;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.DropDownButton;
 import com.electronwill.nightconfig.core.EnumGetMethod;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.Option;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.network.chat.Component;

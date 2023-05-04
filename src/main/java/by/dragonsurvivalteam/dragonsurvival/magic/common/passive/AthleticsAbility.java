@@ -7,7 +7,6 @@ import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
@@ -21,7 +20,7 @@ import java.util.ArrayList;
 public abstract class AthleticsAbility extends TickablePassiveAbility {
 	@Override
 	public Component getDescription(){
-		return new TranslatableComponent("ds.skill.description." + getName(), getDuration(), getLevel() == getMaxLevel() ? "III" : "II");
+		return Component.translatable("ds.skill.description." + getName(), getDuration(), getLevel() == getMaxLevel() ? "III" : "II");
 	}
 
 	public int getDuration(){
@@ -61,7 +60,7 @@ public abstract class AthleticsAbility extends TickablePassiveAbility {
 	@OnlyIn( Dist.CLIENT )
 	public ArrayList<Component> getLevelUpInfo(){
 		ArrayList<Component> list = super.getLevelUpInfo();
-		list.add(new TranslatableComponent("ds.skill.duration.seconds", "+1"));
+		list.add(Component.translatable("ds.skill.duration.seconds", "+1"));
 		return list;
 	}
 }

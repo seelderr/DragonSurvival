@@ -29,7 +29,7 @@ public class MixinItem{
 		if(player.isCreative() || player.isSpectator() || !DragonUtils.isDragon(player))
 			return;
 
-		if(ServerConfig.blacklistedSlots.contains(slot) && ServerConfig.blacklistedItems.contains(stack.getItem().getRegistryName().toString())){
+		if(ServerConfig.blacklistedSlots.contains(slot) && ServerConfig.blacklistedItems.contains(stack.getItem().toString())){
 			if(slot >= 0 && slot < 9 && !isSelected && !ItemStack.matches(player.getOffhandItem(), stack)){
 				return;
 			}

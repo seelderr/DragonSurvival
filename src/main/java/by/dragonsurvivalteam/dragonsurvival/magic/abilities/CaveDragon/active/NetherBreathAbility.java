@@ -27,7 +27,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -109,7 +108,7 @@ public class NetherBreathAbility extends BreathAbility{
 	@OnlyIn( Dist.CLIENT )
 	public ArrayList<Component> getLevelUpInfo(){
 		ArrayList<Component> list = super.getLevelUpInfo();
-		list.add(new TranslatableComponent("ds.skill.damage", "+" + fireBreathDamage));
+		list.add(Component.translatable("ds.skill.damage", "+" + fireBreathDamage));
 		return list;
 	}
 

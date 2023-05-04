@@ -13,7 +13,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -91,7 +91,7 @@ public class ServerFlightHandler{
 	 */
 	@SubscribeEvent
 	public static void changeFallDistance(LivingFallEvent event){
-		LivingEntity livingEntity = event.getEntityLiving();
+		LivingEntity livingEntity = event.getEntity();
 		double flightSpeed = event.getDistance();
 
 		DragonStateProvider.getCap(livingEntity).ifPresent(dragonStateHandler -> {
@@ -300,7 +300,7 @@ public class ServerFlightHandler{
 						if(isFlying(player)){
 							if(!player.level.isClientSide){
 								if(player.getFoodData().getFoodLevel() <= foldWingsThreshold && !allowFlyingWithoutHunger && !player.isCreative()){
-									player.sendMessage(new TranslatableComponent("ds.wings.nohunger"), player.getUUID());
+									player.sendSystemMessage(Component.translatable("ds.wings.nohunger"));
 									dragonStateHandler.setWingsSpread(false);
 									NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncFlyingStatus(player.getId(), false));
 									return;

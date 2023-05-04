@@ -30,7 +30,7 @@ public abstract class MixinClientWorld extends Level{
 	private LevelRenderer levelRenderer;
 
 	protected MixinClientWorld(WritableLevelData pLevelData, ResourceKey<Level> pDimension, Holder<DimensionType> pDimensionType, Supplier<ProfilerFiller> pProfiler, boolean pIsClientSide, boolean pIsDebug, long pBiomeZoomSeed){
-		super(pLevelData, pDimension, pDimensionType, pProfiler, pIsClientSide, pIsDebug, pBiomeZoomSeed);
+		super(pLevelData, pDimension, pDimensionType, pProfiler, pIsClientSide, pIsDebug, pBiomeZoomSeed, 1000000);
 	}
 
 

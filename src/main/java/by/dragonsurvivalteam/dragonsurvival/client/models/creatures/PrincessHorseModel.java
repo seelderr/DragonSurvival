@@ -8,12 +8,12 @@ import software.bernie.geckolib3.model.AnimatedGeoModel;
 
 public class PrincessHorseModel extends AnimatedGeoModel<PrincesHorseEntity>{
 	@Override
-	public ResourceLocation getModelLocation(PrincesHorseEntity object){
+	public ResourceLocation getModelResource(PrincesHorseEntity object){
 		return new ResourceLocation(DragonSurvivalMod.MODID, "geo/horseback_rider.geo.json");
 	}
 
 	@Override
-	public ResourceLocation getTextureLocation(PrincesHorseEntity object){
+	public ResourceLocation getTextureResource(PrincesHorseEntity object){
 		DyeColor dyeColor = DyeColor.byId(object.getColor());
 		switch(dyeColor){
 			case RED:
@@ -33,7 +33,7 @@ public class PrincessHorseModel extends AnimatedGeoModel<PrincesHorseEntity>{
 	}
 
 	@Override
-	public ResourceLocation getAnimationFileLocation(PrincesHorseEntity animatable){
+	public ResourceLocation getAnimationResource(PrincesHorseEntity animatable){
 		return new ResourceLocation(DragonSurvivalMod.MODID, "animations/horseback_rider.animations.json");
 	}
 }

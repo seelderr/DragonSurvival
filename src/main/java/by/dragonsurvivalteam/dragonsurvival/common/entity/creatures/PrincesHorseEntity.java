@@ -14,7 +14,6 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -149,7 +148,7 @@ public class PrincesHorseEntity extends Villager implements IAnimatable, CommonT
 
 	@Override
 	protected Component getTypeName(){
-		return new TranslatableComponent(getType().getDescriptionId());
+		return Component.translatable(getType().getDescriptionId());
 	}
 
 	@Override
@@ -201,7 +200,7 @@ public class PrincesHorseEntity extends Villager implements IAnimatable, CommonT
 	}
 
 	@Override
-	protected int getExperienceReward(Player p_70693_1_){
+	public int getExperienceReward(){
 		return 1 + level.random.nextInt(2);
 	}
 

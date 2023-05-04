@@ -8,9 +8,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.gui.GuiUtils;
+import net.minecraftforge.client.gui.ScreenUtils;
 
 import java.util.function.Consumer;
 
@@ -39,8 +39,8 @@ public class ExtendedCheckbox extends Checkbox{
 		Font fontrenderer = minecraft.font;
 
 		if(height > 10){
-			GuiUtils.drawContinuousTexturedBox(pMatrixStack, BACKGROUND_TEXTURE, x, y, 0, 0, width, height, 32, 32, 10, 10, 10, 10, (float)0);
-			GuiUtils.drawContinuousTexturedBox(pMatrixStack, BACKGROUND_TEXTURE, x, y, 0, 0, renderWidth, height, 32, 32, 10, 10, 10, 10, (float)0);
+			ScreenUtils.blitWithBorder(pMatrixStack, BACKGROUND_TEXTURE, x, y, 0, 0, width, height, 32, 32, 10, 10, 10, 10, (float)0);
+			ScreenUtils.blitWithBorder(pMatrixStack, BACKGROUND_TEXTURE, x, y, 0, 0, renderWidth, height, 32, 32, 10, 10, 10, 10, (float)0);
 		}
 
 
@@ -55,11 +55,12 @@ public class ExtendedCheckbox extends Checkbox{
 
 			blit(pMatrixStack, x + 2, y + 2, u, v, renderWidth - 4, height - 4, (int)(72 * widthMod), (int)(72f * heightMod));
 			renderBg(pMatrixStack, minecraft, pMouseX, pMouseY);
-
-			Component message = active ? getMessage() : ((TranslatableComponent)getMessage()).withStyle(ChatFormatting.DARK_GRAY);
-
+			// Insecure modification
+			MutableComponent message = Component.empty().append(getMessage());
+			if (active)
+				message = message.withStyle(ChatFormatting.DARK_GRAY);
 			pMatrixStack.pushPose();
-			drawString(pMatrixStack, fontrenderer, message, x + renderWidth + 2, y + (height - 8) / 2, 14737632);
+			drawString(pMatrixStack, fontrenderer,  message, x + renderWidth + 2, y + (height - 8) / 2, 14737632);
 			pMatrixStack.popPose();
 		}else{
 			float widthMod = renderWidth / 36f;
@@ -71,7 +72,11 @@ public class ExtendedCheckbox extends Checkbox{
 			blit(pMatrixStack, x, y, u, v, renderWidth, height, (int)(72 * widthMod), (int)(72f * heightMod));
 			renderBg(pMatrixStack, minecraft, pMouseX, pMouseY);
 
-			Component message = active ? getMessage() : ((TranslatableComponent)getMessage()).withStyle(ChatFormatting.DARK_GRAY);
+			//Component message = active ? getMessage() : ((TranslatableComponent)getMessage()).withStyle(ChatFormatting.DARK_GRAY);
+			// Insecure modification
+			MutableComponent message = Component.empty().append(getMessage());
+			if (active)
+				message = message.withStyle(ChatFormatting.DARK_GRAY);
 
 			pMatrixStack.pushPose();
 			drawString(pMatrixStack, fontrenderer, message, x + renderWidth + 2, y + (height - 8) / 2, 14737632);

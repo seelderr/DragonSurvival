@@ -21,7 +21,7 @@ import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
@@ -42,7 +42,7 @@ public class DragonAltarGUI extends Screen{
 	private int tick;
 
 	public DragonAltarGUI(){
-		super(new TranslatableComponent("ds.gui.dragon_altar"));
+		super(Component.translatable("ds.gui.dragon_altar"));
 	}
 
 	@Override
@@ -105,8 +105,8 @@ public class DragonAltarGUI extends Screen{
 	}
 
 	public static void renderBorders(PoseStack stack, ResourceLocation texture, int x0, int x1, int y0, int y1, int width, int height){
-		Tesselator tessellator = Tesselator.getInstance();
-		BufferBuilder bufferbuilder = tessellator.getBuilder();
+		Tesselator tesselator = Tesselator.getInstance();
+		BufferBuilder bufferbuilder = tesselator.getBuilder();
 		RenderSystem.setShaderTexture(0, texture);
 
 		stack.pushPose();
@@ -125,7 +125,7 @@ public class DragonAltarGUI extends Screen{
 		bufferbuilder.vertex(x0 + width, height, zLevel).uv((float)width / 32.0F, (float)height / 32.0F).color(64, 64, 64, 255).endVertex();
 		bufferbuilder.vertex(x0 + width, y1, zLevel).uv((float)width / 32.0F, (float)y1 / 32.0F).color(64, 64, 64, 255).endVertex();
 		bufferbuilder.vertex(x0, y1, zLevel).uv(0.0F, (float)y1 / 32.0F).color(64, 64, 64, 255).endVertex();
-		tessellator.end();
+		tesselator.end();
 
 		RenderSystem.depthFunc(515);
 		RenderSystem.disableDepthTest();
@@ -143,7 +143,7 @@ public class DragonAltarGUI extends Screen{
 		bufferbuilder.vertex(x1, y1, zLevel).uv(1.0F, 1.0F).color(0, 0, 0, 255).endVertex();
 		bufferbuilder.vertex(x1, y1 - 4, zLevel).uv(1.0F, 0.0F).color(0, 0, 0, 0).endVertex();
 		bufferbuilder.vertex(x0, y1 - 4, zLevel).uv(0.0F, 0.0F).color(0, 0, 0, 0).endVertex();
-		tessellator.end();
+		tesselator.end();
 		stack.popPose();
 	}
 
@@ -176,7 +176,7 @@ public class DragonAltarGUI extends Screen{
 		addRenderableWidget(new AltarTypeButton(this, DragonTypes.SEA, width / 2 + 2, guiTop + 30));
 		addRenderableWidget(new AltarTypeButton(this, null, width / 2 + 55, guiTop + 30));
 
-		addRenderableWidget(new ExtendedButton(width / 2 - 75, height - 25, 150, 20, new TranslatableComponent("ds.gui.dragon_editor"), btn -> {
+		addRenderableWidget(new ExtendedButton(width / 2 - 75, height - 25, 150, 20, Component.translatable("ds.gui.dragon_editor"), btn -> {
 			Minecraft.getInstance().setScreen(new DragonEditorScreen(Minecraft.getInstance().screen));
 		}){
 			@Override

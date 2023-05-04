@@ -139,7 +139,7 @@ public class ClientDragonRender{
 	 */
 	@SubscribeEvent
 	public static void thirdPersonPreRender(RenderPlayerEvent.Pre renderPlayerEvent){
-		if(!(renderPlayerEvent.getPlayer() instanceof AbstractClientPlayer player)){
+		if(!(renderPlayerEvent.getEntity() instanceof AbstractClientPlayer player)){
 			return;
 		}
 
@@ -187,7 +187,7 @@ public class ClientDragonRender{
 				int eventLight = renderPlayerEvent.getPackedLight();
 				final MultiBufferSource renderTypeBuffer = renderPlayerEvent.getMultiBufferSource();
 				if(dragonNameTags){
-					net.minecraftforge.client.event.RenderNameplateEvent renderNameplateEvent = new net.minecraftforge.client.event.RenderNameplateEvent(player, player.getDisplayName(), playerRenderer, matrixStack, renderTypeBuffer, eventLight, partialRenderTick);
+					net.minecraftforge.client.event.RenderNameTagEvent renderNameplateEvent = new net.minecraftforge.client.event.RenderNameTagEvent(player, player.getDisplayName(), playerRenderer, matrixStack, renderTypeBuffer, eventLight, partialRenderTick);
 					net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(renderNameplateEvent);
 					if(renderNameplateEvent.getResult() != net.minecraftforge.eventbus.api.Event.Result.DENY && (renderNameplateEvent.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || ((AccessorLivingRenderer)playerRenderer).callShouldShowName(player))){
 						((AccessorEntityRenderer)playerRenderer).callRenderNameTag(player, renderNameplateEvent.getContent(), matrixStack, renderTypeBuffer, eventLight);
@@ -198,7 +198,6 @@ public class ClientDragonRender{
 				matrixStack.scale(scale, scale, scale);
 				((AccessorEntityRenderer)renderPlayerEvent.getRenderer()).setShadowRadius((float)((3.0F * size + 62.0F) / 260.0F));
 				DragonEntity dummyDragon = playerDragonHashMap.get(player.getId()).get();
-
 				EntityRenderer<? super DragonEntity> dragonRenderer = mc.getEntityRenderDispatcher().getRenderer(dummyDragon);
 				dragonModel.setCurrentTexture(texture);
 
@@ -207,14 +206,14 @@ public class ClientDragonRender{
 				}else if(player.isCrouching()){
 					matrixStack.translate(0, 0.325 - size / DragonLevel.ADULT.size * 0.140, 0);
 				}else if(player.isSwimming() || player.isAutoSpinAttack() || cap.isWingsSpread() && !player.isOnGround() && !player.isInWater() && !player.isInLava()){
-					matrixStack.translate(0, -0.15 - size / DragonLevel.ADULT.size * 0.2, 0);
+ 					matrixStack.translate(0, -0.15 - size / DragonLevel.ADULT.size * 0.2, 0);
 				}
 				if(!player.isInvisible()){
 					if(ServerFlightHandler.isGliding(player)){
 						if(renderOtherPlayerRotation || mc.player == player){
 							float upRot = Mth.clamp((float)(player.getDeltaMovement().y * 20), -80, 80);
 
-							dummyDragon.prevXRot = Mth.lerp(0.1F, dummyDragon.prevXRot, upRot);
+     							dummyDragon.prevXRot = Mth.lerp(0.1F, dummyDragon.prevXRot, upRot);
 							dummyDragon.prevXRot = Mth.clamp(dummyDragon.prevXRot, -80, 80);
 
 							if(Float.isNaN(dummyDragon.prevXRot)){
@@ -328,7 +327,7 @@ public class ClientDragonRender{
 	}
 
 	@SubscribeEvent
-	public static void spin(InputEvent.ClickInputEvent keyInputEvent){
+	public static void spin(InputEvent.InteractionKeyMappingTriggered keyInputEvent){
 		LocalPlayer player = Minecraft.getInstance().player;
 		if(player == null){
 			return;

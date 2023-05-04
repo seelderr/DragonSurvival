@@ -8,7 +8,6 @@ import by.dragonsurvivalteam.dragonsurvival.network.player.SyncSize;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SynchronizeDragonCap;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.network.protocol.game.ClientboundSetPassengersPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -73,6 +72,6 @@ public class StarBoneItem extends Item{
 		@Nullable
 			Level p_77624_2_, List<Component> p_77624_3_, TooltipFlag p_77624_4_){
 		super.appendHoverText(p_77624_1_, p_77624_2_, p_77624_3_, p_77624_4_);
-		p_77624_3_.add(new TranslatableComponent("ds.description.starBone"));
+		p_77624_3_.add(Component.translatable("ds.description.starBone"));
 	}
 }

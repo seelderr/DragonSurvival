@@ -22,9 +22,11 @@ import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.blocks.BlockStateParser;
 import net.minecraft.commands.arguments.item.ItemParser;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
+import net.minecraft.data.BuiltinRegistries;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.FormattedCharSequence;
@@ -34,9 +36,10 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.client.gui.GuiUtils;
+import net.minecraftforge.client.gui.ScreenUtils;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
 import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -157,7 +160,7 @@ public class ResourceTextField extends EditBox implements TooltipAccessor{
 			SharedSuggestionProvider.suggestResource(ForgeRegistries.BLOCKS.getKeys(), builder);
 
 		if(isEntity)
-			SharedSuggestionProvider.suggestResource(ForgeRegistries.ENTITIES.getKeys(), builder);
+			SharedSuggestionProvider.suggestResource(ForgeRegistries.ENTITY_TYPES.getKeys(), builder);
 
 		if(isEffect)
 			SharedSuggestionProvider.suggestResource(ForgeRegistries.MOB_EFFECTS.getKeys(), builder);
@@ -196,32 +199,35 @@ public class ResourceTextField extends EditBox implements TooltipAccessor{
 
 				if(isEntity)
 					try{
-						results.add(new ResourceEntry(value, Objects.requireNonNull(ForgeRegistries.ENTITIES.tags().getTag(TagKey.create(Registry.ENTITY_TYPE_REGISTRY, location))).stream().map(s -> new ItemStack(ForgeSpawnEggItem.fromEntityType(s))).toList(), true));
+						results.add(new ResourceEntry(value, Objects.requireNonNull(ForgeRegistries.ENTITY_TYPES.tags().getTag(TagKey.create(Registry.ENTITY_TYPE_REGISTRY, location))).stream().map(s -> new ItemStack(ForgeSpawnEggItem.fromEntityType(s))).toList(), true));
 					}catch(Exception ignored){}
 			}
 
 			if(isItem)
+				// Insecure modification
 				try{
-					results.add(new ResourceEntry(value, Collections.singletonList(new ItemStack(new ItemParser(new StringReader(value), false).parse().getItem()))));
+					results.add(new ResourceEntry(value, Collections.singletonList(new ItemStack(ItemParser.parseForItem(HolderLookup.forRegistry(Registry.ITEM), new StringReader(value)).item()))));
 				}catch(Exception ignored){
 				}
 
 			if(isBlock)
+				// Insecure modification
 				try{
-					results.add(new ResourceEntry(value, Collections.singletonList(new ItemStack(Objects.requireNonNull(new BlockStateParser(new StringReader(value), false).parse(false).getState()).getBlock()))));
+					results.add(new ResourceEntry(value, Collections.singletonList(new ItemStack(BlockStateParser.parseForBlock(HolderLookup.forRegistry(Registry.BLOCK),new StringReader(value), false).blockState().getBlock()))));
 				}catch(Exception ignored){
 				}
 
 			if(isEntity)
 				try{
-					EntityType<?> entityType = ForgeRegistries.ENTITIES.getValue(location);
+					EntityType<?> entityType = ForgeRegistries.ENTITY_TYPES.getValue(location);
 					if(entityType != null){
 						SpawnEggItem item = ForgeSpawnEggItem.fromEntityType(entityType);
 
 						if(item != null){
 							results.add(new ResourceEntry(value, Collections.singletonList(new ItemStack(item))));
 						}else{
-							results.add(new ResourceEntry(value, Collections.singletonList(new ItemStack(new ItemParser(new StringReader(value), false).parse().getItem()))));
+							// Insecure modification
+							results.add(new ResourceEntry(value, Collections.singletonList(new ItemStack(ItemParser.parseForItem(HolderLookup.forRegistry(Registry.ITEM), new StringReader(value)).item()))));
 						}
 					}
 				}catch(Exception ignored){
@@ -296,7 +302,7 @@ public class ResourceTextField extends EditBox implements TooltipAccessor{
 			}
 
 			boolean finalHasBorder = hasBorder;
-			renderButton = new ExtendedButton(0, 0, 0, 0, TextComponent.EMPTY, null){
+			renderButton = new ExtendedButton(0, 0, 0, 0, Component.empty(), null){
 				@Override
 				public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
 					active = visible = false;
@@ -330,7 +336,7 @@ public class ResourceTextField extends EditBox implements TooltipAccessor{
 	@Override
 	public void renderButton(PoseStack pPoseStack, int pMouseX, int pMouseY, float pPartialTicks){
 		int v = isHovered ? 32 : 0;
-		GuiUtils.drawContinuousTexturedBox(pPoseStack, BACKGROUND_TEXTURE, x, y + 1, 0, v, width, height, 32, 32, 10, 10, 10, 10, (float)0);
+		ScreenUtils.blitWithBorder(pPoseStack, BACKGROUND_TEXTURE, x, y + 1, 0, v, width, height, 32, 32, 10, 10, 10, 10, (float)0);
 
 		if(stack != null && !stack.isEmpty()){
 			stack.tick();

@@ -12,7 +12,6 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChargeCastAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -69,12 +68,12 @@ public class HunterAbility extends ChargeCastAbility{
 		ArrayList<Component> components = super.getInfo();
 
 		if(!KeyInputHandler.ABILITY4.isUnbound()){
-			String key = KeyInputHandler.ABILITY4.getKey().getDisplayName().getContents().toUpperCase(Locale.ROOT);
+			String key = KeyInputHandler.ABILITY4.getKey().getDisplayName().getString().toUpperCase(Locale.ROOT);
 
 			if(key.isEmpty()){
 				key = KeyInputHandler.ABILITY4.getKey().getDisplayName().getString();
 			}
-			components.add(new TranslatableComponent("ds.skill.keybind", key));
+			components.add(Component.translatable("ds.skill.keybind", key));
 		}
 
 		return components;
@@ -119,7 +118,7 @@ public class HunterAbility extends ChargeCastAbility{
 
 	@Override
 	public Component getDescription(){
-		return new TranslatableComponent("ds.skill.description." + getName(), 1.5 * getLevel() + "x", getDuration());
+		return Component.translatable("ds.skill.description." + getName(), 1.5 * getLevel() + "x", getDuration());
 	}
 
 	@Override
@@ -145,8 +144,8 @@ public class HunterAbility extends ChargeCastAbility{
 	@OnlyIn( Dist.CLIENT )
 	public ArrayList<Component> getLevelUpInfo(){
 		ArrayList<Component> list = super.getLevelUpInfo();
-		list.add(new TranslatableComponent("ds.skill.duration.seconds", "+" + hunterDuration));
-		list.add(new TranslatableComponent("ds.skill.damage", "+" + hunterDamageBonus + "X"));
+		list.add(Component.translatable("ds.skill.duration.seconds", "+" + hunterDuration));
+		list.add(Component.translatable("ds.skill.damage", "+" + hunterDamageBonus + "X"));
 		return list;
 	}
 

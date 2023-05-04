@@ -62,6 +62,7 @@ public class SyncMagicCap implements IMessage<SyncMagicCap>{
 				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncMagicCap(player.getId(), dragonStateHandler.getMagicData()));
 			});
 		}
+		supplier.get().setPacketHandled(true);
 	}
 
 	@OnlyIn( Dist.CLIENT )

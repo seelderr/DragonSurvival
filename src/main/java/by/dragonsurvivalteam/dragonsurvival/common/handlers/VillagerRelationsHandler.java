@@ -9,12 +9,12 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import by.dragonsurvivalteam.dragonsurvival.util.SpawningUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
@@ -32,12 +32,12 @@ import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.item.trading.MerchantOffers;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraftforge.common.BiomeDictionary;
+import net.minecraft.world.level.biome.Biomes;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.living.PotionEvent;
+import net.minecraftforge.event.entity.living.MobEffectEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -55,7 +55,7 @@ public class VillagerRelationsHandler{
 
 	@SubscribeEvent
 	public static void onDeath(LivingDeathEvent deathEvent){
-		LivingEntity livingEntity = deathEvent.getEntityLiving();
+		LivingEntity livingEntity = deathEvent.getEntity();
 		Entity killer = deathEvent.getSource().getEntity();
 		if(killer instanceof Player playerEntity){
 			if(livingEntity instanceof AbstractVillager){
@@ -99,7 +99,7 @@ public class VillagerRelationsHandler{
 					playerEntity.addEffect(new MobEffectInstance(MobEffects.BAD_OMEN, Functions.minutesToTicks(5)));
 				}
 			}
-			String typeName = livingEntity.getType().getRegistryName().toString();
+			String typeName = ResourceHelper.getKey(livingEntity).toString();
 			if(DragonUtils.isDragon(playerEntity) && ServerConfig.royalChaseStatusGivers.contains(typeName)){
 				applyEvilMarker(playerEntity);
 			}
@@ -160,18 +160,19 @@ public class VillagerRelationsHandler{
 		});
 	}
 
+
 	@SubscribeEvent
-	public static void voidEvilStatus(PotionEvent.PotionAddedEvent potionAddedEvent){
-		MobEffectInstance effectInstance = potionAddedEvent.getPotionEffect();
-		LivingEntity livingEntity = potionAddedEvent.getEntityLiving();
+	public static void voidEvilStatus(MobEffectEvent.Added potionAddedEvent){
+		MobEffectInstance effectInstance = potionAddedEvent.getEffectInstance();
+		LivingEntity livingEntity = potionAddedEvent.getEntity();
 		if(effectInstance.getEffect() == MobEffects.HERO_OF_THE_VILLAGE){
 			livingEntity.removeEffect(DragonEffects.ROYAL_CHASE);
 		}
 	}
 
 	@SubscribeEvent
-	public static void specialTasks(EntityJoinWorldEvent joinWorldEvent){
-		Level world = joinWorldEvent.getWorld();
+	public static void specialTasks(EntityJoinLevelEvent joinWorldEvent){
+		Level world = joinWorldEvent.getLevel();
 		Entity entity = joinWorldEvent.getEntity();
 		if(entity instanceof IronGolem golemEntity){
 			golemEntity.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(golemEntity, Player.class, 0, true, false, livingEntity -> livingEntity.hasEffect(DragonEffects.ROYAL_CHASE)));
@@ -184,7 +185,7 @@ public class VillagerRelationsHandler{
 
 	@SubscribeEvent
 	public static void interactions(PlayerInteractEvent.EntityInteract event){
-		Player playerEntity = event.getPlayer();
+		Player playerEntity = event.getEntity();
 		Entity livingEntity = event.getTarget();
 		if(livingEntity instanceof AbstractVillager){
 			if(playerEntity.hasEffect(DragonEffects.ROYAL_CHASE)){
@@ -228,8 +229,7 @@ public class VillagerRelationsHandler{
 							if(spawnPosition != null && spawnPosition.getY() >= ServerConfig.riderSpawnLowerBound && spawnPosition.getY() <= ServerConfig.riderSpawnUpperBound){
 								Optional<ResourceKey<Biome>> biomeRegistryKey = serverWorld.getBiome(spawnPosition).unwrapKey();
 								if(biomeRegistryKey.isPresent()){
-									ResourceKey<Biome> biome = biomeRegistryKey.get();
-									if(BiomeDictionary.hasType(biome, BiomeDictionary.Type.OCEAN)){
+									if(biomeRegistryKey.get() == Biomes.OCEAN){
 										return;
 									}
 								}
@@ -321,9 +321,9 @@ public class VillagerRelationsHandler{
 	}
 
 	@SubscribeEvent
-	public static void spawnPrinceOrPrincess(TickEvent.WorldTickEvent serverTickEvent){
+	public static void spawnPrinceOrPrincess(TickEvent.LevelTickEvent serverTickEvent){
 		if(ServerConfig.spawnPrinceAndPrincess){
-			Level world = serverTickEvent.world;
+			Level world = serverTickEvent.level;
 			if(world instanceof ServerLevel serverWorld){
 				if(!serverWorld.players().isEmpty() && serverWorld.dimension() == Level.OVERWORLD){
 					if(timeLeft == 0){
@@ -333,10 +333,8 @@ public class VillagerRelationsHandler{
 							if(blockPos != null && blockPos.getY() >= ServerConfig.riderSpawnLowerBound && blockPos.getY() <= ServerConfig.riderSpawnUpperBound && serverWorld.isVillage(blockPos)){
 								Optional<ResourceKey<Biome>> biomeRegistryKey = serverWorld.getBiome(blockPos).unwrapKey();
 								if(biomeRegistryKey.isPresent()){
-									ResourceKey<Biome> biome = biomeRegistryKey.get();
-									if(BiomeDictionary.hasType(biome, BiomeDictionary.Type.OCEAN)){
+									if(biomeRegistryKey.get() == Biomes.OCEAN)
 										return;
-									}
 								}
 								EntityType<? extends PrincesHorseEntity> entityType = world.random.nextBoolean() ? DSEntities.PRINCESS_ON_HORSE : DSEntities.PRINCE_ON_HORSE;
 								PrincesHorseEntity princessEntity = entityType.create(world);

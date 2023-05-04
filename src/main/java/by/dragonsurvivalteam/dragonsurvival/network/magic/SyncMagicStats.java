@@ -57,6 +57,7 @@ public class SyncMagicStats implements IMessage<SyncMagicStats>{
 	@Override
 	public void handle(SyncMagicStats message, Supplier<NetworkEvent.Context> supplier){
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> run(message, supplier));
+		supplier.get().setPacketHandled(true);
 	}
 
 	@OnlyIn( Dist.CLIENT )

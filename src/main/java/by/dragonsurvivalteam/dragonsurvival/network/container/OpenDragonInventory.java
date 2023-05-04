@@ -4,7 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.DragonContainer;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraftforge.network.NetworkEvent;
@@ -25,7 +25,8 @@ public class OpenDragonInventory implements IMessage<OpenDragonInventory>{
 		ServerPlayer serverPlayer = supplier.get().getSender();
 		if(DragonUtils.isDragon(serverPlayer)){
 			serverPlayer.containerMenu.removed(serverPlayer);
-			serverPlayer.openMenu(new SimpleMenuProvider((val1, inv, player) -> new DragonContainer(val1, inv, false), new TextComponent("")));
+			serverPlayer.openMenu(new SimpleMenuProvider((val1, inv, player) -> new DragonContainer(val1, inv, false), Component.empty()));
 		}
+		supplier.get().setPacketHandled(true);
 	}
 }

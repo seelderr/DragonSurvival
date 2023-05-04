@@ -9,7 +9,6 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.TooltipFlag.Default;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
@@ -47,8 +46,8 @@ public class ResourceDropdownEntry extends DropdownEntry{
 					private int tick = 0;
 
 					@Override
-					public TextComponent getMessage(){
-						return (TextComponent)TextComponent.EMPTY;
+					public Component getMessage(){
+						return Component.empty();
 					}
 
 					@Override
@@ -97,7 +96,7 @@ public class ResourceDropdownEntry extends DropdownEntry{
 							Gui.fill(mStack, x, y, x + width, y + height, color);
 
 							String text = entry.id;
-							Minecraft.getInstance().font.drawShadow(mStack, new TextComponent( Minecraft.getInstance().font.substrByWidth(new TextComponent(text), width - 20).getString()), x + 25, y + 5, DyeColor.WHITE.getTextColor());
+							Minecraft.getInstance().font.drawShadow(mStack, Component.empty().append( Minecraft.getInstance().font.substrByWidth(Component.empty().append(text), width - 20).getString()), x + 25, y + 5, DyeColor.WHITE.getTextColor());
 
 							if(!entry.isEmpty()){
 								ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
@@ -106,7 +105,7 @@ public class ResourceDropdownEntry extends DropdownEntry{
 
 								if(entry.tag){
 									mStack.translate(0, 0, 200);
-									Minecraft.getInstance().font.drawShadow(mStack, new TextComponent("#"), x + 14, y + 10, DyeColor.WHITE.getTextColor());
+									Minecraft.getInstance().font.drawShadow(mStack, Component.empty().append("#"), x + 14, y + 10, DyeColor.WHITE.getTextColor());
 									mStack.translate(0, 0, -200);
 								}
 

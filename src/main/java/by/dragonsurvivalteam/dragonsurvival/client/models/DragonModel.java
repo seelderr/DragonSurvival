@@ -31,12 +31,12 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity>{
 	private ResourceLocation currentTexture = defaultTexture;
 
 	@Override
-	public ResourceLocation getModelLocation(DragonEntity dragon){
+	public ResourceLocation getModelResource(DragonEntity dragon){
 		return new ResourceLocation(DragonSurvivalMod.MODID, "geo/dragon_model.geo.json");
 	}
 
 	@Override
-	public ResourceLocation getTextureLocation(DragonEntity dragon){
+	public ResourceLocation getTextureResource(DragonEntity dragon){
 		if(dragon.player != null || dragon.getPlayer() != null){
 			DragonStateHandler handler = DragonUtils.getHandler(dragon.getPlayer());
 			SkinAgeGroup ageGroup = handler.getSkinData().skinPreset.skinAges.get(handler.getLevel());
@@ -68,7 +68,7 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity>{
 	}
 
 	@Override
-	public ResourceLocation getAnimationFileLocation(DragonEntity animatable){
+	public ResourceLocation getAnimationResource(DragonEntity animatable){
 		return new ResourceLocation(DragonSurvivalMod.MODID, "animations/dragon.animations.json");
 	}
 

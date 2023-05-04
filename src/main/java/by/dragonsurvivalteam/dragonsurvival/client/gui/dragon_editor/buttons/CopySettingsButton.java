@@ -10,8 +10,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
 
@@ -51,7 +49,7 @@ public class CopySettingsButton extends ExtendedButton{
 
 	@Override
 	public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-		TooltipRendering.drawHoveringText(p_230443_1_, new TranslatableComponent("ds.gui.dragon_editor.copy"), p_230443_2_, p_230443_3_);
+		TooltipRendering.drawHoveringText(p_230443_1_, Component.translatable("ds.gui.dragon_editor.copy"), p_230443_2_, p_230443_3_);
 	}
 
 	@Override
@@ -60,7 +58,7 @@ public class CopySettingsButton extends ExtendedButton{
 	@Override
 	public void onPress(){
 		if(!toggled){
-			renderButton = new ExtendedButton(0, 0, 0, 0, TextComponent.EMPTY, null){
+			renderButton = new ExtendedButton(0, 0, 0, 0, Component.empty(), null){
 				@Override
 				public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
 					active = visible = false;

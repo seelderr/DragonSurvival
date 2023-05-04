@@ -49,6 +49,7 @@ public class SyncPotionRemovedEffect implements IMessage<SyncPotionRemovedEffect
 	@Override
 	public void handle(SyncPotionRemovedEffect message, Supplier<NetworkEvent.Context> supplier){
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> run(message, supplier));
+		supplier.get().setPacketHandled(true);
 	}
 
 	@OnlyIn( Dist.CLIENT )

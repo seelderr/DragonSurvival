@@ -51,5 +51,6 @@ public class SyncDragonAbilitySlot implements IMessage<SyncDragonAbilitySlot>{
 			cap.getMagicData().setSelectedAbilitySlot(message.selectedSlot);
 			cap.getMagicData().setRenderAbilities(message.displayHotbar);
 		});
+		supplier.get().setPacketHandled(true);
 	}
 }

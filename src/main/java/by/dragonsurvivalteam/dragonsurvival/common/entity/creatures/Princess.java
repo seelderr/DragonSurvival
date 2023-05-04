@@ -10,7 +10,6 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -201,7 +200,7 @@ public class Princess extends Villager{
 
 	@Override
 	protected Component getTypeName(){
-		return new TranslatableComponent(getType().getDescriptionId());
+		return Component.translatable(getType().getDescriptionId());
 	}
 
 	@Override

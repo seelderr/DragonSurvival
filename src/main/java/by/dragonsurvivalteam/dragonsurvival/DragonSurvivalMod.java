@@ -30,7 +30,6 @@ import software.bernie.geckolib3.GeckoLib;
 public class DragonSurvivalMod{
 	public static final String MODID = "dragonsurvival";
 	public static final Logger LOGGER = LogManager.getLogger("Dragon Survival");
-
 	public static DragonSurvivalCreativeTab items = new DragonSurvivalCreativeTab("dragon.survival.blocks");
 
 	public DragonSurvivalMod(){
@@ -43,6 +42,7 @@ public class DragonSurvivalMod{
 		IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 		modEventBus.addListener(this::setup);
 
+		DSParticles.register();
 		DSParticles.REGISTRY.register(modEventBus);
 		SoundRegistry.SOUNDS.register(modEventBus);
 

@@ -10,10 +10,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.gui.GuiUtils;
+import net.minecraftforge.client.gui.ScreenUtils;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
 
 public class BackgroundColorButton extends ExtendedButton{
@@ -36,7 +34,7 @@ public class BackgroundColorButton extends ExtendedButton{
 	@Override
 	public void onPress(){
 		if(!toggled){
-			renderButton = new ExtendedButton(0, 0, 0, 0, TextComponent.EMPTY, null){
+			renderButton = new ExtendedButton(0, 0, 0, 0, Component.empty(), null){
 				@Override
 				public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
 					active = visible = false;
@@ -76,7 +74,7 @@ public class BackgroundColorButton extends ExtendedButton{
 		}
 
 		if(visible){
-			GuiUtils.drawContinuousTexturedBox(mStack, BACKGROUND_TEXTURE, x, y, 0, 0, width, height, 32, 32, 10, 10, 10, 10, (float)0);
+			ScreenUtils.blitWithBorder(mStack, BACKGROUND_TEXTURE, x, y, 0, 0, width, height, 32, 32, 10, 10, 10, 10, (float)0);
 			RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/background_color_button.png"));
 			blit(mStack, x + 3, y + 3, 0, 0, width - 6, height - 6, width - 6, height - 6);
 
@@ -88,6 +86,6 @@ public class BackgroundColorButton extends ExtendedButton{
 
 	@Override
 	public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-		TooltipRendering.drawHoveringText(p_230443_1_, new TranslatableComponent("ds.gui.dragon_editor.background_color"), p_230443_2_, p_230443_3_);
+		TooltipRendering.drawHoveringText(p_230443_1_, Component.translatable("ds.gui.dragon_editor.background_color"), p_230443_2_, p_230443_3_);
 	}
 }

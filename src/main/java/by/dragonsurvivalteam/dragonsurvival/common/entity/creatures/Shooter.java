@@ -11,6 +11,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffects;
@@ -168,7 +169,7 @@ public class Shooter extends Hunter implements CrossbowAttackMob{
 	}
 
 	@Override
-	protected void populateDefaultEquipmentSlots(DifficultyInstance p_180481_1_){
+	protected void populateDefaultEquipmentSlots(RandomSource randomSource, DifficultyInstance p_180481_1_){
 		ItemStack stack = new ItemStack(Items.CROSSBOW);
 		addArrow(stack);
 		setItemSlot(EquipmentSlot.MAINHAND, stack);

@@ -13,7 +13,7 @@ public class PoisonBreathSound extends AbstractTickableSoundInstance{
 	private final ForestBreathAbility ability;
 
 	public PoisonBreathSound(ForestBreathAbility ability){
-		super(SoundRegistry.forestBreathLoop, SoundSource.PLAYERS);
+		super(SoundRegistry.forestBreathLoop, SoundSource.PLAYERS, ability.getPlayer().getRandom());
 
 		looping = true;
 

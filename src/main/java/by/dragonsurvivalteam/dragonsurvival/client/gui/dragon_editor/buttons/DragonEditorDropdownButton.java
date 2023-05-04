@@ -14,7 +14,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractSelectionList;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
 
 import java.util.ArrayList;
@@ -59,7 +59,7 @@ public class DragonEditorDropdownButton extends DropDownButton{
 	@Override
 	public void updateMessage(){
 		if(current != null){
-			message = new TextComponent((current.substring(0, 1).toUpperCase(Locale.ROOT) + current.substring(1).toLowerCase(Locale.ROOT)).replace("_", " "));
+			message = Component.empty().append((current.substring(0, 1).toUpperCase(Locale.ROOT) + current.substring(1).toLowerCase(Locale.ROOT)).replace("_", " "));
 		}
 	}
 
@@ -115,7 +115,7 @@ public class DragonEditorDropdownButton extends DropDownButton{
 			}
 
 			boolean finalHasBorder = hasBorder;
-			renderButton = new ExtendedButton(0, 0, 0, 0, TextComponent.EMPTY, null){
+			renderButton = new ExtendedButton(0, 0, 0, 0, Component.empty(), null){
 				@Override
 				public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
 					active = visible = false;

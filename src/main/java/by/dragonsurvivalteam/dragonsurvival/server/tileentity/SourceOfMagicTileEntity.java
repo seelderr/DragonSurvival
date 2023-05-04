@@ -11,7 +11,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Container;
@@ -115,8 +115,8 @@ public class SourceOfMagicTileEntity extends BaseBlockTileEntity implements Cont
 	}
 
 	@Override
-	public TextComponent getDisplayName(){
-		return new TextComponent("Source Of Magic");
+	public Component getDisplayName(){
+		return Component.empty().append("Source Of Magic");
 	}
 
 	@Override

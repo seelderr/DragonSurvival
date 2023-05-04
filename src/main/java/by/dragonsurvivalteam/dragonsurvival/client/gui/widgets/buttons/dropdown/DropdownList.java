@@ -13,7 +13,7 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraftforge.client.gui.GuiUtils;
+import net.minecraftforge.client.gui.ScreenUtils;
 
 public class DropdownList extends AbstractSelectionList<DropdownEntry>{
 	public static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/textbox.png");
@@ -63,7 +63,7 @@ public class DropdownList extends AbstractSelectionList<DropdownEntry>{
 
 	@Override
 	protected void renderBackground(PoseStack stack){
-		GuiUtils.drawContinuousTexturedBox(stack, BACKGROUND_TEXTURE, x0, y0 - 3, 0, 0, width, height + 6, 32, 32, 10, 10, 10, 10, (float)0);
+		ScreenUtils.blitWithBorder(stack, BACKGROUND_TEXTURE, x0, y0 - 3, 0, 0, width, height + 6, 32, 32, 10, 10, 10, 10, (float)0);
 
 		if(children().size() > 0){
 			RenderSystem.enableScissor((int)(x0 * Minecraft.getInstance().getWindow().getGuiScale()), (int)(Minecraft.getInstance().getWindow().getScreenHeight() - (y1 - 3) * Minecraft.getInstance().getWindow().getGuiScale()), (int)(width * Minecraft.getInstance().getWindow().getGuiScale()), (int)((height - 6) * Minecraft.getInstance().getWindow().getGuiScale()));
@@ -82,10 +82,11 @@ public class DropdownList extends AbstractSelectionList<DropdownEntry>{
 		int j = i + 6;
 		Tesselator tesselator = Tesselator.getInstance();
 		BufferBuilder bufferbuilder = tesselator.getBuilder();
-		int j1 = getRowLeft();
-		int k = y0 + 4 - (int)getScrollAmount();
-		renderList(pPoseStack, j1, k, pMouseX, pMouseY, pPartialTicks);
-
+		// Insecure modifications
+		// int j1 = getRowLeft();
+		// int k = y0 + 4 - (int)getScrollAmount();
+		// renderList(pPoseStack, j1, k, pMouseX, pMouseY, pPartialTicks);
+		renderList(pPoseStack, pMouseX, pMouseY, pPartialTicks);
 		if(children().size() > 0){
 			RenderSystem.disableScissor();
 		}

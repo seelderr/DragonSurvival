@@ -3,10 +3,10 @@ package by.dragonsurvivalteam.dragonsurvival.common.items;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -88,7 +88,7 @@ public class RoyalSummonItem extends Item
 	public void appendHoverText(ItemStack stack, @Nullable
 	Level world, List<Component> list, TooltipFlag tooltipFlag){
 		super.appendHoverText(stack, world, list, tooltipFlag);
-		String langKey = "ds.description." + getRegistryName().getPath();
-		list.add(new TranslatableComponent(langKey));
+		String langKey = "ds.description." + ResourceHelper.getKey(this).getPath();
+		list.add(Component.translatable(langKey));
 	}
 }

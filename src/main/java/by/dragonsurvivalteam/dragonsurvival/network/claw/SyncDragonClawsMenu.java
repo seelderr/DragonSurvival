@@ -59,6 +59,7 @@ public class SyncDragonClawsMenu implements IMessage<SyncDragonClawsMenu>{
 	@Override
 	public void handle(SyncDragonClawsMenu message, Supplier<NetworkEvent.Context> supplier){
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> run(message, supplier));
+		supplier.get().setPacketHandled(true);
 	}
 
 	@OnlyIn( Dist.CLIENT )

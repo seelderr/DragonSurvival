@@ -7,10 +7,11 @@ import by.dragonsurvivalteam.dragonsurvival.network.status.SyncTreasureRestStatu
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -201,7 +202,7 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 	@Override
 	public void appendHoverText(ItemStack pStack, @org.jetbrains.annotations.Nullable BlockGetter pLevel, List<net.minecraft.network.chat.Component> pTooltip, TooltipFlag pFlag){
 		super.appendHoverText(pStack, pLevel, pTooltip, pFlag);
-		pTooltip.add(new TranslatableComponent("ds.description.treasures"));
+		pTooltip.add(Component.translatable("ds.description.treasures"));
 	}
 
 	@Override
@@ -225,7 +226,7 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 	}
 
 	@Override
-	public void tick(BlockState p_225534_1_, ServerLevel p_225534_2_, BlockPos p_225534_3_, Random p_225534_4_){
+	public void tick(BlockState p_225534_1_, ServerLevel p_225534_2_, BlockPos p_225534_3_, RandomSource p_225534_4_){
 		boolean belowEmpty = isFree(p_225534_2_.getBlockState(p_225534_3_.below())) && p_225534_3_.getY() >= p_225534_2_.getMinBuildHeight();
 		boolean lowerLayer = p_225534_2_.getBlockState(p_225534_3_.below()).getBlock() == p_225534_1_.getBlock() && p_225534_2_.getBlockState(p_225534_3_.below()).getValue(LAYERS) < 8;
 		if(belowEmpty || lowerLayer){
@@ -271,7 +272,7 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 
 	@Override
 	@OnlyIn( Dist.CLIENT )
-	public void animateTick(BlockState block, Level world, BlockPos pos, Random random){
+	public void animateTick(BlockState block, Level world, BlockPos pos, RandomSource random){
 		double d1 = random.nextDouble();
 		double d2 = block.getValue(LAYERS) * (1.0 / 8) + .1;
 		double d3 = random.nextDouble();

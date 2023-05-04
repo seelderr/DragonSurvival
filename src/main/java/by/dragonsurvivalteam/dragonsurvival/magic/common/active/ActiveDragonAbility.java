@@ -14,7 +14,6 @@ import lombok.Setter;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.ArrayList;
@@ -90,18 +89,18 @@ public abstract class ActiveDragonAbility extends DragonAbility{
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 
 		if(!canConsumeMana(player)){
-			ClientMagicHUDHandler.castingError(new TranslatableComponent("ds.skill_mana_check_failure"));
+			ClientMagicHUDHandler.castingError(Component.translatable("ds.skill_mana_check_failure"));
 			return false;
 		}
 
 		if(getCurrentCooldown() != 0){
-			ClientMagicHUDHandler.castingError(new TranslatableComponent("ds.skill_cooldown_check_failure", nf.format(getCurrentCooldown() / 20F) + "s").withStyle(ChatFormatting.RED));
+			ClientMagicHUDHandler.castingError(Component.translatable("ds.skill_cooldown_check_failure", nf.format(getCurrentCooldown() / 20F) + "s").withStyle(ChatFormatting.RED));
 			return false;
 		}
 
 		if(requiresStationaryCasting() || ServerFlightHandler.isGliding(player)){
 			if(handler.isWingsSpread() && player.isFallFlying() || !player.isOnGround() && player.fallDistance > 0.15F){
-				ClientMagicHUDHandler.castingError(new TranslatableComponent("ds.skill.nofly"));
+				ClientMagicHUDHandler.castingError(Component.translatable("ds.skill.nofly"));
 				return false;
 			}
 		}
@@ -138,10 +137,10 @@ public abstract class ActiveDragonAbility extends DragonAbility{
 	public ArrayList<Component> getInfo(){
 		ArrayList<Component> components = super.getInfo();
 
-		components.add(new TranslatableComponent("ds.skill.mana_cost", getManaCost()));
+		components.add(Component.translatable("ds.skill.mana_cost", getManaCost()));
 
 		if(getSkillCooldown() > 0)
-			components.add(new TranslatableComponent("ds.skill.cooldown", Functions.ticksToSeconds(getSkillCooldown())));
+			components.add(Component.translatable("ds.skill.cooldown", Functions.ticksToSeconds(getSkillCooldown())));
 
 		return components;
 	}

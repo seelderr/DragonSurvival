@@ -11,8 +11,8 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.ClientRegistry;
 import net.minecraftforge.client.event.InputEvent;
+import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -38,59 +38,59 @@ public class KeyInputHandler{
 	public static KeyMapping SPIN_ABILITY;
 	public static KeyMapping FREE_LOOK;
 
-
-	public static void setupKeybinds(){
+	public static void registerKeys(final RegisterKeyMappingsEvent evt) {
+		
 		TOGGLE_WINGS = new KeyMapping("ds.keybind.wings", GLFW.GLFW_KEY_G, "ds.keybind.category");
 		TOGGLE_WINGS.setKeyConflictContext(KeyConflictContext.IN_GAME);
-		ClientRegistry.registerKeyBinding(TOGGLE_WINGS);
+		evt.register(TOGGLE_WINGS);
 
 		DRAGON_INVENTORY = new KeyMapping("ds.keybind.dragon_inv", GLFW.GLFW_KEY_UNKNOWN, "ds.keybind.category");
 		DRAGON_INVENTORY.setKeyConflictContext(KeyConflictContext.IN_GAME);
-		ClientRegistry.registerKeyBinding(DRAGON_INVENTORY);
+		evt.register(DRAGON_INVENTORY);
 
 		USE_ABILITY = new KeyMapping("ds.keybind.use_ability", GLFW.GLFW_KEY_C, "ds.keybind.category");
 		USE_ABILITY.setKeyConflictContext(KeyConflictContext.IN_GAME);
-		ClientRegistry.registerKeyBinding(USE_ABILITY);
+		evt.register(USE_ABILITY);
 
 		TOGGLE_ABILITIES = new KeyMapping("ds.keybind.toggle_abilities", GLFW.GLFW_KEY_X, "ds.keybind.category");
 		TOGGLE_ABILITIES.setKeyConflictContext(KeyConflictContext.IN_GAME);
-		ClientRegistry.registerKeyBinding(TOGGLE_ABILITIES);
+		evt.register(TOGGLE_ABILITIES);
 
 		NEXT_ABILITY = new KeyMapping("ds.keybind.next_ability", GLFW.GLFW_KEY_R, "ds.keybind.category");
 		NEXT_ABILITY.setKeyConflictContext(KeyConflictContext.IN_GAME);
-		ClientRegistry.registerKeyBinding(NEXT_ABILITY);
+		evt.register(NEXT_ABILITY);
 
 		PREV_ABILITY = new KeyMapping("ds.keybind.prev_ability", GLFW.GLFW_KEY_F, "ds.keybind.category");
 		PREV_ABILITY.setKeyConflictContext(KeyConflictContext.IN_GAME);
-		ClientRegistry.registerKeyBinding(PREV_ABILITY);
+		evt.register(PREV_ABILITY);
 
 		ABILITY1 = new KeyMapping("ds.keybind.ability1", GLFW.GLFW_KEY_UNKNOWN, "ds.keybind.category");
 		ABILITY1.setKeyConflictContext(KeyConflictContext.IN_GAME);
-		ClientRegistry.registerKeyBinding(ABILITY1);
+		evt.register(ABILITY1);
 
 		ABILITY2 = new KeyMapping("ds.keybind.ability2", GLFW.GLFW_KEY_UNKNOWN, "ds.keybind.category");
 		ABILITY2.setKeyConflictContext(KeyConflictContext.IN_GAME);
-		ClientRegistry.registerKeyBinding(ABILITY2);
+		evt.register(ABILITY2);
 
 		ABILITY3 = new KeyMapping("ds.keybind.ability3", GLFW.GLFW_KEY_UNKNOWN, "ds.keybind.category");
 		ABILITY3.setKeyConflictContext(KeyConflictContext.IN_GAME);
-		ClientRegistry.registerKeyBinding(ABILITY3);
+		evt.register(ABILITY3);
 
 		ABILITY4 = new KeyMapping("ds.keybind.ability4", GLFW.GLFW_KEY_UNKNOWN, "ds.keybind.category");
 		ABILITY4.setKeyConflictContext(KeyConflictContext.IN_GAME);
-		ClientRegistry.registerKeyBinding(ABILITY4);
+		evt.register(ABILITY4);
 
 		SPIN_ABILITY = new KeyMapping("ds.keybind.spin", Type.MOUSE, GLFW.GLFW_MOUSE_BUTTON_RIGHT, "ds.keybind.category");
 		SPIN_ABILITY.setKeyConflictContext(KeyConflictContext.GUI);
-		ClientRegistry.registerKeyBinding(SPIN_ABILITY);
+		evt.register(SPIN_ABILITY);
 
 		FREE_LOOK = new KeyMapping("ds.keybind.free_look", GLFW.GLFW_KEY_LEFT_ALT, "ds.keybind.category");
 		FREE_LOOK.setKeyConflictContext(KeyConflictContext.IN_GAME);
-		ClientRegistry.registerKeyBinding(FREE_LOOK);
+		evt.register(FREE_LOOK);
 	}
 
 	@SubscribeEvent
-	public static void onKey(InputEvent.KeyInputEvent keyInputEvent){
+	public static void onKey(InputEvent.Key keyInputEvent){
 		Minecraft minecraft = Minecraft.getInstance();
 		LocalPlayer player = Minecraft.getInstance().player;
 

@@ -54,7 +54,7 @@ public class DragonGlowLayerRenderer extends GeoLayerRenderer<DragonEntity>{
 
 		if(glowTexture == null && handler.getSkinData().skinPreset.skinAges.get(handler.getLevel()).defaultSkin){
 			ResourceLocation location = new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/" + handler.getType().getTypeName().toLowerCase(Locale.ROOT) + "_" + handler.getLevel().name.toLowerCase(Locale.ROOT) + "_glow.png");
-			if(Minecraft.getInstance().getResourceManager().hasResource(location)){
+			if(Minecraft.getInstance().getResourceManager().getResource(location).isPresent()){
 				glowTexture = location;
 			}
 		}
@@ -63,7 +63,7 @@ public class DragonGlowLayerRenderer extends GeoLayerRenderer<DragonEntity>{
 			RenderType type = RenderType.eyes(glowTexture);
 			VertexConsumer vertexConsumer = bufferIn.getBuffer(type);
 			((DragonRenderer)renderer).isRenderLayers = true;
-			renderer.render(getEntityModel().getModel(getEntityModel().getModelLocation(entitylivingbaseIn)), entitylivingbaseIn, partialTicks, type, matrixStackIn, bufferIn, vertexConsumer, 0, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+			renderer.render(getEntityModel().getModel(getEntityModel().getModelResource(entitylivingbaseIn)), entitylivingbaseIn, partialTicks, type, matrixStackIn, bufferIn, vertexConsumer, 0, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
 			((DragonRenderer)renderer).isRenderLayers = false;
 		}else{
 			ResourceLocation dynamicGlowKey = new ResourceLocation(DragonSurvivalMod.MODID, "dynamic_glow_" + entitylivingbaseIn.getPlayer().getStringUUID());
@@ -72,7 +72,7 @@ public class DragonGlowLayerRenderer extends GeoLayerRenderer<DragonEntity>{
 			if(ageGroup.layerSettings.values().stream().anyMatch(s -> s.glowing)){
 				RenderType type = RenderType.eyes(dynamicGlowKey);
 				VertexConsumer vertexConsumer = bufferIn.getBuffer(type);
-				renderer.render(ClientDragonRender.dragonModel.getModel(ClientDragonRender.dragonModel.getModelLocation(null)), entitylivingbaseIn, partialTicks, type, matrixStackIn, bufferIn, vertexConsumer, packedLightIn, OverlayTexture.NO_OVERLAY, 1f, 1f, 1f, 1f);
+				renderer.render(ClientDragonRender.dragonModel.getModel(ClientDragonRender.dragonModel.getModelResource(null)), entitylivingbaseIn, partialTicks, type, matrixStackIn, bufferIn, vertexConsumer, packedLightIn, OverlayTexture.NO_OVERLAY, 1f, 1f, 1f, 1f);
 			}
 			((DragonRenderer)renderer).isRenderLayers = false;
 		}

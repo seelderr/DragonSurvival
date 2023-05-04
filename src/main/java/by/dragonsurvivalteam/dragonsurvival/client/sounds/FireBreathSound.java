@@ -12,7 +12,7 @@ public class FireBreathSound extends AbstractTickableSoundInstance{
 	private final NetherBreathAbility ability;
 
 	public FireBreathSound(NetherBreathAbility ability){
-		super(SoundRegistry.fireBreathLoop, SoundSource.PLAYERS);
+		super(SoundRegistry.fireBreathLoop, SoundSource.PLAYERS,ability.getPlayer().getRandom());
 		looping = true;
 
 		this.ability = ability;

@@ -17,6 +17,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.active.BreathAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import by.dragonsurvivalteam.dragonsurvival.util.TargetingFunctions;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
@@ -27,7 +28,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -241,7 +241,7 @@ public class StormBreathAbility extends BreathAbility{
 
 			onDamageChecks(target);
 
-			if(!chargedSpreadBlacklist.contains(source.getType().getRegistryName().toString())){
+			if(!chargedSpreadBlacklist.contains(ResourceHelper.getKey(source).toString())){
 				if(target != source){
 					DragonStateHandler capSource = DragonUtils.getHandler(source);
 					DragonStateHandler cap = DragonUtils.getHandler(target);
@@ -278,10 +278,10 @@ public class StormBreathAbility extends BreathAbility{
 		if(target == null || attacker == null){
 			return false;
 		}
-		if(chargedBlacklist.contains(target.getType().getRegistryName().toString())){
+		if(chargedBlacklist.contains(ResourceHelper.getKey(target).toString())){
 			return false;
 		}
-		if(chargedSpreadBlacklist.contains(attacker.getType().getRegistryName().toString())){
+		if(chargedSpreadBlacklist.contains(ResourceHelper.getKey(attacker).toString())){
 			return false;
 		}
 
@@ -303,7 +303,7 @@ public class StormBreathAbility extends BreathAbility{
 		}
 
 		if(!entity.level.isClientSide){
-			if(!chargedBlacklist.contains(entity.getType().getRegistryName().toString())){
+			if(!chargedBlacklist.contains(ResourceHelper.getKey(entity).toString())){
 				if(entity.level.random.nextInt(100) < 40){
 					DragonStateHandler cap = DragonUtils.getHandler(entity);
 
@@ -340,7 +340,7 @@ public class StormBreathAbility extends BreathAbility{
 	@OnlyIn( Dist.CLIENT )
 	public ArrayList<Component> getLevelUpInfo(){
 		ArrayList<Component> list = super.getLevelUpInfo();
-		list.add(new TranslatableComponent("ds.skill.damage", "+" + stormBreathDamage));
+		list.add(Component.translatable("ds.skill.damage", "+" + stormBreathDamage));
 		return list;
 	}
 

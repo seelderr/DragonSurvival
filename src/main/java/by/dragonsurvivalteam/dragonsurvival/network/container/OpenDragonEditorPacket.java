@@ -29,6 +29,7 @@ public class OpenDragonEditorPacket implements IMessage<OpenDragonEditorPacket>{
 	@Override
 	public void handle(OpenDragonEditorPacket message, Supplier<NetworkEvent.Context> supplier){
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> runClient(message, supplier));
+		supplier.get().setPacketHandled(true);
 	}
 
 	@OnlyIn( Dist.CLIENT )

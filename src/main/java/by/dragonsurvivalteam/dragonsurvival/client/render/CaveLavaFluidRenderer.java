@@ -16,16 +16,20 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 
 public class CaveLavaFluidRenderer extends LiquidBlockRenderer{
 
+
+
 	@Override
-	public boolean tesselate(BlockAndTintGetter p_228796_1_, BlockPos p_228796_2_, VertexConsumer p_228796_3_, BlockState state, FluidState p_228796_4_){
+	public void tesselate(BlockAndTintGetter p_228796_1_, BlockPos p_228796_2_, VertexConsumer p_228796_3_, BlockState state, FluidState p_228796_4_){
 		try{
 			if(p_228796_4_.is(FluidTags.LAVA)){
 				TextureAtlasSprite[] atextureatlassprite = net.minecraftforge.client.ForgeHooksClient.getFluidSprites(p_228796_1_, p_228796_2_, p_228796_4_);
 				BlockState blockstate = p_228796_1_.getBlockState(p_228796_2_);
-				int i = p_228796_4_.getType().getAttributes().getColor(p_228796_1_, p_228796_2_);
+				IClientFluidTypeExtensions fluidTypeExtensions = IClientFluidTypeExtensions.of(p_228796_4_);
+				int i = fluidTypeExtensions.getTintColor();
 				float alpha = 0.85F;
 				float f = (float)(i >> 16 & 255) / 255.0F;
 				float f1 = (float)(i >> 8 & 255) / 255.0F;
@@ -37,7 +41,7 @@ public class CaveLavaFluidRenderer extends LiquidBlockRenderer{
 				boolean flag5 = shouldRenderFace(p_228796_1_, p_228796_2_, p_228796_4_, blockstate, Direction.WEST);
 				boolean flag6 = shouldRenderFace(p_228796_1_, p_228796_2_, p_228796_4_, blockstate, Direction.EAST);
 				if(!flag1 && !flag2 && !flag6 && !flag5 && !flag3 && !flag4){
-					return false;
+					return;
 				}else{
 					boolean flag7 = false;
 					float f3 = p_228796_1_.getShade(Direction.DOWN, true);
@@ -216,13 +220,13 @@ public class CaveLavaFluidRenderer extends LiquidBlockRenderer{
 							}
 						}
 					}
-					return flag7;
+					//return flag7;
 				}
 			}else{
-				return super.tesselate(p_228796_1_, p_228796_2_, p_228796_3_, state, p_228796_4_);
+				super.tesselate(p_228796_1_, p_228796_2_, p_228796_3_, state, p_228796_4_);
 			}
 		}catch(Exception ex){
-			return false;
+			return;
 		}
 	}
 

@@ -29,13 +29,14 @@ public class DragonArmorModel extends AnimatedGeoModel<DragonEntity>{
 		}
 	}
 
+
 	@Override
-	public ResourceLocation getModelLocation(DragonEntity object){
+	public ResourceLocation getModelResource(DragonEntity object){
 		return new ResourceLocation(DragonSurvivalMod.MODID, "geo/dragon_armor_model.geo.json");
 	}
 
 	@Override
-	public ResourceLocation getTextureLocation(DragonEntity object){
+	public ResourceLocation getTextureResource(DragonEntity object){
 		return armorTexture;
 	}
 
@@ -44,7 +45,7 @@ public class DragonArmorModel extends AnimatedGeoModel<DragonEntity>{
 	}
 
 	@Override
-	public ResourceLocation getAnimationFileLocation(DragonEntity animatable){
+	public ResourceLocation getAnimationResource(DragonEntity animatable){
 		return new ResourceLocation(DragonSurvivalMod.MODID, "animations/dragon.animations.json");
 	}
 }

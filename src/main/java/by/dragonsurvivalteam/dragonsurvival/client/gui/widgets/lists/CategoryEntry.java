@@ -9,7 +9,7 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraftforge.api.distmarker.Dist;
@@ -22,7 +22,7 @@ import java.util.Objects;
 
 @OnlyIn( Dist.CLIENT )
 public class CategoryEntry extends OptionListEntry{
-	public final TextComponent name;
+	public final Component name;
 	private final OptionsList optionsList;
 	private final ResourceLocation BUTTON_UP = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/emote/button_up.png");
 	private final ResourceLocation BUTTON_DOWN = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/emote/button_down.png");
@@ -33,7 +33,7 @@ public class CategoryEntry extends OptionListEntry{
 	public CategoryEntry parent;
 	public int catNum;
 
-	public CategoryEntry(OptionsList optionsList, TextComponent p_i232280_2_, CategoryEntry entry, int catNum){
+	public CategoryEntry(OptionsList optionsList, Component p_i232280_2_, CategoryEntry entry, int catNum){
 		super(ImmutableMap.of());
 		this.optionsList = optionsList;
 		name = p_i232280_2_;

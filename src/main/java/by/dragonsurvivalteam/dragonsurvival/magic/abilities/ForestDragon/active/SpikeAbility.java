@@ -15,7 +15,6 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.active.InstantCastAbili
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
@@ -45,7 +44,7 @@ public class SpikeAbility extends InstantCastAbility{
 
 	@Override
 	public Component getDescription(){
-		return new TranslatableComponent("ds.skill.description." + getName(), getDamage());
+		return Component.translatable("ds.skill.description." + getName(), getDamage());
 	}
 
 	@Override
@@ -81,7 +80,7 @@ public class SpikeAbility extends InstantCastAbility{
 	@OnlyIn( Dist.CLIENT )
 	public ArrayList<Component> getLevelUpInfo(){
 		ArrayList<Component> list = super.getLevelUpInfo();
-		list.add(new TranslatableComponent("ds.skill.damage", "+" + spikeDamage));
+		list.add(Component.translatable("ds.skill.damage", "+" + spikeDamage));
 		return list;
 	}
 
@@ -118,16 +117,16 @@ public class SpikeAbility extends InstantCastAbility{
 	@Override
 	public ArrayList<Component> getInfo(){
 		ArrayList<Component> components = super.getInfo();
-		components.add(new TranslatableComponent("ds.skill.damage", getDamage()));
+		components.add(Component.translatable("ds.skill.damage", getDamage()));
 
 		if(!KeyInputHandler.ABILITY2.isUnbound()){
 
-			String key = KeyInputHandler.ABILITY2.getKey().getDisplayName().getContents().toUpperCase(Locale.ROOT);
+			String key = KeyInputHandler.ABILITY2.getKey().getDisplayName().getString().toUpperCase(Locale.ROOT);
 
 			if(key.isEmpty()){
 				key = KeyInputHandler.ABILITY2.getKey().getDisplayName().getString();
 			}
-			components.add(new TranslatableComponent("ds.skill.keybind", key));
+			components.add(Component.translatable("ds.skill.keybind", key));
 		}
 
 		return components;

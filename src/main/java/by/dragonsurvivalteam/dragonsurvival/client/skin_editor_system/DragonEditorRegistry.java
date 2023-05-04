@@ -14,6 +14,7 @@ import com.google.gson.GsonBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ReloadableResourceManager;
+import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.minecraftforge.api.distmarker.Dist;
@@ -25,6 +26,7 @@ import net.minecraftforge.fml.loading.FMLPaths;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.Optional;
 
 @Mod.EventBusSubscriber( bus = Mod.EventBusSubscriber.Bus.MOD )
 public class DragonEditorRegistry{
@@ -126,7 +128,10 @@ public class DragonEditorRegistry{
 	protected static void reload(ResourceManager manager, ResourceLocation location){
 		try{
 			Gson gson = new Gson();
-			InputStream in = manager.getResource(location).getInputStream();
+			Optional<Resource> resource = manager.getResource(location);
+			if (resource.isEmpty())
+				throw new IOException(String.format("Resource %s not found!", location.getPath()));
+			InputStream in = resource.get().open();
 
 			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 			DragonEditorObject je = gson.fromJson(reader, DragonEditorObject.class);

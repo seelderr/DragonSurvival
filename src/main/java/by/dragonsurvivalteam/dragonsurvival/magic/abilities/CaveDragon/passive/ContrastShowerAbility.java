@@ -9,7 +9,6 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAbility;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -28,7 +27,7 @@ public class ContrastShowerAbility extends PassiveDragonAbility{
 
 	@Override
 	public Component getDescription(){
-		return new TranslatableComponent("ds.skill.description." + getName(), getDuration());
+		return Component.translatable("ds.skill.description." + getName(), getDuration());
 	}
 
 	@Override
@@ -60,7 +59,7 @@ public class ContrastShowerAbility extends PassiveDragonAbility{
 	@OnlyIn( Dist.CLIENT )
 	public ArrayList<Component> getLevelUpInfo(){
 		ArrayList<Component> list = super.getLevelUpInfo();
-		list.add(new TranslatableComponent("ds.skill.duration.seconds", "+30"));
+		list.add(Component.translatable("ds.skill.duration.seconds", "+30"));
 		return list;
 	}
 

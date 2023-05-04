@@ -12,8 +12,7 @@ import com.google.gson.reflect.TypeToken;
 import com.mojang.bridge.game.Language;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
@@ -91,12 +90,12 @@ public class WingObtainmentController{
 
 	@SubscribeEvent
 	public static void inTheEnd(PlayerEvent.PlayerChangedDimensionEvent changedDimensionEvent){
-		Player player = changedDimensionEvent.getPlayer();
+		Player player = changedDimensionEvent.getEntity();
 
 		if(changedDimensionEvent.getTo() == Level.END){
 			DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
 				if(dragonStateHandler.isDragon() && !dragonStateHandler.getMovementData().spinLearned && ServerFlightHandler.enderDragonGrantsSpin){
-					executorService.schedule(() -> player.sendMessage(new TextComponent("ds.endmessage"), enderDragonUUID), 3, TimeUnit.SECONDS);
+					executorService.schedule(() -> player.sendSystemMessage(Component.empty().append("ds.endmessage")), 3, TimeUnit.SECONDS);
 				}
 			});
 		}
@@ -104,14 +103,14 @@ public class WingObtainmentController{
 
 	@SubscribeEvent
 	public static void clientMessageRecieved(ClientChatReceivedEvent event){
-		if(event.getSenderUUID().equals(enderDragonUUID)){
+		if(event.getMessageSigner().profileId().equals(enderDragonUUID)){
 			if(event.getMessage().getString().equals("ds.endmessage")){
 				Language language = Minecraft.getInstance().getLanguageManager().getSelected();
 				LocalPlayer player = Minecraft.getInstance().player;
 				int messageId = player.getRandom().nextInt(dragonPhrases.getOrDefault(language.getCode(), dragonPhrases.getOrDefault("en_us", 1))) + 1;
-				event.setMessage(new TranslatableComponent("ds.endmessage." + messageId, player.getDisplayName().getString()));
+				event.setMessage(Component.translatable("ds.endmessage." + messageId, player.getDisplayName().getString()));
 			}else if(event.getMessage().getString().equals("ds.dragon.grants.wings")){
-				event.setMessage(new TranslatableComponent("ds.dragon.grants.wings"));
+				event.setMessage(Component.translatable("ds.dragon.grants.wings"));
 			}
 		}
 	}
@@ -119,15 +118,15 @@ public class WingObtainmentController{
 
 	@SubscribeEvent
 	public static void serverChatEvent(ServerChatEvent chatEvent){
-		String message = chatEvent.getMessage();
+		Component message = chatEvent.getMessage();
 		ServerPlayer player = chatEvent.getPlayer();
-		String lowercase = message.toLowerCase();
+		String lowercase = message.getString().toLowerCase();
 		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon() && !dragonStateHandler.getMovementData().spinLearned && ServerFlightHandler.enderDragonGrantsSpin){
 				if(player.getLevel().dimension() == Level.END){
 					if(!player.getLevel().getDragons().isEmpty()){
 						if(!lowercase.isEmpty()){
-							executorService.schedule(() -> player.sendMessage(new TextComponent("ds.dragon.grants.wings"), enderDragonUUID), 2, TimeUnit.SECONDS);
+							executorService.schedule(() -> player.sendSystemMessage(Component.empty().append("ds.dragon.grants.wings")), 2, TimeUnit.SECONDS);
 
 							dragonStateHandler.setHasWings(true);
 							dragonStateHandler.getMovementData().spinLearned = true;
@@ -145,7 +144,7 @@ public class WingObtainmentController{
 		if(!ServerConfig.endVoidTeleport){
 			return;
 		}
-		LivingEntity living = damageEvent.getEntityLiving();
+		LivingEntity living = damageEvent.getEntity();
 		if(living instanceof Player){
 			DamageSource damageSource = damageEvent.getSource();
 			if(living.level.dimension() == Level.END && damageSource == DamageSource.OUT_OF_WORLD && living.position().y < -60){

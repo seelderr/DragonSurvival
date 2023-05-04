@@ -17,9 +17,8 @@ import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.components.events.AbstractContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraftforge.client.gui.GuiUtils;
+import net.minecraft.network.chat.Component;
+import net.minecraftforge.client.gui.ScreenUtils;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
 
 import java.util.List;
@@ -46,19 +45,19 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 		this.ySize = ySize;
 		this.btn = btn;
 
-		confirm = new ExtendedButton(x + xSize / 2 - 18, y + ySize - 15, 15, 15, TextComponent.EMPTY, null){
+		confirm = new ExtendedButton(x + xSize / 2 - 18, y + ySize - 15, 15, 15, Component.empty(), null){
 			@Override
 			public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){
 				mStack.pushPose();
 				mStack.translate(0, 0, 100);
-				setMessage(TextComponent.EMPTY);
+				setMessage(Component.empty());
 				super.renderButton(mStack, mouseX, mouseY, partial);
 				RenderSystem.setShaderTexture(0, DragonAltarGUI.CONFIRM_BUTTON);
 				blit(mStack, x + 1, y, 0, 0, 15, 15, 15, 15);
 				mStack.popPose();
 
 				if(isHovered){
-					TooltipRendering.drawHoveringText(mStack, new TranslatableComponent("ds.gui.dragon_editor.tooltip.done"), mouseX, mouseY);
+					TooltipRendering.drawHoveringText(mStack, Component.translatable("ds.gui.dragon_editor.tooltip.done"), mouseX, mouseY);
 				}
 			}
 
@@ -91,19 +90,19 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 			}
 		};
 
-		cancel = new ExtendedButton(x + xSize / 2 + 3, y + ySize - 15, 15, 15, TextComponent.EMPTY, null){
+		cancel = new ExtendedButton(x + xSize / 2 + 3, y + ySize - 15, 15, 15, Component.empty(), null){
 			@Override
 			public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){
 				mStack.pushPose();
 				mStack.translate(0, 0, 100);
-				setMessage(TextComponent.EMPTY);
+				setMessage(Component.empty());
 				super.renderButton(mStack, mouseX, mouseY, partial);
 				RenderSystem.setShaderTexture(0, DragonAltarGUI.CANCEL_BUTTON);
 				blit(mStack, x, y, 0, 0, 15, 15, 15, 15);
 				mStack.popPose();
 
 				if(isHovered){
-					TooltipRendering.drawHoveringText(mStack, new TranslatableComponent("ds.gui.dragon_editor.tooltip.cancel"), mouseX, mouseY);
+					TooltipRendering.drawHoveringText(mStack, Component.translatable("ds.gui.dragon_editor.tooltip.cancel"), mouseX, mouseY);
 				}
 			}
 
@@ -114,7 +113,7 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 			}
 		};
 
-		newborn = new ExtendedCheckbox(x + 5, y + 12, xSize - 10, 10, 10, new TranslatableComponent("ds.level.newborn"), false, s -> {}){
+		newborn = new ExtendedCheckbox(x + 5, y + 12, xSize - 10, 10, 10, Component.translatable("ds.level.newborn"), false, s -> {}){
 			@Override
 			public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
 				super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
@@ -126,7 +125,7 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 				}
 			}
 		};
-		young = new ExtendedCheckbox(x + 5, y + 27, xSize - 10, 10, 10, new TranslatableComponent("ds.level.young"), false, s -> {}){
+		young = new ExtendedCheckbox(x + 5, y + 27, xSize - 10, 10, 10, Component.translatable("ds.level.young"), false, s -> {}){
 			@Override
 			public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
 				super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
@@ -138,7 +137,7 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 				}
 			}
 		};
-		adult = new ExtendedCheckbox(x + 5, y + 27 + 15, xSize - 10, 10, 10, new TranslatableComponent("ds.level.adult"), false, s -> {}){
+		adult = new ExtendedCheckbox(x + 5, y + 27 + 15, xSize - 10, 10, 10, Component.translatable("ds.level.adult"), false, s -> {}){
 			@Override
 			public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
 				super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
@@ -164,12 +163,12 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 
 	@Override
 	public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
-		GuiUtils.drawContinuousTexturedBox(pMatrixStack, DropdownList.BACKGROUND_TEXTURE, x, y - 3, 0, 0, xSize, ySize + 6, 32, 32, 10, 10, 10, 10, (float)10);
+		ScreenUtils.blitWithBorder(pMatrixStack, DropdownList.BACKGROUND_TEXTURE, x, y - 3, 0, 0, xSize, ySize + 6, 32, 32, 10, 10, 10, 10, (float)10);
 		confirm.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 		cancel.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 		newborn.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 		young.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 		adult.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
-		Gui.drawCenteredString(pMatrixStack, Minecraft.getInstance().font, new TranslatableComponent("ds.gui.dragon_editor.copy_to"), x + xSize / 2, y + 1, 14737632);
+		Gui.drawCenteredString(pMatrixStack, Minecraft.getInstance().font, Component.translatable("ds.gui.dragon_editor.copy_to"), x + xSize / 2, y + 1, 14737632);
 	}
 }

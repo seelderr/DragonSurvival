@@ -17,17 +17,17 @@ import com.mojang.serialization.Codec;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
-import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
-import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.RegisterEvent;
 import net.minecraftforge.registries.RegistryObject;
 
-@Mod.EventBusSubscriber( bus = Mod.EventBusSubscriber.Bus.MOD )
+@Mod.EventBusSubscriber( bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class DSParticles{
 	public static final DeferredRegister<ParticleType<?>> REGISTRY = DeferredRegister.create(ForgeRegistries.PARTICLE_TYPES, DragonSurvivalMod.MODID);
 	public static final RegistryObject<ParticleType<TreasureParticleData>> TREASURE = REGISTRY.register("treasures", () -> new ParticleType<TreasureParticleData>(false, TreasureParticleData.DESERIALIZER){
@@ -39,36 +39,32 @@ public class DSParticles{
 	public static SimpleParticleType fireBeaconParticle, magicBeaconParticle, peaceBeaconParticle;
 	public static SimpleParticleType seaSweep;
 
-	@SubscribeEvent
-	public static void registerParticles(RegistryEvent.Register<ParticleType<?>> registryEvent){
-		IForgeRegistry<ParticleType<?>> particleTypes = registryEvent.getRegistry();
+	public static void register()
+	{
 		fireBeaconParticle = new SimpleParticleType(false);
-		fireBeaconParticle.setRegistryName(DragonSurvivalMod.MODID, "netherite_particle");
-		particleTypes.register(fireBeaconParticle);
+		REGISTRY.register("netherite_particle", ()->fireBeaconParticle);
 
 		peaceBeaconParticle = new SimpleParticleType(false);
-		peaceBeaconParticle.setRegistryName(DragonSurvivalMod.MODID, "gold_particle");
-		particleTypes.register(peaceBeaconParticle);
+		REGISTRY.register("gold_particle", ()->peaceBeaconParticle);
 
 		magicBeaconParticle = new SimpleParticleType(false);
-		magicBeaconParticle.setRegistryName(DragonSurvivalMod.MODID, "diamond_particle");
-		particleTypes.register(magicBeaconParticle);
+		REGISTRY.register("diamond_particle", ()->magicBeaconParticle);
 
 		seaSweep = new SimpleParticleType(false);
-		seaSweep.setRegistryName(DragonSurvivalMod.MODID, "sea_sweep");
-		particleTypes.register(seaSweep);
+		REGISTRY.register("sea_sweep", ()->seaSweep);
 	}
 
+	//Insecure modifications
 	//LargePoisonParticleData
-	@SubscribeEvent( priority = EventPriority.LOWEST )
-	public static void registerParticles(ParticleFactoryRegisterEvent event){
-		Minecraft.getInstance().particleEngine.register(DSParticles.FIRE.get(), SmallFireParticle.FireFactory::new);
-		Minecraft.getInstance().particleEngine.register(DSParticles.LARGE_FIRE.get(), LargeFireParticle.FireFactory::new);
-		Minecraft.getInstance().particleEngine.register(DSParticles.POISON.get(), ForestFactory::new);
-		Minecraft.getInstance().particleEngine.register(DSParticles.LARGE_POISON.get(), LargePoisonParticle.ForestFactory::new);
-		Minecraft.getInstance().particleEngine.register(DSParticles.LIGHTNING.get(), SeaFactory::new);
-		Minecraft.getInstance().particleEngine.register(DSParticles.LARGE_LIGHTNING.get(), LargeLightningParticle.SeaFactory::new);
-		Minecraft.getInstance().particleEngine.register(DSParticles.TREASURE.get(), by.jackraidenph.dragonsurvival.client.particles.TreasureParticle.Factory::new);
+	@SubscribeEvent( priority = EventPriority.LOWEST)
+	public static void registerParticles(RegisterParticleProvidersEvent event){
+		event.register(DSParticles.FIRE.get(), SmallFireParticle.FireFactory::new);
+		event.register(DSParticles.LARGE_FIRE.get(), LargeFireParticle.FireFactory::new);
+		event.register(DSParticles.POISON.get(), ForestFactory::new);
+		event.register(DSParticles.LARGE_POISON.get(), LargePoisonParticle.ForestFactory::new);
+		event.register(DSParticles.LIGHTNING.get(), SeaFactory::new);
+		event.register(DSParticles.LARGE_LIGHTNING.get(), LargeLightningParticle.SeaFactory::new);
+		event.register(DSParticles.TREASURE.get(), by.jackraidenph.dragonsurvival.client.particles.TreasureParticle.Factory::new);
 	}
 
 	public static final RegistryObject<ParticleType<SmallFireParticleData>> FIRE = REGISTRY.register("fire", () -> new ParticleType<SmallFireParticleData>(false, SmallFireParticleData.DESERIALIZER){

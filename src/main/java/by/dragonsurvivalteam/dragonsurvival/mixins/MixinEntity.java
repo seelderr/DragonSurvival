@@ -6,6 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import com.mojang.math.Vector3f;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
@@ -31,7 +32,7 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
 		super(baseClass);
 	}
 
-	@Inject( at = @At( value = "HEAD" ), method = "Lnet/minecraft/world/entity/Entity;positionRider(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/entity/Entity$MoveFunction;)V", cancellable = true )
+	@Inject( at = @At( value = "HEAD" ), method = "positionRider(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/entity/Entity$MoveFunction;)V", cancellable = true )
 	private void positionRider(Entity p_226266_1_, Entity.MoveFunction p_226266_2_, CallbackInfo callbackInfo){
 		if(DragonUtils.isDragon((Entity)(net.minecraftforge.common.capabilities.CapabilityProvider<Entity>)this)){
 			if(hasPassenger(p_226266_1_)){
@@ -99,7 +100,7 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
 	public void canRide(Entity entity, CallbackInfoReturnable<Boolean> ci){
 		if(ci.getReturnValue() && DragonUtils.isDragon((Entity)(Object)this) && !DragonUtils.isDragon(entity)){
 			if(ServerConfig.ridingBlacklist){
-				ci.setReturnValue(ServerConfig.allowedVehicles.contains(entity.getType().getRegistryName().toString()));
+				ci.setReturnValue(ServerConfig.allowedVehicles.contains(ResourceHelper.getKey(entity).toString()));
 			}
 		}
 	}

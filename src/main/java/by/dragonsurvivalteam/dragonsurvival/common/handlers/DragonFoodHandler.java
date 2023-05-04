@@ -34,7 +34,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.gui.ForgeIngameGui;
+import net.minecraftforge.client.gui.overlay.ForgeGui;
+import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -291,14 +292,14 @@ public class DragonFoodHandler{
 	}
 
 	@OnlyIn( Dist.CLIENT )
-	public static void onRenderFoodBar(ForgeIngameGui gui, PoseStack mStack, float partialTicks, int width, int height){
+	public static void onRenderFoodBar(ForgeGui gui, PoseStack mStack, float partialTicks, int width, int height){
 		LocalPlayer player = Minecraft.getInstance().player;
 
 		if(Minecraft.getInstance().options.hideGui || !gui.shouldDrawSurvivalElements()){
 			return;
 		}
 		if(!customDragonFoods || !DragonUtils.isDragon(player)){
-			ForgeIngameGui.FOOD_LEVEL_ELEMENT.render(gui, mStack, partialTicks, width, height);
+			VanillaGuiOverlay.FOOD_LEVEL.type().overlay().render(gui, mStack, partialTicks, width, height);
 			return;
 		}
 
@@ -310,9 +311,9 @@ public class DragonFoodHandler{
 				RenderSystem.enableBlend();
 				RenderSystem.setShaderTexture(0, FOOD_ICONS);
 
-				if(Minecraft.getInstance().gui instanceof ForgeIngameGui){
-					rightHeight = ((ForgeIngameGui)Minecraft.getInstance().gui).right_height;
-					((ForgeIngameGui)Minecraft.getInstance().gui).right_height += 10;
+				if(Minecraft.getInstance().gui instanceof ForgeGui){
+					rightHeight = ((ForgeGui)Minecraft.getInstance().gui).rightHeight;
+					((ForgeGui)Minecraft.getInstance().gui).rightHeight += 10;
 				}
 
 				final int left = width / 2 + 91;
@@ -350,7 +351,7 @@ public class DragonFoodHandler{
 
 	@SubscribeEvent
 	public void onItemUseStart(LivingEntityUseItemEvent.Start event){
-		DragonStateProvider.getCap(event.getEntityLiving()).ifPresent(dragonStateHandler -> {
+		DragonStateProvider.getCap(event.getEntity()).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon()){
 				event.setDuration(getUseDuration(event.getItem(), dragonStateHandler.getType()));
 			}
@@ -367,11 +368,11 @@ public class DragonFoodHandler{
 
 	@SubscribeEvent
 	public void onItemRightClick(PlayerInteractEvent.RightClickItem event){
-		DragonStateProvider.getCap(event.getEntityLiving()).ifPresent(dragonStateHandler -> {
+		DragonStateProvider.getCap(event.getEntity()).ifPresent(dragonStateHandler -> {
 
 			if(dragonStateHandler.isDragon()){
-				if(!event.getPlayer().level.isClientSide){
-					ServerPlayer player = (ServerPlayer)event.getPlayer();
+				if(!event.getEntity().level.isClientSide){
+					ServerPlayer player = (ServerPlayer)event.getEntity();
 					ServerLevel level = player.getLevel();
 					InteractionHand hand = event.getHand();
 

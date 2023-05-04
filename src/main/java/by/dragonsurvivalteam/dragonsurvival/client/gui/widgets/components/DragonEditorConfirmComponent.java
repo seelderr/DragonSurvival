@@ -14,7 +14,7 @@ import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.components.events.AbstractContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.CommonComponents;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeColor;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
@@ -46,7 +46,7 @@ public class DragonEditorConfirmComponent extends AbstractContainerEventHandler 
 				drawCenteredString(mStack, Minecraft.getInstance().font, getMessage(), x + width / 2, y + (height - 8) / 2, getFGColor());
 
 				if(isHovered){
-					TooltipRendering.drawHoveringText(mStack, new TranslatableComponent("ds.gui.dragon_editor.tooltip.done"), mouseX, mouseY);
+					TooltipRendering.drawHoveringText(mStack, Component.translatable("ds.gui.dragon_editor.tooltip.done"), mouseX, mouseY);
 				}
 			}
 
@@ -62,7 +62,7 @@ public class DragonEditorConfirmComponent extends AbstractContainerEventHandler 
 				drawCenteredString(mStack, Minecraft.getInstance().font, getMessage(), x + width / 2, y + (height - 8) / 2, getFGColor());
 
 				if(isHovered){
-					TooltipRendering.drawHoveringText(mStack, new TranslatableComponent("ds.gui.dragon_editor.tooltip.cancel"), mouseX, mouseY);
+					TooltipRendering.drawHoveringText(mStack, Component.translatable("ds.gui.dragon_editor.tooltip.cancel"), mouseX, mouseY);
 				}
 			}
 
@@ -90,7 +90,7 @@ public class DragonEditorConfirmComponent extends AbstractContainerEventHandler 
 
 		RenderSystem.setShaderTexture(0, BACKGROUND_TEXTURE);
 		String key = "ds.gui.dragon_editor.confirm." + (!ServerConfig.saveAllAbilities && !ServerConfig.saveGrowthStage ? "all" : ServerConfig.saveAllAbilities && !ServerConfig.saveGrowthStage ? "ability" : !ServerConfig.saveAllAbilities && ServerConfig.saveGrowthStage ? "growth" : "");
-		String text = new TranslatableComponent(key).getString();
+		String text = Component.translatable(key).getString();
 		blit(pMatrixStack, x, y, 0, 0, xSize, ySize);
 		TextRenderUtil.drawCenteredScaledTextSplit(pMatrixStack, x + xSize / 2, y + 42, 1f, text, DyeColor.WHITE.getTextColor(), xSize - 10, 0);
 
