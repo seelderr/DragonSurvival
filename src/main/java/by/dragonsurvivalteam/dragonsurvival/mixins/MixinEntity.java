@@ -110,9 +110,7 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
 			double size = DragonUtils.getHandler(entity).getSize();
 			double height = DragonSizeHandler.calculateModifiedHeight(DragonSizeHandler.calculateDragonHeight(size, ServerConfig.hitboxGrowsPastHuman), pose, ServerConfig.sizeChangesHitbox);
 			double width = DragonSizeHandler.calculateDragonWidth(size, ServerConfig.hitboxGrowsPastHuman) / 2.0D;
-			Vec3 vector3d = new Vec3(getX() - width, getY(), getZ() - width);
-			Vec3 vector3d1 = new Vec3(getX() + width, getY() + height, getZ() + width);
-			return new AABB(vector3d, vector3d1);
+			return DragonSizeHandler.calculateDimensions(width, height).makeBoundingBox(entity.position());
 		}else
 			return getBoundingBoxForPose(pose);
 	}
