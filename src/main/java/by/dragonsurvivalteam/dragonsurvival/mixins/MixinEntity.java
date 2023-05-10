@@ -109,7 +109,7 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
 		if(DragonUtils.isDragon(entity) && ServerConfig.sizeChangesHitbox){
 			double size = DragonUtils.getHandler(entity).getSize();
 			double height = DragonSizeHandler.calculateModifiedHeight(DragonSizeHandler.calculateDragonHeight(size, ServerConfig.hitboxGrowsPastHuman), pose, ServerConfig.sizeChangesHitbox);
-			double width = DragonSizeHandler.calculateDragonWidth(size, ServerConfig.hitboxGrowsPastHuman) / 2.0D;
+			double width = DragonSizeHandler.calculateDragonWidth(size, ServerConfig.hitboxGrowsPastHuman);
 			return DragonSizeHandler.calculateDimensions(width, height).makeBoundingBox(entity.position());
 		}else
 			return getBoundingBoxForPose(pose);
