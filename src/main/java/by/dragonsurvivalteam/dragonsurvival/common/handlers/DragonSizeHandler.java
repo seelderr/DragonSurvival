@@ -45,7 +45,7 @@ public class DragonSizeHandler{
 			// Apply changes
 			event.setNewEyeHeight((float)eyeHeight);
 			// Rounding solves floating point issues that caused the dragon to get stuck inside a block at times.
-			event.setNewSize(new EntityDimensions((float)(Math.round(width * 100.0D) / 100.0D), (float)(Math.round(height * 100.0D) / 100.0D), false));
+			event.setNewSize(calculateDimensions(width, height));
 		}
 	}
 
@@ -80,6 +80,11 @@ public class DragonSizeHandler{
 			eyeHeight *= 7.0D / 12.0D;
 		}
 		return eyeHeight;
+	}
+
+	public static EntityDimensions calculateDimensions(double width, double height)
+	{
+		return new EntityDimensions((float)(Math.round(width * 100.0D) / 100.0D), (float)(Math.round(height * 100.0D) / 100.0D), false);
 	}
 
 	public static Pose overridePose(Player player){
@@ -125,7 +130,7 @@ public class DragonSizeHandler{
 		double size = player.getCapability(Capabilities.DRAGON_CAPABILITY).orElse(null).getSize();
 		double height = calculateModifiedHeight(calculateDragonHeight((float)size, ServerConfig.hitboxGrowsPastHuman), pose, ServerConfig.sizeChangesHitbox);
 		double width = calculateDragonWidth((float)size, ServerConfig.hitboxGrowsPastHuman);
-		return player.level.getBlockCollisions(null, new AABB(player.position().subtract(width * 0.5D, 0.0D, width * 0.5D), player.position().add(width * 0.5D, height, width * 0.5D))).spliterator().estimateSize() == 0;
+		return player.level.noCollision(calculateDimensions(width,height).makeBoundingBox(player.position()));
 	}
 
 	public static double calculateModifiedHeight(double height, Pose pose, boolean sizeChangesHitbox){
