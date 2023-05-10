@@ -38,6 +38,7 @@ public class NetworkHandler{
 		register(SynchronizeDragonCap.class, new SynchronizeDragonCap());
 		register(PacketSyncCapabilityMovement.class, new PacketSyncCapabilityMovement());
 		register(SyncDragonTypeData.class, new SyncDragonTypeData());
+		register(SyncChatEvent.class, new SyncChatEvent());
 		register(PlayerJumpSync.class, new PlayerJumpSync());
 		register(RefreshDragons.class, new RefreshDragons());
 		register(SyncAltarCooldown.class, new SyncAltarCooldown());

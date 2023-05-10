@@ -43,6 +43,7 @@ public class DragonSurvivalMod{
 		modEventBus.addListener(this::setup);
 
 		DSParticles.register();
+		SoundRegistry.register();
 		DSParticles.REGISTRY.register(modEventBus);
 		SoundRegistry.SOUNDS.register(modEventBus);
 

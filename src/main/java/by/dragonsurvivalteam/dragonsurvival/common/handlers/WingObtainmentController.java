@@ -4,6 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
+import by.dragonsurvivalteam.dragonsurvival.network.player.SyncChatEvent;
 import by.dragonsurvivalteam.dragonsurvival.network.status.RefreshDragons;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.CompleteDataSync;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
@@ -16,8 +17,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.event.ServerChatEvent;
@@ -90,27 +94,39 @@ public class WingObtainmentController{
 
 	@SubscribeEvent
 	public static void inTheEnd(PlayerEvent.PlayerChangedDimensionEvent changedDimensionEvent){
-		Player player = changedDimensionEvent.getEntity();
+		if (!(changedDimensionEvent.getEntity() instanceof ServerPlayer player))
+			return;
 
 		if(changedDimensionEvent.getTo() == Level.END){
 			DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
 				if(dragonStateHandler.isDragon() && !dragonStateHandler.getMovementData().spinLearned && ServerFlightHandler.enderDragonGrantsSpin){
-					executorService.schedule(() -> player.sendSystemMessage(Component.empty().append("ds.endmessage")), 3, TimeUnit.SECONDS);
+					executorService.schedule(
+							() -> NetworkHandler.CHANNEL.send(
+									PacketDistributor.PLAYER.with(()->player),
+									new SyncChatEvent(enderDragonUUID.toString(), "ds.endmessage")
+							), 3, TimeUnit.SECONDS);
 				}
 			});
 		}
 	}
 
-	@SubscribeEvent
-	public static void clientMessageRecieved(ClientChatReceivedEvent event){
-		if(event.getMessageSigner().profileId().equals(enderDragonUUID)){
-			if(event.getMessage().getString().equals("ds.endmessage")){
+	public static void clientMessageRecieved(SyncChatEvent event){
+		Player player = Minecraft.getInstance().player;
+		if (player == null)
+			return;
+
+		if(event.signerId.equals(enderDragonUUID.toString())){
+			Vec3 centerPoint = new Vec3(0D, 128D, 0D);
+			List<EnderDragon> enderDragons = player.getLevel().getEntitiesOfClass(EnderDragon.class, AABB.ofSize(centerPoint,192 ,192 ,192));
+			if (enderDragons.size() == 0)
+				return;
+			String dragonName = "<"+enderDragons.get(0).getDisplayName().getString()+"> ";
+			if(event.chatId.equals("ds.endmessage")){
 				Language language = Minecraft.getInstance().getLanguageManager().getSelected();
-				LocalPlayer player = Minecraft.getInstance().player;
 				int messageId = player.getRandom().nextInt(dragonPhrases.getOrDefault(language.getCode(), dragonPhrases.getOrDefault("en_us", 1))) + 1;
-				event.setMessage(Component.translatable("ds.endmessage." + messageId, player.getDisplayName().getString()));
-			}else if(event.getMessage().getString().equals("ds.dragon.grants.wings")){
-				event.setMessage(Component.translatable("ds.dragon.grants.wings"));
+				player.sendSystemMessage(Component.literal(dragonName).append(Component.translatable("ds.endmessage." + messageId, player.getDisplayName().getString())));
+			}else if(event.chatId.equals("ds.dragon.grants.wings")){
+				player.sendSystemMessage(Component.translatable("ds.dragon.grants.wings"));
 			}
 		}
 	}
@@ -126,7 +142,7 @@ public class WingObtainmentController{
 				if(player.getLevel().dimension() == Level.END){
 					if(!player.getLevel().getDragons().isEmpty()){
 						if(!lowercase.isEmpty()){
-							executorService.schedule(() -> player.sendSystemMessage(Component.empty().append("ds.dragon.grants.wings")), 2, TimeUnit.SECONDS);
+							executorService.schedule(() -> player.sendSystemMessage(Component.translatable("ds.dragon.grants.wings")), 2, TimeUnit.SECONDS);
 
 							dragonStateHandler.setHasWings(true);
 							dragonStateHandler.getMovementData().spinLearned = true;
