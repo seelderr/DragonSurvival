@@ -27,6 +27,7 @@ public class CaveClawAbility extends DragonClawsAbility{
 		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/cave_claws_and_teeth_3.png"),
 		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/cave_claws_and_teeth_4.png"),
 		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/cave_claws_and_teeth_5.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/cave_claws_and_teeth_6.png")};
+		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/cave_claws_and_teeth_6.png"),
+		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/cave_claws_and_teeth_7.png")};
 	}
 }

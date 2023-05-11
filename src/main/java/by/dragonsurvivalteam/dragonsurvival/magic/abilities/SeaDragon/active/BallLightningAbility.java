@@ -67,6 +67,11 @@ public class BallLightningAbility extends ChargeCastAbility{
 	}
 
 	@Override
+	public boolean requiresStationaryCasting(){
+		return false;
+	}
+
+	@Override
 	public void onCasting(Player player, int currentCastTime){
 
 	}
