@@ -43,7 +43,17 @@ public class FireBallEntity extends DragonBallEntity{
 		if(!level.isClientSide && !isDead){
 			boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(level, getOwner());
 			float explosivePower = getSkillLevel();
-			level.explode(null, getX(), getY(), getZ(), explosivePower, flag, flag ? Explosion.BlockInteraction.DESTROY : Explosion.BlockInteraction.NONE);
+			Entity attacker = getOwner();
+			DamageSource damagesource;
+			if(attacker == null){
+				damagesource = DamageSource.fireball(this, this);
+			}else{
+				damagesource = DamageSource.fireball(this, attacker);
+				if(attacker instanceof LivingEntity attackerEntity){
+					attackerEntity.setLastHurtMob(attacker);
+				}
+			}
+			level.explode(null, damagesource, null, getX(), getY(), getZ(), explosivePower, flag, flag ? Explosion.BlockInteraction.DESTROY : Explosion.BlockInteraction.NONE);
 
 			isDead = true;
 			setDeltaMovement(0, 0, 0);
