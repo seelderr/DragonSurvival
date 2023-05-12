@@ -15,6 +15,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class MixinItemBlockRenderTypes {
     @Inject(at = @At("TAIL"), cancellable = true, method = "Lnet/minecraft/client/renderer/ItemBlockRenderTypes;getRenderLayer(Lnet/minecraft/world/level/material/FluidState;)Lnet/minecraft/client/renderer/RenderType;")
     private static void getRenderLayer(FluidState fluidState, CallbackInfoReturnable<RenderType> cir) {
+/*
         cir.setReturnValue(ClientEvents.onRenderFluidLayer(fluidState));
+*/
     }
 }

@@ -292,7 +292,7 @@ public class ClientEvents{
 		return texture;
 	}
 
-	public static RenderType onRenderFluidLayer(FluidState fluidState)
+/*	public static RenderType onRenderFluidLayer(FluidState fluidState)
 	{
 		RenderType result = RenderType.solid();
 		Minecraft minecraft = Minecraft.getInstance();
@@ -305,7 +305,7 @@ public class ClientEvents{
 		if (fluidState.is(Fluids.LAVA) && fluidState.is(Fluids.FLOWING_LAVA) && player.hasEffect(DragonEffects.LAVA_VISION))
 			result = RenderType.translucent();
 		return result;
-	}
+	}*/
 
 	@SubscribeEvent
 	@OnlyIn( Dist.CLIENT )
