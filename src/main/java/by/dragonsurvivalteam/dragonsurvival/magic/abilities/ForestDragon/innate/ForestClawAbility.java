@@ -27,6 +27,7 @@ public class ForestClawAbility extends DragonClawsAbility{
 		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/forest/forest_claws_and_teeth_3.png"),
 		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/forest/forest_claws_and_teeth_4.png"),
 		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/forest/forest_claws_and_teeth_5.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/forest/forest_claws_and_teeth_6.png")};
+		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/forest/forest_claws_and_teeth_6.png"),
+		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/forest/forest_claws_and_teeth_7.png")};
 	}
 }
