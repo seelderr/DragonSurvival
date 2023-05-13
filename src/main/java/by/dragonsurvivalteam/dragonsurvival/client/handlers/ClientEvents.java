@@ -292,20 +292,17 @@ public class ClientEvents{
 		return texture;
 	}
 
-/*	public static RenderType onRenderFluidLayer(FluidState fluidState)
+	public static RenderType onRenderFluidLayer(FluidState fluidState)
 	{
-		RenderType result = RenderType.solid();
-		Minecraft minecraft = Minecraft.getInstance();
-		LocalPlayer player = minecraft.player;
-
+		LocalPlayer player = Minecraft.getInstance().player;
 		if (player == null){
-			return result;
+			return null;
 		}
 
-		if (fluidState.is(Fluids.LAVA) && fluidState.is(Fluids.FLOWING_LAVA) && player.hasEffect(DragonEffects.LAVA_VISION))
-			result = RenderType.translucent();
-		return result;
-	}*/
+		if ((fluidState.is(Fluids.LAVA) || fluidState.is(Fluids.FLOWING_LAVA)) && player.hasEffect(DragonEffects.LAVA_VISION))
+			return RenderType.translucent();
+		return null;
+	}
 
 	@SubscribeEvent
 	@OnlyIn( Dist.CLIENT )
