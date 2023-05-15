@@ -10,7 +10,7 @@ loaderVersion = "[36,)" #mandatory This is typically bumped every Minecraft vers
 # A URL to refer people to when problems occur with this mod
 issueTrackerURL = "https://github.com/DragonSurvivalTeam/DragonSurvival/issues" #optional
 # A list of mods - how many allowed here is determined by the individual mod loader
-license = "Apache License 2.0"
+license = "All rights reserved exclusively to Viktoria Ershova (BlackAures1)"
 [[mods]] #mandatory
 # The modid of the mod
 modId = "dragonsurvival" #mandatory

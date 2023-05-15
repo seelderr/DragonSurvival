@@ -43,4 +43,4 @@
 
    END OF TERMS AND CONDITIONS
 
-   Copyright 2020-2022 Black Aures
+   Copyright 2020-2023 Black Aures
