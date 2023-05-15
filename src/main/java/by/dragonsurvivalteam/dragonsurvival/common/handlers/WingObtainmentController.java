@@ -23,6 +23,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
@@ -109,7 +110,7 @@ public class WingObtainmentController{
 			});
 		}
 	}
-
+	@OnlyIn(Dist.CLIENT)
 	public static void clientMessageRecieved(SyncChatEvent event){
 		Player player = Minecraft.getInstance().player;
 		if (player == null)
