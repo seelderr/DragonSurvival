@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.network.container;
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.DragonAltarGUI;
+import by.dragonsurvivalteam.dragonsurvival.client.handlers.DragonAltarHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
@@ -35,9 +36,7 @@ public class OpenDragonAltar implements IMessage<OpenDragonAltar>{
 	public void runClient(OpenDragonAltar message, Supplier<NetworkEvent.Context> supplier){
 		NetworkEvent.Context context = supplier.get();
 		context.enqueueWork(() -> {
-			if(Minecraft.getInstance().screen == null && !Minecraft.getInstance().player.isDeadOrDying()){
-				Minecraft.getInstance().setScreen(new DragonAltarGUI());
-			}
+			DragonAltarHandler.OpenAltar();
 			context.setPacketHandled(true);
 		});
 	}
