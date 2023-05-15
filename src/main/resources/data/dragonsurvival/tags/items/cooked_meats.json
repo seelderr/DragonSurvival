@@ -294,6 +294,58 @@
     {
       "id": "nocubes_better_smoker:cooked_rabbit_foot",
       "required": false
+    },
+    {
+      "id": "nethersdelight:hoglin_sirloin",
+      "required": false
+    },
+    {
+      "id": "nethersdelight:stuffed_hoglin",
+      "required": false
+    },
+    {
+      "id": "gothic:lamb_sausage",
+      "required": false
+    },
+    {
+      "id": "gothic:meatbug_ragout",
+      "required": false
+    },
+    {
+      "id": "nethersdelight:hoglin_sirloin",
+      "required": false
+    },
+    {
+      "id": "unusualprehistory:cooked_coty",
+      "required": false
+    },
+    {
+      "id": "gothic:meat_cooked",
+      "required": false
+    },
+    {
+      "id": "unusualprehistory:cooked_austro",
+      "required": false
+    },
+    {
+      "id": "ends_delight:smoked_dragon_leg",
+      "required": false
+    },
+    {
+      "id": "ends_delight:roasted_dragon_meat",
+      "required": false
+    },
+    {
+      "id": "ends_delight:roasted_dragon_meat_cuts",
+      "required": false
+    },
+    {
+      "id": "ends_delight:dried_endermite_meat",
+      "required": false
+    },
+    {
+      "id": "goated:chevon",
+      "required": false
     }
   ]
 }
