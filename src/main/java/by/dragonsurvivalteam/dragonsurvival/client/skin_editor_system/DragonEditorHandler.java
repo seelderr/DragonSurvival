@@ -94,7 +94,7 @@ public class DragonEditorHandler{
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 
 		SkinPreset preset = handler.getSkinData().skinPreset;
-		SkinAgeGroup ageGroup = preset.skinAges.get(handler.getLevel());
+		SkinAgeGroup ageGroup = preset.skinAges.get(handler.getLevel()).get();
 
 		if(!RenderSystem.isOnRenderThreadOrInit()){
 			RenderSystem.recordRenderCall(() -> {
@@ -110,7 +110,7 @@ public class DragonEditorHandler{
 		NativeImage glow = new NativeImage(512, 512, true);
 
 		for(EnumSkinLayer layer : EnumSkinLayer.values()){
-			LayerSettings settings = ageGroup.layerSettings.get(layer);
+			LayerSettings settings = ageGroup.layerSettings.get(layer).get();
 			String key = settings.selectedSkin;
 
 			if(key != null){

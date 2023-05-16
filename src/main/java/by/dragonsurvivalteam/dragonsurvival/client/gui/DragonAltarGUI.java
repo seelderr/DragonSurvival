@@ -77,12 +77,12 @@ public class DragonAltarGUI extends Screen{
 					handler1.setType(button.type);
 					handler1.setHasWings(true);
 					handler1.setSize(DragonLevel.NEWBORN.size);
-					handler1.getSkinData().skinPreset.skinAges.get(DragonLevel.NEWBORN).defaultSkin = true;
+					handler1.getSkinData().skinPreset.skinAges.get(DragonLevel.NEWBORN).get().defaultSkin = true;
 
 					handler2.setType(button.type);
 					handler2.setHasWings(true);
 					handler2.setSize(button.type == null ? DragonLevel.NEWBORN.size : DragonLevel.ADULT.size);
-					handler2.getSkinData().skinPreset.skinAges.get(button.type == null ? DragonLevel.NEWBORN : DragonLevel.ADULT).defaultSkin = true;
+					handler2.getSkinData().skinPreset.skinAges.get(button.type == null ? DragonLevel.NEWBORN : DragonLevel.ADULT).get().defaultSkin = true;
 
 					FakeClientPlayerUtils.getFakePlayer(0, handler1).animationSupplier = () -> animations[animation1];
 					FakeClientPlayerUtils.getFakePlayer(1, handler2).animationSupplier = () -> animations[animation2];

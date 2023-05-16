@@ -9,8 +9,10 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.Sk
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.util.GsonFactory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.InstanceCreator;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ReloadableResourceManager;
@@ -18,6 +20,7 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -111,7 +114,8 @@ public class DragonEditorRegistry{
 			}
 		}else {
 			try{
-				Gson gson = new Gson();
+				//Gson gson = new Gson();
+				Gson gson = GsonFactory.getInstance();
 				InputStream in = new FileInputStream(savedFile);
 				BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 				savedCustomizations = gson.fromJson(reader, SavedSkinPresets.class);
