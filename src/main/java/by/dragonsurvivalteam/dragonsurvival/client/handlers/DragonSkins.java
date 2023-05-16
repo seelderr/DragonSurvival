@@ -6,6 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.util.GsonFactory;
 import com.google.gson.Gson;
 import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.Minecraft;
@@ -169,7 +170,8 @@ public class DragonSkins{
 
 	public static void init(){
 		try{
-			Gson gson = new Gson();
+			//Gson gson = new Gson();
+			Gson gson = GsonFactory.getInstance();
 			URL url = new URL(GITHUB_API);
 			BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
 			SkinObject[] je = gson.fromJson(reader, SkinObject[].class);

@@ -27,7 +27,7 @@ public class DragonEditorDropdownButton extends DropDownButton{
 
 	public DragonEditorDropdownButton(DragonEditorScreen dragonEditorScreen, int x, int y, int xSize, int ySize, String current, String[] values, EnumSkinLayer layers){
 		super(x, y, xSize, ySize, current, values, s -> {
-			dragonEditorScreen.preset.skinAges.get(dragonEditorScreen.level).layerSettings.get(layers).selectedSkin = s;
+			dragonEditorScreen.preset.skinAges.get(dragonEditorScreen.level).get().layerSettings.get(layers).get().selectedSkin = s;
 			dragonEditorScreen.handler.getSkinData().compileSkin();
 			dragonEditorScreen.update();
 		});
@@ -39,7 +39,7 @@ public class DragonEditorDropdownButton extends DropDownButton{
 	public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
 		active = visible = dragonEditorScreen.showUi;
 		super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
-		String curValue = dragonEditorScreen.preset.skinAges.get(dragonEditorScreen.level).layerSettings.get(layers).selectedSkin;
+		String curValue = dragonEditorScreen.preset.skinAges.get(dragonEditorScreen.level).get().layerSettings.get(layers).get().selectedSkin;
 
 		if(curValue != current){
 			current = curValue;
@@ -53,7 +53,7 @@ public class DragonEditorDropdownButton extends DropDownButton{
 		}
 
 		values = valueList.toArray(new String[0]);
-		active = !dragonEditorScreen.preset.skinAges.get(dragonEditorScreen.level).defaultSkin;
+		active = !dragonEditorScreen.preset.skinAges.get(dragonEditorScreen.level).get().defaultSkin;
 	}
 
 	@Override
