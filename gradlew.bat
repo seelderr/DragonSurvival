@@ -1,17 +1,48 @@
 @rem
-@rem Copyright 2015 the original author or authors.
+@rem                          Version 1.0, January 2022
 @rem
-@rem Licensed under the Apache License, Version 2.0 (the "License");
-@rem you may not use this file except in compliance with the License.
-@rem You may obtain a copy of the License at
+@rem   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
 @rem
-@rem      https://www.apache.org/licenses/LICENSE-2.0
+@rem   The author and owner of Dragon Survival is Viktoria Ershova (BlackAures1)
 @rem
-@rem Unless required by applicable law or agreed to in writing, software
-@rem distributed under the License is distributed on an "AS IS" BASIS,
-@rem WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-@rem See the License for the specific language governing permissions and
-@rem limitations under the License.
+@rem   Allowed use of content: private use, modification, distribution, view and fork repository,
+@rem     making pull request or suggestions to improve the project. Other uses are negotiated with the author separately.
+@rem     The author retains full rights to the project. Only "Minecraft Mod: Dragons Survival"
+@rem     participants are free to make changes may freely modify, distribute and use all project
+@rem     content except for the creation of third-party projects using any Dragon Survival content.
+@rem     List of participants "Minecraft Mod: Dragons Survival" on the GitHub:
+@rem                https://github.com/orgs/DragonSurvivalTeam/people
+@rem
+@rem    This License does not grant permission to use the trade
+@rem      names, trademarks, service marks, or product names of the Licensor,
+@rem      except as required for reasonable and customary use in describing the
+@rem      origin of the Work and reproducing the content of the NOTICE file.
+@rem
+@rem    Disclaimer of Warranty. Unless required by applicable law or
+@rem      agreed to in writing, Licensor provides the Work (and each
+@rem      Contributor provides its Contributions) on an "AS IS" BASIS,
+@rem      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+@rem      implied, including, without limitation, any warranties or conditions
+@rem      of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A
+@rem     PARTICULAR PURPOSE. You are solely responsible for determining the
+@rem     appropriateness of using or redistributing the Work and assume any
+@rem      risks associated with Your exercise of permissions under this License.
+@rem
+@rem    Limitation of Liability. In no event and under no legal theory,
+@rem      whether in tort (including negligence), contract, or otherwise,
+@rem      unless required by applicable law (such as deliberate and grossly
+@rem      negligent acts) or agreed to in writing, shall any Contributor be
+@rem      liable to You for damages, including any direct, indirect, special,
+@rem      incidental, or consequential damages of any character arising as a
+@rem      result of this License or out of the use or inability to use the
+@rem      Work (including but not limited to damages for loss of goodwill,
+@rem      work stoppage, computer failure or malfunction, or any and all
+@rem      other commercial damages or losses), even if such Contributor
+@rem      has been advised of the possibility of such damages.
+@rem
+@rem   END OF TERMS AND CONDITIONS
+@rem
+@rem   Copyright 2020-2023 Black Aures
 @rem
 
 @if "%DEBUG%" == "" @echo off

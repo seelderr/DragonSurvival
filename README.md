@@ -4,7 +4,7 @@
 * ■ Сurseforge (download) - https://www.curseforge.com/minecraft/mc-mods/dragons-survival
 * ■ Discord Server - http://discord.gg/8SsB8ar
 * ■ Youtube - https://www.youtube.com/channel/UCasTlG0nSSQPPvk4mrmoWLw
-*  ■ TODO list Trello: https://trello.com/b/TkWoD0V3
+*  ■ TODO list Trello: https://trello.com/b/Zs7uCDpo/dragon-survival-board
 
 # Wiki 
 
