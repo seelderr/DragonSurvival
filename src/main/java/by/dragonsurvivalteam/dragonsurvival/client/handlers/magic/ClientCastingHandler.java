@@ -17,7 +17,10 @@ import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber( Dist.CLIENT )
 public class ClientCastingHandler{
-	public static byte status = 0;
+	public static final byte StatusIdle = 0;
+	public static final byte StatusInProgress = 1;
+	public static final byte StatusStop = 2;
+	public static byte status = StatusIdle;
 	public static boolean hasCast = false;
 	public static int oldChargeTime = -1;
 	@SubscribeEvent
@@ -38,11 +41,11 @@ public class ClientCastingHandler{
 								|| KeyInputHandler.ABILITY3.isDown() && dragonStateHandler.getMagicData().getSelectedAbilitySlot() == 2
 								|| KeyInputHandler.ABILITY4.isDown() && dragonStateHandler.getMagicData().getSelectedAbilitySlot() == 3);
 
-		if(status == 0 && isKeyDown)
-			status = 1;
+		if(status == StatusIdle && isKeyDown)
+			status = StatusInProgress;
 
-		if(status == 1 && !isKeyDown){
-			status = 2;
+		if(status == StatusInProgress && !isKeyDown){
+			status = StatusStop;
 		}
 
 		if(!isKeyDown){
@@ -53,22 +56,36 @@ public class ClientCastingHandler{
 		int slot = dragonStateHandler.getMagicData().getSelectedAbilitySlot();
 		ActiveDragonAbility ability = dragonStateHandler.getMagicData().getAbilityFromSlot(slot);
 
-		if(ability != null && ability.getLevel() > 0 && !ability.isDisabled()){
-				if(status == 1 && ability.canCastSkill(player) ){
-					if (!(ability instanceof ChannelingCastAbility channelingCastAbility))
-						NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCasting(player.getId(), true, ability.saveNBT()));
-					else if (oldChargeTime != channelingCastAbility.getChargeTime()) {
-						oldChargeTime = channelingCastAbility.getChargeTime();
-						NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCasting(player.getId(), true, ability.saveNBT()));
-					}
-				}else if(status == 2 || status == 1 && !ability.canCastSkill(player)){
-					NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCasting(player.getId(), false, ability.saveNBT()));
-
-					ability.onKeyReleased(player);
-					status = 0;
-					oldChargeTime = -1;
-				}
-			//}
+		if (ability instanceof ChannelingCastAbility channelingCastAbility && status == StatusInProgress) {
+			if (oldChargeTime == channelingCastAbility.getChargeTime())
+				return;
+			oldChargeTime = channelingCastAbility.getChargeTime();
 		}
+		if(status == StatusInProgress && ability.canCastSkill(player) ){
+			NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCasting(player.getId(), true, ability.saveNBT()));
+		}else if(status == StatusStop || status == StatusInProgress && !ability.canCastSkill(player)){
+			NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCasting(player.getId(), false, ability.saveNBT()));
+			ability.onKeyReleased(player);
+			status = StatusIdle;
+			oldChargeTime = -1;
+		}
+	/*
+		if(ability != null && ability.getLevel() > 0 && !ability.isDisabled()){
+			if(status == StatusInProgress && ability.canCastSkill(player) ){
+				if (!(ability instanceof ChannelingCastAbility channelingCastAbility))
+					NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCasting(player.getId(), true, ability.saveNBT()));
+				else if (oldChargeTime != channelingCastAbility.getChargeTime()) {
+					oldChargeTime = channelingCastAbility.getChargeTime();
+					NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCasting(player.getId(), true, ability.saveNBT()));
+				}
+			}else if(status == StatusStop || status == StatusInProgress && !ability.canCastSkill(player)){
+				NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCasting(player.getId(), false, ability.saveNBT()));
+
+				ability.onKeyReleased(player);
+				status = StatusIdle;
+				oldChargeTime = -1;
+			}
+		}
+		*/
 	}
 }

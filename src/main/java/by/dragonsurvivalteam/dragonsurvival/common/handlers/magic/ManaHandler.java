@@ -86,7 +86,13 @@ public class ManaHandler{
 	public static int getMaxMana(Player entity){
 		return 1 + (ServerConfig.noEXPRequirements ? 9 : Math.max(0, (Math.min(50, entity.experienceLevel) - 5) / 5) + (DragonAbilities.getAbility(entity, MagicAbility.class) != null ? DragonAbilities.getAbility(entity, MagicAbility.class).getMana() : 0));
 	}
-
+	public static boolean canConsumeMana(Player player, int manaCost)
+	{
+		manaCost -= ManaHandler.getCurrentMana(player);
+		if (ServerConfig.consumeEXPAsMana)
+			manaCost -= player.totalExperience / 10;
+		return manaCost <= 0;
+	}
 	public static void replenishMana(Player entity, int mana){
 		if(entity.level.isClientSide){
 			return;
@@ -104,7 +110,7 @@ public class ManaHandler{
 
 		if(ServerConfig.consumeEXPAsMana){
 			if(entity.level.isClientSide){
-				if(getCurrentMana(entity) < mana && (getCurrentMana(entity) + entity.totalExperience / 10 >= mana || entity.experienceLevel > 0)){
+				if(getCurrentMana(entity) < mana && ManaHandler.canConsumeMana(entity,mana)){
 					entity.playSound(SoundEvents.EXPERIENCE_ORB_PICKUP, 0.01F, 0.01F);
 				}
 			}
@@ -116,7 +122,7 @@ public class ManaHandler{
 
 		DragonStateProvider.getCap(entity).ifPresent(cap -> {
 			if(ServerConfig.consumeEXPAsMana){
-				if(getCurrentMana(entity) < mana && (getCurrentMana(entity) + entity.totalExperience / 10 >= mana || entity.experienceLevel > 0)){
+				if(getCurrentMana(entity) < mana && canConsumeMana(entity, mana)){
 					int missingMana = mana - getCurrentMana(entity);
 					int missingExp = missingMana * 10;
 					entity.giveExperiencePoints(-missingExp);
