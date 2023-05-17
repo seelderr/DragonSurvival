@@ -9,11 +9,12 @@ public class LazyJsonAdapter implements JsonSerializer<Lazy<Object>>, JsonDeseri
     @Override
     public Lazy<Object> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         Class type = (Class)((ParameterizedType) typeOfT).getActualTypeArguments()[0];
-        return Lazy.of(()->new Gson().fromJson(json, type));
+        return Lazy.of(()->GsonFactory.getDefault().fromJson(json, type));
     }
 
     @Override
     public JsonElement serialize(Lazy<Object> src, Type typeOfSrc, JsonSerializationContext context) {
-        return new Gson().toJsonTree(src.get());
+        Class type = (Class)((ParameterizedType) typeOfSrc).getActualTypeArguments()[0];
+        return GsonFactory.getDefault().toJsonTree(src.get(), type);
     }
 }

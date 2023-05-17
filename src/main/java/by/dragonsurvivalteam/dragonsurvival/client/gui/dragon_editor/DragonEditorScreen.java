@@ -44,6 +44,7 @@ import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+import by.dragonsurvivalteam.dragonsurvival.util.GsonFactory;
 import com.google.common.collect.EvictingQueue;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -243,7 +244,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 		DragonEditorRegistry.getSavedCustomizations().current.get(typeS).put(level, currentSelected);
 
 		try{
-			Gson gson = new GsonBuilder().setPrettyPrinting().create();
+			Gson gson = GsonFactory.newBuilder().setPrettyPrinting().create();
 			FileWriter writer = new FileWriter(DragonEditorRegistry.savedFile);
 			gson.toJson(DragonEditorRegistry.getSavedCustomizations(), writer);
 			writer.close();

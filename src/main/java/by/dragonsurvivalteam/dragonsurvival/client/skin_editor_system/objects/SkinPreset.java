@@ -63,6 +63,7 @@ public class SkinPreset implements NBTInterface{
 
 		public boolean wings = true;
 		public boolean defaultSkin = false;
+		public SkinAgeGroup(){}
 
 		public SkinAgeGroup(DragonLevel level, AbstractDragonType type){
 			this(level);

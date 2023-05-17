@@ -7,6 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.status.RefreshDragons;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.CompleteDataSync;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
+import by.dragonsurvivalteam.dragonsurvival.util.GsonFactory;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.mojang.bridge.game.Language;
@@ -65,7 +66,7 @@ public class WingObtainmentController{
 				langs.add(file);
 			}
 			reader.close();
-			Gson gson = new Gson();
+			Gson gson = GsonFactory.getDefault();
 			Type type = new TypeToken<Map<String, String>>(){
 			}.getType();
 			for(String langFile : langs){

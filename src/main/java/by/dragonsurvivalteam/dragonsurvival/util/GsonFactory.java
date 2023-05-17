@@ -1,17 +1,19 @@
 package by.dragonsurvivalteam.dragonsurvival.util;
 
 import com.google.gson.*;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
 import net.minecraftforge.common.util.Lazy;
 
-import java.io.IOException;
-import java.lang.reflect.Type;
-
 final  public class GsonFactory {
-    private static final Gson object = new GsonBuilder().registerTypeAdapter(Lazy.class, new LazyJsonAdapter()).create();
-    public static Gson getInstance()
+    private static final Gson object;
+    static{
+        object = newBuilder().create();
+    }
+    public static Gson getDefault()
     {
         return object;
+    }
+    public static GsonBuilder newBuilder()
+    {
+        return new GsonBuilder().registerTypeAdapter(Lazy.class, new LazyJsonAdapter());
     }
 }

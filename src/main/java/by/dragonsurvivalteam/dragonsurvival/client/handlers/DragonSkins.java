@@ -170,8 +170,7 @@ public class DragonSkins{
 
 	public static void init(){
 		try{
-			//Gson gson = new Gson();
-			Gson gson = GsonFactory.getInstance();
+			Gson gson = GsonFactory.getDefault();
 			URL url = new URL(GITHUB_API);
 			BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
 			SkinObject[] je = gson.fromJson(reader, SkinObject[].class);
