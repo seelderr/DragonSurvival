@@ -186,7 +186,7 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 						if(state.getBlock() != Blocks.AIR){
 							if(DragonConfigHandler.DRAGON_BREATH_BLOCKS != null && DragonConfigHandler.DRAGON_BREATH_BLOCKS.containsKey(getDragonType().getTypeName()) && DragonConfigHandler.DRAGON_BREATH_BLOCKS.get(getDragonType().getTypeName()).contains(state.getBlock())){
 								if(!player.level.isClientSide){
-									if(player.level.random.nextFloat() * 100 <= blockBreakChance()){
+									if(player.getRandom().nextFloat() * 100 <= blockBreakChance()){
 										player.level.destroyBlock(newPos, false, player);
 										continue;
 									}

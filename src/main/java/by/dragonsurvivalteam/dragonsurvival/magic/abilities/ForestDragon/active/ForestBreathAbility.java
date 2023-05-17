@@ -130,7 +130,7 @@ public class ForestBreathAbility extends BreathAbility{
 	public void onBlock(BlockPos pos, BlockState blockState, Direction direction){
 		if(blockState.getMaterial().isSolidBlocking()){
 			if(!player.level.isClientSide){
-				if(player.level.random.nextInt(100) < 30){
+				if(player.getRandom().nextInt(100) < 30){
 					AreaEffectCloud entity = new AreaEffectCloud(EntityType.AREA_EFFECT_CLOUD, player.level);
 					entity.setWaitTime(0);
 					entity.setPos(pos.above().getX(), pos.above().getY(), pos.above().getZ());
@@ -143,7 +143,7 @@ public class ForestBreathAbility extends BreathAbility{
 			}
 		}
 		if(blockState.getBlock() == Blocks.POTATOES){
-			if(player.level.random.nextInt(100) < 10){
+			if(player.getRandom().nextInt(100) < 10){
 				PotatoBlock bl = (PotatoBlock)blockState.getBlock();
 				if(bl.isMaxAge(blockState)){
 					player.level.destroyBlock(pos, false);
@@ -154,20 +154,20 @@ public class ForestBreathAbility extends BreathAbility{
 
 
 		if(blockState.getBlock() != Blocks.GRASS_BLOCK && blockState.getBlock() != Blocks.GRASS){
-			if(player.level.random.nextInt(100) < 50){
+			if(player.getRandom().nextInt(100) < 50){
 				if(blockState.getBlock() instanceof BonemealableBlock){
 					if(!DragonConfigHandler.FOREST_DRAGON_BREATH_GROW_BLACKLIST.contains(blockState.getBlock())){
 						BonemealableBlock igrowable = (BonemealableBlock)blockState.getBlock();
 						if(igrowable.isValidBonemealTarget(player.level, pos, blockState, player.level.isClientSide)){
 							if(player.level instanceof ServerLevel){
-								if(igrowable.isBonemealSuccess(player.level, player.level.random, pos, blockState)){
+								if(igrowable.isBonemealSuccess(player.level, player.getRandom(), pos, blockState)){
 									for(int i = 0; i < 3; i++){
 										if(igrowable instanceof DoublePlantBlock plant){
 											if(!blockState.hasProperty(DoublePlantBlock.HALF)){
 												continue;
 											}
 										}
-										igrowable.performBonemeal((ServerLevel)player.level, player.level.random, pos, blockState);
+										igrowable.performBonemeal((ServerLevel)player.level, player.getRandom(), pos, blockState);
 									}
 								}
 							}
@@ -211,9 +211,9 @@ public class ForestBreathAbility extends BreathAbility{
 			}
 
 			for(int i = 0; i < 10; i++){
-				double xSpeed = speed * xComp + spread * 0.7 * (player.level.random.nextFloat() * 2 - 1) * Math.sqrt(1 - xComp * xComp);
-				double ySpeed = speed * yComp + spread * 0.7 * (player.level.random.nextFloat() * 2 - 1) * Math.sqrt(1 - yComp * yComp);
-				double zSpeed = speed * zComp + spread * 0.7 * (player.level.random.nextFloat() * 2 - 1) * Math.sqrt(1 - zComp * zComp);
+				double xSpeed = speed * xComp + spread * 0.7 * (player.getRandom().nextFloat() * 2 - 1) * Math.sqrt(1 - xComp * xComp);
+				double ySpeed = speed * yComp + spread * 0.7 * (player.getRandom().nextFloat() * 2 - 1) * Math.sqrt(1 - yComp * yComp);
+				double zSpeed = speed * zComp + spread * 0.7 * (player.getRandom().nextFloat() * 2 - 1) * Math.sqrt(1 - zComp * zComp);
 				player.level.addParticle(new SmallPoisonParticleData(37, false), dx, dy, dz, xSpeed, ySpeed, zSpeed);
 			}
 		}
@@ -268,7 +268,7 @@ public class ForestBreathAbility extends BreathAbility{
 
 
 		if(!entityHit.level.isClientSide){
-			if(entityHit.level.random.nextInt(100) < 30){
+			if(entityHit.getRandom().nextInt(100) < 30){
 				DragonUtils.getHandler(entityHit).lastAfflicted = player != null ? player.getId() : -1;
 				entityHit.addEffect(new MobEffectInstance(DragonEffects.DRAIN, Functions.secondsToTicks(10), 0, false, true));
 			}

@@ -152,7 +152,7 @@ public class NetherBreathAbility extends BreathAbility{
 					boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(player.level, player);
 
 					if(flag){
-						if(player.level.random.nextInt(100) < 50){
+						if(player.getRandom().nextInt(100) < 50){
 							BlockState blockstate1 = FireBlock.getState(player.level, blockPos);
 							player.level.setBlock(blockPos, blockstate1, 3);
 						}
@@ -162,7 +162,7 @@ public class NetherBreathAbility extends BreathAbility{
 			DragonStateHandler handler = DragonUtils.getHandler(player);
 
 			BurnAbility burnAbility = DragonAbilities.getAbility(player, BurnAbility.class);
-			if(player.level.random.nextInt(100) < burnAbility.level * 15){
+			if(player.getRandom().nextInt(100) < burnAbility.level * 15){
 				BlockState blockAbove = player.level.getBlockState(pos.above());
 
 				if(blockAbove.getBlock() == Blocks.AIR){
@@ -181,7 +181,7 @@ public class NetherBreathAbility extends BreathAbility{
 
 		if(player.level.isClientSide){
 			for(int z = 0; z < 4; ++z){
-				if(player.level.random.nextInt(100) < 20){
+				if(player.getRandom().nextInt(100) < 20){
 					player.level.addParticle(ParticleTypes.LAVA, pos.above().getX(), pos.above().getY(), pos.above().getZ(), 0, 0.05, 0);
 				}
 			}
@@ -190,7 +190,7 @@ public class NetherBreathAbility extends BreathAbility{
 		if(player.level.isClientSide){
 			if(blockState.getBlock() == Blocks.WATER){
 				for(int z = 0; z < 4; ++z){
-					if(player.level.random.nextInt(100) < 90){
+					if(player.getRandom().nextInt(100) < 90){
 						player.level.addParticle(ParticleTypes.BUBBLE_COLUMN_UP, pos.above().getX(), pos.above().getY(), pos.above().getZ(), 0, 0.05, 0);
 					}
 				}
@@ -231,9 +231,9 @@ public class NetherBreathAbility extends BreathAbility{
 			}
 
 			for(int i = 0; i < 10; i++){
-				double xSpeed = speed * xComp + spread * 0.7 * (player.level.random.nextFloat() * 2 - 1) * Math.sqrt(1 - xComp * xComp);
-				double ySpeed = speed * yComp + spread * 0.7 * (player.level.random.nextFloat() * 2 - 1) * Math.sqrt(1 - yComp * yComp);
-				double zSpeed = speed * zComp + spread * 0.7 * (player.level.random.nextFloat() * 2 - 1) * Math.sqrt(1 - zComp * zComp);
+				double xSpeed = speed * xComp + spread * 0.7 * (player.getRandom().nextFloat() * 2 - 1) * Math.sqrt(1 - xComp * xComp);
+				double ySpeed = speed * yComp + spread * 0.7 * (player.getRandom().nextFloat() * 2 - 1) * Math.sqrt(1 - yComp * yComp);
+				double zSpeed = speed * zComp + spread * 0.7 * (player.getRandom().nextFloat() * 2 - 1) * Math.sqrt(1 - zComp * zComp);
 				player.level.addParticle(new LargeFireParticleData(37, false), dx, dy, dz, xSpeed, ySpeed, zSpeed);
 			}
 		}
@@ -288,7 +288,7 @@ public class NetherBreathAbility extends BreathAbility{
 			DragonStateHandler handler = DragonUtils.getHandler(player);
 			BurnAbility burnAbility = DragonAbilities.getAbility(player, BurnAbility.class);
 
-			if(entityHit.level.random.nextInt(100) < burnAbility.level * 15){
+			if(entityHit.getRandom().nextInt(100) < burnAbility.level * 15){
 				DragonUtils.getHandler(entityHit).lastAfflicted = player != null ? player.getId() : -1;
 				entityHit.addEffect(new MobEffectInstance(DragonEffects.BURN, Functions.secondsToTicks(10), 0, false, true));
 			}

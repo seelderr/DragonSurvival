@@ -296,7 +296,7 @@ public class StormBreathAbility extends BreathAbility{
 		TargetingFunctions.attackTargets(getPlayer(), e -> e.hurt(new BreathDamage(player), getDamage()), entity);
 		onDamage(entity);
 
-		if(player.level.random.nextInt(100) < 50){
+		if(player.getRandom().nextInt(100) < 50){
 			if(!player.level.isClientSide){
 				player.addEffect(new MobEffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(30)));
 			}
@@ -304,7 +304,7 @@ public class StormBreathAbility extends BreathAbility{
 
 		if(!entity.level.isClientSide){
 			if(!chargedBlacklist.contains(ResourceHelper.getKey(entity).toString())){
-				if(entity.level.random.nextInt(100) < 40){
+				if(entity.getRandom().nextInt(100) < 40){
 					DragonStateHandler cap = DragonUtils.getHandler(entity);
 
 					cap.lastAfflicted = player.getId();
@@ -378,7 +378,7 @@ public class StormBreathAbility extends BreathAbility{
 		if(!player.level.isClientSide){
 			if(player.tickCount % 40 == 0){
 				if(player.level.isThundering()){
-					if(player.level.random.nextInt(100) < 30){
+					if(player.getRandom().nextInt(100) < 30){
 						if(player.level.canSeeSky(pos)){
 							LightningBolt lightningboltentity = EntityType.LIGHTNING_BOLT.create(player.level);
 							lightningboltentity.moveTo(new Vec3(pos.getX(), pos.getY(), pos.getZ()));
@@ -424,9 +424,9 @@ public class StormBreathAbility extends BreathAbility{
 			}
 
 			for(int i = 0; i < 2; i++){
-				double xSpeed = speed * xComp + spread * 0.7 * (player.level.random.nextFloat() * 2 - 1) * Math.sqrt(1 - xComp * xComp);
-				double ySpeed = speed * yComp + spread * 0.7 * (player.level.random.nextFloat() * 2 - 1) * Math.sqrt(1 - yComp * yComp);
-				double zSpeed = speed * zComp + spread * 0.7 * (player.level.random.nextFloat() * 2 - 1) * Math.sqrt(1 - zComp * zComp);
+				double xSpeed = speed * xComp + spread * 0.7 * (player.getRandom().nextFloat() * 2 - 1) * Math.sqrt(1 - xComp * xComp);
+				double ySpeed = speed * yComp + spread * 0.7 * (player.getRandom().nextFloat() * 2 - 1) * Math.sqrt(1 - yComp * yComp);
+				double zSpeed = speed * zComp + spread * 0.7 * (player.getRandom().nextFloat() * 2 - 1) * Math.sqrt(1 - zComp * zComp);
 				player.level.addParticle(new LargeLightningParticleData(37, false), dx, dy, dz, xSpeed, ySpeed, zSpeed);
 			}
 		}

@@ -29,12 +29,12 @@ public abstract class AoeBuffAbility extends ChargeCastAbility{
 
 		for(int i = 0; i < 20; i++)
 			for(int k1 = 0; (float)k1 < f5; ++k1){
-				float f6 = player.level.random.nextFloat() * ((float)Math.PI * 2F);
+				float f6 = player.getRandom().nextFloat() * ((float)Math.PI * 2F);
 
-				float f7 = Mth.sqrt(player.level.random.nextFloat()) * getRange();
+				float f7 = Mth.sqrt(player.getRandom().nextFloat()) * getRange();
 				float f8 = Mth.cos(f6) * f7;
 				float f9 = Mth.sin(f6) * f7;
-				player.level.addAlwaysVisibleParticle(getParticleEffect(), player.getX() + (double)f8, player.getY(), player.getZ() + (double)f9, (0.5D - player.level.random.nextDouble()) * 0.15D, 0.01F, (0.5D - player.level.random.nextDouble()) * 0.15D);
+				player.level.addAlwaysVisibleParticle(getParticleEffect(), player.getX() + (double)f8, player.getY(), player.getZ() + (double)f9, (0.5D - player.getRandom().nextDouble()) * 0.15D, 0.01F, (0.5D - player.getRandom().nextDouble()) * 0.15D);
 			}
 
 		List<LivingEntity> list1 = player.level.getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(getRange()));
