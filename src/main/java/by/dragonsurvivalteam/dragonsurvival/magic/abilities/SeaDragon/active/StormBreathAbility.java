@@ -249,7 +249,7 @@ public class StormBreathAbility extends BreathAbility{
 					cap.chainCount = capSource.chainCount + 1;
 
 					if(!target.level.isClientSide){
-						if(target.level.random.nextInt(100) < 40){
+						if(target.getRandom().nextInt(100) < 40){
 							if(cap.chainCount < chargedEffectMaxChain || chargedEffectMaxChain == -1){
 								cap.lastAfflicted = player != null ? player.getId() : -1;
 								target.addEffect(new MobEffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(10), 0, false, true));
@@ -258,7 +258,7 @@ public class StormBreathAbility extends BreathAbility{
 					}
 
 					if(player != null){
-						if(player.level.random.nextInt(100) < 50){
+						if(player.getRandom().nextInt(100) < 50){
 							if(!player.level.isClientSide){
 								player.addEffect(new MobEffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(30)));
 							}
