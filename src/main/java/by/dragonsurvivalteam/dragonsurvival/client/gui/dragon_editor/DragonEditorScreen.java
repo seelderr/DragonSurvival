@@ -629,7 +629,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 				}
 
 				if(keys.size() > 0){
-					String key = keys.get(minecraft.player.level.random.nextInt(keys.size()));
+					String key = keys.get(minecraft.player.getRandom().nextInt(keys.size()));
 					if(Objects.equals(layer.name, "Extra")){
 						extraKeys.remove(key);
 					}
@@ -638,9 +638,9 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 					Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, handler), layer, key, type);
 
 					if(text != null && text.randomHue){
-						layerSetting.hue = 0.25f + minecraft.player.level.random.nextFloat() * 0.5f;
-						layerSetting.saturation = 0.25f + minecraft.player.level.random.nextFloat() * 0.5f;
-						layerSetting.brightness = 0.3f + minecraft.player.level.random.nextFloat() * 0.2f;
+						layerSetting.hue = 0.25f + minecraft.player.getRandom().nextFloat() * 0.5f;
+						layerSetting.saturation = 0.25f + minecraft.player.getRandom().nextFloat() * 0.5f;
+						layerSetting.brightness = 0.3f + minecraft.player.getRandom().nextFloat() * 0.2f;
 					}else{
 						layerSetting.hue = 0.5f;
 						layerSetting.saturation = 0.5f;

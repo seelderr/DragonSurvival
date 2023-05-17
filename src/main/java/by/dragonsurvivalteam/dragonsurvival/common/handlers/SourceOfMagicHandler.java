@@ -136,7 +136,7 @@ public class SourceOfMagicHandler{
 							if(ServerConfig.sourceOfMagicInfiniteMagic){
 								if(player.level.isClientSide){
 									Minecraft minecraft = Minecraft.getInstance();
-									Random random = player.level.random;
+									Random random = player.getRandom();
 									double x = -1 + random.nextDouble() * 2;
 									double z = -1 + random.nextDouble() * 2;
 

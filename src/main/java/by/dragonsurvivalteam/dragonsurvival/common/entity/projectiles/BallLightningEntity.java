@@ -92,7 +92,7 @@ public class BallLightningEntity extends DragonBallEntity{
 				TargetingFunctions.attackTargets(getOwner(), ent1 -> ent1.hurt(DamageSource.LIGHTNING_BOLT, BallLightningAbility.getDamage(getSkillLevel())), ent);
 
 				if(ent instanceof LivingEntity livingEntity){
-					if(livingEntity.level.random.nextInt(100) < 40){
+					if(livingEntity.getRandom().nextInt(100) < 40){
 						if(!livingEntity.level.isClientSide){
 							livingEntity.addEffect(new MobEffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(10), 0, false, true));
 						}
