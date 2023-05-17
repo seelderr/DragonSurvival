@@ -27,9 +27,9 @@ public class SpawningUtils
 		MutableBlockPos blockpos$mutable = new MutableBlockPos();
 
 		for(int i1 = 0; i1 < timesToCheck; i1++){
-			float f = player.level.random.nextFloat() * 6.2831855F;
-			double xRandom = player.getX() + Mth.floor(Mth.cos(f) * distance * i) + player.level.random.nextInt(5);
-			double zRandom = player.getZ() + Mth.floor(Mth.sin(f) * distance * i) + player.level.random.nextInt(5);
+			float f = player.getRandom().nextFloat() * 6.2831855F;
+			double xRandom = player.getX() + Mth.floor(Mth.cos(f) * distance * i) + player.getRandom().nextInt(5);
+			double zRandom = player.getZ() + Mth.floor(Mth.sin(f) * distance * i) + player.getRandom().nextInt(5);
 			int y = player.level.getHeight(Types.WORLD_SURFACE, (int)xRandom, (int)zRandom);
 			blockpos$mutable.set(xRandom, y, zRandom);
 			if(player.level.hasChunksAt(blockpos$mutable.getX() - 10, blockpos$mutable.getY() - 10, blockpos$mutable.getZ() - 10, blockpos$mutable.getX() + 10, blockpos$mutable.getY() + 10, blockpos$mutable.getZ() + 10) && (NaturalSpawner.canSpawnAtBody(Type.ON_GROUND, player.level, blockpos$mutable, DSEntities.HUNTER_HOUND) || player.level.getBlockState(blockpos$mutable).is(
