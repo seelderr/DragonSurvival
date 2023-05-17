@@ -51,7 +51,7 @@ public class ClawToolHandler{
 			}
 
 			if(stacks.size() > 0){
-				ItemStack repairTime = stacks.get(player.level.random.nextInt(stacks.size()));
+				ItemStack repairTime = stacks.get(player.getRandom().nextInt(stacks.size()));
 				if(!repairTime.isEmpty() && repairTime.isDamaged()){
 
 					int i = Math.min((int)(event.getOrb().value * repairTime.getXpRepairRatio()), repairTime.getDamageValue());
