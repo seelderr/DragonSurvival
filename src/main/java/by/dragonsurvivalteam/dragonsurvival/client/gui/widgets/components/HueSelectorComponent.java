@@ -47,7 +47,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 		this.xSize = xSize;
 		this.ySize = ySize;
 
-		settings = () -> screen.preset.skinAges.get(screen.level).layerSettings.get(layer);
+		settings = () -> screen.preset.skinAges.get(screen.level).get().layerSettings.get(layer).get();
 		LayerSettings set = settings.get();
 
 		glowing = new ExtendedCheckbox(x + 3, y, xSize - 5, 10, 10, Component.translatable("ds.gui.dragon_editor.glowing"), set.glowing, s -> {

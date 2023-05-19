@@ -39,7 +39,7 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity>{
 	public ResourceLocation getTextureResource(DragonEntity dragon){
 		if(dragon.player != null || dragon.getPlayer() != null){
 			DragonStateHandler handler = DragonUtils.getHandler(dragon.getPlayer());
-			SkinAgeGroup ageGroup = handler.getSkinData().skinPreset.skinAges.get(handler.getLevel());
+			SkinAgeGroup ageGroup = handler.getSkinData().skinPreset.skinAges.get(handler.getLevel()).get();
 
 			if(handler.getSkinData().recompileSkin){
 				DragonEditorHandler.generateSkinTextures(dragon);

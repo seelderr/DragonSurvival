@@ -121,7 +121,7 @@ public class SkinsScreen extends Screen{
 			if(noSkin && Objects.equals(playerName, minecraft.player.getGameProfile().getName())){
 				handler.getSkinData().skinPreset.readNBT(DragonUtils.getHandler(minecraft.player).getSkinData().skinPreset.writeNBT());
 			}else{
-				handler.getSkinData().skinPreset.skinAges.get(level).defaultSkin = true;
+				handler.getSkinData().skinPreset.skinAges.get(level).get().defaultSkin = true;
 			}
 
 			FakeClientPlayerUtils.getFakePlayer(0, handler).animationSupplier = () -> "fly";

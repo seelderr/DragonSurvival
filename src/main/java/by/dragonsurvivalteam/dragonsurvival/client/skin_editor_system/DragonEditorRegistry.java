@@ -9,6 +9,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.Sk
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.util.GsonFactory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.minecraft.client.Minecraft;
@@ -84,7 +85,7 @@ public class DragonEditorRegistry{
 		if(!savedFile.exists()){
 			try{
 				savedFile.createNewFile();
-				Gson gson = new GsonBuilder().setPrettyPrinting().create();
+				Gson gson = GsonFactory.newBuilder().setPrettyPrinting().create();
 				savedCustomizations = new SavedSkinPresets();
 
 				for(String t : DragonTypes.getTypes()){
@@ -113,7 +114,7 @@ public class DragonEditorRegistry{
 			}
 		}else {
 			try{
-				Gson gson = new Gson();
+				Gson gson = GsonFactory.getDefault();
 				InputStream in = new FileInputStream(savedFile);
 				BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 				savedCustomizations = gson.fromJson(reader, SavedSkinPresets.class);
@@ -127,7 +128,7 @@ public class DragonEditorRegistry{
 
 	protected static void reload(ResourceManager manager, ResourceLocation location){
 		try{
-			Gson gson = new Gson();
+			Gson gson = GsonFactory.getDefault();
 			Optional<Resource> resource = manager.getResource(location);
 			if (resource.isEmpty())
 				throw new IOException(String.format("Resource %s not found!", location.getPath()));

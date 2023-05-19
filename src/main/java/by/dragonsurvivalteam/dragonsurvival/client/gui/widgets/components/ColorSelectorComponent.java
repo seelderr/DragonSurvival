@@ -41,7 +41,7 @@ public class ColorSelectorComponent extends AbstractContainerEventHandler implem
 		this.xSize = xSize;
 		this.ySize = ySize;
 
-		settings = () -> screen.preset.skinAges.get(screen.level).layerSettings.get(layer);
+		settings = () -> screen.preset.skinAges.get(screen.level).get().layerSettings.get(layer).get();
 
 		LayerSettings set = settings.get();
 		Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, screen.handler), layer, set.selectedSkin, screen.handler.getType());

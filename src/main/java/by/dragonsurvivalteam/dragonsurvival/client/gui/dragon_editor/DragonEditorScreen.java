@@ -19,6 +19,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEdit
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEditorRegistry;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.EnumSkinLayer;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonEditorObject.Texture;
+import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.LayerSettings;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset.SkinAgeGroup;
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
@@ -43,6 +44,7 @@ import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+import by.dragonsurvivalteam.dragonsurvival.util.GsonFactory;
 import com.google.common.collect.EvictingQueue;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -62,6 +64,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.DyeColor;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
 import net.minecraftforge.client.gui.widget.ForgeSlider;
+import net.minecraftforge.common.util.Lazy;
 import org.apache.commons.lang3.text.WordUtils;
 
 import java.io.FileWriter;
@@ -240,7 +243,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 		DragonEditorRegistry.getSavedCustomizations().current.get(typeS).put(level, currentSelected);
 
 		try{
-			Gson gson = new GsonBuilder().setPrettyPrinting().create();
+			Gson gson = GsonFactory.newBuilder().setPrettyPrinting().create();
 			FileWriter writer = new FileWriter(DragonEditorRegistry.savedFile);
 			gson.toJson(DragonEditorRegistry.getSavedCustomizations(), writer);
 			writer.close();
@@ -330,7 +333,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			}
 
 			String[] values = valueList.toArray(new String[0]);
-			String curValue = preset.skinAges.get(level).layerSettings.get(layers).selectedSkin;
+			String curValue = preset.skinAges.get(level).get().layerSettings.get(layers).get().selectedSkin;
 
 
 			DropDownButton btn = new DragonEditorDropdownButton(this, i < 5 ? width / 2 - 100 - 100 : width / 2 + 83, guiTop + 10 + (i >= 5 ? (i - 5) * 30 : i * 30), 90, 15, curValue, values, layers){
@@ -396,7 +399,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 
 			addRenderableWidget(new ColorSelectorButton(this, layers, btn.x + 15 + btn.getWidth() + 2, btn.y, btn.getHeight(), btn.getHeight(), s -> {
 				doAction();
-				preset.skinAges.get(level).layerSettings.get(layers).hue = s.floatValue();
+				preset.skinAges.get(level).get().layerSettings.get(layers).get().hue = s.floatValue();
 				handler.getSkinData().compileSkin();
 				update();
 			}));
@@ -487,17 +490,17 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			}
 		});
 
-		addRenderableWidget(new ExtendedCheckbox(width / 2 + 100, height - 16, 120, 14, 14, Component.translatable("ds.gui.dragon_editor.wings"), preset.skinAges.get(level).wings, p -> preset.skinAges.get(level).wings = p.selected()){
+		addRenderableWidget(new ExtendedCheckbox(width / 2 + 100, height - 16, 120, 14, 14, Component.translatable("ds.gui.dragon_editor.wings"), preset.skinAges.get(level).get().wings, p -> preset.skinAges.get(level).get().wings = p.selected()){
 			@Override
 			public void renderButton(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
-				selected = preset.skinAges.get(level).wings;
+				selected = preset.skinAges.get(level).get().wings;
 				super.renderButton(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 			}
 		});
-		addRenderableWidget(new ExtendedCheckbox(width / 2 + 100, height - 31, 120, 14, 14, Component.translatable("ds.gui.dragon_editor.default_skin"), preset.skinAges.get(level).defaultSkin, p -> preset.skinAges.get(level).defaultSkin = p.selected()){
+		addRenderableWidget(new ExtendedCheckbox(width / 2 + 100, height - 31, 120, 14, 14, Component.translatable("ds.gui.dragon_editor.default_skin"), preset.skinAges.get(level).get().defaultSkin, p -> preset.skinAges.get(level).get().defaultSkin = p.selected()){
 			@Override
 			public void renderButton(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
-				selected = preset.skinAges.get(level).defaultSkin;
+				selected = preset.skinAges.get(level).get().defaultSkin;
 				super.renderButton(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 			}
 
@@ -586,7 +589,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 
 		addRenderableWidget(new ExtendedButton(guiLeft + 256 + 16, 9, 19, 19, Component.empty(), btn -> {
 			doAction();
-			preset.skinAges.put(level, new SkinAgeGroup(level, type));
+			preset.skinAges.put(level, Lazy.of(()->new SkinAgeGroup(level, type)));
 			handler.getSkinData().compileSkin();
 			update();
 		}){
@@ -630,19 +633,20 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 						extraKeys.remove(key);
 					}
 
-					preset.skinAges.get(level).layerSettings.get(layer).selectedSkin = key;
+					LayerSettings settings = preset.skinAges.get(level).get().layerSettings.get(layer).get();
+					settings.selectedSkin = key;
 					Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, handler), layer, key, type);
 
 					if(text != null && text.randomHue){
-						preset.skinAges.get(level).layerSettings.get(layer).hue = 0.25f + minecraft.player.getRandom().nextFloat() * 0.5f;
-						preset.skinAges.get(level).layerSettings.get(layer).saturation = 0.25f + minecraft.player.getRandom().nextFloat() * 0.5f;
-						preset.skinAges.get(level).layerSettings.get(layer).brightness = 0.3f + minecraft.player.getRandom().nextFloat() * 0.2f;
-						preset.skinAges.get(level).layerSettings.get(layer).modifiedColor = true;
+						settings.hue = 0.25f + minecraft.player.getRandom().nextFloat() * 0.5f;
+						settings.saturation = 0.25f + minecraft.player.getRandom().nextFloat() * 0.5f;
+						settings.brightness = 0.3f + minecraft.player.getRandom().nextFloat() * 0.2f;
+						settings.modifiedColor = true;
 					}else{
-						preset.skinAges.get(level).layerSettings.get(layer).hue = 0.5f;
-						preset.skinAges.get(level).layerSettings.get(layer).saturation = 0.5f;
-						preset.skinAges.get(level).layerSettings.get(layer).brightness = 0.5f;
-						preset.skinAges.get(level).layerSettings.get(layer).modifiedColor = true;
+						settings.hue = 0.5f;
+						settings.saturation = 0.5f;
+						settings.brightness = 0.5f;
+						settings.modifiedColor = true;
 					}
 				}
 				handler.getSkinData().compileSkin();

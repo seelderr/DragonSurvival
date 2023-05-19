@@ -42,7 +42,7 @@ public class DragonGlowLayerRenderer extends GeoLayerRenderer<DragonEntity>{
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 
 		SkinPreset preset = handler.getSkinData().skinPreset;
-		SkinAgeGroup ageGroup = preset.skinAges.get(handler.getLevel());
+		SkinAgeGroup ageGroup = preset.skinAges.get(handler.getLevel()).get();
 
 		ResourceLocation glowTexture = DragonSkins.getGlowTexture(player, handler.getType(), handler.getLevel());
 
@@ -52,7 +52,7 @@ public class DragonGlowLayerRenderer extends GeoLayerRenderer<DragonEntity>{
 			}
 		}
 
-		if(glowTexture == null && handler.getSkinData().skinPreset.skinAges.get(handler.getLevel()).defaultSkin){
+		if(glowTexture == null && handler.getSkinData().skinPreset.skinAges.get(handler.getLevel()).get().defaultSkin){
 			ResourceLocation location = new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/" + handler.getType().getTypeName().toLowerCase(Locale.ROOT) + "_" + handler.getLevel().name.toLowerCase(Locale.ROOT) + "_glow.png");
 			if(Minecraft.getInstance().getResourceManager().getResource(location).isPresent()){
 				glowTexture = location;
@@ -69,7 +69,7 @@ public class DragonGlowLayerRenderer extends GeoLayerRenderer<DragonEntity>{
 			ResourceLocation dynamicGlowKey = new ResourceLocation(DragonSurvivalMod.MODID, "dynamic_glow_" + entitylivingbaseIn.getPlayer().getStringUUID());
 			((DragonRenderer)renderer).isRenderLayers = true;
 
-			if(ageGroup.layerSettings.values().stream().anyMatch(s -> s.glowing)){
+			if(ageGroup.layerSettings.values().stream().anyMatch(s -> s.get().glowing)){
 				RenderType type = RenderType.eyes(dynamicGlowKey);
 				VertexConsumer vertexConsumer = bufferIn.getBuffer(type);
 				renderer.render(ClientDragonRender.dragonModel.getModel(ClientDragonRender.dragonModel.getModelResource(null)), entitylivingbaseIn, partialTicks, type, matrixStackIn, bufferIn, vertexConsumer, packedLightIn, OverlayTexture.NO_OVERLAY, 1f, 1f, 1f, 1f);

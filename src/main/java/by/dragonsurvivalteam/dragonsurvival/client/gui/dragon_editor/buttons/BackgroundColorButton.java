@@ -64,7 +64,7 @@ public class BackgroundColorButton extends ExtendedButton{
 
 	@Override
 	public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){
-		active = !screen.preset.skinAges.get(screen.level).defaultSkin;
+		active = !screen.preset.skinAges.get(screen.level).get().defaultSkin;
 
 		if(toggled && (!visible || !isMouseOver(mouseX, mouseY) && (colorComponent == null || !colorComponent.isMouseOver(mouseX, mouseY)))){
 			toggled = false;
