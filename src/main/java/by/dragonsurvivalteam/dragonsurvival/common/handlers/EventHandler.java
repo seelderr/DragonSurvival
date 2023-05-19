@@ -353,6 +353,26 @@ public class EventHandler{
 	}
 
 	@SubscribeEvent
+	public static void returnNetherStarHeart(PlayerEvent.ItemCraftedEvent craftedEvent){
+		Container inventory = craftedEvent.getInventory();
+		ItemStack result = craftedEvent.getCrafting();
+		int rem = ContainerHelper.clearOrCountMatchingItems(inventory, item -> item.getItem() == DSItems.starHeart, 1, true);
+		if(rem == 0 && result.getItem() == DSItems.starHeart.asItem()){
+			craftedEvent.getEntity().addItem(new ItemStack(Items.NETHER_STAR));
+		}
+	}
+
+	@SubscribeEvent
+	public static void returnNetherStarBone(PlayerEvent.ItemCraftedEvent craftedEvent){
+		Container inventory = craftedEvent.getInventory();
+		ItemStack result = craftedEvent.getCrafting();
+		int rem = ContainerHelper.clearOrCountMatchingItems(inventory, item -> item.getItem() == DSItems.starBone, 1, true);
+		if(rem == 0 && result.getItem() == DSItems.starBone.asItem()){
+			craftedEvent.getEntity().addItem(new ItemStack(Items.NETHER_STAR));
+		}
+	}
+
+	@SubscribeEvent
 	public static void onJump(LivingJumpEvent jumpEvent){
 		final LivingEntity living = jumpEvent.getEntity();
 		DragonStateProvider.getCap(living).ifPresent(dragonStateHandler -> {
