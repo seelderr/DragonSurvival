@@ -45,7 +45,7 @@ public class ColorSelectorButton extends ExtendedButton{
 			return;
 		}
 		super.render(stack, p_230430_2_, p_230430_3_, p_230430_4_);
-		active = !screen.preset.skinAges.get(screen.level).defaultSkin;
+		active = !screen.preset.skinAges.get(screen.level).get().defaultSkin;
 
 		if(visible)
 			RenderingUtils.drawGradientRect(stack.last().pose(), 100, x + 2, y + 2, x + xSize - 2, y + ySize - 2, new int[]{Color.red.getRGB(),
@@ -61,7 +61,7 @@ public class ColorSelectorButton extends ExtendedButton{
 			screen.renderables.removeIf(s -> s == renderButton);
 		}
 
-		Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, screen.handler), layer, screen.preset.skinAges.get(screen.level).layerSettings.get(layer).selectedSkin, screen.handler.getType());
+		Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, screen.handler), layer, screen.preset.skinAges.get(screen.level).get().layerSettings.get(layer).get().selectedSkin, screen.handler.getType());
 
 		visible = text != null && text.colorable;
 	}
@@ -81,7 +81,7 @@ public class ColorSelectorButton extends ExtendedButton{
 
 	@Override
 	public void onPress(){
-		Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, screen.handler), layer, screen.preset.skinAges.get(screen.level).layerSettings.get(layer).selectedSkin, screen.handler.getType());
+		Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, screen.handler), layer, screen.preset.skinAges.get(screen.level).get().layerSettings.get(layer).get().selectedSkin, screen.handler.getType());
 
 		if(!toggled){
 			renderButton = new ExtendedButton(0, 0, 0, 0, Component.empty(), null){

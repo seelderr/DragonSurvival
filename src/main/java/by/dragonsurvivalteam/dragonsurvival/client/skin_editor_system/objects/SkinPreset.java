@@ -7,16 +7,17 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.NBTInterface;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraftforge.common.util.Lazy;
 
 import java.util.HashMap;
 
 public class SkinPreset implements NBTInterface{
-	public HashMap<DragonLevel, SkinAgeGroup> skinAges = new HashMap<>();
+	public HashMap<DragonLevel, Lazy<SkinAgeGroup>> skinAges = new HashMap<>();
 	public double sizeMul = 1.0;
 
 	public SkinPreset(){
 		for(DragonLevel level : DragonLevel.values()){
-			skinAges.computeIfAbsent(level, SkinAgeGroup::new);
+			skinAges.computeIfAbsent(level, (_level)->Lazy.of(()->new SkinAgeGroup(_level)));
 		}
 	}
 
@@ -26,7 +27,7 @@ public class SkinPreset implements NBTInterface{
 
 	public void initDefaults(AbstractDragonType type){
 		for(DragonLevel level : DragonLevel.values()){
-			skinAges.put(level, new SkinAgeGroup(level, type));
+			skinAges.put(level, Lazy.of(()->new SkinAgeGroup(level, type)));
 		}
 	}
 
@@ -36,7 +37,7 @@ public class SkinPreset implements NBTInterface{
 		nbt.putDouble("sizeMul", sizeMul);
 
 		for(DragonLevel level : DragonLevel.values()){
-			nbt.put(level.name, skinAges.getOrDefault(level, new SkinAgeGroup(level)).writeNBT());
+			nbt.put(level.name, skinAges.getOrDefault(level, Lazy.of(()->new SkinAgeGroup(level))).get().writeNBT());
 		}
 
 		return nbt;
@@ -47,16 +48,20 @@ public class SkinPreset implements NBTInterface{
 		sizeMul = base.getDouble("sizeMul");
 
 		for(DragonLevel level : DragonLevel.values()){
-			SkinAgeGroup ageGroup = new SkinAgeGroup(level);
-			CompoundTag nbt = base.getCompound(level.name);
-			ageGroup.readNBT(nbt);
-			skinAges.put(level, ageGroup);
+			skinAges.put(level,
+					Lazy.of(()->{
+						SkinAgeGroup ageGroup = new SkinAgeGroup(level);
+						CompoundTag nbt = base.getCompound(level.name);
+						ageGroup.readNBT(nbt);
+						return ageGroup;
+					})
+			);
 		}
 	}
 
 	public static class SkinAgeGroup implements NBTInterface{
 		public DragonLevel level;
-		public HashMap<EnumSkinLayer, LayerSettings> layerSettings = new HashMap<>();
+		public HashMap<EnumSkinLayer, Lazy<LayerSettings>> layerSettings = new HashMap<>();
 
 		public boolean wings = true;
 		public boolean defaultSkin = false;
@@ -64,7 +69,7 @@ public class SkinPreset implements NBTInterface{
 		public SkinAgeGroup(DragonLevel level, AbstractDragonType type){
 			this(level);
 			for(EnumSkinLayer layer : EnumSkinLayer.values()){
-				layerSettings.put(layer, new LayerSettings(DragonEditorRegistry.getDefaultPart(type, level, layer)));
+				layerSettings.put(layer, Lazy.of(()->new LayerSettings(DragonEditorRegistry.getDefaultPart(type, level, layer))));
 			}
 		}
 
@@ -72,7 +77,7 @@ public class SkinPreset implements NBTInterface{
 			this.level = level;
 
 			for(EnumSkinLayer layer : EnumSkinLayer.values()){
-				layerSettings.computeIfAbsent(layer, s -> new LayerSettings());
+				layerSettings.computeIfAbsent(layer, s -> Lazy.of(LayerSettings::new));
 			}
 		}
 
@@ -84,7 +89,7 @@ public class SkinPreset implements NBTInterface{
 			nbt.putBoolean("defaultSkin", defaultSkin);
 
 			for(EnumSkinLayer layer : EnumSkinLayer.values()){
-				nbt.put(layer.name(), layerSettings.getOrDefault(layer, new LayerSettings()).writeNBT());
+				nbt.put(layer.name(), layerSettings.getOrDefault(layer, Lazy.of(LayerSettings::new)).get().writeNBT());
 			}
 
 			return nbt;
@@ -96,10 +101,12 @@ public class SkinPreset implements NBTInterface{
 			defaultSkin = base.getBoolean("defaultSkin");
 
 			for(EnumSkinLayer layer : EnumSkinLayer.values()){
-				LayerSettings ageGroup = new LayerSettings();
-				CompoundTag nbt = base.getCompound(layer.name());
-				ageGroup.readNBT(nbt);
-				layerSettings.put(layer, ageGroup);
+				layerSettings.put(layer, Lazy.of(()->{
+					LayerSettings ageGroup = new LayerSettings();
+					CompoundTag nbt = base.getCompound(layer.name());
+					ageGroup.readNBT(nbt);
+					return ageGroup;
+				}));
 			}
 		}
 	}

@@ -20,6 +20,7 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.client.gui.ScreenUtils;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
+import net.minecraftforge.common.util.Lazy;
 
 import java.util.List;
 
@@ -63,26 +64,32 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 
 			@Override
 			public void onPress(){
-				SkinAgeGroup preset = screen.preset.skinAges.getOrDefault(screen.level, new SkinAgeGroup(screen.level));
+				SkinAgeGroup preset = screen.preset.skinAges.getOrDefault(screen.level, Lazy.of(()->new SkinAgeGroup(screen.level))).get();
 
 				screen.doAction();
 
 				if(newborn.active && newborn.selected()){
-					SkinAgeGroup ageGroup = new SkinAgeGroup(DragonLevel.NEWBORN);
-					ageGroup.readNBT(preset.writeNBT());
-					screen.preset.skinAges.put(DragonLevel.NEWBORN, ageGroup);
+					screen.preset.skinAges.put(DragonLevel.NEWBORN, Lazy.of(()->{
+						SkinAgeGroup ageGroup = new SkinAgeGroup(DragonLevel.NEWBORN);
+						ageGroup.readNBT(preset.writeNBT());
+						return ageGroup;
+					}));
 				}
 
 				if(young.active && young.selected()){
-					SkinAgeGroup ageGroup = new SkinAgeGroup(DragonLevel.YOUNG);
-					ageGroup.readNBT(preset.writeNBT());
-					screen.preset.skinAges.put(DragonLevel.YOUNG, ageGroup);
+					screen.preset.skinAges.put(DragonLevel.YOUNG, Lazy.of(()->{
+						SkinAgeGroup ageGroup = new SkinAgeGroup(DragonLevel.YOUNG);
+						ageGroup.readNBT(preset.writeNBT());
+						return ageGroup;
+					}));
 				}
 
 				if(adult.active && adult.selected()){
-					SkinAgeGroup ageGroup = new SkinAgeGroup(DragonLevel.ADULT);
-					ageGroup.readNBT(preset.writeNBT());
-					screen.preset.skinAges.put(DragonLevel.ADULT, ageGroup);
+					screen.preset.skinAges.put(DragonLevel.ADULT, Lazy.of(()->{
+						SkinAgeGroup ageGroup = new SkinAgeGroup(DragonLevel.ADULT);
+						ageGroup.readNBT(preset.writeNBT());
+						return ageGroup;
+					}));
 				}
 
 				screen.update();

@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.emotes;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
+import by.dragonsurvivalteam.dragonsurvival.util.GsonFactory;
 import com.google.gson.Gson;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
@@ -50,7 +51,7 @@ public class EmoteRegistry{
 
 	protected static void reload(ResourceManager manager, ResourceLocation location){
 		try{
-			Gson gson = new Gson();
+			Gson gson = GsonFactory.getDefault();
 			Resource resource = manager.getResource(location).orElse(null);
 			if (resource == null)
 				throw new RuntimeException(String.format("Resource '%s' not found!", location.getPath()));

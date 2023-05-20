@@ -78,7 +78,7 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity>{
 		Player player = entity.getPlayer();
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 
-		boolean hasWings = handler.hasWings() && handler.getSkinData().skinPreset.skinAges.get(handler.getLevel()).wings;
+		boolean hasWings = handler.hasWings() && handler.getSkinData().skinPreset.skinAges.get(handler.getLevel()).get().wings;
 
 		IBone leftWing = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("WingLeft");
 		IBone rightWing = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("WingRight");
