@@ -86,7 +86,13 @@ public class ManaHandler{
 	public static int getMaxMana(Player entity){
 		return 1 + (ServerConfig.noEXPRequirements ? 9 : Math.max(0, (Math.min(50, entity.experienceLevel) - 5) / 5) + (DragonAbilities.getAbility(entity, MagicAbility.class) != null ? DragonAbilities.getAbility(entity, MagicAbility.class).getMana() : 0));
 	}
-
+	public static boolean canConsumeMana(Player player, int manaCost)
+	{
+		manaCost -= ManaHandler.getCurrentMana(player);
+		if (ServerConfig.consumeEXPAsMana)
+			manaCost -= player.totalExperience / 10;
+		return manaCost <= 0;
+	}
 	public static void replenishMana(Player entity, int mana){
 		if(entity.level.isClientSide){
 			return;

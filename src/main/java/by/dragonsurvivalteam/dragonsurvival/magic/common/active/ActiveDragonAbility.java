@@ -109,7 +109,7 @@ public abstract class ActiveDragonAbility extends DragonAbility{
 	}
 
 	public boolean canConsumeMana(Player player){
-		return ManaHandler.getCurrentMana(player) >= getManaCost() || ServerConfig.consumeEXPAsMana && (player.totalExperience / 10 >= getManaCost() || player.experienceLevel > 0);
+		return ManaHandler.canConsumeMana(player, getManaCost());
 	}
 
 	public void tickCooldown(){

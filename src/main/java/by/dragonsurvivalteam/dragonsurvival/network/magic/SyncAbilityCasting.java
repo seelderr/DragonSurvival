@@ -95,7 +95,7 @@ public class SyncAbilityCasting implements IMessage<SyncAbilityCasting>{
 							ability.onKeyPressed(player, () -> {
 								if(player.getId() == thisPlayer.getId()) {
 									ClientCastingHandler.hasCast = true;
-									ClientCastingHandler.status = 2;
+									ClientCastingHandler.status = ClientCastingHandler.StatusStop;
 								}
 							});
 						}else{
