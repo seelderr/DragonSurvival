@@ -83,7 +83,7 @@ public class ClientMagicHUDHandler{
 			if(ability == null)
 				return;
 
-			if(ManaHandler.getCurrentMana(playerEntity) < ability.getManaCost() && (ManaHandler.getCurrentMana(playerEntity) + playerEntity.totalExperience / 10 >= ability.getManaCost() || playerEntity.experienceLevel > 0)){
+			if (ManaHandler.getCurrentMana(playerEntity) < ability.getManaCost() && ability.canConsumeMana(playerEntity)){
 				Window window = Minecraft.getInstance().getWindow();
 
 				int screenWidth = window.getGuiScaledWidth();

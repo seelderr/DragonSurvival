@@ -38,11 +38,8 @@ public abstract class ChannelingCastAbility extends ActiveDragonAbility {
 
 	@Override
 	public boolean canConsumeMana(Player player){
-		int manaCost = chargeTime <= getSkillChargeTime() / 2 ? getManaCost() + getChargingManaCost() : getManaCost();
-
-		return ManaHandler.getCurrentMana(player) >= manaCost
-		       || ServerConfig.consumeEXPAsMana && (player.totalExperience / 10 >= manaCost
-		                                            || player.experienceLevel > 0);
+		int manaCost = chargeTime < getSkillChargeTime() / 2 ? getManaCost() + getChargingManaCost() : getManaCost();
+		return ManaHandler.canConsumeMana(player, manaCost);
 	}
 
 	@Override
