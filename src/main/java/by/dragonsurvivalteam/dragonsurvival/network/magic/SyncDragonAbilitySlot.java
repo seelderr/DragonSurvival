@@ -46,10 +46,12 @@ public class SyncDragonAbilitySlot implements IMessage<SyncDragonAbilitySlot>{
 
 	@Override
 	public void handle(SyncDragonAbilitySlot message, Supplier<NetworkEvent.Context> supplier){
-		DragonStateProvider.getCap(supplier.get().getSender()).ifPresent(cap -> {
-			if(cap.getMagicData().getAbilityFromSlot(cap.getMagicData().getSelectedAbilitySlot()) != null) cap.getMagicData().getAbilityFromSlot(cap.getMagicData().getSelectedAbilitySlot()).onKeyReleased(supplier.get().getSender());
-			cap.getMagicData().setSelectedAbilitySlot(message.selectedSlot);
-			cap.getMagicData().setRenderAbilities(message.displayHotbar);
+		supplier.get().enqueueWork(()->{
+			DragonStateProvider.getCap(supplier.get().getSender()).ifPresent(cap -> {
+				if(cap.getMagicData().getAbilityFromSlot(cap.getMagicData().getSelectedAbilitySlot()) != null) cap.getMagicData().getAbilityFromSlot(cap.getMagicData().getSelectedAbilitySlot()).onKeyReleased(supplier.get().getSender());
+				cap.getMagicData().setSelectedAbilitySlot(message.selectedSlot);
+				cap.getMagicData().setRenderAbilities(message.displayHotbar);
+			});
 		});
 		supplier.get().setPacketHandled(true);
 	}

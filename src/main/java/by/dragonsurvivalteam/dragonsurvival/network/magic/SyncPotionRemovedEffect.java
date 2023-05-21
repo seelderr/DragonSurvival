@@ -56,13 +56,11 @@ public class SyncPotionRemovedEffect implements IMessage<SyncPotionRemovedEffect
 	public void run(SyncPotionRemovedEffect message, Supplier<NetworkEvent.Context> supplier){
 		NetworkEvent.Context context = supplier.get();
 		context.enqueueWork(() -> {
-
 			Player thisPlayer = Minecraft.getInstance().player;
 			if(thisPlayer != null){
 				Level world = thisPlayer.level;
 				Entity entity = world.getEntity(message.entityId);
 				MobEffect ef = MobEffect.byId(message.effectId);
-
 
 				if(ef != null){
 					if(entity instanceof LivingEntity){

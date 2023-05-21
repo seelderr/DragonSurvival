@@ -49,23 +49,25 @@ public class SyncSkillLevelChangeCost implements IMessage<SyncSkillLevelChangeCo
 			return;
 		}
 
-		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
-			DragonAbility staticAbility = DragonAbilities.ABILITY_LOOKUP.get(message.skill);
+		supplier.get().enqueueWork(()->{
+			DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
+				DragonAbility staticAbility = DragonAbilities.ABILITY_LOOKUP.get(message.skill);
 
-			if(staticAbility instanceof PassiveDragonAbility ability){
-				try{
-					PassiveDragonAbility newActivty = ability.getClass().newInstance();
-					PassiveDragonAbility playerAbility = DragonAbilities.getAbility(player, ability.getClass());
-					newActivty.setLevel(playerAbility.getLevel() + message.levelChange);
-					int levelCost = message.levelChange > 0 ? -newActivty.getLevelCost() : Math.max((int)(((PassiveDragonAbility)playerAbility).getLevelCost() * 0.8F), 1);
+				if(staticAbility instanceof PassiveDragonAbility ability){
+					try{
+						PassiveDragonAbility newActivty = ability.getClass().newInstance();
+						PassiveDragonAbility playerAbility = DragonAbilities.getAbility(player, ability.getClass());
+						newActivty.setLevel(playerAbility.getLevel() + message.levelChange);
+						int levelCost = message.levelChange > 0 ? -newActivty.getLevelCost() : Math.max((int)(((PassiveDragonAbility)playerAbility).getLevelCost() * 0.8F), 1);
 
-					if(levelCost != 0 && !player.isCreative()){
-						player.giveExperienceLevels(levelCost);
+						if(levelCost != 0 && !player.isCreative()){
+							player.giveExperienceLevels(levelCost);
+						}
+					}catch(InstantiationException | IllegalAccessException e){
+						throw new RuntimeException(e);
 					}
-				}catch(InstantiationException | IllegalAccessException e){
-					throw new RuntimeException(e);
 				}
-			}
+			});
 		});
 		supplier.get().setPacketHandled(true);
 	}
