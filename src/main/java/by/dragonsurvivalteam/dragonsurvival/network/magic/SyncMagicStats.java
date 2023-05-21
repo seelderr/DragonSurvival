@@ -64,7 +64,6 @@ public class SyncMagicStats implements IMessage<SyncMagicStats>{
 	public void run(SyncMagicStats message, Supplier<NetworkEvent.Context> supplier){
 		NetworkEvent.Context context = supplier.get();
 		context.enqueueWork(() -> {
-
 			Player thisPlayer = Minecraft.getInstance().player;
 			if(thisPlayer != null){
 				Level world = thisPlayer.level;

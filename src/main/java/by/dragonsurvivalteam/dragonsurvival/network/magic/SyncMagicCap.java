@@ -55,11 +55,13 @@ public class SyncMagicCap implements IMessage<SyncMagicCap>{
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> run(message, supplier));
 
 		if(supplier.get().getDirection() == NetworkDirection.PLAY_TO_SERVER){
-			ServerPlayer player = supplier.get().getSender();
+			supplier.get().enqueueWork(()->{
+				ServerPlayer player = supplier.get().getSender();
 
-			DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
-				dragonStateHandler.getMagicData().readNBT(message.nbt);
-				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncMagicCap(player.getId(), dragonStateHandler.getMagicData()));
+				DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
+					dragonStateHandler.getMagicData().readNBT(message.nbt);
+					NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncMagicCap(player.getId(), dragonStateHandler.getMagicData()));
+				});
 			});
 		}
 		supplier.get().setPacketHandled(true);
