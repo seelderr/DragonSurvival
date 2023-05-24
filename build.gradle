@@ -121,8 +121,14 @@ repositories {
     	url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
     }
     maven {
-        name = "Progwml6 maven"
-        url = "https://dvs1.progwml6.com/files/maven/"
+        // location of the maven that hosts JEI files since January 2023
+        name = "Jared's maven"
+        url = "https://maven.blamejared.com/"
+    }
+    maven {
+        // location of a maven mirror for JEI files, as a fallback
+        name = "ModMaven"
+        url = "https://modmaven.dev"
     }
     maven {
         url = "https://maven.theillusivec4.top/"

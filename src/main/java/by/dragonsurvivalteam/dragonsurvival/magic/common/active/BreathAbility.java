@@ -24,6 +24,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -73,12 +74,15 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 	@Override
 	public void onCharging(Player player, int currentChargeTime){}
 
+
 	@Override
 	public void onChanneling(Player player, int castDuration){
 		DragonStateHandler playerStateHandler = DragonUtils.getHandler(player);
 		DragonLevel growthLevel = DragonUtils.getDragonLevel(player);
-		
-		RANGE = (int)Math.round(4 + (playerStateHandler.getSize() - DragonLevel.NEWBORN.size) / (DragonLevel.ADULT.size - DragonLevel.NEWBORN.size) * 4);
+
+		double size = playerStateHandler.getSize();
+
+		RANGE = (int)Math.round(4 + (size - DragonLevel.NEWBORN.size) / (DragonLevel.ADULT.size - DragonLevel.NEWBORN.size) * 4);
 		yaw = (float)Math.toRadians(-player.getYRot());
 		pitch = (float)Math.toRadians(-player.getXRot());
 		speed = growthLevel == DragonLevel.NEWBORN ? 0.1F : growthLevel == DragonLevel.YOUNG ? 0.2F : 0.3F; //Changes distance
@@ -87,28 +91,20 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 		yComp = (float)Math.sin(pitch);
 		zComp = (float)(Math.cos(yaw) * Math.cos(pitch));
 
-		double headRot = playerStateHandler.getMovementData().headYaw;
-		double pitch = playerStateHandler.getMovementData().headPitch;
-		Vector3f bodyRot = Functions.getDragonCameraOffset(player);
-
-		Point2D result = new Double();
-		Point2D result2 = new Double();
-
-		Point2D point = new Point2D.Double(player.position().x() + bodyRot.x(), player.position().y() + player.getEyeHeight() - 0.2);
-		AffineTransform transform = new AffineTransform();
-		double angleInRadians = Mth.clamp(pitch, -90, 90) * -1 * Math.PI / 180;
-		transform.rotate(angleInRadians, player.position().x(), player.position().y() + player.getEyeHeight() - 0.2);
-		transform.transform(point, result);
-
-		Point2D point2 = new Point2D.Double(player.position().x() + bodyRot.x(), player.position().z() + bodyRot.z());
-		AffineTransform transform2 = new AffineTransform();
-		double angleInRadians2 = Mth.clamp(headRot, -180, 180) * -1 * Math.PI / 180;
-		transform2.rotate(angleInRadians2, player.position().x(), player.position().z());
-		transform2.transform(point2, result2);
-
-		dx = result2.getX();
-		dy = result.getY() - Math.abs(headRot) / 180 * .5;// * sizeScale;
-		dz = result2.getY();
+		Vec3 eyePos = player.getEyePosition();
+		Vec3 lookAngle = player.getLookAngle();
+		Vec3 forward;
+		Vec3 breathPos;
+		if (player.getAbilities().flying) {
+			forward = lookAngle.scale(2.0F);
+			breathPos = eyePos.add(forward).add(0F, -0.1-0.5F*(size / 30F), 0F);
+		}else{
+			forward = lookAngle.scale(1.0F);
+			breathPos = eyePos.add(forward).add(0F, -0.1F-0.2F*(size / 30F), 0F);
+		}
+		dx = breathPos.x;
+		dy = breathPos.y;
+		dz = breathPos.z;
 
 		Vec3 delta = player.getDeltaMovement();
 
@@ -126,8 +122,19 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 	}
 
 	public void hitEntities(){
-		Vec3 targetVec = TargetingFunctions.fromEntityCenter(player).add(player.getLookAngle().scale(RANGE)).add(0, 0.5, 0);
-		List<Entity>  entities = player.level.getEntities(player, TargetingFunctions.boxForRange(targetVec, 3), e -> !e.isSpectator() && e.isAlive() && TargetingFunctions.isValidTarget(getPlayer(), e));
+		AABB hitRange = TargetingFunctions.boxForRange(player.getPosition(1.0F), RANGE);
+		List<Entity>  entities = player.level.getEntities(player, hitRange, entity -> {
+					if(!entity.isSpectator() && entity.isAlive() && TargetingFunctions.isValidTarget(getPlayer(), entity))
+					{
+						Vec3 eyePosition = player.getEyePosition(1.0F);
+						Vec3 entityPos = entity.getPosition(1.0F);
+						double distance = entityPos.distanceTo(eyePosition);
+						return distance < RANGE && eyePosition.add(player.getLookAngle().scale(distance)).distanceTo(entityPos) < (distance / 4);
+
+					}
+					return false;
+				}
+		);
 
 		for(Entity entity : entities){
 			if(entity instanceof LivingEntity livingEntity){
