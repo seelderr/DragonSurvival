@@ -17,22 +17,21 @@ public class StormBreathSound extends AbstractTickableSoundInstance{
 
 		looping = true;
 
+		this.x = ability.getPlayer().getX();
+		this.y = ability.getPlayer().getY();
+		this.z = ability.getPlayer().getZ();
+
 		this.ability = ability;
 	}
 
 	@Override
 	public void tick(){
-		if(ability.getPlayer() != null){
-			DragonStateProvider.getCap(ability.getPlayer()).ifPresent(cap -> {
-				if(cap.getMagicData().getCurrentlyCasting() != ability){
-					stop();
-				}
-			});
-		}
-
-		if(ability.chargeTime == 0){
+		if(ability.getPlayer() == null || ability.chargeTime == 0)
 			stop();
-		}
+
+		this.x = ability.getPlayer().getX();
+		this.y = ability.getPlayer().getY();
+		this.z = ability.getPlayer().getZ();
 	}
 
 	@Override
