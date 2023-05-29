@@ -41,6 +41,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.DistExecutor;
@@ -77,12 +78,6 @@ public class ForestBreathAbility extends BreathAbility{
 	@ConfigType(Block.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathGrowBlacklist", comment = "Blocks that will not be grown by the forest breath. Formatting: block/modid:id" )
 	public static List<String> forestBreathGrowBlacklist =List.of();
-	@OnlyIn( Dist.CLIENT )
-	private SoundInstance startingSound;
-	@OnlyIn( Dist.CLIENT )
-	private TickableSoundInstance loopingSound;
-	@OnlyIn( Dist.CLIENT )
-	private SoundInstance endSound;
 
 	@Override
 	public String getName(){
@@ -199,7 +194,7 @@ public class ForestBreathAbility extends BreathAbility{
 			return;
 		}
 
-		if(player.level.isClientSide && castDuration <= 1){
+		if(player.level.isClientSide && castDuration <= 0){
 			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)this::sound);
 		}
 
@@ -247,10 +242,13 @@ public class ForestBreathAbility extends BreathAbility{
 	@OnlyIn( Dist.CLIENT )
 	public  void stopSound(){
 		if(SoundRegistry.forestBreathEnd != null){
-			if(endSound == null){
-				endSound = SimpleSoundInstance.forAmbientAddition(SoundRegistry.forestBreathEnd);
-			}
-
+			Vec3 pos = player.getEyePosition(1.0F);
+			SimpleSoundInstance endSound = new SimpleSoundInstance(
+					SoundRegistry.forestBreathEnd,
+					SoundSource.PLAYERS,
+					1.0F,1.0F,
+					pos.x, pos.y, pos.z
+			);
 			Minecraft.getInstance().getSoundManager().playDelayed(endSound, 0);
 		}
 
@@ -291,14 +289,16 @@ public class ForestBreathAbility extends BreathAbility{
 
 	@OnlyIn( Dist.CLIENT )
 	public  void sound(){
-		if(startingSound == null){
-			startingSound = SimpleSoundInstance.forAmbientAddition(SoundRegistry.forestBreathStart);
-		}
+		Vec3 pos = player.getEyePosition(1.0F);
+		SimpleSoundInstance startingSound = new SimpleSoundInstance(
+				SoundRegistry.forestBreathStart,
+				SoundSource.PLAYERS,
+				1.0F,1.0F,
+				pos.x,pos.y,pos.z
+		);
 		Minecraft.getInstance().getSoundManager().playDelayed(startingSound, 0);
-		loopingSound = new PoisonBreathSound(this);
-
 		Minecraft.getInstance().getSoundManager().stop(new ResourceLocation(DragonSurvivalMod.MODID, "forest_breath_loop"), SoundSource.PLAYERS);
-		Minecraft.getInstance().getSoundManager().queueTickingSound(loopingSound);
+		Minecraft.getInstance().getSoundManager().queueTickingSound(new PoisonBreathSound(this));
 	}
 
 	@Override

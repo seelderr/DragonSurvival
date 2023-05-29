@@ -41,6 +41,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FireBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.DistExecutor;
@@ -76,15 +77,6 @@ public class NetherBreathAbility extends BreathAbility{
 	@ConfigRange( min = 1, max = 10000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreathCasttime", comment = "The cast time in ticks of the fire breath ability" )
 	public static Integer fireBreathCasttime = 20;
-	@OnlyIn( Dist.CLIENT )
-	private SoundInstance startingSound;
-
-	@OnlyIn( Dist.CLIENT )
-	private TickableSoundInstance loopingSound;
-
-	@OnlyIn( Dist.CLIENT )
-	private SoundInstance endSound;
-
 
 	@Override
 	public String getName(){
@@ -219,7 +211,7 @@ public class NetherBreathAbility extends BreathAbility{
 			return;
 		}
 
-		if(player.level.isClientSide && castDuration <= 1){
+		if(player.level.isClientSide && castDuration <= 0){
 			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)this::sound);
 		}
 
@@ -248,22 +240,29 @@ public class NetherBreathAbility extends BreathAbility{
 
 	@OnlyIn( Dist.CLIENT )
 	public  void sound(){
-		if(startingSound == null){
-			startingSound = SimpleSoundInstance.forAmbientAddition(SoundRegistry.fireBreathStart);
-		}
+		Vec3 pos = player.getEyePosition(1.0F);
+		SimpleSoundInstance startingSound = new SimpleSoundInstance(
+				SoundRegistry.fireBreathStart,
+				SoundSource.PLAYERS,
+				1.0F,1.0F,
+				pos.x, pos.y, pos.z
+		);
 		Minecraft.getInstance().getSoundManager().playDelayed(startingSound, 0);
-		loopingSound = new FireBreathSound(this);
 
 		Minecraft.getInstance().getSoundManager().stop(new ResourceLocation(DragonSurvivalMod.MODID, "fire_breath_loop"), SoundSource.PLAYERS);
-		Minecraft.getInstance().getSoundManager().queueTickingSound(loopingSound);
+		Minecraft.getInstance().getSoundManager().queueTickingSound(new FireBreathSound(this));
 	}
 
 	@OnlyIn( Dist.CLIENT )
 	public  void stopSound(){
 		if(SoundRegistry.fireBreathEnd != null){
-			if(endSound == null){
-				endSound = SimpleSoundInstance.forAmbientAddition(SoundRegistry.fireBreathEnd);
-			}
+			Vec3 pos = player.getEyePosition(1.0F);
+			SimpleSoundInstance endSound = new SimpleSoundInstance(
+					SoundRegistry.fireBreathEnd,
+					SoundSource.PLAYERS,
+					1.0F,1.0F,
+					pos.x, pos.y, pos.z
+			);
 
 			Minecraft.getInstance().getSoundManager().playDelayed(endSound, 0);
 		}
