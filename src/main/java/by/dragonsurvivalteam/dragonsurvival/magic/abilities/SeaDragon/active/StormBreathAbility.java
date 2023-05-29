@@ -160,15 +160,6 @@ public class StormBreathAbility extends BreathAbility{
 	                                                     "storm_breath"}, key = "chargedBlacklist", comment = "List of entities that will not receive the charged effect at all Format: modid:id" )
 	public static List<String> chargedBlacklist = List.of("minecraft:armor_stand", "minecraft:cat", "minecraft:cart", "minecraft:guardian", "minecraft:elder_guardian", "minecraft:enderman");
 
-	@OnlyIn( Dist.CLIENT )
-	private SoundInstance startingSound;
-
-	@OnlyIn( Dist.CLIENT )
-	private TickableSoundInstance loopingSound;
-
-	@OnlyIn( Dist.CLIENT )
-	private SoundInstance endSound;
-
 	public static void onDamageChecks(LivingEntity entity){
 		if(entity instanceof Creeper creeper){
 
@@ -362,15 +353,17 @@ public class StormBreathAbility extends BreathAbility{
 
 	@OnlyIn( Dist.CLIENT )
 	public void sound(){
-		if(startingSound == null){
-			startingSound = SimpleSoundInstance.forAmbientAddition(SoundRegistry.stormBreathStart);
-		}
+		Vec3 pos = player.getEyePosition(1.0F);
+		SimpleSoundInstance startingSound = new SimpleSoundInstance(
+				SoundRegistry.stormBreathStart,
+				SoundSource.PLAYERS,
+				1.0F,1.0F,
+				pos.x,pos.y,pos.z
+		);
 
 		Minecraft.getInstance().getSoundManager().playDelayed(startingSound, 0);
-		loopingSound = new StormBreathSound(this);
-
 		Minecraft.getInstance().getSoundManager().stop(new ResourceLocation(DragonSurvivalMod.MODID, "storm_breath_loop"), SoundSource.PLAYERS);
-		Minecraft.getInstance().getSoundManager().queueTickingSound(loopingSound);
+		Minecraft.getInstance().getSoundManager().queueTickingSound(new StormBreathSound(this));
 	}
 
 	@Override
@@ -396,10 +389,13 @@ public class StormBreathAbility extends BreathAbility{
 	@OnlyIn( Dist.CLIENT )
 	public void stopSound(){
 		if(SoundRegistry.stormBreathEnd != null){
-			if(endSound == null){
-				endSound = SimpleSoundInstance.forAmbientAddition(SoundRegistry.stormBreathEnd);
-			}
-
+			Vec3 pos = player.getEyePosition(1.0F);
+			SimpleSoundInstance endSound = new SimpleSoundInstance(
+					SoundRegistry.stormBreathEnd,
+					SoundSource.PLAYERS,
+					1.0F,1.0F,
+					pos.x, pos.y, pos.z
+			);
 			Minecraft.getInstance().getSoundManager().playDelayed(endSound, 0);
 		}
 
@@ -411,7 +407,7 @@ public class StormBreathAbility extends BreathAbility{
 	public void onChanneling(Player player, int castDuration){
 		super.onChanneling(player, castDuration);
 
-		if(player.level.isClientSide && castDuration <= 1){
+		if(player.level.isClientSide && castDuration <= 0){
 			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)this::sound);
 		}
 
