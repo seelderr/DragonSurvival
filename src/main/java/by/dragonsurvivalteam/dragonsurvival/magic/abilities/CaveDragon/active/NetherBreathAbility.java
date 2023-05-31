@@ -153,7 +153,7 @@ public class NetherBreathAbility extends BreathAbility{
 			}
 			DragonStateHandler handler = DragonUtils.getHandler(player);
 
-			BurnAbility burnAbility = DragonAbilities.getAbility(player, BurnAbility.class);
+			BurnAbility burnAbility = DragonAbilities.getSelfAbility(player, BurnAbility.class);
 			if(player.getRandom().nextInt(100) < burnAbility.level * 15){
 				BlockState blockAbove = player.level.getBlockState(pos.above());
 
@@ -287,7 +287,7 @@ public class NetherBreathAbility extends BreathAbility{
 
 		if(!entityHit.level.isClientSide){
 			DragonStateHandler handler = DragonUtils.getHandler(player);
-			BurnAbility burnAbility = DragonAbilities.getAbility(player, BurnAbility.class);
+			BurnAbility burnAbility = DragonAbilities.getSelfAbility(player, BurnAbility.class);
 
 			if(entityHit.getRandom().nextInt(100) < burnAbility.level * 15){
 				DragonUtils.getHandler(entityHit).lastAfflicted = player != null ? player.getId() : -1;

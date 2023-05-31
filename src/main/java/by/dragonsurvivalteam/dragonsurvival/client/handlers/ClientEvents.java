@@ -376,7 +376,7 @@ public class ClientEvents{
 
 					int maxTimeWithoutWater = ServerConfig.seaTicksWithoutWater;
 
-					WaterAbility waterAbility = DragonAbilities.getAbility(player, WaterAbility.class);
+					WaterAbility waterAbility = DragonAbilities.getSelfAbility(player, WaterAbility.class);
 
 					if(waterAbility != null){
 						maxTimeWithoutWater += Functions.secondsToTicks(waterAbility.getDuration());
@@ -412,7 +412,7 @@ public class ClientEvents{
 						((ForgeGui)Minecraft.getInstance().gui).rightHeight += 10;
 					}
 
-					ContrastShowerAbility contrastShower = DragonAbilities.getAbility(player, ContrastShowerAbility.class);
+					ContrastShowerAbility contrastShower = DragonAbilities.getSelfAbility(player, ContrastShowerAbility.class);
 					int maxRainTime = 0;
 
 					if(contrastShower != null){
@@ -467,7 +467,7 @@ public class ClientEvents{
 					}
 
 					int maxTimeInDarkness = ServerConfig.forestStressTicks;
-					LightInDarknessAbility lightInDarkness = DragonAbilities.getAbility(player, LightInDarknessAbility.class);
+					LightInDarknessAbility lightInDarkness = DragonAbilities.getSelfAbility(player, LightInDarknessAbility.class);
 
 					if(lightInDarkness != null){
 						maxTimeInDarkness += Functions.secondsToTicks(((LightInDarknessAbility)lightInDarkness).getDuration());
