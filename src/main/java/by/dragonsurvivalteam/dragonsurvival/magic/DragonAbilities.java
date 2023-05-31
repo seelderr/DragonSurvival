@@ -18,6 +18,7 @@ import net.minecraftforge.forgespi.language.ModFileScanData;
 import net.minecraftforge.network.PacketDistributor;
 import org.objectweb.asm.Type;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.*;
@@ -144,14 +145,32 @@ public class DragonAbilities{
 		}
 	}
 
-	public static boolean hasAbility(LivingEntity player, Class<? extends DragonAbility> c) {
+	public static boolean hasAbility(LivingEntity player, Class<? extends DragonAbility> c, @Nullable String dragonType) {
 		DragonStateHandler handler = DragonUtils.getHandler(player);
-		return handler.getMagicData().abilities.values().stream().anyMatch(s-> s.getClass() == c||s.getClass().isAssignableFrom(c) || c.isAssignableFrom(s.getClass()));
+		return handler.getMagicData().abilities.values().stream().anyMatch(s-> {
+			if (s.getClass() != c && !s.getClass().isAssignableFrom(c) && !c.isAssignableFrom(s.getClass()))
+				return false;
+			if (dragonType != null && !dragonType.equals(s.getDragonType().getTypeName()))
+				return false;
+			return true;
+		});
 	}
-
-	public static <T extends DragonAbility> T getAbility(LivingEntity player, Class<T> c){
+	public static boolean hasAbility(LivingEntity player, Class<? extends DragonAbility> c) {
+		return hasAbility(player, c, null);
+	}
+	public static boolean hasSelfAbility(LivingEntity player, Class<? extends DragonAbility> c) {
 		DragonStateHandler handler = DragonUtils.getHandler(player);
-		Optional<T> optionalT = (Optional<T>)handler.getMagicData().abilities.values().stream().filter(s-> s.getClass() == c || s.getClass().isAssignableFrom(c) || c.isAssignableFrom(s.getClass())).findAny();
+		return hasAbility(player, c, handler.getType().getTypeName());
+	}
+	public static <T extends DragonAbility> T getAbility(LivingEntity player, Class<T> c, @Nullable String dragonType){
+		DragonStateHandler handler = DragonUtils.getHandler(player);
+		Optional<T> optionalT = (Optional<T>)handler.getMagicData().abilities.values().stream().filter(s-> {
+			if (s.getClass() != c && !s.getClass().isAssignableFrom(c) && !c.isAssignableFrom(s.getClass()))
+				return false;
+			if (dragonType != null && !dragonType.equals(s.getDragonType().getTypeName()))
+				return false;
+			return true;
+		}).findAny();
 		return optionalT.orElseGet(() -> {
 			if(Modifier.isAbstract(c.getModifiers())) return null;
 			try{
@@ -160,5 +179,12 @@ public class DragonAbilities{
 				throw new RuntimeException(e);
 			}
 		});
+	}
+	public static <T extends DragonAbility> T getAbility(LivingEntity player, Class<T> c) {
+		return getAbility(player, c, null);
+	}
+	public static <T extends DragonAbility> T getSelfAbility(LivingEntity player, Class<T> c) {
+		DragonStateHandler handler = DragonUtils.getHandler(player);
+		return getAbility(player, c, handler.getType().getTypeName());
 	}
 }

@@ -76,7 +76,7 @@ public class BallLightningEntity extends DragonBallEntity{
 
 	@Override
 	public void attackMobs(){
-		int range = DragonAbilities.getAbility((Player)getOwner(), BallLightningAbility.class).getRange();
+		int range = DragonAbilities.getSelfAbility((Player)getOwner(), BallLightningAbility.class).getRange();
 		List<Entity> entities = level.getEntities(null, new AABB(position().x - range, position().y - range, position().z - range, position().x + range, position().y + range, position().z + range));
 		entities.removeIf(e -> e == getOwner() || e instanceof BallLightningEntity);
 		entities.removeIf(e -> e.distanceTo(this) > range);

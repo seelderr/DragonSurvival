@@ -64,7 +64,7 @@ public class CaveDragonType extends AbstractDragonType{
 		boolean isInCauldron = DragonTraitHandler.isInCauldron(feetBlock, blockUnder);
 		boolean isInSeaBlock = DragonConfigHandler.SEA_DRAGON_HYDRATION_BLOCKS != null && (DragonConfigHandler.SEA_DRAGON_HYDRATION_BLOCKS.contains(block) || DragonConfigHandler.SEA_DRAGON_HYDRATION_BLOCKS.contains(feetBlock.getBlock()) || isInCauldron);
 
-		ContrastShowerAbility contrastShower = DragonAbilities.getAbility(player, ContrastShowerAbility.class);
+		ContrastShowerAbility contrastShower = DragonAbilities.getSelfAbility(player, ContrastShowerAbility.class);
 		int maxRainTime = 0;
 		if(contrastShower != null){
 			maxRainTime += Functions.secondsToTicks(contrastShower.getDuration());

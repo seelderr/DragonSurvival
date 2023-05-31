@@ -53,7 +53,7 @@ public class ForestDragonType extends AbstractDragonType{
 		Biome biome = world.getBiome(player.blockPosition()).value();
 
 		int maxStressTicks = ServerConfig.forestStressTicks;
-		LightInDarknessAbility lightInDarkness = DragonAbilities.getAbility(player, LightInDarknessAbility.class);
+		LightInDarknessAbility lightInDarkness = DragonAbilities.getSelfAbility(player, LightInDarknessAbility.class);
 	
 		if(lightInDarkness != null){
 			maxStressTicks += Functions.secondsToTicks(lightInDarkness.getDuration());
