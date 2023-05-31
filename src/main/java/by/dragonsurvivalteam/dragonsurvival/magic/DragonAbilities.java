@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.magic;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
@@ -159,8 +160,11 @@ public class DragonAbilities{
 		return hasAbility(player, c, null);
 	}
 	public static boolean hasSelfAbility(LivingEntity player, Class<? extends DragonAbility> c) {
-		DragonStateHandler handler = DragonUtils.getHandler(player);
-		return hasAbility(player, c, handler.getType().getTypeName());
+		AbstractDragonType dragonType = DragonUtils.getHandler(player).getType();
+		if (dragonType == null)
+			return hasAbility(player, c, null);
+		else
+			return hasAbility(player, c, dragonType.getTypeName());
 	}
 	public static <T extends DragonAbility> T getAbility(LivingEntity player, Class<T> c, @Nullable String dragonType){
 		DragonStateHandler handler = DragonUtils.getHandler(player);
@@ -184,7 +188,10 @@ public class DragonAbilities{
 		return getAbility(player, c, null);
 	}
 	public static <T extends DragonAbility> T getSelfAbility(LivingEntity player, Class<T> c) {
-		DragonStateHandler handler = DragonUtils.getHandler(player);
-		return getAbility(player, c, handler.getType().getTypeName());
+		AbstractDragonType dragonType = DragonUtils.getHandler(player).getType();
+		if (dragonType == null)
+			return getAbility(player, c, null);
+		else
+			return getAbility(player, c, dragonType.getTypeName());
 	}
 }
