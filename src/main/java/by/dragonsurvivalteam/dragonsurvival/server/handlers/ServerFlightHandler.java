@@ -118,7 +118,7 @@ public class ServerFlightHandler{
 				damage = Mth.clamp(damage, 0, livingEntity.getHealth() - (lethalFlight ? 0 : 1));
 
 				if(!livingEntity.level.isClientSide && dragonStateHandler.isWingsSpread()){
-					event.setDistance((float)Math.floor((damage + 3.0F + f) / event.getDamageMultiplier()));
+					event.setDistance((float)Math.floor((damage + 3.0F + f) * event.getDamageMultiplier()));
 				}
 
 				if(!livingEntity.level.isClientSide){
