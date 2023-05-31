@@ -61,7 +61,7 @@ public class SkillProgressButton extends Button{
 
 		if(ability != null)
 			DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {
-				DragonAbility ability1 = DragonAbilities.getAbility(Minecraft.getInstance().player, ability.getClass());
+				DragonAbility ability1 = DragonAbilities.getSelfAbility(Minecraft.getInstance().player, ability.getClass());
 
 				if(ability.getLevel() > ability1.getLevel() + 1){
 					Gui.fill(stack, x, y, x + 16, y + 16, new Color(0.25F, 0.25F, 0.25F, 0.75F).getRGB());

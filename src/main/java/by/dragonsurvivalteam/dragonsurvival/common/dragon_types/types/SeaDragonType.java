@@ -64,7 +64,7 @@ public class SeaDragonType extends AbstractDragonType {
 		boolean isInSeaBlock = DragonConfigHandler.SEA_DRAGON_HYDRATION_BLOCKS != null && (DragonConfigHandler.SEA_DRAGON_HYDRATION_BLOCKS.contains(block) || DragonConfigHandler.SEA_DRAGON_HYDRATION_BLOCKS.contains(feetBlock.getBlock()) || isInCauldron);
 
 		int maxTicksOutofWater = ServerConfig.seaTicksWithoutWater;
-		WaterAbility waterAbility = DragonAbilities.getAbility(player, WaterAbility.class);
+		WaterAbility waterAbility = DragonAbilities.getSelfAbility(player, WaterAbility.class);
 
 		if(waterAbility != null){
 			maxTicksOutofWater += Functions.secondsToTicks(waterAbility.getDuration());

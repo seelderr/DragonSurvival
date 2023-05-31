@@ -84,7 +84,7 @@ public class DragonBonusHandler{
 						distance -= ServerConfig.forestFallReduction.floatValue();
 					}
 
-					CliffhangerAbility ability = DragonAbilities.getAbility(living, CliffhangerAbility.class);
+					CliffhangerAbility ability = DragonAbilities.getSelfAbility(living, CliffhangerAbility.class);
 					distance -= ability.getHeight();
 				}
 				distance -= dragonStateHandler.getLevel().jumpHeight;

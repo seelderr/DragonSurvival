@@ -184,7 +184,7 @@ public class AbilityScreen extends Screen{
 			unlockAbleSkills.clear();
 
 			for(ActiveDragonAbility ab : cap.getMagicData().getActiveAbilities()){
-				ActiveDragonAbility ability = DragonAbilities.getAbility(minecraft.player, ab.getClass());
+				ActiveDragonAbility ability = DragonAbilities.getSelfAbility(minecraft.player, ab.getClass());
 				ActiveDragonAbility db = ability != null ? ability : ab;
 
 				for(int i = db.getLevel(); i < db.getMaxLevel(); i++){

@@ -281,7 +281,7 @@ public class MagicHandler{
 							}
 
 							if(Objects.equals(cap.getType(), DragonTypes.SEA)){
-								SpectralImpactAbility spectralImpact = DragonAbilities.getAbility(player, SpectralImpactAbility.class);
+								SpectralImpactAbility spectralImpact = DragonAbilities.getSelfAbility(player, SpectralImpactAbility.class);
 								boolean hit = player.getRandom().nextInt(100) <= spectralImpact.getChance();
 
 								if(hit){
@@ -294,7 +294,7 @@ public class MagicHandler{
 									}
 								}
 							}else if(Objects.equals(cap.getType(), DragonTypes.CAVE)){
-								BurnAbility burnAbility = DragonAbilities.getAbility(player, BurnAbility.class);
+								BurnAbility burnAbility = DragonAbilities.getSelfAbility(player, BurnAbility.class);
 								boolean hit = player.getRandom().nextInt(100) < burnAbility.getChance();
 
 								if(hit){
