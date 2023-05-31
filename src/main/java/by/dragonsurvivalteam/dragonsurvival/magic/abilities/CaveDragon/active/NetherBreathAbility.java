@@ -21,8 +21,6 @@ import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
-import net.minecraft.client.resources.sounds.SoundInstance;
-import net.minecraft.client.resources.sounds.TickableSoundInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -154,7 +152,7 @@ public class NetherBreathAbility extends BreathAbility{
 			}
 			DragonStateHandler handler = DragonUtils.getHandler(player);
 
-			BurnAbility burnAbility = DragonAbilities.getAbility(player, BurnAbility.class);
+			BurnAbility burnAbility = DragonAbilities.getSelfAbility(player, BurnAbility.class);
 			if(player.getRandom().nextInt(100) < burnAbility.level * 15){
 				BlockState blockAbove = player.level.getBlockState(pos.above());
 
@@ -286,7 +284,7 @@ public class NetherBreathAbility extends BreathAbility{
 
 		if(!entityHit.level.isClientSide){
 			DragonStateHandler handler = DragonUtils.getHandler(player);
-			BurnAbility burnAbility = DragonAbilities.getAbility(player, BurnAbility.class);
+			BurnAbility burnAbility = DragonAbilities.getSelfAbility(player, BurnAbility.class);
 
 			if(entityHit.getRandom().nextInt(100) < burnAbility.level * 15){
 				DragonUtils.getHandler(entityHit).lastAfflicted = player != null ? player.getId() : -1;
