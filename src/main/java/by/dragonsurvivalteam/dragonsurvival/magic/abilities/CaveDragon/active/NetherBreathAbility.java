@@ -316,8 +316,13 @@ public class NetherBreathAbility extends BreathAbility{
 	}
 
 	@Override
-	public int getChargingManaCost(){
-		return 2;
+	public int getContinuousManaCostTime() {
+		return fireBreathManaTicks;
+	}
+
+	@Override
+	public int getInitManaCost(){
+		return fireBreathInitialMana;
 	}
 
 	@Override

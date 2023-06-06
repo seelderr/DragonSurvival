@@ -99,7 +99,6 @@ public class StormBreathAbility extends BreathAbility{
 	                                                     "sea_dragon",
 	                                                     "actives",
 	                                                     "storm_breath"}, key = "stormBreathManaTicks", comment = "How often in ticks, mana is consumed while using storm breath" )
-	///need delete unused configs
 	public static Integer stormBreathManaTicks = 40;
 	@ConfigType( Block.class )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic",
@@ -463,7 +462,12 @@ public class StormBreathAbility extends BreathAbility{
 	}
 
 	@Override
-	public int getChargingManaCost(){
+	public int getContinuousManaCostTime() {
+		return stormBreathManaTicks;
+	}
+
+	@Override
+	public int getInitManaCost(){
 		return stormBreathInitialMana;
 	}
 

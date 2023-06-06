@@ -11,11 +11,9 @@ import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.TargetingFunctions;
-import com.mojang.math.Vector3f;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.EntityDamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -29,9 +27,6 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
-import java.awt.geom.Point2D.Double;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -224,7 +219,7 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 		DragonLevel growthLevel = DragonUtils.getDragonLevel(player);
 		int RANGE = growthLevel == DragonLevel.NEWBORN ? 4 : growthLevel == DragonLevel.YOUNG ? 7 : 10;
 
-		components.add(Component.translatable("ds.skill.mana_cost", getChargingManaCost()));
+		components.add(Component.translatable("ds.skill.mana_cost", getInitManaCost()));
 		components.add(Component.translatable("ds.skill.channel_cost", getManaCost(), 2));
 
 		components.add(Component.translatable("ds.skill.cast_time", nf.format((double)getSkillChargeTime() / 20)));
