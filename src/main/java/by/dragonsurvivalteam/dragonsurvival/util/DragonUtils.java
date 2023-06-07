@@ -22,7 +22,7 @@ public class DragonUtils{
 
 	public static EntityStateHandler getEntityHandler(Entity entity){
 		if (entity == null) {
-			return null;
+			return new EntityStateHandler();
 		}
 
 		LazyOptional<EntityStateHandler> cap = (LazyOptional<EntityStateHandler>) DragonStateProvider.getEntityCap(entity);
