@@ -307,7 +307,12 @@ public class ForestBreathAbility extends BreathAbility{
 	}
 
 	@Override
-	public int getChargingManaCost(){
+	public int getContinuousManaCostTime() {
+		return forestBreathManaTicks;
+	}
+
+	@Override
+	public int getInitManaCost(){
 		return forestBreathInitialMana;
 	}
 

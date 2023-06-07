@@ -96,36 +96,39 @@ public class ServerFlightHandler{
 
 		DragonStateProvider.getCap(livingEntity).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon() && dragonStateHandler.hasWings()){
-				if(!enableFlightFallDamage){
-					event.setCanceled(true);
-				}
+				try{
+					if (!enableFlightFallDamage) {
+						event.setCanceled(true);
+						return;
+					}
 
-				if(flightSpeed <= 2 || dragonStateHandler.isWingsSpread() && !livingEntity.isSprinting() && flightSpeed <= 4){
-					event.setCanceled(true);
-					return;
-				}
+					if (flightSpeed <= 2 || dragonStateHandler.isWingsSpread() && !livingEntity.isSprinting() && flightSpeed <= 4) {
+						event.setCanceled(true);
+						return;
+					}
 
-				if(livingEntity.isPassenger() && DragonUtils.isDragon(livingEntity.getVehicle())){
-					event.setCanceled(true);
-					return;
-				}
+					if (livingEntity.isPassenger() && DragonUtils.isDragon(livingEntity.getVehicle())) {
+						event.setCanceled(true);
+						return;
+					}
 
 
-				MobEffectInstance effectinstance = livingEntity.getEffect(MobEffects.JUMP);
-				float f = effectinstance == null ? 0.0F : (float)(effectinstance.getAmplifier() + 1);
+					MobEffectInstance effectinstance = livingEntity.getEffect(MobEffects.JUMP);
+					float f = effectinstance == null ? 0.0F : (float) (effectinstance.getAmplifier() + 1);
 
-				double damage = livingEntity.getDeltaMovement().lengthSqr() * (dragonStateHandler.getSize() / 20);
-				damage = Mth.clamp(damage, 0, livingEntity.getHealth() - (lethalFlight ? 0 : 1));
+					double damage = livingEntity.getDeltaMovement().lengthSqr() * (dragonStateHandler.getSize() / 20);
+					damage = Mth.clamp(damage, 0, livingEntity.getHealth() - (lethalFlight ? 0 : 1));
 
-				if(!livingEntity.level.isClientSide && dragonStateHandler.isWingsSpread()){
-					event.setDistance((float)Math.floor((damage + 3.0F + f) * event.getDamageMultiplier()));
-				}
-
-				if(!livingEntity.level.isClientSide){
-					if(foldWingsOnLand){
-						if(dragonStateHandler.isWingsSpread()){
-							dragonStateHandler.setWingsSpread(false);
-							NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> livingEntity), new SyncFlyingStatus(livingEntity.getId(), false));
+					if (!livingEntity.level.isClientSide && dragonStateHandler.isWingsSpread()) {
+						event.setDistance((float) Math.floor((damage + 3.0F + f) * event.getDamageMultiplier()));
+					}
+				}finally {
+					if(!livingEntity.level.isClientSide){
+						if(foldWingsOnLand){
+							if(dragonStateHandler.isWingsSpread()){
+								dragonStateHandler.setWingsSpread(false);
+								NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> livingEntity), new SyncFlyingStatus(livingEntity.getId(), false));
+							}
 						}
 					}
 				}
