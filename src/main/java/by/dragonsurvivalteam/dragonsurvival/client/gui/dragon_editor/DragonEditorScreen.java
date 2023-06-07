@@ -801,10 +801,19 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 
 			if(cap.getType() != type){
 				Minecraft.getInstance().player.sendSystemMessage(Component.translatable("ds." + type.getTypeName().toLowerCase() + "_dragon_choice"));
+
+				if(type == null && cap.getType() != null){
+					DragonCommand.reInsertClawTools(Minecraft.getInstance().player, cap);
+				}
+
 				cap.setType(type);
 
-				if(!ServerConfig.saveGrowthStage || cap.getSize() == 0){
+				double size = cap.getSavedDragonSize(cap.getType().getTypeName());
+
+				if(!ServerConfig.saveGrowthStage || size == 0){
 					cap.setSize(DragonLevel.NEWBORN.size);
+				} else {
+					cap.setSize(size);
 				}
 
 				cap.setHasWings(ServerConfig.saveGrowthStage ? cap.hasWings() || ServerFlightHandler.startWithWings : ServerFlightHandler.startWithWings);
@@ -815,10 +824,6 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 				NetworkHandler.CHANNEL.sendToServer(new SyncAltarCooldown(Minecraft.getInstance().player.getId(), Functions.secondsToTicks(ServerConfig.altarUsageCooldown)));
 				NetworkHandler.CHANNEL.sendToServer(new SyncSpinStatus(Minecraft.getInstance().player.getId(), cap.getMovementData().spinAttack, cap.getMovementData().spinCooldown, cap.getMovementData().spinLearned));
 				ClientEvents.sendClientData(new RequestClientData(cap.getType(), cap.getLevel()));
-
-				if(type == null && cap.getType() != null){
-					DragonCommand.reInsertClawTools(Minecraft.getInstance().player, cap);
-				}
 			}
 		});
 

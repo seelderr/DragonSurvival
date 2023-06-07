@@ -13,8 +13,8 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
 
+// FIXME :: Why does this still exist as a duplicate
 public class DragonStateProvider implements ICapabilitySerializable<CompoundTag>{
-
 	private final DragonStateHandler handlerObject = new DragonStateHandler();
 	private final LazyOptional<DragonStateHandler> instance = LazyOptional.of(() -> handlerObject);
 

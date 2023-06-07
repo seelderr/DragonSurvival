@@ -114,7 +114,7 @@ public class DragonCommand{
 		NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player),new SynchronizeDragonCap(player.getId(), cap.isHiding(), cap.getType(), cap.getSize(), cap.hasWings(), 0));
 		NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player),new SyncSpinStatus(player.getId(), cap.getMovementData().spinAttack, cap.getMovementData().spinCooldown, cap.getMovementData().spinLearned));
 		NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncSize(player.getId(), size));
-		NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)player), new RequestClientData(cap.getType(), cap.getLevel()));
+		NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new RequestClientData(cap.getType(), cap.getLevel()));
 		player.refreshDimensions();
 		return 1;
 	}

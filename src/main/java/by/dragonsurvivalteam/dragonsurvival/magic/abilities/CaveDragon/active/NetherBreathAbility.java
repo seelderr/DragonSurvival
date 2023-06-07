@@ -278,19 +278,18 @@ public class NetherBreathAbility extends BreathAbility{
 
 	@Override
 	public void onEntityHit(LivingEntity entityHit){
-		//Short enough fire duration to not cause fire damage but still drop cooked items
 		if(!entityHit.isOnFire()){
+			// Short enough fire duration to not cause fire damage but still drop cooked items
 			entityHit.setRemainingFireTicks(1);
 		}
 
 		super.onEntityHit(entityHit);
 
 		if(!entityHit.level.isClientSide){
-			DragonStateHandler handler = DragonUtils.getHandler(player);
 			BurnAbility burnAbility = DragonAbilities.getSelfAbility(player, BurnAbility.class);
 
 			if(entityHit.getRandom().nextInt(100) < burnAbility.level * 15){
-				DragonUtils.getHandler(entityHit).lastAfflicted = player != null ? player.getId() : -1;
+				DragonUtils.getEntityHandler(entityHit).lastAfflicted = player != null ? player.getId() : -1;
 				entityHit.addEffect(new MobEffectInstance(DragonEffects.BURN, Functions.secondsToTicks(10), 0, false, true));
 			}
 		}

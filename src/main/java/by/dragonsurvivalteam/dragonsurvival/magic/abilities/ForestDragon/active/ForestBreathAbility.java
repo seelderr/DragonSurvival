@@ -267,7 +267,7 @@ public class ForestBreathAbility extends BreathAbility{
 
 		if(!entityHit.level.isClientSide){
 			if(entityHit.getRandom().nextInt(100) < 30){
-				DragonUtils.getHandler(entityHit).lastAfflicted = player != null ? player.getId() : -1;
+				DragonUtils.getEntityHandler(entityHit).lastAfflicted = player != null ? player.getId() : -1;
 				entityHit.addEffect(new MobEffectInstance(DragonEffects.DRAIN, Functions.secondsToTicks(10), 0, false, true));
 			}
 		}

@@ -5,7 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaDragon.LargeLigh
 import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaDragon.SmallLightningParticleData;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.SoundRegistry;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.StormBreathSound;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
@@ -23,7 +23,6 @@ import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
-import net.minecraft.client.resources.sounds.TickableSoundInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.DustParticleOptions;
@@ -34,6 +33,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
@@ -233,15 +233,15 @@ public class StormBreathAbility extends BreathAbility{
 
 			if(!chargedSpreadBlacklist.contains(ResourceHelper.getKey(source).toString())){
 				if(target != source){
-					DragonStateHandler capSource = DragonUtils.getHandler(source);
-					DragonStateHandler cap = DragonUtils.getHandler(target);
+					EntityStateHandler capSource = DragonUtils.getEntityHandler(source);
+					EntityStateHandler entityCap = DragonUtils.getEntityHandler(target);
 
-					cap.chainCount = capSource.chainCount + 1;
+					entityCap.chainCount = capSource.chainCount + 1;
 
 					if(!target.level.isClientSide){
 						if(target.getRandom().nextInt(100) < 40){
-							if(cap.chainCount < chargedEffectMaxChain || chargedEffectMaxChain == -1){
-								cap.lastAfflicted = player != null ? player.getId() : -1;
+							if(entityCap.chainCount < chargedEffectMaxChain || chargedEffectMaxChain == -1){
+								entityCap.lastAfflicted = player != null ? player.getId() : -1;
 								target.addEffect(new MobEffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(10), 0, false, true));
 							}
 						}
@@ -295,7 +295,7 @@ public class StormBreathAbility extends BreathAbility{
 		if(!entity.level.isClientSide){
 			if(!chargedBlacklist.contains(ResourceHelper.getKey(entity).toString())){
 				if(entity.getRandom().nextInt(100) < 40){
-					DragonStateHandler cap = DragonUtils.getHandler(entity);
+					EntityStateHandler cap = DragonUtils.getEntityHandler(entity);
 
 					cap.lastAfflicted = player.getId();
 					cap.chainCount = 1;
