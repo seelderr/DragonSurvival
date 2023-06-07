@@ -9,6 +9,5 @@ public class EntityStateHandler {
     // Amount of times the last chain attack has chained
     public int chainCount = 0;
 
-    // TODO : Does not seem to be used yet?
     public Vec3 lastPos;
 }
