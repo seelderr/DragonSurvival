@@ -39,7 +39,7 @@ public class Capabilities{
 		if(!(event.getObject() instanceof Player player))
 			return;
 
-		if(event.getObject().level.isClientSide || isFakePlayer(player))
+		if(event.getObject().level.isClientSide && isFakePlayer(player))
 			return;
 
 		DragonStateProvider provider = new DragonStateProvider();
