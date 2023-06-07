@@ -36,12 +36,11 @@ public class Capabilities{
 
 	@SubscribeEvent
 	public static void attachCapabilities(AttachCapabilitiesEvent<Entity> event){
-		if(event.getObject() instanceof Player player){
-			if(event.getObject().level.isClientSide){
-				if(isFakePlayer(player))
-					return;
-			}
-		}
+		if(!(event.getObject() instanceof Player player))
+			return;
+
+		if(event.getObject().level.isClientSide || isFakePlayer(player))
+			return;
 
 		DragonStateProvider provider = new DragonStateProvider();
 		event.addCapability(new ResourceLocation("dragonsurvival", "playerstatehandler"), provider);
