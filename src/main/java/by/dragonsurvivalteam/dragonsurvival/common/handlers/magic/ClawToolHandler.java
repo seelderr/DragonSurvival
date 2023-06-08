@@ -67,6 +67,8 @@ public class ClawToolHandler{
 
 	@SubscribeEvent
 	public static void playerDieEvent(LivingDropsEvent event){
+		// FIXME :: Add support for SoulBound etc.
+
 		Entity ent = event.getEntity();
 
 		if(ent instanceof Player player){
@@ -77,7 +79,10 @@ public class ClawToolHandler{
 					ItemStack stack = handler.getClawToolData().getClawsInventory().getItem(i);
 
 					if(!stack.isEmpty()){
-						event.getDrops().add(new ItemEntity(player.level, player.getX(), player.getY(), player.getZ(), stack));
+						if (!EnchantmentHelper.hasVanishingCurse(stack)) {
+							event.getDrops().add(new ItemEntity(player.level, player.getX(), player.getY(), player.getZ(), stack));
+						}
+
 						handler.getClawToolData().getClawsInventory().setItem(i, ItemStack.EMPTY);
 					}
 				}
