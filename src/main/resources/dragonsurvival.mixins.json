@@ -25,7 +25,8 @@
     "MixinInventoryScreen",
     "MixinItemBlockRenderTypes",
     "MixinItemInHandRenderer",
-    "MixinWorldRenderer"
+    "MixinWorldRenderer",
+    "MixinFoodHelper"
   ],
   "minVersion": "0.8"
 }
