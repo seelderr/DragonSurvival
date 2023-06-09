@@ -29,11 +29,13 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.fml.DistExecutor;
 
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
 
-public class DragonStateHandler implements NBTInterface{
+public class DragonStateHandler extends EntityStateHandler implements NBTInterface{
 
 	//TODO Remove / cleanup the following
 	private final DragonMovementData movementData = new DragonMovementData(0, 0, 0, false);
@@ -44,8 +46,9 @@ public class DragonStateHandler implements NBTInterface{
 	private final SkinCap skinData = new SkinCap(this);
 	private final VillageRelationShips villageRelationShips = new VillageRelationShips(this);
 
-
 	public final Supplier<SubCap>[] caps = new Supplier[]{this::getSkinData, this::getMagicData, this::getEmoteData, this::getClawToolData, this::getVillageRelationShips};
+	private final Map<String, Double> savedDragonSize = new ConcurrentHashMap<>();
+
 	public boolean hasFlown;
 	public boolean growing = true;
 
@@ -56,14 +59,7 @@ public class DragonStateHandler implements NBTInterface{
 	public int altarCooldown;
 	public boolean hasUsedAltar;
 
-	public Vec3 lastPos;
 	private boolean isHiding;
-
-	//Last entity this entity recieved a debuff from
-	public int lastAfflicted = -1;
-
-	//Amount of times the last chain attack has chained
-	public int chainCount = 0;
 
 	private AbstractDragonType dragonType;
 
@@ -172,6 +168,11 @@ public class DragonStateHandler implements NBTInterface{
 			tag.putBoolean("resting", treasureResting);
 			tag.putInt("restingTimer", treasureRestTimer);
 		}
+
+		tag.putDouble("seaSize", getSavedDragonSize(DragonTypes.SEA.getTypeName()));
+		tag.putDouble("caveSize", getSavedDragonSize(DragonTypes.CAVE.getTypeName()));
+		tag.putDouble("forestSize", getSavedDragonSize(DragonTypes.FOREST.getTypeName()));
+
 		for(int i = 0; i < caps.length; i++){
 			tag.put("cap_" + i, caps[i].get().writeNBT());
 		}
@@ -225,11 +226,16 @@ public class DragonStateHandler implements NBTInterface{
 			}
 		}
 
+		setSavedDragonSize(DragonTypes.SEA.getTypeName(), tag.getDouble("seaSize"));
+		setSavedDragonSize(DragonTypes.CAVE.getTypeName(), tag.getDouble("caveSize"));
+		setSavedDragonSize(DragonTypes.FOREST.getTypeName(), tag.getDouble("forestSize"));
+
 		for(int i = 0; i < caps.length; i++){
 			if(tag.contains("cap_" + i)){
 				caps[i].get().readNBT((CompoundTag)tag.get("cap_" + i));
 			}
 		}
+
 		altarCooldown = tag.getInt("altarCooldown");
 		hasUsedAltar = tag.getBoolean("usedAltar");
 
@@ -275,7 +281,28 @@ public class DragonStateHandler implements NBTInterface{
 
 			if(oldLevel != getLevel())
 				onGrow();
+
+			if (dragonType != null) {
+				setSavedDragonSize(dragonType.getTypeName(), size);
+			}
 		}
+	}
+
+	public double getSavedDragonSize(final String type) {
+		Double value = savedDragonSize.get(type);
+		value = value == null ? 0 : value;
+
+		return value;
+	}
+
+	public void setSavedDragonSize(final String type, double size) {
+		Double value = savedDragonSize.get(type);
+
+		if (size == 0 || (value != null && value == size)) {
+			return;
+		}
+
+		savedDragonSize.put(type, size);
 	}
 
 	public void onGrow(){
@@ -304,23 +331,6 @@ public class DragonStateHandler implements NBTInterface{
 		}else{
 			dragonType = null;
 		}
-
-		//TODO Reimplement
-//		if(ServerConfig.saveGrowthStage)
-//			switch(type){
-//				case SEA -> {
-//					size = seaSize;
-//					hasWings = seaWings;
-//				}
-//				case CAVE -> {
-//					size = caveSize;
-//					hasWings = caveWings;
-//				}
-//				case FOREST -> {
-//					size = forestSize;
-//					hasWings = forestWings;
-//				}
-//			}
 	}
 
 	public MagicCap getMagicData(){

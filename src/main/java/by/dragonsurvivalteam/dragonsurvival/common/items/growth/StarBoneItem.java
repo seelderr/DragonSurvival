@@ -41,7 +41,6 @@ public class StarBoneItem extends Item{
 					size = Math.max(size, DragonLevel.NEWBORN.size);
 					dragonStateHandler.setSize(size, playerIn);
 
-
 					if(!playerIn.isCreative()){
 						playerIn.getItemInHand(handIn).shrink(1);
 					}

@@ -32,15 +32,18 @@ import net.minecraftforge.network.PacketDistributor;
 public class Capabilities{
 	public static Capability<VillageRelationShips> VILLAGE_RELATIONSHIP = CapabilityManager.get(new CapabilityToken<>(){});
 	public static Capability<DragonStateHandler> GENERIC_CAPABILITY = CapabilityManager.get(new CapabilityToken<>(){});
+	public static Capability<EntityStateHandler> ENTITY_CAPABILITY = CapabilityManager.get(new CapabilityToken<>(){});
 	public static Capability<DragonStateHandler> DRAGON_CAPABILITY = CapabilityManager.get(new CapabilityToken<>(){});
 
 	@SubscribeEvent
 	public static void attachCapabilities(AttachCapabilitiesEvent<Entity> event){
-		if(!(event.getObject() instanceof Player player))
+		if (!(event.getObject() instanceof Player player)) {
 			return;
+		}
 
-		if(event.getObject().level.isClientSide && isFakePlayer(player))
+		if (event.getObject().getLevel().isClientSide() && isFakePlayer(player)) {
 			return;
+		}
 
 		DragonStateProvider provider = new DragonStateProvider();
 		event.addCapability(new ResourceLocation("dragonsurvival", "playerstatehandler"), provider);
