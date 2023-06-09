@@ -57,6 +57,11 @@ public class ToolTipHandler{
 	@ConfigOption( side = ConfigSide.CLIENT, category = "tooltips", key = "alwaysShowHelpTooltip", comment = "Always show the help tooltip border" )
 	public static Boolean alwaysShowHelpTooltip = false;
 
+	@ConfigOption(side = ConfigSide.CLIENT, category = "tooltips", key = "hideAppleskinTooltip", comment = "Hide the AppleSkin tooltip if you're a dragon. The tooltip will only show correct food values for humans.")
+	public static Boolean hideAppleskinTooltip = true;
+
+	private final static ResourceLocation ICONS = new ResourceLocation(DragonSurvivalMod.MODID, "food_tooltip_icon_font");
+
 
 	private static boolean blink = false;
 	private static int tick = 0;
@@ -98,13 +103,11 @@ public class ToolTipHandler{
 			saturation = saturationValue > 0 ? String.valueOf(saturationValue / 2) : "0";
 		}
 
-		MutableComponent nutritionIconComponent = Component.literal(nutritionIcon).withStyle(Style.EMPTY.withFont(new ResourceLocation(DragonSurvivalMod.MODID, "food_tooltip_icon_font")));
+		MutableComponent nutritionIconComponent = Component.literal(nutritionIcon).withStyle(Style.EMPTY.withFont(ICONS));
 		MutableComponent nutritionComponent = Component.literal(": " + nutrition + " ").withStyle(color);
 
-		MutableComponent saturationIconComponent = Component.literal(saturationIcon).withStyle(Style.EMPTY.withFont(new ResourceLocation(DragonSurvivalMod.MODID, "food_tooltip_icon_font")));
+		MutableComponent saturationIconComponent = Component.literal(saturationIcon).withStyle(Style.EMPTY.withFont(ICONS));
 		MutableComponent saturationComponent = Component.literal(" / " + saturation + " ").withStyle(color);
-
-
 
 		return component.append(nutritionComponent).append(nutritionIconComponent).append(saturationComponent).append(saturationIconComponent);
 	}
