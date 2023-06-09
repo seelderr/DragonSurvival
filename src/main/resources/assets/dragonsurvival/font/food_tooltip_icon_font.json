@@ -9,11 +9,12 @@
     },
     {
       "type": "bitmap",
-      "file": "dragonsurvival:icons/food_tooltip_icons.png",
+      "file": "dragonsurvival:icons/food_tooltip_icons_extended.png",
       "ascent": 8,
       "height": 9,
       "chars": [
-        "\uEA01\uEA02\uEA03"
+        "\uEA01\uEA02\uEA03",
+        "\uEA04\uEA05\uEA06"
       ]
     }
   ]

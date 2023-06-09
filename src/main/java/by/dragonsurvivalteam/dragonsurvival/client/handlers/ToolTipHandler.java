@@ -69,40 +69,44 @@ public class ToolTipHandler{
 			List<Component> toolTip = tooltipEvent.getToolTip();
 
 			if(DragonFoodHandler.getSafeEdibleFoods(DragonTypes.CAVE).contains(item)){
-				toolTip.add(createFoodTooltip(item, DragonTypes.CAVE, ChatFormatting.RED, "\uEA02"));
+				toolTip.add(createFoodTooltip(item, DragonTypes.CAVE, ChatFormatting.RED, "\uEA02", "\uEA05"));
 			}
 
 			if(DragonFoodHandler.getSafeEdibleFoods(DragonTypes.FOREST).contains(item)){
-				toolTip.add(createFoodTooltip(item, DragonTypes.FOREST, ChatFormatting.GREEN, "\uEA01"));
+				toolTip.add(createFoodTooltip(item, DragonTypes.FOREST, ChatFormatting.GREEN, "\uEA01", "\uEA04"));
 			}
 
 			if(DragonFoodHandler.getSafeEdibleFoods(DragonTypes.SEA).contains(item)){
-				toolTip.add(createFoodTooltip(item, DragonTypes.SEA, ChatFormatting.DARK_AQUA, "\uEA03"));
+				toolTip.add(createFoodTooltip(item, DragonTypes.SEA, ChatFormatting.DARK_AQUA, "\uEA03", "\uEA06"));
 			}
 		}
 	}
 
-	private static MutableComponent createFoodTooltip(final Item item, final AbstractDragonType type, final ChatFormatting color, final String icon) {
+	private static MutableComponent createFoodTooltip(final Item item, final AbstractDragonType type, final ChatFormatting color, final String nutritionIcon, final String saturationIcon) {
 		MutableComponent component = Component.translatable("ds." + type.getTypeName() + ".dragon.food");
 		FoodProperties properties = DragonFoodHandler.getDragonFoodProperties(item, type);
 
 		String nutrition = "0";
+		String saturation = "0";
 
 		if (properties != null) {
-			// FIXME :: Some food may exceed the maximum level (e. g. `Creative Blaze Cake` - limit them to 20?)
-			nutrition = String.valueOf(properties.getNutrition());
+			float nutritionValue = properties.getNutrition();
+			float saturationValue = properties.getNutrition() * properties.getSaturationModifier() * 2f;
+
+			// 1 Icon = 2 points (e.g. 10 nutrition icons for a maximum food level of 20)
+			nutrition = nutritionValue > 0 ? String.valueOf(nutritionValue / 2) : "0";
+			saturation = saturationValue > 0 ? String.valueOf(saturationValue / 2) : "0";
 		}
 
-		if (nutrition.length() == 1) {
-			// Formatting reasons: `1` -> `01`
-			nutrition = "0" + nutrition;
-		}
+		MutableComponent nutritionIconComponent = Component.literal(nutritionIcon).withStyle(Style.EMPTY.withFont(new ResourceLocation(DragonSurvivalMod.MODID, "food_tooltip_icon_font")));
+		MutableComponent nutritionComponent = Component.literal(": " + nutrition + " ").withStyle(color);
 
-		MutableComponent iconComponent = Component.literal(icon).withStyle(Style.EMPTY.withFont(new ResourceLocation(DragonSurvivalMod.MODID, "food_tooltip_icon_font")));
-		// Maximum food level is hardcoded as 20 (two per icon)
-		MutableComponent nutritionComponent = Component.literal(": " + nutrition + "/20 ").withStyle(color);
+		MutableComponent saturationIconComponent = Component.literal(saturationIcon).withStyle(Style.EMPTY.withFont(new ResourceLocation(DragonSurvivalMod.MODID, "food_tooltip_icon_font")));
+		MutableComponent saturationComponent = Component.literal(" / " + saturation + " ").withStyle(color);
 
-		return component.append(nutritionComponent).append(iconComponent);
+
+
+		return component.append(nutritionComponent).append(nutritionIconComponent).append(saturationComponent).append(saturationIconComponent);
 	}
 
 	@SubscribeEvent
