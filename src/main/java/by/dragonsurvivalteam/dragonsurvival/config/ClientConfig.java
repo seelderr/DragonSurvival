@@ -20,4 +20,7 @@ public class ClientConfig{
 
 	@ConfigOption(side = ConfigSide.CLIENT, category = "misc", key = "stableNightVision", comment = "When enabled it stops the blinking effect of night vision when low duration, disable if it causes rendering issues with other mods.")
 	public static Boolean stableNightVision = true;
+
+	@ConfigOption(side = ConfigSide.CLIENT, category = "misc", key = "hideAppleskinTooltip", comment = "Hide the AppleSkin tooltip if you're a dragon. The tooltip will only show correct food values for humans.")
+	public static Boolean hideAppleskinTooltip = true;
 }

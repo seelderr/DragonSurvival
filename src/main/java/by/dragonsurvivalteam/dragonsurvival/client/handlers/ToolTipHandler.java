@@ -15,6 +15,7 @@ import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -22,7 +23,10 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
@@ -63,18 +67,43 @@ public class ToolTipHandler{
 		if(tooltipEvent.getEntity() != null){
 			Item item = tooltipEvent.getItemStack().getItem();
 			List<Component> toolTip = tooltipEvent.getToolTip();
+
 			if(DragonFoodHandler.getSafeEdibleFoods(DragonTypes.CAVE).contains(item)){
-				toolTip.add(Component.translatable("ds.cave.dragon.food"));
+				toolTip.add(createFoodTooltip(item, DragonTypes.CAVE, ChatFormatting.RED, "\uEA02"));
 			}
+
 			if(DragonFoodHandler.getSafeEdibleFoods(DragonTypes.FOREST).contains(item)){
-				toolTip.add(Component.translatable("ds.forest.dragon.food"));
+				toolTip.add(createFoodTooltip(item, DragonTypes.FOREST, ChatFormatting.GREEN, "\uEA01"));
 			}
+
 			if(DragonFoodHandler.getSafeEdibleFoods(DragonTypes.SEA).contains(item)){
-				toolTip.add(Component.translatable("ds.sea.dragon.food"));
+				toolTip.add(createFoodTooltip(item, DragonTypes.SEA, ChatFormatting.DARK_AQUA, "\uEA03"));
 			}
 		}
 	}
 
+	private static MutableComponent createFoodTooltip(final Item item, final AbstractDragonType type, final ChatFormatting color, final String icon) {
+		MutableComponent component = Component.translatable("ds." + type.getTypeName() + ".dragon.food");
+		FoodProperties properties = DragonFoodHandler.getDragonFoodProperties(item, type);
+
+		String nutrition = "0";
+
+		if (properties != null) {
+			// FIXME :: Some food may exceed the maximum level (e. g. `Creative Blaze Cake` - limit them to 20?)
+			nutrition = String.valueOf(properties.getNutrition());
+		}
+
+		if (nutrition.length() == 1) {
+			// Formatting reasons: `1` -> `01`
+			nutrition = "0" + nutrition;
+		}
+
+		MutableComponent iconComponent = Component.literal(icon).withStyle(Style.EMPTY.withFont(new ResourceLocation(DragonSurvivalMod.MODID, "food_tooltip_icon_font")));
+		// Maximum food level is hardcoded as 20 (two per icon)
+		MutableComponent nutritionComponent = Component.literal(": " + nutrition + "/20 ").withStyle(color);
+
+		return component.append(nutritionComponent).append(iconComponent);
+	}
 
 	@SubscribeEvent
 	public static void itemDescriptions(ItemTooltipEvent event){
