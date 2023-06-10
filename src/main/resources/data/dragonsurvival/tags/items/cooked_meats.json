@@ -294,6 +294,14 @@
     {
       "id": "nocubes_better_smoker:cooked_rabbit_foot",
       "required": false
+    },
+    {
+      "id": "gothic:bug_meat",
+      "required": false
+    },
+    {
+      "id": "gothic:cooked_meat",
+      "required": false
     }
   ]
 }
