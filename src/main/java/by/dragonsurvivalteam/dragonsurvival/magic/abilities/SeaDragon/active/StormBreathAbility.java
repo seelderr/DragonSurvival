@@ -106,7 +106,7 @@ public class StormBreathAbility extends BreathAbility{
 	                                                     "sea_dragon",
 	                                                     "actives",
 	                                                     "storm_breath"}, key = "stormBreathBlockBreaks", comment = "Blocks that have a chance to be broken by storm breath. Formatting: block/modid:id" )
-	public static List<String> stormBreathBlockBreaks = List.of("minecraft:impermeable", "minecraft:crops", "minecraft:flowers", "minecraft:replaceable_plants");
+	public static List<String> stormBreathBlockBreaks = List.of("minecraft:impermeable", "minecraft:flowers", "minecraft:replaceable_plants");
 
 	@ConfigRange( min = 0, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic",
@@ -356,10 +356,10 @@ public class StormBreathAbility extends BreathAbility{
 		SimpleSoundInstance startingSound = new SimpleSoundInstance(
 				SoundRegistry.stormBreathStart,
 				SoundSource.PLAYERS,
-				1.0F,1.0F,SoundInstance.createUnseededRandom(),
+				1.0F,1.0F,
+				SoundInstance.createUnseededRandom(),
 				pos.x,pos.y,pos.z
 		);
-
 		Minecraft.getInstance().getSoundManager().playDelayed(startingSound, 0);
 		Minecraft.getInstance().getSoundManager().stop(new ResourceLocation(DragonSurvivalMod.MODID, "storm_breath_loop"), SoundSource.PLAYERS);
 		Minecraft.getInstance().getSoundManager().queueTickingSound(new StormBreathSound(this));
@@ -412,17 +412,17 @@ public class StormBreathAbility extends BreathAbility{
 		}
 
 		if(player.level.isClientSide){
-			for(int i = 0; i < 6; i++){
-				double xSpeed = speed * 1f * xComp;
-				double ySpeed = speed * 1f * yComp;
-				double zSpeed = speed * 1f * zComp;
+			for(int i = 0; i < 4; i++){
+				double xSpeed = speed * 1f * xComp + spread * 1.1 * (player.getRandom().nextFloat() * 2 - 1) * Math.sqrt(1 - xComp * xComp);
+				double ySpeed = speed * 1f * yComp + spread * 1.1 * (player.getRandom().nextFloat() * 2 - 1) * Math.sqrt(1 - yComp * yComp);
+				double zSpeed = speed * 1f * zComp + spread * 1.1 * (player.getRandom().nextFloat() * 2 - 1) * Math.sqrt(1 - zComp * zComp);
 				player.level.addParticle(new SmallLightningParticleData(37, true), dx, dy, dz, xSpeed, ySpeed, zSpeed);
 			}
 
 			for(int i = 0; i < 2; i++){
-				double xSpeed = speed * xComp + spread * 0.7 * (player.getRandom().nextFloat() * 2 - 1) * Math.sqrt(1 - xComp * xComp);
-				double ySpeed = speed * yComp + spread * 0.7 * (player.getRandom().nextFloat() * 2 - 1) * Math.sqrt(1 - yComp * yComp);
-				double zSpeed = speed * zComp + spread * 0.7 * (player.getRandom().nextFloat() * 2 - 1) * Math.sqrt(1 - zComp * zComp);
+				double xSpeed = speed * xComp + spread * 1.4 * (player.getRandom().nextFloat() * 2 - 1) * Math.sqrt(1 - xComp * xComp);
+				double ySpeed = speed * yComp + spread * 1.4 * (player.getRandom().nextFloat() * 2 - 1) * Math.sqrt(1 - yComp * yComp);
+				double zSpeed = speed * zComp + spread * 1.4 * (player.getRandom().nextFloat() * 2 - 1) * Math.sqrt(1 - zComp * zComp);
 				player.level.addParticle(new LargeLightningParticleData(37, false), dx, dy, dz, xSpeed, ySpeed, zSpeed);
 			}
 		}
