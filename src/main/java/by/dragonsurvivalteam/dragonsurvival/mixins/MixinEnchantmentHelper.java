@@ -9,6 +9,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TieredItem;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -35,7 +36,11 @@ public abstract class MixinEnchantmentHelper{
 	}
 
 	@Inject( at = @At( "HEAD" ), method = "getEnchantmentLevel(Lnet/minecraft/world/item/enchantment/Enchantment;Lnet/minecraft/world/entity/LivingEntity;)I", cancellable = true)
-	private static void getEnchantmentLevel(Enchantment enchantment, LivingEntity entity, CallbackInfoReturnable<Integer> ci){
+	private static void getEnchantmentLevel(Enchantment enchantment, LivingEntity entity, CallbackInfoReturnable<Integer> ci) {
+		if (!(enchantment.category == EnchantmentCategory.DIGGER || enchantment.category == EnchantmentCategory.WEAPON)) {
+			return;
+		}
+
 		if(!entity.getMainHandItem().isEmpty()){
 			if(entity.getMainHandItem().getItem() instanceof TieredItem){
 				return;
@@ -43,11 +48,10 @@ public abstract class MixinEnchantmentHelper{
 		}
 
 		if(DragonUtils.isDragon(entity) && entity instanceof Player player){
-			DragonStateHandler handler = DragonUtils.getHandler(entity);
 			ItemStack stack = ClawToolHandler.getDragonTools(player);
 
 			if(stack != null){
-				ci.setReturnValue(EnchantmentHelper.getItemEnchantmentLevel(enchantment, stack));
+				ci.setReturnValue(stack.getEnchantmentLevel(enchantment));
 			}
 		}
 	}

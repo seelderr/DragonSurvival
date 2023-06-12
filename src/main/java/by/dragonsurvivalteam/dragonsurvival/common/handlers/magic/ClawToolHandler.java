@@ -160,14 +160,17 @@ public class ClawToolHandler{
 	}
 
 	@SubscribeEvent
-	public static void onToolBreak(PlayerDestroyItemEvent event){
-		if(event.getHand() == null) return;
+	public static void onToolBreak(PlayerDestroyItemEvent event) {
+		if (event.getHand() == null) return;
 		Player player = event.getEntity();
 
-		if(DragonUtils.isDragon(player)){
+		if (DragonUtils.isDragon(player)) {
 			ItemStack clawTool = getDragonTools(player);
-			if(ItemStack.matches(clawTool, event.getOriginal())){
+
+			if (ItemStack.matches(clawTool, event.getOriginal())) {
 				player.broadcastBreakEvent(event.getHand());
+			} else {
+				// Return break speed to normal
 			}
 		}
 	}

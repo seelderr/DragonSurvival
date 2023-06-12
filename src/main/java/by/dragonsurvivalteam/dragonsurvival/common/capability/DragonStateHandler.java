@@ -157,12 +157,12 @@ public class DragonStateHandler extends EntityStateHandler implements NBTInterfa
 			//Spin attack
 			tag.putInt("spinCooldown", movementData.spinCooldown);
 			tag.putInt("spinAttack", movementData.spinAttack);
-			tag.putBoolean("spinLearned", movementData.spinLearned);
+			tag.putBoolean("spinLearned", movementData.spinLearned); // FIXME
 
 			tag.putDouble("size", getSize());
 			tag.putBoolean("growing", growing);
 
-			tag.putBoolean("hasWings", hasWings());
+			tag.putBoolean("hasWings", hasWings()); // FIXME
 			tag.putBoolean("isFlying", isWingsSpread());
 
 			tag.putBoolean("resting", treasureResting);
