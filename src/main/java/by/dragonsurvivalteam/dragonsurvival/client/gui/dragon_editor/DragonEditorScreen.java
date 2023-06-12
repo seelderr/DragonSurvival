@@ -808,7 +808,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 
 				cap.setType(type);
 
-				double size = cap.getSavedDragonSize(cap.getType().getTypeName());
+				double size = cap.getSavedDragonSize(cap.getTypeName());
 
 				if(!ServerConfig.saveGrowthStage || size == 0){
 					cap.setSize(DragonLevel.NEWBORN.size);

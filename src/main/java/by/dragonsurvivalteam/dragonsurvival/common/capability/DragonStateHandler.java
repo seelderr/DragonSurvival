@@ -319,6 +319,14 @@ public class DragonStateHandler extends EntityStateHandler implements NBTInterfa
 		return dragonType;
 	}
 
+	public String getTypeName() {
+		if (dragonType == null) {
+			return "human";
+		}
+
+		return dragonType.getTypeName();
+	}
+
 	public void setType(AbstractDragonType type){
 		if(type != null && !Objects.equals(dragonType, type)){
 			growing = true;

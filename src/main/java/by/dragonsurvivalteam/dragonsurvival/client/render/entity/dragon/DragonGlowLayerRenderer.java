@@ -46,14 +46,14 @@ public class DragonGlowLayerRenderer extends GeoLayerRenderer<DragonEntity>{
 
 		ResourceLocation glowTexture = DragonSkins.getGlowTexture(player, handler.getType(), handler.getLevel());
 
-		if(glowTexture == null || glowTexture.getPath().contains("/" + handler.getType().getTypeName().toLowerCase() + "_")){
+		if(glowTexture == null || glowTexture.getPath().contains("/" + handler.getTypeName().toLowerCase() + "_")){
 			if(((DragonRenderer)renderer).glowTexture != null){
 				glowTexture = ((DragonRenderer)renderer).glowTexture;
 			}
 		}
 
 		if(glowTexture == null && handler.getSkinData().skinPreset.skinAges.get(handler.getLevel()).get().defaultSkin){
-			ResourceLocation location = new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/" + handler.getType().getTypeName().toLowerCase(Locale.ROOT) + "_" + handler.getLevel().name.toLowerCase(Locale.ROOT) + "_glow.png");
+			ResourceLocation location = new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/" + handler.getTypeName().toLowerCase(Locale.ROOT) + "_" + handler.getLevel().name.toLowerCase(Locale.ROOT) + "_glow.png");
 			if(Minecraft.getInstance().getResourceManager().getResource(location).isPresent()){
 				glowTexture = location;
 			}
