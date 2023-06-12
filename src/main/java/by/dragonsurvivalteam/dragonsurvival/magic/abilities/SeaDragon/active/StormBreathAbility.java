@@ -188,7 +188,7 @@ public class StormBreathAbility extends BreathAbility{
 				double x = start.x + xDif * i;
 				double y = start.y + yDif * i + eyeHeight;
 				double z = start.z + zDif * i;
-				source.level.addParticle(new DustParticleOptions(new Vector3f(0f, 1F, 1F), 1f), x, y, z, 0, 0, 0);
+				source.level.addParticle(new SmallLightningParticleData(37, true), x, y, z, xDif, yDif, zDif);
 			}
 		}
 	}
