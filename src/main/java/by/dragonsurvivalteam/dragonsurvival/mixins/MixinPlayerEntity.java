@@ -6,7 +6,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ClawToolHandler;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.core.BlockPos;
@@ -14,12 +13,10 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stat;
 import net.minecraft.stats.Stats;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MoverType;
-import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.animal.FlyingAnimal;
@@ -34,12 +31,11 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -96,12 +92,37 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 		}
 	}
 
-	@Redirect( method = "attack", at = @At( value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;getMainHandItem()Lnet/minecraft/world/item/ItemStack;" ) )
-	private ItemStack getDragonSword(Player entity){
-		ItemStack mainStack = entity.getMainHandItem();
-		DragonStateHandler cap = DragonUtils.getHandler(entity);
+	@ModifyVariable(method = "attack", at = @At("STORE"), name = "itemstack1")
+	private ItemStack handleDamage(ItemStack stack) {
+		// Will get used for `hurtEnemy` and `PlayerDestroyItemEvent`
+		return getDragonSword(stack);
+	}
 
-		if(!(mainStack.getItem() instanceof TieredItem)){
+	@Redirect(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;setItemInHand(Lnet/minecraft/world/InteractionHand;Lnet/minecraft/world/item/ItemStack;)V", ordinal = 0))
+	private void redirectSetItemInHand(Player player, InteractionHand hand, ItemStack stack) {
+		ItemStack handStack = player.getItemInHand(hand);
+
+		if (!handStack.isEmpty() && handStack.isDamageableItem()) {
+			if (handStack.getMaxDamage() - handStack.getDamageValue() <= 0) {
+				// Only remove the item if it should break; If you had a tool in the hand it seems to be EMPTY at this point anyway, not sure if this is ever reached
+				// No recursive loop - this will actually call the original method
+				player.setItemInHand(hand, stack);
+			}
+		}
+	}
+
+	@ModifyArg(method = "attack", at = @At(value = "INVOKE", target = "net/minecraft/world/item/enchantment/EnchantmentHelper.getDamageBonus(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/MobType;)F"))
+	private ItemStack handleEnchantmentBonus(ItemStack stack) {
+		// Will be used for `EnchantmentHelper.getDamageBonus`
+		return getDragonSword(stack);
+	}
+
+	@NotNull
+	private ItemStack getDragonSword(ItemStack stack) {
+		Object self = this;
+		DragonStateHandler cap = DragonUtils.getHandler((Player) self);
+
+		if(!(stack.getItem() instanceof TieredItem)){
 			ItemStack sword = cap.getClawToolData().getClawsInventory().getItem(0);
 
 			if(!sword.isEmpty()){
@@ -109,7 +130,7 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 			}
 		}
 
-		return mainStack;
+		return stack;
 	}
 
 	@Redirect( method = "getDigSpeed(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;)F", at = @At( value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;getMainHandItem()Lnet/minecraft/world/item/ItemStack;" ), remap = false )

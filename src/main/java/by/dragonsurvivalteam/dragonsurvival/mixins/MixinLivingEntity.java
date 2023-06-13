@@ -47,7 +47,6 @@ public abstract class MixinLivingEntity extends Entity{
 
 	@Redirect( method = "collectEquipmentChanges", at = @At( value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getItemBySlot(Lnet/minecraft/world/entity/EquipmentSlot;)Lnet/minecraft/world/item/ItemStack;" ) )
 	private ItemStack getDragonSword(LivingEntity entity, EquipmentSlot slotType){
-        // FIXME :: Redirect necessary?
 	    ItemStack mainStack = entity.getMainHandItem();
 
 	    if (slotType == EquipmentSlot.MAINHAND) {
