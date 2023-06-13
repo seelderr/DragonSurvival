@@ -101,7 +101,7 @@ public class AltarTypeButton extends Button implements TooltipRender{
 				player.level.playSound(player, player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 1, 0.7f);
 
 				if (ServerConfig.saveGrowthStage) {
-					cap.setSavedDragonSize(cap.getType().getTypeName(), cap.getSize());
+					cap.setSavedDragonSize(cap.getTypeName(), cap.getSize());
 				}
 
 				cap.setType(null);

@@ -287,7 +287,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 			RenderSystem.enableTexture();
 			RenderSystem.setShader(GameRenderer::getPositionTexShader);
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1.0f);
-			RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_" + handler.getType().getTypeName().toLowerCase() + ".png"));
+			RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_" + handler.getTypeName().toLowerCase() + ".png"));
 			RenderingUtils.drawTexturedCircle(stack, circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, sides, progress, -0.5);
 
 			RenderSystem.disableTexture();
@@ -297,7 +297,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 
 			RenderSystem.setShader(GameRenderer::getPositionTexShader);
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1.0f);
-			RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/growth_" + handler.getType().getTypeName().toLowerCase() + "_" + (handler.getLevel().ordinal() + 1) + ".png"));
+			RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/growth_" + handler.getTypeName().toLowerCase() + "_" + (handler.getLevel().ordinal() + 1) + ".png"));
 			blit(stack, circleX + 6, circleY + 6, 0, 0, 20, 20, 20, 20);
 
 			stack.popPose();

@@ -16,7 +16,6 @@ public class DragonTypes {
 	public static SeaDragonType SEA;
 	public static ForestDragonType FOREST;
 
-
 	public static void registerTypes(){
 		CAVE = registerType(CaveDragonType::new);
         SEA = registerType(SeaDragonType::new);
