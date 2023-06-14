@@ -46,14 +46,14 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity>{
 			}
 
 			if(handler.getSkinData().blankSkin){
-				return new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/blank_skin_" + handler.getType().getTypeName().toLowerCase(Locale.ROOT) + ".png");
+				return new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/blank_skin_" + handler.getTypeName().toLowerCase(Locale.ROOT) + ".png");
 			}
 
 			if(ageGroup.defaultSkin){
 				if(currentTexture != null){
 					return currentTexture;
 				}
-				return new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/" + handler.getType().getTypeName().toLowerCase(Locale.ROOT) + "_" + handler.getLevel().name.toLowerCase(Locale.ROOT) + ".png");
+				return new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/" + handler.getTypeName().toLowerCase(Locale.ROOT) + "_" + handler.getLevel().name.toLowerCase(Locale.ROOT) + ".png");
 			}
 
 			if(handler.getSkinData().isCompiled && currentTexture == null){

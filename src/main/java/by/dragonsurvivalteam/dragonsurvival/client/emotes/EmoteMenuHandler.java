@@ -400,7 +400,7 @@ public class EmoteMenuHandler{
 				if(em.requirements.type != null){
 					boolean hasType = false;
 					for(String t : em.requirements.type){
-						if(t.equalsIgnoreCase(handler.getType().getTypeName())){
+						if(t.equalsIgnoreCase(handler.getTypeName())){
 							hasType = true;
 							break;
 						}
