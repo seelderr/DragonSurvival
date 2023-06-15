@@ -56,7 +56,7 @@ public class MixinServerPlayerGameMode{
 			for (int i = 0; i < 4; i++) {
 				ItemStack tool = cap.getClawToolData().getClawsInventory().getItem(i);
 
-				if (tool == ItemStack.EMPTY) {
+				if (tool == ItemStack.EMPTY || !tool.isCorrectToolForDrops(instance)) {
 					continue;
 				}
 

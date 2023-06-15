@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins;
 
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
@@ -20,8 +21,6 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.animal.FlyingAnimal;
-import net.minecraft.world.entity.player.Abilities;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
 import net.minecraft.world.item.Item;
@@ -32,7 +31,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.*;
@@ -44,19 +42,10 @@ import java.util.Objects;
 import java.util.UUID;
 
 
-@Mixin( Player.class )
+@Mixin(value = Player.class)
 public abstract class MixinPlayerEntity extends LivingEntity{
-
 	private static final UUID SLOW_FALLING_ID = UUID.fromString("A5B6CF2A-2F7C-31EF-9022-7C3E7D5E6ABA");
 	private static final AttributeModifier SLOW_FALLING = new AttributeModifier(SLOW_FALLING_ID, "Slow falling acceleration reduction", -0.07, AttributeModifier.Operation.ADDITION); // Add -0.07 to 0.08 so we get the vanilla default of 0.01
-	@Shadow
-	@Final
-	private Abilities abilities;
-	@Shadow
-	@Final
-	private Inventory inventory;
-	@Shadow
-	private int sleepCounter;
 
 	protected MixinPlayerEntity(EntityType<? extends LivingEntity> p_20966_, Level p_20967_){
 		super(p_20966_, p_20967_);
@@ -98,19 +87,43 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 		return getDragonSword(stack);
 	}
 
-	@Redirect(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;setItemInHand(Lnet/minecraft/world/InteractionHand;Lnet/minecraft/world/item/ItemStack;)V"))
-	private void avoidToolBreak(Player instance, InteractionHand hand, ItemStack stack) {
-		if (!DragonUtils.isDragon(instance)) {
-			instance.setItemInHand(hand, stack);
+	private ItemStack stored;
+
+	@Inject(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;setItemInHand(Lnet/minecraft/world/InteractionHand;Lnet/minecraft/world/item/ItemStack;)V"))
+	private void avoidToolBreak_storeItem(Entity target, CallbackInfo ci) {
+		// Currently set up like this to avoid clash with `Better Combat` dual-wield logic
+		Object self = this;
+
+		if (!DragonUtils.isDragon((Player) self)) {
+			return;
 		}
 
-		ItemStack handStack = instance.getItemInHand(hand);
+		ItemStack current = ((Player) self).getItemInHand(InteractionHand.MAIN_HAND);
+		stored = current;
 
-		if (!handStack.isEmpty() && handStack.isDamageableItem()) {
-			if (handStack.getMaxDamage() - handStack.getDamageValue() <= 0) {
+		if (!current.isEmpty() && current.isDamageableItem()) {
+			if (current.getMaxDamage() - current.getDamageValue() <= 0) {
 				// Only remove the item if it should break; If you had a tool in the hand it seems to be EMPTY at this point anyway, not sure if this is ever reached
-				instance.setItemInHand(hand, stack);
+				stored = ItemStack.EMPTY;
 			}
+		}
+	}
+
+	@Inject(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;setItemInHand(Lnet/minecraft/world/InteractionHand;Lnet/minecraft/world/item/ItemStack;)V", shift = At.Shift.AFTER))
+	private void avoidToolBreak_setItem(Entity target, CallbackInfo ci) {
+		Object self = this;
+
+		if (!DragonUtils.isDragon((Player) self)) {
+			return;
+		}
+
+		ItemStack current = ((Player) self).getItemInHand(InteractionHand.MAIN_HAND);
+
+		if (current != ItemStack.EMPTY) {
+			DragonSurvivalMod.LOGGER.error("Item in hand was not empty after weapon broke");
+			// TODO :: Could drop the item in this case? Or place in inventory if there is space?
+		} else {
+			((Player) self).setItemInHand(InteractionHand.MAIN_HAND, stored);
 		}
 	}
 
@@ -119,13 +132,6 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 		// Will be used for `EnchantmentHelper.getDamageBonus`
 		return getDragonSword(stack);
 	}
-
-//	@ModifyVariable(method = "attack", at = @At("STORE"), ordinal = 0)
-//	private ItemStack handleSweepCheck(ItemStack stack) {
-//		// Line : ItemStack itemstack = this.getItemInHand(InteractionHand.MAIN_HAND);
-//		return getDragonSword(stack);
-//	}
-
 
 	@Redirect(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;getItemInHand(Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/item/ItemStack;"))
 	private ItemStack getItemForSweep(Player instance, InteractionHand hand) {

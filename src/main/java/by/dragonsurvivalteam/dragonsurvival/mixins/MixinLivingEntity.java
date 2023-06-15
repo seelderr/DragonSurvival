@@ -30,12 +30,12 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.ArrayList;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
-
 @Mixin( LivingEntity.class )
 public abstract class MixinLivingEntity extends Entity{
+	@Shadow public abstract ItemStack getMainHandItem();
+
+	@Shadow public abstract ItemStack getItemBySlot(EquipmentSlot pSlot);
+
 	@Shadow
 	protected ItemStack useItem;
 	@Shadow
@@ -46,36 +46,25 @@ public abstract class MixinLivingEntity extends Entity{
 	}
 
 	@Redirect( method = "collectEquipmentChanges", at = @At( value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getItemBySlot(Lnet/minecraft/world/entity/EquipmentSlot;)Lnet/minecraft/world/item/ItemStack;" ) )
-	private ItemStack getDragonSword(LivingEntity entity, EquipmentSlot slotType){
-	    ItemStack mainStack = entity.getMainHandItem();
+	private ItemStack grantDragonSwordAttributes(LivingEntity entity, EquipmentSlot slotType){
+		if (slotType == EquipmentSlot.MAINHAND) {
+			Object self = this;
 
-	    if (slotType == EquipmentSlot.MAINHAND) {
-	    	Object self = this;
+			if (self instanceof Player && DragonUtils.isDragon((Player) self)) {
+				DragonStateHandler cap = DragonUtils.getHandler(entity);
 
-	    	if (self instanceof Player) {
-	    		DragonStateHandler cap = DragonUtils.getHandler(entity);
+				if (!(getMainHandItem().getItem() instanceof TieredItem)) {
+					// Without this the item in the dragon slot for the sword would not grant any of its attributes
+					ItemStack sword = cap.getClawToolData().getClawsInventory().getItem(0);
 
-	    		if (!(mainStack.getItem() instanceof TieredItem)) {
-	    			ItemStack sword = cap.getClawToolData().getClawsInventory().getItem(0);
+					if (!sword.isEmpty()) {
+						return sword;
+					}
+				}
+			}
+		}
 
-	    			if (!sword.isEmpty()) {
-	    				return sword;
-	    			}
-	    		}
-	    	}
-
-	    	return entity.getMainHandItem();
-	    } else if (slotType == EquipmentSlot.OFFHAND) {
-	    	return entity.getOffhandItem();
-	    } else {
-	    	if (slotType.getType() == EquipmentSlot.Type.ARMOR && entity.getArmorSlots() != null && entity.getArmorSlots().iterator().hasNext() && entity.getArmorSlots().spliterator() != null) {
-	    		Stream<ItemStack> stream = StreamSupport.stream(entity.getArmorSlots().spliterator(), false);
-	    		ArrayList<ItemStack> list = new ArrayList<>(stream.toList());
-	    		return list.size() > slotType.getIndex() ? list.get(slotType.getIndex()) : ItemStack.EMPTY;
-	    	} else {
-	    		return ItemStack.EMPTY;
-	    	}
-	    }
+		return this.getItemBySlot(slotType);
 	}
 
 	@Inject( at = @At( "HEAD" ), method = "rideableUnderWater()Z", cancellable = true )

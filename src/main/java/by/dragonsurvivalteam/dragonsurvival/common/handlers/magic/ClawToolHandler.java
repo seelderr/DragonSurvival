@@ -9,7 +9,6 @@ import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
@@ -144,19 +143,6 @@ public class ClawToolHandler{
 		}
 
 		return harvestTool;
-	}
-
-	public static ItemStack getWeapon(LivingEntity entity, ItemStack mainStack){
-		DragonStateHandler cap = DragonUtils.getHandler(entity);
-
-		if(!(mainStack.getItem() instanceof TieredItem)){
-			ItemStack sword = cap.getClawToolData().getClawsInventory().getItem(0);
-
-			if(!sword.isEmpty()){
-				return sword;
-			}
-		}
-		return null;
 	}
 
 	@SubscribeEvent
