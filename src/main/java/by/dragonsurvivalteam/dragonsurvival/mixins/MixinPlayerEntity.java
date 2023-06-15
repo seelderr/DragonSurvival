@@ -42,7 +42,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 
-@Mixin(value = Player.class)
+@Mixin(Player.class)
 public abstract class MixinPlayerEntity extends LivingEntity{
 	private static final UUID SLOW_FALLING_ID = UUID.fromString("A5B6CF2A-2F7C-31EF-9022-7C3E7D5E6ABA");
 	private static final AttributeModifier SLOW_FALLING = new AttributeModifier(SLOW_FALLING_ID, "Slow falling acceleration reduction", -0.07, AttributeModifier.Operation.ADDITION); // Add -0.07 to 0.08 so we get the vanilla default of 0.01

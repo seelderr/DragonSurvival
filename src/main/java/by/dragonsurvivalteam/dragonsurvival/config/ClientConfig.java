@@ -20,4 +20,7 @@ public class ClientConfig{
 
 	@ConfigOption(side = ConfigSide.CLIENT, category = "misc", key = "stableNightVision", comment = "When enabled it stops the blinking effect of night vision when low duration, disable if it causes rendering issues with other mods.")
 	public static Boolean stableNightVision = true;
+
+	@ConfigOption( side = ConfigSide.CLIENT, category = "rendering", key = "hideDragonModel", comment = "Hide the dragon model when in first person. This can fix some animation / model issues with Better Combat." )
+	public static Boolean hideDragonModel = false;
 }

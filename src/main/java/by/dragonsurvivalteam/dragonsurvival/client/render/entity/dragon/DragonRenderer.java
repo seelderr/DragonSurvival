@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
+import by.dragonsurvivalteam.dragonsurvival.config.ClientConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
@@ -78,6 +79,13 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity>{
 		Player player = entity.getPlayer();
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 
+        if (ClientConfig.hideDragonModel && Minecraft.getInstance().options.getCameraType().isFirstPerson() && handler.isDragon()) {
+			// TODO
+			// For Better Combat attack animation - I think you only need to hide the head (or hand(s) since Better Combat uses that?) - not sure
+			// There is surely a better way since even with this the weapon doesn't have any animation - but it's better than having the head block the screen
+			return;
+        }
+
 		boolean hasWings = handler.hasWings() && handler.getSkinData().skinPreset.skinAges.get(handler.getLevel()).get().wings;
 
 		IBone leftWing = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("WingLeft");
@@ -101,7 +109,6 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity>{
 
 		if(!isRenderLayers){
 			Player player = currentEntityBeingRendered.getPlayer();
-			DragonStateHandler handler = DragonUtils.getHandler(player);
 
 			ResourceLocation currentTexture = getTextureLocation(currentEntityBeingRendered);
 			MultiBufferSource bufferSource = getCurrentRTB();

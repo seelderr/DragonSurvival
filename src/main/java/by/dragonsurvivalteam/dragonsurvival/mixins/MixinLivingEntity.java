@@ -33,13 +33,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin( LivingEntity.class )
 public abstract class MixinLivingEntity extends Entity{
 	@Shadow public abstract ItemStack getMainHandItem();
-
 	@Shadow public abstract ItemStack getItemBySlot(EquipmentSlot pSlot);
-
-	@Shadow
-	protected ItemStack useItem;
-	@Shadow
-	protected int useItemRemaining;
+	@Shadow protected ItemStack useItem;
+	@Shadow protected int useItemRemaining;
 
 	public MixinLivingEntity(EntityType<?> p_i48580_1_, Level p_i48580_2_){
 		super(p_i48580_1_, p_i48580_2_);
@@ -64,7 +60,7 @@ public abstract class MixinLivingEntity extends Entity{
 			}
 		}
 
-		return this.getItemBySlot(slotType);
+		return getItemBySlot(slotType);
 	}
 
 	@Inject( at = @At( "HEAD" ), method = "rideableUnderWater()Z", cancellable = true )
