@@ -99,17 +99,17 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 	}
 
 	@Redirect(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;setItemInHand(Lnet/minecraft/world/InteractionHand;Lnet/minecraft/world/item/ItemStack;)V"))
-	private void redirectSetItemInHand(Player player, InteractionHand hand, ItemStack stack) {
-		if (!DragonUtils.isDragon(player)) {
-			player.setItemInHand(hand, stack);
+	private void avoidToolBreak(Player instance, InteractionHand hand, ItemStack stack) {
+		if (!DragonUtils.isDragon(instance)) {
+			instance.setItemInHand(hand, stack);
 		}
 
-		ItemStack handStack = player.getItemInHand(hand);
+		ItemStack handStack = instance.getItemInHand(hand);
 
 		if (!handStack.isEmpty() && handStack.isDamageableItem()) {
 			if (handStack.getMaxDamage() - handStack.getDamageValue() <= 0) {
 				// Only remove the item if it should break; If you had a tool in the hand it seems to be EMPTY at this point anyway, not sure if this is ever reached
-				player.setItemInHand(hand, stack);
+				instance.setItemInHand(hand, stack);
 			}
 		}
 	}
@@ -120,8 +120,25 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 		return getDragonSword(stack);
 	}
 
-	@NotNull
-	private ItemStack getDragonSword(ItemStack stack) {
+//	@ModifyVariable(method = "attack", at = @At("STORE"), ordinal = 0)
+//	private ItemStack handleSweepCheck(ItemStack stack) {
+//		// Line : ItemStack itemstack = this.getItemInHand(InteractionHand.MAIN_HAND);
+//		return getDragonSword(stack);
+//	}
+
+
+	@Redirect(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;getItemInHand(Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/item/ItemStack;"))
+	private ItemStack getItemForSweep(Player instance, InteractionHand hand) {
+		if (hand == InteractionHand.MAIN_HAND) {
+			if (DragonUtils.isDragon(instance)) {
+				return getDragonSword(instance.getItemInHand(hand));
+			}
+		}
+
+		return instance.getItemInHand(hand);
+	}
+
+	private ItemStack getDragonSword(@NotNull final ItemStack stack) {
 		Object self = this;
 		DragonStateHandler cap = DragonUtils.getHandler((Player) self);
 

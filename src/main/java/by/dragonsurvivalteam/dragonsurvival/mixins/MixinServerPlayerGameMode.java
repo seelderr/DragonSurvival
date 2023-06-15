@@ -29,7 +29,7 @@ public class MixinServerPlayerGameMode{
 	}
 
 	@Redirect(method = "destroyBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;canHarvestBlock(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/player/Player;)Z"))
-	private boolean injected(BlockState instance, BlockGetter blockGetter, BlockPos pos, Player player) {
+	private boolean modifiedHarvestCheck(BlockState instance, BlockGetter blockGetter, BlockPos pos, Player player) {
 		boolean originalCheck = instance.canHarvestBlock(blockGetter, pos, player);
 		// This works but not sure about the performance impact etc.
 		// FIXME :: Should maybe skip doing this on vanilla blocks since they should work by default?
@@ -47,6 +47,7 @@ public class MixinServerPlayerGameMode{
 					continue;
 				}
 
+				// Could also copy the whole inventory in case any mod checks for certain enchants / items?
 				fakePlayer.setItemInHand(InteractionHand.MAIN_HAND, tool);
 				boolean reCheck = instance.canHarvestBlock(blockGetter, pos, fakePlayer);
 
