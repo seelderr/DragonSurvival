@@ -98,14 +98,17 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 		return getDragonSword(stack);
 	}
 
-	@Redirect(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;setItemInHand(Lnet/minecraft/world/InteractionHand;Lnet/minecraft/world/item/ItemStack;)V", ordinal = 0))
+	@Redirect(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;setItemInHand(Lnet/minecraft/world/InteractionHand;Lnet/minecraft/world/item/ItemStack;)V"))
 	private void redirectSetItemInHand(Player player, InteractionHand hand, ItemStack stack) {
+		if (!DragonUtils.isDragon(player)) {
+			player.setItemInHand(hand, stack);
+		}
+
 		ItemStack handStack = player.getItemInHand(hand);
 
 		if (!handStack.isEmpty() && handStack.isDamageableItem()) {
 			if (handStack.getMaxDamage() - handStack.getDamageValue() <= 0) {
 				// Only remove the item if it should break; If you had a tool in the hand it seems to be EMPTY at this point anyway, not sure if this is ever reached
-				// No recursive loop - this will actually call the original method
 				player.setItemInHand(hand, stack);
 			}
 		}

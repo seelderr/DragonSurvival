@@ -166,11 +166,10 @@ public class ClawToolHandler{
 
 		if (DragonUtils.isDragon(player)) {
 			ItemStack clawTool = getDragonTools(player);
+			// FIXME - Check :: Sword seems to be never selected?
 
 			if (ItemStack.matches(clawTool, event.getOriginal())) {
 				player.broadcastBreakEvent(event.getHand());
-			} else {
-				// Return break speed to normal
 			}
 		}
 	}
