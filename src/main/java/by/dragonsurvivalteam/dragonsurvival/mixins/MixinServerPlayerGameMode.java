@@ -5,15 +5,18 @@ import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ClawToolHandle
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerPlayerGameMode;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TieredItem;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -32,7 +35,17 @@ public class MixinServerPlayerGameMode{
 	private boolean modifiedHarvestCheck(BlockState instance, BlockGetter blockGetter, BlockPos pos, Player player) {
 		boolean originalCheck = instance.canHarvestBlock(blockGetter, pos, player);
 		// This works but not sure about the performance impact etc.
-		// FIXME :: Should maybe skip doing this on vanilla blocks since they should work by default?
+		ResourceLocation location = ForgeRegistries.BLOCKS.getKey(instance.getBlock());
+
+		if (location != null && location.getNamespace().equals("minecraft")) {
+			// Don't bother checking vanilla blocks - they should work by default
+			return originalCheck;
+		}
+
+		if (player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof TieredItem) {
+			// If the player had a tool in the hand don't bother checking for dragon tools
+			return originalCheck;
+		}
 
 		if (!originalCheck && player.level instanceof ServerLevel) {
 			DragonStateHandler cap = DragonUtils.getHandler(player);
@@ -47,7 +60,7 @@ public class MixinServerPlayerGameMode{
 					continue;
 				}
 
-				// Could also copy the whole inventory in case any mod checks for certain enchants / items?
+				// If certain mods have problems: Could also copy other stuff (inventory, capabilities etc.)
 				fakePlayer.setItemInHand(InteractionHand.MAIN_HAND, tool);
 				boolean reCheck = instance.canHarvestBlock(blockGetter, pos, fakePlayer);
 
