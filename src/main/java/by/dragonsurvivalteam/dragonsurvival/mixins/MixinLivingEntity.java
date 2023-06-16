@@ -74,7 +74,12 @@ public abstract class MixinLivingEntity extends Entity{
 	  		* UseOnContext
 	  		* ForgeHooks
 
-	  	Could maybe also mixin into prominent mods which to add support?
+	  	As an alternative:
+			* Mixin into popular mods to add support?
+			* Make it in-lore that a sword / item in dragon tool slot cannot have its full power (create list of incompatible enchants and colour tooltip)?
+			* In the "attack" method switch out main hand item with slot in dragon tool for sword (and switch it back at the end)?
+				-> This might actually work - would need to refactor some mixins etc.
+
 	*/
 //	@Inject(method = "getMainHandItem", at = @At("RETURN"), cancellable = true)
 //	public void returnDragonToolAsMainHand(CallbackInfoReturnable<ItemStack> cir) {

@@ -41,6 +41,9 @@ public class DragonStateHandler extends EntityStateHandler implements NBTInterfa
 	private final DragonMovementData movementData = new DragonMovementData(0, 0, 0, false);
 
 	private final ClawInventory clawToolData = new ClawInventory(this);
+	public ItemStack storedMainHand = ItemStack.EMPTY;
+	public boolean switchedItems;
+
 	private final EmoteCap emoteData = new EmoteCap(this);
 	private final MagicCap magicData = new MagicCap(this);
 	private final SkinCap skinData = new SkinCap(this);

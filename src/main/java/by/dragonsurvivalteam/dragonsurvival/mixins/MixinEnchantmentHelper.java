@@ -33,31 +33,31 @@ public abstract class MixinEnchantmentHelper{
 		}
 	}
 
-	@Inject(method = "doPostHurtEffects", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/enchantment/EnchantmentHelper;runIterationOnInventory(Lnet/minecraft/world/item/enchantment/EnchantmentHelper$EnchantmentVisitor;Ljava/lang/Iterable;)V", shift = At.Shift.AFTER, ordinal = 0))
-	private static void postHurtDragonSword(LivingEntity target, Entity attacker, CallbackInfo ci) {
-		ItemStack sword = ClawToolHandler.getDragonSword(target);
+//	@Inject(method = "doPostHurtEffects", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/enchantment/EnchantmentHelper;runIterationOnInventory(Lnet/minecraft/world/item/enchantment/EnchantmentHelper$EnchantmentVisitor;Ljava/lang/Iterable;)V", shift = At.Shift.AFTER, ordinal = 0))
+//	private static void postHurtDragonSword(LivingEntity target, Entity attacker, CallbackInfo ci) {
+//		ItemStack sword = ClawToolHandler.getDragonSword(target);
+//
+//		if (sword == ItemStack.EMPTY) {
+//			return;
+//		}
+//
+//		for (Map.Entry<Enchantment, Integer> entry : sword.getAllEnchantments().entrySet()) {
+//			entry.getKey().doPostHurt(target, attacker, entry.getValue());
+//		}
+//	}
 
-		if (sword == ItemStack.EMPTY) {
-			return;
-		}
-
-		for (Map.Entry<Enchantment, Integer> entry : sword.getAllEnchantments().entrySet()) {
-			entry.getKey().doPostHurt(target, attacker, entry.getValue());
-		}
-	}
-
-	@Inject(method = "doPostDamageEffects", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/enchantment/EnchantmentHelper;runIterationOnInventory(Lnet/minecraft/world/item/enchantment/EnchantmentHelper$EnchantmentVisitor;Ljava/lang/Iterable;)V", shift = At.Shift.AFTER, ordinal = 0))
-	private static void postDamageDragonSword(LivingEntity attacker, Entity target, CallbackInfo ci) {
-		ItemStack sword = ClawToolHandler.getDragonSword(attacker);
-
-		if (sword == ItemStack.EMPTY) {
-			return;
-		}
-
-		for (Map.Entry<Enchantment, Integer> entry : sword.getAllEnchantments().entrySet()) {
-			entry.getKey().doPostAttack(attacker, target, entry.getValue());
-		}
-	}
+//	@Inject(method = "doPostDamageEffects", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/enchantment/EnchantmentHelper;runIterationOnInventory(Lnet/minecraft/world/item/enchantment/EnchantmentHelper$EnchantmentVisitor;Ljava/lang/Iterable;)V", shift = At.Shift.AFTER, ordinal = 0))
+//	private static void postDamageDragonSword(LivingEntity attacker, Entity target, CallbackInfo ci) {
+//		ItemStack sword = ClawToolHandler.getDragonSword(attacker);
+//
+//		if (sword == ItemStack.EMPTY) {
+//			return;
+//		}
+//
+//		for (Map.Entry<Enchantment, Integer> entry : sword.getAllEnchantments().entrySet()) {
+//			entry.getKey().doPostAttack(attacker, target, entry.getValue());
+//		}
+//	}
 
 	private static final List<EnchantmentCategory> IGNORED_CATEGORIES = List.of(
 		EnchantmentCategory.ARMOR,
