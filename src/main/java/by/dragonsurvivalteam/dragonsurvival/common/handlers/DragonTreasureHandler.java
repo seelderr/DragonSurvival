@@ -7,6 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncTreasureRestStatus;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -74,7 +75,7 @@ public class DragonTreasureHandler{
 					}
 					treasureNearby = Mth.clamp(treasureNearby, 0, ServerConfig.maxTreasures);
 
-					int totalTime = ServerConfig.treasureRegenTicks;
+					int totalTime = Functions.secondsToTicks(ServerConfig.treasureRegenTicks);
 					int restTimer = totalTime - ServerConfig.treasureRegenTicksReduce * treasureNearby;
 
 					if(handler.treasureRestTimer >= restTimer){

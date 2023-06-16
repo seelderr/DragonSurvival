@@ -77,15 +77,15 @@ public class StormBreathAbility extends BreathAbility{
 	                                                     "abilities",
 	                                                     "sea_dragon",
 	                                                     "actives",
-	                                                     "storm_breath"}, key = "stormBreathCooldown", comment = "The cooldown in ticks of the storm breath ability" )
-	public static Integer stormBreathCooldown = 200;
+	                                                     "storm_breath"}, key = "stormBreathCooldown", comment = "The cooldown in seconds of the storm breath ability" )
+	public static Integer stormBreathCooldown = 10;
 	@ConfigRange( min = 1, max = 10000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic",
 	                                                     "abilities",
 	                                                     "sea_dragon",
 	                                                     "actives",
-	                                                     "storm_breath"}, key = "stormBreathCasttime", comment = "The cast time in ticks of the storm breath ability" )
-	public static Integer stormBreathCasttime = 10;
+	                                                     "storm_breath"}, key = "stormBreathCasttime", comment = "The cast time in seconds of the storm breath ability" )
+	public static Integer stormBreathCasttime = 1;
 	@ConfigRange( min = 0, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic",
 	                                                     "abilities",
@@ -98,8 +98,8 @@ public class StormBreathAbility extends BreathAbility{
 	                                                     "abilities",
 	                                                     "sea_dragon",
 	                                                     "actives",
-	                                                     "storm_breath"}, key = "stormBreathManaTicks", comment = "How often in ticks, mana is consumed while using storm breath" )
-	public static Integer stormBreathManaTicks = 40;
+	                                                     "storm_breath"}, key = "stormBreathManaTicks", comment = "How often in seconds, mana is consumed while using storm breath" )
+	public static Integer stormBreathManaTicks = 2;
 	@ConfigType( Block.class )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic",
 	                                                     "abilities",
@@ -208,7 +208,7 @@ public class StormBreathAbility extends BreathAbility{
 
 	@Override
 	public int getSkillCooldown(){
-		return stormBreathCooldown;
+		return Functions.secondsToTicks(stormBreathCooldown);
 	}
 
 	public static void chargedEffectSparkle(Player player, LivingEntity source, int chainRange, int maxChainTargets, int damage){
@@ -458,12 +458,12 @@ public class StormBreathAbility extends BreathAbility{
 
 	@Override
 	public int getSkillChargeTime(){
-		return stormBreathCasttime;
+		return Functions.secondsToTicks(stormBreathCasttime);
 	}
 
 	@Override
 	public int getContinuousManaCostTime() {
-		return stormBreathManaTicks;
+		return Functions.secondsToTicks(stormBreathManaTicks);
 	}
 
 	@Override

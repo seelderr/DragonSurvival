@@ -57,11 +57,11 @@ public class ForestBreathAbility extends BreathAbility{
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathDamage", comment = "The amount of damage the forest breath ability deals. This value is multiplied by the skill level." )
 	public static Double forestBreathDamage = 2.0;
 	@ConfigRange( min = 1, max = 10000 )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathCooldown", comment = "The cooldown in ticks of the forest breath ability" )
-	public static Integer forestBreathCooldown = 100;
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathCooldown", comment = "The cooldown in seconds of the forest breath ability" )
+	public static Integer forestBreathCooldown = 5;
 	@ConfigRange( min = 1, max = 10000 )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathCasttime", comment = "The casttime in ticks of the forest breath ability" )
-	public static Integer forestBreathCasttime = 20;
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathCasttime", comment = "The casttime in seconds of the forest breath ability" )
+	public static Integer forestBreathCasttime = 1;
 	@ConfigRange( min = 0, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathInitialMana", comment = "The mana cost for starting the forest breath ability" )
 	public static Integer forestBreathInitialMana = 2;
@@ -69,8 +69,8 @@ public class ForestBreathAbility extends BreathAbility{
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathOvertimeMana", comment = "The mana cost of sustaining the forest breath ability" )
 	public static Integer forestBreathOvertimeMana = 1;
 	@ConfigRange( min = 0, max = 100 )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathManaTicks", comment = "How often in ticks, mana is consumed while using forest breath" )
-	public static Integer forestBreathManaTicks = 40;
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathManaTicks", comment = "How often in seconds, mana is consumed while using forest breath" )
+	public static Integer forestBreathManaTicks = 2;
 	@ConfigType(Block.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathBlockBreaks", comment = "Blocks that have a chance to be broken by forest breath. Formatting: block/modid:id" )
 	public static List<String> forestBreathBlockBreaks = List.of("minecraft:banners");
@@ -233,7 +233,7 @@ public class ForestBreathAbility extends BreathAbility{
 
 	@Override
 	public int getSkillCooldown(){
-		return forestBreathCooldown;
+		return Functions.secondsToTicks(forestBreathCooldown);
 	}
 
 
@@ -303,12 +303,12 @@ public class ForestBreathAbility extends BreathAbility{
 
 	@Override
 	public int getSkillChargeTime(){
-		return forestBreathCasttime;
+		return Functions.secondsToTicks(forestBreathCasttime);
 	}
 
 	@Override
 	public int getContinuousManaCostTime() {
-		return forestBreathManaTicks;
+		return Functions.secondsToTicks(forestBreathManaTicks);
 	}
 
 	@Override

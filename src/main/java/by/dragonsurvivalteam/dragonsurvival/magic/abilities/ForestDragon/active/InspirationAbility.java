@@ -9,6 +9,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.AoeBuffAbility;
+import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -19,14 +20,14 @@ public class InspirationAbility extends AoeBuffAbility{
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "inspiration"}, key = "inspiration", comment = "Whether the inspiration ability should be enabled" )
 	public static Boolean inspiration = true;
 	@ConfigRange( min = 1, max = 10000 )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "inspiration"}, key = "inspirationCooldown", comment = "The cooldown in ticks of the inspiration ability" )
-	public static Integer inspirationCooldown = 1200;
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "inspiration"}, key = "inspirationCooldown", comment = "The cooldown in seconds of the inspiration ability" )
+	public static Integer inspirationCooldown = 60;
 	@ConfigRange( min = 1, max = 10000 )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "inspiration"}, key = "inspirationCasttime", comment = "The cast time in ticks of the inspiration ability" )
-	public static Integer inspirationCasttime = 100;
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "inspiration"}, key = "inspirationCasttime", comment = "The cast time in seconds of the inspiration ability" )
+	public static Integer inspirationCasttime = 5;
 	@ConfigRange( min = 0, max = 10000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "inspiration"}, key = "inspirationDuration", comment = "The duration in seconds of the inspiration effect given when the ability is used" )
-	public static Integer inspirationDuration = 1200;
+	public static Integer inspirationDuration = 60;
 	@ConfigRange( min = 0, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "inspiration"}, key = "inspirationManaCost", comment = "The mana cost for using the inspiration ability" )
 	public static Integer inspirationManaCost = 1;
@@ -77,7 +78,7 @@ public class InspirationAbility extends AoeBuffAbility{
 
 	@Override
 	public int getSkillCooldown(){
-		return inspirationCooldown;
+		return Functions.secondsToTicks(inspirationCooldown);
 	}
 
 	@Override
@@ -92,11 +93,11 @@ public class InspirationAbility extends AoeBuffAbility{
 
 	@Override
 	public MobEffectInstance getEffect(){
-		return new MobEffectInstance(MobEffects.DIG_SPEED, inspirationDuration, 2);
+		return new MobEffectInstance(MobEffects.DIG_SPEED, Functions.secondsToTicks(inspirationDuration), 2);
 	}
 
 	@Override
 	public int getSkillCastingTime(){
-		return inspirationCasttime;
+		return Functions.secondsToTicks(inspirationCasttime);
 	}
 }

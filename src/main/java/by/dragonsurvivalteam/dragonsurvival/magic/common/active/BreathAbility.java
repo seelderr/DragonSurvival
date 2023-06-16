@@ -222,7 +222,7 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 		components.add(Component.translatable("ds.skill.mana_cost", getInitManaCost()));
 		components.add(Component.translatable("ds.skill.channel_cost", getManaCost(), 2));
 
-		components.add(Component.translatable("ds.skill.cast_time", nf.format((double)getSkillChargeTime() / 20)));
+		components.add(Component.translatable("ds.skill.cast_time", Functions.ticksToSeconds(getSkillChargeTime())));
 		components.add(Component.translatable("ds.skill.cooldown", Functions.ticksToSeconds(getSkillCooldown())));
 
 		components.add(Component.translatable("ds.skill.damage", getDamage()));
