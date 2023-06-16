@@ -27,7 +27,7 @@ public class MixinInventory{
 	@Inject( at = @At( "HEAD" ), method = "getDestroySpeed", cancellable = true )
 	public void getDestroySpeed(BlockState state, CallbackInfoReturnable<Float> ci){
 		ItemStack mainStack = player.getInventory().getSelected();
-		ItemStack breakStack = ClawToolHandler.getDragonTools(player);
+		ItemStack breakStack = ClawToolHandler.getDragonHarvestTool(player);
 
 		if(!ItemStack.isSame(mainStack, breakStack)){
 			float tempSpeed = breakStack.getDestroySpeed(state);

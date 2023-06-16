@@ -146,10 +146,6 @@ public class MagicHandler{
 
 	@SubscribeEvent
 	public static void livingTick(LivingEvent.LivingTickEvent event){
-		/* TODO
-		Entities do not need the entire DragonStateHandler
-		A new State with the fields `lastAfflicated` and `lastPos` should be enough
-		*/
 		LivingEntity entity = event.getEntity();
 		EntityStateHandler cap = DragonUtils.getEntityHandler(entity);
 
@@ -159,10 +155,6 @@ public class MagicHandler{
 			}
 		}
 
-		/*
-		Relevant for both `DRAIN` and `CHARGED`
-		If an entity has such a debuff it searches for the player who afflicted said debuff
-		*/
 		if(entity.hasEffect(DragonEffects.DRAIN)){
 			if(!DragonUtils.isDragonType(entity, DragonTypes.FOREST)){
 				if(entity.tickCount % 20 == 0){

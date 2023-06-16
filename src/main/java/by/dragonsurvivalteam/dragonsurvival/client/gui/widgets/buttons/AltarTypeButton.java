@@ -106,7 +106,6 @@ public class AltarTypeButton extends Button implements TooltipRender{
 
 				cap.setType(null);
 				cap.setSize(20F);
-				cap.setHasWings(false);
 				cap.setIsHiding(false);
 				cap.getMovementData().spinLearned = false;
 

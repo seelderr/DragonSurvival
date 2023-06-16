@@ -28,7 +28,7 @@ public class MixinServerPlayerGameMode{
 	@Redirect( method = "destroyBlock(Lnet/minecraft/core/BlockPos;)Z", at = @At( value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;getMainHandItem()Lnet/minecraft/world/item/ItemStack;" ) )
 	public ItemStack getTools(ServerPlayer instance){
 		instance.detectEquipmentUpdates();
-		return ClawToolHandler.getDragonTools(instance);
+		return ClawToolHandler.getDragonHarvestTool(instance);
 	}
 
 	@Redirect(method = "destroyBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;canHarvestBlock(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/player/Player;)Z"))

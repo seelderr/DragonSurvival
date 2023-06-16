@@ -212,7 +212,7 @@ public class EventHandler{
 				BlockState blockState = breakEvent.getState();
 				BlockPos blockPos = breakEvent.getPos();
 				Block block = blockState.getBlock();
-				ItemStack mainHandItem = ClawToolHandler.getDragonTools(player);
+				ItemStack mainHandItem = ClawToolHandler.getDragonHarvestTool(player);
 				double random;
 				// Modded Ore Support
 				String[] tagStringSplit = ServerConfig.oresTag.split(":");

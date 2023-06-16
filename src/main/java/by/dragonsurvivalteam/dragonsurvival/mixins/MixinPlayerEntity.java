@@ -146,14 +146,11 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 
 	private ItemStack getDragonSword(@NotNull final ItemStack stack) {
 		Object self = this;
-		DragonStateHandler cap = DragonUtils.getHandler((Player) self);
 
-		if(!(stack.getItem() instanceof TieredItem)){
-			ItemStack sword = cap.getClawToolData().getClawsInventory().getItem(0);
+		ItemStack dragonSword = ClawToolHandler.getDragonSword((Player) self);
 
-			if(!sword.isEmpty()){
-				return sword;
-			}
+		if (dragonSword != ItemStack.EMPTY) {
+			return dragonSword;
 		}
 
 		return stack;
@@ -161,7 +158,7 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 
 	@Redirect( method = "getDigSpeed(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;)F", at = @At( value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;getMainHandItem()Lnet/minecraft/world/item/ItemStack;" ), remap = false )
 	private ItemStack getDragonTools(Player entity){
-		return ClawToolHandler.getDragonTools(entity);
+		return ClawToolHandler.getDragonHarvestTool(entity);
 	}
 
 	@Inject( method = "isSleepingLongEnough", at = @At( "HEAD" ), cancellable = true )

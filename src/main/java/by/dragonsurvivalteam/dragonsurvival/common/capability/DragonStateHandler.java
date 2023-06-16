@@ -157,17 +157,18 @@ public class DragonStateHandler extends EntityStateHandler implements NBTInterfa
 			//Spin attack
 			tag.putInt("spinCooldown", movementData.spinCooldown);
 			tag.putInt("spinAttack", movementData.spinAttack);
-			tag.putBoolean("spinLearned", movementData.spinLearned); // FIXME
 
 			tag.putDouble("size", getSize());
 			tag.putBoolean("growing", growing);
 
-			tag.putBoolean("hasWings", hasWings()); // FIXME
 			tag.putBoolean("isFlying", isWingsSpread());
 
 			tag.putBoolean("resting", treasureResting);
 			tag.putInt("restingTimer", treasureRestTimer);
 		}
+
+		tag.putBoolean("spinLearned", getMovementData().spinLearned);
+		tag.putBoolean("hasWings", hasWings());
 
 		tag.putDouble("seaSize", getSavedDragonSize(DragonTypes.SEA.getTypeName()));
 		tag.putDouble("caveSize", getSavedDragonSize(DragonTypes.CAVE.getTypeName()));
@@ -191,7 +192,6 @@ public class DragonStateHandler extends EntityStateHandler implements NBTInterfa
 
 	@Override
 	public void readNBT(CompoundTag tag){
-		//setType(DragonType.valueOf(tag.getString("type").toUpperCase(Locale.ROOT)));
 		dragonType = DragonTypes.newDragonTypeInstance(tag.getString("type"));
 
 		if(dragonType != null){
@@ -208,12 +208,10 @@ public class DragonStateHandler extends EntityStateHandler implements NBTInterfa
 			setIsHiding(tag.getBoolean("isHiding"));
 			getMovementData().dig = tag.getBoolean("dig");
 
-			setHasWings(tag.getBoolean("hasWings"));
 			setWingsSpread(tag.getBoolean("isFlying"));
 
 			getMovementData().spinCooldown = tag.getInt("spinCooldown");
 			getMovementData().spinAttack = tag.getInt("spinAttack");
-			getMovementData().spinLearned = tag.getBoolean("spinLearned");
 
 			setSize(tag.getDouble("size"));
 			growing = !tag.contains("growing") || tag.getBoolean("growing");
@@ -225,6 +223,9 @@ public class DragonStateHandler extends EntityStateHandler implements NBTInterfa
 				setSize(DragonLevel.NEWBORN.size);
 			}
 		}
+
+		getMovementData().spinLearned = tag.getBoolean("spinLearned");
+		setHasWings(tag.getBoolean("hasWings"));
 
 		setSavedDragonSize(DragonTypes.SEA.getTypeName(), tag.getDouble("seaSize"));
 		setSavedDragonSize(DragonTypes.CAVE.getTypeName(), tag.getDouble("caveSize"));

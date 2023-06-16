@@ -12,7 +12,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -33,12 +32,14 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
 	}
 
 	@Inject( at = @At( value = "HEAD" ), method = "positionRider(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/entity/Entity$MoveFunction;)V", cancellable = true )
-	private void positionRider(Entity p_226266_1_, Entity.MoveFunction p_226266_2_, CallbackInfo callbackInfo){
-		if(DragonUtils.isDragon((Entity)(net.minecraftforge.common.capabilities.CapabilityProvider<Entity>)this)){
-			if(hasPassenger(p_226266_1_)){
-				double d0 = getY() + getPassengersRidingOffset() + p_226266_1_.getMyRidingOffset();
-				Vector3f cameraOffset = Functions.getDragonCameraOffset((Entity)(net.minecraftforge.common.capabilities.CapabilityProvider<Entity>)this);
-				p_226266_2_.accept(p_226266_1_, getX() - cameraOffset.x(), d0, getZ() - cameraOffset.z());
+	private void positionRider(Entity entity, Entity.MoveFunction move, CallbackInfo callbackInfo){
+		Object self = this;
+
+		if(DragonUtils.isDragon((Entity) self)){
+			if(hasPassenger(entity)){
+				double d0 = getY() + getPassengersRidingOffset() + entity.getMyRidingOffset();
+				Vector3f cameraOffset = Functions.getDragonCameraOffset((Entity) self);
+				move.accept(entity, getX() - cameraOffset.x(), d0, getZ() - cameraOffset.z());
 				callbackInfo.cancel();
 			}
 		}
