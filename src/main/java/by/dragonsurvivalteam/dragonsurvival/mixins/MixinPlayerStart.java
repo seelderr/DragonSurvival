@@ -14,6 +14,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = Player.class, priority = 1) // To make sure it's the first call in the method
 public class MixinPlayerStart {
+    // Did not notice any problems running on a server - but you could exclude the client thread from running this by checking `player instanceof ServerPlayer`
+
     @Inject(method = "attack", at = @At("HEAD"))
     public void switchStart(Entity target, CallbackInfo ci) {
         Object self = this;

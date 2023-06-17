@@ -16,6 +16,8 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.IS_BETTERCO
 
 @Mixin(value = Player.class, priority = 10000) // To make sure it's the last call in the method
 public class MixinPlayerEnd {
+    // Did not notice any problems running on a server - but you could exclude the client thread from running this by checking `player instanceof ServerPlayer`
+
     @Inject(method = "attack", at = @At("RETURN"))
     public void switchEnd(Entity target, CallbackInfo ci) {
         Object self = this;
