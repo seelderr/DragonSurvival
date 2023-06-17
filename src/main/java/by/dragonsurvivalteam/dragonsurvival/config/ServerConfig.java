@@ -428,7 +428,7 @@ public class ServerConfig{
 
 	@ConfigType(Block.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "mana"}, key = "forestDragonManaBlocks", comment = "Blocks that will restore mana quicker when a forest dragon is standing on it. Formatting: block/modid:blockid" )
-	public static List<String> forestDragonManaBlocks = List.of("dragonsurvival:forest_source_of_magic", "minecraft:small_flowers", "minecraft:flowers", "minecraft:tall_flowers");
+	public static List<String> forestDragonManaBlocks = List.of("dragonsurvival:forest_source_of_magic", "minecraft:grass_block", "minecraft:grass_block", "minecraft:small_flowers", "minecraft:flowers", "minecraft:tall_flowers", "minecraft:lily_pad", "minecraft:red_mushroom", "minecraft:brown_mushroom", "minecraft:sweet_berry_bush", "minecraft:oak_leaves");
 
 	@ConfigType(Block.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "mana"}, key = "caveDragonManaBlocks", comment = "Blocks that will restore mana quicker when a cave dragon is standing on it. Formatting: block/modid:blockid" )
