@@ -63,46 +63,6 @@ public abstract class MixinLivingEntity extends Entity{
 		return getItemBySlot(slotType);
 	}
 
-	/* TODO ::
-	    Mods which add enchantments etc. call this method to check if the item used for attacking has a specific enchantment e.g.
-	    Examples:
-	    	* https://github.com/Shadows-of-Fire/Apotheosis/blob/1.19/src/main/java/shadows/apotheosis/ench/enchantments/masterwork/ScavengerEnchant.java
-	    	* https://github.com/infernalstudios/Mining-Master/blob/1.19/src/main/java/org/infernalstudios/miningmaster/mixin/MixinPlayer.java
-	  	But if this is used it would probably also create problems (e.g. tempting animals with wheat etc.)
-	  	Some situations could maybe be handled with events or adding a mixin to specific spots to-rechange the main hand item?
-	  	Interesting classes:
-	  		* UseOnContext
-	  		* ForgeHooks
-
-	  	As an alternative:
-			* Mixin into popular mods to add support?
-			* Make it in-lore that a sword / item in dragon tool slot cannot have its full power (create list of incompatible enchants and colour tooltip)?
-			* In the "attack" method switch out main hand item with slot in dragon tool for sword (and switch it back at the end)?
-				-> This might actually work - would need to refactor some mixins etc.
-
-	*/
-//	@Inject(method = "getMainHandItem", at = @At("RETURN"), cancellable = true)
-//	public void returnDragonToolAsMainHand(CallbackInfoReturnable<ItemStack> cir) {
-//		Object self = this;
-//
-//		if (!(self instanceof Player player) || !DragonUtils.isDragon(player)) {
-//			return;
-//		}
-//
-//		// player.detectEquipmentUpdates();
-////		ItemStack stack = ClawToolHandler.getDragonHarvestTool(player); // Recursive loop due to `EntityCollisionContext`
-//
-////		if (stack == ItemStack.EMPTY) {
-////			stack = ClawToolHandler.getDragonSword(player);
-////		}
-//
-//		ItemStack stack = ClawToolHandler.getDragonSword(player);
-//
-//		if (stack != ItemStack.EMPTY) {
-//			cir.setReturnValue(stack);
-//		}
-//	}
-
 	@Inject( at = @At( "HEAD" ), method = "rideableUnderWater()Z", cancellable = true )
 	public void dragonRideableUnderWater(CallbackInfoReturnable<Boolean> ci){
 		Object self = this;

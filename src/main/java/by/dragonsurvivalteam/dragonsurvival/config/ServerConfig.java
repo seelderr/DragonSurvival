@@ -326,7 +326,7 @@ public class ServerConfig{
 	);
 
 	@ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "blacklistedSlots", comment = "List of slots to handle blacklistedItems option" )
-	public static List<Integer> blacklistedSlots = Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 45);
+	public static List<Integer> blacklistedSlots = Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 40);
 
 	// Cave Dragon Penalties
 	@ConfigRange( min = 0.0, max = 100.0 )

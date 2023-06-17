@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
@@ -14,7 +13,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stat;
 import net.minecraft.stats.Stats;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
@@ -25,12 +23,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TieredItem;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.*;
@@ -80,81 +76,6 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 			}
 		}
 	}
-
-//	@ModifyVariable(method = "attack", at = @At("STORE"), name = "itemstack1")
-//	private ItemStack handleDamage(ItemStack stack) {
-//		// Will get used for `hurtEnemy` and `PlayerDestroyItemEvent`
-//		return getDragonSword(stack);
-//	}
-
-//	private ItemStack stored;
-
-//	@Inject(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;setItemInHand(Lnet/minecraft/world/InteractionHand;Lnet/minecraft/world/item/ItemStack;)V"))
-//	private void avoidToolBreak_storeItem(Entity target, CallbackInfo ci) {
-//		// Currently set up like this to avoid clash with `Better Combat` dual-wield logic
-//		Object self = this;
-//
-//		if (!DragonUtils.isDragon((Player) self)) {
-//			return;
-//		}
-//
-//		ItemStack current = ((Player) self).getItemInHand(InteractionHand.MAIN_HAND);
-//		stored = current;
-//
-//		if (!current.isEmpty() && current.isDamageableItem()) {
-//			if (current.getMaxDamage() - current.getDamageValue() <= 0) {
-//				// Only remove the item if it should break; If you had a tool in the hand it seems to be EMPTY at this point anyway, not sure if this is ever reached
-//				stored = ItemStack.EMPTY;
-//			}
-//		}
-//	}
-
-//	@Inject(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;setItemInHand(Lnet/minecraft/world/InteractionHand;Lnet/minecraft/world/item/ItemStack;)V", shift = At.Shift.AFTER))
-//	private void avoidToolBreak_setItem(Entity target, CallbackInfo ci) {
-//		Object self = this;
-//
-//		if (!DragonUtils.isDragon((Player) self)) {
-//			return;
-//		}
-//
-//		ItemStack current = ((Player) self).getItemInHand(InteractionHand.MAIN_HAND);
-//
-//		if (current != ItemStack.EMPTY) {
-//			DragonSurvivalMod.LOGGER.error("Item in hand was not empty after weapon broke");
-//			// TODO :: Could drop the item in this case? Or place in inventory if there is space?
-//		} else {
-//			((Player) self).setItemInHand(InteractionHand.MAIN_HAND, stored);
-//		}
-//	}
-
-//	@ModifyArg(method = "attack", at = @At(value = "INVOKE", target = "net/minecraft/world/item/enchantment/EnchantmentHelper.getDamageBonus(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/MobType;)F"))
-//	private ItemStack handleEnchantmentBonus(ItemStack stack) {
-//		// Will be used for `EnchantmentHelper.getDamageBonus`
-//		return getDragonSword(stack);
-//	}
-
-//	@Redirect(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;getItemInHand(Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/item/ItemStack;"))
-//	private ItemStack getItemForSweep(Player instance, InteractionHand hand) {
-//		if (hand == InteractionHand.MAIN_HAND) {
-//			if (DragonUtils.isDragon(instance)) {
-//				return getDragonSword(instance.getItemInHand(hand));
-//			}
-//		}
-//
-//		return instance.getItemInHand(hand);
-//	}
-
-//	private ItemStack getDragonSword(@NotNull final ItemStack stack) {
-//		Object self = this;
-//
-//		ItemStack dragonSword = ClawToolHandler.getDragonSword((Player) self);
-//
-//		if (dragonSword != ItemStack.EMPTY) {
-//			return dragonSword;
-//		}
-//
-//		return stack;
-//	}
 
 	@Redirect( method = "getDigSpeed(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;)F", at = @At( value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;getMainHandItem()Lnet/minecraft/world/item/ItemStack;" ), remap = false )
 	private ItemStack getDragonTools(Player entity){
