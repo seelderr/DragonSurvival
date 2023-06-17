@@ -21,7 +21,6 @@ public class RenderHudEvents {
     }
 
     @SubscribeEvent(receiveCanceled = true)
-    //@SubscribeEvent
     public static void onRenderOverlay(RenderGuiOverlayEvent.Pre event) {
         Minecraft minecraft = Minecraft.getInstance();
         if (event.isCanceled() ||
@@ -41,6 +40,7 @@ public class RenderHudEvents {
         } else if (id == VanillaGuiOverlay.AIR_LEVEL.id()) {
             ClientEvents.onRenderOverlayPreTick(getGui(), event.getPoseStack(), event.getPartialTick(), screenWidth, screenHeight);
             ClientMagicHUDHandler.renderAbilityHud(getGui(), event.getPoseStack(), event.getPartialTick(), screenWidth, screenHeight);
+            // Renders the growth icon above the experience bar when an item is selected which grants growth
             ClientGrowthHudHandler.renderGrowth(getGui(), event.getPoseStack(), event.getPartialTick(), screenWidth, screenHeight);
         }
     }

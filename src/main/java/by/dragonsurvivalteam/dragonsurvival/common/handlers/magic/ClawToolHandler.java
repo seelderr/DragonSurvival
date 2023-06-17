@@ -8,6 +8,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -108,7 +109,7 @@ public class ClawToolHandler{
 		});
 	}
 
-	public static ItemStack getDragonTools(Player player){
+	public static ItemStack getDragonHarvestTool(Player player){
 		ItemStack mainStack = player.getInventory().getSelected();
 		ItemStack harvestTool = mainStack;
 		float newSpeed = 0F;
@@ -146,27 +147,36 @@ public class ClawToolHandler{
 		return harvestTool;
 	}
 
-	public static ItemStack getWeapon(LivingEntity entity, ItemStack mainStack){
-		DragonStateHandler cap = DragonUtils.getHandler(entity);
-
-		if(!(mainStack.getItem() instanceof TieredItem)){
-			ItemStack sword = cap.getClawToolData().getClawsInventory().getItem(0);
-
-			if(!sword.isEmpty()){
-				return sword;
-			}
+	/**
+	 *
+	 * @return Only the sword in the dragon tool slot <br>
+	 * If the main hand has a {@link TieredItem} the returned result will be {@link ItemStack#EMPTY}
+	 */
+	public static ItemStack getDragonSword(final LivingEntity player) {
+		if (!(player instanceof Player)) {
+			return ItemStack.EMPTY;
 		}
-		return null;
+
+		ItemStack itemInHand = player.getItemInHand(InteractionHand.MAIN_HAND);
+
+		if (itemInHand.getItem() instanceof TieredItem) {
+			return ItemStack.EMPTY;
+		}
+
+		DragonStateHandler cap = DragonUtils.getHandler(player);
+
+		return cap.getClawToolData().getClawsInventory().getItem(0);
 	}
 
 	@SubscribeEvent
-	public static void onToolBreak(PlayerDestroyItemEvent event){
-		if(event.getHand() == null) return;
+	public static void onToolBreak(PlayerDestroyItemEvent event) {
+		if (event.getHand() == null) return;
 		Player player = event.getEntity();
 
-		if(DragonUtils.isDragon(player)){
-			ItemStack clawTool = getDragonTools(player);
-			if(ItemStack.matches(clawTool, event.getOriginal())){
+		if (DragonUtils.isDragon(player)) {
+			ItemStack clawTool = getDragonHarvestTool(player);
+
+			if (ItemStack.matches(clawTool, event.getOriginal())) {
 				player.broadcastBreakEvent(event.getHand());
 			}
 		}

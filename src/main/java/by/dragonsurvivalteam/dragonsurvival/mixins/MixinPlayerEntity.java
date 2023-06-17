@@ -6,7 +6,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ClawToolHandler;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.core.BlockPos;
@@ -16,30 +15,21 @@ import net.minecraft.stats.Stat;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MoverType;
-import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.animal.FlyingAnimal;
-import net.minecraft.world.entity.player.Abilities;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TieredItem;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.Vec3;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -48,19 +38,10 @@ import java.util.Objects;
 import java.util.UUID;
 
 
-@Mixin( Player.class )
+@Mixin(Player.class)
 public abstract class MixinPlayerEntity extends LivingEntity{
-
 	private static final UUID SLOW_FALLING_ID = UUID.fromString("A5B6CF2A-2F7C-31EF-9022-7C3E7D5E6ABA");
 	private static final AttributeModifier SLOW_FALLING = new AttributeModifier(SLOW_FALLING_ID, "Slow falling acceleration reduction", -0.07, AttributeModifier.Operation.ADDITION); // Add -0.07 to 0.08 so we get the vanilla default of 0.01
-	@Shadow
-	@Final
-	private Abilities abilities;
-	@Shadow
-	@Final
-	private Inventory inventory;
-	@Shadow
-	private int sleepCounter;
 
 	protected MixinPlayerEntity(EntityType<? extends LivingEntity> p_20966_, Level p_20967_){
 		super(p_20966_, p_20967_);
@@ -96,25 +77,9 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 		}
 	}
 
-	@Redirect( method = "attack", at = @At( value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;getMainHandItem()Lnet/minecraft/world/item/ItemStack;" ) )
-	private ItemStack getDragonSword(Player entity){
-		ItemStack mainStack = entity.getMainHandItem();
-		DragonStateHandler cap = DragonUtils.getHandler(entity);
-
-		if(!(mainStack.getItem() instanceof TieredItem)){
-			ItemStack sword = cap.getClawToolData().getClawsInventory().getItem(0);
-
-			if(!sword.isEmpty()){
-				return sword;
-			}
-		}
-
-		return mainStack;
-	}
-
 	@Redirect( method = "getDigSpeed(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;)F", at = @At( value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;getMainHandItem()Lnet/minecraft/world/item/ItemStack;" ), remap = false )
 	private ItemStack getDragonTools(Player entity){
-		return ClawToolHandler.getDragonTools(entity);
+		return ClawToolHandler.getDragonHarvestTool(entity);
 	}
 
 	@Inject( method = "isSleepingLongEnough", at = @At( "HEAD" ), cancellable = true )

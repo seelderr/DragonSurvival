@@ -63,19 +63,19 @@ public class NetherBreathAbility extends BreathAbility{
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreathOvertimeMana", comment = "The mana cost of sustaining the firebreath ability" )
 	public static Integer fireBreathOvertimeMana = 1;
 	@ConfigRange( min = 0, max = 100 )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreathManaTicks", comment = "How often in ticks, mana is consumed while using fire breath" )
-	public static Integer fireBreathManaTicks = 40;
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreathManaTicks", comment = "How often in seconds, mana is consumed while using fire breath" )
+	public static Integer fireBreathManaTicks = 2;
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreathSpreadsFire", comment = "Whether the fire breath actually spreads fire when used" )
 	public static Boolean fireBreathSpreadsFire = true;
 	@ConfigType(Block.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreathBlockBreaks", comment = "Blocks that have a chance to be broken by fire breath. Formatting: block/modid:id" )
 	public static List<String> fireBreathBlockBreaks = List.of("minecraft:impermeable", "minecraft:crops", "minecraft:flowers", "minecraft:replaceable_plants", "minecraft:cobweb");
 	@ConfigRange( min = 1, max = 10000 )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreathCooldown", comment = "The cooldown in ticks of the fire breath ability" )
-	public static Integer fireBreathCooldown = 100;
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreathCooldown", comment = "The cooldown in seconds of the fire breath ability" )
+	public static Integer fireBreathCooldown = 5;
 	@ConfigRange( min = 1, max = 10000 )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreathCasttime", comment = "The cast time in ticks of the fire breath ability" )
-	public static Integer fireBreathCasttime = 20;
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreathCasttime", comment = "The cast time in seconds of the fire breath ability" )
+	public static Integer fireBreathCasttime = 1;
 
 	@Override
 	public String getName(){
@@ -131,7 +131,7 @@ public class NetherBreathAbility extends BreathAbility{
 
 	@Override
 	public int getSkillCooldown(){
-		return fireBreathCooldown;
+		return Functions.secondsToTicks(fireBreathCooldown);
 	}
 
 	@Override
@@ -310,12 +310,12 @@ public class NetherBreathAbility extends BreathAbility{
 
 	@Override
 	public int getSkillChargeTime(){
-		return fireBreathCasttime;
+		return Functions.secondsToTicks(fireBreathCasttime);
 	}
 
 	@Override
 	public int getContinuousManaCostTime() {
-		return fireBreathManaTicks;
+		return Functions.secondsToTicks(fireBreathManaTicks);
 	}
 
 	@Override

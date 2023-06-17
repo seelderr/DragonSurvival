@@ -12,6 +12,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.AoeBuffAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -29,13 +30,13 @@ public class ToughSkinAbility extends AoeBuffAbility{
 	public static Boolean toughSkin = true;
 	@ConfigRange( min = 0, max = 10000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "tough_skin"}, key = "toughSkinDuration", comment = "The duration in seconds of the tough skin effect given when the ability is used" )
-	public static Integer toughSkinDuration = 3600;
+	public static Integer toughSkinDuration = 180;
 	@ConfigRange( min = 1, max = 10000 )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "tough_skin"}, key = "toughSkinCooldown", comment = "The cooldown in ticks of the tough skin ability" )
-	public static Integer toughSkinCooldown = 600;
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "tough_skin"}, key = "toughSkinCooldown", comment = "The cooldown in seconds of the tough skin ability" )
+	public static Integer toughSkinCooldown = 30;
 	@ConfigRange( min = 1, max = 10000 )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "tough_skin"}, key = "toughSkinCasttime", comment = "The cast time in ticks of the tough skin ability" )
-	public static Integer toughSkinCasttime = 60;
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "tough_skin"}, key = "toughSkinCasttime", comment = "The cast time in seconds of the tough skin ability" )
+	public static Integer toughSkinCasttime = 3;
 	@ConfigRange( min = 0, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "tough_skin"}, key = "toughSkinManaCost", comment = "The mana cost for using the tough skin ability" )
 	public static Integer toughSkinManaCost = 1;
@@ -50,7 +51,7 @@ public class ToughSkinAbility extends AoeBuffAbility{
 
 	@Override
 	public int getSkillCastingTime(){
-		return toughSkinCasttime;
+		return Functions.secondsToTicks(toughSkinCasttime);
 	}
 
 	@Override
@@ -98,12 +99,12 @@ public class ToughSkinAbility extends AoeBuffAbility{
 
 	@Override
 	public int getSkillCooldown(){
-		return toughSkinCooldown;
+		return Functions.secondsToTicks(toughSkinCooldown);
 	}
 
 	@Override
 	public MobEffectInstance getEffect(){
-		return new MobEffectInstance(DragonEffects.STRONG_LEATHER, toughSkinDuration, getLevel() - 1);
+		return new MobEffectInstance(DragonEffects.STRONG_LEATHER, Functions.secondsToTicks(toughSkinDuration), getLevel() - 1);
 	}
 
 	@Override

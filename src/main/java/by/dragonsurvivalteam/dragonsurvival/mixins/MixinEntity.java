@@ -8,15 +8,19 @@ import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import com.mojang.math.Vector3f;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -33,12 +37,14 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
 	}
 
 	@Inject( at = @At( value = "HEAD" ), method = "positionRider(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/entity/Entity$MoveFunction;)V", cancellable = true )
-	private void positionRider(Entity p_226266_1_, Entity.MoveFunction p_226266_2_, CallbackInfo callbackInfo){
-		if(DragonUtils.isDragon((Entity)(net.minecraftforge.common.capabilities.CapabilityProvider<Entity>)this)){
-			if(hasPassenger(p_226266_1_)){
-				double d0 = getY() + getPassengersRidingOffset() + p_226266_1_.getMyRidingOffset();
-				Vector3f cameraOffset = Functions.getDragonCameraOffset((Entity)(net.minecraftforge.common.capabilities.CapabilityProvider<Entity>)this);
-				p_226266_2_.accept(p_226266_1_, getX() - cameraOffset.x(), d0, getZ() - cameraOffset.z());
+	private void positionRider(Entity entity, Entity.MoveFunction move, CallbackInfo callbackInfo){
+		Object self = this;
+
+		if(DragonUtils.isDragon((Entity) self)){
+			if(hasPassenger(entity)){
+				double d0 = getY() + getPassengersRidingOffset() + entity.getMyRidingOffset();
+				Vector3f cameraOffset = Functions.getDragonCameraOffset((Entity) self);
+				move.accept(entity, getX() - cameraOffset.x(), d0, getZ() - cameraOffset.z());
 				callbackInfo.cancel();
 			}
 		}
@@ -114,6 +120,35 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
 			return DragonSizeHandler.calculateDimensions(width, height).makeBoundingBox(entity.position());
 		}else
 			return getBoundingBoxForPose(pose);
+	}
+
+	@ModifyVariable(method = "spawnAtLocation(Lnet/minecraft/world/item/ItemStack;F)Lnet/minecraft/world/entity/item/ItemEntity;", at = @At(value = "STORE"), name = "itementity")
+	public ItemEntity protectDrops(ItemEntity itemEntity) {
+		Object self = this;
+
+		if (self instanceof LivingEntity livingEntity) {
+			if (!(livingEntity.level instanceof ServerLevel)) {
+				return itemEntity;
+			}
+
+			if (livingEntity.lastHurtByPlayerTime > 0) {
+				Player player = livingEntity.lastHurtByPlayer;
+
+				// Prevent the dropped item from burning when player is a cave dragon
+				if (DragonUtils.isDragonType(player, DragonTypes.CAVE)) {
+					itemEntity = new ItemEntity(livingEntity.level, itemEntity.position().x, itemEntity.position().y, itemEntity.position().z, itemEntity.getItem()) {
+						@Override
+						public boolean fireImmune(){
+							return true;
+						}
+					};
+
+					return itemEntity;
+				}
+			}
+		}
+
+		return itemEntity;
 	}
 
 	@Shadow

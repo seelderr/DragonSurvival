@@ -11,6 +11,8 @@
     "MixinItem",
     "MixinLivingEntity",
     "MixinPlayerEntity",
+    "MixinPlayerStart",
+    "MixinPlayerEnd",
     "MixinServerPlayerGameMode",
     "MixinSleepStatus"
   ],

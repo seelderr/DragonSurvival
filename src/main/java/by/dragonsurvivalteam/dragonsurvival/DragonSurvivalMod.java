@@ -22,6 +22,7 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
@@ -34,6 +35,8 @@ public class DragonSurvivalMod{
 	public static final Logger LOGGER = LogManager.getLogger("Dragon Survival");
 	public static DragonSurvivalCreativeTab items = new DragonSurvivalCreativeTab("dragon.survival.blocks");
 
+	public static boolean IS_BETTERCOMBAT_LOADED;
+
 	public DragonSurvivalMod(){
 		GeckoLib.initialize();
 		DragonTypes.registerTypes();
@@ -42,7 +45,8 @@ public class DragonSurvivalMod{
 		DragonAbilities.initAbilities();
 
 		IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-		modEventBus.addListener(this::setup);
+		modEventBus.addListener(this::commonSetup);
+		modEventBus.addListener(this::clientSetup);
 
 		DSParticles.register();
 		SoundRegistry.register();
@@ -53,17 +57,21 @@ public class DragonSurvivalMod{
 		MinecraftForge.EVENT_BUS.register(new DragonFoodHandler());
 		MinecraftForge.EVENT_BUS.register(new Event_busHandler());
 
-		if (ModList.get().isLoaded("appleskin")) {
-			MinecraftForge.EVENT_BUS.register(new AppleSkinEventHandler());
-		}
-
 		MinecraftForge.EVENT_BUS.addListener(this::serverRegisterCommandsEvent);
+
+		IS_BETTERCOMBAT_LOADED = ModList.get().isLoaded("bettercombat");
 	}
 
-	private void setup(final FMLCommonSetupEvent event){
+	private void commonSetup(final FMLCommonSetupEvent event){
 		WingObtainmentController.loadDragonPhrases();
 		NetworkHandler.setup();
 		LOGGER.info("Successfully registered packets!");
+	}
+
+	private void clientSetup(final FMLClientSetupEvent event) {
+		if (ModList.get().isLoaded("appleskin")) {
+			MinecraftForge.EVENT_BUS.register(new AppleSkinEventHandler());
+		}
 	}
 
 	@SubscribeEvent

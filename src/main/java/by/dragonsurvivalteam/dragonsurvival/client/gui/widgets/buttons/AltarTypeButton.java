@@ -106,9 +106,12 @@ public class AltarTypeButton extends Button implements TooltipRender{
 
 				cap.setType(null);
 				cap.setSize(20F);
-				cap.setHasWings(false);
 				cap.setIsHiding(false);
-				cap.getMovementData().spinLearned = false;
+
+				if (!ServerConfig.saveAllAbilities) {
+					cap.getMovementData().spinLearned = false;
+					cap.setHasWings(false);
+				}
 
 				NetworkHandler.CHANNEL.sendToServer(new SyncAltarCooldown(Minecraft.getInstance().player.getId(), Functions.secondsToTicks(ServerConfig.altarUsageCooldown)));
 				NetworkHandler.CHANNEL.sendToServer(new SynchronizeDragonCap(player.getId(), cap.isHiding(), cap.getType(), cap.getSize(), cap.hasWings(), 0));

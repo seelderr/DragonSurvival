@@ -41,6 +41,9 @@ public class DragonStateHandler extends EntityStateHandler implements NBTInterfa
 	private final DragonMovementData movementData = new DragonMovementData(0, 0, 0, false);
 
 	private final ClawInventory clawToolData = new ClawInventory(this);
+	public ItemStack storedMainHand = ItemStack.EMPTY;
+	public boolean switchedItems;
+
 	private final EmoteCap emoteData = new EmoteCap(this);
 	private final MagicCap magicData = new MagicCap(this);
 	private final SkinCap skinData = new SkinCap(this);
@@ -157,17 +160,21 @@ public class DragonStateHandler extends EntityStateHandler implements NBTInterfa
 			//Spin attack
 			tag.putInt("spinCooldown", movementData.spinCooldown);
 			tag.putInt("spinAttack", movementData.spinAttack);
-			tag.putBoolean("spinLearned", movementData.spinLearned);
 
 			tag.putDouble("size", getSize());
 			tag.putBoolean("growing", growing);
 
-			tag.putBoolean("hasWings", hasWings());
 			tag.putBoolean("isFlying", isWingsSpread());
 
 			tag.putBoolean("resting", treasureResting);
 			tag.putInt("restingTimer", treasureRestTimer);
 		}
+
+		if (isDragon() || ServerConfig.saveAllAbilities) {
+			tag.putBoolean("spinLearned", getMovementData().spinLearned);
+			tag.putBoolean("hasWings", hasWings());
+		}
+
 
 		tag.putDouble("seaSize", getSavedDragonSize(DragonTypes.SEA.getTypeName()));
 		tag.putDouble("caveSize", getSavedDragonSize(DragonTypes.CAVE.getTypeName()));
@@ -191,7 +198,6 @@ public class DragonStateHandler extends EntityStateHandler implements NBTInterfa
 
 	@Override
 	public void readNBT(CompoundTag tag){
-		//setType(DragonType.valueOf(tag.getString("type").toUpperCase(Locale.ROOT)));
 		dragonType = DragonTypes.newDragonTypeInstance(tag.getString("type"));
 
 		if(dragonType != null){
@@ -208,12 +214,10 @@ public class DragonStateHandler extends EntityStateHandler implements NBTInterfa
 			setIsHiding(tag.getBoolean("isHiding"));
 			getMovementData().dig = tag.getBoolean("dig");
 
-			setHasWings(tag.getBoolean("hasWings"));
 			setWingsSpread(tag.getBoolean("isFlying"));
 
 			getMovementData().spinCooldown = tag.getInt("spinCooldown");
 			getMovementData().spinAttack = tag.getInt("spinAttack");
-			getMovementData().spinLearned = tag.getBoolean("spinLearned");
 
 			setSize(tag.getDouble("size"));
 			growing = !tag.contains("growing") || tag.getBoolean("growing");
@@ -224,6 +228,11 @@ public class DragonStateHandler extends EntityStateHandler implements NBTInterfa
 			if(getSize() == 0){
 				setSize(DragonLevel.NEWBORN.size);
 			}
+		}
+
+		if (isDragon() || ServerConfig.saveAllAbilities) {
+			getMovementData().spinLearned = tag.getBoolean("spinLearned");
+			setHasWings(tag.getBoolean("hasWings"));
 		}
 
 		setSavedDragonSize(DragonTypes.SEA.getTypeName(), tag.getDouble("seaSize"));
