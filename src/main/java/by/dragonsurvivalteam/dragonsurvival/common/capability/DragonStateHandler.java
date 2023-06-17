@@ -170,8 +170,11 @@ public class DragonStateHandler extends EntityStateHandler implements NBTInterfa
 			tag.putInt("restingTimer", treasureRestTimer);
 		}
 
-		tag.putBoolean("spinLearned", getMovementData().spinLearned);
-		tag.putBoolean("hasWings", hasWings());
+		if (isDragon() || ServerConfig.saveAllAbilities) {
+			tag.putBoolean("spinLearned", getMovementData().spinLearned);
+			tag.putBoolean("hasWings", hasWings());
+		}
+
 
 		tag.putDouble("seaSize", getSavedDragonSize(DragonTypes.SEA.getTypeName()));
 		tag.putDouble("caveSize", getSavedDragonSize(DragonTypes.CAVE.getTypeName()));
@@ -227,8 +230,10 @@ public class DragonStateHandler extends EntityStateHandler implements NBTInterfa
 			}
 		}
 
-		getMovementData().spinLearned = tag.getBoolean("spinLearned");
-		setHasWings(tag.getBoolean("hasWings"));
+		if (isDragon() || ServerConfig.saveAllAbilities) {
+			getMovementData().spinLearned = tag.getBoolean("spinLearned");
+			setHasWings(tag.getBoolean("hasWings"));
+		}
 
 		setSavedDragonSize(DragonTypes.SEA.getTypeName(), tag.getDouble("seaSize"));
 		setSavedDragonSize(DragonTypes.CAVE.getTypeName(), tag.getDouble("caveSize"));
