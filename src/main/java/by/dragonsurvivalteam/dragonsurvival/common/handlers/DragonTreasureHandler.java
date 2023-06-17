@@ -76,7 +76,7 @@ public class DragonTreasureHandler{
 					treasureNearby = Mth.clamp(treasureNearby, 0, ServerConfig.maxTreasures);
 
 					int totalTime = Functions.secondsToTicks(ServerConfig.treasureRegenTicks);
-					int restTimer = totalTime - ServerConfig.treasureRegenTicksReduce * treasureNearby;
+					int restTimer = totalTime - Functions.secondsToTicks(ServerConfig.treasureRegenTicksReduce * treasureNearby);
 
 					if(handler.treasureRestTimer >= restTimer){
 						handler.treasureRestTimer = 0;

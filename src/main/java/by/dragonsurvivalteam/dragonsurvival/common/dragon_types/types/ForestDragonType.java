@@ -80,7 +80,7 @@ public class ForestDragonType extends AbstractDragonType{
 				timeInDarkness = Math.min(timeInDarkness, maxStressTicks);
 				
 				if (timeInDarkness >= maxStressTicks && player.tickCount % 21 == 0) {
-					player.addEffect(new MobEffectInstance(DragonEffects.STRESS, ServerConfig.forestStressEffectDuration * 20));
+					player.addEffect(new MobEffectInstance(DragonEffects.STRESS, Functions.secondsToTicks(ServerConfig.forestStressEffectDuration)));
 				}
 				
 				
