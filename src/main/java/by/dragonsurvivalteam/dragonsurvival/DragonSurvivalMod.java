@@ -35,6 +35,8 @@ public class DragonSurvivalMod{
 	public static final Logger LOGGER = LogManager.getLogger("Dragon Survival");
 	public static DragonSurvivalCreativeTab items = new DragonSurvivalCreativeTab("dragon.survival.blocks");
 
+	public static boolean IS_BETTERCOMBAT_LOADED;
+
 	public DragonSurvivalMod(){
 		GeckoLib.initialize();
 		DragonTypes.registerTypes();
@@ -56,6 +58,8 @@ public class DragonSurvivalMod{
 		MinecraftForge.EVENT_BUS.register(new Event_busHandler());
 
 		MinecraftForge.EVENT_BUS.addListener(this::serverRegisterCommandsEvent);
+
+		IS_BETTERCOMBAT_LOADED = ModList.get().isLoaded("bettercombat");
 	}
 
 	private void commonSetup(final FMLCommonSetupEvent event){

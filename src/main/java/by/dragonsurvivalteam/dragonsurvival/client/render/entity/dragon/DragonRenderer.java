@@ -28,6 +28,8 @@ import software.bernie.geckolib3.util.RenderUtils;
 
 import javax.annotation.Nullable;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.IS_BETTERCOMBAT_LOADED;
+
 public class DragonRenderer extends GeoEntityRenderer<DragonEntity>{
 	public ResourceLocation glowTexture = null;
 
@@ -79,7 +81,7 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity>{
 		Player player = entity.getPlayer();
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 
-        if (ClientConfig.hideDragonModel && Minecraft.getInstance().options.getCameraType().isFirstPerson() && handler.isDragon()) {
+        if (IS_BETTERCOMBAT_LOADED && ClientConfig.hideDragonModel && Minecraft.getInstance().options.getCameraType().isFirstPerson() && handler.isDragon()) {
 			// TODO
 			// For Better Combat attack animation - I think you only need to hide the head (or hand(s) since Better Combat uses that?) - not sure
 			// There is surely a better way since even with this the weapon doesn't have any animation - but it's better than having the head block the screen

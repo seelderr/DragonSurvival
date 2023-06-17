@@ -22,5 +22,5 @@ public class ClientConfig{
 	public static Boolean stableNightVision = true;
 
 	@ConfigOption( side = ConfigSide.CLIENT, category = "rendering", key = "hideDragonModel", comment = "Hide the dragon model when in first person. This can fix some animation / model issues with Better Combat." )
-	public static Boolean hideDragonModel = false;
+	public static Boolean hideDragonModel = true;
 }
