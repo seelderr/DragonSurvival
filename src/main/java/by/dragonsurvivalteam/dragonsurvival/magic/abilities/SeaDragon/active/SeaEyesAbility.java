@@ -31,7 +31,7 @@ public class SeaEyesAbility extends ChargeCastAbility{
 
 	@ConfigRange( min = 0, max = 10000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "sea_vision"}, key = "seaVisionDuration", comment = "The duration in seconds of the sea vision effect given when the ability is used" )
-	public static Integer seaEyesDuration = 70;
+	public static Integer seaEyesDuration = 100;
 
 	@ConfigRange( min = 1, max = 10000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "sea_vision"}, key = "seaVisionCooldown", comment = "The cooldown in seconds of the sea vision ability" )
@@ -39,7 +39,7 @@ public class SeaEyesAbility extends ChargeCastAbility{
 
 	@ConfigRange( min = 1, max = 10000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "sea_vision"}, key = "seaEyesCasttime", comment = "The cast time in seconds of the sea vision ability" )
-	public static Integer seaEyesCasttime = 2;
+	public static Integer seaEyesCasttime = 1;
 
 	@ConfigRange( min = 0, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "sea_vision"}, key = "seaVisionManaCost", comment = "The mana cost for using the sea vision ability" )

@@ -149,7 +149,7 @@ public class StormBreathAbility extends BreathAbility{
 	                                                     "sea_dragon",
 	                                                     "actives",
 	                                                     "storm_breath"}, key = "chargedSpreadBlacklist", comment = "List of entities that will not spread the charged effect. Format: modid:id" )
-	public static List<String> chargedSpreadBlacklist = List.of("minecraft:armor_stand", "minecraft:cat", "minecraft:cart", "minecraft:guardian", "minecraft:elder_guardian", "minecraft:enderman");
+	public static List<String> chargedSpreadBlacklist = List.of("minecraft:armor_stand", "minecraft:cat", "minecraft:cart", "minecraft:guardian", "minecraft:elder_guardian", "minecraft:enderman", "upgrade_aquatic:thrasher", "upgrade_aquatic:great_thrasher");
 
 	@ConfigType( EntityType.class )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic",
@@ -157,7 +157,7 @@ public class StormBreathAbility extends BreathAbility{
 	                                                     "sea_dragon",
 	                                                     "actives",
 	                                                     "storm_breath"}, key = "chargedBlacklist", comment = "List of entities that will not receive the charged effect at all Format: modid:id" )
-	public static List<String> chargedBlacklist = List.of("minecraft:armor_stand", "minecraft:cat", "minecraft:cart", "minecraft:guardian", "minecraft:elder_guardian", "minecraft:enderman");
+	public static List<String> chargedBlacklist = List.of("minecraft:armor_stand", "minecraft:cat", "minecraft:cart", "minecraft:guardian", "minecraft:elder_guardian", "minecraft:enderman", "upgrade_aquatic:thrasher", "upgrade_aquatic:great_thrasher");
 
 	public static void onDamageChecks(LivingEntity entity){
 		if(entity instanceof Creeper creeper){
