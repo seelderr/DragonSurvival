@@ -31,11 +31,11 @@ public class MixinServerPlayerGameMode{
 		return ClawToolHandler.getDragonHarvestTool(instance);
 	}
 
+	/** Some modded ores use override the `canHarvestBlock` method and circumvent the Forge event */
 	@Redirect(method = "destroyBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;canHarvestBlock(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/player/Player;)Z"))
-	private boolean modifiedHarvestCheck(BlockState instance, BlockGetter blockGetter, BlockPos pos, Player player) {
-		boolean originalCheck = instance.canHarvestBlock(blockGetter, pos, player);
-		// This works but not sure about the performance impact etc.
-		ResourceLocation location = ForgeRegistries.BLOCKS.getKey(instance.getBlock());
+	private boolean modifiedHarvestCheck(final BlockState blockState, final BlockGetter blockGetter, final BlockPos position, final Player player) {
+		boolean originalCheck = blockState.canHarvestBlock(blockGetter, position, player);
+		ResourceLocation location = ForgeRegistries.BLOCKS.getKey(blockState.getBlock());
 
 		if (location != null && location.getNamespace().equals("minecraft")) {
 			// Don't bother checking vanilla blocks - they should work by default
@@ -48,21 +48,26 @@ public class MixinServerPlayerGameMode{
 		}
 
 		if (!originalCheck && player.level instanceof ServerLevel) {
-			DragonStateHandler cap = DragonUtils.getHandler(player);
+			DragonStateHandler handler = DragonUtils.getHandler(player);
 
 			UUID id = UUID.randomUUID();
 			FakePlayer fakePlayer = new FakePlayer((ServerLevel) player.level, new GameProfile(id, id.toString()));
 
-			for (int i = 0; i < 4; i++) {
-				ItemStack tool = cap.getClawToolData().getClawsInventory().getItem(i);
+			for (int toolSlot = 0; toolSlot < 4; toolSlot++) {
+				ItemStack tool = handler.getClawToolData().getClawsInventory().getItem(toolSlot);
 
-				if (tool == ItemStack.EMPTY || !tool.isCorrectToolForDrops(instance)) {
-					continue;
+				if (tool == ItemStack.EMPTY && toolSlot != 0) {
+                    // To make the dragon harvest bonus work
+					tool = handler.getFakeTool(blockState);
 				}
+
+                if (!tool.isCorrectToolForDrops(blockState)) {
+                    continue;
+                }
 
 				// If certain mods have problems: Could also copy other stuff (inventory, capabilities etc.)
 				fakePlayer.setItemInHand(InteractionHand.MAIN_HAND, tool);
-				boolean reCheck = instance.canHarvestBlock(blockGetter, pos, fakePlayer);
+				boolean reCheck = blockState.canHarvestBlock(blockGetter, position, fakePlayer);
 
 				if (reCheck) {
 					return true;

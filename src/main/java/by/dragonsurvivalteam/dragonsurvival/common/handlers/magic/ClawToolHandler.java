@@ -103,7 +103,7 @@ public class ClawToolHandler{
 				Item item = stack.getItem();
 				BlockState blockState = harvestCheck.getTargetBlock();
 				if(!(item instanceof DiggerItem || item instanceof SwordItem || item instanceof ShearsItem) && !harvestCheck.canHarvest()){
-					harvestCheck.setCanHarvest(dragonStateHandler.canHarvestWithPaw(playerEntity, blockState));
+					harvestCheck.setCanHarvest(dragonStateHandler.canHarvestWithPaw(blockState));
 				}
 			}
 		});

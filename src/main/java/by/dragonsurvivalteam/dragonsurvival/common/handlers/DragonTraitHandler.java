@@ -6,6 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.TickablePassiveAbility;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.AbstractCauldronBlock;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.event.TickEvent;

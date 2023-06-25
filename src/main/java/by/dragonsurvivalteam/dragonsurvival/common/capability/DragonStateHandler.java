@@ -14,13 +14,17 @@ import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.Tiers;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -28,7 +32,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.registries.ForgeRegistries;
 
+import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -383,48 +389,165 @@ public class DragonStateHandler extends EntityStateHandler implements NBTInterfa
 		return isHiding;
 	}
 
-	public boolean canHarvestWithPaw(Player player, BlockState state){
-		int harvestLevel = state.is(BlockTags.NEEDS_DIAMOND_TOOL) ? 3 : state.is(BlockTags.NEEDS_IRON_TOOL) ? 2 : state.is(BlockTags.NEEDS_STONE_TOOL) ? 1 : 0;
-		int baseHarvestLevel = 0;
-
-		for(int i = 1; i < 4; i++){
-			ItemStack stack = getClawToolData().getClawsInventory().getItem(i);
-			if(stack.isCorrectToolForDrops(state))
-				return true;
-		}
-
-		switch(getLevel()){
-			case NEWBORN:
-				if(ServerConfig.bonusUnlockedAt != DragonLevel.NEWBORN){
-					if(harvestLevel <= ServerConfig.baseHarvestLevel + baseHarvestLevel)
-						return true;
-					break;
-				}
-			case YOUNG:
-				if(ServerConfig.bonusUnlockedAt == DragonLevel.ADULT && getLevel() != DragonLevel.NEWBORN){
-					if(harvestLevel <= ServerConfig.baseHarvestLevel + baseHarvestLevel)
-						return true;
-					break;
-				}
-			case ADULT:
-				if(harvestLevel <= ServerConfig.bonusHarvestLevel + baseHarvestLevel){
-					for(TagKey<Block> blockTagKey : getType().mineableBlocks(player)){
-						if(state.is(blockTagKey)){
-							return true;
-						}
-					}
-				}
-				if(harvestLevel <= ServerConfig.baseHarvestLevel + baseHarvestLevel)
-					return true;
-		}
-		return false;
-	}
-
-	public ClawInventory getClawToolData(){
+	public ClawInventory getClawToolData()  {
 		return clawToolData;
 	}
 
-	public VillageRelationShips getVillageRelationShips(){
+	public VillageRelationShips getVillageRelationShips() {
 		return villageRelationShips;
+	}
+
+	/** Determines if the current dragon type can harvest the supplied block (with or without tools) (configured harvest bonuses are taken into account) */
+	public boolean canHarvestWithPaw(final BlockState state) {
+		for (int i = 1; i < 4; i++) {
+			// FIXME :: Why is the sword ignored? It can harvest cobwebs (and due to other mods maybe other things as well)
+			ItemStack stack = getClawToolData().getClawsInventory().getItem(i);
+
+			if (stack.isCorrectToolForDrops(state)) {
+				return true;
+			}
+		}
+
+		return canHarvestWithPawNoTools(state);
+	}
+
+	/** Determines if the current dragon type can harvest the supplied block without a tool (configured harvest bonuses are taken into account) */
+	public boolean canHarvestWithPawNoTools(final BlockState blockState) {
+		int harvestLevel = blockState.is(BlockTags.NEEDS_DIAMOND_TOOL) ? 3 : blockState.is(BlockTags.NEEDS_IRON_TOOL) ? 2 : blockState.is(BlockTags.NEEDS_STONE_TOOL) ? 1 : 0;
+
+		if (harvestLevel <= ServerConfig.baseHarvestLevel) {
+			return true;
+		}
+
+		for (TagKey<Block> tagKey : getType().mineableBlocks()) {
+			if (blockState.is(tagKey)) {
+				return harvestLevel <= getDragonHarvestLevel(getType().slotForBonus);
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * @param blockState The block for which the tool is required for
+	 * @return The appropriate harvest tool for the supplied block<br>
+	 * The tier depends on the dragon and configured harvest bonuses
+	 */
+	public ItemStack getFakeTool(final BlockState blockState) {
+		int harvestLevel = 0;
+
+		for (TagKey<Block> tagKey : getType().mineableBlocks()) {
+			if (blockState.is(tagKey)) {
+				harvestLevel = getDragonHarvestLevel(blockState);
+
+				break;
+			}
+		}
+
+		if (harvestLevel < 0) {
+			return ItemStack.EMPTY;
+		} else {
+			return getToolOfType(getDragonHarvestTier(blockState), blockState);
+		}
+	}
+
+	/** Calls {@link DragonStateHandler#getToolOfType(Tier, int)} with the result of {@link DragonStateHandler#getRelevantToolSlot(BlockState)} */
+	public ItemStack getToolOfType(final Tier tier, final BlockState blockState) {
+		return getToolOfType(tier, getRelevantToolSlot(blockState));
+	}
+
+	/**
+	 * @param tier The tier which the returned item is supposed to have
+	 * @param toolSlot To determine the type of harvest tool (e.g. `1` for Pickaxe)
+	 * @return A default instance of the tool (or {@link ItemStack#EMPTY} if nothing matches / some problem occurs)
+	 */
+	public ItemStack getToolOfType(final Tier tier, int toolSlot) {
+		String tierPath = ((Tiers) tier).name().toLowerCase() + "_";
+		tierPath = tierPath.replace("wood", "wooden");
+
+		Item item =  switch (toolSlot) {
+			case 1 -> ForgeRegistries.ITEMS.getValue(new ResourceLocation("minecraft", tierPath + "pickaxe"));
+			case 2 -> ForgeRegistries.ITEMS.getValue(new ResourceLocation("minecraft", tierPath + "axe"));
+			case 3 -> ForgeRegistries.ITEMS.getValue(new ResourceLocation("minecraft", tierPath + "shovel"));
+			default -> ItemStack.EMPTY.getItem();
+		};
+
+		if (item != null) {
+			return item.getDefaultInstance();
+		}
+
+		return ItemStack.EMPTY;
+	}
+
+	/** Calls {@link DragonStateHandler#getDragonHarvestLevel(int)} with the result of {@link DragonStateHandler#getRelevantToolSlot(BlockState)} */
+	public int getDragonHarvestLevel(final BlockState blockState) {
+		return getDragonHarvestLevel(getRelevantToolSlot(blockState));
+	}
+
+	/**
+	 * @param slot The dragon tool slot of the harvest tool which needs to be checked
+	 * @return The harvest level of the current dragon type for the provided slot
+	 */
+	public int getDragonHarvestLevel(int slot) {
+		int harvestLevel = ServerConfig.baseHarvestLevel;
+		int bonusLevel = 0;
+
+		if (getLevel() == DragonLevel.NEWBORN && ServerConfig.bonusUnlockedAt == DragonLevel.NEWBORN) {
+			bonusLevel = ServerConfig.bonusHarvestLevel;
+		} else if (getLevel() == DragonLevel.YOUNG && ServerConfig.bonusUnlockedAt != DragonLevel.ADULT) {
+			bonusLevel = ServerConfig.bonusHarvestLevel;
+		} else if (getLevel() == DragonLevel.ADULT) {
+			bonusLevel = ServerConfig.bonusHarvestLevel;
+		}
+
+		if (slot == getType().slotForBonus) {
+			return harvestLevel + bonusLevel;
+		}
+
+		return harvestLevel;
+	}
+
+	/** Calls {@link DragonStateHandler#getDragonHarvestTier(int)} with the result of {@link DragonStateHandler#getRelevantToolSlot(BlockState)} */
+	public @Nullable Tier getDragonHarvestTier(final BlockState blockState) {
+		return getDragonHarvestTier(getRelevantToolSlot(blockState));
+	}
+
+	/**
+	 *
+	 * @param slot The (dragon) tool slot the item would belong to (e.g. `1` for Pickaxe)
+	 * @return the tier of the current dragon harvest level<br>
+	 * (Which is a combination of {@link ServerConfig#baseHarvestLevel} and {@link ServerConfig#bonusHarvestLevel} (if enabled))<br>
+	 * Will return null if the config somehow set a negative harvest level
+	 */
+	public @Nullable Tier getDragonHarvestTier(int slot) {
+		int harvestLevel = getDragonHarvestLevel(slot);
+
+		if (harvestLevel < 0) {
+			return null;
+		}
+
+		return switch(harvestLevel) {
+			case 0 -> Tiers.WOOD;
+			case 1 -> Tiers.STONE;
+			case 2 -> Tiers.IRON;
+			case 3 -> Tiers.DIAMOND;
+			default -> Tiers.NETHERITE;
+		};
+	}
+
+	/**
+	 * @param blockState The block to test against
+	 * @return The dragon tool slot which is effective for the supplied block (e.g. `1` (Pickaxe) for the block `Stone`)
+	 */
+	public int getRelevantToolSlot(final BlockState blockState) {
+		if (blockState.is(BlockTags.MINEABLE_WITH_PICKAXE)) {
+			return 1;
+		} else if (blockState.is(BlockTags.MINEABLE_WITH_AXE)) {
+			return 2;
+		} else if (blockState.is(BlockTags.MINEABLE_WITH_SHOVEL)) {
+			return 3;
+		}
+
+		return 0;
 	}
 }

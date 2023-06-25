@@ -44,6 +44,9 @@ public class SkillProgressButton extends Button{
 			if(ability1 != null && ability1.getIcon() != null){
 				texture = ability1.getIcon();
 				ability = ability1;
+			} else {
+				// FIXME :: There is a second where all abilities will still be shown as obtainable - maybe because the server packet has not been handled yet?
+				texture = AbilityButton.BLANK_TEXTURE;
 			}
 		}
 

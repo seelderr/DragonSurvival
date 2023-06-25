@@ -13,7 +13,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class AbstractDragonType implements NBTInterface, Comparable<AbstractDragonType>{
+public abstract class AbstractDragonType implements NBTInterface, Comparable<AbstractDragonType> {
+	public int slotForBonus;
 	public abstract String getTypeName();
 	public abstract void onPlayerUpdate(Player player, DragonStateHandler handler);
 	public abstract boolean isInManaCondition(Player player, DragonStateHandler cap);
@@ -21,7 +22,7 @@ public abstract class AbstractDragonType implements NBTInterface, Comparable<Abs
 	
 	//Not implemented
 	public abstract List<Pair<ItemStack, FoodData>> validFoods(Player player, DragonStateHandler handler);
-	public abstract List<TagKey<Block>> mineableBlocks(Player player);
+	public abstract List<TagKey<Block>> mineableBlocks();
 	@Override
 	public int compareTo(@NotNull AbstractDragonType o){
 		return getTypeName().compareTo(o.getTypeName());

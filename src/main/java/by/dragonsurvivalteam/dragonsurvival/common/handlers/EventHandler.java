@@ -232,7 +232,7 @@ public class EventHandler{
 				int fortuneLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_FORTUNE, player.getMainHandItem());
 				int silkTouchLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, player.getMainHandItem());
 				int expDrop = block.getExpDrop(blockState, level, player.getRandom(), blockPos, fortuneLevel, silkTouchLevel);
-				boolean suitableOre = expDrop > 0 && (mainHandItem.isCorrectToolForDrops(blockState) || dragonStateHandler.isDragon() && dragonStateHandler.canHarvestWithPaw(player, blockState)) && drops.stream().noneMatch(s -> s.getItem() == block.asItem());
+				boolean suitableOre = expDrop > 0 && (mainHandItem.isCorrectToolForDrops(blockState) || dragonStateHandler.isDragon() && dragonStateHandler.canHarvestWithPaw(blockState)) && drops.stream().noneMatch(s -> s.getItem() == block.asItem());
 
 
 				if(suitableOre && !player.isCreative()){

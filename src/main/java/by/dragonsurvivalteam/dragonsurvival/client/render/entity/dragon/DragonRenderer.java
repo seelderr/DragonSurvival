@@ -83,7 +83,7 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity>{
 		Player player = entity.getPlayer();
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 
-        if (IS_BETTERCOMBAT_LOADED && ClientConfig.hideDragonModel && Minecraft.getInstance().options.getCameraType().isFirstPerson() && !(Minecraft.getInstance().screen instanceof InventoryScreen || Minecraft.getInstance().screen instanceof DragonScreen) && handler.isDragon()) {
+        if (IS_BETTERCOMBAT_LOADED && ClientConfig.hideDragonModel && Minecraft.getInstance().options.getCameraType().isFirstPerson() && Minecraft.getInstance().screen == null && handler.isDragon()) {
 			// TODO
 			// For Better Combat attack animation - I think you only need to hide the head (or hand(s) since Better Combat uses that?) - not sure
 			// There is surely a better way since even with this the weapon doesn't have any animation - but it's better than having the head block the screen

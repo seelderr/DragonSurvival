@@ -6,6 +6,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.common.ToolActions;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -16,8 +17,7 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.IS_BETTERCO
 
 @Mixin(value = Player.class, priority = 10000) // To make sure it's the last call in the method
 public class MixinPlayerEnd {
-    // Did not notice any problems running on a server - but you could exclude the client thread from running this by checking `player instanceof ServerPlayer`
-
+    /** Put the switched-out items (dragon claw tool and main hand item) back to their original places */
     @Inject(method = "attack", at = @At("RETURN"))
     public void switchEnd(Entity target, CallbackInfo ci) {
         Object self = this;
@@ -41,18 +41,20 @@ public class MixinPlayerEnd {
         }
     }
 
+    /** Re-enable sweeping for dragons when `Better Combat` is installed since it currently does not work with the dragon claw slot */
     @ModifyVariable(method = "attack", at = @At("STORE"), ordinal = 3)
     private boolean reEnableSweeping(boolean value) {
-        // Re-enable sweeping when attacking from the dragon tool slot (since it does not currently work correctly with Better Combat)
         if (!IS_BETTERCOMBAT_LOADED) {
             return value;
         }
 
         Object self = this;
-        DragonStateHandler handler = DragonUtils.getHandler((Player) self);
+        Player player = (Player) self;
+        DragonStateHandler handler = DragonUtils.getHandler(player);
 
+        // Only need to overwrite the value if the items were switched out (= dragon claw sword was used)
         if (handler.switchedItems) {
-            return true;
+            return player.getMainHandItem().canPerformAction(ToolActions.SWORD_SWEEP);
         }
 
         return value;
