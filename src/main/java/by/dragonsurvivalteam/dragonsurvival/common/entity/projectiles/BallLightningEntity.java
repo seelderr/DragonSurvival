@@ -76,6 +76,11 @@ public class BallLightningEntity extends DragonBallEntity{
 
 	@Override
 	public void attackMobs(){
+		if (!(getOwner() instanceof Player))
+		{
+			level.playLocalSound(getX(), getY(), getZ(), SoundEvents.LIGHTNING_BOLT_IMPACT, SoundSource.HOSTILE, 3.0F, 0.5f, false);
+			return;
+		}
 		int range = DragonAbilities.getSelfAbility((Player)getOwner(), BallLightningAbility.class).getRange();
 		List<Entity> entities = level.getEntities(null, new AABB(position().x - range, position().y - range, position().z - range, position().x + range, position().y + range, position().z + range));
 		entities.removeIf(e -> e == getOwner() || e instanceof BallLightningEntity);
