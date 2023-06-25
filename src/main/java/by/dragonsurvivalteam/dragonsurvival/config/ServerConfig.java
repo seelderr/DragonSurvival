@@ -18,9 +18,6 @@ public class ServerConfig{
 		ConfigHandler.addConfigs(builder, ConfigSide.SERVER);
 	}
 
-	@ConfigOption( side = ConfigSide.SERVER, category = "general", key = "harvestableStarBlock", comment = "Whether silk touch hoes can be used to harvest Predator Stars." )
-	public static Boolean mineStarBlock = false;
-
 	@ConfigRange( min = 0, max = 1000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = "general", key = "altarUsageCooldown", comment = "How long of a cooldown in seconds the altar has after each use." )
 	public static Integer altarUsageCooldown = 0;
@@ -326,7 +323,7 @@ public class ServerConfig{
 	);
 
 	@ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "blacklistedSlots", comment = "List of slots to handle blacklistedItems option" )
-	public static List<Integer> blacklistedSlots = Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 40);
+	public static List<Integer> blacklistedSlots = Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 40, 45);
 
 	// Cave Dragon Penalties
 	@ConfigRange( min = 0.0, max = 100.0 )
@@ -643,7 +640,7 @@ public class ServerConfig{
 
 	@ConfigType(MobEffect.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_beacons", key = "magicBeaconEffects", comment = "Effects of Magic beacon" )
-	public static List<String> magicBeaconEffects = List.of("dragonsurvival:magic", "dragonsurvival:predator_anti_spawn");
+	public static List<String> magicBeaconEffects = List.of("dragonsurvival:magic", "minecraft:haste");
 
 	@ConfigType(MobEffect.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_beacons", key = "fireBeaconEffects", comment = "Effects of Fire beacon" )

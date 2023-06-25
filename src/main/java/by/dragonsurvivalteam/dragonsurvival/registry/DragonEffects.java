@@ -32,7 +32,6 @@ public class DragonEffects{
 	public static MobEffect ROYAL_CHASE;
 	public static MobEffect PEACE, MAGIC, FIRE;
 	public static MobEffect ANIMAL_PEACE;
-	public static MobEffect PREDATOR_ANTI_SPAWN;
 
 	public static MobEffect SOURCE_OF_MAGIC;
 
@@ -60,7 +59,6 @@ public class DragonEffects{
 		MAGIC = registerMobEffect(event, "magic", new Effect2(MobEffectCategory.BENEFICIAL, 0x0, false));
 		FIRE = registerMobEffect(event, "fire", new Effect2(MobEffectCategory.BENEFICIAL, 0x0, false));
 		ANIMAL_PEACE = registerMobEffect(event, "animal_peace", new Effect2(MobEffectCategory.BENEFICIAL, 0x0, false));
-		PREDATOR_ANTI_SPAWN = registerMobEffect(event, "predator_anti_spawn", new Effect2(MobEffectCategory.BENEFICIAL, 0x0, false));
 		SOURCE_OF_MAGIC = registerMobEffect(event, "source_of_magic",new Effect2(MobEffectCategory.BENEFICIAL, 0x0, false));
 
 		ROYAL_DEPARTURE = registerMobEffect(event, "royal_departure", new TradeEffect(MobEffectCategory.HARMFUL, -3407617, true));

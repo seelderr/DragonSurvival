@@ -17,7 +17,6 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 @Mod.EventBusSubscriber( bus = Mod.EventBusSubscriber.Bus.MOD )
 public class DSTileEntities{
 
-	public static BlockEntityType<PredatorStarTileEntity> PREDATOR_STAR_TILE_ENTITY_TYPE;
 	public static BlockEntityType<SourceOfMagicTileEntity> sourceOfMagicTileEntity;
 	public static BlockEntityType<SourceOfMagicPlaceholder> sourceOfMagicPlaceholder;
 	public static BlockEntityType<HelmetTileEntity> helmetTile;
@@ -30,10 +29,8 @@ public class DSTileEntities{
 			return;
 
 		sourceOfMagicTileEntity = BlockEntityType.Builder.of(SourceOfMagicTileEntity::new, DSBlocks.caveSourceOfMagic, DSBlocks.seaSourceOfMagic, DSBlocks.forestSourceOfMagic).build(null);
-		PREDATOR_STAR_TILE_ENTITY_TYPE = BlockEntityType.Builder.of(PredatorStarTileEntity::new, DSBlocks.PREDATOR_STAR_BLOCK).build(null);
 
 		event.register(Registry.BLOCK_ENTITY_TYPE_REGISTRY,new ResourceLocation(MODID, "dragon_nest"), ()->sourceOfMagicTileEntity);
-		event.register(Registry.BLOCK_ENTITY_TYPE_REGISTRY,new ResourceLocation(MODID,"predator_star_te"), ()->PREDATOR_STAR_TILE_ENTITY_TYPE);
 
 		sourceOfMagicPlaceholder = BlockEntityType.Builder.of(SourceOfMagicPlaceholder::new, DSBlocks.forestSourceOfMagic, DSBlocks.seaSourceOfMagic, DSBlocks.caveSourceOfMagic).build(null);
 		event.register(Registry.BLOCK_ENTITY_TYPE_REGISTRY,new ResourceLocation(MODID,"placeholder"), ()->sourceOfMagicPlaceholder);

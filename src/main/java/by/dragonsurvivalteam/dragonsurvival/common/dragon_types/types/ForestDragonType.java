@@ -111,7 +111,7 @@ public class ForestDragonType extends AbstractDragonType{
 			light = Math.round((float)light * Mth.cos(f));
 			light = Mth.clamp(light, 0, 15);
 
-			if(light >= 14){
+			if(light >= 10){
 				return true;
 			}
 		}

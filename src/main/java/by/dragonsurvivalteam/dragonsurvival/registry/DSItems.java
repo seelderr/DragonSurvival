@@ -52,8 +52,6 @@ public class DSItems{
 	public static Item passiveFireBeacon, passiveMagicBeacon, passivePeaceBeacon;
 	public static Item starHeart;
 
-	public static Item predatorStar;
-
 	public static Item wingGrantItem, spinGrantItem;
 	public static Item lightningTextureItem;
 	public static Item inactivePeaceDragonBeacon, inactiveMagicDragonBeacon, inactiveFireDragonBeacon;
@@ -63,8 +61,6 @@ public class DSItems{
 		if (!event.getRegistryKey().equals(Registry.ITEM_REGISTRY))
 			return ;
 		Properties defaultProperties = new Item.Properties().tab(DragonSurvivalMod.items);
-
-		predatorStar = registerItem(event, "predator_star", "ds.description.predatorStar");
 
 		starBone = registerItem(event, new StarBoneItem(defaultProperties), "star_bone");
 		starHeart = registerItem(event, new StarHeartItem(defaultProperties), "star_heart");

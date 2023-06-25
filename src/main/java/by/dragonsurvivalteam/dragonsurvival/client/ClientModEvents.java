@@ -100,8 +100,6 @@ public class ClientModEvents{
 
 		EntityRenderers.register(DSEntities.DRAGON_SPIKE, DragonSpikeRenderer::new);
 
-		//EntityRenderers.register(DSEntities.MAGICAL_BEAST, MagicalPredatorRenderer::new);
-
 		EntityRenderers.register(DSEntities.BOLAS_ENTITY, BolasEntityRenderer::new);
 
 		EntityRenderers.register(DSEntities.PRINCESS, PrincessRenderer::new);
@@ -109,7 +107,6 @@ public class ClientModEvents{
 		EntityRenderers.register(DSEntities.SHOOTER_HUNTER, ShooterHunterRenderer::new);
 		EntityRenderers.register(DSEntities.SQUIRE_HUNTER, SquireHunterRenderer::new);
 
-		// BlockEntityRenderers.register(DSTileEntities.PREDATOR_STAR_TILE_ENTITY_TYPE, PredatorStarTESR::new);
 		BlockEntityRenderers.register(DSTileEntities.helmetTile, HelmetEntityRenderer::new);
 		BlockEntityRenderers.register(DSTileEntities.dragonBeacon, DragonBeaconRenderer::new);
 
