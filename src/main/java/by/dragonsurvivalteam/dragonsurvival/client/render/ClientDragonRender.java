@@ -58,6 +58,8 @@ import net.minecraftforge.fml.common.Mod;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.IS_BETTERCOMBAT_LOADED;
+
 @Mod.EventBusSubscriber( Dist.CLIENT )
 public class ClientDragonRender{
 	public static DragonModel dragonModel = new DragonModel();
@@ -137,13 +139,20 @@ public class ClientDragonRender{
 	/**
 	 * Called for every player.
 	 */
-	@SubscribeEvent
+	@SubscribeEvent // TODO :: This is heavy on render performance (even in first person) due to renderRecursively -> renderChildBones
 	public static void thirdPersonPreRender(RenderPlayerEvent.Pre renderPlayerEvent){
 		if(!(renderPlayerEvent.getEntity() instanceof AbstractClientPlayer player)){
 			return;
 		}
 
 		Minecraft mc = Minecraft.getInstance();
+
+		if (IS_BETTERCOMBAT_LOADED && ClientConfig.hideDragonModel && player == mc.player && mc.screen == null && mc.options.getCameraType().isFirstPerson()) {
+			// TODO
+			// For Better Combat attack animation - I think you only need to hide the head (or hand(s) since Better Combat uses that?) - not sure
+			// There is surely a better way since even with this the weapon doesn't have any animation - but it's better than having the head block the screen
+			return;
+		}
 
 		if(!playerDragonHashMap.containsKey(player.getId())){
 			DragonEntity dummyDragon = DSEntities.DRAGON.create(player.level);
