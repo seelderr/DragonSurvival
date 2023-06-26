@@ -154,8 +154,6 @@ public class ClientDragonRender{
 			// There is surely a better way since even with this the weapon doesn't have any animation - but it's better than having the head block the screen
 			renderPlayerEvent.setCanceled(true);
 			return;
-		} else {
-			DragonSurvivalMod.LOGGER.debug(mc.screen + " | " + IS_BETTERCOMBAT_LOADED + " | " + ClientConfig.hideDragonModel + " | " + mc.options.getCameraType().isFirstPerson() + " | " + cap.isDragon());
 		}
 
 		if(!playerDragonHashMap.containsKey(player.getId())){
