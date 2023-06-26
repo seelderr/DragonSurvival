@@ -146,8 +146,9 @@ public class ClientDragonRender{
 		}
 
 		Minecraft mc = Minecraft.getInstance();
+		DragonStateHandler cap = DragonUtils.getHandler(player);
 
-		if (IS_BETTERCOMBAT_LOADED && ClientConfig.hideDragonModel && player == mc.player && mc.screen == null && mc.options.getCameraType().isFirstPerson()) {
+		if (IS_BETTERCOMBAT_LOADED && ClientConfig.hideDragonModel && player == mc.player && mc.screen == null && mc.options.getCameraType().isFirstPerson() && cap.isDragon()) {
 			// TODO
 			// For Better Combat attack animation - I think you only need to hide the head (or hand(s) since Better Combat uses that?) - not sure
 			// There is surely a better way since even with this the weapon doesn't have any animation - but it's better than having the head block the screen
@@ -172,7 +173,6 @@ public class ClientDragonRender{
 			dummyDragon.player = player.getId();
 		}
 
-		DragonStateHandler cap = DragonUtils.getHandler(player);
 		if(cap.isDragon()){
 			renderPlayerEvent.setCanceled(true);
 			float partialRenderTick = renderPlayerEvent.getPartialTick();
