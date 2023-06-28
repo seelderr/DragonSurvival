@@ -10,6 +10,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawsMenu;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -21,6 +22,7 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -191,31 +193,52 @@ public class ClawToolHandler{
 		}
 	}
 
-	@Mod.EventBusSubscriber( modid = DragonSurvivalMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD )
-	public static class Event_busHandler{
+	@Mod.EventBusSubscriber(modid = DragonSurvivalMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+	public static class Event_busHandler {
 		@SubscribeEvent
-		public void modifyBreakSpeed(PlayerEvent.BreakSpeed breakSpeedEvent){
-			if(!ServerConfig.bonuses || !ServerConfig.clawsAreTools){
-				return;
-			}
-			Player playerEntity = breakSpeedEvent.getEntity();
-
-			ItemStack mainStack = playerEntity.getMainHandItem();
-			DragonStateHandler dragonStateHandler = DragonUtils.getHandler(playerEntity);
-			if(mainStack.getItem() instanceof TieredItem || !dragonStateHandler.isDragon()){
+		public void modifyBreakSpeed(final PlayerEvent.BreakSpeed event) {
+			if (!ServerConfig.bonuses || !ServerConfig.clawsAreTools) {
 				return;
 			}
 
-			BlockState blockState = breakSpeedEvent.getState();
-			float originalSpeed = breakSpeedEvent.getOriginalSpeed();
+			Player player = event.getEntity();
+			ItemStack mainStack = player.getMainHandItem();
+			DragonStateHandler handler = DragonUtils.getHandler(player);
 
-			if(!(mainStack.getItem() instanceof DiggerItem || mainStack.getItem() instanceof SwordItem || mainStack.getItem() instanceof ShearsItem || mainStack.getItem() instanceof TieredItem)){
-				float bonus = dragonStateHandler.getLevel() == DragonLevel.ADULT
-					? blockState.is(BlockTags.MINEABLE_WITH_AXE) && Objects.equals(dragonStateHandler.getType(), DragonTypes.FOREST) ? 4 : blockState.is(BlockTags.MINEABLE_WITH_PICKAXE) && Objects.equals(dragonStateHandler.getType(), DragonTypes.CAVE) ? 4 : blockState.is(BlockTags.MINEABLE_WITH_SHOVEL) && Objects.equals(dragonStateHandler.getType(), DragonTypes.SEA) ? 4 : 2F
-					: dragonStateHandler.getLevel() == DragonLevel.NEWBORN ? ServerConfig.bonusUnlockedAt == DragonLevel.NEWBORN ? 2F : 1F : dragonStateHandler.getLevel() == DragonLevel.YOUNG ? ServerConfig.bonusUnlockedAt != DragonLevel.ADULT ? 2F : 1F : 2F;
-
-				breakSpeedEvent.setNewSpeed(originalSpeed * bonus);
+			if (mainStack.getItem() instanceof TieredItem || mainStack.getItem() instanceof SwordItem || mainStack.getItem() instanceof ShearsItem || !handler.isDragon()) {
+				// Bonus is not applied to items in the hotbar
+				return;
 			}
+
+			BlockState blockState = event.getState();
+			float originalSpeed = event.getOriginalSpeed();
+
+			float bonus = 1F;
+			float unlockedBonus = 1F;
+
+			/* TODO ::
+			Setting the the bonus or base harvest level to diamond doesn't improve the speed here
+			Should the speed bonus scale with the bonus harvest level or stay at these static values?
+			*/
+
+			if (handler.getLevel() == DragonLevel.NEWBORN && ServerConfig.bonusUnlockedAt == DragonLevel.NEWBORN) {
+				unlockedBonus = 2F;
+			} else if (handler.getLevel() == DragonLevel.YOUNG && ServerConfig.bonusUnlockedAt != DragonLevel.ADULT) {
+				unlockedBonus = 2F;
+			} else if (handler.getLevel() == DragonLevel.ADULT) {
+				unlockedBonus = 4F;
+				bonus = 2F;
+			}
+
+			for (TagKey<Block> tagKey : handler.getType().mineableBlocks()) {
+				if (blockState.is(tagKey)) {
+					bonus = unlockedBonus;
+
+					break;
+				}
+			}
+
+			event.setNewSpeed(originalSpeed * bonus);
 		}
 	}
 }
