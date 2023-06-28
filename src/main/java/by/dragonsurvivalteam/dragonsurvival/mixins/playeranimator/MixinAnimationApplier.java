@@ -33,15 +33,18 @@ public abstract class MixinAnimationApplier extends AnimationProcessor {
         }
 
         if (partName.equals("rightArm") || partName.equals("leftArm")) {
-            // TODO :: Find a way to cache this? (maybe in a general sense for all calls)
-            DragonStateHandler handler = DragonUtils.getHandler(player);
 
-            if (IS_BETTERCOMBAT_LOADED && ClientConfig.betterCombatCompatibility && instance.options.getCameraType().isFirstPerson() && handler.isDragon()) {
-                double size = handler.getSize();
-                float yOffset = (float) (20F - size + (size * 0.4));
+            if (IS_BETTERCOMBAT_LOADED && ClientConfig.betterCombatCompatibility && instance.options.getCameraType().isFirstPerson() && instance.screen == null) {
+                // TODO :: Find a way to cache this? (maybe in a general sense for all calls)
+                DragonStateHandler handler = DragonUtils.getHandler(player);
 
-                // Negative `y` value => animation is higher
-                part.offsetPos(new Vector3f(0, yOffset, 0));
+                if (handler.isDragon()) {
+                    double size = handler.getSize();
+                    float yOffset = (float) (20F - size + (size * 0.4));
+
+                    // Negative `y` value => animation is higher
+                    part.offsetPos(new Vector3f(0, yOffset, 0));
+                }
             }
         }
     }
