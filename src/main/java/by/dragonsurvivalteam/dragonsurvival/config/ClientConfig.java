@@ -21,6 +21,6 @@ public class ClientConfig{
 	@ConfigOption(side = ConfigSide.CLIENT, category = "misc", key = "stableNightVision", comment = "When enabled it stops the blinking effect of night vision when low duration, disable if it causes rendering issues with other mods.")
 	public static Boolean stableNightVision = true;
 
-	@ConfigOption( side = ConfigSide.CLIENT, category = "rendering", key = "hideDragonModel", comment = "Hide the dragon model when in first person. This can fix some animation / model issues with Better Combat." )
-	public static Boolean hideDragonModel = true;
+	@ConfigOption( side = ConfigSide.CLIENT, category = "rendering", key = "betterCombatCompatibility", comment = "Makes the Better Combat attack animation somewhat work in first person when you're a dragon. (Recommended to disable `Show arms in first person` in the Better Combat client configuration)" )
+	public static Boolean betterCombatCompatibility = true;
 }

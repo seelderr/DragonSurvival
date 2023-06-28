@@ -26,6 +26,8 @@ public class ApplyMixinPlugin implements IMixinConfigPlugin {
             return LoadingModList.get().getModFileById("jade") != null;
         } else if (mixinClassName.equals("by.dragonsurvivalteam.dragonsurvival.mixins.MixinHarvestabilityWailaHandler")) {
             return LoadingModList.get().getModFileById("wthitharvestability") != null;
+        } else if (mixinClassName.equals("by.dragonsurvivalteam.dragonsurvival.mixins.playeranimator.MixinAnimationApplier")) {
+            return LoadingModList.get().getModFileById("bettercombat") != null;
         }
 
         return true;

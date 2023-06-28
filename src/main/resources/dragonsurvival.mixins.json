@@ -30,7 +30,8 @@
     "MixinItemInHandRenderer",
     "MixinWorldRenderer",
     "MixinJadeHarvestToolProvider",
-    "MixinHarvestabilityWailaHandler"
+    "MixinHarvestabilityWailaHandler",
+    "playeranimator.MixinAnimationApplier"
   ],
   "minVersion": "0.8"
 }

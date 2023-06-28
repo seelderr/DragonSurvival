@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins;
 
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
+import by.dragonsurvivalteam.dragonsurvival.config.ClientConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Matrix4f;
@@ -18,6 +19,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import software.bernie.geckolib3.core.processor.IBone;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.IS_BETTERCOMBAT_LOADED;
+
 
 @Mixin( LevelRenderer.class )
 public class MixinWorldRenderer{
@@ -30,7 +33,7 @@ public class MixinWorldRenderer{
 		if(camera.isDetached()){
 			return;
 		}
-		if(!ClientDragonRender.renderInFirstPerson){
+		if(!ClientDragonRender.renderInFirstPerson || (IS_BETTERCOMBAT_LOADED && ClientConfig.betterCombatCompatibility)){
 			return;
 		}
 		if(!DragonUtils.isDragon(camera.getEntity())){

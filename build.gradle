@@ -154,6 +154,9 @@ dependencies {
     compileOnly fg.deobf("curse.maven:wthit-forge-455982:4576229") // 1.19.2 - 5.16.2
     compileOnly fg.deobf("curse.maven:wthit-harvestability-666621:3960349") // 1.19.2 - 2.1.0
 
+    // Player Animator (for Better Combat)
+    compileOnly fg.deobf("curse.maven:playeranimator-658587:4418149") // 1.19.2 - 1.0.2
+
     // Mixin
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
