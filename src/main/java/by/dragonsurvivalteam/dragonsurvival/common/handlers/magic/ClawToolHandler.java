@@ -5,6 +5,8 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
+import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawsMenu;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.tags.BlockTags;
@@ -29,6 +31,7 @@ import net.minecraftforge.event.entity.player.PlayerXpEvent.PickupXp;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.network.PacketDistributor;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -168,8 +171,9 @@ public class ClawToolHandler{
 		return cap.getClawToolData().getClawsInventory().getItem(0);
 	}
 
+	/** Handle tool breaking for the dragon */
 	@SubscribeEvent
-	public static void onToolBreak(PlayerDestroyItemEvent event) {
+	public static void onToolBreak(final PlayerDestroyItemEvent event) {
 		if (event.getHand() == null) return;
 		Player player = event.getEntity();
 
@@ -178,6 +182,11 @@ public class ClawToolHandler{
 
 			if (ItemStack.matches(clawTool, event.getOriginal())) {
 				player.broadcastBreakEvent(event.getHand());
+			} else {
+				if (!player.level.isClientSide) {
+					DragonStateHandler handler = DragonUtils.getHandler(player);
+					NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncDragonClawsMenu(player.getId(), handler.getClawToolData().isClawsMenuOpen(), handler.getClawToolData().getClawsInventory()));
+				}
 			}
 		}
 	}
