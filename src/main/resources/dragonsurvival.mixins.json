@@ -28,10 +28,7 @@
     "MixinInventoryScreen",
     "MixinItemBlockRenderTypes",
     "MixinItemInHandRenderer",
-    "MixinWorldRenderer",
-    "MixinJadeHarvestToolProvider",
-    "MixinHarvestabilityWailaHandler",
-    "playeranimator.MixinAnimationApplier"
+    "MixinWorldRenderer"
   ],
   "minVersion": "0.8"
 }

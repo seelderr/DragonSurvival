@@ -20,16 +20,7 @@ public class ApplyMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(final String targetClassName, final String mixinClassName) {
-        // TODO :: Could also check for version if there are future compatibility problems
         // `ModList.get()` is not available at this point in time
-        if (mixinClassName.equals("by.dragonsurvivalteam.dragonsurvival.mixins.MixinJadeHarvestToolProvider")) {
-            return LoadingModList.get().getModFileById("jade") != null;
-        } else if (mixinClassName.equals("by.dragonsurvivalteam.dragonsurvival.mixins.MixinHarvestabilityWailaHandler")) {
-            return LoadingModList.get().getModFileById("wthitharvestability") != null;
-        } else if (mixinClassName.equals("by.dragonsurvivalteam.dragonsurvival.mixins.playeranimator.MixinAnimationApplier")) {
-            return LoadingModList.get().getModFileById("bettercombat") != null;
-        }
-
         return true;
     }
 

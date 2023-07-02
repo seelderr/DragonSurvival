@@ -19,8 +19,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import software.bernie.geckolib3.core.processor.IBone;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.IS_BETTERCOMBAT_LOADED;
-
 
 @Mixin( LevelRenderer.class )
 public class MixinWorldRenderer{
@@ -33,7 +31,7 @@ public class MixinWorldRenderer{
 		if(camera.isDetached()){
 			return;
 		}
-		if(!ClientDragonRender.renderInFirstPerson || (IS_BETTERCOMBAT_LOADED && ClientConfig.betterCombatCompatibility)){
+		if(!ClientDragonRender.renderInFirstPerson){
 			return;
 		}
 		if(!DragonUtils.isDragon(camera.getEntity())){

@@ -58,8 +58,6 @@ import net.minecraftforge.fml.common.Mod;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.IS_BETTERCOMBAT_LOADED;
-
 @Mod.EventBusSubscriber( Dist.CLIENT )
 public class ClientDragonRender{
 	public static DragonModel dragonModel = new DragonModel();
@@ -147,11 +145,6 @@ public class ClientDragonRender{
 
 		Minecraft mc = Minecraft.getInstance();
 		DragonStateHandler cap = DragonUtils.getHandler(player);
-
-		if (IS_BETTERCOMBAT_LOADED && ClientConfig.betterCombatCompatibility && (player == mc.player || mc.player == null) && mc.screen == null && mc.options.getCameraType().isFirstPerson() && cap.isDragon()) {
-			renderPlayerEvent.getRenderer().getModel().setAllVisible(false);
-			return;
-		}
 
 		if(!playerDragonHashMap.containsKey(player.getId())){
 			DragonEntity dummyDragon = DSEntities.DRAGON.create(player.level);
