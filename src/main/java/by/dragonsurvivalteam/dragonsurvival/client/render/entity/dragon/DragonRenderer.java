@@ -1,17 +1,14 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon;
 
-import by.dragonsurvivalteam.dragonsurvival.client.gui.DragonScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
-import by.dragonsurvivalteam.dragonsurvival.config.ClientConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
@@ -29,8 +26,6 @@ import software.bernie.geckolib3.util.EModelRenderCycle;
 import software.bernie.geckolib3.util.RenderUtils;
 
 import javax.annotation.Nullable;
-
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.IS_BETTERCOMBAT_LOADED;
 
 public class DragonRenderer extends GeoEntityRenderer<DragonEntity>{
 	public ResourceLocation glowTexture = null;
@@ -82,13 +77,6 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity>{
 
 		Player player = entity.getPlayer();
 		DragonStateHandler handler = DragonUtils.getHandler(player);
-
-        if (IS_BETTERCOMBAT_LOADED && ClientConfig.hideDragonModel && Minecraft.getInstance().options.getCameraType().isFirstPerson() && !(Minecraft.getInstance().screen instanceof InventoryScreen || Minecraft.getInstance().screen instanceof DragonScreen) && handler.isDragon()) {
-			// TODO
-			// For Better Combat attack animation - I think you only need to hide the head (or hand(s) since Better Combat uses that?) - not sure
-			// There is surely a better way since even with this the weapon doesn't have any animation - but it's better than having the head block the screen
-			return;
-        }
 
 		boolean hasWings = handler.hasWings() && handler.getSkinData().skinPreset.skinAges.get(handler.getLevel()).get().wings;
 

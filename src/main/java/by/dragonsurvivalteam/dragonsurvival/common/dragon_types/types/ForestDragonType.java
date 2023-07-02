@@ -32,6 +32,10 @@ import java.util.List;
 public class ForestDragonType extends AbstractDragonType{
 	public int timeInDarkness;
 
+	public ForestDragonType() {
+		slotForBonus = 2;
+	}
+
 	@Override
 	public CompoundTag writeNBT(){
 		CompoundTag tag = new CompoundTag();
@@ -135,7 +139,7 @@ public class ForestDragonType extends AbstractDragonType{
 	}
 
 	@Override
-	public List<TagKey<Block>> mineableBlocks(Player player){
+	public List<TagKey<Block>> mineableBlocks(){
 		return List.of(BlockTags.MINEABLE_WITH_AXE);
 	}
 }

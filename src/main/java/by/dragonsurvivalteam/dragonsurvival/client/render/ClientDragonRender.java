@@ -137,13 +137,14 @@ public class ClientDragonRender{
 	/**
 	 * Called for every player.
 	 */
-	@SubscribeEvent
+	@SubscribeEvent // TODO :: This is heavy on render performance (even in first person) due to renderRecursively -> renderChildBones
 	public static void thirdPersonPreRender(RenderPlayerEvent.Pre renderPlayerEvent){
 		if(!(renderPlayerEvent.getEntity() instanceof AbstractClientPlayer player)){
 			return;
 		}
 
 		Minecraft mc = Minecraft.getInstance();
+		DragonStateHandler cap = DragonUtils.getHandler(player);
 
 		if(!playerDragonHashMap.containsKey(player.getId())){
 			DragonEntity dummyDragon = DSEntities.DRAGON.create(player.level);
@@ -163,7 +164,6 @@ public class ClientDragonRender{
 			dummyDragon.player = player.getId();
 		}
 
-		DragonStateHandler cap = DragonUtils.getHandler(player);
 		if(cap.isDragon()){
 			renderPlayerEvent.setCanceled(true);
 			float partialRenderTick = renderPlayerEvent.getPartialTick();

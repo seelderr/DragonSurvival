@@ -92,12 +92,6 @@ public class VillagerRelationsHandler{
 						}
 					}
 				}
-			}else if(livingEntity instanceof DragonHunter){
-				if(DragonUtils.isDragon(playerEntity)){
-					//                    applyEvilMarker(playerEntity);
-				}else if(livingEntity instanceof KnightEntity){
-					playerEntity.addEffect(new MobEffectInstance(MobEffects.BAD_OMEN, Functions.minutesToTicks(5)));
-				}
 			}
 			String typeName = ResourceHelper.getKey(livingEntity).toString();
 			if(DragonUtils.isDragon(playerEntity) && ServerConfig.royalChaseStatusGivers.contains(typeName)){

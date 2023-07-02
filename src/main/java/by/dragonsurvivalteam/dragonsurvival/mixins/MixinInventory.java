@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins;
 
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ClawToolHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
@@ -83,6 +84,12 @@ public abstract class MixinInventory{
 
 		for (String regex : ServerConfig.blacklistedItemsRegex) {
 			String[] split = regex.split(":");
+
+			// Just to be sure
+			if (split.length != 2) {
+				DragonSurvivalMod.LOGGER.warn("Regex definition for the blacklist hast the wrong format: " + regex);
+				continue;
+			}
 
 			if (location.getNamespace().equals(split[0])) {
 				Pattern pattern = Pattern.compile(split[1]);

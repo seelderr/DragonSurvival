@@ -230,11 +230,11 @@ public class ServerConfig{
 	@ConfigOption( side = ConfigSide.SERVER, category = "bonuses", key = "clawsAreTools", comment = "Whether dragon claws function as tools." )
 	public static Boolean clawsAreTools = true;
 
-	@ConfigRange( min = -1, max = 100 )
+	@ConfigRange(min = 0, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = "bonuses", key = "baseHarvestLevel", comment = "The harvest level to apply when dragons breaks a block, regardless of dragon/tool type." )
 	public static Integer baseHarvestLevel = 0;
 
-	@ConfigRange( min = -1, max = 100 )
+	@ConfigRange(min = 0, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = "bonuses", key = "bonusHarvestLevel", comment = "The harvest level to apply to a dragons specific tool type once unlocked." )
 	public static Integer bonusHarvestLevel = 1;
 

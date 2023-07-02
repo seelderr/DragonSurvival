@@ -147,6 +147,7 @@ dependencies {
 
     compileOnly fg.deobf("squeek.appleskin:appleskin-forge:${appleskin_version}:api")
 
+    // Mixin
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
 
