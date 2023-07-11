@@ -434,6 +434,10 @@ public class DragonStateHandler extends EntityStateHandler implements NBTInterfa
 	 * The tier depends on the dragon and configured harvest bonuses
 	 */
 	public ItemStack getFakeTool(final BlockState blockState) {
+		if (getType() == null) {
+			return ItemStack.EMPTY;
+		}
+
 		int harvestLevel = 0;
 
 		for (TagKey<Block> tagKey : getType().mineableBlocks()) {
@@ -462,7 +466,12 @@ public class DragonStateHandler extends EntityStateHandler implements NBTInterfa
 	 * @return A default instance of the tool (or {@link ItemStack#EMPTY} if nothing matches / some problem occurs)
 	 */
 	public ItemStack getToolOfType(final Tier tier, int toolSlot) {
-		String tierPath = ((Tiers) tier).name().toLowerCase() + "_";
+		if (!(tier instanceof Tiers tiers)) {
+			// TODO :: Do something with ForgeTier to support custom tools (benefit = ?)
+			return ItemStack.EMPTY;
+		}
+
+		String tierPath = tiers.name().toLowerCase() + "_";
 		tierPath = tierPath.replace("wood", "wooden");
 
 		Item item =  switch (toolSlot) {
@@ -485,10 +494,15 @@ public class DragonStateHandler extends EntityStateHandler implements NBTInterfa
 	}
 
 	/**
+	 * Don't call this when the player is not a dragon, if you do you get a -1
 	 * @param slot The dragon tool slot of the harvest tool which needs to be checked
 	 * @return The harvest level of the current dragon type for the provided slot
 	 */
 	public int getDragonHarvestLevel(int slot) {
+		if (getType() == null) {
+			return -1;
+		}
+
 		int harvestLevel = ServerConfig.baseHarvestLevel;
 		int bonusLevel = 0;
 

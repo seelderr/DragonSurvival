@@ -50,12 +50,21 @@ public class MixinServerPlayerGameMode{
 		if (!originalCheck && player.level instanceof ServerLevel) {
 			DragonStateHandler handler = DragonUtils.getHandler(player);
 
+			if (!handler.isDragon()) {
+				return originalCheck;
+			}
+
 			UUID id = UUID.randomUUID();
 			FakePlayer fakePlayer = new FakePlayer((ServerLevel) player.level, new GameProfile(id, id.toString()));
 
 			for (int toolSlot = 0; toolSlot < 4; toolSlot++) {
 				ItemStack tool = handler.getClawToolData().getClawsInventory().getItem(toolSlot);
 
+				/* FIXME
+				If the tool has a lower harvest level than the base and bonus from the dragon type
+				then the lower harvest level from the tool will be used (since no fake tool is created)
+				(Only relevant for weirdly modded blocks)
+				*/
 				if (tool == ItemStack.EMPTY && toolSlot != 0) {
                     // To make the dragon harvest bonus work
 					tool = handler.getFakeTool(blockState);
