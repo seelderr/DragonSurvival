@@ -36,6 +36,7 @@ public class DragonSkins{
 		public String name;
 		public String short_name;
 		public int size;
+		public boolean glow;
 	}
 
 	public static boolean useInChina = false;
@@ -251,6 +252,7 @@ public class DragonSkins{
 						SKIN_USERS.put(size, new HashMap<>());
 					}
 					skin.short_name = name;
+					skin.glow = isGlow;
 					SKIN_USERS.get(size).putIfAbsent(name, skin);
 				}
 			}
