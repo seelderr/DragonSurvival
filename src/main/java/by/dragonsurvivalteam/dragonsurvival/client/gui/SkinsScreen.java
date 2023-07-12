@@ -323,14 +323,13 @@ public class SkinsScreen extends Screen{
 
 		addRenderableWidget(new Button(startX + 35, startY + 128, 60, 20, Component.translatable("ds.gui.skins.random"), button -> {
 			ArrayList<Pair<DragonLevel, String>> skins = new ArrayList<>();
-			ArrayList<String> users = new ArrayList<>();
+			HashSet<String> users = new HashSet<>();
 			Random random = new Random();
 
 			for (Map.Entry<DragonLevel, HashMap<String, DragonSkins.SkinObject>> ent : DragonSkins.SKIN_USERS.entrySet()){
 				for (Map.Entry<String,DragonSkins.SkinObject> user : ent.getValue().entrySet()){
-					skins.add(Pair.of(ent.getKey(), user.getKey()));
-
-					if(!users.contains(user.getKey())){
+					if (!user.getValue().glow){
+						skins.add(Pair.of(ent.getKey(), user.getKey()));
 						users.add(user.getKey());
 					}
 				}
