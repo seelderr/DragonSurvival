@@ -33,7 +33,6 @@ public class DragonEffects{
 	public static MobEffect ROYAL_CHASE;
 	public static MobEffect PEACE, MAGIC, FIRE;
 	public static MobEffect ANIMAL_PEACE;
-	public static MobEffect PREDATOR_ANTI_SPAWN;
 
 	public static MobEffect SOURCE_OF_MAGIC;
 
@@ -66,8 +65,6 @@ public class DragonEffects{
 		forgeRegistry.register(FIRE);
 		ANIMAL_PEACE = new Effect2(MobEffectCategory.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "animal_peace");
 		forgeRegistry.register(ANIMAL_PEACE);
-		PREDATOR_ANTI_SPAWN = new Effect2(MobEffectCategory.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "predator_anti_spawn");
-		forgeRegistry.register(PREDATOR_ANTI_SPAWN);
 
 		SOURCE_OF_MAGIC = new Effect2(MobEffectCategory.BENEFICIAL, 0x0, false).setRegistryName(DragonSurvivalMod.MODID, "source_of_magic");
 		forgeRegistry.register(SOURCE_OF_MAGIC);

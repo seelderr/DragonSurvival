@@ -26,8 +26,6 @@ public class DSBlocks{
 	public static HashMap<String, Block> DS_BLOCKS = new HashMap<>();
 	public static HashMap<String, BlockItem> DS_BLOCK_ITEMS = new HashMap<>();
 
-	public static Block PREDATOR_STAR_BLOCK;
-
 	public static DragonDoor spruceDoor, acaciaDoor, birchDoor, jungleDoor, oakDoor, darkOakDoor, crimsonDoor, warpedDoor;
 	public static DragonDoor legacyDoor, ironDoor, murdererDoor, sleeperDoor, stoneDoor;
 	public static DragonDoor caveDoor, forestDoor, seaDoor;
@@ -75,9 +73,6 @@ public class DSBlocks{
 		dragon_altar_nether_bricks = registerBlock(new DragonAltarBlock(Block.Properties.of(Material.STONE).strength(0.4f).sound(SoundType.NETHER_BRICKS).requiresCorrectToolForDrops()), "dragon_altar_nether_bricks", forgeRegistry);
 		dragon_altar_mossy_cobblestone = registerBlock(new DragonAltarBlock(Block.Properties.of(Material.STONE).strength(2f).sound(SoundType.STONE).requiresCorrectToolForDrops()), "dragon_altar_mossy_cobblestone", forgeRegistry);
 		dragon_altar_blackstone = registerBlock(new DragonAltarBlock(Block.Properties.of(Material.STONE).strength(1.5f).sound(SoundType.STONE).requiresCorrectToolForDrops()), "dragon_altar_blackstone", forgeRegistry);
-
-		PREDATOR_STAR_BLOCK = new PredatorStarBlock(Block.Properties.of(Material.EGG).noCollission().strength(10F, 9999F).randomTicks().requiresCorrectToolForDrops().sound(SoundType.NETHER_WART));
-		forgeRegistry.register(PREDATOR_STAR_BLOCK.setRegistryName(DragonSurvivalMod.MODID, "predator_star"));
 
 		oakDoor = registerBlock(new DragonDoor(Block.Properties.of(Material.WOOD, Blocks.OAK_PLANKS.defaultMaterialColor()).strength(3.0F).sound(SoundType.WOOD).noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE), "oak_dragon_door", forgeRegistry);
 		spruceDoor = registerBlock(new DragonDoor(Block.Properties.of(Material.WOOD, Blocks.SPRUCE_PLANKS.defaultMaterialColor()).strength(3.0F).sound(SoundType.WOOD).noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE), "spruce_dragon_door", forgeRegistry);
@@ -182,8 +177,6 @@ public class DSBlocks{
 //		registerItem(seaSmallDoor, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
 //		registerItem(ironSmallDoor, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
 //		registerItem(murdererSmallDoor, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
-//
-//		forgeRegistry.register(new BlockItem(PREDATOR_STAR_BLOCK, new Item.Properties().tab(DragonSurvivalMod.items)).setRegistryName("predator_star"));
 //
 //		registerItem(seaSourceOfMagic, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);
 //		registerItem(forestSourceOfMagic, new Item.Properties().tab(DragonSurvivalMod.items), forgeRegistry);

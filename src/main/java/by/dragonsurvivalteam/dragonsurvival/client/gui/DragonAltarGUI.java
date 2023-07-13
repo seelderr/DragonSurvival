@@ -30,8 +30,8 @@ import net.minecraftforge.client.gui.widget.ExtendedButton;
 public class DragonAltarGUI extends Screen{
 	public static final ResourceLocation CONFIRM_BUTTON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/confirm_button.png");
 	public static final ResourceLocation CANCEL_BUTTON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/cancel_button.png");
-	private static final ResourceLocation backgroundTexture = new ResourceLocation("textures/block/dirt.png");
-	private final String[] animations = {"sit", "idle", "fly", "swim_fast", "run"};
+	private static final ResourceLocation backgroundTexture = new ResourceLocation("textures/block/black_concrete.png");
+	private final String[] animations = {"sit", "idle", "fly", "swim_fast", "run", "fly_spin", "dig", "sit_on_magic_source", "sitting_blep", "resting_left", "vibing_sitting", "shy_sitting", "vibing_sitting", "flapping_wings_standing_biped", "rocking_on_back" };
 	public DragonStateHandler handler1 = new DragonStateHandler();
 	public DragonStateHandler handler2 = new DragonStateHandler();
 	private int guiLeft;
@@ -113,11 +113,11 @@ public class DragonAltarGUI extends Screen{
 		double zLevel = 0;
 
 		RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
-		RenderSystem.setShaderTexture(0, GuiComponent.BACKGROUND_LOCATION);
+//		RenderSystem.setShaderTexture(0, GuiComponent.BACKGROUND_LOCATION);
 		RenderSystem.enableDepthTest();
 		RenderSystem.depthFunc(519);
 		bufferbuilder.begin(Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
-		bufferbuilder.vertex(x0, y0, zLevel).uv(0.0F, (float)y0 / 32.0F).color(64, 64, 64, 255).endVertex();
+		bufferbuilder.vertex(x0, y0, zLevel).uv(0.0F, (float)y0 / 32.0F).color(64, 64, 64, 55).endVertex();
 		bufferbuilder.vertex(x0 + width, y0, zLevel).uv((float)width / 32.0F, (float)y0 / 32.0F).color(64, 64, 64, 255).endVertex();
 		bufferbuilder.vertex(x0 + width, 0.0D, zLevel).uv((float)width / 32.0F, 0.0F).color(64, 64, 64, 255).endVertex();
 		bufferbuilder.vertex(x0, 0.0D, zLevel).uv(0.0F, 0.0F).color(64, 64, 64, 255).endVertex();
@@ -169,7 +169,7 @@ public class DragonAltarGUI extends Screen{
 		guiLeft = (width - 304) / 2;
 		guiTop = (height - 190) / 2;
 
-		addRenderableWidget(new HelpButton(width / 2 - 9, 32 + 0, 16, 16, "ds.help.altar", 1));
+		addRenderableWidget(new HelpButton(width / 2, 32 + 5, 16, 16, "ds.help.altar", 1));
 
 		addRenderableWidget(new AltarTypeButton(this, DragonTypes.CAVE, width / 2 - 104, guiTop + 30));
 		addRenderableWidget(new AltarTypeButton(this, DragonTypes.FOREST, width / 2 - 51, guiTop + 30));

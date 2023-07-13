@@ -11,7 +11,6 @@ import net.minecraftforge.registries.IForgeRegistry;
 @Mod.EventBusSubscriber( bus = Mod.EventBusSubscriber.Bus.MOD )
 public class DSTileEntities{
 
-	public static BlockEntityType<PredatorStarTileEntity> PREDATOR_STAR_TILE_ENTITY_TYPE;
 	public static BlockEntityType<SourceOfMagicTileEntity> sourceOfMagicTileEntity;
 	public static BlockEntityType<SourceOfMagicPlaceholder> sourceOfMagicPlaceholder;
 	public static BlockEntityType<HelmetTileEntity> helmetTile;
@@ -20,9 +19,7 @@ public class DSTileEntities{
 	@SubscribeEvent
 	public static void registerBlockEntities(RegistryEvent.Register<BlockEntityType<?>> event){
 		sourceOfMagicTileEntity = BlockEntityType.Builder.of(SourceOfMagicTileEntity::new, DSBlocks.caveSourceOfMagic, DSBlocks.seaSourceOfMagic, DSBlocks.forestSourceOfMagic).build(null);
-		PREDATOR_STAR_TILE_ENTITY_TYPE = BlockEntityType.Builder.of(PredatorStarTileEntity::new, DSBlocks.PREDATOR_STAR_BLOCK).build(null);
 		IForgeRegistry<BlockEntityType<?>> registry = event.getRegistry();
-		registry.registerAll(sourceOfMagicTileEntity.setRegistryName(DragonSurvivalMod.MODID, "dragon_nest"), PREDATOR_STAR_TILE_ENTITY_TYPE.setRegistryName(DragonSurvivalMod.MODID, "predator_star_te"));
 
 		sourceOfMagicPlaceholder = BlockEntityType.Builder.of(SourceOfMagicPlaceholder::new, DSBlocks.forestSourceOfMagic, DSBlocks.seaSourceOfMagic, DSBlocks.caveSourceOfMagic).build(null);
 		registry.register(sourceOfMagicPlaceholder.setRegistryName("placeholder"));

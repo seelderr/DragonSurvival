@@ -18,9 +18,6 @@ public class ServerConfig{
 		ConfigHandler.addConfigs(builder, ConfigSide.SERVER);
 	}
 
-	@ConfigOption( side = ConfigSide.SERVER, category = "general", key = "harvestableStarBlock", comment = "Whether silk touch hoes can be used to harvest Predator Stars." )
-	public static Boolean mineStarBlock = false;
-
 	@ConfigRange( min = 0, max = 1000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = "general", key = "altarUsageCooldown", comment = "How long of a cooldown in seconds the altar has after each use." )
 	public static Integer altarUsageCooldown = 0;
@@ -302,7 +299,7 @@ public class ServerConfig{
 	public static List<String> blacklistedItems = List.of("minecraft:bow", "spartanshields:shield_basic_nickel", "spartanshields:shield_basic_invar", "spartanshields:shield_basic_constantan", "spartanshields:shield_basic_platinum", "spartanshields:shield_mekanism_refined_glowstone", "spartanshields:shield_tower_wood", "spartanshields:shield_tower_stone", "spartanshields:shield_tower_iron", "spartanshields:shield_tower_gold", "spartanshields:shield_tower_diamond", "spartanshields:shield_tower_netherite", "spartanshields:shield_tower_obsidian", "spartanshields:shield_tower_copper", "spartanshields:shield_tower_tin", "spartanshields:shield_tower_bronze", "spartanshields:shield_tower_steel", "spartanshields:shield_tower_silver", "spartanshields:shield_tower_lead", "spartanshields:shield_tower_nickel", "spartanshields:shield_tower_constantan", "spartanshields:shield_tower_invar", "spartanshields:shield_tower_platinum", "spartanshields:shield_tower_electrum", "spartanshields:shield_mekanism_powered_ultimate", "quark:flamerang", "quark:pickarang", "spartanshields:shield_botania_manasteel", "spartanshields:shield_botania_elementium", "spartanshields:shield_mekanism_osmium", "spartanshields:shield_mekanism_lapis_lazuli", "spartanshields:shield_basic_electrum", "spartanshields:shield_mekanism_refined_obsidian", "spartanshields:shield_mekanism_powered_basic", "spartanshields:shield_mekanism_powered_advanced", "spartanshields:shield_mekanism_powered_elite", "spartanweaponry:boomerang_steel", "spartanweaponry:boomerang_invar", "spartanweaponry:boomerang_platinum", "spartanweaponry:boomerang_electrum", "spartanshields:shield_basic_bronze", "spartanshields:shield_basic_tin", "spartanshields:shield_basic_copper", "spartanshields:shield_basic_obsidian", "spartanshields:shield_basic_netherite", "spartanshields:shield_basic_diamond", "spartanshields:shield_basic_gold", "spartanshields:shield_basic_iron", "spartanshields:shield_basic_stone", "spartanshields:shield_basic_wood", "spartanweaponry:boomerang_lead", "spartanweaponry:boomerang_nickel", "spartanshields:shield_basic_steel", "spartanshields:shield_basic_silver", "spartanshields:shield_basic_lead", "spartanweaponry:boomerang_bronze", "spartanweaponry:boomerang_tin", "spartanweaponry:boomerang_copper", "spartanweaponry:boomerang_netherite", "spartanweaponry:boomerang_gold", "spartanweaponry:boomerang_iron", "spartanweaponry:boomerang_stone", "spartanweaponry:heavy_crossbow_bronze", "mowziesmobs:wrought_axe", "spartanshields:shield_botania_terrasteel", "spartanweaponry:heavy_crossbow_leather", "spartanweaponry:heavy_crossbow_iron", "spartanweaponry:heavy_crossbow_gold", "spartanweaponry:heavy_crossbow_diamond", "spartanweaponry:heavy_crossbow_netherite", "spartanweaponry:heavy_crossbow_copper", "spartanweaponry:heavy_crossbow_tin", "spartanweaponry:boomerang_wood", "nethers_exoticism:rambutan_shield", "minecraft:shield", "minecraft:trident", "spartanweaponry:heavy_crossbow_lead", "spartanweaponry:heavy_crossbow_nickel", "spartanweaponry:heavy_crossbow_electrum", "spartanweaponry:heavy_crossbow_platinum", "spartanweaponry:heavy_crossbow_invar", "spartanweaponry:heavy_crossbow_silver", "spartanweaponry:heavy_crossbow_steel", "spartanweaponry:boomerang_diamond", "spartanweaponry:heavy_crossbow_wood", "minecraft:crossbow", "aquaculture:neptunium_bow", "spartanweaponry:longbow_electrum", "spartanweaponry:longbow_invar", "infernalexp:glowsilk_bow", "spartanweaponry:longbow_wood", "spartanweaponry:longbow_leather", "spartanweaponry:longbow_silver", "spartanweaponry:longbow_steel", "spartanweaponry:longbow_bronze", "spartanweaponry:longbow_tin", "spartanweaponry:longbow_copper", "spartanweaponry:longbow_netherite", "spartanweaponry:longbow_diamond", "spartanweaponry:longbow_gold", "spartanweaponry:longbow_iron", "spartanweaponry:boomerang_diamond", "spartanweaponry:boomerang_iron", "spartanweaponry:boomerang_wood", "spartanweaponry:boomerang_gold", "spartanweaponry:boomerang_netherite", "spartanweaponry:boomerang_copper", "spartanweaponry:boomerang_tin", "spartanweaponry:boomerang_bronze", "spartanweaponry:boomerang_stone", "spartanweaponry:boomerang_platinum", "spartanweaponry:boomerang_electrum", "spartanweaponry:boomerang_steel", "spartanweaponry:boomerang_lead", "spartanweaponry:boomerang_invar", "spartanweaponry:boomerang_nickel");
 
 	@ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "blacklistedSlots", comment = "List of slots to handle blacklistedItems option" )
-	public static List<Integer> blacklistedSlots = Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 45);
+	public static List<Integer> blacklistedSlots = Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 40, 45);
 
 	// Cave Dragon Penalties
 	@ConfigRange( min = 0.0, max = 100.0 )
@@ -400,15 +397,15 @@ public class ServerConfig{
 
 	@ConfigType(Block.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "mana"}, key = "seaDragonManaBlocks", comment = "Blocks that will restore mana quicker when a sea dragon is standing on it. Formatting: block/modid:blockid" )
-	public static List<String> seaDragonManaBlocks = List.of("dragonsurvival:sea_source_of_magic", "minecraft:ice", "minecraft:snow", "minecraft:snow_block", "minecraft:water", "minecraft:wet_sponge", "minecraft:cauldron");
+	public static List<String> seaDragonManaBlocks = List.of("dragonsurvival:sea_source_of_magic", "minecraft:ice", "minecraft:snow", "minecraft:snow_block", "minecraft:powder_snow", "minecraft:water", "minecraft:wet_sponge", "minecraft:cauldron");
 
 	@ConfigType(Block.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "mana"}, key = "forestDragonManaBlocks", comment = "Blocks that will restore mana quicker when a forest dragon is standing on it. Formatting: block/modid:blockid" )
-	public static List<String> forestDragonManaBlocks = List.of("dragonsurvival:forest_source_of_magic", "minecraft:small_flowers", "minecraft:flowers", "minecraft:tall_flowers");
+	public static List<String> forestDragonManaBlocks = List.of("dragonsurvival:forest_source_of_magic", "minecraft:grass_block", "minecraft:grass_block", "minecraft:small_flowers", "minecraft:flowers", "minecraft:tall_flowers", "minecraft:lily_pad", "minecraft:red_mushroom", "minecraft:brown_mushroom", "minecraft:sweet_berry_bush", "minecraft:oak_leaves");
 
 	@ConfigType(Block.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "mana"}, key = "caveDragonManaBlocks", comment = "Blocks that will restore mana quicker when a cave dragon is standing on it. Formatting: block/modid:blockid" )
-	public static List<String> caveDragonManaBlocks = List.of("dragonsurvival:cave_source_of_magic", "minecraft:campfires", "minecraft:lava", "minecraft:smoker", "minecraft:furnace", "minecraft:magma_block", "minecraft:blast_furnace");
+	public static List<String> caveDragonManaBlocks = List.of("dragonsurvival:cave_source_of_magic", "minecraft:campfires", "minecraft:lava", "minecraft:smoker", "minecraft:furnace", "minecraft:magma_block", "minecraft:blast_furnace", "netherdepthsupgrade:wet_lava_sponge");
 
 
 	@ConfigOption( side = ConfigSide.SERVER, category = "magic", key = "dragonAbilities", comment = "Whether dragon abilities should be enabled" )
@@ -557,10 +554,10 @@ public class ServerConfig{
 	@ConfigRange( min = 0d, max = 20d )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "hunter"}, key = "hunterArmor", comment = "Dragon Hunter armor" )
 	public static Double hunterArmor = 0d;
-/*
-	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "hunter"}, key = "hunterThrowsBolas", comment = "Is Dragon hunter able to throw a bolas?" )
-	public static Boolean hunterHasBolas = false;
-*/
+	/*
+        @ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "hunter"}, key = "hunterThrowsBolas", comment = "Is Dragon hunter able to throw a bolas?" )
+        public static Boolean hunterHasBolas = false;
+    */
 	@ConfigRange( min = 10d, max = 60d )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "squire"}, key = "squireHealth", comment = "Dragon Squire health" )
 	public static Double squireHealth = 24d;
@@ -619,7 +616,7 @@ public class ServerConfig{
 
 	@ConfigType(MobEffect.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_beacons", key = "magicBeaconEffects", comment = "Effects of Magic beacon" )
-	public static List<String> magicBeaconEffects = List.of("dragonsurvival:magic", "dragonsurvival:predator_anti_spawn");
+	public static List<String> magicBeaconEffects = List.of("dragonsurvival:magic", "minecraft:haste");
 
 	@ConfigType(MobEffect.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_beacons", key = "fireBeaconEffects", comment = "Effects of Fire beacon" )
