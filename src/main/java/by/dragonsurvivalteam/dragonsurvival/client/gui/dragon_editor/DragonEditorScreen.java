@@ -74,7 +74,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DragonEditorScreen extends Screen implements TooltipRender{
-	private static final ResourceLocation backgroundTexture = new ResourceLocation("textures/block/dirt.png");
+	private static final ResourceLocation backgroundTexture = new ResourceLocation("textures/block/black_concrete.png");
 	public final ConcurrentHashMap<Integer, EvictingQueue<CompoundTag>> UNDO_QUEUES = new ConcurrentHashMap<>();
 	public final ConcurrentHashMap<Integer, EvictingQueue<CompoundTag>> REDO_QUEUES = new ConcurrentHashMap<>();
 	private final Screen source;
@@ -457,7 +457,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 		});
 
 		for(int num = 1; num <= 9; num++){
-			addRenderableWidget(new DragonEditorSlotButton(width / 2 + 195 + 15, guiTop + (num - 1) * 12 + 5 + 20, num, this));
+			addRenderableWidget(new DragonEditorSlotButton(width / 2 + 200 + 15, guiTop + (num - 1) * 12 + 5 + 30, num, this));
 		}
 
 		addRenderableWidget(new ForgeSlider(width / 2 - 100 - 100, height - 25, 100, 20, Component.translatable("ds.gui.dragon_editor.size"), Component.empty().append("%"), ServerConfig.minSizeVari, ServerConfig.maxSizeVari, Math.round((preset.sizeMul - 1.0) * 100), true){
@@ -696,7 +696,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			}
 		});
 
-		addRenderableWidget(new ExtendedButton(width / 2 + 193 + 15, guiTop + 5, 16, 16, Component.empty(), p -> {}){
+		addRenderableWidget(new ExtendedButton(width / 2 + 198 + 15, guiTop - 26, 16, 16, Component.empty(), p -> {}){
 			@Override
 			public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
 				active = visible = showUi;
@@ -717,7 +717,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){}
 		});
 
-		addRenderableWidget(new CopySettingsButton(this, width / 2 + 193 + 15, guiTop - 16, 16, 16, Component.empty(), p -> {}));
+		addRenderableWidget(new CopySettingsButton(this, width / 2 + 198 + 15, guiTop + 10, 16, 16, Component.empty(), p -> {}));
 
 		addRenderableWidget(new ExtendedButton(dragonRender.x + dragonRender.width - 17, dragonRender.y + dragonRender.height + 3, 15, 15, Component.empty(), btn -> {
 			dragonRender.yRot = -3;

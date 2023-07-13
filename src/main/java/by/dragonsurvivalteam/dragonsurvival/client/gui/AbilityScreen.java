@@ -145,7 +145,7 @@ public class AbilityScreen extends Screen{
 
 		//Inventory
 		addRenderableWidget(new TabButton(startX + 5, startY - 26, 0, this));
-		addRenderableWidget(new TabButton(startX + 33, startY - 28, 1, this));
+		addRenderableWidget(new TabButton(startX + 34, startY - 28, 1, this));
 		addRenderableWidget(new TabButton(startX + 62, startY - 26, 2, this));
 		addRenderableWidget(new TabButton(startX + 91, startY - 26, 3, this));
 

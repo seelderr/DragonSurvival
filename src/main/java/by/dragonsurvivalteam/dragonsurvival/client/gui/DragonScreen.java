@@ -49,7 +49,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 	static final ResourceLocation BACKGROUND = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_inventory.png");
 	private static final ResourceLocation CLAWS_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_claws.png");
 	private static final ResourceLocation DRAGON_CLAW_BUTTON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_claws_button.png");
-	private static final ResourceLocation DRAGON_CLAW_CHECKMARK = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_claws_tetris.png");
+	private static final ResourceLocation DRAGON_CLAW_CHECKMARK = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_claws_checked.png");
 	private final Player player;
 	public boolean clawsMenu = false;
 	private boolean buttonClicked;
@@ -220,17 +220,17 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 
 		//DSButton
 		if(ClientEvents.inventoryToggle){
-			addRenderableWidget(new DSImageButton(leftPos + imageWidth - 28, height / 2 - 30 + 50, 20, 18, 0, 0, 19, INVENTORY_TOGGLE_BUTTON, p_onPress_1_ -> {
+			addRenderableWidget(new DSImageButton(leftPos + imageWidth - 28, height / 2 - 30 + 47, 20, 18, 0, 0, 19, INVENTORY_TOGGLE_BUTTON, p_onPress_1_ -> {
 				Minecraft.getInstance().setScreen(new InventoryScreen(player));
 				NetworkHandler.CHANNEL.sendToServer(new OpenInventory());
 			}, Component.translatable("ds.gui.toggle_inventory.vanilla")));
 		}
 
-		addRenderableWidget(new DSImageButton(leftPos + imageWidth - 28, height / 2, 20, 18, 0, 0, 18, SORTING_BUTTON, p_onPress_1_ -> {
+		addRenderableWidget(new DSImageButton(leftPos + imageWidth - 28, height / 2 - 1, 20, 18, 0, 0, 18, SORTING_BUTTON, p_onPress_1_ -> {
 			NetworkHandler.CHANNEL.sendToServer(new SortInventoryPacket());
 		}, Component.translatable("ds.gui.sort")));
 
-		addRenderableWidget(new DSImageButton(leftPos + imageWidth - 27, height / 2 + 40, 18, 18, 0, 0, 18, SETTINGS_BUTTON, p_onPress_1_ -> {
+		addRenderableWidget(new DSImageButton(leftPos + imageWidth - 28, height / 2 + 35, 20, 18, 0, 0, 18, SETTINGS_BUTTON, p_onPress_1_ -> {
 			Minecraft.getInstance().setScreen(new ConfigSideSelectionScreen(this, Minecraft.getInstance().options, Component.translatable("ds.gui.tab_button.4")));
 		}, Component.translatable("ds.gui.tab_button.4")));
 	}

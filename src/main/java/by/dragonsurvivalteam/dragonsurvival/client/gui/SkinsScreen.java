@@ -48,7 +48,7 @@ public class SkinsScreen extends Screen{
 
 	private static final ResourceLocation DISCORD = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/discord_button.png");
 	private static final ResourceLocation WIKI = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/wiki_button.png");
-	private static final ResourceLocation HELP = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_claws_button.png");
+	private static final ResourceLocation HELP = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/skin_help.png");
 
 	private static final String DISCORD_URL = "http://discord.gg/8SsB8ar";
 	private static final String WIKI_URL = "https://github.com/DragonSurvivalTeam/DragonSurvival/wiki/3.-Customization";
@@ -140,7 +140,7 @@ public class SkinsScreen extends Screen{
 		RenderSystem.setShaderTexture(0, BACKGROUND_TEXTURE);
 		blit(stack, startX + 128, startY, 0, 0, 164, 256);
 
-		drawNonShadowString(stack, minecraft.font, Component.translatable("ds.gui.skins").withStyle(ChatFormatting.DARK_GRAY), startX + 128 + imageWidth / 2, startY + 7, -1);
+		drawNonShadowString(stack, minecraft.font, Component.translatable("ds.gui.skins").withStyle(ChatFormatting.BLACK), startX + 128 + imageWidth / 2, startY + 7, -1);
 		drawCenteredString(stack, minecraft.font, Component.translatable("ds.gui.skins.toggle"), startX + 128 + imageWidth / 2, startY + 30, -1);
 
 		drawNonShadowString(stack, minecraft.font, Component.empty().append(playerName + " - " + level.getName()).withStyle(ChatFormatting.GRAY), startX + 15, startY - 15, -1);
@@ -197,7 +197,7 @@ public class SkinsScreen extends Screen{
 
 		setTextures();
 
-		addRenderableWidget(new TabButton(startX + 128 + 5, startY - 26, 0, this));
+		addRenderableWidget(new TabButton(startX + 128 + 4, startY - 26, 0, this));
 		addRenderableWidget(new TabButton(startX + 128 + 33, startY - 26, 1, this));
 		addRenderableWidget(new TabButton(startX + 128 + 62, startY - 26, 2, this));
 		addRenderableWidget(new TabButton(startX + 128 + 91, startY - 28, 3, this));
@@ -267,7 +267,7 @@ public class SkinsScreen extends Screen{
 			}
 		});
 
-		addRenderableWidget(new Button(startX + 128 + imageWidth / 2 - 8, startY + 128 + 30, 16, 16, Component.empty(), button -> {
+		addRenderableWidget(new Button(startX + 128 + imageWidth / 2 - 8 - 25, startY + 128 + 30, 16, 16, Component.empty(), button -> {
 			try{
 				URI uri = new URI(DISCORD_URL);
 				clickedLink = uri;
@@ -309,7 +309,7 @@ public class SkinsScreen extends Screen{
 			}
 		});
 
-		addRenderableWidget(new HelpButton(startX + 128 + imageWidth / 2 - 8 - 25, startY + 128 + 30, 16, 16, "ds.gui.skins.tooltip.help", 1));
+		addRenderableWidget(new HelpButton(startX + 128 + imageWidth / 2 - 8, startY + 128 + 30, 16, 16,  "ds.gui.skins.tooltip.help", 1));
 
 		addRenderableWidget(new Button(startX - 60, startY + 128, 90, 20, Component.translatable("ds.gui.skins.yours"), button -> {
 			playerName = minecraft.player.getGameProfile().getName();
@@ -449,9 +449,6 @@ public class SkinsScreen extends Screen{
 	public boolean mouseDragged(double x1, double y1, int p_231045_5_, double x2, double y2){
 		xRot -= x2 / 5;
 		yRot -= y2 / 5;
-
-		//		xRot = MathHelper.clamp(xRot, -17, 17);
-		//		yRot = MathHelper.clamp(yRot, -17, 17);
 
 		return super.mouseDragged(x1, y1, p_231045_5_, x2, y2);
 	}
