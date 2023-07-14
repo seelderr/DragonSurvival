@@ -230,7 +230,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 			NetworkHandler.CHANNEL.sendToServer(new SortInventoryPacket());
 		}, new TranslatableComponent("ds.gui.sort")));
 
-		addRenderableWidget(new DSImageButton(leftPos + imageWidth - 27, height / 2 + 40, 18, 18, 0, 0, 18, SETTINGS_BUTTON, p_onPress_1_ -> {
+		addRenderableWidget(new DSImageButton(leftPos + imageWidth - 28, height / 2 + 35, 20, 18, 0, 0, 18, SETTINGS_BUTTON, p_onPress_1_ -> {
 			Minecraft.getInstance().setScreen(new ConfigSideSelectionScreen(this, Minecraft.getInstance().options, new TranslatableComponent("ds.gui.tab_button.4")));
 		}, new TranslatableComponent("ds.gui.tab_button.4")));
 	}
