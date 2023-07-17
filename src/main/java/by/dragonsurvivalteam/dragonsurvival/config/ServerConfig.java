@@ -152,11 +152,11 @@ public class ServerConfig{
 
 	@ConfigRange( min = 1, max = 10000000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = "treasure", key = "treasureRegenTicks", comment = "The time in seconds it takes to recover 1hp while sleeping on one treasure. A large number of treasures in one place reduces time." )
-	public static Integer treasureRegenTicks = 1201;
+	public static Integer treasureRegenTicks = 241;
 
 	@ConfigRange( min = 1, max = 10000000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = "treasure", key = "treasureRegenTicksReduce", comment = "The amount of seconds each additional treasure reduces the regen time by" )
-	public static Integer treasureRegenTicksReduce = 5;
+	public static Integer treasureRegenTicksReduce = 1;
 
 	@ConfigRange( min = 1, max = 10000000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = "treasure", key = "maxTreasures", comment = "The max amount of additional treasure that can be used to reduce the regen time" )
