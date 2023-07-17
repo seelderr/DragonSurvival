@@ -41,7 +41,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
 
-public class DragonStateHandler extends EntityStateHandler implements NBTInterface{
+public class DragonStateHandler extends EntityStateHandler {
 
 	//TODO Remove / cleanup the following
 	private final DragonMovementData movementData = new DragonMovementData(0, 0, 0, false);
