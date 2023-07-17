@@ -455,6 +455,23 @@ public class DragonStateHandler extends EntityStateHandler implements NBTInterfa
 		}
 	}
 
+	/**
+	 * @return Harvest tool of which the dragon type is effective for (tier is based on the current harvest level of the dragon)
+	 */
+	public ItemStack getInnateFakeTool() {
+		if (getType() == null) {
+			return ItemStack.EMPTY;
+		}
+
+		int harvestLevel = getDragonHarvestLevel(getType().slotForBonus);
+
+		if (harvestLevel < 0) {
+			return ItemStack.EMPTY;
+		} else {
+			return getToolOfType(DragonUtils.levelToVanillaTier(harvestLevel), getType().slotForBonus);
+		}
+	}
+
 	/** Calls {@link DragonStateHandler#getToolOfType(Tier, int)} with the result of {@link DragonStateHandler#getRelevantToolSlot(BlockState)} */
 	public ItemStack getToolOfType(final Tier tier, final BlockState blockState) {
 		return getToolOfType(tier, getRelevantToolSlot(blockState));
@@ -474,7 +491,7 @@ public class DragonStateHandler extends EntityStateHandler implements NBTInterfa
 		String tierPath = tiers.name().toLowerCase() + "_";
 		tierPath = tierPath.replace("wood", "wooden");
 
-		Item item =  switch (toolSlot) {
+		Item item = switch (toolSlot) {
 			case 1 -> ForgeRegistries.ITEMS.getValue(new ResourceLocation("minecraft", tierPath + "pickaxe"));
 			case 2 -> ForgeRegistries.ITEMS.getValue(new ResourceLocation("minecraft", tierPath + "axe"));
 			case 3 -> ForgeRegistries.ITEMS.getValue(new ResourceLocation("minecraft", tierPath + "shovel"));
