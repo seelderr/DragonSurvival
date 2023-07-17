@@ -25,8 +25,4 @@ public class EntityStateProvider implements ICapabilitySerializable<CompoundTag>
     public void deserializeNBT(CompoundTag nbt){
         instance.orElseThrow(() -> new IllegalArgumentException("LazyOptional must not be empty!")).readNBT(nbt);
     }
-
-    public void invalidate(){
-        instance.invalidate();
-    }
 }

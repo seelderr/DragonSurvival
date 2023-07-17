@@ -51,7 +51,6 @@ public class Capabilities{
 		} else if (entity instanceof LivingEntity) {
 			EntityStateProvider provider = new EntityStateProvider();
 			event.addCapability(new ResourceLocation("dragonsurvival", "entitystatehandler"), provider);
-			event.addListener(provider::invalidate);
 		}
 	}
 
