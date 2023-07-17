@@ -81,7 +81,7 @@ public class DragonTreasureHandler{
 					if(handler.treasureRestTimer >= restTimer){
 						handler.treasureRestTimer = 0;
 
-						if(player.getHealth() < player.getMaxHealth()){
+						if(player.getHealth() < player.getMaxHealth() + 1){
 							player.heal(1);
 						}
 					}else{
