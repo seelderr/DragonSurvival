@@ -15,6 +15,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -36,7 +37,7 @@ public abstract class MixinInventory{
 	@Inject( at = @At( "HEAD" ), method = "getDestroySpeed", cancellable = true )
 	public void getDestroySpeed(BlockState state, CallbackInfoReturnable<Float> ci){
 		ItemStack mainStack = player.getInventory().getSelected();
-		ItemStack breakStack = ClawToolHandler.getDragonHarvestTool(player);
+		ItemStack breakStack = ClawToolHandler.getDragonHarvestTool(player, state);
 
 		if(!ItemStack.isSame(mainStack, breakStack)){
 			float tempSpeed = breakStack.getDestroySpeed(state);
@@ -54,15 +55,16 @@ public abstract class MixinInventory{
 			return;
 		}
 
-		handleItem(selected);
+		dragonSurvival$handleItem(selected);
 		// Offhand cannot be selected
-		handleItem(SLOT_OFFHAND);
+		dragonSurvival$handleItem(SLOT_OFFHAND);
 	}
 
-	private void handleItem(int slot) {
+	@Unique
+	private void dragonSurvival$handleItem(int slot) {
 		ItemStack stack = getItem(slot);
 
-		if((ServerConfig.blacklistedSlots.contains(slot)) && isBlacklisted(stack.getItem())){
+		if((ServerConfig.blacklistedSlots.contains(slot)) && dragonSurvival$isBlacklisted(stack.getItem())){
 			if(stack.isEmpty() || !stack.onDroppedByPlayer(player)){
 				return;
 			}
@@ -71,7 +73,8 @@ public abstract class MixinInventory{
 		}
 	}
 
-	private boolean isBlacklisted(final Item item) {
+	@Unique
+	private boolean dragonSurvival$isBlacklisted(final Item item) {
 		ResourceLocation location = ResourceHelper.getKey(item);
 
 		boolean contains = ServerConfig.blacklistedItems.contains(location.toString());

@@ -25,10 +25,12 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -76,10 +78,21 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 			}
 		}
 	}
+	@Unique private BlockState dragonSurvival$storedBlockState;
 
-	@Redirect( method = "getDigSpeed(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;)F", at = @At( value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;getMainHandItem()Lnet/minecraft/world/item/ItemStack;" ), remap = false )
-	private ItemStack getDragonTools(Player entity){
-		return ClawToolHandler.getDragonHarvestTool(entity);
+	@Inject(method = "getDigSpeed", at = @At("HEAD"), remap = false)
+	private void getDragonTools(final BlockState blockState, final BlockPos pos, final CallbackInfoReturnable<Float> cir) {
+		dragonSurvival$storedBlockState = blockState;
+	}
+
+	@Redirect(method = "getDigSpeed", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;getMainHandItem()Lnet/minecraft/world/item/ItemStack;"), remap = false)
+	private ItemStack getDragonTools(final Player player) {
+		if (dragonSurvival$storedBlockState == null) {
+			// Will use raytrace to get the block the player is looking at
+			return ClawToolHandler.getDragonHarvestTool(player);
+		} else {
+			return ClawToolHandler.getDragonHarvestTool(player, dragonSurvival$storedBlockState);
+		}
 	}
 
 	@Inject( method = "isSleepingLongEnough", at = @At( "HEAD" ), cancellable = true )
