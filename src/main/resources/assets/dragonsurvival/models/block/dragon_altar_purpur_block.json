@@ -1,12 +1,12 @@
 {
-  "parent": "minecraft:block/orientable",
+  "parent": "block/orientable",
   "textures": {
-    "up": "dragonsurvival:block/dragon_altar_purpur_block_top",
-    "down": "dragonsurvival:block/dragon_altar_purpur_block_top",
+    "particle": "dragonsurvival:block/dragon_altar_purpur_block_top",
     "east": "dragonsurvival:block/dragon_altar_purpur_block_east",
     "west": "dragonsurvival:block/dragon_altar_purpur_block_west",
     "north": "dragonsurvival:block/dragon_altar_purpur_block_north",
     "south": "dragonsurvival:block/dragon_altar_purpur_block_south",
-    "particle": "dragonsurvival:block/dragon_altar_purpur_block_top"
+    "up": "dragonsurvival:block/dragon_altar_purpur_block_top",
+    "down": "dragonsurvival:block/dragon_altar_purpur_block_top"
   }
 }

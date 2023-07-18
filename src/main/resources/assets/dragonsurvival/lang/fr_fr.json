@@ -385,7 +385,7 @@
   "ds.description.blackHelmet": "■§7 Tu aurais dû utiliser l'Oeil d'Innos.",
   "ds.description.dragonBeacon": "■ §7Requit pour créer des balises de dragon. Requiert l'enchantement \"Toucher de Soie\" pour récupérer. Quand fabriquer une balise vanilla revient à la mode.",
   "ds.description.passivePeaceBeacon": "■ §7Donne les effets «Paix des Mers» et «Calme Animal». Parfait pour les Dragons des Mers. Requiert l'enchantement \"Toucher de Soie\" pour récupérer.",
-  "ds.description.passiveMagicBeacon": "■§7 Gives the effects «Forest Magic» and «Haste». Best for forest dragons. You can buy an effect by pressing the right button in exchange for experience. Requires a silk touch.",
+  "ds.description.passiveMagicBeacon": "■§7 Gives the effects «Forest Magic» and «Haste». Prohibits predator spawning. Best for forest dragons. You can buy an effect by pressing the right button in exchange for experience. Requires a silk touch.",
   "ds.description.passiveFireBeacon": "■§7 Gives the effects «Cave Fire» and «Sturdy Skin». Gives extra armor. Best for cave dragons. You can buy an effect by pressing the right button in exchange for experience. Requires a silk touch.",
   "ds.description.dragonMemoryBlock": "■ §7Si placé sous n'importe quelle balise de dragon, procure ses effets sans avoir à les acheter, dans une zone alentour.",
   "ds.description.dragonAltar": "■ §7Bloc utilisé pour se transformer en dragon et comme décoration.",
