@@ -8,6 +8,8 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.EntityDamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
@@ -23,9 +25,11 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -187,6 +191,26 @@ public abstract class MixinLivingEntity extends Entity{
 				}
 			});
 		}
+	}
+
+	@Unique private DamageSource dragonSurvival$damageSource;
+
+	@Inject(method = "hurt", at = @At(value = "HEAD"))
+	public void storeDamageSource(final DamageSource damageSource, float amount, final CallbackInfoReturnable<Boolean> cir) {
+		dragonSurvival$damageSource = damageSource;
+	}
+
+	@ModifyArg(method = "hurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;knockback(DDD)V"), index = 0)
+	public double disableKnockbackForMagic(double strength) {
+		if (dragonSurvival$damageSource instanceof EntityDamageSource) {
+			String id = dragonSurvival$damageSource.msgId;
+
+			if (id.equals("onFire") || id.equals("magic")) {
+				return 0;
+			}
+		}
+
+		return strength;
 	}
 
 	@Shadow

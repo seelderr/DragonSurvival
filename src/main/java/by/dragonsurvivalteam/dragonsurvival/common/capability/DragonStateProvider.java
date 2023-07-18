@@ -61,7 +61,7 @@ public class DragonStateProvider implements ICapabilitySerializable<CompoundTag>
 		return cap == Capabilities.DRAGON_CAPABILITY ? instance.cast() : LazyOptional.empty();
 	}
 
-	@Override
+	@Override // TODO :: Biggest TPS impact
 	public CompoundTag serializeNBT(){
 		return instance.orElseThrow(() -> new IllegalArgumentException("LazyOptional must not be empty!")).writeNBT();
 	}

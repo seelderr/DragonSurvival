@@ -3,13 +3,11 @@ package by.dragonsurvivalteam.dragonsurvival.common.handlers.magic;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawsMenu;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
@@ -36,7 +34,6 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.network.PacketDistributor;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 @EventBusSubscriber
 public class ClawToolHandler{
@@ -114,42 +111,54 @@ public class ClawToolHandler{
 		});
 	}
 
-	public static ItemStack getDragonHarvestTool(Player player){
+	public static ItemStack getDragonHarvestTool(final Player player, final BlockState state){
 		ItemStack mainStack = player.getInventory().getSelected();
 		ItemStack harvestTool = mainStack;
 		float newSpeed = 0F;
 
-		DragonStateHandler cap = DragonUtils.getHandler(player);
-
-		if(mainStack.getItem() instanceof DiggerItem || mainStack.getItem() instanceof SwordItem || mainStack.getItem() instanceof ShearsItem || mainStack.getItem() instanceof TieredItem){
+		if (mainStack.getItem() instanceof DiggerItem || mainStack.getItem() instanceof SwordItem || mainStack.getItem() instanceof ShearsItem || mainStack.getItem() instanceof TieredItem) {
 			return mainStack;
 		}
 
-		Level world = player.level;
-		BlockHitResult raytraceresult = Item.getPlayerPOVHitResult(world, player, ClipContext.Fluid.NONE);
+		DragonStateHandler handler = DragonUtils.getHandler(player);
 
-		if(raytraceresult.getType() != HitResult.Type.MISS){
-			BlockState state = world.getBlockState(raytraceresult.getBlockPos());
+		for (int i = 1; i < 4; i++) {
+			ItemStack breakingItem = handler.getClawToolData().getClawsInventory().getItem(i);
 
-			for(int i = 1; i < 4; i++){
-				ItemStack breakingItem = cap.getClawToolData().getClawsInventory().getItem(i);
+			if (!breakingItem.isEmpty() && breakingItem.isCorrectToolForDrops(state)) {
+				float tempSpeed = breakingItem.getDestroySpeed(state);
 
-				if(!breakingItem.isEmpty() && breakingItem.isCorrectToolForDrops(state)){
-					float tempSpeed = breakingItem.getDestroySpeed(state);
+				if (breakingItem.getItem() instanceof DiggerItem item) {
+					tempSpeed = item.getDestroySpeed(breakingItem, state);
+				}
 
-					if(breakingItem.getItem() instanceof DiggerItem item){
-						tempSpeed = item.getDestroySpeed(breakingItem, state);
-					}
-
-					if(tempSpeed > newSpeed){
-						newSpeed = tempSpeed;
-						harvestTool = breakingItem;
-					}
+				if (tempSpeed > newSpeed) {
+					newSpeed = tempSpeed;
+					harvestTool = breakingItem;
 				}
 			}
 		}
 
 		return harvestTool;
+	}
+
+	public static ItemStack getDragonHarvestTool(final Player player) {
+		ItemStack mainStack = player.getInventory().getSelected();
+
+		if (mainStack.getItem() instanceof DiggerItem || mainStack.getItem() instanceof SwordItem || mainStack.getItem() instanceof ShearsItem || mainStack.getItem() instanceof TieredItem) {
+			return mainStack;
+		}
+
+		Level world = player.level;
+		BlockHitResult result = Item.getPlayerPOVHitResult(world, player, ClipContext.Fluid.NONE);
+
+		if (result.getType() != HitResult.Type.MISS) {
+			BlockState state = world.getBlockState(result.getBlockPos());
+
+			return getDragonHarvestTool(player, state);
+		}
+
+		return mainStack;
 	}
 
 	/**

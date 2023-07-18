@@ -20,8 +20,8 @@ import net.minecraft.world.level.material.MaterialColor;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.RegisterEvent;
+import software.bernie.geckolib3.core.util.Color;
 
-import java.awt.Color;
 import java.util.HashMap;
 
 @Mod.EventBusSubscriber( bus = Mod.EventBusSubscriber.Bus.MOD )
@@ -126,12 +126,12 @@ public class DSBlocks{
 		forestSourceOfMagic = registerBlock(new SourceOfMagicBlock(Block.Properties.of(Material.STONE).strength(3, 100).noOcclusion().lightLevel(c1 -> 10)), "forest_source_of_magic", event);
 		seaSourceOfMagic = registerBlock(new SourceOfMagicBlock(Block.Properties.of(Material.STONE).strength(3, 100).noOcclusion().lightLevel(c1 -> 10)), "sea_source_of_magic", event);
 
-		treasureDebris = registerBlock(new TreasureBlock(new Color(148, 120, 114), Block.Properties.of(Material.METAL, MaterialColor.COLOR_BROWN).noOcclusion().sound(SoundRegistry.treasureMetal).strength(0.5F)), "treasure_debris", event);
-		treasureDiamond = registerBlock(new TreasureBlock(new Color(212, 255, 255), Block.Properties.of(Material.METAL, MaterialColor.DIAMOND).noOcclusion().sound(SoundRegistry.treasureGem).strength(0.5F)), "treasure_diamond", event);
-		treasureEmerald = registerBlock(new TreasureBlock(new Color(57, 240, 94), Block.Properties.of(Material.METAL, MaterialColor.COLOR_GREEN).noOcclusion().sound(SoundRegistry.treasureGem).strength(0.5F)), "treasure_emerald", event);
-		treasureCopper = registerBlock(new TreasureBlock(new Color(255, 255, 208), Block.Properties.of(Material.GLASS, MaterialColor.COLOR_ORANGE).noOcclusion().sound(SoundRegistry.treasureMetal).strength(0.5F)), "treasure_copper", event);
-		treasureGold = registerBlock(new TreasureBlock(new Color(255, 255, 243), Block.Properties.of(Material.METAL, MaterialColor.GOLD).noOcclusion().sound(SoundRegistry.treasureMetal).strength(0.5F)), "treasure_gold", event);
-		treasureIron = registerBlock(new TreasureBlock(new Color(211, 211, 211), Block.Properties.of(Material.METAL, MaterialColor.METAL).noOcclusion().sound(SoundRegistry.treasureMetal).strength(0.5F)), "treasure_iron", event);
+		treasureDebris = registerBlock(new TreasureBlock(Color.ofRGB(148, 120, 114), Block.Properties.of(Material.METAL, MaterialColor.COLOR_BROWN).noOcclusion().sound(SoundRegistry.treasureMetal).strength(0.5F)), "treasure_debris", event);
+		treasureDiamond = registerBlock(new TreasureBlock(Color.ofRGB(212, 255, 255), Block.Properties.of(Material.METAL, MaterialColor.DIAMOND).noOcclusion().sound(SoundRegistry.treasureGem).strength(0.5F)), "treasure_diamond", event);
+		treasureEmerald = registerBlock(new TreasureBlock(Color.ofRGB(57, 240, 94), Block.Properties.of(Material.METAL, MaterialColor.COLOR_GREEN).noOcclusion().sound(SoundRegistry.treasureGem).strength(0.5F)), "treasure_emerald", event);
+		treasureCopper = registerBlock(new TreasureBlock(Color.ofRGB(255, 255, 208), Block.Properties.of(Material.GLASS, MaterialColor.COLOR_ORANGE).noOcclusion().sound(SoundRegistry.treasureMetal).strength(0.5F)), "treasure_copper", event);
+		treasureGold = registerBlock(new TreasureBlock(Color.ofRGB(255, 255, 243), Block.Properties.of(Material.METAL, MaterialColor.GOLD).noOcclusion().sound(SoundRegistry.treasureMetal).strength(0.5F)), "treasure_gold", event);
+		treasureIron = registerBlock(new TreasureBlock(Color.ofRGB(211, 211, 211), Block.Properties.of(Material.METAL, MaterialColor.METAL).noOcclusion().sound(SoundRegistry.treasureMetal).strength(0.5F)), "treasure_iron", event);
 
 		helmet1 = registerBlock(new HelmetBlock(Block.Properties.of(Material.METAL)), "broken_knight_helmet_1", event);
 		helmet2 = registerBlock(new HelmetBlock(Block.Properties.of(Material.METAL)), "broken_knight_helmet_2", event);

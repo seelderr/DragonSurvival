@@ -155,9 +155,9 @@ public class MagicHandler{
 			}
 		}
 
-		if(entity.hasEffect(DragonEffects.DRAIN)){
-			if(!DragonUtils.isDragonType(entity, DragonTypes.FOREST)){
-				if(entity.tickCount % 20 == 0){
+		if(entity.tickCount % 20 == 0){
+			if(entity.hasEffect(DragonEffects.DRAIN)){
+				if(!DragonUtils.isDragonType(entity, DragonTypes.FOREST)){
 					Player player = cap.lastAfflicted != -1 && entity.level.getEntity(cap.lastAfflicted) instanceof Player ? (Player)entity.level.getEntity(cap.lastAfflicted) : null;
 					if(player != null){
 						TargetingFunctions.attackTargets(player, ent -> ent.hurt(new EntityDamageSource("magic", player).bypassArmor().setMagic(), 1f), entity);
@@ -166,22 +166,14 @@ public class MagicHandler{
 					}
 				}
 			}
-		}
 
-		if(entity.hasEffect(DragonEffects.CHARGED)){
-			if(entity.tickCount % 20 == 0){
+			if(entity.hasEffect(DragonEffects.CHARGED)){
 				Player player = cap.lastAfflicted != -1 && entity.level.getEntity(cap.lastAfflicted) instanceof Player ? (Player)entity.level.getEntity(cap.lastAfflicted) : null;
 				if(!DragonUtils.isDragonType(entity, DragonTypes.SEA)){
 					StormBreathAbility.chargedEffectSparkle(player, entity, StormBreathAbility.chargedChainRange, StormBreathAbility.chargedEffectChainCount, StormBreathAbility.chargedEffectDamage);
 				}
 			}
-		}else{
-			if(cap.lastAfflicted != -1){
-				cap.lastAfflicted = -1;
-			}
-		}
 
-		if(entity.tickCount % 20 == 0){
 			if(entity.hasEffect(DragonEffects.BURN)){
 				if(!entity.fireImmune()){
 					if(cap.lastPos != null){
@@ -206,6 +198,7 @@ public class MagicHandler{
 
 			cap.lastPos = entity.position();
 		}
+
 	}
 
 	@SubscribeEvent

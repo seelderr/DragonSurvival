@@ -60,12 +60,9 @@ public class MixinServerPlayerGameMode{
 			for (int toolSlot = 0; toolSlot < 4; toolSlot++) {
 				ItemStack tool = handler.getClawToolData().getClawsInventory().getItem(toolSlot);
 
-				/* FIXME
-				If the tool has a lower harvest level than the base and bonus from the dragon type
-				then the lower harvest level from the tool will be used (since no fake tool is created)
-				(Only relevant for weirdly modded blocks)
-				*/
-				if (tool == ItemStack.EMPTY && toolSlot != 0) {
+				// No tool or the level of the tool is lower than the harvest level of the dragon
+				// TODO :: Do fake items for swords make sense (for harvesting related logic)?
+				if (toolSlot != 0 && (tool == ItemStack.EMPTY || (tool.getItem() instanceof TieredItem tieredItem && tieredItem.getTier().getLevel() < handler.getDragonHarvestLevel(toolSlot)))) {
                     // To make the dragon harvest bonus work
 					tool = handler.getFakeTool(blockState);
 				}

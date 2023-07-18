@@ -48,6 +48,7 @@ public class DragonSurvivalMod{
 
 		DSParticles.register();
 		SoundRegistry.register();
+		// TODO :: Move to clientSetup?
 		DSParticles.REGISTRY.register(modEventBus);
 		SoundRegistry.SOUNDS.register(modEventBus);
 
