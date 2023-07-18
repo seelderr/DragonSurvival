@@ -163,7 +163,7 @@
   "ds.wings.enabled": "You have spread your wings",
   "ds.wings.disabled": "You have folded your wings",
   "ds.wings.nohunger": "Hunger has exhausted you and you can't fly",
-  "ds.you.have.no.wings": "You have §cno wings§r. You need to talk to the Ender dragon or take  special item.",
+  "ds.you.have.no.wings": "You have §cno wings§r. You need to talk to the Ender dragon or take special item.",
   "ds.dragon.grants.wings": "<Ender dragon> I bestow wings on you. Now get out of here!",
   "ds.space.occupied": "You need a 3x3 area to place",
   "ds.cooldown.active": "The altar is on cooldown: {0}",
