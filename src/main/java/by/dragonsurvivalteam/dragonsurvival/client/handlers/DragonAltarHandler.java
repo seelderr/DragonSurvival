@@ -26,7 +26,7 @@ public class DragonAltarHandler {
             Minecraft minecraft = Minecraft.getInstance();
             if(
                     minecraft.screen == null &&
-                            minecraft.player != null && !minecraft.player.isDeadOrDying()
+                    minecraft.player != null && !minecraft.player.isDeadOrDying()
             ){
                 minecraft.setScreen(new DragonAltarGUI());
                 openingAltar = false;

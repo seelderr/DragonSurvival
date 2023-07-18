@@ -5,6 +5,7 @@ import com.ibm.icu.impl.Pair;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
@@ -43,6 +44,14 @@ public class DragonStateProvider implements ICapabilitySerializable<CompoundTag>
 		}
 	}
 
+	public static LazyOptional<? extends EntityStateHandler> getEntityCap(Entity entity){
+		if (entity instanceof Player) {
+			return entity.getCapability(Capabilities.DRAGON_CAPABILITY);
+		}
+
+		return entity.getCapability(Capabilities.ENTITY_CAPABILITY);
+	}
+
 	public void invalidate(){
 		//  instance.invalidate();
 	}
@@ -52,7 +61,7 @@ public class DragonStateProvider implements ICapabilitySerializable<CompoundTag>
 		return cap == Capabilities.DRAGON_CAPABILITY ? instance.cast() : LazyOptional.empty();
 	}
 
-	@Override
+	@Override // TODO :: Biggest TPS impact
 	public CompoundTag serializeNBT(){
 		return instance.orElseThrow(() -> new IllegalArgumentException("LazyOptional must not be empty!")).writeNBT();
 	}

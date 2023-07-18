@@ -55,6 +55,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -290,6 +291,18 @@ public class ClientEvents{
 			texture += "moded_";
 		}
 		return texture;
+	}
+
+	public static RenderType onRenderFluidLayer(FluidState fluidState)
+	{
+		LocalPlayer player = Minecraft.getInstance().player;
+		if (player == null){
+			return null;
+		}
+
+		if ((fluidState.is(Fluids.LAVA) || fluidState.is(Fluids.FLOWING_LAVA)) && player.hasEffect(DragonEffects.LAVA_VISION))
+			return RenderType.translucent();
+		return null;
 	}
 
 	@SubscribeEvent

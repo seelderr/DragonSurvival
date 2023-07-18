@@ -14,6 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -32,20 +33,25 @@ import net.minecraftforge.network.PacketDistributor;
 public class Capabilities{
 	public static Capability<VillageRelationShips> VILLAGE_RELATIONSHIP = CapabilityManager.get(new CapabilityToken<>(){});
 	public static Capability<DragonStateHandler> GENERIC_CAPABILITY = CapabilityManager.get(new CapabilityToken<>(){});
+	public static Capability<EntityStateHandler> ENTITY_CAPABILITY = CapabilityManager.get(new CapabilityToken<>(){});
 	public static Capability<DragonStateHandler> DRAGON_CAPABILITY = CapabilityManager.get(new CapabilityToken<>(){});
 
 	@SubscribeEvent
 	public static void attachCapabilities(AttachCapabilitiesEvent<Entity> event){
-		if(event.getObject() instanceof Player player){
-			if(event.getObject().level.isClientSide){
-				if(isFakePlayer(player))
-					return;
-			}
-		}
+		Entity entity = event.getObject();
 
-		DragonStateProvider provider = new DragonStateProvider();
-		event.addCapability(new ResourceLocation("dragonsurvival", "playerstatehandler"), provider);
-		event.addListener(provider::invalidate);
+		if (entity instanceof Player player) {
+			if (entity.getLevel().isClientSide && isFakePlayer(player)) {
+				return;
+			}
+
+			DragonStateProvider provider = new DragonStateProvider();
+			event.addCapability(new ResourceLocation("dragonsurvival", "playerstatehandler"), provider);
+			event.addListener(provider::invalidate);
+		} else if (entity instanceof LivingEntity) {
+			EntityStateProvider provider = new EntityStateProvider();
+			event.addCapability(new ResourceLocation("dragonsurvival", "entitystatehandler"), provider);
+		}
 	}
 
 	@OnlyIn( Dist .CLIENT)

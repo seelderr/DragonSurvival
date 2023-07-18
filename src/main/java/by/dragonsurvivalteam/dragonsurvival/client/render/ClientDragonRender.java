@@ -137,7 +137,7 @@ public class ClientDragonRender{
 	/**
 	 * Called for every player.
 	 */
-	@SubscribeEvent
+	@SubscribeEvent // TODO :: This is heavy on render performance (even in first person) due to renderRecursively -> renderChildBones
 	public static void thirdPersonPreRender(RenderPlayerEvent.Pre renderPlayerEvent){
 		if(!(renderPlayerEvent.getPlayer() instanceof AbstractClientPlayer player)){
 			return;

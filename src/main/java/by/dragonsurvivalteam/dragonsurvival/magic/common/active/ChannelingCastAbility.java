@@ -16,7 +16,8 @@ public abstract class ChannelingCastAbility extends ActiveDragonAbility {
 	public int chargeTime = 0;
 
 	public abstract int getSkillChargeTime();
-	public abstract int getChargingManaCost();
+	public abstract int getContinuousManaCostTime();
+	public abstract int getInitManaCost();
 
 	@Override
 	public void onKeyPressed(Player player, Runnable onFinish){
@@ -25,21 +26,21 @@ public abstract class ChannelingCastAbility extends ActiveDragonAbility {
 		if(chargeTime >= getSkillChargeTime()){
 			onChanneling(player, chargeTime - getSkillChargeTime());
 
-			if(player.tickCount % 40 == 0){
+			if(chargeTime % getContinuousManaCostTime() == 0){
 				ManaHandler.consumeMana(player, getManaCost());
 			}
 		}else{
 			onCharging(player, chargeTime);
 
 			if(chargeTime == getSkillChargeTime() / 2){
-				ManaHandler.consumeMana(player, getChargingManaCost());
+				ManaHandler.consumeMana(player, getInitManaCost());
 			}
 		}
 	}
 
 	@Override
 	public boolean canConsumeMana(Player player){
-		int manaCost = chargeTime < getSkillChargeTime() / 2 ? getManaCost() + getChargingManaCost() : getManaCost();
+		int manaCost = chargeTime < getSkillChargeTime() / 2 ? getManaCost() + getInitManaCost() : getManaCost();
 		return ManaHandler.canConsumeMana(player, manaCost);
 	}
 

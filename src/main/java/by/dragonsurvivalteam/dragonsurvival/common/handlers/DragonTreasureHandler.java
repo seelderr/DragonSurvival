@@ -7,6 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncTreasureRestStatus;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -28,8 +29,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
-
-import java.awt.Color;
+import software.bernie.geckolib3.core.util.Color;
 
 @Mod.EventBusSubscriber
 public class DragonTreasureHandler{
@@ -74,13 +74,13 @@ public class DragonTreasureHandler{
 					}
 					treasureNearby = Mth.clamp(treasureNearby, 0, ServerConfig.maxTreasures);
 
-					int totalTime = ServerConfig.treasureRegenTicks;
-					int restTimer = totalTime - ServerConfig.treasureRegenTicksReduce * treasureNearby;
+					int totalTime = Functions.secondsToTicks(ServerConfig.treasureRegenTicks);
+					int restTimer = totalTime - Functions.secondsToTicks(ServerConfig.treasureRegenTicksReduce * treasureNearby);
 
 					if(handler.treasureRestTimer >= restTimer){
 						handler.treasureRestTimer = 0;
 
-						if(player.getHealth() < player.getMaxHealth()){
+						if(player.getHealth() < player.getMaxHealth() + 1){
 							player.heal(1);
 						}
 					}else{
@@ -137,8 +137,8 @@ public class DragonTreasureHandler{
 					sleepTimer--;
 				}
 				if(sleepTimer > 0){
-					Color darkening = new Color(0.05f, 0.05f, 0.05f, Mth.lerp(Math.min(sleepTimer, 100) / 100f, 0, 0.5F));
-					Gui.fill(event.getMatrixStack(), 0, 0, window.getGuiScaledWidth(), window.getGuiScaledHeight(), darkening.getRGB());
+					Color darkening = Color.ofRGBA(0.05f, 0.05f, 0.05f, Mth.lerp(Math.min(sleepTimer, 100) / 100f, 0, 0.5F));
+					Gui.fill(event.getMatrixStack(), 0, 0, window.getGuiScaledWidth(), window.getGuiScaledHeight(), darkening.getColor());
 				}
 			}
 		});

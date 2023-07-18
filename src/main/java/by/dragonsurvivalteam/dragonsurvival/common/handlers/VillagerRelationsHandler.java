@@ -33,6 +33,7 @@ import net.minecraft.world.item.trading.MerchantOffers;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
@@ -41,6 +42,7 @@ import net.minecraftforge.event.entity.living.PotionEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.List;
 import java.util.Objects;
@@ -91,12 +93,6 @@ public class VillagerRelationsHandler{
 							}
 						}
 					}
-				}
-			}else if(livingEntity instanceof DragonHunter){
-				if(DragonUtils.isDragon(playerEntity)){
-					//                    applyEvilMarker(playerEntity);
-				}else if(livingEntity instanceof KnightEntity){
-					playerEntity.addEffect(new MobEffectInstance(MobEffects.BAD_OMEN, Functions.minutesToTicks(5)));
 				}
 			}
 			String typeName = livingEntity.getType().getRegistryName().toString();
@@ -159,6 +155,7 @@ public class VillagerRelationsHandler{
 			}
 		});
 	}
+
 
 	@SubscribeEvent
 	public static void voidEvilStatus(PotionEvent.PotionAddedEvent potionAddedEvent){
@@ -226,12 +223,8 @@ public class VillagerRelationsHandler{
 						if(villageRelationShips.hunterSpawnDelay == 0){
 							BlockPos spawnPosition = SpawningUtils.findRandomSpawnPosition(player, 1, 4, 14.0F);
 							if(spawnPosition != null && spawnPosition.getY() >= ServerConfig.riderSpawnLowerBound && spawnPosition.getY() <= ServerConfig.riderSpawnUpperBound){
-								Optional<ResourceKey<Biome>> biomeRegistryKey = serverWorld.getBiome(spawnPosition).unwrapKey();
-								if(biomeRegistryKey.isPresent()){
-									ResourceKey<Biome> biome = biomeRegistryKey.get();
-									if(BiomeDictionary.hasType(biome, BiomeDictionary.Type.OCEAN)){
-										return;
-									}
+								if(serverWorld.getBiome(spawnPosition).is(Tags.Biomes.IS_WATER)){
+									return;
 								}
 								int levelOfEvil = computeLevelOfEvil(player);
 								for(int i = 0; i < levelOfEvil; i++){
@@ -331,12 +324,8 @@ public class VillagerRelationsHandler{
 						if(player != null && player.isAlive() && !player.isCreative() && !player.isSpectator()){
 							BlockPos blockPos = SpawningUtils.findRandomSpawnPosition(player, 1, 2, 20.0F);
 							if(blockPos != null && blockPos.getY() >= ServerConfig.riderSpawnLowerBound && blockPos.getY() <= ServerConfig.riderSpawnUpperBound && serverWorld.isVillage(blockPos)){
-								Optional<ResourceKey<Biome>> biomeRegistryKey = serverWorld.getBiome(blockPos).unwrapKey();
-								if(biomeRegistryKey.isPresent()){
-									ResourceKey<Biome> biome = biomeRegistryKey.get();
-									if(BiomeDictionary.hasType(biome, BiomeDictionary.Type.OCEAN)){
-										return;
-									}
+								if(serverWorld.getBiome(blockPos).is(Tags.Biomes.IS_WATER)){
+									return;
 								}
 								EntityType<? extends PrincesHorseEntity> entityType = world.random.nextBoolean() ? DSEntities.PRINCESS_ON_HORSE : DSEntities.PRINCE_ON_HORSE;
 								PrincesHorseEntity princessEntity = entityType.create(world);

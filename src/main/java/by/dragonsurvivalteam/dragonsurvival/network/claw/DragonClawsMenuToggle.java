@@ -29,7 +29,6 @@ public class DragonClawsMenuToggle implements IMessage<DragonClawsMenuToggle>{
 	@Override
 
 	public DragonClawsMenuToggle decode(FriendlyByteBuf buffer){
-
 		boolean state = buffer.readBoolean();
 		return new DragonClawsMenuToggle(state);
 	}
@@ -47,5 +46,6 @@ public class DragonClawsMenuToggle implements IMessage<DragonClawsMenuToggle>{
 		if(player.containerMenu instanceof DragonContainer container){
 			container.update();
 		}
+		supplier.get().setPacketHandled(true);
 	}
 }

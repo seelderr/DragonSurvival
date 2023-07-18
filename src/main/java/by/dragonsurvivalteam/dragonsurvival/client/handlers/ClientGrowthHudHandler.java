@@ -14,6 +14,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -84,6 +85,7 @@ public class ClientGrowthHudHandler{
 			RenderingUtils.drawSmoothCircle(mStack, circleX + radius, circleY + radius, radius, 6, 1, 0);
 
 			RenderSystem.enableTexture();
+			RenderSystem.setShader(GameRenderer::getPositionTexShader);
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1.0f);
 
 			if(nextProgess > progress){
@@ -97,13 +99,13 @@ public class ClientGrowthHudHandler{
 				RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_" + num + ".png"));
 				RenderingUtils.drawTexturedCircle(mStack, circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, 6, nextProgess, -0.5);
 
-				RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_" + handler.getType().getTypeName().toLowerCase() + ".png"));
+				RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_" + handler.getTypeName().toLowerCase() + ".png"));
 				RenderingUtils.drawTexturedCircle(mStack, circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, 6, progress, -0.5);
 			}else if(increment < 0){
 				RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_3.png"));
 				RenderingUtils.drawTexturedCircle(mStack, circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, 6, progress, -0.5);
 
-				RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_" + handler.getType().getTypeName().toLowerCase() + ".png"));
+				RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_" + handler.getTypeName().toLowerCase() + ".png"));
 				RenderingUtils.drawTexturedCircle(mStack, circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, 6, nextProgess, -0.5);
 			}
 
@@ -111,9 +113,10 @@ public class ClientGrowthHudHandler{
 			RenderSystem.setShaderColor(c.getRed() / 255.0f, c.getBlue() / 255.0f, c.getGreen() / 255.0f, 1.0f);
 			RenderingUtils.drawSmoothCircle(mStack, circleX + radius, circleY + radius, radius - thickness, 6, 1, 0);
 			RenderSystem.enableTexture();
+			RenderSystem.setShader(GameRenderer::getPositionTexShader);
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1.0f);
 
-			RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/growth_" + handler.getType().getTypeName().toLowerCase() + "_" + (handler.getLevel().ordinal() + 1) + ".png"));
+			RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/growth_" + handler.getTypeName().toLowerCase() + "_" + (handler.getLevel().ordinal() + 1) + ".png"));
 			Screen.blit(mStack, circleX + 6, circleY + 6, 0, 0, 20, 20, 20, 20);
 		}
 	}

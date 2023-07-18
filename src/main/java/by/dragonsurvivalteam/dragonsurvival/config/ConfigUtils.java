@@ -16,7 +16,7 @@ import java.util.List;
 public class ConfigUtils{
 
 	public static boolean containsEntity(List<? extends String> values, Entity entity){
-		String type = entity.getType().getRegistryName().toString();
+		String type = entity.getEncodeId();
 		return values.contains(type) || values.contains("entity:" + type);
 	}
 

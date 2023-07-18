@@ -62,7 +62,6 @@ public class SyncDragonSkinSettings implements IMessage<SyncDragonSkinSettings>{
 	public void handle(SyncDragonSkinSettings message, Supplier<NetworkEvent.Context> supplier){
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> runClient(message, supplier));
 
-
 		if(supplier.get().getDirection() == NetworkDirection.PLAY_TO_SERVER){
 			ServerPlayer entity = supplier.get().getSender();
 
@@ -76,6 +75,7 @@ public class SyncDragonSkinSettings implements IMessage<SyncDragonSkinSettings>{
 				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new SyncDragonSkinSettings(entity.getId(), message.newborn, message.young, message.adult));
 			}
 		}
+		supplier.get().setPacketHandled(true);
 	}
 
 	@OnlyIn( Dist.CLIENT )
