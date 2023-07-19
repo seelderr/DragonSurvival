@@ -267,7 +267,7 @@ public class SkinsScreen extends Screen{
 			}
 		});
 
-		addRenderableWidget(new Button(startX + 128 + imageWidth / 2 - 8 - 25, startY + 128 + 30, 16, 16, new TextComponent(""), button -> {
+		addRenderableWidget(new Button(startX + 128 + imageWidth / 2 - 8 - 25, startY + 128 + 30, 16, 16, TextComponent.EMPTY, button -> {
 			try{
 				URI uri = new URI(DISCORD_URL);
 				clickedLink = uri;
@@ -288,7 +288,7 @@ public class SkinsScreen extends Screen{
 			}
 		});
 
-		addRenderableWidget(new Button(startX + 128 + imageWidth / 2 - 8 + 25, startY + 128 + 30, 16, 16, new TextComponent(""), button -> {
+		addRenderableWidget(new Button(startX + 128 + imageWidth / 2 - 8 + 25, startY + 128 + 30, 16, 16, TextComponent.EMPTY, button -> {
 			try{
 				URI uri = new URI(WIKI_URL);
 				clickedLink = uri;

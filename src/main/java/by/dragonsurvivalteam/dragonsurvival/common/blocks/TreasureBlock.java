@@ -42,9 +42,9 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import software.bernie.geckolib3.core.util.Color;
 
 import javax.annotation.Nullable;
-import java.awt.Color;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;

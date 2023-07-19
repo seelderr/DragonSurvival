@@ -16,7 +16,6 @@ import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class IncreaseLevelButton extends ArrowButton {

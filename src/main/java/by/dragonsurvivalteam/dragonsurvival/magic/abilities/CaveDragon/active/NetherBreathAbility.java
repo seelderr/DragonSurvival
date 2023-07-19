@@ -246,7 +246,6 @@ public class NetherBreathAbility extends BreathAbility{
 				pos.x, pos.y, pos.z
 		);
 		Minecraft.getInstance().getSoundManager().playDelayed(startingSound, 0);
-
 		Minecraft.getInstance().getSoundManager().stop(new ResourceLocation(DragonSurvivalMod.MODID, "fire_breath_loop"), SoundSource.PLAYERS);
 		Minecraft.getInstance().getSoundManager().queueTickingSound(new FireBreathSound(this));
 	}

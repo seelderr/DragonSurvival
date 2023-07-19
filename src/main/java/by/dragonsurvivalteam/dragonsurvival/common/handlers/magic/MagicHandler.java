@@ -237,7 +237,6 @@ public class MagicHandler{
 	@SubscribeEvent
 	public static void playerHitEntity(CriticalHitEvent event){
 		if(event.getEntityLiving() instanceof Player player){
-			
 			DragonStateProvider.getCap(player).ifPresent(cap -> {
 				if(!cap.isDragon()){
 					return;

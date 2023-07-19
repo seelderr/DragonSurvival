@@ -78,6 +78,7 @@ public class ClientMagicHUDHandler{
 			ActiveDragonAbility ability = cap.getMagicData().getAbilityFromSlot(cap.getMagicData().getSelectedAbilitySlot());
 			if(ability == null)
 				return;
+
 			if (ManaHandler.getCurrentMana(playerEntity) < ability.getManaCost() && ability.canConsumeMana(playerEntity)){
 				Window window = Minecraft.getInstance().getWindow();
 

@@ -3,13 +3,11 @@ package by.dragonsurvivalteam.dragonsurvival.common.handlers.magic;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawsMenu;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
@@ -36,7 +34,6 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.network.PacketDistributor;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 @EventBusSubscriber
 public class ClawToolHandler{
@@ -73,6 +70,8 @@ public class ClawToolHandler{
 
 	@SubscribeEvent
 	public static void playerDieEvent(LivingDropsEvent event){
+		// FIXME :: Add support for SoulBound etc.
+
 		Entity ent = event.getEntity();
 
 		if(ent instanceof Player player){

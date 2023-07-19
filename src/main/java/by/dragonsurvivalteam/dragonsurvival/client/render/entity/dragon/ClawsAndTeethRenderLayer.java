@@ -98,7 +98,7 @@ public class ClawsAndTeethRenderLayer extends GeoLayerRenderer<DragonEntity>{
 	}
 
 
-	private void renderToolLayer(PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn, DragonEntity entitylivingbaseIn, float partialTicks, ResourceLocation texture, IGeoRenderer<DragonEntity> renderer, GeoModelProvider entityModel){
+	private void renderToolLayer(PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn, DragonEntity entitylivingbaseIn, float partialTicks, ResourceLocation texture, IGeoRenderer<DragonEntity> renderer, GeoModelProvider<DragonEntity> entityModel){
 		RenderType type = renderer.getRenderType(entitylivingbaseIn, partialTicks, matrixStackIn, bufferIn, null, packedLightIn, texture);
 		VertexConsumer vertexConsumer = bufferIn.getBuffer(type);
 

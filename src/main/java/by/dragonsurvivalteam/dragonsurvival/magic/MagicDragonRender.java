@@ -41,7 +41,7 @@ public class MagicDragonRender{
 
 		if(!description.isEmpty()){
 			if(ability.getInfo().size() > 0){
-				FormattedText textContents = new TextComponent("");
+				FormattedText textContents = TextComponent.EMPTY;
 
 				for(Component component : ability.getInfo()){
 					textContents = FormattedText.composite(textContents, new TextComponent("\n"));

@@ -20,7 +20,7 @@ import net.minecraft.resources.ResourceLocation;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 
@@ -78,7 +78,7 @@ public class SkillProgressButton extends Button{
 		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {
 			if(ability != null){
 				ChatFormatting format =  Objects.equals(cap.getType(), DragonTypes.CAVE) ? ChatFormatting.DARK_RED :  Objects.equals(cap.getType(), DragonTypes.SEA) ? ChatFormatting.AQUA :  Objects.equals(cap.getType(), DragonTypes.FOREST) ? ChatFormatting.GREEN : ChatFormatting.WHITE;
-				ArrayList<Component> description = new ArrayList<>(Arrays.asList(((TranslatableComponent)ability.getTitle()).withStyle(format).append(" (" + ability.getLevel() + " / " + ability.getMaxLevel() + ")")));
+				ArrayList<Component> description = new ArrayList<>(List.of(((TranslatableComponent) ability.getTitle()).withStyle(format).append(" (" + ability.getLevel() + " / " + ability.getMaxLevel() + ")")));
 
 				if(ability.getLevelUpInfo().size() > 0)
 					description.addAll(ability.getLevelUpInfo());
