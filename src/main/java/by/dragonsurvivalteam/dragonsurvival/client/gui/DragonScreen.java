@@ -11,6 +11,8 @@ import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonGrowthHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
@@ -38,10 +40,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.StringJoiner;
+import java.util.*;
 
 public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer>{
 	public static final ResourceLocation INVENTORY_TOGGLE_BUTTON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/inventory_button.png");
@@ -55,15 +54,45 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 	public boolean clawsMenu = false;
 	private boolean buttonClicked;
 
+	private static final HashMap<String, ResourceLocation> textures;
+
+	static {
+		textures = new HashMap<>();
+
+		Set<String> keys = DragonTypes.staticTypes.keySet();
+
+		for (String key : keys) {
+			AbstractDragonType type = DragonTypes.staticTypes.get(key);
+
+			String start = "textures/gui/growth/";
+			String end = ".png";
+
+			for (int i = 1; i < 4; i++) {
+				String growthResource = getTexture(type, "growth", i);
+				textures.put(growthResource, new ResourceLocation(DragonSurvivalMod.MODID, start + growthResource + end));
+			}
+
+			String circleResource = getTexture(type, "circle", 0);
+			textures.put(circleResource, new ResourceLocation(DragonSurvivalMod.MODID, start + circleResource + end));
+		}
+	}
+
+	private static String getTexture(final AbstractDragonType type, final String textureType, int level) {
+		String texture = textureType + "_" + type.getTypeName().toLowerCase();
+
+		if (textureType.equals("growth")) {
+			texture += "_" + level;
+		}
+
+		return texture;
+	}
 
 	public DragonScreen(DragonContainer screenContainer, Inventory inv, Component titleIn){
 		super(screenContainer, inv, titleIn);
 		passEvents = true;
 		player = inv.player;
 
-		DragonStateProvider.getCap(player).ifPresent(cap -> {
-			clawsMenu = cap.getClawToolData().isClawsMenuOpen();
-		});
+		DragonStateProvider.getCap(player).ifPresent(cap -> clawsMenu = cap.getClawToolData().isClawsMenuOpen());
 
 		imageWidth = 203;
 		imageHeight = 166;
@@ -288,7 +317,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 			RenderSystem.enableTexture();
 			RenderSystem.setShader(GameRenderer::getPositionTexShader);
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1.0f);
-			RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_" + handler.getTypeName().toLowerCase() + ".png"));
+			RenderSystem.setShaderTexture(0, textures.get(getTexture(handler.getType(), "circle", 0)));
 			RenderingUtils.drawTexturedCircle(stack, circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, sides, progress, -0.5);
 
 			RenderSystem.disableTexture();
@@ -298,7 +327,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 
 			RenderSystem.setShader(GameRenderer::getPositionTexShader);
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1.0f);
-			RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/growth_" + handler.getTypeName().toLowerCase() + "_" + (handler.getLevel().ordinal() + 1) + ".png"));
+			RenderSystem.setShaderTexture(0, textures.get(getTexture(handler.getType(), "growth", handler.getLevel().ordinal() + 1)));
 			blit(stack, circleX + 6, circleY + 6, 0, 0, 20, 20, 20, 20);
 
 			stack.popPose();
