@@ -54,9 +54,13 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 	public boolean clawsMenu = false;
 	private boolean buttonClicked;
 
-	private static final HashMap<String, ResourceLocation> textures;
+	private static HashMap<String, ResourceLocation> textures;
 
 	static {
+		initResources();
+	}
+
+	private static void initResources() {
 		textures = new HashMap<>();
 
 		Set<String> keys = DragonTypes.staticTypes.keySet();
@@ -285,6 +289,10 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 		}
 
 		if(clawsMenu){
+			if (textures == null || textures.isEmpty()) {
+				initResources();
+			}
+
 			double curSize = handler.getSize();
 			float progress = 0;
 
