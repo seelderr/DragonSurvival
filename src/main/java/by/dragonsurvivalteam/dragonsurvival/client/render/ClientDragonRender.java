@@ -294,7 +294,6 @@ public class ClientDragonRender{
 				if(!(throwable instanceof NullPointerException) || ClientConfig.clientDebugMessages){
 					throwable.printStackTrace();
 				}
-				matrixStack.popPose();
 			}finally{
 				matrixStack.popPose();
 			}
