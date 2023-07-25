@@ -325,6 +325,10 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 			RenderingUtils.drawSmoothCircle(stack, circleX + radius, circleY + radius, radius - thickness, sides, 1, 0);
 			RenderSystem.enableTexture();
 
+			// Don't get overlayed by other rendered elements
+			RenderSystem.enableDepthTest();
+			stack.translate(0, 0, 150);
+
 			RenderSystem.setShader(GameRenderer::getPositionTexShader);
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1.0f);
 			RenderSystem.setShaderTexture(0, textures.get(getTexture(handler.getType(), "growth", handler.getLevel().ordinal() + 1)));
