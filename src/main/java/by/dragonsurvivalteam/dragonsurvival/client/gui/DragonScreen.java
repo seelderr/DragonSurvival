@@ -67,7 +67,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 			String start = "textures/gui/growth/";
 			String end = ".png";
 
-			for (int i = 1; i < 4; i++) {
+			for (int i = 1; i <= DragonLevel.values().length; i++) {
 				String growthResource = getTexture(type, "growth", i);
 				textures.put(growthResource, new ResourceLocation(DragonSurvivalMod.MODID, start + growthResource + end));
 			}
