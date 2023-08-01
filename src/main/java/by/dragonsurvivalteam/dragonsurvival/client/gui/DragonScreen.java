@@ -71,23 +71,17 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 			String end = ".png";
 
 			for (int i = 1; i <= DragonLevel.values().length; i++) {
-				String growthResource = getTexture(type, "growth", i);
+				String growthResource = createTextureKey(type, "growth", "_" + i);
 				textures.put(growthResource, new ResourceLocation(DragonSurvivalMod.MODID, start + growthResource + end));
 			}
 
-			String circleResource = getTexture(type, "circle", 0);
+			String circleResource = createTextureKey(type, "circle", "");
 			textures.put(circleResource, new ResourceLocation(DragonSurvivalMod.MODID, start + circleResource + end));
 		}
 	}
 
-	private static String getTexture(final AbstractDragonType type, final String textureType, int level) {
-		String texture = textureType + "_" + type.getTypeName().toLowerCase();
-
-		if (textureType.equals("growth")) {
-			texture += "_" + level;
-		}
-
-		return texture;
+	private static String createTextureKey(final AbstractDragonType type, final String textureType, final String addition) {
+		return textureType + "_" + type.getTypeName().toLowerCase() + addition;
 	}
 
 	public DragonScreen(DragonContainer screenContainer, Inventory inv, Component titleIn){
@@ -324,7 +318,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 			RenderSystem.enableTexture();
 			RenderSystem.setShader(GameRenderer::getPositionTexShader);
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1.0f);
-			RenderSystem.setShaderTexture(0, textures.get(getTexture(handler.getType(), "circle", 0)));
+			RenderSystem.setShaderTexture(0, textures.get(createTextureKey(handler.getType(), "circle", "")));
 			RenderingUtils.drawTexturedCircle(stack, circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, sides, progress, -0.5);
 
 			RenderSystem.disableTexture();
@@ -338,7 +332,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 
 			RenderSystem.setShader(GameRenderer::getPositionTexShader);
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1.0f);
-			RenderSystem.setShaderTexture(0, textures.get(getTexture(handler.getType(), "growth", handler.getLevel().ordinal() + 1)));
+			RenderSystem.setShaderTexture(0, textures.get(createTextureKey(handler.getType(), "growth", "_" + (handler.getLevel().ordinal() + 1))));
 			blit(stack, circleX + 6, circleY + 6, 0, 0, 20, 20, 20, 20);
 
 			stack.popPose();
