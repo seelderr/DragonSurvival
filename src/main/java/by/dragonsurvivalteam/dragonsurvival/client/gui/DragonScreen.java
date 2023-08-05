@@ -329,11 +329,11 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 			// Don't get overlayed by other rendered elements
 			RenderSystem.enableDepthTest();
 			stack.translate(0, 0, 150);
-
 			RenderSystem.setShader(GameRenderer::getPositionTexShader);
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1.0f);
 			RenderSystem.setShaderTexture(0, textures.get(createTextureKey(handler.getType(), "growth", "_" + (handler.getLevel().ordinal() + 1))));
 			blit(stack, circleX + 6, circleY + 6, 0, 0, 20, 20, 20, 20);
+			RenderSystem.disableDepthTest();
 
 			stack.popPose();
 		}
