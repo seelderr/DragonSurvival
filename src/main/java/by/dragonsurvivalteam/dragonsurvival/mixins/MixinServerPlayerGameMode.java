@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.mixins;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ClawToolHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.util.ToolUtils;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -42,7 +43,7 @@ public class MixinServerPlayerGameMode{
 			return originalCheck;
 		}
 
-		if (player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof TieredItem) {
+		if (!ToolUtils.shouldUseDragonTools(player.getItemInHand(InteractionHand.MAIN_HAND))) {
 			// If the player had a tool in the hand don't bother checking for dragon tools
 			return originalCheck;
 		}
@@ -51,7 +52,7 @@ public class MixinServerPlayerGameMode{
 			DragonStateHandler handler = DragonUtils.getHandler(player);
 
 			if (!handler.isDragon()) {
-				return originalCheck;
+				return false;
 			}
 
 			UUID id = UUID.randomUUID();
