@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public class DragonTypes {
-	private static HashMap<String, Supplier<AbstractDragonType>> classMappings = new HashMap<>();
-	private static HashMap<String, AbstractDragonType> staticTypes = new HashMap<>();
+	private static final HashMap<String, Supplier<AbstractDragonType>> classMappings = new HashMap<>();
+	public static final HashMap<String, AbstractDragonType> staticTypes = new HashMap<>();
 
 	public static CaveDragonType CAVE;
 	public static SeaDragonType SEA;

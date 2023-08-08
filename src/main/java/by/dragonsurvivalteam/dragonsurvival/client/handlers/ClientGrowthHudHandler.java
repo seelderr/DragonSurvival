@@ -95,6 +95,7 @@ public class ClientGrowthHudHandler{
 					nextProgess = (float)(progress + perSide);
 					num = 2;
 				}
+				// FIXME :: Initialize them once
 
 				RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_" + num + ".png"));
 				RenderingUtils.drawTexturedCircle(mStack, circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, 6, nextProgess, -0.5);
