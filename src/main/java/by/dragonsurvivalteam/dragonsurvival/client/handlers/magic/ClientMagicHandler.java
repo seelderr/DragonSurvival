@@ -51,7 +51,7 @@ public class ClientMagicHandler{
 						perc = Math.pow(2, -10 * perc) * Math.sin((perc * 10 - 0.75) * c4) + 1;
 					}
 
-					float newFov = (float)Mth.clamp(perc, 0.75F, 1.2F);
+					float newFov = (float)Mth.clamp(perc, 1.0F, 1.0F);
 					event.setNewFovModifier(newFov);
 				}
 			}
