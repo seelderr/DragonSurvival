@@ -8,6 +8,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawsMenu;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.util.ToolUtils;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
@@ -102,9 +103,8 @@ public class ClawToolHandler{
 		DragonStateProvider.getCap(playerEntity).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon()){
 				ItemStack stack = playerEntity.getMainHandItem();
-				Item item = stack.getItem();
 				BlockState blockState = harvestCheck.getTargetBlock();
-				if(!(item instanceof DiggerItem || item instanceof SwordItem || item instanceof ShearsItem) && !harvestCheck.canHarvest()){
+				if(ToolUtils.shouldUseDragonTools(stack) && !harvestCheck.canHarvest()){
 					harvestCheck.setCanHarvest(dragonStateHandler.canHarvestWithPaw(blockState));
 				}
 			}
@@ -113,13 +113,13 @@ public class ClawToolHandler{
 
 	public static ItemStack getDragonHarvestTool(final Player player, final BlockState state){
 		ItemStack mainStack = player.getInventory().getSelected();
-		ItemStack harvestTool = mainStack;
 		float newSpeed = 0F;
 
-		if (mainStack.getItem() instanceof DiggerItem || mainStack.getItem() instanceof SwordItem || mainStack.getItem() instanceof ShearsItem || mainStack.getItem() instanceof TieredItem) {
+		if (!ToolUtils.shouldUseDragonTools(mainStack)) {
 			return mainStack;
 		}
 
+		ItemStack harvestTool = mainStack;
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 
 		for (int i = 1; i < 4; i++) {
@@ -145,7 +145,7 @@ public class ClawToolHandler{
 	public static ItemStack getDragonHarvestTool(final Player player) {
 		ItemStack mainStack = player.getInventory().getSelected();
 
-		if (mainStack.getItem() instanceof DiggerItem || mainStack.getItem() instanceof SwordItem || mainStack.getItem() instanceof ShearsItem || mainStack.getItem() instanceof TieredItem) {
+		if (!ToolUtils.shouldUseDragonTools(mainStack)) {
 			return mainStack;
 		}
 
@@ -164,7 +164,7 @@ public class ClawToolHandler{
 	/**
 	 *
 	 * @return Only the sword in the dragon tool slot <br>
-	 * If the main hand has a {@link TieredItem} the returned result will be {@link ItemStack#EMPTY}
+	 * Returns {@link ItemStack#EMPTY} if the player is holding any sort of tool
 	 */
 	public static ItemStack getDragonSword(final LivingEntity player) {
 		if (!(player instanceof Player)) {
@@ -173,7 +173,7 @@ public class ClawToolHandler{
 
 		ItemStack itemInHand = player.getItemInHand(InteractionHand.MAIN_HAND);
 
-		if (itemInHand.getItem() instanceof TieredItem) {
+		if (!ToolUtils.shouldUseDragonTools(itemInHand)) {
 			return ItemStack.EMPTY;
 		}
 
@@ -210,10 +210,15 @@ public class ClawToolHandler{
 			}
 
 			ItemStack mainStack = player.getMainHandItem();
+
+			if (!ToolUtils.shouldUseDragonTools(mainStack)) {
+				// Bonus does not apply to held tools
+				return;
+			}
+
 			DragonStateHandler handler = DragonUtils.getHandler(player);
 
-			if (mainStack.getItem() instanceof TieredItem || mainStack.getItem() instanceof SwordItem || mainStack.getItem() instanceof ShearsItem || !handler.isDragon()) {
-				// Bonus is not applied to items in the hotbar
+			if (!handler.isDragon()) {
 				return;
 			}
 

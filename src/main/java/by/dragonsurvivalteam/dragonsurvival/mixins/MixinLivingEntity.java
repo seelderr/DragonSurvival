@@ -4,6 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.util.ToolUtils;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.sounds.SoundEvent;
@@ -20,7 +21,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TieredItem;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
@@ -50,10 +50,10 @@ public abstract class MixinLivingEntity extends Entity{
 		if (slotType == EquipmentSlot.MAINHAND) {
 			Object self = this;
 
-			if (self instanceof Player && DragonUtils.isDragon((Player) self)) {
+			if (self instanceof Player player && DragonUtils.isDragon(player)) {
 				DragonStateHandler cap = DragonUtils.getHandler(entity);
 
-				if (!(getMainHandItem().getItem() instanceof TieredItem)) {
+				if (ToolUtils.shouldUseDragonTools(getMainHandItem())) {
 					// Without this the item in the dragon slot for the sword would not grant any of its attributes
 					ItemStack sword = cap.getClawToolData().getClawsInventory().getItem(0);
 
