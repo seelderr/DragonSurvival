@@ -220,7 +220,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 
 		//DSButton
 		if(ClientEvents.inventoryToggle){
-			addRenderableWidget(new DSImageButton(leftPos + imageWidth - 28, height / 2 - 30 + 50, 20, 18, 0, 0, 19, INVENTORY_TOGGLE_BUTTON, p_onPress_1_ -> {
+			addRenderableWidget(new DSImageButton(leftPos + imageWidth - 28, height / 2 - 30 + 47, 20, 18, 0, 0, 19, INVENTORY_TOGGLE_BUTTON, p_onPress_1_ -> {
 				Minecraft.getInstance().setScreen(new InventoryScreen(player));
 				NetworkHandler.CHANNEL.sendToServer(new OpenInventory());
 			}, new TranslatableComponent("ds.gui.toggle_inventory.vanilla")));
@@ -230,7 +230,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 			NetworkHandler.CHANNEL.sendToServer(new SortInventoryPacket());
 		}, new TranslatableComponent("ds.gui.sort")));
 
-		addRenderableWidget(new DSImageButton(leftPos + imageWidth - 28, height / 2 + 35, 20, 18, 0, 0, 18, SETTINGS_BUTTON, p_onPress_1_ -> {
+		addRenderableWidget(new DSImageButton(leftPos + imageWidth - 28, height / 2 + 34, 20, 18, 0, 0, 18, SETTINGS_BUTTON, p_onPress_1_ -> {
 			Minecraft.getInstance().setScreen(new ConfigSideSelectionScreen(this, Minecraft.getInstance().options, new TranslatableComponent("ds.gui.tab_button.4")));
 		}, new TranslatableComponent("ds.gui.tab_button.4")));
 	}

@@ -791,6 +791,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 	}
 
 	public void confirm(){
+		save();
 		DragonStateProvider.getCap(minecraft.player).ifPresent(cap -> {
 			minecraft.player.level.playSound(minecraft.player, minecraft.player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 1, 0.7f);
 

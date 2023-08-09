@@ -1,5 +1,7 @@
 {
   "itemGroup.dragon.survival.blocks": "Dragons Survival",
+  "entity.dragonsurvival.magical_predator_entity": "Drapieżca Magii",
+  "item.dragonsurvival.magical_predator_entity_spawn_egg": "Jajo przyzywające drapieżcę magii",
   "item.dragonsurvival.star_bone": "Gwiezdna Kość",
   "item.dragonsurvival.heart_element": "Fragment Serca",
   "item.dragonsurvival.elder_dragon_bone": "Kość Starszego Smoka",
@@ -10,6 +12,7 @@
   "item.dragonsurvival.charred_vegetable": "Zwęglone Warzywo",
   "item.dragonsurvival.charred_seafood": "Zwęglone Owoce Morza",
   "item.dragonsurvival.charred_mushroom": "Zwęglony Grzyb",
+  "block.dragonsurvival.predator_star": "Gwiazda Drapieżcy",
   "block.dragonsurvival.dragon_altar": "Ołtarz Smoków",
   "block.dragonsurvival.cave_nest_small": "Małe Jaskiniowe Gniazdo",
   "block.dragonsurvival.forest_nest_small": "Małe Leśne Gniazdo",
