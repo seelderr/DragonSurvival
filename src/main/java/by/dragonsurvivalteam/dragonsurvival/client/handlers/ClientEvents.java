@@ -270,24 +270,29 @@ public class ClientEvents{
 	}
 
 	public static String getMaterial(String texture, ItemStack clawItem){
-		TieredItem item = (TieredItem)clawItem.getItem();
-		Tier tier = item.getTier();
-		if(tier == Tiers.NETHERITE){
-			texture += "netherite_";
-		}else if(tier == Tiers.DIAMOND){
-			texture += "diamond_";
-		}else if(tier == Tiers.IRON){
-			texture += "iron_";
-		}else if(tier == Tiers.GOLD){
-			texture += "gold_";
-		}else if(tier == Tiers.STONE){
-			texture += "stone_";
-		}else if(tier == Tiers.WOOD){
-			texture += "wooden_";
-		}else{
-			texture += "moded_";
+		if (clawItem.getItem() instanceof TieredItem item) {
+			Tier tier = item.getTier();
+
+			if (tier == Tiers.NETHERITE) {
+				texture += "netherite_";
+			} else if (tier == Tiers.DIAMOND) {
+				texture += "diamond_";
+			} else if (tier == Tiers.IRON) {
+				texture += "iron_";
+			} else if (tier == Tiers.GOLD) {
+				texture += "gold_";
+			} else if (tier == Tiers.STONE) {
+				texture += "stone_";
+			} else if (tier == Tiers.WOOD) {
+				texture += "wooden_";
+			} else {
+				texture += "moded_";
+			}
+
+			return texture;
 		}
-		return texture;
+
+		return texture + "moded_";
 	}
 
 	public static RenderType onRenderFluidLayer(FluidState fluidState)
