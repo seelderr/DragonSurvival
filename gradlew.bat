@@ -5,7 +5,7 @@
 @rem
 @rem   The author and owner of Dragon Survival is Viktoria Ershova (BlackAures1)
 @rem
-@rem   Allowed use of content: private use, private modification, view and fork private repository,
+@rem   Allowed use of content: private use, modification, distribution, view and fork repository,
 @rem     making pull request or suggestions to improve the project. Other uses are negotiated with the author separately.
 @rem     The author retains full rights to the project. Only "Minecraft Mod: Dragons Survival"
 @rem     participants are free to make changes may freely modify, distribute and use all project

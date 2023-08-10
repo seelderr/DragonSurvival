@@ -19,7 +19,7 @@
 		  "animation": "blend_yawning",
 		  "blend": true,
 		  "loops": true,
-		  "duration": 90,
+		  "duration": 59,
 		  "locksHead": true
 	  },
 	  {
@@ -63,20 +63,20 @@
 		  "locksHead": false
 	  },
 	  {
+		  "name": "ds.emote.sit_curled_tail_left_head_locked",
+		  "animation": "sitting_curled_tail_left_head_locked",
+		  "loops": true,
+		  "locksHead": true
+	  },
+	  {
 		  "name": "ds.emote.sit_curled_tail_right",
 		  "animation": "sitting_curled_tail_right",
 		  "loops": true,
 		  "locksHead": false
 	  },
 	  {
-		  "name": "ds.emote.sit_curled_tail_left_locked",
-		  "animation": "sitting_curled_tail_left",
-		  "loops": true,
-		  "locksHead": true
-	  },
-	  {
-		  "name": "ds.emote.sit_curled_tail_right_locked",
-		  "animation": "sitting_curled_tail_right",
+		  "name": "ds.emote.sit_curled_tail_right_head_locked",
+		  "animation": "sitting_curled_tail_right_head_locked",
 		  "loops": true,
 		  "locksHead": true
 	  },
@@ -87,16 +87,10 @@
 		  "locksHead": false
 	  },
 	  {
-		  "name": "ds.emote.sit_locked",
-		  "animation": "sit",
+		  "name": "ds.emote.sit_head_locked",
+		  "animation": "sit_head_locked",
 		  "loops": true,
 		  "locksHead": true
-	  },
-	  {
-		  "name": "ds.emote.sit_blep",
-		  "animation": "sitting_blep",
-		  "loops": true,
-		  "locksHead": false
 	  },
 	  {
 		  "name": "ds.emote.sit_item",

@@ -43,6 +43,7 @@ public class DiggingStatus implements IMessage<DiggingStatus>{
 	@Override
 	public void handle(DiggingStatus message, Supplier<NetworkEvent.Context> supplier){
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> run(message, supplier));
+		supplier.get().setPacketHandled(true);
 	}
 
 	@OnlyIn( Dist.CLIENT )

@@ -57,7 +57,6 @@ public class SyncMagicSourceStatus implements IMessage<SyncMagicSourceStatus>{
 	public void handle(SyncMagicSourceStatus message, Supplier<NetworkEvent.Context> supplier){
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> runClient(message, supplier));
 
-
 		if(supplier.get().getDirection() == NetworkDirection.PLAY_TO_SERVER){
 			ServerPlayer entity = supplier.get().getSender();
 
@@ -70,6 +69,7 @@ public class SyncMagicSourceStatus implements IMessage<SyncMagicSourceStatus>{
 				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new SyncMagicSourceStatus(entity.getId(), message.state, message.timer));
 			}
 		}
+		supplier.get().setPacketHandled(true);
 	}
 
 	@OnlyIn( Dist.CLIENT )

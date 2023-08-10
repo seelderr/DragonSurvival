@@ -137,13 +137,14 @@ public class ClientDragonRender{
 	/**
 	 * Called for every player.
 	 */
-	@SubscribeEvent
+	@SubscribeEvent // TODO :: This is heavy on render performance (even in first person) due to renderRecursively -> renderChildBones
 	public static void thirdPersonPreRender(RenderPlayerEvent.Pre renderPlayerEvent){
 		if(!(renderPlayerEvent.getPlayer() instanceof AbstractClientPlayer player)){
 			return;
 		}
 
 		Minecraft mc = Minecraft.getInstance();
+		DragonStateHandler cap = DragonUtils.getHandler(player);
 
 		if(!playerDragonHashMap.containsKey(player.getId())){
 			DragonEntity dummyDragon = DSEntities.DRAGON.create(player.level);
@@ -163,7 +164,6 @@ public class ClientDragonRender{
 			dummyDragon.player = player.getId();
 		}
 
-		DragonStateHandler cap = DragonUtils.getHandler(player);
 		if(cap.isDragon()){
 			renderPlayerEvent.setCanceled(true);
 			float partialRenderTick = renderPlayerEvent.getPartialTick();
@@ -198,7 +198,6 @@ public class ClientDragonRender{
 				matrixStack.scale(scale, scale, scale);
 				((AccessorEntityRenderer)renderPlayerEvent.getRenderer()).setShadowRadius((float)((3.0F * size + 62.0F) / 260.0F));
 				DragonEntity dummyDragon = playerDragonHashMap.get(player.getId()).get();
-
 				EntityRenderer<? super DragonEntity> dragonRenderer = mc.getEntityRenderDispatcher().getRenderer(dummyDragon);
 				dragonModel.setCurrentTexture(texture);
 
@@ -207,14 +206,14 @@ public class ClientDragonRender{
 				}else if(player.isCrouching()){
 					matrixStack.translate(0, 0.325 - size / DragonLevel.ADULT.size * 0.140, 0);
 				}else if(player.isSwimming() || player.isAutoSpinAttack() || cap.isWingsSpread() && !player.isOnGround() && !player.isInWater() && !player.isInLava()){
-					matrixStack.translate(0, -0.15 - size / DragonLevel.ADULT.size * 0.2, 0);
+ 					matrixStack.translate(0, -0.15 - size / DragonLevel.ADULT.size * 0.2, 0);
 				}
 				if(!player.isInvisible()){
 					if(ServerFlightHandler.isGliding(player)){
 						if(renderOtherPlayerRotation || mc.player == player){
 							float upRot = Mth.clamp((float)(player.getDeltaMovement().y * 20), -80, 80);
 
-							dummyDragon.prevXRot = Mth.lerp(0.1F, dummyDragon.prevXRot, upRot);
+     							dummyDragon.prevXRot = Mth.lerp(0.1F, dummyDragon.prevXRot, upRot);
 							dummyDragon.prevXRot = Mth.clamp(dummyDragon.prevXRot, -80, 80);
 
 							if(Float.isNaN(dummyDragon.prevXRot)){
@@ -295,7 +294,6 @@ public class ClientDragonRender{
 				if(!(throwable instanceof NullPointerException) || ClientConfig.clientDebugMessages){
 					throwable.printStackTrace();
 				}
-				matrixStack.popPose();
 			}finally{
 				matrixStack.popPose();
 			}

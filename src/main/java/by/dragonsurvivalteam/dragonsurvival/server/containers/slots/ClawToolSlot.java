@@ -6,15 +6,15 @@ import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawsMenu;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.DragonContainer;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.util.ToolUtils;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.*;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.network.PacketDistributor;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
@@ -34,13 +34,12 @@ public class ClawToolSlot extends Slot{
 	}
 
 	@Override
-	public boolean mayPlace(ItemStack stack){
-		Item item = stack.getItem();
+	public boolean mayPlace(@NotNull final ItemStack stack){
 		return switch(num){
-			case 0 -> item.canPerformAction(stack, ToolActions.SWORD_SWEEP) || item.canPerformAction(stack, ToolActions.AXE_DIG) || item instanceof SwordItem;
-			case 1 -> item.canPerformAction(stack, ToolActions.PICKAXE_DIG) || item instanceof PickaxeItem || item.isCorrectToolForDrops(Blocks.STONE.defaultBlockState());
-			case 2 -> item.canPerformAction(stack, ToolActions.AXE_DIG) || item instanceof AxeItem || item.isCorrectToolForDrops(Blocks.OAK_LOG.defaultBlockState());
-			case 3 -> item.canPerformAction(stack, ToolActions.SHOVEL_DIG) || item instanceof ShovelItem || item.isCorrectToolForDrops(Blocks.DIRT.defaultBlockState());
+			case 0 -> ToolUtils.isWeapon(stack);
+			case 1 -> ToolUtils.isPickaxe(stack);
+			case 2 -> ToolUtils.isAxe(stack);
+			case 3 -> ToolUtils.isShovel(stack);
 			default -> false;
 		};
 	}

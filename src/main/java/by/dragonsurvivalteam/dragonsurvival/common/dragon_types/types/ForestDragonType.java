@@ -32,6 +32,10 @@ import java.util.List;
 public class ForestDragonType extends AbstractDragonType{
 	public int timeInDarkness;
 
+	public ForestDragonType() {
+		slotForBonus = 2;
+	}
+
 	@Override
 	public CompoundTag writeNBT(){
 		CompoundTag tag = new CompoundTag();
@@ -80,7 +84,7 @@ public class ForestDragonType extends AbstractDragonType{
 				timeInDarkness = Math.min(timeInDarkness, maxStressTicks);
 				
 				if (timeInDarkness >= maxStressTicks && player.tickCount % 21 == 0) {
-					player.addEffect(new MobEffectInstance(DragonEffects.STRESS, ServerConfig.forestStressEffectDuration * 20));
+					player.addEffect(new MobEffectInstance(DragonEffects.STRESS, Functions.secondsToTicks(ServerConfig.forestStressEffectDuration)));
 				}
 				
 				
@@ -111,7 +115,7 @@ public class ForestDragonType extends AbstractDragonType{
 			light = Math.round((float)light * Mth.cos(f));
 			light = Mth.clamp(light, 0, 15);
 
-			if(light >= 14){
+			if(light >= 10){
 				return true;
 			}
 		}
@@ -135,7 +139,7 @@ public class ForestDragonType extends AbstractDragonType{
 	}
 
 	@Override
-	public List<TagKey<Block>> mineableBlocks(Player player){
+	public List<TagKey<Block>> mineableBlocks(){
 		return List.of(BlockTags.MINEABLE_WITH_AXE);
 	}
 }

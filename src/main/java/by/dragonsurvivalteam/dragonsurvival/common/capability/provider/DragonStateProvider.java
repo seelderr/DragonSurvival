@@ -13,54 +13,54 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
 
-public class DragonStateProvider implements ICapabilitySerializable<CompoundTag>{
-
-	private final DragonStateHandler handlerObject = new DragonStateHandler();
-	private final LazyOptional<DragonStateHandler> instance = LazyOptional.of(() -> handlerObject);
-
-	@OnlyIn( Dist.CLIENT )
-	private static Pair<Boolean, LazyOptional<DragonStateHandler>> getFakePlayer(Entity entity){
-		if(entity instanceof FakeClientPlayer){
-			if(((FakeClientPlayer)entity).handler != null){
-				return Pair.of(true, LazyOptional.of(() -> ((FakeClientPlayer)entity).handler));
-			}
-		}
-
-		return Pair.of(false, LazyOptional.empty());
-	}
-
-	public static LazyOptional<DragonStateHandler> getCap(Entity entity){
-		if(entity == null){
-			return LazyOptional.empty();
-		}else{
-			if(entity.level.isClientSide){
-				Pair<Boolean, LazyOptional<DragonStateHandler>> fakeState = getFakePlayer(entity);
-
-				if(fakeState.first){
-					return fakeState.second;
-				}
-			}
-
-			return entity.getCapability(Capabilities.DRAGON_CAPABILITY);
-		}
-	}
-
-	public void invalidate(){
-		//  instance.invalidate();
-	}
-
-	@Override
-	public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side){
-		return cap == Capabilities.DRAGON_CAPABILITY ? instance.cast() : LazyOptional.empty();
-	}
-
-	@Override
-	public CompoundTag serializeNBT(){
-		return instance.orElseThrow(() -> new IllegalArgumentException("LazyOptional must not be empty!")).writeNBT();
-	}
-
-	@Override
-	public void deserializeNBT(CompoundTag nbt){
-		instance.orElseThrow(() -> new IllegalArgumentException("LazyOptional must not be empty!")).readNBT(nbt);
-	}
-}
+// FIXME :: Why does this still exist as a duplicate
+//public class DragonStateProvider implements ICapabilitySerializable<CompoundTag>{
+//	private final DragonStateHandler handlerObject = new DragonStateHandler();
+//	private final LazyOptional<DragonStateHandler> instance = LazyOptional.of(() -> handlerObject);
+//
+//	@OnlyIn( Dist.CLIENT )
+//	private static Pair<Boolean, LazyOptional<DragonStateHandler>> getFakePlayer(Entity entity){
+//		if(entity instanceof FakeClientPlayer){
+//			if(((FakeClientPlayer)entity).handler != null){
+//				return Pair.of(true, LazyOptional.of(() -> ((FakeClientPlayer)entity).handler));
+//			}
+//		}
+//
+//		return Pair.of(false, LazyOptional.empty());
+//	}
+//
+//	public static LazyOptional<DragonStateHandler> getCap(Entity entity){
+//		if(entity == null){
+//			return LazyOptional.empty();
+//		}else{
+//			if(entity.level.isClientSide){
+//				Pair<Boolean, LazyOptional<DragonStateHandler>> fakeState = getFakePlayer(entity);
+//
+//				if(fakeState.first){
+//					return fakeState.second;
+//				}
+//			}
+//
+//			return entity.getCapability(Capabilities.DRAGON_CAPABILITY);
+//		}
+//	}
+//
+//	public void invalidate(){
+//		//  instance.invalidate();
+//	}
+//
+//	@Override
+//	public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side){
+//		return cap == Capabilities.DRAGON_CAPABILITY ? instance.cast() : LazyOptional.empty();
+//	}
+//
+//	@Override
+//	public CompoundTag serializeNBT(){
+//		return instance.orElseThrow(() -> new IllegalArgumentException("LazyOptional must not be empty!")).writeNBT();
+//	}
+//
+//	@Override
+//	public void deserializeNBT(CompoundTag nbt){
+//		instance.orElseThrow(() -> new IllegalArgumentException("LazyOptional must not be empty!")).readNBT(nbt);
+//	}
+//}

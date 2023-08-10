@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.client.IItemRenderProperties;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
@@ -14,7 +15,7 @@ public class HelmetItem extends BlockItem{
 	}
 
 	@Override
-	public void initializeClient(Consumer<IItemRenderProperties> consumer){
+	public void initializeClient(@NotNull Consumer<IItemRenderProperties> consumer){
 		super.initializeClient(consumer);
 		consumer.accept(new IItemRenderProperties(){
 			private final HelmetStackTileEntityRenderer renderer = new HelmetStackTileEntityRenderer();

@@ -16,6 +16,7 @@ public class DSContainers{
 	public static MenuType<SourceOfMagicContainer> nestContainer;
 	public static MenuType<DragonContainer> dragonContainer;
 
+	//MenuType
 	@SubscribeEvent
 	public static void registerContainers(RegistryEvent.Register<MenuType<?>> register){
 		IForgeRegistry<MenuType<?>> forgeRegistry = register.getRegistry();

@@ -14,6 +14,7 @@ import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.AbstractCauldronBlock;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
 import net.minecraft.world.level.block.CauldronBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -71,9 +72,9 @@ public class ManaHandler{
 		}
 
 		return DragonStateProvider.getCap(player).map(cap -> {
-			if(DragonConfigHandler.DRAGON_MANA_BLOCKS != null && DragonConfigHandler.DRAGON_MANA_BLOCKS.containsKey(cap.getType().getTypeName())){
-				if(DragonConfigHandler.DRAGON_MANA_BLOCKS.get(cap.getType().getTypeName()).contains(blockBelow.getBlock()) || DragonConfigHandler.DRAGON_MANA_BLOCKS.get(cap.getType().getTypeName()).contains(feetBlock.getBlock())){
-					if(!(blockBelow.getBlock() instanceof AbstractFurnaceBlock) && !(feetBlock.getBlock() instanceof AbstractFurnaceBlock) && !(blockBelow.getBlock() instanceof CauldronBlock) && !(feetBlock.getBlock() instanceof CauldronBlock)){
+			if(DragonConfigHandler.DRAGON_MANA_BLOCKS != null && DragonConfigHandler.DRAGON_MANA_BLOCKS.containsKey(cap.getTypeName())){
+				if(DragonConfigHandler.DRAGON_MANA_BLOCKS.get(cap.getTypeName()).contains(blockBelow.getBlock()) || DragonConfigHandler.DRAGON_MANA_BLOCKS.get(cap.getTypeName()).contains(feetBlock.getBlock())){
+					if(!(blockBelow.getBlock() instanceof AbstractFurnaceBlock) && !(feetBlock.getBlock() instanceof AbstractFurnaceBlock) && !(blockBelow.getBlock() instanceof AbstractCauldronBlock) && !(feetBlock.getBlock() instanceof AbstractCauldronBlock)){
 						return true;
 					}
 				}
@@ -110,7 +111,7 @@ public class ManaHandler{
 
 		if(ServerConfig.consumeEXPAsMana){
 			if(entity.level.isClientSide){
-				if(getCurrentMana(entity) < mana && ManaHandler.canConsumeMana(entity,mana)){
+				if(getCurrentMana(entity) < mana && (getCurrentMana(entity) + entity.totalExperience / 10 >= mana || entity.experienceLevel > 0)){
 					entity.playSound(SoundEvents.EXPERIENCE_ORB_PICKUP, 0.01F, 0.01F);
 				}
 			}
@@ -122,7 +123,7 @@ public class ManaHandler{
 
 		DragonStateProvider.getCap(entity).ifPresent(cap -> {
 			if(ServerConfig.consumeEXPAsMana){
-				if(getCurrentMana(entity) < mana && canConsumeMana(entity, mana)){
+				if(getCurrentMana(entity) < mana && (getCurrentMana(entity) + entity.totalExperience / 10 >= mana || entity.experienceLevel > 0)){
 					int missingMana = mana - getCurrentMana(entity);
 					int missingExp = missingMana * 10;
 					entity.giveExperiencePoints(-missingExp);

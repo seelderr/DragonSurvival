@@ -51,8 +51,6 @@ public class SyncTreasureRestStatus implements IMessage<SyncTreasureRestStatus>{
 	@Override
 	public void handle(SyncTreasureRestStatus message, Supplier<NetworkEvent.Context> supplier){
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> runClient(message, supplier));
-
-
 		if(supplier.get().getDirection() == NetworkDirection.PLAY_TO_SERVER){
 			ServerPlayer entity = supplier.get().getSender();
 
@@ -75,6 +73,7 @@ public class SyncTreasureRestStatus implements IMessage<SyncTreasureRestStatus>{
 				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new SyncTreasureRestStatus(entity.getId(), message.state));
 			}
 		}
+		supplier.get().setPacketHandled(true);
 	}
 
 	@OnlyIn( Dist.CLIENT )

@@ -1,5 +1,7 @@
 {
   "itemGroup.dragon.survival.blocks": "Dragons Survival",
+  "entity.dragonsurvival.magical_predator_entity": "Predador Mágico",
+  "item.dragonsurvival.magical_predator_entity_spawn_egg": "Ovo de invocação de Predador Mágico",
   "item.dragonsurvival.star_bone": "Osso estelar",
   "item.dragonsurvival.heart_element": "Coração elemental",
   "item.dragonsurvival.elder_dragon_bone": "Osso de Dragão Ancião",
@@ -10,6 +12,7 @@
   "item.dragonsurvival.charred_vegetable": "Vegetais carbonizados",
   "item.dragonsurvival.charred_seafood": "Frutos do Mar carbonizados",
   "item.dragonsurvival.charred_mushroom": "Cogumelo Carbonizado",
+  "block.dragonsurvival.predator_star": "Estrela do predador",
   "block.dragonsurvival.dragon_altar": "Altar dos Dragões",
   "block.dragonsurvival.cave_nest_small": "Ninho Pequeno da Caverna",
   "block.dragonsurvival.forest_nest_small": "Ninho Pequeno da Floresta",

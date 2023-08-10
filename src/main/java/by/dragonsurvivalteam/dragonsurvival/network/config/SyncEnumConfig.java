@@ -51,11 +51,13 @@ public class SyncEnumConfig implements IMessage<SyncEnumConfig>{
 	public void handle(SyncEnumConfig message, Supplier<NetworkEvent.Context> supplier){
 		ServerPlayer entity = supplier.get().getSender();
 		if(entity == null || !entity.hasPermissions(2)){
+			supplier.get().setPacketHandled(true);
 			return;
 		}
 
 		if(ConfigHandler.serverSpec.getValues().get("server." + message.key) instanceof ForgeConfigSpec.EnumValue value){
 			ConfigHandler.updateConfigValue(value, message.value);
 		}
+		supplier.get().setPacketHandled(true);
 	}
 }

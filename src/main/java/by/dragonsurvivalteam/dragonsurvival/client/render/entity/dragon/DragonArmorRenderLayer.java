@@ -54,10 +54,10 @@ public class DragonArmorRenderLayer extends GeoLayerRenderer<DragonEntity>{
 
 		GeoModel model = ClientDragonRender.dragonModel.getModel(ClientDragonRender.dragonModel.getModelLocation(null));
 
-		renderArmorPiece(model, renderer.helmet, matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, helmetTexture);
-		renderArmorPiece(model, renderer.chestplate, matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, chestPlateTexture);
-		renderArmorPiece(model, renderer.leggings, matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, legsTexture);
-		renderArmorPiece(model, renderer.boots, matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, bootsTexture);
+		renderArmorPiece(model, player.getItemBySlot(EquipmentSlot.HEAD), matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, helmetTexture);
+		renderArmorPiece(model, player.getItemBySlot(EquipmentSlot.CHEST), matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, chestPlateTexture);
+		renderArmorPiece(model, player.getItemBySlot(EquipmentSlot.LEGS), matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, legsTexture);
+		renderArmorPiece(model, player.getItemBySlot(EquipmentSlot.FEET), matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, bootsTexture);
 
 		((DragonRenderer)renderer).isRenderLayers = false;
 	}
@@ -147,7 +147,7 @@ public class DragonArmorRenderLayer extends GeoLayerRenderer<DragonEntity>{
 	
 	public static String itemToResLoc(Item item) {
 		if (item == Items.AIR) return null;
-		
+
 		ResourceLocation registryName = item.getRegistryName();
 		if (registryName != null) {
 			String[] reg = registryName.toString().split(":");
@@ -155,9 +155,9 @@ public class DragonArmorRenderLayer extends GeoLayerRenderer<DragonEntity>{
 			// filters certain characters (non [a-z0-9/._-]) to prevent crashes
 			// this probably should never be relevant, but you can never be too safe
 			loc = loc.chars()
-					.filter(ch -> ResourceLocation.validPathChar((char) ch))
-					.collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-					.toString();
+				.filter(ch -> ResourceLocation.validPathChar((char) ch))
+				.collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+				.toString();
 			return loc;
 		}
 		return null;
