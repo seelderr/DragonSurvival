@@ -225,11 +225,12 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 			}
 		});
 
-
+		// Button to enable / disable the rendering of claws
 		addRenderableWidget(new DSButton(leftPos - 80 + 34, topPos + 140, 9, 9, null, p_onPress_1_ -> {
 			boolean claws = !handler.getClawToolData().renderClaws;
 
 			handler.getClawToolData().renderClaws = claws;
+			ConfigHandler.updateConfigValue("renderDragonClaws", handler.getClawToolData().renderClaws);
 			NetworkHandler.CHANNEL.sendToServer(new SyncDragonClawRender(player.getId(), claws));
 		}, Component.translatable("ds.gui.claws.rendering")){
 			@Override

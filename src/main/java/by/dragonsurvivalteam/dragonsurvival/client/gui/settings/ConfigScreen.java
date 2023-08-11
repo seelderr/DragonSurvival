@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.settings;
 
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.settings.widgets.*;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.fields.TextField;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.CategoryEntry;
@@ -176,6 +177,7 @@ public abstract class ConfigScreen extends OptionsSubScreen{
 			Component tooltip = Component.literal(tooltip0);
 			Class<?> checkType = Primitives.unwrap(fe.getType());
 
+			// FIXME :: Currently only list configs are checked while editing
 			if(Number.class.isAssignableFrom(fe.getType())){
 				Option option = null;
 
@@ -236,27 +238,30 @@ public abstract class ConfigScreen extends OptionsSubScreen{
 				OptionsList.configMap.put(option, key);
 				addOption(category, name, option);
 			}else if(checkType.isAssignableFrom(List.class)){
-				if(value.get() instanceof List && (((List<?>)value.get()).isEmpty() || ((List<?>)value.get()).get(0) instanceof String)){
+				if(value.get() instanceof List<?> listConfig && (listConfig.isEmpty() || listConfig.get(0) instanceof String || listConfig.get(0) instanceof Number)) {
 					StringJoiner joiner = new StringJoiner(",");
 
-					if(((List<?>)value.get()).size() > 0)
-						for(Object ob1 : (List<?>)value.get()){
-							joiner.add("[" + ob1.toString() + "]");
+					if (!listConfig.isEmpty())
+						for (Object listElement : listConfig) {
+							joiner.add("[" + listElement.toString() + "]");
 						}
-					else
+					else {
 						joiner.add("[]");
+					}
+
 					String text = Minecraft.getInstance().font.substrByWidth(Component.literal(joiner.toString()), 120).getString();
-					CycleOption<String> option = new CycleOption<String>(name,
-	                     val -> text,
-	                     (val1, val2, val3) -> minecraft.setScreen(new ConfigListMenu(this, minecraft.options, Component.literal(name), key, value, screenSide(), key)),
-	                     () -> {
-							return new Builder<String>(t -> Component.literal(text)).displayOnlyValue().withValues(text).withInitialValue(text);
-					}).setTooltip(mc-> s ->mc.font.split(tooltip, 200));
+
+					CycleOption<String> option = new CycleOption<>(
+							name,
+                            options -> text,
+                            (val1, val2, val3) -> minecraft.setScreen(new ConfigListMenu(this, minecraft.options, Component.literal(name), key, value, screenSide(), key)),
+                            () -> new Builder<String>(t -> Component.literal(text)).displayOnlyValue().withValues(text).withInitialValue(text)).setTooltip(mc-> s -> mc.font.split(tooltip, 200));
 
 					OptionsList.configMap.put(option, key);
 					addOption(category, name, option);
-				}else
-					System.err.println("Invalid config \"" + key + "\"");
+				}else {
+					DragonSurvivalMod.LOGGER.warn("Invalid configuration: [" + key + "]");
+				}
 			}
 		}
 	}

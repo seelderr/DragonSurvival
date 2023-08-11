@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.settings;
 
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.settings.widgets.DSTextBoxOption;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.settings.widgets.Option;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.settings.widgets.ResourceTextFieldOption;
@@ -40,51 +41,59 @@ public class ConfigListMenu extends OptionsSubScreen{
 
 	private boolean isItems = false;
 
-	public ConfigListMenu(Screen p_i225930_1_, Options p_i225930_2_, Component p_i225930_3_, String valueSpec, ConfigValue value, ConfigSide side, String configKey){
-		super(p_i225930_1_, p_i225930_2_, p_i225930_3_);
-		this.value = value;
+	// FIXME :: valueSpec and configKey seem to get the same value - why are there two fields for it?
+	public ConfigListMenu(final Screen screen, final Options options, final Component component, final String valueSpec, final ConfigValue<?> configValue, final ConfigSide side, final String configKey) {
+		super(screen, options, component);
+		this.value = configValue;
 		this.side = side;
 		this.configKey = configKey;
 		this.valueSpec = valueSpec;
-		title = p_i225930_3_;
+		title = component;
 	}
 
 	@Override
-	protected void init(){
+	protected void init() {
 		double scroll = 0;
-		if(list != null){
+
+		if (list != null) {
 			oldVals = list.children();
 			scroll = list.getScrollAmount();
 		}
 
-		list = new OptionsList(width, height, 32, height - 32){
+		list = new OptionsList(width, height, 32, height - 32) {
 			@Override
-			protected int getMaxPosition(){
+			protected int getMaxPosition() {
 				return super.getMaxPosition() + 120;
 			}
 		};
 
-		if(!isItems){
+		if(!isItems) {
 			Field fe = ConfigHandler.configFields.get(valueSpec);
 			Class<?> checkType = Primitives.unwrap(fe.getType());
 
-			if(fe.isAnnotationPresent(ConfigType.class)){
+			if (fe.isAnnotationPresent(ConfigType.class)) {
 				ConfigType type = fe.getAnnotation(ConfigType.class);
 				checkType = Primitives.unwrap(type.value());
 			}
 
-			if(ItemLike.class.isAssignableFrom(checkType)){
+			if (ItemLike.class.isAssignableFrom(checkType)) {
 				isItems = true;
 			}
 		}
 
-		if(oldVals == null || oldVals.isEmpty()){
-			List<String> list = (List<String>)value.get();
-
-			for(String t : list){
-				createOption(t);
+		if (oldVals == null || oldVals.isEmpty()) {
+			if (value.get() instanceof List<?> listConfig && !listConfig.isEmpty()) {
+				listConfig.forEach(element -> {
+					if (element instanceof String string) {
+						createOption(string);
+					} else if (element instanceof Number number) {
+						createOption(number.toString());
+					} else {
+						DragonSurvivalMod.LOGGER.warn("Invalid configuration element in [" + configKey + "]");
+					}
+				});
 			}
-		}else{
+		} else {
 			for(OptionListEntry oldVal : oldVals){
 				if(oldVal instanceof TextBoxEntry textBoxEntry){
 					createOption(((EditBox)textBoxEntry.widget).getValue());
@@ -96,33 +105,45 @@ public class ConfigListMenu extends OptionsSubScreen{
 
 		addWidget(list);
 
-		addRenderableWidget(new Button(width / 2 + 20, height - 27, 100, 20, Component.literal("Add new"), p_213106_1_ -> {
+		// Button to add new entries
+		addRenderableWidget(new Button(width / 2 + 20, height - 27, 100, 20, Component.literal("Add new"), button -> {
 			createOption("");
 			list.setScrollAmount(list.getMaxScroll());
 		}));
 
-		addRenderableWidget(new Button(width / 2 - 120, height - 27, 100, 20, CommonComponents.GUI_DONE, p_213106_1_ -> {
+		// Button to save the input
+		addRenderableWidget(new Button(width / 2 - 120, height - 27, 100, 20, CommonComponents.GUI_DONE, button -> {
 			ArrayList<String> output = new ArrayList<>();
 
-			list.children().forEach(ent -> {
-				ent.children().forEach(child -> {
-					if(child instanceof EditBox){
-						String value = ((EditBox)child).getValue();
+			list.children().forEach(entry -> entry.children().forEach(child -> {
+				if (child instanceof EditBox editBox) {
+					String value = editBox.getValue();
 
-						if(!value.isEmpty()){
-							output.add(value);
-						}
+					if (!value.isEmpty()) {
+						output.add(value);
 					}
-				});
-			});
+				}
+			}));
 
-			value.set(output);
+			boolean isValid = true;
 
-			if(side == ConfigSide.SERVER){
-				NetworkHandler.CHANNEL.sendToServer(new SyncListConfig(configKey, output));
+			for (String configValue : output) {
+				if (!ConfigHandler.checkConfig(configKey, configValue)) {
+					DragonSurvivalMod.LOGGER.warn("Config entry [" + configValue + "] is invalid for [" + configKey + "]");
+					isValid = false;
+					break;
+				}
 			}
 
-			minecraft.setScreen(lastScreen);
+			if (isValid) {
+				value.set(output);
+
+				if (side == ConfigSide.SERVER) {
+					NetworkHandler.CHANNEL.sendToServer(new SyncListConfig(configKey, output));
+				}
+
+				minecraft.setScreen(lastScreen);
+			}
 		}));
 
 		list.setScrollAmount(scroll);

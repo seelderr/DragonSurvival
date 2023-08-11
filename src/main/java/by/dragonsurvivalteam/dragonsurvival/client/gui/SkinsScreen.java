@@ -202,10 +202,12 @@ public class SkinsScreen extends Screen{
 		addRenderableWidget(new TabButton(startX + 128 + 62, startY - 26, 2, this));
 		addRenderableWidget(new TabButton(startX + 128 + 91, startY - 28, 3, this));
 
+		// Button to enable / disable rendering of the newborn dragon skin
 		addRenderableWidget(new Button(startX + 128, startY + 45, imageWidth, 20, Component.translatable("ds.level.newborn"), button -> {
 			DragonStateHandler handler = DragonUtils.getHandler(getMinecraft().player);
 
 			handler.getSkinData().renderNewborn = !handler.getSkinData().renderNewborn;
+			ConfigHandler.updateConfigValue("renderNewbornSkin", handler.getSkinData().renderNewborn);
 			NetworkHandler.CHANNEL.sendToServer(new SyncDragonSkinSettings(getMinecraft().player.getId(), handler.getSkinData().renderNewborn, handler.getSkinData().renderYoung, handler.getSkinData().renderAdult));
 			setTextures();
 		}){
@@ -219,10 +221,12 @@ public class SkinsScreen extends Screen{
 			}
 		});
 
+		// Button to enable / disable rendering of the young dragon skin
 		addRenderableWidget(new Button(startX + 128, startY + 45 + 23, imageWidth, 20, Component.translatable("ds.level.young"), button -> {
 			DragonStateHandler handler = DragonUtils.getHandler(getMinecraft().player);
 
 			handler.getSkinData().renderYoung = !handler.getSkinData().renderYoung;
+			ConfigHandler.updateConfigValue("renderYoungSkin", handler.getSkinData().renderYoung);
 			NetworkHandler.CHANNEL.sendToServer(new SyncDragonSkinSettings(getMinecraft().player.getId(), handler.getSkinData().renderNewborn, handler.getSkinData().renderYoung, handler.getSkinData().renderAdult));
 			setTextures();
 		}){
@@ -236,10 +240,12 @@ public class SkinsScreen extends Screen{
 			}
 		});
 
+		// Button to enable / disable rendering of the adult dragon skin
 		addRenderableWidget(new Button(startX + 128, startY + 45 + 46, imageWidth, 20, Component.translatable("ds.level.adult"), button -> {
 			DragonStateHandler handler = DragonUtils.getHandler(getMinecraft().player);
 
 			handler.getSkinData().renderAdult = !handler.getSkinData().renderAdult;
+			ConfigHandler.updateConfigValue("renderAdultSkin", handler.getSkinData().renderAdult);
 			NetworkHandler.CHANNEL.sendToServer(new SyncDragonSkinSettings(getMinecraft().player.getId(), handler.getSkinData().renderNewborn, handler.getSkinData().renderYoung, handler.getSkinData().renderAdult));
 			setTextures();
 		}){
@@ -253,9 +259,10 @@ public class SkinsScreen extends Screen{
 			}
 		});
 
+		// Button to enable / disable the rendering of customized skins (of other players)
+		// TODO :: This does not seem to apply to the random skin functionality - is that intended?
 		addRenderableWidget(new Button(startX + 128, startY + 128, imageWidth, 20, Component.translatable("ds.gui.skins.other_skins"), button -> {
 			ConfigHandler.updateConfigValue("renderOtherPlayerSkins", !ClientDragonRender.renderOtherPlayerSkins);
-			//			executor.execute(() -> setTextures());
 			setTextures();
 		}){
 			@Override

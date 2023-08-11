@@ -90,7 +90,7 @@ public abstract class MixinInventory{
 
 			// Just to be sure
 			if (split.length != 2) {
-				DragonSurvivalMod.LOGGER.warn("Regex definition for the blacklist hast the wrong format: " + regex);
+				DragonSurvivalMod.LOGGER.warn("Regex definition for the blacklist has the wrong format: " + regex);
 				continue;
 			}
 

@@ -311,7 +311,6 @@ public class ServerConfig{
 			, "upgradednetherite_ultimate:ultimate_upgraded_netherite_bow"
 	);
 
-	@ConfigType(Item.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "blacklistedItemsRegex", comment = "List of items that are disallowed to be used by dragons. Format: item/modid:<regular_expression>. Example: minecraft:.*?_wool" )
 	public static List<String> blacklistedItemsRegex = List.of(
 			"upgradednetherite:.*?_bow"
@@ -399,17 +398,14 @@ public class ServerConfig{
 	@ConfigOption( side = ConfigSide.SERVER, category = "ore", key = "oresTag", comment = "The tag that contains all ores that can drop dust/bones when harvested. Will not drop if the ore drops another of the items in this tag. Format: modid:id" )
 	public static String oresTag = "forge:ores";
 
-	@IgnoreConfigCheck
 	@ConfigType(Item.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = "food", key = "hurtfulToCaveDragon", comment = "Items which will cause damage to cave dragons when consumed. Formatting: item/modid:itemid:damage" )
 	public static List<String> caveDragonHurtfulItems = Arrays.asList("minecraft:potion:2", "minecraft:water_bottle:2", "minecraft:milk_bucket:2");
 
-	@IgnoreConfigCheck
 	@ConfigType(Item.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = "food", key = "hurtfulToSeaDragon", comment = "Items which will cause damage to sea dragons when consumed. Formatting: item/modid:itemid:damage" )
 	public static List<String> seaDragonHurtfulItems = Collections.emptyList();
 
-	@IgnoreConfigCheck
 	@ConfigType(Item.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = "food", key = "hurtfulToForestDragon", comment = "Items which will cause damage to forest dragons when consumed. Formatting: item/modid:itemid:damage" )
 	public static List<String> forestDragonHurtfulItems = Collections.emptyList();

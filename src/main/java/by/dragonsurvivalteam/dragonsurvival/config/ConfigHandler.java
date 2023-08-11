@@ -8,7 +8,6 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.IgnoreConfigCheck;
 import com.electronwill.nightconfig.core.EnumGetMethod;
 import com.google.common.primitives.Primitives;
 import com.google.gson.reflect.TypeToken;
-import net.minecraft.Util;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -124,66 +123,143 @@ public class ConfigHandler{
 		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, serverSpec);
 	}
 
-	public static void addConfigs(ForgeConfigSpec.Builder builder, ConfigSide side){
-		for(String key : configs.getOrDefault(side, Collections.emptyList())){
+	public static void addConfigs(final ForgeConfigSpec.Builder builder, final ConfigSide side) {
+		for (String key : configs.getOrDefault(side, Collections.emptyList())) {
 			ConfigOption option = configObjects.get(key);
-			Field fe = configFields.get(key);
-			Object defaultOb = defaultConfigValues.get(option.key());
+			Field field = configFields.get(key);
+			Object defaultValues = defaultConfigValues.get(option.key());
 
+			// Get the category - if none is present put it in the `general` category
 			String[] categories = option.category() != null && option.category().length > 0 ? option.category() : new String[]{"general"};
-			String[] comment =  option.comment() != null ? option.comment() : new String[0];
+			String[] comment = option.comment() != null ? option.comment() : new String[0];
 
-			for(String string : categories){
-				builder.push(string);
+			for (String category : categories) {
+				builder.push(category);
 			}
 
 			builder.comment(comment);
 
-			if(!option.localization().isBlank()){
+			if (!option.localization().isBlank()) {
 				builder.translation(option.localization());
 			}
 
-			try{
-				Object tt = Primitives.isWrapperType(defaultOb.getClass()) ? Primitives.wrap(defaultOb.getClass()).cast(defaultOb) : defaultOb;
+			try {
+				Object tt = Primitives.isWrapperType(defaultValues.getClass()) ? Primitives.wrap(defaultValues.getClass()).cast(defaultValues) : defaultValues;
 
-				ConfigRange range = fe.isAnnotationPresent(ConfigRange.class) ? fe.getAnnotation(ConfigRange.class) : null;
+				ConfigRange range = field.isAnnotationPresent(ConfigRange.class) ? field.getAnnotation(ConfigRange.class) : null;
 				boolean rang = range != null;
 
-				if(tt instanceof Integer intVal){
-					IntValue value = builder.defineInRange(option.key(), intVal, rang ? (int)range.min() : Integer.MIN_VALUE, rang ? (int)range.max() : Integer.MAX_VALUE);
+				// Fill the configuration options (define the key, default value and predicate to check if the option is valid)
+				if (tt instanceof Integer intVal) {
+					IntValue value = builder.defineInRange(option.key(), intVal, rang ? (int) range.min() : Integer.MIN_VALUE, rang ? (int) range.max() : Integer.MAX_VALUE);
 					configValues.put(key, value);
-				}else if(tt instanceof Float floatVal){
+				} else if (tt instanceof Float floatVal) {
 					DoubleValue value = builder.defineInRange(option.key(), floatVal, rang ? range.min() : Float.MIN_VALUE, rang ? range.max() : Float.MAX_VALUE);
 					configValues.put(key, value);
-				}else if(tt instanceof Long longVal){
-					LongValue value = builder.defineInRange(option.key(), longVal, rang ? (long)range.min() : Long.MIN_VALUE, rang ? (long)range.max() : Long.MAX_VALUE);
+				} else if (tt instanceof Long longVal) {
+					LongValue value = builder.defineInRange(option.key(), longVal, rang ? (long) range.min() : Long.MIN_VALUE, rang ? (long) range.max() : Long.MAX_VALUE);
 					configValues.put(key, value);
-				}else if(tt instanceof Double doubleVal){
+				} else if (tt instanceof Double doubleVal) {
 					DoubleValue value = builder.defineInRange(option.key(), doubleVal, rang ? range.min() : Double.MIN_VALUE, rang ? range.max() : Double.MAX_VALUE);
 					configValues.put(key, value);
-				}else if(tt instanceof Boolean boolValue){
-					BooleanValue value = builder.define(option.key(), (boolean)boolValue);
+				} else if (tt instanceof Boolean boolValue) {
+					BooleanValue value = builder.define(option.key(), (boolean) boolValue);
 					configValues.put(key, value);
-				}else if(fe.getType().isEnum()){
-					EnumValue value = builder.defineEnum(option.key(), (Enum)defaultOb, ((Enum<?>)defaultOb).getClass().getEnumConstants());
+				} else if (field.getType().isEnum()) {
+					EnumValue value = builder.defineEnum(option.key(), (Enum)defaultValues, ((Enum<?>)defaultValues).getClass().getEnumConstants());
 					configValues.put(key, value);
-				}else if(tt instanceof List<?> ls){
-					ConfigValue<List<?>> value = builder.defineList(option.key(), ls, s -> fe.isAnnotationPresent(IgnoreConfigCheck.class) || ResourceLocation.isValidResourceLocation(String.valueOf(s)));
+				} else if(tt instanceof List<?> list) { // TODO :: Numeric lists?
+					ConfigValue<List<?>> value = builder.defineList(option.key(), list, configValue -> field.isAnnotationPresent(IgnoreConfigCheck.class) || checkConfig(option, configValue));
 					configValues.put(key, value);
-				}else{
-					ConfigValue<Object> value = builder.define(option.key(), defaultOb);
+				} else {
+					ConfigValue<Object> value = builder.define(option.key(), defaultValues);
 					configValues.put(key, value);
-					System.out.println("Possible config issue for option: " + option.key());
+					DragonSurvivalMod.LOGGER.warn("Potential issue found for configuration: [" + option.key() + "]");
 				}
-			}catch(Exception e){
-				e.printStackTrace();
+			} catch (Exception e) {
+				DragonSurvivalMod.LOGGER.error("Invalid configuration found: [" + option.key() + "]", e);
 			}
 
-
-			for(int i = 0; i < categories.length; i++){
+			for (int i = 0; i < categories.length; i++) {
 				builder.pop();
 			}
 		}
+	}
+
+	public static boolean checkConfig(final ConfigOption configOption, final Object configValue) {
+		return checkConfig(configOption.key(), configValue);
+	}
+
+	public static boolean checkConfig(final String key, final Object configValue) {
+		return checkSpecific(key, configValue);
+	}
+
+	/** More specific checks depending on the config type */
+	public static boolean checkSpecific(final String key, final Object configValue) {
+		// Food options
+		if (key.equals("caveDragon") || key.equals("forestDragon") || key.equals("seaDragon")) {
+			if (configValue instanceof String string) {
+				// namespace:item_id:hunter:saturation
+				String[] split = string.split(":");
+
+				if (split.length == 2) {
+					return ResourceLocation.isValidResourceLocation(string);
+				} else if (split.length == 4) {
+					return ResourceLocation.isValidResourceLocation(split[0] + ":" + split[1]);
+				}
+			}
+
+			return false;
+		}
+
+		if (key.equals("hurtfulToCaveDragon") || key.equals("hurtfulToForestDragon") || key.equals("hurtfulToSeaDragon")) {
+			if (configValue instanceof String string) {
+				// namespace:item_id:damage
+				String[] split = string.split(":");
+
+				if (split.length == 3) {
+					return ResourceLocation.isValidResourceLocation(split[0] + ":" + split[1]);
+				}
+			}
+
+			return false;
+		}
+
+		// Blacklist Item Regex
+		if (key.equals("blacklistedItemsRegex")) {
+			if (configValue instanceof String string) {
+				// namespace:regex
+				// TODO :: Handle `:` or `"` in some way for regex purposes?
+				int length = string.split(":").length;
+				return length == 2;
+			}
+
+			return false;
+		}
+
+		// Blacklisted Slots | TODO :: Add actual support for numeric lists (currently they get converted into string lists)
+		if (key.equals("blacklistedSlots")) {
+			try {
+				Integer.parseInt(String.valueOf(configValue));
+			} catch (NumberFormatException e) {
+				return false;
+			}
+
+			return true;
+		}
+
+		if (configValue instanceof Number) {
+			return true;
+		}
+
+		String string = String.valueOf(configValue);
+
+		if (string.split(":").length == 2) {
+			// Simply checking for this at the start is unsafe since `awtaj` is a valid resource location but can cause problems if it's just some gibberish
+			return ResourceLocation.isValidResourceLocation(string);
+		}
+
+		return false;
 	}
 
 	private static Object convertObject(Object ob){
@@ -319,24 +395,22 @@ public class ConfigHandler{
 	}
 
 	public static void updateConfigValue(ForgeConfigSpec.ConfigValue conf, Object value){
-		Util.ioPool().execute(() -> {
-			conf.set(convertToString(value));
-			conf.save();
-		});
+		conf.set(convertToString(value));
+		conf.save();
 
 		ConfigHandler.configValues.entrySet().stream().filter(c -> c.getValue() == conf).findFirst().ifPresent(key -> {
-			try{
+			try {
 				Field fe = ConfigHandler.configFields.get(key.getKey());
 
-				if(fe != null){
+				if (fe != null) {
 					Object obj = convertFromString(fe, value);
 
-					if(obj != null){
+					if (obj != null) {
 						fe.set(null, obj);
 					}
 				}
-			}catch(IllegalAccessException e){
-				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				DragonSurvivalMod.LOGGER.error("An error occured while trying to update the config value of [" + conf.getPath() + "] with the value [" + value + "]", e);
 			}
 		});
 	}
