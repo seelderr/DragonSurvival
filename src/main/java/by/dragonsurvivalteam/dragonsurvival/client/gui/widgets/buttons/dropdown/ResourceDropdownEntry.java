@@ -75,9 +75,9 @@ public class ResourceDropdownEntry extends DropdownEntry {
                         return;
                     }
 
-                    // Make sure it gets rendered above the other resource text fields
                     poseStack.pushPose();
                     RenderSystem.enableDepthTest();
+                    // Make sure it gets rendered above the other resource text fields
                     poseStack.translate(0, 0, 200);
 
                     if (entry != null) {
@@ -100,7 +100,7 @@ public class ResourceDropdownEntry extends DropdownEntry {
                             color = new Color(color).brighter().getRGB();
                         }
 
-                        // Draws the background per entry // FIXME :: Currently overalys the item tooltip
+                        // Draws the background per entry
                         Gui.fill(poseStack, x, y, x + width, y + height, color);
 
                         String text = entry.id;
@@ -120,7 +120,7 @@ public class ResourceDropdownEntry extends DropdownEntry {
                             itemRenderer.blitOffset = 0;
 
                             if (isHovered) {
-                                poseStack.translate(0, 0, 200); // TODO
+                                poseStack.translate(0, 0, 200);
                                 List<Component> lines = entry.getDisplayItem().getTooltipLines(Minecraft.getInstance().player, Default.NORMAL);
                                 TooltipRendering.drawHoveringText(poseStack, lines, mouseX, mouseY);
                                 poseStack.translate(0, 0, -200);

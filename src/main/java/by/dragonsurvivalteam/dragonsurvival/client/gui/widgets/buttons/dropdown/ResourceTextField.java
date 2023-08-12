@@ -8,6 +8,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigType;
 import com.google.common.primitives.Primitives;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.brigadier.StringReader;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestion;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
@@ -205,6 +206,7 @@ public class ResourceTextField extends EditBox implements TooltipAccessor {
 		List<String> suggestions = new ArrayList<>(sgs.getList().stream().map(Suggestion::getText).toList());
 
 		suggestions.removeIf(string -> string == null || string.isEmpty());
+		// TODO :: Currently does not suggest tags?
 		suggestions.forEach(string -> this.suggestions.addAll(parseCombinedList(Collections.singletonList(string), true)));
 	}
 
@@ -228,36 +230,45 @@ public class ResourceTextField extends EditBox implements TooltipAccessor {
 			}
 
 			// Go through the registries to create a ResourceEntry (which will contain relevant information, e.g. a fitting ItemStack to render in the text field)
+			// TODO :: Currently tags are not suggested
 			if (isTag) {
 				if (isItem) {
 					try {
+						// Exception can be IllegalAccessException : java.lang.LinkageError: bad method type alias: (ItemLike)void not visible from class net.minecraft.world.item.ItemStack
+						// DragonSurvivalMod.LOGGER.debug("Error while trying to retrieve value from registry for the config, value: [" + value + "] - [" + element.getDescriptionId() + "]", e);
 						results.add(new ResourceEntry(value, Objects.requireNonNull(ForgeRegistries.ITEMS.tags().getTag(TagKey.create(Registry.ITEM_REGISTRY, location)).stream().map(ItemStack::new).toList()), true));
-					} catch (Exception ignored) { /* Nothing to do */ }
+					} catch (Exception e) {
+						DragonSurvivalMod.LOGGER.debug("Error while trying to retrieve a value from the 'ITEMS' registry for the config, value: [" + value + "]", e);
+					}
 				}
 
 				if (isBlock) {
 					try {
 						results.add(new ResourceEntry(value, Objects.requireNonNull(ForgeRegistries.BLOCKS.tags().getTag(TagKey.create(Registry.BLOCK_REGISTRY, location))).stream().map(ItemStack::new).toList(), true));
-					} catch (Exception ignored) { /* Nothing to do */ }
+					} catch (Exception e) {
+						DragonSurvivalMod.LOGGER.debug("Error while trying to retrieve a value from the 'BLOCKS' registry for the config, value: [" + value + "]", e);
+					}
 				}
 
 				if (isEntity) {
                     try {
                         results.add(new ResourceEntry(value, Objects.requireNonNull(ForgeRegistries.ENTITY_TYPES.tags().getTag(TagKey.create(Registry.ENTITY_TYPE_REGISTRY, location))).stream().map(type -> new ItemStack(ForgeSpawnEggItem.fromEntityType(type))).toList(), true));
-                    } catch (Exception ignored) { /* Nothing to do */ }
+                    } catch (Exception e) {
+						DragonSurvivalMod.LOGGER.debug("Error while trying to retrieve a value from the 'ENTITY_TYPES' registry for the config, value: [" + value + "]", e);
+					}
                 }
 			}
 
 			if (isItem) {
                 try {
                     results.add(new ResourceEntry(value, Collections.singletonList(new ItemStack(ItemParser.parseForItem(HolderLookup.forRegistry(Registry.ITEM), new StringReader(value)).item()))));
-                } catch (Exception ignored) { /* Nothing to do */ }
+                } catch (CommandSyntaxException ignored) { /* Nothing to do */ }
             }
 
 			if (isBlock) {
                 try {
                     results.add(new ResourceEntry(value, Collections.singletonList(new ItemStack(BlockStateParser.parseForBlock(HolderLookup.forRegistry(Registry.BLOCK), new StringReader(value), false).blockState().getBlock()))));
-                } catch (Exception ignored) { /* Nothing to do */ }
+                } catch (CommandSyntaxException ignored) { /* Nothing to do */ }
             }
 
 			if (isEntity) {
@@ -273,7 +284,7 @@ public class ResourceTextField extends EditBox implements TooltipAccessor {
                             results.add(new ResourceEntry(value, Collections.singletonList(new ItemStack(ItemParser.parseForItem(HolderLookup.forRegistry(Registry.ITEM), new StringReader(value)).item()))));
                         }
                     }
-                } catch (Exception ignored) { /* Nothing to do */ }
+                } catch (CommandSyntaxException ignored) { /* Nothing to do */ }
             }
 
 			if (isEffect) {
@@ -284,7 +295,9 @@ public class ResourceTextField extends EditBox implements TooltipAccessor {
                     PotionUtils.setPotion(stack, Potions.WATER);
                     PotionUtils.setCustomEffects(stack, Collections.singletonList(instance));
                     results.add(new ResourceEntry(value, Collections.singletonList(stack)));
-                } catch (Exception ignored) { /* Nothing to do */ }
+                } catch (Exception e) {
+					DragonSurvivalMod.LOGGER.debug("Error while trying to retrieve a value from the 'MOB_EFFECTS' registry for the config, value: [" + value + "]", e);
+				}
             }
 		}
 
@@ -352,7 +365,8 @@ public class ResourceTextField extends EditBox implements TooltipAccessor {
 
 					if (entry instanceof ResourceTextField resourceTextField && resourceTextField != this) {
 						if (resourceTextField.list.visible && !resourceTextField.list.children().isEmpty()) {
-							if (y > resourceTextField.list.getMinY() - 23 && y < resourceTextField.list.getMaxY()) {
+							// Offset by item height since without it the text field below the focused one is not hidden
+							if (y > resourceTextField.list.getTop() - 23 && y < resourceTextField.list.getBottom() + 3) {
 								shouldBeHidden.set(true);
 							}
 						}

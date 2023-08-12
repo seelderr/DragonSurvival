@@ -129,12 +129,4 @@ public class DropdownList extends AbstractSelectionList<DropdownEntry> {
 	public boolean isMouseOver(double mouseX, double mouseY) {
 		return visible && mouseY >= (double) y0 - 3 && mouseY <= (double) y1 + 3 && mouseX >= (double) x0 && mouseX <= (double) x1;
 	}
-
-	public int getMinY() {
-		return y0;
-	}
-
-	public int getMaxY() {
-		return y1;
-	}
 }
