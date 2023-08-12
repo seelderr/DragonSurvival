@@ -237,7 +237,7 @@ public class ConfigHandler{
 			return false;
 		}
 
-		// Blacklisted Slots | TODO :: Add actual support for numeric lists (currently they get converted into string lists)
+		// Blacklisted Slots
 		if (key.equals("blacklistedSlots")) {
 			try {
 				Integer.parseInt(String.valueOf(configValue));
@@ -245,10 +245,6 @@ public class ConfigHandler{
 				return false;
 			}
 
-			return true;
-		}
-
-		if (configValue instanceof Number) {
 			return true;
 		}
 
@@ -448,20 +444,20 @@ public class ConfigHandler{
 	public static <T> List<T> configList(Class<T> type, List<?> in){
 		ArrayList<T> list = new ArrayList<>();
 
-		Tuple<Supplier<IForgeRegistry<?>>, Supplier<ResourceKey<? extends Registry<?>>>> ent = REGISTRY_HASH_MAP.getOrDefault(type, null);
+		Tuple<Supplier<IForgeRegistry<?>>, Supplier<ResourceKey<? extends Registry<?>>>> registry = REGISTRY_HASH_MAP.getOrDefault(type, null);
 
 		for(Object o : in){
 			if(o == null) continue;
 
 			if(o instanceof String tex){
 				ResourceLocation location = ResourceLocation.tryParse(tex);
-				Optional<? extends Holder<?>> optional = ent.getA().get().getHolder(location);
+				Optional<? extends Holder<?>> optional = registry.getA().get().getHolder(location);
 				optional.ifPresent(s -> list.add((T)s.value()));
 
-				TagKey<T> tagKey = TagKey.create((ResourceKey<? extends Registry<T>>)ent.getB().get(), location);
-				if(tagKey.isFor(ent.getA().get().getRegistryKey())){
-					ITagManager<T> manager = (ITagManager<T>)ent.getA().get().tags();
-					list.addAll((List<T>)manager.getTag(tagKey).stream().toList());
+				TagKey<T> tagKey = TagKey.create((ResourceKey<? extends Registry<T>>)registry.getB().get(), location);
+				if(tagKey.isFor(registry.getA().get().getRegistryKey())){
+					ITagManager<T> manager = (ITagManager<T>)registry.getA().get().tags();
+					list.addAll(manager.getTag(tagKey).stream().toList());
 				}
 			}
 		}

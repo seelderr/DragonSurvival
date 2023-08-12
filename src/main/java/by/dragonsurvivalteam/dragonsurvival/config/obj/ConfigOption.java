@@ -9,8 +9,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface ConfigOption{
 	ConfigSide side();
-
 	String key();
+	/** The category the option will be found in - the array defines a path (e.g. {"a", "b", "c"} results in the path a.b.c) */
 	String[] category() default {};
 	String[] comment();
 	String localization() default "";

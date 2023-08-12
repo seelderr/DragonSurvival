@@ -24,11 +24,13 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
+/** Handles the config options / entries */
 public class ConfigListMenu extends OptionsSubScreen{
 	private final ConfigValue value;
 	private final ConfigSide side;
@@ -68,11 +70,11 @@ public class ConfigListMenu extends OptionsSubScreen{
 		};
 
 		if(!isItems) {
-			Field fe = ConfigHandler.configFields.get(valueSpec);
-			Class<?> checkType = Primitives.unwrap(fe.getType());
+			Field field = ConfigHandler.configFields.get(valueSpec);
+			Class<?> checkType = Primitives.unwrap(field.getType());
 
-			if (fe.isAnnotationPresent(ConfigType.class)) {
-				ConfigType type = fe.getAnnotation(ConfigType.class);
+			if (field.isAnnotationPresent(ConfigType.class)) {
+				ConfigType type = field.getAnnotation(ConfigType.class);
 				checkType = Primitives.unwrap(type.value());
 			}
 
@@ -94,9 +96,10 @@ public class ConfigListMenu extends OptionsSubScreen{
 				});
 			}
 		} else {
-			for(OptionListEntry oldVal : oldVals){
-				if(oldVal instanceof TextBoxEntry textBoxEntry){
-					createOption(((EditBox)textBoxEntry.widget).getValue());
+			// TODO :: Not sure when this is ever reached
+			for (OptionListEntry oldVal : oldVals) {
+				if (oldVal instanceof TextBoxEntry textBoxEntry) {
+					createOption(((EditBox) textBoxEntry.widget).getValue());
 				}
 			}
 
@@ -150,21 +153,25 @@ public class ConfigListMenu extends OptionsSubScreen{
 	}
 
 	@Override
-	public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
-		renderBackground(p_230430_1_);
-		list.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
-		super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
+	public void render(@NotNull final PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
+		// Renders a black background - without it you would see the players viewpoint but in cinema-format (top and bottom covered)
+		renderBackground(poseStack);
+		// Render the actual config entries (within a config category)
+		list.render(poseStack, mouseX, mouseY, partialTicks);
+		// Renders default buttons when going into config list entries (e.g. `Done` or `Add new`)
+		super.render(poseStack, mouseX, mouseY, partialTicks);
 	}
 
-	private void createOption(String t){
+	private void createOption(final String text) {
 		Option option;
 
-		if(isItems){
-			option = new ResourceTextFieldOption(valueSpec, t, settings -> t);
-		}else{
-			option = new DSTextBoxOption(valueSpec, t, settings -> t);
+		if (isItems) {
+			option = new ResourceTextFieldOption(valueSpec, text, settings -> text);
+		} else {
+			option = new DSTextBoxOption(valueSpec, text, settings -> text);
 		}
-		AbstractWidget widget1 = option.createButton(minecraft.options, 32, 0, list.getScrollbarPosition() - 32 - 60);
-		list.addEntry(new TextBoxEntry(option, list, widget1, null));
+
+		AbstractWidget widget = option.createButton(minecraft.options, 32, 0, list.getScrollbarPosition() - 32 - 60);
+		list.addEntry(new TextBoxEntry(option, list, widget, null));
 	}
 }

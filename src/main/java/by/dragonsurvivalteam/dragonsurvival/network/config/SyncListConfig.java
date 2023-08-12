@@ -27,13 +27,12 @@ public class SyncListConfig implements IMessage<SyncListConfig>{
 	}
 
 	@Override
-
-	public void encode(SyncListConfig message, FriendlyByteBuf buffer){
+	public void encode(final SyncListConfig message, final FriendlyByteBuf buffer){
 		buffer.writeInt(message.value.size());
 
 		for (Object object : message.value) {
-			if (message.key.equals("blacklistedSlots")) { // TODO :: There is surely a better way to do this
-				buffer.writeInt(Integer.parseInt(object.toString()));
+			if (object instanceof Number number) {
+				buffer.writeUtf(number.toString());
 			} else {
 				buffer.writeUtf(object.toString());
 			}
@@ -44,11 +43,11 @@ public class SyncListConfig implements IMessage<SyncListConfig>{
 
 	@Override
 
-	public SyncListConfig decode(FriendlyByteBuf buffer){
+	public SyncListConfig decode(final FriendlyByteBuf buffer){
 		int size = buffer.readInt();
 		ArrayList<String> list = new ArrayList<>();
 
-		for(int i = 0; i < size; i++){
+		for (int i = 0; i < size; i++) {
 			list.add(buffer.readUtf());
 		}
 

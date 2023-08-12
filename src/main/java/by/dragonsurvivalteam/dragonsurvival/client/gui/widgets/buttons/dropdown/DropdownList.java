@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraftforge.client.gui.ScreenUtils;
+import org.jetbrains.annotations.NotNull;
 
 public class DropdownList extends AbstractSelectionList<DropdownEntry>{
 	public static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/textbox.png");
@@ -47,25 +48,24 @@ public class DropdownList extends AbstractSelectionList<DropdownEntry>{
 	}
 
 	@Override
-	public void updateNarration(NarrationElementOutput pNarrationElementOutput){}	@Override
-	public void centerScrollOn(DropdownEntry pEntry){
-		setScrollAmount(children().indexOf(pEntry) * itemHeight + itemHeight / 2 - (y1 - y0) / 2);
+	public void updateNarration(@NotNull final NarrationElementOutput narration) {}
+
+	@Override
+	public void centerScrollOn(@NotNull final DropdownEntry entry) {
+		setScrollAmount(children().indexOf(entry) * itemHeight + (double) itemHeight / 2 - (double) (y1 - y0) / 2);
 	}
-
-
-
 
 	@Override
 	public int getScrollbarPosition(){
 		return x1 - 6 - 3;
 	}
 
-
 	@Override
-	protected void renderBackground(PoseStack stack){
-		ScreenUtils.blitWithBorder(stack, BACKGROUND_TEXTURE, x0, y0 - 3, 0, 0, width, height + 6, 32, 32, 10, 10, 10, 10, (float)0);
+	protected void renderBackground(final PoseStack poseStack) {
+		// Renders the black background
+		ScreenUtils.blitWithBorder(poseStack, BACKGROUND_TEXTURE, x0, y0 - 3, 0, 0, width, height + 6, 32, 32, 10, 10, 10, 10, (float)0);
 
-		if(children().size() > 0){
+		if (!children().isEmpty()) {
 			RenderSystem.enableScissor((int)(x0 * Minecraft.getInstance().getWindow().getGuiScale()), (int)(Minecraft.getInstance().getWindow().getScreenHeight() - (y1 - 3) * Minecraft.getInstance().getWindow().getGuiScale()), (int)(width * Minecraft.getInstance().getWindow().getGuiScale()), (int)((height - 6) * Minecraft.getInstance().getWindow().getGuiScale()));
 		}
 	}
@@ -76,30 +76,28 @@ public class DropdownList extends AbstractSelectionList<DropdownEntry>{
 	}
 
 	@Override
-	public void render(PoseStack pPoseStack, int pMouseX, int pMouseY, float pPartialTicks){
-		renderBackground(pPoseStack);
+	public void render(@NotNull final PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
+		poseStack.translate(0, 0, -150);
+		renderBackground(poseStack);
+		poseStack.translate(0, 0, 150);
 		int i = getScrollbarPosition();
 		int j = i + 6;
 		Tesselator tesselator = Tesselator.getInstance();
 		BufferBuilder bufferbuilder = tesselator.getBuilder();
-		// Insecure modifications
-		// int j1 = getRowLeft();
-		// int k = y0 + 4 - (int)getScrollAmount();
-		// renderList(pPoseStack, j1, k, pMouseX, pMouseY, pPartialTicks);
-		renderList(pPoseStack, pMouseX, pMouseY, pPartialTicks);
-		if(children().size() > 0){
+		renderList(poseStack, mouseX, mouseY, partialTicks);
+
+		if (!children().isEmpty()) {
 			RenderSystem.disableScissor();
 		}
 
 		int k1 = getMaxScroll();
-		if(k1 > 0){
+
+		if (k1 > 0) {
 			RenderSystem.disableTexture();
 			RenderSystem.setShader(GameRenderer::getPositionColorShader);
 			int l1 = (int)((float)((y1 - y0) * (y1 - y0)) / (float)getMaxPosition());
 			l1 = Mth.clamp(l1, itemHeight, y1 - y0 - 8);
-			int i2 = (int)getScrollAmount() * (y1 - y0 - l1) / k1 + y0;
-			if(i2 < y0)
-				i2 = y0;
+			int i2 = Math.max((int) getScrollAmount() * (y1 - y0 - l1) / k1 + y0, y0);
 			double z = getBlitOffset() + 10;
 
 			bufferbuilder.begin(Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
@@ -118,13 +116,13 @@ public class DropdownList extends AbstractSelectionList<DropdownEntry>{
 			tesselator.end();
 		}
 
-		renderDecorations(pPoseStack, pMouseX, pMouseY);
+		renderDecorations(poseStack, mouseX, mouseY);
 		RenderSystem.enableTexture();
 		RenderSystem.disableBlend();
 	}
 
 	@Override
-	public boolean isMouseOver(double pMouseX, double pMouseY){
-		return visible && pMouseY >= (double)y0 - 3 && pMouseY <= (double)y1 + 3 && pMouseX >= (double)x0 && pMouseX <= (double)x1;
+	public boolean isMouseOver(double mouseX, double mouseY) {
+		return visible && mouseY >= (double) y0 - 3 && mouseY <= (double) y1 + 3 && mouseX >= (double) x0 && mouseX <= (double) x1;
 	}
 }

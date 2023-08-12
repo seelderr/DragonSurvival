@@ -11,44 +11,72 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-public class DSNumberFieldOption extends Option{
+public class DSNumberFieldOption extends Option {
 	private final Function<Options, Number> getter;
 	private final BiConsumer<Options, Number> setter;
 	private final Function<Minecraft, List<FormattedCharSequence>> tooltipSupplier;
 
 	private final Number min;
 	private final Number max;
+	private final boolean hasDecimals;
 
-	public DSNumberFieldOption(String key, Number min, Number max, Function<Options, Number> getter, BiConsumer<Options, Number> setter, Function<Minecraft, List<FormattedCharSequence>> pTooltipSupplier){
+	public DSNumberFieldOption(String key, Number min, Number max, Function<Options, Number> getter, BiConsumer<Options, Number> setter, Function<Minecraft, List<FormattedCharSequence>> tooltipSupplier, boolean hasDecimals) {
 		super(key);
 		this.getter = getter;
 		this.setter = setter;
 		this.min = min;
 		this.max = max;
-		tooltipSupplier = pTooltipSupplier;
+		this.hasDecimals = hasDecimals;
+		this.tooltipSupplier = tooltipSupplier;
 	}
 
 	@Override
 	public AbstractWidget createButton(Options gameSettings, int i, int i1, int i2){
 		TextField widget = new TextField(null, this, i, i1, i2, 18, getCaption()){
 			@Override
-			public boolean charTyped(char pCodePoint, int pModifiers){
-				boolean val = super.charTyped(pCodePoint, pModifiers);
-				if(val){
-					Number num = NumberUtils.createNumber(getValue());
-					if(num.doubleValue() > max.doubleValue())
-						setValue(max.toString());
-					else if(num.doubleValue() < min.doubleValue())
-						setValue(min.toString());
-					setter.accept(gameSettings, num);
+			public boolean charTyped(char codePoint, int modifiers) {
+				boolean isCharAllowed = super.charTyped(codePoint, modifiers);
+
+				if (isCharAllowed) {
+					Number number = NumberUtils.createNumber(getValue());
+
+					if (number.doubleValue() > max.doubleValue()) {
+						setValue(String.valueOf(hasDecimals ? max.doubleValue() : max.intValue()));
+					} else if (number.doubleValue() < min.doubleValue()) {
+						setValue(String.valueOf(hasDecimals ? min.doubleValue() : min.intValue()));
+					}
+
+					// In case min. or max. has been reached
+					number = NumberUtils.createNumber(getValue());
+
+					setter.accept(gameSettings, number); // FIXME :: Value can be higher than intended?
 				}
-				return val;
+
+				return isCharAllowed;
 			}
 		};
+
 		widget.tooltip = tooltipSupplier.apply(Minecraft.getInstance());
-		widget.setFilter(s -> NumberUtils.isCreatable(s) || s.isEmpty());
+		widget.setFilter(text -> {
+			if (text.isEmpty()) {
+				return true;
+			}
+
+			try {
+				if (hasDecimals) {
+					Double.parseDouble(text);
+				} else {
+					Integer.parseInt(text);
+				}
+			} catch (NumberFormatException e) {
+				return false;
+			}
+
+			return true;
+		});
 		widget.setMaxLength(10);
 		widget.setValue(getter.apply(Minecraft.getInstance().options).toString());
+
 		return widget;
 	}
 }
