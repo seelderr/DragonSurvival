@@ -2,22 +2,19 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.settings.widgets.ResourceTextFieldOption;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.OptionsList;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigType;
 import com.google.common.primitives.Primitives;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.suggestion.Suggestion;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.AbstractSelectionList;
-import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.TooltipAccessor;
 import net.minecraft.client.gui.components.events.GuiEventListener;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.blocks.BlockStateParser;
@@ -37,7 +34,6 @@ import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.client.gui.ScreenUtils;
-import net.minecraftforge.client.gui.widget.ExtendedButton;
 import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.StringUtils;
@@ -45,36 +41,38 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ResourceTextField extends EditBox implements TooltipAccessor {
 	private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/textbox.png");
 	private static final int maxItems = 6;
+
 	private final List<ResourceEntry> suggestions = new ArrayList<>();
-	boolean isItem;
-	boolean isBlock;
-	boolean isEntity;
-	boolean isEffect;
-	boolean isBiome;
-	private ResourceTextFieldOption option;
-	private String optionKey;
-	private ResourceEntry stack;
+	private final ResourceTextFieldOption textField;
+
 	protected DropdownList list;
-	private AbstractWidget renderButton;
 
-	private static ResourceTextField ACTIVE;
+	private ResourceEntry stack;
 
-	public ResourceTextField(String optionKey, ResourceTextFieldOption option, int pX, int pY, int pWidth, int pHeight, Component pMessage){
-		super(Minecraft.getInstance().font, pX, pY, pWidth, pHeight, pMessage);
+    private final String optionKey;
+	// TODO :: Enum?
+	private final boolean isItem;
+	private final boolean isBlock;
+	private final boolean isEntity;
+	private final boolean isEffect;
+	private final boolean isBiome;
+
+	public ResourceTextField(final String optionKey, final ResourceTextFieldOption textField, int x, int y, int width, int height, final Component component) {
+		super(Minecraft.getInstance().font, x, y, width, height, component);
 		setBordered(false);
-		this.option = option;
-		this.optionKey = optionKey;
+		this.textField = textField;
+        this.optionKey = optionKey;
 
-		Field fe = ConfigHandler.configFields.get(optionKey);
+		Field field = ConfigHandler.configFields.get(optionKey);
+		Class<?> checkType = Primitives.unwrap(field.getType());
 
-		Class<?> checkType = Primitives.unwrap(fe.getType());
-
-		if(fe.isAnnotationPresent(ConfigType.class)){
-			ConfigType type = fe.getAnnotation(ConfigType.class);
+		if (field.isAnnotationPresent(ConfigType.class)) {
+			ConfigType type = field.getAnnotation(ConfigType.class);
 			checkType = Primitives.unwrap(type.value());
 		}
 
@@ -84,14 +82,19 @@ public class ResourceTextField extends EditBox implements TooltipAccessor {
 		isEffect = MobEffect.class.isAssignableFrom(checkType);
 		isBiome = Biome.class.isAssignableFrom(checkType);
 
-		list = new DropdownList(x, y + height, width, 0, 23);
-		Minecraft.getInstance().screen.children.add(list); // TODO :: Remove when closing screen?
-
+		list = new DropdownList(this.x, this.y + this.height, this.width, 0, 23);
+		// So that when you click on the suggestion entries it fills the text field
+		Minecraft.getInstance().screen.children.add(list);
 		update();
 	}
 
 	@Override
 	public void render(@NotNull final PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
+		if (shouldBeHidden()) {
+			return;
+		}
+
+//		RenderSystem.enableDepthTest();
 		super.render(poseStack, mouseX, mouseY, partialTicks);
 
 		// Re-check if still focused
@@ -104,8 +107,21 @@ public class ResourceTextField extends EditBox implements TooltipAccessor {
 		}
 
 		if (list != null && list.visible) {
+//			poseStack.translate(0, 0, 200);
 			list.render(poseStack, mouseX, mouseY, partialTicks);
+//			poseStack.translate(0, 0, -200);
 		}
+
+//		RenderSystem.disableDepthTest();
+	}
+
+	@Override
+	public boolean isActive() {
+		if (shouldBeHidden()) {
+			return false;
+		}
+
+		return super.isActive();
 	}
 
 	public void update() {
@@ -116,7 +132,7 @@ public class ResourceTextField extends EditBox implements TooltipAccessor {
 			list.children().clear();
 		}
 
-		String resource = getValue().isEmpty() && option != null ? option.getter.apply(Minecraft.getInstance().options) : getValue();
+		String resource = getValue().isEmpty() && textField != null ? textField.getter.apply(Minecraft.getInstance().options) : getValue();
 
 		// Only keep the actual resource location (namespace:path)
 		while (StringUtils.countMatches(resource, ":") > 1) {
@@ -138,16 +154,16 @@ public class ResourceTextField extends EditBox implements TooltipAccessor {
 			return;
 		}
 
-		run(resource);
+		fillSuggestions(resource);
 
 		if (suggestions.isEmpty() && !resource.isEmpty()) {
-			run("");
+			fillSuggestions("");
 		}
 
-		suggestions.sort((entryOne, entryTwo) -> entryTwo.mod.compareTo(entryOne.mod));
-		suggestions.sort(Comparator.comparing(c -> c.id));
 		suggestions.removeIf(entry -> entry.id.isEmpty());
 		suggestions.removeIf(ResourceEntry::isEmpty);
+		suggestions.sort((entryOne, entryTwo) -> entryTwo.mod.compareTo(entryOne.mod));
+		suggestions.sort(Comparator.comparing(c -> c.id));
 
 		for (int i = 0; i < suggestions.size(); i++) {
 			ResourceEntry entry = suggestions.get(i);
@@ -162,7 +178,7 @@ public class ResourceTextField extends EditBox implements TooltipAccessor {
 		}
 	}
 
-	private void run(final String resource) {
+	private void fillSuggestions(final String resource) {
 		SuggestionsBuilder builder = new SuggestionsBuilder(resource, 0);
 
 		if (isItem) {
@@ -189,10 +205,7 @@ public class ResourceTextField extends EditBox implements TooltipAccessor {
 		List<String> suggestions = new ArrayList<>(sgs.getList().stream().map(Suggestion::getText).toList());
 
 		suggestions.removeIf(string -> string == null || string.isEmpty());
-		suggestions.forEach(string -> {
-			this.suggestions.addAll(parseCombinedList(Collections.singletonList(string), true));
-//			this.suggestions.addAll(parseCombinedList(Collections.singletonList(string), false));
-		});
+		suggestions.forEach(string -> this.suggestions.addAll(parseCombinedList(Collections.singletonList(string), true)));
 	}
 
 	/**
@@ -214,6 +227,7 @@ public class ResourceTextField extends EditBox implements TooltipAccessor {
 				continue;
 			}
 
+			// Go through the registries to create a ResourceEntry (which will contain relevant information, e.g. a fitting ItemStack to render in the text field)
 			if (isTag) {
 				if (isItem) {
 					try {
@@ -229,7 +243,7 @@ public class ResourceTextField extends EditBox implements TooltipAccessor {
 
 				if (isEntity) {
                     try {
-                        results.add(new ResourceEntry(value, Objects.requireNonNull(ForgeRegistries.ENTITY_TYPES.tags().getTag(TagKey.create(Registry.ENTITY_TYPE_REGISTRY, location))).stream().map(s -> new ItemStack(ForgeSpawnEggItem.fromEntityType(s))).toList(), true));
+                        results.add(new ResourceEntry(value, Objects.requireNonNull(ForgeRegistries.ENTITY_TYPES.tags().getTag(TagKey.create(Registry.ENTITY_TYPE_REGISTRY, location))).stream().map(type -> new ItemStack(ForgeSpawnEggItem.fromEntityType(type))).toList(), true));
                     } catch (Exception ignored) { /* Nothing to do */ }
                 }
 			}
@@ -304,90 +318,58 @@ public class ResourceTextField extends EditBox implements TooltipAccessor {
 	}
 
 	@Override
-	protected boolean clicked(double mouseX, double mouseY) {
-		ACTIVE = this;
-		return super.clicked(mouseX, mouseY);
+	public void setFocus(boolean focus) {
+		if (shouldBeHidden()) {
+			return;
+		}
+
+		super.setFocus(focus);
+        list.visible = focus && Minecraft.getInstance().screen != null && !Minecraft.getInstance().screen.children.isEmpty();
+
+        if (Minecraft.getInstance().screen == null) {
+            DragonSurvivalMod.LOGGER.warn("Screen was not available while trying to focus 'ResourceTextField' [" + optionKey + "]");
+            return;
+        }
+
+		// Hide suggestion windows which are no longer relevant
+		Minecraft.getInstance().screen.children.forEach(widget -> {
+			if (widget instanceof DropdownList dropdownList && dropdownList != list) {
+				if (list.visible && dropdownList.visible) {
+					dropdownList.visible = false;
+				}
+			}
+		});
 	}
 
-	@Override
-	public void setFocus(boolean focus) {
-		super.setFocus(focus);
+	/** Avoid overlapping suggestion entries */
+	private boolean shouldBeHidden() {
+		AtomicBoolean shouldBeHidden = new AtomicBoolean(false);
 
-		Screen screen = Minecraft.getInstance().screen;
+		Minecraft.getInstance().screen.children.forEach(widget -> {
+			if (widget instanceof OptionsList optionsList) {
+				optionsList.children().forEach(listEntry -> {
+					GuiEventListener entry = listEntry.children().get(0);
 
-		// FIXME :: Instead of adding and removing children, do it all at once and then set them to visible / hide them?
-
-		if (focus) {
-//			list = new DropdownList(x, y + height, width, Math.min(suggestions.size(), maxItems) * height, 23);
-//			update();
-
-			boolean hasBorder = false;
-
-			if (!screen.children.isEmpty()) {
-//				screen.children.add(0, list);
-//				screen.children.add(list);
-
-				list.visible = true;
-
-//				screen.renderables.add(0, list);
-//				screen.renderables.add(list);
-
-				for (GuiEventListener child : screen.children) {
-					if (child instanceof AbstractSelectionList<?> abstractSelectionList) {
-						if (abstractSelectionList.renderTopAndBottom) {
-							hasBorder = true;
-							break;
+					if (entry instanceof ResourceTextField resourceTextField && resourceTextField != this) {
+						if (resourceTextField.list.visible && !resourceTextField.list.children().isEmpty()) {
+							if (y > resourceTextField.list.getMinY() - 23 && y < resourceTextField.list.getMaxY()) {
+								shouldBeHidden.set(true);
+							}
 						}
 					}
-				}
-			} else {
-				list.visible = false;
-//				screen.children.add(list);
-//				screen.renderables.add(list);
+				});
 			}
+		});
 
-			boolean finalHasBorder = hasBorder;
-
-			renderButton = new ExtendedButton(0, 0, 0, 0, Component.empty(), null) {
-				@Override
-				public void render(@NotNull final PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
-					active = visible = false;
-
-					if (list != null) {
-						list.visible = ResourceTextField.this.visible;
-
-						if (finalHasBorder) {
-							RenderSystem.enableScissor(0, (int) (32 * Minecraft.getInstance().getWindow().getGuiScale()), Minecraft.getInstance().getWindow().getScreenWidth(), Minecraft.getInstance().getWindow().getScreenHeight() - (int) (32 * Minecraft.getInstance().getWindow().getGuiScale()) * 2);
-						}
-
-						if (list.visible) {
-							list.render(poseStack, mouseX, mouseY, partialTicks);
-						}
-
-						if (finalHasBorder) {
-							RenderSystem.disableScissor();
-						}
-					}
-				}
-			};
-
-//			screen.children.add(renderButton);
-//			screen.renderables.add(renderButton);
-		} else {
-//			screen.children.removeIf(s -> s == list);
-//			screen.children.removeIf(s -> s == renderButton);
-
-//			screen.renderables.removeIf(s -> s == list);
-//			screen.renderables.removeIf(s -> s == renderButton);
-
-			list.visible = false;
-
-//			list = null;
-		}
+		return shouldBeHidden.get();
 	}
 
 	@Override
 	public void renderButton(@NotNull final PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
+		if (shouldBeHidden()) {
+			return;
+		}
+
 		int v = isHovered ? 32 : 0;
 
 		// Background box for the list entries
@@ -400,17 +382,13 @@ public class ResourceTextField extends EditBox implements TooltipAccessor {
 			itemRenderer.renderGuiItemDecorations(Minecraft.getInstance().font, stack.getDisplayItem(), x + 3, y + 3);
 		}
 
-		if (!isFocused()) {
-//			suggestions.clear();
-		}
-
 		x += 25;
 		y += 6;
 
 		super.renderButton(poseStack, mouseX, mouseY, partialTicks);
 		setTextColor(14737632);
 
-		if (getValue().isEmpty()) {
+		if (getValue().isEmpty()) { // FIXME :: What is this for?
 			boolean isFocus = isFocused();
 			setFocus(false);
 			int cursor = getCursorPosition();

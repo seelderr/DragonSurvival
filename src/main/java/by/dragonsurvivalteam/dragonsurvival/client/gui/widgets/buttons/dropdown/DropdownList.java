@@ -16,12 +16,12 @@ import net.minecraft.util.Mth;
 import net.minecraftforge.client.gui.ScreenUtils;
 import org.jetbrains.annotations.NotNull;
 
-public class DropdownList extends AbstractSelectionList<DropdownEntry>{
+public class DropdownList extends AbstractSelectionList<DropdownEntry> {
 	public static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/textbox.png");
 	public int listWidth;
 	public boolean visible;
 
-	public DropdownList(int x, int y, int xSize, int ySize, int itemHeight){
+	public DropdownList(int x, int y, int xSize, int ySize, int itemHeight) {
 		super(Minecraft.getInstance(), 0, 0, 0, 0, itemHeight);
 		listWidth = xSize;
 		setRenderBackground(false);
@@ -43,12 +43,12 @@ public class DropdownList extends AbstractSelectionList<DropdownEntry>{
 	}
 
 	@Override
-	public int addEntry(DropdownEntry p_230513_1_){
-		return super.addEntry(p_230513_1_);
+	public int addEntry(@NotNull final DropdownEntry entry) {
+		return super.addEntry(entry);
 	}
 
 	@Override
-	public void updateNarration(@NotNull final NarrationElementOutput narration) {}
+	public void updateNarration(@NotNull final NarrationElementOutput narration) { /* Nothing to do */ }
 
 	@Override
 	public void centerScrollOn(@NotNull final DropdownEntry entry) {
@@ -61,7 +61,7 @@ public class DropdownList extends AbstractSelectionList<DropdownEntry>{
 	}
 
 	@Override
-	protected void renderBackground(final PoseStack poseStack) {
+	protected void renderBackground(@NotNull final PoseStack poseStack) {
 		// Renders the black background
 		ScreenUtils.blitWithBorder(poseStack, BACKGROUND_TEXTURE, x0, y0 - 3, 0, 0, width, height + 6, 32, 32, 10, 10, 10, 10, (float)0);
 
@@ -71,12 +71,16 @@ public class DropdownList extends AbstractSelectionList<DropdownEntry>{
 	}
 
 	@Override
-	protected int getMaxPosition(){
+	protected int getMaxPosition() {
 		return getItemCount() * itemHeight + headerHeight + itemHeight / 4;
 	}
 
 	@Override
 	public void render(@NotNull final PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
+		if (!visible) {
+			return;
+		}
+
 		poseStack.translate(0, 0, -150);
 		renderBackground(poseStack);
 		poseStack.translate(0, 0, 150);
@@ -95,9 +99,9 @@ public class DropdownList extends AbstractSelectionList<DropdownEntry>{
 		if (k1 > 0) {
 			RenderSystem.disableTexture();
 			RenderSystem.setShader(GameRenderer::getPositionColorShader);
-			int l1 = (int)((float)((y1 - y0) * (y1 - y0)) / (float)getMaxPosition());
+			int l1 = (int) ((float) ((y1 - y0) * (y1 - y0)) / (float) getMaxPosition());
 			l1 = Mth.clamp(l1, itemHeight, y1 - y0 - 8);
-			int i2 = Math.max((int) getScrollAmount() * (y1 - y0 - l1) / k1 + y0, y0);
+			int i2 = Math.max(y0, (int) getScrollAmount() * (y1 - y0 - l1) / k1 + y0);
 			double z = getBlitOffset() + 10;
 
 			bufferbuilder.begin(Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
@@ -124,5 +128,13 @@ public class DropdownList extends AbstractSelectionList<DropdownEntry>{
 	@Override
 	public boolean isMouseOver(double mouseX, double mouseY) {
 		return visible && mouseY >= (double) y0 - 3 && mouseY <= (double) y1 + 3 && mouseX >= (double) x0 && mouseX <= (double) x1;
+	}
+
+	public int getMinY() {
+		return y0;
+	}
+
+	public int getMaxY() {
+		return y1;
 	}
 }

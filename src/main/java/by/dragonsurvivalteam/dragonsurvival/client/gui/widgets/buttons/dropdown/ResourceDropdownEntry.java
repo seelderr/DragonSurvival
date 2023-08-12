@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown
 
 import by.dragonsurvivalteam.dragonsurvival.client.util.TooltipRendering;
 import com.google.common.collect.ImmutableList;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -14,13 +15,13 @@ import net.minecraft.world.item.TooltipFlag.Default;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class ResourceDropdownEntry extends DropdownEntry {  // TODO :: Right click -> mouseClicked event handler -> ConcurrentModification
+public class ResourceDropdownEntry extends DropdownEntry {
 	private final int num;
 	private final ResourceEntry entry;
 	private final Consumer<ResourceEntry> setter;
@@ -40,9 +41,9 @@ public class ResourceDropdownEntry extends DropdownEntry {  // TODO :: Right cli
 	}
 
 	@Override
-    public void render(@NotNull final PoseStack poseStack, int pIndex, int pTop, int pLeft, int pWidth, int pHeight, int pMouseX, int pMouseY, boolean pIsMouseOver, float pPartialTicks) {
+    public void render(@NotNull final PoseStack poseStack, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean isMouseOver, float partialTicks) {
         if (button == null) {
-            button = new ExtendedButton(list.getLeft() + 3, 0, list.getWidth() - 12, pHeight, null, null) {
+            button = new ExtendedButton(list.getLeft() + 3, 0, list.getWidth() - 12, height, null, null) {
                 private int tick = 0;
 
                 @Override
@@ -74,6 +75,11 @@ public class ResourceDropdownEntry extends DropdownEntry {  // TODO :: Right cli
                         return;
                     }
 
+                    // Make sure it gets rendered above the other resource text fields
+                    poseStack.pushPose();
+                    RenderSystem.enableDepthTest();
+                    poseStack.translate(0, 0, 200);
+
                     if (entry != null) {
                         if (tick >= 1) {
                             entry.tick();
@@ -82,12 +88,12 @@ public class ResourceDropdownEntry extends DropdownEntry {  // TODO :: Right cli
                             tick++;
                         }
 
-                        poseStack.pushPose();
-
-                        int color = new Color(0.1F, 0.1F, 0.1F, 1F).getRGB();
+                        int color;
 
                         if (num % 2 == 0) {
                             color = new Color(0.2F, 0.2F, 0.2F, 1F).getRGB();
+                        } else {
+                             color = new Color(0.1F, 0.1F, 0.1F, 1F).getRGB();
                         }
 
                         if (isHovered) {
@@ -96,8 +102,6 @@ public class ResourceDropdownEntry extends DropdownEntry {  // TODO :: Right cli
 
                         // Draws the background per entry // FIXME :: Currently overalys the item tooltip
                         Gui.fill(poseStack, x, y, x + width, y + height, color);
-
-//                        poseStack.translate(0, 0, 200);
 
                         String text = entry.id;
                         Minecraft.getInstance().font.drawShadow(poseStack, Component.empty().append(Minecraft.getInstance().font.substrByWidth(Component.empty().append(text), width - 20).getString()), x + 25, y + 5, DyeColor.WHITE.getTextColor());
@@ -123,14 +127,15 @@ public class ResourceDropdownEntry extends DropdownEntry {  // TODO :: Right cli
                             }
                         }
 
+                        RenderSystem.disableDepthTest();
                         poseStack.popPose();
                     }
                 }
             };
         } else {
-            button.y = pTop;
+            button.y = top;
             button.visible = source.visible;
-            button.render(poseStack, pMouseX, pMouseY, pPartialTicks);
+            button.render(poseStack, mouseX, mouseY, partialTicks);
         }
     }
 

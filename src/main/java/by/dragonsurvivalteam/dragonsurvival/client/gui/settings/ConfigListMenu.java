@@ -22,7 +22,11 @@ import net.minecraft.client.gui.screens.OptionsSubScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,7 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** Handles the config options / entries */
-public class ConfigListMenu extends OptionsSubScreen{
+public class ConfigListMenu extends OptionsSubScreen {
 	private final ConfigValue value;
 	private final ConfigSide side;
 	private final String configKey;
@@ -41,7 +45,7 @@ public class ConfigListMenu extends OptionsSubScreen{
 
 	private List<OptionListEntry> oldVals;
 
-	private boolean isItems = false;
+	private boolean isResouce = false;
 
 	// FIXME :: valueSpec and configKey seem to get the same value - why are there two fields for it?
 	public ConfigListMenu(final Screen screen, final Options options, final Component component, final String valueSpec, final ConfigValue<?> configValue, final ConfigSide side, final String configKey) {
@@ -69,7 +73,8 @@ public class ConfigListMenu extends OptionsSubScreen{
 			}
 		};
 
-		if(!isItems) {
+		// Entries that support suggestions (and rendering ItemStacks next to their name)
+		if (!isResouce) {
 			Field field = ConfigHandler.configFields.get(valueSpec);
 			Class<?> checkType = Primitives.unwrap(field.getType());
 
@@ -78,8 +83,8 @@ public class ConfigListMenu extends OptionsSubScreen{
 				checkType = Primitives.unwrap(type.value());
 			}
 
-			if (ItemLike.class.isAssignableFrom(checkType)) {
-				isItems = true;
+			if (ItemLike.class.isAssignableFrom(checkType) || checkType == Block.class || checkType == EntityType.class || checkType == MobEffect.class || checkType == Biome.class) {
+				isResouce = true;
 			}
 		}
 
@@ -165,7 +170,7 @@ public class ConfigListMenu extends OptionsSubScreen{
 	private void createOption(final String text) {
 		Option option;
 
-		if (isItems) {
+		if (isResouce) {
 			option = new ResourceTextFieldOption(valueSpec, text, settings -> text);
 		} else {
 			option = new DSTextBoxOption(valueSpec, text, settings -> text);
