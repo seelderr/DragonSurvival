@@ -5,7 +5,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.util.FormattedCharSequence;
-import org.apache.commons.lang3.math.NumberUtils;
 
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -32,7 +31,7 @@ public class DSNumberFieldOption extends Option {
 
 	@Override
 	public AbstractWidget createButton(Options gameSettings, int i, int i1, int i2){
-		TextField widget = new TextField(null, this, i, i1, i2, 18, getCaption()){
+		TextField widget = new TextField(i, i1, i2, 18, getCaption()){
 			@Override
 			public boolean charTyped(char codePoint, int modifiers) {
 				boolean isCharAllowed = super.charTyped(codePoint, modifiers);

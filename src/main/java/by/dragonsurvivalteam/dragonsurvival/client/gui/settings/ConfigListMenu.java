@@ -171,7 +171,7 @@ public class ConfigListMenu extends OptionsSubScreen {
 		if (isResouce) {
 			option = new ResourceTextFieldOption(configOption.key(), text, settings -> text);
 		} else {
-			option = new DSTextBoxOption(configOption.key(), text, settings -> text);
+			option = new DSTextBoxOption(text, settings -> text);
 		}
 
 		AbstractWidget widget = option.createButton(minecraft.options, 32, 0, list.getScrollbarPosition() - 32 - 60);
