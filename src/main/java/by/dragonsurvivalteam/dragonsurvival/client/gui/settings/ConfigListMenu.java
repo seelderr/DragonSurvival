@@ -8,6 +8,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.OptionListE
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.OptionsList;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.TextBoxEntry;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigType;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
@@ -38,23 +39,20 @@ import java.util.List;
 public class ConfigListMenu extends OptionsSubScreen {
 	private final ConfigValue value;
 	private final ConfigSide side;
-	private final String configKey;
-	private final String valueSpec;
+	private final ConfigOption configOption;
 
 	private OptionsList list;
-
 	private List<OptionListEntry> oldVals;
 
 	private boolean isResouce = false;
 
 	// FIXME :: valueSpec and configKey seem to get the same value - why are there two fields for it?
-	public ConfigListMenu(final Screen screen, final Options options, final Component component, final String valueSpec, final ConfigValue<?> configValue, final ConfigSide side, final String configKey) {
-		super(screen, options, component);
+	public ConfigListMenu(final Screen screen, final Options options, final Component title, final ConfigValue<?> configValue, final ConfigSide side, final ConfigOption configOption) {
+		super(screen, options, title);
 		this.value = configValue;
 		this.side = side;
-		this.configKey = configKey;
-		this.valueSpec = valueSpec;
-		title = component;
+		this.configOption = configOption;
+		this.title = title;
 	}
 
 	@Override
@@ -75,7 +73,7 @@ public class ConfigListMenu extends OptionsSubScreen {
 
 		// Entries that support suggestions (and rendering ItemStacks next to their name)
 		if (!isResouce) {
-			Field field = ConfigHandler.configFields.get(valueSpec);
+			Field field = ConfigHandler.configFields.get(configOption.key());
 			Class<?> checkType = Primitives.unwrap(field.getType());
 
 			if (field.isAnnotationPresent(ConfigType.class)) {
@@ -96,7 +94,7 @@ public class ConfigListMenu extends OptionsSubScreen {
 					} else if (element instanceof Number number) {
 						createOption(number.toString());
 					} else {
-						DragonSurvivalMod.LOGGER.warn("Invalid configuration element in [" + configKey + "]");
+						DragonSurvivalMod.LOGGER.warn("Invalid configuration element in [" + configOption.key() + "]");
 					}
 				});
 			}
@@ -136,8 +134,8 @@ public class ConfigListMenu extends OptionsSubScreen {
 			boolean isValid = true;
 
 			for (String configValue : output) {
-				if (!ConfigHandler.checkConfig(configKey, configValue)) {
-					DragonSurvivalMod.LOGGER.warn("Config entry [" + configValue + "] is invalid for [" + configKey + "]");
+				if (!ConfigHandler.checkConfig(configOption.key(), configValue)) {
+					DragonSurvivalMod.LOGGER.warn("Config entry [" + configValue + "] is invalid for [" + configOption.key() + "]");
 					isValid = false;
 					break;
 				}
@@ -147,7 +145,7 @@ public class ConfigListMenu extends OptionsSubScreen {
 				value.set(output);
 
 				if (side == ConfigSide.SERVER) {
-					NetworkHandler.CHANNEL.sendToServer(new SyncListConfig(configKey, output));
+					NetworkHandler.CHANNEL.sendToServer(new SyncListConfig(ConfigHandler.createConfigPath(configOption), output));
 				}
 
 				minecraft.setScreen(lastScreen);
@@ -171,9 +169,9 @@ public class ConfigListMenu extends OptionsSubScreen {
 		Option option;
 
 		if (isResouce) {
-			option = new ResourceTextFieldOption(valueSpec, text, settings -> text);
+			option = new ResourceTextFieldOption(configOption.key(), text, settings -> text);
 		} else {
-			option = new DSTextBoxOption(valueSpec, text, settings -> text);
+			option = new DSTextBoxOption(configOption.key(), text, settings -> text);
 		}
 
 		AbstractWidget widget = option.createButton(minecraft.options, 32, 0, list.getScrollbarPosition() - 32 - 60);

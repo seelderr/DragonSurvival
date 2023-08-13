@@ -50,7 +50,7 @@ public class AltarTypeButton extends Button implements TooltipRender{
 
 	@Override
 	public void renderToolTip(PoseStack pPoseStack, int pMouseX, int pMouseY){
-		if(atTheTopOrBottom) TooltipRendering.drawHoveringText(pPoseStack, altarDragonInfoLocalized(type == null ? "human" : type.getTypeName().toLowerCase() + "_dragon", type == null ? Collections.emptyList() : DragonFoodHandler.getSafeEdibleFoods(type)), pMouseX, pMouseY);
+		if(atTheTopOrBottom) TooltipRendering.drawHoveringText(pPoseStack, altarDragonInfoLocalized(type == null ? "human" : type.getTypeName().toLowerCase() + "_dragon", type == null ? Collections.emptyList() : DragonFoodHandler.getEdibleFoods(type)), pMouseX, pMouseY);
 	}
 
 	private ArrayList<Component> altarDragonInfoLocalized(String dragonType, List<Item> foodList){

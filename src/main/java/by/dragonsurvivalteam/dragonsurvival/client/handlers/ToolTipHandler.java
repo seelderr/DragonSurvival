@@ -40,21 +40,24 @@ import java.awt.*;
 import java.util.List;
 import java.util.Objects;
 
-@Mod.EventBusSubscriber( Dist.CLIENT )
+@Mod.EventBusSubscriber(Dist.CLIENT)
 public class ToolTipHandler{
 	private static final ResourceLocation tooltip_1 = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/magic_tips_0.png");
 	private static final ResourceLocation tooltip_2 = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/magic_tips_1.png");
 
-	@ConfigOption( side = ConfigSide.CLIENT, category = "tooltips", key = "tooltipChanges", comment = "Should the mod be allowed ot change the color and appearance of tooltips?" )
+	@ConfigOption(side = ConfigSide.CLIENT, category = "tooltips", key = "tooltipChanges", comment = "Should the mod be allowed ot change the color and appearance of tooltips?")
 	public static Boolean tooltipChanges = true;
 
-	@ConfigOption( side = ConfigSide.CLIENT, category = "tooltips", key = "dragonFoodTooltips", comment = "Should dragon foods have their tooltip color changed to show which type of dragon can consume it?" )
+	@ConfigOption(side = ConfigSide.CLIENT, category = "tooltips", key = "hideUnsafeFood", comment = "Should the tooltip be hidden for unsafe (negative effects) food?")
+	public static Boolean hideUnsafeFood = true;
+
+	@ConfigOption(side = ConfigSide.CLIENT, category = "tooltips", key = "dragonFoodTooltips", comment = "Should dragon foods have their tooltip color changed to show which type of dragon can consume it?")
 	public static Boolean dragonFoodTooltips = true;
 
-	@ConfigOption( side = ConfigSide.CLIENT, category = "tooltips", key = "helpTooltips", comment = "Should the effect of the help tooltips be enabled?" )
+	@ConfigOption(side = ConfigSide.CLIENT, category = "tooltips", key = "helpTooltips", comment = "Should the effect of the help tooltips be enabled?")
 	public static Boolean helpTooltips = true;
 
-	@ConfigOption( side = ConfigSide.CLIENT, category = "tooltips", key = "alwaysShowHelpTooltip", comment = "Always show the help tooltip border" )
+	@ConfigOption(side = ConfigSide.CLIENT, category = "tooltips", key = "alwaysShowHelpTooltip", comment = "Always show the help tooltip border")
 	public static Boolean alwaysShowHelpTooltip = false;
 
 	@ConfigOption(side = ConfigSide.CLIENT, category = "tooltips", key = "hideAppleskinTooltip", comment = "Hide the AppleSkin tooltip if you're a dragon. The tooltip will only show correct food values for humans.")
@@ -73,15 +76,15 @@ public class ToolTipHandler{
 			Item item = tooltipEvent.getItemStack().getItem();
 			List<Component> toolTip = tooltipEvent.getToolTip();
 
-			if(DragonFoodHandler.getSafeEdibleFoods(DragonTypes.CAVE).contains(item)){
+			if(DragonFoodHandler.getEdibleFoods(DragonTypes.CAVE).contains(item)){
 				toolTip.add(createFoodTooltip(item, DragonTypes.CAVE, ChatFormatting.RED, "\uEA02", "\uEA05"));
 			}
 
-			if(DragonFoodHandler.getSafeEdibleFoods(DragonTypes.FOREST).contains(item)){
+			if(DragonFoodHandler.getEdibleFoods(DragonTypes.FOREST).contains(item)){
 				toolTip.add(createFoodTooltip(item, DragonTypes.FOREST, ChatFormatting.GREEN, "\uEA01", "\uEA04"));
 			}
 
-			if(DragonFoodHandler.getSafeEdibleFoods(DragonTypes.SEA).contains(item)){
+			if(DragonFoodHandler.getEdibleFoods(DragonTypes.SEA).contains(item)){
 				toolTip.add(createFoodTooltip(item, DragonTypes.SEA, ChatFormatting.DARK_AQUA, "\uEA03", "\uEA06"));
 			}
 		}
@@ -299,9 +302,9 @@ public class ToolTipHandler{
 
 		ItemStack stack = event.getItemStack();
 
-		boolean isSeaFood = dragonFoodTooltips && !stack.isEmpty() && DragonFoodHandler.getSafeEdibleFoods(DragonTypes.SEA).contains(stack.getItem());
-		boolean isForestFood = dragonFoodTooltips && !stack.isEmpty() && DragonFoodHandler.getSafeEdibleFoods(DragonTypes.FOREST).contains(stack.getItem());
-		boolean isCaveFood = dragonFoodTooltips && !stack.isEmpty() && DragonFoodHandler.getSafeEdibleFoods(DragonTypes.CAVE).contains(stack.getItem());
+		boolean isSeaFood = dragonFoodTooltips && !stack.isEmpty() && DragonFoodHandler.getEdibleFoods(DragonTypes.SEA).contains(stack.getItem());
+		boolean isForestFood = dragonFoodTooltips && !stack.isEmpty() && DragonFoodHandler.getEdibleFoods(DragonTypes.FOREST).contains(stack.getItem());
+		boolean isCaveFood = dragonFoodTooltips && !stack.isEmpty() && DragonFoodHandler.getEdibleFoods(DragonTypes.CAVE).contains(stack.getItem());
 		int foodCount = (isSeaFood ? 1 : 0) + (isForestFood ? 1 : 0) + (isCaveFood ? 1 : 0);
 
 		boolean isFood = foodCount == 1;

@@ -206,7 +206,6 @@ public class ResourceTextField extends EditBox implements TooltipAccessor {
 		List<String> suggestions = new ArrayList<>(sgs.getList().stream().map(Suggestion::getText).toList());
 
 		suggestions.removeIf(string -> string == null || string.isEmpty());
-		// TODO :: Currently does not suggest tags?
 		suggestions.forEach(string -> this.suggestions.addAll(parseCombinedList(Collections.singletonList(string), true)));
 	}
 
@@ -402,7 +401,8 @@ public class ResourceTextField extends EditBox implements TooltipAccessor {
 		super.renderButton(poseStack, mouseX, mouseY, partialTicks);
 		setTextColor(14737632);
 
-		if (getValue().isEmpty()) { // FIXME :: What is this for?
+		// Sets the prompt text
+		if (getValue().isEmpty() && !getMessage().toString().isBlank()) {
 			boolean isFocus = isFocused();
 			setFocus(false);
 			int cursor = getCursorPosition();

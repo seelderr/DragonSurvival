@@ -60,7 +60,7 @@ public class ConfigHandler{
 	public static HashMap<String, ConfigOption> configObjects = new HashMap<>();
 	public static HashMap<String, Field> configFields = new HashMap<>();
 	public static HashMap<ConfigSide, List<String>> configs = new HashMap<>();
-	public static HashMap<String, ForgeConfigSpec.ConfigValue> configValues = new HashMap<>();
+	public static HashMap<String, ForgeConfigSpec.ConfigValue<?>> configValues = new HashMap<>();
 
 	private static List<Field> getFields() {
 		List<Field> instances = new ArrayList<>();
@@ -463,5 +463,21 @@ public class ConfigHandler{
 		}
 
 		return list;
+	}
+
+	public static String createConfigPath(final String[] category, final String key) {
+		StringBuilder path = new StringBuilder();
+
+		for (String pathElement : category) {
+			path.append(pathElement).append(".");
+		}
+
+		path.append(key);
+
+		return path.toString();
+	}
+
+	public static String createConfigPath(final ConfigOption configOption) {
+		return createConfigPath(configOption.category(), configOption.key());
 	}
 }

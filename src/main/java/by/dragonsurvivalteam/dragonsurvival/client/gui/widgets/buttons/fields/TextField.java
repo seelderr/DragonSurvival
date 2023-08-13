@@ -40,6 +40,7 @@ public class TextField extends EditBox implements TooltipAccessor{
 		y += 6;
 		super.renderButton(pPoseStack, pMouseX, pMouseY, pPartialTicks);
 
+		// Sets the prompt text
 		if(getValue().isEmpty()){
 			boolean isFocus = isFocused();
 			setFocus(false);

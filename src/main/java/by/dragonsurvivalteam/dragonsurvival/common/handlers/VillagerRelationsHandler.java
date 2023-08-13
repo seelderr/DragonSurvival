@@ -2,7 +2,10 @@ package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.VillageRelationShips;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.*;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.DragonHunter;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.KnightEntity;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.PrinceHorseEntity;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.PrincesHorseEntity;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.FollowMobGoal;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
@@ -12,7 +15,6 @@ import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import by.dragonsurvivalteam.dragonsurvival.util.SpawningUtils;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -31,8 +33,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.item.trading.MerchantOffers;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.Biomes;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
@@ -221,11 +222,8 @@ public class VillagerRelationsHandler{
 						if(villageRelationShips.hunterSpawnDelay == 0){
 							BlockPos spawnPosition = SpawningUtils.findRandomSpawnPosition(player, 1, 4, 14.0F);
 							if(spawnPosition != null && spawnPosition.getY() >= ServerConfig.riderSpawnLowerBound && spawnPosition.getY() <= ServerConfig.riderSpawnUpperBound){
-								Optional<ResourceKey<Biome>> biomeRegistryKey = serverWorld.getBiome(spawnPosition).unwrapKey();
-								if(biomeRegistryKey.isPresent()){
-									if(biomeRegistryKey.get() == Biomes.OCEAN){
-										return;
-									}
+								if (serverWorld.getBiome(spawnPosition).is(Tags.Biomes.IS_WATER)) {
+									return;
 								}
 								int levelOfEvil = computeLevelOfEvil(player);
 								for(int i = 0; i < levelOfEvil; i++){
@@ -325,10 +323,8 @@ public class VillagerRelationsHandler{
 						if(player != null && player.isAlive() && !player.isCreative() && !player.isSpectator()){
 							BlockPos blockPos = SpawningUtils.findRandomSpawnPosition(player, 1, 2, 20.0F);
 							if(blockPos != null && blockPos.getY() >= ServerConfig.riderSpawnLowerBound && blockPos.getY() <= ServerConfig.riderSpawnUpperBound && serverWorld.isVillage(blockPos)){
-								Optional<ResourceKey<Biome>> biomeRegistryKey = serverWorld.getBiome(blockPos).unwrapKey();
-								if(biomeRegistryKey.isPresent()){
-									if(biomeRegistryKey.get() == Biomes.OCEAN)
-										return;
+								if (serverWorld.getBiome(blockPos).is(Tags.Biomes.IS_WATER)) {
+									return;
 								}
 								EntityType<? extends PrincesHorseEntity> entityType = world.random.nextBoolean() ? DSEntities.PRINCESS_ON_HORSE : DSEntities.PRINCE_ON_HORSE;
 								PrincesHorseEntity princessEntity = entityType.create(world);

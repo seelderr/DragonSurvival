@@ -37,19 +37,33 @@ public class DSNumberFieldOption extends Option {
 			public boolean charTyped(char codePoint, int modifiers) {
 				boolean isCharAllowed = super.charTyped(codePoint, modifiers);
 
-				if (isCharAllowed) {
-					Number number = NumberUtils.createNumber(getValue());
+				if (isCharAllowed && !getValue().isBlank()) {
+					Number number = hasDecimals ? Double.parseDouble(getValue()) : Long.parseLong(getValue());
 
+					// Have to explicitly storing non-decimal values in a long field, otherwise they still keep '.0' which causes problems
 					if (number.doubleValue() > max.doubleValue()) {
-						setValue(String.valueOf(hasDecimals ? max.doubleValue() : max.intValue()));
+						if (hasDecimals) {
+							double value = max.doubleValue();
+							setValue(String.valueOf(value));
+							number = value;
+						} else {
+							long value = max.longValue();
+							setValue(String.valueOf(value));
+							number = value;
+						}
 					} else if (number.doubleValue() < min.doubleValue()) {
-						setValue(String.valueOf(hasDecimals ? min.doubleValue() : min.intValue()));
+						if (hasDecimals) {
+							double value = min.doubleValue();
+							setValue(String.valueOf(value));
+							number = value;
+						} else {
+							long value = min.longValue();
+							setValue(String.valueOf(value));
+							number = value;
+						}
 					}
 
-					// In case min. or max. has been reached
-					number = NumberUtils.createNumber(getValue());
-
-					setter.accept(gameSettings, number); // FIXME :: Value can be higher than intended?
+					setter.accept(gameSettings, number);
 				}
 
 				return isCharAllowed;
@@ -66,7 +80,7 @@ public class DSNumberFieldOption extends Option {
 				if (hasDecimals) {
 					Double.parseDouble(text);
 				} else {
-					Integer.parseInt(text);
+					Long.parseLong(text);
 				}
 			} catch (NumberFormatException e) {
 				return false;

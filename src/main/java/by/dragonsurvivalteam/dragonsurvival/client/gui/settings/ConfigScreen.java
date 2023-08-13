@@ -174,8 +174,11 @@ public abstract class ConfigScreen extends OptionsSubScreen{
 			ConfigRange range = field.isAnnotationPresent(ConfigRange.class) ? field.getAnnotation(ConfigRange.class) : null;
 			boolean hasDecimals = field.getType() == Double.class || field.getType() == Float.class;
 
-			BigDecimal min = BigDecimal.valueOf(range != null ? range.min() : -1).setScale(5, RoundingMode.FLOOR);
-			BigDecimal max = BigDecimal.valueOf(range != null ? range.max() : Integer.MAX_VALUE).setScale(5, RoundingMode.FLOOR);
+//			BigDecimal min = BigDecimal.valueOf(range != null ? range.min() : -1).setScale(5, RoundingMode.FLOOR);
+//			BigDecimal max = BigDecimal.valueOf(range != null ? range.max() : Integer.MAX_VALUE).setScale(5, RoundingMode.FLOOR);
+
+			Number min = range != null ? range.min() : Integer.MIN_VALUE;
+			Number max = range != null ? range.max() : Integer.MAX_VALUE;
 
 			Component tooltip = Component.literal(tooltip0);
 			Class<?> checkType = Primitives.unwrap(field.getType());
@@ -195,14 +198,14 @@ public abstract class ConfigScreen extends OptionsSubScreen{
 
 				Function<Options, Number> getter = options -> ((ConfigValue<Number>) configValue).get();
 
-				BiConsumer<Options, Number> setter = (settings, settingValue) -> {
+                BiConsumer<Options, Number> setter = (settings, settingValue) -> {
 					ConfigHandler.updateConfigValue(configValue, numberFunction.apply(checkType, settingValue));
 
 					if (screenSide() == ConfigSide.SERVER) {
 						if (field.getType() == Double.class || field.getType() == Float.class) {
-							NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(key, settingValue.doubleValue()));
-						} else {
-							NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(key, settingValue.intValue()));
+							NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(ConfigHandler.createConfigPath(configOption), settingValue.doubleValue()));
+                        } else if (field.getType() == Integer.class || field.getType() == Long.class) {
+							NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(ConfigHandler.createConfigPath(configOption), settingValue.longValue()));
 						}
 					}
 				};
@@ -210,16 +213,16 @@ public abstract class ConfigScreen extends OptionsSubScreen{
                 Option option;
 
 				// Use slider if the difference between min and max value is small enough, otherwise use text field
-				if (max.subtract(min).intValue() <= 10) {
+				if (false /*max.subtract(min).intValue() <= 10*/) { // FIXME :: Calling the setter every time a value changes causes problems - only set value when 'Done' is clicked? Also has problems with certain decimals (it moves in 0.1 range but some config are in 0.01 range)
 					option = new ProgressOption(
-						name,
-						hasDecimals ? min.doubleValue() : min.intValue(),
-						hasDecimals ? max.doubleValue() : max.intValue(),
+						    name,
+						    hasDecimals ? min.doubleValue() : min.intValue(),
+						    hasDecimals ? max.doubleValue() : max.intValue(),
 							sliderPercentage,
-						options -> hasDecimals ? getter.apply(options).doubleValue() : getter.apply(options).intValue(),
-						setter::accept,
-						(settings, slider) -> Component.literal(numberFunction.apply(checkType, slider.get(settings)) + ""),
-						minecraft -> minecraft.font.split(tooltip, 200)
+						    options -> hasDecimals ? getter.apply(options).doubleValue() : getter.apply(options).intValue(),
+						    setter::accept,
+						    (settings, slider) -> Component.literal(numberFunction.apply(checkType, slider.get(settings)) + ""),
+						    minecraft -> minecraft.font.split(tooltip, 200)
 					);
 				} else {
 					option = new DSNumberFieldOption(name, min, max, getter, setter, minecraft -> Minecraft.getInstance().font.split(tooltip, 200), hasDecimals);
@@ -233,7 +236,7 @@ public abstract class ConfigScreen extends OptionsSubScreen{
 					ConfigHandler.updateConfigValue(configValue, settingValue);
 
 					if (screenSide() == ConfigSide.SERVER) {
-						NetworkHandler.CHANNEL.sendToServer(new SyncBooleanConfig(key, settingValue));
+						NetworkHandler.CHANNEL.sendToServer(new SyncBooleanConfig(ConfigHandler.createConfigPath(configOption), settingValue));
 					}
 				}, () -> CycleButton.booleanBuilder(((MutableComponent) CommonComponents.OPTION_ON)
                                 .withStyle(ChatFormatting.GREEN), ((MutableComponent) CommonComponents.OPTION_OFF)
@@ -250,7 +253,7 @@ public abstract class ConfigScreen extends OptionsSubScreen{
 					ConfigHandler.updateConfigValue(configValue, enumValue);
 
 					if (screenSide() == ConfigSide.SERVER) {
-						NetworkHandler.CHANNEL.sendToServer(new SyncEnumConfig(key, enumValue));
+						NetworkHandler.CHANNEL.sendToServer(new SyncEnumConfig(ConfigHandler.createConfigPath(configOption), enumValue));
 					}
 				}, minecraft -> minecraft.font.split(tooltip, 200));
 
@@ -273,7 +276,7 @@ public abstract class ConfigScreen extends OptionsSubScreen{
 					CycleOption<String> option = new CycleOption<>(
 							name,
                             options -> text,
-                            (val1, val2, val3) -> minecraft.setScreen(new ConfigListMenu(this, minecraft.options, Component.literal(name), key, configValue, screenSide(), key)),
+                            (val1, val2, val3) -> minecraft.setScreen(new ConfigListMenu(this, minecraft.options, Component.literal(name), configValue, screenSide(), configOption)),
                             () -> new Builder<String>(ignored -> Component.literal(text)).displayOnlyValue().withValues(text).withInitialValue(text)).setTooltip(minecraft -> ignored -> minecraft.font.split(tooltip, 200));
 
 					OptionsList.configMap.put(option, key);

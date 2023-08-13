@@ -260,7 +260,6 @@ public class SkinsScreen extends Screen{
 		});
 
 		// Button to enable / disable the rendering of customized skins (of other players)
-		// TODO :: This does not seem to apply to the random skin functionality - is that intended?
 		addRenderableWidget(new Button(startX + 128, startY + 128, imageWidth, 20, Component.translatable("ds.gui.skins.other_skins"), button -> {
 			ConfigHandler.updateConfigValue("renderOtherPlayerSkins", !ClientDragonRender.renderOtherPlayerSkins);
 			setTextures();

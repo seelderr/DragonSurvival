@@ -15,30 +15,31 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class SyncListConfig implements IMessage<SyncListConfig>{
-	public String key;
+public class SyncListConfig implements IMessage<SyncListConfig> {
+	public String path;
 	public List<?> value;
 
-	public SyncListConfig(){}
+	public SyncListConfig() { /* Nothing to do */ }
 
-	public SyncListConfig(String key, List<?> value){
-		this.key = key;
+	public SyncListConfig(final String path, final List<?> value) {
+		this.path = path;
 		this.value = value;
 	}
 
 	@Override
-	public void encode(final SyncListConfig message, final FriendlyByteBuf buffer){
+	public void encode(final SyncListConfig message, final FriendlyByteBuf buffer) {
 		buffer.writeInt(message.value.size());
 
 		for (Object object : message.value) {
 			if (object instanceof Number number) {
+				// TODO :: Check for Integer / Double and handle those instead as actual numbers
 				buffer.writeUtf(number.toString());
 			} else {
 				buffer.writeUtf(object.toString());
 			}
 		}
 
-		buffer.writeUtf(message.key);
+		buffer.writeUtf(message.path);
 	}
 
 	@Override
@@ -51,8 +52,8 @@ public class SyncListConfig implements IMessage<SyncListConfig>{
 			list.add(buffer.readUtf());
 		}
 
-		String key = buffer.readUtf();
-		return new SyncListConfig(key, list);
+		String path = buffer.readUtf();
+		return new SyncListConfig(path, list);
 	}
 
 	@Override
@@ -65,13 +66,13 @@ public class SyncListConfig implements IMessage<SyncListConfig>{
 				return;
 			}
 
-			NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new SyncListConfig(message.key, message.value));
+			NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new SyncListConfig(message.path, message.value));
 		}
 
 		UnmodifiableConfig spec = ConfigHandler.serverSpec.getValues();
-		Object ob = spec.get("server." + message.key);
+		Object config = spec.get(message.path);
 
-		if (ob instanceof ConfigValue<?> configValue) {
+		if (config instanceof ConfigValue<?> configValue) {
 			ConfigHandler.updateConfigValue(configValue, message.value);
 		}
 
