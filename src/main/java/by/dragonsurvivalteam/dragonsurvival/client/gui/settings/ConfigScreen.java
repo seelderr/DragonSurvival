@@ -246,19 +246,29 @@ public abstract class ConfigScreen extends OptionsSubScreen{
 				OptionsList.configMap.put(option, key);
 				addOption(category, name, option);
 			} else if (checkType.isEnum()) {
-				Class<? extends Enum> cs = (Class<? extends Enum>) configValue.get().getClass();
-				Enum vale = EnumGetMethod.ORDINAL_OR_NAME.get(((Enum<?>) configValue.get()).ordinal(), cs);
+				Class<? extends Enum> enumClass = (Class<? extends Enum>) configValue.get().getClass();
+				Enum<?> value = null;
 
-				Option option = new DSDropDownOption(name, vale, enumValue -> {
-					ConfigHandler.updateConfigValue(configValue, enumValue);
+				if (configValue.get() instanceof String stringValue) {
+					value = EnumGetMethod.ORDINAL_OR_NAME.get(stringValue, enumClass);
+				} else if (configValue.get() instanceof Enum<?> enumValue) {
+					value = EnumGetMethod.ORDINAL_OR_NAME.get(enumValue.ordinal(), enumClass);
+				}
 
-					if (screenSide() == ConfigSide.SERVER) {
-						NetworkHandler.CHANNEL.sendToServer(new SyncEnumConfig(ConfigHandler.createConfigPath(configOption), enumValue));
-					}
-				}, minecraft -> minecraft.font.split(tooltip, 200));
+				if (value != null) {
+					Option option = new DSDropDownOption(name, value, enumValue -> {
+						ConfigHandler.updateConfigValue(configValue, enumValue);
 
-				OptionsList.configMap.put(option, key);
-				addOption(category, name, option);
+						if (screenSide() == ConfigSide.SERVER) {
+							NetworkHandler.CHANNEL.sendToServer(new SyncEnumConfig(ConfigHandler.createConfigPath(configOption), enumValue));
+						}
+					}, minecraft -> minecraft.font.split(tooltip, 200));
+
+					OptionsList.configMap.put(option, key);
+					addOption(category, name, option);
+				} else {
+					DragonSurvivalMod.LOGGER.error("An enum configuration seems to be broken for [" + ConfigHandler.createConfigPath(configOption) + "] - value: [" + configValue.get() + "], class: [" + configValue.get().getClass() + "]");
+				}
 			} else if (checkType.isAssignableFrom(List.class)) {
                 // Handle list values
 				if (configValue.get() instanceof List<?> listConfig && (listConfig.isEmpty() || listConfig.get(0) instanceof String || listConfig.get(0) instanceof Number)) {
