@@ -39,7 +39,7 @@ public class ClawsAndTeethRenderLayer extends GeoLayerRenderer<DragonEntity>{
 
 		DragonStateHandler handler = DragonUtils.getHandler(entitylivingbaseIn.getPlayer());
 
-		if(!handler.getClawToolData().renderClaws){
+		if(!handler.getClawToolData().shouldRenderClaws){
 			return;
 		}
 

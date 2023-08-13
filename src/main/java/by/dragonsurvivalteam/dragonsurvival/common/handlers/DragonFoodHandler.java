@@ -91,6 +91,8 @@ public class DragonFoodHandler {
 	}
 
 	public static void rebuildFoodMap() {
+		DragonSurvivalMod.LOGGER.debug("Rebuilding food map...");
+
 		ConcurrentHashMap<String, ConcurrentHashMap<Item, FoodProperties>> map = new ConcurrentHashMap<>();
 		map.put(DragonTypes.CAVE.getTypeName(), buildDragonFoodMap(DragonTypes.CAVE));
 		map.put(DragonTypes.FOREST.getTypeName(), buildDragonFoodMap(DragonTypes.FOREST));
@@ -291,9 +293,9 @@ public class DragonFoodHandler {
 
 		if (Objects.equals(type, DragonTypes.FOREST) && FOREST_DRAGON_FOOD == null) {
 			FOREST_DRAGON_FOOD = foods;
-		} else if(Objects.equals(type, DragonTypes.CAVE) && CAVE_DRAGON_FOOD == null) {
+		} else if (Objects.equals(type, DragonTypes.CAVE) && CAVE_DRAGON_FOOD == null) {
 			CAVE_DRAGON_FOOD = foods;
-		} else if(Objects.equals(type, DragonTypes.SEA) && SEA_DRAGON_FOOD == null) {
+		} else if (Objects.equals(type, DragonTypes.SEA) && SEA_DRAGON_FOOD == null) {
 			SEA_DRAGON_FOOD = foods;
 		}
 

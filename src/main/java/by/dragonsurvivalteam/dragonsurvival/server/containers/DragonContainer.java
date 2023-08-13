@@ -134,7 +134,7 @@ public class DragonContainer extends AbstractContainerMenu{ // TODO - tool slots
 
 	public void update(){
 		DragonStateProvider.getCap(player).ifPresent(cap -> {
-			menuStatus = cap.getClawToolData().isClawsMenuOpen() ? 1 : 0;
+			menuStatus = cap.getClawToolData().isMenuOpen() ? 1 : 0;
 		});
 
 		broadcastChanges();

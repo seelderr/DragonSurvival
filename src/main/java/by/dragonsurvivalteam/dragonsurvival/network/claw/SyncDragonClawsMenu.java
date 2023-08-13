@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.network.claw;
 
-
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.ClawInventory;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
@@ -12,41 +11,40 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class SyncDragonClawsMenu implements IMessage<SyncDragonClawsMenu>{
+public class SyncDragonClawsMenu implements IMessage<SyncDragonClawsMenu> {
 	public int playerId;
 	public boolean state;
 
-	public SimpleContainer inv;
+	public SimpleContainer clawInventory;
 
-	public SyncDragonClawsMenu(){}
+	public SyncDragonClawsMenu() { /* Nothing to do */ }
 
-	public SyncDragonClawsMenu(int playerId, boolean state, SimpleContainer inv){
-
+	public SyncDragonClawsMenu(int playerId, boolean state, final SimpleContainer clawInventory) {
 		this.playerId = playerId;
 		this.state = state;
-		this.inv = inv;
+		this.clawInventory = clawInventory;
 	}
 
 	@Override
-	public void encode(SyncDragonClawsMenu message, FriendlyByteBuf buffer){
+	public void encode(final SyncDragonClawsMenu message, final FriendlyByteBuf buffer) {
 		buffer.writeInt(message.playerId);
 		buffer.writeBoolean(message.state);
 		CompoundTag nbt = new CompoundTag();
-		nbt.put("inv", ClawInventory.saveClawInventory(message.inv));
+		nbt.put("inv", ClawInventory.saveClawInventory(message.clawInventory));
 		buffer.writeNbt(nbt);
 	}
 
 	@Override
-	public SyncDragonClawsMenu decode(FriendlyByteBuf buffer){
+	public SyncDragonClawsMenu decode(final FriendlyByteBuf buffer) {
 		int playerId = buffer.readInt();
 		boolean state = buffer.readBoolean();
 		CompoundTag tag = buffer.readNbt();
-		SimpleContainer inventory = ClawInventory.readClawInventory(tag.getList("inv", 10));
+		SimpleContainer inventory = ClawInventory.readClawInventory(tag.getList("inv", 10)); // TODO :: What type is 10?
 		return new SyncDragonClawsMenu(playerId, state, inventory);
 	}
 
 	@Override
-	public void handle(SyncDragonClawsMenu message, Supplier<NetworkEvent.Context> supplier){
+	public void handle(final SyncDragonClawsMenu message, final Supplier<NetworkEvent.Context> supplier) {
 		if (supplier.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
 			runClient(message, supplier);
 		} else {

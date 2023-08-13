@@ -17,10 +17,6 @@ buildscript {
     }
 }
 
-plugins {
-    id "io.freefair.lombok" version "6.5.0.2"
-}
-
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: 'org.spongepowered.mixin'

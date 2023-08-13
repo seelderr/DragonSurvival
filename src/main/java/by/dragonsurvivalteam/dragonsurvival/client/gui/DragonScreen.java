@@ -89,7 +89,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 		passEvents = true;
 		player = inv.player;
 
-		DragonStateProvider.getCap(player).ifPresent(cap -> clawsMenu = cap.getClawToolData().isClawsMenuOpen());
+		DragonStateProvider.getCap(player).ifPresent(cap -> clawsMenu = cap.getClawToolData().isMenuOpen());
 
 		imageWidth = 203;
 		imageHeight = 166;
@@ -121,7 +121,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 			init();
 
 			NetworkHandler.CHANNEL.sendToServer(new DragonClawsMenuToggle(clawsMenu));
-			DragonStateProvider.getCap(player).ifPresent(cap -> cap.getClawToolData().setClawsMenuOpen(clawsMenu));
+			DragonStateProvider.getCap(player).ifPresent(cap -> cap.getClawToolData().setMenuOpen(clawsMenu));
 		}, Component.translatable("ds.gui.claws")){
 			@Override
 			public void renderButton(PoseStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_){
@@ -227,10 +227,10 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 
 		// Button to enable / disable the rendering of claws
 		addRenderableWidget(new DSButton(leftPos - 80 + 34, topPos + 140, 9, 9, null, p_onPress_1_ -> {
-			boolean claws = !handler.getClawToolData().renderClaws;
+			boolean claws = !handler.getClawToolData().shouldRenderClaws;
 
-			handler.getClawToolData().renderClaws = claws;
-			ConfigHandler.updateConfigValue("renderDragonClaws", handler.getClawToolData().renderClaws);
+			handler.getClawToolData().shouldRenderClaws = claws;
+			ConfigHandler.updateConfigValue("renderDragonClaws", handler.getClawToolData().shouldRenderClaws);
 			NetworkHandler.CHANNEL.sendToServer(new SyncDragonClawRender(player.getId(), claws));
 		}, Component.translatable("ds.gui.claws.rendering")){
 			@Override
@@ -238,7 +238,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 				active = clawsMenu;
 				DragonStateHandler handler = DragonUtils.getHandler(player);
 
-				if(handler.getClawToolData().renderClaws && clawsMenu){
+				if(handler.getClawToolData().shouldRenderClaws && clawsMenu){
 					RenderSystem.setShaderTexture(0, DRAGON_CLAW_CHECKMARK);
 					blit(p_230430_1_, x, y, 0, 0, 9, 9, 9, 9);
 				}

@@ -148,7 +148,7 @@ public class ClientMagicHUDHandler{
 			posX += skillbarXOffset;
 			posY += skillbarYOffset;
 
-			if(cap.getMagicData().isRenderAbilities()){
+			if(cap.getMagicData().shouldRenderAbilities()){
 				RenderSystem.setShaderTexture(0, new ResourceLocation("textures/gui/widgets.png"));
 				Screen.blit(mStack, posX, posY - 2, 0, 0, 0, 41, 22, 256, 256);
 				Screen.blit(mStack, posX + 41, posY - 2, 0, 141, 0, 41, 22, 256, 256);
