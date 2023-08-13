@@ -42,7 +42,6 @@ import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig.Type;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
-import net.minecraftforge.fml.event.config.ModConfigEvent.Loading;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
@@ -52,7 +51,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Stream;
 
 @Mod.EventBusSubscriber(modid = DragonSurvivalMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
-public class DragonFoodHandler{
+public class DragonFoodHandler {
 	// Food general
 	@ConfigOption(side = ConfigSide.SERVER, category = "food", key = "dragonFoods", comment = "Force dragons to eat a unique diet for their type.")
 	public static Boolean customDragonFoods = true;
@@ -91,7 +90,7 @@ public class DragonFoodHandler{
 		}
 	}
 
-	private static void rebuildFoodMap() {
+	public static void rebuildFoodMap() {
 		ConcurrentHashMap<String, ConcurrentHashMap<Item, FoodProperties>> map = new ConcurrentHashMap<>();
 		map.put(DragonTypes.CAVE.getTypeName(), buildDragonFoodMap(DragonTypes.CAVE));
 		map.put(DragonTypes.FOREST.getTypeName(), buildDragonFoodMap(DragonTypes.FOREST));

@@ -3,12 +3,9 @@ package by.dragonsurvivalteam.dragonsurvival.network.dragon_editor;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
-import net.minecraft.client.Minecraft;
+import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.PacketDistributor;
@@ -75,21 +72,7 @@ public class SyncDragonSkinSettings implements IMessage<SyncDragonSkinSettings> 
 		NetworkEvent.Context context = supplier.get();
 
 		context.enqueueWork(() -> {
-			Player localPlayer = Minecraft.getInstance().player;
-
-			if (localPlayer != null) {
-				Level world = localPlayer.level;
-				Entity entity = world.getEntity(message.playerId);
-
-				if (entity instanceof Player) {
-					DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
-						dragonStateHandler.getSkinData().renderNewborn = message.newborn;
-						dragonStateHandler.getSkinData().renderYoung = message.young;
-						dragonStateHandler.getSkinData().renderAdult = message.adult;
-					});
-				}
-			}
-
+			ClientProxy.handleSyncDragonSkinSettings(message);
 			context.setPacketHandled(true);
 		});
 	}

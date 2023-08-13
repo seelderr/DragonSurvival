@@ -1,20 +1,13 @@
 package by.dragonsurvivalteam.dragonsurvival.network.claw;
 
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.ClawInventory;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
-import net.minecraft.client.Minecraft;
+import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.SimpleContainer;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.DistExecutor.SafeRunnable;
+import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -35,9 +28,7 @@ public class SyncDragonClawsMenu implements IMessage<SyncDragonClawsMenu>{
 	}
 
 	@Override
-
 	public void encode(SyncDragonClawsMenu message, FriendlyByteBuf buffer){
-
 		buffer.writeInt(message.playerId);
 		buffer.writeBoolean(message.state);
 		CompoundTag nbt = new CompoundTag();
@@ -46,9 +37,7 @@ public class SyncDragonClawsMenu implements IMessage<SyncDragonClawsMenu>{
 	}
 
 	@Override
-
 	public SyncDragonClawsMenu decode(FriendlyByteBuf buffer){
-
 		int playerId = buffer.readInt();
 		boolean state = buffer.readBoolean();
 		CompoundTag tag = buffer.readNbt();
@@ -58,27 +47,18 @@ public class SyncDragonClawsMenu implements IMessage<SyncDragonClawsMenu>{
 
 	@Override
 	public void handle(SyncDragonClawsMenu message, Supplier<NetworkEvent.Context> supplier){
-		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> run(message, supplier));
-		supplier.get().setPacketHandled(true);
+		if (supplier.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
+			runClient(message, supplier);
+		} else {
+			supplier.get().setPacketHandled(true);
+		}
 	}
 
-	@OnlyIn( Dist.CLIENT )
-	public void run(SyncDragonClawsMenu message, Supplier<NetworkEvent.Context> supplier){
+	public void runClient(final SyncDragonClawsMenu message, final Supplier<NetworkEvent.Context> supplier) {
 		NetworkEvent.Context context = supplier.get();
+
 		context.enqueueWork(() -> {
-
-			Player thisPlayer = Minecraft.getInstance().player;
-			if(thisPlayer != null){
-				Level world = thisPlayer.level;
-				Entity entity = world.getEntity(message.playerId);
-				if(entity instanceof Player){
-
-					DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
-						dragonStateHandler.getClawToolData().setClawsMenuOpen(message.state);
-						dragonStateHandler.getClawToolData().setClawsInventory(message.inv);
-					});
-				}
-			}
+			ClientProxy.handleSyncDragonClawsMenu(message);
 			context.setPacketHandled(true);
 		});
 	}

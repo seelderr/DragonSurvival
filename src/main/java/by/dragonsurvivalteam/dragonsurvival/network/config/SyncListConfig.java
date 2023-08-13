@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.network.config;
 
+import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
@@ -43,7 +44,6 @@ public class SyncListConfig implements IMessage<SyncListConfig> {
 	}
 
 	@Override
-
 	public SyncListConfig decode(final FriendlyByteBuf buffer){
 		int size = buffer.readInt();
 		ArrayList<String> list = new ArrayList<>();
@@ -73,6 +73,11 @@ public class SyncListConfig implements IMessage<SyncListConfig> {
 		Object config = spec.get(message.path);
 
 		if (config instanceof ConfigValue<?> configValue) {
+			// In case the config event does not get triggered
+			if (message.path.startsWith("food")) {
+				DragonFoodHandler.rebuildFoodMap();
+			}
+
 			ConfigHandler.updateConfigValue(configValue, message.value);
 		}
 

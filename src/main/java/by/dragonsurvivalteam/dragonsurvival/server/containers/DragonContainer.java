@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class DragonContainer extends AbstractContainerMenu{
+public class DragonContainer extends AbstractContainerMenu{ // TODO - tool slots sometimes show when logging in but not the rest of the container
 	private static final EquipmentSlot[] VALID_EQUIPMENT_SLOTS = {EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
 	private static final ResourceLocation[] ARMOR_SLOT_TEXTURES = {InventoryMenu.EMPTY_ARMOR_SLOT_BOOTS, InventoryMenu.EMPTY_ARMOR_SLOT_LEGGINGS, InventoryMenu.EMPTY_ARMOR_SLOT_CHESTPLATE, InventoryMenu.EMPTY_ARMOR_SLOT_HELMET};
 	public final CraftingContainer craftMatrix = new CraftingContainer(this, 3, 3);

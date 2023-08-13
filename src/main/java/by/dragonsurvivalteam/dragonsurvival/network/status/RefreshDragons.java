@@ -35,7 +35,7 @@ public class RefreshDragons implements IMessage<RefreshDragons>{
 	}
 
 	@Override
-	public void handle(RefreshDragons message, Supplier<NetworkEvent.Context> supplier){
+	public void handle(RefreshDragons message, Supplier<NetworkEvent.Context> supplier){ // FIXME not sure if this is safe
 		if(supplier.get().getDirection().getReceptionSide() == LogicalSide.CLIENT){
 			Thread thread = new Thread(() -> {
 				try{

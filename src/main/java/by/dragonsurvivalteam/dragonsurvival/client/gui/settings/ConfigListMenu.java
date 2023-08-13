@@ -124,7 +124,7 @@ public class ConfigListMenu extends OptionsSubScreen {
 			boolean isValid = true;
 
 			for (String configValue : output) {
-				if (!ConfigHandler.checkConfig(configOption.key(), configValue)) {
+				if (!ConfigHandler.checkConfig(configOption, configValue)) {
 					DragonSurvivalMod.LOGGER.warn("Config entry [" + configValue + "] is invalid for [" + configOption.key() + "]");
 					isValid = false;
 					break;

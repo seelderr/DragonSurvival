@@ -95,51 +95,54 @@ public class ConfigHandler{
 		return instances;
 	}
 
-	public static void initConfig(){
+	public static void initConfig() {
 		initTypes();
-		List<Field> set = getFields();
 
-		set.forEach(s -> {
-			if(!Modifier.isStatic(s.getModifiers()))
+		List<Field> fields = getFields();
+
+		fields.forEach(field -> {
+			if (!Modifier.isStatic(field.getModifiers())) {
 				return;
-
-			ConfigOption option = s.getAnnotation(ConfigOption.class);
-
-			try{
-				defaultConfigValues.put(option.key(), s.get(null));
-			}catch(IllegalAccessException e){
-				e.printStackTrace();
 			}
-			configFields.put(option.key(), s);
-			configObjects.put(option.key(), option);
 
-			configs.computeIfAbsent(option.side(), c -> new ArrayList<>());
-			configs.get(option.side()).add(option.key());
+			ConfigOption configOption = field.getAnnotation(ConfigOption.class);
+
+			try {
+				defaultConfigValues.put(configOption.key(), field.get(null));
+			} catch (IllegalAccessException e) {
+				DragonSurvivalMod.LOGGER.error("There was a problem while trying to get the default config value of [" + ConfigHandler.createConfigPath(configOption) + "]", e);
+			}
+
+			configFields.put(configOption.key(), field);
+			configObjects.put(configOption.key(), configOption);
+
+			configs.computeIfAbsent(configOption.side(), key -> new ArrayList<>()).add(configOption.key());
 		});
 
-		if(FMLEnvironment.dist.isClient()){
-			Pair<ClientConfig, ForgeConfigSpec> client = new ForgeConfigSpec.Builder().configure(ClientConfig::new);
-			CLIENT = client.getLeft();
-			clientSpec = client.getRight();
+		if (FMLEnvironment.dist.isClient()) {
+			Pair<ClientConfig, ForgeConfigSpec> clientConfig = new ForgeConfigSpec.Builder().configure(ClientConfig::new);
+			CLIENT = clientConfig.getLeft();
+			clientSpec = clientConfig.getRight();
+
 			ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, clientSpec);
 		}
 
-		Pair<ServerConfig, ForgeConfigSpec> server = new ForgeConfigSpec.Builder().configure(ServerConfig::new);
-		SERVER = server.getLeft();
-		serverSpec = server.getRight();
+		Pair<ServerConfig, ForgeConfigSpec> serverConfig = new ForgeConfigSpec.Builder().configure(ServerConfig::new);
+		SERVER = serverConfig.getLeft();
+		serverSpec = serverConfig.getRight();
 
 		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, serverSpec);
 	}
 
 	public static void addConfigs(final ForgeConfigSpec.Builder builder, final ConfigSide side) {
 		for (String key : configs.getOrDefault(side, Collections.emptyList())) {
-			ConfigOption option = configObjects.get(key);
+			ConfigOption configOption = configObjects.get(key);
 			Field field = configFields.get(key);
-			Object defaultValues = defaultConfigValues.get(option.key());
+			Object defaultValues = defaultConfigValues.get(configOption.key());
 
 			// Get the category - if none is present put it in the `general` category
-			String[] categories = option.category() != null && option.category().length > 0 ? option.category() : new String[]{"general"};
-			String[] comment = option.comment() != null ? option.comment() : new String[0];
+			String[] categories = configOption.category() != null && configOption.category().length > 0 ? configOption.category() : new String[]{"general"};
+			String[] comment = configOption.comment() != null ? configOption.comment() : new String[0];
 
 			for (String category : categories) {
 				builder.push(category);
@@ -147,8 +150,8 @@ public class ConfigHandler{
 
 			builder.comment(comment);
 
-			if (!option.localization().isBlank()) {
-				builder.translation(option.localization());
+			if (!configOption.localization().isBlank()) {
+				builder.translation(configOption.localization());
 			}
 
 			try {
@@ -159,33 +162,33 @@ public class ConfigHandler{
 
 				// Fill the configuration options (define the key, default value and predicate to check if the option is valid)
 				if (tt instanceof Integer intVal) {
-					IntValue value = builder.defineInRange(option.key(), intVal, rang ? (int) range.min() : Integer.MIN_VALUE, rang ? (int) range.max() : Integer.MAX_VALUE);
+					IntValue value = builder.defineInRange(configOption.key(), intVal, rang ? (int) range.min() : Integer.MIN_VALUE, rang ? (int) range.max() : Integer.MAX_VALUE);
 					configValues.put(key, value);
 				} else if (tt instanceof Float floatVal) {
-					DoubleValue value = builder.defineInRange(option.key(), floatVal, rang ? range.min() : Float.MIN_VALUE, rang ? range.max() : Float.MAX_VALUE);
+					DoubleValue value = builder.defineInRange(configOption.key(), floatVal, rang ? range.min() : Float.MIN_VALUE, rang ? range.max() : Float.MAX_VALUE);
 					configValues.put(key, value);
 				} else if (tt instanceof Long longVal) {
-					LongValue value = builder.defineInRange(option.key(), longVal, rang ? (long) range.min() : Long.MIN_VALUE, rang ? (long) range.max() : Long.MAX_VALUE);
+					LongValue value = builder.defineInRange(configOption.key(), longVal, rang ? (long) range.min() : Long.MIN_VALUE, rang ? (long) range.max() : Long.MAX_VALUE);
 					configValues.put(key, value);
 				} else if (tt instanceof Double doubleVal) {
-					DoubleValue value = builder.defineInRange(option.key(), doubleVal, rang ? range.min() : Double.MIN_VALUE, rang ? range.max() : Double.MAX_VALUE);
+					DoubleValue value = builder.defineInRange(configOption.key(), doubleVal, rang ? range.min() : Double.MIN_VALUE, rang ? range.max() : Double.MAX_VALUE);
 					configValues.put(key, value);
 				} else if (tt instanceof Boolean boolValue) {
-					BooleanValue value = builder.define(option.key(), (boolean) boolValue);
+					BooleanValue value = builder.define(configOption.key(), (boolean) boolValue);
 					configValues.put(key, value);
 				} else if (field.getType().isEnum()) {
-					EnumValue value = builder.defineEnum(option.key(), (Enum)defaultValues, ((Enum<?>)defaultValues).getClass().getEnumConstants());
+					EnumValue<?> value = builder.defineEnum(configOption.key(), (Enum) defaultValues, ((Enum<?>) defaultValues).getClass().getEnumConstants());
 					configValues.put(key, value);
 				} else if(tt instanceof List<?> list) { // TODO :: Numeric lists?
-					ConfigValue<List<?>> value = builder.defineList(option.key(), list, configValue -> field.isAnnotationPresent(IgnoreConfigCheck.class) || checkConfig(option, configValue));
+					ConfigValue<List<?>> value = builder.defineList(configOption.key(), list, configValue -> field.isAnnotationPresent(IgnoreConfigCheck.class) || checkConfig(configOption, configValue));
 					configValues.put(key, value);
 				} else {
-					ConfigValue<Object> value = builder.define(option.key(), defaultValues);
+					ConfigValue<Object> value = builder.define(configOption.key(), defaultValues);
 					configValues.put(key, value);
-					DragonSurvivalMod.LOGGER.warn("Potential issue found for configuration: [" + option.key() + "]");
+					DragonSurvivalMod.LOGGER.warn("Potential issue found for configuration: [" + configOption.key() + "]");
 				}
 			} catch (Exception e) {
-				DragonSurvivalMod.LOGGER.error("Invalid configuration found: [" + option.key() + "]", e);
+				DragonSurvivalMod.LOGGER.error("Invalid configuration found: [" + configOption.key() + "]", e);
 			}
 
 			for (int i = 0; i < categories.length; i++) {
@@ -204,6 +207,7 @@ public class ConfigHandler{
 
 	/** More specific checks depending on the config type */
 	public static boolean checkSpecific(final String key, final Object configValue) {
+		// TODO :: Maybe specifiy the full path?
 		// Food options
 		if (key.equals("caveDragon") || key.equals("forestDragon") || key.equals("seaDragon")) {
 			if (configValue instanceof String string) {
@@ -266,18 +270,26 @@ public class ConfigHandler{
 		return false;
 	}
 
-	private static Object convertObject(Object ob){
-		if(ob instanceof IForgeRegistry<?> forge){
-			return forge.getRegistryName().toString();
+	/** Get the relevant string value from an object for specific types */
+	private static Object getRelevantString(final Object object) {
+		// TODO :: Might not be used / relevant at the moment?
+		if (object instanceof IForgeRegistry<?> forgeRegistry) {
+			return forgeRegistry.getRegistryName().toString();
 		}
 
-		if(ob instanceof Enum<?>){
-			return ((Enum<?>)ob).name();
+		if (object instanceof Enum<?> enumValue) {
+			return enumValue.name();
 		}
 
-		return ob;
+		return object;
 	}
 
+	/**
+	 * @param type Class of the resource type
+	 * @param location Value to parse
+	 * @return Either a list of the resolved tag or the resource element
+	 * @param <T> Types which can be used in a registry (e.g. Item or Block)
+	 */
 	public static <T> List<T> parseResourceLocation(final Class<T> type, final ResourceLocation location) {
 		Tuple<Supplier<IForgeRegistry<?>>, Supplier<ResourceKey<? extends Registry<?>>>> registry = REGISTRY_HASH_MAP.getOrDefault(type, null);
 
@@ -301,6 +313,17 @@ public class ConfigHandler{
 		return Collections.emptyList();
 	}
 
+	/**
+	 * If the value is a {@link String} it can return the following:
+	 * <ul>
+	 *     <li>Enum value if the field is an enum</li>
+	 *     <li>Resource entries from {@link ConfigHandler#parseResourceLocation(Class, ResourceLocation)}</li>
+	 *     <li>Otherwise just the original string value</li>
+	 * </ul>
+	 *
+	 * Otherwise, it will check if the value is a {@link Number} and return the correct value for that<br>
+	 * If it's also not a number the original value will be returned
+	 */
 	private static Object getRelevantValue(final Field field, final Object object) {
 		if (object instanceof String stringValue) {
 			if (field.getType().isEnum()) {
@@ -359,7 +382,7 @@ public class ConfigHandler{
 					Field field = ConfigHandler.configFields.get(config);
 
 					if (field != null) {
-						Object object = convertFromString(field, configValues.get(config).get());
+						Object object = convertFromGeneric(field, configValues.get(config).get());
 
 						if (object != null) {
 							field.set(null, object);
@@ -388,7 +411,7 @@ public class ConfigHandler{
 				Field field = ConfigHandler.configFields.get(configList.getKey());
 
 				if (field != null) {
-					Object object = convertFromString(field, configValue);
+					Object object = convertFromGeneric(field, configValue);
 
 					if (object != null) {
 						field.set(null, object);
@@ -401,23 +424,28 @@ public class ConfigHandler{
 	}
 
 	@Nullable
-	private static Object convertToString(Object object) {
-		if (object instanceof Collection<?>) {
+	private static Object convertToString(final Object object) {
+		Object result;
+
+		if (object instanceof Collection<?> collection) {
 			Collection<Object> list = new ArrayList<>();
 
-			for (Object o : (Collection<?>) object) {
-				list.add(convertObject(o));
+			for (Object listElement : collection) {
+				list.add(getRelevantString(listElement));
 			}
 
-			object = list;
+			result = list;
 		} else {
-			object = convertObject(object);
+			result = getRelevantString(object);
 		}
 
-		return object;
+		return result;
 	}
 
-	private static Object convertFromString(final Field field, Object object) throws IllegalAccessException {
+	/** See {@link ConfigHandler#getRelevantValue(Field, Object)} for more info */
+	private static Object convertFromGeneric(final Field field, final Object object) throws IllegalAccessException {
+		Object result;
+
 		if (field.getType().isAssignableFrom(Collection.class)) {
 			ArrayList<Object> list = new ArrayList<>();
 
@@ -425,10 +453,12 @@ public class ConfigHandler{
 				list.add(getRelevantValue(field, listValue));
 			}
 
-			object = list;
+			result = list;
+		} else {
+			result = object;
 		}
 
-		return getRelevantValue(field, object);
+		return getRelevantValue(field, result);
 	}
 
 	/**
