@@ -63,6 +63,8 @@ public class ResourceTextField extends EditBox implements TooltipAccessor {
 	private final boolean isEffect;
 	private final boolean isBiome;
 
+	private final boolean configValueIsList;
+
 	public ResourceTextField(final String optionKey, final ResourceTextFieldOption textField, int x, int y, int width, int height, final Component component) {
 		super(Minecraft.getInstance().font, x, y, width, height, component);
 		setBordered(false);
@@ -83,6 +85,7 @@ public class ResourceTextField extends EditBox implements TooltipAccessor {
 		isEffect = MobEffect.class.isAssignableFrom(checkType);
 		isBiome = Biome.class.isAssignableFrom(checkType);
 
+		configValueIsList = field.getType().isAssignableFrom(List.class);
 		list = new DropdownList(this.x, this.y + this.height, this.width, 0, 23);
 		// So that when you click on the suggestion entries it fills the text field
 		Minecraft.getInstance().screen.children.add(list);
@@ -95,7 +98,6 @@ public class ResourceTextField extends EditBox implements TooltipAccessor {
 			return;
 		}
 
-//		RenderSystem.enableDepthTest();
 		super.render(poseStack, mouseX, mouseY, partialTicks);
 
 		// Re-check if still focused
@@ -108,12 +110,8 @@ public class ResourceTextField extends EditBox implements TooltipAccessor {
 		}
 
 		if (list != null && list.visible) {
-//			poseStack.translate(0, 0, 200);
 			list.render(poseStack, mouseX, mouseY, partialTicks);
-//			poseStack.translate(0, 0, -200);
 		}
-
-//		RenderSystem.disableDepthTest();
 	}
 
 	@Override
@@ -336,7 +334,12 @@ public class ResourceTextField extends EditBox implements TooltipAccessor {
 		}
 
 		super.setFocus(focus);
-        list.visible = focus && Minecraft.getInstance().screen != null && !Minecraft.getInstance().screen.children.isEmpty();
+
+		/* FIXME
+		Currently the suggestions only properly work if they're in a sub menu which gets opened if the config value is a list
+		Otherwise they get overlayed by the other OptionEntry / CategoryEntry elements
+		*/
+        list.visible = focus && Minecraft.getInstance().screen != null && !Minecraft.getInstance().screen.children.isEmpty() && configValueIsList;
 
         if (Minecraft.getInstance().screen == null) {
             DragonSurvivalMod.LOGGER.warn("Screen was not available while trying to focus 'ResourceTextField' [" + optionKey + "]");
@@ -360,13 +363,16 @@ public class ResourceTextField extends EditBox implements TooltipAccessor {
 		Minecraft.getInstance().screen.children.forEach(widget -> {
 			if (widget instanceof OptionsList optionsList) {
 				optionsList.children().forEach(listEntry -> {
-					GuiEventListener entry = listEntry.children().get(0);
+					// Check if the list of any resource text field is visible
+					if (!listEntry.children().isEmpty()) {
+						GuiEventListener entry = listEntry.children().get(0);
 
-					if (entry instanceof ResourceTextField resourceTextField && resourceTextField != this) {
-						if (resourceTextField.list.visible && !resourceTextField.list.children().isEmpty()) {
-							// Offset by item height since without it the text field below the focused one is not hidden
-							if (y > resourceTextField.list.getTop() - 23 && y < resourceTextField.list.getBottom() + 3) {
-								shouldBeHidden.set(true);
+						if (entry instanceof ResourceTextField resourceTextField && resourceTextField != this) {
+							if (resourceTextField.list.visible && !resourceTextField.list.children().isEmpty()) {
+								// Offset by item height since without it the text field below the focused one is not hidden
+								if (y > resourceTextField.list.getTop() - 23 && y < resourceTextField.list.getBottom() + 3) {
+									shouldBeHidden.set(true);
+								}
 							}
 						}
 					}

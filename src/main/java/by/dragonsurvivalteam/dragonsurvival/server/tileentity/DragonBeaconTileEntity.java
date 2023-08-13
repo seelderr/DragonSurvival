@@ -9,8 +9,6 @@ import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -54,21 +52,21 @@ public class DragonBeaconTileEntity extends BaseBlockTileEntity{
 				List<Player> dragons = pLevel.getEntitiesOfClass(Player.class, new AABB(pPos).inflate(50).expandTowards(0, pLevel.getMaxBuildHeight(), 0), DragonUtils::isDragon);
 				switch(pBlockEntity.type){
 					case PEACE -> dragons.forEach(playerEntity -> {
-						ConfigHandler.configList(MobEffect.class, ServerConfig.peaceBeaconEffects).forEach(effect -> {
+						ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.peaceBeaconEffects).forEach(effect -> {
 							if(effect != null){
 								playerEntity.addEffect(new MobEffectInstance(effect, Functions.minutesToTicks(ServerConfig.minutesOfDragonEffect) + 5, 0, true, true));
 							}
 						});
 					});
 					case MAGIC -> dragons.forEach(playerEntity -> {
-						ConfigHandler.configList(MobEffect.class, ServerConfig.magicBeaconEffects).forEach(effect -> {
+						ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.magicBeaconEffects).forEach(effect -> {
 							if(effect != null){
 								playerEntity.addEffect(new MobEffectInstance(effect, Functions.minutesToTicks(ServerConfig.minutesOfDragonEffect) + 5, 0, true, true));
 							}
 						});
 					});
 					case FIRE -> dragons.forEach(playerEntity -> {
-						ConfigHandler.configList(MobEffect.class, ServerConfig.fireBeaconEffects).forEach(effect -> {
+						ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.fireBeaconEffects).forEach(effect -> {
 							if(effect != null){
 								playerEntity.addEffect(new MobEffectInstance(effect, Functions.minutesToTicks(ServerConfig.minutesOfDragonEffect) + 5, 0, true, true));
 							}

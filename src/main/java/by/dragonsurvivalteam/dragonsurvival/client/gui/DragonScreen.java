@@ -190,9 +190,9 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 
 				ArrayList<Item> allowedList = new ArrayList<>();
 
-				List<Item> newbornList = ConfigHandler.configList(Item.class, ServerConfig.growNewborn);
-				List<Item> youngList = ConfigHandler.configList(Item.class, ServerConfig.growYoung);
-				List<Item> adultList = ConfigHandler.configList(Item.class, ServerConfig.growAdult);
+				List<Item> newbornList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growNewborn);
+				List<Item> youngList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growYoung);
+				List<Item> adultList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growAdult);
 
 				if(handler.getSize() < DragonLevel.YOUNG.size){
 					allowedList.addAll(newbornList);

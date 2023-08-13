@@ -396,6 +396,7 @@ public class ServerConfig{
 	@ConfigOption( side = ConfigSide.SERVER, category = "ore", key = "dragonOreBoneChance", comment = "The odds of a bone dropping when a dragon harvests an ore." )
 	public static Double dragonOreBoneChance = 0.01;
 
+	@ConfigType(Block.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = "ore", key = "oresTag", comment = "The tag that contains all ores that can drop dust/bones when harvested. Will not drop if the ore drops another of the items in this tag. Format: modid:id" )
 	public static String oresTag = "forge:ores";
 

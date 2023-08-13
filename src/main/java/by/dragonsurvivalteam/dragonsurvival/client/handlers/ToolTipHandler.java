@@ -102,8 +102,8 @@ public class ToolTipHandler{
 			float saturationValue = properties.getNutrition() * properties.getSaturationModifier() * 2f;
 
 			// 1 Icon = 2 points (e.g. 10 nutrition icons for a maximum food level of 20)
-			nutrition = nutritionValue > 0 ? String.valueOf(nutritionValue / 2) : "0";
-			saturation = saturationValue > 0 ? String.valueOf(saturationValue / 2) : "0";
+			nutrition = String.format("%.1f", nutritionValue / 2);
+			saturation = String.format("%.1f", saturationValue / 2);
 		}
 
 		MutableComponent nutritionIconComponent = Component.literal(nutritionIcon).withStyle(Style.EMPTY.withFont(ICONS));

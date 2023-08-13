@@ -50,7 +50,7 @@ public class SkinsScreen extends Screen{
 	private static final ResourceLocation WIKI = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/wiki_button.png");
 	private static final ResourceLocation HELP = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/skin_help.png");
 
-	private static final String DISCORD_URL = "http://discord.gg/8SsB8ar";
+	private static final String DISCORD_URL = "https://discord.gg/8SsB8ar";
 	private static final String WIKI_URL = "https://github.com/DragonSurvivalTeam/DragonSurvival/wiki/3.-Customization";
 	private static final ArrayList<String> seenSkins = new ArrayList<>();
 	private final DragonStateHandler handler = new DragonStateHandler();

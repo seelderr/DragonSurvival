@@ -1,13 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.config;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
-import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
-import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
-import by.dragonsurvivalteam.dragonsurvival.config.obj.IgnoreConfigCheck;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.*;
 import com.electronwill.nightconfig.core.EnumGetMethod;
 import com.google.common.primitives.Primitives;
-import com.google.gson.reflect.TypeToken;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -18,6 +14,7 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -44,7 +41,6 @@ import org.objectweb.asm.Type;
 import java.lang.annotation.ElementType;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
 import java.util.*;
 import java.util.function.Supplier;
 
@@ -56,11 +52,23 @@ public class ConfigHandler{
 	public static ServerConfig SERVER;
 	public static ForgeConfigSpec serverSpec;
 
-	public static HashMap<String, Object> defaultConfigValues = new HashMap<>();
-	public static HashMap<String, ConfigOption> configObjects = new HashMap<>();
-	public static HashMap<String, Field> configFields = new HashMap<>();
-	public static HashMap<ConfigSide, List<String>> configs = new HashMap<>();
-	public static HashMap<String, ForgeConfigSpec.ConfigValue<?>> configValues = new HashMap<>();
+	public static HashMap<String, Object> defaultConfigValues = new HashMap<>(); // Contains the default values
+	public static HashMap<String, ConfigOption> configObjects = new HashMap<>(); // Contains config options
+	public static HashMap<String, Field> configFields = new HashMap<>(); // Contains all annotated config fields
+	public static HashMap<ConfigSide, List<String>> configs = new HashMap<>(); // Contains all config keys per side
+	public static HashMap<String, ForgeConfigSpec.ConfigValue<?>> configValues = new HashMap<>(); // contains all config values
+
+	private static final HashMap<Class<?>, Tuple<Supplier<IForgeRegistry<?>>, Supplier<ResourceKey<? extends Registry<?>>>>> REGISTRY_HASH_MAP = new HashMap<>();
+
+	public static void initTypes() {
+		REGISTRY_HASH_MAP.put(Item.class, new Tuple<>(() -> ForgeRegistries.ITEMS, () -> Registry.ITEM_REGISTRY));
+		REGISTRY_HASH_MAP.put(Block.class,  new Tuple<>(() -> ForgeRegistries.BLOCKS, () -> Registry.BLOCK_REGISTRY));
+		REGISTRY_HASH_MAP.put(EntityType.class,  new Tuple<>(() -> ForgeRegistries.ENTITY_TYPES, () -> Registry.ENTITY_TYPE_REGISTRY));
+		REGISTRY_HASH_MAP.put(BlockEntityType.class, new Tuple<>(() -> ForgeRegistries.BLOCK_ENTITY_TYPES, () -> Registry.BLOCK_ENTITY_TYPE_REGISTRY));
+		REGISTRY_HASH_MAP.put(Biome.class,  new Tuple<>(() -> ForgeRegistries.BIOMES, () -> Registry.BIOME_REGISTRY));
+		REGISTRY_HASH_MAP.put(MobEffect.class,  new Tuple<>(() -> ForgeRegistries.MOB_EFFECTS, () -> Registry.MOB_EFFECT_REGISTRY));
+		REGISTRY_HASH_MAP.put(Potion.class,  new Tuple<>(() -> ForgeRegistries.POTIONS, () -> Registry.POTION_REGISTRY));
+	}
 
 	private static List<Field> getFields() {
 		List<Field> instances = new ArrayList<>();
@@ -270,30 +278,21 @@ public class ConfigHandler{
 		return ob;
 	}
 
-	private static final HashMap<Class<?>, Tuple<Supplier<IForgeRegistry<?>>, Supplier<ResourceKey<? extends Registry<?>>>>> REGISTRY_HASH_MAP = new HashMap<>();
-	public static void initTypes(){
-		REGISTRY_HASH_MAP.put(Item.class, new Tuple<>(() -> ForgeRegistries.ITEMS, () -> Registry.ITEM_REGISTRY));
-		REGISTRY_HASH_MAP.put(Block.class,  new Tuple<>(() -> ForgeRegistries.BLOCKS, () -> Registry.BLOCK_REGISTRY));
-		REGISTRY_HASH_MAP.put(EntityType.class,  new Tuple<>(() -> ForgeRegistries.ENTITY_TYPES, () -> Registry.ENTITY_TYPE_REGISTRY));
-		REGISTRY_HASH_MAP.put(BlockEntityType.class, new Tuple<>(() -> ForgeRegistries.BLOCK_ENTITY_TYPES, () -> Registry.BLOCK_ENTITY_TYPE_REGISTRY));
-		REGISTRY_HASH_MAP.put(Biome.class,  new Tuple<>(() -> ForgeRegistries.BIOMES, () -> Registry.BIOME_REGISTRY));
-		REGISTRY_HASH_MAP.put(MobEffect.class,  new Tuple<>(() -> ForgeRegistries.MOB_EFFECTS, () -> Registry.MOB_EFFECT_REGISTRY));
-		REGISTRY_HASH_MAP.put(Potion.class,  new Tuple<>(() -> ForgeRegistries.POTIONS, () -> Registry.POTION_REGISTRY));
-	}
+	public static <T> List<T> parseResourceLocation(final Class<T> type, final ResourceLocation location) {
+		Tuple<Supplier<IForgeRegistry<?>>, Supplier<ResourceKey<? extends Registry<?>>>> registry = REGISTRY_HASH_MAP.getOrDefault(type, null);
 
-	public static <T> List<T> parseObject(Class<T> type, ResourceLocation location){
-		Tuple<Supplier<IForgeRegistry<?>>, Supplier<ResourceKey<? extends Registry<?>>>> ent = REGISTRY_HASH_MAP.getOrDefault(type, null);
-		if(ent != null){
-			if(ForgeRegistries.ITEMS.containsKey(location)){
-				Optional<? extends Holder<?>> optional = ent.getA().get().getHolder(location);
-				if(optional.isPresent() && optional.get().isBound()){
-					return List.of((T)optional.get().value());
+		if (registry != null) {
+			if (registry.getA().get().containsKey(location)) {
+				Optional<? extends Holder<?>> optional = registry.getA().get().getHolder(location);
+
+				if (optional.isPresent() && optional.get().isBound()) {
+					return List.of((T) optional.get().value());
 				}
-			}else{
-				TagKey<T> tagKey = TagKey.create((ResourceKey<? extends Registry<T>>)ent.getB().get(), location);
+			} else {
+				TagKey<T> tagKey = TagKey.create((ResourceKey<? extends Registry<T>>) registry.getB().get(), location);
 
-				if(tagKey.isFor(ent.getA().get().getRegistryKey())){
-					ITagManager<T> manager = (ITagManager<T>)ent.getA().get().tags();
+				if (tagKey.isFor(registry.getA().get().getRegistryKey())) {
+					ITagManager<T> manager = (ITagManager<T>) registry.getA().get().tags();
 					return manager.getTag(tagKey).stream().toList();
 				}
 			}
@@ -302,161 +301,160 @@ public class ConfigHandler{
 		return Collections.emptyList();
 	}
 
-	private static Object loadObject(Field fe, Object ob){
-		if(ob instanceof String key){
-			if(fe.getType().isEnum()){
-				Class<? extends Enum> cs = (Class<? extends Enum>)fe.getType();
-				return EnumGetMethod.ORDINAL_OR_NAME.get(ob, cs);
+	private static Object getRelevantValue(final Field field, final Object object) {
+		if (object instanceof String stringValue) {
+			if (field.getType().isEnum()) {
+				Class<? extends Enum> cs = (Class<? extends Enum>) field.getType();
+				return EnumGetMethod.ORDINAL_OR_NAME.get(object, cs);
 			}
 
-			ResourceLocation location = ResourceLocation.tryParse(key);
-			List<?> ls = parseObject((Class<? extends IForgeRegistry>)fe.getType(), location);
+			ResourceLocation location = ResourceLocation.tryParse(stringValue);
+			List<?> list = parseResourceLocation((Class<? extends IForgeRegistry>) field.getType(), location);
 
-			if(ls != null){
-				if(fe.getGenericType() instanceof List<?>){
-					return ls;
-				}else{
-					return ls.stream().findFirst().orElseGet(() -> null);
+			if (list != null) {
+				if (field.getGenericType() instanceof List<?>) {
+					return list.isEmpty() ? List.of(stringValue) : list;
+				} else {
+					return list.isEmpty() ? null : stringValue;
 				}
 			}
 		}
 
-		if(ob instanceof Double db){
-			if(fe.getType().equals(int.class) || fe.getType().equals(Integer.class)){
-				return db.intValue();
+		if (object instanceof Number number) {
+			if (field.getType().equals(double.class) || field.getType().equals(Double.class)) {
+				return number.doubleValue();
 			}
 
-			if(fe.getType().equals(float.class) || fe.getType().equals(Float.class)){
-				return db.floatValue();
+			if (field.getType().equals(int.class) || field.getType().equals(Integer.class)) {
+				return number.intValue();
 			}
 
-			if(fe.getType().equals(long.class) || fe.getType().equals(Long.class)){
-				return db.longValue();
+			if (field.getType().equals(long.class) || field.getType().equals(Long.class)) {
+				return number.longValue();
 			}
 
-			return db;
+			if (field.getType().equals(float.class) || field.getType().equals(Float.class)) {
+				return number.floatValue();
+			}
+
+			return number;
 		}
 
-		return ob;
-	}
-
-	public static boolean isType(Field fe, Class<?> c){
-		TypeToken<?> check = TypeToken.get(c);
-		TypeToken<?> token = TypeToken.get(fe.getType());
-
-		if(fe.getGenericType() instanceof ParameterizedType prType){
-			TypeToken<?> token1 = TypeToken.get(prType.getActualTypeArguments()[0]);
-			if(check.isAssignableFrom(token1)) return true;
-		}
-
-		return check.isAssignableFrom(token);
+		return object;
 	}
 
 	@SubscribeEvent
-	public static void onModConfig(ModConfigEvent.Reloading event){
+	public static void onModConfig(final ModConfigEvent event) {
 		onModConfig(event.getConfig().getType());
 	}
 
-	@SubscribeEvent
-	public static void onModConfig(ModConfigEvent.Loading event){
-		onModConfig(event.getConfig().getType());
-	}
-
-	public static void onModConfig(ModConfig.Type type){
+	/** Sets the values of the config fields */
+	public static void onModConfig(final ModConfig.Type type) {
 		ConfigSide side = type == ModConfig.Type.SERVER ? ConfigSide.SERVER : ConfigSide.CLIENT;
 		List<String> configList = configs.get(side);
-		for(String s : configList){
-			try{
-				if(configValues.containsKey(s) && configFields.containsKey(s)){
-					Field fe = ConfigHandler.configFields.get(s);
 
-					if(fe != null){
-						Object obj = convertFromString(fe, configValues.get(s).get());
+		for (String config : configList) {
+			try {
+				if (configValues.containsKey(config) && configFields.containsKey(config)) {
+					Field field = ConfigHandler.configFields.get(config);
 
-						if(obj != null){
-							fe.set(null, obj);
+					if (field != null) {
+						Object object = convertFromString(field, configValues.get(config).get());
+
+						if (object != null) {
+							field.set(null, object);
 						}
 					}
 				}
-			}catch(IllegalAccessException e){
-				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				DragonSurvivalMod.LOGGER.error("An error occured while setting the config [" + config + "]", e);
 			}
 		}
 	}
 
-	public static void updateConfigValue(String conf, Object value){
-		if(configValues.containsKey(conf)){
-			updateConfigValue(configValues.get(conf), value);
+	public static void updateConfigValue(final String configKey, final Object configValue) {
+		if (configValues.containsKey(configKey)) {
+			updateConfigValue(configValues.get(configKey), configValue);
 		}
 	}
 
-	public static void updateConfigValue(ForgeConfigSpec.ConfigValue conf, Object value){
-		conf.set(convertToString(value));
-		conf.save();
+	/** Update and save the config */
+	public static void updateConfigValue(final ForgeConfigSpec.ConfigValue config, final Object configValue) {
+		config.set(convertToString(configValue));
+		config.save();
 
-		ConfigHandler.configValues.entrySet().stream().filter(c -> c.getValue() == conf).findFirst().ifPresent(key -> {
+		ConfigHandler.configValues.entrySet().stream().filter(configList -> configList.getValue() == config).findFirst().ifPresent(configList -> {
 			try {
-				Field fe = ConfigHandler.configFields.get(key.getKey());
+				Field field = ConfigHandler.configFields.get(configList.getKey());
 
-				if (fe != null) {
-					Object obj = convertFromString(fe, value);
+				if (field != null) {
+					Object object = convertFromString(field, configValue);
 
-					if (obj != null) {
-						fe.set(null, obj);
+					if (object != null) {
+						field.set(null, object);
 					}
 				}
 			} catch (IllegalAccessException e) {
-				DragonSurvivalMod.LOGGER.error("An error occured while trying to update the config value of [" + conf.getPath() + "] with the value [" + value + "]", e);
+				DragonSurvivalMod.LOGGER.error("An error occured while trying to update the config [" + config.getPath() + "] with the value [" + configValue + "]", e);
 			}
 		});
 	}
 
 	@Nullable
-	private static Object convertToString(Object ob){
-		if(ob instanceof Collection<?>){
-			Collection<Object> obs = new ArrayList<>();
+	private static Object convertToString(Object object) {
+		if (object instanceof Collection<?>) {
+			Collection<Object> list = new ArrayList<>();
 
-			for(Object o : (Collection<?>)ob){
-				obs.add(convertObject(o));
+			for (Object o : (Collection<?>) object) {
+				list.add(convertObject(o));
 			}
 
-			ob = obs;
-		}else{
-			ob = convertObject(ob);
+			object = list;
+		} else {
+			object = convertObject(object);
 		}
-		return ob;
+
+		return object;
 	}
 
-	private static Object convertFromString(Field fe, Object obj) throws IllegalAccessException{
-		if(fe.getType().isAssignableFrom(Collection.class)){
-			ArrayList<Object> ls = new ArrayList<>();
+	private static Object convertFromString(final Field field, Object object) throws IllegalAccessException {
+		if (field.getType().isAssignableFrom(Collection.class)) {
+			ArrayList<Object> list = new ArrayList<>();
 
-			for(Object o : (Collection)obj){
-				ls.add(loadObject(fe, o));
+			for (Object listValue : (Collection<?>) object) {
+				list.add(getRelevantValue(field, listValue));
 			}
 
-			obj = ls;
+			object = list;
 		}
 
-		return loadObject(fe, obj);
+		return getRelevantValue(field, object);
 	}
 
-	public static <T> List<T> configList(Class<T> type, List<?> in){
+	/**
+	 * @param type Class of the resource type
+	 * @param values Resource locations
+	 * @return List of the resource element and the resolved tag
+	 * @param <T> Types which can be used in a registry (e.g. Item or Block)
+	 */
+	public static <T> List<T> getResourceElements(final Class<T> type, final List<?> values) {
+		Tuple<Supplier<IForgeRegistry<?>>, Supplier<ResourceKey<? extends Registry<?>>>> registry = REGISTRY_HASH_MAP.getOrDefault(type, null);
 		ArrayList<T> list = new ArrayList<>();
 
-		Tuple<Supplier<IForgeRegistry<?>>, Supplier<ResourceKey<? extends Registry<?>>>> registry = REGISTRY_HASH_MAP.getOrDefault(type, null);
+		for (Object object : values) {
+			if (object == null) {
+				continue;
+			}
 
-		for(Object o : in){
-			if(o == null) continue;
-
-			if(o instanceof String tex){
-				ResourceLocation location = ResourceLocation.tryParse(tex);
+			if (object instanceof String stringValue) {
+				ResourceLocation location = ResourceLocation.tryParse(stringValue);
 				Optional<? extends Holder<?>> optional = registry.getA().get().getHolder(location);
-				optional.ifPresent(s -> list.add((T)s.value()));
+				optional.ifPresent(holder -> list.add((T) holder.value()));
 
-				TagKey<T> tagKey = TagKey.create((ResourceKey<? extends Registry<T>>)registry.getB().get(), location);
-				if(tagKey.isFor(registry.getA().get().getRegistryKey())){
-					ITagManager<T> manager = (ITagManager<T>)registry.getA().get().tags();
+				TagKey<T> tagKey = TagKey.create((ResourceKey<? extends Registry<T>>) registry.getB().get(), location);
+
+				if (tagKey.isFor(registry.getA().get().getRegistryKey())) {
+					ITagManager<T> manager = (ITagManager<T>) registry.getA().get().tags();
 					list.addAll(manager.getTag(tagKey).stream().toList());
 				}
 			}
@@ -479,5 +477,21 @@ public class ConfigHandler{
 
 	public static String createConfigPath(final ConfigOption configOption) {
 		return createConfigPath(configOption.category(), configOption.key());
+	}
+
+	public static boolean isResource(final ConfigOption configOption) {
+		Field field = ConfigHandler.configFields.get(configOption.key());
+		Class<?> checkType = Primitives.unwrap(field.getType());
+
+		if (field.isAnnotationPresent(ConfigType.class)) {
+			ConfigType type = field.getAnnotation(ConfigType.class);
+			checkType = Primitives.unwrap(type.value());
+		}
+
+		if (ItemLike.class.isAssignableFrom(checkType) || checkType == Block.class || checkType == EntityType.class || checkType == MobEffect.class || checkType == Biome.class) {
+			return true;
+		}
+
+		return false;
 	}
 }

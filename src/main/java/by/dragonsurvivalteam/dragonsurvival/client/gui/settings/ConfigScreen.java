@@ -174,9 +174,6 @@ public abstract class ConfigScreen extends OptionsSubScreen{
 			ConfigRange range = field.isAnnotationPresent(ConfigRange.class) ? field.getAnnotation(ConfigRange.class) : null;
 			boolean hasDecimals = field.getType() == Double.class || field.getType() == Float.class;
 
-//			BigDecimal min = BigDecimal.valueOf(range != null ? range.min() : -1).setScale(5, RoundingMode.FLOOR);
-//			BigDecimal max = BigDecimal.valueOf(range != null ? range.max() : Integer.MAX_VALUE).setScale(5, RoundingMode.FLOOR);
-
 			Number min = range != null ? range.min() : Integer.MIN_VALUE;
 			Number max = range != null ? range.max() : Integer.MAX_VALUE;
 
@@ -184,8 +181,7 @@ public abstract class ConfigScreen extends OptionsSubScreen{
 			Class<?> checkType = Primitives.unwrap(field.getType());
 
 			if (Number.class.isAssignableFrom(field.getType())) {
-                // Handle numbers
-
+				// Handle numbers
 				BiFunction<Class<?>, Number, Object> numberFunction = (type, val) -> {
 					BigDecimal outVal = BigDecimal.valueOf(val.doubleValue()).setScale(3, RoundingMode.FLOOR);
 
@@ -293,6 +289,20 @@ public abstract class ConfigScreen extends OptionsSubScreen{
 					addOption(category, name, option);
 				} else {
 					DragonSurvivalMod.LOGGER.warn("Invalid configuration: [" + key + "]");
+				}
+			} else if (checkType.isAssignableFrom(String.class)) {
+				// Handle String values
+				if (configValue.get() instanceof String stringValue) {
+					Option option;
+
+					if (ConfigHandler.isResource(configOption)) {
+						option = new ResourceTextFieldOption(configOption.key(), stringValue, settings -> stringValue);
+					} else {
+						option = new DSTextBoxOption(stringValue, settings -> stringValue);
+					}
+
+					OptionsList.configMap.put(option, key);
+					addOption(category, name, option);
 				}
 			}
 		}

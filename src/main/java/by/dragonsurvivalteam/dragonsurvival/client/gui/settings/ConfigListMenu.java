@@ -73,17 +73,7 @@ public class ConfigListMenu extends OptionsSubScreen {
 
 		// Entries that support suggestions (and rendering ItemStacks next to their name)
 		if (!isResouce) {
-			Field field = ConfigHandler.configFields.get(configOption.key());
-			Class<?> checkType = Primitives.unwrap(field.getType());
-
-			if (field.isAnnotationPresent(ConfigType.class)) {
-				ConfigType type = field.getAnnotation(ConfigType.class);
-				checkType = Primitives.unwrap(type.value());
-			}
-
-			if (ItemLike.class.isAssignableFrom(checkType) || checkType == Block.class || checkType == EntityType.class || checkType == MobEffect.class || checkType == Biome.class) {
-				isResouce = true;
-			}
+			isResouce = ConfigHandler.isResource(configOption);
 		}
 
 		if (oldVals == null || oldVals.isEmpty()) {
