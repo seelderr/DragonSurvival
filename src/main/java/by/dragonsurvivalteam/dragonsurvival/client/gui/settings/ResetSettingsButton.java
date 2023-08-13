@@ -114,7 +114,7 @@ public class ResetSettingsButton extends Button {
 			if (widget instanceof AbstractOptionSliderButton abstractOptionSliderButton && option instanceof ProgressOption progressOption) {
 				widget.setMessage(progressOption.getMessage(Minecraft.getInstance().options));
 				abstractOptionSliderButton.value = progressOption.toPct((Integer) defaultValues);
-			} else if(widget instanceof TextField textField) {
+			} else if (widget instanceof TextField textField) {
 				textField.setValue(defaultValues.toString());
 			}
 		}

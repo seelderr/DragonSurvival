@@ -2,12 +2,15 @@ package by.dragonsurvivalteam.dragonsurvival.network.config;
 
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
+import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
 import net.minecraftforge.common.ForgeConfigSpec.IntValue;
 import net.minecraftforge.common.ForgeConfigSpec.LongValue;
+import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.network.PacketDistributor;
 
 import java.util.function.Supplier;
 
@@ -60,20 +63,24 @@ public class SyncNumberConfig implements IMessage<SyncNumberConfig> {
 
 	@Override
 	public void handle(final SyncNumberConfig message, final Supplier<NetworkEvent.Context> supplier) {
-		ServerPlayer entity = supplier.get().getSender();
+		if (supplier.get().getDirection() == NetworkDirection.PLAY_TO_SERVER) {
+			ServerPlayer entity = supplier.get().getSender();
 
-		if (entity == null || !entity.hasPermissions(2)) {
-			supplier.get().setPacketHandled(true);
-			return;
+			if (entity == null || !entity.hasPermissions(2)) {
+				supplier.get().setPacketHandled(true);
+				return;
+			}
+
+			NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new SyncNumberConfig(message.path, message.value));
 		}
 
 		Object object = ConfigHandler.serverSpec.getValues().get(message.path);
 
 		if (object instanceof IntValue intValue) {
 			ConfigHandler.updateConfigValue(intValue, message.value.intValue());
-		} else if(object instanceof DoubleValue doubleValue) {
+		} else if (object instanceof DoubleValue doubleValue) {
 			ConfigHandler.updateConfigValue(doubleValue, message.value.doubleValue());
-		} else if(object instanceof LongValue longValue) {
+		} else if (object instanceof LongValue longValue) {
 			ConfigHandler.updateConfigValue(longValue, message.value.longValue());
 		}
 
