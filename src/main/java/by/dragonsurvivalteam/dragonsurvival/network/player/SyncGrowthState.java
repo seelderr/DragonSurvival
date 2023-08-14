@@ -1,56 +1,40 @@
 package by.dragonsurvivalteam.dragonsurvival.network.player;
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
-import net.minecraft.client.Minecraft;
+import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.DistExecutor.SafeRunnable;
+import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class SyncGrowthState implements IMessage<SyncGrowthState>{
+public class SyncGrowthState implements IMessage<SyncGrowthState> {
 	public boolean growing;
 
-	public SyncGrowthState(boolean growing){
+	public SyncGrowthState(boolean growing) {
 		this.growing = growing;
 	}
 
-	public SyncGrowthState(){
-
-	}
+	public SyncGrowthState() { /* Nothing to do */ }
 
 	@Override
-	public void encode(SyncGrowthState message, FriendlyByteBuf buffer){
+	public void encode(final SyncGrowthState message, final FriendlyByteBuf buffer) {
 		buffer.writeBoolean(message.growing);
 	}
 
 	@Override
-	public SyncGrowthState decode(FriendlyByteBuf buffer){
+	public SyncGrowthState decode(final FriendlyByteBuf buffer) {
 		return new SyncGrowthState(buffer.readBoolean());
 	}
 
 	@Override
-	public void handle(SyncGrowthState message, Supplier<NetworkEvent.Context> supplier){
-		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> run(message, supplier));
-		supplier.get().setPacketHandled(true);
-	}
-
-	@OnlyIn( Dist.CLIENT )
-	public void run(SyncGrowthState message, Supplier<NetworkEvent.Context> supplier){
+	public void handle(final SyncGrowthState message, final Supplier<NetworkEvent.Context> supplier) {
 		NetworkEvent.Context context = supplier.get();
-		context.enqueueWork(() -> {
-			Player thisPlayer = Minecraft.getInstance().player;
-			if(thisPlayer != null){
-				DragonStateProvider.getCap(thisPlayer).ifPresent(dragonStateHandler -> {
-					dragonStateHandler.growing = message.growing;
-				});
-			}
-			context.setPacketHandled(true);
-		});
+
+		if (context.getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
+			context.enqueueWork(() -> ClientProxy.handleSyncGrowthState(message));
+		}
+
+		context.setPacketHandled(true);
 	}
 }

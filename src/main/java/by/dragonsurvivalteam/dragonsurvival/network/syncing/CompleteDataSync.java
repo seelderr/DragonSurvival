@@ -9,8 +9,6 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.NetworkEvent;
 
-import java.util.function.Supplier;
-
 public class CompleteDataSync extends ISidedMessage<CompleteDataSync> {
 	private CompoundTag nbt;
 
@@ -45,10 +43,10 @@ public class CompleteDataSync extends ISidedMessage<CompleteDataSync> {
 	}
 
 	@Override
-	public void runCommon(CompleteDataSync message, Supplier<NetworkEvent.Context> supplier) { /* Nothing to do */ }
+	public void runCommon(final CompleteDataSync message, final NetworkEvent.Context context) { /* Nothing to do */ }
 
-	@Override
-	public void runServer(final CompleteDataSync message, final Supplier<NetworkEvent.Context> supplier, final ServerPlayer player) {
+	@Override // Currently only relevant for DragonEditorScreen#confirm
+	public void runServer(final CompleteDataSync message, final NetworkEvent.Context context, final ServerPlayer player) {
 		DragonStateProvider.getCap(player).ifPresent(cap -> {
 			SimpleContainer container = cap.getClawToolData().getClawsInventory();
 			cap.readNBT(message.nbt);
@@ -59,7 +57,7 @@ public class CompleteDataSync extends ISidedMessage<CompleteDataSync> {
 	}
 
 	@Override
-	public void runClient(final CompleteDataSync message, final Supplier<NetworkEvent.Context> supplier, final Player player) {
+	public void runClient(final CompleteDataSync message, final NetworkEvent.Context context, final Player player) {
 		DragonStateProvider.getCap(player).ifPresent(handler -> handler.readNBT(message.nbt));
 	}
 }

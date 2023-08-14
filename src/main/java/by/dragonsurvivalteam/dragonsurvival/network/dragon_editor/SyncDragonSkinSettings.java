@@ -46,34 +46,27 @@ public class SyncDragonSkinSettings implements IMessage<SyncDragonSkinSettings> 
 
 	@Override
 	public void handle(final SyncDragonSkinSettings message, final Supplier<NetworkEvent.Context> supplier) {
-		if (supplier.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
-			runClient(message, supplier);
+		NetworkEvent.Context context = supplier.get();
+
+		if (context.getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
+			context.enqueueWork(() -> ClientProxy.handleSyncDragonSkinSettings(message));
 		}
 
-		if (supplier.get().getDirection() == NetworkDirection.PLAY_TO_SERVER) {
-			ServerPlayer entity = supplier.get().getSender();
+		if (context.getDirection() == NetworkDirection.PLAY_TO_SERVER) {
+			ServerPlayer sender = context.getSender();
 
-			if (entity != null) {
-				DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
-					dragonStateHandler.getSkinData().renderNewborn = message.newborn;
-					dragonStateHandler.getSkinData().renderYoung = message.young;
-					dragonStateHandler.getSkinData().renderAdult = message.adult;
+			if (sender != null) {
+				DragonStateProvider.getCap(sender).ifPresent(handler -> {
+					handler.getSkinData().renderNewborn = message.newborn;
+					handler.getSkinData().renderYoung = message.young;
+					handler.getSkinData().renderAdult = message.adult;
 				});
 
 				// Make the other clients aware of the changes
-				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new SyncDragonSkinSettings(entity.getId(), message.newborn, message.young, message.adult));
+				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> sender), new SyncDragonSkinSettings(sender.getId(), message.newborn, message.young, message.adult));
 			}
 		}
 
-		supplier.get().setPacketHandled(true);
-	}
-
-	public void runClient(final SyncDragonSkinSettings message, final Supplier<NetworkEvent.Context> supplier) {
-		NetworkEvent.Context context = supplier.get();
-
-		context.enqueueWork(() -> {
-			ClientProxy.handleSyncDragonSkinSettings(message);
-			context.setPacketHandled(true);
-		});
+		context.setPacketHandled(true);
 	}
 }

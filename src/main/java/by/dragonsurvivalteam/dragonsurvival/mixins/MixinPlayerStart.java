@@ -34,7 +34,7 @@ public class MixinPlayerStart {
             DragonStateHandler handler = DragonUtils.getHandler(player);
             handler.getClawToolData().getClawsInventory().setItem(0, ItemStack.EMPTY); // There is no real need to reset it here but doesn't hurt to do it
             handler.storedMainHand = mainHand;
-            handler.hasSwitchedItems = true;
+            handler.switchedItems = true;
         }
     }
 }

@@ -7,65 +7,53 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.NetworkEvent;
 
-import java.util.function.Supplier;
-
-public class SyncEmote extends ISidedMessage<SyncEmote>{
-
+public class SyncEmote extends ISidedMessage<SyncEmote> {
 	private CompoundTag nbt;
 
-	public SyncEmote(int playerId, EmoteCap cap){
+	public SyncEmote(int playerId, final EmoteCap cap) {
 		super(playerId);
 		nbt = cap.writeNBT();
 	}
 
-	public SyncEmote(int playerId, CompoundTag nbt){
+	public SyncEmote(int playerId, final CompoundTag nbt) {
 		super(playerId);
 		this.nbt = nbt;
 	}
 
-	public SyncEmote(){
+	public SyncEmote() {
 		super(-1);
 	}
 
 	@Override
-	public void encode(SyncEmote message, FriendlyByteBuf buffer){
+	public void encode(final SyncEmote message, final FriendlyByteBuf buffer) {
 		buffer.writeInt(message.playerId);
 		buffer.writeNbt(message.nbt);
 	}
 
 	@Override
-	public SyncEmote decode(FriendlyByteBuf buffer){
+	public SyncEmote decode(final FriendlyByteBuf buffer) {
 		int playerId = buffer.readInt();
 		CompoundTag nbt = buffer.readNbt();
 		return new SyncEmote(playerId, nbt);
 	}
 
 	@Override
-	public SyncEmote create(SyncEmote message){
+	public SyncEmote create(final SyncEmote message) {
 		return new SyncEmote(message.playerId, message.nbt);
 	}
 
 	@Override
-	public void runCommon(SyncEmote message, Supplier<NetworkEvent.Context> supplier){
+	public void runCommon(SyncEmote message, NetworkEvent.Context context) { /* Nothing to do */ }
 
+	@Override
+	public void runServer(final SyncEmote message, final NetworkEvent.Context context, final ServerPlayer sender) {
+		DragonStateProvider.getCap(sender).ifPresent(handler -> handler.getEmoteData().readNBT(message.nbt));
 	}
 
 	@Override
-	public void runServer(SyncEmote message, Supplier<NetworkEvent.Context> supplier, ServerPlayer sender){
-		DragonStateProvider.getCap(sender).ifPresent(dragonStateHandler -> {
-			dragonStateHandler.getEmoteData().readNBT(message.nbt);
-		});
-	}
-
-	@OnlyIn( Dist.CLIENT )
-	@Override
-	public void runClient(SyncEmote message, Supplier<NetworkEvent.Context> supplier, Player targetPlayer){
-		DragonStateProvider.getCap(targetPlayer).ifPresent(dragonStateHandler -> {
-			dragonStateHandler.getEmoteData().readNBT(message.nbt);
-		});
+	public void runClient(final SyncEmote message, final NetworkEvent.Context context, final Player player) {
+		DragonStateProvider.getCap(player).ifPresent(handler -> handler.getEmoteData().readNBT(message.nbt));
 	}
 }

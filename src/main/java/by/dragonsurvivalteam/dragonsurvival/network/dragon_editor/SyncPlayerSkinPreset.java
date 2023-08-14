@@ -4,82 +4,61 @@ import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.Sk
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
-import net.minecraft.client.Minecraft;
+import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.DistExecutor.SafeRunnable;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.PacketDistributor;
 
 import java.util.function.Supplier;
 
-
-public class SyncPlayerSkinPreset implements IMessage<SyncPlayerSkinPreset>{
+public class SyncPlayerSkinPreset implements IMessage<SyncPlayerSkinPreset> {
 	public int playerId;
 	public SkinPreset preset;
 
-	public SyncPlayerSkinPreset(){}
+	public SyncPlayerSkinPreset() { /* Nothing to do */ }
 
-	public SyncPlayerSkinPreset(int playerId, SkinPreset preset){
+	public SyncPlayerSkinPreset(int playerId, final SkinPreset preset) {
 		this.playerId = playerId;
 		this.preset = preset;
 	}
 
 	@Override
-	public void encode(SyncPlayerSkinPreset message, FriendlyByteBuf buffer){
+	public void encode(final SyncPlayerSkinPreset message, final FriendlyByteBuf buffer) {
 		buffer.writeInt(message.playerId);
 		buffer.writeNbt(message.preset.writeNBT());
 	}
 
 	@Override
-	public SyncPlayerSkinPreset decode(FriendlyByteBuf buffer){
+	public SyncPlayerSkinPreset decode(final FriendlyByteBuf buffer) {
 		int playerId = buffer.readInt();
+
 		SkinPreset preset = new SkinPreset();
 		preset.readNBT(buffer.readNbt());
+
 		return new SyncPlayerSkinPreset(playerId, preset);
 	}
 
 	@Override
-	public void handle(SyncPlayerSkinPreset message, Supplier<NetworkEvent.Context> supplier){
-		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> runClient(message, supplier));
+	public void handle(final SyncPlayerSkinPreset message, final Supplier<NetworkEvent.Context> supplier) {
+		NetworkEvent.Context context = supplier.get();
 
-		if(supplier.get().getDirection() == NetworkDirection.PLAY_TO_SERVER){
-			ServerPlayer entity = supplier.get().getSender();
-			if(entity != null){
-				DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
-					dragonStateHandler.getSkinData().skinPreset = message.preset;
-					dragonStateHandler.getSkinData().compileSkin();
+		if (context.getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
+			context.enqueueWork(() -> ClientProxy.handleSyncPlayerSkinPreset(message));
+		} else if (context.getDirection() == NetworkDirection.PLAY_TO_SERVER){
+			ServerPlayer sender = context.getSender();
+
+			if (sender != null) {
+				DragonStateProvider.getCap(sender).ifPresent(handler -> {
+					handler.getSkinData().skinPreset = message.preset;
+					handler.getSkinData().compileSkin();
 				});
 
-				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new SyncPlayerSkinPreset(entity.getId(), message.preset));
+				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> sender), new SyncPlayerSkinPreset(sender.getId(), message.preset));
 			}
 		}
-		supplier.get().setPacketHandled(true);
-	}
 
-	@OnlyIn( Dist.CLIENT )
-	public void runClient(SyncPlayerSkinPreset message, Supplier<NetworkEvent.Context> supplier){
-		NetworkEvent.Context context = supplier.get();
-		context.enqueueWork(() -> {
-			Player thisPlayer = Minecraft.getInstance().player;
-			if(thisPlayer != null){
-				Level world = thisPlayer.level;
-				Entity entity = world.getEntity(message.playerId);
-				if(entity instanceof Player){
-					DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
-						dragonStateHandler.getSkinData().skinPreset = message.preset;
-						dragonStateHandler.getSkinData().compileSkin();
-					});
-				}
-			}
-			context.setPacketHandled(true);
-		});
+		context.setPacketHandled(true);
 	}
 }

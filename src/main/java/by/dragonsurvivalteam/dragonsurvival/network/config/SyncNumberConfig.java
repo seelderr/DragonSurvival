@@ -63,11 +63,13 @@ public class SyncNumberConfig implements IMessage<SyncNumberConfig> {
 
 	@Override
 	public void handle(final SyncNumberConfig message, final Supplier<NetworkEvent.Context> supplier) {
-		if (supplier.get().getDirection() == NetworkDirection.PLAY_TO_SERVER) {
-			ServerPlayer entity = supplier.get().getSender();
+		NetworkEvent.Context context = supplier.get();
 
-			if (entity == null || !entity.hasPermissions(2)) {
-				supplier.get().setPacketHandled(true);
+		if (context.getDirection() == NetworkDirection.PLAY_TO_SERVER) {
+			ServerPlayer sender = context.getSender();
+
+			if (sender == null || !sender.hasPermissions(2)) {
+				context.setPacketHandled(true);
 				return;
 			}
 
@@ -84,6 +86,6 @@ public class SyncNumberConfig implements IMessage<SyncNumberConfig> {
 			ConfigHandler.updateConfigValue(longValue, message.value.longValue());
 		}
 
-		supplier.get().setPacketHandled(true);
+		context.setPacketHandled(true);
 	}
 }

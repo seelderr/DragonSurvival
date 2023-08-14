@@ -43,7 +43,7 @@ public class DragonStateHandler extends EntityStateHandler {
     /** Used in {@link by.dragonsurvivalteam.dragonsurvival.mixins.MixinPlayerStart} and {@link by.dragonsurvivalteam.dragonsurvival.mixins.MixinPlayerEnd} */
     public ItemStack storedMainHand = ItemStack.EMPTY;
 
-	public boolean hasSwitchedItems;
+	public boolean switchedItems;
 	public boolean hasFlown;
 	public boolean growing = true;
 

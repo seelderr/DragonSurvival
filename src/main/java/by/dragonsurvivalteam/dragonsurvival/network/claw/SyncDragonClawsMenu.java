@@ -45,19 +45,12 @@ public class SyncDragonClawsMenu implements IMessage<SyncDragonClawsMenu> {
 
 	@Override
 	public void handle(final SyncDragonClawsMenu message, final Supplier<NetworkEvent.Context> supplier) {
-		if (supplier.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
-			runClient(message, supplier);
-		} else {
-			supplier.get().setPacketHandled(true);
-		}
-	}
-
-	public void runClient(final SyncDragonClawsMenu message, final Supplier<NetworkEvent.Context> supplier) {
 		NetworkEvent.Context context = supplier.get();
 
-		context.enqueueWork(() -> {
-			ClientProxy.handleSyncDragonClawsMenu(message);
-			context.setPacketHandled(true);
-		});
+		if (context.getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
+			context.enqueueWork(() -> ClientProxy.handleSyncDragonClawsMenu(message));
+		}
+
+		context.setPacketHandled(true);
 	}
 }

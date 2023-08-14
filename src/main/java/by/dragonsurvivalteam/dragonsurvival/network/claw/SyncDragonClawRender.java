@@ -17,7 +17,7 @@ public class SyncDragonClawRender implements IMessage<SyncDragonClawRender> {
 	public int playerId;
 	public boolean state;
 
-	public SyncDragonClawRender() {}
+	public SyncDragonClawRender() { /* Nothing to do */ }
 
 	public SyncDragonClawRender(int playerId, boolean state) {
 		this.playerId = playerId;
@@ -39,33 +39,24 @@ public class SyncDragonClawRender implements IMessage<SyncDragonClawRender> {
 
 	@Override
 	public void handle(final SyncDragonClawRender message, final Supplier<NetworkEvent.Context> supplier) {
-		if (supplier.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
-			runClient(message, supplier);
-		} else if (supplier.get().getDirection() == NetworkDirection.PLAY_TO_SERVER) {
-			ServerPlayer entity = supplier.get().getSender();
+		NetworkEvent.Context context = supplier.get();
 
-			if (entity != null) {
-				DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
-					dragonStateHandler.getClawToolData().shouldRenderClaws = message.state;
-				});
+		if (context.getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
+			ClientProxy.handleSyncDragonClawRender(message);
+		} else if (context.getDirection() == NetworkDirection.PLAY_TO_SERVER) {
+			ServerPlayer sender = context.getSender();
+
+			if (sender != null) {
+				DragonStateProvider.getCap(sender).ifPresent(handler -> handler.getClawToolData().shouldRenderClaws = message.state);
 
 				if (ServerConfig.syncClawRender) {
 					// Make the other clients aware of the changes (but only if the option to do so is enabled)
 					// TODO :: If a player hides their claw and then the server config changes, won't that claw stay hidden for other players (until restart)?
-					NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new SyncDragonClawRender(entity.getId(), message.state));
+					NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> sender), new SyncDragonClawRender(sender.getId(), message.state));
 				}
 			}
 		}
 
 		supplier.get().setPacketHandled(true);
-	}
-
-	public void runClient(final SyncDragonClawRender message, final Supplier<NetworkEvent.Context> supplier) {
-		NetworkEvent.Context context = supplier.get();
-
-        context.enqueueWork(() -> {
-			ClientProxy.handleSyncDragonClawRender(message);
-			context.setPacketHandled(true);
-		});
 	}
 }

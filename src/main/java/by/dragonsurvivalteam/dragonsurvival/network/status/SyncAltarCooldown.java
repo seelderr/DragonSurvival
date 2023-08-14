@@ -3,79 +3,58 @@ package by.dragonsurvivalteam.dragonsurvival.network.status;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
+import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.DistExecutor.SafeRunnable;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.PacketDistributor;
 
 import java.util.function.Supplier;
 
-
-public class SyncAltarCooldown implements IMessage<SyncAltarCooldown>{
+public class SyncAltarCooldown implements IMessage<SyncAltarCooldown> {
 	public int playerId;
 	public int cooldown;
 
-	public SyncAltarCooldown(){}
+	public SyncAltarCooldown() { /* Nothing to do */ }
 
-	public SyncAltarCooldown(int playerId, int cooldown){
+	public SyncAltarCooldown(int playerId, int cooldown) {
 		this.playerId = playerId;
 		this.cooldown = cooldown;
 	}
 
 	@Override
-	public void encode(SyncAltarCooldown message, FriendlyByteBuf buffer){
+	public void encode(final SyncAltarCooldown message, final FriendlyByteBuf buffer) {
 		buffer.writeInt(message.playerId);
 		buffer.writeInt(message.cooldown);
 	}
 
 	@Override
-	public SyncAltarCooldown decode(FriendlyByteBuf buffer){
+	public SyncAltarCooldown decode(final FriendlyByteBuf buffer) {
 		int playerId = buffer.readInt();
 		int cooldown = buffer.readInt();
 		return new SyncAltarCooldown(playerId, cooldown);
 	}
 
 	@Override
-	public void handle(SyncAltarCooldown message, Supplier<NetworkEvent.Context> supplier){
-		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> runClient(message, supplier));
+	public void handle(final SyncAltarCooldown message, final Supplier<NetworkEvent.Context> supplier) {
+		NetworkEvent.Context context = supplier.get();
 
-		if(supplier.get().getDirection() == NetworkDirection.PLAY_TO_SERVER){
-			ServerPlayer entity = supplier.get().getSender();
-			if(entity != null){
-				DragonStateHandler dragonStateHandler = DragonUtils.getHandler(entity);
-				dragonStateHandler.altarCooldown = message.cooldown;
-				dragonStateHandler.hasUsedAltar = true;
+		if (context.getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
+			context.enqueueWork(() -> ClientProxy.handleSyncAltarCooldown(message));
+		} else if (context.getDirection() == NetworkDirection.PLAY_TO_SERVER) {
+			ServerPlayer sender = context.getSender();
 
-				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new SyncAltarCooldown(entity.getId(), message.cooldown));
+			if (sender != null) {
+				DragonStateHandler handler = DragonUtils.getHandler(sender);
+				handler.altarCooldown = message.cooldown;
+				handler.hasUsedAltar = true;
+
+				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> sender), new SyncAltarCooldown(sender.getId(), message.cooldown));
 			}
 		}
-		supplier.get().setPacketHandled(true);
-	}
 
-	@OnlyIn( Dist.CLIENT )
-	public void runClient(SyncAltarCooldown message, Supplier<NetworkEvent.Context> supplier){
-		NetworkEvent.Context context = supplier.get();
-		context.enqueueWork(() -> {
-			Player thisPlayer = Minecraft.getInstance().player;
-			if(thisPlayer != null){
-				Level world = thisPlayer.level;
-				Entity entity = world.getEntity(message.playerId);
-				if(entity instanceof Player){
-					DragonStateHandler dragonStateHandler = DragonUtils.getHandler(entity);
-					dragonStateHandler.altarCooldown = message.cooldown;
-				}
-			}
-			context.setPacketHandled(true);
-		});
+		context.setPacketHandled(true);
 	}
 }

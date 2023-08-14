@@ -9,24 +9,24 @@ import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class DragonAltarHandler {
-    public static boolean openingAltar = false;
+    public static boolean shouldAltarOpen = false;
 
-    public static void OpenAltar() {
+    public static void openAltar() {
         if (Minecraft.getInstance().player != null && Minecraft.getInstance().screen == null && !Minecraft.getInstance().player.isDeadOrDying()) {
             Minecraft.getInstance().setScreen(new DragonAltarGUI());
         } else {
-            openingAltar = true;
+            shouldAltarOpen = true;
         }
     }
 
     @SubscribeEvent
-    public static void onPlayerTick(final TickEvent.PlayerTickEvent tickEvent) {
-        if (openingAltar && tickEvent.side.isClient()) {
+    public static void onPlayerTick(final TickEvent.PlayerTickEvent.ClientTickEvent event) {
+        if (shouldAltarOpen) {
             Minecraft minecraft = Minecraft.getInstance();
 
             if (minecraft.screen == null && minecraft.player != null && !minecraft.player.isDeadOrDying()) {
                 minecraft.setScreen(new DragonAltarGUI());
-                openingAltar = false;
+                shouldAltarOpen = false;
             }
         }
     }

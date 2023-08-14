@@ -61,9 +61,9 @@ public class SyncListConfig implements IMessage<SyncListConfig> {
 		NetworkEvent.Context context = supplier.get();
 
 		if (context.getDirection() == NetworkDirection.PLAY_TO_SERVER) {
-			ServerPlayer entity = context.getSender();
+			ServerPlayer sender = context.getSender();
 
-			if (entity == null || !entity.hasPermissions(2)) {
+			if (sender == null || !sender.hasPermissions(2)) {
 				context.setPacketHandled(true);
 				return;
 			}

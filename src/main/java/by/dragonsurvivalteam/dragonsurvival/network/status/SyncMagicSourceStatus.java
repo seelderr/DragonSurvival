@@ -1,52 +1,39 @@
 package by.dragonsurvivalteam.dragonsurvival.network.status;
 
-
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
-import net.minecraft.client.Minecraft;
+import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.DistExecutor.SafeRunnable;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.PacketDistributor;
 
 import java.util.function.Supplier;
 
-
-public class SyncMagicSourceStatus implements IMessage<SyncMagicSourceStatus>{
+public class SyncMagicSourceStatus implements IMessage<SyncMagicSourceStatus> {
 	public int playerId;
 	public boolean state;
 	public int timer;
 
-	public SyncMagicSourceStatus(){}
+	public SyncMagicSourceStatus() { /* Nothing to do */ }
 
-	public SyncMagicSourceStatus(int playerId, boolean state, int timer){
+	public SyncMagicSourceStatus(int playerId, boolean state, int timer) {
 		this.playerId = playerId;
 		this.state = state;
 		this.timer = timer;
 	}
 
 	@Override
-
-	public void encode(SyncMagicSourceStatus message, FriendlyByteBuf buffer){
-
+	public void encode(final SyncMagicSourceStatus message, final FriendlyByteBuf buffer) {
 		buffer.writeInt(message.playerId);
 		buffer.writeBoolean(message.state);
 		buffer.writeInt(message.timer);
 	}
 
 	@Override
-
-	public SyncMagicSourceStatus decode(FriendlyByteBuf buffer){
-
+	public SyncMagicSourceStatus decode(final FriendlyByteBuf buffer) {
 		int playerId = buffer.readInt();
 		boolean state = buffer.readBoolean();
 		int timer = buffer.readInt();
@@ -54,42 +41,24 @@ public class SyncMagicSourceStatus implements IMessage<SyncMagicSourceStatus>{
 	}
 
 	@Override
-	public void handle(SyncMagicSourceStatus message, Supplier<NetworkEvent.Context> supplier){
-		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> runClient(message, supplier));
+	public void handle(final SyncMagicSourceStatus message, final Supplier<NetworkEvent.Context> supplier) {
+		NetworkEvent.Context context = supplier.get();
 
-		if(supplier.get().getDirection() == NetworkDirection.PLAY_TO_SERVER){
-			ServerPlayer entity = supplier.get().getSender();
+		if (context.getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
+			context.enqueueWork(() -> ClientProxy.handleSyncMagicSourceStatus(message));
+		} else if (context.getDirection() == NetworkDirection.PLAY_TO_SERVER) {
+			ServerPlayer sender = context.getSender();
 
-			if(entity != null){
-				DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
-					dragonStateHandler.getMagicData().onMagicSource = message.state;
-					dragonStateHandler.getMagicData().magicSourceTimer = message.timer;
+			if (sender != null) {
+				DragonStateProvider.getCap(sender).ifPresent(handler -> {
+					handler.getMagicData().onMagicSource = message.state;
+					handler.getMagicData().magicSourceTimer = message.timer;
 				});
 
-				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new SyncMagicSourceStatus(entity.getId(), message.state, message.timer));
+				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> sender), new SyncMagicSourceStatus(sender.getId(), message.state, message.timer));
 			}
 		}
-		supplier.get().setPacketHandled(true);
-	}
 
-	@OnlyIn( Dist.CLIENT )
-	public void runClient(SyncMagicSourceStatus message, Supplier<NetworkEvent.Context> supplier){
-		NetworkEvent.Context context = supplier.get();
-		context.enqueueWork(() -> {
-
-			Player thisPlayer = Minecraft.getInstance().player;
-			if(thisPlayer != null){
-				Level world = thisPlayer.level;
-				Entity entity = world.getEntity(message.playerId);
-				if(entity instanceof Player){
-
-					DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
-						dragonStateHandler.getMagicData().onMagicSource = message.state;
-						dragonStateHandler.getMagicData().magicSourceTimer = message.timer;
-					});
-				}
-			}
-			context.setPacketHandled(true);
-		});
+		context.setPacketHandled(true);
 	}
 }

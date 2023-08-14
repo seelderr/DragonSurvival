@@ -31,13 +31,15 @@ public class DragonClawsMenuToggle implements IMessage<DragonClawsMenuToggle> {
 
 	@Override
 	public void handle(final DragonClawsMenuToggle message, final Supplier<NetworkEvent.Context> supplier) {
-		ServerPlayer player = supplier.get().getSender();
-		DragonStateProvider.getCap(player).ifPresent(handler -> handler.getClawToolData().setMenuOpen(message.state));
+		NetworkEvent.Context context = supplier.get();
 
-		if (player.containerMenu instanceof DragonContainer container) {
+		ServerPlayer sender = context.getSender();
+		DragonStateProvider.getCap(sender).ifPresent(handler -> handler.getClawToolData().setMenuOpen(message.state));
+
+		if (sender.containerMenu instanceof DragonContainer container) {
 			container.update();
 		}
 
-		supplier.get().setPacketHandled(true);
+		context.setPacketHandled(true);
 	}
 }
