@@ -58,11 +58,13 @@ public class SyncListConfig implements IMessage<SyncListConfig> {
 
 	@Override
 	public void handle(final SyncListConfig message, final Supplier<NetworkEvent.Context> supplier) {
-		if (supplier.get().getDirection() == NetworkDirection.PLAY_TO_SERVER) {
-			ServerPlayer entity = supplier.get().getSender();
+		NetworkEvent.Context context = supplier.get();
+
+		if (context.getDirection() == NetworkDirection.PLAY_TO_SERVER) {
+			ServerPlayer entity = context.getSender();
 
 			if (entity == null || !entity.hasPermissions(2)) {
-				supplier.get().setPacketHandled(true);
+				context.setPacketHandled(true);
 				return;
 			}
 
@@ -73,14 +75,14 @@ public class SyncListConfig implements IMessage<SyncListConfig> {
 		Object config = spec.get(message.path);
 
 		if (config instanceof ConfigValue<?> configValue) {
+			ConfigHandler.updateConfigValue(configValue, message.value);
+
 			// In case the config event does not get triggered
 			if (message.path.startsWith("food")) {
-				DragonFoodHandler.rebuildFoodMap();
+				context.enqueueWork(DragonFoodHandler::rebuildFoodMap);
 			}
-
-			ConfigHandler.updateConfigValue(configValue, message.value);
 		}
 
-		supplier.get().setPacketHandled(true);
+		context.setPacketHandled(true);
 	}
 }

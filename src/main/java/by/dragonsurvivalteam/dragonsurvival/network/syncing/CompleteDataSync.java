@@ -11,63 +11,55 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class CompleteDataSync extends ISidedMessage<CompleteDataSync>{
+public class CompleteDataSync extends ISidedMessage<CompleteDataSync> {
 	private CompoundTag nbt;
 
-	public CompleteDataSync(){
+	public CompleteDataSync() {
 		super(-1);
 	}
 
-	public CompleteDataSync(int playerId){
-		super(playerId);
-	}
-
-	public CompleteDataSync(Player player){
+	public CompleteDataSync(final Player player) {
 		super(player.getId());
 		DragonStateProvider.getCap(player).ifPresent(cap -> nbt = cap.writeNBT());
 	}
 
-	public CompleteDataSync(int playerId, CompoundTag nbt){
+	public CompleteDataSync(int playerId, final CompoundTag nbt) {
 		super(playerId);
 		this.nbt = nbt;
 	}
 
 	@Override
-	public void encode(CompleteDataSync message, FriendlyByteBuf buffer){
+	public void encode(final CompleteDataSync message, final FriendlyByteBuf buffer) {
 		buffer.writeInt(message.playerId);
 		buffer.writeNbt(message.nbt);
 	}
 
 	@Override
-	public CompleteDataSync decode(FriendlyByteBuf buffer){
+	public CompleteDataSync decode(final FriendlyByteBuf buffer) {
 		return new CompleteDataSync(buffer.readInt(), buffer.readNbt());
 	}
 
 	@Override
-	public CompleteDataSync create(CompleteDataSync message){
+	public CompleteDataSync create(final CompleteDataSync message) {
 		return new CompleteDataSync(message.playerId, message.nbt);
 	}
 
 	@Override
-	public void runCommon(CompleteDataSync message, Supplier<NetworkEvent.Context> supplier){
-
-	}
+	public void runCommon(CompleteDataSync message, Supplier<NetworkEvent.Context> supplier) { /* Nothing to do */ }
 
 	@Override
-	public void runServer(CompleteDataSync message, Supplier<NetworkEvent.Context> supplier, ServerPlayer sender){
-		DragonStateProvider.getCap(sender).ifPresent(cap -> {
+	public void runServer(final CompleteDataSync message, final Supplier<NetworkEvent.Context> supplier, final ServerPlayer player) {
+		DragonStateProvider.getCap(player).ifPresent(cap -> {
 			SimpleContainer container = cap.getClawToolData().getClawsInventory();
 			cap.readNBT(message.nbt);
-			cap.getClawToolData().setClawsInventory(container);
+			cap.getClawToolData().setClawsInventory(container); // TODO :: Why is the old state restored?
 		});
 
-		sender.refreshDimensions();
+		player.refreshDimensions();
 	}
 
 	@Override
-	public void runClient(CompleteDataSync message, Supplier<NetworkEvent.Context> supplier, Player targetPlayer){
-		DragonStateProvider.getCap(targetPlayer).ifPresent(cap -> {
-			cap.readNBT(message.nbt);
-		});
+	public void runClient(final CompleteDataSync message, final Supplier<NetworkEvent.Context> supplier, final Player player) {
+		DragonStateProvider.getCap(player).ifPresent(handler -> handler.readNBT(message.nbt));
 	}
 }

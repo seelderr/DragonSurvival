@@ -9,8 +9,6 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegisterEvent;
 
 @Mod.EventBusSubscriber( bus = Mod.EventBusSubscriber.Bus.MOD )
@@ -28,7 +26,7 @@ public class DSContainers{
 		nestContainer = IForgeMenuType.create(SourceOfMagicContainer::new);
 		event.register(Registry.MENU_REGISTRY, new ResourceLocation(DragonSurvivalMod.MODID, "dragon_nest"), ()->nestContainer);
 
-		dragonContainer = IForgeMenuType.create((windowId, inv, data) -> new DragonContainer(windowId, inv, false));
+		dragonContainer = IForgeMenuType.create((windowId, inv, data) -> new DragonContainer(windowId, inv));
 		event.register(Registry.MENU_REGISTRY, new ResourceLocation(DragonSurvivalMod.MODID, "dragon_container"), ()->dragonContainer);
 	}
 }
