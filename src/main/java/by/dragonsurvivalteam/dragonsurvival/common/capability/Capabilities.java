@@ -91,6 +91,7 @@ public class Capabilities{
 
 	@SubscribeEvent
 	public static void onDimensionChange(PlayerEvent.PlayerChangedDimensionEvent event){
+		// TODO :: Might not needed if EntityJoinLevelEvent is used instead of PlayerLoggedInEvent?
 		Player player = event.getEntity();
 		syncCapability(player);
 		DragonStateProvider.getCap(player).ifPresent(cap -> cap.getSkinData().compileSkin());

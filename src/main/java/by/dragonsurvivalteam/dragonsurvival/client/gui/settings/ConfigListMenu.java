@@ -4,34 +4,28 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.settings.widgets.DSTextBoxOption;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.settings.widgets.Option;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.settings.widgets.ResourceTextFieldOption;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownList;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.OptionListEntry;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.OptionsList;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.TextBoxEntry;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
-import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigType;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.config.SyncListConfig;
-import com.google.common.primitives.Primitives;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.OptionsSubScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.level.ItemLike;
-import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -166,5 +160,19 @@ public class ConfigListMenu extends OptionsSubScreen {
 
 		AbstractWidget widget = option.createButton(minecraft.options, 32, 0, list.getScrollbarPosition() - 32 - 60);
 		list.addEntry(new TextBoxEntry(option, list, widget, null));
+	}
+
+	@Override
+	public boolean mouseScrolled(double pMouseX, double pMouseY, double pDelta) {
+		for (GuiEventListener child : children()) {
+			if (child instanceof DropdownList dropdownList) {
+				if (dropdownList.visible && dropdownList.isMouseOver(pMouseX, pMouseY)) {
+					dropdownList.mouseScrolled(pMouseX, pMouseY, pDelta);
+					return false;
+				}
+			}
+		}
+
+		return super.mouseScrolled(pMouseX, pMouseY, pDelta);
 	}
 }
