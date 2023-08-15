@@ -12,8 +12,9 @@ import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.ForgeMod;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
@@ -23,12 +24,16 @@ import software.bernie.geckolib3.resource.GeckoLibCache;
 
 import java.util.Collections;
 import java.util.Locale;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class DragonModel extends AnimatedGeoModel<DragonEntity>{
 	private final double lookSpeed = 0.05;
 	private final double lookDistance = 10;
 	private final ResourceLocation defaultTexture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/cave_newborn.png");
 	private ResourceLocation currentTexture = defaultTexture;
+
+	private final ConcurrentHashMap<String, Vec3> lastPlayerPositions = new ConcurrentHashMap<>();
 
 	@Override
 	public ResourceLocation getModelResource(DragonEntity dragon){
@@ -92,15 +97,9 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity>{
 			lastGameTickTime = gameTick;
 		}
 
-		AnimationEvent<DragonEntity> predicate;
-		if (customPredicate == null) {
-			predicate = new AnimationEvent<DragonEntity>(entity, 0, 0, (float) (manager.tick - lastGameTickTime), false,
-			                                             Collections.emptyList());
-		} else {
-			predicate = customPredicate;
-		}
-
+		AnimationEvent<DragonEntity> predicate = Objects.requireNonNullElseGet(customPredicate, () -> new AnimationEvent<>(entity, 0, 0, (float) (manager.tick - lastGameTickTime), false, Collections.emptyList()));
 		predicate.animationTick = seekTime;
+
 		getAnimationProcessor().preAnimationSetup(predicate.getAnimatable(), seekTime);
 
 		if (!getAnimationProcessor().getModelRendererList().isEmpty()) {
@@ -122,20 +121,23 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity>{
 			return;
 		}
 
+		Vec3 previousPosition = lastPlayerPositions.getOrDefault(player.getStringUUID(), player.position());
+		Vec3 deltaMovement = player.position().subtract(previousPosition);
+		lastPlayerPositions.put(player.getStringUUID(), player.position());
+
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 
-		parser.setValue("query.delta_y", () -> player.getDeltaMovement().y);
-		parser.setValue("query.head_yaw", () -> DragonUtils.getHandler(player).getMovementData().headYaw);
-		parser.setValue("query.head_pitch", () -> DragonUtils.getHandler(player).getMovementData().headPitch);
+		parser.setValue("query.delta_y", () -> deltaMovement.y);
+		parser.setValue("query.head_yaw", () -> handler.getMovementData().headYaw);
+		parser.setValue("query.head_pitch", () -> handler.getMovementData().headPitch);
 
 		double bodyYawChange = Functions.angleDifference((float)handler.getMovementData().bodyYawLastTick, (float)handler.getMovementData().bodyYaw);
 		double headYawChange = Functions.angleDifference((float)handler.getMovementData().headYawLastTick, (float)handler.getMovementData().headYaw);
 		double headPitchChange = Functions.angleDifference((float)handler.getMovementData().headPitchLastTick, (float)handler.getMovementData().headPitch);
 
-		AttributeInstance gravity = player.getAttribute(net.minecraftforge.common.ForgeMod.ENTITY_GRAVITY.get());
-		double g = gravity.getValue();
+		double gravity = player.getAttribute(ForgeMod.ENTITY_GRAVITY.get()).getValue();
 
-		dragon.tailMotionUp = Mth.clamp(Mth.lerp(0.25, dragon.tailMotionUp, ServerFlightHandler.isFlying(player) ? 0 : (player.getDeltaMovement().y + g) * 50), -10, 10);
+		dragon.tailMotionUp = Mth.clamp(Mth.lerp(0.25, dragon.tailMotionUp, ServerFlightHandler.isFlying(player) ? 0 : (deltaMovement.y + gravity) * 50), -10, 10);
 		dragon.tailMotionSide = Mth.lerp(0.1, Mth.clamp(dragon.tailMotionSide + (ServerFlightHandler.isGliding(player) ? 0 : bodyYawChange), -50, 50), 0);
 
 		dragon.bodyYawAverage.add(bodyYawChange);
@@ -175,7 +177,7 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity>{
 		double query_tail_motion_up = Mth.lerp(0.1, dragon.tail_motion_up, tailUpAvg);
 		double query_tail_motion_side = Mth.lerp(0.1, dragon.tail_motion_side, tailSideAvg);
 
-		if(((DragonEntity)animatable).tailLocked || !ClientConfig.enableTailPhysics){
+		if (dragon.tailLocked || !ClientConfig.enableTailPhysics) {
 			dragon.tailMotionUp = 0;
 			dragon.tailMotionSide = 0;
 
