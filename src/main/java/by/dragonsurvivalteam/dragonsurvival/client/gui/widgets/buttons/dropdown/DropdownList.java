@@ -82,9 +82,11 @@ public class DropdownList extends AbstractSelectionList<DropdownEntry>{
 		int j = i + 6;
 		Tesselator tesselator = Tesselator.getInstance();
 		BufferBuilder bufferbuilder = tesselator.getBuilder();
+		// FIXME :: "Insecure modifications"?
 		int j1 = getRowLeft();
 		int k = y0 + 4 - (int)getScrollAmount();
 		renderList(pPoseStack, j1, k, pMouseX, pMouseY, pPartialTicks);
+		//
 
 		if(children().size() > 0){
 			RenderSystem.disableScissor();

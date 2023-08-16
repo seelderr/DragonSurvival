@@ -11,7 +11,9 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-//Syncs the logic for consuming or giving exp to server side to prevent desyncs
+/**
+ * Synchronizes the logic of consuming or giving experience to the server side to prevent de-syncs
+ */
 public class SyncSkillLevelChangeCost implements IMessage<SyncSkillLevelChangeCost>{
 	private int level;
 	private int levelChange;
@@ -41,30 +43,27 @@ public class SyncSkillLevelChangeCost implements IMessage<SyncSkillLevelChangeCo
 	}
 
 	@Override
-	public void handle(SyncSkillLevelChangeCost message, Supplier<NetworkEvent.Context> supplier){
+	public void handle(final SyncSkillLevelChangeCost message, final Supplier<NetworkEvent.Context> supplier){
 		ServerPlayer player = supplier.get().getSender();
 
-		if(player == null){
+		if (player == null) {
+			supplier.get().setPacketHandled(true);
 			return;
 		}
 
-		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
+		supplier.get().enqueueWork(() -> DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
 			DragonAbility staticAbility = DragonAbilities.ABILITY_LOOKUP.get(message.skill);
 
-			if(staticAbility instanceof PassiveDragonAbility ability){
-				try{
-					PassiveDragonAbility newActivty = ability.getClass().newInstance();
-					PassiveDragonAbility playerAbility = DragonAbilities.getSelfAbility(player, ability.getClass());
-					newActivty.setLevel(playerAbility.getLevel() + message.levelChange);
-					int levelCost = message.levelChange > 0 ? -newActivty.getLevelCost() : Math.max((int)(((PassiveDragonAbility)playerAbility).getLevelCost() * 0.8F), 1);
+			if (staticAbility instanceof PassiveDragonAbility ability) {
+				PassiveDragonAbility playerAbility = DragonAbilities.getSelfAbility(player, ability.getClass());
+				int levelCost = message.levelChange > 0 ? -playerAbility.getLevelCost(message.levelChange) : Math.max((int) (playerAbility.getLevelCost() * 0.8F), 1);
 
-					if(levelCost != 0 && !player.isCreative()){
-						player.giveExperienceLevels(levelCost);
-					}
-				}catch(InstantiationException | IllegalAccessException e){
-					throw new RuntimeException(e);
+				if (levelCost != 0 && !player.isCreative()) {
+					player.giveExperienceLevels(levelCost);
 				}
 			}
-		});
+		}));
+
+		supplier.get().setPacketHandled(true);
 	}
 }

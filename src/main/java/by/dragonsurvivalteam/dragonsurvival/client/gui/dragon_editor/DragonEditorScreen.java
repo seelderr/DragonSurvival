@@ -224,20 +224,14 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 		stack.popPose();
 	}
 
-	public void save(){
+	public SkinPreset save(){
 		SkinPreset newPreset = new SkinPreset();
 		newPreset.readNBT(preset.writeNBT());
+		String types = type != null ? type.getTypeName().toUpperCase() : null;
 
-		String typeS = type != null ? type.getTypeName().toUpperCase() : null;
-
-		if(DragonUtils.getDragonType(minecraft.player) == type){
-			NetworkHandler.CHANNEL.sendToServer(new SyncPlayerSkinPreset(minecraft.player.getId(), newPreset));
-		}
-
-		DragonEditorRegistry.getSavedCustomizations().skinPresets.computeIfAbsent(typeS, t -> new HashMap<>());
-		DragonEditorRegistry.getSavedCustomizations().skinPresets.get(typeS).put(currentSelected, newPreset);
-
-		DragonEditorRegistry.getSavedCustomizations().current.get(typeS).put(level, currentSelected);
+		DragonEditorRegistry.getSavedCustomizations().skinPresets.computeIfAbsent(types, t -> new HashMap<>());
+		DragonEditorRegistry.getSavedCustomizations().skinPresets.get(types).put(currentSelected, newPreset);
+		DragonEditorRegistry.getSavedCustomizations().current.get(types).put(level, currentSelected);
 
 		try{
 			Gson gson = GsonFactory.newBuilder().setPrettyPrinting().create();
@@ -245,8 +239,10 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			gson.toJson(DragonEditorRegistry.getSavedCustomizations(), writer);
 			writer.close();
 		}catch(IOException e){
-			e.printStackTrace();
+			DragonSurvivalMod.LOGGER.error("An error occured while trying to save the dragon skin", e);
 		}
+
+		return newPreset;
 	}
 
 	@Override
@@ -797,10 +793,19 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 
 			if(cap.getType() != type){
 				Minecraft.getInstance().player.sendMessage(new TranslatableComponent("ds." + type.getTypeName().toLowerCase() + "_dragon_choice"), Minecraft.getInstance().player.getUUID());
+
+				if(type == null && cap.getType() != null){
+					DragonCommand.reInsertClawTools(Minecraft.getInstance().player, cap);
+				}
+
 				cap.setType(type);
 
-				if(!ServerConfig.saveGrowthStage || cap.getSize() == 0){
+				double size = cap.getSavedDragonSize(cap.getTypeName());
+
+				if(!ServerConfig.saveGrowthStage || size == 0){
 					cap.setSize(DragonLevel.NEWBORN.size);
+				} else {
+					cap.setSize(size);
 				}
 
 				cap.setHasWings(ServerConfig.saveGrowthStage ? cap.hasWings() || ServerFlightHandler.startWithWings : ServerFlightHandler.startWithWings);
@@ -811,12 +816,13 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 				NetworkHandler.CHANNEL.sendToServer(new SyncAltarCooldown(Minecraft.getInstance().player.getId(), Functions.secondsToTicks(ServerConfig.altarUsageCooldown)));
 				NetworkHandler.CHANNEL.sendToServer(new SyncSpinStatus(Minecraft.getInstance().player.getId(), cap.getMovementData().spinAttack, cap.getMovementData().spinCooldown, cap.getMovementData().spinLearned));
 				ClientEvents.sendClientData(new RequestClientData(cap.getType(), cap.getLevel()));
+			}
 
-				if(type == null && cap.getType() != null){
-					DragonCommand.reInsertClawTools(Minecraft.getInstance().player, cap);
-				}
+			if (minecraft != null && minecraft.player != null) {
+				NetworkHandler.CHANNEL.sendToServer(new SyncPlayerSkinPreset(minecraft.player.getId(), save()));
 			}
 		});
+
 		Minecraft.getInstance().player.closeContainer();
 	}
 

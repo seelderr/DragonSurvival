@@ -194,7 +194,16 @@ public abstract class ConfigScreen extends OptionsSubScreen{
 				};
 
 				if(max.subtract(min).intValue() <= 10){ //Use slider if the difference between min and max value is small enough, otherwise use text field
-					option = new ProgressOption(name, min.doubleValue(), max.doubleValue(), sliderPerc, val->getter.apply(val).doubleValue(), setter::accept, (settings, slider) -> new TextComponent(numberFunction.apply(checkType, slider.get(settings)) + ""), mc -> mc.font.split(tooltip, 200));
+					option = new ProgressOption(
+						name,
+						min.doubleValue(),
+						max.doubleValue(),
+						sliderPerc,
+						val->getter.apply(val).doubleValue(),
+						setter::accept,
+						(settings, slider) -> new TextComponent(numberFunction.apply(checkType, slider.get(settings)) + ""),
+						mc -> mc.font.split(tooltip, 200)
+					);
 				}else{
 					option = new DSNumberFieldOption(name, min, max, getter, setter, m -> Minecraft.getInstance().font.split(tooltip, 200));
 				}

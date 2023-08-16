@@ -1,6 +1,6 @@
 modLoader = "javafml"
 loaderVersion = "[40,)"
-license = "All rights reserved exclusively to Viktoria Ershova (BlackAures1)."
+license = "Dragon Survival License. Version 1.0, January 2022. All rights reserved exclusively to Viktoria Ershova (BlackAures1)."
 issueTrackerURL = "https://github.com/DragonSurvivalTeam/DragonSurvival/issues"
 logoFile = "dragonsurvival.png"
 
@@ -9,7 +9,6 @@ logoFile = "dragonsurvival.png"
     version = "${file.jarVersion}"
     displayName = "Dragon Survival"
     displayURL = "https://www.curseforge.com/minecraft/mc-mods/dragons-survival"
-    credits = ""
     authors = "Black Aures"
     description = '''
         This mod lets you play as a dragon. There are 3 dragon kinds, which have different traits.

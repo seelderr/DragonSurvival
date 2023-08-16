@@ -57,13 +57,13 @@ public class SyncMagicStats implements IMessage<SyncMagicStats>{
 	@Override
 	public void handle(SyncMagicStats message, Supplier<NetworkEvent.Context> supplier){
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> run(message, supplier));
+		supplier.get().setPacketHandled(true);
 	}
 
 	@OnlyIn( Dist.CLIENT )
 	public void run(SyncMagicStats message, Supplier<NetworkEvent.Context> supplier){
 		NetworkEvent.Context context = supplier.get();
 		context.enqueueWork(() -> {
-
 			Player thisPlayer = Minecraft.getInstance().player;
 			if(thisPlayer != null){
 				Level world = thisPlayer.level;

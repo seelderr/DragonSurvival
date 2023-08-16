@@ -42,6 +42,7 @@ public class SyncNumberConfig implements IMessage<SyncNumberConfig>{
 	public void handle(SyncNumberConfig message, Supplier<NetworkEvent.Context> supplier){
 		ServerPlayer entity = supplier.get().getSender();
 		if(entity == null || !entity.hasPermissions(2)){
+			supplier.get().setPacketHandled(true);
 			return;
 		}
 
@@ -56,5 +57,6 @@ public class SyncNumberConfig implements IMessage<SyncNumberConfig>{
 		}else if(ob instanceof LongValue value){
 			ConfigHandler.updateConfigValue(value, message.value.longValue());
 		}
+		supplier.get().setPacketHandled(true);
 	}
 }

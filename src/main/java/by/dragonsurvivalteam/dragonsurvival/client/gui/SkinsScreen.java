@@ -72,7 +72,7 @@ public class SkinsScreen extends Screen{
 	protected int imageHeight = 128;
 
 	public SkinsScreen(Screen sourceScreen){
-		super(new TextComponent(""));
+		super(TextComponent.EMPTY);
 		this.sourceScreen = sourceScreen;
 	}
 
@@ -267,7 +267,7 @@ public class SkinsScreen extends Screen{
 			}
 		});
 
-		addRenderableWidget(new Button(startX + 128 + imageWidth / 2 - 8 - 25, startY + 128 + 30, 16, 16, new TextComponent(""), button -> {
+		addRenderableWidget(new Button(startX + 128 + imageWidth / 2 - 8 - 25, startY + 128 + 30, 16, 16, TextComponent.EMPTY, button -> {
 			try{
 				URI uri = new URI(DISCORD_URL);
 				clickedLink = uri;
@@ -288,7 +288,7 @@ public class SkinsScreen extends Screen{
 			}
 		});
 
-		addRenderableWidget(new Button(startX + 128 + imageWidth / 2 - 8 + 25, startY + 128 + 30, 16, 16, new TextComponent(""), button -> {
+		addRenderableWidget(new Button(startX + 128 + imageWidth / 2 - 8 + 25, startY + 128 + 30, 16, 16, TextComponent.EMPTY, button -> {
 			try{
 				URI uri = new URI(WIKI_URL);
 				clickedLink = uri;
@@ -323,15 +323,14 @@ public class SkinsScreen extends Screen{
 
 		addRenderableWidget(new Button(startX + 35, startY + 128, 60, 20, new TranslatableComponent("ds.gui.skins.random"), button -> {
 			ArrayList<Pair<DragonLevel, String>> skins = new ArrayList<>();
-			ArrayList<String> users = new ArrayList<>();
+			HashSet<String> users = new HashSet<>();
 			Random random = new Random();
 
-			for(Map.Entry<DragonLevel, ArrayList<String>> ent : DragonSkins.SKIN_USERS.entrySet()){
-				for(String user : ent.getValue()){
-					skins.add(Pair.of(ent.getKey(), user));
-
-					if(!users.contains(user)){
-						users.add(user);
+			for (Map.Entry<DragonLevel, HashMap<String, DragonSkins.SkinObject>> ent : DragonSkins.SKIN_USERS.entrySet()){
+				for (Map.Entry<String,DragonSkins.SkinObject> user : ent.getValue().entrySet()){
+					if (!user.getValue().glow){
+						skins.add(Pair.of(ent.getKey(), user.getKey()));
+						users.add(user.getKey());
 					}
 				}
 			}
@@ -361,7 +360,7 @@ public class SkinsScreen extends Screen{
 			}
 		});
 
-		addRenderableWidget(new Button(startX + 90, startY + 10, 11, 17, new TextComponent(""), button -> {
+		addRenderableWidget(new Button(startX + 90, startY + 10, 11, 17, TextComponent.EMPTY, button -> {
 			int pos = Mth.clamp(level.ordinal() + 1, 0, DragonLevel.values().length - 1);
 			level = DragonLevel.values()[pos];
 
@@ -380,7 +379,7 @@ public class SkinsScreen extends Screen{
 			}
 		});
 
-		addRenderableWidget(new Button(startX - 70, startY + 10, 11, 17, new TextComponent(""), button -> {
+		addRenderableWidget(new Button(startX - 70, startY + 10, 11, 17, TextComponent.EMPTY, button -> {
 			int pos = Mth.clamp(level.ordinal() - 1, 0, DragonLevel.values().length - 1);
 			level = DragonLevel.values()[pos];
 
@@ -403,7 +402,7 @@ public class SkinsScreen extends Screen{
 	public void setTextures(){
 		loading = true;
 
-		ResourceLocation skinTexture = DragonSkins.getPlayerSkin(playerName + "_" + level.name);
+		ResourceLocation skinTexture = DragonSkins.getPlayerSkin(playerName, level);
 		ResourceLocation glowTexture = null;
 		boolean defaultSkin = false;
 
@@ -413,7 +412,7 @@ public class SkinsScreen extends Screen{
 		}
 
 		if(skinTexture != null){
-			glowTexture = DragonSkins.getPlayerGlow(playerName + "_" + level.name);
+			glowTexture = DragonSkins.getPlayerGlow(playerName, level);
 		}
 
 		SkinsScreen.glowTexture = glowTexture;

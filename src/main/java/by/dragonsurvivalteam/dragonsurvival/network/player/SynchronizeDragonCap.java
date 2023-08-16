@@ -93,6 +93,7 @@ public class SynchronizeDragonCap implements IMessage<SynchronizeDragonCap>{
 		}else{
 			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> runClient(message, supplier));
 		}
+		supplier.get().setPacketHandled(true);
 	}
 
 	@OnlyIn( Dist.CLIENT )

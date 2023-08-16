@@ -37,6 +37,10 @@ public class CaveDragonType extends AbstractDragonType{
 	public int timeInRain;
 	public int lavaAirSupply;
 
+	public CaveDragonType() {
+		slotForBonus = 1;
+	}
+
 	@Override
 	public CompoundTag writeNBT(){
 		CompoundTag tag = new CompoundTag();
@@ -173,7 +177,7 @@ public class CaveDragonType extends AbstractDragonType{
 	}
 
 	@Override
-	public List<TagKey<Block>> mineableBlocks(Player player){
+	public List<TagKey<Block>> mineableBlocks(){
 		return List.of(BlockTags.MINEABLE_WITH_PICKAXE);
 	}
 

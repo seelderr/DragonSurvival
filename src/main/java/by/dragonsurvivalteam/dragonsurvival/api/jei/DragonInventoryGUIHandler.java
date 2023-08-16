@@ -9,12 +9,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.crafting.CraftingRecipe;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public class DragonInventoryGUIHandler implements IRecipeTransferInfo, IGuiContainerHandler<DragonScreen>{
 	@Override
-	public Class getContainerClass(){
+	public @NotNull Class getContainerClass(){
 		return DragonContainer.class;
 	}
 
@@ -29,17 +30,17 @@ public class DragonInventoryGUIHandler implements IRecipeTransferInfo, IGuiConta
 	}
 
 	@Override
-	public boolean canHandle(AbstractContainerMenu container, Object recipe){
+	public boolean canHandle(@NotNull AbstractContainerMenu container, @NotNull Object recipe){
 		return container instanceof DragonContainer;
 	}
 
 	@Override
-	public List<Slot> getRecipeSlots(AbstractContainerMenu container, Object recipe){
+	public @NotNull List<Slot> getRecipeSlots(@NotNull AbstractContainerMenu container, @NotNull Object recipe){
 		return ((DragonContainer)container).craftingSlots;
 	}
 
 	@Override
-	public List<Slot> getInventorySlots(AbstractContainerMenu container, Object recipe){
+	public @NotNull List<Slot> getInventorySlots(@NotNull AbstractContainerMenu container, @NotNull Object recipe){
 		return ((DragonContainer)container).inventorySlots;
 	}
 }
