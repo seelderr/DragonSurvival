@@ -9,6 +9,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.ClientConfig;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -33,7 +34,7 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity>{
 	private final ResourceLocation defaultTexture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/cave_newborn.png");
 	private ResourceLocation currentTexture = defaultTexture;
 
-	private final ConcurrentHashMap<String, Vec3> lastPlayerPositions = new ConcurrentHashMap<>();
+	private final ConcurrentHashMap<String, Pair<Vec3, Vec3>> lastPlayerPositions = new ConcurrentHashMap<>();
 
 	@Override
 	public ResourceLocation getModelResource(DragonEntity dragon){
@@ -121,9 +122,10 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity>{
 			return;
 		}
 
-		Vec3 previousPosition = lastPlayerPositions.getOrDefault(player.getStringUUID(), player.position());
-		Vec3 deltaMovement = player.position().subtract(previousPosition);
-		lastPlayerPositions.put(player.getStringUUID(), player.position());
+		Pair<Vec3, Vec3> previous = lastPlayerPositions.getOrDefault(player.getStringUUID(), new Pair<>(player.position(), new Vec3(0, 0, 0)));
+		Vec3 currentDelta = player.position().subtract(previous.getFirst());
+		Vec3 deltaMovement = previous.getSecond().lerp(currentDelta, 0.2);
+		lastPlayerPositions.put(player.getStringUUID(), Pair.of(player.position(), deltaMovement));
 
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 
