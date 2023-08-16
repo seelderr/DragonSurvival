@@ -11,22 +11,25 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class OpenDragonInventory implements IMessage<OpenDragonInventory>{
+public class OpenDragonInventory implements IMessage<OpenDragonInventory> {
 	@Override
-	public void encode(OpenDragonInventory message, FriendlyByteBuf buffer){}
+	public void encode(final OpenDragonInventory message, final FriendlyByteBuf buffer) { /* Nothing to do */ }
 
 	@Override
-	public OpenDragonInventory decode(FriendlyByteBuf buffer){
+	public OpenDragonInventory decode(final FriendlyByteBuf buffer) {
 		return new OpenDragonInventory();
 	}
 
 	@Override
-	public void handle(OpenDragonInventory message, Supplier<NetworkEvent.Context> supplier){
-		ServerPlayer serverPlayer = supplier.get().getSender();
-		if(DragonUtils.isDragon(serverPlayer)){
-			serverPlayer.containerMenu.removed(serverPlayer);
-			serverPlayer.openMenu(new SimpleMenuProvider((val1, inv, player) -> new DragonContainer(val1, inv, false), Component.empty()));
+	public void handle(final OpenDragonInventory message, final Supplier<NetworkEvent.Context> supplier) {
+		NetworkEvent.Context context = supplier.get();
+		ServerPlayer sender = context.getSender();
+
+		if (DragonUtils.isDragon(sender)) {
+			sender.containerMenu.removed(sender);
+			sender.openMenu(new SimpleMenuProvider((containerId, inventory, player) -> new DragonContainer(containerId, inventory), Component.empty()));
 		}
-		supplier.get().setPacketHandled(true);
+
+		context.setPacketHandled(true);
 	}
 }

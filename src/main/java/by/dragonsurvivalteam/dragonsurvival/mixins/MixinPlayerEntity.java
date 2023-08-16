@@ -106,15 +106,14 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 		}
 	}
 
-
-	@Inject( at = @At( "HEAD" ), method = "eat", cancellable = true )
-	public void dragonEat(Level level, ItemStack itemStack, CallbackInfoReturnable<ItemStack> ci){
-		DragonStateProvider.getCap(this).ifPresent(dragonStateHandler -> {
-			if(dragonStateHandler.isDragon()){
-				DragonFoodHandler.dragonEat(getFoodData(), itemStack.getItem(), itemStack, dragonStateHandler.getType());
+	@Inject(at = @At("HEAD"), method = "eat", cancellable = true)
+	public void dragonEat(final Level level, final ItemStack itemStack, final CallbackInfoReturnable<ItemStack> callback) {
+		DragonStateProvider.getCap(this).ifPresent(handler -> {
+			if (handler.isDragon()) {
+				DragonFoodHandler.dragonEat(getFoodData(), itemStack.getItem(), handler.getType());
 				awardStat(Stats.ITEM_USED.get(itemStack.getItem()));
 				level.playSound(null, getX(), getY(), getZ(), SoundEvents.PLAYER_BURP, SoundSource.PLAYERS, 0.5F, level.random.nextFloat() * 0.1F + 0.9F);
-				ci.setReturnValue(super.eat(level, itemStack));
+				callback.setReturnValue(super.eat(level, itemStack)); // TODO :: Not sure why it's handled this way - are all dragon foods correctly tagged as edible?
 			}
 		});
 	}
@@ -123,7 +122,6 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 	public FoodData getFoodData(){
 		throw new IllegalStateException("Mixin failed to shadow getFoodData()");
 	}
-
 
 	@Shadow
 	public void awardStat(Stat<Item> stat){

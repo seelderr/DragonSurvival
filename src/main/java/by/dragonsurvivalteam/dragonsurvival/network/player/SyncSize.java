@@ -1,66 +1,44 @@
 package by.dragonsurvivalteam.dragonsurvival.network.player;
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
-import net.minecraft.client.Minecraft;
+import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.DistExecutor.SafeRunnable;
+import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-/**
- * Synchronizes dragon level and size
- */
-public class SyncSize implements IMessage<SyncSize>{
-
+/** Synchronizes dragon level and size */
+public class SyncSize implements IMessage<SyncSize> {
 	public int playerId;
 	public double size;
 
-	public SyncSize(int playerId, double size){
+	public SyncSize(int playerId, double size) {
 		this.playerId = playerId;
 		this.size = size;
 	}
 
-	public SyncSize(){
-
-	}
+	public SyncSize() { /* Nothing to do */ }
 
 	@Override
-	public void encode(SyncSize message, FriendlyByteBuf buffer){
+	public void encode(final SyncSize message, final FriendlyByteBuf buffer) {
 		buffer.writeInt(message.playerId);
 		buffer.writeDouble(message.size);
 	}
 
 	@Override
-	public SyncSize decode(FriendlyByteBuf buffer){
+	public SyncSize decode(final FriendlyByteBuf buffer) {
 		return new SyncSize(buffer.readInt(), buffer.readDouble());
 	}
 
 	@Override
-	public void handle(SyncSize message, Supplier<NetworkEvent.Context> supplier){
-		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> runClient(message, supplier));
-		supplier.get().setPacketHandled(true);
-	}
-
-	@OnlyIn( Dist.CLIENT )
-	public void runClient(SyncSize message, Supplier<NetworkEvent.Context> supplier){
+	public void handle(final SyncSize message, final Supplier<NetworkEvent.Context> supplier) {
 		NetworkEvent.Context context = supplier.get();
-		context.enqueueWork(() -> {
-			Minecraft minecraft = Minecraft.getInstance();
-			Entity entity = minecraft.level.getEntity(message.playerId);
-			if(entity instanceof Player pl){
-				DragonStateProvider.getCap(pl).ifPresent(dragonStateHandler -> {
-					dragonStateHandler.setSize(message.size, pl);
-				});
-				pl.refreshDimensions();
-			}
-			supplier.get().setPacketHandled(true);
-		});
+
+		if (context.getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
+			context.enqueueWork(() -> ClientProxy.handleSyncSize(message));
+		}
+
+		context.setPacketHandled(true);
 	}
 }

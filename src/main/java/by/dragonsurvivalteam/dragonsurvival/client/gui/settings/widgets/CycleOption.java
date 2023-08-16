@@ -21,11 +21,7 @@ public class CycleOption<T> extends Option {
     private final CycleOption.OptionSetter<T> setter;
     private final Function<Options, T> getter;
     private final Supplier<CycleButton.Builder<T>> buttonSetup;
-    private Function<Minecraft, OptionInstance.TooltipSupplier<T>> tooltip = (p_167722_) -> {
-        return (p_167728_) -> {
-            return ImmutableList.of();
-        };
-    };
+    private Function<Minecraft, OptionInstance.TooltipSupplier<T>> tooltip = minecraft -> ignored -> ImmutableList.of();
 
     public CycleOption(String pCaptionKey, Function<Options, T> pGetter, CycleOption.OptionSetter<T> pSetter, Supplier<CycleButton.Builder<T>> pButtonSetup) {
         super(pCaptionKey);
@@ -35,33 +31,23 @@ public class CycleOption<T> extends Option {
     }
 
     public static <T> CycleOption<T> create(String pCaptionKey, List<T> pValues, Function<T, Component> pValueStringifier, Function<Options, T> pGetter, CycleOption.OptionSetter<T> pSetter) {
-        return new CycleOption<>(pCaptionKey, pGetter, pSetter, () -> {
-            return CycleButton.builder(pValueStringifier).withValues(pValues);
-        });
+        return new CycleOption<>(pCaptionKey, pGetter, pSetter, () -> CycleButton.builder(pValueStringifier).withValues(pValues));
     }
 
     public static <T> CycleOption<T> create(String pCaptionKey, Supplier<List<T>> pValues, Function<T, Component> pValueStringifier, Function<Options, T> pGetter, CycleOption.OptionSetter<T> pSetter) {
-        return new CycleOption<>(pCaptionKey, pGetter, pSetter, () -> {
-            return CycleButton.builder(pValueStringifier).withValues(pValues.get());
-        });
+        return new CycleOption<>(pCaptionKey, pGetter, pSetter, () -> CycleButton.builder(pValueStringifier).withValues(pValues.get()));
     }
 
     public static <T> CycleOption<T> create(String pCaptionKey, List<T> pDefaultList, List<T> pSelectedList, BooleanSupplier pAltListSelector, Function<T, Component> pValueStringifier, Function<Options, T> pGetter, CycleOption.OptionSetter<T> pSetter) {
-        return new CycleOption<>(pCaptionKey, pGetter, pSetter, () -> {
-            return CycleButton.builder(pValueStringifier).withValues(pAltListSelector, pDefaultList, pSelectedList);
-        });
+        return new CycleOption<>(pCaptionKey, pGetter, pSetter, () -> CycleButton.builder(pValueStringifier).withValues(pAltListSelector, pDefaultList, pSelectedList));
     }
 
     public static <T> CycleOption<T> create(String pCaptionKey, T[] pValues, Function<T, Component> pValueStringifier, Function<Options, T> pGetter, CycleOption.OptionSetter<T> pSetter) {
-        return new CycleOption<>(pCaptionKey, pGetter, pSetter, () -> {
-            return CycleButton.builder(pValueStringifier).withValues(pValues);
-        });
+        return new CycleOption<>(pCaptionKey, pGetter, pSetter, () -> CycleButton.builder(pValueStringifier).withValues(pValues));
     }
 
     public static CycleOption<Boolean> createBinaryOption(String pCaptionKey, Component pDefaultValue, Component pSelectedValue, Function<Options, Boolean> pGetter, CycleOption.OptionSetter<Boolean> pSetter) {
-        return new CycleOption<>(pCaptionKey, pGetter, pSetter, () -> {
-            return CycleButton.booleanBuilder(pDefaultValue, pSelectedValue);
-        });
+        return new CycleOption<>(pCaptionKey, pGetter, pSetter, () -> CycleButton.booleanBuilder(pDefaultValue, pSelectedValue));
     }
 
     public static CycleOption<Boolean> createOnOff(String pCaptionKey, Function<Options, Boolean> pGetter, CycleOption.OptionSetter<Boolean> pSetter) {
@@ -71,9 +57,7 @@ public class CycleOption<T> extends Option {
     public static CycleOption<Boolean> createOnOff(String pCaptionKey, Component pDefaultValue, Function<Options, Boolean> pGetter, CycleOption.OptionSetter<Boolean> pSetter) {
         return createOnOff(pCaptionKey, pGetter, pSetter).setTooltip((p_167791_) -> {
             List<FormattedCharSequence> list = p_167791_.font.split(pDefaultValue, 200);
-            return (p_167772_) -> {
-                return list;
-            };
+            return (p_167772_) -> list;
         });
     }
 

@@ -64,7 +64,7 @@ public class ClientMagicHUDHandler{
 	                                                     "magic"}, key = "manabarYOffset", comment = "Offset the y position of the mana bar in relation to its normal position" )
 	public static Integer manabarYOffset = 0;
 
-	public static void cancelExpBar(ForgeGui gui, PoseStack mStack, float partialTicks, int width, int height){
+	public static void cancelExpBar(ForgeGui gui, PoseStack mStack, float partialTicks, int width, int height){ // TODO :: Should have a different name
 		Player playerEntity = Minecraft.getInstance().player;
 		if(Minecraft.getInstance().options.hideGui || !gui.shouldDrawSurvivalElements() || !Minecraft.getInstance().gameMode.hasExperience())
 			return;
@@ -148,7 +148,7 @@ public class ClientMagicHUDHandler{
 			posX += skillbarXOffset;
 			posY += skillbarYOffset;
 
-			if(cap.getMagicData().isRenderAbilities()){
+			if(cap.getMagicData().shouldRenderAbilities()){
 				RenderSystem.setShaderTexture(0, new ResourceLocation("textures/gui/widgets.png"));
 				Screen.blit(mStack, posX, posY - 2, 0, 0, 0, 41, 22, 256, 256);
 				Screen.blit(mStack, posX + 41, posY - 2, 0, 141, 0, 41, 22, 256, 256);

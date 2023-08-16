@@ -6,8 +6,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 
-public class ClawInventory extends SubCap{
-	public boolean renderClaws = true;
+public class ClawInventory extends SubCap {
 	/*
 		Slot 0: Sword
 		Slot 1: Pickaxe
@@ -15,77 +14,82 @@ public class ClawInventory extends SubCap{
 		Slot 3: Shovel
 	 */
 	private SimpleContainer clawsInventory = new SimpleContainer(4);
-	private boolean clawsMenuOpen = false;
 
-	public ClawInventory(DragonStateHandler handler){
+	public boolean shouldRenderClaws = true;
+
+	private boolean isMenuOpen;
+
+	public ClawInventory(final DragonStateHandler handler) {
 		super(handler);
 	}
 
 	@Override
-	public CompoundTag writeNBT(){
+	public CompoundTag writeNBT() {
 		CompoundTag tag = new CompoundTag();
 
-		tag.putBoolean("clawsMenu", isClawsMenuOpen());
-		tag.put("clawsInventory", saveClawInventory(getClawsInventory()));
-		tag.putBoolean("renderClaws", renderClaws);
+		tag.putBoolean("clawsMenu", isMenuOpen);
+		tag.put("clawsInventory", saveClawInventory(clawsInventory));
+		tag.putBoolean("renderClaws", shouldRenderClaws);
 
 		return tag;
 	}
 
-	public SimpleContainer getClawsInventory(){
-		return clawsInventory;
-	}
-
-	public boolean isClawsMenuOpen(){
-		return clawsMenuOpen;
-	}
-
 	@Override
 	public void readNBT(CompoundTag tag){
-		setClawsMenuOpen(tag.getBoolean("clawsMenu"));
-		renderClaws = tag.getBoolean("renderClaws");
+		setMenuOpen(tag.getBoolean("clawsMenu"));
+		shouldRenderClaws = tag.getBoolean("renderClaws");
 
-		ListTag clawInv = tag.getList("clawsInventory", 10);
-		setClawsInventory(readClawInventory(clawInv));
+		ListTag listTag = tag.getList("clawsInventory", 10);
+		setClawsInventory(readClawInventory(listTag));
 	}
 
-	public void setClawsMenuOpen(boolean clawsMenuOpen){
-		this.clawsMenuOpen = clawsMenuOpen;
-	}
+	public static SimpleContainer readClawInventory(final ListTag listTag) {
+		SimpleContainer clawInventory = new SimpleContainer(4);
 
-	public void setClawsInventory(SimpleContainer clawsInventory){
-		this.clawsInventory = clawsInventory;
-	}
-
-	public static SimpleContainer readClawInventory(ListTag clawInv){
-		SimpleContainer inventory = new SimpleContainer(4);
-
-		for(int i = 0; i < clawInv.size(); ++i){
-			CompoundTag CompoundTag = clawInv.getCompound(i);
-			int j = CompoundTag.getByte("Slot") & 255;
+		for (int i = 0; i < listTag.size(); i++) {
+			CompoundTag CompoundTag = listTag.getCompound(i);
+			int slot = CompoundTag.getByte("Slot") & 255; // Avoid negative values
 			ItemStack itemstack = ItemStack.of(CompoundTag);
-			if(!itemstack.isEmpty()){
-				if(j >= 0 && j < inventory.getContainerSize()){
-					inventory.setItem(j, itemstack);
+
+			if (!itemstack.isEmpty()) {
+				if (slot < clawInventory.getContainerSize()) {
+					clawInventory.setItem(slot, itemstack);
 				}
 			}
 		}
 
-		return inventory;
+		return clawInventory;
 	}
 
-	public static ListTag saveClawInventory(SimpleContainer inv){
-		ListTag nbt = new ListTag();
+	public static ListTag saveClawInventory(final SimpleContainer clawInventory) {
+		ListTag listTag = new ListTag();
 
-		for(int i = 0; i < inv.getContainerSize(); ++i){
-			if(!inv.getItem(i).isEmpty()){
+		for (int slot = 0; slot < clawInventory.getContainerSize(); slot++) {
+			if (!clawInventory.getItem(slot).isEmpty()) {
 				CompoundTag CompoundTag = new CompoundTag();
-				CompoundTag.putByte("Slot", (byte)i);
-				inv.getItem(i).save(CompoundTag);
-				nbt.add(CompoundTag);
+				CompoundTag.putByte("Slot", (byte)slot);
+				clawInventory.getItem(slot).save(CompoundTag);
+
+				listTag.add(CompoundTag);
 			}
 		}
 
-		return nbt;
+		return listTag;
+	}
+
+	public void setClawsInventory(final SimpleContainer clawsInventory) {
+		this.clawsInventory = clawsInventory;
+	}
+
+	public void setMenuOpen(boolean isMenuOpen) {
+		this.isMenuOpen = isMenuOpen;
+	}
+
+	public SimpleContainer getClawsInventory() {
+		return clawsInventory;
+	}
+
+	public boolean isMenuOpen() {
+		return isMenuOpen;
 	}
 }

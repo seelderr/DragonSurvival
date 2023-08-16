@@ -107,18 +107,18 @@ public class KeyInputHandler{
 			}
 
 		}else if(TOGGLE_ABILITIES.consumeClick()){
-			dragonStateHandler.getMagicData().setRenderAbilities(!dragonStateHandler.getMagicData().isRenderAbilities());
-			NetworkHandler.CHANNEL.sendToServer(new SyncDragonAbilitySlot(player.getId(), dragonStateHandler.getMagicData().getSelectedAbilitySlot(), dragonStateHandler.getMagicData().isRenderAbilities()));
+			dragonStateHandler.getMagicData().setRenderAbilities(!dragonStateHandler.getMagicData().shouldRenderAbilities());
+			NetworkHandler.CHANNEL.sendToServer(new SyncDragonAbilitySlot(player.getId(), dragonStateHandler.getMagicData().getSelectedAbilitySlot(), dragonStateHandler.getMagicData().shouldRenderAbilities()));
 
 		}else if(NEXT_ABILITY.consumeClick()){
 			int nextSlot = dragonStateHandler.getMagicData().getSelectedAbilitySlot() == 3 ? 0 : dragonStateHandler.getMagicData().getSelectedAbilitySlot() + 1;
 			dragonStateHandler.getMagicData().setSelectedAbilitySlot(nextSlot);
-			NetworkHandler.CHANNEL.sendToServer(new SyncDragonAbilitySlot(player.getId(), dragonStateHandler.getMagicData().getSelectedAbilitySlot(), dragonStateHandler.getMagicData().isRenderAbilities()));
+			NetworkHandler.CHANNEL.sendToServer(new SyncDragonAbilitySlot(player.getId(), dragonStateHandler.getMagicData().getSelectedAbilitySlot(), dragonStateHandler.getMagicData().shouldRenderAbilities()));
 
 		}else if(PREV_ABILITY.consumeClick()){
 			int nextSlot = dragonStateHandler.getMagicData().getSelectedAbilitySlot() == 0 ? 3 : dragonStateHandler.getMagicData().getSelectedAbilitySlot() - 1;
 			dragonStateHandler.getMagicData().setSelectedAbilitySlot(nextSlot);
-			NetworkHandler.CHANNEL.sendToServer(new SyncDragonAbilitySlot(player.getId(), dragonStateHandler.getMagicData().getSelectedAbilitySlot(), dragonStateHandler.getMagicData().isRenderAbilities()));
+			NetworkHandler.CHANNEL.sendToServer(new SyncDragonAbilitySlot(player.getId(), dragonStateHandler.getMagicData().getSelectedAbilitySlot(), dragonStateHandler.getMagicData().shouldRenderAbilities()));
 
 		}
 
@@ -127,44 +127,44 @@ public class KeyInputHandler{
 			if(ABILITY1.consumeClick()){
 				if(dragonStateHandler.getMagicData().getAbilityFromSlot(dragonStateHandler.getMagicData().getSelectedAbilitySlot()) != null) dragonStateHandler.getMagicData().getAbilityFromSlot(dragonStateHandler.getMagicData().getSelectedAbilitySlot()).onKeyReleased(Minecraft.getInstance().player);
 				dragonStateHandler.getMagicData().setSelectedAbilitySlot(0);
-				NetworkHandler.CHANNEL.sendToServer(new SyncDragonAbilitySlot(player.getId(), dragonStateHandler.getMagicData().getSelectedAbilitySlot(), dragonStateHandler.getMagicData().isRenderAbilities()));
+				NetworkHandler.CHANNEL.sendToServer(new SyncDragonAbilitySlot(player.getId(), dragonStateHandler.getMagicData().getSelectedAbilitySlot(), dragonStateHandler.getMagicData().shouldRenderAbilities()));
 			}else if(ABILITY2.consumeClick()){
 				if(dragonStateHandler.getMagicData().getAbilityFromSlot(dragonStateHandler.getMagicData().getSelectedAbilitySlot()) != null) dragonStateHandler.getMagicData().getAbilityFromSlot(dragonStateHandler.getMagicData().getSelectedAbilitySlot()).onKeyReleased(Minecraft.getInstance().player);
 				dragonStateHandler.getMagicData().setSelectedAbilitySlot(1);
-				NetworkHandler.CHANNEL.sendToServer(new SyncDragonAbilitySlot(player.getId(), dragonStateHandler.getMagicData().getSelectedAbilitySlot(), dragonStateHandler.getMagicData().isRenderAbilities()));
+				NetworkHandler.CHANNEL.sendToServer(new SyncDragonAbilitySlot(player.getId(), dragonStateHandler.getMagicData().getSelectedAbilitySlot(), dragonStateHandler.getMagicData().shouldRenderAbilities()));
 			}else if(ABILITY3.consumeClick()){
 				if(dragonStateHandler.getMagicData().getAbilityFromSlot(dragonStateHandler.getMagicData().getSelectedAbilitySlot()) != null) dragonStateHandler.getMagicData().getAbilityFromSlot(dragonStateHandler.getMagicData().getSelectedAbilitySlot()).onKeyReleased(Minecraft.getInstance().player);
 				dragonStateHandler.getMagicData().setSelectedAbilitySlot(2);
-				NetworkHandler.CHANNEL.sendToServer(new SyncDragonAbilitySlot(player.getId(), dragonStateHandler.getMagicData().getSelectedAbilitySlot(), dragonStateHandler.getMagicData().isRenderAbilities()));
+				NetworkHandler.CHANNEL.sendToServer(new SyncDragonAbilitySlot(player.getId(), dragonStateHandler.getMagicData().getSelectedAbilitySlot(), dragonStateHandler.getMagicData().shouldRenderAbilities()));
 			}else if(ABILITY4.consumeClick()){
 				if(dragonStateHandler.getMagicData().getAbilityFromSlot(dragonStateHandler.getMagicData().getSelectedAbilitySlot()) != null) dragonStateHandler.getMagicData().getAbilityFromSlot(dragonStateHandler.getMagicData().getSelectedAbilitySlot()).onKeyReleased(Minecraft.getInstance().player);
 				dragonStateHandler.getMagicData().setSelectedAbilitySlot(3);
-				NetworkHandler.CHANNEL.sendToServer(new SyncDragonAbilitySlot(player.getId(), dragonStateHandler.getMagicData().getSelectedAbilitySlot(), dragonStateHandler.getMagicData().isRenderAbilities()));
+				NetworkHandler.CHANNEL.sendToServer(new SyncDragonAbilitySlot(player.getId(), dragonStateHandler.getMagicData().getSelectedAbilitySlot(), dragonStateHandler.getMagicData().shouldRenderAbilities()));
 			}
 		}else{
 			if(ABILITY1.isDown()){
 				if(dragonStateHandler.getMagicData().getSelectedAbilitySlot() != 0){
 					if(dragonStateHandler.getMagicData().getAbilityFromSlot(dragonStateHandler.getMagicData().getSelectedAbilitySlot()) != null) dragonStateHandler.getMagicData().getAbilityFromSlot(dragonStateHandler.getMagicData().getSelectedAbilitySlot()).onKeyReleased(Minecraft.getInstance().player);
 					dragonStateHandler.getMagicData().setSelectedAbilitySlot(0);
-					NetworkHandler.CHANNEL.sendToServer(new SyncDragonAbilitySlot(player.getId(), dragonStateHandler.getMagicData().getSelectedAbilitySlot(), dragonStateHandler.getMagicData().isRenderAbilities()));
+					NetworkHandler.CHANNEL.sendToServer(new SyncDragonAbilitySlot(player.getId(), dragonStateHandler.getMagicData().getSelectedAbilitySlot(), dragonStateHandler.getMagicData().shouldRenderAbilities()));
 				}
 			}else if(ABILITY2.isDown()){
 				if(dragonStateHandler.getMagicData().getSelectedAbilitySlot() != 1){
 					if(dragonStateHandler.getMagicData().getAbilityFromSlot(dragonStateHandler.getMagicData().getSelectedAbilitySlot()) != null) dragonStateHandler.getMagicData().getAbilityFromSlot(dragonStateHandler.getMagicData().getSelectedAbilitySlot()).onKeyReleased(Minecraft.getInstance().player);
 					dragonStateHandler.getMagicData().setSelectedAbilitySlot(1);
-					NetworkHandler.CHANNEL.sendToServer(new SyncDragonAbilitySlot(player.getId(), dragonStateHandler.getMagicData().getSelectedAbilitySlot(), dragonStateHandler.getMagicData().isRenderAbilities()));
+					NetworkHandler.CHANNEL.sendToServer(new SyncDragonAbilitySlot(player.getId(), dragonStateHandler.getMagicData().getSelectedAbilitySlot(), dragonStateHandler.getMagicData().shouldRenderAbilities()));
 				}
 			}else if(ABILITY3.isDown()){
 				if(dragonStateHandler.getMagicData().getSelectedAbilitySlot() != 2){
 					if(dragonStateHandler.getMagicData().getAbilityFromSlot(dragonStateHandler.getMagicData().getSelectedAbilitySlot()) != null) dragonStateHandler.getMagicData().getAbilityFromSlot(dragonStateHandler.getMagicData().getSelectedAbilitySlot()).onKeyReleased(Minecraft.getInstance().player);
 					dragonStateHandler.getMagicData().setSelectedAbilitySlot(2);
-					NetworkHandler.CHANNEL.sendToServer(new SyncDragonAbilitySlot(player.getId(), dragonStateHandler.getMagicData().getSelectedAbilitySlot(), dragonStateHandler.getMagicData().isRenderAbilities()));
+					NetworkHandler.CHANNEL.sendToServer(new SyncDragonAbilitySlot(player.getId(), dragonStateHandler.getMagicData().getSelectedAbilitySlot(), dragonStateHandler.getMagicData().shouldRenderAbilities()));
 				}
 			}else if(ABILITY4.isDown()){
 				if(dragonStateHandler.getMagicData().getSelectedAbilitySlot() != 3){
 					if(dragonStateHandler.getMagicData().getAbilityFromSlot(dragonStateHandler.getMagicData().getSelectedAbilitySlot()) != null) dragonStateHandler.getMagicData().getAbilityFromSlot(dragonStateHandler.getMagicData().getSelectedAbilitySlot()).onKeyReleased(Minecraft.getInstance().player);
 					dragonStateHandler.getMagicData().setSelectedAbilitySlot(3);
-					NetworkHandler.CHANNEL.sendToServer(new SyncDragonAbilitySlot(player.getId(), dragonStateHandler.getMagicData().getSelectedAbilitySlot(), dragonStateHandler.getMagicData().isRenderAbilities()));
+					NetworkHandler.CHANNEL.sendToServer(new SyncDragonAbilitySlot(player.getId(), dragonStateHandler.getMagicData().getSelectedAbilitySlot(), dragonStateHandler.getMagicData().shouldRenderAbilities()));
 				}
 			}
 		}

@@ -10,28 +10,26 @@ import net.minecraftforge.network.PacketDistributor;
 
 import java.util.function.Supplier;
 
-public class RequestSpinResync implements IMessage<RequestSpinResync>{
-
-	public RequestSpinResync(){
-	}
-
+public class RequestSpinResync implements IMessage<RequestSpinResync> {
+	public RequestSpinResync() { /* Nothing to do */ }
 
 	@Override
-	public void encode(RequestSpinResync message, FriendlyByteBuf buffer){}
+	public void encode(final RequestSpinResync message, FriendlyByteBuf buffer) { /* Nothing to do */ }
 
 	@Override
-	public RequestSpinResync decode(FriendlyByteBuf buffer){
+	public RequestSpinResync decode(final FriendlyByteBuf buffer) {
 		return new RequestSpinResync();
 	}
 
 	@Override
-	public void handle(RequestSpinResync message, Supplier<NetworkEvent.Context> supplier){
-		ServerPlayer entity = supplier.get().getSender();
-		if(entity != null){
-			DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
-				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new SyncSpinStatus(entity.getId(), dragonStateHandler.getMovementData().spinAttack, dragonStateHandler.getMovementData().spinCooldown, dragonStateHandler.getMovementData().spinLearned));
-			});
+	public void handle(final RequestSpinResync message, final Supplier<NetworkEvent.Context> supplier) {
+		NetworkEvent.Context context = supplier.get();
+		ServerPlayer sender = context.getSender();
+
+		if (sender != null) {
+			DragonStateProvider.getCap(sender).ifPresent(handler -> NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> sender), new SyncSpinStatus(sender.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned)));
 		}
-		supplier.get().setPacketHandled(true);
+
+		context.setPacketHandled(true);
 	}
 }

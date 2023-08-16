@@ -169,6 +169,11 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 
 	@Override
 	public void render(PoseStack stack, int pMouseX, int pMouseY, float pPartialTicks){
+		if (dragonRender == null) {
+			// TODO :: Can happen with the dragon-editor command before using the altar first
+			init();
+		}
+
 		tick += pPartialTicks;
 		if(tick >= 60 * 20){
 			save();
@@ -796,7 +801,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			minecraft.player.level.playSound(minecraft.player, minecraft.player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 1, 0.7f);
 
 			if(cap.getType() != type){
-				Minecraft.getInstance().player.sendSystemMessage(Component.translatable("ds." + type.getTypeName().toLowerCase() + "_dragon_choice"));
+				minecraft.player.sendSystemMessage(Component.translatable("ds." + type.getTypeName().toLowerCase() + "_dragon_choice"));
 
 				if(type == null && cap.getType() != null){
 					DragonCommand.reInsertClawTools(Minecraft.getInstance().player, cap);
@@ -827,7 +832,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			}
 		});
 
-		Minecraft.getInstance().player.closeContainer();
+		minecraft.player.closeContainer();
 	}
 
 	@Override

@@ -11,31 +11,29 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-/**
- * Synchronizes the logic of consuming or giving experience to the server side to prevent de-syncs
- */
-public class SyncSkillLevelChangeCost implements IMessage<SyncSkillLevelChangeCost>{
+/** Synchronizes the logic of consuming or giving experience to the server side to prevent de-syncs */
+public class SyncSkillLevelChangeCost implements IMessage<SyncSkillLevelChangeCost> {
 	private int level;
 	private int levelChange;
 	private String skill;
 
-	public SyncSkillLevelChangeCost(int level, String skill, int levelChange){
+	public SyncSkillLevelChangeCost(int level, String skill, int levelChange) {
 		this.level = level;
 		this.skill = skill;
 		this.levelChange = levelChange;
 	}
 
-	public SyncSkillLevelChangeCost(){}
+	public SyncSkillLevelChangeCost() { /* Nothing to do */ }
 
 	@Override
-	public void encode(SyncSkillLevelChangeCost message, FriendlyByteBuf buffer){
+	public void encode(final SyncSkillLevelChangeCost message, final FriendlyByteBuf buffer) {
 		buffer.writeInt(message.level);
 		buffer.writeUtf(message.skill);
 		buffer.writeInt(message.levelChange);
 	}
 
 	@Override
-	public SyncSkillLevelChangeCost decode(FriendlyByteBuf buffer){
+	public SyncSkillLevelChangeCost decode(final FriendlyByteBuf buffer) {
 		int level = buffer.readInt();
 		String skill = buffer.readUtf();
 		int levelChange = buffer.readInt();
@@ -43,27 +41,25 @@ public class SyncSkillLevelChangeCost implements IMessage<SyncSkillLevelChangeCo
 	}
 
 	@Override
-	public void handle(final SyncSkillLevelChangeCost message, final Supplier<NetworkEvent.Context> supplier){
-		ServerPlayer player = supplier.get().getSender();
+	public void handle(final SyncSkillLevelChangeCost message, final Supplier<NetworkEvent.Context> supplier) {
+		NetworkEvent.Context context = supplier.get();
+		ServerPlayer sender = context.getSender();
 
-		if (player == null) {
-			supplier.get().setPacketHandled(true);
-			return;
+		if (sender != null) {
+			context.enqueueWork(() -> DragonStateProvider.getCap(sender).ifPresent(handler -> {
+				DragonAbility staticAbility = DragonAbilities.ABILITY_LOOKUP.get(message.skill);
+
+				if (staticAbility instanceof PassiveDragonAbility ability) {
+					PassiveDragonAbility playerAbility = DragonAbilities.getSelfAbility(sender, ability.getClass());
+					int levelCost = message.levelChange > 0 ? -playerAbility.getLevelCost(message.levelChange) : Math.max((int) (playerAbility.getLevelCost() * 0.8F), 1);
+
+					if (levelCost != 0 && !sender.isCreative()) {
+						sender.giveExperienceLevels(levelCost);
+					}
+				}
+			}));
 		}
 
-		supplier.get().enqueueWork(() -> DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
-			DragonAbility staticAbility = DragonAbilities.ABILITY_LOOKUP.get(message.skill);
-
-			if (staticAbility instanceof PassiveDragonAbility ability) {
-				PassiveDragonAbility playerAbility = DragonAbilities.getSelfAbility(player, ability.getClass());
-				int levelCost = message.levelChange > 0 ? -playerAbility.getLevelCost(message.levelChange) : Math.max((int) (playerAbility.getLevelCost() * 0.8F), 1);
-
-				if (levelCost != 0 && !player.isCreative()) {
-					player.giveExperienceLevels(levelCost);
-				}
-			}
-		}));
-
-		supplier.get().setPacketHandled(true);
+		context.setPacketHandled(true);
 	}
 }

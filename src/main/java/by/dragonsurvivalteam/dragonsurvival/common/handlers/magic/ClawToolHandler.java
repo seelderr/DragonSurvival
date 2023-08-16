@@ -47,14 +47,14 @@ public class ClawToolHandler{
 
 			for(int i = 0; i < 4; i++){
 				ItemStack clawStack = cap.getClawToolData().getClawsInventory().getItem(i);
-				int mending = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MENDING, clawStack);
+				int mending = clawStack.getEnchantmentLevel(Enchantments.MENDING);
 
 				if(mending > 0 && clawStack.isDamaged()){
 					stacks.add(clawStack);
 				}
 			}
 
-			if(stacks.size() > 0){
+			if (!stacks.isEmpty()) {
 				ItemStack repairTime = stacks.get(player.getRandom().nextInt(stacks.size()));
 				if(!repairTime.isEmpty() && repairTime.isDamaged()){
 
@@ -71,8 +71,6 @@ public class ClawToolHandler{
 
 	@SubscribeEvent
 	public static void playerDieEvent(LivingDropsEvent event){
-		// FIXME :: Add support for SoulBound etc.
-
 		Entity ent = event.getEntity();
 
 		if(ent instanceof Player player){
@@ -196,7 +194,7 @@ public class ClawToolHandler{
 			} else {
 				if (!player.level.isClientSide) {
 					DragonStateHandler handler = DragonUtils.getHandler(player);
-					NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncDragonClawsMenu(player.getId(), handler.getClawToolData().isClawsMenuOpen(), handler.getClawToolData().getClawsInventory()));
+					NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncDragonClawsMenu(player.getId(), handler.getClawToolData().isMenuOpen(), handler.getClawToolData().getClawsInventory()));
 				}
 			}
 		}

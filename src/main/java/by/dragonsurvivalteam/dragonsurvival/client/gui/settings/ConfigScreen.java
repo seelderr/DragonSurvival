@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.settings;
 
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.settings.widgets.*;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.fields.TextField;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.CategoryEntry;
@@ -33,7 +34,6 @@ import net.minecraft.util.FormattedCharSequence;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -42,93 +42,95 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+/** Handles the config categories */
 public abstract class ConfigScreen extends OptionsSubScreen{
-	private static final Float sliderPerc = 0.1F;
+	private static final Float sliderPercentage = 0.1F;
 	private final ArrayList<Option> OPTIONS = new ArrayList<>();
-	private final TreeMap<String, ArrayList<Option>> optionMap = new TreeMap<>();
-	private final ArrayList<String> options = new ArrayList<>();
+	/** Contains all categories (with their full path) */
+	private final TreeMap<String, List<Option>> categories = new TreeMap<>();
+	/** The individual config options / entries */
+	private final ArrayList<String> optionKeys = new ArrayList<>();
 	public OptionsList list;
 	private double scroll;
 
-	public ConfigScreen(Screen p_i225930_1_, Options p_i225930_2_){
-		super(p_i225930_1_, p_i225930_2_, Component.empty());
+	public ConfigScreen(final Screen screen, final Options options, final Component component) {
+		super(screen, options, component);
 		OptionsList.activeCats.clear();
-	}
-
-	public ConfigScreen(Screen p_i225930_1_, Options p_i225930_2_, Component p_i225930_3_){
-		super(p_i225930_1_, p_i225930_2_, p_i225930_3_);
-		OptionsList.activeCats.clear();
-		title = p_i225930_3_;
+		title = component;
 	}
 
 	public abstract ConfigSide screenSide();
 
 	@Override
 	protected void init(){
-		if(list != null){
+		if (list != null) {
 			scroll = list.getScrollAmount();
 		}
 
 		OPTIONS.clear();
-		optionMap.clear();
-		options.clear();
-
+		categories.clear();
+		optionKeys.clear();
 		OptionsList.configMap.clear();
 
 		list = new OptionsList(width, height, 32, height - 32);
-
 		addConfigs();
-
 		list.add(OPTIONS.toArray(new Option[0]), null);
 
-		int catNum = 0;
-		for(Map.Entry<String, ArrayList<Option>> ent : optionMap.entrySet()){
+		int categoryNumber = 0;
+
+		for (Map.Entry<String, List<Option>> entryList : categories.entrySet()) {
 			CategoryEntry entry = null;
-			if(!ent.getKey().isEmpty()){
-				String key = ent.getKey();
-				String lastKey = key;
-				for(String s : key.split("\\.")){
-					if(list.findCategory(s, lastKey) == null || Objects.requireNonNull(list.findCategory(s, lastKey)).parent != null && !Objects.requireNonNull(list.findCategory(s, lastKey)).parent.origName.equals(lastKey)){
-						entry = list.addCategory(s, entry, catNum);
-						catNum++;
-					}else{
-						entry = list.findCategory(s, lastKey);
+
+			if (!entryList.getKey().isEmpty()) {
+				String path = entryList.getKey();
+				String lastPath = path;
+
+				for (String pathElement : path.split("\\.")) {
+					if (list.findCategory(pathElement, lastPath) == null || Objects.requireNonNull(list.findCategory(pathElement, lastPath)).parent != null && !Objects.requireNonNull(list.findCategory(pathElement, lastPath)).parent.origName.equals(lastPath)) {
+						entry = list.addCategory(pathElement, entry, categoryNumber);
+						categoryNumber++;
+					} else {
+						entry = list.findCategory(pathElement, lastPath);
 					}
-					lastKey = s;
+
+					lastPath = pathElement;
 				}
 			}
-			list.add(ent.getValue().toArray(new Option[0]), entry);
+
+			list.add(entryList.getValue().toArray(new Option[0]), entry);
 		}
 
 		children.add(list);
 
-		addRenderableWidget(new Button(32, height - 27, 120 + 32, 20, CommonComponents.GUI_DONE, p_213106_1_ -> {
-			minecraft.setScreen(lastScreen);
-		}));
+		// Button to go back
+		addRenderableWidget(new Button(32, height - 27, 120 + 32, 20, CommonComponents.GUI_DONE, p_213106_1_ -> minecraft.setScreen(lastScreen)));
 
-		addRenderableWidget(new TextField(list.getScrollbarPosition() - 150 - 32, height - 27, 150 + 32, 20, Component.literal("Search")){
-			final ArrayList<CategoryEntry> cats = new ArrayList<>();
+		// Search field
+		addRenderableWidget(new TextField(list.getScrollbarPosition() - 150 - 32, height - 27, 150 + 32, 20, Component.literal("Search")) {
+			final ArrayList<CategoryEntry> categories = new ArrayList<>();
 
 			@Override
-			public boolean charTyped(char pCodePoint, int pModifiers){
-				cats.forEach(c -> c.enabled = false);
-				cats.clear();
+			public boolean charTyped(char codePoint, int modifiers) {
+				categories.forEach(entry -> entry.enabled = false);
+				categories.clear();
 
-				if(!getValue().isEmpty()){
+				if (!getValue().isEmpty()) {
 					OptionEntry entry = list.findClosest(getValue());
 
-					if(entry != null){
-						CategoryEntry cat = entry.category;
+					if (entry != null) {
+						CategoryEntry category = entry.category;
 
-						while(cat != null){
-							cat.enabled = true;
-							cats.add(cat);
-							cat = cat.parent;
+						while (category != null) {
+							category.enabled = true;
+							categories.add(category);
+							category = category.parent;
 						}
+
 						list.centerScrollOn(entry);
 					}
 				}
-				return super.charTyped(pCodePoint, pModifiers);
+
+				return super.charTyped(codePoint, modifiers);
 			}
 		});
 
@@ -136,170 +138,216 @@ public abstract class ConfigScreen extends OptionsSubScreen{
 	}
 
 	private void addConfigs(){
-		List<ConfigOption> opts = new ArrayList<>();
+		List<ConfigOption> configOptions = new ArrayList<>();
 
-		for(String s : ConfigHandler.configs.getOrDefault(screenSide(), Collections.emptyList())){
-			if(ConfigHandler.configObjects.containsKey(s)){
+		for (String s : ConfigHandler.configs.getOrDefault(screenSide(), Collections.emptyList())){
+			if (ConfigHandler.configObjects.containsKey(s)) {
 				ConfigOption option = ConfigHandler.configObjects.get(s);
-				opts.add(option);
+				configOptions.add(option);
 			}
 		}
 
-		opts.sort((C1, c2) -> Arrays.compare(C1.category(), c2.category()));
+		configOptions.sort((configOptionOne, configOptionTwo) -> Arrays.compare(configOptionOne.category(), configOptionTwo.category()));
 
-		for(ConfigOption opt : opts){
-			String key = opt.key();
-			Field fe = ConfigHandler.configFields.get(opt.key());
-			ConfigValue<?> value = ConfigHandler.configValues.get(opt.key());
-			String category = String.join(".", opt.category());
+		for (ConfigOption configOption : configOptions) {
+			String key = configOption.key();
+			Field field = ConfigHandler.configFields.get(configOption.key());
+			ConfigValue<?> configValue = ConfigHandler.configValues.get(configOption.key());
+			String category = String.join(".", configOption.category());
 
-			if(options.contains(key) || value == null){
+			if (optionKeys.contains(key) || configValue == null) {
 				continue;
 			}
 
-			String fullpath = String.join(".", List.of(category, key));
+			String fullPath = String.join(".", List.of(category, key));
 
-			String translatedName = Component.translatable("ds." + fullpath).getString();
-			String translateTooltip = Component.translatable("ds." + fullpath + ".tooltip").getString();
+			String translatedName = Component.translatable("ds." + fullPath).getString();
+			String translateTooltip = Component.translatable("ds." + fullPath + ".tooltip").getString();
 
-			String name = !translatedName.equalsIgnoreCase("ds." + fullpath) ? translatedName : key;
-			String tooltip0 = !translateTooltip.equalsIgnoreCase("ds." + fullpath + ".tooltip") ? translateTooltip : opt.comment() != null ? String.join("\n", opt.comment()) : "";
+			String name = !translatedName.equalsIgnoreCase("ds." + fullPath) ? translatedName : key;
+			String tooltip0 = !translateTooltip.equalsIgnoreCase("ds." + fullPath + ".tooltip") ? translateTooltip : configOption.comment() != null ? String.join("\n", configOption.comment()) : "";
 
-			if(opt.restart()){
-				tooltip0 += "\n" + I18n.get("ds.config.server_restart");
+			if (configOption.restart()) {
+				tooltip0 += "\n" + I18n.get("ds.config.server_restart"); // FIXME :: No translation exists?
 			}
 
-			ConfigRange range = fe.isAnnotationPresent(ConfigRange.class) ? fe.getAnnotation(ConfigRange.class) : null;
-			BigDecimal min = BigDecimal.valueOf(range != null ? range.min() : -1).setScale(5, RoundingMode.FLOOR);
-			BigDecimal max = BigDecimal.valueOf(range != null ? range.max() : Integer.MAX_VALUE).setScale(5, RoundingMode.FLOOR);
+			ConfigRange range = field.isAnnotationPresent(ConfigRange.class) ? field.getAnnotation(ConfigRange.class) : null;
+			boolean hasDecimals = field.getType() == Double.class || field.getType() == Float.class;
+
+			Number min = range != null ? range.min() : Integer.MIN_VALUE;
+			Number max = range != null ? range.max() : Integer.MAX_VALUE;
 
 			Component tooltip = Component.literal(tooltip0);
-			Class<?> checkType = Primitives.unwrap(fe.getType());
+			Class<?> checkType = Primitives.unwrap(field.getType());
 
-			if(Number.class.isAssignableFrom(fe.getType())){
-				Option option = null;
-
+			if (Number.class.isAssignableFrom(field.getType())) {
+				// Handle numbers
 				BiFunction<Class<?>, Number, Object> numberFunction = (type, val) -> {
 					BigDecimal outVal = BigDecimal.valueOf(val.doubleValue()).setScale(3, RoundingMode.FLOOR);
-					return Primitives.wrap(fe.getType()).cast(outVal.doubleValue());
-				};
 
-				Function<Options, Number> getter = options -> ((ConfigValue<Number>)value).get();
-				BiConsumer<Options, Number> setter = (settings, settingValue) -> {
-					ConfigHandler.updateConfigValue(value, numberFunction.apply(checkType, settingValue));
-
-					if(screenSide() == ConfigSide.SERVER){
-						NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(key, settingValue.doubleValue()));
+					if (hasDecimals) {
+						return outVal.doubleValue();
+					} else {
+						return outVal.intValue();
 					}
 				};
 
-				if(max.subtract(min).intValue() <= 10){ //Use slider if the difference between min and max value is small enough, otherwise use text field
+				Function<Options, Number> getter = options -> ((ConfigValue<Number>) configValue).get();
+
+                BiConsumer<Options, Number> setter = (settings, settingValue) -> {
+					ConfigHandler.updateConfigValue(configValue, numberFunction.apply(checkType, settingValue));
+
+					if (screenSide() == ConfigSide.SERVER) {
+						if (field.getType() == Double.class || field.getType() == Float.class) {
+							NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(ConfigHandler.createConfigPath(configOption), settingValue.doubleValue()));
+                        } else if (field.getType() == Integer.class || field.getType() == Long.class) {
+							NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(ConfigHandler.createConfigPath(configOption), settingValue.longValue()));
+						}
+					}
+				};
+
+                Option option;
+
+				// Use slider if the difference between min and max value is small enough, otherwise use text field
+				if (false /*max.subtract(min).intValue() <= 10*/) { // FIXME :: Calling the setter every time a value changes causes problems - only set value when 'Done' is clicked? Also has problems with certain decimals (it moves in 0.1 range but some config are in 0.01 range)
 					option = new ProgressOption(
-						name,
-						min.doubleValue(),
-						max.doubleValue(),
-						sliderPerc,
-						val->getter.apply(val).doubleValue(),
-						setter::accept,
-						(settings, slider) -> Component.literal(numberFunction.apply(checkType, slider.get(settings)) + ""),
-						mc -> mc.font.split(tooltip, 200)
+						    name,
+						    hasDecimals ? min.doubleValue() : min.intValue(),
+						    hasDecimals ? max.doubleValue() : max.intValue(),
+							sliderPercentage,
+						    options -> hasDecimals ? getter.apply(options).doubleValue() : getter.apply(options).intValue(),
+						    setter::accept,
+						    (settings, slider) -> Component.literal(numberFunction.apply(checkType, slider.get(settings)) + ""),
+						    minecraft -> minecraft.font.split(tooltip, 200)
 					);
-				}else{
-					option = new DSNumberFieldOption(name, min, max, getter, setter, m -> Minecraft.getInstance().font.split(tooltip, 200));
+				} else {
+					option = new DSNumberFieldOption(name, min, max, getter, setter, minecraft -> Minecraft.getInstance().font.split(tooltip, 200), hasDecimals);
 				}
 
 				OptionsList.configMap.put(option, key);
 				addOption(category, name, option);
+			} else if (checkType.equals(boolean.class)) {
+                // Handle booleans
+				CycleOption<Boolean> option = new CycleOption<>(name, val -> ((ConfigValue<Boolean>) configValue).get(), (settings, optionO, settingValue) -> {
+					ConfigHandler.updateConfigValue(configValue, settingValue);
 
-			}else if(checkType.equals(boolean.class)){
-				CycleOption<Boolean> option = new CycleOption<>(name, val -> ((ConfigValue<Boolean>)value).get(), (settings, optionO, settingValue) -> {
-					ConfigHandler.updateConfigValue(value, settingValue);
-
-					if(screenSide() == ConfigSide.SERVER){
-						NetworkHandler.CHANNEL.sendToServer(new SyncBooleanConfig(key, settingValue));
+					if (screenSide() == ConfigSide.SERVER) {
+						NetworkHandler.CHANNEL.sendToServer(new SyncBooleanConfig(ConfigHandler.createConfigPath(configOption), settingValue));
 					}
-				}, () -> CycleButton.booleanBuilder(((MutableComponent)CommonComponents.OPTION_ON).withStyle(ChatFormatting.GREEN), ((MutableComponent)CommonComponents.OPTION_OFF).withStyle(ChatFormatting.RED)).displayOnlyValue())
-					.setTooltip(mc-> s ->mc.font.split(tooltip, 200));
+				}, () -> CycleButton.booleanBuilder(((MutableComponent) CommonComponents.OPTION_ON)
+                                .withStyle(ChatFormatting.GREEN), ((MutableComponent) CommonComponents.OPTION_OFF)
+                                .withStyle(ChatFormatting.RED))
+                        .displayOnlyValue())
+                        .setTooltip(mc-> s ->mc.font.split(tooltip, 200));
 				OptionsList.configMap.put(option, key);
 				addOption(category, name, option);
-			}else if(checkType.isEnum()){
-				Class<? extends Enum> cs = (Class<? extends Enum>)value.get().getClass();
-				Enum vale = EnumGetMethod.ORDINAL_OR_NAME.get(((Enum<?>)value.get()).ordinal(), cs);
+			} else if (checkType.isEnum()) {
+				Class<? extends Enum> enumClass = (Class<? extends Enum>) configValue.get().getClass();
+				Enum<?> value = null;
 
-				Option option = new DSDropDownOption(name, vale, val -> {
-					ConfigHandler.updateConfigValue(value, val);
+				if (configValue.get() instanceof String stringValue) {
+					value = EnumGetMethod.ORDINAL_OR_NAME.get(stringValue, enumClass);
+				} else if (configValue.get() instanceof Enum<?> enumValue) {
+					value = EnumGetMethod.ORDINAL_OR_NAME.get(enumValue.ordinal(), enumClass);
+				}
 
-					if(screenSide() == ConfigSide.SERVER)
-						NetworkHandler.CHANNEL.sendToServer(new SyncEnumConfig(key, val));
-				}, m -> m.font.split(tooltip, 200));
+				if (value != null) {
+					Option option = new DSDropDownOption(name, value, enumValue -> {
+						ConfigHandler.updateConfigValue(configValue, enumValue);
 
-				OptionsList.configMap.put(option, key);
-				addOption(category, name, option);
-			}else if(checkType.isAssignableFrom(List.class)){
-				if(value.get() instanceof List && (((List<?>)value.get()).isEmpty() || ((List<?>)value.get()).get(0) instanceof String)){
-					StringJoiner joiner = new StringJoiner(",");
-
-					if(((List<?>)value.get()).size() > 0)
-						for(Object ob1 : (List<?>)value.get()){
-							joiner.add("[" + ob1.toString() + "]");
+						if (screenSide() == ConfigSide.SERVER) {
+							NetworkHandler.CHANNEL.sendToServer(new SyncEnumConfig(ConfigHandler.createConfigPath(configOption), enumValue));
 						}
-					else
-						joiner.add("[]");
-					String text = Minecraft.getInstance().font.substrByWidth(Component.literal(joiner.toString()), 120).getString();
-					CycleOption<String> option = new CycleOption<String>(name,
-	                     val -> text,
-	                     (val1, val2, val3) -> minecraft.setScreen(new ConfigListMenu(this, minecraft.options, Component.literal(name), key, value, screenSide(), key)),
-	                     () -> {
-							return new Builder<String>(t -> Component.literal(text)).displayOnlyValue().withValues(text).withInitialValue(text);
-					}).setTooltip(mc-> s ->mc.font.split(tooltip, 200));
+					}, minecraft -> minecraft.font.split(tooltip, 200));
 
 					OptionsList.configMap.put(option, key);
 					addOption(category, name, option);
-				}else
-					System.err.println("Invalid config \"" + key + "\"");
+				} else {
+					DragonSurvivalMod.LOGGER.error("An enum configuration seems to be broken for [" + ConfigHandler.createConfigPath(configOption) + "] - value: [" + configValue.get() + "], class: [" + configValue.get().getClass() + "]");
+				}
+			} else if (checkType.isAssignableFrom(List.class)) {
+                // Handle list values
+				if (configValue.get() instanceof List<?> listConfig && (listConfig.isEmpty() || listConfig.get(0) instanceof String || listConfig.get(0) instanceof Number)) {
+					StringJoiner joiner = new StringJoiner(",");
+
+					if (!listConfig.isEmpty()) {
+                        for (Object listElement : listConfig) {
+                            joiner.add("[" + listElement.toString() + "]");
+                        }
+                    } else {
+						joiner.add("[]");
+					}
+
+					String text = Minecraft.getInstance().font.substrByWidth(Component.literal(joiner.toString()), 120).getString();
+					CycleOption<String> option = new CycleOption<>(
+							name,
+                            options -> text,
+                            (val1, val2, val3) -> minecraft.setScreen(new ConfigListMenu(this, minecraft.options, Component.literal(name), configValue, screenSide(), configOption)),
+                            () -> new Builder<String>(ignored -> Component.literal(text)).displayOnlyValue().withValues(text).withInitialValue(text)).setTooltip(minecraft -> ignored -> minecraft.font.split(tooltip, 200));
+
+					OptionsList.configMap.put(option, key);
+					addOption(category, name, option);
+				} else {
+					DragonSurvivalMod.LOGGER.warn("Invalid configuration: [" + key + "]");
+				}
+			} else if (checkType.isAssignableFrom(String.class)) {
+				// Handle String values
+				if (configValue.get() instanceof String stringValue) {
+					Option option;
+
+					if (ConfigHandler.isResource(configOption)) {
+						option = new ResourceTextFieldOption(configOption.key(), stringValue, settings -> stringValue);
+					} else {
+						option = new DSTextBoxOption(stringValue, settings -> stringValue);
+					}
+
+					OptionsList.configMap.put(option, key);
+					addOption(category, name, option);
+				}
 			}
 		}
 	}
 
-	private void addOption(String category, String path, Option option){
-		if(category != null){
-			if(!optionMap.containsKey(category))
-				optionMap.put(category, new ArrayList<>());
-			optionMap.get(category).add(option);
-		}else
-			OPTIONS.add(option);
+	private void addOption(final String category, final String path, final Option option) {
+		if (category != null) {
+			categories.computeIfAbsent(category, key -> new ArrayList<>()).add(option);
+		} else {
+            OPTIONS.add(option);
+        }
 
-		options.add(path);
+		optionKeys.add(path);
 	}
-
-
-
 
 	@Override
-	public void render(@NotNull PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
-		renderBackground(p_230430_1_);
-		list.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
-		super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
+	public void render(@NotNull final PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
+		// Renders a black transparent overlay behind the config categories
+		renderBackground(poseStack);
+		// Render the actual config categories
+		list.render(poseStack, mouseX, mouseY, partialTicks);
+		// Renders default buttons (e.g. `Done`)
+		super.render(poseStack, mouseX, mouseY, partialTicks);
 
-		List<FormattedCharSequence> list = tooltipAt(this.list, p_230430_2_, p_230430_3_);
-		if(list != null)
-			renderTooltip(p_230430_1_, list, p_230430_2_, p_230430_3_);
+		List<FormattedCharSequence> list = tooltipAt(this.list, mouseX, mouseY);
+
+		if (list != null) {
+			renderTooltip(poseStack, list, mouseX, mouseY);
+		}
 	}
 
+	public static List<FormattedCharSequence> tooltipAt(final OptionsList options, int mouseX, int mouseY) {
+		Optional<AbstractWidget> optional = options.getMouseOver(mouseX, mouseY);
+		OptionListEntry entry = options.getEntryAtPos(mouseX, mouseY);
 
-	@Nullable
-	public static List<FormattedCharSequence> tooltipAt(OptionsList p_243293_0_, int p_243293_1_, int p_243293_2_){
-		Optional<AbstractWidget> optional = p_243293_0_.getMouseOver(p_243293_1_, p_243293_2_);
-		OptionListEntry optional2 = p_243293_0_.getEntryAtPos(p_243293_1_, p_243293_2_);
-
-		if(optional.isEmpty() || !(optional.get() instanceof TooltipAccessor))
-			if(optional2 instanceof OptionEntry){
-				optional = Optional.of(((OptionEntry)optional2).widget);
+		if (optional.isEmpty() || !(optional.get() instanceof TooltipAccessor)) {
+			if (entry instanceof OptionEntry optionEntry) {
+				optional = Optional.of(optionEntry.widget);
 			}
+		}
 
-		if(optional.isPresent() && optional.get() instanceof TooltipAccessor && optional.get().visible && !optional.get().isHoveredOrFocused())
-			return ((TooltipAccessor)optional.get()).getTooltip();
-		else
+		if (optional.isPresent() && optional.get() instanceof TooltipAccessor tooltipAccessor && optional.get().visible && !optional.get().isHoveredOrFocused()) {
+			return tooltipAccessor.getTooltip();
+		} else {
 			return ImmutableList.of();
+		}
 	}
 }

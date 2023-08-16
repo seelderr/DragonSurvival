@@ -1,15 +1,15 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists;
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.settings.widgets.Option;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.settings.widgets.SliderButton;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.*;
-import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.Locale;
@@ -78,13 +78,15 @@ public class OptionsList extends ContainerObjectSelectionList<OptionListEntry>{
 	}
 
 	@Override
-	protected int getRowTop(int p_230962_1_){
+	protected int getRowTop(int index){
 		int height = 0;
-		for(int i = 0; i < p_230962_1_; i++){
+
+		for (int i = 0; i < index; i++) {
 			OptionListEntry e = getEntry(i);
 			height += e.getHeight();
 		}
-		return y0 + 4 - (int)getScrollAmount() + height - 4;
+
+		return y0 + 4 - (int) getScrollAmount() + height - 4;
 	}
 
 	@Override
@@ -92,9 +94,10 @@ public class OptionsList extends ContainerObjectSelectionList<OptionListEntry>{
 		return super.removeEntry(p_230956_1_);
 	}
 
-	public void add(Option[] p_214335_1_, CategoryEntry entry){
-		for(int i = 0; i < p_214335_1_.length; i++)
-			add(p_214335_1_[i], entry);
+	public void add(final Option[] options, final CategoryEntry entry) {
+        for (Option option : options) {
+            add(option, entry);
+        }
 	}
 
 	public void add(Option option, CategoryEntry entry){
@@ -149,32 +152,34 @@ public class OptionsList extends ContainerObjectSelectionList<OptionListEntry>{
 	}
 
 	@Override
-	public int getRowWidth(){
+	public int getRowWidth() {
 		return listWidth;
 	}
+
+	/** Handles the rendering of the entries (but not the options when clicking on an entry) */
 	@Override
-	protected void renderList(PoseStack pPoseStack, int pMouseX, int pMouseY, float pPartialTick){
-		int i = getItemCount();
+	protected void renderList(@NotNull final PoseStack poseStack, int pMouseX, int pMouseY, float partialTicks) {
+		int itemCount = getItemCount();
 
-		for(int j = 0; j < i; ++j){
-			int k = getRowTop(j);
-			int l = getRowBottom(j);
-			OptionListEntry e = getEntry(j);
-			e.visible = l >= y0 + 16 && k <= y1 - 16;
+		for (int index = 0; index < itemCount; index++) {
+			int top = getRowTop(index);
+			int bottom = getRowBottom(index);
 
-			if(l >= y0 && k <= y1){
-				int j1 = e.getHeight();
-				int k1 = getRowWidth();
-				int j2 = getRowLeft();
-				boolean mouseOver = isMouseOver(pMouseX, pMouseY) && Objects.equals(getEntryAtPos(pMouseX, pMouseY), e);
-				e.render(pPoseStack, j, k, j2, k1, j1, pMouseX, pMouseY, mouseOver, pPartialTick);
+			OptionListEntry entry = getEntry(index);
+			entry.visible = bottom >= y0 + 16 && top <= y1 - 16;
+
+			if (bottom >= y0 && top <= y1) {
+				int entryHeight = entry.getHeight();
+				int rowWidth = getRowWidth();
+				int rowLeft = getRowLeft();
+				boolean mouseOver = isMouseOver(pMouseX, pMouseY) && Objects.equals(getEntryAtPos(pMouseX, pMouseY), entry);
+				entry.render(poseStack, index, top, rowLeft, rowWidth, entryHeight, pMouseX, pMouseY, mouseOver, partialTicks);
 			}
 		}
 	}
 
-	public int getRowBottom(int p_230948_1_){
-		OptionListEntry e = getEntry(p_230948_1_);
-		return getRowTop(p_230948_1_) + e.getHeight();
+	public int getRowBottom(int index) {
+		return getRowTop(index) + getEntry(index).getHeight();
 	}
 
 	@Nullable
@@ -185,38 +190,6 @@ public class OptionsList extends ContainerObjectSelectionList<OptionListEntry>{
 				if(cat.parent == null || cat.parent.origName.equals(lastKey)){
 					if(cat.origName.equals(text)){
 						return cat;
-					}
-				}
-			}
-
-		return null;
-	}
-
-	@Nullable
-	public Widget findWidget(String text){
-		for(OptionListEntry optionsrowlist$row : children())
-			for(GuiEventListener widget : optionsrowlist$row.children()){
-				if(widget instanceof Widget){
-					if(widget instanceof CycleButton && ((CycleButton<?>)widget).getMessage().getString().equals(text)){
-						return (Widget)widget;
-					}else if(widget instanceof SliderButton && ((SliderButton)widget).getMessage().getString().equals(text)){
-						return (Widget)widget;
-					}
-				}
-			}
-
-		return null;
-	}
-
-	@Nullable
-	public OptionListEntry findEntry(String text){
-		for(OptionListEntry optionsrowlist$row : children())
-			for(GuiEventListener widget : optionsrowlist$row.children()){
-				if(widget instanceof Widget){
-					if(widget instanceof CycleButton && ((CycleButton<?>)widget).getMessage().getString().equals(text)){
-						return optionsrowlist$row;
-					}else if(widget instanceof SliderButton && ((SliderButton)widget).getMessage().getString().equals(text)){
-						return optionsrowlist$row;
 					}
 				}
 			}

@@ -1,17 +1,15 @@
 package by.dragonsurvivalteam.dragonsurvival.common.capability;
 
-import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientEvents;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.objects.DragonMovementData;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.*;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.network.RequestClientData;
+import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonModifiers;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
@@ -29,9 +27,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
@@ -40,24 +37,13 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
-
 public class DragonStateHandler extends EntityStateHandler {
-
-	//TODO Remove / cleanup the following
-	private final DragonMovementData movementData = new DragonMovementData(0, 0, 0, false);
-
-	private final ClawInventory clawToolData = new ClawInventory(this);
-	public ItemStack storedMainHand = ItemStack.EMPTY;
-	public boolean switchedItems;
-
-	private final EmoteCap emoteData = new EmoteCap(this);
-	private final MagicCap magicData = new MagicCap(this);
-	private final SkinCap skinData = new SkinCap(this);
-	private final VillageRelationShips villageRelationShips = new VillageRelationShips(this);
-
 	public final Supplier<SubCap>[] caps = new Supplier[]{this::getSkinData, this::getMagicData, this::getEmoteData, this::getClawToolData, this::getVillageRelationShips};
-	private final Map<String, Double> savedDragonSize = new ConcurrentHashMap<>();
 
+    /** Used in {@link by.dragonsurvivalteam.dragonsurvival.mixins.MixinPlayerStart} and {@link by.dragonsurvivalteam.dragonsurvival.mixins.MixinPlayerEnd} */
+    public ItemStack storedMainHand = ItemStack.EMPTY;
+
+	public boolean switchedItems;
 	public boolean hasFlown;
 	public boolean growing = true;
 
@@ -68,89 +54,80 @@ public class DragonStateHandler extends EntityStateHandler {
 	public int altarCooldown;
 	public boolean hasUsedAltar;
 
-	private boolean isHiding;
+    /** Last timestamp the server synchronized the player */
+    public int lastSync = 0;
+
+
+	private final DragonMovementData movementData = new DragonMovementData(0, 0, 0, false);
+	private final ClawInventory clawToolData = new ClawInventory(this);
+	private final EmoteCap emoteData = new EmoteCap(this);
+	private final MagicCap magicData = new MagicCap(this);
+	private final SkinCap skinData = new SkinCap(this);
+	private final VillageRelationShips villageRelationShips = new VillageRelationShips(this);
+	private final Map<String, Double> savedDragonSize = new ConcurrentHashMap<>();
 
 	private AbstractDragonType dragonType;
 
-	private boolean hasWings;
-	private boolean spreadWings;
-	private double size;
 	private int passengerId;
+	private boolean isHiding;
+	private boolean hasWings;
+	private boolean areWingsSpread;
+	private double size;
 
-	/**
-	 * Sets the size, health and base damage
-	 */
-	public void setSize(double size, Player player){
+	/** Sets the size, health and base damage */
+	public void setSize(double size, final Player player) {
 		setSize(size);
 		updateModifiers(size, player);
 	}
 
-	private void updateModifiers(double size, Player player){
-		if(isDragon()){
-			AttributeModifier healthMod = DragonModifiers.buildHealthMod(size);
-			DragonModifiers.updateHealthModifier(player, healthMod);
-			AttributeModifier damageMod = DragonModifiers.buildDamageMod(this, isDragon());
-			DragonModifiers.updateDamageModifier(player, damageMod);
-			AttributeModifier swimSpeedMod = DragonModifiers.buildSwimSpeedMod(getType());
-			DragonModifiers.updateSwimSpeedModifier(player, swimSpeedMod);
-			AttributeModifier reachMod = DragonModifiers.buildReachMod(size);
-			DragonModifiers.updateReachModifier(player, reachMod);
-		}else{
+	private void updateModifiers(double size, final Player player) {
+		if (isDragon()) {
+            // Grant the dragon attribute modifiers
+			AttributeModifier health = DragonModifiers.buildHealthMod(size);
+			DragonModifiers.updateHealthModifier(player, health);
+
+            AttributeModifier damage = DragonModifiers.buildDamageMod(this, isDragon());
+			DragonModifiers.updateDamageModifier(player, damage);
+
+            AttributeModifier swimSpeed = DragonModifiers.buildSwimSpeedMod(getType());
+			DragonModifiers.updateSwimSpeedModifier(player, swimSpeed);
+
+            AttributeModifier reach = DragonModifiers.buildReachMod(size);
+			DragonModifiers.updateReachModifier(player, reach);
+		} else {
+            // Remove the dragon attribute modifiers
 			AttributeModifier oldMod = DragonModifiers.getHealthModifier(player);
-			if(oldMod != null){
+            if (oldMod != null) {
 				AttributeInstance max = Objects.requireNonNull(player.getAttribute(Attributes.MAX_HEALTH));
 				max.removeModifier(oldMod);
 			}
 
 			oldMod = DragonModifiers.getDamageModifier(player);
-			if(oldMod != null){
+			if (oldMod != null) {
 				AttributeInstance max = Objects.requireNonNull(player.getAttribute(Attributes.ATTACK_DAMAGE));
 				max.removeModifier(oldMod);
 			}
 
 			oldMod = DragonModifiers.getSwimSpeedModifier(player);
-			if(oldMod != null){
+			if (oldMod != null) {
 				AttributeInstance max = Objects.requireNonNull(player.getAttribute(ForgeMod.SWIM_SPEED.get()));
 				max.removeModifier(oldMod);
 			}
 
 			oldMod = DragonModifiers.getReachModifier(player);
-			if(oldMod != null){
+			if (oldMod != null) {
 				AttributeInstance max = Objects.requireNonNull(player.getAttribute(ForgeMod.REACH_DISTANCE.get()));
 				max.removeModifier(oldMod);
 			}
 		}
 	}
 
-	public boolean isDragon(){
-		return dragonType != null;
-	}
-
-	public int getPassengerId(){
-		return passengerId;
-	}
-
-	public void setPassengerId(int passengerId){
-		this.passengerId = passengerId;
-	}
-
-	public EmoteCap getEmoteData(){
-		return emoteData;
-	}
-
-	public SkinCap getSkinData(){
-		return skinData;
-	}
-
-	public int lastSync = 0;//Last timestamp the server synced this player
-
 	@Override
-	public CompoundTag writeNBT(){
+	public CompoundTag writeNBT() {
 		CompoundTag tag = new CompoundTag();
-		//tag.putString("type", getType().name());
 		tag.putString("type", dragonType != null ? dragonType.getTypeName() : "none");
 
-		if(isDragon()){
+		if (isDragon()) {
 			tag.put("typeData", dragonType.writeNBT());
 
 			//Rendering
@@ -176,24 +153,23 @@ public class DragonStateHandler extends EntityStateHandler {
 			tag.putInt("restingTimer", treasureRestTimer);
 		}
 
-		if (isDragon() || ServerConfig.saveAllAbilities) {
+		if (isDragon() || ServerConfig.saveAllAbilities) { // FIXME :: Is this growing or abilities?
 			tag.putBoolean("spinLearned", getMovementData().spinLearned);
 			tag.putBoolean("hasWings", hasWings());
 		}
-
 
 		tag.putDouble("seaSize", getSavedDragonSize(DragonTypes.SEA.getTypeName()));
 		tag.putDouble("caveSize", getSavedDragonSize(DragonTypes.CAVE.getTypeName()));
 		tag.putDouble("forestSize", getSavedDragonSize(DragonTypes.FOREST.getTypeName()));
 
-		for(int i = 0; i < caps.length; i++){
+		for (int i = 0; i < caps.length; i++) {
 			tag.put("cap_" + i, caps[i].get().writeNBT());
 		}
 
 		tag.putInt("altarCooldown", altarCooldown);
 		tag.putBoolean("usedAltar", hasUsedAltar);
 
-		if(lastPos != null){
+		if (lastPos != null) {
 			tag.put("lastPos", Functions.newDoubleList(lastPos.x, lastPos.y, lastPos.z));
 		}
 
@@ -203,16 +179,16 @@ public class DragonStateHandler extends EntityStateHandler {
 	}
 
 	@Override
-	public void readNBT(CompoundTag tag){
+	public void readNBT(final CompoundTag tag) {
 		dragonType = DragonTypes.newDragonTypeInstance(tag.getString("type"));
 
-		if(dragonType != null){
-			if(tag.contains("typeData")){
+		if (dragonType != null) {
+			if (tag.contains("typeData")) {
 				dragonType.readNBT(tag.getCompound("typeData"));
 			}
 		}
 
-		if(isDragon()){
+		if (isDragon()) {
 			setMovementData(tag.getDouble("bodyYaw"), tag.getDouble("headYaw"), tag.getDouble("headPitch"), tag.getBoolean("bite"));
 			getMovementData().headYawLastTick = getMovementData().headYaw;
 			getMovementData().bodyYawLastTick = getMovementData().bodyYaw;
@@ -245,16 +221,16 @@ public class DragonStateHandler extends EntityStateHandler {
 		setSavedDragonSize(DragonTypes.CAVE.getTypeName(), tag.getDouble("caveSize"));
 		setSavedDragonSize(DragonTypes.FOREST.getTypeName(), tag.getDouble("forestSize"));
 
-		for(int i = 0; i < caps.length; i++){
-			if(tag.contains("cap_" + i)){
-				caps[i].get().readNBT((CompoundTag)tag.get("cap_" + i));
+		for (int i = 0; i < caps.length; i++) {
+			if (tag.contains("cap_" + i)) {
+				caps[i].get().readNBT((CompoundTag) tag.get("cap_" + i));
 			}
 		}
 
 		altarCooldown = tag.getInt("altarCooldown");
 		hasUsedAltar = tag.getBoolean("usedAltar");
 
-		if(tag.contains("lastPos")){
+		if (tag.contains("lastPos")) {
 			ListTag listnbt = tag.getList("lastPos", 6);
 			lastPos = new Vec3(listnbt.getDouble(0), listnbt.getDouble(1), listnbt.getDouble(2));
 		}
@@ -264,17 +240,7 @@ public class DragonStateHandler extends EntityStateHandler {
 		getSkinData().compileSkin();
 	}
 
-	public void setHasWings(boolean hasWings){
-		if(hasWings != this.hasWings){
-			this.hasWings = hasWings;
-		}
-	}
-
-	public void setIsHiding(boolean hiding){
-		isHiding = hiding;
-	}
-
-	public void setMovementData(double bodyYaw, double headYaw, double headPitch, boolean bite){
+	public void setMovementData(double bodyYaw, double headYaw, double headPitch, boolean bite) {
 		movementData.headYawLastTick = movementData.headYaw;
 		movementData.bodyYawLastTick = movementData.bodyYaw;
 		movementData.headPitchLastTick = movementData.headPitch;
@@ -285,17 +251,14 @@ public class DragonStateHandler extends EntityStateHandler {
 		movementData.bite = bite;
 	}
 
-	public double getSize(){
-		return size;
-	}
-
-	public void setSize(double size){
-		if(size != this.size){
+	public void setSize(double size) {
+		if (size != this.size) {
 			DragonLevel oldLevel = getLevel();
 			this.size = size;
 
-			if(oldLevel != getLevel())
-				onGrow();
+			if (oldLevel != getLevel()) {
+				requestClientData();
+			}
 
 			if (dragonType != null) {
 				setSavedDragonSize(dragonType.getTypeName(), size);
@@ -320,14 +283,10 @@ public class DragonStateHandler extends EntityStateHandler {
 		savedDragonSize.put(type, size);
 	}
 
-	public void onGrow(){
-		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (DistExecutor.SafeRunnable)this::requestSkinUpdate);
-	}
-
-	@OnlyIn( Dist.CLIENT )
-	public void requestSkinUpdate(){
-		if(this == DragonUtils.getHandler(Minecraft.getInstance().player))
-			ClientEvents.sendClientData(new RequestClientData(getType(), getLevel()));
+	public void requestClientData() {
+		if (FMLEnvironment.dist == Dist.CLIENT) {
+			ClientProxy.requestClientData(this);
+		}
 	}
 
 	public AbstractDragonType getType(){
@@ -342,59 +301,31 @@ public class DragonStateHandler extends EntityStateHandler {
 		return dragonType.getTypeName();
 	}
 
-	public void setType(AbstractDragonType type){
-		if(type != null && !Objects.equals(dragonType, type)){
+	public void setType(final AbstractDragonType type) {
+		if (type != null && !Objects.equals(dragonType, type)) {
 			growing = true;
 			getMagicData().initAbilities(type);
 		}
 
-		if(type != null){
-			if(Objects.equals(dragonType, type)) return;
+		if (type != null) {
+			if (Objects.equals(dragonType, type)) {
+				return;
+			}
+
 			dragonType = DragonTypes.newDragonTypeInstance(type.getTypeName());
-		}else{
+		} else {
 			dragonType = null;
 		}
 	}
 
-	public MagicCap getMagicData(){
-		return magicData;
-	}
-
-	public DragonLevel getLevel(){
-		if(size < 20F)
+	public DragonLevel getLevel() {
+		if (size < 20F) {
 			return DragonLevel.NEWBORN;
-		else if(size < 30F)
+		} else if (size < 30F) {
 			return DragonLevel.YOUNG;
-		else
+		} else {
 			return DragonLevel.ADULT;
-	}
-
-	public DragonMovementData getMovementData(){
-		return movementData;
-	}
-
-	public boolean hasWings(){
-		return hasWings;
-	}
-
-	public boolean isWingsSpread(){
-		return hasWings && spreadWings;
-	}
-
-	public void setWingsSpread(boolean flying){
-		spreadWings = flying;
-	}
-
-	public boolean isHiding(){
-		return isHiding;
-	}
-
-	public ClawInventory getClawToolData()  {
-		return clawToolData;
-	}
-
-	public VillageRelationShips getVillageRelationShips() {
-		return villageRelationShips;
+		}
 	}
 
 	/** Determines if the current dragon type can harvest the supplied block (with or without tools) (configured harvest bonuses are taken into account) */
@@ -413,6 +344,7 @@ public class DragonStateHandler extends EntityStateHandler {
 
 	/** Determines if the current dragon type can harvest the supplied block without a tool (configured harvest bonuses are taken into account) */
 	public boolean canHarvestWithPawNoTools(final BlockState blockState) {
+		// FIXME :: Not the most accurate check
 		int harvestLevel = blockState.is(BlockTags.NEEDS_DIAMOND_TOOL) ? 3 : blockState.is(BlockTags.NEEDS_IRON_TOOL) ? 2 : blockState.is(BlockTags.NEEDS_STONE_TOOL) ? 1 : 0;
 
 		if (harvestLevel <= ServerConfig.baseHarvestLevel) {
@@ -580,5 +512,71 @@ public class DragonStateHandler extends EntityStateHandler {
 		}
 
 		return 0;
+	}
+
+	public void setPassengerId(int passengerId) {
+		this.passengerId = passengerId;
+	}
+
+	public void setWingsSpread(boolean areWingsSpread) {
+		this.areWingsSpread = areWingsSpread;
+	}
+
+	public void setHasWings(boolean hasWings) {
+		if (hasWings != this.hasWings) { // TODO :: Why this check?
+			this.hasWings = hasWings;
+		}
+	}
+
+	public void setIsHiding(boolean isHiding) {
+		this.isHiding = isHiding;
+	}
+
+	public MagicCap getMagicData(){
+		return magicData;
+	}
+
+	public DragonMovementData getMovementData() {
+		return movementData;
+	}
+
+	public double getSize(){
+		return size;
+	}
+
+	public boolean isDragon() {
+		return dragonType != null;
+	}
+
+	public int getPassengerId() {
+		return passengerId;
+	}
+
+	public EmoteCap getEmoteData() {
+		return emoteData;
+	}
+
+	public SkinCap getSkinData() {
+		return skinData;
+	}
+
+	public boolean hasWings() {
+		return hasWings;
+	}
+
+	public boolean isWingsSpread() {
+		return hasWings && areWingsSpread;
+	}
+
+	public boolean isHiding(){
+		return isHiding;
+	}
+
+	public ClawInventory getClawToolData()  {
+		return clawToolData;
+	}
+
+	public VillageRelationShips getVillageRelationShips() {
+		return villageRelationShips;
 	}
 }

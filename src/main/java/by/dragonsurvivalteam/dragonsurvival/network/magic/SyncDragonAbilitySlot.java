@@ -8,35 +8,28 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class SyncDragonAbilitySlot implements IMessage<SyncDragonAbilitySlot>{
-
+public class SyncDragonAbilitySlot implements IMessage<SyncDragonAbilitySlot> {
 	public int playerId;
 	private int selectedSlot;
 	private boolean displayHotbar;
 
-	public SyncDragonAbilitySlot(){
+	public SyncDragonAbilitySlot() { /* Nothing to do */ }
 
-	}
-
-	public SyncDragonAbilitySlot(int playerId, int selectedSlot, boolean displayHotbar){
+	public SyncDragonAbilitySlot(int playerId, int selectedSlot, boolean displayHotbar) {
 		this.playerId = playerId;
 		this.selectedSlot = selectedSlot;
 		this.displayHotbar = displayHotbar;
 	}
 
 	@Override
-
-	public void encode(SyncDragonAbilitySlot message, FriendlyByteBuf buffer){
-
+	public void encode(final SyncDragonAbilitySlot message, final FriendlyByteBuf buffer) {
 		buffer.writeInt(message.playerId);
 		buffer.writeInt(message.selectedSlot);
 		buffer.writeBoolean(message.displayHotbar);
 	}
 
 	@Override
-
-	public SyncDragonAbilitySlot decode(FriendlyByteBuf buffer){
-
+	public SyncDragonAbilitySlot decode(final FriendlyByteBuf buffer) {
 		int playerId = buffer.readInt();
 		int selectedSlot = buffer.readInt();
 		boolean hideHotbar = buffer.readBoolean();
@@ -45,14 +38,18 @@ public class SyncDragonAbilitySlot implements IMessage<SyncDragonAbilitySlot>{
 	}
 
 	@Override
-	public void handle(SyncDragonAbilitySlot message, Supplier<NetworkEvent.Context> supplier){
-		supplier.get().enqueueWork(()->{
-			DragonStateProvider.getCap(supplier.get().getSender()).ifPresent(cap -> {
-				if(cap.getMagicData().getAbilityFromSlot(cap.getMagicData().getSelectedAbilitySlot()) != null) cap.getMagicData().getAbilityFromSlot(cap.getMagicData().getSelectedAbilitySlot()).onKeyReleased(supplier.get().getSender());
-				cap.getMagicData().setSelectedAbilitySlot(message.selectedSlot);
-				cap.getMagicData().setRenderAbilities(message.displayHotbar);
-			});
-		});
-		supplier.get().setPacketHandled(true);
+	public void handle(final SyncDragonAbilitySlot message, final Supplier<NetworkEvent.Context> supplier) {
+		NetworkEvent.Context context = supplier.get();
+
+		context.enqueueWork(()-> DragonStateProvider.getCap(context.getSender()).ifPresent(cap -> {
+			if (cap.getMagicData().getAbilityFromSlot(cap.getMagicData().getSelectedAbilitySlot()) != null) {
+				cap.getMagicData().getAbilityFromSlot(cap.getMagicData().getSelectedAbilitySlot()).onKeyReleased(context.getSender());
+			}
+
+			cap.getMagicData().setSelectedAbilitySlot(message.selectedSlot);
+			cap.getMagicData().setRenderAbilities(message.displayHotbar);
+		}));
+
+		context.setPacketHandled(true);
 	}
 }

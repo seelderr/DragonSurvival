@@ -374,7 +374,7 @@ public class ClientEvents{
 
 					if(Minecraft.getInstance().gui instanceof ForgeGui gui1){
 						rightHeight = ((ForgeGui)Minecraft.getInstance().gui).rightHeight;
-						((ForgeGui)Minecraft.getInstance().gui).rightHeight += 10;
+						gui1.rightHeight += 10;
 					}
 
 					int maxTimeWithoutWater = ServerConfig.seaTicksWithoutWater;
@@ -419,7 +419,7 @@ public class ClientEvents{
 					int maxRainTime = 0;
 
 					if(contrastShower != null){
-						maxRainTime += Functions.secondsToTicks(((ContrastShowerAbility)contrastShower).getDuration());
+						maxRainTime += Functions.secondsToTicks(contrastShower.getDuration());
 					}
 
 
@@ -473,7 +473,7 @@ public class ClientEvents{
 					LightInDarknessAbility lightInDarkness = DragonAbilities.getSelfAbility(player, LightInDarknessAbility.class);
 
 					if(lightInDarkness != null){
-						maxTimeInDarkness += Functions.secondsToTicks(((LightInDarknessAbility)lightInDarkness).getDuration());
+						maxTimeInDarkness += Functions.secondsToTicks(lightInDarkness.getDuration());
 					}
 
 					final int timeInDarkness = maxTimeInDarkness - Math.min(forestDragonType.timeInDarkness, maxTimeInDarkness);

@@ -98,7 +98,7 @@ public class DragonBeacon extends Block implements SimpleWaterloggedBlock, Entit
 				if(dragonStateHandler.isDragon() && (playerEntity.totalExperience >= 60 || playerEntity.isCreative())){
 					if(this == DSBlocks.peaceDragonBeacon){
 						if(!world.isClientSide){
-							ConfigHandler.configList(MobEffect.class, ServerConfig.peaceBeaconEffects).forEach(effect -> {
+							ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.peaceBeaconEffects).forEach(effect -> {
 								if(effect != null){
 									playerEntity.addEffect(new MobEffectInstance(effect, Functions.minutesToTicks(ServerConfig.secondsOfBeaconEffect)));
 								}
@@ -106,7 +106,7 @@ public class DragonBeacon extends Block implements SimpleWaterloggedBlock, Entit
 						}
 					}else if(this == DSBlocks.magicDragonBeacon){
 						if(!world.isClientSide){
-							ConfigHandler.configList(MobEffect.class, ServerConfig.magicBeaconEffects).forEach(effect -> {
+							ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.magicBeaconEffects).forEach(effect -> {
 								if(effect != null){
 									playerEntity.addEffect(new MobEffectInstance(effect, Functions.minutesToTicks(ServerConfig.secondsOfBeaconEffect)));
 								}
@@ -114,7 +114,7 @@ public class DragonBeacon extends Block implements SimpleWaterloggedBlock, Entit
 						}
 					}else if(this == DSBlocks.fireDragonBeacon){
 						if(!world.isClientSide){
-							ConfigHandler.configList(MobEffect.class, ServerConfig.fireBeaconEffects).forEach(effect -> {
+							ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.fireBeaconEffects).forEach(effect -> {
 								if(effect != null){
 									playerEntity.addEffect(new MobEffectInstance(effect, Functions.minutesToTicks(ServerConfig.secondsOfBeaconEffect)));
 								}

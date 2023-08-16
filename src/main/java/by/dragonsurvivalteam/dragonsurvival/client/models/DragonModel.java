@@ -9,11 +9,13 @@ import by.dragonsurvivalteam.dragonsurvival.config.ClientConfig;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.ForgeMod;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
@@ -23,52 +25,57 @@ import software.bernie.geckolib3.resource.GeckoLibCache;
 
 import java.util.Collections;
 import java.util.Locale;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
-public class DragonModel extends AnimatedGeoModel<DragonEntity>{
-	private final double lookSpeed = 0.05;
-	private final double lookDistance = 10;
+public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 	private final ResourceLocation defaultTexture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/cave_newborn.png");
+	private final ConcurrentHashMap<String, Pair<Vec3, Vec3>> lastPlayerPositions = new ConcurrentHashMap<>();
+
 	private ResourceLocation currentTexture = defaultTexture;
+	private double previousTick;
 
 	@Override
-	public ResourceLocation getModelResource(DragonEntity dragon){
+	public ResourceLocation getModelResource(final DragonEntity ignored) {
 		return new ResourceLocation(DragonSurvivalMod.MODID, "geo/dragon_model.geo.json");
 	}
 
 	@Override
-	public ResourceLocation getTextureResource(DragonEntity dragon){
-		if(dragon.player != null || dragon.getPlayer() != null){
+	public ResourceLocation getTextureResource(final DragonEntity dragon) {
+		if (dragon.player != null || dragon.getPlayer() != null) {
 			DragonStateHandler handler = DragonUtils.getHandler(dragon.getPlayer());
 			SkinAgeGroup ageGroup = handler.getSkinData().skinPreset.skinAges.get(handler.getLevel()).get();
 
-			if(handler.getSkinData().recompileSkin){
+			if (handler.getSkinData().recompileSkin) {
 				DragonEditorHandler.generateSkinTextures(dragon);
 			}
 
-			if(handler.getSkinData().blankSkin){
+			if (handler.getSkinData().blankSkin) {
 				return new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/blank_skin_" + handler.getTypeName().toLowerCase(Locale.ROOT) + ".png");
 			}
 
-			if(ageGroup.defaultSkin){
-				if(currentTexture != null){
+			if (ageGroup.defaultSkin) {
+				if (currentTexture != null) {
 					return currentTexture;
 				}
+
 				return new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/" + handler.getTypeName().toLowerCase(Locale.ROOT) + "_" + handler.getLevel().name.toLowerCase(Locale.ROOT) + ".png");
 			}
 
-			if(handler.getSkinData().isCompiled && currentTexture == null){
+			if (handler.getSkinData().isCompiled && currentTexture == null) {
 				return new ResourceLocation(DragonSurvivalMod.MODID, "dynamic_normal_" + dragon.getPlayer().getStringUUID());
 			}
 		}
+
 		return currentTexture == null ? defaultTexture : currentTexture;
 	}
 
-	public void setCurrentTexture(ResourceLocation currentTexture){
+	public void setCurrentTexture(final ResourceLocation currentTexture) {
 		this.currentTexture = currentTexture;
 	}
 
 	@Override
-	public ResourceLocation getAnimationResource(DragonEntity animatable){
+	public ResourceLocation getAnimationResource(final DragonEntity ignored) {
 		return new ResourceLocation(DragonSurvivalMod.MODID, "animations/dragon.animations.json");
 	}
 
@@ -77,11 +84,11 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity>{
 	 * @link <a href="https://github.com/bernie-g/geckolib/blob/4e864bd2d4a0a8dceea01f600b7031cb2fba3a3b/Forge/src/main/java/software/bernie/geckolib3/model/AnimatedGeoModel.java#L51">Github link</a>
 	 */
 	@Override
-	public void setCustomAnimations(DragonEntity entity, int uniqueID, AnimationEvent customPredicate) {
-		AnimationData manager = entity.getFactory().getOrCreateAnimationData(uniqueID);
+	public void setCustomAnimations(final DragonEntity dragon, int uniqueID, final AnimationEvent customPredicate) {
+		AnimationData manager = dragon.getFactory().getOrCreateAnimationData(uniqueID);
 
 		if (manager.startTick == -1) {
-			manager.startTick = entity.tickCount + Minecraft.getInstance().getFrameTime();
+			manager.startTick = dragon.tickCount + Minecraft.getInstance().getFrameTime();
 		}
 
 		if (!Minecraft.getInstance().isPaused() || manager.shouldPlayWhilePaused) {
@@ -92,74 +99,72 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity>{
 			lastGameTickTime = gameTick;
 		}
 
-		AnimationEvent<DragonEntity> predicate;
-		if (customPredicate == null) {
-			predicate = new AnimationEvent<DragonEntity>(entity, 0, 0, (float) (manager.tick - lastGameTickTime), false,
-			                                             Collections.emptyList());
-		} else {
-			predicate = customPredicate;
-		}
-
+		AnimationEvent<DragonEntity> predicate = Objects.requireNonNullElseGet(customPredicate, () -> new AnimationEvent<>(dragon, 0, 0, (float) (manager.tick - lastGameTickTime), false, Collections.emptyList()));
 		predicate.animationTick = seekTime;
+
 		getAnimationProcessor().preAnimationSetup(predicate.getAnimatable(), seekTime);
 
 		if (!getAnimationProcessor().getModelRendererList().isEmpty()) {
-			getAnimationProcessor().tickAnimation(entity, uniqueID, seekTime, predicate, GeckoLibCache.getInstance().parser, shouldCrashOnMissing);
+			getAnimationProcessor().tickAnimation(dragon, uniqueID, seekTime, predicate, GeckoLibCache.getInstance().parser, shouldCrashOnMissing);
 		}
 	}
 
 	@Override
-	public void setMolangQueries(IAnimatable animatable, double currentTick){
+	public void setMolangQueries(final IAnimatable animatable, double currentTick) {
 		super.setMolangQueries(animatable, currentTick);
-		if(!(animatable instanceof DragonEntity dragon) || dragon.player == null){
+
+		// In case the Integer (id of the player) is null
+		if (!(animatable instanceof DragonEntity dragon) || dragon.player == null || dragon.getPlayer() == null) {
 			return;
 		}
 
 		MolangParser parser = GeckoLibCache.getInstance().parser;
 		Player player = dragon.getPlayer();
 
-		if(player == null){
-			return;
-		}
+		Pair<Vec3, Vec3> previous = lastPlayerPositions.getOrDefault(player.getStringUUID(), new Pair<>(player.position(), new Vec3(0, 0, 0)));
+		Vec3 currentDelta = player.position().subtract(previous.getFirst());
+		Vec3 deltaMovement = previous.getSecond().lerp(currentDelta, currentTick - previousTick);
+
+		lastPlayerPositions.put(player.getStringUUID(), Pair.of(player.position(), deltaMovement));
+		previousTick = currentTick;
 
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 
-		parser.setValue("query.delta_y", () -> player.getDeltaMovement().y);
-		parser.setValue("query.head_yaw", () -> DragonUtils.getHandler(player).getMovementData().headYaw);
-		parser.setValue("query.head_pitch", () -> DragonUtils.getHandler(player).getMovementData().headPitch);
+		parser.setValue("query.delta_y", () -> deltaMovement.y);
+		parser.setValue("query.head_yaw", () -> handler.getMovementData().headYaw);
+		parser.setValue("query.head_pitch", () -> handler.getMovementData().headPitch);
 
 		double bodyYawChange = Functions.angleDifference((float)handler.getMovementData().bodyYawLastTick, (float)handler.getMovementData().bodyYaw);
 		double headYawChange = Functions.angleDifference((float)handler.getMovementData().headYawLastTick, (float)handler.getMovementData().headYaw);
 		double headPitchChange = Functions.angleDifference((float)handler.getMovementData().headPitchLastTick, (float)handler.getMovementData().headPitch);
 
-		AttributeInstance gravity = player.getAttribute(net.minecraftforge.common.ForgeMod.ENTITY_GRAVITY.get());
-		double g = gravity.getValue();
+		double gravity = player.getAttribute(ForgeMod.ENTITY_GRAVITY.get()).getValue();
 
-		dragon.tailMotionUp = Mth.clamp(Mth.lerp(0.25, dragon.tailMotionUp, ServerFlightHandler.isFlying(player) ? 0 : (player.getDeltaMovement().y + g) * 50), -10, 10);
+		dragon.tailMotionUp = Mth.clamp(Mth.lerp(0.25, dragon.tailMotionUp, ServerFlightHandler.isFlying(player) ? 0 : (deltaMovement.y + gravity) * 50), -10, 10);
 		dragon.tailMotionSide = Mth.lerp(0.1, Mth.clamp(dragon.tailMotionSide + (ServerFlightHandler.isGliding(player) ? 0 : bodyYawChange), -50, 50), 0);
 
 		dragon.bodyYawAverage.add(bodyYawChange);
-		while(dragon.bodyYawAverage.size() > 10){
+		while (dragon.bodyYawAverage.size() > 10) {
 			dragon.bodyYawAverage.remove(0);
 		}
 
 		dragon.headYawAverage.add(headYawChange);
-		while(dragon.headYawAverage.size() > 10){
+		while (dragon.headYawAverage.size() > 10) {
 			dragon.headYawAverage.remove(0);
 		}
 
 		dragon.headPitchAverage.add(headPitchChange);
-		while(dragon.headPitchAverage.size() > 10){
+		while (dragon.headPitchAverage.size() > 10) {
 			dragon.headPitchAverage.remove(0);
 		}
 
 		dragon.tailSideAverage.add(dragon.tailMotionSide);
-		while(dragon.tailSideAverage.size() > 10){
+		while (dragon.tailSideAverage.size() > 10) {
 			dragon.tailSideAverage.remove(0);
 		}
 
 		dragon.tailUpAverage.add(dragon.tailMotionUp * -1);
-		while(dragon.tailUpAverage.size() > 10){
+		while (dragon.tailUpAverage.size() > 10) {
 			dragon.tailUpAverage.remove(0);
 		}
 
@@ -175,7 +180,7 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity>{
 		double query_tail_motion_up = Mth.lerp(0.1, dragon.tail_motion_up, tailUpAvg);
 		double query_tail_motion_side = Mth.lerp(0.1, dragon.tail_motion_side, tailSideAvg);
 
-		if(((DragonEntity)animatable).tailLocked || !ClientConfig.enableTailPhysics){
+		if (dragon.tailLocked || !ClientConfig.enableTailPhysics) {
 			dragon.tailMotionUp = 0;
 			dragon.tailMotionSide = 0;
 

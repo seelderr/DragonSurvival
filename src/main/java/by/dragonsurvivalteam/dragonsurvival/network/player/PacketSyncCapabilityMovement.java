@@ -3,33 +3,27 @@ package by.dragonsurvivalteam.dragonsurvival.network.player;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
-import net.minecraft.client.Minecraft;
+import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.DistExecutor.SafeRunnable;
+import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.PacketDistributor;
 
 import java.util.function.Supplier;
 
-public class PacketSyncCapabilityMovement implements IMessage<PacketSyncCapabilityMovement>{
-
+public class PacketSyncCapabilityMovement implements IMessage<PacketSyncCapabilityMovement> {
 	public int playerId;
 	public double bodyYaw;
 	public double headYaw;
 	public double headPitch;
 	public boolean bite;
 
-	public PacketSyncCapabilityMovement(){
-	}
+	public PacketSyncCapabilityMovement() { /* Nothing to do */ }
 
-	public PacketSyncCapabilityMovement(int playerId, double bodyYaw, double headYaw, double headPitch, boolean bite){
+	public PacketSyncCapabilityMovement(int playerId, double bodyYaw, double headYaw, double headPitch, boolean bite) {
 		this.bodyYaw = bodyYaw;
 		this.headYaw = headYaw;
 		this.headPitch = headPitch;
@@ -38,59 +32,38 @@ public class PacketSyncCapabilityMovement implements IMessage<PacketSyncCapabili
 	}
 
 	@Override
-	public void encode(PacketSyncCapabilityMovement m, FriendlyByteBuf b){
-		b.writeInt(m.playerId);
-		b.writeDouble(m.bodyYaw);
-		b.writeDouble(m.headYaw);
-		b.writeDouble(m.headPitch);
-		b.writeBoolean(m.bite);
+	public void encode(final PacketSyncCapabilityMovement message, final FriendlyByteBuf buffer) {
+		buffer.writeInt(message.playerId);
+		buffer.writeDouble(message.bodyYaw);
+		buffer.writeDouble(message.headYaw);
+		buffer.writeDouble(message.headPitch);
+		buffer.writeBoolean(message.bite);
 	}
 
 	@Override
-	public PacketSyncCapabilityMovement decode(FriendlyByteBuf b){
-		return new PacketSyncCapabilityMovement(b.readInt(), b.readDouble(), b.readDouble(), b.readDouble(), b.readBoolean());
+	public PacketSyncCapabilityMovement decode(final FriendlyByteBuf buffer) {
+		return new PacketSyncCapabilityMovement(buffer.readInt(), buffer.readDouble(), buffer.readDouble(), buffer.readDouble(), buffer.readBoolean());
 	}
 
 	@Override
-	public void handle(PacketSyncCapabilityMovement syncCapabilityMovement, Supplier<NetworkEvent.Context> supplier){
+	public void handle(final PacketSyncCapabilityMovement message, final Supplier<NetworkEvent.Context> supplier) {
 		NetworkEvent.Context context = supplier.get();
-		ServerPlayer player = context.getSender();
-		if(player == null){
-			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> runClient(syncCapabilityMovement, supplier));
-			context.setPacketHandled(true);
-			return;
-		}
-		Entity entity = player.level.getEntity(syncCapabilityMovement.playerId);
-		if(entity == null || entity.level == null){
-			context.setPacketHandled(true);
-			return;
-		}
-		if(entity instanceof Player){
-			DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
-				dragonStateHandler.setMovementData(syncCapabilityMovement.bodyYaw, syncCapabilityMovement.headYaw, syncCapabilityMovement.headPitch, syncCapabilityMovement.bite);
-			});
-		}
-		if(!entity.level.isClientSide){
-			NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY.with(() -> player), syncCapabilityMovement);
-		}
-		context.setPacketHandled(true);
-	}
 
-	@OnlyIn( Dist.CLIENT )
-	public void runClient(PacketSyncCapabilityMovement message, Supplier<NetworkEvent.Context> supplier){
-		NetworkEvent.Context context = supplier.get();
-		context.enqueueWork(() -> {
-			Player thisPlayer = Minecraft.getInstance().player;
-			if(thisPlayer != null){
-				Level world = thisPlayer.level;
-				Entity entity = world.getEntity(message.playerId);
-				if(entity instanceof Player){
-					DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
-						dragonStateHandler.setMovementData(message.bodyYaw, message.headYaw, message.headPitch, message.bite);
-					});
+		if (context.getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
+			context.enqueueWork(() -> ClientProxy.handlePacketSyncCapabilityMovement(message));
+		} else if (context.getDirection() == NetworkDirection.PLAY_TO_SERVER) {
+			ServerPlayer sender = context.getSender();
+
+			if (sender != null) {
+				Entity entity = sender.level.getEntity(message.playerId);
+
+				if (entity instanceof Player player) {
+					DragonStateProvider.getCap(player).ifPresent(handler -> handler.setMovementData(message.bodyYaw, message.headYaw, message.headPitch, message.bite));
+					NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY.with(() -> sender), message);
 				}
 			}
-			context.setPacketHandled(true);
-		});
+		}
+
+		context.setPacketHandled(true);
 	}
 }

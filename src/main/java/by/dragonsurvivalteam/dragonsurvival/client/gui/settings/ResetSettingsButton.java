@@ -21,108 +21,127 @@ import net.minecraft.client.gui.components.AbstractOptionSliderButton;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.CycleButton;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
+import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.Field;
 import java.util.List;
 
-public class ResetSettingsButton extends Button{
+public class ResetSettingsButton extends Button {
 	public static final ResourceLocation texture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/reset_icon.png");
 
 	private final Option option;
 
-	public ResetSettingsButton(int x, int y, Option option){
-		super(x, y, 20, 20, null, btn -> {
-			if(btn.active)
-				if(OptionsList.configMap.containsKey(option)){
+	public ResetSettingsButton(int x, int y, final Option option) {
+		super(x, y, 20, 20, Component.empty(), button -> {
+			if (button.isActive()) {
+				if (OptionsList.configMap.containsKey(option)) {
 					String key = OptionsList.configMap.get(option);
 
-					ConfigOption opt = ConfigHandler.configObjects.get(key);
-					Field fe = ConfigHandler.configFields.get(key);
+					ConfigOption configOption = ConfigHandler.configObjects.get(key);
 					ConfigValue<?> value = ConfigHandler.configValues.get(key);
 
-					if(Minecraft.getInstance().screen instanceof ConfigScreen screen){
-						
+					if (Minecraft.getInstance().screen instanceof ConfigScreen configScreen) {
 						ConfigHandler.updateConfigValue(value, ConfigHandler.defaultConfigValues.get(key));
 
 						String configKey = OptionsList.configMap.get(option);
-						AbstractWidget widget = screen.list.findOption(option);
+						AbstractWidget widget = configScreen.list.findOption(option);
 
-						Object ob = ConfigHandler.defaultConfigValues.get(key);
-						if(ob instanceof Boolean){
-							if(widget != null){
-								((CycleButton)widget).setValue(ob);
-							}
-							if(opt.side() == ConfigSide.SERVER){
-								NetworkHandler.CHANNEL.sendToServer(new SyncBooleanConfig(configKey, (Boolean)ob));
-							}
-						}else if(ob instanceof Integer){
-							if(widget != null){
-								if(widget instanceof AbstractOptionSliderButton){
-									widget.setMessage(((ProgressOption)option).getMessage(Minecraft.getInstance().options));
-									((AbstractOptionSliderButton)widget).value = ((ProgressOption)option).toPct((Integer)ob);
-								}else if(widget instanceof TextField){
-									((TextField)widget).setValue(ob.toString());
-								}
-							}
-							if(opt.side() == ConfigSide.SERVER){
-								NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(configKey, (Integer)ob));
-							}
-						}else if(ob instanceof Double){
-							if(widget != null){
-								if(widget instanceof AbstractOptionSliderButton){
-									widget.setMessage(((ProgressOption)option).getMessage(Minecraft.getInstance().options));
-									((AbstractOptionSliderButton)widget).value = ((ProgressOption)option).toPct((Double)ob);
-								}else if(widget instanceof TextField){
-									((TextField)widget).setValue(ob.toString());
-								}
-							}
-							if(opt.side() == ConfigSide.SERVER){
-								NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(configKey, (Double)ob));
-							}
-						}else if(ob instanceof Long){
-							if(widget != null){
-								if(widget instanceof AbstractOptionSliderButton){
-									widget.setMessage(((ProgressOption)option).getMessage(Minecraft.getInstance().options));
-									((AbstractOptionSliderButton)widget).value = ((ProgressOption)option).toPct((Long)ob);
-								}else if(widget instanceof TextField){
-									((TextField)widget).setValue(ob.toString());
-								}
-							}
-							if(opt.side() == ConfigSide.SERVER){
-								NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(configKey, (Long)ob));
-							}
-						}else if(ob instanceof Enum){
-							((DSDropDownOption)option).btn.current = ((Enum<?>)ob).name();
-							((DSDropDownOption)option).btn.updateMessage();
+						Object defaultValues = ConfigHandler.defaultConfigValues.get(key);
 
-							if(opt.side() == ConfigSide.SERVER){
-								NetworkHandler.CHANNEL.sendToServer(new SyncEnumConfig(configKey, (Enum)ob));
+						if (defaultValues instanceof Boolean) {
+							handleBooleanValue(widget, defaultValues, configOption, configKey);
+						} else if (defaultValues instanceof Integer) {
+							handleIntegerValue(option, widget, defaultValues, configOption);
+						} else if (defaultValues instanceof Double) {
+							handleDoubleValue(option, widget, defaultValues, configOption);
+						} else if (defaultValues instanceof Long) {
+							handleLongValue(option, widget, defaultValues, configOption);
+						}else if (defaultValues instanceof Enum) {
+							((DSDropDownOption) option).btn.current = ((Enum<?>) defaultValues).name();
+							((DSDropDownOption) option).btn.updateMessage();
+
+							if (configOption.side() == ConfigSide.SERVER) {
+								NetworkHandler.CHANNEL.sendToServer(new SyncEnumConfig(ConfigHandler.createConfigPath(configOption), (Enum<?>) defaultValues));
 							}
-						}else if(ob instanceof List){
-							if(opt.side() == ConfigSide.SERVER){
-								NetworkHandler.CHANNEL.sendToServer(new SyncListConfig(configKey, (List<String>)ob));
+						} else if (defaultValues instanceof List<?> list) {
+							if (configOption.side() == ConfigSide.SERVER) {
+								NetworkHandler.CHANNEL.sendToServer(new SyncListConfig(ConfigHandler.createConfigPath(configOption), list));
 							}
 						}
 					}
 				}
+			}
 		});
 
 		this.option = option;
 	}
 
+	// TODO :: Generalize numeric values (one method for all types)
+	private static void handleLongValue(final Option option, final AbstractWidget widget, final Object defaultValues, final ConfigOption configOption) {
+		if (widget != null) {
+			if (widget instanceof AbstractOptionSliderButton abstractOptionSliderButton && option instanceof ProgressOption progressOption) {
+				widget.setMessage(progressOption.getMessage(Minecraft.getInstance().options));
+				abstractOptionSliderButton.value = progressOption.toPct((Long) defaultValues);
+			} else if (widget instanceof TextField textField) {
+				textField.setValue(defaultValues.toString());
+			}
+		}
+
+		if (configOption.side() == ConfigSide.SERVER) {
+			NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(ConfigHandler.createConfigPath(configOption), (Long) defaultValues));
+		}
+	}
+
+	private static void handleDoubleValue(final Option option, final AbstractWidget widget, final Object defaultValues, final ConfigOption configOption) {
+		if (widget != null) {
+			if (widget instanceof AbstractOptionSliderButton abstractOptionSliderButton && option instanceof ProgressOption progressOption) {
+				widget.setMessage(progressOption.getMessage(Minecraft.getInstance().options));
+				abstractOptionSliderButton.value = progressOption.toPct((Double) defaultValues);
+			} else if (widget instanceof TextField textField) {
+				textField.setValue(defaultValues.toString());
+			}
+		}
+
+		if (configOption.side() == ConfigSide.SERVER) {
+			NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(ConfigHandler.createConfigPath(configOption), (Double) defaultValues));
+		}
+	}
+
+	private static void handleIntegerValue(final Option option, final AbstractWidget widget, final Object defaultValues, final ConfigOption configOption) {
+		if (widget != null) {
+			if (widget instanceof AbstractOptionSliderButton abstractOptionSliderButton && option instanceof ProgressOption progressOption) {
+				widget.setMessage(progressOption.getMessage(Minecraft.getInstance().options));
+				abstractOptionSliderButton.value = progressOption.toPct((Integer) defaultValues);
+			} else if (widget instanceof TextField textField) {
+				textField.setValue(defaultValues.toString());
+			}
+		}
+
+		if (configOption.side() == ConfigSide.SERVER) {
+			NetworkHandler.CHANNEL.sendToServer(new SyncNumberConfig(ConfigHandler.createConfigPath(configOption), (Integer) defaultValues));
+		}
+	}
+
+	private static void handleBooleanValue(final AbstractWidget widget, final Object defaultValues, final ConfigOption configOption, final String configKey) {
+		if (widget != null) {
+			((CycleButton) widget).setValue(defaultValues);
+		}
+
+		if (configOption.side() == ConfigSide.SERVER) {
+			NetworkHandler.CHANNEL.sendToServer(new SyncBooleanConfig(ConfigHandler.createConfigPath(configOption), (Boolean) defaultValues));
+		}
+	}
+
 	@Override
-	public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
-		if(visible){
+	public void render(@NotNull final PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
+		if (visible) {
 			active = false;
-			isHovered = p_230430_2_ >= x && p_230430_3_ >= y && p_230430_2_ < x + width && p_230430_3_ < y + height;
+			isHovered = mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + height;
 
-			if(OptionsList.configMap.containsKey(option)){
+			if (OptionsList.configMap.containsKey(option)) {
 				String key = OptionsList.configMap.get(option);
-
-				ConfigOption opt = ConfigHandler.configObjects.get(key);
-				Field fe = ConfigHandler.configFields.get(key);
 				ConfigValue<?> value = ConfigHandler.configValues.get(key);
 				active = !value.get().equals(ConfigHandler.defaultConfigValues.get(key));
 			}
@@ -134,12 +153,12 @@ public class ResetSettingsButton extends Button{
 			RenderSystem.enableBlend();
 			RenderSystem.defaultBlendFunc();
 			RenderSystem.enableDepthTest();
-			blit(p_230430_1_, x, y, 0, 46 + i * 20, width / 2, height);
-			blit(p_230430_1_, x + width / 2, y, 200 - width / 2, 46 + i * 20, width / 2, height);
-			renderBg(p_230430_1_, minecraft, p_230430_2_, p_230430_3_);
+			blit(poseStack, x, y, 0, 46 + i * 20, width / 2, height);
+			blit(poseStack, x + width / 2, y, 200 - width / 2, 46 + i * 20, width / 2, height);
+			renderBg(poseStack, minecraft, mouseX, mouseY);
 
 			RenderSystem.setShaderTexture(0, texture);
-			blit(p_230430_1_, x + 2, y + 2, 0, 0, 16, 16, 16, 16);
+			blit(poseStack, x + 2, y + 2, 0, 0, 16, 16, 16, 16);
 		}
 	}
 }

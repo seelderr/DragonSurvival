@@ -5,8 +5,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Retention( RetentionPolicy.RUNTIME)
-@Target( ElementType.FIELD)
-public @interface ConfigType{
-	public Class<?> value();
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
+public @interface ConfigType {
+	// TODO :: Allow a filter option? e.g. filter for edible foods for dragon food config
+	Class<?> value();
 }

@@ -2,7 +2,6 @@ package by.dragonsurvivalteam.dragonsurvival.magic.common.active;
 
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ManaHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-import lombok.Getter;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
@@ -10,7 +9,6 @@ import net.minecraft.world.entity.player.Player;
 import java.util.ArrayList;
 
 public abstract class ChargeCastAbility extends ActiveDragonAbility {
-	@Getter
 	public int castTime = 0;
 
 	public abstract int getSkillCastingTime();
@@ -59,5 +57,9 @@ public abstract class ChargeCastAbility extends ActiveDragonAbility {
 			components.add(Component.translatable("ds.skill.cast_time", Functions.ticksToSeconds(getSkillCastingTime())));
 
 		return components;
+	}
+
+	public int getCastTime() {
+		return castTime;
 	}
 }
