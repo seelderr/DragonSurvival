@@ -19,8 +19,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class CaveLavaFluidRenderer extends LiquidBlockRenderer{
 
-
-
 	@Override
 	public boolean tesselate(BlockAndTintGetter p_228796_1_, BlockPos p_228796_2_, VertexConsumer p_228796_3_, BlockState state, FluidState p_228796_4_){
 		try{

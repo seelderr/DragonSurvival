@@ -13,7 +13,6 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChargeCastAbility;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -33,12 +32,12 @@ public class FireBallAbility extends ChargeCastAbility{
 	public static Boolean fireball = true;
 
 	@ConfigRange( min = 1, max = 10000 )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fireball"}, key = "fireballCooldown", comment = "The cooldown in seconds of the fireball ability" )
-	public static Integer fireballCooldown = 7;
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fireball"}, key = "fireballCooldown", comment = "The cooldown in ticks of the fireball ability" )
+	public static Integer fireballCooldown = 150;
 
 	@ConfigRange( min = 1, max = 10000 )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fireball"}, key = "fireballCasttime", comment = "The cast time in seconds of the fireball ability" )
-	public static Integer fireballCasttime = 2;
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fireball"}, key = "fireballCasttime", comment = "The cast time in ticks of the fireball ability" )
+	public static Integer fireballCasttime = 40;
 
 	@ConfigRange( min = 0, max = 100.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fireball"}, key = "fireballDamage", comment = "The amount of damage the fireball ability deals. This value is multiplied by the skill level." )
@@ -68,7 +67,7 @@ public class FireBallAbility extends ChargeCastAbility{
 
 	@Override
 	public int getSkillCooldown(){
-		return Functions.secondsToTicks(fireballCooldown);
+		return fireballCooldown;
 	}
 
 	@Override
@@ -140,7 +139,7 @@ public class FireBallAbility extends ChargeCastAbility{
 
 	@Override
 	public int getSkillCastingTime(){
-		return Functions.secondsToTicks(fireballCasttime);
+		return fireballCasttime;
 	}
 
 	@Override

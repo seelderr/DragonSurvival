@@ -58,28 +58,23 @@ public class SyncAbilityCasting implements IMessage<SyncAbilityCasting>{
 	public void handle(SyncAbilityCasting message, Supplier<NetworkEvent.Context> supplier){
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> run(message, supplier));
 
-		if(supplier.get().getDirection() == NetworkDirection.PLAY_TO_SERVER) {
-			supplier.get().enqueueWork(() -> {
+		if(supplier.get().getDirection() == NetworkDirection.PLAY_TO_SERVER){
+			ServerPlayer player = supplier.get().getSender();
 
-				ServerPlayer player = supplier.get().getSender();
+			DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
+				ActiveDragonAbility ability = dragonStateHandler.getMagicData().getAbilityFromSlot(dragonStateHandler.getMagicData().getSelectedAbilitySlot());
+				ability.loadNBT(message.tag);
 
-				DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
-					ActiveDragonAbility ability = dragonStateHandler.getMagicData().getAbilityFromSlot(dragonStateHandler.getMagicData().getSelectedAbilitySlot());
-					ability.loadNBT(message.tag);
-
-					dragonStateHandler.getMagicData().isCasting = message.isCasting;
-					if (message.isCasting) {
-						ability.onKeyPressed(player, () -> {
-						});
-					} else {
-						ability.onKeyReleased(player);
-					}
-				});
-
-				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncAbilityCasting(player.getId(), message.isCasting, message.tag));
+				dragonStateHandler.getMagicData().isCasting = message.isCasting;
+				if(message.isCasting){
+					ability.onKeyPressed(player, () -> {});
+				}else{
+					ability.onKeyReleased(player);
+				}
 			});
+
+			NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncAbilityCasting(player.getId(), message.isCasting, message.tag));
 		}
-		supplier.get().setPacketHandled(true);
 	}
 
 	@OnlyIn( Dist.CLIENT )

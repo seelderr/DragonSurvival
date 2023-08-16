@@ -13,7 +13,6 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChargeCastAbility;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -31,11 +30,11 @@ public class BallLightningAbility extends ChargeCastAbility{
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "ball_lightning"}, key = "ballLightning", comment = "Whether the lightning ball ability should be enabled" )
 	public static Boolean ballLightning = true;
 	@ConfigRange( min = 1, max = 10000 )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "ball_lightning"}, key = "ballLightningCooldown", comment = "The cooldown in seconds of the ball lightning ability" )
-	public static Integer ballLightningCooldown = 20;
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "ball_lightning"}, key = "ballLightningCooldown", comment = "The cooldown in ticks of the ball lightning ability" )
+	public static Integer ballLightningCooldown = 400;
 	@ConfigRange( min = 1, max = 10000 )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "ball_lightning"}, key = "ballLightningCasttime", comment = "The cast time in seconds of the ball lightning ability" )
-	public static Integer ballLightningCasttime = 2;
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "ball_lightning"}, key = "ballLightningCasttime", comment = "The cast time in ticks of the ball lightning ability" )
+	public static Integer ballLightningCasttime = 40;
 	@ConfigRange( min = 0, max = 100.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "ball_lightning"}, key = "ballLightningDamage", comment = "The amount of damage the lightning ball ability deals. This value is multiplied by the skill level." )
 	public static Double ballLightningDamage = 4.0;
@@ -60,12 +59,12 @@ public class BallLightningAbility extends ChargeCastAbility{
 
 	@Override
 	public int getSkillCooldown(){
-		return Functions.secondsToTicks(ballLightningCooldown);
+		return ballLightningCooldown;
 	}
 
 	@Override
 	public int getSkillCastingTime(){
-		return Functions.secondsToTicks(ballLightningCasttime);
+		return ballLightningCasttime;
 	}
 
 	@Override

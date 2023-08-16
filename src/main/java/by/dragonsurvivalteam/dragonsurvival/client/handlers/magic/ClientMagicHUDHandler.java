@@ -76,39 +76,39 @@ public class ClientMagicHUDHandler{
 
 		DragonStateProvider.getCap(playerEntity).ifPresent(cap -> {
 			ActiveDragonAbility ability = cap.getMagicData().getAbilityFromSlot(cap.getMagicData().getSelectedAbilitySlot());
-
-			if (ability == null || ability.canConsumeMana(playerEntity)) {
-				gui.renderExperienceBar(mStack, x);
+			if(ability == null)
 				return;
-			}
+			if (ManaHandler.getCurrentMana(playerEntity) < ability.getManaCost() && ability.canConsumeMana(playerEntity)){
+				Window window = Minecraft.getInstance().getWindow();
 
-			Window window = Minecraft.getInstance().getWindow();
+				int screenWidth = window.getGuiScaledWidth();
+				int screenHeight = window.getGuiScaledHeight();
 
-			int screenWidth = window.getGuiScaledWidth();
-			int screenHeight = window.getGuiScaledHeight();
+				RenderSystem.setShaderTexture(0, widgetTextures);
+				int i = Minecraft.getInstance().player.getXpNeededForNextLevel();
+				if(i > 0){
+					int j = 182;
+					int k = (int)(Minecraft.getInstance().player.experienceProgress * 183.0F);
+					int l = screenHeight - 32 + 3;
+					blit(mStack, x, l, 0, 164, 182, 5);
+					if(k > 0)
+						blit(mStack, x, l, 0, 169, k, 5);
+				}
 
-			RenderSystem.setShaderTexture(0, widgetTextures);
-			int i = Minecraft.getInstance().player.getXpNeededForNextLevel();
-			if(i > 0){
-				int j = 182;
-				int k = (int)(Minecraft.getInstance().player.experienceProgress * 183.0F);
-				int l = screenHeight - 32 + 3;
-				blit(mStack, x, l, 0, 164, 182, 5);
-				if(k > 0)
-					blit(mStack, x, l, 0, 169, k, 5);
-			}
-
-			if(Minecraft.getInstance().player.experienceLevel > 0){
-				String s = "" + Minecraft.getInstance().player.experienceLevel;
-				int i1 = (screenWidth - Minecraft.getInstance().font.width(s)) / 2;
-				int j1 = screenHeight - 31 - 4;
-				Minecraft.getInstance().font.draw(mStack, s, (float)(i1 + 1), (float)j1, 0);
-				Minecraft.getInstance().font.draw(mStack, s, (float)(i1 - 1), (float)j1, 0);
-				Minecraft.getInstance().font.draw(mStack, s, (float)i1, (float)(j1 + 1), 0);
-				Minecraft.getInstance().font.draw(mStack, s, (float)i1, (float)(j1 - 1), 0);
-				Minecraft.getInstance().font.draw(mStack, s, (float)i1, (float)j1, new Color(243, 48, 59).getRGB());
+				if(Minecraft.getInstance().player.experienceLevel > 0){
+					String s = "" + Minecraft.getInstance().player.experienceLevel;
+					int i1 = (screenWidth - Minecraft.getInstance().font.width(s)) / 2;
+					int j1 = screenHeight - 31 - 4;
+					Minecraft.getInstance().font.draw(mStack, s, (float)(i1 + 1), (float)j1, 0);
+					Minecraft.getInstance().font.draw(mStack, s, (float)(i1 - 1), (float)j1, 0);
+					Minecraft.getInstance().font.draw(mStack, s, (float)i1, (float)(j1 + 1), 0);
+					Minecraft.getInstance().font.draw(mStack, s, (float)i1, (float)(j1 - 1), 0);
+					Minecraft.getInstance().font.draw(mStack, s, (float)i1, (float)j1, new Color(243, 48, 59).getRGB());
+				}
 			}
 		});
+
+		gui.renderExperienceBar(mStack, x);
 	}
 
 	public static void blit(PoseStack p_238474_1_, int p_238474_2_, int p_238474_3_, int p_238474_4_, int p_238474_5_, int p_238474_6_, int p_238474_7_){

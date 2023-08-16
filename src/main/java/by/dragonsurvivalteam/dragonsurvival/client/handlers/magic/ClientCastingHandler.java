@@ -69,5 +69,23 @@ public class ClientCastingHandler{
 			status = StatusIdle;
 			oldChargeTime = -1;
 		}
+	/*
+		if(ability != null && ability.getLevel() > 0 && !ability.isDisabled()){
+			if(status == StatusInProgress && ability.canCastSkill(player) ){
+				if (!(ability instanceof ChannelingCastAbility channelingCastAbility))
+					NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCasting(player.getId(), true, ability.saveNBT()));
+				else if (oldChargeTime != channelingCastAbility.getChargeTime()) {
+					oldChargeTime = channelingCastAbility.getChargeTime();
+					NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCasting(player.getId(), true, ability.saveNBT()));
+				}
+			}else if(status == StatusStop || status == StatusInProgress && !ability.canCastSkill(player)){
+				NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCasting(player.getId(), false, ability.saveNBT()));
+
+				ability.onKeyReleased(player);
+				status = StatusIdle;
+				oldChargeTime = -1;
+			}
+		}
+		*/
 	}
 }

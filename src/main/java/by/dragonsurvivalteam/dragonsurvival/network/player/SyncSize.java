@@ -45,7 +45,6 @@ public class SyncSize implements IMessage<SyncSize>{
 	@Override
 	public void handle(SyncSize message, Supplier<NetworkEvent.Context> supplier){
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> runClient(message, supplier));
-		supplier.get().setPacketHandled(true);
 	}
 
 	@OnlyIn( Dist.CLIENT )

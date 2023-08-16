@@ -11,7 +11,6 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.AbilityAnimation;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChargeCastAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
-import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -31,13 +30,13 @@ public class LavaVisionAbility extends ChargeCastAbility {
 	public static Boolean lavaVision = true;
 	@ConfigRange( min = 0, max = 10000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "lava_vision"}, key = "lavaVisionDuration", comment = "The duration in seconds of the lava vision effect given when the ability is used" )
-	public static Integer lavaVisionDuration = 100;
+	public static Integer lavaVisionDuration = 1400;
 	@ConfigRange( min = 1, max = 10000 )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "lava_vision"}, key = "lavaVisionCooldown", comment = "The cooldown in seconds of the lava vision ability" )
-	public static Integer lavaVisionCooldown = 30;
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "lava_vision"}, key = "lavaVisionCooldown", comment = "The cooldown in ticks of the lava vision ability" )
+	public static Integer lavaVisionCooldown = 600;
 	@ConfigRange( min = 1, max = 10000 )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "lava_vision"}, key = "lavaVisionCasttime", comment = "The cast time in seconds of the lava vision ability" )
-	public static Integer lavaVisionCasttime = 1;
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "lava_vision"}, key = "lavaVisionCasttime", comment = "The cast time in ticks of the lava vision ability" )
+	public static Integer lavaVisionCasttime = 40;
 	@ConfigRange( min = 0, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "lava_vision"}, key = "lavaVisionManaCost", comment = "The mana cost for using the lava vision ability" )
 	public static Integer lavaVisionManaCost = 1;
@@ -76,7 +75,7 @@ public class LavaVisionAbility extends ChargeCastAbility {
 
 	@Override
 	public int getSkillCooldown(){
-		return Functions.secondsToTicks(lavaVisionCooldown);
+		return lavaVisionCooldown;
 	}
 
 	@Override
@@ -92,8 +91,8 @@ public class LavaVisionAbility extends ChargeCastAbility {
 		return new AbilityAnimation("self_buff", 0.52 * 20, true, false);
 	}
 
-	public int getDuration() {
-		return Functions.secondsToTicks(lavaVisionDuration);
+	public int getDuration(){
+		return lavaVisionDuration;
 	}
 
 	@Override
@@ -138,7 +137,7 @@ public class LavaVisionAbility extends ChargeCastAbility {
 
 	@Override
 	public int getSkillCastingTime(){
-		return Functions.secondsToTicks(lavaVisionCasttime);
+		return lavaVisionCasttime;
 	}
 
 	@Override

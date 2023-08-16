@@ -65,7 +65,7 @@ public class BallLightningEntity extends DragonBallEntity{
 					attackerEntity.setLastHurtMob(attacker);
 				}
 			}
-			level.explode(null, damagesource, null, getX(), getY(), getZ(), explosivePower, flag, flag ? Explosion.BlockInteraction.DESTROY : Explosion.BlockInteraction.NONE);
+			level.explode(null, damagesource,null, getX(), getY(), getZ(), explosivePower, flag, flag ? Explosion.BlockInteraction.DESTROY : Explosion.BlockInteraction.NONE);
 
 			isDead = true;
 			setDeltaMovement(0, 0, 0);

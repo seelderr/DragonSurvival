@@ -105,8 +105,8 @@ public class DragonAltarGUI extends Screen{
 	}
 
 	public static void renderBorders(PoseStack stack, ResourceLocation texture, int x0, int x1, int y0, int y1, int width, int height){
-		Tesselator tesselator = Tesselator.getInstance();
-		BufferBuilder bufferbuilder = tesselator.getBuilder();
+		Tesselator tessellator = Tesselator.getInstance();
+		BufferBuilder bufferbuilder = tessellator.getBuilder();
 		RenderSystem.setShaderTexture(0, texture);
 
 		stack.pushPose();
@@ -125,7 +125,7 @@ public class DragonAltarGUI extends Screen{
 		bufferbuilder.vertex(x0 + width, height, zLevel).uv((float)width / 32.0F, (float)height / 32.0F).color(64, 64, 64, 255).endVertex();
 		bufferbuilder.vertex(x0 + width, y1, zLevel).uv((float)width / 32.0F, (float)y1 / 32.0F).color(64, 64, 64, 255).endVertex();
 		bufferbuilder.vertex(x0, y1, zLevel).uv(0.0F, (float)y1 / 32.0F).color(64, 64, 64, 255).endVertex();
-		tesselator.end();
+		tessellator.end();
 
 		RenderSystem.depthFunc(515);
 		RenderSystem.disableDepthTest();
@@ -143,7 +143,7 @@ public class DragonAltarGUI extends Screen{
 		bufferbuilder.vertex(x1, y1, zLevel).uv(1.0F, 1.0F).color(0, 0, 0, 255).endVertex();
 		bufferbuilder.vertex(x1, y1 - 4, zLevel).uv(1.0F, 0.0F).color(0, 0, 0, 0).endVertex();
 		bufferbuilder.vertex(x0, y1 - 4, zLevel).uv(0.0F, 0.0F).color(0, 0, 0, 0).endVertex();
-		tesselator.end();
+		tessellator.end();
 		stack.popPose();
 	}
 

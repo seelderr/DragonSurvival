@@ -1,5 +1,5 @@
 name: Compatibility Report
-description: Crashes the game in the modpack? Write about it here.
+description: Crashes the game in your modpack? Write about it here.
 title: "[Compatibility]: "
 labels: ["compatibility", "triage"]
 assignees:
@@ -8,12 +8,12 @@ body:
   - type: markdown
     attributes:
       value: |
-        Please only crash reports, not suggestions like "Don't let the dragons of mod X attack the dragons of Dragon Survival".
+        Please only crash reports, not suggestions like "Don't let the dragons of mod X be friends with dragons from Dragon Survival"!
         
   - type: input
     id: contact
     attributes:
-      label: ■ Your Discord ID
+      label: ■ Your Discord ID or other contacts
       description: How can we get in touch with you if we need more info?
       placeholder: BlackAures#7759
     validations:
@@ -34,9 +34,10 @@ body:
       label: ■ Minecraft version
       description: 1.16.5 or...?
       options:
-        - 1.16.5 (Default)
+        - 1.18.2 (Default)
         - 1.15
-        - 1.18
+        - 1.16.5
+        - 1.19.2
     validations:
       required: true  
       
@@ -44,11 +45,11 @@ body:
     id: server
     attributes:
       label: ■ Single game or server?
-      description: There can be huge differences between the single-player game and the server. If you are a host or player on a server, indicate this.
+      description: There are huge differences between the dedicated server, local server and client. Be sure to correctly specify which version you are playing on.
       options:
         - Single (Default)
-        - Forge Server or host
-        - Playing with friends over a local network (Hamachi, etc.)
+        - Dedicated Server or Host Sites
+        - Local network (LAN, Hamachi, etc.)
     validations:
       required: true
 
@@ -56,7 +57,7 @@ body:
     id: configs
     attributes:
       label: ■ Do you delete old configs before writing a bug report?
-      description: Removing old configs after major updates is essential for clean operation of many modifications.
+      description: Removing old configs after major updates is essential for clean operation of many modifications. Also on the wiki there are instructions on how to solve most of the bugs and problems with our mod.
       options:
         - Nope (Default)
         - I always delete configs
@@ -68,7 +69,7 @@ body:
     id: incompatibility
     attributes:
       label: ■ Description of incompatibility
-      description:  A clear and concise description of what the incompatibility is. If applicable, add screenshots to help explain your problem. Please only crash reports, not suggestions.
+      description: A clear and concise description of what the incompatibility is. If applicable, add screenshots to help explain your problem. Please only crash reports, not suggestions.
       placeholder: I remove Dragon Survival or mod X and the game starts working, but together this causes the game crashes.
     validations:
       required: true
@@ -86,8 +87,7 @@ body:
   - type: textarea
     id: crash-report
     attributes:
-      label: ■ Crash Report
-      description: If your game crashes, Minecraft creates a file in crash-reports folder. Send us the contents of this file or the file itself. Just drag the file here and it will upload.
+      label: ■ Crash Report File and Logs
+      description: If your game or server crashes, game creates a file in crash-reports and log folder. Just grab that latest files and drag it into this box. No need to copy all text inside.
     validations:
       required: false
-

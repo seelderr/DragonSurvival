@@ -48,14 +48,12 @@ public class SkinPreset implements NBTInterface{
 		sizeMul = base.getDouble("sizeMul");
 
 		for(DragonLevel level : DragonLevel.values()){
-			skinAges.put(level,
-					Lazy.of(()->{
+			skinAges.put(level, Lazy.of(()->{
 						SkinAgeGroup ageGroup = new SkinAgeGroup(level);
 						CompoundTag nbt = base.getCompound(level.name);
 						ageGroup.readNBT(nbt);
 						return ageGroup;
-					})
-			);
+					}));
 		}
 	}
 
@@ -65,6 +63,7 @@ public class SkinPreset implements NBTInterface{
 
 		public boolean wings = true;
 		public boolean defaultSkin = false;
+		public SkinAgeGroup(){}
 
 		public SkinAgeGroup(DragonLevel level, AbstractDragonType type){
 			this(level);

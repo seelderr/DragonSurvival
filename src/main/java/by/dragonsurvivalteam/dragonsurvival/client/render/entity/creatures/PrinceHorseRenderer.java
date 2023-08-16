@@ -8,7 +8,6 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
@@ -48,8 +47,7 @@ public class PrinceHorseRenderer extends ExtendedGeoEntityRenderer<PrinceHorseEn
 	@Override
 	protected ItemStack getHeldItemForBone(String boneName, PrinceHorseEntity currentEntity){
 		if(boneName.equalsIgnoreCase("left_item")){
-			return currentEntity.getItemBySlot(EquipmentSlot.MAINHAND);
-			//return mainHand;
+			return mainHand;
 		}
 
 		return null;

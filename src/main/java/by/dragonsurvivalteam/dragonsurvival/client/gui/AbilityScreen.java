@@ -74,13 +74,13 @@ public class AbilityScreen extends Screen{
 
 			stack.pushPose();
 			stack.translate(0.5F, 0.75F, 0F);
-			blit(stack, startX + 23 / 2, startY + 28, 0, (float) 180 / 2, 105, 3, 128, 128);
-			blit(stack, startX + 254 / 2, startY + 28, 0, (float) 180 / 2, 105, 3, 128, 128);
+			blit(stack, startX + 23 / 2, startY + 28, 0, 180 / 2, 105, 3, 128, 128);
+			blit(stack, startX + 254 / 2, startY + 28, 0, 180 / 2, 105, 3, 128, 128);
 
-			blit(stack, startX + 23 / 2, startY + 28, 0, (float) barYPos / 2, (int)(105 * progress1), 3, 128, 128);
+			blit(stack, startX + 23 / 2, startY + 28, 0, barYPos / 2, (int)(105 * progress1), 3, 128, 128);
 
 			if(progress > 0.5){
-				blit(stack, startX + 254 / 2, startY + 28, 0, (float) barYPos / 2, (int)(105 * progress2), 3, 128, 128);
+				blit(stack, startX + 254 / 2, startY + 28, 0, barYPos / 2, (int)(105 * progress2), 3, 128, 128);
 			}
 
 			int expChange = -1;
@@ -101,10 +101,10 @@ public class AbilityScreen extends Screen{
 				float Changeprogress1 = Math.min(1F, Math.min(0.5F, Changeprogress) * 2F);
 				float Changeprogress2 = Math.min(1F, Math.min(0.5F, Changeprogress - 0.5F) * 2F);
 
-				blit(stack, startX + 23 / 2, startY + 28, 0, (float) 174 / 2, (int)(105 * Changeprogress1), 3, 128, 128);
+				blit(stack, startX + 23 / 2, startY + 28, 0, 174 / 2, (int)(105 * Changeprogress1), 3, 128, 128);
 
 				if(Changeprogress2 > 0.5){
-					blit(stack, startX + 254 / 2, startY + 28, 0, (float) 174 / 2, (int)(105 * Changeprogress2), 3, 128, 128);
+					blit(stack, startX + 254 / 2 - (int)(105 * progress1), startY + 28, 0, 174 / 2, (int)(105 * Changeprogress2), 3, 128, 128);
 				}
 			}
 
@@ -152,9 +152,9 @@ public class AbilityScreen extends Screen{
 
 		addRenderableWidget(new SkillProgressButton(guiLeft + (int)(219 / 2F), startY + 8, 4, this));
 
-		for(int i = 1; i <= 4; i++){
-			addRenderableWidget(new SkillProgressButton(guiLeft + (int)(219 / 2F) - i * 23, startY + 8, 4 - i, this));
-			addRenderableWidget(new SkillProgressButton(guiLeft + (int)(219 / 2F) + i * 23, startY + 8, 4 + i, this));
+		for(int i = 0; i <= 4; i++){
+			addRenderableWidget(new SkillProgressButton(guiLeft + (int)(219 / 2F) - i * (23 + (4 - i) / 4), startY + 8, 4 - i, this));
+			addRenderableWidget(new SkillProgressButton(guiLeft + (int)(219 / 2F) + i * (23 + (4 - i) / 4), startY + 8, 4 + i, this));
 		}
 
 		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {

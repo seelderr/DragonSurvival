@@ -11,7 +11,6 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.AbilityAnimation;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChargeCastAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
-import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -32,15 +31,15 @@ public class SeaEyesAbility extends ChargeCastAbility{
 
 	@ConfigRange( min = 0, max = 10000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "sea_vision"}, key = "seaVisionDuration", comment = "The duration in seconds of the sea vision effect given when the ability is used" )
-	public static Integer seaEyesDuration = 100;
+	public static Integer seaEyesDuration = 1400;
 
 	@ConfigRange( min = 1, max = 10000 )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "sea_vision"}, key = "seaVisionCooldown", comment = "The cooldown in seconds of the sea vision ability" )
-	public static Integer seaEyesCooldown = 60;
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "sea_vision"}, key = "seaVisionCooldown", comment = "The cooldown in ticks of the sea vision ability" )
+	public static Integer seaEyesCooldown = 1200;
 
 	@ConfigRange( min = 1, max = 10000 )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "sea_vision"}, key = "seaEyesCasttime", comment = "The cast time in seconds of the sea vision ability" )
-	public static Integer seaEyesCasttime = 1;
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "sea_vision"}, key = "seaEyesCasttime", comment = "The cast time in ticks of the sea vision ability" )
+	public static Integer seaEyesCasttime = 40;
 
 	@ConfigRange( min = 0, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "sea_vision"}, key = "seaVisionManaCost", comment = "The mana cost for using the sea vision ability" )
@@ -51,7 +50,7 @@ public class SeaEyesAbility extends ChargeCastAbility{
 
 	@Override
 	public int getSkillCastingTime(){
-		return Functions.secondsToTicks(seaEyesCasttime);
+		return seaEyesCasttime;
 	}
 
 	@Override
@@ -99,7 +98,7 @@ public class SeaEyesAbility extends ChargeCastAbility{
 
 	@Override
 	public int getSkillCooldown(){
-		return Functions.secondsToTicks(seaEyesCooldown);
+		return seaEyesCooldown;
 	}
 
 	@Override
@@ -116,7 +115,7 @@ public class SeaEyesAbility extends ChargeCastAbility{
 	}
 
 	public int getDuration(){
-		return Functions.secondsToTicks(seaEyesDuration * getLevel());
+		return seaEyesDuration * getLevel();
 	}
 
 	@Override

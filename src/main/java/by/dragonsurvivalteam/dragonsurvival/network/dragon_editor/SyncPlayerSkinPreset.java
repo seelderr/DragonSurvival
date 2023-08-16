@@ -61,7 +61,6 @@ public class SyncPlayerSkinPreset implements IMessage<SyncPlayerSkinPreset>{
 				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new SyncPlayerSkinPreset(entity.getId(), message.preset));
 			}
 		}
-		supplier.get().setPacketHandled(true);
 	}
 
 	@OnlyIn( Dist.CLIENT )

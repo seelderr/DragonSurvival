@@ -55,7 +55,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
-import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -273,41 +272,24 @@ public class ClientEvents{
 	}
 
 	public static String getMaterial(String texture, ItemStack clawItem){
-		if (clawItem.getItem() instanceof TieredItem item) {
-			Tier tier = item.getTier();
-
-			if (tier == Tiers.NETHERITE) {
-				texture += "netherite_";
-			} else if (tier == Tiers.DIAMOND) {
-				texture += "diamond_";
-			} else if (tier == Tiers.IRON) {
-				texture += "iron_";
-			} else if (tier == Tiers.GOLD) {
-				texture += "gold_";
-			} else if (tier == Tiers.STONE) {
-				texture += "stone_";
-			} else if (tier == Tiers.WOOD) {
-				texture += "wooden_";
-			} else {
-				texture += "moded_";
-			}
-
-			return texture;
+		TieredItem item = (TieredItem)clawItem.getItem();
+		Tier tier = item.getTier();
+		if(tier == Tiers.NETHERITE){
+			texture += "netherite_";
+		}else if(tier == Tiers.DIAMOND){
+			texture += "diamond_";
+		}else if(tier == Tiers.IRON){
+			texture += "iron_";
+		}else if(tier == Tiers.GOLD){
+			texture += "gold_";
+		}else if(tier == Tiers.STONE){
+			texture += "stone_";
+		}else if(tier == Tiers.WOOD){
+			texture += "wooden_";
+		}else{
+			texture += "moded_";
 		}
-
-		return texture + "moded_";
-	}
-
-	public static RenderType onRenderFluidLayer(FluidState fluidState)
-	{
-		LocalPlayer player = Minecraft.getInstance().player;
-		if (player == null){
-			return null;
-		}
-
-		if ((fluidState.is(Fluids.LAVA) || fluidState.is(Fluids.FLOWING_LAVA)) && player.hasEffect(DragonEffects.LAVA_VISION))
-			return RenderType.translucent();
-		return null;
+		return texture;
 	}
 
 	@SubscribeEvent

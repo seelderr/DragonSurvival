@@ -4,7 +4,7 @@
 * ■ Сurseforge (download) - https://www.curseforge.com/minecraft/mc-mods/dragons-survival
 * ■ Discord Server - http://discord.gg/8SsB8ar
 * ■ Youtube - https://www.youtube.com/channel/UCasTlG0nSSQPPvk4mrmoWLw
-* ■ TODO list Trello: https://trello.com/b/Zs7uCDpo/dragon-survival-board
+*  ■ TODO list Trello: https://trello.com/b/Zs7uCDpo/dragon-survival-board
 
 # Wiki 
 
@@ -21,9 +21,9 @@
 
 # Project Description
 
-■ This project is creating a global modification that adds the ability to turn into a dragon and all the content associated with it. Details about the project are in [Wiki](https://github.com/DragonSurvivalTeam/DragonSurvival/wiki). 
+■ This project is creating a global modification that adds the ability to turn into a dragon and all the content associated with it. Details about the project are in Wiki and Discord. 
 
-■ *I've always liked dragons and this wonderful game, but I've been playing alone and without modifications my whole life, until I accidentally came across this cultural phenomenon in 2020. I was fascinated by the amount of player-created content. There were so many mods created by them, many of which had to do with dragons. You could tame them, breed them, ride them, kill them, but in none of them could you **BE a dragon**. This really upset me. Being an artist very far from programming, modding and the minecraft community, I decided to take a risk and create my own mod. I had absolutely no knowledge or friends in this field. The only thing I had was a dream and the support of a community of dragon lovers. That's about how I became the developer of Dragons Survival. Join us to help develop this project together!*
+■ *I've always liked dragons and this wonderful game, but I've been playing alone and without modifications my whole life, until I accidentally came across this cultural phenomenon in 2020. I was fascinated by the amount of player-created content. There were so many mods created by them, many of which had to do with dragons. You could tame them, breed them, ride them, kill them, but in none of them could you **BE a dragon**. This really upset me. Being an artist very far from programming, modding and the minecraft community, I decided to take a risk and create my own mod. I had absolutely no knowledge or friends in this field. The only thing I had was a dream and the support of a community of dragon lovers. That's about how I became the developer of Dragons Survival.* 
 
 (c) **Black Aures**
 

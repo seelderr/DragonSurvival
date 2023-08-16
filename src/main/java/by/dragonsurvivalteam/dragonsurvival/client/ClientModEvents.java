@@ -51,7 +51,6 @@ import net.minecraftforge.client.gui.OverlayRegistry;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
@@ -145,24 +144,27 @@ public class ClientModEvents{
 	public static void registerParticleFactories(ParticleFactoryRegisterEvent factoryRegisterEvent){
 		ParticleEngine particleManager = Minecraft.getInstance().particleEngine;
 		particleManager.register(DSParticles.fireBeaconParticle, p_create_1_ -> new ParticleProvider<SimpleParticleType>(){
+			@Nullable
 			@Override
-			public @NotNull Particle createParticle(@NotNull SimpleParticleType p_199234_1_, @NotNull ClientLevel clientWorld, double v, double v1, double v2, double v3, double v4, double v5) {
+			public Particle createParticle(SimpleParticleType p_199234_1_, ClientLevel clientWorld, double v, double v1, double v2, double v3, double v4, double v5){
 				BeaconParticle beaconParticle = new BeaconParticle(clientWorld, v, v1, v2, v3, v4, v5);
 				beaconParticle.pickSprite(p_create_1_);
 				return beaconParticle;
 			}
 		});
 		particleManager.register(DSParticles.magicBeaconParticle, p_create_1_ -> new ParticleProvider<SimpleParticleType>(){
+			@Nullable
 			@Override
-			public @NotNull Particle createParticle(@NotNull SimpleParticleType p_199234_1_, @NotNull ClientLevel clientWorld, double v, double v1, double v2, double v3, double v4, double v5){
+			public Particle createParticle(SimpleParticleType p_199234_1_, ClientLevel clientWorld, double v, double v1, double v2, double v3, double v4, double v5){
 				BeaconParticle beaconParticle = new BeaconParticle(clientWorld, v, v1, v2, v3, v4, v5);
 				beaconParticle.pickSprite(p_create_1_);
 				return beaconParticle;
 			}
 		});
 		particleManager.register(DSParticles.peaceBeaconParticle, p_create_1_ -> new ParticleProvider<SimpleParticleType>(){
+			@Nullable
 			@Override
-			public @NotNull Particle createParticle(@NotNull SimpleParticleType p_199234_1_, @NotNull ClientLevel clientWorld, double v, double v1, double v2, double v3, double v4, double v5){
+			public Particle createParticle(SimpleParticleType p_199234_1_, ClientLevel clientWorld, double v, double v1, double v2, double v3, double v4, double v5){
 				BeaconParticle beaconParticle = new BeaconParticle(clientWorld, v, v1, v2, v3, v4, v5);
 				beaconParticle.pickSprite(p_create_1_);
 				return beaconParticle;
@@ -170,8 +172,9 @@ public class ClientModEvents{
 		});
 
 		particleManager.register(DSParticles.seaSweep, p_create_1_ -> new ParticleProvider<SimpleParticleType>(){
+			@Nullable
 			@Override
-			public @NotNull Particle createParticle(@NotNull SimpleParticleType p_199234_1_, @NotNull ClientLevel clientWorld, double v, double v1, double v2, double v3, double v4, double v5){
+			public Particle createParticle(SimpleParticleType p_199234_1_, ClientLevel clientWorld, double v, double v1, double v2, double v3, double v4, double v5){
 				SeaSweepParticle beaconParticle = new SeaSweepParticle(clientWorld, v, v1, v2, v3, p_create_1_);
 				beaconParticle.pickSprite(p_create_1_);
 				return beaconParticle;

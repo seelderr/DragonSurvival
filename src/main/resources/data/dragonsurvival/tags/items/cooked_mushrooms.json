@@ -86,22 +86,6 @@
     {
       "id": "nocubes_better_smoker:cooked_brown_mushroom",
       "required": false
-    },
-    {
-      "id": "gothic:black_mushroom_item",
-      "required": false
-    },
-    {
-      "id": "gothic:tall_mushrooms",
-      "required": false
-    },
-    {
-      "id": "gothic:cave_mushrooms",
-      "required": false
-    },
-    {
-      "id": "orcz:orczstew",
-      "required": false
     }
   ]
 }

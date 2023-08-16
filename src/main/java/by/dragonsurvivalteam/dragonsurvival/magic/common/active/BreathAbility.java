@@ -11,10 +11,12 @@ import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.TargetingFunctions;
+import com.mojang.math.Vector3f;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.EntityDamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -28,6 +30,9 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
+import java.awt.geom.Point2D.Double;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -68,6 +73,7 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 
 	@Override
 	public void onCharging(Player player, int currentChargeTime){}
+
 
 	@Override
 	public void onChanneling(Player player, int castDuration){
@@ -118,16 +124,16 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 	public void hitEntities(){
 		AABB hitRange = TargetingFunctions.boxForRange(player.getPosition(1.0F), RANGE);
 		List<Entity>  entities = player.level.getEntities(player, hitRange, entity -> {
-				if(!entity.isSpectator() && entity.isAlive() && TargetingFunctions.isValidTarget(getPlayer(), entity))
-				{
-					Vec3 eyePosition = player.getEyePosition(1.0F);
-					Vec3 entityPos = entity.getPosition(1.0F);
-					double distance = entityPos.distanceTo(eyePosition);
-					return distance < RANGE && eyePosition.add(player.getLookAngle().scale(distance)).distanceTo(entityPos) < (distance / 4);
+					if(!entity.isSpectator() && entity.isAlive() && TargetingFunctions.isValidTarget(getPlayer(), entity))
+					{
+						Vec3 eyePosition = player.getEyePosition(1.0F);
+						Vec3 entityPos = entity.getPosition(1.0F);
+						double distance = entityPos.distanceTo(eyePosition);
+						return distance < RANGE && eyePosition.add(player.getLookAngle().scale(distance)).distanceTo(entityPos) < (distance / 4);
 
+					}
+					return false;
 				}
-				return false;
-			}
 		);
 
 		for(Entity entity : entities){
@@ -220,10 +226,10 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 		DragonLevel growthLevel = DragonUtils.getDragonLevel(player);
 		int RANGE = growthLevel == DragonLevel.NEWBORN ? 4 : growthLevel == DragonLevel.YOUNG ? 7 : 10;
 
-		components.add(new TranslatableComponent("ds.skill.mana_cost", getInitManaCost()));
+		components.add(new TranslatableComponent("ds.skill.mana_cost", getChargingManaCost()));
 		components.add(new TranslatableComponent("ds.skill.channel_cost", getManaCost(), 2));
 
-		components.add(new TranslatableComponent("ds.skill.cast_time", Functions.ticksToSeconds(getSkillChargeTime())));
+		components.add(new TranslatableComponent("ds.skill.cast_time", nf.format((double)getSkillChargeTime() / 20)));
 		components.add(new TranslatableComponent("ds.skill.cooldown", Functions.ticksToSeconds(getSkillCooldown())));
 
 		components.add(new TranslatableComponent("ds.skill.damage", getDamage()));

@@ -32,6 +32,5 @@ public class RequestSpinResync implements IMessage<RequestSpinResync>{
 				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new SyncSpinStatus(entity.getId(), dragonStateHandler.getMovementData().spinAttack, dragonStateHandler.getMovementData().spinCooldown, dragonStateHandler.getMovementData().spinLearned));
 			});
 		}
-		supplier.get().setPacketHandled(true);
 	}
 }

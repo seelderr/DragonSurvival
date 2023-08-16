@@ -31,6 +31,5 @@ public class SortInventoryPacket implements IMessage<SortInventoryPacket>{
 		if(player != null){
 			SortingHandler.sortInventory(player);
 		}
-		supplier.get().setPacketHandled(true);
 	}
 }

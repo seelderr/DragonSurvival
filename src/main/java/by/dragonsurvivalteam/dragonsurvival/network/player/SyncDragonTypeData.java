@@ -52,7 +52,6 @@ public class SyncDragonTypeData implements IMessage<SyncDragonTypeData>{
 	@Override
 	public void handle(SyncDragonTypeData message, Supplier<NetworkEvent.Context> supplier){
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> runClient(message, supplier));
-		supplier.get().setPacketHandled(true);
 	}
 
 	@OnlyIn( Dist.CLIENT )

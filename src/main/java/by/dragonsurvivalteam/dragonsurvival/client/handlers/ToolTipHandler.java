@@ -15,18 +15,15 @@ import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
-import net.minecraft.network.chat.*;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
@@ -57,11 +54,6 @@ public class ToolTipHandler{
 	@ConfigOption( side = ConfigSide.CLIENT, category = "tooltips", key = "alwaysShowHelpTooltip", comment = "Always show the help tooltip border" )
 	public static Boolean alwaysShowHelpTooltip = false;
 
-	@ConfigOption(side = ConfigSide.CLIENT, category = "tooltips", key = "hideAppleskinTooltip", comment = "Hide the AppleSkin tooltip if you're a dragon. The tooltip will only show correct food values for humans.")
-	public static Boolean hideAppleskinTooltip = true;
-
-	private final static ResourceLocation ICONS = new ResourceLocation(DragonSurvivalMod.MODID, "food_tooltip_icon_font");
-
 
 	private static boolean blink = false;
 	private static int tick = 0;
@@ -72,45 +64,18 @@ public class ToolTipHandler{
 		if(tooltipEvent.getPlayer() != null){
 			Item item = tooltipEvent.getItemStack().getItem();
 			List<Component> toolTip = tooltipEvent.getToolTip();
-
 			if(DragonFoodHandler.getSafeEdibleFoods(DragonTypes.CAVE).contains(item)){
-				toolTip.add(createFoodTooltip(item, DragonTypes.CAVE, ChatFormatting.RED, "\uEA02", "\uEA05"));
+				toolTip.add(new TranslatableComponent("ds.cave.dragon.food"));
 			}
-
 			if(DragonFoodHandler.getSafeEdibleFoods(DragonTypes.FOREST).contains(item)){
-				toolTip.add(createFoodTooltip(item, DragonTypes.FOREST, ChatFormatting.GREEN, "\uEA01", "\uEA04"));
+				toolTip.add(new TranslatableComponent("ds.forest.dragon.food"));
 			}
-
 			if(DragonFoodHandler.getSafeEdibleFoods(DragonTypes.SEA).contains(item)){
-				toolTip.add(createFoodTooltip(item, DragonTypes.SEA, ChatFormatting.DARK_AQUA, "\uEA03", "\uEA06"));
+				toolTip.add(new TranslatableComponent("ds.sea.dragon.food"));
 			}
 		}
 	}
 
-	private static Component createFoodTooltip(final Item item, final AbstractDragonType type, final ChatFormatting color, final String nutritionIcon, final String saturationIcon) {
-		MutableComponent component = new TranslatableComponent("ds." + type.getTypeName() + ".dragon.food");
-		FoodProperties properties = DragonFoodHandler.getDragonFoodProperties(item, type);
-
-		String nutrition = "0";
-		String saturation = "0";
-
-		if (properties != null) {
-			float nutritionValue = properties.getNutrition();
-			float saturationValue = properties.getNutrition() * properties.getSaturationModifier() * 2f;
-
-			// 1 Icon = 2 points (e.g. 10 nutrition icons for a maximum food level of 20)
-			nutrition = nutritionValue > 0 ? String.valueOf(nutritionValue / 2) : "0";
-			saturation = saturationValue > 0 ? String.valueOf(saturationValue / 2) : "0";
-		}
-
-		MutableComponent nutritionIconComponent = new TextComponent(nutritionIcon).withStyle(Style.EMPTY.withFont(ICONS));
-		MutableComponent nutritionComponent = new TextComponent(": " + nutrition + " ").withStyle(color);
-
-		MutableComponent saturationIconComponent = new TextComponent(saturationIcon).withStyle(Style.EMPTY.withFont(ICONS));
-		MutableComponent saturationComponent = new TextComponent(" / " + saturation + " ").withStyle(color);
-
-		return component.append(nutritionComponent).append(nutritionIconComponent).append(saturationComponent).append(saturationIconComponent);
-	}
 
 	@SubscribeEvent
 	public static void itemDescriptions(ItemTooltipEvent event){

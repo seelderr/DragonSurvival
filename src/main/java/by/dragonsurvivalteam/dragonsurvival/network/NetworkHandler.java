@@ -69,6 +69,7 @@ public class NetworkHandler{
 		register(SyncDragonSkinSettings.class, new SyncDragonSkinSettings());
 		register(DragonClawsMenuToggle.class, new DragonClawsMenuToggle());
 		register(SyncDragonClawsMenu.class, new SyncDragonClawsMenu());
+		register(SyncDragonClawRender.class, new SyncDragonClawRender());
 
 		//Ability packets
 		register(OpenDragonInventory.class, new OpenDragonInventory());

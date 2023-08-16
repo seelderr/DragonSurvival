@@ -11,7 +11,6 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.AbilityAnimation;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChargeCastAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
-import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -31,13 +30,13 @@ public class HunterAbility extends ChargeCastAbility{
 	public static Boolean hunter = true;
 	@ConfigRange( min = 0, max = 10000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "hunter"}, key = "hunterDuration", comment = "The duration in seconds of the inspiration effect given when the ability is used" )
-	public static Integer hunterDuration = 30;
+	public static Integer hunterDuration = 600;
 	@ConfigRange( min = 1, max = 10000 )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "hunter"}, key = "hunterCooldown", comment = "The cooldown in seconds of the hunter ability" )
-	public static Integer hunterCooldown = 30;
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "hunter"}, key = "hunterCooldown", comment = "The cooldown in ticks of the hunter ability" )
+	public static Integer hunterCooldown = 600;
 	@ConfigRange( min = 1, max = 10000 )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "hunter"}, key = "hunterCasttime", comment = "The cast time in seconds of the hunter ability" )
-	public static Integer hunterCasttime = 3;
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "hunter"}, key = "hunterCasttime", comment = "The cast time in ticks of the hunter ability" )
+	public static Integer hunterCasttime = 60;
 	@ConfigRange( min = 0, max = 100.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "hunter"}, key = "hunterDamageBonus", comment = "The damage bonus the hunter effect gives when invisible. This value is multiplied by the skill level." )
 	public static Double hunterDamageBonus = 1.5;
@@ -53,7 +52,7 @@ public class HunterAbility extends ChargeCastAbility{
 
 	@Override
 	public int getSkillCastingTime(){
-		return Functions.secondsToTicks(hunterCasttime);
+		return hunterCasttime;
 	}
 
 	@Override
@@ -94,7 +93,7 @@ public class HunterAbility extends ChargeCastAbility{
 
 	@Override
 	public int getSkillCooldown(){
-		return Functions.secondsToTicks(hunterCooldown);
+		return hunterCooldown;
 	}
 
 	@Override
@@ -111,7 +110,7 @@ public class HunterAbility extends ChargeCastAbility{
 	}
 
 	public int getDuration(){
-		return Functions.secondsToTicks(hunterDuration * getLevel());
+		return hunterDuration * getLevel();
 	}
 
 	public double getDamage(){

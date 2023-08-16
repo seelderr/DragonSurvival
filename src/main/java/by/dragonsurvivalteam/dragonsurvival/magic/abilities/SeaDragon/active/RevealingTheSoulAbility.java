@@ -10,7 +10,6 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.AoeBuffAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
-import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -25,13 +24,13 @@ public class RevealingTheSoulAbility extends AoeBuffAbility{
 	public static Boolean revealingTheSoul = true;
 	@ConfigRange( min = 0, max = 10000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "revealing_the_soul"}, key = "revealingTheSoulDuration", comment = "The duration in seconds of the revealing The Soul effect given when the ability is used" )
-	public static Integer revealingTheSoulDuration = 200;
+	public static Integer revealingTheSoulDuration = 1800;
 	@ConfigRange( min = 1, max = 10000 )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "revealing_the_soul"}, key = "revealingTheSoulCooldown", comment = "The cooldown in seconds of the revealing the soul ability" )
-	public static Integer revealingTheSoulCooldown = 30;
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "revealing_the_soul"}, key = "revealingTheSoulCooldown", comment = "The cooldown in ticks of the revealing the soul ability" )
+	public static Integer revealingTheSoulCooldown = 600;
 	@ConfigRange( min = 1, max = 10000 )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "revealing_the_soul"}, key = "revealingTheSoulCasttime", comment = "The cast time in seconds of the revealing the soul ability" )
-	public static Integer revealingTheSoulCasttime = 1;
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "revealing_the_soul"}, key = "revealingTheSoulCasttime", comment = "The cast time in ticks of the revealing the soul ability" )
+	public static Integer revealingTheSoulCasttime = 60;
 	@ConfigRange( min = 0, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "revealing_the_soul"}, key = "revealingTheSoulManaCost", comment = "The mana cost for using the revealing The Soul ability" )
 	public static Integer revealingTheSoulManaCost = 1;
@@ -87,7 +86,7 @@ public class RevealingTheSoulAbility extends AoeBuffAbility{
 
 	@Override
 	public int getSkillCooldown(){
-		return Functions.secondsToTicks(revealingTheSoulCooldown);
+		return revealingTheSoulCooldown;
 	}
 
 	@Override
@@ -102,12 +101,12 @@ public class RevealingTheSoulAbility extends AoeBuffAbility{
 
 	@Override
 	public MobEffectInstance getEffect(){
-		return new MobEffectInstance(DragonEffects.REVEALING_THE_SOUL, Functions.secondsToTicks(revealingTheSoulDuration));
+		return new MobEffectInstance(DragonEffects.REVEALING_THE_SOUL, revealingTheSoulDuration);
 	}
 
 	@Override
 	public int getSkillCastingTime(){
-		return Functions.secondsToTicks(revealingTheSoulCasttime);
+		return revealingTheSoulCasttime;
 	}
 
 	@Override

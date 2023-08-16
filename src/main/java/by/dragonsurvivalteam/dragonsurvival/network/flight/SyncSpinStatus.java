@@ -69,7 +69,6 @@ public class SyncSpinStatus implements IMessage<SyncSpinStatus>{
 				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new SyncSpinStatus(entity.getId(), message.spinAttack, message.spinCooldown, message.spinLearned));
 			}
 		}
-		supplier.get().setPacketHandled(true);
 	}
 
 	@OnlyIn( Dist.CLIENT )

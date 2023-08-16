@@ -46,7 +46,6 @@ public class SyncBooleanConfig implements IMessage<SyncBooleanConfig>{
 		if(supplier.get().getDirection() == NetworkDirection.PLAY_TO_SERVER){
 			ServerPlayer entity = supplier.get().getSender();
 			if(entity == null || !entity.hasPermissions(2)){
-				supplier.get().setPacketHandled(true);
 				return;
 			}
 			NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new SyncBooleanConfig(message.key, message.value));
@@ -55,6 +54,5 @@ public class SyncBooleanConfig implements IMessage<SyncBooleanConfig>{
 		if(ConfigHandler.serverSpec.getValues().get("server." + message.key) instanceof BooleanValue value){
 			ConfigHandler.updateConfigValue(value, message.value);
 		}
-		supplier.get().setPacketHandled(true);
 	}
 }

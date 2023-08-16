@@ -151,6 +151,7 @@ public class OptionsList extends ContainerObjectSelectionList<OptionListEntry>{
 	public int getRowWidth(){
 		return listWidth;
 	}
+
 	@Override
 	protected void renderList(PoseStack p_238478_1_, int p_238478_2_, int p_238478_3_, int p_238478_4_, int p_238478_5_, float p_238478_6_){
 		int i = getItemCount();

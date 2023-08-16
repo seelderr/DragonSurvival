@@ -352,14 +352,6 @@
     {
       "id": "nocubes_better_smoker:cooked_poisonous_potato",
       "required": false
-    },
-    {
-      "id": "gothic:stew",
-      "required": false
-    },
-    {
-      "id": "unusualprehistory:cooked_ginkgo_seeds",
-      "required": false
     }
   ]
 }

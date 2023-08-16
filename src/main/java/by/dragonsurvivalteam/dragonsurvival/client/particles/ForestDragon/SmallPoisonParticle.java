@@ -74,6 +74,7 @@ public class SmallPoisonParticle extends TextureSheetParticle{
 	}
 
 	@Override
+
 	public void remove(){
 		level.addParticle(ParticleTypes.DRAGON_BREATH, x, y, z, 0, 0.01, 0);
 		super.remove();

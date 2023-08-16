@@ -35,7 +35,6 @@ public abstract class ISidedMessage<T extends ISidedMessage> implements IMessage
 		}
 
 		runCommon(message, supplier);
-		supplier.get().setPacketHandled(true);
 	}
 
 	public abstract T create(T message);

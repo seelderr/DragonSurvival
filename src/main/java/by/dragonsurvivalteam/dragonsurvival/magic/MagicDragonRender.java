@@ -19,8 +19,8 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraftforge.client.gui.GuiUtils;
-import software.bernie.geckolib3.core.util.Color;
 
+import java.awt.Color;
 import java.util.List;
 
 public class MagicDragonRender{
@@ -41,7 +41,7 @@ public class MagicDragonRender{
 
 		if(!description.isEmpty()){
 			if(ability.getInfo().size() > 0){
-				FormattedText textContents = TextComponent.EMPTY;
+				FormattedText textContents = new TextComponent("");
 
 				for(Component component : ability.getInfo()){
 					textContents = FormattedText.composite(textContents, new TextComponent("\n"));
@@ -73,8 +73,8 @@ public class MagicDragonRender{
 		String skillType = ability instanceof ActiveDragonAbility ? "active" : ability instanceof InnateDragonAbility ? "innate" : ability instanceof PassiveDragonAbility ? "passive" : null;
 
 		if(skillType != null){
-			Color c = ability instanceof ActiveDragonAbility ? Color.ofRGB(200, 143, 31) : ability instanceof InnateDragonAbility ? Color.ofRGB(150, 56, 175) : Color.ofRGB(127, 145, 46);
-			Gui.drawCenteredString(stack, Minecraft.getInstance().font, new TranslatableComponent("ds.skill.type." + skillType), xPos + 150 / 2, yPos + 30, c.getColor());
+			Color c = ability instanceof ActiveDragonAbility ? new Color(200, 143, 31) : ability instanceof InnateDragonAbility ? new Color(150, 56, 175) : new Color(127, 145, 46);
+			Gui.drawCenteredString(stack, Minecraft.getInstance().font, new TranslatableComponent("ds.skill.type." + skillType), xPos + 150 / 2, yPos + 30, c.getRGB());
 		}
 
 		if(ability.getMaxLevel() > 1){

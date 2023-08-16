@@ -6,7 +6,6 @@ import com.mojang.math.Vector3f;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -71,11 +70,7 @@ public class SmallLightningParticle extends TextureSheetParticle{
 		swirlTick++;
 		setSpriteFromAge(sprites);
 	}
-	@Override
-	public void remove(){
-		level.addParticle(ParticleTypes.WHITE_ASH, x, y, z, 0, 0.01, 0);
-		super.remove();
-	}
+
 	@Override
 
 	public ParticleRenderType getRenderType(){

@@ -57,7 +57,6 @@ public class PacketSyncCapabilityMovement implements IMessage<PacketSyncCapabili
 		ServerPlayer player = context.getSender();
 		if(player == null){
 			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> runClient(syncCapabilityMovement, supplier));
-			context.setPacketHandled(true);
 			return;
 		}
 		Entity entity = player.level.getEntity(syncCapabilityMovement.playerId);

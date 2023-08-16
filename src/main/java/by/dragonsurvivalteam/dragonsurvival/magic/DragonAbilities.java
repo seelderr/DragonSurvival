@@ -166,6 +166,7 @@ public class DragonAbilities{
 		else
 			return hasAbility(player, c, dragonType.getTypeName());
 	}
+
 	public static <T extends DragonAbility> T getAbility(LivingEntity player, Class<T> c, @Nullable String dragonType){
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 		Optional<T> optionalT = (Optional<T>)handler.getMagicData().abilities.values().stream().filter(s-> {

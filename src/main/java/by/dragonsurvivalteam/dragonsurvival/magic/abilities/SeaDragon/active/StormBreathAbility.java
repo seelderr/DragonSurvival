@@ -6,7 +6,6 @@ import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaDragon.SmallLigh
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.SoundRegistry;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.StormBreathSound;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
@@ -19,10 +18,14 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.TargetingFunctions;
+import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.client.resources.sounds.SoundInstance;
+import net.minecraft.client.resources.sounds.TickableSoundInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -74,15 +77,15 @@ public class StormBreathAbility extends BreathAbility{
 	                                                     "abilities",
 	                                                     "sea_dragon",
 	                                                     "actives",
-	                                                     "storm_breath"}, key = "stormBreathCooldown", comment = "The cooldown in seconds of the storm breath ability" )
-	public static Integer stormBreathCooldown = 10;
+	                                                     "storm_breath"}, key = "stormBreathCooldown", comment = "The cooldown in ticks of the storm breath ability" )
+	public static Integer stormBreathCooldown = 200;
 	@ConfigRange( min = 1, max = 10000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic",
 	                                                     "abilities",
 	                                                     "sea_dragon",
 	                                                     "actives",
-	                                                     "storm_breath"}, key = "stormBreathCasttime", comment = "The cast time in seconds of the storm breath ability" )
-	public static Integer stormBreathCasttime = 1;
+	                                                     "storm_breath"}, key = "stormBreathCasttime", comment = "The cast time in ticks of the storm breath ability" )
+	public static Integer stormBreathCasttime = 10;
 	@ConfigRange( min = 0, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic",
 	                                                     "abilities",
@@ -95,15 +98,16 @@ public class StormBreathAbility extends BreathAbility{
 	                                                     "abilities",
 	                                                     "sea_dragon",
 	                                                     "actives",
-	                                                     "storm_breath"}, key = "stormBreathManaTicks", comment = "How often in seconds, mana is consumed while using storm breath" )
-	public static Integer stormBreathManaTicks = 2;
+	                                                     "storm_breath"}, key = "stormBreathManaTicks", comment = "How often in ticks, mana is consumed while using storm breath" )
+	///need delete unused configs
+	public static Integer stormBreathManaTicks = 40;
 	@ConfigType( Block.class )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic",
 	                                                     "abilities",
 	                                                     "sea_dragon",
 	                                                     "actives",
 	                                                     "storm_breath"}, key = "stormBreathBlockBreaks", comment = "Blocks that have a chance to be broken by storm breath. Formatting: block/modid:id" )
-	public static List<String> stormBreathBlockBreaks = List.of("minecraft:impermeable", "minecraft:flowers", "minecraft:replaceable_plants");
+	public static List<String> stormBreathBlockBreaks = List.of("minecraft:impermeable", "minecraft:crops", "minecraft:flowers", "minecraft:replaceable_plants");
 
 	@ConfigRange( min = 0, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic",
@@ -146,7 +150,7 @@ public class StormBreathAbility extends BreathAbility{
 	                                                     "sea_dragon",
 	                                                     "actives",
 	                                                     "storm_breath"}, key = "chargedSpreadBlacklist", comment = "List of entities that will not spread the charged effect. Format: modid:id" )
-	public static List<String> chargedSpreadBlacklist = List.of("minecraft:armor_stand", "minecraft:cat", "minecraft:cart", "minecraft:guardian", "minecraft:elder_guardian", "minecraft:enderman", "upgrade_aquatic:thrasher", "upgrade_aquatic:great_thrasher");
+	public static List<String> chargedSpreadBlacklist = List.of("minecraft:armor_stand", "minecraft:cat", "minecraft:cart", "minecraft:guardian", "minecraft:elder_guardian", "minecraft:enderman");
 
 	@ConfigType( EntityType.class )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic",
@@ -154,7 +158,7 @@ public class StormBreathAbility extends BreathAbility{
 	                                                     "sea_dragon",
 	                                                     "actives",
 	                                                     "storm_breath"}, key = "chargedBlacklist", comment = "List of entities that will not receive the charged effect at all Format: modid:id" )
-	public static List<String> chargedBlacklist = List.of("minecraft:armor_stand", "minecraft:cat", "minecraft:cart", "minecraft:guardian", "minecraft:elder_guardian", "minecraft:enderman", "upgrade_aquatic:thrasher", "upgrade_aquatic:great_thrasher");
+	public static List<String> chargedBlacklist = List.of("minecraft:armor_stand", "minecraft:cat", "minecraft:cart", "minecraft:guardian", "minecraft:elder_guardian", "minecraft:enderman");
 
 	public static void onDamageChecks(LivingEntity entity){
 		if(entity instanceof Creeper creeper){
@@ -185,7 +189,7 @@ public class StormBreathAbility extends BreathAbility{
 				double x = start.x + xDif * i;
 				double y = start.y + yDif * i + eyeHeight;
 				double z = start.z + zDif * i;
-				source.level.addParticle(new SmallLightningParticleData(37, true), x, y, z, xDif, yDif, zDif);
+				source.level.addParticle(new DustParticleOptions(new Vector3f(0f, 1F, 1F), 1f), x, y, z, 0, 0, 0);
 			}
 		}
 	}
@@ -205,7 +209,7 @@ public class StormBreathAbility extends BreathAbility{
 
 	@Override
 	public int getSkillCooldown(){
-		return Functions.secondsToTicks(stormBreathCooldown);
+		return stormBreathCooldown;
 	}
 
 	public static void chargedEffectSparkle(Player player, LivingEntity source, int chainRange, int maxChainTargets, int damage){
@@ -230,15 +234,15 @@ public class StormBreathAbility extends BreathAbility{
 
 			if(!chargedSpreadBlacklist.contains(source.getType().getRegistryName().toString())){
 				if(target != source){
-					EntityStateHandler capSource = DragonUtils.getEntityHandler(source);
-					EntityStateHandler entityCap = DragonUtils.getEntityHandler(target);
+					DragonStateHandler capSource = DragonUtils.getHandler(source);
+					DragonStateHandler cap = DragonUtils.getHandler(target);
 
-					entityCap.chainCount = capSource.chainCount + 1;
+					cap.chainCount = capSource.chainCount + 1;
 
 					if(!target.level.isClientSide){
 						if(target.getRandom().nextInt(100) < 40){
-							if(entityCap.chainCount < chargedEffectMaxChain || chargedEffectMaxChain == -1){
-								entityCap.lastAfflicted = player != null ? player.getId() : -1;
+							if(cap.chainCount < chargedEffectMaxChain || chargedEffectMaxChain == -1){
+								cap.lastAfflicted = player != null ? player.getId() : -1;
 								target.addEffect(new MobEffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(10), 0, false, true));
 							}
 						}
@@ -292,7 +296,7 @@ public class StormBreathAbility extends BreathAbility{
 		if(!entity.level.isClientSide){
 			if(!chargedBlacklist.contains(entity.getType().getRegistryName().toString())){
 				if(entity.getRandom().nextInt(100) < 40){
-					EntityStateHandler cap = DragonUtils.getEntityHandler(entity);
+					DragonStateHandler cap = DragonUtils.getHandler(entity);
 
 					cap.lastAfflicted = player.getId();
 					cap.chainCount = 1;
@@ -356,6 +360,7 @@ public class StormBreathAbility extends BreathAbility{
 				1.0F,1.0F,
 				pos.x,pos.y,pos.z
 		);
+
 		Minecraft.getInstance().getSoundManager().playDelayed(startingSound, 0);
 		Minecraft.getInstance().getSoundManager().stop(new ResourceLocation(DragonSurvivalMod.MODID, "storm_breath_loop"), SoundSource.PLAYERS);
 		Minecraft.getInstance().getSoundManager().queueTickingSound(new StormBreathSound(this));
@@ -407,7 +412,7 @@ public class StormBreathAbility extends BreathAbility{
 		}
 
 		if(player.level.isClientSide){
-			for(int i = 0; i < 4; i++){
+			for(int i = 0; i < 6; i++){
 				double xSpeed = speed * 1f * xComp;
 				double ySpeed = speed * 1f * yComp;
 				double zSpeed = speed * 1f * zComp;
@@ -453,16 +458,11 @@ public class StormBreathAbility extends BreathAbility{
 
 	@Override
 	public int getSkillChargeTime(){
-		return Functions.secondsToTicks(stormBreathCasttime);
+		return stormBreathCasttime;
 	}
 
 	@Override
-	public int getContinuousManaCostTime() {
-		return Functions.secondsToTicks(stormBreathManaTicks);
-	}
-
-	@Override
-	public int getInitManaCost(){
+	public int getChargingManaCost(){
 		return stormBreathInitialMana;
 	}
 

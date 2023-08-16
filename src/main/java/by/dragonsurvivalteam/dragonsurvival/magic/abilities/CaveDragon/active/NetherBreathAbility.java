@@ -62,19 +62,19 @@ public class NetherBreathAbility extends BreathAbility{
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreathOvertimeMana", comment = "The mana cost of sustaining the firebreath ability" )
 	public static Integer fireBreathOvertimeMana = 1;
 	@ConfigRange( min = 0, max = 100 )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreathManaTicks", comment = "How often in seconds, mana is consumed while using fire breath" )
-	public static Integer fireBreathManaTicks = 2;
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreathManaTicks", comment = "How often in ticks, mana is consumed while using fire breath" )
+	public static Integer fireBreathManaTicks = 40;
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreathSpreadsFire", comment = "Whether the fire breath actually spreads fire when used" )
 	public static Boolean fireBreathSpreadsFire = true;
 	@ConfigType(Block.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreathBlockBreaks", comment = "Blocks that have a chance to be broken by fire breath. Formatting: block/modid:id" )
 	public static List<String> fireBreathBlockBreaks = List.of("minecraft:impermeable", "minecraft:crops", "minecraft:flowers", "minecraft:replaceable_plants", "minecraft:cobweb");
 	@ConfigRange( min = 1, max = 10000 )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreathCooldown", comment = "The cooldown in seconds of the fire breath ability" )
-	public static Integer fireBreathCooldown = 5;
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreathCooldown", comment = "The cooldown in ticks of the fire breath ability" )
+	public static Integer fireBreathCooldown = 100;
 	@ConfigRange( min = 1, max = 10000 )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreathCasttime", comment = "The cast time in seconds of the fire breath ability" )
-	public static Integer fireBreathCasttime = 1;
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreathCasttime", comment = "The cast time in ticks of the fire breath ability" )
+	public static Integer fireBreathCasttime = 20;
 
 	@Override
 	public String getName(){
@@ -130,7 +130,7 @@ public class NetherBreathAbility extends BreathAbility{
 
 	@Override
 	public int getSkillCooldown(){
-		return Functions.secondsToTicks(fireBreathCooldown);
+		return fireBreathCooldown;
 	}
 
 	@Override
@@ -246,6 +246,7 @@ public class NetherBreathAbility extends BreathAbility{
 				pos.x, pos.y, pos.z
 		);
 		Minecraft.getInstance().getSoundManager().playDelayed(startingSound, 0);
+
 		Minecraft.getInstance().getSoundManager().stop(new ResourceLocation(DragonSurvivalMod.MODID, "fire_breath_loop"), SoundSource.PLAYERS);
 		Minecraft.getInstance().getSoundManager().queueTickingSound(new FireBreathSound(this));
 	}
@@ -274,18 +275,19 @@ public class NetherBreathAbility extends BreathAbility{
 
 	@Override
 	public void onEntityHit(LivingEntity entityHit){
+		//Short enough fire duration to not cause fire damage but still drop cooked items
 		if(!entityHit.isOnFire()){
-			// Short enough fire duration to not cause fire damage but still drop cooked items
 			entityHit.setRemainingFireTicks(1);
 		}
 
 		super.onEntityHit(entityHit);
 
 		if(!entityHit.level.isClientSide){
+			DragonStateHandler handler = DragonUtils.getHandler(player);
 			BurnAbility burnAbility = DragonAbilities.getSelfAbility(player, BurnAbility.class);
 
 			if(entityHit.getRandom().nextInt(100) < burnAbility.level * 15){
-				DragonUtils.getEntityHandler(entityHit).lastAfflicted = player != null ? player.getId() : -1;
+				DragonUtils.getHandler(entityHit).lastAfflicted = player != null ? player.getId() : -1;
 				entityHit.addEffect(new MobEffectInstance(DragonEffects.BURN, Functions.secondsToTicks(10), 0, false, true));
 			}
 		}
@@ -307,17 +309,12 @@ public class NetherBreathAbility extends BreathAbility{
 
 	@Override
 	public int getSkillChargeTime(){
-		return Functions.secondsToTicks(fireBreathCasttime);
+		return fireBreathCasttime;
 	}
 
 	@Override
-	public int getContinuousManaCostTime() {
-		return Functions.secondsToTicks(fireBreathManaTicks);
-	}
-
-	@Override
-	public int getInitManaCost(){
-		return fireBreathInitialMana;
+	public int getChargingManaCost(){
+		return 2;
 	}
 
 	@Override

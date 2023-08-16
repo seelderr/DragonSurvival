@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival;
 
-import by.dragonsurvivalteam.dragonsurvival.api.appleskin.AppleSkinEventHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.DSParticles;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.SoundRegistry;
 import by.dragonsurvivalteam.dragonsurvival.commands.DragonAltarCommand;
@@ -20,9 +19,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
@@ -33,6 +30,7 @@ import software.bernie.geckolib3.GeckoLib;
 public class DragonSurvivalMod{
 	public static final String MODID = "dragonsurvival";
 	public static final Logger LOGGER = LogManager.getLogger("Dragon Survival");
+
 	public static DragonSurvivalCreativeTab items = new DragonSurvivalCreativeTab("dragon.survival.blocks");
 
 	public DragonSurvivalMod(){
@@ -43,8 +41,7 @@ public class DragonSurvivalMod{
 		DragonAbilities.initAbilities();
 
 		IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-		modEventBus.addListener(this::commonSetup);
-		modEventBus.addListener(this::clientSetup);
+		modEventBus.addListener(this::setup);
 
 		DSParticles.REGISTRY.register(modEventBus);
 		SoundRegistry.SOUNDS.register(modEventBus);
@@ -56,16 +53,10 @@ public class DragonSurvivalMod{
 		MinecraftForge.EVENT_BUS.addListener(this::serverRegisterCommandsEvent);
 	}
 
-	private void commonSetup(final FMLCommonSetupEvent event){
+	private void setup(final FMLCommonSetupEvent event){
 		WingObtainmentController.loadDragonPhrases();
 		NetworkHandler.setup();
 		LOGGER.info("Successfully registered packets!");
-	}
-
-	private void clientSetup(final FMLClientSetupEvent event) {
-		if (ModList.get().isLoaded("appleskin")) {
-			MinecraftForge.EVENT_BUS.register(new AppleSkinEventHandler());
-		}
 	}
 
 	@SubscribeEvent

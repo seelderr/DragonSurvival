@@ -298,26 +298,6 @@
 	{
       "id": "nocubes_better_smoker:cooked_tropical_fish",
       "required": false
-    },
-    {
-      "id": "oceansdelight:cooked_elder_guardian_slice",
-      "required": false
-    },
-    {
-      "id": "oceansdelight:cooked_guardian_tail",
-      "required": false
-    },
-    {
-      "id": "oceansdelight:baked_tentacle_on_a_stick",
-      "required": false
-    },
-    {
-      "id": "unusualprehistory:cooked_stetha",
-      "required": false
-    },
-    {
-      "id": "unusualprehistory:cooked_scau",
-      "required": false
     }
   ]
 }

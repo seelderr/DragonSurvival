@@ -70,7 +70,6 @@ public class SyncDragonClawRender implements IMessage<SyncDragonClawRender>{
 				}
 			}
 		}
-		supplier.get().setPacketHandled(true);
 	}
 
 	@OnlyIn( Dist.CLIENT )

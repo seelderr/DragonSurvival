@@ -101,6 +101,7 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity>{
 
 		if(!isRenderLayers){
 			Player player = currentEntityBeingRendered.getPlayer();
+			DragonStateHandler handler = DragonUtils.getHandler(player);
 
 			ResourceLocation currentTexture = getTextureLocation(currentEntityBeingRendered);
 			MultiBufferSource bufferSource = getCurrentRTB();

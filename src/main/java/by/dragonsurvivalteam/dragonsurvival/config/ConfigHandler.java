@@ -224,7 +224,7 @@ public class ConfigHandler{
 
 				if(tagKey.isFor(ent.getA().get().getRegistryKey())){
 					ITagManager<T> manager = (ITagManager<T>)ent.getA().get().tags();
-					return manager.getTag(tagKey).stream().toList();
+					return (List<T>)manager.getTag(tagKey).stream().toList();
 				}
 			}
 		}

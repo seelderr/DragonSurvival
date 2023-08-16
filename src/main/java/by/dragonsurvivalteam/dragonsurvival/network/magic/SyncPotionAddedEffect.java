@@ -58,18 +58,19 @@ public class SyncPotionAddedEffect implements IMessage<SyncPotionAddedEffect>{
 	@Override
 	public void handle(SyncPotionAddedEffect message, Supplier<NetworkEvent.Context> supplier){
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> run(message, supplier));
-		supplier.get().setPacketHandled(true);
 	}
 
 	@OnlyIn( Dist.CLIENT )
 	public void run(SyncPotionAddedEffect message, Supplier<NetworkEvent.Context> supplier){
 		NetworkEvent.Context context = supplier.get();
 		context.enqueueWork(() -> {
+
 			Player thisPlayer = Minecraft.getInstance().player;
 			if(thisPlayer != null){
 				Level world = thisPlayer.level;
 				Entity entity = world.getEntity(message.entityId);
 				MobEffect ef = MobEffect.byId(message.effectId);
+
 
 				if(ef != null){
 					if(entity instanceof LivingEntity){

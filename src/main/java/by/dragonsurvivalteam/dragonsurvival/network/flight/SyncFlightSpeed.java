@@ -58,7 +58,6 @@ public class SyncFlightSpeed implements IMessage<SyncFlightSpeed>{
 				NetworkHandler.CHANNEL.send(PacketDistributor.NEAR.with(() -> point), new SyncFlightSpeed(entity.getId(), message.flightSpeed));
 			}
 		}
-		supplier.get().setPacketHandled(true);
 	}
 
 	@OnlyIn( Dist.CLIENT )
