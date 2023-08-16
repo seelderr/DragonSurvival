@@ -4,7 +4,7 @@
     "minecraft:pumpkin_pie",
     "minecraft:baked_potato",
     "minecraft:beetroot_soup",
-    "minecraft:dried_kelp",
+    "minecraft:dried_kelp_block",
     {
       "id": "simplefarming:veggie_burger",
       "required": false
@@ -339,6 +339,18 @@
     },
     {
       "id": "prehistoric_delight:foliage_salad",
+      "required": false
+    },
+    {
+      "id": "nocubes_better_smoker:cooked_beetroot",
+      "required": false
+    },
+    {
+      "id": "nocubes_better_smoker:cooked_carrot",
+      "required": false
+    },
+    {
+      "id": "nocubes_better_smoker:cooked_poisonous_potato",
       "required": false
     }
   ]

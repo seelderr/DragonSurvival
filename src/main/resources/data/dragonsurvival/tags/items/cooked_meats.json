@@ -15,6 +15,14 @@
       "id": "environmental:cooked_venison",
       "required": false
     },
+	{
+      "id": "naturalist:cooked_venison",
+      "required": false
+    },
+	{
+      "id": "chinchillas:cooked_chinchilla_meat",
+      "required": false
+    },	
     {
       "id": "abnormals_delight:cooked_duct_fillet",
       "required": false
@@ -61,6 +69,10 @@
     },
     {
       "id": "unnamedanimalmod:cooked_musk_ox_shank",
+      "required": false
+    },
+	{
+      "id": "untamedwilds:food_turtle_soup",
       "required": false
     },
     {
@@ -230,9 +242,7 @@
     {
       "id": "untamedwilds:food_bear_cooked",
       "required": false
-    }
-
-  ,
+    },
     {
       "id": "prehistoricfauna:cooked_large_thyreophoran_meat",
       "required": false
@@ -271,6 +281,26 @@
     },
     {
       "id": "prehistoricfauna:cooked_large_synapsid_meat",
+      "required": false
+    },
+    {
+      "id": "nocubes_better_frogs:cooked_frog_leg",
+      "required": false
+    },
+    {
+      "id": "nocubes_better_smoker:cooked_rotten_flesh",
+      "required": false
+    },
+    {
+      "id": "nocubes_better_smoker:cooked_rabbit_foot",
+      "required": false
+    },
+    {
+      "id": "gothic:bug_meat",
+      "required": false
+    },
+    {
+      "id": "gothic:cooked_meat",
       "required": false
     }
   ]

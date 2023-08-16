@@ -25,7 +25,7 @@ public class DSItems{
 
 	public static Item dragonHeartShard, weakDragonHeart, elderDragonHeart;
 	public static Item starBone, elderDragonBone, elderDragonDust;
-	public static Item charredMeat, charredVegetable, charredMushroom, charredSeafood, chargedCoal, chargedSoup;
+	public static Item charredMeat, charredVegetable, charredMushroom, charredSeafood, chargedCoal, chargedSoup, hotDragonRod, explosiveCopper, doubleQuartz, quartzExplosiveCopper, meatChorusMix, meatWildBerries, smellyMeatPorridge, diamondChorus, luminousOintment, sweetSourRabbit, seasonedFish, goldenCoralPufferfish, frozenRawFish, goldenTurtleEgg;
 	public static Item seaDragonTreat, caveDragonTreat, forestDragonTreat;
 	public static Item huntingNet;
 	public static Item passiveFireBeacon, passiveMagicBeacon, passivePeaceBeacon;
@@ -49,13 +49,27 @@ public class DSItems{
 		elderDragonHeart = registerItem(registry, "elder_dragon_heart", "ds.description.elderDragonHeart");
 
 		chargedCoal = registerItem(registry, new ChargedCoalItem(new Item.Properties().tab(DragonSurvivalMod.items)), "charged_coal");
-
 		charredMeat = registerItem(registry, new CharredFoodItem(new Item.Properties().tab(DragonSurvivalMod.items)), "charred_meat");
 		charredVegetable = registerItem(registry, new CharredFoodItem(new Item.Properties().tab(DragonSurvivalMod.items)), "charred_vegetable");
 		charredMushroom = registerItem(registry, new CharredFoodItem(new Item.Properties().tab(DragonSurvivalMod.items)), "charred_mushroom");
 		charredSeafood = registerItem(registry, new CharredFoodItem(new Item.Properties().tab(DragonSurvivalMod.items)), "charred_seafood");
-
 		chargedSoup = registerItem(registry, new ChargedSoupItem(new Item.Properties().tab(DragonSurvivalMod.items)), "charged_soup");
+		hotDragonRod = registerItem(registry, new CharredFoodItem(new Item.Properties().tab(DragonSurvivalMod.items)), "hot_dragon_rod");
+		explosiveCopper = registerItem(registry, new CharredFoodItem(new Item.Properties().tab(DragonSurvivalMod.items)), "explosive_copper");
+		quartzExplosiveCopper = registerItem(registry, new CharredFoodItem(new Item.Properties().tab(DragonSurvivalMod.items)), "quartz_explosive_copper");
+		doubleQuartz = registerItem(registry, new CharredFoodItem(new Item.Properties().tab(DragonSurvivalMod.items)), "double_quartz");
+
+		sweetSourRabbit = registerItem(registry, new CharredFoodItem(new Item.Properties().tab(DragonSurvivalMod.items)), "sweet_sour_rabbit");
+		luminousOintment = registerItem(registry, new CharredFoodItem(new Item.Properties().tab(DragonSurvivalMod.items)), "luminous_ointment");
+		diamondChorus = registerItem(registry, new CharredFoodItem(new Item.Properties().tab(DragonSurvivalMod.items)), "diamond_chorus");
+		smellyMeatPorridge = registerItem(registry, new CharredFoodItem(new Item.Properties().tab(DragonSurvivalMod.items)), "smelly_meat_porridge");
+		meatWildBerries = registerItem(registry, new CharredFoodItem(new Item.Properties().tab(DragonSurvivalMod.items)), "meat_wild_berries");
+		meatChorusMix = registerItem(registry, new CharredFoodItem(new Item.Properties().tab(DragonSurvivalMod.items)), "meat_chorus_mix");
+
+		seasonedFish = registerItem(registry, new CharredFoodItem(new Item.Properties().tab(DragonSurvivalMod.items)), "seasoned_fish");
+		goldenCoralPufferfish = registerItem(registry, new CharredFoodItem(new Item.Properties().tab(DragonSurvivalMod.items)), "golden_coral_pufferfish");
+		frozenRawFish = registerItem(registry, new CharredFoodItem(new Item.Properties().tab(DragonSurvivalMod.items)), "frozen_raw_fish");
+		goldenTurtleEgg = registerItem(registry, new CharredFoodItem(new Item.Properties().tab(DragonSurvivalMod.items)), "golden_turtle_egg");
 
 		seaDragonTreat = registerItem(registry, new DragonTreatItem(DragonType.SEA, new Item.Properties().tab(DragonSurvivalMod.items)), "sea_dragon_treat");
 		caveDragonTreat = registerItem(registry, new DragonTreatItem(DragonType.CAVE, new Item.Properties().tab(DragonSurvivalMod.items)), "cave_dragon_treat");

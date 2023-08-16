@@ -78,6 +78,14 @@
     {
       "id": "xenoclustwo:fulngus_stew",
       "required": false
+    },
+    {
+      "id": "nocubes_better_smoker:cooked_red_mushroom",
+      "required": false
+    },
+    {
+      "id": "nocubes_better_smoker:cooked_brown_mushroom",
+      "required": false
     }
   ]
 }

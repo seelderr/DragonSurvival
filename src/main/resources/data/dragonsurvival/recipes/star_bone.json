@@ -1,14 +1,15 @@
 {
-  "type": "crafting_shapeless",
+  "type": "minecraft:crafting_shapeless",
   "ingredients": [
     {
-      "item": "dragonsurvival:predator_star"
+      "item": "minecraft:nether_star"
     },
     {
       "item": "dragonsurvival:elder_dragon_bone"
     }
   ],
   "result": {
-    "item": "dragonsurvival:star_bone"
+    "item": "dragonsurvival:star_bone",
+    "count": 1
   }
 }

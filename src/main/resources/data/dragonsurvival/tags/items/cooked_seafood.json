@@ -16,6 +16,10 @@
       "required": false
     },
     {
+      "id": "naturalist:tropical_stew",
+      "required": false
+    },	
+    {
       "id": "silents_mechanisms:cod_jerky",
       "required": false
     },
@@ -259,8 +263,40 @@
       "id": "prehistoric_delight:ancient_sea_chowder",
       "required": false
     },
+	{
+      "id": "netherdepthsupgrade:cooked_soulsucker_slice",
+      "required": false
+    },
+	    {
+      "id": "netherdepthsupgrade:cooked_lava_pufferfish_slice",
+      "required": false
+    },
+	{
+      "id": "netherdepthsupgrade:cooked_glowdine_slice",
+      "required": false
+    },
+	{
+      "id": "netherdepthsupgrade:cooked_magmacubefish_slice",
+      "required": false
+    },
     {
+      "id": "netherdepthsupgrade:cooked_obsidianfish_slice",
+      "required": false
+    },
+	{
+      "id": "netherdepthsupgrade:cooked_searing_cod_slice",
+      "required": false
+    },
+	{
+      "id": "netherdepthsupgrade:blazefish_slice",
+      "required": false
+    },
+	{
       "id": "prehistoric_delight:prehistoric_fillet_cooked",
+      "required": false
+    },
+	{
+      "id": "nocubes_better_smoker:cooked_tropical_fish",
       "required": false
     }
   ]
