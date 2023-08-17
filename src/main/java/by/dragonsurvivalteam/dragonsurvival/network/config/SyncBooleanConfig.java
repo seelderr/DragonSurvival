@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.network.config;
 
+import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
@@ -54,7 +55,13 @@ public class SyncBooleanConfig implements IMessage<SyncBooleanConfig> {
 		}
 
 		if (ConfigHandler.serverSpec.getValues().get(message.path) instanceof BooleanValue booleanValue) {
-			ConfigHandler.updateConfigValue(booleanValue, message.value);
+			context.enqueueWork(() -> {
+				ConfigHandler.updateConfigValue(booleanValue, message.value);
+
+				if (message.path.equals("tooltips.hideUnsafeFood")) {
+					DragonFoodHandler.clearTooltipMaps();
+				}
+			});
 		}
 
 		context.setPacketHandled(true);

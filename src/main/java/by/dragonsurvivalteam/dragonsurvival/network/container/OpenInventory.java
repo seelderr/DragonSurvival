@@ -23,12 +23,14 @@ public class OpenInventory implements IMessage<OpenInventory> {
 		ServerPlayer sender = context.getSender();
 
 		if (sender != null) {
-			if (sender.containerMenu != null) { // TODO :: container might never be null?
-				sender.containerMenu.removed(sender);
-			}
+			context.enqueueWork(() -> {
+				if (sender.containerMenu != null) { // TODO :: container might never be null?
+					sender.containerMenu.removed(sender);
+				}
 
-			InventoryMenu inventory = sender.inventoryMenu;
-			sender.initMenu(inventory);
+				InventoryMenu inventory = sender.inventoryMenu;
+				sender.initMenu(inventory);
+			});
 		}
 
 		context.setPacketHandled(true);

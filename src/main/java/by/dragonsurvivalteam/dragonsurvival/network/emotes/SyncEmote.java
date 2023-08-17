@@ -49,7 +49,7 @@ public class SyncEmote extends ISidedMessage<SyncEmote> {
 
 	@Override
 	public void runServer(final SyncEmote message, final NetworkEvent.Context context, final ServerPlayer sender) {
-		DragonStateProvider.getCap(sender).ifPresent(handler -> handler.getEmoteData().readNBT(message.nbt));
+		context.enqueueWork(() -> DragonStateProvider.getCap(sender).ifPresent(handler -> handler.getEmoteData().readNBT(message.nbt)));
 	}
 
 	@Override

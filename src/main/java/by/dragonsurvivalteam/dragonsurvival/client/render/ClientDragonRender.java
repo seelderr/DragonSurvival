@@ -134,43 +134,41 @@ public class ClientDragonRender{
 		}
 	}
 
-	/**
-	 * Called for every player.
-	 */
+	/** Called for every player */
 	@SubscribeEvent // TODO :: This is heavy on render performance (even in first person) due to renderRecursively -> renderChildBones
-	public static void thirdPersonPreRender(RenderPlayerEvent.Pre renderPlayerEvent){
-		if(!(renderPlayerEvent.getEntity() instanceof AbstractClientPlayer player)){
+	public static void thirdPersonPreRender(final RenderPlayerEvent.Pre renderPlayerEvent) {
+		if (!(renderPlayerEvent.getEntity() instanceof AbstractClientPlayer player)) {
 			return;
 		}
 
-		Minecraft mc = Minecraft.getInstance();
-		DragonStateHandler cap = DragonUtils.getHandler(player);
+		Minecraft minecraft = Minecraft.getInstance();
+		DragonStateHandler handler = DragonUtils.getHandler(player);
 
 		if(!playerDragonHashMap.containsKey(player.getId())){
 			DragonEntity dummyDragon = DSEntities.DRAGON.create(player.level);
-			dummyDragon.player = player.getId();
+			dummyDragon.playerId = player.getId();
 			playerDragonHashMap.put(player.getId(), new AtomicReference<>(dummyDragon));
 		}
 
 		if(dragonArmor == null){
 			dragonArmor = DSEntities.DRAGON_ARMOR.create(player.level);
 			assert dragonArmor != null;
-			dragonArmor.player = player.getId();
+			dragonArmor.playerId = player.getId();
 		}
 
 		if(dummyDragon == null){
 			dummyDragon = DSEntities.DRAGON.create(player.level);
 			assert dummyDragon != null;
-			dummyDragon.player = player.getId();
+			dummyDragon.playerId = player.getId();
 		}
 
-		if(cap.isDragon()){
+		if(handler.isDragon()){
 			renderPlayerEvent.setCanceled(true);
 			float partialRenderTick = renderPlayerEvent.getPartialTick();
 			float yaw = player.getViewYRot(partialRenderTick);
 
-			DragonLevel dragonStage = cap.getLevel();
-			ResourceLocation texture = DragonSkins.getPlayerSkin(player, cap.getType(), dragonStage);
+			DragonLevel dragonStage = handler.getLevel();
+			ResourceLocation texture = DragonSkins.getPlayerSkin(player, handler.getType(), dragonStage);
 			PoseStack matrixStack = renderPlayerEvent.getPoseStack();
 
 			try{
@@ -179,11 +177,11 @@ public class ClientDragonRender{
 				Vector3f lookVector = Functions.getDragonCameraOffset(player);
 				matrixStack.translate(-lookVector.x(), lookVector.y(), -lookVector.z());
 
-				double size = cap.getSize() * cap.getSkinData().skinPreset.sizeMul;
+				double size = handler.getSize() * handler.getSkinData().skinPreset.sizeMul;
 				// This is some arbitrary scaling that was created back when the maximum size was hard capped at 40. Touching it will cause the render to desync from the hitbox.
-				float scale = (float)Math.max(size / 40.0D, 0.4D);
+				float scale = (float)Math.max(size / 40.0D, 0.4D); // FIXME
 				String playerModelType = player.getModelName();
-				EntityRenderer<? extends Player> playerRenderer = ((AccessorEntityRendererManager)mc.getEntityRenderDispatcher()).getPlayerRenderers().get(playerModelType);
+				EntityRenderer<? extends Player> playerRenderer = ((AccessorEntityRendererManager)minecraft.getEntityRenderDispatcher()).getPlayerRenderers().get(playerModelType);
 				int eventLight = renderPlayerEvent.getPackedLight();
 				final MultiBufferSource renderTypeBuffer = renderPlayerEvent.getMultiBufferSource();
 				if(dragonNameTags){
@@ -194,23 +192,23 @@ public class ClientDragonRender{
 					}
 				}
 
-				matrixStack.mulPose(Vector3f.YN.rotationDegrees((float)cap.getMovementData().bodyYaw));
+				matrixStack.mulPose(Vector3f.YN.rotationDegrees((float)handler.getMovementData().bodyYaw));
 				matrixStack.scale(scale, scale, scale);
 				((AccessorEntityRenderer)renderPlayerEvent.getRenderer()).setShadowRadius((float)((3.0F * size + 62.0F) / 260.0F));
 				DragonEntity dummyDragon = playerDragonHashMap.get(player.getId()).get();
-				EntityRenderer<? super DragonEntity> dragonRenderer = mc.getEntityRenderDispatcher().getRenderer(dummyDragon);
+				EntityRenderer<? super DragonEntity> dragonRenderer = minecraft.getEntityRenderDispatcher().getRenderer(dummyDragon);
 				dragonModel.setCurrentTexture(texture);
 
-				if(player.isCrouching() && cap.isWingsSpread() && !player.isOnGround()){
+				if(player.isCrouching() && handler.isWingsSpread() && !player.isOnGround()){
 					matrixStack.translate(0, -0.15, 0);
 				}else if(player.isCrouching()){
 					matrixStack.translate(0, 0.325 - size / DragonLevel.ADULT.size * 0.140, 0);
-				}else if(player.isSwimming() || player.isAutoSpinAttack() || cap.isWingsSpread() && !player.isOnGround() && !player.isInWater() && !player.isInLava()){
+				}else if(player.isSwimming() || player.isAutoSpinAttack() || handler.isWingsSpread() && !player.isOnGround() && !player.isInWater() && !player.isInLava()){
  					matrixStack.translate(0, -0.15 - size / DragonLevel.ADULT.size * 0.2, 0);
 				}
 				if(!player.isInvisible()){
 					if(ServerFlightHandler.isGliding(player)){
-						if(renderOtherPlayerRotation || mc.player == player){
+						if(renderOtherPlayerRotation || minecraft.player == player){
 							float upRot = Mth.clamp((float)(player.getDeltaMovement().y * 20), -80, 80);
 
      							dummyDragon.prevXRot = Mth.lerp(0.1F, dummyDragon.prevXRot, upRot);
@@ -249,7 +247,7 @@ public class ClientDragonRender{
 							matrixStack.mulPose(Vector3f.ZP.rotation(dummyDragon.prevZRot));
 						}
 					}
-					if(player != mc.player || !Minecraft.getInstance().options.getCameraType().isFirstPerson() || !ServerFlightHandler.isGliding(player) || renderFirstPersonFlight){
+					if(player != minecraft.player || !Minecraft.getInstance().options.getCameraType().isFirstPerson() || !ServerFlightHandler.isGliding(player) || renderFirstPersonFlight){
 						dragonRenderer.render(dummyDragon, yaw, partialRenderTick, matrixStack, renderTypeBuffer, eventLight);
 
 						if(!armorRenderLayer){
@@ -277,9 +275,9 @@ public class ClientDragonRender{
 						matrixStack.mulPose(Vector3f.XN.rotationDegrees(180.0F));
 						double height = 1.3 * scale;
 						double forward = 0.3 * scale;
-						float parrotHeadYaw = Mth.clamp(-1.0F * ((float)cap.getMovementData().bodyYaw - (float)cap.getMovementData().headYaw), -75.0F, 75.0F);
+						float parrotHeadYaw = Mth.clamp(-1.0F * ((float)handler.getMovementData().bodyYaw - (float)handler.getMovementData().headYaw), -75.0F, 75.0F);
 						matrixStack.translate(0, -height, -forward);
-						renderLayer.render(matrixStack, renderTypeBuffer, eventLight, player, 0.0F, 0.0F, partialRenderTick, (float)player.tickCount + partialRenderTick, parrotHeadYaw, (float)cap.getMovementData().headPitch);
+						renderLayer.render(matrixStack, renderTypeBuffer, eventLight, player, 0.0F, 0.0F, partialRenderTick, (float)player.tickCount + partialRenderTick, parrotHeadYaw, (float)handler.getMovementData().headPitch);
 						matrixStack.translate(0, height, forward);
 						matrixStack.mulPose(Vector3f.XN.rotationDegrees(-180.0F));
 						matrixStack.scale(scale, scale, scale);
@@ -290,11 +288,9 @@ public class ClientDragonRender{
 						ClientEvents.renderBolas(eventLight, combinedOverlayIn, renderTypeBuffer, matrixStack);
 					}
 				}
-			}catch(Throwable throwable){
-				if(!(throwable instanceof NullPointerException) || ClientConfig.clientDebugMessages){
-					throwable.printStackTrace();
-				}
-			}finally{
+			} catch (Throwable throwable) {
+				DragonSurvivalMod.LOGGER.error("A problem occurred while rendering a dragon in third person", throwable);
+			} finally {
 				matrixStack.popPose();
 			}
 		}else{
@@ -483,6 +479,7 @@ public class ClientDragonRender{
 		renderEntityInInventory(entity, x, y, scale, xRot, yRot, 0, 0);
 	}
 
+	// This is only called for the dragon editor
 	public static void renderEntityInInventory(LivingEntity entity, int x, int y, float scale, float xRot, float yRot, float xOffset, float yOffset){
 		if(entity == null)
 			return;
@@ -491,16 +488,18 @@ public class ClientDragonRender{
 			if(ClientDragonRender.dragonArmor == null){
 				ClientDragonRender.dragonArmor = DSEntities.DRAGON_ARMOR.create(Minecraft.getInstance().player.level);
 				assert dragonArmor != null;
-				ClientDragonRender.dragonArmor.player = Minecraft.getInstance().player.getId();
+				ClientDragonRender.dragonArmor.playerId = Minecraft.getInstance().player.getId();
 			}
 
 			if(!ClientDragonRender.playerDragonHashMap.containsKey(Minecraft.getInstance().player.getId())){
 				DragonEntity dummyDragon = DSEntities.DRAGON.create(Minecraft.getInstance().player.level);
-				dummyDragon.player = Minecraft.getInstance().player.getId();
+				dummyDragon.playerId = Minecraft.getInstance().player.getId();
 				ClientDragonRender.playerDragonHashMap.put(Minecraft.getInstance().player.getId(), new AtomicReference<>(dummyDragon));
 			}
 		}
+		// FIXME :: "Could not load animation: sitting_blep. Is it missing?"
 
+		// Copied from InventoryScreen#renderEntityInInventoryRaw
 		PoseStack matrixstack = new PoseStack();
 		matrixstack.pushPose();
 		matrixstack.translate((float)x, (float)y, 0);
@@ -517,6 +516,7 @@ public class ClientDragonRender{
 		float f4 = entity.xRot;
 		float f5 = entity.yHeadRotO;
 		float f6 = entity.yHeadRot;
+		// TODO :: The changes to the rotation don't seem to affect anything? (Even if they get reset within the fancy thread)
 		entity.yBodyRot = 180.0F + xRot * 10.0F;
 		entity.yRot = 180.0F + xRot * 10.0F;
 		entity.xRot = -yRot * 10.0F;
@@ -538,12 +538,12 @@ public class ClientDragonRender{
 		});
 
 		irendertypebuffer$impl.endBatch();
+		matrixstack.popPose();
 
 		entity.yBodyRot = f2;
 		entity.yRot = f3;
 		entity.xRot = f4;
 		entity.yHeadRotO = f5;
 		entity.yHeadRot = f6;
-		matrixstack.popPose();
 	}
 }

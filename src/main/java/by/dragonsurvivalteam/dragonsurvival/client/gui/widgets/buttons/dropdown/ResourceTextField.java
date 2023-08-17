@@ -231,8 +231,6 @@ public class ResourceTextField extends EditBox implements TooltipAccessor {
 			if (isTag) {
 				if (isItem) {
 					try {
-						// Exception can be IllegalAccessException : java.lang.LinkageError: bad method type alias: (ItemLike)void not visible from class net.minecraft.world.item.ItemStack
-						// DragonSurvivalMod.LOGGER.debug("Error while trying to retrieve value from registry for the config, value: [" + value + "] - [" + element.getDescriptionId() + "]", e);
 						results.add(new ResourceEntry(value, Objects.requireNonNull(ForgeRegistries.ITEMS.tags().getTag(TagKey.create(Registry.ITEM_REGISTRY, location)).stream().map(ItemStack::new).toList()), true));
 					} catch (Exception e) {
 						DragonSurvivalMod.LOGGER.debug("Error while trying to retrieve a value from the 'ITEMS' registry for the config, value: [" + value + "]", e);

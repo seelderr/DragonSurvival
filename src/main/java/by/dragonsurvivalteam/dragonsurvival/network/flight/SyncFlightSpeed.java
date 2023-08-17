@@ -47,9 +47,11 @@ public class SyncFlightSpeed implements IMessage<SyncFlightSpeed> {
 			ServerPlayer sender = context.getSender();
 
 			if (sender != null) {
-				sender.setDeltaMovement(message.flightSpeed);
-				TargetPoint point = new TargetPoint(sender, sender.position().x, sender.position().y, sender.position().z, 32, sender.level.dimension());
-				NetworkHandler.CHANNEL.send(PacketDistributor.NEAR.with(() -> point), new SyncFlightSpeed(sender.getId(), message.flightSpeed));
+				context.enqueueWork(() -> {
+					sender.setDeltaMovement(message.flightSpeed);
+					TargetPoint point = new TargetPoint(sender, sender.position().x, sender.position().y, sender.position().z, 32, sender.level.dimension());
+					NetworkHandler.CHANNEL.send(PacketDistributor.NEAR.with(() -> point), new SyncFlightSpeed(sender.getId(), message.flightSpeed));
+				});
 			}
 		}
 

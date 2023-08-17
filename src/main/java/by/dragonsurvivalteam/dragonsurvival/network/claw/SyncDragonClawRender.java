@@ -42,7 +42,7 @@ public class SyncDragonClawRender implements IMessage<SyncDragonClawRender> {
 		NetworkEvent.Context context = supplier.get();
 
 		if (context.getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
-			ClientProxy.handleSyncDragonClawRender(message);
+			context.enqueueWork(() -> ClientProxy.handleSyncDragonClawRender(message));
 		} else if (context.getDirection() == NetworkDirection.PLAY_TO_SERVER) {
 			ServerPlayer sender = context.getSender();
 

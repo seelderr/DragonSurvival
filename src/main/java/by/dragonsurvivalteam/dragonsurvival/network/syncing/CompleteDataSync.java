@@ -47,13 +47,15 @@ public class CompleteDataSync extends ISidedMessage<CompleteDataSync> {
 
 	@Override // Currently only relevant for DragonEditorScreen#confirm
 	public void runServer(final CompleteDataSync message, final NetworkEvent.Context context, final ServerPlayer player) {
-		DragonStateProvider.getCap(player).ifPresent(cap -> {
-			SimpleContainer container = cap.getClawToolData().getClawsInventory();
-			cap.readNBT(message.nbt);
-			cap.getClawToolData().setClawsInventory(container); // TODO :: Why is the old state restored?
-		});
+		context.enqueueWork(() -> {
+			DragonStateProvider.getCap(player).ifPresent(handler -> {
+				SimpleContainer container = handler.getClawToolData().getClawsInventory();
+				handler.readNBT(message.nbt);
+				handler.getClawToolData().setClawsInventory(container); // TODO :: Why is the old state restored?
+			});
 
-		player.refreshDimensions();
+			player.refreshDimensions();
+		});
 	}
 
 	@Override

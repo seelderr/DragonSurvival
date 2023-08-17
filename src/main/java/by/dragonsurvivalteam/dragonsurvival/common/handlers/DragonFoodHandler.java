@@ -72,13 +72,15 @@ public class DragonFoodHandler {
 	@ConfigOption(side = ConfigSide.SERVER, key = "foodHungerEffect", category = "food", comment = "Should eating wrong food items give hunger effect?")
 	public static boolean foodHungerEffect = true;
 
-	private static final ResourceLocation FOOD_ICONS = new ResourceLocation(DragonSurvivalMod.MODID + ":textures/gui/dragon_hud.png");
-	private static final Random RANDOM = new Random();
-
+	// Tooltip maps
 	public static CopyOnWriteArrayList<Item> CAVE_DRAGON_FOOD;
 	public static CopyOnWriteArrayList<Item> FOREST_DRAGON_FOOD;
 	public static CopyOnWriteArrayList<Item> SEA_DRAGON_FOOD;
 	public static int rightHeight = 0;
+
+
+	private static final ResourceLocation FOOD_ICONS = new ResourceLocation(DragonSurvivalMod.MODID + ":textures/gui/dragon_hud.png");
+	private static final Random RANDOM = new Random();
 
 	private static ConcurrentHashMap<String, Map<Item, FoodProperties>> DRAGON_FOODS;
 
@@ -98,20 +100,24 @@ public class DragonFoodHandler {
 		map.put(DragonTypes.FOREST.getTypeName(), buildDragonFoodMap(DragonTypes.FOREST));
 		map.put(DragonTypes.SEA.getTypeName(), buildDragonFoodMap(DragonTypes.SEA));
 
-		if (CAVE_DRAGON_FOOD != null) {
-			CAVE_DRAGON_FOOD.clear();
-		}
-
-		if (FOREST_DRAGON_FOOD != null) {
-			FOREST_DRAGON_FOOD.clear();
-		}
-
-		if (SEA_DRAGON_FOOD != null) {
-			SEA_DRAGON_FOOD.clear();
-		}
+        clearTooltipMaps();
 
 		DRAGON_FOODS = new ConcurrentHashMap<>(map);
 	}
+
+    public static void clearTooltipMaps() {
+        if (CAVE_DRAGON_FOOD != null) {
+            CAVE_DRAGON_FOOD.clear();
+        }
+
+        if (FOREST_DRAGON_FOOD != null) {
+            FOREST_DRAGON_FOOD.clear();
+        }
+
+        if (SEA_DRAGON_FOOD != null) {
+            SEA_DRAGON_FOOD.clear();
+        }
+    }
 
 	private static ConcurrentHashMap<Item, FoodProperties> buildDragonFoodMap(final AbstractDragonType type) {
 		ConcurrentHashMap<Item, FoodProperties> map = new ConcurrentHashMap<>();
@@ -121,7 +127,7 @@ public class DragonFoodHandler {
 		}
 
 		String[] foodConfiguration = new String[0];
-		
+
 		if (Objects.equals(type, DragonTypes.CAVE)) {
 			foodConfiguration = caveDragonFoods.toArray(new String[0]);
 		} else if (Objects.equals(type, DragonTypes.FOREST)) {

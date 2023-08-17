@@ -9,7 +9,6 @@ import by.dragonsurvivalteam.dragonsurvival.config.ClientConfig;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -26,14 +25,11 @@ import software.bernie.geckolib3.resource.GeckoLibCache;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 	private final ResourceLocation defaultTexture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/cave_newborn.png");
-	private final ConcurrentHashMap<String, Pair<Vec3, Vec3>> lastPlayerPositions = new ConcurrentHashMap<>();
 
 	private ResourceLocation currentTexture = defaultTexture;
-	private double previousTick;
 
 	@Override
 	public ResourceLocation getModelResource(final DragonEntity ignored) {
@@ -42,7 +38,7 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 
 	@Override
 	public ResourceLocation getTextureResource(final DragonEntity dragon) {
-		if (dragon.player != null || dragon.getPlayer() != null) {
+		if (dragon.playerId != null || dragon.getPlayer() != null) {
 			DragonStateHandler handler = DragonUtils.getHandler(dragon.getPlayer());
 			SkinAgeGroup ageGroup = handler.getSkinData().skinPreset.skinAges.get(handler.getLevel()).get();
 
@@ -114,20 +110,13 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 		super.setMolangQueries(animatable, currentTick);
 
 		// In case the Integer (id of the player) is null
-		if (!(animatable instanceof DragonEntity dragon) || dragon.player == null || dragon.getPlayer() == null) {
+		if (!(animatable instanceof DragonEntity dragon) || dragon.playerId == null || dragon.getPlayer() == null) {
 			return;
 		}
 
 		MolangParser parser = GeckoLibCache.getInstance().parser;
 		Player player = dragon.getPlayer();
-
-		Pair<Vec3, Vec3> previous = lastPlayerPositions.getOrDefault(player.getStringUUID(), new Pair<>(player.position(), new Vec3(0, 0, 0)));
-		Vec3 currentDelta = player.position().subtract(previous.getFirst());
-		Vec3 deltaMovement = previous.getSecond().lerp(currentDelta, currentTick - previousTick);
-
-		lastPlayerPositions.put(player.getStringUUID(), Pair.of(player.position(), deltaMovement));
-		previousTick = currentTick;
-
+		Vec3 deltaMovement = dragon.getPseudoDeltaMovement();
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 
 		parser.setValue("query.delta_y", () -> deltaMovement.y);

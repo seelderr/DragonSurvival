@@ -26,8 +26,10 @@ public class OpenDragonInventory implements IMessage<OpenDragonInventory> {
 		ServerPlayer sender = context.getSender();
 
 		if (DragonUtils.isDragon(sender)) {
-			sender.containerMenu.removed(sender);
-			sender.openMenu(new SimpleMenuProvider((containerId, inventory, player) -> new DragonContainer(containerId, inventory), Component.empty()));
+			context.enqueueWork(() -> {
+				sender.containerMenu.removed(sender);
+				sender.openMenu(new SimpleMenuProvider((containerId, inventory, player) -> new DragonContainer(containerId, inventory), Component.empty()));
+			});
 		}
 
 		context.setPacketHandled(true);

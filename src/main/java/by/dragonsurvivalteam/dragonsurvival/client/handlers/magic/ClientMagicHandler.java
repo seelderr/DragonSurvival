@@ -105,7 +105,7 @@ public class ClientMagicHandler{
 
 	@SubscribeEvent
 	@OnlyIn( Dist.CLIENT )
-	public static void removeLavaAndWaterFog(ViewportEvent.RenderFog event){
+	public static void removeLavaAndWaterFog(ViewportEvent.RenderFog event){ // TODO :: Check for fluid first
 		LocalPlayer player = Minecraft.getInstance().player;
 		DragonStateProvider.getCap(player).ifPresent(cap -> {
 			if(!cap.isDragon()){

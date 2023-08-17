@@ -46,24 +46,26 @@ public class SyncTreasureRestStatus implements IMessage<SyncTreasureRestStatus> 
 		} else if (context.getDirection() == NetworkDirection.PLAY_TO_SERVER) {
 			ServerPlayer entity = context.getSender();
 
-			if(entity != null){
-				DragonStateProvider.getCap(entity).ifPresent(handler -> {
-					boolean update = false;
+			if (entity != null) {
+				context.enqueueWork(() -> {
+					DragonStateProvider.getCap(entity).ifPresent(handler -> {
+						boolean update = false;
 
-					if (message.state != handler.treasureResting) {
-						handler.treasureRestTimer = 0;
-						handler.treasureSleepTimer = 0;
-						update = true;
-					}
+						if (message.state != handler.treasureResting) {
+							handler.treasureRestTimer = 0;
+							handler.treasureSleepTimer = 0;
+							update = true;
+						}
 
-					handler.treasureResting = message.state;
+						handler.treasureResting = message.state;
 
-					if (update) {
-						((ServerLevel) entity.level).updateSleepingPlayerList();
-					}
+						if (update) {
+							((ServerLevel) entity.level).updateSleepingPlayerList();
+						}
+					});
+
+					NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new SyncTreasureRestStatus(entity.getId(), message.state));
 				});
-
-				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), new SyncTreasureRestStatus(entity.getId(), message.state));
 			}
 		}
 

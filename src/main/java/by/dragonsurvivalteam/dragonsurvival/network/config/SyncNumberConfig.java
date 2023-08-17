@@ -78,13 +78,15 @@ public class SyncNumberConfig implements IMessage<SyncNumberConfig> {
 
 		Object object = ConfigHandler.serverSpec.getValues().get(message.path);
 
-		if (object instanceof IntValue intValue) {
-			ConfigHandler.updateConfigValue(intValue, message.value.intValue());
-		} else if (object instanceof DoubleValue doubleValue) {
-			ConfigHandler.updateConfigValue(doubleValue, message.value.doubleValue());
-		} else if (object instanceof LongValue longValue) {
-			ConfigHandler.updateConfigValue(longValue, message.value.longValue());
-		}
+		context.enqueueWork(() -> {
+			if (object instanceof IntValue intValue) {
+				ConfigHandler.updateConfigValue(intValue, message.value.intValue());
+			} else if (object instanceof DoubleValue doubleValue) {
+				ConfigHandler.updateConfigValue(doubleValue, message.value.doubleValue());
+			} else if (object instanceof LongValue longValue) {
+				ConfigHandler.updateConfigValue(longValue, message.value.longValue());
+			}
+		});
 
 		context.setPacketHandled(true);
 	}
