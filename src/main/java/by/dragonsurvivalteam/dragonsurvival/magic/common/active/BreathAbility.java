@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.magic.common.active;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.StormBreathAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.AbilityAnimation;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.ISecondAnimation;
@@ -114,32 +115,28 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 		return new AbilityAnimation("breath", false, false);
 	}
 
-	public void hitEntities(){
-		AABB hitRange = TargetingFunctions.boxForRange(player.getPosition(1.0F), RANGE);
-		List<Entity>  entities = player.level.getEntities(player, hitRange, entity -> {
-				if(!entity.isSpectator() && entity.isAlive() && TargetingFunctions.isValidTarget(getPlayer(), entity))
-				{
-					Vec3 eyePosition = player.getEyePosition(1.0F);
-					Vec3 entityPos = entity.getPosition(1.0F);
-					double distance = entityPos.distanceTo(eyePosition);
-					return distance < RANGE && eyePosition.add(player.getLookAngle().scale(distance)).distanceTo(entityPos) < (distance / 4);
+	public void hitEntities() {
+		AABB hitRange = DragonAbilities.calculateHitRange(player, RANGE);
 
+		List<Entity> entities = player.level.getEntities(player, hitRange, entity -> {
+					if (entity instanceof LivingEntity livingEntity) {
+						if (!livingEntity.isSpectator() && livingEntity.isAlive() && TargetingFunctions.isValidTarget(getPlayer(), livingEntity)) {
+							if (/* Specific check per ability */ canHitEntity(livingEntity)) {
+								// Only allow 1 player hit per second
+								return livingEntity.getLastHurtByMob() != player || livingEntity.getLastHurtByMobTimestamp() + Functions.secondsToTicks(1) >= livingEntity.tickCount;
+							}
+						}
+					}
+
+					return false;
 				}
-				return false;
-			}
 		);
 
-		for(Entity entity : entities){
-			if(entity instanceof LivingEntity livingEntity){
-				if(!canHitEntity(livingEntity))
-					return;
-
-				if(livingEntity.getLastHurtByMob() == player && livingEntity.getLastHurtByMobTimestamp() + Functions.secondsToTicks(1) < livingEntity.tickCount)
-					continue;
-
+		entities.forEach(entity -> {
+			if (entity instanceof LivingEntity livingEntity) {
 				onEntityHit(livingEntity);
 			}
-		}
+		});
 	}
 
 	public abstract boolean canHitEntity(LivingEntity entity);

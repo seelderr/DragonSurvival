@@ -11,9 +11,12 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAb
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncMagicCap;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import net.minecraftforge.network.PacketDistributor;
@@ -193,5 +196,48 @@ public class DragonAbilities{
 			return getAbility(player, c, null);
 		else
 			return getAbility(player, c, dragonType.getTypeName());
+	}
+
+	public static AABB calculateHitRange(final Player player, double range) {
+		Vec3 viewVector = player.getLookAngle().scale(range);
+		// TODO :: Change depending on dragon level
+		double defaultRadius = 1;
+
+		double xOffset = getOffset(viewVector.x(), defaultRadius);
+		// TODO :: Fix accuracy when player starts to look down (e.g. don't immediately add the eye height, or at all?)
+		double yOffset = player.getEyeHeight() + Math.abs(viewVector.y());
+		double zOffset = getOffset(viewVector.z(), defaultRadius);
+
+		/*
+		north: positive z
+		east: positive x
+		west: negative x
+		south: positive z
+		*/
+		Direction direction = player.getDirection();
+
+		// Check for look angle to avoid extending the range in the direction the player is not facing / looking
+		double xMin = (direction == Direction.EAST ? 0 : player.getLookAngle().x() < 0 ? xOffset : defaultRadius);
+		double zMin = (direction == Direction.SOUTH ? 0 : player.getLookAngle().z() < 0 ? zOffset : defaultRadius);
+
+		double xMax = (direction == Direction.WEST ? 0 : player.getLookAngle().x() > 0 ? xOffset : defaultRadius);
+		double zMax = (direction == Direction.NORTH ? 0 : player.getLookAngle().z() > 0 ? zOffset : defaultRadius);
+
+		return new AABB(
+				player.getX() - Math.abs(xMin),
+				player.getY() - Math.abs(player.getLookAngle().y < 0 ? yOffset : 0), // Only increase when player is looking down
+				player.getZ() - Math.abs(zMin),
+				player.getX() + Math.abs(xMax),
+				player.getY() + Math.abs(player.getLookAngle().y > 0 ? yOffset : player.getEyeHeight()), // Only increase when player is looking up
+				player.getZ() + Math.abs(zMax)
+		);
+	}
+
+	private static double getOffset(double value, double defaultValue) {
+		if (value < 0) {
+			return Math.min(value, -defaultValue);
+		}
+
+		return Math.max(value, defaultValue);
 	}
 }

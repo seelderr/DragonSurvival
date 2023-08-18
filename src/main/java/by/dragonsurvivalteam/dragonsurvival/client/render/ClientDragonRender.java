@@ -11,9 +11,9 @@ import by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon.DragonRe
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
-import by.dragonsurvivalteam.dragonsurvival.config.ClientConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
+import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorEntityRenderer;
 import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorEntityRendererManager;
 import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorLivingRenderer;
@@ -27,13 +27,16 @@ import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
@@ -49,6 +52,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
+import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.RenderTickEvent;
@@ -131,6 +135,25 @@ public class ClientDragonRender{
 					}
 				}
 			});
+		}
+	}
+
+	/** Show breath hit range when hitboxes are being rendered */
+	@SubscribeEvent
+	public static void renderBreathHitBox(final RenderLevelStageEvent event) {
+		if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_SOLID_BLOCKS && /* TODO :: Client config option */ Minecraft.getInstance().getEntityRenderDispatcher().shouldRenderHitBoxes()) {
+			VertexConsumer buffer = Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(RenderType.LINES);
+			Vec3 camera = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
+
+			PoseStack poseStack = event.getPoseStack();
+			poseStack.pushPose();
+			poseStack.translate(-camera.x(), -camera.y(), -camera.z());
+
+			LocalPlayer localPlayer = Minecraft.getInstance().player;
+			// TODO :: Render hitbox in the dragon color?
+			LevelRenderer.renderLineBox(poseStack, buffer, DragonAbilities.calculateHitRange(localPlayer, 5), 1, 0, 0, 1);
+
+			poseStack.popPose();
 		}
 	}
 
