@@ -116,10 +116,12 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 	}
 
 	public void hitEntities() {
-		AABB hitRange = DragonAbilities.calculateHitRange(player, RANGE);
+		AABB hitRange = DragonAbilities.calculateBreathRange(player, RANGE);
 
 		List<Entity> entities = player.level.getEntities(player, hitRange, entity -> {
+					// TODO :: Check if solid blocks are between the player and the entity?
 					if (entity instanceof LivingEntity livingEntity) {
+						// TODO :: Also check for creative? Or add spectator and creative as checks to isValidTarget?
 						if (!livingEntity.isSpectator() && livingEntity.isAlive() && TargetingFunctions.isValidTarget(getPlayer(), livingEntity)) {
 							if (/* Specific check per ability */ canHitEntity(livingEntity)) {
 								// Only allow 1 player hit per second

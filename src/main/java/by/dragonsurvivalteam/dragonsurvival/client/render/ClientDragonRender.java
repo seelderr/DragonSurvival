@@ -151,7 +151,7 @@ public class ClientDragonRender{
 
 			LocalPlayer localPlayer = Minecraft.getInstance().player;
 			// TODO :: Render hitbox in the dragon color?
-			LevelRenderer.renderLineBox(poseStack, buffer, DragonAbilities.calculateHitRange(localPlayer, 5), 1, 0, 0, 1);
+			LevelRenderer.renderLineBox(poseStack, buffer, DragonAbilities.calculateBreathRange(localPlayer, /* TODO :: Use value from BreathAbility */ 5), 1, 0, 0, 1);
 
 			poseStack.popPose();
 		}
