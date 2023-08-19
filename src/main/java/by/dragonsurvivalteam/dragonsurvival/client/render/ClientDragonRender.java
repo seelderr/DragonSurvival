@@ -502,7 +502,7 @@ public class ClientDragonRender{
 		renderEntityInInventory(entity, x, y, scale, xRot, yRot, 0, 0);
 	}
 
-	// This is only called for the dragon editor
+	// Called for the dragon editor and skins screen (but not the actual inventory?)
 	public static void renderEntityInInventory(LivingEntity entity, int x, int y, float scale, float xRot, float yRot, float xOffset, float yOffset){
 		if(entity == null)
 			return;

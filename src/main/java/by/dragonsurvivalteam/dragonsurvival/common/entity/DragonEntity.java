@@ -84,6 +84,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 		return new Vec3(0, 0, 0);
 	}
 
+	// TODO :: Not really needed while SyncFlightSpeed packet is constantly being synced
 	public Vec3 getPseudoDeltaMovement(final Player player) {
 		if (player == null) {
 			return new Vec3(0, 0, 0);

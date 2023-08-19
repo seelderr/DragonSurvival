@@ -16,6 +16,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncFlyingStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.math.Vector3f;
@@ -31,6 +32,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -95,6 +97,7 @@ public class ClientFlightHandler {
 	static float lastZoom = 1f;
 
 	private static long lastHungerMessage;
+	private static int levitationLeft;
 
 	@SubscribeEvent
 	public static void flightCamera(ViewportEvent.ComputeCameraAngles setup){
@@ -245,221 +248,232 @@ public class ClientFlightHandler {
 	}
 
 	/** Controls acceleration */
-	@SubscribeEvent
+	@SubscribeEvent // FIXME :: Currently runs twice per tick (START and END)
 	public static void flightControl(final ClientTickEvent event) {
-		// FIXME :: Currently runs twice per tick (START and END)
-
 		LocalPlayer player = Minecraft.getInstance().player;
 
 		if (player != null && !player.isPassenger()) {
-			DragonStateProvider.getCap(player).ifPresent(handler -> {
-				if (handler.isDragon()) {
-					Vec3 viewVector = player.getLookAngle();
-					double yaw = Math.toRadians(player.getYHeadRot() + 90);
+			if (player.hasEffect(MobEffects.LEVITATION)) {
+				/* TODO
+				To make fall damage work you'd have to:
+					- call `player.resetFallDistance()` when the levitation effect is applied (MobEffectEvent.Added)
+					- add a check in ServerFlightHandler#changeFallDistance
+				*/
+				levitationLeft = Functions.secondsToTicks(/* TODO :: Server Config */ 3);
+			} else if (levitationLeft > 0) {
+				// TODO :: Set to 0 once ground is reached?
+				if (event.phase == Phase.END) {
+					levitationLeft--;
+				}
+			} else {
+				DragonStateProvider.getCap(player).ifPresent(handler -> {
+					if (handler.isDragon()) {
+						Vec3 viewVector = player.getLookAngle();
+						double yaw = Math.toRadians(player.getYHeadRot() + 90);
 
-					// Only apply while in water (not while flying)
-					if (ServerFlightHandler.canSwimSpin(player) && ServerFlightHandler.isSpin(player)) {
-						Input movement = player.input;
-
-						Vec3 deltaMovement = player.getDeltaMovement();
-
-						double maxFlightSpeed = ServerFlightHandler.maxFlightSpeed;
-						// FIXME :: Magic numbers at various places
-						ax = Mth.clamp(ax, -0.2 * maxFlightSpeed, 0.2 * maxFlightSpeed);
-						az = Mth.clamp(az, -0.2 * maxFlightSpeed, 0.2 * maxFlightSpeed);
-
-						// Increase acceleration depending on how sharply the player turns their character
-						ax += Math.cos(yaw) / 500 * 50;
-						az += Math.sin(yaw) / 500 * 50;
-						ay = viewVector.y / 8;
-
-						if (viewVector.y < 0) {
-							deltaMovement = deltaMovement.add(ax, 0, az);
-						} else {
-							// Only increase height if the player is looking up
-							deltaMovement = deltaMovement.add(ax, ay, az);
-						}
-
-						// TODO :: Why 0.99 etc.?
-						deltaMovement = deltaMovement.multiply(0.99F, 0.98F, 0.99F);
-
-						player.setDeltaMovement(deltaMovement);
-						ay = player.getDeltaMovement().y;
-					}
-
-					if (handler.isWingsSpread()) {
-						Input movement = player.input;
-						boolean hasFood = player.getFoodData().getFoodLevel() > ServerFlightHandler.flightHungerThreshold || player.isCreative() || ServerFlightHandler.allowFlyingWithoutHunger;
-
-						if (!hasFood) {
-							// TODO :: If you use Math.abs you always get a positive number, shouldn't this be max() instead of clamp()?
-							ay = Mth.clamp(Math.abs(ay * 4), -0.2 * ServerFlightHandler.maxFlightSpeed, 0.2 * ServerFlightHandler.maxFlightSpeed);
-						}
-
-						if (ServerFlightHandler.isFlying(player)) {
-							if (!wasFlying) {
-								wasFlying = true;
-							}
+						// Only apply while in water (not while flying)
+						if (ServerFlightHandler.canSwimSpin(player) && ServerFlightHandler.isSpin(player)) {
+							Input movement = player.input;
 
 							Vec3 deltaMovement = player.getDeltaMovement();
 
-							double horizontalView = viewVector.horizontalDistance();
-							double horizontalMovement = deltaMovement.horizontalDistance();
-							double lookMagnitude = viewVector.length();
+							double maxFlightSpeed = ServerFlightHandler.maxFlightSpeed;
+							// FIXME :: Magic numbers at various places
+							ax = Mth.clamp(ax, -0.2 * maxFlightSpeed, 0.2 * maxFlightSpeed);
+							az = Mth.clamp(az, -0.2 * maxFlightSpeed, 0.2 * maxFlightSpeed);
 
-							float pitch = (float) Math.toRadians(player.getXRot());
-							float verticalDelta = Mth.cos(pitch);
+							// Increase acceleration depending on how sharply the player turns their character
+							ax += Math.cos(yaw) / 500 * 50;
+							az += Math.sin(yaw) / 500 * 50;
+							ay = viewVector.y / 8;
 
-							verticalDelta = (float) ((double) verticalDelta * (double) verticalDelta * Math.min(1.0D, lookMagnitude / 0.4D));
-							double gravity = player.getAttribute(ForgeMod.ENTITY_GRAVITY.get()).getValue();
-
-							if (ServerFlightHandler.isGliding(player)) {
-								if (!wasGliding) {
-									Minecraft.getInstance().getSoundManager().play(new FastGlideSound(player));
-									wasGliding = true;
-								}
+							if (viewVector.y < 0) {
+								deltaMovement = deltaMovement.add(ax, 0, az);
+							} else {
+								// Only increase height if the player is looking up
+								deltaMovement = deltaMovement.add(ax, ay, az);
 							}
 
-							if (ServerFlightHandler.isGliding(player) || ax != 0 || az != 0) {
-								deltaMovement = player.getDeltaMovement().add(0.0D, gravity * (-1.0D + (double) verticalDelta * 0.75D), 0.0D);
+							// TODO :: Why 0.99 etc.?
+							deltaMovement = deltaMovement.multiply(0.99F, 0.98F, 0.99F);
 
-								if (deltaMovement.y < 0 && horizontalView > 0) {
-									double downwardMomentum = deltaMovement.y * -0.1D * (double) verticalDelta;
-									deltaMovement = deltaMovement.add(viewVector.x * downwardMomentum / horizontalView, downwardMomentum, viewVector.z * downwardMomentum / horizontalView);
+							player.setDeltaMovement(deltaMovement);
+							ay = player.getDeltaMovement().y;
+						}
+
+						if (handler.isWingsSpread()) {
+							Input movement = player.input;
+							boolean hasFood = player.getFoodData().getFoodLevel() > ServerFlightHandler.flightHungerThreshold || player.isCreative() || ServerFlightHandler.allowFlyingWithoutHunger;
+
+							if (!hasFood) {
+								// TODO :: If you use Math.abs you always get a positive number, shouldn't this be max() instead of clamp()?
+								ay = Mth.clamp(Math.abs(ay * 4), -0.2 * ServerFlightHandler.maxFlightSpeed, 0.2 * ServerFlightHandler.maxFlightSpeed);
+							}
+
+							if (ServerFlightHandler.isFlying(player)) {
+								if (!wasFlying) {
+									wasFlying = true;
 								}
 
-								if (pitch < 0 && horizontalView > 0) {
-									// Handle movement when the player makes turns
-									double delta = horizontalMovement * -Mth.sin(pitch) * 0.04D;
-									deltaMovement = deltaMovement.add(-viewVector.x * delta / horizontalView, delta * 3.2D, -viewVector.z * delta / horizontalView);
-								}
+								Vec3 deltaMovement = player.getDeltaMovement();
 
-								if (horizontalView > 0) {
-									deltaMovement = deltaMovement.add((viewVector.x / horizontalView * horizontalMovement - deltaMovement.x) * 0.1D, 0.0D, (viewVector.z / horizontalView * horizontalMovement - deltaMovement.z) * 0.1D);
-								}
+								double horizontalView = viewVector.horizontalDistance();
+								double horizontalMovement = deltaMovement.horizontalDistance();
+								double lookMagnitude = viewVector.length();
 
-								// Increase speed while flying down or height when flying up
-								if (viewVector.y < 0) {
-									ax += Math.cos(yaw) / 500;
-									az += Math.sin(yaw) / 500;
-								} else {
-									ax *= 0.99;
-									az *= 0.99;
-									ay = viewVector.y / 8; // TODO :: Causes flying dragons to gain height when they look up but not moving otherwise?
-								}
+								float pitch = (float) Math.toRadians(player.getXRot());
+								float verticalDelta = Mth.cos(pitch);
 
-								double speedLimit = ServerFlightHandler.maxFlightSpeed;
-								ax = Mth.clamp(ax, -0.2 * speedLimit, 0.2 * speedLimit);
-								az = Mth.clamp(az, -0.2 * speedLimit, 0.2 * speedLimit);
-
-								if (ServerFlightHandler.isSpin(player)) { // TODO :: If the spin move is used in water won't the acceleration be applied twice?
-									ax += Math.cos(yaw) / 500 * 100;
-									az += Math.sin(yaw) / 500 * 100;
-									ay = viewVector.y / 8;
-								}
+								verticalDelta = (float) ((double) verticalDelta * (double) verticalDelta * Math.min(1.0D, lookMagnitude / 0.4D));
+								double gravity = player.getAttribute(ForgeMod.ENTITY_GRAVITY.get()).getValue();
 
 								if (ServerFlightHandler.isGliding(player)) {
+									if (!wasGliding) {
+										Minecraft.getInstance().getSoundManager().play(new FastGlideSound(player));
+										wasGliding = true;
+									}
+								}
+
+								if (ServerFlightHandler.isGliding(player) || ax != 0 || az != 0) {
+									deltaMovement = player.getDeltaMovement().add(0.0D, gravity * (-1.0D + (double) verticalDelta * 0.75D), 0.0D);
+
+									if (deltaMovement.y < 0 && horizontalView > 0) {
+										double downwardMomentum = deltaMovement.y * -0.1D * (double) verticalDelta;
+										deltaMovement = deltaMovement.add(viewVector.x * downwardMomentum / horizontalView, downwardMomentum, viewVector.z * downwardMomentum / horizontalView);
+									}
+
+									if (pitch < 0 && horizontalView > 0) {
+										// Handle movement when the player makes turns
+										double delta = horizontalMovement * -Mth.sin(pitch) * 0.04D;
+										deltaMovement = deltaMovement.add(-viewVector.x * delta / horizontalView, delta * 3.2D, -viewVector.z * delta / horizontalView);
+									}
+
+									if (horizontalView > 0) {
+										deltaMovement = deltaMovement.add((viewVector.x / horizontalView * horizontalMovement - deltaMovement.x) * 0.1D, 0.0D, (viewVector.z / horizontalView * horizontalMovement - deltaMovement.z) * 0.1D);
+									}
+
+									// Increase speed while flying down or height when flying up
 									if (viewVector.y < 0) {
-										deltaMovement = deltaMovement.add(ax, 0, az);
+										ax += Math.cos(yaw) / 500;
+										az += Math.sin(yaw) / 500;
 									} else {
-										deltaMovement = deltaMovement.add(ax, ay, az);
+										ax *= 0.99;
+										az *= 0.99;
+										ay = viewVector.y / 8; // TODO :: Causes flying dragons to gain height when they look up but not moving otherwise?
 									}
 
-									deltaMovement = deltaMovement.multiply(0.99F, 0.98F, 0.99F);
+									double speedLimit = ServerFlightHandler.maxFlightSpeed;
+									ax = Mth.clamp(ax, -0.2 * speedLimit, 0.2 * speedLimit);
+									az = Mth.clamp(az, -0.2 * speedLimit, 0.2 * speedLimit);
 
-									player.setDeltaMovement(deltaMovement);
-									ay = player.getDeltaMovement().y;
-								}
-							}
-
-							if (!ServerFlightHandler.isGliding(player)) {
-								wasGliding = false;
-								double maxForward = 0.5;
-
-								Vec3 moveVector = ClientDragonRender.getInputVector(new Vec3(movement.leftImpulse, 0, movement.forwardImpulse), 1F, player.yRot);
-								moveVector.multiply(1.3, 0, 1.3);
-
-								boolean moving = movement.up || movement.down || movement.left || movement.right;
-
-								if (ServerFlightHandler.isSpin(player)) {
-									ax += Math.cos(yaw) / 500 * 200;
-									az += Math.sin(yaw) / 500 * 200;
-									ay = viewVector.y / 8;
-								}
-
-								if (ServerFlightHandler.stableHover && !movement.jumping && !movement.shiftKeyDown && !ServerFlightHandler.isSpin(player) && !ServerFlightHandler.isGliding(player)) {
-									ay = Math.max(ay, gravity * 1.1);
-								}
-
-								if (moving && !movement.jumping && !movement.shiftKeyDown) {
-									maxForward = 0.8;
-									moveVector.multiply(1.4, 0, 1.4);
-									deltaMovement = new Vec3(Mth.lerp(0.1, deltaMovement.x, moveVector.x), 0, Mth.lerp(0.1, deltaMovement.z, moveVector.z));
-									deltaMovement = new Vec3(Mth.clamp(deltaMovement.x, -maxForward, maxForward), 0, Mth.clamp(deltaMovement.z, -maxForward, maxForward));
-
-									deltaMovement = deltaMovement.add(ax, ay, az);
-
-									ax *= 0.9F;
-									ay *= 0.9F;
-									az *= 0.9F;
-
-									if (!ServerFlightHandler.stableHover) {
-										deltaMovement = new Vec3(deltaMovement.x, -(gravity * 2) + deltaMovement.y, deltaMovement.z);
-									} else {
-										deltaMovement = new Vec3(deltaMovement.x, -gravity + deltaMovement.y, deltaMovement.z);
+									if (ServerFlightHandler.isSpin(player)) { // TODO :: If the spin move is used in water won't the acceleration be applied twice?
+										ax += Math.cos(yaw) / 500 * 100;
+										az += Math.sin(yaw) / 500 * 100;
+										ay = viewVector.y / 8;
 									}
 
-									player.setDeltaMovement(deltaMovement);
-								} else {
-									deltaMovement = deltaMovement.multiply(0.99F, 0.98F, 0.99F);
-									deltaMovement = new Vec3(Mth.lerp(0.1, deltaMovement.x, moveVector.x), 0, Mth.lerp(0.1, deltaMovement.z, moveVector.z));
-									deltaMovement = new Vec3(Mth.clamp(deltaMovement.x, -maxForward, maxForward), 0, Mth.clamp(deltaMovement.z, -maxForward, maxForward));
+									if (ServerFlightHandler.isGliding(player)) {
+										if (viewVector.y < 0) {
+											deltaMovement = deltaMovement.add(ax, 0, az);
+										} else {
+											deltaMovement = deltaMovement.add(ax, ay, az);
+										}
 
-									deltaMovement = deltaMovement.add(ax, ay, az);
+										deltaMovement = deltaMovement.multiply(0.99F, 0.98F, 0.99F);
+
+										player.setDeltaMovement(deltaMovement);
+										ay = player.getDeltaMovement().y;
+									}
+								}
+
+								if (!ServerFlightHandler.isGliding(player)) {
+									wasGliding = false;
+									double maxForward = 0.5;
+
+									Vec3 moveVector = ClientDragonRender.getInputVector(new Vec3(movement.leftImpulse, 0, movement.forwardImpulse), 1F, player.yRot);
+									moveVector.multiply(1.3, 0, 1.3);
+
+									boolean moving = movement.up || movement.down || movement.left || movement.right;
 
 									if (ServerFlightHandler.isSpin(player)) {
-										deltaMovement.multiply(10, 10, 10);
+										ax += Math.cos(yaw) / 500 * 200;
+										az += Math.sin(yaw) / 500 * 200;
+										ay = viewVector.y / 8;
 									}
 
-									ax *= 0.9F;
-									ay *= 0.9F;
-									az *= 0.9F;
+									if (ServerFlightHandler.stableHover && !movement.jumping && !movement.shiftKeyDown && !ServerFlightHandler.isSpin(player) && !ServerFlightHandler.isGliding(player)) {
+										ay = Math.max(ay, gravity * 1.1);
+									}
 
-									// TODO :: Why not do this first before all of these other calculations?
-									if (movement.jumping) {
-										deltaMovement = new Vec3(deltaMovement.x, 0.4 + deltaMovement.y, deltaMovement.z);
+									if (moving && !movement.jumping && !movement.shiftKeyDown) {
+										maxForward = 0.8;
+										moveVector.multiply(1.4, 0, 1.4);
+										deltaMovement = new Vec3(Mth.lerp(0.1, deltaMovement.x, moveVector.x), 0, Mth.lerp(0.1, deltaMovement.z, moveVector.z));
+										deltaMovement = new Vec3(Mth.clamp(deltaMovement.x, -maxForward, maxForward), 0, Mth.clamp(deltaMovement.z, -maxForward, maxForward));
+
+										deltaMovement = deltaMovement.add(ax, ay, az);
+
+										ax *= 0.9F;
+										ay *= 0.9F;
+										az *= 0.9F;
+
+										if (!ServerFlightHandler.stableHover) {
+											deltaMovement = new Vec3(deltaMovement.x, -(gravity * 2) + deltaMovement.y, deltaMovement.z);
+										} else {
+											deltaMovement = new Vec3(deltaMovement.x, -gravity + deltaMovement.y, deltaMovement.z);
+										}
+
 										player.setDeltaMovement(deltaMovement);
-									} else if (movement.shiftKeyDown) {
-										deltaMovement = new Vec3(deltaMovement.x, -0.5 + deltaMovement.y, deltaMovement.z);
-										player.setDeltaMovement(deltaMovement);
-									} else if (wasFlying) { // Don't activate on a regular jump
-										double yMotion = hasFood ? -gravity + ay : -(gravity * 4) + ay;
-										deltaMovement = new Vec3(deltaMovement.x, yMotion, deltaMovement.z);
-										player.setDeltaMovement(deltaMovement);
+									} else {
+										deltaMovement = deltaMovement.multiply(0.99F, 0.98F, 0.99F);
+										deltaMovement = new Vec3(Mth.lerp(0.1, deltaMovement.x, moveVector.x), 0, Mth.lerp(0.1, deltaMovement.z, moveVector.z));
+										deltaMovement = new Vec3(Mth.clamp(deltaMovement.x, -maxForward, maxForward), 0, Mth.clamp(deltaMovement.z, -maxForward, maxForward));
+
+										deltaMovement = deltaMovement.add(ax, ay, az);
+
+										if (ServerFlightHandler.isSpin(player)) {
+											deltaMovement.multiply(10, 10, 10);
+										}
+
+										ax *= 0.9F;
+										ay *= 0.9F;
+										az *= 0.9F;
+
+										if (movement.jumping) {
+											deltaMovement = new Vec3(deltaMovement.x, 0.4 + deltaMovement.y, deltaMovement.z);
+											player.setDeltaMovement(deltaMovement);
+										} else if (movement.shiftKeyDown) {
+											deltaMovement = new Vec3(deltaMovement.x, -0.5 + deltaMovement.y, deltaMovement.z);
+											player.setDeltaMovement(deltaMovement);
+										} else if (wasFlying) { // Don't activate on a regular jump
+											double yMotion = hasFood ? -gravity + ay : -(gravity * 4) + ay;
+											deltaMovement = new Vec3(deltaMovement.x, yMotion, deltaMovement.z);
+											player.setDeltaMovement(deltaMovement);
+										}
 									}
 								}
+							} else {
+								wasGliding = false;
+								wasFlying = false;
+								ax = 0;
+								az = 0;
+								ay = 0;
 							}
 						} else {
-							wasGliding = false;
-							wasFlying = false;
 							ax = 0;
 							az = 0;
 							ay = 0;
 						}
-					} else {
-						ax = 0;
-						az = 0;
-						ay = 0;
 					}
-				}
+				});
+			}
 
-				if (event.phase == Phase.END && player.tickCount % 5 == 0) { // TODO :: Some checks to avoid too many packets
-					// Delta movement is not part of the regular sync (server itself seems to only keep track of the y value?)
-					// TODO :: Check ClientboundSetEntityMotionPacket
-					// Currently still used for ServerFlightHandler (there might be some other part which runs for other players too)
-					NetworkHandler.CHANNEL.sendToServer(new SyncFlightSpeed(player.getId(), player.getDeltaMovement()));
-				}
-			});
+			if (event.phase == Phase.END && player.tickCount % 5 == 0) { // TODO :: Some checks to avoid too many packets
+				// Delta movement is not part of the regular sync (server itself seems to only keep track of the y value?)
+				// TODO :: Check ClientboundSetEntityMotionPacket
+				// Currently still used for ServerFlightHandler (there might be some other part which runs for other players too)
+				NetworkHandler.CHANNEL.sendToServer(new SyncFlightSpeed(player.getId(), player.getDeltaMovement()));
+			}
 		}
 	}
 
