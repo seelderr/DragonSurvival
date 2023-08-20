@@ -19,6 +19,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import net.minecraftforge.network.PacketDistributor;
+import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.Type;
 
 import javax.annotation.Nullable;
@@ -197,14 +198,22 @@ public class DragonAbilities{
 			return getAbility(player, c, dragonType.getTypeName());
 	}
 
-	public static AABB calculateBreathRange(final Player player, double range) {
+	public static AABB calculateBreathRange(@NotNull final Player player, double range) {
+		return calculateBreathRange(player, DragonUtils.getHandler(player), range);
+	}
+
+	public static AABB calculateBreathRange(@NotNull final Player player, final DragonStateHandler handler, double range) {
 		Vec3 viewVector = player.getLookAngle().scale(range);
-		// TODO :: Change depending on dragon level
-		double defaultRadius = 1;
+
+		double defaultRadius = switch (handler.getLevel()) {
+			case NEWBORN -> 0.3;
+			case YOUNG -> 0.7;
+			case ADULT -> 1;
+		};
 
 		double xOffset = getOffset(viewVector.x(), defaultRadius);
 		// TODO :: Fix accuracy when player starts to look down (e.g. don't immediately add the eye height, or at all?)
-		double yOffset = player.getEyeHeight() + Math.abs(viewVector.y());
+		double yOffset = Math.abs(viewVector.y());
 		double zOffset = getOffset(viewVector.z(), defaultRadius);
 
 		// Check for look angle to avoid extending the range in the direction the player is not facing / looking
@@ -214,7 +223,7 @@ public class DragonAbilities{
 		Vec3 min = new Vec3(Math.abs(xMin), Math.abs(yMin), Math.abs(zMin));
 
 		double xMax = (player.getLookAngle().x() > 0 ? xOffset : defaultRadius);
-		double yMax = (player.getLookAngle().y() > 0 ? yOffset : player.getEyeHeight());
+		double yMax = (player.getLookAngle().y() > 0 ? yOffset + player.getEyeHeight() : player.getEyeHeight());
 		double zMax = (player.getLookAngle().z() > 0 ? zOffset : defaultRadius);
 		Vec3 max = new Vec3(Math.abs(xMax), Math.abs(yMax), Math.abs(zMax));
 

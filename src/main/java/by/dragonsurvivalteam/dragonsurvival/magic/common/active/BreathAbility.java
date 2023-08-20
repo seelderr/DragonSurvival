@@ -3,6 +3,9 @@ package by.dragonsurvivalteam.dragonsurvival.magic.common.active;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.StormBreathAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.AbilityAnimation;
@@ -26,61 +29,70 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public abstract class BreathAbility extends ChannelingCastAbility implements ISecondAnimation{
+public abstract class BreathAbility extends ChannelingCastAbility implements ISecondAnimation {
+	@ConfigRange(min = 0, max = 10)
+	@ConfigOption(side = ConfigSide.SERVER, category = "magic", key = "baseBreathRange", comment = "The base range of the breath attack (breath range increases with dragon growth)")
+	public static Integer baseBreathRange = 4;
 
-	private static final int ARC = 45;
+	public int currentBreathRange;
+
 	public float yaw;
 	public float pitch;
 	public float speed;
 	public float spread;
+
 	public float xComp;
 	public float yComp;
 	public float zComp;
+
 	public double dx;
 	public double dy;
 	public double dz;
-	private int RANGE = 5;
 
-	public static List<LivingEntity> getEntityLivingBaseNearby(LivingEntity source, double radius){
+	public static List<LivingEntity> getEntityLivingBaseNearby(final LivingEntity source, double radius) {
 		return getEntitiesNearby(source, LivingEntity.class, radius);
 	}
 
-	public static <T extends Entity> List<T> getEntitiesNearby(LivingEntity source, Class<T> entityClass, double r){
-		return source.level.getEntitiesOfClass(entityClass, source.getBoundingBox().inflate(r, r, r), e -> e != source && source.distanceTo(e) <= r + e.getBbWidth() / 2f && e.getY() <= source.getY() + r);
+	public static <T extends Entity> List<T> getEntitiesNearby(final LivingEntity source, final Class<T> entityClass, double radius) {
+		return source.level.getEntitiesOfClass(entityClass, source.getBoundingBox().inflate(radius, radius, radius), entity -> entity != source && source.distanceTo(entity) <= radius + entity.getBbWidth() / 2f && entity.getY() <= source.getY() + radius);
 	}
 
 	@Override
-	public boolean requiresStationaryCasting(){
+	public boolean requiresStationaryCasting() {
 		return false;
 	}
+
 	@Override
-	public boolean canCastSkill(Player player){
-		if(ServerFlightHandler.isGliding(player))
+	public boolean canCastSkill(final Player player) {
+		if (ServerFlightHandler.isGliding(player)) {
 			return false;
+		}
+
 		return super.canCastSkill(player);
 	}
 
 	@Override
-	public void onCharging(Player player, int currentChargeTime){}
+	public void onCharging(Player player, int currentChargeTime) { /* Nothing to do */ }
 
 	@Override
-	public void onChanneling(Player player, int castDuration){
-		DragonStateHandler playerStateHandler = DragonUtils.getHandler(player);
-		DragonLevel growthLevel = DragonUtils.getDragonLevel(player);
+	public void onChanneling(final Player player, int castDuration) {
+		DragonStateHandler handler = DragonUtils.getHandler(player);
+		DragonLevel dragonLevel = DragonUtils.getDragonLevel(player);
 
-		double size = playerStateHandler.getSize();
+		currentBreathRange = calculateCurrentBreathRange(dragonLevel);
 
-		RANGE = (int)Math.round(4 + (size - DragonLevel.NEWBORN.size) / (DragonLevel.ADULT.size - DragonLevel.NEWBORN.size) * 4);
-		yaw = (float)Math.toRadians(-player.getYRot());
-		pitch = (float)Math.toRadians(-player.getXRot());
-		speed = growthLevel == DragonLevel.NEWBORN ? 0.1F : growthLevel == DragonLevel.YOUNG ? 0.2F : 0.3F; //Changes distance
+		yaw = (float) Math.toRadians(-player.getYRot());
+		pitch = (float) Math.toRadians(-player.getXRot());
+		speed = dragonLevel == DragonLevel.NEWBORN ? 0.1F : dragonLevel == DragonLevel.YOUNG ? 0.2F : 0.3F; // Changes distance
 		spread = 0.1f;
+
 		xComp = (float)(Math.sin(yaw) * Math.cos(pitch));
 		yComp = (float)Math.sin(pitch);
 		zComp = (float)(Math.cos(yaw) * Math.cos(pitch));
@@ -89,34 +101,39 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 		Vec3 lookAngle = player.getLookAngle();
 		Vec3 forward;
 		Vec3 breathPos;
+
+		double size = handler.getSize();
+
 		if (player.getAbilities().flying) {
 			forward = lookAngle.scale(2.0F);
 			breathPos = eyePos.add(forward).add(0F, -0.1-0.5F*(size / 30F), 0F);
-		}else{
+		} else {
 			forward = lookAngle.scale(1.0F);
 			breathPos = eyePos.add(forward).add(0F, -0.1F-0.2F*(size / 30F), 0F);
 		}
+
 		dx = breathPos.x;
 		dy = breathPos.y;
 		dz = breathPos.z;
 
 		Vec3 delta = player.getDeltaMovement();
 
-		if(player.isFallFlying() || player.getAbilities().flying)
-			yComp += (float)delta.y * 6;
+		if (player.isFallFlying() || player.getAbilities().flying) {
+			yComp += (float) delta.y * 6;
+		}
 
-		xComp += (float)delta.x * 6;
-		zComp += (float)delta.z * 6;
+		xComp += (float) delta.x * 6;
+		zComp += (float) delta.z * 6;
 	}
 
 
 	@Override
-	public AbilityAnimation getLoopingAnimation(){
+	public AbilityAnimation getLoopingAnimation() {
 		return new AbilityAnimation("breath", false, false);
 	}
 
 	public void hitEntities() {
-		AABB hitRange = DragonAbilities.calculateBreathRange(player, RANGE);
+		AABB hitRange = DragonAbilities.calculateBreathRange(player, currentBreathRange);
 
 		List<Entity> entities = player.level.getEntities(player, hitRange, entity -> {
 					// TODO :: Check if solid blocks are between the player and the entity?
@@ -143,8 +160,8 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 
 	public abstract boolean canHitEntity(LivingEntity entity);
 
-	public void onEntityHit(LivingEntity entityHit){
-		if(TargetingFunctions.attackTargets(getPlayer(), entity -> entity.hurt(new BreathDamage(player), getDamage()), entityHit)){
+	public void onEntityHit(final LivingEntity entityHit) {
+		if (TargetingFunctions.attackTargets(getPlayer(), entity -> entity.hurt(new BreathDamage(player), getDamage()), entityHit)) {
 			entityHit.setDeltaMovement(entityHit.getDeltaMovement().multiply(0.25, 1, 0.25));
 			onDamage(entityHit);
 		}
@@ -154,69 +171,77 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 
 	public abstract float getDamage();
 
-	public List<LivingEntity> getEntityLivingBaseNearby(double distanceX, double distanceY, double distanceZ, double radius){
+	public List<LivingEntity> getEntityLivingBaseNearby(double distanceX, double distanceY, double distanceZ, double radius) {
 		return getEntitiesNearby(LivingEntity.class, distanceX, distanceY, distanceZ, radius);
 	}
 
-	public <T extends Entity> List<T> getEntitiesNearby(Class<T> entityClass, double dX, double dY, double dZ, double r){
-		return player.level.getEntitiesOfClass(entityClass, player.getBoundingBox().inflate(dX, dY, dZ), e -> e != player && player.distanceTo(e) <= r + e.getBbWidth() / 2f && e.getY() <= player.getY() + dY);
+	public <T extends Entity> List<T> getEntitiesNearby(final Class<T> entityClass, double dX, double dY, double dZ, double radius) {
+		return player.level.getEntitiesOfClass(entityClass, player.getBoundingBox().inflate(dX, dY, dZ), entity -> entity != player && player.distanceTo(entity) <= radius + entity.getBbWidth() / 2f && entity.getY() <= player.getY() + dY);
 	}
 
-	public void hitBlocks(){
+	public void hitBlocks() {
 		Vec3 vector3d = player.getEyePosition(1.0F);
-		Vec3 vector3d1 = player.getViewVector(1.0F).scale(RANGE);
+		Vec3 vector3d1 = player.getViewVector(1.0F).scale(currentBreathRange);
 		Vec3 vector3d2 = vector3d.add(vector3d1);
 		BlockHitResult result = player.level.clip(new ClipContext(vector3d, vector3d2, ClipContext.Block.OUTLINE, this instanceof StormBreathAbility ? ClipContext.Fluid.NONE : ClipContext.Fluid.ANY, null));
 
 		BlockPos pos = null;
 
-		if(result.getType() == HitResult.Type.MISS)
+		if (result.getType() == HitResult.Type.MISS) {
 			pos = new BlockPos(vector3d2.x, vector3d2.y, vector3d2.z);
-		else if(result.getType() == HitResult.Type.BLOCK)
+		} else if (result.getType() == HitResult.Type.BLOCK) {
 			pos = result.getBlockPos();
-		if(pos == null)
-			return;
+		}
 
-		for(int x = -(RANGE / 2); x < RANGE / 2; x++)
-			for(int y = -(RANGE / 2); y < RANGE / 2; y++){
-				for(int z = -(RANGE / 2); z < RANGE / 2; z++){
+		if (pos == null) {
+			return;
+		}
+
+		// TODO :: Use the bounding box here as well?
+
+		for (int x = -(currentBreathRange / 2); x < currentBreathRange / 2; x++) {
+			for (int y = -(currentBreathRange / 2); y < currentBreathRange / 2; y++) { // TODO :: Apply eye height for positive y but not negative y
+				for (int z = -(currentBreathRange / 2); z < currentBreathRange / 2; z++) {
 					BlockPos newPos = new BlockPos(pos.getX() + x, pos.getY() + y, pos.getZ() + z);
-					if(newPos.distSqr(pos) <= RANGE){
+
+					if (newPos.distSqr(pos) <= currentBreathRange) {
 						BlockState state = player.level.getBlockState(newPos);
-						if(state.getBlock() != Blocks.AIR){
-							if(DragonConfigHandler.DRAGON_BREATH_BLOCKS != null && DragonConfigHandler.DRAGON_BREATH_BLOCKS.containsKey(getDragonType().getTypeName()) && DragonConfigHandler.DRAGON_BREATH_BLOCKS.get(getDragonType().getTypeName()).contains(state.getBlock())){
-								if(!player.level.isClientSide){
-									if(player.getRandom().nextFloat() * 100 <= blockBreakChance()){
+
+						if (state.getBlock() != Blocks.AIR) {
+							if (DragonConfigHandler.DRAGON_BREATH_BLOCKS != null && DragonConfigHandler.DRAGON_BREATH_BLOCKS.containsKey(getDragonType().getTypeName()) && DragonConfigHandler.DRAGON_BREATH_BLOCKS.get(getDragonType().getTypeName()).contains(state.getBlock())) {
+								if (!player.level.isClientSide) {
+									if (player.getRandom().nextFloat() * 100 <= blockBreakChance()) {
 										player.level.destroyBlock(newPos, false, player);
 										continue;
 									}
 								}
 							}
-							
+
 							onBlock(newPos, state, result.getDirection());
 						}
 					}
 				}
 			}
+		}
 	}
 
 	public abstract void onBlock(BlockPos pos, BlockState blockState, Direction direction);
 
-	public int blockBreakChance(){
+	public int blockBreakChance() {
 		return 90;
 	}
 
 	@Override
-	public int getSortOrder(){
+	public int getSortOrder() {
 		return 1;
 	}
 
 	@Override
-	public ArrayList<Component> getInfo(){
-		ArrayList<Component> components = new ArrayList<Component>();
+	public ArrayList<Component> getInfo() {
+		ArrayList<Component> components = new ArrayList<>();
 
-		DragonLevel growthLevel = DragonUtils.getDragonLevel(player);
-		int RANGE = growthLevel == DragonLevel.NEWBORN ? 4 : growthLevel == DragonLevel.YOUNG ? 7 : 10;
+		DragonLevel dragonLevel = DragonUtils.getDragonLevel(player);
+		int range = calculateCurrentBreathRange(dragonLevel);
 
 		components.add(Component.translatable("ds.skill.mana_cost", getInitManaCost()));
 		components.add(Component.translatable("ds.skill.channel_cost", getManaCost(), 2));
@@ -225,24 +250,32 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 		components.add(Component.translatable("ds.skill.cooldown", Functions.ticksToSeconds(getSkillCooldown())));
 
 		components.add(Component.translatable("ds.skill.damage", getDamage()));
-		components.add(Component.translatable("ds.skill.range.blocks", RANGE));
+		components.add(Component.translatable("ds.skill.range.blocks", range));
 
-		if(!KeyInputHandler.ABILITY1.isUnbound()){
+		if (!KeyInputHandler.ABILITY1.isUnbound()) {
 			String key = KeyInputHandler.ABILITY1.getKey().getDisplayName().getString().toUpperCase(Locale.ROOT);
 
-			if(key.isEmpty())
+			if (key.isEmpty()) {
 				key = KeyInputHandler.ABILITY1.getKey().getDisplayName().getString();
+			}
+
 			components.add(Component.translatable("ds.skill.keybind", key));
 		}
 
 		return components;
 	}
 
-	public static class BreathDamage extends EntityDamageSource{
-		public BreathDamage(
-			@Nullable
-				Entity p_i1567_2_){
-			super("player", p_i1567_2_);
+	public static class BreathDamage extends EntityDamageSource {
+		public BreathDamage(@Nullable final Entity entity) {
+			super("player", entity);
 		}
+	}
+
+	public static int calculateCurrentBreathRange(@NotNull final DragonLevel dragonLevel) {
+		return baseBreathRange + switch (dragonLevel) {
+			case NEWBORN -> 0;
+			case YOUNG -> 2;
+			case ADULT -> 4;
+		};
 	}
 }

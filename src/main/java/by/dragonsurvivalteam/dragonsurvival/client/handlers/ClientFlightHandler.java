@@ -57,6 +57,11 @@ import java.util.concurrent.TimeUnit;
 @Mod.EventBusSubscriber(Dist.CLIENT)
 @SuppressWarnings("unused")
 public class ClientFlightHandler {
+	@ConfigRange(min = 0, max = 60)
+	@ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "levitationAfterEffect", comment = "For how many seconds wings are disabled after the levitation effect has ended")
+	public static Integer levitationAfterEffect = 3;
+
+
 	@ConfigOption(side = ConfigSide.CLIENT, category = "flight", key = "notifyWingStatus", comment = "Notifies of wing status in chat message")
 	public static Boolean notifyWingStatus = false;
 
@@ -259,7 +264,7 @@ public class ClientFlightHandler {
 					- call `player.resetFallDistance()` when the levitation effect is applied (MobEffectEvent.Added)
 					- add a check in ServerFlightHandler#changeFallDistance
 				*/
-				levitationLeft = Functions.secondsToTicks(/* TODO :: Server Config */ 3);
+				levitationLeft = Functions.secondsToTicks(levitationAfterEffect);
 			} else if (levitationLeft > 0) {
 				// TODO :: Set to 0 once ground is reached?
 				if (event.phase == Phase.END) {

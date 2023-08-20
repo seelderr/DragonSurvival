@@ -10,10 +10,14 @@ import by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon.DragonAr
 import by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon.DragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
+import by.dragonsurvivalteam.dragonsurvival.config.ClientConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
+import by.dragonsurvivalteam.dragonsurvival.magic.common.active.BreathAbility;
 import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorEntityRenderer;
 import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorEntityRendererManager;
 import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorLivingRenderer;
@@ -141,7 +145,14 @@ public class ClientDragonRender{
 	/** Show breath hit range when hitboxes are being rendered */
 	@SubscribeEvent
 	public static void renderBreathHitBox(final RenderLevelStageEvent event) {
-		if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_SOLID_BLOCKS && /* TODO :: Client config option */ Minecraft.getInstance().getEntityRenderDispatcher().shouldRenderHitBoxes()) {
+		if (ClientConfig.renderBreathRange && event.getStage() == RenderLevelStageEvent.Stage.AFTER_SOLID_BLOCKS && Minecraft.getInstance().getEntityRenderDispatcher().shouldRenderHitBoxes()) {
+			LocalPlayer localPlayer = Minecraft.getInstance().player;
+			DragonStateHandler handler = DragonUtils.getHandler(localPlayer);
+
+			if (localPlayer == null || !handler.isDragon()) {
+				return;
+			}
+
 			VertexConsumer buffer = Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(RenderType.LINES);
 			Vec3 camera = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
 
@@ -149,10 +160,14 @@ public class ClientDragonRender{
 			poseStack.pushPose();
 			poseStack.translate(-camera.x(), -camera.y(), -camera.z());
 
-			LocalPlayer localPlayer = Minecraft.getInstance().player;
-			// TODO :: Render hitbox in the dragon color?
-			LevelRenderer.renderLineBox(poseStack, buffer, DragonAbilities.calculateBreathRange(localPlayer, /* TODO :: Use value from BreathAbility */ 5), 1, 0, 0, 1);
+			int range = BreathAbility.calculateCurrentBreathRange(handler.getLevel());
+			AbstractDragonType dragonType = handler.getType();
 
+			int red = DragonUtils.isDragonType(dragonType, DragonTypes.CAVE) ? 1 : 0;
+			int green = DragonUtils.isDragonType(dragonType, DragonTypes.FOREST) ? 1 : 0;
+			int blue = DragonUtils.isDragonType(dragonType, DragonTypes.SEA) ? 1 : 0;
+
+			LevelRenderer.renderLineBox(poseStack, buffer, DragonAbilities.calculateBreathRange(localPlayer, handler, range), red, green, blue, 1);
 			poseStack.popPose();
 		}
 	}
