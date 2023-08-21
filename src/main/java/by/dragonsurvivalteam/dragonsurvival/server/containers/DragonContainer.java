@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class DragonContainer extends AbstractContainerMenu { // TODO - tool slots sometimes show when logging in but not the rest of the container
+public class DragonContainer extends AbstractContainerMenu {
 	public final CraftingContainer craftMatrix = new CraftingContainer(this, 3, 3);
 	public final ResultContainer craftResult = new ResultContainer();
 	public final Player player;
@@ -181,6 +181,11 @@ public class DragonContainer extends AbstractContainerMenu { // TODO - tool slot
 				if (!moveItemStackTo(slotItemStack, 4, 40, false)) {
 					return ItemStack.EMPTY;
 				}
+			} else if (menuStatus == 1 && !slots.get(42).hasItem() && ToolUtils.isAxe(slotItemStack)) {
+				// Claw tool axe (check first to prefer axe slot over weapon slot)
+				if (!moveItemStackTo(slotItemStack, 42, 43, false)) {
+					return ItemStack.EMPTY;
+				}
 			} else if (menuStatus == 1 && !slots.get(40).hasItem() && ToolUtils.isWeapon(slotItemStack)) {
 				// Claw tool sword
 				if (!moveItemStackTo(slotItemStack, 40, 41, false)) {
@@ -189,11 +194,6 @@ public class DragonContainer extends AbstractContainerMenu { // TODO - tool slot
 			} else if (menuStatus == 1 && !slots.get(41).hasItem() && ToolUtils.isPickaxe(slotItemStack)) {
 				// Claw tool pickaxe
 				if (!moveItemStackTo(slotItemStack, 41, 42, false)) {
-					return ItemStack.EMPTY;
-				}
-			} else if (menuStatus == 1 && !slots.get(42).hasItem() && ToolUtils.isAxe(slotItemStack)) {
-				// Claw tool axe
-				if (!moveItemStackTo(slotItemStack, 42, 43, false)) {
 					return ItemStack.EMPTY;
 				}
 			} else if (menuStatus == 1 && !slots.get(43).hasItem() && ToolUtils.isShovel(slotItemStack)) {
