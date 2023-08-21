@@ -7,7 +7,6 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
-import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.StormBreathAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.AbilityAnimation;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.ISecondAnimation;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
@@ -15,6 +14,7 @@ import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.TargetingFunctions;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -22,12 +22,9 @@ import net.minecraft.world.damagesource.EntityDamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
@@ -133,9 +130,9 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 	}
 
 	public void hitEntities() {
-		AABB hitRange = DragonAbilities.calculateBreathRange(player, currentBreathRange);
+		AABB breathArea = DragonAbilities.calculateBreathArea(player, currentBreathRange);
 
-		List<Entity> entities = player.level.getEntities(player, hitRange, entity -> {
+		List<Entity> entities = player.level.getEntities(player, breathArea, entity -> {
 					// TODO :: Check if solid blocks are between the player and the entity?
 					if (entity instanceof LivingEntity livingEntity) {
 						// TODO :: Also check for creative? Or add spectator and creative as checks to isValidTarget?
@@ -180,44 +177,37 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 	}
 
 	public void hitBlocks() {
-		Vec3 vector3d = player.getEyePosition(1.0F);
-		Vec3 vector3d1 = player.getViewVector(1.0F).scale(currentBreathRange);
-		Vec3 vector3d2 = vector3d.add(vector3d1);
-		BlockHitResult result = player.level.clip(new ClipContext(vector3d, vector3d2, ClipContext.Block.OUTLINE, this instanceof StormBreathAbility ? ClipContext.Fluid.NONE : ClipContext.Fluid.ANY, null));
+		Pair<BlockPos, Direction> data = DragonAbilities.breathStartPosition(player, this, currentBreathRange);
+		BlockPos position = data.getFirst();
+		Direction direction = data.getSecond();
 
-		BlockPos pos = null;
-
-		if (result.getType() == HitResult.Type.MISS) {
-			pos = new BlockPos(vector3d2.x, vector3d2.y, vector3d2.z);
-		} else if (result.getType() == HitResult.Type.BLOCK) {
-			pos = result.getBlockPos();
-		}
-
-		if (pos == null) {
+		if (position == null) {
 			return;
 		}
 
 		// TODO :: Use the bounding box here as well?
 
+		// Alternative: BlockPos.randomInCube()
+		BlockPos.MutableBlockPos mutablePosition = position.mutable();
 		for (int x = -(currentBreathRange / 2); x < currentBreathRange / 2; x++) {
-			for (int y = -(currentBreathRange / 2); y < currentBreathRange / 2; y++) { // TODO :: Apply eye height for positive y but not negative y
+			for (int y = -(currentBreathRange / 2); y < currentBreathRange / 2; y++) { // TODO :: Apply eye height for positive y but not negative y?
 				for (int z = -(currentBreathRange / 2); z < currentBreathRange / 2; z++) {
-					BlockPos newPos = new BlockPos(pos.getX() + x, pos.getY() + y, pos.getZ() + z);
+					mutablePosition.set(position).move(x, y, z);
 
-					if (newPos.distSqr(pos) <= currentBreathRange) {
-						BlockState state = player.level.getBlockState(newPos);
+					if (mutablePosition.distSqr(position) <= currentBreathRange) {
+						BlockState state = player.level.getBlockState(mutablePosition);
 
 						if (state.getBlock() != Blocks.AIR) {
 							if (DragonConfigHandler.DRAGON_BREATH_BLOCKS != null && DragonConfigHandler.DRAGON_BREATH_BLOCKS.containsKey(getDragonType().getTypeName()) && DragonConfigHandler.DRAGON_BREATH_BLOCKS.get(getDragonType().getTypeName()).contains(state.getBlock())) {
 								if (!player.level.isClientSide) {
 									if (player.getRandom().nextFloat() * 100 <= blockBreakChance()) {
-										player.level.destroyBlock(newPos, false, player);
+										player.level.destroyBlock(mutablePosition, false, player);
 										continue;
 									}
 								}
 							}
 
-							onBlock(newPos, state, result.getDirection());
+							onBlock(mutablePosition, state, direction);
 						}
 					}
 				}

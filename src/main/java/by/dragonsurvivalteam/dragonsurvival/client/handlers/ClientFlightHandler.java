@@ -212,7 +212,7 @@ public class ClientFlightHandler {
 					}
 
 
-					if(player.tickCount - lastSync >= 20){
+					if(player.tickCount - lastSync >= 20){ // TODO :: Is this necessary?
 						//Request the server to resync the status of a spin if it is has been too long since the last update
 						NetworkHandler.CHANNEL.sendToServer(new RequestSpinResync());
 					}

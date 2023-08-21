@@ -17,6 +17,9 @@ import by.dragonsurvivalteam.dragonsurvival.config.ClientConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
+import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.active.NetherBreathAbility;
+import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.active.ForestBreathAbility;
+import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.StormBreathAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.BreathAbility;
 import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorEntityRenderer;
 import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorEntityRendererManager;
@@ -32,6 +35,7 @@ import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.datafixers.util.Pair;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.CameraType;
@@ -45,6 +49,8 @@ import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.ParrotOnShoulderLayer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -52,6 +58,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeableArmorItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
@@ -167,7 +174,26 @@ public class ClientDragonRender{
 			int green = DragonUtils.isDragonType(dragonType, DragonTypes.FOREST) ? 1 : 0;
 			int blue = DragonUtils.isDragonType(dragonType, DragonTypes.SEA) ? 1 : 0;
 
-			LevelRenderer.renderLineBox(poseStack, buffer, DragonAbilities.calculateBreathRange(localPlayer, handler, range), red, green, blue, 1);
+			LevelRenderer.renderLineBox(poseStack, buffer, DragonAbilities.calculateBreathArea(localPlayer, handler, range), red, green, blue, 1);
+
+			/* Draw the area which will affect blocks
+			Pair<BlockPos, Direction> data = DragonAbilities.breathStartPosition(localPlayer, red == 1 ? new NetherBreathAbility() : green == 1 ? new ForestBreathAbility() : new StormBreathAbility(), range);
+			BlockPos startPosition = data.getFirst();
+
+			if (startPosition != null) {
+				AABB blockRange = new AABB(
+						startPosition.getX() - (double) range / 2,
+						startPosition.getY() - (double) range / 2,
+						startPosition.getZ() - (double) range / 2,
+						startPosition.getX() + (double) range / 2,
+						startPosition.getY() + (double) range / 2,
+						startPosition.getZ() + (double) range / 2
+				);
+
+				LevelRenderer.renderLineBox(poseStack, buffer, blockRange, 1, 1, 1, 1);
+			}
+			*/
+
 			poseStack.popPose();
 		}
 	}
