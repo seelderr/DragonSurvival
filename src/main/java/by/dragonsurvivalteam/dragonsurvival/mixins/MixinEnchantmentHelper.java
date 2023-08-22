@@ -38,7 +38,7 @@ public abstract class MixinEnchantmentHelper{
 		    EnchantmentCategory.ARMOR_CHEST,
 		    EnchantmentCategory.ARMOR_LEGS,
 		    EnchantmentCategory.ARMOR_FEET,
-            // Doesn't make senese in the dragon sword slot
+            // Doesn't make sense in the dragon sword slot
 		    EnchantmentCategory.BOW,
 		    EnchantmentCategory.CROSSBOW,
 		    EnchantmentCategory.FISHING_ROD
@@ -54,6 +54,10 @@ public abstract class MixinEnchantmentHelper{
 
 	@Inject(at = @At("HEAD"), method = "getEnchantmentLevel(Lnet/minecraft/world/item/enchantment/Enchantment;Lnet/minecraft/world/entity/LivingEntity;)I", cancellable = true)
 	private static void getEnchantmentLevel(final Enchantment enchantment, final LivingEntity entity, final CallbackInfoReturnable<Integer> callback) {
+		if (!(entity instanceof Player player)) {
+			return;
+		}
+
 		if (IGNORED_CATEGORIES.contains(enchantment.category)) {
 			return;
 		}
@@ -62,14 +66,14 @@ public abstract class MixinEnchantmentHelper{
 			return;
 		}
 
-		if (!ToolUtils.shouldUseDragonTools(entity.getMainHandItem())) {
+		if (!ToolUtils.shouldUseDragonTools(player.getMainHandItem())) {
 			return;
 		}
 
-		if (entity instanceof Player player && DragonUtils.isDragon(player)) {
+		if (DragonUtils.isDragon(player)) {
 			ItemStack stack = ClawToolHandler.getDragonHarvestTool(player);
 
-			if (stack == entity.getMainHandItem()) {
+			if (stack == player.getMainHandItem()) {
 				// No relevant tool found - get the sword
 				stack = ClawToolHandler.getDragonSword(player);
 			}

@@ -211,7 +211,7 @@ public class ConfigHandler{
 		// Food options
 		if (key.equals("caveDragon") || key.equals("forestDragon") || key.equals("seaDragon")) {
 			if (configValue instanceof String string) {
-				// namespace:item_id:hunter:saturation
+				// namespace:item_id:hunger:saturation
 				String[] split = string.split(":");
 
 				if (split.length == 2) {
