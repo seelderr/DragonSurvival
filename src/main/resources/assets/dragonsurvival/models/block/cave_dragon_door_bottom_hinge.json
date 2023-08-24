@@ -1,5 +1,5 @@
 {
-  "parent": "block/door_bottom_right",
+  "parent": "block/door_bottom_rh",
   "textures": {
     "bottom": "dragonsurvival:block/cave_dragon_door_bottom",
     "top": "dragonsurvival:block/cave_dragon_door_bottom"
