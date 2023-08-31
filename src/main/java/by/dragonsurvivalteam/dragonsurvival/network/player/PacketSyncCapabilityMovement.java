@@ -58,7 +58,7 @@ public class PacketSyncCapabilityMovement implements IMessage<PacketSyncCapabili
 				Entity entity = sender.level.getEntity(message.playerId);
 
 				if (entity instanceof Player player) {
-					DragonStateProvider.getCap(player).ifPresent(handler -> handler.setMovementData(message.bodyYaw, message.headYaw, message.headPitch, message.bite));
+					context.enqueueWork(() -> DragonStateProvider.getCap(player).ifPresent(handler -> handler.setMovementData(message.bodyYaw, message.headYaw, message.headPitch, message.bite)));
 					NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY.with(() -> sender), message);
 				}
 			}

@@ -164,7 +164,7 @@ public class ClawToolHandler{
 	 * @return Only the sword in the dragon tool slot <br>
 	 * Returns {@link ItemStack#EMPTY} if the player is holding any sort of tool
 	 */
-	public static ItemStack getDragonSword(final LivingEntity player) {
+	public static ItemStack getDragonSword(final LivingEntity player) { // TODO :: Return main hand item when `switched` is true (i.e. within the attack method)?
 		if (!(player instanceof Player)) {
 			return ItemStack.EMPTY;
 		}

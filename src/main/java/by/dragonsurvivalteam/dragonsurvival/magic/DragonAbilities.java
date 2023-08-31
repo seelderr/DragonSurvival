@@ -3,20 +3,31 @@ package by.dragonsurvivalteam.dragonsurvival.magic;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
+import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.StormBreathAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
+import by.dragonsurvivalteam.dragonsurvival.magic.common.active.BreathAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.innate.InnateDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncMagicCap;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import com.mojang.datafixers.util.Pair;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import net.minecraftforge.network.PacketDistributor;
+import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.Type;
 
 import javax.annotation.Nullable;
@@ -193,5 +204,67 @@ public class DragonAbilities{
 			return getAbility(player, c, null);
 		else
 			return getAbility(player, c, dragonType.getTypeName());
+	}
+
+	public static AABB calculateBreathArea(@NotNull final Player player, double range) {
+		return calculateBreathArea(player, DragonUtils.getHandler(player), range);
+	}
+
+	public static AABB calculateBreathArea(@NotNull final Player player, final DragonStateHandler handler, double range) {
+		Vec3 viewVector = player.getLookAngle().scale(range);
+
+		double defaultRadius = switch (handler.getLevel()) {
+			case NEWBORN -> 0.3;
+			case YOUNG -> 0.7;
+			case ADULT -> 1;
+		};
+
+		/* TODO
+		For each variable - start at center and move until it hits the max. range or a solid block (mutable block pos)?
+		Would be bad for performance
+		*/
+
+		double xOffset = getOffset(viewVector.x(), defaultRadius);
+		double yOffset = Math.abs(viewVector.y());
+		double zOffset = getOffset(viewVector.z(), defaultRadius);
+
+		// Check for look angle to avoid extending the range in the direction the player is not facing / looking
+		double xMin = (player.getLookAngle().x() < 0 ? xOffset : defaultRadius);
+		double yMin = (player.getLookAngle().y() < 0 ? yOffset : 0);
+		double zMin = (player.getLookAngle().z() < 0 ? zOffset : defaultRadius);
+		Vec3 min = new Vec3(Math.abs(xMin), Math.abs(yMin), Math.abs(zMin));
+
+		double xMax = (player.getLookAngle().x() > 0 ? xOffset : defaultRadius);
+		double yMax = (player.getLookAngle().y() > 0 ? yOffset + player.getEyeHeight() : player.getEyeHeight());
+		double zMax = (player.getLookAngle().z() > 0 ? zOffset : defaultRadius);
+		Vec3 max = new Vec3(Math.abs(xMax), Math.abs(yMax), Math.abs(zMax));
+
+		return new AABB(player.position().subtract(min), player.position().add(max));
+	}
+
+	private static double getOffset(double value, double defaultValue) {
+		if (value < 0) {
+			return Math.min(value, -defaultValue);
+		}
+
+		return Math.max(value, defaultValue);
+	}
+
+	/** Start position for the logic which will affect blocks */
+	public static Pair<BlockPos, Direction> breathStartPosition(final Player player, final BreathAbility breathAbility, int currentBreathRange) {
+		Vec3 eyePosition = player.getEyePosition(1.0F);
+		Vec3 viewVector = player.getViewVector(1.0F).scale(currentBreathRange);
+		Vec3 vector3d2 = eyePosition.add(viewVector);
+
+		BlockPos pos = null;
+		BlockHitResult result = player.level.clip(new ClipContext(eyePosition, vector3d2, ClipContext.Block.OUTLINE, breathAbility instanceof StormBreathAbility ? ClipContext.Fluid.NONE : ClipContext.Fluid.ANY, null));
+
+		if (result.getType() == HitResult.Type.MISS) {
+			pos = new BlockPos(vector3d2.x, vector3d2.y, vector3d2.z);
+		} else if (result.getType() == HitResult.Type.BLOCK) {
+			pos = result.getBlockPos();
+		}
+
+		return Pair.of(pos, result.getDirection());
 	}
 }

@@ -33,12 +33,14 @@ public class DragonClawsMenuToggle implements IMessage<DragonClawsMenuToggle> {
 	public void handle(final DragonClawsMenuToggle message, final Supplier<NetworkEvent.Context> supplier) {
 		NetworkEvent.Context context = supplier.get();
 
-		ServerPlayer sender = context.getSender();
-		DragonStateProvider.getCap(sender).ifPresent(handler -> handler.getClawToolData().setMenuOpen(message.state));
+		context.enqueueWork(() -> {
+			ServerPlayer sender = context.getSender();
+			DragonStateProvider.getCap(sender).ifPresent(handler -> handler.getClawToolData().setMenuOpen(message.state));
 
-		if (sender.containerMenu instanceof DragonContainer container) {
-			container.update();
-		}
+			if (sender.containerMenu instanceof DragonContainer container) {
+				container.update();
+			}
+		});
 
 		context.setPacketHandled(true);
 	}

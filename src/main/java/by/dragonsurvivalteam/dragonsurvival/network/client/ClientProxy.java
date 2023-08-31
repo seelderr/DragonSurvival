@@ -43,11 +43,10 @@ public class ClientProxy {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
-            Level world = localPlayer.level;
-            Entity entity = world.getEntity(message.playerId);
+            Entity entity = localPlayer.level.getEntity(message.playerId);
 
             if (entity instanceof Player) {
-                DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> dragonStateHandler.getClawToolData().shouldRenderClaws = message.state);
+                DragonStateProvider.getCap(entity).ifPresent(handler -> handler.getClawToolData().shouldRenderClaws = message.state);
             }
         }
     }
@@ -133,7 +132,8 @@ public class ClientProxy {
         if (localPlayer != null) {
             Entity entity = localPlayer.level.getEntity(message.playerId);
 
-            if (entity instanceof Player player) {
+            // Local player already has the correct values of themselves
+            if (entity instanceof Player player && player != localPlayer) {
                 player.setDeltaMovement(message.flightSpeed);
             }
         }
@@ -309,14 +309,15 @@ public class ClientProxy {
     public static void handleSynchronizeDragonCap(final SynchronizeDragonCap message) {
         LocalPlayer localPlayer = Minecraft.getInstance().player;
 
+        // TODO :: use string uuid?
         if (localPlayer != null) {
             if (ClientDragonRender.dragonArmor != null) {
-                ClientDragonRender.dragonArmor.player = localPlayer.getId();
+                ClientDragonRender.dragonArmor.playerId = localPlayer.getId();
             }
 
             Entity entity = localPlayer.level.getEntity(message.playerId);
 
-            if(entity instanceof Player player) {
+            if (entity instanceof Player player) {
                 DragonStateProvider.getCap(player).ifPresent(handler -> {
                     handler.setType(message.dragonType);
                     handler.setIsHiding(message.hiding);
@@ -328,7 +329,7 @@ public class ClientProxy {
                 // Refresh instances
                 if (player != localPlayer) {
                     DragonEntity dragon = DSEntities.DRAGON.create(localPlayer.level);
-                    dragon.player = player.getId();
+                    dragon.playerId = player.getId();
                     ClientDragonRender.playerDragonHashMap.computeIfAbsent(player.getId(), integer -> new AtomicReference<>(dragon)).getAndSet(dragon);
                 }
 
@@ -372,14 +373,14 @@ public class ClientProxy {
         ClientDragonRender.dragonArmor = DSEntities.DRAGON_ARMOR.create(localPlayer.level);
 
         if (ClientDragonRender.dragonArmor != null) {
-            ClientDragonRender.dragonArmor.player = localPlayer.getId();
+            ClientDragonRender.dragonArmor.playerId = localPlayer.getId();
         }
 
         Entity entity = localPlayer.level.getEntity(message.playerId);
 
         if (entity instanceof Player player) {
             DragonEntity dragon = DSEntities.DRAGON.create(localPlayer.level);
-            dragon.player = player.getId();
+            dragon.playerId = player.getId();
             ClientDragonRender.playerDragonHashMap.computeIfAbsent(player.getId(), integer -> new AtomicReference<>(dragon)).getAndSet(dragon);
         }
     }

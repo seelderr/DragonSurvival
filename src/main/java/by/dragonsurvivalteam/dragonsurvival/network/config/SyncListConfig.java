@@ -75,12 +75,14 @@ public class SyncListConfig implements IMessage<SyncListConfig> {
 		Object config = spec.get(message.path);
 
 		if (config instanceof ConfigValue<?> configValue) {
-			ConfigHandler.updateConfigValue(configValue, message.value);
+			context.enqueueWork(() -> {
+				ConfigHandler.updateConfigValue(configValue, message.value);
 
-			// In case the config event does not get triggered
-			if (message.path.startsWith("food")) {
-				context.enqueueWork(DragonFoodHandler::rebuildFoodMap);
-			}
+				// In case the config event does not get triggered
+				if (message.path.startsWith("food")) {
+					context.enqueueWork(DragonFoodHandler::rebuildFoodMap);
+				}
+			});
 		}
 
 		context.setPacketHandled(true);

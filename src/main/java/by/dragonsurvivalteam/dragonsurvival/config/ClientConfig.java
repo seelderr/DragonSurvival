@@ -12,8 +12,12 @@ public class ClientConfig{
 		ConfigHandler.addConfigs(builder, ConfigSide.CLIENT);
 	}
 
+	// FIXME :: Remove - unused
 	@ConfigOption( side = ConfigSide.CLIENT, category = "misc", key = "clientDebugMessages", comment = "Enable client-side debug messages" )
 	public static Boolean clientDebugMessages = false;
+
+	@ConfigOption(side = ConfigSide.CLIENT, category = "misc", key = "renderBreathRange", comment = "Whether the range of the breath should be rendered (while hitboxes are shown)")
+	public static Boolean renderBreathRange = true;
 
 	@ConfigOption( side = ConfigSide.CLIENT, category = "rendering", key = "enableTailPhysics", comment = "Enable movement based physics on the tail, this is still a work in progress and can be buggy." )
 	public static Boolean enableTailPhysics = true;

@@ -50,10 +50,10 @@ public class SyncPlayerSkinPreset implements IMessage<SyncPlayerSkinPreset> {
 			ServerPlayer sender = context.getSender();
 
 			if (sender != null) {
-				DragonStateProvider.getCap(sender).ifPresent(handler -> {
+				context.enqueueWork(() -> DragonStateProvider.getCap(sender).ifPresent(handler -> {
 					handler.getSkinData().skinPreset = message.preset;
 					handler.getSkinData().compileSkin();
-				});
+				}));
 
 				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> sender), new SyncPlayerSkinPreset(sender.getId(), message.preset));
 			}

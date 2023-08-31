@@ -25,7 +25,7 @@ public class SortInventoryPacket implements IMessage<SortInventoryPacket> {
 		ServerPlayer sender = context.getSender();
 
 		if (sender != null) {
-			SortingHandler.sortInventory(sender);
+			context.enqueueWork(() -> SortingHandler.sortInventory(sender));
 		}
 
 		context.setPacketHandled(true);

@@ -37,6 +37,7 @@ public abstract class ISidedMessage<T extends ISidedMessage<T>> implements IMess
 
 	public abstract T create(T message);
 
+	/** Gets handled within enqueueWork() */
 	public abstract void runClient(T message, NetworkEvent.Context context, Player targetPlayer);
 
 	public abstract void runCommon(T message, NetworkEvent.Context context);

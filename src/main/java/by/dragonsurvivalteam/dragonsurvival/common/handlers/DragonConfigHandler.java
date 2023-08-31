@@ -40,7 +40,7 @@ public class DragonConfigHandler{
 	}
 
 	@SubscribeEvent
-	public static void onConfigLoad(ModConfigEvent.Loading event){
+	public static void onConfigLoad(ModConfigEvent.Loading event){ // TODO :: Listen to reload event
 		if(event.getConfig().getType() == ModConfig.Type.SERVER){
 			rebuildSpeedupBlocksMap();
 			rebuildSeaDragonConfigs();

@@ -60,7 +60,7 @@ public class SyncEnumConfig implements IMessage<SyncEnumConfig> {
 		}
 
 		if (ConfigHandler.serverSpec.getValues().get(message.path) instanceof ForgeConfigSpec.EnumValue<?> enumValue) {
-			ConfigHandler.updateConfigValue(enumValue, message.value);
+			context.enqueueWork(() -> ConfigHandler.updateConfigValue(enumValue, message.value));
 		}
 
 		context.setPacketHandled(true);
