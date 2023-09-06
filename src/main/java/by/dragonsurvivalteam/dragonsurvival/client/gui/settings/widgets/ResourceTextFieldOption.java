@@ -8,7 +8,7 @@ import net.minecraft.client.gui.components.AbstractWidget;
 
 import java.util.function.Function;
 
-public class ResourceTextFieldOption extends Option{
+public class ResourceTextFieldOption extends Option {
 	public final Function<Options, String> getter;
 	private final String spec;
 

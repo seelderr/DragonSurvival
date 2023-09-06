@@ -1,4 +1,4 @@
-name: 1.18.2 Bug Report
+name: 1.18.2 Forge Bug Report
 description: File a bug report
 title: "[1.18.2 Forge Bug]: "
 labels: ["bug", "triage"]
@@ -9,41 +9,41 @@ body:
     attributes:
       value: |
         Thanks for taking the time to fill out this bug report! Make sure that you have removed the old configs and read the DS installation rules
-
+        
   - type: input
     id: contact
     attributes:
-      label: ■ Your Discord ID or other contacts
+      label: ■ Your Discord ID
       description: How can we get in touch with you if we need more info?
       placeholder: BlackAures#7759
     validations:
       required: false
-
+      
   - type: textarea
     id: version
     attributes:
-      label: ■ Dragon Survival version and Modpack version (if have)
+      label: ■ Dragon Survival version
       description: Copy the full name of the file.
-      placeholder: Example - DragonSurvival-1.18.2-1.5.2 + Play as Dragon 1.18
+      placeholder: Example - DragonSurvival_DragonEditor-1.18.2-0.11.0.jar
     validations:
       required: true
-
+      
   - type: dropdown
     id: server
     attributes:
       label: ■ Single game or server?
-      description: There are huge differences between the dedicated server, local server and client. Be sure to correctly specify which version you are playing on.
+      description: There can be huge differences between the single-player game and the server. If you are a host or player on a server, indicate this.
       options:
         - Single (Default)
-        - Dedicated Server or Host Sites
-        - Local network (LAN, Hamachi, etc.)
+        - Forge Server or host
+        - Playing with friends over a local network (Hamachi, etc.)
     validations:
       required: true
-
+      
   - type: dropdown
     id: configs
     attributes:
-      label: ■ Do you delete old configs before writing a bug report?
+      label: ■ Do you delete old configurations and check the Wiki before writing a bug report?
       description: Removing old configs after major updates is essential for clean operation of many modifications. Also on the wiki there are instructions on how to solve most of the bugs and problems with our mod.
       options:
         - Nope (Default)
@@ -51,29 +51,51 @@ body:
         - Usually yes, but this time no.
     validations:
       required: true
-
-  - type: textarea
-    id: reproduce
+      
+  - type: dropdown
+    id: compatibility
     attributes:
-      label: ■ Bug Description and Reproduce
-      description: Please describe how we can get the same result as yours.
-      placeholder: Description - I have been lying on the treasure for five minutes now, but nothing happens. 1. Put the treasure on the ground 2. Right-click on them 3. Just wait and nothing happens.
+      label: ■ Do you play pure MC + DS and Geckolib or do you have some kind of modpack?
+      description: Try the clean version first. Many problems arise because of a conflict with some third-party mod. Check the wiki, there is a list of mods that Dragon Survival is not compatible with.
+      options:
+        - I only play with DS and Geckolib (Default)
+        - I have other mods
+        - I want to report a compatibility problem
     validations:
       required: true
 
+  - type: textarea
+    id: bug
+    attributes:
+      label: ■ Describe the bug
+      description:  
+      placeholder: I have been lying on the treasure for five minutes now, but nothing happens.
+    validations:
+      required: true
+      
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: ■ To Reproduce
+      description: Is this error repeatable? If so, please describe how we can get the same result as yours.
+      placeholder: 1. Put the treasure on the ground 2. Right-click on them 3. Just wait and nothing happens
+    validations:
+      required: true
+      
   - type: textarea
     id: expected
     attributes:
       label: ■ Expected behavior
-      description:  A clear and concise description of what you expected to happen.
+      description:  A clear and concise description of what you expected to happen. 
       placeholder: I use treasures and expect them to give healing.
     validations:
       required: true
-
+       
   - type: textarea
     id: crash-report
     attributes:
-      label: ■ Crash Report File and Logs
-      description: If your game or server crashes, game creates a file in crash-reports and log folder. Just grab that latest files and drag it into this box. No need to copy all text inside.
+      label: ■ Crash Report
+      description: If your game or server crashes, the game creates a file in crash-reports folder. Just grab that file from the folder and drag it into this box.
     validations:
       required: false
+      

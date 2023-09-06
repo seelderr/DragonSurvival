@@ -6,73 +6,71 @@ import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawsMenu;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.DragonContainer;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.util.ToolUtils;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.*;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.common.ToolActions;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.PacketDistributor;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
-
-public class ClawToolSlot extends Slot{
+public class ClawToolSlot extends Slot {
 	static final ResourceLocation AXE_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "gui/dragon_claws_axe");
 	static final ResourceLocation PICKAXE_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "gui/dragon_claws_pickaxe");
 	static final ResourceLocation SHOVEL_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "gui/dragon_claws_shovel");
 	static final ResourceLocation SWORD_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "gui/dragon_claws_sword");
-	DragonContainer dragonContainer;
-	int num;
+	private final DragonContainer dragonContainer;
+	private final int clawSlot;
 
-	public ClawToolSlot(DragonContainer container, Container inv, int index, int x, int y, int num){
-		super(inv, index, x, y);
-		dragonContainer = container;
-		this.num = num;
+	public ClawToolSlot(final DragonContainer dragonContainer, final Container container, int index, int x, int y, int clawSlot) {
+		super(container, index, x, y);
+		this.dragonContainer = dragonContainer;
+		this.clawSlot = clawSlot;
 	}
 
 	@Override
-	public boolean mayPlace(ItemStack stack){
-		Item item = stack.getItem();
-		return switch(num){
-			case 0 -> item.canPerformAction(stack, ToolActions.SWORD_SWEEP) || item.canPerformAction(stack, ToolActions.AXE_DIG) || item instanceof SwordItem;
-			case 1 -> item.canPerformAction(stack, ToolActions.PICKAXE_DIG) || item instanceof PickaxeItem || item.isCorrectToolForDrops(Blocks.STONE.defaultBlockState());
-			case 2 -> item.canPerformAction(stack, ToolActions.AXE_DIG) || item instanceof AxeItem || item.isCorrectToolForDrops(Blocks.OAK_LOG.defaultBlockState());
-			case 3 -> item.canPerformAction(stack, ToolActions.SHOVEL_DIG) || item instanceof ShovelItem || item.isCorrectToolForDrops(Blocks.DIRT.defaultBlockState());
+	public boolean mayPlace(@NotNull final ItemStack itemStack) {
+		return switch(clawSlot) {
+			case 0 -> ToolUtils.isWeapon(itemStack);
+			case 1 -> ToolUtils.isPickaxe(itemStack);
+			case 2 -> ToolUtils.isAxe(itemStack);
+			case 3 -> ToolUtils.isShovel(itemStack);
 			default -> false;
 		};
 	}
 
 	@Override
-	public void set(ItemStack p_75215_1_){
-		super.set(p_75215_1_);
+	public void set(@NotNull final ItemStack itemStack) {
+		super.set(itemStack);
 		syncSlots();
 	}
 
 	@Nullable
 	@Override
-	public Pair<ResourceLocation, ResourceLocation> getNoItemIcon(){
-		return Pair.of(InventoryMenu.BLOCK_ATLAS, num == 0 ? SWORD_TEXTURE : num == 2 ? AXE_TEXTURE : num == 1 ? PICKAXE_TEXTURE : SHOVEL_TEXTURE);
+	public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
+		return Pair.of(InventoryMenu.BLOCK_ATLAS, clawSlot == 0 ? SWORD_TEXTURE : clawSlot == 2 ? AXE_TEXTURE : clawSlot == 1 ? PICKAXE_TEXTURE : SHOVEL_TEXTURE);
 	}
 
 	@Override
-	public ItemStack remove(int p_75209_1_){
-		ItemStack stack = super.remove(p_75209_1_);
+	public @NotNull ItemStack remove(int amount) {
+		ItemStack stack = super.remove(amount);
 		syncSlots();
 		return stack;
 	}
 
 	@Override
-	public boolean isActive(){
+	public boolean isActive() {
 		return dragonContainer.menuStatus == 1;
 	}
 
-	private void syncSlots(){
-		if(!dragonContainer.player.level.isClientSide){
+	private void syncSlots() {
+		if (!dragonContainer.player.level.isClientSide()) {
 			DragonStateHandler handler = DragonUtils.getHandler(dragonContainer.player);
-			NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> dragonContainer.player), new SyncDragonClawsMenu(dragonContainer.player.getId(), handler.getClawToolData().isClawsMenuOpen(), handler.getClawToolData().getClawsInventory()));
+			NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> dragonContainer.player), new SyncDragonClawsMenu(dragonContainer.player.getId(), handler.getClawToolData().isMenuOpen(), handler.getClawToolData().getClawsInventory()));
 		}
 	}
 }

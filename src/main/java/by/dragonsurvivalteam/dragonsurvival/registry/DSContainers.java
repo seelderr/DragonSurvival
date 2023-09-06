@@ -23,7 +23,7 @@ public class DSContainers{
 		nestContainer = IForgeMenuType.create(SourceOfMagicContainer::new);
 		forgeRegistry.register(nestContainer.setRegistryName(DragonSurvivalMod.MODID, "dragon_nest"));
 
-		dragonContainer = IForgeMenuType.create((windowId, inv, data) -> new DragonContainer(windowId, inv, false));
+		dragonContainer = IForgeMenuType.create((windowId, inv, data) -> new DragonContainer(windowId, inv));
 		forgeRegistry.register(dragonContainer.setRegistryName(DragonSurvivalMod.MODID, "dragon_container"));
 	}
 }

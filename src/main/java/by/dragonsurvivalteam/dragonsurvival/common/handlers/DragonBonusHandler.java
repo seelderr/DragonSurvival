@@ -57,6 +57,7 @@ public class DragonBonusHandler{
 		});
 	}
 
+
 	@SubscribeEvent
 	public static void removeLavaFootsteps(PlaySoundAtEntityEvent event){
 		if(!(event.getEntity() instanceof Player player)){

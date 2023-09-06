@@ -9,8 +9,6 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbil
 import by.dragonsurvivalteam.dragonsurvival.magic.common.innate.InnateDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
-import lombok.Getter;
-import lombok.Setter;
 import net.minecraft.nbt.CompoundTag;
 
 import java.util.ArrayList;
@@ -37,8 +35,6 @@ public class MagicCap extends SubCap{
 	public boolean onMagicSource = false;
 	public int magicSourceTimer = 0;
 
-	@Getter
-	@Setter
 	private boolean renderAbilities = true;
 
 	public MagicCap(DragonStateHandler handler){
@@ -182,7 +178,7 @@ public class MagicCap extends SubCap{
 
 	public void loadAbilities(CompoundTag tag){
 		for(Entry<String, ArrayList<DragonAbility>> entry : DragonAbilities.ABILITIES.entrySet()){
-			if(!ServerConfig.saveAllAbilities && !Objects.equals(entry.getKey(), handler.getType().getTypeName())) continue;
+			if(!ServerConfig.saveAllAbilities && !Objects.equals(entry.getKey(), handler.getTypeName())) continue;
 
 			for(DragonAbility ability : entry.getValue()){
 				if(tag.contains(ability.getName())){
@@ -243,5 +239,13 @@ public class MagicCap extends SubCap{
 
 		if(tag.contains("abilityData"))
 			loadAbilities(tag.getCompound("abilityData"));
+	}
+
+	public void setRenderAbilities(boolean renderAbilities) {
+		this.renderAbilities = renderAbilities;
+	}
+
+	public boolean shouldRenderAbilities() {
+		return renderAbilities;
 	}
 }

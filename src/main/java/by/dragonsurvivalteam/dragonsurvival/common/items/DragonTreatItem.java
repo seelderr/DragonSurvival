@@ -16,36 +16,35 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class DragonTreatItem extends Item{
+/** Handle food which can replenish mana */
+public class DragonTreatItem extends Item {
 	public AbstractDragonType type;
 
-	public DragonTreatItem(AbstractDragonType type, Properties p_i48487_1_){
-		super(p_i48487_1_.food(new FoodProperties.Builder().nutrition(1).alwaysEat().saturationMod(0.4F).meat().effect(() -> new MobEffectInstance(MobEffects.HUNGER, 20 * 15, 0), 1.0F).build()));
+	public DragonTreatItem(final AbstractDragonType type, final Properties foodProperties) {
+		super(foodProperties.food(new FoodProperties.Builder().nutrition(1).alwaysEat().saturationMod(0.4F).meat().effect(() -> new MobEffectInstance(MobEffects.HUNGER, 20 * 15, 0), 1.0F).build()));
 		this.type = type;
 	}
 
 	@Override
-	public ItemStack finishUsingItem(ItemStack p_77654_1_, Level p_77654_2_, LivingEntity entity){
-		if(entity instanceof Player player){
-			
-			if(DragonUtils.isDragonType(player, type)){
+	public @NotNull ItemStack finishUsingItem(@NotNull final ItemStack itemStack, @NotNull final Level level, @NotNull final LivingEntity livingEntity) {
+		if (livingEntity instanceof Player player) {
+			if (DragonUtils.isDragonType(player, type)) {
 				ManaHandler.replenishMana(player, ManaHandler.getMaxMana(player));
 				player.addEffect(new MobEffectInstance(DragonEffects.SOURCE_OF_MAGIC, Functions.minutesToTicks(1)));
 			}
 		}
 
-		return isEdible() ? entity.eat(p_77654_2_, p_77654_1_) : p_77654_1_;
+		return isEdible() ? livingEntity.eat(level, itemStack) : itemStack;
 	}
 
 	@Override
-	public void appendHoverText(ItemStack p_77624_1_,
-		@Nullable
-			Level p_77624_2_, List<Component> p_77624_3_, TooltipFlag p_77624_4_){
-		super.appendHoverText(p_77624_1_, p_77624_2_, p_77624_3_, p_77624_4_);
-		p_77624_3_.add(new TranslatableComponent("ds.description." + type.getTypeName().toLowerCase() + "DragonTreat"));
+	public void appendHoverText(@NotNull final ItemStack itemStack, @Nullable final Level level, @NotNull final List<Component> components, @NotNull final TooltipFlag tooltipFlag) {
+		super.appendHoverText(itemStack, level, components, tooltipFlag);
+		components.add(new TranslatableComponent("ds.description." + type.getTypeName().toLowerCase() + "DragonTreat"));
 	}
 }

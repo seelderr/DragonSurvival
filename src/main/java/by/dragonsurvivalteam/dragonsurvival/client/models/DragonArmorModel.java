@@ -29,6 +29,7 @@ public class DragonArmorModel extends AnimatedGeoModel<DragonEntity>{
 		}
 	}
 
+
 	@Override
 	public ResourceLocation getModelLocation(DragonEntity object){
 		return new ResourceLocation(DragonSurvivalMod.MODID, "geo/dragon_armor_model.geo.json");

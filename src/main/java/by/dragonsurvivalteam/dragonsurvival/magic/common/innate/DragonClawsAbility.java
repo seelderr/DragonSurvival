@@ -4,6 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
@@ -13,91 +14,84 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 
-import static by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes.*;
-
 public abstract class DragonClawsAbility extends InnateDragonAbility {
-
 	@Override
-	public int getMaxLevel(){
+	public int getMaxLevel() {
 		return 1;
 	}
 
 	@Override
-	public int getMinLevel(){
+	public int getMinLevel() {
 		return 1;
 	}
 
-	@OnlyIn( Dist.CLIENT )
+	@OnlyIn(Dist.CLIENT)
 	@Override
-	public ArrayList<Component> getInfo(){
-		int harvestLevel = getHarvestTexture() - 1;
-		Tier tier = null;
-
-		for(Tier t : Tiers.values())
-			if(t.getLevel() <= harvestLevel){
-				if(tier == null || t.getLevel() > tier.getLevel()){
-					tier = t;
-				}
-			}
+	public ArrayList<Component> getInfo() {
+		DragonStateHandler handler = DragonUtils.getHandler(Minecraft.getInstance().player);
 
 		ArrayList<Component> components = super.getInfo();
 		components.add(new TranslatableComponent("ds.skill.tool_type." + getName()));
 
-		if(tier != null)
-			components.add(new TranslatableComponent("ds.skill.harvest_level", I18n.get("ds.skill.harvest_level." + ((Tiers)tier).name().toLowerCase())));
+		Pair<Tiers, Integer> harvestInfo = getHarvestInfo();
 
-		DragonStateHandler handler = DragonUtils.getHandler(Minecraft.getInstance().player);
+		if (harvestInfo != null) {
+			components.add(new TranslatableComponent("ds.skill.harvest_level", I18n.get("ds.skill.harvest_level." + harvestInfo.getFirst().name().toLowerCase())));
+		}
 
-		ItemStack swordStack = handler.getClawToolData().getClawsInventory().getItem(0);
-		double ageBonus = handler.isDragon() ? handler.getLevel() == DragonLevel.ADULT ? ServerConfig.adultBonusDamage : handler.getLevel() == DragonLevel.YOUNG ? ServerConfig.youngBonusDamage : ServerConfig.babyBonusDamage : 0;
-		double swordBonus = swordStack.isEmpty() ? 0 : swordStack.getItem() instanceof SwordItem ? ((SwordItem)swordStack.getItem()).getDamage() : 0;
-		double bonus = Math.max(ageBonus, swordBonus - 1);
+		double damageBonus = handler.isDragon() ? handler.getLevel() == DragonLevel.ADULT ? ServerConfig.adultBonusDamage : handler.getLevel() == DragonLevel.YOUNG ? ServerConfig.youngBonusDamage : ServerConfig.babyBonusDamage : 0;
 
-		if(bonus > 0.0)
-			components.add(new TranslatableComponent("ds.skill.claws.damage", "+" + bonus));
+		if (damageBonus > 0.0) {
+			components.add(new TranslatableComponent("ds.skill.claws.damage", "+" + damageBonus));
+		}
 
 		return components;
 	}
 
 	@Override
-	public int getLevel(){
-		return FMLEnvironment.dist == Dist.CLIENT ? getHarvestTexture() : 0;
+	public int getLevel() {
+		Pair<Tiers, Integer> harvestInfo = getHarvestInfo();
+		int textureId = harvestInfo != null ? harvestInfo.getSecond() : 0;
+
+		return FMLEnvironment.dist == Dist.CLIENT ? textureId : 0;
 	}
 
-	@OnlyIn( Dist.CLIENT )
-	public int getHarvestTexture(){
+	@OnlyIn(Dist.CLIENT)
+	public @Nullable Pair<Tiers, Integer> getHarvestInfo() {
 		DragonStateHandler handler = DragonUtils.getHandler(Minecraft.getInstance().player);
 
-		Tier tier = Tiers.STONE;
-		ItemStack stack = null;
-
-		if(handler.getType() == null) return 0;
-
-		if(SEA.equals(handler.getType())){
-			stack = handler.getClawToolData().getClawsInventory().getItem(3);
-		}else if(FOREST.equals(handler.getType())){
-			stack = handler.getClawToolData().getClawsInventory().getItem(2);
-		}else if(CAVE.equals(handler.getType())){
-			stack = handler.getClawToolData().getClawsInventory().getItem(1);
+		if (handler.getType() == null) {
+			return null;
 		}
 
-		if(stack != null && !stack.isEmpty() && stack.getItem() instanceof TieredItem st)
-			tier = st.getTier();
+		Item item = handler.getInnateFakeTool().getItem();
 
-		if(Tiers.WOOD.equals(tier))
-			return 1;
-		else if(Tiers.STONE.equals(tier))
-			return 2;
-		else if(Tiers.IRON.equals(tier))
-			return 3;
-		else if(Tiers.GOLD.equals(tier))
-			return 4;
-		else if(Tiers.DIAMOND.equals(tier))
-			return 5;
-		else if(Tiers.NETHERITE.equals(tier))
-			return 6;
-		return 0;
+		if (!(item instanceof TieredItem tieredItem && tieredItem.getTier() instanceof Tiers tier)) {
+			return Pair.of(Tiers.WOOD, 0);
+		}
+
+		int textureId = 0;
+
+		if (Tiers.WOOD.equals(tier)) {
+			textureId = 1;
+		} else if(Tiers.STONE.equals(tier)) {
+			textureId = 2;
+		} else if(Tiers.IRON.equals(tier)) {
+			textureId = 3;
+		} else if(Tiers.GOLD.equals(tier)) {
+			// FIXME :: If only innate is relevant then this can never be reached (same harvest level as wood)
+			textureId = 4;
+		} else if(Tiers.DIAMOND.equals(tier)) {
+			textureId = 5;
+		} else if(Tiers.NETHERITE.equals(tier)) {
+			textureId = 6;
+		}
+
+		// TODO :: What about the texture for 7?
+
+		return Pair.of(tier, textureId);
 	}
 }

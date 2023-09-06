@@ -46,7 +46,7 @@ public class DragonGlowLayerRenderer extends GeoLayerRenderer<DragonEntity>{
 
 		ResourceLocation glowTexture = DragonSkins.getGlowTexture(player, handler.getType(), handler.getLevel());
 
-		if(glowTexture == null || glowTexture.getPath().contains("/" + handler.getType().getTypeName().toLowerCase() + "_")){
+		if(glowTexture == null || glowTexture.getPath().contains("/" + handler.getTypeName().toLowerCase() + "_")){
 			if(((DragonRenderer)renderer).glowTexture != null){
 				glowTexture = ((DragonRenderer)renderer).glowTexture;
 			}
@@ -66,7 +66,7 @@ public class DragonGlowLayerRenderer extends GeoLayerRenderer<DragonEntity>{
 			renderer.render(getEntityModel().getModel(getEntityModel().getModelLocation(entitylivingbaseIn)), entitylivingbaseIn, partialTicks, type, matrixStackIn, bufferIn, vertexConsumer, 0, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
 			((DragonRenderer)renderer).isRenderLayers = false;
 		}else{
-			ResourceLocation dynamicGlowKey = new ResourceLocation(DragonSurvivalMod.MODID, "dynamic_glow_" + entitylivingbaseIn.getPlayer().getStringUUID());
+			ResourceLocation dynamicGlowKey = new ResourceLocation(DragonSurvivalMod.MODID, "dynamic_glow_" + entitylivingbaseIn.getPlayer().getStringUUID() + "_" + handler.getLevel().name);
 			((DragonRenderer)renderer).isRenderLayers = true;
 
 			if(ageGroup.layerSettings.values().stream().anyMatch(s -> s.get().glowing)){

@@ -79,7 +79,11 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 	public final ConcurrentHashMap<Integer, EvictingQueue<CompoundTag>> UNDO_QUEUES = new ConcurrentHashMap<>();
 	public final ConcurrentHashMap<Integer, EvictingQueue<CompoundTag>> REDO_QUEUES = new ConcurrentHashMap<>();
 	private final Screen source;
-	private final String[] animations = {"sit", "idle", "fly", "swim_fast", "run", "fly_spin", "dig", "sit_on_magic_source", "sitting_blep", "resting_left", "vibing_sitting", "shy_sitting", "flapping_wings_standing_biped", "rocking_on_back"};
+	private final String[] animations = {"sit",
+	                                     "idle",
+	                                     "fly",
+	                                     "swim_fast",
+	                                     "run"};
 	@ConfigRange( min = 1, max = 1000 )
 	@ConfigOption( side = ConfigSide.CLIENT, category = "misc", key = "editorHistory", comment = "The amount of undos and redos that are saved in the dragon editor." )
 	public static Integer editorHistory = 10;
@@ -166,6 +170,11 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 
 	@Override
 	public void render(PoseStack stack, int pMouseX, int pMouseY, float pPartialTicks){
+		if (dragonRender == null) {
+			// TODO :: Can happen with the dragon-editor command before using the altar first
+			init();
+		}
+
 		tick += pPartialTicks;
 		if(tick >= 60 * 20){
 			save();
@@ -224,20 +233,14 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 		stack.popPose();
 	}
 
-	public void save(){
+	public SkinPreset save(){
 		SkinPreset newPreset = new SkinPreset();
 		newPreset.readNBT(preset.writeNBT());
+		String types = type != null ? type.getTypeName().toUpperCase() : null;
 
-		String typeS = type != null ? type.getTypeName().toUpperCase() : null;
-
-		if(DragonUtils.getDragonType(minecraft.player) == type){
-			NetworkHandler.CHANNEL.sendToServer(new SyncPlayerSkinPreset(minecraft.player.getId(), newPreset));
-		}
-
-		DragonEditorRegistry.getSavedCustomizations().skinPresets.computeIfAbsent(typeS, t -> new HashMap<>());
-		DragonEditorRegistry.getSavedCustomizations().skinPresets.get(typeS).put(currentSelected, newPreset);
-
-		DragonEditorRegistry.getSavedCustomizations().current.get(typeS).put(level, currentSelected);
+		DragonEditorRegistry.getSavedCustomizations().skinPresets.computeIfAbsent(types, t -> new HashMap<>());
+		DragonEditorRegistry.getSavedCustomizations().skinPresets.get(types).put(currentSelected, newPreset);
+		DragonEditorRegistry.getSavedCustomizations().current.get(types).put(level, currentSelected);
 
 		try{
 			Gson gson = GsonFactory.newBuilder().setPrettyPrinting().create();
@@ -245,8 +248,10 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			gson.toJson(DragonEditorRegistry.getSavedCustomizations(), writer);
 			writer.close();
 		}catch(IOException e){
-			e.printStackTrace();
+			DragonSurvivalMod.LOGGER.error("An error occured while trying to save the dragon skin", e);
 		}
+
+		return newPreset;
 	}
 
 	@Override
@@ -629,20 +634,22 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 					if(Objects.equals(layer.name, "Extra")){
 						extraKeys.remove(key);
 					}
-					LayerSettings layerSetting = preset.skinAges.get(level).get().layerSettings.get(layer).get();
-					layerSetting.selectedSkin = key;
+
+					LayerSettings settings = preset.skinAges.get(level).get().layerSettings.get(layer).get();
+					settings.selectedSkin = key;
 					Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, handler), layer, key, type);
 
 					if(text != null && text.randomHue){
-						layerSetting.hue = 0.25f + minecraft.player.getRandom().nextFloat() * 0.5f;
-						layerSetting.saturation = 0.25f + minecraft.player.getRandom().nextFloat() * 0.5f;
-						layerSetting.brightness = 0.3f + minecraft.player.getRandom().nextFloat() * 0.2f;
+						settings.hue = 0.25f + minecraft.player.getRandom().nextFloat() * 0.5f;
+						settings.saturation = 0.25f + minecraft.player.getRandom().nextFloat() * 0.5f;
+						settings.brightness = 0.3f + minecraft.player.getRandom().nextFloat() * 0.2f;
+						settings.modifiedColor = true;
 					}else{
-						layerSetting.hue = 0.5f;
-						layerSetting.saturation = 0.5f;
-						layerSetting.brightness = 0.5f;
+						settings.hue = 0.5f;
+						settings.saturation = 0.5f;
+						settings.brightness = 0.5f;
+						settings.modifiedColor = true;
 					}
-					layerSetting.modifiedColor = true;
 				}
 				handler.getSkinData().compileSkin();
 			}
@@ -791,16 +798,24 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 	}
 
 	public void confirm(){
-		save();
 		DragonStateProvider.getCap(minecraft.player).ifPresent(cap -> {
 			minecraft.player.level.playSound(minecraft.player, minecraft.player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 1, 0.7f);
 
 			if(cap.getType() != type){
-				Minecraft.getInstance().player.sendMessage(new TranslatableComponent("ds." + type.getTypeName().toLowerCase() + "_dragon_choice"), Minecraft.getInstance().player.getUUID());
+				minecraft.player.sendMessage(new TranslatableComponent("ds." + type.getTypeName().toLowerCase() + "_dragon_choice"), Minecraft.getInstance().player.getUUID());
+
+				if(type == null && cap.getType() != null){
+					DragonCommand.reInsertClawTools(Minecraft.getInstance().player, cap);
+				}
+
 				cap.setType(type);
 
-				if(!ServerConfig.saveGrowthStage || cap.getSize() == 0){
+				double size = cap.getSavedDragonSize(cap.getTypeName());
+
+				if(!ServerConfig.saveGrowthStage || size == 0){
 					cap.setSize(DragonLevel.NEWBORN.size);
+				} else {
+					cap.setSize(size);
 				}
 
 				cap.setHasWings(ServerConfig.saveGrowthStage ? cap.hasWings() || ServerFlightHandler.startWithWings : ServerFlightHandler.startWithWings);
@@ -811,13 +826,14 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 				NetworkHandler.CHANNEL.sendToServer(new SyncAltarCooldown(Minecraft.getInstance().player.getId(), Functions.secondsToTicks(ServerConfig.altarUsageCooldown)));
 				NetworkHandler.CHANNEL.sendToServer(new SyncSpinStatus(Minecraft.getInstance().player.getId(), cap.getMovementData().spinAttack, cap.getMovementData().spinCooldown, cap.getMovementData().spinLearned));
 				ClientEvents.sendClientData(new RequestClientData(cap.getType(), cap.getLevel()));
+			}
 
-				if(type == null && cap.getType() != null){
-					DragonCommand.reInsertClawTools(Minecraft.getInstance().player, cap);
-				}
+			if (minecraft != null && minecraft.player != null) {
+				NetworkHandler.CHANNEL.sendToServer(new SyncPlayerSkinPreset(minecraft.player.getId(), save()));
 			}
 		});
-		Minecraft.getInstance().player.closeContainer();
+
+		minecraft.player.closeContainer();
 	}
 
 	@Override

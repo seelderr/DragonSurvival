@@ -210,7 +210,7 @@ public class EventHandler{
 				BlockState blockState = breakEvent.getState();
 				BlockPos blockPos = breakEvent.getPos();
 				Block block = blockState.getBlock();
-				ItemStack mainHandItem = ClawToolHandler.getDragonTools(player);
+				ItemStack mainHandItem = ClawToolHandler.getDragonHarvestTool(player, blockState);
 				double random;
 				// Modded Ore Support
 				String[] tagStringSplit = ServerConfig.oresTag.split(":");
@@ -230,7 +230,7 @@ public class EventHandler{
 				int fortuneLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_FORTUNE, player.getMainHandItem());
 				int silkTouchLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, player.getMainHandItem());
 				int expDrop = block.getExpDrop(blockState, level, blockPos, fortuneLevel, silkTouchLevel);
-				boolean suitableOre = expDrop > 0 && (mainHandItem.isCorrectToolForDrops(blockState) || dragonStateHandler.isDragon() && dragonStateHandler.canHarvestWithPaw(player, blockState)) && drops.stream().noneMatch(s -> s.getItem() == block.asItem());
+				boolean suitableOre = expDrop > 0 && (mainHandItem.isCorrectToolForDrops(blockState) || dragonStateHandler.isDragon() && dragonStateHandler.canHarvestWithPaw(blockState)) && drops.stream().noneMatch(s -> s.getItem() == block.asItem());
 
 
 				if(suitableOre && !player.isCreative()){

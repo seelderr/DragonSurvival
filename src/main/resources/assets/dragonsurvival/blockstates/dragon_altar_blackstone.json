@@ -1,15 +1,16 @@
 {
   "variants": {
-    "facing=north": {
-      "model": "dragonsurvival:block/dragon_altar_blackstone",
-      "y": 180
-    },
     "facing=south": {
-      "model": "dragonsurvival:block/dragon_altar_blackstone"
+      "model": "dragonsurvival:block/dragon_altar_blackstone",
+      "y": 0
     },
     "facing=west": {
       "model": "dragonsurvival:block/dragon_altar_blackstone",
       "y": 90
+    },
+    "facing=north": {
+      "model": "dragonsurvival:block/dragon_altar_blackstone",
+      "y": 180
     },
     "facing=east": {
       "model": "dragonsurvival:block/dragon_altar_blackstone",

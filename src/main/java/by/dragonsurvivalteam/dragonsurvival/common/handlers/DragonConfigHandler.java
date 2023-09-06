@@ -40,7 +40,7 @@ public class DragonConfigHandler{
 	}
 
 	@SubscribeEvent
-	public static void onConfigLoad(ModConfigEvent.Loading event){
+	public static void onConfigLoad(ModConfigEvent.Loading event){ // TODO :: Listen to reload event
 		if(event.getConfig().getType() == ModConfig.Type.SERVER){
 			rebuildSpeedupBlocksMap();
 			rebuildSeaDragonConfigs();
@@ -52,34 +52,34 @@ public class DragonConfigHandler{
 
 	private static void rebuildSpeedupBlocksMap(){
 		HashMap<String, List<Block>> speedupMap = new HashMap<>();
-		speedupMap.put(DragonTypes.CAVE.getTypeName(), ConfigHandler.configList(Block.class, ServerConfig.caveSpeedupBlocks));
-		speedupMap.put(DragonTypes.FOREST.getTypeName(), ConfigHandler.configList(Block.class, ServerConfig.forestSpeedupBlocks));
-		speedupMap.put(DragonTypes.SEA.getTypeName(), ConfigHandler.configList(Block.class, ServerConfig.seaSpeedupBlocks));
+		speedupMap.put(DragonTypes.CAVE.getTypeName(), ConfigHandler.getResourceElements(Block.class, ServerConfig.caveSpeedupBlocks));
+		speedupMap.put(DragonTypes.FOREST.getTypeName(), ConfigHandler.getResourceElements(Block.class, ServerConfig.forestSpeedupBlocks));
+		speedupMap.put(DragonTypes.SEA.getTypeName(), ConfigHandler.getResourceElements(Block.class, ServerConfig.seaSpeedupBlocks));
 		DRAGON_SPEEDUP_BLOCKS = speedupMap;
 	}
 
 	public static void rebuildBreathBlocks(){
 		HashMap<String, List<Block>> breathMap = new HashMap<>();
-		breathMap.put(DragonTypes.CAVE.getTypeName(), ConfigHandler.configList(Block.class, NetherBreathAbility.fireBreathBlockBreaks));
-		breathMap.put(DragonTypes.FOREST.getTypeName(), ConfigHandler.configList(Block.class, ForestBreathAbility.forestBreathBlockBreaks));
-		breathMap.put(DragonTypes.SEA.getTypeName(), ConfigHandler.configList(Block.class, StormBreathAbility.stormBreathBlockBreaks));
+		breathMap.put(DragonTypes.CAVE.getTypeName(), ConfigHandler.getResourceElements(Block.class, NetherBreathAbility.fireBreathBlockBreaks));
+		breathMap.put(DragonTypes.FOREST.getTypeName(), ConfigHandler.getResourceElements(Block.class, ForestBreathAbility.forestBreathBlockBreaks));
+		breathMap.put(DragonTypes.SEA.getTypeName(), ConfigHandler.getResourceElements(Block.class, StormBreathAbility.stormBreathBlockBreaks));
 		DRAGON_BREATH_BLOCKS = breathMap;
 	}
 
 	public static void rebuildManaBlocks(){
 		HashMap<String, List<Block>> map = new HashMap<>();
-		map.put(DragonTypes.CAVE.getTypeName(), ConfigHandler.configList(Block.class, ServerConfig.caveDragonManaBlocks));
-		map.put(DragonTypes.FOREST.getTypeName(), ConfigHandler.configList(Block.class, ServerConfig.forestDragonManaBlocks));
-		map.put(DragonTypes.SEA.getTypeName(), ConfigHandler.configList(Block.class, ServerConfig.seaDragonManaBlocks));
+		map.put(DragonTypes.CAVE.getTypeName(), ConfigHandler.getResourceElements(Block.class, ServerConfig.caveDragonManaBlocks));
+		map.put(DragonTypes.FOREST.getTypeName(), ConfigHandler.getResourceElements(Block.class, ServerConfig.forestDragonManaBlocks));
+		map.put(DragonTypes.SEA.getTypeName(), ConfigHandler.getResourceElements(Block.class, ServerConfig.seaDragonManaBlocks));
 		DRAGON_MANA_BLOCKS = map;
 	}
 
 	private static void rebuildSeaDragonConfigs(){
-		SEA_DRAGON_HYDRATION_BLOCKS = ConfigHandler.configList(Block.class, ServerConfig.seaHydrationBlocks);
-		SEA_DRAGON_HYDRATION_USE_ALTERNATIVES = ConfigHandler.configList(Item.class, ServerConfig.seaAdditionalWaterUseables);
+		SEA_DRAGON_HYDRATION_BLOCKS = ConfigHandler.getResourceElements(Block.class, ServerConfig.seaHydrationBlocks);
+		SEA_DRAGON_HYDRATION_USE_ALTERNATIVES = ConfigHandler.getResourceElements(Item.class, ServerConfig.seaAdditionalWaterUseables);
 	}
 
 	private static void rebuildForestDragonConfigs(){
-		FOREST_DRAGON_BREATH_GROW_BLACKLIST = ConfigHandler.configList(Block.class, ForestBreathAbility.forestBreathGrowBlacklist);
+		FOREST_DRAGON_BREATH_GROW_BLACKLIST = ConfigHandler.getResourceElements(Block.class, ForestBreathAbility.forestBreathGrowBlacklist);
 	}
 }
