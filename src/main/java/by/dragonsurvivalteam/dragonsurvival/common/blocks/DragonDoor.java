@@ -107,7 +107,7 @@ public class DragonDoor extends Block implements SimpleWaterloggedBlock{
 					playSound(worldIn, pos, flag);
 				}
 
-				worldIn.setBlock(pos, state.setValue(POWERED, flag).setValue(OPEN, flag), 2);
+				worldIn.setBlock(pos, state.setValue(POWERED, flag).setValue(OPEN, flag), Block.UPDATE_CLIENTS);
 			}
 		}
 	}
@@ -117,11 +117,11 @@ public class DragonDoor extends Block implements SimpleWaterloggedBlock{
 	}
 
 	private int getCloseSound(){
-		return material == Material.METAL ? 1011 : 1012;
+		return material == Material.METAL ? LevelEvent.SOUND_CLOSE_IRON_DOOR : LevelEvent.SOUND_CLOSE_WOODEN_DOOR;
 	}
 
 	private int getOpenSound(){
-		return material == Material.METAL ? 1005 : 1006;
+		return material == Material.METAL ? LevelEvent.SOUND_OPEN_IRON_DOOR : LevelEvent.SOUND_OPEN_WOODEN_DOOR;
 	}
 
 	@Override
@@ -130,11 +130,11 @@ public class DragonDoor extends Block implements SimpleWaterloggedBlock{
 		if(state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.NONE || dragonStateHandler.isDragon() && state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.CAVE && Objects.equals(dragonStateHandler.getType(), DragonTypes.CAVE) || state.getValue(
 				OPEN_REQ) == DragonDoorOpenRequirement.FOREST && Objects.equals(dragonStateHandler.getType(), DragonTypes.FOREST) || state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.SEA && Objects.equals(dragonStateHandler.getType(), DragonTypes.SEA)){
 			state = state.cycle(OPEN).setValue(WATERLOGGED, worldIn.getFluidState(pos).getType() == Fluids.WATER);
-			worldIn.setBlock(pos, state, 10);
+			worldIn.setBlock(pos, state, /* Block.UPDATE_CLIENTS + Block.UPDATE_IMMEDIATE */ 10);
 			worldIn.levelEvent(player, state.getValue(OPEN) ? getOpenSound() : getCloseSound(), pos, 0);
 			if(state.getValue(PART) == Part.TOP){
 				worldIn.setBlock(pos.below(2), state.setValue(PART, Part.BOTTOM).setValue(WATERLOGGED, worldIn.getFluidState(pos.below(2)).getType() == Fluids.WATER), 10);
-				worldIn.setBlock(pos.below(), state.setValue(PART, Part.MIDDLE).setValue(WATERLOGGED, worldIn.getFluidState(pos.below()).getType() == Fluids.WATER), 10);
+				worldIn.setBlock(pos.below(), state.setValue(PART, Part.MIDDLE).setValue(WATERLOGGED, worldIn.getFluidState(pos.below()).getType() == Fluids.WATER), /* Block.UPDATE_CLIENTS + Block.UPDATE_IMMEDIATE */ 10);
 			}
 			return InteractionResult.SUCCESS;
 		}
@@ -253,8 +253,8 @@ public class DragonDoor extends Block implements SimpleWaterloggedBlock{
 
 	@Override
 	public void setPlacedBy(Level worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack){
-		worldIn.setBlock(pos.above(), state.setValue(PART, Part.MIDDLE).setValue(WATERLOGGED, worldIn.getFluidState(pos.above()).getType() == Fluids.WATER), 3);
-		worldIn.setBlock(pos.above(2), state.setValue(PART, Part.TOP).setValue(WATERLOGGED, worldIn.getFluidState(pos.above(2)).getType() == Fluids.WATER), 3);
+		worldIn.setBlock(pos.above(), state.setValue(PART, Part.MIDDLE).setValue(WATERLOGGED, worldIn.getFluidState(pos.above()).getType() == Fluids.WATER), Block.UPDATE_ALL);
+		worldIn.setBlock(pos.above(2), state.setValue(PART, Part.TOP).setValue(WATERLOGGED, worldIn.getFluidState(pos.above(2)).getType() == Fluids.WATER), Block.UPDATE_ALL);
 	}
 
 	@Override
@@ -265,15 +265,15 @@ public class DragonDoor extends Block implements SimpleWaterloggedBlock{
 				BlockPos middlePos = part == Part.BOTTOM ? pos.above() : pos.below();
 				BlockState middleState = worldIn.getBlockState(middlePos);
 				if(middleState.getBlock() == state.getBlock()){
-					worldIn.setBlock(middlePos, Blocks.AIR.defaultBlockState(), 35);
-					worldIn.levelEvent(player, 2001, middlePos, Block.getId(middleState));
+					worldIn.setBlock(middlePos, Blocks.AIR.defaultBlockState(), /* Block.UPDATE_NEIGHBORS + Block.UPDATE_CLIENTS + Block.UPDATE_SUPPRESS_DROPS */ 35);
+					worldIn.levelEvent(player, LevelEvent.PARTICLES_DESTROY_BLOCK, middlePos, Block.getId(middleState));
 				}
 			}else if(part != Part.BOTTOM && player.isCreative()){
 				BlockPos bottomPos = part == Part.MIDDLE ? pos.below() : pos.below(2);
 				BlockState bottomState = worldIn.getBlockState(bottomPos);
 				if(bottomState.getBlock() == state.getBlock()){
-					worldIn.setBlock(bottomPos, Blocks.AIR.defaultBlockState(), 35);
-					worldIn.levelEvent(player, 2001, bottomPos, Block.getId(bottomState));
+					worldIn.setBlock(bottomPos, Blocks.AIR.defaultBlockState(), /* Block.UPDATE_NEIGHBORS + Block.UPDATE_CLIENTS + Block.UPDATE_SUPPRESS_DROPS */ 35);
+					worldIn.levelEvent(player, LevelEvent.PARTICLES_DESTROY_BLOCK, bottomPos, Block.getId(bottomState));
 				}
 			}
 		}

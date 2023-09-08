@@ -146,12 +146,11 @@ public class NetherBreathAbility extends BreathAbility{
 					if(flag){
 						if(player.getRandom().nextInt(100) < 50){
 							BlockState blockstate1 = FireBlock.getState(player.level, blockPos);
-							player.level.setBlock(blockPos, blockstate1, 3);
+							player.level.setBlock(blockPos, blockstate1, Block.UPDATE_ALL_IMMEDIATE);
 						}
 					}
 				}
 			}
-			DragonStateHandler handler = DragonUtils.getHandler(player);
 
 			BurnAbility burnAbility = DragonAbilities.getSelfAbility(player, BurnAbility.class);
 			if(player.getRandom().nextInt(100) < burnAbility.level * 15){
