@@ -260,6 +260,19 @@ public class ConfigHandler{
 			return true;
 		}
 
+		// Dirt transformations (forest dragon breath)
+		if (key.equals("dirtTransformationBlocks")) {
+			if (configValue instanceof String string) {
+				String[] data = string.split(":");
+
+				if (data.length == 3) {
+					return isInteger(data[2]) && ResourceLocation.isValidResourceLocation(data[0] + ":" + data[1]);
+				}
+
+				return false;
+			}
+		}
+
 		String string = String.valueOf(configValue);
 
 		if (string.split(":").length == 2) {
@@ -268,6 +281,15 @@ public class ConfigHandler{
 		}
 
 		return false;
+	}
+
+	private static boolean isInteger(final String string) {
+		try {
+			Integer.parseInt(String.valueOf(string));
+			return true;
+		} catch (NumberFormatException e) {
+			return false;
+		}
 	}
 
 	/** Get the relevant string value from an object for specific types */
