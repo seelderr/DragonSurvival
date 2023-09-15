@@ -1,28 +1,25 @@
 modLoader = "javafml"
-loaderVersion = "[40,)"
-license = "Dragon Survival License. Version 1.0, January 2022. All rights reserved exclusively to Viktoria Ershova (BlackAures1)."
+loaderVersion = "${loader_version_range}"
+license = "${mod_license}"
 issueTrackerURL = "https://github.com/DragonSurvivalTeam/DragonSurvival/issues"
 logoFile = "dragonsurvival.png"
 
 [[mods]]
-    modId = "dragonsurvival"
-    version = "${file.jarVersion}"
-    displayName = "Dragon Survival"
+    modId = "${mod_id}"
+    version = "${mod_version}"
+    displayName = "${mod_name}"
     displayURL = "https://www.curseforge.com/minecraft/mc-mods/dragons-survival"
-    authors = "Black Aures"
-    description = '''
-        This mod lets you play as a dragon. There are 3 dragon kinds, which have different traits.
-        To start, you must create a Dragon Altar where you can choose the dragon type you want to become.
-        '''
+    authors = "${mod_authors}"
+    description = "${mod_description}"
 
-[[dependencies.dragonsurvival]]
-    modId = "geckolib3"
-    mandatory = true
-    versionRange = "[3.0.47,)"
-    ordering = "NONE"
-    side = "CLIENT"
-
-[[dependencies.dragonsurvival]]
+[[dependencies.${mod_id}]]
     modId = "forge"
     mandatory = true
-    versionRange = "[40.1.67,)"
+    versionRange = "${neo_version_range}"
+
+[[dependencies.${mod_id}]]
+    modId = "geckolib"
+    mandatory = true
+    versionRange = "${geckolib_version_range}"
+    ordering = "NONE"
+    side = "CLIENT"

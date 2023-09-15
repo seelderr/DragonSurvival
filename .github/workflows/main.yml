@@ -72,7 +72,7 @@ jobs:
         uses: christian-draeger/read-properties@1.0.1
         with:
           path: './gradle.properties'
-          property: 'mc_version'
+          property: 'minecraft_version'
 
       - name: Send Discord alert
         if: steps.semantic.outputs.new_release_published == 'true'
